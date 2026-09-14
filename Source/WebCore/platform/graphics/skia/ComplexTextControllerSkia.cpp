@@ -29,6 +29,7 @@
 #include "FontFeatureValues.h"
 #include "FontTaggedSettings.h"
 #include "HbUniquePtr.h"
+#include "SkiaHarfBuzzFont.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextFlags.h"
 #include "TextRun.h"
@@ -185,23 +186,10 @@ static void forEachHBRun(const std::span<const char16_t>& characters, Function<v
 
 static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
 {
-    static const unsigned maxCount = 32;
-
-    unsigned scriptCount = maxCount;
-    std::array<hb_tag_t, maxCount> scriptTags;
-    hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB, 0, &scriptCount, scriptTags.data());
-    for (unsigned scriptIndex = 0; scriptIndex < scriptCount; ++scriptIndex) {
-        unsigned languageCount = maxCount;
-        std::array<hb_tag_t, maxCount> languageTags;
-        hb_ot_layout_script_get_language_tags(face, HB_OT_TAG_GSUB, scriptIndex, 0, &languageCount, languageTags.data());
-        for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
-            unsigned featureIndex;
-            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'e', 'r', 't'), &featureIndex)
-                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'r', 't', '2'), &featureIndex))
-                return hb_ot_tag_to_script(scriptTags[scriptIndex]);
-        }
-    }
-    return HB_SCRIPT_INVALID;
+    auto script = scriptSupportingOpenTypeFeature(face, HB_OT_TAG_GSUB, HB_TAG('v', 'e', 'r', 't'));
+    if (script == HB_SCRIPT_INVALID)
+        script = scriptSupportingOpenTypeFeature(face, HB_OT_TAG_GSUB, HB_TAG('v', 'r', 't', '2'));
+    return script;
 }
 
 void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)

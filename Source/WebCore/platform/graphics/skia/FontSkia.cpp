@@ -30,6 +30,7 @@
 #include "NotImplemented.h"
 #include "PathSkia.h"
 #include "SkiaHarfBuzzFont.h"
+#include <hb-ot.h>
 #include <skia/core/SkFont.h>
 #include <skia/core/SkFontMetrics.h>
 #include <wtf/StdLibExtras.h>
@@ -168,16 +169,43 @@ RefPtr<Font> Font::platformCreateScaledFont(const FontDescription&, float scaleF
 
 RefPtr<Font> Font::platformCreateHalfWidthFont() const
 {
+    if (!supportsOpenTypeAlternateHalfWidths())
+        return nullptr;
+
+    static constexpr hb_tag_t haltTag = HB_TAG('h', 'a', 'l', 't');
+    static constexpr hb_tag_t vhalTag = HB_TAG('v', 'h', 'a', 'l');
+    auto* hbFont = m_platformData.hbFont();
+    auto* face = hbFont ? hb_font_get_face(hbFont) : nullptr;
+
+    auto features = m_platformData.features();
+    if (face && supportsOpenTypeFeature(face, HB_OT_TAG_GPOS, haltTag))
+        features.append({ haltTag, 1, 0, static_cast<unsigned>(-1) });
+    if (face && supportsOpenTypeFeature(face, HB_OT_TAG_GPOS, vhalTag))
+        features.append({ vhalTag, 1, 0, static_cast<unsigned>(-1) });
     return Font::create(FontPlatformData(m_platformData.skFont().refTypeface(), m_platformData.size(),
         m_platformData.syntheticBold(),
         m_platformData.syntheticOblique(),
         m_platformData.orientation(),
         FontWidthVariant::HalfWidth,
         m_platformData.textRenderingMode(),
-        Vector<hb_feature_t> { m_platformData.features() },
+        WTF::move(features),
         m_platformData.metricsOverrides(),
         m_platformData.customPlatformData()),
         origin(), IsInterstitial::No);
+}
+
+bool FontBase::supportsOpenTypeAlternateHalfWidths() const
+{
+    if (m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Unknown) {
+        static constexpr hb_tag_t haltTag = HB_TAG('h', 'a', 'l', 't');
+        static constexpr hb_tag_t vhalTag = HB_TAG('v', 'h', 'a', 'l');
+        auto* hbFont = m_platformData.hbFont();
+        auto* face = hbFont ? hb_font_get_face(hbFont) : nullptr;
+        bool supported = face
+            && (supportsOpenTypeFeature(face, HB_OT_TAG_GPOS, haltTag) || supportsOpenTypeFeature(face, HB_OT_TAG_GPOS, vhalTag));
+        m_supportsOpenTypeAlternateHalfWidths = supported ? SupportsFeature::Yes : SupportsFeature::No;
+    }
+    return m_supportsOpenTypeAlternateHalfWidths == SupportsFeature::Yes;
 }
 
 void Font::determinePitch()

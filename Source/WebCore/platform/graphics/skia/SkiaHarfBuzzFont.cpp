@@ -32,6 +32,8 @@
 #include "FontPlatformData.h"
 #include "NotImplemented.h"
 #include "SkiaHarfBuzzFontCache.h"
+#include <array>
+#include <hb-ot.h>
 #include <wtf/unicode/CharacterNames.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -237,6 +239,34 @@ void SkiaHarfBuzzFont::glyphExtents(hb_codepoint_t glyph, hb_glyph_extents_t* ex
     extents->y_bearing = skScalarToHarfBuzzPosition(-bounds.fTop);
     extents->width = skScalarToHarfBuzzPosition(bounds.width());
     extents->height = skScalarToHarfBuzzPosition(-bounds.height());
+}
+
+hb_script_t scriptSupportingOpenTypeFeature(hb_face_t* face, hb_tag_t tableTag, hb_tag_t featureTag)
+{
+    static constexpr unsigned maxCount = 32;
+
+    unsigned scriptCount = maxCount;
+    std::array<hb_tag_t, maxCount> scriptTags;
+    hb_ot_layout_table_get_script_tags(face, tableTag, 0, &scriptCount, scriptTags.data());
+    for (unsigned scriptIndex = 0; scriptIndex < scriptCount; ++scriptIndex) {
+        unsigned featureIndex;
+        if (hb_ot_layout_language_find_feature(face, tableTag, scriptIndex, HB_OT_LAYOUT_DEFAULT_LANGUAGE_INDEX, featureTag, &featureIndex))
+            return hb_ot_tag_to_script(scriptTags[scriptIndex]);
+
+        unsigned languageCount = maxCount;
+        std::array<hb_tag_t, maxCount> languageTags;
+        hb_ot_layout_script_get_language_tags(face, tableTag, scriptIndex, 0, &languageCount, languageTags.data());
+        for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
+            if (hb_ot_layout_language_find_feature(face, tableTag, scriptIndex, languageIndex, featureTag, &featureIndex))
+                return hb_ot_tag_to_script(scriptTags[scriptIndex]);
+        }
+    }
+    return HB_SCRIPT_INVALID;
+}
+
+bool supportsOpenTypeFeature(hb_face_t* face, hb_tag_t tableTag, hb_tag_t featureTag)
+{
+    return scriptSupportingOpenTypeFeature(face, tableTag, featureTag) != HB_SCRIPT_INVALID;
 }
 
 } // namespace WebCore
