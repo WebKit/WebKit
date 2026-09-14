@@ -1687,6 +1687,7 @@ void WebProcessPool::registerAdditionalFonts(NSArray *fontNames)
 }
 #endif // PLATFORM(MAC)
 
+#if !PLATFORM(MAC)
 static URL fontURLFromName(ASCIILiteral fontName)
 {
     RetainPtr cfFontName = fontName.createCFString();
@@ -1701,8 +1702,33 @@ static RetainPtr<CTFontDescriptorRef> fontDescription(ASCIILiteral fontName)
     return adoptCF(CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)attributes.get()));
 }
 
+#endif
+
 void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
 {
+#if PLATFORM(MAC)
+    Vector<URL> fontURLs;
+    // These system fonts can be installed as MobileAsset fonts, which are not
+    // included in the WebContent process's static font registry.
+    for (NSString *family : @[@"Kaiti SC", @"Kaiti TC", @"STKaiti", @"BiauKaiTC", @"BiauKaiHK", @"STFangsong"]) {
+        RetainPtr attributes = @{ bridge_cast(kCTFontFamilyNameAttribute): family, bridge_cast(kCTFontUserInstalledAttribute): @NO };
+        RetainPtr descriptor = adoptCF(CTFontDescriptorCreateWithAttributes((__bridge CFDictionaryRef)attributes.get()));
+        RetainPtr mandatoryAttributes = [NSSet setWithArray:[attributes allKeys]];
+        RetainPtr matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(descriptor.get(), (__bridge CFSetRef)mandatoryAttributes.get()));
+        if (!matches)
+            continue;
+        for (CFIndex i = 0; i < CFArrayGetCount(matches.get()); ++i) {
+            auto match = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matches.get(), i));
+            RetainPtr url = adoptCF(checked_cf_cast<CFURLRef>(CTFontDescriptorCopyAttribute(match, kCTFontURLAttribute)));
+            if (!url)
+                continue;
+            URL fontURL(url.get());
+            if (!fontURLs.contains(fontURL))
+                fontURLs.append(WTF::move(fontURL));
+        }
+    }
+    process.send(Messages::WebProcess::RegisterAdditionalFonts(AdditionalFonts::additionalFonts(fontURLs, process.auditToken())), 0);
+#else
     if (m_assetFontURLs) {
         process.send(Messages::WebProcess::RegisterAdditionalFonts(AdditionalFonts::additionalFonts({ *m_assetFontURLs }, process.auditToken())), 0);
         return;
@@ -1739,6 +1765,7 @@ void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
     dispatch_async(globalDispatchQueueSingleton(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [descriptions = RetainPtr<NSArray>(descriptions), blockPtr] {
         CTFontDescriptorMatchFontDescriptorsWithProgressHandler((__bridge CFArrayRef)descriptions.get(), nullptr, blockPtr.get());
     });
+#endif
 }
 
 } // namespace WebKit

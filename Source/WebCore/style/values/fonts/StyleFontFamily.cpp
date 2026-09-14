@@ -27,6 +27,7 @@
 #include "StyleFontFamily.h"
 
 #include "CSSFontFamilyNameValue.h"
+#include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "Document.h"
@@ -43,6 +44,11 @@ namespace Style {
 auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSSValue& value) -> FontFamilies
 {
     using namespace CSSPropertyParserHelpers;
+
+    if (RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(value)) {
+        ASSERT(functionValue->name() == CSSValueGeneric);
+        return { genericFontFamily(downcast<CSSKeywordValue>(*functionValue->item(0)).valueID()), FontFamilyKind::Generic };
+    }
 
     if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
         auto valueID = keywordValue->valueID();
@@ -88,6 +94,11 @@ auto CSSValueConversion<FontFamilies>::operator()(BuilderState& state, const CSS
     std::optional<FontFamilyKind> firstFontKind;
     auto families = WTF::compactMap(*valueList, [&](auto& contentValue) -> std::optional<WebCore::FontFamily> {
         auto [family, kind] = [&] -> std::pair<AtomString, FontFamilyKind> {
+            if (RefPtr functionValue = dynamicDowncast<CSSFunctionValue>(contentValue)) {
+                ASSERT(functionValue->name() == CSSValueGeneric);
+                return { genericFontFamily(downcast<CSSKeywordValue>(*functionValue->item(0)).valueID()), FontFamilyKind::Generic };
+            }
+
             if (RefPtr fontFamilyNameContentValue = dynamicDowncast<CSSFontFamilyNameValue>(contentValue)) {
                 return {
                     toStyleFromCSSValue<FontFamilyName>(state, *fontFamilyNameContentValue).value,
