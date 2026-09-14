@@ -60,6 +60,7 @@
     position: relative;
     will-change: z-index;
     overflow: clip;
+    color-scheme: light dark;
 }
 
 .media-controls-container,

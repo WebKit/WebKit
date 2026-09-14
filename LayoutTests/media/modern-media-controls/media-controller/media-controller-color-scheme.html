@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<script type="text/javascript">
+
+description("Testing that the media controls container has a CSS color-scheme value.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+const mediaControlsContainer = shadowRoot.lastElementChild;
+shouldBeEqualToString("window.getComputedStyle(mediaControlsContainer).colorScheme", "light dark");
+
+</script>
+</body>
