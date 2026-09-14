@@ -971,6 +971,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
                                        DrawElementsType type,
                                        const void *indices,
                                        GLsizei primcount,
+                                       GLint basevertex,
                                        GLuint baseinstance)
 {
     if (primcount <= 0)
@@ -983,10 +984,11 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
 
         // Early exit.
         return ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices,
-                                          primcount);
+                                          primcount, basevertex);
     }
 
-    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, primcount))
+    if (!ValidateDrawElementsCommon(context, entryPoint, mode, count, type, indices, primcount,
+                                    basevertex))
     {
         return false;
     }
@@ -4705,7 +4707,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
                                         GLsizei primcount)
 {
     if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           primcount, 0))
+                                           primcount, 0, 0))
     {
         return false;
     }
@@ -4722,7 +4724,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
                                       GLsizei primcount)
 {
     if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           primcount, 0))
+                                           primcount, 0, 0))
     {
         return false;
     }
