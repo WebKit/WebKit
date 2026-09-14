@@ -112,6 +112,9 @@ public:
     inline bool canContainAbsolutelyPositionedObjects(const Style::ComputedStyle* styleToUse = nullptr) const; // Defined in RenderElementStyleInlines.h.
     bool canEstablishContainingBlockWithTransform() const;
 
+    // True if a style change toggles whether this box (inside a multi-column flow) traps column-span:all
+    // descendants, requiring spanner placeholders in the subtree to be rebuilt. See isValidColumnSpanner().
+    bool multiColumnSpannerReevaluationNeededForStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle) const;
     inline bool shouldApplyLayoutContainment() const; // Defined in RenderElementStyleInlines.h
     inline bool shouldApplySizeContainment() const; // Defined in RenderElementStyleInlines.h
     inline bool shouldApplyInlineSizeContainment() const; // Defined in RenderElementStyleInlines.h.
