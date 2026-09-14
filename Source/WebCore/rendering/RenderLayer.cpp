@@ -804,6 +804,31 @@ void RenderLayer::dirtyNormalFlowList()
         setNeedsCompositingPaintOrderChildrenUpdate();
 }
 
+static void reorderLayersForFlexOrGridOrder(Vector<RenderLayer*>& list)
+{
+    auto isFlexOrGridItem = [](const RenderLayer* layer) {
+        auto* parent = layer->renderer().parent();
+        return parent && !layer->renderer().isOutOfFlowPositioned()
+            && (parent->isFlexibleBoxIncludingDeprecated() || parent->isRenderGrid());
+    };
+    auto sameContainerItems = [&](const RenderLayer* a, const RenderLayer* b) {
+        return isFlexOrGridItem(a) && isFlexOrGridItem(b) && a->renderer().parent() == b->renderer().parent();
+    };
+
+    for (size_t runStart = 0; runStart < list.size(); ) {
+        size_t runEnd = runStart + 1;
+        while (runEnd < list.size() && list[runEnd]->zIndex() == list[runStart]->zIndex() && sameContainerItems(list[runStart], list[runEnd]))
+            ++runEnd;
+        if (runEnd - runStart > 1) {
+            auto run = list.mutableSpan().subspan(runStart, runEnd - runStart);
+            std::stable_sort(run.begin(), run.end(), [](const RenderLayer* a, const RenderLayer* b) {
+                return a->renderer().style().order() < b->renderer().style().order();
+            });
+        }
+        runStart = runEnd;
+    }
+}
+
 void RenderLayer::updateNormalFlowList()
 {
     if (!m_normalFlowListDirty)
@@ -821,8 +846,10 @@ void RenderLayer::updateNormalFlowList()
         }
     }
 
-    if (m_normalFlowList)
+    if (m_normalFlowList) {
+        reorderLayersForFlexOrGridOrder(*m_normalFlowList);
         m_normalFlowList->shrinkToFit();
+    }
 
     m_normalFlowListDirty = false;
 }
@@ -871,11 +898,13 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
     // Sort the two lists.
     if (posZOrderList) {
         std::stable_sort(posZOrderList->begin(), posZOrderList->end(), compareZIndex);
+        reorderLayersForFlexOrGridOrder(*posZOrderList);
         posZOrderList->shrinkToFit();
     }
 
     if (negZOrderList) {
         std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
+        reorderLayersForFlexOrGridOrder(*negZOrderList);
         negZOrderList->shrinkToFit();
     }
 
