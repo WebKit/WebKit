@@ -1661,7 +1661,14 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)didEndSyntheticMomentumScrolling
 {
     _isMomentumActive = false;
-    [self _resetCaughtDeceleratingScroll];
+
+    // Only the delta suppression is tied to momentum: once it has stopped, continuing to
+    // zero deltas stops top scroll stretching from engaging.
+    //
+    // Whether the interaction caught a decelerating scroll is a property of the gesture
+    // (and not the momentum). Clearing it here lets the scroll interrupt click through.
+    // Instead, we should let the gesture end paths own/reset it instead.
+    _suppressNextPanScrollDelta = false;
 }
 
 - (void)_resetCaughtDeceleratingScroll
