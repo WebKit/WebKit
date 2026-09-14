@@ -33,6 +33,23 @@ namespace WebCore {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(FrameGeometrySyncData);
 
+bool operator==(const FrameGeometrySyncData& a, const FrameGeometrySyncData& b)
+{
+    if (a.layoutViewportRect != b.layoutViewportRect || a.contentsSize != b.contentsSize)
+        return false;
+
+    if (a.childrenFrameLayoutInfo.size() != b.childrenFrameLayoutInfo.size())
+        return false;
+
+    for (auto& [frameID, layoutInfo] : a.childrenFrameLayoutInfo) {
+        RefPtr otherLayoutInfo = b.childrenFrameLayoutInfo.get(frameID);
+        if (!otherLayoutInfo || *otherLayoutInfo != layoutInfo.get())
+            return false;
+    }
+
+    return true;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, const FrameGeometrySyncData& data)
 {
     WTF::TextStream::GroupScope scope(ts);

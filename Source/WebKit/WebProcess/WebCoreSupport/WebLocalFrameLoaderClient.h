@@ -28,6 +28,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameGeometrySyncData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/PageIdentifier.h>
@@ -49,6 +50,8 @@ class WebLocalFrameLoaderClient final : public WebCore::LocalFrameLoaderClient, 
 public:
     WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
+
+    void clearLastBroadcastFrameGeometry() { m_lastBroadcastFrameGeometry = std::nullopt; }
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
@@ -316,6 +319,8 @@ private:
     bool m_frameCameFromBackForwardCache { false };
     std::optional<FrameSpecificStorageAccessIdentifier> m_frameSpecificStorageAccessIdentifier;
     WeakRef<WebCore::LocalFrame> m_localFrame;
+
+    std::optional<WebCore::FrameGeometrySyncData> m_lastBroadcastFrameGeometry;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

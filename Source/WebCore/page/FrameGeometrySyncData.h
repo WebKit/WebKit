@@ -46,6 +46,8 @@ struct FrameGeometrySyncData {
     HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
 };
 
+WEBCORE_EXPORT bool operator==(const FrameGeometrySyncData&, const FrameGeometrySyncData&);
+
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameGeometrySyncData&);
 
 } // namespace WebCore

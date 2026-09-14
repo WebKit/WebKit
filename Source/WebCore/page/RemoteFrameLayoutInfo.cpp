@@ -61,6 +61,21 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
 {
 }
 
+bool operator==(const RemoteFrameLayoutInfo& a, const RemoteFrameLayoutInfo& b)
+{
+    return a.m_visibleRectInParent == b.m_visibleRectInParent
+        && a.m_onScreenRectInChildView == b.m_onScreenRectInChildView
+#if PLATFORM(IOS_FAMILY)
+        && a.m_exposedContentRectInChildView == b.m_exposedContentRectInChildView
+#endif
+        && a.m_ownerHasRenderer == b.m_ownerHasRenderer
+        && a.m_childFrameOwnerToRootContentTransform == b.m_childFrameOwnerToRootContentTransform
+        && a.m_absoluteToChildFrameOwnerLocalTransform == b.m_absoluteToChildFrameOwnerLocalTransform
+        && a.m_usedZoom == b.m_usedZoom
+        && a.m_contentBoxLocation == b.m_contentBoxLocation
+        && a.m_ownerElementAppearance == b.m_ownerElementAppearance;
+}
+
 WTF::TextStream& operator<<(WTF::TextStream& ts, FrameOwnerElementAppearance appearance)
 {
     switch (appearance) {
