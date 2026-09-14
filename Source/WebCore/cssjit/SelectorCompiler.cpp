@@ -1560,6 +1560,9 @@ static FunctionType constructFragmentsInternal(const CSSSelector& rootSelector, 
             fragment->classNames.append(selector->value().impl());
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
+        case CSSSelector::Match::ClassPrefix:
+            // Class prefix selectors can't be matched via pointer-identity comparison against a fixed AtomStringImpl*; fall back to the non-JIT selector checker.
+            return FunctionType::CannotCompile;
         case CSSSelector::Match::PseudoClass: {
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)

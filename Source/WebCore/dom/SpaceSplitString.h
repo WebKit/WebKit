@@ -119,6 +119,18 @@ public:
     bool contains(const AtomString& string) const { return m_data && m_data->contains(string); }
     bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
 
+    // A class token matches a prefix (e.g. ".foo-*") if it starts with the prefix, has at least
+    // one character beyond it, and that character isn't also a hyphen. https://drafts.csswg.org/selectors/#class-prefix
+    static bool classNameMatchesPrefix(StringView className, StringView prefix)
+    {
+        if (className.length() <= prefix.length())
+            return false;
+        if (!className.startsWith(prefix))
+            return false;
+        return className[prefix.length()] != '-';
+    }
+    bool containsClassPrefix(const AtomString& prefix) const;
+
     unsigned size() const { return m_data ? m_data->size() : 0; }
     bool isEmpty() const { return !m_data; }
     const AtomString& operator[](unsigned i) const LIFETIME_BOUND

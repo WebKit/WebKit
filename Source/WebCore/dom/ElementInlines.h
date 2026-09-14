@@ -160,6 +160,13 @@ inline bool Element::hasClassName(const AtomString& className) const
     return elementData()->classNames().contains(className);
 }
 
+inline bool Element::hasClassNamePrefix(const AtomString& prefix) const
+{
+    if (!elementData())
+        return false;
+    return elementData()->classNames().containsClassPrefix(prefix);
+}
+
 inline unsigned Element::attributeCount() const
 {
     ASSERT(elementData());

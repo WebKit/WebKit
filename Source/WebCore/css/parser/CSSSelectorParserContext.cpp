@@ -39,6 +39,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , imageControlsEnabled(context.imageControlsEnabled)
 #endif
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
+    , cssClassPrefixSelectorEnabled(context.cssClassPrefixSelectorEnabled)
     , cssPickerPseudoElementEnabled(context.cssPickerPseudoElementEnabled)
     , htmlEnhancedSelectEnabled(context.htmlEnhancedSelectEnabled)
     , targetTextPseudoElementEnabled(context.targetTextPseudoElementEnabled)
@@ -54,6 +55,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , imageControlsEnabled(document.settings().imageControlsEnabled())
 #endif
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
+    , cssClassPrefixSelectorEnabled(document.settings().cssClassPrefixSelectorEnabled())
     , cssPickerPseudoElementEnabled(document.settings().cssPickerPseudoElementEnabled())
     , htmlEnhancedSelectEnabled(document.settings().htmlEnhancedSelectEnabled())
     , targetTextPseudoElementEnabled(document.settings().targetTextPseudoElementEnabled())
@@ -70,6 +72,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.imageControlsEnabled,
 #endif
         context.popoverAttributeEnabled,
+        context.cssClassPrefixSelectorEnabled,
         context.cssPickerPseudoElementEnabled,
         context.htmlEnhancedSelectEnabled,
         context.targetTextPseudoElementEnabled,

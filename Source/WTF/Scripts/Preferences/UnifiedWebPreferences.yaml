@@ -832,6 +832,14 @@ CSSCalcSizeFunctionEnabled:
   humanReadableDescription: "Enable support for CSS calc-size()"
   defaultValue: false
 
+CSSClassPrefixSelectorEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS class prefix selector"
+  humanReadableDescription: "Enable the CSS class prefix selector (.foo-*)"
+  defaultValue: false
+
 CSSColorLayersEnabled:
   type: bool
   category: css
