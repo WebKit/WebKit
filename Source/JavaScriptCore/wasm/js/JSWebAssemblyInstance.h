@@ -210,7 +210,7 @@ public:
 
     void elemDrop(uint32_t elementIndex);
 
-    bool memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex);
+    bool memoryInit(uint64_t dstAddress, uint64_t srcAddress, uint64_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex);
 
     void dataDrop(uint32_t dataSegmentIndex);
 
@@ -331,6 +331,7 @@ public:
 #endif
     static constexpr ptrdiff_t offsetOfMemoryIsMemory64Bits() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_memoryIsMemory64Bits); }
     static constexpr ptrdiff_t offsetOfCachedMemory0Size() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_cachedMemory0Size); }
+    static constexpr ptrdiff_t offsetOfPassiveDataSegments() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_passiveDataSegments); }
 
     // Tail accessors.
     static_assert(sizeof(WasmMemoryBaseAndSize) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(WasmMemoryBaseAndSize)), "We rely on this for the alignment to be correct");
