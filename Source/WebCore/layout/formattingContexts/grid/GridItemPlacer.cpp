@@ -42,8 +42,10 @@ GridItemPlacer::GridItemPlacer(GridAutoFlowOptions autoFlowOptions)
 //
 // Step 3 (determining the columns in the implicit grid) is handled while the grid is built, in
 // ImplicitGrid::createInitialGrid().
-GridItemPlacementResult GridItemPlacer::placeItems(const UnplacedGridItems& unplacedGridItems, ImplicitGrid& implicitGrid) const
+GridItemPlacementResult GridItemPlacer::placeItems(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const
 {
+    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
+
     // 1. Position anything that's not auto-positioned.
     for (auto& nonAutoPositionedItem : unplacedGridItems.nonAutoPositionedItems)
         implicitGrid.insertUnplacedGridItem(nonAutoPositionedItem);
