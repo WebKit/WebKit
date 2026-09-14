@@ -377,6 +377,29 @@ void webKitMediaSrcSetPlayer(WebKitMediaSrc* source, ThreadSafeWeakPtr<MediaPlay
     source->priv->player = WTF::move(player);
 }
 
+// This is part of a workaround for libav decoders not emitting all decoded frames
+// without an EOS event.
+// See the comment on MediaPlayerPrivateGStreamer::multiqueueUnderrunCallback.
+gboolean webKitMediaSrcPushStillFrameEvent(WebKitMediaSrc* source)
+{
+    for (RefPtr<Stream> stream : source->priv->streams.values()) {
+        if (stream->track->type() != GStreamerTrackType::Video)
+            continue;
+
+        DataMutexLocker queue { stream->track->queueDataMutex() };
+        if (queue->isEmpty()) {
+            GST_DEBUG_OBJECT(stream->pad.get(), "Enqueueing still-frame event on stream '%'" PRIu64 "'", stream->track->id());
+            queue->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_video_event_new_still_frame(TRUE))));
+        } else
+            GST_TRACE_OBJECT(stream->pad.get(), "Track queue isn't empty, not sending still-frame event.");
+
+        return TRUE;
+    }
+
+    GST_WARNING_OBJECT(source, "No video stream to push a still-frame event to");
+    return FALSE;
+}
+
 static void webKitMediaSrcTearDownStream(WebKitMediaSrc* source, TrackID id)
 {
     ASSERT(isMainThread());

@@ -60,4 +60,6 @@ void webKitMediaSrcFlush(WebKitMediaSrc*, WebCore::TrackID);
 
 void webKitMediaSrcSetPlayer(WebKitMediaSrc*, ThreadSafeWeakPtr<WebCore::MediaPlayerPrivateGStreamerMSE>&&);
 
+gboolean webKitMediaSrcPushStillFrameEvent(WebKitMediaSrc*);
+
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
