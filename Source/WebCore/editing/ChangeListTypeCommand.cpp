@@ -93,7 +93,7 @@ static void removeSourceListAttributes(const HTMLElement& listToReplace, HTMLEle
     }
 
     RefPtr existingInlineStyle = listToReplace.inlineStyle();
-    if (existingInlineStyle && !existingInlineStyle->getPropertyValue(CSSPropertyListStyleType).isEmpty())
+    if (existingInlineStyle && existingInlineStyle->hasProperty(CSSPropertyListStyleType))
         list.setInlineStyleProperty(CSSPropertyListStyleType, (convertToUnorderedList ? CSSValueDisc : CSSValueDecimal));
 }
 

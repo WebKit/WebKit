@@ -911,8 +911,8 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
             for (auto& [cssPropertyId, stringValue] : computedKeyframe.styleStrings) {
                 if (cssPropertyId == CSSPropertyCustom)
                     continue;
-                if (auto cssValue = protect(parsedKeyframe.style)->getPropertyCSSValue(cssPropertyId))
-                    stringValue = cssValue->cssText(CSS::defaultSerializationContext());
+                if (auto computedValue = protect(parsedKeyframe.style)->getPropertyValue(cssPropertyId); !computedValue.isNull())
+                    stringValue = WTF::move(computedValue);
             }
             computedKeyframe.easing = protect(timingFunctionForKeyframeAtIndex(i))->cssText();
             computedKeyframes.append(WTF::move(computedKeyframe));
