@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include "FloatSize.h"
-#include "PlatformExportMacros.h"
-#include "PlatformVideoColorSpace.h"
-#include "SharedBuffer.h"
 #include <JavaScriptCore/DataView.h>
+#include <WebCore/FloatSize.h>
+#include <WebCore/PlatformExportMacros.h>
+#include <WebCore/PlatformVideoColorSpace.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringView.h>

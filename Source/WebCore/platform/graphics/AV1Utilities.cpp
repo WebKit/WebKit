@@ -1343,7 +1343,7 @@ static std::optional<std::pair<std::span<const uint8_t>, std::span<const uint8_t
             ++index;
 
         Checked<size_t> payloadSize = readULEBSize(data, index);
-        if (index + payloadSize >= data.size())
+        if (index + payloadSize > data.size())
             return std::nullopt;
 
         if (headerType == 1) {
