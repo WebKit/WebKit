@@ -78,6 +78,8 @@ public:
     id<MTLRenderPipelineState> renderPipelineState() const;
     id<MTLRenderPipelineState> icbRenderPipelineState() const;
 
+    void setPrecompiledRenderPipelineState(id<MTLRenderPipelineState>);
+
     id<MTLDepthStencilState> NODELETE depthStencilState() const;
     bool validateDepthStencilState(bool depthReadOnly, bool stencilReadOnly) const;
     MTLPrimitiveType primitiveType() const { return m_primitiveType; }

@@ -29,6 +29,7 @@
 #import "CallGraph.h"
 #import "WGSL.h"
 #import <variant>
+#import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -75,6 +76,8 @@ public:
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
     static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label, NSError **, WGSL::DeviceState&&);
+    static id<MTLLibrary> createLibrary(id<MTLDevice>, NSString *msl, NSString *label, NSError **, const WGSL::DeviceState&);
+    static void createLibraryAsync(id<MTLDevice>, NSString *msl, NSString *label, const WGSL::DeviceState&, CompletionHandler<void(id<MTLLibrary>, NSError *)>&&);
 
     WGSL::ShaderModule* ast() const;
 
