@@ -5214,16 +5214,6 @@ LayoutRect RenderBox::flippedPaddingBoxRect() const
     return rect;
 }
 
-LayoutUnit RenderBox::offsetLeft() const
-{
-    return adjustedPositionRelativeToOffsetParent(topLeftLocation()).x();
-}
-
-LayoutUnit RenderBox::offsetTop() const
-{
-    return adjustedPositionRelativeToOffsetParent(topLeftLocation()).y();
-}
-
 LayoutPoint RenderBox::flipForWritingModeForChild(const RenderBox& child, const LayoutPoint& point) const
 {
     if (!writingMode().isBlockFlipped())

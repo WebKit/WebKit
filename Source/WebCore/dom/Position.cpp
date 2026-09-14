@@ -950,7 +950,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(const RenderElement&
             continue;
         }
         if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*descendant)) {
-            if ((renderInline->isFirstLetter() || isEmptyInline(*renderInline)) && boundingBoxLogicalHeight(renderInline->linesBoundingBox()))
+            if ((renderInline->isFirstLetter() || isEmptyInline(*renderInline)) && boundingBoxLogicalHeight(renderInline->borderBoxRectInContainer()))
                 return true;
             continue;
         }
