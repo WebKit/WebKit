@@ -122,11 +122,11 @@ InlineBoxIterator& InlineBoxIterator::traverseInlineBoxLineLeftward()
     return *this;
 }
 
-InlineBoxIterator lineLeftmostInlineBoxFor(const RenderInline& renderInline)
+InlineBoxIterator lineLeftmostInlineBoxFor(const RenderBoxModelObject& inlineBox)
 {
-    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(renderInline))
-        return lineLayout->firstInlineBoxFor(renderInline);
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderInline);
+    if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(inlineBox))
+        return lineLayout->firstInlineBoxFor(inlineBox);
+    auto* svgInline = dynamicDowncast<RenderSVGInline>(inlineBox);
     return { BoxLegacyPath { svgInline ? svgInline->firstLegacyInlineBox() : nullptr } };
 }
 

@@ -126,7 +126,7 @@ void OutlinePainter::paintOutline(const RenderElement& renderer, const LayoutRec
     });
 }
 
-void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoint& paintOffset) const
+void OutlinePainter::paintOutline(const RenderBoxModelObject& renderer, const LayoutPoint& paintOffset) const
 {
     ASSERT(renderer.hasOutline());
 
@@ -190,7 +190,7 @@ void OutlinePainter::paintOutline(const RenderInline& renderer, const LayoutPoin
     paintOutlineWithLineRects(renderer, paintOffset, rects);
 }
 
-void OutlinePainter::paintOutlineWithLineRects(const RenderInline& renderer, const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects) const
+void OutlinePainter::paintOutlineWithLineRects(const RenderBoxModelObject& renderer, const LayoutPoint& paintOffset, const Vector<LayoutRect>& lineRects) const
 {
     if (lineRects.size() == 1) {
         auto adjustedPaintRect = lineRects[0];
@@ -396,9 +396,9 @@ bool OutlinePainter::collectFocusRingRectsForListBox(const RenderListBox& render
     return true;
 }
 
-void OutlinePainter::collectFocusRingRectsForInline(const RenderInline& renderer, Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
+void OutlinePainter::collectFocusRingRectsForInline(const RenderBoxModelObject& renderer, Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer)
 {
-    renderer.collectLineBoxRects(rects, additionalOffset);
+    downcast<RenderInline>(renderer).collectLineBoxRects(rects, additionalOffset);
 
     for (CheckedRef child : childrenOfType<RenderBoxModelObject>(renderer)) {
         if (child->isRenderListOutsideMarker())
