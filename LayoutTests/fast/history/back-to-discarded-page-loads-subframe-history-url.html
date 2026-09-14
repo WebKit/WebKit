@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpBackForwardList();
+    testRunner.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<iframe id="frame" name="theSubframe" src="resources/discarded-page-subframe-red.html"></iframe>
+<script>
+const frame = document.getElementById("frame");
+frame.src = "resources/discarded-page-subframe-red.html";
+
+window.addEventListener("load", function () {
+    frame.onload = function () {
+        frame.onload = null;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+    frame.src = "resources/discarded-page-subframe-blue.html";
+});
+</script>
+</body>
+</html>
