@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NetworkRTCUtilitiesCocoa.h"
 
+#if USE(LIBWEBRTC)
 
 #import <WebCore/RegistrableDomain.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
@@ -57,10 +58,9 @@ void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const cha
         nw_parameters_set_attributed_bundle_identifierPtr()(parameters, attributedBundleIdentifier.utf8().legacyCStringPointer());
 }
 
-void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker, IsRTC isRTC)
+void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker)
 {
-    // This function is used by other protocols, do not set this account id by default.
-    if (shouldBypassRelay && isRTC == IsRTC::Yes)
+    if (shouldBypassRelay)
         nw_parameters_set_account_id(parameters, "com.apple.safari.peertopeer");
     nw_parameters_set_is_third_party_web_content(parameters, !isFirstParty);
     nw_parameters_set_is_known_tracker(parameters, isKnownTracker);
@@ -74,7 +74,6 @@ bool isKnownTracker(const WebCore::RegistrableDomain& domain)
     return !!NEHelperTrackerGetDisposition(nullptr, bridge_cast(domains.get()), context, &index);
 }
 
-#if USE(LIBWEBRTC)
 std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint dscpValue, bool enableServiceClass)
 {
     if (enableServiceClass)
@@ -113,7 +112,6 @@ std::optional<uint32_t> trafficClassFromDSCP(webrtc::DiffServCodePoint dscpValue
     };
     return { };
 }
-#endif // USE(LIBWEBRTC)
 
 nw_ip_version_t ipVersionFromFamily(int family)
 {
@@ -131,3 +129,4 @@ nw_ip_version_t ipVersionFromFamily(int family)
 
 } // namespace WebKit
 
+#endif // USE(LIBWEBRTC)

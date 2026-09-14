@@ -33,7 +33,6 @@
 #import "MessageSenderInlines.h"
 #import "NetworkConnectionToWebProcess.h"
 #import "NetworkProcess.h"
-#import "NetworkRTCUtilitiesCocoa.h"
 #import "NetworkSessionCocoa.h"
 #import "NetworkTransportStream.h"
 #import "WebTransportSessionMessages.h"
@@ -44,7 +43,6 @@
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/HTTPParsers.h>
 #import <WebCore/RFC8941.h>
-#import <WebCore/RegistrableDomain.h>
 #import <WebCore/WebTransportConnectionInfo.h>
 #import <WebCore/WebTransportConnectionStats.h>
 #import <WebCore/WebTransportReceiveStreamStats.h>
@@ -256,12 +254,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
-    RetainPtr parameters = adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
-    setNWParametersApplicationIdentifiers(parameters.get(), connectionToWebProcess.networkProcess().uiProcessBundleIdentifier().ascii().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
-    bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
-    bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
-    setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
-    return parameters;
+    return adoptNS(MAYBE_SOFT_LINK(nw_parameters_create_webtransport_http)(configureWebTransport, configureTLS, configureQUIC, configureTCP));
 }
 
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
