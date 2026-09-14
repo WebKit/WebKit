@@ -25,42 +25,21 @@
 
 #pragma once
 
+#include <JavaScriptCore/DeferGC.h>
 #include <JavaScriptCore/WeakGCHashTable.h>
-#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/HashSet.h>
 
 namespace JSC {
 
-// A HashSet with Weak<JSCell> values, which automatically removes values once they're garbage collected.
-
-template<typename T>
-struct WeakGCSetHashTraits : HashTraits<Weak<T>> {
-    static constexpr bool hasIsWeakNullValueFunction = true;
-    static bool isWeakNullValue(const Weak<T>& value)
-    {
-        return !value.isHashTableDeletedValue() && !value.isHashTableEmptyValue() && !value;
-    }
-};
-
-template<typename T>
-struct WeakGCSetHash {
-    // We only prune stale entries on Full GCs so we have to handle non-Live entries in the table.
-    static unsigned hash(const Weak<T>& p) { return PtrHash<T*>::hash(p.get()); }
-    static bool equal(const Weak<T>& a, const Weak<T>& b)
-    {
-        if (!a || !b)
-            return false;
-        return a.get() == b.get();
-    }
-    static constexpr bool safeToCompareToEmptyOrDeleted = false;
-};
+// A HashSet holding JSCells weakly: an entry is removed once a collection proves it unreachable.
+// Every entry an iterator hands out is therefore live.
 
 // FIXME: This doesn't currently accept WeakHandleOwners by default... it's probably not hard to add but it's not exactly clear how to handle multiple different handle owners for the same value.
-template<typename ValueArg, typename HashArg = WeakGCSetHash<ValueArg>, typename TraitsArg = WeakGCSetHashTraits<ValueArg>>
+template<typename ValueArg, typename HashArg = DefaultHash<ValueArg*>, typename TraitsArg = HashTraits<ValueArg*>>
 class WeakGCSet final : public WeakGCHashTable {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(WeakGCSet);
     WTF_MAKE_NONCOPYABLE(WeakGCSet);
-    using ValueType = Weak<ValueArg>;
+    using ValueType = ValueArg*;
     using HashSetType = UncheckedKeyHashSet<ValueType, HashArg, TraitsArg>;
 
 public:
@@ -76,11 +55,11 @@ public:
         m_set.clear();
     }
 
-    AddResult add(ValueArg* key)
+    AddResult add(ValueArg* value)
     {
-        // Constructing a Weak shouldn't trigger a GC but add this ASSERT for good measure.
-        AssertNoGC assertNoGC;
-        return m_set.add(key);
+        AddResult result = m_set.add(value);
+        markDirty(m_vm);
+        return result;
     }
 
     template<typename HashTranslator, typename T>
@@ -89,9 +68,10 @@ public:
         // If functor invokes GC, GC can prune WeakGCSet, and manipulate HashSet while we are touching it in the ensure function.
         // The functor must not invoke GC.
         AssertNoGC assertNoGC;
-        
+
         auto result = m_set.template ensure<HashTranslator>(std::forward<T>(key), functor);
-        return result.iterator->get();
+        markDirty(m_vm);
+        return *result.iterator;
     }
 
     // It's not safe to call into the VM or allocate an object while an iterator is open.
@@ -105,7 +85,6 @@ public:
 
 private:
     void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope) final;
-    NEVER_INLINE void pruneStaleEntries();
 
     HashSetType m_set;
     VM& m_vm;

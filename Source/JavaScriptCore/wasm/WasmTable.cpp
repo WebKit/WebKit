@@ -177,10 +177,8 @@ std::optional<uint32_t> Table::grow(uint64_t delta, JSValue defaultValue)
         });
         RELEASE_ASSERT_WITH_MESSAGE(success, "First grow size succeeded so the second should too");
         setLength(newLength);
-        for (auto& instance : funcTable->m_instances) {
-            if (auto* strongReference = instance.get())
-                strongReference->updateCachedTable0();
-        }
+        for (auto* instance : funcTable->m_instances)
+            instance->updateCachedTable0();
         break;
     }
     }
