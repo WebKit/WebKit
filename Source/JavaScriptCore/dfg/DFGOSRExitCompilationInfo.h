@@ -35,7 +35,9 @@ struct OSRExitCompilationInfo {
     MacroAssembler::JumpList m_failureJumps;
     MacroAssembler::Label m_replacementSource;
     MacroAssembler::Label m_replacementDestination;
+#if CPU(RISCV64)
     MacroAssembler::PatchableJump m_patchableJump;
+#endif
 };
 
 } } // namespace JSC::DFG

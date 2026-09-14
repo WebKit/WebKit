@@ -164,19 +164,24 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
     // really be profitable.
     DeferGCForAWhile deferGC(vm);
 
+    JITCode* jitCode = codeBlock->jitCode()->dfg();
+#if CPU(RISCV64)
     uint32_t exitIndex = vm.osrExitIndex;
-    OSRExit& exit = codeBlock->jitCode()->dfg()->m_osrExit[exitIndex];
+#else
+    uint32_t exitIndex = jitCode->isUnlinked() ? vm.osrExitIndex : jitCode->osrExitIndexForReturnPC(vm.osrExitReturnPC);
+#endif
+    OSRExit& exit = jitCode->m_osrExit[exitIndex];
 
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
     EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isOSRExitDueToException());
     
     // Compute the value recoveries.
     Operands<ValueRecovery> operands;
-    codeBlock->jitCode()->dfg()->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, codeBlock->jitCode()->dfg()->minifiedDFG, exit.m_streamIndex, operands);
+    jitCode->variableEventStream.reconstruct(codeBlock, exit.m_codeOrigin, jitCode->minifiedDFG, exit.m_streamIndex, operands);
 
     SpeculationRecovery* recovery = nullptr;
     if (exit.m_recoveryIndex != UINT_MAX)
-        recovery = &codeBlock->jitCode()->dfg()->m_speculationRecovery[exit.m_recoveryIndex];
+        recovery = &jitCode->m_speculationRecovery[exit.m_recoveryIndex];
 
     MacroAssemblerCodeRef<OSRExitPtrTag> exitCode;
     {
@@ -217,8 +222,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
         codeBlock->dfgJITData()->setExitCode(exitIndex, exitCode);
     }
 
-    if (exit.codeLocationForRepatch())
+    if (!jitCode->isUnlinked()) {
+#if CPU(RISCV64)
         MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
+#else
+        MacroAssembler::replaceWithJump(jitCode->osrExitEntrance(exitIndex), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
+#endif
+    }
 
     vm.osrExitJumpDestination = exitCode.code().taggedPtr();
 }

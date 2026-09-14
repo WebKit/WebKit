@@ -262,6 +262,8 @@ bool A64DOpcode::handlePotentialDataPointer(void* ptr)
                 description = "vm.softStackLimit()";
             else if (ptr == &vm.osrExitIndex)
                 description = "vm.osrExitIndex";
+            else if (ptr == &vm.osrExitReturnPC)
+                description = "vm.osrExitReturnPC";
             else if (ptr == &vm.osrExitJumpDestination)
                 description = "vm.osrExitJumpDestination";
             else if (ptr == vm.smallStrings.singleCharacterStrings())
