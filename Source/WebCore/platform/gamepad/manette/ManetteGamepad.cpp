@@ -222,12 +222,8 @@ void ManetteGamepad::effectDelayTimerFired()
 
 void ManetteGamepad::startRumble(const GamepadEffectParameters& parameters)
 {
-#if defined(MANETTE_CHECK_VERSION)
-#if MANETTE_CHECK_VERSION(1, 0, 0)
+#if HAVE(MANETTE_NORMALIZED_RUMBLE)
     manette_device_rumble(m_device.get(), parameters.strongMagnitude, parameters.weakMagnitude, static_cast<guint>(parameters.duration));
-#else
-    manette_device_rumble(m_device.get(), parameters.strongMagnitude * G_MAXUINT16, parameters.weakMagnitude * G_MAXUINT16, static_cast<guint>(parameters.duration));
-#endif
 #else
     manette_device_rumble(m_device.get(), parameters.strongMagnitude * G_MAXUINT16, parameters.weakMagnitude * G_MAXUINT16, static_cast<guint>(parameters.duration));
 #endif

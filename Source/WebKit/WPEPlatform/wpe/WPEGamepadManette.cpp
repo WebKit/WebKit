@@ -173,12 +173,8 @@ static gboolean wpeGamepadManetteHasRumble(WPEGamepad* gamepad)
 static gboolean wpeGamepadManetteRumble(WPEGamepad* gamepad, gdouble strongMagnitude, gdouble weakMagnitude, guint durationMs)
 {
     auto* priv = WPE_GAMEPAD_MANETTE(gamepad)->priv;
-#if defined(MANETTE_CHECK_VERSION)
-#if MANETTE_CHECK_VERSION(1, 0, 0)
+#if HAVE(MANETTE_NORMALIZED_RUMBLE)
     return manette_device_rumble(priv->device.get(), strongMagnitude, weakMagnitude, durationMs);
-#else
-    return manette_device_rumble(priv->device.get(), strongMagnitude * G_MAXUINT16, weakMagnitude * G_MAXUINT16, durationMs);
-#endif
 #else
     return manette_device_rumble(priv->device.get(), strongMagnitude * G_MAXUINT16, weakMagnitude * G_MAXUINT16, durationMs);
 #endif
