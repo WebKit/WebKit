@@ -104,7 +104,7 @@ function test()
 <h2>The second of the duplicated set</h2>
 <img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" />
 <script>
-navigator.sendBeacon("https://127.0.0.1:8443/blink/sendbeacon/resources/save-beacon.py?name=priorities", "SameOrigin");
+navigator.sendBeacon("http://127.0.0.1:8000/blink/sendbeacon/resources/save-beacon.py?name=priorities", "SameOrigin");
 
 window.addEventListener("load", () => {
     TestPage.dispatchEventToFrontend("LoadComplete");
