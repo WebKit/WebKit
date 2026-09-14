@@ -56,6 +56,10 @@ struct GridTrackSizes : ListOrDefault<GridTrackSizeList, GridTrackSizeDefaulter>
     }
 };
 
+// MARK: - Utilities
+
+GridTrackSizes reversedTrackSizes(const GridTrackSizes&);
+
 // MARK: - Conversion
 
 template<> struct ToCSS<GridTrackSizes> { auto operator()(const GridTrackSizes&, const Style::ComputedStyle&) -> CSS::GridTrackSizes; };
