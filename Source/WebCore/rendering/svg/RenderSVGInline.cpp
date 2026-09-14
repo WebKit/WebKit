@@ -168,7 +168,7 @@ const RenderElement* RenderSVGInline::pushMappingToContainer(const RenderLayerMo
 void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        RenderInline::absoluteQuads(quads, wasFixed);
+        RenderBoxModelObject::absoluteQuads(quads, wasFixed);
         return;
     }
 
@@ -185,7 +185,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
 void RenderSVGInline::absoluteQuadsForSelection(Vector<FloatQuad>& quads) const
 {
     // Unlike absoluteQuads(), selection geometry is built from the line box rects even with the legacy SVG engine.
-    RenderInline::absoluteQuads(quads, nullptr);
+    RenderBoxModelObject::absoluteQuads(quads, nullptr);
 }
 #endif
 
@@ -249,6 +249,18 @@ void RenderSVGInline::updateFromStyle()
 
     // SVG text layout code expects us to be an inline-level element.
     setInline(true);
+}
+
+LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
+{
+    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
+    return svgInline ? svgInline->firstLegacyInlineBox() : nullptr;
+}
+
+LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
+{
+    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
+    return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
 }
 
 }

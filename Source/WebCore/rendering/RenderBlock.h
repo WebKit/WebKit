@@ -259,8 +259,6 @@ public:
     void adjustBorderBoxRectForPainting(LayoutRect&) override;
     LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) override;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
     Node* nodeForHitTest() const override;
 
     PaintInfo paintInfoForBlockChildren(const PaintInfo&) const;

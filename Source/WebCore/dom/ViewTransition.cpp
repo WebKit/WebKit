@@ -444,7 +444,7 @@ LayoutRect ViewTransition::captureOverflowRect(RenderLayerModelObject& renderer)
 static LayoutPoint layerToLayoutOffset(const RenderLayerModelObject& renderer)
 {
     if (const auto* renderInline = dynamicDowncast<RenderInline>(renderer)) {
-        auto boundingBox = renderInline->linesBoundingBox();
+        auto boundingBox = renderInline->borderBoxRectInContainer();
         return LayoutPoint { boundingBox.x(), boundingBox.y() };
     }
     return { };

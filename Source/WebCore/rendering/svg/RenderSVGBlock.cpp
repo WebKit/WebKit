@@ -74,15 +74,14 @@ bool RenderSVGBlock::needsHasSVGTransformFlags() const
     return protect(graphicsElement())->hasTransformRelatedAttributes();
 }
 
-void RenderSVGBlock::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+Vector<FloatRect> RenderSVGBlock::localBorderBoxRects() const
 {
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        rects.append({ accumulatedOffset, borderBoxSize() });
-        return;
-    }
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return RenderBlockFlow::localBorderBoxRects();
 
     // This code path should never be taken for SVG, as we're assuming useTransforms=true everywhere, absoluteQuads should be used.
     ASSERT_NOT_REACHED();
+    return { };
 }
 
 void RenderSVGBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

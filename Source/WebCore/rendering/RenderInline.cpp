@@ -82,21 +82,6 @@ RenderInline::RenderInline(Type type, Document& document, Style::ComputedStyle&&
 
 RenderInline::~RenderInline() = default;
 
-// Only SVG inlines have legacy line boxes, and they always do: SVG text is always laid out by
-// LegacyLineLayout (Settings::useIFCForSVGText, the in-progress migration off it, is never enabled).
-// Every legacy arm below is therefore reachable from RenderSVGInline only.
-static LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderInline& renderer)
-{
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
-    return svgInline ? svgInline->firstLegacyInlineBox() : nullptr;
-}
-
-static LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderInline& renderer)
-{
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
-    return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
-}
-
 void RenderInline::updateFromStyle()
 {
     RenderBoxModelObject::updateFromStyle();
@@ -159,77 +144,6 @@ void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         lineLayout->paint(paintInfo, paintOffset, this);
 }
 
-template<typename GeneratorContext>
-void RenderInline::generateLineBoxRects(GeneratorContext& context) const
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
-        auto inlineBoxRects = lineLayout->collectInlineBoxRects(*this);
-        if (inlineBoxRects.isEmpty()) {
-            context.addRect({ });
-            return;
-        }
-        for (auto inlineRect : inlineBoxRects)
-            context.addRect(inlineRect);
-        return;
-    }
-    if (auto* curr = firstLegacyInlineBoxFor(*this)) {
-        for (; curr; curr = curr->nextLineBox())
-            context.addRect(FloatRect(curr->topLeft(), curr->size()));
-    } else
-        context.addRect(FloatRect());
-}
-
-class AbsoluteRectsGeneratorContext {
-public:
-    AbsoluteRectsGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
-        : m_rects(rects)
-        , m_accumulatedOffset(accumulatedOffset) { }
-
-    void addRect(const FloatRect& rect)
-    {
-        LayoutRect adjustedRect = LayoutRect(rect);
-        adjustedRect.moveBy(m_accumulatedOffset);
-        m_rects.append(adjustedRect);
-    }
-private:
-    Vector<LayoutRect>& m_rects;
-    const LayoutPoint& m_accumulatedOffset;
-};
-
-void RenderInline::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
-{
-    AbsoluteRectsGeneratorContext context(rects, accumulatedOffset);
-    generateLineBoxRects(context);
-}
-
-namespace {
-
-class AbsoluteQuadsGeneratorContext {
-public:
-    AbsoluteQuadsGeneratorContext(const RenderInline* renderer, Vector<FloatQuad>& quads)
-        : m_quads(quads)
-        , m_geometryMap()
-    {
-        m_geometryMap.pushMappingsToAncestor(renderer, nullptr);
-    }
-
-    void addRect(const FloatRect& rect)
-    {
-        m_quads.append(m_geometryMap.absoluteRect(rect));
-    }
-private:
-    Vector<FloatQuad>& m_quads;
-    RenderGeometryMap m_geometryMap;
-};
-
-} // unnamed namespace
-
-void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
-{
-    AbsoluteQuadsGeneratorContext context(this, quads);
-    generateLineBoxRects(context);
-}
-
 LayoutUnit RenderInline::offsetLeft() const
 {
     return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();
@@ -249,7 +163,7 @@ LayoutPoint RenderInline::firstInlineBoxTopLeft() const
     return { };
 }
 
-static LayoutUnit computeMargin(const RenderInline* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
+static LayoutUnit computeMargin(const RenderBoxModelObject* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
 {
     return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
         return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
@@ -303,9 +217,7 @@ ASCIILiteral RenderInline::renderName() const
     if (isStickilyPositioned())
         return "RenderInline (sticky positioned)"_s;
     // FIXME: Temporary hack while the new generated content system is being implemented.
-    if (isPseudoElement())
-        return "RenderInline (generated)"_s;
-    if (isAnonymous())
+    if (isPseudoElement() || isAnonymous())
         return "RenderInline (generated)"_s;
     return "RenderInline"_s;
 }
@@ -365,62 +277,9 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
 LayoutUnit RenderInline::innerPaddingBoxHeight() const
 {
-    auto innerPaddingBoxLogicalHeight = LayoutUnit { isHorizontalWritingMode() ? linesBoundingBox().height() : linesBoundingBox().width() };
+    auto innerPaddingBoxLogicalHeight = LayoutUnit { isHorizontalWritingMode() ? borderBoxRectInContainer().height() : borderBoxRectInContainer().width() };
     innerPaddingBoxLogicalHeight -= (borderBefore() + borderAfter());
     return innerPaddingBoxLogicalHeight;
-}
-
-IntRect RenderInline::linesBoundingBox() const
-{
-    if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
-        if (!layoutBox() || !layout->contains(*this)) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers
-            // (or we just forgot to initiate layout before querying geometry on stale content after moving inline boxes between blocks).
-            ASSERT(needsLayout());
-            return { };
-        }
-        if (isRenderSVGInline()) {
-            // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
-            // any post-layout box adjustments.
-            FloatRect result;
-            for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward()) {
-                auto rect = box->visualRectIgnoringBlockDirection();
-                result.unite(rect);
-            }
-            return enclosingIntRect(result);
-        }
-        return enclosingIntRect(layout->enclosingBorderBoxRectFor(*this));
-    }
-
-    auto* firstInlineBox = firstLegacyInlineBoxFor(*this);
-    auto* lastInlineBox = lastLegacyInlineBoxFor(*this);
-
-    // See <rdar://problem/5289721>, for an unknown reason the linked list here is sometimes inconsistent, first is non-zero and last is zero.  We have been
-    // unable to reproduce this at all (and consequently unable to figure ot why this is happening).  The assert will hopefully catch the problem in debug
-    // builds and help us someday figure out why.  We also put in a redundant check of lastLineBox() to avoid the crash for now.
-    ASSERT(!firstInlineBox == !lastInlineBox); // Either both are null or both exist.
-    IntRect result;
-    if (firstInlineBox && lastInlineBox) {
-        // Return the width of the minimal left side and the maximal right side.
-        float logicalLeftSide = 0;
-        float logicalRightSide = 0;
-        for (auto* curr = firstInlineBox; curr; curr = curr->nextLineBox()) {
-            if (curr == firstInlineBox || curr->logicalLeft() < logicalLeftSide)
-                logicalLeftSide = curr->logicalLeft();
-            if (curr == firstInlineBox || curr->logicalRight() > logicalRightSide)
-                logicalRightSide = curr->logicalRight();
-        }
-
-        bool isHorizontal = writingMode().isHorizontal();
-
-        float x = isHorizontal ? logicalLeftSide : firstInlineBox->x();
-        float y = isHorizontal ? firstInlineBox->y() : logicalLeftSide;
-        float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastInlineBox->logicalBottom() - x;
-        float height = isHorizontal ? lastInlineBox->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = enclosingIntRect(FloatRect(x, y, width, height));
-    }
-
-    return result;
 }
 
 LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
@@ -693,27 +552,7 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     repaint();
 }
 
-namespace {
-    class AbsoluteRectsIgnoringEmptyGeneratorContext : public AbsoluteRectsGeneratorContext {
-        public:
-            AbsoluteRectsIgnoringEmptyGeneratorContext(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset)
-                : AbsoluteRectsGeneratorContext(rects, accumulatedOffset) { }
-
-                void addRect(const FloatRect& rect)
-                {
-                    if (!rect.isEmpty())
-                        AbsoluteRectsGeneratorContext::addRect(rect);
-                }
-    };
-} // unnamed namespace
-
-void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset) const
-{
-    AbsoluteRectsIgnoringEmptyGeneratorContext context(rects, additionalOffset);
-    generateLineBoxRects(context);
-}
-
-static RenderObject* firstContentfulChild(const RenderInline& renderer)
+static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
         if (current.isFloatingOrOutOfFlowPositioned())
@@ -730,14 +569,14 @@ static RenderObject* firstContentfulChild(const RenderInline& renderer)
     return { };
 }
 
-bool isEmptyInline(const RenderInline& renderer)
+bool isEmptyInline(const RenderBoxModelObject& renderer)
 {
     return !firstContentfulChild(renderer);
 }
 
-RenderObject* firstContentfulChild(RenderInline& renderer)
+RenderObject* firstContentfulChild(RenderBoxModelObject& renderer)
 {
-    return firstContentfulChild(const_cast<const RenderInline&>(renderer));
+    return firstContentfulChild(const_cast<const RenderBoxModelObject&>(renderer));
 }
 
 bool RenderInline::requiresLayer() const
