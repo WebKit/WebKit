@@ -1119,6 +1119,13 @@ struct WKWebsiteData {
     });
 }
 
+- (void)_revokeLocalNetworkAccessPermissionsForOrigin:(NSURL *)origin completionHandler:(void (^)(void))completionHandler
+{
+    protect(*_websiteDataStore)->removeLocalNetworkAccessPermissions(WebCore::SecurityOriginData::fromURL(origin), [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_setPrivateTokenIPCForTesting:(bool)enabled
 {
     protect(*_websiteDataStore)->setPrivateTokenIPCForTesting(enabled);

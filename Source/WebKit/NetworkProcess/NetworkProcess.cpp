@@ -1752,6 +1752,27 @@ void NetworkProcess::setOptInCookiePartitioningEnabled(PAL::SessionID sessionID,
 }
 #endif
 
+void NetworkProcess::setLocalNetworkAccessPermissionForTesting(PAL::SessionID sessionID, WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState state, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->setLocalNetworkAccessPermissionForTesting(WTF::move(origin), addressSpace, state);
+    completionHandler();
+}
+
+void NetworkProcess::removeLocalNetworkAccessPermissions(PAL::SessionID sessionID, WebCore::SecurityOriginData&& topOrigin, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->removeLocalNetworkAccessPermissions(topOrigin);
+    completionHandler();
+}
+
+void NetworkProcess::clearLocalNetworkAccessPermissionsForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->clearLocalNetworkAccessPermissionsForTesting();
+    completionHandler();
+}
+
 void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest&& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, uint64_t requiredCookiesVersion)
 {
     auto url = request.url();

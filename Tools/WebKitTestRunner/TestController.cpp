@@ -1695,6 +1695,14 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         runUntil(done, noTimeout);
     }
 
+    {
+        bool done { false };
+        WKWebsiteDataStoreClearLocalNetworkAccessPermissionsForTesting(websiteDataStore(), &done, [] (void* context) {
+            *(bool*)context = true;
+        });
+        runUntil(done, noTimeout);
+    }
+
     WKPageClearBackForwardListForTesting(m_mainWebView->page(), nullptr, [](void*) { });
     WKPageClearBackForwardCache(m_mainWebView->page());
 
@@ -2439,6 +2447,14 @@ if (window.testRunner) {
         const entries = await post(['GetAllStorageAccessEntries']);
         callback?.(entries);
     };
+    testRunner.setLocalNetworkAccessPermission = async (granted, isLoopback, requestingOrigin, callback) => { // NOLINT
+        await post(['SetLocalNetworkAccessPermission', { Value: granted, IsLoopback: isLoopback, TopOrigin: location.href, RequestingOrigin: requestingOrigin ?? location.href }]);
+        callback?.();
+    };
+    testRunner.revokeLocalNetworkAccessPermissions = async (callback) => { // NOLINT
+        await post(['RevokeLocalNetworkAccessPermissions', { Origin: location.href }]);
+        callback?.();
+    };
     testRunner.setStorageAccessPermission = async (granted, subFrameURL, callback) => { // NOLINT
         await post(['SetStorageAccessPermission', { Value: granted, SubFrameURL: subFrameURL }]);
         callback?.();
@@ -2688,6 +2704,20 @@ void TestController::didReceiveScriptMessage(WKScriptMessageRef message, Complet
 
     if (WKStringIsEqualToUTF8CString(command, "RemoveAllSessionCredentials"))
         return TestController::singleton().removeAllSessionCredentials(WTF::move(completionHandler));
+
+    if (WKStringIsEqualToUTF8CString(command, "RevokeLocalNetworkAccessPermissions")) {
+        auto origin = stringValue(dictionaryValue(argument), "Origin");
+        return WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTesting(websiteDataStore(), origin, completionHandler.leak(), adoptAndCallCompletionHandler);
+    }
+
+    if (WKStringIsEqualToUTF8CString(command, "SetLocalNetworkAccessPermission")) {
+        auto argumentDictionary = dictionaryValue(argument);
+        auto value = booleanValue(argumentDictionary, "Value");
+        auto isLoopback = booleanValue(argumentDictionary, "IsLoopback");
+        auto topOrigin = stringValue(argumentDictionary, "TopOrigin");
+        auto requestingOrigin = stringValue(argumentDictionary, "RequestingOrigin");
+        return WKWebsiteDataStoreSetLocalNetworkAccessPermissionForTesting(websiteDataStore(), topOrigin, requestingOrigin, isLoopback, value, completionHandler.leak(), adoptAndCallCompletionHandler);
+    }
 
     if (WKStringIsEqualToUTF8CString(command, "SetStorageAccessPermission")) {
         auto argumentDictionary = dictionaryValue(argument);

@@ -222,6 +222,9 @@ public:
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
     void setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&&);
     void setPrivateTokenIPCForTesting(bool enabled);
+    void setLocalNetworkAccessPermissionForTesting(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, WebCore::PermissionState, CompletionHandler<void()>&&);
+    void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void()>&&);
+    void clearLocalNetworkAccessPermissionsForTesting(CompletionHandler<void()>&&);
 
     void fetchDomainsWithUserInteraction(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&);
 

@@ -2138,6 +2138,21 @@ void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, c
     completionHandler();
 }
 
+void WebsiteDataStore::setLocalNetworkAccessPermissionForTesting(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState state, CompletionHandler<void()>&& completionHandler)
+{
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetLocalNetworkAccessPermissionForTesting(m_sessionID, origin, addressSpace, state), WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin, CompletionHandler<void()>&& completionHandler)
+{
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::RemoveLocalNetworkAccessPermissions(m_sessionID, topOrigin), WTF::move(completionHandler));
+}
+
+void WebsiteDataStore::clearLocalNetworkAccessPermissionsForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::ClearLocalNetworkAccessPermissionsForTesting(m_sessionID), WTF::move(completionHandler));
+}
+
 void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)
 {
     protect(networkProcess())->send(Messages::NetworkProcess::SetShouldSendPrivateTokenIPCForTesting(sessionID(), enabled), 0);

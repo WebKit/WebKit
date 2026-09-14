@@ -15232,6 +15232,10 @@ bool WebPageProxy::shouldAlwaysPromptForPermission(PermissionName permissionName
     case PermissionName::Camera:
     case PermissionName::Geolocation:
     case PermissionName::Microphone:
+
+    // Answered in the networking process, before reaching queryPermission().
+    case PermissionName::LocalNetwork:
+    case PermissionName::LoopbackNetwork:
         break;
 
     // Notifications are not available in ephemeral sessions.

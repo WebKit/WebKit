@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "MessageReceiver.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/PermissionController.h>
 #include <WebCore/PermissionDescriptor.h>
+#include <WebCore/PermissionState.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakHashSet.h>
 
@@ -38,6 +40,16 @@ enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 class Page;
 class SecurityOriginData;
+}
+
+namespace IPC {
+
+// PermissionState::Granted is zero, so a default-constructed reply on IPC failure would report a grant
+// nobody made.
+template<> struct AsyncReplyError<WebCore::PermissionState> {
+    static WebCore::PermissionState create() { return WebCore::PermissionState::Denied; }
+};
+
 }
 
 namespace WebKit {

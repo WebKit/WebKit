@@ -25,7 +25,9 @@
 
 // https://w3c.github.io/permissions/#enumdef-permissionstate
 
-enum PermissionState {
+[
+    ExportMacro=WEBCORE_EXPORT
+] enum PermissionState {
     "granted",
     "denied",
     "prompt"

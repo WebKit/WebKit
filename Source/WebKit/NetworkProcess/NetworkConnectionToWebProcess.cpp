@@ -533,6 +533,15 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(IPC::Connection&, I
     protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier, messageName), 0);
 }
 
+void NetworkConnectionToWebProcess::queryLocalNetworkAccessPermission(WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& completion)
+{
+    CheckedPtr session = networkSession();
+    // No session is not a decision, and Prompt is how "nothing recorded" is already reported.
+    if (!session)
+        return completion(WebCore::PermissionState::Prompt);
+    completion(session->localNetworkAccessPermission(origin, addressSpace));
+}
+
 void NetworkConnectionToWebProcess::createSocketChannel(const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, const ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::IsInitiatedByDedicatedWorker isInitiatedByDedicatedWorker)
 {
     MESSAGE_CHECK(request.url().isValid());
