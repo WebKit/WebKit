@@ -56,7 +56,7 @@ namespace WebKit {
     
 class WebColorPickerMac final : public WebColorPicker {
 public:
-    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *, std::optional<WebCore::FrameIdentifier> = std::nullopt);
+    static Ref<WebColorPickerMac> create(WebColorPicker::Client*, const WebCore::Color&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *, std::optional<WebCore::FrameIdentifier> = std::nullopt);
     virtual ~WebColorPickerMac();
 
     void endPicker() final;
@@ -66,7 +66,7 @@ public:
     void didChooseColor(const WebCore::Color&);
 
 private:
-    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, const WebCore::IntRect&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *, std::optional<WebCore::FrameIdentifier>);
+    WebColorPickerMac(WebColorPicker::Client*, const WebCore::Color&, WebKit::ColorControlSupportsAlpha, Vector<WebCore::Color>&&, NSView *, std::optional<WebCore::FrameIdentifier>);
     RetainPtr<NSObject<WKColorPickerUIMac> > m_colorPickerUI;
     WebKit::ColorControlSupportsAlpha m_supportsAlpha { WebKit::ColorControlSupportsAlpha::No };
     Vector<WebCore::Color> m_suggestions;
