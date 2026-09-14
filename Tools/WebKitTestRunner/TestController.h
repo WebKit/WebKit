@@ -44,10 +44,10 @@
 #if PLATFORM(COCOA)
 #include "ClassMethodSwizzler.h"
 #include "InstanceMethodSwizzler.h"
-#if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#if ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #include <pal/spi/cocoa/NetworkSPI.h>
 #include <wtf/darwin/NetworkOSObject.h>
-#endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #endif // PLATFORM(COCOA)
 
 OBJC_CLASS NEPolicySession;
@@ -927,10 +927,10 @@ private:
     
 #if PLATFORM(COCOA)
     bool m_hasSetApplicationBundleIdentifier { false };
-#if !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#if ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
     RetainPtr<NEPolicySession> m_policySession;
     OSObjectPtr<nw_resolver_config_t> m_resolverConfig;
-#endif // !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
 #endif // PLATFORM(COCOA)
 
     bool m_isSpeechRecognitionPermissionGranted { false };

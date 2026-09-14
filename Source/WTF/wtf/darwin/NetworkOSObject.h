@@ -25,6 +25,11 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(COCOA)
+
+#if __has_include(<Network/Network.h>)
 #include <Network/Network.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/darwin/TypeCastsOSObject.h>
@@ -87,3 +92,7 @@ WTF_OS_OBJECT_NETWORK_TYPES(WTF_DECLARE_NETWORK_OSOBJECT_RETAIN_TRAITS)
 } // namespace WTF
 
 using WTF::protect;
+
+#endif // __has_include(<Network/Network.h>)
+
+#endif // PLATFORM(COCOA)
