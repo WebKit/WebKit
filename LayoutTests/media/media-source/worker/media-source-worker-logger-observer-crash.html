@@ -1,0 +1,31 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+if (window.internals)
+    internals.configureLoggingChannel("Media", true);
+
+const workerSource = `
+    for (let i = 0; i < 16; i++)
+        new MediaSource();
+    postMessage("done");
+`;
+const worker = new Worker(URL.createObjectURL(new Blob([workerSource], { type: "text/javascript" })));
+worker.onmessage = () => {
+    worker.terminate();
+    setTimeout(() => {
+        document.createElement("video");
+        if (window.internals)
+            internals.configureLoggingChannel("Media", false);
+        document.body.textContent = "PASS if no crash.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 200);
+};
+</script>
+</body>
+</html>
