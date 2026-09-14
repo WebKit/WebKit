@@ -33,7 +33,7 @@ static WebKitTestServer* s_server;
 
 static void serverCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
 {
-    static constexpr auto page = R"HTML(
+    static constexpr auto sharedWorkerPage = R"HTML(
         <title>loading</title>
         <script>
             window.worker = new SharedWorker('shared-worker.js', 'automation-shared-worker');
@@ -41,15 +41,57 @@ static void serverCallback(SoupServer*, SoupServerMessage* message, const char* 
             worker.port.start();
         </script>
     )HTML";
-    static constexpr auto worker = "onconnect = event => event.ports[0].postMessage('ready');";
+    static constexpr auto sharedWorkerScript = "onconnect = event => event.ports[0].postMessage('ready');";
+    static constexpr auto serviceWorkerPage = R"HTML(
+        <title>loading</title>
+        <script>
+            const registerServiceWorkerAndReportExecution = async() => {
+                const queryParameters = new URLSearchParams(location.search);
+                const requestedWorkerScript = queryParameters.get('workerScript');
+                const clientRequestIdentifier = queryParameters.get('clientRequest');
+                if (requestedWorkerScript) {
+                    const requestedWorkerScriptPath = '/' + requestedWorkerScript;
+                    const registration = await navigator.serviceWorker.register(requestedWorkerScriptPath);
+                    while (!registration.active || !registration.active.scriptURL.endsWith(requestedWorkerScriptPath))
+                        await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true }));
+                }
+                const registration = await navigator.serviceWorker.ready;
+                const channel = new MessageChannel();
+                channel.port1.onmessage = event => document.title = clientRequestIdentifier + ':' + event.data;
+                registration.active.postMessage(null, [channel.port2]);
+            };
+            registerServiceWorkerAndReportExecution();
+        </script>
+    )HTML";
+    static constexpr auto serviceWorkerScriptV1 = R"JS(
+        const realmExecutionToken = 'service-worker-execution-v1-' + Date.now() + '-' + Math.random();
+        self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
+        self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+        self.addEventListener('message', event => event.ports[0].postMessage(realmExecutionToken));
+    )JS";
+    static constexpr auto serviceWorkerScriptV2 = R"JS(
+        const realmExecutionToken = 'service-worker-execution-v2-' + Date.now() + '-' + Math.random();
+        self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
+        self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+        self.addEventListener('message', event => event.ports[0].postMessage(realmExecutionToken));
+    )JS";
 
     const char* content;
     const char* contentType;
     if (g_str_equal(path, "/shared-worker.html")) {
-        content = page;
+        content = sharedWorkerPage;
         contentType = "text/html";
     } else if (g_str_equal(path, "/shared-worker.js")) {
-        content = worker;
+        content = sharedWorkerScript;
+        contentType = "application/javascript";
+    } else if (g_str_equal(path, "/service-worker.html")) {
+        content = serviceWorkerPage;
+        contentType = "text/html";
+    } else if (g_str_equal(path, "/service-worker-v1.js")) {
+        content = serviceWorkerScriptV1;
+        contentType = "application/javascript";
+    } else if (g_str_equal(path, "/service-worker-v2.js")) {
+        content = serviceWorkerScriptV2;
         contentType = "application/javascript";
     } else {
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
@@ -161,6 +203,26 @@ public:
         while (g_strcmp0(webkit_web_view_get_title(webView), "ready"))
             g_main_loop_run(m_mainLoop.get());
         g_signal_handler_disconnect(webView, titleChangedHandler);
+    }
+
+    String loadServiceWorkerClientAndGetExecutionToken(WebKitWebView* webView, const char* path, const char* clientRequestIdentifier)
+    {
+        auto titleChangedHandler = g_signal_connect(webView, "notify::title", G_CALLBACK(+[](WebKitWebView*, GParamSpec*, AutomationTest* test) {
+            g_main_loop_quit(test->m_mainLoop.get());
+        }), this);
+        webkit_web_view_load_uri(webView, s_server->getURIForPath(path).data());
+
+        GUniquePtr<char> expectedTitlePrefix(g_strdup_printf("%s:", clientRequestIdentifier));
+        String executionToken;
+        do {
+            g_main_loop_run(m_mainLoop.get());
+            const char* title = webkit_web_view_get_title(webView);
+            if (title && g_str_has_prefix(title, expectedTitlePrefix.get()))
+                executionToken = String::fromUTF8(title + strlen(expectedTitlePrefix.get()));
+        } while (executionToken.isEmpty());
+
+        g_signal_handler_disconnect(webView, titleChangedHandler);
+        return executionToken;
     }
 
     Ref<JSON::Object> sendBidiCommandAndWait(int identifier, const String& method, Ref<JSON::Object>&& parameters)
@@ -412,6 +474,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
     }
 };
 #if ENABLE(WEBDRIVER_BIDI)
+static void verifyServiceWorkerRealmLifecycle(AutomationTest&, WebKitWebView*);
 static void verifySharedWorkerRealmLifecycle(AutomationTest&, GRefPtr<WebKitWebView>&, const String&, GRefPtr<WebKitWebView>&, const String&);
 #endif
 
@@ -499,6 +562,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(newWebViewInTab.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB);
     g_assert_true(test->createNewTab(newWebViewInTab.get()));
 #if ENABLE(WEBDRIVER_BIDI)
+    verifyServiceWorkerRealmLifecycle(*test, webView.get());
     verifySharedWorkerRealmLifecycle(*test, webView, firstBrowsingContext, newWebViewInWindow, secondBrowsingContext);
 #endif
 
@@ -506,6 +570,85 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+static String assertServiceWorkerRealmAndGetIdentifier(const JSON::Object& realm, const String& expectedOrigin)
+{
+    g_assert_true(realm.getString("type"_s) == "service-worker"_s);
+    g_assert_true(realm.getString("origin"_s) == expectedOrigin);
+    g_assert_false(!!realm.getValue("context"_s));
+    g_assert_false(!!realm.getValue("owners"_s));
+
+    auto realmIdentifier = realm.getString("realm"_s);
+    g_assert_true(realmIdentifier.startsWith("realm-"_s));
+    return realmIdentifier;
+}
+
+static Ref<JSON::Object> waitForServiceWorkerRealmCreated(AutomationTest& test)
+{
+    auto event = test.waitForBidiMessage([](const JSON::Object& message) {
+        if (message.getString("method"_s) != "script.realmCreated"_s)
+            return false;
+        auto parameters = message.getObject("params"_s);
+        return parameters && parameters->getString("type"_s) == "service-worker"_s;
+    });
+    auto realm = event->getObject("params"_s);
+    g_assert_true(!!realm);
+    return realm.releaseNonNull();
+}
+
+static void waitForServiceWorkerRealmDestroyed(AutomationTest& test, const String& realmIdentifier)
+{
+    auto event = test.waitForBidiMessage([&realmIdentifier](const JSON::Object& message) {
+        if (message.getString("method"_s) != "script.realmDestroyed"_s)
+            return false;
+        auto parameters = message.getObject("params"_s);
+        return parameters && parameters->getString("realm"_s) == realmIdentifier;
+    });
+    auto realm = event->getObject("params"_s);
+    g_assert_true(!!realm);
+    g_assert_false(!!realm->getValue("context"_s));
+}
+
+static void verifyServiceWorkerRealmLifecycle(AutomationTest& test, WebKitWebView* webView)
+{
+    auto subscriptionParameters = JSON::Object::create();
+    auto events = JSON::Array::create();
+    events->pushString("script.realmCreated"_s);
+    events->pushString("script.realmDestroyed"_s);
+    subscriptionParameters->setArray("events"_s, WTF::move(events));
+    test.sendBidiCommandAndWait(8, "session.subscribe"_s, WTF::move(subscriptionParameters));
+
+    auto firstExecutionToken = test.loadServiceWorkerClientAndGetExecutionToken(webView,
+        "/service-worker.html?workerScript=service-worker-v1.js&clientRequest=initial", "initial");
+    auto firstRealm = waitForServiceWorkerRealmCreated(test);
+    auto expectedOrigin = s_server->baseURL().protocolHostAndPort();
+    auto firstRealmIdentifier = assertServiceWorkerRealmAndGetIdentifier(firstRealm, expectedOrigin);
+
+    auto executionTokenAfterNavigation = test.loadServiceWorkerClientAndGetExecutionToken(webView,
+        "/service-worker.html?clientRequest=after-navigation", "after-navigation");
+    g_assert_true(executionTokenAfterNavigation == firstExecutionToken);
+    g_assert_false(!!test.takeBidiMessage([&firstRealmIdentifier](const JSON::Object& message) {
+        if (message.getString("method"_s) != "script.realmDestroyed"_s)
+            return false;
+        auto parameters = message.getObject("params"_s);
+        return parameters && parameters->getString("realm"_s) == firstRealmIdentifier;
+    }));
+
+    auto secondExecutionToken = test.loadServiceWorkerClientAndGetExecutionToken(webView,
+        "/service-worker.html?workerScript=service-worker-v2.js&clientRequest=updated", "updated");
+    auto secondRealm = waitForServiceWorkerRealmCreated(test);
+    auto secondRealmIdentifier = assertServiceWorkerRealmAndGetIdentifier(secondRealm, expectedOrigin);
+    waitForServiceWorkerRealmDestroyed(test, firstRealmIdentifier);
+    g_assert_true(secondExecutionToken != firstExecutionToken);
+    g_assert_true(secondRealmIdentifier != firstRealmIdentifier);
+
+    auto unsubscribeParameters = JSON::Object::create();
+    auto unsubscribedEvents = JSON::Array::create();
+    unsubscribedEvents->pushString("script.realmCreated"_s);
+    unsubscribedEvents->pushString("script.realmDestroyed"_s);
+    unsubscribeParameters->setArray("events"_s, WTF::move(unsubscribedEvents));
+    test.sendBidiCommandAndWait(9, "session.unsubscribe"_s, WTF::move(unsubscribeParameters));
+}
+
 static String assertSharedWorkerRealmAndGetIdentifier(const JSON::Object& realm, const String& expectedOrigin)
 {
     g_assert_true(realm.getString("type"_s) == "shared-worker"_s);

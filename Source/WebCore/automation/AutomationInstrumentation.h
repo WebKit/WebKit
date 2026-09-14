@@ -36,6 +36,7 @@
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <tuple>
@@ -67,6 +68,8 @@ public:
     virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier) = 0;
     virtual void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&) = 0;
     virtual void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier) = 0;
+    virtual void scriptServiceWorkerRealmCreated(ScriptExecutionContextIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptServiceWorkerRealmDestroyed(ScriptExecutionContextIdentifier) = 0;
 };
 
 
@@ -87,6 +90,8 @@ public:
     static void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&);
     static void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier);
     static Vector<SharedWorkerRealmData> sharedWorkerRealms();
+    static void scriptServiceWorkerRealmCreated(ScriptExecutionContextIdentifier, const SecurityOriginData&);
+    static void scriptServiceWorkerRealmDestroyed(ScriptExecutionContextIdentifier);
 };
 
 } // namespace WebCore

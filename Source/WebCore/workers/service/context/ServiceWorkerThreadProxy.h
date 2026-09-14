@@ -30,6 +30,8 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/Page.h>
 #include <WebCore/PushSubscriptionData.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerDebuggable.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerInspectorProxy.h>
@@ -71,6 +73,10 @@ public:
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
+#if ENABLE(WEBDRIVER_BIDI)
+    void serviceWorkerGlobalScopeBecameExecutionReady(ScriptExecutionContextIdentifier, SecurityOriginData&&);
+    void serviceWorkerGlobalScopeTerminated();
+#endif
 
     WEBCORE_EXPORT RefPtr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
@@ -141,6 +147,10 @@ private:
     WeakRef<CacheStorageProvider> m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };
+
+#if ENABLE(WEBDRIVER_BIDI)
+    std::optional<ScriptExecutionContextIdentifier> m_automationRealmExecutionContextIdentifier;
+#endif
 
     ServiceWorkerInspectorProxy m_inspectorProxy;
     uint64_t m_functionalEventTasksCounter { 0 };

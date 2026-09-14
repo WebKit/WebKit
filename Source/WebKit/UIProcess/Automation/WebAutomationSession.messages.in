@@ -34,5 +34,7 @@ messages -> WebAutomationSession {
     ScriptDedicatedWorkerRealmDestroyed(String workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier)
     ScriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier workerIdentifier, Vector<WebCore::FrameIdentifier> activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier> attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData> origin)
     ScriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier workerIdentifier)
+    ScriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, IPC::Untrusted<WebCore::SecurityOriginData> origin)
+    ScriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier)
 #endif
 }

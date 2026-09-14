@@ -3294,6 +3294,22 @@ void WebAutomationSession::scriptSharedWorkerRealmDestroyed(WebCore::SharedWorke
 {
     m_bidiProcessor->scriptAgent().notifySharedWorkerRealmDestroyed(workerIdentifier);
 }
+
+void WebAutomationSession::scriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+{
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    m_bidiProcessor->scriptAgent().notifyServiceWorkerRealmCreated(executionContextIdentifier, origin);
+}
+
+void WebAutomationSession::scriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier executionContextIdentifier)
+{
+    m_bidiProcessor->scriptAgent().notifyServiceWorkerRealmDestroyed(executionContextIdentifier);
+}
+
+void WebAutomationSession::removeServiceWorkerRealmsForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_bidiProcessor->scriptAgent().removeServiceWorkerRealmsForProcess(processIdentifier);
+}
 #endif
 
 #if !PLATFORM(COCOA) && !USE(CAIRO) && !USE(SKIA)
