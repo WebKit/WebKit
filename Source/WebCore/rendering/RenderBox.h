@@ -43,6 +43,7 @@ class RenderBoxFragmentInfo;
 class RenderFragmentContainer;
 class PositionedLayoutConstraints;
 struct PaintInfo;
+struct RenderBoxOverridingSizes;
 
 enum class AvailableLogicalHeightType : bool { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
 
@@ -740,7 +741,11 @@ protected:
     // Our overflow information.
     std::unique_ptr<RenderOverflow> m_overflow;
 
+    std::unique_ptr<RenderBoxOverridingSizes> m_overridingSizes;
+
 private:
+    RenderBoxOverridingSizes& ensureOverridingSizes();
+
     // Used to store state between styleWillChange and styleDidChange
     static bool s_hadNonVisibleOverflow;
 };
