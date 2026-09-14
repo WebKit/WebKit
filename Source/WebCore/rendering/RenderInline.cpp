@@ -85,13 +85,13 @@ RenderInline::~RenderInline() = default;
 // Only SVG inlines have legacy line boxes, and they always do: SVG text is always laid out by
 // LegacyLineLayout (Settings::useIFCForSVGText, the in-progress migration off it, is never enabled).
 // Every legacy arm below is therefore reachable from RenderSVGInline only.
-static LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderInline& renderer)
+static LegacyInlineFlowBox* firstLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
 {
     auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
     return svgInline ? svgInline->firstLegacyInlineBox() : nullptr;
 }
 
-static LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderInline& renderer)
+static LegacyInlineFlowBox* lastLegacyInlineBoxFor(const RenderBoxModelObject& renderer)
 {
     auto* svgInline = dynamicDowncast<RenderSVGInline>(renderer);
     return svgInline ? svgInline->lastLegacyInlineBox() : nullptr;
@@ -249,7 +249,7 @@ LayoutPoint RenderInline::firstInlineBoxTopLeft() const
     return { };
 }
 
-static LayoutUnit computeMargin(const RenderInline* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
+static LayoutUnit computeMargin(const RenderBoxModelObject* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
 {
     return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
         return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
@@ -713,7 +713,7 @@ void RenderInline::collectLineBoxRects(Vector<LayoutRect>& rects, const LayoutPo
     generateLineBoxRects(context);
 }
 
-static RenderObject* firstContentfulChild(const RenderInline& renderer)
+static RenderObject* firstContentfulChild(const RenderBoxModelObject& renderer)
 {
     for (auto& current : childrenOfType<RenderObject>(renderer)) {
         if (current.isFloatingOrOutOfFlowPositioned())
@@ -730,14 +730,14 @@ static RenderObject* firstContentfulChild(const RenderInline& renderer)
     return { };
 }
 
-bool isEmptyInline(const RenderInline& renderer)
+bool isEmptyInline(const RenderBoxModelObject& renderer)
 {
     return !firstContentfulChild(renderer);
 }
 
-RenderObject* firstContentfulChild(RenderInline& renderer)
+RenderObject* firstContentfulChild(RenderBoxModelObject& renderer)
 {
-    return firstContentfulChild(const_cast<const RenderInline&>(renderer));
+    return firstContentfulChild(const_cast<const RenderBoxModelObject&>(renderer));
 }
 
 bool RenderInline::requiresLayer() const
