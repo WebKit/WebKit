@@ -37,6 +37,7 @@
 #include "RenderDescendantIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderElementStyleInlines.h"
+#include "RenderGlyph.h"
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "RenderTextFragment.h"
@@ -178,6 +179,13 @@ static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Quote
 {
     auto contentRenderer = createRenderer<RenderQuote>(document, Style::ComputedStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), value.quote);
     contentRenderer->initializeStyle();
+    return contentRenderer;
+}
+
+static RenderPtr<RenderObject> createContentRenderer(const Style::Content::Glyph& value, const String& altText, Document& document, const Style::ComputedStyle&)
+{
+    auto contentRenderer = createRenderer<RenderGlyph>(document, value.glyph);
+    contentRenderer->setAltText(altText);
     return contentRenderer;
 }
 

@@ -1,0 +1,6 @@
+
+
+PASS The user agent stylesheet gives select::picker-icon a glyph keyword, which computes to itself.
+PASS select::picker-icon computes the same regardless of the used appearance.
+PASS A glyph keyword cannot be set through CSSOM either.
+

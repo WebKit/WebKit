@@ -39,6 +39,7 @@
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGlyph.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -47,6 +48,7 @@
 #include "RenderListOutsideMarker.h"
 #include "RenderMenuList.h"
 #include "RenderObjectInlines.h"
+#include "RenderSVGInline.h"
 #include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTextControl.h"
@@ -180,8 +182,11 @@ static Layout::ElementBox::IsListMarkerImage isListMarkerImage(const RenderListO
     return listMarkerRenderer.isImage() ? Layout::ElementBox::IsListMarkerImage::Yes : Layout::ElementBox::IsListMarkerImage::No;
 }
 
-static bool markerTextSynthesizesGlyph(const RenderText& textRenderer)
+static bool synthesizesGlyph(const RenderText& textRenderer)
 {
+    if (is<RenderGlyph>(textRenderer))
+        return true;
+
     // The marker is this text's parent when it is an inline box, and its grandparent when a marker box holds the text in a content container of its own.
     for (CheckedPtr marker = textRenderer.parent(); marker; marker = marker->parent()) {
         if (marker->style().isListMarkerStyle())
@@ -236,7 +241,7 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
         if (*hasStrongDirectionalityContent)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
-        if (markerTextSynthesizesGlyph(*textRenderer))
+        if (synthesizesGlyph(*textRenderer))
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
         return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTF::move(style), WTF::move(firstLineStyle));
@@ -385,7 +390,7 @@ void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
     }
     if (*hasStrongDirectionalityContent)
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
-    if (markerTextSynthesizesGlyph(textRenderer))
+    if (synthesizesGlyph(textRenderer))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
     inlineTextBox->setContent(text, contentCharacteristic);

@@ -136,6 +136,7 @@ public:
         FlexibleBox,
         Frame,
         FrameSet,
+        Glyph,
         Grid,
         HTMLCanvas,
         IFrame,
@@ -438,6 +439,7 @@ public:
     inline bool isNonReplacedAtomicInlineLevelBox() const;
 
     bool isRenderCounter() const { return type() == Type::Counter; }
+    bool isRenderGlyph() const { return type() == Type::Glyph; }
     bool isRenderQuote() const { return type() == Type::Quote; }
 
     bool isRenderEmbeddedObject() const { return type() == Type::EmbeddedObject; }

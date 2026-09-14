@@ -35,6 +35,7 @@
 #include <wtf/EnumTraits.h>
 
 namespace WTF {
+class String;
 class TextStream;
 }
 
@@ -554,6 +555,13 @@ enum class QuoteType : uint8_t {
     NoOpenQuote,
     NoCloseQuote
 };
+
+enum class SynthesizedGlyph : uint8_t {
+    PickerUp,
+    PickerDown
+};
+
+WTF::String fallbackText(SynthesizedGlyph);
 
 enum class AnimationFillMode : uint8_t {
     None,
@@ -1217,6 +1225,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, PositionType);
 WTF::TextStream& operator<<(WTF::TextStream&, PrintColorAdjust);
 WTF::TextStream& operator<<(WTF::TextStream&, PseudoElementType);
 WTF::TextStream& operator<<(WTF::TextStream&, QuoteType);
+WTF::TextStream& operator<<(WTF::TextStream&, SynthesizedGlyph);
 WTF::TextStream& operator<<(WTF::TextStream&, ReflectionDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyPosition);
 WTF::TextStream& operator<<(WTF::TextStream&, RubyAlign);

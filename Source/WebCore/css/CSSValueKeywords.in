@@ -664,6 +664,10 @@ no-open-quote
 nowrap
 open-quote
 overline
+// UA stylesheet restricted 'content' keywords for glyphs the UA draws itself.
+// See https://github.com/w3c/csswg-drafts/issues/14317 and https://github.com/w3c/csswg-drafts/issues/14003
+picker-down
+picker-up
 portrait
 pre
 pre-line
