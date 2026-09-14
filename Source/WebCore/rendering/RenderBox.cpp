@@ -293,6 +293,9 @@ void RenderBox::styleWillChange(Style::Difference diff, const Style::ComputedSty
 
     const Style::ComputedStyle* oldStyle = hasInitializedStyle() ? &style() : nullptr;
     if (oldStyle) {
+        if (CheckedPtr delegateBlock = nearestNonAnonymousContainingBlockIncludingSelf())
+            removeOutOfFlowBoxesIfNeededOnStyleChange(*delegateBlock, *oldStyle, newStyle);
+
         // The background of the root element or the body element could propagate up to
         // the canvas. Issue full repaint, when our style changes substantially.
         if (diff >= Style::DifferenceResult::Repaint && (isDocumentElementRenderer() || isBody())) {
