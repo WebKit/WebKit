@@ -548,6 +548,9 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
     if (prohibitsScrolling())
         return;
 
+    // A scrollBy carries an originalScrollDelta; scroll-state(scrolled) tracks it as a relative scroll.
+    SetForScope currentScrollIsRelative(m_currentScrollIsRelative, options.originalScrollDelta.has_value());
+
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating) {
         scrollAnimator().cancelAnimations();
         stopAsyncAnimatedScroll();
