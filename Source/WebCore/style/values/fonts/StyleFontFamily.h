@@ -61,6 +61,10 @@ struct FontFamily {
                 return visitor(CSS::Keyword::Fantasy { });
             if (value.name == mathFamily)
                 return visitor(CSS::Keyword::Math { });
+            if (value.name == kaiFamily)
+                return visitor(FunctionNotation<CSSValueGeneric, CSS::Keyword::Kai> { });
+            if (value.name == fangsongFamily)
+                return visitor(FunctionNotation<CSSValueGeneric, CSS::Keyword::Fangsong> { });
             if (value.name == pictographFamily)
                 return visitor(CSS::Keyword::WebkitPictograph { });
         }

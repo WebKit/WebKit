@@ -45,7 +45,13 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascadeCache);
 FontFamilyName::FontFamilyName() = default;
 
 FontFamilyName::FontFamilyName(const AtomString& name)
-    : m_name { name }
+    : FontFamilyName(FontFamily { name, FontFamilyKind::Specified })
+{
+}
+
+FontFamilyName::FontFamilyName(const FontFamily& family)
+    : m_name { family.name }
+    , m_kind { family.kind }
 {
 }
 
@@ -56,6 +62,7 @@ const AtomString& FontFamilyName::string() const
 
 void add(Hasher& hasher, const FontFamilyName& name)
 {
+    add(hasher, name.m_kind);
     // FIXME: Would be better to hash the characters in the name instead of hashing a hash.
     if (!name.string().isNull())
         add(hasher, FontCascadeDescription::familyNameHash(name.string()));
@@ -63,6 +70,8 @@ void add(Hasher& hasher, const FontFamilyName& name)
 
 bool operator==(const FontFamilyName& a, const FontFamilyName& b)
 {
+    if (a.m_kind != b.m_kind)
+        return false;
     return (a.string().isNull() || b.string().isNull()) ? a.string() == b.string() : FontCascadeDescription::familyNamesAreEqual(a.string(), b.string());
 }
 
@@ -107,7 +116,7 @@ FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& descri
     auto hasComplexFontSelector = fontSelector && !fontSelector->isSimpleFontSelectorForDescription();
     return FontCascadeCacheKey {
         FontDescriptionKey(description),
-        Vector<FontFamilyName, 3>(familyCount, [&](size_t familyIndex) { return description.familyAt(familyIndex).name; }),
+        Vector<FontFamilyName, 3>(familyCount, [&](size_t familyIndex) { return description.familyAt(familyIndex); }),
         hasComplexFontSelector ? fontSelector->uniqueId() : 0,
         hasComplexFontSelector ? fontSelector->version() : 0,
         hasComplexFontSelector

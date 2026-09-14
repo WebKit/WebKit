@@ -30,14 +30,20 @@
 
 #include <WebCore/FontDescription.h>
 #include <WebCore/ShouldLocalizeAxisNames.h>
+#include <wtf/RefPtr.h>
 
 #include <CoreText/CTFont.h>
 
 namespace WebCore {
 
+class Font;
 class FontCreationContext;
 class UnrealizedCoreTextFont;
 enum class FontLookupOptions : uint8_t;
+
+#if PLATFORM(MAC)
+RefPtr<Font> fontForSystemFontFamily(const FontDescription&, const String&);
+#endif
 
 struct SynthesisPair {
     explicit SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)

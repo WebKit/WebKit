@@ -73,9 +73,17 @@ private:
 };
 
 FontRanges::FontRanges(RefPtr<Font>&& font)
+    : FontRanges(WTF::move(font), { { 0, 0x7FFFFFFF } })
 {
-    if (font)
-        m_ranges.append(Range { 0, 0x7FFFFFFF, TrivialFontAccessor::create(font.releaseNonNull()) });
+}
+
+FontRanges::FontRanges(RefPtr<Font>&& font, std::initializer_list<std::pair<char32_t, char32_t>> ranges)
+{
+    if (!font)
+        return;
+    auto accessor = TrivialFontAccessor::create(font.releaseNonNull());
+    for (auto [from, to] : ranges)
+        m_ranges.append(Range { from, to, accessor.copyRef() });
 }
 
 FontRanges::~FontRanges() = default;

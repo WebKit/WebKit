@@ -38,6 +38,7 @@
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariantLigaturesParser.h"
 #include "CSSFontVariantNumericParser.h"
+#include "CSSFunctionValue.h"
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSParserToken.h"
@@ -226,6 +227,10 @@ const AtomString& genericFontFamily(CSSValueID ident)
         return WebKitFontFamilyNames::systemUiFamily.get();
     case CSSValueMath:
         return WebKitFontFamilyNames::mathFamily.get();
+    case CSSValueKai:
+        return WebKitFontFamilyNames::kaiFamily.get();
+    case CSSValueFangsong:
+        return WebKitFontFamilyNames::fangsongFamily.get();
     default:
         return nullAtom();
     }
@@ -250,6 +255,10 @@ WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
         return WebKitFontFamilyNames::FamilyNamesIndex::SystemUiFamily;
     case CSSValueMath:
         return WebKitFontFamilyNames::FamilyNamesIndex::MathFamily;
+    case CSSValueKai:
+        return WebKitFontFamilyNames::FamilyNamesIndex::KaiFamily;
+    case CSSValueFangsong:
+        return WebKitFontFamilyNames::FamilyNamesIndex::FangsongFamily;
     default:
         ASSERT_NOT_REACHED();
         return WebKitFontFamilyNames::FamilyNamesIndex::StandardFamily;
@@ -271,7 +280,7 @@ static AtomString concatenateFamilyName(CSSParserTokenRange& range, bool allowNu
         builder.append(range.consumeIncludingWhitespace().value());
     }
     // <family-name> can't contain unquoted generic families
-    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || !genericFontFamily(firstToken.id()).isNull()))
+    if (!addedSpace && (!isValidCustomIdentifier(firstToken.id()) || isGenericFontFamilyKeyword(firstToken.id())))
         return nullAtom();
     return builder.toAtomString();
 }
@@ -287,12 +296,23 @@ static AtomString consumeFamilyNameUnresolved(CSSParserTokenRange& range, bool a
 
 static std::optional<CSSValueID> consumeGenericFamilyUnresolved(CSSParserTokenRange& range)
 {
+    if (range.peek().functionId() == CSSValueGeneric) {
+        auto rangeCopy = range;
+        auto arguments = consumeFunction(rangeCopy);
+        auto family = consumeIdentRaw<CSSValueKai, CSSValueFangsong>(arguments);
+        if (!family || !arguments.atEnd())
+            return std::nullopt;
+        range = rangeCopy;
+        return family;
+    }
     return consumeIdentRaw<CSSValueSerif, CSSValueSansSerif, CSSValueCursive, CSSValueFantasy, CSSValueMonospace, CSSValueWebkitBody, CSSValueWebkitPictograph, CSSValueSystemUi, CSSValueMath>(range);
 }
 
 static RefPtr<CSSValue> consumeGenericFamily(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (auto familyName = consumeGenericFamilyUnresolved(range)) {
+        if (*familyName == CSSValueKai || *familyName == CSSValueFangsong)
+            return CSSFunctionValue::create(CSSValueGeneric, CSSKeywordValue::create(*familyName));
         // FIXME: Remove special case for system-ui.
         if (*familyName == CSSValueSystemUi)
             return state.pool.createFontFamilyNameValue(nameLiteral(*familyName));
