@@ -50,7 +50,7 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollerPairCoordinated);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollerCoordinated);
 
 ScrollerCoordinated::ScrollerCoordinated(ScrollerPairCoordinated& pair, ScrollbarOrientation orientation)
     : m_pair(pair)

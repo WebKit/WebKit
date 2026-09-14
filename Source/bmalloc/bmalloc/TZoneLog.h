@@ -34,7 +34,9 @@
 #include "BExport.h"
 #include "BInline.h"
 
+#if BUSE(OS_LOG)
 #include <os/log.h>
+#endif
 #include <stdarg.h>
 
 namespace bmalloc { namespace api {
