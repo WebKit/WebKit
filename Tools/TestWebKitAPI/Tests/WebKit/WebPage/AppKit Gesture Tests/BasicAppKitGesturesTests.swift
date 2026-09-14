@@ -115,6 +115,54 @@ extension AppKitGesturesTests.Basic {
         #expect(actual.map(\.type) == expectedEvents)
     }
 
+    @Test(arguments: [[], [KeyboardModifier.shift], [.option], [.command], [.shift, .option, .command]])
+    func singleClickReportsHeldModifierKeys(modifiers: [KeyboardModifier]) async throws {
+        let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
+
+        try await loadHTML()
+
+        try await page.callJavaScript(
+            """
+            window.eventLog = [];
+
+            const target = document.getElementById("div");
+            target.style.webkitUserSelect = "none";
+
+            for (const type of eventTypes) {
+                target.addEventListener(type, event => {
+                    const active = [
+                        event.shiftKey ? "shift" : null,
+                        event.altKey ? "alt" : null,
+                        event.ctrlKey ? "ctrl" : null,
+                        event.metaKey ? "meta" : null,
+                    ].filter(name => name !== null).sort().join(",");
+
+                    window.eventLog.push(`${event.type}(${active})`);
+                });
+            }
+            """,
+            arguments: ["eventTypes": expectedEvents.map(\.rawValue)]
+        )
+
+        let toBounds = try await screenBoundsOfText("to")
+
+        await recap.play { composer in
+            composer.holdingModifiers(modifiers) {
+                composer._wk_click(at: toBounds.center, for: .seconds(0.05))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let observed = try await page.callJavaScript(returning: [String].self) {
+            "return window.eventLog;"
+        }
+
+        let active = modifiers.map(\.domName).sorted().joined(separator: ",")
+        #expect(observed == expectedEvents.map { "\($0.rawValue)(\(active))" })
+    }
+
     @Test(arguments: [true, false])
     func updatingTextRangeSelectionByUserInteractionUpdatesEditorState(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable)

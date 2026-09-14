@@ -33,6 +33,7 @@ import Testing
 import TestWebKitAPILibrary
 import Recap
 private import AppKit_Private.NSMenu_Private
+private import IOKit.hid
 
 actor Recap {
     static let shared = Recap()
@@ -47,6 +48,63 @@ actor Recap {
         }
 
         await RCPInlinePlayer.play(eventStream, options: .init())
+    }
+}
+
+enum KeyboardModifier: Sendable {
+    case shift
+    case option
+    case command
+
+    fileprivate var hidUsage: UInt {
+        switch self {
+        case .shift: UInt(kHIDUsage_KeyboardLeftShift)
+        case .option: UInt(kHIDUsage_KeyboardLeftAlt)
+        case .command: UInt(kHIDUsage_KeyboardLeftGUI)
+        }
+    }
+
+    var domName: String {
+        switch self {
+        case .shift: "shift"
+        case .option: "alt"
+        case .command: "meta"
+        }
+    }
+}
+
+private let keyboardOrKeypadUsagePage = UInt(kHIDPage_KeyboardOrKeypad)
+
+private let modifierDelay: TimeInterval = 0.05
+
+extension RCPEventStreamComposer {
+    /// Composes `body` with `modifiers` physically held down, so that the inner events carry those modifiers.
+    func holdingModifiers(_ modifiers: [KeyboardModifier], _ body: () -> Void) {
+        guard !modifiers.isEmpty else {
+            body()
+            return
+        }
+
+        let pointerSender = senderProperties
+
+        senderProperties = .keyboardSender()
+        for modifier in modifiers {
+            beginButtonPress(withPage: keyboardOrKeypadUsagePage, usage: modifier.hidUsage)
+        }
+
+        advanceTime(modifierDelay)
+
+        senderProperties = pointerSender
+        body()
+
+        advanceTime(modifierDelay)
+
+        senderProperties = .keyboardSender()
+        for modifier in modifiers.reversed() {
+            endButtonPress(withPage: keyboardOrKeypadUsagePage, usage: modifier.hidUsage)
+        }
+
+        senderProperties = pointerSender
     }
 }
 

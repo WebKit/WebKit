@@ -1363,7 +1363,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
     }
 
-    [webView _protectedPage]->commitPotentialClick(std::nullopt, { }, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID);
+    auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
+    [webView _protectedPage]->commitPotentialClick(std::nullopt, modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebCore::mousePointerID);
 }
 
 - (void)_handleClickCancelled
