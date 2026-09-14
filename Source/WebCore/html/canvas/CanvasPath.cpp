@@ -242,12 +242,7 @@ void CanvasPath::rect(float x, float y, float width, float height)
     m_path.addRect(FloatRect(x, y, width, height));
 }
 
-ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const RadiusVariant& radii)
-{
-    return roundRect(x, y, width, height, singleElementSpan(radii));
-}
-
-ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, std::span<const RadiusVariant> radii)
+ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const RadiiVariant& radii)
 {
     // Based on Nov 5th 2021 version of https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-roundrect
     // 1. If any of x, y, w, or h are infinite or NaN, then return.
@@ -255,15 +250,26 @@ ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float hei
     if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))
         return { };
 
+    // If radii is an unrestricted double or DOMPointInit, then set radii to « radii ».
+    RadiusVariant singleRadius;
+    auto radiiList = WTF::switchOn(radii,
+        [](const Vector<RadiusVariant>& radiiSequence) -> std::span<const RadiusVariant> {
+            return radiiSequence.span();
+        },
+        [&](const auto& radius) -> std::span<const RadiusVariant> {
+            singleRadius = radius;
+            return singleElementSpan(std::as_const(singleRadius));
+        });
+
     // 2. If radii is not a list of size one, two, three, or four, then throw a RangeError.
-    if (radii.size() > 4 || radii.empty())
-        return Exception { ExceptionCode::RangeError, makeString("radii must contain at least 1 element, up to 4. It contained "_s, radii.size(), " elements."_s) };
+    if (radiiList.size() > 4 || radiiList.empty())
+        return Exception { ExceptionCode::RangeError, makeString("radii must contain at least 1 element, up to 4. It contained "_s, radiiList.size(), " elements."_s) };
 
     // 3. Let normalizedRadii be an empty list.
     Vector<FloatPoint, 4> normalizedRadii;
 
     // 4. For each radius of radii:
-    for (auto& radius : radii) {
+    for (auto& radius : radiiList) {
         auto shouldReturnSilently = false;
         auto exception = WTF::switchOn(radius,
             // 4.1 If radius is a DOMPointInit:
