@@ -107,13 +107,6 @@ public:
     bool isVisibleInViewport(const Document&) const;
     bool allowsAnimation(const Image&) const;
 
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    std::optional<bool> axCustomColorModeShouldAdjust() const { return m_axCustomColorModeShouldAdjust; }
-    void setAXCustomColorModeShouldAdjust(bool value) { m_axCustomColorModeShouldAdjust = value; }
-    NativeImage* axCustomColorModeAdjustedTile(const FloatSize& forSize) const;
-    void setAXCustomColorModeAdjustedTile(RefPtr<NativeImage>&&, const FloatSize&);
-#endif
-
 private:
     FloatSize internalImageSizeForRenderer(const RenderElement*, float multiplier, SizeType, float density) const;
 

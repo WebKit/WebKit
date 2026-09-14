@@ -552,14 +552,6 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                     return m_renderer.imageOrientation();
             }();
 
-            RefPtr imageToDraw = image;
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-            if constexpr (std::same_as<Layer, Style::BackgroundLayer>) {
-                if (RefPtr adjusted = axCustomColorModeAdjustedBackgroundImage(context, document(), bgImage->cachedImage(), *image, geometry.tileSize, orientation))
-                    imageToDraw = WTF::move(adjusted);
-            }
-#endif
-
             ImagePaintingOptions options = {
                 op == CompositeOperator::SourceOver ? layer.layer.compositeForPainting(layer.isLast) : op,
                 layerBlendMode,
@@ -573,7 +565,7 @@ template<typename Layer> void BackgroundPainter::paintFillLayerImpl(const Color&
                 style.dynamicRangeLimit().toPlatformDynamicRangeLimit()
             };
 
-            auto drawResult = context.drawTiledImage(*imageToDraw, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
+            auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 protect(bgImage->cachedImage())->addClientWaitingForAsyncDecoding(protect(m_renderer)->cachedImageClient());
