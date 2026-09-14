@@ -53,6 +53,26 @@ TEST(ImageRotationSessionVT, ChangeOfRotationAngle)
     EXPECT_EQ(480, videoFrame180->presentationSize().height());
 }
 
+TEST(CVUtilities, CreateBlackPixelBuffer)
+{
+    auto pixelBuffer = createBlackPixelBuffer(64, 64);
+    ASSERT_TRUE(pixelBuffer);
+
+    OSType format = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
+    ASSERT_TRUE(format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange || format == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange);
+
+    // Full-range black is Y=0; video-range black is the luma floor Y=16. Chroma is neutral (128) for both.
+    uint8_t expectedLuma = format == kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange ? 16 : 0;
+
+    ASSERT_EQ(kCVReturnSuccess, CVPixelBufferLockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly));
+    auto* yPlane = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer.get(), 0));
+    auto* uvPlane = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer.get(), 1));
+    EXPECT_EQ(expectedLuma, yPlane[0]);
+    EXPECT_EQ(128, uvPlane[0]);
+    EXPECT_EQ(128, uvPlane[1]);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+}
+
 #endif
 
 }; // namespace TestWebKitAPI
