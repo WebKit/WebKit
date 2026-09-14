@@ -137,6 +137,7 @@ public:
 #endif
 
     void loadDeferredImage();
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
     AtomString srcsetForBindings() const;
 
