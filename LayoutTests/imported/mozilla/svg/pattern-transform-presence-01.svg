@@ -37,9 +37,8 @@ function addTransform()
        which are not defined on this element are inherited by this element.').
        Hence this pattern should look IDENTICAL to patternBase. -->
   <pattern xlink:href="#patternBase" id="patternRefWithoutTransform"/>
-  <!-- 3. References the base pattern but patternTransform is defined (although
-       empty) and hence the patternTransform should NOT be inherited and this
-       pattern should look DIFFERENT to patternBase. -->
+  <!-- There's no way to differentiate an explicitly specified (but empty)
+       transform from no transform, so this should look IDENTICAL to patternBase -->
   <pattern xlink:href="#patternBase" id="patternRefWithTransform"
     patternTransform=""/>
   <!-- The case of a patternTransform being supplied by animation is covered by
