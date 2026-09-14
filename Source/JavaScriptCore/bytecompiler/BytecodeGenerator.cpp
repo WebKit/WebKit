@@ -4874,9 +4874,9 @@ void BytecodeGenerator::emitUsingBodyScope(unsigned usingCount, bool hasAwaitUsi
                 emitLoad(hasAwaited.get(), jsBoolean(true));
                 emitAwait(result.get(), result.get(), divot);
 
+                emitJump(skipSlot.get());
                 Ref<Label> trySlotEnd = newEmittedLabel();
                 popTry(trySlotData, trySlotEnd.get());
-                emitJump(skipSlot.get());
 
                 emitSuppressedErrorCatch(trySlotData, catchLabel.get());
             } else {
@@ -4902,9 +4902,9 @@ void BytecodeGenerator::emitUsingBodyScope(unsigned usingCount, bool hasAwaitUsi
                 move(disposeArgs.thisRegister(), slot.value.get());
                 emitCallIgnoreResult(newTemporary(), slot.method.get(), NoExpectedFunction, disposeArgs, divot, divot, divot, DebuggableCall::No);
 
+                emitJump(skipSlot.get());
                 Ref<Label> trySlotEnd = newEmittedLabel();
                 popTry(trySlotData, trySlotEnd.get());
-                emitJump(skipSlot.get());
 
                 emitSuppressedErrorCatch(trySlotData, catchLabel.get());
             }
