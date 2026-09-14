@@ -31,6 +31,7 @@ typedef struct _WebKitWebExtensionMatchPattern WebKitWebExtensionMatchPattern;
 
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(Ref<WebKit::WebExtensionMatchPattern>&);
 WebKitWebExtensionMatchPattern* webkitWebExtensionMatchPatternCreate(const RefPtr<WebKit::WebExtensionMatchPattern>&);
+RefPtr<WebKit::WebExtensionMatchPattern> webkitWebExtensionMatchPatternToImpl(WebKitWebExtensionMatchPattern*);
 
 #endif
 

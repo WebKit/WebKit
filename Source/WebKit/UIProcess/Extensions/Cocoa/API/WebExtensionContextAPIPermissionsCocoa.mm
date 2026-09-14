@@ -170,17 +170,6 @@ void WebExtensionContext::permissionsRemove(HashSet<String> permissions, HashSet
     completionHandler(!hasPermissions(permissions, matchPatterns));
 }
 
-void WebExtensionContext::firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType type, const PermissionsSet& permissions, const MatchPatternSet& matchPatterns)
-{
-    ASSERT(type == WebExtensionEventListenerType::PermissionsOnAdded || type == WebExtensionEventListenerType::PermissionsOnRemoved);
-
-    HashSet<String> origins = toStrings(matchPatterns);
-
-    wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvent(type, Messages::WebExtensionContextProxy::DispatchPermissionsEvent(type, permissions, origins));
-    });
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

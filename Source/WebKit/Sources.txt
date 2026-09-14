@@ -613,11 +613,13 @@ UIProcess/Extensions/WebExtensionController.cpp
 UIProcess/Extensions/WebExtensionControllerConfiguration.cpp
 UIProcess/Extensions/WebExtensionDataRecord.cpp
 UIProcess/Extensions/WebExtensionDeclarativeNetRequestSQLiteStore.cpp
+UIProcess/Extensions/WebExtensionDynamicScripts.cpp
 UIProcess/Extensions/WebExtensionMatchPattern.cpp
 UIProcess/Extensions/WebExtensionStorageSQLiteStore.cpp
 
 UIProcess/Extensions/API/WebExtensionContextAPIAlarms.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIDeclarativeNetRequest.cpp
+UIProcess/Extensions/API/WebExtensionContextAPIPermissions.cpp
 UIProcess/Extensions/API/WebExtensionContextAPIStorage.cpp @cost:3
 
 UIProcess/Gamepad/UIGamepad.cpp

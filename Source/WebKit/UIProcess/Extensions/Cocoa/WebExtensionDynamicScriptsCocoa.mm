@@ -265,22 +265,6 @@ void WebExtensionRegisteredScript::merge(WebExtensionRegisteredScriptParameters&
         parameters.world = m_parameters.world.value();
 }
 
-void WebExtensionRegisteredScript::addUserScript(const String& identifier, API::UserScript& userScript)
-{
-    auto& userScripts = m_userScriptsMap.ensure(identifier, [&] {
-        return UserScriptVector { };
-    }).iterator->value;
-    userScripts.append(userScript);
-}
-
-void WebExtensionRegisteredScript::addUserStyleSheet(const String& identifier, API::UserStyleSheet& userStyleSheet)
-{
-    auto& userStyleSheets = m_userStyleSheetsMap.ensure(identifier, [&] {
-        return UserStyleSheetVector { };
-    }).iterator->value;
-    userStyleSheets.append(userStyleSheet);
-}
-
 void WebExtensionRegisteredScript::removeUserScriptsAndStyleSheets(const String& identifier)
 {
     removeUserScripts(identifier);
