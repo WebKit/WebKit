@@ -657,6 +657,14 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
     m_pictureElement = pictureElement;
 }
     
+LayoutSize HTMLImageElement::densityCorrectedNaturalSize() const
+{
+    RefPtr image = m_imageLoader->image();
+    if (!image)
+        return { };
+    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio);
+}
+
 unsigned HTMLImageElement::width()
 {
     if (inRenderedDocument())
@@ -664,13 +672,11 @@ unsigned HTMLImageElement::width()
 
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        auto optionalWidth = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr));
-        if (optionalWidth)
+        if (auto optionalWidth = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(widthAttr)))
             return optionalWidth.value();
 
-        // if the image is available, use its width
-        if (RefPtr image = m_imageLoader->image())
-            return image->imageSizeForRenderer(nullptr, 1.0f, CachedImage::IntrinsicSize).width().toUnsigned();
+        // otherwise fall back to what naturalWidth returns
+        return densityCorrectedNaturalSize().width().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -687,13 +693,11 @@ unsigned HTMLImageElement::height()
 
     if (!renderer()) {
         // check the attribute first for an explicit pixel value
-        auto optionalHeight = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr));
-        if (optionalHeight)
+        if (auto optionalHeight = parseHTMLNonNegativeInteger(attributeWithoutSynchronization(heightAttr)))
             return optionalHeight.value();
 
-        // if the image is available, use its height
-        if (RefPtr image = m_imageLoader->image())
-            return image->imageSizeForRenderer(nullptr, 1.0f, CachedImage::IntrinsicSize).height().toUnsigned();
+        // otherwise fall back to what naturalHeight returns
+        return densityCorrectedNaturalSize().height().toUnsigned();
     }
 
     CheckedPtr box = renderBox();
@@ -705,18 +709,12 @@ unsigned HTMLImageElement::height()
 
 unsigned HTMLImageElement::naturalWidth() const
 {
-    RefPtr image = m_imageLoader->image();
-    if (!image)
-        return 0;
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio).width().toUnsigned();
+    return densityCorrectedNaturalSize().width().toUnsigned();
 }
 
 unsigned HTMLImageElement::naturalHeight() const
 {
-    RefPtr image = m_imageLoader->image();
-    if (!image)
-        return 0;
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio).height().toUnsigned();
+    return densityCorrectedNaturalSize().height().toUnsigned();
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const

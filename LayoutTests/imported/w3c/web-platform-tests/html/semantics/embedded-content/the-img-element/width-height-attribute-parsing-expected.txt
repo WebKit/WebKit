@@ -1,0 +1,16 @@
+
+PASS width and height attribute value "10"
+PASS width and height attribute value "0"
+PASS width and height attribute value "010"
+PASS width and height attribute value "+10"
+PASS width and height attribute value " 10 "
+PASS width and height attribute value "\n10"
+PASS width and height attribute value "10px"
+PASS width and height attribute value "50%"
+PASS width and height attribute value "1.9"
+PASS width and height attribute value "2147483647"
+PASS width and height attribute value "-10"
+PASS width and height attribute value ""
+PASS width and height attribute value "abc"
+PASS unparseable width attribute falls back to the density-corrected natural width
+
