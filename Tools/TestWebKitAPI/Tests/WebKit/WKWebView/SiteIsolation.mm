@@ -13542,6 +13542,76 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalGoMinus2)
     EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)2);
 }
 
+TEST(SiteIsolation, CrossProcessHistoryTraversalForwardInSubframeAfterGoMinus2)
+{
+    constexpr auto pageWithIframes = "<iframe src='https://webkit.org/x'></iframe><iframe src='https://apple.com/x'></iframe>"_s;
+    constexpr auto iframeBody = "x"_s;
+
+    HTTPServer server({
+        { "/a"_s, { pageWithIframes } },
+        { "/b"_s, { pageWithIframes } },
+        { "/c"_s, { pageWithIframes } },
+        { "/x"_s, { iframeBody } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)2);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)0);
+    EXPECT_EQ([webView mainFrame].childFrames.count, 2u);
+
+    __block unsigned didFinishCount = 0;
+    navigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        ++didFinishCount;
+    };
+
+    unsigned countBeforeGoMinus2 = didFinishCount;
+    [webView evaluateJavaScript:@"history.go(-2)" completionHandler:nil];
+
+    int spins = 0;
+    while (didFinishCount == countBeforeGoMinus2 && spins++ < 100)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_GT(didFinishCount, countBeforeGoMinus2);
+    EXPECT_WK_STREQ(@"https://example.com/a", [webView backForwardList].currentItem.URL.absoluteString);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)0);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)2);
+
+    RetainPtr<NSArray<_WKFrameTreeNode *>> childFramesAfterTraversal;
+    spins = 0;
+    while (spins++ < 100) {
+        childFramesAfterTraversal = [webView mainFrame].childFrames;
+        if ([childFramesAfterTraversal count] == 2u)
+            break;
+        TestWebKitAPI::Util::runFor(0.1_s);
+    }
+    EXPECT_EQ([childFramesAfterTraversal count], 2u);
+
+    RetainPtr<WKFrameInfo> crossSiteChildFrameInfo = [childFramesAfterTraversal objectAtIndex:0].info;
+    pid_t mainPidAfterTraversal = [[webView mainFrame] info]._processIdentifier;
+    EXPECT_NE([crossSiteChildFrameInfo _processIdentifier], mainPidAfterTraversal);
+
+    unsigned countBeforeForward = didFinishCount;
+    [webView evaluateJavaScript:@"history.forward()" inFrame:crossSiteChildFrameInfo.get() completionHandler:nil];
+
+    spins = 0;
+    while (didFinishCount == countBeforeForward && spins++ < 100)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_GT(didFinishCount, countBeforeForward);
+    EXPECT_WK_STREQ(@"https://example.com/b", [webView backForwardList].currentItem.URL.absoluteString);
+    EXPECT_WK_STREQ(@"https://example.com/b", [[webView URL] absoluteString]);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)1);
+}
+
 TEST(SiteIsolation, CrossProcessHistoryTraversalSameFrameBackTwice)
 {
     constexpr auto pageWithIframes = "<iframe src='https://webkit.org/x'></iframe><iframe src='https://apple.com/x'></iframe>"_s;
