@@ -320,10 +320,21 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         ASSERT(!m_sessionWrapper->session.get().configuration.URLCredentialStorage);
         break;
     case WebCore::StoredCredentialsPolicy::DoNotUse:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        if (SecurityFlags::radar183065569())
+            ASSERT(!m_sessionWrapper->session.get().configuration.URLCredentialStorage);
+        else {
+            RetainPtr<NSURLSessionConfiguration> effectiveConfiguration = m_sessionWrapper->session.get().configuration;
+            effectiveConfiguration.get().URLCredentialStorage = nil;
+            [m_task _adoptEffectiveConfiguration:effectiveConfiguration.get()];
+        }
+        break;
+#else
         RetainPtr<NSURLSessionConfiguration> effectiveConfiguration = m_sessionWrapper->session.get().configuration;
         effectiveConfiguration.get().URLCredentialStorage = nil;
         [m_task _adoptEffectiveConfiguration:effectiveConfiguration.get()];
         break;
+#endif
     };
 
     RELEASE_ASSERT(!m_sessionWrapper->dataTaskMap.contains([m_task taskIdentifier]));

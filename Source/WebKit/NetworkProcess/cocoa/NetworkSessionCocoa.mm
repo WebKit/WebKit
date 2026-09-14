@@ -1397,6 +1397,32 @@ SessionWrapper& SessionSet::initializeEphemeralStatelessSessionIfNeeded(Navigati
     return ephemeralStatelessSession.get();
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+static SessionWrapper& initializeSessionWithoutCredentialStorageIfNeeded(SessionWrapper& sessionWithoutCredentialStorage, const SessionWrapper& sessionWithCredentialStorage, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
+{
+    if (sessionWithoutCredentialStorage.session)
+        return sessionWithoutCredentialStorage;
+
+    RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([sessionWithCredentialStorage.session.get().configuration copy]);
+    configuration.get().URLCredentialStorage = nil;
+    configuration.get()._shouldSkipPreferredClientCertificateLookup = YES;
+
+    protect(sessionWithoutCredentialStorage)->initialize(configuration.get(), session, WebCore::StoredCredentialsPolicy::DoNotUse, isNavigatingToAppBoundDomain);
+
+    return sessionWithoutCredentialStorage;
+}
+
+SessionWrapper& SessionSet::initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
+{
+    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(sessionWithoutCredentialStorage, sessionWithCredentialStorage, isNavigatingToAppBoundDomain, session);
+}
+
+SessionWrapper& IsolatedSession::initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain isNavigatingToAppBoundDomain, NetworkSessionCocoa& session)
+{
+    return WebKit::initializeSessionWithoutCredentialStorageIfNeeded(sessionWithoutCredentialStorage, sessionWithCredentialStorage, isNavigatingToAppBoundDomain, session);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 CheckedRef<SessionWrapper> NetworkSessionCocoa::sessionWrapperForTask(std::optional<WebPageProxyIdentifier> webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
@@ -1418,8 +1444,15 @@ CheckedRef<SessionWrapper> NetworkSessionCocoa::sessionWrapperForTask(std::optio
 
     switch (storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
-    case WebCore::StoredCredentialsPolicy::DoNotUse:
         return sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.get();
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        if (SecurityFlags::radar183065569())
+            return protect(sessionSetForPage(webPageProxyID))->initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain::No, *this);
+        return sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.get();
+#else
+        return sessionSetForPage(webPageProxyID).sessionWithCredentialStorage.get();
+#endif
     case WebCore::StoredCredentialsPolicy::EphemeralStateless:
         return initializeEphemeralStatelessSessionIfNeeded(webPageProxyID, NavigatingToAppBoundDomain::No);
     }
@@ -1438,9 +1471,20 @@ SessionWrapper& NetworkSessionCocoa::appBoundSession(std::optional<WebPageProxyI
     return [&](auto storedCredentialsPolicy) -> SessionWrapper& {
         switch (storedCredentialsPolicy) {
         case WebCore::StoredCredentialsPolicy::Use:
-        case WebCore::StoredCredentialsPolicy::DoNotUse:
             LOG(NetworkSession, "Using app-bound NSURLSession.");
             return sessionSet->appBoundSession->sessionWithCredentialStorage.get();
+        case WebCore::StoredCredentialsPolicy::DoNotUse:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            if (SecurityFlags::radar183065569()) {
+                LOG(NetworkSession, "Using app-bound NSURLSession without credential storage.");
+                return sessionSet->appBoundSession->initializeSessionWithoutCredentialStorageIfNeeded(NavigatingToAppBoundDomain::Yes, *this);
+            }
+            LOG(NetworkSession, "Using app-bound NSURLSession.");
+            return sessionSet->appBoundSession->sessionWithCredentialStorage.get();
+#else
+            LOG(NetworkSession, "Using app-bound NSURLSession.");
+            return sessionSet->appBoundSession->sessionWithCredentialStorage.get();
+#endif
         case WebCore::StoredCredentialsPolicy::EphemeralStateless:
             return initializeEphemeralStatelessSessionIfNeeded(webPageProxyID, NavigatingToAppBoundDomain::Yes);
         }
@@ -1485,9 +1529,20 @@ CheckedRef<SessionWrapper> SessionSet::isolatedSession(WebCore::StoredCredential
     CheckedRef sessionWrapper = [this, protectedThis = Ref { *this }, &entry, isNavigatingToAppBoundDomain, session = CheckedRef { session }] (auto storedCredentialsPolicy) -> SessionWrapper& {
         switch (storedCredentialsPolicy) {
         case WebCore::StoredCredentialsPolicy::Use:
-        case WebCore::StoredCredentialsPolicy::DoNotUse:
             LOG(NetworkSession, "Using isolated NSURLSession.");
             return entry->sessionWithCredentialStorage;
+        case WebCore::StoredCredentialsPolicy::DoNotUse:
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            if (SecurityFlags::radar183065569()) {
+                LOG(NetworkSession, "Using isolated NSURLSession without credential storage.");
+                return entry->initializeSessionWithoutCredentialStorageIfNeeded(isNavigatingToAppBoundDomain, session);
+            }
+            LOG(NetworkSession, "Using isolated NSURLSession.");
+            return entry->sessionWithCredentialStorage;
+#else
+            LOG(NetworkSession, "Using isolated NSURLSession.");
+            return entry->sessionWithCredentialStorage;
+#endif
         case WebCore::StoredCredentialsPolicy::EphemeralStateless:
             return initializeEphemeralStatelessSessionIfNeeded(isNavigatingToAppBoundDomain, session);
         }
@@ -1534,19 +1589,33 @@ void NetworkSessionCocoa::clearIsolatedSessions()
 void NetworkSessionCocoa::invalidateAndCancelSessionSet(SessionSet& sessionSet)
 {
     [sessionSet.sessionWithCredentialStorage->session invalidateAndCancel];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    [sessionSet.sessionWithoutCredentialStorage->session invalidateAndCancel];
+#endif
     [sessionSet.ephemeralStatelessSession->session invalidateAndCancel];
     [sessionSet.sessionWithCredentialStorage->delegate sessionInvalidated];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    [sessionSet.sessionWithoutCredentialStorage->delegate sessionInvalidated];
+#endif
     [sessionSet.ephemeralStatelessSession->delegate sessionInvalidated];
 
     for (auto& session : sessionSet.isolatedSessions.values()) {
         [session->sessionWithCredentialStorage->session invalidateAndCancel];
         [session->sessionWithCredentialStorage->delegate sessionInvalidated];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        [session->sessionWithoutCredentialStorage->session invalidateAndCancel];
+        [session->sessionWithoutCredentialStorage->delegate sessionInvalidated];
+#endif
     }
     sessionSet.isolatedSessions.clear();
 
     if (sessionSet.appBoundSession) {
         [sessionSet.appBoundSession->sessionWithCredentialStorage->session invalidateAndCancel];
         [sessionSet.appBoundSession->sessionWithCredentialStorage->delegate sessionInvalidated];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        [sessionSet.appBoundSession->sessionWithoutCredentialStorage->session invalidateAndCancel];
+        [sessionSet.appBoundSession->sessionWithoutCredentialStorage->delegate sessionInvalidated];
+#endif
     }
 }
 
@@ -2087,13 +2156,24 @@ void NetworkSessionCocoa::forEachSessionWrapper(NOESCAPE const Function<void(Ses
 {
     auto sessionSetFunction = [&](SessionSet& sessionSet) {
         function(protect(sessionSet.sessionWithCredentialStorage).get());
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        function(protect(sessionSet.sessionWithoutCredentialStorage).get());
+#endif
         function(protect(sessionSet.ephemeralStatelessSession).get());
-        if (sessionSet.appBoundSession)
+        if (sessionSet.appBoundSession) {
             function(protect(sessionSet.appBoundSession->sessionWithCredentialStorage));
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            function(protect(sessionSet.appBoundSession->sessionWithoutCredentialStorage));
+#endif
+        }
 
         for (auto& isolatedSession : sessionSet.isolatedSessions.values()) {
-            if (isolatedSession)
+            if (isolatedSession) {
                 function(protect(isolatedSession->sessionWithCredentialStorage));
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                function(protect(isolatedSession->sessionWithoutCredentialStorage));
+#endif
+            }
         }
     };
     

@@ -18,6 +18,9 @@ radar176384129:
 radar180469521:
   humanReadableDescription: "Validate URL passed to ProvisionalPageProxy::didStartProvisionalLoadForFrame by the WebContent process"
 
+radar183065569:
+  humanReadableDescription: "Requests with different StoredCredentialsPolicies must use different NSURLSessions"
+
 radar183491061:
   humanReadableDescription: "Enforces access to back/forward items in the UI process can only come from web content processes that own the item"
 
