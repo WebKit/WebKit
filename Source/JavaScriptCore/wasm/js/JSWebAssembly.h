@@ -56,7 +56,7 @@ public:
     JS_EXPORT_PRIVATE static void webAssemblyModuleValidateAsync(JSGlobalObject*, JSPromise*, Vector<uint8_t>&&, std::optional<WebAssemblyCompileOptions>&&);
     static JSValue instantiate(JSGlobalObject*, JSPromise*, RefPtr<SourceProvider>&&, const Identifier&, JSValue);
 
-    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*, RefPtr<SourceProvider>&&);
+    static void instantiateForStreaming(VM&, JSGlobalObject*, JSPromise*, JSWebAssemblyModule*, JSObject*, RefPtr<SourceProvider>&&, JSGlobalObject* incumbent);
 
 private:
     JSWebAssembly(VM&, Structure*);
