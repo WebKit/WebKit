@@ -24,12 +24,12 @@
 PRODUCT_NAME = TestIPC;
 
 // IR PGO profile generation flags
-WK_PGO_GEN_FLAGS = $(WK_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
-WK_PGO_GEN_FLAGS_YES = -fprofile-generate;
+WK_CLANG_PGO_GEN_FLAGS = $(WK_CLANG_PGO_GEN_FLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_CLANG_PGO_GEN_FLAGS_YES = -fprofile-generate;
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_CFLAGS = $(inherited) $(WK_PGO_GEN_FLAGS);
+OTHER_CFLAGS = $(inherited) $(WK_CLANG_PGO_GEN_FLAGS);
 
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
@@ -40,7 +40,7 @@ WK_BROWSERENGINEKIT_LDFLAGS[sdk=appletv*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=watch*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=xr*] =
 
-OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers -framework Testing $(WK_PGO_GEN_FLAGS);
+OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers -framework Testing $(WK_CLANG_PGO_GEN_FLAGS);
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices -framework IOSurface -framework CoreVideo;
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText -framework IOSurface -framework CoreVideo;
 
