@@ -45,7 +45,18 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, { }, { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames }, Ref { *contentWorld->_contentWorld });
+    NSURL *associatedURL = nil;
+    NSString* sourceURLPrefix = @"//# sourceURL=";
+    if ([source hasPrefix:sourceURLPrefix]) {
+        NSRange firstLineRange = [source rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]];
+        if (firstLineRange.location == NSNotFound)
+            firstLineRange = NSMakeRange(0, source.length);
+        NSString* firstLine = [source substringToIndex:firstLineRange.location];
+        NSString* sourceURLString = [firstLine substringFromIndex:sourceURLPrefix.length];
+        associatedURL = [NSURL URLWithString:sourceURLString];
+    }
+
+    API::Object::constructInWrapper<API::UserScript>(self, WebCore::UserScript { source, associatedURL, { }, { }, API::toWebCoreUserScriptInjectionTime(injectionTime), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames }, Ref { *contentWorld->_contentWorld });
 
     return self;
 }
