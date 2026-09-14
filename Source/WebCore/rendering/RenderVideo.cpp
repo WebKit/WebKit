@@ -570,6 +570,14 @@ bool RenderVideo::hasPosterFrameSize() const
 
 bool RenderVideo::hasDefaultObjectSize() const
 {
+    // A <video> in a standalone media document deliberately overrides its
+    // intrinsic size to defaultSize().width() x 1 (see calculateIntrinsicSizeInternal)
+    // so audio-only files size their controls correctly. That is a real preferred
+    // ratio, not the 300x150 default object size, so it must still contribute one.
+    Ref videoElement = this->videoElement();
+    if (videoElement->document().isMediaDocument())
+        return false;
+
     return !hasVideoMetadata() && !hasPosterFrameSize() && !shouldApplySizeContainment();
 }
 
