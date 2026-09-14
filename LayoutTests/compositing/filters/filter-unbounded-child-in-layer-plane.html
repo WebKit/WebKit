@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- The filter layer's own transform is projective (perspective on the ancestor), and one of its
+         children straddles the w = 0 plane of the filter layer's own perspective, so the subtree has
+         no finite bounding box in the layer plane. That child is fully transparent and must not
+         contribute anything - neither to the composite nor to the drop shadow - so the striped child
+         has to rasterize exactly as it does without it. -->
+    <style>
+      body { margin: 0; background: white; }
+      .persp {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 400px;
+        height: 400px;
+        perspective: 300px;
+      }
+      .f {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        transform: rotateY(50deg);
+        perspective: 100px;
+        filter: drop-shadow(20px 20px black);
+      }
+      .detail {
+        will-change: transform;
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        width: 200px;
+        height: 200px;
+        background: repeating-linear-gradient(90deg, green 0 4px, white 4px 8px);
+      }
+      /* Half of this crosses behind the viewer of the .f perspective, so it projects to infinity. */
+      .inf {
+        will-change: transform;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 2000px;
+        height: 200px;
+        background: green;
+        transform: rotateY(70deg);
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=persp>
+      <div class=f>
+        <div class=inf></div>
+        <div class=detail></div>
+      </div>
+    </div>
+  </body>
+</html>
