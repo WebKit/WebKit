@@ -32,6 +32,10 @@ import DirectResource
 import RealityKit
 import UniformTypeIdentifiers
 
+private func maximumTextureDimension(_ device: any MTLDevice) -> Int {
+    device.supportsFamily(.apple10) ? 32768 : 16384
+}
+
 extension MTLCaptureDescriptor {
     fileprivate convenience init(from device: (any MTLDevice)?) {
         self.init()
@@ -70,6 +74,14 @@ private func makeMTLTextureFromImageAsset(
     logInfo(
         "imageAssetData = \(imageAssetData)  -  width = \(imageAsset.width)  -  height = \(imageAsset.height)  - imageAsset.pixelFormat:  \(imageAsset.pixelFormat)"
     )
+
+    let maximumDimension = maximumTextureDimension(device)
+    guard
+        imageAsset.width > 0, imageAsset.width <= maximumDimension,
+        imageAsset.height > 0, imageAsset.height <= maximumDimension
+    else {
+        fatalError("unsupported image asset dimensions \(imageAsset.width)x\(imageAsset.height)")
+    }
 
     let pixelFormat = imageAsset.pixelFormat
 
