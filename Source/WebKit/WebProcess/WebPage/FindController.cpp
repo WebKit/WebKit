@@ -307,7 +307,7 @@ std::optional<FrameIdentifier> FindController::applyFindMatch(const FindMatch& m
         // Clear any prior text selection so it isn't left highlighted while parked on the video.
         if (RefPtr selectedFrame = frameWithSelection(protect(webPage->corePage()).get()))
             protect(selectedFrame->selection())->clear();
-        media->setCurrentTime(cue.seekTime.toDouble());
+        media->seekToFindMatch(cue.seekTime);
         media->scrollIntoViewIfNeeded();
     }
     return frame->frameID();
