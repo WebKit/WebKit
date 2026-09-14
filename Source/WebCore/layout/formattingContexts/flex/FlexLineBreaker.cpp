@@ -88,9 +88,10 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
     // start overflows on its own. Placing a single item is always permitted.
     Vector<size_t> lastFittingEnd(FillWith { }, itemCount, 0);
     for (size_t start = 0, end = 1; start < itemCount; ++start) {
+        end = std::max(end, start + 1);
         while (end < itemCount && lineLength(start, end + 1) <= capacity)
             ++end;
-        lastFittingEnd[start] = std::max(end, start + 1);
+        lastFittingEnd[start] = end;
     }
 
     auto minScores = Vector<uint64_t>(FillWith { }, itemCount + 1, std::numeric_limits<uint64_t>::max());
