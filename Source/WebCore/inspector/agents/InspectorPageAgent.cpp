@@ -63,6 +63,7 @@
 #include "Page.h"
 #include "PageInspectorController.h"
 #include "PageRuntimeAgent.h"
+#include "RegistrableDomain.h"
 #include "RemoteFrame.h"
 #include "RenderObjectInlines.h"
 #include "RenderTheme.h"
@@ -547,6 +548,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
             continue;
         RefPtr page = document->page();
         if (!page)
+            continue;
+        if (!RegistrableDomain::uncheckedCreateFromHost(cookie->domain).matches(document->firstPartyForCookies()))
+            continue;
+        if (!RegistrableDomain(document->cookieURL()).matches(document->firstPartyForCookies()))
             continue;
         page->cookieJar().setRawCookie(*document, cookie.value(), shouldPartitionCookie);
     }
