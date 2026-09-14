@@ -196,6 +196,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector,
         }
     case CSSSelector::Match::Exact:
     case CSSSelector::Match::Class:
+    case CSSSelector::Match::ClassPrefix:
     case CSSSelector::Match::Set:
     case CSSSelector::Match::List:
     case CSSSelector::Match::Hyphen:
@@ -506,6 +507,10 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         } else if (selector->match() == Match::Class) {
             builder.append('.');
             serializeIdentifier(builder, selector->serializingValue());
+        } else if (selector->match() == Match::ClassPrefix) {
+            builder.append('.');
+            serializeIdentifier(builder, selector->serializingValue());
+            builder.append('*');
         } else if (selector->match() == Match::ForgivingUnknown || selector->match() == Match::ForgivingUnknownNestContaining) {
             builder.append(selector->value());
         } else if (selector->match() == Match::HasScope) {

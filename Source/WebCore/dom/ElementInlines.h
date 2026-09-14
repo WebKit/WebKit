@@ -160,6 +160,29 @@ inline bool Element::hasClassName(const AtomString& className) const
     return elementData()->classNames().contains(className);
 }
 
+// A class token matches a prefix (e.g. ".foo-*") if it starts with the prefix, has at least
+// one character beyond it, and that character isn't also a hyphen.
+// https://drafts.csswg.org/selectors-5/#class-prefix
+static inline bool classNameMatchesPrefix(StringView className, StringView prefix)
+{
+    if (className.length() <= prefix.length())
+        return false;
+    if (!className.startsWith(prefix))
+        return false;
+    return className[prefix.length()] != '-';
+}
+
+inline bool Element::hasClassNamePrefix(StringView prefix) const
+{
+    if (!elementData())
+        return false;
+    for (auto& className : elementData()->classNames()) {
+        if (classNameMatchesPrefix(className, prefix))
+            return true;
+    }
+    return false;
+}
+
 inline unsigned Element::attributeCount() const
 {
     ASSERT(elementData());

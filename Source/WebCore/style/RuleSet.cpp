@@ -313,6 +313,7 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
             case CSSSelector::Match::HasScope:
             case CSSSelector::Match::NestingParent:
             case CSSSelector::Match::PagePseudoClass:
+            case CSSSelector::Match::ClassPrefix:
                 break;
             }
         }
