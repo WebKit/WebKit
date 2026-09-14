@@ -1,0 +1,27 @@
+
+PASS onpopstate in window
+PASS history.pushState is present
+PASS history.replaceState is present
+PASS history.state is present
+PASS history.state is initialized to null
+PASS history.pushState increments history.length
+PASS history.pushState clears forward entries
+PASS history.pushState accepts a third parameter 'url' and uses it to alter location
+PASS history.pushState's url parameter can be an absolute url
+PASS history.pushState can modify location object in multiple frames
+PASS history.pushState throws DOMException with code SECURITY_ERR (18)
+PASS history.pushState throws DATA_CLONE_ERR(25) for bad state parameter
+PASS history.replaceState does not increment history.length
+PASS history.replaceState does not clear forward entries
+PASS history.replaceState accepts a third parameter 'url' and uses it to alter location
+PASS history.replaceState's url parameter can be an absolute url
+PASS history.replaceState can modify location object in multiple frames
+PASS history.replaceState throws DOMException with code SECURITY_ERR (18)
+PASS history.replaceState throws DATA_CLONE_ERR(25) for bad state parameter
+PASS PopStateEvent fires on Back navigation
+PASS PopStateEvent fires on Forward navigation
+PASS PopStateEvent receives state data on Back navigation
+PASS history.state is set by history.pushState
+PASS history.state is set by history.replaceState
+PASS history.state changes on navigation
+
