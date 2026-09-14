@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "EnhancedSecurity.h"
 #include "FrameProcess.h"
+#include "Logging.h"
 #include "PageLoadState.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -39,6 +40,8 @@
 #include "WebProcessProxy.h"
 #include <WebCore/IPAddressSpace.h>
 #include <WebCore/SecurityOrigin.h>
+
+#define BROWSINGCONTEXTGROUP_RELEASE_LOG(fmt, ...) RELEASE_LOG(SiteIsolation, "%p - BrowsingContextGroup::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -106,6 +109,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
         ASSERT(existingSharedProcess->isSharedProcess());
         RELEASE_ASSERT(!existingSharedProcess->process().isInProcessCache());
         existingSharedProcess->process().addSharedProcessDomain(site.domain());
+        BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", site.loggingString().utf8().legacyCStringPointer(), existingSharedProcess->process().processID(), m_sharedProcessSites.size());
         return completionHandler(existingSharedProcess.get());
     }
 
@@ -116,6 +120,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     ASSERT(frameProcess->process().isSharedProcess());
     frameProcess->process().addSharedProcessDomain(site.domain());
     m_sharedProcess = frameProcess.ptr();
+    BROWSINGCONTEXTGROUP_RELEASE_LOG("sharedProcessForSite: created shared process %d for site %" SENSITIVE_LOG_STRING, process->processID(), site.loggingString().utf8().legacyCStringPointer());
     completionHandler(frameProcess.ptr());
 }
 
@@ -125,8 +130,10 @@ Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, c
         RefPtr sharedProcess = liveSharedProcess();
         if (sharedProcess && (m_sharedProcessSites.contains(site) || process.isSharedProcess())) {
             ASSERT(&sharedProcess->process() == &process);
-            if (m_sharedProcessSites.add(site).isNewEntry)
+            if (m_sharedProcessSites.add(site).isNewEntry) {
                 process.addSharedProcessDomain(site.domain());
+                BROWSINGCONTEXTGROUP_RELEASE_LOG("ensureProcessForSite: site %" SENSITIVE_LOG_STRING " joined shared process %d, which now hosts %u sites", site.loggingString().utf8().legacyCStringPointer(), process.processID(), m_sharedProcessSites.size());
+            }
             return sharedProcess.releaseNonNull();
         }
         if (RefPtr existingProcess = processForSite(site)) {
