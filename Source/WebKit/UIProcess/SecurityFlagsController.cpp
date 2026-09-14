@@ -26,14 +26,15 @@
 #include "config.h"
 #include "SecurityFlagsController.h"
 
-#include "GPUProcessProxy.h"
 #include "Logging.h"
-#include "ModelProcessProxy.h"
-#include "NetworkProcessProxy.h"
 #include <array>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+
+#if PLATFORM(COCOA)
+#include "SecurityFlagsSharedPage.h"
+#endif
 
 namespace WebKit {
 
@@ -55,6 +56,11 @@ void SecurityFlagsController::initialize()
 SecurityFlagsController::SecurityFlagsController()
     : m_persistentlyDisabledNames(platformPersistentlyDisabledFlagNames())
 {
+#if PLATFORM(COCOA)
+    // Establishing the page zeroes it, so this has to precede the first write below.
+    SecurityFlagsSharedPage::initializeInUIProcess();
+#endif
+
     SecurityFlags::Storage::update(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
 
     for (auto& name : m_persistentlyDisabledNames) {
@@ -62,8 +68,7 @@ SecurityFlagsController::SecurityFlagsController()
         RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8().data());
     }
 
-    // Deferred because singleton() is still under construction here. A privileged child process launched before the
-    // reply lands learns the value over SecurityFlagsDidChange.
+    // Deferred because singleton() is still under construction here.
     RunLoop::mainSingleton().dispatch([] {
         singleton().platformObserveRemoteListChanges();
         singleton().requestRemoteList();
@@ -191,8 +196,7 @@ void SecurityFlagsController::scheduleRemoteListRetry()
 
 void SecurityFlagsController::apply(SecurityFlags::Storage&& newFlags)
 {
-    if (SecurityFlags::Storage::update(WTF::move(newFlags)))
-        propagateToChildProcesses();
+    SecurityFlags::Storage::update(WTF::move(newFlags));
 }
 
 #if !PLATFORM(COCOA)
@@ -210,24 +214,5 @@ void SecurityFlagsController::platformObserveRemoteListChanges()
 {
 }
 #endif
-
-void SecurityFlagsController::propagateToChildProcesses()
-{
-    ASSERT(RunLoop::isMain());
-
-    // Processes launched after this point pick the new value up through their creation parameters instead.
-    for (Ref networkProcess : NetworkProcessProxy::allNetworkProcesses())
-        networkProcess->securityFlagsDidChange(securityFlags());
-
-#if ENABLE(GPU_PROCESS)
-    if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
-        gpuProcess->securityFlagsDidChange(securityFlags());
-#endif
-
-#if ENABLE(MODEL_PROCESS)
-    if (RefPtr modelProcess = ModelProcessProxy::singletonIfCreated())
-        modelProcess->securityFlagsDidChange(securityFlags());
-#endif
-}
 
 } // namespace WebKit

@@ -28,6 +28,8 @@
 #include <wtf/Compiler.h>
 
 #import "AuxiliaryProcess.h"
+#import "Logging.h"
+#import "SecurityFlagsSharedPage.h"
 #import "WebKit2Initialize.h"
 #import <JavaScriptCore/ExecutableAllocator.h>
 #import <wtf/CompletionHandler.h>
@@ -97,6 +99,14 @@ void disableJSC(NOESCAPE WTF::CompletionHandler<void(void)>&& beforeFinalizeHand
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType, bool isWebContentProcess = false>
 void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
+    // Before anything else, so that nothing an attacker chose has been parsed by the time the flags stop being
+    // writable here. The scope is what releases the send right once the mapping no longer needs it.
+    {
+        auto securityFlagsMemoryEntry = initializerMessage ? MachSendRight::adopt(xpc_dictionary_copy_mach_send(initializerMessage, "security-flags-memory-entry")) : MachSendRight { };
+        if (!SecurityFlagsSharedPage::mapReadOnlyPermanently(securityFlagsMemoryEntry))
+            RELEASE_LOG_FAULT(Process, "SecurityFlagsSharedPage: enforcing every security flag in this process");
+    }
+
     XPCServiceInitializerDelegateType delegate(WTF::move(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,

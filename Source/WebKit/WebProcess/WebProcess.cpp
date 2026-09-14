@@ -49,6 +49,7 @@
 #include "RemoteRemoteCommandListener.h"
 #include "RemoteWebLockRegistry.h"
 #include "RemoteWorkerType.h"
+#include "SecurityFlags.h"
 #include "SpeechRecognitionRealtimeMediaSourceManager.h"
 #include "StorageAreaMap.h"
 #include "UserData.h"
@@ -1083,6 +1084,13 @@ Awaitable<unsigned> WebProcess::countWebPagesForTesting()
 {
     co_return m_pageMap.size();
 }
+
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+void WebProcess::isSecurityFlagEnabledForTesting(const String& flagName, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+{
+    completionHandler(securityFlags().isFlagEnabledNamedForTesting(flagName));
+}
+#endif
 
 void WebProcess::removeWebPage(PageIdentifier pageID)
 {

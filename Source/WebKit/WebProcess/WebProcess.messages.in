@@ -31,6 +31,13 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     CreateWebPage(WebCore::PageIdentifier newPageID, struct WebKit::WebPageCreationParameters pageCreationParameters)
     CountWebPagesForTesting() -> (unsigned count)
 
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    IsSecurityFlagEnabledForTesting(String flagName) -> (std::optional<bool> enabled)
+#if PLATFORM(COCOA)
+    AttackSecurityFlagsPageForTesting() -> (int32_t raiseCurrentProtection, int32_t raiseMaximumProtection, int32_t raiseProtectionByCopying, int32_t overwriteWithWritableMemory, int32_t substituteReadOnlyPage)
+#endif
+#endif
+
     PrewarmWithDomainInformation(struct WebCore::PrewarmInformation prewarmInformation)
 
     # Global preferences.

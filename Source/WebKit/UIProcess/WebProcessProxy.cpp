@@ -2485,6 +2485,20 @@ void WebProcessProxy::getNotifyStateForTesting(const String& name, CompletionHan
 }
 #endif
 
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+void WebProcessProxy::isSecurityFlagEnabledForTesting(const String& flagName, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebProcess::IsSecurityFlagEnabledForTesting(flagName), WTF::move(completionHandler));
+}
+
+#if PLATFORM(COCOA)
+void WebProcessProxy::attackSecurityFlagsPageForTesting(CompletionHandler<void(int32_t, int32_t, int32_t, int32_t, int32_t)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebProcess::AttackSecurityFlagsPageForTesting(), WTF::move(completionHandler));
+}
+#endif
+#endif
+
 void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 {
     RELEASE_ASSERT(!isInProcessCache());

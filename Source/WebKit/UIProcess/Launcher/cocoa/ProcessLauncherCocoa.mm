@@ -29,6 +29,7 @@
 #import "AuxiliaryProcess.h"
 #import "Logging.h"
 #import "MachPort.h"
+#import "SecurityFlagsSharedPage.h"
 #import "WebPreferencesDefaultValues.h"
 #import "WebProcessPool.h"
 #import "XPCUtilities.h"
@@ -416,6 +417,9 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
     xpc_dictionary_set_string(bootstrapMessage.get(), "message-name", "bootstrap");
 
     xpc_dictionary_set_mach_send(bootstrapMessage.get(), "server-port", listeningPort);
+
+    if (auto securityFlagsMemoryEntry = SecurityFlagsSharedPage::createSendRightForChildProcess())
+        xpc_dictionary_set_mach_send(bootstrapMessage.get(), "security-flags-memory-entry", securityFlagsMemoryEntry.sendRight());
 
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-identifier", !clientIdentifier.isEmpty() ? clientIdentifier.utf8().data() : *_NSGetProgname());
     xpc_dictionary_set_string(bootstrapMessage.get(), "client-bundle-identifier", applicationBundleIdentifier().utf8().data());

@@ -247,6 +247,12 @@ public:
     WebPage* webPage(WebCore::PageIdentifier) const;
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
     Awaitable<unsigned> countWebPagesForTesting();
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
+#if PLATFORM(COCOA)
+    void attackSecurityFlagsPageForTesting(CompletionHandler<void(int32_t, int32_t, int32_t, int32_t, int32_t)>&&);
+#endif
+#endif
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* NODELETE focusedWebPage() const;
     bool hasEverHadAnyWebPages() const { return m_hasEverHadAnyWebPages; }

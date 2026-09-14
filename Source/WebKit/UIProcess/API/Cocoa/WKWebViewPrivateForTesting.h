@@ -181,6 +181,9 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_terminateIdleServiceWorkersForTesting;
 
+- (void)_isSecurityFlagEnabledInWebProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber * _Nullable))completionHandler;
+- (void)_attackSecurityFlagsPageInWebProcessForTesting:(void(^)(NSArray<NSNumber *> * _Nullable))completionHandler;
+
 - (void)_getNotifyStateForTesting:(NSString *)notificationName completionHandler:(void(^)(NSNumber * _Nullable))completionHandler WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4));
 
 @property (nonatomic, readonly) BOOL _hasAccessibilityActivityForTesting;

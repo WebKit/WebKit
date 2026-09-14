@@ -1038,6 +1038,29 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         networkProcess->terminateIdleServiceWorkers(protectedProcessProxy->coreProcessIdentifier(), [] { });
 }
 
+- (void)_isSecurityFlagEnabledInWebProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber *))completionHandler
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    protect(_page->legacyMainFrameProcess())->isSecurityFlagEnabledForTesting(flagName, [completionHandler = makeBlockPtr(completionHandler)] (std::optional<bool> enabled) {
+        completionHandler(enabled ? [NSNumber numberWithBool:*enabled] : nil);
+    });
+#else
+    UNUSED_PARAM(flagName);
+    completionHandler(nil);
+#endif // ENGINEERING_BUILD
+}
+
+- (void)_attackSecurityFlagsPageInWebProcessForTesting:(void(^)(NSArray<NSNumber *> *))completionHandler
+{
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    protect(_page->legacyMainFrameProcess())->attackSecurityFlagsPageForTesting([completionHandler = makeBlockPtr(completionHandler)] (int32_t raiseCurrent, int32_t raiseMaximum, int32_t raiseByCopying, int32_t overwrite, int32_t substitute) {
+        completionHandler(@[@(raiseCurrent), @(raiseMaximum), @(raiseByCopying), @(overwrite), @(substitute)]);
+    });
+#else
+    completionHandler(nil);
+#endif // ENGINEERING_BUILD
+}
+
 - (void)_getNotifyStateForTesting:(NSString *)notificationName completionHandler:(void(^)(NSNumber *))completionHandler
 {
 #if ENABLE(NOTIFY_BLOCKING)

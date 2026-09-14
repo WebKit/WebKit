@@ -29,7 +29,6 @@
 
 #include "AuxiliaryProcessCreationParameters.h"
 #include "SandboxExtension.h"
-#include "SecurityFlags.h"
 #include <wtf/ProcessID.h>
 
 #if USE(GBM)
@@ -45,7 +44,6 @@ namespace WebKit {
 
 struct GPUProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    SecurityFlags::Storage securityFlags;
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices { false };
 #if PLATFORM(MAC)

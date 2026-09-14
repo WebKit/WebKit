@@ -211,7 +211,6 @@ $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
 $(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.cpp.erb
 $(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.h.erb
-$(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.serialization.in.erb
 $(PROJECT_DIR)/Scripts/create-http-header-serialization-interface.py
 $(PROJECT_DIR)/Scripts/generate-derived-log-sources.py
 $(PROJECT_DIR)/Scripts/generate-https-upgrade-database.sh

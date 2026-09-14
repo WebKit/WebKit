@@ -6922,6 +6922,8 @@
 		5E55104200000000000B0002 /* SecurityFlagsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsController.h; sourceTree = "<group>"; };
 		5E55104200000000000B0003 /* SecurityFlagsControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SecurityFlagsControllerCocoa.mm; sourceTree = "<group>"; };
 		5E55104200000000000C0001 /* SecurityFlagsForSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsForSwift.h; sourceTree = "<group>"; };
+		5E55104200000000000D0001 /* SecurityFlagsSharedPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityFlagsSharedPage.h; sourceTree = "<group>"; };
+		5E55104200000000000D0002 /* SecurityFlagsSharedPage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SecurityFlagsSharedPage.mm; sourceTree = "<group>"; };
 		5EB592AB2DC2049A0058664B /* BidiStorage.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = BidiStorage.json; sourceTree = "<group>"; };
 		5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BidiStorageAgent.cpp; sourceTree = "<group>"; };
 		5EEC724D2DC1B31300D012DD /* BidiStorageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiStorageAgent.h; sourceTree = "<group>"; };
@@ -13470,6 +13472,8 @@
 				7AB4EA4122777FC70085BBAA /* SandboxInitialiationParametersCocoa.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,
 				7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */,
+				5E55104200000000000D0001 /* SecurityFlagsSharedPage.h */,
+				5E55104200000000000D0002 /* SecurityFlagsSharedPage.mm */,
 				CD4B4D9A1E765E0000D27092 /* SharedCARingBuffer.cpp */,
 				CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */,
 				462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */,

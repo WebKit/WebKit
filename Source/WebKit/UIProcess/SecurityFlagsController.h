@@ -36,7 +36,7 @@
 namespace WebKit {
 
 // The UIProcess's owner of the value securityFlags() answers, because it comes from a single device-global list.
-// Setting the flags is main run loop only, because propagateToChildProcesses() touches the proxies.
+// Setting the flags is main run loop only, because the child processes read the page it writes.
 class SecurityFlagsController {
     WTF_MAKE_NONCOPYABLE(SecurityFlagsController);
 public:
@@ -67,7 +67,6 @@ private:
     enum class IncludePersistentNames : bool { No, Yes };
     SecurityFlags::Storage flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
     void apply(SecurityFlags::Storage&&);
-    void propagateToChildProcesses();
 
     // Nullopt is no answer at all, which leaves the flags as they are rather than resetting them to the list.
     void didReceiveRemoteList(uint64_t generation, std::optional<Vector<String>>&&);

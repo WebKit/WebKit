@@ -302,6 +302,13 @@ public:
     void getNotifyStateForTesting(const String&, CompletionHandler<void(std::optional<uint64_t>)>&&);
 #endif
 
+#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+    void isSecurityFlagEnabledForTesting(const String&, CompletionHandler<void(std::optional<bool>)>&&);
+#if PLATFORM(COCOA)
+    void attackSecurityFlagsPageForTesting(CompletionHandler<void(int32_t, int32_t, int32_t, int32_t, int32_t)>&&);
+#endif
+#endif
+
     bool isRunningServiceWorkers() const { return !!m_serviceWorkerInformation; }
     bool isStandaloneServiceWorkerProcess() const { return isRunningServiceWorkers() && !pageCount(); }
     bool isRunningSharedWorkers() const { return !!m_sharedWorkerInformation; }

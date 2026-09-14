@@ -27,8 +27,13 @@
 
 #import "Test.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKProcessPool.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <mach/mach_error.h>
+#import <mach/vm_prot.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -88,7 +93,11 @@ class SecurityFlagsTest : public testing::Test {
 public:
     void SetUp() final { [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[]]; }
 
-    void TearDown() final { [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[]]; }
+    void TearDown() final
+    {
+        [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[]];
+        [WKWebsiteDataStore _setWithholdSecurityFlagsPageFromChildProcessesForTesting:NO];
+    }
 };
 
 TEST_F(SecurityFlagsTest, SecureByDefault)
@@ -107,7 +116,7 @@ TEST_F(SecurityFlagsTest, UIProcessReadsItsOwnValue)
     EXPECT_EQ(flagStateInUIProcess(testSecurityFlagName), FlagState::Disabled);
 }
 
-TEST_F(SecurityFlagsTest, DidChangeReachesRunningProcess)
+TEST_F(SecurityFlagsTest, DisablingReachesARunningNetworkProcess)
 {
     auto dataStore = launchNetworkProcess();
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
@@ -117,9 +126,7 @@ TEST_F(SecurityFlagsTest, DidChangeReachesRunningProcess)
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
 }
 
-// Terminating is what makes this discriminating: an already-running process would have learned the value over
-// SecurityFlagsDidChange, passing with no creation-parameter plumbing at all.
-TEST_F(SecurityFlagsTest, CreationParametersReachNewProcess)
+TEST_F(SecurityFlagsTest, ARelaunchedNetworkProcessSeesTheDisabledFlag)
 {
     auto dataStore = launchNetworkProcess();
     auto originalPID = [dataStore _networkProcessIdentifier];
@@ -131,8 +138,7 @@ TEST_F(SecurityFlagsTest, CreationParametersReachNewProcess)
     while ([dataStore _networkProcessIdentifier] <= 0)
         Util::spinRunLoop();
 
-    auto relaunchedPID = [dataStore _networkProcessIdentifier];
-    EXPECT_NE(relaunchedPID, originalPID);
+    EXPECT_NE([dataStore _networkProcessIdentifier], originalPID);
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
 }
 
@@ -143,6 +149,107 @@ TEST_F(SecurityFlagsTest, UnknownFlagNameIsIgnored)
     auto dataStore = launchNetworkProcess();
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), @"radar99999999"), FlagState::NoSuchFlag);
+}
+
+// [nil boolValue] is NO, so handing back the NSNumber would let a dead WebContent process pass for a disabled flag.
+static FlagState flagStateInWebContentProcess(TestWKWebView *webView, NSString *flagName)
+{
+    RetainPtr<NSNumber> reply;
+    bool done = false;
+    [webView _isSecurityFlagEnabledInWebProcessForTesting:flagName completionHandler:[&] (NSNumber *enabled) {
+        reply = enabled;
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_GT([webView _webProcessIdentifier], 0) << "WebContent process died while answering";
+    if (!reply)
+        return FlagState::NoSuchFlag;
+    return [reply boolValue] ? FlagState::Enforced : FlagState::Disabled;
+}
+
+static RetainPtr<TestWKWebView> launchWebContentProcess()
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<body>hello</body>"];
+    return webView;
+}
+
+TEST_F(SecurityFlagsTest, WebContentProcessIsSecureByDefault)
+{
+    auto webView = launchWebContentProcess();
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), testSecurityFlagName), FlagState::Enforced);
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), @"radar99999999"), FlagState::NoSuchFlag);
+}
+
+TEST_F(SecurityFlagsTest, DisablingReachesARunningWebContentProcess)
+{
+    auto webView = launchWebContentProcess();
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), testSecurityFlagName), FlagState::Enforced);
+
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[testSecurityFlagName]];
+
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsTest, AWebContentProcessLaunchedLaterSeesTheDisabledFlag)
+{
+    auto firstWebView = launchWebContentProcess();
+    auto firstPID = [firstWebView _webProcessIdentifier];
+    EXPECT_GT(firstPID, 0);
+
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[testSecurityFlagName]];
+
+    auto secondWebView = launchWebContentProcess();
+    EXPECT_NE([secondWebView _webProcessIdentifier], firstPID);
+
+    EXPECT_EQ(flagStateInWebContentProcess(secondWebView.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+static void expectTheWebContentProcessCannotWriteThePage(TestWKWebView *webView)
+{
+    RetainPtr<NSArray<NSNumber *>> results;
+    bool done = false;
+    [webView _attackSecurityFlagsPageInWebProcessForTesting:[&] (NSArray<NSNumber *> *replies) {
+        results = replies;
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_GT([webView _webProcessIdentifier], 0) << "WebContent process died while answering";
+    ASSERT_EQ([results count], 5u);
+    EXPECT_EQ([[results objectAtIndex:0] intValue], KERN_PROTECTION_FAILURE) << "raised the current protection";
+    EXPECT_EQ([[results objectAtIndex:1] intValue], KERN_PROTECTION_FAILURE) << "raised the maximum protection";
+    EXPECT_EQ([[results objectAtIndex:2] intValue], KERN_PROTECTION_FAILURE) << "took a private writable copy";
+    EXPECT_EQ([[results objectAtIndex:3] intValue], KERN_PROTECTION_FAILURE) << "overwrote the page with writable memory";
+    EXPECT_EQ([[results objectAtIndex:4] intValue], KERN_PROTECTION_FAILURE) << "substituted a page of its own";
+}
+
+TEST_F(SecurityFlagsTest, TheWebContentProcessCannotWriteThePage)
+{
+    auto webView = launchWebContentProcess();
+
+    expectTheWebContentProcessCannotWriteThePage(webView.get());
+
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
+TEST_F(SecurityFlagsTest, AWebContentProcessWithoutTheSharedPageEnforcesEveryFlag)
+{
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[testSecurityFlagName]];
+    [WKWebsiteDataStore _setWithholdSecurityFlagsPageFromChildProcessesForTesting:YES];
+
+    auto webView = launchWebContentProcess();
+    EXPECT_GT([webView _webProcessIdentifier], 0);
+
+    EXPECT_EQ(flagStateInWebContentProcess(webView.get(), testSecurityFlagName), FlagState::Enforced);
+    expectTheWebContentProcessCannotWriteThePage(webView.get());
+
+    [WKWebsiteDataStore _setWithholdSecurityFlagsPageFromChildProcessesForTesting:NO];
+    auto sharingWebView = launchWebContentProcess();
+    EXPECT_EQ(flagStateInWebContentProcess(sharingWebView.get(), testSecurityFlagName), FlagState::Disabled);
 }
 
 static NSString * const disabledSecurityFlagsDefaultsKey = @"WebKitDebugDisabledSecurityFlags";
