@@ -105,9 +105,7 @@ CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
 #import <Foundation/Foundation.h>
 #endif
 
-#if __has_include(<Network/Network.h>)
 #include <Network/Network.h>
-#endif // __has_include(<Network/Network.h>)
 
 #if defined(__OBJC__)
 
