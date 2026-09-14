@@ -69,6 +69,8 @@ private:
     void recordTextFragment(InlineIterator::SVGTextBoxIterator, const Vector<SVGTextMetrics>&);
     bool parentDefinesTextLength(RenderObject*) const;
 
+    float computeTextPathStartOffset(const RenderSVGTextPath&) const;
+
     void layoutTextOnLineOrPath(InlineIterator::SVGTextBoxIterator, const RenderSVGInlineText&, const Style::ComputedStyle&);
     void finalizeTransformMatrices(Vector<InlineIterator::SVGTextBoxIterator>&);
 
