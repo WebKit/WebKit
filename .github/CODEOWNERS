@@ -70,6 +70,12 @@ AllowedSPI*.toml @emw-apple
 /Tools/TestWebKitAPI/Tests/WTF/bmalloc @WebKit/jsc-reviewers
 
 # ================================================================================
+# WTF
+
+/Source/WTF @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/WTF @WebKit/jsc-reviewers
+
+# ================================================================================
 # JavaScriptCore
 
 /Source/JavaScriptCore @WebKit/jsc-reviewers
