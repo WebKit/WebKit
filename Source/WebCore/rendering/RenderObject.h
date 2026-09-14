@@ -131,7 +131,6 @@ public:
         CombineText,
         Counter,
         DeprecatedFlexibleBox,
-        DetailsMarker,
         EmbeddedObject,
         FileUploadControl,
         FlexibleBox,
@@ -441,7 +440,6 @@ public:
     bool isRenderCounter() const { return type() == Type::Counter; }
     bool isRenderQuote() const { return type() == Type::Quote; }
 
-    bool isRenderDetailsMarker() const { return type() == Type::DetailsMarker; }
     bool isRenderEmbeddedObject() const { return type() == Type::EmbeddedObject; }
     bool NODELETE isFieldset() const;
     bool isRenderFileUploadControl() const { return type() == Type::FileUploadControl; }
