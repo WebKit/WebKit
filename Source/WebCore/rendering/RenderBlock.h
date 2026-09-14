@@ -371,8 +371,6 @@ private:
 
     std::pair<LayoutUnit, LayoutUnit> computeBlockIntrinsicLogicalWidths() const;
     
-    LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const final;
-    const Style::ComputedStyle& outlineStyleForRepaint() const LIFETIME_BOUND final;
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) final
     {
