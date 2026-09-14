@@ -100,6 +100,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
 #endif
     , gridLanesEnabled { settings.gridLanesEnabled() }
     , cssAppearanceBaseEnabled { settings.cssAppearanceBaseEnabled() }
+    , cssClassPrefixSelectorEnabled { settings.cssClassPrefixSelectorEnabled() }
     , cssPaintingAPIEnabled { settings.cssPaintingAPIEnabled() }
     , cssTextDecorationLineErrorValues { settings.cssTextDecorationLineErrorValues() }
     , cssFlexWrapBalanceEnabled { settings.cssFlexWrapBalanceEnabled() }
@@ -154,6 +155,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
 #endif
         context.gridLanesEnabled,
         context.cssAppearanceBaseEnabled,
+        context.cssClassPrefixSelectorEnabled,
         context.cssPaintingAPIEnabled,
         context.cssWordBreakAutoPhraseEnabled,
         context.popoverAttributeEnabled,

@@ -1,0 +1,5 @@
+
+PASS adding/removing a class that starts matching the prefix invalidates the element itself (subject position)
+PASS a class change on an ancestor invalidates descendants selected through the class prefix selector
+PASS a class change on a preceding sibling invalidates a following sibling selected through the class prefix selector
+

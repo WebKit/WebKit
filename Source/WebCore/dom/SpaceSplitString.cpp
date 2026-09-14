@@ -63,6 +63,17 @@ static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, Stri
         tokenizeSpaceSplitString(tokenProcessor, string.span16());
 }
 
+bool SpaceSplitString::containsClassPrefix(const AtomString& prefix) const
+{
+    if (!m_data)
+        return false;
+    for (auto& className : *m_data) {
+        if (classNameMatchesPrefix(className, prefix))
+            return true;
+    }
+    return false;
+}
+
 bool SpaceSplitStringData::containsAll(const SpaceSplitStringData& other) const
 {
     if (this == &other)

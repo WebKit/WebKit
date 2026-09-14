@@ -749,11 +749,21 @@ std::unique_ptr<MutableCSSSelector> CSSSelectorParser::consumeClass(CSSParserTok
     if (range.peek().type() != IdentToken)
         return nullptr;
 
-    auto selector = makeUnique<MutableCSSSelector>();
-    selector->setMatch(CSSSelector::Match::Class);
-
     auto token = range.consume();
-    selector->setValue(token.value().toAtomString(), m_context.mode == HTMLQuirksMode);
+    auto identifier = token.value();
+
+    auto selector = makeUnique<MutableCSSSelector>();
+
+    // The class prefix selector (.foo-*) is a dash-terminated identifier immediately followed by
+    // an asterisk, with no intervening whitespace. https://drafts.csswg.org/selectors/#class-prefix
+    if (m_context.cssClassPrefixSelectorEnabled && !identifier.isEmpty() && identifier[identifier.length() - 1] == '-'
+        && range.peek().type() == DelimiterToken && range.peek().delimiter() == '*') {
+        range.consume();
+        selector->setMatch(CSSSelector::Match::ClassPrefix);
+    } else
+        selector->setMatch(CSSSelector::Match::Class);
+
+    selector->setValue(identifier.toAtomString(), m_context.mode == HTMLQuirksMode);
 
     return selector;
 }

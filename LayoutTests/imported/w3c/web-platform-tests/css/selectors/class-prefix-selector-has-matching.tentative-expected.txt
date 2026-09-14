@@ -1,0 +1,10 @@
+
+PASS :has(.foo-*) matches an element with a descendant, at any depth, whose class matches the prefix
+PASS :has(> .foo-*) only matches a direct child, unlike the plain descendant form
+PASS :has(+ .foo-*) matches when the immediately following sibling matches the prefix
+PASS :has(~ .foo-*) matches a later sibling that is not the immediately following one
+PASS :has(~ .bar > .foo-*) matches when a later sibling has a matching direct child
+PASS :has(~ .bar .foo-*) matches at any depth under a later sibling, unlike the direct-child form
+PASS class prefix selector works inside :has() used as a :not() argument
+PASS a class prefix selector on the same compound as :has() still matches normally
+

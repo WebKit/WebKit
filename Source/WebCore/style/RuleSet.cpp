@@ -338,6 +338,8 @@ void RuleSet::addRuleToBucket(RuleData& ruleData)
             case CSSSelector::Match::HasScope:
             case CSSSelector::Match::NestingParent:
             case CSSSelector::Match::PagePseudoClass:
+            case CSSSelector::Match::ClassPrefix:
+                // Class prefix selectors can't be indexed by an exact class name, so they fall into the universal bucket.
                 break;
             }
         }

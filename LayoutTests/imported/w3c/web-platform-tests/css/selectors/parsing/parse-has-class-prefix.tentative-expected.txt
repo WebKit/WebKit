@@ -1,0 +1,17 @@
+
+PASS ":has(.foo-*)" should be a valid selector
+PASS ":has(> .foo-*)" should be a valid selector
+PASS ":has(+ .foo-*)" should be a valid selector
+PASS ":has(~ .foo-*)" should be a valid selector
+PASS ":has(~ .bar > .foo-*)" should be a valid selector
+PASS ":has(~ .bar .foo-*)" should be a valid selector
+PASS ".a:has(.foo-*)" should be a valid selector
+PASS ".foo-*:has(.a)" should be a valid selector
+PASS ":has(.foo-*) .a" should be a valid selector
+PASS ":has(> .foo-*) > .a" should be a valid selector
+PASS ":not(:has(.foo-*))" should be a valid selector
+PASS ":has(.foo-*, .bar-*)" should be a valid selector
+PASS ":has(.foo-*):has(.bar-*)" should be a valid selector
+PASS ":has(.foo*)" should be an invalid selector
+PASS ":has(.foo-*, .bar*)" should be an invalid selector
+
