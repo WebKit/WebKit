@@ -726,6 +726,7 @@ private:
 class alignas(16) RTT final : public ThreadSafeRefCounted<RTT>, private TrailingArray<RTT, RefPtr<const RTT>> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(RTT);
     WTF_MAKE_NONMOVABLE(RTT);
+    using Malloc = FastCompactMalloc;
     using TrailingArrayType = TrailingArray<RTT, RefPtr<const RTT>>;
     friend TrailingArrayType;
     friend class JSC::LLIntOffsetsExtractor;
