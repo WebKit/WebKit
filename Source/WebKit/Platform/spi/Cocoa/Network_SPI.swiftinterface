@@ -1,0 +1,16 @@
+// swift-interface-format-version: 1.0
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level spi -enable-bare-slash-regex -module-name Network_SPI -module-abi-name Network
+import Foundation
+import Swift
+import _Concurrency
+@_exported import Network
+
+extension Network.NWConnection {
+  // Network.NWConnection.nw.getter : __C.OS_nw_connection
+  @_silgen_name("$s7Network12NWConnectionC2nwSo03OS_C11_connection_pvg")
+  public func __nwHandle() -> Network.nw_connection_t
+
+  @_alwaysEmitIntoClient public var nw: Network.nw_connection_t {
+    return __nwHandle()
+  }
+}

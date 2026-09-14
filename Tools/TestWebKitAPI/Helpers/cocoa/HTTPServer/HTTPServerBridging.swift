@@ -22,9 +22,17 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServerBridging
+import Security
+private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServer.HTTPServerBridging
 
 import struct Swift.String
+
+#if USE_APPLE_INTERNAL_SDK
+@_spi(CTypeConversion) import Network
+#else
+import Network
+import Network_SPI
+#endif
 
 @objc
 @implementation
@@ -61,8 +69,34 @@ extension HTTPServerBridge {
     var lastRequestCookies: String { storage.lastRequestCookies }
     var sawAuthorizationHeader: Bool { storage.sawAuthorizationHeader }
 
-    init?(routes: [String: HTTPResponseDataBridge], protocol: HTTPServerProtocolBridge, port: UInt16) {
-        let core = try? HTTPServerCore(protocol: .init(`protocol`), responses: routes.mapValues(\.storage), port: port == 0 ? nil : port)
+    init?(
+        routes: [String: HTTPResponseDataBridge],
+        protocol: HTTPServerProtocolBridge,
+        port: UInt16,
+        identity: SecIdentity?,
+        certificateVerifier: sec_protocol_verify_t?
+    ) {
+        let core = try? HTTPServerCore(
+            protocol: .init(`protocol`),
+            responses: routes.mapValues(\.storage),
+            port: port == 0 ? nil : port,
+            identity: identity,
+            verifier: certificateVerifier
+        )
+        guard let core else {
+            return nil
+        }
+        self.storage = core
+    }
+
+    @objc(initWithProtocol:connectionHandler:)
+    init?(
+        withProtocol protocol: HTTPServerProtocolBridge,
+        connectionHandler: @escaping (nw_connection_t) -> Void
+    ) {
+        let core = try? HTTPServerCore(protocol: .init(`protocol`)) { connection in
+            connectionHandler(connection.nw)
+        }
         guard let core else {
             return nil
         }

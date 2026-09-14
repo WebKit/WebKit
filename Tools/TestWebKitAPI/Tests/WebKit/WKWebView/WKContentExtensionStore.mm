@@ -367,18 +367,21 @@ TEST_F(WKContentRuleListStoreTest, CrossOriginCookieBlocking)
             while (true) {
                 auto request = co_await connection.awaitableReceiveHTTPRequest();
                 auto path = HTTPServer::parsePath(request);
+                std::optional<bool> pendingCookieResult;
                 auto response = [&] {
                     if (path == "/com"_s)
                         return HTTPResponse({ { "Set-Cookie"_s, "testCookie=42; Path=/; SameSite=None; Secure"_s } }, "<script>alert('hi')</script>"_s);
                     if (path == "/org"_s)
                         return HTTPResponse("<script>fetch('https://example.com/cookie-check', {credentials: 'include'})</script>"_s);
                     if (path == "/cookie-check"_s) {
-                        requestHadCookieResult = contains(request.span(), "Cookie: testCookie=42"_span);
+                        pendingCookieResult = contains(request.span(), "Cookie: testCookie=42"_span);
                         return HTTPResponse("hi"_s);
                     }
                     RELEASE_ASSERT_NOT_REACHED();
                 }();
                 co_await connection.awaitableSend(response.serialize());
+                if (pendingCookieResult)
+                    requestHadCookieResult = pendingCookieResult;
             }
         }, HTTPServer::Protocol::HttpsProxy);
 

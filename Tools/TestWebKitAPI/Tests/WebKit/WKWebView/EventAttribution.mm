@@ -615,7 +615,7 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     cleanUpDaemon(tempDir);
 }
 
-static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
+static HTTPServer setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigationDelegate> navigationDelegate, NSString *html, id<WKUIDelegate> uiDelegate)
 {
     HTTPServer server({ { "/app/id1234567890"_s, { "hello"_s } } }, HTTPServer::Protocol::HttpsProxy);
 
@@ -650,6 +650,8 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
     webView.get().navigationDelegate = navigationDelegate;
 
     [webView clickOnElementID:@"anchorid"];
+
+    return server;
 }
 
 const char* expectedSKAdNetworkConsoleMessage = "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3";
@@ -667,7 +669,7 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
         consoleMessages.append(log);
     };
-    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
+    auto server = setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
@@ -694,7 +696,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkAboutBlank)
     NSString *linkToAppStoreHTMLWithAboutBlank = @"<body>"
     "    <a target='_blank' href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
     "</body>";
-    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTMLWithAboutBlank, uiDelegate.get());
+    auto server = setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTMLWithAboutBlank, uiDelegate.get());
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], expectedSKAdNetworkConsoleMessage);
@@ -715,7 +717,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
     uiDelegate.get().didReceiveConsoleLogForTesting = ^(NSString *log) {
         consoleMessages.append(log);
     };
-    setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
+    auto server = setupSKAdNetworkTest(consoleMessages, delegate.get(), linkToAppStoreHTML, uiDelegate.get());
 
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();

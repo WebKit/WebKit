@@ -26,6 +26,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import <Network/Network.h>
 #import <Security/Security.h>
 
 typedef NS_ENUM(uint8_t, HTTPServerProtocolBridge) {
@@ -57,7 +58,8 @@ NS_SWIFT_UI_ACTOR
 NS_SWIFT_UI_ACTOR
 @interface HTTPServerBridge : NSObject
 - (instancetype)init NS_UNAVAILABLE;
-- (nullable instancetype)initWithRoutes:(NSDictionary<NSString *, HTTPResponseDataBridge *> *)routes protocol:(HTTPServerProtocolBridge)protocol port:(uint16_t)port;
+- (nullable instancetype)initWithRoutes:(NSDictionary<NSString *, HTTPResponseDataBridge *> *)routes protocol:(HTTPServerProtocolBridge)protocol port:(uint16_t)port identity:(nullable SecIdentityRef)identity certificateVerifier:(nullable sec_protocol_verify_t)verifier;
+- (nullable instancetype)initWithProtocol:(HTTPServerProtocolBridge)protocol connectionHandler:(void (^)(nw_connection_t))handler;
 
 @property (readonly) uint16_t port;
 @property (readonly) NSInteger totalRequests;
