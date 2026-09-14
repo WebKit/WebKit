@@ -217,6 +217,43 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventForSubframe)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventSubframeTypeFilter)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/subframe.html'></iframe>"_s } },
+        { "/subframe.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (!details?.url?.includes('/subframe.html'))",
+        @"    return",
+        @"  browser.test.notifyPass()",
+        @"}, { urls: [ '<all_urls>' ], types: [ 'sub_frame' ] })",
+
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (!details?.url?.includes('/subframe.html'))",
+        @"    return",
+        @"  browser.test.notifyFail('the main_frame type filter should not match a subframe load')",
+        @"}, { urls: [ '<all_urls>' ], types: [ 'main_frame' ] })",
+
+        @"browser.test.sendMessage('Load Tab')"
+    ]);
+
+    auto manager = Util::loadExtension(webRequestManifest, @{ @"background.js": backgroundScript });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndFormData)
 {
     auto *pageScript = Util::constructScript(@[
