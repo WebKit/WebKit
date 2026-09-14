@@ -314,7 +314,6 @@ Tests/WebKit/WKWebView/JSBuffer.mm @nonARC
 Tests/WebKit/WKWebView/SwitchInputTests.mm @nonARC
 Tests/WebKit/WKWebView/SystemColors.mm @nonARC
 Tests/WebKit/WKWebView/SystemPreview.mm @nonARC
-Tests/WebKit/WKWebView/TextPlaceholderTests.mm @nonARC
 Tests/WebKit/WKWebView/TLSDeprecation.mm @nonARC
 Tests/WebKit/WKWebView/TabOutOfWebView.mm @nonARC
 Tests/WebKit/WKWebView/TestAwakener.mm @nonARC
@@ -322,9 +321,6 @@ Tests/WebKit/WKWebView/SOAuthorizationTests.mm @nonARC
 Tests/WebKit/WKWebView/TestURLSchemeHandler.mm @nonARC
 Tests/WebKit/WKWebView/TextExtractionTests.mm @nonARC
 Tests/WebKit/WKWebView/TextManipulation.mm @nonARC
-Tests/WebKit/WKWebView/TextSize.mm @nonARC
-Tests/WebKit/WKWebView/TextWidth.mm @nonARC
-Tests/WebKit/WKWebView/TimeZoneOverride.mm @nonARC
 Tests/WebKit/WKWebView/UIDelegate.mm @nonARC
 Tests/WebKit/WKWebView/UnifiedPDFTests.mm @nonARC
 Tests/WebKit/WKWebView/UploadDirectory.mm @nonARC

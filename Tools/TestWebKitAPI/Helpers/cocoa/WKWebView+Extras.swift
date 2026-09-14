@@ -54,9 +54,9 @@ extension WKWebView {
     ///
     /// - Parameters:
     ///   - html: The markup to load.
-    ///   - baseURL: The base URL to resolve relative URLs against, if any.
+    ///   - baseURL: The base URL to resolve relative URLs against. Defaults to the test resources bundle.
     /// - Throws: The navigation error if the provisional load fails.
-    public func load(html: String, baseURL: URL? = nil) async throws {
+    public func load(html: String, baseURL: URL? = Bundle.testResources.resourceURL) async throws {
         loadHTMLString(html, baseURL: baseURL)
         try await _test_waitForDidFinishNavigation()
     }

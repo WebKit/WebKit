@@ -25,7 +25,11 @@
 
 #import <WebKit/WKWebViewConfiguration.h>
 
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 @interface WKWebViewConfiguration (TestWebKitAPIExtras)
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className;
 + (instancetype)_test_configurationWithTestPlugInClassName:(NSString *)className configureJSCForTesting:(BOOL)value;
 @end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

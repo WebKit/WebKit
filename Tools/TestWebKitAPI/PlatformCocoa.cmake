@@ -668,6 +668,10 @@ webkit_target_add_swift_options(TestWebKitAPILibrary
 list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/CodingTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift
+    Tests/WebKit/WKWebView/TextPlaceholderTests.swift
+    Tests/WebKit/WKWebView/TextSize.swift
+    Tests/WebKit/WKWebView/TextWidth.swift
+    Tests/WebKit/WKWebView/TimeZoneOverride.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAction.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPIAlarms.swift
     Tests/WebKit/WKWebView/WKWebExtensionAPICommands.swift

@@ -47,7 +47,7 @@ struct TextFragmentTests {
         sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         // Load an empty baseURL-less string, otherwise using the same baseURL (modulo the fragment) does a same-document navigation.
-        try await webView.load(html: "")
+        try await webView.load(html: "", baseURL: nil)
         try await webView.load(html: pageContent, baseURL: URL(string: "http://example.com/\(textFragment)"))
 
         #expect(await webView._getTextFragmentMatch() == expectedResult, sourceLocation: sourceLocation)
