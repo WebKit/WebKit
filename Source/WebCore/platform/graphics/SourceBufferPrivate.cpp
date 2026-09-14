@@ -609,9 +609,17 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
 {
     assertIsCurrent(m_dispatcher.get());
 
+    const uint64_t contentSize = totalTrackBufferSizeInBytes();
+    const uint64_t maximumBufferSize = m_maximumBufferSize;
+
     SourceBufferEvictionData evictionData {
-        .contentSize = totalTrackBufferSizeInBytes(),
+        .contentSize = contentSize,
         .evictableSize = [&]() -> int64_t {
+            // Only scan for evictable content once the buffer is at least half full;
+            // below that the result is unused and eviction cannot be triggered yet.
+            if (contentSize < maximumBufferSize / 2)
+                return 0;
+
             RefPtr mediaSource = m_mediaSource.get();
             if (!mediaSource)
                 return 0;
@@ -659,7 +667,7 @@ void SourceBufferPrivate::computeEvictionData(ComputeEvictionDataRule rule)
             });
             return evictableSize;
         }(),
-        .maximumBufferSize = m_maximumBufferSize,
+        .maximumBufferSize = maximumBufferSize,
         .numMediaSamples = [&]() -> size_t {
             const size_t evictionThreshold = platformEvictionThreshold();
             if (!evictionThreshold)
