@@ -608,6 +608,7 @@ public:
     virtual void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&) = 0;
     virtual void updateFocusedElementInformation(const FocusedElementInformation&) = 0;
     virtual void elementDidBlur() = 0;
+    virtual bool hasFocusedElement() const = 0;
     virtual void focusedElementDidChangeInputMode(WebCore::InputMode) = 0;
     virtual void didUpdateEditorState() = 0;
     virtual bool isFocusingElement() = 0;

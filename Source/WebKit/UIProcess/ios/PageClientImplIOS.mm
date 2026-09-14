@@ -817,6 +817,11 @@ void PageClientImpl::elementDidBlur()
     [contentView() _elementDidBlur];
 }
 
+bool PageClientImpl::hasFocusedElement() const
+{
+    return [contentView() _hasFocusedElement];
+}
+
 void PageClientImpl::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 {
     [contentView() _didUpdateInputMode:mode];

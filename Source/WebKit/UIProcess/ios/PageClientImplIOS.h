@@ -206,6 +206,7 @@ private:
     void didProgrammaticallyClearFocusedElement(WebCore::ElementContext&&) final;
     void updateFocusedElementInformation(const FocusedElementInformation&) final;
     void elementDidBlur() override;
+    bool hasFocusedElement() const final;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didUpdateEditorState() override;
     void reconcileEnclosingScrollViewContentOffset(EditorState&) final;

@@ -912,14 +912,19 @@ void WebPageProxy::didProgrammaticallyClearFocusedElement(WebCore::ElementContex
 
 void WebPageProxy::elementDidFocus(IPC::Connection& connection, const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData& userData)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+
     m_pendingInputModeChange = std::nullopt;
-    m_focusedElementProcessID = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
+    m_focusedElementProcessID = process->coreProcessIdentifier();
 
     RefPtr pageClient = this->pageClient();
     if (!pageClient)
         return;
 
-    RefPtr userDataObject = WebProcessProxy::fromConnection(connection)->transformHandlesToObjects(protect(userData.object())).get();
+    if (pageClient->hasFocusedElement())
+        blurPreviousNode = true;
+
+    RefPtr userDataObject = process->transformHandlesToObjects(protect(userData.object())).get();
 
     convertFocusedElementInformationRectsToMainFrameCoordinates(information,
         [weakThis = WeakPtr { *this }, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject = WTF::move(userDataObject)] (FocusedElementInformation convertedInfo) {
