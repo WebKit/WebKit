@@ -314,6 +314,7 @@ public:
     inline const FloatingObjectSet* floatingObjectSet() const LIFETIME_BOUND; // Defined in RenderBlockFlowInlines.h
 
     FloatingObject& insertFloatingBox(RenderBox&);
+    void placeFloatingBox(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
 
     inline LayoutUnit logicalTopForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h
     inline LayoutUnit logicalBottomForFloat(const FloatingObject&) const; // Defined in RenderBlockFlowInlines.h

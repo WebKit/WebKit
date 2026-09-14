@@ -1,0 +1,14 @@
+<style>
+* { padding-inline-end: 672px; -webkit-text-stroke: 0vh; max-width: max-content; }
+.left { float: left; }
+.right, :nth-of-type(2) { float: right; }
+</style>
+PASS if no crash.
+<span>
+<embed type="g" class="left">b
+<dl class="right"></dl>
+<h2 style="writing-mode: sideways-rl">Nyx</h2>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

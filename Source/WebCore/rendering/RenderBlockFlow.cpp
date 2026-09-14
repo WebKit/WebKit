@@ -2816,6 +2816,18 @@ FloatingObject& RenderBlockFlow::insertFloatingBox(RenderBox& floatBox)
     return *m_floatingObjects->add(FloatingObject::create(floatBox));
 }
 
+void RenderBlockFlow::placeFloatingBox(FloatingObject& floatingObject, const LayoutRect& frameRect, LayoutSize marginOffset)
+{
+    ASSERT(m_floatingObjects);
+
+    if (floatingObject.isPlaced())
+        m_floatingObjects->removePlacedObject(&floatingObject);
+
+    floatingObject.setFrameRect(frameRect);
+    floatingObject.setMarginOffset(marginOffset);
+    m_floatingObjects->addPlacedObject(&floatingObject);
+}
+
 void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
 {
     if (!m_floatingObjects)
