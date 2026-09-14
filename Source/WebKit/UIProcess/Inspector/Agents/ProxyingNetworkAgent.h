@@ -44,6 +44,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
+namespace WebCore {
+class NetworkLoadMetrics;
+}
+
 namespace WebKit {
 class WebProcessProxy;
 }
@@ -103,7 +107,7 @@ private:
     void requestWillBeSent(ResourceID, FrameID, const String& loaderId, const String& targetID, const String& documentURL, const WebCore::ResourceRequest&, std::optional<WebCore::ResourceResponse>&&, ResourceType, double timestamp, double walltime);
     void responseReceived(ResourceID, FrameID, const String& loaderId, const WebCore::ResourceResponse&, ResourceType, double timestamp);
     void dataReceived(ResourceID, int dataLength, int encodedDataLength, double timestamp);
-    void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL);
+    void loadingFinished(ResourceID, double timestamp, const String& sourceMapURL, const WebCore::NetworkLoadMetrics&);
     void loadingFailed(ResourceID, double timestamp, const String& errorText, bool canceled);
     void requestServedFromMemoryCache(ResourceID, FrameID, const String& loaderId, const String& documentURL, const WebCore::ResourceResponse&, ResourceType, const String& sourceMapURL, uint64_t bodySize, double timestamp);
 
