@@ -97,6 +97,7 @@ static ResourceRequest makePrefetchRequest(URL&& url, const Vector<String>& tags
 
     ResourceRequest request { WTF::move(url) };
     request.setPriority(ResourceLoadPriority::VeryLow);
+    request.setInitialPriority(ResourceLoadPriority::VeryLow);
 
     // https://html.spec.whatwg.org/multipage/speculative-loading.html#the-sec-speculation-tags-header
     if (!tags.isEmpty()) {
