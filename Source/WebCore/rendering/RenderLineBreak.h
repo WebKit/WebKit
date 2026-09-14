@@ -41,7 +41,7 @@ public:
 
     IntRect linesBoundingBox() const;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
+    Vector<FloatRect> localBorderBoxRects() const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const final;
 
     void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
@@ -72,6 +72,7 @@ private:
     LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutRect borderBoundingBox() const final { return LayoutRect(LayoutPoint(), linesBoundingBox().size()); }
+    LayoutRect NODELETE borderBoxRectInContainer() const final { return linesBoundingBox(); }
     LayoutRect frameRectForStickyPositioning() const final { ASSERT_NOT_REACHED(); return { }; }
     RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final { return { }; }
 

@@ -83,15 +83,12 @@ IntRect RenderLineBreak::linesBoundingBox() const
     return enclosingIntRect(run->visualRectIgnoringBlockDirection());
 }
 
-void RenderLineBreak::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+Vector<FloatRect> RenderLineBreak::localBorderBoxRects() const
 {
     auto box = InlineIterator::boxFor(*this);
     if (!box)
-        return;
-
-    auto rect = LayoutRect { box->visualRectIgnoringBlockDirection() };
-    rect.moveBy(accumulatedOffset);
-    rects.append(rect);
+        return { };
+    return { box->visualRectIgnoringBlockDirection() };
 }
 
 void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const

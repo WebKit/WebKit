@@ -660,11 +660,6 @@ LayoutRect RenderSVGRoot::overflowClipRect(const LayoutPoint& location, OverlayS
     return clipRect;
 }
 
-void RenderSVGRoot::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
-{
-    rects.append({ accumulatedOffset, borderBoxSize() });
-}
-
 void RenderSVGRoot::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow(); fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))

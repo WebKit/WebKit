@@ -50,7 +50,7 @@ protected:
 private:
     void element() const = delete;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const override;
+    Vector<FloatRect> localBorderBoxRects() const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     FloatRect referenceBoxRect(CSSBoxType) const final;

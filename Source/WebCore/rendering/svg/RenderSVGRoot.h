@@ -115,7 +115,6 @@ private:
 
     void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const final;
 
-    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
 
     bool canBeSelectionLeaf() const final { return false; }

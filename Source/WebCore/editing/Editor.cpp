@@ -2507,12 +2507,12 @@ void Editor::closeTyping()
     TypingCommand::closeTyping(protect(m_document));
 }
 
-RenderInline* Editor::writingSuggestionRenderer() const
+RenderBoxModelObject* Editor::writingSuggestionRenderer() const
 {
     return m_writingSuggestionRenderer.get();
 }
 
-void Editor::setWritingSuggestionRenderer(RenderInline& renderer)
+void Editor::setWritingSuggestionRenderer(RenderBoxModelObject& renderer)
 {
     m_writingSuggestionRenderer = renderer;
 }
