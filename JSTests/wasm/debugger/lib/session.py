@@ -19,6 +19,7 @@ Connection handshake:
   so no unexpected "Process 1 stopped" events pollute the test command flow.
 """
 
+import collections
 import os
 import queue
 import re
@@ -94,6 +95,7 @@ class DebugSession:
         self._verbose = verbose
         self._name = name
         self._jsc_ready = threading.Event()
+        self._jsc_socket_error = None
         self._jsc = None  # initialized before try so close() is always safe to call
         self._lldb = None
 
@@ -129,6 +131,11 @@ class DebugSession:
                 raise TimeoutError(
                     f"[{self._name}] JSC did not print DEBUGGER_READY within 60 s"
                 )
+
+            # DEBUGGER_READY comes from the JS fixture and says nothing about the server: a
+            # failed bind otherwise surfaces 60 s later as a misleading LLDB timeout.
+            if self._jsc_socket_error:
+                raise RuntimeError(f"[{self._name}] {self._jsc_socket_error}")
 
             # Step 3 — all modules are loaded; connect LLDB now. Any module-load
             # notifications that fired before this point are irrelevant to LLDB.
@@ -182,8 +189,7 @@ class DebugSession:
                 "see cmd() source for details."
             )
 
-        if self._verbose:
-            print(f"[{self._name}][LLDB]> {command}")
+        # No echo: LLDB prints "(lldb) <command>" itself, reported by the reader as [LLDB][stdout].
         self._lldb.stdin.write(f"{command}\n")
         self._lldb.stdin.flush()
 
@@ -223,18 +229,22 @@ class DebugSession:
         compiled = [re.compile(re.escape(p)) for p in patterns]
         matched = set()
         deadline = time.monotonic() + timeout
+        # On timeout, what LLDB actually said distinguishes a wrong-reason stop from no stop.
+        seen = collections.deque(maxlen=20)
 
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 unmatched = [patterns[i] for i in range(len(patterns)) if i not in matched]
+                tail = "\n      ".join(seen) if seen else "(LLDB produced no output at all)"
                 raise TimeoutError(
-                    f"[{self._name}] Timed out waiting for: {unmatched}"
+                    f"[{self._name}] Timed out waiting for: {unmatched}\n"
+                    f"    last {len(seen)} line(s) from LLDB:\n      {tail}"
                 )
             try:
                 line = self._q.get(timeout=min(remaining, 0.1))
-                if self._verbose:
-                    print(f"[{self._name}][LLDB] {line}")
+                seen.append(line)
+                # No echo: the reader already printed this line; echoing here doubled the log.
                 for i, pat in enumerate(compiled):
                     if i not in matched and pat.search(line):
                         matched.add(i)
@@ -254,6 +264,10 @@ class DebugSession:
                     continue
                 if self._verbose:
                     print(f"[{self._name}][{proc_name}][{kind}] {line}")
+                # JSC only emits this under --verbose-wasm-debugger; without it a failed bind is
+                # silent and the session still fails, just with the slower LLDB timeout.
+                if "[Debugger] Failed to " in line:
+                    self._jsc_socket_error = line
                 if ready_event and "DEBUGGER_READY" in line:
                     ready_event.set()
                 if to_queue:

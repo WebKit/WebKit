@@ -1539,12 +1539,12 @@ class WasmUnreachableFaultTestCase:
     def execute(self):
         for _ in range(10):
             self.session.cmd("c", patterns=["Process 1 stopped"])
-            self.session.cmd("dis", patterns=["->  0x4000000000000024: unreachable"])
+            self.session.cmd("dis", patterns=["->  0x4000000000000025: unreachable"])
 
         self.session.cmd(
             "bt",
             patterns=[
-                "frame #0: 0x4000000000000024",
+                "frame #0: 0x4000000000000025",
                 "frame #1: 0xc000000000000000",
             ]
         )
@@ -1555,10 +1555,10 @@ class BreakpointOnUnreachableTestCase:
 
     def execute(self):
         # A breakpoint on unreachable reports the breakpoint first, then the trap.
-        self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000000000025", patterns=["Breakpoint 1"])
         self.session.cmd(
             "c",
-            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000024: unreachable"],
+            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000025: unreachable"],
         )
         self.session.cmd(
             "c",
@@ -1571,10 +1571,10 @@ class StepOffUnreachableTestCase:
 
     def execute(self):
         # Unreachable has no successor instruction, so a step off it lands on the trap.
-        self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000000000025", patterns=["Breakpoint 1"])
         self.session.cmd(
             "c",
-            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000024: unreachable"],
+            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000025: unreachable"],
         )
         self.session.cmd("si", patterns=["Unreachable code should not be executed"])
 
@@ -1979,14 +1979,9 @@ class MultiInstanceUnreachableOwnSiteTestCase:
         # A site on instance 0's own `unreachable`. The patch byte and the instruction are both
         # 0x00, so there is no displaced opcode to replay on resume -- the trap has to propagate.
         self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 1"])
-        # FIXME: This cannot be looped, so the breakpoint is only checked on its first hit.
-        # Resuming from a site, LLDB runs a z0 / step / Z0 dance, which assumes the step executes
-        # one instruction and stops. At a wasm trap there is no next wasm instruction -- the trap
-        # unwinds to JS, which can catch it -- so step() resumes all instead. The step therefore
-        # covers unbounded execution: the JS catch runs, the loop calls the export again, and the
-        # interpreter reaches this byte once more while the site is still lifted, so that hit is
-        # reported as a plain trap. Z0 arrives only after the stop, too late to catch it. Net
-        # effect: the breakpoint reports on the first hit and the trap on every hit after.
+        # FIXME: Cannot be looped; the breakpoint only reports on its first hit. LLDB's z0/step/Z0
+        # dance assumes the step retires one instruction, but a wasm trap unwinds to JS, so step()
+        # resumes all and the JS catch re-enters the export while the site is still lifted.
         self.session.cmd(
             "c",
             patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000024: unreachable"],

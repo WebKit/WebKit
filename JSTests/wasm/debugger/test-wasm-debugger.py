@@ -5,6 +5,7 @@ WebAssembly Debugger Test Runner
 
 import argparse
 import os
+import socket
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -119,9 +120,14 @@ def main():
     else:
         tests = all_tests
 
-    # Assign stable ports: index in all_tests (not filtered list) so ports
-    # don't shift when --test filters a subset.
-    port_map = {cls: 12340 + i for i, cls in enumerate(all_tests)}
+    # OS-assigned ports: a fixed base is collidable by anything else on the machine, and the bind
+    # failure is silent. Every probe is held until all ports are picked, so they cannot repeat.
+    probes = [socket.socket() for _ in all_tests]
+    for probe in probes:
+        probe.bind(("127.0.0.1", 0))
+    port_map = {cls: probe.getsockname()[1] for cls, probe in zip(all_tests, probes)}
+    for probe in probes:
+        probe.close()
     tasks = [(cls, port_map[cls], env, verbose, args.verbose_wasm_debugger)
              for cls in tests]
 

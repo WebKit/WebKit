@@ -14,12 +14,19 @@ var wasm = new Uint8Array([
 
     // [0x1f] Code section
     0x0a,       // section id = 10
-    0x05,       // section size = 5
+    0x06,       // section size = 6
     0x01,       // 1 function body
-    0x03,       // body size = 3
+    0x04,       // body size = 4
     0x00,       // 0 local declarations
-    0x00,       // [0x24] unreachable
-    0x0b        // [0x25] end
+    // The leading nop is load-bearing. A prologue interrupt is reported at the first body
+    // instruction, so with `unreachable` first the PC is already on the site at resume, and
+    // LLDB's lift dance (z0, s, Z0) can never complete: the step traps instead of retiring an
+    // instruction, so the PC never moves and Z0 arrives after the stop.
+    // FIXME: Drop the nop once stepping off a trapping site works -- same limitation as
+    // MultiInstanceUnreachableOwnSiteTestCase.
+    0x01,       // [0x24] nop
+    0x00,       // [0x25] unreachable
+    0x0b        // [0x26] end
 ]);
 
 var module = new WebAssembly.Module(wasm);
