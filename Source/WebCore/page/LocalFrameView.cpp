@@ -3500,9 +3500,18 @@ void LocalFrameView::scrollToFocusedElementInternal()
 
     bool insideFixed;
     auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
-    auto anchorRectWithScrollMargin = absoluteBounds.marginRect;
     auto anchorRect = absoluteBounds.anchorRect;
-    LocalFrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, OnlyAllowForwardScrolling::No, AllowScrollingOverflowHidden::Yes, anchorRect });
+    LocalFrameView::scrollRectToVisible(anchorRect, *renderer, insideFixed, {
+        .revealMode = m_selectionRevealModeForFocusedElement,
+        .alignX = ScrollAlignment::alignCenterIfNeeded,
+        .alignY = ScrollAlignment::alignCenterIfNeeded,
+        .shouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No,
+        .behavior = ScrollBehavior::Auto,
+        .onlyAllowForwardScrolling = OnlyAllowForwardScrolling::No,
+        .allowScrollingOverflowHidden = AllowScrollingOverflowHidden::Yes,
+        .visibilityCheckRect = anchorRect,
+        .scrollMargin = absoluteBounds.scrollMargin
+    });
 }
 
 void LocalFrameView::textFragmentIndicatorTimerFired()
@@ -4684,9 +4693,13 @@ void LocalFrameView::scrollToAnchor()
     cancelScheduledScrolls();
 
     LayoutRect rect;
+    LayoutBoxExtent scrollMargin;
     bool insideFixed = false;
-    if (anchorNode != m_frame->document() && anchorNode->renderer())
-        rect = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
+    if (anchorNode != m_frame->document() && anchorNode->renderer()) {
+        auto bounds = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        rect = bounds.anchorRect;
+        scrollMargin = bounds.scrollMargin;
+    }
 
     LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 
@@ -4709,7 +4722,13 @@ void LocalFrameView::scrollToAnchor()
 
     adjustScrollAlignmentForScrollSnapAlign(renderer, &alignX, &alignY);
 
-    scrollRectToVisible(rect, renderer, insideFixed, { SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::No });
+    scrollRectToVisible(rect, renderer, insideFixed, {
+        .revealMode = SelectionRevealMode::Reveal,
+        .alignX = alignX,
+        .alignY = alignY,
+        .shouldAllowCrossOriginScrolling = ShouldAllowCrossOriginScrolling::No,
+        .scrollMargin = scrollMargin
+    });
 
     if (AXObjectCache* cache = protect(m_frame->document())->existingAXObjectCache())
         cache->handleScrolledToAnchor(*anchorNode);

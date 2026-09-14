@@ -1919,11 +1919,18 @@ LayoutRect RenderLayerScrollableArea::scrollRectToVisible(const LayoutRect& abso
     scrollingViewportWithPadding.contract(scrollPadding);
 
     auto localExposeRect = computeLocalExposeRect(absoluteRect, box);
+
+    // Add the scroll-margin outsets in this container's coordinate space, and thread the
+    // unmargined rect back to ancestor scrollers so each applies the margin in its own space.
+    // https://drafts.csswg.org/css-scroll-snap-1/#scroll-margin
+    auto localExposeRectWithMargin = localExposeRect;
+    localExposeRectWithMargin.expand(options.scrollMargin);
+
     std::optional<LayoutRect> localVisiblityRect;
     if (options.visibilityCheckRect)
         localVisiblityRect = computeLocalExposeRect(*options.visibilityCheckRect, box);
 
-    auto revealRect = getRectToExposeForScrollIntoView(scrollingViewportWithPadding, localExposeRect, options.alignX, options.alignY, localVisiblityRect);
+    auto revealRect = getRectToExposeForScrollIntoView(scrollingViewportWithPadding, localExposeRectWithMargin, options.alignX, options.alignY, localVisiblityRect);
     revealRect.move(-scrollingViewportWithPadding.x(), -scrollingViewportWithPadding.y());
 
     auto scrollPositionOptions = ScrollPositionChangeOptions::createProgrammatic();
