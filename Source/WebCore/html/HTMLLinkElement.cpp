@@ -577,7 +577,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
         m_sheet->contents().setAsLoadedFromOpaqueSource();
 }
 
-void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet* cachedStyleSheet)
+void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     unblockRendering();
     if (!isConnected()) {
@@ -592,8 +592,8 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     // Completing the sheet load may cause scripts to execute.
     Ref<HTMLLinkElement> protectedThis(*this);
 
-    if (!cachedStyleSheet->errorOccurred() && !matchIntegrityMetadata(*cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)) {
-        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load stylesheet "_s, integrityMismatchDescription(*cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)));
+    if (!cachedStyleSheet.errorOccurred() && !matchIntegrityMetadata(cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)) {
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Cannot load stylesheet "_s, integrityMismatchDescription(cachedStyleSheet, m_integrityMetadataForPendingSheetRequest)));
 
         m_loading = false;
         sheetLoaded();
@@ -604,10 +604,10 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     CSSParserContext parserContext(document.get(), baseURL, charset);
     auto cachePolicy = frame->loader().subresourceCachePolicy(baseURL);
 
-    if (auto restoredSheet = const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->restoreParsedStyleSheet(parserContext, cachePolicy, frame->loader())) {
+    if (auto restoredSheet = const_cast<CachedCSSStyleSheet&>(cachedStyleSheet).restoreParsedStyleSheet(parserContext, cachePolicy, frame->loader())) {
         ASSERT(restoredSheet->isCacheable());
         ASSERT(!restoredSheet->isLoading());
-        initializeStyleSheet(restoredSheet.releaseNonNull(), *cachedStyleSheet, parserContext);
+        initializeStyleSheet(restoredSheet.releaseNonNull(), cachedStyleSheet, parserContext);
 
         m_loading = false;
         sheetLoaded();
@@ -616,7 +616,7 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     }
 
     auto styleSheet = StyleSheetContents::create(href, parserContext);
-    initializeStyleSheet(styleSheet.copyRef(), *cachedStyleSheet, parserContext);
+    initializeStyleSheet(styleSheet.copyRef(), cachedStyleSheet, parserContext);
 
     // FIXME: Set the visibility option based on m_sheet being clean or not.
     // Best approach might be to set it on the style sheet content itself or its context parser otherwise.
@@ -628,11 +628,11 @@ void HTMLLinkElement::setCSSStyleSheet(const String& href, const URL& baseURL, A
     }
 
     m_loading = false;
-    styleSheet.get().notifyLoadedSheet(cachedStyleSheet);
+    styleSheet.get().notifyLoadedSheet(&cachedStyleSheet);
     styleSheet.get().checkLoaded();
 
     if (styleSheet.get().isCacheable())
-        const_cast<CachedCSSStyleSheet*>(cachedStyleSheet)->saveParsedStyleSheet(WTF::move(styleSheet));
+        const_cast<CachedCSSStyleSheet&>(cachedStyleSheet).saveParsedStyleSheet(WTF::move(styleSheet));
 }
 
 bool HTMLLinkElement::styleSheetIsLoading() const

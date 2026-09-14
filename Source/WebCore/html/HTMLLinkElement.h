@@ -122,7 +122,7 @@ private:
     void initializeStyleSheet(Ref<StyleSheetContents>&&, const CachedCSSStyleSheet&, const CSSParserContext&);
 
     // from CachedResourceClient
-    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet*) final;
+    void setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet&) final;
     bool sheetLoaded() final;
     void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred) final;
     void startLoadingDynamicSheet() final;
