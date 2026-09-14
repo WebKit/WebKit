@@ -130,6 +130,8 @@ private:
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::ScriptExecutionContextIdentifier ownerDocumentIdentifier) override;
     void scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier, const Vector<WebCore::FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<WebCore::FrameIdentifier>& attachedOwnerFrameIdentifiers, const WebCore::SecurityOriginData&) override;
     void scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier, WebCore::ScriptExecutionContextIdentifier) override;
+    void scriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier, const WebCore::SecurityOriginData&) override;
+    void scriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
 
     using DedicatedWorkerRealmSnapshot = std::tuple<String, WebCore::FrameIdentifier, RealmIdentifier, RealmIdentifier, WebCore::SecurityOriginData>;
@@ -166,6 +168,7 @@ private:
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
     HashMap<DedicatedWorkerRealmKey, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealmInfo;
     HashMap<WebCore::ScriptExecutionContextIdentifier, RealmIdentifier> m_sharedWorkerRealmIdentifiersByContextIdentifier;
+    HashMap<WebCore::ScriptExecutionContextIdentifier, RealmIdentifier> m_serviceWorkerRealmIdentifiersByExecutionContextIdentifier;
 #endif
 };
 

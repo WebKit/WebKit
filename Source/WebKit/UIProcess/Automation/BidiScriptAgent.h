@@ -34,6 +34,7 @@
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <optional>
@@ -100,6 +101,10 @@ public:
     void notifySharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier, RealmIdentifier);
     void removeSharedWorkerRealmsForProcess(WebCore::ProcessIdentifier);
     std::optional<bool> sharedWorkerRealmMatches(RealmIdentifier, WebCore::SharedWorkerIdentifier) const;
+    void notifyServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier, RealmIdentifier, const WebCore::SecurityOriginData&);
+    void notifyServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier, RealmIdentifier);
+    void removeServiceWorkerRealmsForProcess(WebCore::ProcessIdentifier);
+    std::optional<bool> serviceWorkerRealmMatches(RealmIdentifier, WebCore::ScriptExecutionContextIdentifier) const;
 
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
     std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
@@ -167,6 +172,7 @@ private:
     HashMap<RealmIdentifier, DedicatedWorkerRealmInfo> m_dedicatedWorkerRealms;
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
     HashMap<RealmIdentifier, WebCore::SharedWorkerIdentifier> m_sharedWorkerIdentifiersByRealm;
+    HashMap<WebCore::ScriptExecutionContextIdentifier, RealmIdentifier> m_serviceWorkerRealmIdentifiersByExecutionContextIdentifier;
 };
 
 } // namespace WebKit

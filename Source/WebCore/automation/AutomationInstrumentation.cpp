@@ -143,6 +143,20 @@ void AutomationInstrumentation::scriptSharedWorkerRealmDestroyed(SharedWorkerIde
         client->scriptSharedWorkerRealmDestroyed(workerIdentifier, contextIdentifier);
 }
 
+void AutomationInstrumentation::scriptServiceWorkerRealmCreated(ScriptExecutionContextIdentifier executionContextIdentifier, const SecurityOriginData& origin)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptServiceWorkerRealmCreated(executionContextIdentifier, origin);
+}
+
+void AutomationInstrumentation::scriptServiceWorkerRealmDestroyed(ScriptExecutionContextIdentifier executionContextIdentifier)
+{
+    ASSERT(isMainThread());
+    if (RefPtr client = automationClient().get())
+        client->scriptServiceWorkerRealmDestroyed(executionContextIdentifier);
+}
+
 Vector<AutomationInstrumentation::SharedWorkerRealmSnapshot> AutomationInstrumentation::sharedWorkerRealms()
 {
     ASSERT(isMainThread());

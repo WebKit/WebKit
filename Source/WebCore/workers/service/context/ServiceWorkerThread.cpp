@@ -528,12 +528,28 @@ WorkerObjectProxy& ServiceWorkerThread::workerObjectProxy() const
     return m_workerObjectProxy.get();
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback, ExecutionReadyCallback&& executionReadyCallback)
+#else
 void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
+#endif
 {
     m_state = State::Starting;
     startHeartBeatTimer();
 
-    WorkerThread::start([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }](auto& errorMessage) mutable {
+#if ENABLE(WEBDRIVER_BIDI)
+    Function<void(SecurityOriginData&&)> globalScopeCreatedCallback;
+    if (executionReadyCallback) {
+        globalScopeCreatedCallback = [executionReadyCallback = WTF::move(executionReadyCallback), weakThis = ThreadSafeWeakPtr { *this }](SecurityOriginData&& origin) mutable {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr globalScope = protectedThis->globalScope())
+                    executionReadyCallback(globalScope->identifier(), WTF::move(origin));
+            }
+        };
+    }
+#endif
+
+    Function<void(const String&)> workerStartedCallback = [callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }](auto& errorMessage) mutable {
 #ifndef NDEBUG
         if (!errorMessage.isEmpty())
             LOG_WITH_STREAM(ServiceWorker, stream << "Service worker thread failed to start: "_s << errorMessage);
@@ -544,7 +560,12 @@ void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
             doesHandleFetch = protectedThis->doesHandleFetch();
         }
         callback(errorMessage, doesHandleFetch);
-    });
+    };
+#if ENABLE(WEBDRIVER_BIDI)
+    WorkerThread::start(WTF::move(workerStartedCallback), WTF::move(globalScopeCreatedCallback));
+#else
+    WorkerThread::start(WTF::move(workerStartedCallback));
+#endif
 }
 
 void ServiceWorkerThread::finishedStarting()

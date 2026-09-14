@@ -59,6 +59,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 #include "IdentifierTypes.h"
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #endif
 
@@ -396,6 +397,8 @@ private:
     void scriptDedicatedWorkerRealmDestroyed(IPC::Connection&, const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier);
     void scriptSharedWorkerRealmStateChanged(IPC::Connection&, WebCore::SharedWorkerIdentifier, RealmIdentifier, Vector<WebCore::FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier>&& attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptSharedWorkerRealmDestroyed(IPC::Connection&, WebCore::SharedWorkerIdentifier, RealmIdentifier);
+    void scriptServiceWorkerRealmCreated(IPC::Connection&, WebCore::ScriptExecutionContextIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptServiceWorkerRealmDestroyed(IPC::Connection&, WebCore::ScriptExecutionContextIdentifier, RealmIdentifier);
 #endif
 
     // Platform-dependent implementations.

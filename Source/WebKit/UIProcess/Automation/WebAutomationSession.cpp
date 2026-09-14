@@ -3428,7 +3428,40 @@ void WebAutomationSession::scriptSharedWorkerRealmDestroyed(IPC::Connection& con
 
 void WebAutomationSession::webProcessDidDisconnect(WebCore::ProcessIdentifier processIdentifier)
 {
-    m_bidiProcessor->scriptAgent().removeSharedWorkerRealmsForProcess(processIdentifier);
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    scriptAgent.removeSharedWorkerRealmsForProcess(processIdentifier);
+    scriptAgent.removeServiceWorkerRealmsForProcess(processIdentifier);
+}
+
+void WebAutomationSession::scriptServiceWorkerRealmCreated(IPC::Connection& connection, WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, RealmIdentifier realmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(executionContextIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    if (auto existingRealmMatchesExecutionContext = scriptAgent.serviceWorkerRealmMatches(realmIdentifier, executionContextIdentifier))
+        MESSAGE_CHECK_BASE(*existingRealmMatchesExecutionContext, connection);
+    else
+        MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+
+    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
+    scriptAgent.notifyServiceWorkerRealmCreated(executionContextIdentifier, realmIdentifier, origin);
+}
+
+void WebAutomationSession::scriptServiceWorkerRealmDestroyed(IPC::Connection& connection, WebCore::ScriptExecutionContextIdentifier executionContextIdentifier, RealmIdentifier realmIdentifier)
+{
+    Ref process = WebProcessProxy::fromConnection(connection);
+    MESSAGE_CHECK_BASE(executionContextIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+    MESSAGE_CHECK_BASE(realmIdentifier.processIdentifier() == process->coreProcessIdentifier(), connection);
+
+    auto& scriptAgent = m_bidiProcessor->scriptAgent();
+    auto existingRealmMatchesExecutionContext = scriptAgent.serviceWorkerRealmMatches(realmIdentifier, executionContextIdentifier);
+    if (!existingRealmMatchesExecutionContext)
+        return;
+
+    MESSAGE_CHECK_BASE(*existingRealmMatchesExecutionContext, connection);
+    scriptAgent.notifyServiceWorkerRealmDestroyed(executionContextIdentifier, realmIdentifier);
 }
 #endif
 

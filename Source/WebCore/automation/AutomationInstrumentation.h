@@ -67,6 +67,8 @@ public:
     virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, ScriptExecutionContextIdentifier ownerDocumentIdentifier) = 0;
     virtual void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, ScriptExecutionContextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&) = 0;
     virtual void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier, ScriptExecutionContextIdentifier) = 0;
+    virtual void scriptServiceWorkerRealmCreated(ScriptExecutionContextIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptServiceWorkerRealmDestroyed(ScriptExecutionContextIdentifier) = 0;
 };
 
 
@@ -84,6 +86,8 @@ public:
     static void scriptSharedWorkerRealmStateChanged(SharedWorkerIdentifier, ScriptExecutionContextIdentifier, const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers, const SecurityOriginData&);
     static void scriptSharedWorkerRealmDestroyed(SharedWorkerIdentifier, ScriptExecutionContextIdentifier);
     static Vector<SharedWorkerRealmSnapshot> sharedWorkerRealms();
+    static void scriptServiceWorkerRealmCreated(ScriptExecutionContextIdentifier, const SecurityOriginData&);
+    static void scriptServiceWorkerRealmDestroyed(ScriptExecutionContextIdentifier);
 };
 
 } // namespace WebCore
