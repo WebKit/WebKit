@@ -219,7 +219,7 @@ public:
 
     virtual bool matches(const Element& element) const { return !m_tagName || element.hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
-    virtual bool propertyExistsInStyle(const EditingStyle& style) const { return style.m_mutableStyle && protect(style.style())->getPropertyCSSValue(m_propertyID); }
+    virtual bool propertyExistsInStyle(const EditingStyle& style) const { return style.m_mutableStyle && protect(style.style())->hasProperty(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element&, const EditingStyle&) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
 
@@ -279,8 +279,8 @@ public:
             return false;
 
         Ref mutableStyle = *style.m_mutableStyle;
-        return mutableStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect)
-            || mutableStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine);
+        return mutableStyle->hasProperty(CSSPropertyWebkitTextDecorationsInEffect)
+            || mutableStyle->hasProperty(CSSPropertyTextDecorationLine);
     }
 
     bool valueIsPresentInStyle(Element& element, const EditingStyle& style) const override
@@ -621,7 +621,7 @@ void EditingStyle::extractFontSizeDelta()
         return;
 
     RefPtr mutableStyle = style();
-    if (mutableStyle->getPropertyCSSValue(CSSPropertyFontSize)) {
+    if (mutableStyle->hasProperty(CSSPropertyFontSize)) {
         // Explicit font size overrides any delta.
         mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
         return;
@@ -1012,7 +1012,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrapMode || propertyID == CSSPropertyWhiteSpaceTrim) && tabSpanNode(&element))
             continue;
 
-        if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
+        if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->hasProperty(CSSPropertyTextDecorationLine)) {
             if (!newInlineStyle)
                 return true;
             conflicts = true;
@@ -1023,10 +1023,10 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
             }
         }
 
-        if (!inlineStyle->getPropertyCSSValue(propertyID))
+        if (!inlineStyle->hasProperty(propertyID))
             continue;
 
-        if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->getPropertyCSSValue(CSSPropertyDirection)) {
+        if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->hasProperty(CSSPropertyDirection)) {
             if (!newInlineStyle)
                 return true;
             conflicts = true;
@@ -1504,7 +1504,7 @@ void EditingStyle::removeStyleInContextNotOverridenByMatchedRules(StyledElement&
 {
     auto computedStyle = EditingStyle::create(context, PropertiesToInclude::EditingPropertiesInEffect);
     if (RefPtr computedStyleMutableStyle = computedStyle->m_mutableStyle) {
-        if (!computedStyleMutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
+        if (!computedStyleMutableStyle->hasProperty(CSSPropertyBackgroundColor))
             computedStyleMutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
 
         // If white-space differs from context, do not remove white-space longhand values.
@@ -1570,9 +1570,9 @@ void EditingStyle::removeDisplayPropertyFromSpanStyleIfRedundant(StyledElement& 
         return;
 
     Ref mutableStyle = *m_mutableStyle;
-    if (!styleFromMatchedRules.getPropertyCSSValue(CSSPropertyDisplay) && identifierForStyleProperty(mutableStyle, CSSPropertyDisplay) == CSSValueInline)
+    if (!styleFromMatchedRules.hasProperty(CSSPropertyDisplay) && identifierForStyleProperty(mutableStyle, CSSPropertyDisplay) == CSSValueInline)
         mutableStyle->removeProperty(CSSPropertyDisplay);
-    if (!styleFromMatchedRules.getPropertyCSSValue(CSSPropertyFloat) && identifierForStyleProperty(mutableStyle, CSSPropertyFloat) == CSSValueNone)
+    if (!styleFromMatchedRules.hasProperty(CSSPropertyFloat) && identifierForStyleProperty(mutableStyle, CSSPropertyFloat) == CSSValueNone)
     mutableStyle->removeProperty(CSSPropertyFloat);
 }
 
@@ -1620,7 +1620,7 @@ void EditingStyle::removeEquivalentProperties(T& style)
         }
 
         // Do not remove equivalent properties when they share a shorthand with non-equivalent ones, and the removal would prevent them from being serialized with the shorthand.
-        if (mutableStyle->getPropertyValue(shorthandID).isEmpty()) {
+        if (!mutableStyle->hasProperty(shorthandID)) {
             propertiesToRemove.append(property.id());
             continue;
         }
@@ -1679,9 +1679,7 @@ bool EditingStyle::convertPositionStyle()
 
 bool EditingStyle::isFloating()
 {
-    RefPtr v = protect(style())->getPropertyCSSValue(CSSPropertyFloat);
-    RefPtr noneValue = CSSKeywordValue::create(CSSValueNone);
-    return v && !v->equals(*noneValue);
+    return protect(style())->propertyAsValueID(CSSPropertyFloat) != CSSValueNone;
 }
 
 int EditingStyle::legacyFontSize(Document& document) const
@@ -1968,7 +1966,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
 
     // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.
     // FIXME: Shouldn't this be done in getPropertiesNotIn?
-    if (mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !protect(style->style())->getPropertyCSSValue(CSSPropertyDirection))
+    if (mutableStyle->hasProperty(CSSPropertyUnicodeBidi) && !protect(style->style())->hasProperty(CSSPropertyDirection))
         mutableStyle->setProperty(CSSPropertyDirection, protect(style->style())->getPropertyValue(CSSPropertyDirection));
 
     if (!mutableStyle->isEmpty())

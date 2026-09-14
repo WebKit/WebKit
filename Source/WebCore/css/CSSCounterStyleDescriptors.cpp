@@ -236,29 +236,25 @@ CSSCounterStyleDescriptors::SystemData extractSystemDataFromCSSValue(const CSSVa
 
 void CSSCounterStyleDescriptors::setExplicitlySetDescriptors(const StyleProperties& properties)
 {
-    auto getPropertyCSSValue = [&](CSSPropertyID id) -> RefPtr<CSSValue> {
-        return properties.getPropertyCSSValue(id);
-    };
-
-    if (getPropertyCSSValue(CSSPropertySystem))
+    if (properties.hasProperty(CSSPropertySystem))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::System);
-    if (getPropertyCSSValue(CSSPropertyNegative))
+    if (properties.hasProperty(CSSPropertyNegative))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Negative);
-    if (getPropertyCSSValue(CSSPropertyPrefix))
+    if (properties.hasProperty(CSSPropertyPrefix))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Prefix);
-    if (getPropertyCSSValue(CSSPropertySuffix))
+    if (properties.hasProperty(CSSPropertySuffix))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Suffix);
-    if (getPropertyCSSValue(CSSPropertyRange))
+    if (properties.hasProperty(CSSPropertyRange))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Range);
-    if (getPropertyCSSValue(CSSPropertyPad))
+    if (properties.hasProperty(CSSPropertyPad))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Pad);
-    if (getPropertyCSSValue(CSSPropertyFallback))
+    if (properties.hasProperty(CSSPropertyFallback))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Fallback);
-    if (getPropertyCSSValue(CSSPropertyAdditiveSymbols))
+    if (properties.hasProperty(CSSPropertyAdditiveSymbols))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::AdditiveSymbols);
-    if (getPropertyCSSValue(CSSPropertySymbols))
+    if (properties.hasProperty(CSSPropertySymbols))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::Symbols);
-    if (getPropertyCSSValue(CSSPropertySpeakAs))
+    if (properties.hasProperty(CSSPropertySpeakAs))
         m_explicitlySetDescriptors.add(ExplicitlySetDescriptors::SpeakAs);
 }
 
