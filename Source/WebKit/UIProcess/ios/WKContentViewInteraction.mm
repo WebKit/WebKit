@@ -6386,11 +6386,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (void)updateFocusedElementValueAsColor:(UIColor *)value
 {
-    auto color = [&] {
-        if (protect(_page->preferences())->inputTypeColorEnhancementsEnabled())
-            return WebCore::Color::createAndPreserveColorSpace(protect(protect(value).get().CGColor));
-        return WebCore::Color(WebCore::roundAndClampToSRGBALossy(protect(protect(value).get().CGColor)));
-    }();
+    auto color = WebCore::Color::createAndPreserveColorSpace(protect(protect(value).get().CGColor));
     auto valueAsString = WebCore::serializationForHTML(color);
 
     protect(_page)->setFocusedElementValue(_focusedElementInformation.frameID(), _focusedElementInformation.elementContext, valueAsString);

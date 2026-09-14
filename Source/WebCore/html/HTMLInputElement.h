@@ -69,11 +69,10 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLInputElement();
 
-    WEBCORE_EXPORT bool NODELETE alpha();
+    bool NODELETE alpha();
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
     String colorSpace();
-    void setColorSpace(const AtomString&);
     WEBCORE_EXPORT FileList* NODELETE files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }

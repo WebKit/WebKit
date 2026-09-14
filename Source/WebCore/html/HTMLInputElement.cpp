@@ -885,7 +885,7 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     case AttributeNames::alphaAttr:
     case AttributeNames::colorspaceAttr:
-        if (isColorControl() && document().settings().inputTypeColorEnhancementsEnabled()) {
+        if (isColorControl()) {
             updateValueIfNeeded();
             updateValidity();
         }
@@ -1611,24 +1611,15 @@ void HTMLInputElement::didCompleteAutofill()
 
 bool HTMLInputElement::alpha()
 {
-    return document().settings().inputTypeColorEnhancementsEnabled() && hasAttributeWithoutSynchronization(alphaAttr);
+    return hasAttributeWithoutSynchronization(alphaAttr);
 }
 
 String HTMLInputElement::colorSpace()
 {
-    if (!document().settings().inputTypeColorEnhancementsEnabled())
-        return nullString();
-
     if (equalLettersIgnoringASCIICase(attributeWithoutSynchronization(colorspaceAttr), "display-p3"_s))
         return "display-p3"_s;
 
     return "limited-srgb"_s;
-}
-
-void HTMLInputElement::setColorSpace(const AtomString& value)
-{
-    ASSERT(document().settings().inputTypeColorEnhancementsEnabled());
-    setAttributeWithoutSynchronization(colorspaceAttr, value);
 }
 
 FileList* HTMLInputElement::files()
