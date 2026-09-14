@@ -291,7 +291,7 @@ https://workspaces.xyz/
 https://wpdevelopment.ca/
     (none)
 https://x.com/
-    (none)
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://twitter.com/
     (none)
 https://www.yahoo.com/

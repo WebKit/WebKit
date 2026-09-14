@@ -324,6 +324,7 @@ https://workspaces.xyz/
 https://wpdevelopment.ca/
     (none)
 https://x.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
     RequiresUserGestureToLoadInPictureInPictureQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
     ShouldAvoidProgrammaticScrollClampingQuirk

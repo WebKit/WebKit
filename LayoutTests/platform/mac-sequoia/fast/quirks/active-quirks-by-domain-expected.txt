@@ -291,6 +291,7 @@ https://workspaces.xyz/
 https://wpdevelopment.ca/
     NeedsFormControlToBeMouseFocusableQuirk
 https://x.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
     RequiresUserGestureToLoadInPictureInPictureQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
 https://twitter.com/
