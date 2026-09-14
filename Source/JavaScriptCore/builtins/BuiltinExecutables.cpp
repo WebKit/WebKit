@@ -212,7 +212,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     bool isArrowFunctionBodyExpression = false;
 
     JSTextPosition positionBeforeLastNewline;
-    positionBeforeLastNewline.line = scanned.lineCount;
+    positionBeforeLastNewline.line = scanned.lineCount ? scanned.lineCount : source.firstLine().oneBasedInt();
     positionBeforeLastNewline.offset = source.startOffset() + scanned.offsetOfLastNewline;
     positionBeforeLastNewline.lineStartOffset = source.startOffset() + scanned.positionBeforeLastNewlineLineStartOffset;
 

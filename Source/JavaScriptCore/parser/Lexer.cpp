@@ -585,6 +585,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     else
         m_current = 0;
     ASSERT(currentOffset() == source.startOffset());
+    m_positionBeforeLastNewline = currentPosition();
 }
 
 template <typename T>
