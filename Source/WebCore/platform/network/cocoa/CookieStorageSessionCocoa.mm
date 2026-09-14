@@ -43,6 +43,7 @@
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringView.h>
 #import <wtf/text/cf/StringConcatenateCF.h>
+#import <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -327,15 +328,71 @@ std::pair<String, bool> CookieStorageSession::cookieRequestHeaderFieldValue(cons
     return cookiesForSession(headerFieldProxy.firstParty, headerFieldProxy.sameSiteInfo, headerFieldProxy.url, CookiesFor::HTTPHeader, headerFieldProxy.includeSecureCookies, thirdPartyCookieBlockingDecision, partition);
 }
 
+static RetainPtr<NSHTTPCookie> cookieWithPropertyOverrides(NSHTTPCookie *cookie, NSDictionary<NSHTTPCookiePropertyKey, id> *overrides)
+{
+    if (!cookie)
+        return nil;
+    RetainPtr properties = adoptNS([[cookie properties] mutableCopy]);
+    if (!properties)
+        return nil;
+    [properties.get() addEntriesFromDictionary:overrides];
+    return adoptNS([[NSHTTPCookie alloc] initWithProperties:properties.get()]);
+}
+
+#if HAVE(BROKEN_LEADING_BOM_COOKIE_PARSER)
+// FIXME: <rdar://186225250> Remove this once NSHTTPCookie stops discarding a leading byte order
+// mark from the name and the value it is handed.
+//
+// U+FEFF is an ordinary character in a cookie name or value, but an existing bug in CFNetwork
+// causes the NSHTTPCookie property dictionary to drop the first one it encounters. We can
+// work around this issue in WebKit by inserting a sacrificial copy, but it must be done as
+// the final step before the cookie is stored.
+//
+// The extra mark is added only after observing that the first one really was discarded, so the
+// workaround will stop happening when the CFNetwork bug is fixed, even if this code is left
+// in place.
+static RetainPtr<NSHTTPCookie> cookieWithLeadingByteOrderMarkRestored(RetainPtr<NSHTTPCookie>&& cookie, StringView name, StringView value)
+{
+    if (!cookie)
+        return WTF::move(cookie);
+
+    bool nameLostMark = name.startsWith(byteOrderMark) && String { [cookie name] } == name.substring(1);
+    bool valueLostMark = value.startsWith(byteOrderMark) && String { [cookie value] } == value.substring(1);
+    if (!nameLostMark && !valueLostMark)
+        return WTF::move(cookie);
+
+    auto withExtraMark = [](bool lostMark, StringView text) {
+        return lostMark ? makeString(byteOrderMark, text) : text.toString();
+    };
+    RetainPtr restored = cookieWithPropertyOverrides(cookie.get(), @{
+        NSHTTPCookieName: withExtraMark(nameLostMark, name).createNSString().get(),
+        NSHTTPCookieValue: withExtraMark(valueLostMark, value).createNSString().get()
+    });
+
+    // Keep what we already have if the mark could not be put back, so this is never worse than
+    // storing the cookie without the workaround.
+    return restored ? WTF::move(restored) : WTF::move(cookie);
+}
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+// This helper function ensures that the two Expires workarounds are run in the proper order.
+static std::optional<String> cookieStringWithRepairedExpires(StringView cookieString)
+{
+    auto swapped = CookieUtil::cookieStringWithDayFirstExpires(cookieString);
+    if (auto cased = CookieUtil::cookieStringWithTitleCasedExpiresNames(swapped ? StringView { *swapped } : cookieString))
+        return cased;
+    return swapped;
+}
+#endif
+
 static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCookie, std::optional<Seconds> cappedLifetime)
 {
     if (!initialCookie)
         return nil;
 
 #if ENABLE(JS_COOKIE_CHECKING)
-    RetainPtr mutableProperties = adoptNS([[initialCookie properties] mutableCopy]);
-    [mutableProperties.get() setValue:@1 forKey:@"SetInJavaScript"];
-    RetainPtr cookie = adoptNS([[NSHTTPCookie alloc] initWithProperties:mutableProperties.get()]);
+    RetainPtr cookie = cookieWithPropertyOverrides(initialCookie, @{ @"SetInJavaScript": @1 });
 #else
     RetainPtr cookie = initialCookie;
 #endif
@@ -357,6 +414,27 @@ static RetainPtr<NSHTTPCookie> adjustScriptWrittenCookie(NSHTTPCookie *initialCo
     return cookie;
 }
 
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+static RetainPtr<NSHTTPCookie> cookieWithNonASCIINameAndValue(const String& cookieString, std::pair<StringView, StringView> nameAndValue, NSURL *cookieURL, const String& partition)
+{
+    auto placeholder = CookieUtil::cookieStringWithNonASCIIReplaced(cookieString);
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+    // Compose with the Expires workarounds: a cookie can carry several of these defects at once.
+    if (auto repaired = cookieStringWithRepairedExpires(placeholder))
+        placeholder = WTF::move(*repaired);
+#endif
+
+    RetainPtr parsed = [NSHTTPCookie _cookieForSetCookieString:placeholder.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()];
+    if (!parsed)
+        return nil;
+
+    return cookieWithPropertyOverrides(parsed.get(), @{
+        NSHTTPCookieName: nameAndValue.first.createNSString().get(),
+        NSHTTPCookieValue: nameAndValue.second.createNSString().get()
+    });
+}
+#endif
+
 static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookieURL, std::optional<Seconds> cappedLifetime, const String& partition)
 {
     // <rdar://problem/5632883> On 10.5, NSHTTPCookieStorage would store an empty cookie,
@@ -368,10 +446,32 @@ static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookie
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
     cookieString = cookieString.contains('=') ? cookieString : makeString(cookieString, '=');
 
-    // FIXME: <rdar://185837942> Remove this once CFNetwork's cookie-date parser accepts a date that
-    // writes the month before the day of the month. RFC 6265 section 5.1.1 accepts either ordering.
-    if (auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString))
-        cookieString = WTF::move(*dayFirst);
+#if HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    // Unlike the response header path, the text is correct here and needs no recovery. A non-ASCII
+    // Path or Domain still cannot survive the all-ASCII stand-in, so leave those alone entirely
+    // rather than storing them with the masking characters in place.
+    if (!cookieString.containsOnlyLatin1() && !CookieUtil::cookieAttributesContainNonASCII(cookieString)) {
+        auto nameAndValue = CookieUtil::cookieNameAndValue(cookieString);
+        if (nameAndValue) {
+            if (RetainPtr cookie = cookieWithNonASCIINameAndValue(cookieString, *nameAndValue, cookieURL, partition)) {
+                RetainPtr adjusted = adjustScriptWrittenCookie(cookie.get(), cappedLifetime);
+#if HAVE(BROKEN_LEADING_BOM_COOKIE_PARSER)
+                adjusted = cookieWithLeadingByteOrderMarkRestored(WTF::move(adjusted), nameAndValue->first, nameAndValue->second);
+#endif
+                return adjusted;
+            }
+        }
+        // Fall through if the stand-in could not be parsed, so behaviour is never worse than before.
+    }
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+    // FIXME: <rdar://185837942>, <rdar://186224951> Remove this once CFNetwork's cookie-date parser
+    // accepts a date that writes the month before the day of the month, and matches the day and
+    // month names case-insensitively. RFC 6265 section 5.1.1 requires both.
+    if (auto repaired = cookieStringWithRepairedExpires(cookieString))
+        cookieString = WTF::move(*repaired);
+#endif
 
     return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
 }
@@ -403,12 +503,124 @@ bool CookieStorageSession::setCookieFromDOM(const URL& firstParty, const SameSit
     if (!nshttpCookie)
         return false;
 
+#if HAVE(BROKEN_LEADING_BOM_COOKIE_PARSER)
+    nshttpCookie = cookieWithLeadingByteOrderMarkRestored(WTF::move(nshttpCookie), cookie.name, cookie.value);
+#endif
+
     setHTTPCookiesForURL(cookieStorage().get(), @[ nshttpCookie.get() ], url.createNSURL().get(), firstParty.createNSURL().get(), nsStringNilIfEmpty(partition).get(), sameSiteInfo, thirdPartyCookieBlockingDecision);
     return true;
 
     END_BLOCK_OBJC_EXCEPTIONS
     return false;
 }
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+void CookieStorageSession::repairCookiesFromHTTPResponse(const URL& firstParty, const URL& url, const SameSiteInfo& sameSiteInfo, const String& setCookieHeaderValue, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, const String& partitionKey) const
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
+
+    if (setCookieHeaderValue.isEmpty())
+        return;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    RetainPtr<NSMutableArray<NSHTTPCookie *>> repaired;
+    RetainPtr cookieURL = url.createNSURL();
+
+    // One pass over the whole header decides whether the charset repair can apply at all, instead
+    // of a recovery attempt per cookie.
+    bool mayNeedCharsetRepair = !setCookieHeaderValue.containsOnlyASCII();
+
+    // The expires-only repair re-stores a cookie CFNetwork already accepted, so the cookie it is
+    // about to overwrite must already be in the jar under the same name and value. That guard is
+    // what keeps splitCoalescedSetCookieHeader() from turning a value that merely CONTAINS a comma
+    // into a second cookie: "Set-Cookie: a=1,b=2; Expires=Sun Jan 05 2027 00:00:00 GMT" is one
+    // cookie to CFNetwork (a = "1,b=2"), but splits into two segments here, and the "b=2" segment
+    // would otherwise be stored as a cookie the server never sent -- persistent, where the worst
+    // case before this workaround existed was a session-scoped cookie. A real repair always finds
+    // its match, because by definition CFNetwork stored it; a synthesized fragment never does.
+    //
+    // Only a header containing a comma can split, so that is the only case worth paying a jar
+    // lookup for. The charset repair cannot use this guard -- CFNetwork stored the mangled name,
+    // so nothing matches -- but it is gated on non-ASCII, which narrows it a great deal.
+    //
+    // The lookup is scoped to this URL, so a cookie the response set under a Path that does not
+    // cover the request path is not visible here and its date simply goes unrepaired. That is the
+    // safe direction to err in: the cookie stays session scoped, exactly as it would have without
+    // any of this.
+    bool mayHaveSplit = setCookieHeaderValue.contains(',');
+    RetainPtr existingCookies = mayHaveSplit
+        ? cookiesForURL(firstParty, sameSiteInfo, url, thirdPartyCookieBlockingDecision, partitionKey)
+        : RetainPtr<NSArray> { };
+    auto jarContains = [&](NSHTTPCookie *candidate) {
+        for (NSHTTPCookie *existing in existingCookies.get()) {
+            if ([[existing name] isEqualToString:[candidate name]] && [[existing value] isEqualToString:[candidate value]])
+                return true;
+        }
+        return false;
+    };
+
+    for (auto cookieString : CookieUtil::splitCoalescedSetCookieHeader(setCookieHeaderValue)) {
+        RetainPtr<NSHTTPCookie> cookie;
+
+#if HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+        // A non-ASCII Path or Domain cannot be carried through the all-ASCII stand-in, and storing
+        // it with the masking characters in place would be worse than not repairing at all.
+        if (mayNeedCharsetRepair && !CookieUtil::cookieAttributesContainNonASCII(cookieString)) {
+            if (auto recovered = CookieUtil::cookieStringWithRecoveredUTF8(cookieString)) {
+                auto nameAndValue = CookieUtil::cookieNameAndValue(*recovered);
+                if (nameAndValue) {
+                    cookie = cookieWithNonASCIINameAndValue(*recovered, *nameAndValue, cookieURL.get(), partitionKey);
+#if HAVE(BROKEN_LEADING_BOM_COOKIE_PARSER)
+                    cookie = cookieWithLeadingByteOrderMarkRestored(WTF::move(cookie), nameAndValue->first, nameAndValue->second);
+#endif
+
+                    // Re-storing overwrites what CFNetwork wrote only when the storage key
+                    // matches, and the key includes the name. If the NAME was the part that got
+                    // mangled, CFNetwork stored the cookie under the mangled name, so the repaired
+                    // cookie would be a second, separate entry -- leaving a garbage cookie in the
+                    // jar that then gets sent on every request. Delete the mangled one explicitly
+                    // in that case. When only the value was damaged the names match, the re-store
+                    // overwrites, and there is nothing to remove.
+                    if (cookie) {
+                        auto mangled = CookieUtil::cookieNameAndValue(cookieString);
+                        if (mangled && mangled->first != nameAndValue->first)
+                            deleteCookie(firstParty, url, mangled->first.toString(), partitionKey, [] { });
+                    }
+                }
+            }
+        }
+#endif
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER)
+        if (!cookie) {
+            if (auto repairedString = cookieStringWithRepairedExpires(cookieString)) {
+                RetainPtr dated = [NSHTTPCookie _cookieForSetCookieString:repairedString->createNSString().get() forURL:cookieURL.get() partition:nsStringNilIfEmpty(partitionKey).get()];
+                // If the repaired string still yields no expiry then the date was unparseable for
+                // some other reason. Leave CFNetwork's decision in place
+                // rather than re-storing a cookie we have not actually improved.
+                if (dated && [dated.get() expiresDate] && (!mayHaveSplit || jarContains(dated.get())))
+                    cookie = WTF::move(dated);
+            }
+        }
+#endif
+
+        if (!cookie)
+            continue;
+
+        if (!repaired)
+            repaired = adoptNS([[NSMutableArray alloc] init]);
+        [repaired.get() addObject:cookie.get()];
+    }
+
+    if (!repaired)
+        return;
+
+    setHTTPCookiesForURL(cookieStorage().get(), repaired.get(), cookieURL.get(), firstParty.createNSURL().get(), nsStringNilIfEmpty(partitionKey).get(), sameSiteInfo, thirdPartyCookieBlockingDecision);
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif
 
 void CookieStorageSession::setCookie(const Cookie& cookie)
 {

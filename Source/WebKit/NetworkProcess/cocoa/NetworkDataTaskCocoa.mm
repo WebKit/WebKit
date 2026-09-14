@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,8 @@
 #import "WebPrivacyHelpers.h"
 #import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/AuthenticationChallenge.h>
+#import <WebCore/Cookie.h>
+#import <WebCore/HTTPHeaderNames.h>
 #import <WebCore/HTTPStatusCodes.h>
 #import <WebCore/IPAddressSpace.h>
 #import <WebCore/NotImplemented.h>
@@ -47,6 +49,7 @@
 #import <WebCore/RegistrableDomain.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/SameSiteInfo.h>
 #import <WebCore/TimingAllowOrigin.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NetworkSPI.h>
@@ -459,11 +462,49 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
             session->reportNetworkIssue(*m_webPageProxyID, firstRequest().url());
     }
 #endif
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    repairCookiesFromResponse(response);
+#endif
     auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get()));
     if (resolvedIPAddress)
         response.setIPAddressSpace(WebCore::classifyIPAddressSpace(*resolvedIPAddress));
     NetworkDataTask::didReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, resolvedIPAddress, WTF::move(completionHandler));
 }
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+// This must run for redirect responses as well as the final one: an auth flow is typically a
+// chain of 302s and each hop can carry its own Set-Cookie, so handling only the final response
+// would miss most session cookies.
+//
+// This is the only hook, so other CFNetwork-driven cookie paths -- the WebSocket handshake, for
+// one -- are deliberately not repaired. Those are a much smaller share of cookie-setting traffic,
+// and the defects being worked around are being fixed in CFNetwork itself.
+void NetworkDataTaskCocoa::repairCookiesFromResponse(const WebCore::ResourceResponse& response)
+{
+    // Set-Cookie is stripped from the response before it leaves the network process, but it is
+    // still present here. Bail out cheaply when there is nothing to look at.
+    auto setCookieHeaderValue = response.httpHeaderField(WebCore::HTTPHeaderName::SetCookie);
+    if (setCookieHeaderValue.isEmpty())
+        return;
+
+    // This runs on every response carrying a Set-Cookie, and the overwhelming majority need no
+    // repair at all. One pass that answers "could any of the defects apply?" keeps that common
+    // case to a single scan with no allocation, instead of a split plus several attribute walks.
+    if (!WebCore::CookieUtil::cookieHeaderMayNeedRepair(setCookieHeaderValue))
+        return;
+
+    CheckedPtr session = m_session.get();
+    if (!session)
+        return;
+    CheckedPtr storageSession = session->networkStorageSession();
+    if (!storageSession)
+        return;
+
+    const auto& request = m_previousRequest.isNull() ? m_firstRequest : m_previousRequest;
+    auto sameSiteInfo = WebCore::SameSiteInfo::create(request);
+    storageSession->repairCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url(), sameSiteInfo, setCookieHeaderValue, requestThirdPartyCookieBlockingDecision(request));
+}
+#endif
 
 void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
@@ -471,6 +512,10 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get())))
         redirectResponse.setIPAddressSpace(WebCore::classifyIPAddressSpace(*resolvedIPAddress));
+
+#if HAVE(BROKEN_COOKIE_DATE_PARSER) || HAVE(BROKEN_NON_ASCII_COOKIE_PARSER)
+    repairCookiesFromResponse(redirectResponse);
+#endif
 
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 
