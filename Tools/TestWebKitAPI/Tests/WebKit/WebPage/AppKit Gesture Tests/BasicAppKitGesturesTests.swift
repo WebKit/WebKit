@@ -828,11 +828,11 @@ extension AppKitGesturesTests.Basic {
         let start = screenBounds(ofPointInWindowCoordinates: window.frame.center)
         let end = CGPoint(x: start.x, y: start.y - 200)
 
-        await recap.play { composer in
-            composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.5))
+        await page.withWheelEventMonitoring {
+            await recap.play { composer in
+                composer._wk_scroll(withStart: start, end: end, duration: .seconds(0.5))
+            }
         }
-
-        try await Task.sleep(for: .seconds(1))
 
         let finalScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
         #expect(finalScrollPosition.x == 0)

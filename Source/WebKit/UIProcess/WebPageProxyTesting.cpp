@@ -231,13 +231,13 @@ void WebPageProxyTesting::startMonitoringWheelEventsForTesting(CompletionHandler
     sendWithAsyncReply(Messages::WebPageTesting::StartMonitoringWheelEventsForTesting(), WTF::move(completionHandler));
 }
 
-void WebPageProxyTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::waitForWheelEventsToCompleteForTesting(bool expectMomentumEnd, CompletionHandler<void()>&& completionHandler)
 {
     if (!page().hasRunningProcess()) {
         completionHandler();
         return;
     }
-    sendWithAsyncReply(Messages::WebPageTesting::WaitForWheelEventsToCompleteForTesting(), WTF::move(completionHandler));
+    sendWithAsyncReply(Messages::WebPageTesting::WaitForWheelEventsToCompleteForTesting(expectMomentumEnd), WTF::move(completionHandler));
 }
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

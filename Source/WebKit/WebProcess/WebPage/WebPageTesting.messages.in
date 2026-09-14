@@ -37,7 +37,7 @@ messages -> WebPageTesting {
 
     ClearWheelEventTestMonitor()
     StartMonitoringWheelEventsForTesting() -> ()
-    WaitForWheelEventsToCompleteForTesting() -> ()
+    WaitForWheelEventsToCompleteForTesting(bool expectMomentumEnd) -> ()
     ResetStateBetweenTests()
     SetObscuredContentInsets(float top, float right, float bottom, float left) -> ()
     ClearCachedBackForwardListCounts() -> ()

@@ -1274,7 +1274,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
-- (void)_startMonitoringWheelEventsForTesting:(void(^)(void))completionHandler
+- (void)_startMonitoringWheelEventsForTestingWithCompletionHandler:(void(^)(void))completionHandler
 {
     RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
@@ -1285,13 +1285,24 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
-- (void)_waitForWheelEventsToCompleteForTesting:(void(^)(void))completionHandler
+- (void)_waitForWheelEventsToCompleteForTestingWithCompletionHandler:(void(^)(void))completionHandler
 {
     RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
-    pageForTesting->waitForWheelEventsToCompleteForTesting([completionHandler = makeBlockPtr(completionHandler)] {
+    pageForTesting->waitForWheelEventsToCompleteForTesting(false, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)_waitForWheelEventsAndMomentumToCompleteForTestingWithCompletionHandler:(void(^)(void))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler();
+
+    pageForTesting->waitForWheelEventsToCompleteForTesting(true, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }

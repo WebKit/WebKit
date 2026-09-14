@@ -76,7 +76,7 @@ public:
 
     void clearWheelEventTestMonitor();
     void startMonitoringWheelEventsForTesting(CompletionHandler<void()>&&);
-    void waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&&);
+    void waitForWheelEventsToCompleteForTesting(bool expectMomentumEnd, CompletionHandler<void()>&&);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     void NODELETE setIndexOfGetDisplayMediaDeviceSelectedForTesting(std::optional<unsigned>);
