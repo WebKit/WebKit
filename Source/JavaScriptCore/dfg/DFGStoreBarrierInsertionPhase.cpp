@@ -440,8 +440,10 @@ private:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewPromise:
+#ifdef RC_REMOVE_SEC_ACCEL_3
             case NewTypedArray:
             case NewTypedArrayBuffer:
+#endif
             case NewRegExp:
             case NewRegExpUntyped:
             case NewStringObject:
@@ -485,6 +487,13 @@ private:
                 m_node->setEpoch(Epoch());
                 break;
                 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            // These allocate, but their operations can GC after the result cell exists
+            // (setFromArrayLike runs accessors; JSArrayBuffer::finishCreation calls
+            // Heap::addReference), so the collector may already have traced the result.
+            case NewTypedArray:
+            case NewTypedArrayBuffer:
+#endif
             default:
                 // For nodes that aren't guaranteed to allocate, we say that their return value
                 // (if there is one) could be arbitrarily old.
