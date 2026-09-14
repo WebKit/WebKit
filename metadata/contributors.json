@@ -3912,6 +3912,13 @@
    },
    {
       "emails" : [
+         "me@itsu.dev"
+      ],
+      "github" : "itsu-dev",
+      "name" : "Itsuru Nomaki"
+   },
+   {
+      "emails" : [
          "ike@apple.com"
       ],
       "name" : "Ivan Ivan Krsti\u0107"
