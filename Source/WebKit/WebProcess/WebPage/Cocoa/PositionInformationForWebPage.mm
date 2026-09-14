@@ -743,6 +743,11 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
 #if ENABLE(MODEL_PROCESS)
     if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode))
         info.isInteractiveModel = modelElement->model() && modelElement->supportsStageModeInteraction();
+#elif ENABLE(MODEL_ELEMENT_STAGE_MODE)
+    // There is no stage mode session in this configuration. Instead, the orbit is driven by mouse events
+    // forwarded by HTMLModelElement to the model player. This behavior is gated behind `isInteractive`.
+    if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode))
+        info.isInteractiveModel = modelElement->model() && modelElement->isInteractive();
 #endif
 
 #if ENABLE(MODEL_ELEMENT)

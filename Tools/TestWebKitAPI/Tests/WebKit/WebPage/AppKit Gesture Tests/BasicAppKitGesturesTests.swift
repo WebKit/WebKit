@@ -1014,6 +1014,35 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .bug("https://webkit.org/b/323383", "<model> element in orbit stage mode does not rotate on press drag"),
+        arguments: [false, true]
+    )
+    func pressDragOverOrbitModelCausesRotation(adjustStyle: Bool) async throws {
+        let modelHTML = try #require(Bundle.testResources.url(forResource: "orbit-model-page", withExtension: "html"))
+        try await page.load(modelHTML).wait()
+        try await waitForModelReady()
+        if adjustStyle {
+            try await page.callJavaScript(
+                arguments: ["elementID": "model", "interactive": false],
+                script: styleAdjustmentForCustomWidgetScript
+            )
+            await page.waitForNextPresentationUpdate()
+        }
+        let modelBounds = try await screenBounds(ofElementWithID: "model")
+        let initialEntityTransform = try await entityTransform()
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: modelBounds.center,
+                end: CGPoint(x: modelBounds.maxX, y: modelBounds.center.y),
+                duration: .seconds(0.05),
+                pressAndWait: .seconds(0.05)
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+        #expect(try await entityTransformDidChange(from: initialEntityTransform))
+    }
+
+    @Test(
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture"),
         arguments: [true, false]
     )
@@ -1801,6 +1830,44 @@ extension AppKitGesturesTests.Basic {
         await page.waitForNextPresentationUpdate()
 
         return elementID
+    }
+
+    private func waitForModelReady() async throws {
+        try await page.callJavaScript(
+            """
+            await document.getElementById("model").ready;
+            """
+        )
+    }
+
+    private func entityTransform() async throws -> [Double] {
+        try await page.callJavaScript(returning: [Double].self) {
+            """
+            return [...document.getElementById("model").entityTransform.toFloat64Array()];
+            """
+        }
+    }
+
+    private func entityTransformDidChange(from initialEntityTransform: [Double]) async throws -> Bool {
+        try await page.callJavaScript(
+            returning: Bool.self,
+            arguments: ["initialEntityTransform": initialEntityTransform]
+        ) {
+            """
+            const model = document.getElementById("model");
+            const changed = () => [...model.entityTransform.toFloat64Array()]
+                .some((value, index) => value !== initialEntityTransform[index]);
+
+            const deadline = performance.now() + 5000;
+            while (!changed()) {
+                if (performance.now() > deadline)
+                    return false;
+                await new Promise(requestAnimationFrame);
+            }
+
+            return true;
+            """
+        }
     }
 
     private func loadScrollableText() async throws {

@@ -1217,6 +1217,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
     bool prefersInteraction = information.isRangeInput || information.isARIASlider;
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
+    prefersInteraction = prefersInteraction || information.isInteractiveModel;
+#endif
     bool yieldToContent = requestIsValid && prefersInteraction;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(

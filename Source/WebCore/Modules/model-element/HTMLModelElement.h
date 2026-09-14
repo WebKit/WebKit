@@ -158,7 +158,7 @@ public:
     WEBCORE_EXPORT bool supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 
-    bool NODELETE isInteractive() const;
+    WEBCORE_EXPORT bool NODELETE isInteractive() const;
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
     double playbackRate() const { return m_playbackRate; }

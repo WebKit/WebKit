@@ -79,7 +79,7 @@ struct InteractionInformationAtPosition {
 #endif
         bool isLink,
         bool isImage,
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
         bool isInteractiveModel,
 #endif
         bool isAttachment,
@@ -151,7 +151,7 @@ struct InteractionInformationAtPosition {
 #endif
     bool isLink { false };
     bool isImage { false };
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     bool isInteractiveModel { false };
 #endif
     bool isAttachment { false };

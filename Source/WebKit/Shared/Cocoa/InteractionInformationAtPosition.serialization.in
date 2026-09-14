@@ -50,7 +50,7 @@ struct WebKit::InteractionInformationAtPosition {
 #endif
     bool isLink;
     bool isImage;
-#if ENABLE(MODEL_PROCESS)
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     bool isInteractiveModel;
 #endif
     bool isAttachment;
