@@ -1192,11 +1192,11 @@ static RefPtr<Element> findImplicitAnchor(const Styleable& anchorPositioned)
         // "The implicit anchor element of a pseudo-element is its originating element, unless otherwise specified."
         // https://drafts.csswg.org/css-anchor-position-1/#implicit
         if (anchorPositioned.pseudoElementIdentifier)
-            return anchorPositioned.element;
+            return anchorPositioned.element.get();
 
         // https://html.spec.whatwg.org/multipage/popover.html#the-popover-attribute
         // 24. Set element's implicit anchor element to invoker.
-        if (auto popoverData = anchorPositioned.element.popoverData())
+        if (auto popoverData = anchorPositioned.element->popoverData())
             return popoverData->invoker();
 
         return nullptr;
@@ -1436,7 +1436,7 @@ auto AnchorPositionEvaluator::makeAnchorPositionedForAnchorMap(AnchorPositionedT
                 continue;
 
             // FIXME: change AnchorToAnchorPositionedMap to use Styleable instead.
-            RefPtr element = &styleable->element;
+            RefPtr element = styleable->element.get();
             if (styleable->pseudoElementIdentifier)
                 element = element->pseudoElementIfExists(*styleable->pseudoElementIdentifier);
             if (!element)

@@ -735,7 +735,7 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #endif
             || style.blendMode() != BlendMode::Normal
             || !style.viewTransitionName().isNone();
-        if (auto* element = m_element.get()) {
+        if (RefPtr element = m_element.get()) {
             auto styleable = Styleable::fromElement(*element);
             forceToFlat |= styleable.capturedInViewTransition();
         }

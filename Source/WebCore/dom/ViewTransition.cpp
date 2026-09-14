@@ -923,7 +923,7 @@ void ViewTransition::copyElementBaseProperties(RenderLayerModelObject& renderer,
 {
     std::optional<const Styleable> styleable = Styleable::fromRenderer(renderer);
     ASSERT(styleable);
-    Style::Extractor styleExtractor { &styleable->element, false, styleable->pseudoElementIdentifier };
+    Style::Extractor styleExtractor { styleable->element.ptr(), false, styleable->pseudoElementIdentifier };
 
     static constexpr auto transitionProperties = WTF::toArray<CSSPropertyID>({
         CSSPropertyWritingMode,
@@ -1085,7 +1085,7 @@ RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedE
     auto styleable = Styleable::fromRenderer(renderer);
     if (!styleable)
         return nullptr;
-    auto capturedName = styleable->element.viewTransitionCapturedName(styleable->pseudoElementIdentifier);
+    auto capturedName = protect(styleable->element)->viewTransitionCapturedName(styleable->pseudoElementIdentifier);
     if (capturedName.isNull())
         return nullptr;
 

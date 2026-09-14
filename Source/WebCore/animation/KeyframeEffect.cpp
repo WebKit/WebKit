@@ -1578,7 +1578,7 @@ void KeyframeEffect::setTarget(RefPtr<Element>&& newTarget)
     auto& previousTargetStyleable = targetStyleable();
     RefPtr<Element> protector;
     if (previousTargetStyleable)
-        protector = previousTargetStyleable->element;
+        protector = previousTargetStyleable->element.ptr();
     m_target = WTF::move(newTarget);
     didChangeTargetStyleable(previousTargetStyleable);
 }
