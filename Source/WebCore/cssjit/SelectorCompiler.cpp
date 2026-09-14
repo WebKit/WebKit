@@ -1560,6 +1560,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector& rootSelector, 
             fragment->classNames.append(selector->value().impl());
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
+        case CSSSelector::Match::ClassPrefix:
+            return FunctionType::CannotCompile;
         case CSSSelector::Match::PseudoClass: {
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
