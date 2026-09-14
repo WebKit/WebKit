@@ -32,10 +32,12 @@
 #include "ImageBuffer.h"
 #include "LayoutRect.h"
 #include "MutableStyleProperties.h"
+#include "NativeImage.h"
 #include "Styleable.h"
 #include "ViewTransitionUpdateCallback.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
+#include <wtf/NativePromise.h>
 #include <wtf/OrderedHashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -82,6 +84,9 @@ public:
     // std::nullopt represents an non-capturable element.
     // nullptr represents an absent snapshot on an capturable element.
     std::optional<RefPtr<ImageBuffer>> oldImage;
+    // Instead of *oldImage when the capture includes a frame hosted in another process.
+    RefPtr<NativeImage> oldDisplayOnlyImage;
+    RefPtr<NativePromise<Ref<NativeImage>, void>> pendingCapture;
     State oldState;
 
     WeakStyleable newElement;
@@ -179,7 +184,7 @@ public:
     // Given the old document's params once its state has been captured, or null if the transition was
     // skipped. Proceeds with the navigation, which must not happen before then.
     using OutboundPostCaptureSteps = CompletionHandler<void(std::unique_ptr<ViewTransitionParams>&&)>;
-    static Ref<ViewTransition> setupCrossDocumentViewTransition(Document&, OutboundPostCaptureSteps&& = { });
+    static Ref<ViewTransition> setupCrossDocumentViewTransition(Document&, OutboundPostCaptureSteps&&);
     ~ViewTransition();
 
     // ContextDestructionObserver.
@@ -196,8 +201,6 @@ public:
     void activateViewTransition();
 
     LayoutRect containingBlockRect();
-
-    UniqueRef<ViewTransitionParams> takeViewTransitionParams();
 
     DOMPromise& LEGACY_NODELETE ready();
     DOMPromise& LEGACY_NODELETE updateCallbackDone();
@@ -242,6 +245,11 @@ private:
 
     void clearViewTransition();
 
+    void whenPendingCapturesComplete(Function<void()>&&);
+    void didCompletePendingCapture(const AtomString& name, RefPtr<NativeImage>&&);
+    void stopWaitingForPendingCaptures();
+    bool hasPendingCaptures() const;
+    UniqueRef<ViewTransitionParams> takeViewTransitionParams();
     void runOutboundPostCaptureSteps();
 
     // VisibilityChangeClient.
@@ -260,6 +268,9 @@ private:
 
     const RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
     bool m_isCrossDocument { false };
+
+    EventLoopTimerHandle m_pendingCapturesTimeout;
+    Function<void()> m_whenPendingCapturesComplete;
 
     using PromiseAndWrapper = std::pair<Ref<DOMPromise>, Ref<DeferredPromise>>;
     PromiseAndWrapper m_ready;

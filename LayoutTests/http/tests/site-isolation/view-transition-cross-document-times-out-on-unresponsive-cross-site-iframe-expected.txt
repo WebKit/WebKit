@@ -1,0 +1,5 @@
+A cross-document view transition whose old state capture includes a cross-site iframe that does not paint in time is skipped after a timeout, and the navigation proceeds.
+
+
+PASS: the navigation proceeded without a view transition
+

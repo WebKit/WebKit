@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ignoreWebProcessTermination=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<style>
+#withframe { view-transition-name: withframe; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<body>
+<div id="withframe"><iframe src="http://localhost:8000/site-isolation/resources/iframe-terminate-process-when-loaded.html"></iframe></div>
+<script>
+description("A cross-site iframe whose process has gone away is left out of the old state capture, rather than failing the whole capture or the transition.");
+jsTestIsAsync = true;
+
+let withFrameState = null;
+
+onload = () => {
+    const transition = document.startViewTransition(() => { });
+    transition.ready.then(() => {
+        withFrameState = internals.viewTransitionOldCaptureState(document, "withframe");
+        shouldBeEqualToString("withFrameState", "remote");
+        transition.skipTransition();
+        finishJSTest();
+    }, (error) => {
+        testFailed("the transition was skipped: " + error);
+        finishJSTest();
+    });
+};
+</script>
+</body>

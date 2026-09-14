@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImageBuffer.h"
+#include "NativeImage.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
@@ -38,6 +39,7 @@ public:
     virtual ~RenderViewTransitionCapture();
 
     void setImage(RefPtr<ImageBuffer>);
+    void setDisplayOnlyImage(RefPtr<NativeImage>&&);
     bool setCapturedSize(const LayoutSize&, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset);
 
     void paintReplaced(PaintInfo&, const LayoutPoint& paintOffset) override;
@@ -64,6 +66,7 @@ public:
     bool isRootElementCapture() const { return m_isRootElementCapture; }
 
     RefPtr<ImageBuffer> image();
+    RefPtr<NativeImage> displayOnlyImage() const;
 
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }
@@ -74,6 +77,7 @@ private:
     Node* nodeForHitTest() const override;
 
     RefPtr<ImageBuffer> m_oldImage;
+    RefPtr<NativeImage> m_oldDisplayOnlyImage;
     // The overflow rect that the captured image represents, in RenderLayer coordinates
     // of the captured renderer (see layerToLayoutOffset in ViewTransition.cpp).
     // The intrisic size subset of the image is stored as the intrinsic size of the RenderReplaced.

@@ -70,6 +70,27 @@ void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
         repaint();
 }
 
+RefPtr<NativeImage> RenderViewTransitionCapture::displayOnlyImage() const
+{
+    // FIXME: An object-view-box needs a source sub-rect, which GraphicsLayer cannot express, so such
+    // a capture is painted, and shows nothing.
+    if (!style().objectViewBox().isNone())
+        return nullptr;
+    return m_oldDisplayOnlyImage;
+}
+
+void RenderViewTransitionCapture::setDisplayOnlyImage(RefPtr<NativeImage>&& oldImage)
+{
+    if (m_oldDisplayOnlyImage == oldImage)
+        return;
+
+    m_oldDisplayOnlyImage = WTF::move(oldImage);
+    if (hasLayer())
+        layer()->contentChanged(ContentChangeType::Image);
+    if (parent())
+        repaint();
+}
+
 bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset)
 {
     if (m_overflowRect == overflowRect && intrinsicSize() == size && m_layerToLayoutOffset == layerToLayoutOffset)

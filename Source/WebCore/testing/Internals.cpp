@@ -276,6 +276,7 @@
 #include "UserGestureIndicator.h"
 #include "UserMediaController.h"
 #include "VideoConfiguration.h"
+#include "ViewTransition.h"
 #include "ViewportArguments.h"
 #include "ViewportConfiguration.h"
 #include "VoidCallback.h"
@@ -3782,6 +3783,21 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
     if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { ExceptionCode::InvalidAccessError };
     return protect(protect(document.frame()->contentRenderer())->compositor())->layerTreeAsText(toLayerTreeAsTextOptions(flags));
+}
+
+String Internals::viewTransitionOldCaptureState(Document& document, const AtomString& name) const
+{
+    RefPtr viewTransition = document.activeViewTransition();
+    if (!viewTransition)
+        return "none"_s;
+    auto* capturedElement = viewTransition->namedElements().find(name);
+    if (!capturedElement)
+        return "none"_s;
+    if (capturedElement->oldDisplayOnlyImage)
+        return "remote"_s;
+    if (capturedElement->oldImage && *capturedElement->oldImage)
+        return "local"_s;
+    return "none"_s;
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)

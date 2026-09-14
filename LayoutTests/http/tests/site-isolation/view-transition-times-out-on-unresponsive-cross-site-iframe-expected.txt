@@ -1,0 +1,11 @@
+A view transition whose capture includes a cross-site iframe that does not paint in time is skipped after a timeout, rather than keeping the page's rendering suppressed for as long as the iframe's process is busy.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS error.name is "TimeoutError"
+PASS error.message is "View transition timed out waiting for the old state to be captured."
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

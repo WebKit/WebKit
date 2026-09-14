@@ -1,0 +1,10 @@
+A cross-site iframe whose process has gone away is left out of the old state capture, rather than failing the whole capture or the transition.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS withFrameState is "remote"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

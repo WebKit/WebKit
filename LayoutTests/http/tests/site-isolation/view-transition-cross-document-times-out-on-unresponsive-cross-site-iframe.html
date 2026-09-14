@@ -1,0 +1,62 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true RemoteSnapshottingEnabled=true UseGPUProcessForDOMRenderingEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+@view-transition { navigation: auto; }
+#withframe { view-transition-name: withframe; }
+iframe { width: 100px; height: 100px; border: none; }
+</style>
+<script>
+// Navigates to itself with a changed query parameter, and checks the transition in the second document.
+const isInitialPage = !location.search.includes("new");
+
+testRunner.dumpAsText();
+testRunner.waitUntilDone();
+
+function log(message)
+{
+    document.getElementById("result").textContent += message + "\n";
+}
+
+if (isInitialPage) {
+    onmessage = (event) => {
+        if (event.data == "onload") {
+            // Longer than the view transition timeout.
+            frames[0].postMessage(6000, "*");
+        } else if (event.data == "busy")
+            location.replace(location.href + "?new");
+    };
+} else {
+    let revealed = false;
+    let iframeLoaded = false;
+    function finishIfDone()
+    {
+        // Not before the iframe's process, which this one shares, is free again, so that it does not hold up the next test.
+        if (revealed && iframeLoaded)
+            testRunner.notifyDone();
+    }
+
+    addEventListener("pagereveal", (event) => {
+        log(event.viewTransition ? "FAIL: the transition started without the iframe's rendering" : "PASS: the navigation proceeded without a view transition");
+        revealed = true;
+        finishIfDone();
+    });
+    onmessage = (event) => {
+        if (event.data == "onload") {
+            iframeLoaded = true;
+            finishIfDone();
+        }
+    };
+}
+</script>
+</head>
+<body>
+<p>A cross-document view transition whose old state capture includes a cross-site iframe that does not paint in time is skipped after a timeout, and the navigation proceeds.</p>
+<div id="withframe"><iframe></iframe></div>
+<pre id="result"></pre>
+<script>
+document.querySelector("iframe").src = "http://localhost:8000/site-isolation/resources/" + (isInitialPage ? "busy-on-message.html" : "green-background.html");
+</script>
+</body>
+</html>
