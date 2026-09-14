@@ -1642,24 +1642,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             WEBKIT_PARAM_READABLE);
 
 #if !ENABLE(2022_GLIB_API)
-    /**
-     * WebKitWebView:is-ephemeral:
-     *
-     * Whether the #WebKitWebView is ephemeral. An ephemeral web view never writes
-     * website data to the client storage, no matter what #WebKitWebsiteDataManager
-     * its context is using. This is normally used to implement private browsing mode.
-     * This is a %G_PARAM_CONSTRUCT_ONLY property, so you have to create an ephemeral
-     * #WebKitWebView and it can't be changed. The ephemeral #WebKitWebsiteDataManager
-     * created for the #WebKitWebView will inherit the network settings from the
-     * #WebKitWebContext<!-- -->'s #WebKitWebsiteDataManager. To use different settings
-     * you can get the #WebKitWebsiteDataManager with webkit_web_view_get_website_data_manager()
-     * and set the new ones.
-     * Note that all #WebKitWebView<!-- -->s created with an ephemeral #WebKitWebContext
-     * will be ephemeral automatically.
-     * See also webkit_web_context_new_ephemeral().
-     *
-     * Since: 2.16
-     */
     sObjProperties[PROP_IS_EPHEMERAL] =
         g_param_spec_boolean(
             "is-ephemeral",
@@ -3491,22 +3473,6 @@ WebKitUserContentManager* webkit_web_view_get_user_content_manager(WebKitWebView
 }
 
 #if !ENABLE(2022_GLIB_API)
-/**
- * webkit_web_view_is_ephemeral:
- * @web_view: a #WebKitWebView
- *
- * Get whether a #WebKitWebView is ephemeral.
- *
- * To create an ephemeral #WebKitWebView you need to
- * use g_object_new() and pass is-ephemeral property with %TRUE value. See
- * #WebKitWebView:is-ephemeral for more details.
- * If @web_view was created with a ephemeral #WebKitWebView:related-view or an
- * ephemeral #WebKitWebView:web-context it will also be ephemeral.
- *
- * Returns: %TRUE if @web_view is ephemeral or %FALSE otherwise.
- *
- * Since: 2.16
- */
 gboolean webkit_web_view_is_ephemeral(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
