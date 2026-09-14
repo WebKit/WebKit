@@ -32,8 +32,11 @@
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerClientIdentifier.h>
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
 #include <WebCore/MediaSession.h>
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+#include <WebCore/CallToActionLabel.h>
 #endif
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformMediaSession.h>
@@ -119,7 +122,7 @@ class PlaybackSessionManager
     : public RefCounted<PlaybackSessionManager>
     , private IPC::MessageReceiver
     , public CanMakeCheckedPtr<PlaybackSessionManager>
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     , public WebCore::MediaSessionObserver
 #endif
     {
@@ -148,8 +151,11 @@ public:
     void cancelTextRecognition();
 #endif
 
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     void actionHandlersChanged() final;
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void metadataChanged(const RefPtr<WebCore::MediaMetadata>&) final;
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -170,8 +176,11 @@ private:
     void removeContext(WebCore::MediaPlayerClientIdentifier);
     void addClientForContext(WebCore::MediaPlayerClientIdentifier);
     void removeClientForContext(WebCore::MediaPlayerClientIdentifier);
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     void setMediaSessionAndRegisterAsObserver();
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    void updateCallToActionState();
 #endif
 
     // Interface to PlaybackSessionInterfaceContext
@@ -251,7 +260,7 @@ private:
     HashMap<WebCore::MediaPlayerClientIdentifier, ModelInterfaceTuple> m_contextMap;
     Markable<WebCore::MediaPlayerClientIdentifier> m_controlsManagerContextId;
     HashCountedSet<WebCore::MediaPlayerClientIdentifier> m_clientCounts;
-#if HAVE(PIP_SKIP_PREROLL)
+#if HAVE(PIP_SKIP_PREROLL) || ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
     WeakPtr<WebCore::MediaSession> m_mediaSession;
 #endif
 

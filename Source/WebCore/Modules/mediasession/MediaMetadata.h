@@ -27,9 +27,9 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "MediaMetadataInit.h"
 #include <WebCore/CachedImageClient.h>
 #include <WebCore/CachedResourceHandle.h>
+#include <WebCore/MediaMetadataInit.h>
 #include <WebCore/MediaSession.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
@@ -95,6 +95,11 @@ public:
 
     const Vector<MediaImage>& artwork() const LIFETIME_BOUND { return m_metadata.artwork; }
     ExceptionOr<void> setArtwork(ScriptExecutionContext&, Vector<MediaImage>&&);
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    CallToActionLabel callToActionLabel() const { return m_metadata.callToActionLabel; }
+    void setCallToActionLabel(CallToActionLabel);
+#endif
 
     const String& artworkSrc() const LIFETIME_BOUND { return m_artworkImageSrc; }
     const RefPtr<Image>& artworkImage() const { return m_artworkImage; }

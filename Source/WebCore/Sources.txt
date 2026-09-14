@@ -4107,6 +4107,7 @@ JSCSSUnitValue.cpp
 JSCSSUnparsedValue.cpp
 JSCSSViewTransitionRule.cpp
 JSCacheQueryOptions.cpp
+JSCallToActionLabel.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasCompositing.cpp
 JSCanvasDirection.cpp

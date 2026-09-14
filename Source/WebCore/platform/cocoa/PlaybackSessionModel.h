@@ -26,6 +26,10 @@
 #pragma once
 
 #include <wtf/Platform.h>
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+#include <WebCore/CallToActionLabel.h>
+#endif
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #include <WebCore/NowPlayingMetadataObserver.h>
@@ -174,6 +178,9 @@ public:
     virtual void mutedChanged(bool) { }
 #if HAVE(PIP_SKIP_PREROLL)
     virtual void canSkipAdChanged(bool) { }
+#endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+    virtual void canShowCallToActionChanged(bool /* hasHandler */, CallToActionLabel) { }
 #endif
     virtual void volumeChanged(double) { }
     virtual void isPictureInPictureSupportedChanged(bool) { }
