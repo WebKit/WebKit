@@ -245,6 +245,7 @@ webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.EphemeralWit
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.ManualAttributionAndConversion [ Pass Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.CrashWithGestureController [ Skip ]
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
+webkit.org/b/324130 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.PageCacheWhenNavigatingFromJS [ Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
 webkit.org/b/242085 [ ios ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingAssistedElementShouldNotScrollToReveal [ Skip ]
 rdar://136525714 [ mac ] TestWebKitAPI.ResourceLoadStatistics.ClientEvaluatedJavaScriptDoesNotLogUserInteraction [ Skip ]
