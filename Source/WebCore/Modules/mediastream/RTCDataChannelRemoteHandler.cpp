@@ -101,13 +101,13 @@ void RTCDataChannelRemoteHandler::setClient(RTCDataChannelHandlerClient& client,
     m_connection->connectToSource(*this, contextIdentifier, *m_localIdentifier, m_remoteIdentifier);
 }
 
-bool RTCDataChannelRemoteHandler::sendStringData(const CString& text)
+bool RTCDataChannelRemoteHandler::sendStringData(const UTF8CString& text)
 {
     if (!m_isReadyToSend) {
-        m_pendingMessages.append(Message { false, SharedBuffer::create(text.span()) });
+        m_pendingMessages.append(Message { false, SharedBuffer::create(asByteSpan(text.span())) });
         return true;
     }
-    m_connection->sendData(m_remoteIdentifier, false, byteCast<uint8_t>(text.span()));
+    m_connection->sendData(m_remoteIdentifier, false, asByteSpan(text.span()));
     return true;
 }
 

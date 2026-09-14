@@ -44,10 +44,10 @@ std::unique_ptr<SandboxExtensionImpl> SandboxExtensionImpl::create(const UTF8CSt
     return impl;
 }
 
-SandboxExtensionImpl::SandboxExtensionImpl(std::span<const uint8_t> serializedFormat)
-    : m_token { byteCast<Latin1Character>(serializedFormat) }
+SandboxExtensionImpl::SandboxExtensionImpl(UTF8CString&& serializedFormat)
+    : m_token { WTF::move(serializedFormat) }
 {
-    ASSERT(!serializedFormat.empty());
+    ASSERT(!m_token.isEmpty());
 }
 
 SandboxExtensionImpl::~SandboxExtensionImpl()
@@ -58,12 +58,12 @@ SandboxExtensionImpl::~SandboxExtensionImpl()
 
 [[nodiscard]] bool SandboxExtensionImpl::consume()
 {
-    m_handle = sandbox_extension_consume(m_token.data());
+    m_handle = sandbox_extension_consume(m_token.legacyCStringPointer());
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
     return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
 #else
     if (m_handle == -1) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token.data(), errno);
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%s', errno = %d", m_token.legacyCStringPointer(), errno);
         return false;
     }
     return true;
@@ -75,13 +75,13 @@ bool SandboxExtensionImpl::invalidate()
     return !sandbox_extension_release(std::exchange(m_handle, 0));
 }
 
-std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
+const UTF8CString& SandboxExtensionImpl::getSerializedFormat() LIFETIME_BOUND
 {
     ASSERT(m_token.length());
-    return byteCast<uint8_t>(m_token.span());
+    return m_token;
 }
 
-CString SandboxExtensionImpl::sandboxExtensionForType(const UTF8CString& path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
+UTF8CString SandboxExtensionImpl::sandboxExtensionForType(const UTF8CString& path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
 {
     auto* pathPointer = path.legacyCStringPointer();
     auto sandboxExtension = [&] {
@@ -116,7 +116,7 @@ CString SandboxExtensionImpl::sandboxExtensionForType(const UTF8CString& path, S
         }
     }();
 
-    return CString(sandboxExtension.get());
+    return UTF8CString { byteCast<char8_t>(sandboxExtension.get()) };
 }
 
 SandboxExtensionImpl::SandboxExtensionImpl(const UTF8CString& path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)
@@ -130,7 +130,7 @@ SandboxExtensionHandle::SandboxExtensionHandle()
 
 SandboxExtensionHandle::SandboxExtensionHandle(const SandboxExtensionHandle& handle)
 {
-    m_sandboxExtension = WTF::makeUnique<SandboxExtensionImpl>(handle.m_sandboxExtension->getSerializedFormat());
+    m_sandboxExtension = WTF::makeUnique<SandboxExtensionImpl>(UTF8CString { handle.m_sandboxExtension->getSerializedFormat() });
 }
 
 SandboxExtensionHandle::SandboxExtensionHandle(SandboxExtensionHandle&&) = default;

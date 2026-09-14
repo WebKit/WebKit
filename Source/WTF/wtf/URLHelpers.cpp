@@ -905,10 +905,11 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
     return String::adopt(WTF::move(outBuffer));
 }
 
-String userVisibleURL(const CString& url)
+String userVisibleURL(std::span<const char8_t> url)
 {
-    auto before = url.span();
-    size_t length = url.length();
+    // The escaping below works a byte at a time, so drop to char for it.
+    auto before = byteCast<char>(url);
+    size_t length = url.size();
 
     if (!length)
         return { };

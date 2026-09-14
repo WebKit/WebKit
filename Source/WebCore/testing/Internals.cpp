@@ -6558,7 +6558,7 @@ void Internals::setPageHasRefreshControllerForTesting(bool hasRefreshController)
 
 String Internals::userVisibleString(const DOMURL& url)
 {
-    return WTF::URLHelpers::userVisibleURL(url.href().string().utf8());
+    return WTF::URLHelpers::userVisibleURL(url.href().string().utf8().span());
 }
 
 #endif

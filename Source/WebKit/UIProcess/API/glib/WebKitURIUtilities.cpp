@@ -45,7 +45,7 @@ gchar* webkit_uri_for_display(const gchar* uri)
 {
     g_return_val_if_fail(uri, nullptr);
 
-    String result = WTF::URLHelpers::userVisibleURL(uri);
+    String result = WTF::URLHelpers::userVisibleURL(byteCast<char8_t>(unsafeSpan(uri)));
     if (!result)
         return nullptr;
 

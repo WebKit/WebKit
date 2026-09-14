@@ -47,15 +47,15 @@ static std::atomic<unsigned> globalLogCountForTesting { 0 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LogStream);
 
-void logWithProcessNamePrefix(os_log_t log, os_log_type_t type, ASCIILiteral processName, int pid, const char* message)
+void logWithProcessNamePrefix(os_log_t log, os_log_type_t type, ASCIILiteral processName, int pid, const UTF8CString& message)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (processName == "WebContent"_s)
-        os_log_with_type(log, type, "WebContent[%d] %{public}s", pid, message); // NOLINT
+        os_log_with_type(log, type, "WebContent[%d] %{public}s", pid, message.legacyCStringPointer()); // NOLINT
     else if (processName == "Model"_s)
-        os_log_with_type(log, type, "Model[%d] %{public}s", pid, message); // NOLINT
+        os_log_with_type(log, type, "Model[%d] %{public}s", pid, message.legacyCStringPointer()); // NOLINT
     else
-        os_log_with_type(log, type, "%{public}s[%d] %{public}s", processName.characters(), pid, message); // NOLINT
+        os_log_with_type(log, type, "%{public}s[%d] %{public}s", processName.characters(), pid, message.legacyCStringPointer()); // NOLINT
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
@@ -111,7 +111,7 @@ void LogStream::stopListeningForIPC()
 #endif
 }
 
-void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> subsystemSpan, std::span<const uint8_t> categorySpan, std::span<const uint8_t> stringSpan, uint8_t logType)
+void LogStream::logOnBehalfOfWebContent(std::span<const char8_t> subsystemSpan, std::span<const char8_t> categorySpan, std::span<const char8_t> stringSpan, uint8_t logType)
 {
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     ASSERT(!isMainRunLoop());
@@ -122,9 +122,9 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> subsystemSpan, 
     bool isValidLogType = logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT;
     MESSAGE_CHECK(isValidLogType, connection);
 
-    CString subsystem = subsystemSpan;
-    CString category = categorySpan;
-    CString string = stringSpan;
+    UTF8CString subsystem { subsystemSpan };
+    UTF8CString category { categorySpan };
+    UTF8CString string { stringSpan };
     MESSAGE_CHECK(subsystem.length() < logSubsystemMaxSize, connection);
     MESSAGE_CHECK(category.length() < logCategoryMaxSize, connection);
     MESSAGE_CHECK(string.length() < logStringMaxSize, connection);
@@ -134,21 +134,19 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> subsystemSpan, 
     if (!subsystem.isEmpty() && !category.isEmpty()) {
         if (category == "Testing"_s)
             globalLogCountForTesting++;
-        osLog = adoptOSObject(os_log_create(subsystem.data(), category.data()));
+        osLog = adoptOSObject(os_log_create(subsystem.legacyCStringPointer(), category.legacyCStringPointer()));
     }
     if (!osLog)
         osLog = OS_LOG_DEFAULT;
 
 #if HAVE(OS_SIGNPOST)
-    if (WTFSignpostHandleIndirectLog(osLog.get(), m_pid, string.spanIncludingNullTerminator()))
+    if (WTFSignpostHandleIndirectLog(osLog.get(), m_pid, byteCast<char>(string.spanIncludingNullTerminator())))
         return;
 #endif
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    SUPPRESS_UNCOUNTED_LOCAL logWithProcessNamePrefix(osLog.get(), static_cast<os_log_type_t>(logType), m_processName, m_pid, string.data());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    SUPPRESS_UNCOUNTED_LOCAL logWithProcessNamePrefix(osLog.get(), static_cast<os_log_type_t>(logType), m_processName, m_pid, string);
 }
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
