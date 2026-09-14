@@ -237,7 +237,7 @@ static NSMutableDictionary *webRequestDetailsForResourceLoad(const ResourceLoadI
         timeStampKey: @(floor(resourceLoad.eventTimestamp.approximate<WallTime>().secondsSinceEpoch().milliseconds())),
         @"url": resourceLoad.originalURL.string().createNSString().get(),
         @"tabId": @(toWebAPI(tabIdentifier)),
-        typeKey: toWebAPI(resourceLoad.type),
+        typeKey: resourceLoad.type == ResourceLoadInfo::Type::Document && resourceLoad.parentFrameID ? @"sub_frame" : toWebAPI(resourceLoad.type),
         methodKey: resourceLoad.originalHTTPMethod.createNSString().get(),
     } mutableCopy];
 
