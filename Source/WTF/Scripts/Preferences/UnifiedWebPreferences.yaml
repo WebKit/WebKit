@@ -1740,7 +1740,7 @@ DataListElementEnabled:
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
   defaultValue:
-    "(PLATFORM(COCOA) && !PLATFORM(WATCHOS)) || PLATFORM(GTK)": true
+    "(PLATFORM(COCOA) && !PLATFORM(WATCHOS)) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy: false
   sharedPreferenceForWebProcess: true
@@ -1772,7 +1772,7 @@ DateTimeInputsEditableComponentsEnabled:
   defaultValue:
     default: false
     WebKit:
-      "PLATFORM(MAC) || PLATFORM(GTK)": true
+      "PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 DeclarativeWebPush:
@@ -2965,7 +2965,7 @@ InputTypeDateEnabled:
   humanReadableName: "Date Input"
   humanReadableDescription: "Enable input elements of type date"
   defaultValue:
-    "PLATFORM(COCOA) || PLATFORM(GTK)": true
+    "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -2979,7 +2979,7 @@ InputTypeDateTimeLocalEnabled:
   humanReadableName: "datetime-local Inputs"
   humanReadableDescription: "Enable input elements of type datetime-local"
   defaultValue:
-    "PLATFORM(COCOA) || PLATFORM(GTK)": true
+    "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -2994,7 +2994,7 @@ InputTypeMonthEnabled:
   humanReadableDescription: "Enable input elements of type month"
   inspectorOverride: true
   defaultValue:
-    "PLATFORM(IOS_FAMILY) || PLATFORM(GTK)": true
+    "PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
@@ -3008,7 +3008,7 @@ InputTypeTimeEnabled:
   humanReadableName: "Time Input"
   humanReadableDescription: "Enable input elements of type time"
   defaultValue:
-    "PLATFORM(COCOA) || PLATFORM(GTK)": true
+    "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
     default: false
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
