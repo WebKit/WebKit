@@ -879,7 +879,7 @@ class Manager(object):
         self._filesystem.write_text_file(full_results_path, jsonp_string)
 
     def _copy_results_html_file(self, filename, destination_path):
-        base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
+        base_dir = self._port.harness_resources_dir()
         results_file = self._filesystem.join(base_dir, filename)
         # Note that the results.html template file won't exist when we're using a MockFileSystem during unit tests,
         # so make sure it exists before we try to copy it.

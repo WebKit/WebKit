@@ -271,7 +271,9 @@ class Port(object):
         return baseline_search_paths[0]
 
     def baseline_search_path(self, device_type=None):
-        return self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path(device_type=device_type)
+        search_path = self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path(device_type=device_type)
+        # Ports can map two platform names onto the same directory, so drop repeats while keeping the first (highest-priority) occurrence of each.
+        return list(dict.fromkeys(search_path))
 
     def default_baseline_search_path(self, device_type=None):
         """Return a list of absolute paths to directories to search under for
@@ -644,6 +646,10 @@ class Port(object):
 
     def perf_tests_dir(self):
         return self._filesystem.join(self.webkit_base(), "PerformanceTests")
+
+    def harness_resources_dir(self):
+        # The harness files exist in LayoutTests even when --layout-tests-directory specifies a different dir.
+        return self._filesystem.join(self.webkit_base(), "LayoutTests", "fast", "harness")
 
     def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""

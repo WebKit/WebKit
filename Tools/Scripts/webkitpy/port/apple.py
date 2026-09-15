@@ -143,6 +143,8 @@ class ApplePort(Port):
         return paths
 
     def _apple_baseline_path(self, platform):
+        if self._layout_tests_dir:
+            return self._webkit_baseline_path(platform)
         return self._filesystem.join(apple_additions().layout_tests_path(), platform)
 
     def _path_to_helper(self):

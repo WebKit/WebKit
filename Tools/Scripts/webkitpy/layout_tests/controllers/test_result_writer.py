@@ -202,7 +202,7 @@ class TestResultWriter(object):
         diff_filename = self.output_filename(self.FILENAME_SUFFIX_IMAGE_DIFF)
         self._write_binary_file(diff_filename, image_diff)
 
-        base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
+        base_dir = self._port.harness_resources_dir()
 
         image_diff_template = self._filesystem.join(base_dir, 'image-diff-template.html')
         image_diff_file = ""
