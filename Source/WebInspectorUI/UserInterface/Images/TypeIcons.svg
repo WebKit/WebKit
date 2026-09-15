@@ -296,6 +296,8 @@
     <g id="DebuggerStatement-light" class="light blue"><use href="#box"/><use href="#D"/></g>
     <g id="DOMBreakpointAttributeModified-dark" class="dark blue"><use href="#box"/><use href="#A"/></g>
     <g id="DOMBreakpointAttributeModified-light" class="light blue"><use href="#box"/><use href="#A"/></g>
+    <g id="DOMBreakpointStyleInvalidated-dark" class="dark blue"><use href="#box"/><use href="#braces"/></g>
+    <g id="DOMBreakpointStyleInvalidated-light" class="light blue"><use href="#box"/><use href="#braces"/></g>
     <g id="DOMBreakpointNodeRemoved-dark" class="dark blue"><use href="#box"/><use href="#R"/></g>
     <g id="DOMBreakpointNodeRemoved-light" class="light blue"><use href="#box"/><use href="#R"/></g>
     <g id="DOMBreakpointSubtreeModified-dark" class="dark blue"><use href="#box"/><use href="#S"/></g>

@@ -56,6 +56,7 @@ public:
     void willDestroyDOMNode(Node&);
     void willModifyDOMAttr(Element&);
     void willInvalidateStyleAttr(Element&);
+    void didInvalidateStyleForElement(Element&);
 
 private:
     void enable();
@@ -66,6 +67,7 @@ private:
     HashMap<Node*, Ref<JSC::Breakpoint>> m_domSubtreeModifiedBreakpoints;
     HashMap<Node*, Ref<JSC::Breakpoint>> m_domAttributeModifiedBreakpoints;
     HashMap<Node*, Ref<JSC::Breakpoint>> m_domNodeRemovedBreakpoints;
+    HashMap<Node*, Ref<JSC::Breakpoint>> m_domStyleInvalidatedBreakpoints;
 };
 
 } // namespace WebCore

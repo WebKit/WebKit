@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/dom-breakpoint-utilities.js"></script>
+<style>
+/* Rules so that class / id / attribute changes are "relevant" and actually invalidate style. */
+.style-invalidated-active { color: rgb(10, 20, 30); }
+#style-invalidated-id-after { color: rgb(40, 50, 60); }
+[data-style-invalidated-state] { color: rgb(70, 80, 90); }
+</style>
+<script>
+let styleInvalidatedCount = 0;
+function triggerInlineStyle() {
+    let node = document.getElementById("style-invalidated-test");
+    // Fresh value each call so the element transitions valid->invalid every time.
+    node.style.width = (100 + (++styleInvalidatedCount * 10)) + "px";
+}
+function triggerClassList() {
+    document.getElementById("style-invalidated-class").classList.toggle("style-invalidated-active");
+}
+function triggerId() {
+    document.getElementById("style-invalidated-id-before").id = "style-invalidated-id-after";
+}
+function triggerDataset() {
+    document.getElementById("style-invalidated-data").dataset.styleInvalidatedState = "on";
+}
+function triggerUnrelated() {
+    document.getElementById("style-invalidated-other").style.width = "321px";
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("DOMBreakpoint.StyleInvalidated");
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.StyleInvalidated.BreakpointEnabled`,
+        description: "Check that debugger pauses when an element's style is invalidated.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+                InspectorTest.log("PAUSED:");
+                InspectorTest.expectEqual(targetData.pauseReason, WI.DebuggerManager.PauseReason.DOM, "Pause reason should be DOM.");
+
+                let pauseData = targetData.pauseData;
+                InspectorTest.expectEqual(pauseData.type, breakpoint.type, `Pause type should be '${breakpoint.type}'.`);
+                InspectorTest.expectEqual(pauseData.nodeId, breakpoint.domNode.id, "Pause nodeId should be expected value.");
+                InspectorTest.assert(!("targetNodeId" in pauseData), "Should not have 'targetNodeId'.");
+                InspectorTest.assert(!("insertion" in pauseData), "Should not have 'insertion'.");
+
+                logActiveStackTrace();
+                WI.debuggerManager.resume();
+            });
+
+            await InspectorTest.evaluateInPage(`triggerInlineStyle()`);
+
+            InspectorTest.assert(paused, "Should pause.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    // Verify the breakpoint fires for the common style-invalidation triggers, not just inline style.
+    function addTriggerTestCase({name, selector, trigger}) {
+        suite.addTestCase({
+            name: `DOMBreakpoint.StyleInvalidated.Trigger.${name}`,
+            description: `Check that the breakpoint pauses when style is invalidated via ${name}.`,
+            async test() {
+                let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector(selector);
+
+                let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+                let paused = false;
+                let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                    paused = true;
+
+                    let pauseData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target).pauseData;
+                    InspectorTest.expectEqual(pauseData.type, breakpoint.type, `Pause type should be '${breakpoint.type}'.`);
+                    InspectorTest.expectEqual(pauseData.nodeId, breakpoint.domNode.id, "Pause nodeId should be expected value.");
+
+                    WI.debuggerManager.resume();
+                });
+
+                InspectorTest.log(`Triggering via ${name}...`);
+                await InspectorTest.evaluateInPage(`${trigger}()`);
+
+                InspectorTest.expectTrue(paused, `Should pause for ${name} trigger.`);
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+            },
+            teardown: InspectorTest.DOMBreakpoint.teardown,
+        });
+    }
+
+    addTriggerTestCase({name: "ClassList", selector: "#style-invalidated-class", trigger: "triggerClassList"});
+    addTriggerTestCase({name: "Id", selector: "#style-invalidated-id-before", trigger: "triggerId"});
+    addTriggerTestCase({name: "Dataset", selector: "#style-invalidated-data", trigger: "triggerDataset"});
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.StyleInvalidated.UnrelatedNode`,
+        description: "Check that debugger does not pause when an unrelated node's style is invalidated.",
+        async test() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+
+            await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            InspectorTest.log("Invalidating an unrelated node...");
+            await InspectorTest.evaluateInPage(`triggerUnrelated()`);
+
+            InspectorTest.expectFalse(paused, "Should not pause when a different node's style is invalidated.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.StyleInvalidated.BreakpointDisabled`,
+        description: "Check that debugger does not pause for disabled breakpoint.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+            InspectorTest.log("Disabling breakpoint...");
+            breakpoint.disabled = true;
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`triggerInlineStyle()`);
+
+            InspectorTest.expectFalse(paused, "Should not pause for disabled breakpoint.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.StyleInvalidated.DebuggerDisabled`,
+        description: "Check that debugger does not pause when the debugger is disabled.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+
+            await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+            InspectorTest.log("Disabling all breakpoints...");
+            await DebuggerAgent.setBreakpointsActive(false);
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`triggerInlineStyle()`);
+
+            InspectorTest.log("Enabling all breakpoints...");
+            await DebuggerAgent.setBreakpointsActive(true);
+
+            InspectorTest.expectFalse(paused, "Should not pause when all breakpoints disabled.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: `DOMBreakpoint.StyleInvalidated.RemoveBreakpoint`,
+        description: "Check that debugger does not pause for removed breakpoint.",
+        async test() {
+            let paused = false;
+            let pausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                WI.debuggerManager.resume();
+            });
+
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+
+            let breakpoint = await InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+
+            InspectorTest.log("Removing breakpoint...");
+            WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+
+            InspectorTest.log("Triggering breakpoint...");
+            await InspectorTest.evaluateInPage(`triggerInlineStyle()`);
+
+            InspectorTest.expectFalse(paused, "Should not pause for removed breakpoint.");
+            WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, pausedListener);
+        },
+        teardown: InspectorTest.DOMBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        async createBreakpoint() {
+            let node = await InspectorTest.DOMBreakpoint.awaitQuerySelector("#style-invalidated-test");
+            return InspectorTest.DOMBreakpoint.createBreakpoint(node, WI.DOMBreakpoint.Type.StyleInvalidated);
+        },
+        async triggerBreakpoint(breakpoint) {
+            return InspectorTest.evaluateInPage(`triggerInlineStyle()`);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for style-invalidated DOM breakpoints.</p>
+<div id="test-container">
+    <div id="style-invalidated-test"></div>
+    <div id="style-invalidated-other"></div>
+    <div id="style-invalidated-class"></div>
+    <div id="style-invalidated-id-before"></div>
+    <div id="style-invalidated-data"></div>
+</div>
+</body>
+</html>

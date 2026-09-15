@@ -7,7 +7,7 @@
         {
             "id": "DOMBreakpointType",
             "type": "string",
-            "enum": ["subtree-modified", "attribute-modified", "node-removed"],
+            "enum": ["subtree-modified", "attribute-modified", "node-removed", "style-invalidated"],
             "description": "DOM breakpoint type."
         },
         {

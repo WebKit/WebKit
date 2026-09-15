@@ -61,6 +61,9 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Breakpoint
 
         case WI.DOMBreakpoint.Type.NodeRemoved:
             return WI.UIString("Node Removed", "Node Removed @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) before DOM node is removed");
+
+        case WI.DOMBreakpoint.Type.StyleInvalidated:
+            return WI.UIString("Style Invalidated", "Style Invalidated @ DOM Breakpoint", "A submenu item of 'Break On' that breaks (pauses) when an element's style is invalidated");
         }
 
         console.assert(false, "Unknown DOM breakpoint type", type);
@@ -142,6 +145,7 @@ WI.DOMBreakpoint.Type = {
     SubtreeModified: "subtree-modified",
     AttributeModified: "attribute-modified",
     NodeRemoved: "node-removed",
+    StyleInvalidated: "style-invalidated",
 };
 
 WI.DOMBreakpoint.Event = {

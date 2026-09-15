@@ -148,6 +148,7 @@ public:
     static void characterDataModified(Document&, CharacterData&);
     static void willInvalidateStyleAttr(Element&);
     static void didInvalidateStyleAttr(Element&);
+    static void didInvalidateStyleForElement(Element&);
     static void documentDetached(Document&);
     static void frameWindowDiscarded(LocalFrame&, LocalDOMWindow*);
     static void mediaQueryResultChanged(Document&);
@@ -394,6 +395,7 @@ private:
     static void characterDataModifiedImpl(InstrumentingAgents&, CharacterData&);
     static void willInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
+    static void didInvalidateStyleForElementImpl(InstrumentingAgents&, Element&);
     static void documentDetachedImpl(InstrumentingAgents&, Document&);
     static void frameWindowDiscardedImpl(InstrumentingAgents&, LocalDOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents&, Document&);
@@ -707,6 +709,13 @@ inline void InspectorInstrumentation::didInvalidateStyleAttr(Element& element)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (RefPtr agents = instrumentingAgents(element.document()))
         didInvalidateStyleAttrImpl(*agents, element);
+}
+
+inline void InspectorInstrumentation::didInvalidateStyleForElement(Element& element)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr agents = instrumentingAgents(element.document()))
+        didInvalidateStyleForElementImpl(*agents, element);
 }
 
 inline void InspectorInstrumentation::documentDetached(Document& document)
