@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: [object Object]
+Testing that a "Log" breakpoint action logs an object as a rich console argument.
+
+
+== Running test suite: Debugger.BreakpointAction.Log.Object
+-- Running test case: LogObjectAsRichConsoleArgument
+inside breakpointActions a:(42) b:([object Object])
+PASS: Should log exactly one console argument.
+PASS: Logged argument should be a rich object, not a string.
+PASS: Logged argument should describe the original object.
+
