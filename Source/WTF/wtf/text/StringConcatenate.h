@@ -31,6 +31,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
 
 #if defined(NDEBUG)
@@ -182,6 +183,18 @@ public:
         : StringTypeAdapter<std::span<SpanMemberFunctionReturnTypeElementType<ClassType>>> { characters.span() }
     {
     }
+};
+
+// A CString does not know its encoding, so there is no right way to decode it. The adapter above
+// would take its span<const char> and reinterpret the bytes as Latin-1, which silently mojibakes any
+// non-ASCII UTF-8 content. Use one of the CStringWithEncoding aliases instead, or take the span and
+// say which encoding it holds. This matches printInternal() in PrintStream.h.
+// This opts out CString and nothing else: an explicit specialization matches the exact type, so
+// CStringWithEncoding keeps using the adapter above, where span() carries the encoding in its
+// element type.
+template<> class StringTypeAdapter<CString> {
+public:
+    StringTypeAdapter(const CString&) = delete;
 };
 
 template<> class StringTypeAdapter<StringImpl*> {

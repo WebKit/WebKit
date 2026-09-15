@@ -295,7 +295,7 @@ std::optional<PlatformXR::FrameData::ExternalTexture> OpenXRGraphicsBindingOpenG
         AHardwareBuffer* buffer { nullptr };
         if (auto error = AHardwareBuffer_allocate(&bufferDesc, &buffer)) {
             if (error < 0)
-                RELEASE_LOG_ERROR(XR, "Failed to allocate AHardwareBuffer for OpenXR texture: %s", safeStrerror(-error).data());
+                RELEASE_LOG_ERROR(XR, "Failed to allocate AHardwareBuffer for OpenXR texture: %s", safeStrerror(-error));
             else
                 RELEASE_LOG_ERROR(XR, "Failed to allocate AHardwareBuffer for OpenXR texture: %" PRIi32, error);
             return { };

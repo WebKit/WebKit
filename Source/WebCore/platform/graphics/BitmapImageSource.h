@@ -91,7 +91,7 @@ public:
     DecodingStatus frameDecodingStatusAtIndex(unsigned index) const final;
 
     // Testing support
-    CString sourceUTF8() const;
+    UTF8CString sourceUTF8() const;
 
     // ImageDecoderClient.
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;

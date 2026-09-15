@@ -103,10 +103,10 @@ static void handleWebSocketMessage(SoupWebsocketConnection* connection, SoupWebs
 
     gsize messageSize;
     gconstpointer messageData = g_bytes_get_data(message, &messageSize);
-    WebSocketMessageHandler::Message messageObj = { connection, { std::span<const char>(static_cast<const char*>(messageData), messageSize) } };
+    WebSocketMessageHandler::Message messageObj = { connection, UTF8CString { unsafeMakeSpan(static_cast<const char8_t*>(messageData), messageSize) } };
     webSocketServer->messageHandler().handleMessage(WTF::move(messageObj), [](WebSocketMessageHandler::Message&& message) {
         if (!message.connection) {
-            RELEASE_LOG(WebDriverBiDi, "No connection found when trying to send message: %s", message.payload.data());
+            RELEASE_LOG(WebDriverBiDi, "No connection found when trying to send message: %s", message.payload);
             return;
         }
         GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(message.payload.data(), message.payload.length()));

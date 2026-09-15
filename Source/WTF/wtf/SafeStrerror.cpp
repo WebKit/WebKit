@@ -26,43 +26,52 @@
 #include "config.h"
 #include <wtf/SafeStrerror.h>
 
+#include <array>
 #include <cstring>
 #include <type_traits>
 #include <wtf/Platform.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 
 namespace WTF {
 
-CString safeStrerror(int errnum)
+UTF8CString safeStrerror(int errnum)
 {
     constexpr size_t bufferLength = 1024;
-    std::span<char> cstringBuffer;
-    auto result = CString::newUninitialized(bufferLength, cstringBuffer);
+    std::array<char, bufferLength> buffer;
+    bool unknownError = false;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+    const char* message = buffer.data();
+
 #if OS(WINDOWS)
-    strerror_s(cstringBuffer.data(), cstringBuffer.size(), errnum);
+    strerror_s(buffer.data(), buffer.size(), errnum);
 #else
-    auto ret = strerror_r(errnum, cstringBuffer.data(), cstringBuffer.size());
+    auto ret = strerror_r(errnum, buffer.data(), buffer.size());
 
     if constexpr (std::is_same<decltype(ret), char*>::value) {
         // We have GNU strerror_r(), which returns char*. This may or may not be a pointer into
-        // cstringBuffer. We also have to be careful because this has to compile even if ret is
-        // an int, hence the reinterpret_casts.
-        char* message = reinterpret_cast<char*>(ret);
-        if (message != cstringBuffer.data())
-            strncpy(cstringBuffer.data(), message, cstringBuffer.size());
+        // buffer, and either way it is null-terminated. We also have to be careful because this
+        // has to compile even if ret is an int, hence the reinterpret_cast.
+        message = reinterpret_cast<const char*>(ret);
     } else {
         // We have POSIX strerror_r, which returns int and may fail.
-        if (ret)
-            snprintf(cstringBuffer.data(), cstringBuffer.size(), "%s %d", "Unknown error", errnum);
+        unknownError = !!ret;
     }
 #endif // OS(WINDOWS)
 
+    // strerror_r() leaves the buffer unspecified when it fails.
+    if (unknownError)
+        return makeString("Unknown error "_s, errnum).utf8();
+
+    // strerror_r() truncates rather than overflowing, so bound the length by the buffer.
+    size_t length = strnlen(message, bufferLength);
+    auto messageSpan = unsafeMakeSpan(message, length);
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    return result;
+    return UTF8CString { byteCast<char8_t>(messageSpan) };
 }
 
 } // namespace WTF
