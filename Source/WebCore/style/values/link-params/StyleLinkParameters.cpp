@@ -30,24 +30,56 @@
 #include "CSSLinkParameter.h"
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
+#include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
 #include "StyleBuilderChecking.h"
 
 namespace WebCore {
 namespace Style {
 
+static ParamSpec toStyleParamSpec(const CSS::ParamSpec& spec)
+{
+    return WTF::switchOn(spec.value,
+        [](CSS::Keyword::Color keyword) { return ParamSpec { keyword }; },
+        [](CSS::Keyword::AccentColor keyword) { return ParamSpec { keyword }; },
+        [](const CSS::ParamSpec::Custom& custom) {
+            return ParamSpec { ParamSpec::Custom { CustomIdent { custom.name.value }, custom.type } };
+        }
+    );
+}
+
+static CSS::ParamSpec toCSSParamSpec(const ParamSpec& spec)
+{
+    return WTF::switchOn(spec.value,
+        [](CSS::Keyword::Color keyword) { return CSS::ParamSpec { keyword }; },
+        [](CSS::Keyword::AccentColor keyword) { return CSS::ParamSpec { keyword }; },
+        [](const ParamSpec::Custom& custom) {
+            return CSS::ParamSpec { CSS::ParamSpec::Custom { CSS::CustomIdent { custom.name.value }, custom.type } };
+        }
+    );
+}
+
+const AtomString& ParamSpec::name() const
+{
+    return WTF::switchOn(value,
+        [](CSS::Keyword::Color) -> const AtomString& { return nameStringForSerialization(CSSValueColor); },
+        [](CSS::Keyword::AccentColor) -> const AtomString& { return nameStringForSerialization(CSSValueAccentColor); },
+        [](const Custom& custom) -> const AtomString& { return custom.name.value; }
+    );
+}
+
 auto CSSValueConversion<LinkParameter>::operator()(BuilderState& state, const CSSValue& value) -> LinkParameter
 {
     RefPtr parameter = requiredDowncast<CSSParamValue>(state, value);
     if (!parameter)
-        return { CustomIdent { nullAtom() }, DeclarationValue { CSSVariableData::create(CSSParserTokenRange { }) } };
+        return { ParamSpec { ParamSpec::Custom { CustomIdent { nullAtom() }, std::nullopt } }, DeclarationValue { CSSVariableData::create(CSSParserTokenRange { }) } };
 
-    return { CustomIdent { parameter->parameter()->name.value }, toStyle(parameter->parameter()->value, state) };
+    return { toStyleParamSpec(parameter->parameter()->spec), toStyle(parameter->parameter()->value, state) };
 }
 
 auto CSSValueCreation<LinkParameter>::operator()(CSSValuePool&, const ComputedStyle& style, const LinkParameter& parameter) -> Ref<CSSValue>
 {
-    return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { CSS::CustomIdent { parameter.name.value }, toCSS(parameter.value, style) } });
+    return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { toCSSParamSpec(parameter.spec), toCSS(parameter.value, style) } });
 }
 
 } // namespace Style
