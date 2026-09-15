@@ -718,7 +718,7 @@ public:
     unsigned m_resourcesToStartPending;
 };
 
-static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gconstpointer)
+static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gconstpointer) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     s_serverLock.lock();
     test->loadURI(kServer->getURIForPath("/sync-request-on-max-conns-0").data());
@@ -730,7 +730,7 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
     }
 
     // By default sync XHRs have a 10 seconds timeout, we don't want to wait all that so use our own timeout.
-    guint timeoutSourceID = g_timeout_add(1000, [] (gpointer) -> gboolean {
+    guint timeoutSourceID = g_timeout_add(1000, [] (gpointer) WTF_IGNORES_THREAD_SAFETY_ANALYSIS -> gboolean {
         g_assert_not_reached();
         s_serverLock.unlock();
         return G_SOURCE_REMOVE;
@@ -739,7 +739,7 @@ static void testWebViewSyncRequestOnMaxConns(SyncRequestOnMaxConnsTest* test, gc
     struct UnlockServerSourceContext {
         guint unlockServerSourceID;
     } context = {
-        g_idle_add_full(G_PRIORITY_DEFAULT, [](gpointer userData) -> gboolean {
+        g_idle_add_full(G_PRIORITY_DEFAULT, [](gpointer userData) WTF_IGNORES_THREAD_SAFETY_ANALYSIS -> gboolean {
             auto& context = *static_cast<UnlockServerSourceContext*>(userData);
             context.unlockServerSourceID = 0;
             s_serverLock.unlock();
