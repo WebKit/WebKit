@@ -76,8 +76,15 @@ static const Style::ComputedStyle* styleForContainer(const Element& container, C
     // Queries that don't need a size container (style and scroll-state queries) resolve
     // against the container's style, which may not be committed to the render tree yet.
     // Look it up from the currently computed style update instead.
-    if (!requirements.needsSizeContainer() && evaluationState && evaluationState->styleUpdate)
-        return evaluationState->styleUpdate->elementStyle(container);
+    if (!requirements.needsSizeContainer() && evaluationState) {
+        if (evaluationState->hostElementStyle && evaluationState->hostElementStyle->element.ptr() == &container)
+            return evaluationState->hostElementStyle->style.ptr();
+
+        if (evaluationState->styleUpdate)
+            return evaluationState->styleUpdate->elementStyle(container);
+
+        return nullptr;
+    }
 
     return container.existingComputedStyle();
 }

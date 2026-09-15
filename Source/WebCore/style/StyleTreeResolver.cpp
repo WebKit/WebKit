@@ -376,6 +376,10 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
         }
     }
 
+    SetForScope hostElementStyleScope(
+        scope().selectorMatchingState.containerQueryEvaluationState.hostElementStyle,
+        HostElementStyle { element, *update.style });
+
     auto resolveAndAddPseudoElementStyle = [&](const PseudoElementIdentifier& pseudoElementIdentifier) {
         const Style::ComputedStyle* existingPseudoStyle = existingStyle ? existingStyle->pseudoElementStyle(pseudoElementIdentifier) : nullptr;
         auto pseudoElementUpdate = resolvePseudoElement(element, pseudoElementIdentifier, update, parent().isInDisplayNoneTree, existingPseudoStyle);
