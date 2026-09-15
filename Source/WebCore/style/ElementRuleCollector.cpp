@@ -386,9 +386,7 @@ void ElementRuleCollector::matchHostPseudoClassRules(DeclarationOrigin origin)
         collectMatchingRulesForList(&rules, hostMatchRequest);
     };
 
-    if (shadowRules->hasHostOrScopePseudoClassRulesInUniversalBucket())
-        collect(shadowRules->universalRules());
-
+    collect(shadowRules->hostOrScopePseudoClassRulesInUniversalBucket());
     collect(shadowRules->hostPseudoClassRules());
 }
 
@@ -557,6 +555,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
     auto matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
+    ASSERT(styleScopeOrdinal != ScopeOrdinal::Shadow || matchBasedOnRuleHash == MatchBasedOnRuleHash::None);
     if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
         ASSERT_WITH_MESSAGE(!m_pseudoElementRequest, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
 
@@ -588,6 +587,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
         if (compiledSelector.status == SelectorCompilationStatus::NotCompiled)
             SelectorCompiler::compileSelector(compiledSelector, ruleData.selector(), SelectorCompiler::SelectorContext::RuleCollector);
 
+        ASSERT(styleScopeOrdinal != ScopeOrdinal::Shadow || compiledSelector.status == SelectorCompilationStatus::CannotCompile);
         if (compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker) {
             compiledSelector.wasUsed();
 
