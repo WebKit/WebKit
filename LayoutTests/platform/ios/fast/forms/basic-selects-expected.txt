@@ -7,15 +7,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,0) size 169x19
           text run at (1,0) width 169: "Whitespace in option text:"
         RenderMenuList {SELECT} at (169,1) size 49x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 36x14
-            RenderText {#text} at (0,-1) size 24x15
-              text run at (0,0) width 24: "f o o"
         RenderText {#text} at (217,0) size 8x19
           text run at (217,0) width 8: "a"
         RenderMenuList {SELECT} at (224,1) size 49x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 36x14
-            RenderText {#text} at (0,-1) size 24x15
-              text run at (0,0) width 24: "f o o"
         RenderText {#text} at (272,0) size 9x19
           text run at (272,0) width 9: "b"
         RenderBR {BR} at (280,0) size 1x19
@@ -23,15 +17,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,36) size 140x19
           text run at (1,36) width 140: "Simple select control:"
         RenderMenuList {SELECT} at (140,37) size 43x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 30x14
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (182,36) size 8x19
           text run at (182,36) width 8: "a"
         RenderMenuList {SELECT} at (189,37) size 43x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 30x14
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (231,36) size 9x19
           text run at (231,36) width 9: "b"
         RenderBR {BR} at (239,36) size 1x19
@@ -39,15 +27,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,72) size 198x19
           text run at (1,72) width 198: "Line-height should be ignored:"
         RenderMenuList {SELECT} at (198,73) size 42x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 29x14
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (239,72) size 8x19
           text run at (239,72) width 8: "a"
         RenderMenuList {SELECT} at (246,73) size 43x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 30x14
-            RenderText {#text} at (0,-1) size 18x15
-              text run at (0,0) width 18: "bar"
         RenderText {#text} at (288,72) size 9x19
           text run at (288,72) width 9: "b"
         RenderBR {BR} at (296,72) size 1x19
@@ -55,15 +37,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,110) size 441x18
           text run at (1,110) width 441: "Padding should be respected, the arrow button shouldn't change size:"
         RenderMenuList {SELECT} at (442,109) size 39x23 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (5,5) size 29x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (481,110) size 8x18
           text run at (481,110) width 8: "a"
         RenderMenuList {SELECT} at (488,109) size 40x23 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (5,5) size 29x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (527,110) size 9x18
           text run at (527,110) width 9: "b"
         RenderBR {BR} at (535,110) size 1x18
@@ -71,15 +47,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,152) size 180x18
           text run at (1,152) width 180: "Border should be respected:"
         RenderMenuList {SELECT} at (180,148) size 63x29 [bgcolor=#E9E9EA] [border: (8px solid #33CCFF)]
-          RenderBlock {DIV} at (13,8) size 36x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (242,152) size 8x18
           text run at (242,152) width 8: "a"
         RenderMenuList {SELECT} at (249,148) size 63x29 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (8px solid #33CCFF)]
-          RenderBlock {DIV} at (13,8) size 36x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (311,152) size 9x18
           text run at (311,152) width 9: "b"
         RenderBR {BR} at (319,152) size 1x18
@@ -87,15 +57,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,198) size 118x18
           text run at (1,198) width 118: "Border + padding:"
         RenderMenuList {SELECT} at (118,193) size 51x31 [bgcolor=#E9E9EA] [border: (4px solid #33CCFF)]
-          RenderBlock {DIV} at (9,9) size 32x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (168,198) size 8x18
           text run at (168,198) width 8: "a"
         RenderMenuList {SELECT} at (175,193) size 51x31 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (4px solid #33CCFF)]
-          RenderBlock {DIV} at (9,9) size 32x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (225,198) size 9x18
           text run at (225,198) width 9: "b"
         RenderBR {BR} at (233,198) size 1x18
@@ -103,15 +67,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,244) size 491x19
           text run at (1,244) width 491: "Height larger than font-size, button should grow, text baseline should center:"
         RenderMenuList {SELECT} at (491,240) size 42x30 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,8) size 29x14
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (532,244) size 8x19
           text run at (532,244) width 8: "a"
         RenderMenuList {SELECT} at (539,240) size 42x30 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,8) size 29x14
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (580,244) size 9x19
           text run at (580,244) width 9: "b"
         RenderBR {BR} at (588,244) size 1x19
@@ -119,15 +77,9 @@ layer at (0,0) size 800x510
         RenderText {#text} at (1,285) size 515x18
           text run at (1,285) width 515: "Heigh smaller than font-size, whole select shrinks and is baselined with the text:"
         RenderMenuList {SELECT} at (515,287) size 43x16 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,1) size 30x13
-            RenderText {#text} at (0,-1) size 17x15
-              text run at (0,0) width 17: "foo"
         RenderText {#text} at (557,285) size 8x18
           text run at (557,285) width 8: "a"
         RenderMenuList {SELECT} at (564,287) size 43x16 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,1) size 30x13
-            RenderText {#text} at (0,-1) size 18x15
-              text run at (0,0) width 18: "bar"
         RenderText {#text} at (606,285) size 9x18
           text run at (606,285) width 9: "b"
         RenderBR {BR} at (614,285) size 1x18
@@ -136,31 +88,99 @@ layer at (0,0) size 800x510
           text run at (1,318) width 169: "select control with size=0:"
         RenderBR {BR} at (169,318) size 1x18
         RenderMenuList {SELECT} at (1,334) size 188x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 176x14
-            RenderText {#text} at (0,-1) size 70x15
-              text run at (0,0) width 70: "Future Series"
         RenderBR {BR} at (189,334) size 0x19
         RenderText {#text} at (1,354) size 169x18
           text run at (1,354) width 169: "select control with size=1:"
         RenderBR {BR} at (169,354) size 1x18
         RenderMenuList {SELECT} at (1,370) size 188x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 176x14
-            RenderText {#text} at (0,-1) size 70x15
-              text run at (0,0) width 70: "Future Series"
         RenderBR {BR} at (189,370) size 0x19
         RenderText {#text} at (1,390) size 166x18
           text run at (1,390) width 166: "Non-styled select control:"
         RenderBR {BR} at (166,390) size 1x18
         RenderMenuList {SELECT} at (1,406) size 198x36 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (11,11) size 176x13
-            RenderText {#text} at (0,-1) size 70x15
-              text run at (0,0) width 70: "Future Series"
         RenderBR {BR} at (199,414) size 0x18
         RenderText {#text} at (1,441) size 294x18
           text run at (1,441) width 294: "Styled select control with large border-radius:"
         RenderBR {BR} at (294,441) size 1x18
         RenderMenuList {SELECT} at (1,457) size 198x36 [bgcolor=#33CCFF] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (11,11) size 176x13
-            RenderText {#text} at (0,-1) size 70x15
-              text run at (0,0) width 70: "Future Series"
         RenderBR {BR} at (199,465) size 0x18
+layer at (183,13) size 36x13
+  RenderBlock {DIV} at (6,3) size 36x14
+    RenderText {#text} at (0,-1) size 24x15
+      text run at (0,0) width 24: "f o o"
+layer at (239,13) size 36x13
+  RenderBlock {DIV} at (6,3) size 36x14
+    RenderText {#text} at (0,-1) size 24x15
+      text run at (0,0) width 24: "f o o"
+layer at (155,49) size 30x13
+  RenderBlock {DIV} at (6,3) size 30x14
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (204,49) size 30x13
+  RenderBlock {DIV} at (6,3) size 30x14
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (213,85) size 29x13
+  RenderBlock {DIV} at (6,3) size 29x14
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (261,85) size 30x13
+  RenderBlock {DIV} at (6,3) size 30x14
+    RenderText {#text} at (0,-1) size 18x15
+      text run at (0,0) width 18: "bar"
+layer at (455,122) size 29x13
+  RenderBlock {DIV} at (5,5) size 29x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (501,122) size 29x13
+  RenderBlock {DIV} at (5,5) size 29x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (201,164) size 36x13
+  RenderBlock {DIV} at (13,8) size 36x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (270,164) size 36x13
+  RenderBlock {DIV} at (13,8) size 36x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (135,210) size 32x13
+  RenderBlock {DIV} at (9,9) size 32x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (193,210) size 32x13
+  RenderBlock {DIV} at (9,9) size 32x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (505,257) size 29x13
+  RenderBlock {DIV} at (6,8) size 29x14
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (553,257) size 29x13
+  RenderBlock {DIV} at (6,8) size 29x14
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (529,297) size 30x13
+  RenderBlock {DIV} at (6,1) size 30x13
+    RenderText {#text} at (0,-1) size 17x15
+      text run at (0,0) width 17: "foo"
+layer at (578,297) size 30x13
+  RenderBlock {DIV} at (6,1) size 30x13
+    RenderText {#text} at (0,-1) size 18x15
+      text run at (0,0) width 18: "bar"
+layer at (15,346) size 176x13
+  RenderBlock {DIV} at (6,3) size 176x14
+    RenderText {#text} at (0,-1) size 70x15
+      text run at (0,0) width 70: "Future Series"
+layer at (15,382) size 176x13
+  RenderBlock {DIV} at (6,3) size 176x14
+    RenderText {#text} at (0,-1) size 70x15
+      text run at (0,0) width 70: "Future Series"
+layer at (20,426) size 176x13
+  RenderBlock {DIV} at (11,11) size 176x13
+    RenderText {#text} at (0,-1) size 70x15
+      text run at (0,0) width 70: "Future Series"
+layer at (20,477) size 176x13
+  RenderBlock {DIV} at (11,11) size 176x13
+    RenderText {#text} at (0,-1) size 70x15
+      text run at (0,0) width 70: "Future Series"

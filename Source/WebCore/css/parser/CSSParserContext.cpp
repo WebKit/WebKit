@@ -137,6 +137,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssFontPaletteMixFunctionEnabled { settings.cssFontPaletteMixFunctionEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
+    StaticCSSValuePool::init();
 }
 
 void add(Hasher& hasher, const CSSParserContext& context)

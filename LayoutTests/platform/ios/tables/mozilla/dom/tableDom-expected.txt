@@ -5,9 +5,6 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x21
         RenderMenuList {SELECT} at (0,0) size 86x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 74x14
-            RenderText {#text} at (0,-1) size 61x15
-              text run at (0,0) width 61: "append cell"
         RenderText {#text} at (86,0) size 53x18
           text run at (86,0) width 53: "   tbody "
         RenderTextControl {INPUT} at (138,1) size 50x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
@@ -47,6 +44,10 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 24: "c22"
       RenderBlock (anonymous) at (0,106) size 784x19
         RenderBR {BR} at (0,0) size 0x18
+layer at (14,12) size 74x13
+  RenderBlock {DIV} at (6,3) size 74x14
+    RenderText {#text} at (0,-1) size 61x15
+      text run at (0,0) width 61: "append cell"
 layer at (152,12) size 37x13
   RenderBlock {DIV} at (6,2) size 37x14
     RenderText {#text} at (0,-1) size 7x15

@@ -186,6 +186,7 @@ void HTMLSelectElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     ScriptDisallowedScope::EventAllowedScope buttonSlotScope { buttonSlot };
     buttonSlot->setAttributeWithoutSynchronization(inertAttr, emptyAtom());
     buttonSlot->setAttributeWithoutSynchronization(nameAttr, buttonSlotName());
+    buttonSlot->setAttributeWithoutSynchronization(styleAttr, "text-overflow:inherit"_s);
     buttonSlot->appendChild(SelectFallbackButtonElement::create(document));
     root.appendChild(buttonSlot);
     m_buttonSlot = WTF::move(buttonSlot);

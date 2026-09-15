@@ -40,6 +40,7 @@
 #include "StyleResolver.h"
 #include "StyleTextAlign.h"
 #include "Text.h"
+#include "UserAgentParts.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -66,6 +67,7 @@ Ref<SelectFallbackButtonElement> SelectFallbackButtonElement::create(Document& d
 {
     Ref element = adoptRef(*new SelectFallbackButtonElement(document));
     ScriptDisallowedScope::EventAllowedScope scope { element };
+    element->setUserAgentPart(UserAgentParts::fieldContent());
     element->appendChild(Text::create(document, "\n"_s));
     return element;
 }

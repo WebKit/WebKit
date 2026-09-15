@@ -185,9 +185,6 @@ layer at (0,0) size 800x2578
           RenderText {#text} at (0,0) size 267x18
             text run at (0,0) width 267: "How does your browser fare on this test? "
           RenderMenuList {SELECT} at (266,0) size 457x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-            RenderBlock {DIV} at (6,3) size 444x14
-              RenderText {#text} at (0,-1) size 432x15
-                text run at (0,0) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
           RenderText {#text} at (0,0) size 0x0
           RenderInline {LABEL} at (0,20) size 226x19
             RenderText {#text} at (0,20) size 72x19
@@ -238,6 +235,10 @@ layer at (0,0) size 800x2578
       RenderBlock {P} at (0,2522) size 784x19
         RenderText {#text} at (0,0) size 185x18
           text run at (0,0) width 185: "Last updated in March 1999."
+layer at (281,2337) size 444x13
+  RenderBlock {DIV} at (6,3) size 444x14
+    RenderText {#text} at (0,-1) size 432x15
+      text run at (0,0) width 432: "The tests all render identically, and this browser may or may not grok CSS2 tables."
 layer at (86,2358) size 142x13 backgroundClip at (86,2358) size 141x13 clip at (86,2358) size 141x13
   RenderBlock {DIV} at (6,3) size 142x13
 layer at (8,2390) size 784x2 clip at (0,0) size 0x0

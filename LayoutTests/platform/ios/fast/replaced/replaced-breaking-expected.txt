@@ -29,22 +29,10 @@ layer at (0,0) size 800x600
               text run at (0,0) width 35: "button"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (1,173) size 56x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 44x14
-            RenderText {#text} at (0,-1) size 32x15
-              text run at (0,0) width 32: "select"
         RenderMenuList {SELECT} at (1,193) size 56x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 44x14
-            RenderText {#text} at (0,-1) size 32x15
-              text run at (0,0) width 32: "select"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (1,213) size 56x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 44x14
-            RenderText {#text} at (0,-1) size 0x15
-              text run at (0,0) width 0: " "
         RenderMenuList {SELECT} at (1,233) size 56x20 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-          RenderBlock {DIV} at (6,3) size 44x14
-            RenderText {#text} at (0,-1) size 0x15
-              text run at (0,0) width 0: " "
         RenderText {#text} at (0,0) size 0x0
         RenderBlock {INPUT} at (3,256) size 16x16 [bgcolor=#FFFFFF03]
         RenderBlock {INPUT} at (3,278) size 16x16 [bgcolor=#FFFFFF03]
@@ -72,3 +60,19 @@ layer at (15,12) size 142x13
   RenderBlock {DIV} at (6,3) size 142x13
 layer at (15,31) size 142x13
   RenderBlock {DIV} at (6,3) size 142x13
+layer at (15,185) size 44x13
+  RenderBlock {DIV} at (6,3) size 44x14
+    RenderText {#text} at (0,-1) size 32x15
+      text run at (0,0) width 32: "select"
+layer at (15,205) size 44x13
+  RenderBlock {DIV} at (6,3) size 44x14
+    RenderText {#text} at (0,-1) size 32x15
+      text run at (0,0) width 32: "select"
+layer at (15,225) size 44x13
+  RenderBlock {DIV} at (6,3) size 44x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "
+layer at (15,245) size 44x13
+  RenderBlock {DIV} at (6,3) size 44x14
+    RenderText {#text} at (0,-1) size 0x15
+      text run at (0,0) width 0: " "

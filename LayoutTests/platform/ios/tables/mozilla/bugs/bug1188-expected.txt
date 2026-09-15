@@ -19,9 +19,6 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (177,9) size 5x19
                   text run at (177,1) width 5: " "
                 RenderMenuList {SELECT} at (181,9) size 75x21 [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
-                  RenderBlock {DIV} at (6,3) size 62x14
-                    RenderText {#text} at (0,-1) size 50x15
-                      text run at (0,0) width 50: "Netscape"
                 RenderTextControl {INPUT} at (255,10) size 225x20 [bgcolor=#FFFFFF] [border: (1px solid #3C3C4399)]
                 RenderText {#text} at (479,9) size 5x19
                   text run at (479,1) width 5: " "
@@ -137,5 +134,9 @@ layer at (0,0) size 800x600
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
 layer at (8,8) size 602x2 clip at (0,0) size 0x0
   RenderBlock {HR} at (0,0) size 602x2 [color=#808080] [border: (1px inset #808080)]
+layer at (197,79) size 62x13
+  RenderBlock {DIV} at (6,3) size 62x14
+    RenderText {#text} at (0,-1) size 50x15
+      text run at (0,0) width 50: "Netscape"
 layer at (271,79) size 212x13
   RenderBlock {DIV} at (6,3) size 212x13

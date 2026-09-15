@@ -56,9 +56,6 @@ layer at (0,0) size 800x600
                   text run at (16,239) width 130: " option #2"
                 RenderBR {BR} at (146,239) size 0x37
                 RenderMenuList {SELECT} at (0,276) size 292x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock {DIV} at (1,1) size 290x28
-                    RenderText {#text} at (5,5) size 77x18
-                      text run at (5,5) width 77: "Initial Value"
                 RenderBR {BR} at (292,267) size 0x37
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {P} at (0,851) size 769x37
@@ -103,6 +100,10 @@ layer at (0,0) size 800x600
               text run at (0,0) width 173: "Initial text before user input"
         layer at (345,407) size 167x18
           RenderBlock {DIV} at (3,3) size 167x18
+        layer at (9,578) size 290x28
+          RenderBlock {DIV} at (1,1) size 290x28
+            RenderText {#text} at (5,5) size 77x18
+              text run at (5,5) width 77: "Initial Value"
         layer at (8,607) size 261x186 clip at (9,608) size 259x184
           RenderTextControl {TEXTAREA} at (0,306) size 261x186 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 255x36

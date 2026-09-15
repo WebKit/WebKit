@@ -4,24 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderMenuList {SELECT} at (0,0) size 62x20 [color=#00000042] [bgcolor=#FFFFFF] [border: (1px solid #00000042)]
-        RenderBlock {DIV} at (1,1) size 60x18
-          RenderText {#text} at (8,2) size 29x13
-            text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (62,-1) size 0x19
       RenderMenuList {SELECT} at (0,20) size 62x20 [color=#00000042] [bgcolor=#FFFFFF] [border: (1px solid #00000042)]
-        RenderBlock {DIV} at (1,1) size 60x18
-          RenderText {#text} at (8,2) size 29x13
-            text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (62,19) size 0x19
       RenderMenuList {SELECT} at (0,40) size 62x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-        RenderBlock {DIV} at (1,1) size 60x18
-          RenderText {#text} at (8,2) size 29x13
-            text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (62,39) size 0x19
       RenderMenuList {SELECT} at (0,60) size 62x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-        RenderBlock {DIV} at (1,1) size 60x18
-          RenderText {#text} at (8,2) size 29x13
-            text run at (8,2) width 29: "PASS"
       RenderBR {BR} at (62,59) size 0x19
       RenderListBox {SELECT} at (0,80) size 46x29 [color=#0000003F] [bgcolor=#FFFFFF] [border: (1px inset #808080)]
       RenderBR {BR} at (46,88) size 0x18
@@ -55,3 +43,19 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,322) size 445x18
         text run at (0,322) width 445: "PASS: sel8 correctly set to selectedIndex 1 by sel8.selectedIndex = 1."
       RenderBR {BR} at (444,322) size 1x18
+layer at (9,9) size 60x18
+  RenderBlock {DIV} at (1,1) size 60x18
+    RenderText {#text} at (8,2) size 29x13
+      text run at (8,2) width 29: "PASS"
+layer at (9,29) size 60x18
+  RenderBlock {DIV} at (1,1) size 60x18
+    RenderText {#text} at (8,2) size 29x13
+      text run at (8,2) width 29: "PASS"
+layer at (9,49) size 60x18
+  RenderBlock {DIV} at (1,1) size 60x18
+    RenderText {#text} at (8,2) size 29x13
+      text run at (8,2) width 29: "PASS"
+layer at (9,69) size 60x18
+  RenderBlock {DIV} at (1,1) size 60x18
+    RenderText {#text} at (8,2) size 29x13
+      text run at (8,2) width 29: "PASS"

@@ -39,7 +39,8 @@ select,
   color: inherit;
   font: inherit;
   background-color: light-dark(transparent, color-mix(currentColor 4%));
-  align-items: center;
+  align-items: unsafe center;
+  align-content: unsafe center;
   white-space: nowrap;
   cursor: default;
   gap: 0.65em;
@@ -98,7 +99,7 @@ select:not([multiple]) > button:first-child {
 select selectedcontent,
 .customizable-select-selectedcontent {
   overflow: clip;
-  text-overflow: ellipsis;
+  text-overflow: inherit;
   min-inline-size: 0;
 }
 
