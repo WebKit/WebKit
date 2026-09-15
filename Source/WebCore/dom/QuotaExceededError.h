@@ -27,6 +27,7 @@
 
 #include <WebCore/DOMException.h>
 #include <WebCore/QuotaExceededErrorOptions.h>
+#include <wtf/Markable.h>
 
 namespace WebCore {
 
@@ -41,8 +42,8 @@ public:
 private:
     QuotaExceededError(const String& message, QuotaExceededErrorOptions&&);
 
-    const std::optional<double> m_quota;
-    const std::optional<double> m_requested;
+    const Markable<double> m_quota;
+    const Markable<double> m_requested;
 };
 
 } // namespace WebCore
