@@ -4,13 +4,78 @@ import glob
 import logging
 import math
 import os
+import re
 import shlex
 import shutil
 import subprocess
 
+from dataclasses import dataclass
 from functools import cache
 
 logger = logging.getLogger(__name__)
+
+REQUIRED_FRAMEWORK_NAMES = ('JavaScriptCore', 'WebCore', 'WebKit')
+FRAMEWORK_NAME_PATTERN = re.compile(r'[A-Za-z][A-Za-z0-9+-]*')
+
+
+@dataclass(frozen=True)
+class ProfiledFramework:
+    name: str
+    optional: bool = False
+
+
+def resolve_profiled_frameworks(directories, suffix='.profdata'):
+    if isinstance(directories, str):
+        raise TypeError('Directories must be passed as a sequence of paths, not a single path, '
+                        'which would be globbed one character at a time')
+    directories = list(directories)
+
+    discovered = set()
+    for directory in directories:
+        for path in sorted(glob.glob(os.path.join(directory, f'*{suffix}'))):
+            if not os.path.isfile(path):
+                continue
+            basename = os.path.basename(path)[:-len(suffix)]
+            name = basename
+            if suffix == '.profraw':
+                name = basename.partition('_')[0]
+            if not FRAMEWORK_NAME_PATTERN.fullmatch(name):
+                logger.warning(f'Ignoring {path}: {name!r} is not a valid framework name')
+                continue
+            if suffix == '.profraw' and name == basename:
+                logger.warning(f'Ignoring {path}: expected {name}_%m_pid%p%c.profraw')
+                continue
+            discovered.add(name)
+
+    optional_names = sorted(discovered.difference(REQUIRED_FRAMEWORK_NAMES))
+    logger.info(f'Processing {", ".join(REQUIRED_FRAMEWORK_NAMES)} as required; '
+                f'discovered {", ".join(optional_names) if optional_names else "no other framework"} '
+                f'from *{suffix} in {", ".join(directories)}')
+
+    return tuple([ProfiledFramework(name) for name in REQUIRED_FRAMEWORK_NAMES]
+                 + [ProfiledFramework(name, optional=True) for name in optional_names])
+
+
+def weighted_profiles_for_framework(framework, directory_weight_pairs):
+    if not directory_weight_pairs:
+        raise ValueError('weighted_profiles_for_framework needs at least one (directory, weight) pair')
+
+    profile_weight_pairs = [(os.path.join(directory, f'{framework.name}.profdata'), weight)
+                            for directory, weight in directory_weight_pairs]
+
+    if framework.optional:
+        available = []
+        missing = []
+        for path, weight in profile_weight_pairs:
+            if os.path.isfile(path):
+                available.append((path, weight))
+            else:
+                missing.append(path)
+        if missing:
+            logger.debug(f'Missing optional {framework.name} profiles: {missing}')
+        profile_weight_pairs = available
+
+    return simplify_profile_weights(profile_weight_pairs)
 
 
 def locate_binary_xcrun(sdk, binary_name):
@@ -138,19 +203,20 @@ class LLVMProfileData:
                                '-a', 'lzfse'], capture_output=True, check=True, text=True)
 
 
-def merge_raw_profiles_in_directory_by_prefixes(prefix_list, input_directory, output_directory=None,
-                                                input_suffix='.profraw', output_suffix='.profdata'):
+def merge_raw_profiles_in_directory(frameworks, input_directory, output_directory=None,
+                                    input_suffix='.profraw', output_suffix='.profdata'):
     output_files = []
-    for prefix in prefix_list:
-        logger.info(f'Merging {prefix}')
-        pattern = f'{prefix}*{input_suffix}'
+    for framework in frameworks:
+        pattern = f'{framework.name}_*{input_suffix}'
         input_profiles = glob.glob(os.path.join(input_directory, pattern))
-        output_file = os.path.join(output_directory or input_directory, f'{prefix}{output_suffix}')
+
+        logger.info(f'Merging {framework.name}')
+        output_file = os.path.join(output_directory or input_directory, f'{framework.name}{output_suffix}')
         merge_process = LLVMProfileData.merge(output_file, unweighted_profiles=input_profiles)
         logger.info(f'stdout: {merge_process.stdout}')
         logger.info(f'stderr: {merge_process.stderr}')
         merge_process.check_returncode()
         output_files.append(output_file)
-        logger.info(f'{prefix} is successfully merged')
+        logger.info(f'{framework.name} is successfully merged')
 
     return output_files
