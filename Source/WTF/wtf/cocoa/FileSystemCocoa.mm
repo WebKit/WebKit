@@ -335,13 +335,13 @@ String darwinCacheDirectory()
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
     if (!length) {
-        RELEASE_LOG_ERROR(Process, "Could not retrieve cache directory path: %s\n", safeStrerror(errno).data());
+        RELEASE_LOG_ERROR(Process, "Could not retrieve cache directory path: %s\n", safeStrerror(errno));
         return { };
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
-        RELEASE_LOG_ERROR(Process, "Could not canonicalize cache directory path: %s\n", safeStrerror(errno).data());
+        RELEASE_LOG_ERROR(Process, "Could not canonicalize cache directory path: %s\n", safeStrerror(errno));
         return { };
     }
     return String::fromUTF8(resolvedPath);
@@ -352,13 +352,13 @@ String darwinTempDirectory()
     char temp[PATH_MAX];
     size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp, sizeof(temp));
     if (!length) {
-        RELEASE_LOG_ERROR(Process, "Could not retrieve temporary directory path: %s\n", safeStrerror(errno).data());
+        RELEASE_LOG_ERROR(Process, "Could not retrieve temporary directory path: %s\n", safeStrerror(errno));
         return { };
     }
     RELEASE_ASSERT(length <= sizeof(temp));
     char resolvedPath[PATH_MAX];
     if (!realpath(temp, resolvedPath)) {
-        RELEASE_LOG_ERROR(Process, "Could not canonicalize temporary directory path: %s\n", safeStrerror(errno).data());
+        RELEASE_LOG_ERROR(Process, "Could not canonicalize temporary directory path: %s\n", safeStrerror(errno));
         return { };
     }
     return String::fromUTF8(resolvedPath);

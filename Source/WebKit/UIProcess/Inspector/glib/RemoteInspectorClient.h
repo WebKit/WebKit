@@ -73,9 +73,9 @@ private:
 
     struct Target {
         uint64_t id;
-        CString type;
-        CString name;
-        CString url;
+        UTF8CString type;
+        UTF8CString name;
+        UTF8CString url;
     };
 
     void setBackendCommands(const char*);

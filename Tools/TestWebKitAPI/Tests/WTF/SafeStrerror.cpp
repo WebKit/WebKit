@@ -31,6 +31,7 @@
 
 #include <cstring>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {
 
@@ -39,7 +40,18 @@ TEST(WTF_SafeStrerror, StringsAreEqual)
     // We test only a few known error codes because our error message when passing an unknown error
     // code won't be localized and might not match the system libc anyway.
     for (int i = 0; i < 10; i++)
-        EXPECT_STREQ(strerror(i), safeStrerror(i).data());
+        EXPECT_STREQ(strerror(i), safeStrerror(i).legacyCStringPointer());
+}
+
+TEST(WTF_SafeStrerror, LengthMatchesMessage)
+{
+    // strerror_r() is handed a fixed-size buffer, so the result has to be trimmed to the message it
+    // wrote. span() and the String conversion would otherwise expose the rest of that buffer.
+    for (int i = 0; i < 10; i++) {
+        auto message = safeStrerror(i);
+        EXPECT_EQ(strlen(strerror(i)), message.length());
+        EXPECT_EQ(String::fromUTF8(strerror(i)), String { message });
+    }
 }
 
 } // namespace TestWebKitAPI

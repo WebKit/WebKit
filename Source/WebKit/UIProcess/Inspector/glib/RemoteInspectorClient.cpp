@@ -154,7 +154,7 @@ const SocketConnection::MessageHandlers& RemoteInspectorClient::messageHandlers(
             gboolean hasLocalDebugger;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &url, &hasLocalDebugger)) {
                 if (!g_strcmp0(type, "JavaScript") || !g_strcmp0(type, "ServiceWorker") || !g_strcmp0(type, "WebPage"))
-                    targetList.append({ targetID, type, name, url });
+                    targetList.append({ targetID, UTF8CString { byteCast<char8_t>(type) }, UTF8CString { byteCast<char8_t>(name) }, UTF8CString { byteCast<char8_t>(url) } });
             }
             client.setTargetList(connectionID, WTF::move(targetList));
         }}
@@ -306,7 +306,7 @@ void RemoteInspectorClient::appendTargetList(StringBuilder& html, InspectorType 
         for (auto connectionID : m_targets.keys()) {
             for (auto& target : m_targets.get(connectionID)) {
                 html.append("<tbody><tr>"_s,
-                    "<td class=\"data\"><div class=\"targetname\">"_s, String::fromUTF8(target.name.span()), "</div><div class=\"targeturl\">"_s,
+                    "<td class=\"data\"><div class=\"targetname\">"_s, target.name, "</div><div class=\"targeturl\">"_s,
                     target.url, "</div></td>"_s,
                     "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick="_s);
 

@@ -304,13 +304,13 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
     auto fileHandle = FileSystem::FileHandle::adopt(open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600));
     if (!fileHandle) {
-        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: "_s, safeStrerror(errno).span());
+        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: "_s, safeStrerror(errno));
         return NO;
     }
 
     auto tempFileHandle = FileSystem::FileHandle::adopt(open(tempFileName, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0600));
     if (!tempFileHandle) {
-        error = makeString("Could not open or lock the bytecode cache temp file. Error: "_s, safeStrerror(errno).span());
+        error = makeString("Could not open or lock the bytecode cache temp file. Error: "_s, safeStrerror(errno));
         return NO;
     }
 

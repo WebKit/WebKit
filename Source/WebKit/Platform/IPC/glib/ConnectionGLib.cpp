@@ -585,7 +585,7 @@ bool Connection::sendOutgoingHardwareBuffers()
         }
 
         if (m_isConnected) {
-            LOG_ERROR("Error sending AHardwareBuffer on socket %d in process %d: %s", g_socket_get_fd(m_socket.get()), getpid(), safeStrerror(-result).data());
+            LOG_ERROR("Error sending AHardwareBuffer on socket %d in process %d: %s", g_socket_get_fd(m_socket.get()), getpid(), safeStrerror(-result));
             connectionDidClose();
         }
         return false;
@@ -616,7 +616,7 @@ bool Connection::receiveIncomingHardwareBuffers()
         }
 
         if (m_isConnected) {
-            LOG_ERROR("Error receiving AHardwareBuffer on socket %d in process %d: %s", g_socket_get_fd(m_socket.get()), getpid(), safeStrerror(-result).data());
+            LOG_ERROR("Error receiving AHardwareBuffer on socket %d in process %d: %s", g_socket_get_fd(m_socket.get()), getpid(), safeStrerror(-result));
             connectionDidClose();
         }
         return false;

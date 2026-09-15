@@ -26,12 +26,14 @@
 #include "config.h"
 
 #include <array>
+#include <concepts>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
 
 TEST(WTF, CStringNullStringConstructor)
@@ -460,15 +462,21 @@ TEST(WTF, CStringWithEncodingHashing)
     EXPECT_EQ(UTF8CString { u8"key"_span }.hash(), CString("key").hash());
 }
 
+template<typename StringType> concept AdaptableToString = std::constructible_from<WTF::StringTypeAdapter<StringType>, const StringType&>;
+
 TEST(WTF, CStringWithEncodingMakeString)
 {
     // makeString picks its adapter off the span's element type, so a UTF8CString is decoded as UTF-8.
+    // An untyped CString has no encoding to decode from, so it has no adapter at all and erasing the
+    // encoding does not compile, rather than silently reinterpreting the bytes as Latin-1.
+    static_assert(AdaptableToString<UTF8CString>);
+    static_assert(AdaptableToString<Latin1CString>);
+    static_assert(AdaptableToString<ASCIICString>);
+    static_assert(!AdaptableToString<CString>);
+
     UTF8CString utf8String { u8"Water🍉Melon"_span };
     EXPECT_EQ(makeString(utf8String), String::fromUTF8(u8"Water🍉Melon"_span));
     EXPECT_EQ(makeString(utf8String).length(), 12U);
-
-    // Erasing the encoding falls back to reinterpreting the bytes as Latin-1.
-    EXPECT_EQ(makeString(static_cast<const CString&>(utf8String)).length(), 14U);
 
     constexpr auto latin1Cafe = WTF::toArray<Latin1Character>({ 'c', 'a', 'f', 0xE9 });
     Latin1CString latin1String { std::span<const Latin1Character> { latin1Cafe } };

@@ -506,7 +506,7 @@ void WebDriverService::handleMessage(WebSocketMessageHandler::Message&& message,
         return;
     }
 
-    auto parsedMessageValue = JSON::Value::parseJSON(String::fromUTF8(message.payload.data()));
+    auto parsedMessageValue = JSON::Value::parseJSON(String { message.payload });
     if (!parsedMessageValue) {
         RELEASE_LOG(WebDriverBiDi, "WebDriverService::handleMessage() Failed to parse incoming message");
         completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, message.connection));

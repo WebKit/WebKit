@@ -757,7 +757,7 @@ long long BitmapImageSource::expectedContentLength() const
     return m_bitmapImage ? protect(m_bitmapImage)->expectedContentLength() : 0;
 }
 
-CString BitmapImageSource::sourceUTF8() const
+UTF8CString BitmapImageSource::sourceUTF8() const
 {
     return m_bitmapImage ? protect(m_bitmapImage)->sourceUTF8() : ""_s;
 }

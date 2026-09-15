@@ -191,7 +191,7 @@ bool ImageFrameAnimator::isAnimationAllowed() const
     return m_repetitionCount == RepetitionCountInfinite || m_repetitionsComplete < m_repetitionCount;
 }
 
-CString ImageFrameAnimator::sourceUTF8() const
+UTF8CString ImageFrameAnimator::sourceUTF8() const
 {
     return m_source.get()->sourceUTF8();
 }
