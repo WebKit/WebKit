@@ -27,6 +27,7 @@
 #include "ProvisionalPageProxy.h"
 
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "APIWebsitePolicies.h"
 #include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
@@ -43,6 +44,7 @@
 #include "RemotePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "URLSchemeTaskParameters.h"
+#include "WebAutomationSession.h"
 #include "WebBackForwardCacheEntry.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListFrameItem.h"
@@ -139,6 +141,8 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
         Ref mainFrame = WebFrameProxy::create(page, protect(m_frameProcess), generateFrameIdentifier(), previousMainFrame->effectiveSandboxFlags(), ReferrerPolicy::EmptyString, previousMainFrame->scrollingMode(), nullptr, nullptr, IsMainFrame::Yes, previousMainFrame->url());
         m_mainFrame = mainFrame.copyRef();
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
+        if (RefPtr automationSession = page.configuration().processPool().automationSession())
+            automationSession->transferKnownNodeReferences(previousMainFrame->frameID(), mainFrame->frameID());
     }
 
     if (!certificateInfo.isEmpty()) {
