@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="log"></pre>
+<script>
+const TOP_ORIGIN = "http://127.0.0.1:8000";
+const CROSS_ORIGIN = "http://localhost:8000";
+const role = new URLSearchParams(location.search).get("frame");
+
+function addBackgroundDiv(marker) {
+    const div = document.createElement("div");
+    div.style.cssText = "width:50px;height:50px;background-image:url(" + TOP_ORIGIN + "/resources/square100.png?" + marker + ")";
+    document.body.appendChild(div);
+}
+
+function reportBackgroundLoad(marker, label) {
+    setTimeout(function () {
+        const fetched = performance.getEntriesByType("resource").some(function (entry) { return entry.name.indexOf(marker) !== -1; });
+        window.top.postMessage({ label: label, fetched: fetched }, "*");
+    }, 500);
+}
+
+if (role === "inner") {
+    addBackgroundDiv("propagated-descendant-bg");
+    reportBackgroundLoad("propagated-descendant-bg", "nested");
+} else if (role === "middle") {
+    addBackgroundDiv("direct-crossorigin-bg");
+    reportBackgroundLoad("direct-crossorigin-bg", "direct");
+    const inner = document.createElement("iframe");
+    inner.src = TOP_ORIGIN + location.pathname + "?frame=inner";
+    document.body.appendChild(inner);
+} else {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function log(s) { document.getElementById("log").textContent += s + "\n"; }
+
+    function finish() {
+        log("Hidden cross-origin iframe - CSS background fetched: " + results.direct);
+        log("Same-origin iframe nested inside it - CSS background fetched: " + results.nested);
+        log("");
+        log((!results.direct && !results.nested)
+            ? "PASS: throttling applied to the hidden cross-origin frame and propagated to its same-origin descendant"
+            : "FAIL: a throttled frame fetched CSS resources");
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    const results = {};
+    window.addEventListener("message", function (event) {
+        if (!event.data || (event.data.label !== "direct" && event.data.label !== "nested"))
+            return;
+        results[event.data.label] = event.data.fetched;
+        if ("direct" in results && "nested" in results)
+            finish();
+    });
+
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = CROSS_ORIGIN + location.pathname + "?frame=middle";
+    document.body.appendChild(iframe);
+}
+</script>
+</body>
+</html>
