@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include <WebCore/StyleValueTypes.h>
+#include <WebCore/StylePrimitiveNumericTypes.h>
+#include <wtf/Hasher.h>
 
 namespace WebCore {
 namespace Style {
@@ -34,8 +35,17 @@ namespace Style {
 // https://www.w3.org/TR/css-overflow-4/#propdef-max-lines.
 struct MaximumLines : ValueOrKeyword<Integer<CSS::Range{1,CSS::Range::infinity}>, CSS::Keyword::None> {
     using Base::Base;
+    using Integer = Base::Value;
 
     constexpr bool isNone() const { return isKeyword(); }
+
+    unsigned valueForHash() const
+    {
+        return switchOn(
+            [&](const CSS::Keyword::None&) -> unsigned { return computeHash(0); },
+            [&](const Integer& integer) -> unsigned { return computeHash(1, integer.value); }
+        );
+    }
 };
 
 } // namespace Style

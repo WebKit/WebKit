@@ -83,7 +83,6 @@
 #include <WebCore/StyleViewTransitionName.h>
 #include <WebCore/StyleWebKitBoxReflect.h>
 #include <WebCore/StyleWebKitInitialLetter.h>
-#include <WebCore/StyleWebKitLineClamp.h>
 #include <WebCore/StyleWhiteSpaceTrim.h>
 #include <WebCore/StyleWillChange.h>
 #include <WebCore/StyleZoom.h>
@@ -125,7 +124,6 @@ public:
     Zoom zoom;
 
     WebkitInitialLetter initialLetter;
-    WebkitLineClamp lineClamp;
     MaximumLines maxLines;
 
     DataRef<MarqueeData> marquee;

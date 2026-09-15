@@ -740,6 +740,8 @@ public:
     inline void setPerspectiveOrigin(PerspectiveOrigin&&);
     inline void setTransformOrigin(TransformOrigin&&);
 
+    inline bool hasLegacyLineClamp() const;
+
     // MARK: - Properties/descriptors that are not yet generated
 
     // `cursor`
