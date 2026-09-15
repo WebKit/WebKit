@@ -242,12 +242,12 @@ void SHA1::addUTF8Bytes(CFStringRef string)
 }
 #endif // USE(CF)
 
-CString SHA1::hexDigest(const Digest& digest)
+ASCIICString SHA1::hexDigest(const Digest& digest)
 {
     return toHexCString(digest);
 }
 
-CString SHA1::computeHexDigest()
+ASCIICString SHA1::computeHexDigest()
 {
     Digest digest;
     computeHash(digest);

@@ -88,10 +88,10 @@ public:
     WTF_EXPORT_PRIVATE void computeHash(Digest&);
 
     // Get a hex hash from the digest.
-    WTF_EXPORT_PRIVATE static CString hexDigest(const Digest&);
+    WTF_EXPORT_PRIVATE static ASCIICString hexDigest(const Digest&);
 
     // Compute the hex digest directly.
-    WTF_EXPORT_PRIVATE CString computeHexDigest();
+    WTF_EXPORT_PRIVATE ASCIICString computeHexDigest();
 
 private:
 #if PLATFORM(COCOA)

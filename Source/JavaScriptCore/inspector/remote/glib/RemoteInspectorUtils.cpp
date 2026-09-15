@@ -51,9 +51,9 @@ GRefPtr<GBytes> backendCommands()
     return bytes;
 }
 
-const CString& backendCommandsHash()
+const ASCIICString& backendCommandsHash()
 {
-    static CString hexDigest;
+    static ASCIICString hexDigest;
     if (hexDigest.isNull()) {
         auto bytes = backendCommands();
         auto bytesSpan = span(bytes);

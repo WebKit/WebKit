@@ -69,10 +69,10 @@ static void NODELETE toHexInternal(std::span<const uint8_t> values, std::span<La
     }
 }
 
-CString toHexCString(std::span<const uint8_t> values)
+ASCIICString toHexCString(std::span<const uint8_t> values)
 {
     std::span<char> buffer;
-    auto result = CString::newUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    auto result = ASCIICString::newUninitialized(CheckedSize(values.size()) * 2U, buffer);
     toHexInternal(values, byteCast<Latin1Character>(buffer));
     return result;
 }
