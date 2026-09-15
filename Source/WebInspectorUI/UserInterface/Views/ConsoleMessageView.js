@@ -753,6 +753,12 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             }
         }
 
+        if (object.description && object.description.length > WI.StringTreeView.chunkSize) {
+            let stringTreeView = new WI.StringTreeView(object.description);
+            fragment.appendChild(stringTreeView.element);
+            return;
+        }
+
         fragment.appendChild(WI.FormattedValue.createLinkifiedElementString(object.description));
     }
 
