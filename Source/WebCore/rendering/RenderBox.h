@@ -133,7 +133,6 @@ public:
     // https://www.w3.org/TR/css-transforms-1/#reference-box
     FloatRect referenceBoxRect(CSSBoxType) const override;
 
-    LayoutRect borderBoundingBox() const final { return borderBoxRect(); }
 
     // Don't use this; it doesn't make sense in a future world with corner-shape. Use BorderShape instead.
     WEBCORE_EXPORT LayoutRoundedRectRadii borderRadii() const;
