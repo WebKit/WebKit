@@ -69,7 +69,7 @@ StyleRuleImport::~StyleRuleImport()
         protect(m_cachedSheet)->removeClient(protect(m_styleSheetClient));
 }
 
-void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet* cachedStyleSheet)
+void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, ASCIILiteral charset, const CachedCSSStyleSheet& cachedStyleSheet)
 {
     if (m_styleSheet)
         m_styleSheet->clearOwnerRule();
@@ -81,7 +81,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
 
     CheckedPtr<Document> document = m_parentStyleSheet ? m_parentStyleSheet->singleOwnerDocument() : nullptr;
     m_styleSheet = StyleSheetContents::create(this, href, context);
-    if ((m_parentStyleSheet && m_parentStyleSheet->loadedFromOpaqueSource() == LoadedFromOpaqueSource::Yes) || !cachedStyleSheet->isCORSSameOrigin())
+    if ((m_parentStyleSheet && m_parentStyleSheet->loadedFromOpaqueSource() == LoadedFromOpaqueSource::Yes) || !cachedStyleSheet.isCORSSameOrigin())
         m_styleSheet->setAsLoadedFromOpaqueSource();
 
     RefPtr securityOrigin = document ? &document->securityOrigin() : nullptr;
@@ -91,7 +91,7 @@ void StyleRuleImport::setCSSStyleSheet(const String& href, const URL& baseURL, A
 
     if (m_parentStyleSheet) {
         if (parseSucceeded)
-            protect(m_parentStyleSheet)->notifyLoadedSheet(cachedStyleSheet);
+            protect(m_parentStyleSheet)->notifyLoadedSheet(&cachedStyleSheet);
         else
             m_parentStyleSheet->setLoadErrorOccured();
         protect(m_parentStyleSheet)->checkLoaded();
