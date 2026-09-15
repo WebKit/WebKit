@@ -107,4 +107,51 @@ inline LayoutRect RenderLayer::rect() const
     return LayoutRect(location(), size());
 }
 
+enum class AncestorTraversal { Continue, Stop };
+
+// This is a simplified version of containing block walking that only handles absolute and fixed position.
+template<typename Function>
+AncestorTraversal traverseAncestorLayers(const RenderLayer& layer, NOESCAPE Function&& function)
+{
+    auto positioningBehavior = layer.renderer().style().position();
+    CheckedPtr nextPaintOrderParent = layer.paintOrderParent();
+
+    for (CheckedPtr<const RenderLayer> ancestorLayer = layer.parent(); ancestorLayer; ancestorLayer = ancestorLayer->parent()) {
+        bool inContainingBlockChain = true;
+
+        switch (positioningBehavior) {
+        case PositionType::Static:
+        case PositionType::Relative:
+        case PositionType::Sticky:
+            break;
+        case PositionType::Absolute:
+            inContainingBlockChain = ancestorLayer->renderer().canContainAbsolutelyPositionedObjects();
+            break;
+        case PositionType::Fixed:
+            inContainingBlockChain = ancestorLayer->renderer().canContainFixedPositionObjects();
+            break;
+        }
+
+        if (function(*ancestorLayer, inContainingBlockChain, ancestorLayer == nextPaintOrderParent) == AncestorTraversal::Stop)
+            return AncestorTraversal::Stop;
+
+        if (inContainingBlockChain)
+            positioningBehavior = ancestorLayer->renderer().style().position();
+
+        if (ancestorLayer == nextPaintOrderParent)
+            nextPaintOrderParent = ancestorLayer->paintOrderParent();
+    }
+
+    return AncestorTraversal::Continue;
+}
+
+inline bool ancestorLayerMayClip(const RenderLayer& layer, const RenderLayer& ancestorLayer, bool isContainingBlockChain)
+{
+    // Surprisingly, the deprecated CSS "clip" property on abspos ancestors of fixedpos elements clips them <https://github.com/w3c/csswg-drafts/issues/8336>.
+    if (layer.renderer().isFixedPositioned() && ancestorLayer.renderer().hasClip())
+        return true;
+
+    return isContainingBlockChain && ancestorLayer.renderer().hasClipOrNonVisibleOverflow();
+}
+
 } // namespace WebCore

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<title>Switching a composited filter to a reference filter must remove the previously composited filter</title>
+<style>
+.target {
+    width: 100px;
+    height: 100px;
+    background: green;
+    filter: blur(20px);
+    will-change: filter;
+}
+</style>
+<script>
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.querySelector(".target").style.filter = "url(#identity)";
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => document.documentElement.classList.remove("reftest-wait"));
+        });
+    });
+};
+</script>
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute">
+    <filter id="identity" color-interpolation-filters="sRGB"><feOffset dx="0" dy="0"/></filter>
+</svg>
+<div class="target"></div>
+</body>
+</html>
