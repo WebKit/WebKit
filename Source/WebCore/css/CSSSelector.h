@@ -94,6 +94,7 @@ public:
         Tag,
         Id,
         Class,
+        ClassPrefix, // .foo-*
         Exact,
         Set,
         List,
