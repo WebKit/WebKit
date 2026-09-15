@@ -45,7 +45,8 @@
 #define WEBKIT_COMPONENT 47
 
 // Trace point codes can be up to 14 bits (0-16383).
-// When adding or changing these codes, update Source/WebKit/Resources/Signposts/SystemTracePoints.plist to match.
+// When adding or changing these codes, update Source/WebKit/Resources/Signposts/SystemTracePoints.plist to match,
+// and SysprofAnnotator::tracePoint(), which pairs the begin and end of each for Sysprof.
 enum TracePointCode {
     WTFRange = 0,
 
@@ -217,8 +218,7 @@ inline void tracePoint(TracePointCode code, uint64_t data1 = 0, uint64_t data2 =
     kdebug_trace(ARIADNEDBG_CODE(WEBKIT_COMPONENT, code), data1, data2, data3, data4);
 #elif USE(SYSPROF_CAPTURE)
     if (auto* annotator = SysprofAnnotator::singletonIfCreated())
-        annotator->tracePoint(code);
-    UNUSED_PARAM(data1);
+        annotator->tracePoint(code, data1);
     UNUSED_PARAM(data2);
     UNUSED_PARAM(data3);
     UNUSED_PARAM(data4);
@@ -237,17 +237,28 @@ public:
 
     TraceScope(TracePointCode entryCode, TracePointCode exitCode, uint64_t data1 = 0, uint64_t data2 = 0, uint64_t data3 = 0, uint64_t data4 = 0)
         : m_exitCode(exitCode)
+#if !HAVE(KDEBUG_H) && USE(SYSPROF_CAPTURE)
+        , m_data1(data1)
+#endif
     {
         tracePoint(entryCode, data1, data2, data3, data4);
     }
 
     ~TraceScope()
     {
+#if !HAVE(KDEBUG_H) && USE(SYSPROF_CAPTURE)
+        // Sysprof pairs some trace points by their data, which the end has to carry as the begin did.
+        tracePoint(m_exitCode, m_data1);
+#else
         tracePoint(m_exitCode);
+#endif
     }
 
 private:
     TracePointCode m_exitCode;
+#if !HAVE(KDEBUG_H) && USE(SYSPROF_CAPTURE)
+    uint64_t m_data1;
+#endif
 };
 
 } // namespace WTF

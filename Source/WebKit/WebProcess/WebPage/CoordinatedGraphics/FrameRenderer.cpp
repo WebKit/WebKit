@@ -57,7 +57,7 @@ void FrameRenderer::scheduleRenderingUpdateRunLoopObserver()
     if (m_isUpdatingRendering)
         return;
 
-    tracePoint(RenderingUpdateRunLoopObserverStart);
+    WTFBeginSignpost(this, RenderingUpdateRunLoopObserver);
     m_renderingUpdateRunLoopObserver->schedule();
 }
 
@@ -66,7 +66,7 @@ void FrameRenderer::invalidateRenderingUpdateRunLoopObserver()
     if (!m_renderingUpdateRunLoopObserver->isScheduled())
         return;
 
-    tracePoint(RenderingUpdateRunLoopObserverEnd);
+    WTFEndSignpost(this, RenderingUpdateRunLoopObserver);
     m_renderingUpdateRunLoopObserver->invalidate();
 }
 
