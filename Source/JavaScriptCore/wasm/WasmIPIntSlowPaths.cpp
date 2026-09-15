@@ -1482,7 +1482,7 @@ static UNUSED_FUNCTION void displayWasmDebugState(JSWebAssemblyInstance* instanc
     dataLogLn("WASM Locals (", numLocals, " entries):");
     auto functionIndex = callee->functionIndex();
     const auto& moduleInfo = instance->module().moduleInformation();
-    const Vector<Wasm::Type>& localTypes = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).locals;
+    const Vector<Wasm::Type>& localTypes = moduleInfo.ensureFunctionDebugInfo(functionIndex).locals;
     FrameAccess frame(callFrame, callee);
     for (uint32_t i = 0; i < numLocals; ++i)
         logWasmLocalValue(i, *frame.localSlot(i), localTypes[i]);

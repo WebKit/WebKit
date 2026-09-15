@@ -409,7 +409,7 @@ void QueryHandler::handleWasmLocal(StringView packet)
 
     auto functionIndex = localCallee->functionIndex();
     const auto& moduleInfo = instance->module().moduleInformation();
-    const Vector<Type>& localTypes = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).locals;
+    const Vector<Type>& localTypes = moduleInfo.ensureFunctionDebugInfo(functionIndex).locals;
 
     if (localIndex >= localTypes.size()) {
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);

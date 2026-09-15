@@ -188,7 +188,8 @@ String ModuleManager::generateLibrariesXML() const
         if (!instance)
             continue;
 
-        const auto& debugInfo = instance->moduleInformation().debugInfo;
+        const auto& moduleInfo = instance->moduleInformation();
+        const auto& debugInfo = moduleInfo.debugInfo;
         VirtualAddress moduleBaseAddress = VirtualAddress::createModule(instanceId);
         // Instance IDs are unique across every module, so suffixing with one is enough to keep
         // library names distinct even when two modules declare the same name. Both halves are
@@ -196,7 +197,7 @@ String ModuleManager::generateLibrariesXML() const
         // FIXME: The name carries no module identity, so two modules declaring the same name look
         // like two instances of one. Fold in a hash of the module's bytes or its build_id section
         // — `<name>#<hash>@<instance>` — cached on ModuleDebugInfo, since this runs per qXfer chunk.
-        String libraryName = debugInfo->declaredName();
+        String libraryName = moduleInfo.declaredName();
         if (libraryName.isEmpty()) {
             // No name to qualify: the base address already names the instance uniquely.
             libraryName = makeString("0x"_s, moduleBaseAddress.hex(), ".wasm"_s);

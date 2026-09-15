@@ -44,6 +44,7 @@ class WebAssemblyCompileOptions;
 namespace Wasm {
 
 struct ModuleDebugInfo;
+struct FunctionDebugInfo;
 
 struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> {
 
@@ -108,6 +109,11 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 
     FunctionCodeIndex toCodeIndex(FunctionSpaceIndex index) const { ASSERT(importFunctionCount() <= index && index < functionIndexSpaceSize()); return FunctionCodeIndex(index - importFunctionCount()); }
     FunctionSpaceIndex toSpaceIndex(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); return FunctionSpaceIndex(index + importFunctionCount()); }
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+    FunctionDebugInfo& ensureFunctionDebugInfo(FunctionCodeIndex) const;
+    JS_EXPORT_PRIVATE String declaredName() const;
+#endif
 
 
     uint32_t memoryCount() const { return memories.size(); }

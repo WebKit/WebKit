@@ -476,7 +476,7 @@ bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
         const auto& moduleInfo = stopData.instance->moduleInformation();
         auto functionIndex = stopData.callee->functionIndex();
         uint32_t offset = stopData.address.offset();
-        const auto* nextInstructions = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).findNextInstructions(offset);
+        const auto* nextInstructions = moduleInfo.ensureFunctionDebugInfo(functionIndex).findNextInstructions(offset);
         RELEASE_ASSERT(nextInstructions, "Didn't find nextInstructions");
         for (uint32_t nextOffset : *nextInstructions)
             setStepBreakpoint(stopData.pc + (static_cast<ptrdiff_t>(nextOffset) - static_cast<ptrdiff_t>(offset)));

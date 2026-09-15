@@ -33,7 +33,10 @@
 #include "WasmNameSection.h"
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
+#include "WasmIPIntGenerator.h"
 #include "WasmModuleDebugInfo.h"
+#include <wtf/URL.h>
+#include <wtf/text/StringBuilder.h>
 #endif
 
 namespace JSC { namespace Wasm {
@@ -44,11 +47,67 @@ ModuleInformation::ModuleInformation()
     m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_relaxed);
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     if (Options::enableWasmDebugger()) [[unlikely]]
-        debugInfo = WTF::makeUnique<ModuleDebugInfo>(*this);
+        debugInfo = WTF::makeUnique<ModuleDebugInfo>();
 #endif
 }
 
 ModuleInformation::~ModuleInformation() = default;
+
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+FunctionDebugInfo& ModuleInformation::ensureFunctionDebugInfo(FunctionCodeIndex functionIndex) const
+{
+    RELEASE_ASSERT(functionIndex < functions.size());
+
+    auto iterator = debugInfo->functionIndexToData.find(functionIndex);
+    if (iterator != debugInfo->functionIndexToData.end())
+        return iterator->value;
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] Lazy collection for function ", functionIndex);
+    const auto& function = functions[functionIndex];
+    FunctionSpaceIndex spaceIndex = toSpaceIndex(functionIndex);
+    Ref rtt = this->rtt(spaceIndex);
+    auto& info = debugInfo->functionIndexToData.add(functionIndex, FunctionDebugInfo()).iterator->value;
+    auto functionData = debugInfo->source.subspan(function.start, function.data.size());
+
+    // parseForDebugInfo hands the module information to IPIntGenerator and FunctionParser, which
+    // both take it non-const; nothing on this path mutates it. Same cast as WasmIPIntSlowPaths.cpp
+    // makes for BBQPlan.
+    parseForDebugInfo(functionData, rtt.get(), const_cast<ModuleInformation&>(*this), functionIndex, info);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo] Debug info collection completed for function ", functionIndex, " with ", info.offsetToNextInstructions.size(), " instruction mappings and ", info.locals.size(), " locals");
+    return info;
+}
+
+String ModuleInformation::declaredName() const
+{
+    if (debugInfo->cachedDeclaredName)
+        return *debugInfo->cachedDeclaredName;
+
+    StringBuilder result;
+
+    if (!this->sourceURL.isEmpty()) {
+        // LLDB normalizes "//" -> "/" in library names (FileSpec treats them as paths),
+        // so we strip the URL scheme and store only "host/path" to avoid mangling.
+        auto sourceURL = makeString(this->sourceURL);
+        URL url { sourceURL };
+        if (url.isValid() && !url.host().isEmpty())
+            result.append(makeString(url.host(), url.path()));
+        else
+            result.append(sourceURL);
+    }
+
+    const auto& rawName = nameSection().moduleName;
+    if (!rawName.isEmpty()) {
+        if (!result.isEmpty())
+            result.append(':');
+        result.append(rawName.span());
+    }
+
+    debugInfo->cachedDeclaredName = result.toString();
+    dataLogLnIf(Options::verboseWasmDebugger(), "[ModuleDebugInfo][declaredName] ", *debugInfo->cachedDeclaredName);
+    return *debugInfo->cachedDeclaredName;
+}
+#endif
+
 
 void ModuleInformation::setNameSection(Ref<NameSection>&& section)
 {

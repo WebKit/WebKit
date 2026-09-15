@@ -60,25 +60,15 @@ struct ModuleDebugInfo {
     WTF_MAKE_TZONE_ALLOCATED(ModuleDebugInfo);
 
 public:
-    ModuleDebugInfo(ModuleInformation& moduleInfo)
-        : moduleInfo(moduleInfo)
-    {
-    }
+    ModuleDebugInfo() = default;
 
     void takeSource(Vector<uint8_t>&& source) { this->source = WTF::move(source); }
-    FunctionDebugInfo& ensureFunctionDebugInfo(FunctionCodeIndex);
 
-    // The module's name section / source URL, empty when it declares neither.
-    // Lazily computed and cached; not thread-safe — must only be called from the debugger thread.
-    JS_EXPORT_PRIVATE String declaredName() const;
-
-    Ref<ModuleInformation> moduleInfo;
     Vector<uint8_t> source;
     using FunctionIndexToData = UncheckedKeyHashMap<size_t, FunctionDebugInfo, DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
     FunctionIndexToData functionIndexToData;
 
-private:
-    mutable std::optional<String> m_cachedDeclaredName;
+    mutable std::optional<String> cachedDeclaredName;
 };
 
 } // namespace Wasm
