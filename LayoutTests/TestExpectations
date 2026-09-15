@@ -7734,9 +7734,6 @@ imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform-genera
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCRtpScriptTransform-encoded-transform.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/RTCEncodedFrame-copy-construction.https.html [ Failure ]
 
-# https://bugs.webkit.org/show_bug.cgi?id=276663
-inspector/css/getMatchedStylesForNodeNestingStyleGrouping.html [ Failure ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=266843 flakey tests with racey promise console.logs
 imported/w3c/web-platform-tests/dom/observable/tentative/observable-from.any.html [ Skip ]
 

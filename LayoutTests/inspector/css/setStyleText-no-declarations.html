@@ -1,0 +1,101 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<style>
+.empty-rule {
+}
+</style>
+<style>
+.parent-without-declarations {
+    .child-rule {
+        color: red;
+    }
+}
+</style>
+<script>
+function test() {
+    let suite = ProtocolTest.createAsyncSuite("CSS.setStyleText.NoDeclarations");
+
+    async function authorRuleForSelector(elementSelector, selectorText) {
+        let { root } = await InspectorProtocol.awaitCommand({ method: "DOM.getDocument" });
+        let { nodeId } = await InspectorProtocol.awaitCommand({
+            method: "DOM.querySelector",
+            params: { nodeId: root.nodeId, selector: elementSelector },
+        });
+        let { matchedCSSRules } = await InspectorProtocol.awaitCommand({
+            method: "CSS.getMatchedStylesForNode",
+            params: { nodeId },
+        });
+        return matchedCSSRules
+            .map(({ rule }) => rule)
+            .find((rule) => rule.origin === "author" && rule.selectorList.text === selectorText);
+    }
+
+    async function styleSheetText(styleSheetId) {
+        let { text } = await InspectorProtocol.awaitCommand({
+            method: "CSS.getStyleSheetText",
+            params: { styleSheetId },
+        });
+        return text;
+    }
+
+    suite.addTestCase({
+        name: "CSS.setStyleText.NoDeclarations.EmptyRule",
+        description: "Setting the first declaration of a rule with an empty body should write it to the style sheet text.",
+        test: async () => {
+            let rule = await authorRuleForSelector("#empty-rule-target", ".empty-rule");
+            ProtocolTest.expectNotNull(rule, "Should find the `.empty-rule` author rule.");
+            if (!rule)
+                return;
+
+            ProtocolTest.expectEqual(rule.style.cssProperties.length, 0, "Rule should start with no declarations.");
+
+            let { style } = await InspectorProtocol.awaitCommand({
+                method: "CSS.setStyleText",
+                params: { styleId: rule.style.styleId, text: "color: green;" },
+            });
+
+            ProtocolTest.expectEqual(style.cssProperties.length, 1, "Style should have one declaration after the edit.");
+            ProtocolTest.expectEqual(style.cssProperties[0].text, "color: green;", "Declaration text should be `color: green;`.");
+
+            ProtocolTest.expectNotNull(style.cssProperties[0].range, "Declaration should have a source range.");
+
+            ProtocolTest.expectEqual(await styleSheetText(rule.ruleId.styleSheetId), "\n.empty-rule {color: green;}\n", "Style sheet text should contain the new declaration.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "CSS.setStyleText.NoDeclarations.ParentOfOnlyChildRules",
+        description: "Setting the first declaration of a style rule that only contains child rules should not overwrite those child rules.",
+        test: async () => {
+            let rule = await authorRuleForSelector("#parent-without-declarations-target", ".parent-without-declarations");
+            ProtocolTest.expectNotNull(rule, "Should find the `.parent-without-declarations` author rule.");
+            if (!rule)
+                return;
+
+            ProtocolTest.expectEqual(rule.style.cssProperties.length, 0, "Rule should start with no declarations of its own.");
+
+            let { style } = await InspectorProtocol.awaitCommand({
+                method: "CSS.setStyleText",
+                params: { styleId: rule.style.styleId, text: "color: green;" },
+            });
+
+            ProtocolTest.expectEqual(style.cssProperties.length, 1, "Style should have one declaration after the edit.");
+            ProtocolTest.expectNotNull(style.cssProperties[0].range, "Declaration should have a source range.");
+
+            let text = await styleSheetText(rule.ruleId.styleSheetId);
+            ProtocolTest.expectTrue(text.includes(".child-rule {\n        color: red;\n    }"), "Style sheet text should still contain the untouched child rule.");
+            ProtocolTest.expectEqual(text, "\n.parent-without-declarations {color: green;\n    .child-rule {\n        color: red;\n    }\n}\n", "New declaration should be inserted at the start of the rule body.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that CSS.setStyleText writes the first declaration of a rule that has none into the style sheet text.</p>
+<div id="empty-rule-target" class="empty-rule"></div>
+<div id="parent-without-declarations-target" class="parent-without-declarations"><div class="child-rule"></div></div>
+</body>
+</html>
