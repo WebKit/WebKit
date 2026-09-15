@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestScriptMessageHandler.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
@@ -802,4 +803,88 @@ TEST(IndexedDB, TransactionOfSuspendedProcessIsAbortedWhenAnotherSuspendedProces
     [waiterWebView _setThrottleStateForTesting:2];
     EXPECT_WK_STREQ([waiterHandler waitForMessage].body, @"waiter transaction completed");
     EXPECT_WK_STREQ([holderHandler waitForMessage].body, @"holder transaction aborted");
+}
+
+enum class UsePageCache : bool { No, Yes };
+
+static void testTransactionAfterCrossSiteNavigationWithServiceWorker(UsePageCache usePageCache)
+{
+    static constexpr auto page = R"HTML(
+        <script>
+        function post(message)
+        {
+            window.webkit.messageHandlers.testHandler.postMessage(message);
+        }
+        const database = new Promise((resolve, reject) => {
+            const request = indexedDB.open("BackNavigationDatabase", 1);
+            request.onupgradeneeded = () => request.result.createObjectStore("store");
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+        async function transaction(value)
+        {
+            const connection = await database;
+            return new Promise((resolve, reject) => {
+                const transaction = connection.transaction("store", "readwrite");
+                const store = transaction.objectStore("store");
+                const request = value ? store.put(value, "key") : store.get("key");
+                transaction.oncomplete = () => resolve(request.result);
+                transaction.onabort = transaction.onerror = () => reject(transaction.error);
+            });
+        }
+        async function read()
+        {
+            await navigator.serviceWorker.register("/worker.js");
+            await navigator.serviceWorker.ready;
+            if (!navigator.serviceWorker.controller)
+                await new Promise(resolve => navigator.serviceWorker.addEventListener("controllerchange", resolve, { once: true }));
+            const value = await transaction();
+            post(value === undefined ? "empty" : value);
+        }
+        addEventListener("pageshow", () => read().catch(error => post(String(error))));
+        </script>
+    )HTML"_s;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { page } },
+        { "/worker.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, "addEventListener('activate', event => event.waitUntil(clients.claim()));"_s } },
+        { "/other.html"_s, { "<p>Other site</p>"_s } },
+    });
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().pageCacheEnabled = usePageCache == UsePageCache::Yes;
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]).get();
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    RetainPtr handler = adoptNS([TestScriptMessageHandler new]);
+    [configuration.get().userContentController addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([handler waitForMessage].body, @"empty");
+
+    [webView evaluateJavaScript:@"transaction('TestValue').then(() => post('stored')).catch(error => post(String(error)))" completionHandler:nil];
+    EXPECT_WK_STREQ([handler waitForMessage].body, @"stored");
+    auto initialProcessIdentifier = [webView _webProcessIdentifier];
+
+    [webView loadRequest:server.requestWithLocalhost("/other.html"_s)];
+    [navigationDelegate waitForDidFinishNavigation];
+    EXPECT_NE(initialProcessIdentifier, [webView _webProcessIdentifier]);
+
+    [webView goBack];
+    EXPECT_WK_STREQ([handler waitForMessage].body, @"TestValue");
+}
+
+TEST(IndexedDB, TransactionAfterCrossSiteNavigationWithServiceWorker)
+{
+    testTransactionAfterCrossSiteNavigationWithServiceWorker(UsePageCache::Yes);
+}
+
+TEST(IndexedDB, TransactionAfterCrossSiteNavigationWithServiceWorkerWithoutPageCache)
+{
+    testTransactionAfterCrossSiteNavigationWithServiceWorker(UsePageCache::No);
 }
