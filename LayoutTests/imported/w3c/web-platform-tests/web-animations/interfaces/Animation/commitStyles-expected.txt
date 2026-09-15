@@ -16,6 +16,7 @@ PASS Commits the intermediate value of an animation in the middle of stack
 PASS Commits the intermediate value of an animation up to the middle of the stack
 PASS Commits styles for an animation that has been removed
 PASS Commit composites on top of the underlying value
+PASS Commit styles of an animation when another animation runs with a different prop
 PASS Commits logical properties
 PASS Commits logical properties as physical properties
 PASS Commits em units as pixel values

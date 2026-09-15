@@ -1,0 +1,3 @@
+
+FAIL display:none via a CSS animation on a pseudo-element does not cancel the animation. assert_equals: display: none on the base style cancels the animation expected 0 but got 1
+

@@ -10,11 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/animate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/getAnimations-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/getAnimations-pseudoElement-option-on-view-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html

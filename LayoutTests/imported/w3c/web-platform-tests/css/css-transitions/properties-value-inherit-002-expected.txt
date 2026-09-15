@@ -479,6 +479,26 @@ PASS word-spacing length(in) / values
 PASS word-spacing length(in) / events
 PASS word-spacing percentage(%) / values
 PASS word-spacing percentage(%) / events
+PASS text-decoration-inset length(pt) / values
+PASS text-decoration-inset length(pt) / events
+PASS text-decoration-inset length(pc) / values
+PASS text-decoration-inset length(pc) / events
+PASS text-decoration-inset length(px) / values
+PASS text-decoration-inset length(px) / events
+PASS text-decoration-inset length(em) / values
+PASS text-decoration-inset length(em) / events
+PASS text-decoration-inset length(ex) / values
+PASS text-decoration-inset length(ex) / events
+PASS text-decoration-inset length(mm) / values
+PASS text-decoration-inset length(mm) / events
+PASS text-decoration-inset length(cm) / values
+PASS text-decoration-inset length(cm) / events
+PASS text-decoration-inset length(in) / values
+PASS text-decoration-inset length(in) / events
+PASS text-decoration-inset percentage(%) / values
+PASS text-decoration-inset percentage(%) / events
+FAIL text-decoration-inset auto-length(keyword) / values assert_not_equals: must not be target value after start got disallowed value "10px"
+FAIL text-decoration-inset auto-length(keyword) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "text-decoration-inset:2s" but got ""
 PASS text-indent length(pt) / values
 PASS text-indent length(pt) / events
 PASS text-indent length(pc) / values

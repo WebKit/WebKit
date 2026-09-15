@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/background-shorthand.html
@@ -30,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-opacity-replaced-effect.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-replaced-animations.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-step-easing-reversed-direction.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/keyframe-exceptions.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-model/keyframe-effects/transform-and-opacity-on-inline-001-expected.html

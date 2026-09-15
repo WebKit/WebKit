@@ -1703,6 +1703,9 @@
     "imported/w3c/web-platform-tests/css/css-transforms/animation/translate-interpolation.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-transitions/events-008.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html": [
         "slow"
     ],

@@ -1,0 +1,8 @@
+
+PASS animation-iteration-count: 1;
+PASS animation-iteration-count: 2;
+PASS animation-iteration-count: 2.1;
+PASS animation-iteration-count: 3;
+PASS animation-iteration-count: 4;
+PASS animation-iteration-count: infinite;
+

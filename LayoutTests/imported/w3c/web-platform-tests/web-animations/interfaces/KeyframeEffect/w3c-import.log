@@ -10,12 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/composite.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor-revert-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/getKeyframes.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite.html

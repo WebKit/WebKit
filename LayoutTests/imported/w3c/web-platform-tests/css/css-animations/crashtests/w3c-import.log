@@ -10,17 +10,41 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 text-size-adjust
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/add-pseudo-while-animating-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/animation-end.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/animation-transition-collision.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/background-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/base-render-style-body.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/base-render-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/cancel-update.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/checkbox-padding-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-404743651.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-405795970.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/chrome-bug-415627003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/composited-identity-animation-layer-squash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/css-animation-null-effect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/font-builder.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/inherit.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/keyframe-easing-var-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/keyframe-timing-function-unset.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/keyframes-rename-after-remove-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/marquee-element-move-and-toggle-visibility.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/multiple-same-animations-asan.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/option-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/option-opacity-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/pause.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/pseudo-element-animation-with-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/pseudo-element-animation-with-marker.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/replace-keyframes-animating-filter-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/servo-bug-45008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/svg-element-css-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/svg-use-animation-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/transform-css-animation-squash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/transform-properties-from-none-to-none-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/universal-selector-opacity-inherit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/update-delay-of-paused-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/webkit-filter-default-arg.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/crashtests/zoomed-length.html

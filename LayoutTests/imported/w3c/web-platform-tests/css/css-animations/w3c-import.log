@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/AnimationEffect-getComputedTiming.tentative.html
@@ -36,6 +34,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/KeyframeEffect-target.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-bg-color-with-change-during-delay-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-bg-color-with-change-during-delay-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-bg-color-with-change-during-delay.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-font-size-with-margin-override.html
@@ -49,6 +50,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-color-mix-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-color-mix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animate-with-relative-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-append-stylesheet-reverse-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-append-stylesheet-reverse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-append-stylesheet-reverse.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-base-response-003.html
@@ -68,6 +72,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-delay-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-duration-infinite-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-duration-infinite-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-duration-infinite.html
@@ -77,8 +83,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-important-with-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-009.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-010.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-count-calc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-event-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-iteration-event-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-multiple-from-to-keyframes-with-only-timing-function.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-name-case-sensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-name-in-nested-shadow-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-name-in-nested-shadow-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-name-in-nested-shadow.html
@@ -105,6 +115,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-transform-pause-and-set-time.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animation-transition-color-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-interface.js
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-marker-pseudoelement.html
@@ -112,6 +123,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/animationevent-types.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/cancel-animation-shadow-slot-invalidation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/cancel-animation-shadow-slot-invalidation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/cancel-events-on-remove.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/computed-style-animation-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/dialog-animation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/dialog-backdrop-animation.html
@@ -122,6 +134,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-none-prevents-starting-in-subtree.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-none-to-display-block-dont-cancel.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-none-to-display-block-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-none-to-display-block-while-running.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-none-to-display-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/display-via-custom-prop-animation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/empty-pseudo-class-with-animation.html
@@ -140,6 +153,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/jump-start-animation-before-phase-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/jump-start-animation-before-phase.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-remove-documentElement-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-rule-caching.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-tree-scoped-property-with-var-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-tree-scoped-property-with-var.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-unrelated-custom-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/keyframes-zero-angle-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/missing-values-first-keyframe.html
@@ -160,9 +176,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/sample-on-last-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/simultaneous-animations-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/style-animation-parsing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-color-visited-currentcolor.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-transform-animation-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-transform-animation-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-transform-animation.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-use-transform-keyframes-custom-property-override-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-use-transform-keyframes-custom-property-override-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/svg-use-transform-keyframes-custom-property-override.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-animations/text-decoration-inset-auto.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html

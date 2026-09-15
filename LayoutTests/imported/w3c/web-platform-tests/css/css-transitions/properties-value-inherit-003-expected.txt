@@ -51,6 +51,8 @@ PASS letter-spacing length-em(em) / values
 PASS letter-spacing length-em(em) / events
 PASS word-spacing length-em(em) / values
 PASS word-spacing length-em(em) / events
+PASS text-decoration-inset length-em(em) / values
+PASS text-decoration-inset length-em(em) / events
 PASS text-indent length-em(em) / values
 PASS text-indent length-em(em) / events
 PASS outline-offset length-em(em) / values

@@ -1,4 +1,5 @@
 
 PASS shapeOutside responsive to style changes
 PASS shapeOutside responsive to inherited shapeOutside changes
+PASS Neutral path() keyframes invalidate when the underlying <shape-box> changes
 

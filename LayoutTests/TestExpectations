@@ -4743,8 +4743,10 @@ imported/w3c/web-platform-tests/css/css-images/radial-gradient-line-height-relat
 # wpt css-transitions and css-animations failures and flakiness
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure ]
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html [ ImageOnlyFailure ]
+webkit.org/b/324039 imported/w3c/web-platform-tests/css/css-animations/keyframes-tree-scoped-property-with-var.html [ ImageOnlyFailure ]
 webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Failure Pass Timeout ]
 imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-003.html [ Failure Pass ]
+webkit.org/b/324038 imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-shape-outside-crash.html [ Skip ]
 
 # wpt css-values failures
 # The "Shared between elements within a property - shorthand" subtest compares two random() draws in

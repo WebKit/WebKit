@@ -1,14 +1,14 @@
 
-PASS values of getComputedTiming() when a KeyframeEffect is constructed without any KeyframeEffectOptions object
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by an empty KeyframeEffectOptions object
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by a normal KeyframeEffectOptions object
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by a double value
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by +Infinity
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by an Infinity duration
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by an auto duration
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by an Infinity iterations
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by an auto fill
-PASS values of getComputedTiming() when a KeyframeEffect is constructed by a forwards fill
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed without any KeyframeEffectOptions object assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by an empty KeyframeEffectOptions object assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by a normal KeyframeEffectOptions object assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by a double value assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by +Infinity assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by an Infinity duration assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by an auto duration assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by an Infinity iterations assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by an auto fill assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
+FAIL values of getComputedTiming() when a KeyframeEffect is constructed by a forwards fill assert_equals: computed startTime expected (number) 0 but got (undefined) undefined
 PASS getComputedTiming().activeDuration for an empty KeyframeEffectOptions object
 PASS getComputedTiming().activeDuration for a non-zero duration and default iteration count
 PASS getComputedTiming().activeDuration for a non-zero duration and integral iteration count
@@ -35,4 +35,9 @@ PASS getComputedTiming().endTime for an infinite duration and negative delay
 PASS getComputedTiming().endTime for an non-zero duration and negative delay
 PASS getComputedTiming().endTime for an non-zero duration and negative delay greater than active duration
 PASS getComputedTiming().endTime for a zero duration and negative delay
+FAIL getComputedTiming().startTime for an empty KeyframeEffectOptions object assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL getComputedTiming().startTime for a non-zero duration and delay assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL getComputedTiming().startTime for a negative delay assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL getComputedTiming().startTime for a non-default iteration count and iterationStart assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL getComputedTiming().startTime for an infinite duration assert_equals: expected (number) 0 but got (undefined) undefined
 

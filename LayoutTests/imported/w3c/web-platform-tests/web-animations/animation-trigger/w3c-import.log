@@ -10,12 +10,8 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-trigger/event-trigger-alternate.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-trigger/event-trigger-before-handlers.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-trigger/event-trigger-once.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-trigger/event-trigger-repeat.tentative.html
-/LayoutTests/imported/w3c/web-platform-tests/web-animations/animation-trigger/event-trigger-state.tentative.html

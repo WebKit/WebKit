@@ -10,10 +10,10 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/animation-range-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel-event-on-element-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-svg-crash.html

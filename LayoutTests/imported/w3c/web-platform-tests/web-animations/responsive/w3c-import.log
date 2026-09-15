@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/animation-on-pseudo-to-display-none.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/assorted-lengths.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/background-color-animation-plus-opacity-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/background-color-animation-plus-opacity-ref.html
@@ -31,17 +30,24 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/columnCount.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/columnGap.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/d.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/fill-forwards-viewport-units.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/font-size-adjust.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/fontSize.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/fontWeight.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/lineHeight.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/minHeight.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/multiple-properties-delayed-important-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/multiple-properties-delayed-important-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/multiple-properties-delayed-important.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/neutral-keyframe.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offset-path.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offsetDistance.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/offsetRotate.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/opacity-with-delayed-important-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/opacity-with-delayed-important-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/opacity-with-delayed-important.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/opacity.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/perspective.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/responsive-test.js
@@ -58,6 +64,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/tramsform-with-delayed-important-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/tramsform-with-delayed-important.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/transform-with-delayed-important-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/transform.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/translate.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/responsive/verticalAlign.html

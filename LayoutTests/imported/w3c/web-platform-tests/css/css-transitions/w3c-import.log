@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/AnimationEffect-getComputedTiming.tentative.html
@@ -34,6 +32,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/after-change-style-inherited-try-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/after-change-style-inherited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/all-interpolates-same-as-explicit-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/allow-discrete-auto-inset-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/allow-discrete-auto-inset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/before-load-001.html
@@ -54,6 +53,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/events-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/events-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/events-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/events-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/idlharness-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/idlharness.html
@@ -64,6 +64,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/inherit-background-color-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/inherit-height-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/inheritance.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/no-transition-for-unchanged-pointer-valued-properties.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-004.tentative.html
@@ -93,6 +94,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-rule-none.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-rule-pseudo-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/starting-style-size-container.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/top-layer-image-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-after-animation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-background-position-with-edge-offset.html
@@ -101,8 +103,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-base-response-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-behavior-events.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-cancel-elapsed-time-on-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-delay-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-infinite-cancelation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-duration-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-events-with-document-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transition-important.html
@@ -119,4 +123,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitioncancel-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitionevent-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/transitions-retarget.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/unregistered-custom-property-transition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/zero-duration-multiple-transition.html

@@ -1,0 +1,14 @@
+
+FAIL 1. opacity keyframes should not clamp before compositing, replace -1 + add 1 = 0 assert_equals: expected 0 but got 1
+FAIL 2. opacity keyframes should not clamp before compositing, replace 1 + add -1 = 0 assert_equals: expected 0 but got 1
+FAIL 3. opacity keyframes should not clamp before compositing, replace -2 + add 2 = 0 assert_equals: expected 0 but got 1
+FAIL 4. opacity keyframes should not clamp before compositing, replace 2 + add -2 = 0 assert_equals: expected 0 but got 1
+PASS 5. opacity keyframes should not clamp before compositing, replace 2 + add -1 = 1
+PASS 6. opacity keyframes should not clamp before compositing, replace -1 + add 2 = 1
+FAIL 7. opacity keyframes should not clamp before compositing, replace -100% + add 100% = 0 assert_equals: expected 0 but got 1
+FAIL 8. opacity keyframes should not clamp before compositing, replace 100% + add -100% = 0 assert_equals: expected 0 but got 1
+FAIL 9. opacity keyframes should not clamp before compositing, replace -200% + add 200% = 0 assert_equals: expected 0 but got 1
+FAIL 10. opacity keyframes should not clamp before compositing, replace 200% + add -200% = 0 assert_equals: expected 0 but got 1
+PASS 11. opacity keyframes should not clamp before compositing, replace 200% + add -100% = 1
+PASS 12. opacity keyframes should not clamp before compositing, replace -100% + add 200% = 1
+

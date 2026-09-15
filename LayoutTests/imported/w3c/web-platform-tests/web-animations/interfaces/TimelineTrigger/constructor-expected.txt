@@ -1,6 +1,15 @@
 
-FAIL Default values when no property bag is supplied Can't find variable: TimelineTrigger
+FAIL Empty ranges when no list is supplied. Can't find variable: TimelineTrigger
+FAIL Empty ranges when empty list is supplied. Can't find variable: TimelineTrigger
 FAIL Default values when an empty property bag is supplied. Can't find variable: TimelineTrigger
 FAIL All values supplied (scroll timeline). Can't find variable: TimelineTrigger
 FAIL All values supplied (view timeline). Not enough arguments
+FAIL Entry range supplied; active copied from entry Not enough arguments
+FAIL Active range supplied; entry copied from active Not enough arguments
+FAIL Multiple (empty) timelines not supported assert_throws_js: function "() => {
+      const trigger = new TimelineTrigger([{}, {}]);
+    }" threw object "ReferenceError: Can't find variable: TimelineTrigger" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Multiple timelines not supported Not enough arguments
 

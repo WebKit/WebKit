@@ -1,0 +1,4 @@
+x
+
+PASS Restyling without changing computed values starts no transitions
+

@@ -2,6 +2,7 @@
 PASS Fires cancel event before requestAnimationFrame
 PASS Fires finish event before requestAnimationFrame
 PASS Sorts finish events by composite order
+PASS Sorts finish events by scheduled event time
 PASS Sorts cancel events by composite order
 PASS Queues a cancel event in transitionstart event callback
 PASS Sorts events for the same transition

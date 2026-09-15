@@ -10,12 +10,16 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/clear-duration-in-transitionend.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/delete-image-set.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/firefox-bug-1941855.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/size-container-transition-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-asan.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-during-style-attr-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-shape-outside-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-transform-translate-calculated-length-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-var-gradient-crash.html
