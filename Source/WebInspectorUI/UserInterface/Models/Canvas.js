@@ -111,7 +111,7 @@ WI.Canvas = class Canvas extends WI.Object
             contextType = WI.Canvas.ContextType.WebGPU;
             break;
         default:
-            console.error("Invalid canvas context type", payload.contextType);
+            console.assert(false, payload.contextType);
         }
 
         let sizes = payload.sizes?.map(WI.Size.fromJSON) || [];
@@ -167,7 +167,7 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.UIString("WebGPU", "WebGPU @ Canvas Context Type", "WebGPU is a type of rendering context associated with a <canvas> element.");
         }
 
-        console.assert(false, "Unknown canvas context type", contextType);
+        console.assert(false, contextType);
         return null;
     }
 
@@ -184,7 +184,7 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.UIString("Linear Display P3", "Linear Display P3 @ Color Space", "Label for a canvas that uses the linear Display P3 color space.");
         }
 
-        console.assert(false, "Unknown canvas color space", colorSpace);
+        console.assert(false, colorSpace);
         return null;
     }
 
@@ -289,7 +289,7 @@ WI.Canvas = class Canvas extends WI.Object
 
     requestContent()
     {
-        return this._target.CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => console.error(error));
+        return this._target.CanvasAgent.requestContent(this._identifier).then((result) => result.content).catch((error) => WI.reportInternalError(error));
     }
 
     requestCSSCanvasClientNodes()
@@ -335,7 +335,7 @@ WI.Canvas = class Canvas extends WI.Object
     {
         let handleStartRecording = (error) => {
             if (error) {
-                console.error(error);
+                WI.reportInternalError(error);
                 return;
             }
 

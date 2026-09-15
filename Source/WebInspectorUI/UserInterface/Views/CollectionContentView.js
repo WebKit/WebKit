@@ -101,7 +101,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             return;
 
         if (this._contentViewMap.has(item)) {
-            console.assert(false, "Already added ContentView for item.", item);
+            console.assert(false, item);
             return;
         }
 
@@ -241,7 +241,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         if (this._selectedItem) {
             let contentView = this._contentViewMap.get(this._selectedItem);
-            console.assert(contentView, "Missing ContentView for deselected item.", this._selectedItem);
+            console.assert(contentView, this._selectedItem);
             contentView.element.classList.remove("selected");
         }
 
@@ -249,7 +249,7 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
 
         if (this._selectedItem) {
             let selectedContentView = this._contentViewMap.get(this._selectedItem);
-            console.assert(selectedContentView, "Missing ContentView for selected item.", this._selectedItem);
+            console.assert(selectedContentView, this._selectedItem);
             selectedContentView.element.classList.add("selected");
         }
 

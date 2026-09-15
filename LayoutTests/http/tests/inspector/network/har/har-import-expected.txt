@@ -76,18 +76,12 @@ Content:
 Test Content
 
 -- Running test case: HAR.Import.BadVersion
-ERROR: HAR Import Error: unsupported HAR version
 PASS: Should fail to import a HAR with an unsupported version.
 
 -- Running test case: HAR.Import.Invalid
-ERROR: HAR Import Error: invalid JSON
 PASS: Should fail to import invalid JSON: null.
-ERROR: HAR Import Error: invalid JSON
 PASS: Should fail to import invalid JSON: 123.
-ERROR: HAR Import Error: invalid HAR
 PASS: Should fail to import invalid JSON: [].
-ERROR: HAR Import Error: invalid HAR
 PASS: Should fail to import invalid JSON: {}.
-ERROR: HAR Import Error: invalid HAR
 PASS: Should fail to import invalid JSON: {"pages":[],"entries":[]}.
 

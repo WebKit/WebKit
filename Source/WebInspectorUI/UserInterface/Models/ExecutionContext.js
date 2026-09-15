@@ -57,7 +57,7 @@ WI.ExecutionContext = class ExecutionContext
             return WI.ExecutionContext.Type.Internal;
         }
 
-        console.assert(false, "Unknown Runtime.ExecutionContextType", payload.type);
+        console.assert(false, payload.type);
         return WI.ExecutionContext.Type.Internal;
     }
 

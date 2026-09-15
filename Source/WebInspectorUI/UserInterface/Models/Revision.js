@@ -30,13 +30,13 @@ WI.Revision = class Revision
     apply()
     {
         // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
+        console.assert(false, this);
     }
 
     revert()
     {
         // Implemented by subclasses.
-        console.error("Needs to be implemented by a subclass.");
+        console.assert(false, this);
     }
 
     copy()

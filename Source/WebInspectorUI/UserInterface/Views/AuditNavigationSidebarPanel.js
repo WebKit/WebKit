@@ -376,7 +376,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             return;
         }
 
-        console.error("Unknown tree element", treeElement);
+        console.assert(false, treeElement);
     }
 
     _handleStartStopButtonNavigationItemClicked(event)

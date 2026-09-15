@@ -215,7 +215,7 @@ WI.IndexedDBManager = class IndexedDBManager extends WI.Object
             case InspectorBackend.Enum.IndexedDB.KeyPathType.Array:
                 return keyPathPayload.array;
             default:
-                console.error("Unknown KeyPath type:", keyPathPayload.type);
+                console.assert(false, keyPathPayload.type);
                 return null;
             }
         }

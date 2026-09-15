@@ -54,7 +54,7 @@ WI.FormattedValue.hasSimpleDisplay = function(object)
         return subtype === "null" || subtype === "regexp" || subtype === "date";
     }
 
-    console.assert(false, "All RemoteObject types should be handled above");
+    console.assert(false, object);
     return false;
 };
 
@@ -188,7 +188,7 @@ WI.FormattedValue.createElementForNodePreview = function(preview, {remoteObjectA
 
     // Remaining node types are often #text, #document, etc, with attribute nodes potentially being any string.
     if (!matches) {
-        console.assert(!value.startsWith("<"), "Unexpected node preview format: " + value);
+        console.assert(!value.startsWith("<"), value);
         span.textContent = value;
         return span;
     }

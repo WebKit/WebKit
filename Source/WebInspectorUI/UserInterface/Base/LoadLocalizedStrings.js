@@ -56,17 +56,15 @@ WI.UIString = function(string, key, comment)
 
     key = key || string;
 
+    console.assert(window.localizedStrings, key, comment);
     if (window.localizedStrings && key in window.localizedStrings)
         return window.localizedStrings[key];
-
-    if (!window.localizedStrings)
-        console.error(`Attempted to load localized string "${key}" before localizedStrings was initialized.`, comment);
 
     if (!this._missingLocalizedStrings)
         this._missingLocalizedStrings = {};
 
     if (!(key in this._missingLocalizedStrings)) {
-        console.error(`Localized string "${key}" was not found.`, comment);
+        console.assert(false, key, comment);
         this._missingLocalizedStrings[key] = true;
     }
 

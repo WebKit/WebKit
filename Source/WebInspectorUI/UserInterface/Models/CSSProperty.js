@@ -453,7 +453,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         if (!WI.settings.experimentalEnableStylesJumpToEffective.value)
             return;
 
-        console.assert(this !== effectiveProperty, `Property "${this.formattedText}" can't override itself.`, this);
+        console.assert(this !== effectiveProperty, this, effectiveProperty);
         this._overridingProperty = effectiveProperty || null;
     }
 

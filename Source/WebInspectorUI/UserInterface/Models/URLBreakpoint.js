@@ -73,7 +73,7 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Breakpoint
             return "/" + this._url + "/";
         }
 
-        console.assert();
+        console.assert(false, this._type);
         return WI.UIString("URL");
     }
 

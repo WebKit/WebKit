@@ -135,7 +135,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         case WI.TimelineRecord.Type.Screenshots:
             return WI.UIString("Screenshots");
         default:
-            console.error("Unknown Timeline type:", timelineType);
+            console.assert(false, timelineType);
         }
 
         return null;
@@ -163,7 +163,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         case WI.TimelineRecord.Type.Screenshots:
             return "screenshots-icon";
         default:
-            console.error("Unknown Timeline type:", timelineType);
+            console.assert(false, timelineType);
         }
 
         return null;
@@ -191,7 +191,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         case WI.TimelineRecord.Type.Screenshots:
             return "screenshots";
         default:
-            console.error("Unknown Timeline type:", timelineType);
+            console.assert(false, timelineType);
         }
 
         return null;
@@ -218,7 +218,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             case WI.LayoutTimelineRecord.EventType.LargestContentfulPaint:
                 return WI.TimelineRecordTreeElement.PerformanceEntryIconStyleClass;
             default:
-                console.error("Unknown LayoutTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
+                console.assert(false, timelineRecord);
             }
             break;
 
@@ -248,7 +248,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             case WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled:
                 return "animation-frame-record";
             default:
-                console.error("Unknown ScriptTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
+                console.assert(false, timelineRecord);
             }
 
             break;
@@ -268,7 +268,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             case WI.MediaTimelineRecord.EventType.MediaElement:
                 return "media-element-record";
             default:
-                console.error("Unknown MediaTimelineRecord eventType: " + timelineRecord.eventType, timelineRecord);
+                console.assert(false, timelineRecord);
             }
 
             break;
@@ -279,7 +279,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             // Not used. Fall through to error just in case.
 
         default:
-            console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
+            console.assert(false, timelineRecord);
         }
 
         return null;
@@ -316,7 +316,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         case WI.TimelineRecord.Type.Screenshots:
             // Not used. Fall through to error just in case.
         default:
-            console.error("Unknown TimelineRecord type: " + timelineRecord.type, timelineRecord);
+            console.assert(false, timelineRecord);
         }
 
         return null;

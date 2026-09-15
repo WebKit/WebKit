@@ -280,7 +280,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
             break;
 
         default:
-            console.error("Unexpected number of color parameters.");
+            console.assert(false, parameters);
             return null;
         }
 
