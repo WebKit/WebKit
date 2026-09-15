@@ -160,10 +160,10 @@ static void fallbackFontsForRunWithIterator(SingleThreadWeakHashSet<const Font>&
                 // "Unsupported Default_ignorable characters must be ignored for text rendering."
                 auto isIgnored = isDefaultIgnorableCodePoint(character);
 
-                // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
-                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
+                if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph)) {
                     if (!isIgnored)
                         fallbackFonts.add(*glyphData.font);
+                }
             }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
