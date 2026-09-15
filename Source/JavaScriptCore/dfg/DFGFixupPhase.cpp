@@ -2979,6 +2979,14 @@ private:
             break;
         }
 
+        case ObjectIsExtensible: {
+            if (node->child1()->shouldSpeculateObject())
+                fixEdge<ObjectUse>(node->child1());
+            else
+                fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case HasStructureWithFlags: {
             fixEdge<KnownCellUse>(node->child1());
             break;
