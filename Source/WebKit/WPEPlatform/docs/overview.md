@@ -15,13 +15,18 @@ small set of GObject-based abstract classes that implementations
 subclass.
 
 WPEPlatform ships with three built-in platform implementations —
-**Wayland**, **DRM**, and **headless** — each exposed as an
-independently consumable library with its own `pkg-config` module. They
-are built by default but each one is individually optional at build
-time. Integrators are expected to choose between using a built-in
-implementation, subclassing one to extend it, or writing a new
-implementation from scratch. External implementations for other
-windowing systems already exist (notably for GTK4 and SDL).
+**Wayland**, **DRM**, and **headless**. All of them are compiled into
+the same shared library as the rest of WPE WebKit, but each one has its
+own headers and its own `pkg-config` module. They are built by default
+but each one is individually optional at build time. Integrators are
+expected to choose between using a built-in implementation or writing a
+new implementation from scratch. The built-in implementations can be
+extended by using their public API, which exposes the internal platform
+specific objects. For example the Wayland implementation exposes its
+underlying `wl_display`, `wl_compositor`, and `wl_surface` objects,
+which makes it possible to add support for a Wayland protocol
+that the built-in module does not implement. External implementations
+for other windowing systems already exist (notably for GTK4 and SDL).
 
 <!-- TODO: uncomment once backend-model.md has landed:
 See [Backend model](backend-model.html) for how WPEPlatform discovers external modules.
@@ -81,7 +86,9 @@ Where the distinction matters it is called out in the [Input handling](input-han
 
 ## Class hierarchy
 
-The core of the API revolves around four abstract classes:
+The core of the API revolves around four base classes. [class@Display],
+[class@View], and [class@Buffer] are abstract - [class@Toplevel] can be
+instantiated but is normally subclassed by platform implementations:
 
 | Class | Role |
 |---|---|

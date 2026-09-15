@@ -29,9 +29,9 @@ below) and simply depends on the core module.
 ## Build-time availability
 
 WPEPlatform is gated behind WPE WebKit's `ENABLE_WPE_PLATFORM` CMake
-option. As of writing this option defaults to
-`ENABLE_DEVELOPER_MODE`, which means **release builds and distribution
-packages may ship without it**. Before assuming any of the modules
+option. This option defaults to `ON`, but it can be turned off (and it
+cannot be combined with `ENABLE_WPE_1_1_API`), so **distribution
+packages may still ship without it**. Before assuming any of the modules
 above exist on a target, confirm that WPE WebKit was built with
 `-DENABLE_WPE_PLATFORM=ON`, or probe for the module from your build
 system:

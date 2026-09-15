@@ -111,7 +111,7 @@ Build and run:
 ```sh
 cmake -B build -S .
 cmake --build build
-./build/hello-wpe https://webkit.org
+./build/my-browser https://webkit.org
 ```
 
 If [func@Display.get_default] cannot find any registered platform
@@ -185,8 +185,8 @@ The browser above renders pages but does little else. From here:
   [class@Toplevel], [class@View], and [class@Screen], including who
   owns whom and when each is created.
 - Backend model — how WPEPlatform discovers module-installed
-  implementations, how priority is resolved, and how to subclass a
-  built-in or write a new one from scratch.
+  implementations, how priority is resolved, and how to write a new
+  one from scratch.
 
 For platform implementers — as opposed to application developers —
 see the Writing a platform tutorial instead.
