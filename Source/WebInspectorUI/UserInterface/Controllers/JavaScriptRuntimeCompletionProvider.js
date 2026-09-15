@@ -143,6 +143,11 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                 bracketNotation = false;
         }
 
+        function currentCompletionContext() {
+            return WI.debuggerManager.activeCallFrame || WI.runtimeManager.activeExecutionContext;
+        }
+        let completionContext = currentCompletionContext();
+
         // Start an completion request. We must now decrement before calling completionController.updateCompletions.
         this._incrementOngoingCompletionRequests();
 
@@ -151,16 +156,17 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
         // and functions once instead of repetitively. Sure, there can be difference each time the base is evaluated,
         // but this optimization gives us more of a win. We clear the cache when a new command gets executed in the
         // quick console and at least every 30 seconds, to make sure we don't use stale properties in most cases.
-        if (this._lastMode === completionController.mode && this._lastBase === base && this._lastPropertyNames) {
+        if (this._lastMode === completionController.mode && this._lastBase === base && this._lastCompletionContext === completionContext && this._lastPropertyNames) {
             receivedPropertyNames.call(this, this._lastPropertyNames);
             return;
         }
 
         this._lastMode = completionController.mode;
         this._lastBase = base;
+        this._lastCompletionContext = completionContext;
         this._lastPropertyNames = null;
 
-        var activeCallFrame = WI.debuggerManager.activeCallFrame;
+        let activeCallFrame = completionContext instanceof WI.CallFrame ? completionContext : null;
         if (!base && activeCallFrame && !this._alwaysEvaluateInWindowContext)
             activeCallFrame.collectScopeChainVariableNames(receivedPropertyNames.bind(this));
         else {
@@ -181,6 +187,11 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
         function evaluated(result, wasThrown)
         {
+            if (currentCompletionContext() !== completionContext) {
+                this._decrementOngoingCompletionRequests();
+                return;
+            }
+
             if (wasThrown || !result || result.type === "undefined" || (result.type === "object" && result.subtype === "null")) {
                 this._decrementOngoingCompletionRequests();
 
@@ -280,9 +291,12 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             console.assert(!propertyNames || Array.isArray(propertyNames));
             propertyNames = propertyNames || [];
 
-            updateLastPropertyNames.call(this, propertyNames);
-
             this._decrementOngoingCompletionRequests();
+
+            if (currentCompletionContext() !== completionContext)
+                return;
+
+            updateLastPropertyNames.call(this, propertyNames);
 
             if (!base) {
                 propertyNames.pushAll(JavaScriptRuntimeCompletionProvider._commandLineAPIKeys);
