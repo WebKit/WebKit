@@ -110,7 +110,7 @@ All wrapped in [class@KeymapXKB], a [class@Keymap] subclass.
 
 | libwpe symbol | WPEPlatform | Kind | Notes |
 |---|---|---|---|
-| `WPE_KEY_*` constants | `WPE_KEY_*` constants in `<wpe/WPEKeysyms.h>` | Direct | The constant names are preserved; both files derive from the X11 keysym list and cover the same ~2280 names (a couple of stragglers differ, e.g. `WPE_KEY_WindowClearGrab` → `WPE_KEY_ClearGrab`). |
+| `WPE_KEY_*` constants | `WPE_KEY_*` constants | Direct | The constant names are preserved; both files derive from the X11 keysym list and cover the same ~2280 names (a couple of stragglers differ, e.g. `WPE_KEY_WindowClearGrab` → `WPE_KEY_ClearGrab`). |
 
 ### `wpe/pasteboard.h`
 
