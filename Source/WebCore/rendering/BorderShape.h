@@ -120,7 +120,7 @@ public:
     bool NODELETE outerShapeIsRectangular() const;
     bool NODELETE innerShapeIsRectangular() const;
 
-    bool hasNonRoundCornerShape() const;
+    bool NODELETE hasNonRoundCornerShape() const;
 
     bool isEmpty() const { return m_borderRect.rect().isEmpty(); }
 
