@@ -226,6 +226,24 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
 
     switch (sharingMode) {
     case MemorySharingMode::Default: {
+        if (declaredMaximumBytes && reservedMaximumBytes && Options::useWasmFaultSignalHandler()) {
+            char* reservedMemory = nullptr;
+            tryAllocate(vm,
+                [&] () -> BufferMemoryResult::Kind {
+                    auto result = BufferMemoryManager::singleton().tryAllocateGrowableBoundsCheckingMemory(reservedMaximumBytes);
+                    reservedMemory = std::bit_cast<char*>(result.basePtr);
+                    return result.kind;
+                });
+            if (reservedMemory) {
+                if (reservedMaximumBytes > initialBytes) {
+                    constexpr bool readable = false;
+                    constexpr bool writable = false;
+                    OSAllocator::protect(reservedMemory + initialBytes, reservedMaximumBytes - initialBytes, readable, writable);
+                }
+                return Memory::create(adoptRef(*new BufferMemoryHandle(reservedMemory, initialBytes, reservedMaximumBytes, initial, maximum, MemorySharingMode::Default, MemoryMode::BoundsChecking)), addressType, WTF::move(growSuccessCallback));
+            }
+        }
+
         if (!initialBytes)
             return adoptRef(new Memory(initial, maximum, MemorySharingMode::Default, addressType, WTF::move(growSuccessCallback)));
 
@@ -370,32 +388,8 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
     size_t desiredSize = newPageCount.bytes();
     RELEASE_ASSERT(desiredSize <= allocatableBytes);
     RELEASE_ASSERT(desiredSize > size());
-    switch (mode()) {
-    case MemoryMode::BoundsChecking: {
-        bool allocationSuccess = tryAllocate(vm,
-            [&] () -> BufferMemoryResult::Kind {
-                return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(desiredSize);
-            });
-        if (!allocationSuccess)
-            return makeUnexpected(GrowFailReason::OutOfMemory);
 
-        RELEASE_ASSERT(maximum().bytes() != 0);
-
-        void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
-        if (!newMemory) {
-            BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
-            return makeUnexpected(GrowFailReason::OutOfMemory);
-        }
-
-        memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), desiredSize), m_handle->mutableSpan());
-        Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
-        m_handle->transferAnchors(newHandle.get());
-        m_handle = WTF::move(newHandle);
-
-        ASSERT(basePointer() == newMemory);
-        return success();
-    }
-    case MemoryMode::Signaling: {
+    auto growInPlace = [&] () -> std::expected<PageCount, GrowFailReason> {
         size_t extraBytes = desiredSize - size();
         RELEASE_ASSERT(extraBytes);
         bool allocationSuccess = tryAllocate(vm,
@@ -407,21 +401,40 @@ std::expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         void* memory = this->basePointer();
         RELEASE_ASSERT(memory);
-
-        // Signaling memory must have been pre-allocated virtually.
         uint8_t* startAddress = static_cast<uint8_t*>(memory) + size();
-        
         dataLogLnIf(verbose, "Marking WebAssembly memory's ", RawPointer(memory), " as read+write in range [", RawPointer(startAddress), ", ", RawPointer(startAddress + extraBytes), ")");
         constexpr bool readable = true;
         constexpr bool writable = true;
         OSAllocator::protect(startAddress, extraBytes, readable, writable);
         m_handle->updateSize(desiredSize);
         return success();
-    }
+    };
+
+    if (mode() == MemoryMode::Signaling || desiredSize <= m_handle->mappedCapacity())
+        return growInPlace();
+
+    RELEASE_ASSERT(mode() == MemoryMode::BoundsChecking);
+
+    bool allocationSuccess = tryAllocate(vm,
+        [&] () -> BufferMemoryResult::Kind {
+            return BufferMemoryManager::singleton().tryAllocatePhysicalBytes(desiredSize);
+        });
+    if (!allocationSuccess)
+        return makeUnexpected(GrowFailReason::OutOfMemory);
+
+    void* newMemory = Gigacage::tryAllocateZeroedVirtualPages(Gigacage::Primitive, desiredSize);
+    if (!newMemory) {
+        BufferMemoryManager::singleton().freePhysicalBytes(desiredSize);
+        return makeUnexpected(GrowFailReason::OutOfMemory);
     }
 
-    RELEASE_ASSERT_NOT_REACHED();
-    return oldPageCount;
+    memcpySpan(unsafeMakeSpan(static_cast<uint8_t*>(newMemory), size()), unsafeMakeSpan(static_cast<uint8_t*>(basePointer()), size()));
+    Ref newHandle = adoptRef(*new BufferMemoryHandle(newMemory, desiredSize, desiredSize, initial(), maximum(), sharingMode(), MemoryMode::BoundsChecking));
+    m_handle->transferAnchors(newHandle.get());
+    m_handle = WTF::move(newHandle);
+
+    ASSERT(basePointer() == newMemory);
+    return success();
 }
 
 bool Memory::init(uint64_t offset, const uint8_t* data, uint32_t length)
