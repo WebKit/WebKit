@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<body>
+<script>
+
+description('Tests the HTML processing instruction parser setting.');
+
+function parseProcessingInstruction()
+{
+    const container = document.createElement('div');
+    container.innerHTML = '<?target data?>';
+    return container.firstChild;
+}
+
+var node = parseProcessingInstruction();
+shouldBe('node.nodeType', 'Node.PROCESSING_INSTRUCTION_NODE');
+shouldBeEqualToString('node.target', 'target');
+shouldBeEqualToString('node.data', 'data');
+
+internals.settings.setHTMLProcessingInstructionEnabled(false);
+node = parseProcessingInstruction();
+shouldBe('node.nodeType', 'Node.COMMENT_NODE');
+shouldBeEqualToString('node.data', '?target data?');
+
+internals.settings.setHTMLProcessingInstructionEnabled(true);
+
+</script>
+</body>
+</html>

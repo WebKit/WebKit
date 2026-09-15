@@ -45,6 +45,15 @@ public:
     void deref() const final { CharacterData::deref(); }
 
     const String& target() const LIFETIME_BOUND { return m_target; }
+    String pseudoAttributeValue(ASCIILiteral);
+
+    bool hasAttributes();
+    Vector<AtomString> getAttributeNames();
+    String getAttribute(const AtomString&);
+    ExceptionOr<void> setAttribute(const AtomString&, const AtomString&);
+    void removeAttribute(const AtomString&);
+    ExceptionOr<bool> toggleAttribute(const AtomString&, std::optional<bool> force);
+    bool hasAttribute(const AtomString&);
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
 
@@ -81,6 +90,13 @@ private:
 
     void parseStyleSheet(const String& sheet);
 
+    struct PseudoAttribute {
+        AtomString name;
+        AtomString value;
+    };
+    void updateAttributesIfNeeded();
+    void updateDataFromAttributes();
+
     String m_target;
     String m_localHref;
     String m_title;
@@ -94,6 +110,8 @@ private:
 #if ENABLE(XSLT)
     bool m_isXSL { false };
 #endif
+    Vector<PseudoAttribute> m_attributes;
+    bool m_attributesDirty { true };
 };
 
 } // namespace WebCore

@@ -1,0 +1,14 @@
+Tests the HTML processing instruction parser setting.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS node.nodeType is Node.PROCESSING_INSTRUCTION_NODE
+PASS node.target is "target"
+PASS node.data is "data"
+PASS node.nodeType is Node.COMMENT_NODE
+PASS node.data is "?target data?"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

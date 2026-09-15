@@ -127,9 +127,10 @@ runMutationTest(n41,
                   "characterData Text.replaceData: empty mutation");
 
   var n50 = document.getElementById('n50').firstChild;
+  var n50OldValue = n50.nodeType === Node.PROCESSING_INSTRUCTION_NODE ? "data" : "?processing data?";
 runMutationTest(n50,
                   {"characterData":true,"characterDataOldValue":true},
-                  [{type: "characterData", oldValue: "?processing data?" },{type: "characterData", oldValue: "CHANGED" },{type: "characterData", oldValue: "CHANGED" }],
+                  [{type: "characterData", oldValue: n50OldValue },{type: "characterData", oldValue: "CHANGED" },{type: "characterData", oldValue: "CHANGED" }],
                   function() {
                     n50.data = "CHANGED";
                     n50.deleteData(0, 0);

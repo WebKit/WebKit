@@ -40,14 +40,14 @@ PASS <
 PASS <#
 PASS </
 PASS </#
-FAIL <? assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ? -->\n| <html>\n|   <head>\n|   <body>"
+PASS <?
 PASS <?#
 PASS <!
 PASS <!#
-FAIL <?COMMENT?> assert_equals: expected "#document\n| <?COMMENT ?>\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ?COMMENT? -->\n| <html>\n|   <head>\n|   <body>"
+PASS <?COMMENT?>
 PASS <!COMMENT>
 PASS </ COMMENT >
-FAIL <?COM--MENT?> assert_equals: expected "#document\n| <?COM--MENT ?>\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ?COM--MENT? -->\n| <html>\n|   <head>\n|   <body>"
+PASS <?COM--MENT?>
 PASS <!COM--MENT>
 PASS </ COM--MENT >
 PASS <!DOCTYPE html><style> EOF
@@ -113,60 +113,4 @@ PASS <table><colgroup><tbody><colgroup><tr><colgroup><td><colgroup></table><colg
 PASS </strong></b></em></i></u></strike></s></blink></tt></pre></big></small></font></select></h1></h2></h3></h4></h5></h6></body></br></a></img></title></span></style></script></table></th></td></tr></frame></area></link></param></hr></input></col></base></meta></basefont></bgsound></embed></spacer></p></dd></dt></caption></colgroup></tbody></tfoot></thead></address></blockquote></center></dir></div></dl></fieldset></listing></menu></ol></ul></li></nobr></wbr></form></button></marquee></object></html></frameset></head></iframe></image></isindex></noembed></noframes></noscript></optgroup></option></plaintext></textarea>
 PASS <table><tr></strong></b></em></i></u></strike></s></blink></tt></pre></big></small></font></select></h1></h2></h3></h4></h5></h6></body></br></a></img></title></span></style></script></table></th></td></tr></frame></area></link></param></hr></input></col></base></meta></basefont></bgsound></embed></spacer></p></dd></dt></caption></colgroup></tbody></tfoot></thead></address></blockquote></center></dir></div></dl></fieldset></listing></menu></ol></ul></li></nobr></wbr></form></button></marquee></object></html></frameset></head></iframe></image></isindex></noembed></noframes></noscript></optgroup></option></plaintext></textarea>
 PASS <frameset>
-<?
-
-Input
-
-<?
-Expected
-
-#document
-| <html>
-|   <head>
-|   <body>
-Actual
-
-#document
-| <!-- ? -->
-| <html>
-|   <head>
-|   <body>
-<?COMMENT?>
-
-Input
-
-<?COMMENT?>
-Expected
-
-#document
-| <?COMMENT ?>
-| <html>
-|   <head>
-|   <body>
-Actual
-
-#document
-| <!-- ?COMMENT? -->
-| <html>
-|   <head>
-|   <body>
-<?COM--MENT?>
-
-Input
-
-<?COM--MENT?>
-Expected
-
-#document
-| <?COM--MENT ?>
-| <html>
-|   <head>
-|   <body>
-Actual
-
-#document
-| <!-- ?COM--MENT? -->
-| <html>
-|   <head>
-|   <body>
 
