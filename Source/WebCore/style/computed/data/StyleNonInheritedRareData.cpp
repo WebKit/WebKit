@@ -72,6 +72,7 @@ NonInheritedRareData::NonInheritedRareData()
     , perspectiveOrigin({ ComputedStyle::initialPerspectiveOriginX(), ComputedStyle::initialPerspectiveOriginY() })
 #if ENABLE(SPATIAL_PORTAL)
     , portalTransform(ComputedStyle::initialPortalTransform())
+    , environmentMap(ComputedStyle::initialEnvironmentMap())
 #else
     , portalTransform(CSS::Keyword::Auto { })
 #endif
@@ -190,6 +191,9 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , perspective(o.perspective)
     , perspectiveOrigin(o.perspectiveOrigin)
     , portalTransform(o.portalTransform)
+#if ENABLE(SPATIAL_PORTAL)
+    , environmentMap(o.environmentMap)
+#endif
     , containerType(o.containerType)
     , containerNames(o.containerNames)
     , containIntrinsicWidth(o.containIntrinsicWidth)
@@ -312,6 +316,9 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && perspective == o.perspective
         && perspectiveOrigin == o.perspectiveOrigin
         && portalTransform == o.portalTransform
+#if ENABLE(SPATIAL_PORTAL)
+        && environmentMap == o.environmentMap
+#endif
         && containerType == o.containerType
         && containerNames == o.containerNames
         && containIntrinsicWidth == o.containIntrinsicWidth
@@ -450,6 +457,9 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(perspective);
     LOG_IF_DIFFERENT(perspectiveOrigin);
     LOG_IF_DIFFERENT(portalTransform);
+#if ENABLE(SPATIAL_PORTAL)
+    LOG_IF_DIFFERENT(environmentMap);
+#endif
 
     LOG_IF_DIFFERENT(containerType);
     LOG_IF_DIFFERENT(containerNames);

@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    assert_equals(getComputedStyle(element).environmentMap, "auto");
+}, "environment-map initial value is auto");
+
+test(t => {
+    const values = [
+        "auto",
+        "none",
+        '"studio"',
+        '"warm studio"',
+        '""',
+        '"has \\"escaped\\" quotes"',
+    ];
+
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    for (const value of values) {
+        element.style.environmentMap = value;
+
+        assert_true(CSS.supports("environment-map", value), `CSS.supports("${value}")`);
+        assert_equals(element.style.environmentMap, value, `specified value of ${value}`);
+        assert_equals(getComputedStyle(element).environmentMap, value, `computed value of ${value}`);
+    }
+}, "environment-map accepts auto, none and a single name");
+
+test(t => {
+    const element = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => element.remove());
+
+    element.style.environmentMap = '"auto"';
+    assert_equals(getComputedStyle(element).environmentMap, '"auto"', '"auto" is a name, not the keyword');
+
+    element.style.environmentMap = '"Studio"';
+    assert_equals(getComputedStyle(element).environmentMap, '"Studio"', "names keep their case");
+}, "environment-map treats names as case-sensitive strings");
+
+test(t => {
+    const style = document.head.appendChild(document.createElement("style"));
+    style.textContent = '#portal { environment-map: "studio"; }';
+
+    const element = document.body.appendChild(document.createElement("div"));
+    element.id = "portal";
+
+    t.add_cleanup(() => {
+        style.remove();
+        element.remove();
+    });
+
+    assert_equals(style.sheet.cssRules[0].style.environmentMap, '"studio"', "specified value in the rule");
+    assert_equals(getComputedStyle(element).environmentMap, '"studio"', "computed value on the element");
+}, "environment-map parses from a stylesheet");
+
+test(t => {
+    const parent = document.body.appendChild(document.createElement("div"));
+    t.add_cleanup(() => parent.remove());
+
+    const child = parent.appendChild(document.createElement("div"));
+
+    parent.style.environmentMap = '"studio"';
+    assert_equals(getComputedStyle(child).environmentMap, "auto", "the child does not inherit the name");
+
+    child.style.environmentMap = "unset";
+    assert_equals(getComputedStyle(child).environmentMap, "auto", "unset is initial, not inherit");
+
+    child.style.environmentMap = "inherit";
+    assert_equals(getComputedStyle(child).environmentMap, '"studio"', "inherit still works when asked for explicitly");
+}, "environment-map is not inherited");
+
+</script>
+</body>
+</html>
