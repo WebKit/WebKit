@@ -102,6 +102,7 @@
 #include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
 #include <WebCore/HandleUserInputEventResult.h>
+#include <WebCore/HistoryController.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageData.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
@@ -759,13 +760,17 @@ void WebFrame::setHistoryItemForBackForwardNavigation(const FrameState& frameSta
     if (!localFrame || !page)
         return;
 
+    Ref frameLoader = localFrame->loader();
+
+    if (frameLoader->history().provisionalItem())
+        return;
+
     // Build HistoryItem from FrameState
     Ref historyItemClient = page->historyItemClient();
     auto ignoreHistoryItemChangesForScope = historyItemClient->ignoreChangesForScope();
     ASSERT(!page->corePage()->settings().useUIProcessForBackForwardItemLoading() || frameState.children.isEmpty());
     Ref historyItem = toHistoryItem(historyItemClient, protect(frameState));
 
-    Ref frameLoader = localFrame->loader();
     frameLoader->setRequestedHistoryItem(historyItem);
 }
 
