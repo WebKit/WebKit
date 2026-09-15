@@ -178,6 +178,8 @@ public:
     void synchronizeAttribute(const QualifiedName&);
     void synchronizeAllAttributes();
 
+    const QualifiedName& attributeNameForSynchronization(const QualifiedName&) const;
+
     void commitPropertyChange(SVGProperty*) override;
     void commitPropertyChange(SVGAnimatedPropertyBase&);
 
