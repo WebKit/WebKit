@@ -4526,8 +4526,12 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             globalObject->setInspectable(options.m_inspectable);
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER) && CPU(ARM64)
-            if (Options::enableWasmDebugger()) [[unlikely]]
-                Wasm::DebugServer::singleton().start();
+            if (Options::enableWasmDebugger()) [[unlikely]] {
+                if (!Wasm::DebugServer::singleton().start()) {
+                    dataLogLnIf(Options::verboseWasmDebugger(), "ERROR: failed to start the WebAssembly debug server (port already in use?)");
+                    jscExit(EXIT_FAILURE);
+                }
+            }
 #endif
 
             func(vm, globalObject, success);

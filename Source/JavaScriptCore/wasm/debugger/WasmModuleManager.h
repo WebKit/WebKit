@@ -78,7 +78,6 @@ private:
     void sweepDeadInstances() WTF_REQUIRES_LOCK(m_lock);
     // Amortized cleanup mechanism (matches ThreadSafeWeakHashSet behavior).
     void amortizedCleanupIfNeeded() WTF_REQUIRES_LOCK(m_lock);
-    void cleanupHappened() WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
     IdToInstance m_instanceIdToInstance WTF_GUARDED_BY_LOCK(m_lock);

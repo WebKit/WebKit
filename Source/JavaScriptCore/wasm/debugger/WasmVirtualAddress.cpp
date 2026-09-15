@@ -64,6 +64,7 @@ void VirtualAddress::dump(PrintStream& out) const
 
 VirtualAddress VirtualAddress::toVirtual(JSWebAssemblyInstance* jsInstance, FunctionCodeIndex index, const uint8_t* pc)
 {
+    RELEASE_ASSERT(jsInstance->debugId() != INVALID_ID, "Wasm debugger encoding an unregistered instance");
     const Wasm::FunctionData& functionData = jsInstance->moduleInformation().functions[index];
     uint32_t offset = static_cast<uint32_t>(pc - &functionData.data[0] + functionData.start);
     return VirtualAddress::createModule(jsInstance->debugId(), offset);

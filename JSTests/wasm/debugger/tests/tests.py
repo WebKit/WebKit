@@ -1455,6 +1455,22 @@ class MalformedMemoryPacketTestCase:
         self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 41ff000000000000"])
 
 
+class MultiInstanceGlobalTestCase:
+    test_file = "resources/wasm/multi-instance-global.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        # A global index only names a global together with an instance. Both instances hold their
+        # own copy of global 0, set to 0x11111111 and 0x22222222 before DEBUGGER_READY.
+        self.session.cmd("image list", patterns=["0x4000000000000000.wasm", "0x4000000100000000.wasm"])
+
+        self.session.cmd("process plugin packet send qWasmGlobal:0;instance:0;", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmGlobal:0;instance:1;", patterns=["response: 22222222"])
+
+        # An id never handed out must be refused, not resolved to a live instance.
+        self.session.cmd("process plugin packet send qWasmGlobal:0;instance:7;", patterns=["response: E05"])
+
+
 class DoCatchThrowTestCase:
     test_file = "resources/swift-wasm/do-catch-throw/main.js"
 
@@ -2326,6 +2342,7 @@ ALL_TESTS = [
     MemoryAtomicWaitNoTimeoutTestCase,
     ThreadStopInfoUnknownThreadTestCase,
     MalformedMemoryPacketTestCase,
+    MultiInstanceGlobalTestCase,
     DoCatchThrowTestCase,
     WasmWasmWasmCallStackTestCase,
     JsWasmJsWasmCallStackTestCase,
