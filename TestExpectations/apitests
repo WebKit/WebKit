@@ -208,6 +208,7 @@ webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.DestinationC
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.EphemeralWithAttributedBundleIdentifier [ Pass Timeout ]
 webkit.org/b/315685 [ Debug ] TestWebKitAPI.PrivateClickMeasurement.ManualAttributionAndConversion [ Pass Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.CrashWithGestureController [ Skip ]
+webkit.org/b/324268 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.GoBackToSuspendedPageWithMainFrameIDThatIsNotOne [ Timeout ]
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
 webkit.org/b/324130 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.PageCacheWhenNavigatingFromJS [ Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
