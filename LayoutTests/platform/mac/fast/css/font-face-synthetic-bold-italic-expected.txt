@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,152) size 784x16
         RenderInline {STRONG} at (0,0) size 784x16
           RenderBlock {P} at (0,0) size 784x16
-            RenderText {#text} at (0,0) size 313x16
-              text run at (0,0) width 313: "Ahem synthetic bold"
+            RenderText {#text} at (0,0) size 304x16
+              text run at (0,0) width 304: "Ahem synthetic bold"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,184) size 784x18
         RenderText {#text} at (0,0) size 142x18
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
         RenderInline {STRONG} at (0,0) size 784x16
           RenderInline {I} at (0,0) size 784x16
             RenderBlock {P} at (0,0) size 784x16
-              RenderText {#text} at (0,0) size 428x16
-                text run at (0,0) width 428: "Ahem synthetic bold italic"
+              RenderText {#text} at (0,0) size 416x16
+                text run at (0,0) width 416: "Ahem synthetic bold italic"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

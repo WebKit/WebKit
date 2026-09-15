@@ -171,7 +171,7 @@ void Font::platformGlyphInit()
     } else
         m_fontMetrics.setIdeogramWidth(platformData().size());
 
-    m_spaceWidth = widthForGlyph(m_spaceGlyph, SyntheticBoldInclusion::Exclude); // spaceWidth() handles adding in the synthetic bold.
+    m_spaceWidth = widthForGlyph(m_spaceGlyph, SyntheticBoldInclusion::Exclude);
     auto amountToAdjustLineGap = std::min(m_fontMetrics.lineGap(), 0.0f);
     m_fontMetrics.setLineGap(m_fontMetrics.lineGap() - amountToAdjustLineGap);
     m_fontMetrics.setLineSpacing(m_fontMetrics.lineSpacing() - amountToAdjustLineGap);

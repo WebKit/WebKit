@@ -110,7 +110,7 @@ public:
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
-    float NODELETE spaceWidth(SyntheticBoldInclusion syntheticBoldInclusion = SyntheticBoldInclusion::Incorporate) const
+    float NODELETE spaceWidth(SyntheticBoldInclusion syntheticBoldInclusion = SyntheticBoldInclusion::Exclude) const
     {
         return m_spaceWidth + (syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
     }
