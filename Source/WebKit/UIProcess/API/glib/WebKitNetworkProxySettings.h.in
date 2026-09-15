@@ -75,7 +75,7 @@ G_END_DECLS
  * Configures network proxies.
  *
  * WebKitNetworkProxySettings can be used to provide a custom proxy configuration
- * to a #WebKitNetworkSession. You need to call webkit_network_session_set_network_proxy_settings()
+ * to a #WebKitNetworkSession. You need to call webkit_network_session_set_proxy_settings()
  * with %WEBKIT_NETWORK_PROXY_MODE_CUSTOM and a WebKitNetworkProxySettings.
  *
  * Since: 2.16

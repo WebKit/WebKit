@@ -61,7 +61,7 @@ typedef void (* WebKitWebExtensionInitializeFunction) (WebKitWebExtension *exten
  * @user_data: a #GVariant
  *
  * Type definition for a function that will be called to initialize
- * the web extensions when the web process starts, and which receives
+ * the web extension when the web process starts, and which receives
  * as additional argument the user data set with
  * webkit_web_context_set_web_extensions_initialization_user_data().
  *

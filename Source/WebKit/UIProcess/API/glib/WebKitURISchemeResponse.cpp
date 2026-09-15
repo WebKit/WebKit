@@ -48,11 +48,11 @@ using namespace WebCore;
  * a #WebKitURISchemeRequestCallback. After that, when a URI response
  * is made with that particular scheme, your callback will be
  * called. There you will be able to provide more response parameters
- * when the methods and properties of a #WebKitURISchemeRequest is not
+ * when the methods and properties of a #WebKitURISchemeRequest are not
  * enough.
  *
  * When you finished setting up your #WebKitURISchemeResponse, call
- * webkit_uri_request_finish_with_response() with it to return the response.
+ * webkit_uri_scheme_request_finish_with_response() with it to return the response.
  */
 
 struct _WebKitURISchemeResponsePrivate {

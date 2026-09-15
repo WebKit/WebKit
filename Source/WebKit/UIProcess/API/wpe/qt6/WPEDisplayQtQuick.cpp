@@ -44,6 +44,7 @@
 /**
  * WPEDisplayQtQuick:
  *
+ * A #WPEDisplay implementation for Qt Quick applications that uses the EGL display provided by Qt.
  */
 struct _WPEDisplayQtQuickPrivate {
     EGLDisplay eglDisplay;

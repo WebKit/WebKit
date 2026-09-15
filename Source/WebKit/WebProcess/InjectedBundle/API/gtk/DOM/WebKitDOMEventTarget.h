@@ -112,7 +112,7 @@ WEBKIT_DEPRECATED gboolean  webkit_dom_event_target_remove_event_listener(WebKit
  * @use_capture: A #gboolean
  *
  * Version of webkit_dom_event_target_add_event_listener() using a closure
- * instead of a callbacks for easier binding in other languages.
+ * instead of callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
  *
@@ -131,7 +131,7 @@ WEBKIT_DEPRECATED gboolean webkit_dom_event_target_add_event_listener_with_closu
  * @use_capture: A #gboolean
  *
  * Version of webkit_dom_event_target_remove_event_listener() using a closure
- * instead of a callbacks for easier binding in other languages.
+ * instead of callbacks for easier binding in other languages.
  *
  * Returns: a #gboolean
  *

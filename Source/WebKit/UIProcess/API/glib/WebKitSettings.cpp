@@ -102,7 +102,7 @@ struct _WebKitSettingsPrivate {
 /**
  * WebKitSettings:
  *
- * Control the behaviour of a #WebKitWebView.
+ * Control the behavior of a #WebKitWebView.
  *
  * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
  * color, font sizes, printing mode, script support, loading of images and various
@@ -1016,7 +1016,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Determines whether or not private browsing is enabled. Private browsing
      * will disable history, cache and form auto-fill for any pages visited.
      *
-     * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebsiteDataManager:is-ephemeral instead.
+     * Deprecated: 2.16: Use #WebKitWebView:is-ephemeral or #WebKitWebsiteDataManager:is-ephemeral instead.
      */
     sObjProperties[PROP_ENABLE_PRIVATE_BROWSING] =
         g_param_spec_boolean(
@@ -1171,7 +1171,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Determine whether it's allowed to create and run modal dialogs
      * from a #WebKitWebView through JavaScript with
-     * <function>window.showModalDialog</function>. If it's set to
+     * `window.showModalDialog`. If it's set to
      * %FALSE, the associated #WebKitWebView won't be able to create
      * new modal dialogs, so not even the #WebKitWebView::create
      * signal will be emitted.
@@ -1442,9 +1442,9 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether to enable Spatial Navigation. This feature consists in the ability
      * to navigate between focusable elements in a Web page, such as hyperlinks
      * and form controls, by using Left, Right, Up and Down arrow keys.
-     * For example, if an user presses the Right key, heuristics determine whether
+     * For example, if a user presses the Right key, heuristics determine whether
      * there is an element they might be trying to reach towards the right, and if
-     * there are multiple elements, which element they probably wants.
+     * there are multiple elements, which element they probably want.
      *
      * Since: 2.4
      */
@@ -1531,7 +1531,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether file access is allowed from file URLs. By default, when
      * something is loaded in a #WebKitWebView using a file URI, cross
      * origin requests to other file resources are not allowed. This
-     * setting allows you to change that behaviour, so that it would be
+     * setting allows you to change that behavior, so that it would be
      * possible to do a XMLHttpRequest of a local file, for example.
      *
      * Since: 2.10
@@ -1551,7 +1551,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * should be allowed to access content from any origin.  By default, when
      * something is loaded in a #WebKitWebView using a file scheme URL,
      * access to the local file system and arbitrary local storage is not
-     * allowed. This setting allows you to change that behaviour, so that
+     * allowed. This setting allows you to change that behavior, so that
      * it would be possible to use local storage, for example.
      *
      * Since: 2.14
@@ -1570,7 +1570,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Whether or not the top frame is allowed to navigate to data URLs. It is disabled by default
      * due to the risk it poses when loading untrusted URLs, with data URLs being used in scamming
      * and phishing attacks. In contrast, a scenario where it could be enabled could be an app that
-     * embeds a WebView and you have control of the pages being show instead of a generic browser.
+     * embeds a WebView and you have control of the pages being shown instead of a generic browser.
      *
      * Since: 2.28
      */
@@ -1662,7 +1662,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
     /**
      * WebKitSettings:media-content-types-requiring-hardware-support:
      *
-     * List of media content types requiring hardware support, split by semicolons (:).
+     * List of media content types requiring hardware support, split by colons (:).
      * For example: 'video/webm; codecs="vp*":video/mp4; codecs="avc*":video/&ast; codecs="av1*"'.
      *
      * Since: 2.30
@@ -1722,8 +1722,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Allow customization of the WebRTC UDP ports range.
      *
-     * In some constrained environments where a firewall blocks UDP network traffic excepted on a
-     * specific port range, this settings can be used to give hints to the WebRTC backend regarding
+     * In some constrained environments where a firewall blocks UDP network traffic except on a
+     * specific port range, this setting can be used to give hints to the WebRTC backend regarding
      * which ports to allocate. The format is min-port:max-port, so for instance 20000:30000. The
      * default empty string value means the OS will use no hints from the WebRTC backend. Using 0
      * for one of the values is allowed and means the value is unspecified.
@@ -2000,7 +2000,7 @@ void webkit_settings_set_enable_html5_database(WebKitSettings* settings, gboolea
  *
  * Returns: %FALSE
  *
- * Deprecated: 2.38. This function does nothing.
+ * Deprecated: 2.38: This function does nothing.
  */
 gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
 {
@@ -2016,7 +2016,7 @@ gboolean webkit_settings_get_enable_xss_auditor(WebKitSettings* settings)
  *
  * The XSS auditor has been removed. This function does nothing.
  *
- * Deprecated: 2.38. This function does nothing.
+ * Deprecated: 2.38: This function does nothing.
  */
 void webkit_settings_set_enable_xss_auditor(WebKitSettings* settings, gboolean enabled)
 {
@@ -2098,7 +2098,7 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
  *
  * Returns: %FALSE always.
  *
- * Deprecated: 2.38. This function always returns %FALSE.
+ * Deprecated: 2.38: This function always returns %FALSE.
  */
 gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
@@ -2118,7 +2118,7 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
  *
  * Deprecated function that does nothing.
  *
- * Deprecated: 2.38. This function does nothing.
+ * Deprecated: 2.38: This function does nothing.
  */
 void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
 {
@@ -2135,7 +2135,7 @@ void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
  *
  * Get the #WebKitSettings:javascript-can-open-windows-automatically property.
  *
- * Returns: %TRUE If JavaScript can open window automatically or %FALSE otherwise.
+ * Returns: %TRUE If JavaScript can open windows automatically or %FALSE otherwise.
  */
 gboolean webkit_settings_get_javascript_can_open_windows_automatically(WebKitSettings* settings)
 {
@@ -2465,7 +2465,7 @@ void webkit_settings_set_pictograph_font_family(WebKitSettings* settings, const 
  *
  * Returns: (nullable): The default font family used to display content marked with math font.
  *
- * Since 2.52
+ * Since: 2.52
  */
 const gchar* webkit_settings_get_math_font_family(WebKitSettings* settings)
 {
@@ -2481,7 +2481,7 @@ const gchar* webkit_settings_get_math_font_family(WebKitSettings* settings)
  *
  * Set the #WebKitSettings:math-font-family property.
  *
- * Since 2.52
+ * Since: 2.52
  */
 void webkit_settings_set_math_font_family(WebKitSettings* settings, const gchar* mathFontFamily)
 {
@@ -2655,7 +2655,7 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
  *
  * Returns: %TRUE If private browsing is enabled or %FALSE otherwise.
  *
- * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
+ * Deprecated: 2.16: Use #WebKitWebView:is-ephemeral or #WebKitWebsiteDataManager:is-ephemeral instead.
  */
 gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
 {
@@ -2671,13 +2671,13 @@ gboolean webkit_settings_get_enable_private_browsing(WebKitSettings* settings)
  *
  * Set the #WebKitSettings:enable-private-browsing property.
  *
- * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
+ * Deprecated: 2.16: Use #WebKitWebView:is-ephemeral or #WebKitWebsiteDataManager:is-ephemeral instead.
  */
 void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    g_warning("webkit_settings_set_enable_private_browsing is deprecated and does nothing, use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead");
+    g_warning("webkit_settings_set_enable_private_browsing is deprecated and does nothing, use WebKitWebView:is-ephemeral or WebKitWebsiteDataManager:is-ephemeral instead");
 }
 #endif
 
@@ -3108,7 +3108,7 @@ void webkit_settings_set_javascript_can_access_clipboard(WebKitSettings* setting
  *
  * Get the #WebKitSettings:media-playback-requires-user-gesture property.
  *
- * Returns: %TRUE If an user gesture is needed to play or load media
+ * Returns: %TRUE If a user gesture is needed to play or load media
  *    or %FALSE if no user gesture is needed.
  */
 gboolean webkit_settings_get_media_playback_requires_user_gesture(WebKitSettings* settings)
@@ -3251,7 +3251,7 @@ void webkit_settings_set_enable_site_specific_quirks(WebKitSettings* settings, g
  *
  * Get the #WebKitSettings:enable-page-cache property.
  *
- * Returns: %TRUE if page cache enabled or %FALSE otherwise.
+ * Returns: %TRUE if page cache is enabled or %FALSE otherwise.
  */
 gboolean webkit_settings_get_enable_page_cache(WebKitSettings* settings)
 {
@@ -3329,13 +3329,13 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
  * webkit_settings_set_user_agent_with_application_details:
  * @settings: a #WebKitSettings
  * @application_name: (allow-none): The application name used for the user agent or %NULL to use the default user agent.
- * @application_version: (allow-none): The application version for the user agent or %NULL to user the default version.
+ * @application_version: (allow-none): The application version for the user agent or %NULL to use the default version.
  *
  * Set the #WebKitSettings:user-agent property by appending the application details.
  *
  * Set the #WebKitSettings:user-agent property by appending the application details to the default user
- * agent. If no application name or version is given, the default user agent used will be used. If only
- * the version is given, the default engine version is used with the given application name.
+ * agent. If no application name is given, the default user agent will be used and @application_version
+ * is ignored. If only the name is given, the default engine version is used with the given application name.
  */
 void webkit_settings_set_user_agent_with_application_details(WebKitSettings* settings, const char* applicationName, const char* applicationVersion)
 {
@@ -3603,7 +3603,7 @@ gboolean webkit_settings_get_enable_mock_capture_devices(WebKitSettings* setting
  *
  * Set the #WebKitSettings:enable-mock-capture-devices property.
  *
- * Since: 2.4
+ * Since: 2.24
  */
 void webkit_settings_set_enable_mock_capture_devices(WebKitSettings* settings, gboolean enabled)
 {
@@ -3860,7 +3860,7 @@ void webkit_settings_set_allow_universal_access_from_file_urls(WebKitSettings* s
  *
  * Get the #WebKitSettings:allow-top-navigation-to-data-urls property.
  *
- * Returns: %TRUE If navigation to data URLs from the top frame is allowed or %FALSE\
+ * Returns: %TRUE If navigation to data URLs from the top frame is allowed or %FALSE
  * otherwise.
  *
  * Since: 2.28
@@ -3900,7 +3900,7 @@ void webkit_settings_set_allow_top_navigation_to_data_urls(WebKitSettings* setti
  *
  * Get the #WebKitSettings:hardware-acceleration-policy property.
  *
- * Return: a #WebKitHardwareAccelerationPolicy
+ * Returns: a #WebKitHardwareAccelerationPolicy
  *
  * Since: 2.16
  */
@@ -3973,7 +3973,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
  *
  * Get the #WebKitSettings:enable-back-forward-navigation-gestures property.
  *
- * Returns: %TRUE if horizontal swipe gesture will trigger back-forward navigaiton or %FALSE otherwise.
+ * Returns: %TRUE if horizontal swipe gesture will trigger back-forward navigation or %FALSE otherwise.
  *
  * Since: 2.24
  */
@@ -4157,7 +4157,7 @@ const gchar* webkit_settings_get_media_content_types_requiring_hardware_support(
 /**
  * webkit_settings_set_media_content_types_requiring_hardware_support:
  * @settings: a #WebKitSettings
- * @content_types: (allow-none): list of media content types requiring hardware support split by semicolons (:) or %NULL to use the default value.
+ * @content_types: (allow-none): list of media content types requiring hardware support split by colons (:) or %NULL to use the default value.
  *
  * Set the #WebKitSettings:media-content-types-requiring-hardware-support property.
  *
@@ -4242,7 +4242,7 @@ void webkit_settings_set_feature_enabled(WebKitSettings* settings, WebKitFeature
 /**
  * webkit_settings_get_feature_enabled:
  * @settings: a #WebKitSettings
- * @feature: the feature to toggle.
+ * @feature: the feature to query.
  *
  * Gets whether a feature is enabled.
  *
@@ -4286,7 +4286,7 @@ WebKitFeatureList* webkit_settings_get_all_features(void)
  * Gets the list of available experimental WebKit features.
  *
  * The returned features are a subset of those returned by
- * [func@Settings.get_all_features], and includes those which
+ * [func@Settings.get_all_features], and include those which
  * certain applications may want to expose to end users; see
  * [enum@FeatureStatus] for more details.
  *
@@ -4305,7 +4305,7 @@ WebKitFeatureList* webkit_settings_get_experimental_features(void)
  * Gets the list of available development WebKit features.
  *
  * The returned features are a subset of those returned by
- * [func@Settings.get_all_features], and includes those which
+ * [func@Settings.get_all_features], and include those which
  * web and WebKit developers might find useful, but in general should
  * *not* be exposed to end users; see [enum@FeatureStatus] for
  * more details.
@@ -4326,7 +4326,7 @@ WebKitFeatureList* webkit_settings_get_development_features(void)
  * @group_name: Name of the group to read from @key_file
  * @error: return location for error or %NULL to ignore
  *
- * Reads the contents of the given @group_name from the given @key_file and apply the value of
+ * Reads the contents of the given @group_name from the given @key_file and applies the value of
  * each key/value to the corresponding property on the @settings.
  *
  * Value types have to match with the corresponding setting property type and the group keys have to

@@ -114,7 +114,7 @@ static void webkit_response_policy_decision_class_init(WebKitResponsePolicyDecis
  *
  * Return the #WebKitURIRequest associated with the response decision.
  *
- * Modifications to the returned object are <emphasis>not</emphasis> taken
+ * Modifications to the returned object are *not* taken
  * into account when the request is sent over the network, and is intended
  * only to aid in evaluating whether a response decision should be taken or
  * not. To modify requests before they are sent over the network the
@@ -171,7 +171,7 @@ gboolean webkit_response_policy_decision_is_mime_type_supported(WebKitResponsePo
  *
  * Gets whether the request is the main frame main resource
  *
- * Returns: %TRUE if the request is the main frame main resouce or %FALSE otherwise
+ * Returns: %TRUE if the request is the main frame main resource or %FALSE otherwise
  *
  * Since: 2.40
  */

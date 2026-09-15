@@ -54,7 +54,7 @@ typedef struct _WPEEvent WPEEvent;
  * @WPE_EVENT_TOUCH_DOWN: a new touch point appeared.
  * @WPE_EVENT_TOUCH_UP: a touch point was removed.
  * @WPE_EVENT_TOUCH_MOVE: a touch point moved.
- * @WPE_EVENT_TOUCH_CANCEL: a touch point was cancelled.
+ * @WPE_EVENT_TOUCH_CANCEL: a touch point was canceled.
  *
  * The type of a [struct@Event].
  */

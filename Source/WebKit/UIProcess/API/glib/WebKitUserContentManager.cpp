@@ -95,8 +95,8 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
      * @value: the value received from the JavaScript world.
      *
      * This signal is emitted when JavaScript in a web view calls
-     * <code>window.webkit.messageHandlers.<name>.postMessage()</code>, after registering
-     * <code><name></code> using
+     * `window.webkit.messageHandlers.<name>.postMessage()`, after registering
+     * `<name>` using
      * webkit_user_content_manager_register_script_message_handler()
      *
      * Since: 2.8
@@ -126,8 +126,8 @@ static void webkit_user_content_manager_class_init(WebKitUserContentManagerClass
      * @reply: the #WebKitScriptMessageReply to send the reply to the script message.
      *
      * This signal is emitted when JavaScript in a web view calls
-     * <code>window.webkit.messageHandlers.<name>.postMessage()</code>, after registering
-     * <code><name></code> using
+     * `window.webkit.messageHandlers.<name>.postMessage()`, after registering
+     * `<name>` using
      * webkit_user_content_manager_register_script_message_handler_with_reply()
      *
      * The given @reply can be used to send a return value with
@@ -278,7 +278,7 @@ void webkit_user_content_manager_remove_all_scripts(WebKitUserContentManager* ma
  *
  * A reply for a script message received.
  * If no reply has been sent by the user, an automatically generated reply with
- * undefined value with be sent.
+ * undefined value will be sent.
  *
  * Since: 2.40
  */
@@ -368,7 +368,8 @@ WebKitScriptMessageReply* webKitScriptMessageReplyCreate(WTF::Function<void(Expe
  *
  * Reply to a script message with a value.
  *
- * This function can be called twice for passing the reply value in.
+ * This function can only be called once. Further calls to it or to
+ * webkit_script_message_reply_return_error_message() emit a critical warning and are ignored.
  *
  * Since: 2.40
  */
@@ -568,7 +569,7 @@ void webkit_user_content_manager_add_filter(WebKitUserContentManager* manager, W
  *
  * Removes a filter from the given #WebKitUserContentManager.
  *
- * Since 2.24
+ * Since: 2.24
  */
 void webkit_user_content_manager_remove_filter(WebKitUserContentManager* manager, WebKitUserContentFilter* filter)
 {

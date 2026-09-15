@@ -438,7 +438,7 @@ gboolean webkit_authentication_request_is_for_proxy(WebKitAuthenticationRequest*
  * webkit_authentication_request_is_retry:
  * @request: a #WebKitAuthenticationRequest
  *
- * Determine whether this this is a first attempt or a retry for this authentication challenge.
+ * Determine whether this is a first attempt or a retry for this authentication challenge.
  *
  * Returns: %TRUE if authentication attempt is a retry or %FALSE otherwise.
  *

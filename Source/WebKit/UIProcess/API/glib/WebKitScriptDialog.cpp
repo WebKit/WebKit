@@ -68,7 +68,7 @@ WebKitScriptDialog* webkit_script_dialog_ref(WebKitScriptDialog* dialog)
  * Atomically decrements the reference count of @dialog by one.
  *
  * If the
- * reference count drops to 0, all memory allocated by the #WebKitScriptdialog is
+ * reference count drops to 0, all memory allocated by the #WebKitScriptDialog is
  * released. This function is MT-safe and may be called from any
  * thread.
  *

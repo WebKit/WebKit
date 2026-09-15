@@ -146,7 +146,7 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_ref(WebKitWeb
  *
  * Atomically releases a reference on the given @matchPattern.
  *
- * If the reference was the last, the resources associated to the
+ * If the reference was the last, the resources associated with the
  * @matchPattern are freed. This function is MT-safe and may be called from
  * any thread.
  *
@@ -332,7 +332,7 @@ gboolean webkit_web_extension_match_pattern_get_matches_all_urls(WebKitWebExtens
  * webkit_web_extension_match_pattern_get_matches_all_hosts:
  * @matchPattern: A #WebKitWebExtensionMatchPattern
  *
- * Gets whether the match pattern matches all host. This happens when
+ * Gets whether the match pattern matches all hosts. This happens when
  * the pattern is `<all_urls>`, or if `*` is set as the host string.
  * 
  * Returns: Whether this match pattern matches all hosts.
@@ -365,7 +365,7 @@ static OptionSet<WebExtensionMatchPattern::Options> toImpl(WebKitWebExtensionMat
  * webkit_web_extension_match_pattern_matches_url:
  * @matchPattern: A #WebKitWebExtensionMatchPattern
  * @url: The URL to match against the pattern.
- * @options: The #WebKitWebExtensionMatchPatternOptions use while matching.
+ * @options: The #WebKitWebExtensionMatchPatternOptions to use while matching.
  *
  * Matches the @matchPattern against the specified URL with options.
  * 
@@ -389,7 +389,7 @@ gboolean webkit_web_extension_match_pattern_matches_url(WebKitWebExtensionMatchP
  * webkit_web_extension_match_pattern_matches_pattern:
  * @matchPattern: A #WebKitWebExtensionMatchPattern to match against.
  * @pattern: The #WebKitWebExtensionMatchPattern to match with @matchPattern.
- * @options: The #WebKitWebExtensionMatchPatternOptions use while matching.
+ * @options: The #WebKitWebExtensionMatchPatternOptions to use while matching.
  *
  * Matches the @matchPattern against the specified @pattern with options.
  * 

@@ -27,7 +27,7 @@ underlying `wl_display`, `wl_compositor`, and `wl_surface` objects,
 which makes it possible to add support for a Wayland protocol
 that the built-in module does not implement. External implementations
 for other windowing systems already exist (notably for
-[for GTK4](https://github.com/Igalia/wpe-platform-gtk)).
+[GTK4](https://github.com/Igalia/wpe-platform-gtk)).
 
 <!-- TODO: uncomment once backend-model.md has landed:
 See [Backend model](backend-model.html) for how WPEPlatform discovers external modules.
@@ -48,7 +48,7 @@ See [Rendering model](rendering-model.html) for the buffer flow in detail.
 ## Audience
 
 WPEPlatform has three distinct kinds of consumer. The same API serves
-all three, but the surface each one uses is different — and recognising
+all three, but the surface each one uses is different — and recognizing
 this up front makes the rest of the documentation easier to navigate.
 
 **Browser-application developers.** Most browser applications never
@@ -138,7 +138,7 @@ A platform implementation subclasses [class@Display] and overrides its
 virtual methods — at minimum [vfunc@Display.connect] and
 [vfunc@Display.create_view] — and
 similarly subclasses [class@View] and [class@Toplevel] for the
-platform-specific behaviour. It optionally subclasses [class@Keymap],
+platform-specific behavior. It optionally subclasses [class@Keymap],
 [class@Screen], [class@InputMethodContext], and others depending on the
 features the platform supports.
 

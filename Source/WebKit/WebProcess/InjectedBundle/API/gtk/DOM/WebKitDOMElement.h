@@ -648,7 +648,7 @@ webkit_dom_element_get_bounding_client_rect(WebKitDOMElement* self);
  * webkit_dom_element_get_client_rects:
  * @self: A #WebKitDOMElement
  *
- * Returns a collection of #WebKitDOMClientRect objects, each of which describe
+ * Returns a collection of #WebKitDOMClientRect objects, each of which describes
  * the size and position of a CSS border box relative to the viewport.
  *
  * Returns: (transfer full): A #WebKitDOMClientRectList

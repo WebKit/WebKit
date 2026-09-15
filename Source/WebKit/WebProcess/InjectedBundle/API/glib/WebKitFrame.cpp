@@ -146,7 +146,7 @@ guint64 webkit_frame_get_id(WebKitFrame* frame)
  * webkit_frame_is_main_frame:
  * @frame: a #WebKitFrame
  *
- * Gets whether @frame is the main frame of a #WebKitWebPage
+ * Gets whether @frame is the main frame of a #WebKitWebPage.
  *
  * Returns: %TRUE if @frame is a main frame or %FALSE otherwise
  *

@@ -149,7 +149,7 @@ WPEEventType wpe_event_get_event_type(WPEEvent* event)
  * wpe_event_get_view:
  * @event: a #WPEEvent
  *
- * Get the #WPEView associated to @event
+ * Get the #WPEView associated with @event
  *
  * Returns: (transfer none): a #WPEView
  */
@@ -314,7 +314,7 @@ gboolean wpe_event_get_position(WPEEvent* event, double* x, double* y)
  *
  * Create a #WPEEvent for a pointer button press or release.
  *
- * Returns: (transfer full): a new allocated #WPEEvent.
+ * Returns: (transfer full): a newly allocated #WPEEvent.
  */
 WPEEvent* wpe_event_pointer_button_new(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, guint button, double x, double y, guint pressCount)
 {
@@ -373,7 +373,7 @@ guint wpe_event_pointer_button_get_press_count(WPEEvent* event)
  *
  * Create a #WPEEvent for a pointer move.
  *
- * Returns: (transfer full): a new allocated #WPEEvent.
+ * Returns: (transfer full): a newly allocated #WPEEvent.
  */
 WPEEvent* wpe_event_pointer_move_new(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, double x, double y, double deltaX, double deltaY)
 {
@@ -419,7 +419,7 @@ void wpe_event_pointer_move_get_delta(WPEEvent* event, double* deltaX, double* d
  *
  * Create a #WPEEvent for a scroll.
  *
- * Returns: (transfer full): a new allocated #WPEEvent.
+ * Returns: (transfer full): a newly allocated #WPEEvent.
  */
 WPEEvent* wpe_event_scroll_new(WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, double deltaX, double deltaY, gboolean preciseDeltas, gboolean isStop, double x, double y)
 {
@@ -494,7 +494,7 @@ gboolean wpe_event_scroll_is_stop(WPEEvent* event)
  *
  * Create a #WPEEvent for a keyboard key press or release
  *
- * Returns: (transfer full): a new allocated #WPEEvent.
+ * Returns: (transfer full): a newly allocated #WPEEvent.
  */
 WPEEvent* wpe_event_keyboard_new(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, guint keycode, guint keyval)
 {
@@ -551,7 +551,7 @@ guint wpe_event_keyboard_get_keyval(WPEEvent* event)
  *
  * Create a #WPEEvent for a touch
  *
- * Returns: (transfer full): a new allocated #WPEEvent.
+ * Returns: (transfer full): a newly allocated #WPEEvent.
  */
 WPEEvent* wpe_event_touch_new(WPEEventType type, WPEView* view, WPEInputSource source, guint32 time, WPEModifiers modifiers, guint32 sequenceID, double x, double y)
 {

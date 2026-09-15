@@ -33,7 +33,7 @@
  * @blue: Blue channel, between 0.0 and 1.0 inclusive
  * @alpha: Alpha channel, between 0.0 and 1.0 inclusive
  *
- * Boxed type representing a RGBA color.
+ * Boxed type representing an RGBA color.
  */
 
 /**

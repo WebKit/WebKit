@@ -63,7 +63,7 @@ static void webkit_script_world_class_init(WebKitScriptWorldClass* klass)
      * WebKitScriptWorld::window-object-cleared:
      * @world: the #WebKitScriptWorld on which the signal is emitted
      * @page: a #WebKitWebPage
-     * @frame: the #WebKitFrame  to which @world belongs
+     * @frame: the #WebKitFrame to which @world belongs
      *
      * Emitted when the JavaScript window object in a #WebKitScriptWorld has been
      * cleared. This is the preferred place to set custom properties on the window
@@ -122,7 +122,7 @@ static gpointer createDefaultScriptWorld(gpointer)
  * Get the default #WebKitScriptWorld. This is the normal script world
  * where all scripts are executed by default.
  * You can get the JavaScript execution context of a #WebKitScriptWorld
- * for a given #WebKitFrame with webkit_frame_get_javascript_context_for_script_world().
+ * for a given #WebKitFrame with webkit_frame_get_js_context_for_script_world().
  *
  * Returns: (transfer none): the default #WebKitScriptWorld
  *
@@ -138,13 +138,13 @@ WebKitScriptWorld* webkit_script_world_get_default(void)
  * webkit_script_world_new:
  *
  * Creates a new isolated #WebKitScriptWorld. Scripts executed in
- * isolated worlds have access to the DOM but not to other variable
+ * isolated worlds have access to the DOM but not to other variables
  * or functions created by the page.
  * The #WebKitScriptWorld is created with a generated unique name. Use
  * webkit_script_world_new_with_name() if you want to create it with a
  * custom name.
  * You can get the JavaScript execution context of a #WebKitScriptWorld
- * for a given #WebKitFrame with webkit_frame_get_javascript_context_for_script_world().
+ * for a given #WebKitFrame with webkit_frame_get_js_context_for_script_world().
  *
  * Returns: (transfer full): a new isolated #WebKitScriptWorld
  *
@@ -160,10 +160,10 @@ WebKitScriptWorld* webkit_script_world_new(void)
  * @name: a name for the script world
  *
  * Creates a new isolated #WebKitScriptWorld with a name. Scripts executed in
- * isolated worlds have access to the DOM but not to other variable
+ * isolated worlds have access to the DOM but not to other variables
  * or functions created by the page.
  * You can get the JavaScript execution context of a #WebKitScriptWorld
- * for a given #WebKitFrame with webkit_frame_get_javascript_context_for_script_world().
+ * for a given #WebKitFrame with webkit_frame_get_js_context_for_script_world().
  *
  * Returns: (transfer full): a new isolated #WebKitScriptWorld
  *

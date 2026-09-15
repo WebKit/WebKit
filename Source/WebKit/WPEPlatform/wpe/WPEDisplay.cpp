@@ -386,7 +386,7 @@ void wpe_display_disconnected(WPEDisplay* display, GError* error)
  *
  * Get the `EGLDisplay` of @display
  *
- * Returns: (transfer none) (nullable): a `EGLDisplay` or %NULL
+ * Returns: (transfer none) (nullable): an `EGLDisplay` or %NULL
  */
 gpointer wpe_display_get_egl_display(WPEDisplay* display, GError** error)
 {

@@ -104,9 +104,9 @@ typedef enum {
  *   of this process model is that the rendering process for a web view
  *   can crash while the rest of the views keep working normally. This
  *   process model is indicated for applications which may use a number
- *   of web views and the content of in each must not interfere with the
- *   rest — for example a full-fledged web browser with support for
- *   multiple tabs.
+ *   of web views and the content in each must not interfere with the
+ *   rest (for example, a full-fledged web browser with support for
+ *   multiple tabs).
  *
  * Enum values used for determining the #WebKitWebContext process model.
  *
@@ -125,7 +125,7 @@ typedef enum {
  * @request: the #WebKitURISchemeRequest
  * @user_data: user data passed to the callback
  *
- * Type definition for a function that will be called back when an URI request is
+ * Type definition for a function that will be called back when a URI request is
  * made for a user registered URI scheme.
  */
 typedef void (* WebKitURISchemeRequestCallback) (WebKitURISchemeRequest *request,

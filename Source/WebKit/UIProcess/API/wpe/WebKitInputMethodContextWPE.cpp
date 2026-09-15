@@ -30,7 +30,7 @@ using namespace WebCore;
  * @underline: a #WebKitInputMethodUnderline
  * @color: (nullable): a #WebKitColor or %NULL
  *
- * Set the color of the underline. If @rgba is %NULL the foreground text color will be used
+ * Set the color of the underline. If @color is %NULL the foreground text color will be used
  * for the underline too.
  *
  * Since: 2.28

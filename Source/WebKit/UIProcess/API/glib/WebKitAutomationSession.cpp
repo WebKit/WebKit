@@ -508,11 +508,11 @@ void webkit_automation_session_set_application_info(WebKitAutomationSession* ses
  * webkit_automation_session_get_application_info:
  * @session: a #WebKitAutomationSession
  *
- * Get the the previously set #WebKitAutomationSession.
+ * Get the previously set #WebKitApplicationInfo.
  *
- * Get the #WebKitAutomationSession previously set with webkit_automation_session_set_application_info().
+ * Get the #WebKitApplicationInfo previously set with webkit_automation_session_set_application_info().
  *
- * Returns: (transfer none): the #WebKitAutomationSession of @session, or %NULL if no one has been set.
+ * Returns: (transfer none): the #WebKitApplicationInfo of @session, or %NULL if no one has been set.
  *
  * Since: 2.18
  */

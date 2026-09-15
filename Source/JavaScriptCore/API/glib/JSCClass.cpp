@@ -41,11 +41,11 @@
  * @title: JSCClass
  * @see_also: JSCContext
  *
- * A JSSClass represents a custom JavaScript class registered by the user in a #JSCContext.
- * It allows to create new JavaScripts objects whose instances are created by the user using
+ * A JSCClass represents a custom JavaScript class registered by the user in a #JSCContext.
+ * It allows creating new JavaScript objects whose instances are created by the user using
  * this API.
- * It's possible to add constructors, properties and methods for a JSSClass by providing
- * #GCallback<!-- -->s to implement them.
+ * It's possible to add constructors, properties and methods for a JSCClass by providing
+ * #GCallback functions to implement them.
  */
 
 enum {
@@ -418,7 +418,7 @@ static void jsc_class_class_init(JSCClassClass* klass)
  * The type of delete_property in #JSCClassVTable. This is only required when you need to handle
  * external properties not added to the prototype.
  *
- * Returns: %TRUE if handled or %FALSE to to forward the request to the parent class or prototype chain.
+ * Returns: %TRUE if handled or %FALSE to forward the request to the parent class or prototype chain.
  */
 
 /**
@@ -513,7 +513,7 @@ void jscClassInvalidate(JSCClass* jscClass)
 
 /**
  * jsc_class_get_name:
- * @jsc_class: a @JSCClass
+ * @jsc_class: a #JSCClass
  *
  * Get the class name of @jsc_class
  *
@@ -528,7 +528,7 @@ const char* jsc_class_get_name(JSCClass* jscClass)
 
 /**
  * jsc_class_get_parent:
- * @jsc_class: a @JSCClass
+ * @jsc_class: a #JSCClass
  *
  * Get the parent class of @jsc_class
  *
@@ -574,9 +574,9 @@ static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const cha
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the constructor return value
  * @n_params: the number of parameter types to follow or 0 if constructor doesn't receive parameters.
- * @...: a list of #GType<!-- -->s, one for each parameter.
+ * @...: a list of #GType values, one for each parameter.
  *
- * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When <function>new</function>
+ * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When `new`
  * is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
  * parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
@@ -620,9 +620,9 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the constructor return value
  * @n_parameters: the number of parameters
- * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType<!-- -->s, one for each parameter, or %NULL
+ * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType values, one for each parameter, or %NULL
  *
- * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When <function>new</function>
+ * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When `new`
  * is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving the
  * parameters and @user_data as the last parameter. When the constructor object is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
@@ -663,9 +663,9 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the constructor return value
  *
- * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When <function>new</function>
+ * Add a constructor to @jsc_class. If @name is %NULL, the class name will be used. When `new`
  * is used with the constructor or jsc_value_constructor_call() is called, @callback is invoked receiving
- * a #GPtrArray of #JSCValue<!-- -->s as arguments and @user_data as the last parameter. When the constructor object
+ * a #GPtrArray of #JSCValue objects as arguments and @user_data as the last parameter. When the constructor object
  * is cleared in the #JSCClass context, @destroy_notify is called with @user_data as parameter.
  *
  * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
@@ -715,7 +715,7 @@ static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback ca
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the method return value, or %G_TYPE_NONE if the method is void.
  * @n_params: the number of parameter types to follow or 0 if the method doesn't receive parameters.
- * @...: a list of #GType<!-- -->s, one for each parameter.
+ * @...: a list of #GType values, one for each parameter.
  *
  * Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
  * @callback is called receiving the class instance as first parameter, followed by the method parameters and then
@@ -753,7 +753,7 @@ void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callba
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the method return value, or %G_TYPE_NONE if the method is void.
  * @n_parameters: the number of parameter types to follow or 0 if the method doesn't receive parameters.
- * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType<!-- -->s, one for each parameter, or %NULL
+ * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType values, one for each parameter, or %NULL
  *
  * Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
  * @callback is called receiving the class instance as first parameter, followed by the method parameters and then
@@ -790,7 +790,7 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
  * @return_type: the #GType of the method return value, or %G_TYPE_NONE if the method is void.
  *
  * Add method with @name to @jsc_class. When the method is called by JavaScript or jsc_value_object_invoke_method(),
- * @callback is called receiving the class instance as first parameter, followed by a #GPtrArray of #JSCValue<!-- -->s
+ * @callback is called receiving the class instance as first parameter, followed by a #GPtrArray of #JSCValue objects
  * with the method arguments and then @user_data as last parameter. When the method is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
  *
@@ -820,8 +820,8 @@ void jsc_class_add_method_variadic(JSCClass* jscClass, const char* name, GCallba
  * @destroy_notify: (nullable): destroy notifier for @user_data
  *
  * Add a property with @name to @jsc_class. When the property value is read, @getter is called
- * receiving the the class instance as first parameter and @user_data as last parameter. When the property
- * value needs to be set, @setter is called receiving the the class instance as first parameter, followed
+ * receiving the class instance as first parameter and @user_data as last parameter. When the property
+ * value needs to be set, @setter is called receiving the class instance as first parameter, followed
  * by the value to be set and then @user_data as the last parameter. When the property is cleared in the
  * #JSCClass context, @destroy_notify is called with @user_data as parameter.
  *

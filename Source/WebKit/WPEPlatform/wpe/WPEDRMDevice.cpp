@@ -150,7 +150,7 @@ WPEDRMDevice* wpe_drm_device_ref(WPEDRMDevice* device)
  *
  * Atomically releases a reference on the given @device.
  *
- * If the reference was the last, the resources associated to the
+ * If the reference was the last, the resources associated with the
  * @device are freed. This function is MT-safe and may be called from
  * any thread.
  */

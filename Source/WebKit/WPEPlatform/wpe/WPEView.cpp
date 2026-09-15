@@ -393,7 +393,7 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
      * @n_buffers: the amount of buffers in the @buffers array
      *
      * Emitted to notify that the set of graphics buffers used to render
-     * the view have changed.
+     * the view has changed.
      *
      * When buffers are about to be released, @n_buffers will be zero
      * and @buffers will be %NULL.
@@ -402,7 +402,7 @@ static void wpe_view_class_init(WPEViewClass* viewClass)
      * after buffer configuration and before buffers get released, buffers
      * used for rendered content will be among those from the @buffers array.
      *
-     * Platform implementations may use this to inspect the @buffers and
+     * Platform implementations may use this to inspect the @buffers
      * prior to their usage.
      *
      * See also [id@wpe_view_buffers_changed].
@@ -780,8 +780,8 @@ gboolean wpe_view_get_mapped(WPEView* view)
  * wpe_view_map:
  * @view: a #WPEView
  *
- * Make @view to be mapped. If #WPEView:visible is %TRUE and
- * the view can be shown (determined by #WPEViewClass::can_be_mapped)
+ * Make @view mapped. If #WPEView:visible is %TRUE and
+ * the view can be shown (determined by [vfunc@View.can_be_mapped])
  * #WPEView:mapped will be set to %TRUE.
  *
  * This function should only be called by #WPEView derived classes
@@ -806,7 +806,7 @@ void wpe_view_map(WPEView* view)
  * wpe_view_unmap:
  * @view: a #WPEView
  *
- * Make @view to be unmapped. This always sets the #WPEView:mapped
+ * Make @view unmapped. This always sets the #WPEView:mapped
  * property to %FALSE and the @view is considered to be hidden even
  * if #WPEView:visible is %TRUE.
  *
@@ -959,10 +959,10 @@ gboolean wpe_view_render_buffer(WPEView* view, WPEBuffer* buffer, const WPERecta
 /**
  * wpe_view_buffers_changed:
  * @view: a #WPEView
- * @buffers: (nullable) (array length=n_buffers):
+ * @buffers: (nullable) (array length=n_buffers): array of buffers
  * @n_buffers: the number of buffers in @buffers
  *
- * Notify that the set of graphics buffers used to render the view have changed.
+ * Notify that the set of graphics buffers used to render the view has changed.
  *
  * The [signal@View::buffers-changed] signal will be emitted.
  */

@@ -330,9 +330,9 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
  *
  * Creates a new #WebKitWebView with the default #WebKitWebContext and
  * no #WebKitUserContentManager associated with it.
- * See also webkit_web_view_new_with_context(),
- * webkit_web_view_new_with_user_content_manager(), and
- * webkit_web_view_new_with_settings().
+ * Set the #WebKitWebView:web-context, #WebKitWebView:user-content-manager
+ * or #WebKitWebView:settings properties at construction to use a different
+ * configuration.
  *
  * Returns: The newly created #WebKitWebView widget
  */

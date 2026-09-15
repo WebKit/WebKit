@@ -693,7 +693,7 @@ WEBKIT_DEPRECATED glong
 webkit_dom_dom_window_get_orientation(WebKitDOMDOMWindow* self);
 
 /**
- * webkit_dom_dom_window_post_user_message:
+ * webkit_dom_dom_window_webkit_message_handlers_post_message:
  * @window: A #WebKitDOMDOMWindow
  * @handler: Name of the user message handler.
  * @message: JavaScript value to be sent.

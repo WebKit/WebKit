@@ -42,7 +42,7 @@ using namespace WebKit;
  * Represents an extension of the WebProcess.
  *
  * WebKitWebExtension is a loadable module for the WebProcess. It allows you to execute code in the
- * WebProcess and being able to use the DOM API, to change any request or to inject custom
+ * WebProcess and to use the DOM API, to change any request or to inject custom
  * JavaScript code, for example.
  *
  * To create a WebKitWebExtension you should write a module with an initialization function that could
@@ -158,7 +158,7 @@ static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
      *
      * This signal is emitted when a #WebKitUserMessage is received from the
      * #WebKitWebContext corresponding to @extension. Messages sent by #WebKitWebContext
-     * are always broadcasted to all #WebKitWebExtension<!-- -->s and they can't be
+     * are always broadcast to all web extensions and they can't be
      * replied to. Calling webkit_user_message_send_reply() will do nothing.
      *
      * Since: 2.28
@@ -256,7 +256,7 @@ WebKitWebPage* webkit_web_extension_get_page(WebKitWebExtension* extension, guin
  *
  * Send @message to the #WebKitWebContext corresponding to @extension. If @message is floating, it's consumed.
  *
- * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @calback.
+ * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @callback.
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_extension_send_message_to_context_finish() to get the message reply.
  *
@@ -295,7 +295,7 @@ void webkit_web_extension_send_message_to_context(WebKitWebExtension* extension,
  * webkit_web_extension_send_message_to_context_finish:
  * @extension: a #WebKitWebExtension
  * @result: a #GAsyncResult
- * @error: return location for error or %NULL to ignor
+ * @error: return location for error or %NULL to ignore
  *
  * Finish an asynchronous operation started with webkit_web_extension_send_message_to_context().
  *

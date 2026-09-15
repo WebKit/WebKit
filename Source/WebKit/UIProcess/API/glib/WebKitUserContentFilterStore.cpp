@@ -217,10 +217,10 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
  * @callback: (scope async): a #GAsyncReadyCallback to call when saving is completed
  * @user_data: the data to pass to the callback function
  *
- * Asynchronously save a content filter from a set source rule.
+ * Asynchronously save a content filter from a source rule set.
  *
  * Asynchronously save a content filter from a source rule set in the
- * [WebKit content extesions JSON format](https://webkit.org/blog/3476/content-blockers-first-look/).
+ * [WebKit content extensions JSON format](https://webkit.org/blog/3476/content-blockers-first-look/).
  *
  * The @identifier can be used afterwards to refer to the filter when using
  * webkit_user_content_filter_store_remove() and webkit_user_content_filter_store_load().
@@ -344,7 +344,7 @@ void webkit_user_content_filter_store_save_from_file(WebKitUserContentFilterStor
  * @result: a #GAsyncResult
  * @error: return location for error or %NULL to ignore
  *
- * Finishes and asynchronous filter save previously started with
+ * Finishes an asynchronous filter save previously started with
  * webkit_user_content_filter_store_save_from_file().
  *
  * Returns: (transfer full): a #WebKitUserContentFilter, or %NULL if saving failed.
@@ -483,7 +483,7 @@ WebKitUserContentFilter* webkit_user_content_filter_store_load_finish(WebKitUser
  * webkit_user_content_filter_store_fetch_identifiers:
  * @store: a #WebKitUserContentFilterStore
  * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
- * @callback: (scope async): a #GAsyncReadyCallback to call when the removal is completed
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the identifiers have been fetched
  * @user_data: the data to pass to the callback function
  *
  * Asynchronously retrieve a list of the identifiers for all the stored filters.

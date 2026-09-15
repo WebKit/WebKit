@@ -319,7 +319,7 @@ guint jsc_exception_get_column_number(JSCException* exception)
  *
  * Get the source URI of @exception.
  *
- * Returns: (nullable): the the source URI of @exception, or %NULL.
+ * Returns: (nullable): the source URI of @exception, or %NULL.
  */
 const char* jsc_exception_get_source_uri(JSCException* exception)
 {
@@ -374,7 +374,7 @@ char* jsc_exception_to_string(JSCException* exception)
  * jsc_exception_report:
  * @exception: a #JSCException
  *
- * Return a report message of @exception, containing all the possible details such us
+ * Return a report message of @exception, containing all the possible details such as
  * source URI, line, column and backtrace, and formatted to be printed.
  *
  * Returns: (transfer full): a new string with the exception report

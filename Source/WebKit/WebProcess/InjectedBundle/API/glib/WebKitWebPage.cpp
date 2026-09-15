@@ -537,7 +537,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * This signal is emitted when the DOM document of a #WebKitWebPage has been
      * loaded.
      *
-     * You can wait for this signal to get the DOM document
+     * You can wait for this signal to get the DOM document.
      */
     signals[DOCUMENT_LOADED] = g_signal_new(
         "document-loaded",
@@ -562,7 +562,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * emitted again with the @request argument containing the new
      * request to be sent to the server due to the redirection and the
      * @redirected_response parameter containing the response
-     * received by the server for the initial request.
+     * received from the server for the initial request.
      *
      * Modifications to the #WebKitURIRequest and its associated
      * #SoupMessageHeaders will be taken into account when the request
@@ -624,7 +624,7 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      * Emitted when a message is sent to the console. This can be a message
      * produced by the use of JavaScript console API, a JavaScript exception,
      * a security error or other errors, warnings, debug or log messages.
-     * The @console_message contains information of the message.
+     * The @console_message contains information about the message.
      *
      * Since: 2.12
      */
@@ -643,9 +643,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
      * WebKitWebPage::form-controls-associated:
      * @web_page: the #WebKitWebPage on which the signal is emitted
      * @elements: (element-type WebKitDOMElement) (transfer none): a #GPtrArray of
-     *     #WebKitDOMElement with the list of forms in the page
+     *     #WebKitDOMElement with the list of form controls associated with @web_page
      *
-     * Emitted after form elements (or form associated elements) are associated to a particular web
+     * Emitted after form elements (or form associated elements) are associated with a particular web
      * page. This is useful to implement form auto filling for web pages where form fields are added
      * dynamically. This signal might be emitted multiple times for the same web page.
      *
@@ -657,7 +657,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
      *
      * Since: 2.16
      *
-     * Deprecated: 2.26, use #WebKitWebPage::form-controls-associated-for-frame instead.
+     * Deprecated: 2.26: Use #WebKitWebPage::form-controls-associated-for-frame instead.
      */
     signals[FORM_CONTROLS_ASSOCIATED] = g_signal_new(
         "form-controls-associated",
@@ -672,10 +672,10 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
      * WebKitWebPage::form-controls-associated-for-frame:
      * @web_page: the #WebKitWebPage on which the signal is emitted
      * @elements: (element-type WebKitDOMElement) (transfer none): a #GPtrArray of
-     *     #WebKitDOMElement with the list of forms in the page
+     *     #WebKitDOMElement with the list of form controls associated with @frame
      * @frame: the #WebKitFrame
      *
-     * Emitted after form elements (or form associated elements) are associated to a particular web
+     * Emitted after form elements (or form associated elements) are associated with a particular web
      * page. This is useful to implement form auto filling for web pages where form fields are added
      * dynamically. This signal might be emitted multiple times for the same web page.
      *
@@ -773,7 +773,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
      *
      * You can handle the user message asynchronously by calling g_object_ref() on
      * @message and returning %TRUE. If the last reference of @message is removed
-     * and the message has been replied, the operation in the #WebKitWebView will
+     * and the message has not been replied to, the operation in the #WebKitWebView will
      * finish with error %WEBKIT_USER_MESSAGE_UNHANDLED_MESSAGE.
      *
      * Returns: %TRUE if the message was handled, or %FALSE otherwise.
@@ -825,12 +825,12 @@ void webkitWebPageDidReceiveUserMessage(WebKitWebPage* webPage, UserMessage&& me
  * webkit_web_page_get_dom_document:
  * @web_page: a #WebKitWebPage
  *
- * Get the #WebKitDOMDocument currently loaded in @web_page
+ * Get the #WebKitDOMDocument currently loaded in @web_page.
  *
  * Returns: (transfer none): the #WebKitDOMDocument currently loaded, or %NULL
  *    if no document is currently loaded.
  *
- * Deprecated: 2.40. Use JavaScriptCore API instead.
+ * Deprecated: 2.40: Use JavaScriptCore API instead.
  */
 WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
 {
@@ -847,7 +847,7 @@ WebKitDOMDocument* webkit_web_page_get_dom_document(WebKitWebPage* webPage)
  * webkit_web_page_get_id:
  * @web_page: a #WebKitWebPage
  *
- * Get the identifier of the #WebKitWebPage
+ * Get the identifier of the #WebKitWebPage.
  *
  * Returns: the identifier of @web_page
  */
@@ -867,7 +867,7 @@ guint64 webkit_web_page_get_id(WebKitWebPage* webPage)
  * You can monitor the active URI by connecting to the notify::uri
  * signal of @web_page.
  *
- * Returns: the current active URI of @web_view or %NULL if nothing has been
+ * Returns: the current active URI of @web_page or %NULL if nothing has been
  *    loaded yet.
  */
 const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
@@ -886,6 +886,7 @@ const gchar* webkit_web_page_get_uri(WebKitWebPage* webPage)
  * Returns: (transfer none): the #WebKitFrame that is the main frame of @web_page
  *
  * Since: 2.2
+ *
  * Deprecated: 2.48
  */
 WebKitFrame* webkit_web_page_get_main_frame(WebKitWebPage* webPage)
@@ -964,7 +965,7 @@ void webkit_web_page_send_message_to_view(WebKitWebPage* webPage, WebKitUserMess
  * webkit_web_page_send_message_to_view_finish:
  * @web_page: a #WebKitWebPage
  * @result: a #GAsyncResult
- * @error: return location for error or %NULL to ignor
+ * @error: return location for error or %NULL to ignore
  *
  * Finish an asynchronous operation started with webkit_web_page_send_message_to_view().
  *

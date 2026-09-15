@@ -55,13 +55,12 @@ using namespace WebCore;
  *
  * Provides access to the icons associated with web sites.
  *
- * WebKit will automatically look for available icons in <link>
+ * WebKit will automatically look for available icons in `<link>`
  * elements on opened pages as well as an existing favicon.ico and
  * load the images found into a memory cache if possible. That cache
  * is frozen to an on-disk database for persistence.
  *
- * If [property@WebView:is-ephemeral] or
- * [property@WebsiteDataManager:is-ephemeral] is %TRUE, new icons
+ * If [property@WebsiteDataManager:is-ephemeral] is %TRUE, new icons
  * won't be added to the on-disk database and no existing icons will
  * be deleted from it. Nevertheless, WebKit will still store them in
  * the in-memory cache during the current execution.
@@ -270,7 +269,7 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
  * webkit_favicon_database_get_page_icons:
  * @database: a #WebKitFaviconDatabase
  * @page_uri: URI of the page to get icons for
- * @cancellable: (nullable): A #GCancellable ior %NULL
+ * @cancellable: (nullable): A #GCancellable or %NULL
  * @callback: (scope async) (nullable): A #GAsyncReadyCallback to invoke when the request
  *    is satisfied or %NULL to discard the result.
  * @user_data: Additional data to pass to @callback.

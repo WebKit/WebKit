@@ -29,14 +29,14 @@ G_BEGIN_DECLS
 
 /**
  * WebKitFeatureStatus:
- * @WEBKIT_FEATURE_STATUS_EMBEDDER: Feature that adjust behaviour for
+ * @WEBKIT_FEATURE_STATUS_EMBEDDER: Feature that adjusts behavior for
  *   specific application needs. The feature is not part of a Web platform
- *   feature, not a mature feature intended to be always on.
+ *   feature, nor a mature feature intended to be always on.
  * @WEBKIT_FEATURE_STATUS_UNSTABLE: Feature in development. The feature
  *   may be unfinished, and there are no guarantees about its safety and
  *   stability.
  * @WEBKIT_FEATURE_STATUS_INTERNAL: Feature for debugging the WebKit engine.
- *   The feature is not generally useful for user or web developers, and
+ *   The feature is not generally useful for users or web developers, and
  *   always disabled by default.
  * @WEBKIT_FEATURE_STATUS_DEVELOPER: Feature for web developers. The feature
  *   is not generally useful for end users, and always disabled by default.
@@ -53,7 +53,7 @@ G_BEGIN_DECLS
  *   always enabled and in general there should be no user-facing interface
  *   to toggle it.
  *
- * Describes the status of a [struct@WebKitFeature].
+ * Describes the status of a [struct@Feature].
  *
  * The status for a given feature can be obtained with
  * [id@webkit_feature_get_status].

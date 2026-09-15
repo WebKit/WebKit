@@ -157,7 +157,7 @@ G_DEFINE_QUARK(WebKitUserContentFilterError, webkit_user_content_filter_error)
  *
  * Gets the quark for the domain of media errors.
  *
- * Returns: media error domin.
+ * Returns: media error domain.
  *
  * Since: 2.40
  */

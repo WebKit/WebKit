@@ -43,7 +43,7 @@ using namespace WebCore;
  * Whenever the user interacts with an <input type='color' />
  * HTML element, WebKit will need to show a dialog to choose a color. For that
  * to happen in a general way, instead of just opening a #GtkColorChooser
- * (which might be not desirable in some cases, which could prefer to use their
+ * (which might not be desirable for applications that prefer to use their
  * own color chooser dialog), WebKit will fire the
  * #WebKitWebView::run-color-chooser signal with a #WebKitColorChooserRequest
  * object, which will allow the client application to specify the color to be

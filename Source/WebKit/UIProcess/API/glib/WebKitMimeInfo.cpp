@@ -100,7 +100,7 @@ const char* webkit_mime_info_get_description(WebKitMimeInfo*)
  * webkit_mime_info_get_extensions:
  * @info: a #WebKitMimeInfo
  *
- * Get the list of file extensions associated to the MIME type.
+ * Get the list of file extensions associated with the MIME type.
  *
  * Returns: (array zero-terminated=1) (transfer none): a
  *     %NULL-terminated array of strings

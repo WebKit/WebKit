@@ -40,8 +40,8 @@ using namespace WebKit;
  * A permission request for enumerating the user's media devices
  *
  * WebKitDeviceInfoPermissionRequest represents a request for
- * permission to whether WebKit should be allowed to access the user's
- * devices information when requested through the MediaDevices.enumerateDevices
+ * permission to decide whether WebKit should be allowed to access the user's
+ * device information when requested through the MediaDevices.enumerateDevices
  * API.
  *
  * When a WebKitDeviceInfoPermissionRequest is not handled by the user,

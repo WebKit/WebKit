@@ -56,7 +56,7 @@ typedef struct _WebKitWebView WebKitWebView;
  *   sensitive, no wrap, forward only search.
  * @WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE: case insensitive search.
  * @WEBKIT_FIND_OPTIONS_AT_WORD_STARTS: search text only at the
- *   begining of the words.
+ *   beginning of the words.
  * @WEBKIT_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START: treat
  *   capital letters in the middle of words as word start.
  * @WEBKIT_FIND_OPTIONS_BACKWARDS: search backwards.

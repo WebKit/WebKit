@@ -390,7 +390,7 @@ WebKitWebViewBase* webkit_web_inspector_get_web_view(WebKitWebInspector* inspect
  *
  * This can be %NULL if
  * nothing has been loaded yet in the inspected view, if the inspector
- * has been closed or when inspected view was loaded from a HTML string
+ * has been closed or when the inspected view was loaded from an HTML string
  * instead of a URI.
  *
  * Returns: the URI that is currently being inspected or %NULL
@@ -503,7 +503,7 @@ void webkit_web_inspector_close(WebKitWebInspector* inspector)
  * webkit_web_inspector_get_attached_height:
  * @inspector: a #WebKitWebInspector
  *
- * Get the height that the inspector view when attached.
+ * Get the height that the inspector view should have when attached.
  *
  * Get the height that the inspector view should have when
  * it's attached. If the inspector view is not attached this

@@ -38,7 +38,7 @@
  * Only a few of them are documented; you can use the undocumented options at
  * your own risk. (You can find the list of options in the WebKit source code).
  *
- * The API allows to set and get any option using the types defined in #JSCOptionType.
+ * The API allows setting and getting any option using the types defined in #JSCOptionType.
  * You can also iterate all the available options using jsc_options_foreach() and
  * passing a #JSCOptionsFunc callback. If your application uses #GOptionContext to handle
  * command line arguments, you can easily integrate the JSCOptions by adding the
@@ -502,9 +502,9 @@ gboolean jsc_options_get_string(const char* option, char** value)
  * @value: the value to set
  *
  * Set @option as a range string. The string must be in the
- * format <emphasis>[!]&lt;low&gt;[:&lt;high&gt;]</emphasis> where low and high are #guint values.
+ * format `[!]<low>[:<high>]` where low and high are #guint values.
  * Values between low and high (both included) will be considered in
- * the range, unless <emphasis>!</emphasis> is used to invert the range.
+ * the range, unless `!` is used to invert the range.
  *
  * Returns: %TRUE if option was correctly set or %FALSE otherwise.
  *
@@ -528,9 +528,9 @@ gboolean jsc_options_set_range_string(const char* option, const char* value)
  * @value: (out): return location for the option value
  *
  * Get @option as a range string. The string must be in the
- * format <emphasis>[!]&lt;low&gt;[:&lt;high&gt;]</emphasis> where low and high are #guint values.
+ * format `[!]<low>[:<high>]` where low and high are #guint values.
  * Values between low and high (both included) will be considered in
- * the range, unless <emphasis>!</emphasis> is used to invert the range.
+ * the range, unless `!` is used to invert the range.
  *
  * Returns: %TRUE if @value has been set or %FALSE if the option doesn't exist
  *
@@ -598,8 +598,8 @@ static JSCOptionType jscOptionsType(const OSLogType&)
  * @JSC_OPTION_BOOLEAN: A #gboolean option type.
  * @JSC_OPTION_INT: A #gint option type.
  * @JSC_OPTION_UINT: A #guint option type.
- * @JSC_OPTION_SIZE: A #gsize options type.
- * @JSC_OPTION_DOUBLE: A #gdouble options type.
+ * @JSC_OPTION_SIZE: A #gsize option type.
+ * @JSC_OPTION_DOUBLE: A #gdouble option type.
  * @JSC_OPTION_STRING: A string option type.
  * @JSC_OPTION_RANGE_STRING: A range string option type.
  *
@@ -617,7 +617,7 @@ static JSCOptionType jscOptionsType(const OSLogType&)
  *
  * Function used to iterate options.
  *
- * Not that @description string is not localized.
+ * Note that @description string is not localized.
  *
  * Returns: %TRUE to stop the iteration, or %FALSE otherwise
  *
@@ -630,7 +630,7 @@ static JSCOptionType jscOptionsType(const OSLogType&)
  * @user_data: callback user data
  *
  * Iterates all available options calling @function for each one. Iteration can
- * stop early if @function returns %FALSE.
+ * stop early if @function returns %TRUE.
  *
  * Since: 2.24
  */
@@ -670,11 +670,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
  *
  * Create a #GOptionGroup to handle JSCOptions as command line arguments.
  * The options will be exposed as command line arguments with the form
- * <emphasis>--jsc-&lt;option&gt;=&lt;value&gt;</emphasis>.
+ * `--jsc-<option>=<value>`.
  * Each entry in the returned #GOptionGroup is configured to apply the
  * corresponding option during command line parsing. Applications only need to
  * pass the returned group to g_option_context_add_group(), and the rest will
- * be taken care for automatically.
+ * be taken care of automatically.
  *
  * Returns: (transfer full): a #GOptionGroup for the JSCOptions
  *
