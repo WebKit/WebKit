@@ -97,9 +97,11 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
         return;
     }
 
-    if (!newImage)
+    if (!newImage) {
         m_styleImage = nullptr;
-    else {
+        if (existingCachedImage)
+            m_renderer->imageChanged(nullptr);
+    } else {
         m_styleImage = Style::CachedImage::create(*newImage);
 
         RefPtr styleImage = m_styleImage;
