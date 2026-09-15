@@ -10432,54 +10432,11 @@ TEST(SiteIsolation, CrossSiteIframeOpenWindowWithBlobURL)
 
 #if PLATFORM(MAC)
 
-TEST(SiteIsolation, ColorInputPickerLocation)
-{
-    HTTPServer server({
-        { "/mainframe"_s, { "<iframe style='margin: 100px; width: 400px; height: 300px;' src='https://webkit.org/iframe'></iframe>"_s } },
-        { "/iframe"_s, { "<!DOCTYPE html><input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s } }
-    }, HTTPServer::Protocol::HttpsProxy);
-
-    __block bool done = false;
-    __block NSRect popoverPositioningRect = NSZeroRect;
-    __block RetainPtr<NSView> popoverPositioningView;
-
-    InstanceMethodSwizzler swizzler {
-        NSPopover.class,
-        @selector(showRelativeToRect:ofView:preferredEdge:),
-        imp_implementationWithBlock(^(id, NSRect positioningRect, NSView *positioningView, NSRectEdge) {
-            popoverPositioningRect = positioningRect;
-            popoverPositioningView = positioningView;
-            done = true;
-        })
-    };
-
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
-    [navigationDelegate waitForDidFinishNavigation];
-    [webView waitForNextPresentationUpdate];
-
-    [webView sendClickAtPoint:NSMakePoint(200, 400)];
-
-    Util::run(&done);
-
-    EXPECT_EQ(popoverPositioningRect, NSMakeRect(0, 0, 50, 50));
-
-    NSRect popoverPositioningViewBoundsInWebViewCoordinates = [popoverPositioningView convertRect:[popoverPositioningView bounds] toView:webView.get()];
-    EXPECT_EQ(popoverPositioningViewBoundsInWebViewCoordinates, NSMakeRect(168, 168, 50, 50));
-}
-
-TEST(SiteIsolation, ColorInputPickerLocation2)
+NSPoint testColorPickerPopoverLocation(const String& iframeSource)
 {
     auto mainPageSource =
         "<iframe id=iframe style='margin: 100px; width: 400px; height: 300px;' src='https://webkit.org/iframe' onload='load()'></iframe>"_s
         "<script>function load() { alert('loaded'); }</script>"_s;
-
-    auto iframeSource =
-        "<!DOCTYPE html>"_s
-        "<div style='height: 1000px'></div>"_s
-        "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s
-        "<div style='height: 1000px'></div>"_s
-        "<script>onload = () => window.scroll(0, 1000);</script>"_s;
 
     HTTPServer server({
         { "/mainframe"_s, { mainPageSource } },
@@ -10487,14 +10444,12 @@ TEST(SiteIsolation, ColorInputPickerLocation2)
     }, HTTPServer::Protocol::HttpsProxy);
 
     __block bool done = false;
-    __block NSRect popoverPositioningRect = NSZeroRect;
     __block RetainPtr<NSView> popoverPositioningView;
 
     InstanceMethodSwizzler swizzler {
         NSPopover.class,
         @selector(showRelativeToRect:ofView:preferredEdge:),
-        imp_implementationWithBlock(^(id, NSRect positioningRect, NSView *positioningView, NSRectEdge) {
-            popoverPositioningRect = positioningRect;
+        imp_implementationWithBlock(^(id, NSRect, NSView *positioningView, NSRectEdge) {
             popoverPositioningView = positioningView;
             done = true;
         })
@@ -10509,10 +10464,30 @@ TEST(SiteIsolation, ColorInputPickerLocation2)
 
     Util::run(&done);
 
-    EXPECT_EQ(popoverPositioningRect, NSMakeRect(0, 0, 50, 50));
+    return [popoverPositioningView convertRect:[popoverPositioningView bounds] toView:webView.get()].origin;
+}
 
-    NSRect popoverPositioningViewBoundsInWebViewCoordinates = [popoverPositioningView convertRect:[popoverPositioningView bounds] toView:webView];
-    EXPECT_EQ(popoverPositioningViewBoundsInWebViewCoordinates, NSMakeRect(168, 168, 50, 50));
+TEST(SiteIsolation, ColorInputPickerLocationInCrossSiteIframe)
+{
+    auto iframeSource =
+        "<!DOCTYPE html>"_s
+        "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s;
+
+    auto pickerLocation = testColorPickerPopoverLocation(iframeSource);
+    EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
+}
+
+TEST(SiteIsolation, ColorInputPickerLocationInScrolledCrossSiteIframe)
+{
+    auto iframeSource =
+        "<!DOCTYPE html>"_s
+        "<div style='height: 1000px'></div>"_s
+        "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s
+        "<div style='height: 1000px'></div>"_s
+        "<script>onload = () => window.scroll(0, 1000);</script>"_s;
+
+    auto pickerLocation = testColorPickerPopoverLocation(iframeSource);
+    EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 
 TEST(SiteIsolation, SelectElementPopupAfterFocusChangesDuringTracking)
