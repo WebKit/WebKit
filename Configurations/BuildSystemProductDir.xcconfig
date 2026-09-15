@@ -1,4 +1,4 @@
-// Copyright (C) 2024 Apple Inc. All rights reserved.
+// Copyright (C) 2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,25 +21,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Base.xcconfig"
-#include? "../../../Configurations/BuildSystemProductDir.xcconfig"
-#include? "../../../LocalOverrides.xcconfig"
+// Included by the tools, which are built above WebKit rather than as part of it.
+// While the file included below is there, WebKit was built with CMake, and the
+// tools build into the CMake directory it names, for the platform and
+// configuration being built -- so each tool links the WebKit beside it, and the
+// run-* scripts find the tool where they already look for that WebKit.
+//
+// build-webkit and set-webkit-configuration write that file whenever the build
+// system they resolve is CMake, and delete it whenever it is Xcode. Without it
+// WK_CMAKE_CONFIGURATION_BUILD_DIR is empty, and everything here resolves to the
+// value the project was given, which is the Xcode product directory.
 
-ONLY_ACTIVE_ARCH = YES;
+#include? "../WebKitBuild/BuildSystem.xcconfig"
 
-GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
-
-SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
-SDKROOT_ = macosx;
-SDKROOT_YES = macosx.internal;
-
-CODE_SIGN_IDENTITY[sdk=embedded] = $(CODE_SIGN_IDENTITY_EMBEDDED_$(USE_INTERNAL_SDK));
-CODE_SIGN_IDENTITY_EMBEDDED_YES = -;
-
-VALIDATE_DEPENDENCIES = $(VALIDATE_DEPENDENCIES_INTERNAL_$(USE_INTERNAL_SDK));
-VALIDATE_DEPENDENCIES_INTERNAL_ = $(VALIDATE_DEPENDENCIES_NATIVE_TARGET_$(WK_NOT_$(WK_EMPTY_$(PRODUCT_TYPE))));
-VALIDATE_DEPENDENCIES_INTERNAL_YES = $(WK_VALIDATE_DEPENDENCIES);
-VALIDATE_DEPENDENCIES_NATIVE_TARGET_YES = $(WK_VALIDATE_DEPENDENCIES);
-
-WK_CCACHE_DIR = $(SRCROOT)/../ccache;
-#include? "../../ccache/ccache.xcconfig"
+WK_CONFIGURATION_BUILD_DIR = $(WK_CONFIGURATION_BUILD_DIR_CMAKE_$(WK_EMPTY_$(WK_CMAKE_CONFIGURATION_BUILD_DIR)));
+WK_CONFIGURATION_BUILD_DIR_CMAKE_ = $(WK_CMAKE_CONFIGURATION_BUILD_DIR);
+WK_CONFIGURATION_BUILD_DIR_CMAKE_YES = $(WK_CONFIGURATION_BUILD_DIR);

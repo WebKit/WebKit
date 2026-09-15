@@ -69,6 +69,7 @@ chdirWebKit();
 # The settings given here become the defaults for every later command, so that
 # they resolve the build that was made last.
 recordBuildSettings();
+recordBuildSystemXcodeConfiguration();
 
 my $showHelp = 0;
 my $verbose = 0;
