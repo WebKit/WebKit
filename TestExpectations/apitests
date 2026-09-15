@@ -214,6 +214,7 @@ webkit.org/b/324277 TestWebKitAPI.ProcessSwap.HistoryItemIDConfusion [ Pass Time
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
 webkit.org/b/324130 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.PageCacheWhenNavigatingFromJS [ Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
+webkit.org/b/324281 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.TerminatedSuspendedPageProcess [ Failure ]
 webkit.org/b/242085 [ ios ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingAssistedElementShouldNotScrollToReveal [ Skip ]
 rdar://136525714 [ mac ] TestWebKitAPI.ResourceLoadStatistics.ClientEvaluatedJavaScriptDoesNotLogUserInteraction [ Skip ]
 rdar://172325390 TestWebKitAPI.ResourceLoadStatistics.GrandfatherCallback [ Skip ]
