@@ -3798,8 +3798,11 @@ void LocalFrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset
 // These scroll positions are affected by zooming.
 void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
-    UNUSED_PARAM(oldPosition);
-    UNUSED_PARAM(newPosition);
+    // scroll-state(scrolled) only tracks relative scrolls: user scrolls (wheel/keyboard/drag) and a
+    // programmatic scrollBy (which sets m_currentScrollIsRelative). Absolute scrolls are ignored.
+    // https://drafts.csswg.org/css-conditional-5/#scrolled
+    if (currentScrollType() == ScrollType::User || m_currentScrollIsRelative)
+        updateScrolledDirections(oldPosition, newPosition);
 
     RefPtr page = m_frame->page();
     Seconds throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : 0_s;
