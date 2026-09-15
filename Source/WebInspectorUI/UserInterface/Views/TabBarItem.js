@@ -28,6 +28,11 @@ WI.TabBarItem = class TabBarItem
 {
     constructor(representedObject, image, displayName, title)
     {
+        // This class should not be instantiated directly. Create a concrete subclass instead.
+        console.assert(this.constructor !== WI.TabBarItem && this instanceof WI.TabBarItem, this);
+
+        console.assert(representedObject instanceof WI.TabContentView, representedObject);
+
         this._representedObject = representedObject || null;
         this._parentTabBar = null;
 
@@ -36,6 +41,9 @@ WI.TabBarItem = class TabBarItem
         this._element.setAttribute("role", "tab");
         this._element.tabIndex = 0;
         this._element[WI.TabBarItem.ElementReferenceSymbol] = this;
+
+        if (this._representedObject)
+            this._element.classList.add(this._representedObject.identifier);
 
         this._element.createChild("div", "flex-space");
 
