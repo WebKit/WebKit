@@ -4557,15 +4557,19 @@ JSValue JSBigInt::parseInt(JSGlobalObject* globalObject, std::span<const CharTyp
     }
 
     ParseIntSign sign = ParseIntSign::Unsigned;
+    ParseIntMode parseMode = ParseIntMode::AllowEmptyString;
     if (p < data.size()) {
         if (data[p] == '-') {
             sign = ParseIntSign::Signed;
+            parseMode = ParseIntMode::DisallowEmptyString;
             ++p;
-        } else if (data[p] == '+')
+        } else if (data[p] == '+') {
+            parseMode = ParseIntMode::DisallowEmptyString;
             ++p;
+        }
     }
 
-    return parseInt(globalObject, vm, data, p, 10, errorParseMode, sign);
+    return parseInt(globalObject, vm, data, p, 10, errorParseMode, sign, parseMode);
 }
 
 template <typename CharType>
@@ -4573,7 +4577,13 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
 {
     size_t p = startIndex;
 
-    if (parseMode != ParseIntMode::AllowEmptyString && startIndex == data.size()) {
+    // Removing trailing spaces. Trimming the span itself rather than tracking an end index keeps
+    // every read below provably within it, and nothing past the trailing spaces is read again.
+    while (data.size() > p && isStrWhiteSpace(data.back()))
+        data = data.first(data.size() - 1);
+    size_t length = data.size();
+
+    if (parseMode != ParseIntMode::AllowEmptyString && p == length) {
         ASSERT(nullOrGlobalObjectForOOM);
         if (errorParseMode == ErrorParseMode::ThrowExceptions) {
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -4583,14 +4593,8 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, std
     }
 
     // Skipping leading zeros
-    while (p < data.size() && data[p] == '0')
+    while (p < length && data[p] == '0')
         ++p;
-
-    // Removing trailing spaces. Trimming the span itself rather than tracking an end index keeps
-    // every read below provably within it, and nothing past the trailing spaces is read again.
-    while (data.size() > p && isStrWhiteSpace(data.back()))
-        data = data.first(data.size() - 1);
-    size_t length = data.size();
 
     if (p == length) {
 #if USE(BIGINT32)
