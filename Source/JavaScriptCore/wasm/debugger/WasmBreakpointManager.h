@@ -66,6 +66,8 @@ public:
     // Absent when no breakpoint patched this PC, i.e. the trap is a genuine `unreachable`.
     std::optional<TrapAction> trapActionFor(const uint8_t* pc, VirtualAddress hitAddress);
 
+    OpType originalOpcodeAt(const uint8_t* pc);
+
     // One-time breakpoints serving a step. Not instance scoped: a step belongs to the debuggee
     // VM, which is the only one running while it is in flight.
     void setStepBreakpoint(const ModuleInformation& owner, uint8_t* pc);
@@ -84,14 +86,14 @@ public:
     RefPtr<Breakpoint> breakpointAt(const uint8_t* pc); // FIXME: Should be used for test only
 
 private:
-    Breakpoint& ensurePatched(const ModuleInformation& owner, uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
+    Ref<Breakpoint> ensurePatched(const ModuleInformation& owner, uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
     void releasePatchIfUnused(uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
     bool removeSiteImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
     UncheckedKeyHashMap<uint8_t*, Ref<Breakpoint>> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
     UncheckedKeyHashSet<uint8_t*> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashMap<VirtualAddress, uint8_t*> m_addressToPC WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<VirtualAddress, Ref<Breakpoint>> m_addressToBreakpoint WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace Wasm

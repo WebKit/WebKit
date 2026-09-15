@@ -1201,6 +1201,23 @@ class ThrowRefTestCase:
         )
 
 
+class StepIntoThrowWithPatchedTryTableTestCase:
+    test_file = "resources/wasm/throw-ref.js"
+
+    def execute(self):
+        # Stepping over a throw must reach the catch body even with a breakpoint on the try_table
+        # opcode, so the step target comes from the pre-patch opcode, not the patched byte.
+        self.session.cmd("b 0x40000000000000e6", patterns=["Breakpoint 1"])
+        self.session.cmd(
+            "c",
+            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x40000000000000e6: try_table"],
+        )
+        self.session.cmd("si", patterns=["->  0x40000000000000ec: throw  0"])
+        self.session.cmd("si", patterns=["->  0x40000000000000f1: throw_ref"])
+
+        self.session.cmd("br del -f", patterns=["All breakpoints removed. (1 breakpoint)"])
+
+
 class TryTableTestCase:
     test_file = "resources/wasm/try-table.js"
 
@@ -1415,18 +1432,17 @@ class MalformedMemoryPacketTestCase:
     extra_jsc_options = ["--useDollarVM=1"]
 
     def execute(self):
-        # Malformed m/M fields must be rejected, not silently defaulted, and must not stop the
-        # stub serving. Each bad packet is followed by a good one: a wedged server answers nothing,
-        # so the good packet is the real assertion.
+        # Malformed m/M fields must be rejected without wedging the stub. Each bad packet is
+        # followed by a good one: a wedged server answers nothing, so that is the real assertion.
         self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 0000000000000000"])
 
-        # A parse failure used to default to 0, which is a real address: instance 0's memory.
+        # 0 is a real address -- instance 0's memory base -- so a bad field must not resolve to it.
         self.session.cmd("process plugin packet send mzzzzzzzz,10", patterns=["response: E01"])
         # parseInteger() accepts a leading '+', which is also the RSP ack character.
         self.session.cmd("process plugin packet send m+20,08", patterns=["response: E01"])
         self.session.cmd("process plugin packet send m0000000000000000,zz", patterns=["response: E01"])
 
-        # offset + length overflowed back inside the module, so the read ran with a huge length.
+        # offset + length can wrap back inside the module, so the bound needs wider arithmetic.
         self.session.cmd("process plugin packet send m4000000000000020,ffffffffffffffe8", patterns=["response: E02"])
         self.session.cmd("process plugin packet send m4000000000000000,04", patterns=["response: 0061736d"])
 
@@ -2301,6 +2317,7 @@ ALL_TESTS = [
     DelegateTestCase,
     RethrowTestCase,
     ThrowRefTestCase,
+    StepIntoThrowWithPatchedTryTableTestCase,
     TryTableTestCase,
     SystemCallTestCase,
     MultiVMSameModuleSameFunctionTestCase,

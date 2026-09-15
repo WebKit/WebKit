@@ -478,9 +478,8 @@ bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
         uint32_t offset = stopData.address.offset();
         const auto* nextInstructions = moduleInfo.debugInfo->ensureFunctionDebugInfo(functionIndex).findNextInstructions(offset);
         RELEASE_ASSERT(nextInstructions, "Didn't find nextInstructions");
-        uint8_t* const basePC = stopData.pc - offset;
         for (uint32_t nextOffset : *nextInstructions)
-            setStepBreakpoint(basePC + nextOffset);
+            setStepBreakpoint(stopData.pc + (static_cast<ptrdiff_t>(nextOffset) - static_cast<ptrdiff_t>(offset)));
     };
 
     switch (stopData.originalBytecode) {
@@ -593,7 +592,7 @@ void ExecutionHandler::setStepIntoBreakpointForThrow(VM& throwVM)
         uintptr_t handlerOffset = std::get<uintptr_t>(throwVM.targetInterpreterPCForThrow);
         const uint8_t* handlerPC = catchCallee->bytecode() + handlerOffset;
 
-        if (*handlerPC == static_cast<uint8_t>(Wasm::OpType::TryTable) && throwVM.targetInterpreterMetadataPCForThrow) {
+        if (m_breakpointManager->originalOpcodeAt(handlerPC) == Wasm::OpType::TryTable && throwVM.targetInterpreterMetadataPCForThrow) {
             const uint8_t* metadataPtr = catchCallee->metadata() + throwVM.targetInterpreterMetadataPCForThrow;
             metadataPtr += sizeof(IPInt::CatchMetadata);
             const IPInt::BlockMetadata* blockMetadata = reinterpret_cast<const IPInt::BlockMetadata*>(metadataPtr);

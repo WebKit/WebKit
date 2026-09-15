@@ -45,6 +45,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
+#include <wtf/RawHex.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
@@ -98,8 +99,8 @@ void logWasmLocalValue(size_t index, const JSC::IPInt::IPIntLocal& local, const 
 
 std::optional<uint64_t> parseHexStrict(StringView str)
 {
-    // An RSP hex field contains nothing but hex digits. parseInteger() would otherwise accept
-    // surrounding whitespace and a leading '+', which is also the ack character.
+    // An RSP hex field is hex digits only; parseInteger() would also take whitespace and a
+    // leading '+', which is the ack character.
     if (str.isEmpty() || !str.containsOnly<isASCIIHexDigit>())
         return std::nullopt;
     return parseInteger<uint64_t>(str, 16);
@@ -339,7 +340,7 @@ StopData::StopData(IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFra
 {
 }
 
-StopData::StopData(VirtualAddress address, uint8_t originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
+StopData::StopData(VirtualAddress address, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
     : address(address)
     , originalBytecode(originalBytecode)
     , pc(pc)
@@ -352,7 +353,7 @@ StopData::StopData(VirtualAddress address, uint8_t originalBytecode, uint8_t* pc
 }
 
 StopData::StopData(IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, Wasm::ExceptionType type)
-    : StopData(VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), 0, pc, mc, stack, callee, instance, callFrame)
+    : StopData(VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), OpType::Unreachable, pc, mc, stack, callee, instance, callFrame)
 {
     wasmTrapType = type;
 }
@@ -362,7 +363,7 @@ StopData::~StopData() = default;
 void StopData::dump(PrintStream& out) const
 {
     out.print("StopData(address:", address);
-    out.print(", originalBytecode:", originalBytecode);
+    out.print(", originalBytecode:", RawHex(static_cast<unsigned>(originalBytecode)));
     out.print(", pc:", RawPointer(pc));
     out.print(", mc:", RawPointer(mc));
     out.print(", stack:", RawPointer(stack));

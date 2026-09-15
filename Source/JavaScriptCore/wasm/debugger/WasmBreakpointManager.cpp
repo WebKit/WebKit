@@ -50,7 +50,7 @@ bool BreakpointManager::hasOneTimeBreakpoints()
     return !m_oneTimeBreakpoints.isEmpty();
 }
 
-Breakpoint& BreakpointManager::ensurePatched(const ModuleInformation& owner, uint8_t* pc)
+Ref<Breakpoint> BreakpointManager::ensurePatched(const ModuleInformation& owner, uint8_t* pc)
 {
     RELEASE_ASSERT(pc);
     if (auto it = m_breakpoints.find(pc); it != m_breakpoints.end()) {
@@ -60,7 +60,7 @@ Breakpoint& BreakpointManager::ensurePatched(const ModuleInformation& owner, uin
 
     Ref<Breakpoint> breakpoint = Breakpoint::create(owner, pc);
     breakpoint->patchBreakpoint();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Patched ", breakpoint);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Patched the byte at ", RawPointer(pc));
     return m_breakpoints.set(pc, WTF::move(breakpoint)).iterator->value;
 }
 
@@ -94,29 +94,31 @@ void BreakpointManager::setBreakpointAt(VirtualAddress address, const ModuleInfo
     Locker locker { m_lock };
     // Re-arming an existing site is a no-op. An address names one instance's view of one byte and
     // IDs are never reused, so it always resolves to this pc.
-    auto result = m_addressToPC.add(address, pc);
-    if (!result.isNewEntry) {
-        RELEASE_ASSERT(result.iterator->value == pc);
+    if (auto it = m_addressToBreakpoint.find(address); it != m_addressToBreakpoint.end()) {
+        RELEASE_ASSERT(it->value->pc == pc);
         return;
     }
-    ensurePatched(owner, pc).siteCount++;
+    Ref<Breakpoint> breakpoint = ensurePatched(owner, pc);
+    breakpoint->siteCount++;
+    m_addressToBreakpoint.add(address, breakpoint.copyRef());
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Site added at ", address, " -> ", breakpoint.get());
 }
 
 bool BreakpointManager::removeSiteImpl(VirtualAddress address)
 {
     // Resolved from the address LLDB installed the site through rather than from a live instance:
     // the bytecode outlives the instance that named it.
-    uint8_t* pc = m_addressToPC.take(address);
-    if (!pc)
+    auto it = m_addressToBreakpoint.find(address);
+    if (it == m_addressToBreakpoint.end())
         return false;
 
-    auto it = m_breakpoints.find(pc);
-    RELEASE_ASSERT(it != m_breakpoints.end());
+    Ref<Breakpoint> breakpoint = it->value;
+    m_addressToBreakpoint.remove(it);
     // Sibling instances hold their own sites on the same byte, so the patch outlives every
     // removal but the last.
-    RELEASE_ASSERT(it->value->siteCount);
-    it->value->siteCount--;
-    releasePatchIfUnused(pc);
+    RELEASE_ASSERT(breakpoint->siteCount);
+    breakpoint->siteCount--;
+    releasePatchIfUnused(breakpoint->pc);
     return true;
 }
 
@@ -130,7 +132,7 @@ void BreakpointManager::removeSitesForInstance(uint32_t instanceId)
 {
     Locker locker { m_lock };
     Vector<VirtualAddress> staleSites;
-    for (const auto& pair : m_addressToPC) {
+    for (const auto& pair : m_addressToBreakpoint) {
         if (pair.key.instanceId() == instanceId)
             staleSites.append(pair.key);
     }
@@ -140,6 +142,15 @@ void BreakpointManager::removeSitesForInstance(uint32_t instanceId)
     }
 }
 
+OpType BreakpointManager::originalOpcodeAt(const uint8_t* pc)
+{
+    Locker locker { m_lock };
+    auto it = m_breakpoints.find(const_cast<uint8_t*>(pc));
+    if (it == m_breakpoints.end())
+        return static_cast<OpType>(*pc);
+    return it->value->originalBytecode;
+}
+
 std::optional<BreakpointManager::TrapAction> BreakpointManager::trapActionFor(const uint8_t* pc, VirtualAddress hitAddress)
 {
     Locker locker { m_lock };
@@ -147,10 +158,10 @@ std::optional<BreakpointManager::TrapAction> BreakpointManager::trapActionFor(co
     if (it == m_breakpoints.end())
         return std::nullopt;
 
-    TrapAction action { static_cast<OpType>(it->value->originalBytecode), std::nullopt };
+    TrapAction action { it->value->originalBytecode, std::nullopt };
     // A site names one instance; a sibling sharing the patched byte has no breakpoint here. A
     // site wins over a step at the same byte, so a step never masks a user breakpoint's reason.
-    if (m_addressToPC.get(hitAddress) == pc)
+    if (m_addressToBreakpoint.get(hitAddress) == it->value.ptr())
         action.stopType = Breakpoint::Type::Regular;
     else if (m_oneTimeBreakpoints.contains(const_cast<uint8_t*>(pc)))
         action.stopType = Breakpoint::Type::Step;
@@ -174,7 +185,7 @@ void BreakpointManager::clearAllBreakpoints()
         breakpoint->restorePatch();
     m_breakpoints.clear();
     m_oneTimeBreakpoints.clear();
-    m_addressToPC.clear();
+    m_addressToBreakpoint.clear();
 }
 
 } // namespace Wasm

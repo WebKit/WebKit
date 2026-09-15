@@ -39,6 +39,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/WasmVirtualAddress.h>
 #include <memory>
 #include <wtf/HexNumber.h>
+#include <wtf/RawHex.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -112,21 +113,21 @@ public:
         return adoptRef(*new Breakpoint(owner, pc));
     }
 
-    void patchBreakpoint() { *pc = 0x00; }
-    void restorePatch() { *pc = originalBytecode; }
+    void patchBreakpoint() { *pc = static_cast<uint8_t>(OpType::Unreachable); }
+    void restorePatch() { *pc = static_cast<uint8_t>(originalBytecode); }
 
     void dump(PrintStream& out) const
     {
         out.print("Breakpoint(pc:", RawPointer(pc));
         out.print(", *pc:", (int)*pc);
-        out.print(", originalBytecode:", originalBytecode);
+        out.print(", originalBytecode:", RawHex(static_cast<unsigned>(originalBytecode)));
         out.print(", siteCount:", siteCount, ")");
     }
 
     // Keeps the bytecode buffer alive.
     RefPtr<const ModuleInformation> owner;
     uint8_t* pc { nullptr };
-    uint8_t originalBytecode { 0 };
+    OpType originalBytecode { OpType::Unreachable };
     // LLDB sites referring to this byte, one per instance. The patch outlives all of them.
     unsigned siteCount { 0 };
 
@@ -134,7 +135,7 @@ private:
     Breakpoint(const ModuleInformation& owner, uint8_t* pc)
         : owner(&owner)
         , pc(pc)
-        , originalBytecode(*pc)
+        , originalBytecode(static_cast<OpType>(*pc))
     {
     }
 };
@@ -144,7 +145,7 @@ private:
 struct StopData {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(StopData);
 
-    StopData(VirtualAddress, uint8_t originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry*, IPIntCallee*, JSWebAssemblyInstance*, CallFrame*);
+    StopData(VirtualAddress, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry*, IPIntCallee*, JSWebAssemblyInstance*, CallFrame*);
 
     StopData(IPIntCallee*, JSWebAssemblyInstance*, CallFrame*); // Prologue: no pc/mc
 
@@ -155,7 +156,7 @@ struct StopData {
     void dump(PrintStream&) const;
 
     VirtualAddress address;
-    uint8_t originalBytecode { 0 };
+    OpType originalBytecode { OpType::Unreachable };
     uint8_t* pc { nullptr };
     uint8_t* mc { nullptr };
     IPInt::IPIntStackEntry* stack { nullptr };
@@ -191,10 +192,13 @@ struct DebugState {
     void setAtomicsWaitStopData(IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack)
     {
         stopReason = Reason::Interrupted;
-        stopData = makeUnique<StopData>(VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), *pc, pc, mc, stack, callee, instance, callFrame);
+        // ExtAtomic by construction: the only callers are the memory_atomic_wait32/64 externs,
+        // reached by dispatching the 0xFE prefix. *pc can be a sibling instance's patch instead.
+        RELEASE_ASSERT(*pc == static_cast<uint8_t>(OpType::ExtAtomic) || *pc == static_cast<uint8_t>(OpType::Unreachable));
+        stopData = makeUnique<StopData>(VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), OpType::ExtAtomic, pc, mc, stack, callee, instance, callFrame);
     }
 
-    void setBreakpointStopData(Breakpoint::Type type, VirtualAddress address, uint8_t originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
+    void setBreakpointStopData(Breakpoint::Type type, VirtualAddress address, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
     {
         switch (type) {
         case Breakpoint::Type::Step:
