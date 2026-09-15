@@ -33,6 +33,7 @@
 #include "CSSSerializationContext.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
+#include "ContainerNodeInlines.h"
 #include "Document.h"
 #include "DocumentPage.h"
 #include "DocumentQuirks.h"
@@ -962,6 +963,13 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     if (element->hasInvalidRenderer() || parentChanges.contains(Change::Renderer))
         changes.add(Change::Renderer);
+
+    // Toggling a containing-block property (transform, filter, containment) inside a multi-column flow
+    // can change whether column-span:all descendants are spanners; rebuild the subtree to re-evaluate.
+    if (currentStyle && !changes.contains(Change::Renderer)) {
+        if (CheckedPtr renderer = element->renderer(); renderer && renderer->multiColumnSpannerReevaluationNeededForStyleChange(*currentStyle, *newStyle))
+            changes.add(Change::Renderer);
+    }
 
     collectChangedAnchorNames(*newStyle, currentStyle);
 
