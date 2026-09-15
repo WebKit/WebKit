@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,8 @@
 #import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/PlatformEventFactoryIOS.h>
 #import <WebCore/Scrollbar.h>
+#import <objc/runtime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
@@ -103,6 +105,20 @@ static OptionSet<WebEventModifier> modifiersForEvent(::WebEvent *event)
     return modifiers;
 }
 
+static const void* automationKeyIdentityAssociatedObjectKey = &automationKeyIdentityAssociatedObjectKey;
+static NSString * const automationKeyIdentityKeyKey = @"key";
+static NSString * const automationKeyIdentityCodeKey = @"code";
+static NSString * const automationKeyIdentityIsKeypadKey = @"isKeypad";
+
+void WebIOSEventFactory::setAutomationKeyIdentity(::WebEvent *event, const String& key, const String& code, bool isKeypad)
+{
+    objc_setAssociatedObject(event, automationKeyIdentityAssociatedObjectKey, @{
+        automationKeyIdentityKeyKey: key.createNSString().get(),
+        automationKeyIdentityCodeKey: code.createNSString().get(),
+        automationKeyIdentityIsKeypadKey: @(isKeypad),
+    }, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 WebKeyboardEventInit WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *event, bool handledByInputMethod)
 {
     WebEventType type = (event.type == WebEventKeyUp) ? WebEventType::KeyUp : WebEventType::KeyDown;
@@ -129,6 +145,13 @@ WebKeyboardEventInit WebIOSEventFactory::createWebKeyboardEvent(::WebEvent *even
     bool isSystemKey = false;
     auto modifiers = modifiersForEvent(event);
     double timestamp = event.timestamp;
+
+    // Check if this is a WebDriver-synthesized event, which may state its DOM identity directly.
+    if (RetainPtr identity = dynamic_objc_cast<NSDictionary>(objc_getAssociatedObject(event, automationKeyIdentityAssociatedObjectKey))) {
+        key = dynamic_objc_cast<NSString>([identity objectForKey:automationKeyIdentityKeyKey]);
+        code = dynamic_objc_cast<NSString>([identity objectForKey:automationKeyIdentityCodeKey]);
+        isKeypad = [dynamic_objc_cast<NSNumber>([identity objectForKey:automationKeyIdentityIsKeypadKey]) boolValue];
+    }
 
     if (windowsVirtualKeyCode == '\r') {
         text = "\r"_s;

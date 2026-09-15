@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -850,6 +850,16 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
         [eventsToBeSent addObject:[NSEvent keyEventWithType:NSEventTypeKeyUp location:eventPosition modifierFlags:m_currentModifiers timestamp:timestamp windowNumber:windowNumber context:nil characters:characters.get() charactersIgnoringModifiers:unmodifiedCharacters.get() isARepeat:NO keyCode:keyCode]];
         break;
     }
+    }
+
+    // Several WebDriver keys have no equivalent on Apple keyboards, so their DOM 'key' and 'code'
+    // cannot be inferred from the key code above. Where the key table states them, attach them to
+    // the events so the web process reports those values instead of the derived ones.
+    if (auto* virtualKey = std::get_if<VirtualKey>(&key)) {
+        if (auto identity = keyIdentityForVirtualKey(*virtualKey)) {
+            for (NSEvent *event in eventsToBeSent.get())
+                WebEventFactory::setAutomationKeyIdentity(event, identity->key, identity->code, identity->isKeypad);
+        }
     }
 
     sendSynthesizedEventsToPage(page, eventsToBeSent.get());
