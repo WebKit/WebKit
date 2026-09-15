@@ -535,6 +535,10 @@ static bool anchorsToWordBoundary(char32_t codePoint)
 
 static bool matchIsWordBounded(StringView text, StringView key, unsigned start)
 {
+    bool keyMayComprisePartOfAnEmailAddress = key.contains("@"_s);
+    if (keyMayComprisePartOfAnEmailAddress)
+        return true;
+
     if (start && anchorsToWordBoundary(key.codePointAt(0)) && isWordCharacter(text.codePointBefore(start)))
         return false;
 
@@ -813,9 +817,14 @@ public:
         return promise;
     }
 
-    void applyReplacements(String& text)
+    String redactedText(const String& text) const
     {
-        text = WebKit::applyReplacements(text, m_options.replacementStrings);
+        return WebKit::applyReplacements(text, m_options.replacementStrings);
+    }
+
+    void applyReplacements(String& text) const
+    {
+        text = redactedText(text);
     }
 
     void truncateTextByWordLimitIfNeeded(String& text, const Vector<CharacterRange>& linkCharacterRanges = { }, HasAdjacentLinkAfter hasAdjacentLinkAfter = HasAdjacentLinkAfter::No)
@@ -1001,7 +1010,7 @@ private:
         if (useJSONOutput()) {
             Ref itemsArray = JSON::Array::create();
             for (auto& itemTitle : m_options.nativeMenuItems)
-                itemsArray->pushString(itemTitle);
+                itemsArray->pushString(redactedText(itemTitle));
 
             Ref menuObject = JSON::Object::create();
             menuObject->setString("type"_s, "nativePopupMenu"_s);
@@ -1012,8 +1021,8 @@ private:
             return;
         }
 
-        auto escapedQuotedItemTitles = m_options.nativeMenuItems.map([](auto& itemTitle) {
-            return makeString('\'', escapeString(itemTitle), '\'');
+        auto escapedQuotedItemTitles = m_options.nativeMenuItems.map([&](auto& itemTitle) {
+            return makeString('\'', escapeString(redactedText(itemTitle)), '\'');
         });
         auto itemsDescription = makeString("items=["_s, commaSeparatedString(escapedQuotedItemTitles), ']');
         addResult({ advanceToNextLine(), 0 }, { "nativePopupMenu"_s, WTF::move(itemsDescription) });
@@ -1048,6 +1057,21 @@ private:
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextExtractionAggregator);
+
+static String redactedAndEscaped(const TextExtractionAggregator& aggregator, const String& value)
+{
+    return escapeString(aggregator.redactedText(value));
+}
+
+static String redactedAndEscapedForHTML(const TextExtractionAggregator& aggregator, const String& value)
+{
+    return escapeStringForHTML(aggregator.redactedText(value));
+}
+
+static String redactedAndEscapedForMarkdown(const TextExtractionAggregator& aggregator, const String& value)
+{
+    return escapeStringForMarkdown(aggregator.redactedText(value));
+}
 
 static Vector<String> eventListenerTypesToStringArray(OptionSet<TextExtraction::EventListenerCategory> eventListeners)
 {
@@ -1265,14 +1289,14 @@ static void setCommonJSONProperties(JSON::Object& jsonObject, const TextExtracti
         jsonObject.setString("role"_s, item.accessibilityRole);
 
     if (!item.title.isEmpty())
-        jsonObject.setString("title"_s, item.title);
+        jsonObject.setString("title"_s, aggregator.redactedText(item.title));
 
     if (!item.eventListeners.isEmpty())
         jsonObject.setArray("events"_s, eventListenerTypesToJSONArray(item.eventListeners));
 
     if (!item.ariaAttributes.isEmpty()) {
         for (auto& [key, value] : item.ariaAttributes)
-            jsonObject.setString(key, value);
+            jsonObject.setString(key, aggregator.redactedText(value));
     }
 
     if (!item.clientAttributes.isEmpty()) {
@@ -1375,15 +1399,15 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
             if (!imageData.completedSource.isEmpty() && aggregator.includeURLs())
                 jsonObject.setString("src"_s, aggregator.stringForURL(imageData));
             if (!imageData.altText.isEmpty())
-                jsonObject.setString("alt"_s, imageData.altText);
+                jsonObject.setString("alt"_s, aggregator.redactedText(imageData.altText));
         },
         [&](const TextExtraction::SelectData& selectData) {
             Ref optionsArray = JSON::Array::create();
             if (aggregator.includeSelectOptions()) {
                 for (auto& option : selectData.options) {
                     Ref object = JSON::Object::create();
-                    object->setString("value"_s, option.value);
-                    object->setString("label"_s, option.label);
+                    object->setString("value"_s, aggregator.redactedText(option.value));
+                    object->setString("label"_s, aggregator.redactedText(option.label));
                     object->setBoolean("selected"_s, option.isSelected);
                     optionsArray->pushObject(WTF::move(object));
                 }
@@ -1395,7 +1419,7 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
                 if (!displays.isEmpty()) {
                     Ref selectedArray = JSON::Array::create();
                     for (auto& display : displays)
-                        selectedArray->pushString(display);
+                        selectedArray->pushString(aggregator.redactedText(display));
                     jsonObject.setArray("selected"_s, WTF::move(selectedArray));
                 }
             }
@@ -1414,15 +1438,15 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
             if (!controlData.autocomplete.isEmpty())
                 jsonObject.setString("autocomplete"_s, controlData.autocomplete);
             if (!controlData.editable.label.isEmpty())
-                jsonObject.setString("label"_s, controlData.editable.label);
+                jsonObject.setString("label"_s, aggregator.redactedText(controlData.editable.label));
             if (!controlData.editable.placeholder.isEmpty())
-                jsonObject.setString("placeholder"_s, controlData.editable.placeholder);
+                jsonObject.setString("placeholder"_s, aggregator.redactedText(controlData.editable.placeholder));
             if (!controlData.pattern.isEmpty())
                 jsonObject.setString("pattern"_s, controlData.pattern);
             if (!controlData.name.isEmpty())
                 jsonObject.setString("name"_s, controlData.name);
             if (shouldIncludeFormControlValue(controlData, item))
-                jsonObject.setString("value"_s, controlData.value);
+                jsonObject.setString("value"_s, aggregator.redactedText(controlData.value));
             if (controlData.minLength)
                 jsonObject.setInteger("minLength"_s, *controlData.minLength);
             if (controlData.maxLength)
@@ -1534,7 +1558,7 @@ static TextExtractionParts partsForItem(const TextExtraction::Item& item, const 
     }
 
     if (!item.title.isEmpty()) {
-        auto title = makeString("title="_s, quoteValue(escapeString(item.title), streamlined));
+        auto title = makeString("title="_s, quoteValue(redactedAndEscaped(aggregator, item.title), streamlined));
         parts.append(title);
         cachedParts.append(WTF::move(title));
     }
@@ -1568,7 +1592,7 @@ static TextExtractionParts partsForItem(const TextExtraction::Item& item, const 
                 continue;
         }
 
-        auto token = makeString(outputKey, '=', quoteValue(escapeString(value), streamlined));
+        auto token = makeString(outputKey, '=', quoteValue(redactedAndEscaped(aggregator, value), streamlined));
         parts.append(token);
         if (!streamlined || !isTransientAriaAttribute(outputKey))
             cachedParts.append(WTF::move(token));
@@ -1825,10 +1849,10 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     attributes.append(makeString("autocomplete='"_s, controlData.autocomplete, '\''));
 
                 if (!controlData.editable.label.isEmpty())
-                    attributes.append(makeString("label='"_s, escapeString(controlData.editable.label), '\''));
+                    attributes.append(makeString("label='"_s, redactedAndEscaped(aggregator, controlData.editable.label), '\''));
 
                 if (!controlData.editable.placeholder.isEmpty())
-                    attributes.append(makeString("placeholder='"_s, escapeString(controlData.editable.placeholder), '\''));
+                    attributes.append(makeString("placeholder='"_s, redactedAndEscaped(aggregator, controlData.editable.placeholder), '\''));
 
                 if (!controlData.pattern.isEmpty())
                     attributes.append(makeString("pattern='"_s, escapeString(controlData.pattern), '\''));
@@ -1837,7 +1861,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     attributes.append(makeString("name='"_s, escapeString(controlData.name), '\''));
 
                 if (shouldIncludeFormControlValue(controlData, item))
-                    attributes.append(makeString("value='"_s, escapeString(controlData.value), '\''));
+                    attributes.append(makeString("value='"_s, redactedAndEscaped(aggregator, controlData.value), '\''));
 
                 if (auto minLength = controlData.minLength)
                     attributes.append(makeString("minlength="_s, *minLength));
@@ -1905,11 +1929,11 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                         }
                     }
                     if (!skipLabel)
-                        appendBoth(makeString("label="_s, quoteValue(escapeString(controlData.editable.label), streamlined)));
+                        appendBoth(makeString("label="_s, quoteValue(redactedAndEscaped(aggregator, controlData.editable.label), streamlined)));
                 }
 
                 if (!controlData.editable.placeholder.isEmpty())
-                    appendBoth(makeString("placeholder="_s, quoteValue(escapeString(controlData.editable.placeholder), streamlined)));
+                    appendBoth(makeString("placeholder="_s, quoteValue(redactedAndEscaped(aggregator, controlData.editable.placeholder), streamlined)));
 
                 if (!controlData.pattern.isEmpty())
                     appendBoth(makeString("pattern="_s, quoteValue(escapeString(controlData.pattern), streamlined)));
@@ -1918,7 +1942,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     appendBoth(makeString("name="_s, quoteValue(escapeString(controlData.name), streamlined)));
 
                 if (shouldIncludeFormControlValue(controlData, item))
-                    appendBoth(makeString("value="_s, quoteValue(escapeString(trimAndSimplifyWhitespace(controlData.value)), streamlined)));
+                    appendBoth(makeString("value="_s, quoteValue(redactedAndEscaped(aggregator, trimAndSimplifyWhitespace(controlData.value)), streamlined)));
 
                 if (auto minLength = controlData.minLength)
                     appendBoth(makeString("minlength="_s, *minLength));
@@ -2018,7 +2042,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                 if (!aggregator.includeSelectOptions()) {
                     auto displays = selectedOptionDisplayValues(selectData);
                     if (!displays.isEmpty())
-                        attributes.append(makeString("selected='"_s, escapeStringForHTML(makeStringByJoining(displays, ","_s)), '\''));
+                        attributes.append(makeString("selected='"_s, redactedAndEscapedForHTML(aggregator, makeStringByJoining(displays, ","_s)), '\''));
                 }
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
@@ -2031,9 +2055,9 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     for (auto& option : selectData.options) {
                         auto optionLine = TextExtractionLine { aggregator.advanceToNextLine(), line.indentLevel + 1, line.enclosingBlockNumber, line.superscriptLevel, line.visualBlockContainerNumber };
                         if (option.isSelected)
-                            aggregator.addResult(optionLine, { makeString("<option value='"_s, escapeStringForHTML(option.value), "' selected>"_s, escapeStringForHTML(option.label), "</option>"_s) }, { });
+                            aggregator.addResult(optionLine, { makeString("<option value='"_s, redactedAndEscapedForHTML(aggregator, option.value), "' selected>"_s, redactedAndEscapedForHTML(aggregator, option.label), "</option>"_s) }, { });
                         else
-                            aggregator.addResult(optionLine, { makeString("<option value='"_s, escapeStringForHTML(option.value), "'>"_s, escapeStringForHTML(option.label), "</option>"_s) }, { });
+                            aggregator.addResult(optionLine, { makeString("<option value='"_s, redactedAndEscapedForHTML(aggregator, option.value), "'>"_s, redactedAndEscapedForHTML(aggregator, option.label), "</option>"_s) }, { });
                     }
                 }
 
@@ -2049,16 +2073,16 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                         if (option.isSelected)
                             optionParts.append("selected"_s);
                         if (!option.value.isEmpty())
-                            optionParts.append(makeString("value="_s, quoteValue(escapeString(option.value), streamlined)));
+                            optionParts.append(makeString("value="_s, quoteValue(redactedAndEscaped(aggregator, option.value), streamlined)));
                         if (!option.label.isEmpty() && !equalIgnoringASCIICase(option.label, option.value))
-                            optionParts.append(makeString('\'', escapeString(option.label), '\''));
+                            optionParts.append(makeString('\'', redactedAndEscaped(aggregator, option.label), '\''));
                         // Per-option selection is transient UI state, so these lines are excluded from the cache.
                         aggregator.addResult(optionLine, WTF::move(optionParts), { });
                     }
                 } else {
                     auto displays = selectedOptionDisplayValues(selectData);
                     if (!displays.isEmpty())
-                        appendClientOnly(makeString("selected="_s, quoteValue(escapeString(makeStringByJoining(displays, ","_s)), streamlined)));
+                        appendClientOnly(makeString("selected="_s, quoteValue(redactedAndEscaped(aggregator, makeStringByJoining(displays, ","_s)), streamlined)));
                 }
 
                 if (selectData.isMultiple)
@@ -2075,7 +2099,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     attributes.append(makeString("src='"_s, aggregator.stringForURL(imageData), '\''));
 
                 if (!imageData.altText.isEmpty())
-                    attributes.append(makeString("alt='"_s, escapeString(imageData.altText), '\''));
+                    attributes.append(makeString("alt='"_s, redactedAndEscaped(aggregator, imageData.altText), '\''));
 
                 if (attributes.isEmpty())
                     parts.append(makeString('<', item.nodeName.convertToASCIILowercase(), '>'));
@@ -2087,7 +2111,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     imageSource = WTF::move(attributeFromClient);
                 else if (aggregator.includeURLs())
                     imageSource = aggregator.stringForURL(imageData);
-                auto imageMarkdown = makeString("!["_s, escapeStringForMarkdown(imageData.altText), "]("_s, WTF::move(imageSource), ')');
+                auto imageMarkdown = makeString("!["_s, redactedAndEscapedForMarkdown(aggregator, imageData.altText), "]("_s, WTF::move(imageSource), ')');
                 if (auto urlString = aggregator.currentURLString(); urlString && !urlString->isEmpty())
                     parts.append(makeString(WTF::move(imageMarkdown), " []("_s, WTF::move(*urlString), ')'));
                 else
@@ -2100,7 +2124,7 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
                     appendBoth(makeString("src="_s, quoteValue(aggregator.stringForURL(imageData), streamlined)));
 
                 if (!imageData.altText.isEmpty())
-                    appendBoth(makeString("alt="_s, quoteValue(escapeString(imageData.altText), streamlined)));
+                    appendBoth(makeString("alt="_s, quoteValue(redactedAndEscaped(aggregator, imageData.altText), streamlined)));
 
                 if (shouldEmitClickableToken(item))
                     appendBoth("clickable"_s);

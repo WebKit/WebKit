@@ -1350,6 +1350,60 @@ TEST(TextExtractionTests, ReplacementStringsWordBoundaries)
     }
 }
 
+TEST(TextExtractionTests, ReplacementStringsForEmailAddresses)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    auto textAfterReplacing = [&](NSString *markup, _WKTextExtractionOutputFormat outputFormat, NSDictionary<NSString *, NSString *> *replacementStrings, void (^customizeConfiguration)(_WKTextExtractionConfiguration *)) -> RetainPtr<NSString> {
+        [webView synchronouslyLoadHTMLString:markup];
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setOutputFormat:outputFormat];
+        [configuration setReplacementStrings:replacementStrings];
+        if (customizeConfiguration)
+            customizeConfiguration(configuration.get());
+        return [webView synchronouslyGetDebugText:configuration.get()];
+    };
+
+    auto expectAddressRedacted = [&](NSString *markup, _WKTextExtractionOutputFormat outputFormat, void (^customizeConfiguration)(_WKTextExtractionConfiguration *) = nil) {
+        SCOPED_TRACE(outputFormat);
+        SCOPED_TRACE(markup.UTF8String);
+
+        EXPECT_TRUE([textAfterReplacing(markup, outputFormat, nil, customizeConfiguration) containsString:@"wenson@me.com"]);
+
+        RetainPtr redactedText = textAfterReplacing(markup, outputFormat, @{ @"wenson@me.com": @"jane.doe@example.com" }, customizeConfiguration);
+        EXPECT_TRUE([redactedText containsString:@"jane.doe@example.com"]);
+        EXPECT_FALSE([redactedText containsString:@"wenson@me.com"]);
+    };
+
+    {
+        RetainPtr text = textAfterReplacing(@"<p>Send a codewenson@me.com</p><p>codewenson@me.comnow</p>", _WKTextExtractionOutputFormatTextTree, @{
+            @"wenson@me.com": @"jane.doe@example.com",
+        }, nil);
+        EXPECT_TRUE([text containsString:@"Send a codejane.doe@example.com"]);
+        EXPECT_TRUE([text containsString:@"codejane.doe@example.comnow"]);
+        EXPECT_FALSE([text containsString:@"wenson@me.com"]);
+    }
+
+    for (auto format : { _WKTextExtractionOutputFormatTextTree, _WKTextExtractionOutputFormatHTML, _WKTextExtractionOutputFormatJSON }) {
+        expectAddressRedacted(@"<div aria-label='Send a code to wenson@me.com'><p>Choose a delivery method</p></div>", format);
+        expectAddressRedacted(@"<button title='Signed in as wenson@me.com'>Menu</button>", format);
+        expectAddressRedacted(@"<input type='radio' id='otp-email' name='otpEmail'><label for='otp-email'>Email me a verification code<span>wenson@me.com</span></label>", format);
+        expectAddressRedacted(@"<h1>Verify</h1><input type='radio' name='otpEmail' value='wenson@me.com'>", format);
+        expectAddressRedacted(@"<input type='email' placeholder='wenson@me.com'>", format);
+        expectAddressRedacted(@"<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>", format);
+        expectAddressRedacted(@"<select><option value='primary'>wenson@me.com</option><option value='backup'>Other address</option></select>", format);
+        expectAddressRedacted(@"<select><option>wenson@me.com</option></select>", format, ^(_WKTextExtractionConfiguration *configuration) {
+            [configuration setIncludeSelectOptions:NO];
+        });
+    }
+
+    expectAddressRedacted(@"<img src='https://example.com/avatar.png' alt='Profile photo for wenson@me.com'>", _WKTextExtractionOutputFormatMarkdown);
+}
+
 TEST(TextExtractionTests, ReplacementStringsAppliedToInteractionDescription)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
