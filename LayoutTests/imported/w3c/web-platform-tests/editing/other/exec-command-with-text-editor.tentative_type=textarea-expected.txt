@@ -298,10 +298,10 @@ PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): The comman
 FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): The command should not be enabled assert_equals: expected false but got true
 FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): execCommand() should return false assert_equals: expected false but got true
 PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): <textarea>.value should be "a[b]c"
-FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): beforeinput.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) ""
-FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): beforeinput.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <textarea id="target"></textarea>
-FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): input.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) ""
-FAIL In <textarea>, execCommand("removeformat", false, null), a[b]c): input.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <textarea id="target"></textarea>
+PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): beforeinput.inputType should be undefined
+PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): beforeinput.target should be undefined
+PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): input.inputType should be undefined
+PASS In <textarea>, execCommand("removeformat", false, null), a[b]c): input.target should be undefined
 PASS In <textarea>, execCommand("unlink", false, null), a[b]c): The command should be supported
 PASS In <textarea>, execCommand("unlink", false, null), a[b]c): The command should not be enabled
 PASS In <textarea>, execCommand("unlink", false, null), a[b]c): execCommand() should return false
@@ -696,10 +696,10 @@ PASS In <textarea> in contenteditable, execCommand("removeformat", false, null),
 FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): The command should not be enabled assert_equals: expected false but got true
 FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): execCommand() should return false assert_equals: expected false but got true
 PASS In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): <textarea>.value should be "a[b]c"
-FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): beforeinput.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) ""
-FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): beforeinput.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <textarea id="target"></textarea>
-FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): input.inputType should be undefined assert_equals: expected (undefined) undefined but got (string) ""
-FAIL In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): input.target should be undefined assert_equals: expected (undefined) undefined but got (object) Element node <textarea id="target"></textarea>
+PASS In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): beforeinput.inputType should be undefined
+PASS In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): beforeinput.target should be undefined
+PASS In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): input.inputType should be undefined
+PASS In <textarea> in contenteditable, execCommand("removeformat", false, null), a[b]c): input.target should be undefined
 PASS In <textarea> in contenteditable, execCommand("unlink", false, null), a[b]c): The command should be supported
 PASS In <textarea> in contenteditable, execCommand("unlink", false, null), a[b]c): The command should not be enabled
 PASS In <textarea> in contenteditable, execCommand("unlink", false, null), a[b]c): execCommand() should return false
