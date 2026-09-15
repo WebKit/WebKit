@@ -60,7 +60,6 @@
 # registers (sc0, sc1, sc2, sc3)
 
 const alignIPInt = constexpr JSC::IPInt::alignIPInt
-const alignAtomicIPInt = constexpr JSC::IPInt::alignAtomicIPInt
 const alignArgumInt = constexpr JSC::IPInt::alignArgumInt
 const alignUInt = constexpr JSC::IPInt::alignUInt
 const alignMInt = constexpr JSC::IPInt::alignMInt
@@ -213,16 +212,24 @@ macro advanceMCByReg(amount)
     addp amount, MC
 end
 
+# Reads the byte at cursor and steps cursor past it; ARM64 does both in one post-indexed load.
+macro loadbAndAdvance(cursor, dst)
+    if ARM64 or ARM64E
+        loadbinc [cursor], dst, 1
+    else
+        loadb [cursor], dst
+        addp 1, cursor
+    end
+end
+
 macro decodeLEBVarUInt(dst, cursor, scratch1, scratch2)
-    loadb [cursor], dst
-    addp 1, cursor
+    loadbAndAdvance(cursor, dst)
     bbb dst, 0x80, .done
     andq 0x7f, dst
     move 7, scratch1
     validateOpcodeConfig(scratch2)
 .loop:
-    loadb [cursor], scratch2
-    addp 1, cursor
+    loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
     andq 0x7f, scratch2
     lshiftq scratch1, scratch2
@@ -237,15 +244,13 @@ macro decodeLEBVarUInt(dst, cursor, scratch1, scratch2)
 end
 
 macro decodeLEBVarSInt32(dst, cursor, scratch1, scratch2)
-    loadb [cursor], dst
-    addp 1, cursor
+    loadbAndAdvance(cursor, dst)
     bbb dst, 0x80, .singleByte
     andq 0x7f, dst
     move 7, scratch1
     validateOpcodeConfig(scratch2)
 .loop:
-    loadb [cursor], scratch2
-    addp 1, cursor
+    loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
     andq 0x7f, scratch2
     lshiftq scratch1, scratch2
@@ -276,15 +281,13 @@ macro decodeLEBVarSInt32(dst, cursor, scratch1, scratch2)
 end
 
 macro decodeLEBVarSInt64(dst, cursor, scratch1, scratch2)
-    loadb [cursor], dst
-    addp 1, cursor
+    loadbAndAdvance(cursor, dst)
     bbb dst, 0x80, .singleByte
     andq 0x7f, dst
     move 7, scratch1
     validateOpcodeConfig(scratch2)
 .loop:
-    loadb [cursor], scratch2
-    addp 1, cursor
+    loadbAndAdvance(cursor, scratch2)
     bbb scratch2, 0x80, .lastByte
     andq 0x7f, scratch2
     lshiftq scratch1, scratch2
@@ -316,8 +319,7 @@ end
 
 macro skipLEB128(cursor, scratch)
 .loop:
-    loadb [cursor], scratch
-    addp 1, cursor
+    loadbAndAdvance(cursor, scratch)
     bbaeq scratch, 0x80, .loop
 end
 
@@ -375,7 +377,7 @@ macro reservedOpcode(opcode)
 end
 
 macro atomicInstructionLabel(instrname)
-    aligned _ipint%instrname%_atomic_validate alignAtomicIPInt
+    aligned _ipint%instrname%_atomic_validate alignIPInt
     _ipint%instrname%_atomic_validate:
     _ipint%instrname%:
 end
@@ -421,8 +423,7 @@ if X86_64
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
 end
     loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
-    negp t0
-    addp PC, t0
+    subp PC, t0, t0
     storei t0, CallSiteIndex[cfr]
 end
 
@@ -446,7 +447,7 @@ macro operationCall(fn)
     pop MC, PC
 end
 
-macro operationCallMayThrowImpl(fn, sizeOfExtraRegistersPreserved)
+macro operationCallMayThrowImpl(fn, exceptionLabel)
     saveCallSiteIndex()
     validateOpcodeConfig(a0)
 
@@ -457,8 +458,18 @@ macro operationCallMayThrowImpl(fn, sizeOfExtraRegistersPreserved)
         push ws0, ws0
     end
     fn()
-    bpneq r1, (constexpr JSC::IPInt::SlowPathExceptionTag), .continuation
+    bpeq r1, (constexpr JSC::IPInt::SlowPathExceptionTag), exceptionLabel
+    if ARM64 or ARM64E
+        loadp [sp], ws0
+        addp MachineRegisterSize * 2, sp
+    end
+    pop MC, PC
+end
 
+# The throwing half of operationCallMayThrowImpl. It lives out of line, once per value of
+# sizeOfExtraRegistersPreserved, so that a handler calling an operation still fits in one
+# alignIPInt-sized dispatch slot.
+macro operationCallMayThrowExceptionTail(sizeOfExtraRegistersPreserved)
     storei r0, ArgumentCountIncludingThis + LowWordOffset[cfr]
     if ARM64 or ARM64E
         move cfr, a1
@@ -469,21 +480,15 @@ macro operationCallMayThrowImpl(fn, sizeOfExtraRegistersPreserved)
         addp sizeOfExtraRegistersPreserved + (2 * MachineRegisterSize), sp
     end
     jmp _wasm_throw_from_slow_path_trampoline
-.continuation:
-    if ARM64 or ARM64E
-        loadp [sp], ws0
-        addp MachineRegisterSize * 2, sp
-    end
-    pop MC, PC
 end
 
 macro operationCallMayThrow(fn)
-    operationCallMayThrowImpl(fn, 0)
+    operationCallMayThrowImpl(fn, _ipint_operation_call_exception)
 end
 
 macro operationCallMayThrowPreservingVolatileRegisters(fn)
     preserveWasmVolatileRegisters()
-    operationCallMayThrowImpl(fn, (NumberOfVolatileGPRs * MachineRegisterSize) + (NumberOfWasmArgumentFPRs * VectorRegisterSize))
+    operationCallMayThrowImpl(fn, _ipint_operation_call_exception_preserving_volatile_registers)
     restoreWasmVolatileRegisters()
 end
 
@@ -535,12 +540,20 @@ if WEBASSEMBLY_BBQJIT
 end # WEBASSEMBLY_BBQJIT
 end
 
-macro ipintLoopOSR(increment)
+macro ipintLoopOSRCheck(increment, tierUpLabel)
 if WEBASSEMBLY_BBQJIT
     validateOpcodeConfig(ws0)
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
     baddis increment, Wasm::IPIntCallee::m_tierUpCounter + Wasm::IPIntTierUpCounter::m_counter[ws0], .continue
+    jmp tierUpLabel
+.continue:
+end
+end
 
+# The tier-up half of the loop opcode. It lives out of line so that the opcode still fits in one
+# alignIPInt-sized dispatch slot; it either enters BBQ or falls through back into the interpreter.
+macro ipintLoopOSRTierUp()
+if WEBASSEMBLY_BBQJIT
     move cfr, a1
     move PC, a2
     # Add 1 to the index due to WTF::UncheckedKeyHashMap not supporting 0 as a key
@@ -562,7 +575,6 @@ if WEBASSEMBLY_BBQJIT
 
 .recover:
     loadp UnboxedWasmCalleeStackSlot[cfr], ws0
-.continue:
 end
 end
 
