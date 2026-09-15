@@ -49,6 +49,8 @@ class JS_EXPORT_PRIVATE InspectorHeapAgent : public InspectorAgentBase, public H
     WTF_MAKE_TZONE_ALLOCATED(InspectorHeapAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorHeapAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorHeapAgent(AgentContext&);
     ~InspectorHeapAgent() override;
 

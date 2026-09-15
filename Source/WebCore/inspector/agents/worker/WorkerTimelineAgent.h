@@ -31,10 +31,13 @@
 
 namespace WebCore {
 
-class WorkerTimelineAgent final : public InspectorTimelineAgent {
+class WorkerTimelineAgent final : public InspectorTimelineAgent, public CanMakeCheckedPtr<WorkerTimelineAgent> {
     WTF_MAKE_NONCOPYABLE(WorkerTimelineAgent);
     WTF_MAKE_TZONE_ALLOCATED(WorkerTimelineAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerTimelineAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     WorkerTimelineAgent(WorkerAgentContext&);
     ~WorkerTimelineAgent();
 

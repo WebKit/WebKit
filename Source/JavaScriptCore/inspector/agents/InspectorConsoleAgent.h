@@ -49,10 +49,13 @@ class InspectorHeapAgent;
 class ScriptArguments;
 class ScriptCallStack;
 
-class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, public ConsoleBackendDispatcherHandler {
+class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, public ConsoleBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorConsoleAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorConsoleAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorConsoleAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorConsoleAgent(AgentContext&);
     ~InspectorConsoleAgent() override;
 

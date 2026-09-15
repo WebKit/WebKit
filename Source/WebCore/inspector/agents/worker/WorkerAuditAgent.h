@@ -32,10 +32,13 @@
 
 namespace WebCore {
 
-class WorkerAuditAgent final : public Inspector::InspectorAuditAgent {
+class WorkerAuditAgent final : public Inspector::InspectorAuditAgent, public CanMakeCheckedPtr<WorkerAuditAgent> {
     WTF_MAKE_NONCOPYABLE(WorkerAuditAgent);
     WTF_MAKE_TZONE_ALLOCATED(WorkerAuditAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerAuditAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     WorkerAuditAgent(WorkerAgentContext&);
     ~WorkerAuditAgent();
 

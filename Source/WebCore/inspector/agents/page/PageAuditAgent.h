@@ -33,10 +33,13 @@ namespace WebCore {
 
 class Page;
 
-class PageAuditAgent final : public Inspector::InspectorAuditAgent {
+class PageAuditAgent final : public Inspector::InspectorAuditAgent, public CanMakeCheckedPtr<PageAuditAgent> {
     WTF_MAKE_NONCOPYABLE(PageAuditAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageAuditAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageAuditAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     PageAuditAgent(PageAgentContext&);
     ~PageAuditAgent();
 

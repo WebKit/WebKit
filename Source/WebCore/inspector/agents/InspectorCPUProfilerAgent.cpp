@@ -66,8 +66,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::startTrackin
     if (m_tracking)
         return { };
 
-    ResourceUsageThread::addObserver(this, CPU, [this] (const ResourceUsageData& data) {
-        collectSample(data);
+    ResourceUsageThread::addObserver(this, CPU, [weakThis = WeakPtr { *this }] (const ResourceUsageData& data) {
+        if (CheckedPtr agent = weakThis.get())
+            agent->collectSample(data);
     });
 
     m_tracking = true;

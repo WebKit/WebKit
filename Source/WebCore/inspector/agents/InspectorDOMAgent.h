@@ -91,6 +91,8 @@ class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOM
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorDOMAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorDOMAgent(PageAgentContext&, InspectorOverlay&);
     ~InspectorDOMAgent();
 

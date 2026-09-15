@@ -59,6 +59,8 @@ class FrameDOMAgent final : public InspectorAgentBase, public Inspector::DOMBack
     WTF_MAKE_TZONE_ALLOCATED(FrameDOMAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameDOMAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     FrameDOMAgent(FrameAgentContext&);
     ~FrameDOMAgent();
 

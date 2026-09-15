@@ -56,6 +56,8 @@ class InspectorAnimationAgent final : public InspectorAgentBase, public Inspecto
     WTF_MAKE_TZONE_ALLOCATED(InspectorAnimationAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAnimationAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorAnimationAgent(PageAgentContext&);
     ~InspectorAnimationAgent();
 

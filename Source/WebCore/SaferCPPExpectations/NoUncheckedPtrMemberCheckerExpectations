@@ -6,7 +6,6 @@ css/SelectorFilter.h
 dom/CollectionIndexCache.h
 dom/Node.cpp
 dom/Node.h
-inspector/InstrumentingAgents.h
 inspector/agents/WebHeapAgent.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.h
 layout/formattingContexts/inline/InlineContentBreaker.h

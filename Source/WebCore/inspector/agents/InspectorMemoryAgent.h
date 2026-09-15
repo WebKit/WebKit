@@ -33,13 +33,17 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class InspectorMemoryAgent final : public InspectorAgentBase, public Inspector::MemoryBackendDispatcherHandler {
+class InspectorMemoryAgent final : public InspectorAgentBase, public Inspector::MemoryBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorMemoryAgent>, public CanMakeWeakPtr<InspectorMemoryAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorMemoryAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorMemoryAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorMemoryAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorMemoryAgent(PageAgentContext&);
     ~InspectorMemoryAgent();
 

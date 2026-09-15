@@ -223,7 +223,7 @@ void InspectorTimelineAgent::startFromConsole(const String& title)
         for (const TimelineRecordEntry& record : m_pendingConsoleProfileRecords) {
             auto recordTitle = protect(record.data)->getString("title"_s);
             if (recordTitle == title) {
-                if (auto* consoleAgent = Ref { m_instrumentingAgents.get() } -> webConsoleAgent()) {
+                if (CheckedPtr consoleAgent = Ref { m_instrumentingAgents.get() } -> webConsoleAgent()) {
                     // FIXME: Send an enum to the frontend for localization?
                     String warning = title.isEmpty() ? "Unnamed Profile already exists"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" already exists"_s);
                     consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::Profile, MessageLevel::Warning, warning));
@@ -258,7 +258,7 @@ void InspectorTimelineAgent::stopFromConsole(const String& title)
         }
     }
 
-    if (auto* consoleAgent = Ref { m_instrumentingAgents.get() }->webConsoleAgent()) {
+    if (CheckedPtr consoleAgent = Ref { m_instrumentingAgents.get() }->webConsoleAgent()) {
         // FIXME: Send an enum to the frontend for localization?
         String warning = title.isEmpty() ? "No profiles exist"_s : makeString("Profile \""_s, ScriptArguments::truncateStringForConsoleMessage(title), "\" does not exist"_s);
         consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, MessageType::ProfileEnd, MessageLevel::Warning, warning));
@@ -367,7 +367,7 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     ASSERT(!tracking());
 
     // Disable breakpoints during programmatic capture.
-    if (auto* webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent()) {
+    if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent()) {
         m_programmaticCaptureRestoreBreakpointActiveValue = webDebuggerAgent->breakpointsActive();
         if (m_programmaticCaptureRestoreBreakpointActiveValue)
             std::ignore = webDebuggerAgent->setBreakpointsActive(false);
@@ -390,7 +390,7 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
 
     // Re-enable breakpoints if they were enabled.
     if (m_programmaticCaptureRestoreBreakpointActiveValue) {
-        if (auto* webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
+        if (CheckedPtr webDebuggerAgent = Ref { m_instrumentingAgents.get() }->enabledWebDebuggerAgent())
             std::ignore = webDebuggerAgent->setBreakpointsActive(true);
     }
 }
@@ -430,7 +430,7 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
-    if (auto* scriptProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentScriptProfilerAgent()) {
+    if (CheckedPtr scriptProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentScriptProfilerAgent()) {
         if (state == InstrumentState::Start)
             std::ignore = scriptProfilerAgent->startTracking(true);
         else
@@ -452,7 +452,7 @@ void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
-    if (auto* cpuProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentCPUProfilerAgent()) {
+    if (CheckedPtr cpuProfilerAgent = Ref { m_instrumentingAgents.get() }->persistentCPUProfilerAgent()) {
         if (state == InstrumentState::Start)
             std::ignore = cpuProfilerAgent->startTracking();
         else
@@ -466,7 +466,7 @@ void InspectorTimelineAgent::toggleCPUInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 {
 #if ENABLE(RESOURCE_USAGE)
-    if (auto* memoryAgent = Ref { m_instrumentingAgents.get() }->persistentMemoryAgent()) {
+    if (CheckedPtr memoryAgent = Ref { m_instrumentingAgents.get() }->persistentMemoryAgent()) {
         if (state == InstrumentState::Start)
             std::ignore = memoryAgent->startTracking();
         else

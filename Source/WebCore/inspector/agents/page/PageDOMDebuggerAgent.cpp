@@ -32,9 +32,13 @@
 #include "LocalFrame.h"
 #include "Node.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PageDOMDebuggerAgent);
 
 PageDOMDebuggerAgent::PageDOMDebuggerAgent(PageAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorDOMDebuggerAgent(context, debuggerAgent)

@@ -51,6 +51,8 @@ class FrameDOMStorageAgent final : public InspectorAgentBase, public Inspector::
     WTF_MAKE_TZONE_ALLOCATED(FrameDOMStorageAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameDOMStorageAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     explicit FrameDOMStorageAgent(FrameAgentContext&);
     ~FrameDOMStorageAgent();
 

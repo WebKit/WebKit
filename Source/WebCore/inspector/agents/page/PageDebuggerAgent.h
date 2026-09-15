@@ -42,10 +42,13 @@ class LocalFrame;
 class Page;
 class UserGestureEmulationScope;
 
-class PageDebuggerAgent final : public WebDebuggerAgent {
+class PageDebuggerAgent final : public WebDebuggerAgent, public CanMakeCheckedPtr<PageDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageDebuggerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     PageDebuggerAgent(PageAgentContext&);
     ~PageDebuggerAgent();
     bool enabled() const;

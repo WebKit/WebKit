@@ -66,6 +66,8 @@ class InspectorPageAgent final : public InspectorAgentBase, public Inspector::Pa
     WTF_MAKE_TZONE_ALLOCATED(InspectorPageAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorPageAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorPageAgent(PageAgentContext&, InspectorBackendClient*, InspectorOverlay&);
     ~InspectorPageAgent();
 

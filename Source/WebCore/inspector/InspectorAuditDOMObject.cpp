@@ -40,7 +40,7 @@ namespace WebCore {
 using namespace Inspector;
 
 #define ERROR_IF_NO_ACTIVE_AUDIT() \
-    if (!m_auditAgent.hasActiveAudit()) \
+    if (!m_auditAgent->hasActiveAudit()) \
         return Exception { ExceptionCode::NotAllowedError, "Cannot be called outside of a Web Inspector Audit"_s };
 
 InspectorAuditDOMObject::InspectorAuditDOMObject(PageAuditAgent& auditAgent)
@@ -74,7 +74,7 @@ ExceptionOr<void> InspectorAuditDOMObject::simulateUserInteraction(Document& doc
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    UserGestureEmulationScope userGestureScope(m_auditAgent.inspectedPage(), true, &document);
+    UserGestureEmulationScope userGestureScope(m_auditAgent->inspectedPage(), true, &document);
     callback->invoke();
 
     return { };

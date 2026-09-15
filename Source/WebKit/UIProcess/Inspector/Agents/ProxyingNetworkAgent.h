@@ -58,6 +58,8 @@ class ProxyingNetworkAgent : public RefCounted<ProxyingNetworkAgent>, public Web
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProxyingNetworkAgent);
     WTF_MAKE_NONCOPYABLE(ProxyingNetworkAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     ProxyingNetworkAgent(WebKit::WebPageAgentContext&);
     ~ProxyingNetworkAgent() override;
 

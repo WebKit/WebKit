@@ -1310,8 +1310,9 @@ void InspectorDebuggerAgent::registerIdleHandler()
     if (!m_registeredIdleCallback) {
         m_registeredIdleCallback = true;
         JSC::VM& vm = m_debugger.vm();
-        vm.whenIdle([this]() {
-            didBecomeIdle();
+        vm.whenIdle([weakThis = WeakPtr { *this }]() {
+            if (CheckedPtr agent = weakThis.get())
+                agent->didBecomeIdle();
         });
     }
 }

@@ -34,10 +34,13 @@ class JSGlobalObject;
 
 namespace Inspector {
 
-class JSGlobalObjectAuditAgent final : public InspectorAuditAgent {
+class JSGlobalObjectAuditAgent final : public InspectorAuditAgent, public CanMakeCheckedPtr<JSGlobalObjectAuditAgent> {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectAuditAgent);
     WTF_MAKE_TZONE_ALLOCATED(JSGlobalObjectAuditAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JSGlobalObjectAuditAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     JSGlobalObjectAuditAgent(JSAgentContext&);
     ~JSGlobalObjectAuditAgent() final;
 

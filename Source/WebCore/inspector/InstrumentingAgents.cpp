@@ -31,8 +31,41 @@
 
 #include "config.h"
 #include "InstrumentingAgents.h"
+
+#include "FrameCSSAgent.h"
+#include "FrameDOMAgent.h"
+#include "FrameDOMStorageAgent.h"
+#include "FrameDebuggerAgent.h"
+#include "FrameRuntimeAgent.h"
+#include "InspectorAnimationAgent.h"
+#include "InspectorCPUProfilerAgent.h"
+#include "InspectorCSSAgent.h"
+#include "InspectorCanvasAgent.h"
+#include "InspectorDOMAgent.h"
+#include "InspectorDOMDebuggerAgent.h"
+#include "InspectorDOMStorageAgent.h"
+#include "InspectorLayerTreeAgent.h"
+#include "InspectorMemoryAgent.h"
+#include "InspectorNetworkAgent.h"
+#include "InspectorPageAgent.h"
+#include "InspectorTimelineAgent.h"
+#include "InspectorWorkerAgent.h"
+#include "NetworkAgentInstrumentation.h"
+#include "PageAgentInstrumentation.h"
+#include "PageCanvasAgent.h"
+#include "PageDOMDebuggerAgent.h"
+#include "PageDebuggerAgent.h"
+#include "PageHeapAgent.h"
+#include "PageRuntimeAgent.h"
+#include "PageTimelineAgent.h"
+#include "WebConsoleAgent.h"
+#include "WebDebuggerAgent.h"
+#include "WebHeapAgent.h"
+#include <JavaScriptCore/InspectorAgent.h>
+#include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 using namespace Inspector;
@@ -48,6 +81,8 @@ Ref<InstrumentingAgents> InstrumentingAgents::create(Inspector::InspectorEnviron
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InstrumentingAgents);
+
+InstrumentingAgents::~InstrumentingAgents() = default;
 
 InstrumentingAgents::InstrumentingAgents(InspectorEnvironment& environment, InstrumentingAgents* fallbackAgents)
     : m_environment(environment)
@@ -76,7 +111,7 @@ FOR_EACH_INSPECTOR_AGENT(RESET_MEMBER_VARIABLE_FOR_INSPECTOR_AGENT)
 Class* InstrumentingAgents::Getter##Name() const \
 { \
     if (m_##Getter##Name) \
-        return m_##Getter##Name; \
+        return m_##Getter##Name.get(); \
     if (auto* fallbackAgents = m_fallbackAgents.get()) \
         return fallbackAgents->Getter##Name(); \
     return nullptr; \

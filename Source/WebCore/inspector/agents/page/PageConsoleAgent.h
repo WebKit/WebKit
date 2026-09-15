@@ -40,6 +40,7 @@ namespace WebCore {
 class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageConsoleAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageConsoleAgent);
 public:
     PageConsoleAgent(PageAgentContext&);
     ~PageConsoleAgent();

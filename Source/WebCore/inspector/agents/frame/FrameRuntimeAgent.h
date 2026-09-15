@@ -43,10 +43,13 @@ class DOMWrapperWorld;
 class LocalFrame;
 class SecurityOrigin;
 
-class FrameRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
+class FrameRuntimeAgent final : public Inspector::InspectorRuntimeAgent, public CanMakeCheckedPtr<FrameRuntimeAgent> {
     WTF_MAKE_NONCOPYABLE(FrameRuntimeAgent);
     WTF_MAKE_TZONE_ALLOCATED(FrameRuntimeAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameRuntimeAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     FrameRuntimeAgent(FrameAgentContext&);
     ~FrameRuntimeAgent();
 

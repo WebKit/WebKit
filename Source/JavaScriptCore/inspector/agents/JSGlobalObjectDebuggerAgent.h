@@ -26,16 +26,20 @@
 #pragma once
 
 #include "InspectorDebuggerAgent.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 
 class InspectorConsoleAgent;
 
-class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent {
+class JSGlobalObjectDebuggerAgent final : public InspectorDebuggerAgent, public CanMakeCheckedPtr<JSGlobalObjectDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(JSGlobalObjectDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(JSGlobalObjectDebuggerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     JSGlobalObjectDebuggerAgent(JSAgentContext&, InspectorConsoleAgent*);
     ~JSGlobalObjectDebuggerAgent() final;
 
@@ -50,7 +54,7 @@ private:
     void muteConsole() final { }
     void unmuteConsole() final { }
 
-    InspectorConsoleAgent* m_consoleAgent { nullptr };
+    const CheckedPtr<InspectorConsoleAgent> m_consoleAgent;
 };
 
 } // namespace Inspector

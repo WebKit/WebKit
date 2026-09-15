@@ -93,8 +93,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorMemoryAgent::startTracking()
     if (m_tracking)
         return { };
 
-    ResourceUsageThread::addObserver(this, Memory, [this] (const ResourceUsageData& data) {
-        collectSample(data);
+    ResourceUsageThread::addObserver(this, Memory, [weakThis = WeakPtr { *this }] (const ResourceUsageData& data) {
+        if (CheckedPtr agent = weakThis.get())
+            agent->collectSample(data);
     });
 
     m_tracking = true;
