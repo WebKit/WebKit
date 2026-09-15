@@ -188,6 +188,8 @@ set(TestWTF_SOURCES
     Tests/WTF/WeakPtr.cpp
     Tests/WTF/WorkQueue.cpp
     Tests/WTF/WorkerPool.cpp
+
+    Tests/WTF/bmalloc/VMAFragmentation.cpp
 )
 
 # These tests check conversions that copy elision would otherwise remove.
