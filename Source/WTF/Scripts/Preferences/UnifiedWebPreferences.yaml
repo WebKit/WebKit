@@ -5690,7 +5690,7 @@ SiteIsolationSharedProcessEnabled:
   category: security
   humanReadableName: "Shared process for Site Isolation"
   humanReadableDescription: "Put cross-site frames in a shared Web process"
-  defaultValue: false
+  defaultValue: true
   sharedPreferenceForWebProcess: true
 
 SlowFrameIndicatorVisible:
