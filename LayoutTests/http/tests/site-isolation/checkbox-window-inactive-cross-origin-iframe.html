@@ -1,0 +1,25 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-100">
+<script src="/js-test-resources/ui-helper.js"></script>
+<body style="margin:0">
+<iframe id="frame" onload="test()" src="http://localhost:8000/site-isolation/resources/checkbox-iframe.html" frameborder=0 style="width:100px;height:60px;border:none;display:block;"></iframe>
+<script>
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
+
+async function test()
+{
+    if (!window.testRunner)
+        return;
+
+    // The checkbox lives in a different process under Site Isolation, so wait for the
+    // window-inactive state change to make its way there and repaint before snapshotting.
+    await UIHelper.setWindowIsKey(false);
+    await new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve, 0)));
+    });
+
+    testRunner.notifyDone();
+}
+</script>
+</body>

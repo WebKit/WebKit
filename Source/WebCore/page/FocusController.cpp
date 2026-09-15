@@ -1265,10 +1265,10 @@ void FocusController::setActive(bool active)
 
 void FocusController::setActiveInternal()
 {
-    RefPtr localMainFrame = m_page->localMainFrame();
-    if (!localMainFrame)
+    RefPtr localMainOrRootFrame = m_page->localMainOrRootFrame();
+    if (!localMainOrRootFrame)
         return;
-    if (RefPtr view = localMainFrame->view()) {
+    if (RefPtr view = localMainOrRootFrame->view()) {
         if (!view->platformWidget()) {
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
