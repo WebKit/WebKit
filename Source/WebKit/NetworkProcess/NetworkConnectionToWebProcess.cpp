@@ -628,13 +628,25 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     if (existingLoaderToResume) {
         if (CheckedPtr session = networkSession()) {
-            if (auto existingLoader = session->takeLoaderAwaitingWebProcessTransfer(*existingLoaderToResume)) {
+            auto claim = session->takeLoaderAwaitingWebProcessTransfer(*existingLoaderToResume, m_webProcessIdentifier);
+            switch (claim.outcome) {
+            case NetworkSession::LoaderAwaitingWebProcessTransferOutcome::Success:
                 CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: Resuming existing NetworkResourceLoader");
-                m_networkResourceLoaders.add(*identifier, *existingLoader);
-                existingLoader->transferToNewWebProcess(*this, loadParameters);
+                completeQueuedExistingLoaderResume(claim.loader.releaseNonNull(), WTF::move(loadParameters));
                 return;
+            case NetworkSession::LoaderAwaitingWebProcessTransferOutcome::WrongCaller:
+                MESSAGE_CHECK(false);
+                return;
+            case NetworkSession::LoaderAwaitingWebProcessTransferOutcome::Pending:
+                if (!session->queuePendingLoaderClaim(*existingLoaderToResume, *this, WTF::move(loadParameters))) {
+                    CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Pending-claim queue full for parked loader %" PRIu64, existingLoaderToResume->toUInt64());
+                    MESSAGE_CHECK(false);
+                }
+                return;
+            case NetworkSession::LoaderAwaitingWebProcessTransferOutcome::NotFound:
+                CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find existing NetworkResourceLoader to resume, will do a fresh load");
+                break;
             }
-            CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find existing NetworkResourceLoader to resume, will do a fresh load");
         } else
             CONNECTION_RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Could not find network session of existing NetworkResourceLoader to resume, will do a fresh load");
     }
@@ -649,6 +661,20 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
     Ref loader = m_networkResourceLoaders.add(*identifier, NetworkResourceLoader::create(WTF::move(loadParameters), *this)).iterator->value;
 
     loader->startWithServiceWorker();
+}
+
+void NetworkConnectionToWebProcess::completeQueuedExistingLoaderResume(Ref<NetworkResourceLoader>&& loader, NetworkResourceLoadParameters&& loadParameters)
+{
+    auto identifier = loadParameters.identifier;
+    ASSERT(identifier);
+    m_networkResourceLoaders.add(*identifier, loader.copyRef());
+    loader->transferToNewWebProcess(*this, loadParameters);
+}
+
+void NetworkConnectionToWebProcess::terminateForInvalidLoaderResumeClaim()
+{
+    RELEASE_LOG_FAULT(IPC, "NetworkConnectionToWebProcess::terminateForInvalidLoaderResumeClaim: WebContent process %" PRIu64 " queued a resume for a parked NetworkResourceLoader assigned to a different process; requesting termination", m_webProcessIdentifier.toUInt64());
+    protect(m_networkProcess->parentProcessConnection())->send(Messages::NetworkProcessProxy::TerminateWebProcess(m_webProcessIdentifier), 0);
 }
 
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
@@ -2097,6 +2123,23 @@ void NetworkConnectionToWebProcess::takeInvalidMessageStringForTesting(Completio
     ASCIILiteral error = connection().takeErrorString();
     String errorString = !error.isNull() ? String::fromUTF8(error) : emptyString();
     callback(WTF::move(errorString));
+}
+
+void NetworkConnectionToWebProcess::addSyntheticParkedLoaderForTesting(NetworkResourceLoadIdentifier identifier, WebCore::ProcessIdentifier destination, CompletionHandler<void(bool)>&& reply)
+{
+    CheckedPtr session = networkSession();
+    if (!session) {
+        reply(false);
+        return;
+    }
+    reply(session->addSyntheticLoaderAwaitingWebProcessTransferForTesting(identifier, destination));
+}
+
+void NetworkConnectionToWebProcess::removeSyntheticParkedLoaderForTesting(NetworkResourceLoadIdentifier identifier, CompletionHandler<void()>&& reply)
+{
+    if (CheckedPtr session = networkSession())
+        session->removeSyntheticLoaderAwaitingWebProcessTransferForTesting(identifier);
+    reply();
 }
 #endif
 
