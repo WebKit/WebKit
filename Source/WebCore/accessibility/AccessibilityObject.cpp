@@ -151,7 +151,7 @@ AccessibilityObject::~AccessibilityObject()
 {
     AX_ASSERT(isDetached());
 
-    if (!cachedIsIgnored()) {
+    if (m_lastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject) {
         if (auto* cache = m_axObjectCache.get())
             cache->decrementUnignoredContentObjectCount(role());
     }
