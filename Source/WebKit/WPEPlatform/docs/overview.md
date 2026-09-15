@@ -169,7 +169,7 @@ target WPEPlatform.
 A few things that lived in libwpe / WPEBackend-fdo do not have direct
 WPEPlatform equivalents:
 
-- **Process management** (libwpe's `wpe_process_provider_*` API, added in 1.14). Child-process launch is once again handled internally by WPE WebKit.
+- **Process management** (libwpe's `wpe_process_provider_*` API, added in 1.14). Child-process launch is once again handled internally by WPE WebKit. The exception is Android builds, where WPEPlatform ships a `WPEProcessManager` for this purpose.
 - **The `renderer-host`/`renderer-backend-egl` plumbing**. The new rendering model is built on buffer sharing through [class@Buffer] subclasses; there is no separate EGL renderer-target abstraction to wire up.
 - **WPEBackend-fdo's "exportable" view backend**. The "WebKit hands you rendered buffers via callbacks" pattern is replaced by subclassing [class@View] and implementing [vfunc@View.render_buffer].
 
