@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULLSCREEN_API)
 
 #import "APIFullscreenClient.h"
+#import "PlaybackSessionManagerProxy.h"
 #import "UIKitSPI.h"
 #import "VideoPresentationManagerProxy.h"
 #import "WKFullScreenViewController.h"
@@ -1036,11 +1037,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!self.isFullScreen || !WebKit::useSpatialFullScreenTransition())
         return;
 
-    bool prefersAutoDimming = true;
-    if (RefPtr videoPresentationManager = [self _videoPresentationManager]) {
-        if (RefPtr bestVideo = videoPresentationManager->bestVideoForElementFullscreen())
-            prefersAutoDimming = bestVideo->playbackSessionModel()->prefersAutoDimming();
-    }
+    bool prefersAutoDimming = WebKit::PlaybackSessionModelContext::persistedPrefersAutoDimming();
 
     WKSurroundingsEffectType targetEffect = prefersAutoDimming ? WebKit::DefaultFullscreenSurroundingsEffect : WKSurroundingsEffectTypeNone;
     if ([WKSurroundingsEffectManager shared].currentEffect != targetEffect)
@@ -2036,12 +2033,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![self _sceneDimmingEnabled])
         return NO;
 
-    if (RefPtr videoPresentationManager = [self _videoPresentationManager]) {
-        if (RefPtr bestVideo = videoPresentationManager->bestVideoForElementFullscreen())
-            return bestVideo->playbackSessionModel()->prefersAutoDimming();
-    }
-
-    return YES;
+    return WebKit::PlaybackSessionModelContext::persistedPrefersAutoDimming();
 }
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=307396
@@ -2323,10 +2315,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     BOOL updatedPrefersSceneDimming = !self.prefersSceneDimming;
 
-    if (RefPtr videoPresentationManager = [self _videoPresentationManager]) {
-        if (RefPtr bestVideo = videoPresentationManager->bestVideoForElementFullscreen())
-            bestVideo->playbackSessionModel()->setPrefersAutoDimming(updatedPrefersSceneDimming);
-    }
+    WebKit::PlaybackSessionModelContext::setPersistedPrefersAutoDimming(updatedPrefersSceneDimming);
 
     if (self.isFullScreen) {
         WKSurroundingsEffectType target = updatedPrefersSceneDimming ? WebKit::DefaultFullscreenSurroundingsEffect : (_parentWindowState ? [_parentWindowState preferredSurroundingsEffect] : WKSurroundingsEffectTypeNone);

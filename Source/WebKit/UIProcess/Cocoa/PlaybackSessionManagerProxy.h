@@ -66,6 +66,9 @@ public:
     }
     virtual ~PlaybackSessionModelContext();
 
+    static bool persistedPrefersAutoDimming();
+    static void setPersistedPrefersAutoDimming(bool);
+
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
@@ -189,7 +192,7 @@ private:
     WebCore::AudioSessionSoundStageSize soundStageSize() const final { return m_soundStageSize; }
     void setSoundStageSize(WebCore::AudioSessionSoundStageSize) final;
 
-    bool prefersAutoDimming() const final { return m_prefersAutoDimming; }
+    bool prefersAutoDimming() const final { return persistedPrefersAutoDimming(); }
     void setPrefersAutoDimming(bool) final;
 
     void NODELETE swapVideoReceiverEndpointsWith(PlaybackSessionModelContext&);
@@ -241,7 +244,6 @@ private:
 #endif
     std::optional<WebCore::ImmersiveVideoMetadata> m_immersiveVideoMetadata;
 
-    bool m_prefersAutoDimming { true };
 #if !RELEASE_LOG_DISABLED
     uint64_t m_logIdentifier { 0 };
 #endif
@@ -364,9 +366,6 @@ private:
     void addNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
     void removeNowPlayingMetadataObserver(PlaybackSessionContextIdentifier, const WebCore::NowPlayingMetadataObserver&);
     void setSoundStageSize(PlaybackSessionContextIdentifier, WebCore::AudioSessionSoundStageSize);
-
-    bool prefersAutoDimming() const;
-    void setPrefersAutoDimming(bool);
 
     void updateVideoControlsManager(PlaybackSessionContextIdentifier);
 
