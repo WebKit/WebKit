@@ -769,8 +769,8 @@ void LOLJIT::privateCompileSlowCases()
             dataLogLn("At ", firstTo, " linked ", iter - iterStart, " slow cases");
 
         if (firstTo.offset() == m_bytecodeIndex.offset()) {
-            RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen while handling %s.", toUTF8CString(currentInstruction->opcodeID()).legacyCStringPointer());
-            RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen while handling %s.", toUTF8CString(currentInstruction->opcodeID()).legacyCStringPointer());
+            RELEASE_ASSERT_WITH_MESSAGE(iter == m_slowCases.end() || firstTo.offset() != iter->to.offset(), "Not enough jumps linked in slow case codegen while handling %s.", toUTF8CString(currentInstruction->opcodeID()));
+            RELEASE_ASSERT_WITH_MESSAGE(firstTo.offset() == (iter - 1)->to.offset(), "Too many jumps linked in slow case codegen while handling %s.", toUTF8CString(currentInstruction->opcodeID()));
         }
 
         jump().linkTo(fastPathResumePoint(), this);

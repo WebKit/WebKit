@@ -1523,7 +1523,7 @@ static void validateUserAgentSheetSelector(const CSSSelectorList& selectorList)
         }
         // Don't use subject position :is(foo, bar) and similar on UA sheet before we have good optimizations for them.
         // Selectors like this should be expanded manually.
-        ASSERT_WITH_MESSAGE(hasBucketedSelector || !hasLogicalCombination, "Subject position selector list in '%s' not allowed in user-agent stylesheet", complexSelector.selectorText().utf8().legacyCStringPointer());
+        ASSERT_WITH_MESSAGE(hasBucketedSelector || !hasLogicalCombination, "Subject position selector list in '%s' not allowed in user-agent stylesheet", complexSelector.selectorText().utf8());
     };
 
     for (auto& complexSelector : selectorList)

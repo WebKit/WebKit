@@ -65,7 +65,7 @@ void link(State& state)
 
         MacroAssemblerCodeRef<JSEntryPtrTag> b3CodeRef =
             FINALIZE_CODE_IF(dumpDisassembly, *state.b3CodeLinkBuffer, JSEntryPtrTag, nullptr,
-                "FTL B3 code for %s", toUTF8CString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)).legacyCStringPointer());
+                "FTL B3 code for %s", toUTF8CString(CodeBlockWithJITType(codeBlock, JITType::FTLJIT)));
 
         state.jitCode->initializeB3Code(b3CodeRef);
         state.jitCode->common.m_jumpReplacements = WTF::move(state.jumpReplacements);

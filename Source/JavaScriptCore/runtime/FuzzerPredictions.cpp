@@ -80,7 +80,7 @@ FuzzerPredictions::FuzzerPredictions(const char* filename)
         const String& lookupKey = lineParts[0];
         const String& predictionString = lineParts[1];
         auto prediction = parseInteger<uint64_t>(predictionString, 0x10);
-        RELEASE_ASSERT_WITH_MESSAGE(prediction, "Could not parse prediction from '%s'", predictionString.utf8().legacyCStringPointer());
+        RELEASE_ASSERT_WITH_MESSAGE(prediction, "Could not parse prediction from '%s'", predictionString.utf8());
         RELEASE_ASSERT(speculationChecked(*prediction, SpecFullTop));
         m_predictions.set(lookupKey, *prediction);
     }

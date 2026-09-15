@@ -153,7 +153,7 @@ void Plan::beginCompilerSignpost(CompilationMode compilationMode, uint32_t funct
 {
     if (Options::useCompilerSignpost()) [[unlikely]] {
         auto message = signpostMessage(compilationMode, functionIndexSpace);
-        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.legacyCStringPointer() ? message.legacyCStringPointer() : "(nullptr)");
+        WTFBeginSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.isNull() ? "(nullptr)"_s : message);
     }
 }
 
@@ -166,7 +166,7 @@ void Plan::endCompilerSignpost(CompilationMode compilationMode, uint32_t functio
 {
     if (Options::useCompilerSignpost()) [[unlikely]] {
         auto message = signpostMessage(compilationMode, functionIndexSpace);
-        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.legacyCStringPointer() ? message.legacyCStringPointer() : "(nullptr)");
+        WTFEndSignpost(this, JSCJITCompiler, "%" PUBLIC_LOG_STRING, message.isNull() ? "(nullptr)"_s : message);
     }
 }
 

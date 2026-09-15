@@ -568,7 +568,7 @@ WTF::String Extractor::propertyValueSerializationInStyle(const Style::ComputedSt
 
     auto valueSerialization = value->cssText(serializationContext);
 
-    RELEASE_ASSERT_WITH_MESSAGE(directSerialization == valueSerialization, "Direct serialization, '%s', does not match value serialization, '%s', for property '%s'", directSerialization.utf8().legacyCStringPointer(), valueSerialization.utf8().legacyCStringPointer(), nameLiteral(propertyID).characters());
+    RELEASE_ASSERT_WITH_MESSAGE(directSerialization == valueSerialization, "Direct serialization, '%s', does not match value serialization, '%s', for property '%s'", directSerialization.utf8(), valueSerialization.utf8(), nameLiteral(propertyID).characters());
 
     return directSerialization;
 #else
