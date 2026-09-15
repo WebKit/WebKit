@@ -612,9 +612,9 @@ inline T NODELETE logPrintfType(T argument) { return argument; }
 #if ASSERT_MSG_DISABLED
 #define ASSERT_WITH_MESSAGE(assertion, ...) ((void)0)
 #else
-#define ASSERT_WITH_MESSAGE(assertion, ...) do { \
+#define ASSERT_WITH_MESSAGE(assertion, format, ...) do { \
     if (UNLIKELY_FOR_C_ASSERTIONS(!(assertion))) { \
-        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
         BACKTRACE(); \
         CRASH(); \
     } \
@@ -631,9 +631,9 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if ASSERT_MSG_DISABLED
 #define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) ((void)variable)
 #else
-#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) do { \
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, format, ...) do { \
     if (UNLIKELY_FOR_C_ASSERTIONS(!(assertion))) { \
-        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
         BACKTRACE(); \
         CRASH(); \
     } \

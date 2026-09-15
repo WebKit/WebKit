@@ -11961,7 +11961,7 @@ void WebPageProxy::setVirtualWalletBehaviorForTesting(const String& action, cons
         parsedAction = VirtualWalletAction::Wait;
 
     if (!parsedAction) {
-        ASSERT_NOT_REACHED_WITH_MESSAGE("Unknown virtual wallet action: %s", action.utf8().legacyCStringPointer());
+        ASSERT_NOT_REACHED_WITH_MESSAGE("Unknown virtual wallet action: %s", action.utf8());
         return;
     }
 

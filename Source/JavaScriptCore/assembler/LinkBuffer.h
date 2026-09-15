@@ -357,7 +357,7 @@ public:
     {
 ALLOW_NONLITERAL_FORMAT_BEGIN
         IGNORE_WARNINGS_BEGIN("format-security")
-        return finalizeCodeWithDisassemblyImpl(dumpDisassembly, simpleName, format, args...).template retagged<tag>();
+        return finalizeCodeWithDisassemblyImpl(dumpDisassembly, simpleName, format, WTF::logPrintfType(args)...).template retagged<tag>();
         IGNORE_WARNINGS_END
 ALLOW_NONLITERAL_FORMAT_END
     }

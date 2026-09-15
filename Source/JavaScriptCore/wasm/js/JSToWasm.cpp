@@ -725,7 +725,7 @@ CodePtr<JSEntryPtrTag> RTT::jsToWasmICEntrypoint() const
     if (linkBuffer.didFailToAllocate()) [[unlikely]]
         return nullptr;
 
-    auto code = FINALIZE_WASM_CODE(linkBuffer, JSEntryPtrTag, nullptr, "JS->Wasm IC %s", WTF::toUTF8CString(*this).legacyCStringPointer());
+    auto code = FINALIZE_WASM_CODE(linkBuffer, JSEntryPtrTag, nullptr, "JS->Wasm IC %s", WTF::toUTF8CString(*this));
     jsToWasmICCallee->setEntrypoint(WTF::move(code));
     WTF::storeStoreFence();
     m_jsToWasmICCallee = WTF::move(jsToWasmICCallee);
