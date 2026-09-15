@@ -477,8 +477,8 @@ struct CommaSeparatedOrderedHashSet {
     static CommaSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
     {
         Container result;
-        for (auto&& value : range)
-            result.add(mapper(value));
+        for (Ref value : range)
+            result.add(mapper(value.get()));
         return result;
     }
 

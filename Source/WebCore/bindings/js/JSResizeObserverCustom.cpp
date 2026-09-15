@@ -37,7 +37,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSResizeObserver::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    ResizeObserverCallback* callback = wrapped().callbackConcurrently();
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL ResizeObserverCallback* callback = wrapped().callbackConcurrently();
     if (callback)
         callback->visitJSFunctionInGCThread(visitor);
 

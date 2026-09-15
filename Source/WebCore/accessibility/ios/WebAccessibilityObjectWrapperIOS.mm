@@ -123,14 +123,14 @@ using namespace HTMLNames;
 static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityObjectWrapper *wrapper)
 {
     while (wrapper && ![wrapper isAccessibilityElement]) {
-        AXCoreObject* object = wrapper.axBackingObject;
+        RefPtr<AXCoreObject> object = wrapper.axBackingObject;
         if (!object)
             break;
 
         if ([wrapper isAttachment] && ![[wrapper attachmentView] accessibilityIsIgnored])
             break;
 
-        AXCoreObject* parentObject = object->parentObjectUnignored();
+        RefPtr<AXCoreObject> parentObject = object->parentObjectUnignored();
         if (!parentObject)
             break;
 
@@ -293,7 +293,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (BOOL)hasImageControls
 {
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (!backingObject || !backingObject->isImage())
         return NO;
 
@@ -481,11 +481,11 @@ struct AccessibilityElementsResult {
 
         // After adding a base-select to its parent's children, inject the popover as
         // a sibling based on the reasoning above.
-        if (auto* select = dynamicDowncast<HTMLSelectElement>(child->node()); select && select->usesBaseAppearancePicker()) {
-            if (auto* popover = select->pickerPopoverElement()) {
+        if (RefPtr select = dynamicDowncast<HTMLSelectElement>(child->node()); select && select->usesBaseAppearancePicker()) {
+            if (RefPtr popover = select->pickerPopoverElement()) {
                 if (shouldCollectElements) {
                     CheckedPtr cache = downcast<AccessibilityObject>(child.get()).axObjectCache();
-                    if (auto* axPopover = cache ? cache->getOrCreate(*popover) : nullptr) {
+                    if (RefPtr axPopover = cache ? cache->getOrCreate(*popover) : nullptr) {
                         if (auto* popoverWrapper = axPopover->wrapper())
                             [result.elements addObject:popoverWrapper];
                     }
@@ -665,7 +665,7 @@ struct AccessibilityElementsResult {
 using AccessibilityRoleSet = HashSet<AccessibilityRole, IntHash<AccessibilityRole>, WTF::StrongEnumHashTraits<AccessibilityRole>>;
 static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descendant, const AccessibilityRoleSet& roles)
 {
-    auto* ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {
+    RefPtr ancestor = Accessibility::findAncestor(descendant, false, [&roles] (const auto& object) {
         return roles.contains(object.role());
     });
     return ancestor ? ancestor->wrapper() : nil;
@@ -728,7 +728,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    auto* ancestor = Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
+    RefPtr ancestor = Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
         return object.isFieldset();
     });
     return ancestor ? ancestor->wrapper() : nil;
@@ -755,7 +755,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
 - (uint64_t)_accessibilityTraitsFromAncestors
 {
     uint64_t traits = 0;
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
 
     // Trait information also needs to be gathered from the parents above the object.
     // The parentObject is needed instead of the unignoredParentObject, because a table might be ignored, but information still needs to be gathered from it.
@@ -848,7 +848,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
 {
     uint64_t traits = [self _axTextEntryTrait];
 
-    auto* backingObject = self.axBackingObject;
+    RefPtr<AXCoreObject> backingObject = self.axBackingObject;
     if (backingObject->isFocused())
         traits |= ([self _axHasTextCursorTrait] | [self _axTextOperationsAvailableTrait]);
     if (backingObject->isSecureField())
@@ -883,7 +883,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         break;
     case AccessibilityRole::ComboBox: {
         auto* node = self.axBackingObject->node();
-        auto* inputElement = dynamicDowncast<HTMLInputElement>(node);
+        RefPtr inputElement = dynamicDowncast<HTMLInputElement>(node);
         if ((inputElement && inputElement->isTextField()) || is<HTMLTextAreaElement>(node))
             traits |= [self _accessibilityTextEntryTraits];
         break;
@@ -1971,7 +1971,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     AX_ASSERT(object->isScrollArea());
 
     // Verify this is the top document. If not, we might need to go through the platform widget.
-    auto* frameView = object->documentFrameView();
+    RefPtr frameView = object->documentFrameView();
     RefPtr document = object->document();
     if (document && frameView && !document->isTopDocument())
         return frameView->platformWidget();

@@ -27,7 +27,6 @@ layout/integration/inline/LayoutIntegrationLineLayout.cpp
 [ iOS ] page/DOMTimer.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] page/ios/FrameIOS.mm

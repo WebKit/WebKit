@@ -3294,7 +3294,7 @@ String AccessibilityObject::embeddedImageDescription() const
 static RefPtr<Image> imageFromRenderer(RenderObject* renderer)
 {
     CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
-    auto* cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
+    RefPtr cachedImage = renderImage ? renderImage->cachedImage() : nullptr;
     return cachedImage ? cachedImage->image() : nullptr;
 }
 

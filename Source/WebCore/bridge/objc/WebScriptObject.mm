@@ -576,8 +576,8 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
         if (auto* jsHTMLElement = dynamicDowncast<JSHTMLElement>(object)) {
             // Plugin elements cache the instance internally.
-            if (auto* instance = downcast<ObjcInstance>(pluginInstance(protect(jsHTMLElement->wrapped()))))
-                return instance->getObject();
+            if (RefPtr instance = downcast<ObjcInstance>(pluginInstance(protect(jsHTMLElement->wrapped())).get()))
+                return retainPtr(instance->getObject()).autorelease();
         } else if (auto* runtimeObject = dynamicDowncast<ObjCRuntimeObject>(object)) {
             if (auto* instance = runtimeObject->getInternalObjCInstance())
                 return instance->getObject();

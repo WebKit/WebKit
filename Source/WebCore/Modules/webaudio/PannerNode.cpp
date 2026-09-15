@@ -110,26 +110,26 @@ PannerNode::~PannerNode()
 void PannerNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    AudioBus& destination = firstOutput->bus();
+    Ref destination = firstOutput->bus();
 
     CheckedPtr firstInput = input(0);
     if (!isInitialized() || !firstInput->isConnected()) {
-        destination.zero();
+        destination->zero();
         return;
     }
 
-    AudioBus& source = firstInput->bus();
+    Ref source = firstInput->bus();
 
     // The audio thread can't block on this lock, so we use tryLock() instead.
     if (!m_processLock.tryLock()) {
         // Too bad - tryLock() failed. We must be in the middle of changing the panner.
-        destination.zero();
+        destination->zero();
         return;
     }
     Locker locker { AdoptLock, m_processLock };
 
     if (!m_panner) {
-        destination.zero();
+        destination->zero();
         return;
     }
 
@@ -138,7 +138,7 @@ void PannerNode::process(size_t framesToProcess)
         if (context().isOfflineContext())
             m_hrtfDatabaseLoader->waitForLoaderThreadCompletion();
         else {
-            destination.zero();
+            destination->zero();
             return;
         }
     }
@@ -158,7 +158,7 @@ void PannerNode::process(size_t framesToProcess)
     double totalGain = distanceConeGain();
 
     // Apply gain in-place.
-    destination.copyWithGainFrom(destination, totalGain);
+    destination->copyWithGainFrom(destination, totalGain);
 }
 
 void PannerNode::processOnlyAudioParams(size_t framesToProcess)
@@ -525,9 +525,9 @@ auto PannerNode::calculateAzimuthElevation(const FloatPoint3D& position, const F
 auto PannerNode::azimuthElevation() -> const AzimuthElevation&
 {
     ASSERT(context().isAudioThread());
-    auto& listener = this->listener();
+    Ref listener = this->listener();
     if (!m_cachedAzimuthElevation)
-        m_cachedAzimuthElevation = calculateAzimuthElevation(position(), listener.position(), listener.orientation(), listener.upVector());
+        m_cachedAzimuthElevation = calculateAzimuthElevation(position(), listener->position(), listener->orientation(), listener->upVector());
     return *m_cachedAzimuthElevation;
 }
 
@@ -581,12 +581,12 @@ void PannerNode::invalidateCachedPropertiesIfNecessary()
     bool hasPositionChanged = m_lastPosition != lastPosition;
     auto lastOrientation = std::exchange(m_lastOrientation, orientation());
     bool hasOrientationChanged = m_lastOrientation != lastOrientation;
-    auto& listener = this->listener();
+    Ref listener = this->listener();
 
-    if (hasPositionChanged || listener.isPositionDirty() || listener.isOrientationDirty() || listener.isUpVectorDirty())
+    if (hasPositionChanged || listener->isPositionDirty() || listener->isOrientationDirty() || listener->isUpVectorDirty())
         m_cachedAzimuthElevation = std::nullopt;
 
-    if (hasPositionChanged || hasOrientationChanged || listener.isPositionDirty())
+    if (hasPositionChanged || hasOrientationChanged || listener->isPositionDirty())
         m_cachedConeGain = std::nullopt;
 }
 

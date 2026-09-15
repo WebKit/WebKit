@@ -77,7 +77,7 @@ DynamicsCompressorNode::~DynamicsCompressorNode()
 void DynamicsCompressorNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    AudioBus& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
 
     float threshold = m_threshold->finalValue();
     float knee = m_knee->finalValue();

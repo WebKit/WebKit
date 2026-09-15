@@ -59,7 +59,7 @@ public:
     virtual WebCore::Frame* frameForId(const Protocol::Network::FrameId&) = 0;
     WEBCORE_EXPORT virtual Protocol::Network::FrameId frameId(const WebCore::Frame*) = 0;
     virtual Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) = 0;
-    virtual WebCore::LocalFrame* assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) = 0;
+    virtual RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) = 0;
 
     // Assigning an ID is what makes frameForId() / assertFrame() able to resolve a frame, so a
     // caller that reports the frame to the frontend over a channel that computes the ID elsewhere
@@ -189,7 +189,7 @@ public:
     WebCore::Frame* frameForId(const Protocol::Network::FrameId&) final;
     WEBCORE_EXPORT Protocol::Network::FrameId frameId(const WebCore::Frame*) final;
     Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) final;
-    WebCore::LocalFrame* assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
+    RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
     Protocol::Network::FrameId takeFrame(const WebCore::Frame&) final;
     Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&) final;
 
@@ -216,7 +216,7 @@ public:
     WebCore::Frame* frameForId(const Protocol::Network::FrameId&) final;
     WEBCORE_EXPORT Protocol::Network::FrameId frameId(const WebCore::Frame*) final;
     Protocol::Network::LoaderId loaderId(WebCore::DocumentLoader*) final;
-    WebCore::LocalFrame* assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
+    RefPtr<WebCore::LocalFrame> assertFrame(Protocol::ErrorString&, const Protocol::Network::FrameId&) final;
     Protocol::Network::FrameId takeFrame(const WebCore::Frame&) final;
     Protocol::Network::LoaderId takeLoader(WebCore::DocumentLoader&) final;
 

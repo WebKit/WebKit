@@ -344,10 +344,10 @@ static bool NODELETE isDirectReference(const SVGElement& element)
         || element.hasTagName(textTag);
 }
 
-SVGGraphicsElement* SVGUseElement::visibleTargetGraphicsElement() const
+RefPtr<SVGGraphicsElement> SVGUseElement::visibleTargetGraphicsElement() const
 {
     RefPtr clone = this->targetClone();
-    auto* targetElement = dynamicDowncast<SVGGraphicsElement>(clone.get());
+    RefPtr targetElement = dynamicDowncast<SVGGraphicsElement>(clone.get());
     if (!targetElement)
         return nullptr;
 

@@ -108,23 +108,23 @@ AudioBufferSourceNode::~AudioBufferSourceNode()
 void AudioBufferSourceNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    auto& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
 
     if (!isInitialized()) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
     // The audio thread can't block on this lock, so we use tryLock() instead.
     if (!m_processLock.tryLock()) {
         // Too bad - tryLock() failed. We must be in the middle of changing buffers and were already outputting silence anyway.
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
     Locker locker { AdoptLock, m_processLock };
 
     if (!m_buffer) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
@@ -132,7 +132,7 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
     // In this case, if the buffer has just been changed and we're not quite ready yet, then just output silence.
     if (numberOfChannels() != m_buffer->numberOfChannels()) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
@@ -142,20 +142,20 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset);
 
     if (!bufferFramesToProcess) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
-    for (unsigned i = 0; i < outputBus.numberOfChannels(); ++i)
-        m_destinationChannels[i] = outputBus.channel(i)->mutableSpan();
+    for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
+        m_destinationChannels[i] = outputBus->channel(i)->mutableSpan();
 
     // Render by reading directly from the buffer.
     if (!renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess, startFrameOffset)) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
-    outputBus.clearSilentFlag();
+    outputBus->clearSilentFlag();
 }
 
 // Returns true if we're finished.

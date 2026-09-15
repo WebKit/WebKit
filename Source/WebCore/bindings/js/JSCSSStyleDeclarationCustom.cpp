@@ -52,9 +52,10 @@ using namespace JSC;
 WebCoreOpaqueRoot root(CSSStyleDeclaration* style)
 {
     ASSERT(style);
-    if (auto* parentRule = style->parentRule())
+    // Cannot ref on the GC thread.
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* parentRule = style->parentRule())
         return root(parentRule);
-    if (auto* styleSheet = style->parentStyleSheet())
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* styleSheet = style->parentStyleSheet())
         return root(styleSheet);
     if (SUPPRESS_UNCHECKED_LOCAL auto* parentElement = style->parentElement())
         return root(parentElement);

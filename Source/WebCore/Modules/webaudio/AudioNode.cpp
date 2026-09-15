@@ -197,8 +197,8 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
     if (inputIndex >= destination.numberOfInputs())
         return Exception { ExceptionCode::IndexSizeError, "Input index exceeds number of inputs"_s };
 
-    auto& context = this->context();
-    if (&context != &destination.context())
+    Ref context = this->context();
+    if (context.ptr() != &destination.context())
         return Exception { ExceptionCode::InvalidAccessError, "Source and destination nodes belong to different audio contexts"_s };
 
     CheckedPtr input = destination.input(inputIndex);
@@ -208,7 +208,7 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
         return Exception { ExceptionCode::InvalidAccessError, "Node has zero output channels"_s };
 
     RefPtr audioContext = dynamicDowncast<AudioContext>(context);
-    if (audioContext && &destination == &context.destination() && !audioContext->destination().isConnected())
+    if (audioContext && &destination == &context->destination() && !audioContext->destination().isConnected())
         audioContext->defaultDestinationWillBecomeConnected();
 
     input->connect(output.get());

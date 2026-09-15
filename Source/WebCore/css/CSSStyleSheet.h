@@ -115,8 +115,8 @@ public:
     const WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData>& adoptingTreeScopes() const LIFETIME_BOUND { return m_adoptingTreeScopes; }
 
     Document* ownerDocument() const;
-    CSSStyleSheet& rootStyleSheet();
-    const CSSStyleSheet& rootStyleSheet() const;
+    Ref<CSSStyleSheet> rootStyleSheet();
+    Ref<const CSSStyleSheet> rootStyleSheet() const;
     Style::Scope* NODELETE styleScope();
 
     const MQ::MediaQueryList& mediaQueries() const LIFETIME_BOUND { return m_mediaQueries; }

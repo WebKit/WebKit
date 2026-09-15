@@ -81,9 +81,9 @@ Protocol::Network::LoaderId LegacyIdentifierRegistry::loaderId(WebCore::Document
     }).iterator->value;
 }
 
-WebCore::LocalFrame* LegacyIdentifierRegistry::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
+RefPtr<WebCore::LocalFrame> LegacyIdentifierRegistry::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
-    auto* frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
+    RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;
@@ -143,9 +143,9 @@ Protocol::Network::LoaderId BackendIdentifierRegistry::loaderId(WebCore::Documen
     }).iterator->value;
 }
 
-WebCore::LocalFrame* BackendIdentifierRegistry::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
+RefPtr<WebCore::LocalFrame> BackendIdentifierRegistry::assertFrame(Protocol::ErrorString& errorString, const Protocol::Network::FrameId& frameId)
 {
-    auto* frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
+    RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(frameForId(frameId));
     if (!frame)
         errorString = "Missing frame for given frameId"_s;
     return frame;

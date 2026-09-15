@@ -42,7 +42,8 @@ using namespace JSC;
 bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
     JSTextTrackCue* jsTextTrackCue = downcast<JSTextTrackCue>(handle.slot()->asCell());
-    TextTrackCue& textTrackCue = jsTextTrackCue->wrapped();
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL TextTrackCue& textTrackCue = jsTextTrackCue->wrapped();
 
     if (!textTrackCue.isContextStopped() && textTrackCue.hasPendingActivity()) {
         if (reason) [[unlikely]]

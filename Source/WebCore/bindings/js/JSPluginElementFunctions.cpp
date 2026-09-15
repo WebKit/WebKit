@@ -40,13 +40,13 @@ using namespace HTMLNames;
 static JSC_DECLARE_HOST_FUNCTION(callPlugin);
 static JSC_DECLARE_CUSTOM_GETTER(pluginElementPropertyGetter);
 
-Instance* pluginInstance(HTMLElement& element)
+RefPtr<Instance> pluginInstance(HTMLElement& element)
 {
     // The plugin element holds an owning reference, so we don't have to.
     auto* pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
         return nullptr;
-    auto* instance = pluginElement->bindingsInstance();
+    RefPtr instance = pluginElement->bindingsInstance();
     if (!instance || !instance->rootObject())
         return nullptr;
     return instance;

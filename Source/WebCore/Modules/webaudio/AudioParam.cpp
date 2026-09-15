@@ -321,7 +321,7 @@ void AudioParam::calculateFinalValues(std::span<float> values, bool sampleAccura
         ASSERT(output);
 
         // Render audio from this output.
-        AudioBus& connectionBus = output->pull(0, AudioUtilities::renderQuantumSize);
+        Ref connectionBus = output->pull(0, AudioUtilities::renderQuantumSize);
 
         // Sum, with unity-gain.
         m_summingBus->sumFrom(connectionBus);

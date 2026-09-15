@@ -65,10 +65,10 @@ ConstantSourceNode::~ConstantSourceNode()
 void ConstantSourceNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    auto& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
     
-    if (!isInitialized() || !outputBus.numberOfChannels()) {
-        outputBus.zero();
+    if (!isInitialized() || !outputBus->numberOfChannels()) {
+        outputBus->zero();
         return;
     }
     
@@ -78,7 +78,7 @@ void ConstantSourceNode::process(size_t framesToProcess)
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess, startFrameOffset);
     
     if (!nonSilentFramesToProcess) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
     
@@ -87,20 +87,20 @@ void ConstantSourceNode::process(size_t framesToProcess)
         auto offsets = m_sampleAccurateValues.span();
         m_offset->calculateSampleAccurateValues(offsets.first(framesToProcess));
         if (nonSilentFramesToProcess > 0) {
-            memcpySpan(outputBus.channel(0)->mutableSpan().subspan(quantumFrameOffset), offsets.subspan(quantumFrameOffset, nonSilentFramesToProcess));
-            outputBus.clearSilentFlag();
+            memcpySpan(outputBus->channel(0)->mutableSpan().subspan(quantumFrameOffset), offsets.subspan(quantumFrameOffset, nonSilentFramesToProcess));
+            outputBus->clearSilentFlag();
         } else
-            outputBus.zero();
+            outputBus->zero();
         return;
     }
     
     float value = isSampleAccurate ? m_offset->finalValue() : m_offset->value();
     if (!value)
-        outputBus.zero();
+        outputBus->zero();
     else {
-        auto destination = outputBus.channel(0)->mutableSpan();
+        auto destination = outputBus->channel(0)->mutableSpan();
         std::ranges::fill(destination.subspan(quantumFrameOffset).first(nonSilentFramesToProcess), value);
-        outputBus.clearSilentFlag();
+        outputBus->clearSilentFlag();
     }
 }
 

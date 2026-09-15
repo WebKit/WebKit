@@ -147,9 +147,9 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
     // Get input and output busses.
     CheckedPtr firstInput = input(0);
-    AudioBus& inputBus = firstInput->bus();
+    Ref inputBus = firstInput->bus();
     CheckedPtr firstOutput = output(0);
-    AudioBus& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
 
     // Get input and output buffers. We double-buffer both the input and output sides.
     unsigned bufferIndex = this->bufferIndex();
@@ -158,13 +158,13 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     if (!m_bufferLocks[bufferIndex].tryLock()) {
         // We're late in handling the previous request. The main thread must be
         // very busy. The best we can do is clear out the buffer ourself here.
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
     Locker locker { AdoptLock, m_bufferLocks[bufferIndex] };
-    
-    AudioBuffer* inputBuffer = m_inputBuffers[bufferIndex].get();
-    AudioBuffer* outputBuffer = m_outputBuffers[bufferIndex].get();
+
+    RefPtr inputBuffer = m_inputBuffers[bufferIndex];
+    RefPtr outputBuffer = m_outputBuffers[bufferIndex];
 
     // Check the consistency of input and output buffers.
     unsigned numberOfInputChannels = m_internalInputBus->numberOfChannels();
@@ -184,7 +184,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     if (!isFramesToProcessGood)
         return;
 
-    unsigned numberOfOutputChannels = outputBus.numberOfChannels();
+    unsigned numberOfOutputChannels = outputBus->numberOfChannels();
 
     bool channelsAreGood = (numberOfInputChannels == m_numberOfInputChannels) && (numberOfOutputChannels == m_numberOfOutputChannels);
     ASSERT(channelsAreGood);
@@ -199,7 +199,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
     // Copy from the output buffer to the output. 
     for (unsigned i = 0; i < numberOfOutputChannels; ++i)
-        memcpySpan(outputBus.channel(i)->mutableSpan(), outputBuffer->rawChannelData(i).subspan(m_bufferReadWriteIndex, framesToProcess));
+        memcpySpan(outputBus->channel(i)->mutableSpan(), outputBuffer->rawChannelData(i).subspan(m_bufferReadWriteIndex, framesToProcess));
 
     // Update the buffering index.
     m_bufferReadWriteIndex = (m_bufferReadWriteIndex + framesToProcess) % bufferSize();
@@ -232,8 +232,8 @@ void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
 {
     ASSERT(isMainThread());
 
-    AudioBuffer* inputBuffer = m_inputBuffers[bufferIndex].get();
-    AudioBuffer* outputBuffer = m_outputBuffers[bufferIndex].get();
+    RefPtr inputBuffer = m_inputBuffers[bufferIndex];
+    RefPtr outputBuffer = m_outputBuffers[bufferIndex];
     ASSERT(outputBuffer);
     if (!outputBuffer)
         return;

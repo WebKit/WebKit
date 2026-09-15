@@ -75,17 +75,17 @@ void AudioBasicProcessorNode::uninitialize()
 void AudioBasicProcessorNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    AudioBus& destinationBus = firstOutput->bus();
+    Ref destinationBus = firstOutput->bus();
 
     if (!isInitialized() || !processor() || processor()->numberOfChannels() != numberOfChannels())
-        destinationBus.zero();
+        destinationBus->zero();
     else {
         CheckedPtr firstInput = input(0);
-        AudioBus& sourceBus = firstInput->bus();
+        Ref sourceBus = firstInput->bus();
 
         // FIXME: if we take "tail time" into account, then we can avoid calling processor()->process() once the tail dies down.
         if (!firstInput->isConnected())
-            sourceBus.zero();
+            sourceBus->zero();
 
         processor()->process(sourceBus, destinationBus, framesToProcess);  
     }

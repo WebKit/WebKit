@@ -148,9 +148,9 @@ bool FEMorphologySoftwareApplier::applyPlatform(PixelBuffer& sourceBuffer, Pixel
 
 bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Ref<FilterImage>> inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
-    auto destinationBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    RefPtr destinationBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationBuffer)
         return false;
 
@@ -164,7 +164,7 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     auto absoluteRadius = flooredIntSize(filter.scaledByFilterScale(radius));
 
     if (isDegenerate(absoluteRadius)) {
-        input.copyPixelBuffer(*destinationBuffer, effectDrawingRect);
+        input->copyPixelBuffer(*destinationBuffer, effectDrawingRect);
         return true;
     }
 
@@ -172,11 +172,11 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, std::span<const Re
     int radiusY = std::min(effectDrawingRect.height() - 1, absoluteRadius.height());
 
     if (isDegenerate({ radiusX, radiusY })) {
-        input.copyPixelBuffer(*destinationBuffer, effectDrawingRect);
+        input->copyPixelBuffer(*destinationBuffer, effectDrawingRect);
         return true;
     }
 
-    RefPtr sourceBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
+    RefPtr sourceBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
     if (!sourceBuffer)
         return false;
 

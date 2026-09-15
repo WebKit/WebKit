@@ -1164,13 +1164,13 @@ void DatabaseTracker::removeDeletedOpenedDatabases() WTF_IGNORES_THREAD_SAFETY_A
                 }
 
                 bool foundDeletedDatabase = false;
-                for (auto& db : databases.value) {
+                for (Ref db : databases.value) {
                     // We are done if this database has already been marked as deleted.
-                    if (db.deleted())
+                    if (db->deleted())
                         continue;
 
                     // If this database has been deleted or if its database file no longer matches the current version, this database is no longer valid and it should be marked as deleted.
-                    if (databaseFileName.isNull() || databaseFileName != FileSystem::pathFileName(db.fileNameIsolatedCopy())) {
+                    if (databaseFileName.isNull() || databaseFileName != FileSystem::pathFileName(db->fileNameIsolatedCopy())) {
                         deletedDatabases.append(db);
                         foundDeletedDatabase = true;
                     }

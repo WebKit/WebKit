@@ -290,7 +290,8 @@ WebCoreOpaqueRoot CSSStyleSheet::opaqueRootForGCThread()
     if (m_ownerNode)
         return root(m_ownerNode.get());
     if (SUPPRESS_UNCOUNTED_LOCAL SUPPRESS_UNCHECKED_LOCAL CSSImportRule* ownerRule = m_ownerRule.get()) {
-        if (auto* parentSheet = ownerRule->parentStyleSheet())
+        // Cannot ref on the GC thread, same as ownerRule above.
+        if (SUPPRESS_UNCOUNTED_LOCAL auto* parentSheet = ownerRule->parentStyleSheet())
             return parentSheet->opaqueRootForGCThread();
     }
     return WebCoreOpaqueRoot { this };
@@ -493,15 +494,15 @@ CSSStyleSheet* CSSStyleSheet::parentStyleSheet() const
     return ownerRule ? ownerRule->parentStyleSheet() : nullptr;
 }
 
-CSSStyleSheet& CSSStyleSheet::rootStyleSheet()
+Ref<CSSStyleSheet> CSSStyleSheet::rootStyleSheet()
 {
-    auto* root = this;
+    RefPtr root = this;
     while (root->parentStyleSheet())
         root = root->parentStyleSheet();
-    return *root;
+    return root.releaseNonNull();
 }
 
-const CSSStyleSheet& CSSStyleSheet::rootStyleSheet() const
+Ref<const CSSStyleSheet> CSSStyleSheet::rootStyleSheet() const
 {
     return const_cast<CSSStyleSheet&>(*this).rootStyleSheet();
 }

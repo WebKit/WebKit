@@ -33,6 +33,7 @@
 #include "FloatPoint3D.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -41,8 +42,10 @@ class BaseAudioContext;
 template<typename> class ExceptionOr;
 
 // AudioListener maintains the state of the listener in the audio scene as defined in the OpenAL specification.
+// It is ref'd from the audio thread (PannerNode), so refcounting must be atomic. Destruction is
+// marshalled to the main thread because releasing the AudioParams must happen there.
 
-class AudioListener : public RefCounted<AudioListener> {
+class AudioListener : public ThreadSafeRefCounted<AudioListener, WTF::DestructionThread::Main> {
 public:
     static Ref<AudioListener> create(BaseAudioContext& context)
     {

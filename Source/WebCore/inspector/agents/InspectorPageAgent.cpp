@@ -772,7 +772,7 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
     return m_inspectedPage->inspectorController().identifierRegistry().loaderId(loader);
 }
 
-LocalFrame* InspectorPageAgent::assertFrame(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
+RefPtr<LocalFrame> InspectorPageAgent::assertFrame(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
     return m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
 }
@@ -915,15 +915,15 @@ Ref<Inspector::Protocol::Page::FrameResourceTree> InspectorPageAgent::buildObjec
 
     // RemoteFrame: build a stub tree with no subresources or children.
     if (auto* remoteFrame = dynamicDowncast<RemoteFrame>(frame)) {
-        auto& origin = remoteFrame->frameDocumentSecurityOriginOrOpaque();
+        Ref origin = remoteFrame->frameDocumentSecurityOriginOrOpaque();
         auto frameObject = Inspector::Protocol::Page::Frame::create()
             .setId(Inspector::IdentifierRegistry::protocolFrameId(remoteFrame->frameID(), remoteFrame->hostingProcessIdentifier()))
             .setLoaderId(emptyString())
-            .setUrl(origin.toRawString())
+            .setUrl(origin->toRawString())
             .setMimeType("text/html"_s)
-            .setSecurityOrigin(origin.toRawString())
+            .setSecurityOrigin(origin->toRawString())
             .release();
-        if (auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent()))
+        if (RefPtr parent = dynamicDowncast<LocalFrame>(frame->tree().parent()))
             frameObject->setParentId(frameId(parent));
         if (RefPtr ownerElement = remoteFrame->ownerElement()) {
             String name = ownerElement->getNameAttribute();

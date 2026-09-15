@@ -34,7 +34,8 @@ namespace WebCore {
 template<typename Visitor>
 void JSNavigateEvent::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    auto& event = wrapped();
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL auto& event = wrapped();
     event.infoWrapper().visitInGCThread(visitor);
     addWebCoreOpaqueRoot(visitor, &event.signal());
 }

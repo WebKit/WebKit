@@ -67,22 +67,22 @@ ChannelSplitterNode::ChannelSplitterNode(BaseAudioContext& context, unsigned num
 void ChannelSplitterNode::process(size_t framesToProcess)
 {
     CheckedPtr firstInput = input(0);
-    AudioBus& source = firstInput->bus();
-    ASSERT_UNUSED(framesToProcess, framesToProcess == source.length());
+    Ref source = firstInput->bus();
+    ASSERT_UNUSED(framesToProcess, framesToProcess == source->length());
 
-    unsigned numberOfSourceChannels = source.numberOfChannels();
+    unsigned numberOfSourceChannels = source->numberOfChannels();
     
     for (unsigned i = 0; i < numberOfOutputs(); ++i) {
         CheckedPtr currentOutput = output(i);
-        AudioBus& destination = currentOutput->bus();
+        Ref destination = currentOutput->bus();
 
         if (i < numberOfSourceChannels) {
             // Split the channel out if it exists in the source.
             // It would be nice to avoid the copy and simply pass along pointers, but this becomes extremely difficult with fanout and fanin.
-            destination.channel(0)->copyFrom(source.channel(i));
+            destination->channel(0)->copyFrom(source->channel(i));
         } else if (currentOutput->renderingFanOutCount() > 0) {
             // Only bother zeroing out the destination if it's connected to anything
-            destination.zero();
+            destination->zero();
         }
     }
 }

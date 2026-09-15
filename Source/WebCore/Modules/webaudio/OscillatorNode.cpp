@@ -341,10 +341,10 @@ double OscillatorNode::processKRate(int n, std::span<float> destination, double 
 void OscillatorNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    auto& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
 
-    if (!isInitialized() || !outputBus.numberOfChannels()) {
-        outputBus.zero();
+    if (!isInitialized() || !outputBus->numberOfChannels()) {
+        outputBus->zero();
         return;
     }
 
@@ -355,14 +355,14 @@ void OscillatorNode::process(size_t framesToProcess)
     // The audio thread can't block on this lock, so we use tryLock() instead.
     if (!m_processLock.tryLock()) {
         // Too bad - tryLock() failed. We must be in the middle of changing wave-tables.
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
     Locker locker { AdoptLock, m_processLock };
 
     // We must access m_periodicWave only inside the lock.
     if (!m_periodicWave.get()) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
@@ -372,11 +372,11 @@ void OscillatorNode::process(size_t framesToProcess)
     updateSchedulingInfo(framesToProcess, outputBus, quantumFrameOffset, nonSilentFramesToProcess, startFrameOffset);
 
     if (!nonSilentFramesToProcess) {
-        outputBus.zero();
+        outputBus->zero();
         return;
     }
 
-    auto destination = outputBus.channel(0)->mutableSpan();
+    auto destination = outputBus->channel(0)->mutableSpan();
 
     ASSERT(quantumFrameOffset <= framesToProcess);
 
@@ -430,7 +430,7 @@ void OscillatorNode::process(size_t framesToProcess)
 
     m_virtualReadIndex = virtualReadIndex;
 
-    outputBus.clearSilentFlag();
+    outputBus->clearSilentFlag();
 }
 
 void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)

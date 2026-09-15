@@ -33,7 +33,8 @@ namespace WebCore {
 
 bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::AbstractSlotVisitor& visitor, ASCIILiteral* reason)
 {
-    auto& abortSignal = downcast<JSAbortSignal>(handle.slot()->asCell())->wrapped();
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL auto& abortSignal = downcast<JSAbortSignal>(handle.slot()->asCell())->wrapped();
     if (abortSignal.aborted())
         return false;
 

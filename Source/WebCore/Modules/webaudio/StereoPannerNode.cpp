@@ -70,15 +70,15 @@ StereoPannerNode::~StereoPannerNode()
 void StereoPannerNode::process(size_t framesToProcess)
 {
     CheckedPtr firstOutput = output(0);
-    AudioBus& destination = firstOutput->bus();
+    Ref destination = firstOutput->bus();
 
     CheckedPtr firstInput = input(0);
     if (!isInitialized() || !firstInput->isConnected()) {
-        destination.zero();
+        destination->zero();
         return;
     }
     
-    AudioBus& source = firstInput->bus();
+    Ref source = firstInput->bus();
 
     if (m_pan->hasSampleAccurateValues() && m_pan->automationRate() == AutomationRate::ARate) {
         auto panValues = m_sampleAccurateValues.span().first(framesToProcess);

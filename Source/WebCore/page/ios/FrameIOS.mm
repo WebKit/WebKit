@@ -189,7 +189,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
         return CGRectZero;
 
     // FIXME: Why this layer check?
-    RenderLayer* layer = m_doc->renderBox()->layer();
+    CheckedPtr layer = m_doc->renderBox()->layer();
     if (!layer)
         return CGRectZero;
 
@@ -224,7 +224,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
             }
 #endif
             IntRect targetRect = renderer->absoluteBoundingBoxRect(true);
-            for (Widget* currView = &(renderer->view().frameView()); currView && currView != view(); currView = currView->parent())
+            for (RefPtr<Widget> currView = &renderer->view().frameView(); currView && currView != view(); currView = currView->parent())
                 targetRect = currView->convertToContainingView(targetRect);
 
             return targetRect;
@@ -508,7 +508,7 @@ NSArray *LocalFrame::interpretationsForCurrentRoot() const
 
     unsigned combinationsSoFar = 1;
 
-    for (auto& node : intersectingNodes(rangeOfRootContents)) {
+    for (Ref node : intersectingNodes(rangeOfRootContents)) {
         for (auto& marker : protect(document())->markers().markersFor(node, DocumentMarkerType::DictationPhraseWithAlternatives)) {
             auto& alternatives = std::get<Vector<String>>(marker->data());
 

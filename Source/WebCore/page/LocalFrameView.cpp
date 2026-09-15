@@ -421,7 +421,7 @@ void LocalFrameView::clear()
 #if PLATFORM(IOS_FAMILY)
     // To avoid flashes of white, disable tile updates immediately when view is cleared at the beginning of a page load.
     // Tiling will be re-enabled from UIKit via [WAKWindow setTilingMode:] when we have content to draw.
-    if (LegacyTileCache* tileCache = legacyTileCache())
+    if (RefPtr tileCache = legacyTileCache())
         tileCache->setTilingMode(LegacyTileCache::Disabled);
 #endif
 }
@@ -430,7 +430,7 @@ void LocalFrameView::clear()
 void LocalFrameView::didReplaceMultipartContent()
 {
     // Re-enable tile updates that were disabled in clear().
-    if (LegacyTileCache* tileCache = legacyTileCache())
+    if (RefPtr tileCache = legacyTileCache())
         tileCache->setTilingMode(LegacyTileCache::Normal);
 }
 #endif
@@ -963,7 +963,7 @@ bool LocalFrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFra
         return false;
 
 #if PLATFORM(IOS_FAMILY)
-    if (LegacyTileCache* tileCache = legacyTileCache())
+    if (RefPtr tileCache = legacyTileCache())
         tileCache->doPendingRepaints();
 #endif
 
@@ -4256,7 +4256,7 @@ void LocalFrameView::adjustTiledBackingCoverage()
     if (renderView && renderView->layer() && renderView->layer()->backing())
         renderView->layer()->backing()->adjustTiledBackingCoverage();
 #if PLATFORM(IOS_FAMILY)
-    if (LegacyTileCache* tileCache = legacyTileCache())
+    if (RefPtr tileCache = legacyTileCache())
         tileCache->setSpeculativeTileCreationEnabled(m_speculativeTilingEnabled);
 #endif
 }

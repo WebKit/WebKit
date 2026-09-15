@@ -125,7 +125,8 @@ JSC::JSValue JSIDBRequest::result(JSC::JSGlobalObject& lexicalGlobalObject) cons
 template<typename Visitor>
 void JSIDBRequest::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
-    auto& request = wrapped();
+    // Cannot ref on the GC thread.
+    SUPPRESS_UNCOUNTED_LOCAL auto& request = wrapped();
     request.resultWrapper().visitInGCThread(visitor);
 }
 

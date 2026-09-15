@@ -445,7 +445,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
     if (!m_quirksData.isBehaviorEnabled(QuirkBehaviors::shouldDispatchSimulatedMouseEventsQuirk))
         return false;
 
-    auto* loader = m_document->loader();
+    RefPtr loader = m_document->loader();
     if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
         return false;
 

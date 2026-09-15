@@ -51,7 +51,7 @@ public:
     {
         return adoptRef(*new ScriptedAnimationController(document));
     }
-    ~ScriptedAnimationController();
+    WEBCORE_EXPORT ~ScriptedAnimationController();
     void clearDocumentPointer() { m_document = nullptr; }
 
     WEBCORE_EXPORT Seconds NODELETE interval() const;

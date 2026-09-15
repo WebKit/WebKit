@@ -55,7 +55,8 @@ template<typename Visitor>
 void JSIDBCursor::visitAdditionalChildrenInGCThread(Visitor& visitor)
 {
     auto& cursor = wrapped();
-    if (auto* request = cursor.request())
+    // Cannot ref on the GC thread.
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* request = cursor.request())
         addWebCoreOpaqueRoot(visitor, *request);
     cursor.keyWrapper().visitInGCThread(visitor);
     cursor.primaryKeyWrapper().visitInGCThread(visitor);

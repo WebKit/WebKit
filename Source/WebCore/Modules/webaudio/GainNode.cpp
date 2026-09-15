@@ -70,13 +70,13 @@ void GainNode::process(size_t framesToProcess)
     // Then we can avoid all of the following:
 
     CheckedPtr firstOutput = output(0);
-    AudioBus& outputBus = firstOutput->bus();
+    Ref outputBus = firstOutput->bus();
 
     CheckedPtr firstInput = input(0);
     if (!isInitialized() || !firstInput->isConnected())
-        outputBus.zero();
+        outputBus->zero();
     else {
-        AudioBus& inputBus = firstInput->bus();
+        Ref inputBus = firstInput->bus();
 
         if (gain().hasSampleAccurateValues() && gain().automationRate() == AutomationRate::ARate) {
             // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
@@ -84,16 +84,16 @@ void GainNode::process(size_t framesToProcess)
             if (framesToProcess <= m_sampleAccurateGainValues.size()) {
                 auto gainValues = m_sampleAccurateGainValues.span().first(framesToProcess);
                 gain().calculateSampleAccurateValues(gainValues);
-                outputBus.copyWithSampleAccurateGainValuesFrom(inputBus, gainValues);
+                outputBus->copyWithSampleAccurateGainValuesFrom(inputBus, gainValues);
             }
         } else {
             // Apply the gain with de-zippering into the output bus.
             float gain = this->gain().hasSampleAccurateValues() ? this->gain().finalValue() : this->gain().value();
             if (!gain) {
                 // If the gain is 0 just zero the bus.
-                outputBus.zero();
+                outputBus->zero();
             } else
-                outputBus.copyWithGainFrom(inputBus, gain);
+                outputBus->copyWithGainFrom(inputBus, gain);
         }
     }
 }

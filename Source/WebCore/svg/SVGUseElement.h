@@ -49,7 +49,7 @@ public:
     RefPtr<SVGElement> clipChild() const;
     RenderElement* rendererClipChild() const;
 
-    SVGGraphicsElement* visibleTargetGraphicsElement() const;
+    RefPtr<SVGGraphicsElement> visibleTargetGraphicsElement() const;
 
     const SVGLengthValue& x() const LIFETIME_BOUND { return m_x->currentValue(); }
     const SVGLengthValue& y() const LIFETIME_BOUND { return m_y->currentValue(); }

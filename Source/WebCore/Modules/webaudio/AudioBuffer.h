@@ -36,6 +36,7 @@
 #include <JavaScriptCore/TypedArrayAdaptersForwardDeclarations.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Lock.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
@@ -44,7 +45,9 @@ class JSDOMGlobalObject;
 class WebCoreOpaqueRoot;
 template<typename> class ExceptionOr;
 
-class AudioBuffer : public ScriptWrappable, public RefCounted<AudioBuffer> {
+// Destruction is marshalled to the main thread because the final deref may happen on the audio
+// thread, and releasing the channels touches Float32Array / JS wrappers.
+class AudioBuffer : public ScriptWrappable, public ThreadSafeRefCounted<AudioBuffer, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED(AudioBuffer);
 public:
     enum class LegacyPreventDetaching : bool { No, Yes };
