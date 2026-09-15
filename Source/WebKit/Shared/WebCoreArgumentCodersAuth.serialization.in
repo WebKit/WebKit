@@ -238,6 +238,15 @@ enum class WebCore::AuthenticatorAttachment : uint8_t {
     bool expectCancel;
     bool supportClientPin;
     bool supportInternalUV;
+    bool supportHmacSecret;
+    bool supportHmacSecretMc;
+    bool expectKeyAgreement;
+    bool keyAgreementError;
+    bool malformedKeyAgreement;
+    bool requireHmacSecretExtension;
+    bool rejectHmacSecretExtension;
+    bool rejectPinUvAuth;
+    String hmacSecretOutputBase64;
     Vector<uint8_t> pinProtocols;
     int64_t maxCredentialCountInList;
     int64_t maxCredentialIdLength;
