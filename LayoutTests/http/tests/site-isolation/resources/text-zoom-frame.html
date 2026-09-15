@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body { margin: 0; padding: 0; }
+#text { font: 20px/1 monospace; white-space: nowrap; display: inline-block; }
+</style>
+</head>
+<body>
+<span id="text">MMMMMMMMMM</span>
+<script>
+window.addEventListener('message', () => {
+    const box = document.getElementById('text').getBoundingClientRect();
+    parent.postMessage({
+        pid: window.internals ? internals.processIdentifier : 0,
+        textW: box.width,
+        textH: box.height
+    }, '*');
+});
+</script>
+</body>
+</html>
