@@ -1,0 +1,2 @@
+PASS: The initial view paints red.
+PASS: Red content returns after reparenting an unchanged view.
