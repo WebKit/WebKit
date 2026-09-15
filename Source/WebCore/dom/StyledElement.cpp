@@ -129,7 +129,7 @@ CSSStyleProperties* StyledElement::inlineStyleCSSOMWrapper()
 
 static bool usesStyleBasedEditability(const StyleProperties& properties)
 {
-    return properties.getPropertyCSSValue(CSSPropertyWebkitUserModify);
+    return properties.hasProperty(CSSPropertyWebkitUserModify);
 }
 
 void StyledElement::setInlineStyleFromString(const AtomString& newStyleString)
