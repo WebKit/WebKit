@@ -437,6 +437,17 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             break;
     }
 
+    switch (renderer->style().cursorType()) {
+    case WebCore::CursorType::EWResize:
+    case WebCore::CursorType::NSResize:
+    case WebCore::CursorType::ColumnResize:
+    case WebCore::CursorType::RowResize:
+        info.hasDirectionalResizeCursor = true;
+        break;
+    default:
+        break;
+    }
+
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     if (!info.isRangeInput) {
         constexpr auto sliderHitType = hitType | OptionSet {

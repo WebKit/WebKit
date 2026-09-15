@@ -1130,6 +1130,26 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .bug("https://webkit.org/b/324040", "Cannot press and drag over some custom sliders"),
+        arguments: SVGSliderVariant.dragCases
+    )
+    func pressDragOverSVGSliderChangesValue(
+        variant: SVGSliderVariant,
+        isStyleAdjusted: Bool,
+        dragStart: SVGSliderDragStart
+    ) async throws {
+        try await loadSVGDragSlider(variant)
+        if isStyleAdjusted {
+            try await page.callJavaScript(
+                arguments: ["elementID": "slider-group", "interactive": false],
+                script: styleAdjustmentForCustomWidgetScript
+            )
+            await page.waitForNextPresentationUpdate()
+        }
+        try await expectDragReachesContent(startingFrom: dragStart)
+    }
+
+    @Test(
         .bug("https://webkit.org/b/323383", "<model> element in orbit stage mode does not rotate on press drag"),
         arguments: [false, true]
     )
@@ -1954,6 +1974,109 @@ extension AppKitGesturesTests.Basic {
             await document.getElementById("model").ready;
             """
         )
+    }
+
+    private func loadSVGDragSlider(_ variant: SVGSliderVariant) async throws {
+        let base = try #require(Bundle.testResources.url(forResource: "svg-drag-slider", withExtension: "html"))
+        let url = base.appending(queryItems: [URLQueryItem(name: "variant", value: variant.queryValue)])
+        try await page.load(url).wait()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    struct SVGSliderVariant: Sendable, Equatable, CustomTestStringConvertible {
+        let queryValue: String
+
+        let testDescription: String
+
+        static let plain = Self(queryValue: "plain", testDescription: "plain")
+
+        /// `cursor: ew-resize`.
+        static let directionalCursor = Self(queryValue: "cursor", testDescription: "directional cursor")
+
+        /// `role="slider"`.
+        static let ariaRoleOnShape = Self(queryValue: "role-on-shape", testDescription: "ARIA role on shape")
+
+        /// The only invalid combination we want to filter out: .plain + !isStyleAdjusted
+        static let dragCases: [(Self, Bool, SVGSliderDragStart)] = {
+            var cases: [(Self, Bool, SVGSliderDragStart)] = []
+
+            for variant in [Self.directionalCursor, .ariaRoleOnShape, .plain] {
+                for isStyleAdjusted in [false, true] where variant != .plain || isStyleAdjusted {
+                    for dragStart in SVGSliderDragStart.allCases {
+                        cases.append((variant, isStyleAdjusted, dragStart))
+                    }
+                }
+            }
+
+            return cases
+        }()
+    }
+
+    enum SVGSliderDragStart: Sendable, CaseIterable, CustomTestStringConvertible {
+        case onHandle
+
+        case onTrack
+
+        var fractionAcrossSlider: Double {
+            switch self {
+            case .onHandle: 0.5
+            case .onTrack: 0.25
+            }
+        }
+
+        var testDescription: String {
+            switch self {
+            case .onHandle: "from handle"
+            case .onTrack: "from track"
+            }
+        }
+    }
+
+    private func expectDragReachesContent(startingFrom start: SVGSliderDragStart) async throws {
+        try await dragAcrossSVGSlider(from: start)
+
+        let value = try await sliderValue()
+        let events = try await sliderEvents()
+        let scroll = try await settledScrollPosition()
+
+        #expect(value == 0)
+        #expect(scroll == .zero)
+
+        #expect(events.first == "mousedown")
+        #expect(events.last == "mouseup")
+        #expect(Set(events) == ["mousedown", "mousemove", "mouseup"])
+    }
+
+    private func dragAcrossSVGSlider(from start: SVGSliderDragStart) async throws {
+        let bounds = try await screenBounds(ofElementWithID: "slider")
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: CGPoint(x: bounds.minX + bounds.width * start.fractionAcrossSlider, y: bounds.center.y),
+                end: CGPoint(x: bounds.minX, y: bounds.center.y),
+                duration: .seconds(0.2),
+                pressAndWait: .seconds(0.2)
+            )
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    private func sliderValue() async throws -> Double {
+        try await page.callJavaScript(returning: Double.self) {
+            """
+            return window.sliderValue;
+            """
+        }
+    }
+
+    private func sliderEvents() async throws -> [String] {
+        try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.sliderEvents;
+            """
+        }
     }
 
     private func entityTransform() async throws -> [Double] {

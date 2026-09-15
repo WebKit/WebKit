@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        margin: 0;
+        width: 2000px;
+        height: 2000px;
+        font: 16px -apple-system, sans-serif;
+    }
+
+    #container {
+        padding: 20px;
+    }
+</style>
+</head>
+<body>
+    <div id="container"></div>
+
+<script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const TRACK_START = 20;
+    const TRACK_END = 620;
+    const MAX_VALUE = 10;
+    const INITIAL_VALUE = 5;
+
+    window.sliderValue = INITIAL_VALUE;
+    window.sliderEvents = [];
+
+    const container = document.getElementById("container");
+
+    // Inspired by https://github.com/johnwalley/d3-simple-slider.
+    function makeSVGSlider(options) {
+        const svg = document.createElementNS(SVG_NS, "svg");
+        svg.setAttribute("id", "slider");
+        svg.setAttribute("width", 640);
+        svg.setAttribute("height", 60);
+        container.appendChild(svg);
+
+        const group = document.createElementNS(SVG_NS, "g");
+        group.setAttribute("id", "slider-group");
+        if (options.cursor)
+            group.setAttribute("cursor", options.cursor);
+        svg.appendChild(group);
+
+        const track = document.createElementNS(SVG_NS, "line");
+        track.setAttribute("x1", TRACK_START);
+        track.setAttribute("x2", TRACK_END);
+        track.setAttribute("y1", 30);
+        track.setAttribute("y2", 30);
+        track.setAttribute("stroke", "#bbb");
+        track.setAttribute("stroke-width", 6);
+        group.appendChild(track);
+
+        const overlay = document.createElementNS(SVG_NS, "line");
+        overlay.setAttribute("x1", TRACK_START);
+        overlay.setAttribute("x2", TRACK_END);
+        overlay.setAttribute("y1", 30);
+        overlay.setAttribute("y2", 30);
+        overlay.setAttribute("stroke", "transparent");
+        overlay.setAttribute("stroke-width", 40);
+        if (options.roleOnShape)
+            overlay.setAttribute("role", "slider");
+        group.appendChild(overlay);
+
+        const handle = document.createElementNS(SVG_NS, "path");
+        handle.setAttribute("d", "M-5.5,-5.5v10l6,5.5l6,-5.5v-10z");
+        handle.setAttribute("fill", "white");
+        handle.setAttribute("stroke", "#777");
+        handle.setAttribute("aria-label", "handle");
+        handle.setAttribute("aria-valuemin", 0);
+        handle.setAttribute("aria-valuemax", MAX_VALUE);
+        handle.setAttribute("aria-orientation", "horizontal");
+        handle.setAttribute("tabindex", 0);
+        if (options.roleOnShape)
+            handle.setAttribute("role", "slider");
+        group.appendChild(handle);
+
+        function setValue(value) {
+            value = Math.max(0, Math.min(MAX_VALUE, value));
+            window.sliderValue = value;
+            handle.setAttribute("aria-valuenow", value);
+            const x = TRACK_START + (value / MAX_VALUE) * (TRACK_END - TRACK_START);
+            handle.setAttribute("transform", `translate(${x},30)`);
+        }
+
+        function setValueFromClientX(clientX) {
+            const rect = svg.getBoundingClientRect();
+            const x = clientX - rect.left;
+            setValue(Math.round((x - TRACK_START) / (TRACK_END - TRACK_START) * MAX_VALUE));
+        }
+
+        function noevent(event) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+
+        function mousemoved(event) {
+            noevent(event);
+            window.sliderEvents.push("mousemove");
+            setValueFromClientX(event.clientX);
+        }
+
+        function mouseupped(event) {
+            window.removeEventListener("mousemove", mousemoved, { capture: true });
+            window.removeEventListener("mouseup", mouseupped, { capture: true });
+            window.removeEventListener("dragstart", noevent, { capture: true });
+            window.removeEventListener("selectstart", noevent, { capture: true });
+            noevent(event);
+            window.sliderEvents.push("mouseup");
+            setValueFromClientX(event.clientX);
+        }
+
+        group.addEventListener("mousedown", event => {
+            if (event.ctrlKey || event.button)
+                return;
+
+            window.addEventListener("mousemove", mousemoved, { capture: true, passive: false });
+            window.addEventListener("mouseup", mouseupped, { capture: true, passive: false });
+            window.addEventListener("dragstart", noevent, { capture: true, passive: false });
+            window.addEventListener("selectstart", noevent, { capture: true, passive: false });
+            event.stopImmediatePropagation();
+
+            window.sliderEvents.push("mousedown");
+            setValueFromClientX(event.clientX);
+        });
+
+        setValue(INITIAL_VALUE);
+    }
+
+    const variants = {
+        "plain": () => makeSVGSlider({}),
+        "cursor": () => makeSVGSlider({ cursor: "ew-resize" }),
+        "role-on-shape": () => makeSVGSlider({ roleOnShape: true }),
+    };
+
+    const requested = new URLSearchParams(location.search).get("variant") ?? "plain";
+    const build = variants[requested];
+    if (!build)
+        throw new Error(`unknown variant "${requested}"; expected one of ${Object.keys(variants).join(", ")}`);
+    build();
+</script>
+</body>
+</html>
