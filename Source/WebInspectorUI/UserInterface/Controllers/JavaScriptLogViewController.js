@@ -242,7 +242,9 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             handler(result !== InspectorBackend.Enum.Runtime.SyntaxErrorType.Recoverable);
         }
 
-        WI.runtimeManager.activeExecutionContext.target.RuntimeAgent.parse(text, parseFinished.bind(this));
+        let activeCallFrame = WI.runtimeManager.useActiveCallFrame ? WI.debuggerManager.activeCallFrame : null;
+        let target = activeCallFrame?.target || WI.runtimeManager.activeExecutionContext.target;
+        target.RuntimeAgent.parse(text, parseFinished.bind(this));
     }
 
     consolePromptTextCommitted(prompt, text)
