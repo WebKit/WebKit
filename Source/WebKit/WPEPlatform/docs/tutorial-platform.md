@@ -34,7 +34,7 @@ directly into an application that constructs the [class@Display]
 itself. The module is optional — this page focuses on writing the
 implementation; how WebKit discovers modules at runtime is a separate
 topic.
-<!-- FIXME: link backend-model.html (discovery) and overview.html model once available/landed -->
+<!-- FIXME: link backend-model.html (discovery) once that page lands -->
 
 The conceptual model behind these classes is introduced in
 [Overview](overview.html). The examples here use the public

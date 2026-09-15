@@ -26,7 +26,8 @@ specific objects. For example the Wayland implementation exposes its
 underlying `wl_display`, `wl_compositor`, and `wl_surface` objects,
 which makes it possible to add support for a Wayland protocol
 that the built-in module does not implement. External implementations
-for other windowing systems already exist (notably for GTK4 and SDL).
+for other windowing systems already exist (notably for
+[for GTK4](https://github.com/Igalia/wpe-platform-gtk)).
 
 <!-- TODO: uncomment once backend-model.md has landed:
 See [Backend model](backend-model.html) for how WPEPlatform discovers external modules.
@@ -129,9 +130,7 @@ specific built-in implementation by instantiating it directly with
 `wpe_display_wayland_new()` — in which case it passes the connected
 display to the web view on construction.
 
-<!-- TODO: uncomment once tutorial-browser.md has landed:
-The [Hello browser tutorial](tutorial-browser.html) walks through both paths.
--->
+The [browser tutorial](tutorial-browser.html) walks through both paths.
 
 ## How a platform implementation uses WPEPlatform
 
@@ -148,10 +147,12 @@ The implementation can be:
 - **Built as a module** and installed under `${LIB_INSTALL_DIR}/wpe-platform-${WPE_API_VERSION}/modules/`, in which case [func@Display.get_default] will pick it up automatically via the `wpe-platform-display` GIO extension point.
 - **Linked directly** by the embedder, in which case the embedder instantiates the display class explicitly.
 
-<!-- TODO: uncomment once tutorial-platform.md and backend-model.md have landed:
-The [Writing a platform tutorial](tutorial-platform.html) walks through
-implementing a minimal backend. The [Backend model](backend-model.html)
-concept page describes how WPEPlatform discovers and loads modules.
+The [Writing a WPE platform implementation](tutorial-platform.html)
+tutorial walks through implementing a backend.
+
+<!-- TODO: uncomment once backend-model.md has landed:
+The [Backend model](backend-model.html) concept page describes how
+WPEPlatform discovers and loads modules.
 -->
 
 ## Relationship to libwpe
@@ -172,11 +173,4 @@ WPEPlatform equivalents:
 - **Process management** (libwpe's `wpe_process_provider_*` API, added in 1.14). Child-process launch is once again handled internally by WPE WebKit. The exception is Android builds, where WPEPlatform ships a `WPEProcessManager` for this purpose.
 - **The `renderer-host`/`renderer-backend-egl` plumbing**. The new rendering model is built on buffer sharing through [class@Buffer] subclasses; there is no separate EGL renderer-target abstraction to wire up.
 - **WPEBackend-fdo's "exportable" view backend**. The "WebKit hands you rendered buffers via callbacks" pattern is replaced by subclassing [class@View] and implementing [vfunc@View.render_buffer].
-
-<!-- TODO: resolve before publishing — depends on the audio / video-plane
-successor decision, and on the migration guide landing:
-The extensions/audio.h (wpe_audio_source / wpe_audio_receiver) and
-extensions/video-plane-display-dmabuf.h APIs from WPEBackend-fdo have no
-visible counterpart in WPEPlatform headers. Confirm whether they have moved
-into the WebKit-level API, are still missing, or are intentionally dropped.
--->
+- **WPEBackend-fdo's audio and video-plane extensions**. See the [Migration mapping table](migration-mapping.html) for their status.
