@@ -40,16 +40,16 @@ using namespace HTMLNames;
 static JSC_DECLARE_HOST_FUNCTION(callPlugin);
 static JSC_DECLARE_CUSTOM_GETTER(pluginElementPropertyGetter);
 
-RefPtr<Instance> pluginInstance(HTMLElement& element)
+Instance* pluginInstance(HTMLElement& element)
 {
     // The plugin element holds an owning reference, so we don't have to.
     auto* pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
     if (!pluginElement)
         return nullptr;
-    RefPtr instance = pluginElement->bindingsInstance();
-    if (!instance || !instance->rootObject())
+    // Validate under a protector; bindingsInstance() then returns the pointer the element owns.
+    if (RefPtr instance = pluginElement->bindingsInstance(); !instance || !instance->rootObject())
         return nullptr;
-    return instance;
+    return pluginElement->bindingsInstance();
 }
 
 JSObject* pluginScriptObject(JSGlobalObject* lexicalGlobalObject, JSHTMLElement* jsHTMLElement)

@@ -32,7 +32,6 @@
 #include "AudioArray.h"
 #include "FloatPoint3D.h"
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

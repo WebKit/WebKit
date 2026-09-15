@@ -39,7 +39,7 @@ class JSHTMLElement;
 
 // JavaScript access to plug-in-exported properties for JSHTMLEmbedElement and JSHTMLObjectElement.
 
-RefPtr<JSC::Bindings::Instance> pluginInstance(HTMLElement&);
+JSC::Bindings::Instance* pluginInstance(HTMLElement&);
 WEBCORE_EXPORT JSC::JSObject* pluginScriptObject(JSC::JSGlobalObject*, JSHTMLElement*);
 
 bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PropertySlot&);
