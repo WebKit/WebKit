@@ -333,6 +333,7 @@ public:
     void provokingVertexANGLE(GCGLenum provokeMode) final;
     void polygonModeANGLE(GCGLenum face, GCGLenum mode) final;
     void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
+    void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) override;
     void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
 
     PlatformGLObject createBuffer() final;

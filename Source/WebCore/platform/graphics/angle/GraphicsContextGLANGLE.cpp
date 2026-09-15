@@ -1174,6 +1174,14 @@ void GraphicsContextGLANGLE::renderbufferStorageMultisampleANGLE(GCGLenum target
     didChangeMemoryCost();
 }
 
+void GraphicsContextGLANGLE::framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_DiscardFramebufferEXT(target, attachments.size(), attachments.data());
+}
+
 void GraphicsContextGLANGLE::texStorage2D(GCGLenum target, GCGLsizei levels, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
 {
     if (!makeContextCurrent())
