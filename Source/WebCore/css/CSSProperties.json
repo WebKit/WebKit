@@ -2522,14 +2522,14 @@
             "initial": "no-ellipsis",
             "values": [
                 "no-ellipsis",
-                "auto"
+                "ellipsis"
             ],
             "codegen-properties": {
                 "settings-flag": "cssLineClampEnabled",
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::BlockEllipsis",
-                "parser-grammar": "no-ellipsis | auto | <string>",
+                "parser-grammar": "no-ellipsis | ellipsis | <string>",
                 "parser-exported": true
             },
             "specification": {
@@ -6687,9 +6687,9 @@
         "max-lines": {
             "animation-type": "discrete",
             "animation-type-comment": "Current spec animation type is 'by computed value'",
-            "initial": "none",
+            "initial": "auto",
             "values": [
-                "none"
+                "auto"
             ],
             "codegen-properties": {
                 "settings-flag": "cssLineClampEnabled",
@@ -6697,7 +6697,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::MaximumLines",
-                "parser-grammar": "none | <integer [1,inf]>",
+                "parser-grammar": "<integer [1,inf]> || auto",
                 "parser-exported": true
             },
             "specification": {

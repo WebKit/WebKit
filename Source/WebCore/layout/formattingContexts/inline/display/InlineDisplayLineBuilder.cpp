@@ -524,7 +524,7 @@ std::optional<InlineDisplay::Line::Ellipsis> InlineDisplayLineBuilder::applyElli
             [&](const CSS::Keyword::NoEllipsis&) -> AtomString {
                 return nullAtom();
             },
-            [&](const CSS::Keyword::Auto&) -> AtomString {
+            [&](const CSS::Keyword::Ellipsis&) -> AtomString {
                 return TextUtil::ellipsisTextInInlineDirection(displayLine.isHorizontal());
             },
             [&](const Style::String& string) -> AtomString {

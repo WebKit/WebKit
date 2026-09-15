@@ -1926,34 +1926,58 @@ inline bool PropertyParserCustom::consumeLineClampShorthand(CSSParserTokenRange&
 
     if (range.peek().id() == CSSValueNone) {
         // Sets max-lines to none, continue to auto, and block-ellipsis to none.
-        result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, CSSKeywordValue::create(CSSValueNone));
+        result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, CSSKeywordValue::create(CSSValueAuto));
         result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSKeywordValue::create(CSSValueAuto));
         result.addPropertyForCurrentShorthand(state, CSSPropertyBlockEllipsis, CSSKeywordValue::create(CSSValueNoEllipsis));
         consumeIdent(range);
         return range.atEnd();
     }
 
-    RefPtr<CSSValue> maxLines;
+    RefPtr<CSSValue> numLines;
     RefPtr<CSSValue> blockEllipsis;
+    RefPtr<CSSKeywordValue> autoKeyword;
+    RefPtr<CSSValue> webkitLegacy;
 
-    for (unsigned propertiesParsed = 0; propertiesParsed < 2 && !range.atEnd(); ++propertiesParsed) {
-        if (!maxLines && (maxLines = CSSPropertyParsing::consumeMaxLines(range, state)))
+    do {
+        if (!webkitLegacy && (webkitLegacy = consumeIdent<CSSValueWebkitLegacy>(range)))
+            break;
+        if (!autoKeyword && (autoKeyword = consumeIdent<CSSValueAuto>(range))) {
+            if (blockEllipsis && numLines)
+                return false;
             continue;
+        }
         if (!blockEllipsis && (blockEllipsis = CSSPropertyParsing::consumeBlockEllipsis(range)))
             continue;
-        // There has to be at least one valid longhand.
+        if (!numLines && (numLines = CSSPrimitiveValueResolver<CSS::Integer<CSS::Range { 1, CSS::Range::infinity } >>::consumeAndResolve(range, state))) {
+            if (blockEllipsis && autoKeyword)
+                return false;
+            continue;
+        }
+        break;
+    } while (!range.atEnd());
+
+    if (!numLines && !autoKeyword && !blockEllipsis)
         return false;
-    }
+
+    RefPtr<CSSValue> maxLines;
+    if (numLines && autoKeyword) {
+        CSSValueListBuilder list;
+        list.append(numLines.releaseNonNull());
+        list.append(autoKeyword.releaseNonNull());
+        maxLines = CSSValueList::createSpaceSeparated(WTF::move(list));
+    } else if (numLines)
+        maxLines = numLines;
+    else if (autoKeyword)
+        maxLines = autoKeyword;
+    else
+        maxLines = CSSKeywordValue::create(CSSValueAuto);
 
     if (!blockEllipsis)
-        blockEllipsis = CSSKeywordValue::create(CSSValueAuto);
-
-    if (!maxLines)
-        maxLines = CSSKeywordValue::create(CSSValueNone);
+        blockEllipsis = CSSKeywordValue::create(CSSValueEllipsis);
 
     result.addPropertyForCurrentShorthand(state, CSSPropertyMaxLines, WTF::move(maxLines));
-    result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSKeywordValue::create(CSSValueDiscard));
     result.addPropertyForCurrentShorthand(state, CSSPropertyBlockEllipsis, WTF::move(blockEllipsis));
+    result.addPropertyForCurrentShorthand(state, CSSPropertyContinue, CSSKeywordValue::create(webkitLegacy ? CSSValueWebkitLegacy : CSSValueDiscard));
     return range.atEnd();
 }
 
