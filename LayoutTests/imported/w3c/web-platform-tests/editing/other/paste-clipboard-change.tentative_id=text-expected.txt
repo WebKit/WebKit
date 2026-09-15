@@ -1,5 +1,6 @@
 Original text
 
 
-FAIL clipboard change during paste event handler assert_equals: expected "New text" but got ""
+FAIL clipboard change during paste event handler assert_true: expected true got false
+FAIL clipboard change during beforeinput event handler assert_true: expected true got false
 

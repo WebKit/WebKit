@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/WEB_FEATURES.yml
@@ -25,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/data_transfer_on_input_event_with_insertfrompaste_type.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-at-end-boundary-of-div-followed-by-inline-element-containing-hidden-select-element-with-non-editable-node.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-at-start-boundary-of-div-containing-hidden-select-element-with-non-editable-node.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-editing-host.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-inline-editing-host-under-shadow-root.html
@@ -41,7 +40,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-around-select-element.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-div-outside-body.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-style-of-range-around-void-element-child.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/empty-elements-insertion-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/end-key-with-wbr.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-never-throw-exceptions.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html
@@ -58,6 +59,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-paragraph-in-void-element.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-space-at-beginning-of-wrapped-line.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-text-in-void-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-text-with-surrogate-pairs.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/inserthtml-do-not-preserve-inline-styles.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/insertlinebreak-with-white-space-style.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-head.tentative.html
@@ -84,6 +86,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/non-html-document.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/outdent-preserving-selection.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/password-bidi-dblclick.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/paste-as-plaintext-data.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/paste-clipboard-change.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/paste-in-list-with-inline-style.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/editing/other/paste-multiline-text-as-plaintext.tentative.https.html
