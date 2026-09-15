@@ -424,7 +424,7 @@ promise_test(async () => {
   div.innerHTML = "def";
   childDoc.head.appendChild(script);
   childDoc.documentElement.insertBefore(div, childDoc.body);
-  // Now: <script>// abc</script></head><div>def</div><body><br></body>
+  // Now: <script>// abc</ script></head><div>def</div><body><br></body>
   childDoc.getSelection().collapse(
     testingBackspace ? div.firstChild : script.firstChild,
     testingBackspace ? 0 : script.firstChild.length
