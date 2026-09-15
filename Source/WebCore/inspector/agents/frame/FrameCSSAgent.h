@@ -71,7 +71,7 @@ public:
     Inspector::CommandResult<void> enable() override;
     Inspector::CommandResult<void> disable() override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSComputedStyleProperty>>> getComputedStyleForNode(Inspector::Protocol::DOM::NodeId) override;
-    Inspector::CommandResult<Ref<Inspector::Protocol::CSS::Font>> getFontDataForNode(Inspector::Protocol::DOM::NodeId) override;
+    Inspector::CommandResultOf<Ref<Inspector::Protocol::CSS::Font>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::Font>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CharacterRange>>> getFontDataForNode(Inspector::Protocol::DOM::NodeId) override;
     Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<Inspector::Protocol::CSS::CSSStyle>> getInlineStylesForNode(Inspector::Protocol::DOM::NodeId) override;
     Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>> getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited) override;
     Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> getAllStyleSheets() override;
@@ -94,6 +94,7 @@ public:
     // InspectorInstrumentation
     bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
     void documentDetached(Document&);
+    void fontDataChanged();
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
 
