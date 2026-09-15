@@ -67,8 +67,6 @@ private:
     LayoutUnit offsetHeight() const final { return borderBoxRectInContainer().height(); }
 
 protected:
-    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
-    LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const final;
 
     std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* container, const VisibleRectContext&, VisibleRectState) const final;
 
