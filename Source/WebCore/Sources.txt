@@ -1273,6 +1273,7 @@ css/values/color/CSSRelativeAlphaColorResolver.cpp
 css/values/color/CSSResolvedColor.cpp
 css/values/content/CSSContent.cpp
 css/values/content/CSSQuotes.cpp
+css/values/counter-styles/CSSCounterStyle.cpp
 css/values/fonts/CSSFontFamilyName.cpp
 css/values/fonts/CSSFontPalette.cpp
 css/values/fonts/CSSFontPaletteMix.cpp

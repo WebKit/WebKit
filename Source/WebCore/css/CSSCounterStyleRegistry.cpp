@@ -146,8 +146,13 @@ Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomS
 
 Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const Style::CounterStyle& style)
 {
+    if (auto symbolsFunctionCounterStyle = style.trySymbolsFunctionCounterStyle())
+        return symbolsFunctionCounterStyle.releaseNonNull();
+
     resolveReferencesIfNeeded();
-    return counterStyle(style.identifier.value, &m_authorCounterStyles);
+    auto name = style.tryName();
+    ASSERT(name);
+    return counterStyle(name ? name->value : nullAtom(), &m_authorCounterStyles);
 }
 
 CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()

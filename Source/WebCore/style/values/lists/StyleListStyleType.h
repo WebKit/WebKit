@@ -26,18 +26,25 @@
 
 #pragma once
 
+#include <WebCore/CSSCounterStyleDescriptors.h>
 #include <WebCore/StyleCounterStyle.h>
 #include <WebCore/StyleString.h>
 #include <WebCore/StyleValueTypes.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+class CSSRegisteredCounterStyle;
+
 namespace Style {
 
 // <'list-style-type'> = <counter-style> | <string> | none
 // https://drafts.csswg.org/css-lists/#propdef-list-style-type
 struct ListStyleType {
+    using SymbolsFunction = CounterStyle::SymbolsFunction;
+
     ListStyleType(CSS::Keyword::None)
         : m_type { Type::None }
     {
@@ -50,36 +57,49 @@ struct ListStyleType {
     }
 
     ListStyleType(CounterStyle&& counterStyle)
-        : m_type { Type::CounterStyle }
-        , m_identifier { WTF::move(counterStyle.identifier.value) }
+    {
+        if (auto symbolsFunction = counterStyle.trySymbolsFunction()) {
+            m_type = Type::Symbols;
+            m_symbolsFunction = WTF::move(*symbolsFunction);
+            return;
+        }
+        m_type = Type::CounterStyle;
+        if (auto name = counterStyle.tryName())
+            m_identifier = WTF::move(name->value);
+    }
+
+    ListStyleType(SymbolsFunction&& symbolsFunction)
+        : m_type { Type::Symbols }
+        , m_symbolsFunction { WTF::move(symbolsFunction) }
     {
     }
 
     // <counter-style> specific constructors.
 
     ListStyleType(CSS::Keyword::Circle keyword)
-        : ListStyleType { CounterStyle { { nameString(keyword.value) } } }
+        : ListStyleType { CounterStyle { CustomIdent { nameString(keyword.value) } } }
     {
     }
 
     ListStyleType(CSS::Keyword::Decimal keyword)
-        : ListStyleType { CounterStyle { { nameString(keyword.value) } } }
+        : ListStyleType { CounterStyle { CustomIdent { nameString(keyword.value) } } }
     {
     }
 
     ListStyleType(CSS::Keyword::Disc keyword)
-        : ListStyleType { CounterStyle { { nameString(keyword.value) } } }
+        : ListStyleType { CounterStyle { CustomIdent { nameString(keyword.value) } } }
     {
     }
 
     ListStyleType(CSS::Keyword::Square keyword)
-        : ListStyleType { CounterStyle { { nameString(keyword.value) } } }
+        : ListStyleType { CounterStyle { CustomIdent { nameString(keyword.value) } } }
     {
     }
 
     bool isNone() const { return m_type == Type::None; }
     bool isCounterStyle() const { return m_type == Type::CounterStyle; }
     bool isString() const { return m_type == Type::String; }
+    bool isSymbolsFunction() const { return m_type == Type::Symbols; }
 
     // <counter-style> specific predicates.
 
@@ -90,8 +110,18 @@ struct ListStyleType {
 
     std::optional<CounterStyle> tryCounterStyle() const
     {
-        return isCounterStyle() ? std::make_optional(CounterStyle { { m_identifier } } ) : std::nullopt;
+        return isCounterStyle() ? std::make_optional(CounterStyle { CustomIdent { m_identifier } }) : std::nullopt;
     }
+
+    std::optional<SymbolsFunction> trySymbolsFunction() const
+    {
+        return isSymbolsFunction() ? std::make_optional(m_symbolsFunction) : std::nullopt;
+    }
+
+    // Builds the anonymous runtime counter style used to render the list marker for the `symbols()`
+    // function. Declared here, but defined out-of-line since `CSSRegisteredCounterStyle` is only
+    // forward-declared in this header.
+    WEBCORE_EXPORT RefPtr<CSSRegisteredCounterStyle> trySymbolsFunctionCounterStyle() const;
 
     std::optional<AtomString> tryString() const
     {
@@ -108,7 +138,9 @@ struct ListStyleType {
         case Type::String:
             return visitor(String { m_identifier });
         case Type::CounterStyle:
-            return visitor(CounterStyle { { m_identifier } });
+            return visitor(CounterStyle { CustomIdent { m_identifier } });
+        case Type::Symbols:
+            return visitor(m_symbolsFunction);
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -119,7 +151,12 @@ struct ListStyleType {
     struct NoneData { };
     struct StringData { AtomString identifier; };
     struct CounterStyleData { AtomString identifier; };
-    using IPCData = Variant<NoneData, StringData, CounterStyleData>;
+    struct SymbolsFunctionData {
+        CSSCounterStyleDescriptors::System system { CSSCounterStyleDescriptors::System::Symbolic };
+        Vector<WTF::String> symbols;
+        friend bool operator==(const SymbolsFunctionData&, const SymbolsFunctionData&) = default;
+    };
+    using IPCData = Variant<NoneData, StringData, CounterStyleData, SymbolsFunctionData>;
 
     WEBCORE_EXPORT ListStyleType(const IPCData&);
     WEBCORE_EXPORT IPCData ipcData() const;
@@ -128,15 +165,15 @@ private:
     enum class Type : uint8_t {
         CounterStyle,
         String,
-        None
+        None,
+        Symbols
     };
-
-    static Type NODELETE type(const IPCData&);
-    static AtomString identifier(const IPCData&);
 
     Type m_type { Type::None };
     // The identifier is the string when the type is String and is the @counter-style name when the type is CounterStyle.
     AtomString m_identifier { nullAtom() };
+    // Only engaged when the type is Symbols.
+    SymbolsFunction m_symbolsFunction;
 };
 
 // MARK: - Conversion

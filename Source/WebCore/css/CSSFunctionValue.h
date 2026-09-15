@@ -34,6 +34,7 @@ enum CSSValueID : uint16_t;
 class CSSFunctionValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSFunctionValue> create(CSSValueID name, CSSValueListBuilder arguments);
+    static Ref<CSSFunctionValue> create(CSSValueID name, CSSValueListBuilder arguments, ValueSeparator);
     static Ref<CSSFunctionValue> create(CSSValueID name);
     static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& argument);
     static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue>&& firstArgument, Ref<CSSValue>&& secondArgument);
@@ -49,6 +50,7 @@ private:
     friend bool CSSValue::addHash(Hasher&) const;
 
     CSSFunctionValue(CSSValueID name, CSSValueListBuilder);
+    CSSFunctionValue(CSSValueID name, ValueSeparator, CSSValueListBuilder);
     explicit CSSFunctionValue(CSSValueID name);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&);
     CSSFunctionValue(CSSValueID name, Ref<CSSValue>&&, Ref<CSSValue>&&);
