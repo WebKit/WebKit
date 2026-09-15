@@ -27,10 +27,16 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
+#include "SessionState.h"
 #include <wtf/Forward.h>
+#include <wtf/Ref.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace WebCore {
+struct FrameIdentifierType;
+using FrameIdentifier = ObjectIdentifier<FrameIdentifierType>;
+}
 namespace WebKit {
 class TestWithSwift;
 class TestWithSwiftMessageForwarder;
@@ -59,6 +65,10 @@ private:
 }
 
 using RefTestWithSwiftMessageForwarder = Ref<WebKit::TestWithSwiftMessageForwarder>;
+
+namespace WebKit {
+using RefFrameState = WTF::Ref<WebKit::FrameState>;
+}
 
 namespace Messages {
 namespace TestWithSwift {
@@ -126,6 +136,87 @@ private:
     uint32_t m_param;
 };
 
+class TestMessageWithAliasedParameter {
+public:
+    using Arguments = std::tuple<Ref<WebKit::FrameState>>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestMessageWithAliasedParameter; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit TestMessageWithAliasedParameter(const Ref<WebKit::FrameState>& frameState)
+        : m_frameState(frameState)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_frameState;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const Ref<WebKit::FrameState>& m_frameState;
+};
+
+class TestThrowingMessageWithReply {
+public:
+    using Arguments = std::tuple<uint32_t>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithReply; }
+    static constexpr bool isSync = true;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    using ReplyArguments = std::tuple<uint8_t>;
+    using Reply = CompletionHandler<void(uint8_t)>;
+    explicit TestThrowingMessageWithReply(uint32_t param)
+        : m_param(param)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        encoder << m_param;
+    }
+
+private:
+    uint32_t m_param;
+};
+
+class TestThrowingMessageWithoutReply {
+public:
+    using Arguments = std::tuple<Ref<WebKit::FrameState>, WebCore::FrameIdentifier>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithSwift_TestThrowingMessageWithoutReply; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    TestThrowingMessageWithoutReply(const Ref<WebKit::FrameState>& frameState, const WebCore::FrameIdentifier& frameID)
+        : m_frameState(frameState)
+        , m_frameID(frameID)
+    {
+    }
+
+    template<typename Encoder>
+    void encode(Encoder& encoder)
+    {
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_frameState;
+        SUPPRESS_FORWARD_DECL_ARG encoder << m_frameID;
+    }
+
+private:
+    SUPPRESS_FORWARD_DECL_MEMBER const Ref<WebKit::FrameState>& m_frameState;
+    SUPPRESS_FORWARD_DECL_MEMBER const WebCore::FrameIdentifier& m_frameID;
+};
+
 class TestAsyncMessageReply {
 public:
     using Arguments = std::tuple<uint8_t>;
@@ -158,6 +249,13 @@ namespace CompletionHandlers {
 namespace TestWithSwift {
 using TestAsyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestAsyncMessage::Reply>;
 using TestSyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestSyncMessage::Reply>;
+using TestThrowingMessageWithReplyCompletionHandler = WTF::RefCountable<Messages::TestWithSwift::TestThrowingMessageWithReply::Reply>;
+
+void completeWithDefaultReply(TestAsyncMessageCompletionHandler&);
+
+void completeWithDefaultReply(TestSyncMessageCompletionHandler&);
+
+void completeWithDefaultReply(TestThrowingMessageWithReplyCompletionHandler&);
 } // namespace TestWithSwift
 } // namespace CompletionHandlers
 

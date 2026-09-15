@@ -163,6 +163,10 @@ namespace CompletionHandlers {
 namespace TestWithSwiftConditionally {
 using TestAsyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwiftConditionally::TestAsyncMessage::Reply>;
 using TestSyncMessageCompletionHandler = WTF::RefCountable<Messages::TestWithSwiftConditionally::TestSyncMessage::Reply>;
+
+void completeWithDefaultReply(TestAsyncMessageCompletionHandler&);
+
+void completeWithDefaultReply(TestSyncMessageCompletionHandler&);
 } // namespace TestWithSwiftConditionally
 } // namespace CompletionHandlers
 

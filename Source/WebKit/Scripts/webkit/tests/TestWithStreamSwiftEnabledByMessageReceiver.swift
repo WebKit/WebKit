@@ -34,6 +34,24 @@ final class TestWithStreamSwiftEnabledByWeakRef {
     func getMessageTarget() -> TestWithStreamSwiftEnabledBy? {
         target
     }
+
+    @used
+    func dispatchSendString(
+        connection: IPC.Connection,
+        url: WTF.String
+    ) {
+        guard let target else {
+            return
+        }
+        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try mayThrowInvalidMessage(
+                target.sendString(
+                    connection: connection,
+                    url: url
+                )
+            )
+        }
+    }
 }
 
 extension WebKit.TestWithStreamSwiftEnabledByMessageForwarder {

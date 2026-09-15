@@ -37,6 +37,52 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef {
     func getMessageTarget() -> TestWithSwiftConditionallyAndEnabledBy? {
         target
     }
+
+    @used
+    func dispatchTestAsyncMessage(
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.TestAsyncMessageCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try mayThrowInvalidMessage(
+                target.testAsyncMessage(
+                    connection: connection,
+                    param: param,
+                    completionHandler: completionHandler
+                )
+            )
+        }
+        if !dispatched {
+            CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)
+        }
+    }
+
+    @used
+    func dispatchTestSyncMessage(
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.TestSyncMessageCompletionHandler
+    ) {
+        guard let target else {
+            return
+        }
+        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+            try mayThrowInvalidMessage(
+                target.testSyncMessage(
+                    connection: connection,
+                    param: param,
+                    completionHandler: completionHandler
+                )
+            )
+        }
+        if !dispatched {
+            CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)
+        }
+    }
 }
 
 extension WebKit.TestWithSwiftConditionallyAndEnabledByMessageForwarder {

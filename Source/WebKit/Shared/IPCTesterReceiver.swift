@@ -42,8 +42,12 @@ final class IPCTesterReceiver {
         return messageForwarder
     }
 
-    func asyncMessage(data: UInt32, completionHandler: CompletionHandlers.IPCTesterReceiver.AsyncMessageCompletionHandler) {
-        completionHandler.pointee(data + 2)
+    func asyncMessage(
+        connection: IPC.Connection,
+        arg1: UInt32,
+        completionHandler: CompletionHandlers.IPCTesterReceiver.AsyncMessageCompletionHandler
+    ) {
+        completionHandler.pointee(arg1 + 2)
     }
 }
 

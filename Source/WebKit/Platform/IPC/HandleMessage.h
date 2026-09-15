@@ -551,7 +551,7 @@ void handleMessageAsync(C& connection, Decoder& decoder, T* object, MF U::* func
         }, MessageType::callbackThread));
     if constexpr (ValidationType::returnsVoid) {
         if constexpr (ValidationType::expectsConnectionArgument) {
-            callMemberFunction(object, function, connection, WTF::move(*arguments),
+            SUPPRESS_UNCOUNTED_ARG callMemberFunction(object, function, ValidationType::makeConnectionArgument(connection), WTF::move(*arguments),
                 ValidationType::unwrapCompletionHandler(std::forward<decltype(completionHandler)>(completionHandler)));
         } else
             callMemberFunction(object, function, WTF::move(*arguments),

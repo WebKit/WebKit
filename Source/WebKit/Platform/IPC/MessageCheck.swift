@@ -66,18 +66,26 @@ func messageCheck(
     }
 }
 
-// onInvalidMessage is defaulted rather than optional so that it stays non-escaping.
+// Lets generated dispatch mark every handler call with `try`, whether or not that handler throws.
+@inline(__always)
+@discardableResult
+func mayThrowInvalidMessage<T>(_ result: T) throws(InvalidMessage) -> T {
+    result
+}
+
+// Returns false if the message was invalid, so that generated dispatch can send a default reply.
+@discardableResult
 func dispatchMessage(
     on connection: IPC.Connection,
-    onInvalidMessage: () -> Void = {},
     body: () throws(InvalidMessage) -> Void
-) {
+) -> Bool {
     do {
         try body()
     } catch {
         markMessageInvalid(error, on: connection)
-        onInvalidMessage()
+        return false
     }
+    return true
 }
 
 func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection) {
