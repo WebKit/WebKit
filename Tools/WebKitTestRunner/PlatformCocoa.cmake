@@ -42,11 +42,11 @@ set_target_properties(TestRunnerInjectedBundle PROPERTIES
 )
 
 if (USE_APPLE_INTERNAL_SDK)
-    set(WebKitTestRunner_CODE_SIGN_ENTITLEMENTS
+    set_property(TARGET WebKitTestRunner PROPERTY CODE_SIGN_ENTITLEMENTS
         "${WebKitTestRunner_DIR}/Configurations/WebKitTestRunner-internal.entitlements"
     )
 else ()
-    set(WebKitTestRunner_CODE_SIGN_ENTITLEMENTS
+    set_property(TARGET WebKitTestRunner PROPERTY CODE_SIGN_ENTITLEMENTS
         "${WebKitTestRunner_DIR}/Configurations/WebKitTestRunner.entitlements"
     )
 endif ()
