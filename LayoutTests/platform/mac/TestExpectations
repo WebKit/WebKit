@@ -132,6 +132,8 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
 webkit.org/b/306558 accessibility/mac/style-range.html [ Failure ]
 
+http/tests/site-isolation/mac [ Pass ]
+
 # Site isolation accessibility tests using the accessibility client API:
 # Skip by default, enable tests that are stable.
 http/tests/site-isolation/accessibility/client [ Skip ]
