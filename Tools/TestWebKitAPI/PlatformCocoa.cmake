@@ -53,6 +53,10 @@ set(_testwebkitapi_swift_options
     -F${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     "-Xcc -I${CMAKE_BINARY_DIR}"
     "-Xcc -I${TESTWEBKITAPI_DIR}"
+
+    # wtf/text/CharacterProperties.h includes <unicode/uscript.h>, so the clang importer needs ICU to build the wtf module.
+    "-Xcc -I${ICU_INCLUDE_DIRS}"
+
     "-I${_testwebkitapi_swiftmodule_dir}"
 )
 if (CMAKE_Swift_COMPILER_TARGET)
@@ -658,6 +662,11 @@ add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/Helpers/cocoa/WKWebView+Extras.swift
 )
 WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestWebKitAPILibrary TestWebKit)
+# The helpers import the WebKit framework built here for its @_spi declarations.
+# WebKit_StageSwiftModuleMac is deliberately kept out of WebKit_DEPENDENCIES, so
+# without naming it the Swift importer can run before the swiftmodule is staged
+# and fall back to the SDK's copy, which does not have them.
+add_dependencies(TestWebKitAPILibrary WebKit WebKit_StageSwiftModuleMac)
 target_include_directories(TestWebKitAPILibrary PRIVATE
     ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES}
 )

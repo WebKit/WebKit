@@ -33,6 +33,12 @@ if (SWIFT_REQUIRED)
 
     enable_language(Swift)
 
+    # Match Xcode, which leaves SWIFT_TREAT_WARNINGS_AS_ERRORS unset: every new
+    # Swift toolchain adds warnings, and a blanket -warnings-as-errors turns each
+    # of them into a build break. Diagnostics that must stay fatal are listed
+    # individually as -Werror groups in WEBKIT_SWIFT_FATAL_DIAGNOSTIC_FLAGS.
+    set(CMAKE_Swift_COMPILE_OPTIONS_WARNING_AS_ERROR "")
+
     # -F causes Swift to find C++23 framework headers in implicit module builds.
     if (WEBKIT_SDK_IS_IOS_FAMILY)
         set(CMAKE_Swift_FRAMEWORK_SEARCH_FLAG "-Xcc -iquote")

@@ -887,6 +887,9 @@ target_include_directories(WebKitSwift PRIVATE
     ${CMAKE_BINARY_DIR}
     ${WTF_FRAMEWORK_HEADERS_DIR}
     ${bmalloc_FRAMEWORK_HEADERS_DIR}
+    # The Objective-C++ sources include Source/WebKit/config.h, which includes
+    # <pal/ExportMacros.h>.
+    ${PAL_FRAMEWORK_HEADERS_DIR}
 )
 
 webkit_target_add_swift_options(WebKitSwift
