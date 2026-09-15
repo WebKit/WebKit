@@ -10280,3 +10280,7 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 webkit.org/b/322305 fast/visual-viewport/ios/interactive-widget/resizes-content-orientation-rotations.html [ Failure ]
 
 imported/w3c/web-platform-tests/input-events/select-event-drag-remove.html [ Skip ] # timeout
+
+# webkit.org/b/301546 [iOS26-iOS27] Two tests in imported/w3c/web-platform-tests/uievents/mouse are constant failures
+imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=16 [ Failure ]
+imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=42 [ Failure ]
