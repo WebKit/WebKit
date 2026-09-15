@@ -38,6 +38,7 @@ WI.SourceCode = class SourceCode extends WI.Object
         this._sourceMaps = null;
         this._formatterSourceMap = null;
         this._requestContentPromise = null;
+        this._scriptSyntaxTree = null;
     }
 
     // Static
@@ -186,6 +187,41 @@ WI.SourceCode = class SourceCode extends WI.Object
         return this._requestContentPromise;
     }
 
+    get scriptSyntaxTree()
+    {
+        return this._scriptSyntaxTree;
+    }
+
+    requestScriptSyntaxTree(callback)
+    {
+        console.assert(this.isScript, this);
+
+        if (this._scriptSyntaxTree) {
+            setTimeout(() => {
+                callback(this._scriptSyntaxTree);
+            });
+            return;
+        }
+
+        let makeSyntaxTreeAndCallCallback = (content) => {
+            if (content)
+                this._scriptSyntaxTree ||= new WI.ScriptSyntaxTree(this, content);
+            callback(this._scriptSyntaxTree);
+        };
+
+        let content = this.contentForScriptSyntaxTree();
+        if (content) {
+            setTimeout(makeSyntaxTreeAndCallCallback, 0, content);
+            return;
+        }
+
+        this.requestContent().then((parameters) => {
+            makeSyntaxTreeAndCallCallback(parameters.sourceCode.content);
+        }).catch(() => {
+            makeSyntaxTreeAndCallCallback(null);
+        });
+    }
+
     createSourceCodeLocation(lineNumber, columnNumber)
     {
         return new WI.SourceCodeLocation(this, lineNumber, columnNumber);
@@ -258,6 +294,18 @@ WI.SourceCode = class SourceCode extends WI.Object
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
         return null;
+    }
+
+    contentForScriptSyntaxTree()
+    {
+        // Overridden by subclasses if needed.
+        return this.content;
+    }
+
+    sourceTypeForScriptSyntaxTree()
+    {
+        // Overridden by subclasses if needed.
+        return WI.Script.SourceType.Program;
     }
 
     // Private
