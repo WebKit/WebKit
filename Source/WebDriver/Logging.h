@@ -30,7 +30,7 @@
 
 
 #define COMMA() ,
-#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA()) __VA_ARGS__
+#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA() LOG_PRINTF_TYPE(__VA_ARGS__))
 
 #define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))
 #define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_INFO(category, MESSAGE_##logMessage OPTIONAL_ARGS(__VA_ARGS__))

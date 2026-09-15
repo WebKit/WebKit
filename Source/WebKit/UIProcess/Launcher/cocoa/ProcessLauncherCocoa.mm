@@ -222,7 +222,7 @@ void ProcessLauncher::launchProcess()
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, ExtensionProcess&& process, ASCIILiteral name, NSError *error)
     {
         if (error) {
-            RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8().legacyCStringPointer(), String([error localizedFailureReason]).utf8().legacyCStringPointer());
+            RELEASE_LOG_FAULT(Process, "Error launching process, description '%s', reason '%s'", String([error localizedDescription]).utf8(), String([error localizedFailureReason]).utf8());
 #if PLATFORM(IOS)
             // Fallback to legacy extension identifiers
             // FIXME: this fallback is temporary and should be removed when possible. See rdar://120793705.
@@ -468,7 +468,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", logName.data(), xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8().legacyCStringPointer());
+            LOG_ERROR("Error while launching %s: %s", logName.data(), xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8());
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
 

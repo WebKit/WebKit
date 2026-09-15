@@ -77,7 +77,7 @@ void WebExtensionSQLiteDatabase::reportErrorWithCode(int errorCode, const String
     ASSERT(errorCode != SQLITE_OK);
 
     if (!query.isEmpty())
-        RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred with query: %" PRIVATE_LOG_STRING, errorCode, query.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred with query: %" PRIVATE_LOG_STRING, errorCode, query.utf8());
     else
         RELEASE_LOG_ERROR(Extensions, "SQLite error (%d) occurred", errorCode);
 
@@ -165,7 +165,7 @@ bool WebExtensionSQLiteDatabase::openWithAccessType(AccessType accessType, RefPt
 
         auto directory = m_url.truncatedForUseAsBase().fileSystemPath();
         if (!FileSystem::makeAllDirectories(directory) || FileSystem::fileType(directory) != FileSystem::FileType::Directory) {
-            RELEASE_LOG_ERROR(Extensions, "Unable to create parent folder for database at path: %s", m_url.fileSystemPath().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Unable to create parent folder for database at path: %s", m_url.fileSystemPath().utf8());
             outError = errorWithSQLiteErrorCode(SQLITE_CANTOPEN);
             return false;
         }

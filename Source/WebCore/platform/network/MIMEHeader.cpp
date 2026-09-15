@@ -131,7 +131,7 @@ MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(StringView text)
         return SevenBit;
     if (equalLettersIgnoringASCIICase(encoding, "binary"_s))
         return Binary;
-    LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.utf8().legacyCStringPointer());
+    LOG_ERROR("Unknown encoding '%s' found in MIME header.", text.utf8());
     return Unknown;
 }
 

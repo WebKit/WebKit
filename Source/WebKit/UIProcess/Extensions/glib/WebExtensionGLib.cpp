@@ -115,7 +115,7 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
 
 void WebExtension::recordError(Ref<API::Error> error)
 {
-    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", error->localizedDescription().utf8().legacyCStringPointer());
+    RELEASE_LOG_ERROR(Extensions, "Error recorded: %s", error->localizedDescription().utf8());
 
     // Only the first occurrence of each error is recorded in the array. This prevents duplicate errors,
     // such as repeated "resource not found" errors, from being included multiple times.

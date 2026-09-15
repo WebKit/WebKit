@@ -61,7 +61,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::migrateData()
             NSDictionary<NSString *, id> *script = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowedClasses fromData:wrapper(row->getData(1)).get() error:&error];
 
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8());
                 continue;
             }
 
@@ -71,7 +71,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::migrateData()
             String jsonString = encodeJSONString(script);
             DatabaseResult result = SQLiteDatabaseExecute(*database(), "UPDATE registered_scripts SET script = ? WHERE key = ?"_s, jsonString, scriptID);
             if (result != SQLITE_DONE)
-                RELEASE_LOG_ERROR(Extensions, "Failed to update registered content script for extension %s.", uniqueIdentifier().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to update registered content script for extension %s.", uniqueIdentifier().utf8());
 
             row = rows->next();
         }

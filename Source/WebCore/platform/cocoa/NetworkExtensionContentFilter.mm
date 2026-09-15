@@ -263,7 +263,7 @@ void NetworkExtensionContentFilter::handleDecision(NEFilterSourceStatus status, 
         m_replacementData = replacementData;
 #if !LOG_DISABLED
     if (!needsMoreData())
-        LOG(ContentFiltering, "NetworkExtensionContentFilter stopped buffering with status %zd and replacement data length %zu.\n", status, replacementData.length);
+        LOG(ContentFiltering, "NetworkExtensionContentFilter stopped buffering with status %zd and replacement data length %zu.\n", static_cast<ssize_t>(status), static_cast<size_t>(replacementData.length));
 #endif
 }
 

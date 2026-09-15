@@ -169,12 +169,12 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForXFrameOptions(Vector<
     }
     case XFrameOptionsDisposition::Conflict: {
         auto errorMessage = makeString("Multiple 'X-Frame-Options' headers with conflicting values ('"_s, xFrameOptions, "') encountered. Falling back to 'DENY'."_s);
-        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().legacyCStringPointer());
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8());
         return true;
     }
     case XFrameOptionsDisposition::Invalid: {
         auto errorMessage = makeString("Invalid 'X-Frame-Options' header encountered: '"_s, xFrameOptions, "' is not a recognized directive. The header will be ignored."_s);
-        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8().legacyCStringPointer());
+        AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForXFrameOptions: %s", errorMessage.utf8());
         return false;
     }
     }
@@ -207,7 +207,7 @@ bool SubFrameSOAuthorizationSession::shouldInterruptLoadForCSPFrameAncestorsOrXF
         String xFrameOptions = response.httpHeaderField(HTTPHeaderName::XFrameOptions);
         if (!xFrameOptions.isNull() && shouldInterruptLoadForXFrameOptions(WTF::move(frameAncestorOrigins), xFrameOptions, response.url())) {
             String errorMessage = makeString("Refused to display '"_s, response.url().stringCenterEllipsizedToLength(), "' in a frame because it set 'X-Frame-Options' to '"_s, xFrameOptions, "'."_s);
-            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8().legacyCStringPointer());
+            AUTHORIZATIONSESSION_RELEASE_LOG("shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions: %s", errorMessage.utf8());
 
             return true;
         }

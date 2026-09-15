@@ -370,7 +370,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
             }
 
             if (!contextConnection) {
-                SWSERVERCONNECTION_RELEASE_LOG_ERROR_WITH_THIS(protectedThis, "startFetch: fetchIdentifier=%s DidNotHandle because failed to run service worker", task->fetchIdentifier().loggingString().utf8().legacyCStringPointer());
+                SWSERVERCONNECTION_RELEASE_LOG_ERROR_WITH_THIS(protectedThis, "startFetch: fetchIdentifier=%s DidNotHandle because failed to run service worker", task->fetchIdentifier().loggingString().utf8());
                 task->cannotHandle();
                 return;
             }
@@ -432,7 +432,7 @@ void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
         return;
     }
 
-    SWSERVERCONNECTION_RELEASE_LOG("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().legacyCStringPointer());
+    SWSERVERCONNECTION_RELEASE_LOG("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
     if (RefPtr server = this->server())

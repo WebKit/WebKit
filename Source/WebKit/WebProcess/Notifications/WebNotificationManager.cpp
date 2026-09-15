@@ -163,7 +163,7 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(const Str
         auto origin = SecurityOriginData::fromURL(URL { originString });
         auto result = connection->sendSync(Messages::NotificationManagerMessageHandler::GetPermissionStateSync(WTF::move(origin)), WebProcess::singleton().sessionID().toUInt64());
         if (!result.succeeded())
-            RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", originString.utf8().legacyCStringPointer(), static_cast<unsigned>(result.error()));
+            RELEASE_LOG_ERROR(Notifications, "Could not look up notification permission for origin %" SENSITIVE_LOG_STRING": %u", originString.utf8(), static_cast<unsigned>(result.error()));
 
         auto [pushPermission] = result.takeReplyOr(PushPermissionState::Denied);
         switch (pushPermission) {

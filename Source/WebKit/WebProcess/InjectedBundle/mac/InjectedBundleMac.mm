@@ -115,14 +115,14 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 {
     if (auto sandboxExtension = std::exchange(m_sandboxExtension, nullptr)) {
         if (!sandboxExtension->consumePermanently()) {
-            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not consume bundle sandbox extension for [%{public}s]", m_path.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not consume bundle sandbox extension for [%{public}s]", m_path.utf8());
             return false;
         }
     }
 
     m_platformBundle = adoptNS([[NSBundle alloc] initWithPath:m_path.createNSString().get()]);
     if (!m_platformBundle) {
-        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not create the bundle for [%{public}s]", m_path.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - Could not create the bundle for [%{public}s]", m_path.utf8());
         return false;
     }
 
@@ -142,11 +142,11 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     if (!initializeFunction) {
         NSError *error;
         if (![m_platformBundle preflightAndReturnError:&error]) {
-            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - preflightAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8().legacyCStringPointer(), error);
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - preflightAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8(), error);
             return false;
         }
         if (![m_platformBundle loadAndReturnError:&error]) {
-            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - loadAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8().legacyCStringPointer(), error);
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - loadAndReturnError failed for [%{public}s]: %{public}@", m_path.utf8(), error);
             return false;
         }
         initializeFunction = std::bit_cast<WKBundleInitializeFunctionPtr>(CFBundleGetFunctionPointerForName(RetainPtr { [m_platformBundle _cfBundle] }.get(), CFSTR("WKBundleInitialize")));
@@ -176,7 +176,7 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     // Otherwise, look to see if the bundle has a principal class
     RetainPtr<Class> principalClass = [m_platformBundle principalClass];
     if (!principalClass) {
-        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - No initialize function or principal class found in the bundle executable [%{public}s]", m_path.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::initialize failed - No initialize function or principal class found in the bundle executable [%{public}s]", m_path.utf8());
         return false;
     }
 
@@ -234,7 +234,7 @@ void InjectedBundle::extendClassesForParameterCoder(API::Array& classes)
         auto className = classNameString->string().utf8();
         RetainPtr objectClass = objc_lookUpClass(className.legacyCStringPointer());
         if (!objectClass) {
-            RELEASE_LOG_ERROR(Process, "InjectedBundle::extendClassesForParameterCoder - Class %{public}s is not a valid Objective C class", className.legacyCStringPointer());
+            RELEASE_LOG_ERROR(Process, "InjectedBundle::extendClassesForParameterCoder - Class %{public}s is not a valid Objective C class", className);
             break;
         }
 
@@ -259,7 +259,7 @@ void InjectedBundle::setBundleParameter(const String& key, std::span<const uint8
     @try {
         parameter = [unarchiver decodeObjectOfClasses:classesForCoder().get() forKey:@"parameter"];
     } @catch (NSException *exception) {
-        RELEASE_LOG_ERROR(Process, "InjectedBundle::setBundleParameter failed to decode bundle parameter '%{public}s': %{public}s -- %{public}s", key.utf8().legacyCStringPointer(), exception.name.UTF8String, exception.reason.UTF8String);
+        RELEASE_LOG_ERROR(Process, "InjectedBundle::setBundleParameter failed to decode bundle parameter '%{public}s': %{public}s -- %{public}s", key.utf8(), exception.name.UTF8String, exception.reason.UTF8String);
         return;
     }
 

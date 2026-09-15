@@ -45,8 +45,8 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 
-#define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().legacyCStringPointer(), ##__VA_ARGS__)
-#define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8().legacyCStringPointer(), ##__VA_ARGS__)
+#define GRANTER_RELEASE_LOG(envID, fmt, ...) RELEASE_LOG(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8(), ##__VA_ARGS__)
+#define GRANTER_RELEASE_LOG_ERROR(envID, fmt, ...) RELEASE_LOG_ERROR(ProcessCapabilities, "%{public}s[envID=%{public}s] " fmt, __FUNCTION__, envID.utf8(), ##__VA_ARGS__)
 
 namespace WebKit {
 

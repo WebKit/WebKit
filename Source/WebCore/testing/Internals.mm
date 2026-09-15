@@ -322,7 +322,7 @@ bool Internals::emitLogs(const String& logString, unsigned logCount, bool useMai
 {
     auto blockPtr = makeBlockPtr([logString, logCount] {
         for (unsigned i = 0; i < logCount; i++)
-            RELEASE_LOG(Testing, "%s", logString.utf8().legacyCStringPointer());
+            RELEASE_LOG(Testing, "%s", logString.utf8());
     });
     if (useMainThread)
         dispatch_async(mainDispatchQueueSingleton(), blockPtr.get());

@@ -282,7 +282,7 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
     
     auto buffer = WTF::move(handle).tryWrapInSharedBuffer();
     if (!buffer) {
-        LOG_ERROR("Unable to create FragmentedSharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8().legacyCStringPointer());
+        LOG_ERROR("Unable to create FragmentedSharedBuffer from ShareableResource handle for resource url %s", request.url().string().utf8());
         return;
     }
 
@@ -340,7 +340,7 @@ void NetworkProcessConnection::loadCancelledDownloadRedirectRequestInFrame(WebCo
         loadParameters.request = request;
         webPage->loadRequest(WTF::move(loadParameters));
     } else
-        RELEASE_LOG_ERROR(Process, "Trying to load Invalid page or frame for %s", request.url().string().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Process, "Trying to load Invalid page or frame for %s", request.url().string().utf8());
 }
 
 #if ENABLE(WEB_RTC)

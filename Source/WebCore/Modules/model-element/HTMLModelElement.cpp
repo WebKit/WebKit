@@ -674,7 +674,7 @@ void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedB
 #endif
     ASSERT(m_dataComplete);
 
-    RELEASE_LOG(ModelElement, "%p - HTMLModelElement::didConvertModelData: Received converted model data, size=%zu mimeType=%s", this, convertedData->size(), convertedMIMEType.utf8().legacyCStringPointer());
+    RELEASE_LOG(ModelElement, "%p - HTMLModelElement::didConvertModelData: Received converted model data, size=%zu mimeType=%s", this, convertedData->size(), convertedMIMEType.utf8());
 
     m_model = Model::create(WTF::move(convertedData), String { convertedMIMEType }, m_sourceURL, true /* isConverted */);
     m_dataMemoryCost.store(m_model->data()->size(), std::memory_order_relaxed);
@@ -2084,7 +2084,7 @@ void HTMLModelElement::triggerModelPlayerCreationCallbacksIfNeeded(ExceptionOr<R
         return;
 
     if (result.hasException())
-        RELEASE_LOG_ERROR(ModelElement, "%p - HTMLModelElement: Model Player creation request: FAILED with error: %s", this, result.exception().message().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(ModelElement, "%p - HTMLModelElement: Model Player creation request: FAILED with error: %s", this, result.exception().message().utf8());
     else
         RELEASE_LOG_INFO(ModelElement, "%p - HTMLModelElement: Model Player creation request: SUCCEEDED", this);
 

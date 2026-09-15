@@ -374,7 +374,7 @@ static void logGLDebugMessage(GLenum source, GLenum type, GLuint identifier, GLe
     if (type == GL_DEBUG_TYPE_ERROR_KHR && LOG_CHANNEL(GLContext).level >= WTFLogLevel::Debug) {
         WTF::StringPrintStream backtraceStream;
         WTFReportBacktraceWithPrefixAndPrintStream(backtraceStream, "#");
-        RELEASE_LOG(GLContext, "Backtrace leading to error:\n%s", backtraceStream.toString().utf8().legacyCStringPointer());
+        RELEASE_LOG(GLContext, "Backtrace leading to error:\n%s", backtraceStream.toString().utf8());
     }
 }
 

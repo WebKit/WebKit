@@ -742,7 +742,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
                 }
                 subframeArchives.append(subframeArchive.releaseNonNull());
             } else
-                LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().legacyCStringPointer());
+                LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8());
 
         } else {
             OrderedHashSet<URL> subresourceURLs;
@@ -782,7 +782,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createInternal(const String& markupSt
 
                 if (!resource) {
                     // FIXME: should do something better than spew to console here
-                    LOG_ERROR("Failed to archive subresource for %s", subresourceURL.string().utf8().legacyCStringPointer());
+                    LOG_ERROR("Failed to archive subresource for %s", subresourceURL.string().utf8());
                     continue;
                 }
 

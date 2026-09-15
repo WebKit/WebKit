@@ -203,7 +203,7 @@ void SOAuthorizationSession::start()
 
 void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const String& hints)
 {
-    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8().legacyCStringPointer());
+    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8());
 
     ASSERT(m_state == State::Active);
     RefPtr page = m_page.get();

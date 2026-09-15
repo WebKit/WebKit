@@ -193,7 +193,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
 
         auto shmFileName = makeString(filename, "-shm"_s);
         if (FileSystem::fileExists(shmFileName) && !FileSystem::isSafeToUseMemoryMapForPath(shmFileName)) {
-            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.utf8().legacyCStringPointer());
+            RELEASE_LOG_FAULT(SQLDatabase, "Opened an SQLite database with a Class A -shm file. This may trigger a crash when the user locks the device. (%s)", shmFileName.utf8());
             if (!FileSystem::makeSafeToUseMemoryMapForPath(shmFileName))
                 return false;
         }
@@ -278,7 +278,7 @@ bool SQLiteDatabase::useWALJournalMode()
 #ifndef NDEBUG
         String mode = statement->columnText(0);
         if (!equalLettersIgnoringASCIICase(mode, "wal"_s)) {
-            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", mode.utf8().legacyCStringPointer());
+            LOG_ERROR("SQLite database journal_mode should be 'WAL', but is '%s'", mode.utf8());
             return false;
         }
 #endif
@@ -804,7 +804,7 @@ std::unique_ptr<SQLiteStatement> SQLiteDatabase::prepareStatementSlow(StringView
     auto query = queryString.trim(isUnicodeCompatibleASCIIWhitespace<char16_t>).utf8();
     auto sqlStatement = constructAndPrepareStatement(*this, byteCast<char>(query.spanIncludingNullTerminator()));
     if (!sqlStatement) {
-        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.legacyCStringPointer());
+        RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query);
         return nullptr;
     }
     return std::unique_ptr<SQLiteStatement>(new SQLiteStatement(*this, sqlStatement.value()));

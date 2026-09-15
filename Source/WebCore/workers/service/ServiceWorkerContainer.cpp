@@ -418,7 +418,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
         destroyJob(job);
     });
 
-    CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8().legacyCStringPointer());
+    CONTAINER_RELEASE_LOG_ERROR("jobFailedWithException: Job %" PRIu64 " failed with error %s", job.identifier().toUInt64(), exception.message().utf8());
 
     if (job.data().type == ServiceWorkerJobType::Register)
         willSettleRegistrationPromise(false);
@@ -571,7 +571,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 {
     ASSERT(m_creationThreadID == currentThreadID());
 
-    CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8().legacyCStringPointer());
+    CONTAINER_RELEASE_LOG_ERROR("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8());
 
     if (job.data().type == ServiceWorkerJobType::Register)
         willSettleRegistrationPromise(false);

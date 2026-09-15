@@ -161,7 +161,7 @@ static bool isValidMicrophoneDevice(const CoreAudioCaptureDevice& device, bool f
 
     // FIXME: We might want to use properties like whether a device can be selected as default once we move device enumeration to GPUProcess.
     if (isVirtualDeviceFromLabel(device.label())) {
-        RELEASE_LOG(WebRTC, "Ignoring virtual microphone device '%s'", device.label().utf8().legacyCStringPointer());
+        RELEASE_LOG(WebRTC, "Ignoring virtual microphone device '%s'", device.label().utf8());
         return false;
     }
 

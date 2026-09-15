@@ -542,7 +542,7 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     auto basePath = FileSystem::realPath(m_resourceBaseURL.fileSystemPath());
     auto resourcePath = FileSystem::realPath(result.fileSystemPath());
     if (!resourcePath.startsWith(basePath)) {
-        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", resourcePath.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Resource URL path escape attempt: %s", resourcePath.utf8());
         return { };
     }
 

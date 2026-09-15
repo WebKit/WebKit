@@ -51,7 +51,7 @@ SecurityFlagsController::SecurityFlagsController()
 
     for (auto& name : m_persistentlyDisabledNames) {
         UNUSED_VARIABLE(name);
-        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8().legacyCStringPointer());
+        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8());
     }
 }
 

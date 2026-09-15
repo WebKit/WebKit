@@ -209,18 +209,18 @@ void WebDriverBidiProcessor::sendBidiMessage(const String& message)
 
     auto msgValue = JSON::Object::parseJSON(message);
     if (!msgValue) {
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON: %s", session->sessionIdentifier().utf8().legacyCStringPointer(), message.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON: %s", session->sessionIdentifier().utf8(), message.utf8());
         return;
     }
     auto msgObj = msgValue->asObject();
     if (!msgObj) {
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON object: %s", session->sessionIdentifier().utf8().legacyCStringPointer(), message.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse message as JSON object: %s", session->sessionIdentifier().utf8(), message.utf8());
         return;
     }
 
     if (auto internalErrorObj = msgObj->getObject("error"_s)) {
         if (auto codeField = internalErrorObj->getInteger("code"_s)) {
-            RELEASE_LOG(Automation, "[s:%s] sendBidiMessage converting internal error into BiDi error: %s", session->sessionIdentifier().utf8().legacyCStringPointer(), message.utf8().legacyCStringPointer());
+            RELEASE_LOG(Automation, "[s:%s] sendBidiMessage converting internal error into BiDi error: %s", session->sessionIdentifier().utf8(), message.utf8());
 
             auto bidiErrorObj = JSON::Object::create();
             bidiErrorObj->setString("type"_s, "error"_s);
@@ -244,7 +244,7 @@ void WebDriverBidiProcessor::sendBidiMessage(const String& message)
             return;
         }
         // FIXME should we forward some unknown error?
-        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse error code: %s", session->sessionIdentifier().utf8().legacyCStringPointer(), message.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Automation, "[s:%s] sendBidiMessage failed to parse error code: %s", session->sessionIdentifier().utf8(), message.utf8());
     } else if (msgObj->getInteger("id"_s))
         msgObj->setString("type"_s, "success"_s);
     else

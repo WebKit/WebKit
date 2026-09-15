@@ -410,7 +410,7 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
     }
 
     if (m_debugLoggingEnabled) [[unlikely]] {
-        ITP_DEBUG_MODE_RELEASE_LOG("About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8().legacyCStringPointer());
+        ITP_DEBUG_MODE_RELEASE_LOG("About to remove data records for %" PUBLIC_LOG_STRING ".", domainsToString(domainsToDeleteOrRestrictWebsiteDataFor).utf8());
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to remove data records for: ["_s, domainsToString(domainsToDeleteOrRestrictWebsiteDataFor), "]."_s));
     }
 
@@ -758,7 +758,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
     static const auto maxNumberOfDomainsInOneLogStatement = 50;
 
     if (domains.size() <= maxNumberOfDomainsInOneLogStatement) {
-        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to: %" PUBLIC_LOG_STRING ".", action.characters(), domainsToString(domains).utf8().legacyCStringPointer());
+        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to: %" PUBLIC_LOG_STRING ".", action.characters(), domainsToString(domains).utf8());
         return;
     }
 
@@ -771,7 +771,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
 
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {
-            ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8());
             batch.shrink(0);
 #if !RELEASE_LOG_DISABLED
             ++batchNumber;
@@ -780,7 +780,7 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(ASCIILiteral action, 
         batch.append(domain);
     }
     if (!batch.isEmpty())
-        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8().legacyCStringPointer());
+        ITP_DEBUG_MODE_RELEASE_LOG("%" PUBLIC_LOG_STRING " to (%d of %u): %" PUBLIC_LOG_STRING ".", action.characters(), batchNumber, numberOfBatches, domainsToString(batch).utf8());
 }
 
 bool ResourceLoadStatisticsStore::shouldExemptFromWebsiteDataDeletion(const RegistrableDomain& domain) const
@@ -1726,14 +1726,14 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
     switch (cookieAccess(subFrameDomain, topFrameDomain, canRequestStorageAccessWithoutUserInteraction)) {
     case CookieAccess::CannotRequest:
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("Cannot grant storage access to %" PRIVATE_LOG_STRING " since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("Cannot grant storage access to %" PRIVATE_LOG_STRING " since its cookies are blocked in third-party contexts and it has not received user interaction as first-party.", subFrameDomain.string().utf8());
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Error, makeString("[ITP] Cannot grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are blocked in third-party contexts and it has not received user interaction as first-party."_s));
         }
         completionHandler(StorageAccessStatus::CannotRequestAccess);
         return;
     case CookieAccess::BasedOnCookiePolicy:
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("No need to grant storage access to %" PRIVATE_LOG_STRING " since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("No need to grant storage access to %" PRIVATE_LOG_STRING " since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies.", subFrameDomain.string().utf8());
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] No need to grant storage access to '"_s, subFrameDomain.string(), "' since its cookies are not blocked in third-party contexts. Note that the underlying cookie policy may still block this third-party from setting cookies."_s));
         }
         completionHandler(StorageAccessStatus::HasAccess);
@@ -1746,7 +1746,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
     auto userWasPromptedEarlier = hasUserGrantedStorageAccessThroughPrompt(*subFrameStatus.second, topFrameDomain);
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::No) {
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("About to ask the user whether they want to grant storage access to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING " or not.", subFrameDomain.string().utf8().legacyCStringPointer(), topFrameDomain.string().utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("About to ask the user whether they want to grant storage access to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING " or not.", subFrameDomain.string().utf8(), topFrameDomain.string().utf8());
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] About to ask the user whether they want to grant storage access to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "' or not."_s));
         }
         completionHandler(StorageAccessStatus::RequiresUserPrompt);
@@ -1755,7 +1755,7 @@ void ResourceLoadStatisticsStore::requestStorageAccess(SubFrameDomain&& subFrame
 
     if (userWasPromptedEarlier == StorageAccessPromptWasShown::Yes) {
         if (debugLoggingEnabled()) [[unlikely]] {
-            ITP_DEBUG_MODE_RELEASE_LOG("Storage access was granted to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING ".", subFrameDomain.string().utf8().legacyCStringPointer(), topFrameDomain.string().utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("Storage access was granted to %" PRIVATE_LOG_STRING " under %" PRIVATE_LOG_STRING ".", subFrameDomain.string().utf8(), topFrameDomain.string().utf8());
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted to '"_s, subFrameDomain.string(), "' under '"_s, topFrameDomain.string(), "'."_s));
         }
     }
@@ -1798,7 +1798,7 @@ void ResourceLoadStatisticsStore::requestStorageAccessUnderOpener(DomainInNeedOf
         return;
 
     if (debugLoggingEnabled()) [[unlikely]] {
-        ITP_DEBUG_MODE_RELEASE_LOG("[Temporary combatibility fix] Storage access was granted for %" PRIVATE_LOG_STRING " under opener page from %" PRIVATE_LOG_STRING ", with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8().legacyCStringPointer(), openerDomain.string().utf8().legacyCStringPointer());
+        ITP_DEBUG_MODE_RELEASE_LOG("[Temporary combatibility fix] Storage access was granted for %" PRIVATE_LOG_STRING " under opener page from %" PRIVATE_LOG_STRING ", with user interaction in the opened window.", domainInNeedOfStorageAccess.string().utf8(), openerDomain.string().utf8());
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
@@ -1969,7 +1969,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsStore::ensurePrevalentResourcesF
         primaryDomainsToBlock.append(debugManualPrevalentResource());
 
         if (debugLoggingEnabled()) {
-            ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PRIVATE_LOG_STRING " as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8().legacyCStringPointer());
+            ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PRIVATE_LOG_STRING " as prevalent resource for the purposes of ITP Debug Mode.", debugManualPrevalentResource().string().utf8());
             debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Did set '"_s, debugManualPrevalentResource().string(), "' as prevalent resource for the purposes of ITP Debug Mode."_s));
         }
     }
@@ -2011,7 +2011,7 @@ void ResourceLoadStatisticsStore::logFrameNavigation(const RegistrableDomain& ta
                     insertDomainRelationshipList(topFrameUniqueRedirectsToSinceSameSiteStrictEnforcementQuery, HashSet<RegistrableDomain>({ targetDomain }), *redirectingDomainResult.second);
 
                     if (debugLoggingEnabled()) [[unlikely]] {
-                        ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8().legacyCStringPointer(), targetDomain.string().utf8().legacyCStringPointer());
+                        ITP_DEBUG_MODE_RELEASE_LOG("Did set %" PUBLIC_LOG_STRING " as making a top frame redirect to %" PUBLIC_LOG_STRING ".", sourceDomain.string().utf8(), targetDomain.string().utf8());
                         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Did set '"_s, sourceDomain.string(), "' as making a top frame redirect to '"_s, targetDomain.string(), "'."_s));
                     }
                 }
@@ -2915,7 +2915,7 @@ RegistrableDomainsToDeleteOrRestrictWebsiteDataFor ResourceLoadStatisticsStore::
                 toDeleteOrRestrictFor.domainsToEnforceSameSiteStrictFor.append(statistic.registrableDomain);
 
                 if (debugLoggingEnabled()) [[unlikely]] {
-                    ITP_DEBUG_MODE_RELEASE_LOG("Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8().legacyCStringPointer());
+                    ITP_DEBUG_MODE_RELEASE_LOG("Scheduled %" PUBLIC_LOG_STRING " to have its cookies set to SameSite=strict.", statistic.registrableDomain.string().utf8());
                     debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("Scheduled '"_s, statistic.registrableDomain.string(), "' to have its cookies set to SameSite=strict'."_s));
                 }
             }

@@ -62,7 +62,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::migrateData()
             NSDictionary<NSString *, id> *rule = [NSKeyedUnarchiver unarchivedObjectOfClasses:allowedClasses fromData:wrapper(row->getData(1)).get() error:&error];
 
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize dynamic declarative net request rule for extension %s", uniqueIdentifier().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize dynamic declarative net request rule for extension %s", uniqueIdentifier().utf8());
                 continue;
             }
 
@@ -72,7 +72,7 @@ void WebExtensionDeclarativeNetRequestSQLiteStore::migrateData()
             String jsonString = encodeJSONString(rule);
             DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("UPDATE "_s, m_tableName, " SET rule = ? WHERE id = ?"_s), jsonString, ruleID);
             if (result != SQLITE_DONE)
-                RELEASE_LOG_ERROR(Extensions, "Failed to update dynamic declarative net request rule for extension %s.", uniqueIdentifier().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to update dynamic declarative net request rule for extension %s.", uniqueIdentifier().utf8());
 
             row = rows->next();
         }

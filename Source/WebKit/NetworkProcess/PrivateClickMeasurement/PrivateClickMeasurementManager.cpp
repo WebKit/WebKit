@@ -108,7 +108,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 #if PLATFORM(COCOA)
             else {
                 if (auto errorMessage = measurement.calculateAndUpdateSourceUnlinkableToken(publicKeyBase64URL)) {
-                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%" PUBLIC_LOG_STRING "'", errorMessage->utf8().legacyCStringPointer());
+                    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceUnlinkableToken(): '%" PUBLIC_LOG_STRING "'", errorMessage->utf8());
                     protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                     return;
                 }
@@ -290,7 +290,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForSource(PrivateCl
 #if PLATFORM(COCOA)
         } else {
             if (auto errorMessage = measurement.calculateAndUpdateSourceSecretToken(*signatureBase64URL)) {
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "'", errorMessage->utf8().legacyCStringPointer());
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "'", errorMessage->utf8());
                 protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, *errorMessage));
                 return;
             }
@@ -338,7 +338,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableTokenForDestination(Sour
             auto result = PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(*signatureBase64URL, *attributionTriggerData.destinationUnlinkableToken);
             if (!result) {
                 auto errorMessage = result.error().isEmpty() ? "Unknown"_s : result.error();
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "'", errorMessage.utf8().legacyCStringPointer());
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateSourceSecretToken(): '%" PUBLIC_LOG_STRING "'", errorMessage.utf8());
                 protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, errorMessage));
                 return;
             }
@@ -423,7 +423,7 @@ void PrivateClickMeasurementManager::handleAttribution(AttributionTriggerData&& 
                 }
 
                 auto errorMessage = result.error().isEmpty() ? "Unknown"_s : result.error();
-                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateDestinationUnlinkableToken(): '%" PUBLIC_LOG_STRING "'", errorMessage.utf8().legacyCStringPointer());
+                RELEASE_LOG_INFO(PrivateClickMeasurement, "Got the following error in calculateAndUpdateDestinationUnlinkableToken(): '%" PUBLIC_LOG_STRING "'", errorMessage.utf8());
                 protectedThis->m_client->broadcastConsoleMessage(MessageLevel::Error, makeString("[Private Click Measurement] "_s, errorMessage));
                 return;
             }

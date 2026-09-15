@@ -182,7 +182,7 @@ void SoupNetworkSession::setHSTSPersistentStorage(const String& directory)
         return;
 
     if (!FileSystem::makeAllDirectories(directory)) {
-        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Network, "Unable to create the HSTS storage directory \"%s\". Using a memory enforcer instead.", directory.utf8());
         return;
     }
 

@@ -195,7 +195,7 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     }
 
     if (!hasValidPushPartition) {
-        RELEASE_LOG_ERROR(Push, "PushClientConnection::create failed: invalid push partition %{public}s", pushPartition.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Push, "PushClientConnection::create failed: invalid push partition %{public}s", pushPartition.utf8());
         return nullptr;
     }
 

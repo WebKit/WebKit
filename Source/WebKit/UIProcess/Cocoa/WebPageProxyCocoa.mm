@@ -1300,13 +1300,13 @@ void WebPageProxy::setMediaCapability(RefPtr<MediaCapability>&& capability)
         return;
     }
 
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().mediaCapability->environmentIdentifier().utf8().legacyCStringPointer(), internals().mediaCapability->webPageURL().string().utf8().legacyCStringPointer());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().mediaCapability->environmentIdentifier().utf8(), internals().mediaCapability->webPageURL().string().utf8());
     protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDisplayCaptureEnvironment(protect(internals().mediaCapability)->environmentIdentifier()), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::deactivateMediaCapability(MediaCapability& capability)
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8().legacyCStringPointer(), capability.webPageURL().string().utf8().legacyCStringPointer());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateMediaCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8(), capability.webPageURL().string().utf8());
     Ref processPool = protect(legacyMainFrameProcess())->processPool();
     Ref granter = processPool->extensionCapabilityGranter();
     granter->setMediaCapabilityActive(capability, false);
@@ -1394,13 +1394,13 @@ void WebPageProxy::setDisplayCaptureCapability(RefPtr<MediaCapability>&& capabil
         return;
     }
 
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setDisplayCaptureCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().displayCaptureCapability->environmentIdentifier().utf8().legacyCStringPointer(), internals().displayCaptureCapability->webPageURL().string().utf8().legacyCStringPointer());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setDisplayCaptureCapability: creating (envID=%{public}s) for URL '%{sensitive}s'", internals().displayCaptureCapability->environmentIdentifier().utf8(), internals().displayCaptureCapability->webPageURL().string().utf8());
     protect(legacyMainFrameProcess())->send(Messages::WebPage::SetDisplayCaptureEnvironment(protect(internals().displayCaptureCapability)->environmentIdentifier()), webPageIDInMainFrameProcess());
 }
 
 void WebPageProxy::deactivateDisplayCaptureCapability(MediaCapability& capability)
 {
-    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateDisplayCaptureCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8().legacyCStringPointer(), capability.webPageURL().string().utf8().legacyCStringPointer());
+    WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "deactivateDisplayCaptureCapability: deactivating (envID=%{public}s) for URL '%{sensitive}s'", capability.environmentIdentifier().utf8(), capability.webPageURL().string().utf8());
     Ref processPool = protect(legacyMainFrameProcess())->processPool();
     Ref granter = processPool->extensionCapabilityGranter();
     granter->setMediaCapabilityActive(capability, false);

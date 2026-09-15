@@ -113,7 +113,7 @@ bool ContentFilter::continueAfterWillSendRequest(ResourceRequest& request, const
     if (!protectedClient)
         return false;
 
-    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from <%{sensitive}s>.\n", request.url().string().utf8().legacyCStringPointer(), redirectResponse.url().string().utf8().legacyCStringPointer());
+    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from <%{sensitive}s>.\n", request.url().string().utf8(), redirectResponse.url().string().utf8());
 #if !LOG_DISABLED
     ResourceRequest originalRequest { request };
 #endif
@@ -181,7 +181,7 @@ void ContentFilter::continueAfterWillSendRequest(ResourceRequest&& request, cons
 {
     ASSERT(RunLoop::isMain());
 
-    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from %s" SENSITIVE_LOG_STRING, request.url().string().utf8().legacyCStringPointer(), redirectResponse.url().string().utf8().legacyCStringPointer());
+    LOG(ContentFiltering, "ContentFilter received request for <%{sensitive}s> with redirect response from %s" SENSITIVE_LOG_STRING, request.url().string().utf8(), redirectResponse.url().string().utf8());
     ASSERT(m_state == State::Stopped || m_state == State::Filtering);
 
     Ref contentFilterCallbackAggregator = ContentFilterCallbackAggregator::create(*this, request, WTF::move(completionHandler));

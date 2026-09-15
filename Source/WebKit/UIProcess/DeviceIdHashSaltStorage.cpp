@@ -127,14 +127,14 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
             }
 
             if (!FileSystem::fileSize(originPath)) {
-                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: Impossible to get the file size of: '%s'", originPath.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: Impossible to get the file size of: '%s'", originPath.utf8());
                 continue;
             }
 
             auto decoder = createForFile(originPath);
 
             if (!decoder) {
-                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: Impossible to access the file to restore the hash salt: '%s'", originPath.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: Impossible to access the file to restore the hash salt: '%s'", originPath.utf8());
                 continue;
             }
 
@@ -146,7 +146,7 @@ void DeviceIdHashSaltStorage::loadStorageFromDisk(CompletionHandler<void(HashMap
             auto deviceIdHashSaltForOrigin = deviceIdHashSaltForOrigins.add(origins, WTF::move(hashSaltForOrigin));
 
             if (!deviceIdHashSaltForOrigin.isNewEntry)
-                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: There are two files with different hash salts for the same origin: '%s'", originPath.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: There are two files with different hash salts for the same origin: '%s'", originPath.utf8());
         }
 
         RunLoop::mainSingleton().dispatch([deviceIdHashSaltForOrigins = WTF::move(deviceIdHashSaltForOrigins), completionHandler = WTF::move(completionHandler)]() mutable {
@@ -159,19 +159,19 @@ std::unique_ptr<DeviceIdHashSaltStorage::HashSaltForOrigin> DeviceIdHashSaltStor
 {
     auto securityOriginData = getSecurityOriginData("origin"_s, decoder);
     if (!securityOriginData) {
-        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The security origin data in the file is not correct: '%s'", deviceIdHashSalt.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The security origin data in the file is not correct: '%s'", deviceIdHashSalt.utf8());
         return nullptr;
     }
 
     auto parentSecurityOriginData = getSecurityOriginData("parentOrigin"_s, decoder);
     if (!parentSecurityOriginData) {
-        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The parent security origin data in the file is not correct: '%s'", deviceIdHashSalt.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The parent security origin data in the file is not correct: '%s'", deviceIdHashSalt.utf8());
         return nullptr;
     }
 
     double lastTimeUsed;
     if (!decoder->decodeDouble("lastTimeUsed"_s, lastTimeUsed)) {
-        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The last time used was not correctly restored for: '%s'", deviceIdHashSalt.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(DiskPersistency, "DeviceIdHashSaltStorage: The last time used was not correctly restored for: '%s'", deviceIdHashSalt.utf8());
         return nullptr;
     }
 

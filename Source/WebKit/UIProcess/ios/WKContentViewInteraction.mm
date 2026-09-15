@@ -5886,7 +5886,7 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     if (selectionFlags)
         selectionChangeStream << ", " << "selectionFlags=" << toSelectionFlags(*selectionFlags);
 
-    RELEASE_LOG(TextInteraction, "Text interaction changing selection using '%s' (%s).", methodName, selectionChangeStream.release().utf8().legacyCStringPointer());
+    RELEASE_LOG(TextInteraction, "Text interaction changing selection using '%s' (%s).", methodName, selectionChangeStream.release().utf8());
 }
 
 - (void)selectPositionAtPoint:(CGPoint)point completionHandler:(void (^)(void))completionHandler
@@ -11097,7 +11097,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         return;
     }
 
-    RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag with attachment identifier: %s", session.get(), info.attachmentIdentifier.utf8().legacyCStringPointer());
+    RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag with attachment identifier: %s", session.get(), info.attachmentIdentifier.utf8());
 
     RetainPtr<NSString> utiType;
     RetainPtr<NSString> fileName;
@@ -11127,7 +11127,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
         if (auto attachment = protect(strongSelf->_page)->attachmentForIdentifier(info.attachmentIdentifier); attachment && !attachment->isEmpty()) {
             attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8().legacyCStringPointer(), destinationURL.get().path);
+                RELEASE_LOG(DragAndDrop, "Drag session: %p delivering promised attachment: %s at path: %@", session.get(), info.attachmentIdentifier.utf8(), destinationURL.get().path);
                 NSError *fileWrapperError = nil;
                 if ([fileWrapper writeToURL:destinationURL.get() options:0 originalContentsURL:nil error:&fileWrapperError])
                     callback(destinationURL.get(), nil);

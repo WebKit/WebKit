@@ -163,7 +163,7 @@ void BackgroundFetchLoad::didReceiveResponse(ResourceResponse&& response, Negoti
 
     auto error = m_networkLoadChecker->validateResponse(m_request, response);
     if (!error.isNull()) {
-        BGLOAD_RELEASE_LOG("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().legacyCStringPointer(), error.errorCode());
+        BGLOAD_RELEASE_LOG("didReceiveResponse: NetworkLoadChecker::validateResponse returned an error (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8(), error.errorCode());
 
         WeakPtr weakThis { *this };
         completionHandler(PolicyAction::Ignore);

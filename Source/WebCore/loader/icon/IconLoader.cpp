@@ -101,7 +101,7 @@ void IconLoader::startLoading()
     if (RefPtr resource = m_resource)
         resource->addClient(*this);
     else
-        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8().legacyCStringPointer());
+        LOG_ERROR("Failed to start load for icon at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8());
 }
 
 void IconLoader::stopLoading()

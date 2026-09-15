@@ -134,7 +134,7 @@ bool CookieJarDB::openDatabase()
                 existsDatabaseFile = false;
             }
         } else {
-            LOG_ERROR("Failed to open cookie database: %s, attempting to recreate the database", m_databasePath.utf8().legacyCStringPointer());
+            LOG_ERROR("Failed to open cookie database: %s, attempting to recreate the database", m_databasePath.utf8());
             deleteAllDatabaseFiles();
             existsDatabaseFile = false;
         }
@@ -142,7 +142,7 @@ bool CookieJarDB::openDatabase()
 
     if (!existsDatabaseFile) {
         if (!isOnMemory() && !FileSystem::makeAllDirectories(FileSystem::parentPath(m_databasePath)))
-            LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8().legacyCStringPointer());
+            LOG_ERROR("Unable to create the Cookie Database path %s", m_databasePath.utf8());
 
         m_database.open(m_databasePath);
     }

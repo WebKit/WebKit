@@ -102,7 +102,7 @@ void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
     String databaseDirectory = m_backingStore->databaseDirectory();
     for (auto& entry : m_blobTemporaryAndStoredFilenames) {
         if (!FileSystem::hardLinkOrCopyFile(entry.first, FileSystem::pathByAppendingComponent(databaseDirectory, entry.second)))
-            LOG_ERROR("Failed to link/copy temporary blob file '%s' to location '%s'", entry.first.utf8().legacyCStringPointer(), FileSystem::pathByAppendingComponent(databaseDirectory, entry.second).utf8().legacyCStringPointer());
+            LOG_ERROR("Failed to link/copy temporary blob file '%s' to location '%s'", entry.first.utf8(), FileSystem::pathByAppendingComponent(databaseDirectory, entry.second).utf8());
 
         FileSystem::deleteFile(entry.first);
     }

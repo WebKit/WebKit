@@ -87,7 +87,7 @@ void WebExtensionSQLiteStore::vacuum()
 
     DatabaseResult result = SQLiteDatabaseExecute(*m_database, "VACUUM"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to vacuum database for extension %s: %s (%d)", m_uniqueIdentifier.utf8().legacyCStringPointer(), m_database->m_lastErrorMessage.data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to vacuum database for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage.data(), result);
 }
 
 bool WebExtensionSQLiteStore::openDatabaseIfNecessary(String& outErrorMessage, bool createIfNecessary)
@@ -113,7 +113,7 @@ String WebExtensionSQLiteStore::openDatabase(const URL& databaseURL, WebExtensio
 
     if (usingDatabaseFile) {
         if (!FileSystem::makeAllDirectories(m_directory.fileSystemPath()) || FileSystem::fileType(m_directory.fileSystemPath()) != FileSystem::FileType::Directory) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to create extension storage directory for extension %s", m_uniqueIdentifier.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to create extension storage directory for extension %s", m_uniqueIdentifier.utf8());
             return "Failed to create extension storage directory."_s;
         }
     }
@@ -130,7 +130,7 @@ String WebExtensionSQLiteStore::openDatabase(const URL& databaseURL, WebExtensio
         }
 
         if (error)
-            RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %s: %s", m_uniqueIdentifier.utf8().legacyCStringPointer(), error->localizedDescription().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %s: %s", m_uniqueIdentifier.utf8(), error->localizedDescription().utf8());
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
             return deleteDatabaseFileAtURL(databaseURL, true);
@@ -144,7 +144,7 @@ String WebExtensionSQLiteStore::openDatabase(const URL& databaseURL, WebExtensio
     // Enable write-ahead logging to minimize the impact of SQLite's disk I/O.
     if (RefPtr db = m_database; !db->enableWAL(error)) {
         if (error)
-            RELEASE_LOG_ERROR(Extensions, "Failed to enable write-ahead logging on database for extension %s: %s", m_uniqueIdentifier.utf8().legacyCStringPointer(), error->localizedDescription().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to enable write-ahead logging on database for extension %s: %s", m_uniqueIdentifier.utf8(), error->localizedDescription().utf8());
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
             return deleteDatabaseFileAtURL(databaseURL, true);
@@ -184,7 +184,7 @@ String WebExtensionSQLiteStore::deleteDatabaseFileAtURL(const URL& databaseURL, 
         FileSystem::deleteFile(makeString(databaseFilePath, suffix));
 
     if (FileSystem::fileExists(databaseFilePath) && !FileSystem::deleteFile(databaseFilePath)) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to delete database for extension %s", m_uniqueIdentifier.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Failed to delete database for extension %s", m_uniqueIdentifier.utf8());
         return "Failed to delete extension storage database file."_s;
     }
 
@@ -215,7 +215,7 @@ String WebExtensionSQLiteStore::deleteDatabase()
     String databaseCloseErrorMessage;
     if (isDatabaseOpen()) {
         if (RefPtr db = database(); db->close() != SQLITE_OK) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to close storage database for extension %s", m_uniqueIdentifier.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to close storage database for extension %s", m_uniqueIdentifier.utf8());
             databaseCloseErrorMessage = "Failed to close extension storage database."_s;
         }
         m_database = nullptr;
@@ -236,7 +236,7 @@ String WebExtensionSQLiteStore::handleSchemaVersioning(bool deleteDatabaseFileOn
     SchemaVersion schemaVersion = migrateToCurrentSchemaVersionIfNeeded();
 
     if (schemaVersion != currentSchemaVersion) {
-        RELEASE_LOG_ERROR(Extensions, "Schema version (%d) does not match the supported schema version (%d) in database for extension %s", schemaVersion, currentSchemaVersion, m_uniqueIdentifier.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Schema version (%d) does not match the supported schema version (%d) in database for extension %s", schemaVersion, currentSchemaVersion, m_uniqueIdentifier.utf8());
 
         if (!m_useInMemoryDatabase && deleteDatabaseFileOnError)
             return deleteDatabaseFileAtURL(databaseURL(), true);
@@ -265,7 +265,7 @@ SchemaVersion WebExtensionSQLiteStore::migrateToCurrentSchemaVersionIfNeeded()
     // Because of this, we still need to do the migration when schemaVersion is 0, even though this is unnecessary if the database we just created,
     // but we don't want to spam the log every time we create a new database.
     if (!!schemaVersion)
-        RELEASE_LOG_INFO(Extensions, "Schema version (%d) does not match our supported schema version (%d) in database for extension %s, recreating database", schemaVersion, currentSchemaVersion, m_uniqueIdentifier.utf8().legacyCStringPointer());
+        RELEASE_LOG_INFO(Extensions, "Schema version (%d) does not match our supported schema version (%d) in database for extension %s, recreating database", schemaVersion, currentSchemaVersion, m_uniqueIdentifier.utf8());
 
     // Someday we might migrate existing data from an older schema version, but we just start over for now.
     if (resetDatabaseSchema() != SQLITE_DONE)
@@ -306,7 +306,7 @@ DatabaseResult WebExtensionSQLiteStore::setDatabaseSchemaVersion(SchemaVersion n
 
     DatabaseResult result = SQLiteDatabaseExecute(*m_database, makeString("PRAGMA user_version = "_s, newVersion));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to set database version for extension %s: %s (%d)", m_uniqueIdentifier.utf8().legacyCStringPointer(), m_database->m_lastErrorMessage.data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to set database version for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage.data(), result);
 
     return result;
 }
@@ -335,7 +335,7 @@ void WebExtensionSQLiteStore::createSavepoint(CompletionHandler<void(Markable<WT
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to create storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8().legacyCStringPointer(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to create storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
             errorMessage = "Failed to create savepoint."_s;
         }
 
@@ -371,7 +371,7 @@ void WebExtensionSQLiteStore::commitSavepoint(WTF::UUID& savepointIdentifier, Co
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("RELEASE SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to release storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8().legacyCStringPointer(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to release storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
             errorMessage = "Failed to release savepoint."_s;
         }
 
@@ -405,7 +405,7 @@ void WebExtensionSQLiteStore::rollbackToSavepoint(WTF::UUID& savepointIdentifier
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("ROLLBACK TO SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to rollback to storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8().legacyCStringPointer(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to rollback to storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
             errorMessage = "Failed to rollback to savepoint."_s;
         }
 

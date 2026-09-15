@@ -668,7 +668,7 @@ void Navigation::resolveFinishedPromise(NavigationAPIMethodTracker* apiMethodTra
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#reject-the-finished-promise
 void Navigation::rejectFinishedPromise(NavigationAPIMethodTracker* apiMethodTracker, const Exception& exception, JSC::JSValue exceptionObject)
 {
-    RELEASE_LOG(Navigation, "rejectFinishedPromise: rejecting promises for tracker=%p with exception='%s'", apiMethodTracker, exception.message().utf8().legacyCStringPointer());
+    RELEASE_LOG(Navigation, "rejectFinishedPromise: rejecting promises for tracker=%p with exception='%s'", apiMethodTracker, exception.message().utf8());
 
     apiMethodTracker->rejectFinished(exception, exceptionObject);
     m_methodTrackers.unregister(*apiMethodTracker);

@@ -166,7 +166,7 @@ private:
             TextStream stream;
             stream << "localMaxValue=" << localMaxValue << "and data =" << node->data();
             LOG_ERROR("PODIntervalTree verification failed at node 0x%p: %s",
-                node, stream.release().utf8().legacyCStringPointer());
+                node, stream.release().utf8());
             return false;
         }
         if (currentMaxValue)

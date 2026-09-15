@@ -97,7 +97,7 @@ void PerActivityStateCPUUsageSampler::loggingTimerFired()
         double cpuUsage = pair.value.value() * 100. / cpuTimeDelta.value();
         String activityStateKey = loggingKeyForActivityState(pair.key);
         page->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::cpuUsageKey(), activityStateKey, cpuUsage, 2, ShouldSample::No);
-        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8().legacyCStringPointer());
+        RELEASE_LOG(PerformanceLogging, "WebContent processes used %.1f%% CPU in %s state", cpuUsage, activityStateKey.utf8());
     }
 
     m_cpuTimeInActivityState.clear();

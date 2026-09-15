@@ -139,7 +139,7 @@ static String getWebPushDirectoryPathWithMigrationIfNecessary()
     if (FileSystem::fileExists(oldDatabasePath) && !FileSystem::fileExists(newDatabasePath)) {
         FileSystem::makeAllDirectories(newPath);
         bool migrated = WebCore::SQLiteFileSystem::moveDatabaseFile(oldDatabasePath, newDatabasePath);
-        RELEASE_LOG(Push, "Moved push database to new container path %" PUBLIC_LOG_STRING " with result: %d", newDatabasePath.utf8().legacyCStringPointer(), migrated);
+        RELEASE_LOG(Push, "Moved push database to new container path %" PUBLIC_LOG_STRING " with result: %d", newDatabasePath.utf8(), migrated);
     }
 
     return newPath;

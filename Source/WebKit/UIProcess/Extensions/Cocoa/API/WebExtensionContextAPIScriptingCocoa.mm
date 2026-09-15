@@ -403,7 +403,7 @@ void WebExtensionContext::clearRegisteredContentScripts()
 
     registeredContentScriptsStore()->deleteDatabase([](const String& errorMessage) {
         if (!errorMessage.isEmpty())
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete registered content scripts database. Error: %s", errorMessage.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete registered content scripts database. Error: %s", errorMessage.utf8());
     });
 }
 

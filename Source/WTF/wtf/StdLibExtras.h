@@ -1315,6 +1315,29 @@ inline decltype(auto) NODELETE safeNSStringPrintfType(T&& argument) { return saf
 #define SAFE_WTFLOGALWAYS(format, ...) \
     SUPPRESS_UNCOUNTED_ARG WTFLogAlways(format __VA_OPT__(, SAFE_NSSTRING_PRINTF_TYPE(__VA_ARGS__)))
 
+// The logging counterpart to safePrintfType(), used by the LOG and RELEASE_LOG macro families so
+// that a call site can hand them a CString and let the macro reach for the pointer.
+//
+// Unlike safePrintfType(), this never rejects an argument: it converts what it knows how to convert
+// and passes everything else through untouched, leaving the format-string checking on the log
+// function itself to catch a mismatch. A log call site is a consumer of whatever the surrounding
+// code already has, which may be a const char* owned by a C interface, an Objective-C object or
+// block, or an enumeration, none of which it can convert to a WTF string type without a copy.
+// Passing those through is also what keeps the macros working unchanged for every call site that
+// has not been migrated.
+//
+// Scalars are taken by value rather than forwarded because the argument can be a bit-field or a
+// SIMD vector element, neither of which a reference can bind to.
+template<typename T> concept LogPrintfConvertibleType = !std::is_scalar_v<std::decay_t<T>>
+    && requires (T&& argument) { safePrintfType(std::forward<T>(argument)); };
+
+template<typename T> requires (std::is_scalar_v<T>) inline T NODELETE logPrintfType(T argument) { return argument; }
+template<LogPrintfConvertibleType T> inline decltype(auto) NODELETE logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
+template<typename T> requires (!std::is_scalar_v<std::decay_t<T>> && !LogPrintfConvertibleType<T>)
+inline T NODELETE logPrintfType(T argument) { return argument; }
+
+#define LOG_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::logPrintfType, __VA_ARGS__)
+
 template<typename T>
 concept NonConstByteType = CanBeConstByteType<T> && !std::is_const_v<T>;
 

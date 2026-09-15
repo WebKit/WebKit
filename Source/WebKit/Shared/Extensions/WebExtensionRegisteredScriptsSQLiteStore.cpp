@@ -112,7 +112,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::deleteScriptsWithIDs(Vector<Strin
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM registered_scripts WHERE key in ("_s, rowFilterStringFromRowKeys(ids), ")"_s));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete scripts for extension %s.", protectedThis->uniqueIdentifier().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete scripts for extension %s.", protectedThis->uniqueIdentifier().utf8());
             errorMessage = "Failed to delete scripts from registered content scripts storage."_s;
         }
 
@@ -212,9 +212,9 @@ Vector<Ref<JSON::Object>> WebExtensionRegisteredScriptsSQLiteStore::getKeysAndVa
             if (RefPtr object = value->asObject())
                 results.append(*object);
             else
-                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to deserialize registered content scripts for extension %s", uniqueIdentifier().utf8());
         } else
-            RELEASE_LOG_ERROR(Extensions, "Failed to parse JSON for registered content scripts for extension %s", uniqueIdentifier().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to parse JSON for registered content scripts for extension %s", uniqueIdentifier().utf8());
 
         row = rows->next();
     }
@@ -229,7 +229,7 @@ void WebExtensionRegisteredScriptsSQLiteStore::insertScript(const String& script
 
     DatabaseResult result = SQLiteDatabaseExecute(database, "INSERT INTO registered_scripts (key, script) VALUES (?, ?)"_s, scriptID, scriptData);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to insert registered content script for extension %s.", uniqueIdentifier().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Failed to insert registered content script for extension %s.", uniqueIdentifier().utf8());
         errorMessage = "Failed to add content script."_s;
         return;
     }
@@ -249,7 +249,7 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::createFreshDatabaseSche
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE registered_scripts (key TEXT PRIMARY KEY NOT NULL, script BLOB NOT NULL)"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", uniqueIdentifier().utf8().legacyCStringPointer(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
     return result;
 }
 
@@ -282,7 +282,7 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::resetDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS registered_scripts"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", uniqueIdentifier().utf8().legacyCStringPointer(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
 
     return result;
 }

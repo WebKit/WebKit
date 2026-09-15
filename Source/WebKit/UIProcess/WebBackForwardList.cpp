@@ -1119,7 +1119,7 @@ void doLog(const WTF::String& msg)
 
 void doLoadingReleaseLog(const WTF::String& msg)
 {
-    RELEASE_LOG(Loading, "%s", msg.utf8().legacyCStringPointer());
+    RELEASE_LOG(Loading, "%s", msg.utf8());
 }
 
 IPC::Connection& connectionForProcess(WebKit::WebProcessProxy& process)

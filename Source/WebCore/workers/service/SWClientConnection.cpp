@@ -88,7 +88,7 @@ bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier
 
     auto iterator = m_scheduledJobSources.find(jobIdentifier);
     if (iterator == m_scheduledJobSources.end()) {
-        LOG_ERROR("Job %s was not found", jobIdentifier.loggingString().utf8().legacyCStringPointer());
+        LOG_ERROR("Job %s was not found", jobIdentifier.loggingString().utf8());
         return false;
     }
     auto isPosted = dispatchToContextThreadIfNecessary(iterator->value, [jobIdentifier, task = WTF::move(task)] (ScriptExecutionContext& context) mutable {

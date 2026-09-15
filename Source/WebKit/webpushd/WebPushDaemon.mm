@@ -481,7 +481,7 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     WebKit::WebPushMessage pushMessage { Vector(byteCast<uint8_t>(data.span())), message.pushPartitionString, message.registrationURL, { } };
 #endif
 
-    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8().legacyCStringPointer(), message.registrationURL.string().utf8().legacyCStringPointer(), m_pendingPushMessages.size(), message.payload.utf8().legacyCStringPointer());
+    WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8(), message.registrationURL.string().utf8(), m_pendingPushMessages.size(), message.payload.utf8());
 
     handleIncomingPushImpl(identifier, WTF::move(pushMessage));
 
@@ -516,7 +516,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
 {
 #if PLATFORM(IOS)
     if (getAllowedBundleIdentifier() != identifier.bundleIdentifier || !ensureWebClipCache().isWebClipVisible(identifier.bundleIdentifier, identifier.pushPartition)) {
-        RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", identifier.debugDescription().utf8().legacyCStringPointer());
+        RELEASE_LOG(Push, "Got incoming push from unexpected app: %{public}s", identifier.debugDescription().utf8());
         updateSubscriptionSetState();
         return;
     }
@@ -528,7 +528,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
     auto blockPtr = makeBlockPtr([identifier = crossThreadCopy(identifier), message = WTF::move(message)](UNNotificationSettings *settings) mutable {
         auto status = settings.authorizationStatus;
         if (status != UNAuthorizationStatusAuthorized) {
-            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), identifier.debugDescription().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Push, "Ignoring incoming push from app with invalid notification permission state %d: %{public}s", static_cast<int>(status), identifier.debugDescription().utf8());
             return;
         }
 
@@ -595,7 +595,7 @@ void WebPushDaemon::handleIncomingPushImpl(const PushSubscriptionSetIdentifier& 
 void WebPushDaemon::notifyClientPushMessageIsAvailable(const WebCore::PushSubscriptionSetIdentifier& subscriptionSetIdentifier)
 {
     const auto& bundleIdentifier = subscriptionSetIdentifier.bundleIdentifier;
-    RELEASE_LOG(Push, "Launching %{public}s in response to push for %{public}s", bundleIdentifier.utf8().legacyCStringPointer(), subscriptionSetIdentifier.debugDescription().utf8().legacyCStringPointer());
+    RELEASE_LOG(Push, "Launching %{public}s in response to push for %{public}s", bundleIdentifier.utf8(), subscriptionSetIdentifier.debugDescription().utf8());
 
 #if PLATFORM(MAC)
     CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
@@ -710,10 +710,10 @@ void WebPushDaemon::silentPushTimerFired()
         auto origin = WebCore::SecurityOriginData::fromURL(URL { it->scope });
         auto originString = origin.toString();
         if (m_inspectedServiceWorkerOrigins.contains(origin))
-            RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), but not incrementing silent push count since it is being inspected", it->identifier.debugDescription().utf8().legacyCStringPointer(), originString.utf8().legacyCStringPointer());
+            RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), but not incrementing silent push count since it is being inspected", it->identifier.debugDescription().utf8(), originString.utf8());
         else {
             m_pushService->incrementSilentPushCount(it->identifier, originString, [identifier = it->identifier, originString](unsigned newSilentPushCount) {
-                RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), silent push count is now %u", identifier.debugDescription().utf8().legacyCStringPointer(), originString.utf8().legacyCStringPointer(), newSilentPushCount);
+                RELEASE_LOG(Push, "showNotification not called in time for %{public}s (origin = %{sensitive}s), silent push count is now %u", identifier.debugDescription().utf8(), originString.utf8(), newSilentPushCount);
             });
         }
 
@@ -730,7 +730,7 @@ void WebPushDaemon::didShowNotification(const WebCore::PushSubscriptionSetIdenti
 
     for (auto it = m_potentialSilentPushes.begin(); it != m_potentialSilentPushes.end();) {
         if (it->identifier == identifier && it->scope == scope && it->expirationTime > now) {
-            RELEASE_LOG(Push, "showNotification called in time for %{public}s (origin = %{sensitive}s)", it->identifier.debugDescription().utf8().legacyCStringPointer(), it->scope.utf8().legacyCStringPointer());
+            RELEASE_LOG(Push, "showNotification called in time for %{public}s (origin = %{sensitive}s)", it->identifier.debugDescription().utf8(), it->scope.utf8());
             removedFirst = (it == m_potentialSilentPushes.begin());
             it = m_potentialSilentPushes.erase(it);
             break;
@@ -842,7 +842,7 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
     auto webClipOrigin = SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8().legacyCStringPointer(), origin.toString().utf8().legacyCStringPointer());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
         return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
     }
 #endif
@@ -852,7 +852,7 @@ void WebPushDaemon::subscribeToPushService(PushClientConnection& connection, con
     RetainPtr center = adoptNS([[m_userNotificationCenterClass.get() alloc] initWithBundleIdentifier:notificationCenterBundleIdentifier.get()]);
     UNNotificationSettings *settings = [center notificationSettings];
     if (settings.authorizationStatus != UNAuthorizationStatusAuthorized) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not have correct permissions", origin.toString().utf8().legacyCStringPointer());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Cannot subscribe because web clip origin %{sensitive}s does not have correct permissions", origin.toString().utf8());
         return replySender(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotAllowedError, "User denied push permission"_s }));
     }
 #endif
@@ -1085,7 +1085,7 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
             for (UNNotification *notification in notifications.get()) {
                 auto notificationData = WebCore::NotificationData::fromDictionary(retainPtr(notification.request.content.userInfo).get());
                 if (!notificationData) {
-                    RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8().legacyCStringPointer());
+                    RELEASE_LOG_ERROR(Push, "WebPushDaemon::getNotifications error: skipping notification with invalid Notification userInfo for subscription %{public}s", identifier.debugDescription().utf8());
                     continue;
                 }
 
@@ -1094,7 +1094,7 @@ void WebPushDaemon::getNotifications(PushClientConnection& connection, const URL
 
                 notificationDatas.append(*notificationData);
             }
-            RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), identifier.debugDescription().utf8().legacyCStringPointer());
+            RELEASE_LOG(Push, "WebPushDaemon::getNotifications: returned %zu notifications for subscription %{public}s", notificationDatas.size(), identifier.debugDescription().utf8());
             completionHandler(notificationDatas);
         });
     });
@@ -1139,7 +1139,7 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8().legacyCStringPointer(), origin.toString().utf8().legacyCStringPointer());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
         return replySender(WebCore::PushPermissionState::Denied);
     }
 #endif
@@ -1156,7 +1156,7 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
             default: return WebCore::PushPermissionState::Prompt;
             }
         }(settings.authorizationStatus);
-        RELEASE_LOG(Push, "getPushPermissionState for %{sensitive}s with result: %u", originString.utf8().legacyCStringPointer(), static_cast<unsigned>(permissionState));
+        RELEASE_LOG(Push, "getPushPermissionState for %{sensitive}s with result: %u", originString.utf8(), static_cast<unsigned>(permissionState));
 
         WorkQueue::mainSingleton().dispatch([replySender = WTF::move(replySender), permissionState] mutable {
             replySender(permissionState);
@@ -1186,7 +1186,7 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
     auto webClipOrigin = WebCore::SecurityOriginData::fromURL(URL { [webClip pageURL] });
 
     if (origin.isNull() || origin.isOpaque() || origin != webClipOrigin) {
-        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8().legacyCStringPointer(), origin.toString().utf8().legacyCStringPointer());
+        WEBPUSHDAEMON_RELEASE_LOG(Push, "Denied push permission because web clip origin %{sensitive}s does not match expected origin %{sensitive}s", webClipOrigin.toString().utf8(), origin.toString().utf8());
         return replySender(false);
     }
 #endif
@@ -1197,9 +1197,9 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
 
     auto blockPtr = makeBlockPtr([originString = crossThreadCopy(origin.toString()), replySender = WTF::move(replySender)](BOOL granted, NSError *error) mutable {
         if (error)
-            RELEASE_LOG_ERROR(Push, "Failed to request push permission for %{sensitive}s: %{public}@", originString.utf8().legacyCStringPointer(), error);
+            RELEASE_LOG_ERROR(Push, "Failed to request push permission for %{sensitive}s: %{public}@", originString.utf8(), error);
         else
-            RELEASE_LOG(Push, "Requested push permission for %{sensitive}s with result: %d", originString.utf8().legacyCStringPointer(), granted);
+            RELEASE_LOG(Push, "Requested push permission for %{sensitive}s with result: %d", originString.utf8(), granted);
 
         WorkQueue::mainSingleton().dispatch([replySender = WTF::move(replySender), granted] mutable {
             replySender(granted);
@@ -1294,10 +1294,10 @@ void WebPushDaemon::setServiceWorkerOriginIsBeingInspected(const WebCore::Securi
         auto count = --result.iterator->value;
         if (count <= 0)
             m_inspectedServiceWorkerOrigins.remove(result.iterator);
-        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s no longer being inspected (inspection count = %d)", origin.toString().utf8().legacyCStringPointer(), count);
+        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s no longer being inspected (inspection count = %d)", origin.toString().utf8(), count);
     } else {
         auto count = ++result.iterator->value;
-        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s is being inspected (inspection count = %d); suspending silent push enforcement", origin.toString().utf8().legacyCStringPointer(), count);
+        RELEASE_LOG(Push, "Service worker for origin %{sensitive}s is being inspected (inspection count = %d); suspending silent push enforcement", origin.toString().utf8(), count);
     }
 }
 

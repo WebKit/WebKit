@@ -152,7 +152,7 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensio
     }
 
     if (!m_extensionContextBaseURLMap.add(extensionContext.baseURL().protocolHostAndPort(), extensionContext)) {
-        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %" PRIVATE_LOG_STRING, extensionContext.baseURL().string().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Extension context already loaded with same base URL: %" PRIVATE_LOG_STRING, extensionContext.baseURL().string().utf8());
         m_extensionContexts.remove(extensionContext);
         return makeUnexpected(extensionContext.createError(WebExtensionContext::Error::BaseURLAlreadyInUse));
     }
@@ -172,7 +172,7 @@ std::expected<bool, RefPtr<API::Error>> WebExtensionController::load(WebExtensio
 
     auto extensionDirectory = storageDirectory(extensionContext);
     if (!!extensionDirectory && !FileSystem::makeAllDirectories(extensionDirectory))
-        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %" PRIVATE_LOG_STRING, extensionDirectory.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %" PRIVATE_LOG_STRING, extensionDirectory.utf8());
 
     auto loadResult = extensionContext.load(*this, extensionDirectory);
     if (!loadResult) {

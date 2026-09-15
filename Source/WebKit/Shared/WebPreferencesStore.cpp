@@ -195,7 +195,7 @@ void WebPreferencesStore::logNonDefaultValues() const
         checkEntry(key, value);
 
     if (!nonDefaultPrefs.isEmpty())
-        RELEASE_LOG(Loading, "WebPreferencesStore: non-default preferences: %" PUBLIC_LOG_STRING, nonDefaultPrefs.toString().utf8().legacyCStringPointer());
+        RELEASE_LOG(Loading, "WebPreferencesStore: non-default preferences: %" PUBLIC_LOG_STRING, nonDefaultPrefs.toString().utf8());
 #endif
 }
 

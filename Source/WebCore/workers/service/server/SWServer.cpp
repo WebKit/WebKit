@@ -190,7 +190,7 @@ void SWServer::originImportComplete(const SecurityOriginData& topOrigin, Monoton
     auto callbacks = m_pendingOriginImportCallbacks.take(topOrigin);
 #if !RELEASE_LOG_DISABLED
     auto elapsed = MonotonicTime::now() - startTime;
-    RELEASE_LOG(ServiceWorker, "SWServer::originImportComplete: Completed import for origin %" SENSITIVE_LOG_STRING " in %.0f ms (%zu pending callbacks)", topOrigin.toString().utf8().legacyCStringPointer(), elapsed.milliseconds(), callbacks.size());
+    RELEASE_LOG(ServiceWorker, "SWServer::originImportComplete: Completed import for origin %" SENSITIVE_LOG_STRING " in %.0f ms (%zu pending callbacks)", topOrigin.toString().utf8(), elapsed.milliseconds(), callbacks.size());
 #else
     UNUSED_PARAM(startTime);
 #endif
@@ -231,7 +231,7 @@ void SWServer::importRegistrationsForOrigin(const SecurityOriginData& topOrigin,
     if (!result.isNewEntry)
         return;
 
-    RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Starting import for origin %" SENSITIVE_LOG_STRING, topOrigin.toString().utf8().legacyCStringPointer());
+    RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Starting import for origin %" SENSITIVE_LOG_STRING, topOrigin.toString().utf8());
 
     RefPtr store = m_registrationStore;
     if (!store) {
@@ -245,7 +245,7 @@ void SWServer::importRegistrationsForOrigin(const SecurityOriginData& topOrigin,
         if (!protectedThis)
             return;
 
-        RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Loaded %zu registrations for origin %" SENSITIVE_LOG_STRING " in %.0f ms", result ? result->size() : 0, topOrigin.toString().utf8().legacyCStringPointer(), (MonotonicTime::now() - startTime).milliseconds());
+        RELEASE_LOG(ServiceWorker, "SWServer::importRegistrationsForOrigin: Loaded %zu registrations for origin %" SENSITIVE_LOG_STRING " in %.0f ms", result ? result->size() : 0, topOrigin.toString().utf8(), (MonotonicTime::now() - startTime).milliseconds());
 
         // Discard stale results if clearAll() was called after this import was initiated.
         if (clearAllCounter != protectedThis->m_clearAllCounter) {
@@ -865,7 +865,7 @@ void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDa
     if (!jobDataIdentifier)
         return;
 
-    RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::scriptContextFailedToStart: Failed to start SW for job %s, error: %s", this, jobDataIdentifier->loggingString().utf8().legacyCStringPointer(), message.utf8().legacyCStringPointer());
+    RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::scriptContextFailedToStart: Failed to start SW for job %s, error: %s", this, jobDataIdentifier->loggingString().utf8(), message.utf8());
 
     CheckedPtr jobQueue = m_jobQueues.get(worker.registrationKey());
     if (!jobQueue || !jobQueue->isCurrentlyProcessingJob(*jobDataIdentifier)) {
@@ -971,7 +971,7 @@ void forEachClientForOriginImpl(const Vector<ScriptExecutionContextIdentifier>& 
         if (auto clientIterator = clientsById.find(clientIdentifier); clientIterator != clientsById.end())
             apply(clientIterator->value);
         else
-            RELEASE_LOG_ERROR(ServiceWorker, "SWServer::forEachClientForOriginImpl: Unable to find identifier=%" PUBLIC_LOG_STRING " in map", clientIdentifier.toString().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(ServiceWorker, "SWServer::forEachClientForOriginImpl: Unable to find identifier=%" PUBLIC_LOG_STRING " in map", clientIdentifier.toString().utf8());
     }
 }
 
@@ -1939,14 +1939,14 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, std::op
         ServiceWorkerRegistrationKey registrationKey { WTF::move(origin), WTF::move(registrationURL) };
         RefPtr registration = protectedThis->m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8());
             callback(true, WTF::move(notificationPayload));
             return;
         }
 
         RefPtr worker = registration->activeWorker();
         if (!worker) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8());
             callback(true, WTF::move(notificationPayload));
             return;
         }
@@ -1994,14 +1994,14 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
         ServiceWorkerRegistrationKey registrationKey { WTF::move(origin), URL { data.serviceWorkerRegistrationURL } };
         RefPtr registration = protectedThis->m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
-            RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8());
             callback(true);
             return;
         }
 
         RefPtr worker = registration->activeWorker();
         if (!worker) {
-            RELEASE_LOG_ERROR(Push, "Cannot process notification event: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8());
             callback(true);
             return;
         }
@@ -2039,7 +2039,7 @@ void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, Back
 {
     RefPtr worker = registration.activeWorker();
     if (!worker) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8());
         callback();
         return;
     }
@@ -2073,7 +2073,7 @@ void SWServer::fireBackgroundFetchClickEvent(SWServerRegistration& registration,
 {
     RefPtr worker = registration.activeWorker();
     if (!worker) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch click message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch click message: no active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8());
         return;
     }
 

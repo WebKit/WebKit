@@ -113,14 +113,14 @@ static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const S
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.utf8().legacyCStringPointer());
+        LOG_ERROR("Failed to prepare statement to set value in database (%s)", query.utf8());
         return false;
     }
 
     statement->bindText(1, value);
 
     if (statement->step() != SQLITE_DONE) {
-        LOG_ERROR("Failed to step statement to set value in database (%s)", query.utf8().legacyCStringPointer());
+        LOG_ERROR("Failed to step statement to set value in database (%s)", query.utf8());
         return false;
     }
 
@@ -131,7 +131,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
 {
     auto statement = db.prepareStatementSlow(query);
     if (!statement) {
-        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", db.lastError(), query.utf8().legacyCStringPointer());
+        LOG_ERROR("Error (%i) preparing statement to read text result from database (%s)", db.lastError(), query.utf8());
         return false;
     }
 
@@ -145,7 +145,7 @@ static bool retrieveTextResultFromDatabase(SQLiteDatabase& db, StringView query,
         return true;
     }
 
-    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.utf8().legacyCStringPointer());
+    LOG_ERROR("Error (%i) reading text result from database (%s)", result, query.utf8());
     return false;
 }
 

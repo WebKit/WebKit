@@ -2211,7 +2211,7 @@ void NetworkStorageManager::didFinishHandlingVersionChangeTransaction(IPC::Conne
 {
     if (RefPtr databaseConnection = m_idbStorageRegistry->connection(databaseConnectionIdentifier, ipcConnection)) {
         if (!databaseConnection->checkedDatabase()->isVersionChangeTransactionFinishingOrFinished(transactionIdentifier)) {
-            RELEASE_LOG_FAULT(IndexedDB, "NetworkStorageManager::didFinishHandlingVersionChangeTransaction: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", transactionIdentifier.loggingString().utf8().legacyCStringPointer());
+            RELEASE_LOG_FAULT(IndexedDB, "NetworkStorageManager::didFinishHandlingVersionChangeTransaction: version change transaction %" PUBLIC_LOG_STRING " is not finishing or finished", transactionIdentifier.loggingString().utf8());
             return;
         }
         databaseConnection->didFinishHandlingVersionChange(transactionIdentifier);

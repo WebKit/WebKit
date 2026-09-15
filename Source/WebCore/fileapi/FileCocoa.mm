@@ -46,7 +46,7 @@ bool File::shouldReplaceFile(const String& path)
     NSError *error;
     RetainPtr pathURL = [NSURL URLByResolvingAliasFileAtURL:[NSURL fileURLWithPath:path.createNSString().get() isDirectory:NO] options:NSURLBookmarkResolutionWithoutUI error:&error];
     if (!pathURL) {
-        LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", path.utf8().legacyCStringPointer(), error);
+        LOG_ERROR("Failed to resolve alias at path %s with error %@.\n", path.utf8(), error);
         return false;
     }
 

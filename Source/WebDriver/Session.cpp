@@ -3344,7 +3344,7 @@ void Session::dispatchBidiMessage(RefPtr<JSON::Object>&& message)
 
     if (bidiMessage->getString("type"_s) == "event"_s) {
         if (bidiMessage->size() < 3 || (bidiMessage->find("method"_s) == bidiMessage->end()) || (bidiMessage->find("params"_s) == bidiMessage->end())) {
-            RELEASE_LOG(WebDriverBiDi, "Session::dispatchBidiMessage: Malformed bidi event: %s", bidiMessageValue->toJSONString().utf8().legacyCStringPointer());
+            RELEASE_LOG(WebDriverBiDi, "Session::dispatchBidiMessage: Malformed bidi event: %s", bidiMessageValue->toJSONString().utf8());
             return;
         }
 

@@ -51,7 +51,7 @@ IDBIndexInfo IDBObjectStoreInfo::createNewIndex(IDBIndexIdentifier indexID, cons
 void IDBObjectStoreInfo::addExistingIndex(const IDBIndexInfo& info)
 {
     if (m_indexMap.contains(info.identifier()))
-        LOG_ERROR("Adding an index '%s' with existing Index ID", info.name().utf8().legacyCStringPointer());
+        LOG_ERROR("Adding an index '%s' with existing Index ID", info.name().utf8());
 
     m_indexMap.set(info.identifier(), info);
 }

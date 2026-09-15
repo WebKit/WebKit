@@ -97,7 +97,7 @@ static std::expected<CoreAudioCaptureUnit::StoredAudioUnit, OSStatus> createAudi
     if (name) {
         String ioUnitName = name;
         CFRelease(name);
-        RELEASE_LOG(WebRTC, "CoreAudioCaptureInternalUnit created \"%" PRIVATE_LOG_STRING "\" component", ioUnitName.utf8().legacyCStringPointer());
+        RELEASE_LOG(WebRTC, "CoreAudioCaptureInternalUnit created \"%" PRIVATE_LOG_STRING "\" component", ioUnitName.utf8());
     }
 #endif
 

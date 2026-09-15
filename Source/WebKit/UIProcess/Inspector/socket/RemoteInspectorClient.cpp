@@ -108,13 +108,13 @@ RemoteInspectorClient::RemoteInspectorClient(URL url, RemoteInspectorObserver& o
     : m_observer(observer)
 {
     if (!url.host() || !url.port()) {
-        LOG_ERROR("Invalid inspector url: %s", url.string().utf8().legacyCStringPointer());
+        LOG_ERROR("Invalid inspector url: %s", url.string().utf8());
         return;
     }
 
     m_connectionID = connectInet(url.host().utf8().legacyCStringPointer(), url.port().value());
     if (!m_connectionID) {
-        LOG_ERROR("Inspector client could not connect to %s", url.string().utf8().legacyCStringPointer());
+        LOG_ERROR("Inspector client could not connect to %s", url.string().utf8());
         return;
     }
 

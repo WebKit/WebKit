@@ -589,7 +589,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
             WTF::TextStream activityStateStream(WTF::TextStream::LineMode::SingleLine);
             activityStateStream << page->activityState();
 
-            RELEASE_LOG(ActivityState, "WebPage %p - load_time: %" PRId64 ", visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.ptr(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), activityStateStream.release().utf8().legacyCStringPointer(), page->mainWebFrame().url().string().utf8().legacyCStringPointer());
+            RELEASE_LOG(ActivityState, "WebPage %p - load_time: %" PRId64 ", visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.ptr(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), activityStateStream.release().utf8(), page->mainWebFrame().url().string().utf8());
         }
     });
 #endif
@@ -608,7 +608,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         if (RefPtr injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(protect(parameters.initializationUserData.object()).get())))
             lazyInitialize(m_injectedBundle, injectedBundle.releaseNonNull());
         else
-            WEBPROCESS_RELEASE_LOG_ERROR(Process, "Failed to create injected bundle for path [%" PUBLIC_LOG_STRING "]; bundle plug-in callbacks will not fire for any WebPage in this process", parameters.injectedBundlePath.utf8().legacyCStringPointer());
+            WEBPROCESS_RELEASE_LOG_ERROR(Process, "Failed to create injected bundle for path [%" PUBLIC_LOG_STRING "]; bundle plug-in callbacks will not fire for any WebPage in this process", parameters.injectedBundlePath.utf8());
     }
 
     for (auto& supplement : m_supplements.values())
@@ -2329,7 +2329,7 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
         auto extensionID = extensions[i].first;
         Ref sandboxExtension = extensions[i].second;
         sandboxExtension->consume();
-        WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extensionID.utf8().legacyCStringPointer());
+        WEBPROCESS_RELEASE_LOG(WebRTC, "grantUserMediaDeviceSandboxExtensions: granted extension %s", extensionID.utf8());
         m_mediaCaptureSandboxExtensions.add(extensionID, WTF::move(sandboxExtension));
     }
     m_machBootstrapExtension = extensions.machBootstrapExtension();
@@ -2363,7 +2363,7 @@ void WebProcess::revokeUserMediaDeviceSandboxExtensions(const Vector<String>& ex
         ASSERT(extension || MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled());
         if (extension) {
             extension->revoke();
-            WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8().legacyCStringPointer());
+            WEBPROCESS_RELEASE_LOG(WebRTC, "revokeUserMediaDeviceSandboxExtensions: revoked extension %s", extensionID.utf8());
         }
     }
     

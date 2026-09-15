@@ -63,7 +63,7 @@ void WebExtensionStorageSQLiteStore::getAllKeys(CompletionHandler<void(Vector<St
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve all keys for extension %s.", uniqueIdentifier.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve all keys for extension %s.", uniqueIdentifier.utf8());
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler({ }, "Failed to retrieve all keys"_s);
             });
@@ -84,7 +84,7 @@ void WebExtensionStorageSQLiteStore::getValuesForKeys(Vector<String> keys, Compl
     queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), keys = crossThreadCopy(keys), completionHandler = WTF::move(completionHandler)]() mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve values for keys: %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8().legacyCStringPointer(), uniqueIdentifier.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to retrieve values for keys: %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8(), uniqueIdentifier.utf8());
             WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
                 completionHandler({ }, "Failed to retrieve values for keys"_s);
             });
@@ -142,7 +142,7 @@ void WebExtensionStorageSQLiteStore::getStorageSizeForKeys(Vector<String> keys, 
             if (!error)
                 completionHandler(result, { });
             else {
-                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %s", error->localizedDescription().utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for keys: %s", error->localizedDescription().utf8());
                 completionHandler(0, error->localizedDescription());
             }
         });
@@ -174,7 +174,7 @@ void WebExtensionStorageSQLiteStore::getStorageSizeForAllKeys(HashMap<String, St
         queue().dispatch([weakThis = ThreadSafeWeakPtr { *this }, uniqueIdentifier = crossThreadCopy(uniqueIdentifier()), storageSize, additionalKeyedData = crossThreadCopy(additionalKeyedData), completionHandler = WTF::move(completionHandler)]() mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis) {
-                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %s.", uniqueIdentifier.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Failed to calculate storage size for extension %s.", uniqueIdentifier.utf8());
                 WorkQueue::mainSingleton().dispatch([completionHandler = WTF::move(completionHandler)]() mutable {
                     completionHandler(0.0, 0, { }, makeString("Failed to calculate storage size"_s));
                 });
@@ -256,7 +256,7 @@ void WebExtensionStorageSQLiteStore::deleteValuesForKeys(Vector<String> keys, Co
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->database()), makeString("DELETE FROM extension_storage WHERE key in ("_s, rowFilterStringFromRowKeys(keys), ")"_s));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to delete keys %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8().legacyCStringPointer(), protectedThis->uniqueIdentifier().utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Extensions, "Failed to delete keys %s for extension %s.", rowFilterStringFromRowKeys(keys).utf8(), protectedThis->uniqueIdentifier().utf8());
             errorMessage = makeString("Failed to delete keys "_s, rowFilterStringFromRowKeys(keys));
         }
 
@@ -275,7 +275,7 @@ String WebExtensionStorageSQLiteStore::insertOrUpdateValue(const String& value, 
 
     DatabaseResult result = SQLiteDatabaseExecute(database, "INSERT OR REPLACE INTO extension_storage (key, value) VALUES (?, ?)"_s, key, value);
     if (result != SQLITE_DONE) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to insert value %s for key %s for extension %s.", value.utf8().legacyCStringPointer(), key.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Extensions, "Failed to insert value %s for key %s for extension %s.", value.utf8(), key.utf8(), uniqueIdentifier().utf8());
         return makeString("Failed to insert value "_s, value, " for key "_s, key);
     }
 
@@ -363,7 +363,7 @@ DatabaseResult WebExtensionStorageSQLiteStore::createFreshDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE extension_storage (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create the extension_storage table for extension %s: %s (%d)", uniqueIdentifier().utf8().legacyCStringPointer(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create the extension_storage table for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
     return result;
 }
 
@@ -391,7 +391,7 @@ DatabaseResult WebExtensionStorageSQLiteStore::resetDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS extension_storage"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset database schema for extension %s: %s (%d)", uniqueIdentifier().utf8().legacyCStringPointer(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
 
     return result;
 }

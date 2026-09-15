@@ -70,7 +70,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BackForwardCache);
 
-#define PCLOG(...) LOG(BackForwardCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8().legacyCStringPointer())
+#define PCLOG(...) LOG(BackForwardCache, "%*s%s", indentLevel*4, "", makeString(__VA_ARGS__).utf8())
 
 static inline void logBackForwardCacheFailureDiagnosticMessage(DiagnosticLoggingClient& client, const String& reason)
 {
@@ -564,7 +564,7 @@ bool BackForwardCache::addIfCacheable(BackForwardFrameItemIdentifier identifier,
         m_items.add(identifier);
     }
     prune(PruningReason::ReachedMaxSize);
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::addIfCacheable frameItemID: %s, size: %u / %u", identifier.toString().utf8().legacyCStringPointer(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::addIfCacheable frameItemID: %s, size: %u / %u", identifier.toString().utf8(), pageCount(), maxSize());
     // prune() can evict the entry we just inserted (e.g. if maxSize() == 0 or
     // the new entry is the oldest under the configured policy), so reflect the
     // actual post-prune state.
@@ -620,7 +620,7 @@ std::unique_ptr<CachedPage> BackForwardCache::take(BackForwardFrameItemIdentifie
     m_items.remove(identifier);
     auto cachedPage = std::get<UniqueRef<CachedPage>>(m_cachedPageMap.take(it));
 
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::take frameItemID: %s, size: %u / %u", identifier.toString().utf8().legacyCStringPointer(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::take frameItemID: %s, size: %u / %u", identifier.toString().utf8(), pageCount(), maxSize());
 
     if (cachedPage->hasExpired() || (page && page->isResourceCachingDisabledByWebInspector())) {
         LOG(BackForwardCache, "Not restoring page from back/forward cache because cache entry has expired");
@@ -641,7 +641,7 @@ void BackForwardCache::removeAllItemsForPage(Page& page)
     m_cachedPageMap.removeIf([&](auto& pair) -> bool {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value)) {
             if (&(*cachedPage)->page() == &page) {
-                RELEASE_LOG(BackForwardCache,  "BackForwardCache::removeAllItemsForPage removing item: %s, size: %u / %u", pair.key.toString().utf8().legacyCStringPointer(), pageCount() - 1, maxSize());
+                RELEASE_LOG(BackForwardCache,  "BackForwardCache::removeAllItemsForPage removing item: %s, size: %u / %u", pair.key.toString().utf8(), pageCount() - 1, maxSize());
                 m_items.remove(pair.key);
                 return true;
             }
@@ -714,7 +714,7 @@ void BackForwardCache::remove(BackForwardFrameItemIdentifier frameItemID, Should
     m_items.remove(frameItemID);
     m_cachedPageMap.remove(it);
 
-    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", frameItemID.toString().utf8().legacyCStringPointer(), pageCount(), maxSize());
+    RELEASE_LOG(BackForwardCache, "BackForwardCache::remove item: %s, size: %u / %u", frameItemID.toString().utf8(), pageCount(), maxSize());
 }
 
 void BackForwardCache::remove(HistoryItem& item)
@@ -733,7 +733,7 @@ void BackForwardCache::prune(PruningReason pruningReason)
         if (auto* uniqueRef = std::get_if<UniqueRef<CachedPage>>(&cachedPage))
             notifyClientOfEviction(protect(uniqueRef->get()));
         m_cachedPageMap.set(oldestItem, pruningReason);
-        RELEASE_LOG(BackForwardCache, "BackForwardCache::prune removing item: %s, size: %u / %u", oldestItem.toString().utf8().legacyCStringPointer(), pageCount(), maxSize());
+        RELEASE_LOG(BackForwardCache, "BackForwardCache::prune removing item: %s, size: %u / %u", oldestItem.toString().utf8(), pageCount(), maxSize());
     }
 }
 
@@ -742,7 +742,7 @@ void BackForwardCache::clearEntriesForOrigins(const HashSet<Ref<SecurityOrigin>>
     m_cachedPageMap.removeIf([&](auto& pair) -> bool {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value)) {
             if (origins.contains(SecurityOrigin::create((*cachedPage)->page().mainFrameURL()))) {
-                RELEASE_LOG(BackForwardCache, "BackForwardCache::clearEntriesForOrigins removing item: %s, size: %u / %u", pair.key.toString().utf8().legacyCStringPointer(), pageCount() - 1, maxSize());
+                RELEASE_LOG(BackForwardCache, "BackForwardCache::clearEntriesForOrigins removing item: %s, size: %u / %u", pair.key.toString().utf8(), pageCount() - 1, maxSize());
                 notifyClientOfEviction(protect(cachedPage->get()));
                 m_items.remove(pair.key);
                 return true;

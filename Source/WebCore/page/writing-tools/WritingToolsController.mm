@@ -224,7 +224,7 @@ WritingToolsController::WritingToolsController(Page& page)
 
 void WritingToolsController::willBeginWritingToolsSession(const std::optional<WritingTools::Session>& session, WeakHashSet<Node, WeakPtrImplWithEventTargetData>&& preservedNodes, CompletionHandler<void(const Vector<WritingTools::Context>&)>&& completionHandler)
 {
-    RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s)", session ? session->identifier.toString().utf8().legacyCStringPointer() : "");
+    RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s)", session ? session->identifier.toString().utf8() : ""_s);
 
     m_clientPreservedNodes = WTF::move(preservedNodes);
 
@@ -237,7 +237,7 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
 
     auto contextRange = contextRangeForSession(*document, session);
     if (!contextRange) {
-        RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => no context range", session ? session->identifier.toString().utf8().legacyCStringPointer() : "");
+        RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => no context range", session ? session->identifier.toString().utf8() : ""_s);
         completionHandler({ });
         return;
     }
@@ -272,11 +272,11 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     auto selectedTextCharacterRange = selectedTextRange ? characterRange(*contextRange, *selectedTextRange) : CharacterRange { };
 
     if (attributedStringFromRange.string.isEmpty())
-        RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8().legacyCStringPointer() : "");
+        RELEASE_LOG(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string is empty", session ? session->identifier.toString().utf8() : ""_s);
 
     auto attributedStringLength = attributedStringFromRange.string.length();
     if (auto clampedRange = rangeClampedToLength(selectedTextCharacterRange, attributedStringLength); clampedRange != selectedTextCharacterRange) [[unlikely]] {
-        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => selected range (%llu, %llu) does not fit within attributed string (length %u)", session ? session->identifier.toString().utf8().legacyCStringPointer() : "", selectedTextCharacterRange.location, selectedTextCharacterRange.length, attributedStringLength);
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => selected range (%llu, %llu) does not fit within attributed string (length %u)", session ? session->identifier.toString().utf8() : ""_s, selectedTextCharacterRange.location, selectedTextCharacterRange.length, attributedStringLength);
         selectedTextCharacterRange = clampedRange;
     }
 
@@ -312,7 +312,7 @@ void WritingToolsController::willBeginWritingToolsSession(const std::optional<Wr
     // attributed string formed by the context range; the length of the entire context range
     // being equal to the length of the attributed string implies the range is valid.
     if (attributedStringLength != contextRangeCharacterCount) [[unlikely]] {
-        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8().legacyCStringPointer(), attributedStringLength, contextRangeCharacterCount);
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::willBeginWritingToolsSession (%s) => attributed string length (%u) != context range length (%llu)", session->identifier.toString().utf8(), attributedStringLength, contextRangeCharacterCount);
         ASSERT_NOT_REACHED();
         completionHandler({ });
         return;
@@ -450,7 +450,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
         return;
     }
 
-    RELEASE_LOG(WritingTools, "WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion (%s) [new state: %hhu, suggestion: %s]", state->session.identifier.toString().utf8().legacyCStringPointer(), std::to_underlying(newTextSuggestionState), textSuggestion.identifier.toString().utf8().legacyCStringPointer());
+    RELEASE_LOG(WritingTools, "WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion (%s) [new state: %hhu, suggestion: %s]", state->session.identifier.toString().utf8(), std::to_underlying(newTextSuggestionState), textSuggestion.identifier.toString().utf8());
 
     RefPtr document = this->document();
     if (!document) {
@@ -738,7 +738,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     // Precondition: the range is always relative to the context's attributed text, so by definition it must
     // be strictly less than the length of the attributed string.
     if (contextTextCharacterCount < range.location + range.length) [[unlikely]] {
-        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", state->session.identifier.toString().utf8().legacyCStringPointer(), contextTextCharacterCount, range.location, range.length);
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => trying to replace a range larger than the context range (context range length: %u, range.location %llu, range.length %llu)", state->session.identifier.toString().utf8(), contextTextCharacterCount, range.location, range.length);
         compositionSessionDidFinishReplacement();
         ASSERT_NOT_REACHED();
         return;
@@ -768,7 +768,7 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
     auto sessionRangeCharacterCount = characterCount(sessionRange);
 
     if (range.length + sessionRangeCharacterCount < contextTextCharacterCount) [[unlikely]] {
-        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", state->session.identifier.toString().utf8().legacyCStringPointer(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
+        RELEASE_LOG_ERROR(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange (%s) => the range offset by the character count delta must have a non-negative size (context range length: %u, range.length %llu, session length: %llu)", state->session.identifier.toString().utf8(), contextTextCharacterCount, range.length, sessionRangeCharacterCount);
         compositionSessionDidFinishReplacement();
         ASSERT_NOT_REACHED();
         return;
@@ -888,7 +888,7 @@ void WritingToolsController::writingToolsSessionDidReceiveAction<WritingTools::S
         return;
     }
 
-    RELEASE_LOG(WritingTools, "WritingToolsController::writingToolsSessionDidReceiveAction<Proofreading> (%s) [action: %hhu]", state->session.identifier.toString().utf8().legacyCStringPointer(), std::to_underlying(action));
+    RELEASE_LOG(WritingTools, "WritingToolsController::writingToolsSessionDidReceiveAction<Proofreading> (%s) [action: %hhu]", state->session.identifier.toString().utf8(), std::to_underlying(action));
 
     RefPtr document = this->document();
     if (!document) {

@@ -140,7 +140,7 @@ void AXLogger::log(RefPtr<AXCoreObject> object)
         else
             stream << "null";
 
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 
@@ -154,7 +154,7 @@ void AXLogger::log(const Vector<Ref<AXCoreObject>>& objects)
             stream << object.get();
         stream << "]";
 
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 
@@ -164,7 +164,7 @@ void AXLogger::log(const std::pair<Ref<AccessibilityObject>, AXNotificationWithD
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << "Notification " << notification.second.notification << " for object ";
         stream << notification.first.get();
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 
@@ -177,7 +177,7 @@ void AXLogger::log(const std::pair<RefPtr<AXCoreObject>, AXNotification>& notifi
             stream << *notification.first;
         else
             stream << "null";
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 
@@ -188,7 +188,7 @@ void AXLogger::log(const AccessibilitySearchCriteria& criteria)
 
     TextStream stream(TextStream::LineMode::MultipleLine);
     stream << criteria;
-    LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+    LOG(Accessibility, "%s", stream.release().utf8());
 }
 
 void AXLogger::log(AccessibilityObjectInclusion inclusion)
@@ -198,7 +198,7 @@ void AXLogger::log(AccessibilityObjectInclusion inclusion)
 
     TextStream stream(TextStream::LineMode::SingleLine);
     stream.dumpProperty("ObjectInclusion"_s, inclusion);
-    LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+    LOG(Accessibility, "%s", stream.release().utf8());
 }
 
 void AXLogger::log(AXRelation relation)
@@ -208,7 +208,7 @@ void AXLogger::log(AXRelation relation)
 
     TextStream stream(TextStream::LineMode::SingleLine);
     stream.dumpProperty("RelationType"_s, relation);
-    LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+    LOG(Accessibility, "%s", stream.release().utf8());
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -217,7 +217,7 @@ void AXLogger::log(AXIsolatedTree& tree)
     if (shouldLog()) {
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << tree;
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 #endif
@@ -227,7 +227,7 @@ void AXLogger::log(AXObjectCache& axObjectCache)
     if (shouldLog()) {
         TextStream stream(TextStream::LineMode::MultipleLine);
         stream << axObjectCache;
-        LOG(Accessibility, "%s", stream.release().utf8().legacyCStringPointer());
+        LOG(Accessibility, "%s", stream.release().utf8());
     }
 }
 

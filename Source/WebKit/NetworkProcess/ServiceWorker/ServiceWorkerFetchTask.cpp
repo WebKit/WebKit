@@ -295,7 +295,7 @@ void ServiceWorkerFetchTask::processResponse(ResourceResponse&& response, bool n
         return;
 #endif
 
-    SWFETCH_RELEASE_LOG("processResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), response.mimeType().utf8().legacyCStringPointer(), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
+    SWFETCH_RELEASE_LOG("processResponse: (httpStatusCode=%d, MIMEType=%" PUBLIC_LOG_STRING ", expectedContentLength=%lld, needsContinueDidReceiveResponseMessage=%d, source=%u)", response.httpStatusCode(), response.mimeType().utf8(), response.expectedContentLength(), needsContinueDidReceiveResponseMessage, static_cast<unsigned>(response.source()));
     m_wasHandled = true;
     if (m_timeoutTimer)
         m_timeoutTimer->stop();
@@ -394,7 +394,7 @@ void ServiceWorkerFetchTask::didFail(const ResourceError& error)
     }
     cancelPreloadIfNecessary();
 
-    SWFETCH_RELEASE_LOG_ERROR("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8().legacyCStringPointer(), error.errorCode());
+    SWFETCH_RELEASE_LOG_ERROR("didFail: (error.domain=%" PUBLIC_LOG_STRING ", error.code=%d)", error.domain().utf8(), error.errorCode());
     protect(m_loader)->didFailLoading(error);
 }
 

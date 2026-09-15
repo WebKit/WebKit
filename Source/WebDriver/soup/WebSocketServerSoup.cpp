@@ -178,7 +178,7 @@ std::optional<String> WebSocketServer::listen(const String& host, unsigned port)
 void WebSocketServer::sendMessage(WebSocketMessageHandler::Connection connection, const String& message)
 {
     ASSERT(connection);
-    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8().legacyCStringPointer());
+    RELEASE_LOG(WebDriverBiDi, "Sending message: %s", message.utf8());
     GRefPtr<GBytes> rawMessage = adoptGRef(g_bytes_new(message.utf8().legacyCStringPointer(), message.utf8().length()));
     soup_websocket_connection_send_message(connection.get(), SOUP_WEBSOCKET_DATA_TEXT, rawMessage.get());
 }

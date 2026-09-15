@@ -1774,7 +1774,7 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
 static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
 // FIXME: Remove after rdar://136373445 is fixed.
-#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8().legacyCStringPointer(), ##__VA_ARGS__);
+#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8(), ##__VA_ARGS__);
 
     if (!attachmentType.isEmpty() && !equalLettersIgnoringASCIICase(attachmentType, "public.data"_s)) {
         if (equalLettersIgnoringASCIICase(attachmentType, "public.directory"_s) || equalLettersIgnoringASCIICase(attachmentType, "multipart/x-folder"_s) || equalLettersIgnoringASCIICase(attachmentType, "application/vnd.apple.folder"_s)) {
@@ -1791,10 +1791,10 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
                 type = UTIFromMIMEType(attachmentType);
 
             if (auto icon = Icon::createIconForUTI(type)) {
-                LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().legacyCStringPointer());
+                LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
                 return icon;
             }
-            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to filename or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().legacyCStringPointer());
+            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to filename or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8());
         }
     }
 
@@ -1809,10 +1809,10 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
     RetainPtr nsTitle = title.createNSString();
     if (RetainPtr<NSString> fileExtension = nsTitle.get().pathExtension; fileExtension.get().length) {
         if (auto icon = Icon::createIconForFileExtension(fileExtension.get())) {
-            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", String(fileExtension.get()).utf8().legacyCStringPointer());
+            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", String(fileExtension.get()).utf8());
             return icon;
         }
-        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", String(fileExtension.get()).utf8().legacyCStringPointer());
+        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", String(fileExtension.get()).utf8());
     } else
         LOG_ATTACHMENT("-> No file extension in title! Will fallback to public.data icon");
 

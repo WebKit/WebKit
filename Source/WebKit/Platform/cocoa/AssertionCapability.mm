@@ -41,7 +41,7 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
     , m_willInvalidateBlock { willInvalidateFunction ? makeBlockPtr(WTF::move(willInvalidateFunction)) : nullptr }
     , m_didInvalidateBlock { didInvalidateFunction ? makeBlockPtr(WTF::move(didInvalidateFunction)) : nullptr }
 {
-    RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8().legacyCStringPointer());
+    RELEASE_LOG(Process, "AssertionCapability::AssertionCapability: taking assertion %{public}s", m_name.utf8());
     if (m_name == "Suspended"_s)
         setPlatformCapability([BEProcessCapability suspended]);
     else if (m_name == "Background"_s)

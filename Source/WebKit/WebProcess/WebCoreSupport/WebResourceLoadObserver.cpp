@@ -439,8 +439,8 @@ void WebResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const 
         auto escapedURL = escapeForJSON(url.string());
         auto escapedDomain = escapeForJSON(topFrameDomain.string());
 
-        LOCAL_LOG("{ \"url\": \"%" PUBLIC_LOG_STRING "\",", escapedURL.utf8().legacyCStringPointer());
-        LOCAL_LOG("  \"domain\" : \"%" PUBLIC_LOG_STRING "\",", escapedDomain.utf8().legacyCStringPointer());
+        LOCAL_LOG("{ \"url\": \"%" PUBLIC_LOG_STRING "\",", escapedURL.utf8());
+        LOCAL_LOG("  \"domain\" : \"%" PUBLIC_LOG_STRING "\",", escapedDomain.utf8());
         LOCAL_LOG("  \"until\" : %f }", newTime.secondsSinceEpoch().seconds());
 
 #undef LOCAL_LOG

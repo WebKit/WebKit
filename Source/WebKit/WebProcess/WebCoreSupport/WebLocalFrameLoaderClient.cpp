@@ -895,7 +895,7 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
     addIfSet(WebCore::LayoutMilestone::DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
     addIfSet(WebCore::LayoutMilestone::DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
 
-    WebLocalFrameLoaderClient_RELEASE_LOG_FORWARDABLE(Layout, WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, builder.toString().utf8().legacyCStringPointer());
+    WebLocalFrameLoaderClient_RELEASE_LOG_FORWARDABLE(Layout, WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, builder.toString().utf8());
 #endif
 
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
@@ -1805,7 +1805,7 @@ void WebLocalFrameLoaderClient::didCacheBackForwardItem(BackForwardItemIdentifie
         // UIProcess rejected the cache: roll back the WebProcess-side entry
         // we just inserted. Skip the eviction notification because the
         // UIProcess never registered an entry to remove.
-        RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: UIProcess rejected itemID %" PUBLIC_LOG_STRING ", evicting frameItemID %" PUBLIC_LOG_STRING, itemID.toString().utf8().legacyCStringPointer(), frameItemID.toString().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(ProcessSwapping, "didCacheBackForwardItem: UIProcess rejected itemID %" PUBLIC_LOG_STRING ", evicting frameItemID %" PUBLIC_LOG_STRING, itemID.toString().utf8(), frameItemID.toString().utf8());
         BackForwardCache::singleton().remove(frameItemID, BackForwardCache::ShouldNotifyClient::No);
     });
 }
@@ -2212,7 +2212,7 @@ void WebLocalFrameLoaderClient::didExceedNetworkUsageThreshold()
     if (url.isEmpty())
         return;
 
-    WebLocalFrameLoaderClient_RELEASE_LOG(ResourceMonitoring, "didExceedNetworkUsageThreshold host=%" SENSITIVE_LOG_STRING, url.host().utf8().legacyCStringPointer());
+    WebLocalFrameLoaderClient_RELEASE_LOG(ResourceMonitoring, "didExceedNetworkUsageThreshold host=%" SENSITIVE_LOG_STRING, url.host().utf8());
 
     auto action = [weakFrame = WeakPtr { m_frame->coreLocalFrame() }](bool wasGranted) {
         RefPtr frame = weakFrame.get();

@@ -181,7 +181,7 @@ bool SearchPopupMenuDB::openDatabase()
                 existsDatabaseFile = false;
             }
         } else {
-            LOG_ERROR("Failed to open search autosave database: %s, attempting to recreate the database", m_databaseFilename.utf8().legacyCStringPointer());
+            LOG_ERROR("Failed to open search autosave database: %s, attempting to recreate the database", m_databaseFilename.utf8());
             deleteAllDatabaseFiles();
             existsDatabaseFile = false;
         }
@@ -189,7 +189,7 @@ bool SearchPopupMenuDB::openDatabase()
 
     if (!existsDatabaseFile) {
         if (!FileSystem::makeAllDirectories(FileSystem::parentPath(m_databaseFilename)))
-            LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8().legacyCStringPointer());
+            LOG_ERROR("Failed to create the search autosave database path %s", m_databaseFilename.utf8());
 
         m_database.open(m_databaseFilename);
     }

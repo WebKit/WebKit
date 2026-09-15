@@ -174,7 +174,7 @@ String resolvePathForSandboxExtension(StringView path)
 {
     String resolvedPath = stringByResolvingSymlinksInPath(path);
     if (resolvedPath.isNull()) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a valid file system representation for the string '%s' of length %u", resolvedPath.utf8().legacyCStringPointer(), resolvedPath.length());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a valid file system representation for the string '%s' of length %u", resolvedPath.utf8(), resolvedPath.length());
         return { };
     }
 
@@ -188,11 +188,11 @@ auto SandboxExtension::createHandleWithoutResolvingPath(StringView path, Type ty
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8(), type, std::nullopt, Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%{private}s'", path.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%{private}s'", path.utf8());
         return std::nullopt;
     }
 
-    RELEASE_LOG(Sandbox, "Successfully created a sandbox extension for '%{private}s'", path.utf8().legacyCStringPointer());
+    RELEASE_LOG(Sandbox, "Successfully created a sandbox extension for '%{private}s'", path.utf8());
     return WTF::move(handle);
 }
 
@@ -325,11 +325,11 @@ auto SandboxExtension::createHandleForReadByAuditToken(StringView path, audit_to
 
     handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8(), Type::ReadByProcess, auditToken);
     if (!handle.m_sandboxExtension) {
-        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%{private}s'", path.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Sandbox, "Could not create a sandbox extension for '%{private}s'", path.utf8());
         return std::nullopt;
     }
     
-    RELEASE_LOG(Sandbox, "Successfully created sandbox extension for '%{private}s'", path.utf8().legacyCStringPointer());
+    RELEASE_LOG(Sandbox, "Successfully created sandbox extension for '%{private}s'", path.utf8());
     return WTF::move(handle);
 }
 

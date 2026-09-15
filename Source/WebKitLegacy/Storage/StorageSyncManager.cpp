@@ -57,7 +57,7 @@ StorageSyncManager::~StorageSyncManager()
 String StorageSyncManager::fullDatabaseFilename(const String& databaseIdentifier)
 {
     if (!FileSystem::makeAllDirectories(m_path)) {
-        LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8().legacyCStringPointer());
+        LOG_ERROR("Unabled to create LocalStorage database path %s", m_path.utf8());
         return String();
     }
 

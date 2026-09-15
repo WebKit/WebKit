@@ -225,7 +225,7 @@ void ServiceWorkerThread::queueTaskToPostMessage(MessageWithMessagePorts&& messa
                         addMismatch("host"_s);
                     if (serviceWorkerGlobalScope.url().port() != sourceClient->url().port())
                         addMismatch("port"_s);
-                    RELEASE_LOG_FAULT(ServiceWorker, "ServiceWorkerThread::queueTaskToPostMessage service worker and client mismatch: %s", mismatchParts.toString().utf8().legacyCStringPointer());
+                    RELEASE_LOG_FAULT(ServiceWorker, "ServiceWorkerThread::queueTaskToPostMessage service worker and client mismatch: %s", mismatchParts.toString().utf8());
                     ASSERT_NOT_REACHED();
                     return ExtendableMessageEventSource { WTF::move(sourceClient) };
                 }

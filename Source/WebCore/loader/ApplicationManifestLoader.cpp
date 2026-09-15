@@ -99,7 +99,7 @@ bool ApplicationManifestLoader::startLoading()
     if (RefPtr resource = m_resource)
         resource->addClient(*this);
     else {
-        LOG_ERROR("Failed to start load for application manifest at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8().legacyCStringPointer());
+        LOG_ERROR("Failed to start load for application manifest at url %s (error: %s)", resourceRequestURL.string().ascii().data(), cachedResource.error().localizedDescription().utf8());
         return false;
     }
 

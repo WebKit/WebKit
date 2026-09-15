@@ -1261,7 +1261,7 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
         if (trigger == LinkDecorationFilteringTrigger::Navigation)
             send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
         auto removedParametersString = makeStringByJoining(removedParameters, ", "_s);
-        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Blocked known tracking query parameters: %s", removedParametersString.utf8().legacyCStringPointer());
+        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "applyLinkDecorationFilteringWithResult: Blocked known tracking query parameters: %s", removedParametersString.utf8());
     }
 
     return { sanitizedURL, DidFilterLinkDecoration::Yes };

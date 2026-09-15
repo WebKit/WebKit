@@ -170,7 +170,7 @@ void NetworkCORSPreflightChecker::completePreflight(ResourceError&& preflightErr
 
     auto result = validatePreflightResponse(m_parameters.sessionID, m_parameters.originalRequest, m_response, m_parameters.storedCredentialsPolicy, protect(m_parameters.topOrigin), protect(m_parameters.sourceOrigin), m_networkResourceLoader);
     if (!result) {
-        CORS_CHECKER_RELEASE_LOG("didComplete, AccessControl error: %s", result.error().utf8().legacyCStringPointer());
+        CORS_CHECKER_RELEASE_LOG("didComplete, AccessControl error: %s", result.error().utf8());
         m_completionCallback(ResourceError { errorDomainWebKitInternal, 0, m_parameters.originalRequest.url(), result.error(), ResourceError::Type::AccessControl });
         return;
     }

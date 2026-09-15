@@ -117,7 +117,7 @@ void MediaPlaybackTargetPickerMock::invalidatePlaybackTargets()
 
 void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlaybackTargetMock::State state)
 {
-    LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().legacyCStringPointer(), (unsigned)state);
+    LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8(), (unsigned)state);
 
     callOnMainThread([weakThis = WeakPtr { *this }, state, deviceName] {
         CheckedPtr checkedThis = weakThis.get();

@@ -602,7 +602,7 @@ bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const HashMap<std::
                 || indexStatement->bindInt(6, multiEntry) != SQLITE_OK
                 || indexStatement->step() != SQLITE_DONE) {
 IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
-                LOG_ERROR("Error adding index '%s' to _Temp_IndexInfo table (%i) - %s", name.utf8().legacyCStringPointer(), database->lastError(), database->lastErrorMsg());
+                LOG_ERROR("Error adding index '%s' to _Temp_IndexInfo table (%i) - %s", name.utf8(), database->lastError(), database->lastErrorMsg());
 IGNORE_GCC_WARNINGS_END
                 return false;
             }
@@ -945,7 +945,7 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
 {
     auto database = makeUniqueRef<SQLiteDatabase>();
     if (!database->open(databasePath)) {
-        LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8().legacyCStringPointer());
+        LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8());
         return std::nullopt;
     }
     if (!database->tableExists("IDBDatabaseInfo"_s)) {
@@ -956,7 +956,7 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
     auto result = databaseMetadataVersionAndNameFromDatabase(CheckedRef { database.get() }.get());
     if (!result) {
         ASSERT(!result.error().isNull());
-        LOG_ERROR("SQLiteIDBBackingStore::databaseNameAndVersionFromFile(): Got error %s", result.error().message().utf8().legacyCStringPointer());
+        LOG_ERROR("SQLiteIDBBackingStore::databaseNameAndVersionFromFile(): Got error %s", result.error().message().utf8());
         return std::nullopt;
     }
 
@@ -965,7 +965,7 @@ std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndV
     String stringVersion = versql ? CheckedRef { *versql }->columnText(0) : String();
     auto databaseVersion = parseInteger<uint64_t>(stringVersion);
     if (!databaseVersion) {
-        LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().legacyCStringPointer());
+        LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8());
         return std::nullopt;
     }
 
@@ -988,7 +988,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
     m_sqliteDB = makeUnique<SQLiteDatabase>();
     if (CheckedPtr sqliteDB = m_sqliteDB.get(); !sqliteDB->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, SQLiteDatabase::OpenOptions::CanSuspendWhileLocked)) {
-        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::getOrEstablishDatabaseInfo: Failed to open database at path '%" PUBLIC_LOG_STRING "' (%d) - %" PUBLIC_LOG_STRING, this, databasePath.utf8().legacyCStringPointer(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::getOrEstablishDatabaseInfo: Failed to open database at path '%" PUBLIC_LOG_STRING "' (%d) - %" PUBLIC_LOG_STRING, this, databasePath.utf8(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
         sqliteDB = nullptr;
         closeSQLiteDB();
     }
@@ -1051,7 +1051,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
 
     auto databaseInfo = result.value() ? std::exchange(result.value(), nullptr) : createAndPopulateInitialDatabaseInfo();
     if (!databaseInfo) {
-        LOG_ERROR("Unable to establish IDB database at path '%s'", databasePath.utf8().legacyCStringPointer());
+        LOG_ERROR("Unable to establish IDB database at path '%s'", databasePath.utf8());
         closeSQLiteDB();
         return IDBError { ExceptionCode::UnknownError, "Unable to establish IDB database file"_s };
     }
@@ -1200,7 +1200,7 @@ IDBError SQLiteIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
             || statement->bindInt(4, info.autoIncrement()) != SQLITE_OK
             || statement->step() != SQLITE_DONE) {
             CheckedRef sqliteDB = *m_sqliteDB;
-            LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8().legacyCStringPointer(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+            LOG_ERROR("Could not add object store '%s' to ObjectStoreInfo table (%i) - %s", info.name().utf8(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Could not create object store"_s };
         }
     }
@@ -1895,7 +1895,7 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
     if (keyRange.isExactlyOneKey()) {
         auto error = deleteRecord(*transaction, objectStoreID, keyRange.lowerKey);
         if (!error.isNull()) {
-            LOG_ERROR("Failed to delete record for key '%s'", keyRange.lowerKey.loggingString().utf8().legacyCStringPointer());
+            LOG_ERROR("Failed to delete record for key '%s'", keyRange.lowerKey.loggingString().utf8());
             return error;
         }
 
@@ -2137,7 +2137,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
 
         if (statement->step() != SQLITE_ROW) {
             CheckedRef sqliteDB = *m_sqliteDB;
-            LOG_ERROR("Entry for blob filename for blob url %s does not exist (%i) - %s", blobURL.utf8().legacyCStringPointer(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
+            LOG_ERROR("Entry for blob filename for blob url %s does not exist (%i) - %s", blobURL.utf8(), sqliteDB->lastError(), sqliteDB->lastErrorMsg());
             return IDBError { ExceptionCode::UnknownError, "Failed to look up blobURL records in object store by key range"_s };
         }
 
@@ -3010,7 +3010,7 @@ void SQLiteIDBBackingStore::deleteBackingStore()
         for (auto& file : blobFiles) {
             String blobPath = FileSystem::pathByAppendingComponent(m_databaseDirectory, file);
             if (!FileSystem::deleteFile(blobPath))
-                LOG_ERROR("Error deleting blob file '%s'", blobPath.utf8().legacyCStringPointer());
+                LOG_ERROR("Error deleting blob file '%s'", blobPath.utf8());
         }
 
         sqliteDB = nullptr;

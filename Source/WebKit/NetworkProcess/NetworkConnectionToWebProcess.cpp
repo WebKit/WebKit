@@ -591,7 +591,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 {
     auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, loadParameters.request.firstPartyForCookies());
     if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow) [[unlikely]]
-        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8().legacyCStringPointer(), loadParameters.request.url().string().utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Loading, "scheduleResourceLoad: Web process does not have cookie access to url %" SENSITIVE_LOG_STRING " for request %" SENSITIVE_LOG_STRING, loadParameters.request.firstPartyForCookies().string().utf8(), loadParameters.request.url().string().utf8());
 
     MESSAGE_CHECK(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate);
 
@@ -2049,7 +2049,7 @@ void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedP
 #if ENABLE(CONTENT_EXTENSIONS)
 void NetworkConnectionToWebProcess::shouldOffloadIFrameForHost(const String& host, CompletionHandler<void(bool)>&& completionHandler)
 {
-    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", host.utf8().legacyCStringPointer());
+    CONNECTION_RELEASE_LOG(ResourceMonitoring, "shouldOffloadIFrameForHost: (host=%" SENSITIVE_LOG_STRING ")", host.utf8());
     if (CheckedPtr session = networkSession())
         protect(session->resourceMonitorThrottler())->tryAccess(host, ContinuousApproximateTime::now(), WTF::move(completionHandler));
     else

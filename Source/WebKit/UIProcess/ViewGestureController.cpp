@@ -381,7 +381,7 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
 
 void ViewGestureController::SnapshotRemovalTracker::log(StringView log) const
 {
-    RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", (MonotonicTime::now() - m_startTime).milliseconds(), log.utf8().legacyCStringPointer());
+    RELEASE_LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", (MonotonicTime::now() - m_startTime).milliseconds(), log.utf8());
 }
 
 void ViewGestureController::SnapshotRemovalTracker::resume()

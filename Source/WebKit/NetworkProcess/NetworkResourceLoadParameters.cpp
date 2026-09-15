@@ -48,16 +48,16 @@ void NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary()
         if (handle)
             resourceSandboxExtension = WTF::move(*handle);
         else
-            RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandleForReadByAuditToken(networkProcess) failed for '%" PRIVATE_LOG_STRING "'", path.utf8().legacyCStringPointer());
+            RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandleForReadByAuditToken(networkProcess) failed for '%" PRIVATE_LOG_STRING "'", path.utf8());
         return;
     }
-    RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, network process audit token unavailable; falling back to non-targeted read handle for '%" PRIVATE_LOG_STRING "'", path.utf8().legacyCStringPointer());
+    RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, network process audit token unavailable; falling back to non-targeted read handle for '%" PRIVATE_LOG_STRING "'", path.utf8());
 #endif
     auto handle = SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly);
     if (handle)
         resourceSandboxExtension = WTF::move(*handle);
     else
-        RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandle(ReadOnly) failed for '%" PRIVATE_LOG_STRING "'", path.utf8().legacyCStringPointer());
+        RELEASE_LOG_ERROR(Sandbox, "NetworkResourceLoadParameters::createSandboxExtensionHandlesIfNecessary: file load, createHandle(ReadOnly) failed for '%" PRIVATE_LOG_STRING "'", path.utf8());
 }
 
 RefPtr<SecurityOrigin> NetworkResourceLoadParameters::parentOrigin() const

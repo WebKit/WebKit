@@ -32,7 +32,7 @@
 #include "WebKitLogDefinitions.h"
 
 #define COMMA() ,
-#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA()) __VA_ARGS__
+#define OPTIONAL_ARGS(...) __VA_OPT__(COMMA() LOG_PRINTF_TYPE(__VA_ARGS__))
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 #include "LogClient.h"

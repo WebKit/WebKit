@@ -145,7 +145,7 @@ void LayerHostingVisibilityPropagator::refreshInjectorsAtIndex(size_t index, con
     entry.injectorsBySourceEnvironment.removeIf([&](auto& pair) {
         if (environments.contains(pair.key))
             return false;
-        RELEASE_LOG(Process, "LayerHostingVisibilityPropagator %p: releasing visibility endowment for pid=%d (source=%{public}s) — source environment no longer active", this, processID, pair.key.utf8().legacyCStringPointer());
+        RELEASE_LOG(Process, "LayerHostingVisibilityPropagator %p: releasing visibility endowment for pid=%d (source=%{public}s) — source environment no longer active", this, processID, pair.key.utf8());
         [pair.value invalidate];
         return true;
     });
@@ -172,7 +172,7 @@ void LayerHostingVisibilityPropagator::refreshInjectorsAtIndex(size_t index, con
             continue;
         }
 
-        RELEASE_LOG(Process, "LayerHostingVisibilityPropagator %p: acquired visibility endowment for pid=%d (source=%{public}s)", this, processID, sourceEnvironment.utf8().legacyCStringPointer());
+        RELEASE_LOG(Process, "LayerHostingVisibilityPropagator %p: acquired visibility endowment for pid=%d (source=%{public}s)", this, processID, sourceEnvironment.utf8());
         entry.injectorsBySourceEnvironment.set(sourceEnvironment, WTF::move(injector));
     }
 }

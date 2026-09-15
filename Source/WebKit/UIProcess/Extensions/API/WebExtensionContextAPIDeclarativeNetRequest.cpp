@@ -87,19 +87,19 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
     if (storage) {
         storage->createSavepoint([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storage, storageType, apiName, rulesToAdd, ruleIDsToRemove](Markable<WTF::UUID> savepointIdentifier, const String& errorMessage) mutable {
             if (!savepointIdentifier || !errorMessage.isEmpty()) {
-                RELEASE_LOG_ERROR(Extensions, "Unable to create %s rules savepoint for extension %s. Error: %s", storageType.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer(), errorMessage.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(Extensions, "Unable to create %s rules savepoint for extension %s. Error: %s", storageType.utf8(), uniqueIdentifier().utf8(), errorMessage.utf8());
                 completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
                 return;
             }
 
             storage->updateRulesByRemovingIDs(ruleIDsToRemove, rulesToAdd, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storage, storageType, apiName, savepointIdentifier = WTF::move(savepointIdentifier)](const String& errorMessage) mutable {
                 if (!errorMessage.isEmpty()) {
-                    RELEASE_LOG_ERROR(Extensions, "Unable to update %s rules for extension %s. Error: %s", storageType.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer(), errorMessage.utf8().legacyCStringPointer());
+                    RELEASE_LOG_ERROR(Extensions, "Unable to update %s rules for extension %s. Error: %s", storageType.utf8(), uniqueIdentifier().utf8(), errorMessage.utf8());
 
                     // Update was unsucessful, rollback the changes to the database.
                     storage->rollbackToSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, errorMessage](const String& savepointErrorMessage) mutable {
                         if (!savepointErrorMessage.isEmpty())
-                            RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer(), savepointErrorMessage.utf8().legacyCStringPointer());
+                            RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8(), uniqueIdentifier().utf8(), savepointErrorMessage.utf8());
 
                         completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
                     });
@@ -113,7 +113,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                         // Load was unsucessful, rollback the changes to the database.
                         storage->rollbackToSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType, apiName, errorMessage](const String& savepointErrorMessage) mutable {
                             if (!savepointErrorMessage.isEmpty())
-                                RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer(), savepointErrorMessage.utf8().legacyCStringPointer());
+                                RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %s rules savepoint for extension %s. Error: %s", storageType.utf8(), uniqueIdentifier().utf8(), savepointErrorMessage.utf8());
 
                             // Load the declarativeNetRequest rules again after rolling back the dynamic update.
                             loadDeclarativeNetRequestRules([completionHandler = WTF::move(completionHandler), apiName](bool success) mutable {
@@ -132,7 +132,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(RefPtr<WebEx
                     // Load was successful, commit the changes to the database.
                     storage->commitSavepoint(savepointIdentifier.value(), [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler), storageType](const String& savepointErrorMessage) mutable {
                         if (!savepointErrorMessage.isEmpty())
-                            RELEASE_LOG_ERROR(Extensions, "Unable to commit %s rules savepoint for extension %s. Error: %s", storageType.utf8().legacyCStringPointer(), uniqueIdentifier().utf8().legacyCStringPointer(), savepointErrorMessage.utf8().legacyCStringPointer());
+                            RELEASE_LOG_ERROR(Extensions, "Unable to commit %s rules savepoint for extension %s. Error: %s", storageType.utf8(), uniqueIdentifier().utf8(), savepointErrorMessage.utf8());
 
                         completionHandler({ });
                     });

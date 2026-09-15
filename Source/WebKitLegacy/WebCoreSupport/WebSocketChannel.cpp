@@ -204,7 +204,7 @@ void WebSocketChannel::close(int code, const String& reason)
 
 void WebSocketChannel::fail(String&& reason)
 {
-    RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8().legacyCStringPointer());
+    RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8());
     ASSERT(!m_suspended);
     if (m_document) {
         LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(m_document.get(), m_progressIdentifier, reason);
@@ -368,7 +368,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
     if (m_document) {
         LegacyWebSocketInspectorInstrumentation::didReceiveWebSocketFrameError(m_document.get(), m_progressIdentifier, message);
         m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
-        LOG_ERROR("%s", message.utf8().legacyCStringPointer());
+        LOG_ERROR("%s", message.utf8());
     }
     m_shouldDiscardReceivedData = true;
     if (RefPtr client = m_client)

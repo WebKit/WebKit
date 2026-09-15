@@ -68,7 +68,7 @@ bool writeOriginToFile(const String& filePath, const ClientOrigin& origin)
     auto originFileHandle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::ReadWrite);
 
     if (!originFileHandle) {
-        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8().legacyCStringPointer());
+        LOG_ERROR("writeOriginToFile: Failed to open origin file '%s'", filePath.utf8());
         return false;
     }
 

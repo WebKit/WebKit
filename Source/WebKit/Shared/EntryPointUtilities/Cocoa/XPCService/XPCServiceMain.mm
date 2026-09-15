@@ -233,7 +233,7 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             } else if (serviceName == modelServiceName)
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(MODEL_SERVICE_INITIALIZER));
             else {
-                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName.utf8().legacyCStringPointer());
+                RELEASE_LOG_ERROR(IPC, "XPCServiceEventHandler: Unexpected 'service-name': %{public}s", serviceName.utf8());
                 return;
             }
 

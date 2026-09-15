@@ -519,7 +519,7 @@ RetainPtr<CTFontRef> InstalledFont::PostScriptFont::toCTFont(float pointSize) co
     auto fontName = String(adoptCF(CTFontCopyPostScriptName(font.get())).get());
     if (fontName != postScriptName) {
         RELEASE_LOG_ERROR(Fonts, "Serialized font %{public}s reconstructed to %{public}s. Subbing system-ui; may result in garbled text.",
-            postScriptName.utf8().legacyCStringPointer(), fontName.utf8().legacyCStringPointer());
+            postScriptName.utf8(), fontName.utf8());
         font = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, pointSize, nullptr));
     }
 

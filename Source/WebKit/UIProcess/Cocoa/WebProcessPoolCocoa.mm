@@ -335,7 +335,7 @@ static void logProcessPoolState(const WebProcessPool& pool)
             }
         }
 
-        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING ", pageURLs: %" SENSITIVE_LOG_STRING, process.ptr(), processDescription.release().utf8().legacyCStringPointer(), domainString.utf8().legacyCStringPointer(), pageURLs.release().utf8().legacyCStringPointer());
+        RELEASE_LOG(Process, "WebProcessProxy %p - %" PUBLIC_LOG_STRING ", domain: %" PRIVATE_LOG_STRING ", pageURLs: %" SENSITIVE_LOG_STRING, process.ptr(), processDescription.release().utf8(), domainString.utf8(), pageURLs.release().utf8());
     }
 }
 
@@ -1726,7 +1726,7 @@ void WebProcessPool::registerAssetFonts(WebProcessProxy& process)
                 protectedThis->m_assetFontURLs = Vector<URL> { };
                 for (auto& fontName : assetFonts) {
                     URL fontURL = fontURLFromName(fontName);
-                    RELEASE_LOG(Process, "Registering font name %s with url %s", fontName.characters(), fontURL.string().utf8().legacyCStringPointer());
+                    RELEASE_LOG(Process, "Registering font name %s with url %s", fontName.characters(), fontURL.string().utf8());
                     protectedThis->m_assetFontURLs->append(WTF::move(fontURL));
                 }
             }

@@ -178,7 +178,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         }
 
         for (const auto& id : ids)
-            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8().legacyCStringPointer());
+            RELEASE_LOG(WebRTC, "UserMediaProcessManager::willCreateMediaStream - granting extension %s", id.utf8());
 
         if (needsAudioSandboxExtension)
             process->grantAudioCaptureExtension();
@@ -247,7 +247,7 @@ void UserMediaProcessManager::revokeSandboxExtensionsIfNeeded(WebProcessProxy& p
         return;
 
     for (const auto& id : params)
-        RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", id.utf8().legacyCStringPointer());
+        RELEASE_LOG(WebRTC, "UserMediaProcessManager::endedCaptureSession - revoking extension %s", id.utf8());
 
     process.send(Messages::WebProcess::RevokeUserMediaDeviceSandboxExtensions(params), 0);
 #endif

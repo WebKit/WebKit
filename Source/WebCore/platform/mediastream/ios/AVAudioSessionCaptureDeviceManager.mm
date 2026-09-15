@@ -219,7 +219,7 @@ bool AVAudioSessionCaptureDeviceManager::setPreferredAudioSessionDeviceIDs()
 
         NSError *error = nil;
         if (![[PAL::getAVAudioSessionClassSingleton() sharedInstance] setPreferredInput:preferredInputPort error:&error]) {
-            RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", m_preferredMicrophoneID.utf8().legacyCStringPointer(), error.localizedDescription);
+            RELEASE_LOG_ERROR(WebRTC, "AVAudioSessionCaptureDeviceManager failed to set preferred input to '%{public}s' with error: %@", m_preferredMicrophoneID.utf8(), error.localizedDescription);
             return false;
         }
     }

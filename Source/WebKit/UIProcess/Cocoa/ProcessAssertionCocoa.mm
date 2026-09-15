@@ -437,7 +437,7 @@ void ProcessAssertion::init(const String& environmentIdentifier)
     ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
     ASSERT(!runningBoardAssertionName.isEmpty());
     if (m_pid <= 0) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}s assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName.characters(), m_reason.utf8().legacyCStringPointer(), m_pid);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion: Failed to acquire RBS %{public}s assertion '%{public}s' for process because PID %d is invalid", this, runningBoardAssertionName.characters(), m_reason.utf8(), m_pid);
         m_wasInvalidated = true;
         return;
     }
@@ -494,7 +494,7 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
 
 void ProcessAssertion::acquireSync()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().legacyCStringPointer(), m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Trying to take RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
 #if USE(EXTENSIONKIT)
     if (m_process && m_capability && m_capability->hasPlatformCapability()) {
         Locker locker { s_capabilityLock };
@@ -510,18 +510,18 @@ void ProcessAssertion::acquireSync()
 #endif
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
-        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().legacyCStringPointer(), m_pid, acquisitionError);
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8(), m_pid, acquisitionError);
         RunLoop::mainSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
             if (auto protectedThis = weakThis.get())
                 protectedThis->processAssertionWasInvalidated();
         });
     } else
-        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().legacyCStringPointer(), m_pid);
+        RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::acquireSync Successfully took RBS assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
 }
 
 ProcessAssertion::~ProcessAssertion()
 {
-    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8().legacyCStringPointer(), m_pid);
+    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion: Releasing process assertion '%{public}s' for process with PID=%d", this, m_reason.utf8(), m_pid);
 
     if (m_rbsAssertion) {
         m_delegate.get().invalidationCallback = nil;

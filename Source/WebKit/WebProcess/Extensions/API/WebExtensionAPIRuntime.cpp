@@ -58,7 +58,7 @@ JSValueRef WebExtensionAPIRuntimeBase::reportError(String errorMessage, JSGlobal
     ASSERT(!errorMessage.isEmpty());
     ASSERT(contextRef);
 
-    RELEASE_LOG_ERROR(Extensions, "Runtime error reported: %" PUBLIC_LOG_STRING, errorMessage.utf8().legacyCStringPointer());
+    RELEASE_LOG_ERROR(Extensions, "Runtime error reported: %" PUBLIC_LOG_STRING, errorMessage.utf8());
 
     auto result = Protected(contextRef, makeErrorValue(contextRef, errorMessage));
 

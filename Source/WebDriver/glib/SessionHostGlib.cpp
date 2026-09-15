@@ -245,7 +245,7 @@ void SessionHost::disconnect(DisconnectReason reason)
     Ref<SessionHost> protectedThis(*this);
 
     if (!m_targetIp.isEmpty())
-        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u disconnected", m_targetIp.utf8().legacyCStringPointer(), m_targetPort);
+        RELEASE_LOG_INFO(SessionHost, "RemoteInspector at %s:%u disconnected", m_targetIp.utf8(), m_targetPort);
     else
         RELEASE_LOG_INFO(SessionHost, "Inspector disconnected (local browser)");
 

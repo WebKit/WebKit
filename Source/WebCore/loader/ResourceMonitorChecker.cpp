@@ -90,7 +90,7 @@ ResourceMonitorChecker::Eligibility ResourceMonitorChecker::checkEligibility(con
     ASSERT(m_ruleList);
 
     auto matched = m_ruleList->processContentRuleListsForResourceMonitoring(info.resourceURL, info.mainDocumentURL, info.frameURL, info.type);
-    RESOURCEMONITOR_RELEASE_LOG("checkEligibility: The url is %" PUBLIC_LOG_STRING ": %" SENSITIVE_LOG_STRING " (%" PUBLIC_LOG_STRING ")", (matched ? "eligible" : "not eligible"), info.resourceURL.string().utf8().legacyCStringPointer(), ContentExtensions::resourceTypeToString(info.type).characters());
+    RESOURCEMONITOR_RELEASE_LOG("checkEligibility: The url is %" PUBLIC_LOG_STRING ": %" SENSITIVE_LOG_STRING " (%" PUBLIC_LOG_STRING ")", (matched ? "eligible" : "not eligible"), info.resourceURL.string().utf8(), ContentExtensions::resourceTypeToString(info.type).characters());
 
     return matched ? Eligibility::Eligible : Eligibility::NotEligible;
 }
