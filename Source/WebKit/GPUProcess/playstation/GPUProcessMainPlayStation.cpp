@@ -31,9 +31,21 @@
 #include "AuxiliaryProcessMain.h"
 #include "GPUProcess.h"
 
+#if USE(SKIA)
+#include <skia/core/SkGraphics.h>
+#endif
+
 namespace WebKit {
 
 class GPUProcessMainPlayStation final: public AuxiliaryProcessMainBase<GPUProcess> {
+public:
+    bool platformInitialize() override
+    {
+#if USE(SKIA)
+        SkGraphics::Init();
+#endif
+        return true;
+    }
 };
 
 int GPUProcessMain(int argc, char** argv)

@@ -53,7 +53,7 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 #if USE(GRAPHICS_LAYER_WC) && USE(WPE_RENDERER)
 uint64_t PageClientImpl::viewWidget()
 {
-    return 0;
+    return 1;
 }
 #endif
 
@@ -198,7 +198,7 @@ WebCore::IntPoint PageClientImpl::accessibilityScreenToRootView(const WebCore::I
 
 WebCore::IntRect PageClientImpl::rootViewToAccessibilityScreen(const WebCore::IntRect& rect)
 {
-    return rootViewToScreen(rect);    
+    return rootViewToScreen(rect);
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
