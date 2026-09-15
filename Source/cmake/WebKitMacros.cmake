@@ -720,8 +720,8 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
     endif ()
 
     get_target_property(_target_type ${_target} TYPE)
-    if (_target_type STREQUAL "EXECUTABLE")
-        # Executables have no "sign last" ordering constraint (unlike a
+    if (NOT _is_framework)
+        # Executables and dylibs have no "sign last" ordering constraint (unlike a
         # framework, which must sign after its embedded bundles). Attach the
         # signing as a POST_BUILD step so that building the target directly,
         # e.g. `cmake --build . --target jsc`, always signs it. A stamp-based
