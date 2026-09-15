@@ -2107,6 +2107,15 @@ VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosi
             break;
         }
 
+        if (!inSameBlock(next, visiblePosition)) {
+            // A line that ends its block has no next line to run into, so this position is already in
+            // whatever follows the block, and the newline between the two is synthesized to separate
+            // them rather than being a line break that terminates this line. End the range at the
+            // line. Reaching outside it would, for the last line of an editable element, hand out a
+            // range that leaves the field and counts a character the field's text doesn't have.
+            break;
+        }
+
         if (stringForVisiblePositionRange({ end, next }).contains("\n"_s)) {
             // Return the range including the line break.
             return { start, next };
