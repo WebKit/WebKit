@@ -78,6 +78,17 @@ void FrameDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
+    // Undo attachDebugger(). Unlike PageDebugger there is no Page::setDebugger(nullptr) to do this.
+    if (RefPtr frame = m_frame.get()) {
+        JSLockHolder lock(vm());
+        Ref windowProxy = frame->windowProxy();
+        for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+            auto* globalObject = jsWindowProxy->window();
+            if (globalObject && globalObject->debugger() == this)
+                detach(globalObject, isBeingDestroyed ? Debugger::GlobalObjectIsDestructing : Debugger::TerminatingDebuggingSession);
+        }
+    }
+
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }
