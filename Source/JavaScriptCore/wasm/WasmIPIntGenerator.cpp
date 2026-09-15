@@ -2988,6 +2988,10 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     if (m_metadata->m_callTargets.size() < m_parser->numCallProfiles())
         m_metadata->m_callTargets.insertFill(m_metadata->m_callTargets.size(), FunctionSpaceIndex { }, m_parser->numCallProfiles() - m_metadata->m_callTargets.size());
 
+    m_metadata->m_metadata.shrinkToFit();
+    m_metadata->m_callTargets.shrinkToFit();
+    m_metadata->m_localInitBytecode.shrinkToFit();
+    m_metadata->m_exceptionHandlers.shrinkToFit();
     return WTF::move(m_metadata);
 }
 

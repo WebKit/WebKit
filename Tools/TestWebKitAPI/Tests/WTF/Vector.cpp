@@ -2163,6 +2163,50 @@ TEST(WTF_Vector, MoveAssignmentOperator)
     }
 }
 
+TEST(WTF_Vector, MoveBetweenCompatibleMallocs)
+{
+    struct DoubleCapacityMalloc final : public FastMalloc {
+        static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity) { return capacity + capacity; }
+    };
+
+    {
+        Vector<uint8_t, 0, UnsafeVectorOverflow, 16, DoubleCapacityMalloc> source;
+        source.grow(64);
+        for (size_t i = 0; i < source.size(); ++i)
+            source[i] = static_cast<uint8_t>(i);
+        const uint8_t* buffer = source.span().data();
+
+        Vector<uint8_t> destination(WTF::move(source));
+        EXPECT_EQ(destination.span().data(), buffer);
+        ASSERT_EQ(destination.size(), 64U);
+        EXPECT_EQ(destination[0], 0);
+        EXPECT_EQ(destination[63], 63);
+        SUPPRESS_USE_AFTER_MOVE {
+            EXPECT_TRUE(source.isEmpty());
+            EXPECT_EQ(source.capacity(), 0U);
+        }
+    }
+
+    {
+        Vector<uint8_t, 0, UnsafeVectorOverflow, 16, DoubleCapacityMalloc> source;
+        source.grow(32);
+        for (size_t i = 0; i < source.size(); ++i)
+            source[i] = static_cast<uint8_t>(i + 1);
+
+        Vector<uint8_t> destination;
+        destination.append(0xFF);
+        const uint8_t* buffer = source.span().data();
+        destination = WTF::move(source);
+        EXPECT_EQ(destination.span().data(), buffer);
+        ASSERT_EQ(destination.size(), 32U);
+        EXPECT_EQ(destination[0], 1);
+        EXPECT_EQ(destination[31], 32);
+        SUPPRESS_USE_AFTER_MOVE {
+            EXPECT_TRUE(source.isEmpty());
+        }
+    }
+}
+
 static Vector<int> mapVector(Vector<int> vector)
 {
     return vector;
