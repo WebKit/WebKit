@@ -1,0 +1,237 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/site-isolation-debugger-test-utilities.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.DOM.FrameLayoutOverlays");
+
+    // Geometry is deliberately not asserted, for the same reason as highlight-frame-target.html.
+    // These cases assert dispatch and acceptance, plus what persistent overlays add: several at once,
+    // survival across scroll, teardown on navigation.
+    // FIXME: the coordinate-dependent parts of a grid/flex overlay are not verifiable from a test.
+    // FIXME: a same-origin frame nested inside a cross-origin root is not covered.
+
+    async function containerNodeForFrame(resourceName) {
+        let target = await frameTargetForURLContaining(resourceName);
+        InspectorTest.expectNotNull(target, "Should find the frame target for " + resourceName + ".");
+
+        if (target.isProvisional) {
+            let committedEvent = await WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
+            target = committedEvent.data.target;
+        }
+        await target.ensureTargetExecutionContext();
+
+        let frameDoc = WI.domManager.frameTargetDocumentForTarget(target);
+        if (!frameDoc) {
+            let docEvent = await WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            frameDoc = docEvent.data.document;
+        }
+        InspectorTest.expectNotNull(frameDoc, "Frame target should have a document.");
+
+        let htmlNode = frameDoc.children.find((child) => child.nodeName() === "HTML");
+        await new Promise((resolve) => htmlNode.getChildNodes(resolve));
+        let bodyNode = htmlNode.children.find((child) => child.nodeName() === "BODY");
+        InspectorTest.expectNotNull(bodyNode, "Frame document should have a BODY.");
+        await new Promise((resolve) => bodyNode.getChildNodes(resolve));
+
+        // Bind the container's children first; an unbound nodeId resolves to null.
+        let containerNode = bodyNode.children.find((child) => child.getAttribute("id") === "container");
+        InspectorTest.expectNotNull(containerNode, "Frame document should have #container.");
+        await new Promise((resolve) => containerNode.getChildNodes(resolve));
+
+        return {target, containerNode};
+    }
+
+    function gridOverlayConfig() {
+        return {
+            gridColor: {r: 255, g: 0, b: 132, a: 0.8},
+            showLineNames: true,
+            showLineNumbers: true,
+            showExtendedGridLines: true,
+            showTrackSizes: true,
+            showAreaNames: true,
+        };
+    }
+
+    function flexOverlayConfig() {
+        return {
+            flexColor: {r: 132, g: 0, b: 255, a: 0.8},
+            showOrderNumbers: true,
+        };
+    }
+
+    async function errorFrom(promise) {
+        try {
+            await promise;
+            return null;
+        } catch (error) {
+            return error;
+        }
+    }
+
+    suite.addTestCase({
+        name: "ShowAndHideGridOverlay",
+        description: "DOM.showGridOverlay and DOM.hideGridOverlay should be accepted by a frame target.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("grid-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#target'.");
+
+            let showError = await errorFrom(target.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: gridOverlayConfig()}));
+            InspectorTest.expectNull(showError, "DOM.showGridOverlay should be accepted by the frame target.");
+
+            let hideError = await errorFrom(target.DOMAgent.hideGridOverlay.invoke({nodeId}));
+            InspectorTest.expectNull(hideError, "DOM.hideGridOverlay should be accepted by the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShowAndHideFlexOverlay",
+        description: "DOM.showFlexOverlay and DOM.hideFlexOverlay should be accepted by a frame target.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("flex-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#target'.");
+
+            let showError = await errorFrom(target.DOMAgent.showFlexOverlay.invoke({nodeId, flexOverlayConfig: flexOverlayConfig()}));
+            InspectorTest.expectNull(showError, "DOM.showFlexOverlay should be accepted by the frame target.");
+
+            let hideError = await errorFrom(target.DOMAgent.hideFlexOverlay.invoke({nodeId}));
+            InspectorTest.expectNull(hideError, "DOM.hideFlexOverlay should be accepted by the frame target.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HideOverlayWithoutNodeIdClearsAll",
+        description: "Omitting nodeId should clear every overlay rather than erroring.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("grid-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            await errorFrom(target.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: gridOverlayConfig()}));
+
+            // The absent-nodeId branch is a distinct code path from the per-node one.
+            let clearAllGridError = await errorFrom(target.DOMAgent.hideGridOverlay.invoke({}));
+            InspectorTest.expectNull(clearAllGridError, "DOM.hideGridOverlay with no nodeId should be accepted.");
+
+            let clearAllFlexError = await errorFrom(target.DOMAgent.hideFlexOverlay.invoke({}));
+            InspectorTest.expectNull(clearAllFlexError, "DOM.hideFlexOverlay with no nodeId should be accepted.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HideOverlayForNeverShownNode",
+        description: "Hiding an overlay that was never shown should be accepted.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("grid-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#not-grid");
+            InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#not-grid'.");
+
+            let error = await errorFrom(target.DOMAgent.hideGridOverlay.invoke({nodeId}));
+            InspectorTest.expectNull(error, "DOM.hideGridOverlay for a node with no overlay should be accepted.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "ShowGridOverlayRejectsInvalidNodeId",
+        description: "An unbound nodeId should report an error, not be silently ignored.",
+        async test() {
+            let {target} = await containerNodeForFrame("grid-overlay-frame.html");
+
+            let error = await errorFrom(target.DOMAgent.showGridOverlay.invoke({nodeId: 999999, gridOverlayConfig: gridOverlayConfig()}));
+            InspectorTest.expectNotNull(error, "DOM.showGridOverlay should reject an unbound nodeId.");
+
+            let hideError = await errorFrom(target.DOMAgent.hideGridOverlay.invoke({nodeId: 999999}));
+            InspectorTest.expectNotNull(hideError, "DOM.hideGridOverlay should reject an unbound nodeId.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "OverlayPersistsAcrossScroll",
+        description: "A layout overlay should stay live while its frame scrolls.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("grid-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            let showError = await errorFrom(target.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: gridOverlayConfig()}));
+            InspectorTest.expectNull(showError, "DOM.showGridOverlay should be accepted before scrolling.");
+
+            try {
+                // Unlike element highlight, the overlay is expected to survive a scroll.
+                await target.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 300)"});
+
+                let reshowError = await errorFrom(target.DOMAgent.showGridOverlay.invoke({nodeId, gridOverlayConfig: gridOverlayConfig()}));
+                InspectorTest.expectNull(reshowError, "DOM.showGridOverlay should be accepted while the frame is scrolled.");
+            } finally {
+                // Later cases share this frame, so both cleanups are wrapped: an unprotected reject
+                // here would skip the one after it and leak the overlay into the next case.
+                await errorFrom(target.RuntimeAgent.evaluate.invoke({expression: "window.scrollTo(0, 0)"}));
+                await errorFrom(target.DOMAgent.hideGridOverlay.invoke({}));
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "GridAndFlexOverlaysLiveInSeparateProcesses",
+        description: "Overlays in two different frame targets should be live simultaneously.",
+        async test() {
+            let grid = await containerNodeForFrame("grid-overlay-frame.html");
+            let flex = await containerNodeForFrame("flex-overlay-frame.html");
+
+            InspectorTest.expectNotEqual(grid.target, flex.target, "The two frames should have distinct targets.");
+
+            let gridNodeId = await grid.containerNode.querySelector("#target");
+            let flexNodeId = await flex.containerNode.querySelector("#target");
+
+            // Each frame owns its own InspectorOverlay, so showing in one must not disturb the other.
+            let gridError = await errorFrom(grid.target.DOMAgent.showGridOverlay.invoke({nodeId: gridNodeId, gridOverlayConfig: gridOverlayConfig()}));
+            InspectorTest.expectNull(gridError, "Grid overlay should be accepted in the grid frame.");
+
+            let flexError = await errorFrom(flex.target.DOMAgent.showFlexOverlay.invoke({nodeId: flexNodeId, flexOverlayConfig: flexOverlayConfig()}));
+            InspectorTest.expectNull(flexError, "Flex overlay should be accepted in the flex frame while the grid overlay is live.");
+
+            // Clearing one target's overlays must not fail or clear the other's.
+            let clearGridError = await errorFrom(grid.target.DOMAgent.hideGridOverlay.invoke({}));
+            InspectorTest.expectNull(clearGridError, "Clearing the grid frame's overlays should be accepted.");
+
+            let stillLiveError = await errorFrom(flex.target.DOMAgent.hideFlexOverlay.invoke({nodeId: flexNodeId}));
+            InspectorTest.expectNull(stillLiveError, "The flex frame's overlay should still be addressable afterwards.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "OverlayTornDownOnFrameNavigation",
+        description: "Navigating a frame with a live overlay should not leave a stale overlay behind.",
+        async test() {
+            let {target, containerNode} = await containerNodeForFrame("flex-overlay-frame.html");
+
+            let nodeId = await containerNode.querySelector("#target");
+            await errorFrom(target.DOMAgent.showFlexOverlay.invoke({nodeId, flexOverlayConfig: flexOverlayConfig()}));
+
+            // Same-origin reload, so the target survives and its agent must drop the stale binding.
+            // evaluate() resolves when the reload is scheduled, so await the new document first.
+            let documentAvailable = WI.domManager.awaitEvent(WI.DOMManager.Event.FrameDocumentAvailable);
+            await target.RuntimeAgent.evaluate.invoke({expression: "location.reload()"});
+            await documentAvailable;
+
+            // The pre-navigation nodeId is now unbound, so this must report an error.
+            let error = await errorFrom(target.DOMAgent.showFlexOverlay.invoke({nodeId, flexOverlayConfig: flexOverlayConfig()}));
+            InspectorTest.expectNotNull(error, "A nodeId from before navigation should no longer resolve.");
+
+            let clearError = await errorFrom(target.DOMAgent.hideFlexOverlay.invoke({}));
+            InspectorTest.expectNull(clearError, "Clearing all overlays after navigation should be accepted.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+<body onload="runTest()">
+<p>Tests that a cross-origin iframe's FrameDOMAgent accepts the DOM grid and flex overlay commands.</p>
+<iframe src="http://localhost:8000/site-isolation/inspector/dom/resources/grid-overlay-frame.html" width="300" height="200"></iframe>
+<iframe src="http://127.0.0.1:8000/site-isolation/inspector/dom/resources/flex-overlay-frame.html" width="300" height="200"></iframe>
+</body>
