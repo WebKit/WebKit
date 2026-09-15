@@ -137,7 +137,7 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOut
                 offset -= (ancestor->borderStart() + ancestor->paddingStart());
             if (is<RenderListItem>(*ancestor))
                 break;
-            offset -= (ancestor->marginStart());
+            offset -= (ancestor->marginStart(ancestor->writingMode()));
             if (ancestor->isFlexItem()) {
                 offset -= ancestor->logicalLeft();
                 hasAccountedForBorderAndPadding = true;
@@ -156,7 +156,7 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListOut
         }
         auto offset = offsetFromParentListItem;
         for (ancestor = ancestor->containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-            offset -= (ancestor->marginStart() + ancestor->borderStart() + ancestor->paddingStart());
+            offset -= (ancestor->marginStart(ancestor->writingMode()) + ancestor->borderStart() + ancestor->paddingStart());
             if (ancestor == associatedListItem)
                 break;
         }

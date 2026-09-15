@@ -162,53 +162,6 @@ LayoutPoint RenderInline::firstInlineBoxTopLeft() const
     return { };
 }
 
-static LayoutUnit computeMargin(const RenderBoxModelObject* renderer, const Style::MarginEdge& margin, const Style::ZoomFactor& zoomFactor)
-{
-    return Style::evaluateMinimum<LayoutUnit>(margin, [&] ALWAYS_INLINE_LAMBDA {
-        return std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth());
-    }, zoomFactor);
-}
-
-LayoutUnit RenderInline::marginLeft() const
-{
-    return computeMargin(this, style().marginLeft(), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginRight() const
-{
-    return computeMargin(this, style().marginRight(), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginTop() const
-{
-    return computeMargin(this, style().marginTop(), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginBottom() const
-{
-    return computeMargin(this, style().marginBottom(), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginStart(const WritingMode writingMode) const
-{
-    return computeMargin(this, style().marginStart(writingMode), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginEnd(const WritingMode writingMode) const
-{
-    return computeMargin(this, style().marginEnd(writingMode), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginBefore(const WritingMode writingMode) const
-{
-    return computeMargin(this, style().marginBefore(writingMode), style().usedZoomForLength());
-}
-
-LayoutUnit RenderInline::marginAfter(const WritingMode writingMode) const
-{
-    return computeMargin(this, style().marginAfter(writingMode), style().usedZoomForLength());
-}
-
 ASCIILiteral RenderInline::renderName() const
 {
     if (isRelativelyPositioned())
@@ -222,7 +175,7 @@ ASCIILiteral RenderInline::renderName() const
 }
 
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-                                const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+    const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     ASSERT(layer());
     if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
@@ -332,7 +285,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
 {
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
         if (!layoutBox()) {
-            // Repaint may be issued on subtrees during content mutation with newly inserted renderers. 
+            // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
             ASSERT(needsLayout());
             return { };
         }
@@ -449,8 +402,8 @@ auto RenderInline::computeVisibleRectsInContainer(const RepaintRects& rects, con
 LayoutSize RenderInline::offsetFromContainer(const RenderElement& container, const LayoutPoint&, bool* offsetDependsOnPoint) const
 {
     ASSERT(&container == this->container());
-    
-    LayoutSize offset;    
+
+    LayoutSize offset;
     if (isInFlowPositioned())
         offset += offsetForInFlowPosition();
 

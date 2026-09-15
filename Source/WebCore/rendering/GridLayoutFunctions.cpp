@@ -326,9 +326,9 @@ void updateAutoMarginsInRowAxisIfNeeded(RenderBox& gridItem, WritingMode writing
     // 'auto', since such computed value may come from a previous layout and may
     // be incorrect now.
     if (!marginStart.isAuto())
-        marginLogicalWidth += gridItem.marginStart();
+        marginLogicalWidth += gridItem.marginStart(gridItem.writingMode());
     if (!marginEnd.isAuto())
-        marginLogicalWidth += gridItem.marginEnd();
+        marginLogicalWidth += gridItem.marginEnd(gridItem.writingMode());
 
     auto availableAlignmentSpace = gridItem.gridAreaContentLogicalWidth()->value() - gridItem.logicalWidth() - marginLogicalWidth;
     if (availableAlignmentSpace <= 0)
@@ -354,9 +354,9 @@ void updateAutoMarginsInColumnAxisIfNeeded(RenderBox& gridItem, WritingMode writ
     // 'auto', since such computed value may come from a previous layout and may
     // be incorrect now.
     if (!marginBefore.isAuto())
-        marginLogicalHeight += gridItem.marginBefore();
+        marginLogicalHeight += gridItem.marginBefore(gridItem.writingMode());
     if (!marginAfter.isAuto())
-        marginLogicalHeight += gridItem.marginAfter();
+        marginLogicalHeight += gridItem.marginAfter(gridItem.writingMode());
 
     auto availableAlignmentSpace = gridItem.gridAreaContentLogicalHeight()->value() - gridItem.logicalHeight() - marginLogicalHeight;
     if (availableAlignmentSpace <= 0)

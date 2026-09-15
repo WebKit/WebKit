@@ -39,19 +39,6 @@ public:
     RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
 
-    LayoutUnit marginLeft() const final;
-    LayoutUnit marginRight() const final;
-    LayoutUnit marginTop() const final;
-    LayoutUnit marginBottom() const final;
-    LayoutUnit marginBefore(const WritingMode) const final;
-    LayoutUnit marginAfter(const WritingMode) const final;
-    LayoutUnit marginStart(const WritingMode) const final;
-    LayoutUnit marginEnd(const WritingMode) const final;
-    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
-    LayoutUnit marginAfter() const { return marginAfter(writingMode()); }
-    LayoutUnit marginStart() const { return marginStart(writingMode()); }
-    LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
-
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 

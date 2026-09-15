@@ -123,9 +123,9 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
     }
 
     // Adjust fraction shifts to satisfy min gaps.
-    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore();
+    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore(numerator().writingMode());
     LayoutUnit numeratorDescent = numerator().logicalHeight() + numerator().marginLogicalHeight() - numeratorAscent;
-    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore();
+    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore(denominator().writingMode());
     LayoutUnit thickness = lineThickness();
     parameters.numeratorShiftUp = std::max(numeratorMinShiftUp, mathAxisHeight() + thickness / 2 + numeratorGapMin + numeratorDescent);
     parameters.denominatorShiftDown = std::max(denominatorMinShiftDown, thickness / 2 + denominatorGapMin + denominatorAscent - mathAxisHeight());
@@ -159,9 +159,9 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
     }
 
     // Adjust fraction shifts to satisfy min gaps.
-    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore();
+    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore(numerator().writingMode());
     LayoutUnit numeratorDescent = numerator().logicalHeight() + numerator().marginLogicalHeight() - numeratorAscent;
-    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore();
+    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore(denominator().writingMode());
     LayoutUnit gap = parameters.numeratorShiftUp - numeratorDescent + parameters.denominatorShiftDown - denominatorAscent;
     if (gap < gapMin) {
         LayoutUnit delta = (gapMin - gap) / 2;
@@ -211,7 +211,7 @@ void RenderMathMLFraction::computeIntrinsicLogicalWidthContributions()
 LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFractionElement::FractionAlignment align) const
 {
     LayoutUnit contentBoxInlineSize = logicalWidth();
-    LayoutUnit childMarginBoxInlineSize = child.marginStart() + child.logicalWidth() + child.marginEnd();
+    LayoutUnit childMarginBoxInlineSize = child.marginStart(child.writingMode()) + child.logicalWidth() + child.marginEnd(child.writingMode());
     switch (align) {
     case MathMLFractionElement::FractionAlignment::Right:
         return LayoutUnit(contentBoxInlineSize - childMarginBoxInlineSize);
@@ -229,7 +229,7 @@ LayoutUnit RenderMathMLFraction::fractionAscent() const
 {
     ASSERT(isValid());
 
-    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore();
+    LayoutUnit numeratorAscent = ascentForChild(numerator()) + numerator().marginBefore(numerator().writingMode());
     if (LayoutUnit thickness = lineThickness())
         return std::max(mathAxisHeight() + thickness / 2, numeratorAscent + fractionParameters().numeratorShiftUp);
 
@@ -258,25 +258,25 @@ void RenderMathMLFraction::layoutBlock(RelayoutChildren relayoutChildren, Layout
     denominator().layoutIfNeeded();
     computeAndSetBlockDirectionMarginsOfChildren();
 
-    LayoutUnit numeratorMarginBoxInlineSize = numerator().marginStart() + numerator().logicalWidth() + numerator().marginEnd();
-    LayoutUnit denominatorMarginBoxInlineSize = denominator().marginStart() + denominator().logicalWidth() + denominator().marginEnd();
+    LayoutUnit numeratorMarginBoxInlineSize = numerator().marginStart(numerator().writingMode()) + numerator().logicalWidth() + numerator().marginEnd(numerator().writingMode());
+    LayoutUnit denominatorMarginBoxInlineSize = denominator().marginStart(denominator().writingMode()) + denominator().logicalWidth() + denominator().marginEnd(denominator().writingMode());
     setLogicalWidth(std::max(numeratorMarginBoxInlineSize, denominatorMarginBoxInlineSize));
 
     LayoutUnit verticalOffset = 0; // This is the top of the renderer.
-    verticalOffset += numerator().marginBefore();
+    verticalOffset += numerator().marginBefore(numerator().writingMode());
     LayoutPoint numeratorLocation(numerator().marginLeft() + horizontalOffset(numerator(), protect(element())->numeratorAlignment()), verticalOffset);
     numerator().setLocation(numeratorLocation);
 
-    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore();
+    LayoutUnit denominatorAscent = ascentForChild(denominator()) + denominator().marginBefore(denominator().writingMode());
     verticalOffset = fractionAscent();
     FractionParameters parameters = lineThickness() ? fractionParameters() : stackParameters();
     verticalOffset += parameters.denominatorShiftDown - denominatorAscent;
 
-    verticalOffset += denominator().marginBefore();
+    verticalOffset += denominator().marginBefore(denominator().writingMode());
     LayoutPoint denominatorLocation(denominator().marginLeft() + horizontalOffset(denominator(), protect(element())->denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
 
-    verticalOffset += denominator().logicalHeight() + denominator().marginAfter(); // This is the bottom of our renderer.
+    verticalOffset += denominator().logicalHeight() + denominator().marginAfter(denominator().writingMode()); // This is the bottom of our renderer.
 
     setLogicalHeight(verticalOffset);
 

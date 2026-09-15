@@ -104,6 +104,14 @@ public:
     inline LayoutUnit computedCSSPaddingAfter() const;
     inline LayoutUnit computedCSSPaddingStart() const;
     inline LayoutUnit computedCSSPaddingEnd() const;
+    inline LayoutUnit computedCSSMarginTop() const;
+    inline LayoutUnit computedCSSMarginBottom() const;
+    inline LayoutUnit computedCSSMarginLeft() const;
+    inline LayoutUnit computedCSSMarginRight() const;
+    inline LayoutUnit computedCSSMarginBefore(const WritingMode) const;
+    inline LayoutUnit computedCSSMarginAfter(const WritingMode) const;
+    inline LayoutUnit computedCSSMarginStart(const WritingMode) const;
+    inline LayoutUnit computedCSSMarginEnd(const WritingMode) const;
 
     // These functions are used during layout. Table cells and the MathML
     // code override them to include some extra intrinsic padding.
@@ -158,18 +166,14 @@ public:
     inline LayoutUnit paddingLogicalWidth() const;
     inline LayoutUnit paddingLogicalHeight() const;
 
-    virtual LayoutUnit marginTop() const = 0;
-    virtual LayoutUnit marginBottom() const = 0;
-    virtual LayoutUnit marginLeft() const = 0;
-    virtual LayoutUnit marginRight() const = 0;
-    virtual LayoutUnit marginBefore(const WritingMode) const = 0;
-    virtual LayoutUnit marginAfter(const WritingMode) const = 0;
-    virtual LayoutUnit marginStart(const WritingMode) const = 0;
-    virtual LayoutUnit marginEnd(const WritingMode) const = 0;
-    inline LayoutUnit marginBefore() const;
-    inline LayoutUnit marginAfter() const;
-    inline LayoutUnit marginStart() const;
-    inline LayoutUnit marginEnd() const;
+    virtual LayoutUnit marginTop() const;
+    virtual LayoutUnit marginBottom() const;
+    virtual LayoutUnit marginLeft() const;
+    virtual LayoutUnit marginRight() const;
+    virtual LayoutUnit marginBefore(const WritingMode) const;
+    virtual LayoutUnit marginAfter(const WritingMode) const;
+    virtual LayoutUnit marginStart(const WritingMode) const;
+    virtual LayoutUnit marginEnd(const WritingMode) const;
     inline LayoutUnit verticalMarginExtent() const;
     inline LayoutUnit horizontalMarginExtent() const;
     inline LayoutUnit marginLogicalHeight() const;

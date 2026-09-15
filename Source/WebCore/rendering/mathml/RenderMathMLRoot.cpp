@@ -224,7 +224,7 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
     } else {
         getBase().layoutIfNeeded();
         m_baseWidth = getBase().logicalWidth() + getBase().marginLogicalWidth();
-        baseAscent = ascentForChild(getBase()) + getBase().marginBefore();
+        baseAscent = ascentForChild(getBase()) + getBase().marginBefore(getBase().writingMode());
         baseDescent = getBase().logicalHeight() + getBase().marginLogicalHeight() - baseAscent;
         getIndex().layoutIfNeeded();
     }
@@ -255,7 +255,7 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
     // For <mroot>, we update the metrics to take into account the index.
     LayoutUnit indexAscent, indexDescent;
     if (rootType() == RootType::RootWithIndex) {
-        indexAscent = ascentForChild(getIndex()) + getIndex().marginBefore();
+        indexAscent = ascentForChild(getIndex()) + getIndex().marginBefore(getIndex().writingMode());
         indexDescent = getIndex().logicalHeight() + getIndex().marginLogicalHeight() - indexAscent;
         ascent = std::max<LayoutUnit>(radicalAscent, indexBottomRaise + indexDescent + indexAscent - descent);
     }
@@ -271,9 +271,9 @@ void RenderMathMLRoot::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit
             child->setLocation(child->location() + baseLocation);
     } else {
         ASSERT(rootType() == RootType::RootWithIndex);
-        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(), getBase()), ascent - baseAscent + getBase().marginBefore());
+        LayoutPoint baseLocation(mirrorIfNeeded(horizontalOffset + getBase().marginStart(getBase().writingMode()), getBase()), ascent - baseAscent + getBase().marginBefore(getBase().writingMode()));
         getBase().setLocation(baseLocation);
-        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree + getIndex().marginStart(), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore());
+        LayoutPoint indexLocation(mirrorIfNeeded(horizontal.kernBeforeDegree + getIndex().marginStart(getIndex().writingMode()), getIndex()), ascent + descent - indexBottomRaise - indexDescent - indexAscent + getIndex().marginBefore(getIndex().writingMode()));
         getIndex().setLocation(indexLocation);
     }
 

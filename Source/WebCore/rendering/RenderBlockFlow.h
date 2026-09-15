@@ -98,19 +98,19 @@ public:
 
     static LayoutUnit positiveMarginBeforeDefault(const RenderBlock& block)
     {
-        return std::max<LayoutUnit>(block.marginBefore(), 0);
+        return std::max<LayoutUnit>(block.marginBefore(block.writingMode()), 0);
     }
     static LayoutUnit negativeMarginBeforeDefault(const RenderBlock& block)
     {
-        return std::max<LayoutUnit>(-block.marginBefore(), 0);
+        return std::max<LayoutUnit>(-block.marginBefore(block.writingMode()), 0);
     }
     static LayoutUnit positiveMarginAfterDefault(const RenderBlock& block)
     {
-        return std::max<LayoutUnit>(block.marginAfter(), 0);
+        return std::max<LayoutUnit>(block.marginAfter(block.writingMode()), 0);
     }
     static LayoutUnit negativeMarginAfterDefault(const RenderBlock& block)
     {
-        return std::max<LayoutUnit>(-block.marginAfter(), 0);
+        return std::max<LayoutUnit>(-block.marginAfter(block.writingMode()), 0);
     }
 
     MarginValues m_margins;

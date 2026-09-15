@@ -162,10 +162,6 @@ public:
     LayoutUnit marginAfter(const WritingMode writingMode) const override { return m_marginBox.after(writingMode); }
     LayoutUnit marginStart(const WritingMode writingMode) const override { return m_marginBox.start(writingMode); }
     LayoutUnit marginEnd(const WritingMode writingMode) const override { return m_marginBox.end(writingMode); }
-    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
-    LayoutUnit marginAfter() const { return marginAfter(writingMode()); }
-    LayoutUnit marginStart() const { return marginStart(writingMode()); }
-    LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
 
     inline LayoutUnit marginBoxLogicalHeight(WritingMode) const;
 
@@ -179,8 +175,8 @@ public:
     void setMarginEnd(LayoutUnit value) { setMarginEnd(value, writingMode()); }
 
     virtual bool isSelfCollapsingBlock() const { return false; }
-    virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }
-    virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
+    virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(writingMode()); }
+    virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(writingMode()); }
 
     // Resolve auto margins in the inline direction of the containing block so that objects can be pushed to the start, middle or end
     // of the containing block.

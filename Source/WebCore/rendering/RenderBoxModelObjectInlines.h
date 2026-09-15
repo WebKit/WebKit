@@ -55,14 +55,22 @@ inline LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const { return 
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingRight(), style().usedZoomForLength()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingStart(), style().usedZoomForLength()); }
 inline LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().paddingTop(), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginAfter(const WritingMode writingMode) const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginAfter(writingMode), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginBefore(const WritingMode writingMode) const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginBefore(writingMode), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginBottom() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginBottom(), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginEnd(const WritingMode writingMode) const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginEnd(writingMode), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginLeft() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginLeft(), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginRight() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginRight(), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginStart(const WritingMode writingMode) const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginStart(writingMode), style().usedZoomForLength()); }
+inline LayoutUnit RenderBoxModelObject::computedCSSMarginTop() const { return resolveLengthPercentageUsingContainerLogicalWidth(style().marginTop(), style().usedZoomForLength()); }
 inline bool RenderBoxModelObject::hasInlineDirectionBordersOrPadding() const { return borderStart() || borderEnd() || paddingStart() || paddingEnd(); }
-inline bool RenderBoxModelObject::hasInlineDirectionBordersPaddingOrMargin() const { return hasInlineDirectionBordersOrPadding() || marginStart() || marginEnd(); }
+inline bool RenderBoxModelObject::hasInlineDirectionBordersPaddingOrMargin() const { return hasInlineDirectionBordersOrPadding() || marginStart(writingMode()) || marginEnd(writingMode()); }
 inline LayoutUnit RenderBoxModelObject::horizontalBorderAndPaddingExtent() const { return borderLeft() + borderRight() + paddingLeft() + paddingRight(); }
 inline LayoutUnit RenderBoxModelObject::horizontalBorderExtent() const { return borderLeft() + borderRight(); }
-inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingAfter() const { return marginAfter() + borderAfter() + paddingAfter(); }
-inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingBefore() const { return marginBefore() + borderBefore() + paddingBefore(); }
-inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingEnd() const { return marginEnd() + borderEnd() + paddingEnd(); }
-inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingStart() const { return marginStart() + borderStart() + paddingStart(); }
+inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingAfter() const { return marginAfter(writingMode()) + borderAfter() + paddingAfter(); }
+inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingBefore() const { return marginBefore(writingMode()) + borderBefore() + paddingBefore(); }
+inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingEnd() const { return marginEnd(writingMode()) + borderEnd() + paddingEnd(); }
+inline LayoutUnit RenderBoxModelObject::marginAndBorderAndPaddingStart() const { return marginStart(writingMode()) + borderStart() + paddingStart(); }
 inline LayoutUnit RenderBoxModelObject::paddingAfter() const { return computedCSSPaddingAfter(); }
 inline LayoutUnit RenderBoxModelObject::paddingBefore() const { return computedCSSPaddingBefore(); }
 inline LayoutUnit RenderBoxModelObject::paddingBottom() const { return computedCSSPaddingBottom(); }
@@ -77,14 +85,10 @@ inline LayoutUnit RenderBoxModelObject::paddingStart() const { return computedCS
 inline LayoutUnit RenderBoxModelObject::paddingTop() const { return computedCSSPaddingTop(); }
 inline LayoutUnit RenderBoxModelObject::verticalBorderAndPaddingExtent() const { return borderTop() + borderBottom() + paddingTop() + paddingBottom(); }
 inline LayoutUnit RenderBoxModelObject::verticalBorderExtent() const { return borderTop() + borderBottom(); }
-inline LayoutUnit RenderBoxModelObject::marginBefore() const { return marginBefore(writingMode()); }
-inline LayoutUnit RenderBoxModelObject::marginAfter() const { return marginAfter(writingMode()); }
-inline LayoutUnit RenderBoxModelObject::marginStart() const { return marginStart(writingMode()); }
-inline LayoutUnit RenderBoxModelObject::marginEnd() const { return marginEnd(writingMode()); }
 inline LayoutUnit RenderBoxModelObject::verticalMarginExtent() const { return marginTop() + marginBottom(); }
 inline LayoutUnit RenderBoxModelObject::horizontalMarginExtent() const { return marginLeft() + marginRight(); }
-inline LayoutUnit RenderBoxModelObject::marginLogicalHeight() const { return marginBefore() + marginAfter(); }
-inline LayoutUnit RenderBoxModelObject::marginLogicalWidth() const { return marginStart() + marginEnd(); }
+inline LayoutUnit RenderBoxModelObject::marginLogicalHeight() const { return marginBefore(writingMode()) + marginAfter(writingMode()); }
+inline LayoutUnit RenderBoxModelObject::marginLogicalWidth() const { return marginStart(writingMode()) + marginEnd(writingMode()); }
 
 inline RectEdges<LayoutUnit> RenderBoxModelObject::borderWidths() const
 {

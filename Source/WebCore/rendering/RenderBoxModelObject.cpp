@@ -1035,4 +1035,44 @@ auto RenderBoxModelObject::computeVisibleRectsUsingPaintOffset(const RepaintRect
     return adjustedRects;
 }
 
+LayoutUnit RenderBoxModelObject::marginTop() const
+{
+    return computedCSSMarginTop();
+}
+
+LayoutUnit RenderBoxModelObject::marginBottom() const
+{
+    return computedCSSMarginBottom();
+}
+
+LayoutUnit RenderBoxModelObject::marginLeft() const
+{
+    return computedCSSMarginLeft();
+}
+
+LayoutUnit RenderBoxModelObject::marginRight() const
+{
+    return computedCSSMarginRight();
+}
+
+LayoutUnit RenderBoxModelObject::marginBefore(const WritingMode writingMode) const
+{
+    return computedCSSMarginBefore(writingMode);
+}
+
+LayoutUnit RenderBoxModelObject::marginAfter(const WritingMode writingMode) const
+{
+    return computedCSSMarginAfter(writingMode);
+}
+
+LayoutUnit RenderBoxModelObject::marginStart(const WritingMode writingMode) const
+{
+    return computedCSSMarginStart(writingMode);
+}
+
+LayoutUnit RenderBoxModelObject::marginEnd(const WritingMode writingMode) const
+{
+    return computedCSSMarginEnd(writingMode);
+}
+
 } // namespace WebCore
