@@ -5528,7 +5528,6 @@ fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
 
-fast/filter-image/filter-image-animation.html
 fast/forms/formmethod-attribute-input-2.html
 fast/forms/formtarget-attribute-input-2.html
 fast/forms/interactive-validation-formnovalidate-2.html

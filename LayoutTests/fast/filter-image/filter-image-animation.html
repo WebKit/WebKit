@@ -1,162 +1,75 @@
 <!DOCTYPE html>
-
 <html>
 <head>
-  <style>
-    .box {
-        height: 100px;
-        width: 100px;
-        margin: 10px;
-        background-color: blue;
-        display: inline-block;
-    }
-
-    #brightness {
-      -webkit-animation: brightness-anim 2s linear;
-    }
-
-    #blur {
-      -webkit-animation: blur-anim 2s linear;
-    }
-
-    #grayscale {
-      -webkit-animation: grayscale-anim 2s linear;
-    }
-
-    #sepia {
-      -webkit-animation: sepia-anim 2s linear;
-    }
-
-    #no {
-      -webkit-animation: no-anim 2s linear;
-    }
-
-    #multiple1 {
-      -webkit-animation: multiple-anim1 2s linear;
-    }
-
-    #multiple2 {
-      -webkit-animation: multiple-anim2 2s linear;
-    }
-
-    #urlfilter {
-      -webkit-animation: url-to-filter-anim 2s linear;
-    }
-
-    #filterurl {
-      -webkit-animation: filter-to-url-anim 2s linear;
-    }
-
-    #filterdiffurl {
-      -webkit-animation: filter-diff-url-anim 2s linear;
-    }
-
-    #generated1 {
-      -webkit-animation: generated-anim1 2s linear;
-    }
-
-    #generated2 {
-      -webkit-animation: generated-anim2 2s linear;
-    }
-
-    @-webkit-keyframes brightness-anim {
-        from { background-image: filter(url(resources/image.svg), brightness(1)); }
-        to   { background-image: filter(url(resources/image.svg), brightness(0)); }
-    }
-
-    @-webkit-keyframes blur-anim {
-        from { background-image: filter(url(resources/image.svg), blur(0)); }
-        to   { background-image: filter(url(resources/image.svg), blur(10px)); }
-    }
-
-    @-webkit-keyframes grayscale-anim {
-        from { background-image: filter(url(resources/image.svg), grayscale(1)); }
-        to   { background-image: filter(url(resources/image.svg), grayscale(0)); }
-    }
-
-    @-webkit-keyframes sepia-anim {
-        from { background-image: filter(url(resources/image.svg), sepia(1)); }
-        to   { background-image: filter(url(resources/image.svg), sepia(0)); }
-    }
-
-    @-webkit-keyframes no-anim {
-        from { background-image: filter(url(resources/image.svg), sepia(1)); }
-        to   { background-image: filter(url(resources/blue.svg), sepia(0)); }
-    }
-
-    @-webkit-keyframes multiple-anim1 {
-        from { background-image: filter(url(resources/image.svg), sepia(0.25) blur(3px) hue-rotate(45deg)); }
-        to   { background-image: filter(url(resources/image.svg), sepia(0.75)); }
-    }
-
-    @-webkit-keyframes multiple-anim2 {
-        from { background-image: filter(url(resources/image.svg), contrast(0.25)); }
-        to   { background-image: filter(url(resources/image.svg), contrast(0.75) blur(3px) hue-rotate(45deg)); }
-    }
-
-    @-webkit-keyframes url-to-filter-anim {
-        from { background-image: url(resources/image.svg); }
-        to   { background-image: filter(url(resources/image.svg), sepia(0.5)); }
-    }
-
-    @-webkit-keyframes filter-to-url-anim {
-        from { background-image: filter(url(resources/image.svg), sepia(0.5)); }
-        to   { background-image: url(resources/image.svg); }
-    }
-
-    @-webkit-keyframes filter-diff-url-anim {
-        from { background-image: url(resources/image.svg); }
-        to   { background-image: filter(url(resources/blue.svg), sepia(0.5)); }
-    }
-
-    @-webkit-keyframes generated-anim1 {
-        from { background-image: filter(filter(url(resources/image.svg), blur(3px)), sepia(1)); }
-        to   { background-image: filter(filter(url(resources/image.svg), blur(3px)), sepia(0)); }
-    }
-
-    @-webkit-keyframes generated-anim2 {
-        from { background-image: filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(1)); }
-        to   { background-image: filter(-webkit-cross-fade(url(resources/image.svg), url(resources/image.svg), 50%), sepia(0)); }
-    }
-  </style>
-  <script src="../../animations/resources/animation-test-helpers.js"></script>
-  <script type="text/javascript">
-    const expectedValues = [
-      // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["brightness-anim",  1, "brightness", "backgroundImage", "filter(url(image.svg), brightness(0.5))", 0.05],
-      ["blur-anim",  1, "blur", "backgroundImage", "filter(url(image.svg), blur(5px))", 0.05],
-      ["grayscale-anim",  1, "grayscale", "backgroundImage", "filter(url(image.svg), grayscale(0.5))", 0.05],
-      ["sepia-anim",  1, "sepia", "backgroundImage", "filter(url(image.svg), sepia(0.5))", 0.05],
-      ["no-anim",  1, "no", "backgroundImage", "filter(url(blue.svg), sepia(0))", 0],
-      ["multiple-anim1",  1, "multiple1", "backgroundImage", "filter(url(image.svg), sepia(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
-      ["multiple-anim2",  1, "multiple2", "backgroundImage", "filter(url(image.svg), contrast(0.5) blur(1.5px) hue-rotate(22.5deg))", 0.05],
-      ["url-to-filter-anim",  1, "urlfilter", "backgroundImage", " filter(url(image.svg), sepia(0.25))", 0.05],
-      ["filter-to-url-anim",  1, "filterurl", "backgroundImage", " filter(url(image.svg), sepia(0.25))", 0.05],
-      ["filter-diff-url-anim",  1, "filterdiffurl", "backgroundImage", " filter(url(blue.svg), sepia(0.5))", 0],
-      // FIXME: We need to support generated images as input to other generated images for animations first.
-      ["generated-anim1",  1, "generated1", "backgroundImage", "filter(filter(url(image.svg), blur(3px)), sepia(0))", 0],
-      ["generated-anim2",  1, "generated2", "backgroundImage", "filter(-webkit-cross-fade(url(image.svg), url(image.svg), 50%), sepia(0))", 0],
-    ];
-    
-    runAnimationTest(expectedValues);
-  </script>
+<meta charset="utf-8">
+<title>background-image with filter() images has a discrete animation type</title>
+<link rel="help" href="https://drafts.csswg.org/css-backgrounds/#background-image">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=322797">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
 </head>
 <body>
+<div id="target"></div>
+<div id="reference"></div>
+<script>
+'use strict';
 
-<div class="box" id="brightness"></div>
-<div class="box" id="blur"></div>
-<div class="box" id="grayscale"></div>
-<div class="box" id="sepia"></div>
-<div class="box" id="no"></div>
-<div class="box" id="multiple1"></div>
-<div class="box" id="multiple2"></div>
-<div class="box" id="urlfilter"></div>
-<div class="box" id="filterurl"></div>
-<div class="box" id="filterdiffurl"></div>
-<div class="box" id="generated1"></div>
-<div class="box" id="generated2"></div>
+// background-image is a discrete property. Even when both endpoints are filter()
+// images sharing the same input image, the animation must hold the "from" value
+// below the 0.5 midpoint and flip to the "to" value at 0.5, rather than
+// interpolating the filter functions.
 
-<div id="result">
-</div>
+const target = document.getElementById('target');
+const reference = document.getElementById('reference');
+
+function computedValueFor(value) {
+    reference.style.backgroundImage = value;
+    return getComputedStyle(reference).backgroundImage;
+}
+
+function animatedValueAt(from, to, currentTime) {
+    const animation = target.animate(
+        [{ backgroundImage: from }, { backgroundImage: to }],
+        { duration: 1000, fill: 'both' });
+    animation.pause();
+    animation.currentTime = currentTime;
+    const value = getComputedStyle(target).backgroundImage;
+    animation.cancel();
+    return value;
+}
+
+function discreteTest(description, from, to) {
+    test(() => {
+        assert_equals(animatedValueAt(from, to, 250), computedValueFor(from),
+            'holds the from value at 25%');
+        assert_equals(animatedValueAt(from, to, 499), computedValueFor(from),
+            'holds the from value at 49.9%');
+        assert_equals(animatedValueAt(from, to, 500), computedValueFor(to),
+            'flips to the to value at 50%');
+        assert_equals(animatedValueAt(from, to, 750), computedValueFor(to),
+            'holds the to value at 75%');
+    }, description);
+}
+
+discreteTest('filter() with a single filter function animates discretely',
+    'filter(url(resources/image.svg), brightness(1))',
+    'filter(url(resources/image.svg), brightness(0))');
+
+discreteTest('filter() with multiple filter functions animates discretely',
+    'filter(url(resources/image.svg), sepia(0.25) blur(3px) hue-rotate(45deg))',
+    'filter(url(resources/image.svg), sepia(0.75))');
+
+discreteTest('animation from url() to filter() is discrete',
+    'url(resources/image.svg)',
+    'filter(url(resources/image.svg), sepia(0.5))');
+
+discreteTest('animation from filter() to url() is discrete',
+    'filter(url(resources/image.svg), sepia(0.5))',
+    'url(resources/image.svg)');
+
+discreteTest('filter() images with different input images animate discretely',
+    'filter(url(resources/image.svg), sepia(1))',
+    'filter(url(resources/blue.svg), sepia(0))');
+</script>
 </body>
 </html>

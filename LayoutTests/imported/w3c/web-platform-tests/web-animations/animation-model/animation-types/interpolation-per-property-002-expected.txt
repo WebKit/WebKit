@@ -40,13 +40,13 @@ PASS line-height uses discrete animation when animating between "normal" and "10
 PASS line-height uses discrete animation when animating between "normal" and "10" with effect easing
 PASS line-height uses discrete animation when animating between "normal" and "10" with keyframe easing
 PASS list-style (type: discrete) has testInterpolation function
-FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with linear easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 499ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
-FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with effect easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 940ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
-FAIL list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with keyframe easing assert_equals: The value should be inside url("http://localhost/test-1") circle at 940ms expected "inside url(\"http://localhost/test-1\") circle" but got "inside url(\"http://localhost/test-2\") circle"
+PASS list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with linear easing
+PASS list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with effect easing
+PASS list-style uses discrete animation when animating between "inside url("http://localhost/test-1") circle" and "outside url("http://localhost/test-2") square" with keyframe easing
 PASS list-style-image (type: discrete) has testInterpolation function
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
-FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing
+PASS list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing
+PASS list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing
 PASS list-style-position (type: discrete) has testInterpolation function
 PASS list-style-position uses discrete animation when animating between "inside" and "outside" with linear easing
 PASS list-style-position uses discrete animation when animating between "inside" and "outside" with effect easing
