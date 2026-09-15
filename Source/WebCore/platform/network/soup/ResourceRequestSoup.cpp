@@ -60,7 +60,11 @@ GRefPtr<SoupMessage> ResourceRequest::createSoupMessage(BlobRegistryImpl& blobRe
     if (!uri)
         return nullptr;
 
-    GRefPtr soupMessage = adoptGRef(soup_message_new_from_uri(httpMethod().ascii().data(), uri.get()));
+    auto method = httpMethod().isEmpty() ? "GET"_s : httpMethod();
+    if (!isValidHTTPToken(method))
+        return nullptr;
+
+    GRefPtr soupMessage = adoptGRef(soup_message_new_from_uri(method.ascii().data(), uri.get()));
 
     soup_message_set_priority(soupMessage.get(), toSoupMessagePriority(priority()));
 
