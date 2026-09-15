@@ -1,0 +1,8 @@
+This tests that an accessible name computation chained more deeply than the stack can hold terminates without crashing.
+
+PASS: typeof platformValueForW3CName(chainStart) === 'string'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
