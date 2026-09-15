@@ -47,6 +47,12 @@ PASS TrustedScriptURL must be primary interface of window.trustedTypes.createPol
 PASS Stringification of window.trustedTypes.createPolicy("SomeName3", { createScriptURL: s => s }).createScriptURL("A string")
 PASS TrustedScriptURL interface: window.trustedTypes.createPolicy("SomeName3", { createScriptURL: s => s }).createScriptURL("A string") must inherit property "toJSON()" with the proper type
 PASS TrustedScriptURL interface: toJSON operation on window.trustedTypes.createPolicy("SomeName3", { createScriptURL: s => s }).createScriptURL("A string")
+FAIL TrustedHTMLParserOptions interface: existence and properties of interface object assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
+FAIL TrustedHTMLParserOptions interface object length assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
+FAIL TrustedHTMLParserOptions interface object name assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
+FAIL TrustedHTMLParserOptions interface: existence and properties of interface prototype object assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
+FAIL TrustedHTMLParserOptions interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
+FAIL TrustedHTMLParserOptions interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "TrustedHTMLParserOptions" expected property "TrustedHTMLParserOptions" missing
 PASS TrustedTypePolicyFactory interface: existence and properties of interface object
 PASS TrustedTypePolicyFactory interface object length
 PASS TrustedTypePolicyFactory interface object name
@@ -89,6 +95,7 @@ PASS TrustedTypePolicy interface: attribute name
 PASS TrustedTypePolicy interface: operation createHTML(DOMString, any...)
 PASS TrustedTypePolicy interface: operation createScript(DOMString, any...)
 PASS TrustedTypePolicy interface: operation createScriptURL(DOMString, any...)
+FAIL TrustedTypePolicy interface: operation createParserOptions(optional SetHTMLUnsafeOptions, any...) assert_own_property: interface prototype object missing non-static operation expected property "createParserOptions" missing
 PASS TrustedTypePolicy must be primary interface of window.trustedTypes.createPolicy("SomeName", { createHTML: s => s })
 PASS Stringification of window.trustedTypes.createPolicy("SomeName", { createHTML: s => s })
 PASS TrustedTypePolicy interface: window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) must inherit property "name" with the proper type
@@ -98,5 +105,7 @@ PASS TrustedTypePolicy interface: window.trustedTypes.createPolicy("SomeName", {
 PASS TrustedTypePolicy interface: calling createScript(DOMString, any...) on window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) with too few arguments must throw TypeError
 PASS TrustedTypePolicy interface: window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) must inherit property "createScriptURL(DOMString, any...)" with the proper type
 PASS TrustedTypePolicy interface: calling createScriptURL(DOMString, any...) on window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) with too few arguments must throw TypeError
+FAIL TrustedTypePolicy interface: window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) must inherit property "createParserOptions(optional SetHTMLUnsafeOptions, any...)" with the proper type assert_inherits: property "createParserOptions" not found in prototype chain
+FAIL TrustedTypePolicy interface: calling createParserOptions(optional SetHTMLUnsafeOptions, any...) on window.trustedTypes.createPolicy("SomeName", { createHTML: s => s }) with too few arguments must throw TypeError assert_inherits: property "createParserOptions" not found in prototype chain
 PASS Window interface: attribute trustedTypes
 
