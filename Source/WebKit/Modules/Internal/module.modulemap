@@ -274,12 +274,6 @@ module WebKit_Internal [system] {
         export *
     }
 
-    module SwiftDemoLogoConfirmation {
-        requires cplusplus20
-        header "../../UIProcess/SwiftDemoLogoConfirmation.h"
-        export *
-    }
-
     module WebBackForwardCacheEntry {
         requires cplusplus20
         header "../../UIProcess/WebBackForwardCacheEntry.h"

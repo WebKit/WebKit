@@ -137,7 +137,6 @@
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
 #include "SuspendedPageProxy.h"
-#include "SwiftDemoLogoConfirmation.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -10284,24 +10283,6 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     protect(websiteDataStore())->beginAppBoundDomainCheck(host.toString(), protocol.toString(), listener);
 #endif
 
-#if ENABLE(SWIFT_DEMO_URI_SCHEME)
-    if (navigationAction->request().url().protocolIs("x-swift-demo"_s) && !m_shouldSuppressSwiftDemoInNextNavigationPolicyDecision) {
-        auto logo = getSwiftLogoData();
-        WTF::Vector<uint8_t> logo2;
-        logo2.reserveCapacity(logo.getCount());
-        for (swift::Int i = 0; i < logo.getCount(); i++)
-            logo2.append(logo[i]);
-        auto mimeType = "image/png"_s;
-        auto charset = "US-ASCII"_s;
-        auto baseURL = "x-swift-demo://"_s;
-        auto data2 = SharedBuffer::create(WTF::move(logo2));
-        m_shouldSuppressSwiftDemoInNextNavigationPolicyDecision = true;
-        loadData(WTF::move(data2), mimeType, charset, baseURL);
-        listener->ignore(WasNavigationIntercepted::Yes);
-        return;
-    }
-#endif
-
     auto wasPotentiallyInitiatedByUser = navigation->isLoadedWithNavigationShared() || navigation->wasUserInitiated();
     if (!sessionID().isEphemeral())
         logFrameNavigation(frame, internals().pageLoadState.url(), request, navigationAction->data().redirectResponse.url(), wasPotentiallyInitiatedByUser);
@@ -20290,18 +20271,6 @@ void WebPageProxy::dropTextExtractionAssertion()
     protect(browsingContextGroup())->forEachRemotePage(*this, [](auto& remotePage) {
         remotePage.processActivityState().dropTextExtractionAssertion();
     });
-}
-
-// See SwiftDemoLogo.swift for the rationale here
-bool NODELETE shouldShowSwiftDemoLogo()
-{
-#if ENABLE(SWIFT_DEMO_URI_SCHEME)
-    return true;
-#else
-    // This shouldn't even be called if ENABLE_SWIFT_DEMO_URI_SCHEME
-    // isn't enabled
-    RELEASE_ASSERT_NOT_REACHED();
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)

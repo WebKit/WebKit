@@ -1431,12 +1431,6 @@ list(APPEND WebKit_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.cpp
 )
 
-if (ENABLE_SWIFT_DEMO_URI_SCHEME)
-    list(APPEND WebKit_SOURCES
-        ${WEBKIT_DIR}/UIProcess/SwiftDemoLogo.swift
-    )
-endif ()
-
 if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     set_source_files_properties(
         ${WebKit_DERIVED_SOURCES_DIR}/WebBackForwardListMessageReceiver.swift
