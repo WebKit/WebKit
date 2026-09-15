@@ -27,6 +27,8 @@
 
 #include <JavaScriptCore/CallData.h>
 #include <wtf/AbstractCanMakeCheckedPtr.h>
+#include <wtf/Compiler.h>
+#include <wtf/Function.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {
@@ -55,6 +57,17 @@ public:
     virtual void frontendInitialized() = 0;
     virtual WTF::Stopwatch& executionStopwatch() const = 0;
     virtual JSC::Debugger* debugger() = 0;
+
+    // JSC::Debugger is deliberately only forward declared here: including Debugger.h would pull the
+    // JSC debugger internals into everything that includes this header, which is most of the
+    // inspector. A raw pointer is the right type either way, since Debugger is neither
+    // ref-counted nor CanMakeCheckedPtr.
+    SUPPRESS_FORWARD_DECL_ARG virtual void forEachDebugger(NOESCAPE const WTF::Function<void(JSC::Debugger&)>& functor)
+    {
+        if (auto* debugger = this->debugger())
+            functor(*debugger);
+    }
+
     virtual JSC::VM& vm() = 0;
 };
 

@@ -62,6 +62,8 @@ void FrameDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
+    m_isAttachedToFrame = true;
+
     RefPtr frame = m_frame.get();
     if (!frame)
         return;
@@ -77,6 +79,8 @@ void FrameDebugger::attachDebugger()
 void FrameDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
+
+    m_isAttachedToFrame = false;
 
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
