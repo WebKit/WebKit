@@ -2266,7 +2266,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     }
 
     ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-    auto [process, suspendedPage, reason] = processForNavigationInternal(page, frame, navigation, sourceURL, isolatedProcessType, mainFrameSite, processSwapRequestedByClient, lockdownMode, enhancedSecurity, frameInfo, dataStore.copyRef());
+    auto [process, suspendedPage, reason] = processForNavigationInternal(page, frame, navigation, sourceURL, browsingContextGroup, isolatedProcessType, mainFrameSite, processSwapRequestedByClient, lockdownMode, enhancedSecurity, frameInfo, dataStore.copyRef());
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
     bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
@@ -2333,7 +2333,7 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
     });
 }
 
-std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebProcessPool::processForNavigationInternal(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& pageSourceURL, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& mainFrameSite, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore)
+std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebProcessPool::processForNavigationInternal(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& pageSourceURL, BrowsingContextGroup& browsingContextGroup, WebProcessProxy::IsolatedProcessType isolatedProcessType, const Site& mainFrameSite, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore)
 {
     auto& targetURL = navigation.currentRequest().url();
     auto targetSite = Site { targetURL };
@@ -2373,6 +2373,15 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
         return { createNewProcess(), nullptr, "Redirect to a different scheme for which the app registered a custom handler"_s };
 
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
+
+    if (siteIsolationEnabled && &browsingContextGroup != &page.browsingContextGroup()) {
+        // Only main frame navigation can swap browsing context group.
+        ASSERT(frame.isMainFrame());
+        RefPtr siteProcess = protect(page.browsingContextGroup())->processForSite(targetSite);
+        if (siteProcess && siteProcess->isSharedProcess())
+            return { createNewProcess(), nullptr, "Process swap because the main frame site is in the shared process"_s };
+    }
+
     bool isProcessInUseBySingleFrame = !siteIsolationEnabled || (sourceProcess->frameProcessCount() == 1 && frame.frameProcess().frameCount() <= 1);
     if (!sourceProcess->hasCommittedAnyProvisionalLoads() && isProcessInUseBySingleFrame) {
         tryPrewarmWithDomainInformation(sourceProcess, targetSite.domain());
