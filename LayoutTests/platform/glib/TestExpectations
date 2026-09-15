@@ -157,13 +157,13 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/embedded_style_media_queries_resized.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal-extended.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-003i.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-003p.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-004i.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-images/object-fit-scale-down-svg-004p.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-lists/list-style-type-decimal-line-height.html [ Pass ]
 
-webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-override-multiple.html [ Pass ]
 
 compositing/scrolling/async-overflow-scrolling [ Pass ]
@@ -1521,8 +1521,6 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composite
 
 webkit.org/b/245716 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/264579 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
-
 webkit.org/b/315151 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Timeout ]
 
 webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-018.html [ ImageOnlyFailure ]
@@ -2697,7 +2695,6 @@ webgl/webgl-backend-type.html [ Skip ]
 
 # Failing with ANGLE backend
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
-http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
 webgl/webgl-draft-extensions-flag-on.html [ Skip ]
@@ -5306,7 +5303,6 @@ webkit.org/b/322623 accessibility/list-marker-content-renderers-text.html [ Fail
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-001.html [ Crash Timeout Pass ]
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-004.html [ Crash Timeout Pass ]
 webkit.org/b/322624 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/baseline/row-grid-lanes-item-baseline-subgrid-005.html [ Crash Timeout Pass ]
-webkit.org/b/322625 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Crash Timeout ]
 webkit.org/b/322641 [ Debug ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/start-time-compat.html [ Pass Failure ]
 webkit.org/b/322642 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Pass Failure ]
 webkit.org/b/322646 [ Debug ] media/track/track-readiness-state.html [ Pass Failure ]

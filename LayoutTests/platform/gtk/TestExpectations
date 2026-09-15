@@ -676,7 +676,6 @@ webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-obj
 webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-screenx-screeny.html [ Failure ]
 webkit.org/b/277166 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-top-left.html [ Failure ]
 
-webkit.org/b/277401 editing/pasteboard/data-transfer-set-data-sanitize-url-when-copying-in-null-origin.html [ Failure ]
 webkit.org/b/277402 fast/events/context-activated-by-key-event.html [ Failure ]
 
 webkit.org/b/277427 fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Skip ] # Timeout
@@ -1192,7 +1191,6 @@ webkit.org/b/318027 [ Release ] fast/events/mouse-focus-imagemap.html [ Pass Fai
 webkit.org/b/318028 [ Release ] fast/parser/entity-end-xmp-tag.html [ Pass Timeout ]
 webkit.org/b/318031 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-applies-to-block.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318032 svg/filters/feImage-element-primitive-subregion.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/318033 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ ImageOnlyFailure ]
 webkit.org/b/157179 fast/events/bogus-dropEffect-effectAllowed.html [ Failure Timeout ]
 webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-new-iframe.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318035 imported/w3c/web-platform-tests/css/css-view-transitions/iframe-and-main-frame-transition-new-main-old-iframe.html [ Pass ImageOnlyFailure ]
