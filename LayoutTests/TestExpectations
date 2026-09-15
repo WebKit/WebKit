@@ -8452,3 +8452,5 @@ imported/w3c/web-platform-tests/svg/as-image/sprite-sheet-fractional-size.html [
 
 # Media controls context menus are only implemented on WK2 Cocoa platforms.
 http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Skip ]
+
+imported/w3c/web-platform-tests/editing/other/paste-as-plaintext-data.tentative.https.html [ Skip ] # timeout
