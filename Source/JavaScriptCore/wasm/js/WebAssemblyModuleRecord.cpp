@@ -104,6 +104,21 @@ void WebAssemblyModuleRecord::prepareLink(VM& vm, JSWebAssemblyInstance* instanc
     m_instance.set(vm, this, instance);
 }
 
+bool WebAssemblyModuleRecord::isMutableGlobalExport(UniquedStringImpl* exportName) const
+{
+    if (!m_instance)
+        return true;
+    const auto& info = m_instance->moduleInformation();
+    for (const auto& exp : info.exports) {
+        if (exp.kind != Wasm::ExternalKind::Global)
+            continue;
+        if (makeAtomString(exp.field).impl() != exportName)
+            continue;
+        return info.globals[exp.kindIndex].mutability == Wasm::Mutability::Mutable;
+    }
+    return false;
+}
+
 Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, RefPtr<ScriptFetcher>)
 {
     VM& vm = globalObject->vm();
