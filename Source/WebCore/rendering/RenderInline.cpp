@@ -127,25 +127,6 @@ void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool*) const
         quads.append(geometryMap.absoluteRect(rect));
 }
 
-LayoutUnit RenderInline::offsetLeft() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).x();
-}
-
-LayoutUnit RenderInline::offsetTop() const
-{
-    return adjustedPositionRelativeToOffsetParent(firstInlineBoxTopLeft()).y();
-}
-
-LayoutPoint RenderInline::firstInlineBoxTopLeft() const
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        return lineLayout->firstInlineBoxRect(*this).location();
-    if (auto* inlineBox = firstLegacyInlineBoxFor(*this))
-        return flooredLayoutPoint(inlineBox->locationIncludingFlipping());
-    return { };
-}
-
 ASCIILiteral RenderInline::renderName() const
 {
     if (isRelativelyPositioned())

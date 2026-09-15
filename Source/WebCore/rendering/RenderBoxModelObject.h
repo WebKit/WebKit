@@ -95,6 +95,7 @@ public:
     virtual LayoutRect borderBoxRectInContainer() const;
     LayoutRect borderBoundingBox() const { return { { }, borderBoxRectInContainer().size() }; }
     virtual LayoutRect visualOverflowRect() const;
+    virtual LayoutRect firstFragmentBorderBoxRect() const;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;

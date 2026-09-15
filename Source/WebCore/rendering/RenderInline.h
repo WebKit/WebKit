@@ -53,8 +53,6 @@ public:
 
     bool requiresLayer() const override;
 
-    LayoutPoint firstInlineBoxTopLeft() const;
-
 protected:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
@@ -71,8 +69,6 @@ private:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
-    LayoutUnit offsetLeft() const final;
-    LayoutUnit offsetTop() const final;
     LayoutUnit offsetWidth() const final { return borderBoxRectInContainer().width(); }
     LayoutUnit offsetHeight() const final { return borderBoxRectInContainer().height(); }
 

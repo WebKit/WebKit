@@ -481,9 +481,9 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (auto* renderBox = dynamicDowncast<RenderBox>(*offsetParent); renderBox && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-renderBox->borderLeft(), -renderBox->borderTop());
-        else if (auto* renderInline = dynamicDowncast<RenderInline>(*offsetParent)) {
+        else if (offsetParent->isInlineBox()) {
             // Inside inline formatting context both inflow and statically positioned out-of-flow boxes are positioned relative to the root block container.
-            auto topLeft = renderInline->firstInlineBoxTopLeft();
+            auto topLeft = offsetParent->firstFragmentBorderBoxRect().location();
             if (isOutOfFlowPositioned()) {
                 auto& outOfFlowStyle = style();
                 ASSERT(containingBlock());
@@ -720,16 +720,12 @@ LayoutSize RenderBoxModelObject::offsetForInFlowPosition() const
 
 LayoutUnit RenderBoxModelObject::offsetLeft() const
 {
-    // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to adjustedPositionRelativeToOffsetParent.
-    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).x();
+    return adjustedPositionRelativeToOffsetParent(firstFragmentBorderBoxRect().location()).x();
 }
 
 LayoutUnit RenderBoxModelObject::offsetTop() const
 {
-    // Note that RenderInline and RenderBox override this to pass a different
-    // startPoint to adjustedPositionRelativeToOffsetParent.
-    return adjustedPositionRelativeToOffsetParent(LayoutPoint()).y();
+    return adjustedPositionRelativeToOffsetParent(firstFragmentBorderBoxRect().location()).y();
 }
 
 InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsContext& context, Image& image, const void* layer, const LayoutSize& size) const
@@ -1077,6 +1073,15 @@ LayoutUnit RenderBoxModelObject::marginStart(const WritingMode writingMode) cons
 LayoutUnit RenderBoxModelObject::marginEnd(const WritingMode writingMode) const
 {
     return computedCSSMarginEnd(writingMode);
+}
+
+LayoutRect RenderBoxModelObject::firstFragmentBorderBoxRect() const
+{
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
+        return lineLayout->firstInlineBoxRect(*this);
+    if (auto* inlineBox = firstLegacyInlineBoxFor(*this))
+        return { flooredLayoutPoint(inlineBox->locationIncludingFlipping()), LayoutSize { inlineBox->size() } };
+    return { };
 }
 
 LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
