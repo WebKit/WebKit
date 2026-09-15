@@ -3443,18 +3443,12 @@ TEST(SiteIsolation, SetMarkedTextInCrossOriginIframe)
     EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
 }
 
-TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
+static void checkFirstRectForCharacterRangeInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
 {
-    // The iframe below has a 100px margin and its own document has no margin, so an input placed at
-    // (20, 30) inside it should land at (120, 130) in main frame coordinates. Render the same input
-    // directly in the main frame at that flattened position as a same-window control: any rendering
-    // detail specific to <input> (default border/padding/line-height) affects both identically, so
-    // comparing the two rects (rather than hand-computing an expected value) isolates whether the
-    // cross-process coordinate transform itself is correct.
     HTTPServer server({
         { "/control"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 120px; top: 130px;' value='test'></body>"_s } },
-        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
-        { "/subframe"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 20px; top: 30px;' value='test'></body>"_s } }
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
     RetainPtr configuration = server.httpsProxyConfiguration();
     enableSiteIsolation(configuration);
@@ -3485,6 +3479,9 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
     [navigationDelegate waitForDidFinishNavigation];
     RetainPtr childFrameInfo = [webView firstChildFrame];
 
+    if (prepareBeforeFocusing)
+        prepareBeforeFocusing(webView, childFrameInfo);
+
     // Focus is a no-op for cross-origin non-main-frame iframes without a user gesture; retry until
     // it lands (bounded, so a regression fails the assertion below rather than hanging).
     // If the query is routed to the wrong process (the main frame's, which has no focused element),
@@ -3499,6 +3496,68 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
 
     EXPECT_NEAR(rect.origin.x, controlRect.origin.x, 2);
     EXPECT_NEAR(rect.origin.y, controlRect.origin.y, 2);
+}
+
+static ASCIILiteral defaultCrossOriginIframeInputHTML = "<body style='margin: 0'><input id='input' style='position: absolute; left: 20px; top: 30px;' value='test'></body>"_s;
+static ASCIILiteral tallCrossOriginIframeInputHTML = "<body style='margin: 0; min-height: 1000px'><input id='input' style='position: absolute; left: 20px; top: 530px;' value='test'></body>"_s;
+
+TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
+{
+    checkFirstRectForCharacterRangeInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeInputHTML
+    );
+}
+
+TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframeWithScrolledMainFrame)
+{
+    checkFirstRectForCharacterRangeInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframe)
+{
+    checkFirstRectForCharacterRangeInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkFirstRectForCharacterRangeInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
 }
 #endif
 
