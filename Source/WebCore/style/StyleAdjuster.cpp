@@ -242,7 +242,9 @@ OptionSet<EventListenerRegionType> Adjuster::computeEventListenerRegionTypes(con
 
 #if ENABLE(WHEEL_EVENT_REGIONS) || ENABLE(TOUCH_EVENT_REGIONS)
     auto findListeners = [&](auto& eventName, auto type, auto nonPassiveType) {
-        auto* eventListenerVector = eventTarget.eventTargetData()->eventListenerMap.find(eventName);
+        auto& eventListenerMap = eventTarget.eventTargetData()->eventListenerMap;
+        eventListenerMap.assertIsOwnerThread();
+        auto* eventListenerVector = eventListenerMap.find(eventName);
         if (!eventListenerVector)
             return;
 
