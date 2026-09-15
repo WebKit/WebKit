@@ -81,7 +81,7 @@ struct _WPEDisplayDRMPrivate {
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayDRM, wpe_display_drm, WPE_TYPE_DISPLAY, WPEDisplay,
     wpeEnsureExtensionPointsRegistered();
-    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, g_define_type_id, "wpe-display-drm", -100))
+    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, g_define_type_id, "drm", -100))
 
 static void wpeDisplayDRMConstructed(GObject* object)
 {

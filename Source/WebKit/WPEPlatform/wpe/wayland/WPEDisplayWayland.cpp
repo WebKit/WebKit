@@ -117,7 +117,7 @@ struct _WPEDisplayWaylandPrivate {
 };
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(WPEDisplayWayland, wpe_display_wayland, WPE_TYPE_DISPLAY, WPEDisplay,
     wpeEnsureExtensionPointsRegistered();
-    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, g_define_type_id, "wpe-display-wayland", 0))
+    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, g_define_type_id, "wayland", 0))
 
 struct EventSource {
     static GSourceFuncs sourceFuncs;

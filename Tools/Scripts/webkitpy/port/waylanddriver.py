@@ -50,5 +50,5 @@ class WaylandDriver(Driver):
         self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_SOCKET')
         driver_environment['GDK_BACKEND'] = 'wayland'
         driver_environment['EGL_PLATFORM'] = 'wayland'
-        driver_environment['WPE_DISPLAY'] = 'wpe-display-wayland'
+        driver_environment['WPE_PLATFORM'] = 'wayland'
         return driver_environment

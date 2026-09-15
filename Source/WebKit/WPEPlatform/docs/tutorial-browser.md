@@ -114,14 +114,14 @@ cmake --build build
 ./build/my-browser https://webkit.org
 ```
 
-If [func@Display.get_default] returns `NULL`, none of the registered
-platforms could connect; re-check that WPE WebKit was built with the
-relevant `ENABLE_WPE_PLATFORM_*` flag. To force a specific platform
-instead of trying them in priority order, set `WPE_DISPLAY`
-(`WPE_DISPLAY=wpe-display-wayland`, `WPE_DISPLAY=wpe-display-drm`, or
-`WPE_DISPLAY=wpe-display-headless`). Note that the process aborts if the
-requested platform is not found or fails to connect — see the
-Environment variables and Backend model documentation.
+If [func@Display.get_default] returns `NULL`, none of the registered platforms
+could connect; re-check that WPE WebKit was built with the relevant
+`ENABLE_WPE_PLATFORM_*` flag. To force a specific platform instead of trying
+them in priority order, set `WPE_PLATFORM` (`WPE_PLATFORM=wayland`,
+`WPE_PLATFORM=drm`, or `WPE_PLATFORM=headless`). Note that the process aborts if
+the requested platform is not found or fails to connect — see the Environment
+variables and Backend model documentation.
+
 <!-- FIXME: link environment-variables.html and backend-model.html once those pages land -->
 
 ## Pinning to a specific platform

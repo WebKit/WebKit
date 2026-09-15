@@ -53,7 +53,7 @@ class WaylandDriverTest(unittest.TestCase):
         environment_user = {'DISPLAY': ':0.0',
                             'WAYLAND_DISPLAY': 'wayland-0',
                             'WAYLAND_SOCKET': 'wayland-0',
-                            'WPE_DISPLAY':  'wpe-display-drm',
+                            'WPE_PLATFORM':  'drm',
                             'WPE_DRM_DEVICE': 'drm1',
                             'XAUTHORITY': '/home/igalia/.Xauthority'}
         return environment_user
@@ -77,11 +77,11 @@ class WaylandDriverTest(unittest.TestCase):
             self.assertIn('WAYLAND_DISPLAY', driver_environment)
             self.assertIn('WAYLAND_SOCKET', driver_environment)
             self.assertIn('GDK_BACKEND', driver_environment)
-            self.assertIn('WPE_DISPLAY', driver_environment)
+            self.assertIn('WPE_PLATFORM', driver_environment)
             self.assertEqual(driver_environment['WAYLAND_DISPLAY'], environment_user['WAYLAND_DISPLAY'])
             self.assertEqual(driver_environment['WAYLAND_SOCKET'], environment_user['WAYLAND_SOCKET'])
             self.assertEqual(driver_environment['GDK_BACKEND'], 'wayland')
-            self.assertEqual(driver_environment['WPE_DISPLAY'], 'wpe-display-wayland')
+            self.assertEqual(driver_environment['WPE_PLATFORM'], 'wayland')
 
     def test_environment_forbidden_variables(self):
         driver = self.make_driver()
