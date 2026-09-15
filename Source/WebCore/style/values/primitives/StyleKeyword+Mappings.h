@@ -986,6 +986,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
+
+#define TYPE PositionContextType
+#define FOR_EACH(CASE) CASE(Container) CASE(Anchor)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
 #endif
 
 constexpr CSSValueID toCSSValueID(Style::TextAlign e)

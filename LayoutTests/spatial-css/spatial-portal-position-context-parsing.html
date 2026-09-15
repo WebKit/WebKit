@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<body>
+<script>
+'use strict';
+
+function makeElement(t) {
+    const element = document.createElement("div");
+    document.body.appendChild(element);
+    t.add_cleanup(() => element.remove());
+    return element;
+}
+
+test(t => {
+    assert_equals(getComputedStyle(makeElement(t)).positionContext, "container");
+}, "position-context initial value is container");
+
+test(t => {
+    for (const value of ["container", "anchor"]) {
+        const element = makeElement(t);
+        element.style.positionContext = value;
+        assert_equals(element.style.positionContext, value, `specified value of "${value}"`);
+        assert_equals(getComputedStyle(element).positionContext, value, `computed value of "${value}"`);
+    }
+}, "position-context accepts container and anchor");
+
+test(() => {
+    assert_true(CSS.supports("position-context", "container"), "container");
+    assert_true(CSS.supports("position-context", "anchor"), "anchor");
+}, "position-context is a supported property");
+
+test(t => {
+    const invalidValues = ["3px", "10", "red", "auto", "none", "normal", "anchor()", "container anchor", "anchor anchor", "container, anchor"];
+    for (const value of invalidValues) {
+        const element = makeElement(t);
+        element.style.positionContext = value;
+        assert_equals(element.style.positionContext, "", `"${value}" is not accepted`);
+        assert_equals(getComputedStyle(element).positionContext, "container", `"${value}" leaves the initial value in place`);
+    }
+}, "position-context ignores invalid values");
+
+test(t => {
+    const element = makeElement(t);
+    element.style.positionContext = "ANCHOR";
+    assert_equals(element.style.positionContext, "anchor", "serializes lowercase");
+    assert_equals(getComputedStyle(element).positionContext, "anchor");
+}, "position-context is ASCII case-insensitive");
+
+test(t => {
+    const parent = makeElement(t);
+    parent.style.positionContext = "anchor";
+
+    const child = parent.appendChild(document.createElement("div"));
+    assert_equals(getComputedStyle(child).positionContext, "container", "child does not inherit");
+
+    child.style.positionContext = "inherit";
+    assert_equals(getComputedStyle(child).positionContext, "anchor", "child inherits when asked to");
+}, "position-context is not inherited");
+
+</script>
+</body>
+</html>
