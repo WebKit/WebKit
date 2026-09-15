@@ -95,6 +95,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/featureless-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/featureless-005-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/featureless-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/featureless-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/featureless-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-letter-flag-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/first-letter-flag-001-ref.html

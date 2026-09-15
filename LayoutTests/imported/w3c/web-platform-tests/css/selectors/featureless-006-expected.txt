@@ -1,0 +1,30 @@
+
+PASS * does not match the shadow host
+PASS div does not match the shadow host
+PASS .host does not match the shadow host
+PASS :nth-of-type(1) does not match the shadow host
+PASS :host matches the shadow host
+PASS :host(.host) matches the shadow host
+PASS :host(.nope) does not match the shadow host
+PASS :not(:host) does not match the shadow host
+PASS :not(:not(:host)) matches the shadow host
+PASS :not(:not(:not(:host))) does not match the shadow host
+PASS :not(:is(:host, div)) does not match the shadow host
+PASS :is(:not(:not(:host))) matches the shadow host
+PASS :where(:host) matches the shadow host
+PASS :not(div) does not match the shadow host
+PASS :not(span) does not match the shadow host
+PASS :not(.foo) does not match the shadow host
+PASS :not(:nth-of-type(99)) does not match the shadow host
+PASS :not(:host.host) does not match the shadow host
+PASS :not(.foo:host) does not match the shadow host
+PASS :not(:host > .foo) does not match the shadow host
+PASS :not(:host(.nope)) matches the shadow host
+PASS :not(:host(.host)) does not match the shadow host
+PASS :is(:not(:host(.nope))) matches the shadow host
+PASS :has(.inner) does not match the shadow host
+PASS :host:has(.inner) matches the shadow host
+PASS :not(:has(.inner)) does not match the shadow host
+PASS :not(:host:has(.inner)) does not match the shadow host
+PASS :not(:host:has(.nope)) matches the shadow host
+
