@@ -1242,8 +1242,6 @@ webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html
 
 webkit.org/b/322025 fast/animation/request-animation-frame-during-modal.html [ Failure Pass ]
 
-webkit.org/b/322486 media/event-attributes.html [ Crash ]
-
 # Gardening 2026-08-26
 webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Failure ]
 webkit.org/b/322626 fast/events/touch/touch-target-limited.html [ Timeout ]
