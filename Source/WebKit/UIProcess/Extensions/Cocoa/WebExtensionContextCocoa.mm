@@ -1729,17 +1729,19 @@ void WebExtensionContext::didFailLoadForFrame(WebPageProxyIdentifier pageID, con
 
 // MARK: webRequest
 
-bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* tab, const URL& resourceURL, const ResourceLoadInfo& loadInfo)
+bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* tab, const URL& resourceURL, const ResourceLoadInfo& loadInfo, bool isRequestFromExtensionPopup)
 {
-    if (!tab)
-        return false;
-
     if (!hasPermission(WebExtensionPermission::webRequest(), tab))
         return false;
 
-    bool isMainFrameNavigation = loadInfo.type == ResourceLoadInfo::Type::Document && !loadInfo.parentFrameID;
-    if (!isMainFrameNavigation && !tab->extensionHasPermission())
-        return false;
+    if (!isRequestFromExtensionPopup) {
+        if (!tab)
+            return false;
+
+        bool isMainFrameNavigation = loadInfo.type == ResourceLoadInfo::Type::Document && !loadInfo.parentFrameID;
+        if (!isMainFrameNavigation && !tab->extensionHasPermission())
+            return false;
+    }
 
     if (resourceURL.isValid() && !hasPermission(resourceURL, tab))
         return false;
@@ -1753,11 +1755,13 @@ bool WebExtensionContext::hasPermissionToSendWebRequestEvent(WebExtensionTab* ta
 
 void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceRequest& request)
 {
-    RefPtr tab = getTab(pageID);
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     std::optional<IPC::FormDataReference> formDataReference;
@@ -1771,24 +1775,26 @@ void WebExtensionContext::resourceLoadDidSendRequest(WebPageProxyIdentifier page
     constexpr auto sendHeadersType = WebExtensionEventListenerType::WebRequestOnSendHeaders;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tab->identifier(), windowIdentifier, request, loadInfo, formDataReference));
+        sendToProcessesForEvents({ beforeRequestType, beforeSendHeadersType, sendHeadersType }, Messages::WebExtensionContextProxy::ResourceLoadDidSendRequest(tabIdentifier, windowIdentifier, request, loadInfo, formDataReference));
     });
 }
 
 void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request)
 {
-    RefPtr tab = getTab(pageID);
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo))
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), request.url(), loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     constexpr auto headersReceivedType = WebExtensionEventListenerType::WebRequestOnHeadersReceived;
     constexpr auto redirectType = WebExtensionEventListenerType::WebRequestOnBeforeRedirect;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, redirectType }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvents({ headersReceivedType, redirectType }, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tab->identifier(), windowIdentifier, response, loadInfo, request));
+        sendToProcessesForEvents({ headersReceivedType, redirectType }, Messages::WebExtensionContextProxy::ResourceLoadDidPerformHTTPRedirection(tabIdentifier, windowIdentifier, response, loadInfo, request));
     });
 
     // After dispatching the redirect events, also dispatch the `didSendRequest` events for the redirection.
@@ -1797,40 +1803,45 @@ void WebExtensionContext::resourceLoadDidPerformHTTPRedirection(WebPageProxyIden
 
 void WebExtensionContext::resourceLoadDidReceiveChallenge(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::AuthenticationChallenge& challenge)
 {
-    RefPtr tab = getTab(pageID);
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), URL { }, loadInfo))
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), URL { }, loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     constexpr auto authRequiredType = WebExtensionEventListenerType::WebRequestOnAuthRequired;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ authRequiredType }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvent(authRequiredType, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tab->identifier(), windowIdentifier, challenge, loadInfo));
+        sendToProcessesForEvent(authRequiredType, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveChallenge(tabIdentifier, windowIdentifier, challenge, loadInfo));
     });
 }
 
 void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response)
 {
-    RefPtr tab = getTab(pageID);
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     constexpr auto headersReceivedType = WebExtensionEventListenerType::WebRequestOnHeadersReceived;
     constexpr auto responseStartedType = WebExtensionEventListenerType::WebRequestOnResponseStarted;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ headersReceivedType, responseStartedType }, [=, this, protectedThis = Ref { *this }] {
-        sendToProcessesForEvents({ headersReceivedType, responseStartedType }, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tab->identifier(), windowIdentifier, response, loadInfo));
+        sendToProcessesForEvents({ headersReceivedType, responseStartedType }, Messages::WebExtensionContextProxy::ResourceLoadDidReceiveResponse(tabIdentifier, windowIdentifier, response, loadInfo));
     });
 }
 
 void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
 {
-    RefPtr tab = getTab(pageID);
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
 
     // If a Fetch or XHR fails due to CORS, prompt the user for permission to the URL
     // if the URL of the frame where the request originated corresponds to this extension.
@@ -1844,24 +1855,26 @@ void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
         }
     }
 
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     constexpr auto errorOccurredType = WebExtensionEventListenerType::WebRequestOnErrorOccurred;
     constexpr auto completedType = WebExtensionEventListenerType::WebRequestOnCompleted;
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ errorOccurredType, completedType }, [=, this, protectedThis = Ref { *this }] mutable {
-        sendToProcessesForEvents({ errorOccurredType, completedType }, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, response, error, loadInfo));
+        sendToProcessesForEvents({ errorOccurredType, completedType }, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tabIdentifier, windowIdentifier, response, error, loadInfo));
     });
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
 void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageProxyIdentifier pageID, const WebExtensionContentRuleListBlockedLoadInfo& info)
 {
-    RefPtr tab = getTab(pageID);
+    bool isRequestFromExtensionPopup = isPopupPage(pageID);
+    RefPtr tab = isRequestFromExtensionPopup ? nullptr : getTab(pageID);
     RefPtr parentFrame = WebFrameProxy::webFrame(info.parentFrameID);
 
     ResourceLoadInfo loadInfo {
@@ -1877,10 +1890,11 @@ void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageP
         parentFrame && parentFrame->isMainFrame()
     };
 
-    if (!hasPermissionToSendWebRequestEvent(tab.get(), info.url, loadInfo))
+    if (!hasPermissionToSendWebRequestEvent(tab.get(), info.url, loadInfo, isRequestFromExtensionPopup))
         return;
 
-    RefPtr window = tab->window();
+    auto tabIdentifier = tab ? tab->identifier() : WebExtensionTabConstants::NoneIdentifier;
+    RefPtr window = tab ? tab->window() : nullptr;
     auto windowIdentifier = window ? window->identifier() : WebExtensionWindowConstants::NoneIdentifier;
 
     constexpr auto beforeRequestType = WebExtensionEventListenerType::WebRequestOnBeforeRequest;
@@ -1889,8 +1903,8 @@ void WebExtensionContext::resourceLoadWasBlockedByDeclarativeNetRequest(WebPageP
     auto error = blockedByContentBlockerError(WebCore::ResourceRequest { URL { info.url } });
 
     wakeUpBackgroundContentIfNecessaryToFireEvents({ beforeRequestType, errorOccurredType }, [=, this, protectedThis = Ref { *this }] mutable {
-        sendToProcessesForEvent(beforeRequestType, Messages::WebExtensionContextProxy::ResourceLoadDidBlockBeforeRequest(tab->identifier(), windowIdentifier, loadInfo));
-        sendToProcessesForEvent(errorOccurredType, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tab->identifier(), windowIdentifier, WebCore::ResourceResponse { }, error, loadInfo));
+        sendToProcessesForEvent(beforeRequestType, Messages::WebExtensionContextProxy::ResourceLoadDidBlockBeforeRequest(tabIdentifier, windowIdentifier, loadInfo));
+        sendToProcessesForEvent(errorOccurredType, Messages::WebExtensionContextProxy::ResourceLoadDidCompleteWithError(tabIdentifier, windowIdentifier, WebCore::ResourceResponse { }, error, loadInfo));
     });
 }
 #endif
@@ -2666,6 +2680,16 @@ void WebExtensionContext::cookiesDidChange(API::HTTPCookieStore&)
 bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const
 {
     return m_backgroundWebView && m_backgroundWebView.get()._page->identifier() == pageProxyIdentifier;
+}
+
+bool WebExtensionContext::isPopupPage(WebPageProxyIdentifier pageProxyIdentifier) const
+{
+    for (auto entry : m_popupPageActionMap) {
+        if (entry.key.identifier() == pageProxyIdentifier)
+            return true;
+    }
+
+    return false;
 }
 
 bool WebExtensionContext::backgroundContentIsLoaded() const
