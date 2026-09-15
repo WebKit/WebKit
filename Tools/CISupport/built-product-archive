@@ -250,6 +250,25 @@ def listRecursiveFilesInDirWithSuffix(directory, suffix):
 
 ALWAYS_EXCLUDED_PATTERNS = ('*.a',)
 MINIFIED_EXCLUDED_PATTERNS = (*ALWAYS_EXCLUDED_PATTERNS, '*.dSYM', 'DerivedSources')
+CMAKE_EXCLUDED_PATTERNS = (
+    # Intermediate data, including derived sources and objects.
+    'SwiftModuleCache', 'Source', 'Tools',
+    # Build internals used by CMake.
+    'CMakeFiles', 'CMakeCache.txt',
+    'CMakeDoxyfile.in', 'build.ninja', 'rules.ninja',
+    '.ninja_deps', '.ninja_log',
+    'compile_commands.json', 'build-webkit-options.txt',
+    # Any stray intermediate data not captured by the above.
+    '*.cmake' '*.o', '*.tmp'
+)
+
+
+def excludedPatternsForBuildDirectory(minify):
+    patterns = MINIFIED_EXCLUDED_PATTERNS if minify else ALWAYS_EXCLUDED_PATTERNS
+    if os.path.isfile(os.path.join(_configurationBuildDirectory, 'CMakeCache.txt')):
+        patterns = (*patterns, *CMAKE_EXCLUDED_PATTERNS)
+    return patterns
+
 
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
     assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'visionos', 'watchos', 'win', 'wpe')
@@ -266,14 +285,14 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         if subprocess.call(['/bin/cp', '-pR', _hostBuildDirectory, combinedDirectory]):
             return 1
         if minify:
-            return createZip(combinedDirectory, 'minified-' + configuration, excludePatterns=MINIFIED_EXCLUDED_PATTERNS)
+            return createZip(combinedDirectory, 'minified-' + configuration, excludePatterns=excludedPatternsForBuildDirectory(minify))
         else:
-            return createZip(combinedDirectory, configuration, excludePatterns=ALWAYS_EXCLUDED_PATTERNS)
+            return createZip(combinedDirectory, configuration, excludePatterns=excludedPatternsForBuildDirectory(minify))
     elif platform == 'mac':
         if minify:
-            return createZip(_configurationBuildDirectory, 'minified-' + configuration, excludePatterns=MINIFIED_EXCLUDED_PATTERNS, embedParentDirectoryNameOnDarwin=True)
+            return createZip(_configurationBuildDirectory, 'minified-' + configuration, excludePatterns=excludedPatternsForBuildDirectory(minify), embedParentDirectoryNameOnDarwin=True)
         else:
-            return createZip(_configurationBuildDirectory, configuration, excludePatterns=ALWAYS_EXCLUDED_PATTERNS, embedParentDirectoryNameOnDarwin=True)
+            return createZip(_configurationBuildDirectory, configuration, excludePatterns=excludedPatternsForBuildDirectory(minify), embedParentDirectoryNameOnDarwin=True)
     elif platform == 'win':
         binDirectory = os.path.join(_configurationBuildDirectory, 'bin')
         thinDirectory = os.path.join(_configurationBuildDirectory, 'thin')
