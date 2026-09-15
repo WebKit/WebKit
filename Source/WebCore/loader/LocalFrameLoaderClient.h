@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include <WebCore/BackForwardCacheCommitData.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/LayoutMilestone.h>
@@ -102,8 +103,6 @@ class Widget;
 
 enum class LoadWillContinueInAnotherProcess : bool;
 enum class LockBackForwardList : bool;
-enum class UsedLegacyTLS : bool;
-enum class WasPrivateRelayed : bool;
 enum class FromDownloadAttribute : bool { No , Yes };
 enum class IsSameDocumentNavigation : bool { No, Yes };
 enum class ShouldGoToHistoryItem : uint8_t { No, Yes, ItemUnknown };
@@ -185,7 +184,7 @@ public:
     virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() = 0;
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
-    virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) = 0;
+    virtual void dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&) = 0;
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) = 0;
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;

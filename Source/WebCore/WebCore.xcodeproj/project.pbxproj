@@ -3902,6 +3902,7 @@
 		93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* JSEventListener.h */; };
 		93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */; };
 		93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* ScriptController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3A7C1D022F9E44100088AA02 /* BackForwardCacheCommitData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7C1D012F9E44100088AA01 /* BackForwardCacheCommitData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09A520B064DB3005ABD4D /* EventHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09C850B0657AA005ABD4D /* ScrollTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16593,6 +16594,7 @@
 		93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSPluginElementFunctions.h; sourceTree = "<group>"; };
 		93B70D5309EB0C7C009D8468 /* ScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptController.cpp; sourceTree = "<group>"; };
 		93B70D5409EB0C7C009D8468 /* ScriptController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptController.h; sourceTree = "<group>"; };
+		3A7C1D012F9E44100088AA01 /* BackForwardCacheCommitData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackForwardCacheCommitData.h; sourceTree = "<group>"; };
 		93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderTypes.h; sourceTree = "<group>"; };
 		93BE79122918275900097A57 /* CSSFontFeatureValuesRule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSFontFeatureValuesRule.idl; sourceTree = "<group>"; };
 		93C09A520B064DB3005ABD4D /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
@@ -39051,6 +39053,7 @@
 				5CA126B228DBA3AB00B65AD3 /* AttributionTimeToSendData.h */,
 				5CA126BA28DBA7CF00B65AD3 /* AttributionTriggerData.cpp */,
 				5CA126B028DBA3AA00B65AD3 /* AttributionTriggerData.h */,
+				3A7C1D012F9E44100088AA01 /* BackForwardCacheCommitData.h */,
 				EFB7287B2124C73D005C2558 /* CanvasActivityRecord.cpp */,
 				EFCC6C8D20FE914000A2321B /* CanvasActivityRecord.h */,
 				46C3C1F928CBCB9300C3DA78 /* COEPInheritenceViolationReportBody.cpp */,
@@ -44683,6 +44686,7 @@
 				07E9C65D2E506781001DFE83 /* AXTreeStoreInlines.h in Headers */,
 				48B187762E54CC85009B57A9 /* AXUtilities.h in Headers */,
 				1477E7770BF4134A00152872 /* BackForwardCache.h in Headers */,
+				3A7C1D022F9E44100088AA02 /* BackForwardCacheCommitData.h in Headers */,
 				51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */,
 				BCA8C81E11E3D36900812FB7 /* BackForwardController.h in Headers */,
 				0208E1832D213D9900BECD3D /* BackForwardFrameItemIdentifier.h in Headers */,

@@ -1871,6 +1871,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/AttributionSecondsUntilSendData.h
     loader/AttributionTimeToSendData.h
     loader/AttributionTriggerData.h
+    loader/BackForwardCacheCommitData.h
     loader/COEPInheritenceViolationReportBody.h
     loader/CORPViolationReportBody.h
     loader/CanvasActivityRecord.h

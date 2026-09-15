@@ -801,7 +801,7 @@ void FrameLoader::receivedFirstData()
 {
     Ref frame = m_frame.get();
     
-    dispatchDidCommitLoad(std::nullopt, std::nullopt, std::nullopt);
+    dispatchDidCommitLoad(std::nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -2583,11 +2583,19 @@ void FrameLoader::commitProvisionalLoad()
         auto mainResourceIdentifier = requestFromDelegate(mainResourceRequest, mainResouceError);
         notifier().dispatchDidReceiveResponse(protect(cachedPage->documentLoader()), mainResourceIdentifier, cachedPage->documentLoader()->response());
 
-        auto hasInsecureContent = cachedPage->cachedMainFrame()->hasInsecureContent();
-        auto usedLegacyTLS = cachedPage->cachedMainFrame()->usedLegacyTLS();
-        auto privateRelayed = cachedPage->cachedMainFrame()->wasPrivateRelayed();
-
-        dispatchDidCommitLoad(hasInsecureContent, usedLegacyTLS, privateRelayed);
+        // The cached Document is not installed in the frame until cachedPage->restore() below.
+        Ref restoredDocument = *cachedPage->document();
+        CheckedPtr restoredContentSecurityPolicy = restoredDocument->contentSecurityPolicy();
+        dispatchDidCommitLoad(BackForwardCacheCommitData {
+            cachedPage->cachedMainFrame()->hasInsecureContent(),
+            cachedPage->cachedMainFrame()->usedLegacyTLS(),
+            cachedPage->cachedMainFrame()->wasPrivateRelayed(),
+            restoredDocument->identifier(),
+            restoredDocument->securityOrigin().data(),
+            DocumentSecurityPolicy { restoredDocument->crossOriginEmbedderPolicy(), restoredDocument->crossOriginOpenerPolicy() },
+            restoredContentSecurityPolicy ? restoredContentSecurityPolicy->insecureNavigationRequestsToUpgrade() : HashSet<SecurityOriginData> { },
+            restoredDocument->isPluginDocument()
+        });
 
         // FIXME: This API should be turned around so that we ground CachedPage into the Page.
         RefPtr page = frame->page();
@@ -4998,12 +5006,12 @@ void FrameLoader::didChangeTitle(DocumentLoader* loader)
     }
 }
 
-void FrameLoader::dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS, std::optional<WasPrivateRelayed> initialWasPrivateRelayed)
+void FrameLoader::dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>& backForwardCacheData)
 {
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
 
-    m_client->dispatchDidCommitLoad(initialHasInsecureContent, initialUsedLegacyTLS, initialWasPrivateRelayed);
+    m_client->dispatchDidCommitLoad(backForwardCacheData);
 
     if (RefPtr page = m_frame->page(); page && m_frame->isMainFrame())
         page->didCommitLoad();

@@ -5727,3 +5727,80 @@ TEST(WKNavigation, JSInitiatedNavigationWithRestrictedPortFailsProvisionalNaviga
     EXPECT_TRUE(didCallDidStartProvisionalNavigation);
     EXPECT_TRUE(didCallDidFailProvisionalNavigation);
 }
+
+enum class BackForwardCacheRestoreShape : uint8_t { SameOrigin, SameSiteCrossOrigin, CrossSite };
+
+static void testBackForwardCacheRestoreReportsRestoredDocument(BackForwardCacheRestoreShape shape)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/first"_s, { "<body>first</body>"_s } },
+        { "/second"_s, { "<body>second</body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block RetainPtr<NSUUID> committedDocumentID;
+    __block RetainPtr<NSString> committedHost;
+    navigationDelegate.get().didCommitLoadWithRequestInFrame = ^(WKWebView *, NSURLRequest *, WKFrameInfo *frameInfo) {
+        if (!frameInfo.isMainFrame)
+            return;
+        committedDocumentID = frameInfo._documentIdentifier;
+        committedHost = frameInfo.securityOrigin.host;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/first"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr firstDocumentID = committedDocumentID;
+    EXPECT_NOT_NULL(firstDocumentID.get());
+    EXPECT_WK_STREQ("example.com", committedHost.get());
+    [webView objectByEvaluatingJavaScript:@"window.marker = 'first document'"];
+
+    NSString *secondURL = nil;
+    switch (shape) {
+    case BackForwardCacheRestoreShape::SameOrigin:
+        secondURL = @"https://example.com/second";
+        break;
+    case BackForwardCacheRestoreShape::SameSiteCrossOrigin:
+        secondURL = @"https://sub.example.com/second";
+        break;
+    case BackForwardCacheRestoreShape::CrossSite:
+        secondURL = @"https://webkit.org/second";
+        break;
+    }
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:secondURL]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr secondDocumentID = committedDocumentID;
+    EXPECT_NOT_NULL(secondDocumentID.get());
+    EXPECT_FALSE([firstDocumentID.get() isEqual:secondDocumentID.get()]);
+
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // If this fails the page was reloaded rather than restored and the checks below are vacuous.
+    EXPECT_WK_STREQ("first document", [webView objectByEvaluatingJavaScript:@"String(window.marker)"]);
+
+    EXPECT_TRUE([committedDocumentID.get() isEqual:firstDocumentID.get()]);
+    EXPECT_FALSE([committedDocumentID.get() isEqual:secondDocumentID.get()]);
+    EXPECT_WK_STREQ("example.com", committedHost.get());
+}
+
+TEST(WKNavigation, BackForwardCacheRestoreReportsRestoredDocument)
+{
+    testBackForwardCacheRestoreReportsRestoredDocument(BackForwardCacheRestoreShape::SameOrigin);
+}
+
+TEST(WKNavigation, BackForwardCacheRestoreAcrossOriginsReportsRestoredDocument)
+{
+    testBackForwardCacheRestoreReportsRestoredDocument(BackForwardCacheRestoreShape::SameSiteCrossOrigin);
+}
+
+TEST(WKNavigation, BackForwardCacheRestoreAfterProcessSwapReportsRestoredDocument)
+{
+    testBackForwardCacheRestoreReportsRestoredDocument(BackForwardCacheRestoreShape::CrossSite);
+}

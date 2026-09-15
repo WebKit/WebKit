@@ -640,7 +640,7 @@ void WebLocalFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirectio
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), truncatedTitle.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent, std::optional<UsedLegacyTLS> usedLegacyTLSFromPageCache, std::optional<WasPrivateRelayed> wasPrivateRelayedFromPageCache)
+void WebLocalFrameLoaderClient::dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>& backForwardCacheData)
 {
     Ref frame = m_frame.get();
     RefPtr webPage = frame->page();
@@ -660,17 +660,17 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
     webPage->sandboxExtensionTracker().didCommitProvisionalLoad(m_frame.ptr());
 
     bool usedLegacyTLS = documentLoader->response().usedLegacyTLS();
-    if (!usedLegacyTLS && usedLegacyTLSFromPageCache)
-        usedLegacyTLS = usedLegacyTLSFromPageCache == UsedLegacyTLS::Yes;
+    if (!usedLegacyTLS && backForwardCacheData)
+        usedLegacyTLS = backForwardCacheData->usedLegacyTLS == UsedLegacyTLS::Yes;
 
     bool wasPrivateRelayed = documentLoader->response().wasPrivateRelayed();
-    if (!wasPrivateRelayed && wasPrivateRelayedFromPageCache)
-        wasPrivateRelayed = wasPrivateRelayedFromPageCache == WasPrivateRelayed::Yes;
+    if (!wasPrivateRelayed && backForwardCacheData)
+        wasPrivateRelayed = backForwardCacheData->wasPrivateRelayed == WasPrivateRelayed::Yes;
 
     auto certificateInfo = valueOrCompute(documentLoader->response().certificateInfo(), [] {
         return CertificateInfo();
     });
-    hasInsecureContent = hasInsecureContent ? *hasInsecureContent : (certificateInfo.containsNonRootSHA1SignedCertificate() ? HasInsecureContent::Yes : HasInsecureContent::No);
+    auto hasInsecureContent = backForwardCacheData ? backForwardCacheData->hasInsecureContent : (certificateInfo.containsNonRootSHA1SignedCertificate() ? HasInsecureContent::Yes : HasInsecureContent::No);
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
     // Notify the extensions controller.
@@ -679,7 +679,10 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
 #endif
 
     RefPtr<Frame> coreLocalFrame = m_localFrame.ptr();
-    auto& cspOriginsThatUpgradeInsecureNavigations = protect(protect(m_localFrame->document())->contentSecurityPolicy())->insecureNavigationRequestsToUpgrade();
+    auto& liveCSPOriginsThatUpgradeInsecureNavigations = protect(protect(m_localFrame->document())->contentSecurityPolicy())->insecureNavigationRequestsToUpgrade();
+    const auto& cspOriginsThatUpgradeInsecureNavigations = backForwardCacheData ? backForwardCacheData->cspOriginsThatUpgradeInsecureNavigations : liveCSPOriginsThatUpgradeInsecureNavigations;
+    auto documentSecurityPolicy = backForwardCacheData ? backForwardCacheData->documentSecurityPolicy : *coreLocalFrame->frameDocumentSecurityPolicy();
+    bool containsPluginDocument = backForwardCacheData ? backForwardCacheData->isPluginDocument : m_localFrame->document()->isPluginDocument();
 
     RefPtr<FrameState> redirectReplaceFrameState;
     if (RefPtr page = m_localFrame->page(); page && page->settings().useUIProcessForBackForwardItemLoading() && protect(m_localFrame->loader())->shouldReplaceHistoryItemInChildFrame()) {
@@ -690,7 +693,16 @@ void WebLocalFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureC
     }
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), frame->info(), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), !certificateInfo.isEmpty(), usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), m_localFrame->document()->isPluginDocument(), *hasInsecureContent, documentLoader->mouseEventPolicy(), *coreLocalFrame->frameDocumentSecurityPolicy(), cspOriginsThatUpgradeInsecureNavigations, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), m_localFrame->loader().loadingFromCachedPage() ? RestoredFromBackForwardCache::Yes : RestoredFromBackForwardCache::No, WTF::move(redirectReplaceFrameState)));
+    auto frameInfo = frame->info();
+    if (backForwardCacheData) {
+        // A page enters the back/forward cache whole, so the restored document is the main frame's and
+        // is therefore also the top origin.
+        ASSERT(frame->isMainFrame());
+        frameInfo.documentID = backForwardCacheData->documentID;
+        frameInfo.securityOrigin = backForwardCacheData->documentOrigin;
+        frameInfo.topOrigin = backForwardCacheData->documentOrigin;
+    }
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(frame->frameID(), WTF::move(frameInfo), documentLoader->request(), documentLoader->navigationID(), documentLoader->response().mimeType(), m_frameHasCustomContentProvider, m_localFrame->loader().loadType(), !certificateInfo.isEmpty(), usedLegacyTLS, wasPrivateRelayed, documentLoader->response().proxyName(), documentLoader->response().source(), containsPluginDocument, hasInsecureContent, documentLoader->mouseEventPolicy(), WTF::move(documentSecurityPolicy), cspOriginsThatUpgradeInsecureNavigations, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), m_localFrame->loader().loadingFromCachedPage() ? RestoredFromBackForwardCache::Yes : RestoredFromBackForwardCache::No, WTF::move(redirectReplaceFrameState)));
     webPage->didCommitLoad(m_frame.ptr());
 }
 

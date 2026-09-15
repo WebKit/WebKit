@@ -89,7 +89,7 @@ private:
     void NODELETE dispatchWillClose() final;
     void NODELETE dispatchDidStartProvisionalLoad() final;
     void NODELETE dispatchDidReceiveTitle(const StringWithDirection&) final;
-    void NODELETE dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>) final;
+    void NODELETE dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&) final;
     void NODELETE dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) final;
     void NODELETE dispatchDidFailLoad(const ResourceError&) final;
     void NODELETE dispatchDidFinishDocumentLoad() final;

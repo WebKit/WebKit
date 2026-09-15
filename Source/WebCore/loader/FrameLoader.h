@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <WebCore/BackForwardCacheCommitData.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderStateMachine.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -96,8 +97,6 @@ enum class CachePolicy : uint8_t;
 enum class NewLoadInProgress : bool;
 enum class NavigationPolicyDecision : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
-enum class UsedLegacyTLS : bool;
-enum class WasPrivateRelayed : bool;
 enum class IsMainResource : bool { No, Yes };
 enum class ShouldUpdateAppInitiatedValue : bool { No, Yes };
 
@@ -449,7 +448,7 @@ private:
 
     bool shouldReloadToHandleUnreachableURL(DocumentLoader&);
 
-    void dispatchDidCommitLoad(std::optional<HasInsecureContent> initialHasInsecureContent, std::optional<UsedLegacyTLS> initialUsedLegacyTLS, std::optional<WasPrivateRelayed> initialWasPrivateRelayed);
+    void dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&);
 
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, RefPtr<const FormSubmission>&&, AllowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified, CompletionHandler<void()>&& = [] { }); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader&, const SecurityOrigin* requesterOrigin); // Calls loadWithDocumentLoader

@@ -868,7 +868,7 @@ void EmptyFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection&)
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>, std::optional<WasPrivateRelayed>)
+void EmptyFrameLoaderClient::dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&)
 {
 }
 
