@@ -2188,26 +2188,22 @@ auto OMGIRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result,
 
 auto OMGIRGenerator::addCurrentMemory(ExpressionType& result, uint8_t memoryIndex) -> PartialResult
 {
-    if (!memoryIndex) {
-        static_assert(sizeof(std::declval<Memory*>()->size()) == sizeof(uintptr_t), "codegen relies on this size");
+    static_assert(sizeof(std::declval<Memory*>()->size()) == sizeof(uintptr_t), "codegen relies on this size");
 
-        Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
+    Value* size = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemorySize(memoryIndex)));
+    if (!memoryIndex)
         m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, size);
+    else
+        m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemoryCurrentSize[memoryIndex], size);
 
-        constexpr uint32_t shiftValue = 16;
-        static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
-        Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, origin(), size, constant(Int32, shiftValue));
+    constexpr uint32_t shiftValue = 16;
+    static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
+    Value* numPages = m_currentBlock->appendNew<Value>(m_proc, ZShr, origin(), size, constant(Int32, shiftValue));
 
-        if (m_info.memory(memoryIndex).isMemory64())
-            result = push(numPages);
-        else
-            result = push(int32OfPointer(numPages));
-    } else {
-        Value* resultValue = callWasmOperation(m_currentBlock, m_info.memory(memoryIndex).addressType().asB3TypeKind(), operationWasmMemorySizeInPages,
-            instanceValue(), constant(Int32, memoryIndex));
-        result = push(resultValue);
-    }
-
+    if (m_info.memory(memoryIndex).isMemory64())
+        result = push(numPages);
+    else
+        result = push(int32OfPointer(numPages));
     return { };
 }
 
