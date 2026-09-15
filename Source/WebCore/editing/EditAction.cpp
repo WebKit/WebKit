@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@ String undoRedoLabel(EditAction editAction)
     case EditAction::Insert:
     case EditAction::InsertReplacement:
     case EditAction::InsertFromDrop:
+    case EditAction::InsertHorizontalRule:
         return { };
     case EditAction::SetColor:
         return WEB_UI_STRING_KEY("Set Color", "Set Color (Undo action name)", "Undo action name");
@@ -144,6 +145,8 @@ String undoRedoLabel(EditAction editAction)
         return WEB_UI_STRING_KEY("Convert to Unordered List", "Convert to Unordered List (Undo action name)", "Undo action name");
     case EditAction::RemoveBackground:
         return WEB_UI_STRING_KEY("Remove Background", "Remove Background (Undo action name)", "Undo action name");
+    case EditAction::RemoveFormat:
+        return WEB_UI_STRING_KEY("Remove Format", "Remove Format (Undo action name)", "Undo action name");
     }
     return { };
 }

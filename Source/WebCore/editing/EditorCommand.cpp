@@ -168,19 +168,19 @@ static bool executeApplyParagraphStyle(LocalFrame& frame, EditorCommandSource so
     return false;
 }
 
-static bool executeInsertFragment(LocalFrame& frame, Ref<DocumentFragment>&& fragment)
+static bool executeInsertFragment(LocalFrame& frame, Ref<DocumentFragment>&& fragment, EditAction action = EditAction::Insert)
 {
     ASSERT(frame.document());
-    ReplaceSelectionCommand::create(*frame.document(), WTF::move(fragment), ReplaceSelectionCommand::PreventNesting, EditAction::Insert)->apply();
+    ReplaceSelectionCommand::create(*frame.document(), WTF::move(fragment), ReplaceSelectionCommand::PreventNesting, action)->apply();
     return true;
 }
 
-static bool executeInsertNode(LocalFrame& frame, Ref<Node>&& content)
+static bool executeInsertNode(LocalFrame& frame, Ref<Node>&& content, EditAction action = EditAction::Insert)
 {
     auto fragment = DocumentFragment::create(protect(*frame.document()));
     if (fragment->appendChild(content).hasException())
         return false;
-    return executeInsertFragment(frame, WTF::move(fragment));
+    return executeInsertFragment(frame, WTF::move(fragment), action);
 }
 
 static bool expandSelectionToGranularity(LocalFrame& frame, TextGranularity granularity)
@@ -477,7 +477,7 @@ static bool executeInsertHorizontalRule(LocalFrame& frame, Event*, EditorCommand
     Ref<HTMLHRElement> rule = HTMLHRElement::create(protect(*frame.document()));
     if (!value.isEmpty())
         rule->setIdAttribute(AtomString { value });
-    return executeInsertNode(frame, WTF::move(rule));
+    return executeInsertNode(frame, WTF::move(rule), EditAction::InsertHorizontalRule);
 }
 
 static bool executeInsertHTML(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
