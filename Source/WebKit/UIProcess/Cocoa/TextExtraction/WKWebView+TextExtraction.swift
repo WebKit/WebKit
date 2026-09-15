@@ -39,13 +39,8 @@ private func createEditable(for editable: WKTextExtractionEditable?) -> Intellig
         return nil
     }
 
-    return .init(
-        label: editable.label,
-        prompt: editable.placeholder,
-        contentType: nil,
-        isSecure: editable.isSecure,
-        isFocused: editable.isFocused
-    )
+    let makeEditable = IntelligenceElement.Text.Editable.init as (String?, String?, String?, Bool, Bool) -> IntelligenceElement.Text.Editable
+    return makeEditable(editable.label, editable.placeholder, nil, editable.isSecure, editable.isFocused)
 }
 
 private func createElementContent(for item: WKTextExtractionItem) -> IntelligenceElement.Content {
