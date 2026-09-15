@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body { margin: 0; padding: 0; height: 100%; }
+#pill {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 22px;
+    background: #0b57d0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+#logo { width: 32px; height: 32px; border-radius: 16px; background: white; flex: none; margin: 0 12px; }
+</style>
+</head>
+<body>
+<div id="pill"><div id="logo"></div></div>
+<script>
+window.addEventListener('message', () => {
+    const logo = document.getElementById('logo').getBoundingClientRect();
+    parent.postMessage({
+        pid: window.internals ? internals.processIdentifier : 0,
+        innerWidth: window.innerWidth,
+        innerHeight: window.innerHeight,
+        logoW: logo.width,
+        logoH: logo.height
+    }, '*');
+});
+</script>
+</body>
+</html>
