@@ -3687,6 +3687,14 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (hasBackingSharingLayers())
         return false;
 
+    // A reference (url()) backdrop-filter is painted in software into this layer's backing
+    // during its content paint (RenderLayer::paintLayerContents); there is no CABackdropLayer to composite it. A
+    // content-less overlay (e.g. a position:fixed full-viewport glass) would otherwise be a simple
+    // container with no backing store and never get a live content paint, so the filter would be dropped.
+    // Treating it as non-simple forces a content paint (and consistently clears the direct-contents path).
+    if (renderer().style().backdropFilter().hasReferenceFilter())
+        return false;
+
     if (auto* replaced = dynamicDowncast<RenderReplaced>(renderer())) {
         if (replaced->paintsContent())
             return false;
