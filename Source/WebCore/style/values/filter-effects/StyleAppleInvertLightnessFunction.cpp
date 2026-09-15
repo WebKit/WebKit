@@ -35,7 +35,7 @@ namespace Style {
 // on color values outside of the non-extended SRGB value range (0-1) to maintain the behavior of colors
 // prior to clamping being enforced. It should likely just use the existing hueRotateColorMatrix(amount)
 // in ColorMatrix.h
-static ColorComponents<float, 4> hueRotate(const ColorComponents<float, 4>& color, float amount)
+ColorComponents<float, 4> AppleInvertLightness::hueRotate(const ColorComponents<float, 4>& color, float amount)
 {
     auto [r, g, b, alpha] = color;
 
