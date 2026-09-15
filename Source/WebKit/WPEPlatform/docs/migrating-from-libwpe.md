@@ -52,9 +52,13 @@ WebKitWebView *web_view =
 WebKitWebView *web_view = g_object_new (WEBKIT_TYPE_WEB_VIEW, NULL);
 ```
 
-There is no `webkit_web_view_new()` in this API; a web view is always
-created with `g_object_new()`, so for most applications the migration is
-simply dropping the `backend` property. WebKit then resolves a platform
+If your code calls `webkit_web_view_new (backend)`, switch to
+`g_object_new()` as above. `webkit_web_view_new()` only exists in builds
+with the legacy libwpe API, and there is no variant taking a
+[class@Display]. Once WPEPlatform is in use, a `backend` property passed
+to `g_object_new()` is ignored with a critical warning. For most
+applications the migration is simply dropping the backend. WebKit then
+resolves a platform
 by iterating the registered implementations — the built-in Wayland, DRM,
 and headless ones, plus any installed module — and connecting to the
 first that succeeds. Your existing settings, network-session, navigation,
@@ -70,7 +74,8 @@ letting WebKit choose.
 
 ```c
 g_autoptr(GError) error = NULL;
-g_autoptr(WPEDisplayWayland) display = wpe_display_wayland_new ();
+g_autoptr(WPEDisplayWayland) display =
+    WPE_DISPLAY_WAYLAND (wpe_display_wayland_new ());
 if (!wpe_display_wayland_connect (display, NULL, &error))
     g_error ("Failed to connect to Wayland: %s", error->message);
 
@@ -87,18 +92,20 @@ in the environment to force one. This is what replaces libwpe's
 
 ## 3. Adding keyboard shortcuts
 
-libwpe delivered input through a view-backend input client whose
-`dispatch_*_event` methods an application overrode — typically to
-implement browser keyboard shortcuts. WPEPlatform delivers the same input
+Under libwpe the application fed input into WebKit itself by calling
+`wpe_view_backend_dispatch_*_event()`, which forwarded the event to the
+input client WebKit had registered, so browser keyboard shortcuts were
+typically implemented by filtering events before dispatching them.
+WPEPlatform delivers the same input
 as the [signal@View::event] signal on the [class@View] WebKit created for
 the web view. Reach the view with `webkit_web_view_get_wpe_view()`,
 connect to the signal, inspect the [struct@Event], and return `TRUE` to
 consume the event before the page sees it.
 
-**Before (a libwpe input client):**
+**Before (filtering before `wpe_view_backend_dispatch_keyboard_event()`):**
 
 ```c
-bool dispatch_keyboard_event (struct wpe_input_keyboard_event *event)
+bool handle_keyboard_event (struct wpe_input_keyboard_event *event)
 {
     if (event->pressed
         && (event->modifiers & wpe_input_keyboard_modifier_control)
@@ -136,8 +143,7 @@ g_signal_connect (view, "event", G_CALLBACK (on_view_event), NULL);
 Event details come from typed accessors — [method@Event.get_event_type],
 [method@Event.get_modifiers], [method@Event.keyboard_get_keyval], and the
 pointer, scroll, and touch equivalents — rather than fields of a C struct.
-The `WPE_KEY_*` keysym constants keep their names, now in
-`<wpe/WPEKeysyms.h>`.
+The `WPE_KEY_*` keysym constants keep their names.
 
 ## 4. Controlling the window
 
