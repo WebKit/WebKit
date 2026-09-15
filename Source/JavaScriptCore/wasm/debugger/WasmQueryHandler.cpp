@@ -298,9 +298,9 @@ void QueryHandler::handleLibrariesRead(StringView packet)
     if (handleChunkedLibrariesResponse(offset, maxSize, response)) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Sending library list chunk: offset=", offset, ", maxSize=", maxSize);
         m_debugServer.sendReply(response);
-        // Only mark modules notified and signal debugger-ready on the final chunk ('l' prefix).
+        // The list is only complete on the final chunk ('l' prefix); mark it sent there.
         if (response[0] == 'l') {
-            m_debugServer.m_isDebuggerReady.store(true, std::memory_order_release);
+            m_debugServer.m_hasSentLibraryList.store(true, std::memory_order_release);
             m_debugServer.moduleManager().notifyLibraryRequeryComplete();
         }
     } else {

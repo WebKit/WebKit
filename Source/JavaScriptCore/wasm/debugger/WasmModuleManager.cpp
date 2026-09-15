@@ -52,10 +52,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleManager);
 void ModuleManager::registerInstance(JSWebAssemblyInstance* jsInstance)
 {
     Locker locker { m_lock };
-    uint32_t instanceId = m_nextInstanceId++;
     // IDs are never reused, so the address space bounds how many instances one session may
     // create. Fail here rather than deep inside VirtualAddress::encode().
-    RELEASE_ASSERT(instanceId <= VirtualAddress::MAX_ID, "Wasm debugger ran out of instance IDs");
+    RELEASE_ASSERT(m_nextInstanceId <= VirtualAddress::MAX_ID, "Wasm debugger ran out of instance IDs");
+    uint32_t instanceId = m_nextInstanceId++;
 
     RefPtr<InstanceAnchor> anchor = jsInstance->anchor();
     RELEASE_ASSERT(anchor, "Instance must have an anchor");
@@ -244,20 +244,17 @@ void ModuleManager::sweepDeadInstances()
         if (!m_unnotifiedInstanceIds.remove(instanceId))
             m_hasPendingLibraryRemovals = true;
     }
+
+    // The budget is sized off the surviving instance count, so it belongs with the sweep and has
+    // to follow the removals above.
+    m_operationCountSinceLastCleanup = 0;
+    m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, static_cast<unsigned>(m_instanceIdToInstance.size())) * 2;
 }
 
 void ModuleManager::amortizedCleanupIfNeeded()
 {
-    if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup) {
+    if (++m_operationCountSinceLastCleanup > m_maxOperationCountWithoutCleanup)
         sweepDeadInstances();
-        cleanupHappened();
-    }
-}
-
-void ModuleManager::cleanupHappened()
-{
-    m_operationCountSinceLastCleanup = 0;
-    m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, static_cast<unsigned>(m_instanceIdToInstance.size())) * 2;
 }
 
 }

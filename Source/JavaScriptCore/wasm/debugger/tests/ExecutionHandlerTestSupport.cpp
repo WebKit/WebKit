@@ -271,7 +271,7 @@ void setupTestEnvironment(DebugServer*& debugServer, ExecutionHandler*& executio
         dataLogLnIf(verboseLogging, RWI_REPLY_PREFIX, packet);
         return true;
     });
-    RELEASE_ASSERT(debugServer->hasDebugger(), "DebugServer has no debug client after RWI start");
+    RELEASE_ASSERT(debugServer->isConnected(), "DebugServer has no debug client after RWI start");
 
     executionHandler = &debugServer->execution();
     executionHandler->setDebugServerThreadId(Thread::currentSingleton().uid());

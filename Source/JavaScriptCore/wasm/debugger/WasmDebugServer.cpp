@@ -207,12 +207,12 @@ void DebugServer::closeSocket(SocketType& socket)
 void DebugServer::reset()
 {
     // Reset to the init state without stopping the debug server.
-    m_isDebuggerReady.store(false, std::memory_order_release);
+    m_hasSentLibraryList.store(false, std::memory_order_release);
     m_hasContinued.store(false, std::memory_order_release);
     m_noAckMode = false;
     m_packetParser.reset();
-    // m_isDebuggerReady=false before reset() gates new traps; socket closed after so
-    // hasDebugger() stays true for wasmDebuggerOnResumeCallback() during resumeImpl().
+    // m_hasSentLibraryList=false before reset() gates new traps; socket closed after so
+    // isConnected() stays true for wasmDebuggerOnResumeCallback() during resumeImpl().
     m_executionHandler->reset();
     closeSocket(m_clientSocket);
 }
@@ -456,11 +456,11 @@ void DebugServer::trackInstance(JSWebAssemblyInstance* instance)
     // Every instance is a library of its own, so a second instance of a known module is a load
     // LLDB has to hear about too.
     m_moduleManager->registerInstance(instance);
-    if (isDebuggerReady())
+    if (hasSentLibraryList())
         m_executionHandler->notifyDebuggerOfNewInstance(instance->vm());
 }
 
-bool DebugServer::hasDebugger() const
+bool DebugServer::isConnected() const
 {
     if (!isInService())
         return false;
