@@ -1,0 +1,40 @@
+
+PASS iteration composition of discrete type animation (align-content)
+PASS iteration composition of <length> type animation
+PASS iteration composition of <percentage> type animation
+PASS iteration composition of <color> type animation
+PASS iteration composition of <color> type animation that green component is decreasing
+PASS iteration composition of <number> type animation
+PASS iteration composition of <shape> type animation
+PASS iteration composition of <calc()> value animation
+PASS iteration composition of <calc()> value animation that the values can'tbe reduced
+PASS iteration composition of opacity animation
+PASS iteration composition of box-shadow animation
+PASS iteration composition of filter blur animation
+PASS iteration composition of filter brightness for different unit animation
+PASS iteration composition of filter brightness animation
+PASS iteration composition of filter drop-shadow animation
+PASS iteration composition of same filter list animation
+PASS iteration composition of discrete filter list because of mismatch of the order
+PASS iteration composition of different length filter list animation
+PASS iteration composition of transform(rotate) animation
+PASS iteration composition of transform: [ scale(0), scale(1) ] animation
+PASS iteration composition of transform: [ scale(1), scale(2) ] animation
+PASS iteration composition of transform: scale(2) animation
+PASS iteration composition of transform list animation
+PASS iteration composition of transform of matrix function
+PASS iteration composition of transform list animation whose order is mismatched
+PASS iteration composition of transform list animation whose order is mismatched because of missing functions
+PASS iteration composition of transform from none to translate
+PASS iteration composition of transform of matrix3d function
+PASS iteration composition of transform of rotate3d function
+PASS iteration composition starts with non-zero value animation
+PASS iteration composition with negative final value animation
+PASS duration changes with an iteration composition operation of accumulate
+PASS iteration composition of incompatible intrinsic size keywords (accumulation is skipped)
+FAIL iteration composition of incompatible calc-size() bases (accumulation skipped at 0%, allowed at 50%) assert_approx_equals: Animated width at 50s of the third iteration (accumulated) expected 216 +/- 0.01 but got 72
+PASS iteration composition of animation non-additive units
+FAIL iteration composition of incompatible clip rects (accumulation skipped at 0%, allowed at 50%) assert_equals: Animated clip style at 0s of the third iteration expected "rect(10px, 50px, 50px, 10px)" but got "rect(10px, 150px, 150px, 30px)"
+PASS iteration composition of long-to-short filter list
+FAIL iteration composition of complex math functions preserves AST left-to-right operand order assert_regexp_match: Expected accumulated term (2 * max(...)) before current term (min(...)) expected object "/2 \* max\(20px, 15%\).*min\(10px, 5%\)/" but got "calc((1 * (max(20px, 15%) + max(20px, 15%) + min(10px, 5%))) + (0 * (max(20px, 15%) + max(20px, 15%) + max(20px, 15%))))"
+
