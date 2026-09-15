@@ -234,17 +234,42 @@ static GridItemIndexes itemsSpanningFlexibleTracks(const UnsizedTracks& unsizedT
     return spanningItems;
 }
 
+// https://drafts.csswg.org/css-grid-1/#algo-spanning-items
+// "Next, consider the items with a span of 2 that do not span a track with a flexible sizing function."
+static Vector<GridItemIndexes> spanGroupsNotCrossingFlexibleTracks(const UnsizedTracks& unsizedTracks, const PlacedGridItemSpanList& gridItemSpanList)
+{
+    GridItemIndexes itemsSortedByIncreasingSpan;
+    for (auto [gridItemIndex, gridItemSpan] : WTF::indexedRange(gridItemSpanList)) {
+        if (gridItemSpan.distance() > 1 && !itemCrossesFlexibleTrack(unsizedTracks, gridItemSpan))
+            itemsSortedByIncreasingSpan.append(gridItemIndex);
+    }
+    std::ranges::stable_sort(itemsSortedByIncreasingSpan, { }, [&](size_t gridItemIndex) {
+        return gridItemSpanList[gridItemIndex].distance();
+    });
+
+    // "Repeat incrementally for items with greater spans until all items have been considered."
+    Vector<GridItemIndexes> spanGroups;
+    size_t previousSpanSize = 0;
+    for (auto gridItemIndex : itemsSortedByIncreasingSpan) {
+        auto spanSize = gridItemSpanList[gridItemIndex].distance();
+        if (spanSize != previousSpanSize)
+            spanGroups.append({ });
+        spanGroups.last().append(gridItemIndex);
+        previousSpanSize = spanSize;
+    }
+    return spanGroups;
+}
+
 // https://drafts.csswg.org/css-grid-1/#algo-content
-static GridItemIndexes itemsToAccommodate(const UnsizedTracks& unsizedTracks, const PlacedGridItemSpanList& gridItemSpanList, ResolveIntrinsicTrackSizesPhase phase)
+static Vector<GridItemIndexes> itemsToAccommodate(const UnsizedTracks& unsizedTracks, const PlacedGridItemSpanList& gridItemSpanList, ResolveIntrinsicTrackSizesPhase phase)
 {
     if (phase == ResolveIntrinsicTrackSizesPhase::ContentSizedTracks) {
         // https://drafts.csswg.org/css-grid-1/#algo-spanning-items
-        notImplemented();
-        return { };
+        return spanGroupsNotCrossingFlexibleTracks(unsizedTracks, gridItemSpanList);
     }
 
     // https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
-    return itemsSpanningFlexibleTracks(unsizedTracks, gridItemSpanList);
+    return { itemsSpanningFlexibleTracks(unsizedTracks, gridItemSpanList) };
 }
 
 using TrackIndexes = Vector<size_t>;
@@ -785,17 +810,9 @@ private:
 
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-items
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
-// The flexible phase is specified as repeating the content sized phase's steps, differing only in the
-// items it accommodates, the tracks it distributes space to, and in items 4-6 being vacuous for it.
 static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTrackSizesContext& resolveIntrinsicTrackSizesContext,
-    UnsizedTracks& unsizedTracks, ResolveIntrinsicTrackSizesPhase phase)
+    UnsizedTracks& unsizedTracks, ResolveIntrinsicTrackSizesPhase phase, const GridItemIndexes& spanningItems, const PlacedGridItemSpanList& gridItemSpanList)
 {
-    auto gridItemSpanList = spannedLinesList(resolveIntrinsicTrackSizesContext.trackSizingItems);
-
-    auto spanningItems = itemsToAccommodate(unsizedTracks, gridItemSpanList, phase);
-    if (spanningItems.isEmpty())
-        return;
-
     auto scenario = resolveIntrinsicTrackSizesContext.axisConstraint.scenario();
 
     auto& trackSizingItems = resolveIntrinsicTrackSizesContext.trackSizingItems;
@@ -878,13 +895,17 @@ static void resolveIntrinsicTrackSizes(const ResolveIntrinsicTrackSizesContext& 
     // 2. Size tracks to fit non-spanning items.
     sizeTracksToFitNonSpanningItems(resolveIntrinsicTrackSizesContext, unsizedTracks);
 
+    auto gridItemSpanList = spannedLinesList(resolveIntrinsicTrackSizesContext.trackSizingItems);
+
     // 3. Increase sizes to accommodate spanning items crossing content-sized tracks:
     // Next, consider the items with a span of 2 that do not span a track with a flexible
     // sizing function.
-    resolveIntrinsicTrackSizesWithSpanningItems(resolveIntrinsicTrackSizesContext, unsizedTracks, ResolveIntrinsicTrackSizesPhase::ContentSizedTracks);
+    for (auto& spanningItems : itemsToAccommodate(unsizedTracks, gridItemSpanList, ResolveIntrinsicTrackSizesPhase::ContentSizedTracks))
+        resolveIntrinsicTrackSizesWithSpanningItems(resolveIntrinsicTrackSizesContext, unsizedTracks, ResolveIntrinsicTrackSizesPhase::ContentSizedTracks, spanningItems, gridItemSpanList);
 
     // 4. Increase sizes to accommodate spanning items crossing flexible tracks:
-    resolveIntrinsicTrackSizesWithSpanningItems(resolveIntrinsicTrackSizesContext, unsizedTracks, ResolveIntrinsicTrackSizesPhase::FlexibleTracks);
+    for (auto& spanningItems : itemsToAccommodate(unsizedTracks, gridItemSpanList, ResolveIntrinsicTrackSizesPhase::FlexibleTracks))
+        resolveIntrinsicTrackSizesWithSpanningItems(resolveIntrinsicTrackSizesContext, unsizedTracks, ResolveIntrinsicTrackSizesPhase::FlexibleTracks, spanningItems, gridItemSpanList);
 
     // 5. If any track still has an infinite growth limit, set its growth limit to its base size.
     for (auto& unsizedTrack : unsizedTracks) {
