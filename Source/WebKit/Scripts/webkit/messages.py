@@ -2364,19 +2364,16 @@ def generate_swift_message_handler(receiver):
         call.append(',\n'.join(['        %s' % argument for argument in arguments]))
         call.append('    )')
         call.append(')')
-        if completion_handler:
-            result.append('        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in\n')
-        else:
-            result.append('        dispatchMessage(on: connection) { () throws(InvalidMessage) in\n')
+        result.append('        do {\n')
         indent = '            '
         for line in call:
             result.append('\n'.join(['%s%s' % (indent, part) for part in line.split('\n')]))
             result.append('\n')
-        result.append('        }\n')
+        result.append('        } catch {\n')
+        result.append('            markMessageInvalid(error, on: connection)\n')
         if completion_handler:
-            result.append('        if !dispatched {\n')
             result.append('            CompletionHandlers.%s.completeWithDefaultReply(completionHandler)\n' % receiver.name)
-            result.append('        }\n')
+        result.append('        }\n')
         result.append('    }\n')
 
     result.append('}\n')

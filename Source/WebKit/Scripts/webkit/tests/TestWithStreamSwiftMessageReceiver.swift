@@ -43,13 +43,15 @@ final class TestWithStreamSwiftWeakRef {
         guard let target else {
             return
         }
-        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.sendString(
                     connection: connection,
                     url: url
                 )
             )
+        } catch {
+            markMessageInvalid(error, on: connection)
         }
     }
 
@@ -62,7 +64,7 @@ final class TestWithStreamSwiftWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.sendStringSync(
                     connection: connection,
@@ -70,8 +72,8 @@ final class TestWithStreamSwiftWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithStreamSwift.completeWithDefaultReply(completionHandler)
         }
     }

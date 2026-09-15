@@ -43,13 +43,15 @@ final class TestWithStreamSwiftEnabledByWeakRef {
         guard let target else {
             return
         }
-        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.sendString(
                     connection: connection,
                     url: url
                 )
             )
+        } catch {
+            markMessageInvalid(error, on: connection)
         }
     }
 }

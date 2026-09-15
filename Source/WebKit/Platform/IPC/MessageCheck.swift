@@ -50,7 +50,7 @@ struct InvalidMessage: Error {
 ///
 /// Logs and crashes here rather than where the error is caught, so that the failing check is still
 /// on the stack as it is for the C++ macros. Marking the in-flight message invalid needs the
-/// connection, so that is left to `dispatchMessage(on:onInvalidMessage:body:)`.
+/// connection, so that is left to the catch site.
 ///
 @inline(__always)
 func messageCheck(

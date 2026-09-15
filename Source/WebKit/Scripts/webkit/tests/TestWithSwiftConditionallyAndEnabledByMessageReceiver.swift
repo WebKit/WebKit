@@ -47,7 +47,7 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testAsyncMessage(
                     connection: connection,
@@ -55,8 +55,8 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)
         }
     }
@@ -70,7 +70,7 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testSyncMessage(
                     connection: connection,
@@ -78,8 +78,8 @@ final class TestWithSwiftConditionallyAndEnabledByWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithSwiftConditionallyAndEnabledBy.completeWithDefaultReply(completionHandler)
         }
     }

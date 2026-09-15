@@ -44,7 +44,7 @@ final class TestWithSwiftWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testAsyncMessage(
                     connection: connection,
@@ -52,8 +52,8 @@ final class TestWithSwiftWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)
         }
     }
@@ -67,7 +67,7 @@ final class TestWithSwiftWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testSyncMessage(
                     connection: connection,
@@ -75,8 +75,8 @@ final class TestWithSwiftWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)
         }
     }
@@ -89,13 +89,15 @@ final class TestWithSwiftWeakRef {
         guard let target else {
             return
         }
-        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testMessageWithAliasedParameter(
                     connection: connection,
                     frameState: frameState
                 )
             )
+        } catch {
+            markMessageInvalid(error, on: connection)
         }
     }
 
@@ -108,7 +110,7 @@ final class TestWithSwiftWeakRef {
         guard let target else {
             return
         }
-        let dispatched = dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testThrowingMessageWithReply(
                     connection: connection,
@@ -116,8 +118,8 @@ final class TestWithSwiftWeakRef {
                     completionHandler: completionHandler
                 )
             )
-        }
-        if !dispatched {
+        } catch {
+            markMessageInvalid(error, on: connection)
             CompletionHandlers.TestWithSwift.completeWithDefaultReply(completionHandler)
         }
     }
@@ -131,7 +133,7 @@ final class TestWithSwiftWeakRef {
         guard let target else {
             return
         }
-        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        do {
             try mayThrowInvalidMessage(
                 target.testThrowingMessageWithoutReply(
                     connection: connection,
@@ -139,6 +141,8 @@ final class TestWithSwiftWeakRef {
                     frameID: frameID
                 )
             )
+        } catch {
+            markMessageInvalid(error, on: connection)
         }
     }
 }
