@@ -17,16 +17,16 @@ depfile_path = Path('{DERIVED_FILES_DIR}/copy-profiling-data.d'.format_map(os.en
 archs = os.environ.get('ARCHS_BASE', os.environ['ARCHS'])
 # When a target is statically linked into another project's dylib (e.g. WTF
 # into JavaScriptCore.framework), its counters land in that dylib's profdata.
-# WK_PGO_SOURCE_PROJECT_NAME lets the consuming target name the source
+# WK_CLANG_PGO_SOURCE_PROJECT_NAME lets the consuming target name the source
 # profile, while still writing into its own DerivedSources output.
-source_project_name = os.environ.get('WK_PGO_SOURCE_PROJECT_NAME') or os.environ['PROJECT_NAME']
+source_project_name = os.environ.get('WK_CLANG_PGO_SOURCE_PROJECT_NAME') or os.environ['PROJECT_NAME']
 
 # When an upstream-in-build-order target has already decompressed the same
 # profile, symlink to its output instead of decompressing again. Falls back
 # to a fresh decompression if the upstream output is missing (clean build
 # before the upstream's phase has run, or production where the upstream
 # project's byproducts are not available).
-upstream_target = os.environ.get('WK_PGO_REUSE_FROM_TARGET')
+upstream_target = os.environ.get('WK_CLANG_PGO_REUSE_FROM_TARGET')
 
 
 def checked_decompress(src, dst):
@@ -63,7 +63,7 @@ def upstream_profdata(arch):
 inputs = []
 # Fall back to the Xcode-provided setting name for configurations where we do
 # not pass the -fprofile-instr-use flag directly.
-if os.environ.get('WK_ENABLE_PGO_USE',
+if os.environ.get('WK_ENABLE_CLANG_PGO_USE',
                   os.environ.get('CLANG_USE_OPTIMIZATION_PROFILE')) == 'YES':
     for arch in archs.split():
         dst = output_folder / f'{arch}.profdata'
