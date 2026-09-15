@@ -46,6 +46,7 @@
 #include "RenderCombineText.h"
 #include "RenderElementStyleInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderGlyph.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -255,6 +256,16 @@ void TextBoxPainter::paint()
 
     if (m_paintInfo.phase == PaintPhase::Selection && m_paintInfo.paintBehavior.contains(PaintBehavior::IncludeDocumentMarkers))
         paintPlatformDocumentMarkers();
+
+    if (is<RenderGlyph>(m_renderer.get())) {
+        if (m_paintInfo.phase == PaintPhase::Foreground)
+            paintSynthesizedGlyph();
+        if (glyphRotation) {
+            auto backRotation = *glyphRotation == RotationDirection::Clockwise ? RotationDirection::Counterclockwise : RotationDirection::Clockwise;
+            m_paintInfo.context().concatCTM(rotation(m_paintRect, backRotation));
+        }
+        return;
+    }
 
     if (m_paintInfo.phase == PaintPhase::Foreground) {
         auto shouldPaintBackgroundFill = [&] {
@@ -649,6 +660,49 @@ static bool NODELETE isTransparent(const StyledMarkedText& markedText)
     default:
         return false;
     }
+}
+
+void TextBoxPainter::paintSynthesizedGlyph()
+{
+    // Drawn from the font metrics rather than from the character the counter style produced, matching the width TextUtil::width reserved for it.
+    auto& fontMetrics = m_style->metricsOfPrimaryFont();
+
+    auto& context = m_paintInfo.context();
+    auto color = m_style->visitedDependentTextFillColorApplyingColorFilter();
+    context.setFillColor(color);
+    context.setStrokeColor(color);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
+
+    // Check 'content' before 'list-style-type'.
+    if (CheckedPtr glyphRenderer = dynamicDowncast<RenderGlyph>(m_renderer.get())) {
+        auto fontSize = m_style->fontCascade().size();
+        auto size = fontSize / 4;
+        FloatPoint center { glyphRenderer->advanceRatio() * fontSize / 2, fontMetrics.ascent(FontBaseline::Central) };
+        center.moveBy(m_paintRect.location());
+
+        bool shouldFlip = (glyphRenderer->glyph() == SynthesizedGlyph::PickerDown) == textBox().writingMode().isLineInverted();
+        GraphicsContextStateSaver stateSaver(context);
+        if (shouldFlip) {
+            // A flipped chevron reads optically low, so lift it by a quarter of the glyph size.
+            context.concatCTM(AffineTransform { }.translate(center.x(), center.y() - size / 4).rotate(180).translate(-center.x(), -center.y()));
+        }
+
+        context.setLineCap(LineCap::Butt);
+        context.setLineJoin(LineJoin::Miter);
+        context.setStrokeThickness(std::max(1.0f, fontSize * 0.05f));
+
+        // Draw chevron pointing down.
+        Path chevron;
+        chevron.moveTo({ center.x() - size, center.y() - size / 2 });
+        chevron.addLineTo({ center.x(), center.y() + size / 2 });
+        chevron.addLineTo({ center.x() + size, center.y() - size / 2 });
+        context.strokePath(chevron);
+        return;
+    }
+
+    // FIXME: List markers are handled here on trunk, but not yet on branch.
+
+    ASSERT_NOT_REACHED();
 }
 
 void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)

@@ -38,6 +38,7 @@
 #include "Latin1TextIterator.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBox.h"
+#include "RenderGlyph.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
@@ -67,6 +68,9 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
 
     if (inlineTextBox.isCombined())
         return fontCascade.size();
+
+    if (CheckedPtr glyphRenderer = dynamicDowncast<RenderGlyph>(inlineTextBox.rendererForIntegration()))
+        return glyphRenderer->advanceRatio() * fontCascade.size();
 
     auto& text = inlineTextBox.content();
     ASSERT(to <= text.length());

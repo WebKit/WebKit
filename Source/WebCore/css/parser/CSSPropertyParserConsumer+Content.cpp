@@ -228,8 +228,15 @@ static std::optional<CSS::Content> consumeUnresolvedContent(CSSParserTokenRange&
         if (auto image = consumeImage(range, state))
             return CSS::Content::Image { CSS::ImageWrapper { image.releaseNonNull() } };
 
-        if (auto quote = consumeSpecificUnresolvedIdent<CSS::Content::Quote::Value>(range))
+        if (auto quote = consumeSpecificUnresolvedIdent<CSS::Content::Quote::Type>(range))
             return CSS::Content::Quote { WTF::move(*quote) };
+
+        // Restricted to the UA stylesheet until they get an official name.
+        // See https://github.com/w3c/csswg-drafts/issues/14317
+        if (isUASheetBehavior(state.context.mode)) {
+            if (auto glyph = consumeSpecificUnresolvedIdent<CSS::Content::Glyph::Type>(range))
+                return CSS::Content::Glyph { WTF::move(*glyph) };
+        }
 
         switch (range.peek().functionId()) {
         case CSSValueAttr:

@@ -97,8 +97,8 @@ struct ContentCountersFunctionWrapper {
 };
 
 struct ContentQuote {
-    using Value = Variant<Keyword::OpenQuote, Keyword::CloseQuote, Keyword::NoOpenQuote, Keyword::NoCloseQuote>;
-    Value quote;
+    using Type = Variant<Keyword::OpenQuote, Keyword::CloseQuote, Keyword::NoOpenQuote, Keyword::NoCloseQuote>;
+    Type quote;
 
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
@@ -108,6 +108,19 @@ struct ContentQuote {
     bool operator==(const ContentQuote&) const = default;
 };
 DEFINE_TYPE_WRAPPER_GET(ContentQuote, quote);
+
+struct ContentGlyph {
+    using Type = Variant<Keyword::PickerUp, Keyword::PickerDown>;
+    Type glyph;
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        return WTF::switchOn(glyph, std::forward<F>(f)...);
+    }
+
+    bool operator==(const ContentGlyph&) const = default;
+};
+DEFINE_TYPE_WRAPPER_GET(ContentGlyph, glyph);
 
 struct ContentLegacyAttrFunctionParameters {
     CustomIdent name;
@@ -130,8 +143,9 @@ struct Content {
     using CounterFunction = ContentCounterFunction;
     using CountersFunction = ContentCountersFunction;
     using Quote = ContentQuote;
+    using Glyph = ContentGlyph;
     using LegacyAttrFunction = ContentLegacyAttrFunction;
-    using VisibleContentListItem = Variant<Text, LegacyAttrFunction, Image, CounterFunction, CountersFunction, Quote>;
+    using VisibleContentListItem = Variant<Text, LegacyAttrFunction, Image, CounterFunction, CountersFunction, Quote, Glyph>;
     using VisibleContentList = SpaceSeparatedVector<VisibleContentListItem>;
     using AltContentListItem = Variant<Text, LegacyAttrFunction>;
     using AltContentList = SpaceSeparatedVector<AltContentListItem>;
@@ -220,4 +234,5 @@ DEFINE_SLASH_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Content::Data, 2)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::ContentText)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::ContentImage)
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::ContentQuote)
+DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::ContentGlyph)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::Content)

@@ -39,6 +39,7 @@
 #include "RenderCounter.h"
 #include "RenderElementInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderGlyph.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"

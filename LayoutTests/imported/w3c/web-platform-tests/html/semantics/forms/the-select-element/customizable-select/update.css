@@ -104,14 +104,54 @@ select selectedcontent,
 
 /* ---- Picker icon ---- */
 
-select::picker-icon,
-.customizable-select-button::after {
-  content: "\2335" / "";
+/* The real icon is a glyph the UA draws itself (see RenderGlyph and TextBoxPainter::paintSynthesizedGlyph)
+   from `content: picker-down`, which is user-agent-stylesheet-only. So for a real <select> only the icon's
+   box is mirrored here, leaving the UA to draw the glyph. */
+select::picker-icon {
   font: 100% system-ui;
   text-orientation: sideways;
   padding-inline: 0.15em;
   margin-inline-start: auto;
-  margin-block-start: -0.25em;
+}
+
+/* The div-based reconstruction cannot name that glyph, so it approximates the drawing with a mask, and
+   borrows the glyph's own fallback character so that the box geometry matches by construction rather than
+   by magic numbers: the character gives the box the same line box (block size), while inline-size is the
+   0.52em advance RenderGlyph::advanceRatio() reserves. The character itself is never painted, because the
+   real icon paints a glyph in its place.
+
+   The mask is the same chevron TextBoxPainter::paintSynthesizedGlyph() strokes: 0.5em x 0.25em about the
+   box center, which is where the central baseline falls, plus 1px for the stroke it centers on that path.
+   At a 16px font the mask box is 9x5 px against a 9x5 viewBox, so the path lands on integer coordinates
+   with a 1px stroke, matching the drawing exactly; the stroke stays 1px rather than following
+   max(1px, 0.05em), so a larger font needs more tolerance. */
+.customizable-select-button::after {
+  content: "\2304";
+  -webkit-text-fill-color: transparent;
+  font: 100% system-ui;
+  padding-inline: 0.15em;
+  margin-inline-start: auto;
+  /* inline-block so the box sizes the same whether the button lays it out as a flex item or, as in the
+     select-clipping reference, as an inline. min-inline-size pins the automatic minimum size a flex item
+     would otherwise take from the borrowed character, which is wider than the glyph's advance. */
+  display: inline-block;
+  inline-size: 0.52em;
+  min-inline-size: 0.52em;
+  background-color: currentColor;
+  mask: no-repeat center / calc(0.5em + 1px) calc(0.25em + 1px) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 5" preserveAspectRatio="none"><path d="M0.5 0.5 4.5 4.5 8.5 0.5" fill="none" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke"/></svg>');
+}
+
+/* The drawn glyph points along the block axis, which a static mask cannot follow, so a reference in a
+   vertical writing mode marks the button with the matching modifier. vertical-lr is also the case where
+   paintSynthesizedGlyph() flips the glyph, and a flipped glyph carries an optical lift of a quarter of the
+   glyph size: applied in the pre-rotated frame it lands along the physical inline axis, so 0.0625em. */
+.customizable-select-button.vertical-rl::after {
+  rotate: 90deg;
+}
+
+.customizable-select-button.vertical-lr::after {
+  rotate: -90deg;
+  translate: 0.0625em;
 }
 
 /* ---- Picker popover ---- */
