@@ -821,18 +821,11 @@ void GPUConnectionToWebProcess::releaseGPU(WebGPUIdentifier identifier)
 
 void GPUConnectionToWebProcess::clearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
-    Ref gpuProcess = this->gpuProcess();
-    if (gpuProcess->isNowPlayingArbiterActive()) {
-        if (pageIdentifier)
-            m_nowPlayingCandidates.remove(*pageIdentifier);
-        else
-            m_nowPlayingCandidates.clear();
-        gpuProcess->recomputeNowPlayingOwner();
-        return;
-    }
-
-    m_isNowPlayingManagerClient = false;
-    gpuProcess->nowPlayingManager().removeClient(*this);
+    if (pageIdentifier)
+        m_nowPlayingCandidates.remove(*pageIdentifier);
+    else
+        m_nowPlayingCandidates.clear();
+    gpuProcess().recomputeNowPlayingOwner();
 }
 
 void GPUConnectionToWebProcess::setNowPlayingCandidateState(NowPlayingCandidateState&& candidateState)
@@ -851,32 +844,24 @@ void GPUConnectionToWebProcess::setNowPlayingCandidateState(NowPlayingCandidateS
 
 void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
-    Ref gpuProcess = this->gpuProcess();
-    if (gpuProcess->isNowPlayingArbiterActive()) {
-        if (!pageIdentifier)
-            return;
-
-        auto& candidate = m_nowPlayingCandidates.ensure(*pageIdentifier, [] {
-            return makeUniqueRef<NowPlayingCandidate>();
-        }).iterator->value.get();
-
-        // Content strips the artwork image from repeat pushes assuming the receiver cached it, so attach it here.
-        if (nowPlayingInfo.metadata.artwork && !nowPlayingInfo.metadata.artwork->image && candidate.info && candidate.info->metadata.artwork && candidate.info->metadata.artwork->src == nowPlayingInfo.metadata.artwork->src)
-            nowPlayingInfo.metadata.artwork->image = candidate.info->metadata.artwork->image;
-        candidate.info = WTF::move(nowPlayingInfo);
-
-        if (gpuProcess->isActiveNowPlayingPage(webProcessIdentifier(), *pageIdentifier)) {
-            gpuProcess->nowPlayingManager().addClient(*this);
-            gpuProcess->nowPlayingManager().setNowPlayingInfo(*candidate.info);
-            updateSupportedRemoteCommands();
-        }
+    if (!pageIdentifier)
         return;
-    }
 
-    m_isNowPlayingManagerClient = true;
-    gpuProcess->nowPlayingManager().addClient(*this);
-    gpuProcess->nowPlayingManager().setNowPlayingInfo(WTF::move(nowPlayingInfo));
-    updateSupportedRemoteCommands();
+    auto& candidate = m_nowPlayingCandidates.ensure(*pageIdentifier, [] {
+        return makeUniqueRef<NowPlayingCandidate>();
+    }).iterator->value.get();
+
+    // Content strips the artwork image from repeat pushes assuming the receiver cached it, so attach it here.
+    if (nowPlayingInfo.metadata.artwork && !nowPlayingInfo.metadata.artwork->image && candidate.info && candidate.info->metadata.artwork && candidate.info->metadata.artwork->src == nowPlayingInfo.metadata.artwork->src)
+        nowPlayingInfo.metadata.artwork->image = candidate.info->metadata.artwork->image;
+    candidate.info = WTF::move(nowPlayingInfo);
+
+    Ref gpuProcess = this->gpuProcess();
+    if (gpuProcess->isActiveNowPlayingPage(webProcessIdentifier(), *pageIdentifier)) {
+        gpuProcess->nowPlayingManager().addClient(*this);
+        gpuProcess->nowPlayingManager().setNowPlayingInfo(*candidate.info);
+        updateSupportedRemoteCommands();
+    }
 }
 
 void GPUConnectionToWebProcess::becomeNowPlayingOwner(WebCore::PageIdentifier pageIdentifier)
@@ -918,9 +903,7 @@ void GPUConnectionToWebProcess::nowPlayingClientDidClose()
     // silently do nothing and leave a dead NowPlayingManager client holding the system command listener.
     resignNowPlayingManagerClient();
 
-    Ref gpuProcess = this->gpuProcess();
-    if (gpuProcess->isNowPlayingArbiterActive())
-        gpuProcess->nowPlayingClientDidClose(webProcessIdentifier());
+    gpuProcess().nowPlayingClientDidClose(webProcessIdentifier());
 }
 
 void GPUConnectionToWebProcess::isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)

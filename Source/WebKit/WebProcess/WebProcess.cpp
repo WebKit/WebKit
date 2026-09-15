@@ -2732,7 +2732,8 @@ void WebProcess::setResourceMonitorContentRuleListAsync(WebCompiledContentRuleLi
 void WebProcess::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument, std::optional<WebCore::MediaSessionIdentifier> targetSession)
 {
     if (!targetSession) {
-        // Non-site-isolated NowPlaying: every page's manager re-selects locally, as it always has.
+        // The GPU process named no target session for this process. Let every page's manager re-select
+        // locally rather than drop the command.
         for (auto& page : m_pageMap.values())
             page->didReceiveRemoteCommand(type, argument, std::nullopt);
         return;
@@ -2744,10 +2745,9 @@ void WebProcess::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlComm
             return;
     }
 
-    // The elected session went away or stopped accepting commands between the election and now. Fall back to local
-    // re-selection so the command is not dropped, as it would be without site isolation. Best effort only: m_pageMap
-    // has no stable order and, under site isolation, each page has its own manager, so there is no cross-page
-    // current-session order to follow here.
+    // The elected session went away or stopped accepting commands between the election and now. Fall back to
+    // local re-selection rather than drop the command. Best effort only: m_pageMap has no stable order, and a
+    // page can have a manager of its own, so there is no cross-page current-session order to follow here.
     for (auto& page : m_pageMap.values()) {
         if (page->didReceiveRemoteCommand(type, argument, std::nullopt))
             return;

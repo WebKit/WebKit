@@ -25,11 +25,13 @@
 
 #pragma once
 
+#include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
 
 struct PageIdentifierType;
 using PageIdentifier = ObjectIdentifier<PageIdentifierType>;
+using QualifiedPageIdentifier = ProcessQualified<PageIdentifier>;
 
 }

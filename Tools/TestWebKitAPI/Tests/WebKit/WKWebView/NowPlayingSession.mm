@@ -64,6 +64,19 @@ static RetainPtr<TestWKWebView> createWebView()
     return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
 }
 
+static RetainPtr<TestWKWebView> createWebViewInItsOwnWebContentProcess()
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+#endif
+    // A pool of its own is what guarantees a separate WebContent process, which is the whole point of the test:
+    // each process elects its own best session, so only the GPU process can pick between them.
+    [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    return adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 480, 320) configuration:configuration.get()]);
+}
+
 TEST(NowPlayingSession, NoSession)
 {
     RetainPtr webView = createWebView();
@@ -259,6 +272,37 @@ TEST(NowPlayingSession, KillWebContentProcessAfterHasSession)
     EXPECT_FALSE([webView _hasActiveNowPlayingSession]);
 
     [webView removeObserver:observer.get() forKeyPath:nowPlayingSessionKeyPath];
+}
+
+TEST(NowPlayingSession, OneOwnerAcrossWebContentProcesses)
+{
+    RetainPtr firstWebView = createWebViewInItsOwnWebContentProcess();
+    RetainPtr secondWebView = createWebViewInItsOwnWebContentProcess();
+
+    RetainPtr firstObserver = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    RetainPtr secondObserver = adoptNS([[NowPlayingSessionObserver alloc] init]);
+    [firstWebView addObserver:firstObserver.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+    [secondWebView addObserver:secondObserver.get() forKeyPath:nowPlayingSessionKeyPath options:NSKeyValueObservingOptionNew context:nil];
+
+    [firstWebView synchronouslyLoadTestPageNamed:@"now-playing-session-test"];
+    [secondWebView synchronouslyLoadTestPageNamed:@"now-playing-session-test"];
+
+    [firstWebView evaluateJavaScript:@"playInMainFrame()" completionHandler:nil];
+    [firstObserver waitForHasActiveNowPlayingSessionChanged];
+    EXPECT_TRUE([firstWebView _hasActiveNowPlayingSession]);
+    EXPECT_FALSE([secondWebView _hasActiveNowPlayingSession]);
+
+    [secondWebView evaluateJavaScript:@"playInMainFrame()" completionHandler:nil];
+
+    // There is one system NowPlaying session, so whichever page the GPU process elects, the other must not also
+    // claim it. Wait past the NowPlaying update interval: both pages keep pushing their own info on that timer,
+    // and before the GPU process arbitrated they took the session from each other on every tick.
+    TestWebKitAPI::Util::runFor(6_s);
+
+    EXPECT_NE([firstWebView _hasActiveNowPlayingSession], [secondWebView _hasActiveNowPlayingSession]);
+
+    [firstWebView removeObserver:firstObserver.get() forKeyPath:nowPlayingSessionKeyPath];
+    [secondWebView removeObserver:secondObserver.get() forKeyPath:nowPlayingSessionKeyPath];
 }
 
 @end

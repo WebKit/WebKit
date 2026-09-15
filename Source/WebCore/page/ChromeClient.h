@@ -799,8 +799,6 @@ public:
 
     virtual void setIsInRedo(bool) { }
 
-    virtual void hasActiveNowPlayingSessionChanged(bool) { }
-
     virtual void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const { callback(std::nullopt); }
 
     virtual void callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion) { completion(SyntheticClickResult::Failed); }

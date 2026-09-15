@@ -134,7 +134,6 @@ public:
     void recomputeNowPlayingOwner();
     void setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier>);
     void nowPlayingClientDidClose(WebCore::ProcessIdentifier);
-    bool isNowPlayingArbiterActive() const { return m_isNowPlayingArbiterActive; }
     bool isActiveNowPlayingPage(WebCore::ProcessIdentifier process, WebCore::PageIdentifier page) const { return m_activeNowPlayingOwner && m_activeNowPlayingOwner->process == process && m_activeNowPlayingOwner->page == page; }
     bool isActiveNowPlayingSession(WebCore::ProcessIdentifier process, WebCore::MediaSessionIdentifier session) const { return m_activeNowPlayingOwner && m_activeNowPlayingOwner->process == process && m_activeNowPlayingOwner->session == session; }
     // Unlike remoteCommandTargetSessionInProcess(), safe to ask from any process: it compares rather than assuming
@@ -221,7 +220,6 @@ private:
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
-    void updateNowPlayingArbiterActive(const SharedPreferencesForWebProcess&);
     void securityFlagsDidChange(SecurityFlags&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
@@ -344,8 +342,6 @@ private:
     bool m_haveEnabledVP9Decoder { false };
     bool m_haveEnabledSWVP9Decoder { false };
 #endif
-    bool m_isNowPlayingArbiterActive { false };
-
 };
 
 } // namespace WebKit
