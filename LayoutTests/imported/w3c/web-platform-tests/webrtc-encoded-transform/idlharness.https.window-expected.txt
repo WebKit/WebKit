@@ -8,47 +8,49 @@ PASS Partial interface RTCRtpReceiver: member names are unique
 PASS Partial interface DedicatedWorkerGlobalScope: original interface defined
 PASS Partial interface DedicatedWorkerGlobalScope: member names are unique
 PASS Partial interface RTCRtpSender[2]: member names are unique
-PASS RTCSFrameSenderTransform includes SFrameEncrypterManager: member names are unique
-PASS RTCSFrameReceiverTransform includes SFrameDecrypterManager: member names are unique
-PASS SFrameEncrypterStream includes GenericTransformStream: member names are unique
-PASS SFrameEncrypterStream includes SFrameEncrypterManager: member names are unique
-PASS SFrameDecrypterStream includes GenericTransformStream: member names are unique
-PASS SFrameDecrypterStream includes SFrameDecrypterManager: member names are unique
+PASS RTCRtpSFrameEncryptor includes SFrameEncryptorManager: member names are unique
+PASS RTCRtpSFrameDecryptor includes SFrameDecryptorManager: member names are unique
+PASS SFrameEncryptorStream includes GenericTransformStream: member names are unique
+PASS SFrameEncryptorStream includes SFrameEncryptorManager: member names are unique
+PASS SFrameDecryptorStream includes GenericTransformStream: member names are unique
+PASS SFrameDecryptorStream includes SFrameDecryptorManager: member names are unique
 PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
 PASS DedicatedWorkerGlobalScope includes AnimationFrameProvider: member names are unique
 PASS DedicatedWorkerGlobalScope includes MessageEventTarget: member names are unique
-FAIL RTCSFrameSenderTransform interface: existence and properties of interface object assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface object length assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface object name assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameSenderTransform interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameSenderTransform" expected property "RTCSFrameSenderTransform" missing
-FAIL RTCSFrameReceiverTransform interface: existence and properties of interface object assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface object length assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface object name assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL RTCSFrameReceiverTransform interface: attribute onerror assert_own_property: self does not have own property "RTCSFrameReceiverTransform" expected property "RTCSFrameReceiverTransform" missing
-FAIL SFrameEncrypterStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface object length assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface object name assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameEncrypterStream interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameEncrypterStream" expected property "SFrameEncrypterStream" missing
-FAIL SFrameDecrypterStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface object length assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface object name assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
-FAIL SFrameDecrypterStream interface: attribute onerror assert_own_property: self does not have own property "SFrameDecrypterStream" expected property "SFrameDecrypterStream" missing
+PASS Worker includes AbstractWorker: member names are unique
+PASS Worker includes MessageEventTarget: member names are unique
+FAIL RTCRtpSFrameEncryptor interface: existence and properties of interface object assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface object length assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface object name assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameEncryptor interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCRtpSFrameEncryptor" expected property "RTCRtpSFrameEncryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: existence and properties of interface object assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface object length assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface object name assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: existence and properties of interface prototype object assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL RTCRtpSFrameDecryptor interface: attribute onerror assert_own_property: self does not have own property "RTCRtpSFrameDecryptor" expected property "RTCRtpSFrameDecryptor" missing
+FAIL SFrameEncryptorStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface object length assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface object name assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameEncryptorStream interface: operation setEncryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameEncryptorStream" expected property "SFrameEncryptorStream" missing
+FAIL SFrameDecryptorStream interface: existence and properties of interface object assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface object length assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface object name assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: existence and properties of interface prototype object assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: operation addDecryptionKey(CryptoKey, CryptoKeyID) assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: operation removeDecryptionKey(CryptoKeyID) assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
+FAIL SFrameDecryptorStream interface: attribute onerror assert_own_property: self does not have own property "SFrameDecryptorStream" expected property "SFrameDecryptorStream" missing
 PASS SFrameTransformErrorEvent interface: existence and properties of interface object
 PASS SFrameTransformErrorEvent interface object length
 PASS SFrameTransformErrorEvent interface object name
