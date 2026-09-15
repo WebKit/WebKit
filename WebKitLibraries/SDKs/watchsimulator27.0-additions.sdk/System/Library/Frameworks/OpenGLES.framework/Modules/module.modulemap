@@ -1,0 +1,23 @@
+framework module OpenGLES {
+  umbrella "Headers"
+  module * { export * }
+
+  module EAGLIOSurface {
+    requires objc
+    header "EAGLIOSurface.h"
+    export *
+  }
+
+  module EAGL {
+    requires objc
+    header "EAGL.h"
+    export *
+  }
+
+  module EAGLDrawable {
+    requires objc
+    header "EAGLDrawable.h"
+    export *
+  }
+}
+

@@ -1,0 +1,10 @@
+framework module IOSurface [system] {
+    umbrella "Headers"
+    module * { export * }
+    
+    module ObjC {
+        requires objc
+        header "IOSurfaceObjC.h"
+        export *
+    }
+}

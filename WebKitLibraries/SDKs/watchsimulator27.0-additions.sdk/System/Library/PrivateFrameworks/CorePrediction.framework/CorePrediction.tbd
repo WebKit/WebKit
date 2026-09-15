@@ -1,0 +1,49 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+install-name:    '/System/Library/PrivateFrameworks/CorePrediction.framework/CorePrediction'
+exports:
+  - targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+    symbols:         [ _CPMLAnalysisClassify, _CPMLAnalysisRegressionPrediction, 
+                       _CPMLBetweenssKMeansAnalysis, _CPMLCentersKMeansAnalysis, 
+                       _CPMLClusterKMeansAnalysis, _CPMLCreateGMMAnalysis, _CPMLCreateKMEANSAnalysis, 
+                       _CPMLCreateLIBSVMAnalysis, _CPMLCreateLINEARSVMAnalysis, _CPMLDestroyGMMAnalysis, 
+                       _CPMLDestroyKMEANSAnalysis, _CPMLDestroyLIBSVMAnalysis, _CPMLDestroyLINEARSVMAnalysis, 
+                       _CPMLIterKMeansAnalysis, _CPMLSizeKMeansAnalysis, _CPMLTotalWithinssKMeansAnalysis, 
+                       _CPMLTotssKMeansAnalysis, _CPMLTrainAndSaveDataFrom, _CPMLTrainAndSaveDataFromDict, 
+                       _CPMLTrainAndSaveDataWith, _CPMLTrainAndSaveDataWithDict, 
+                       _CPMLTrainDataFrom, _CPMLTrainDataFromDict, _CPMLTrainDataWith, 
+                       _CPMLTrainDataWithDict, _CPMLWithinssKMeansAnalysis, _check_parameter, 
+                       _check_probability_model, _check_regression_model, _cross_validation, 
+                       _destroy_param, _free_and_destroy_model, _free_model_content, 
+                       _get_decfun_bias, _get_decfun_coef, _get_labels, _get_nr_class, 
+                       _get_nr_feature, _kCPML_clearTrainingValueTrainingPhase, _kCPML_clearTrainingValueUpdatePhase, 
+                       _kCPML_commitCountMax, _kCPML_csvType, _kCPML_defaultsDomain, 
+                       _kCPML_fileprotection, _kCPML_loggingMode, _kCPML_machineLearningAlgorithm, 
+                       _kCPML_mapFunction, _kCPML_modelOpenFileFlagOptions, _kCPML_schema, 
+                       _kCPML_schema_categoricalData, _kCPML_schema_header, _kCPML_schema_headerDef, 
+                       _kCPML_schema_predictedValue, _kCPML_schema_reMapTable, _kCPML_schema_shouldIndexDiscreteValue, 
+                       _kCPML_schema_substituteValue, _kCPML_schema_substitutionMatch, 
+                       _kCPML_schema_vectorType, _kCPML_seralizeFunction, _kCPML_tunable, 
+                       _kCPML_versionMD, _kCPML_versionTD, _libsvm_cpu_count, _libsvm_version, 
+                       _load_model, _predict, _predict_probability, _predict_values, 
+                       _predict_values_vn, _predict_vn, _save_model, _set_print_string_function, 
+                       _svm_check_parameter, _svm_check_probability_model, _svm_cross_validation, 
+                       _svm_destroy_param, _svm_free_and_destroy_model, _svm_free_model_content, 
+                       _svm_get_labels, _svm_get_nr_class, _svm_get_nr_sv, _svm_get_sv_indices, 
+                       _svm_get_svm_type, _svm_get_svr_probability, _svm_load_model, 
+                       _svm_predict, _svm_predict_probability, _svm_predict_values, 
+                       _svm_save_model, _svm_set_print_string_function, _svm_train, 
+                       _train ]
+    objc-classes:    [ CPMLDB, CPMLEvalutionResult, CPMLKMeansModel, CPMLModel, CPMLModelEvaluate, 
+                       CPMLNaiveBayesStorageManager, CPMLStorageManager, CPMLTrainer ]
+  - targets:         [ x86_64-watchos-simulator, arm64-watchos-simulator ]
+    symbols:         [ __ZN15CPMLTunableData11tDataGetIntEPKcPi, __ZN15CPMLTunableData12getNSNumFromEPKc, 
+                       __ZN15CPMLTunableData12tDataGetBoolEPKcPb, __ZN15CPMLTunableData12tDataGetUIntEPKcPj, 
+                       __ZN15CPMLTunableData14tDataGetDoubleEPKcPd, __ZN15CPMLTunableData14tDataGetStringEPKcPcm, 
+                       __ZN15CPMLTunableData14tDataGetUInt64EPKcPy, __ZN15CPMLTunableData17isOptionAvailableEi, 
+                       __ZN15CPMLTunableDataC1EPvS0_, __ZN15CPMLTunableDataC2EPvS0_, 
+                       __ZNK15CPMLTunableData16getNumberOfItemsEv ]
+    objc-ivars:      [ CPMLModel._mData, CPMLModel._realBase, CPMLModel._totalBytesIntSection, 
+                       CPMLModel._totalBytesRealSection ]
+...

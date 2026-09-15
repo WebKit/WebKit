@@ -1,0 +1,6 @@
+framework module AudioToolbox [system] {
+	umbrella header "AudioToolbox.h"
+
+	export *
+	module * { export * }
+}

@@ -1,0 +1,10 @@
+framework module CoreImage [system] {
+  umbrella header "CoreImage.h"
+  export *
+  module * { export * }
+  
+  explicit module CIFilterBuiltins {
+      header "CIFilterBuiltins.h"
+      export *
+  }
+}

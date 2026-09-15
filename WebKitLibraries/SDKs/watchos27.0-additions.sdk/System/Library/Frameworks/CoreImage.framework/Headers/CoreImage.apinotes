@@ -1,0 +1,1231 @@
+Name: CoreImage
+
+#---------------------------------- Current -----------------------------------#
+
+Globals:
+  
+# CIFormat
+- Name: kCIFormatARGB8
+  SwiftName: ARGB8
+- Name: kCIFormatBGRA8
+  SwiftName: BGRA8
+- Name: kCIFormatRGBA8
+  SwiftName: RGBA8
+- Name: kCIFormatRGBX8
+  SwiftName: RGBX8
+- Name: kCIFormatABGR8
+  SwiftName: ABGR8
+- Name: kCIFormatRGBAh
+  SwiftName: RGBAh
+- Name: kCIFormatRGBA16
+  SwiftName: RGBA16
+- Name: kCIFormatRGBAf
+  SwiftName: RGBAf
+- Name: kCIFormatA8
+  SwiftName: A8
+- Name: kCIFormatA16
+  SwiftName: A16
+- Name: kCIFormatAh
+  SwiftName: Ah
+- Name: kCIFormatAf
+  SwiftName: Af
+- Name: kCIFormatR8
+  SwiftName: R8
+- Name: kCIFormatR16
+  SwiftName: R16
+- Name: kCIFormatRh
+  SwiftName: Rh
+- Name: kCIFormatRf
+  SwiftName: Rf
+- Name: kCIFormatRG8
+  SwiftName: RG8
+- Name: kCIFormatRG16
+  SwiftName: RG16
+- Name: kCIFormatRGh
+  SwiftName: RGh
+- Name: kCIFormatRGf
+  SwiftName: RGf
+- Name: kCIFormatL8
+  SwiftName: L8
+- Name: kCIFormatL16
+  SwiftName: L16
+- Name: kCIFormatLh
+  SwiftName: Lh
+- Name: kCIFormatLf
+  SwiftName: Lf
+- Name: kCIFormatLA8
+  SwiftName: LA8
+- Name: kCIFormatLA16
+  SwiftName: LA16
+- Name: kCIFormatLAh
+  SwiftName: LAh
+- Name: kCIFormatLAf
+  SwiftName: LAf
+
+# CIFormat - Private
+- Name: kCIFormatNil
+  SwiftName: Nil
+- Name: kCIFormatXBGR8
+  SwiftName: XBGR8
+- Name: kCIFormatXRGB8
+  SwiftName: XRGB8
+- Name: kCIFormatBGRX8
+  SwiftName: BGRX8
+- Name: kCIFormatARGB16
+  SwiftName: ARGB16
+- Name: kCIFormatARGBf
+  SwiftName: ARGBf
+- Name: kCIFormatI8
+  SwiftName: I8
+- Name: kCIFormatI16
+  SwiftName: I16
+- Name: kCIFormatIh
+  SwiftName: Ih
+- Name: kCIFormatIf
+  SwiftName: If
+- Name: kCIFormatRGB8
+  SwiftName: RGB8
+- Name: kCIFormatRGB16
+  SwiftName: RGB16
+- Name: kCIFormatRGBh
+  SwiftName: RGBh
+- Name: kCIFormatRGBf
+  SwiftName: RGBf
+- Name: kCIFormat420f
+  SwiftName: 420f
+- Name: kCIFormat420v
+  SwiftName: 420v
+- Name: kCIFormatYCbYCr8
+  SwiftName: YCbYCr8
+- Name: kCIFormatCbYCrY8
+  SwiftName: CbYCrY8
+- Name: kCIFormatYCbYCr8f
+  SwiftName: YCbYCr8f
+- Name: kCIFormatCbYCrY8f
+  SwiftName: CbYCrY8f
+- Name: kCIFormatRGBA14
+  SwiftName: RGBA14
+- Name: kCIFormatRGB10WideGamut
+  SwiftName: RGB10WideGamut
+- Name: kCIFormatARGB10WideGamut
+  SwiftName: ARGB10WideGamut
+- Name: kCIFormatA2RGB10
+  SwiftName: A2RGB10
+- Name: kCIFormatA2BGR10
+  SwiftName: A2BGR10
+
+# CIImageOption
+- Name: kCIImageColorSpace
+  SwiftName: colorSpace
+- Name: kCIImageNearestSampling
+  SwiftName: nearestSampling
+- Name: kCIImageProperties
+  SwiftName: properties
+- Name: kCIImageApplyOrientationProperty
+  SwiftName: applyOrientationProperty
+- Name: kCIImageCacheImmediately
+  SwiftName: cacheImmediately
+- Name: kCIImageExpandToHDR
+  SwiftName: expandToHDR
+- Name: kCIImageTextureTarget
+  SwiftName: textureTarget
+- Name: kCIImageTextureFormat
+  SwiftName: textureFormat
+- Name: kCIImageSubsampleFactor
+  SwiftName: subsampleFactor
+- Name: kCIImageTypeIdentifierHint
+  SwiftName: typeIdentifierHint
+- Name: kCIImageUseHardwareAcceleration
+  SwiftName: useHardwareAcceleration
+- Name: kCIImageAuxiliaryDepth
+  SwiftName: auxiliaryDepth
+- Name: kCIImageAuxiliaryDisparity
+  SwiftName: auxiliaryDisparity
+- Name: kCIImageAuxiliaryPortraitEffectsMatte
+  SwiftName: auxiliaryPortraitEffectsMatte
+- Name: kCIImageAuxiliarySemanticSegmentationSkinMatte
+  SwiftName: auxiliarySemanticSegmentationSkinMatte
+- Name: kCIImageAuxiliarySemanticSegmentationHairMatte
+  SwiftName: auxiliarySemanticSegmentationHairMatte
+- Name: kCIImageAuxiliarySemanticSegmentationTeethMatte
+  SwiftName: auxiliarySemanticSegmentationTeethMatte
+- Name: kCIImageAuxiliarySemanticSegmentationGlassesMatte
+  SwiftName: auxiliarySemanticSegmentationGlassesMatte
+- Name: kCIImageAuxiliarySemanticSegmentationSkyMatte
+  SwiftName: auxiliarySemanticSegmentationSkyMatte
+- Name: kCIImageAuxiliaryHDRGainMap
+  SwiftName: auxiliaryHDRGainMap
+- Name: kCIImageContentHeadroom
+  SwiftName: contentHeadroom
+- Name: kCIImageContentAverageLightLevel
+  SwiftName: contentAverageLightLevel
+- Name: kCIImageApplyCleanAperture
+  SwiftName: applyCleanAperture
+
+# CIImageRepresentationOption
+- Name: kCIImageRepresentationHDRGainMapImage
+  SwiftName: hdrGainMapImage
+- Name: kCIImageRepresentationHDRGainMapAsRGB
+  SwiftName: hdrGainMapAsRGB
+
+# CIImageOptions - Private
+- Name: kCIImageFlipped
+  SwiftName: flipped
+- Name: kCIImagePremultiplied
+  SwiftName: premultiplied
+- Name: kCIImageAutoApplyVideoFilter
+  SwiftName: autoApplyVideoFilter
+- Name: kCIImageApplyGeometryCorrectionVideoFilter
+  SwiftName: applyGeometryCorrectionVideoFilter
+- Name: kCIImageApplyColorspaceCorrectionVideoFilter
+  SwiftName: applyColorspaceCorrectionVideoFilter
+- Name: kCIImageApplyColorCorrectionVideoFilter
+  SwiftName: applyColorCorrectionVideoFilter
+- Name: kCIImageApplyGammaCorrectionVideoFilter
+  SwiftName: applyGammaCorrectionVideoFilter
+- Name: kCIImageEdgesAreClear
+  SwiftName: edgesAreClear
+- Name: kCIImageClampToEdge
+  SwiftName: clampToEdge
+- Name: kCIImageEdgeRepeat
+  SwiftName: edgeRepeat
+- Name: kCIImageAlphaOne
+  SwiftName: alphaOne
+- Name: kCIImageOpaque
+  SwiftName: opaque
+- Name: kCIImageCacheHint
+  SwiftName: cacheHint
+- Name: kCIImageYCCMatrix
+  SwiftName: YCCMatrix
+- Name: kCIImageIgnorePixelFormatFor601Fixup
+  SwiftName: ignorePixelFormatFor601Fixup
+- Name: kCIImageAVDepthData
+  SwiftName: AVDepthData
+- Name: kCIImageAVPortraitEffectsMatte
+  SwiftName: AVPortraitEffectsMatte
+- Name: kCIImageTextScaleFactor
+  SwiftName: textScaleFactor
+
+# CIContextOption
+- Name: kCIContextOutputColorSpace
+  SwiftName: outputColorSpace
+- Name: kCIContextWorkingColorSpace
+  SwiftName: workingColorSpace
+- Name: kCIContextWorkingFormat
+  SwiftName: workingFormat
+- Name: kCIContextHighQualityDownsample
+  SwiftName: highQualityDownsample
+- Name: kCIContextOutputPremultiplied
+  SwiftName: outputPremultiplied
+- Name: kCIContextCacheIntermediates
+  SwiftName: cacheIntermediates
+- Name: kCIContextUseSoftwareRenderer
+  SwiftName: useSoftwareRenderer
+- Name: kCIContextPriorityRequestLow
+  SwiftName: priorityRequestLow
+- Name: kCIContextAllowLowPower
+  SwiftName: allowLowPower
+- Name: kCIContextName
+  SwiftName: name
+- Name: kCIContextMemoryLimit
+  SwiftName: memoryTarget
+
+# CIContextOption - Private
+- Name: kCIContextDisableSoftwareFallback
+  SwiftName: disableSoftwareFallback
+- Name: kCIContextQuality
+  SwiftName: quality
+- Name: kCIContextOpenGLShareContext
+  SwiftName: openGLShareContext
+- Name: kCIContextDefaultCGImageFormat
+  SwiftName: defaultCGImageFormat
+- Name: kCIContextParametricColorMatching
+  SwiftName: parametricColorMatching
+- Name: kCIContextColorCubeSize
+  SwiftName: colorCubeSize
+- Name: kCIContextInlineAffineTransforms
+  SwiftName: inlineAffineTransforms
+- Name: kCIContextEnableBlending
+  SwiftName: enableBlending
+- Name: kCIContextUseMetalRenderer
+  SwiftName: useMetalRenderer
+- Name: kCIContextAllowClampToAlpha
+  SwiftName: allowClampToAlpha
+- Name: kCIContextIntermediateMemoryTarget
+  SwiftName: intermediateMemoryTarget
+- Name: kCIContextPriorityRequestHigh
+  SwiftName: priorityRequestHigh
+- Name: kCIContextAllowHalfPrecision
+  SwiftName: allowHalfPrecision
+- Name: kCIContextHLGOpticalScale
+  SwiftName: HLGOpticalScale
+- Name: kCIContextLossyCompressedIntermediates
+  SwiftName: lossyCompressedIntermediates
+
+# CIImageAutoAdjustmentOption
+- Name: kCIImageAutoAdjustEnhance
+  SwiftName: enhance
+- Name: kCIImageAutoAdjustRedEye
+  SwiftName: redEye
+- Name: kCIImageAutoAdjustFeatures
+  SwiftName: features
+- Name: kCIImageAutoAdjustCrop
+  SwiftName: crop
+- Name: kCIImageAutoAdjustLevel
+  SwiftName: level
+
+# CIRAWFilterOption
+- Name: kCIInputAllowDraftModeKey
+  SwiftName: allowDraftMode
+- Name: kCIInputDecoderVersionKey
+  SwiftName: decoderVersion
+- Name: kCISupportedDecoderVersionsKey
+  SwiftName: supportedDecoderVersions
+- Name: kCIInputBaselineExposureKey
+  SwiftName: baselineExposure
+- Name: kCIInputBoostKey
+  SwiftName: boostAmount
+- Name: kCIInputBoostShadowAmountKey
+  SwiftName: boostShadowAmount
+- Name: kCIInputDisableGamutMapKey
+  SwiftName: disableGamutMap
+- Name: kCIInputNeutralChromaticityXKey
+  SwiftName: neutralChromaticityX
+- Name: kCIInputNeutralChromaticityYKey
+  SwiftName: neutralChromaticityY
+- Name: kCIInputNeutralTemperatureKey
+  SwiftName: neutralTemperature
+- Name: kCIInputNeutralTintKey
+  SwiftName: neutralTint
+- Name: kCIInputNeutralLocationKey
+  SwiftName: neutralLocation
+- Name: kCIInputScaleFactorKey
+  SwiftName: scaleFactor
+- Name: kCIInputIgnoreImageOrientationKey
+  SwiftName: ignoreImageOrientation
+- Name: kCIInputImageOrientationKey
+  SwiftName: imageOrientation
+- Name: kCIInputEnableSharpeningKey
+  SwiftName: enableSharpening
+- Name: kCIInputEnableChromaticNoiseTrackingKey
+  SwiftName: enableChromaticNoiseTracking
+- Name: kCIInputNoiseReductionAmountKey
+  SwiftName: noiseReductionAmount
+- Name: kCIInputMoireAmountKey
+  SwiftName: moireAmount
+- Name: kCIInputEnableVendorLensCorrectionKey
+  SwiftName: enableVendorLensCorrection
+- Name: kCIInputLuminanceNoiseReductionAmountKey
+  SwiftName: luminanceNoiseReductionAmount
+- Name: kCIInputColorNoiseReductionAmountKey
+  SwiftName: colorNoiseReductionAmount
+- Name: kCIInputNoiseReductionSharpnessAmountKey
+  SwiftName: noiseReductionSharpnessAmount
+- Name: kCIInputNoiseReductionContrastAmountKey
+  SwiftName: noiseReductionContrastAmount
+- Name: kCIInputNoiseReductionDetailAmountKey
+  SwiftName: noiseReductionDetailAmount
+- Name: kCIInputLinearSpaceFilter
+  SwiftName: linearSpaceFilter
+- Name: kCIOutputNativeSizeKey
+  SwiftName: outputNativeSize
+- Name: kCIActiveKeys
+  SwiftName: activeKeys
+- Name: kCIPropertiesKey
+  SwiftName: propertiesKey
+
+Classes:
+
+- Name: CIColor
+  Properties:
+  - Name: blackColor
+    PropertyKind: Class
+    SwiftName: black
+  - Name: whiteColor
+    PropertyKind: Class
+    SwiftName: white
+  - Name: grayColor
+    PropertyKind: Class
+    SwiftName: gray
+  - Name: redColor
+    PropertyKind: Class
+    SwiftName: red
+  - Name: greenColor
+    PropertyKind: Class
+    SwiftName: green
+  - Name: blueColor
+    PropertyKind: Class
+    SwiftName: blue
+  - Name: cyanColor
+    PropertyKind: Class
+    SwiftName: cyan
+  - Name: magentaColor
+    PropertyKind: Class
+    SwiftName: magenta
+  - Name: yellowColor
+    PropertyKind: Class
+    SwiftName: yellow
+  - Name: clearColor
+    PropertyKind: Class
+    SwiftName: clear
+- Name: CIImage
+  Properties:
+  - Name: blackImage
+    PropertyKind: Class
+    SwiftName: black
+  - Name: whiteImage
+    PropertyKind: Class
+    SwiftName: white
+  - Name: grayImage
+    PropertyKind: Class
+    SwiftName: gray
+  - Name: redImage
+    PropertyKind: Class
+    SwiftName: red
+  - Name: greenImage
+    PropertyKind: Class
+    SwiftName: green
+  - Name: blueImage
+    PropertyKind: Class
+    SwiftName: blue
+  - Name: cyanImage
+    PropertyKind: Class
+    SwiftName: cyan
+  - Name: magentaImage
+    PropertyKind: Class
+    SwiftName: magenta
+  - Name: yellowImage
+    PropertyKind: Class
+    SwiftName: yellow
+  - Name: clearImage
+    PropertyKind: Class
+    SwiftName: clear
+  Methods:
+  - Selector: "imageByApplyingTransform:"
+    MethodKind: Instance
+    SwiftName: "transformed(by:)"    
+  - Selector: "imageByApplyingTransform:highQualityDownsample:"
+    MethodKind: Instance
+    SwiftName: "transformed(by:highQualityDownsample:)"    
+  - Selector: "imageByApplyingOrientation:"
+    MethodKind: Instance
+    SwiftName: "oriented(forExifOrientation:)"
+  - Selector: "imageTransformForOrientation:"
+    MethodKind: Instance
+    SwiftName: "orientationTransform(forExifOrientation:)"
+  - Selector: "imageByApplyingCGOrientation:"
+    MethodKind: Instance
+    SwiftName: "oriented(_:)"
+  - Selector: "imageTransformForCGOrientation:"
+    MethodKind: Instance
+    SwiftName: "orientationTransform(for:)"
+  - Selector: "imageByCompositingOverImage:"
+    MethodKind: Instance
+    SwiftName: "composited(over:)"
+  - Selector: "imageByCroppingToRect:"
+    MethodKind: Instance
+    SwiftName: "cropped(to:)"
+  - Selector: "imageByClampingToExtent"
+    MethodKind: Instance
+    SwiftName: "clampedToExtent()"
+  - Selector: "imageByClampingToRect:"
+    MethodKind: Instance
+    SwiftName: "clamped(to:)"
+  - Selector: "imageByApplyingFilter:withInputParameters:"
+    MethodKind: Instance
+    SwiftName: "applyingFilter(_:parameters:)"
+    Parameters:
+    - Position: 1
+      Nullability: N
+  - Selector: "imageByApplyingFilter:"
+    MethodKind: Instance
+    SwiftName: "applyingFilter(_:)"
+  - Selector: "imageBySettingAlphaOneInExtent:"
+    MethodKind: Instance
+    SwiftName: "settingAlphaOne(in:)"    
+  - Selector: "imageByApplyingGaussianBlurWithSigma:"
+    MethodKind: Instance
+    SwiftName: "applyingGaussianBlur(sigma:)"
+  - Selector: "imageByColorMatchingColorSpaceToWorkingSpace:"
+    MethodKind: Instance
+    SwiftName: "matchedToWorkingSpace(from:)"
+  - Selector: "imageByColorMatchingWorkingSpaceToColorSpace:"
+    MethodKind: Instance
+    SwiftName: "matchedFromWorkingSpace(to:)"
+  - Selector: "imageBySamplingLinear"
+    MethodKind: Instance
+    SwiftName: "samplingLinear()"
+  - Selector: "imageBySamplingNearest"
+    MethodKind: Instance
+    SwiftName: "samplingNearest()"
+  - Selector: "imageByInsertingIntermediate"
+    MethodKind: Instance
+    SwiftName: "insertingIntermediate()"
+  - Selector: "imageByInsertingIntermediate:"
+    MethodKind: Instance
+    SwiftName: "insertingIntermediate(cache:)"
+  - Selector: "imageByInsertingTiledIntermediate"
+    MethodKind: Instance
+    SwiftName: "insertingTiledIntermediate()"
+  - Selector: "imageByTaggingWithColorSpace:"
+    MethodKind: Instance
+    SwiftName: "tagged(with:)"
+  - Selector: "imageBySettingContentHeadroom:"
+    MethodKind: Instance
+    SwiftName: "settingContentHeadroom(_:)"
+  - Selector: "imageBySettingContentAverageLightLevel:"
+    MethodKind: Instance
+    SwiftName: "settingContentAverageLightLevel(_:)"
+- Name: CIKernel
+  Methods:
+  - Selector: "kernelsWithString:"
+    MethodKind: Class
+    SwiftName: "makeKernels(source:)"    
+  - Selector: "kernelWithString:"
+    MethodKind: Class
+    SwiftName: "init(source:)"
+  - Selector: "applyWithExtent:roiCallback:arguments:"
+    MethodKind: Instance
+    SwiftName: "apply(extent:roiCallback:arguments:)"
+    Parameters:
+    - Position: 2
+      Nullability: N
+- Name: CIColorKernel
+  Methods:
+  - Selector: "applyWithExtent:arguments:"
+    MethodKind: Instance
+    SwiftName: "apply(extent:arguments:)"
+    Parameters:
+    - Position: 1
+      Nullability: N
+- Name: CIWarpKernel
+  Methods:
+  - Selector: "applyWithExtent:roiCallback:inputImage:arguments:"
+    MethodKind: Instance
+    SwiftName: "apply(extent:roiCallback:image:arguments:)"
+    Parameters:
+    - Position: 3
+      Nullability: N
+- Name: CIBlendKernel
+  Methods:
+  - Selector: "applyWithForeground:background:"
+    MethodKind: Instance
+    SwiftName: "apply(foreground:background:)"
+  - Selector: "applyWithForeground:background:colorSpace:"
+    MethodKind: Instance
+    SwiftName: "apply(foreground:background:colorSpace:)"
+- Name: CIFilter
+  Methods:
+  - Selector: "filterWithName:withInputParameters:" 
+    MethodKind: Class
+    SwiftName: "init(name:parameters:)"
+
+- Name: CIRAWFilter
+  Methods:
+  - Selector: "supportedCameraModelsWithVersion:"
+    MethodKind: Class
+    SwiftName: "supportedCameraModels(with:)"
+
+#--------------------------------- Versioned ----------------------------------#
+
+SwiftVersions:
+
+#---------------------------------- Swift 3 -----------------------------------#
+
+- Version: 3
+
+  Classes:
+
+  - Name: CIColor
+    Properties:
+    - Name: blackColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: whiteColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: grayColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: redColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: greenColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: blueColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: cyanColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: magentaColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: yellowColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+    - Name: clearColor
+      PropertyKind: Class
+      SwiftImportAsAccessors: true
+  - Name: CIImage
+    Methods:
+    - Selector: "imageByApplyingTransform:"
+      MethodKind: Instance
+      SwiftName: "applying(_:)"    
+    - Selector: "imageByApplyingOrientation:"
+      MethodKind: Instance
+      SwiftName: "applyingOrientation(_:)"
+    - Selector: "imageTransformForOrientation:"
+      MethodKind: Instance
+      SwiftName: "imageTransform(forOrientation:)"
+    - Selector: "imageByCompositingOverImage:"
+      MethodKind: Instance
+      SwiftName: "compositingOverImage(_:)"
+    - Selector: "imageByCroppingToRect:"
+      MethodKind: Instance
+      SwiftName: "cropping(to:)"
+    - Selector: "imageByClampingToExtent"
+      MethodKind: Instance
+      SwiftName: "clampingToExtent()"
+    - Selector: "imageByClampingToRect:"
+      MethodKind: Instance
+      SwiftName: "clamping(to:)"
+    - Selector: "imageByApplyingFilter:withInputParameters:"
+      MethodKind: Instance
+      SwiftName: "applyingFilter(_:withInputParameters:)"
+      Parameters:
+      - Position: 1
+        Nullability: O
+    - Selector: "imageBySettingAlphaOneInExtent:"
+      MethodKind: Instance
+      SwiftName: "settingAlphaOne(inExtent:)"    
+    - Selector: "imageByApplyingGaussianBlurWithSigma:"
+      MethodKind: Instance
+      SwiftName: "applyingGaussianBlur(withSigma:)"
+  - Name: CIKernel
+    Methods:
+    - Selector: "kernelsWithString:"
+      MethodKind: Class
+      SwiftName: "kernels(with:)"    
+    - Selector: "kernelWithString:"
+      MethodKind: Class
+      SwiftName: "init(string:)"
+    - Selector: "applyWithExtent:roiCallback:arguments:"
+      MethodKind: Instance
+      SwiftName: "apply(withExtent:roiCallback:arguments:)"
+      Parameters:
+      - Position: 2
+        Nullability: O
+  - Name: CIColorKernel
+    Methods:
+    - Selector: "applyWithExtent:arguments:"
+      MethodKind: Instance
+      SwiftName: "apply(withExtent:arguments:)"
+      Parameters:
+      - Position: 1
+        Nullability: O
+  - Name: CIWarpKernel
+    Methods:
+    - Selector: "applyWithExtent:roiCallback:inputImage:arguments:"
+      MethodKind: Instance
+      SwiftName: "apply(withExtent:roiCallback:inputImage:arguments:)"
+      Parameters:
+      - Position: 3
+        Nullability: O
+  - Name: CIBlendKernel
+    Methods:
+    - Selector: "applyWithForeground:background:"
+      MethodKind: Instance
+      SwiftName: "apply(withForeground:background:)"
+    - Selector: "applyWithForeground:background:colorSpace:"
+      MethodKind: Instance
+      SwiftName: "apply(foreground:background:colorSpace:)"
+
+#---------------------------------- Swift 4 -----------------------------------#
+
+- Version: 4
+  
+  Typedefs:
+
+  - Name: CIFormat
+    SwiftWrapper: none
+  - Name: CIImageOption
+    SwiftWrapper: none
+  - Name: CIImageAutoAdjustmentOption
+    SwiftWrapper: none
+  - Name: CIRAWFilterOption
+    SwiftWrapper: none
+  - Name: CIContextOption
+    SwiftWrapper: none
+  - Name: CIImageRepresentationOption
+    SwiftWrapper: none
+
+  Globals:
+    
+  # CIFormat
+  - Name: kCIFormatARGB8
+    SwiftName: kCIFormatARGB8
+  - Name: kCIFormatBGRA8
+    SwiftName: kCIFormatBGRA8
+  - Name: kCIFormatRGBA8
+    SwiftName: kCIFormatRGBA8
+  - Name: kCIFormatRGBX8
+    SwiftName: kCIFormatRGBX8
+  - Name: kCIFormatABGR8
+    SwiftName: kCIFormatABGR8
+  - Name: kCIFormatRGBAh
+    SwiftName: kCIFormatRGBAh
+  - Name: kCIFormatRGBA16
+    SwiftName: kCIFormatRGBA16
+  - Name: kCIFormatRGBAf
+    SwiftName: kCIFormatRGBAf
+  - Name: kCIFormatRGBXh
+    SwiftName: kCIFormatRGBXh
+  - Name: kCIFormatRGBXf
+    SwiftName: kCIFormatRGBXf
+  - Name: kCIFormatA8
+    SwiftName: kCIFormatA8
+  - Name: kCIFormatA16
+    SwiftName: kCIFormatA16
+  - Name: kCIFormatAh
+    SwiftName: kCIFormatAh
+  - Name: kCIFormatAf
+    SwiftName: kCIFormatAf
+  - Name: kCIFormatR8
+    SwiftName: kCIFormatR8
+  - Name: kCIFormatR16
+    SwiftName: kCIFormatR16
+  - Name: kCIFormatRh
+    SwiftName: kCIFormatRh
+  - Name: kCIFormatRf
+    SwiftName: kCIFormatRf
+  - Name: kCIFormatRG8
+    SwiftName: kCIFormatRG8
+  - Name: kCIFormatRG16
+    SwiftName: kCIFormatRG16
+  - Name: kCIFormatRGh
+    SwiftName: kCIFormatRGh
+  - Name: kCIFormatRGf
+    SwiftName: kCIFormatRGf
+  - Name: kCIFormatL8
+    SwiftName: kCIFormatL8
+  - Name: kCIFormatL16
+    SwiftName: kCIFormatL16
+  - Name: kCIFormatLh
+    SwiftName: kCIFormatLh
+  - Name: kCIFormatLf
+    SwiftName: kCIFormatLf
+  - Name: kCIFormatLA8
+    SwiftName: kCIFormatLA8
+  - Name: kCIFormatLA16
+    SwiftName: kCIFormatLA16
+  - Name: kCIFormatLAh
+    SwiftName: kCIFormatLAh
+  - Name: kCIFormatLAf
+    SwiftName: kCIFormatLAf
+
+  # CIFormat - Private
+  - Name: kCIFormatNil
+    SwiftName: kCIFormatNil
+  - Name: kCIFormatXBGR8
+    SwiftName: kCIFormatXBGR8
+  - Name: kCIFormatXRGB8
+    SwiftName: kCIFormatXRGB8
+  - Name: kCIFormatBGRX8
+    SwiftName: kCIFormatBGRX8
+  - Name: kCIFormatARGB16
+    SwiftName: kCIFormatARGB16
+  - Name: kCIFormatARGBf
+    SwiftName: kCIFormatARGBf
+  - Name: kCIFormatI8
+    SwiftName: kCIFormatI8
+  - Name: kCIFormatI16
+    SwiftName: kCIFormatI16
+  - Name: kCIFormatIh
+    SwiftName: kCIFormatIh
+  - Name: kCIFormatIf
+    SwiftName: kCIFormatIf
+  - Name: kCIFormatA10
+    SwiftName: A10
+  - Name: kCIFormatA12
+    SwiftName: A12
+  - Name: kCIFormatLA10
+    SwiftName: LA10
+  - Name: kCIFormatLA12
+    SwiftName: LA12
+  - Name: kCIFormatRGB8
+    SwiftName: kCIFormatRGB8
+  - Name: kCIFormatRGB16
+    SwiftName: kCIFormatRGB16
+  - Name: kCIFormatRGBh
+    SwiftName: kCIFormatRGBh
+  - Name: kCIFormatRGBf
+    SwiftName: kCIFormatRGBf
+  - Name: kCIFormat420f
+    SwiftName: kCIFormat420f
+  - Name: kCIFormat420v
+    SwiftName: kCIFormat420v
+  - Name: kCIFormatYCbYCr8
+    SwiftName: kCIFormatYCbYCr8
+  - Name: kCIFormatCbYCrY8
+    SwiftName: kCIFormatCbYCrY8
+  - Name: kCIFormatYCbYCr8f
+    SwiftName: kCIFormatYCbYCr8f
+  - Name: kCIFormatCbYCrY8f
+    SwiftName: kCIFormatCbYCrY8f
+  - Name: kCIFormatRGBA14
+    SwiftName: kCIFormatRGBA14
+  - Name: kCIFormatRGB10WideGamut
+    SwiftName: kCIFormatRGB10WideGamut
+  - Name: kCIFormatARGB10WideGamut
+    SwiftName: kCIFormatARGB10WideGamut
+  - Name: kCIFormatA2RGB10
+    SwiftName: kCIFormatA2RGB10
+  - Name: kCIFormatA2BGR10
+    SwiftName: kCIFormatA2BGR10
+
+  # CIImageOption
+  - Name: kCIImageColorSpace
+    SwiftName: kCIImageColorSpace
+  - Name: kCIImageNearestSampling
+    SwiftName: kCIImageNearestSampling
+  - Name: kCIImageProperties
+    SwiftName: kCIImageProperties
+  - Name: kCIImageApplyOrientationProperty
+    SwiftName: kCIImageApplyOrientationProperty
+  - Name: kCIImageTextureTarget
+    SwiftName: kCIImageTextureTarget
+  - Name: kCIImageTextureFormat
+    SwiftName: kCIImageTextureFormat
+  - Name: kCIImageAuxiliaryDepth
+    SwiftName: kCIImageAuxiliaryDepth
+  - Name: kCIImageAuxiliaryDisparity
+    SwiftName: kCIImageAuxiliaryDisparity
+  - Name: kCIImageAuxiliaryPortraitEffectsMatte
+    SwiftName: kCIImageAuxiliaryPortraitEffectsMatte
+
+  # CIImageOptions - Private
+  - Name: kCIImageFlipped
+    SwiftName: kCIImageFlipped
+  - Name: kCIImagePremultiplied
+    SwiftName: kCIImagePremultiplied
+  - Name: kCIImageAutoApplyVideoFilter
+    SwiftName: kCIImageAutoApplyVideoFilter
+  - Name: kCIImageApplyGeometryCorrectionVideoFilter
+    SwiftName: kCIImageApplyGeometryCorrectionVideoFilter
+  - Name: kCIImageApplyColorspaceCorrectionVideoFilter
+    SwiftName: kCIImageApplyColorspaceCorrectionVideoFilter
+  - Name: kCIImageApplyColorCorrectionVideoFilter
+    SwiftName: kCIImageApplyColorCorrectionVideoFilter
+  - Name: kCIImageApplyGammaCorrectionVideoFilter
+    SwiftName: kCIImageApplyGammaCorrectionVideoFilter
+  - Name: kCIImageEdgesAreClear
+    SwiftName: kCIImageEdgesAreClear
+  - Name: kCIImageClampToEdge
+    SwiftName: kCIImageClampToEdge
+  - Name: kCIImageEdgeRepeat
+    SwiftName: kCIImageEdgeRepeat
+  - Name: kCIImageAlphaOne
+    SwiftName: kCIImageAlphaOne
+  - Name: kCIImageOpaque
+    SwiftName: kCIImageOpaque
+  - Name: kCIImageCacheHint
+    SwiftName: kCIImageCacheHint
+  - Name: kCIImageCacheImmediately
+    SwiftName: kCIImageCacheImmediately
+  - Name: kCIImageYCCMatrix
+    SwiftName: kCIImageYCCMatrix
+  - Name: kCIImageIgnorePixelFormatFor601Fixup
+    SwiftName: kCIImageIgnorePixelFormatFor601Fixup
+  - Name: kCIImageAVDepthData
+    SwiftName: kCIImageAVDepthData
+  - Name: kCIImageAVPortraitEffectsMatte
+    SwiftName: kCIImageAVPortraitEffectsMatte
+  - Name: kCIImageTextScaleFactor
+    SwiftName: kCIImageTextScaleFactor
+
+  # CIContextOption
+  - Name: kCIContextOutputColorSpace
+    SwiftName: kCIContextOutputColorSpace
+  - Name: kCIContextWorkingColorSpace
+    SwiftName: kCIContextWorkingColorSpace
+  - Name: kCIContextWorkingFormat
+    SwiftName: kCIContextWorkingFormat
+  - Name: kCIContextHighQualityDownsample
+    SwiftName: kCIContextHighQualityDownsample
+  - Name: kCIContextOutputPremultiplied
+    SwiftName: kCIContextOutputPremultiplied
+  - Name: kCIContextCacheIntermediates
+    SwiftName: kCIContextCacheIntermediates
+  - Name: kCIContextUseSoftwareRenderer
+    SwiftName: kCIContextUseSoftwareRenderer
+  - Name: kCIContextPriorityRequestLow
+    SwiftName: kCIContextPriorityRequestLow
+
+  # CIContextOption - Private
+  - Name: kCIContextDisableSoftwareFallback
+    SwiftName: kCIContextDisableSoftwareFallback
+  - Name: kCIContextQuality
+    SwiftName: kCIContextQuality
+  - Name: kCIContextOpenGLShareContext
+    SwiftName: kCIContextOpenGLShareContext
+  - Name: kCIContextDefaultCGImageFormat
+    SwiftName: kCIContextDefaultCGImageFormat
+  - Name: kCIContextParametricColorMatching
+    SwiftName: kCIContextParametricColorMatching
+  - Name: kCIContextColorCubeSize
+    SwiftName: kCIContextColorCubeSize
+  - Name: kCIContextInlineAffineTransforms
+    SwiftName: kCIContextInlineAffineTransforms
+  - Name: kCIContextEnableBlending
+    SwiftName: kCIContextEnableBlending
+  - Name: kCIContextUseMetalRenderer
+    SwiftName: kCIContextUseMetalRenderer
+  - Name: kCIContextAllowLowPower
+    SwiftName: kCIContextAllowLowPower
+  - Name: kCIContextAllowClampToAlpha
+    SwiftName: kCIContextAllowClampToAlpha
+  - Name: kCIContextIntermediateMemoryTarget
+    SwiftName: kCIContextIntermediateMemoryTarget
+  - Name: kCIContextPriorityRequestHigh
+    SwiftName: kCIContextPriorityRequestHigh
+  - Name: kCIContextAllowHalfPrecision
+    SwiftName: kCIContextAllowHalfPrecision
+  - Name: kCIContextName
+    SwiftName: kCIContextName
+
+  # CIImageAutoAdjustmentOption
+  - Name: kCIImageAutoAdjustEnhance
+    SwiftName: kCIImageAutoAdjustEnhance
+  - Name: kCIImageAutoAdjustRedEye
+    SwiftName: kCIImageAutoAdjustRedEye
+  - Name: kCIImageAutoAdjustFeatures
+    SwiftName: kCIImageAutoAdjustFeatures
+  - Name: kCIImageAutoAdjustCrop
+    SwiftName: kCIImageAutoAdjustCrop
+  - Name: kCIImageAutoAdjustLevel
+    SwiftName: kCIImageAutoAdjustLevel
+
+  # CIRAWFilterOption
+  - Name: kCIInputAllowDraftModeKey
+    SwiftName: kCIInputAllowDraftModeKey
+  - Name: kCIInputDecoderVersionKey
+    SwiftName: kCIInputDecoderVersionKey
+  - Name: kCISupportedDecoderVersionsKey
+    SwiftName: kCISupportedDecoderVersionsKey
+  - Name: kCIInputBaselineExposureKey
+    SwiftName: kCIInputBaselineExposureKey
+  - Name: kCIInputBoostKey
+    SwiftName: kCIInputBoostKey
+  - Name: kCIInputBoostShadowAmountKey
+    SwiftName: kCIInputBoostShadowAmountKey
+  - Name: kCIInputDisableGamutMapKey
+    SwiftName: kCIInputDisableGamutMapKey
+  - Name: kCIInputNeutralChromaticityXKey
+    SwiftName: kCIInputNeutralChromaticityXKey
+  - Name: kCIInputNeutralChromaticityYKey
+    SwiftName: kCIInputNeutralChromaticityYKey
+  - Name: kCIInputNeutralTemperatureKey
+    SwiftName: kCIInputNeutralTemperatureKey
+  - Name: kCIInputNeutralTintKey
+    SwiftName: kCIInputNeutralTintKey
+  - Name: kCIInputNeutralLocationKey
+    SwiftName: kCIInputNeutralLocationKey
+  - Name: kCIInputScaleFactorKey
+    SwiftName: kCIInputScaleFactorKey
+  - Name: kCIInputIgnoreImageOrientationKey
+    SwiftName: kCIInputIgnoreImageOrientationKey
+  - Name: kCIInputImageOrientationKey
+    SwiftName: kCIInputImageOrientationKey
+  - Name: kCIInputEnableSharpeningKey
+    SwiftName: kCIInputEnableSharpeningKey
+  - Name: kCIInputEnableChromaticNoiseTrackingKey
+    SwiftName: kCIInputEnableChromaticNoiseTrackingKey
+  - Name: kCIInputNoiseReductionAmountKey
+    SwiftName: kCIInputNoiseReductionAmountKey
+  - Name: kCIInputMoireAmountKey
+    SwiftName: kCIInputMoireAmountKey
+  - Name: kCIInputEnableVendorLensCorrectionKey
+    SwiftName: kCIInputEnableVendorLensCorrectionKey
+  - Name: kCIInputLuminanceNoiseReductionAmountKey
+    SwiftName: kCIInputLuminanceNoiseReductionAmountKey
+  - Name: kCIInputColorNoiseReductionAmountKey
+    SwiftName: kCIInputColorNoiseReductionAmountKey
+  - Name: kCIInputNoiseReductionSharpnessAmountKey
+    SwiftName: kCIInputNoiseReductionSharpnessAmountKey
+  - Name: kCIInputNoiseReductionContrastAmountKey
+    SwiftName: kCIInputNoiseReductionContrastAmountKey
+  - Name: kCIInputNoiseReductionDetailAmountKey
+    SwiftName: kCIInputNoiseReductionDetailAmountKey
+  - Name: kCIInputLinearSpaceFilter
+    SwiftName: kCIInputLinearSpaceFilter
+  - Name: kCIOutputNativeSizeKey
+    SwiftName: kCIOutputNativeSizeKey
+  - Name: kCIActiveKeys
+    SwiftName: kCIActiveKeys
+
+  Classes:
+
+  - Name: CIContext
+    Methods:
+    - Selector: "contextWithCGLContext:pixelFormat:colorSpace:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextWithCGLContext:pixelFormat:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 2
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextWithCGContext:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextWithOptions:"
+      MethodKind: Class
+      Parameters:
+      - Position: 0
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "initWithOptions:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 0
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextWithEAGLContext:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextWithMTLDevice:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "contextForOfflineGPUAtIndex:colorSpace:options:sharedContext:"
+      MethodKind: Class
+      Parameters:
+      - Position: 2
+        Type: "NSDictionary<NSString*,id> * _Nullable"
+    - Selector: "TIFFRepresentationOfImage:format:colorSpace:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "JPEGRepresentationOfImage:colorSpace:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 2
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "HEIFRepresentationOfImage:format:colorSpace:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "PNGRepresentationOfImage:format:colorSpace:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "writeTIFFRepresentationOfImage:toURL:format:colorSpace:options:error:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 4
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "writePNGRepresentationOfImage:toURL:format:colorSpace:options:error:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 4
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "writeJPEGRepresentationOfImage:toURL:colorSpace:options:error:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary * _Nonnull"
+    - Selector: "writeHEIFRepresentationOfImage:toURL:format:colorSpace:options:error:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 4
+        Type: "NSDictionary * _Nonnull"
+    # CIContext - Private
+    - Selector: "initWithCGContext:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary * _Nullable"
+    - Selector: "initWithCGLContext:pixelFormat:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 2
+        Type: "NSDictionary * _Nullable"
+    - Selector: "initWithCGLContext:pixelFormat:colorSpace:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary* _Nullable"
+    - Selector: "initWithEAGLContext:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary * _Nullable"
+  - Name: CIImage
+    Methods:
+    - Selector: "imageWithCGImage:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithCGLayer:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithTexture:size:flipped:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithMTLTexture:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithContentsOfURL:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithData:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithCVImageBuffer:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithCVPixelBuffer:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithIOSurface:options:"
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithCGImage:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithCGLayer:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithData:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithTexture:size:flipped:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithMTLTexture:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithContentsOfURL:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithIOSurface:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithIOSurface:plane:format:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 3
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithCVImageBuffer:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithCVPixelBuffer:options:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "autoAdjustmentFiltersWithOptions:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 0
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    # CIImage - Private
+    - Selector: "imageWithContentsOfFile:options:"
+      MethodKind: Class
+      Parameters: 
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithContentsOfFile:options:"
+      MethodKind: Instance
+      Parameters: 
+      - Position: 1
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithBitmapData:bytesPerRow:size:format:options:"
+      MethodKind: Class
+      Parameters: 
+      - Position: 4
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithBitmapData:bytesPerRow:size:format:options:"
+      MethodKind: Instance
+      Parameters: 
+      - Position: 4
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithTexture:size:options:"
+      MethodKind: Class
+      Parameters: 
+      - Position: 2
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "initWithTexture:size:options:"
+      MethodKind: Instance
+      Parameters: 
+      - Position: 2
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+    - Selector: "imageWithAttributedString:format:options:"
+      MethodKind: Class
+      Parameters: 
+      - Position: 2
+        Type: "NSDictionary<NSString *,id> * _Nullable"
+
+  - Name: CIFilter
+    Methods:
+    - Selector: "filterWithImageURL:options:"  
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary *"
+    - Selector: "filterWithImageData:options:"  
+      MethodKind: Class
+      Parameters:
+      - Position: 1
+        Type: "NSDictionary *"
+    - Selector: "filterWithCVPixelBuffer:properties:options:"  
+      MethodKind: Class
+      Parameters:
+      - Position: 2
+        Type: "NSDictionary *"
+    - Selector: "filterWithName:withInputParameters:" 
+      MethodKind: Class
+      SwiftName: "init?(name:withInputParameters:)"

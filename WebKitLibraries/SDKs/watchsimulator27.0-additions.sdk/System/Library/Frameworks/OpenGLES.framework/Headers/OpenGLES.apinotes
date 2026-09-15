@@ -1,0 +1,53 @@
+---
+Name: OpenGLES
+
+SwiftVersions:
+- Version: 3
+  Functions:
+  - Name: EAGLGetVersion
+    Parameters:
+    - Position: 0
+      Nullability: U
+    - Position: 1
+      Nullability: U
+  Classes:
+  - Name: EAGLContext
+    Properties:
+    - Name: debugLabel
+      PropertyKind: Instance
+      Nullability: U
+    - Name: sharegroup
+      PropertyKind: Instance
+      Nullability: U
+    Methods:
+    - Selector: "initWithAPI:"
+      MethodKind: Instance
+      NullabilityOfRet: U
+    - Selector: "initWithAPI:sharegroup:"
+      MethodKind: Instance
+      NullabilityOfRet: U
+      Nullability: [S, U]
+    - Selector: "currentContext"
+      MethodKind: Class
+      NullabilityOfRet: U
+    - Selector: "setCurrentContext:"
+      MethodKind: Class
+      Parameters:
+      - Position: 0
+        Nullability: U
+    - Selector: "renderbufferStorage:fromDrawable:"
+      MethodKind: Instance
+      Parameters:
+      - Position: 1
+        Nullability: U
+  - Name: EAGLSharegroup
+    Properties:
+    - Name: debugLabel
+      PropertyKind: Instance
+      Nullability: U
+  Protocols:
+  - Name: EAGLDrawable
+    Properties:
+    - Name: drawableProperties
+      PropertyKind: Instance
+      Type: "NSDictionary*"
