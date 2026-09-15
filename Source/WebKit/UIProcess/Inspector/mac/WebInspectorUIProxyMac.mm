@@ -416,6 +416,62 @@ void WebInspectorUIProxy::showSavePanel(NSWindow *frontendWindow, NSURL *platfor
 {
     ASSERT(platformURL);
 
+    if (saveDatas.size() > 1) {
+        RetainPtr<NSMutableSet> baseNames = adoptNS([[NSMutableSet alloc] init]);
+        for (auto& saveData : saveDatas) {
+            RetainPtr fileURL = adoptNS([[NSURL alloc] initWithString:saveData.url.createNSString().get()]);
+            RetainPtr baseName = [[fileURL URLByDeletingPathExtension] lastPathComponent] ?: @"";
+            [baseNames addObject:baseName.get()];
+        }
+        if ([baseNames count] == saveDatas.size()) {
+            RetainPtr openPanel = [NSOpenPanel openPanel];
+            [openPanel setCanChooseFiles:NO];
+            [openPanel setCanChooseDirectories:YES];
+            [openPanel setCanCreateDirectories:YES];
+            [openPanel setPrompt:WEB_UI_STRING("Save", "Button label for the Web Inspector save-to-directory panel").createNSString().get()];
+
+            if (platformURL.isFileURL)
+                [openPanel setDirectoryURL:[platformURL URLByDeletingLastPathComponent]];
+
+            auto saveToDirectory = [saveDatas = WTF::move(saveDatas), completionHandler = WTF::move(completionHandler)] (NSURL *directoryURL) mutable {
+                ASSERT(directoryURL);
+
+                for (auto& saveData : saveDatas) {
+                    RetainPtr fileURL = adoptNS([[NSURL alloc] initWithString:saveData.url.createNSString().get()]);
+                    RetainPtr fileName = [fileURL lastPathComponent];
+                    if (![fileName length])
+                        continue;
+
+                    RetainPtr destinationURL = [directoryURL URLByAppendingPathComponent:fileName.get()];
+                    if (saveData.base64Encoded) {
+                        auto decodedData = base64Decode(saveData.content, { Base64DecodeOption::ValidatePadding });
+                        if (!decodedData)
+                            continue;
+                        RetainPtr dataContent = toNSData(decodedData->span());
+                        [dataContent writeToURL:destinationURL.get() atomically:YES];
+                    } else
+                        [saveData.content.createNSString() writeToURL:destinationURL.get() atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+                }
+
+                completionHandler(directoryURL);
+            };
+
+            auto didShowModal = [openPanel, saveToDirectory = WTF::move(saveToDirectory)] (NSInteger result) mutable {
+                if (result == NSModalResponseCancel)
+                    return;
+
+                ASSERT(result == NSModalResponseOK);
+                saveToDirectory(retainPtr([openPanel URL]).get());
+            };
+
+            if (RetainPtr window = frontendWindow ?: [NSApp keyWindow])
+                [openPanel beginSheetModalForWindow:window.get() completionHandler:makeBlockPtr(WTF::move(didShowModal)).get()];
+            else
+                didShowModal([openPanel runModal]);
+            return;
+        }
+    }
+
     RetainPtr savePanel = [NSSavePanel savePanel];
     [savePanel setExtensionHidden:NO];
 

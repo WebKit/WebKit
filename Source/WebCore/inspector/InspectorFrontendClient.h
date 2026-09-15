@@ -132,6 +132,7 @@ public:
     enum class SaveMode : uint8_t {
         SingleFile,
         FileVariants,
+        MultipleFiles,
     };
 
     using SaveData = InspectorFrontendClientSaveData;
