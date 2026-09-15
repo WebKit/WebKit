@@ -586,11 +586,11 @@ void JSWebAssemblyInstance::elemDrop(uint32_t elementIndex)
     m_passiveElements.quickClear(elementIndex);
 }
 
-bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex)
+bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint64_t srcAddress, uint64_t length, uint32_t dataSegmentIndex, uint8_t memoryIndex)
 {
     RELEASE_ASSERT(dataSegmentIndex < module().moduleInformation().dataSegmentsCount());
 
-    if (sumOverflows<uint32_t>(srcAddress, length))
+    if (sumOverflows<uint64_t>(srcAddress, length))
         return false;
 
     auto& segment = module().moduleInformation().data[dataSegmentIndex];
@@ -598,10 +598,10 @@ bool JSWebAssemblyInstance::memoryInit(uint64_t dstAddress, uint32_t srcAddress,
     if (srcAddress + length > segmentSizeInBytes)
         return false;
 
-    const uint8_t* segmentData = !length ? nullptr : &segment->byte(srcAddress);
+    const uint8_t* segmentData = !length ? nullptr : &segment->byte(static_cast<uint32_t>(srcAddress));
 
     ASSERT(memoryIndex < m_moduleInformation->memoryCount());
-    return memory(memoryIndex)->memory().init(dstAddress, segmentData, length);
+    return memory(memoryIndex)->memory().init(dstAddress, segmentData, static_cast<uint32_t>(length));
 }
 
 void JSWebAssemblyInstance::dataDrop(uint32_t dataSegmentIndex)

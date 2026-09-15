@@ -1584,7 +1584,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryAtomicNotify, UCPUStrictInt32, 
     return toUCPUStrictInt32(memoryAtomicNotify(instance, base, offset, countValue, memoryIndex));
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint32_t srcAddress, uint32_t length, uint8_t memoryIndex))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (JSWebAssemblyInstance* instance, unsigned dataSegmentIndex, uint64_t dstAddress, uint64_t srcAddress, uint64_t length, uint8_t memoryIndex))
 {
     return toUCPUStrictInt32(memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length, memoryIndex));
 }
