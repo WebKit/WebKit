@@ -74,6 +74,7 @@
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 
@@ -761,6 +762,25 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
+
+    auto resetCaughtDeceleratingScrollIfNeeded = makeScopeExit([state = gesture.state, weakSelf = WeakObjCPtr<WKAppKitGestureController>(self)] {
+        RetainPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        if (strongSelf->_caughtDeceleratingScroll) {
+            switch (state) {
+            case NSGestureRecognizerStateEnded:
+            case NSGestureRecognizerStateCancelled:
+            case NSGestureRecognizerStateFailed:
+                [strongSelf _resetCaughtDeceleratingScroll];
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+    });
 
     if (_dragGestureHasSentMouseDown) {
         WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Exiting early because _dragGestureHasSentMouseDown is true");
@@ -1987,11 +2007,15 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Gesture: %@", gestureLogDescription(gestureRecognizer));
 
+    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView];
+
     // While catching a decelerating scroll, only select gestures are allowed to begin:
     // - single click, so it can reset the interruption state
-    // - pan, so it can continue with successive scrolls
+    // - mouse tracking or pan, so they can continue with successive scrolls (scrollbar drag for the former)
     if (_caughtDeceleratingScroll) {
         if (gestureRecognizer == _singleClickGestureRecognizer)
+            return YES;
+        if ([self _isMouseTrackingGestureRecognizer:gestureRecognizer] && [self _isPointInScrollbar:locationInViewCoordinates])
             return YES;
         if (gestureRecognizer != _panGestureRecognizer)
             return NO;
@@ -1999,8 +2023,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
-
-    NSPoint locationInViewCoordinates = [gestureRecognizer locationInView:webView.get()];
 
     // An event over a scrollbar is a scrollbar interaction; only a mouse-tracking gesture (which drives
     // `Scrollbar::mouseDown` -> thumb drag) should handle it. The AppKit text-selection/context-menu gestures

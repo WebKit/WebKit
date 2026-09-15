@@ -807,6 +807,40 @@ extension AppKitGesturesTests.Basic {
         #expect(finalScrollPosition.y > 0)
     }
 
+    @Test
+    func scrollbarCanBeDraggedDuringScrollDeceleration() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 1200px; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+
+        let contentCenter = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let scrollEnd = CGPoint(x: contentCenter.x, y: contentCenter.y - 150)
+
+        await recap.play { composer in
+            composer._wk_scroll(withStart: contentCenter, end: scrollEnd, duration: .seconds(0.1))
+        }
+
+        let thumb = screenBounds(ofPointInWindowCoordinates: CGPoint(x: window.frame.maxX - 8, y: window.frame.midY))
+        let thumbDragEnd = CGPoint(x: thumb.x, y: thumb.y - window.frame.height)
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: thumb,
+                end: thumbDragEnd,
+                duration: .seconds(0.5),
+                pressAndWait: .seconds(0.1)
+            )
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let finalScrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        #expect(finalScrollPosition.y == 0)
+    }
+
     @Test(arguments: [true, false])
     func scrollingChangesScrollPosition(scrollOnImage: Bool) async throws {
         let image = scrollOnImage ? #"<img id="img" src="400x400-green.png" style="display: block; margin: 50px;">"# : ""
