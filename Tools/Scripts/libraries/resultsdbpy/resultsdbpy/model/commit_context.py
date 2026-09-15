@@ -332,6 +332,26 @@ class CommitContext(object):
             if commit.branch in ScmBase.DEFAULT_BRANCHES:
                 commit.branch = self.repositories[commit.repository_id].default_branch
 
+            refs = [ref_gen(commit) for key, ref_gen in (
+                ('revision', lambda commit: 'r{}'.format(commit.revision)),
+                ('hash', lambda commit: commit.hash),
+                ('identifier', str),
+            ) if getattr(commit, key)]
+
+            # Never overwrite an existing commit with an empty commit/author
+            if not all(commit.branch, commit.author, commit.message):
+                for ref in refs:
+                    for row in self.cassandra.select_from_table(
+                        self.CommitByRef.__table_name__, limit=1,
+                        repository_id=commit.repository_id, ref=ref,
+                    ):
+                        existing = row.to_commit()
+                        commit.branch = commit.branch or existing.branch
+                        commit.author = commit.author or existing.author
+                        commit.message = commit.message or existing.message
+                    if commit.author and commit.message:
+                        break
+
             for table in [self.CommitByUuidAscending, self.CommitByUuidDescending]:
                 self.cassandra.insert_row(
                     table.__table_name__,
@@ -345,17 +365,10 @@ class CommitContext(object):
                     message=commit.message,
                 )
 
-            for key, ref_gen in (
-                ('revision', lambda commit: 'r{}'.format(commit.revision)),
-                ('hash', lambda commit: commit.hash),
-                ('identifier', str),
-            ):
-                if not getattr(commit, key):
-                    continue
-
+            for ref in refs:
                 self.cassandra.insert_row(
                     self.CommitByRef.__table_name__,
-                    ref=ref_gen(commit),
+                    ref=ref,
                     repository_id=commit.repository_id,
                     branch=commit.branch,
                     revision=commit.revision,

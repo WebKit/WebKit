@@ -57,6 +57,7 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             cassandra.drop_keyspace(keyspace=cls.KEYSPACE)
             redis_instance = redis()
+            ttl_seconds = MockModelFactory.ttl_seconds()
 
             model = Model(
                 redis=redis_instance, cassandra=cassandra(keyspace=cls.KEYSPACE, create_keyspace=True),
@@ -64,6 +65,8 @@ class WebSiteTestCase(FlaskTestCase, WaitForDockerTestCase):
                     WebKitRepository(),
                     StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari'),
                 ],
+                default_ttl_seconds=ttl_seconds,
+                archive_ttl_seconds=ttl_seconds,
             )
             api_routes = APIRoutes(model=model, import_name=__name__)
             view_routes = ViewRoutes(
