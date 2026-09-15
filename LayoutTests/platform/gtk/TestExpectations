@@ -1218,7 +1218,7 @@ webkit.org/b/319061 [ Debug ] media/muted-video-is-playing-audio.html [ Timeout 
 webkit.org/b/319062 [ Debug ] inspector/dom/getMediaStats.html [ Failure Pass ]
 webkit.org/b/319063 [ Debug ] fullscreen/full-screen-enter-while-exiting.html [ Timeout ]
 webkit.org/b/319064 [ Debug ] fullscreen/video-inside-flex-item.html [ Failure Pass ]
-webkit.org/b/319066 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html [ Failure Pass ]
+webkit.org/b/319066 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html [ Failure Pass ]
 
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Pass Failure Timeout ]
 webkit.org/b/319318 http/tests/inspector/network/har/har-page-aggressive-gc.html [ Failure ]
@@ -1300,3 +1300,13 @@ webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/lock-attributes.ht
 webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-exclusive.https.any.sharedworker.html [ Failure Pass ]
 webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.sharedworker.html [ Failure Pass ]
 webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.sharedworker.html [ Failure Pass ]
+
+# Gardening 2026-09-15
+webkit.org/b/324249 [ Release ] fullscreen/full-screen-enter-while-exiting.html [ Timeout Pass ]
+webkit.org/b/324251 [ Debug ] fast/mediastream/stream-switch.html [ Slow Pass ]
+webkit.org/b/324252 fast/parser/entity-comment-in-textarea.html [ Timeout Pass ]
+webkit.org/b/324253 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html [ Failure Pass ]
+webkit.org/b/324254 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ ImageOnlyFailure Pass ]
+webkit.org/b/324255 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Failure Pass ]
+webkit.org/b/324256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure Pass ]
+webkit.org/b/324257 inspector/runtime/getCollectionEntries.html [ Failure Pass ]

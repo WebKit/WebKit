@@ -1128,10 +1128,8 @@ webkit.org/b/310543 imported/w3c/web-platform-tests/css/css-contain/content-visi
 webkit.org/b/310543 imported/w3c/web-platform-tests/css/css-contain/content-visibility/scrollIntoView-with-focus-target-with-contents-hidden.html [ ImageOnlyFailure ]
 
 webkit.org/b/311856 [ arm64 ] imported/w3c/web-platform-tests/fullscreen/rendering/backdrop-object.html [ Pass ImageOnlyFailure Timeout ]
-webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html [ Failure Pass ]
 webkit.org/b/311857 [ arm64 ] imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-table-th-right.html [ Pass ImageOnlyFailure ]
 webkit.org/b/311859 [ arm64 ] http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Pass Failure ]
-webkit.org/b/313034 [ Release ] http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass Failure ]
 webkit.org/b/311864 [ arm64 ] fast/events/monotonic-event-time-real-gap.html [ Pass Failure ]
 webkit.org/b/311865 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob.window.html [ Pass Failure ]
 
@@ -1149,8 +1147,6 @@ webkit.org/b/160119 [ arm64 ] editing/selection/caret-at-bidi-boundary.html [ Pa
 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
 webkit.org/b/314811 imported/w3c/web-platform-tests/css/mediaqueries/test_media_queries.html [ Failure ]
-
-webkit.org/b/315615 media/media-vp8-hiddenframes.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/315825 [ Release arm64 ] editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
 
@@ -1198,7 +1194,6 @@ webkit.org/b/318345 [ x86_64 ] media/track/video-track-configuration-mp4-default
 webkit.org/b/318349 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/image-TAO.sub.html [ Failure Pass ]
 webkit.org/b/318350 [ arm64 ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Failure Pass ]
 
-webkit.org/b/318887 [ Release ] media/video-seek-pause.html [ Pass Failure ]
 webkit.org/b/318889 [ arm64 ] fast/block/out-of-flow-becomes-in-flow-with-auto-width.html [ Pass Timeout ]
 webkit.org/b/318891 [ arm64 ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-string-negotiated.window.html [ Pass Failure ]
 
@@ -1304,7 +1299,6 @@ webkit.org/b/323666 [ x86_64 ] imported/w3c/web-platform-tests/webrtc-extensions
 webkit.org/b/323777 [ x86_64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addTransceiver.https.html?rest [ Crash Pass ]
 webkit.org/b/323780 [ arm64 ] imported/w3c/web-platform-tests/shadow-dom/directionality-001.tentative.html [ Pass Timeout ]
 webkit.org/b/323785 [ arm64 Release ] fast/dom/move-embedded-during-update.html [ Failure Pass ]
-webkit.org/b/323781 [ x86_64 ] webrtc/concurrentVideoPlayback2.html [ Failure Pass ]
 webkit.org/b/323783 [ x86_64 ] webrtc/vp8-then-h264-gpu-process-crash.html [ Failure Pass ]
 
 webkit.org/b/324152 platform/glib/damage/animations-drop-shadow-color.html [ Pass Failure ]

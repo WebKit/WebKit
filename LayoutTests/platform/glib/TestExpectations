@@ -1885,7 +1885,7 @@ webkit.org/b/234352 media/media-source/media-source-video-renders.html [ ImageOn
 
 # Race conditions from missing this patch:
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/3471 (still flaky with GStreamer 1.24)
-webkit.org/b/254514 [ Release ] media/media-source/media-source-current-time.html [ Failure Pass ]
+webkit.org/b/254514 [ Release ] media/media-source/media-source-current-time.html [ Failure Pass Timeout ]
 
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
@@ -3052,6 +3052,8 @@ webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.h
 
 webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
 
+webkit.org/b/324243 http/tests/websocket/tests/hybi/websocket-samesite-none-sent-cross-site.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3290,7 +3292,7 @@ imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigati
 # XHR-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-http/tests/xmlhttprequest/gzip-content-type.html [ Failure ]
+http/tests/xmlhttprequest/gzip-content-type.html [ Failure Pass ]
 
 # TestExpectations doesn't seem to support test names containing space characters, so skip the whole
 # xhr test suite for now. See also webkit.org/b/264596.
@@ -3661,6 +3663,9 @@ http/tests/model/ [ Skip ]
 
 # This test requires an internal API which only works on Cocoa ports.
 webanimations/transform-animation-with-delay-yields-accelerated-animation.html [ Skip ]
+
+# paletteColors/variations are CORE_TEXT only, Cocoa specific.
+webkit.org/b/324246 ipc/cache-font-null-palette-colors-crash.html [ Skip ]
 
 # resignFirstResponder is not implemented on GLIB
 fast/shadow-dom/focus-ring-on-shadow-host.html [ Skip ]
@@ -5328,6 +5333,20 @@ webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-sy
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-001.html [ Pass ]
 
 webkit.org/b/324147 imported/w3c/web-platform-tests/dom/nodes/moveBefore/focus-preserve.html [ Pass Failure ]
+
+webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/315615 media/media-vp8-hiddenframes.html [ ImageOnlyFailure Pass ]
+webkit.org/b/323781 [ x86_64 ] webrtc/concurrentVideoPlayback2.html [ Failure Pass Timeout ]
+webkit.org/b/318887 [ Release ] media/video-seek-pause.html [ Pass Failure ]
+webkit.org/b/313034 [ Release ] http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-removal.html [ Pass Failure ]
+webkit.org/b/305514 imported/w3c/web-platform-tests/fullscreen/rendering/fullscreen-root-block-scroll.html [ Failure Pass ]
+
+# Gardening 2026-09-15
+webkit.org/b/324248 [ Release ] media/video-seek-with-negative-playback.html [ Timeout Failure Pass ]
+webkit.org/b/324244 fast/workers/worker-terminate-wasm-atomic-wait.html [ Failure Pass ]
+webkit.org/b/324245 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Failure Pass ]
+webkit.org/b/324247 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count-on-src-change.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
