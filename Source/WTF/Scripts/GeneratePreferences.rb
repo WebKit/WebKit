@@ -367,8 +367,17 @@ class Preferences
     @frontend = frontend
 
     @preferences = []
+    definingFileByName = {}
     preferenceFiles.each do |file|
-      initializeParsedPreferences(load(file))
+      parsed = load(file)
+      (parsed || {}).each_key do |name|
+        if definingFileByName.key?(name)
+          STDERR.puts "error: #{file}: #{name} is already defined in #{definingFileByName[name]}."
+          exit 1
+        end
+        definingFileByName[name] = file
+      end
+      initializeParsedPreferences(parsed)
     end
 
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }

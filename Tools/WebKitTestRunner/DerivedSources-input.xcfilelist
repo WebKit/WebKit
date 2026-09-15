@@ -4,6 +4,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-arg
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.arm64e.resp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.armv7k.resp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKitTestRunner/platform-enabled-swift-args.x86_64.resp
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebPreferencesAdditions.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/GeneratePreferences.rb
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/UnifiedWebPreferences.yaml
 $(PROJECT_DIR)/../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl

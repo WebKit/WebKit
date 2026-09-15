@@ -2569,8 +2569,12 @@ $(NAMESPACE_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
 
 # Internal Settings
 
+# Only the first match is used, since the file can be present both in the build output and in the SDK.
+WEB_PREFERENCES_ADDITIONS = $(firstword $(wildcard $(addsuffix /WebPreferencesAdditions.yaml, $(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
 WEB_PREFERENCES_INPUT_FILES = \
     ${WTF_BUILD_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml \
+    $(WEB_PREFERENCES_ADDITIONS) \
     ${WebCore}/page/Settings.yaml \
 #
 
