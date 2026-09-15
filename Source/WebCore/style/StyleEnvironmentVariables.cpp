@@ -113,7 +113,7 @@ void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
     m_linkParameterValues.clear();
 
     for (auto& parameter : parameters) {
-        auto& name = parameter->name.value;
+        auto name = parameter->spec.name();
         m_linkParameterValues.set(name, CustomProperty::createForVariableData(name, parameter->value.value.copyRef()));
     }
 

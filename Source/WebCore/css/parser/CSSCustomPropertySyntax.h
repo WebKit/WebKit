@@ -66,11 +66,15 @@ struct CSSCustomPropertySyntax {
         Type type;
         Multiplier multiplier { Multiplier::Single };
         AtomString ident { };
+
+        bool operator==(const Component&) const = default;
     };
 
     using Definition = Vector<Component>;
 
     Definition definition;
+
+    bool operator==(const CSSCustomPropertySyntax&) const = default;
 
     bool isUniversal() const { return definition.isEmpty(); }
 
