@@ -83,6 +83,9 @@ struct ResolutionContext {
     const Style::ComputedStyle* parentBoxStyle { nullptr };
     // This needs to be provided during style resolution when up-to-date document element style is not available via DOM.
     const Style::ComputedStyle* documentElementStyle { nullptr };
+    // Style of the host of the shadow tree the element is being resolved in, if any. Editability does not
+    // propagate from a host into its shadow tree, but still has to reach slotted content through the slot.
+    const Style::ComputedStyle* shadowHostStyle { nullptr };
     SelectorMatchingState* selectorMatchingState { nullptr };
     CheckedPtr<TreeResolutionState> treeResolutionState { };
 

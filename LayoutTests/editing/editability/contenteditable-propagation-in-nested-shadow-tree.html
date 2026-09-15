@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="reslotHost">
+    <template shadowrootmode="open">
+        <div id="slottingBox">Slots ahead:
+            <template shadowrootmode="open">
+                <slot></slot>
+                <slot name="unslotted"> Unslotted content.</slot>
+            </template>
+            <slot></slot>
+        </div>
+    </template>
+    <span id="reslotted">reslotted</span>
+</div>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Verifies that editability propagates correctly when shadow trees are nested.");
+
+
+const slottingBox = reslotHost.shadowRoot.querySelector("#slottingBox");
+
+// This queries isContentEditable and also tries to type into the element.
+function checkEditability(target)
+{
+    const oldContent = target.textContent;
+    reslotHost.focus();
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.collapse(target.firstChild, 1);
+    document.execCommand("InsertText", false, "x");
+
+    const canTypeInto = target.textContent !== oldContent;
+    return `isContentEditable: ${target.isContentEditable}, canTypeInto: ${canTypeInto}`;
+}
+
+function makeShadowTreeEditable(shadowRoot)
+{
+    for (const element of shadowRoot.querySelectorAll("*")) {
+        element.setAttribute("contenteditable", "true");
+        element.style.webkitUserModify = "read-write";
+    }
+
+    const style = document.createElement("style");
+    style.textContent = "* { -webkit-user-modify: read-write; }";
+    shadowRoot.appendChild(style);
+}
+
+debug("");
+debug("Nothing is editable to begin with.");
+shouldBeEqualToString('checkEditability(reslotted)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(slottingBox)', 'isContentEditable: false, canTypeInto: false');
+
+debug("");
+debug("An editable host reaches its content through both slots, but not into its shadow trees.");
+reslotHost.setAttribute("contenteditable", "true");
+
+shouldBeEqualToString('checkEditability(reslotted)', 'isContentEditable: true, canTypeInto: true');
+shouldBeEqualToString('checkEditability(slottingBox)', 'isContentEditable: false, canTypeInto: false');
+reslotHost.removeAttribute("contenteditable", "true");
+
+debug("");
+debug("Even if both shadow trees are made fully editable, the reslotted content is still not editable.");
+makeShadowTreeEditable(reslotHost.shadowRoot);
+makeShadowTreeEditable(slottingBox.shadowRoot);
+
+shouldBeEqualToString('checkEditability(reslotted)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(slottingBox)', 'isContentEditable: true, canTypeInto: true');
+</script>
+</body>
+</html>

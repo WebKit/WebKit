@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="shadowHost">
+    <template shadowrootmode="open">
+        <div id="box">Slots ahead:
+            <slot id="assignedSlot">Placeholder 1.</slot>
+            <slot name="unassignedSlot" id="unassignedSlot">Placeholder 2.</slot>
+        </div>
+    </template>
+    <p id="slottedIn"> Slotted in</p>
+</div>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Verifies that contenteditable should propagate across the light tree, not the flattened tree.");
+
+const box = shadowHost.shadowRoot.querySelector('#box');
+const assignedSlot = shadowHost.shadowRoot.querySelector('#assignedSlot');
+const unassignedSlot = shadowHost.shadowRoot.querySelector('#unassignedSlot');
+
+// This queries isContentEditable and also tries to type into the element.
+function checkEditability(target)
+{
+    const oldContent = target.textContent;
+    shadowHost.focus();
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.collapse(target.firstChild, 1);
+    document.execCommand("InsertText", false, "x");
+
+    const canTypeInto = target.textContent !== oldContent;
+    return `isContentEditable: ${target.isContentEditable}, canTypeInto: ${canTypeInto}`;
+}
+
+debug("");
+debug("At first, everything is read-only.");
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: false, canTypeInto: false');
+
+debug("");
+debug("Everything can be made editable. However, the replaced slot isn't rendered so it cannot be typed into.");
+shadowHost.setAttribute('contenteditable', 'true');
+box.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: true, canTypeInto: true');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: true, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: true, canTypeInto: true');
+shadowHost.removeAttribute('contenteditable');
+box.removeAttribute('contenteditable');
+
+debug("");
+debug("Making the slotted element editable works.");
+slottedIn.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: true, canTypeInto: true');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: false, canTypeInto: false');
+slottedIn.removeAttribute('contenteditable');
+
+debug("");
+debug("Making the shadow host editable doesn't affect the shadow tree, but it affects slotted-in content because they are light-tree descendants.");
+shadowHost.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: true, canTypeInto: true');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: false, canTypeInto: false');
+shadowHost.removeAttribute('contenteditable');
+
+debug("");
+debug("Making parts of the shadow DOM editable only affects unreplaced elements.");
+box.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: true, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: true, canTypeInto: true');
+box.removeAttribute('contenteditable');
+
+debug("");
+debug("Making a slot editable has no effect on what replaces it.");
+assignedSlot.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: true, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: false, canTypeInto: false');
+assignedSlot.removeAttribute('contenteditable');
+
+debug("");
+debug("Making a slot editable has an effect if the slot is not replaced.");
+unassignedSlot.setAttribute('contenteditable', 'true');
+
+shouldBeEqualToString('checkEditability(slottedIn)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(assignedSlot)', 'isContentEditable: false, canTypeInto: false');
+shouldBeEqualToString('checkEditability(unassignedSlot)', 'isContentEditable: true, canTypeInto: true');
+unassignedSlot.removeAttribute('contenteditable');
+
+</script>
+</body>
+</html>

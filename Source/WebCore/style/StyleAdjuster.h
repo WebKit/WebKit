@@ -48,11 +48,12 @@ class Update;
 
 class Adjuster {
 public:
-    Adjuster(const Document&, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element*);
+    Adjuster(const Document&, const Style::ComputedStyle& parentStyle, const Style::ComputedStyle* parentBoxStyle, Element*, const Style::ComputedStyle* shadowHostStyle);
 
     static void adjustFromBuilder(Style::ComputedStyle&);
     void adjust(Style::ComputedStyle&) const;
     void adjustAnimatedStyle(Style::ComputedStyle&, OptionSet<AnimationImpact>) const;
+    void adjustUserModifyForSlot(Style::ComputedStyle&) const;
     void adjustUsedUserSelect(Style::ComputedStyle&) const;
 
     static void adjustVisibilityForPseudoElement(Style::ComputedStyle&, const Element& host);
@@ -97,6 +98,7 @@ private:
     const Style::ComputedStyle& m_parentStyle;
     const Style::ComputedStyle& m_parentBoxStyle;
     RefPtr<Element> m_element;
+    const Style::ComputedStyle* m_shadowHostStyle { nullptr };
 };
 
 }

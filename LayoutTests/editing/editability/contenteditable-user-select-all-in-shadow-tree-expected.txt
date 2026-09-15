@@ -1,0 +1,27 @@
+Sxlotted in content.
+
+Sxlotted span
+Rxegular content (no shadow trees involved).
+
+---:Rxegular span (no shadow trees involved):---
+
+Verifies that '-webkit-user-select: all' has the same effect on editability inside and outside a shadow tree.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Baseline result: editable content has selectability coerced to text:
+PASS checkEditabilityAndUserSelect(lightParagraph) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+PASS checkEditabilityAndUserSelect(lightSpan) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+
+Same should happen in content that was slotted in:
+PASS checkEditabilityAndUserSelect(slottedParagraph) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+PASS checkEditabilityAndUserSelect(slottedSpan) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+
+Same should happen for content inside the shadow tree:
+PASS checkEditabilityAndUserSelect(shadowParagraph) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+PASS checkEditabilityAndUserSelect(shadowSpan) is "isContentEditable: true, canTypeInto: true, computed user-select: all, probed user-select: text"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

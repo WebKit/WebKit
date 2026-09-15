@@ -27,6 +27,7 @@
 #include "HTMLSlotElement.h"
 
 #include "AXObjectCache.h"
+#include "CommonAtomStrings.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -46,13 +47,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLSlotElement);
 
 using namespace HTMLNames;
 
-Ref<HTMLSlotElement> HTMLSlotElement::create(const QualifiedName& tagName, Document& document)
+Ref<HTMLSlotElement> HTMLSlotElement::create(const QualifiedName& tagName, Document& document, bool forcedNotEditable)
 {
-    return adoptRef(*new HTMLSlotElement(tagName, document));
+    return adoptRef(*new HTMLSlotElement(tagName, document, forcedNotEditable));
 }
 
-HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& document)
+HTMLSlotElement::HTMLSlotElement(const QualifiedName& tagName, Document& document, bool forcedNotEditable)
     : HTMLElement(tagName, document)
+    , m_forcedNotEditable(forcedNotEditable)
 {
     ASSERT(hasTagName(slotTag));
 }
