@@ -31,6 +31,7 @@
 
 #include "HeapAnalyzer.h"
 #include "JSCInlines.h"
+#include <wtf/BitVector.h>
 
 namespace JSC {
 
@@ -52,18 +53,31 @@ void JSLexicalEnvironment::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
     auto* thisObject = uncheckedDowncast<JSLexicalEnvironment>(cell);
     Base::analyzeHeap(cell, analyzer);
 
-    ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
-    SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
-    for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-        SymbolTableEntry::Fast entry = it->value;
-        ASSERT(!entry.isNull());
-        ScopeOffset offset = entry.scopeOffset();
-        if (!thisObject->isValidScopeOffset(offset))
-            continue;
+    unsigned scopeSize = thisObject->symbolTable()->scopeSize();
+    BitVector namedOffsets(scopeSize);
+    {
+        ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
+        SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+        for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+            SymbolTableEntry::Fast entry = it->value;
+            ASSERT(!entry.isNull());
+            ScopeOffset offset = entry.scopeOffset();
+            if (!thisObject->isValidScopeOffset(offset))
+                continue;
 
-        JSValue toValue = thisObject->variableAt(offset).get();
+            namedOffsets.quickSet(offset.offset());
+            JSValue toValue = thisObject->variableAt(offset).get();
+            if (toValue && toValue.isCell())
+                analyzer.analyzeVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+        }
+    }
+
+    for (unsigned i = 0; i < scopeSize; ++i) {
+        if (namedOffsets.quickGet(i))
+            continue;
+        JSValue toValue = thisObject->variableAt(ScopeOffset(i)).get();
         if (toValue && toValue.isCell())
-            analyzer.analyzeVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+            analyzer.analyzeEdge(thisObject, toValue.asCell(), RootMarkReason::None);
     }
 }
 

@@ -61,6 +61,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     // FIXME: the output of codeBlock->expressionInfoForBytecodeIndex() allows for some of
     // these opcodes to have predictions, but not all instances can be reliably targeted.
     case op_get_from_scope: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203603
+    case op_restore_generator_locals:
     case op_get_from_arguments: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203608
     case op_get_by_val: // partially broken https://bugs.webkit.org/show_bug.cgi?id=203665
     case op_get_by_id: // sometimes occurs implicitly for things related to Symbol.iterator
