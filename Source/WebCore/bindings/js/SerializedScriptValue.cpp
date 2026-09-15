@@ -80,6 +80,7 @@
 #include "JSWebCodecsEncodedVideoChunk.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "JSWritableStream.h"
+#include "QuotaExceededError.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValueInternals.h"
@@ -129,6 +130,7 @@
 #include <JavaScriptCore/VMManager.h>
 #include <JavaScriptCore/WasmModule.h>
 #include <JavaScriptCore/YarrFlags.h>
+#include <cmath>
 #include <limits>
 #include <optional>
 #include <wtf/CheckedArithmetic.h>
@@ -243,6 +245,7 @@ static bool NODELETE isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObje
     case RTCDataChannelTransferTag:
 #endif
     case DOMExceptionTag:
+    case QuotaExceededErrorTag:
 #if ENABLE(WEB_CODECS)
     case WebCodecsEncodedVideoChunkTag:
     case WebCodecsVideoFrameTag:
@@ -1186,13 +1189,19 @@ private:
             return;
         }
 
-        write(DOMExceptionTag);
+        RefPtr quotaExceededError = dynamicDowncast<QuotaExceededError>(exception);
+        write(quotaExceededError ? QuotaExceededErrorTag : DOMExceptionTag);
         write(exception->message());
         write(exception->name());
         write(errorInformation->line);
         write(errorInformation->column);
         writeNullableString(errorInformation->sourceURL);
         writeNullableString(errorInformation->stack);
+
+        if (quotaExceededError) {
+            write(quotaExceededError->quota().value_or(std::numeric_limits<double>::quiet_NaN()));
+            write(quotaExceededError->requested().value_or(std::numeric_limits<double>::quiet_NaN()));
+        }
     }
 
 public:
@@ -3484,8 +3493,11 @@ private:
         return getJSValue(WTF::move(bitmap));
     }
 
-    JSValue readDOMException()
+    JSValue readDOMException(SerializationTag tag)
     {
+        ASSERT(tag == DOMExceptionTag || tag == QuotaExceededErrorTag);
+        bool isQuotaExceededError = tag == QuotaExceededErrorTag;
+
         CachedStringRef message;
         if (!readStringData(message))
             return JSValue();
@@ -3503,7 +3515,19 @@ private:
                 return JSValue();
         }
 
-        auto exception = DOMException::create(message->string(), name->string());
+        double quota = std::numeric_limits<double>::quiet_NaN();
+        double requested = std::numeric_limits<double>::quiet_NaN();
+        if (isQuotaExceededError && (!read(quota) || !read(requested)))
+            return JSValue();
+
+        auto toOptional = [](double value) -> std::optional<double> {
+            if (std::isnan(value))
+                return std::nullopt;
+            return value;
+        };
+        Ref<DOMException> exception = isQuotaExceededError
+            ? Ref<DOMException> { QuotaExceededError::create(message->string(), { toOptional(quota), toOptional(requested) }) }
+            : DOMException::create(message->string(), name->string());
         JSValue result = getJSValue(exception);
         // Creating the wrapper captured a stack trace of the frame doing the deserializing; replace
         // it with the serialized one so the clone reports the same stack as the original did.
@@ -3953,7 +3977,8 @@ public:
             return readMediaSourceHandle();
 #endif
         case DOMExceptionTag:
-            return readDOMException();
+        case QuotaExceededErrorTag:
+            return readDOMException(tag);
 
         case FileSystemHandleTag:
             return readFileSystemHandle();
