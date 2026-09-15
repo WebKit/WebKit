@@ -110,6 +110,11 @@ inline LayoutPoint RenderBox::topLeftLocation() const
     return topLeftLocationWithFlipping();
 }
 
+inline LayoutRect RenderBox::firstFragmentBorderBoxRect() const
+{
+    return { topLeftLocation(), borderBoxSize() };
+}
+
 inline LayoutSize RenderBox::topLeftLocationOffset() const
 {
     // This is inlined for speed, since it is used by updateLayerPosition() during scrolling.
