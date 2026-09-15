@@ -471,6 +471,32 @@ extension AppKitGesturesTests.Basic {
         }
     }
 
+    @Test
+    func pressAndHoldOnLinkOpensContextMenuWithoutReleasingClick() async throws {
+        let html = """
+            <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
+            """
+        try await page.load(html: html).wait()
+
+        let linkViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "link"))
+        let linkBounds = screenBounds(ofRectInViewportCoordinates: linkViewportBounds)
+
+        await withSwizzledContextMenu {
+            await recap.play { composer in
+                composer._wk_drag(
+                    withStart: linkBounds.center,
+                    end: linkBounds.center,
+                    duration: .seconds(1.5),
+                    release: false
+                )
+            }
+        }
+
+        await recap.play { composer in
+            composer._wk_mouseUp()
+        }
+    }
+
     @Test(
         .bug(
             "rdar://179184036",
