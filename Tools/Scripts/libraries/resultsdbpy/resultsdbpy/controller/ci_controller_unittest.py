@@ -50,10 +50,10 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
             with model.upload_context:
                 # Mock results are more complicated because we want to attach results to builders
                 for configuration in [
-                    Configuration(platform='Mac', version_name='Catalina', version='10.15.0', sdk='19A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
-                    Configuration(platform='Mac', version_name='Catalina', version='10.15.0', sdk='19A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
-                    Configuration(platform='Mac', version_name='Mojave', version='10.14.0', sdk='18A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
-                    Configuration(platform='Mac', version_name='Mojave', version='10.14.0', sdk='18A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
+                    Configuration(platform='mac', version_name='Catalina', version='10.15.0', sdk='19A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
+                    Configuration(platform='mac', version_name='Catalina', version='10.15.0', sdk='19A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
+                    Configuration(platform='mac', version_name='Mojave', version='10.14.0', sdk='18A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
+                    Configuration(platform='mac', version_name='Mojave', version='10.14.0', sdk='18A500', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
                 ]:
                     build_count = [1]
 
@@ -89,7 +89,7 @@ class CIControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(response.json(), [
             dict(
                 configuration=dict(
-                    is_simulator=False, platform='Mac',
+                    is_simulator=False, platform='mac',
                     architecture='x86_64', style='Release', flavor='wk2',
                     sdk='19A500', suite='layout-tests', version=10015000, version_name='Catalina',
                 ),

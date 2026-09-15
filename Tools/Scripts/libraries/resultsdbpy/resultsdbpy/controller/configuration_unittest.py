@@ -43,10 +43,10 @@ class ConfigurationUnittest(unittest.TestCase):
         self.assertEqual('0.0.1', Configuration.integer_to_version(1))
 
     def test_wildcard_compare(self):
-        reference = Configuration(platform='Mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2')
+        reference = Configuration(platform='mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2')
 
         should_match = [
-            Configuration(platform='Mac'),
+            Configuration(platform='mac'),
             Configuration(version='10.14'),
             Configuration(is_simulator=False),
             Configuration(architecture='x86_64'),
@@ -58,7 +58,7 @@ class ConfigurationUnittest(unittest.TestCase):
             self.assertFalse(element != reference)
 
         shouldnt_match = [
-            Configuration(platform='iOS'),
+            Configuration(platform='ios'),
             Configuration(version='10.13'),
             Configuration(is_simulator=True),
             Configuration(architecture='arm64'),
@@ -71,10 +71,10 @@ class ConfigurationUnittest(unittest.TestCase):
 
     def test_jsonify(self):
         configs = [
-            Configuration(platform='Mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
-            Configuration(platform='Mac', version='10.14', style='Production', flavor='wk2'),
-            Configuration(platform='iOS', version='11', is_simulator=True, architecture='x86_64', style='Debug'),
-            Configuration(platform='iOS', version='12', is_simulator=False, architecture='arm64', style='Release'),
+            Configuration(platform='mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
+            Configuration(platform='mac', version='10.14', style='Production', flavor='wk2'),
+            Configuration(platform='ios', version='11', is_simulator=True, architecture='x86_64', style='Debug'),
+            Configuration(platform='ios', version='12', is_simulator=False, architecture='arm64', style='Release'),
         ]
 
         for config in configs:
@@ -83,20 +83,20 @@ class ConfigurationUnittest(unittest.TestCase):
 
     def test_to_query(self):
         self.assertEqual(
-            Configuration(platform='Mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2').to_query(),
-            'platform=Mac&is_simulator=False&version=10.14.0&architecture=x86_64&style=Debug&flavor=wk2',
+            Configuration(platform='mac', version='10.14', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2').to_query(),
+            'platform=mac&is_simulator=False&version=10.14.0&architecture=x86_64&style=Debug&flavor=wk2',
         )
         self.assertEqual(
-            Configuration(platform='Mac', version='10.14', style='Production', flavor='wk2').to_query(),
-            'platform=Mac&version=10.14.0&style=Production&flavor=wk2',
+            Configuration(platform='mac', version='10.14', style='Production', flavor='wk2').to_query(),
+            'platform=mac&version=10.14.0&style=Production&flavor=wk2',
         )
         self.assertEqual(
-            Configuration(platform='iOS', version='11', is_simulator=True, architecture='x86_64', style='Debug').to_query(),
-            'platform=iOS&is_simulator=True&version=11.0.0&architecture=x86_64&style=Debug',
+            Configuration(platform='ios', version='11', is_simulator=True, architecture='x86_64', style='Debug').to_query(),
+            'platform=ios&is_simulator=True&version=11.0.0&architecture=x86_64&style=Debug',
         )
         self.assertEqual(
-            Configuration(platform='iOS', version='12', is_simulator=False, architecture='arm64', style='Release').to_query(),
-            'platform=iOS&is_simulator=False&version=12.0.0&architecture=arm64&style=Release',
+            Configuration(platform='ios', version='12', is_simulator=False, architecture='arm64', style='Release').to_query(),
+            'platform=ios&is_simulator=False&version=12.0.0&architecture=arm64&style=Release',
         )
 
     def test_javascript_to_params_emits_every_member(self):

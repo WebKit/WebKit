@@ -36,30 +36,30 @@ from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 class ConfigurationContextTest(WaitForDockerTestCase):
     KEYSPACE = 'configuration_context_test_keyspace'
     CONFIGURATIONS = [
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk1'),
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk1'),
-        Configuration(platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk2'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk1'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk1'),
-        Configuration(platform='Mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk2'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Debug'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Release'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Asan'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Debug'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Release'),
-        Configuration(platform='iOS', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Asan'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Debug'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Release'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Asan'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone Xs', style='Debug'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone 8', style='Release'),
-        Configuration(platform='iOS', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone Xs', style='Asan'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk1'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk1'),
+        Configuration(platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk2'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk1'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Debug', flavor='wk2'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Release', flavor='wk1'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Release', flavor='wk2'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk1'),
+        Configuration(platform='mac', version='10.14.0', sdk='18A391', is_simulator=False, architecture='x86_64', style='Asan', flavor='wk2'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Debug'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Release'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=True, architecture='x86_64', style='Asan'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Debug'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Release'),
+        Configuration(platform='ios', version='11.0.0', sdk='15A432', is_simulator=False, architecture='arm64', model='iPhone 8', style='Asan'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Debug'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Release'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=True, architecture='x86_64', style='Asan'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone Xs', style='Debug'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone 8', style='Release'),
+        Configuration(platform='ios', version='12.0.0', sdk='16A404', is_simulator=False, architecture='arm64', model='iPhone Xs', style='Asan'),
     ]
 
     def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -74,8 +74,8 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         old = current - 60 * 60 * 24 * 21
 
         for configuration in self.CONFIGURATIONS:
-            if (configuration.platform == 'Mac' and configuration.version <= Configuration.version_to_integer('10.13')) \
-               or (configuration.platform == 'iOS' and configuration.version <= Configuration.version_to_integer('11')):
+            if (configuration.platform == 'mac' and configuration.version <= Configuration.version_to_integer('10.13')) \
+               or (configuration.platform == 'ios' and configuration.version <= Configuration.version_to_integer('11')):
                 self.database.register_configuration(configuration, branch=None, timestamp=old)
             else:
                 self.database.register_configuration(configuration, branch=None, timestamp=current)
@@ -87,7 +87,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         with self.assertRaises(TypeError):
             self.database.register_configuration('invalid object')
         with self.assertRaises(TypeError):
-            self.database.register_configuration(Configuration(platform='iOS'))
+            self.database.register_configuration(Configuration(platform='ios'))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_complete_configurations_for_expands_a_partial_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -96,7 +96,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
-        partial = Configuration(platform='Mac', style='Release')
+        partial = Configuration(platform='mac', style='Release')
         for recent in (True, False):
             search = self.database.search_for_recent_configuration if recent else self.database.search_for_configuration
             expanded = self.database.complete_configurations_for([partial], recent=recent)
@@ -166,7 +166,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         try:
             type(cassandra_context).__enter__ = counting_enter
             self.database.select_from_table_with_configurations(
-                ExampleModel.__table_name__, [Configuration(platform='Mac')], index=1,
+                ExampleModel.__table_name__, [Configuration(platform='mac')], index=1,
             )
         finally:
             type(cassandra_context).__enter__ = original
@@ -178,7 +178,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
 
         self.database.register_configuration(Configuration(
-            platform='Mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64',
+            platform='mac', version='10.13.0', sdk='17A405', is_simulator=False, architecture='x86_64',
         ))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -186,7 +186,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
-        configuration_to_search_for = Configuration(platform='Mac', style='Debug')
+        configuration_to_search_for = Configuration(platform='mac', style='Debug')
         matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
         self.assertEqual(4, len(matching_configurations))
         for config in matching_configurations:
@@ -197,7 +197,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
-        configuration_to_search_for = Configuration(platform='Mac', style='Debug', flavor='wk1')
+        configuration_to_search_for = Configuration(platform='mac', style='Debug', flavor='wk1')
         matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
         self.assertEqual(2, len(matching_configurations))
         for config in matching_configurations:
@@ -208,7 +208,7 @@ class ConfigurationContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         self.register_configurations()
 
-        configuration_to_search_for = Configuration(platform='Mac', version='10.13', style='Release')
+        configuration_to_search_for = Configuration(platform='mac', version='10.13', style='Release')
         matching_configurations = self.database.search_for_configuration(configuration_to_search_for)
         self.assertEqual(2, len(matching_configurations))
         for config in matching_configurations:
