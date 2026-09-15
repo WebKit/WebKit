@@ -1,0 +1,6 @@
+framework module Metal [system] {
+  umbrella header "Metal.h"
+  export *
+  module * { export * }
+}
+
