@@ -173,9 +173,9 @@ else
 ```
 
 [method@Toplevel.maximize], [method@Toplevel.minimize], and
-[method@Toplevel.resize] round out the window controls. Only a windowed
-platform such as Wayland acts on them; on DRM and headless they are
-no-ops.
+[method@Toplevel.resize] round out the window controls. Support depends
+on the platform: Wayland implements all of them, headless only tracks
+size and fullscreen state, and on DRM they have no effect.
 
 ## 5. What WebKit now handles for you
 
