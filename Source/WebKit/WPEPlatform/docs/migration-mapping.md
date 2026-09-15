@@ -162,7 +162,7 @@ points.
 
 | libwpe symbol | WPEPlatform | Kind | Notes |
 |---|---|---|---|
-| `wpe_loader_init("libfoo.so")` | `WPE_DISPLAY=<name>` env var, **or** direct instantiation (e.g. `wpe_display_wayland_new()`) | Reshape | The "select a backend by .so path" mechanism is gone. |
+| `wpe_loader_init("libfoo.so")` | `WPE_PLATFORM=<name>` env var, **or** direct instantiation (e.g. `wpe_display_wayland_new()`) | Reshape | The "select a backend by .so path" mechanism is gone. |
 | `struct wpe_loader_interface` (`_wpe_loader_interface` symbol) | GIO extension point `"wpe-platform-display"` (`WPE_DISPLAY_EXTENSION_POINT_NAME`) | Reshape | A module is now a GIO type module that registers itself with this extension point. |
 | `wpe_loader_get_loaded_implementation_library_name()` | — | Removed | No direct equivalent; introspect the [class@Display] instance instead (`G_OBJECT_TYPE_NAME()`). |
 

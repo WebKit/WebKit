@@ -205,7 +205,7 @@ class WPEPortTest(port_testcase.PortTestCase):
         self.assertTrue(cog_path.endswith('/cog'))
 
     def test_setup_environ_for_test_wpe_prefix(self):
-        environment_user = {'WPE_DISPLAY':  'wpe-display-drm',
+        environment_user = {'WPE_PLATFORM':  'drm',
                             'WPE_DRM_DEVICE': 'drm1',
                             'WPE_USE_EXPLICIT_SYNC': '1',
                             'WPE_RANDOM_VAR': 'randValue',

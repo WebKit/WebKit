@@ -282,12 +282,11 @@ negotiate formats without having any monitors.
 ## Making the implementation discoverable
 
 WebKit finds implementations through the GIO extension point
-`WPE_DISPLAY_EXTENSION_POINT_NAME`: a [class@Display] subclass registers
-itself there with a unique name and a priority. The name is what
-`WPE_DISPLAY` selects — by convention `wpe-display-<name>` — and the
-priority orders candidates when several are installed: the Wayland
-implementation uses `0`, and the more specialized DRM and headless ones
-use `-100` so they are tried only after Wayland declines.
+`WPE_DISPLAY_EXTENSION_POINT_NAME`: a [class@Display] subclass registers itself
+there with a unique name and a priority. The name is what `WPE_PLATFORM` selects
+and the priority orders candidates when several are installed: the Wayland
+implementation uses `0`, and the more specialized DRM and headless ones use
+`-100` so they are tried only after Wayland declines.
 
 How you register depends on whether the implementation is compiled in or
 loaded as a module.
@@ -299,7 +298,7 @@ type-registration time:
 ```c
 G_DEFINE_FINAL_TYPE_WITH_CODE (MyDisplay, my_display, WPE_TYPE_DISPLAY,
     g_io_extension_point_implement (WPE_DISPLAY_EXTENSION_POINT_NAME,
-        g_define_type_id, "wpe-display-myplatform", 0))
+        g_define_type_id, "myplatform", 0))
 ```
 
 An application that links the library can then construct `MyDisplay`
@@ -317,7 +316,7 @@ g_io_module_load (GIOModule *module)
 {
     my_display_register_type (G_TYPE_MODULE (module));
     g_io_extension_point_implement (WPE_DISPLAY_EXTENSION_POINT_NAME,
-        MY_TYPE_DISPLAY, "wpe-display-myplatform", 0);
+        MY_TYPE_DISPLAY, "myplatform", 0);
 }
 
 G_MODULE_EXPORT void
@@ -347,11 +346,11 @@ The exact path is available from the `pkg-config` module:
 pkg-config --variable=moduledir wpe-platform-2.0
 ```
 
-Once installed, force WebKit to use it by setting `WPE_DISPLAY` to the
+Once installed, force WebKit to use it by setting `WPE_PLATFORM` to the
 name you registered:
 
 ```sh
-WPE_DISPLAY=wpe-display-myplatform MiniBrowser https://webkit.org
+WPE_PLATFORM=myplatform MiniBrowser https://webkit.org
 ```
 
 While iterating on a module that is not installed yet, point WebKit at

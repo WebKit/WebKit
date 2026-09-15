@@ -41,6 +41,7 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -287,18 +288,27 @@ WPEDisplay* wpe_display_get_default(void)
         wpeEnsureExtensionPointsLoaded();
         auto* extensionPoint = g_io_extension_point_lookup(WPE_DISPLAY_EXTENSION_POINT_NAME);
 
-        const char* extensionName = g_getenv("WPE_DISPLAY");
-        if (extensionName && *extensionName) {
-            if (auto* extension = g_io_extension_point_get_extension_by_name(extensionPoint, extensionName)) {
+        CStringView extensionName = CStringView::unsafeFromUTF8(g_getenv("WPE_PLATFORM"));
+        if (!extensionName) {
+            static constexpr auto displayNamePrefix = "wpe-display-"_s;
+            extensionName = CStringView::unsafeFromUTF8(g_getenv("WPE_DISPLAY"));
+            if (extensionName.lengthInBytes() > displayNamePrefix.length() && extensionName.span().first(displayNamePrefix.length()) == displayNamePrefix) {
+                auto nullTerminatedSpan = extensionName.spanIncludingNullTerminator();
+                extensionName = CStringView::fromUTF8(nullTerminatedSpan.last(nullTerminatedSpan.size() - displayNamePrefix.length()));
+            }
+        }
+
+        if (extensionName) {
+            if (auto* extension = g_io_extension_point_get_extension_by_name(extensionPoint, extensionName.utf8())) {
                 GUniqueOutPtr<GError> error;
                 GRefPtr<WPEDisplay> display = adoptGRef(WPE_DISPLAY(g_object_new(g_io_extension_get_type(extension), nullptr)));
                 if (wpe_display_connect(display.get(), &error.outPtr())) {
                     s_defaultDisplay = WTF::move(display);
                     return;
                 }
-                g_error("Failed to connect to display of type %s: %s", extensionName, error->message);
+                g_error("Failed to connect to display of type %s: %s", extensionName.utf8(), error->message);
             } else
-                g_error("Display of type %s was not found", extensionName);
+                g_error("Display of type %s was not found", extensionName.utf8());
             return;
         }
 

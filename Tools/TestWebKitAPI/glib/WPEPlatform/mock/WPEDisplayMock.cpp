@@ -207,7 +207,7 @@ void wpeDisplayMockRegister(GIOModule* ioModule)
     wpe_display_mock_register_type(G_TYPE_MODULE(ioModule));
     if (!ioModule)
         g_io_extension_point_register(WPE_DISPLAY_EXTENSION_POINT_NAME);
-    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, WPE_TYPE_DISPLAY_MOCK, "wpe-display-mock", G_MAXINT32);
+    g_io_extension_point_implement(WPE_DISPLAY_EXTENSION_POINT_NAME, WPE_TYPE_DISPLAY_MOCK, "mock", G_MAXINT32);
 }
 
 void wpeDisplayMockDisconnect(WPEDisplayMock* mock)

@@ -53,7 +53,7 @@ class HeadlessDriverTest(unittest.TestCase):
         environment_user = {'DISPLAY': ':0.0',
                             'WAYLAND_DISPLAY': 'wayland-0',
                             'WAYLAND_SOCKET': 'wayland-0',
-                            'WPE_DISPLAY':  'wpe-display-drm',
+                            'WPE_PLATFORM':  'drm',
                             'WPE_DRM_DEVICE': 'drm1',
                             'XAUTHORITY': '/home/igalia/.Xauthority'}
         return environment_user
@@ -63,8 +63,8 @@ class HeadlessDriverTest(unittest.TestCase):
         environment_user = self.make_environment()
         with patch('os.environ', environment_user):
             driver_environment = driver._setup_environ_for_test()
-            self.assertIn('WPE_DISPLAY', driver_environment)
-            self.assertEqual(driver_environment['WPE_DISPLAY'], 'wpe-display-headless')
+            self.assertIn('WPE_PLATFORM', driver_environment)
+            self.assertEqual(driver_environment['WPE_PLATFORM'], 'headless')
             self.assertIn('EGL_PLATFORM', driver_environment)
             self.assertEqual(driver_environment['EGL_PLATFORM'], 'wayland')
 

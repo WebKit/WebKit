@@ -86,7 +86,7 @@ WebKitWebView *web_view =
 This links the platform library — here `wpe-platform-wayland-2.0` — and
 instantiates it directly, with no module discovery involved. To stay
 portable but still choose at runtime, use [func@Display.get_default],
-which returns the first platform that connects, or set `WPE_DISPLAY=<name>`
+which returns the first platform that connects, or set `WPE_PLATFORM=<name>`
 in the environment to force one. This is what replaces libwpe's
 `wpe_loader_init()`, which selected a backend by shared-library name.
 

@@ -112,10 +112,10 @@ class WestonDriverTest(unittest.TestCase):
             self.assertIn('WAYLAND_DISPLAY', driver_environment)
             self.assertIn('GDK_BACKEND', driver_environment)
             self.assertIn('EGL_PLATFORM', driver_environment)
-            self.assertIn('WPE_DISPLAY', driver_environment)
+            self.assertIn('WPE_PLATFORM', driver_environment)
             self.assertNotEqual(driver_environment['WAYLAND_DISPLAY'], environment_user['WAYLAND_DISPLAY'])
             self.assertEqual(driver_environment['GDK_BACKEND'], 'wayland')
             self.assertEqual(driver_environment['EGL_PLATFORM'], 'wayland')
-            self.assertEqual(driver_environment['WPE_DISPLAY'], 'wpe-display-wayland')
+            self.assertEqual(driver_environment['WPE_PLATFORM'], 'wayland')
         # Prevent improper cleanup of the subprocess.Popen mock object in implicitly-invoked WestonDriver.stop.
         driver._weston_process = None
