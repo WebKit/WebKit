@@ -1242,38 +1242,10 @@ bool spansOverlap(std::span<T, TExtent> a, std::span<U, UExtent> b)
         && static_cast<const void*>(b.data()) < static_cast<const void*>(std::to_address(a.end()));
 }
 
-/* WTF_FOR_EACH */
-
-// https://www.scs.stanford.edu/~dm/blog/va-opt.html
-#define WTF_PARENS ()
-#define WTF_EXPAND(...) WTF_EXPAND4(WTF_EXPAND4(WTF_EXPAND4(WTF_EXPAND4(__VA_ARGS__))))
-#define WTF_EXPAND4(...) WTF_EXPAND3(WTF_EXPAND3(WTF_EXPAND3(WTF_EXPAND3(__VA_ARGS__))))
-#define WTF_EXPAND3(...) WTF_EXPAND2(WTF_EXPAND2(WTF_EXPAND2(WTF_EXPAND2(__VA_ARGS__))))
-#define WTF_EXPAND2(...) WTF_EXPAND1(WTF_EXPAND1(WTF_EXPAND1(WTF_EXPAND1(__VA_ARGS__))))
-#define WTF_EXPAND1(...) __VA_ARGS__
-#define WTF_FOR_EACH_HELPER(macro, a1, ...) macro(a1) __VA_OPT__(, WTF_FOR_EACH_AGAIN WTF_PARENS (macro, __VA_ARGS__))
-#define WTF_FOR_EACH_AGAIN() WTF_FOR_EACH_HELPER
-#define WTF_FOR_EACH(macro, ...) __VA_OPT__(WTF_EXPAND(WTF_FOR_EACH_HELPER(macro, __VA_ARGS__)))
-
 /* SAFE_PRINTF */
 
-// https://gist.github.com/sehe/3374327
-template<std::integral T> inline T safePrintfType(T arg) { return arg; }
-template<std::floating_point T> inline T safePrintfType(T arg) { return arg; }
-template<typename T> requires (std::is_pointer_v<T>) inline T NODELETE safePrintfType(T arg)
-{
-    static_assert(!std::same_as<std::remove_cv_t<std::remove_pointer_t<T>>, char>, "char* is not bounds safe; please use a null terminated string type");
-    return arg;
-}
-
-// These versions of printf reject char* but accept known null terminated
-// string types, like ASCIILiteral and CString. A type can specialize
-// 'safePrintfType' to advertise conversion to null terminated string.
-
-// We do this as a macro so that we still get compile-time checking that our
-// arguments match our format string.
-
-#define SAFE_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::safePrintfType, __VA_ARGS__)
+// WTF_FOR_EACH(), safePrintfType() and SAFE_PRINTF_TYPE() are defined in wtf/Assertions.h, which
+// the logging macros need and which cannot include this header.
 
 #define SAFE_PRINTF(format, ...) \
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
@@ -1315,28 +1287,8 @@ inline decltype(auto) NODELETE safeNSStringPrintfType(T&& argument) { return saf
 #define SAFE_WTFLOGALWAYS(format, ...) \
     SUPPRESS_UNCOUNTED_ARG WTFLogAlways(format __VA_OPT__(, SAFE_NSSTRING_PRINTF_TYPE(__VA_ARGS__)))
 
-// The logging counterpart to safePrintfType(), used by the LOG and RELEASE_LOG macro families so
-// that a call site can hand them a CString and let the macro reach for the pointer.
-//
-// Unlike safePrintfType(), this never rejects an argument: it converts what it knows how to convert
-// and passes everything else through untouched, leaving the format-string checking on the log
-// function itself to catch a mismatch. A log call site is a consumer of whatever the surrounding
-// code already has, which may be a const char* owned by a C interface, an Objective-C object or
-// block, or an enumeration, none of which it can convert to a WTF string type without a copy.
-// Passing those through is also what keeps the macros working unchanged for every call site that
-// has not been migrated.
-//
-// Scalars are taken by value rather than forwarded because the argument can be a bit-field or a
-// SIMD vector element, neither of which a reference can bind to.
-template<typename T> concept LogPrintfConvertibleType = !std::is_scalar_v<std::decay_t<T>>
-    && requires (T&& argument) { safePrintfType(std::forward<T>(argument)); };
-
-template<typename T> requires (std::is_scalar_v<T>) inline T NODELETE logPrintfType(T argument) { return argument; }
-template<LogPrintfConvertibleType T> inline decltype(auto) NODELETE logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
-template<typename T> requires (!std::is_scalar_v<std::decay_t<T>> && !LogPrintfConvertibleType<T>)
-inline T NODELETE logPrintfType(T argument) { return argument; }
-
-#define LOG_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::logPrintfType, __VA_ARGS__)
+// logPrintfType() and LOG_PRINTF_TYPE(), the logging counterpart to safePrintfType(), are defined
+// in wtf/Assertions.h too, next to the LOG and RELEASE_LOG macro families that use them.
 
 template<typename T>
 concept NonConstByteType = CanBeConstByteType<T> && !std::is_const_v<T>;

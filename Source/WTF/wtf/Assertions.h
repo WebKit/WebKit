@@ -66,9 +66,11 @@
 #endif
 
 #ifdef __cplusplus
+#include <concepts>
 #include <cstdlib>
 #include <span>
 #include <type_traits>
+#include <utility>
 #endif
 
 #define _XSTRINGIFY(line) #line
@@ -531,9 +533,75 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void NODELETE WTFCrashWithSecurityImpl
 
 /* Logging and assertion macros convert their arguments with LOG_PRINTF_TYPE() so that a call site
    can hand them a CString directly. This header is also included from C and Objective-C files,
-   where that C++ helper does not exist and the arguments have to go through unchanged. */
+   where that C++ helper does not exist and the arguments have to go through unchanged.
+
+   The conversion lives here rather than next to the SAFE_PRINTF() family in wtf/StdLibExtras.h,
+   which shares it, because the macros that use it are defined here: a call site that reaches
+   RELEASE_LOG() through this header has no reason to have included StdLibExtras.h, and cannot be
+   made to include it from here without a cycle. */
 
 #ifdef __cplusplus
+
+/* WTF_FOR_EACH */
+
+// https://www.scs.stanford.edu/~dm/blog/va-opt.html
+#define WTF_PARENS ()
+#define WTF_EXPAND(...) WTF_EXPAND4(WTF_EXPAND4(WTF_EXPAND4(WTF_EXPAND4(__VA_ARGS__))))
+#define WTF_EXPAND4(...) WTF_EXPAND3(WTF_EXPAND3(WTF_EXPAND3(WTF_EXPAND3(__VA_ARGS__))))
+#define WTF_EXPAND3(...) WTF_EXPAND2(WTF_EXPAND2(WTF_EXPAND2(WTF_EXPAND2(__VA_ARGS__))))
+#define WTF_EXPAND2(...) WTF_EXPAND1(WTF_EXPAND1(WTF_EXPAND1(WTF_EXPAND1(__VA_ARGS__))))
+#define WTF_EXPAND1(...) __VA_ARGS__
+#define WTF_FOR_EACH_HELPER(macro, a1, ...) macro(a1) __VA_OPT__(, WTF_FOR_EACH_AGAIN WTF_PARENS (macro, __VA_ARGS__))
+#define WTF_FOR_EACH_AGAIN() WTF_FOR_EACH_HELPER
+#define WTF_FOR_EACH(macro, ...) __VA_OPT__(WTF_EXPAND(WTF_FOR_EACH_HELPER(macro, __VA_ARGS__)))
+
+namespace WTF {
+
+/* SAFE_PRINTF */
+
+// https://gist.github.com/sehe/3374327
+template<std::integral T> inline T safePrintfType(T arg) { return arg; }
+template<std::floating_point T> inline T safePrintfType(T arg) { return arg; }
+template<typename T> requires (std::is_pointer_v<T>) inline T NODELETE safePrintfType(T arg)
+{
+    static_assert(!std::same_as<std::remove_cv_t<std::remove_pointer_t<T>>, char>, "char* is not bounds safe; please use a null terminated string type");
+    return arg;
+}
+
+// The logging counterpart to safePrintfType(), used by the LOG and RELEASE_LOG macro families so
+// that a call site can hand them a CString and let the macro reach for the pointer.
+//
+// Unlike safePrintfType(), this never rejects an argument: it converts what it knows how to convert
+// and passes everything else through untouched, leaving the format-string checking on the log
+// function itself to catch a mismatch. A log call site is a consumer of whatever the surrounding
+// code already has, which may be a const char* owned by a C interface, an Objective-C object or
+// block, or an enumeration, none of which it can convert to a WTF string type without a copy.
+// Passing those through is also what keeps the macros working unchanged for every call site that
+// has not been migrated.
+//
+// Scalars are taken by value rather than forwarded because the argument can be a bit-field or a
+// SIMD vector element, neither of which a reference can bind to.
+template<typename T> concept LogPrintfConvertibleType = !std::is_scalar_v<std::decay_t<T>>
+    && requires (T&& argument) { safePrintfType(std::forward<T>(argument)); };
+
+template<typename T> requires (std::is_scalar_v<T>) inline T NODELETE logPrintfType(T argument) { return argument; }
+template<LogPrintfConvertibleType T> inline decltype(auto) NODELETE logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
+template<typename T> requires (!std::is_scalar_v<std::decay_t<T>> && !LogPrintfConvertibleType<T>)
+inline T NODELETE logPrintfType(T argument) { return argument; }
+
+} // namespace WTF
+
+// SAFE_PRINTF_TYPE() is what the SAFE_PRINTF() family in wtf/StdLibExtras.h converts its arguments
+// with: it rejects char* but accepts known null terminated string types, like ASCIILiteral and
+// CString. A type can overload 'safePrintfType' to advertise conversion to a null terminated string.
+
+// We do this as a macro so that we still get compile-time checking that our
+// arguments match our format string.
+
+#define SAFE_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::safePrintfType, __VA_ARGS__)
+
+#define LOG_PRINTF_TYPE(...) WTF_FOR_EACH(WTF::logPrintfType, __VA_ARGS__)
+
 #define WTF_LOG_PRINTF_ARGS(...) __VA_OPT__(, LOG_PRINTF_TYPE(__VA_ARGS__))
 #else
 #define WTF_LOG_PRINTF_ARGS(...) __VA_OPT__(, __VA_ARGS__)
