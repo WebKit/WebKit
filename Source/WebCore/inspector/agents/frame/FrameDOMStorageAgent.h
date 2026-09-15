@@ -26,6 +26,7 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
+#include "StorageType.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -39,6 +40,7 @@ class DOMStorageFrontendDispatcher;
 namespace WebCore {
 
 class LocalFrame;
+class SecurityOrigin;
 class StorageArea;
 
 // FrameDOMStorageAgent is the per-frame DOMStorage agent for Site Isolation. Each
@@ -65,6 +67,9 @@ public:
     Inspector::CommandResult<void> setDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key, const String& value) override;
     Inspector::CommandResult<void> removeDOMStorageItem(Ref<JSON::Object>&& storageId, const String& key) override;
     Inspector::CommandResult<void> clearDOMStorageItems(Ref<JSON::Object>&& storageId) override;
+
+    // InspectorInstrumentation
+    void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
 private:
     RefPtr<StorageArea> findStorageArea(Inspector::Protocol::ErrorString&, const JSON::Object& storageId, RefPtr<LocalFrame>& targetFrame);
