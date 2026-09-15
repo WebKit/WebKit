@@ -242,7 +242,7 @@ messages -> WebPageProxy {
     ClearAllEditCommands()
     RegisterInsertionUndoGrouping()
     CanUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (bool result) Synchronous
-    ExecuteUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (uint32_t undoVersion, Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>> pendingUndoRedo) Synchronous
+    ExecuteUndoRedo(enum:bool WebKit::UndoOrRedo undoOrRedo) -> (uint64_t firstSequence, Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>> undoRedo) Synchronous
 
     # Diagnostic messages logging
     LogDiagnosticMessageFromWebProcess(String message, String description, enum:bool WebCore::ShouldSample shouldSample)

@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "WebUndoStepID.h"
 #include <WebCore/EditAction.h>
+#include <WebCore/PageIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -37,29 +38,39 @@
 namespace WebKit {
 
 class WebPageProxy;
+class WebProcessProxy;
 
 class WebEditCommandProxy : public API::ObjectImpl<API::Object::Type::EditCommandProxy>, public CanMakeWeakPtr<WebEditCommandProxy> {
 public:
-    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, String&& label, WebPageProxy& page)
+    static Ref<WebEditCommandProxy> create(WebUndoStepID commandID, String&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
     {
-        return adoptRef(*new WebEditCommandProxy(commandID, WTF::move(label), page));
+        return adoptRef(*new WebEditCommandProxy(commandID, WTF::move(label), page, process, pageIDInProcess));
     }
     ~WebEditCommandProxy();
 
     WebUndoStepID commandID() const { return m_commandID; }
     String label() const { return m_label; }
 
-    void invalidate() { m_page.clear(); }
+    RefPtr<WebProcessProxy> process() const;
+    WebCore::PageIdentifier pageIDInProcess() const { return m_pageIDInProcess; }
+
+    void invalidate()
+    {
+        m_page.clear();
+        m_process.clear();
+    }
 
     void unapply();
     void reapply();
 
 private:
-    WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy&);
+    WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier pageIDInProcess);
 
     WebUndoStepID m_commandID;
     String m_label;
     WeakPtr<WebPageProxy> m_page;
+    WeakPtr<WebProcessProxy> m_process;
+    WebCore::PageIdentifier m_pageIDInProcess;
 };
 
 } // namespace WebKit

@@ -37,10 +37,12 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy& page)
+WebEditCommandProxy::WebEditCommandProxy(WebUndoStepID commandID, String&& label, WebPageProxy& page, WebProcessProxy& process, WebCore::PageIdentifier pageIDInProcess)
     : m_commandID(commandID)
     , m_label(WTF::move(label))
     , m_page(page)
+    , m_process(process)
+    , m_pageIDInProcess(pageIDInProcess)
 {
     page.addEditCommand(*this);
 }
@@ -51,18 +53,35 @@ WebEditCommandProxy::~WebEditCommandProxy()
         page->removeEditCommand(*this);
 }
 
+RefPtr<WebProcessProxy> WebEditCommandProxy::process() const
+{
+    return m_process.get();
+}
+
 void WebEditCommandProxy::unapply()
 {
     RefPtr page = m_page.get();
     if (!page || !page->hasRunningProcess())
         return;
 
-    page->addPendingUndoRedo(m_commandID, UndoOrRedo::Undo);
-    // FIXME: <rdar://168324268> Fix this for site isolation.
-    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UnapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
+    // The undo step only exists in the WebPage that registered it. If that process is gone, or its
+    // WebPage was closed while the process stayed alive for some other page, the step can neither be
+    // unapplied nor re-registered for redo, so leave the platform undo stack alone instead of offering
+    // a redo for an operation that never happened.
+    RefPtr process = m_process.get();
+    if (!process || !process->canSendMessage() || !page->hasWebPageInProcess(*process, m_pageIDInProcess))
+        return;
+
+    // Send the request asynchronously. While it is unacknowledged it is also handed back in the reply to
+    // any ExecuteUndoRedo from this process, so that execCommand() applies it before returning; its
+    // sequence number lets the web process discard whichever copy arrives second.
+    auto processIdentifier = process->coreProcessIdentifier();
+    auto sequence = page->addPendingUndoRedo(m_commandID, UndoOrRedo::Undo, processIdentifier);
+    process->sendWithAsyncReply(Messages::WebPage::UnapplyEditCommand(sequence, m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID, processIdentifier]() {
         if (RefPtr page = weakPage.get())
-            page->removePendingUndoRedo(commandID);
-    }, page->webPageIDInMainFrameProcess());
+            page->removePendingUndoRedo(commandID, processIdentifier);
+    }, m_pageIDInProcess);
+
     page->registerEditCommand(*this, UndoOrRedo::Redo);
 }
 
@@ -72,12 +91,17 @@ void WebEditCommandProxy::reapply()
     if (!page || !page->hasRunningProcess())
         return;
 
-    page->addPendingUndoRedo(m_commandID, UndoOrRedo::Redo);
-    // FIXME: <rdar://168324268> Fix this for site isolation.
-    protect(page->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ReapplyEditCommand(page->undoVersion(), m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID]() {
+    RefPtr process = m_process.get();
+    if (!process || !process->canSendMessage() || !page->hasWebPageInProcess(*process, m_pageIDInProcess))
+        return;
+
+    auto processIdentifier = process->coreProcessIdentifier();
+    auto sequence = page->addPendingUndoRedo(m_commandID, UndoOrRedo::Redo, processIdentifier);
+    process->sendWithAsyncReply(Messages::WebPage::ReapplyEditCommand(sequence, m_commandID), [weakPage = WeakPtr { *page }, commandID = m_commandID, processIdentifier]() {
         if (RefPtr page = weakPage.get())
-            page->removePendingUndoRedo(commandID);
-    }, page->webPageIDInMainFrameProcess());
+            page->removePendingUndoRedo(commandID, processIdentifier);
+    }, m_pageIDInProcess);
+
     page->registerEditCommand(*this, UndoOrRedo::Undo);
 }
 

@@ -803,8 +803,8 @@ public:
     WebUndoStep* webUndoStep(WebUndoStepID);
     void addWebUndoStep(WebUndoStepID, Ref<WebUndoStep>&&);
     void removeWebEditCommand(WebUndoStepID);
-    void unapplyEditCommand(uint32_t undoVersion, WebUndoStepID, CompletionHandler<void()>&&);
-    void reapplyEditCommand(uint32_t undoVersion, WebUndoStepID, CompletionHandler<void()>&&);
+    void unapplyEditCommand(uint64_t sequence, WebUndoStepID, CompletionHandler<void()>&&);
+    void reapplyEditCommand(uint64_t sequence, WebUndoStepID, CompletionHandler<void()>&&);
     bool isInRedo() const { return m_isInRedo; }
     void setIsInRedo(bool isInRedo) { m_isInRedo = isInRedo; }
 
@@ -2978,7 +2978,7 @@ private:
     bool m_mayStartMediaWhenInWindow { false };
 
     HashMap<WebUndoStepID, Ref<WebUndoStep>> m_undoStepMap;
-    uint32_t m_currentUndoVersion { 0 };
+    uint64_t m_nextUndoRedoSequenceToApply { 0 };
 
 #if ENABLE(CONTEXT_MENUS)
     std::unique_ptr<API::InjectedBundle::PageContextMenuClient> m_contextMenuClient;

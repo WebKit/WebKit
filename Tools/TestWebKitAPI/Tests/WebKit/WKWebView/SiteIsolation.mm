@@ -14869,4 +14869,151 @@ TEST(SiteIsolation, MultiProcessBFCacheIframeRendersAfterBackNavigation)
     expectAnimationFrameCountToIncrease(webView.get(), [webView firstChildFrame]);
 }
 
+static void insertTextInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *editableElement, NSString *text)
+{
+    [webView objectByEvaluatingJavaScriptWithUserGesture:[NSString stringWithFormat:@"%@.focus(); document.execCommand('insertText', false, '%@')", editableElement, text] inFrame:frame];
+
+    // Give the platform undo manager a chance to close the group it opened for this edit, so that consecutive edits are undone one at a time.
+    [webView waitForNextPresentationUpdate];
+}
+
+static bool waitForTextContentInFrame(TestWKWebView *webView, WKFrameInfo *frame, NSString *editableElement, NSString *text)
+{
+    return Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:[NSString stringWithFormat:@"%@.textContent", editableElement] inFrame:frame] isEqualToString:text];
+    });
+}
+
+TEST(SiteIsolation, UndoAndRedoEditInCrossOriginIframeFromMainFrame)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    insertTextInFrame(webView.get(), childFrame.get(), @"document.body", @"hello");
+    EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.queryCommandEnabled('undo')"] boolValue];
+    }));
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.execCommand('undo')"] boolValue]);
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), childFrame.get(), @"document.body", @""));
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.queryCommandEnabled('redo')"] boolValue];
+    }));
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.execCommand('redo')"] boolValue]);
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), childFrame.get(), @"document.body", @"hello"));
+}
+
+#if PLATFORM(MAC)
+TEST(SiteIsolation, UndoAndRedoEditInCrossOriginIframeFromPlatformUndoManager)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    insertTextInFrame(webView.get(), childFrame.get(), @"document.body", @"hello");
+    EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
+
+    RetainPtr undoManager = [webView undoManager];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![undoManager canUndo];
+    }));
+
+    [undoManager undo];
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), childFrame.get(), @"document.body", @""));
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![undoManager canRedo];
+    }));
+
+    [undoManager redo];
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), childFrame.get(), @"document.body", @"hello"));
+}
+
+TEST(SiteIsolation, UndoAfterCrossOriginIframeProcessCrashesDoesNotOfferRedo)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    insertTextInFrame(webView.get(), [webView firstChildFrame], @"document.body", @"hello");
+
+    RetainPtr undoManager = [webView undoManager];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !![undoManager canUndo];
+    }));
+
+    pid_t iframePID = findFramePID(frameTrees(webView.get()).get(), FrameType::Remote);
+    kill(iframePID, SIGKILL);
+    while (processStillRunning(iframePID))
+        Util::spinRunLoop();
+
+    // The step lives only in the process that just died, so the undo cannot happen. The command must not
+    // move to the redo stack and enable Redo for an operation that would silently do nothing.
+    [undoManager undo];
+    EXPECT_FALSE([undoManager canRedo]);
+}
+
+#endif // PLATFORM(MAC)
+
+TEST(SiteIsolation, UndoEditsRegisteredByMultipleProcesses)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<div id='editor' contenteditable></div><iframe id='iframe' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<body contenteditable></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    insertTextInFrame(webView.get(), nil, @"editor", @"main");
+    EXPECT_WK_STREQ("main", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"document.queryCommandEnabled('undo')"] boolValue];
+    }));
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    insertTextInFrame(webView.get(), childFrame.get(), @"document.body", @"sub");
+    EXPECT_WK_STREQ("sub", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.execCommand('undo')"] boolValue]);
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), childFrame.get(), @"document.body", @""));
+    EXPECT_WK_STREQ("main", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.execCommand('undo')"] boolValue]);
+    EXPECT_TRUE(waitForTextContentInFrame(webView.get(), nil, @"editor", @""));
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
+}
+
 }

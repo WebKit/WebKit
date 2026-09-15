@@ -382,14 +382,18 @@ bool WebEditorClient::canRedo() const
     return result;
 }
 
-static void applyPendingUndoRedo(WebPage& page, uint32_t undoVersion, const Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>>& pendingUndoRedo)
+static void applyUndoRedo(WebPage& page, uint64_t firstSequence, const Vector<std::pair<WebKit::WebUndoStepID, WebKit::UndoOrRedo>>& undoRedo)
 {
-    for (auto undoRedo : pendingUndoRedo) {
-        if (undoRedo.second == UndoOrRedo::Undo)
-            page.unapplyEditCommand(undoVersion, undoRedo.first, [] { });
+    // The entries are a contiguous run in send order starting at firstSequence, so each one's sequence
+    // number follows from its position.
+    for (size_t i = 0; i < undoRedo.size(); ++i) {
+        auto [stepID, action] = undoRedo[i];
+        auto sequence = firstSequence + i;
+        if (action == UndoOrRedo::Undo)
+            page.unapplyEditCommand(sequence, stepID, [] { });
         else {
-            ASSERT(undoRedo.second == UndoOrRedo::Redo);
-            page.reapplyEditCommand(undoVersion, undoRedo.first, [] { });
+            ASSERT(action == UndoOrRedo::Redo);
+            page.reapplyEditCommand(sequence, stepID, [] { });
         }
     }
 }
@@ -399,7 +403,7 @@ void WebEditorClient::undo()
     if (RefPtr page = m_page.get()) {
         auto result = page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Undo));
         if (result.succeeded())
-            applyPendingUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
+            applyUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
     }
 }
 
@@ -408,7 +412,7 @@ void WebEditorClient::redo()
     if (RefPtr page = m_page.get()) {
         auto result = page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo));
         if (result.succeeded())
-            applyPendingUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
+            applyUndoRedo(*page, std::get<0>(result.reply()), std::get<1>(result.reply()));
     }
 }
 

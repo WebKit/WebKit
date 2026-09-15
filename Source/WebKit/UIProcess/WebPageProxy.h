@@ -789,6 +789,7 @@ public:
     WebCore::PageIdentifier webPageIDInMainFrameProcess() const { return m_webPageID; }
     WebCore::PageIdentifier identifierInSiteIsolatedProcess() const { return webPageIDInMainFrameProcess(); }
     WebCore::PageIdentifier webPageIDInProcess(const WebProcessProxy&) const;
+    bool hasWebPageInProcess(const WebProcessProxy&, WebCore::PageIdentifier);
     WebCore::PageIdentifier webPageIDInProcessForFrame(std::optional<WebCore::FrameIdentifier>);
 
     PAL::SessionID NODELETE sessionID() const;
@@ -1881,10 +1882,8 @@ public:
 
     bool canUndo();
     bool canRedo();
-    void addPendingUndoRedo(WebUndoStepID, UndoOrRedo);
-    void removePendingUndoRedo(WebUndoStepID);
-    uint32_t undoVersion() const { return m_undoVersion; }
-    void updateUndoVersion() { ++m_undoVersion; }
+    uint64_t addPendingUndoRedo(WebUndoStepID, UndoOrRedo, WebCore::ProcessIdentifier);
+    void removePendingUndoRedo(WebUndoStepID, WebCore::ProcessIdentifier);
 
 #if PLATFORM(COCOA)
     void registerKeypressCommandName(const String& name) { m_knownKeypressCommandNames.add(name); }
@@ -3362,7 +3361,7 @@ private:
     void registerInsertionUndoGrouping();
     void clearAllEditCommands();
     void canUndoRedo(UndoOrRedo, CompletionHandler<void(bool)>&&);
-    void executeUndoRedo(UndoOrRedo, CompletionHandler<void(uint32_t undoVersion, Vector<std::pair<WebUndoStepID, UndoOrRedo>>&&)>&&);
+    void executeUndoRedo(IPC::Connection&, UndoOrRedo, CompletionHandler<void(uint64_t firstSequence, Vector<std::pair<WebUndoStepID, UndoOrRedo>>&& undoRedo)>&&);
 
     // Keyboard handling
 #if PLATFORM(COCOA)
@@ -3900,8 +3899,14 @@ private:
 
     RefPtr<WebInspectorUIProxy> m_inspector;
 
-    Deque<std::pair<WebUndoStepID, UndoOrRedo>> m_pendingUndoRedo;
-    uint32_t m_undoVersion { 0 };
+    struct PendingUndoRedo {
+        WebUndoStepID stepID;
+        UndoOrRedo action;
+        WebCore::ProcessIdentifier process;
+        uint64_t sequence;
+    };
+    Deque<PendingUndoRedo> m_pendingUndoRedo;
+    HashMap<WebCore::ProcessIdentifier, uint64_t> m_nextUndoRedoSequenceByProcess;
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;

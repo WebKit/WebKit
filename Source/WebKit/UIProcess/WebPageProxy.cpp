@@ -12748,7 +12748,9 @@ void WebPageProxy::compositionWasCanceled()
 
 void WebPageProxy::registerEditCommandForUndo(IPC::Connection& connection, WebUndoStepID commandID, String&& label)
 {
-    registerEditCommand(WebEditCommandProxy::create(commandID, WTF::move(label), *this), UndoOrRedo::Undo);
+    Ref process = WebProcessProxy::fromConnection(connection);
+    auto pageIDInProcess = webPageIDInProcess(process);
+    registerEditCommand(WebEditCommandProxy::create(commandID, WTF::move(label), *this, process, pageIDInProcess), UndoOrRedo::Undo);
 }
 
 void WebPageProxy::registerInsertionUndoGrouping()
@@ -12765,13 +12767,26 @@ void WebPageProxy::canUndoRedo(UndoOrRedo action, CompletionHandler<void(bool)>&
     completionHandler(pageClient && pageClient->canUndoRedo(action));
 }
 
-void WebPageProxy::executeUndoRedo(UndoOrRedo action, CompletionHandler<void(uint32_t undoVersion, Vector<std::pair<WebUndoStepID, UndoOrRedo>>&&)>&& completionHandler)
+void WebPageProxy::executeUndoRedo(IPC::Connection& connection, UndoOrRedo action, CompletionHandler<void(uint64_t firstSequence, Vector<std::pair<WebUndoStepID, UndoOrRedo>>&&)>&& completionHandler)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->executeUndoRedo(action);
-    // FIXME: <rdar://168324268> Fix this for site isolation. We need a separate pending undo/redo stack for each process.
-    ++m_undoVersion;
-    completionHandler(m_undoVersion, WTF::moveToVector(std::exchange(m_pendingUndoRedo, { })));
+
+    auto callingProcess = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
+    auto firstSequence = m_nextUndoRedoSequenceByProcess.get(callingProcess);
+    Vector<std::pair<WebUndoStepID, UndoOrRedo>> undoRedoInCallingProcess;
+    m_pendingUndoRedo.removeAllMatching([&](auto& pendingUndoRedo) {
+        if (pendingUndoRedo.process != callingProcess)
+            return false;
+        if (undoRedoInCallingProcess.isEmpty())
+            firstSequence = pendingUndoRedo.sequence;
+        else
+            ASSERT(pendingUndoRedo.sequence == firstSequence + undoRedoInCallingProcess.size());
+        undoRedoInCallingProcess.append({ pendingUndoRedo.stepID, pendingUndoRedo.action });
+        return true;
+    });
+
+    completionHandler(firstSequence, WTF::move(undoRedoInCallingProcess));
 }
 
 void WebPageProxy::clearAllEditCommands()
@@ -12780,16 +12795,17 @@ void WebPageProxy::clearAllEditCommands()
         pageClient->clearAllEditCommands();
 }
 
-void WebPageProxy::addPendingUndoRedo(WebUndoStepID commandID, UndoOrRedo action)
+uint64_t WebPageProxy::addPendingUndoRedo(WebUndoStepID commandID, UndoOrRedo action, WebCore::ProcessIdentifier process)
 {
-    ++m_undoVersion;
-    m_pendingUndoRedo.append({ commandID, action });
+    auto sequence = m_nextUndoRedoSequenceByProcess.add(process, 0).iterator->value++;
+    m_pendingUndoRedo.append({ commandID, action, process, sequence });
+    return sequence;
 }
 
-void WebPageProxy::removePendingUndoRedo(WebUndoStepID commandID)
+void WebPageProxy::removePendingUndoRedo(WebUndoStepID commandID, WebCore::ProcessIdentifier process)
 {
-    m_pendingUndoRedo.removeFirstMatching([commandID](auto& item) {
-        return item.first == commandID;
+    m_pendingUndoRedo.removeFirstMatching([&](auto& pendingUndoRedo) {
+        return pendingUndoRedo.stepID == commandID && pendingUndoRedo.process == process;
     });
 }
 
@@ -13536,7 +13552,12 @@ void WebPageProxy::removeEditCommand(WebEditCommandProxy& command)
 
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::DidRemoveEditCommand(command.commandID()));
+
+    RefPtr process = command.process();
+    if (!process)
+        return;
+
+    process->send(Messages::WebPage::DidRemoveEditCommand(command.commandID()), command.pageIDInProcess());
 }
 
 bool WebPageProxy::canUndo()
@@ -19301,6 +19322,18 @@ WebCore::PageIdentifier WebPageProxy::webPageIDInProcess(const WebProcessProxy& 
     if (RefPtr remotePage = protect(browsingContextGroup())->remotePageInProcess(*this, process))
         return remotePage->pageID();
     return m_webPageID;
+}
+
+bool WebPageProxy::hasWebPageInProcess(const WebProcessProxy& process, WebCore::PageIdentifier pageID)
+{
+    // Unlike webPageIDInProcess(), which falls back to m_webPageID, this answers whether the process
+    // still hosts a WebPage of this page under that specific identifier.
+    bool found = false;
+    forEachWebContentProcess([&](auto& webProcess, auto pageIDInProcess) {
+        if (&webProcess == &process && pageIDInProcess == pageID)
+            found = true;
+    });
+    return found;
 }
 
 WebPopupMenuProxyClient& WebPageProxy::popupMenuClient()

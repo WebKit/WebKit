@@ -334,8 +334,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     RequestFontAttributesAtSelectionStart() -> (struct WebCore::FontAttributes attributes)
 
     DidRemoveEditCommand(WebKit::WebUndoStepID commandID)
-    ReapplyEditCommand(uint32_t undoVersion, WebKit::WebUndoStepID commandID) -> ()
-    UnapplyEditCommand(uint32_t undoVersion, WebKit::WebUndoStepID commandID) -> ()
+    ReapplyEditCommand(uint64_t sequence, WebKit::WebUndoStepID commandID) -> ()
+    UnapplyEditCommand(uint64_t sequence, WebKit::WebUndoStepID commandID) -> ()
 
     DidSetPageZoomFactor(double zoomFactor)
     DidSetTextZoomFactor(double zoomFactor)
