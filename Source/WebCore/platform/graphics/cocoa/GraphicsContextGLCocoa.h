@@ -92,8 +92,6 @@ public:
     GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
     bool enableRequiredWebXRExtensions() final;
 
-    // GL_EXT_discard_framebuffer
-    void framebufferDiscard(GCGLenum, std::span<const GCGLenum>) final;
     // GL_WEBKIT_explicit_resolve_target
     void framebufferResolveRenderbuffer(GCGLenum, GCGLenum, GCGLenum, PlatformGLObject) final;
 #endif
