@@ -1582,6 +1582,7 @@ if (WEBKIT_SDK_IS_MACOS OR WEBKIT_SDK_IS_IOS_FAMILY)
             WebProcess_CodeSign
             WebProcessEnhancedSecurity_CodeSign
             WebProcessCaptivePortal_CodeSign
+            WebProcessDevelopment_CodeSign
             NetworkProcess_CodeSign
             GPUProcess_CodeSign
         )
