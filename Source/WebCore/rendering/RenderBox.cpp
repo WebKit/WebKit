@@ -4288,6 +4288,16 @@ inline static LayoutRange getScrollableContainingBlockRange(const RenderBox& con
     return containingBlock.scrollablePaddingAreaOverflowRect().yRange();
 }
 
+LayoutUnit RenderBox::paddingBoxLogicalWidth() const
+{
+    return writingMode().isHorizontal() ? paddingBoxWidth() : paddingBoxHeight();
+}
+
+LayoutUnit RenderBox::paddingBoxLogicalHeight() const
+{
+    return writingMode().isHorizontal() ? paddingBoxHeight() : paddingBoxWidth();
+}
+
 LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObject& container, BoxAxis physicalAxis) const
 {
     ASSERT(container.canContainAbsolutelyPositionedObjects() || container.canContainFixedPositionObjects());
@@ -4304,10 +4314,10 @@ LayoutRange RenderBox::containingBlockRangeForPositioned(const RenderBoxModelObj
     }
 
     // Inline containing blocks are formed by relatively-positioned inline boxes.
-    if (auto* inlineContainer = dynamicDowncast<RenderInline>(container)) {
+    if (container.isInlineBox()) {
         return isContainerInlineAxis
-            ? LayoutRange(startEdge, inlineContainer->innerPaddingBoxWidth())
-            : LayoutRange(startEdge, inlineContainer->innerPaddingBoxHeight());
+            ? LayoutRange(startEdge, container.paddingBoxLogicalWidth())
+            : LayoutRange(startEdge, container.paddingBoxLogicalHeight());
     }
 
     auto* containingBlock = dynamicDowncast<RenderBlock>(container) ? : container.containingBlock();

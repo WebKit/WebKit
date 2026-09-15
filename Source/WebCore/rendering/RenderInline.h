@@ -43,8 +43,6 @@ public:
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
-    LayoutUnit innerPaddingBoxWidth() const;
-    LayoutUnit innerPaddingBoxHeight() const;
 
 
     bool requiresLayer() const override;
