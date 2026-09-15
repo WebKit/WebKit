@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/Forward.h>
@@ -46,7 +47,7 @@ class SharedWorkerObjectConnection : public RefCounted<SharedWorkerObjectConnect
 public:
     WEBCORE_EXPORT virtual ~SharedWorkerObjectConnection();
 
-    virtual void requestSharedWorker(const SharedWorkerKey&, SharedWorkerObjectIdentifier, TransferredMessagePort&&, const WorkerOptions&) = 0;
+    virtual void requestSharedWorker(const SharedWorkerKey&, SharedWorkerObjectIdentifier, FrameIdentifier ownerFrameIdentifier, TransferredMessagePort&&, const WorkerOptions&) = 0;
     virtual void sharedWorkerObjectIsGoingAway(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
     virtual void suspendForBackForwardCache(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
     virtual void resumeForBackForwardCache(const SharedWorkerKey&, SharedWorkerObjectIdentifier) = 0;
