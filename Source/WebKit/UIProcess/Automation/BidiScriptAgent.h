@@ -109,11 +109,10 @@ private:
     void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
-    void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
+    void collectExecutionReadyFrames(FrameTreeNodeData&&, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter);
     bool NODELETE isFrameExecutionReady(const FrameInfoData&);
-    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
+    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&, RealmIdentifier, const WebCore::SecurityOriginData&);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
-    RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
