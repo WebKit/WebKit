@@ -27,16 +27,48 @@
 #include "SimplifyMarkupCommand.h"
 
 #include "ContainerNodeInlines.h"
+#include "FontCascadeInlines.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"
-#include "RenderInline.h"
+#include "RenderElement.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderObject.h"
+#include "RenderObjectInlines.h"
 #include "StyleComputedStyle.h"
 #include "StyleDifference.h"
 
 namespace WebCore {
+
+static bool mayAffectLayout(const RenderElement& renderer)
+{
+    if (!renderer.isInlineBox())
+        return true;
+
+    CheckedRef parent = *renderer.parent();
+    CheckedRef parentStyle = parent->style();
+    auto parentIsInlineBox = parent->isInlineBox();
+    auto hasHardLineBreakChildOnly = renderer.firstChild() && renderer.firstChild() == renderer.lastChild() && renderer.firstChild()->isBR();
+    bool checkFonts = renderer.document().inNoQuirksMode();
+    auto affectsGeometry = (parentIsInlineBox && mayAffectLayout(parent))
+        || (parentIsInlineBox && !WTF::holdsAlternative<CSS::Keyword::Baseline>(parentStyle->verticalAlign()))
+        || !WTF::holdsAlternative<CSS::Keyword::Baseline>(renderer.style().verticalAlign())
+        || !renderer.style().textEmphasisStyle().isNone()
+        || (checkFonts && (!parentStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(renderer.style().fontCascade().metricsOfPrimaryFont())
+        || parentStyle->textAutosizingAdjustedLineHeight() != renderer.style().textAutosizingAdjustedLineHeight()))
+        || hasHardLineBreakChildOnly;
+
+    if (!affectsGeometry && checkFonts) {
+        // Have to check the first line style as well.
+        CheckedRef parentFirstLineStyle = parent->firstLineStyle();
+        CheckedRef childStyle = renderer.firstLineStyle();
+        affectsGeometry = !parentFirstLineStyle->fontCascade().metricsOfPrimaryFont().hasIdenticalAscentDescentAndLineGap(childStyle->fontCascade().metricsOfPrimaryFont())
+            || !WTF::holdsAlternative<CSS::Keyword::Baseline>(childStyle->verticalAlign())
+            || parentFirstLineStyle->textAutosizingAdjustedLineHeight() != childStyle->textAutosizingAdjustedLineHeight();
+    }
+    return affectsGeometry;
+}
 
 SimplifyMarkupCommand::SimplifyMarkupCommand(Ref<Document>&& document, Node* firstNode, Node* nodeAfterLast)
     : CompositeEditCommand(WTF::move(document))
@@ -80,8 +112,8 @@ void SimplifyMarkupCommand::doApply()
             if (!currentNode)
                 break;
 
-            CheckedPtr renderInline = dynamicDowncast<RenderInline>(currentNode->renderer());
-            if (!renderInline || renderInline->mayAffectLayout())
+            CheckedPtr renderer = currentNode->renderer();
+            if (!renderer || mayAffectLayout(*renderer))
                 continue;
             
             if (currentNode->firstChild() != currentNode->lastChild()) {
