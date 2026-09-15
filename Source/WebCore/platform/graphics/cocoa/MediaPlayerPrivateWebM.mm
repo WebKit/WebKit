@@ -31,6 +31,7 @@
 #import "AudioMediaStreamTrackRenderer.h"
 #import "AudioTrackPrivateWebM.h"
 #import "AudioVideoRendererAVFObjC.h"
+#import "ContentTypeUtilities.h"
 #import "FloatSize.h"
 #import "GraphicsContext.h"
 #import "GraphicsContextStateSaver.h"
@@ -182,6 +183,9 @@ MediaPlayer::SupportsType MediaPlayerPrivateWebM::supportsType(const MediaEngine
         return MediaPlayer::SupportsType::IsNotSupported;
 #endif
 
+    if (!contentTypeMeetsContainerAndCodecTypeRequirements(parameters.type, parameters.allowedMediaContainerTypes, parameters.allowedMediaCodecTypes))
+        return MediaPlayer::SupportsType::IsNotSupported;
+
     return SourceBufferParserWebM::isContentTypeSupported(parameters.type, parameters.supportsLimitedMatroska);
 }
 
@@ -239,6 +243,20 @@ void MediaPlayerPrivateWebM::load(const URL& url, const LoadOptions& options)
     ALWAYS_LOG(LOGIDENTIFIER);
 
     setReadyState(MediaPlayer::ReadyState::HaveNothing);
+
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    auto allowedMediaContainerTypes = player->allowedMediaContainerTypes();
+    constexpr auto isWebMContainerType = [](auto& containerType) {
+        return equalLettersIgnoringASCIICase(containerType, "video/webm"_s) || equalLettersIgnoringASCIICase(containerType, "audio/webm"_s);
+    };
+    if (allowedMediaContainerTypes && !allowedMediaContainerTypes->containsIf(isWebMContainerType)) {
+        ERROR_LOG(LOGIDENTIFIER, "WebM is not an allowed container type");
+        setNetworkState(MediaPlayer::NetworkState::FormatError);
+        return;
+    }
 
     m_assetURL = url;
     if (options.supportsLimitedMatroska)

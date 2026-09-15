@@ -13,5 +13,13 @@ EXPECTED (video.canPlayType("audio/mp3") == '') OK
 EXPECTED (video.canPlayType("video/mp4") == 'maybe') OK
 RUN(video.src = "content/test.mp4")
 EVENT(canplay) OK
+RUN(internals.settings.setAllowedMediaContainerTypes("video/webm"))
+EXPECTED (video.canPlayType("video/webm") == 'maybe') OK
+RUN(video.src = "content/test-vp8.webm")
+EVENT(canplay) OK
+RUN(internals.settings.setAllowedMediaContainerTypes("video/mp4"))
+EXPECTED (video.canPlayType("video/webm") == '') OK
+RUN(video.src = "content/test-vp8.webm")
+EVENT(error) OK
 END OF TEST
 
