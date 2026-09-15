@@ -5841,7 +5841,7 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent
         return;
 
     auto eventPhase = WebEventFactory::toNativeEventPhase(event.phase());
-    auto locationInWindow = [m_view.get() convertPoint:event.position() toView:nil];
+    auto locationInWindow = [m_view.get() convertPoint:event.positionInRootView() toView:nil];
 
     [m_view.get() _web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:eventPhase magnification:event.gestureScale() locationInWindow:locationInWindow];
 }

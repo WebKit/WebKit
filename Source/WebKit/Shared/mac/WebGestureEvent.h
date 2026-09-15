@@ -64,6 +64,7 @@ public:
     static Ref<WebGestureEvent> create(WebGestureEventInit&&);
 
     WebCore::IntPoint position() const { return m_data.position; }
+    void setPosition(WebCore::IntPoint position) { m_data.position = position; }
 
     float gestureScale() const { return m_data.gestureScale; }
     float gestureRotation() const { return m_data.gestureRotation; }

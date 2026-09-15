@@ -85,6 +85,10 @@ http/tests/site-isolation/select-in-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/autofill-credentials-in-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/focus-navigation-cross-origin-iframe.html [ Skip ]
 http/tests/site-isolation/magnify-gesture-over-cross-origin-pdf-iframe.html [ Skip ]
+# Needs ENABLE(MAC_GESTURE_EVENTS), so eventSender.scaleGesture* only exists on
+# internal SDK builds. Re-enabled alongside the test above in the internal mac-wk2
+# expectations.
+http/tests/site-isolation/magnify-gesture-coordinates.html [ Skip ]
 fast/viewport/ios [ Skip ]
 fast/visual-viewport/ios/ [ Skip ]
 http/tests/visual-viewport/ios/ [ Skip ]

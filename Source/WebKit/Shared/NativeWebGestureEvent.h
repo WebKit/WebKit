@@ -58,6 +58,10 @@ public:
     Kind kind() const { return m_kind; }
     NSEvent *nativeEvent() const { return m_nativeEvent.get(); }
 
+    // position() is rewritten into the target frame's coordinate space when the event is
+    // re-sent to a remote frame's process, so keep the original for the native zoom fallback.
+    WebCore::IntPoint positionInRootView() const { return m_positionInRootView; }
+
 private:
     static RefPtr<NativeWebGestureEvent> create(const Init&, NSView *, NSEvent *);
     NativeWebGestureEvent(WebEventType, const Init&, NSView *, NSEvent *);
@@ -65,6 +69,7 @@ private:
     bool m_allowsNativeZoom { true };
     Kind m_kind;
     RetainPtr<NSEvent> m_nativeEvent;
+    WebCore::IntPoint m_positionInRootView;
 };
 
 } // namespace WebKit

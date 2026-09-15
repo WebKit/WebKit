@@ -1,0 +1,10 @@
+Verifies that a magnify gesture over a cross-origin iframe is delivered at coordinates translated into that iframe's coordinate space.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is 'target,40,50'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1041,8 +1041,9 @@ void WebPage::didBeginMagnificationGesture()
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    if (RefPtr localMainFrame = corePage()->localMainFrame())
-        localMainFrame->eventHandler().didEndMagnificationGesture();
+    // Under site isolation the main frame can be remote in this process, so reset every local root.
+    for (WeakRef frame : protect(corePage())->rootFrames())
+        frame->eventHandler().didEndMagnificationGesture();
 #endif
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn())

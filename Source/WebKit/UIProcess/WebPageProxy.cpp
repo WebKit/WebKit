@@ -13797,7 +13797,11 @@ void WebPageProxy::mouseEventHandlingCompleted(bool handled, std::optional<Remot
 void WebPageProxy::gestureEventHandlingCompleted(std::optional<WebEventType> eventType, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData)
 {
     if (remoteUserInputEventData) {
-        sendGestureEvent(remoteUserInputEventData->targetFrameID, internals().gestureEventQueue.first().copyRef());
+        Ref event = internals().gestureEventQueue.first();
+        // The remote frame's process re-hit-tests the gesture, so it needs the position in that
+        // frame's root view coordinates rather than this page's.
+        event->setPosition(roundedIntPoint(remoteUserInputEventData->transformedPoint));
+        sendGestureEvent(remoteUserInputEventData->targetFrameID, WTF::move(event));
         return;
     }
 
@@ -17459,7 +17463,11 @@ void WebPageProxy::didEndMagnificationGesture()
 {
     if (!hasRunningProcess())
         return;
-    send(Messages::WebPage::DidEndMagnificationGesture());
+    // A gesture can be handled by any frame's process under site isolation, so every one of them
+    // needs to reset its gesture state.
+    forEachWebContentProcess([](auto& process, auto pageID) {
+        process.send(Messages::WebPage::DidEndMagnificationGesture(), pageID);
+    });
 }
 
 #endif
