@@ -1081,7 +1081,9 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     RELEASE_ASSERT(!m_isInProcessCache);
     ASSERT(!m_websiteDataStore || websiteDataStore() == &webPage.websiteDataStore());
 
+#if USE(RUNNINGBOARD)
     bool wasStandaloneServiceWorkerProcess = isStandaloneServiceWorkerProcess();
+#endif
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes) {
         RELEASE_ASSERT(m_processPool);
@@ -1107,11 +1109,13 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateBackgroundResponsivenessTimer();
     protect(websiteDataStore())->propagateSettingUpdates();
 
+#if USE(RUNNINGBOARD)
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
     // assertions on the network process
     if (wasStandaloneServiceWorkerProcess)
         didChangeThrottleState(throttler().currentState());
+#endif
 }
 
 void WebProcessProxy::markIsNoLongerInPrewarmedPool()
