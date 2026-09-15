@@ -1273,7 +1273,7 @@ WebKitSecurityManager* webkit_web_context_get_security_manager(WebKitWebContext*
  */
 void webkit_web_context_set_additional_plugins_directory(WebKitWebContext*, const char*)
 {
-    g_warning("webkit_web_context_set_additional_plugins_directory is deprecated and does nothing. Netscape plugins are no longer supported.");
+    g_warning("webkit_web_context_set_additional_plugins_directory() is deprecated and does nothing. Netscape plugins are no longer supported.");
 }
 
 /**
@@ -1294,7 +1294,7 @@ void webkit_web_context_get_plugins(WebKitWebContext* context, GCancellable* can
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    g_warning("webkit_web_context_get_plugins is deprecated and always returns an empty list. Netscape plugins are no longer supported.");
+    g_warning("webkit_web_context_get_plugins() is deprecated and always returns an empty list. Netscape plugins are no longer supported.");
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(context, cancellable, callback, userData));
     g_task_return_pointer(task.get(), nullptr, nullptr);
@@ -1735,7 +1735,7 @@ void webkit_web_context_set_web_extensions_initialization_user_data(WebKitWebCon
  */
 void webkit_web_context_set_disk_cache_directory(WebKitWebContext*, const char*)
 {
-    g_warning("webkit_web_context_set_disk_cache_directory is deprecated and does nothing, use WebKitWebsiteDataManager instead");
+    g_warning("webkit_web_context_set_disk_cache_directory() is deprecated and does nothing, use WebKitWebsiteDataManager instead");
 }
 #endif
 
@@ -1852,7 +1852,7 @@ void webkit_web_context_set_web_process_count_limit(WebKitWebContext* context, g
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
-    g_warning("webkit_web_context_set_web_process_count_limit is deprecated and does nothing. Limiting the number of web processes is no longer possible for security reasons");
+    g_warning("webkit_web_context_set_web_process_count_limit() is deprecated and does nothing. Limiting the number of web processes is no longer possible for security reasons");
 }
 
 /**

@@ -209,7 +209,7 @@ JSCValue* jsc_value_new_null(JSCContext* context)
  *
  * Get whether the value referenced by @value is `null`.
  *
- * Returns: whether the value is null.
+ * Returns: whether the value is `null`.
  */
 gboolean jsc_value_is_null(JSCValue* value)
 {

@@ -1865,7 +1865,7 @@ gboolean webkit_settings_get_load_icons_ignoring_image_load_setting(WebKitSettin
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    g_warning("webkit_settings_get_load_icons_ignoring_image_load_setting is deprecated and always returns FALSE.");
+    g_warning("webkit_settings_get_load_icons_ignoring_image_load_setting() is deprecated and always returns FALSE.");
 
     return FALSE;
 }
@@ -1884,7 +1884,7 @@ void webkit_settings_set_load_icons_ignoring_image_load_setting(WebKitSettings* 
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (enabled)
-        g_warning("webkit_settings_set_load_icons_ignoring_image_load_setting is deprecated and does nothing.");
+        g_warning("webkit_settings_set_load_icons_ignoring_image_load_setting() is deprecated and does nothing.");
 }
 
 /**
@@ -1918,7 +1918,7 @@ void webkit_settings_set_enable_offline_web_application_cache(WebKitSettings* se
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (enabled)
-        g_warning("webkit_settings_set_enable_offline_web_application_cache is deprecated and does nothing.");
+        g_warning("webkit_settings_set_enable_offline_web_application_cache() is deprecated and does nothing.");
 }
 
 /**
@@ -2068,7 +2068,7 @@ gboolean webkit_settings_get_enable_plugins(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    g_warning("webkit_settings_get_enable_plugins is deprecated and always returns FALSE. Plugins are no longer supported.");
+    g_warning("webkit_settings_get_enable_plugins() is deprecated and always returns FALSE. Plugins are no longer supported.");
 
     return FALSE;
 }
@@ -2087,7 +2087,7 @@ void webkit_settings_set_enable_plugins(WebKitSettings* settings, gboolean enabl
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (enabled)
-        g_warning("webkit_settings_set_enable_plugins is deprecated and does nothing. Plugins are no longer supported.");
+        g_warning("webkit_settings_set_enable_plugins() is deprecated and does nothing. Plugins are no longer supported.");
 }
 
 /**
@@ -2104,7 +2104,7 @@ gboolean webkit_settings_get_enable_java(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    g_warning("webkit_settings_get_enable_java is deprecated and always returns FALSE. Java is no longer supported.");
+    g_warning("webkit_settings_get_enable_java() is deprecated and always returns FALSE. Java is no longer supported.");
 
     return FALSE;
 }
@@ -2125,7 +2125,7 @@ void webkit_settings_set_enable_java(WebKitSettings* settings, gboolean enabled)
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (enabled)
-        g_warning("webkit_settings_set_enable_java is deprecated and does nothing. Java is no longer supported.");
+        g_warning("webkit_settings_set_enable_java() is deprecated and does nothing. Java is no longer supported.");
 }
 #endif
 
@@ -2195,7 +2195,7 @@ void webkit_settings_set_enable_hyperlink_auditing(WebKitSettings* settings, gbo
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (!enabled)
-        g_warning("webkit_settings_set_enable_hyperlink_auditing is deprecated and does nothing.");
+        g_warning("webkit_settings_set_enable_hyperlink_auditing() is deprecated and does nothing.");
 }
 
 /**
@@ -2677,7 +2677,7 @@ void webkit_settings_set_enable_private_browsing(WebKitSettings* settings, gbool
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    g_warning("webkit_settings_set_enable_private_browsing is deprecated and does nothing, use WebKitWebView:is-ephemeral or WebKitWebsiteDataManager:is-ephemeral instead");
+    g_warning("webkit_settings_set_enable_private_browsing() is deprecated and does nothing, use WebKitWebView:is-ephemeral or WebKitWebsiteDataManager:is-ephemeral instead");
 }
 #endif
 
@@ -2800,7 +2800,7 @@ gboolean webkit_settings_get_enable_dns_prefetching(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    g_warning("webkit_settings_get_enable_dns_prefetching is deprecated and always returns FALSE.");
+    g_warning("webkit_settings_get_enable_dns_prefetching() is deprecated and always returns FALSE.");
 
     return FALSE;
 }
@@ -2819,7 +2819,7 @@ void webkit_settings_set_enable_dns_prefetching(WebKitSettings* settings, gboole
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     if (enabled)
-        g_warning("webkit_settings_set_enable_dns_prefetching is deprecated and does nothing.");
+        g_warning("webkit_settings_set_enable_dns_prefetching() is deprecated and does nothing.");
 }
 
 /**
