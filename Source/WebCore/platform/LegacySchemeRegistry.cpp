@@ -141,9 +141,6 @@ static std::span<const ASCIILiteral> builtinSecureSchemes()
         "about"_s,
         "data"_s,
         "wss"_s,
-#if ENABLE(SWIFT_DEMO_URI_SCHEME)
-        "x-swift-demo"_s,
-#endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         "resource"_s,
 #endif

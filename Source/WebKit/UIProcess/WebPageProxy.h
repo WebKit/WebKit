@@ -4079,9 +4079,6 @@ private:
 #if HAVE(APP_SSO)
     bool m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision { false };
 #endif
-#if ENABLE(SWIFT_DEMO_URI_SCHEME)
-    bool m_shouldSuppressSwiftDemoInNextNavigationPolicyDecision { false };
-#endif
 
     std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
 
