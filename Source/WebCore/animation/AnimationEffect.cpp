@@ -34,6 +34,9 @@
 #include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
+#ifndef RC_REMOVE_SEC_ACCEL_3
+#include "ScriptDisallowedScope.h"
+#endif // RC_REMOVE_SEC_ACCEL_3
 #include "ScriptExecutionContext.h"
 #include "ScrollTimeline.h"
 #include "StyleSingleAnimationRange.h"
@@ -437,6 +440,10 @@ void AnimationEffect::updateComputedTimingPropertiesIfNeeded()
 {
     if (!m_timingDidMutate)
         return;
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     m_timingDidMutate = false;
 
