@@ -37,14 +37,14 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         this._sourceCode = sourceCode || null;
         this._lineNumber = lineNumber;
         this._columnNumber = columnNumber;
-        this._resolveFormattedLocation();
 
-        if (this._sourceCode) {
-            this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-            this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
-        }
+        this._formattedLineNumber = lineNumber;
+        this._formattedColumnNumber = columnNumber;
 
         this._resetMappedLocation();
+
+        this._initialized = false;
+        this._addedSourceCodeListeners = false;
     }
 
     // Static
@@ -55,6 +55,12 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
     }
 
     // Public
+
+    addEventListener(eventType, listener, thisObject)
+    {
+        this._initializeIfNeeded();
+        return super.addEventListener(eventType, listener, thisObject);
+    }
 
     isEqual(other)
     {
@@ -112,11 +118,13 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 
     get formattedLineNumber()
     {
+        this._initializeIfNeeded();
         return this._formattedLineNumber;
     }
 
     get formattedColumnNumber()
     {
+        this._initializeIfNeeded();
         return this._formattedColumnNumber;
     }
 
@@ -187,6 +195,7 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
 
     hasFormattedLocation()
     {
+        this._initializeIfNeeded();
         return this._formattedLineNumber !== this._lineNumber || this._formattedColumnNumber !== this._columnNumber;
     }
 
@@ -282,22 +291,19 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
         console.assert((this._sourceCode === null && sourceCode instanceof WI.SourceCode) || (this._sourceCode instanceof WI.SourceCode && sourceCode === null) || this._sourceCode?.contentIdentifier === sourceCode?.contentIdentifier);
 
         this._makeChangeAndDispatchChangeEventIfNeeded(function() {
-            if (this._sourceCode) {
-                this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.removeEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
-            }
+            this._removeSourceCodeListeners();
 
             this._sourceCode = sourceCode;
 
-            if (this._sourceCode) {
-                this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
-                this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
-            }
+            if (this._initialized)
+                this._addSourceCodeListeners();
         });
     }
 
     resolveMappedLocation()
     {
+        this._initializeIfNeeded();
+
         if (this._mappedLocationIsResolved)
             return;
 
@@ -321,6 +327,39 @@ WI.SourceCodeLocation = class SourceCodeLocation extends WI.Object
     }
 
     // Private
+
+    _initializeIfNeeded()
+    {
+        if (this._initialized)
+            return;
+
+        this._initialized = true;
+
+        this._addSourceCodeListeners();
+        this._resolveFormattedLocation();
+    }
+
+    _addSourceCodeListeners()
+    {
+        if (this._addedSourceCodeListeners || !this._sourceCode)
+            return;
+
+        this._addedSourceCodeListeners = true;
+
+        this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+        this._sourceCode.addEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+    }
+
+    _removeSourceCodeListeners()
+    {
+        if (!this._addedSourceCodeListeners)
+            return;
+
+        this._addedSourceCodeListeners = false;
+
+        this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this._sourceCodeSourceMapAdded, this);
+        this._sourceCode.removeEventListener(WI.SourceCode.Event.FormatterDidChange, this._sourceCodeFormatterDidChange, this);
+    }
 
     _locationString(sourceCode, lineNumber, columnNumber, columnStyle, nameStyle, prefix)
     {
