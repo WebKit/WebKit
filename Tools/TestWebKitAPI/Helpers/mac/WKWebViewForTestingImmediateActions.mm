@@ -86,7 +86,8 @@ static NSPoint swizzledImmediateActionLocationInView(id, SEL, NSView *)
     gSwizzledImmediateActionLocation = location;
     [immediateActionGesture.delegate immediateActionRecognizerWillPrepare:immediateActionGesture];
 
-    TestWebKitAPI::Util::run(&_hasReturnedImmediateActionController);
+    // Bounded, so a web process that never replies fails here instead of spinning forever.
+    EXPECT_TRUE(TestWebKitAPI::Util::runFor(&_hasReturnedImmediateActionController, 10_s));
 
     _hasReturnedImmediateActionController = false;
     return { std::exchange(_hitTestResult, nil), std::exchange(_actionType, _WKImmediateActionNone) };

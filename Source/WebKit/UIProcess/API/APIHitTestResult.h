@@ -27,6 +27,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PageOverlay.h>
 #include <WebCore/SharedMemory.h>
+#include <WebCore/TextIndicator.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -60,6 +61,8 @@ public:
     bool isContentEditable() const { return m_data.isContentEditable; }
 
     WebCore::IntRect elementBoundingBox() const { return m_data.elementBoundingBox; }
+
+    RefPtr<const WebCore::TextIndicator> dictionaryPopupTextIndicator() const { return m_data.dictionaryPopupInfo.textIndicator; }
 
     bool isScrollbar() const { return m_data.isScrollbar != WebKit::WebHitTestResultData::IsScrollbar::No; }
 

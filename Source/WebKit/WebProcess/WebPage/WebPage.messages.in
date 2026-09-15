@@ -959,7 +959,6 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ContentsToRootViewRect(WebCore::FrameIdentifier frameID, WebCore::FloatRect rect) -> (WebCore::FloatRect rect)
     ContentsToRootViewRects(WebCore::FrameIdentifier frameID, Vector<WebCore::FloatRect> rects) -> (Vector<WebCore::FloatRect> rects)
     ContentsToRootViewPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point) -> (WebCore::FloatPoint point)
-    RemoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, struct WebCore::DictionaryPopupInfo popupInfo) -> (struct WebCore::DictionaryPopupInfo popupInfo)
     HitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, struct WebKit::ContentWorldData world) -> (struct WebKit::NodeHitTestResult result)
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
