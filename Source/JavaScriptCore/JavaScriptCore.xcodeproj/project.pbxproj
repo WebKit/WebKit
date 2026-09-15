@@ -4235,6 +4235,10 @@
 		234E91C42EE25777000BAE2C /* WebAssemblySuspendErrorPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendErrorPrototype.cpp; path = js/WebAssemblySuspendErrorPrototype.cpp; sourceTree = "<group>"; };
 		237C93D92E95A85F00F62455 /* WebAssemblySuspendingConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspendingConstructor.h; path = js/WebAssemblySuspendingConstructor.h; sourceTree = "<group>"; };
 		237C93DA2E95A85F00F62455 /* WebAssemblySuspendingConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendingConstructor.cpp; path = js/WebAssemblySuspendingConstructor.cpp; sourceTree = "<group>"; };
+		A10F00012F4E00010000F001 /* WebAssemblyJSFunctionConstructor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyJSFunctionConstructor.cpp; path = js/WebAssemblyJSFunctionConstructor.cpp; sourceTree = "<group>"; };
+		A10F00022F4E00010000F002 /* WebAssemblyJSFunctionConstructor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyJSFunctionConstructor.h; path = js/WebAssemblyJSFunctionConstructor.h; sourceTree = "<group>"; };
+		A10F00032F4E00010000F003 /* WebAssemblyJSFunctionPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyJSFunctionPrototype.cpp; path = js/WebAssemblyJSFunctionPrototype.cpp; sourceTree = "<group>"; };
+		A10F00042F4E00010000F004 /* WebAssemblyJSFunctionPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblyJSFunctionPrototype.h; path = js/WebAssemblyJSFunctionPrototype.h; sourceTree = "<group>"; };
 		237C93DB2E95A85F00F62455 /* WebAssemblySuspendingPrototype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAssemblySuspendingPrototype.h; path = js/WebAssemblySuspendingPrototype.h; sourceTree = "<group>"; };
 		237C93DC2E95A85F00F62455 /* WebAssemblySuspendingPrototype.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblySuspendingPrototype.cpp; path = js/WebAssemblySuspendingPrototype.cpp; sourceTree = "<group>"; };
 		23863EE92E5EC91500E57879 /* WebAssemblyBuiltinTrampoline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyBuiltinTrampoline.cpp; path = js/WebAssemblyBuiltinTrampoline.cpp; sourceTree = "<group>"; };
@@ -10994,6 +10998,10 @@
 				AD2FCBB51DB58DA400B3E736 /* WebAssemblyInstanceConstructor.h */,
 				AD2FCBB61DB58DA400B3E736 /* WebAssemblyInstancePrototype.cpp */,
 				AD2FCBB71DB58DA400B3E736 /* WebAssemblyInstancePrototype.h */,
+				A10F00012F4E00010000F001 /* WebAssemblyJSFunctionConstructor.cpp */,
+				A10F00022F4E00010000F002 /* WebAssemblyJSFunctionConstructor.h */,
+				A10F00032F4E00010000F003 /* WebAssemblyJSFunctionPrototype.cpp */,
+				A10F00042F4E00010000F004 /* WebAssemblyJSFunctionPrototype.h */,
 				ADE8029D1E08F2260058DE78 /* WebAssemblyLinkErrorConstructor.cpp */,
 				ADE802951E08F1C90058DE78 /* WebAssemblyLinkErrorConstructor.h */,
 				ADE802961E08F1C90058DE78 /* WebAssemblyLinkErrorPrototype.cpp */,
