@@ -85,13 +85,13 @@ bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyN
     ErrorConstructor* thisObject = uncheckedDowncast<ErrorConstructor>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit) {
+        std::optional<unsigned> limit;
         if (value.isNumber()) {
             double effectiveLimit = value.asNumber();
-            effectiveLimit = std::max(0., effectiveLimit);
-            effectiveLimit = std::min(effectiveLimit, static_cast<double>(std::numeric_limits<unsigned>::max()));
-            thisObject->globalObject()->setStackTraceLimit(static_cast<unsigned>(effectiveLimit));
-        } else
-            thisObject->globalObject()->setStackTraceLimit(std::nullopt);
+            if (!std::isnan(effectiveLimit))
+                limit = static_cast<unsigned>(std::clamp(effectiveLimit, 0., static_cast<double>(std::numeric_limits<unsigned>::max())));
+        }
+        thisObject->globalObject()->setStackTraceLimit(limit);
     }
 
     return Base::put(thisObject, globalObject, propertyName, value, slot);
