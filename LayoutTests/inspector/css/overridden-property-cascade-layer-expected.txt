@@ -1,0 +1,35 @@
+Test that CSSProperty.prototype.overridden accounts for cascade layers when comparing `!important` declarations.
+
+
+== Running test suite: OverriddenPropertyCascadeLayer
+-- Running test case: ImportantInDifferentLayers
+-- #important-different-layers
+blue !important @layer theme OVERRIDDEN
+red !important @layer base effective
+
+-- Running test case: ImportantLayeredBeatsUnlayered
+-- #important-layered-vs-unlayered
+blue !important (unlayered) OVERRIDDEN
+red !important @layer base effective
+
+-- Running test case: ImportantAcrossThreeLayers
+-- #important-three-layers
+blue !important @layer gamma OVERRIDDEN
+green !important @layer beta OVERRIDDEN
+red !important @layer alpha effective
+
+-- Running test case: NormalInDifferentLayers
+-- #normal-different-layers
+blue @layer theme effective
+red @layer base OVERRIDDEN
+
+-- Running test case: ImportantBeatsNormalAcrossLayers
+-- #important-beats-normal
+blue @layer theme OVERRIDDEN
+red !important @layer base effective
+
+-- Running test case: ImportantInSameLayer
+-- #important-same-layer
+blue !important @layer base effective
+red !important @layer base OVERRIDDEN
+
