@@ -155,7 +155,7 @@ public:
     void stop() final;
 
     bool isIntersectingViewport() const final { return m_isIntersectingViewport; }
-    void viewportIntersectionChanged(bool isIntersecting);
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
 private:
     friend class HTMLVideoElementPictureInPicture;
