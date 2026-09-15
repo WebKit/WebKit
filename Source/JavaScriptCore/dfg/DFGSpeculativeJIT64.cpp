@@ -10054,7 +10054,8 @@ void SpeculativeJIT::emitRegExpStickyFirstCharacterFilterGuards(const uint8_t* b
 
 void SpeculativeJIT::emitRegExpMinimumLengthFilterGuards(std::optional<unsigned> constantMinimumSize, GPRReg baseGPR, GPRReg argumentGPR, bool argumentCanBeRope, GPRReg scratch1GPR, GPRReg scratch2GPR, JumpList& slowCases)
 {
-    ASSERT(noOverlap(baseGPR, argumentGPR, scratch1GPR, scratch2GPR));
+    ASSERT(noOverlap(baseGPR, scratch1GPR, scratch2GPR));
+    ASSERT(noOverlap(argumentGPR, scratch1GPR, scratch2GPR));
 
     loadPtr(Address(argumentGPR, JSString::offsetOfValue()), scratch1GPR);
     Jump isRope;
