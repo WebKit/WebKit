@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, evaluate, createUUID, isValidNodeIdentifier) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
@@ -57,11 +57,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
     nodeForIdentifier(identifier)
     {
         this._clearStaleNodes();
-        try {
-            return this._nodeForIdentifier(identifier);
-        } catch (error) {
-            return null;
-        }
+        return this._nodeForIdentifier(identifier);
     }
 
     // Private
@@ -304,7 +300,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
         // A node this frame knew about and then evicted is stale. One it never knew about
         // belongs to a different browsing context, which callers must distinguish.
-        if (this._staleIdentifiers.has(identifier))
+        if (this._staleIdentifiers.has(identifier) || isKnownReference(currentFrameIdentifier, identifier))
             throw {name: "StaleNode", message: "Node with identifier '" + identifier + "' is stale"};
         throw {name: "NodeNotFound", message: "Node with identifier '" + identifier + "' was not found"};
     }
@@ -319,6 +315,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
         this._nodeToIdMap.set(node, identifier);
         this._idToNodeMap.set(identifier, node);
+        addKnownReference(currentFrameIdentifier, identifier);
 
         return identifier;
     }
