@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGResourceGradientInlines.h"
 #include "RenderSVGText.h"
+#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
@@ -65,7 +66,7 @@ GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElemen
 {
     std::optional<FloatRect> objectBoundingBox;
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-        objectBoundingBox = renderer.objectBoundingBox();
+        objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(renderer);
 
     float textPaintingScale = 1;
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))

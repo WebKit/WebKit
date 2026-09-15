@@ -152,6 +152,17 @@ LayoutRepainter::CheckForRepaint SVGRenderSupport::checkForSVGRepaintDuringLayou
     return LayoutRepainter::CheckForRepaint::Yes;
 }
 
+FloatRect SVGRenderSupport::objectBoundingBoxForResources(const RenderObject& renderer)
+{
+    if (renderer.isRenderSVGInline()) {
+        if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(renderer))
+            return textAncestor->objectBoundingBox();
+        return { };
+    }
+
+    return renderer.objectBoundingBox();
+}
+
 // https://svgwg.org/svg2-draft/coords.html#BoundingBoxes
 static bool hasValidBoundingBoxForContainer(const RenderObject& object)
 {

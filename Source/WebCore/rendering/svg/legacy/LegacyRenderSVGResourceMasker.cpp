@@ -28,6 +28,7 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
+#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -108,7 +109,7 @@ bool LegacyRenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerD
 {
     RefPtr maskImage = maskerData->maskImage;
     auto& maskImageContext = maskImage->context();
-    auto objectBoundingBox = object->objectBoundingBox();
+    auto objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(*object);
 
     if (!drawContentIntoContext(maskImageContext, objectBoundingBox))
         return false;
@@ -187,7 +188,7 @@ void LegacyRenderSVGResourceMasker::calculateMaskContentRepaintRect(RepaintRectC
 
 FloatRect LegacyRenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    FloatRect objectBoundingBox = object.objectBoundingBox();
+    FloatRect objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(object);
     Ref maskElement = this->maskElement();
     FloatRect maskBoundaries = SVGLengthContext::resolveRectangle(maskElement.get(), maskElement->maskUnits(), objectBoundingBox);
 

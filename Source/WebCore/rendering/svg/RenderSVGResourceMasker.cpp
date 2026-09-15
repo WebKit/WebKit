@@ -36,6 +36,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGGraphicsElement.h"
 #include "SVGLengthContext.h"
+#include "SVGRenderSupport.h"
 #include "SVGVisitedRendererTracking.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -89,7 +90,7 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(targetRenderer);
     auto coordinateSystemOriginTranslation = adjustedPaintOffset - targetRenderer.nominalSVGLayoutLocation();
     if (!coordinateSystemOriginTranslation.isZero())
         context.translate(coordinateSystemOriginTranslation);
@@ -166,7 +167,7 @@ FloatRect RenderSVGResourceMasker::maskBoundsInLocalCoordinates(const FloatRect&
 
 FloatRect RenderSVGResourceMasker::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    auto targetBoundingBox = object.objectBoundingBox();
+    auto targetBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(object);
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 
     SVGVisitedRendererTracking recursionTracking(s_visitedSet);

@@ -41,6 +41,7 @@
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
+#include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
@@ -81,7 +82,7 @@ auto LegacyRenderSVGResourceClipper::applyResource(RenderElement& renderer, cons
     if (repaintRect.isEmpty())
         return { ApplyResult::ResourceApplied };
 
-    auto boundingBox = renderer.objectBoundingBox();
+    auto boundingBox = SVGRenderSupport::objectBoundingBoxForResources(renderer);
     return applyClippingToContext(*context, renderer, boundingBox, boundingBox);
 }
 
@@ -380,7 +381,7 @@ FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject
         m_clipperMap.ensure(object, [&]() { // For selfNeedsClientInvalidation().
             return makeUnique<ClipperData>();
         });
-        return object.objectBoundingBox();
+        return SVGRenderSupport::objectBoundingBoxForResources(object);
     }
 
     if (m_clipBoundaries[repaintRectCalculation].isEmpty())
@@ -389,7 +390,7 @@ FloatRect LegacyRenderSVGResourceClipper::resourceBoundingBox(const RenderObject
     auto clipBoundaries = m_clipBoundaries[repaintRectCalculation];
 
     if (protect(clipPathElement())->clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
-        FloatRect objectBoundingBox = object.objectBoundingBox();
+        FloatRect objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(object);
         AffineTransform transform;
         transform.translate(objectBoundingBox.location());
         transform.scale(objectBoundingBox.size());

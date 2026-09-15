@@ -24,6 +24,7 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceGradientInlines.h"
 #include "RenderSVGShape.h"
+#include "SVGRenderSupport.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -99,7 +100,7 @@ bool RenderSVGResourceGradient::buildGradientIfNeeded(const RenderLayerModelObje
             return false;
     }
 
-    auto objectBoundingBox = targetRenderer.objectBoundingBox();
+    auto objectBoundingBox = SVGRenderSupport::objectBoundingBoxForResources(targetRenderer);
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         // Gradient is not applicable on 1d objects (empty objectBoundingBox), unless 'gradientUnits' is equal to 'userSpaceOnUse'.
         if (objectBoundingBox.isEmpty())
