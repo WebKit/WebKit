@@ -412,7 +412,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             RetainPtr firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
-                && storageSession->shouldBlockCookies(firstPartyForCookies.get(), request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request));
+                && storageSession->thirdPartyCookieBlockingDecisionForRequest(firstPartyForCookies.get(), request.URL, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request)) != WebCore::ThirdPartyCookieBlockingDecision::None;
             if (shouldIgnoreHSTS) {
                 RetainPtr newRequest = downgradeRequest(request);
                 ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
@@ -464,7 +464,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
         if (CheckedPtr sessionCocoa = networkDataTask->networkSession()) {
             CheckedPtr storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
-                && storageSession->shouldBlockCookies(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request));
+                && storageSession->thirdPartyCookieBlockingDecisionForRequest(request, networkDataTask->frameID(), networkDataTask->pageID(), networkDataTask->shouldRelaxThirdPartyCookieBlocking(), NetworkSession::isRequestToKnownCrossSiteTracker(request)) != WebCore::ThirdPartyCookieBlockingDecision::None;
             if (shouldIgnoreHSTS) {
                 RetainPtr newRequest = downgradeRequest(request);
                 ASSERT([newRequest.get().URL.scheme isEqualToString:@"http"]);
