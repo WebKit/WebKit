@@ -334,11 +334,20 @@ using QuirkBitSet = WTF::BitSet<static_cast<size_t>(QuirkBehaviorID::NumberOfIDs
 
 struct QuirkParameters {
     ASCIILiteral script;
+    std::optional<URLMatch> scriptURLCondition { std::nullopt };
 
     static consteval QuirkParameters fromScript(ASCIILiteral script)
     {
         return QuirkParameters {
             .script = script
+        };
+    }
+
+    static consteval QuirkParameters fromScript(ASCIILiteral script, const URLMatch& scriptURLCondition)
+    {
+        return QuirkParameters {
+            .script = script,
+            .scriptURLCondition = scriptURLCondition
         };
     }
 };
@@ -347,25 +356,51 @@ enum class QuirkParametersNeeded : uint8_t {
     NeedsScript = 1 << 0,
 };
 
+enum class QuirkConditionsSupported : uint8_t {
+    ElementSelector = 1 << 0,
+};
+
+namespace QuirkBehaviorConditions {
+struct ElementMatchesSelector {
+    ASCIILiteral selector;
+};
+
+constexpr ElementMatchesSelector elementMatchesSelector(ASCIILiteral selector)
+{
+    return ElementMatchesSelector { selector };
+}
+
+} // namespace QuirkBehaviorConditions
+
 struct QuirkBehavior {
     QuirkBehaviorID id;
     bool isAvailable { false };
     OptionSet<QuirkParametersNeeded> quirkParametersNeeded { };
-    std::optional<URLMatch> urlCondition { std::nullopt };
+    OptionSet<QuirkConditionsSupported> quirkConditionsSupported { };
+    std::optional<ASCIILiteral> elementSelectorCondition { std::nullopt };
     std::optional<QuirkParameters> parameters { std::nullopt };
 
     consteval QuirkBehavior operator()(QuirkParameters params) const
     {
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!quirkParametersNeeded.isEmpty());
         auto copy = *this;
         copy.parameters = params;
         return copy;
     }
 
-    consteval QuirkBehavior when(const URLMatch& urlCondition) const
+    template<typename... Conditions> consteval QuirkBehavior when(Conditions... conditions) const
     {
+        static_assert(sizeof...(conditions), "when() must name at least one condition");
         auto copy = *this;
-        copy.urlCondition = urlCondition;
+        (applyCondition(copy, conditions), ...);
         return copy;
+    }
+
+    consteval void applyCondition(QuirkBehavior& behavior, QuirkBehaviorConditions::ElementMatchesSelector elementMatchesSelector) const
+    {
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(behavior.quirkConditionsSupported.contains(QuirkConditionsSupported::ElementSelector));
+        RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(!behavior.elementSelectorCondition);
+        behavior.elementSelectorCondition = elementMatchesSelector.selector;
     }
 };
 
@@ -468,7 +503,7 @@ inline constexpr QuirkBehavior shouldDispatchPlayPauseEventsOnResume { WebCore::
 inline constexpr QuirkBehavior shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick { WebCore::QuirkBehaviorID::ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick, BuildCondition::touchEvents };
 inline constexpr QuirkBehavior shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk { WebCore::QuirkBehaviorID::ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk { WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk, BuildCondition::always };
-inline constexpr QuirkBehavior shouldDispatchSimulatedMouseEventsQuirk { WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, BuildCondition::touchEvents || BuildCondition::touchEventRegions };
+inline constexpr QuirkBehavior shouldDispatchSimulatedMouseEventsQuirk { .id = WebCore::QuirkBehaviorID::ShouldDispatchSimulatedMouseEventsQuirk, .isAvailable = BuildCondition::touchEvents || BuildCondition::touchEventRegions, .quirkConditionsSupported = QuirkConditionsSupported::ElementSelector };
 inline constexpr QuirkBehavior shouldEnableCameraAndMicrophonePermissionStateQuirk { WebCore::QuirkBehaviorID::ShouldEnableCameraAndMicrophonePermissionStateQuirk, BuildCondition::mediaStream };
 inline constexpr QuirkBehavior shouldEnableCameraBackgroundPlayback { WebCore::QuirkBehaviorID::ShouldEnableCameraBackgroundPlayback, BuildCondition::mediaStream };
 inline constexpr QuirkBehavior shouldEnableEnumerateDeviceQuirk { WebCore::QuirkBehaviorID::ShouldEnableEnumerateDeviceQuirk, BuildCondition::mediaStream };

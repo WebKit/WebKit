@@ -83,6 +83,9 @@ public:
     bool needsExpediaGroupAnimationQuirk(Element&) const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
+
+    WEBCORE_EXPORT static bool elementMatchesSelectorCondition(ASCIILiteral selector, const Node*);
+
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     bool shouldDispatchSimulatedMouseEvents(const EventTarget*) const;
     bool shouldPreventDispatchOfTouchEvent(const AtomString&, EventTarget*) const;
@@ -261,7 +264,7 @@ public:
     bool NODELETE shouldDisableElementFullscreenQuirk() const;
     bool NODELETE shouldIgnorePlaysInlineRequirementQuirk() const;
 
-    bool shouldAllowPopupFromMicrosoftOfficeToOneDrive() const { return m_quirksData.isBehaviorEnabled(QuirkBehaviors::shouldAllowPopupFromMicrosoftOfficeToOneDrive); }
+    bool shouldAllowPopupFromMicrosoftOfficeToOneDrive() const { return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldAllowPopupFromMicrosoftOfficeToOneDrive); }
     bool needsPopupFromMicrosoftOfficeToOneDrive(const URL& targetURL) const;
 
     WEBCORE_EXPORT bool needsConsistentQueryParameterFilteringQuirk(const URL&) const;
@@ -371,9 +374,9 @@ private:
         auto index = static_cast<size_t>(quirk.id);
         if (!m_probedQuirks.get(index)) {
             m_probedQuirks.set(index);
-            m_quirksData.setEnabled(quirk.id, probe());
+            m_quirksData.setEnabled(quirk, probe());
         }
-        return m_quirksData.isBehaviorEnabled(quirk);
+        return m_quirksData.isBehaviorEnabled(quirk.id);
     }
 
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
