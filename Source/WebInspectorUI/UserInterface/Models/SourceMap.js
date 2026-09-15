@@ -32,8 +32,12 @@ WI.SourceMap = class SourceMap
         this._sourceRoot = sourceRoot;
         this._mappings = mappings;
 
+        this._generatedPositionsForOriginalName = new Map;
         this._generatedPositionForOriginalLineForURL = new Map;
-        for (let [index, [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn, isRangeMapping]] of this._mappings.entries()) {
+        for (let [index, [generatedLine, generatedColumn, sourceURL, originalLine, originalColumn, isRangeMapping, name]] of this._mappings.entries()) {
+            if (name)
+                this._generatedPositionsForOriginalName.getOrInsert(name, []).push([generatedLine, generatedColumn]);
+
             if (!sourceURL)
                 continue;
             let generatedPositionForOriginalLine = this._generatedPositionForOriginalLineForURL.getOrInsert(sourceURL, new Map);
@@ -121,7 +125,6 @@ WI.SourceMap = class SourceMap
             if ("names" in map && (!Array.isArray(map.names) || map.names.some((name) => typeof name !== "string")))
                 throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("names"));
             let names = map.names || [];
-            // Currently `names` is unused, but check it anyways for conformance.
 
             let sourceURLs = [];
             for (let i = 0; i < map.sources.length; ++i) {
@@ -217,18 +220,19 @@ WI.SourceMap = class SourceMap
                     if (sourceURLIndex < 0 || sourceURLIndex >= sourceURLs.length || originalLine < 0 || originalColumn < 0)
                         throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("mappings"));
 
+                    let name = null;
                     let relativeNameIndex = vlq.decode();
                     if (relativeNameIndex !== WI.SourceMap._VLQ.AtSeparator) {
                         nameIndex += relativeNameIndex;
                         if (nameIndex < 0 || nameIndex >= names.length)
                             throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("mappings"));
-                        // Currently `names` is unused, but check it anyways for conformance.
+                        name = names[nameIndex];
                     }
 
                     if (vlq.hasNextCharacter() && !vlq.atSeparator())
                         throw WI.SourceMap._invalidPropertyError(WI.unlocalizedString("mappings"));
 
-                    mappings.push([generatedLine, generatedColumn, sourceURLs[sourceURLIndex], originalLine, originalColumn, isRangeMapping]);
+                    mappings.push([generatedLine, generatedColumn, sourceURLs[sourceURLIndex], originalLine, originalColumn, isRangeMapping, name]);
                     ++lineIndex;
                 } else {
                     if (relativeSourceURLIndex !== WI.SourceMap._VLQ.AtSeparator)
@@ -406,6 +410,45 @@ WI.SourceMap = class SourceMap
                 return generatedPosition;
         }
         return generatedPositionForOriginalLine.firstValue;
+    }
+
+    async generatedFunctionInfoForOriginalSymbol(breakpoint)
+    {
+        console.assert(breakpoint instanceof WI.SymbolicBreakpoint, breakpoint);
+
+        if (!(this._originalSourceCode instanceof WI.Script))
+            return [];
+
+        let generatedPositions;
+        if (breakpoint.caseSensitive && !breakpoint.isRegex)
+            generatedPositions = this._generatedPositionsForOriginalName.get(breakpoint.symbol) || [];
+        else {
+            generatedPositions = [];
+            for (let [name, positions] of this._generatedPositionsForOriginalName) {
+                if (breakpoint.matches(name))
+                    generatedPositions.pushAll(positions);
+            }
+        }
+        if (!generatedPositions.length)
+            return [];
+
+        let syntaxTree = await new Promise((resolve) => {
+            this._originalSourceCode.requestScriptSyntaxTree(resolve);
+        });
+        if (!syntaxTree?.parsedSuccessfully)
+            return [];
+
+        let generatedFunctionInfoForPosition = new Map;
+        for (let [generatedLine, generatedColumn] of generatedPositions) {
+            let position = new WI.SourceCodePosition(generatedLine, generatedColumn);
+            let functionInfo = syntaxTree.functionInfo(position);
+            if (!functionInfo)
+                continue;
+
+            let key = `${functionInfo.position.lineNumber}:${functionInfo.position.columnNumber}`;
+            generatedFunctionInfoForPosition.set(key, functionInfo);
+        }
+        return Array.from(generatedFunctionInfoForPosition.values());
     }
 };
 
