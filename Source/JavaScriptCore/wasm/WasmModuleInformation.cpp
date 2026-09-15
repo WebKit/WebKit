@@ -77,6 +77,31 @@ FunctionDebugInfo& ModuleInformation::ensureFunctionDebugInfo(FunctionCodeIndex 
     return info;
 }
 
+bool ModuleInformation::isInstructionStart(uint32_t moduleOffset) const
+{
+#if ASSERT_ENABLED
+    for (size_t i = 1; i < functions.size(); ++i)
+        ASSERT(functions[i - 1].start <= functions[i].start);
+#endif
+
+    auto iterator = std::upper_bound(functions.begin(), functions.end(), moduleOffset,
+        [](uint32_t offset, const FunctionData& function) {
+            return offset < function.start;
+        });
+    if (iterator == functions.begin())
+        return false;
+
+    auto functionIterator = std::prev(iterator);
+    const auto& function = *functionIterator;
+    if (moduleOffset < function.start || moduleOffset >= function.end)
+        return false;
+
+    size_t functionIndex = std::distance(functions.begin(), functionIterator);
+    const auto& starts = ensureFunctionDebugInfo(FunctionCodeIndex(functionIndex)).instructionStarts;
+    ASSERT(!starts.isEmpty());
+    return starts.contains(moduleOffset);
+}
+
 String ModuleInformation::declaredName() const
 {
     if (debugInfo->cachedDeclaredName)

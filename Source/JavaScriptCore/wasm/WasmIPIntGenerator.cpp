@@ -94,15 +94,13 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-#define RECORD_NEXT_INSTRUCTION(fromPC, toPC)                                                            \
-    do {                                                                                                 \
-        if (Options::enableWasmDebugger()) [[unlikely]] {                                                \
-            if (m_debugInfo) {                                                                           \
-                uint32_t fromOffset = fromPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset; \
-                uint32_t toOffset = toPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset;     \
-                m_debugInfo->addNextInstruction(fromOffset, toOffset);                                   \
-            }                                                                                            \
-        }                                                                                                \
+#define RECORD_NEXT_INSTRUCTION(fromPC, toPC)                                                        \
+    do {                                                                                             \
+        if (m_debugInfo) [[unlikely]] {                                                              \
+            uint32_t fromOffset = fromPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset; \
+            uint32_t toOffset = toPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset;     \
+            m_debugInfo->addNextInstruction(fromOffset, toOffset);                                   \
+        }                                                                                            \
     } while (0)
 #else
 #define RECORD_NEXT_INSTRUCTION(fromPC, toPC) do { (void)(fromPC); (void)(toPC); } while (0)
@@ -552,18 +550,25 @@ public:
     void NODELETE willParseExtendedOpcode() { }
     void didParseOpcode()
     {
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+        if (m_debugInfo) [[unlikely]] {
+            uint32_t instructionStart = m_parser->currentOpcodeStartingOffset() + m_functionStartByteOffset;
+            m_debugInfo->addInstructionStart(instructionStart);
+        }
+#endif
+
         if (!m_parser->unreachableBlocks()) {
             ASSERT(m_parser->getStackHeightInValues() == m_stackSize.value());
-            if (Options::enableWasmDebugger()) [[unlikely]] {
-                if (m_debugInfo) {
-                    OpType currentOpcode = m_parser->currentOpcode();
-                    bool isControlFlowInstruction = Wasm::isControlFlowInstructionWithExtGC(currentOpcode, [this]() {
-                        return m_parser->currentExtendedOpcode();
-                    });
-                    if (!isControlFlowInstruction || currentOpcode == AnnotatedSelect)
-                        RECORD_NEXT_INSTRUCTION(curPC(), nextPC());
-                }
+#if ENABLE(WEBASSEMBLY_DEBUGGER)
+            if (m_debugInfo) [[unlikely]] {
+                OpType currentOpcode = m_parser->currentOpcode();
+                bool isControlFlowInstruction = Wasm::isControlFlowInstructionWithExtGC(currentOpcode, [this]() {
+                    return m_parser->currentExtendedOpcode();
+                });
+                if (!isControlFlowInstruction || currentOpcode == AnnotatedSelect)
+                    RECORD_NEXT_INSTRUCTION(curPC(), nextPC());
             }
+#endif
         }
     }
 
@@ -945,12 +950,10 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     m_metadata->m_numArguments = numArgs;
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (Options::enableWasmDebugger()) [[unlikely]] {
-        if (m_debugInfo) {
-            auto* localTypes = &m_debugInfo->locals;
-            for (size_t i = 0; i < numArgs; ++i)
-                localTypes->append(signature.argumentType(i));
-        }
+    if (m_debugInfo) [[unlikely]] {
+        auto* localTypes = &m_debugInfo->locals;
+        for (size_t i = 0; i < numArgs; ++i)
+            localTypes->append(signature.argumentType(i));
     }
 #endif
 
@@ -972,12 +975,10 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     m_metadata->m_numLocals += count;
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-    if (Options::enableWasmDebugger()) [[unlikely]] {
-        if (m_debugInfo) {
-            auto* localTypes = &m_debugInfo->locals;
-            for (unsigned i = 0; i < count; ++i)
-                localTypes->append(localType);
-        }
+    if (m_debugInfo) [[unlikely]] {
+        auto* localTypes = &m_debugInfo->locals;
+        for (unsigned i = 0; i < count; ++i)
+            localTypes->append(localType);
     }
 #endif
 
