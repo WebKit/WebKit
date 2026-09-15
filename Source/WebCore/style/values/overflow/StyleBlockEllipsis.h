@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Style {
 
-// <'block-ellipse'> = no-ellipsis | auto | <string>
+// <'block-ellipsis'> = no-ellipsis | auto | <string>
 // https://www.w3.org/TR/css-overflow-4/#propdef-block-ellipsis
 struct BlockEllipsis {
     BlockEllipsis(CSS::Keyword::NoEllipsis)

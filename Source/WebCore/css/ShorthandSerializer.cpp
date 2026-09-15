@@ -146,6 +146,7 @@ private:
     String serializePageBreak() const;
     String serializePositionTry() const;
     String serializeLineClamp() const;
+    String serializeLegacyLineClamp() const;
     String serializeTextBox() const;
     String serializeTextWrap() const;
     String serializeWhiteSpace() const;
@@ -432,6 +433,8 @@ String ShorthandSerializer::serialize()
         return serializeHyphenateLimitChars();
     case CSSPropertyLineClamp:
         return serializeLineClamp();
+    case CSSPropertyWebkitLineClamp:
+        return serializeLegacyLineClamp();
     case CSSPropertyMarker:
         return serializeCommonValue();
     case CSSPropertyOffset:
@@ -1535,6 +1538,16 @@ String ShorthandSerializer::serializeLineClamp() const
 
     // FIXME: Add check for correct order.
     return serializeLonghands(2);
+}
+
+String ShorthandSerializer::serializeLegacyLineClamp() const
+{
+    auto isMaxLinesInitial = isLonghandInitialValue(0);
+    auto isBlockEllipsisInitial = isLonghandInitialValue(1);
+    if (isMaxLinesInitial && isBlockEllipsisInitial)
+        return nameString(CSSValueNone);
+
+    return serializeLonghands(1);
 }
 
 String ShorthandSerializer::serializeTextBox() const
