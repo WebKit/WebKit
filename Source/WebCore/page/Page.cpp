@@ -2260,11 +2260,17 @@ unsigned NODELETE Page::renderingUpdateCount() const
     return m_renderingUpdateCount;
 }
 
+static FrameTreeSyncSerializationData frameGeometrySyncSerializationData(FrameGeometrySyncData&& geometry)
+{
+    return { FrameTreeSyncDataVariant { WTF::InPlaceIndex<std::to_underlying(FrameTreeSyncDataType::FrameGeometry)>, WTF::move(geometry) } };
+}
+
 void Page::syncLocalFrameInfoToRemote()
 {
     ASSERT(mainFrame().tree().containsRemoteFrame());
 
-    forEachLocalFrame([] (LocalFrame& frame) {
+    Vector<std::pair<FrameIdentifier, FrameTreeSyncSerializationData>> frameGeometryUpdates;
+    forEachLocalFrame([&frameGeometryUpdates] (LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
@@ -2345,12 +2351,16 @@ void Page::syncLocalFrameInfoToRemote()
             return;
         }
 
-        frame.loader().client().broadcastFrameGeometryToOtherProcesses({
+        FrameGeometrySyncData frameGeometry {
             frameView->layoutViewportRect(),
             frameView->contentsSize(),
             WTF::move(childrenFrameLayoutInfo)
-        });
+        };
+        frameGeometryUpdates.append({ frame.frameID(), frameGeometrySyncSerializationData(WTF::move(frameGeometry)) });
     });
+
+    if (!frameGeometryUpdates.isEmpty())
+        chrome().client().broadcastFrameTreeSyncDataBatchToOtherProcesses(frameGeometryUpdates);
 }
 
 // https://html.spec.whatwg.org/multipage/webappapis.html#update-the-rendering
