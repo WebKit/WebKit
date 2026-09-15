@@ -478,7 +478,7 @@ static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, con
     bool wasFixed = false;
     auto localRect = [&]() -> LayoutRect {
         if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(&box))
-            return inlineBox->linesBoundingBox();
+            return inlineBox->borderBoxRectInContainer();
         return box.borderBoundingBox();
     }();
     // FIXME: figure out if OverscrollClamp is still needed.

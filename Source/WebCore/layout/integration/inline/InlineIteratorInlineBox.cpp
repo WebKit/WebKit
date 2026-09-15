@@ -28,7 +28,6 @@
 
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlowInlines.h"
-#include "RenderInline.h"
 #include "RenderSVGInline.h"
 #include "StyleComputedStyle+GettersInlines.h"
 
@@ -126,8 +125,7 @@ InlineBoxIterator lineLeftmostInlineBoxFor(const RenderBoxModelObject& inlineBox
 {
     if (CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(inlineBox))
         return lineLayout->firstInlineBoxFor(inlineBox);
-    auto* svgInline = dynamicDowncast<RenderSVGInline>(inlineBox);
-    return { BoxLegacyPath { svgInline ? svgInline->firstLegacyInlineBox() : nullptr } };
+    return { BoxLegacyPath { firstLegacyInlineBoxFor(inlineBox) } };
 }
 
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow& block)
