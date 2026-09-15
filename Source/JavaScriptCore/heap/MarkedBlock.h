@@ -162,7 +162,12 @@ public:
         void unsweepWithNoNewlyAllocated();
         
         inline void shrink();
-            
+
+        // Leaves the WeakSet with no WeakBlocks at all, which a block must be in before it changes
+        // cell size or owner: a surviving WeakBlock would go on reading mark bits for cells that no
+        // longer exist at those addresses. Runs finalizers, so it is not valid while marking.
+        void emptyWeakSet();
+
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
         // of these functions:

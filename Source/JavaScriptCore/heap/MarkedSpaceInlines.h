@@ -100,7 +100,7 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
                 if (m_current) {
                     auto* block = m_current;
                     m_current = m_current->next();
-                    if (block->isEmpty())
+                    if (!block->hasLiveHandles())
                         continue;
                     results[resultsSize++] = block;
                     if (resultsSize == batchSize)

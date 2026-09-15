@@ -49,6 +49,7 @@
 #include <wtf/Box.h>
 #include <wtf/ConcurrentPtrHashSet.h>
 #include <wtf/Deque.h>
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -513,7 +514,7 @@ public:
     JS_EXPORT_PRIVATE void unregisterWeakGCHashTable(WeakGCHashTable*);
     void addDirtyWeakGCHashTable(WeakGCHashTable*);
 
-    void addLogicallyEmptyWeakBlock(WeakBlock*);
+    unsigned weakBlockCount() const { return m_weakBlockCount; }
 
 #if ENABLE(RESOURCE_USAGE)
     size_t blockBytesAllocated() const { return m_blockBytesAllocated; }
@@ -670,6 +671,7 @@ private:
     friend class IncrementalSweeper;
     friend class VM;
     friend class VerifierSlotVisitor;
+    friend class WeakBlock;
     friend class WeakSet;
 
     class HeapThread;
@@ -774,7 +776,6 @@ private:
     void sweepArrayBuffers();
     void snapshotUnswept();
     void deleteSourceProviderCaches();
-    void notifyIncrementalSweeper();
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>
@@ -793,8 +794,12 @@ private:
     void runCollectionEpilogue();
     void sweepEagerlyInEpilogue();
     
-    void sweepAllLogicallyEmptyWeakBlocks();
-    bool sweepNextLogicallyEmptyWeakBlock();
+    void addDetachedWeakBlock(WeakBlock*);
+    void releaseDetachedWeakBlock(WeakBlock*);
+    void returnWeakBlockToPool(WeakBlock*);
+    WeakBlock* takeWeakBlockFromPool();
+    void destroyAllPooledWeakBlocks();
+    unsigned maxPooledWeakBlocks();
 
     bool shouldDoFullCollection();
 
@@ -919,8 +924,10 @@ private:
     Seconds m_lastEdenGCLength { 10_ms };
 #endif
 
-    Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
-    size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
+    DoublyLinkedList<WeakBlock> m_detachedWeakBlocks;
+    DoublyLinkedList<WeakBlock> m_pooledWeakBlocks;
+    unsigned m_pooledWeakBlockCount { 0 };
+    unsigned m_weakBlockCount { 0 };
 
 #if ASSERT_ENABLED
     // JS_EXPORT_PRIVATE matches GCOwnedDataScope.h. Heap.h does not include it, so
