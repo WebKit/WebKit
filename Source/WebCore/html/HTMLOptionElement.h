@@ -105,9 +105,6 @@ private:
 
     void willResetComputedStyle() final;
 
-    String collectOptionInnerText() const;
-    String collectOptionInnerTextCollapsingWhitespace() const;
-
     void invalidateShadowTree();
 
     bool m_disabled { false };
