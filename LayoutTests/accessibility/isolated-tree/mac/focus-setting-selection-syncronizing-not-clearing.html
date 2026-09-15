@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ TabsToLinks=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<fieldset>
+    <div>
+        <input id="1">
+        <label for="1">1</label>
+    </div>
+    <div>
+        <input id="2">
+        <label for="2">2</label>
+    </div>
+</fieldset>
+
+<script>
+var output = "This tests that calling focus on a render object when it doesn't result in a selection change won't leave isSynchronizingSelection set to true.\n\n";
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    accessibilityController.enableEnhancedAccessibility(true);
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+
+    setTimeout(async () => {
+        // Tab to input "1".
+        await waitForNotification(webArea, "AXSelectedTextChanged", () => {
+            eventSender.keyDown("\t");
+        });
+        output += expect("accessibilityController.focusedElement.isEqual(accessibilityController.accessibleElementById('1'))", "true");
+
+        // Call takeFocus() on input "1" (already focused). This should not
+        // leave isSynchronizingSelection set to true.
+        output += expect("accessibilityController.accessibleElementById('1').isFocusable", "true");
+        await waitForNotification(webArea, "AXFocusChanged", () => {
+            accessibilityController.accessibleElementById("1").takeFocus();
+        });
+
+        // Tab to input "2". Verify AXTextStateSync is not set, confirming
+        // isSynchronizingSelection was properly cleared.
+        var received = false;
+        var receivedUserInfo;
+        webArea.addNotificationListener((notification, userInfo) => {
+            if (notification == "AXSelectedTextChanged") {
+                receivedUserInfo = userInfo;
+                received = true;
+            }
+        });
+        eventSender.keyDown("\t");
+        await waitFor(() => received);
+        webArea.removeNotificationListener();
+
+        output += `PASS: AXTextStateSync after tabbing is ${receivedUserInfo["AXTextStateSync"]}, expected undefined`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

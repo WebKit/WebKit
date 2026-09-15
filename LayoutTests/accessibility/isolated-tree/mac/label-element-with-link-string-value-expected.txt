@@ -1,0 +1,12 @@
+ first choice
+This tests that if a label element contains a link it will be exposed as a group with no AXValue.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS label.role is 'AXRole: AXGroup'
+PASS label.stringValue is 'AXValue: '
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

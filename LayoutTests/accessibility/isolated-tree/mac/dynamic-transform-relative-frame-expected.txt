@@ -1,0 +1,39 @@
+This test ensures we compute the relative frame of iframes and their descendants correctly.
+
+
+{ AXRole: AXGroup #dialog-container } has AXRelativeFrame: NSRect: {{0, 100}, {785, 345}}
+
+{ AXRole: AXGroup #dialog } has AXRelativeFrame: NSRect: {{97, 100}, {591, 345}}
+
+{ AXRole: AXGroup #dialog-text-wrapper } has AXRelativeFrame: NSRect: {{117, 130}, {551, 36}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{117, 130}, {523, 36}}
+
+{ AXRole: AXImage } has AXRelativeFrame: NSRect: {{117, 216}, {281, 209}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 3000}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 3000}, {78, 18}}
+
+Adding transform animation to #dialog-container.
+
+{ AXRole: AXGroup #dialog-container } has AXRelativeFrame: NSRect: {{-393, -73}, {1571, 691}}
+
+{ AXRole: AXGroup #dialog } has AXRelativeFrame: NSRect: {{-198, -73}, {1181, 691}}
+
+{ AXRole: AXGroup #dialog-text-wrapper } has AXRelativeFrame: NSRect: {{-158, -13}, {1101, 73}}
+
+{ AXRole: AXStaticText AXValue: This is some filler text. You can read it, but it's not overly important. Have a great day! } has AXRelativeFrame: NSRect: {{-158, -13}, {1046, 73}}
+
+{ AXRole: AXImage } has AXRelativeFrame: NSRect: {{-158, 159}, {561, 419}}
+
+{ AXRole: AXGroup #end-of-page-container } has AXRelativeFrame: NSRect: {{8, 3000}, {769, 18}}
+
+{ AXRole: AXStaticText AXValue: End of page } has AXRelativeFrame: NSRect: {{8, 3000}, {78, 18}}
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some filler text. You can read it, but it's not overly important. Have a great day!
+
+End of page

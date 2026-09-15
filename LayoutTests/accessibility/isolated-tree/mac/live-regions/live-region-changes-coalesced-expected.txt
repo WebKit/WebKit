@@ -1,0 +1,29 @@
+This tests that many changes to distinct descendants of the same live region within a single run loop iteration are coalesced, so the region's snapshot is recomputed only once rather than once per change.
+
+
+Changed 10 distinct descendants of the live region in one run loop iteration.
+Snapshot recomputations: 1
+
+PASS buildCount is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Updated 0
+
+Updated 1
+
+Updated 2
+
+Updated 3
+
+Updated 4
+
+Updated 5
+
+Updated 6
+
+Updated 7
+
+Updated 8
+
+Updated 9

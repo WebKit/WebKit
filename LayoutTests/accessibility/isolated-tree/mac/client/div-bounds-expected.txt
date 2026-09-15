@@ -1,0 +1,17 @@
+Test x, y, width, height via the client accessibility APIs.
+
+webArea role: AXRole: AXWebArea
+webArea childrenCount: 2
+div1 role: AXRole: AXGroup
+div2 role: AXRole: AXGroup
+div1 width: 200
+div1 height: 80
+div2 width: 120
+div2 height: 60
+x difference (div2.x - div1.x): 50
+y difference (div2.y - div1.y): 130
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,11 @@
+This test verifies lineIndex() returns the correct line number for markers deep inside a single large block.
+
+PASS: lineIndexForLine(0) === 0
+PASS: lineIndexForLine(1) === 1
+PASS: lineIndexForLine(20) === 20
+PASS: lineIndexForLine(39) === 39
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,16 @@
+This test ensures that increment and decrement simulate up and down keypresses for date input spinbuttons.
+
+Month spinbutton initial value: AXValue: 0
+PASS: monthSpinbutton.isIncrementActionSupported() === true
+PASS: monthSpinbutton.isDecrementActionSupported() === true
+
+Incrementing the month spinbutton.
+Month spinbutton after increment: AXValue: 1
+
+Decrementing spinbutton.
+Month spinbutton after decrement: AXValue: 12
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

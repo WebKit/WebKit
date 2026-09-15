@@ -1,0 +1,9 @@
+This test ensures we compute the correct line range after basic arrow key movement in a contenteditable.
+
+PASS: Computed correct line range based on cursor position: 'is a test of'
+PASS: Computed correct line range based on cursor position: 'some content'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world, it's me! This is a test of some content
