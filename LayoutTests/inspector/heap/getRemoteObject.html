@@ -80,9 +80,9 @@ function test()
         name: "GetRemoteObjectCollectedObject",
         description: "Calling Heap.getRemoteObject for an object that has been collected should result in an error.",
         test(resolve, reject) {
-            function findNodeByPropertyName(objectId, maps, propertyName, callback) {
+            function findNodeByPropertyName(maps, propertyName, callback) {
                 for (let node of maps) {
-                    WI.HeapSnapshotWorkerProxy.singleton().callMethod(objectId, "retainers", node.id, ({edges}) => {
+                    node.retainers((retainerNodes, edges) => {
                         if (edges.some((edge) => (edge.type === "Property" || edge.type === "Variable") && edge.data === propertyName))
                             callback(node);
                     });
@@ -101,7 +101,7 @@ function test()
                             InspectorTest.evaluateInPage("triggerDeleteMapObject()");
                             HeapAgent.gc();
 
-                            findNodeByPropertyName(objectId, maps, "myMap", (heapSnapshotNode) => {
+                            findNodeByPropertyName(maps, "myMap", (heapSnapshotNode) => {
                                 HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
                                     InspectorTest.expectThat(error, "Should get an error when object has been collected.");
                                     InspectorTest.pass(error);
