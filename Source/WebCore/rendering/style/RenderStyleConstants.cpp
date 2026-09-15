@@ -1080,6 +1080,15 @@ TextStream& operator<<(TextStream& ts, PortalActionType portalAction)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, PositionContextType positionContext)
+{
+    switch (positionContext) {
+    case PositionContextType::Container: ts << "Container"_s; break;
+    case PositionContextType::Anchor: ts << "Anchor"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, TextCombine textCombine)
 {
     switch (textCombine) {
