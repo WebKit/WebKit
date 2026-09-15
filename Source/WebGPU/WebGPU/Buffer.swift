@@ -22,7 +22,23 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 private import CxxStdlib
+import WebGPU_Internal.Adapter
+import WebGPU_Internal.BindGroup
+import WebGPU_Internal.BindGroupLayout
 import WebGPU_Internal.Buffer
+import WebGPU_Internal.ComputePipeline
+import WebGPU_Internal.ExternalTexture
+import WebGPU_Internal.PipelineLayout
+import WebGPU_Internal.PresentationContext
+import WebGPU_Internal.RenderBundle
+import WebGPU_Internal.RenderBundleEncoder
+import WebGPU_Internal.RenderPipeline
+import WebGPU_Internal.Sampler
+import WebGPU_Internal.ShaderModule
+import WebGPU_Internal.XRBinding
+import WebGPU_Internal.XRProjectionLayer
+import WebGPU_Internal.XRSubImage
+import WebGPU_Internal.XRView
 import WebGPU_Private.CxxBridgingPublic
 
 extension WebGPU.Buffer {

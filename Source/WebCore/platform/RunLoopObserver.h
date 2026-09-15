@@ -34,7 +34,6 @@
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/Lock.h>
-#include <wtf/glib/ActivityObserver.h>
 #endif
 
 #if USE(CF)
