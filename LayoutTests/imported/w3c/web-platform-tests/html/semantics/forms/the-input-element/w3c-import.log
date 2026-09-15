@@ -58,6 +58,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden-charset-case-sensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image-click-form-data.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image-width-height.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html
