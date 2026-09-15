@@ -3882,6 +3882,16 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentA
         [&](const typename SizeType::Calc&) -> std::optional<LayoutUnit> {
             return computePercentageLogicalHeight(logicalHeight);
         },
+        [&](const typename SizeType::CalcSize& calcSize) -> std::optional<LayoutUnit> {
+            if (auto result = computePercentageLogicalHeight(logicalHeight))
+                return result;
+            // A percentage basis against an indefinite containing block leaves the function behaving
+            // as the basis does.
+            if (calcSize.basisHasPercentage())
+                return { };
+            // Percentages in the calculation resolve against zero when indefinite.
+            return Style::evaluate<LayoutUnit>(calcSize, 0_lu, style().usedZoomForLength());
+        },
         [&](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> {
             return keywordSize();
         },
@@ -4111,6 +4121,11 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style:
 }
 
 std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>>& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
+{
+    return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
+}
+
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::UnevaluatedCalcSize& logicalHeight, UpdatePercentageHeightDescendants updateDescendants) const
 {
     return computePercentageLogicalHeightGeneric(logicalHeight, updateDescendants);
 }
@@ -4445,6 +4460,9 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         },
         [&](const typename SizeType::Calc& calculatedLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calculatedLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()));
+        },
+        [&](const typename SizeType::CalcSize& calcSizeLogicalWidth) -> LayoutUnit {
+            return adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcSizeLogicalWidth, inlineConstraints.containingSize(), style().usedZoomForLength()));
         },
         [&](const CSS::Keyword::FitContent& keyword) -> LayoutUnit {
             return intrinsic(keyword);

@@ -59,6 +59,7 @@
 #include "RenderSVGModelObject.h"
 #include "SVGElement.h"
 #include "SVGLengthContext.h"
+#include "StyleCalcSizeValue+Serialization.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "StyleFontPaletteInlines.h"

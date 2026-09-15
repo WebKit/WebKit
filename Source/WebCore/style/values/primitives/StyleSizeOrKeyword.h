@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/StyleCalcSizeValue+Evaluation.h>
 #include <WebCore/StylePrimitiveNumericOrKeyword.h>
 
 namespace WebCore {
@@ -33,11 +34,31 @@ namespace Style {
 // and their keywords. Being a distinct base keeps the calc-size() handling off the other
 // <length-percentage>-or-keyword types.
 template<CSS::SpecificKeyword... Ks>
-struct SizeOrKeyword : PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, Ks...> {
-    using NumericOrKeyword = PrimitiveNumericOrKeyword<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, Ks...>;
+struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, CalcSizeSupport::Yes, Ks...> {
+    using NumericOrKeyword = PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercentage<CSS::NonnegativeLayoutUnitClamped>, CalcSizeSupport::Yes, Ks...>;
     using Base = SizeOrKeyword<Ks...>;
 
     using NumericOrKeyword::NumericOrKeyword;
+
+    ALWAYS_INLINE bool isCalcSize() const { return this->template holdsAlternative<typename NumericOrKeyword::CalcSize>(); }
+
+    // Specified because a calc-size() resolves to a length, unless its basis is a keyword, in which
+    // case it behaves as that keyword.
+    ALWAYS_INLINE bool isSpecified() const
+    {
+        if (isCalcSize())
+            SUPPRESS_FORWARD_DECL_ARG return calcSizeBasisKeyword(this->calcSizeValue()) == CSSValueInvalid;
+        return NumericOrKeyword::isSpecified();
+    }
+
+    // A calc-size() resolves against the containing block whenever a percentage appears anywhere in
+    // it, so percentage bookkeeping has to see it.
+    ALWAYS_INLINE bool isPercentOrCalculated() const
+    {
+        if (isCalcSize())
+            SUPPRESS_FORWARD_DECL_ARG return calcSizeBasisKeyword(this->calcSizeValue()) == CSSValueInvalid && calcSizeHasPercentage(this->calcSizeValue());
+        return NumericOrKeyword::isPercentOrCalculated();
+    }
 };
 
 template<typename T> concept SizeOrKeywordDerived = WTF::IsBaseOfTemplate<SizeOrKeyword, T>::value && VariantLike<T>;

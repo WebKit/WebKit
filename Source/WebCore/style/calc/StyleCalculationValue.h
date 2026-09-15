@@ -43,6 +43,8 @@ struct ZoomFactor;
 
 namespace Calculation {
 
+struct EvaluationOptions;
+
 class Value : public RefCounted<Value> {
     WTF_DEPRECATED_MAKE_FAST_COMPACT_ALLOCATED(Value);
 public:
@@ -50,6 +52,7 @@ public:
     WEBCORE_EXPORT ~Value();
 
     double evaluate(CSS::Range, double percentResolutionLength, ZoomFactor) const;
+    double evaluate(CSS::Range, const EvaluationOptions&) const;
 
     const Tree& tree() const LIFETIME_BOUND { return m_tree; }
     Tree copyTree() const;

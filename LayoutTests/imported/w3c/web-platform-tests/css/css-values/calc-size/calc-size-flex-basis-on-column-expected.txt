@@ -10,15 +10,15 @@ PASS resolved value for height resulting from flex-basis: calc-size(any, 357px)
 PASS resolved value for height resulting from flex-basis: calc-size(any, 220%)
 FAIL resolved value for height resulting from flex-basis: calc-size(max-content, 350%) assert_equals: resulting height is correct expected "700px" but got "20px"
 FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, 172px) assert_equals: resulting height is correct expected "172px" but got "20px"
-FAIL resolved value for height resulting from flex-basis: calc-size(37px, 193px) assert_equals: resulting height is correct expected "193px" but got "37px"
-FAIL resolved value for height resulting from flex-basis: calc-size(83px, size * 3) assert_equals: resulting height is correct expected "249px" but got "83px"
+PASS resolved value for height resulting from flex-basis: calc-size(37px, 193px)
+PASS resolved value for height resulting from flex-basis: calc-size(83px, size * 3)
 FAIL resolved value for height resulting from flex-basis: calc-size(min-content, size / 0.25) assert_equals: resulting height is correct expected "80px" but got "20px"
 FAIL resolved value for height resulting from flex-basis: calc-size(max-content, size * 5.2) assert_equals: resulting height is correct expected "104px" but got "20px"
 FAIL resolved value for height resulting from flex-basis: calc-size(fit-content, size / 4 + 60px) assert_equals: resulting height is correct expected "65px" but got "20px"
 FAIL resolved value for height resulting from flex-basis: calc-size(stretch, size * 2 - 10%) assert_equals: resulting height is correct expected "380px" but got "200px"
-FAIL resolved value for height resulting from flex-basis: calc-size(30px, 15em) assert_equals: resulting height is correct expected "300px" but got "30px"
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(any, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "30px"
-FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "192px"
+PASS resolved value for height resulting from flex-basis: calc-size(30px, 15em)
+PASS resolved value for height resulting from flex-basis: calc-size(calc-size(any, 30px), 15em)
+PASS resolved value for height resulting from flex-basis: calc-size(calc-size(2in, 30px), 15em)
 FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, 30px), 15em) assert_equals: resulting height is correct expected "300px" but got "20px"
 FAIL resolved value for height resulting from flex-basis: calc-size(calc-size(min-content, size), size * 3) assert_equals: resulting height is correct expected "60px" but got "20px"
 PASS resolved value for height resulting from flex-basis: calc-size(auto, size)

@@ -40,7 +40,8 @@ namespace WebCore {
 namespace Style {
 
 template<typename> struct DimensionPercentageMapping;
-template<Numeric, WebCore::CSS::SpecificKeyword...> struct PrimitiveNumericOrKeyword;
+enum class CalcSizeSupport : bool;
+template<Numeric, CalcSizeSupport, WebCore::CSS::SpecificKeyword...> struct PrimitiveNumericOrKeywordOrOptionalCalcSize;
 template<typename, typename> struct EvaluationMinimum;
 
 struct PrimitiveNumericEmptyToken { constexpr bool operator==(const PrimitiveNumericEmptyToken&) const = default; };
@@ -419,7 +420,7 @@ template<CSS::Range R, typename V> struct PrimitiveNumeric<CSS::LengthPercentage
     std::optional<Dimension> tryFixed() const { return tryGet<Dimension>(); }
 
 private:
-    template<Numeric, WebCore::CSS::SpecificKeyword...> friend struct PrimitiveNumericOrKeyword;
+    template<Numeric, CalcSizeSupport, WebCore::CSS::SpecificKeyword...> friend struct PrimitiveNumericOrKeywordOrOptionalCalcSize;
     template<typename> friend struct Blending;
     template<typename, typename> friend struct Evaluation;
     template<typename, typename> friend struct EvaluationMinimum;

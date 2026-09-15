@@ -25,9 +25,12 @@
 #include "config.h"
 #include "StylePrimitiveData.h"
 
+#include "StyleCalcSizeValue+Evaluation.h"
+#include "StyleCalcSizeValue.h"
 #include "StyleCalculationValue.h"
-#include "StyleCalculationValueMap.h"
+#include "StyleUnevaluatedCalcSize.h"
 #include "StyleUnevaluatedCalculation.h"
+#include "StyleValueHandleMap.h"
 #include <cmath>
 
 namespace WebCore {
@@ -37,32 +40,60 @@ PrimitiveData::PrimitiveData(uint8_t opaqueType, UnevaluatedCalculationBase&& va
     : m_opaqueType { opaqueType }
     , m_kind { PrimitiveDataKind::Calculation }
 {
-    m_calculationValueHandle = Calculation::ValueMap::calculationValues().insert(value.leakRef());
+    m_calculationValueHandle = ValueHandleMap<Calculation::Value>::singleton().insert(value.leakRef());
 }
 
 PrimitiveData::PrimitiveData(uint8_t opaqueType, const UnevaluatedCalculationBase& value)
     : m_opaqueType { opaqueType }
     , m_kind { PrimitiveDataKind::Calculation }
 {
-    m_calculationValueHandle = Calculation::ValueMap::calculationValues().insert(value.calculation());
+    m_calculationValueHandle = ValueHandleMap<Calculation::Value>::singleton().insert(value.calculation());
+}
+
+PrimitiveData::PrimitiveData(uint8_t opaqueType, UnevaluatedCalcSize&& value)
+    : m_opaqueType { opaqueType }
+    , m_kind { PrimitiveDataKind::CalcSize }
+{
+    m_calculationValueHandle = ValueHandleMap<CalcSizeValue>::singleton().insert(value.leakRef());
+}
+
+PrimitiveData::PrimitiveData(uint8_t opaqueType, const UnevaluatedCalcSize& value)
+    : m_opaqueType { opaqueType }
+    , m_kind { PrimitiveDataKind::CalcSize }
+{
+    m_calculationValueHandle = ValueHandleMap<CalcSizeValue>::singleton().insert(protect(value.calcSize()));
 }
 
 Calculation::Value& PrimitiveData::calculationValue() const
 {
     ASSERT(m_kind == PrimitiveDataKind::Calculation);
-    return Calculation::ValueMap::calculationValues().get(m_calculationValueHandle);
+    return ValueHandleMap<Calculation::Value>::singleton().get(m_calculationValueHandle);
+}
+
+CalcSizeValue& PrimitiveData::calcSizeValue() const
+{
+    ASSERT(m_kind == PrimitiveDataKind::CalcSize);
+    return ValueHandleMap<CalcSizeValue>::singleton().get(m_calculationValueHandle);
 }
 
 void PrimitiveData::ref() const
 {
-    ASSERT(m_kind == PrimitiveDataKind::Calculation);
-    Calculation::ValueMap::calculationValues().ref(m_calculationValueHandle);
+    ASSERT(usesHandle());
+    if (m_kind == PrimitiveDataKind::CalcSize) {
+        ValueHandleMap<CalcSizeValue>::singleton().ref(m_calculationValueHandle);
+        return;
+    }
+    ValueHandleMap<Calculation::Value>::singleton().ref(m_calculationValueHandle);
 }
 
 void PrimitiveData::deref() const
 {
-    ASSERT(m_kind == PrimitiveDataKind::Calculation);
-    Calculation::ValueMap::calculationValues().deref(m_calculationValueHandle);
+    ASSERT(usesHandle());
+    if (m_kind == PrimitiveDataKind::CalcSize) {
+        ValueHandleMap<CalcSizeValue>::singleton().deref(m_calculationValueHandle);
+        return;
+    }
+    ValueHandleMap<Calculation::Value>::singleton().deref(m_calculationValueHandle);
 }
 
 float PrimitiveData::nonNanCalculatedValue(CSS::Range range, float maxValue, const ZoomFactor& usedZoom) const
@@ -74,9 +105,20 @@ float PrimitiveData::nonNanCalculatedValue(CSS::Range range, float maxValue, con
     return result;
 }
 
+double PrimitiveData::nonNanCalcSizeValue(CSS::Range range, double maxValue, const ZoomFactor& usedZoom) const
+{
+    ASSERT(m_kind == PrimitiveDataKind::CalcSize);
+    return evaluateCalcSize(protect(calcSizeValue()), range, maxValue, usedZoom);
+}
+
 bool PrimitiveData::isCalculatedEqual(const PrimitiveData& other) const
 {
     return calculationValue() == other.calculationValue();
+}
+
+bool PrimitiveData::isCalcSizeEqual(const PrimitiveData& other) const
+{
+    return calcSizeValue() == other.calcSizeValue();
 }
 
 } // namespace Style

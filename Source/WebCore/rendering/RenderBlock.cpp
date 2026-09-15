@@ -397,6 +397,9 @@ bool RenderBlock::isSelfCollapsingBlock() const
             [&](const Style::PreferredSize::Calc&) {
                 return true;
             },
+            [&](const Style::PreferredSize::CalcSize&) {
+                return true;
+            },
             [](const CSS::Keyword::Stretch&) {
                 return true;
             },
@@ -433,6 +436,9 @@ bool RenderBlock::isSelfCollapsingBlock() const
                 return handleNonZeroPercentageOrCalc();
             },
             [&](const Style::PreferredSize::Calc&) {
+                return handleNonZeroPercentageOrCalc();
+            },
+            [&](const Style::PreferredSize::CalcSize&) {
                 return handleNonZeroPercentageOrCalc();
             },
             [](const CSS::Keyword::Auto&) {

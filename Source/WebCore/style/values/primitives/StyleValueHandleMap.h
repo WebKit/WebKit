@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,48 @@
 
 #pragma once
 
-#include "StyleCalculationValue.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 namespace Style {
-namespace Calculation {
 
-class ValueMap {
+// Side table for values that PrimitiveData refers to by handle rather than holding inline, which is
+// what lets it stay packed. Each value type gets its own map.
+template<typename ValueType> class ValueHandleMap {
 public:
-    static ValueMap& NODELETE calculationValues();
+    static ValueHandleMap& NODELETE singleton()
+    {
+        static NeverDestroyed<ValueHandleMap> map;
+        return map;
+    }
 
-    unsigned insert(Ref<Value>&&);
+    unsigned insert(Ref<ValueType>&&);
     void ref(unsigned handle);
     void deref(unsigned handle);
 
-    Value& get(unsigned handle) const;
+    ValueType& get(unsigned handle) const;
 
 private:
-    friend NeverDestroyed<ValueMap>;
-    ValueMap();
+    friend NeverDestroyed<ValueHandleMap>;
+    ValueHandleMap() = default;
 
     struct Entry {
         uint64_t referenceCountMinusOne { 0 };
-        RefPtr<Value> value;
+        RefPtr<ValueType> value;
+
         Entry() = default;
-        Entry(Ref<Value>&&);
+        Entry(Ref<ValueType>&& value)
+            : value(WTF::move(value))
+        {
+        }
     };
 
     unsigned m_nextAvailableHandle { 1 };
     HashMap<unsigned, Entry> m_map;
 };
 
-inline ValueMap::Entry::Entry(Ref<Value>&& value)
-    : value(WTF::move(value))
-{
-}
-
-inline unsigned ValueMap::insert(Ref<Value>&& value)
+template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<ValueType>&& value)
 {
     ASSERT(m_nextAvailableHandle);
 
@@ -76,21 +80,21 @@ inline unsigned ValueMap::insert(Ref<Value>&& value)
     return m_nextAvailableHandle++;
 }
 
-inline Value& ValueMap::get(unsigned handle) const
+template<typename ValueType> ValueType& ValueHandleMap<ValueType>::get(unsigned handle) const
 {
     ASSERT(m_map.contains(handle));
 
     return *m_map.find(handle)->value.value;
 }
 
-inline void ValueMap::ref(unsigned handle)
+template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle)
 {
     ASSERT(m_map.contains(handle));
 
     ++m_map.find(handle)->value.referenceCountMinusOne;
 }
 
-inline void ValueMap::deref(unsigned handle)
+template<typename ValueType> void ValueHandleMap<ValueType>::deref(unsigned handle)
 {
     ASSERT(m_map.contains(handle));
 
@@ -103,6 +107,5 @@ inline void ValueMap::deref(unsigned handle)
     m_map.remove(it);
 }
 
-} // namespace Calculation
 } // namespace Style
 } // namespace WebCore

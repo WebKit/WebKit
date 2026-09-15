@@ -24,18 +24,27 @@
 
 #pragma once
 
+#include "StyleZoomPrimitives.h"
+#include <optional>
+
 namespace WebCore {
 namespace Style {
-
-struct ZoomFactor;
-
 namespace Calculation {
 
 struct Tree;
 
 // MARK: Evaluation.
 
-double evaluate(const Tree&, double percentResolutionLength, const ZoomFactor&);
+struct EvaluationOptions {
+    double percentResolutionLength;
+    ZoomFactor usedZoom;
+
+    // Used value of the calc-size basis, which the `size` keyword resolves to. Absent outside a
+    // calc-size calculation.
+    std::optional<double> sizeResolutionLength { };
+};
+
+double evaluate(const Tree&, const EvaluationOptions&);
 
 } // namespace Calculation
 } // namespace Style

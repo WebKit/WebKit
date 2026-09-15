@@ -379,6 +379,9 @@ template<typename SizeType> LayoutUnit RenderTable::convertStyleLogicalHeightToC
         [&](const typename SizeType::Calc& calc) {
             return checkedThis->computePercentageLogicalHeight(calc).value_or(0_lu);
         },
+        [&](const typename SizeType::CalcSize& calcSize) {
+            return checkedThis->computePercentageLogicalHeight(calcSize).value_or(0_lu);
+        },
         [&](Style::IsIntrinsicOrStretchSizeKeyword auto const&) {
             return checkedThis->computeSizingKeywordLogicalContentHeightUsing(styleLogicalHeight, checkedThis->logicalHeight() - borderAndPadding, borderAndPadding).value_or(0_lu);
         },

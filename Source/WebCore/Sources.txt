@@ -3359,7 +3359,6 @@ style/calc/StyleCalculationTree+Copy.cpp
 style/calc/StyleCalculationTree+Evaluation.cpp
 style/calc/StyleCalculationTree.cpp
 style/calc/StyleCalculationValue.cpp
-style/calc/StyleCalculationValueMap.cpp
 style/computed/data/StyleAppleColorFilterData.cpp @cost:5
 style/computed/data/StyleBackdropFilterData.cpp @cost:5
 style/computed/data/StyleBackgroundData.cpp @cost:5
@@ -3556,6 +3555,7 @@ style/values/overflow/StyleTextOverflow.cpp
 style/values/overflow/StyleOverflowClipMargin.cpp
 style/values/page/StylePageSize.cpp
 style/values/pointerevents/StyleTouchAction.cpp
+style/values/primitives/StyleCalcSizeValue.cpp
 style/values/primitives/StyleCustomIdent.cpp
 style/values/primitives/StyleDeclarationValue.cpp
 style/values/primitives/StyleLengthResolution.cpp @header:RenderStyleGetters @cost:6
@@ -3565,6 +3565,7 @@ style/values/primitives/StyleRatio.cpp
 style/values/primitives/StyleSnapLengthAsBorderWidth.cpp
 style/values/primitives/StyleString.cpp
 style/values/primitives/StyleURL.cpp
+style/values/primitives/StyleUnevaluatedCalcSize.cpp
 style/values/primitives/StyleUnevaluatedCalculation.cpp
 style/values/rhythm/StyleBlockStepSize.cpp
 style/values/scroll-animations/StyleScrollFunction.cpp

@@ -1233,7 +1233,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         return perpendicularContainingBlockLogicalHeight();
     };
 
-    auto percentageOrCalc = [&](Style::IsPercentageOrCalc auto const& logicalWidth) {
+    auto percentageOrCalc = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalWidth) {
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
         if (auto containerWidth = calculateContainerWidth(); containerWidth > 0 || (!containerWidth && (containingBlock()->style().logicalWidth().isSpecified()))) {
@@ -1260,6 +1260,9 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         },
         [&](const typename SizeType::Calc& calculatedLogicalWidth) -> LayoutUnit {
             return percentageOrCalc(calculatedLogicalWidth);
+        },
+        [&](const typename SizeType::CalcSize& calcSizeLogicalWidth) -> LayoutUnit {
+            return percentageOrCalc(calcSizeLogicalWidth);
         },
         [&](const CSS::Keyword::FitContent& keyword) -> LayoutUnit {
             return content(keyword, calculateContainerWidth());
@@ -1384,7 +1387,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         ASSERT(!replacedMaxLogicalHeightComputesAsNone());
 #endif
 
-    auto percentageOrCalculated = [&](Style::IsPercentageOrCalc auto const& logicalHeight) {
+    auto percentageOrCalculated = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalHeight) {
         auto* container = isOutOfFlowPositioned() ? this->container() : containingBlock();
         while (container && container->shouldSkipForPercentageResolution()) {
             // Stop at rendering context root.
@@ -1468,6 +1471,9 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         },
         [&](const typename SizeType::Calc& calculatedLogicalHeight) -> LayoutUnit {
             return percentageOrCalculated(calculatedLogicalHeight);
+        },
+        [&](const typename SizeType::CalcSize& calcSizeLogicalHeight) -> LayoutUnit {
+            return percentageOrCalculated(calcSizeLogicalHeight);
         },
         [&](const CSS::Keyword::FitContent&) -> LayoutUnit {
             return content();

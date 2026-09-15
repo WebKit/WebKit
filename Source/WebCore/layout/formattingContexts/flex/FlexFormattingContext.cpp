@@ -967,6 +967,11 @@ LayoutUnit FlexFormattingContext::computeMainSizeFromAspectRatioUsing(const Flex
                 ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, calcCrossSizeLength)
                 : integrationUtils().adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution, style->usedZoomForLength()));
         },
+        [&](const typename SizeType::CalcSize& calcSizeCrossSizeLength) -> std::optional<LayoutUnit> {
+            return flexLayoutItem.mainAxisIsInlineAxis
+                ? integrationUtils().computePercentageLogicalHeightForFlexItem(flexLayoutItem, SizeType { calcSizeCrossSizeLength })
+                : integrationUtils().adjustBorderBoxLogicalWidthForBoxSizing(Style::evaluate<LayoutUnit>(calcSizeCrossSizeLength, m_constraints.crossAxisSizeForLengthResolution, style->usedZoomForLength()));
+        },
         [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
             ASSERT(flexFormattingUtils().hasDefiniteCrossSizeForFlexItem(flexLayoutItem));
             return flexFormattingUtils().innerCrossSizeForFlexItem(flexLayoutItem);

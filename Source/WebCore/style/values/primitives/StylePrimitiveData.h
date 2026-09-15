@@ -38,11 +38,14 @@ namespace Calculation {
 class Value;
 }
 
+class CalcSizeValue;
+class UnevaluatedCalcSize;
 class UnevaluatedCalculationBase;
 
 enum class PrimitiveDataKind : uint8_t {
     Default,
     Calculation,
+    CalcSize,
     Empty,
     HashTableEmpty,
     HashTableDeleted
@@ -52,6 +55,7 @@ enum class PrimitiveDataEvaluationKind : uint8_t {
     Fixed,
     Percentage,
     Calculation,
+    CalcSize,
     Flag
 };
 
@@ -60,6 +64,8 @@ struct PrimitiveData {
     PrimitiveData(uint8_t opaqueType, float value, bool hasQuirk = false);
     WEBCORE_EXPORT explicit PrimitiveData(uint8_t opaqueType, UnevaluatedCalculationBase&&);
     WEBCORE_EXPORT explicit PrimitiveData(uint8_t opaqueType, const UnevaluatedCalculationBase&);
+    WEBCORE_EXPORT explicit PrimitiveData(uint8_t opaqueType, UnevaluatedCalcSize&&);
+    WEBCORE_EXPORT explicit PrimitiveData(uint8_t opaqueType, const UnevaluatedCalcSize&);
 
     explicit PrimitiveData(WTF::HashTableEmptyValueType);
     explicit PrimitiveData(WTF::HashTableDeletedValueType);
@@ -76,8 +82,9 @@ struct PrimitiveData {
     uint8_t type() const { return m_opaqueType; }
     bool hasQuirk() const { return m_hasQuirk; }
 
-    float value() const { ASSERT(m_kind != PrimitiveDataKind::Calculation); return m_floatValue; }
+    float value() const { ASSERT(!usesHandle()); return m_floatValue; }
     Calculation::Value& calculationValue() const;
+    CalcSizeValue& calcSizeValue() const;
 
     bool isKnownZero(PrimitiveDataEvaluationKind) const;
     bool isKnownPositive(PrimitiveDataEvaluationKind) const;
@@ -95,7 +102,12 @@ struct PrimitiveData {
 
 private:
     WEBCORE_EXPORT float nonNanCalculatedValue(CSS::Range, float maxValue, const ZoomFactor& usedZoom) const;
+    WEBCORE_EXPORT double nonNanCalcSizeValue(CSS::Range, double maxValue, const ZoomFactor& usedZoom) const;
     bool isCalculatedEqual(const PrimitiveData&) const;
+    bool isCalcSizeEqual(const PrimitiveData&) const;
+
+    // Both of these kinds store a handle in the union rather than a float, but into different maps.
+    bool usesHandle() const { return m_kind == PrimitiveDataKind::Calculation || m_kind == PrimitiveDataKind::CalcSize; }
 
     void initialize(const PrimitiveData&);
     void initialize(PrimitiveData&&);
@@ -153,7 +165,7 @@ inline PrimitiveData& PrimitiveData::operator=(const PrimitiveData& other)
     if (this == &other)
         return *this;
 
-    if (m_kind == PrimitiveDataKind::Calculation)
+    if (usesHandle())
         deref();
 
     initialize(other);
@@ -165,7 +177,7 @@ inline PrimitiveData& PrimitiveData::operator=(PrimitiveData&& other)
     if (this == &other)
         return *this;
 
-    if (m_kind == PrimitiveDataKind::Calculation)
+    if (usesHandle())
         deref();
 
     initialize(WTF::move(other));
@@ -180,6 +192,7 @@ inline void PrimitiveData::initialize(const PrimitiveData& other)
 
     switch (m_kind) {
     case PrimitiveDataKind::Calculation:
+    case PrimitiveDataKind::CalcSize:
         m_calculationValueHandle = other.m_calculationValueHandle;
         ref();
         break;
@@ -200,6 +213,7 @@ inline void PrimitiveData::initialize(PrimitiveData&& other)
 
     switch (m_kind) {
     case PrimitiveDataKind::Calculation:
+    case PrimitiveDataKind::CalcSize:
         m_calculationValueHandle = std::exchange(other.m_calculationValueHandle, 0);
         break;
     case PrimitiveDataKind::Default:
@@ -215,7 +229,7 @@ inline void PrimitiveData::initialize(PrimitiveData&& other)
 
 inline PrimitiveData::~PrimitiveData()
 {
-    if (m_kind == PrimitiveDataKind::Calculation)
+    if (usesHandle())
         deref();
 }
 
@@ -225,6 +239,8 @@ inline bool PrimitiveData::operator==(const PrimitiveData& other) const
         return false;
     if (m_kind == PrimitiveDataKind::Calculation)
         return isCalculatedEqual(other);
+    if (m_kind == PrimitiveDataKind::CalcSize)
+        return isCalcSizeEqual(other);
     return value() == other.value();
 }
 
@@ -283,6 +299,9 @@ ReturnType PrimitiveData::minimumValueForPrimitiveDataWithLazyMaximum(PrimitiveD
     case PrimitiveDataEvaluationKind::Calculation:
         ASSERT(m_kind == PrimitiveDataKind::Calculation);
         return ReturnType(nonNanCalculatedValue(range, lazyMaximumValueFunctor(), zoom));
+    case PrimitiveDataEvaluationKind::CalcSize:
+        ASSERT(m_kind == PrimitiveDataKind::CalcSize);
+        return ReturnType(nonNanCalcSizeValue(range, lazyMaximumValueFunctor(), zoom));
     case PrimitiveDataEvaluationKind::Flag:
         ASSERT(m_kind == PrimitiveDataKind::Default);
         return ReturnType(0);
@@ -304,6 +323,9 @@ ReturnType PrimitiveData::valueForPrimitiveDataWithLazyMaximum(PrimitiveDataEval
     case PrimitiveDataEvaluationKind::Calculation:
         ASSERT(m_kind == PrimitiveDataKind::Calculation);
         return ReturnType(nonNanCalculatedValue(range, lazyMaximumValueFunctor(), zoom));
+    case PrimitiveDataEvaluationKind::CalcSize:
+        ASSERT(m_kind == PrimitiveDataKind::CalcSize);
+        return ReturnType(nonNanCalcSizeValue(range, lazyMaximumValueFunctor(), zoom));
     case PrimitiveDataEvaluationKind::Flag:
         ASSERT(m_kind == PrimitiveDataKind::Default);
         return ReturnType(lazyMaximumValueFunctor());

@@ -31,6 +31,7 @@
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ShapeOutsideInfo.h>
+#include <WebCore/StyleUnevaluatedCalcSize.h>
 #include <WebCore/StyleUnevaluatedCalculation.h>
 #include <wtf/TypeCasts.h>
 
@@ -380,6 +381,7 @@ public:
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::FlexBasis& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::Percentage<CSS::NonnegativeLayoutUnitClamped, float>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalculation<CSS::LengthPercentage<CSS::NonnegativeLayoutUnitClamped, float>>& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
+    std::optional<LayoutUnit> computePercentageLogicalHeight(const Style::UnevaluatedCalcSize& logicalHeight, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     bool hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;

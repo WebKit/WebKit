@@ -5561,6 +5561,10 @@
 		BCA1C5000000000000000003 /* CSSCalcSizeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C5000000000000000002 /* CSSCalcSizeValue.h */; };
 		BCA1C5000000000000000006 /* CSSCalcSizeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C5000000000000000005 /* CSSCalcSizeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA1C6000000000000000002 /* StyleSizeOrKeyword.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C6000000000000000001 /* StyleSizeOrKeyword.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C7000000000000000005 /* StyleCalcSizeValue+Evaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C7000000000000000001 /* StyleCalcSizeValue+Evaluation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C7000000000000000006 /* StyleCalcSizeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C7000000000000000004 /* StyleCalcSizeValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C7000000000000000008 /* StyleValueHandleMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C7000000000000000007 /* StyleValueHandleMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCA1C700000000000000000B /* StyleUnevaluatedCalcSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA1C7000000000000000009 /* StyleUnevaluatedCalcSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA2B061105047600043BD1C /* UserScript.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA2B0601050475F0043BD1C /* UserScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA2B08B10505BCD0043BD1C /* UserScriptTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA2B08A10505BCD0043BD1C /* UserScriptTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA407FD2C9FBAC9006B037F /* CSSValueTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA407F12C9F26C6006B037F /* CSSValueTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19693,8 +19697,6 @@
 		BC4630642E9B098600EA911F /* StyleCalculationTree+Traversal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Traversal.h"; sourceTree = "<group>"; };
 		BC4630652E9B098600EA911F /* StyleCalculationValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalculationValue.h; sourceTree = "<group>"; };
 		BC4630662E9B098600EA911F /* StyleCalculationValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalculationValue.cpp; sourceTree = "<group>"; };
-		BC4630672E9B098600EA911F /* StyleCalculationValueMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalculationValueMap.h; sourceTree = "<group>"; };
-		BC4630682E9B098600EA911F /* StyleCalculationValueMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalculationValueMap.cpp; sourceTree = "<group>"; };
 		BC46307B2E9C18CB00EA911F /* ModelPlayerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelPlayerIdentifier.h; sourceTree = "<group>"; };
 		BC46307D2E9C197000EA911F /* ModelPlayerAccessibilityChildren.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelPlayerAccessibilityChildren.h; sourceTree = "<group>"; };
 		BC4630B82E9D59D000EA911F /* CSSCalcExecutor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCalcExecutor.h; sourceTree = "<group>"; };
@@ -20307,6 +20309,13 @@
 		BCA1C5000000000000000008 /* CSSPropertyParserConsumer+CalcSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+CalcSize.h"; sourceTree = "<group>"; };
 		BCA1C6000000000000000001 /* StyleSizeOrKeyword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSizeOrKeyword.h; sourceTree = "<group>"; };
 		BCA1C6000000000000000003 /* StyleSizeOrKeyword+CSSValueConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleSizeOrKeyword+CSSValueConversion.h"; sourceTree = "<group>"; };
+		BCA1C7000000000000000001 /* StyleCalcSizeValue+Evaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalcSizeValue+Evaluation.h"; sourceTree = "<group>"; };
+		BCA1C7000000000000000002 /* StyleCalcSizeValue+Serialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalcSizeValue+Serialization.h"; sourceTree = "<group>"; };
+		BCA1C7000000000000000003 /* StyleCalcSizeValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalcSizeValue.cpp; sourceTree = "<group>"; };
+		BCA1C7000000000000000004 /* StyleCalcSizeValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalcSizeValue.h; sourceTree = "<group>"; };
+		BCA1C7000000000000000007 /* StyleValueHandleMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleValueHandleMap.h; sourceTree = "<group>"; };
+		BCA1C7000000000000000009 /* StyleUnevaluatedCalcSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleUnevaluatedCalcSize.h; sourceTree = "<group>"; };
+		BCA1C700000000000000000A /* StyleUnevaluatedCalcSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleUnevaluatedCalcSize.cpp; sourceTree = "<group>"; };
 		BCA2B0601050475F0043BD1C /* UserScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserScript.h; sourceTree = "<group>"; };
 		BCA2B0601050485F0043BD1C /* UserScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserScript.cpp; sourceTree = "<group>"; };
 		BCA2B08A10505BCD0043BD1C /* UserScriptTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserScriptTypes.h; sourceTree = "<group>"; };
@@ -38259,8 +38268,6 @@
 				BC46305E2E9B098600EA911F /* StyleCalculationTree.h */,
 				BC4630662E9B098600EA911F /* StyleCalculationValue.cpp */,
 				BC4630652E9B098600EA911F /* StyleCalculationValue.h */,
-				BC4630682E9B098600EA911F /* StyleCalculationValueMap.cpp */,
-				BC4630672E9B098600EA911F /* StyleCalculationValueMap.h */,
 			);
 			path = calc;
 			sourceTree = "<group>";
@@ -39385,6 +39392,10 @@
 		BCB271F22CC0156E00265123 /* primitives */ = {
 			isa = PBXGroup;
 			children = (
+				BCA1C7000000000000000001 /* StyleCalcSizeValue+Evaluation.h */,
+				BCA1C7000000000000000002 /* StyleCalcSizeValue+Serialization.h */,
+				BCA1C7000000000000000003 /* StyleCalcSizeValue.cpp */,
+				BCA1C7000000000000000004 /* StyleCalcSizeValue.h */,
 				BC7320162E7343D900A6584F /* StyleCoordinatedValueList.h */,
 				BCD278122EAEA47F0047A4DE /* StyleCoordinatedValueListValue.h */,
 				3084F84F2F64403D00EC9C6E /* StyleCustomIdent.cpp */,
@@ -39433,10 +39444,13 @@
 				28A097C5302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h */,
 				BC66AF5A2F7D8E4000345E91 /* StyleString.cpp */,
 				BC66AF592F7D8D3B00345E91 /* StyleString.h */,
+				BCA1C700000000000000000A /* StyleUnevaluatedCalcSize.cpp */,
+				BCA1C7000000000000000009 /* StyleUnevaluatedCalcSize.h */,
 				BC38D4F22D480063004BE2FF /* StyleUnevaluatedCalculation.cpp */,
 				BCD67C352D23113B0079EB9C /* StyleUnevaluatedCalculation.h */,
 				BCC0F3DB2D9A1D100065B859 /* StyleURL.cpp */,
 				BCC0F3D92D99D4860065B859 /* StyleURL.h */,
+				BCA1C7000000000000000007 /* StyleValueHandleMap.h */,
 			);
 			path = primitives;
 			sourceTree = "<group>";
@@ -49268,6 +49282,8 @@
 				E4ABABF32368B95900FA4345 /* StyleBuilderState.h in Headers */,
 				9331BAD129EDA36600137ED2 /* StyleBuilderStateInlines.h in Headers */,
 				BC1777812F42511100E318C5 /* StyleCachedImage.h in Headers */,
+				BCA1C7000000000000000005 /* StyleCalcSizeValue+Evaluation.h in Headers */,
+				BCA1C7000000000000000006 /* StyleCalcSizeValue.h in Headers */,
 				BC4630702E9B0F8B00EA911F /* StyleCalculationTree.h in Headers */,
 				BC46306E2E9B0F6500EA911F /* StyleCalculationValue.h in Headers */,
 				BCAB57072F02FF7E0087F79C /* StyleCaretColor.h in Headers */,
@@ -49615,10 +49631,12 @@
 				BC4F32B32E89C4DA00F6AEC1 /* StyleTranslateTransformFunction.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */,
 				CD671CA02F5D0A7F00B387A2 /* StyleTreeResolverInlines.h in Headers */,
+				BCA1C700000000000000000B /* StyleUnevaluatedCalcSize.h in Headers */,
 				BCD67C362D23113B0079EB9C /* StyleUnevaluatedCalculation.h in Headers */,
 				E42E76DC1C7AF77600E3614D /* StyleUpdate.h in Headers */,
 				BCC0F3DA2D99D4860065B859 /* StyleURL.h in Headers */,
 				E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */,
+				BCA1C7000000000000000008 /* StyleValueHandleMap.h in Headers */,
 				BCA408182CA394CE006B037F /* StyleValueTypes.h in Headers */,
 				BC22AA812E367D83009AC0C3 /* StyleVerticalAlign.h in Headers */,
 				BC73202F2E734E3E00A6584F /* StyleViewFunction.h in Headers */,

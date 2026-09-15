@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +22,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StyleCalculationValueMap.h"
+#pragma once
 
-#include <wtf/NeverDestroyed.h>
+#include <WebCore/StylePrimitiveNumeric.h>
+#include <WebCore/StyleUnevaluatedCalcSize.h>
+#include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
 namespace Style {
-namespace Calculation {
 
-ValueMap::ValueMap() = default;
+// Resolves the basis, binds it to the `size` keyword, then resolves the calculation. A keyword basis
+// stands for the element's intrinsic size, which only layout knows, so callers check
+// behavesAsKeyword() and degrade to the keyword before reaching here.
+// FIXME: Resolve keyword bases in layout, so calc-size(auto, size * 2) works.
+WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, double percentResolutionLength, ZoomFactor);
 
-ValueMap& ValueMap::calculationValues()
-{
-    static NeverDestroyed<ValueMap> map;
-    return map;
-}
+// Clamps the result to the property's range, as Calculation::Value::evaluate() does for a calc().
+WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, CSS::Range, double percentResolutionLength, ZoomFactor);
 
-} // namespace Calculation
+template<typename T> concept IsPercentageOrCalcOrCalcSize = IsPercentageOrCalc<T> || std::same_as<T, UnevaluatedCalcSize>;
+
+template<typename Result> struct Evaluation<UnevaluatedCalcSize, Result> {
+    auto operator()(const UnevaluatedCalcSize& calcSize, Result percentResolutionLength, ZoomFactor usedZoom) -> Result
+    {
+        return Result(calcSize.evaluate(static_cast<double>(percentResolutionLength), usedZoom));
+    }
+};
+
 } // namespace Style
 } // namespace WebCore

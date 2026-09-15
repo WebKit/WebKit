@@ -56,7 +56,12 @@ Value::~Value() = default;
 
 double Value::evaluate(CSS::Range range, double percentageBasis, ZoomFactor zoom) const
 {
-    auto result = Calculation::evaluate(m_tree, percentageBasis, zoom);
+    return evaluate(range, { .percentResolutionLength = percentageBasis, .usedZoom = zoom });
+}
+
+double Value::evaluate(CSS::Range range, const EvaluationOptions& options) const
+{
+    auto result = Calculation::evaluate(m_tree, options);
     if (std::isnan(result))
         return 0;
     return CSS::clampToRange<double>(result, range);

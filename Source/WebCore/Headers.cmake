@@ -3468,6 +3468,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/position/StyleInset.h
 
+    style/values/primitives/StyleCalcSizeValue+Evaluation.h
+    style/values/primitives/StyleCalcSizeValue.h
     style/values/primitives/StyleCustomIdent.h
     style/values/primitives/StyleDeclarationValue.h
     style/values/primitives/StyleCoordinatedValueList.h
@@ -3488,7 +3490,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/primitives/StyleSnapLengthAsBorderWidth.h
     style/values/primitives/StyleString.h
     style/values/primitives/StyleURL.h
+    style/values/primitives/StyleUnevaluatedCalcSize.h
     style/values/primitives/StyleUnevaluatedCalculation.h
+    style/values/primitives/StyleValueHandleMap.h
 
     style/values/rhythm/StyleBlockStepSize.h
 
