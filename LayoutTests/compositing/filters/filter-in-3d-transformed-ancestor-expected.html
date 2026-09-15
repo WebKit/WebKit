@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- A filtered layer under a rotated ancestor with a perspective. The layer plane itself is mapped
+         projectively but stays invertible, so the filter has to be applied in that plane and the
+         subtree bounds have to be expressed in it as well. -->
+    <style>
+      body { margin: 0; background: white; }
+      .stage {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        perspective: 600px;
+      }
+      .rot {
+        transform: rotateY(50deg);
+      }
+      .filtered {
+        width: 200px;
+        height: 200px;
+        background: green;
+        filter: drop-shadow(20px 20px 0 rgba(0, 0, 0, 0.6));
+      }
+      .inner {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        width: 80px;
+        height: 80px;
+        background: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=stage>
+      <div class=rot>
+        <div class=filtered><div class=inner></div></div>
+      </div>
+    </div>
+  </body>
+</html>

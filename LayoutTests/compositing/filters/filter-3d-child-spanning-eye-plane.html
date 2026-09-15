@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- A filtered layer with a child plane long enough to pass behind the eye. Two of its corners map to
+         w < 0, so the bounds come from the two positive corners plus the two points where the edges
+         cross the eye plane - not from all four mapped corners. -->
+    <meta name="fuzzy" content="maxDifference=0-160; totalPixels=0-8000">
+    <style>
+      body { margin: 0; background: white; }
+      .group {
+        position: absolute;
+        top: 150px;
+        left: 150px;
+        width: 100px;
+        height: 100px;
+        perspective: 100px;
+        filter: drop-shadow(30px 30px 0 rgba(0, 0, 0, 0.6));
+        will-change: transform;
+      }
+      .deep {
+        position: absolute;
+        top: 0;
+        left: -100px;
+        width: 300px;
+        height: 100px;
+        background: green;
+        transform-style: preserve-3d;
+        transform: translate3d(0, 0, 50px) rotateY(90deg);
+        will-change: transform;
+      }
+      .flat {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        background: blue;
+        will-change: transform;
+      }
+    </style>
+  </head>
+  <body>
+    <div class=group>
+      <div class=deep></div>
+      <div class=flat></div>
+    </div>
+  </body>
+</html>

@@ -202,7 +202,6 @@ private:
         const SkiaDamageRegion* damageRegionOrNull() const { return compositingDamageRegion ? &*compositingDamageRegion : nullptr; }
         float opacity { 1 };
         std::optional<SkBlendMode> blendMode;
-        IntSize offset;
         sk_sp<SkColorFilter> colorFilter;
         TransformationMatrix accumulatedReplicaTransform;
         RefPtr<SkiaCompositingLayer> paintingBackdropForLayer;
@@ -233,14 +232,15 @@ private:
     void addGroupDamage(SkCanvas&, PaintContext&, const Vector<IntRect, 1>& overlapRects);
     static void resolveBackdropDamage(const Vector<FloatRect>& backdropRectsInFrame, Damage&);
 #endif
+    bool stopPaintingIntoBackdropIfNeeded(PaintContext&);
     void paintSelfAndChildren(SkCanvas&, PaintContext&);
     void paintWithIntermediateSurface(SkCanvas&, PaintContext&, const IntRect&, SkPaint*, PaintFunction&&);
+    void paintWithFilter(SkCanvas&, PaintContext&, const TransformationMatrix& layerTransform, const TransformationMatrix& inverseLayerTransform, const FloatRect& localBounds, const SkPaint&, PaintFunction&&);
     void paintWith3DRenderingContext(SkCanvas&, PaintContext&);
     void paintBackdrop(SkCanvas&, PaintContext&);
     Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(const SkCanvas&, const PaintContext&, ComputeOverlapRegionMode);
     TransformationMatrix replicaTransform() const;
     TransformationMatrix combinedTransform(const PaintContext&) const;
-    IntRect clipBounds(const SkCanvas&, const PaintContext&) const;
     sk_sp<SkImage> maskImage();
     FloatPolygon3D geometryFor3DRenderingContext() const;
     FloatRect transformedFlattenedBounds() const;
@@ -250,7 +250,8 @@ private:
     void clipRect(SkCanvas&, const FloatRoundedRect&, const TransformationMatrix& = { });
 
     enum class IncludesReplica : bool { No, Yes };
-    void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes);
+    enum class IncludesFilterOutsets : bool { No, Yes };
+    void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix& accumulatedReplicaTransform, IncludesReplica = IncludesReplica::Yes, IncludesFilterOutsets = IncludesFilterOutsets::Yes);
 
     void damageWholeLayer()
     {

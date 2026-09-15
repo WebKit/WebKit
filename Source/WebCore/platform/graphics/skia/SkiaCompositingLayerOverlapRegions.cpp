@@ -30,8 +30,11 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
 #include "FloatRect.h"
+#include "LayoutRect.h"
 #include "TransformationMatrix.h"
+#include <algorithm>
 #include <array>
+#include <cmath>
 
 namespace WebCore {
 
@@ -79,7 +82,7 @@ void ComputeOverlapRegionData::resolveOverlaps(const IntRect& newRegion)
     nonOverlapRegion.unite(newNonOverlapRegion);
 }
 
-IntRect ComputeOverlapRegionData::transformedBoundingBox(const TransformationMatrix& transform, const FloatRect& rect) const
+std::optional<IntRect> projectedBoundingBox(const TransformationMatrix& transform, const FloatRect& rect, const std::optional<IntRect>& clipBounds)
 {
     using Point = Point4D<double>;
     auto mapPoint = [&](const FloatPoint& p) -> Point {
@@ -146,11 +149,18 @@ IntRect ComputeOverlapRegionData::transformedBoundingBox(const TransformationMat
         return { std::min(minmax1.min, minmax2.min), std::max(minmax1.max, minmax2.max) };
     };
 
+    // An unclipped request is still bounded by the largest representable rect, which keeps the
+    // arithmetic below finite without cutting anything a caller could care about.
+    const auto bounds = clipBounds.value_or(enclosingIntRect(LayoutRect::infiniteRect()));
+
     auto clipped = [&](const MinMax<double>& xMinMax, const MinMax<double>& yMinMax) -> IntRect {
-        int minX = std::max<double>(xMinMax.min, clipBounds.x());
-        int minY = std::max<double>(yMinMax.min, clipBounds.y());
-        int maxX = std::min<double>(xMinMax.max, clipBounds.maxX());
-        int maxY = std::min<double>(yMinMax.max, clipBounds.maxY());
+        if (bounds.isEmpty())
+            return { };
+
+        int minX = std::floor(std::clamp<double>(xMinMax.min, bounds.x(), bounds.maxX()));
+        int minY = std::floor(std::clamp<double>(yMinMax.min, bounds.y(), bounds.maxY()));
+        int maxX = std::ceil(std::clamp<double>(xMinMax.max, bounds.x(), bounds.maxX()));
+        int maxY = std::ceil(std::clamp<double>(yMinMax.max, bounds.y(), bounds.maxY()));
         return { minX, minY, maxX - minX, maxY - minY };
     };
 
@@ -186,10 +196,15 @@ IntRect ComputeOverlapRegionData::transformedBoundingBox(const TransformationMat
         return boundingBoxPNN(vertex[i1], vertex[i2], vertex[i3]);
     };
 
-    int count = isPositive[0] + isPositive[1] + isPositive[2] + isPositive[3];
-    switch (count) {
+    // A rect that crosses the eye plane projects to a half plane and has no box at all without a
+    // clip to bound it. One entirely behind the eye plane projects to nothing.
+    const int positiveVertexCount = isPositive[0] + isPositive[1] + isPositive[2] + isPositive[3];
+    if (!clipBounds && positiveVertexCount && positiveVertexCount < 4)
+        return std::nullopt;
+
+    switch (positiveVertexCount) {
     case 0:
-        return { };
+        return IntRect { };
     case 1: {
         int i = findFirstPositiveVertex();
         ASSERT(i < 4);
