@@ -1,0 +1,77 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<div id=logDiv></div>
+<script>
+window.testRunner?.dumpAsText();
+window.testRunner?.waitUntilDone();
+
+function done(message)
+{
+    logDiv.innerHTML = message;
+    window.testRunner?.notifyDone();
+}
+
+function updateBounds(CoreIPC, layerID, bounds)
+{
+    CoreIPC.GPU.GPUConnectionToWebProcess.UpdateSampleBufferDisplayLayerBoundsAndPosition(0, {
+        identifier: layerID,
+        bounds: bounds,
+        fence: {}
+    });
+}
+
+function createLayer(CoreIPC, layerID, size)
+{
+    return new Promise(resolve => {
+        CoreIPC.GPU.RemoteSampleBufferDisplayLayerManager.CreateLayer(0, {
+            id: layerID,
+            hideRootLayer: false,
+            size: size,
+            shouldMaintainAspectRatio: false,
+            canShowWhileLocked: false
+        }, resolve);
+    });
+}
+
+async function doTest()
+{
+    if (!window.IPC)
+        return;
+
+    const { CoreIPC } = await import("../coreipc.js");
+
+    // An absurd layer size must not be handed to the render server as-is.
+    await createLayer(CoreIPC, 1, { width: 58, height: 1627447832 });
+
+    // CALayer raises CALayerInvalidGeometry for non-finite geometry, which would terminate the
+    // GPU process. Each of these must be dropped instead.
+    await createLayer(CoreIPC, 2, { width: 64, height: 64 });
+    const nonFinite = [NaN, Infinity, -Infinity];
+    for (const value of nonFinite) {
+        updateBounds(CoreIPC, 2, { location: { x: value, y: 0 }, size: { width: 64, height: 64 } });
+        updateBounds(CoreIPC, 2, { location: { x: 0, y: value }, size: { width: 64, height: 64 } });
+        updateBounds(CoreIPC, 2, { location: { x: 0, y: 0 }, size: { width: value, height: 64 } });
+        updateBounds(CoreIPC, 2, { location: { x: 0, y: 0 }, size: { width: 64, height: value } });
+        updateBounds(CoreIPC, 2, { location: { x: value, y: value }, size: { width: value, height: value } });
+    }
+
+    // The exact geometry from the original report.
+    updateBounds(CoreIPC, 2, {
+        location: { x: NaN, y: 1.4459716862457999e-18 },
+        size: { width: 4.281020796106233e-13, height: 1.2051166793193427e-43 }
+    });
+
+    // A finite update after the rejected ones must still be applied.
+    updateBounds(CoreIPC, 2, { location: { x: 0, y: 0 }, size: { width: 32, height: 32 } });
+
+    for (const layerID of [1, 2])
+        CoreIPC.GPU.RemoteSampleBufferDisplayLayerManager.ReleaseLayer(0, { id: layerID });
+
+    return new Promise(resolve => setTimeout(resolve, 500));
+}
+
+doTest().then(() => done("PASS"), e => done("FAIL: " + e));
+</script>
+</body>
+</html>
