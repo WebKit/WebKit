@@ -153,8 +153,9 @@ G_END_DECLS
  * Asynchronously obtains a favicon image.
  *
  * Asynchronously obtains an image of the favicon for the
- * given page URI. Icons already in the memory cache are provided without
- * reading the database again, but the result is always delivered asynchronously.
+ * given page URI. If the icon is already in the memory cache, its image data
+ * is not read from the database again. The result is always delivered
+ * asynchronously.
  *
  * This is an asynchronous method. When the operation is finished, callback will
  * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
@@ -221,8 +222,9 @@ G_END_DECLS
  * Asynchronously obtains a favicon image.
  *
  * Asynchronously obtains an image of the favicon for the
- * given page URI. Icons already in the memory cache are provided without
- * reading the database again, but the result is always delivered asynchronously.
+ * given page URI. If the icon is already in the memory cache, its image data
+ * is not read from the database again. The result is always delivered
+ * asynchronously.
  *
  * This is an asynchronous method. When the operation is finished, callback will
  * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
