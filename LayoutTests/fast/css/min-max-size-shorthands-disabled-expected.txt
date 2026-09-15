@@ -1,0 +1,75 @@
+Tests that the min-size and max-size shorthands are not exposed across the parser, CSSOM, Typed OM and animation surfaces when CSSSizeShorthandEnabled is disabled, while the min-width/min-height/max-width/max-height longhands keep working.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+1. The min-size and max-size shorthands must not be exposed:
+PASS 'minSize' in document.documentElement.style is false
+PASS 'maxSize' in document.documentElement.style is false
+PASS 'min-size' in document.documentElement.style is false
+PASS 'max-size' in document.documentElement.style is false
+PASS 'min-size' in getComputedStyle(target) is false
+PASS 'max-size' in getComputedStyle(target) is false
+PASS CSS.supports('min-size', '10px') is false
+PASS CSS.supports('max-size', '10px') is false
+PASS CSS.supports('min-size: 10px 20px') is false
+PASS CSS.supports('max-size: 30px 40px') is false
+
+2. The CSSOM write API is a no-op for both shorthands and never touches the longhands:
+PASS target.style.getPropertyValue('min-size') is ""
+PASS target.style.getPropertyValue('max-size') is ""
+PASS target.style.getPropertyValue('min-width') is ""
+PASS target.style.getPropertyValue('min-height') is ""
+PASS target.style.getPropertyValue('max-width') is ""
+PASS target.style.getPropertyValue('max-height') is ""
+PASS target.style.cssText is ""
+PASS target.style.getPropertyValue('min-size') is ""
+PASS target.style.getPropertyValue('max-size') is ""
+PASS target.style.getPropertyPriority('min-size') is ""
+PASS target.style.getPropertyPriority('max-size') is ""
+PASS target.style.removeProperty('min-size') is ""
+PASS target.style.removeProperty('max-size') is ""
+
+3. The longhands remain fully functional:
+PASS CSS.supports('min-width', '10px') is true
+PASS CSS.supports('min-height', '20px') is true
+PASS CSS.supports('max-width', '30px') is true
+PASS CSS.supports('max-height', '40px') is true
+PASS target.style.getPropertyValue('min-width') is "10px"
+PASS target.style.getPropertyValue('min-height') is "20px"
+PASS target.style.getPropertyValue('max-width') is "30px"
+PASS target.style.getPropertyValue('max-height') is "40px"
+
+4. The longhands must not collapse into the shorthands when serializing:
+PASS target.style.cssText is "min-width: 10px; min-height: 20px; max-width: 30px; max-height: 40px;"
+PASS target.style.getPropertyValue('min-size') is ""
+PASS target.style.getPropertyValue('max-size') is ""
+
+5. The disabled shorthands never appear in style enumeration:
+PASS target.style.length is 4
+PASS target.style.item(0) is "min-width"
+PASS target.style.item(1) is "min-height"
+PASS target.style.item(2) is "max-width"
+PASS target.style.item(3) is "max-height"
+
+6. Both shorthands are dropped from @keyframes when disabled, while the longhands are preserved:
+PASS keyframe.style.getPropertyValue('min-size') is ""
+PASS keyframe.style.getPropertyValue('max-size') is ""
+PASS keyframe.style.getPropertyValue('min-width') is "50px"
+PASS keyframe.style.getPropertyValue('max-width') is "60px"
+
+7. Typed OM rejects both shorthands when disabled, but not the longhands:
+PASS target.attributeStyleMap.set('min-size', '10px 20px') threw exception TypeError: Invalid property min-size.
+PASS target.attributeStyleMap.get('min-size') threw exception TypeError: Invalid property min-size.
+PASS target.computedStyleMap().get('min-size') threw exception TypeError: Invalid property min-size.
+PASS target.attributeStyleMap.set('max-size', '30px 40px') threw exception TypeError: Invalid property max-size.
+PASS target.attributeStyleMap.get('max-size') threw exception TypeError: Invalid property max-size.
+PASS target.computedStyleMap().get('max-size') threw exception TypeError: Invalid property max-size.
+PASS target.attributeStyleMap.set('min-width', '10px') did not throw exception.
+PASS target.attributeStyleMap.get('min-width') did not throw exception.
+PASS target.attributeStyleMap.set('max-width', '30px') did not throw exception.
+PASS target.attributeStyleMap.get('max-width') did not throw exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

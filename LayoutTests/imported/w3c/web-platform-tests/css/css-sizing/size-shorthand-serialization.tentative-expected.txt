@@ -4,4 +4,14 @@ PASS Equal width and height longhands do not collapse into the size shorthand wh
 PASS The size shorthand expands to the width and height longhands
 PASS Content authored with size serializes back as the width and height longhands, not as size
 PASS The size shorthand value is still available via getPropertyValue
+PASS min-width and min-height longhands do not collapse into the min-size shorthand when serializing
+PASS Equal min-width and min-height longhands do not collapse into the min-size shorthand when serializing
+PASS The min-size shorthand expands to the min-width and min-height longhands
+PASS Content authored with min-size serializes back as the min-width and min-height longhands, not as min-size
+PASS The min-size shorthand value is still available via getPropertyValue
+PASS max-width and max-height longhands do not collapse into the max-size shorthand when serializing
+PASS Equal max-width and max-height longhands do not collapse into the max-size shorthand when serializing
+PASS The max-size shorthand expands to the max-width and max-height longhands
+PASS Content authored with max-size serializes back as the max-width and max-height longhands, not as max-size
+PASS The max-size shorthand value is still available via getPropertyValue
 
