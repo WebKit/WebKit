@@ -35,7 +35,7 @@ using namespace WebCore;
  * Access to editing capabilities of a #WebKitWebPage.
  *
  * The WebKitWebEditor provides access to various editing capabilities of
- * a #WebKitWebPage such as a possibility to react to the current selection in
+ * a #WebKitWebPage such as the possibility to react to the current selection in
  * #WebKitWebPage.
  *
  * Since: 2.10

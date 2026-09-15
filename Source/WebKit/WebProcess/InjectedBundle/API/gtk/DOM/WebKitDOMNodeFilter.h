@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 /**
  * WEBKIT_DOM_NODE_FILTER_ACCEPT:
  *
- * Accept the node. Use this macro as return value of webkit_dom_node_filter_accept_node()
+ * Accept the node. Use this macro as the return value of a webkit_dom_node_filter_accept_node()
  * implementation to accept the given #WebKitDOMNode
  *
  * Since: 2.6
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
 /**
  * WEBKIT_DOM_NODE_FILTER_REJECT:
  *
- * Reject the node. Use this macro as return value of webkit_dom_node_filter_accept_node()
+ * Reject the node. Use this macro as the return value of a webkit_dom_node_filter_accept_node()
  * implementation to reject the given #WebKitDOMNode. The children of the given node will
  * be rejected too.
  *
@@ -60,7 +60,7 @@ G_BEGIN_DECLS
 /**
  * WEBKIT_DOM_NODE_FILTER_SKIP:
  *
- * Skip the node. Use this macro as return value of webkit_dom_node_filter_accept_node()
+ * Skip the node. Use this macro as the return value of a webkit_dom_node_filter_accept_node()
  * implementation to skip the given #WebKitDOMNode. The children of the given node will
  * not be skipped.
  *

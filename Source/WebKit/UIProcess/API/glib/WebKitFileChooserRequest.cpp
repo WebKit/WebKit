@@ -46,8 +46,8 @@ using namespace WebCore;
  * file type, WebKit will need to show a dialog to choose one or
  * more files to be uploaded to the server along with the rest of the
  * form data. For that to happen in a general way, instead of just
- * opening a #GtkFileChooserDialog (which might be not desirable in
- * some cases, which could prefer to use their own file chooser
+ * opening a #GtkFileChooserDialog (which might not be desirable for
+ * applications that prefer to use their own file chooser
  * dialog), WebKit will fire the #WebKitWebView::run-file-chooser
  * signal with a #WebKitFileChooserRequest object, which will allow
  * the client application to specify the files to be selected, to
@@ -171,7 +171,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
      * WebKitFileChooserRequest:selected-files:
      *
      * A %NULL-terminated array of strings containing the list of
-     * selected files associated to the current request. See
+     * selected files associated with the current request. See
      * webkit_file_chooser_request_get_selected_files() for more details.
      */
     g_object_class_install_property(objectClass,
@@ -251,7 +251,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
  *
  * Returns: (transfer none): a #GtkFileFilter if a list of accepted
  * MIME types is defined or %NULL otherwise. The returned object is
- * owned by WebKit should not be modified or freed.
+ * owned by WebKit and should not be modified or freed.
  */
 GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChooserRequest* request)
 {
@@ -286,7 +286,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
  *
  * Whether the file chooser should allow selecting multiple files.
  *
- * Determine whether the file chooser associated to this
+ * Determine whether the file chooser associated with this
  * #WebKitFileChooserRequest should allow selecting multiple files,
  * which depends on the HTML input element having a 'multiple'
  * attribute defined.
@@ -333,12 +333,12 @@ void webkit_file_chooser_request_select_files(WebKitFileChooserRequest* request,
  * webkit_file_chooser_request_get_selected_files:
  * @request: a #WebKitFileChooserRequest
  *
- * Get the list of selected files associated to the request.
+ * Get the list of selected files associated with the request.
  *
- * Get the list of selected files currently associated to the
+ * Get the list of selected files currently associated with the
  * request. Initially, the return value of this method contains any
  * files selected in previous file chooser requests for this HTML
- * input element. Once webkit_file_chooser_request_select_files, the
+ * input element. Once webkit_file_chooser_request_select_files() has been called, the
  * value will reflect whatever files are given.
  *
  * This function should normally be called only before presenting the

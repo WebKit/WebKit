@@ -4,7 +4,7 @@ Slug: android
 WPE WebKit supports running on [Android](https://www.android.com), which is
 considerably different from other Linux-based systems.
 
-## Building 
+## Building
 
 Compiling WPE WebKit for Android requires a suitable toolchain configured
 to use a “sysroot” which includes the needed dependencies—including
@@ -30,7 +30,7 @@ is provided by the separate
 Prebuilt packages produced by the WPE Android project are readily available
 as
 [org.wpewebkit.wpeview](https://central.sonatype.com/artifact/org.wpewebkit.wpeview/wpeview)
-at the [Maven Central](https://central.sonatype.com/) repository. Using these
+at the [Maven Central](https://central.sonatype.com/) repository. Using this
 package is the recommended way of using WPE WebKit to develop Android
 applications that embed WPE WebKit web views.
 
@@ -46,12 +46,12 @@ adb shell setprop log.tag.WPEWebKit VERBOSE
 adb logcat -s WPEWebKit
 ```
 
-The `WEBKIT_DEBUG` [environment variable](environment.html) is replaced by the
+The `WEBKIT_DEBUG` [environment variable](environment-variables.html) is replaced by the
 `debug.WPEWebKit.log` system property to configure logging channels:
 
 ```sh
 adb shell setprop debug.WPEWebKit.log 'Process,Media=error'
 ```
 
-Using the `persist.` prefix may be added to system properties to store
+The `persist.` prefix may be added to system properties to store
 settings across device reboots.

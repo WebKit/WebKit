@@ -71,7 +71,7 @@ enum {
 /**
  * WebKitInputMethodUnderline:
  *
- * Range of text in an preedit string to be shown underlined.
+ * Range of text in a preedit string to be shown underlined.
  *
  * Since: 2.28
  */
@@ -384,7 +384,7 @@ void webkit_input_method_context_set_enable_preedit(WebKitInputMethodContext* co
  * @underlines: (out) (transfer full) (nullable) (element-type WebKitInputMethodUnderline): location to store the underlines as a #GList of #WebKitInputMethodUnderline
  * @cursor_offset: (out) (nullable): location to store the position of cursor in preedit string
  *
- *  Get the pre-edit string and a list of WebKitInputMethodUnderline.
+ * Get the pre-edit string and a list of WebKitInputMethodUnderline.
  *
  * Get the current pre-edit string for the @context, and a list of WebKitInputMethodUnderline to apply to the string.
  * The string will be displayed inserted at @cursor_offset.

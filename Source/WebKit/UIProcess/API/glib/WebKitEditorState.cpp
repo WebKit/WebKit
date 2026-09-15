@@ -108,7 +108,7 @@ static void webkit_editor_state_class_init(WebKitEditorStateClass* editorStateCl
      * WebKitEditorState::changed:
      * @editor_state: the #WebKitEditorState on which the signal is emitted
      *
-     * Emitted when the #WebKitEdtorState is changed.
+     * Emitted when the #WebKitEditorState is changed.
      *
      * Since: 2.44
      */

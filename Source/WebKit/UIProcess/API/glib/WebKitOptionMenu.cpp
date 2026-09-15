@@ -38,7 +38,7 @@ using namespace WebKit;
  *
  * When a select element in a #WebKitWebView needs to display a dropdown menu, the signal
  * #WebKitWebView::show-option-menu is emitted, providing a WebKitOptionMenu with the
- * #WebKitOptionMenuItem<!-- -->s that should be displayed.
+ * #WebKitOptionMenuItem objects that should be displayed.
  *
  * Since: 2.18
  */
@@ -117,7 +117,7 @@ void webkitOptionMenuSetEvent(WebKitOptionMenu* menu, GdkEvent* event)
  *
  * Gets the length of the @menu.
  *
- * Returns: the number of #WebKitOptionMenuItem<!-- -->s in @menu
+ * Returns: the number of #WebKitOptionMenuItem objects in @menu
  *
  * Since: 2.18
  */
@@ -156,7 +156,7 @@ WebKitOptionMenuItem* webkit_option_menu_get_item(WebKitOptionMenu* menu, guint 
  *
  * Selecting an item changes the
  * text shown by the combo button, but it doesn't change the value of the element. You need to
- * explicitly activate the item with webkit_option_menu_select_item() or close the menu with
+ * explicitly activate the item with webkit_option_menu_activate_item() or close the menu with
  * webkit_option_menu_close() in which case the currently selected item will be activated.
  *
  * Since: 2.18

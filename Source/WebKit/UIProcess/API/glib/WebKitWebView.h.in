@@ -987,7 +987,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *     JSCValue               *value;
  *     GError                 *error = NULL;
  *
- *     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     js_result = webkit_web_view_run_javascript_in_world_finish (WEBKIT_WEB_VIEW (object), result, &error);
  *     if (!js_result) {
  *         g_warning ("Error running javascript: %s", error->message);
  *         g_error_free (error);
@@ -996,13 +996,12 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *
  *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_number (value)) {
- *         gint32        int_value = jsc_value_to_string (value);
+ *         gint32        int_value = jsc_value_to_int32 (value);
  *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
  *         if (exception)
  *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
  *         else
  *             g_print ("Script result: %d\n", int_value);
- *         g_free (str_value);
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
@@ -1057,7 +1056,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *     JSCValue               *value;
  *     GError                 *error = NULL;
  *
- *     js_result = webkit_web_view_run_javascript_finish (WEBKIT_WEB_VIEW (object), result, &error);
+ *     js_result = webkit_web_view_run_javascript_in_world_finish (WEBKIT_WEB_VIEW (object), result, &error);
  *     if (!js_result) {
  *         g_warning ("Error running javascript: %s", error->message);
  *         g_error_free (error);
@@ -1066,13 +1065,12 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  *
  *     value = webkit_javascript_result_get_js_value (js_result);
  *     if (jsc_value_is_number (value)) {
- *         gint32        int_value = jsc_value_to_string (value);
+ *         gint32        int_value = jsc_value_to_int32 (value);
  *         JSCException *exception = jsc_context_get_exception (jsc_value_get_context (value));
  *         if (exception)
  *             g_warning ("Error running javascript: %s", jsc_exception_get_message (exception));
  *         else
  *             g_print ("Script result: %d\n", int_value);
- *         g_free (str_value);
  *     } else {
  *         g_warning ("Error running javascript: unexpected return value");
  *     }
@@ -1102,7 +1100,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
 /**
  * WebKitWebView:favicon:
  *
- * The favicon currently associated to the #WebKitWebView.
+ * The favicon currently associated with the #WebKitWebView.
  * See webkit_web_view_get_favicon() for more details.
  *
  * New applications should use [property@WebView:page-icons] instead.
@@ -1114,9 +1112,9 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  * webkit_web_view_get_favicon:
  * @web_view: a #WebKitWebView
  *
- * Returns favicon currently associated to @web_view.
+ * Returns favicon currently associated with @web_view.
  *
- * Returns favicon currently associated to @web_view, if any. You can
+ * Returns favicon currently associated with @web_view, if any. You can
  * connect to notify::favicon signal of @web_view to be notified when
  * the favicon is available.
  *
@@ -1131,7 +1129,7 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
 /**
  * WebKitWebView:favicon:
  *
- * The favicon currently associated to the #WebKitWebView.
+ * The favicon currently associated with the #WebKitWebView.
  * See webkit_web_view_get_favicon() for more details.
  */
 
@@ -1139,9 +1137,9 @@ webkit_web_view_leave_immersive_mode                 (WebKitWebView             
  * webkit_web_view_get_favicon:
  * @web_view: a #WebKitWebView
  *
- * Returns favicon currently associated to @web_view.
+ * Returns favicon currently associated with @web_view.
  *
- * Returns favicon currently associated to @web_view, if any. You can
+ * Returns favicon currently associated with @web_view, if any. You can
  * connect to notify::favicon signal of @web_view to be notified when
  * the favicon is available.
  *

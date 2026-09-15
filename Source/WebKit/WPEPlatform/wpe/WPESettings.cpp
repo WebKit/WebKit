@@ -131,7 +131,7 @@ static void wpe_settings_class_init(WPESettingsClass* settingsClass)
      * @key: the key that changed
      * @value: the new value
      *
-     * Emitted when a settings is changed.
+     * Emitted when a setting is changed.
      * It will contain a detail of the specific key that changed.
      */
     signals[CHANGED] = g_signal_new(

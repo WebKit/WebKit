@@ -36,7 +36,7 @@ G_BEGIN_DECLS
  *   sheet *only* in the top-level frame loaded by the web view,
  *   and *not* in the nested frames.
  *
- * Specifies in which frames user style sheets are to be inserted in.
+ * Specifies in which frames user style sheets are to be inserted.
  *
  * Since: 2.6
  */
@@ -47,13 +47,13 @@ typedef enum {
 
 /**
  * WebKitUserStyleLevel:
- * @WEBKIT_USER_STYLE_LEVEL_USER: The style sheet is an user style sheet,
+ * @WEBKIT_USER_STYLE_LEVEL_USER: The style sheet is a user style sheet,
  *   its contents always override other style sheets. This is the default.
  * @WEBKIT_USER_STYLE_LEVEL_AUTHOR: The style sheet will be treated as if
  *   it was provided by the loaded documents. That means other user style
  *   sheets may still override it.
  *
- * Specifies how to treat an user style sheet.
+ * Specifies how to treat a user style sheet.
  *
  * Since: 2.6
  */
@@ -97,7 +97,7 @@ webkit_user_style_sheet_new_for_world (const gchar                    *source,
  * @WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END: Insert the code of the user
  *   script at the end of the loaded documents.
  *
- * Specifies at which place of documents an user script will be inserted.
+ * Specifies at which place of documents a user script will be inserted.
  *
  * Since: 2.6
  */

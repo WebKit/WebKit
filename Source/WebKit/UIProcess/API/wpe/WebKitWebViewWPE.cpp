@@ -70,7 +70,7 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
 /**
  * webkit_web_view_new:
  * @backend: (transfer full) (nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView], or %NULL to use the WPE platform API.
+ *    will determine the behavior of the new [class@WebView], or %NULL to use the WPE platform API.
  *
  * Creates a new web view with a default configuration.
  *
@@ -101,7 +101,7 @@ WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 /**
  * webkit_web_view_new_with_context:
  * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ *    will determine the behavior of the new [class@WebView].
  * @context: the web context the new [class@WebView] will use.
  *
  * Creates a new web view with a given context.
@@ -133,7 +133,7 @@ WebKitWebView* webkit_web_view_new_with_context(WebKitWebViewBackend* backend, W
 /**
  * webkit_web_view_new_with_related_view: (constructor)
  * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ *    will determine the behavior of the new [class@WebView].
  * @web_view: the related web view.
  *
  * Creates a new web view sharing the same configuration and web process as another.
@@ -164,7 +164,7 @@ WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebViewBackend* backe
 /**
  * webkit_web_view_new_with_settings:
  * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ *    will determine the behavior of the new [class@WebView].
  * @settings: settings for the new view.
  *
  * Creates a new web view with the given settings.
@@ -190,7 +190,7 @@ WebKitWebView* webkit_web_view_new_with_settings(WebKitWebViewBackend* backend, 
 /**
  * webkit_web_view_new_with_user_content_manager:
  * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ *    will determine the behavior of the new [class@WebView].
  * @user_content_manager: the user content manager for the new view.
  *
  * Creates a new web view with the given user content manager.
@@ -222,7 +222,7 @@ WebKitWebView* webkit_web_view_new_with_user_content_manager(WebKitWebViewBacken
  *
  * Sets the color that will be used to draw the @web_view background before
  * the actual contents are rendered. Note that if the web page loaded in @web_view
- * specifies a background color, it will take precedence over the background color.
+ * specifies a background color, it will take precedence over the @color.
  * By default the @web_view background color is opaque white.
  *
  * Since: 2.24
@@ -340,7 +340,7 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
  * webkit_web_view_toggle_inspector:
  * @web_view: a #WebKitWebView
  *
- * Show or hide the web inspector of @web_view
+ * Show or hide the web inspector of @web_view.
  * Note that local inspector is only supported by
  * WPEWebKit when using WPE Platform API.
  *

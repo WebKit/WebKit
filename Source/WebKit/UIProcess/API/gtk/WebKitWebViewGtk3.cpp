@@ -35,36 +35,27 @@ guint createContextMenuSignal(WebKitWebViewClass* webViewClass)
      * Emitted when a context menu is about to be displayed to give the application
      * a chance to customize the proposed menu, prevent the menu from being displayed,
      * or build its own context menu.
-     * <itemizedlist>
-     * <listitem><para>
-     *  To customize the proposed menu you can use webkit_context_menu_prepend(),
+     *
+     * - To customize the proposed menu you can use webkit_context_menu_prepend(),
      *  webkit_context_menu_append() or webkit_context_menu_insert() to add new
-     *  #WebKitContextMenuItem<!-- -->s to @context_menu, webkit_context_menu_move_item()
+     *  #WebKitContextMenuItem objects to @context_menu, webkit_context_menu_move_item()
      *  to reorder existing items, or webkit_context_menu_remove() to remove an
      *  existing item. The signal handler should return %FALSE, and the menu represented
      *  by @context_menu will be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To prevent the menu from being displayed you can just connect to this signal
+     * - To prevent the menu from being displayed you can just connect to this signal
      *  and return %TRUE so that the proposed menu will not be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To build your own menu, you can remove all items from the proposed menu with
+     * - To build your own menu, you can remove all items from the proposed menu with
      *  webkit_context_menu_remove_all(), add your own items and return %FALSE so
      *  that the menu will be shown. You can also ignore the proposed #WebKitContextMenu,
      *  build your own #GtkMenu and return %TRUE to prevent the proposed menu from being shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  If you just want the default menu to be shown always, simply don't connect to this
-     *  signal because showing the proposed context menu is the default behaviour.
-     * </para></listitem>
-     * </itemizedlist>
+     * - If you just want the default menu to be shown always, simply don't connect to this
+     *  signal because showing the proposed context menu is the default behavior.
      *
      * The @event parameter is now deprecated. Use webkit_context_menu_get_event() to get the
      * #GdkEvent that triggered the context menu.
      *
      * If the signal handler returns %FALSE the context menu represented by @context_menu
-     * will be shown, if it return %TRUE the context menu will not be shown.
+     * will be shown, if it returns %TRUE the context menu will not be shown.
      *
      * The proposed #WebKitContextMenu passed in @context_menu argument is only valid
      * during the signal emission.
@@ -137,8 +128,8 @@ guint createShowOptionMenuSignal(WebKitWebViewClass* webViewClass)
  * the actual contents are rendered. Note that if the web page loaded in @web_view
  * specifies a background color, it will take precedence over the @rgba color.
  * By default the @web_view background color is opaque white.
- * Note that the parent window must have a RGBA visual and
- * #GtkWidget:app-paintable property set to %TRUE for backgrounds colors to work.
+ * Note that the parent window must have an RGBA visual and
+ * #GtkWidget:app-paintable property set to %TRUE for background colors to work.
  *
  * ```c
  * static void browser_window_set_background_color (BrowserWindow *window,

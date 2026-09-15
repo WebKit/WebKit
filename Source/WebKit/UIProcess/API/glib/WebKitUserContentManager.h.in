@@ -83,7 +83,7 @@ webkit_user_content_manager_remove_all_style_sheets                    (WebKitUs
  *
  * ```c
  * WebKitWebView *view = webkit_web_view_new ();
- * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
+ * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager (view);
  * g_signal_connect (manager, "script-message-received::foobar",
  *                   G_CALLBACK (handle_script_message), NULL);
  * webkit_user_content_manager_register_script_message_handler (manager, "foobar");
@@ -138,7 +138,7 @@ webkit_user_content_manager_unregister_script_message_handler          (WebKitUs
  *
  * ```c
  * WebKitWebView *view = webkit_web_view_new ();
- * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
+ * WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager (view);
  * g_signal_connect (manager, "script-message-received::foobar",
  *                   G_CALLBACK (handle_script_message), NULL);
  * webkit_user_content_manager_register_script_message_handler (manager, "foobar", "world");

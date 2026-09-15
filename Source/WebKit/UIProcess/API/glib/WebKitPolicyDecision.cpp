@@ -99,7 +99,7 @@ void webkit_policy_decision_use(WebKitPolicyDecision* decision)
  * in the origin associated with the accepted navigation action.
  *
  * For example, a navigation decision to a video sharing website may
- * be accepted under the priviso no movies are allowed to autoplay. The
+ * be accepted under the proviso no movies are allowed to autoplay. The
  * autoplay policy in this case would be set in the @policies.
  *
  * Since: 2.30
@@ -121,7 +121,7 @@ void webkit_policy_decision_use_with_policies(WebKitPolicyDecision* decision, We
  * webkit_policy_decision_ignore:
  * @decision: a #WebKitPolicyDecision
  *
- * #WebKitResponsePolicyDecision, this would cancel the request.
+ * Ignore the action which triggered this decision.
  *
  * Ignore the action which triggered this decision. For instance, for a
  * #WebKitResponsePolicyDecision, this would cancel the request.

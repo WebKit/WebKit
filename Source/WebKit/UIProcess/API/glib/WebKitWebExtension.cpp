@@ -440,7 +440,7 @@ static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
      * WebKitWebExtension:has-content-modification-rules:
      * 
      * Whether the #WebKitWebExtension includes rules used for content modification or blocking.
-     * See webkit_web_extension_get_content_modification_rules() for more details.
+     * See webkit_web_extension_get_has_content_modification_rules() for more details.
      * 
      * Since: 2.52
      */
@@ -559,7 +559,7 @@ const char* webkit_web_extension_get_path(WebKitWebExtension* extension)
  * Get the parsed manifest version, or `0` if there is no
  * version specified in the manifest.
  *
- * A [error@WebExtensionError.UNSUPPORTED_MANIFEST_VERSION] error will be
+ * A %WEBKIT_WEB_EXTENSION_ERROR_UNSUPPORTED_MANIFEST_VERSION error will be
  * reported if the manifest version isn't specified.
  * 
  * Returns: the parsed manifest version.
@@ -735,7 +735,7 @@ const gchar* webkit_web_extension_get_display_description(WebKitWebExtension* ex
  * 
  * This label serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to 
  * the extension being loaded into an extension context.
- * Once the extension is loaded, use the ``actionForTab:`` API to get the tab-specific label.
+ * Once the extension is loaded, a tab-specific label may be used instead.
  * 
  * Returns: (nullable): the localized display action label, or %NULL if there
  * was no display action label specified.
@@ -792,8 +792,8 @@ GIcon* webkit_web_extension_get_icon(WebKitWebExtension* extension, gdouble widt
  *
  * Returns the extension's default action icon image for the specified size.
  * This icon serves as a default and should be used to represent the extension in contexts like action sheets or toolbars prior to 
- * the extension being loaded into an extension context. Once the extension is loaded, use the
- * ``actionForTab:`` API to get the tab-specific icon.
+ * the extension being loaded into an extension context. Once the extension is loaded, a tab-specific
+ * icon may be used instead.
  * The returned image will be the best match for the specified size that is available in the extension's action icon set. If no matching icon is available,
  * the method will fall back to the extension's icon.
  * 
@@ -1048,8 +1048,8 @@ gboolean webkit_web_extension_get_has_persistent_background_content(WebKitWebExt
  * Get whether the extension has script or stylesheet content
  * that can be injected into webpages.
  * 
- * Once the extension is loaded, use the ``hasInjectedContent``
- * property on an extension context, as the injectable content
+ * Once the extension is loaded, use
+ * webkit_web_extension_context_get_has_injected_content(), as the injectable content
  * can change after the extension is loaded.
  * 
  * Returns: `TRUE` if the extension has content that can be
@@ -1073,7 +1073,7 @@ gboolean webkit_web_extension_get_has_injected_content(WebKitWebExtension* exten
  * 
  * The app should provide access to this page through a
  * user interface element, which can be accessed via
- * ``optionsPageURL`` on an extension context.
+ * webkit_web_extension_context_get_options_page_uri().
  * 
  * Returns: `TRUE` if the extension includes a dedicated options
  * page where users can customize settings.
@@ -1096,8 +1096,8 @@ gboolean webkit_web_extension_get_has_options_page(WebKitWebExtension* extension
  * 
  * The app should prompt the user for permission to use
  * the extension's new tab page as the default, which can
- * be accessed via ``overrideNewTabPageURL``
- * on an extension context.
+ * be accessed via
+ * webkit_web_extension_context_get_override_new_tab_page_uri().
  * 
  * Returns: `TRUE` if the extension can specify a custom page
  * that can be displayed when a new tab is opened in the app,
@@ -1120,9 +1120,7 @@ gboolean webkit_web_extension_get_has_override_new_tab_page(WebKitWebExtension* 
  * 
  * These commands should be accessible via keyboard shortcuts,
  * menu items, or other user interface elements provided
- * by the app. The list of commands can be accessed
- * via ``commands`` on an extension context, and
- * invoked via ``performCommand:``.
+ * by the app.
  * 
  * Returns: `TRUE` if the extension contains one or more commands
  * that can be performed by the user.

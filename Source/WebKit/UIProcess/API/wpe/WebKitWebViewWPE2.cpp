@@ -35,33 +35,24 @@ guint createContextMenuSignal(WebKitWebViewClass* webViewClass)
      * Emitted when a context menu is about to be displayed to give the application
      * a chance to customize the proposed menu, prevent the menu from being displayed,
      * or build its own context menu.
-     * <itemizedlist>
-     * <listitem><para>
-     *  To customize the proposed menu you can use webkit_context_menu_prepend(),
+     *
+     * - To customize the proposed menu you can use webkit_context_menu_prepend(),
      *  webkit_context_menu_append() or webkit_context_menu_insert() to add new
-     *  #WebKitContextMenuItem<!-- -->s to @context_menu, webkit_context_menu_move_item()
+     *  #WebKitContextMenuItem objects to @context_menu, webkit_context_menu_move_item()
      *  to reorder existing items, or webkit_context_menu_remove() to remove an
      *  existing item. The signal handler should return %FALSE, and the menu represented
      *  by @context_menu will be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To prevent the menu from being displayed you can just connect to this signal
+     * - To prevent the menu from being displayed you can just connect to this signal
      *  and return %TRUE so that the proposed menu will not be shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  To build your own menu, you can remove all items from the proposed menu with
+     * - To build your own menu, you can remove all items from the proposed menu with
      *  webkit_context_menu_remove_all(), add your own items and return %FALSE so
      *  that the menu will be shown. You can also ignore the proposed #WebKitContextMenu,
      *  build your own menu and return %TRUE to prevent the proposed menu from being shown.
-     * </para></listitem>
-     * <listitem><para>
-     *  If you just want the default menu to be shown always, simply don't connect to this
-     *  signal because showing the proposed context menu is the default behaviour.
-     * </para></listitem>
-     * </itemizedlist>
+     * - If you just want the default menu to be shown always, simply don't connect to this
+     *  signal because showing the proposed context menu is the default behavior.
      *
      * If the signal handler returns %FALSE the context menu represented by @context_menu
-     * will be shown, if it return %TRUE the context menu will not be shown.
+     * will be shown, if it returns %TRUE the context menu will not be shown.
      *
      * The proposed #WebKitContextMenu passed in @context_menu argument is only valid
      * during the signal emission.

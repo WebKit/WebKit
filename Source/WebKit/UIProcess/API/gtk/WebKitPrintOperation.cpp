@@ -245,7 +245,7 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
      * Emitted when displaying the print dialog with webkit_print_operation_run_dialog().
      * The returned #WebKitPrintCustomWidget will be added to the print dialog and
      * it will be owned by the @print_operation. However, the object is guaranteed
-     * to be alive until the #WebKitPrintCustomWidget::apply is emitted.
+     * to be alive until the #WebKitPrintCustomWidget::apply signal is emitted.
      *
      * Returns: (transfer full): A #WebKitPrintCustomWidget that will be embedded in the dialog.
      *
@@ -746,7 +746,7 @@ GtkPrintSettings* webkit_print_operation_get_print_settings(WebKitPrintOperation
  * @print_operation: a #WebKitPrintOperation
  * @print_settings: a #GtkPrintSettings to set
  *
- *  Set the current print settings of @print_operation.
+ * Set the current print settings of @print_operation.
  *
  * Set the current print settings of @print_operation. Current print settings are used for
  * the initial values of the print dialog when webkit_print_operation_run_dialog() is called.
@@ -818,8 +818,8 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
  * is returned and the print operation starts. In this case, the #WebKitPrintOperation::finished
  * signal is emitted when the operation finishes. If an error occurs while printing, the signal
  * #WebKitPrintOperation::failed is emitted before #WebKitPrintOperation::finished.
- * If the print dialog is not cancelled current print settings and page setup of @print_operation
- * are updated with options selected by the user when Print button is pressed in print dialog.
+ * If the print dialog is not cancelled, the current print settings and page setup of @print_operation
+ * are updated with the options selected by the user when the Print button is pressed in the print dialog.
  * You can get the updated print settings and page setup by calling
  * webkit_print_operation_get_print_settings() and webkit_print_operation_get_page_setup()
  * after this method.

@@ -45,6 +45,7 @@
 /**
  * WPEViewQtQuick:
  *
+ * A #WPEView implementation that renders web content into a Qt Quick scene for a WPEQtView.
  */
 struct _WPEViewQtQuickPrivate {
     GRefPtr<WPEBuffer> pendingBuffer;

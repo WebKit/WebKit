@@ -35,7 +35,7 @@ using namespace WebCore;
 /**
  * WebKitWebFormManager:
  *
- * Form manager of a #WebKitWebPage in a #WebKitScriptWorld
+ * Form manager of a #WebKitWebPage in a #WebKitScriptWorld.
  *
  * Since: 2.40
  */
@@ -65,9 +65,9 @@ static void webkit_web_form_manager_class_init(WebKitWebFormManagerClass* klass)
      * @form_manager: the #WebKitWebFormManager on which the signal is emitted
      * @frame: a #WebKitFrame
      * @elements: (element-type JSCValue) (transfer none): a #GPtrArray of
-     *     #JSCValue with the list of forms in the page
+     *     #JSCValue with the list of form controls associated with @frame
      *
-     * Emitted after form elements (or form associated elements) are associated to @frame.
+     * Emitted after form elements (or form associated elements) are associated with @frame.
      * This is useful to implement form auto filling for web pages where form fields are added
      * dynamically. This signal might be emitted multiple times for the same frame.
      *

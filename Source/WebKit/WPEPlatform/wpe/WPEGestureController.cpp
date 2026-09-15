@@ -34,7 +34,7 @@
  *
  * This interface enables implementing custom gesture detection algorithms.
  * Objects of classes implementing this interface can be supplied to
- * #WPEView so that they are being used instead of the default gesture detector.
+ * #WPEView so that they are used instead of the default gesture detector.
  */
 
 G_DEFINE_INTERFACE(WPEGestureController, wpe_gesture_controller, G_TYPE_OBJECT)
@@ -48,7 +48,8 @@ static void wpe_gesture_controller_default_init(WPEGestureControllerInterface*)
  * @controller: a #WPEGestureController
  * @event: a #WPEEvent
  *
- * Get the gesture detected by @controller if any was detected during processing of @event.
+ * Process @event with @controller to detect gestures. The detected gesture, if any,
+ * can then be retrieved with wpe_gesture_controller_get_gesture().
  * 
  * Returns: %TRUE if @event was handled by @controller and gesture information is updated,
  *    or %FALSE otherwise.

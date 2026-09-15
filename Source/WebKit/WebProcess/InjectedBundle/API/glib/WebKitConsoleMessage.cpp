@@ -46,7 +46,7 @@ WebKitConsoleMessage* webkit_console_message_copy(WebKitConsoleMessage* consoleM
  * webkit_console_message_free:
  * @console_message: a #WebKitConsoleMessage
  *
- * Free the #WebKitConsoleMessage
+ * Free the #WebKitConsoleMessage.
  *
  * Since: 2.12
  */
@@ -61,7 +61,7 @@ void webkit_console_message_free(WebKitConsoleMessage* consoleMessage)
  * webkit_console_message_get_source:
  * @console_message: a #WebKitConsoleMessage
  *
- * Gets the source of a #WebKitConsoleMessage
+ * Gets the source of a #WebKitConsoleMessage.
  *
  * Returns: a #WebKitConsoleMessageSource indicating the source of @console_message
  *
@@ -91,7 +91,7 @@ WebKitConsoleMessageSource webkit_console_message_get_source(WebKitConsoleMessag
  * webkit_console_message_get_level:
  * @console_message: a #WebKitConsoleMessage
  *
- * Gets the log level of a #WebKitConsoleMessage
+ * Gets the log level of a #WebKitConsoleMessage.
  *
  * Returns: a #WebKitConsoleMessageLevel indicating the log level of @console_message
  *
@@ -121,7 +121,7 @@ WebKitConsoleMessageLevel webkit_console_message_get_level(WebKitConsoleMessage*
  * webkit_console_message_get_text:
  * @console_message: a #WebKitConsoleMessage
  *
- * Gets the text message of a #WebKitConsoleMessage
+ * Gets the text message of a #WebKitConsoleMessage.
  *
  * Returns: the text message of @console_message
  *
@@ -137,7 +137,7 @@ const gchar* webkit_console_message_get_text(WebKitConsoleMessage* consoleMessag
  * webkit_console_message_get_line:
  * @console_message: a #WebKitConsoleMessage
  *
- * Gets the line number of a #WebKitConsoleMessage
+ * Gets the line number of a #WebKitConsoleMessage.
  *
  * Returns: the line number of @console_message
  *
@@ -153,7 +153,7 @@ guint webkit_console_message_get_line(WebKitConsoleMessage* consoleMessage)
  * webkit_console_message_get_source_id:
  * @console_message: a #WebKitConsoleMessage
  *
- * Gets the source identifier of a #WebKitConsoleMessage
+ * Gets the source identifier of a #WebKitConsoleMessage.
  *
  * Returns: the source identifier of @console_message
  *

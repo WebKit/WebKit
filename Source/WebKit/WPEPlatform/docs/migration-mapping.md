@@ -193,7 +193,7 @@ The EGL renderer-target abstraction is replaced by buffer sharing.
 | `struct wpe_renderer_backend_egl_interface` | — | Removed | |
 | `struct wpe_renderer_backend_egl_target_interface` | — | Removed | |
 | `wpe_renderer_backend_egl_create()` / `_destroy()` | — | Removed | |
-| `wpe_renderer_backend_egl_get_native_display()` | [method@Display.get_egl_display] | Reshape | **Type semantics differ.** libwpe returned `EGLNativeDisplayType` (e.g. an X11 `Display*` or `wl_display*`); WPEPlatform returns the already-initialised `EGLDisplay`. Embedders migrating code that called `eglGetDisplay()` on the libwpe-returned value should drop that step. |
+| `wpe_renderer_backend_egl_get_native_display()` | [method@Display.get_egl_display] | Reshape | **Type semantics differ.** libwpe returned `EGLNativeDisplayType` (e.g. an X11 `Display*` or `wl_display*`); WPEPlatform returns the already-initialized `EGLDisplay`. Embedders migrating code that called `eglGetDisplay()` on the libwpe-returned value should drop that step. |
 | `wpe_renderer_backend_egl_get_platform()` | — | Removed | Not needed (handled internally). |
 | `wpe_renderer_backend_egl_target_*` (create, set_client, initialize, get_native_window, resize, frame_will_render, frame_rendered, deinitialize) | [class@View] + [class@Buffer] flow | Reshape | The whole concept of an EGL target wrapping a native window is gone; instead, the view receives [class@Buffer] objects via [vfunc@View.render_buffer]. |
 | `wpe_renderer_backend_egl_target_dispatch_frame_complete()` | [method@View.buffer_rendered] / [signal@View::buffer-rendered] | Reshape | |
@@ -229,7 +229,7 @@ library between WebKit and the platform.
 
 | WPEBackend-fdo symbol | WPEPlatform | Kind | Notes |
 |---|---|---|---|
-| `wpe_fdo_initialize_for_egl_display(EGLDisplay)` | — | Removed | The display manages its own EGL initialisation. |
+| `wpe_fdo_initialize_for_egl_display(EGLDisplay)` | — | Removed | The display manages its own EGL initialization. |
 
 ### `wpe/view-backend-exportable.h`, `wpe/view-backend-exportable-egl.h`
 
@@ -271,13 +271,13 @@ library between WebKit and the platform.
 |---|---|---|---|
 | DMA-BUF pool (`wpe_view_backend_dmabuf_pool_fdo`, `wpe_dmabuf_pool_entry`) | — | Removed | Not part of the WPEPlatform public surface. |
 | EGLStream variant (`wpe_view_backend_exportable_fdo_eglstream*`, `wpe_fdo_initialize_eglstream()`) | — | Removed | EGLStream-specific path is gone. |
-| Explicit SHM/DMA-BUF initialise calls (`wpe_fdo_initialize_dmabuf`, `_initialize_shm`) | — | Removed | The display picks its buffer types automatically. |
+| Explicit SHM/DMA-BUF initialize calls (`wpe_fdo_initialize_dmabuf`, `_initialize_shm`) | — | Removed | The display picks its buffer types automatically. |
 
 ### `wpe/extensions/*`
 
 These two extensions have no counterpart in the WPEPlatform public API:
 
-- `wpe_audio_source` / `wpe_audio_receiver` (`<wpe/extensions/audio.h>`) — an external-audio *sink*: WebKit passed packets of raw PCM frames, each in its own memfd, to the embedder for it to render, instead of driving PulseAudio/ALSA. WebKit dropped support for this protocol in 2.46 ([281281@main](https://github.com/WebKit/WebKit/commit/602c91212cdb11bff348ea5e28892e1dbe31ad7b)). No WPEPlatform equivalent; audio uses WebKit's normal output path.
+- `wpe_audio_source` / `wpe_audio_receiver` (`<wpe/extensions/audio.h>`) — an external-audio *sink*: WebKit passed packets of raw PCM frames, each in its own memfd, to the embedder for it to render, instead of driving PulseAudio/ALSA. WebKit dropped support for this protocol in 2.46 ([commit 281281@main](https://github.com/WebKit/WebKit/commit/602c91212cdb11bff348ea5e28892e1dbe31ad7b)). No WPEPlatform equivalent; audio uses WebKit's normal output path.
 - `wpe_video_plane_display_dmabuf_source` / `_receiver` (`<wpe/extensions/video-plane-display-dmabuf.h>`) — zero-copy display of decoded video frames on a hardware overlay plane (Broadcom-class SoCs). A WPEPlatform equivalent is in progress — a Broadcom Nexus proof-of-concept has been prototyped — but the public API had not landed when this page was written.
 
 ---
@@ -289,7 +289,7 @@ the old stack at all:
 
 - [class@Toplevel] (proper window abstraction; was implicit in the view backend).
 - Active-window state: `WPE_TOPLEVEL_STATE_ACTIVE` from [method@Toplevel.get_state], observed per-view via [signal@View::toplevel-state-changed]. libwpe only had the visible, focused, and in-window activity states.
-- [class@Settings] (centralised platform/font/UX settings keyed by `WPE_SETTING_*` paths).
+- [class@Settings] (centralized platform/font/UX settings keyed by `WPE_SETTING_*` paths).
 - [class@Screen] (proper screen/monitor object with sync observer for vblank).
 - [class@ScreenSyncObserver] (vblank callbacks).
 - [iface@GestureController] (interface for higher-level gesture recognition).

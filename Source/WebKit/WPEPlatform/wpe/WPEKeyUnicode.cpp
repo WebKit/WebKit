@@ -1689,7 +1689,7 @@ static const struct {
  *
  * Convert from a Unicode character to a key symbol.
  *
- * Returns: the corresponding WPE key symbol, if one exists.
+ * Returns: the corresponding WPE key symbol, if one exists,
  *   or, if there is no corresponding symbol, wc | 0x01000000
  */
 guint wpe_unicode_to_keyval(guint32 wc)

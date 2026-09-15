@@ -32,7 +32,7 @@ G_BEGIN_DECLS
  * WebKitWebExtensionMatchPatternOptions:
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_NONE: No special matching options.
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_IGNORE_SCHEMES: The scheme components should be ignored while matching.
- * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_IGNORE_PATHS: The host components should be ignored while matching.
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_IGNORE_PATHS: The path components should be ignored while matching.
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_OPTIONS_MATCH_BIDIRECTIONALLY: Two patterns should be checked in either direction while matching (A matches B, or B matches A). Invalid for matching URLs.
  *
  * Enum values representing matching options.

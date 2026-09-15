@@ -213,7 +213,7 @@ SoupMessageHeaders* webkit_uri_scheme_request_get_http_headers(WebKitURISchemeRe
  *
  * Get the request body.
  *
- * Returns: (transfer full): (nullable): the body of the @request.
+ * Returns: (transfer full) (nullable): the body of the @request.
  *
  * Since: 2.40
  */

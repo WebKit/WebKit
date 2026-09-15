@@ -42,7 +42,7 @@ using namespace WebKit;
  * Represents an extension of the web process.
  *
  * WebKitWebProcessExtension is a loadable module for the web process. It allows you to execute code in the
- * web process and being able to use the DOM API, to change any request or to inject custom
+ * web process and to use the DOM API, to change any request or to inject custom
  * JavaScript code, for example.
  *
  * To create a WebKitWebProcessExtension you should write a module with an initialization function that could
@@ -75,37 +75,38 @@ using namespace WebKit;
  * a #WebKitWebPage is created.
  *
  * WebKit has to know where it can find the created WebKitWebProcessExtension. To do so you
- * should use the webkit_web_context_set_web_extensions_directory() function. The signal
- * #WebKitWebContext::initialize-web-extensions is the recommended place to call it.
+ * should use the webkit_web_context_set_web_process_extensions_directory() function. The signal
+ * #WebKitWebContext::initialize-web-process-extensions is the recommended place to call it.
  *
  * To provide the initialization data used by the webkit_web_process_extension_initialize_with_user_data()
- * function, you have to call webkit_web_context_set_web_extensions_initialization_user_data() with
+ * function, you have to call webkit_web_context_set_web_process_extensions_initialization_user_data() with
  * the desired data as parameter. You can see an example of this in the following piece of code:
  *
  * ```c
- * #define WEB_EXTENSIONS_DIRECTORY // ...
+ * #define WEB_PROCESS_EXTENSIONS_DIRECTORY // ...
  *
  * static void
- * initialize_web_extensions (WebKitWebContext *context,
- *                            gpointer          user_data)
+ * initialize_web_process_extensions (WebKitWebContext *context,
+ *                                    gpointer          user_data)
  * {
- *   // Web Extensions get a different ID for each Web Process
+ *   // Web process extensions get a different ID for each web process
  *   static guint32 unique_id = 0;
  *
- *   webkit_web_context_set_web_extensions_directory (
- *      context, WEB_EXTENSIONS_DIRECTORY);
- *   webkit_web_context_set_web_extensions_initialization_user_data (
+ *   webkit_web_context_set_web_process_extensions_directory (
+ *      context, WEB_PROCESS_EXTENSIONS_DIRECTORY);
+ *   webkit_web_context_set_web_process_extensions_initialization_user_data (
  *      context, g_variant_new_uint32 (unique_id++));
  * }
  *
  * int main (int argc, char **argv)
  * {
  *   g_signal_connect (webkit_web_context_get_default (),
- *                    "initialize-web-extensions",
- *                     G_CALLBACK (initialize_web_extensions),
+ *                     "initialize-web-process-extensions",
+ *                     G_CALLBACK (initialize_web_process_extensions),
  *                     NULL);
  *
- *   GtkWidget *view = webkit_web_view_new ();
+ *   // With the legacy libwpe backend, WPE also needs the "backend" property
+ *   WebKitWebView *view = g_object_new (WEBKIT_TYPE_WEB_VIEW, NULL);
  *
  *   // ...
  * }
@@ -162,7 +163,7 @@ static void webkit_web_process_extension_class_init(WebKitWebProcessExtensionCla
      *
      * This signal is emitted when a #WebKitUserMessage is received from the
      * #WebKitWebContext corresponding to @extension. Messages sent by #WebKitWebContext
-     * are always broadcasted to all web extensions and they can't be
+     * are always broadcast to all web extensions and they can't be
      * replied to. Calling webkit_user_message_send_reply() will do nothing.
      *
      * Since: 2.40
@@ -262,7 +263,7 @@ WebKitWebPage* webkit_web_process_extension_get_page(WebKitWebProcessExtension* 
  *
  * Send @message to the #WebKitWebContext corresponding to @extension. If @message is floating, it's consumed.
  *
- * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @calback.
+ * If you don't expect any reply, or you simply want to ignore it, you can pass %NULL as @callback.
  * When the operation is finished, @callback will be called. You can then call
  * webkit_web_process_extension_send_message_to_context_finish() to get the message reply.
  *
@@ -301,7 +302,7 @@ void webkit_web_process_extension_send_message_to_context(WebKitWebProcessExtens
  * webkit_web_process_extension_send_message_to_context_finish:
  * @extension: a #WebKitWebProcessExtension
  * @result: a #GAsyncResult
- * @error: return location for error or %NULL to ignor
+ * @error: return location for error or %NULL to ignore
  *
  * Finish an asynchronous operation started with webkit_web_process_extension_send_message_to_context().
  *

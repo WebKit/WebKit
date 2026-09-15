@@ -250,7 +250,7 @@ QUrl WPEQtView::url() const
 /*!
   \qmlproperty url WPEView::url
 
-  The URL of currently loaded web page. Changing this will trigger
+  The URL of the currently loaded web page. Changing this will trigger
   loading new content.
 
   The URL is used as-is. URLs that originate from user input should

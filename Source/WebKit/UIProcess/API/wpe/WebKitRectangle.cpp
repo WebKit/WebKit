@@ -27,7 +27,7 @@
  * @width: The width of the rectangle.
  * @height: The height of the rectangle.
  *
- * Boxed type representing a rectangle with integer coordiantes.
+ * Boxed type representing a rectangle with integer coordinates.
  *
  * Since: 2.28
  */

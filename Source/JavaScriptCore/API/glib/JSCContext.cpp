@@ -621,7 +621,7 @@ JSCContext* jsc_context_new()
  * jsc_context_new_with_virtual_machine:
  * @vm: a #JSCVirtualMachine
  *
- * Create a new #JSCContext in @virtual_machine.
+ * Create a new #JSCContext in @vm.
  *
  * Returns: (transfer full): the newly created #JSCContext.
  */
@@ -650,7 +650,7 @@ JSCVirtualMachine* jsc_context_get_virtual_machine(JSCContext* context)
  * jsc_context_get_exception:
  * @context: a #JSCContext
  *
- * Get the last unhandled exception thrown in @context by API functions calls.
+ * Get the last unhandled exception thrown in @context by API function calls.
  *
  * Returns: (transfer none) (nullable): a #JSCException or %NULL if there isn't any
  *    unhandled exception in the #JSCContext.
@@ -896,7 +896,7 @@ JSCValue* jsc_context_evaluate_with_source_uri(JSCContext* context, const char* 
  * @line_number: the starting line number
  * @object: (out) (transfer full): return location for a #JSCValue.
  *
- * Evaluate @code and create an new object where symbols defined in @code will be added as properties,
+ * Evaluate @code and create a new object where symbols defined in @code will be added as properties,
  * instead of being added to @context global object. The new object is returned as @object parameter.
  * Similar to how jsc_value_new_object() works, if @object_instance is not %NULL @object_class must be provided too.
  * The @line_number is the starting line number in @uri; the value is one-based so the first line is 1.
@@ -1096,7 +1096,7 @@ JSCValue* jsc_context_get_value(JSCContext* context, const char* name)
  *
  * Register a custom class in @context using the given @name. If the new class inherits from
  * another #JSCClass, the parent should be passed as @parent_class, otherwise %NULL should be
- * used. The optional @vtable parameter allows to provide a custom implementation for handling
+ * used. The optional @vtable parameter allows providing a custom implementation for handling
  * the class, for example, to handle external properties not added to the prototype.
  * When an instance of the #JSCClass is cleared in the context, @destroy_notify is called with
  * the instance as parameter.

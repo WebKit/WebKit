@@ -3,10 +3,10 @@ Slug: overview
 
 WebKitGTK is a GObject-based library that provides a GTK widget
 to interact with the WebKit engine. It can be used to write a
-variety of apps, from web browers to news readers to rich text
+variety of apps, from web browsers to news readers to rich text
 editors.
 
-WebkitGTK is distributed under the [BSD][bsd] and [LGPL-2.1][lgpl-2.1]
+WebKitGTK is distributed under the [BSD][bsd] and [LGPL-2.1][lgpl-2.1]
 licenses.
 
 Besides offering a C API for app developers, WebKitGTK also

@@ -31,6 +31,7 @@
 /**
  * WPEToplevelQtQuick:
  *
+ * A #WPEToplevel implementation for Qt Quick applications.
  */
 struct _WPEToplevelQtQuickPrivate {
 };

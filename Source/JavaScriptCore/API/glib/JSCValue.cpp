@@ -161,7 +161,7 @@ JSCContext* jsc_value_get_context(JSCValue* value)
  * jsc_value_new_undefined:
  * @context: a #JSCContext
  *
- * Create a new #JSCValue referencing <function>undefined</function> in @context.
+ * Create a new #JSCValue referencing `undefined` in @context.
  *
  * Returns: (transfer full): a #JSCValue.
  */
@@ -176,7 +176,7 @@ JSCValue* jsc_value_new_undefined(JSCContext* context)
  * jsc_value_is_undefined:
  * @value: a #JSCValue
  *
- * Get whether the value referenced by @value is <function>undefined</function>.
+ * Get whether the value referenced by @value is `undefined`.
  *
  * Returns: whether the value is undefined.
  */
@@ -192,7 +192,7 @@ gboolean jsc_value_is_undefined(JSCValue* value)
  * jsc_value_new_null:
  * @context: a #JSCContext
  *
- * Create a new #JSCValue referencing <function>null</function> in @context.
+ * Create a new #JSCValue referencing `null` in @context.
  *
  * Returns: (transfer full): a #JSCValue.
  */
@@ -207,7 +207,7 @@ JSCValue* jsc_value_new_null(JSCContext* context)
  * jsc_value_is_null:
  * @value: a #JSCValue
  *
- * Get whether the value referenced by @value is <function>null</function>.
+ * Get whether the value referenced by @value is `null`.
  *
  * Returns: whether the value is null.
  */
@@ -559,7 +559,7 @@ JSCValue* jsc_value_new_array_from_garray(JSCContext* context, GPtrArray* gArray
  * @context: a #JSCContext
  * @strv: (array zero-terminated=1) (element-type utf8): a %NULL-terminated array of strings
  *
- * Create a new #JSCValue referencing an array of strings with the items from @strv. If @array
+ * Create a new #JSCValue referencing an array of strings with the items from @strv. If @strv
  * is %NULL or empty a new empty array will be created.
  *
  * Returns: (transfer full): a #JSCValue.
@@ -940,7 +940,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
  * of this function.
  *
  * This function always returns a #JSCValue, in case of void methods a #JSCValue referencing
- * <function>undefined</function> is returned.
+ * `undefined` is returned.
  *
  * Returns: (transfer full): a #JSCValue with the return value of the method.
  */
@@ -978,7 +978,7 @@ JSCValue* jsc_value_object_invoke_method(JSCValue* value, const char* name, GTyp
  * @value: a #JSCValue
  * @name: the method name
  * @n_parameters: the number of parameters
- * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue<!-- -->s to pass as parameters to the method, or %NULL
+ * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue objects to pass as parameters to the method, or %NULL
  *
  * Invoke method with @name on object referenced by @value, passing the given @parameters. If
  * @n_parameters is 0 no parameters will be passed to the method.
@@ -987,7 +987,7 @@ JSCValue* jsc_value_object_invoke_method(JSCValue* value, const char* name, GTyp
  * of this function.
  *
  * This function always returns a #JSCValue, in case of void methods a #JSCValue referencing
- * <function>undefined</function> is returned.
+ * `undefined` is returned.
  *
  * Returns: (transfer full): a #JSCValue with the return value of the method.
  */
@@ -1046,7 +1046,7 @@ JSCValue* jsc_value_object_invoke_methodv(JSCValue* value, const char* name, uns
  * @property_value: (nullable): the default property value
  *
  * Define or modify a property with @property_name in object referenced by @value. This is equivalent to
- * JavaScript <function>Object.defineProperty()</function> when used with a data descriptor.
+ * JavaScript `Object.defineProperty()` when used with a data descriptor.
  */
 void jsc_value_object_define_property_data(JSCValue* value, const char* propertyName, JSCValuePropertyFlags flags, JSCValue* propertyValue)
 {
@@ -1143,7 +1143,7 @@ static void jscValueObjectDefinePropertyAccessor(JSCValue* value, const char* pr
  * Define or modify a property with @property_name in object referenced by @value. When the
  * property value is read or set, @getter and @setter callbacks will be called.
  * When the property is cleared in the #JSCClass context, @destroy_notify is called with
- * @user_data as parameter. This is equivalent to JavaScript <function>Object.defineProperty()</function>
+ * @user_data as parameter. This is equivalent to JavaScript `Object.defineProperty()`
  * when used with an accessor descriptor.
  *
  * Note that the value returned by @getter must be fully transferred. In case of boxed types, you could use
@@ -1188,14 +1188,14 @@ static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char*
 
 /**
  * jsc_value_new_function: (skip)
- * @context: a #JSCContext:
+ * @context: a #JSCContext
  * @name: (nullable): the function name or %NULL
  * @callback: (scope async): a #GCallback.
  * @user_data: user data to pass to @callback.
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the function return value, or %G_TYPE_NONE if the function is void.
  * @n_params: the number of parameter types to follow or 0 if the function doesn't receive parameters.
- * @...: a list of #GType<!-- -->s, one for each parameter.
+ * @...: a list of #GType values, one for each parameter.
  *
  * Create a function in @context. If @name is %NULL an anonymous function will be created.
  * When the function is called by JavaScript or jsc_value_function_call(), @callback is called
@@ -1233,7 +1233,7 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
  * @destroy_notify: (nullable): destroy notifier for @user_data
  * @return_type: the #GType of the function return value, or %G_TYPE_NONE if the function is void.
  * @n_parameters: the number of parameters
- * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType<!-- -->s, one for each parameter, or %NULL
+ * @parameter_types: (nullable) (array length=n_parameters) (element-type GType): a list of #GType values, one for each parameter, or %NULL
  *
  * Create a function in @context. If @name is %NULL an anonymous function will be created.
  * When the function is called by JavaScript or jsc_value_function_call(), @callback is called
@@ -1268,7 +1268,7 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
  *
  * Create a function in @context. If @name is %NULL an anonymous function will be created.
  * When the function is called by JavaScript or jsc_value_function_call(), @callback is called
- * receiving an #GPtrArray of #JSCValue<!-- -->s with the arguments and then @user_data as last parameter.
+ * receiving a #GPtrArray of #JSCValue objects with the arguments and then @user_data as last parameter.
  * When the function is cleared in @context, @destroy_notify is called with @user_data as parameter.
  *
  * Note that the value returned by @callback must be fully transferred. In case of boxed types, you could use
@@ -1315,7 +1315,7 @@ gboolean jsc_value_is_function(JSCValue* value)
  * is %G_TYPE_NONE no parameters will be passed to the function.
  *
  * This function always returns a #JSCValue, in case of void functions a #JSCValue referencing
- * <function>undefined</function> is returned
+ * `undefined` is returned
  *
  * Returns: (transfer full): a #JSCValue with the return value of the function.
  */
@@ -1342,13 +1342,13 @@ JSCValue* jsc_value_function_call(JSCValue* value, GType firstParameterType, ...
  * jsc_value_function_callv: (rename-to jsc_value_function_call)
  * @value: a #JSCValue
  * @n_parameters: the number of parameters
- * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue<!-- -->s to pass as parameters to the function, or %NULL
+ * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue objects to pass as parameters to the function, or %NULL
  *
  * Call function referenced by @value, passing the given @parameters. If @n_parameters
  * is 0 no parameters will be passed to the function.
  *
  * This function always returns a #JSCValue, in case of void functions a #JSCValue referencing
- * <function>undefined</function> is returned
+ * `undefined` is returned
  *
  * Returns: (transfer full): a #JSCValue with the return value of the function.
  */
@@ -1401,7 +1401,7 @@ gboolean jsc_value_is_constructor(JSCValue* value)
  * @first_parameter_type: #GType of first parameter, or %G_TYPE_NONE
  * @...: value of the first parameter, followed optionally by more type/value pairs, followed by %G_TYPE_NONE
  *
- * Invoke <function>new</function> with constructor referenced by @value. If @first_parameter_type
+ * Invoke `new` with constructor referenced by @value. If @first_parameter_type
  * is %G_TYPE_NONE no parameters will be passed to the constructor.
  *
  * Returns: (transfer full): a #JSCValue referencing the newly created object instance.
@@ -1429,9 +1429,9 @@ JSCValue* jsc_value_constructor_call(JSCValue* value, GType firstParameterType, 
  * jsc_value_constructor_callv: (rename-to jsc_value_constructor_call)
  * @value: a #JSCValue
  * @n_parameters: the number of parameters
- * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue<!-- -->s to pass as parameters to the constructor, or %NULL
+ * @parameters: (nullable) (array length=n_parameters) (element-type JSCValue): the #JSCValue objects to pass as parameters to the constructor, or %NULL
  *
- * Invoke <function>new</function> with constructor referenced by @value. If @n_parameters
+ * Invoke `new` with constructor referenced by @value. If @n_parameters
  * is 0 no parameters will be passed to the constructor.
  *
  * Returns: (transfer full): a #JSCValue referencing the newly created object instance.
@@ -1485,7 +1485,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ArrayBufferDeallocatorContext)
  * released. This is intended to be used for freeing resources related to
  * the memory region which contains the data:
  *
- * |[!<-- language="C" -->
+ * |[<!-- language="C" -->
  * GMappedFile *f = g_mapped_file_new (file_path, TRUE, NULL);
  * JSCValue *value = jsc_value_new_array_buffer (context,
  *     g_mapped_file_get_contents (f), g_mapped_file_get_length (f),
@@ -1494,7 +1494,7 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ArrayBufferDeallocatorContext)
  *
  * Note that the @user_data can be the same value as @data:
  *
- * |[!<-- language="C" -->
+ * |[<!-- language="C" -->
  * void *bytes = g_malloc0 (100);
  * JSCValue *value = jsc_value_new_array_buffer (context, bytes, 100, g_free, bytes);
  * ]|
@@ -1891,9 +1891,9 @@ JSCTypedArrayType jsc_value_typed_array_get_type(JSCValue *value)
  * Obtains a pointer to the memory region that holds the elements of the typed
  * array; modifications done to them will be visible to JavaScript code. If
  * @length is not %NULL, the number of elements contained in the typed array
- * are also stored in the pointed location.
+ * is also stored in the pointed location.
  *
- * The returned pointer needs to be casted to the appropriate type (see
+ * The returned pointer needs to be cast to the appropriate type (see
  * #JSCTypedArrayType), and has the `offset` over the underlying array
  * buffer data applied—that is, points to the first element of the typed
  * array:
@@ -2146,7 +2146,7 @@ char* jsc_value_to_json(JSCValue* value, unsigned indent)
  * @reject: #JSCValue function to call to reject the promise
  * @user_data: user data
  *
- * A function passed to @jsc_value_new_promise called during initialization
+ * A function passed to jsc_value_new_promise() called during initialization
  *
  * It is called like a JavaScript function, so exceptions raised will not be propagated
  * to the context, but handled by the promise causing a rejection.
@@ -2162,7 +2162,7 @@ char* jsc_value_to_json(JSCValue* value, unsigned indent)
  * @user_data: (nullable): user data passed in @executor
  *
  * Creates a new Promise. @executor will be invoked during promise initialization
- * and it receives the @resolve and @reject objects than can be called to resolve
+ * and it receives the @resolve and @reject objects that can be called to resolve
  * or reject the promise. It is called like a JavaScript function, so exceptions raised
  * during the executor invocation will not be propagated to the context, but
  * handled by the promise causing a rejection.

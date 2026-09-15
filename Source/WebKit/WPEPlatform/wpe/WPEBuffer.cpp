@@ -247,7 +247,7 @@ void wpe_buffer_set_user_data(WPEBuffer* buffer, gpointer userData, GDestroyNoti
  * wpe_buffer_get_user_data:
  * @buffer: a #WPEBuffer
  *
- * Get user data previously set with wpe_buffer_set_user_data.
+ * Get user data previously set with wpe_buffer_set_user_data().
  *
  * Returns: (nullable): the @buffer user data, or %NULL
  */
@@ -263,7 +263,7 @@ gpointer wpe_buffer_get_user_data(WPEBuffer* buffer)
  * @buffer: a #WPEBuffer
  * @error: return location for error or %NULL to ignore
  *
- * Import @buffer into a EGL image.
+ * Import @buffer into an EGL image.
  *
  * Returns: (transfer none): an EGL image, or %NULL in case of error
  */

@@ -82,7 +82,7 @@ typedef enum {
  * WebKitInputHints:
  * @WEBKIT_INPUT_HINT_NONE: No special behavior suggested
  * @WEBKIT_INPUT_HINT_SPELLCHECK: Suggest spell checking
- * @WEBKIT_INPUT_HINT_LOWERCASE: Suggest to not autocapitlize
+ * @WEBKIT_INPUT_HINT_LOWERCASE: Suggest to not autocapitalize
  * @WEBKIT_INPUT_HINT_UPPERCASE_CHARS: Suggest to capitalize all text
  * @WEBKIT_INPUT_HINT_UPPERCASE_WORDS: Suggest to capitalize the first character of each word
  * @WEBKIT_INPUT_HINT_UPPERCASE_SENTENCES: Suggest to capitalize the first word of each sentence

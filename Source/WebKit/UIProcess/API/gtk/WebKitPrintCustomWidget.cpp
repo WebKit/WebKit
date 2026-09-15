@@ -31,9 +31,9 @@
  * WebKitPrintCustomWidget:
  * @See_also: #WebKitPrintOperation
  *
- * Allows to embed a custom widget in print dialog.
+ * Allows embedding a custom widget in the print dialog.
  *
- * A WebKitPrintCustomWidget allows to embed a custom widget in the print
+ * A WebKitPrintCustomWidget allows embedding a custom widget in the print
  * dialog by connecting to the #WebKitPrintOperation::create-custom-widget
  * signal, creating a new WebKitPrintCustomWidget with
  * webkit_print_custom_widget_new() and returning it from there. You can later
@@ -157,7 +157,7 @@ static void webkit_print_custom_widget_class_init(WebKitPrintCustomWidgetClass* 
      * @print_settings: actual print settings
      *
      * Emitted after change of selected printer in the dialog. The actual page setup
-     * and print settings are available and the custom widget can actualize itself
+     * and print settings are available and the custom widget can update itself
      * according to their values.
      *
      * Since: 2.16
@@ -210,7 +210,7 @@ static void webkit_print_custom_widget_class_init(WebKitPrintCustomWidgetClass* 
  * object could still be alive at that point. You typically want to pass a container
  * widget with multiple widgets in it.
  *
- * Returns: (transfer full): a new #WebKitPrintOperation.
+ * Returns: (transfer full): a new #WebKitPrintCustomWidget.
  *
  * Since: 2.16
  *

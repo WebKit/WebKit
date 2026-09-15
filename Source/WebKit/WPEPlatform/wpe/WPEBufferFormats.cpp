@@ -94,7 +94,7 @@ static void wpe_buffer_formats_class_init(WPEBufferFormatsClass*)
  * wpe_buffer_formats_get_device:
  * @formats: a #WPEBufferFormats
  *
- * Get the main DRM device to be used to allocate buffer for @formats
+ * Get the main DRM device to be used to allocate buffers for @formats
  *
  * Returns: (transfer none) (nullable): a #WPEDRMDevice or %NULL
  */
@@ -282,7 +282,7 @@ WPEBufferFormatsBuilder* wpe_buffer_formats_builder_ref(WPEBufferFormatsBuilder*
  *
  * Atomically releases a reference on the given @builder.
  *
- * If the reference was the last, the resources associated to the
+ * If the reference was the last, the resources associated with the
  * @builder are freed. This function is MT-safe and may be called from
  * any thread.
  */

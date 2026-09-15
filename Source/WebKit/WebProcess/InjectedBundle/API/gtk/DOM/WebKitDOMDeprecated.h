@@ -343,7 +343,8 @@ WEBKIT_DEPRECATED GType webkit_dom_entity_reference_get_type(void);
  *
  * This function has been removed from the DOM spec and it just returns %FALSE.
  *
- * Returns: A #gboolean                                                                                                                                                                       *
+ * Returns: A #gboolean
+ *
  * Deprecated: 2.12
  */
 WEBKIT_DEPRECATED gboolean webkit_dom_node_iterator_get_expand_entity_references(WebKitDOMNodeIterator* self);

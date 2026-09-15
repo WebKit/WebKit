@@ -359,7 +359,7 @@ guint32 wpe_buffer_dma_buf_get_format(WPEBufferDMABuf* buffer)
  * wpe_buffer_dma_buf_get_n_planes:
  * @buffer: a #WPEBufferDMABuf
  *
- * Get the numbers of planes of @buffer
+ * Get the number of planes of @buffer
  *
  * Returns: the number of planes
  */

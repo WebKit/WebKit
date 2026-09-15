@@ -241,7 +241,7 @@ AtkObject* wpeToplevelGetAccessibleAtk(WPEToplevel* toplevel)
  *
  * Get a list of all #WPEToplevel
  *
- * Returns: (transfer container) (element-type WPEToplevel): a #Glist of WPEToplevel
+ * Returns: (transfer container) (element-type WPEToplevel): a #GList of WPEToplevel
  */
 GList* wpe_toplevel_list()
 {
@@ -303,7 +303,7 @@ guint wpe_toplevel_get_max_views(WPEToplevel* toplevel)
  *
  * Get the number of #WPEView contained by @toplevel
  *
- * Returns: the number of view in @toplevel
+ * Returns: the number of views in @toplevel
  */
 guint wpe_toplevel_get_n_views(WPEToplevel* toplevel)
 {
@@ -576,7 +576,7 @@ gboolean wpe_toplevel_maximize(WPEToplevel* toplevel)
  * Request that the @toplevel is unmaximized. If the toplevel is not maximized this function
  * does nothing.
  *
- * Returns: %TRUE if maximize is supported, otherwise %FALSE
+ * Returns: %TRUE if unmaximize is supported, otherwise %FALSE
  */
 gboolean wpe_toplevel_unmaximize(WPEToplevel* toplevel)
 {

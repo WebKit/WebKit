@@ -41,7 +41,7 @@
  * Methods webkit_web_view_go_back() and webkit_web_view_go_forward() move
  * the current item backward or forward by one. Method
  * webkit_web_view_go_to_back_forward_list_item() sets the current item to the
- * specified item. All other methods returning #WebKitBackForwardListItem<!-- -->s
+ * specified item. All other methods returning #WebKitBackForwardListItem objects
  * do not change the value of the current item, they just return the requested
  * item or items.
  */
@@ -71,12 +71,12 @@ static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* list
      * WebKitBackForwardList::changed:
      * @back_forward_list: the #WebKitBackForwardList on which the signal was emitted
      * @item_added: (allow-none): the #WebKitBackForwardListItem added or %NULL
-     * @items_removed: a #GList of #WebKitBackForwardListItem<!-- -->s
+     * @items_removed: a #GList of #WebKitBackForwardListItem objects
      *
      * This signal is emitted when @back_forward_list changes. This happens
      * when the current item is updated, a new item is added or one or more
      * items are removed. Note that both @item_added and @items_removed can
-     * %NULL when only the current item is updated. Items are only removed
+     * be %NULL when only the current item is updated. Items are only removed
      * when the list is cleared or the maximum items limit is reached.
      */
     signals[CHANGED] = g_signal_new(

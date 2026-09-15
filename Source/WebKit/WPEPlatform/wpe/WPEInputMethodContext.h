@@ -89,7 +89,7 @@ typedef enum
 
 /**
  * WPEInputHints:
- * @WPE_INPUT_HINT_NONE: No special behaviour suggested
+ * @WPE_INPUT_HINT_NONE: No special behavior suggested
  * @WPE_INPUT_HINT_SPELLCHECK: Suggest checking for typos
  * @WPE_INPUT_HINT_NO_SPELLCHECK: Suggest not checking for typos
  * @WPE_INPUT_HINT_WORD_COMPLETION: Suggest word completion
@@ -100,7 +100,7 @@ typedef enum
  * @WPE_INPUT_HINT_UPPERCASE_SENTENCES: Suggest to capitalize the
  *   first word of each sentence
  * @WPE_INPUT_HINT_INHIBIT_OSK: Suggest to not show an onscreen keyboard
- *   (e.g for a calculator that already has all the keys).
+ *   (e.g. for a calculator that already has all the keys).
  * @WPE_INPUT_HINT_VERTICAL_WRITING: The text is vertical
  * @WPE_INPUT_HINT_EMOJI: Suggest offering Emoji support
  * @WPE_INPUT_HINT_NO_EMOJI: Suggest not offering Emoji support
@@ -110,7 +110,7 @@ typedef enum
  * Describes hints that might be taken into account by input methods
  * or applications.
  *
- * Note that input methods may already tailor their behaviour according
+ * Note that input methods may already tailor their behavior according
  * to the [enum@InputPurpose] of the entry.
  *
  * Some common sense is expected when using these flags - mixing

@@ -98,7 +98,7 @@ WebKitSecurityOrigin* webkit_security_origin_new(const gchar* protocol, const gc
  * webkit_security_origin_new_for_uri:
  * @uri: The URI for the new origin
  *
- * Create a new security origin from the provided.
+ * Create a new security origin from the provided URI.
  *
  * Create a new security origin from the provided URI. Components of
  * @uri other than protocol, host, and port do not affect the created

@@ -4,7 +4,7 @@
  * This file is derived by hand from an automatically generated file.
  * Keeping it up-to-date could potentially be done by adding
  * a make_names.pl generator, or by writing a separate
- * generater which takes JSHTMLElementWrapperFactory.h as input.
+ * generator which takes JSHTMLElementWrapperFactory.h as input.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions

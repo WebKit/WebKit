@@ -46,7 +46,7 @@ G_DEFINE_BOXED_TYPE(WebKitApplicationInfo, webkit_application_info, webkit_appli
  *
  * Returns: (transfer full): the newly created #WebKitApplicationInfo.
  *
- * since: 2.18
+ * Since: 2.18
  */
 WebKitApplicationInfo* webkit_application_info_new()
 {

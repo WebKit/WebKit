@@ -148,7 +148,7 @@ typedef enum {
 /**
  * WebKitJavascriptError:
  * @WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED: An exception was raised in JavaScript execution
- * @WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER: An unsupported parameter has been used to call and async function from API. Since 2.40
+ * @WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER: An unsupported parameter has been used to call an async function from API. Since 2.40
  * @WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT: The result of JavaScript execution could not be returned. Since 2.40
  *
  * Enum values used to denote errors happening when executing JavaScript
@@ -172,7 +172,7 @@ typedef enum {
 #if ENABLE(2022_GLIB_API)
 /**
  * WebKitWebExtensionError:
- * @WEBKIT_WEB_EXTENSION_ERROR_UNKNOWN: An unknown error occured.
+ * @WEBKIT_WEB_EXTENSION_ERROR_UNKNOWN: An unknown error occurred.
  * @WEBKIT_WEB_EXTENSION_ERROR_RESOURCE_NOT_FOUND: A specified resource was not found on disk.
  * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_RESOURCE_CODE_SIGNATURE: A resource failed the bundle's code signature checks.
  * @WEBKIT_WEB_EXTENSION_ERROR_INVALID_MANIFEST: An invalid `manifest.json` was encountered.
@@ -200,12 +200,12 @@ typedef enum {
 
 /**
  * WebKitWebExtensionContextError:
- * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_UNKNOWN: An unknown error occured.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_UNKNOWN: An unknown error occurred.
  * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_ALREADY_LOADED: The context is already loaded by a controller.
  * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NOT_LOADED: The context is not loaded by a controller.
  * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_BASE_URL_ALREADY_IN_USE: Another context is already using the specified base URL.
  * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_NO_BACKGROUND_CONTENT: The extension does not have background content.
- * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_BACKGROUND_CONTENT_FAILED_TO_LOAD: An error occured when loading the background content.
+ * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_BACKGROUND_CONTENT_FAILED_TO_LOAD: An error occurred when loading the background content.
  * @WEBKIT_WEB_EXTENSION_CONTEXT_ERROR_SCRIPT_EXECUTION: A script error occurred, such as an uncaught exception, unhandled promise rejection, or a call to console.error().
  *
  * Enum values used to denote errors happening when loading a [class@WebExtensionContext].
@@ -225,7 +225,7 @@ typedef enum {
 
 /**
  * WebKitWebExtensionMatchPatternError:
- * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN: An unknown error occured.
+ * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_UNKNOWN: An unknown error occurred.
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_SCHEME: The scheme component was invalid.
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_HOST: The host component was invalid.
  * @WEBKIT_WEB_EXTENSION_MATCH_PATTERN_ERROR_INVALID_PATH: The path component was invalid.
