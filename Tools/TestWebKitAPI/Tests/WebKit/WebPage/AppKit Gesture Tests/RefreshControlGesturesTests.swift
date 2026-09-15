@@ -86,15 +86,30 @@ extension AppKitGesturesTests.RefreshControl {
             composer._wk_scroll(withStart: scrollStart, end: scrollEnd, duration: .seconds(0.1))
         }
 
-        let pollInterval = Duration.milliseconds(100)
-        for _ in 0..<Int(Self.refreshDispatchWindow / pollInterval) {
-            if refreshes.count > 0 {
-                break
-            }
+        try await waitForRefresh()
+        #expect(refreshes.count == 1)
+    }
 
-            try await Task.sleep(for: pollInterval)
+    @Test(
+        .bug("https://webkit.org/b/318442", "Pull to refresh and top scroll stretching often fail to activate")
+    )
+    func trackpadSwipeDownToInterruptDeceleratingScrollTriggersRefresh() async throws {
+        try await loadTallPage()
+        await page.waitForNextPresentationUpdate()
+
+        let (nearTop, nearBottom) = try verticalDrag()
+
+        // Start way down the page, less than a single swipe from the top. Then,
+        // swipe twice; once back to the top, and again while momentum is decelerating.
+        try await page.callJavaScript { "window.scrollTo(0, 200);" }
+        await page.waitForNextPresentationUpdate()
+        await recap.play { composer in
+            composer._wk_scroll(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
+            composer.advanceTime(0.15)
+            composer._wk_scroll(withStart: nearTop, end: nearBottom, duration: .seconds(0.1))
         }
 
+        try await waitForRefresh()
         #expect(refreshes.count == 1)
     }
 
@@ -140,6 +155,17 @@ extension AppKitGesturesTests.RefreshControl {
         let nearBottom = screenBounds(ofPointInWindowCoordinates: NSPoint(x: x, y: Self.dragInset))
 
         return (nearTop, nearBottom)
+    }
+
+    private func waitForRefresh() async throws {
+        let pollInterval = Duration.milliseconds(100)
+        for _ in 0..<Int(Self.refreshDispatchWindow / pollInterval) {
+            if refreshes.count > 0 {
+                break
+            }
+
+            try await Task.sleep(for: pollInterval)
+        }
     }
 }
 
