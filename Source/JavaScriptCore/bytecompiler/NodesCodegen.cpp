@@ -493,17 +493,7 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     allDenseStrings = false;
 
     if (firstPutElement && firstPutElement->value()->isSpreadExpression()) {
-        bool hasElision = m_elision;
-        if (!hasElision) {
-            for (ElementNode* node = firstPutElement; node; node = node->next()) {
-                if (node->elision()) {
-                    hasElision = true;
-                    break;
-                }
-            }
-        }
-
-        if (!hasElision)
+        if (!hasElision())
             return generator.emitNewArrayWithSpread(generator.finalDestination(dst), m_element);
     }
 
@@ -550,6 +540,17 @@ handleSpread:
         generator.emitPutById(array.get(), generator.propertyNames().length, index.get());
     }
     return generator.move(dst, array.get());
+}
+
+bool ArrayNode::hasElision() const
+{
+    if (m_elision)
+        return true;
+    for (ElementNode* node = m_element; node; node = node->next()) {
+        if (node->elision())
+            return true;
+    }
+    return false;
 }
 
 bool ArrayNode::isSimpleArray() const

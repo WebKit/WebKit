@@ -607,6 +607,7 @@ void SpeculativeJIT::emitCall(Node* node)
     CallLinkInfo::CallType callType;
     bool isVarargs = false;
     bool isForwardVarargs = false;
+    bool isSpreadVarargs = false;
     bool isTail = false;
     bool isEmulatedTail = false;
     bool isDirect = false;
@@ -633,6 +634,11 @@ void SpeculativeJIT::emitCall(Node* node)
     case CallVarargs:
         callType = CallLinkInfo::CallVarargs;
         isVarargs = true;
+        break;
+    case CallVarargsWithSpread:
+        callType = CallLinkInfo::CallVarargs;
+        isVarargs = true;
+        isSpreadVarargs = true;
         break;
     case TailCallVarargs:
         callType = CallLinkInfo::TailCallVarargs;
@@ -719,7 +725,7 @@ void SpeculativeJIT::emitCall(Node* node)
         CallVarargsData* data = node->callVarargsData();
 
         int numUsedStackSlots = m_graph.m_nextMachineLocal;
-        
+
         if (isForwardVarargs) {
             flushRegisters();
             if (node->child3())
@@ -747,52 +753,132 @@ void SpeculativeJIT::emitCall(Node* node)
             callOperation(operationThrowStackOverflowForVarargs, LinkableConstant::globalObject(*this, node));
             abortWithReason(DFGVarargsThrowingPathDidNotThrow);
             done.link(this);
-        } else {
-            GPRReg argumentsGPR;
-            GPRReg scratchGPR1;
-            GPRReg scratchGPR2;
-            GPRReg scratchGPR3;
-            
-            auto loadArgumentsGPR = [&] (GPRReg reservedGPR) {
-                if (reservedGPR != InvalidGPRReg)
-                    lock(reservedGPR);
-                JSValueOperand arguments(this, node->child3());
-                argumentsGPR = arguments.gpr();
-                if (reservedGPR != InvalidGPRReg)
-                    unlock(reservedGPR);
-                flushRegisters();
-                
-                scratchGPR1 = selectScratchGPR(argumentsGPR, reservedGPR);
-                scratchGPR2 = selectScratchGPR(argumentsGPR, scratchGPR1, reservedGPR);
-                scratchGPR3 = selectScratchGPR(argumentsGPR, scratchGPR1, scratchGPR2, reservedGPR);
-            };
-            
-            loadArgumentsGPR(InvalidGPRReg);
-            
-            DFG_ASSERT(m_graph, node, isFlushed());
-            
-            // Right now, arguments is in argumentsGPR and the register file is flushed.
-            callOperation(operationSizeFrameForVarargs, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), argumentsGPR, numUsedStackSlots, data->firstVarArgOffset);
-            
-            // Now we have the argument count of the callee frame, but we've lost the arguments operand.
-            // Reconstruct the arguments operand while preserving the callee frame.
-            loadArgumentsGPR(GPRInfo::returnValueGPR);
+        } else if (isSpreadVarargs) {
+            unsigned numElems = node->numChildren() - 2;
+            BitVector* bitVector = node->bitVector();
+            EncodedJSValue* buffer = fillSpreadArgumentsBuffer(node, 2, numElems);
+
+            // emitCall consumes children explicitly (UseChildrenCalledExplicitly), so the spread
+            // element edges filled above must be use()d here; otherwise they stay live to the end of
+            // the block and trip the RELEASE_ASSERT(!info.alive()) consistency check.
+            for (unsigned e = 0; e < numElems; ++e)
+                use(m_graph.varArgChild(node, 2 + e));
+
+            flushRegisters();
+
+            // Fast path for the single-trailing-spread shape f(prefix..., ...c): build the frame inline
+            // with no C calls. Bails to the buffer ops otherwise. The trailing spread is always a
+            // materialized Spread here (arguments elimination is FTL-only), so its butterfly is
+            // contiguous and its slots can be copied into the argument slots verbatim.
+            bool singleTrailingSpread = numElems && bitVector->get(numElems - 1);
+            for (unsigned e = 0; singleTrailingSpread && e + 1 < numElems; ++e) {
+                if (bitVector->get(e))
+                    singleTrailingSpread = false;
+            }
+            std::optional<Jump> spreadFastDone;
+            if (singleTrailingSpread) {
+                unsigned numPrefix = numElems - 1;
+                GPRReg bufBaseGPR = selectScratchGPR();
+                move(TrustedImmPtr(buffer), bufBaseGPR);
+                GPRReg butterflyGPR = selectScratchGPR(bufBaseGPR);
+                load64(Address(bufBaseGPR, numPrefix * sizeof(EncodedJSValue)), butterflyGPR);
+                GPRReg numUsedGPR = selectScratchGPR(bufBaseGPR, butterflyGPR);
+                move(TrustedImm32(numUsedStackSlots), numUsedGPR);
+                GPRReg resultFrameGPR = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR);
+                GPRReg spreadScratch1 = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR, resultFrameGPR);
+                GPRReg spreadScratch2 = selectScratchGPR(bufBaseGPR, butterflyGPR, numUsedGPR, resultFrameGPR, spreadScratch1);
+                JumpList slowSpread;
+                emitInlineVarargsFrameForSpreadButterfly(vm(), *this, butterflyGPR, numUsedGPR, resultFrameGPR, spreadScratch1, spreadScratch2, slowSpread, numPrefix);
+                for (unsigned p = 0; p < numPrefix; ++p) {
+                    load64(Address(bufBaseGPR, p * sizeof(EncodedJSValue)), spreadScratch1);
+                    store64(spreadScratch1, calleeArgumentSlot(1 + p));
+                }
+                spreadFastDone = jump();
+                slowSpread.link(this);
+            }
+
+            callOperation(operationSizeFrameForVarargsWithSpreadBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), TrustedImmPtr(buffer), TrustedImm32(numElems), numUsedStackSlots);
+
+            GPRReg scratchGPR1 = selectScratchGPR(GPRInfo::returnValueGPR);
             move(TrustedImm32(numUsedStackSlots), scratchGPR1);
             emitSetVarargsFrame(*this, GPRInfo::returnValueGPR, false, scratchGPR1, scratchGPR1);
             addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), scratchGPR1, stackPointerRegister);
-            
-            callOperation(operationSetupVarargsFrame, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR1, argumentsGPR, data->firstVarArgOffset, GPRInfo::returnValueGPR);
+
+            callOperation(operationSetupVarargsFrameWithSpreadBuffer, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), scratchGPR1, TrustedImmPtr(buffer), TrustedImm32(numElems), GPRInfo::returnValueGPR);
             addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, stackPointerRegister);
+
+            if (spreadFastDone)
+                spreadFastDone->link(this);
+        } else {
+            GPRReg argumentsGPR;
+
+            {
+                JSValueOperand arguments(this, node->child3());
+                argumentsGPR = arguments.gpr();
+                flushRegisters();
+            }
+
+            DFG_ASSERT(m_graph, node, isFlushed());
+
+            // operationSizeFrameForVarargs clobbers the volatile registers, so `arguments` is needed a
+            // second time below. Re-filling the operand there would call allocate(), and the fast path
+            // jumps over that code: DFG register-allocation validation forbids a branch that straddles an
+            // allocation site, and allocate() records one even when it emits no code. So park the value we
+            // already hold and reload it with a plain load, which also sidesteps the operand's spill
+            // format and constant-ness. The parked copy needs no marking of its own: the value stays
+            // reachable from this frame, or from the CodeBlock if it is a constant. Reusing a shared
+            // scratch buffer is safe because its live range spans only the frame-setup operations, which
+            // can GC or throw but never re-enter JS.
+            EncodedJSValue* parkedArguments = static_cast<EncodedJSValue*>(vm().scratchBufferForSize(sizeof(EncodedJSValue))->dataBuffer());
+            store64(argumentsGPR, parkedArguments);
+
+            JumpList slowVarargs;
+            std::optional<Jump> fastVarargsDone;
+            // Fast path: build the callee frame inline for a small dense Int32/Contiguous JSArray.
+            if (!data->firstVarArgOffset) {
+                GPRReg arrayGPR = selectScratchGPR(argumentsGPR);
+                GPRReg numUsedGPR = selectScratchGPR(argumentsGPR, arrayGPR);
+                GPRReg resultFrameGPR = selectScratchGPR(argumentsGPR, arrayGPR, numUsedGPR);
+                GPRReg fpScratch1 = selectScratchGPR(argumentsGPR, arrayGPR, numUsedGPR, resultFrameGPR);
+                GPRReg fpScratch2 = selectScratchGPR(argumentsGPR, arrayGPR, numUsedGPR, resultFrameGPR, fpScratch1);
+                GPRReg fpScratch3 = selectScratchGPR(argumentsGPR, arrayGPR, numUsedGPR, resultFrameGPR, fpScratch1, fpScratch2);
+                // The helper reuses its array register as the butterfly, so hand it a copy and keep
+                // argumentsGPR live for the slow path (matching the FTL's version of this fast path).
+                move(argumentsGPR, arrayGPR);
+                move(TrustedImm32(numUsedStackSlots), numUsedGPR);
+                emitInlineVarargsFrameForContiguousArray(vm(), *this, arrayGPR, numUsedGPR, resultFrameGPR, fpScratch1, fpScratch2, fpScratch3, slowVarargs);
+                fastVarargsDone = jump();
+            }
+
+            slowVarargs.link(this);
+
+            // Right now, arguments is in argumentsGPR and the register file is flushed.
+            callOperation(operationSizeFrameForVarargs, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), argumentsGPR, numUsedStackSlots, data->firstVarArgOffset);
+
+            // Now we have the argument count of the callee frame, but returnValueGPR holds it, so reload
+            // the arguments operand somewhere else while preserving the callee frame.
+            GPRReg reloadedArgumentsGPR = selectScratchGPR(GPRInfo::returnValueGPR);
+            GPRReg frameGPR = selectScratchGPR(GPRInfo::returnValueGPR, reloadedArgumentsGPR);
+            load64(parkedArguments, reloadedArgumentsGPR);
+            move(TrustedImm32(numUsedStackSlots), frameGPR);
+            emitSetVarargsFrame(*this, GPRInfo::returnValueGPR, false, frameGPR, frameGPR);
+            addPtr(TrustedImm32(-static_cast<int32_t>(sizeof(CallerFrameAndPC) + WTF::roundUpToMultipleOf<stackAlignmentBytes()>(5 * sizeof(void*)))), frameGPR, stackPointerRegister);
+
+            callOperation(operationSetupVarargsFrame, GPRInfo::returnValueGPR, LinkableConstant::globalObject(*this, node), frameGPR, reloadedArgumentsGPR, data->firstVarArgOffset, GPRInfo::returnValueGPR);
+            addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, stackPointerRegister);
+
+            if (fastVarargsDone)
+                fastVarargsDone->link(this);
         }
         
         DFG_ASSERT(m_graph, node, isFlushed());
         
         // We don't need the arguments array anymore.
-        if (isVarargs)
+        if (isVarargs && !isSpreadVarargs)
             use(node->child3());
 
         // Now set up the "this" argument.
-        JSValueOperand thisArgument(this, node->child2());
+        JSValueOperand thisArgument(this, m_graph.child(node, 1));
         GPRReg thisArgumentGPR = thisArgument.gpr();
         thisArgument.use();
         
@@ -5904,6 +5990,7 @@ void SpeculativeJIT::compile(Node* node)
     case TailCallInlinedCaller:
     case Construct:
     case CallVarargs:
+    case CallVarargsWithSpread:
     case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
     case CallForwardVarargs:
@@ -5924,8 +6011,18 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case VarargsLengthWithSpread: {
+        compileVarargsLengthWithSpread(node);
+        break;
+    }
+
     case LoadVarargs: {
         compileLoadVarargs(node);
+        break;
+    }
+
+    case LoadVarargsWithSpread: {
+        compileLoadVarargsWithSpread(node);
         break;
     }
         
