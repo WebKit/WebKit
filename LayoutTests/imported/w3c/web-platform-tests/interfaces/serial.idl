@@ -1,7 +1,7 @@
 // GENERATED CONTENT - DO NOT EDIT
 // Content was automatically extracted by Reffy into webref
 // (https://github.com/w3c/webref)
-// Source: Web Serial API (https://wicg.github.io/serial/)
+// Source: WebSerial Standard (https://serial.spec.whatwg.org/)
 
 [Exposed=Window, SecureContext]
 partial interface Navigator {
@@ -37,8 +37,8 @@ interface SerialPort : EventTarget {
   attribute EventHandler onconnect;
   attribute EventHandler ondisconnect;
   readonly attribute boolean connected;
-  readonly attribute ReadableStream readable;
-  readonly attribute WritableStream writable;
+  readonly attribute ReadableStream? readable;
+  readonly attribute WritableStream? writable;
 
   SerialPortInfo getInfo();
 
@@ -56,7 +56,7 @@ dictionary SerialPortInfo {
 };
 
 dictionary SerialOptions {
-  [EnforceRange] required unsigned long baudRate;
+  required [EnforceRange] unsigned long baudRate;
   [EnforceRange] octet dataBits = 8;
   [EnforceRange] octet stopBits = 1;
   ParityType parity = "none";
