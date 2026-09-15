@@ -76,6 +76,5 @@ style/StyleResolver.cpp
 style/StyleResolver.h
 style/StyleScope.h
 style/StyleTreeResolver.h
-style/Styleable.h
 style/values/primitives/StyleLengthResolution.cpp
 svg/properties/SVGPropertyOwnerRegistry.h

@@ -81,7 +81,7 @@ ViewTimeline::ViewTimeline(const Style::ScopedName& scopedName, ScrollAxis axis,
 const Element* ViewTimeline::subject() const
 {
     if (auto subject = m_subject.styleable())
-        return &subject->element;
+        return subject->element.ptr();
     return nullptr;
 }
 
@@ -103,18 +103,18 @@ void ViewTimeline::setSubject(const Styleable& styleable)
     auto previousSubject = m_subject.element();
     m_subject = styleable;
 
-    if (previousSubject && &previousSubject->document() == &styleable.element.document())
+    if (previousSubject && &previousSubject->document() == &protect(styleable.element)->document())
         return;
 
     removeTimelineFromDocument(protect(previousSubject.get()));
 
-    protect(styleable.element.document())->ensureTimelinesController().addTimeline(*this);
+    protect(protect(styleable.element)->document())->ensureTimelinesController().addTimeline(*this);
 }
 
 AnimationTimelinesController* ViewTimeline::controller() const
 {
     if (auto subject = m_subject.styleable())
-        return &protect(subject->element.document())->ensureTimelinesController();
+        return &protect(protect(subject->element)->document())->ensureTimelinesController();
     return nullptr;
 }
 
@@ -225,7 +225,7 @@ void ViewTimeline::cacheCurrentTime()
             return { };
 
         CheckedPtr sourceRenderer = sourceScrollerRenderer();
-        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), protect(subject->element.document()));
+        CheckedPtr sourceScrollableArea = scrollableAreaForSourceRenderer(sourceRenderer.get(), protect(protect(subject->element)->document()));
         if (!sourceScrollableArea)
             return { };
 
@@ -344,7 +344,7 @@ Style::SingleAnimationRange ViewTimeline::defaultRange() const
 RefPtr<Element> ViewTimeline::bindingsSource() const
 {
     if (auto subject = m_subject.styleable())
-        protect(subject->element.document())->updateStyleIfNeeded();
+        protect(protect(subject->element)->document())->updateStyleIfNeeded();
     return ScrollTimeline::bindingsSource();
 }
 
