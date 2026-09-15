@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testUserTiming() {
+    performance.mark("begin");
+    let startTime = performance.now();
+    while (startTime + 10 > performance.now());
+    let detail = {
+        map: new Map([["one", 1], ["two", 2]]),
+        tags: ["a", "b", "c"],
+        when: new Date(0),
+    };
+    performance.measure("myMeasure", {start: "begin", detail});
+    savePageData({});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineRecording.UserTiming.ExportImport");
+
+    function checkRecord(record, prefix, live) {
+        InspectorTest.expectTrue(record instanceof WI.UserTimingTimelineRecord, `${prefix} should be a UserTimingTimelineRecord.`);
+        InspectorTest.expectEqual(record.subtype, WI.UserTimingTimelineRecord.Type.Measure, `${prefix} subtype should be Measure.`);
+        InspectorTest.expectEqual(record.label, "myMeasure", `${prefix} label should be "myMeasure".`);
+        InspectorTest.expectTrue(record.endTime > record.startTime, `${prefix} endTime should be greater than startTime.`);
+
+        let preview;
+        if (live) {
+            InspectorTest.expectTrue(record.detail instanceof WI.RemoteObject, `${prefix} detail should be a live WI.RemoteObject.`);
+            InspectorTest.expectTrue(record.detail.hasChildren, `${prefix} detail should be expandable.`);
+            preview = record.detail.preview;
+        } else {
+            InspectorTest.expectTrue(record.detail instanceof WI.ObjectPreview, `${prefix} detail should be a WI.ObjectPreview snapshot.`);
+            preview = record.detail;
+        }
+        InspectorTest.expectEqual(preview.type, "object", `${prefix} detail should be an object.`);
+        InspectorTest.expectEqual(preview.propertyPreviews.length, 3, `${prefix} detail should preview 3 properties.`);
+        let mapProperty = preview.propertyPreviews.find((property) => property.name === "map");
+        InspectorTest.expectTrue(mapProperty, `${prefix} detail should preview a "map" property.`);
+        InspectorTest.expectEqual(mapProperty.subtype, "map", `${prefix} the "map" property should preview as a Map.`);
+    }
+
+    suite.addTestCase({
+        name: "TimelineRecording.UserTiming.ExportImport",
+        description: "User Timing records (including the measure detail) survive export and re-import.",
+        async test() {
+            await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testUserTiming()`,
+                timelineType: WI.TimelineRecord.Type.UserTiming,
+            });
+
+            let recording = WI.timelineManager.activeRecording;
+            let timeline = recording.timelines.get(WI.TimelineRecord.Type.UserTiming);
+            InspectorTest.expectEqual(timeline.records.length, 1, "Recording should have one User Timing record.");
+            checkRecord(timeline.records[0], "Original", true);
+
+            InspectorTest.expectTrue(recording.canExport(), "TimelineRecording should be able to export.");
+            let jsonData = JSON.parse(JSON.stringify(recording.exportData()));
+
+            let imported = await WI.TimelineRecording.import(123, jsonData, "TEST");
+            InspectorTest.expectTrue(imported.imported, "Imported TimelineRecording should be marked imported.");
+
+            let importedTimeline = imported.timelines.get(WI.TimelineRecord.Type.UserTiming);
+            InspectorTest.expectTrue(importedTimeline, "Imported recording should have a User Timing timeline.");
+            InspectorTest.expectEqual(importedTimeline.records.length, 1, "Imported recording should have one User Timing record.");
+            checkRecord(importedTimeline.records[0], "Imported", false);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests that User Timing records (including the measure detail) survive export and re-import.</p>
+</body>
+</html>

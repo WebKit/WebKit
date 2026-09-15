@@ -290,23 +290,20 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
         this._untrackWeakEntries();
     }
 
-    showOnlyProperties()
+    hideThis()
     {
         this._inConsole = false;
-
-        this._element.classList.add("properties-only");
-
         this._includeProtoProperty = false;
+
+        this._element.classList.add("hide-this");
     }
 
-    showOnlyJSON()
+    hidePrototype()
     {
-        console.assert(this._mode === WI.ObjectTreeView.Mode.Properties, this._mode);
-        console.assert(!this._hasLosslessPreview);
+        this._inConsole = false;
+        this._includeProtoProperty = false;
 
-        this.showOnlyProperties();
-
-        this._element.classList.add("json-only");
+        this._element.classList.add("hide-prototype");
     }
 
     appendTitleSuffix(suffixElement)

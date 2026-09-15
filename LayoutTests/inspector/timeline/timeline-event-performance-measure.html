@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="./resources/timeline-event-utilities.js"></script>
+<script>
+
+function testPerformanceMeasure() {
+    performance.mark("begin");
+    let startTime = performance.now();
+    while (startTime + 10 > performance.now());
+    let detail = {
+        map: new Map([["one", 1], ["two", 2]]),
+        tags: ["a", "b", "c"],
+        when: new Date(0),
+    };
+    performance.measure("myMeasure", {start: "begin", detail});
+    savePageData({});
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("TimelineEvent.PerformanceMeasure");
+
+    suite.addTestCase({
+        name: "TimelineEvent.PerformanceMeasure.performanceMeasure",
+        async test() {
+            await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testPerformanceMeasure()`,
+                timelineType: WI.TimelineRecord.Type.UserTiming,
+            });
+
+            let recording = WI.timelineManager.activeRecording;
+            let timeline = recording.timelines.get(WI.TimelineRecord.Type.UserTiming);
+            let record = timeline.records[0];
+
+            InspectorTest.expectTrue(record instanceof WI.UserTimingTimelineRecord, "Should be a UserTimingTimelineRecord.");
+            InspectorTest.expectEqual(record.eventType, WI.UserTimingTimelineRecord.EventType.PerformanceMeasure, "Should be a PerformanceMeasure event.");
+            InspectorTest.expectEqual(record.label, "myMeasure", "Should have the measure name.");
+            InspectorTest.expectGreaterThan(record.endTime, record.startTime, "Should have endTime after startTime.");
+            InspectorTest.expectTrue(record.stackTrace instanceof WI.StackTrace, "Should have a captured stack trace.");
+            InspectorTest.expectTrue(record.initiatorCallFrame instanceof WI.CallFrame, "Should have an initiator call frame.");
+            InspectorTest.expectTrue(record.detail instanceof WI.RemoteObject, "Should have RemoteObject detail.");
+            InspectorTest.expectEqual(record.detail.type, "object", "Should have object detail.");
+            InspectorTest.expectTrue(record.detail.hasChildren, "Should have detail with children.");
+            InspectorTest.expectEqual(record.detail.preview.propertyPreviews.length, 3, "Should have preview 3 properties in detail.");
+            let mapProperty = record.detail.preview.propertyPreviews.find((property) => property.name === "map");
+            InspectorTest.expectEqual(mapProperty.subtype, "map", "Should have map preview in detail.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests 'performance.measure' Timeline event records.</p>
+</body>
+</html>
