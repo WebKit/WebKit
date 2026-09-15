@@ -711,7 +711,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             tokens = this._addColorTokens(tokens);
         }
 
-        if (this._property.isVariable || WI.CSSKeywordCompletions.isTimingFunctionAwareProperty(this._property.name)) {
+        if (this._property.isVariable || WI.CSSKeywordCompletions.isEasingAwareProperty(this._property.name)) {
             tokens = this._addTimingFunctionTokens(tokens, "cubic-bezier");
             tokens = this._addTimingFunctionTokens(tokens, "linear");
             tokens = this._addTimingFunctionTokens(tokens, "spring");

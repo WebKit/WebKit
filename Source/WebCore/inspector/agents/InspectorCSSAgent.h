@@ -92,6 +92,7 @@ public:
     };
 
     static std::optional<Inspector::Protocol::CSS::PseudoId> NODELETE protocolValueForPseudoElementType(PseudoElementType);
+    static std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>> buildSupportedCSSProperties(const Settings&);
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend();
@@ -113,7 +114,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::Grouping>> setGroupingHeaderText(Ref<JSON::Object>&& ruleId, const String& headerText);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> createStyleSheet(const Inspector::Protocol::Network::FrameId&);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> addRule(const Inspector::Protocol::CSS::StyleSheetId&, const String& selector);
-    Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> getSupportedCSSProperties();
+    Inspector::Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>>> getSupportedCSSProperties();
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> getSupportedSystemFontFamilyNames();
     Inspector::Protocol::ErrorStringOr<void> forcePseudoState(Inspector::Protocol::DOM::NodeId, Ref<JSON::Array>&& forcedPseudoClasses);
     Inspector::Protocol::ErrorStringOr<void> setLayoutContextTypeChangedMode(Inspector::Protocol::CSS::LayoutContextTypeChangedMode);

@@ -44,6 +44,7 @@
 #include "CSSPropertyParsing.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
+#include <array>
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
@@ -981,6 +982,36 @@ static std::optional<CSS::Inset> consumeBasicShapeInsetFunctionParameters(CSSPar
 
 // MARK: - <basic-shape>
 
+static constexpr std::array allBasicShapeFunctions = {
+    CSSValueCircle,
+    CSSValueEllipse,
+    CSSValueInset,
+    CSSValuePath,
+    CSSValuePolygon,
+    CSSValueRect,
+    CSSValueShape,
+    CSSValueXywh,
+};
+static_assert(std::size(allBasicShapeFunctions) == allBasicShapeFunctionsCount);
+
+Vector<CSSValueID, allBasicShapeFunctionsCount> enabledBasicShapeFunctions(const CSSParserContext&)
+{
+    return allBasicShapeFunctions;
+}
+
+static void validateBasicShapeFunction(CSSValueID functionId, const CSSParserContext& context)
+{
+    UNUSED_PARAM(functionId);
+    UNUSED_PARAM(context);
+#if ASSERT_ENABLED
+    if (std::ranges::find(allBasicShapeFunctions, functionId) == allBasicShapeFunctions.end())
+        return;
+
+    auto enabledFunctionIds = enabledBasicShapeFunctions(context);
+    RELEASE_ASSERT(std::ranges::find(enabledFunctionIds, functionId) != enabledFunctionIds.end());
+#endif
+}
+
 RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyParserState& state, OptionSet<BasicShapeParsingOptions> options)
 {
     // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
@@ -992,6 +1023,7 @@ RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, CSS::PropertyPars
         return { };
 
     auto id = rangeCopy.peek().functionId();
+    validateBasicShapeFunction(id, state.context);
     auto args = consumeFunction(rangeCopy);
 
     std::optional<CSS::BasicShape> result;
