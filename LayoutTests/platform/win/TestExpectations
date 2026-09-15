@@ -1203,6 +1203,9 @@ http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Fail
 compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen-variant.html [ Skip ] # Timeout
 compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen.html [ Skip ] # Timeout
 
+# TextureMapper does not rotate/scale the drop-shadow offset with the layer transform.
+webkit.org/b/312898 compositing/filters/drop-shadow-transform.html [ ImageOnlyFailure ]
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # CSS
