@@ -38,7 +38,7 @@ partial interface SubtleCrypto {
 
   static boolean supports(DOMString operation,
                    AlgorithmIdentifier algorithm,
-                   optional unsigned long? length = null);
+                   optional [EnforceRange] unsigned long? length = null);
   static boolean supports(DOMString operation,
                    AlgorithmIdentifier algorithm,
                    AlgorithmIdentifier additionalAlgorithm);
@@ -59,7 +59,7 @@ dictionary EncapsulatedBits {
 };
 
 partial dictionary JsonWebKey {
-  // The following fields are defined in draft-ietf-cose-dilithium-07
+  // The following fields are defined in RFC 9964
   DOMString pub;
   DOMString priv;
 };
@@ -75,8 +75,18 @@ dictionary AeadParams : Algorithm {
 };
 
 dictionary CShakeParams : Algorithm {
-  required [EnforceRange] unsigned long length;
+  required [EnforceRange] unsigned long outputLength;
   BufferSource functionName;
+  BufferSource customization;
+};
+
+dictionary TurboShakeParams : Algorithm {
+  required [EnforceRange] unsigned long outputLength;
+  [EnforceRange] octet domainSeparation;
+};
+
+dictionary KangarooTwelveParams : Algorithm {
+  required [EnforceRange] unsigned long outputLength;
   BufferSource customization;
 };
 
@@ -89,11 +99,11 @@ dictionary KmacImportParams : Algorithm {
 };
 
 dictionary KmacKeyAlgorithm : KeyAlgorithm {
-  required unsigned long length;
+  required [EnforceRange] unsigned long length;
 };
 
 dictionary KmacParams : Algorithm {
-  required [EnforceRange] unsigned long length;
+  required [EnforceRange] unsigned long outputLength;
   BufferSource customization;
 };
 

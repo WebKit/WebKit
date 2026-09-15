@@ -1,6 +1,12 @@
 
 PASS idl_test setup
 PASS idl_test validation
+PASS MediaStreamTrackHandle interface: existence and properties of interface object
+PASS MediaStreamTrackHandle interface object length
+PASS MediaStreamTrackHandle interface object name
+PASS MediaStreamTrackHandle interface: existence and properties of interface prototype object
+PASS MediaStreamTrackHandle interface: existence and properties of interface prototype object's "constructor" property
+PASS MediaStreamTrackHandle interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaStreamTrackProcessor interface: existence and properties of interface object
 PASS MediaStreamTrackProcessor interface object length
 PASS MediaStreamTrackProcessor interface object name
@@ -8,9 +14,13 @@ PASS MediaStreamTrackProcessor interface: existence and properties of interface 
 PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's "constructor" property
 PASS MediaStreamTrackProcessor interface: existence and properties of interface prototype object's @@unscopables property
 PASS MediaStreamTrackProcessor interface: attribute readable
+FAIL MediaStreamTrackProcessor interface: attribute discardedFrames assert_true: The prototype object must have a property "discardedFrames" expected true got false
+FAIL MediaStreamTrackProcessor interface: attribute totalFrames assert_true: The prototype object must have a property "totalFrames" expected true got false
 FAIL MediaStreamTrackProcessor must be primary interface of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
 FAIL Stringification of new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
 FAIL MediaStreamTrackProcessor interface: new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) must inherit property "readable" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
+FAIL MediaStreamTrackProcessor interface: new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) must inherit property "discardedFrames" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
+FAIL MediaStreamTrackProcessor interface: new MediaStreamTrackProcessor({ track: new VideoTrackGenerator() }) must inherit property "totalFrames" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: Type error"
 PASS VideoTrackGenerator interface: existence and properties of interface object
 PASS VideoTrackGenerator interface object length
 PASS VideoTrackGenerator interface object name

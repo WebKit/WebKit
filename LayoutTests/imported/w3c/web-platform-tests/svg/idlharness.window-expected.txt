@@ -13,7 +13,7 @@ PASS Partial interface Element: member names are unique
 PASS Partial interface ShadowRoot: member names are unique
 PASS Partial interface Document[4]: member names are unique
 PASS SVGElement includes GlobalEventHandlers: member names are unique
-PASS SVGElement includes HTMLOrSVGElement: member names are unique
+PASS SVGElement includes HTMLOrSVGOrMathMLElement: member names are unique
 PASS SVGGraphicsElement includes SVGTests: member names are unique
 PASS SVGSVGElement includes SVGFitToViewBox: member names are unique
 PASS SVGSVGElement includes WindowEventHandlers: member names are unique
@@ -354,8 +354,8 @@ PASS SVGAnimatedRect interface: attribute baseVal
 PASS SVGAnimatedRect interface: attribute animVal
 PASS SVGAnimatedRect must be primary interface of objects.svg.viewBox
 PASS Stringification of objects.svg.viewBox
-FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "baseVal" with the proper type assert_true: wrong type: not a DOMRect expected true got false
-FAIL SVGAnimatedRect interface: objects.svg.viewBox must inherit property "animVal" with the proper type assert_true: wrong type: not a DOMRectReadOnly expected true got false
+PASS SVGAnimatedRect interface: objects.svg.viewBox must inherit property "baseVal" with the proper type
+PASS SVGAnimatedRect interface: objects.svg.viewBox must inherit property "animVal" with the proper type
 PASS SVGAnimatedNumberList interface: existence and properties of interface object
 PASS SVGAnimatedNumberList interface object length
 PASS SVGAnimatedNumberList interface object name
@@ -404,10 +404,10 @@ PASS SVGSVGElement interface: attribute width
 PASS SVGSVGElement interface: attribute height
 PASS SVGSVGElement interface: attribute currentScale
 PASS SVGSVGElement interface: attribute currentTranslate
-PASS SVGSVGElement interface: operation getIntersectionList(DOMRectReadOnly, SVGElement?)
-PASS SVGSVGElement interface: operation getEnclosureList(DOMRectReadOnly, SVGElement?)
-PASS SVGSVGElement interface: operation checkIntersection(SVGElement, DOMRectReadOnly)
-PASS SVGSVGElement interface: operation checkEnclosure(SVGElement, DOMRectReadOnly)
+PASS SVGSVGElement interface: operation getIntersectionList(SVGRect, SVGElement?)
+PASS SVGSVGElement interface: operation getEnclosureList(SVGRect, SVGElement?)
+PASS SVGSVGElement interface: operation checkIntersection(SVGElement, SVGRect)
+PASS SVGSVGElement interface: operation checkEnclosure(SVGElement, SVGRect)
 PASS SVGSVGElement interface: operation deselectAll()
 PASS SVGSVGElement interface: operation createSVGNumber()
 PASS SVGSVGElement interface: operation createSVGLength()
@@ -436,15 +436,15 @@ PASS SVGSVGElement interface: objects.svg must inherit property "y" with the pro
 PASS SVGSVGElement interface: objects.svg must inherit property "width" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "height" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "currentScale" with the proper type
-FAIL SVGSVGElement interface: objects.svg must inherit property "currentTranslate" with the proper type assert_true: wrong type: not a DOMPointReadOnly expected true got false
-PASS SVGSVGElement interface: objects.svg must inherit property "getIntersectionList(DOMRectReadOnly, SVGElement?)" with the proper type
-PASS SVGSVGElement interface: calling getIntersectionList(DOMRectReadOnly, SVGElement?) on objects.svg with too few arguments must throw TypeError
-PASS SVGSVGElement interface: objects.svg must inherit property "getEnclosureList(DOMRectReadOnly, SVGElement?)" with the proper type
-PASS SVGSVGElement interface: calling getEnclosureList(DOMRectReadOnly, SVGElement?) on objects.svg with too few arguments must throw TypeError
-PASS SVGSVGElement interface: objects.svg must inherit property "checkIntersection(SVGElement, DOMRectReadOnly)" with the proper type
-PASS SVGSVGElement interface: calling checkIntersection(SVGElement, DOMRectReadOnly) on objects.svg with too few arguments must throw TypeError
-PASS SVGSVGElement interface: objects.svg must inherit property "checkEnclosure(SVGElement, DOMRectReadOnly)" with the proper type
-PASS SVGSVGElement interface: calling checkEnclosure(SVGElement, DOMRectReadOnly) on objects.svg with too few arguments must throw TypeError
+PASS SVGSVGElement interface: objects.svg must inherit property "currentTranslate" with the proper type
+PASS SVGSVGElement interface: objects.svg must inherit property "getIntersectionList(SVGRect, SVGElement?)" with the proper type
+PASS SVGSVGElement interface: calling getIntersectionList(SVGRect, SVGElement?) on objects.svg with too few arguments must throw TypeError
+PASS SVGSVGElement interface: objects.svg must inherit property "getEnclosureList(SVGRect, SVGElement?)" with the proper type
+PASS SVGSVGElement interface: calling getEnclosureList(SVGRect, SVGElement?) on objects.svg with too few arguments must throw TypeError
+PASS SVGSVGElement interface: objects.svg must inherit property "checkIntersection(SVGElement, SVGRect)" with the proper type
+PASS SVGSVGElement interface: calling checkIntersection(SVGElement, SVGRect) on objects.svg with too few arguments must throw TypeError
+PASS SVGSVGElement interface: objects.svg must inherit property "checkEnclosure(SVGElement, SVGRect)" with the proper type
+PASS SVGSVGElement interface: calling checkEnclosure(SVGElement, SVGRect) on objects.svg with too few arguments must throw TypeError
 PASS SVGSVGElement interface: objects.svg must inherit property "deselectAll()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "createSVGNumber()" with the proper type
 PASS SVGSVGElement interface: objects.svg must inherit property "createSVGLength()" with the proper type
@@ -582,8 +582,6 @@ PASS SVGUseElement interface: attribute x
 PASS SVGUseElement interface: attribute y
 PASS SVGUseElement interface: attribute width
 PASS SVGUseElement interface: attribute height
-FAIL SVGUseElement interface: attribute instanceRoot assert_true: The prototype object must have a property "instanceRoot" expected true got false
-FAIL SVGUseElement interface: attribute animatedInstanceRoot assert_true: The prototype object must have a property "animatedInstanceRoot" expected true got false
 PASS SVGUseElement interface: attribute href
 PASS SVGUseElement must be primary interface of objects.use
 PASS Stringification of objects.use
@@ -591,8 +589,6 @@ PASS SVGUseElement interface: objects.use must inherit property "x" with the pro
 PASS SVGUseElement interface: objects.use must inherit property "y" with the proper type
 PASS SVGUseElement interface: objects.use must inherit property "width" with the proper type
 PASS SVGUseElement interface: objects.use must inherit property "height" with the proper type
-FAIL SVGUseElement interface: objects.use must inherit property "instanceRoot" with the proper type assert_inherits: property "instanceRoot" not found in prototype chain
-FAIL SVGUseElement interface: objects.use must inherit property "animatedInstanceRoot" with the proper type assert_inherits: property "animatedInstanceRoot" not found in prototype chain
 PASS SVGUseElement interface: objects.use must inherit property "href" with the proper type
 PASS SVGGraphicsElement interface: objects.use must inherit property "transform" with the proper type
 PASS SVGGraphicsElement interface: objects.use must inherit property "getBBox(optional SVGBoundingBoxOptions)" with the proper type
@@ -693,7 +689,7 @@ PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit prope
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "SVG_TRANSFORM_SKEWX" with the proper type
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "SVG_TRANSFORM_SKEWY" with the proper type
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "type" with the proper type
-FAIL SVGTransform interface: objects.svg.createSVGTransform() must inherit property "matrix" with the proper type assert_true: wrong type: not a DOMMatrix expected true got false
+PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "matrix" with the proper type
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "angle" with the proper type
 PASS SVGTransform interface: objects.svg.createSVGTransform() must inherit property "setMatrix(optional DOMMatrix2DInit)" with the proper type
 PASS SVGTransform interface: calling setMatrix(optional DOMMatrix2DInit) on objects.svg.createSVGTransform() with too few arguments must throw TypeError
@@ -969,29 +965,29 @@ PASS SVGPointList interface: existence and properties of interface prototype obj
 PASS SVGPointList interface: attribute length
 PASS SVGPointList interface: attribute numberOfItems
 PASS SVGPointList interface: operation clear()
-PASS SVGPointList interface: operation initialize(DOMPoint)
+PASS SVGPointList interface: operation initialize(SVGPoint)
 PASS SVGPointList interface: operation getItem(unsigned long)
-PASS SVGPointList interface: operation insertItemBefore(DOMPoint, unsigned long)
-PASS SVGPointList interface: operation replaceItem(DOMPoint, unsigned long)
+PASS SVGPointList interface: operation insertItemBefore(SVGPoint, unsigned long)
+PASS SVGPointList interface: operation replaceItem(SVGPoint, unsigned long)
 PASS SVGPointList interface: operation removeItem(unsigned long)
-PASS SVGPointList interface: operation appendItem(DOMPoint)
+PASS SVGPointList interface: operation appendItem(SVGPoint)
 PASS SVGPointList must be primary interface of objects.polygon.points
 PASS Stringification of objects.polygon.points
 PASS SVGPointList interface: objects.polygon.points must inherit property "length" with the proper type
 PASS SVGPointList interface: objects.polygon.points must inherit property "numberOfItems" with the proper type
 PASS SVGPointList interface: objects.polygon.points must inherit property "clear()" with the proper type
-PASS SVGPointList interface: objects.polygon.points must inherit property "initialize(DOMPoint)" with the proper type
-PASS SVGPointList interface: calling initialize(DOMPoint) on objects.polygon.points with too few arguments must throw TypeError
+PASS SVGPointList interface: objects.polygon.points must inherit property "initialize(SVGPoint)" with the proper type
+PASS SVGPointList interface: calling initialize(SVGPoint) on objects.polygon.points with too few arguments must throw TypeError
 PASS SVGPointList interface: objects.polygon.points must inherit property "getItem(unsigned long)" with the proper type
 PASS SVGPointList interface: calling getItem(unsigned long) on objects.polygon.points with too few arguments must throw TypeError
-PASS SVGPointList interface: objects.polygon.points must inherit property "insertItemBefore(DOMPoint, unsigned long)" with the proper type
-PASS SVGPointList interface: calling insertItemBefore(DOMPoint, unsigned long) on objects.polygon.points with too few arguments must throw TypeError
-PASS SVGPointList interface: objects.polygon.points must inherit property "replaceItem(DOMPoint, unsigned long)" with the proper type
-PASS SVGPointList interface: calling replaceItem(DOMPoint, unsigned long) on objects.polygon.points with too few arguments must throw TypeError
+PASS SVGPointList interface: objects.polygon.points must inherit property "insertItemBefore(SVGPoint, unsigned long)" with the proper type
+PASS SVGPointList interface: calling insertItemBefore(SVGPoint, unsigned long) on objects.polygon.points with too few arguments must throw TypeError
+PASS SVGPointList interface: objects.polygon.points must inherit property "replaceItem(SVGPoint, unsigned long)" with the proper type
+PASS SVGPointList interface: calling replaceItem(SVGPoint, unsigned long) on objects.polygon.points with too few arguments must throw TypeError
 PASS SVGPointList interface: objects.polygon.points must inherit property "removeItem(unsigned long)" with the proper type
 PASS SVGPointList interface: calling removeItem(unsigned long) on objects.polygon.points with too few arguments must throw TypeError
-PASS SVGPointList interface: objects.polygon.points must inherit property "appendItem(DOMPoint)" with the proper type
-PASS SVGPointList interface: calling appendItem(DOMPoint) on objects.polygon.points with too few arguments must throw TypeError
+PASS SVGPointList interface: objects.polygon.points must inherit property "appendItem(SVGPoint)" with the proper type
+PASS SVGPointList interface: calling appendItem(SVGPoint) on objects.polygon.points with too few arguments must throw TypeError
 PASS SVGPolylineElement interface: existence and properties of interface object
 PASS SVGPolylineElement interface object length
 PASS SVGPolylineElement interface object name
