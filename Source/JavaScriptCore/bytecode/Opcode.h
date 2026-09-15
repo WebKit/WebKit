@@ -235,6 +235,7 @@ inline bool isBranch(OpcodeID opcodeID)
     case op_jnstricteq:
     case op_jbelow:
     case op_jbeloweq:
+    case op_iterator_close_check:
     case op_switch_imm:
     case op_switch_char:
     case op_switch_string:

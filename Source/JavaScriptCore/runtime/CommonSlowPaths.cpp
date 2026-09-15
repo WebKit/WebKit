@@ -829,9 +829,8 @@ ALWAYS_INLINE UGPRPair iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObj
     case IterationMode::FastArray: {
         // We should be good to go.
         metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
-        GET(bytecode.m_next) = vm.fastArrayValuesSentinel();
-        auto* iteratedObject = uncheckedDowncast<JSObject>(iterable);
-        iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), iteratedObject, IterationKind::Values);
+        GET(bytecode.m_next) = jsNumber(0);
+        iterator = vm.fastArraySentinel();
         PROFILE_VALUE_IN(iterator.jsValue(), m_iteratorValueProfile);
         return encodeResult(pc, reinterpret_cast<void*>(static_cast<uintptr_t>(IterationMode::FastArray)));
     }
@@ -1182,6 +1181,45 @@ JSC_DEFINE_COMMON_SLOW_PATH(iterator_next_try_fast_wide32)
 {
     BEGIN();
     return iteratorNextTryFastImpl<Wide32>(vm, globalObject, codeBlock, callFrame, throwScope, pc);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_iterator_next_fast_array)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpIteratorNext>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastArraySentinel());
+
+    JSValue iterable = GET(bytecode.m_iterable).jsValue();
+    RELEASE_ASSERT(isJSArray(iterable));
+    auto* array = asArray(iterable);
+    metadata.m_iterableProfile.observeStructureID(array->structureID());
+    metadata.m_iterationMetadata.seenModes = metadata.m_iterationMetadata.seenModes | IterationMode::FastArray;
+
+    JSValue index = GET(bytecode.m_next).jsValue();
+    JSValue value;
+    bool hasNext = iteratorNextFastArray(globalObject, array, index, value);
+    GET(bytecode.m_next) = index;
+    CHECK_EXCEPTION();
+    GET(bytecode.m_done) = jsBoolean(!hasNext);
+    if (hasNext)
+        PROFILE_VALUE_IN(value, m_valueValueProfile);
+    GET(bytecode.m_value) = value;
+    END_IMPL();
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_iterator_close_check)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpIteratorCloseCheck>();
+    ASSERT(GET(bytecode.m_iterator).jsValue() == vm.fastArraySentinel());
+
+    JSValue iterable = GET(bytecode.m_iterable).jsValue();
+    RELEASE_ASSERT(isJSArray(iterable));
+    auto* iterator = JSArrayIterator::create(vm, globalObject->arrayIteratorStructure(), asArray(iterable), IterationKind::Values);
+    iterator->setIndex(GET(bytecode.m_next).jsValue().asAnyInt());
+    GET(bytecode.m_iterator) = iterator;
+    END_IMPL();
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_strcat)

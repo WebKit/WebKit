@@ -197,6 +197,7 @@ void computeUsesForBytecodeIndexImpl(const JSInstruction* instruction, Checkpoin
     USES(OpIsObject, operand)
     USES(OpIsCellWithType, operand)
     USES(OpIsCallable, operand)
+    USES(OpIteratorCloseCheck, iterator, next, iterable)
     USES(OpIsConstructor, operand)
     USES(OpToNumber, operand)
     USES(OpToNumeric, operand)
@@ -548,6 +549,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     DEFS(OpIsObject, dst)
     DEFS(OpIsCellWithType, dst)
     DEFS(OpIsCallable, dst)
+    DEFS(OpIteratorCloseCheck, iterator)
     DEFS(OpIsConstructor, dst)
     DEFS(OpInById, dst)
     DEFS(OpInByVal, dst)
@@ -631,6 +633,7 @@ void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* inst
     case op_iterator_next: {
         auto bytecode = instruction->as<OpIteratorNext>();
 
+        defAt(OpIteratorNext::computeNext, bytecode.m_next);
         defAt(OpIteratorNext::getDone, bytecode.m_done);
         // We need to claim we set m_value here because we could early exit from the bytecode if we are done.
         defAt(OpIteratorNext::getDone, bytecode.m_value);

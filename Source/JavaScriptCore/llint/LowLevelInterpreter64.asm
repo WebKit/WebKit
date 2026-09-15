@@ -3350,7 +3350,7 @@ end)
 llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch, metadata, return)
 
     loadVariable(get, m_next, t0)
-    btqnz t0, notCellMask, .iteratorNextGeneric
+    btqnz t0, notCellMask, .iteratorNextForNonCell
     bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorNextGeneric
     macro fastNarrow()
         callSlowPath(_iterator_next_try_fast_narrow)
@@ -3365,6 +3365,13 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 
     # FIXME: We should do this with inline assembly since it's the "fast" case.
     bpeq r1, constexpr IterationMode::Generic, .iteratorNextGeneric
+    dispatch()
+
+.iteratorNextForNonCell:
+    loadVariable(get, m_iterator, t0)
+    btqnz t0, notCellMask, .iteratorNextGeneric
+    bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorNextGeneric
+    callSlowPath(_slow_path_iterator_next_fast_array)
     dispatch()
 
 .iteratorNextGeneric:
@@ -3435,6 +3442,24 @@ llintOpWithMetadata(op_iterator_next, OpIteratorNext, macro (size, get, dispatch
 .getValueSlow:
     callSlowPath(_llint_slow_path_iterator_next_get_value)
     dispatch()
+end)
+
+llintOpWithMetadata(op_iterator_close_check, OpIteratorCloseCheck, macro (size, get, dispatch, metadata, return)
+    loadVariable(get, m_iterator, t0)
+    btqnz t0, notCellMask, .iteratorCloseCheckFallThrough
+    bbneq JSCell::m_type[t0], constexpr SentinelType, .iteratorCloseCheckFallThrough
+    metadata(t5, t1)
+    storeb 1, OpIteratorCloseCheck::Metadata::m_hasSeenFastArray[t5]
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalObject[t1], t1
+    branchIfInlineWatchpointSetIsStillValid(JSGlobalObject::m_arrayIteratorProtocolWatchpointSet + InlineWatchpointSet::m_data[t1], t1, .iteratorCloseCheckNothingToClose)
+    callSlowPath(_slow_path_iterator_close_check)
+.iteratorCloseCheckFallThrough:
+    dispatch()
+
+.iteratorCloseCheckNothingToClose:
+    get(m_targetLabel, t0)
+    jumpImpl(dispatchIndirect, t0)
 end)
 
 llintOpWithMetadata(op_async_iterator_next, OpAsyncIteratorNext, macro (size, get, dispatch, metadata, return)
