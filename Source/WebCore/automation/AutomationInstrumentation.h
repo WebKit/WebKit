@@ -35,13 +35,16 @@
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
+#include <tuple>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 
 namespace Inspector {
@@ -59,17 +62,24 @@ public:
     virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
+    virtual void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier) = 0;
 };
 
 
 class WEBCORE_EXPORT AutomationInstrumentation {
 public:
+    using DedicatedWorkerRealmData = std::tuple<String, FrameIdentifier, SecurityOriginData>;
+
     static void NODELETE setClient(const AutomationInstrumentationClient&);
     static void NODELETE clearClient();
 
     static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
     static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
+    static void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, const SecurityOriginData&);
+    static void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier);
+    static Vector<DedicatedWorkerRealmData> dedicatedWorkerRealms(PageIdentifier);
 };
 
 } // namespace WebCore
