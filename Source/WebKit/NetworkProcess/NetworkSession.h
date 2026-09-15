@@ -171,6 +171,10 @@ public:
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
 
     WebCore::PermissionState requestLocalNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace, bool canPrompt);
+    void setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&&, WebCore::IPAddressSpace, WebCore::PermissionState);
+    WebCore::PermissionState localNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace) const;
+    void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
+    void clearLocalNetworkAccessPermissionsForTesting();
     
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool hasAppBoundSession() const { return false; }

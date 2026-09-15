@@ -99,6 +99,9 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     NotifyMediaStreamingActivity(bool activity)
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::ResourceRequest request, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, uint64_t requiredCookiesVersion);
+    SetLocalNetworkAccessPermissionForTesting(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin, enum:uint8_t WebCore::IPAddressSpace addressSpace, enum:uint8_t WebCore::PermissionState state) -> ()
+    RemoveLocalNetworkAccessPermissions(PAL::SessionID sessionID, WebCore::SecurityOriginData topOrigin) -> ()
+    ClearLocalNetworkAccessPermissionsForTesting(PAL::SessionID sessionID) -> ()
 
     SetInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
 

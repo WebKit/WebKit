@@ -124,6 +124,10 @@ static bool isAllowedByPermissionsPolicy(const Document& document, PermissionNam
         return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::Microphone, document, PermissionsPolicy::ShouldReportViolation::No);
     case PermissionName::StorageAccess:
         return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::StorageAccess, document, PermissionsPolicy::ShouldReportViolation::No);
+    case PermissionName::LocalNetwork:
+        return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LocalNetwork, document, PermissionsPolicy::ShouldReportViolation::No);
+    case PermissionName::LoopbackNetwork:
+        return PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LoopbackNetwork, document, PermissionsPolicy::ShouldReportViolation::No);
     default:
         return true;
     }
@@ -149,6 +153,12 @@ std::optional<PermissionName> Permissions::toPermissionName(const String& name)
         return PermissionName::Camera;
     if (name == "geolocation"_s)
         return PermissionName::Geolocation;
+    // No "local-network-access" alias: Chromium's pre-split name spans both of these, whose states are
+    // tracked independently, so there is no one state to report.
+    if (name == "local-network"_s)
+        return PermissionName::LocalNetwork;
+    if (name == "loopback-network"_s)
+        return PermissionName::LoopbackNetwork;
     if (name == "microphone"_s)
         return PermissionName::Microphone;
     if (name == "notifications"_s)

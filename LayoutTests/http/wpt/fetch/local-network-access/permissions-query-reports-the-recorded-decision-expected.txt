@@ -1,0 +1,10 @@
+
+
+PASS an undecided permission reports prompt
+PASS a recorded grant is reported, and only for the permission it was recorded for
+PASS a recorded denial is reported as denied
+PASS revoking a decision clears it
+PASS a grant recorded for another requesting origin is not reported to this one
+PASS a permissions-policy denial is reported as denied
+PASS the pre-split Chromium permission name is not accepted
+

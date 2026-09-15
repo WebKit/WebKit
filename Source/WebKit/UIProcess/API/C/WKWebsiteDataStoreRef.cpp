@@ -45,6 +45,9 @@
 #include "WebsiteDataRecord.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
+#include <WebCore/ClientOrigin.h>
+#include <WebCore/IPAddressSpace.h>
+#include <WebCore/PermissionState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/URL.h>
@@ -823,6 +826,34 @@ void WKWebsiteDataStoreSetStorageAccessForTesting(WKWebsiteDataStoreRef dataStor
     if (blocked)
         store->clearStorageAccessForTesting([callbackAggregator] { });
     store->setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(blocked, WebCore::ThirdPartyCookieBlockingMode::All, [callbackAggregator] { });
+}
+
+void WKWebsiteDataStoreSetLocalNetworkAccessPermissionForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef topOriginString, WKStringRef requestingOriginString, bool isLoopback, bool granted, void* context, WKWebsiteDataStoreSetLocalNetworkAccessPermissionForTestingFunction completionHandler)
+{
+    Ref store = *WebKit::toImpl(dataStoreRef);
+    auto topOrigin = WebCore::SecurityOriginData::fromURL(URL { protect(WebKit::toImpl(topOriginString))->string() });
+    auto requestingOrigin = WebCore::SecurityOriginData::fromURL(URL { protect(WebKit::toImpl(requestingOriginString))->string() });
+    auto addressSpace = isLoopback ? WebCore::IPAddressSpace::Loopback : WebCore::IPAddressSpace::Local;
+    auto state = granted ? WebCore::PermissionState::Granted : WebCore::PermissionState::Denied;
+    store->setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin { topOrigin, requestingOrigin }, addressSpace, state, [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef originString, void* context, WKWebsiteDataStoreRevokeLocalNetworkAccessPermissionsForTestingFunction completionHandler)
+{
+    Ref store = *WebKit::toImpl(dataStoreRef);
+    store->removeLocalNetworkAccessPermissions(WebCore::SecurityOriginData::fromURL(URL { protect(WebKit::toImpl(originString))->string() }), [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKWebsiteDataStoreClearLocalNetworkAccessPermissionsForTesting(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearLocalNetworkAccessPermissionsForTestingFunction completionHandler)
+{
+    Ref store = *WebKit::toImpl(dataStoreRef);
+    store->clearLocalNetworkAccessPermissionsForTesting([context, completionHandler] {
+        completionHandler(context);
+    });
 }
 
 void WKWebsiteDataStoreFlushNetworkProcessIPC(WKWebsiteDataStoreRef dataStore, void* context, WKWebsiteDataStoreFlushNetworkProcessIPCCallback callback)

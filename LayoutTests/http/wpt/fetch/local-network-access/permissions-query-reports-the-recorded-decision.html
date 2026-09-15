@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+function queryLoopback()
+{
+    return navigator.permissions.query({ name: 'loopback-network' }).then((status) => status.state);
+}
+
+promise_test(async () => {
+    assert_equals(await queryLoopback(), 'prompt');
+}, 'an undecided permission reports prompt');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true);
+
+    assert_equals(await queryLoopback(), 'granted');
+    assert_equals(await navigator.permissions.query({ name: 'local-network' }).then((s) => s.state), 'prompt',
+        'the two are separate permissions, so granting one must not report the other');
+}, 'a recorded grant is reported, and only for the permission it was recorded for');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(false, true);
+
+    // Not softened to prompt: a site should be able to tell "the user said no" from "not yet asked".
+    assert_equals(await queryLoopback(), 'denied');
+}, 'a recorded denial is reported as denied');
+
+promise_test(async () => {
+    await testRunner.setLocalNetworkAccessPermission(true, true);
+    assert_equals(await queryLoopback(), 'granted');
+
+    await testRunner.revokeLocalNetworkAccessPermissions();
+    assert_equals(await queryLoopback(), 'prompt', 'revoking returns the origin to undecided');
+}, 'revoking a decision clears it');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+    await testRunner.setLocalNetworkAccessPermission(true, true, 'http://localhost:8801');
+
+    assert_equals(await queryLoopback(), 'prompt',
+        'the decision is keyed on the requesting origin too, so this page does not inherit it');
+}, 'a grant recorded for another requesting origin is not reported to this one');
+
+promise_test(async () => {
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network \'none\'';
+    frame.src = 'resources/permission-query-frame.html';
+    document.body.appendChild(frame);
+
+    const state = await new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+    });
+    assert_equals(state, 'denied', 'a frame the permissions policy forbids is denied without consulting the record');
+}, 'a permissions-policy denial is reported as denied');
+
+promise_test((t) => {
+    return promise_rejects_js(t, TypeError, navigator.permissions.query({ name: 'local-network-access' }));
+}, 'the pre-split Chromium permission name is not accepted');
+
+</script>
+</body>
+</html>

@@ -91,6 +91,10 @@ static ASCIILiteral toFeatureNameForLogging(PermissionsPolicy::Feature feature)
         return "PrivateToken"_s;
     case PermissionsPolicy::Feature::StorageAccess:
         return "StorageAccess"_s;
+    case PermissionsPolicy::Feature::LocalNetwork:
+        return "LocalNetwork"_s;
+    case PermissionsPolicy::Feature::LoopbackNetwork:
+        return "LoopbackNetwork"_s;
     case PermissionsPolicy::Feature::Invalid:
         return "Invalid"_s;
     }
@@ -131,6 +135,8 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
 #endif
     constexpr auto privateTokenToken { "private-token"_s };
     constexpr auto storageAccessToken { "storage-access"_s };
+    constexpr auto localNetworkToken { "local-network"_s };
+    constexpr auto loopbackNetworkToken { "loopback-network"_s };
 
     if (value.startsWith(cameraToken)) {
         feature = PermissionsPolicy::Feature::Camera;
@@ -195,6 +201,12 @@ static std::pair<PermissionsPolicy::Feature, StringView> readFeatureIdentifier(S
     } else if (value.startsWith(storageAccessToken)) {
         feature = PermissionsPolicy::Feature::StorageAccess;
         remainingValue = value.substring(storageAccessToken.length());
+    } else if (value.startsWith(loopbackNetworkToken)) {
+        feature = PermissionsPolicy::Feature::LoopbackNetwork;
+        remainingValue = value.substring(loopbackNetworkToken.length());
+    } else if (value.startsWith(localNetworkToken)) {
+        feature = PermissionsPolicy::Feature::LocalNetwork;
+        remainingValue = value.substring(localNetworkToken.length());
     }
 
     // FIXME: webkit.org/b/274159.
@@ -235,6 +247,8 @@ static ASCIILiteral defaultAllowlistValue(PermissionsPolicy::Feature feature)
     case PermissionsPolicy::Feature::XRSpatialTracking:
 #endif
     case PermissionsPolicy::Feature::PrivateToken:
+    case PermissionsPolicy::Feature::LocalNetwork:
+    case PermissionsPolicy::Feature::LoopbackNetwork:
         return "'self'"_s;
     case PermissionsPolicy::Feature::Invalid:
         return "'none'"_s;

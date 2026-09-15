@@ -335,6 +335,9 @@ public:
     void NODELETE setPrivateClickMeasurementEnabled(bool);
     bool NODELETE privateClickMeasurementEnabled() const;
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
+    void setLocalNetworkAccessPermissionForTesting(PAL::SessionID, WebCore::ClientOrigin&&, WebCore::IPAddressSpace, WebCore::PermissionState, CompletionHandler<void()>&&);
+    void removeLocalNetworkAccessPermissions(PAL::SessionID, WebCore::SecurityOriginData&&, CompletionHandler<void()>&&);
+    void clearLocalNetworkAccessPermissionsForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 
 #if HAVE(ENHANCED_SECURITY_LINKS)
     void setIsEnhancedSecurityLinksEnabled(bool);

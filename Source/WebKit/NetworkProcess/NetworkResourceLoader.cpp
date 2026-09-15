@@ -919,10 +919,9 @@ void NetworkResourceLoader::checkLocalNetworkAccess(const ResourceRequest& reque
     auto sourceOrigin = m_parameters.sourceOrigin ? m_parameters.sourceOrigin->data() : SecurityOriginData { };
     auto topOrigin = m_parameters.topOrigin ? m_parameters.topOrigin->data() : SecurityOriginData { };
 
-    // FIXME: The permissions-policy features are not plumbed yet, so both are treated as allowed, which
-    // is their default. See https://bugs.webkit.org/show_bug.cgi?id=319908
     performLocalNetworkAccessCheck(request, currentURL, connectionAddressSpace, m_parameters.clientAddressSpace,
-        m_parameters.clientIsSecureContext, ClientOrigin { topOrigin, sourceOrigin }, true, true,
+        m_parameters.clientIsSecureContext, ClientOrigin { topOrigin, sourceOrigin },
+        m_parameters.localNetworkAllowedByPermissionsPolicy, m_parameters.loopbackNetworkAllowedByPermissionsPolicy,
         [networkSession](const ClientOrigin& origin, IPAddressSpace addressSpace, CompletionHandler<void(WebCore::PermissionState)>&& permissionHandler) {
             permissionHandler(networkSession->requestLocalNetworkAccessPermission(origin, addressSpace, true));
         }, [this, protectedThis = Ref { *this }, url = currentURL, completionHandler = WTF::move(completionHandler)](std::optional<ResourceError> error) mutable {
