@@ -31,14 +31,18 @@
 
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
+#include "CSSValueList.h"
 #include "CommonAtomStrings.h"
 #include "HTMLNames.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
+#include "StylePropertiesInlines.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -125,6 +129,43 @@ static inline PropertyAllowlist determinePropertyAllowlist(const CSSSelector& se
     return PropertyAllowlist::None;
 }
 
+static bool isZeroTimeList(const CSSValue& value)
+{
+    if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value))
+        return primitive->isZero().value_or(false);
+    if (auto* list = dynamicDowncast<CSSValueList>(value)) {
+        for (auto& item : *list) {
+            if (!isZeroTimeList(item))
+                return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+static bool canGeneratePseudoElement(const StyleProperties& properties)
+{
+    for (auto property : properties) {
+        switch (property.id()) {
+        case CSSPropertyContent:
+        case CSSPropertyAll:
+        case CSSPropertyAnimationName:
+        case CSSPropertyTransitionProperty:
+        case CSSPropertyTransitionTimingFunction:
+        case CSSPropertyTransitionBehavior:
+            return true;
+        case CSSPropertyTransitionDuration:
+        case CSSPropertyTransitionDelay:
+            if (!isZeroTimeList(*property.value()))
+                return true;
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
 RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned selectorListIndex, unsigned position, IsStartingStyle isStartingStyle)
     : m_styleRuleWithSelectorIndex(&styleRule, static_cast<uint16_t>(selectorIndex))
     , m_selectorListIndex(selectorListIndex)
@@ -133,6 +174,7 @@ RuleData::RuleData(const StyleRule& styleRule, unsigned selectorIndex, unsigned 
     , m_propertyAllowlist(std::to_underlying(determinePropertyAllowlist(selector())))
     , m_isStartingStyle(std::to_underlying(isStartingStyle))
     , m_isEnabled(true)
+    , m_canGeneratePseudoElement(m_canMatchPseudoElement && Style::canGeneratePseudoElement(styleRule.properties()))
     , m_position(position)
     , m_descendantSelectorIdentifierHashes(SelectorFilter::collectHashes(selector()))
 {
