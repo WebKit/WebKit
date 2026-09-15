@@ -388,6 +388,26 @@ RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::moveToImageBuffer(Re
     return result;
 }
 
+void RemoteRenderingBackendProxy::moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferProxy& serialized, WebCore::ImageBufferTransferIdentifier transferIdentifier)
+{
+    send(Messages::RemoteRenderingBackend::MoveSerializedBufferToTransferHeap(serialized.identifier(), transferIdentifier));
+}
+
+RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::takeTransferredBuffer(const WebCore::ImageBufferTransferHandle& handle)
+{
+    // The pixels are in the GPU process and stay there, so this process never has a backing store
+    // of its own to re-adopt here.
+    auto backend = createBackendForSerializedBuffer(handle.parameters, handle.renderingMode, std::nullopt);
+    if (!backend)
+        return nullptr;
+    Ref result = RemoteImageBufferProxy::createForSerializedBuffer(handle.parameters, WTF::move(backend), *this);
+    auto resultIdentifier = result->renderingResourceIdentifier();
+    auto addResult = m_imageBuffers.add(resultIdentifier, result);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::RemoteRenderingBackend::TakeTransferredBuffer(handle.identifier, resultIdentifier, result->contextIdentifier()));
+    return result;
+}
+
 UniqueRef<RemoteSnapshotRecorderProxy> RemoteRenderingBackendProxy::createSnapshotRecorder(const FloatRect& initialClip, RemoteSnapshotIdentifier snapshotIdentifier)
 {
     auto recorder = makeUniqueRef<RemoteSnapshotRecorderProxy>(initialClip, *this);
