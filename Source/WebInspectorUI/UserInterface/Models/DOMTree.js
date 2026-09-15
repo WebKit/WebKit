@@ -122,7 +122,7 @@ WI.DOMTree = class DOMTree extends WI.Object
         // Bump the request identifier. This prevents pending callbacks for previous requests from completing.
         var requestIdentifier = ++this._requestIdentifier;
 
-        function rootObjectAvailable(error, result)
+        async function rootObjectAvailable(error, result)
         {
             // Check to see if we have been invalidated (if the callbacks were cleared).
             if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)
@@ -137,13 +137,10 @@ WI.DOMTree = class DOMTree extends WI.Object
             }
 
             // Convert the RemoteObject to a DOMNode by asking the backend to push it to us.
-            var remoteObject = WI.RemoteObject.fromPayload(result);
-            remoteObject.pushNodeToFrontend(rootDOMNodeAvailable.bind(this, remoteObject));
-        }
-
-        function rootDOMNodeAvailable(remoteObject, nodeId)
-        {
-            remoteObject.release();
+            using remoteObject = WI.RemoteObject.fromPayload(result);
+            let nodeId = await new Promise((resolve) => {
+                remoteObject.pushNodeToFrontend(resolve);
+            });
 
             // Check to see if we have been invalidated (if the callbacks were cleared).
             if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)

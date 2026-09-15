@@ -307,7 +307,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
 
     if (!options.usingLocalDOMNode) {
         if (domNode.isCustomElement()) {
-            contextMenu.appendItem(WI.UIString("Jump to Definition"), () => {
+            contextMenu.appendItem(WI.UIString("Jump to Definition"), async () => {
                 function didGetFunctionDetails(error, response) {
                     if (error)
                         return;
@@ -324,16 +324,10 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                     });
                 }
 
-                WI.RemoteObject.resolveNode(domNode).then((remoteObject) => {
-                    remoteObject.getProperty("constructor", (error, result, wasThrown) => {
-                        if (error)
-                            return;
-                        if (result.type === "function")
-                            remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
-                        result.release();
-                    });
-                    remoteObject.release();
-                });
+                using remoteObject = await WI.RemoteObject.resolveNode(domNode);
+                using result = await remoteObject.getProperty("constructor");
+                if (result.type === "function")
+                    remoteObject.target.DebuggerAgent.getFunctionDetails(result.objectId, didGetFunctionDetails);
             });
 
             contextMenu.appendSeparator();
