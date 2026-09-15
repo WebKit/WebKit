@@ -207,6 +207,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     GoToBackForwardItem(struct WebKit::GoToBackForwardItemParameters parameters)
     GoToBackForwardItemWaitingForProcessLaunch(struct WebKit::GoToBackForwardItemParameters parameters, WebKit::WebPageProxyIdentifier pageID)
+    ApplyHistoryTraversalToFrame(Ref<WebKit::FrameState> toFrameState, Ref<WebKit::FrameState> fromFrameState, enum:uint8_t WebCore::FrameLoadType frameLoadType)
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, String referrer, WebCore::FrameIdentifier frameID)

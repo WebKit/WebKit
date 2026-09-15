@@ -358,7 +358,7 @@ public:
     bool errorOccurredInLoading() const { return m_errorOccurredInLoading; }
 
     // HistoryController specific.
-    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
+    WEBCORE_EXPORT void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache = ShouldRestoreFromBackForwardCache::Unspecified);
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
     WEBCORE_EXPORT void setRequestedHistoryItem(HistoryItem&);
     WEBCORE_EXPORT void loadRequestedHistoryItem(FrameLoadType, PolicyAlreadyDecided = PolicyAlreadyDecided::No);
