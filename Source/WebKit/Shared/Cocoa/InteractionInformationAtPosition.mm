@@ -47,6 +47,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool isRangeInput,
     bool isARIASlider,
     bool hasDirectionalResizeCursor,
+    bool isInResizeControl,
     bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled,
@@ -119,6 +120,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , isRangeInput(isRangeInput)
     , isARIASlider(isARIASlider)
     , hasDirectionalResizeCursor(hasDirectionalResizeCursor)
+    , isInResizeControl(isInResizeControl)
     , isNearMarkedText(isNearMarkedText)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(touchCalloutEnabled)

@@ -1244,7 +1244,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const auto& information = _positionInformationManager->currentInformation();
 
     // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
-    bool prefersInteraction = information.isRangeInput || information.isARIASlider || information.hasDirectionalResizeCursor;
+    bool prefersInteraction = information.isRangeInput || information.isARIASlider || information.hasDirectionalResizeCursor || information.isInResizeControl;
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
     prefersInteraction = prefersInteraction || information.isInteractiveModel;
 #endif

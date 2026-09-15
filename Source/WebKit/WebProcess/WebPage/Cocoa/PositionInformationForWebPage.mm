@@ -69,6 +69,7 @@
 #import <WebCore/RenderBlockFlow.h>
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
+#import <WebCore/RenderLayer.h>
 #import <WebCore/RenderObjectDocument.h>
 #import <WebCore/RenderObjectStyle.h>
 #import <WebCore/RenderVideo.h>
@@ -445,6 +446,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             break;
     }
 
+#if HAVE(APPKIT_GESTURES_SUPPORT)
     switch (renderer->style().cursorType()) {
     case WebCore::CursorType::EWResize:
     case WebCore::CursorType::NSResize:
@@ -456,7 +458,9 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         break;
     }
 
-#if HAVE(APPKIT_GESTURES_SUPPORT)
+    if (CheckedPtr layerRenderer = dynamicDowncast<WebCore::RenderLayerModelObject>(renderer); layerRenderer && layerRenderer->hasLayer())
+        info.isInResizeControl = layerRenderer->layer()->isPointInResizeControl(WebCore::roundedIntPoint(result.localPoint()));
+
     if (!info.isRangeInput) {
         constexpr auto sliderHitType = hitType | OptionSet {
             WebCore::HitTestRequest::Type::CollectMultipleElements,

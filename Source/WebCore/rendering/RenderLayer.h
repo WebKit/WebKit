@@ -537,7 +537,7 @@ public:
 
     bool hasOverlayScrollbars() const;
 
-    bool isPointInResizeControl(IntPoint localPoint) const;
+    WEBCORE_EXPORT bool isPointInResizeControl(IntPoint localPoint) const;
     IntSize offsetFromResizeCorner(const IntPoint& localPoint) const;
 
     std::optional<ScrollbarUpdateScope> updateScrollInfoAfterLayout();
