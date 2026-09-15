@@ -3649,12 +3649,20 @@ JSC_DEFINE_HOST_FUNCTION(functionFindTypeForExpression, (JSGlobalObject* globalO
     FunctionExecutable* executable = (dynamicDowncast<JSFunction>(functionValue.asCell()->getObject()))->jsExecutable();
 
     RELEASE_ASSERT(callFrame->argument(1).isString());
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto substring = asString(callFrame->argument(1))->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     String sourceCodeText = executable->source().view().toString();
-    unsigned offset = static_cast<unsigned>(sourceCodeText.find(substring) + executable->source().startOffset());
-    
+    size_t index = sourceCodeText.find(substring);
+    unsigned startOffset = executable->source().startOffset();
+    if (index == notFound || index > std::numeric_limits<unsigned>::max() - startOffset)
+        return JSValue::encode(jsNull());
+    unsigned offset = static_cast<unsigned>(index) + startOffset;
+
     String jsonString = vm.typeProfiler()->typeInformationForExpressionAtOffset(TypeProfilerSearchDescriptorNormal, offset, executable->sourceID(), vm);
-    return JSValue::encode(JSONParse(globalObject, jsonString));
+    JSValue result = JSONParse(globalObject, jsonString);
+    RETURN_IF_EXCEPTION(scope, { });
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionReturnTypeFor, (JSGlobalObject* globalObject, CallFrame* callFrame))
