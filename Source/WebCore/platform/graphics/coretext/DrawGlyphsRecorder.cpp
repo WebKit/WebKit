@@ -447,6 +447,7 @@ void DrawGlyphsRecorder::drawOTSVGRun(const Font& font, std::span<const GlyphBuf
 
         // Create a local ImageBuffer because decoding the SVG fonts has to happen in WebProcess.
         if (auto imageBuffer = m_owner.createAlignedImageBuffer(bounds, m_owner.colorSpace(), RenderingMethod::Local)) {
+            imageBuffer->context().setFillBrush(m_owner.state().fillBrush());
             FontCascade::drawGlyphs(imageBuffer->context(), font, glyphs.subspan(i, 1), advances.subspan(i, 1), FloatPoint(), smoothingMode);
 
             FloatRect destinationRect = enclosingIntRect(bounds);
