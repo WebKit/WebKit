@@ -136,7 +136,8 @@ private:
     void typingAddedToOpenCommand(Type);
     bool makeEditableRootEmpty();
 
-    void postTextStateChangeNotificationForDeletion(const VisibleSelection&);
+    String recordDeletionForAccessibility(const VisibleSelection&);
+    void postTextStateChangeNotificationForDeletion(const String& deletedText);
     void insertTextAndNotifyAccessibility(const String &text, bool selectInsertedText);
     void insertLineBreakAndNotifyAccessibility();
     void insertParagraphSeparatorInQuotedContentAndNotifyAccessibility();

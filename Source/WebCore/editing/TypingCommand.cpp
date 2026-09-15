@@ -344,15 +344,24 @@ void TypingCommand::ensureLastEditCommandHasCurrentSelectionIfOpenForMoreTyping(
 }
 #endif
 
-void TypingCommand::postTextStateChangeNotificationForDeletion(const VisibleSelection& selection)
+String TypingCommand::recordDeletionForAccessibility(const VisibleSelection& selection)
 {
     if (!AXObjectCache::accessibilityEnabled())
-        return;
-    postTextStateChangeNotification(AXTextEditType::Delete, AccessibilityObject::stringForVisiblePositionRange(selection), selection.start());
+        return { };
+
     VisiblePositionIndexRange range;
     range.startIndex.value = indexForVisiblePosition(selection.visibleStart(), range.startIndex.scope);
     range.endIndex.value = indexForVisiblePosition(selection.visibleEnd(), range.endIndex.scope);
     protect(composition())->setRangeDeletedByUnapply(range);
+    return AccessibilityObject::stringForVisiblePositionRange(selection);
+}
+
+void TypingCommand::postTextStateChangeNotificationForDeletion(const String& deletedText)
+{
+    if (deletedText.isEmpty())
+        return;
+
+    postTextStateChangeNotification(AXTextEditType::Delete, deletedText);
 }
 
 bool TypingCommand::willApplyCommand()
@@ -770,8 +779,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     if (shouldAddToKillRing)
         protect(document())->editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange(), Editor::KillRingInsertionMode::PrependText);
 
-    // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
-    postTextStateChangeNotificationForDeletion(selectionToDelete);
+    // Capture what's about to be deleted while selectionToDelete is still valid.
+    auto deletedText = recordDeletionForAccessibility(selectionToDelete);
 
     // Make undo select everything that has been deleted, unless an undo will undo more than just this deletion.
     // FIXME: This behaves like TextEdit except for the case where you open with text insertion and then delete
@@ -781,6 +790,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);
     setSmartDelete(false);
     typingAddedToOpenCommand(Type::DeleteKey);
+    postTextStateChangeNotificationForDeletion(deletedText);
 }
 
 bool TypingCommand::performSmartListUndo(TextGranularity granularity)
@@ -911,8 +921,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     if (!willAddTypingToOpenCommand(Type::ForwardDeleteKey, granularity, { }, selectionToDelete.firstRange()))
         return;
 
-    // Post the accessibility notification before actually deleting the content while selectionToDelete is still valid
-    postTextStateChangeNotificationForDeletion(selectionToDelete);
+    // Capture what's about to be deleted while selectionToDelete is still valid; the notification is
+    // posted below, once the deletion is done.
+    auto deletedText = recordDeletionForAccessibility(selectionToDelete);
 
     if (shouldAddToKillRing)
         protect(document())->editor().addRangeToKillRing(*selectionToDelete.toNormalizedRange(), Editor::KillRingInsertionMode::AppendText);
@@ -921,6 +932,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
     CompositeEditCommand::deleteSelection(selectionToDelete, m_smartDelete, /* mergeBlocksAfterDelete*/ true, /* replace*/ false, expandForSpecialElements, /*sanitizeMarkup*/ true);
     setSmartDelete(false);
     typingAddedToOpenCommand(Type::ForwardDeleteKey);
+    postTextStateChangeNotificationForDeletion(deletedText);
 }
 
 void TypingCommand::deleteSelection(bool smartDelete)
