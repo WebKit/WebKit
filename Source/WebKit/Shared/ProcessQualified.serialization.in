@@ -117,6 +117,14 @@ header: <WebCore/WebKitJSHandle.h>
     WebCore::ProcessIdentifier processIdentifier();
 };
 
+header: "IdentifierTypes.h"
+#if ENABLE(WEBDRIVER_BIDI)
+[Alias=class WebCore::ProcessQualified<ObjectIdentifier<WebKit::RealmIdentifierType>>, CustomHeader] alias WebKit::RealmIdentifier {
+    WebKit::NonProcessQualifiedRealmIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+#endif
+
 header: <WebCore/ResourceLoaderIdentifier.h>
 [Alias=class ProcessQualified<ResourceLoaderIdentifier>, CustomHeader] alias WebCore::ScopedResourceLoaderIdentifier {
     WebCore::ResourceLoaderIdentifier object();
