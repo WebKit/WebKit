@@ -667,6 +667,7 @@ webkit_target_add_swift_options(TestWebKitAPILibrary
 
 list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/CodingTests.swift
+    Tests/WebKit/WKWebView/TextExtractionTests.swift
     Tests/WebKit/WKWebView/TextFragments.swift
     Tests/WebKit/WKWebView/TextPlaceholderTests.swift
     Tests/WebKit/WKWebView/TextSize.swift
