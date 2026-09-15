@@ -36,22 +36,22 @@ class ConfigurationControllerTest(unittest.TestCase):
 
     def test_configurations_from_query_expansion(self):
         self.assertEqual(
-            sorted([Configuration(platform='iOS'), Configuration(platform='Mac')]),
-            sorted(self.func(platform=['iOS', 'Mac'])),
+            sorted([Configuration(platform='ios'), Configuration(platform='mac')]),
+            sorted(self.func(platform=['ios', 'mac'])),
         )
         self.assertEqual(
             sorted([
-                Configuration(platform='iOS', style='Release'),
-                Configuration(platform='Mac', style='Debug'),
-                Configuration(platform='iOS', style='Debug'),
-                Configuration(platform='Mac', style='Release'),
-            ]), sorted(self.func(platform=['iOS', 'Mac'], style=['Debug', 'Release'])),
+                Configuration(platform='ios', style='Release'),
+                Configuration(platform='mac', style='Debug'),
+                Configuration(platform='ios', style='Debug'),
+                Configuration(platform='mac', style='Release'),
+            ]), sorted(self.func(platform=['ios', 'mac'], style=['Debug', 'Release'])),
         )
 
     def test_configurations_from_query_platform(self):
         self.assertEqual(
-            [Configuration(platform='iOS')],
-            self.func(platform=['iOS']),
+            [Configuration(platform='ios')],
+            self.func(platform=['ios']),
         )
 
     def test_configuration_from_query_version(self):

@@ -49,7 +49,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
     def test_find_archive(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         archives = self.model.archive_context.find_archive(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
@@ -61,7 +61,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
     def test_archive_list(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.ls(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
@@ -74,7 +74,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.file(
             path='file.txt',
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
@@ -86,7 +86,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
     def test_file_list(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         files = self.model.archive_context.file(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
@@ -108,12 +108,12 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
         self.init_database(
             redis=redis, cassandra=cassandra,
-            configuration=Configuration(platform='Mac', style='Release', flavor='wk1'),
+            configuration=Configuration(platform='mac', style='Release', flavor='wk1'),
             archive=buff,
         )
 
         files = self.model.archive_context.find_archive(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             begin=1601660000, end=1601660000,
             suite='layout-tests',
         )
@@ -123,7 +123,7 @@ class ArchiveContextTest(WaitForDockerTestCase):
 
         with mock.patch('resultsdbpy.model.archive_context.ArchiveContext.MEMORY_LIMIT', new=FILE_SIZE), self.assertRaises(RuntimeError):
             self.model.archive_context.find_archive(
-                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
                 begin=1601660000, end=1601660000,
                 suite='layout-tests',
             )

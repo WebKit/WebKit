@@ -29,8 +29,8 @@ class Configuration(object):
     """
     This class is designed to use a partial configuration to match more complete configurations. Generally, an instance
     of this class will match another instance if all members match or are None. This means that, for example, a
-    Configuration object with a platform of 'Mac' and all other members set to None will match any Configuration object
-    with a platform of 'Mac', regardless of the values of the Configuration's other members.
+    Configuration object with a platform of 'mac' and all other members set to None will match any Configuration object
+    with a platform of 'mac', regardless of the values of the Configuration's other members.
     """
 
     VERSION_OFFSET_CONSTANT = 1000

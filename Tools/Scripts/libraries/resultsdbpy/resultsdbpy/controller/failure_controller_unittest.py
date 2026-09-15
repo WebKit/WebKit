@@ -61,7 +61,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_failures_collapsed(self, client, **kwargs):
-        response = client.get(self.URL + '/api/failures/layout-tests?platform=iOS&style=Debug&unexpected=False')
+        response = client.get(self.URL + '/api/failures/layout-tests?platform=ios&style=Debug&unexpected=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(response.json(), ['fast/encoding/css-cached-bom.html', 'fast/encoding/css-charset-default.xhtml'])
@@ -69,7 +69,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_unexpected_failures_collapsed(self, client, **kwargs):
-        response = client.get(self.URL + '/api/failures/layout-tests?platform=iOS&style=Debug')
+        response = client.get(self.URL + '/api/failures/layout-tests?platform=ios&style=Debug')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
         self.assertEqual(response.json(), ['fast/encoding/css-cached-bom.html'])
@@ -77,7 +77,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_failures(self, client, **kwargs):
-        response = client.get(self.URL + '/api/failures/layout-tests?platform=Mac&style=Debug&unexpected=False&collapsed=False')
+        response = client.get(self.URL + '/api/failures/layout-tests?platform=mac&style=Debug&unexpected=False&collapsed=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(len(response.json()[0]['results']), 5)
@@ -87,7 +87,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_unexpected_failures(self, client, **kwargs):
-        response = client.get(self.URL + '/api/failures/layout-tests?platform=Mac&style=Debug&collapsed=False')
+        response = client.get(self.URL + '/api/failures/layout-tests?platform=mac&style=Debug&collapsed=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         self.assertEqual(len(response.json()[0]['results']), 5)
@@ -96,7 +96,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_failure_by_time(self, client, **kwargs):
-        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=iOS&style=Debug&recent=False&after_time={time.time() - 60 * 60}&collapsed=False')
+        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=ios&style=Debug&recent=False&after_time={time.time() - 60 * 60}&collapsed=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         for i in range(2):
@@ -109,7 +109,7 @@ class FailureControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_no_runs(self, client, **kwargs):
-        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=iOS&style=Debug&recent=False&before_uuid=0')
+        response = client.get(f'{self.URL}/api/failures/layout-tests?platform=ios&style=Debug&recent=False&before_uuid=0')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json(), dict(
             status='error',

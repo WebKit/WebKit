@@ -66,7 +66,7 @@ class TestContextTest(WaitForDockerTestCase):
     def test_find_all(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_commit(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-link-charset.html', recent=True,
         )
 
@@ -82,7 +82,7 @@ class TestContextTest(WaitForDockerTestCase):
     def test_find_by_commit(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_commit(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-cached-bom.html', recent=False,
             begin=1601661000,
             end=1601663000,
@@ -95,7 +95,7 @@ class TestContextTest(WaitForDockerTestCase):
     def test_find_by_time(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
         results = self.model.test_context.find_by_start_time(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', test='fast/encoding/css-charset.html', recent=False,
             begin_query_time=(time.time() - 60 * 60),
         )

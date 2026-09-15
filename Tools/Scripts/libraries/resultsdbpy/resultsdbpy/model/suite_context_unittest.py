@@ -47,7 +47,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_commit(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=True,
         )
         self.assertEqual(len(results), 1)
@@ -58,7 +58,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_commit(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=False,
             begin=1601661000,
             end=1601663000,
@@ -72,7 +72,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_start_time(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', recent=False,
             begin_query_time=(time.time() - 60 * 60),
         )
@@ -85,7 +85,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
 
         results = self.model.suite_context.find_by_start_time(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests',
             begin=1601660000,
             end=1601660000,
@@ -120,7 +120,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra, test_results=test_results)
 
         results = self.model.suite_context.find_by_start_time(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests',
             begin=1601660000,
             end=1601660000,
@@ -156,7 +156,7 @@ class SuiteContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra, test_results=test_results)
 
         results = self.model.suite_context.find_by_start_time(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests',
             begin=1601660000,
             end=1601660000,
