@@ -299,10 +299,10 @@ WebCore::Frame* WebFrame::coreFrame() const
 
 Awaitable<std::optional<FrameInfoData>> WebFrame::getFrameInfo()
 {
-    co_return info(WithCertificateInfo::Yes);
+    co_return info();
 }
 
-FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
+FrameInfoData WebFrame::info() const
 {
     RefPtr parent = parentFrame();
     RefPtr coreFrame = this->coreFrame();
@@ -337,7 +337,6 @@ FrameInfoData WebFrame::info(WithCertificateInfo withCertificateInfo) const
         page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
         parent ? std::optional { parent->frameID() } : std::nullopt,
         document ? std::optional { document->identifier() } : std::nullopt,
-        withCertificateInfo == WithCertificateInfo::Yes ? certificateInfo() : CertificateInfo(),
         getCurrentProcessID(),
         isFocused(),
         loadingFrame && loadingFrame->loader().errorOccurredInLoading(),

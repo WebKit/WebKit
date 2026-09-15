@@ -39,8 +39,17 @@ Ref<FrameInfo> FrameInfo::create(WebKit::FrameInfoData&& frameInfoData)
     return adoptRef(*new FrameInfo(WTF::move(frameInfoData)));
 }
 
+static WebCore::CertificateInfo certificateInfoFromFrameID(WebCore::FrameIdentifier frameID)
+{
+    RefPtr frame = WebKit::WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return { };
+    return frame->certificateInfo();
+}
+
 FrameInfo::FrameInfo(WebKit::FrameInfoData&& data)
-    : m_data(WTF::move(data)) { }
+    : m_data(WTF::move(data))
+    , m_certificateInfo(certificateInfoFromFrameID(m_data.frameID)) { }
 
 FrameInfo::~FrameInfo() = default;
 

@@ -117,8 +117,6 @@ struct JSHandleInfo;
 struct ProvisionalFrameCreationParameters;
 struct WebsitePoliciesData;
 
-enum class WithCertificateInfo : bool { No, Yes };
-
 class WebFrame : public API::ObjectImpl<API::Object::Type::BundleFrame>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
     static Ref<WebFrame> create(WebPage& page, WebCore::FrameIdentifier frameID) { return adoptRef(*new WebFrame(page, frameID)); }
@@ -150,7 +148,7 @@ public:
     WebCore::LocalFrame* provisionalFrame() { return m_provisionalFrame.get(); }
 
     Awaitable<std::optional<FrameInfoData>> getFrameInfo();
-    FrameInfoData info(WithCertificateInfo = WithCertificateInfo::No) const;
+    FrameInfoData info() const;
     FrameTreeNodeData frameTreeData() const;
 
     WebCore::FrameIdentifier frameID() const { return m_frameID; }

@@ -7386,7 +7386,8 @@ TEST(SiteIsolation, FrameServerTrust)
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *frameInfo, void (^completionHandler)(void)) {
         EXPECT_WK_STREQ(message, "iframe loaded");
-        EXPECT_NULL(frameInfo._serverTrust);
+        EXPECT_NOT_NULL(frameInfo._serverTrust);
+        verifyCertificateAndPublicKey(frameInfo._serverTrust);
         completionHandler();
         receivedAlert = true;
     };

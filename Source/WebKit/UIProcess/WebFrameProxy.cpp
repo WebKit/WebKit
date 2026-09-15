@@ -750,10 +750,6 @@ void WebFrameProxy::getFrameInfo(CompletionHandler<void(std::optional<FrameInfoD
             RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: topOrigin mismatch");
             frameInfo->topOrigin = WTF::move(topOrigin);
         }
-        if (frameInfo->certificateInfo != certificateInfo()) {
-            RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: certificateInfo mismatch");
-            frameInfo->certificateInfo = certificateInfo();
-        }
         if (frameInfo->processID != process().processID()) {
             RELEASE_LOG_ERROR(IPC, "WebFrameProxy::getFrameInfo: process ID mismatch");
             frameInfo->processID = process().processID();

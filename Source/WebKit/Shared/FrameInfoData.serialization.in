@@ -35,7 +35,6 @@ struct WebKit::FrameInfoData {
     Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
     Markable<WebCore::FrameIdentifier> parentFrameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
-    WebCore::CertificateInfo certificateInfo;
     WTF::ProcessID processID;
     bool isFocused;
     bool errorOccurred;
