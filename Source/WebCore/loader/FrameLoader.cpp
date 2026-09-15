@@ -4279,6 +4279,11 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
             m_provisionalLoadHappeningInAnotherProcess = true;
         }
 
+        // The navigation continues in another process; mark the async back-forward navigation complete
+        // so the leftover state won't prevent this cached page from being restored later.
+        if (navigationPolicyDecision == NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
+            clearAsyncBackForwardNavigationState();
+
         if (navigationPolicyDecision != NavigationPolicyDecision::LoadWillContinueInAnotherProcess)
             checkLoadComplete();
 
