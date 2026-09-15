@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include <WebCore/RectEdges.h>
 #include <WebCore/StyleScope.h>
 
 namespace WebCore {
@@ -69,6 +70,19 @@ public:
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
 
+    // The scroll state of a scroll-state query container, snapshotted after layout and used as the
+    // input to container query evaluation until the next snapshot.
+    // https://drafts.csswg.org/css-conditional-5/#updating-scroll-state
+    struct ScrollState {
+        // Edges the container can currently be scrolled further toward.
+        RectEdges<bool> scrollableEdges { false, false, false, false };
+
+        bool operator==(const ScrollState&) const = default;
+    };
+    // Runs as part of the snapshot post-layout state steps, invalidating the containers whose state changed.
+    void updateScrollStateSnapshots();
+    ScrollState scrollStateSnapshotFor(const Element&) const;
+
     AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     const AnchorPositionedToAnchorMap& anchorPositionedToAnchorMap() const LIFETIME_BOUND { return m_anchorPositionedToAnchorMap; }
     void updateAnchorPositioningStateAfterStyleResolution();
@@ -97,6 +111,7 @@ private:
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
     WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerDimensionsOnLastUpdate;
+    WeakHashMap<Element, ScrollState, WeakPtrImplWithEventTargetData> m_queryContainerScrollStatesOnLastUpdate;
 
     struct AnchorPosition {
         LayoutRect absoluteRect;
