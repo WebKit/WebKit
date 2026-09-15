@@ -3,8 +3,8 @@
 // (https://github.com/w3c/webref)
 // Source: WebRTC Encoded Transform (https://w3c.github.io/webrtc-encoded-transform/)
 
-typedef (RTCSFrameSenderTransform or RTCRtpScriptTransform) RTCRtpSenderTransform;
-typedef (RTCSFrameReceiverTransform or RTCRtpScriptTransform) RTCRtpReceiverTransform;
+typedef (RTCRtpSFrameEncryptor or RTCRtpScriptTransform) RTCRtpSenderTransform;
+typedef (RTCRtpSFrameDecryptor or RTCRtpScriptTransform) RTCRtpReceiverTransform;
 
 // New methods for RTCRtpSender and RTCRtpReceiver
 partial interface RTCRtpSender {
@@ -15,57 +15,69 @@ partial interface RTCRtpReceiver {
     attribute RTCRtpReceiverTransform? transform;
 };
 
-// List of supported cipher suites, as defined in [[RFC9605]] section 4.5.
+// List of supported cipher suites, as defined in [[RFC9605]] section 4.5 and in https://datatracker.ietf.org/doc/draft-barnes-sframe-iana-256/.
 enum SFrameCipherSuite {
      "AES_128_CTR_HMAC_SHA256_80",
      "AES_128_CTR_HMAC_SHA256_64",
      "AES_128_CTR_HMAC_SHA256_32",
      "AES_128_GCM_SHA256_128",
-     "AES_256_GCM_SHA512_128"
+     "AES_256_GCM_SHA512_128",
+     "AES_256_CTR_HMAC_SHA512_80",
+     "AES_256_CTR_HMAC_SHA512_64",
+     "AES_256_CTR_HMAC_SHA512_32"
 };
 
 dictionary SFrameTransformOptions {
     required SFrameCipherSuite cipherSuite;
 };
 
+enum SFrameType {
+    "per-frame",
+    "per-packet"
+};
+
+dictionary RTCRtpSFrameEncryptorOptions : SFrameTransformOptions {
+    SFrameType type = "per-frame";
+};
+
 typedef [EnforceRange] unsigned long long SmallCryptoKeyID;
 typedef (SmallCryptoKeyID or bigint) CryptoKeyID;
 
-interface mixin SFrameEncrypterManager {
+interface mixin SFrameEncryptorManager {
     Promise<undefined> setEncryptionKey(CryptoKey key, CryptoKeyID keyId);
 };
 
-interface mixin SFrameDecrypterManager {
+interface mixin SFrameDecryptorManager {
     Promise<undefined> addDecryptionKey(CryptoKey key, CryptoKeyID keyId);
     Promise<undefined> removeDecryptionKey(CryptoKeyID keyId);
     attribute EventHandler onerror;
 };
 
 [Exposed=Window]
-interface RTCSFrameSenderTransform {
-    constructor(optional SFrameTransformOptions options = {});
+interface RTCRtpSFrameEncryptor {
+    constructor(RTCRtpSFrameEncryptorOptions options);
 };
-RTCSFrameSenderTransform includes SFrameEncrypterManager;
+RTCRtpSFrameEncryptor includes SFrameEncryptorManager;
 
 [Exposed=Window]
-interface RTCSFrameReceiverTransform : EventTarget {
-    constructor(optional SFrameTransformOptions options = {});
+interface RTCRtpSFrameDecryptor : EventTarget {
+    constructor(SFrameTransformOptions options);
 };
-RTCSFrameReceiverTransform includes SFrameDecrypterManager;
+RTCRtpSFrameDecryptor includes SFrameDecryptorManager;
 
 [Exposed=(Window,DedicatedWorker)]
-interface SFrameEncrypterStream : EventTarget {
-    constructor(optional SFrameTransformOptions options = {});
+interface SFrameEncryptorStream {
+    constructor(SFrameTransformOptions options);
 };
-SFrameEncrypterStream includes GenericTransformStream;
-SFrameEncrypterStream includes SFrameEncrypterManager;
+SFrameEncryptorStream includes GenericTransformStream;
+SFrameEncryptorStream includes SFrameEncryptorManager;
 
 [Exposed=(Window,DedicatedWorker)]
-interface SFrameDecrypterStream : EventTarget {
-    constructor(optional SFrameTransformOptions options = {});
+interface SFrameDecryptorStream : EventTarget {
+    constructor(SFrameTransformOptions options);
 };
-SFrameDecrypterStream includes GenericTransformStream;
-SFrameDecrypterStream includes SFrameDecrypterManager;
+SFrameDecryptorStream includes GenericTransformStream;
+SFrameDecryptorStream includes SFrameDecryptorManager;
 
 enum SFrameTransformErrorEventType {
     "authentication",
@@ -79,12 +91,12 @@ interface SFrameTransformErrorEvent : Event {
 
     readonly attribute SFrameTransformErrorEventType errorType;
     readonly attribute CryptoKeyID? keyID;
-    readonly attribute any frame;
+    readonly attribute (RTCEncodedVideoFrame or RTCEncodedAudioFrame) frame;
 };
 
 dictionary SFrameTransformErrorEventInit : EventInit {
     required SFrameTransformErrorEventType errorType;
-    required any frame;
+    required (RTCEncodedVideoFrame or RTCEncodedAudioFrame) frame;
     CryptoKeyID? keyID;
 };
 
@@ -138,9 +150,20 @@ interface RTCEncodedAudioFrame {
     RTCEncodedAudioFrameMetadata getMetadata();
 };
 
+enum RTCRtpScriptTransformType {
+    "sframe"
+};
+
+dictionary WorkerAndParameters {
+     required Worker worker;
+     RTCRtpScriptTransformType type;
+};
+
+typedef (Worker or WorkerAndParameters) WorkerOrWorkerAndParameters;
+
 [Exposed=Window]
 interface RTCRtpScriptTransform {
-    constructor(Worker worker, optional any options, optional sequence<object> transfer);
+    constructor(WorkerOrWorkerAndParameters workerOrWorkerAndParameters, optional any options, optional sequence<object> transfer);
 };
 
 [Exposed=DedicatedWorker]

@@ -12,6 +12,7 @@ interface SpeechRecognition : EventTarget {
     attribute DOMString lang;
     attribute boolean continuous;
     attribute boolean interimResults;
+    attribute boolean unspokenPunctuation;
     attribute unsigned long maxAlternatives;
     attribute boolean processLocally;
     attribute ObservableArray<SpeechRecognitionPhrase> phrases;
@@ -38,9 +39,16 @@ interface SpeechRecognition : EventTarget {
     attribute EventHandler onend;
 };
 
+enum SpeechRecognitionQuality {
+  "command",
+  "dictation",
+  "conversation"
+};
+
 dictionary SpeechRecognitionOptions {
   required sequence<DOMString> langs;
   boolean processLocally = false;
+  SpeechRecognitionQuality quality = "command";
 };
 
 enum SpeechRecognitionErrorCode {
