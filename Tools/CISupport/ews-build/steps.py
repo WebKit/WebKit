@@ -8152,7 +8152,7 @@ class ParseStaticAnalyzerResultsWithoutChange(ParseStaticAnalyzerResults):
 class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
     name = 'find-modified-safer-cpp-expectations'
     RE_FILE = r'^(\+|-)(?P<file>[^/+/-].+(?:\.cpp|\.mm|\.h|\.m|\.c))$'
-    RE_EXPECTATIONS = r'^(\+\+\+).+(Source/(?P<project>.+)/SaferCPPExpectations/(?P<checker>.+)Expectations)$'
+    RE_EXPECTATIONS = r'^(\+\+\+|---).+(Source/(?P<project>.+)/SaferCPPExpectations/(?P<checker>.+)Expectations)$'
     command = ['git', 'diff', 'HEAD~1', '--', '*Expectations']
 
     def __init__(self, **kwargs):
@@ -8176,6 +8176,7 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
         yield self._addToLog('stdio', '\nLooking for changes to Safer CPP expectations...\n')
         removed_tests = []
         added_tests = []
+        project = checker = None
         for line in logText.splitlines():
             expectation_match = re.search(self.RE_EXPECTATIONS, line, re.IGNORECASE)
             if expectation_match:
@@ -8183,7 +8184,7 @@ class FindModifiedSaferCPPExpectations(shell.ShellCommand, AddToLogMixin):
                 checker = expectation_match.group('checker')
                 yield self._addToLog('stdio', f'Changes for {project}/{checker}...\n')
             file_match = re.search(self.RE_FILE, line, re.IGNORECASE)
-            if file_match:
+            if file_match and project and checker:
                 test_name = f"{project}/{file_match.group('file')}/{checker}"
                 if file_match.group(1) == '+':
                     added_tests.append(test_name)
