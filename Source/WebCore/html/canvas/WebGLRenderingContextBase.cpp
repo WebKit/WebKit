@@ -3246,10 +3246,12 @@ static bool NODELETE isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame
 #endif // ENABLE(WEB_CODECS)
 
 namespace {
-// The image contents to upload, together with the premultiplication of the contents.
+// The image contents to upload, together with the premultiplication of the contents. std::nullopt
+// means the contents were decoded for this upload, in which case the image itself states the
+// premultiplication, as image decoders do not necessarily honor the requested one.
 struct TexImageSourceImage {
     RefPtr<NativeImage> image;
-    AlphaPremultiplication alphaPremultiplication { AlphaPremultiplication::Premultiplied };
+    std::optional<AlphaPremultiplication> alphaPremultiplication;
 };
 }
 
@@ -3258,17 +3260,19 @@ struct TexImageSourceImage {
 // In such cases decode the encoded data again with the properties the upload needs.
 static TexImageSourceImage nativeImageForTexImageSource(Image& image, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
+    // Images without encoded data are backed by image buffers, which hold premultiplied alpha.
+    RefPtr data = image.data();
+    if (!data)
+        return { image.currentNativeImage(), AlphaPremultiplication::Premultiplied };
     bool hasAlpha = !image.currentFrameKnownToBeOpaque();
-    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image.data()) {
+    if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) {
         auto decodedImage = BitmapImage::create(nullptr, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
-        decodedImage->setData(image.data(), true);
+        decodedImage->setData(WTF::move(data), true);
         if (!decodedImage->frameCount())
             return { };
-        // The decode above produced the premultiplication the upload asked for.
-        return { decodedImage->currentNativeImage(), premultiplyAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied };
+        return { decodedImage->currentNativeImage(), std::nullopt };
     }
-    // Decoded frames hold premultiplied alpha.
-    return { image.currentNativeImage(), AlphaPremultiplication::Premultiplied };
+    return { image.currentNativeImage(), std::nullopt };
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
@@ -3618,7 +3622,7 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
     }
 }
 
-void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, NativeImage& image, AlphaPremultiplication sourceAlphaPremultiplication, bool flipY, bool premultiplyAlpha, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight)
+void WebGLRenderingContextBase::texImageImpl(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLenum format, GCGLenum type, NativeImage& image, std::optional<AlphaPremultiplication> sourceAlphaPremultiplication, bool flipY, bool premultiplyAlpha, const IntRect& sourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight)
 {
     auto functionName = texImageFunctionName(functionID);
     // All calling functions check isContextLost, so a duplicate check is not
