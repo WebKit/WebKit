@@ -204,8 +204,9 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 #endif
 - (void)_cancelFixedColorExtensionFadeAnimationsForTesting;
 
-- (void)_startMonitoringWheelEventsForTesting:(void(^)(void))completionHandler;
-- (void)_waitForWheelEventsToCompleteForTesting:(void(^)(void))completionHandler;
+- (void)_startMonitoringWheelEventsForTestingWithCompletionHandler:(void(^)(void))completionHandler;
+- (void)_waitForWheelEventsToCompleteForTestingWithCompletionHandler:(void(^)(void))completionHandler;
+- (void)_waitForWheelEventsAndMomentumToCompleteForTestingWithCompletionHandler:(void(^)(void))completionHandler;
 
 - (unsigned)_forwardedLogsCountForTesting;
 - (bool)_receivedLogsDuringLaunchForTesting;

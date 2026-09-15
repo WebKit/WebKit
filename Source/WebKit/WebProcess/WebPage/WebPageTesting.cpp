@@ -140,7 +140,7 @@ void WebPageTesting::startMonitoringWheelEventsForTesting(CompletionHandler<void
     completionHandler();
 }
 
-void WebPageTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<void()>&& completionHandler)
+void WebPageTesting::waitForWheelEventsToCompleteForTesting(bool expectMomentumEnd, CompletionHandler<void()>&& completionHandler)
 {
     RefPtr page = m_page ? m_page->corePage() : nullptr;
     if (!page || !page->isMonitoringWheelEvents()) {
@@ -149,7 +149,7 @@ void WebPageTesting::waitForWheelEventsToCompleteForTesting(CompletionHandler<vo
     }
 
     if (auto wheelEventTestMonitor = page->wheelEventTestMonitor())
-        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(true, false, WTF::move(completionHandler));
+        wheelEventTestMonitor->setTestCallbackAndStartMonitoring(true, expectMomentumEnd, WTF::move(completionHandler));
     else
         completionHandler();
 }

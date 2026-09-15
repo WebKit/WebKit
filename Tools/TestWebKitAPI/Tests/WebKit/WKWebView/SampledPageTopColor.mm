@@ -325,7 +325,7 @@ static void scrollPageDown(TestWKWebView *webView)
 #if PLATFORM(MAC)
     {
         __block bool done = false;
-        [webView _startMonitoringWheelEventsForTesting:^{
+        [webView _startMonitoringWheelEventsForTestingWithCompletionHandler:^{
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
@@ -338,7 +338,7 @@ static void scrollPageDown(TestWKWebView *webView)
 
     {
         __block bool done = false;
-        [webView _waitForWheelEventsToCompleteForTesting:^{
+        [webView _waitForWheelEventsToCompleteForTestingWithCompletionHandler:^{
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
@@ -1206,7 +1206,7 @@ TEST(SampledPageTopColor, TopScrollStretchingDoesNotPreventTopEdgeSampling)
 #if PLATFORM(MAC)
     {
         __block bool done = false;
-        [webView _startMonitoringWheelEventsForTesting:^{
+        [webView _startMonitoringWheelEventsForTestingWithCompletionHandler:^{
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
@@ -1219,7 +1219,7 @@ TEST(SampledPageTopColor, TopScrollStretchingDoesNotPreventTopEdgeSampling)
 
     {
         __block bool done = false;
-        [webView _waitForWheelEventsToCompleteForTesting:^{
+        [webView _waitForWheelEventsToCompleteForTestingWithCompletionHandler:^{
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
@@ -1256,7 +1256,7 @@ TEST(SampledPageTopColor, TopScrollStretchingDoesNotPreventTopEdgeSampling)
 
     {
         __block bool done = false;
-        [webView _waitForWheelEventsToCompleteForTesting:^{
+        [webView _waitForWheelEventsToCompleteForTestingWithCompletionHandler:^{
             done = true;
         }];
         TestWebKitAPI::Util::run(&done);
