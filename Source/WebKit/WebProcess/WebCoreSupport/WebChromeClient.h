@@ -586,8 +586,6 @@ private:
 
     void setIsInRedo(bool) final;
 
-    void hasActiveNowPlayingSessionChanged(bool) final;
-
 #if ENABLE(GPU_PROCESS)
     void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<WebCore::ImageBufferResourceLimits>)>&&) const final;
 #endif

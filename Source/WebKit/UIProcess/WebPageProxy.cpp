@@ -8832,6 +8832,11 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         m_sessionHistoryTraversalQueue->traversalDidSettle();
         recordFirstPartyVisit(request.url());
+
+        // A new document has no media sessions. The GPU process withdraws the elected session over its own
+        // connection, which is not ordered against this commit, so drop the claim here to keep it in step with
+        // the navigation; the election reports this page again if it wins with the new document.
+        hasActiveNowPlayingSessionChanged(false);
     }
 
     if (frame->provisionalFrame()) {

@@ -690,8 +690,6 @@ messages -> WebPageProxy {
     [EnabledBy=GamepadsEnabled] GamepadsRecentlyAccessed()
 #endif
 
-    HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
-
     SetAllowsLayoutViewportHeightExpansion(bool newValue)
 
 #if ENABLE(VIDEO)

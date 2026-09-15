@@ -44,7 +44,6 @@
 
 namespace WebCore {
 
-class MediaSessionManagerClient;
 class Page;
 class PlatformMediaSessionInterface;
 struct NowPlayingMetadata;
@@ -93,7 +92,6 @@ public:
     virtual std::optional<MediaUniqueIdentifier> lastUpdatedNowPlayingInfoUniqueIdentifier() const { return std::nullopt; }
     virtual void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
     virtual void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
-    virtual bool hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier>);
     virtual bool registeredAsNowPlayingApplication() const { return false; }
     virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
@@ -189,9 +187,6 @@ public:
 protected:
     explicit MediaSessionManagerInterface(std::optional<PageIdentifier>);
 
-    MediaSessionManagerClient& client() const;
-    void setClient(std::unique_ptr<MediaSessionManagerClient>&&);
-
     virtual WeakListHashSet<PlatformMediaSessionInterface>& sessions() const = 0;
     virtual Vector<WeakPtr<PlatformMediaSessionInterface>> copySessionsToVector() const = 0;
 
@@ -248,7 +243,6 @@ private:
     TaskCancellationGroup m_taskGroup;
 
     Markable<PageIdentifier> m_pageIdentifier;
-    std::unique_ptr<MediaSessionManagerClient> m_client;
 #if !RELEASE_LOG_DISABLED
     UniqueRef<Timer> m_stateLogTimer;
     const Ref<AggregateLogger> m_logger;

@@ -226,6 +226,10 @@ private:
 
     void setMediaCodecCapabilities(GPUProcessMediaCodecCapabilities&& mediaCodecCapabilities) { s_gpuProcessMediaCodecCapabilities = WTF::move(mediaCodecCapabilities); }
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    void nowPlayingOwnerDidChange(std::optional<WebCore::QualifiedPageIdentifier>);
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     void voiceActivityDetected();
     void microphoneMuteStatusChanged(bool isMuting);
@@ -267,6 +271,10 @@ private:
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    std::optional<WebCore::QualifiedPageIdentifier> m_nowPlayingOwnerPage;
+#endif
 };
 
 } // namespace WebKit

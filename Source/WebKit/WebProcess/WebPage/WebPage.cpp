@@ -10967,11 +10967,6 @@ void WebPage::removeReasonsToDisallowLayoutViewportHeightExpansion(OptionSet<Dis
         send(Messages::WebPageProxy::SetAllowsLayoutViewportHeightExpansion(true));
 }
 
-void WebPage::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
-{
-    send(Messages::WebPageProxy::HasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession));
-}
-
 void WebPage::simulateClickOverFirstMatchingTextInViewportWithUserInteraction(const String& targetText, CompletionHandler<void(bool)>&& completion)
 {
     ASSERT(!targetText.isEmpty());
