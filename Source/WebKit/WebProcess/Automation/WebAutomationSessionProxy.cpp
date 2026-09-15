@@ -1231,6 +1231,47 @@ void WebAutomationSessionProxy::scriptRealmDestroyed(WebCore::FrameIdentifier fr
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptRealmDestroyed(frameID, realmIdentifier), 0);
 }
 
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::SecurityOriginData& origin)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmCreated(workerIdentifier, ownerFrameIdentifier, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier), 0);
+}
+
+void WebAutomationSessionProxy::getDedicatedWorkerRealms(WebCore::PageIdentifier pageID, CompletionHandler<void(Vector<DedicatedWorkerRealmData>&&)>&& completionHandler)
+{
+    Vector<DedicatedWorkerRealmData> result;
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage || !corePage->isControlledByAutomation()) {
+        completionHandler(WTF::move(result));
+        return;
+    }
+
+    result = AutomationInstrumentation::dedicatedWorkerRealms(pageID);
+
+    completionHandler(WTF::move(result));
+}
+
+void WebAutomationSessionProxy::scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier workerIdentifier, const Vector<WebCore::FrameIdentifier>& activeOwnerFrameIdentifiers, const Vector<WebCore::FrameIdentifier>& attachedOwnerFrameIdentifiers, const WebCore::SecurityOriginData& origin)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptSharedWorkerRealmStateChanged(workerIdentifier, activeOwnerFrameIdentifiers, attachedOwnerFrameIdentifiers, origin), 0);
+}
+
+void WebAutomationSessionProxy::scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier workerIdentifier)
+{
+    protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptSharedWorkerRealmDestroyed(workerIdentifier), 0);
+}
+
+void WebAutomationSessionProxy::getSharedWorkerRealms(CompletionHandler<void(Vector<SharedWorkerRealmData>&&)>&& completionHandler)
+{
+    completionHandler(AutomationInstrumentation::sharedWorkerRealms());
+}
+
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

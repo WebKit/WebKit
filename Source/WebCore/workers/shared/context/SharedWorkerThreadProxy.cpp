@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SharedWorkerThreadProxy.h"
 
+#include "AutomationInstrumentation.h"
 #include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "Chrome.h"
@@ -105,12 +106,14 @@ bool SharedWorkerThreadProxy::hasInstances()
     return !allSharedWorkerThreadProxies().isEmpty();
 }
 
-SharedWorkerThreadProxy::SharedWorkerThreadProxy(Ref<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, CacheStorageProvider& cacheStorageProvider)
+SharedWorkerThreadProxy::SharedWorkerThreadProxy(Ref<Page>&& page, SharedWorkerIdentifier sharedWorkerIdentifier, const ClientOrigin& clientOrigin, WorkerFetchResult&& workerFetchResult, WorkerOptions&& workerOptions, WorkerInitializationData&& initializationData, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers, CacheStorageProvider& cacheStorageProvider)
     : m_page(WTF::move(page))
     , m_document(*m_page->localTopDocument())
     , m_contextIdentifier(*initializationData.clientIdentifier)
     , m_workerThread(SharedWorkerThread::create(sharedWorkerIdentifier, generateWorkerParameters(workerFetchResult, WTF::move(workerOptions), WTF::move(initializationData), m_document), WTF::move(workerFetchResult.script), *this, *this, *this, *this, WorkerThreadStartMode::Normal, clientOrigin.topOrigin.securityOrigin(), protect(m_document->idbConnectionProxy()).get(), protect(m_document->socketProvider()).get(), JSC::RuntimeFlags::createAllEnabled()))
     , m_cacheStorageProvider(cacheStorageProvider)
+    , m_activeOwnerFrameIdentifiers(WTF::move(activeOwnerFrameIdentifiers))
+    , m_attachedOwnerFrameIdentifiers(WTF::move(attachedOwnerFrameIdentifiers))
     , m_clientOrigin(clientOrigin)
 {
     ASSERT(!allSharedWorkerThreadProxies().contains(m_contextIdentifier));
@@ -137,6 +140,39 @@ SharedWorkerThreadProxy::~SharedWorkerThreadProxy()
 SharedWorkerIdentifier SharedWorkerThreadProxy::identifier() const
 {
     return m_workerThread->identifier();
+}
+
+void SharedWorkerThreadProxy::setOwnerFrameIdentifiers(Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers)
+{
+    ASSERT(isMainThread());
+    m_activeOwnerFrameIdentifiers = WTF::move(activeOwnerFrameIdentifiers);
+    m_attachedOwnerFrameIdentifiers = WTF::move(attachedOwnerFrameIdentifiers);
+#if ENABLE(WEBDRIVER_BIDI)
+    if (isExecutionReady())
+        AutomationInstrumentation::scriptSharedWorkerRealmStateChanged(identifier(), m_activeOwnerFrameIdentifiers, m_attachedOwnerFrameIdentifiers, *m_automationSecurityOrigin);
+#endif
+}
+
+void SharedWorkerThreadProxy::workerBecameExecutionReady(SecurityOriginData&& origin)
+{
+    ASSERT(isMainThread());
+    if (isExecutionReady() || isTerminatingOrTerminated())
+        return;
+
+    m_automationSecurityOrigin = WTF::move(origin);
+#if ENABLE(WEBDRIVER_BIDI)
+    AutomationInstrumentation::scriptSharedWorkerRealmStateChanged(identifier(), m_activeOwnerFrameIdentifiers, m_attachedOwnerFrameIdentifiers, *m_automationSecurityOrigin);
+#endif
+}
+
+void SharedWorkerThreadProxy::workerTerminated()
+{
+    ASSERT(isMainThread());
+#if ENABLE(WEBDRIVER_BIDI)
+    if (isExecutionReady())
+        AutomationInstrumentation::scriptSharedWorkerRealmDestroyed(identifier());
+#endif
+    m_automationSecurityOrigin = std::nullopt;
 }
 
 void SharedWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
