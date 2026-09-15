@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The outsets of a filter on a clipping element must widen the document rect clipping its composited descendants</title>
+<style>
+html { overflow: hidden; }
+body { margin: 0; }
+.blurred {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    filter: blur(10px);
+}
+.child {
+    width: 0;
+    height: 0;
+    border: 100px solid green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="blurred">
+    <div class="child"></div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

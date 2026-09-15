@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The painted content of a composited child must be kept in the region an ancestor drop-shadow samples from</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.filtered {
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 200px;
+    height: 100px;
+    filter: drop-shadow(100px 0 0 green);
+}
+.box {
+    width: 0;
+    height: 0;
+    border: 50px solid green;
+    will-change: transform;
+}
+</style>
+</head>
+<body>
+<div class="clip">
+    <div class="filtered">
+        <div class="box"></div>
+    </div>
+</div>
+</body>
+</html>
