@@ -1130,12 +1130,20 @@ bool contains(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+bool spansOverlap(std::span<T, TExtent> a, std::span<U, UExtent> b)
+{
+    return static_cast<const void*>(a.data()) < static_cast<const void*>(std::to_address(b.end()))
+        && static_cast<const void*>(b.data()) < static_cast<const void*>(std::to_address(a.end()));
+}
+
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 void NODELETE memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
     static_assert(sizeof(T) == sizeof(U));
     static_assert(std::is_trivially_copyable_v<T> || std::is_floating_point_v<T>);
     static_assert(std::is_trivially_copyable_v<U> || std::is_floating_point_v<U>);
     RELEASE_ASSERT(destination.size() >= source.size());
+    ASSERT(source.empty() || !spansOverlap(destination.first(source.size()), source));
     memcpy(destination.data(), source.data(), source.size_bytes()); // NOLINT
 }
 
@@ -1233,13 +1241,6 @@ template<typename DestinationType, typename SourceType>
 match_constness_t<SourceType, DestinationType>& consumeAndReinterpretCastTo(std::span<SourceType>& data) requires(sizeof(SourceType) == 1)
 {
     return spanReinterpretCast<match_constness_t<SourceType, DestinationType>>(consumeSpan(data, sizeof(DestinationType)))[0];
-}
-
-template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
-bool spansOverlap(std::span<T, TExtent> a, std::span<U, UExtent> b)
-{
-    return static_cast<const void*>(a.data()) < static_cast<const void*>(std::to_address(b.end()))
-        && static_cast<const void*>(b.data()) < static_cast<const void*>(std::to_address(a.end()));
 }
 
 /* WTF_FOR_EACH */
