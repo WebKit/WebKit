@@ -906,7 +906,7 @@ public:
     void executeEditingCommand(const String& commandName, const String& argument);
     void sendClose();
 
-    void suspendForProcessSwap(CompletionHandler<void(std::optional<bool>)>&&);
+    bool suspendForProcessSwap();
 
     void sendSetWindowFrame(const WebCore::FloatRect&);
 

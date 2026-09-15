@@ -2477,21 +2477,21 @@ void WebPage::sendClose()
     send(Messages::WebPageProxy::ClosePage());
 }
 
-void WebPage::suspendForProcessSwap(CompletionHandler<void(std::optional<bool>)>&& completionHandler)
+bool WebPage::suspendForProcessSwap()
 {
     flushDeferredDidReceiveMouseEvent();
 
     RefPtr page = corePage();
     if (!page)
-        return completionHandler(false);
+        return false;
 
     // FIXME: Make this work if the main frame is not a LocalFrame.
     RefPtr currentHistoryItem = m_mainFrame->coreLocalFrame()->loader().history().currentItem();
     if (!currentHistoryItem)
-        return completionHandler(false);
+        return false;
 
     if (!BackForwardCache::singleton().addIfCacheable(currentHistoryItem->frameItemID(), *page))
-        return completionHandler(false);
+        return false;
 
     // Back/forward cache does not break the opener link for the main frame (only does so for the subframes) because the
     // main frame is normally re-used for the navigation. However, in the case of process-swapping, the main frame
@@ -2499,7 +2499,7 @@ void WebPage::suspendForProcessSwap(CompletionHandler<void(std::optional<bool>)>
     if (RefPtr frame = m_mainFrame->coreLocalFrame())
         frame->detachFromAllOpenedFrames();
 
-    completionHandler(true);
+    return true;
 }
 
 void WebPage::loadURLInFrame(URL&& url, const String& referrer, FrameIdentifier frameID)
@@ -9132,7 +9132,7 @@ void WebPage::setIsSuspended(bool suspended, CompletionHandler<void(std::optiona
 
     WebProcess::singleton().sendPrewarmInformation(m_mainFrame->url());
 
-    suspendForProcessSwap(WTF::move(completionHandler));
+    completionHandler(suspendForProcessSwap());
 }
 
 void WebPage::suspendWithFrameItem(BackForwardFrameItemIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
