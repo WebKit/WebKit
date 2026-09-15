@@ -10,13 +10,13 @@ STANDARDS mode.
  0px 0px
 
 4. 'alt' attribute is set to empty value on a blockified image (image box should not collapse):
-20px 20px
+0px 20px
 
 5. 'alt' attribute is set to empty value and width/height values are set (image box should collapse):
-width attribute is set: 0px 0px
-height attribute is set: 0px 0px
-width and height attributes are set: 0px 0px
-inline style with width set: 0px 0px
-inline style with height set: 0px 0px
-inline style with width and height: 0px 0px
+width attribute is set: 20px 0px
+height attribute is set: 0px 20px
+width and height attributes are set: 20px 20px
+inline style with width set: 20px 0px
+inline style with height set: 0px 20px
+inline style with width and height: 20px 20px
 
