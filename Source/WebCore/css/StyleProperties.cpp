@@ -223,7 +223,10 @@ static constexpr bool NODELETE canUseShorthandForLonghand(CSSPropertyID shorthan
 
     // Avoid collapsing width/height into the new `size` shorthand for copy/paste interop
     // with engines and older WebKit that don't support it yet. See csswg-drafts#820.
+    // The min-size and max-size shorthands are avoided for the same reason.
     case CSSPropertySize:
+    case CSSPropertyMinSize:
+    case CSSPropertyMaxSize:
         return false;
 
     // FIXME: -webkit-mask is a legacy shorthand but it's used to serialize -webkit-mask-clip,

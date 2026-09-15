@@ -14021,6 +14021,32 @@
                 "category": "css-sizing",
                 "url": "https://drafts.csswg.org/css-sizing-4/#sizing-properties"
             }
+        },
+        "min-size": {
+            "codegen-properties": {
+                "longhands": ["min-width", "min-height"],
+                "shorthand-pattern": "CoalescingPair",
+                "settings-flag": "cssSizeShorthandEnabled",
+                "parser-grammar-unused": "<'min-width'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://drafts.csswg.org/css-sizing-4/#sizing-properties"
+            }
+        },
+        "max-size": {
+            "codegen-properties": {
+                "longhands": ["max-width", "max-height"],
+                "shorthand-pattern": "CoalescingPair",
+                "settings-flag": "cssSizeShorthandEnabled",
+                "parser-grammar-unused": "<'max-width'>{1,2}",
+                "parser-grammar-unused-reason": "Needs support for shorthand grammars."
+            },
+            "specification": {
+                "category": "css-sizing",
+                "url": "https://drafts.csswg.org/css-sizing-4/#sizing-properties"
+            }
         }
     },
     "descriptors": {
