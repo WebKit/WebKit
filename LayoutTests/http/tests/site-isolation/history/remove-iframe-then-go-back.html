@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true UsesBackForwardCache=false ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Verifies that back navigation restores iframes correctly after one iframe was removed from DOM.");
+jsTestIsAsync = true;
+
+var loadCount = 0;
+var iframeAUrl = "";
+var iframeBUrl = "";
+
+onmessage = (event) => {
+    var url = event.data;
+    if (url.includes("id=a"))
+        iframeAUrl = url;
+    else if (url.includes("id=b"))
+        iframeBUrl = url;
+    loadCount++;
+
+    if (sessionStorage.verifyPhase) {
+        if (loadCount < 2)
+            return;
+        // After back navigation, both iframes should be restored from history
+        // even though iframe A was removed before navigating away.
+        shouldBeEqualToString("iframeAUrl", "http://localhost:8000/site-isolation/history/resources/report-url.html?id=a");
+        shouldBeEqualToString("iframeBUrl", "http://localhost:8000/site-isolation/history/resources/report-url.html?id=b&navigated=true");
+        delete sessionStorage.verifyPhase;
+        finishJSTest();
+        return;
+    }
+
+    if (loadCount === 2) {
+        // Both iframes loaded. Navigate iframe B to a new URL.
+        document.getElementById("b").src =
+            "http://localhost:8000/site-isolation/history/resources/report-url.html?id=b&navigated=true";
+    } else if (loadCount === 3) {
+        // iframe B navigated. Remove iframe A from DOM, then navigate main frame away.
+        document.getElementById("a").remove();
+        sessionStorage.verifyPhase = "true";
+        location.href = "/site-isolation/history/resources/go-back.html";
+    }
+};
+</script>
+<iframe id="a" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=a"></iframe>
+<iframe id="b" src="http://localhost:8000/site-isolation/history/resources/report-url.html?id=b"></iframe>

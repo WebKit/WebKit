@@ -1,0 +1,12 @@
+Verifies that a srcdoc iframe coexists correctly with a cross-origin iframe during back navigation.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll('iframe').length is 2
+PASS event.data.includes('id=cross&navigated=true') is true
+PASS srcdocContent is "Hello from srcdoc"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
