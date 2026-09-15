@@ -2698,11 +2698,6 @@ void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
     rareData->m_pageLogicalOffset = logicalOffset;
 }
 
-void RenderBlock::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
-{
-    rects.append({ accumulatedOffset, borderBoxSize() });
-}
-
 void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     // FIXME: This is wrong for block-flows that are horizontal.

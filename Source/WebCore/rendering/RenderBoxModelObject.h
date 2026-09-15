@@ -93,6 +93,8 @@ public:
     bool requiresLayer() const override;
 
     virtual LayoutRect borderBoxRectInContainer() const;
+    virtual Vector<FloatRect> localBorderBoxRects() const;
+    void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     LayoutRect borderBoundingBox() const { return { { }, borderBoxRectInContainer().size() }; }
     virtual LayoutRect visualOverflowRect() const;
     virtual LayoutRect firstFragmentBorderBoxRect() const;

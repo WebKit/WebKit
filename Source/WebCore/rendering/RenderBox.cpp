@@ -788,9 +788,9 @@ void RenderBox::setScrollPosition(const ScrollPosition& position, const ScrollPo
     scrollableArea->setScrollPosition(position, options);
 }
 
-void RenderBox::boundingRects(Vector<LayoutRect>& rects, const LayoutPoint& accumulatedOffset) const
+Vector<FloatRect> RenderBox::localBorderBoxRects() const
 {
-    rects.append({ accumulatedOffset, borderBoxSize() });
+    return { FloatRect { { }, borderBoxSize() } };
 }
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
