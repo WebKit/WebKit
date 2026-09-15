@@ -67,7 +67,7 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
         [&](Ref<DOMFormData>&& domFormData) -> ExceptionOr<FetchBody> {
             auto formData = FormData::createMultiPart(domFormData.get());
             contentType = makeString("multipart/form-data; boundary="_s, formData->boundary());
-            return FetchBody(WTF::move(formData));
+            return FetchBody(WTF::move(formData), WTF::move(domFormData));
         },
         [&](Ref<URLSearchParams>&& params) -> ExceptionOr<FetchBody> {
             contentType = HTTPHeaderValues::formURLEncodedContentType();
@@ -409,6 +409,7 @@ FetchBody FetchBody::clone(JSDOMGlobalObject& globalObject)
     ASSERT(!isFormData() || !protect(formDataBody())->isPendingStream());
 
     FetchBody clone(protect(consumer())->clone());
+    clone.m_formDataSource = m_formDataSource;
 
     if (isArrayBuffer())
         clone.m_data = protect(arrayBufferBody());
