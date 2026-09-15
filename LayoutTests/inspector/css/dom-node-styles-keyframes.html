@@ -1,0 +1,63 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let suite = InspectorTest.createAsyncSuite("WI.DOMNodeStyles.keyframes");
+
+    for (let selector of ["#single", "#multiple", "#none"]) {
+        suite.addTestCase({
+            name: `WI.DOMNodeStyles.keyframes.${selector}`,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(nodeId));
+                await domNodeStyles.refresh();
+
+                let keysForName = new Multimap;
+                for (let keyframe of domNodeStyles.keyframes) {
+                    let grouping = keyframe.groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.KeyframesRule);
+                    keysForName.add(grouping.text, keyframe.selectorText);
+                }
+                InspectorTest.log(Array.from(keysForName.sets(), ([name, keys]) => `${name} { ${Array.from(keys).join(", ")} }`).join("\n") || "(none)");
+            },
+        });
+    }
+
+    suite.addTestCase({
+        name: `WI.DOMNodeStyles.keyframes.#pseudo::before`,
+        async test() {
+            let documentNode = await WI.domManager.requestDocument();
+            let nodeId = await documentNode.querySelector("#pseudo");
+            let domNodeStyles = WI.cssManager.stylesForNode(WI.domManager.nodeForId(nodeId));
+            await domNodeStyles.refresh();
+
+            let keysForName = new Multimap;
+            for (let keyframe of domNodeStyles.pseudoElements.firstValue.keyframes) {
+                let grouping = keyframe.groupings.find((grouping) => grouping.type === WI.CSSGrouping.Type.KeyframesRule);
+                keysForName.add(grouping.text, keyframe.selectorText);
+            }
+            InspectorTest.log(Array.from(keysForName.sets(), ([name, keys]) => `${name} { ${Array.from(keys).join(", ")} }`).join("\n") || "(none)");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Testing WI.DOMNodeStyles.keyframes.</p>
+<style>
+    @keyframes fade { from { opacity: 0; } 50% { opacity: 0.5; } to { opacity: 1; } }
+    @keyframes spin { 0%, 100% { transform: rotate(0deg); } }
+    #single { animation: fade 1s; }
+    #multiple { animation: fade 1s, spin 2s; }
+    #pseudo::before { content: ""; animation: fade 1s; }
+    #none { color: red; }
+</style>
+<div id="single"></div>
+<div id="multiple"></div>
+<div id="pseudo"></div>
+<div id="none"></div>
+</body>
+</html>

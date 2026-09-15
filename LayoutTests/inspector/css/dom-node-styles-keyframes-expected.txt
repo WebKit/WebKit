@@ -1,0 +1,17 @@
+Testing WI.DOMNodeStyles.keyframes.
+
+
+== Running test suite: WI.DOMNodeStyles.keyframes
+-- Running test case: WI.DOMNodeStyles.keyframes.#single
+fade { 0%, 50%, 100% }
+
+-- Running test case: WI.DOMNodeStyles.keyframes.#multiple
+fade { 0%, 50%, 100% }
+spin { 0%,100% }
+
+-- Running test case: WI.DOMNodeStyles.keyframes.#none
+(none)
+
+-- Running test case: WI.DOMNodeStyles.keyframes.#pseudo::before
+fade { 0%, 50%, 100% }
+

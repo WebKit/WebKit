@@ -27,7 +27,10 @@
 #include "FrameCSSAgent.h"
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSGroupingRule.h"
 #include "CSSImportRule.h"
+#include "CSSKeyframeRule.h"
+#include "CSSKeyframesRule.h"
 #include "CSSParserContext.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
@@ -251,7 +254,7 @@ Inspector::CommandResultOf<RefPtr<Inspector::Protocol::CSS::CSSStyle>, RefPtr<In
     return { { styleSheet->buildObjectForStyle(protect(styledElement->cssomStyle()).ptr()), buildObjectForAttributesStyle(*styledElement) } };
 }
 
-Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>> FrameCSSAgent::getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId nodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited)
+Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>>> FrameCSSAgent::getMatchedStylesForNode(Inspector::Protocol::DOM::NodeId nodeId, std::optional<bool>&& includePseudo, std::optional<bool>&& includeInherited, std::optional<bool>&& includeKeyframes)
 {
     Inspector::Protocol::ErrorString errorString;
 
@@ -298,6 +301,10 @@ Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMa
                             .setPseudoId(protocolPseudoId.value())
                             .setMatches(buildArrayForMatchedRuleList(pseudoRules, styleResolver, *element, pseudoElementIdentifier))
                             .release();
+                        if (!includeKeyframes || *includeKeyframes) {
+                            if (CheckedPtr pseudoComputedStyle = element->computedStyle(pseudoElementIdentifier))
+                                matches->setKeyframes(buildArrayForKeyframes(*pseudoComputedStyle, styleResolver));
+                        }
                         pseudoElements->addItem(WTF::move(matches));
                     }
                 }
@@ -321,22 +328,22 @@ Inspector::CommandResultOf<RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMa
         }
     }
 
-    return { { WTF::move(matchedCSSRules), WTF::move(pseudoElements), WTF::move(inherited) } };
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> keyframes;
+    if (!includeKeyframes || *includeKeyframes) {
+        if (CheckedPtr elementComputedStyle = element->computedStyle(elementPseudoId))
+            keyframes = buildArrayForKeyframes(*elementComputedStyle, styleResolver);
+    }
+
+    return { { WTF::move(matchedCSSRules), WTF::move(pseudoElements), WTF::move(inherited), WTF::move(keyframes) } };
 }
 
 Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>>> FrameCSSAgent::getAllStyleSheets()
 {
     auto headers = JSON::ArrayOf<Inspector::Protocol::CSS::CSSStyleSheetHeader>::create();
 
-    RefPtr document = m_inspectedFrame->document();
-    if (!document)
-        return headers;
-
-    Vector<CSSStyleSheet*> cssStyleSheets;
-    collectAllDocumentStyleSheets(*document, cssStyleSheets);
-
-    for (RefPtr cssStyleSheet : cssStyleSheets) {
-        Ref inspectorStyleSheet = bindStyleSheet(cssStyleSheet.get());
+    Vector<InspectorStyleSheet*> inspectorStyleSheets;
+    collectAllStyleSheets(inspectorStyleSheets);
+    for (RefPtr inspectorStyleSheet : inspectorStyleSheets) {
         if (auto header = inspectorStyleSheet->buildObjectForStyleSheetInfo())
             headers->addItem(header.releaseNonNull());
     }
@@ -434,7 +441,7 @@ Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(protect(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(compoundId))));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(compoundId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -774,10 +781,10 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(cons
     if (RefPtr shadowRoot = element.shadowRoot())
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(shadowRoot->styleScope()));
 
-    return buildObjectForRule(protect(styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule)));
+    return buildObjectForRule(protect(styleResolver.inspectorCSSOMWrappers().getWrapperForStyleRuleInSheets(styleRule)));
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(CSSRule* rule)
 {
     if (!rule)
         return nullptr;
@@ -819,6 +826,72 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> FrameCSSAgent::buildArra
     return result;
 }
 
+Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::buildArrayForKeyframes(const Style::ComputedStyle& computedStyle, Style::Resolver& styleResolver)
+{
+    auto result = JSON::ArrayOf<Inspector::Protocol::CSS::CSSRule>::create();
+
+    if (computedStyle.animations().isInitial())
+        return result;
+
+    HashSet<AtomString> usedAnimationNames;
+    for (auto& animation : computedStyle.animations().usedValues()) {
+        auto keyframesName = animation.name().tryKeyframesName();
+        if (!keyframesName)
+            continue;
+        if (!keyframesName->name.isEmpty())
+            usedAnimationNames.add(keyframesName->name);
+    }
+
+    Vector<InspectorStyleSheet*> inspectorStyleSheets;
+    collectAllStyleSheets(inspectorStyleSheets);
+    for (RefPtr inspectorStyleSheet : inspectorStyleSheets) {
+        RefPtr cssStyleSheet = inspectorStyleSheet->pageStyleSheet();
+        if (!cssStyleSheet)
+            continue;
+
+        Vector<RefPtr<CSSRule>> rulesToVisit;
+        for (unsigned i = 0; i < cssStyleSheet->length(); ++i)
+            rulesToVisit.append(cssStyleSheet->item(i));
+        for (unsigned i = 0; i < rulesToVisit.size(); ++i) {
+            RefPtr rule = rulesToVisit[i];
+
+            if (RefPtr groupingRule = dynamicDowncast<CSSGroupingRule>(rule.get())) {
+                for (unsigned i = 0; i < groupingRule->length(); ++i)
+                    rulesToVisit.append(groupingRule->item(i));
+                continue;
+            }
+
+            RefPtr keyframesRule = dynamicDowncast<CSSKeyframesRule>(rule.get());
+            if (!keyframesRule || !usedAnimationNames.contains(keyframesRule->name()))
+                continue;
+            for (unsigned i = 0; i < keyframesRule->length(); ++i) {
+                if (auto protocolKeyframe = buildObjectForRule(protect(keyframesRule->item(i))))
+                    result->addItem(protocolKeyframe.releaseNonNull());
+            }
+        }
+    }
+
+    // User-agent `@keyframes` have no CSSOM stylesheet (so they're absent from the sheets walked above);
+    // look them up in the resolver's user-agent keyframes map, reusing the wrappers built for the UA sheets.
+    if (auto* extensionStyleSheets = styleResolver.document().extensionStyleSheetsIfExists())
+        styleResolver.inspectorCSSOMWrappers().collectDocumentWrappers(*extensionStyleSheets);
+
+    auto& userAgentKeyframes = Style::Resolver::userAgentKeyframes();
+    for (auto& animationName : usedAnimationNames) {
+        auto it = userAgentKeyframes.find(animationName);
+        if (it == userAgentKeyframes.end())
+            continue;
+
+        RefPtr keyframesRule = styleResolver.inspectorCSSOMWrappers().getWrapperForKeyframesRuleInSheets(it->value.ptr());
+        for (unsigned i = 0; keyframesRule && i < keyframesRule->length(); ++i) {
+            if (auto protocolKeyframe = buildObjectForRule(protect(keyframesRule->item(i))))
+                result->addItem(protocolKeyframe.releaseNonNull());
+        }
+    }
+
+    return result;
+}
+
 InspectorStyleSheet& FrameCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet)
 {
     auto it = m_cssStyleSheetToInspectorStyleSheet.find(styleSheet);
@@ -842,6 +915,16 @@ InspectorStyleSheet* FrameCSSAgent::assertStyleSheetForId(Inspector::Protocol::E
         return nullptr;
     }
     return it->value.ptr();
+}
+
+void FrameCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& result)
+{
+    Vector<CSSStyleSheet*> cssStyleSheets;
+    if (RefPtr document = m_inspectedFrame->document())
+        collectAllDocumentStyleSheets(*document, cssStyleSheets);
+
+    for (RefPtr cssStyleSheet : cssStyleSheets)
+        result.append(&bindStyleSheet(cssStyleSheet));
 }
 
 void FrameCSSAgent::collectAllDocumentStyleSheets(Document& document, Vector<CSSStyleSheet*>& result)
