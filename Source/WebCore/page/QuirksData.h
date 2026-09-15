@@ -27,22 +27,17 @@
 
 #include <WebCore/QuirkBehaviors.h>
 #include <WebCore/URLMatch.h>
+#include <algorithm>
 #include <span>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-struct ParameterizedQuirkBehavior {
-    QuirkBehaviorID id;
-    std::optional<URLMatch> urlCondition { std::nullopt };
-    QuirkParameters parameters;
-};
-
 class QuirksData {
 public:
-    inline bool isBehaviorEnabled(const QuirkBehavior& quirk) const
+    inline bool isBehaviorEnabled(const QuirkBehaviorID& id) const
     {
-        return m_activeQuirks.get(static_cast<size_t>(quirk.id));
+        return m_behaviorFlags.get(static_cast<size_t>(id));
     }
 
     inline bool isSite(QuirkSite site) const
@@ -50,41 +45,21 @@ public:
         return m_sites.get(static_cast<size_t>(site));
     }
 
-    inline bool hasEnabledBehaviors() const
+    inline bool hasBehaviors() const
     {
-        return !m_activeQuirks.isEmpty();
+        return !m_behaviorFlags.isEmpty();
     }
 
-    inline const QuirkBitSet& enabledBehaviors() const LIFETIME_BOUND
+    inline const Vector<QuirkBehavior>& behaviors() const LIFETIME_BOUND
     {
-        return m_activeQuirks;
+        return m_behaviors;
     }
 
-    inline Vector<QuirkParameters, 1> parametersFor(const QuirkBehavior& behavior, const URLMatchContext& context) const
+    inline const Vector<QuirkBehavior> behaviorsMatching(QuirkBehaviorID id)
     {
-        if (!isBehaviorEnabled(behavior))
-            return { };
-
-        Vector<QuirkParameters, 1> matching;
-        for (auto& candidate : m_parameterizedBehaviors) {
-            if (candidate.id != behavior.id)
-                continue;
-
-            if (!candidate.urlCondition || candidate.urlCondition->matches(context))
-                matching.append(candidate.parameters);
-        }
-
-        return matching;
-    }
-
-    inline void applyTableRow(std::span<const QuirkBehavior> behaviors)
-    {
-        for (auto& behavior : behaviors) {
-            m_activeQuirks.set(static_cast<size_t>(behavior.id));
-
-            if (behavior.parameters)
-                m_parameterizedBehaviors.append({ behavior.id, behavior.urlCondition, *behavior.parameters });
-        }
+        return m_behaviors
+            | std::views::filter([&](const auto& behavior) { return behavior.id == id; })
+            | WTF::rangeTo<decltype(m_behaviors)>();
     }
 
     inline void addSite(QuirkSite site)
@@ -92,23 +67,38 @@ public:
         m_sites.set(static_cast<size_t>(site));
     }
 
-    inline void setEnabled(QuirkBehaviorID id, bool state)
+    inline void setEnabled(const QuirkBehavior& behavior, bool state)
     {
-        m_activeQuirks.set(static_cast<size_t>(id), state);
+        if (state)
+            addBehavior(behavior);
+        else
+            removeBehaviorsMatching(behavior.id);
+    }
+
+    inline void addBehavior(const QuirkBehavior& behavior)
+    {
+        m_behaviorFlags.set(static_cast<size_t>(behavior.id), true);
+        m_behaviors.append(behavior);
+    }
+
+    inline void removeBehaviorsMatching(QuirkBehaviorID id)
+    {
+        m_behaviorFlags.set(static_cast<size_t>(id), false);
+        m_behaviors.removeAllMatching([&](const auto& behavior) { return behavior.id == id; });
     }
 
     void merge(const QuirksData& other)
     {
-        auto& [otherActiveQuirks, otherSites, otherParameterizedBehaviors] = other;
-        m_activeQuirks.merge(otherActiveQuirks);
+        auto& [otherBehaviorFlags, otherSites, otherBehaviors] = other;
+        m_behaviorFlags.merge(otherBehaviorFlags);
         m_sites.merge(otherSites);
-        m_parameterizedBehaviors.appendVector(otherParameterizedBehaviors);
+        m_behaviors.appendVector(otherBehaviors);
     }
 
 private:
-    QuirkBitSet m_activeQuirks;
+    QuirkBitSet m_behaviorFlags;
     QuirkSiteBitSet m_sites;
-    Vector<ParameterizedQuirkBehavior> m_parameterizedBehaviors;
+    Vector<QuirkBehavior> m_behaviors;
 };
 
 } // namespace WebCore
