@@ -75,6 +75,7 @@ public:
     virtual void signalAllAcceptedCredentials(const SecurityOrigin&, AllAcceptedCredentialsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) = 0;
     virtual void signalCurrentUserDetails(const SecurityOrigin&, CurrentUserDetailsOptions&&, CompletionHandler<void(std::optional<WebCore::ExceptionData>)>&&) = 0;
     virtual void cancel(CompletionHandler<void()>&&) = 0;
+    virtual bool shouldBypassDocumentFocusRequirement() const = 0;
 };
 
 } // namespace WebCore
