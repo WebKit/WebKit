@@ -30,11 +30,29 @@
 #include "CSSLinkParameter.h"
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
+#include "CSSURLModifiers.h"
 #include "CSSVariableData.h"
 #include "StyleBuilderChecking.h"
 
 namespace WebCore {
 namespace Style {
+
+LinkParameters linkParametersForResource(const LinkParameters& fromProperty, const CSS::URLModifiers& fromURL)
+{
+    auto& fromURLParameters = fromURL.linkParameters;
+    if (fromURLParameters.isEmpty())
+        return fromProperty;
+
+    auto countFromProperty = fromProperty.size();
+
+    return LinkParameterList::createWithSizeFromGenerator(countFromProperty + fromURLParameters.size(), [&](size_t i) -> ParamFunction {
+        if (i < countFromProperty)
+            return fromProperty[i];
+
+        auto& parameter = fromURLParameters[i - countFromProperty];
+        return ParamFunction { LinkParameter { CustomIdent { parameter->name.value }, DeclarationValue { parameter->value.value.copyRef() } } };
+    });
+}
 
 auto CSSValueConversion<LinkParameter>::operator()(BuilderState& state, const CSSValue& value) -> LinkParameter
 {
