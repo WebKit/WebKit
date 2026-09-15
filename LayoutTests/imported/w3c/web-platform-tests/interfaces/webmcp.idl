@@ -1,0 +1,66 @@
+// GENERATED CONTENT - DO NOT EDIT
+// Content was automatically extracted by Reffy into webref
+// (https://github.com/w3c/webref)
+// Source: WebMCP (https://webmachinelearning.github.io/webmcp/)
+
+partial interface Document {
+  [SecureContext, SameObject] readonly attribute ModelContext modelContext;
+};
+
+[Exposed=Window, SecureContext]
+interface ModelContext : EventTarget {
+  Promise<undefined> registerTool(ModelContextTool tool, optional ModelContextRegisterToolOptions options = {});
+  Promise<sequence<RegisteredTool>> getTools(optional ModelContextGetToolOptions options = {});
+  Promise<DOMString> executeTool(RegisteredTool tool, optional object inputObject = {}, optional ModelContextExecuteToolOptions options = {});
+
+  attribute EventHandler ontoolchange;
+};
+
+dictionary ModelContextTool {
+  required DOMString name;
+  // Because `title` is for display in possibly native UIs, this must be a `USVString`.
+  // See https://w3ctag.github.io/design-principles/#idl-string-types.
+  USVString title;
+  required DOMString description;
+  object inputSchema;
+  required ToolExecuteCallback execute;
+  ToolAnnotations annotations;
+};
+
+dictionary ToolAnnotations {
+  boolean readOnlyHint = false;
+  boolean untrustedContentHint = false;
+  boolean consequentialHint = false;
+};
+
+dictionary ToolExecuteCallbackOptions {
+  required AbortSignal signal;
+};
+
+callback ToolExecuteCallback = Promise<any> (object inputObject, ToolExecuteCallbackOptions options);
+
+dictionary ModelContextRegisterToolOptions {
+  sequence<USVString> exposedTo;
+  AbortSignal signal;
+};
+
+dictionary ModelContextGetToolOptions {
+  sequence<USVString> fromOrigins;
+};
+
+dictionary ModelContextExecuteToolOptions {
+  AbortSignal signal;
+};
+
+dictionary RegisteredTool {
+  required DOMString name;
+  // `title` can be exposed as a `DOMString` since it was taken in by a
+  // `USVString`, meaning all unmatched surrogate processing has already been
+  // done, and there's no need to do it again on tool exposure.
+  DOMString title;
+  required DOMString description;
+  object inputSchema;
+  required Window window;
+  required USVString origin;
+  ToolAnnotations annotations;
+};
