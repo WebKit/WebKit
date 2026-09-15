@@ -102,6 +102,8 @@ public:
     bool hasObservationTargets() const { return !m_observationTargets.isEmptyIgnoringNullReferences(); }
     bool NODELETE isObserving(const Element&) const;
 
+    void resetPreviousThresholdIndexForTarget(const Element&);
+
     void observe(Element&);
     void unobserve(Element&);
     void disconnect();
