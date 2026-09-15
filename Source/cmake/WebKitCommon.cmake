@@ -526,6 +526,77 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     endif ()
 
     # -----------------------------------------------------------------------------
+    # Record the build settings for later commands
+    # -----------------------------------------------------------------------------
+    # run-safari, run-webkit-tests and the apps built above WebKit resolve a build
+    # through the settings in the base product directory, which only build-webkit
+    # and set-webkit-configuration write. A tree configured or built straight from
+    # a preset records them too, so that the build made last is the one those
+    # commands resolve. set-webkit-configuration stays the only writer of the files.
+    execute_process(
+        COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/webkit-build-directory --top-level
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE _base_product_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE _base_product_dir_result
+    )
+    if (_base_product_dir_result EQUAL 0)
+        get_filename_component(_base_product_dir "${_base_product_dir}" REALPATH)
+    else ()
+        set(_base_product_dir "")
+    endif ()
+
+    cmake_path(GET CMAKE_BINARY_DIR FILENAME _configuration_directory)
+    cmake_path(GET CMAKE_BINARY_DIR PARENT_PATH _tree_directory)
+    cmake_path(GET _tree_directory PARENT_PATH _tree_base_dir)
+    get_filename_component(_tree_base_dir "${_tree_base_dir}" REALPATH)
+
+    # A sanitizer builds into a directory named after the sanitizer whichever
+    # configuration it was built in, so there the configuration is the build type
+    # and everywhere else it is the directory, which is what has to be resolved.
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_sanitizer_configuration --debug)
+    else ()
+        set(_sanitizer_configuration --release)
+    endif ()
+
+    set(_recorded_settings "")
+    if (_configuration_directory STREQUAL "Release")
+        set(_recorded_settings --release --no-asan --no-tsan)
+    elseif (_configuration_directory STREQUAL "Debug")
+        set(_recorded_settings --debug --no-asan --no-tsan)
+    elseif (_configuration_directory STREQUAL "ASan")
+        set(_recorded_settings ${_sanitizer_configuration} --asan --no-tsan)
+    elseif (_configuration_directory STREQUAL "TSan")
+        set(_recorded_settings ${_sanitizer_configuration} --tsan --no-asan)
+    endif ()
+
+    if (NOT _base_product_dir)
+        message(STATUS "Not recording the build settings: the base product directory could not be resolved")
+    elseif (NOT _tree_base_dir STREQUAL _base_product_dir)
+        message(STATUS "Not recording the build settings: ${CMAKE_BINARY_DIR} is not in ${_base_product_dir}")
+    elseif (NOT _recorded_settings)
+        message(STATUS "Not recording the build settings: set-webkit-configuration has no setting for the ${_configuration_directory} configuration")
+    else ()
+        # Recorded now, so that a tree that is only configured is already the one
+        # later commands resolve, and again on every build, so that the settings
+        # are those of the build made last.
+        execute_process(
+            COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
+                    --cmake ${_recorded_settings}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMAND_ERROR_IS_FATAL ANY
+        )
+        add_custom_target(RecordBuildSettings ALL
+            COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
+                    --cmake ${_recorded_settings}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Recording the build settings for later commands"
+            VERBATIM
+        )
+    endif ()
+
+    # -----------------------------------------------------------------------------
     # Job pool to avoid running too many memory hungry processes
     # -----------------------------------------------------------------------------
     if (DEFINED ENV{WEBKIT_NINJA_LINK_MAX})
