@@ -124,7 +124,7 @@ void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier
     // to the remaining port to tell it this port closed.
 }
 
-bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
+bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget, CompletionHandlerCallingScope&& blobURLsInFlight)
 {
     ASSERT(isMainThread());
 
@@ -137,7 +137,7 @@ bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&
         return false;
     }
 
-    return channel->postMessageToRemote(WTF::move(message), remoteTarget);
+    return channel->postMessageToRemote(WTF::move(message), remoteTarget, WTF::move(blobURLsInFlight));
 }
 
 void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, CompletionHandler<void(Vector<MessageWithMessagePorts>&&, CompletionHandler<void()>&&)>&& callback)
