@@ -64,7 +64,7 @@ struct SVGTextFragment {
     // (see SVGTextLayoutEngine, which builds this transformation).
     AffineTransform transform;
 
-    // Contains lengthAdjust related transformations, which are not allowd to influence the SVGTextQuery code.
+    // Contains lengthAdjust related transformations.
     AffineTransform lengthAdjustTransform;
 
 private:
