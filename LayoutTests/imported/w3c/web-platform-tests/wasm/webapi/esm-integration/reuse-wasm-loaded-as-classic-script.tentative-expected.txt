@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Reuse Wasm loaded as classic script Test timed out
+PASS Reuse Wasm loaded as classic script
 

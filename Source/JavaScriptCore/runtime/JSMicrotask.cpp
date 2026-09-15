@@ -45,10 +45,10 @@
 #include "JSFunction.h"
 #include "JSGenerator.h"
 #include "JSGlobalObject.h"
-#include "JSObjectInlines.h"
 #include "JSModuleLoader.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
+#include "JSObjectInlines.h"
 #include "JSPromise.h"
 #include "JSPromiseCombinatorsGlobalContext.h"
 #include "JSPromiseConstructor.h"
@@ -1045,7 +1045,8 @@ static void runModuleRegistryFetchSettled(JSGlobalObject* globalObject, VM& vm, 
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
         auto moduleData = argument1;
-        JSPromise* makeModulePromise = JSModuleLoader::makeModule(globalObject, entry->key(), moduleData);
+        auto phase = entry->sourcePhase() ? AbstractModuleRecord::ModulePhase::Source : AbstractModuleRecord::ModulePhase::Evaluation;
+        JSPromise* makeModulePromise = JSModuleLoader::makeModule(globalObject, entry->key(), moduleData, phase);
         if (scope.exception()) {
             modulePromise->rejectWithCaughtException(vm, scope);
             return;
@@ -1109,12 +1110,32 @@ static void runModuleLoadStep(JSGlobalObject* globalObject, VM& vm, InternalMicr
     auto* loadPromise = uncheckedDowncast<JSPromise>(argument0);
     auto status = static_cast<JSPromise::Status>(payload);
 
+    auto finishFetchedModule = [&](AbstractModuleRecord* module) {
+        globalObject->moduleLoader()->finishLoadingImportedModule(globalObject, context->referrer(), context->moduleRequest(), context->payload(), module, context->scriptFetcher());
+        if (scope.exception()) {
+            loadPromise->rejectWithCaughtException(vm, scope);
+            return;
+        }
+        auto* entry = context->entry();
+        if (auto* cyclic = dynamicDowncast<CyclicModuleRecord>(module); cyclic && cyclic->status() != CyclicModuleRecord::Status::Unlinked) {
+            ASSERT(cyclic->status() != CyclicModuleRecord::Status::Linking);
+            loadPromise->fulfill(vm, entry->record());
+        } else {
+            entry->setRecord(vm, module);
+            entry->setStatus(ModuleRegistryEntry::Status::Fetched);
+            loadPromise->fulfill(vm, entry->record());
+        }
+    };
+
     switch (context->step()) {
     case ModuleLoadingContext::Step::Main: {
-        // modulePromise settled: on fulfillment, call loadRequestedModules and chain next step
         if (status == JSPromise::Status::Fulfilled) {
             auto* module = downcast<AbstractModuleRecord>(argument1);
             context->module(vm, module);
+            if (context->phase() == AbstractModuleRecord::ModulePhase::Source) {
+                finishFetchedModule(module);
+                return;
+            }
             JSPromise* requestedPromise = globalObject->moduleLoader()->loadRequestedModules(globalObject, module, context->scriptFetcher());
             if (scope.exception()) {
                 loadPromise->rejectWithCaughtException(vm, scope);
@@ -1127,27 +1148,9 @@ static void runModuleLoadStep(JSGlobalObject* globalObject, VM& vm, InternalMicr
         return;
     }
     case ModuleLoadingContext::Step::Requested: {
-        // loadRequestedModules settled: on fulfillment, call finishLoading and update entry
-        if (status == JSPromise::Status::Fulfilled) {
-            auto* module = context->module();
-            globalObject->moduleLoader()->finishLoadingImportedModule(globalObject, context->referrer(), context->moduleRequest(), context->payload(), module, context->scriptFetcher());
-            if (scope.exception()) {
-                loadPromise->rejectWithCaughtException(vm, scope);
-                return;
-            }
-
-            // setEntryRecord logic
-            auto* entry = context->entry();
-            if (auto* cyclic = dynamicDowncast<CyclicModuleRecord>(module); cyclic && cyclic->status() != CyclicModuleRecord::Status::Unlinked) {
-                ASSERT(cyclic->status() != CyclicModuleRecord::Status::Linking);
-                loadPromise->fulfill(vm, entry->record());
-            } else {
-                entry->setRecord(vm, module);
-                entry->setStatus(ModuleRegistryEntry::Status::Fetched);
-                loadPromise->fulfill(vm, entry->record());
-            }
-        } else {
-            // onRejected logic: store evaluation error on entry
+        if (status == JSPromise::Status::Fulfilled)
+            finishFetchedModule(context->module());
+        else {
             auto* entry = context->entry();
             JSValue errorValue = argument1;
             entry->setEvaluationError(globalObject, errorValue);
@@ -1201,10 +1204,15 @@ static void runModuleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, Intern
             intermediatePromise->rejectWithCaughtException(vm, scope);
             return;
         }
+        if (context->source()) {
+            if (ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type))
+                entry->setSourcePhase(true);
+        }
 
         JSPromise* statePromise = JSPromise::create(vm, globalObject->promiseStructure());
         statePromise->markAsHandled();
         AbstractModuleRecord::ModuleRequest request { specifier, ScriptFetchParameters::create(type) };
+        request.m_phase = context->phase();
         // combinedCell is the host-defined payload AND the AND-join state for loadPromise+statePromise.
         // For dynamic import we wrap statePromise; for graph load we use the ModuleGraphLoadingState directly.
         JSCell* combinedCell;
@@ -1213,8 +1221,10 @@ static void runModuleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, Intern
         OptionSet<ModuleLoadFlag> innerLoadFlags;
         if (context->useImportMap())
             innerLoadFlags.add(ModuleLoadFlag::UseImportMap);
+        if (context->source())
+            innerLoadFlags.add(ModuleLoadFlag::Source);
         if (context->dynamic()) {
-            combinedCell = ModuleLoaderPayload::create(vm, statePromise, context->deferred());
+            combinedCell = ModuleLoaderPayload::create(vm, statePromise, context->phase());
             loadPromise = globalObject->moduleLoader()->loadModule(globalObject, globalObject, request, combinedCell, scriptFetcher, innerLoadFlags);
         } else {
             combinedCell = ModuleGraphLoadingState::create(vm, statePromise, scriptFetcher);
@@ -1630,14 +1640,13 @@ static void runImportModuleNamespace(JSGlobalObject* globalObject, VM& vm, Inter
     auto* resultPromise = uncheckedDowncast<JSPromise>(argument0);
     auto status = static_cast<JSPromise::Status>(payload);
     if (status == JSPromise::Status::Fulfilled) {
-        // The value is a JSModuleNamespaceObject forwarded from the internal
-        // pipeline (dynamicImportEvaluateSettled → combinedPromise → here).
-        // resultPromise is the user-visible import() promise. Must use resolve() per spec:
+        // Evaluation and defer forward a JSModuleNamespaceObject. Source phase
+        // forwards the module object. resultPromise is the user-visible import()
+        // promise. Must use resolve() per spec:
         // ContinueDynamicImport https://tc39.es/ecma262/#sec-ContinueDynamicImport
         // Step 6.d.ii: Call(promiseCapability.[[Resolve]], undefined, « namespace »).
         // A module namespace that exports "then" is a thenable per spec.
-        auto* moduleNamespace = downcast<JSModuleNamespaceObject>(argument1);
-        resultPromise->resolve(globalObject, vm, moduleNamespace);
+        resultPromise->resolve(globalObject, vm, argument1);
     } else
         resultPromise->reject(vm, argument1);
     return;

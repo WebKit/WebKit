@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = SyntaxError: Unexpected identifier 'module'. Expected 'from' before imported module name.
-
+FAIL Testing import of WebAssembly source phase with js-string builtins TypeError: import wasm:js-string:newbuiltin is not a valid builtin reference
 

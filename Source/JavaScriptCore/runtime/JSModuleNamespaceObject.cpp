@@ -132,7 +132,8 @@ static JSValue getValue(JSModuleEnvironment* environment, PropertyName localName
     {
         ConcurrentJSLocker locker(symbolTable->m_lock);
         auto iter = symbolTable->find(locker, localName.uid());
-        ASSERT(iter != symbolTable->end(locker));
+        if (iter == symbolTable->end(locker))
+            return { };
         SymbolTableEntry& entry = iter->value;
         ASSERT(!entry.isNull());
         scopeOffset = entry.scopeOffset();
@@ -171,11 +172,20 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(JSGlobalObject* globalObj
             // https://tc39.es/ecma262/#sec-module-namespace-exotic-objects-get-p-receiver
             // 10. If binding.[[BindingName]] is "*namespace*", then
             //     a. Return ? GetModuleNamespace(targetModule).
-            // We call getModuleNamespace() to ensure materialization. And after that, looking up the value from the scope to encourage module namespace object IC.
-            exportEntry.moduleRecord->getModuleNamespace(globalObject);
+            JSModuleNamespaceObject* namespaceObject = exportEntry.moduleRecord->getModuleNamespace(globalObject);
             RETURN_IF_EXCEPTION(scope, false);
+            slot.setValue(this, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, namespaceObject);
+            return true;
+        }
+        JSValue sourceBinding = exportEntry.moduleRecord->getSourcePhaseBinding(globalObject, exportEntry.localName);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (sourceBinding) {
+            slot.setValue(this, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, sourceBinding);
+            return true;
         }
         JSModuleEnvironment* environment = exportEntry.moduleRecord->moduleEnvironment();
+        if (!environment)
+            return false;
         ScopeOffset scopeOffset;
         JSValue value = getValue(environment, exportEntry.localName, scopeOffset);
         // If the value is filled with TDZ value, throw a reference error.

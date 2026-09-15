@@ -78,6 +78,15 @@ public:
     bool dynamic() const { return m_flags.contains(ModuleLoadFlag::Dynamic); }
     bool useImportMap() const { return m_flags.contains(ModuleLoadFlag::UseImportMap); }
     bool deferred() const { return m_flags.contains(ModuleLoadFlag::Deferred); }
+    bool source() const { return m_flags.contains(ModuleLoadFlag::Source); }
+    AbstractModuleRecord::ModulePhase phase() const
+    {
+        if (source())
+            return AbstractModuleRecord::ModulePhase::Source;
+        if (deferred())
+            return AbstractModuleRecord::ModulePhase::Defer;
+        return AbstractModuleRecord::ModulePhase::Evaluation;
+    }
 
 private:
     ModuleLoadingContext(VM&, Structure*, Step, const JSModuleLoader::ModuleReferrer&, AbstractModuleRecord::ModuleRequest&&, JSCell* payload, ModuleRegistryEntry*, RefPtr<ScriptFetcher>);

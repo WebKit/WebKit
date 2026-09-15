@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/ScriptFetchParameters.h>
 #include <wtf/Forward.h>
@@ -66,7 +67,7 @@ struct GlobalObjectMethodTable {
     // https://html.spec.whatwg.org/multipage/webappapis.html#module-type-allowed
     bool (*moduleTypeIsAllowed)(ScriptFetchParameters::Type);
 
-    JSPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, bool deferred);
+    JSPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, RefPtr<ScriptFetchParameters>, const SourceOrigin&, AbstractModuleRecord::ModulePhase);
     Identifier (*moduleLoaderResolve)(JSGlobalObject*, JSModuleLoader*, JSValue, JSValue, RefPtr<ScriptFetcher>, bool useImportMap);
     JSPromise* (*moduleLoaderFetch)(JSGlobalObject*, JSModuleLoader*, JSValue key, const String& referrer, RefPtr<ScriptFetchParameters>, RefPtr<ScriptFetcher>);
     JSObject* (*moduleLoaderCreateImportMetaProperties)(JSGlobalObject*, JSModuleLoader*, JSValue, JSModuleRecord*, RefPtr<ScriptFetcher>);
