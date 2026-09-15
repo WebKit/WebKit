@@ -191,5 +191,5 @@ The browser above renders pages but does little else. From here:
   one from scratch.
 
 For platform implementers — as opposed to application developers —
-see the Writing a platform tutorial instead.
-<!-- FIXME: link tutorial-platform.html once the platform tutorial has content -->
+see [Writing a WPE platform implementation](tutorial-platform.html)
+instead.
