@@ -227,6 +227,8 @@ enum class AXProperty : uint16_t {
     IsMathTable,
     IsMathTableRow,
     IsMathTableCell,
+    IsMathText,
+    IsMathEmpty,
     IsMathMultiscript,
     IsMathToken,
     IsMultiSelectable,

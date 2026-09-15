@@ -758,7 +758,8 @@ public:
     bool isMathUnderOver() const override { return false; }
     bool isMathRoot() const override { return false; }
     bool isMathSquareRoot() const override { return false; }
-    virtual bool isMathText() const { return false; }
+    bool isMathEmpty() const override { return false; }
+    bool isMathText() const override { return false; }
     virtual bool isMathNumber() const { return false; }
     virtual bool isMathOperator() const { return false; }
     virtual bool isMathFenceOperator() const { return false; }

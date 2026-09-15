@@ -98,10 +98,7 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
     if (coreObject.isTable())
         interfaces.add(Interface::Table);
 
-    if (coreObject.role() == AccessibilityRole::Cell
-        || coreObject.role() == AccessibilityRole::GridCell
-        || coreObject.role() == AccessibilityRole::ColumnHeader
-        || coreObject.role() == AccessibilityRole::RowHeader)
+    if (coreObject.isTableCell())
         interfaces.add(Interface::TableCell);
 
     if (coreObject.role() == AccessibilityRole::ListMarker && renderer) {
@@ -1217,8 +1214,8 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
         return renderer && renderer->isImage() ? Atspi::Role::Image : Atspi::Role::Text;
     }
     case AccessibilityRole::MathElement:
-        if (m_coreObject->isMathRow())
-            return Atspi::Role::Panel;
+        if (m_coreObject->isMathRow() || m_coreObject->isMathEmpty())
+            return Atspi::Role::Section;
         if (m_coreObject->isMathTable())
             return Atspi::Role::Table;
         if (m_coreObject->isMathTableRow())
@@ -1239,7 +1236,7 @@ std::optional<Atspi::Role> AccessibilityObjectAtspi::effectiveRole() const
             || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PreSuperscript)
             || liveObject->isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType::PostSuperscript)))
             return Atspi::Role::Superscript;
-        if (m_coreObject->isMathToken())
+        if (m_coreObject->isMathToken() || m_coreObject->isMathText())
             return Atspi::Role::Static;
         break;
     case AccessibilityRole::ListItem: {

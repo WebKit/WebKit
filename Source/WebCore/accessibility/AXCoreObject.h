@@ -1366,6 +1366,8 @@ public:
     virtual bool isMathUnderOver() const = 0;
     virtual bool isMathRoot() const = 0;
     virtual bool isMathSquareRoot() const = 0;
+    virtual bool isMathText() const = 0;
+    virtual bool isMathEmpty() const = 0;
     virtual bool isMathTable() const = 0;
     virtual bool isMathTableRow() const = 0;
     virtual bool isMathTableCell() const = 0;

@@ -998,6 +998,12 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::IsMathTableCell:
         stream << "IsMathTableCell";
         break;
+    case AXProperty::IsMathText:
+        stream << "IsMathText";
+        break;
+    case AXProperty::IsMathEmpty:
+        stream << "IsMathEmpty";
+        break;
     case AXProperty::IsMathMultiscript:
         stream << "IsMathMultiscript";
         break;
