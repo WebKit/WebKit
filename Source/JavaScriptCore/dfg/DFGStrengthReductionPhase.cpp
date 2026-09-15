@@ -35,6 +35,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGJITCode.h"
 #include "DFGPhase.h"
+#include "DefinePropertyAttributes.h"
 #include "JSBoundFunctionInlines.h"
 #include "JSObjectInlines.h"
 #include "JSWebAssemblyInstance.h"
@@ -2063,11 +2064,82 @@ private:
             break;
         }
 
+        case ObjectDefineProperty: {
+            // Detect pattern like Object.defineProperty(obj, "key", { value: x }) and convert it to DefineDataProperty.
+            // FIXME: Support descriptors with writable/enumerable/configurable attributes.
+            // FIXME: When key is a constant identifier and target's structure is known, inline
+            // the　structure transition directly (PutByOffset + PutStructure) instead of DefineDataProperty.
+            Node* target = m_node->child1().node();
+            Node* descriptor = m_node->child3().node();
+            if (descriptor->op() != NewObject)
+                break;
+
+            Structure* finalStructure = nullptr;
+            for (unsigned i = m_nodeIndex; i--;) {
+                Node* node = m_block->at(i);
+                if (node == descriptor)
+                    break;
+                if (node->op() == PutStructure && node->child1().node() == descriptor) {
+                    finalStructure = node->transition()->next.get();
+                    break;
+                }
+            }
+            if (!finalStructure)
+                break;
+
+            if (finalStructure->inlineSize() + finalStructure->outOfLineSize() != 1)
+                break;
+            VM& vm = m_graph.m_vm;
+            PropertyOffset valueOffset = finalStructure->getConcurrently(vm.propertyNames->value.impl());
+            if (!isValidOffset(valueOffset))
+                break;
+
+            DefinePropertyAttributes defineAttrs;
+            defineAttrs.setValue();
+
+            NodeOrigin origin = m_node->origin;
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, CheckStructure, origin, OpInfo(m_graph.addStructureSet(finalStructure)), Edge(descriptor, CellUse));
+            StorageAccessData* data = m_graph.m_storageAccessData.add();
+            data->offset = valueOffset;
+            data->identifierNumber = m_graph.identifiers().ensure(vm.propertyNames->value.impl());
+
+            Node* propertyStorage;
+            if (isInlineOffset(valueOffset))
+                propertyStorage = descriptor;
+            else
+                propertyStorage = m_insertionSet.insertNode(m_nodeIndex, SpecNone, GetButterfly, origin, Edge(descriptor, CellUse));
+
+            Node* value = m_insertionSet.insertNode(m_nodeIndex, SpecBytecodeTop, GetByOffset, origin, OpInfo(data), OpInfo(SpecBytecodeTop), Edge(propertyStorage, KnownStorageUse), Edge(descriptor));
+            Node* attributes = m_insertionSet.insertConstant(m_nodeIndex, origin, jsNumber(static_cast<int32_t>(defineAttrs.rawRepresentation())));
+
+            Node* key = m_node->child2().node();
+            UseKind keyUseKind = UntypedUse;
+            if (key->shouldSpeculateSymbol())
+                keyUseKind = SymbolUse;
+            else if (!m_graph.hasExitSite(m_node->origin.semantic, BadStringType) && key->shouldSpeculateStringIdent())
+                keyUseKind = StringIdentUse;
+            else if (key->shouldSpeculateString())
+                keyUseKind = StringUse;
+
+            size_t firstChild = m_graph.m_varArgChildren.size();
+            m_graph.m_varArgChildren.append(Edge(target, CellUse));
+            m_graph.m_varArgChildren.append(Edge(key, keyUseKind));
+            m_graph.m_varArgChildren.append(Edge(value, UntypedUse));
+            m_graph.m_varArgChildren.append(Edge(attributes, KnownInt32Use));
+
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, Node::VarArg, DefineDataProperty, origin, OpInfo(0), OpInfo(0), firstChild, m_graph.m_varArgChildren.size() - firstChild);
+
+            m_node->convertToIdentityOn(target);
+            m_node->origin = m_node->origin.withInvalidExit();
+            m_changed = true;
+            break;
+        }
+
         default:
             break;
         }
     }
-            
+
     void convertToIdentityOverChild(unsigned childIndex)
     {
         ASSERT(!(m_node->flags() & NodeHasVarArgs));
