@@ -52,7 +52,7 @@ public:
 
     LogClient(Ref<ConnectionType>&&);
 
-    void log(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t) final;
+    void log(std::span<const char8_t> logChannel, std::span<const char8_t> logCategory, std::span<const char8_t> logString, os_log_type_t) final;
 
 #if __has_include("WebKitLogClientDeclarations.h")
 #include "WebKitLogClientDeclarations.h"

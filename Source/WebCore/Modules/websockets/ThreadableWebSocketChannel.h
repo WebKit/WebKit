@@ -69,7 +69,7 @@ public:
     virtual String subprotocol() = 0; // Will be available after didConnect() callback is invoked.
     virtual String extensions() = 0; // Will be available after didConnect() callback is invoked.
 
-    virtual void send(CString&&) = 0;
+    virtual void send(UTF8CString&&) = 0;
     virtual void send(const JSC::ArrayBuffer&, size_t byteOffset, size_t byteLength) = 0;
     virtual void send(Blob&) = 0;
 

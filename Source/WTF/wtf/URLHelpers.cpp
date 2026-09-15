@@ -905,10 +905,9 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
     return String::adopt(WTF::move(outBuffer));
 }
 
-String userVisibleURL(const CString& url)
+String userVisibleURL(std::span<const char8_t> url)
 {
-    auto before = url.span();
-    size_t length = url.length();
+    size_t length = url.size();
 
     if (!length)
         return { };
@@ -923,7 +922,7 @@ String userVisibleURL(const CString& url)
 
     size_t afterIndex = 0;
     {
-        auto p = before;
+        auto p = url;
         for (size_t i = 0; i < length; i++) {
             unsigned char c = p[i];
             // unescape escape sequences that indicate bytes greater than 0x7f

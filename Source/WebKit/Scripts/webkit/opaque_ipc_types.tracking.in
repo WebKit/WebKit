@@ -147,10 +147,6 @@
     [Legacy] MessageParam LibWebRTCCodecsProxy.DecodeFrame data
     [Legacy] MessageParam LibWebRTCCodecsProxy.SetDecoderFormatDescription description
 
-    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logCategory
-    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logChannel
-    [Legacy] MessageParam LogStream.LogOnBehalfOfWebContent logString
-
     [Legacy] MessageParam NetworkRTCProvider.SendToSocket data
     [Legacy] MessageParam NetworkSocketChannel.SendData data
     [Legacy] MessageParam NetworkSocketChannel.SendString message
@@ -183,7 +179,6 @@
     [Legacy] StructureParam WebKit::CoreIPCSecKeychainItem.dataReference()
     [Legacy] StructureParam WebKit::CoreIPCSecTrust.dataReference()
     [Legacy] StructureParam WebKit::CoreIPCCFCharacterSet.dataReference()
-    [Legacy] StructureParam WebKit::SandboxExtensionImpl.getSerializedFormat()
     [Legacy] StructureParam WebCore::BufferSource.span()
     [Legacy] StructureParam WebCore::PixelBufferSourceView.bytes()
     [Legacy] StructureParam JSC::ArrayBufferContents.span()

@@ -86,9 +86,12 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
-    // FIXME: This appends the bytes as Latin-1. It should take an encoding-aware CStringWithEncoding
-    // and decode accordingly, rather than silently reinterpreting a sliced UTF8CString.
+    // CString does not know its encoding, so its bytes are appended as Latin-1. Prefer the
+    // encoding-aware overloads below, which decode according to the character type.
     WTF_EXPORT_PRIVATE TextStream& operator<<(const CString&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const UTF8CString&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const Latin1CString&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const ASCIICString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);

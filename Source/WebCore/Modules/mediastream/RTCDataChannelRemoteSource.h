@@ -46,7 +46,7 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void sendStringData(const CString& text) { m_handler->sendStringData(text); }
+    void sendStringData(const UTF8CString& text) { m_handler->sendStringData(text); }
     void sendRawData(std::span<const uint8_t> data) { m_handler->sendRawData(data); }
     void close() { m_handler->close(); }
 
