@@ -77,6 +77,7 @@ def main():
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
 
@@ -154,7 +155,6 @@ public:''')
     }
 ''')
         writeln(f'    std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
-        writeln(f'    WTF::HashSet<AtomString> allEventHandlerNames() const;')
         writeln(f'')
         writeln(f'    static constexpr std::array timedEvents {{')
         for name in category_map['EventTimingEligible']:
@@ -174,6 +174,9 @@ private:
 };
 
 const EventNames& eventNames();
+
+// Unlike eventNames(), this is thread-safe: it matches by content rather than by AtomString identity.
+bool isEventHandlerAttributeName(StringView);
 
 inline const EventNames& eventNames()
 {
@@ -212,6 +215,8 @@ inline EventTypeInfo EventNames::typeInfoForEvent(const AtomString& eventType) c
 
 #include "config.h"
 #include "EventNames.h"
+
+#include <wtf/SortedArrayMap.h>
 
 namespace WebCore {
 ''')
@@ -277,17 +282,21 @@ namespace WebCore {
         writeln('''    } };''')
         writeln('}')
         writeln('')
-        writeln(f'WTF::HashSet<AtomString> EventNames::allEventHandlerNames() const')
-        writeln('{')
-        writeln(f'    WTF::HashSet<AtomString> set;')
-        for name in sorted(event_names_input.keys()):
+        # Content-keyed and immutable, so unlike an AtomString-keyed table this is safe to share
+        # between threads: AtomStrings are per-thread and compare by pointer identity.
+        writeln('static constexpr SortedArraySet eventHandlerAttributeNameSet { WTF::toArray<ComparableASCIILiteral>({')
+        for name in sorted(event_names_input.keys(), key=lambda name: 'on' + name.lower()):
             conditional = event_names_input[name].get('conditional', None)
             if conditional:
                 writeln(f'#if {conditional}')
-            writeln(f'    set.add("on{name.lower()}"_s);')
+            writeln(f'    "on{name.lower()}"_s,')
             if conditional:
                 writeln(f'#endif')
-        writeln('    return set;')
+        writeln('}) };')
+        writeln('')
+        writeln('bool isEventHandlerAttributeName(StringView name)')
+        writeln('{')
+        writeln('    return eventHandlerAttributeNameSet.contains(name);')
         writeln('}')
         writeln('')
         writeln(f'static constexpr std::array<const AtomString EventNames::*, {len(event_names_input)}> eventStringInEventNames {{')
