@@ -191,6 +191,26 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Worker.Debugger.Threads.Paused.RemoveActiveTarget",
+        description: "Removing the active call frame's target should preserve the remaining paused targets.",
+        async test() {
+            let worker1CallFrame = WI.debuggerManager.dataForTarget(workerTarget1).stackTrace.callFrames[0];
+            WI.debuggerManager.activeCallFrame = worker1CallFrame;
+
+            let targetRemovedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetRemoved);
+            let activeCallFrameDidChangePromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.ActiveCallFrameDidChange);
+
+            let mainCallFrame = WI.debuggerManager.dataForTarget(mainTarget).stackTrace.callFrames[0];
+            let terminatePromise = mainTarget.DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: mainCallFrame.id, expression: "worker1.terminate()", objectGroup: "test"});
+
+            let [targetRemovedEvent] = await Promise.all([targetRemovedPromise, activeCallFrameDidChangePromise, terminatePromise]);
+            InspectorTest.expectEqual(targetRemovedEvent.data.target, workerTarget1, "Worker 1 should be removed.");
+            InspectorTest.expectNull(WI.debuggerManager.activeCallFrame, "The active call frame should be cleared when its target is removed.");
+            InspectorTest.expectTrue(WI.debuggerManager.paused, "The debugger should remain paused while other targets are paused.");
+        }
+    });
+
+    suite.addTestCase({
         name: "Worker.Debugger.Threads.Complete",
         description: "Resume all threads for the test to complete.",
         test(resolve, reject) {
