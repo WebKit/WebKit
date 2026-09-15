@@ -71,6 +71,7 @@ public:
     WEBCORE_EXPORT TimeBounds getFetchTimeBounds();
 
     uint32_t channelCount() const { return m_channelCount; }
+    uint32_t frameCount() const { return m_frameCount; }
 
 protected:
     WEBCORE_EXPORT CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
