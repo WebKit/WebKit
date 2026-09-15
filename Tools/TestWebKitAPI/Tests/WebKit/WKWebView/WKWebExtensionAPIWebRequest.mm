@@ -328,6 +328,52 @@ TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventNestedSubframeParentFrameId)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventForActionPopupSubframe)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subframe.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *subframeRequest = server.requestWithLocalhost("/subframe.html"_s);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webRequest.onBeforeRequest.addListener((details) => {",
+        @"  if (!details?.url?.includes('/subframe.html'))",
+        @"    return",
+        @"  browser.test.assertEq(details?.type, 'sub_frame', 'the popup iframe request should be a sub_frame')",
+        @"  browser.test.assertEq(details?.tabId, -1, 'a request from an action popup should not be associated with a tab')",
+        @"  browser.test.assertTrue(details?.frameId !== 0, 'the popup iframe should have a non-zero frameId')",
+        @"  browser.test.notifyPass()",
+        @"}, { urls: [ '<all_urls>' ] })",
+
+        @"browser.test.sendMessage('Ready')"
+    ]);
+
+    auto *popupHTML = [NSString stringWithFormat:@"<body><iframe src='%@'></iframe></body>", subframeRequest.URL.absoluteString];
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"webRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module" },
+        @"action": @{ @"default_popup": @"popup.html" }
+    };
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript, @"popup.html": popupHTML });
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:subframeRequest.URL];
+
+    manager.get().internalDelegate.presentPopupForAction = ^(WKWebExtensionAction *action) {
+        // Do nothing so the popup web view will stay loaded.
+    };
+
+    [manager runUntilTestMessage:@"Ready"];
+
+    [manager.get().context performActionForTab:manager.get().defaultTab];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebRequest, BeforeRequestEventWithRequestBodyAndFormData)
 {
     auto *pageScript = Util::constructScript(@[
