@@ -35,6 +35,10 @@
 
 namespace JSC {
 
+static_assert(static_cast<uint8_t>(ImportCallPhase::Evaluation) == static_cast<uint8_t>(AbstractModuleRecord::ModulePhase::Evaluation));
+static_assert(static_cast<uint8_t>(ImportCallPhase::Defer) == static_cast<uint8_t>(AbstractModuleRecord::ModulePhase::Defer));
+static_assert(static_cast<uint8_t>(ImportCallPhase::Source) == static_cast<uint8_t>(AbstractModuleRecord::ModulePhase::Source));
+
 static std::expected<RefPtr<ScriptFetchParameters>, std::tuple<ErrorType, String>> tryCreateAttributes(VM& vm, ImportAttributesListNode* attributesList)
 {
     if (!attributesList)
@@ -87,7 +91,7 @@ bool ImportDeclarationNode::analyzeModule(ModuleAnalyzer& analyzer)
         return false;
     }
 
-    auto phase = m_type == ImportType::Deferred ? AbstractModuleRecord::ModulePhase::Defer : AbstractModuleRecord::ModulePhase::Evaluation;
+    auto phase = static_cast<AbstractModuleRecord::ModulePhase>(m_phase);
     auto moduleRequestType = result.value() ? result.value()->type() : ScriptFetchParameters::Type::JavaScript;
     analyzer.appendRequestedModule(m_moduleName->moduleName(), WTF::move(result.value()), phase);
     for (auto* specifier : m_specifierList->specifiers()) {

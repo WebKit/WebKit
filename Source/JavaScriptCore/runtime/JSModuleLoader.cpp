@@ -38,6 +38,9 @@
 #include "JSSourceCode.h"
 #include "JSWebAssembly.h"
 #include "Microtask.h"
+#if ENABLE(WEBASSEMBLY)
+#include "WebAssemblyModuleRecord.h"
+#endif
 #include "ModuleAnalyzer.h"
 #include "ModuleLoadingContext.h"
 #include "ModuleRegistryEntry.h"
@@ -55,6 +58,18 @@ namespace JSC {
 
 namespace JSModuleLoaderInternal {
 static constexpr unsigned maximumResolutionFailures = 128;
+
+#if ENABLE(WEBASSEMBLY)
+static void prepareWasmRecordForEvaluation(JSGlobalObject* globalObject, AbstractModuleRecord* record)
+{
+    auto* wasm = dynamicDowncast<WebAssemblyModuleRecord>(record);
+    if (!wasm || !wasm->jsModule() || wasm->instance())
+        return;
+    wasm->ensureInstance(globalObject);
+    if (wasm->status() == CyclicModuleRecord::Status::Unlinked)
+        wasm->setStatus(CyclicModuleRecord::Status::New);
+}
+#endif
 }
 
 static Identifier jsValueToSpecifier(JSGlobalObject* globalObject, JSValue value)
@@ -374,6 +389,10 @@ JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identi
     }
 
     AbstractModuleRecord::ModuleRequest request { specifier, ScriptFetchParameters::create(type) };
+    if (flags.contains(ModuleLoadFlag::Source))
+        request.m_phase = AbstractModuleRecord::ModulePhase::Source;
+    else if (flags.contains(ModuleLoadFlag::Deferred))
+        request.m_phase = AbstractModuleRecord::ModulePhase::Defer;
     auto* context = ModuleLoadingContext::create(vm, request, WTF::move(scriptFetcher), flags);
 
     JSPromise* intermediatePromise = JSPromise::create(vm, globalObject->promiseStructure());
@@ -441,7 +460,7 @@ static String moduleReferrer(const Identifier& referrerKey)
     return referrerKey.string();
 }
 
-JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleName, const Identifier& referrer, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher, bool deferred)
+JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleName, const Identifier& referrer, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher, AbstractModuleRecord::ModulePhase phase)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -449,9 +468,14 @@ JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, con
     Identifier resolved = resolve(globalObject, moduleName, referrer, scriptFetcher, /* useImportMap */ true);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    OptionSet<ModuleLoadFlag> flags { ModuleLoadFlag::Evaluate, ModuleLoadFlag::Dynamic };
-    if (deferred)
-        flags.add(ModuleLoadFlag::Deferred);
+    OptionSet<ModuleLoadFlag> flags { ModuleLoadFlag::Dynamic };
+    if (phase == AbstractModuleRecord::ModulePhase::Source)
+        flags.add(ModuleLoadFlag::Source);
+    else {
+        flags.add(ModuleLoadFlag::Evaluate);
+        if (phase == AbstractModuleRecord::ModulePhase::Defer)
+            flags.add(ModuleLoadFlag::Deferred);
+    }
     // Per "fetch an import() module script graph", the referring script's base URL is the fetch's referrer.
     JSPromise* promise = loadModule(globalObject, resolved, WTF::move(parameters), WTF::move(scriptFetcher), flags, moduleReferrer(referrer));
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -482,7 +506,7 @@ static bool moduleTypeIsAllowed(JSGlobalObject* globalObject, ScriptFetchParamet
     };
 }
 
-JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer, bool deferred)
+JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer, AbstractModuleRecord::ModulePhase phase)
 {
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [import] ", printableModuleKey(globalObject, moduleName));
 
@@ -506,7 +530,7 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
         fetchParams = ScriptFetchParameters::create(type.value());
 
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
-        RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, WTF::move(fetchParams), referrer, deferred));
+        RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, WTF::move(fetchParams), referrer, phase));
 
     auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     auto moduleNameString = moduleName->value(globalObject);
@@ -669,6 +693,12 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
             ASSERT(loadedEntry);
             ASSERT(loadedEntry->record() == loaded);
             ASSERT(loadedEntry->loadPromise());
+#if ENABLE(WEBASSEMBLY)
+            if (moduleRequest.m_phase != AbstractModuleRecord::ModulePhase::Source) {
+                JSModuleLoaderInternal::prepareWasmRecordForEvaluation(globalObject, loaded);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+            }
+#endif
             finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, loaded, scriptFetcher);
             RETURN_IF_EXCEPTION(scope, nullptr);
             return loadedEntry->loadPromise();
@@ -742,6 +772,12 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
         JSPromise* promise = mapEntry->loadPromise();
         if (promise) {
             if (mapEntry->record()) {
+#if ENABLE(WEBASSEMBLY)
+                if (moduleRequest.m_phase != AbstractModuleRecord::ModulePhase::Source) {
+                    JSModuleLoaderInternal::prepareWasmRecordForEvaluation(globalObject, mapEntry->record());
+                    RETURN_IF_EXCEPTION(scope, nullptr);
+                }
+#endif
                 finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, mapEntry->record(), scriptFetcher);
                 RETURN_IF_EXCEPTION(scope, nullptr);
             } else {
@@ -759,6 +795,9 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
         Locker locker { cellLock() };
         m_moduleMap.add(moduleMapKey, WriteBarrier<ModuleRegistryEntry>(vm, this, mapEntry));
     }
+
+    if (moduleRequest.m_phase == AbstractModuleRecord::ModulePhase::Source && mapEntry->status() == ModuleRegistryEntry::Status::New)
+        mapEntry->setSourcePhase(true);
 
     if (mapEntry->status() == ModuleRegistryEntry::Status::New) {
         // Per "fetch the descendants of a module script", the referrer is the referring module's base URL.
@@ -840,6 +879,12 @@ void JSModuleLoader::innerModuleLoading(JSGlobalObject* globalObject, ModuleGrap
             // 2.d.ii. Else if module.[[LoadedModules]] contains a LoadedModuleRequest Record record such that ModuleRequestsEqual(record, request) is true, then
             if (auto iter = module->loadedModules().find(ModuleMapKey { request.m_specifier.impl(), request.type() }); iter != module->loadedModules().end()) {
                 // 2.d.ii.1. Perform InnerModuleLoading(state, record.[[Module]]).
+#if ENABLE(WEBASSEMBLY)
+                if (request.m_phase != AbstractModuleRecord::ModulePhase::Source) {
+                    JSModuleLoaderInternal::prepareWasmRecordForEvaluation(globalObject, iter->value.m_module.get());
+                    RETURN_IF_EXCEPTION(scope, void());
+                }
+#endif
                 innerModuleLoading(globalObject, state, iter->value.m_module.get());
                 RETURN_IF_EXCEPTION(scope, void());
                 // 2.d.iii. Else,
@@ -928,13 +973,13 @@ void JSModuleLoader::finishLoadingImportedModule(JSGlobalObject* globalObject, c
     // 2. If payload is a GraphLoadingState Record, then
     if (auto* state = dynamicDowncast<ModuleGraphLoadingState>(payload)) {
         // 2.a. Perform ContinueModuleLoading(payload, result).
-        continueModuleLoading(globalObject, state, result);
+        continueModuleLoading(globalObject, state, result, moduleRequest.m_phase);
         RETURN_IF_EXCEPTION(scope, void());
     // 3. Else,
     } else {
         // 3.a. Perform ContinueDynamicImport(payload, result).
         auto* dynamicPayload = uncheckedDowncast<ModuleLoaderPayload>(payload);
-        continueDynamicImport(globalObject, dynamicPayload->promise(), result, WTF::move(scriptFetcher), dynamicPayload->deferred());
+        continueDynamicImport(globalObject, dynamicPayload->promise(), result, WTF::move(scriptFetcher), dynamicPayload->phase());
         RETURN_IF_EXCEPTION(scope, void());
     }
 
@@ -942,7 +987,7 @@ void JSModuleLoader::finishLoadingImportedModule(JSGlobalObject* globalObject, c
     scope.release();
 }
 
-void JSModuleLoader::continueModuleLoading(JSGlobalObject* globalObject, ModuleGraphLoadingState *state, ModuleCompletion moduleCompletion)
+void JSModuleLoader::continueModuleLoading(JSGlobalObject* globalObject, ModuleGraphLoadingState *state, ModuleCompletion moduleCompletion, AbstractModuleRecord::ModulePhase phase)
 {
     // ContinueModuleLoading(state, moduleCompletion)
     // https://tc39.es/ecma262/#sec-ContinueModuleLoading
@@ -955,6 +1000,26 @@ void JSModuleLoader::continueModuleLoading(JSGlobalObject* globalObject, ModuleG
         RELEASE_AND_RETURN(scope, void());
     // 2. If moduleCompletion is a normal completion, then
     if (auto* module = std::get_if<AbstractModuleRecord*>(&moduleCompletion)) {
+        if (phase == AbstractModuleRecord::ModulePhase::Source) {
+            if (auto* cyclic = dynamicDowncast<CyclicModuleRecord>(*module); cyclic && cyclic->status() == CyclicModuleRecord::Status::New)
+                cyclic->setStatus(CyclicModuleRecord::Status::Unlinked);
+            ASSERT(state->pendingModulesCount() >= 1);
+            state->setPendingModulesCount(state->pendingModulesCount() - 1);
+            if (!state->pendingModulesCount()) {
+                state->setIsLoading(false);
+                state->iterateVisited([](CyclicModuleRecord* loaded) {
+                    if (loaded->status() == CyclicModuleRecord::Status::New)
+                        loaded->setStatus(CyclicModuleRecord::Status::Unlinked);
+                });
+                state->promise()->fulfill(vm, *module);
+            }
+            scope.release();
+            return;
+        }
+#if ENABLE(WEBASSEMBLY)
+        JSModuleLoaderInternal::prepareWasmRecordForEvaluation(globalObject, *module);
+        RETURN_IF_EXCEPTION(scope, void());
+#endif
         // 2.a. Perform InnerModuleLoading(state, moduleCompletion.[[Value]]).
         innerModuleLoading(globalObject, state, *module);
         RETURN_IF_EXCEPTION(scope, void());
@@ -969,7 +1034,7 @@ void JSModuleLoader::continueModuleLoading(JSGlobalObject* globalObject, ModuleG
     scope.release();
 }
 
-void JSModuleLoader::continueDynamicImport(JSGlobalObject* globalObject, JSPromise* promise, ModuleCompletion completion, RefPtr<ScriptFetcher> scriptFetcher, bool deferred)
+void JSModuleLoader::continueDynamicImport(JSGlobalObject* globalObject, JSPromise* promise, ModuleCompletion completion, RefPtr<ScriptFetcher> scriptFetcher, AbstractModuleRecord::ModulePhase phase)
 {
     // ContinueDynamicImport(promiseCapability, moduleCompletion)
     // https://tc39.es/ecma262/#sec-ContinueDynamicImport
@@ -987,11 +1052,30 @@ void JSModuleLoader::continueDynamicImport(JSGlobalObject* globalObject, JSPromi
     }
     // 2. Let module be moduleCompletion.[[Value]].
     auto* module = std::get<AbstractModuleRecord*>(completion);
+    // Source phase: GetModuleSource(module) and resolve. Do not LoadRequestedModules / Link / Evaluate.
+    // https://tc39.es/proposal-source-phase-imports/
+    if (phase == AbstractModuleRecord::ModulePhase::Source) {
+        JSValue moduleSource = module->getModuleSource(globalObject);
+        if (scope.exception()) [[unlikely]] {
+            attachErrorInfo(globalObject, scope, module, module->moduleKey(), module->moduleType(), ModuleFailure::Kind::Evaluation);
+            promise->rejectWithCaughtException(vm, scope);
+            return;
+        }
+        promise->fulfill(vm, moduleSource);
+        return;
+    }
+#if ENABLE(WEBASSEMBLY)
+    JSModuleLoaderInternal::prepareWasmRecordForEvaluation(globalObject, module);
+    RETURN_IF_EXCEPTION(scope, void());
+#endif
     // 3. Let loadPromise be module.LoadRequestedModules().
     JSPromise* loadPromise = loadRequestedModules(globalObject, module, WTF::move(scriptFetcher));
     RETURN_IF_EXCEPTION(scope, void());
     // 4-8. Link and evaluate using microtask dispatch instead of closures.
-    loadPromise->performPromiseThenWithInternalMicrotask(vm, deferred ? InternalMicrotask::DynamicImportDeferLoadSettled : InternalMicrotask::DynamicImportLoadSettled, promise, module);
+    InternalMicrotask settled = phase == AbstractModuleRecord::ModulePhase::Defer
+        ? InternalMicrotask::DynamicImportDeferLoadSettled
+        : InternalMicrotask::DynamicImportLoadSettled;
+    loadPromise->performPromiseThenWithInternalMicrotask(vm, settled, promise, module);
     // 9. Return UNUSED.
     scope.release();
 }
@@ -1105,7 +1189,7 @@ JSValue JSModuleLoader::ModuleReferrer::toJSValue() const
     return std::get<JSGlobalObject*>(*this);
 }
 
-JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSSourceCode* jsSourceCode)
+JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSSourceCode* jsSourceCode, AbstractModuleRecord::ModulePhase phase)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1116,8 +1200,13 @@ JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identi
     promise->markAsHandled();
 
 #if ENABLE(WEBASSEMBLY)
-    if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly)
+    if (sourceCode.provider()->sourceType() == SourceProviderSourceType::WebAssembly) {
+        if (phase == AbstractModuleRecord::ModulePhase::Source)
+            RELEASE_AND_RETURN(scope, uncheckedDowncast<JSPromise>(JSWebAssembly::compileForModuleLoader(globalObject, promise, sourceCode.provider(), moduleKey, jsSourceCode)));
         RELEASE_AND_RETURN(scope, uncheckedDowncast<JSPromise>(JSWebAssembly::instantiate(globalObject, promise, sourceCode.provider(), moduleKey, jsSourceCode)));
+    }
+#else
+    UNUSED_PARAM(phase);
 #endif
 
     // https://tc39.es/proposal-json-modules/#sec-parse-json-module
