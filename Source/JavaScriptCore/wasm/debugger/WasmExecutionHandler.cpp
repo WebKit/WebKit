@@ -641,8 +641,13 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
+    auto parsedAddress = parseHexStrict(parts[1]);
+    if (!parsedAddress) {
+        sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
     uint32_t type = parseDecimal(parts[0]);
-    VirtualAddress address = VirtualAddress(parseHex(parts[1]));
+    VirtualAddress address = VirtualAddress(*parsedAddress);
     uint32_t length = parseDecimal(parts[2]);
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][SetBreakpoint] Setting breakpoint: type=", static_cast<int>(type), ", address=", address, ", length=", length);
@@ -696,8 +701,13 @@ void ExecutionHandler::removeBreakpoint(StringView packet)
         return;
     }
 
+    auto parsedAddress = parseHexStrict(parts[1]);
+    if (!parsedAddress) {
+        sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
     uint32_t type = parseDecimal(parts[0]);
-    VirtualAddress address = VirtualAddress(parseHex(parts[1]));
+    VirtualAddress address = VirtualAddress(*parsedAddress);
 
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Removing breakpoint: type=", static_cast<int>(type), ", address=", address);
 
@@ -722,11 +732,15 @@ void ExecutionHandler::handleThreadStopInfo(StringView packet)
     // Format: qThreadStopInfo<thread-id-in-hex>
     // Parse the thread ID
     StringView threadIdStr = packet.substring(strlen("qThreadStopInfo"));
-    uint64_t vmId = parseHex(threadIdStr);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling qThreadStopInfo for thread: ", vmId);
+    auto vmId = parseHexStrict(threadIdStr);
+    if (!vmId) {
+        sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Handling qThreadStopInfo for thread: ", *vmId);
 
     Locker locker { m_lock };
-    sendStopReplyForThread(locker, vmId);
+    sendStopReplyForThread(locker, *vmId);
 }
 
 static uint64_t NODELETE getStopPC(const DebugState& state)

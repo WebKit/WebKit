@@ -420,10 +420,11 @@ void DebugServer::handleThreadManagement(StringView packet)
             // -1 = all threads, 0 = any thread, 1 = thread 1
             // All are valid for our single-threaded WebAssembly context
             sendReplyOK();
-        } else {
-            execution().switchTarget(parseHex(threadSpec));
+        } else if (auto threadId = parseHexStrict(threadSpec)) {
+            execution().switchTarget(*threadId);
             sendReplyOK();
-        }
+        } else
+            sendErrorReply(ProtocolError::InvalidPacket);
         break;
     }
     case 'g': {

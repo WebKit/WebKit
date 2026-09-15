@@ -304,7 +304,7 @@ String stringToHex(StringView);
 
 void logWasmLocalValue(size_t index, const JSC::IPInt::IPIntLocal&, const Wasm::Type&);
 
-uint64_t parseHex(StringView, uint64_t defaultValue = 0);
+std::optional<uint64_t> parseHexStrict(StringView);
 
 uint32_t parseDecimal(StringView, uint32_t defaultValue = 0);
 

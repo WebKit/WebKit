@@ -145,7 +145,12 @@ void QueryHandler::handleRegisterInfo(StringView packet)
     // WebAssembly Context: WASM only exposes PC register for debugging
     // Other registers are internal to the WASM runtime and not accessible
     StringView regNumStr = packet.substring(strlen("qRegisterInfo"));
-    int regNum = static_cast<int>(parseHex(regNumStr));
+    auto parsedRegNum = parseHexStrict(regNumStr);
+    if (!parsedRegNum) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidRegister);
+        return;
+    }
+    int regNum = static_cast<int>(*parsedRegNum);
 
     if (!regNum) {
         // PC register definition for WebAssembly debugging
@@ -178,8 +183,13 @@ bool QueryHandler::parseLibrariesReadPacket(StringView packet, size_t& offset, s
     if (parts.size() != 2)
         return false;
 
-    offset = parseHex(parts[0]);
-    maxSize = parseHex(parts[1]);
+    auto parsedOffset = parseHexStrict(parts[0]);
+    auto parsedMaxSize = parseHexStrict(parts[1]);
+    if (!parsedOffset || !parsedMaxSize)
+        return false;
+
+    offset = *parsedOffset;
+    maxSize = *parsedMaxSize;
     return true;
 }
 
@@ -314,10 +324,14 @@ void QueryHandler::handleWasmCallStack(StringView packet)
     }
 
     StringView threadIdStr = strings[1];
-    uint64_t requestedThreadId = parseHex(threadIdStr);
-    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack thread ID: ", requestedThreadId);
+    auto requestedThreadId = parseHexStrict(threadIdStr);
+    if (!requestedThreadId) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack thread ID: ", *requestedThreadId);
 
-    String response = m_debugServer.execution().callStackStringFor(requestedThreadId);
+    String response = m_debugServer.execution().callStackStringFor(*requestedThreadId);
     dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmCallStack response: ", response);
 
     if (response.isEmpty()) {

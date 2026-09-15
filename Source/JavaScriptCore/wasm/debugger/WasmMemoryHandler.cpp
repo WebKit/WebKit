@@ -40,6 +40,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <cstdlib>
 #include <cstring>
 #include <wtf/ASCIICType.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -72,8 +73,14 @@ void MemoryHandler::read(StringView packet)
         return;
     }
 
-    VirtualAddress address = VirtualAddress(parseHex(parts[0]));
-    size_t length = static_cast<size_t>(parseHex(parts[1]));
+    auto parsedAddress = parseHexStrict(parts[0]);
+    auto parsedLength = parseHexStrict(parts[1]);
+    if (!parsedAddress || !parsedLength) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+    VirtualAddress address = VirtualAddress(*parsedAddress);
+    size_t length = static_cast<size_t>(*parsedLength);
 
     StringBuilder data;
     VirtualAddress::Type addressType = address.type();
@@ -107,9 +114,13 @@ bool MemoryHandler::readModuleData(VirtualAddress address, size_t length, String
         // Cannot clamp at non-zero offsets as it corrupts DWARF debug info in LLDB.
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - clamping read from ", length, " to ", source.size(), " bytes (module size: ", source.size(), ")");
         length = source.size();
-    } else if (offset >= source.size() || offset + length > source.size()) {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - read beyond module boundary. Address: ", address, " offset: ", offset, " size: ", length, " module size: ", source.size());
-        return false;
+    } else {
+        CheckedSize end = offset;
+        end += length;
+        if (end.hasOverflowed() || end > source.size()) {
+            dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - read beyond module boundary. Address: ", address, " offset: ", offset, " size: ", length, " module size: ", source.size());
+            return false;
+        }
     }
 
     for (size_t i = 0; i < length; ++i)
@@ -133,7 +144,9 @@ bool MemoryHandler::readMemoryData(VirtualAddress address, size_t length, String
     // FIXME(wasm-multimemory): Should the debugger eventually support multiple linear memories?
     void* memoryBase = jsInstance->memory(0)->basePointer();
     size_t size = jsInstance->memory(0)->memory().size();
-    if (!memoryBase || offset + length > size) {
+    CheckedSize readEnd = offset;
+    readEnd += length;
+    if (!memoryBase || readEnd.hasOverflowed() || readEnd > size) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] - memory access out of bounds. Instance ID: ", instanceId, " offset: ", offset, " size: ", length, " memory size: ", size);
         return false;
     }
@@ -155,13 +168,14 @@ void MemoryHandler::handleMemoryRegionInfo(StringView packet)
     // WebAssembly Context: Provide memory region info for WASM modules, memory, stack, and globals
     // Return region info with start, size, permissions, and name
     StringView addressStr = packet.substring(strlen("qMemoryRegionInfo:"));
-    if (addressStr.isEmpty()) {
+    auto parsedAddress = parseHexStrict(addressStr);
+    if (!parsedAddress) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] Malformed qMemoryRegionInfo packet");
         m_debugServer.sendErrorReply(ProtocolError::InvalidAddress);
         return;
     }
 
-    VirtualAddress address = VirtualAddress(parseHex(addressStr));
+    VirtualAddress address = VirtualAddress(*parsedAddress);
     dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] qMemoryRegionInfo for address: ", address);
 
     VirtualAddress::Type addressType = address.type();
@@ -298,12 +312,25 @@ void MemoryHandler::write(StringView packet)
         return;
     }
 
-    VirtualAddress address = VirtualAddress(parseHex(parts[0]));
-    size_t length = static_cast<size_t>(parseHex(parts[1]));
+    auto parsedAddress = parseHexStrict(parts[0]);
+    auto parsedLength = parseHexStrict(parts[1]);
+    if (!parsedAddress || !parsedLength) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+    VirtualAddress address = VirtualAddress(*parsedAddress);
+    size_t length = static_cast<size_t>(*parsedLength);
     StringView hexData = parts[2];
 
     // Validate hex data length (2 hex chars per byte)
     if (hexData.length() != length * 2) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+
+    // toASCIIHexValue() asserts on non-hex input, so check before decoding or writing anything.
+    if (!hexData.containsOnly<isASCIIHexDigit>()) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] Write rejected: non-hex payload");
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
         return;
     }
@@ -330,7 +357,9 @@ void MemoryHandler::write(StringView packet)
     // FIXME(wasm-multimemory): Should the debugger eventually support multiple linear memories?
     void* memoryBase = jsInstance->memory(0)->basePointer();
     size_t memorySize = jsInstance->memory(0)->memory().size();
-    if (!memoryBase || offset + length > memorySize) {
+    CheckedSize writeEnd = offset;
+    writeEnd += length;
+    if (!memoryBase || writeEnd.hasOverflowed() || writeEnd > memorySize) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[MemoryHandler] Write out of bounds. Instance ID: ", instanceId, " offset: ", offset, " size: ", length, " memory size: ", memorySize);
         m_debugServer.sendErrorReply(ProtocolError::MemoryError);
         return;

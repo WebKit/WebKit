@@ -1410,6 +1410,35 @@ class ThreadStopInfoUnknownThreadTestCase:
         self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 0000000000000000"])
 
 
+class MalformedMemoryPacketTestCase:
+    test_file = "resources/wasm/memory-atomic-wait.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        # Malformed m/M fields must be rejected, not silently defaulted, and must not stop the
+        # stub serving. Each bad packet is followed by a good one: a wedged server answers nothing,
+        # so the good packet is the real assertion.
+        self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 0000000000000000"])
+
+        # A parse failure used to default to 0, which is a real address: instance 0's memory.
+        self.session.cmd("process plugin packet send mzzzzzzzz,10", patterns=["response: E01"])
+        # parseInteger() accepts a leading '+', which is also the RSP ack character.
+        self.session.cmd("process plugin packet send m+20,08", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send m0000000000000000,zz", patterns=["response: E01"])
+
+        # offset + length overflowed back inside the module, so the read ran with a huge length.
+        self.session.cmd("process plugin packet send m4000000000000020,ffffffffffffffe8", patterns=["response: E02"])
+        self.session.cmd("process plugin packet send m4000000000000000,04", patterns=["response: 0061736d"])
+
+        # A non-hex payload reaches toASCIIHexValue, which asserts.
+        self.session.cmd("process plugin packet send M0000000000000000,2:zzzz", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 0000000000000000"])
+
+        # Positive control: a well-formed write still lands.
+        self.session.cmd("process plugin packet send M0000000000000000,2:41ff", patterns=["response: OK"])
+        self.session.cmd("process plugin packet send m0000000000000000,08", patterns=["response: 41ff000000000000"])
+
+
 class DoCatchThrowTestCase:
     test_file = "resources/swift-wasm/do-catch-throw/main.js"
 
@@ -2279,6 +2308,7 @@ ALL_TESTS = [
     MemoryAtomicWaitTestCase,
     MemoryAtomicWaitNoTimeoutTestCase,
     ThreadStopInfoUnknownThreadTestCase,
+    MalformedMemoryPacketTestCase,
     DoCatchThrowTestCase,
     WasmWasmWasmCallStackTestCase,
     JsWasmJsWasmCallStackTestCase,

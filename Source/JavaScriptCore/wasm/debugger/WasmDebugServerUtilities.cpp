@@ -42,6 +42,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmOps.h"
 #include "WasmVirtualAddress.h"
 #include <cstring>
+#include <wtf/ASCIICType.h>
 #include <wtf/DataLog.h>
 #include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
@@ -95,12 +96,13 @@ void logWasmLocalValue(size_t index, const JSC::IPInt::IPIntLocal& local, const 
     }
 }
 
-uint64_t parseHex(StringView str, uint64_t defaultValue)
+std::optional<uint64_t> parseHexStrict(StringView str)
 {
-    if (str.isEmpty())
-        return defaultValue;
-    auto result = parseInteger<uint64_t>(str, 16);
-    return result.value_or(defaultValue);
+    // An RSP hex field contains nothing but hex digits. parseInteger() would otherwise accept
+    // surrounding whitespace and a leading '+', which is also the ack character.
+    if (str.isEmpty() || !str.containsOnly<isASCIIHexDigit>())
+        return std::nullopt;
+    return parseInteger<uint64_t>(str, 16);
 }
 
 uint32_t parseDecimal(StringView str, uint32_t defaultValue)
