@@ -496,6 +496,33 @@ TEST_F(GraphicsContextGLCocoaTest, CopyImageAndMutateDrawingBuffer)
     EXPECT_TRUE(imagePixelIs(Color::blue, *displayImage, FloatPoint(5, 5)));
 }
 
+// Verify that the internal paint readback (copyNativeImageYFlipped) is not affected by content
+// setting glReadBuffer(GL_NONE) on the emulated default framebuffer in WebGL2.
+TEST_F(GraphicsContextGLCocoaTest, CopyNativeImageWithReadBufferNoneWebGL2)
+{
+    using GL = GraphicsContextGL;
+    GraphicsContextGLAttributes attributes;
+    attributes.isWebGL2 = true;
+    attributes.alpha = true;
+    attributes.antialias = false;
+    attributes.preserveDrawingBuffer = false;
+    auto gl = TestedGraphicsContextGLCocoa::create(WTF::move(attributes));
+    ASSERT_NE(gl, nullptr);
+    gl->reshape(10, 10);
+    gl->clearColor(0.f, 1.f, 0.f, 1.f);
+    gl->clear(GL::COLOR_BUFFER_BIT);
+
+    gl->bindFramebuffer(GL::FRAMEBUFFER, 0);
+    gl->readBuffer(GL::NONE);
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+
+    RefPtr drawingImage = gl->copyNativeImageYFlipped(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage, nullptr);
+    EXPECT_EQ(drawingImage->size(), FloatSize(10, 10));
+    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage, FloatPoint(5, 5)));
+    EXPECT_TRUE(gl->getErrors().isEmpty());
+}
+
 TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
 {
     auto context = createTestContext({ 20, 20 });
