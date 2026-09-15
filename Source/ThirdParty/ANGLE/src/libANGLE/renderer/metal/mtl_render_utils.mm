@@ -1278,7 +1278,11 @@ angle::Result ColorBlitUtils::getColorBlitRenderPipelineState(
 
     pipelineDesc.setInputPrimitiveTopology(MTLPrimitiveTopologyClassTriangle);
 
-    ShaderKey key(GetShaderTextureType(params.src), renderPassDesc.numColorAttachments,
+    const int sourceTextureType = GetShaderTextureType(params.src);
+    ANGLE_CHECK(contextMtl, sourceTextureType >= 0, gl::err::kInternalError,
+                GL_INVALID_OPERATION);
+
+    ShaderKey key(sourceTextureType, renderPassDesc.numColorAttachments,
                   params.unpackUnmultiplyAlpha, params.unpackPremultiplyAlpha,
                   params.transformLinearToSrgb);
 
@@ -1410,6 +1414,8 @@ angle::Result DepthStencilBlitUtils::getStencilToBufferComputePipelineState(
     angle::ObjCPtr<id<MTLComputePipelineState>> *outComputePipelineState)
 {
     int sourceStencilTextureType = GetShaderTextureType(params.srcStencil);
+    ANGLE_CHECK(contextMtl, sourceStencilTextureType >= 0, gl::err::kInternalError,
+                GL_INVALID_OPERATION);
     angle::ObjCPtr<id<MTLFunction>> &shader =
         mStencilBlitToBufferComputeShaders[sourceStencilTextureType];
     if (!shader)
@@ -1456,6 +1462,10 @@ angle::Result DepthStencilBlitUtils::getDepthStencilBlitRenderPipelineState(
     angle::ObjCPtr<id<MTLFunction>> *fragmentShader = nullptr;
     int depthTextureType                            = GetShaderTextureType(params.src);
     int stencilTextureType                          = GetShaderTextureType(params.srcStencil);
+    ANGLE_CHECK(contextMtl,
+                (params.src || params.srcStencil) && (!params.src || depthTextureType >= 0) &&
+                    (!params.srcStencil || stencilTextureType >= 0),
+                gl::err::kInternalError, GL_INVALID_OPERATION);
     if (params.src && params.srcStencil)
     {
         fragmentShader = &mDepthStencilBlitFragmentShaders[depthTextureType][stencilTextureType];
@@ -2394,6 +2404,8 @@ angle::Result CopyPixelsUtils::getT2BComputePipeline(
 {
     int formatIDValue     = static_cast<int>(angleFormat.id);
     int shaderTextureType = GetShaderTextureType(texture);
+    ANGLE_CHECK(contextMtl, shaderTextureType >= 0, gl::err::kInternalError,
+                GL_INVALID_OPERATION);
 
     auto &shader = mT2BComputeShaders[formatIDValue][shaderTextureType];
 
