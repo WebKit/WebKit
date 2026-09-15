@@ -337,6 +337,8 @@
 
     [NotSentFromWebContent] MessageParam WebPage.SetObscuredContentInsetsFenced machSendRight
     [NotSentFromWebContent] MessageParamReply RemoteGraphicsContextGL.PrepareForDisplay displayBuffer
+
+    [NeedsReview] MessageParam WebProcessProxy.SetTaskNamePort taskNamePort
 }
 
 [UnsafeWrapper] Vector<MachSendRight> {

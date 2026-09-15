@@ -400,6 +400,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     RELEASE_LOG_FORWARDABLE(Process, PlatformInitializeWebProcess);
 
+    if (mach_port_t taskNamePort = MACH_PORT_NULL; task_name_for_pid(mach_task_self(), getpid(), &taskNamePort) == KERN_SUCCESS)
+        parentProcessConnection()->send(Messages::WebProcessProxy::SetTaskNamePort(MachSendRight::adopt(taskNamePort)), 0);
+
 #if USE(EXTENSIONKIT)
     // Workaround for crash seen when running tests. See rdar://118186487.
     unsetenv("BSServiceDomains");

@@ -42,6 +42,7 @@
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
+#import <mach/mach_traps.h>
 #import <pal/Logging.h>
 #import <pal/spi/ios/MobileGestaltSPI.h>
 #import <sys/sysctl.h>
@@ -137,6 +138,21 @@ const Vector<String>& WebProcessProxy::mediaMIMETypes()
 void WebProcessProxy::cacheMediaSourceTypeSupported(const String& type, bool isSupported)
 {
     protect(processPool())->cacheMediaSourceTypeSupported(type, isSupported);
+}
+
+void WebProcessProxy::setTaskNamePort(MachSendRight&& taskNamePort)
+{
+    MESSAGE_CHECK(!m_taskNamePort);
+
+    pid_t pid = processID();
+    if (!pid)
+        return;
+
+    pid_t pidForTask = 0;
+    if (pid_for_task(taskNamePort.sendRight(), &pidForTask) == KERN_SUCCESS)
+        MESSAGE_CHECK(pid == pidForTask);
+
+    m_taskNamePort = WTF::move(taskNamePort);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)

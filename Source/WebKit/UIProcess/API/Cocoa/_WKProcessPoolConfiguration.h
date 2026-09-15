@@ -79,6 +79,7 @@ WK_EXTERN WK_API_DEPRECATED("Creating and using multiple instances of WKProcessP
 @property (nonatomic, nullable, copy) NSString *timeZoneOverride WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 @property (nonatomic) NSTimeInterval memoryFootprintPollIntervalForTesting;
+@property (nonatomic) size_t memoryLimitForTesting;
 @property (nonatomic, copy) NSArray<NSNumber *> *memoryFootprintNotificationThresholds WK_API_AVAILABLE(macos(14.5));
 
 @property (nonatomic) BOOL suspendsWebProcessesAggressivelyOnMemoryPressure WK_API_AVAILABLE(macos(15.4));

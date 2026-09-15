@@ -65,6 +65,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 #if PLATFORM(COCOA)
     CacheMediaMIMETypes(Vector<String> types)
     CacheMediaSourceTypeSupported(String type, bool isSupported)
+    SetTaskNamePort(MachSendRight taskNamePort)
 #endif
 
 #if HAVE(DISPLAY_LINK)

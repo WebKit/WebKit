@@ -33,11 +33,19 @@ namespace WTF {
 
 size_t memoryFootprint()
 {
-    task_vm_info_data_t vmInfo;
-    mach_msg_type_number_t count = TASK_VM_INFO_COUNT;
-    kern_return_t result = task_info(mach_task_self(), TASK_VM_INFO, (task_info_t) &vmInfo, &count);
-    if (result != KERN_SUCCESS)
+    return memoryFootprint(mach_task_self());
+}
+
+size_t memoryFootprint(mach_port_t taskPort)
+{
+    if (taskPort == MACH_PORT_NULL)
         return 0;
+
+    task_vm_info_data_t vmInfo;
+    mach_msg_type_number_t count = TASK_VM_INFO_REV1_COUNT;
+    if (task_info(taskPort, TASK_VM_INFO, (task_info_t)&vmInfo, &count) != KERN_SUCCESS)
+        return 0;
+
     return static_cast<size_t>(vmInfo.phys_footprint);
 }
 

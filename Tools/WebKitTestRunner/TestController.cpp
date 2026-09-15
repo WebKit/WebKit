@@ -1006,6 +1006,8 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
 
     WKContextConfigurationSetShouldConfigureJSCForTesting(configuration.get(), true);
 
+    WKContextConfigurationSetMemoryLimitForTesting(configuration.get(), std::numeric_limits<uint64_t>::max());
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
     WKContextConfigurationSetDisableFontHintingForTesting(configuration.get(), true);
 #endif
