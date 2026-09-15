@@ -48,6 +48,16 @@ FontBase::FontBase() = default;
 
 FontBase::~FontBase() = default;
 
+void FontBase::platformVerticalDataInit()
+{
+#if ENABLE(OPENTYPE_VERTICAL)
+    if (m_platformData.orientation() == FontOrientation::Vertical && !isTextOrientationFallback()) {
+        m_verticalData = FontCache::forCurrentThread().verticalData(m_platformData);
+        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
+    }
+#endif
+}
+
 void FontBase::applyFontMetricsOverrides()
 {
     if (m_platformData.metricsOverrides().ascentOverride.isNormal()

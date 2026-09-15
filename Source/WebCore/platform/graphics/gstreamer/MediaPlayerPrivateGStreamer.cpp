@@ -1363,7 +1363,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             track->setActive(true);
 
         Variant<AudioTrackPrivate*, VideoTrackPrivate*, InbandTextTrackPrivate*> variantTrack(&track.get());
-        switch (variantTrack.index()) {
+        auto trackType(static_cast<GStreamerTrackType>(variantTrack.index()));
+        switch (trackType) {
         case GStreamerTrackType::Audio:
             player->addAudioTrack(*std::get<AudioTrackPrivate*>(variantTrack));
             break;
@@ -1373,6 +1374,9 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         case GStreamerTrackType::Text:
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
         }
         tracks.add(track->streamId(), WTF::move(track));
         changed = true;

@@ -203,8 +203,9 @@ protected:
     WEBCORE_EXPORT FontBase(const FontPlatformData&, Origin, IsInterstitial, Visibility, IsOrientationFallback, std::optional<RenderingResourceIdentifier>);
     FontBase();
 
-    void platformInit();
-    void applyFontMetricsOverrides();
+    WEBCORE_EXPORT void platformInit();
+    WEBCORE_EXPORT void platformVerticalDataInit();
+    WEBCORE_EXPORT void applyFontMetricsOverrides();
 
 #if PLATFORM(COCOA)
     const PAL::OTSVGTable& otSVGTable() const;

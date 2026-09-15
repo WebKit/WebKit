@@ -41,7 +41,7 @@ namespace WebCore {
 
 class TrackPrivateBase;
 using TrackID = uint64_t;
-enum GStreamerTrackType {
+enum class GStreamerTrackType {
     Audio,
     Video,
     Text,
