@@ -29,6 +29,7 @@
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
+#include <wtf/AbstractCanMakeCheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -63,7 +64,7 @@ enum class DisconnectReason {
     InspectorDestroyed
 };
 
-class InspectorAgentBase {
+class InspectorAgentBase : public AbstractCanMakeCheckedPtr {
     WTF_MAKE_TZONE_ALLOCATED(InspectorAgentBase);
 public:
     virtual ~InspectorAgentBase() { }

@@ -45,6 +45,8 @@ class InspectorStorageAgent final : public InspectorAgentBase, public Inspector:
     WTF_MAKE_TZONE_ALLOCATED(InspectorStorageAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorStorageAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorStorageAgent(WebPageAgentContext&);
     ~InspectorStorageAgent();
 

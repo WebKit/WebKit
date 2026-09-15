@@ -45,10 +45,13 @@ namespace WebCore {
 
 class Page;
 
-class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler {
+class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspector::IndexedDBBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorIndexedDBAgent> {
     WTF_MAKE_TZONE_ALLOCATED(InspectorIndexedDBAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorIndexedDBAgent);
     WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorIndexedDBAgent(PageAgentContext&);
     ~InspectorIndexedDBAgent();
 

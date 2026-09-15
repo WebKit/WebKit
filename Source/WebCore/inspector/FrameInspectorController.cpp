@@ -127,7 +127,7 @@ void FrameInspectorController::createConsoleAgent()
 
     auto context = frameAgentContext();
     UniqueRef consoleAgent = makeUniqueRef<FrameConsoleAgent>(context);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
+    m_instrumentingAgents->setWebConsoleAgent(protect(consoleAgent).ptr());
     m_agents.append(WTF::move(consoleAgent));
     m_didCreateConsoleAgent = true;
 }

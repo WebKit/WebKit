@@ -42,6 +42,8 @@ class JS_EXPORT_PRIVATE InspectorTargetAgent final : public InspectorAgentBase, 
     WTF_MAKE_TZONE_ALLOCATED(InspectorTargetAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorTargetAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorTargetAgent(FrontendRouter&, BackendDispatcher&);
     ~InspectorTargetAgent() final;
 

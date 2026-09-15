@@ -30,12 +30,12 @@
 
 #pragma once
 
+#include "ChromeClient.h"
 #include "UserGestureIndicator.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class ChromeClient;
 class Document;
 class Page;
 

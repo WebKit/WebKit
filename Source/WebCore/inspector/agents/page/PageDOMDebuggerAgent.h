@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
+
 #include "InspectorDOMDebuggerAgent.h"
 #include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
@@ -37,6 +39,8 @@ class LocalFrame;
 class Node;
 
 class PageDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
+    WTF_MAKE_TZONE_ALLOCATED(PageDOMDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageDOMDebuggerAgent);
 public:
     PageDOMDebuggerAgent(PageAgentContext&, Inspector::InspectorDebuggerAgent*);
     ~PageDOMDebuggerAgent();

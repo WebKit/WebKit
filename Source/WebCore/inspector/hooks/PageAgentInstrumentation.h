@@ -53,9 +53,8 @@ namespace Inspector {
 // cross-process proxy can coexist.
 //
 // Inherits InspectorAgentBase so subclasses register with AgentRegistry, and
-// AbstractCanMakeCheckedPtr so InstrumentingAgents can hold CheckedPtr to it.
 // Concrete subclasses must use CanMakeCheckedPtr and WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR.
-class PageAgentInstrumentation : public WebCore::InspectorAgentBase, public AbstractCanMakeCheckedPtr {
+class PageAgentInstrumentation : public WebCore::InspectorAgentBase {
 public:
     ~PageAgentInstrumentation() override = default;
 

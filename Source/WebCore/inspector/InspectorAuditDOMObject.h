@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PageAuditAgent.h"
+#include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -50,7 +51,7 @@ public:
 private:
     explicit InspectorAuditDOMObject(PageAuditAgent&);
 
-    PageAuditAgent& m_auditAgent;
+    const CheckedRef<PageAuditAgent> m_auditAgent;
 };
 
 } // namespace WebCore

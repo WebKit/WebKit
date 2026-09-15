@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/TZoneMalloc.h>
+
 #include "InspectorDOMDebuggerAgent.h"
 #include <JavaScriptCore/Breakpoint.h>
 #include <wtf/RefPtr.h>
@@ -32,6 +34,8 @@
 namespace WebCore {
 
 class WorkerDOMDebuggerAgent final : public InspectorDOMDebuggerAgent {
+    WTF_MAKE_TZONE_ALLOCATED(WorkerDOMDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerDOMDebuggerAgent);
 public:
     WorkerDOMDebuggerAgent(WorkerAgentContext&, Inspector::InspectorDebuggerAgent*);
     ~WorkerDOMDebuggerAgent();

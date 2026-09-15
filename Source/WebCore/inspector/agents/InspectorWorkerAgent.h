@@ -47,6 +47,8 @@ class InspectorWorkerAgent : public InspectorAgentBase, public Inspector::Worker
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorWorkerAgent);
 
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeThreadSafeCheckedPtr);
+
     ~InspectorWorkerAgent();
 
     Inspector::WorkerFrontendDispatcher& frontendDispatcher() LIFETIME_BOUND { return m_frontendDispatcher; }

@@ -38,10 +38,13 @@ class Profile;
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE InspectorScriptProfilerAgent final : public InspectorAgentBase, public ScriptProfilerBackendDispatcherHandler, public JSC::Debugger::ProfilingClient {
+class JS_EXPORT_PRIVATE InspectorScriptProfilerAgent final : public InspectorAgentBase, public ScriptProfilerBackendDispatcherHandler, public JSC::Debugger::ProfilingClient, public CanMakeCheckedPtr<InspectorScriptProfilerAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorScriptProfilerAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorScriptProfilerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorScriptProfilerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorScriptProfilerAgent(AgentContext&);
     ~InspectorScriptProfilerAgent() final;
 

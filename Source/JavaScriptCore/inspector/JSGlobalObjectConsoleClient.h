@@ -26,7 +26,10 @@
 #pragma once
 
 #include "ConsoleClient.h"
+#include "InspectorConsoleAgent.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorHeapAgent.h"
+#include "InspectorScriptProfilerAgent.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -75,10 +78,10 @@ private:
     void startConsoleProfile();
     void stopConsoleProfile();
 
-    InspectorConsoleAgent* m_consoleAgent;
-    InspectorDebuggerAgent* m_debuggerAgent { nullptr };
+    const CheckedPtr<InspectorConsoleAgent> m_consoleAgent;
+    CheckedPtr<InspectorDebuggerAgent> m_debuggerAgent;
     CheckedPtr<InspectorHeapAgent> m_heapAgent;
-    InspectorScriptProfilerAgent* m_scriptProfilerAgent { nullptr };
+    CheckedPtr<InspectorScriptProfilerAgent> m_scriptProfilerAgent;
     Vector<String> m_profiles;
     bool m_profileRestoreBreakpointActiveValue { false };
 };

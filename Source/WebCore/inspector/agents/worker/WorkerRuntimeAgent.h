@@ -39,10 +39,13 @@ namespace WebCore {
 
 class WorkerOrWorkletGlobalScope;
 
-class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
+class WorkerRuntimeAgent final : public Inspector::InspectorRuntimeAgent, public CanMakeCheckedPtr<WorkerRuntimeAgent> {
     WTF_MAKE_NONCOPYABLE(WorkerRuntimeAgent);
     WTF_MAKE_TZONE_ALLOCATED(WorkerRuntimeAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerRuntimeAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     WorkerRuntimeAgent(WorkerAgentContext&);
     ~WorkerRuntimeAgent();
 
