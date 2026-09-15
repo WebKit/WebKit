@@ -193,7 +193,7 @@ private:
 
 constexpr bool FloatSize::isZero() const
 {
-    return fabsConstExpr(m_width) < std::numeric_limits<float>::epsilon() && fabsConstExpr(m_height) < std::numeric_limits<float>::epsilon();
+    return std::fabs(m_width) < std::numeric_limits<float>::epsilon() && std::fabs(m_height) < std::numeric_limits<float>::epsilon();
 }
 
 inline FloatSize& operator+=(FloatSize& a, const FloatSize& b)
@@ -290,7 +290,7 @@ constexpr FloatSize FloatSize::nanSize()
 
 constexpr bool FloatSize::isNaN() const
 {
-    return isNaNConstExpr(width());
+    return std::isnan(width());
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatSize&);
