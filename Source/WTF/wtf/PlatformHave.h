@@ -96,7 +96,7 @@
 #define HAVE_HISERVICES 1
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV)
 #define HAVE_READLINE 1
 #endif
 
@@ -216,7 +216,7 @@
 #define HAVE_PTHREAD_SETNAME_NP 1
 #endif
 
-#if OS(DARWIN)
+#if OS(DARWIN) && !PLATFORM(APPLETV)
 #define HAVE_READLINE 1
 #endif
 

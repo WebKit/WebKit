@@ -24,7 +24,9 @@
  */
 
 #import <memory>
+#if __has_include(<objc/Protocol.h>)
 #import <objc/Protocol.h>
+#endif
 #import <objc/runtime.h>
 #import <wtf/HashSet.h>
 #import <wtf/ObjCRuntimeExtras.h>

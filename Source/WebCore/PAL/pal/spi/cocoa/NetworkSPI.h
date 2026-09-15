@@ -30,6 +30,7 @@
 
 DECLARE_SYSTEM_HEADER
 
+#if __has_include(<Network/Network.h>)
 #import <Network/Network.h>
 
 typedef void (^nw_webtransport_drain_handler_t)(void);
@@ -200,3 +201,5 @@ typedef NS_ENUM(NSInteger, NEPolicySessionPriority) {
 // ------------------------------------------------------------
 
 #endif // !USE(APPLE_INTERNAL_SDK)
+
+#endif // __has_include(<Network/Network.h>)
