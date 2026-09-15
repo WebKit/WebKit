@@ -103,7 +103,7 @@ public:
     Vector<FloatRect, inlineGlyphRunCapacity> boundsForGlyphs(std::span<const Glyph>) const;
 #endif
 
-    float widthForGlyph(Glyph, SyntheticBoldInclusion = SyntheticBoldInclusion::Exclude) const;
+    float widthForGlyph(Glyph) const;
 
     Path pathForGlyph(Glyph) const;
 
