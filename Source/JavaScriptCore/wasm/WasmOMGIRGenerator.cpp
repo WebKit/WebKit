@@ -767,6 +767,8 @@ public:
     [[nodiscard]] PartialResult addMemoryCopy(ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
     void emitMemoryFill(Value* dstAddress, Value* targetValue, Value* count, uint8_t memoryIndex);
     void emitMemoryCopy(Value* dstAddress, Value* srcAddress, Value* count, uint8_t dstMemoryIndex, uint8_t srcMemoryIndex);
+    template<typename Func>
+    void emitPassiveBitClear(ptrdiff_t bitVectorOffset, unsigned bitIndex, Func operation);
     [[nodiscard]] PartialResult addMemoryInit(unsigned, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length, uint8_t memoryIndex);
     [[nodiscard]] PartialResult addDataDrop(unsigned);
 
@@ -1872,12 +1874,47 @@ auto OMGIRGenerator::addTableInit(unsigned elementIndex, unsigned tableIndex, Ex
     return { };
 }
 
+template<typename Func>
+void OMGIRGenerator::emitPassiveBitClear(ptrdiff_t bitVectorOffset, unsigned bitIndex, Func operation)
+{
+    if (bitIndex >= BitVector::maxInlineBitCount()) {
+        callWasmOperation(m_currentBlock, B3::Void, operation,
+            instanceValue(),
+            constant(Int32, bitIndex));
+        return;
+    }
+
+    auto* bits = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(bitVectorOffset));
+    auto* isInline = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), BitVector::inlineBitMask()));
+
+    auto* inlinePath = m_proc.addBlock();
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isInline,
+        FrequentedBlock(inlinePath), FrequentedBlock(slowPath, FrequencyClass::Rare));
+    inlinePath->addPredecessor(m_currentBlock);
+    slowPath->addPredecessor(m_currentBlock);
+
+    m_currentBlock = inlinePath;
+    auto* cleared = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), ~(static_cast<uint64_t>(1) << bitIndex)));
+    m_currentBlock->appendNew<MemoryValue>(m_proc, Store, origin(), cleared, instanceValue(), safeCast<int32_t>(bitVectorOffset));
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    callWasmOperation(m_currentBlock, B3::Void, operation,
+        instanceValue(),
+        constant(Int32, bitIndex));
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
+}
+
 auto OMGIRGenerator::addElemDrop(unsigned elementIndex) -> PartialResult
 {
-    callWasmOperation(m_currentBlock, B3::Void, operationWasmElemDrop,
-        instanceValue(),
-        constant(Int32, elementIndex));
-
+    emitPassiveBitClear(JSWebAssemblyInstance::offsetOfPassiveElements(), elementIndex, operationWasmElemDrop);
     return { };
 }
 
@@ -2329,10 +2366,7 @@ void OMGIRGenerator::emitMemoryCopy(Value* dstAddressValue, Value* srcAddressVal
 
 auto OMGIRGenerator::addDataDrop(unsigned dataSegmentIndex) -> PartialResult
 {
-    callWasmOperation(m_currentBlock, B3::Void, operationWasmDataDrop,
-        instanceValue(),
-        constant(Int32, dataSegmentIndex));
-
+    emitPassiveBitClear(JSWebAssemblyInstance::offsetOfPassiveDataSegments(), dataSegmentIndex, operationWasmDataDrop);
     return { };
 }
 

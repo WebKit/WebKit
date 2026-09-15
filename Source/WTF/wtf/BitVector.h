@@ -396,7 +396,11 @@ public:
         return byteCount(bitCount);
     }
     unsigned outOfLineMemoryUse() const { return outOfLineMemoryUse(size()); }
-        
+
+    static constexpr unsigned maxInlineBitCount() { return maxInlineBits(); }
+    static constexpr uintptr_t inlineBitMask() { return static_cast<uintptr_t>(1) << maxInlineBitCount(); }
+    bool isInline() const { return m_bitsOrPointer >> maxInlineBits(); }
+
     WTF_EXPORT_PRIVATE void shiftRightByMultipleOf64(size_t);
 
 private:
@@ -495,8 +499,6 @@ private:
         size_t m_numBits;
         uintptr_t m_words[0];
     };
-    
-    bool isInline() const { return m_bitsOrPointer >> maxInlineBits(); }
     
     const OutOfLineBits* outOfLineBits() const { return std::bit_cast<const OutOfLineBits*>(m_bitsOrPointer << 1); }
     OutOfLineBits* outOfLineBits() { return std::bit_cast<OutOfLineBits*>(m_bitsOrPointer << 1); }
