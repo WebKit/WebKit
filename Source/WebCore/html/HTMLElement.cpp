@@ -65,6 +65,7 @@
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLHeadingElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "HTMLNames.h"
@@ -90,6 +91,7 @@
 #include "RenderElement.h"
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
+#include "ScriptElement.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -770,6 +772,28 @@ String HTMLElement::accessKeyLabel() const
 String HTMLElement::title() const
 {
     return attributeWithoutSynchronization(titleAttr);
+}
+
+// https://html.spec.whatwg.org/multipage/form-elements.html#get-html-aware-text-content
+String HTMLElement::htmlAwareTextContent(const Element& element, IncludeAltText includeAltText)
+{
+    StringBuilder text;
+    for (RefPtr node = element.firstChild(); node;) {
+        if (isScriptElement(*node)) {
+            node = NodeTraversal::nextSkippingChildren(*node, &element);
+            continue;
+        }
+        if (RefPtr textNode = dynamicDowncast<Text>(*node))
+            text.append(textNode->data());
+        if (RefPtr image = dynamicDowncast<HTMLImageElement>(*node)) {
+            if (includeAltText == IncludeAltText::Yes)
+                text.append(image->attributeWithoutSynchronization(altAttr));
+            node = NodeTraversal::nextSkippingChildren(*node, &element);
+            continue;
+        }
+        node = NodeTraversal::next(*node, &element);
+    }
+    return text.toString().simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 bool HTMLElement::translate() const

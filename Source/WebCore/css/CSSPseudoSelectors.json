@@ -422,6 +422,9 @@
             "status": "non-standard",
             "user-agent-part": true
         },
+        "-internal-optgroup-label": {
+            "user-agent-part": true
+        },
         "-webkit-progress-bar": {
             "status": "non-standard",
             "user-agent-part": true

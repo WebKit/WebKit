@@ -1224,7 +1224,8 @@ select optgroup option {
     font-weight: normal;
 }
 
-select optgroup legend {
+select optgroup legend,
+optgroup::-internal-optgroup-label {
     box-sizing: border-box;
     padding-block: 0.6em 0.15em;
     padding-inline: 0.75em;
@@ -1247,7 +1248,8 @@ select optgroup legend {
         color: SelectedItemText;
     }
     select option:disabled,
-    select optgroup legend {
+    select optgroup legend,
+    optgroup::-internal-optgroup-label {
         color: GrayText;
     }
 }

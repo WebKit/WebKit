@@ -44,11 +44,9 @@
 #include "MouseEvent.h"
 #include "NodeName.h"
 #include "NodeRenderStyle.h"
-#include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
-#include "ScriptElement.h"
 #include "SelectPopoverElement.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleResolver.h"
@@ -292,11 +290,9 @@ bool HTMLOptionElement::isFocusable() const
 
 String HTMLOptionElement::text() const
 {
-    String text = collectOptionInnerText();
-
     // FIXME: Is displayStringModifiedByEncoding helpful here?
     // If it's correct here, then isn't it needed in the value and label functions too?
-    return protect(document())->displayStringModifiedByEncoding(text).trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
+    return protect(document())->displayStringModifiedByEncoding(htmlAwareTextContent(*this, IncludeAltText::No));
 }
 
 void HTMLOptionElement::setText(String&& text)
@@ -478,7 +474,7 @@ String HTMLOptionElement::value() const
     const AtomString& value = attributeWithoutSynchronization(valueAttr);
     if (!value.isNull())
         return value;
-    return collectOptionInnerTextCollapsingWhitespace();
+    return htmlAwareTextContent(*this, IncludeAltText::No);
 }
 
 bool HTMLOptionElement::selected(AllowStyleInvalidation allowStyleInvalidation) const
@@ -581,14 +577,14 @@ String HTMLOptionElement::label() const
     String label = attributeWithoutSynchronization(labelAttr);
     if (!label.isNull())
         return label;
-    return collectOptionInnerTextCollapsingWhitespace();
+    return htmlAwareTextContent(*this, IncludeAltText::No);
 }
 
 String HTMLOptionElement::displayLabel() const
 {
     String label = attributeWithoutSynchronization(labelAttr);
     if (label.isEmpty())
-        return collectOptionInnerTextCollapsingWhitespace();
+        return htmlAwareTextContent(*this, IncludeAltText::Yes);
     return label;
 }
 
@@ -635,22 +631,6 @@ bool HTMLOptionElement::isActuallyDisabled() const
         return true;
     RefPtr select = ownerSelectElement();
     return select && select->isDisabledFormControl();
-}
-
-String HTMLOptionElement::collectOptionInnerText() const
-{
-    StringBuilder text;
-    // Text nodes inside script elements are not part of the option text.
-    for (RefPtr node = firstChild(); node; node = isScriptElement(*node) ? NodeTraversal::nextSkippingChildren(*node, this) : NodeTraversal::next(*node, this)) {
-        if (auto* textNode = dynamicDowncast<Text>(*node))
-            text.append(textNode->data());
-    }
-    return text.toString();
-}
-
-String HTMLOptionElement::collectOptionInnerTextCollapsingWhitespace() const
-{
-    return collectOptionInnerText().trim(isASCIIWhitespace).simplifyWhiteSpace(isASCIIWhitespace);
 }
 
 void HTMLOptionElement::cloneIntoSelectedContent(HTMLSelectedContentElement& selectedContent)

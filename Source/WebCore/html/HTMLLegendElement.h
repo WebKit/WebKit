@@ -39,9 +39,6 @@ public:
 
 private:
     HTMLLegendElement(const QualifiedName&, Document&);
-
-    NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
-    void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
 };
 
 } // namespace WebCore

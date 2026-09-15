@@ -42,14 +42,20 @@ PASS getComputedStyle(ogShadow.firstChild).display is "block"
 PASS ogShadow.firstChild.textContent is "New Group"
 
 After removing optgroup label attribute:
-PASS getComputedStyle(ogShadow.firstChild).display is "none"
+PASS getComputedStyle(ogShadow.firstChild).display is "block"
+PASS ogShadow.firstChild.textContent is ""
 
 After re-adding optgroup label attribute:
 PASS getComputedStyle(ogShadow.firstChild).display is "block"
 PASS ogShadow.firstChild.textContent is "Re-added"
 
+After appending legend as the last child of optgroup:
+PASS getComputedStyle(ogShadow.firstChild).display is "block"
+PASS ogShadow.firstChild.textContent is "Re-added"
+
 Optgroup without label attribute:
-PASS og2Shadow === null is true
+PASS og2Shadow !== null is true
+PASS og2Shadow.firstChild.textContent is ""
 
 After setting label on optgroup without initial label:
 PASS og2Shadow !== null is true
@@ -83,8 +89,8 @@ Optgroup with label not inside a select:
 PASS og6Shadow === null is true
 
 Optgroup gains label while select is disconnected:
-PASS og7Shadow === null is true
-PASS og7Shadow === null is true
+PASS og7Shadow !== null is true
+PASS og7Shadow !== null is true
 PASS og7Shadow !== null is true
 PASS og7Shadow.firstChild.textContent is "Added while disconnected"
 

@@ -62,6 +62,9 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setInnerText(String&&);
     WEBCORE_EXPORT ExceptionOr<void> setOuterText(String&&);
 
+    enum class IncludeAltText : bool { No, Yes };
+    static String htmlAwareTextContent(const Element&, IncludeAltText);
+
     virtual bool NODELETE hasCustomFocusLogic() const;
     bool supportsFocus() const override;
 
