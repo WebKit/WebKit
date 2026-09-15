@@ -55,8 +55,8 @@ public:
         RGB,
 #if USE(TEXTURE_MAPPER)
         YUV,
-#endif
         ExternalOES,
+#endif
         HolePunch,
         Video,
         DMABuf,

@@ -65,7 +65,7 @@ private:
     void createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>&, bool gstGLEnabled);
 
 #if USE(GBM)
-    void createSkiaImageForQualcommDecoder();
+    void createSkiaImageForQualcommDecoder(const sk_sp<GrContextThreadSafeProxy>&);
 #if GST_CHECK_VERSION(1, 24, 0)
     void createSkiaImageForDMABufMemory(const sk_sp<GrContextThreadSafeProxy>&);
 #endif

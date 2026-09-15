@@ -72,8 +72,16 @@ public:
     std::optional<TransferFunction> transferFunction() const { return m_transferFunction; }
     void setTransferFunction(TransferFunction transferFunction) { m_transferFunction = transferFunction; }
 
+    enum class SampleRange : bool { Narrow, Full };
+    std::optional<SampleRange> sampleRange() const { return m_sampleRange; }
+    void setSampleRange(SampleRange sampleRange) { m_sampleRange = sampleRange; }
+
     EGLImage createEGLImage(GLDisplay&) const;
     static EGLImage createEGLImage(GLDisplay&, const Attributes&);
+#if USE(GSTREAMER)
+    static EGLImage createEGLImageForQualcommVideoFrame(GLDisplay&, const Attributes&, ColorSpace, SampleRange);
+#endif
+    bool isQualcommVideoFrameBuffer() const;
     static std::optional<Vector<EGLint>> buildEGLImageAttributes(const Attributes&, Attributes::EnableModifiers = Attributes::EnableModifiers::Yes);
 
 #if USE(TEXTURE_MAPPER)
@@ -87,6 +95,9 @@ public:
 
     sk_sp<SkImage> createImage(SkColorType, SkAlphaType, GrSurfaceOrigin);
     sk_sp<SkImage> createPromiseImage(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin, std::unique_ptr<GLFence>&&, WTF::UnixFileDescriptor&&);
+#if USE(GSTREAMER)
+    sk_sp<SkImage> createPromiseImageForQualcommVideoFrame(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin);
+#endif
 #endif
 
 private:
@@ -97,6 +108,7 @@ private:
     Attributes m_attributes;
     std::optional<ColorSpace> m_colorSpace;
     std::optional<TransferFunction> m_transferFunction;
+    std::optional<SampleRange> m_sampleRange;
 #if USE(TEXTURE_MAPPER)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 #else
