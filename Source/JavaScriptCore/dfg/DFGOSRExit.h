@@ -116,14 +116,15 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMaterializeOSRExitSideState, void, (
 struct OSRExit : public OSRExitBase {
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
+#if CPU(RISCV64)
     CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
+    CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch() const { return CodeLocationJump<JSInternalPtrTag>(m_patchableJumpLocation); }
+#endif
 
     JSValueSource m_jsValueSource;
     MethodOfGettingAValueProfile m_valueProfile;
     
     unsigned m_recoveryIndex;
-
-    CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch() const { return CodeLocationJump<JSInternalPtrTag>(m_patchableJumpLocation); }
 
     unsigned m_streamIndex;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)

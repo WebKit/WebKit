@@ -45,10 +45,18 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 {
     CCallHelpers jit(nullptr);
 
+#if !CPU(RISCV64)
+    jit.preserveReturnAddressAfterCall(GPRInfo::numberTagRegister);
+#endif
+
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
     adjustFrameAndStackInOSRExitCompilerThunk<DFG::JITCode>(jit, vm, JITType::DFGJIT);
 
+#if CPU(RISCV64)
     jit.store32(GPRInfo::numberTagRegister, &vm.osrExitIndex);
+#else
+    jit.storePtr(GPRInfo::numberTagRegister, &vm.osrExitReturnPC);
+#endif
 
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);

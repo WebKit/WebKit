@@ -417,6 +417,10 @@ protected:
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
+#if !CPU(RISCV64)
+    Label m_firstOSRExitEntrance;
+    Label m_lastOSRExitEntrance;
+#endif
     Vector<Vector<Label>> m_exitSiteLabels;
     Vector<DFG::OSREntryData> m_osrEntry;
     Vector<DFG::OSRExit> m_osrExit;

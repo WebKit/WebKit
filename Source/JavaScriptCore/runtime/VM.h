@@ -884,6 +884,9 @@ public:
 
     unsigned varargsLength;
     uint32_t osrExitIndex;
+#if !CPU(RISCV64)
+    void* osrExitReturnPC;
+#endif
     void* osrExitJumpDestination;
     RegExp* m_executingRegExp { nullptr };
 
