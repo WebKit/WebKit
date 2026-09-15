@@ -952,6 +952,7 @@ void TestController::initialize(int argc, const char* argv[])
 
     m_useWaitToDumpWatchdogTimer = options.useWaitToDumpWatchdogTimer;
     m_forceNoTimeout = options.forceNoTimeout;
+    m_ipAddressSpaceOverrides = options.ipAddressSpaceOverrides;
     m_verbose = options.verbose;
     m_gcBetweenTests = options.gcBetweenTests;
     m_shouldDumpPixelsForAllTests = options.shouldDumpPixelsForAllTests;
@@ -1692,6 +1693,14 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     {
         bool done { false };
         WKWebsiteDataStoreRemoveNetworkCache(websiteDataStore(), &done, [] (void* context) {
+            *(bool*)context = true;
+        });
+        runUntil(done, noTimeout);
+    }
+
+    if (!m_ipAddressSpaceOverrides.empty()) {
+        bool done { false };
+        WKWebsiteDataStoreSetIPAddressSpaceOverridesForTesting(websiteDataStore(), toWK(m_ipAddressSpaceOverrides.c_str()).get(), &done, [] (void* context) {
             *(bool*)context = true;
         });
         runUntil(done, noTimeout);
