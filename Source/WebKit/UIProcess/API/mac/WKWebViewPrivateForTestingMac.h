@@ -66,6 +66,11 @@
 // The value NSRefreshControl reads through the NSRefreshControlHosting protocol to decide
 // whether a pull may commit to a refresh. False during momentum so a flick cannot refresh.
 @property (nonatomic, readonly) BOOL _refreshControlHostIsTrackingForTesting;
+@property (nonatomic, readonly) BOOL _hasLiveResizePresentationOverrideForTesting;
+@property (nonatomic, readonly) NSSize _liveResizePresentationCommittedClipSizeForTesting;
+@property (nonatomic, readonly) NSSize _liveResizePresentationTargetClipSizeForTesting;
+@property (nonatomic, readonly) NSPoint _liveResizePresentationVisibleContentOriginForTesting;
+@property (nonatomic, readonly) NSRect _liveResizePresentationMappedContentRectForTesting;
 
 - (BOOL)isPointInScrollbar:(NSPoint)locationInView;
 

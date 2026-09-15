@@ -159,6 +159,9 @@ public:
 protected:
     RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
 
+    bool isInLiveResize() const { return m_isInLiveResize; }
+    virtual void updateLiveResizePresentation(bool flushImmediately = false) { }
+
     void updateDebugIndicatorPosition();
 
     bool shouldCoalesceVisualEditorStateUpdates() const override { return true; }
@@ -231,6 +234,7 @@ private:
     void sendUpdateGeometry();
 
     bool m_isWaitingForDidUpdateGeometry { false };
+    bool m_isInLiveResize { false };
 
     void didRefreshDisplay(IPC::Connection*);
     IPC::Error didRefreshDisplay(ProcessState&, IPC::Connection&);
