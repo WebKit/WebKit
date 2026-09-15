@@ -675,6 +675,12 @@ void ExecutionHandler::setBreakpoint(StringView packet)
         return;
     }
 
+    if (!instance->moduleInformation().isInstructionStart(address.offset())) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] Not an instruction boundary: ", address);
+        sendErrorReply(ProtocolError::InvalidAddress);
+        return;
+    }
+
     // Idempotent: LLDB sends one Z0 per instance for shared bytecode. The address is
     // recorded so the patch survives until all sites referring to it are removed.
     m_breakpointManager->setBreakpointAt(address, instance->moduleInformation(), pc);
