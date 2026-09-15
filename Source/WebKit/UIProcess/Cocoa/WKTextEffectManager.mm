@@ -28,40 +28,144 @@
 
 #if ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
 
-#import "ImageOptions.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/NativeImage.h>
 #import <WebCore/TextAnimationTypes.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/WritingDirection.h>
-#import <pal/spi/cocoa/WritingToolsUISPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/WeakObjCPtr.h>
 
-#import <pal/cocoa/WritingToolsUISoftLink.h>
+// The grammar-presentation animation API is spelled slightly differently on AppKit and UIKit; alias the
+// platform types so the coordinator plumbing below can be written once.
+#if PLATFORM(MAC)
+using CocoaWritingToolsCoordinator = NSWritingToolsCoordinator;
+using CocoaWritingToolsCoordinatorContext = NSWritingToolsCoordinatorContext;
+using CocoaWritingToolsCoordinatorContextScope = NSWritingToolsCoordinatorContextScope;
+using CocoaWritingToolsCoordinatorTextReplacementReason = NSWritingToolsCoordinatorTextReplacementReason;
+using CocoaWritingToolsCoordinatorAnimationParameters = NSWritingToolsCoordinatorAnimationParameters;
+using CocoaWritingToolsCoordinatorTextAnimation = NSWritingToolsCoordinatorTextAnimation;
+using CocoaWritingToolsCoordinatorTextDecoration = NSWritingToolsCoordinatorTextDecoration;
+using CocoaBezierPath = NSBezierPath;
+using CocoaTextPreview = NSArray<NSTextPreview *>;
+static constexpr auto cocoaWritingToolsCoordinatorTextAnimationIndicateGrammar = NSWritingToolsCoordinatorTextAnimationIndicateGrammar;
+static constexpr auto cocoaWritingToolsCoordinatorTextDecorationNone = NSWritingToolsCoordinatorTextDecorationNone;
+static constexpr auto cocoaWritingToolsCoordinatorTextDecorationGrammarUnderline = NSWritingToolsCoordinatorTextDecorationGrammarUnderline;
+#else
+using CocoaWritingToolsCoordinator = UIWritingToolsCoordinator;
+using CocoaWritingToolsCoordinatorContext = UIWritingToolsCoordinatorContext;
+using CocoaWritingToolsCoordinatorContextScope = UIWritingToolsCoordinatorContextScope;
+using CocoaWritingToolsCoordinatorTextReplacementReason = UIWritingToolsCoordinatorTextReplacementReason;
+using CocoaWritingToolsCoordinatorAnimationParameters = UIWritingToolsCoordinatorAnimationParameters;
+using CocoaWritingToolsCoordinatorTextAnimation = UIWritingToolsCoordinatorTextAnimation;
+using CocoaWritingToolsCoordinatorTextDecoration = UIWritingToolsCoordinatorTextDecoration;
+using CocoaBezierPath = UIBezierPath;
+using CocoaTextPreview = UITargetedPreview;
+static constexpr auto cocoaWritingToolsCoordinatorTextAnimationIndicateGrammar = UIWritingToolsCoordinatorTextAnimationIndicateGrammar;
+static constexpr auto cocoaWritingToolsCoordinatorTextDecorationNone = UIWritingToolsCoordinatorTextDecorationNone;
+static constexpr auto cocoaWritingToolsCoordinatorTextDecorationGrammarUnderline = UIWritingToolsCoordinatorTextDecorationGrammarUnderline;
+#endif
 
+enum class UnderlyingTextVisibility : bool { Hidden, Visible };
 
-static constexpr WTTextEffectManagerWritingDirection toTextEffectWritingDirection(WebCore::WritingDirection editorWritingDirection)
+static NSWritingDirection toNSWritingDirection(WebCore::WritingDirection editorWritingDirection)
 {
-    switch (editorWritingDirection) {
-    case WebCore::WritingDirection::Natural:
-        return WTTextEffectManagerWritingDirectionLeftToRight;
-    case WebCore::WritingDirection::LeftToRight:
-        return WTTextEffectManagerWritingDirectionLeftToRight;
-    case WebCore::WritingDirection::RightToLeft:
-        return WTTextEffectManagerWritingDirectionRightToLeft;
-    default:
-        ASSERT_NOT_REACHED();
-        return WTTextEffectManagerWritingDirectionLeftToRight;
+    return editorWritingDirection == WebCore::WritingDirection::RightToLeft ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+}
+
+// The indicator's rects are in root view coordinates, which is also the coordinate space of the coordinator's
+// effect container view, so no conversion is needed.
+template<typename Callback>
+static void forEachTextPreviewImage(const RefPtr<WebCore::TextIndicator>& textIndicator, NOESCAPE Callback&& callback)
+{
+    if (!textIndicator)
+        return;
+
+    RefPtr snapshot = textIndicator->contentImage();
+    if (!snapshot)
+        return;
+
+    RefPtr snapshotImage = snapshot->nativeImage();
+    if (!snapshotImage)
+        return;
+
+    RetainPtr snapshotPlatformImage = snapshotImage->platformImage();
+    if (!snapshotPlatformImage)
+        return;
+
+    CGRect boundingRectInRootViewCoordinates = textIndicator->textBoundingRectInRootViewCoordinates();
+
+    for (auto textRectInSnapshotCoordinates : textIndicator->textRectsInBoundingRectCoordinates()) {
+        CGRect presentationFrame = CGRectOffset(textRectInSnapshotCoordinates, boundingRectInRootViewCoordinates.origin.x, boundingRectInRootViewCoordinates.origin.y);
+        textRectInSnapshotCoordinates.scale(textIndicator->contentImageScaleFactor());
+        callback(adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage.get(), textRectInSnapshotCoordinates)).get(), presentationFrame);
     }
 }
 
-@interface WKTextEffectManager () <_WTTextEffectManagerDelegate>
+#if PLATFORM(MAC)
+
+static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore::TextIndicator>& textIndicator, NSView *)
+{
+    RetainPtr previews = adoptNS([[NSMutableArray alloc] init]);
+    forEachTextPreviewImage(textIndicator, [&](CGImageRef image, CGRect presentationFrame) {
+        [previews addObject:adoptNS([[NSTextPreview alloc] initWithSnapshotImage:image presentationFrame:presentationFrame]).get()];
+    });
+
+    if (![previews count])
+        return nil;
+
+    return previews;
+}
+
+#else
+
+static RetainPtr<CocoaTextPreview> textPreviewFromIndicator(const RefPtr<WebCore::TextIndicator>& textIndicator, UIView *containerView)
+{
+    if (!containerView)
+        return nil;
+
+    RetainPtr previewView = adoptNS([[UIView alloc] init]);
+    CGRect boundingFrame = CGRectNull;
+
+    forEachTextPreviewImage(textIndicator, [&](CGImageRef image, CGRect presentationFrame) {
+        RetainPtr imageView = adoptNS([[UIImageView alloc] initWithImage:adoptNS([[UIImage alloc] initWithCGImage:image]).get()]);
+        [imageView setFrame:presentationFrame];
+        [previewView addSubview:imageView.get()];
+        boundingFrame = CGRectUnion(boundingFrame, presentationFrame);
+    });
+
+    if (CGRectIsNull(boundingFrame))
+        return nil;
+
+    // A targeted preview positions a single view by its center, so the image views have to be laid out relative
+    // to the preview view's own bounds rather than to the container.
+    [previewView setFrame:boundingFrame];
+    for (UIView *imageView in [previewView subviews])
+        [imageView setFrame:CGRectOffset([imageView frame], -boundingFrame.origin.x, -boundingFrame.origin.y)];
+
+    RetainPtr parameters = adoptNS([[UIPreviewParameters alloc] init]);
+    RetainPtr target = adoptNS([[UIPreviewTarget alloc] initWithContainer:containerView center:CGPointMake(CGRectGetMidX(boundingFrame), CGRectGetMidY(boundingFrame))]);
+    return adoptNS([[UITargetedPreview alloc] initWithView:previewView.get() parameters:parameters.get() target:target.get()]);
+}
+
+#endif
+
+@interface WKTextEffectManager () <
+#if PLATFORM(MAC)
+    NSWritingToolsCoordinatorDelegate
+#else
+    UIWritingToolsCoordinatorDelegate
+#endif
+>
 @end
 
 @implementation WKTextEffectManager {
     WeakObjCPtr<WKWebView> _webView;
-    RetainPtr<_WTTextEffectManager> _textEffectManager;
+    RetainPtr<CocoaWritingToolsCoordinator> _writingToolsCoordinator;
+    RetainPtr<NSMutableDictionary<NSUUID *, CocoaWritingToolsCoordinatorContext *>> _effectIDToContext;
+    RetainPtr<NSMutableDictionary<NSUUID *, NSUUID *>> _effectIDToAnimationID;
+    RetainPtr<NSMutableDictionary<NSUUID *, NSUUID *>> _contextIDToEffectID;
 }
 
 - (instancetype)initWithWebView:(WKWebView *)webView
@@ -70,130 +174,205 @@ static constexpr WTTextEffectManagerWritingDirection toTextEffectWritingDirectio
         return nil;
 
     _webView = webView;
-    _textEffectManager = adoptNS([PAL::alloc_WTTextEffectManagerInstance() initWithDelegate:self]);
+    _writingToolsCoordinator = adoptNS([[CocoaWritingToolsCoordinator alloc] initWithDelegate:self]);
+    _effectIDToContext = adoptNS([[NSMutableDictionary alloc] init]);
+    _effectIDToAnimationID = adoptNS([[NSMutableDictionary alloc] init]);
+    _contextIDToEffectID = adoptNS([[NSMutableDictionary alloc] init]);
+
+#if PLATFORM(MAC)
+    [webView setWritingToolsCoordinator:_writingToolsCoordinator.get()];
+#else
+    RetainPtr contentView = [self _effectContainerView];
+    [_writingToolsCoordinator setEffectContainerView:contentView.get()];
+    [contentView addInteraction:_writingToolsCoordinator.get()];
+#endif
 
     return self;
 }
 
+- (void)dealloc
+{
+#if PLATFORM(MAC)
+    RetainPtr webView = _webView.get();
+    if ([webView writingToolsCoordinator] == _writingToolsCoordinator.get())
+        [webView setWritingToolsCoordinator:nil];
+#else
+    [[self _effectContainerView] removeInteraction:_writingToolsCoordinator.get()];
+#endif
+
+    [super dealloc];
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (UIView *)_effectContainerView
+{
+    RetainPtr webView = _webView.get();
+    return webView ? webView->_contentView.get() : nil;
+}
+#endif
+
 - (void)addTextEffectForID:(NSUUID *)uuid withData:(const WebCore::TextEffectData&)data
 {
-    [_textEffectManager startAnimationForSuggestionWithUUID:uuid writingDirection:toTextEffectWritingDirection(data.writingDirection) effectType:WTTextEffectManagerEffectTypeDefault completion:^(NSUUID *uuid) { }];
+    // The coordinator identifies an animation by (context, range). The grammar-indicate animation does not consult
+    // the context's text -- that only happens for NSWritingDirectionNatural, which is never passed here -- so an
+    // empty context is enough; its auto-assigned identifier is what maps back to the effect UUID.
+    NSRange range = NSMakeRange(0, 0);
+    RetainPtr attributedString = adoptNS([[NSAttributedString alloc] initWithString:@""]);
+    RetainPtr context = adoptNS([[CocoaWritingToolsCoordinatorContext alloc] initWithAttributedString:attributedString.get() range:range]);
+
+    // The prepare and preview delegate callbacks can be invoked from within startTextAnimation, so the context has
+    // to be resolvable before the animation starts.
+    [_effectIDToContext setObject:context.get() forKey:uuid];
+    [_contextIDToEffectID setObject:uuid forKey:[context identifier]];
+
+    RetainPtr animationID = [_writingToolsCoordinator startTextAnimation:cocoaWritingToolsCoordinatorTextAnimationIndicateGrammar forRange:range inContext:context.get() writingDirection:toNSWritingDirection(data.writingDirection)];
+    if (!animationID) {
+        [self forgetEffectForID:uuid];
+        return;
+    }
+
+    [_effectIDToAnimationID setObject:animationID.get() forKey:uuid];
 }
 
 - (void)removeTextEffectForID:(NSUUID *)uuid
 {
-    [_textEffectManager cancelAnimationForSuggestionWithUUID:uuid];
+    if (RetainPtr animationID = [_effectIDToAnimationID objectForKey:uuid])
+        [_writingToolsCoordinator cancelTextAnimationsWithIdentifiers:@[animationID.get()]];
+
+    [self forgetEffectForID:uuid];
 }
 
 - (void)removeAllTextEffects
 {
-    [_textEffectManager cancelAllAnimations];
+    [_writingToolsCoordinator stopWritingTools];
+    [_effectIDToContext removeAllObjects];
+    [_effectIDToAnimationID removeAllObjects];
+    [_contextIDToEffectID removeAllObjects];
 }
 
-#pragma mark _WTTextEffectManagerDelegate
-- (void)hideTextForSuggestionWithUUID:(NSUUID *)uuid completion:(void(^)(void))completionHandler
+- (void)forgetEffectForID:(NSUUID *)uuid
+{
+    if (RetainPtr context = [_effectIDToContext objectForKey:uuid])
+        [_contextIDToEffectID removeObjectForKey:[context identifier]];
+    [_effectIDToAnimationID removeObjectForKey:uuid];
+    [_effectIDToContext removeObjectForKey:uuid];
+}
+
+- (NSUUID *)effectIDForContext:(CocoaWritingToolsCoordinatorContext *)context
+{
+    return [_contextIDToEffectID objectForKey:[context identifier]];
+}
+
+- (void)setUnderlyingTextVisibility:(UnderlyingTextVisibility)visibility forEffectID:(NSUUID *)uuid completion:(void(^)(void))completionHandler
 {
     RetainPtr webView = _webView.get();
     if (!webView)
         return completionHandler();
 
-    auto textEffectUUID = WTF::UUID::fromNSUUID(uuid);
-    if (!textEffectUUID)
+    auto textEffectID = WTF::UUID::fromNSUUID(uuid);
+    if (!textEffectID)
         return completionHandler();
 
-    [webView _page]->updateUnderlyingTextVisibilityForTextEffectID(*textEffectUUID, false, [completionHandler = makeBlockPtr(completionHandler)] {
+    [webView _page]->updateUnderlyingTextVisibilityForTextEffectID(*textEffectID, visibility == UnderlyingTextVisibility::Visible, [completionHandler = makeBlockPtr(completionHandler)] {
         if (completionHandler)
             completionHandler();
     });
 }
-- (void)showTextForSuggestionWithUUID:(NSUUID *)uuid completion:(void(^)(void))completionHandler
+
+- (void)previewForContext:(CocoaWritingToolsCoordinatorContext *)context textDecoration:(CocoaWritingToolsCoordinatorTextDecoration)textDecoration completion:(void(^)(CocoaTextPreview *))completion
 {
     RetainPtr webView = _webView.get();
-    if (!webView)
-        return completionHandler();
+    NSUUID *effectID = [self effectIDForContext:context];
+    if (!webView || !effectID)
+        return completion(nil);
 
-    auto textEffectUUID = WTF::UUID::fromNSUUID(uuid);
-    if (!textEffectUUID)
-        return completionHandler();
+    auto textEffectID = WTF::UUID::fromNSUUID(effectID);
+    if (!textEffectID)
+        return completion(nil);
 
-    [webView _page]->updateUnderlyingTextVisibilityForTextEffectID(*textEffectUUID, true, [completionHandler = makeBlockPtr(completionHandler)] {
-        if (completionHandler)
-            completionHandler();
-    });
-}
-
-- (void)containerViewForSuggestionWithUUID:(NSUUID *)uuid completion:(void(^)(CocoaView *containerView))completionHandler
-{
-    completionHandler(_webView.get());
-}
-
-static RetainPtr<NSArray<_WTTextPreview *>> textPreviewsFromIndicator(const RefPtr<WebCore::TextIndicator>& textIndicator, CocoaView *rootView, CocoaView *containerView)
-{
-    if (!textIndicator)
-        return nil;
-
-    RefPtr snapshot = textIndicator->contentImage();
-    if (!snapshot)
-        return nil;
-
-    RefPtr snapshotImage = snapshot->nativeImage();
-    if (!snapshotImage)
-        return nil;
-
-    RetainPtr previews = adoptNS([[NSMutableArray alloc] initWithCapacity:textIndicator->textRectsInBoundingRectCoordinates().size()]);
-    RetainPtr snapshotPlatformImage = snapshotImage->platformImage();
-
-    if (!snapshotPlatformImage)
-        return nil;
-
-    CGRect boundingRectInRootViewCoordinates = textIndicator->textBoundingRectInRootViewCoordinates();
-
-    for (auto textRectInSnapshotCoordinates : textIndicator->textRectsInBoundingRectCoordinates()) {
-        CGRect frameInRootViewCoordinates = CGRectOffset(textRectInSnapshotCoordinates, boundingRectInRootViewCoordinates.origin.x, boundingRectInRootViewCoordinates.origin.y);
-        CGRect presentationFrame = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
-        textRectInSnapshotCoordinates.scale(textIndicator->contentImageScaleFactor());
-        [previews addObject:adoptNS([PAL::alloc_WTTextPreviewInstance() initWithSnapshotImage:adoptCF(CGImageCreateWithImageInRect(snapshotPlatformImage.get(), textRectInSnapshotCoordinates)).get() presentationFrame:presentationFrame]).get()];
-    }
-
-    return previews;
-}
-
-- (void)previewsForSuggestionWithUUID:(NSUUID *)uuid completion:(void (^)(NSArray<_WTTextPreview *> * _Nullable textPreviews, NSArray<_WTTextPreview *> * _Nullable underlinePreviews))completionHandler
-{
-    RetainPtr webView = _webView.get();
-    if (!webView)
-        return completionHandler(nil, nil);
-
-    auto textEffectUUID = WTF::UUID::fromNSUUID(uuid);
-    if (!textEffectUUID)
-        return completionHandler(nil, nil);
-
-    [webView _page]->textIndicatorForTextEffectID(*textEffectUUID, [protectedSelf = retainPtr(self), textEffectUUID = *textEffectUUID, completionHandler = makeBlockPtr(completionHandler)](RefPtr<WebCore::TextIndicator> textIndicator) {
-        RetainPtr webView = protectedSelf->_webView.get();
-        if (!webView) {
-            completionHandler(nil, nil);
-            return;
-        }
-
-#if PLATFORM(IOS_FAMILY)
-        RetainPtr rootView = webView->_contentView.get();
+    auto previewFromIndicator = [protectedSelf = retainPtr(self), completion = makeBlockPtr(completion)](RefPtr<WebCore::TextIndicator>&& textIndicator) mutable {
+#if PLATFORM(MAC)
+        RetainPtr containerView = protectedSelf->_webView.get();
 #else
-        RetainPtr rootView = webView.get();
+        RetainPtr containerView = [protectedSelf _effectContainerView];
 #endif
-        RetainPtr textPreviews = textPreviewsFromIndicator(textIndicator, rootView, webView);
-        if (!textPreviews) {
-            completionHandler(nil, nil);
-            return;
-        }
+        completion(textPreviewFromIndicator(textIndicator, containerView.get()).get());
+    };
 
-        [webView _page]->decorationIndicatorForTextEffectID(textEffectUUID, [textPreviews = WTF::move(textPreviews), rootView, webView, completionHandler](RefPtr<WebCore::TextIndicator> decorationIndicator) {
-            auto underlinePreviews = textPreviewsFromIndicator(decorationIndicator, rootView.get(), webView.get());
-            completionHandler(textPreviews.get(), underlinePreviews.get());
-        });
-    });
+    if (textDecoration == cocoaWritingToolsCoordinatorTextDecorationGrammarUnderline)
+        [webView _page]->decorationIndicatorForTextEffectID(*textEffectID, WTF::move(previewFromIndicator));
+    else
+        [webView _page]->textIndicatorForTextEffectID(*textEffectID, WTF::move(previewFromIndicator));
 }
+
+#pragma mark Writing Tools coordinator delegate
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator prepareForTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation forRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(void))completion
+{
+    NSUUID *effectID = [self effectIDForContext:context];
+    if (!effectID)
+        return completion();
+
+    [self setUnderlyingTextVisibility:UnderlyingTextVisibility::Hidden forEffectID:effectID completion:completion];
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator finishTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation forRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(void))completion
+{
+    NSUUID *effectID = [self effectIDForContext:context];
+    if (!effectID)
+        return completion();
+
+    [self setUnderlyingTextVisibility:UnderlyingTextVisibility::Visible forEffectID:effectID completion:completion];
+    [self forgetEffectForID:effectID];
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator requestsPreviewForTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation ofRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(CocoaTextPreview *))completion
+{
+    [self previewForContext:context textDecoration:cocoaWritingToolsCoordinatorTextDecorationNone completion:completion];
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator requestsPreviewForTextAnimation:(CocoaWritingToolsCoordinatorTextAnimation)textAnimation ofRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context textDecoration:(CocoaWritingToolsCoordinatorTextDecoration)textDecoration completion:(void(^)(CocoaTextPreview *))completion
+{
+    [self previewForContext:context textDecoration:textDecoration completion:completion];
+}
+
+// The grammar-indicate animation does not drive any of the base coordinator flows (contexts, replacement,
+// selection, decorations), so the remaining required delegate methods are inert.
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator requestsContextsForScope:(CocoaWritingToolsCoordinatorContextScope)scope completion:(void(^)(NSArray<CocoaWritingToolsCoordinatorContext *> *))completion
+{
+    completion(@[]);
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator replaceRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context proposedText:(NSAttributedString *)replacementText reason:(CocoaWritingToolsCoordinatorTextReplacementReason)reason animationParameters:(CocoaWritingToolsCoordinatorAnimationParameters *)animationParameters completion:(void(^)(NSAttributedString *))completion
+{
+    completion(nil);
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator selectRanges:(NSArray<NSValue *> *)ranges inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(void))completion
+{
+    completion();
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator requestsBoundingBezierPathsForRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(NSArray<CocoaBezierPath *> *))completion
+{
+    completion(@[]);
+}
+
+- (void)writingToolsCoordinator:(CocoaWritingToolsCoordinator *)writingToolsCoordinator requestsUnderlinePathsForRange:(NSRange)range inContext:(CocoaWritingToolsCoordinatorContext *)context completion:(void(^)(NSArray<CocoaBezierPath *> *))completion
+{
+    completion(@[]);
+}
+
+#if PLATFORM(MAC)
+
+- (void)writingToolsCoordinator:(NSWritingToolsCoordinator *)writingToolsCoordinator requestsPreviewForRect:(NSRect)rect inContext:(NSWritingToolsCoordinatorContext *)context completion:(void(^)(NSTextPreview *))completion
+{
+    completion(nil);
+}
+
+#endif
 
 @end
 
-#endif // ENABLE(WRITING_TOOLS_TEXT_EFFECT)
-
+#endif // ENABLE(WRITING_TOOLS_TEXT_EFFECTS)
