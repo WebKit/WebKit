@@ -410,6 +410,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         m_fastArrayValuesSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
         m_fastArrayKeysSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
         m_fastArrayEntriesSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
+        m_fastArraySentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
         m_fastMapKeysSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
         m_fastMapValuesSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
         m_fastMapEntriesSentinel.setWithoutWriteBarrier(JSSentinel::create(*this, sentinelStructure));
@@ -1988,6 +1989,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(m_fastArrayValuesSentinel);
     visitor.append(m_fastArrayKeysSentinel);
     visitor.append(m_fastArrayEntriesSentinel);
+    visitor.append(m_fastArraySentinel);
     visitor.append(m_fastMapKeysSentinel);
     visitor.append(m_fastMapValuesSentinel);
     visitor.append(m_fastMapEntriesSentinel);
