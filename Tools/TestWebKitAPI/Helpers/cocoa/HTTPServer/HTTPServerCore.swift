@@ -21,10 +21,17 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import Network
 import Security
 
 import struct Swift.String
+
+#if USE_APPLE_INTERNAL_SDK
+@_spi(HTTP) @_spi(OHTTP) @_spi(ConnectionExperimental) import Network
+#else
+import Network
+import Network_SPI
+private import TestWebKitAPILibrary.Helpers.cocoa.NetworkSPI
+#endif
 
 @MainActor
 final class HTTPServerCore {
@@ -182,6 +189,16 @@ final class HTTPServerCore {
 
         if let customHandler {
             customHandler(connection)
+        } else if `protocol` == .http2 || `protocol` == .http3 || `protocol` == .http2Proxy {
+            #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+            Task {
+                // FIXME: Handle errors better.
+                // swift-format-ignore: NeverUseForceTry
+                try! await respondToHTTPMessagingRequests(on: connection)
+            }
+            #else
+            fatalError("HTTP messaging is not available in this configuration")
+            #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
         } else {
             Task {
                 // FIXME: Handle errors better.
@@ -234,9 +251,61 @@ final class HTTPServerCore {
             }
         }
     }
+
+    // Each HTTP/2 stream (i.e. each request) arrives as its own one-shot pseudo-connection via
+    // attachProtocolListener; unlike respondToRequests(), this must not recurse
+    // to await a second message on the same connection, since a second request never arrives here.
+    private func respondToHTTPMessagingRequests(on connection: NWConnection) async throws {
+        guard let (request, _) = try await connection.receiveHTTPMessagingRequest(), let path = request.path else {
+            return
+        }
+
+        requestCount += 1
+        lastRequestCookies = request.headerFields[.cookie] ?? ""
+
+        if request.headerFields[.authorization] != nil {
+            sawAuthorizationHeader = true
+        }
+
+        guard let response = responses[path] else {
+            throw Self.Error.invalidPath(path)
+        }
+
+        if response.shouldRespondWith304ToConditionalRequests && request.headerFields.contains(.ifNoneMatch) {
+            let fields = response.headerFieldsFor304.map { (name: $0.key, value: $0.value) }
+            let response = HTTPResponseData(statusCode: 304, headerFields: fields)
+            try await connection.sendHTTPMessagingResponse(response)
+
+            return
+        }
+
+        switch response.behavior {
+        case .terminateConnectionAfterReceivingRequest:
+            await terminateIfNeeded(connection)
+
+        case .sendResponseNormally:
+            try await connection.sendHTTPMessagingResponse(response)
+
+        case .neverSendResponse:
+            break
+        }
+    }
 }
 
 extension HTTPServerCore {
+    /// `NWProtocolHTTP` is`@_spi(OHTTP)` and cannot be redeclared in `Network_SPI`, because its nested `Options`
+    /// subclasses the non-open `NWProtocolOptions`, so the public-SDK path goes through the C function.
+    #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+    private static func makeHTTPMessagingOptions() -> NWProtocolOptions {
+        #if USE_APPLE_INTERNAL_SDK
+        NWProtocolHTTP.Options()
+        #else
+        // swift-format-ignore: NeverForceUnwrap
+        unsafe NWProtocolOptions.__fromNW(nw_http_messaging_create_options())!
+        #endif
+    }
+    #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+
     fileprivate static func makeParameters(protocol: `Protocol`, identity: SecIdentity?, verifier: sec_protocol_verify_t?) -> NWParameters {
         func tls() -> NWProtocolTLS.Options {
             makeTLSOptions(protocol: `protocol`, identity: identity ?? TestCertificates.identity, verifier: verifier)
@@ -255,7 +324,39 @@ extension HTTPServerCore {
 
             parameters.defaultProtocolStack.applicationProtocols.insert(NWProtocolFramer.Options(definition: framerDefinition), at: 0)
             parameters.defaultProtocolStack.applicationProtocols.insert(tls(), at: 0)
+
             return parameters
+
+        case .http2Proxy:
+            #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+            let parameters = NWParameters(tls: nil)
+                .serverMode(true)
+                .attachProtocolListener(true)
+
+            parameters.defaultProtocolStack.applicationProtocols.insert(
+                NWProtocolFramer.Options(definition: HTTPSProxyFramer.definition),
+                at: 0
+            )
+            parameters.defaultProtocolStack.applicationProtocols.insert(tls(), at: 0)
+            parameters.defaultProtocolStack.applicationProtocols.insert(Self.makeHTTPMessagingOptions(), at: 0)
+
+            return parameters
+            #else
+            fatalError("HTTP messaging is not available in this configuration")
+            #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+
+        case .http2:
+            #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+            let parameters = NWParameters(tls: tls())
+                .serverMode(true)
+                .attachProtocolListener(true)
+
+            parameters.defaultProtocolStack.applicationProtocols.insert(Self.makeHTTPMessagingOptions(), at: 0)
+
+            return parameters
+            #else
+            fatalError("HTTP messaging is not available in this configuration")
+            #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
 
         default:
             fatalError("not yet ported")
@@ -289,7 +390,7 @@ extension HTTPServerCore {
             sec_protocol_options_set_verify_block(securityOptions, verifier, .main)
         }
 
-        if `protocol` == .http2Raw || `protocol` == .http2 {
+        if `protocol` == .http2Raw || `protocol` == .http2 || `protocol` == .http2Proxy {
             unsafe sec_protocol_options_add_tls_application_protocol(securityOptions, "h2")
         }
 
