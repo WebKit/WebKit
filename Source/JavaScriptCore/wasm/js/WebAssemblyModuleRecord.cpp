@@ -50,6 +50,27 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class BackupIncumbentScope {
+    WTF_MAKE_NONCOPYABLE(BackupIncumbentScope);
+public:
+    BackupIncumbentScope(VM& vm, JSGlobalObject* incumbent)
+        : m_vm(vm)
+        , m_previous(vm.backupIncumbentGlobalObject())
+    {
+        if (incumbent)
+            vm.setBackupIncumbentGlobalObject(incumbent);
+    }
+
+    ~BackupIncumbentScope()
+    {
+        m_vm.setBackupIncumbentGlobalObject(m_previous);
+    }
+
+private:
+    VM& m_vm;
+    JSGlobalObject* m_previous { nullptr };
+};
+
 const ClassInfo WebAssemblyModuleRecord::s_info = { "WebAssemblyModuleRecord"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyModuleRecord) };
 
 Structure* WebAssemblyModuleRecord::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -980,6 +1001,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
     ASSERT(!exception);
 
     if (JSObject* startFunction = m_startFunction.get()) {
+        BackupIncumbentScope backupIncumbent(vm, m_instance->incumbentGlobalObject());
         auto callData = JSC::getCallDataInline(startFunction);
         call(globalObject, startFunction, callData, jsUndefined(), *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });

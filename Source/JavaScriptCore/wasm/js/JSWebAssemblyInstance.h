@@ -92,7 +92,8 @@ public:
 
     static Identifier createPrivateModuleKey();
 
-    static JSWebAssemblyInstance* tryCreate(VM&, Structure*, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Wasm::CreationMode, RefPtr<SourceProvider>&&);
+    static JSGlobalObject* incumbentGlobalObjectFromStack(VM&, JSGlobalObject* fallback);
+    static JSWebAssemblyInstance* tryCreate(VM&, Structure*, JSGlobalObject*, const Identifier& moduleKey, JSWebAssemblyModule*, JSObject* importObject, Wasm::CreationMode, RefPtr<SourceProvider>&&, JSGlobalObject* incumbent);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;
@@ -101,6 +102,8 @@ public:
 
     void initializeImports(JSGlobalObject*, JSObject* importObject, Wasm::CreationMode);
     void finalizeCreation(VM&, JSGlobalObject*, Ref<Wasm::CalleeGroup>&&, Wasm::CreationMode);
+
+    JSGlobalObject* incumbentGlobalObject() const { return m_incumbentGlobalObject.get(); }
     
     WebAssemblyModuleRecord* moduleRecord() LIFETIME_BOUND { return m_moduleRecord.get(); }
 
@@ -487,6 +490,7 @@ private:
     VM* const m_vm;
     WriteBarrier<JSWebAssemblyModule> m_jsModule;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
+    WriteBarrier<JSGlobalObject> m_incumbentGlobalObject;
     FixedVector<WriteBarrier<JSWebAssemblyMemory>> m_memories;
     FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;
     StackManager::Mirror m_stackMirror;

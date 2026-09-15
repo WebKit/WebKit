@@ -49,7 +49,7 @@ class StreamingPlan;
 
 class StreamingCompiler final : public StreamingParserClient, public ThreadSafeRefCounted<StreamingCompiler> {
 public:
-    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL = { }, uint64_t requestIdentifier = 0);
+    JS_EXPORT_PRIVATE static Ref<StreamingCompiler> create(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL = { }, uint64_t requestIdentifier = 0);
 
     JS_EXPORT_PRIVATE ~StreamingCompiler();
 
@@ -71,7 +71,7 @@ public:
     JS_EXPORT_PRIVATE JSGlobalObject* globalObjectIfActive();
 
 private:
-    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL, uint64_t requestIdentifier);
+    JS_EXPORT_PRIVATE StreamingCompiler(VM&, CompilerMode, JSGlobalObject*, JSPromise*, JSObject* importObject, JSGlobalObject* incumbent, std::optional<WebAssemblyCompileOptions>&&, const SourceCode&, String wasmSourceURL, uint64_t requestIdentifier);
 
     bool didReceiveFunctionData(FunctionCodeIndex, const FunctionData&) final;
     void didFinishParsing() final;
@@ -88,6 +88,7 @@ private:
     Lock m_lock;
     unsigned m_remainingCompilationRequests { 0 };
     ThreadSafeWeakPtr<DeferredWorkTimer::Ticket> m_ticket;
+    JSGlobalObject* m_incumbent { nullptr };
     const Ref<Wasm::ModuleInformation> m_info;
     StreamingParser m_parser;
     RefPtr<EntryPlan> m_plan;

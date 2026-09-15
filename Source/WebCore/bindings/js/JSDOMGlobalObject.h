@@ -144,7 +144,7 @@ protected:
 
 #if ENABLE(WEBASSEMBLY)
     static void compileStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, std::optional<JSC::WebAssemblyCompileOptions>&&);
-    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&&);
+    static void instantiateStreaming(JSC::JSGlobalObject*, JSC::JSPromise*, JSC::JSValue, JSC::JSObject* importObject, std::optional<JSC::WebAssemblyCompileOptions>&&, JSC::JSGlobalObject* incumbent);
 #endif
 
     static JSC::Identifier moduleLoaderResolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSValue, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
