@@ -30,13 +30,8 @@
 
 #ifdef __cplusplus
 
+#include <cstddef>
 #include <span>
-
-namespace WebGPU {
-
-using SpanConstUInt8 = std::span<const uint8_t>;
-using SpanUInt8 = std::span<uint8_t>;
-
-}
+#include <wtf/EscapableByteSpan.h>
 
 #endif // __cplusplus
