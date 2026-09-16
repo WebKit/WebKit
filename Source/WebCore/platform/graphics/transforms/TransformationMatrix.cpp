@@ -719,8 +719,8 @@ TransformationMatrix TransformationMatrix::fromProjection(double fovUp, double f
 
 TransformationMatrix TransformationMatrix::fromProjection(double fovy, double aspect, double depthNear, double depthFar)
 {
-    double f = 1.0f / tanf(fovy / 2);
-    double invDepth = 1.0f / (depthNear - depthFar);
+    double f = 1.0 / tan(fovy / 2);
+    double invDepth = 1.0 / (depthNear - depthFar);
 
     return TransformationMatrix(f / aspect, 0.0f, 0.0f, 0.0f,
         0.0f, f, 0.0f, 0.0f,
