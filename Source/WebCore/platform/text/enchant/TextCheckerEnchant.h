@@ -44,9 +44,10 @@ public:
     bool hasDictionary() const { return !m_enchantDictionaries.isEmpty(); }
     Vector<String> availableSpellCheckingLanguages() const;
 
+    ~TextCheckerEnchant() = default;
+
 private:
     TextCheckerEnchant();
-    ~TextCheckerEnchant() = delete;
 
     void checkSpellingOfWord(const String&, int start, int end, int& misspellingLocation, int& misspellingLength);
 
