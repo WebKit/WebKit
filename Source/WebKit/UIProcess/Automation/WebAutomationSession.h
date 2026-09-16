@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -417,6 +417,17 @@ private:
 
     std::optional<unichar> NODELETE charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
     std::optional<unichar> NODELETE charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey) const;
+
+    // The DOM identity a synthesized key event should report, taken from the WebDriver key table.
+    // Several WebDriver keys have no equivalent on Apple keyboards, so their 'key' and 'code' cannot
+    // be derived from a platform key code; and on iOS no key code is supplied at all. Where this
+    // returns a value, the event factory reports it in place of the derived values.
+    struct KeyIdentity {
+        String key;
+        String code;
+        bool isKeypad { false };
+    };
+    static std::optional<KeyIdentity> keyIdentityForVirtualKey(Inspector::Protocol::Automation::VirtualKey);
 #endif
 
     WeakPtr<WebProcessPool> m_processPool;
