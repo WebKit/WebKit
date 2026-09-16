@@ -117,7 +117,18 @@ private:
     String generateRealmIdForBrowsingContext(const String& browsingContext);
     static String originStringFromSecurityOriginData(const WebCore::SecurityOriginData&);
 
+    struct ParsedStackTrace {
+        Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>> callFrames;
+        unsigned topLineNumber { 0 };
+        unsigned topColumnNumber { 0 };
+    };
+
     void finishEvaluateBidiScriptResult(const String& realmID, const String& expression, Inspector::CommandResult<String>&&, Inspector::CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&&);
+
+    ParsedStackTrace parseStackTrace(const String& stackTraceString);
+    RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> buildExceptionDetailsFromExceptionValue(RefPtr<JSON::Value> exceptionValue);
+    static Ref<Inspector::Protocol::BidiScript::StackTrace> createEmptyStackTrace();
+    static RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails> createExceptionDetails(const String& text, Ref<Inspector::Protocol::BidiScript::RemoteValue>&&, unsigned lineNumber = 0, unsigned columnNumber = 0);
 
     static std::optional<RealmIdentifier> parseRealmIdentifier(const String& realmID);
     std::optional<String> browsingContextForRealm(RealmIdentifier) const;
