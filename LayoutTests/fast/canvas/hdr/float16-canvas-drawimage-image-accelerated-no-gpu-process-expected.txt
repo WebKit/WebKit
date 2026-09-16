@@ -1,0 +1,43 @@
+Tests that drawImage() of an HDR image into a float16 canvas preserves HDR values, and that an SDR canvas is unaffected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+
+- globalCompositeOperation = "source-over"
+PASS HDR image -> float16 ("source-over"): peaks within the expected HDR range
+PASS HDR image -> unorm8 ("source-over"): is within the SDR range
+PASS SDR image -> float16 ("source-over"): is within the SDR range
+PASS SDR image -> unorm8 ("source-over"): is within the SDR range
+
+- globalCompositeOperation = "copy"
+PASS HDR image -> float16 ("copy"): peaks within the expected HDR range
+PASS HDR image -> unorm8 ("copy"): is within the SDR range
+PASS SDR image -> float16 ("copy"): is within the SDR range
+PASS SDR image -> unorm8 ("copy"): is within the SDR range
+
+- globalCompositeOperation = "source-in"
+PASS HDR image -> float16 ("source-in"): peaks within the expected HDR range
+PASS HDR image -> unorm8 ("source-in"): is within the SDR range
+PASS SDR image -> float16 ("source-in"): is within the SDR range
+PASS SDR image -> unorm8 ("source-in"): is within the SDR range
+
+- destination rect covers the canvas
+PASS HDR image -> float16 (covers canvas): peaks within the expected HDR range
+PASS HDR image -> unorm8 (covers canvas): is within the SDR range
+PASS SDR image -> float16 (covers canvas): is within the SDR range
+PASS SDR image -> unorm8 (covers canvas): is within the SDR range
+
+- animated image reporting HDR content
+PASS animated HDR image -> float16: is within the SDR range
+PASS animated HDR image -> unorm8: is within the SDR range
+
+- SVGImageElement source
+PASS HDR <svg:image> -> float16: peaks within the expected HDR range
+PASS HDR <svg:image> -> unorm8: is within the SDR range
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

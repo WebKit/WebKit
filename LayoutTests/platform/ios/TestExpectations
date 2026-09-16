@@ -4945,6 +4945,11 @@ compositing/hdr [ Pass ]
 fast/canvas/hdr [ Pass ]
 
 # These tests do not draw the HDR images correctly on iPhone 12 simulator
+fast/canvas/hdr/float16-canvas-drawimage-image-accelerated.html [ Failure ]
+fast/canvas/hdr/float16-canvas-drawimage-image-accelerated-display-p3.html [ Failure ]
+fast/canvas/hdr/float16-canvas-drawimage-image-accelerated-no-gpu-process.html [ Failure ]
+fast/canvas/hdr/float16-canvas-drawimage-image-unaccelerated.html [ Failure ]
+fast/canvas/hdr/float16-canvas-drawimage-image-unaccelerated-no-gpu-process.html [ Failure ]
 fast/images/hdr-basic-image.html [ ImageOnlyFailure ]
 fast/images/hdr-basic-image-dynamic-range-limit.html [ ImageOnlyFailure ]
 fast/images/hdr-background-image.html [ ImageOnlyFailure ]
