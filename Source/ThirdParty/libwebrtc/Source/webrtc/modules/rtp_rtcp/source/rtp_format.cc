@@ -80,7 +80,12 @@ std::vector<int> RtpPacketizer::SplitAboutEqually(
     int payload_len,
     const PayloadSizeLimits& limits) {
 #ifdef WEBRTC_WEBKIT_BUILD
+#ifdef RC_REMOVE_SEC_ACCEL_3
   if (payload_len == 0)
+#else
+  // payload_len is coming from a size_t given via RTCEncodedVideoFrame, let's reject oversized payloads.
+  if (payload_len <= 0)
+#endif
     return { };
 #else
   RTC_DCHECK_GT(payload_len, 0);
