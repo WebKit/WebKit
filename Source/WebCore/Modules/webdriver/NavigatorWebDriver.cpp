@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,12 @@ namespace WebCore {
 
 bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
 {
-    auto* frame = navigator.frame();
-    if (!frame || !frame->page())
+    RefPtr frame = navigator.frame();
+    if (!frame)
+        return false;
+
+    RefPtr page = frame->page();
+    if (!page)
         return false;
 
     switch (frame->settings().navigatorWebDriverActivePolicy()) {
@@ -49,7 +53,7 @@ bool NavigatorWebDriver::isControlledByAutomation(const Navigator& navigator)
     case NavigatorWebDriverActivePolicy::Auto:
         break;
     }
-    return frame->page()->isControlledByAutomation();
+    return page->isControlledByAutomation();
 }
 
 bool NavigatorWebDriver::webdriver(const Navigator& navigator)

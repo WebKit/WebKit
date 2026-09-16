@@ -25,18 +25,16 @@
 
 #pragma once
 
-#include <wtf/Compiler.h>
-
 namespace WebCore {
 
 class Navigator;
 
 class NavigatorWebDriver {
 public:
-    static bool NODELETE webdriver(const Navigator&);
+    static bool webdriver(const Navigator&);
 
 private:
-    static bool NODELETE isControlledByAutomation(const Navigator&);
+    static bool isControlledByAutomation(const Navigator&);
 };
 
 } // namespace WebCore
