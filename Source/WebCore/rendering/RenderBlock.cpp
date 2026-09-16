@@ -2339,11 +2339,26 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
         m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
+    } else if (logicalWidth.isCalcSize() && !logicalWidth.isAuto()) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis. What
+        // the basis is worth here: min-content and max-content each stand for one size, so both
+        // contributions collapse to it; fit-content depends on the space available, which a
+        // contribution does not have, so each keeps its own; a <calc-sum> basis resolves `size`
+        // itself and ignores what is passed in. An `auto` basis has no intrinsic width to stand for,
+        // so it is left to the content based branch below.
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+        if (logicalWidth.isMinContent())
+            maxContentLogicalWidth = minContentLogicalWidth;
+        else if (logicalWidth.isMaxContent())
+            minContentLogicalWidth = maxContentLogicalWidth;
+
+        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth, minContentLogicalWidth);
+        m_maxContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth, maxContentLogicalWidth);
     } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
-        // Either keyword makes both contributions that one size, so the box neither shrinks below it
-        // nor grows past it. Both sit behind the aspect-ratio branch: a ratio transfers the block size
-        // across, and that transferred size is what the keyword then stands for, not the content based
-        // one, which for an empty box with `height: 100px; aspect-ratio: 1/1` would be zero.
+        // Either keyword stands for one size, so the box neither shrinks below it nor grows past it.
+        // This sits behind the aspect-ratio branch because a ratio transfers the block size across,
+        // and that is the size the keyword stands for. The content based size of an empty box with
+        // `height: 100px; aspect-ratio: 1/1` is zero.
         std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
         if (logicalWidth.isMaxContent())
             m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;

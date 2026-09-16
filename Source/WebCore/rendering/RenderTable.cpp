@@ -1034,6 +1034,15 @@ void RenderTable::computeIntrinsicLogicalWidthContributions()
 
     m_tableLayout->applyContentLogicalWidthQuirks(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
 
+    if (auto& styleLogicalWidth = style().logicalWidth(); styleLogicalWidth.isCalcSize() && (styleLogicalWidth.isMinContent() || styleLogicalWidth.isMaxContent())) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis.
+        // Cell spacing is part of the table's used width under the basis keyword, so `size` keeps it.
+        auto keywordLogicalWidth = styleLogicalWidth.isMaxContent() ? m_maxContentLogicalWidthContribution : m_minContentLogicalWidthContribution;
+        auto borderAndPadding = borderAndPaddingLogicalWidth();
+        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(styleLogicalWidth, std::max(0_lu, keywordLogicalWidth - borderAndPadding)) + borderAndPadding;
+        m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
+    }
+
     for (auto& caption : m_captions) {
         LayoutUnit captionMinWidth = caption->minContentLogicalWidthContribution();
         captionMinWidth += marginIntrinsicLogicalWidthForChild(*caption);

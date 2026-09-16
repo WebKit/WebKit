@@ -26,6 +26,7 @@
 
 #include <WebCore/CSSPrimitiveNumericRange.h>
 #include <WebCore/CSSValueKeywords.h>
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 
@@ -63,7 +64,7 @@ public:
     WEBCORE_EXPORT bool hasPercentage() const;
     WEBCORE_EXPORT bool basisHasPercentage() const;
 
-    WEBCORE_EXPORT double evaluate(double percentResolutionLength, const ZoomFactor&) const;
+    WEBCORE_EXPORT double evaluate(double percentResolutionLength, const ZoomFactor&, std::optional<double> keywordBasis = std::nullopt) const;
 
     WEBCORE_EXPORT bool operator==(const UnevaluatedCalcSize&) const;
 
