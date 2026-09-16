@@ -1673,6 +1673,12 @@ WEBKIT_COPY_FILES(WebCore_CopyBundleResources
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyBundleResources)
 
+WEBKIT_COPY_FILES(WebCore_CopyAudioResources
+    DESTINATION "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Resources/audio"
+    FILES ${WEBCORE_DIR}/platform/audio/resources/Composite.wav
+    FLATTENED NO_SYMLINK)
+add_dependencies(WebCore WebCore_CopyAudioResources)
+
 # Stage the in-tree WebCore_Private module map into the framework bundle so the
 # Swift Clang importer finds it as a real module via -F (as JavaScriptCore does,
 # and as iOS does below).
