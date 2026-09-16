@@ -26,11 +26,16 @@
 #include "config.h"
 #include "PageDOMDebuggerAgent.h"
 
+#include "Document.h"
 #include "Element.h"
+#include "FrameDebuggerAgent.h"
+#include "FrameDestructionObserverInlines.h"
+#include "FrameInspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "LocalFrame.h"
 #include "Node.h"
+#include "NodeDocument.h"
 
 #include <wtf/TZoneMallocInlines.h>
 
@@ -174,10 +179,6 @@ static std::optional<size_t> calculateDistance(Node& child, Node& ancestor)
 
 void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 {
-    CheckedPtr debuggerAgent = m_debuggerAgent;
-    if (!debuggerAgent->breakpointsActive())
-        return;
-
     if (m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
@@ -202,6 +203,13 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 
     ASSERT(closestBreakpointOwner);
 
+    // Resolve and gate on the frame that owns the breakpoint, not the one that mutated:
+    // innerParentNode crosses iframe boundaries, so an ancestor breakpoint can match a mutation in a
+    // descendant frame, and the two frames' debuggers can disagree about breakpointsActive().
+    CheckedPtr debuggerAgent = pausingDebuggerAgentForFrame(RefPtr { closestBreakpointOwner->document().frame() });
+    if (!debuggerAgent->breakpointsActive())
+        return;
+
     auto pauseData = buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
     pauseData->setBoolean("insertion"_s, true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
@@ -211,10 +219,6 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
 
 void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
 {
-    CheckedPtr debuggerAgent = m_debuggerAgent;
-    if (!debuggerAgent->breakpointsActive())
-        return;
-
     if (m_domNodeRemovedBreakpoints.isEmpty() && m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
@@ -257,6 +261,11 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     ASSERT(closestBreakpointType);
     ASSERT(closestBreakpointOwner);
 
+    // See willInsertDOMNode: resolve and gate on the breakpoint owner's frame, not the mutated node's.
+    CheckedPtr debuggerAgent = pausingDebuggerAgentForFrame(RefPtr { closestBreakpointOwner->document().frame() });
+    if (!debuggerAgent->breakpointsActive())
+        return;
+
     auto pauseData = buildPauseDataForDOMBreakpoint(*closestBreakpointType, *closestBreakpointOwner);
     if (CheckedPtr domAgent = Ref { m_instrumentingAgents.get() }->persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
@@ -286,7 +295,7 @@ void PageDOMDebuggerAgent::willDestroyDOMNode(Node& node)
 
 void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 {
-    CheckedPtr debuggerAgent = m_debuggerAgent;
+    CheckedPtr debuggerAgent = pausingDebuggerAgentForFrame(RefPtr { element.document().frame() });
     if (!debuggerAgent->breakpointsActive())
         return;
 
@@ -300,7 +309,7 @@ void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 
 void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
 {
-    CheckedPtr debuggerAgent = m_debuggerAgent;
+    CheckedPtr debuggerAgent = pausingDebuggerAgentForFrame(RefPtr { element.document().frame() });
     if (!debuggerAgent->breakpointsActive())
         return;
 
@@ -314,7 +323,7 @@ void PageDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
 
 Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Inspector::Protocol::DOMDebugger::DOMBreakpointType breakpointType, Node& breakpointOwner)
 {
-    ASSERT(m_debuggerAgent->breakpointsActive());
+    ASSERT(pausingDebuggerAgentForFrame(RefPtr { breakpointOwner.document().frame() })->breakpointsActive());
     ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();

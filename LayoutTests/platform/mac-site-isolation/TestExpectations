@@ -36,7 +36,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across
 fast/loader/stateobjects/pushstate-in-iframe.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
 http/tests/navigation-api/different-origin-entries-removed-after-bfcache.html [ Failure Timeout ]
-inspector/dom-debugger/url-breakpoints-dom-text-and-regex.html [ Skip ]
 
 ########################
 # Tests that Text fail #
@@ -106,7 +105,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-t
 inspector/dom/inspect-template-node.html [ Failure ]
 inspector/dom/inspect.html [ Failure ]
 inspector/dom/willDestroyDOMNode.html [ Failure ]
-inspector/dom-debugger/attribute-modified-style.html [ Failure ]
 inspector/runtime/executionContextCreated-onEnable.html [ Failure ]
 svg/webarchive/svg-cursor-subresources.svg [ Failure ]
 

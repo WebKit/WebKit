@@ -31,7 +31,7 @@ function test()
             await pausePromise;
 
             InspectorTest.log("Checking $event...");
-            let {result} = await DebuggerAgent.evaluateOnCallFrame.invoke({
+            let {result} = await WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({
                 callFrameId: WI.debuggerManager.activeCallFrame.id,
                 expression: `$event.target.worldID`,
                 objectGroup: "test",
@@ -59,7 +59,7 @@ function test()
             await pausePromise;
 
             InspectorTest.log("Checking $event...");
-            let {result} = await DebuggerAgent.evaluateOnCallFrame.invoke({
+            let {result} = await WI.debuggerManager.activeCallFrame.target.DebuggerAgent.evaluateOnCallFrame.invoke({
                 callFrameId: WI.debuggerManager.activeCallFrame.id,
                 expression: `$event.target.worldID`,
                 objectGroup: "test",
