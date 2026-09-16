@@ -186,6 +186,11 @@ public:
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
     virtual void dispatchDidCommitLoad(const std::optional<BackForwardCacheCommitData>&) = 0;
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure) = 0;
+    // A child-frame navigation was refused by the frame-embedding content security policy
+    // (frame-src / child-src) before any provisional load could start, so no provisional-load
+    // failure is dispatched. The argument is the blocked target URL. Optional: only clients that
+    // surface navigation failures to automation need it (out-of-line empty default).
+    virtual void dispatchDidBlockNavigationByContentPolicy(const URL& blockedURL);
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;
     virtual void dispatchDidFinishLoad() = 0;

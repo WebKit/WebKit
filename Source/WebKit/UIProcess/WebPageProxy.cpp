@@ -8573,6 +8573,38 @@ void WebPageProxy::didCancelClientRedirectForFrame(IPC::Connection& connection, 
         m_navigationClient->didCancelClientRedirect(*this);
 }
 
+void WebPageProxy::didBlockNavigationByContentPolicyForFrame(IPC::Connection& connection, FrameIdentifier frameID, URL&& blockedURL)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    Ref process = WebProcessProxy::fromConnection(connection);
+    // WebFrameProxy::webFrame resolves through a process-global table; verify the frame belongs to this
+    // page and was reported by the process that hosts it before driving automation for it.
+    MESSAGE_CHECK(process, frame->page() == this);
+    MESSAGE_CHECK(process, &frame->process() == process.ptr());
+    MESSAGE_CHECK_URL(process, blockedURL);
+
+    WEBPAGEPROXY_RELEASE_LOG(Loading, "didBlockNavigationByContentPolicyForFrame: frameID=%" PRIu64 ", isMainFrame=%d", frameID.toUInt64(), frame->isMainFrame());
+
+#if ENABLE(WEBDRIVER_BIDI)
+    // A child-frame navigation blocked by the embedding content security policy never starts a
+    // provisional load, so WebCore reports neither a start nor a failure. Synthesize both for
+    // automation so the blocked navigable emits navigationStarted then navigationFailed, each with
+    // the blocked URL, matching the frame's browsing-context handle in browsingContext.getTree. The
+    // load never started, so it has no WebCore navigation identifier; allocate one so the start and
+    // failure share a single, unique id (the same allocator API::Navigation uses).
+    if (RefPtr automationSession = activeAutomationSession()) {
+        auto navigationID = WebCore::NavigationIdentifier::generate();
+        automationSession->navigationStartedForFrame(*frame, navigationID, blockedURL.string());
+        automationSession->navigationFailedForFrame(*frame, navigationID, blockedURL.string());
+    }
+#else
+    UNUSED_PARAM(blockedURL);
+#endif
+}
+
 void WebPageProxy::didChangeProvisionalURLForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL&& url)
 {
     didChangeProvisionalURLForFrameShared(WebProcessProxy::fromConnection(connection), frameID, navigationID, WTF::move(url));
@@ -9016,6 +9048,11 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     }
 
     protectedPageLoadState->commitChanges();
+    // Always drop the previous document's cached child-frame handles at commit, for classic automation
+    // as well as BiDi (they share the frame-handle map, and navigationCommittedForFrame below is only
+    // built with WEBDRIVER_BIDI).
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->didCommitLoadForFrame(*frame);
 #if ENABLE(WEBDRIVER_BIDI)
     if (RefPtr automationSession = activeAutomationSession())
         automationSession->navigationCommittedForFrame(*frame, navigationID);
