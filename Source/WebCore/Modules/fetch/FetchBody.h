@@ -125,10 +125,10 @@ private:
     explicit FetchBody(Ref<Blob>&& data) : m_data(WTF::move(data)) { }
     explicit FetchBody(Ref<ArrayBuffer>&& data) : m_data(WTF::move(data)) { }
     explicit FetchBody(Ref<ArrayBufferView>&& data) : m_data(WTF::move(data)) { }
-    explicit FetchBody(Ref<FormData>&& data) : m_data(WTF::move(data)) { }
+    explicit FetchBody(Ref<FormData>&& data, RefPtr<DOMFormData>&& source = { }) : m_data(WTF::move(data)), m_formDataSource(WTF::move(source)) { }
     explicit FetchBody(Ref<URLSearchParams>&& data) : m_data(WTF::move(data)) { }
     explicit FetchBody(Ref<ReadableStream>&& stream) : m_data(stream), m_readableStream(WTF::move(stream)) { }
-    explicit FetchBody(UniqueRef<FetchBodyConsumer>&& consumer) : m_consumer(consumer.moveToUniquePtr()) { }
+    explicit FetchBody(UniqueRef<FetchBodyConsumer>&& consumer, RefPtr<DOMFormData>&& source = { }) : m_consumer(consumer.moveToUniquePtr()), m_formDataSource(WTF::move(source)) { }
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
@@ -158,6 +158,7 @@ private:
     std::unique_ptr<FetchBodyConsumer> m_consumer;
     RefPtr<ReadableStream> m_readableStream;
     RefPtr<PendingStreamState> m_pendingStreamState;
+    RefPtr<DOMFormData> m_formDataSource;
 };
 
 struct FetchBodyWithType {

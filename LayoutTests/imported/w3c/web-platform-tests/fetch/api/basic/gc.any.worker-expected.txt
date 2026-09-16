@@ -1,3 +1,8 @@
 
 PASS GC/CC should not abruptly close the stream while being consumed by Response
+PASS GC/CC should not discard a Response's FormData body Blob before it is read
+PASS GC/CC should not discard a Request's FormData body Blob before it is read
+PASS GC/CC should not discard a cloned FormData body's Blob before it is read
+PASS GC/CC should not discard a moved FormData body's Blob before it is read
+PASS GC/CC should not discard a FormData body's Blob before its stream is read
 
