@@ -36,7 +36,6 @@ GCC_PREPROCESSOR_DEFINITIONS = DEQP_TARGET_NAME=\"angle\" _HAS_EXCEPTIONS=1 _XOP
 // warnings (ANGLE's base builds -Werror).
 GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 WARNING_CFLAGS = $(inherited) -Wno-sizeof-array-div -Wno-string-conversion -Wno-unused-function -Wno-unused-local-typedef -Wno-unused-result -Wno-global-constructors -Wno-delete-non-virtual-dtor -Wno-deprecated -Wno-self-assign;
-OTHER_CFLAGS = $(inherited) -fwrapv;
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 
 // Frameworks linked by both the dEQP tool and .app targets. Each target config

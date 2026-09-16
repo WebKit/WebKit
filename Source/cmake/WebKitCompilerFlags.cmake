@@ -192,6 +192,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
     # https://webkit.org/b/317542
     WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
 
+    # Make signed integer overflow two's compliment rather than UB.
+    WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fwrapv)
+
     # clang-cl.exe impersonates cl.exe so some clang arguments like -fno-rtti are
     # represented using cl.exe's options and should not be passed as flags, so
     # we do not add -fno-rtti or -fno-exceptions for clang-cl
