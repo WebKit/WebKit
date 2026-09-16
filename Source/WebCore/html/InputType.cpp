@@ -34,6 +34,7 @@
 #include "CheckboxInputType.h"
 #include "ColorInputType.h"
 #include "DOMFormData.h"
+#include "DataTransfer.h"
 #include "DateComponents.h"
 #include "DateInputType.h"
 #include "DateTimeLocalInputType.h"
@@ -46,12 +47,14 @@
 #include "FileInputType.h"
 #include "FileList.h"
 #include "FormController.h"
+#include "FrameDestructionObserverInlines.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
+#include "InputEvent.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
@@ -78,6 +81,7 @@
 #include "TimeInputType.h"
 #include "URLInputType.h"
 #include "WeekInputType.h"
+#include "WindowProxy.h"
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -1136,6 +1140,13 @@ void InputType::stepUpFromRenderer(int n)
 
     ASSERT(element());
     Ref element = *this->element();
+
+    Ref beforeInputEvent = InputEvent::create(eventNames().beforeinputEvent, emptyString(), Event::IsCancelable::Yes,
+        element->document().windowProxy(), { }, nullptr, { }, 0, IsInputMethodComposing::No);
+    element->dispatchEvent(beforeInputEvent);
+    if (beforeInputEvent->defaultPrevented() || !element->document().frame())
+        return;
+
     String currentStringValue = element->value();
     Decimal current = parseToNumberOrNaN(currentStringValue);
     if (!current.isFinite()) {

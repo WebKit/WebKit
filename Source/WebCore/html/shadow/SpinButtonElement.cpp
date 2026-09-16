@@ -108,7 +108,9 @@ void SpinButtonElement::defaultEventHandler(Event& event)
         if (box->borderBoxRect().contains(local)) {
             // The following functions of HTMLInputElement may run JavaScript
             // code which detaches this shadow node. We need to take a reference
-            // and check renderer() after such function calls.
+            // and check renderer() after such function calls. Release the
+            // CheckedPtr first so it isn't left dangling if the renderer dies.
+            box = nullptr;
             Ref<SpinButtonElement> protectedThis(*this);
             if (RefPtr spinButtonOwner = m_spinButtonOwner)
                 spinButtonOwner->focusAndSelectSpinButtonOwner();
@@ -121,6 +123,8 @@ void SpinButtonElement::defaultEventHandler(Event& event)
                     // chance to cancel the timer.
                     startRepeatingTimer();
                     doStepAction(m_upDownState == Up ? 1 : -1);
+                    if (!renderer())
+                        stopRepeatingTimer();
                 }
             }
             mouseEvent->setDefaultHandled();
