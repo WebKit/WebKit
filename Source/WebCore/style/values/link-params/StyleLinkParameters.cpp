@@ -30,9 +30,16 @@
 #include "CSSLinkParameter.h"
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
+#include "CSSPropertyParser.h"
+#include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
+#include "ColorSerialization.h"
 #include "StyleBuilderChecking.h"
+#include "StyleBuilderState.h"
+#include "StyleColor.h"
+#include "StyleColorResolver.h"
+#include "StyleCustomProperty.h"
 
 namespace WebCore {
 namespace Style {
@@ -68,13 +75,51 @@ const AtomString& ParamSpec::name() const
     );
 }
 
+static LinkParameter::ResolvedValue resolveTypedValue(const ParamSpec& spec, const DeclarationValue& value, BuilderState& state)
+{
+    // Untyped parameters pass through unchanged.
+    auto* custom = std::get_if<ParamSpec::Custom>(&spec.value);
+    if (!custom || !custom->type)
+        return LinkParameter::Unresolved { };
+
+    auto parsed = CSSPropertyParser::parseTypedCustomPropertyValue(spec.name(), custom->type->syntax, value.value->tokenRange(), state, value.value->context(), value.value->isAttrTainted());
+    if (!parsed)
+        return LinkParameter::Invalid { };
+
+    RefPtr<const CustomProperty> property;
+    WTF::switchOn(*parsed,
+        [&](const Ref<const CustomProperty>& resolvedProperty) { property = resolvedProperty.ptr(); },
+        [](CSSWideKeyword) { }
+    );
+    if (!property)
+        return LinkParameter::Invalid { };
+
+    // A computed <color> can still reference the element, through currentcolor or a function
+    // containing it, so it is absolutized here.
+    WTF::String serialization;
+    if (auto* typedValue = std::get_if<CustomProperty::Value>(&property->value())) {
+        if (auto* color = std::get_if<Color>(typedValue))
+            serialization = WebCore::serializationForCSS(ColorResolver { state.style() }.colorResolvingCurrentColor(*color));
+    }
+
+    if (serialization.isNull())
+        return Ref { CSSVariableData::create(CSSParserTokenRange { property->tokens().span() }) };
+
+    CSSTokenizer tokenizer { StringView { serialization } };
+    return Ref { CSSVariableData::create(tokenizer.tokenRange()) };
+}
+
 auto CSSValueConversion<LinkParameter>::operator()(BuilderState& state, const CSSValue& value) -> LinkParameter
 {
     RefPtr parameter = requiredDowncast<CSSParamValue>(state, value);
     if (!parameter)
-        return { ParamSpec { ParamSpec::Custom { CustomIdent { nullAtom() }, std::nullopt } }, DeclarationValue { CSSVariableData::create(CSSParserTokenRange { }) } };
+        return { ParamSpec { ParamSpec::Custom { CustomIdent { nullAtom() }, std::nullopt } }, DeclarationValue { CSSVariableData::create(CSSParserTokenRange { }) }, LinkParameter::Unresolved { } };
 
-    return { toStyleParamSpec(parameter->parameter()->spec), toStyle(parameter->parameter()->value, state) };
+    auto spec = toStyleParamSpec(parameter->parameter()->spec);
+    auto declarationValue = toStyle(parameter->parameter()->value, state);
+    auto resolved = resolveTypedValue(spec, declarationValue, state);
+
+    return { WTF::move(spec), WTF::move(declarationValue), WTF::move(resolved) };
 }
 
 auto CSSValueCreation<LinkParameter>::operator()(CSSValuePool&, const ComputedStyle& style, const LinkParameter& parameter) -> Ref<CSSValue>
