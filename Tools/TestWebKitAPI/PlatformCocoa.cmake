@@ -407,6 +407,8 @@ list(APPEND TestWebKit_SOURCES
     Tests/WebKit/WKWebView/mac/NSRefreshControllerTests.mm
     Tests/WebKit/WKWebView/mac/RunningBoardManagement.mm
     Tests/WebKit/WKWebView/mac/WordBoundaryTypingAttributes.mm
+
+    Tests/WebKit/WebPage/EnhancedSecurityTests.swift
 )
 
 list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
