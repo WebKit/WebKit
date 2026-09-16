@@ -275,12 +275,18 @@ static LocalFrame* frameForEvent(KeyboardEvent* event)
     return downcast<Node>(event->target())->document().frame();
 }
 
-bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
+bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& passedCommands, KeyboardEvent* event)
 {
     RefPtr frame = event ? frameForEvent(event) : m_page->focusController().focusedOrMainFrame();
     if (!frame)
         return false;
     ASSERT(frame->page() == corePage());
+
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    auto& commands = passedCommands;
+#else
+    auto commands = passedCommands;
+#endif
 
     Ref editor = frame->editor();
     bool eventWasHandled = false;
