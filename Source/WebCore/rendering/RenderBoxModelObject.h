@@ -102,6 +102,7 @@ public:
     virtual LayoutUnit paddingBoxLogicalHeight() const;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const override;
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
+    void mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const override;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;
