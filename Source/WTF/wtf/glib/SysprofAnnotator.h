@@ -24,6 +24,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -32,10 +33,21 @@ namespace WTF {
 class SysprofAnnotator final {
     WTF_MAKE_NONCOPYABLE(SysprofAnnotator);
 
-    using RawPointerPair = std::pair<const void*, const void*>;
-    using TimestampAndString = std::pair<int64_t, Vector<char>>;
+    using NameAndPointer = std::pair<const void*, const void*>;
+    using NameAndThread = std::pair<const void*, uint32_t>;
+    using NameAndData = std::pair<const void*, uint64_t>;
+
+    struct OngoingMark {
+        int64_t time;
+        uint32_t threadUID;
+        Vector<char> message;
+    };
+    using OngoingMarks = Vector<OngoingMark, 1>;
+    static constexpr size_t maxOngoingMarksPerKey = 64;
 
 public:
+    // Used for unit testing.
+    using MarkWriterForTesting = void (*)(int64_t time, int64_t duration, const char* name, const char* message);
 
     static SysprofAnnotator* singletonIfCreated()
     {
@@ -51,9 +63,7 @@ public:
     {
         va_list args;
         va_start(args, description);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        sysprof_collector_mark_vprintf(SYSPROF_CAPTURE_CURRENT_TIME, 0, m_processName, name.data(), description, args);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        writeFormattedMark(SYSPROF_CAPTURE_CURRENT_TIME, 0, name, description, args);
         va_end(args);
     }
 
@@ -61,9 +71,7 @@ public:
     {
         va_list args;
         va_start(args, description);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        sysprof_collector_mark_vprintf(time, 0, m_processName, name.data(), description, args);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        writeFormattedMark(time, 0, name, description, args);
         va_end(args);
     }
 
@@ -77,7 +85,7 @@ public:
             buffer.resize(0);
             buffer.append('\0');
         } else {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib ports
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             va_list args, copyArgs;
             va_start(args, description);
             va_copy(copyArgs, args);
@@ -88,34 +96,32 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib ports
 
             vsnprintf(buffer.mutableSpan().data(), descriptionLength + 1, description, copyArgs);
             va_end(copyArgs);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
 
-        auto key = std::make_pair(pointer, static_cast<const void*>(name.data()));
-        auto value = std::make_pair(time, WTF::move(buffer));
+        OngoingMark begin { time, Thread::currentSingleton().uid(), WTF::move(buffer) };
 
         Locker locker { m_lock };
-        m_ongoingMarks.set(key, WTF::move(value));
+        push(m_ongoingMarks, NameAndPointer { name.data(), pointer }, WTF::move(begin));
     }
 
     void endMark(const void* pointer, std::span<const char> name, const char* description, ...) WTF_ATTRIBUTE_PRINTF(4, 5)
     {
         auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+        auto threadUID = Thread::currentSingleton().uid();
 
-        auto key = std::make_pair(pointer, static_cast<const void*>(name.data()));
-        std::optional<TimestampAndString> value;
-
+        std::optional<OngoingMark> begin;
         {
             Locker locker { m_lock };
-            value = m_ongoingMarks.takeOptional(key);
+            begin = takeInnermost(m_ongoingMarks, NameAndPointer { name.data(), pointer }, threadUID);
         }
 
-        if (value) {
-            int64_t startTime = std::get<0>(*value);
-            Vector<char>& buffer = std::get<1>(*value);
+        if (begin) {
+            int64_t startTime = begin->time;
+            Vector<char>& buffer = begin->message;
 
             if (description && description[0] != '\0') {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib ports
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                 va_list args, copyArgs;
                 va_start(args, description);
                 va_copy(copyArgs, args);
@@ -138,31 +144,60 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib ports
                     vsnprintf(span.data(), descriptionLength + 1, description, copyArgs);
                 }
                 va_end(copyArgs);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             }
 
-            sysprof_collector_mark(startTime, time - startTime, m_processName, name.data(), buffer.span().data());
+            writeMark(startTime, time - startTime, name, buffer.span().data());
         } else {
             va_list args;
             va_start(args, description);
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            sysprof_collector_mark_vprintf(time, 0, m_processName, name.data(), description, args);
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            writeFormattedMark(time, 0, name, description, args);
             va_end(args);
         }
     }
 
-    void tracePoint(TracePointCode code)
+    void tracePoint(TracePointCode code, uint64_t data1 = 0)
     {
+        auto name = [code] {
+            return tracePointCodeName(code).spanIncludingNullTerminator();
+        };
+
         switch (code) {
+        // These pass the same data at their begin and their end, which tells apart what they trace: the load, the page of
+        // a main resource load, the launched process, the flush, or the number a script picked. Pair them by that data,
+        // so they pair even when they end on another thread.
+        case SubresourceLoadWillStart:
+            // A redirect begins the load again without having ended it, and the load is timed from its first begin.
+            beginTracePoint(data1, name(), BegunAgain::KeepsFirstBegin);
+            break;
+        case MainResourceLoadDidStartProvisional:
+        case FlushRemoteImageBufferStart:
+        case ProcessLaunchStart:
+        case FromJSStart:
+            beginTracePoint(data1, name(), BegunAgain::ReplacesBegin);
+            break;
+        case MainResourceLoadDidEnd:
+        case SubresourceLoadDidEnd:
+        case FlushRemoteImageBufferEnd:
+        case ProcessLaunchEnd:
+        case FromJSStop:
+            endTracePoint(data1, name());
+            break;
+
+        // This begins on the main thread and ends on the scrolling thread, and its data is a flag at the end only.
+        case ScrollingThreadRenderUpdateSyncStart:
+            beginMark(nullptr, name(), "%s", "");
+            break;
+        case ScrollingThreadRenderUpdateSyncEnd:
+            endMark(nullptr, name(), "%s", "");
+            break;
+
+        // The rest begin and end on one thread, and carry a measurement or a flag rather than what they trace.
         case VMEntryScopeStart:
         case WebAssemblyCompileStart:
         case WebAssemblyExecuteStart:
         case DumpJITMemoryStart:
-        case FromJSStart:
         case IncrementalSweepStart:
-        case MainResourceLoadDidStartProvisional:
-        case SubresourceLoadWillStart:
         case FetchCookiesStart:
         case StyleRecalcStart:
         case RenderTreeBuildStart:
@@ -179,7 +214,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case DispatchTouchEventsStart:
         case ParseHTMLStart:
         case DisplayListReplayStart:
-        case ScrollingThreadRenderUpdateSyncStart:
         case ScrollingThreadDisplayDidRefreshStart:
         case RenderTreeLayoutStart:
         case PerformOpportunisticallyScheduledTasksStart:
@@ -197,7 +231,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case InitializeWebProcessStart:
         case RenderingUpdateRunLoopObserverStart:
         case LayerTreeFreezeStart:
-        case FlushRemoteImageBufferStart:
         case CreateInjectedBundleStart:
         case PaintSnapshotStart:
         case RenderServerSnapshotStart:
@@ -206,7 +239,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case ProcessInitializeStart:
         case UpdateLayerContentBuffersStart:
         case CommitLayerTreeStart:
-        case ProcessLaunchStart:
         case InitializeSandboxStart:
         case WebXRCPFrameWaitStart:
         case WebXRCPFrameStartSubmissionStart:
@@ -217,17 +249,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case CoreImageRenderStart:
         case TextExtractionStart:
         case RemoteLayerTreeAnimationsUpdateStart:
-            beginMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            beginScope(name());
             break;
 
         case VMEntryScopeEnd:
         case WebAssemblyCompileEnd:
         case WebAssemblyExecuteEnd:
         case DumpJITMemoryStop:
-        case FromJSStop:
         case IncrementalSweepEnd:
-        case MainResourceLoadDidEnd:
-        case SubresourceLoadDidEnd:
         case FetchCookiesEnd:
         case StyleRecalcEnd:
         case RenderTreeBuildEnd:
@@ -244,7 +273,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case DispatchTouchEventsEnd:
         case ParseHTMLEnd:
         case DisplayListReplayEnd:
-        case ScrollingThreadRenderUpdateSyncEnd:
         case ScrollingThreadDisplayDidRefreshEnd:
         case RenderTreeLayoutEnd:
         case PerformOpportunisticallyScheduledTasksEnd:
@@ -265,7 +293,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case InitializeWebProcessEnd:
         case RenderingUpdateRunLoopObserverEnd:
         case LayerTreeFreezeEnd:
-        case FlushRemoteImageBufferEnd:
         case CreateInjectedBundleEnd:
         case PaintSnapshotEnd:
         case RenderServerSnapshotEnd:
@@ -274,7 +301,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case ProcessInitializeEnd:
         case UpdateLayerContentBuffersEnd:
         case CommitLayerTreeEnd:
-        case ProcessLaunchEnd:
         case InitializeSandboxEnd:
         case WebXRCPFrameWaitEnd:
         case WebXRCPFrameStartSubmissionEnd:
@@ -285,7 +311,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case CoreImageRenderEnd:
         case TextExtractionEnd:
         case RemoteLayerTreeAnimationsUpdateEnd:
-            endMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            endScope(name());
             break;
 
         case DisplayRefreshDispatchingToMainThread:
@@ -295,7 +321,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         case SyntheticMomentumEvent:
         case RemoteLayerTreeScheduleRenderingUpdate:
         case DisplayLinkUpdate:
-            instantMark(tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            instantMark(name(), "%s", "");
             break;
 
         case WTFRange:
@@ -346,6 +372,21 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (!getenv("SYSPROF_CONTROL_FD"))
             return;
 
+        create(processName);
+    }
+
+    // Used by unit testing facility, to observe the trace marks without running sysprof, or storing syscap files.
+    static void createForTesting(MarkWriterForTesting writer)
+    {
+        s_markWriterForTesting.store(writer);
+        create("Testing"_s);
+    }
+
+private:
+    friend class LazyNeverDestroyed<SysprofAnnotator>;
+
+    static void create(ASCIILiteral processName)
+    {
         static LazyNeverDestroyed<SysprofAnnotator> instance;
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [&] {
@@ -353,8 +394,133 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         });
     }
 
-private:
-    friend class LazyNeverDestroyed<SysprofAnnotator>;
+    void writeMark(int64_t time, int64_t duration, std::span<const char> name, const char* message)
+    {
+        if (auto writer = s_markWriterForTesting.load()) [[unlikely]] {
+            writer(time, duration, name.data(), message);
+            return;
+        }
+        sysprof_collector_mark(time, duration, m_processName, name.data(), message);
+    }
+
+    void writeFormattedMark(int64_t time, int64_t duration, std::span<const char> name, const char* description, va_list args) WTF_ATTRIBUTE_PRINTF(5, 0)
+    {
+        if (auto writer = s_markWriterForTesting.load()) [[unlikely]] {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+            va_list lengthArgs;
+            va_copy(lengthArgs, args);
+            auto descriptionLength = vsnprintf(nullptr, 0, description, lengthArgs);
+            va_end(lengthArgs);
+
+            Vector<char> message(static_cast<size_t>(std::max(descriptionLength, 0)) + 1);
+            vsnprintf(message.mutableSpan().data(), message.size(), description, args);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+            writer(time, duration, name.data(), message.span().data());
+            return;
+        }
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        sysprof_collector_mark_vprintf(time, duration, m_processName, name.data(), description, args);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    }
+
+    enum class BegunAgain : bool { ReplacesBegin, KeepsFirstBegin };
+
+    // Without data there is nothing to pair by, so pair the trace point as a scope instead.
+    void beginTracePoint(uint64_t data, std::span<const char> name, BegunAgain begunAgain)
+    {
+        if (!data) {
+            beginScope(name);
+            return;
+        }
+
+        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+        NameAndData key { name.data(), data };
+
+        Locker locker { m_lock };
+        if (begunAgain == BegunAgain::KeepsFirstBegin)
+            m_ongoingTracePoints.add(key, time);
+        else
+            m_ongoingTracePoints.set(key, time);
+    }
+
+    void endTracePoint(uint64_t data, std::span<const char> name)
+    {
+        if (!data) {
+            endScope(name);
+            return;
+        }
+
+        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+
+        std::optional<int64_t> startTime;
+        {
+            Locker locker { m_lock };
+            startTime = m_ongoingTracePoints.takeOptional(NameAndData { name.data(), data });
+        }
+
+        auto start = startTime.value_or(time);
+        writeMark(start, time - start, name, "");
+    }
+
+    // A scope begins and ends on the same thread, so pair it by its thread. That keeps the same scope running on two threads at once apart.
+    void beginScope(std::span<const char> name)
+    {
+        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+        auto threadUID = Thread::currentSingleton().uid();
+
+        Locker locker { m_lock };
+        push(m_ongoingScopes, NameAndThread { name.data(), threadUID }, OngoingMark { time, threadUID, { } });
+    }
+
+    void endScope(std::span<const char> name)
+    {
+        auto time = SYSPROF_CAPTURE_CURRENT_TIME;
+        auto threadUID = Thread::currentSingleton().uid();
+
+        std::optional<OngoingMark> begin;
+        {
+            Locker locker { m_lock };
+            begin = takeInnermost(m_ongoingScopes, NameAndThread { name.data(), threadUID }, threadUID);
+        }
+
+        auto start = begin ? begin->time : time;
+        writeMark(start, time - start, name, "");
+    }
+
+    template<typename Key>
+    static void push(UncheckedKeyHashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, OngoingMark&& begin)
+    {
+        auto& begins = ongoingMarks.add(key, OngoingMarks { }).iterator->value;
+        if (begins.size() == maxOngoingMarksPerKey)
+            begins.removeAt(0);
+        begins.append(WTF::move(begin));
+    }
+
+    // Takes the begin that an end belongs to: the latest begin on the same thread as the end. This pairs nested marks,
+    // and keeps the same mark running on two threads at once apart. If that thread has no begin, the mark began on
+    // another thread, so take the latest begin from any thread.
+    template<typename Key>
+    static std::optional<OngoingMark> takeInnermost(UncheckedKeyHashMap<Key, OngoingMarks>& ongoingMarks, const Key& key, uint32_t threadUID)
+    {
+        auto iterator = ongoingMarks.find(key);
+        if (iterator == ongoingMarks.end())
+            return std::nullopt;
+
+        auto& begins = iterator->value;
+        auto index = begins.reverseFindIf([&](auto& begin) {
+            return begin.threadUID == threadUID;
+        });
+        if (index == notFound)
+            index = begins.size() - 1;
+
+        auto begin = WTF::move(begins[index]);
+        begins.removeAt(index);
+        if (begins.isEmpty())
+            ongoingMarks.remove(iterator);
+        return begin;
+    }
 
     static ASCIILiteral tracePointCodeName(TracePointCode code)
     {
@@ -591,19 +757,24 @@ private:
     explicit SysprofAnnotator(ASCIILiteral processName)
         : m_processName(processName)
     {
-        sysprof_collector_init();
+        if (!s_markWriterForTesting.load())
+            sysprof_collector_init();
         s_annotator = this;
     }
 
     ASCIILiteral m_processName;
     Lock m_lock;
-    UncheckedKeyHashMap<RawPointerPair, TimestampAndString> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<NameAndPointer, OngoingMarks> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<NameAndThread, OngoingMarks> m_ongoingScopes WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashMap<NameAndData, int64_t> m_ongoingTracePoints WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_countersLock;
     UncheckedKeyHashMap<const void*, unsigned> m_counters WTF_GUARDED_BY_LOCK(m_countersLock);
     static SysprofAnnotator* s_annotator;
+    static std::atomic<MarkWriterForTesting> s_markWriterForTesting;
 };
 
 inline SysprofAnnotator* SysprofAnnotator::s_annotator;
+inline std::atomic<SysprofAnnotator::MarkWriterForTesting> SysprofAnnotator::s_markWriterForTesting;
 
 } // namespace WTF
 
