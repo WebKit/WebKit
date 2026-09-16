@@ -269,7 +269,7 @@ TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceCompensatesFollowingMar
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+    auto spaceWidth = font.primaryFont().spaceWidth();
 
     // 'a', then a [space, combining mark] cluster whose whole 100pt advance Core Text put on the space.
     Vector<FloatSize> advances = { FloatSize(40, 0), FloatSize(100, 0), FloatSize() };
@@ -308,7 +308,7 @@ TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceDoesNotCompensateInRTL)
     description.setUsedSize(80);
     FontCascade font(WTF::move(description));
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+    auto spaceWidth = font.primaryFont().spaceWidth();
 
     // [alef, mark] then [space, mark], in visual order: the space's mark, the space, the alef's mark, the alef.
     // Core Text widened the space to 100pt to hold its mark, so a compensation here would be (100 - spaceWidth).
@@ -406,7 +406,7 @@ TEST_F(ComplexTextControllerTest, WordSpacingDoesNotSlideAFollowingMark)
     FontCascade font(WTF::move(description));
     font.setWordSpacing(wordSpacing);
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+    auto spaceWidth = font.primaryFont().spaceWidth();
 
     std::array<char16_t, 3> characters { 'a', 0x20, 0x336 };
     TextRun textRun { StringView(characters) };
@@ -434,7 +434,7 @@ TEST_F(ComplexTextControllerTest, ExpansionDoesNotSlideAFollowingMark)
     description.setUsedSize(fontSize);
     FontCascade font(WTF::move(description));
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+    auto spaceWidth = font.primaryFont().spaceWidth();
 
     std::array<char16_t, 3> characters { 'a', 0x20, 0x336 };
     TextRun textRun(StringView(characters), 0, expansion);
@@ -611,7 +611,7 @@ TEST_F(ComplexTextControllerTest, WordSpacingDoesNotSlideAMarkInRTL)
     FontCascade font(WTF::move(description));
     font.setWordSpacing(wordSpacing);
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+    auto spaceWidth = font.primaryFont().spaceWidth();
     // Otherwise the substitution would be a no-op and the test could not tell compensated from uncompensated.
     EXPECT_NE(spaceWidth + wordSpacing, clusterAdvance);
 

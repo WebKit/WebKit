@@ -81,12 +81,6 @@ public:
     using Visibility = FontVisibility;
     using IsOrientationFallback = FontIsOrientationFallback;
 
-    // Should the result of this function include the results of synthetic bold?
-    enum class SyntheticBoldInclusion {
-        Incorporate,
-        Exclude
-    };
-
     WEBCORE_EXPORT ~FontBase();
 
     const FontPlatformData& platformData() const LIFETIME_BOUND { return m_platformData; }
@@ -110,10 +104,7 @@ public:
 
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 
-    float NODELETE spaceWidth(SyntheticBoldInclusion syntheticBoldInclusion = SyntheticBoldInclusion::Exclude) const
-    {
-        return m_spaceWidth + (syntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
-    }
+    float NODELETE spaceWidth() const { return m_spaceWidth; }
 
     float maxCharWidth() const { return m_maxCharWidth; }
     void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }

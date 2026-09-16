@@ -108,7 +108,7 @@ ALWAYS_INLINE Vector<FloatRect, Font::inlineGlyphRunCapacity> Font::boundsForGly
 }
 #endif
 
-ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion SyntheticBoldInclusion) const
+ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph) const
 {
     // The optimization of returning 0 for the zero-width-space glyph is incorrect for the LastResort font,
     // used in place of the actual font when isLoading() is true on both macOS and iOS.
@@ -119,7 +119,7 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
 
     float width = m_glyphToWidthMap.metricsForGlyph(glyph);
     if (width != cGlyphSizeUnknown)
-        return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+        return width;
 
 #if ENABLE(OPENTYPE_VERTICAL)
     if (m_verticalData)
@@ -129,7 +129,7 @@ ALWAYS_INLINE float Font::widthForGlyph(Glyph glyph, SyntheticBoldInclusion Synt
         width = platformWidthForGlyph(glyph);
 
     m_glyphToWidthMap.setMetricsForGlyph(glyph, width);
-    return width + (SyntheticBoldInclusion == SyntheticBoldInclusion::Incorporate ? syntheticBoldOffset() : 0);
+    return width;
 }
 
 } // namespace WebCore
