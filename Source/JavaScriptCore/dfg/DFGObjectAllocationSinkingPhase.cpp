@@ -1583,6 +1583,7 @@ escapeChildren:
             }
         };
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         auto shouldDemote = [] (Node* candidate, Node* where) {
             InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
             if (!inlineCallFrame)
@@ -1591,6 +1592,17 @@ escapeChildren:
                 return false;
             return inlineCallFrame != where->origin.semantic.inlineCallFrame();
         };
+#else
+        auto shouldDemote = [] (Node* candidate, Node* where) {
+            for (InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
+                // Only the innermost closure-call or varargs frame needs checking: if `where` is
+                // inlined into that one, it is inlined into all of its callers as well.
+                if (inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs())
+                    return !where->origin.semantic.inlineStackContains(*inlineCallFrame);
+            }
+            return false;
+        };
+#endif
 
         // Closure rule #2: for each candidate, promote every `dependencies` entry
         // (i.e. every allocation it was put into).
@@ -1609,12 +1621,22 @@ escapeChildren:
             // If we're moving an allocation to `where` in the program, we need to ensure
             // we can still walk the stack at that point in the program for the
             // InlineCallFrame of the original allocation. Certain InlineCallFrames rely on
+#ifdef RC_REMOVE_SEC_ACCEL_3
             // data in the stack when taking a stack trace. All allocation sites can do a
             // stack walk (we do a stack walk when we GC). Conservatively, we say we're
             // still ok to move this allocation if we are moving within the same InlineCallFrame.
             // We could be more precise here and do an analysis of stack writes. However,
             // this scenario is so rare that we just take the conservative-and-straight-forward
             // approach of checking that we're in the same InlineCallFrame.
+#else
+            // data in the stack when taking a stack trace: a closure call's callee and a
+            // varargs call's argument count each live in a stack slot belonging to that
+            // frame, and intervening code is free to reuse those slots once execution has
+            // left it. All allocation sites can do a stack walk (we do a stack walk when we
+            // GC). So an allocation inside a closure-call or varargs frame can only be sunk
+            // to a point that is also inside that frame. When `where` is not, we demote the
+            // candidate and leave the allocation where it was.
+#endif
             forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
                 for (Node* allocation : escapees.keys()) {
                     if (shouldDemote(allocation, where)) {
