@@ -53,11 +53,25 @@ RefPtr<WorkerOrWorkletGlobalScope> AudioWorkletThread::createGlobalScope()
 
 void AudioWorkletThread::clearProxies()
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_messagingProxyLock };
+#endif
     m_messagingProxy = nullptr;
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+RefPtr<AudioWorkletMessagingProxy> AudioWorkletThread::messagingProxy() const
+{
+    Locker locker { m_messagingProxyLock };
+    return m_messagingProxy.get();
+}
+#endif
+
 WorkerLoaderProxy* AudioWorkletThread::workerLoaderProxy() const
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    Locker locker { m_messagingProxyLock };
+#endif
     return m_messagingProxy.get();
 }
 

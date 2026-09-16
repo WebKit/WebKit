@@ -34,12 +34,20 @@ namespace WebCore {
 
 class WorkletPendingTasks;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 class WorkletGlobalScopeProxy : public ThreadSafeRefCounted<WorkletGlobalScopeProxy> {
+#else
+class WorkletGlobalScopeProxy : public ThreadSafeRefCounted<WorkletGlobalScopeProxy, WTF::DestructionThread::Main> {
+#endif
 public:
     virtual ~WorkletGlobalScopeProxy() = default;
 
     virtual bool postTaskForModeToWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode) = 0;
     virtual bool isAudioWorkletMessagingProxy() const = 0;
+
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    virtual void detachFromThread() { }
+#endif
 };
 
 } // namespace WebCore

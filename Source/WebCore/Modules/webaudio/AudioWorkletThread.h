@@ -53,7 +53,11 @@ public:
     WorkerLoaderProxy* workerLoaderProxy() const final;
     WorkerDebuggerProxy* workerDebuggerProxy() const final;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     AudioWorkletMessagingProxy* messagingProxy() { return m_messagingProxy.get(); }
+#else
+    RefPtr<AudioWorkletMessagingProxy> messagingProxy() const;
+#endif
 
 private:
     AudioWorkletThread(AudioWorkletMessagingProxy&, WorkletParameters&&);
@@ -63,7 +67,12 @@ private:
     Ref<Thread> createThread() final;
     RefPtr<WorkerOrWorkletGlobalScope> createGlobalScope() final;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     CheckedPtr<AudioWorkletMessagingProxy> m_messagingProxy;
+#else
+    mutable Lock m_messagingProxyLock;
+    CheckedPtr<AudioWorkletMessagingProxy> m_messagingProxy WTF_GUARDED_BY_LOCK(m_messagingProxyLock);
+#endif
     WorkletParameters m_parameters;
 };
 
