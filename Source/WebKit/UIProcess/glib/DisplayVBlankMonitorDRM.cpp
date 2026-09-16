@@ -235,7 +235,7 @@ std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDi
     vblank.request.signal = 0;
     auto ret = drmWaitVBlank(drmNodeWithCrtcInfo->drmNodeFd.value(), &vblank);
     if (ret) {
-        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: drmWaitVBlank failed: %s", displayID, safeStrerror(-ret).data());
+        RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: drmWaitVBlank failed: %s", displayID, safeStrerror(-ret));
         return nullptr;
     }
 

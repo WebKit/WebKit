@@ -330,7 +330,7 @@ static bool wpeViewDRMCommitAtomic(WPEViewDRM* view, WPE::DRM::Buffer* buffer, s
             uint32_t blobID;
             auto result = drmModeCreatePropertyBlob(fd, mode, sizeof(drmModeModeInfo), &blobID);
             if (result < 0) {
-                g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate blob from DRM mode: %s", safeStrerror(-result).data());
+                g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate blob from DRM mode: %s", safeStrerror(-result).legacyCStringPointer());
                 return false;
             }
 
@@ -417,7 +417,7 @@ static std::optional<uint32_t> buildDamageBlob(WPEDisplayDRM* display, const Vec
     int fd = gbm_device_get_fd(wpe_display_drm_get_device(display));
     auto result = drmModeCreatePropertyBlob(fd, damageRects.span().data(), damageRects.sizeInBytes(), &blobID);
     if (result < 0) {
-        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate damage blob: %s", safeStrerror(-result).data());
+        g_set_error(error, WPE_VIEW_ERROR, WPE_VIEW_ERROR_RENDER_FAILED, "Failed to render buffer: failed to crate damage blob: %s", safeStrerror(-result).legacyCStringPointer());
         return 0;
     }
 

@@ -291,7 +291,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     
     int result = fclose(file);
     if (result)
-        dataLogLn("Failed to close file ", fileName, ": ", safeStrerror(errno).data());
+        dataLogLn("Failed to close file ", fileName, ": ", safeStrerror(errno));
 }
     
 } // namespace JSC

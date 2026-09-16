@@ -2543,7 +2543,7 @@ static NSURL *resolvePathToScripts()
         const size_t maxLength = 10000;
         char cwd[maxLength];
         if (!getcwd(cwd, maxLength)) {
-            NSLog(@"getcwd errored with code: %s", safeStrerror(errno).data());
+            SAFE_WTFLOGALWAYS("getcwd errored with code: %s", safeStrerror(errno));
             exitProcess(1);
         }
         NSURL *cwdURL = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%s", cwd]];

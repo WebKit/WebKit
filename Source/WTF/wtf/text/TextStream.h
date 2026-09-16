@@ -86,9 +86,9 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
-    // CString does not know its encoding, so its bytes are appended as Latin-1. Prefer the
+    // A CString does not know its encoding and therefore cannot be streamed: use one of the
     // encoding-aware overloads below, which decode according to the character type.
-    WTF_EXPORT_PRIVATE TextStream& operator<<(const CString&);
+    TextStream& operator<<(const CString&) = delete;
     WTF_EXPORT_PRIVATE TextStream& operator<<(const UTF8CString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const Latin1CString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const ASCIICString&);

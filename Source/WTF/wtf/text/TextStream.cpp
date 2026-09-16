@@ -132,12 +132,6 @@ TextStream& TextStream::operator<<(const AtomString& string)
     return *this;
 }
 
-TextStream& TextStream::operator<<(const CString& string)
-{
-    m_text.append(string);
-    return *this;
-}
-
 TextStream& TextStream::operator<<(const UTF8CString& string)
 {
     m_text.append(string.span());

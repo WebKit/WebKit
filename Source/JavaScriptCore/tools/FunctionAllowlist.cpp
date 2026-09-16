@@ -50,7 +50,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
             for (auto f : String::fromLatin1(filename).split(','))
                 m_entries.add(f);
         } else
-            dataLogF("Failed to open file %s. Did you add the file-read-data entitlement to WebProcess.sb? Error code: %s\n", filename, safeStrerror(errno).data());
+            dataLogLn("Failed to open file ", filename, ". Did you add the file-read-data entitlement to WebProcess.sb? Error code: ", safeStrerror(errno));
         return;
     }
 
@@ -78,7 +78,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
 
     int result = fclose(f);
     if (result)
-        dataLogF("Failed to close file %s: %s\n", filename, safeStrerror(errno).data());
+        dataLogLn("Failed to close file ", filename, ": ", safeStrerror(errno));
 }
 
 bool FunctionAllowlist::contains(CodeBlock* codeBlock) const
