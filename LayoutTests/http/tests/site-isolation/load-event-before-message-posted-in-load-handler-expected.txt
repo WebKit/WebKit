@@ -1,0 +1,5 @@
+PASS dispatchedEvents.join(',') is "load,message"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
