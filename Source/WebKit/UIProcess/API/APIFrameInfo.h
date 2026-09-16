@@ -62,15 +62,22 @@ public:
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
     WTF::String title() const;
-    const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }
+    const WebCore::CertificateInfo& certificateInfo() const { return m_stateSnapshot.certificateInfo; }
 
     const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
 
 private:
     FrameInfo(WebKit::FrameInfoData&&);
 
+    struct StateSnapshot {
+        const WebCore::CertificateInfo certificateInfo;
+        Markable<WebCore::FrameIdentifier> parentFrameID;
+        WTF::String title;
+    };
+    static StateSnapshot stateSnapshot(WebCore::FrameIdentifier);
+
     const WebKit::FrameInfoData m_data;
-    const WebCore::CertificateInfo m_certificateInfo;
+    const StateSnapshot m_stateSnapshot;
 };
 
 } // namespace API

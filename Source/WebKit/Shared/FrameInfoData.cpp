@@ -45,7 +45,6 @@ FrameInfoData legacyEmptyFrameInfo(WebCore::ResourceRequest&& request)
         WebCore::generateFrameIdentifier(),
         std::nullopt,
         std::nullopt,
-        std::nullopt,
         getCurrentProcessID(),
         isFocused,
         errorOccurred,

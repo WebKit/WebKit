@@ -335,7 +335,6 @@ FrameInfoData WebFrame::info() const
         coreFrame ? coreFrame->tree().specifiedName().string() : String(),
         frameID(),
         page ? std::optional { page->webPageProxyIdentifier() } : std::nullopt,
-        parent ? std::optional { parent->frameID() } : std::nullopt,
         document ? std::optional { document->identifier() } : std::nullopt,
         getCurrentProcessID(),
         isFocused(),

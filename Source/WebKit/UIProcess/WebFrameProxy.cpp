@@ -806,21 +806,21 @@ void WebFrameProxy::getFrameTree(CompletionHandler<void(std::optional<FrameTreeN
             aggregator->setCurrentFrameData(WTF::move(*info));
     });
 
-    RefPtr page = this->page();
-    bool isSiteIsolationEnabled = page && protect(page->preferences())->siteIsolationEnabled();
     size_t index = 0;
     for (Ref childFrame : m_childFrames) {
-        childFrame->getFrameTree([aggregator, index = index++, frameID = this->frameID(), isSiteIsolationEnabled] (std::optional<FrameTreeNodeData>&& data) {
+        childFrame->getFrameTree([
+            aggregator
+#if ASSERT_ENABLED
+            , weakThis = WeakPtr { *this }
+#endif
+            , index = index++
+        ] (std::optional<FrameTreeNodeData>&& data) {
             if (!data)
                 return;
-
-            // FIXME: m_childFrames currently contains iframes that are in the back/forward cache, not currently
-            // connected to this parent frame. They should really not be part of m_childFrames anymore.
-            // FIXME: With site isolation enabled, remote frames currently don't have a parentFrameID so we temporarily
-            // ignore this check.
-            if (data->info.parentFrameID != frameID && !isSiteIsolationEnabled)
-                return;
-
+#if ASSERT_ENABLED
+            RefPtr child = WebFrameProxy::webFrame(data->info.frameID);
+            ASSERT(child && child->parentFrame() == weakThis.get());
+#endif
             aggregator->addChildFrameData(index, WTF::move(*data));
         });
     }

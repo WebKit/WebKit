@@ -55,7 +55,6 @@ struct FrameInfoData {
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebPageProxyIdentifier> webPageProxyID;
-    Markable<WebCore::FrameIdentifier> parentFrameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     ProcessID processID;
     bool isFocused { false };
