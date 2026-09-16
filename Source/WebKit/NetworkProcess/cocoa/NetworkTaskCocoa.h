@@ -57,7 +57,13 @@ public:
 
     virtual bool isInitiatedByDedicatedWorker() const { return false; }
 
+<<<<<<< HEAD
     virtual bool navigationLosesFrameSpecificStorageAccess() const { return false; }
+=======
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    bool hasBeenSetToAllowOnlyPartitionedCookies() const { return m_hasBeenSetToAllowOnlyPartitionedCookies; }
+#endif
+>>>>>>> 93576dcf7c39 (Unpartitioned cookies are sent on a cross-site redirect when cookie partitioning is enabled)
 
 protected:
     NetworkTaskCocoa(NetworkSession&);
@@ -78,6 +84,7 @@ protected:
     WebCore::ThirdPartyCookieBlockingDecision requestThirdPartyCookieBlockingDecision(const WebCore::ResourceRequest&) const;
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     bool isOptInCookiePartitioningEnabled() const;
+    bool shouldAllowOnlyPartitionedCookies(const WebCore::ResourceRequest&);
 #endif
 
     bool isAlwaysOnLoggingAllowed() const { return m_isAlwaysOnLoggingAllowed; }
@@ -90,6 +97,9 @@ private:
 
     WeakPtr<NetworkSession> m_networkSession;
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
+#if ENABLE(OPT_IN_PARTITIONED_COOKIES)
+    bool m_hasBeenSetToAllowOnlyPartitionedCookies { false };
+#endif
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
     bool m_isAlwaysOnLoggingAllowed { false };
 };
