@@ -1,7 +1,4 @@
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-dom/ContainerNode.cpp
-dom/Element.cpp
-dom/Position.cpp
 [ macOS ] html/HTMLMediaElement.cpp
 [ Mac ] page/mac/ServicesOverlayController.mm
 [ iOS ] platform/audio/ios/AudioSessionIOS.mm

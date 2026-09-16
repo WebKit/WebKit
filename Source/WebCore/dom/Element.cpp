@@ -6672,7 +6672,7 @@ RefPtr<HTMLElement> Element::topmostPopoverAncestor(TopLayerElementType topLayer
     HashMap<Ref<const Element>, size_t> topLayerPositions;
     size_t i = 0;
     for (auto& element : document().topLayerElements()) {
-        if (auto* htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
+        if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element.get())) {
             if (htmlElement->popoverData() && htmlElement->popoverData()->visibilityState() == PopoverVisibilityState::Showing
                 && (htmlElement->popoverState() == PopoverState::Auto || (considerHints && htmlElement->popoverState() == PopoverState::Hint)))
                 topLayerPositions.add(element, i++);

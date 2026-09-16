@@ -3,9 +3,7 @@ accessibility/AccessibilityRenderObject.cpp
 [ iOS ] accessibility/cocoa/AXTextMarkerCocoa.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-dom/ContainerNode.cpp
 dom/Document.cpp
-dom/Element.cpp
 dom/Position.cpp
 editing/Editing.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm

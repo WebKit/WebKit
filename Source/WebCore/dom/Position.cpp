@@ -88,26 +88,28 @@ static bool hasInlineRun(RenderObject& renderer)
     return false;
 }
 
-static Node* nextRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
+static RefPtr<Node> nextRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while ((node = nextLeafNode(protect(node)))) {
-        CheckedPtr renderer = node->renderer();
-        if (!renderer || !node->hasEditableStyle())
+    RefPtr currentNode = node;
+    while ((currentNode = nextLeafNode(currentNode))) {
+        CheckedPtr renderer = currentNode->renderer();
+        if (!renderer || !currentNode->hasEditableStyle())
             continue;
         if (hasInlineRun(*renderer))
-            return node;
+            return currentNode;
     }
     return nullptr;
 }
 
-static Node* previousRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
+static RefPtr<Node> previousRenderedEditable(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while ((node = previousLeafNode(protect(node)))) {
-        CheckedPtr renderer = node->renderer();
-        if (!renderer || !node->hasEditableStyle())
+    RefPtr currentNode = node;
+    while ((currentNode = previousLeafNode(currentNode))) {
+        CheckedPtr renderer = currentNode->renderer();
+        if (!renderer || !currentNode->hasEditableStyle())
             continue;
         if (hasInlineRun(*renderer))
-            return node;
+            return currentNode;
     }
     return nullptr;
 }
@@ -636,12 +638,13 @@ static bool endsOfNodeAreVisuallyDistinctPositions(Node* node)
     return !Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*node->renderer()));
 }
 
-static Node* enclosingVisualBoundary(SUPPRESS_UNCHECKED_LOCAL Node* node)
+static RefPtr<Node> enclosingVisualBoundary(SUPPRESS_UNCHECKED_LOCAL Node* node)
 {
-    while (node && !endsOfNodeAreVisuallyDistinctPositions(protect(node)))
-        node = node->parentNode();
+    RefPtr currentNode = node;
+    while (currentNode && !endsOfNodeAreVisuallyDistinctPositions(currentNode))
+        currentNode = currentNode->parentNode();
 
-    return node;
+    return currentNode;
 }
 
 // The first-letter and remaining text are separate renderers but share one DOM

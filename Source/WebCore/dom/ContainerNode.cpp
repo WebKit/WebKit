@@ -1534,7 +1534,7 @@ ExceptionOr<void> ContainerNode::moveBefore(Node& node, RefPtr<Node>&& refChild)
             return Exception { ExceptionCode::HierarchyRequestError };
 
         if (refChild) {
-            for (auto* followingSibling = refChild.get(); followingSibling; followingSibling = followingSibling->nextSibling()) {
+            for (RefPtr followingSibling = refChild; followingSibling; followingSibling = followingSibling->nextSibling()) {
                 if (followingSibling->isDocumentTypeNode())
                     return Exception { ExceptionCode::HierarchyRequestError };
             }
