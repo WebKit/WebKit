@@ -332,7 +332,7 @@ private:
     ResponseCompletionHandler m_responseCompletionHandler;
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
-    std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
+    const RefPtr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;
 
     std::optional<NetworkActivityTracker> m_networkActivityTracker;
     RefPtr<ServiceWorkerFetchTask> m_serviceWorkerFetchTask;

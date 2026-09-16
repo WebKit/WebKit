@@ -76,7 +76,10 @@ public:
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
     ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, const RuleListFilter&) const;
-    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod);
+
+    enum class MainFrameContext : bool { No, Yes };
+    WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod, MainFrameContext = MainFrameContext::No);
+
     bool processContentRuleListsForResourceMonitoring(const URL&, const URL& mainDocumentURL, const URL& frameURL, OptionSet<ResourceType>);
 
     static const String& displayNoneCSSRule();
