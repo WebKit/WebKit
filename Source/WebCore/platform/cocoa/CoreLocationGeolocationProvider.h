@@ -26,6 +26,7 @@
 #pragma once
 
 #if HAVE(CORE_LOCATION)
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -41,7 +42,7 @@ class RegistrableDomain;
 class WEBCORE_EXPORT CoreLocationGeolocationProvider {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CoreLocationGeolocationProvider, WEBCORE_EXPORT);
 public:
-    class Client {
+    class Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
     public:
         virtual ~Client() { }
 
