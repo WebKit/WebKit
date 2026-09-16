@@ -79,6 +79,8 @@ static_assert(sizeof(IPIntLocal) == LOCAL_SIZE);
 struct InstructionLengthMetadata {
     uint8_t length; // 1B for length of current instruction
 };
+// IPInt consumes this with one loadbAndAdvance, which hard-codes both the offset and the size.
+static_assert(sizeof(InstructionLengthMetadata) == 1);
 
 struct BlockMetadata {
     // Field order is significant, both may be loaded with one 'loadpairi' instruction.

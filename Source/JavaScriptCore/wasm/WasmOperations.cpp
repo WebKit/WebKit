@@ -832,7 +832,7 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
     context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
     context.sp() = framePointer + 1;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 1);
-#elif CPU(ARM64E) || CPU(ARM64)
+#elif CPU(ARM64)
     // move(framePointerRegister, stackPointerRegister);
     // popPair(framePointerRegister, linkRegister);
     context.fp() = std::bit_cast<UCPURegister*>(*framePointer);

@@ -429,6 +429,27 @@ end
 # Actual lowering code follows.
 #
 
+# Pre- and post-indexed accesses fold the offset into the base register as a side effect of the
+# access. The lowerings that legalise an out-of-range offset compute the address into a temporary
+# instead, which would drop that writeback without a diagnostic, so these opcodes are kept out of
+# those lowerings and their offset has to be encodable exactly as written. Post-indexed forms carry
+# the increment as a separate operand, so their address has to be a bare base register.
+ARM64_INDEXED_LOAD_STORE_OFFSETS = {
+    "loadqinc" => 0..0,
+    "loadbinc" => 0..0,
+    "loadbpreinc" => -256..255,
+}
+
+def isArm64IndexedLoadStore(opcode)
+    ARM64_INDEXED_LOAD_STORE_OFFSETS.key? opcode
+end
+
+def arm64IndexedLoadStoreAddress(opcode, operand)
+    raise "#{opcode} needs an address with an immediate offset at #{operand.codeOriginString}" unless operand.is_a? Address
+    raise "#{opcode} offset #{operand.offset.value} out of range at #{operand.codeOriginString}" unless ARM64_INDEXED_LOAD_STORE_OFFSETS[opcode].include? operand.offset.value
+    operand
+end
+
 def isMalformedArm64LoadStoreAddress(opcode, operand)
     malformed = false
     if operand.is_a? Address
@@ -445,6 +466,8 @@ def isMalformedArm64LoadStoreAddress(opcode, operand)
             malformed ||= (not (operand.offset.value % 8).zero?)
         when "loadi", "loadis", "storei"
             malformed ||= (not (-255..16380).include? operand.offset.value)
+        when *ARM64_INDEXED_LOAD_STORE_OFFSETS.keys
+            malformed ||= (not ARM64_INDEXED_LOAD_STORE_OFFSETS[opcode].include? operand.offset.value)
         else
             # This is just a conservative estimate of the max offset.
             malformed ||= (not (-255..4095).include? operand.offset.value)
@@ -505,7 +528,7 @@ def arm64LowerMalformedLoadStoreAddresses(list)
                 tmp = Tmp.new(codeOrigin, :gpr)
                 newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
                 newList << Instruction.new(node.codeOrigin, node.opcode, [node.operands[0], BaseIndex.new(node.codeOrigin, address.base, tmp, Immediate.new(codeOrigin, 1), Immediate.new(codeOrigin, 0))], node.annotation)
-            elsif node.opcode =~ /^load/ and isMalformedArm64LoadStoreAddress(node.opcode, node.operands[0])
+            elsif node.opcode =~ /^load/ and not isArm64IndexedLoadStore(node.opcode) and isMalformedArm64LoadStoreAddress(node.opcode, node.operands[0])
                 address = node.operands[0]
                 tmp = Tmp.new(codeOrigin, :gpr)
                 newList << Instruction.new(node.codeOrigin, "move", [address.offset, tmp])
@@ -599,6 +622,7 @@ class Sequence
         result = arm64LowerLabelReferences(result)
         result = riscLowerMalformedAddresses(result) {
             | node, address |
+            next true if isArm64IndexedLoadStore(node.opcode)
             isLoadStorePairOp = false
             case node.opcode
             when "loadb", "loadbsi", "loadbsq", "storeb", /^bb/, /^btb/, /^cb/, /^tb/, "loadlinkacqb", "storecondrelb", /^atomic[a-z]+b$/
@@ -631,7 +655,7 @@ class Sequence
             if address.is_a? BaseIndex
                 registerOffsetForm = $currentSettings["ADDRESS64"] &&
                     !isLoadStorePairOp &&
-                    node.opcode !~ /^loadqinc$|^atomic|^loadlinkacq|^storecondrel|^loadv$|^storev$/
+                    node.opcode !~ /^atomic|^loadlinkacq|^storecondrel|^loadv$|^storev$/
                 address.offset.value == 0 and
                     (node.opcode =~ /^lea/ or
                      (registerOffsetForm and (address.scaleValue == 1 or address.scaleValue == size)))
@@ -684,6 +708,8 @@ class Sequence
         result = riscLowerMalformedAddresses(result) {
             | node, address |
             case node.opcode
+            when *ARM64_INDEXED_LOAD_STORE_OFFSETS.keys
+                true
             when /^loadpair/, /^storepair/
                 not address.is_a? Address or not isMalformedArm64LoadStorePairAddress(node.opcode, address)
             when /^load/, /^store/, /^transfer/
@@ -987,6 +1013,8 @@ class Instruction
             emitARM64Add("add", operands, :quad)
         when 'addlshiftp'
             emitARM64AddShift("add", operands, :quad)
+        when 'orlshifti'
+            emitARM64AddShift("orr", operands, :word)
         when 'addqs'
             emitARM64Add("adds", operands, :quad)
         when 'subqs'
@@ -1096,7 +1124,14 @@ class Instruction
         when "loadq"
             emitARM64Access("ldr", "ldur", operands[1], operands[0], :quad)
         when "loadqinc"
-            $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, #{operands[0].arm64Operand(:quad)}, #{operands[2].value}"
+            address = arm64IndexedLoadStoreAddress("loadqinc", operands[0])
+            $asm.puts "ldr #{operands[1].arm64Operand(:quad)}, #{address.arm64Operand(:quad)}, #{operands[2].value}"
+        when "loadbinc"
+            address = arm64IndexedLoadStoreAddress("loadbinc", operands[0])
+            $asm.puts "ldrb #{operands[1].arm64Operand(:word)}, #{address.arm64Operand(:word)}, #{operands[2].value}"
+        when "loadbpreinc"
+            address = arm64IndexedLoadStoreAddress("loadbpreinc", operands[0])
+            $asm.puts "ldrb #{operands[1].arm64Operand(:word)}, [#{address.base.arm64Operand(:ptr)}, \##{address.offset.value}]!"
         when "storei"
             emitARM64Unflipped("str", operands, :word)
         when "storep"
@@ -1448,6 +1483,8 @@ class Instruction
             $asm.puts "b.eq #{operands[0].asmLabel}"
         when "bnz"
             $asm.puts "b.ne #{operands[0].asmLabel}"
+        when "bc"
+            $asm.puts "b.hs #{operands[0].asmLabel}"
         when "leai"
             operands[0].arm64EmitLea(operands[1], :word)
         when "leap"
