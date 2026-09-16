@@ -30,12 +30,17 @@
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMalloc.h>
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 namespace JSC {
 class ArrayBuffer;
 }
+#endif
 
 namespace WebCore {
 class AudioBuffer;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+class SharedBuffer;
+#endif
 
 // AsyncAudioDecoder asynchronously decodes audio file data from an ArrayBuffer in a worker thread.
 // Upon successful decoding, the DecodingTaskPromise will be resolved with the decoded AudioBuffer
@@ -50,7 +55,11 @@ public:
     ~AsyncAudioDecoder();
 
     // Must be called on the main thread.
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Ref<DecodingTaskPromise> decodeAsync(Ref<JSC::ArrayBuffer>&& audioData, float sampleRate);
+#else
+    Ref<DecodingTaskPromise> decodeAsync(Ref<SharedBuffer>&& audioData, float sampleRate);
+#endif
 
 private:
     const Ref<RunLoop> m_runLoop;
