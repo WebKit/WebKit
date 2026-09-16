@@ -3259,6 +3259,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/align/StyleOverflowPosition.h
 
     style/values/anchor-position/StyleAnchorName.h
+    style/values/anchor-position/StylePinnedAnchorName.h
     style/values/anchor-position/StylePositionAnchor.h
     style/values/anchor-position/StylePositionArea.h
     style/values/anchor-position/StylePositionAreaAxis.h
@@ -3544,6 +3545,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/sizing/StyleMinimumSize.h
     style/values/sizing/StylePreferredSize.h
     style/values/sizing/StyleSizing.h
+
+    style/values/spatial/StyleEnvironmentMap.h
 
     style/values/speech/StyleSpeakAs.h
 

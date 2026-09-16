@@ -1,0 +1,4 @@
+
+PASS environment-map rejects invalid values
+PASS environment-map rejects a list of names
+

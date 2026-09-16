@@ -3596,6 +3596,7 @@ style/values/size-adjust/StyleTextSizeAdjust.cpp
 style/values/sizing/StyleAspectRatio.cpp @header:RenderStyleGetters @cost:5
 style/values/sizing/StyleContainIntrinsicSize.cpp
 style/values/sizing/StylePreferredSize.cpp
+style/values/spatial/StyleEnvironmentMap.cpp
 style/values/speech/StyleSpeakAs.cpp
 style/values/svg/StyleSVGBaselineShift.cpp
 style/values/svg/StyleSVGGlyphOrientationVertical.cpp

@@ -4904,6 +4904,27 @@
                 "url": "https://www.w3.org/TR/CSS2/tables.html#empty-cells"
             }
         },
+        "environment-map": {
+            "animation-type": "discrete",
+            "initial": "auto",
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "comment": "Singular and not inherited by design: summing multiple maps is not supported, same with nested spatial contexts.",
+                "enable-if": "ENABLE_SPATIAL_PORTAL",
+                "settings-flag": "spatialPortalEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::EnvironmentMap",
+                "parser-grammar": "auto | none | <string>"
+            },
+            "specification": {
+                "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#propdef-environment-map"
+            },
+            "status": "in development"
+        },
         "fill": {
             "animation-type": "by computed value",
             "inherited": true,
