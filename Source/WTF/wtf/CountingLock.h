@@ -145,8 +145,8 @@ public:
     //
     // If tryOptimisitcRead() runs when the lock is not held, this thread will run a critical section
     // without ever writing to memory. However, on ARM, this requires fencing. We use a load-acquire for
-    // tryOptimisticRead(). We have no choice but to use the more expensive `dmb ish` in validate(). If
-    // you want to avoid that, you could try to use tryOptimisticFencelessRead().
+    // tryOptimisticRead() and a load-load fence in validate(). If you want to avoid those fences, you
+    // could try to use tryOptimisticFencelessRead().
     Count tryOptimisticRead()
     {
         LockType currentValue = m_word.load();

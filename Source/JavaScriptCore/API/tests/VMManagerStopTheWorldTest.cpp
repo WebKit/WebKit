@@ -782,7 +782,7 @@ static void waitForVMDestruction() WTF_REQUIRES_LOCK(lock)
     vmDestructionConditionVariable.wait(lock);
     WTF::compilerFence();
     mainIsWaitingForVMDestruction = false;
-    WTF::loadLoadFence();
+    WTF::storeLoadFence();
 }
 
 static int test()

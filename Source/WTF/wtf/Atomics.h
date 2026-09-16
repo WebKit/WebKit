@@ -257,13 +257,25 @@ inline void arm_dmb_st()
     asm volatile("dmb ishst" ::: "memory");
 }
 
+// Like the above, but only loads before the barrier are constrained. Accesses after the
+// barrier are constrained whether they are loads or stores.
+inline void arm_dmb_ld()
+{
+#if CPU(ARM64)
+    asm volatile("dmb ishld" ::: "memory");
+#else
+    // ARMv7 doesn't have the load only variant of dmb
+    arm_dmb();
+#endif
+}
+
 inline void arm_isb()
 {
     asm volatile("isb" ::: "memory");
 }
 
-inline void loadLoadFence() { arm_dmb(); }
-inline void loadStoreFence() { arm_dmb(); }
+inline void loadLoadFence() { arm_dmb_ld(); }
+inline void loadStoreFence() { arm_dmb_ld(); }
 inline void storeLoadFence() { arm_dmb(); }
 inline void storeStoreFence() { arm_dmb_st(); }
 inline void crossModifyingCodeFence() { arm_isb(); }
