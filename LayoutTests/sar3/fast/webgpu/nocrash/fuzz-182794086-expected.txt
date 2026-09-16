@@ -1,0 +1,9 @@
+PASS output[0] >= 0x11110000 && output[0] <= 0x11110007 is true
+PASS output[1] <= 7 is true
+PASS output[2] is 30
+PASS output[3] is 91
+PASS output[4] is 25
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
