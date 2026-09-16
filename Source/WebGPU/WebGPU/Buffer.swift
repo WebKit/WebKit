@@ -21,39 +21,44 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+private import CxxStdlib
 import WebGPU_Internal.Buffer
 import WebGPU_Private.CxxBridgingPublic
-import wtf
 
-extension WebGPU.BufferBorrow {
-    func copy(from source: WTF.ByteSpan, offset: Int) {
-        var destination = bytes().subspan(offset, source.size())
-        WTF.copyByteSpan(&destination, source)
+extension WebGPU.Buffer {
+    func copy(from source: Span<UInt8>, offset: Int) {
+        // FIXME (rdar://161274084): Swift doesn't have a lifetime-safe way to return a borrowed value from a refcounted object yet.
+        let bufferContents = unsafe MutableSpan(_unsafeCxxSpan: getBufferContents())
+
+        var destination = bufferContents._consumingExtracting(droppingFirst: offset)
+        destination.copyMemory(from: source)
     }
 }
 
 @_expose(Cxx)
-func bufferCopyFrom(_ borrow: WebGPU.BufferBorrow, from data: WTF.ByteSpan, offset: Int) {
-    borrow.copy(from: data, offset: offset)
+func bufferCopyFrom(_ buffer: WebGPU.Buffer, from data: WebGPU.SpanConstUInt8, offset: Int) {
+    buffer.copy(from: unsafe Span<UInt8>(_unsafeCxxSpan: data), offset: offset)
 }
 
 @_expose(Cxx)
-@_lifetime(copy borrow)
-func bufferGetMappedRange(
-    _ borrow: WebGPU.BufferBorrow,
-    offset: Int,
-    size: Int,
-) -> WTF.MutableByteSpan {
-    borrow.getMappedRange(offset: offset, size: size)
+func bufferGetMappedRange(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> WebGPU.SpanUInt8 {
+    unsafe buffer.getMappedRange(offset: offset, size: size)
+}
+
+extension WebGPU.SpanUInt8 {
+    /// A default-constructed, zero-length span: a null base pointer that's never read through.
+    ///
+    /// Marked `@safe` because the empty case carries no risk.
+    @safe
+    fileprivate static var empty: WebGPU.SpanUInt8 {
+        unsafe WebGPU.SpanUInt8()
+    }
 }
 
 extension WebGPU.Buffer {
-    // Validates a getMappedRange() request and records the range as mapped, returning the
-    // size of the range to hand out, or nil if there is nothing to map. Separate from
-    // BufferBorrow.getMappedRange() because it needs Buffer's private members.
-    func recordMappedRange(offset: Int, size: Int) -> Int? {
+    func getMappedRange(offset: Int, size: Int) -> WebGPU.SpanUInt8 {
         if !isValid() {
-            return nil
+            return .empty
         }
 
         var rangeSize = size
@@ -62,27 +67,16 @@ extension WebGPU.Buffer {
         }
 
         if !validateGetMappedRange(offset, rangeSize) {
-            return nil
+            return .empty
         }
 
         m_mappedRanges.add(.init(UInt(offset), UInt(offset + rangeSize)))
         m_mappedRanges.compact()
 
         if m_buffer.storageMode == .private || m_buffer.storageMode == .memoryless || m_buffer.length == 0 {
-            return nil
+            return .empty
         }
 
-        return rangeSize
-    }
-}
-
-extension WebGPU.BufferBorrow {
-    @_lifetime(copy self)
-    func getMappedRange(offset: Int, size: Int) -> WTF.MutableByteSpan {
-        guard let rangeSize = buffer().recordMappedRange(offset: offset, size: size) else {
-            return WTF.MutableByteSpan()
-        }
-
-        return bytes().subspan(offset, rangeSize)
+        return unsafe getBufferContents().subspan(offset, rangeSize)
     }
 }

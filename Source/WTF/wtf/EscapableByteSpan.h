@@ -31,81 +31,28 @@
 #include <wtf/Assertions.h>
 #include <wtf/Borrow.h>
 #include <wtf/ForbidHeapAllocation.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
-// Byte spans for Swift interop. In order of preference:
+// WTF's byte views for Swift interop.
 //
-//   SpanUInt8 / MutableSpanUInt8 (plain std::span). C++ accessors on a non-reference-
-//   counted type with LIFETIME_BOUND or NOESCAPE which return or accept spans come through
-//   as a nice safe Span or MutableSpan. Use these when possible.
+// Where possible, use SpanUInt8 or MutableSpanUInt8 -- in C++ these are simply
+// std::span<const uint8_t> and std::span<uint8_t>.
+// On the Swift side these materialise as Span<UInt8> and MutableSpan<UInt8>, which are
+// non-escapable. That means Swift will ensure at compile-time that the data is not
+// stashed anywhere, but is used or copied before control returns to the C++ caller.
 //
-//   ByteSpan / MutableByteSpan. Non-escapable in Swift, so Swift cannot store one, and
-//   subspan() narrows without naming a pointer. Use these when C++ calls a Swift
-//   function: such a function cannot take or return Swift's own Span or MutableSpan,
-//   and a std::span parameter arrives in Swift as an unsafe type.
-//
-//   EscapableByteSpan. Escapable, for Swift APIs that reject
-//   non-escapable types, such as anything taking DataProtocol. They cost a copy count
-//   and turn misuse into a runtime crash rather than a compile error, so prefer the
-//   others.
+// However, some Swift APIs are not compatible with non-escapable types. In these cases,
+// use EscapableByteSpan which adds a small runtime overhead to ensure Swift
+// relinquishes its view of the data before it falls out of C++ scope.
 
 // Common byte-buffer specializations, named so they can be referenced from Swift.
 using SpanUInt8 = std::span<const uint8_t>;
 using MutableSpanUInt8 = std::span<uint8_t>;
 using VectorUInt8 = Vector<uint8_t>;
-
-template<typename T> class ByteSpanView;
-using ByteSpan = ByteSpanView<const uint8_t>;
-using MutableByteSpan = ByteSpanView<uint8_t>;
-
-void copyByteSpan(MutableByteSpan& destination, const ByteSpan& source);
-
-// Non-escapable wrapper for std::span, for Swift function signatures exposed to C++
-// (because std::span/Span cannot safely be used in that context.)
-//
-// Safe to template only because Swift never extends these: a Swift extension on a
-// template specialization emits unparseable .swiftinterface names.
-template<typename T> class SWIFT_NONESCAPABLE ByteSpanView final {
-public:
-    ByteSpanView() = default;
-
-    size_t size() const { return m_span.size(); }
-
-    ByteSpanView subspan(size_t offset, size_t count) const LIFETIME_BOUND
-    {
-        RELEASE_ASSERT(offset <= m_span.size() && count <= m_span.size() - offset);
-        return ByteSpanView(m_span.subspan(offset, count));
-    }
-
-    // Hidden from Swift so that Swift can neither build one from an unsafe span nor take one
-    // back out; span() is also hidden because a lifetimebound member returning a dependent span
-    // crashes the compiler (rdar://187391842).
-#ifndef __swift__
-    static ByteSpanView create(std::span<T> bytes LIFETIME_BOUND) { return ByteSpanView(bytes); }
-
-    std::span<T> span() const { return m_span; }
-#endif
-
-private:
-    friend void copyByteSpan(MutableByteSpan&, const ByteSpan&);
-
-    explicit ByteSpanView(std::span<T> bytes LIFETIME_BOUND)
-        : m_span(bytes)
-    {
-    }
-
-    std::span<T> m_span;
-};
-
-inline void copyByteSpan(MutableByteSpan& destination, const ByteSpan& source)
-{
-    memcpySpan(destination.m_span, source.m_span);
-}
 
 // EscapableByteSpan is a stack-only control block over a span of bytes owned elsewhere
 // (typically a Vector on the C++ stack). It lets Swift borrow C++ bytes with no copy
@@ -209,8 +156,5 @@ inline EscapableByteSpan escapableSpan(SpanUInt8 bytes LIFETIME_BOUND)
 
 } // namespace WTF
 
-using WTF::ByteSpan;
 using WTF::EscapableByteSpan;
-using WTF::MutableByteSpan;
-using WTF::copyByteSpan;
 using WTF::escapableSpan;

@@ -32,7 +32,6 @@
 
 #import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
-#import <wtf/EscapableByteSpan.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -294,7 +293,7 @@ std::span<uint8_t> Buffer::getMappedRange(size_t offset, size_t size)
 {
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled())
-        return bufferGetMappedRange(BufferBorrow::create(borrow(*this)), offset, size).span();
+        return bufferGetMappedRange(this, offset, size);
 #endif
 
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
@@ -321,20 +320,10 @@ std::span<uint8_t> Buffer::getBufferContents()
     return span<uint8_t>(m_buffer);
 }
 
-BufferBorrow BufferBorrow::create(const Borrow<Buffer>& borrow)
-{
-    return BufferBorrow(borrow.get());
-}
-
-WTF::MutableByteSpan BufferBorrow::bytes() const
-{
-    return WTF::MutableByteSpan::create(protect(m_buffer)->getBufferContents());
-}
-
 void Buffer::bufferCopy(std::span<const uint8_t> data, size_t offset)
 {
 #if ENABLE(WEBGPU_SWIFT)
-    bufferCopyFrom(BufferBorrow::create(borrow(*this)), WTF::ByteSpan::create(data), offset);
+    bufferCopyFrom(this, data, offset);
 #else
     UNUSED_PARAM(data);
     UNUSED_PARAM(offset);

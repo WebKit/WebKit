@@ -38,7 +38,6 @@
 #import <simd/simd.h>
 #import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
-#import <wtf/EscapableByteSpan.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -725,19 +724,11 @@ std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<
     return std::make_pair(m_temporaryBuffer, priorOffset);
 }
 
-NonEscapableMTLBuffer Queue::newTemporaryBufferWithBytes(const WTF::MutableByteSpan& data, bool noCopy, uint64_t& outOffset)
-{
-    auto bufferWithOffset = newTemporaryBufferWithBytes(data.span(), noCopy);
-    outOffset = bufferWithOffset.second;
-    return NonEscapableMTLBuffer::create(bufferWithOffset.first);
-}
-
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled()) {
-        auto dataSpan = MutableByteSpan::create(data);
-        queueWriteBuffer(this, buffer, bufferOffset, dataSpan);
+        queueWriteBuffer(this, buffer, bufferOffset, data);
         return;
     }
 #endif
@@ -760,7 +751,7 @@ void Queue::stageBufferWrite(id<MTLBuffer> buffer, uint64_t bufferOffset, std::s
         return;
     }
 
-    encodeStagedCopy(NonEscapableMTLBuffer::create(temporaryBuffer), temporaryBufferOffset, buffer, bufferOffset, data.size(), noCopy);
+    encodeStagedCopy(temporaryBuffer, temporaryBufferOffset, buffer, bufferOffset, data.size(), noCopy);
 }
 
 // Encodes an already-staged copy, choosing the channel it rides. Split out from stageBufferWrite so
@@ -776,9 +767,8 @@ void Queue::stageBufferWrite(id<MTLBuffer> buffer, uint64_t bufferOffset, std::s
 // validation guarantees 4-byte alignment of both offset and size, and the staging suballocator is
 // 64-byte aligned, so the word-copy kernel covers every spec-reachable write; the blit encoder
 // remains as the fallback (and for writeTexture, clearBuffer, and internal copies).
-void Queue::encodeStagedCopy(const NonEscapableMTLBuffer& temporaryBufferView, uint64_t temporaryBufferOffset, id<MTLBuffer> buffer, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy)
+void Queue::encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer> buffer, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy)
 {
-    id<MTLBuffer> temporaryBuffer = temporaryBufferView.buffer();
     if (!temporaryBuffer || !buffer || !size)
         return;
 

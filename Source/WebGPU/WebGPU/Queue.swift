@@ -24,27 +24,29 @@
 import Metal
 import WebGPU_Internal.Queue
 import WebGPU_Private.WebGPUExt
-import wtf
 
 private let largeBufferSize = Int(WGPU_LARGE_BUFFER_SIZE)
 
 @_expose(Cxx)
-func queueWriteBuffer(_ queue: WebGPU.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WTF.MutableByteSpan) {
-    queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: data)
+func queueWriteBuffer(_ queue: WebGPU.Queue, buffer: any MTLBuffer, bufferOffset: UInt64, data: WebGPU.SpanUInt8) {
+    // FIXME (rdar://161269480): We should be able to declare 'data' as MutableSpan<UInt8>, which will remove this use of 'unsafe'.
+    queue.writeBuffer(buffer: buffer, bufferOffset: bufferOffset, data: unsafe MutableSpan(_unsafeCxxSpan: data))
 }
 
 extension WebGPU.Queue {
-    func writeBuffer(buffer: any MTLBuffer, bufferOffset: UInt64, data: WTF.MutableByteSpan) {
+    func writeBuffer(buffer: any MTLBuffer, bufferOffset: UInt64, data: consuming MutableSpan<UInt8>) {
         guard self.metalDevice() != nil else {
             return
         }
 
-        let count = data.size()
-        let noCopy = count >= largeBufferSize
-        var temporaryBufferOffset: UInt64 = 0
-        let temporaryBuffer = newTemporaryBufferWithBytes(data, noCopy, &temporaryBufferOffset)
+        let count = data.count
+        let noCopy = data.count >= largeBufferSize
+        // FIXME: 'bufferWithOffset' may extend the lifetime of 'data', but we drop that information here.
+        let bufferWithOffset = unsafe newTemporaryBufferWithBytes(WebGPU.SpanUInt8(data), noCopy)
+        let temporaryBuffer = unsafe bufferWithOffset.first
+        let temporaryBufferOffset = unsafe bufferWithOffset.second
 
-        guard temporaryBuffer.isValid() else {
+        guard let temporaryBuffer = temporaryBuffer else {
             assertionFailure("temporaryBuffer should not be nil")
             return
         }
@@ -52,7 +54,8 @@ extension WebGPU.Queue {
         // Shared channel decision with the C++ backend (Queue::encodeStagedCopy): the staged copy
         // is encoded on the compute channel when possible, because standalone blit-only staging
         // command buffers interleaved with user compute submissions intermittently deadlock the
-        // AGX blit/DMA channel. See Queue.mm for the full rationale.
+        // AGX blit/DMA channel. See Queue.mm for the full rationale. Passing the staging buffer
+        // and byte offsets keeps this call free of span interop, so it needs no 'unsafe'.
         encodeStagedCopy(temporaryBuffer, temporaryBufferOffset, buffer, bufferOffset, UInt64(count), noCopy)
     }
 }
