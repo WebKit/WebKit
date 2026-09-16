@@ -114,13 +114,7 @@ public:
         return kind;
     }
     
-    Relationship()
-        : m_left(nullptr)
-        , m_right(nullptr)
-        , m_kind(Equal)
-        , m_offset(0)
-    {
-    }
+    Relationship() = default;
 
     // left <kind> (right + offset)
     Relationship(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
@@ -1001,10 +995,10 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    NodeFlowProjection m_left;
-    NodeFlowProjection m_right;
-    Kind m_kind;
-    int m_offset; // This offset can be arbitrarily large.
+    NodeFlowProjection m_left { nullptr };
+    NodeFlowProjection m_right { nullptr };
+    Kind m_kind { Equal };
+    int m_offset { 0 }; // This offset can be arbitrarily large.
 };
 
 typedef UncheckedKeyHashMap<NodeFlowProjection, Vector<Relationship>> RelationshipMap;
@@ -1021,7 +1015,11 @@ public:
 
     struct RangeBound {
         int32_t value;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         const Relationship* proof { nullptr };
+#else
+        Relationship proof { };
+#endif
     };
 
     std::optional<std::tuple<RangeBound, RangeBound>> rangeFor(Node* node)
@@ -1041,12 +1039,20 @@ public:
             int32_t candidateMin = relationship.minValueOfLeft();
             if (candidateMin > minBound.value) {
                 minBound.value = candidateMin;
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 minBound.proof = &relationship;
+#else
+                minBound.proof = relationship;
+#endif
             }
             int32_t candidateMax = relationship.maxValueOfLeft();
             if (candidateMax < maxBound.value) {
                 maxBound.value = candidateMax;
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 maxBound.proof = &relationship;
+#else
+                maxBound.proof = relationship;
+#endif
             }
         }
         return std::tuple { minBound, maxBound };
@@ -1071,10 +1077,17 @@ public:
     {
         if (!bound.proof)
             return;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (Node* right = bound.proof->right().node(); right && !right->isConstant())
             right->mergeFlags(NodeMustGenerate);
         if (Node* left = bound.proof->left().node(); left && !left->isConstant())
             left->mergeFlags(NodeMustGenerate);
+#else
+        if (Node* right = bound.proof.right().node(); right && !right->isConstant())
+            right->mergeFlags(NodeMustGenerate);
+        if (Node* left = bound.proof.left().node(); left && !left->isConstant())
+            left->mergeFlags(NodeMustGenerate);
+#endif
     }
 
     // Be careful: do not use this to infer a relationship that will not be pruned later,
