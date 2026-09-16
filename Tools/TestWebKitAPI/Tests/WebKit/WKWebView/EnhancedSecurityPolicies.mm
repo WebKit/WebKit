@@ -181,11 +181,14 @@ static void testAlertWithEnhancedSecurity(RetainPtr<TestUIDelegate> uiDelegate, 
     }
 }
 
+enum class UseSharedProcess : bool { No, Yes };
+
 static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
     const TestWebKitAPI::HTTPServer* plaintextServer,
     const TestWebKitAPI::HTTPServer* secureServer = nullptr,
     bool useSiteIsolation = false,
-    bool useNonPersistentStore = true)
+    bool useNonPersistentStore = true,
+    UseSharedProcess useSharedProcess = UseSharedProcess::No)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
 
@@ -197,6 +200,10 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
             || [feature.key isEqualToString:@"EnhancedSecurityHeuristicsEnabled"]) {
             [preferences _setEnabled:YES forFeature:feature];
         }
+        // Stated explicitly because these tests depend on whether a cross-site subframe gets a
+        // process of its own.
+        if ([feature.key isEqualToString:@"SiteIsolationSharedProcessEnabled"])
+            [preferences _setEnabled:useSharedProcess == UseSharedProcess::Yes forFeature:feature];
     }
 
     auto storeConfiguration = useNonPersistentStore
@@ -220,6 +227,22 @@ static RetainPtr<TestWKWebView> enhancedSecurityTestConfiguration(
     }
 
     return webView;
+}
+
+static pid_t iframeProcessIdentifier(RetainPtr<TestWKWebView> webView)
+{
+    __block bool done = false;
+    __block RetainPtr<NSArray<_WKFrameTreeNode *>> childFrames;
+    [webView _frames:^(_WKFrameTreeNode *root) {
+        childFrames = root.childFrames;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_EQ([childFrames count], 1u);
+    if (![childFrames count])
+        return 0;
+    return [childFrames firstObject].info._processIdentifier;
 }
 
 enum class ExpectedEnhancedSecurity : bool { Disabled = false, Enabled = true };
@@ -504,7 +527,7 @@ static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation
         { "http://insecure.example.internal/second"_s, { "<script>alert('after-iframe-gone')</script>"_s } },
     });
 
-    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation);
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, useSiteIsolation, true, UseSharedProcess::No);
 
     runActionAndCheckEnhancedSecurityAlerts(webView, [webView] {
         [webView loadHTMLString:@"<iframe src='http://insecure.example.internal/iframe'></iframe>" baseURL:nil];
@@ -529,6 +552,40 @@ static void runIframeKeepsSiteOutOfEnhancedSecurityProcess(bool useSiteIsolation
     EXPECT_EQ(plaintextServer.totalRequests(), 3u);
 }
 TEST_WITH_SITE_ISOLATION(IframeKeepsSiteOutOfEnhancedSecurityProcess)
+
+TEST(EnhancedSecurityPolicies, IframeInSharedProcessDoesNotKeepSiteOutOfEnhancedSecurityProcess)
+{
+    HTTPServer plaintextServer({
+        { "http://insecure.example.internal/iframe"_s, { "<script>alert('iframe-in-page')</script>"_s } },
+        { "http://insecure.example.internal/first"_s, { "<script>alert('with-iframe-alive')</script>"_s } },
+        { "http://insecure.example.internal/second"_s, { "<script>alert('after-iframe-gone')</script>"_s } },
+    });
+
+    auto webView = enhancedSecurityTestConfiguration(&plaintextServer, nullptr, true, true, UseSharedProcess::Yes);
+
+    runActionAndCheckEnhancedSecurityAlerts(webView, [webView] {
+        [webView loadHTMLString:@"<iframe src='http://insecure.example.internal/iframe'></iframe>" baseURL:nil];
+    }, {
+        { "iframe-in-page"_s, ExpectedEnhancedSecurity::Disabled }
+    });
+
+    auto pidWithIframeAlive = [webView _webProcessIdentifier];
+    EXPECT_NE(iframeProcessIdentifier(webView), pidWithIframeAlive);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/first", {
+        { "with-iframe-alive"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/first");
+    EXPECT_NE([webView _webProcessIdentifier], pidWithIframeAlive);
+
+    loadRequestAndCheckEnhancedSecurityAlerts(webView, @"http://insecure.example.internal/second", {
+        { "after-iframe-gone"_s, ExpectedEnhancedSecurity::Enabled }
+    });
+
+    EXPECT_WK_STREQ([webView URL].absoluteString, @"http://insecure.example.internal/second");
+    EXPECT_EQ(plaintextServer.totalRequests(), 3u);
+}
 
 // MARK: - HTTPS First Upgrade Tests
 
