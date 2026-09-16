@@ -62,6 +62,12 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
 
+# webkit.org/b/324360 [Site Isolation macOS Tahoe DEBUG] 4x TestWebKitAPI.ProcessSwap.* (api-tests) are constant crashes.
+[ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.CancelCrossSiteProvisionalLoadWithoutPSON [ Crash ]
+[ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.CrossSiteClientSideRedirectWithoutPSON [ Crash ]
+[ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.NavigationWithLockedHistoryWithoutPSON [ Crash ]
+[ mac debug siteisolation Tahoe ] TestWebKitAPI.ProcessSwap.QuickBackForwardNavigationWithoutPSON [ Crash ]
+
 # webkit.org/b/324191 [Site Isolation macOS Tahoe Debug]REGRESSION(315452@main): 2x TestWebKitAPI.* (api-tests) are constant crashes.
 [ mac debug arm64 siteisolation ] TestWebKitAPI.ProcessSwap.EphemeralWebStorage [ Crash ]
 [ mac debug arm64 siteisolation ] TestWebKitAPI.WebKit.DecidePolicyForNavigationActionForHyperlinkThatRedirectsWithoutPSON [ Crash ]
