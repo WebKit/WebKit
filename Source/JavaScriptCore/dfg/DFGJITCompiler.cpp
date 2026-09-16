@@ -124,12 +124,11 @@ void JITCompiler::linkOSRExits()
             didNotHaveException.link(this);
         }
         dispatchCases.link(this);
-        loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExits()), GPRInfo::jitDataRegister);
-        static_assert(sizeof(JITData::ExitVector::value_type) == 16);
-        static_assert(!JITData::ExitVector::value_type::offsetOfCodePtr());
-        lshiftPtr(GPRInfo::numberTagRegister, TrustedImm32(4), GPRInfo::notCellMaskRegister);
+        loadPtr(Address(GPRInfo::jitDataRegister, JITData::offsetOfExitJumpTable()), GPRInfo::jitDataRegister);
+        static_assert(sizeof(JITData::ExitJumpTable::value_type) == 8);
+        lshiftPtr(GPRInfo::numberTagRegister, TrustedImm32(3), GPRInfo::notCellMaskRegister);
         addPtr(GPRInfo::notCellMaskRegister, GPRInfo::jitDataRegister);
-        farJump(Address(GPRInfo::jitDataRegister, JITData::ExitVector::Storage::offsetOfData()), OSRExitPtrTag);
+        farJump(Address(GPRInfo::jitDataRegister, JITData::ExitJumpTable::Storage::offsetOfData()), OSRExitPtrTag);
     }
 }
 
@@ -310,7 +309,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(!m_exitSiteLabels.size());
 
     m_jitCode->common.compilation = m_graph.compilation();
-    m_jitCode->m_osrExit = WTF::move(m_osrExit);
+    m_jitCode->m_osrExits = OSRExitStream(m_osrExit, m_graph.m_plan.isUnlinked() ? CodeLocationLabel<JSInternalPtrTag>() : linkBuffer.entrypoint<JSInternalPtrTag>());
     m_jitCode->m_speculationRecovery = WTF::move(m_speculationRecovery);
     
     // Link new DFG exception handlers and remove baseline JIT handlers.

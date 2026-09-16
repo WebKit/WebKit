@@ -739,9 +739,12 @@ void Plan::cleanMustHandleValuesIfNecessary()
 
 std::unique_ptr<JITData> Plan::tryFinalizeJITData(const DFG::JITCode& jitCode)
 {
-    auto osrExitThunk = m_vm->getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
-    auto exits = JITData::ExitVector::createWithSizeAndConstructorArguments(jitCode.m_osrExit.size(), osrExitThunk);
-    return JITData::tryCreate(*m_vm, m_codeBlock, jitCode, WTF::move(exits));
+    JITData::ExitJumpTable exitJumpTable;
+    if (isUnlinked()) {
+        auto osrExitThunk = m_vm->getCTIStub(osrExitGenerationThunkGenerator).retagged<OSRExitPtrTag>();
+        exitJumpTable = JITData::ExitJumpTable::createWithSizeAndConstructorArguments(jitCode.m_osrExits.size(), osrExitThunk.code());
+    }
+    return JITData::tryCreate(*m_vm, m_codeBlock, jitCode, WTF::move(exitJumpTable));
 }
 
 } } // namespace JSC::DFG

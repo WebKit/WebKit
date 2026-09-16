@@ -77,6 +77,12 @@ struct WeakReferenceTransition {
     WriteBarrier<JSCell> m_from;
     WriteBarrier<JSCell> m_to;
 };
+
+struct OSRExitStub {
+    unsigned exitIndex;
+    MacroAssemblerCodeRef<OSRExitPtrTag> code;
+};
+using OSRExitStubs = Vector<OSRExitStub, 0, CrashOnOverflow, 1>;
         
 class CommonData : public MathICHolder {
     WTF_MAKE_NONCOPYABLE(CommonData);
