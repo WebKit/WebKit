@@ -4378,7 +4378,7 @@ constexpr unsigned isOnFreeList = 5; // MarkedBlock + freeListed only: cell is a
 constexpr unsigned nibbleCount = 6;
 }
 
-// reg1: offending offset + bad-object data validity + butterfly state.
+// reg1: offending offset + bad-object data validity + butterfly state + structure dictionary state.
 namespace Reg1 {
 constexpr unsigned propertyOffset = 0; // nibbles 0-3 (16 bits)
 constexpr unsigned offsetIsInline = 4; // 0 => out-of-line (in the butterfly)
@@ -4389,7 +4389,10 @@ constexpr unsigned blockHeaderVMPointerState = 8; // MarkedBlock only: 0 => zero
 constexpr unsigned butterflyIsNull = 9; // out-of-line only
 constexpr unsigned butterflyInButterflySpace = 10; // out-of-line only: in vm.auxiliarySpace()
 constexpr unsigned butterflyOutOfLineStorageIsZeroFilled = 11; // out-of-line only
-constexpr unsigned blockPayloadZeroByteCount = 12; // nibbles 12-15 (16 bits): number of zero bytes in the block payload, MarkedBlock only
+constexpr unsigned structureIsDictionary = 12;
+constexpr unsigned structureIsUncacheableDictionary = 13; // the kind flattenDictionaryStructure() renumbers
+constexpr unsigned structureHasBeenFlattenedBefore = 14; // ineligible for further flattening
+constexpr unsigned structureInlineCapacity = 15; // saturated to 4 bits
 }
 
 // reg2: sizes/counts, 16 bits (4 nibbles) each.
@@ -4433,8 +4436,11 @@ static_assert(Reg2::butterflyPublicLength == Reg2::outOfLineSize + 4);
 static_assert(Reg2::butterflyVectorLength + 4 <= 16);
 static_assert(Reg4::blockHeaderZeroByteCount == Reg4::previousInChainGCState + GCState::nibbleCount);
 static_assert(Reg4::blockHeaderZeroByteCount + 4 <= 16); // 16-bit count spans 4 nibbles
-static_assert(Reg1::blockPayloadZeroByteCount + 4 <= 16); // 16-bit count spans 4 nibbles
-static_assert(Reg1::butterflyOutOfLineStorageIsZeroFilled < Reg1::blockPayloadZeroByteCount);
+static_assert(Reg1::structureIsDictionary == Reg1::butterflyOutOfLineStorageIsZeroFilled + 1);
+static_assert(Reg1::structureIsUncacheableDictionary == Reg1::structureIsDictionary + 1);
+static_assert(Reg1::structureHasBeenFlattenedBefore == Reg1::structureIsUncacheableDictionary + 1);
+static_assert(Reg1::structureInlineCapacity == Reg1::structureHasBeenFlattenedBefore + 1);
+static_assert(Reg1::structureInlineCapacity <= 15);
 
 }
 #endif
@@ -4578,6 +4584,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
     if (decodedStructure) {
         metaStructure = decodedStructure->structureID().tryDecode();
         structureOfStructureIsStructureStructure = metaStructure && vm != nullptr && metaStructure == vm->structureStructure.get();
+        reg1 |= static_cast<uint64_t>(decodedStructure->isDictionary()) << nibbleShift(Reg1::structureIsDictionary);
+        reg1 |= static_cast<uint64_t>(decodedStructure->isUncacheableDictionary()) << nibbleShift(Reg1::structureIsUncacheableDictionary);
+        reg1 |= static_cast<uint64_t>(decodedStructure->hasBeenFlattenedBefore()) << nibbleShift(Reg1::structureHasBeenFlattenedBefore);
+        reg1 |= saturate<4>(decodedStructure->inlineCapacity()) << nibbleShift(Reg1::structureInlineCapacity);
     }
     reg1 |= static_cast<uint64_t>(structureOfStructureIsStructureStructure) << nibbleShift(Reg1::structureOfStructureIsStructureStructure);
 
@@ -4599,11 +4609,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
 
     updateDumpState(0x570a);
 
-    // If the bad object lives in a MarkedBlock, how zeroed-out is that block?
-    // The header holds some words that are written non-zero even after the
-    // payload is zero-filled. So instead, count zero bytes separately for the
-    // header and payload, and capture the header's VM pointer, mirroring
-    // MarkedBlock::analyzeInvalidHandleAndCrash().
+    // If the bad object lives in a MarkedBlock, how zeroed-out is that block's header?
+    // The header holds some words that are written non-zero even after the payload is
+    // zero-filled, so zero bytes there are the stronger corruption signal. Also capture
+    // the header's VM pointer, mirroring MarkedBlock::analyzeInvalidHandleAndCrash().
     if (!badObject->isPreciseAllocation()) {
         MarkedBlock& block = badObject->markedBlock();
         auto* blockStart = reinterpret_cast<const char*>(&block);
@@ -4617,9 +4626,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
             return zeros;
         };
         uint64_t headerZeroBytes = countZeroBytes(blockStart + MarkedBlock::offsetOfHeader, blockStart + MarkedBlock::offsetOfHeader + MarkedBlock::headerSize);
-        uint64_t payloadZeroBytes = countZeroBytes(blockStart + MarkedBlock::offsetOfHeader + MarkedBlock::headerSize, blockStart + MarkedBlock::blockSize);
         reg4 |= saturate<16>(headerZeroBytes) << nibbleShift(Reg4::blockHeaderZeroByteCount);
-        reg1 |= saturate<16>(payloadZeroBytes) << nibbleShift(Reg1::blockPayloadZeroByteCount);
 
         // Is a critical value like the header's VM pointer zeroed out?
         // 0 => zeroed, 1 => non-null but not this structure's VM, 2 => matches `vm` from from the `structure` argument.
@@ -4755,7 +4762,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
 
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(attributes);
-    WTFCrashWithInfo(line, filename, function_name, 0x900d0ff5e7bad, reg1, reg2, reg3, reg4, reg5, reg6);
+    WTFCrashWithInfo(line, filename, function_name, 0x100900d0ff5e7bad, reg1, reg2, reg3, reg4, reg5, reg6);
 #else
     UNUSED_PARAM(structure);
     UNUSED_PARAM(propertyName);
@@ -4763,7 +4770,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void JSObject::crashDueToEmptyValueAtValidOf
     UNUSED_PARAM(bottomOfChain);
     UNUSED_PARAM(previousInChain);
     UNUSED_PARAM(attributes);
-    WTFCrashWithInfo(line, filename, function_name, 0x900d0ff5e7bad);
+    WTFCrashWithInfo(line, filename, function_name, 0x100900d0ff5e7bad);
 #endif
 }
 
