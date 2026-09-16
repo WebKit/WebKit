@@ -4410,7 +4410,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     auto variant = status[0];
                     if (!variant.conditionSet().isEmpty()) {
                         ASSERT(variant.structureSet().size() == 1);
-                        auto attempToFold = [&] {
+                        auto attemptToFold = [&] {
                             for (auto& condition : variant.conditionSet()) {
                                 switch (condition.kind()) {
                                 case PropertyCondition::Presence: {
@@ -4434,7 +4434,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                             return false;
                         };
 
-                        if (attempToFold())
+                        if (attemptToFold())
                             break;
 
                         clobberWorld();
