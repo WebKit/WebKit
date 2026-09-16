@@ -1,0 +1,6 @@
+
+PASS An inline query container is not scrollable, so only none matches
+PASS A display:contents query container is not scrollable, so only none matches
+PASS A box that is not a scroll container matches none
+PASS A scroll container with scrollable overflow matches the direction, not none
+

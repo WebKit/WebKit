@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>scroll-state(scrollable) against a query container that is not a scroll container</title>
+<link rel="help" href="https://drafts.csswg.org/css-conditional-5/#scrollable">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+  .container { container-type: scroll-state; }
+
+  /* Generates a RenderInline, not a box. */
+  #inline-container { display: inline; }
+  /* Generates no principal box at all. */
+  #contents-container { display: contents; }
+  /* A box, but overflow is visible so it is not a scroll container. */
+  #block-container { width: 100px; height: 100px; }
+  #scroller { width: 100px; height: 100px; overflow-y: auto; }
+  #filler { height: 1000px; }
+
+  .target { --none: no; --bottom: no; }
+  @container scroll-state(scrollable: none) { .target { --none: yes; } }
+  @container scroll-state(scrollable: bottom) { .target { --bottom: yes; } }
+</style>
+
+<span class="container" id="inline-container"><span class="target" id="t-inline"></span></span>
+<div class="container" id="contents-container"><div class="target" id="t-contents"></div></div>
+<div class="container" id="block-container"><div class="target" id="t-block"></div></div>
+<div class="container" id="scroller"><div id="filler"><div class="target" id="t-scroller"></div></div></div>
+
+<script>
+function value(id, name) {
+  return getComputedStyle(document.getElementById(id)).getPropertyValue(name).trim();
+}
+
+function nextRenderingUpdate() {
+  return new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+// The scroll state is snapshotted during the rendering update, so let one run first.
+promise_setup(async () => { await nextRenderingUpdate(); });
+
+promise_test(async () => {
+  assert_equals(value('t-inline', '--none'), 'yes', 'matches none');
+  assert_equals(value('t-inline', '--bottom'), 'no', 'does not match bottom');
+}, 'An inline query container is not scrollable, so only none matches');
+
+promise_test(async () => {
+  assert_equals(value('t-contents', '--none'), 'yes', 'matches none');
+  assert_equals(value('t-contents', '--bottom'), 'no', 'does not match bottom');
+}, 'A display:contents query container is not scrollable, so only none matches');
+
+promise_test(async () => {
+  assert_equals(value('t-block', '--none'), 'yes', 'matches none');
+  assert_equals(value('t-block', '--bottom'), 'no', 'does not match bottom');
+}, 'A box that is not a scroll container matches none');
+
+promise_test(async () => {
+  assert_equals(value('t-scroller', '--none'), 'no', 'does not match none');
+  assert_equals(value('t-scroller', '--bottom'), 'yes', 'matches bottom');
+}, 'A scroll container with scrollable overflow matches the direction, not none');
+</script>
