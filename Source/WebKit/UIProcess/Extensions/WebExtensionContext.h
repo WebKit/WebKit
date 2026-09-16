@@ -775,6 +775,7 @@ private:
 
     bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
+    bool isExtensionPage(WebPageProxyIdentifier) const;
     bool NODELETE backgroundContentIsLoaded() const;
 
     bool isNotRunningInTestRunner();
@@ -1112,7 +1113,8 @@ private:
     void fireWindowsEventIfNeeded(WebExtensionEventListenerType, std::optional<WebExtensionWindowParameters>);
 
     // webRequest support.
-    bool hasPermissionToSendWebRequestEvent(WebExtensionTab*, const URL& resourceURL, const ResourceLoadInfo&);
+    bool hasPermissionToSendWebRequestEvent(WebExtensionTab*, const URL& resourceURL, const ResourceLoadInfo&, bool isRequestFromExtensionPage);
+    std::optional<std::pair<WebExtensionTabIdentifier, WebExtensionWindowIdentifier>> webRequestEventTabAndWindowIdentifiers(WebPageProxyIdentifier, const URL& resourceURL, const ResourceLoadInfo&);
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
