@@ -1,0 +1,4 @@
+This test passes if RemoteBindGroup::UpdateExternalTextures only rewrites the bind group's argument buffer for the ExternalTexture it was created with, and only while no command encoder has made that ExternalTexture resident.
+
+PASS: IPC testing API unavailable
+
