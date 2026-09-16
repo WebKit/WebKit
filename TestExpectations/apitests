@@ -218,6 +218,7 @@ webkit.org/b/324268 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.GoBack
 webkit.org/b/324276 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.GoToSecondItemInBackHistory [ Pass Timeout ]
 webkit.org/b/324277 TestWebKitAPI.ProcessSwap.HistoryItemIDConfusion [ Pass Timeout ]
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
+webkit.org/b/324363 [ mac Sequoia+ debug x86_64 ] TestWebKitAPI.ProcessSwap.NavigateCrossSiteBeforePageLoadEnd [ Pass Fail ]
 webkit.org/b/324130 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.PageCacheWhenNavigatingFromJS [ Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
 webkit.org/b/324281 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.TerminatedSuspendedPageProcess [ Failure ]
