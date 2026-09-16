@@ -141,10 +141,7 @@ private:
 
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
-    LayoutUnit computeReplacedLogicalWidth(IsComputingIntrinsicSize = IsComputingIntrinsicSize::No) const override;
-    LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
-
-    bool shouldCollapseToEmpty() const;
+    bool imageRepresentsNothing() const;
 
     // Text to display as long as the image isn't available.
     String m_altText;
