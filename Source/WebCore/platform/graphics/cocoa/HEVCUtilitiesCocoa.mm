@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#import "CMUtilities.h"
 #import "FourCC.h"
 #import "HEVCUtilities.h"
 #import "PlatformMediaCapabilitiesInfo.h"
@@ -37,6 +38,7 @@
 #import <wtf/text/StringToIntegerConversion.h>
 
 #import "VideoToolboxSoftLink.h"
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 namespace WebCore {
@@ -198,6 +200,11 @@ std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViPa
         return std::nullopt;
 
     return { { true, true, isHardwareAccelerated } };
+}
+
+Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef hvccSampleBuffer, bool isKeyframe)
+{
+    return convertParameterSetsCMSampleBufferToAnnexB(hvccSampleBuffer, isKeyframe, PAL::CMVideoFormatDescriptionGetHEVCParameterSetAtIndex);
 }
 
 }

@@ -46,6 +46,7 @@
 #include <WebCore/Settings.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #include <WebCore/VideoFrameCV.h>
+#include <WebCore/WebRTCVideoEncoder.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -815,7 +816,41 @@ RefPtr<GenericPromise> LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_
     });
 }
 
-void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, std::span<const uint8_t> data, const webrtc::WebKitEncodedFrameInfo& info)
+static webrtc::WebKitEncodedVideoRotation toWebKitEncodedVideoRotation(WebCore::VideoFrameRotation rotation)
+{
+    switch (rotation) {
+    case WebCore::VideoFrameRotation::None:
+        return webrtc::WebKitEncodedVideoRotation::kVideoRotation_0;
+    case WebCore::VideoFrameRotation::UpsideDown:
+        return webrtc::WebKitEncodedVideoRotation::kVideoRotation_180;
+    case WebCore::VideoFrameRotation::Right:
+        return webrtc::WebKitEncodedVideoRotation::kVideoRotation_90;
+    case WebCore::VideoFrameRotation::Left:
+        return webrtc::WebKitEncodedVideoRotation::kVideoRotation_270;
+    }
+    ASSERT_NOT_REACHED();
+    return webrtc::WebKitEncodedVideoRotation::kVideoRotation_0;
+}
+
+static webrtc::WebKitEncodedFrameInfo toWebKitEncodedFrameInfo(const WebCore::WebRTCVideoEncoderFrameInfo& info)
+{
+    webrtc::WebKitEncodedFrameInfo result;
+    result.width = info.width;
+    result.height = info.height;
+    result.timeStamp = info.timeStamp;
+    result.duration = info.duration;
+    result.captureTimeMS = info.captureTimeMS;
+    result.frameType = info.isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
+    result.rotation = toWebKitEncodedVideoRotation(info.rotation);
+    result.contentType = info.isScreenshare ? webrtc::VideoContentType::SCREENSHARE : webrtc::VideoContentType::UNSPECIFIED;
+    result.completeFrame = true;
+    result.qp = info.qp;
+    result.temporalIndex = info.temporalIndex ? static_cast<int>(*info.temporalIndex) : -1;
+    result.timing.flags = webrtc::VideoSendTiming::kInvalid;
+    return result;
+}
+
+void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, std::span<const uint8_t> data, const WebCore::WebRTCVideoEncoderFrameInfo& info)
 {
     assertIsCurrent(workQueue());
 
@@ -830,15 +865,16 @@ void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, std::
     Locker locker { AdoptLock, encoder->encodedImageCallbackLock };
 
     if (encoder->encoderCallback) {
-        auto temporalIndex = info.temporalIndex >= 0 ? std::make_optional<unsigned>(info.temporalIndex) : std::nullopt;
-        encoder->encoderCallback(data, info.frameType == webrtc::VideoFrameType::kVideoFrameKey, info.timeStamp, info.duration, temporalIndex);
+        auto temporalIndex = info.temporalIndex ? std::make_optional<unsigned>(*info.temporalIndex) : std::nullopt;
+        encoder->encoderCallback(data, info.isKeyFrame, info.timeStamp, info.duration, temporalIndex);
         return;
     }
 
     if (!encoder->encodedImageCallback)
         return;
 
-    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, toWebRTCCodecType(encoder->type), data.data(), data.size(), info);
+    auto webKitInfo = toWebKitEncodedFrameInfo(info);
+    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, toWebRTCCodecType(encoder->type), data.data(), data.size(), webKitInfo);
 }
 
 void LibWebRTCCodecs::setEncodingConfiguration(WebKit::VideoEncoderIdentifier identifier, std::span<const uint8_t> description, std::optional<WebCore::PlatformVideoColorSpace> colorSpace)

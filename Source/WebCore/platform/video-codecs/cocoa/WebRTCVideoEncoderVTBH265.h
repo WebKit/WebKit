@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,27 @@
 
 #pragma once
 
-#if USE(LIBWEBRTC)
+#if USE(AVFOUNDATION)
 
-#include <WebCore/LibWebRTCMacros.h>
-#include <wtf/Compiler.h>
+#include "WebRTCVideoEncoderVTB.h"
+#include <WebCore/HEVCUtilities.h>
+#include <wtf/TZoneMalloc.h>
 
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
-WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+namespace WebCore {
 
-#endif // USE(LIBWEBRTC)
+class WebRTCVideoEncoderVTBH265 final : public WebRTCVideoEncoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCVideoEncoderVTBH265);
+public:
+    WebRTCVideoEncoderVTBH265(bool useAnnexB, WebRTCVideoEncoderCallback&&, WebRTCVideoEncoderDescriptionCallback&&, WebRTCVideoEncoderErrorCallback&&);
+    ~WebRTCVideoEncoderVTBH265() = default;
+
+private:
+    CMVideoCodecType codecType() const final;
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, WebRTCVideoEncoderFrameInfo&&) final;
+
+    HEVCBitstreamParser m_bitstreamParser;
+};
+
+}
+
+#endif // USE(AVFOUNDATION)

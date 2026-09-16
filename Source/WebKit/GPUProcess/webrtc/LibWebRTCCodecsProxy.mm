@@ -51,7 +51,6 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
-#include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
@@ -65,6 +64,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCCodecsProxy);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(LibWebRTCCodecsProxy::Encoder);
 
 Ref<LibWebRTCCodecsProxy> LibWebRTCCodecsProxy::create(GPUConnectionToWebProcess& webProcessConnection, SharedPreferencesForWebProcess& sharedPreferencesForWebProcess)
 {
@@ -105,9 +105,8 @@ void LibWebRTCCodecsProxy::stopListeningForIPC(Ref<LibWebRTCCodecsProxy>&& refFr
         decoders.clear();
         auto encoders = std::exchange(protectedThis->m_encoders, { });
         for (auto& encoder : encoders.values()) {
-            webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
-            while (!encoder.encodingCallbacks.isEmpty())
-                encoder.encodingCallbacks.takeFirst()(false);
+            while (!encoder->encodingCallbacks.isEmpty())
+                encoder->encodingCallbacks.takeFirst()(false);
         }
     });
 }
@@ -343,10 +342,6 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
 
     MESSAGE_CHECK_COMPLETION(!m_encoders.contains(identifier), callback(false));
 
-    std::map<std::string, std::string> rtcParameters;
-    for (auto& parameter : parameters)
-        rtcParameters.emplace(parameter.first.utf8().legacyCStringPointer(), parameter.second.utf8().legacyCStringPointer());
-
     if (codecType != WebCore::VideoCodecType::H264 && codecType != WebCore::VideoCodecType::H265) {
         callback(false);
         return;
@@ -357,41 +352,30 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         return;
     }
 
-    auto errorBlock = makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, queue = m_queue, identifier](bool result) {
+    auto errorBlock = [weakThis = ThreadSafeWeakPtr { *this }, identifier](bool result) {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyEncoderResult(identifier, result);
-    });
-    auto newFrameBlock = makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, queue = m_queue, connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
-        connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, unsafeMakeSpan(buffer, size), info }, 0);
+    };
+    auto newFrameBlock = [weakThis = ThreadSafeWeakPtr { *this }, connection = m_connection, identifier](std::span<const uint8_t> buffer, const WebCore::WebRTCVideoEncoderFrameInfo& frameInfo) {
+        connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, buffer, frameInfo }, 0);
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyEncoderResult(identifier, true);
-    });
-    auto newConfigurationBlock = makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size) {
+    };
+    auto newConfigurationBlock = [connection = m_connection, identifier](std::span<const uint8_t> buffer) {
         // Current encoders are limited to this configuration. We might want in the future to let encoders notify which colorSpace they are selecting.
         PlatformVideoColorSpace colorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = true };
-        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, unsafeMakeSpan(buffer, size), colorSpace }, 0);
-    });
+        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, buffer, colorSpace }, 0);
+    };
 
-    webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;
-    switch (scalabilityMode) {
-    case VideoEncoderScalabilityMode::L1T1:
-        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T1;
-        break;
-    case VideoEncoderScalabilityMode::L1T2:
-        rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T2;
-        break;
-    case VideoEncoderScalabilityMode::L1T3:
-        callback(false);
-        return;
-    }
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == WebCore::VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
+    bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoEncodersEnabled;
+    auto encoder = WebCore::WebRTCVideoEncoder::create(codecType, useWebCoreEncoder, parameters, useAnnexB, scalabilityMode, WTF::move(newFrameBlock), WTF::move(newConfigurationBlock), WTF::move(errorBlock));
     if (!encoder) {
         callback(false);
         return;
     }
 
-    webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
-    auto result = m_encoders.add(identifier, Encoder { encoder, makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), { }, codecType, useLowLatency });
+    encoder->setLowLatency(useLowLatency);
+    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(makeUniqueRefFromNonNullUniquePtr(WTF::move(encoder)), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
     callback(true);
@@ -401,12 +385,10 @@ void LibWebRTCCodecsProxy::releaseEncoder(VideoEncoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto encoder = m_encoders.take(identifier);
-    if (!encoder.webrtcEncoder)
+    if (!encoder)
         return;
 
-    webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
-
-    m_queue->dispatch([encodingCallbacks = WTF::move(encoder.encodingCallbacks)] () mutable {
+    m_queue->dispatch([encodingCallbacks = WTF::move(encoder->encodingCallbacks)] () mutable {
         while (!encodingCallbacks.isEmpty())
             encodingCallbacks.takeFirst()(-2);
     });
@@ -441,7 +423,7 @@ void LibWebRTCCodecsProxy::initializeEncoder(VideoEncoderIdentifier identifier, 
         encoder->isInvalid = true;
         return;
     }
-    webrtc::initializeLocalEncoder(encoder->webrtcEncoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate);
+    encoder->webrtcEncoder->initialize(width, height, startBitrate, maxBitrate, minBitrate, maxFramerate);
 }
 
 LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(VideoEncoderIdentifier identifier)
@@ -449,23 +431,7 @@ LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(VideoEncoderIde
     auto iterator = m_encoders.find(identifier);
     if (iterator == m_encoders.end())
         return nullptr;
-    return &iterator->value;
-}
-
-static inline webrtc::VideoRotation NODELETE toWebRTCVideoRotation(WebCore::VideoFrame::Rotation rotation)
-{
-    switch (rotation) {
-    case WebCore::VideoFrame::Rotation::None:
-        return webrtc::kVideoRotation_0;
-    case WebCore::VideoFrame::Rotation::UpsideDown:
-        return webrtc::kVideoRotation_180;
-    case WebCore::VideoFrame::Rotation::Right:
-        return webrtc::kVideoRotation_90;
-    case WebCore::VideoFrame::Rotation::Left:
-        return webrtc::kVideoRotation_270;
-    }
-    ASSERT_NOT_REACHED();
-    return webrtc::kVideoRotation_0;
+    return iterator->value.ptr();
 }
 
 void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&& callback)
@@ -499,7 +465,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
 
 #if !PLATFORM(MACCATALYST)
     encoder->encodingCallbacks.append(WTF::move(callback));
-    webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);
+    encoder->webrtcEncoder->encodeFrame(pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, sharedVideoFrame.rotation, shouldEncodeAsKeyFrame);
 #else
     callback(false);
 #endif
@@ -539,7 +505,7 @@ void LibWebRTCCodecsProxy::flushEncoder(VideoEncoderIdentifier identifier, Compl
 {
     assertIsCurrent(workQueue());
     if (auto* encoder = findEncoder(identifier))
-        webrtc::flushLocalEncoder(encoder->webrtcEncoder);
+        encoder->webrtcEncoder->flush();
     // FIXME: It would be nice to ASSERT that when executing callback, the encoding task deque is empty.
     m_queue->dispatch(WTF::move(callback));
 }
@@ -555,7 +521,7 @@ void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uin
     if (!encoder)
         return;
 
-    webrtc::setLocalEncoderRates(encoder->webrtcEncoder, bitRate, frameRate);
+    encoder->webrtcEncoder->setRates(bitRate, frameRate);
 }
 
 void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(VideoEncoderIdentifier identifier, IPC::Semaphore&& semaphore)

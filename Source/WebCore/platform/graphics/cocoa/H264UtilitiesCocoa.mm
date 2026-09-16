@@ -29,6 +29,7 @@
 
 #import "BitReader.h"
 #import "TrackInfo.h"
+#import <wtf/RetainPtr.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
@@ -120,6 +121,11 @@ RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t> avcc)
             .extensionAtoms = { FillWith { }, 1 , { computeBoxType(kCMVideoCodecType_H264), SharedBuffer::create(avcc) } },
         }
     });
+}
+
+Vector<uint8_t> convertAVCCMSampleBufferToAnnexB(CMSampleBufferRef avccSampleBuffer, bool isKeyframe)
+{
+    return convertParameterSetsCMSampleBufferToAnnexB(avccSampleBuffer, isKeyframe, PAL::CMVideoFormatDescriptionGetH264ParameterSetAtIndex);
 }
 
 } // namespace WebCore
