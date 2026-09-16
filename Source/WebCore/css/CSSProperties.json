@@ -13735,6 +13735,27 @@
                 "url": "https://drafts.csswg.org/css-anchor-position-1/#position-area"
             }
         },
+        "position-context": {
+            "animation-type": "discrete",
+            "initial": "container",
+            "values": [
+                "container",
+                "anchor"
+            ],
+            "codegen-properties": {
+                "comment": "Whether a box is positioned in its containing block's coordinate system or its anchor's. Used to anchor a <model> inside a spatial portal.",
+                "enable-if": "ENABLE_SPATIAL_PORTAL",
+                "settings-flag": "spatialPortalEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "PositionContextType",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#propdef-position-context"
+            },
+            "status": "in development"
+        },
         "position-try": {
             "codegen-properties": {
                 "longhands": [

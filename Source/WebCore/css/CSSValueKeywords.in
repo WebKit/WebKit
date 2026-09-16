@@ -1978,6 +1978,9 @@ self-inline-start
 self-inline-end
 span-self-inline-start
 span-self-inline-end
+// position-context
+container
+// anchor
 // position-visibility
 // always
 anchors-valid

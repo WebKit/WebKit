@@ -298,6 +298,11 @@ enum class PortalActionType : bool {
     Orbit
 };
 
+enum class PositionContextType : bool {
+    Container,
+    Anchor
+};
+
 enum class TextCombine : bool {
     None,
     All
@@ -1221,6 +1226,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, OverflowAlignment);
 WTF::TextStream& operator<<(WTF::TextStream&, OverflowWrap);
 WTF::TextStream& operator<<(WTF::TextStream&, PointerEvents);
 WTF::TextStream& operator<<(WTF::TextStream&, PortalActionType);
+WTF::TextStream& operator<<(WTF::TextStream&, PositionContextType);
 WTF::TextStream& operator<<(WTF::TextStream&, PositionType);
 WTF::TextStream& operator<<(WTF::TextStream&, PrintColorAdjust);
 WTF::TextStream& operator<<(WTF::TextStream&, PseudoElementType);

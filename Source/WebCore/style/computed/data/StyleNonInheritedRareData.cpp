@@ -119,6 +119,7 @@ NonInheritedRareData::NonInheritedRareData()
     , contentVisibility(static_cast<unsigned>(ComputedStyle::initialContentVisibility()))
     , spatial(static_cast<unsigned>(SpatialType::None))
     , portalAction(static_cast<unsigned>(PortalActionType::None))
+    , positionContext(static_cast<unsigned>(PositionContextType::Container))
     , transformStyle3D(static_cast<unsigned>(ComputedStyle::initialTransformStyle3D()))
     , transformStyleForcedToFlat(false)
     , backfaceVisibility(static_cast<unsigned>(ComputedStyle::initialBackfaceVisibility()))
@@ -237,6 +238,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , contentVisibility(o.contentVisibility)
     , spatial(o.spatial)
     , portalAction(o.portalAction)
+    , positionContext(o.positionContext)
     , transformStyle3D(o.transformStyle3D)
     , transformStyleForcedToFlat(o.transformStyleForcedToFlat)
     , backfaceVisibility(o.backfaceVisibility)
@@ -362,6 +364,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && contentVisibility == o.contentVisibility
         && spatial == o.spatial
         && portalAction == o.portalAction
+        && positionContext == o.positionContext
         && transformStyle3D == o.transformStyle3D
         && transformStyleForcedToFlat == o.transformStyleForcedToFlat
         && backfaceVisibility == o.backfaceVisibility
@@ -517,6 +520,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
 
     LOG_IF_DIFFERENT_WITH_CAST(SpatialType, spatial);
     LOG_IF_DIFFERENT_WITH_CAST(PortalActionType, portalAction);
+    LOG_IF_DIFFERENT_WITH_CAST(PositionContextType, positionContext);
 
     LOG_IF_DIFFERENT_WITH_CAST(TransformStyle3D, transformStyle3D);
     LOG_IF_DIFFERENT_WITH_CAST(bool, transformStyleForcedToFlat);

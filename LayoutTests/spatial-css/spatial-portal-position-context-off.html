@@ -1,0 +1,26 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SpatialPortalEnabled=false ] -->
+<html>
+<style>
+    #anchored { position: absolute; position-context: anchor; }
+</style>
+<body>
+<div id="anchored">Hello!</div>
+<pre id="results"></pre>
+<script>
+    window.testRunner?.dumpAsText();
+
+    const anchored = document.getElementById("anchored");
+    const lines = [];
+
+    lines.push(`position-context is supported: ${CSS.supports("position-context", "anchor")}`);
+    lines.push(`position-context computed style is exposed: ${getComputedStyle(anchored).positionContext !== undefined}`);
+
+    anchored.style.positionContext = "anchor";
+    lines.push(`position-context survives in cssText: ${anchored.style.cssText.includes("position-context")}`);
+
+    results.textContent = lines.join("\n");
+
+    anchored.remove();
+</script>
+</body>
+</html>
