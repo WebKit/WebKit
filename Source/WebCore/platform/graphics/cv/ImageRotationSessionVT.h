@@ -69,7 +69,7 @@ public:
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(VideoFrame&, const RotationProperties&, IsCGImageCompatible);
     RetainPtr<CVPixelBufferRef> rotate(NativeImage&, const RotationProperties&, IsCGImageCompatible);
 
-    RefPtr<VideoFrame> applyRotation(VideoFrame&, IsCGImageCompatible = IsCGImageCompatible::No);
+    WEBCORE_EXPORT RefPtr<VideoFrame> applyRotation(VideoFrame&, IsCGImageCompatible = IsCGImageCompatible::No);
     RefPtr<NativeImage> applyRotation(NativeImage&, ImageOrientation, IsCGImageCompatible = IsCGImageCompatible::No);
 
 private:
