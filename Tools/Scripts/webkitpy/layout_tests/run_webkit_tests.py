@@ -351,6 +351,10 @@ def parse_args(args):
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
         optparse.make_option("--allowed-host", type="string", action="append", default=[], help="If specified, tests are allowed to make requests to the specified hostname."),
+        optparse.make_option("--media-logging", action="store_true", default=True, dest="media_logging", help="Raise CoreMedia and AVFoundation log levels for the run (macOS only). On by default; notes go to the unified log, so capture them with 'log show' or 'log stream'."),
+        optparse.make_option("--no-media-logging", action="store_false", dest="media_logging", help="Leave CoreMedia and AVFoundation log levels alone."),
+        optparse.make_option("--media-logging-note", type="string", action="append", default=[], help="Enable an additional Fig note by name, in addition to those --media-logging turns on (--media-logging-note=KEY, or --media-logging-note=DOMAIN:KEY). Repeatable."),
+        optparse.make_option("--media-logging-level", type="int", default=5, help="Verbosity ceiling for the notes --media-logging enables; each note fires when its level is <= this (default: 5)."),
         optparse.make_option("--disable-expected-crash-logs-gathering", action="store_false", default=True, dest="gather-expected-crash-logs", help="Disable crash logs gathering for tests expected to crash.")
     ]))
 
