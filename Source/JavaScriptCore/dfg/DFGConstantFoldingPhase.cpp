@@ -849,7 +849,11 @@ private:
                             RELEASE_ASSERT(impl);
                             m_graph.freezeStrong(string);
                             m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
+#ifdef RC_REMOVE_SEC_ACCEL_3
                             m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
+#else
+                            m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+#endif
                             node->convertToInByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                             changed = true;
                             break;
@@ -871,7 +875,11 @@ private:
                                 RELEASE_ASSERT(impl);
                                 m_graph.freezeStrong(string);
                                 m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
+#ifdef RC_REMOVE_SEC_ACCEL_3
                                 m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
+#else
+                                m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+#endif
                                 node->convertToGetByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                                 changed = true;
                                 break;
@@ -894,8 +902,12 @@ private:
                                 RELEASE_ASSERT(impl);
                                 m_graph.freezeStrong(string);
                                 m_graph.identifiers().ensure(const_cast<UniquedStringImpl*>(static_cast<const UniquedStringImpl*>(impl)));
+#ifdef RC_REMOVE_SEC_ACCEL_3
                                 m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 0));
                                 m_insertionSet.insertCheck(indexInBlock, node->origin, m_graph.child(node, 1));
+#else
+                                m_insertionSet.insertCheck(m_graph, indexInBlock, node);
+#endif
                                 node->convertToPutByIdMaybeMegamorphic(m_graph, CacheableIdentifier::createFromCell(string));
                                 changed = true;
                                 break;
