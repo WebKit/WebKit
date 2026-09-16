@@ -69,8 +69,6 @@ class SVGFEDisplacementMapElement final : public SVGFilterPrimitiveStandardAttri
 public:
     static Ref<SVGFEDisplacementMapElement> create(const QualifiedName&, Document&);
 
-    static ChannelSelectorType stringToChannel(const String&);
-
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector->currentValue<ChannelSelectorType>(); }
