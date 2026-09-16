@@ -4355,6 +4355,14 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         } else if (shouldRestoreFromBackForwardCache == ShouldRestoreFromBackForwardCache::Yes)
             FRAMELOADER_RELEASE_LOG_ERROR(ResourceLoading, "continueLoadAfterNavigationPolicy: expected to restore from back/forward cache but no cached page");
         diagnosticLoggingClient->logDiagnosticMessageWithResult(DiagnosticLoggingKeys::backForwardCacheKey(), DiagnosticLoggingKeys::retrievalKey(), DiagnosticLoggingResultFail, ShouldSample::Yes);
+
+        if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader; provisionalItem && provisionalDocumentLoader && provisionalDocumentLoader->isCommitted()) {
+            FRAMELOADER_RELEASE_LOG_ERROR(ResourceLoading, "continueLoadAfterNavigationPolicy: restarting back/forward load with a fresh document loader");
+            Ref item = provisionalItem.releaseNonNull();
+            setProvisionalDocumentLoader(nullptr);
+            loadDifferentDocumentItem(item, protect(history().currentItem()).get(), type, MayAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No, ShouldRestoreFromBackForwardCache::No, PolicyAlreadyDecided::Yes);
+            return;
+        }
     }
 
     CompletionHandler<void()> completionHandler = [this, protectedThis = Ref { *this }] () mutable {
