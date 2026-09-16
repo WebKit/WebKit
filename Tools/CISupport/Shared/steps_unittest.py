@@ -52,6 +52,26 @@ def expectedFailure(f):
     return f
 
 
+class TestShellMixin(unittest.TestCase):
+    def setUp(self):
+        self.mixin = ShellMixin()
+        self.mixin.sigtermTime = None
+        self.mixin.getProperty = lambda name, default=None: default
+
+    def test_filter_test_logs_sets_sigterm_time(self):
+        self.mixin.shell_command('run-tests 2>&1 | Tools/Scripts/filter-test-logs layout')
+        self.assertEqual(self.mixin.sigtermTime, 10)
+
+    def test_filter_test_logs_preserves_sigterm_time(self):
+        self.mixin.sigtermTime = 20
+        self.mixin.shell_command('run-tests 2>&1 | Tools/Scripts/filter-test-logs layout')
+        self.assertEqual(self.mixin.sigtermTime, 20)
+
+    def test_other_command_does_not_set_sigterm_time(self):
+        self.mixin.shell_command('run-tests')
+        self.assertIsNone(self.mixin.sigtermTime)
+
+
 class ExpectMasterShellCommand(object):
     def __init__(self, command, workdir=None, env=None, usePTY=0):
         self.args = command
