@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebRTCVideoEncoder.h"
 
+#import "WebRTCVideoEncoderVTBH264.h"
 #import "WebRTCVideoEncoderVTBH265.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -115,10 +116,16 @@ private:
 
 std::unique_ptr<WebRTCVideoEncoder> WebRTCVideoEncoder::create(VideoCodecType codecType, bool useWebCoreEncoder, const Vector<std::pair<String, String>>& parameters, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, WebRTCVideoEncoderCallback&& callback, WebRTCVideoEncoderDescriptionCallback&& descriptionCallback, WebRTCVideoEncoderErrorCallback&& errorCallback)
 {
+    if (scalabilityMode == VideoEncoderScalabilityMode::L1T3)
+        return nullptr;
+
     if (useWebCoreEncoder) {
 #if USE(AVFOUNDATION)
         if (codecType == VideoCodecType::H265)
             return makeUnique<WebRTCVideoEncoderVTBH265>(useAnnexB, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+        if (codecType == VideoCodecType::H264)
+            return makeUnique<WebRTCVideoEncoderVTBH264>(parameters, useAnnexB, scalabilityMode, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+        return nullptr;
 #endif
     }
 

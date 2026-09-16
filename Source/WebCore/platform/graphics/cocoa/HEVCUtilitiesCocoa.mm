@@ -28,12 +28,10 @@
 
 #if PLATFORM(COCOA)
 
+#import "CMUtilities.h"
 #import "FourCC.h"
 #import "HEVCUtilities.h"
-#import "Logging.h"
 #import "PlatformMediaCapabilitiesInfo.h"
-#import <wtf/FlipBytes.h>
-#import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -206,86 +204,7 @@ std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViPa
 
 Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef hvccSampleBuffer, bool isKeyframe)
 {
-    static constexpr uint8_t annexBHeaderBytes[] = { 0, 0, 0, 1 };
-    static constexpr size_t avccHeaderByteSize = sizeof(uint32_t);
-
-    Vector<uint8_t> annexBBuffer;
-
-    RetainPtr description = PAL::CMSampleBufferGetFormatDescription(hvccSampleBuffer);
-    if (!description) {
-        RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB no description");
-        return annexBBuffer;
-    }
-
-    int naluHeaderSize = 0;
-    size_t paramSetCount = 0;
-    if (PAL::CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(description, 0, nullptr, nullptr, &paramSetCount, &naluHeaderSize) != noErr)
-        return annexBBuffer;
-    if (naluHeaderSize != avccHeaderByteSize) {
-        RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB unexpected nalu header size");
-        return annexBBuffer;
-    }
-
-    if (isKeyframe) {
-        for (size_t i = 0; i < paramSetCount; ++i) {
-            const uint8_t* paramSet = nullptr;
-            size_t paramSetSize = 0;
-            if (PAL::CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(description, i, &paramSet, &paramSetSize, nullptr, nullptr) != noErr)
-                return { };
-            annexBBuffer.append(std::span { annexBHeaderBytes });
-            annexBBuffer.append(unsafeMakeSpan(paramSet, paramSetSize));
-        }
-    }
-
-    RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(hvccSampleBuffer);
-    if (!blockBuffer) {
-        RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB no block buffer");
-        return { };
-    }
-
-    RetainPtr<CMBlockBufferRef> contiguousBuffer;
-    if (!PAL::CMBlockBufferIsRangeContiguous(blockBuffer.get(), 0, 0)) {
-        CMBlockBufferRef newBuffer = nullptr;
-        if (PAL::CMBlockBufferCreateContiguous(nullptr, blockBuffer.get(), nullptr, nullptr, 0, 0, 0, &newBuffer) != noErr) {
-            RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB unable to create a contiguous block buffer");
-            return { };
-        }
-        contiguousBuffer = adoptCF(newBuffer);
-    } else
-        contiguousBuffer = WTF::move(blockBuffer);
-
-    auto dataSpan = [&contiguousBuffer] -> std::optional<std::span<const uint8_t>> {
-        char* dataPtr = nullptr;
-        size_t blockBufferSize = PAL::CMBlockBufferGetDataLength(contiguousBuffer.get());
-        if (PAL::CMBlockBufferGetDataPointer(contiguousBuffer.get(), 0, nullptr, nullptr, &dataPtr) != noErr)
-            return { };
-        return unsafeMakeSpan(byteCast<uint8_t>(dataPtr), blockBufferSize);
-    }();
-    if (!dataSpan) {
-        RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB unable to get block buffer data");
-        return { };
-    }
-
-    auto data = *dataSpan;
-    while (data.size() > 0) {
-        if (data.size() < avccHeaderByteSize) {
-            RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB missing data");
-            return { };
-        }
-        uint32_t packetSize;
-        memcpySpan(asMutableByteSpan(packetSize), data.first(avccHeaderByteSize));
-        packetSize = flipBytesIfLittleEndian(packetSize, false);
-        size_t bytesWritten = packetSize + avccHeaderByteSize;
-        if (bytesWritten > data.size()) {
-            RELEASE_LOG_ERROR(WebRTC, "convertHEVCCMSampleBufferToAnnexB missing data");
-            return { };
-        }
-        annexBBuffer.append(std::span { annexBHeaderBytes });
-        annexBBuffer.append(data.subspan(avccHeaderByteSize, packetSize));
-        data = data.subspan(bytesWritten);
-    }
-
-    return annexBBuffer;
+    return convertParameterSetsCMSampleBufferToAnnexB(hvccSampleBuffer, isKeyframe, PAL::CMVideoFormatDescriptionGetHEVCParameterSetAtIndex);
 }
 
 }

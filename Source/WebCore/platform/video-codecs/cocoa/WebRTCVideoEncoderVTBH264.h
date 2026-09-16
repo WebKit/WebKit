@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,29 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#if USE(AVFOUNDATION)
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+#include "WebRTCVideoEncoderVTB.h"
+#include <WebCore/H264Utilities.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class VideoInfo;
+class WebRTCVideoEncoderVTBH264 final : public WebRTCVideoEncoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCVideoEncoderVTBH264);
+public:
+    WebRTCVideoEncoderVTBH264(const Vector<std::pair<String, String>>& parameters, bool useAnnexB, VideoEncoderScalabilityMode, WebRTCVideoEncoderCallback&&, WebRTCVideoEncoderDescriptionCallback&&, WebRTCVideoEncoderErrorCallback&&);
+    ~WebRTCVideoEncoderVTBH264() = default;
 
-WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t>);
-WEBCORE_EXPORT Vector<uint8_t> convertAVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
+private:
+    CMVideoCodecType codecType() const final;
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, WebRTCVideoEncoderFrameInfo&&) final;
+    void configureAdditionalProperties() final;
 
-} // namespace WebCore
+    CFStringRef m_profileLevel { nullptr };
+    H264BitstreamParser m_bitstreamParser;
+};
+
+}
+
+#endif // USE(AVFOUNDATION)

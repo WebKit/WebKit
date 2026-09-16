@@ -28,6 +28,7 @@
 #if USE(AVFOUNDATION)
 
 #include "VideoEncoderVTB.h"
+#include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoEncoder.h>
 #include <memory>
 #include <wtf/BlockPtr.h>
@@ -41,7 +42,7 @@ public:
     ~WebRTCVideoEncoderVTB();
 
 protected:
-    WebRTCVideoEncoderVTB(bool useAnnexB, WebRTCVideoEncoderCallback&&, WebRTCVideoEncoderDescriptionCallback&&, WebRTCVideoEncoderErrorCallback&&);
+    WebRTCVideoEncoderVTB(bool useAnnexB, VideoEncoderScalabilityMode, WebRTCVideoEncoderCallback&&, WebRTCVideoEncoderDescriptionCallback&&, WebRTCVideoEncoderErrorCallback&&);
 
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
@@ -57,6 +58,10 @@ protected:
     // Converts the raw VTCompressionSession output into wire bytes and reports it via notifyEncodedFrame()/notifyDescription().
     // Returns false on failure, in which case the base class reports an encode error.
     virtual bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, WebRTCVideoEncoderFrameInfo&&) = 0;
+    // Called once the compression session is (re)created, after the base class has set its own properties.
+    // Overridden by leaf classes needing codec-specific session properties (e.g. H264's profile/level).
+    virtual void configureAdditionalProperties() { }
+    void setProperty(CFStringRef, CFTypeRef);
 
 private:
     void setLowLatency(bool) final;
@@ -81,6 +86,7 @@ private:
     bool m_isLowLatencyEnabled { true };
     bool m_needsToSendDescription { false };
     const std::unique_ptr<WebRTCVideoEncoderBitrateAdjuster> m_bitrateAdjuster;
+    VideoEncoderScalabilityMode m_scalabilityMode { VideoEncoderScalabilityMode::L1T1 };
 };
 
 }

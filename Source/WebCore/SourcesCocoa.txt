@@ -737,6 +737,7 @@ platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBVP9.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoEncoder.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoEncoderVTB.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoEncoderVTBH264.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoEncoderVTBH265.mm @nonARC
 platform/xr/cocoa/PlatformXRPose.cpp
 rendering/AttachmentLayout.mm @nonARC

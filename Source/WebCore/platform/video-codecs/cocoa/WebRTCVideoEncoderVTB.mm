@@ -119,13 +119,14 @@ private:
     std::optional<MonotonicTime> m_lastUpdateTime WTF_GUARDED_BY_LOCK(m_lock);
 };
 
-WebRTCVideoEncoderVTB::WebRTCVideoEncoderVTB(bool useAnnexB, WebRTCVideoEncoderCallback&& callback, WebRTCVideoEncoderDescriptionCallback&& descriptionCallback, WebRTCVideoEncoderErrorCallback&& errorCallback)
+WebRTCVideoEncoderVTB::WebRTCVideoEncoderVTB(bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, WebRTCVideoEncoderCallback&& callback, WebRTCVideoEncoderDescriptionCallback&& descriptionCallback, WebRTCVideoEncoderErrorCallback&& errorCallback)
     : m_callback(WTF::move(callback))
     , m_descriptionCallback(WTF::move(descriptionCallback))
     , m_errorCallback(WTF::move(errorCallback))
     , m_useAnnexB(useAnnexB)
     , m_needsToSendDescription(!useAnnexB)
     , m_bitrateAdjuster(makeUnique<WebRTCVideoEncoderBitrateAdjuster>())
+    , m_scalabilityMode(scalabilityMode)
 {
 }
 
@@ -190,7 +191,20 @@ void WebRTCVideoEncoderVTB::configureCompressionSession()
     double maxKeyFrameIntervalDuration = 240;
     encoder->setProperty(PAL::kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, adoptCF(CFNumberCreate(nullptr, kCFNumberDoubleType, &maxKeyFrameIntervalDuration)).get());
 
+    if (m_scalabilityMode == VideoEncoderScalabilityMode::L1T2) {
+        double baseLayerFrameRateFraction = 0.5;
+        encoder->setProperty(PAL::kVTCompressionPropertyKey_BaseLayerFrameRateFraction, adoptCF(CFNumberCreate(nullptr, kCFNumberDoubleType, &baseLayerFrameRateFraction)).get());
+    }
+
+    configureAdditionalProperties();
+
     encoder->prepareToEncodeFrames();
+}
+
+void WebRTCVideoEncoderVTB::setProperty(CFStringRef key, CFTypeRef value)
+{
+    if (RefPtr encoder = m_encoder)
+        encoder->setProperty(key, value);
 }
 
 void WebRTCVideoEncoderVTB::setEncoderBitrateBps(uint32_t bitrateBps)
@@ -242,17 +256,27 @@ void WebRTCVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t ti
         }
 
         bool isKeyframe = true;
+        bool isBaseLayer = true;
         if (RetainPtr attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false)) {
             if (CFArrayGetCount(attachments.get())) {
                 if (RetainPtr attachment = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments.get(), 0))) {
                     CFBooleanRef notSync = nullptr;
                     if (CFDictionaryGetValueIfPresent(attachment.get(), PAL::kCMSampleAttachmentKey_NotSync, reinterpret_cast<const void**>(&notSync)))
                         isKeyframe = !CFBooleanGetValue(notSync);
+                    if (m_scalabilityMode == VideoEncoderScalabilityMode::L1T2) {
+                        CFBooleanRef isDependedOnByOthers = nullptr;
+                        if (CFDictionaryGetValueIfPresent(attachment, PAL::kCMSampleAttachmentKey_IsDependedOnByOthers, reinterpret_cast<const void**>(&isDependedOnByOthers)))
+                            isBaseLayer = CFBooleanGetValue(isDependedOnByOthers);
+                    }
                 }
             }
         }
 
-        WebRTCVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1 };
+        std::optional<uint8_t> temporalIndex;
+        if (m_scalabilityMode == VideoEncoderScalabilityMode::L1T2)
+            temporalIndex = isBaseLayer ? 0 : 1;
+
+        WebRTCVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1, temporalIndex };
         if (!convertAndNotify(sampleBuffer, WTF::move(info))) {
             notifyError(false);
             return;

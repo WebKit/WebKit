@@ -40,7 +40,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCVideoEncoderVTBH265);
 
 WebRTCVideoEncoderVTBH265::WebRTCVideoEncoderVTBH265(bool useAnnexB, WebRTCVideoEncoderCallback&& callback, WebRTCVideoEncoderDescriptionCallback&& descriptionCallback, WebRTCVideoEncoderErrorCallback&& errorCallback)
-    : WebRTCVideoEncoderVTB(useAnnexB, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback))
+    : WebRTCVideoEncoderVTB(useAnnexB, VideoEncoderScalabilityMode::L1T1, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback))
 {
 }
 

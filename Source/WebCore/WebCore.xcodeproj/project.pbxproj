@@ -6109,6 +6109,7 @@
 		CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.mm */; };
 		CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595932146DEC300A84185 /* HEVCUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595912146DEC300A84185 /* HEVCUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7D2E9A4C1B3F60D8E5A2C0F4 /* H264Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C6B4A2E8F5D1037C4B0A9E1 /* H264Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
 		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -10178,6 +10179,8 @@
 		3A342EBD40C14F3CF697F93C /* VideoEncoderVTB.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoEncoderVTB.mm; sourceTree = "<group>"; };
 		45AD0809903806FA15A959BF /* WebRTCVideoEncoderVTB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoEncoderVTB.h; sourceTree = "<group>"; };
 		19AA0E362A4ACA1FA67877D0 /* WebRTCVideoEncoderVTB.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoEncoderVTB.mm; sourceTree = "<group>"; };
+		E8B4F1A6C2D5039E7A6F8B1D /* WebRTCVideoEncoderVTBH264.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoEncoderVTBH264.h; sourceTree = "<group>"; };
+		2F5C8E0A9D1B4736C0E5A2F8 /* WebRTCVideoEncoderVTBH264.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoEncoderVTBH264.mm; sourceTree = "<group>"; };
 		ACCC1731AED700DE52C4C008 /* WebRTCVideoEncoderVTBH265.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRTCVideoEncoderVTBH265.h; sourceTree = "<group>"; };
 		00F0ED67E5B07F1C0E934B03 /* WebRTCVideoEncoderVTBH265.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRTCVideoEncoderVTBH265.mm; sourceTree = "<group>"; };
 		1EC57482ED01054BFAD1ADBD /* ElementInlinesLight.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ElementInlinesLight.h; sourceTree = "<group>"; };
@@ -21553,6 +21556,8 @@
 		CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionInterfaceIOS.h; sourceTree = "<group>"; };
 		CDA29A2F1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionInterfaceIOS.mm; sourceTree = "<group>"; };
 		CDA595912146DEC300A84185 /* HEVCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilities.h; sourceTree = "<group>"; };
+		9C6B4A2E8F5D1037C4B0A9E1 /* H264Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H264Utilities.h; sourceTree = "<group>"; };
+		4A1E9F3D5A4C8D227E1F60B2 /* H264Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = H264Utilities.cpp; sourceTree = "<group>"; };
 		CDA595922146DEC300A84185 /* HEVCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HEVCUtilities.cpp; sourceTree = "<group>"; };
 		CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilitiesCocoa.h; sourceTree = "<group>"; };
 		CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HEVCUtilitiesCocoa.mm; sourceTree = "<group>"; };
@@ -27664,6 +27669,8 @@
 				1E4F9E98BC7FE88417A74C61 /* WebRTCVideoEncoder.mm */,
 				45AD0809903806FA15A959BF /* WebRTCVideoEncoderVTB.h */,
 				19AA0E362A4ACA1FA67877D0 /* WebRTCVideoEncoderVTB.mm */,
+				E8B4F1A6C2D5039E7A6F8B1D /* WebRTCVideoEncoderVTBH264.h */,
+				2F5C8E0A9D1B4736C0E5A2F8 /* WebRTCVideoEncoderVTBH264.mm */,
 				ACCC1731AED700DE52C4C008 /* WebRTCVideoEncoderVTBH265.h */,
 				00F0ED67E5B07F1C0E934B03 /* WebRTCVideoEncoderVTBH265.mm */,
 			);
@@ -37133,6 +37140,8 @@
 				B2A015950AF6CD53006BCE0E /* GraphicsTypes.h */,
 				77A17A7A12F2890B004E02F6 /* GraphicsTypesGL.h */,
 				FE3DC9902D0BA6F00021B6FC /* GraphicsTZoneImpls.cpp */,
+				4A1E9F3D5A4C8D227E1F60B2 /* H264Utilities.cpp */,
+				9C6B4A2E8F5D1037C4B0A9E1 /* H264Utilities.h */,
 				CDA595922146DEC300A84185 /* HEVCUtilities.cpp */,
 				CDA595912146DEC300A84185 /* HEVCUtilities.h */,
 				E3BFBA6B2E036BE600A38E4F /* HostingContext.h */,
@@ -46171,6 +46180,7 @@
 				A51432582DE0CE6E0059FFA1 /* GridSpan.h in Headers */,
 				E12DE7181E4B74A600F9ACCF /* GridTrackSizingAlgorithm.h in Headers */,
 				A5FA576E2E85F8A700EF058F /* GridTypeAliases.h in Headers */,
+				7D2E9A4C1B3F60D8E5A2C0F4 /* H264Utilities.h in Headers */,
 				51F0844C2D3E1D0700F85E0A /* H264UtilitiesCocoa.h in Headers */,
 				0223E06D2AAECC2200AF30FB /* HandleUserInputEventResult.h in Headers */,
 				4110A21928E3441600321D09 /* HardwareAcceleration.h in Headers */,
