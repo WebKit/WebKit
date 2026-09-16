@@ -7682,11 +7682,6 @@ webkit.org/b/268995 [ Debug ] fast/misc/out-of-flow-position-inside-mathml-crash
 
 webkit.org/b/261557 media/video-remove-insert-repaints.html [ Pass Crash ]
 
-# CSS match :not(:not(:host))
-# webkit.org/b/283062
-imported/w3c/web-platform-tests/css/css-shadow/host-multiple-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-shadow/host-multiple-004.html [ ImageOnlyFailure ]
-
 # ::part() cascade is wrong when the part name is forwarded with exportparts and !important is used.
 imported/w3c/web-platform-tests/css/css-shadow/part/exportparts-layered.html [ ImageOnlyFailure ]
 
@@ -7778,8 +7773,6 @@ media/webkit-media-controls-not-visible-after-exiting-fullscreen.html [ Skip ]
 webkit.org/b/279297 fast/block/float/float-avoider-with-negative-margin.html [ ImageOnlyFailure ]
 webkit.org/b/298061 fast/block/crash-with-percent-padding.html [ Skip ]
 
-# imported/w3c/web-platform-tests/css/selectors/featureless-004 is a failure.
-webkit.org/b/280685 imported/w3c/web-platform-tests/css/selectors/featureless-004.html [ ImageOnlyFailure ]
 webkit.org/b/294638 imported/w3c/web-platform-tests/css/selectors/focus-visible-018-2.html [ Skip ]
 
 # Skip large regular expression tests on Debug to avoid timeout.
