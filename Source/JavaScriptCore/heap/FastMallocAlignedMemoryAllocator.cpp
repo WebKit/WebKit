@@ -35,7 +35,8 @@
 
 #if USE(LIBPAS)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-#include <bmalloc/bmalloc_prefault_supply.h>
+#include <bmalloc/js_marked_block_heap.h>
+#include <bmalloc/js_marked_block_heap_prefault_supply.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
@@ -44,6 +45,8 @@ namespace JSC {
 #if !ENABLE(MALLOC_HEAP_BREAKDOWN)
 
 #if USE(LIBPAS)
+
+static_assert(MarkedBlock::blockSize == JS_MARKED_BLOCK_SIZE);
 
 static bool warmUpMarkedBlocksIsEnabled()
 {
@@ -55,9 +58,8 @@ static void configureWarmUpSupply()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        bmalloc_prefault_supply_set_block_size(MarkedBlock::blockSize);
-        bmalloc_prefault_supply_idle_timeout_in_milliseconds = Options::warmUpMarkedBlockIdleTimeout() * 1000;
-        bmalloc_prefault_supply_target = warmUpMarkedBlocksIsEnabled() ? Options::warmUpMarkedBlockCount() : 0;
+        js_marked_block_heap_prefault_supply_idle_timeout_in_milliseconds = Options::warmUpMarkedBlockIdleTimeout() * 1000;
+        js_marked_block_heap_prefault_supply_target = warmUpMarkedBlocksIsEnabled() ? Options::warmUpMarkedBlockCount() : 0;
     });
 }
 
@@ -67,7 +69,7 @@ bool warmUpMarkedBlocksAreEnabledForTesting()
 {
 #if USE(LIBPAS)
     configureWarmUpSupply();
-    return !!bmalloc_prefault_supply_target;
+    return !!js_marked_block_heap_prefault_supply_target;
 #else
     return false;
 #endif
@@ -77,7 +79,7 @@ unsigned warmUpMarkedBlockCountForTesting()
 {
 #if USE(LIBPAS)
     configureWarmUpSupply();
-    return bmalloc_prefault_supply_block_count();
+    return js_marked_block_heap_prefault_supply_block_count();
 #else
     return 0;
 #endif
@@ -87,7 +89,7 @@ void setWarmUpMarkedBlockAllocationShouldFailForTesting(bool shouldFail)
 {
 #if USE(LIBPAS)
     // Read by the libpas filling thread, written here by whichever thread runs the test.
-    __atomic_store_n(&bmalloc_prefault_supply_allocation_should_fail_for_testing, shouldFail, __ATOMIC_RELAXED);
+    __atomic_store_n(&js_marked_block_heap_prefault_supply_allocation_should_fail_for_testing, shouldFail, __ATOMIC_RELAXED);
 #else
     UNUSED_PARAM(shouldFail);
 #endif
@@ -114,17 +116,16 @@ void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignmen
 {
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.memalign(alignment, size, true);
-#else
-
-#if USE(LIBPAS)
-    // MarkedBlock::tryCreate is the only caller today and always asks for a block-shaped region.
-    // The guard keeps a future caller of some other size from being handed a block.
-    if (alignment == MarkedBlock::blockSize && size == MarkedBlock::blockSize && warmUpMarkedBlocksIsEnabled()) {
+#elif USE(LIBPAS)
+    // freeAlignedMemory has only the pointer to go on, so it cannot tell which heap a block came
+    // from. Serving some other shape from somewhere else would make the free path ambiguous.
+    RELEASE_ASSERT(alignment == MarkedBlock::blockSize && size == MarkedBlock::blockSize);
+    if (warmUpMarkedBlocksIsEnabled()) {
         configureWarmUpSupply();
-        return bmalloc_prefault_supply_try_allocate();
+        return js_marked_block_heap_prefault_supply_try_allocate();
     }
-#endif
-
+    return js_marked_block_heap_try_allocate();
+#else
     return tryFastCompactAlignedMalloc(alignment, size);
 #endif
 }
@@ -133,10 +134,11 @@ void FastMallocAlignedMemoryAllocator::freeAlignedMemory(void* basePtr)
 {
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
     return m_heap.free(basePtr);
+#elif USE(LIBPAS)
+    js_marked_block_heap_deallocate(basePtr);
 #else
     fastFree(basePtr);
 #endif
-
 }
 
 void FastMallocAlignedMemoryAllocator::dump(PrintStream& out) const
@@ -172,4 +174,3 @@ void* FastMallocAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_
 }
 
 } // namespace JSC
-

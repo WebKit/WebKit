@@ -322,7 +322,7 @@ typedef struct {
         .root_data = &name ## _root_data, \
         .prepare_to_enumerate = name ## _prepare_to_enumerate, \
         PAS_HEAP_CONFIG_SPECIALIZATIONS(name ## _heap_config), \
-        .pgm_enabled = true, \
+        .pgm_enabled = ((pas_basic_heap_config_arguments){__VA_ARGS__}).pgm_enabled, \
         .delegate_large_user_allocations = ((pas_basic_heap_config_arguments){__VA_ARGS__}).delegate_large_user_allocations, \
         .large_map_variant = ((pas_basic_heap_config_arguments){__VA_ARGS__}).large_map_variant \
     })
