@@ -326,7 +326,9 @@ static bool NODELETE hasScrollableBlockComputedOverflowValue(const PlacedGridIte
 // the available space (the grid area size) less the box's margins, border, and padding.
 static BorderBoxSize stretchFitSize(LayoutUnit borderAndPadding, LayoutUnit availableSize, const UsedMargins& usedMargins)
 {
-    return BorderBoxSize { ContentBoxSize { availableSize - usedMargins.marginStart - usedMargins.marginEnd - borderAndPadding }, borderAndPadding };
+    // A content box cannot be negative, so an item whose margins, border, and padding already fill
+    // the available space stretches to a zero content box and overflows its grid area.
+    return BorderBoxSize { ContentBoxSize { std::max(0_lu, availableSize - usedMargins.marginStart - usedMargins.marginEnd - borderAndPadding) }, borderAndPadding };
 }
 
 // https://www.w3.org/TR/css-sizing-3/#fit-content-size
