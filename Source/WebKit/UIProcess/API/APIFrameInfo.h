@@ -62,6 +62,7 @@ public:
     bool isFocused() const { return m_data.isFocused; }
     bool errorOccurred() const { return m_data.errorOccurred; }
     WTF::String title() const;
+    const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }
 
     const WebKit::FrameInfoData& frameInfoData() const LIFETIME_BOUND { return m_data; }
 
@@ -69,6 +70,7 @@ private:
     FrameInfo(WebKit::FrameInfoData&&);
 
     const WebKit::FrameInfoData m_data;
+    const WebCore::CertificateInfo m_certificateInfo;
 };
 
 } // namespace API
