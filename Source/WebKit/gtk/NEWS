@@ -1,3 +1,14 @@
+================
+WebKitGTK 2.54.0
+================
+
+What's new in WebKitGTK 2.54.0?
+
+  - Fix contents being y-flipped on GTK3 when using SHM or GBM mapped buffers.
+  - Take into account the layer transform when deciding the sampling options of compositing tiles.
+  - Fix clipping of single child layer which has filter outsets.
+  - Fix several crashes and rendering issues.
+
 =================
 WebKitGTK 2.53.92
 =================
