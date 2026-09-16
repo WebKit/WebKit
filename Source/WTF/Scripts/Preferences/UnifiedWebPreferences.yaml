@@ -2080,6 +2080,19 @@ EnumeratingVisibleNetworkInterfacesEnabled:
   excludeFrom: [ WebKitLegacy, WebCore ]
   defaultValue: true
 
+ErrorPrototypeStackAccessorEnabled:
+  type: bool
+  status: stable
+  category: javascript
+  humanReadableName: "Error Stack Accessor"
+  humanReadableDescription: "Install Error.prototype.stack as an accessor instead of installing 'stack' as an own data property on each Error instance."
+  webcoreBinding: none
+  jscOptionName: useErrorPrototypeStackAccessor
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: true
+
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   type: bool
   status: internal
