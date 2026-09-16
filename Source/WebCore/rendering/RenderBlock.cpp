@@ -2341,14 +2341,14 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
     } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
         // Either keyword makes both contributions that one size, so the box neither shrinks below it
-        // nor grows past it. Both sit behind the aspect-ratio branch: a ratio transfers the block size
-        // across, and that transferred size is what the keyword then stands for, not the content based
-        // one, which for an empty box with `height: 100px; aspect-ratio: 1/1` would be zero.
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-        if (logicalWidth.isMaxContent())
-            m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-        else
-            m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
+        // nor grows past it. This sits behind the aspect-ratio branch because a ratio transfers the
+        // block size across, and that is the size the keyword stands for. The content based size of
+        // an empty box with `height: 100px; aspect-ratio: 1/1` is zero.
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+        auto keywordLogicalWidth = logicalWidth.isMaxContent() ? maxContentLogicalWidth : minContentLogicalWidth;
+        // A calc-size() contributes the result of its calculation, not the size of its basis.
+        m_minContentLogicalWidthContribution = logicalWidth.isCalcSize() ? resolveCalcSizeLogicalWidthContribution(logicalWidth, keywordLogicalWidth) : keywordLogicalWidth;
+        m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
     } else
         std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
 

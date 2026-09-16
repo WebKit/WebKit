@@ -261,8 +261,17 @@ void RenderListBox::computeIntrinsicLogicalWidthContributions()
     if (auto fixedLogicalWidth = style().logicalWidth().tryFixed(); fixedLogicalWidth && fixedLogicalWidth->isPositive()) {
         m_maxContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-    } else
+    } else {
         std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
+
+        auto& logicalWidth = style().logicalWidth();
+        if (logicalWidth.isCalcSize() && (logicalWidth.isMinContent() || logicalWidth.isMaxContent())) {
+            // A calc-size() contributes the result of its calculation, not the size of its basis.
+            auto keywordLogicalWidth = logicalWidth.isMaxContent() ? m_maxContentLogicalWidthContribution : m_minContentLogicalWidthContribution;
+            m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth, keywordLogicalWidth);
+            m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
+        }
+    }
 
     constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
 

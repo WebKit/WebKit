@@ -631,6 +631,9 @@ protected:
     std::optional<LayoutUnit> computeSizingKeywordLogicalContentHeightUsing(const Style::MaximumSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const;
     std::optional<LayoutUnit> computeSizingKeywordLogicalContentHeightUsing(const Style::FlexBasis& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const;
 
+    LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize& logicalWidth, LayoutUnit keywordContentBoxLogicalWidth, LayoutUnit availableLogicalWidth) const;
+    LayoutUnit resolveCalcSizeLogicalWidthContribution(const Style::PreferredSize& logicalWidth, LayoutUnit keywordContentBoxLogicalWidth) const;
+
     LayoutRect localOutlineBoundsRepaintRect() const;
 
     void mapAbsoluteToLocalPoint(OptionSet<MapCoordinatesMode>, TransformState&) const override;
