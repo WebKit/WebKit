@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="../video-test.js"></script>
+        <script>
+            function canplaythrough2()
+            {
+                testExpected('video.audioTracks[0].enabled', true);
+                testExpected('video.audioTracks[1].enabled', false);
+                endTest();
+            }
+
+            function canplaythrough1()
+            {
+                testExpected('video.audioTracks.length', 2);
+
+                video.src = '../content/vp9-opus-good-3tracks.webm#track=blahblah';
+                waitForEventOnce('canplaythrough', canplaythrough2);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.src = '../content/vp9-opus-good-3tracks.webm';
+                waitForEventOnce('canplaythrough', canplaythrough1);
+            }
+        </script>
+    </head>
+
+    <body onload="setup()">
+        <p>A "track=" fragment that does not match any track id is ignored, leaving the default audio track selection unchanged.</p>
+        <video controls></video>
+    </body>
+</html>
