@@ -103,8 +103,11 @@ public:
     };
     MemoryType memoryType() const { return m_memoryType; }
 
-#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
+#if USE(GBM)
+#if GST_CHECK_VERSION(1, 24, 0)
     RefPtr<DMABufBuffer> getDMABuf();
+#endif
+    Ref<DMABufBuffer> dmabufForQualcommDecoder(const IntSize&) const;
 #endif
     const GstVideoInfo& info() const LIFETIME_BOUND { return m_info.info; }
     std::optional<DMABufFormat> dmaBufFormat() const { return m_info.dmaBufFormat; }

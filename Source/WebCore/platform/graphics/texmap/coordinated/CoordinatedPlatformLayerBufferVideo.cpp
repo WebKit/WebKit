@@ -105,26 +105,6 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
 }
 
-#if USE(GBM) || USE(GSTREAMER_GL)
-static std::pair<CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, CoordinatedPlatformLayerBufferYUV::TransferFunction> yuvColorSpaceFromVideoInfo(const GstVideoInfo& info)
-{
-    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
-    auto yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601;
-    auto transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Bt709;
-    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&info);
-    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt709;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-        transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Pq;
-    } else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Smpte240M;
-    return { yuvToRgbColorSpace, transferFunction };
-}
-#endif
-
 #if USE(TEXTURE_MAPPER)
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
 {
@@ -133,22 +113,8 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     auto memory = gst_buffer_peek_memory(buffer, 0);
 
 #if USE(GBM)
-    if (gst_is_fd_memory(memory) && m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::Qualcomm) {
-        // The buffers produced by the Qualcomm decoder contain a single GstMemory which stores the
-        // GBM FD pointing to the decoded frame. The frame format is YUV (NV12). As this is stored
-        // in a single memory the existing DMABuf/YUV layer buffers cannot be used for rendering. So
-        // we rely on the EXT_YUV_target OpenGL ES extension to convert it to a RGB texture for
-        // rendering.
-        auto dmabufFormat = m_videoFrame->dmaBufFormat();
-        RELEASE_ASSERT(dmabufFormat);
-        // The driver converts YUV to RGB while sampling, so it needs the frame colorimetry.
-        const auto& info = m_videoFrame->info();
-        auto yuvColorSpace = yuvColorSpaceFromVideoInfo(info).first;
-        auto sampleRange = GST_VIDEO_INFO_COLORIMETRY(&info).range == GST_VIDEO_COLOR_RANGE_0_255
-            ? CoordinatedPlatformLayerBufferExternalOES::SampleRange::Full
-            : CoordinatedPlatformLayerBufferExternalOES::SampleRange::Narrow;
-        return CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr(buffer), dmabufFormat->first, yuvColorSpace, sampleRange, m_size, m_flags);
-    }
+    if (gst_is_fd_memory(memory) && m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::Qualcomm)
+        return CoordinatedPlatformLayerBufferDMABuf::create(m_videoFrame->dmabufForQualcommDecoder(m_size), m_flags, nullptr);
 
 #if GST_CHECK_VERSION(1, 24, 0)
     if (gst_is_dmabuf_memory(memory))
@@ -224,6 +190,24 @@ static std::optional<CoordinatedPlatformLayerBufferYUV::Format> yuvFormatFromGst
     }
 
     return std::nullopt;
+}
+
+static std::pair<CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, CoordinatedPlatformLayerBufferYUV::TransferFunction> yuvColorSpaceFromVideoInfo(const GstVideoInfo& info)
+{
+    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
+    auto yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601;
+    auto transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Bt709;
+    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&info);
+    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt709;
+    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
+    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
+        transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Pq;
+    } else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Smpte240M;
+    return { yuvToRgbColorSpace, transferFunction };
 }
 
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory()
@@ -399,7 +383,7 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageIfNeeded(const sk_sp<Gr
 
 #if USE(GBM)
     if (gst_is_fd_memory(memory) && m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::Qualcomm) {
-        createSkiaImageForQualcommDecoder();
+        createSkiaImageForQualcommDecoder(threadSafeGrContext);
         return;
     }
 
@@ -442,25 +426,12 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageIfNeeded(const sk_sp<Gr
 }
 
 #if USE(GBM)
-void CoordinatedPlatformLayerBufferVideo::createSkiaImageForQualcommDecoder()
+void CoordinatedPlatformLayerBufferVideo::createSkiaImageForQualcommDecoder(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
-    // FIXME: switch to use promise images, use an inner CoordinatedPlatformLayerBuffer for now.
-
-    // The buffers produced by the Qualcomm decoder contain a single GstMemory which stores the
-    // GBM FD pointing to the decoded frame. The frame format is YUV (NV12). As this is stored
-    // in a single memory the existing DMABuf/YUV layer buffers cannot be used for rendering. So
-    // we rely on the EXT_YUV_target OpenGL ES extension to convert it to a RGB texture for
-    // rendering.
-    auto dmabufFormat = m_videoFrame->dmaBufFormat();
-    RELEASE_ASSERT(dmabufFormat);
-    // The driver converts YUV to RGB while sampling, so it needs the frame colorimetry.
-    const auto& info = m_videoFrame->info();
-    auto yuvColorSpace = yuvColorSpaceFromVideoInfo(info).first;
-    auto sampleRange = GST_VIDEO_INFO_COLORIMETRY(&info).range == GST_VIDEO_COLOR_RANGE_0_255
-        ? CoordinatedPlatformLayerBufferExternalOES::SampleRange::Full
-        : CoordinatedPlatformLayerBufferExternalOES::SampleRange::Narrow;
-    auto* buffer = gst_sample_get_buffer(m_videoFrame->sample().get());
-    m_buffer = CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr(buffer), dmabufFormat->first, yuvColorSpace, sampleRange, m_size, m_flags);
+    auto dmabuf = m_videoFrame->dmabufForQualcommDecoder(m_size);
+    auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+    auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
+    m_image = dmabuf->createPromiseImageForQualcommVideoFrame(threadSafeGrContext, kRGBA_8888_SkColorType, alphaType, origin);
 }
 
 #if GST_CHECK_VERSION(1, 24, 0)
