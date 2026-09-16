@@ -96,13 +96,13 @@ inline Structure* createDataPropertyDescriptorObjectStructure(VM& vm, JSGlobalOb
 {
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == dataPropertyDescriptorValuePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->writable, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->writable, 0, offset);
     RELEASE_ASSERT(offset == dataPropertyDescriptorWritablePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->enumerable, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->enumerable, 0, offset);
     RELEASE_ASSERT(offset == dataPropertyDescriptorEnumerablePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->configurable, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->configurable, 0, offset);
     RELEASE_ASSERT(offset == dataPropertyDescriptorConfigurablePropertyOffset);
     return structure;
 }
@@ -111,13 +111,13 @@ inline Structure* createAccessorPropertyDescriptorObjectStructure(VM& vm, JSGlob
 {
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), JSFinalObject::defaultInlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->get, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->get, 0, offset);
     RELEASE_ASSERT(offset == accessorPropertyDescriptorGetPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->set, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->set, 0, offset);
     RELEASE_ASSERT(offset == accessorPropertyDescriptorSetPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->enumerable, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->enumerable, 0, offset);
     RELEASE_ASSERT(offset == accessorPropertyDescriptorEnumerablePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->configurable, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->configurable, 0, offset);
     RELEASE_ASSERT(offset == accessorPropertyDescriptorConfigurablePropertyOffset);
     return structure;
 }

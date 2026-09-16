@@ -1541,7 +1541,10 @@ void CodeBlock::reconcileLLIntInlineCachesAtGCEnd()
         // We need to add optimizations for op_resolve_scope_for_hoisting_func_decl_in_eval to do link time scope resolution.
 
         auto clearIfNeeded = [&] (GetByIdModeMetadata& modeMetadata, ASCIILiteral opName) {
-            if (modeMetadata.mode != GetByIdMode::Default)
+            // RawDouble must be reconciled exactly like Default: it REUSES defaultMode's layout, so it caches a
+            // StructureID that would otherwise outlive its Structure and then be compared against a recycled
+            // StructureID on the LLInt fast path -- a stale hit that loads from the wrong offset.
+            if (modeMetadata.mode != GetByIdMode::Default && modeMetadata.mode != GetByIdMode::RawDouble)
                 return;
             StructureID oldStructureID = modeMetadata.defaultMode.structureID;
             if (!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))

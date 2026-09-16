@@ -35,11 +35,11 @@ Structure* createSegmentDataObjectStructure(VM& vm, JSGlobalObject& globalObject
     constexpr unsigned inlineCapacity = 3;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->segment, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->segment, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectSegmentPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->index, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectIndexPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->input, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectInputPropertyOffset);
     return structure;
 }
@@ -49,13 +49,13 @@ Structure* createSegmentDataObjectWithIsWordLikeStructure(VM& vm, JSGlobalObject
     constexpr unsigned inlineCapacity = 4;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->segment, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->segment, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectSegmentPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->index, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectIndexPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->input, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectInputPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->isWordLike, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->isWordLike, 0, offset);
     RELEASE_ASSERT(offset == segmentDataObjectIsWordLikePropertyOffset);
     return structure;
 }

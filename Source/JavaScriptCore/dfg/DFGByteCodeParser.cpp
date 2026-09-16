@@ -514,8 +514,12 @@ private:
     bool handleTypedArrayConstructor(Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks, CodeSpecializationKind);
     template<typename ChecksFunctor>
     bool handleConstantFunction(Node* callTargetNode, Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, Node* newTarget, const ChecksFunctor& insertChecks);
-    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
-    Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
+    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, RawDoubleRep, Node* value);
+    Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, RawDoubleRep, NodeType = GetByOffset);
+    // Which structure owns the slot a PutByVariant targets? For a Transition it is the NEW structure -- the old
+    // one does not have the property yet, and getting this backwards is the bug that made 18 000 of 20 000
+    // objects read wrong (07-PLAN 5w). For a Replace it is the existing structure set.
+    RawDoubleRep rawDoubleRepForPutVariant(const PutByVariant&);
     bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, Node* unwrapped, unsigned identifierNumber, SpeculatedType prediction);
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
     bool handleProxyObjectLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus, BytecodeIndex osrExitIndex);
@@ -4706,8 +4710,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             Node* done = addToGraph(CompareStrictEq, Edge(nextPosition, Int32Use), Edge(doneIndex, Int32Use));
 
             Node* resultObject = addToGraph(NewObject, OpInfo(m_graph.registerStructure(iteratorResultStructure)));
-            handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->value.impl()), iteratorResultObjectValuePropertyOffset, value);
-            handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->done.impl()), iteratorResultObjectDonePropertyOffset, done);
+            handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->value.impl()), iteratorResultObjectValuePropertyOffset, m_graph.rawDoubleRepFor(iteratorResultStructure, iteratorResultObjectValuePropertyOffset), value);
+            handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->done.impl()), iteratorResultObjectDonePropertyOffset, m_graph.rawDoubleRepFor(iteratorResultStructure, iteratorResultObjectDonePropertyOffset), done);
 
             // Advance the iterator only after all nodes that can OSR exit, so that an exit cannot
             // observe the updated index and run next() again with the advanced position.
@@ -4961,8 +4965,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
                     addToGraph(Phantom, get(virtualRegisterForArgumentIncludingThis(i, registerOffset)));
 
                 Node* resultObject = addToGraph(NewObject, OpInfo(m_graph.registerStructure(iteratorResultStructure)));
-                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->value.impl()), iteratorResultObjectValuePropertyOffset, finalValue);
-                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->done.impl()), iteratorResultObjectDonePropertyOffset, finalDone);
+                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->value.impl()), iteratorResultObjectValuePropertyOffset, m_graph.rawDoubleRepFor(iteratorResultStructure, iteratorResultObjectValuePropertyOffset), finalValue);
+                handlePutByOffset(resultObject, m_graph.identifiers().ensure(m_vm->propertyNames->done.impl()), iteratorResultObjectDonePropertyOffset, m_graph.rawDoubleRepFor(iteratorResultStructure, iteratorResultObjectDonePropertyOffset), finalDone);
 
                 Node* iteratorInBlock = get(iteratorOperand);
                 addToGraph(PutInternalField, OpInfo(storageFieldIndex), iteratorInBlock, committedStorage);
@@ -6829,8 +6833,17 @@ bool ByteCodeParser::handleConstantFunction(
     return false;
 }
 
+RawDoubleRep ByteCodeParser::rawDoubleRepForPutVariant(const PutByVariant& variant)
+{
+    // TRANSITION ONLY. A Transition has exactly one destination structure, so it cannot disagree with itself and no
+    // narrowing is possible or needed. Replace is handled in replace(), which owns the CheckStructure and so can
+    // narrow the speculation -- see the comment there for why reporting Boxed on a mixed Replace set is not enough.
+    RELEASE_ASSERT(variant.kind() == PutByVariant::Transition);
+    return m_graph.rawDoubleRepFor(variant.newStructure(), variant.offset());
+}
+
 Node* ByteCodeParser::handleGetByOffset(
-    SpeculatedType prediction, Node* base, unsigned identifierNumber, PropertyOffset offset, NodeType op)
+    SpeculatedType prediction, Node* base, unsigned identifierNumber, PropertyOffset offset, RawDoubleRep rawDoubleRep, NodeType op)
 {
     Node* propertyStorage;
     if (isInlineOffset(offset))
@@ -6841,6 +6854,7 @@ Node* ByteCodeParser::handleGetByOffset(
     StorageAccessData* data = m_graph.m_storageAccessData.add();
     data->offset = offset;
     data->identifierNumber = identifierNumber;
+    data->rawDoubleRep = rawDoubleRep;
     
     Node* getByOffset = addToGraph(op, OpInfo(data), OpInfo(prediction), Edge(propertyStorage, KnownStorageUse), Edge(base));
 
@@ -6848,7 +6862,7 @@ Node* ByteCodeParser::handleGetByOffset(
 }
 
 Node* ByteCodeParser::handlePutByOffset(
-    Node* base, unsigned identifier, PropertyOffset offset,
+    Node* base, unsigned identifier, PropertyOffset offset, RawDoubleRep rawDoubleRep,
     Node* value)
 {
     Node* propertyStorage;
@@ -6860,6 +6874,7 @@ Node* ByteCodeParser::handlePutByOffset(
     StorageAccessData* data = m_graph.m_storageAccessData.add();
     data->offset = offset;
     data->identifierNumber = identifier;
+    data->rawDoubleRep = rawDoubleRep;
     
     Node* result = addToGraph(PutByOffset, OpInfo(data), Edge(propertyStorage, KnownStorageUse), Edge(base), Edge(value));
     
@@ -7029,8 +7044,16 @@ Node* ByteCodeParser::load(
         return addToGraph(JSConstant, OpInfo(method.constant()));
     case GetByOffsetMethod::LoadFromPrototype: {
         Node* baseNode = addToGraph(JSConstant, OpInfo(method.prototype()));
+        // LoadFromPrototype: the slot lives on the PROTOTYPE, so the prototype's structure owns the offset. Asking
+        // the receiver's would be the wrong-structure mistake of 07-PLAN 5y.
+        //
+        // Use the FROZEN structure, not prototype()->value().asCell()->structure(). The frozen snapshot is what
+        // planLoad watched and what the emitted CheckStructure guards; DFGFrozenValue.h warns that viewing one
+        // constant through both views during a compilation "can sometimes cause bad things to happen", and here it
+        // would mean the guard and the recorded representation came from different structures.
         return handleGetByOffset(
-            prediction, baseNode, identifierNumber, method.offset(), op);
+            prediction, baseNode, identifierNumber, method.offset(),
+            m_graph.rawDoubleRepFor(method.prototype()->structure(), method.offset()), op);
     }
     case GetByOffsetMethod::Load:
         // Will never see this from planLoad().
@@ -7193,8 +7216,45 @@ Node* ByteCodeParser::load(
         }
     }
 
+    // MIXED-SITE NARROWING. The representation must be decided BEFORE the structure check, because when the set
+    // disagrees about this offset the check itself is what makes the site uniform: the raw members are dropped from
+    // the speculation and take an ordinary CheckStructure exit, which is legal here (at lowering it would not be --
+    // adding an exit there breaks mayExit validation, 07-PLAN 5ad). Boxed is preferred over raw as the surviving
+    // subset, so the conservative representation is the one that stays on the fast path.
+    //
+    // Narrowing needs a structure check to narrow. When needStructureCheck is false the guard is a watched presence
+    // condition on a KNOWN (constant) base, which has exactly one structure, so the set cannot be mixed there.
+    StructureSet checkSet = variant.structureSet();
+    bool getIsMixed = false;
+    RawDoubleRep getRep = m_graph.rawDoubleRepFor(checkSet, variant.offset(), getIsMixed);
+    if (getIsMixed && !needStructureCheck) [[unlikely]] {
+        // THE ONE ESCAPE HATCH the comment above asserts cannot happen. Instrumented rather than trusted: if this
+        // fires, a mixed set is being read with getRep left at whatever rawDoubleRepFor returned for a mixed set
+        // (Boxed) and no narrowing to enforce it, which is exactly a Boxed read of a raw slot.
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+            "[rawdouble] MIXED GetByVariant with NO structure check at offset ", variant.offset(),
+            " setSize=", checkSet.size());
+    }
+    if (getIsMixed && needStructureCheck) [[unlikely]] {
+        // DO NOT NARROW. Excluding the raw structures makes every object carrying one fail the
+        // CheckStructure, which is CORRECT but converts representation polymorphism into a PERMANENT
+        // speculation failure: measured on Box2D as bc#347 BadCache 7,013 times, the DFG jettisoned on every
+        // compile with the exit count doubling 200->6401, FTL never reached, and the hottest loop pinned in
+        // Baseline (FTL residency 56.9%->12.9%, Baseline 17.5x, IC stubs 28x). Cost: Overall -2.85%,
+        // Box2D -41%. See 07-PLAN 5at.
+        //
+        // Instead, decline to resolve the access statically and let the generic by-id path handle it. Its IC
+        // handler IS raw-aware (the flag from B29 plus the generated-stub fix from B36), so this is sound, and
+        // it produces NO exit: a polymorphic IC absorbs both representations the way it absorbs any other
+        // polymorphism.
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+            "[rawdouble] DECLINED static resolution of MIXED GetByVariant at offset ", variant.offset(),
+            " (", checkSet.size(), " structures)  bc#", m_currentIndex.offset());
+        return nullptr;
+    }
+
     if (needStructureCheck)
-        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.structureSet())), unwrapped);
+        addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(checkSet)), unwrapped);
 
     if (variant.isPropertyUnset()) {
         if (m_graph.watchConditions(variant.conditionSet()))
@@ -7226,7 +7286,7 @@ Node* ByteCodeParser::load(
         }
 
         loadedValue = handleGetByOffset(
-            loadPrediction, unwrapped, identifierNumber, variant.offset(), loadOp);
+            loadPrediction, unwrapped, identifierNumber, variant.offset(), getRep, loadOp);
     }
 
     return loadedValue;
@@ -7236,8 +7296,33 @@ Node* ByteCodeParser::replace(Node* base, unsigned identifier, const PutByVarian
 {
     RELEASE_ASSERT(variant.kind() == PutByVariant::Replace);
 
-    checkReplacement(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
-    return handlePutByOffset(base, identifier, variant.offset(), value);
+    // Mirror of the narrowing in load(). When the Replace set disagrees about whether the slot is raw, no single store
+    // representation serves the whole set, so keep only the boxed structures and let the raw ones fail the
+    // CheckStructure and OSR-exit. Merely REPORTING Boxed without narrowing the check -- which is what this did until
+    // 5ai -- stores a NaN-boxed JSValue into a slot that is genuinely raw, and every raw reader of that slot then
+    // unboxes a bias that was never applied.
+    //
+    // This was the root cause of v8-raytrace-strict. getRay does `pos.y = pos.y * -1`, a mixed Replace at offset 1
+    // (Vector.y, which `this.y = (y ? y : 0)` leaves Int32-boxed in some structures and raw-double in others), and
+    // intersect -- with subtract/dot inlined into it -- is the raw reader. Delta-debugging --dfgAllowlist over the 29
+    // DFG-compiled functions minimised the failure to exactly {getRay, intersect}, 6/6 together and 0/6 either alone,
+    // and the census then showed every Get narrowed and this Put not. The FTL symptom was louder than the usual
+    // wrong-number one because bits(0.0) == 0: an unbiased read of a raw slot holding 0.0 is the EMPTY JSValue, which
+    // reached operationValueSubProfiled as a null cell. See 07-PLAN 5ai.
+    StructureSet checkSet = variant.structure();
+    bool putIsMixed = false;
+    RawDoubleRep putRep = m_graph.rawDoubleRepFor(checkSet, variant.offset(), putIsMixed);
+    if (putIsMixed) [[unlikely]] {
+        // Store mirror of the decision in load(): see the long comment there. Returning nullptr makes the caller emit
+        // a generic PutById rather than a narrowed CheckStructure that exits forever.
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+            "[rawdouble] DECLINED static resolution of MIXED PutByVariant at offset ", variant.offset(),
+            " (", checkSet.size(), " structures)  bc#", m_currentIndex.offset());
+        return nullptr;
+    }
+
+    checkReplacement(base, m_graph.identifiers()[identifier], variant.offset(), checkSet);
+    return handlePutByOffset(base, identifier, variant.offset(), putRep, value);
 }
 
 void ByteCodeParser::simplifyGetByStatus(Node* base, GetByStatus& getByStatus)
@@ -7644,6 +7729,14 @@ void ByteCodeParser::handleDeleteById(
     StorageAccessData* storageData = m_graph.m_storageAccessData.add();
     storageData->offset = variant.offset();
     storageData->identifierNumber = identifierNumber;
+    // THIS IS A DELETION, not a property addition. The store below writes Edge(jsConstant(JSValue())) -- an EMPTY
+    // JSValue, never a double -- so the slot must be written boxed regardless of what any structure says. Stated
+    // explicitly rather than derived, because the general "ask the destination structure" rule reads the wrong way
+    // here: for a PropertyDeletion transition newStructure() has had the offset removed and its mask bit cleared
+    // (Structure.cpp PropertyDeletion path -> StructureInlines.h clearRawDoubleOffset), so it would answer Boxed by
+    // accident, while the structure that actually owns the slot at store time is variant.oldStructure() -- which CAN
+    // answer Raw. Deriving it would therefore be right today and wrong the moment the rule is applied literally.
+    storageData->rawDoubleRep = RawDoubleRep::Boxed;
 
     addToGraph(
         PutByOffset,
@@ -7815,6 +7908,18 @@ void ByteCodeParser::handlePutById(
     
     switch (variant.kind()) {
     case PutByVariant::Replace: {
+        // replace() declines a MIXED representation set (see the comment in load()). Probe that BEFORE emitting
+        // FilterPutByStatus so the bail-out leaves no partial graph behind, then fall through to the generic PutById,
+        // whose IC handler is raw-aware.
+        {
+            bool probeMixed = false;
+            m_graph.rawDoubleRepFor(variant.structure(), variant.offset(), probeMixed);
+            if (probeMixed) [[unlikely]] {
+                emitPutById(base, identifier, value, putByStatus, isDirect, ecmaMode);
+                return;
+            }
+        }
+
         addToGraph(FilterPutByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByStatus(currentCodeOrigin(), putByStatus)), base);
 
         replace(unwrapped, identifierNumber, variant, value);
@@ -7824,6 +7929,22 @@ void ByteCodeParser::handlePutById(
     }
     
     case PutByVariant::Transition: {
+        // NO DECLINE HERE. B41 added one -- "a Transition into a raw slot whose value is not predicted numeric goes
+        // to the by-id path" -- and it was WRONG ON BOTH COUNTS, proven by ablating it behind
+        // an ablation option that has since been deleted:
+        //
+        //   crash    mini repro 6/6 -> 0/6,  n-body 6/6 -> 0/6   (it INTRODUCED these)
+        //   threejs  +0.2% with it, -2.1% without it             (it bought NOTHING)
+        //
+        // It also fired far more often than intended: the census showed it declining all three fields of
+        // `function V(x,y,z){this.x=x;this.y=y;this.z=z;}` called with literal 0.0, because shouldSpeculateNumber()
+        // reads a prediction that is not populated for an inlined call argument at parse time. Declining routed those
+        // stores to the IC, which stored raw bits into a slot the C++ reader then read as boxed -- and since
+        // bits(0.0) == 0, that read returns the EMPTY JSValue, which passes isCell() and null-derefs in
+        // getOwnNonIndexPropertySlot (the ASSERT(value) that would have caught it is compiled out in release).
+        //
+        // The threejs win came entirely from the OTHER half of B41 -- deleting the ForceOSRExit in FixupPhase, whose
+        // "self-healing" claim was false (5be). The two were bundled; only that half was real. See 07-PLAN 5bh.
         addToGraph(FilterPutByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addPutByStatus(currentCodeOrigin(), putByStatus)), base);
 
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(variant.oldStructure())), unwrapped);
@@ -7862,6 +7983,7 @@ void ByteCodeParser::handlePutById(
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
+        data->rawDoubleRep = rawDoubleRepForPutVariant(variant);
         
         // NOTE: We could GC at this point because someone could insert an operation that GCs.
         // That's fine because:
@@ -8038,6 +8160,7 @@ void ByteCodeParser::handlePutPrivateNameById(
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
+        data->rawDoubleRep = rawDoubleRepForPutVariant(variant);
         
         // NOTE: We could GC at this point because someone could insert an operation that GCs.
         // That's fine because:
@@ -8311,6 +8434,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                             Node* object = addToGraph(NewObject, OpInfo(m_graph.registerStructure(structure)));
                             if (structure->hasPolyProto()) {
                                 StorageAccessData* data = m_graph.m_storageAccessData.add();
+                                data->rawDoubleRep = m_graph.rawDoubleRepFor(structure, knownPolyProtoOffset);
                                 data->offset = knownPolyProtoOffset;
                                 data->identifierNumber = m_graph.identifiers().ensure(m_graph.m_vm.propertyNames->builtinNames().polyProtoName().impl());
                                 ASSERT(isInlineOffset(knownPolyProtoOffset));

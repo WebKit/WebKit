@@ -232,6 +232,12 @@ public:
     void convertToNonStringPrimitiveKeyAccessType(AccessType);
     PropertyOffset offset() const { return m_offset; }
 
+    // THE STRUCTURE THAT OWNS THE ACCESSED SLOT, which is NOT always structure(). Transitions report previousID()
+    // and prototype hits keep the slot on the holder, so both need correcting -- see the definition in AccessCase.cpp.
+    // Shared by InlineCacheHandler::createPreCompiled (which turns it into the runtime m_isRawDoubleField flag) and
+    // by InlineCacheCompiler::generateAccessCase (which uses it statically), so the two cannot disagree.
+    Structure* structureOwningAccessedSlot() const;
+
     Structure* structure() const
     {
         if (m_type == Transition || m_type == Delete || m_type == SetPrivateBrand

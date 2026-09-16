@@ -384,12 +384,20 @@ public:
     JS_EXPORT_PRIVATE JSString* toString(JSGlobalObject*) const;
 
     // This get function only looks at the property map.
+    //
+    // RAW-DOUBLE AWARE. These two overloads already hold the Structure, so they take the checked path -- there is no
+    // reason for them to use the unchecked getDirect(PropertyOffset) and 40 callers benefit at once. One of those
+    // callers was the 8th unhooked reader found in this project:
+    // ObjectAllocationProfileBase::possibleDefaultPropertyCount (ObjectAllocationProfileInlines.h:160), reached from
+    // slow_path_create_this via JSFunction::allocateAndInitializeRareData, which reads a property off a PROTOTYPE
+    // while sizing an allocation profile. Located by lldb backtrace on the ASSERT_ENABLED detector while running
+    // v8-raytrace-strict. See 07-PLAN 5ah.
     JSValue getDirect(VM& vm, PropertyName propertyName) const
     {
         Structure* structure = this->structure();
         PropertyOffset offset = structure->get(vm, propertyName);
         checkOffset(offset, structure->inlineCapacity());
-        return offset != invalidOffset ? getDirect(offset) : JSValue();
+        return offset != invalidOffset ? getDirect(*structure, offset) : JSValue();
     }
     
     JSValue getDirect(VM& vm, PropertyName propertyName, unsigned& attributes) const
@@ -397,7 +405,7 @@ public:
         Structure* structure = this->structure();
         PropertyOffset offset = structure->get(vm, propertyName, attributes);
         checkOffset(offset, structure->inlineCapacity());
-        return offset != invalidOffset ? getDirect(offset) : JSValue();
+        return offset != invalidOffset ? getDirect(*structure, offset) : JSValue();
     }
 
     PropertyOffset getDirectOffset(VM& vm, PropertyName propertyName)
@@ -492,10 +500,138 @@ private:
 public:
 
     // Fast access to known property offsets.
-    ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
+    // The UNCHECKED read. It cannot know the field's representation, so once useRawDoubleFieldStorage is on it will
+    // return bits(d)+2^49 reinterpreted as a double for any Double-represented field -- 1.5 reads back as 1.625.
+    // ~140 call sites reach this; rather than audit them by hand, the assertion below makes a Debug run of the test
+    // suite report exactly which are reachable for a double-carrying object. Prefer getDirect(Structure&, offset).
+    // See analysis/prompt/box2d/07-PLAN-double-field.md section 5f.
+    ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const
+    {
+#if ASSERT_ENABLED
+        assertNotRawDoubleFieldRead(offset);
+#endif
+        return locationForOffset(offset)->get();
+    }
+#if ASSERT_ENABLED
+    JS_EXPORT_PRIVATE void assertNotRawDoubleFieldRead(PropertyOffset) const;
+#endif
+
+    // RAW-DOUBLE-AWARE READ. Correct even when the field is stored as a raw double rather than a NaN-boxed JSValue.
+    // Prefer this wherever a Structure is already in hand; the bare getDirect(PropertyOffset) above CANNOT check and
+    // is the remaining hazard tracked in analysis/prompt/box2d/07-PLAN-double-field.md section 5d.
+    //
+    // Cost: one bit test on the Structure in the overwhelmingly common case. Only structures that actually carry a
+    // Double-represented property pay the property-table walk, and C++ reads are not a hot path -- the JIT knows the
+    // representation statically from its CheckStructure and emits no check at all (section 5e).
+    // Structure-aware overload, retained for its ~70 call sites but now ADDING NO CODE: guarantee-only storage keeps
+    // every slot a NaN-boxed JSValue, claimed or not. The branch that used to be here is what pushed
+    // getOwnNonIndexPropertySlot out of line in the patched build; see
+    // repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md.
+    ALWAYS_INLINE JSValue getDirect(Structure&, PropertyOffset offset) const
+    {
+        return getDirect(offset);
+    }
+    JS_EXPORT_PRIVATE JSValue getDirectRawDoubleAware(Structure&, PropertyOffset) const;
     JSValue getDirect(Locker<JSCellLock>&, Concurrency, Structure* expectedStructure, PropertyOffset) const;
     JSValue getDirectConcurrently(Locker<JSCellLock>&, Structure* expectedStructure, PropertyOffset) const;
-    void putDirectOffset(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
+    // PHASE 0 census hook for the double-field representation project. Out-of-line and option-gated inside, so
+    // this stays a one-liner in the common case. See analysis/prompt/box2d/01-DESIGN-double-field-representation.md.
+    JS_EXPORT_PRIVATE void noteDoubleFieldSplitCensus(PropertyOffset, JSValue);
+
+    // RAW-DOUBLE-AWARE WRITE. The mirror of getDirect(Structure&, PropertyOffset), and it must stay a mirror: a slot
+    // whose Structure marks it Double is stored as a bare IEEE-754 double, with neither the bias add nor purifyNaN.
+    // Getting the two out of step in EITHER direction is the 1.625/1.375 bug class documented in OptionsList.h.
+    //
+    // This overload takes the DESTINATION structure explicitly because `this->structure()` is NOT always the right
+    // authority. Two callers in JSObjectInlines.h add a brand-new property and store to it BEFORE setStructure()
+    // installs the structure that owns it, so at store time the object still points at the old structure -- which has
+    // neither the property nor its mask bit. That is exactly the object-construction path, i.e. where every double
+    // field is first written, so consulting `this->structure()` there would silently store boxed into a slot every
+    // reader then treats as raw. Verified by reading JSObjectInlines.h; see 07-PLAN section 5t.
+    // NOTE ON TUNING THIS FUNCTION: don't, without a full-sweep measurement. Removing the census gate below and
+    // marking this ALWAYS_INLINE was tried and is NET NEGATIVE: it helped json-stringify (-2.56% -> -1.75%),
+    // postcss and prismjs, and cost babylonjs-scene-es6 (-0.97% -> -2.33%), FlightPlanner (+0.20% -> -1.85%),
+    // threejs, jsdom-d3-startup and json-parse -- summing to -15.6 against -11.8. See
+    // repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md: at this scale these gates move cost between
+    // benchmarks rather than removing it. The one change that genuinely removed cost was deleting the large
+    // dataLogLn diagnostics from ALWAYS_INLINE functions (-260 KB of __text).
+    void putDirectOffset(VM& vm, Structure& destinationStructure, PropertyOffset offset, JSValue value)
+    {
+        // ONE BIT TEST PLUS TWO COMPARES, and nothing else. The claim gate below is required for correctness; the
+        // census gate that used to sit in front of it -- two Options loads and two branches on EVERY C++ property
+        // store -- was pure diagnostics, and its job is done (it produced doc 19's Gap 1 sizing and the
+        // offset-contiguity data that justifies mightHaveClaimAt's range test). The census now runs inside the
+        // out-of-line writer, so it only observes stores to claimed structures: a deliberate loss of coverage,
+        // recorded in repro/bugs/open/26-ROOT-CAUSES-of-the-14-regressions.md.
+        //
+        // Verified motivation, not a guess: 3 profiles per side on async-fs put Structure::hasRawDoubleFields() at
+        // 0,0,0 samples in base against 27,26,21 patched with a spread of 6 -- i.e. this line is measurably hot on
+        // the createIteratorResultObject store path that every `await` allocates through.
+        //
+        // A DOUBLE NEEDS NO WRITER AT ALL, claimed or not, and that is what the second test buys. Under guarantee-only
+        // every slot holds a NaN-boxed JSValue, so for a value that is ALREADY a double the out-of-line writer does
+        // nothing but re-derive the claim and perform this same store. The writer is only genuinely needed for the two
+        // exceptional kinds: an Int32, which must be re-encoded as a double so a claimed reader does not de-bias a
+        // tagged integer, and a non-number, which must give the claim up. Both are rare.
+        //
+        // This matters because mightHaveClaimAt() is deliberately COARSE -- a summary bit plus a [first,last] range
+        // compare, with no dependent load -- so it fires for every offset inside the claimed range, including offsets
+        // that carry no claim at all. On json-parse-inspector that is ~1.9M calls into the out-of-line writer per run
+        // (see the comment in putDirectOffsetRawDoubleAware), against 475,924 stores the census attributes to claimed
+        // offsets, and json-parse-inspector is the largest durable regression in the suite at -2.34%.
+        //
+        // COST: the census no longer observes pure-double stores to claimed offsets, since those never reach the
+        // writer. That is a further deliberate narrowing of an already-narrowed diagnostic (26-ROOT-CAUSES). Engagement
+        // is still checkable without it via $vm.isRawDoubleField, which queries the Structure directly.
+        if (destinationStructure.mightHaveClaimAt(offset) && !value.isDouble()) [[unlikely]] {
+            putDirectOffsetRawDoubleAware(vm, destinationStructure, offset, value);
+            return;
+        }
+        locationForOffset(offset)->set(vm, this, value);
+    }
+
+    // FOR CALLERS THAT ALREADY KNOW THE CLAIM STATE. Prefer this wherever the attributes, or the owning Structure's
+    // claim bit, have just been computed for another reason -- passing the answer in is strictly cheaper than having
+    // the store path re-derive it.
+    //
+    // WHY IT EXISTS, measured. `locationForOffset(offset)->set(...)` needs only the offset and the value; the claim
+    // gate is the ONLY reason a property store touches the Structure at all. mightHaveClaimAt loads Structure's
+    // summary bit plus its two range bytes, and on a workload that builds many distinct shapes those lines are cold,
+    // so the gate buys a likely cache miss per store. Bisected by build against the unpatched baseline:
+    //
+    //   claims never created, gate still running : json-parse -1.14%,  regexp-octane -1.26%
+    //   claims never created, gate compiled out  : json-parse +0.12% (p=0.52), regexp-octane -0.31% (p=0.55)
+    //
+    // i.e. a ~1.2% tax paid whether or not any claim exists anywhere, which is why it hit claim-FREE regexp-octane
+    // exactly as hard as claim-heavy json-parse.
+    //
+    // destinationStructure is dereferenced only on the slow path, so an unused reference costs a register, not a load.
+    ALWAYS_INLINE void putDirectOffset(VM& vm, Structure& destinationStructure, PropertyOffset offset, JSValue value, bool slotIsClaimed)
+    {
+        if (slotIsClaimed && !value.isDouble()) [[unlikely]] {
+            putDirectOffsetRawDoubleAware(vm, destinationStructure, offset, value);
+            return;
+        }
+        locationForOffset(offset)->set(vm, this, value);
+    }
+
+    // Convenience overload for the ~70 callers that store into a property the object ALREADY has, or that added it in
+    // place without a transition. For those `this->structure()` is the destination structure. The one bit test is
+    // paid only by objects that actually carry a Double-represented field.
+    void putDirectOffset(VM& vm, PropertyOffset offset, JSValue value)
+    {
+        putDirectOffset(vm, *this->structure(), offset, value);
+    }
+    JS_EXPORT_PRIVATE void putDirectOffsetRawDoubleAware(VM&, Structure&, PropertyOffset, JSValue);
+
+    // PHASE 3 WIDENING. If `propertyName` is currently Double-represented on this object, move this object to a
+    // structure that no longer claims it and re-box the value already in the slot. Called from putDirectInternal
+    // before a store that cannot be represented as a raw double. No-op unless the object actually carries a
+    // Double-represented field, so the common path is one bit test.
+    //
+    // Returns TRUE if it transitioned. The caller must then disable caching on the PutPropertySlot: this is a
+    // structure transition on a store to an EXISTING property, which the Replace IC cannot model.
+    JS_EXPORT_PRIVATE bool widenDoubleRepresentation(VM&, PropertyName);
     void putDirectWithoutBarrier(PropertyOffset offset, JSValue value) { locationForOffset(offset)->setWithoutWriteBarrier(value); }
 
     JS_EXPORT_PRIVATE bool putDirectNativeIntrinsicGetter(VM&, JSGlobalObject*, Identifier, NativeFunction, Intrinsic, unsigned attributes);
@@ -1094,7 +1230,12 @@ ALWAYS_INLINE JSValue JSObject::getDirect(Locker<JSCellLock>& cellLock, Concurre
     switch (concurrency) {
     case Concurrency::MainThread:
         ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
-        return getDirect(offset);
+        // Raw-double aware, for the same reason as the ConcurrentThread branch below: both are reached from
+        // PropertyCondition (isStillValidAssumingImpurePropertyWatchpoint here, attemptToMakeEquivalence* there),
+        // whose result gets baked into compiled code as a watchpoint or a folded constant. Fixing only one branch
+        // leaves the bug alive on whichever concurrency the caller happens to use -- which is exactly what
+        // happened: the concurrent branch was fixed first and the detector immediately fired on this one.
+        return getDirect(*expectedStructure, offset);
     case Concurrency::ConcurrentThread:
         return getDirectConcurrently(cellLock, expectedStructure, offset);
     }
@@ -1109,7 +1250,17 @@ inline JSValue JSObject::getDirectConcurrently(Locker<JSCellLock>&, Structure* e
     ConcurrentJSLocker locker { expectedStructure->lock() };
     if (!expectedStructure->isValidOffset(offset))
         return { };
-    return getDirect(offset);
+    // RAW-DOUBLE AWARE, and it must be. This is the 6th unhooked reader in the project and by far the most
+    // damaging, because it does not merely return a wrong value to a caller -- it runs on the DFG compiler thread
+    // from PropertyCondition::attemptToMakeEquivalenceWithoutBarrier, which CONSTANT-FOLDS the value it reads into
+    // compiled code. Reading a raw 1.5 as a JSValue yields 1.375, so the prototype load folds to 1.375 and every
+    // execution of that compiled code is wrong. Found by lldb backtrace on the ASSERT_ENABLED detector, on thread
+    // "JIT Worklist Helper Thread" inside ByteCodeParser::planLoad; the earlier 5666-test sweep missed it because
+    // nothing in that corpus put a Double-represented field on a prototype.
+    //
+    // isRawDoubleOffset is lock-free and allocation-free by construction (Structure.h), which is what makes it
+    // legal on a compiler thread holding these two locks.
+    return getDirect(*expectedStructure, offset);
 }
 
 // It is safe to call this method with a PropertyName that is actually an index,
@@ -1128,12 +1279,24 @@ ALWAYS_INLINE bool JSObject::getOwnNonIndexPropertySlot(VM& vm, Structure* struc
     // getPropertySlot relies on this method never returning index properties!
     ASSERT(!parseIndex(propertyName));
 
-    JSValue value = getDirect(offset);
+    // Structure-aware: this is the generic C++ read path for every get_by_id that misses its IC, so it is the site
+    // a Double-represented field is overwhelmingly most likely to be read through. `structure` is already in hand,
+    // so the raw-double check costs one bit test. Empirically the top offender: 91 of the 96 stress tests that
+    // tripped the ASSERT_ENABLED detector reached it here (both template instantiations).
+    JSValue value = getDirect(*structure, offset);
 
     if constexpr (debugLLIntGetById) {
         if (!value)
             crashDueToEmptyValueAtValidOffset(structure, propertyName, offset, debugData->bottomOfChain, debugData->previousInChain, attributes, __LINE__, __FILE__, WTF_PRETTY_FUNCTION);
     }
+
+    // NOTE: two large dataLogLn diagnostics used to sit here, hunting "a raw-double slot read as a JSValue".
+    // They are obsolete under guarantee-only storage -- every slot IS a JSValue, claimed or not -- and they were
+    // enormously expensive in CODE SIZE: this function is ALWAYS_INLINE and inlined into dozens of hot callers, and
+    // an Options-gated branch still emits its whole body at every one of them. Measured: they accounted for the bulk
+    // of the patch's +326 KB of __text, which showed up as ~1% regressions across every startup/library benchmark.
+    // See repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md. Do not reintroduce a dataLogLn in this function;
+    // put diagnostics behind an out-of-line JS_EXPORT_PRIVATE call.
 
     if (value.isCell()) {
         ASSERT(value);

@@ -325,7 +325,7 @@ ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSFinalObject*
             return true;
 
         properties.append(entry.key()); // sourceStructure ensures the lifetimes of these strings.
-        values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+        values.appendWithCrashOnOverflow(source->getDirect(*sourceStructure, entry.offset()));
 
         return true;
     });

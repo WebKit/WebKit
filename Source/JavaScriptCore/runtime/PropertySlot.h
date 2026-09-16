@@ -44,6 +44,13 @@ class JSModuleEnvironment;
 enum class PropertyAttribute : unsigned {
     // This must be 7 bits. Keep in sync with Structure's definition.
     None              = 0,
+    // Bit 0 is NOT a user-visible attribute. It records the property's storage REPRESENTATION, derived from the
+    // value seen at the creating store, so that the compiler can trust it via the CheckStructure it already
+    // performs. It lives here because the attributes byte is what transition identity is keyed on
+    // (StructureInlines.h createKey) and what materializePropertyTable replays, so the representation rides both
+    // for free. It MUST be masked out of any comparison that asks "did the user change the attributes?" -- see
+    // userVisibleAttributes(). Phase 1 of analysis/prompt/box2d/01-DESIGN-double-field-representation.md.
+    RepresentationDouble = 1 << 0,
     ReadOnly          = 1 << 1,  // property can be only read, not written
     DontEnum          = 1 << 2,  // property doesn't appear in (for .. in ..)
     DontDelete        = 1 << 3,  // property can't be deleted
@@ -94,6 +101,13 @@ inline unsigned attributesForStructure(unsigned attributes)
     // The attributes that are used just for the static hashtable are at bit 8 and higher.
     return static_cast<uint8_t>(attributes);
 }
+
+// The representation bit is engine-internal. Every equality test that means "did the user redefine this property?"
+// must compare user-visible attributes only, or a representation change looks like an attribute change and forces a
+// spurious attributeChangeTransition on every re-define.
+static constexpr unsigned propertyRepresentationMask = static_cast<unsigned>(PropertyAttribute::RepresentationDouble);
+inline constexpr unsigned userVisibleAttributes(unsigned attributes) { return attributes & ~propertyRepresentationMask; }
+inline constexpr bool attributesSayDoubleRepresentation(unsigned attributes) { return attributes & propertyRepresentationMask; }
 
 using GetValueFunc = FunctionPtr<GetValueFuncPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName), FunctionAttributes::JITOperation>;
 using GetValueFuncWithPtr = FunctionPtr<GetValueFuncWithPtrPtrTag, EncodedJSValue(JSGlobalObject*, EncodedJSValue, PropertyName, void*), FunctionAttributes::JITOperation>;

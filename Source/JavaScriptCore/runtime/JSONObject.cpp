@@ -604,7 +604,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             propertyName = std::get<0>(m_propertiesAndOffsets[index]);
             if (m_object->structureID() == m_structure->id()) {
                 unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
-                value = m_object->getDirect(offset);
+                value = m_object->getDirect(*m_structure, offset);
             } else {
                 value = m_object->get(globalObject, propertyName);
                 RETURN_IF_EXCEPTION(scope, false);
@@ -618,7 +618,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 propertyName = std::get<0>(m_propertiesAndOffsets[index]);
                 if (m_object->structureID() == m_structure->id()) {
                     unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
-                    value = m_object->getDirect(offset);
+                    value = m_object->getDirect(*m_structure, offset);
                     if (value.isGetterSetter()) {
                         value = uncheckedDowncast<GetterSetter>(value)->callGetter(globalObject, m_object);
                         RETURN_IF_EXCEPTION(scope, false);
@@ -1527,6 +1527,15 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
         if constexpr (hasGap == HasGap::Yes)
             ++m_depth;
         const unsigned newLineAndIndent = hasGap == HasGap::Yes ? newLineAndIndentSize() : 0;
+        // HOIST THE STRUCTURE-LEVEL HALF of the raw-double question out of the property loop. getDirect(Structure&,
+        // offset) asks it per property, and that is the summary bit, an Options load and two dependent loads into
+        // StructureRareData -- paid once per property on an object that carries any Double-represented field, which a
+        // JSON document full of doubles always does. The structure cannot transition mid-iteration here (see the
+        // assertion below), so one lookup is valid for the whole walk. Null means nothing on this structure is raw, in
+        // which case the per-property test disappears entirely.
+        // NOTE: a hoisted RawDoubleMask lookup plus a per-property maskSaysRawDouble test used to live here, to
+        // route claimed slots through the reconstructing reader. Both are dead under guarantee-only storage --
+        // getDirectRawDoubleAware() is now literally getDirect() -- so the per-property test is gone entirely.
         structure.forEachProperty(m_vm, [&](const auto& entry) -> bool {
             if (entry.attributes() & PropertyAttribute::DontEnum) [[unlikely]] {
                 // https://tc39.es/ecma262/#sec-serializejsonproperty
@@ -1561,6 +1570,11 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             // so there is no JS observable to mutate the structure.
             ASSERT(object.structure() == &structure);
 
+            // Same authority and same answer as getDirect(structure, offset) -- Structure::isRawDoubleOffset is
+            // exactly rawDoubleMaskIfAny() composed with maskSaysRawDouble() -- with the structure-level half hoisted.
+            // NOT entry.attributes(): the mask is the only authority, because it cannot represent an offset >= 128 and
+            // deliberately answers false there while the attributes byte keeps saying Double. Trusting attributes here
+            // is what made an object with 90 double fields read 79.5 back as 87.5 (see getDirectRawDoubleAware).
             JSValue value = object.getDirect(entry.offset());
             if (value.isUndefined())
                 return true;

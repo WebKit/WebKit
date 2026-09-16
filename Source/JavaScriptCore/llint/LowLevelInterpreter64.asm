@@ -1687,11 +1687,31 @@ macro performGetByIDHelper(opcodeStruct, modeMetadataName, valueProfileName, slo
     return(t0)
 
 .opGetByIdUnset:
+    bbneq t1, constexpr GetByIdMode::Unset, .opGetByIdRawDouble
     loadi JSCell::m_structureID[t3], t1
     loadi %opcodeStruct%::Metadata::%modeMetadataName%.unsetMode.structureID[t2], t0
     bineq t0, t1, slowLabel
     valueProfile(size, opcodeStruct, valueProfileName, ValueUndefined, t2)
     return(ValueUndefined)
+
+# RAW-DOUBLE SELF PROPERTY. Same guard and same metadata layout as Default (it reuses defaultMode), but the slot holds
+# bare IEEE-754 bits instead of a NaN-boxed JSValue, so boxing it is one add of JSValue::DoubleEncodeOffset --
+# box(d) == bits(d) + 2^49. Placed LAST in the mode chain deliberately: every arm above is byte-for-byte unchanged, so
+# ordinary property access pays nothing. Before this arm existed the slow path declined to cache a raw slot at all, so
+# every such access went to C++ forever; Box2D at --useJIT=0 measured Score -3.83%, First-Score -3.89% for that.
+#
+# 2^49 does not fit an ARM64 add immediate, so it is materialised into a register first. Both extra instructions are on
+# the raw path only.
+.opGetByIdRawDouble:
+    loadi JSCell::m_structureID[t3], t1
+    loadi %opcodeStruct%::Metadata::%modeMetadataName%.defaultMode.structureID[t2], t0
+    bineq t0, t1, slowLabel
+    loadis %opcodeStruct%::Metadata::%modeMetadataName%.defaultMode.cachedOffset[t2], t1
+    loadPropertyAtVariableOffset(t1, t3, t0)
+    move constexpr JSValue::DoubleEncodeOffset, t1
+    addq t1, t0
+    valueProfile(size, opcodeStruct, valueProfileName, t0, t2)
+    return(t0)
 
 end
 
@@ -1812,6 +1832,42 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     get(m_value, t1)
     loadConstantOrVariable(size, t1, t2)
     loadi OpPutById::Metadata::m_offset[t5], t1
+    # RAW-DOUBLE SLOT? Bit 31 of the cached offset marks it (putByIdRawDoubleOffsetFlag). PropertyOffsets are far
+    # below 2^31, so this steals no range, and m_offset is already loaded -- the test is one signed compare and a
+    # not-taken branch. Before this existed the slow path declined to cache raw slots entirely.
+    #
+    # REACHED FROM THE TRANSITION PATH WITH THE NEW STRUCTURE ALREADY INSTALLED. .opPutByIdTransitionDirect does
+    # `storei t1, JSCell::m_structureID[t0]` above and then falls through to here, so the bails below (and the one
+    # at .opPutByIdRawDouble) leave the object carrying newStructure with the slot NOT yet written. That is SAFE,
+    # but only because of two properties, both of which must hold if this code is ever moved:
+    #   1. it self-corrects -- the C++ slow path re-executes the whole put against the object's CURRENT structure,
+    #      which is now newStructure, and stores through the raw-aware writer. Verified with an Int32 and with a
+    #      string at a raw-marked transition site;
+    #   2. the intermediate state is not observable by the collector as a type confusion, because the slot still
+    #      holds its PRE-transition contents (a JSValue) while newStructure may claim it raw -- the marker then
+    #      SKIPS it, which loses nothing: the old value is either empty (a fresh property) or still reachable from
+    #      the object it was copied from.
+    # Do not "optimise" the bail to happen after the store, and do not move the structure install below this test
+    # without re-deriving both.
+    bilt t1, 0, .opPutByIdRawDouble
+    storePropertyAtVariableOffset(t1, t0, t2)
+    writeBarrierOnOperands(size, get, m_base, m_value)
+    dispatch()
+
+# t0 = base, t1 = offset with the raw flag set, t2 = value as a JSValue.
+#
+# Only a BOXED DOUBLE is handled inline, because raw = boxed - 2^49 is a single subtract. An Int32 would need an FP
+# temporary to convert through, and a non-number needs the representation WIDENED via a structure transition, which no
+# store can do -- both go to the C++ slow path, which coerces or widens correctly.
+# t0 = base, t1 = offset with the claim flag set, t2 = value as a JSValue.
+#
+# The slot is an ordinary NaN-boxed JSValue, so there is no bias to apply -- the only job here is the BAIL. A stub
+# cannot give a claim up, so an Int32 (which must be re-encoded as a double) or a non-number (which must clear the
+# claim and fire its watchpoint) has to reach the C++ slow path.
+.opPutByIdRawDouble:
+    btqz t2, numberTag, .opPutByIdSlow    # not a number at all (cell/other) -> slow
+    bqaeq t2, numberTag, .opPutByIdSlow   # Int32 -> slow, C++ re-encodes as a double
+    andi constexpr putByIdOffsetMask, t1
     storePropertyAtVariableOffset(t1, t0, t2)
     writeBarrierOnOperands(size, get, m_base, m_value)
     dispatch()

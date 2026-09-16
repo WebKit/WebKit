@@ -2870,6 +2870,20 @@ escapeChildren:
                 StorageAccessData* data = m_graph.m_storageAccessData.add();
                 data->offset = firstOffset;
                 data->identifierNumber = identifierNumber;
+                // Every structure here agrees on the offset (checked just above), so they are asked as a group.
+                // `structures` is a Vector<RegisteredStructure>, so it is walked directly rather than converted.
+                {
+                    bool anyRaw = false;
+                    bool allRaw = true;
+                    for (RegisteredStructure structure : structures) {
+                        bool raw = m_graph.rawDoubleRepFor(structure.get(), firstOffset) == RawDoubleRep::Raw;
+                        anyRaw |= raw;
+                        allRaw &= raw;
+                    }
+                    data->rawDoubleRep = allRaw ? RawDoubleRep::Raw : RawDoubleRep::Boxed;
+                    dataLogLnIf(anyRaw && !allRaw && Options::dumpDoubleFieldSplitCensus(),
+                        "[rawdouble] MIXED sunken-allocation store at offset ", firstOffset);
+                }
 
                 return m_graph.addNode(
                     PutByOffset,

@@ -1059,9 +1059,9 @@ Structure* createPromiseAllSettledFulfilledResultStructure(VM& vm, JSGlobalObjec
     constexpr unsigned inlineCapacity = 2;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->status, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->status, 0, offset);
     RELEASE_ASSERT(offset == promiseAllSettledStatusPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == promiseAllSettledValuePropertyOffset);
     return structure;
 }
@@ -1071,9 +1071,9 @@ Structure* createPromiseAllSettledRejectedResultStructure(VM& vm, JSGlobalObject
     constexpr unsigned inlineCapacity = 2;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->status, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->status, 0, offset);
     RELEASE_ASSERT(offset == promiseAllSettledStatusPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->reason, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->reason, 0, offset);
     RELEASE_ASSERT(offset == promiseAllSettledReasonPropertyOffset);
     return structure;
 }

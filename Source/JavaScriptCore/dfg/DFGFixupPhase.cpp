@@ -2664,8 +2664,57 @@ private:
             
         case PutByOffset: {
             fixEdge<KnownCellUse>(node->child2());
-            if (!attemptToMakeDoubleRepForPut(node, node->child3()))
+            if (!attemptToMakeDoubleRepForPut(node, node->child3())) {
+                // A RAW-DOUBLE slot can only hold a number. Storing a non-number there requires WIDENING the
+                // representation -- an attributeChangeTransition clearing RepresentationDouble, JSObject.cpp:354 --
+                // and no JIT store can perform a structure transition. So bail out of the compiled path entirely.
+                //
+                // WHY NOT fixEdge<DoubleRepUse>: with a Bool prediction it selects the NotCellNorBigIntUse
+                // conversion, which turns `true` into 1.0 WITHOUT exiting. That would silently make `o.f === true`
+                // false, which is worse than the bug it replaces. It is only safe when shouldSpeculateNumber() holds,
+                // which is exactly when this branch is not needed.
+                //
+                // WHY ForceOSRExit AND NOT A SPECULATION AT PutByOffset: an exit at a node the graph did not mark as
+                // exiting breaks mayExit validation -- measured at 139 attributable stress failures, including
+                // exitok-is-not-the-same-as-mayExit.js (07-PLAN 5ad). ForceOSRExit is the idiom this phase already
+                // uses for the same purpose a few hundred lines above, and it is guarded on origin.exitOK.
+                //
+                // THE EXIT IS SELF-HEALING and happens at most once per structure: baseline re-executes the store
+                // through the C++ writer, which widens the representation, so the slot stops being raw and the
+                // recompile records Boxed. Guarded on !shouldSpeculateNumber(), i.e. the profile has ACTUALLY seen a
+                // non-number here, so the widening really does happen. See 07-PLAN 5ao.
+                if (node->storageAccessData().rawDoubleRep == RawDoubleRep::Raw) [[unlikely]] {
+                    // A raw slot can hold ONLY a number, so make that a CHECKED property of the graph rather than a
+                    // hoped-for one. This Check is UNCONDITIONAL as of B45; it used to be gated on
+                    // shouldSpeculateNumber(), and the ungated half fell through to
+                    // emitRawDoubleBitsForStore/rawDoubleBitsForStore's unproven-value arm, which stores the JSValue
+                    // verbatim into a raw slot. That is the 1.625 bug: `false` boxes to 0x6, a raw-aware reader
+                    // returns 0x6+2^49 -- a tiny NONZERO double -- so `if (o.f)` is TRUE for false. It is also the
+                    // 0.0 crash from the other side, since bits(0.0) == 0 reads back as the empty JSValue. Four
+                    // attributable stress failures and the Octane raytrace crash, all from that one arm. See 5bj.
+                    //
+                    // WHY A Check AND NOT A SPECULATION AT PutByOffset: PutByOffset is not an exit site, so exiting
+                    // there breaks mayExit validation (139 failures, 5ad). A Check exits legally by construction.
+                    // WHY NOT A CALL OUT TO WIDEN: tried in 5bj and reverted -- besides re-tripping the same mayExit
+                    // assertion, widening is a structure transition and PutByOffset does not declare that it writes
+                    // Structure, so the transition is invisible to the abstract interpreter.
+                    // WHY NOT fixEdge<DoubleRepUse>: with a Bool prediction it selects NotCellNorBigIntUse, turning
+                    // `true` into 1.0 WITHOUT exiting, which silently breaks `o.f === true`.
+                    //
+                    // WHY THIS DOES NOT REPEAT 5ao's EXIT STORM, which is the obvious objection: 5ao's ForceOSRExit
+                    // exited on EVERY execution of the store, including the overwhelming majority where the value was
+                    // a perfectly good double -- that is why all-doubles CircleGeometry took 5,534 InadequateCoverage
+                    // exits. A NumberUse Check exits only when the value REALLY IS a non-number, so at a
+                    // numbers-only site it never fires at all. And a site that does store a non-number heals
+                    // structurally, not by luck: baseline re-executes through the C++ writer, which picks the BOXED
+                    // transition for that object, so the put site now has two transition targets, its PutByStatus is
+                    // no longer a single Transition variant, and the recompile stops resolving it to the raw
+                    // transition -- at which point there is no Check left to exit. Bounded by one recompile cycle.
+                    m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin,
+                        Edge(node->child3().node(), NumberUse));
+                }
                 speculateForBarrier(node->child3());
+            }
             break;
         }
             

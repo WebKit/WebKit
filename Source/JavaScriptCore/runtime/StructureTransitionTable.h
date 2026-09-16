@@ -191,15 +191,51 @@ class StructureTransitionTable {
             static_assert(sizeof(TransitionKind) * 8 <= 8);
             static_assert(hashTableDeletedValue < 8);
 
-            // Highest 8 bits are for TransitionKind; next 8 belong to TransitionPropertyAttributes.
-            // Remaining bits are for PointerKey.
-            Key(PointerKey impl, unsigned attributes, TransitionKind transitionKind)
-                : m_encodedData(impl.raw() | (static_cast<uintptr_t>(attributes) << attributesShift) | (static_cast<uintptr_t>(transitionKind) << transitionKindShift))
+            // REPRESENTATION IS NOT PART OF TRANSITION IDENTITY. PropertyAttribute::RepresentationDouble (bit 0) is
+            // an engine-internal storage decision, not a user-visible attribute, and it MUST NOT fork a Structure.
+            //
+            // It used to. Because this key is the full attributes byte, `this.x = 1.5` and `this.x = 1` produced
+            // DIFFERENT transitions from the same base, so one source-level shape became two Structures. Measured on
+            // Box2D: 14 -> 18 distinct Object structures, GetByOffset 4004 -> 5375, and 227 GetByVal sites degrading
+            // from Contiguous+OriginalNonCopyOnWriteArray+InBoundsSaneChain+AsIs to
+            // Contiguous+PossiblyArray+InBounds+Convert because the arrays now held more than one shape. That drove
+            // 828 extra BadCache exits and 6 extra jettisons past osrExitCountForReoptimization, for Box2D -16%.
+            // It is the same mechanism 01-DESIGN Phase 1 measured at -11.3% and recorded as REFUTED.
+            //
+            // V8 does the opposite and it is the right model: representation is deliberately excluded from map
+            // identity so it can be GENERALIZED IN PLACE on the field owner (MapUpdater::GeneralizeField ->
+            // UpdateFieldType + DeoptimizeDependencyGroups(kFieldRepresentationGroup)). Its lattice only ever moves
+            // up -- kSmi/kDouble -> kTagged -- and never forks sideways. Masking here gives us the same property:
+            // one Structure per source shape, with rawness carried by the per-offset rare-data mask instead.
+            //
+            // Masking is SOUND because the mask is one-directional -- it may only under-claim. Whichever store
+            // creates the transition decides, and a later store of the other kind is absorbed rather than split:
+            // an Int32 into a raw slot coerces losslessly (putDirectOffsetRawDoubleAware), and a double into a boxed
+            // slot is simply the pre-existing NaN-boxed behaviour. Box2D needs zero widenings
+            // (--validateDoubleFieldRepresentation: 60411 double, 12120 Int32, 0 neither), so nothing is lost.
+            static constexpr unsigned representationMask = 1; // PropertyAttribute::RepresentationDouble
+
+            // ...BUT NOT FOR PropertyAttributeChange. An attribute change is the ONLY way a representation gets
+            // widened (JSObject::widenDoubleRepresentation, Structure::ensureBoxedRepresentation), so if the raw and
+            // boxed answers alias here the widened sibling is UNREACHABLE: a lookup with the bit clear is served the
+            // cached raw-claiming target and the widen silently no-ops. That is the root of the addrof in
+            // repro/bugs/02 -- Object.defineProperty on an existing property was handed a target claiming the slot
+            // raw while the value being installed was a cell, and GC tracing then skipped the slot (repro/bugs/02b).
+            // Attribute changes come only from Object.defineProperty and from widening itself, never from the
+            // `this.x = 1.5` property-ADDITION path the mask exists to protect, so keeping the bit here forks
+            // nothing that was measured.
+            static constexpr unsigned attributesForKey(unsigned attributes, TransitionKind transitionKind)
+            {
+                return transitionKind == TransitionKind::PropertyAttributeChange ? attributes : (attributes & ~representationMask);
+            }
+
+            Key(PointerKey impl, unsigned attributesIncludingRepresentation, TransitionKind transitionKind)
+                : m_encodedData(impl.raw() | (static_cast<uintptr_t>(attributesForKey(attributesIncludingRepresentation, transitionKind)) << attributesShift) | (static_cast<uintptr_t>(transitionKind) << transitionKindShift))
             {
                 ASSERT(impl == this->impl());
                 ASSERT(roundUpToMultipleOf<8>(impl.raw()) == impl.raw());
-                ASSERT(attributes <= UINT8_MAX);
-                ASSERT(attributes == this->attributes());
+                ASSERT(attributesIncludingRepresentation <= UINT8_MAX);
+                ASSERT(attributesForKey(attributesIncludingRepresentation, transitionKind) == this->attributes());
                 ASSERT(transitionKind != TransitionKind::Unknown);
                 ASSERT(transitionKind == this->transitionKind());
             }

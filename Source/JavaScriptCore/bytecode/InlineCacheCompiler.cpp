@@ -77,6 +77,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+
 namespace InlineCacheCompilerInternal {
 static constexpr bool verbose = false;
 static constexpr bool traceHandlerExecution = false;
@@ -3194,6 +3195,31 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     GPRReg thisGPR = m_propertyCache.thisValueIsInExtraGPR() ? m_propertyCache.thisGPR() : baseGPR;
     GPRReg scratchGPR = m_scratchGPR;
 
+    // CLAIM BAIL for the generated-stub Replace and Transition cases, mirroring the load side above. A CLAIMED slot may
+    // only receive a double, and a stub can handle neither of the two exceptions: an Int32 has to be re-encoded as a
+    // double, and a non-number has to give the claim up and fire its watchpoint. Both go to the slow path -- the C++
+    // writer, which does exactly that. m_failAndRepatch is the right list: it already carries this kind of value-type
+    // bail (see the branchIfNotInt32/branchIfNotNumber sites above).
+    //
+    // EMIT IT EARLY, BEFORE ANYTHING THAT SPILLS -- this is load-bearing. Emitting it at the store site instead puts
+    // the two branchIfs after restoreLiveRegistersFromStackForCall(spillState) on the Transition path, so they jump
+    // over a region where the scratch register allocator has spilled and restored. That is what
+    // AbstractMacroAssembler::RegisterAllocationOffset::checkOffsets forbids: it fires as "Unsafe branch over register
+    // allocation at instruction offset N in jump offset range L..H" on a debug build, and as a SIGSEGV on release once
+    // enough stores are claimed for a Transition stub to be generated at all. Early emission also means the bail can
+    // never happen after a butterfly has been allocated, so there is no unreachable-garbage case to reason about.
+    auto bailIfNotRawDoubleStorable = [&] {
+        // CLAIM, not encoding: the claim is part of transition identity, so a store that violates it must reach the
+        // C++ path that gives the claim up. See 22-DESIGN section 5.
+        Structure* owning = accessCase.structureOwningAccessedSlot();
+        if (!owning || !owning->isRawDoubleOffset(accessCase.m_offset)) [[likely]]
+            return;
+        m_failAndRepatch.append(jit.branchIfNotNumber(valueGPR, DoNotHaveTagRegisters));
+        m_failAndRepatch.append(jit.branchIfInt32(valueGPR, DoNotHaveTagRegisters));
+    };
+
+
+
     switch (accessCase.m_type) {
     case AccessCase::InHit:
     case AccessCase::InMiss:
@@ -3256,6 +3282,8 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         }
 
         jit.loadValue(CCallHelpers::Address(storageGPR, offsetRelativeToBase(accessCase.m_offset)), valueGPR);
+        // NOTE: a raw-double reconstruction (one add of 2^49) used to live here, for stubs generated rather than
+        // pre-compiled. Dead under guarantee-only storage: the loaded word IS a JSValue.
         succeed();
         return;
     }
@@ -3597,6 +3625,8 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTrueKeyReplace:
     case AccessCase::IndexedFalseKeyReplace: {
         ASSERT(canBeViaGlobalProxy(accessCase.m_type));
+        // Bail on a value that cannot live in a raw slot BEFORE anything spills. See the comment on the lambdas.
+        bailIfNotRawDoubleStorable();
         GPRReg base = baseGPR;
         if (accessCase.viaGlobalProxy()) {
             // This aint pretty, but the path that structure checks loads the real base into scratchGPR.
@@ -3652,6 +3682,9 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTrueKeyTransition:
     case AccessCase::IndexedFalseKeyTransition: {
         ASSERT(!accessCase.viaGlobalProxy());
+        // Bail on a value that cannot live in a raw slot BEFORE the butterfly allocation and its spill/restore.
+        // Emitting this at the store site instead is the "Unsafe branch over register allocation" bug.
+        bailIfNotRawDoubleStorable();
         // AccessCase::createTransition() should have returned null if this wasn't true.
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !accessCase.structure()->outOfLineCapacity() || accessCase.structure()->outOfLineCapacity() == accessCase.newStructure()->outOfLineCapacity());
 
@@ -5246,6 +5279,13 @@ static void loadHandlerImpl(CCallHelpers& jit, GPRReg baseGPR, GPRReg resultGPR,
         jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), scratch1GPR);
         jit.loadProperty(scratch1GPR, scratch2GPR, resultGPR);
     }
+
+    // RAW-DOUBLE RECONSTRUCTION. If the handler says this slot holds a bare IEEE-754 double, the word just loaded
+    // is NOT a JSValue and returning it would hand the caller bits(d) reinterpreted as a tagged value -- the
+    // 1.375 direction of the bug. Boxing is exactly `bits(d) + DoubleEncodeOffset`, so the whole fix is one add.
+    //
+    // Cost when the flag is clear (every slot in a default build): one byte load, one test, one not-taken branch.
+    // The flag is resolved once at handler creation, so nothing here walks the per-offset mask.
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
@@ -5622,6 +5662,88 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdModuleNamespaceLoadHandler()
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById ModuleNamespaceLoad handler"_s, "GetById ModuleNamespaceLoad handler");
 }
 
+// CLAIM-AWARE STORE for the shared put handlers. A slot the handler flags as CLAIMED may only receive a double: an
+// Int32 has to be re-encoded as a double and a non-number has to give the claim up and fire its watchpoint, and a
+// stub can do neither. So the only job here is the BAIL -- send those two cases to C++ and store everything else
+// directly.
+//
+// HISTORICAL NOTE, kept because it cost a real bug. Under raw storage this helper also converted the value in place,
+// subtracting 2^49 before the store and adding it back after, because the slot held bare bits. Mutating the caller's
+// value register and leaving it that way was wrong in two ways: a branch to the slow path after the subtract handed
+// C++ a de-biased value, and -- far worse -- the register kept its corrupted contents after the handler RETURNED. The
+// FTL declares the value operand of a PutById patchpoint as a plain use, so B3/Air may hoist a loop-invariant boxed
+// constant into a callee-saved register in the preheader and reuse it every iteration; each trip subtracted 2^49
+// again. For the constant 0.0, box(0.0) IS exactly DoubleEncodeOffset, so one iteration turned the register into the
+// empty JSValue and the next store hit "ASSERTION FAILED: value" in putInlineForJSObject. For 2.0 it took
+// 0x4002000000000000 / 2^49 == 8193 iterations, which is why the failure looked value-independent and needed a long
+// loop. See repro/bugs/poc.js. Guarantee-only storage removes the conversion entirely, and with it that whole hazard.
+// slot in a default build -- keeps exactly its old cost: one byte load, one test, one not-taken branch. Only the raw
+// path pays the extra add and jump.
+//
+// Only the boxed-double case is handled inline, because that is the only one that is a single instruction:
+// raw = boxed - DoubleEncodeOffset. An Int32 would need an FPR to convert through and these thunks have no spare
+// one, and a non-numeric value cannot live in a raw slot at all. Both are appended to `bail`, which reaches the
+// C++ slow path -- and that path already does the right thing: JSObject::putDirectOffsetRawDoubleAware coerces
+// Int32 losslessly, and putDirectInternal widens the representation for anything else.
+//
+// `bail` is null for the allocating transition, whose type test has already been emitted by
+// emitRawDoubleStoreBailOnly before anything was mutated; see the comment there.
+// See analysis/prompt/box2d/07-PLAN-double-field.md section 5w.
+static void emitRawDoubleAwareStoreProperty(CCallHelpers& jit, CCallHelpers::JumpList* bail, GPRReg valueGPR, GPRReg baseGPR, GPRReg offsetGPR, GPRReg scratchGPR)
+{
+    if (!Options::useRawDoubleFieldStorage()) {
+        jit.storeProperty(valueGPR, baseGPR, offsetGPR, scratchGPR);
+        return;
+    }
+    jit.load8(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfIsRawDoubleField()), scratchGPR);
+    auto notRawDouble = jit.branchTest32(CCallHelpers::Zero, scratchGPR);
+    if (bail) {
+        bail->append(jit.branchIfNotNumber(valueGPR, DoNotHaveTagRegisters));
+        bail->append(jit.branchIfInt32(valueGPR, DoNotHaveTagRegisters));
+    }
+    // ONE STORE, NOT TWO. The claimed and unclaimed arms store the identical bits: under guarantee-only the slot is
+    // an ordinary NaN-boxed JSValue either way, and the bias arithmetic that used to make the claimed arm different
+    // is gone. So the only thing the claim changes is whether the type test above runs -- join here and emit
+    // storeProperty once.
+    //
+    // The duplicate was expensive out of proportion to its source: storeProperty takes a DYNAMIC offset, so it must
+    // branch on inline-vs-out-of-line and compute an address, and emitting that twice DOUBLED the shared
+    // PutById Replace handler, 96 -> 192 bytes. That handler is on the path of every put to an existing property in
+    // the VM. Measured at the Baseline tier on the ladder (--useDFGJIT=0, medians of 7): L2 -18.17%, L5 -20.10%,
+    // with the sampling profiler putting one put_by_id (L2 bc#328) at 22 -> 390 samples across 3 runs per side.
+    //
+    // Note the type tests are NOT the cost here: `TrustedImm64(JSValue::NumberTag)` is a single arm64 logical-immediate
+    // `mov`, so DoNotHaveTagRegisters costs ~2 instructions per test, not the ~6 a naive count suggests. Materialising
+    // the tag once into a scratch was tried first and moved the thunk size not at all.
+    notRawDouble.link(&jit);
+    jit.storeProperty(valueGPR, baseGPR, offsetGPR, scratchGPR);
+}
+
+// THE BAIL, SPLIT OUT, for a store that must mutate the object before it can store.
+//
+// emitRawDoubleAwareStoreProperty above bails and biases in one place, which is only safe when nothing has been
+// mutated yet -- true for the Replace thunks and for the non-allocating transition, both of which store BEFORE they
+// install the new structure. The ALLOCATING transition is different: it has to allocate the butterfly and install the
+// new structure first, and the comment on that sequence is explicit that the install is done last precisely "so that
+// whatever we had done up to this point is forgotten if we choose to branch to slow path". Putting a bail after it
+// broke that: an Int32 or non-numeric store would jump to the next handler with the object already carrying the new
+// structure and the new slot never written.
+//
+// So the type test, which is the only part that can branch away, is emitted BEFORE anything is mutated, and the
+// store itself is then emitted by emitRawDoubleAwareStoreProperty with a null `bail`. This is the same two-phase
+// shape that generateAccessCase already uses for its generated stubs (bailIfNotRawDoubleStorable /
+// adjustValueForRawDoubleStore); the thunks were simply inconsistent with it.
+static void emitRawDoubleStoreBailOnly(CCallHelpers& jit, CCallHelpers::JumpList& bail, GPRReg valueGPR, GPRReg scratchGPR)
+{
+    if (!Options::useRawDoubleFieldStorage())
+        return;
+    jit.load8(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfIsRawDoubleField()), scratchGPR);
+    auto notRawDouble = jit.branchTest32(CCallHelpers::Zero, scratchGPR);
+    bail.append(jit.branchIfNotNumber(valueGPR, DoNotHaveTagRegisters));
+    bail.append(jit.branchIfInt32(valueGPR, DoNotHaveTagRegisters));
+    notRawDouble.link(&jit);
+}
+
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler()
 {
@@ -5641,7 +5763,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler()
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
     jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
-    jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+    emitRawDoubleAwareStoreProperty(jit, &fallThrough, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
@@ -5654,15 +5776,18 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdReplaceHandler()
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
 template<bool allocating, bool reallocating>
-static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpList& allocationFailure, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, GPRReg scratch4GPR)
+static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpList& allocationFailure, CCallHelpers::JumpList& fallThrough, GPRReg baseGPR, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR, GPRReg scratch4GPR)
 {
     if constexpr (!allocating) {
         JIT_COMMENT(jit, "storeProperty");
         jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
-        jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+        emitRawDoubleAwareStoreProperty(jit, &fallThrough, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
         jit.transfer32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewStructureID()), CCallHelpers::Address(baseGPR, JSCell::structureIDOffset()));
     } else {
         JIT_COMMENT(jit, "allocating");
+        // The type test goes here, BEFORE the allocation and the structure install, so that taking it leaves the
+        // object exactly as it was. See emitRawDoubleStoreBailOnly.
+        emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
         jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfNewSize()), scratch1GPR);
         jit.emitAllocateVariableSized(scratch2GPR, vm.auxiliarySpace(), scratch1GPR, scratch4GPR, scratch3GPR, allocationFailure);
 
@@ -5714,7 +5839,8 @@ static void transitionHandlerImpl(VM& vm, CCallHelpers& jit, CCallHelpers::JumpL
 
         JIT_COMMENT(jit, "storeProperty");
         jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
-        jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+        // No bail here -- it was already emitted above, before anything was mutated.
+        emitRawDoubleAwareStoreProperty(jit, nullptr, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
     }
 }
 
@@ -5740,13 +5866,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionHandlerImpl(VM& vm
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
-    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, baseGPR, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
+    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, fallThrough, baseGPR, valueGPR, scratch1GPR, scratch2GPR, scratch3GPR, scratch4GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     if (!allocationFailure.empty()) {
         ASSERT(allocating);
         allocationFailure.link(&jit);
+        // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+        // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via
+        // the handler chain here -- and it has to leave from here rather than later, because a branch out after
+        // emitDataICPrepareForCall would leak the stack adjustment.
+        emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
         jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         InlineCacheCompiler::emitDataICPrepareForCall(jit);
         jit.makeSpaceOnStackForCCall();
@@ -5803,6 +5934,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHand
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
+    // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+    // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via the
+    // handler chain here -- and it has to leave from here rather than later, because a branch out after
+    // emitDataICPrepareForCall would leak the stack adjustment.
+    emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
     jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
     InlineCacheCompiler::emitDataICPrepareForCall(jit);
     jit.makeSpaceOnStackForCCall();
@@ -6374,7 +6510,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyReplac
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
     jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
-    jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+    // Same claim-aware store adjustment the put_by_id replace thunk does: a claimed slot must not receive a
+    // non-double without the claim being given up first, so the stub bails to C++.
+    emitRawDoubleAwareStoreProperty(jit, &fallThrough, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
@@ -6407,13 +6545,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyTransi
     fallThrough.append(emitNonStringPrimitiveKeyCheck<keyType>(jit, propertyGPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
-    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, baseGPR, valueGPR, scratch1GPR, scratch2GPR, propertyGPR, profileGPR);
+    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, fallThrough, baseGPR, valueGPR, scratch1GPR, scratch2GPR, propertyGPR, profileGPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     if (!allocationFailure.empty()) {
         ASSERT(allocating);
         allocationFailure.link(&jit);
+        // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+        // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via
+        // the handler chain here -- and it has to leave from here rather than later, because a branch out after
+        // emitDataICPrepareForCall would leak the stack adjustment.
+        emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
         jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         InlineCacheCompiler::emitDataICPrepareForCall(jit);
         jit.makeSpaceOnStackForCCall();
@@ -6452,6 +6595,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValNonStringPrimitiveKeyTransi
     fallThrough.append(emitNonStringPrimitiveKeyCheck<keyType>(jit, propertyGPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
 
+    // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+    // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via the
+    // handler chain here -- and it has to leave from here rather than later, because a branch out after
+    // emitDataICPrepareForCall would leak the stack adjustment.
+    emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
     jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
     InlineCacheCompiler::emitDataICPrepareForCall(jit);
     jit.makeSpaceOnStackForCCall();
@@ -6613,7 +6761,8 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValReplaceHandlerImpl()
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyGPR, scratch1GPR));
 
     jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch1GPR);
-    jit.storeProperty(valueGPR, baseGPR, scratch1GPR, scratch2GPR);
+    // See putByIdReplaceHandler: a claimed slot must not receive a non-double without the claim being given up.
+    emitRawDoubleAwareStoreProperty(jit, &fallThrough, valueGPR, baseGPR, scratch1GPR, scratch2GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
@@ -6660,13 +6809,18 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionHandlerImpl(VM& v
 
     // At this point, we will not go to slow path, so clobbering the other registers are fine.
     // We use propertyGPR and profileGPR for scratch register purpose.
-    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, baseGPR, valueGPR, scratch1GPR, scratch2GPR, propertyGPR, profileGPR);
+    transitionHandlerImpl<allocating, reallocating>(vm, jit, allocationFailure, fallThrough, baseGPR, valueGPR, scratch1GPR, scratch2GPR, propertyGPR, profileGPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     if (!allocationFailure.empty()) {
         ASSERT(allocating);
         allocationFailure.link(&jit);
+        // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+        // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via
+        // the handler chain here -- and it has to leave from here rather than later, because a branch out after
+        // emitDataICPrepareForCall would leak the stack adjustment.
+        emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
         jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
         InlineCacheCompiler::emitDataICPrepareForCall(jit);
         jit.makeSpaceOnStackForCCall();
@@ -6753,6 +6907,11 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValTransitionOutOfLineHandlerI
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseGPR, scratch1GPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyGPR, scratch1GPR));
 
+    // BEFORE any mutation and before the stack is adjusted for the call. operationReallocateButterflyAndTransition
+    // stores through the DESTINATION structure, so a value that cannot live in a raw-double slot has to leave via the
+    // handler chain here -- and it has to leave from here rather than later, because a branch out after
+    // emitDataICPrepareForCall would leak the stack adjustment.
+    emitRawDoubleStoreBailOnly(jit, fallThrough, valueGPR, scratch1GPR);
     jit.transfer32(CCallHelpers::Address(propertyCacheGPR, PropertyInlineCache::offsetOfCallSiteIndex()), CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
     InlineCacheCompiler::emitDataICPrepareForCall(jit);
     jit.makeSpaceOnStackForCCall();

@@ -924,7 +924,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
                 return true;
 
             properties.append(entry.key());
-            values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+            values.appendWithCrashOnOverflow(source->getDirect(*sourceStructure, entry.offset()));
             return true;
         });
         RETURN_IF_EXCEPTION(scope, { });
@@ -1010,7 +1010,12 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCloneObject, (JSGlobalObject* globalObject, C
         // that ends up transitioning the structure underneath us.
         // https://bugs.webkit.org/show_bug.cgi?id=187837
 
-        source->structure()->forEachProperty(vm, [&](const PropertyTableEntry& entry) ALWAYS_INLINE_LAMBDA {
+        // RAW-DOUBLE AWARE. The structure is re-read here rather than reused from above because this path
+        // deliberately re-fetches it (see the FIXME on the transitioning hazard); binding it once keeps the read and
+        // the representation check looking at the SAME structure, which is the wrong-structure mistake 07-PLAN 5y
+        // records four separate instances of.
+        Structure* liveSourceStructure = source->structure();
+        liveSourceStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) ALWAYS_INLINE_LAMBDA {
             PropertyName propertyName(entry.key());
             if (propertyName.isPrivateName())
                 return true;
@@ -1019,7 +1024,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCloneObject, (JSGlobalObject* globalObject, C
                 return true;
 
             properties.append(entry.key());
-            values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+            values.appendWithCrashOnOverflow(source->getDirect(*liveSourceStructure, entry.offset()));
             return true;
         });
         RETURN_IF_EXCEPTION(scope, { });

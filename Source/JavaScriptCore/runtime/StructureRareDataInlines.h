@@ -62,6 +62,49 @@ struct SpecialPropertyCache {
     }
 };
 
+// Side table for the per-offset raw-double map; see StructureRareData::m_rawDoubleMask for why it is out of line
+// rather than an inline array (StructureRareData is already at its 96-byte budget).
+// The invalidation channel for double-field claims, shared by reference across a Structure lineage.
+struct DoubleFieldClaimRecord {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(DoubleFieldClaimRecord);
+    DoubleFieldClaimRecord() : set(IsWatched) { }
+    InlineWatchpointSet set;
+    // Cached mirror of "set has been fired", so the hot query is a byte load rather than a WatchpointSet state decode.
+    bool givenUp { false };
+};
+
+struct RawDoubleMask {
+    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RawDoubleMask);
+    std::array<uint64_t, 2> bits { };
+
+    // PHASE B1 (repro/bugs/open/22-DESIGN-guarantee-only-the-v8-model.md): the invalidation channel for the claims
+    // recorded in `bits`. V8's equivalent is DependentCode::kFieldRepresentationGroup, fired from MapUpdater at the
+    // violating write; compiled code that skipped the three-way dispatch registers here via
+    // DesiredWatchpoints::addLazily and is jettisoned when the claim is given up.
+    //
+    // IT LIVES HERE, NOT IN StructureRareData, because that class is at a hard 112-byte budget whose comment records
+    // an 8-byte field already being rejected. This side table is allocated only for Structures that genuinely carry a
+    // claim, so putting it here is free for everyone else -- and it rides the propagation that already exists
+    // (Structure::copyRawDoubleMaskFrom, called from finishCreation).
+    //
+    // SHARED BY REFERENCE with every descendant Structure, exactly like StructureRareData::m_polyProtoWatchpoint.
+    // That is what makes invalidation O(1) instead of a transition-tree walk, and it gives the same scope as V8's
+    // field-owner map: the Box is created by the Structure that first claims a field and reaches only its subtree,
+    // so siblings -- which can legitimately hold a different type at the same offset -- are untouched.
+    //
+    // ONE SET FOR THE WHOLE LINEAGE, not one per offset. That is V8's granularity (kFieldRepresentationGroup is
+    // per-map), and it is what keeps propagation to a single refcount bump. Per-offset sets were considered and
+    // rejected: the copy cost is quadratic in the number of claimed fields over an object's construction sequence.
+    // ONE LOAD, NOT A decodeState(). The bit is what every claim query reads; the WatchpointSet beside it is only
+    // touched when a claim is GIVEN UP or when a compile registers a dependency. Measured on async-fs with 3 profiles
+    // per side: reading the state through InlineWatchpointSet::isStillValid() put decodeState() at 0 -> ~30 samples
+    // (spread 5, base exactly zero in all three runs) on the createIteratorResultObject store path.
+    //
+    // The bit MUST live in the shared record, not in the per-Structure mask: masks are copied per transition, so a
+    // per-Structure flag would not reach descendants, which is the whole reason invalidation uses a shared Box.
+    Box<DoubleFieldClaimRecord> claimRecord;
+};
+
 class StructureChainInvalidationWatchpoint final : public Watchpoint {
 public:
     StructureChainInvalidationWatchpoint()

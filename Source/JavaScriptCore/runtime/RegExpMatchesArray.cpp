@@ -292,11 +292,11 @@ static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, Inde
 {
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->index, 0, offset);
     ASSERT(offset == RegExpMatchesArrayIndexPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->input, 0, offset);
     ASSERT(offset == RegExpMatchesArrayInputPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->groups, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->groups, 0, offset);
     ASSERT(offset == RegExpMatchesArrayGroupsPropertyOffset);
     return structure;
 }
@@ -305,13 +305,13 @@ static Structure* createStructureWithIndicesImpl(VM& vm, JSGlobalObject* globalO
 {
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->index, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->index, 0, offset);
     ASSERT(offset == RegExpMatchesArrayIndexPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->input, 0, offset);
     ASSERT(offset == RegExpMatchesArrayInputPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->groups, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->groups, 0, offset);
     ASSERT(offset == RegExpMatchesArrayGroupsPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->indices, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->indices, 0, offset);
     ASSERT(offset == RegExpMatchesArrayIndicesPropertyOffset);
     return structure;
 }
@@ -320,7 +320,7 @@ static Structure* createIndicesStructureImpl(VM& vm, JSGlobalObject* globalObjec
 {
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->groups, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->groups, 0, offset);
     ASSERT(offset == RegExpMatchesIndicesGroupsPropertyOffset);
     return structure;
 }
