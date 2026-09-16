@@ -32,6 +32,9 @@ namespace WebCore {
 
 TransformState& TransformState::operator=(const TransformState& other)
 {
+    if (this == &other)
+        return *this;
+
     m_accumulatedOffset = other.m_accumulatedOffset;
     m_tracking = other.m_tracking;
     m_inputPoint = other.m_inputPoint;
