@@ -29,6 +29,7 @@
 
 namespace JSC {
 
+// Note: This is concurrency with other constraints not the mutator. All constraints run with the world stopped.
 enum class ConstraintConcurrency : uint8_t {
     Sequential,
     Concurrent
