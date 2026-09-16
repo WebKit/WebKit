@@ -2817,6 +2817,15 @@ FloatingObject& RenderBlockFlow::insertFloatingBox(RenderBox& floatBox)
     return *m_floatingObjects->add(FloatingObject::create(floatBox));
 }
 
+void RenderBlockFlow::placeFloatingBox(FloatingObject& floatingObject, const LayoutRect& frameRect, LayoutSize marginOffset)
+{
+    if (!m_floatingObjects) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_floatingObjects->place(floatingObject, frameRect, marginOffset);
+}
+
 void RenderBlockFlow::removeFloatingBox(RenderBox& floatBox)
 {
     if (!m_floatingObjects)

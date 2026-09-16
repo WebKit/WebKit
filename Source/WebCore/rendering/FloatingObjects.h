@@ -165,6 +165,7 @@ public:
     void remove(FloatingObject*);
     void NODELETE addPlacedObject(FloatingObject*);
     void NODELETE removePlacedObject(FloatingObject*);
+    void place(FloatingObject&, const LayoutRect& frameRect, LayoutSize marginOffset);
     void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
 
     bool hasLeftObjects() const { return m_leftObjectsCount > 0; }

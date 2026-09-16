@@ -349,6 +349,18 @@ void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
     floatingObject->setIsPlaced(false);
 }
 
+void FloatingObjects::place(FloatingObject& floatingObject, const LayoutRect& frameRect, LayoutSize marginOffset)
+{
+    // The float may already be in m_placedFloatsTree, indexed on the rect it had then. Take it out before
+    // changing the rect, so the entry is keyed on the rect the float actually has.
+    if (floatingObject.isPlaced())
+        removePlacedObject(&floatingObject);
+
+    floatingObject.setFrameRect(frameRect);
+    floatingObject.setMarginOffset(marginOffset);
+    addPlacedObject(&floatingObject);
+}
+
 FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)
 {
     increaseObjectsCount(floatingObject->type());

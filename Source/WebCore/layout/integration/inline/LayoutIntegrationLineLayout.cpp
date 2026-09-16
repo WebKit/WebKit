@@ -767,9 +767,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                 borderBoxVisualRect.move(0_lu, -firstLineTrim);
             }
 
-            floatingObject.setFrameRect(marginBoxVisualRect);
-            floatingObject.setMarginOffset({ borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
-            floatingObject.setIsPlaced(true);
+            flow().placeFloatingBox(floatingObject, marginBoxVisualRect, { borderBoxVisualRect.x() - marginBoxVisualRect.x(), borderBoxVisualRect.y() - marginBoxVisualRect.y() });
 
             auto oldRect = renderer->borderBoxRectInContainer();
             renderer->setLocation(borderBoxVisualRect.location());

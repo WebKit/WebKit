@@ -596,8 +596,17 @@ UniqueRef<LineContent> LineBuilder::placeInlineAndFloatContent(const InlineItemR
                             isEndOfLine = true;
                         }
                     }
-                } else
+                } else {
+                    auto dropSuspendedFloatsFromRevertedContent = [&] {
+                        for (auto index = needsLayoutRange.startIndex() + result.committedCount.value; index < needsLayoutRange.startIndex() + placedInlineItemCount; ++index) {
+                            auto& inlineItem = m_inlineItemList[index];
+                            if (inlineItem.isFloat())
+                                m_suspendedFloats.removeFirst(&inlineItem.layoutBox());
+                        }
+                    };
+                    dropSuspendedFloatsFromRevertedContent();
                     placedInlineItemCount = result.committedCount.value;
+                }
 
                 if (isEndOfLine) {
                     lineContent->partialTrailingContentLength = result.partialTrailingContentLength;
