@@ -7207,6 +7207,7 @@
 		EE62BD9D2DE12C1B006C9A05 /* ResolvedScopedName.h in Headers */ = {isa = PBXBuildFile; fileRef = EE62BD9B2DE12BD4006C9A05 /* ResolvedScopedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EE6C530F2F8831FF00C7B706 /* RenderTreeOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = EE6C530D2F8830BD00C7B706 /* RenderTreeOrder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EEE349082DE0061C00A7D4BB /* StyleScopeIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = EEE349072DE005FC00A7D4BB /* StyleScopeIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EEFD8C093057F92800800C98 /* StyleCurrentAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = EEFD8C073057F8FA00800C98 /* StyleCurrentAccentColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EFCC6C8F20FE914400A2321B /* CanvasActivityRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = EFCC6C8D20FE914000A2321B /* CanvasActivityRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EFDEE0C8177A66CA2E21B69E /* SkipBack10.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = AAEC636EAA8CE308206FFC96 /* SkipBack10.svg */; platformFilters = (macos, ); };
 		F00DCAFE000000000000A003 /* StyleWhiteSpaceTrim.h in Headers */ = {isa = PBXBuildFile; fileRef = F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23441,6 +23442,8 @@
 		EE7A169E2C607AF00057B563 /* StartViewTransitionOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = StartViewTransitionOptions.idl; sourceTree = "<group>"; };
 		EE7A169F2C607BFA0057B563 /* StartViewTransitionOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartViewTransitionOptions.h; sourceTree = "<group>"; };
 		EEE349072DE005FC00A7D4BB /* StyleScopeIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleScopeIdentifier.h; sourceTree = "<group>"; };
+		EEFD8C073057F8FA00800C98 /* StyleCurrentAccentColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCurrentAccentColor.h; sourceTree = "<group>"; };
+		EEFD8C083057F8FA00800C98 /* StyleCurrentAccentColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCurrentAccentColor.cpp; sourceTree = "<group>"; };
 		EFB7287B2124C73D005C2558 /* CanvasActivityRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasActivityRecord.cpp; sourceTree = "<group>"; };
 		EFCC6C8D20FE914000A2321B /* CanvasActivityRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasActivityRecord.h; sourceTree = "<group>"; };
 		F00DCAFE000000000000A001 /* StyleWhiteSpaceTrim.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleWhiteSpaceTrim.h; sourceTree = "<group>"; };
@@ -38299,6 +38302,8 @@
 				BC394A382C765DD5001A629A /* StyleColorResolutionState.h */,
 				BCA407B52C9B2EC8006B037F /* StyleContrastColor.cpp */,
 				BCA407B42C9B2EC8006B037F /* StyleContrastColor.h */,
+				EEFD8C083057F8FA00800C98 /* StyleCurrentAccentColor.cpp */,
+				EEFD8C073057F8FA00800C98 /* StyleCurrentAccentColor.h */,
 				BCF0BCE32BEE8A6500F42CCD /* StyleCurrentColor.cpp */,
 				BCF0BCE42BEE8A6500F42CCD /* StyleCurrentColor.h */,
 				BC5C89C12D56806C000F45B7 /* StyleDynamicRangeLimit.cpp */,
@@ -50431,6 +50436,7 @@
 				1CFAE4212A4D8A140004AE37 /* WebGPUImageCopyBuffer.h in Headers */,
 				1CFAE3FC2A4D8A140004AE37 /* WebGPUImageCopyExternalImage.h in Headers */,
 				1CFAE3DF2A4D8A140004AE37 /* WebGPUImageCopyTexture.h in Headers */,
+				EEFD8C093057F92800800C98 /* StyleCurrentAccentColor.h in Headers */,
 				1CFAE3E12A4D8A140004AE37 /* WebGPUImageCopyTextureTagged.h in Headers */,
 				1CFAE4122A4D8A140004AE37 /* WebGPUImageDataLayout.h in Headers */,
 				1CFAE3CC2A4D8A140004AE37 /* WebGPUIndexFormat.h in Headers */,

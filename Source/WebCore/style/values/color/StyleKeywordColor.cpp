@@ -34,6 +34,8 @@
 #include "StyleColor.h"
 #include "StyleColorResolutionState.h"
 #include "StyleComputedStyle.h"
+#include "StyleContrastColor.h"
+#include "StyleCurrentAccentColor.h"
 #include "StyleCurrentColor.h"
 
 namespace WebCore {
@@ -52,6 +54,10 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
         return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr())) };
     case CSSValueCurrentcolor:
         return { CurrentColor() };
+    case CSSValueAccentcolor:
+        return { CurrentAccentColor() };
+    case CSSValueAccentcolortext:
+        return { ContrastColor { CurrentAccentColor() } };
     default:
         return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr())) };
     }
