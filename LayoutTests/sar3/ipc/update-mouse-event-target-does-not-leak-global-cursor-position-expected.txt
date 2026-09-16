@@ -1,0 +1,3 @@
+
+PASS UpdateMouseEventTargetAfterWindowAndViewFramesChanged is only sent when the cursor is over the view
+
