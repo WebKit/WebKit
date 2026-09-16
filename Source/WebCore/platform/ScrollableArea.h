@@ -440,8 +440,6 @@ public:
 
     WEBCORE_EXPORT virtual float adjustVerticalPageScrollStepForFixedContent(float step);
 
-    virtual bool needsAnimatedScroll() const { return false; }
-
     // Anchor positioning
     virtual void updateAnchorPositionedAfterScroll() { }
 

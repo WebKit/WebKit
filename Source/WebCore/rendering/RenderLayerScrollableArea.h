@@ -115,9 +115,7 @@ public:
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
-    
-    bool needsAnimatedScroll() const final { return m_isRegisteredForAnimatedScroll; }
-    
+
     OverscrollBehavior NODELETE horizontalOverscrollBehavior() const final;
     OverscrollBehavior NODELETE verticalOverscrollBehavior() const final;
 
