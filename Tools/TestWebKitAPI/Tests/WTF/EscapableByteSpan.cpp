@@ -27,6 +27,8 @@
 #include <wtf/EscapableByteSpan.h>
 
 #include "Helpers/Test.h"
+#include <array>
+#include <limits>
 #include <optional>
 #include <wtf/Vector.h>
 
@@ -42,6 +44,121 @@ namespace TestWebKitAPI {
 #else
 #define EXPECTED_BORROW_CRASH ""
 #endif
+
+// MARK: - ByteSpan and MutableByteSpan
+
+TEST(WTF_ByteSpan, WrapsASpan)
+{
+    std::array<uint8_t, 5> buffer { 0, 1, 2, 3, 4 };
+    auto bytes = ByteSpan::create(std::span<const uint8_t> { buffer });
+
+    EXPECT_EQ(bytes.size(), buffer.size());
+    EXPECT_EQ(bytes.span().data(), buffer.data());
+    EXPECT_EQ(bytes.span().size(), buffer.size());
+}
+
+TEST(WTF_ByteSpan, DefaultConstructedIsEmpty)
+{
+    EXPECT_EQ(ByteSpan().size(), 0u);
+    EXPECT_TRUE(ByteSpan().span().empty());
+}
+
+TEST(WTF_ByteSpan, Subspan)
+{
+    std::array<uint8_t, 6> buffer { 0, 1, 2, 3, 4, 5 };
+    auto bytes = ByteSpan::create(std::span<const uint8_t> { buffer });
+
+    EXPECT_EQ(bytes.subspan(2, 3).size(), 3u);
+    EXPECT_EQ(bytes.subspan(2, 3).span().data(), buffer.data() + 2);
+
+    // Degenerate but legal: an empty view at the very end.
+    EXPECT_EQ(bytes.subspan(6, 0).size(), 0u);
+}
+
+TEST(WTF_ByteSpanDeathTest, SubspanPastTheEndCrashes)
+{
+    auto shouldCrash = [] {
+        std::array<uint8_t, 4> buffer { };
+        ByteSpan::create(std::span<const uint8_t> { buffer }).subspan(2, 3);
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), EXPECTED_BORROW_CRASH);
+}
+
+TEST(WTF_ByteSpanDeathTest, SubspanWithWrappedOffsetCrashes)
+{
+    auto shouldCrash = [] {
+        std::array<uint8_t, 4> buffer { };
+        ByteSpan::create(std::span<const uint8_t> { buffer }).subspan(std::numeric_limits<size_t>::max(), 1);
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), EXPECTED_BORROW_CRASH);
+}
+
+TEST(WTF_MutableByteSpan, WrapsASpan)
+{
+    std::array<uint8_t, 5> buffer { 0, 1, 2, 3, 4 };
+    auto bytes = MutableByteSpan::create(std::span<uint8_t> { buffer });
+
+    EXPECT_EQ(bytes.size(), buffer.size());
+    EXPECT_EQ(bytes.span().data(), buffer.data());
+}
+
+TEST(WTF_MutableByteSpan, DefaultConstructedIsEmpty)
+{
+    EXPECT_EQ(MutableByteSpan().size(), 0u);
+    EXPECT_TRUE(MutableByteSpan().span().empty());
+}
+
+TEST(WTF_MutableByteSpan, SubspanIsWritable)
+{
+    std::array<uint8_t, 6> buffer { 0, 1, 2, 3, 4, 5 };
+    auto bytes = MutableByteSpan::create(std::span<uint8_t> { buffer });
+    auto middle = bytes.subspan(2, 3);
+
+    EXPECT_EQ(middle.size(), 3u);
+    EXPECT_EQ(middle.span().data(), buffer.data() + 2);
+
+    middle.span()[0] = 42;
+    EXPECT_EQ(buffer[2], 42);
+}
+
+TEST(WTF_MutableByteSpanDeathTest, SubspanPastTheEndCrashes)
+{
+    auto shouldCrash = [] {
+        std::array<uint8_t, 4> buffer { };
+        MutableByteSpan::create(std::span<uint8_t> { buffer }).subspan(2, 3);
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), EXPECTED_BORROW_CRASH);
+}
+
+TEST(WTF_MutableByteSpanDeathTest, SubspanWithWrappedOffsetCrashes)
+{
+    auto shouldCrash = [] {
+        std::array<uint8_t, 4> buffer { };
+        MutableByteSpan::create(std::span<uint8_t> { buffer }).subspan(std::numeric_limits<size_t>::max(), 1);
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), EXPECTED_BORROW_CRASH);
+}
+
+TEST(WTF_MutableByteSpan, CopyByteSpan)
+{
+    std::array<uint8_t, 6> destination { 0, 0, 0, 0, 0, 0 };
+    std::array<uint8_t, 3> source { 7, 8, 9 };
+
+    auto bytes = MutableByteSpan::create(std::span<uint8_t> { destination });
+    auto middle = bytes.subspan(2, 3);
+    copyByteSpan(middle, ByteSpan::create(std::span<const uint8_t> { source }));
+
+    EXPECT_EQ(destination[1], 0);
+    EXPECT_EQ(destination[2], 7);
+    EXPECT_EQ(destination[4], 9);
+    EXPECT_EQ(destination[5], 0);
+}
+
+TEST(WTF_MutableByteSpan, CopyByteSpanOfNothing)
+{
+    auto empty = MutableByteSpan();
+    copyByteSpan(empty, ByteSpan());
+}
 
 // MARK: - EscapableByteSpan
 

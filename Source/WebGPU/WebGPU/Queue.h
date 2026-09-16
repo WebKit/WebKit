@@ -29,7 +29,9 @@
 #import <CoreVideo/CVPixelBuffer.h>
 #import <Metal/Metal.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/EscapableByteSpan.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/ForbidHeapAllocation.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/SwiftBridging.h>
@@ -58,6 +60,32 @@ class TextureView;
 // Row-major and applied to linear-light values; std::nullopt when the frame's primaries already are
 // the destination's, which has to stay a no-op rather than a transfer function round trip.
 std::optional<std::array<float, 9>> primariesConversionMatrixForPixelBuffer(CVPixelBufferRef, WGPUColorSpace destination);
+
+class SWIFT_NONESCAPABLE NonEscapableMTLBuffer final {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    NonEscapableMTLBuffer() = default;
+
+    bool isValid() const { return !!m_buffer; }
+
+    // Hidden from Swift so that Swift can neither build one of these nor take the bare buffer
+    // back out of one.
+#ifndef __swift__
+    static NonEscapableMTLBuffer create(id<MTLBuffer> buffer) { return NonEscapableMTLBuffer(buffer); }
+
+    id<MTLBuffer> buffer() const { return m_buffer; }
+#endif
+
+private:
+#ifndef __swift__
+    explicit NonEscapableMTLBuffer(id<MTLBuffer> buffer)
+        : m_buffer(buffer)
+    {
+    }
+#endif
+
+    id<MTLBuffer> m_buffer { nil };
+};
 
 // https://gpuweb.github.io/gpuweb/#gpuqueue
 // A device owns its default queue, not the other way around.
@@ -114,9 +142,12 @@ public:
     void synchronizeResourceAndWait(id<MTLBuffer>);
     id<MTLIndirectCommandBuffer> trimICB(id<MTLIndirectCommandBuffer> dest, id<MTLIndirectCommandBuffer> src, NSUInteger newSize);
     id<MTLDevice> _Nullable metalDevice() const;
-    std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
+    // When noCopy, the returned buffer aliases 'data' and outlives this call. Prefer the
+    // NonEscapableMTLBuffer overload below, which models that; this one hands out a bare pointer.
+    SWIFT_UNSAFE std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
+    NonEscapableMTLBuffer newTemporaryBufferWithBytes(const WTF::MutableByteSpan& data LIFETIME_BOUND, bool noCopy, uint64_t& outOffset);
     void stageBufferWrite(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
-    void encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer>, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy);
+    void encodeStagedCopy(const NonEscapableMTLBuffer& temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer>, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy);
 
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);

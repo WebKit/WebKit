@@ -33,10 +33,13 @@
 #import <WebGPU/WebGPU.h>
 #import <WebGPU/WebGPUExt.h>
 #import <utility>
+#import <wtf/Borrow.h>
 #import <wtf/CanBorrow.h>
 #import <wtf/Compiler.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/EscapableByteSpan.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/ForbidHeapAllocation.h>
 #import <wtf/HashMap.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
@@ -179,6 +182,34 @@ private:
 #endif
     HashMap<uint64_t, bool, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_didReadOOB;
 } SWIFT_SHARED_REFERENCE(refBuffer, derefBuffer) SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+
+// A borrow of a Buffer, and the receiver for the Swift half of Buffer's implementation.
+//
+// FIXME: rdar://161274084 Replace all of this with a LIFETIME_BOUND accessor on Buffer
+// once the C++ importer infers lifetime dependencies from LIFETIME_BOUND on an FRT.
+class SWIFT_NONESCAPABLE SWIFT_PRIVATE_FILEID("WebGPU/Buffer.swift") BufferBorrow final {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    // Typical usage:
+    //     someSwiftFunction(BufferBorrow::create(borrow(*this)), ...);
+    static BufferBorrow create(const Borrow<Buffer>& borrow LIFETIME_BOUND);
+    WTF::MutableByteSpan bytes() const LIFETIME_BOUND;
+
+private:
+    Buffer& buffer() const { return m_buffer; }
+
+    // Hidden from Swift so that a Swift file granted private access by SWIFT_PRIVATE_FILEID
+    // still cannot forge a BufferBorrow that no Borrow<Buffer> stands behind.
+#ifndef __swift__
+    explicit BufferBorrow(Buffer& buffer LIFETIME_BOUND)
+        : m_buffer(buffer)
+    {
+    }
+#endif
+
+    SUPPRESS_UNCOUNTED_MEMBER Buffer& m_buffer;
+};
 
 } // namespace WebGPU
 
