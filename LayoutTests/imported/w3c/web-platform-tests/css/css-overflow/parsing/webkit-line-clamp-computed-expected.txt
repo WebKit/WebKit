@@ -1,0 +1,7 @@
+
+PASS Property -webkit-line-clamp value 'none'
+PASS Property -webkit-line-clamp value '1'
+FAIL Property -webkit-line-clamp serializes to empty when longhand continue is not -webkit-legacy assert_equals: expected "" but got "1"
+FAIL Property -webkit-line-clamp serializes to empty when longhand block-ellipsis is not ellipsis assert_equals: expected "" but got "1"
+PASS Property -webkit-line-clamp serializes to empty when longhand max-lines is not an integer
+

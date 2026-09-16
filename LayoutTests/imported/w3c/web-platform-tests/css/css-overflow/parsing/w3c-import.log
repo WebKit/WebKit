@@ -46,5 +46,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/text-overflow-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-box-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-line-clamp-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-line-clamp-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/parsing/webkit-line-clamp-valid.html

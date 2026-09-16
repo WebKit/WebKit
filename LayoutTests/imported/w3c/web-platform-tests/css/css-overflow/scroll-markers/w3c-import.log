@@ -14,6 +14,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/chrome-421199213-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/chrome-555280390-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/column-scroll-marker-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/column-scroll-marker-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/column-scroll-marker-001.html
@@ -173,6 +174,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-activation-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-activation-specified-direction-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-active-unreached-target.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-click-remove-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-003.html

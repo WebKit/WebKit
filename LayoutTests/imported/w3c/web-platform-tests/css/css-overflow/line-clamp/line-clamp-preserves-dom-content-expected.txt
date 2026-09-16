@@ -1,0 +1,5 @@
+Visible line.
+
+PASS line-clamp preserves the complete textContent
+PASS line-clamp preserves elements beyond the clamp boundary
+

@@ -1,0 +1,6 @@
+Visible text.
+Clipped text.
+
+PASS overflow: clip preserves the complete textContent
+PASS overflow: clip preserves elements beyond the clip boundary
+

@@ -4179,6 +4179,24 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-canvas.html [ ImageOnl
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-border-radius-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-border-radius.html [ ImageOnlyFailure ]
 
+# Tests that failed on the 2026-09-16 import of css-overflow
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-in-textarea.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-after-blur.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-dynamic-text-overflow.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-dynamic-value.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-dynamic-width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-field-sizing-content.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-multiline.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-overflow/text-overflow-string-in-textarea-scrolled-back.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-048.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-058.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-059.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-060.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-061.html [ ImageOnlyFailure ]
+webkit.org/b/206748 imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-auto-062.html [ ImageOnlyFailure ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-touch.html [ Skip ]
+webkit.org/b/324326 imported/w3c/web-platform-tests/css/css-overflow/scroll-axis-lock-none-wheel.html  [ Skip ]
+
 # Tests that failed on the 2026-02-02 import of css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/clip-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/column-style-change-triggers-relayout.html [ ImageOnlyFailure ]
