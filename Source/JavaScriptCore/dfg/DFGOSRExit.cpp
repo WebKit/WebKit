@@ -383,9 +383,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
             shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseDFGOSRExit(),
             patchBuffer, OSRExitPtrTag, nullptr,
             "DFG OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
-                exitIndex, exit.m_dfgNodeIndex, toUTF8CString(exit.m_codeOrigin).legacyCStringPointer(),
-                toUTF8CString(exit.m_kind).legacyCStringPointer(), toUTF8CString(*codeBlock).legacyCStringPointer(),
-                toUTF8CString(ignoringContext<DumpContext>(operands)).legacyCStringPointer());
+                exitIndex, exit.m_dfgNodeIndex, toUTF8CString(exit.m_codeOrigin),
+                toUTF8CString(exit.m_kind), toUTF8CString(*codeBlock),
+                toUTF8CString(ignoringContext<DumpContext>(operands)));
         codeBlock->dfgJITData()->appendExitStub(exitIndex, exitCode);
     }
 

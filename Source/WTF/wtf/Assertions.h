@@ -562,7 +562,7 @@ namespace WTF {
 // https://gist.github.com/sehe/3374327
 template<std::integral T> inline T safePrintfType(T arg) { return arg; }
 template<std::floating_point T> inline T safePrintfType(T arg) { return arg; }
-template<typename T> requires (std::is_pointer_v<T>) inline T NODELETE safePrintfType(T arg)
+template<typename T> requires (std::is_pointer_v<T>) inline T CLANG_POINTER_CONVERSION safePrintfType(T arg)
 {
     static_assert(!std::same_as<std::remove_cv_t<std::remove_pointer_t<T>>, char>, "char* is not bounds safe; please use a null terminated string type");
     return arg;
@@ -581,10 +581,16 @@ template<typename T> requires (std::is_pointer_v<T>) inline T NODELETE safePrint
 //
 // Scalars are taken by value rather than forwarded because the argument can be a bit-field or a
 // SIMD vector element, neither of which a reference can bind to.
+//
+// The overloads that hand a pointer straight back are annotated CLANG_POINTER_CONVERSION rather than
+// NODELETE so that the static analyzer traces an argument back to its origin through them. NODELETE
+// only tells it the call is harmless, which leaves a CF or NS pointer the call site had already made
+// safe, as in someFormatMacro("%@", string.createCFString().get()), looking like it originates from
+// the conversion call once the macro wraps it, and so reported as unretained.
 template<typename T> concept LogPrintfConvertibleType = !std::is_scalar_v<std::decay_t<T>>
     && requires (T&& argument) { safePrintfType(std::forward<T>(argument)); };
 
-template<typename T> requires (std::is_scalar_v<T>) inline T NODELETE logPrintfType(T argument) { return argument; }
+template<typename T> requires (std::is_scalar_v<T>) inline T CLANG_POINTER_CONVERSION logPrintfType(T argument) { return argument; }
 template<LogPrintfConvertibleType T> inline decltype(auto) NODELETE logPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
 template<typename T> requires (!std::is_scalar_v<std::decay_t<T>> && !LogPrintfConvertibleType<T>)
 inline T NODELETE logPrintfType(T argument) { return argument; }
@@ -612,9 +618,9 @@ inline T NODELETE logPrintfType(T argument) { return argument; }
 #if ASSERT_MSG_DISABLED
 #define ASSERT_WITH_MESSAGE(assertion, ...) ((void)0)
 #else
-#define ASSERT_WITH_MESSAGE(assertion, ...) do { \
+#define ASSERT_WITH_MESSAGE(assertion, format, ...) do { \
     if (UNLIKELY_FOR_C_ASSERTIONS(!(assertion))) { \
-        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
         BACKTRACE(); \
         CRASH(); \
     } \
@@ -631,9 +637,9 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #if ASSERT_MSG_DISABLED
 #define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) ((void)variable)
 #else
-#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, ...) do { \
+#define ASSERT_WITH_MESSAGE_UNUSED(variable, assertion, format, ...) do { \
     if (UNLIKELY_FOR_C_ASSERTIONS(!(assertion))) { \
-        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, __VA_ARGS__); \
+        WTFReportAssertionFailureWithMessage(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion, format WTF_LOG_PRINTF_ARGS(__VA_ARGS__)); \
         BACKTRACE(); \
         CRASH(); \
     } \

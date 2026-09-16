@@ -33,11 +33,11 @@
 #include <wtf/text/WTFString.h>
 
 #define TEXT_MARKER_ASSERT(assertion) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(origin()).utf8().legacyCStringPointer())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(origin()).utf8())
 #define TEXT_MARKER_ASSERT_SINGLE(assertion, marker) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(marker.origin()).utf8().legacyCStringPointer())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origin: %s", originToString(marker.origin()).utf8())
 #define TEXT_MARKER_ASSERT_DOUBLE(assertion, marker1, marker2) \
-    ASSERT_WITH_MESSAGE(assertion, "Text marker origins: %s, %s", originToString(marker1.origin()).utf8().legacyCStringPointer(), originToString(marker2.origin()).utf8().legacyCStringPointer())
+    ASSERT_WITH_MESSAGE(assertion, "Text marker origins: %s, %s", originToString(marker1.origin()).utf8(), originToString(marker2.origin()).utf8())
 
 namespace WebCore {
 

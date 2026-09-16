@@ -95,14 +95,14 @@ std::expected<Ref<API::Data>, RefPtr<API::Error>> WebExtension::resourceDataForP
     auto resourceURL = resourceFileURLForPath(path);
     if (resourceURL.isEmpty()) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", path.utf8().legacyCStringPointer())));
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources. It is an invalid path.", "WKWebExtensionErrorResourceNotFound description with invalid file path", path.utf8())));
         return makeUnexpected(nullptr);
     }
 
     auto rawData = FileSystem::readEntireFile(resourceURL.fileSystemPath());
     if (!rawData.has_value()) {
         if (suppressErrors == SuppressNotFoundErrors::No)
-            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", path.utf8().legacyCStringPointer())));
+            return makeUnexpected(createError(Error::ResourceNotFound, WEB_UI_FORMAT_STRING("Unable to find “%s” in the extension’s resources.", "WKWebExtensionErrorResourceNotFound description with file name", path.utf8())));
         return makeUnexpected(nullptr);
     }
 

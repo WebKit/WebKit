@@ -28,6 +28,7 @@
 #define LocalizedStrings_h
 
 #include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CFString.h>
@@ -492,15 +493,15 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(COCOA)
-#define WEB_UI_FORMAT_CFSTRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), __VA_ARGS__)
-#define WEB_UI_FORMAT_CFSTRING_KEY(string, key, description, ...) WebCore::formatLocalizedString(CFSTR(key), __VA_ARGS__)
-#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), __VA_ARGS__)
+#define WEB_UI_FORMAT_CFSTRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), LOG_PRINTF_TYPE(__VA_ARGS__))
+#define WEB_UI_FORMAT_CFSTRING_KEY(string, key, description, ...) WebCore::formatLocalizedString(CFSTR(key), LOG_PRINTF_TYPE(__VA_ARGS__))
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(CFSTR(string), LOG_PRINTF_TYPE(__VA_ARGS__))
 #elif PLATFORM(WIN)
-#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(L##string, __VA_ARGS__)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(L##string, LOG_PRINTF_TYPE(__VA_ARGS__))
 #elif USE(GLIB) && defined(GETTEXT_PACKAGE)
-#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(_(string), __VA_ARGS__)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(_(string), LOG_PRINTF_TYPE(__VA_ARGS__))
 #else
-#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(string, __VA_ARGS__)
+#define WEB_UI_FORMAT_STRING(string, description, ...) WebCore::formatLocalizedString(string, LOG_PRINTF_TYPE(__VA_ARGS__))
 #endif
 
 #if PLATFORM(COCOA)

@@ -1278,7 +1278,7 @@ template<typename T> concept ObjectiveCObjectPointer = std::convertible_to<T, id
 template<typename T> concept ObjectiveCObjectPointer = false;
 #endif
 
-template<ObjectiveCObjectPointer T> inline T NODELETE safeNSStringPrintfType(T argument) { return argument; }
+template<ObjectiveCObjectPointer T> inline T CLANG_POINTER_CONVERSION safeNSStringPrintfType(T argument) { return argument; }
 template<typename T> requires (!ObjectiveCObjectPointer<std::decay_t<T>>)
 inline decltype(auto) NODELETE safeNSStringPrintfType(T&& argument) { return safePrintfType(std::forward<T>(argument)); }
 

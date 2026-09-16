@@ -652,9 +652,9 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
         shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(),
         patchBuffer, OSRExitPtrTag, nullptr,
         "FTL OSR exit #%u (D@%u, %s, %s) from %s, with operands = %s",
-            exitID, exit.m_dfgNodeIndex, toUTF8CString(exit.m_codeOrigin).legacyCStringPointer(),
-            toUTF8CString(exit.m_kind).legacyCStringPointer(), toUTF8CString(*codeBlock).legacyCStringPointer(),
-            toUTF8CString(ignoringContext<DumpContext>(exitValues)).legacyCStringPointer()
+            exitID, exit.m_dfgNodeIndex, toUTF8CString(exit.m_codeOrigin),
+            toUTF8CString(exit.m_kind), toUTF8CString(*codeBlock),
+            toUTF8CString(ignoringContext<DumpContext>(exitValues))
         );
 }
 

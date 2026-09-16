@@ -157,7 +157,7 @@ bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated ex
             break;
     } while (true);
 
-    NSLog(@"Expected state %s, but after 10 seconds state is %s", wkMediaCaptureStateString(expectedState).utf8().legacyCStringPointer(), wkMediaCaptureStateString(state).utf8().legacyCStringPointer());
+    SAFE_WTFLOGALWAYS("Expected state %s, but after 10 seconds state is %s", wkMediaCaptureStateString(expectedState).utf8(), wkMediaCaptureStateString(state).utf8());
     return false;
 }
 

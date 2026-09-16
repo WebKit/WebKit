@@ -85,7 +85,6 @@ jit/JITWorklist.cpp
 jit/JITWorklistInlines.h
 jit/JITWorklistThread.cpp
 jit/PolymorphicCallStubRoutine.cpp
-llint/LLIntSlowPaths.cpp
 parser/Lexer.cpp
 parser/Parser.cpp
 parser/Parser.h

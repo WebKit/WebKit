@@ -242,7 +242,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     jit.ret();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::FTLThunk);
-    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "FTL slow path call thunk for %s", toUTF8CString(key).legacyCStringPointer());
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, nullptr, "FTL slow path call thunk for %s", toUTF8CString(key));
 }
 
 } } // namespace JSC::FTL

@@ -666,7 +666,7 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
             requestData->sawAuthorizationHeader = true;
 
         auto path = parsePath(request);
-        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8().legacyCStringPointer());
+        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8());
 
         auto response = requestData->requestMap.get(path);
         if (response.shouldRespondWith304ToConditionalRequests) {
@@ -708,7 +708,7 @@ void HTTPServer::respondToHTTPMessagingRequests(Connection connection, Ref<Reque
         if (!request.headerFields.get("authorization"_s).isEmpty())
             requestData->sawAuthorizationHeader = true;
 
-        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(request.path), "This HTTPServer does not know how to respond to a request for %s", request.path.utf8().legacyCStringPointer());
+        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(request.path), "This HTTPServer does not know how to respond to a request for %s", request.path.utf8());
 
         auto response = requestData->requestMap.get(request.path);
         if (response.shouldRespondWith304ToConditionalRequests) {

@@ -49,7 +49,7 @@ String humanReadableStringFromCodecString(const String& codecString)
         uint8_t levelMajor = parameters->level / 10;
         uint8_t levelMinor = parameters->level % 10;
         auto levelString = levelMinor ? WEB_UI_FORMAT_STRING("%d.%d", "Codec Level (Codec Strings)", levelMajor, levelMinor) : String::number(levelMajor);
-        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, levelString.utf8().legacyCStringPointer()), ')');
+        builder.append(WEB_UI_FORMAT_STRING("Profile %d, Level %s", "VP8/9 Codec Level & Profile (Codec Strings)", parameters->profile, levelString.utf8()), ')');
 
         return builder.toString();
     }

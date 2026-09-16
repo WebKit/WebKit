@@ -188,7 +188,7 @@ void SpeculativeJIT::compile()
 
     disassemble(linkBuffer);
 
-    auto codeRef = FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toUTF8CString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).legacyCStringPointer());
+    auto codeRef = FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toUTF8CString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)));
     m_jitCode->initializeCodeRefForDFG(codeRef, codeRef.code());
     m_jitCode->variableEventStream = finalizeEventStream();
 
@@ -297,7 +297,7 @@ void SpeculativeJIT::compileFunction()
     CodePtr<JSEntryPtrTag> withArityCheck = linkBuffer.locationOf<JSEntryPtrTag>(arityCheck);
 
     m_jitCode->initializeCodeRefForDFG(
-        FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toUTF8CString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT)).legacyCStringPointer()),
+        FINALIZE_DFG_CODE(linkBuffer, JSEntryPtrTag, "DFG JIT code for %s", toUTF8CString(CodeBlockWithJITType(m_codeBlock, JITType::DFGJIT))),
         withArityCheck);
     m_jitCode->variableEventStream = finalizeEventStream();
 
