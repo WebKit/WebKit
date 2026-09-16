@@ -557,6 +557,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpCreateGenerator)
 
         LINK(OpJneqPtr)
+        LINK(OpIteratorCloseCheck)
 
         LINK(OpCatch)
         LINK(OpProfileControlFlow)

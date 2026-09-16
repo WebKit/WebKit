@@ -1418,12 +1418,16 @@ macro skipIfIsRememberedOrInEden(cell, slowPath)
 .done:
 end
 
+macro branchIfInlineWatchpointSetIsStillValid(setData, scratch, stillValid)
+    loadp setData, scratch
+    bpeq scratch, InlineWatchpointSetThinInvalidated, .invalidated
+    btpnz scratch, InlineWatchpointSetThinFlag, stillValid
+    bbneq WatchpointSet::m_state[scratch], IsInvalidated, stillValid
+.invalidated:
+end
+
 macro notifyWrite(set, scratch, slow)
-    loadp InlineWatchpointSet::m_data[set], scratch
-    bpeq scratch, InlineWatchpointSetThinInvalidated, .done
-    btpnz scratch, InlineWatchpointSetThinFlag, slow
-    bbneq WatchpointSet::m_state[scratch], IsInvalidated, slow
-.done:
+    branchIfInlineWatchpointSetIsStillValid(InlineWatchpointSet::m_data[set], scratch, slow)
 end
 
 macro varReadOnlyCheck(slowPath, scratch)
