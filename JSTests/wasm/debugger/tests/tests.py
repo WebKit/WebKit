@@ -1471,6 +1471,16 @@ class MultiInstanceGlobalTestCase:
         self.session.cmd("process plugin packet send qWasmGlobal:0;instance:7;", patterns=["response: E05"])
 
 
+class BreakpointNonInstructionBoundaryTestCase:
+    test_file = "resources/wasm/multi-instance-same-module.js"
+    extra_jsc_options = ["--useDollarVM=1"]
+
+    def execute(self):
+        self.session.cmd("process plugin packet send Z0,4000000000000025,1", patterns=["response: E02"])
+        self.session.cmd("process plugin packet send Z0,4000000000000024,1", patterns=["response: OK"])
+        self.session.cmd("process plugin packet send z0,4000000000000024,1", patterns=["response: OK"])
+
+
 class DoCatchThrowTestCase:
     test_file = "resources/swift-wasm/do-catch-throw/main.js"
 
@@ -2343,6 +2353,7 @@ ALL_TESTS = [
     ThreadStopInfoUnknownThreadTestCase,
     MalformedMemoryPacketTestCase,
     MultiInstanceGlobalTestCase,
+    BreakpointNonInstructionBoundaryTestCase,
     DoCatchThrowTestCase,
     WasmWasmWasmCallStackTestCase,
     JsWasmJsWasmCallStackTestCase,
