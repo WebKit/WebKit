@@ -52,7 +52,9 @@ CalcSizeValue::CalcSizeValue(Basis&& basis, Calculation::Tree&& calculation, boo
 
 CalcSizeValue::~CalcSizeValue() = default;
 
-CSSValueID CalcSizeValue::basisKeyword() const
+// FIXME: SUPPRESS_NODELETE shouldn't be necessary. Visiting the basis destructs nothing, the checker
+// just cannot see through switchOn().
+SUPPRESS_NODELETE CSSValueID CalcSizeValue::basisKeyword() const
 {
     return WTF::switchOn(m_basis,
         // `any` states that the value does not depend on a basis, so it behaves as a length rather

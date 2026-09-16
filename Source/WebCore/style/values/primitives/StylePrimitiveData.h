@@ -84,7 +84,7 @@ struct PrimitiveData {
 
     float value() const { ASSERT(!usesHandle()); return m_floatValue; }
     Calculation::Value& calculationValue() const;
-    CalcSizeValue& calcSizeValue() const;
+    CalcSizeValue& NODELETE calcSizeValue() const;
 
     bool isKnownZero(PrimitiveDataEvaluationKind) const;
     bool isKnownPositive(PrimitiveDataEvaluationKind) const;

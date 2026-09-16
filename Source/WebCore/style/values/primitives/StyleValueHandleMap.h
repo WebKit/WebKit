@@ -45,7 +45,7 @@ public:
     void ref(unsigned handle);
     void deref(unsigned handle);
 
-    ValueType& get(unsigned handle) const;
+    ValueType& NODELETE get(unsigned handle) const;
 
 private:
     friend NeverDestroyed<ValueHandleMap>;
@@ -80,11 +80,12 @@ template<typename ValueType> unsigned ValueHandleMap<ValueType>::insert(Ref<Valu
     return m_nextAvailableHandle++;
 }
 
-template<typename ValueType> ValueType& ValueHandleMap<ValueType>::get(unsigned handle) const
+template<typename ValueType> ValueType& NODELETE ValueHandleMap<ValueType>::get(unsigned handle) const
 {
-    ASSERT(m_map.contains(handle));
+    auto entry = m_map.find(handle);
+    ASSERT(entry != m_map.end());
 
-    return *m_map.find(handle)->value.value;
+    return *entry->value.value;
 }
 
 template<typename ValueType> void ValueHandleMap<ValueType>::ref(unsigned handle)
