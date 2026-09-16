@@ -1281,7 +1281,6 @@ webkit.org/b/323612 imported/w3c/web-platform-tests/css/css-counter-styles/count
 webkit.org/b/323611 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-overflow-icb-004-rtl.html [ ImageOnlyFailure Pass ]
 webkit.org/b/323611 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-overflow-icb-006-rtl.html [ ImageOnlyFailure Pass ]
 webkit.org/b/323611 imported/w3c/web-platform-tests/css/css-anchor-position/position-area-overflow-icb-008-rtl.html [ ImageOnlyFailure Pass ]
-webkit.org/b/323666 [ Release ] imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Crash Pass ]
 webkit.org/b/323778 [ Debug ] media/media-source/media-source-addsourcebuffer-after-canplaytype.html [ Crash Pass ]
 
 webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/held.https.any.sharedworker.html [ Failure Pass ]
