@@ -503,6 +503,24 @@ bool GetCompressionFixedRate(VkImageCompressionControlEXT *compressionInfo,
 
     return rtn;
 }
+
+vk::ImageFormatReinterpretability DecideFormatReinterpretability(VkImageCreateFlags createFlags,
+                                                                 VkImageUsageFlags usageFlags)
+{
+    // If the STORAGE usage is specified, require full format reinterpretability.  This is only
+    // possible if the MUTABLE create flag is specified.  Otherwise, if only the MUTABLE create flag
+    // is specified, the colorspace can be overriden.  Without it, the format cannot be
+    // reinterpreted.
+    if ((createFlags & VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT) == 0)
+    {
+        return vk::ImageFormatReinterpretability::None;
+    }
+    if ((usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) == 0)
+    {
+        return vk::ImageFormatReinterpretability::ColorspaceOverrides;
+    }
+    return vk::ImageFormatReinterpretability::Full;
+}
 }  // anonymous namespace
 
 // TextureVk implementation.
@@ -2291,11 +2309,7 @@ angle::Result TextureVk::setStorageExternalMemory(const gl::Context *context,
     createFlags &= vk::GetMinimalImageCreateFlags(renderer, type, usageFlags) |
                    VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 
-    // Require full format reinterpretability for textures backed by external memory objects
-    // with storage usage
-    mFormatReinterpretability = ((usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) == 0)
-                                    ? vk::ImageFormatReinterpretability::ColorspaceOverrides
-                                    : vk::ImageFormatReinterpretability::Full;
+    mFormatReinterpretability = DecideFormatReinterpretability(createFlags, usageFlags);
     ANGLE_TRY(memoryObjectVk->createImage(contextVk, type, levels, internalFormat, size, offset,
                                           mImage, createFlags, usageFlags,
                                           mFormatReinterpretability, imageCreateInfoPNext));
@@ -2562,11 +2576,16 @@ void TextureVk::setImageHelper(ContextVk *contextVk,
     mPreviousEGLImageIndex = {};
 
     mOwnsImage          = selfOwned;
-    // If image is shared between other container objects, force it to renderable format since we
-    // don't know if other container object will render or not.
-    if (!mOwnsImage && !imageHelper->isBackedByExternalMemory())
+    if (!mOwnsImage)
     {
-        mRequiredFormatSupport = vk::ImageFormatSupport::Renderable;
+        // If image is shared between other container objects, force it to renderable format since
+        // we don't know if other container object will render or not.
+        if (!imageHelper->isBackedByExternalMemory())
+        {
+            mRequiredFormatSupport = vk::ImageFormatSupport::Renderable;
+        }
+        mFormatReinterpretability =
+            DecideFormatReinterpretability(imageHelper->getCreateFlags(), imageHelper->getUsage());
     }
     mImage               = imageHelper;
 
@@ -3776,14 +3795,6 @@ angle::Result TextureVk::respecifyImageStorageIfNecessary(ContextVk *contextVk, 
         mFormatReinterpretability = vk::ImageFormatReinterpretability::Full;
     }
 
-    // If we're handling dirty srgb decode/override state, we may have to reallocate the image with
-    // VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT. Vulkan requires this bit to be set in order to use
-    // imageviews with a format that does not match the texture's internal format.
-    if (isSRGBOverrideEnabled())
-    {
-        mImageCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
-    }
-
     // Create a new image if used as attachment for the first time. This must be called before
     // prepareForGenerateMipmap since this changes the format which prepareForGenerateMipmap relies
     // on.
@@ -4043,11 +4054,6 @@ angle::Result TextureVk::syncState(const gl::Context *context,
             mState.getBaseLevelDesc().format.info->sizedInternalFormat));
         mImageView.updateSrgbDecode(imageFormat, srgbDecode);
         mImageView.updateSrgbOverride(imageFormat, mState.getSRGBOverride());
-
-        if (!renderer->getFeatures().supportsImageFormatList.enabled)
-        {
-            refreshAllImageViews = true;
-        }
     }
 
     // Initialize the image storage and flush the pixel buffer.
@@ -4507,10 +4513,11 @@ angle::Result TextureVk::initReadImageViews(ContextVk *contextVk, uint32_t level
     gl::SwizzleState formatSwizzle      = GetFormatSwizzle(intendedFormat, sized);
     gl::SwizzleState readSwizzle        = ApplySwizzle(formatSwizzle, mState.getSwizzleState());
 
-    // Use this as a proxy for the SRGB override & skip decode settings.
+    // Only attempt to create sRGB views if the intended format supports it.  For example, an RGBA4
+    // texture should ignore sRGB override even if it's implemented as RGBA8.
     bool createExtraSRGBViews =
-        (mImageCreateFlags & VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT) != 0 &&
-        mFormatReinterpretability != vk::ImageFormatReinterpretability::None;
+        mFormatReinterpretability != vk::ImageFormatReinterpretability::None &&
+        IsOverridableLinearOrSRGBFormat(mImage->getIntendedFormatID());
 
     GLenum astcDecodePrecision = GL_NONE;
     vk::Renderer *renderer     = contextVk->getRenderer();
@@ -4982,21 +4989,6 @@ angle::Result TextureVk::refreshImageViews(ContextVk *contextVk)
     onStateChange(angle::SubjectMessage::SubjectChanged);
 
     return angle::Result::Continue;
-}
-
-angle::Result TextureVk::ensureMutable(ContextVk *contextVk)
-{
-    if ((mImageCreateFlags & VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT) != 0)
-    {
-        return angle::Result::Continue;
-    }
-
-    mImageCreateFlags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
-
-    ANGLE_TRY(respecifyImageStorage(contextVk));
-    ANGLE_TRY(ensureImageInitialized(contextVk, ImageMipLevels::EnabledLevels));
-
-    return refreshImageViews(contextVk);
 }
 
 angle::Result TextureVk::ensureRenderable(ContextVk *contextVk,

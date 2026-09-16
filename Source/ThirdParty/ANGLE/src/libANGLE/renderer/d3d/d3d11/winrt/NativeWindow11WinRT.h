@@ -35,7 +35,7 @@ class NativeWindow11WinRT : public NativeWindow11
                             UINT width,
                             UINT height,
                             UINT samples,
-                            IDXGISwapChain **swapChain) override;
+                            angle::ComPtr<IDXGISwapChain> *swapChain) override;
 
     void commitChange() override;
 

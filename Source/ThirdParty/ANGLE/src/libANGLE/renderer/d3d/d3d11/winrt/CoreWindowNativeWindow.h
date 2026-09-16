@@ -36,7 +36,7 @@ class CoreWindowNativeWindow : public InspectableNativeWindow,
                             unsigned int width,
                             unsigned int height,
                             bool containsAlpha,
-                            IDXGISwapChain1 **swapChain) override;
+                            ComPtr<IDXGISwapChain1> *swapChain) override;
 
   protected:
     HRESULT scaleSwapChain(const Size &windowSize, const RECT &clientRect) override;

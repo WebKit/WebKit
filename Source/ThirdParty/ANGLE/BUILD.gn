@@ -625,12 +625,18 @@ angle_common_lib("angle_common_shader_state") {
   sources = libangle_common_shader_state_sources
 }
 
+angle_source_set("angle_frame_capture_shared") {
+  sources = [
+    "src/common/frame_capture_shared.cpp",
+    "src/common/frame_capture_shared.h",
+  ]
+  deps = [ ":angle_common" ]
+}
+
 angle_source_set("angle_capture_common") {
   sources = [
     "src/common/frame_capture_binary_data.cpp",
     "src/common/frame_capture_binary_data.h",
-    "src/common/frame_capture_shared.cpp",
-    "src/common/frame_capture_shared.h",
     "src/common/frame_capture_utils.cpp",
     "src/common/frame_capture_utils.h",
     "src/common/frame_capture_utils_autogen.cpp",
@@ -643,7 +649,10 @@ angle_source_set("angle_capture_common") {
     ":angle_common",
     ":angle_compression",
   ]
-  public_deps = [ ":angle_gl_enum_utils" ]
+  public_deps = [
+    ":angle_frame_capture_shared",
+    ":angle_gl_enum_utils",
+  ]
 }
 
 config("angle_image_util_config") {

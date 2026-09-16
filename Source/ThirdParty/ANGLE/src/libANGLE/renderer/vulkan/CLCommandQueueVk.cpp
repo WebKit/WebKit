@@ -1584,16 +1584,9 @@ angle::Result CLCommandQueueVk::enqueueReleaseExternalMemObjectsKHR(
 
 angle::Result CLCommandQueueVk::addMemoryDependencies(const CLKernelArgument *arg)
 {
-    if (IsCLKernelArgumentReadonly(*arg))
-    {
-        return addMemoryDependencies(GetCLKernelArgumentMemoryHandle(*arg),
-                                     MemoryHandleAccess::ReadOnly);
-    }
-    else
-    {
-        return addMemoryDependencies(GetCLKernelArgumentMemoryHandle(*arg),
-                                     MemoryHandleAccess::Writeable);
-    }
+    return addMemoryDependencies(arg->getMemoryHandle(), arg->isReadOnly()
+                                                             ? MemoryHandleAccess::ReadOnly
+                                                             : MemoryHandleAccess::Writeable);
 }
 
 angle::Result CLCommandQueueVk::addMemoryDependencies(cl::Memory *clMem, MemoryHandleAccess access)
@@ -1727,17 +1720,24 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
         updateDescriptorSetsBuilders[DescriptorSetIndex::KernelArguments];
     for (size_t index = 0; index < args.size(); index++)
     {
-        const auto &arg = args.at(index);
-        switch (arg.type)
+        const auto arg = args.at(index);
+        switch (arg->getReflectionType())
         {
             case NonSemanticClspvReflectionArgumentUniform:
             case NonSemanticClspvReflectionArgumentStorageBuffer:
             {
-                cl::Memory *clMem = GetCLKernelArgumentMemoryHandle(arg);
+                if (arg->getMemoryHandle() == nullptr)
+                {
+                    // The spec mentiones that for buffer object, the arg_value can be NULL or point
+                    // to a NULL value. We just ignore the arg in such cases.
+                    WARN() << "Null arg detected in an incompatible VK resource type!";
+                    break;
+                }
+                cl::Memory *clMem = arg->getMemoryHandle();
                 ASSERT(clMem);
                 CLBufferVk &vkMem = clMem->getImpl<CLBufferVk>();
 
-                ANGLE_TRY(addMemoryDependencies(&arg));
+                ANGLE_TRY(addMemoryDependencies(arg.get()));
 
                 // Update buffer/descriptor info
                 VkDescriptorBufferInfo &bufferInfo =
@@ -1749,14 +1749,14 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                     kernelArgDescSetBuilder.allocWriteDescriptorSet();
                 writeDescriptorSet.descriptorCount = 1;
                 writeDescriptorSet.descriptorType =
-                    arg.type == NonSemanticClspvReflectionArgumentUniform
+                    arg->getReflectionType() == NonSemanticClspvReflectionArgumentUniform
                         ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
                         : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
                 writeDescriptorSet.pBufferInfo = &bufferInfo;
                 writeDescriptorSet.sType       = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSet.dstSet =
                     kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
-                writeDescriptorSet.dstBinding = arg.descriptorBinding;
+                writeDescriptorSet.dstBinding = arg->getDescriptorBinding();
                 break;
             }
             case NonSemanticClspvReflectionArgumentPodPushConstant:
@@ -1765,9 +1765,10 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
 
                 // Spec requires the size and offset to be multiple of 4, round up for size and
                 // round down for offset to ensure this
-                uint32_t offset = roundDownPow2(arg.pushConstOffset, 4u);
+                uint32_t offset = roundDownPow2(arg->getPushConstantOffset(), 4u);
                 uint32_t size =
-                    roundUpPow2(arg.pushConstOffset + arg.pushConstantSize, 4u) - offset;
+                    roundUpPow2(arg->getPushConstantOffset() + arg->getPushConstantSize(), 4u) -
+                    offset;
                 ASSERT(offset + size <= kernelVk.getPodArgumentPushConstantsData().size());
                 mComputePassCommands->getCommandBuffer().pushConstants(
                     kernelVk.getPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, offset, size,
@@ -1781,8 +1782,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
             }
             case NonSemanticClspvReflectionArgumentSampler:
             {
-                cl::Sampler *clSampler =
-                    cl::Sampler::Cast(*static_cast<const cl_sampler *>(arg.handle));
+                cl::Sampler *clSampler = arg->getSamplerHandle();
                 CLSamplerVk &vkSampler = clSampler->getImpl<CLSamplerVk>();
                 VkDescriptorImageInfo &samplerInfo =
                     kernelArgDescSetBuilder.allocDescriptorImageInfo();
@@ -1795,7 +1795,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                 writeDescriptorSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSet.dstSet =
                     kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
-                writeDescriptorSet.dstBinding = arg.descriptorBinding;
+                writeDescriptorSet.dstBinding = arg->getDescriptorBinding();
 
                 const VkPushConstantRange *samplerMaskRange =
                     devProgramData->getNormalizedSamplerMaskRange(index);
@@ -1817,11 +1817,11 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
             case NonSemanticClspvReflectionArgumentStorageImage:
             case NonSemanticClspvReflectionArgumentSampledImage:
             {
-                cl::Memory *clMem = GetCLKernelArgumentMemoryHandle(arg);
+                cl::Memory *clMem = arg->getMemoryHandle();
                 ASSERT(clMem);
                 CLImageVk &vkMem = clMem->getImpl<CLImageVk>();
 
-                ANGLE_TRY(addMemoryDependencies(&arg));
+                ANGLE_TRY(addMemoryDependencies(arg.get()));
 
                 // update push constants for image channel info
                 cl_image_format imageFormat = vkMem.getFormat();
@@ -1849,32 +1849,33 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                 VkDescriptorImageInfo &imageInfo =
                     kernelArgDescSetBuilder.allocDescriptorImageInfo();
                 // TODO: Can't this always be vkMem.getImage().getCurrentLayout(renderer)?
-                imageInfo.imageLayout = arg.type == NonSemanticClspvReflectionArgumentStorageImage
-                                            ? VK_IMAGE_LAYOUT_GENERAL
-                                            : vkMem.getImage().getCurrentLayout(renderer);
-                imageInfo.imageView   = vkMem.getImageView().getHandle();
-                imageInfo.sampler     = VK_NULL_HANDLE;
+                imageInfo.imageLayout =
+                    arg->getReflectionType() == NonSemanticClspvReflectionArgumentStorageImage
+                        ? VK_IMAGE_LAYOUT_GENERAL
+                        : vkMem.getImage().getCurrentLayout(renderer);
+                imageInfo.imageView = vkMem.getImageView().getHandle();
+                imageInfo.sampler   = VK_NULL_HANDLE;
                 VkWriteDescriptorSet &writeDescriptorSet =
                     kernelArgDescSetBuilder.allocWriteDescriptorSet();
                 writeDescriptorSet.descriptorCount = 1;
                 writeDescriptorSet.descriptorType =
-                    arg.type == NonSemanticClspvReflectionArgumentStorageImage
+                    arg->getReflectionType() == NonSemanticClspvReflectionArgumentStorageImage
                         ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
                         : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
                 writeDescriptorSet.pImageInfo = &imageInfo;
                 writeDescriptorSet.sType      = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSet.dstSet =
                     kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
-                writeDescriptorSet.dstBinding = arg.descriptorBinding;
+                writeDescriptorSet.dstBinding = arg->getDescriptorBinding();
                 break;
             }
             case NonSemanticClspvReflectionArgumentUniformTexelBuffer:
             case NonSemanticClspvReflectionArgumentStorageTexelBuffer:
             {
-                cl::Memory *clMem = GetCLKernelArgumentMemoryHandle(arg);
+                cl::Memory *clMem = arg->getMemoryHandle();
                 CLImageVk &vkMem  = clMem->getImpl<CLImageVk>();
 
-                ANGLE_TRY(addMemoryDependencies(&arg));
+                ANGLE_TRY(addMemoryDependencies(arg.get()));
 
                 // update push constants for image channel info
                 cl_image_format imageFormat = vkMem.getFormat();
@@ -1908,14 +1909,14 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                     kernelArgDescSetBuilder.allocWriteDescriptorSet();
                 writeDescriptorSet.descriptorCount = 1;
                 writeDescriptorSet.descriptorType =
-                    arg.type == NonSemanticClspvReflectionArgumentStorageTexelBuffer
+                    arg->getReflectionType() == NonSemanticClspvReflectionArgumentStorageTexelBuffer
                         ? VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER
                         : VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
                 writeDescriptorSet.pImageInfo = nullptr;
                 writeDescriptorSet.sType      = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSet.dstSet =
                     kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
-                writeDescriptorSet.dstBinding       = arg.descriptorBinding;
+                writeDescriptorSet.dstBinding       = arg->getDescriptorBinding();
                 writeDescriptorSet.pTexelBufferView = &bufferView;
 
                 break;
@@ -1925,50 +1926,52 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
             {
                 if (!podBufferPresent)
                 {
-                    podBufferPresent  = true;
-                    podBinding        = arg.descriptorBinding;
-                    podDescriptorType = arg.type == NonSemanticClspvReflectionArgumentPodUniform
-                                            ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
-                                            : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                    podBufferPresent = true;
+                    podBinding       = arg->getDescriptorBinding();
+                    podDescriptorType =
+                        arg->getReflectionType() == NonSemanticClspvReflectionArgumentPodUniform
+                            ? VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+                            : VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
                 }
                 break;
             }
             case NonSemanticClspvReflectionArgumentPointerPushConstant:
             {
                 unsigned char *argPushConstOrigin =
-                    &(kernelVk.getPodArgumentPushConstantsData()[arg.pushConstOffset]);
-                if (static_cast<const cl_mem>(arg.handle) == NULL)
+                    &(kernelVk.getPodArgumentPushConstantsData()[arg->getPushConstantOffset()]);
+                if (arg->getMemoryHandle() == nullptr)
                 {
                     // If the argument is a buffer object, the arg_value pointer can be NULL or
                     // point to a NULL value in which case a NULL value will be used as the value
                     // for the argument declared as a pointer to global or constant memory in the
                     // kernel.
                     uint64_t null = 0;
-                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &null, arg.handleSize));
+                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &null, arg->getSize()));
                 }
                 else
                 {
-                    cl::Memory *clMem = cl::Buffer::Cast(static_cast<const cl_mem>(arg.handle));
+                    cl::Memory *clMem = arg->getMemoryHandle();
                     CLBufferVk &vkMem = clMem->getImpl<CLBufferVk>();
 
-                    ANGLE_TRY(addMemoryDependencies(&arg));
+                    ANGLE_TRY(addMemoryDependencies(arg.get()));
 
                     uint64_t devAddr =
                         vkMem.getBuffer().getDeviceAddress(mContext) + vkMem.getOffset();
-                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &devAddr, arg.handleSize));
+                    ANGLE_UNSAFE_TODO(std::memcpy(argPushConstOrigin, &devAddr, arg->getSize()));
                 }
 
                 mComputePassCommands->getCommandBuffer().pushConstants(
                     kernelVk.getPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT,
-                    roundDownPow2(arg.pushConstOffset, 4u), roundUpPow2(arg.pushConstantSize, 4u),
-                    argPushConstOrigin);
+                    roundDownPow2(arg->getPushConstantOffset(), 4u),
+                    roundUpPow2(arg->getPushConstantSize(), 4u), argPushConstOrigin);
 
                 break;
             }
             case NonSemanticClspvReflectionArgumentPointerUniform:
             {
-                ASSERT(kernelVk.getPodBuffer()->getSize() >= arg.handleSize + arg.podUniformOffset);
-                if (static_cast<const cl_mem>(arg.handle) == NULL)
+                ASSERT(kernelVk.getPodBuffer()->getSize() >=
+                       arg->getSize() + arg->getPodUniformOffset());
+                if (arg->getMemoryHandle() == nullptr)
                 {
                     // If the argument is a buffer object, the arg_value pointer can be NULL or
                     // point to a NULL value in which case a NULL value will be used as the value
@@ -1976,23 +1979,23 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk)
                     // kernel.
                     uint64_t null = 0;
                     ANGLE_TRY(kernelVk.getPodBuffer()->getImpl<CLBufferVk>().copyFrom(
-                        &null, arg.podStorageBufferOffset, arg.handleSize));
+                        &null, arg->getPodStorageBufferOffset(), arg->getSize()));
                 }
                 else
                 {
-                    cl::Memory *clMem = cl::Buffer::Cast(static_cast<const cl_mem>(arg.handle));
+                    cl::Memory *clMem = arg->getMemoryHandle();
                     CLBufferVk &vkMem = clMem->getImpl<CLBufferVk>();
-                    ANGLE_TRY(addMemoryDependencies(&arg));
+                    ANGLE_TRY(addMemoryDependencies(arg.get()));
                     uint64_t devAddr =
                         vkMem.getBuffer().getDeviceAddress(mContext) + vkMem.getOffset();
                     ANGLE_TRY(kernelVk.getPodBuffer()->getImpl<CLBufferVk>().copyFrom(
-                        &devAddr, arg.podStorageBufferOffset, arg.handleSize));
+                        &devAddr, arg->getPodStorageBufferOffset(), arg->getSize()));
                 }
 
                 if (!podBufferPresent)
                 {
                     podBufferPresent  = true;
-                    podBinding        = arg.descriptorBinding;
+                    podBinding        = arg->getDescriptorBinding();
                     podDescriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 }
                 break;

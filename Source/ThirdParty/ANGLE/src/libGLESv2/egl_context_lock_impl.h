@@ -87,6 +87,9 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetCurrentSurface(Thread *thr
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetDisplay(Thread *thread)
 {
+    // No context lock is needed as this entry point does not operate on a context.
+    // Furthermore, taking a context lock here risks a deadlock if a display lock is acquired
+    // later; the required lock hierarchy is: Global Lock -> Display Lock -> Context Lock.
     return {};
 }
 
@@ -264,6 +267,9 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_DestroySync(Thread *thread)
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetPlatformDisplay(Thread *thread)
 {
+    // No context lock is needed as this entry point does not operate on a context.
+    // Furthermore, taking a context lock here risks a deadlock if a display lock is acquired
+    // later; the required lock hierarchy is: Global Lock -> Display Lock -> Context Lock.
     return {};
 }
 
@@ -525,6 +531,9 @@ ANGLE_INLINE ScopedContextMutexLock GetContextLock_CreatePlatformWindowSurfaceEX
 
 ANGLE_INLINE ScopedContextMutexLock GetContextLock_GetPlatformDisplayEXT(Thread *thread)
 {
+    // No context lock is needed as this entry point does not operate on a context.
+    // Furthermore, taking a context lock here risks a deadlock if a display lock is acquired
+    // later; the required lock hierarchy is: Global Lock -> Display Lock -> Context Lock.
     return {};
 }
 

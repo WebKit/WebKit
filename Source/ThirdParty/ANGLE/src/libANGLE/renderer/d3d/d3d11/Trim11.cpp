@@ -45,21 +45,20 @@ void Trim11::trim()
     }
 
 #if defined(ANGLE_ENABLE_WINDOWS_UWP)
-    ID3D11Device *device      = mRenderer->getDevice();
-    IDXGIDevice3 *dxgiDevice3 = d3d11::DynamicCastComObject<IDXGIDevice3>(device);
+    ID3D11Device *device                    = mRenderer->getDevice();
+    angle::ComPtr<IDXGIDevice3> dxgiDevice3 = angle::DynamicCastComObject<IDXGIDevice3>(device);
     if (dxgiDevice3)
     {
         dxgiDevice3->Trim();
     }
-    SafeRelease(dxgiDevice3);
 #endif
 }
 
 bool Trim11::registerForRendererTrimRequest()
 {
 #if defined(ANGLE_ENABLE_WINDOWS_UWP)
-    ICoreApplication *coreApplication = nullptr;
-    HRESULT result                    = GetActivationFactory(
+    angle::ComPtr<ICoreApplication> coreApplication;
+    HRESULT result = GetActivationFactory(
         HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
         &coreApplication);
     if (SUCCEEDED(result))
@@ -72,8 +71,6 @@ bool Trim11::registerForRendererTrimRequest()
         result =
             coreApplication->add_Suspending(suspendHandler.Get(), &mApplicationSuspendedEventToken);
     }
-    SafeRelease(coreApplication);
-
     if (FAILED(result))
     {
         return false;
@@ -87,7 +84,7 @@ void Trim11::unregisterForRendererTrimRequest()
 #if defined(ANGLE_ENABLE_WINDOWS_UWP)
     if (mApplicationSuspendedEventToken.value != 0)
     {
-        ICoreApplication *coreApplication = nullptr;
+        angle::ComPtr<ICoreApplication> coreApplication;
         if (SUCCEEDED(GetActivationFactory(
                 HStringReference(RuntimeClass_Windows_ApplicationModel_Core_CoreApplication).Get(),
                 &coreApplication)))
@@ -95,7 +92,6 @@ void Trim11::unregisterForRendererTrimRequest()
             coreApplication->remove_Suspending(mApplicationSuspendedEventToken);
         }
         mApplicationSuspendedEventToken.value = 0;
-        SafeRelease(coreApplication);
     }
 #endif
 }

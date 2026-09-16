@@ -113,7 +113,7 @@ class MultiviewFramebufferTestBase : public MultiviewTestBase,
         AttachMultiviewTextures(GL_DRAW_FRAMEBUFFER, viewWidth, numViews, baseViewIndex,
                                 mColorTexture, mDepthTexture, 0u);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
 
         // Create read framebuffer to be used to retrieve the pixel information for testing
         // purposes.

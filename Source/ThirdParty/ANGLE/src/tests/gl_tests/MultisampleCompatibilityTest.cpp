@@ -305,7 +305,7 @@ class MultisampleCompatibilityTest : public ANGLETest<>
         glGenFramebuffers(1, &mSampleFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, mSampleFBO);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, mSampleRB);
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         // Create another FBO to resolve the multisample buffer into.
         glGenTextures(1, &mResolveTex);
@@ -319,7 +319,7 @@ class MultisampleCompatibilityTest : public ANGLETest<>
         glGenFramebuffers(1, &mResolveFBO);
         glBindFramebuffer(GL_FRAMEBUFFER, mResolveFBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mResolveTex, 0);
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         glViewport(0, 0, kWidth, kHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, mSampleFBO);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

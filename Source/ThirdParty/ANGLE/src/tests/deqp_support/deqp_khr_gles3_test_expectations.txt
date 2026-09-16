@@ -114,3 +114,5 @@
 355292302 : KHR-GLES3.api.coverage* = FAIL
 
 539554093 WIN VULKAN NVIDIA : KHR-GLES3.number_parsing.float_overflow* = FAIL
+
+557268102 LINUX NVIDIA VULKAN : KHR-GLES3.number_parsing.float_overflow_to_*_infinity = FAIL

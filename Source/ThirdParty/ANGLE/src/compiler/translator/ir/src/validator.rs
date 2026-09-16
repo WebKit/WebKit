@@ -18,6 +18,14 @@
 //   - No identical types with different IDs: validate_no_identical_types_with_different_ids()
 //   - Referenced IDs are not dead-code-eliminated: validate_data_type_id_is_in_bound_and_alive(),
 //     validate_constant_id_is_in_bound_and_alive(), validate_variable_id_is_in_bound_and_alive()
+//   - Catch misuse of GLSL built-in variables: validate_misuse_of_builtin_names()
+//
+// Names:
+//   - Interface variables with NameSource::ShaderInterface are unique;
+//   - Interface variables with NameSource::Internal are unique:
+//     validate_interface_variables_have_unique_names()
+//   - NameSource::ShaderInterface and NameSource::Internal are never found inside body blocks,
+//     those should always be Temporary: validate_block_variable_name_sources_are_temporary()
 //
 // Types:
 //   - Validate that ImageType fields are valid in combination with ImageDimension:
@@ -79,14 +87,9 @@
 
 // TODO(http://anglebug.com/349994211): to validate:
 //   - If there's a cached "has side effect", that it's correct.
-//   - Catch misuse of built-in names.
 //   - Loop blocks ends in the appropriate instructions.
-//   - Interface variables with NameSource::Internal are unique.
 //   - NameSource::Internal names don't start with the user and temporary name prefixes (_u, t and f
 //     respectively).
-//   - Interface variables with NameSource::ShaderInterface are unique.
-//   - NameSource::ShaderInterface and NameSource::Internal are never found inside body
-//   - blocks, those should always be Temporary.
 //   - Type matches?
 //   - Whatever else is in the AST validation currently.
 //   - Validate built-ins that accept an out or inout parameter, that the corresponding parameter is
@@ -298,6 +301,9 @@ impl<'a> Validator<'a> {
     fn validate(&self) {
         self.validate_all_ids_are_present();
         self.validate_all_alive_variables_are_pointers();
+        self.validate_misuse_of_builtin_names();
+        self.validate_interface_variables_have_unique_names();
+        self.validate_block_variable_name_sources_are_temporary();
         self.validate_decorations();
         self.validate_no_pointer_to_pointer_type();
         self.validate_all_variables_are_declared_in_scope();
@@ -919,6 +925,64 @@ impl<'a> Validator<'a> {
                     "invalid variable: variable {:?} is not a pointer",
                     alive_variable
                 ));
+            }
+        }
+    }
+
+    fn validate_misuse_of_builtin_names(&self) {
+        for variable in
+            self.ir.meta.all_variables().iter().filter(|variable| !variable.is_dead_code_eliminated)
+        {
+            if variable.name.name.starts_with("gl_") {
+                self.on_error(format_args!(
+                    "invalid variable name: {:?}, names starting with 'gl_' are reserved for \
+                     built-in variables",
+                    variable.name.name
+                ));
+            }
+
+            if variable.built_in.is_some() {
+                if variable.scope != VariableScope::Global {
+                    self.on_error(format_args!(
+                        "invalid built-in variable: {:?}, built-in variable must have global scope",
+                        variable
+                    ));
+                }
+
+                if !variable.name.name.is_empty() || variable.name.source != NameSource::Internal {
+                    self.on_error(format_args!(
+                        "invalid built-in variable: {:?}, built-in variable must not have \
+                         self-defined variable name and must have Internal name source",
+                        variable
+                    ));
+                }
+            }
+        }
+    }
+
+    fn validate_interface_variables_have_unique_names(&self) {
+        let mut seen_interface_names: HashSet<Name> = HashSet::new();
+        for variable in self.ir.meta.all_variables().iter().filter(|variable| {
+            !variable.is_dead_code_eliminated
+                && variable.is_interface_variable()
+                && !variable.name.name.is_empty()
+        }) {
+            match variable.name.source {
+                NameSource::ShaderInterface | NameSource::Internal => {
+                    if !seen_interface_names.insert(variable.name) {
+                        self.on_error(format_args!(
+                            "invalid variable: {:?}: duplicate interface variable name found: {:?}",
+                            variable, variable.name
+                        ));
+                    }
+                }
+                NameSource::Temporary => {
+                    self.on_error(format_args!(
+                        "invalid variable: {:?}: interface variable should not have a temporary \
+                         name",
+                        variable
+                    ));
+                }
             }
         }
     }
@@ -1904,6 +1968,28 @@ impl<'a> Validator<'a> {
                 traverser::visitor::VISIT_SUB_BLOCKS
             },
             |_, _| {}, // do nothing in post_visit
+        );
+    }
+
+    fn validate_block_variable_name_sources_are_temporary(&self) {
+        traverser::visitor::for_each_function(
+            &mut (),
+            &self.ir.function_entries,
+            |_, _| {},
+            |_, block, _, _| {
+                for variable_id in &block.variables {
+                    let variable = self.ir.meta.get_variable(*variable_id);
+                    if variable.name.source != NameSource::Temporary {
+                        self.on_error(format_args!(
+                            "invalid variable: {:?}: block variable name source must be \
+                             NameSource::Temporary",
+                            variable
+                        ));
+                    }
+                }
+                traverser::visitor::VISIT_SUB_BLOCKS
+            },
+            |_, _| {},
         );
     }
 

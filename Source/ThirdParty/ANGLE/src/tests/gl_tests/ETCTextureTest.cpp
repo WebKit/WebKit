@@ -56,7 +56,7 @@ TEST_P(ETCTextureTest, ETC2RGB8_CubeMapValidation)
     const std::vector<GLubyte> kInvalidTextureData(
         kInvalidTextureWidth * kInvalidTextureHeight * kCubemapFaceCount, 0);
 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, mTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, mTexture);
     EXPECT_GL_NO_ERROR();
 
     glCompressedTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB, kInvalidTextureWidth,

@@ -17,6 +17,7 @@
 #include "common/unsafe_buffers.h"
 
 #include "common/Color.h"
+#include "common/com_utils.h"
 
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
@@ -172,23 +173,6 @@ struct RasterizerStateKey final
 
 bool operator==(const RasterizerStateKey &a, const RasterizerStateKey &b);
 bool operator!=(const RasterizerStateKey &a, const RasterizerStateKey &b);
-
-template <typename outType>
-outType *DynamicCastComObject(IUnknown *object)
-{
-    outType *outObject = nullptr;
-    HRESULT result =
-        object->QueryInterface(__uuidof(outType), reinterpret_cast<void **>(&outObject));
-    if (SUCCEEDED(result))
-    {
-        return outObject;
-    }
-    else
-    {
-        SafeRelease(outObject);
-        return nullptr;
-    }
-}
 
 inline bool isDeviceLostError(HRESULT errorCode)
 {
@@ -400,12 +384,12 @@ class TextureHelper11 : public Resource11Base<ID3D11Resource, std::shared_ptr<Ge
     }
 
     template <typename ResourceT>
-    void set(ResourceT *object, const d3d11::Format &format)
+    void set(angle::ComPtr<ResourceT> object, const d3d11::Format &format)
     {
         ASSERT(!valid());
 
         mFormatSet     = &format;
-        data().object.Attach(object);
+        data().object  = std::move(object);
         data().manager = nullptr;
 
         GetDescFromD3D11<ResourceT> desc;

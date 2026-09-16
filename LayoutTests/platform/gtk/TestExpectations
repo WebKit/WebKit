@@ -1307,3 +1307,7 @@ webkit.org/b/323049 [ Debug ] fast/webcodecs/resetting-video-encoder-with-unsupp
 webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/static-router-subresource.https.html [ Crash Pass ]
 webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register.https.html [ Crash Pass ]
 webkit.org/b/324338 [ Debug ] webaudio/silent-audio-interrupted-in-background.html [ Failure Pass ]
+
+# ANGLE now loses hardened WebGL contexts on any backend error, so a driver OOM here reports CONTEXT_LOST_WEBGL instead of INVALID_VALUE (chromium:552538802).
+webkit.org/b/324374 webgl/1.0.x/conformance/textures/misc/texture-size-limit.html [ Failure ]
+webkit.org/b/324374 webgl/2.0.y/conformance/textures/misc/texture-size-limit.html [ Failure ]

@@ -555,7 +555,7 @@ class ResetBaseVertexBaseInstance : angle::NonCopyable
 
 angle::FormatID ConvertToSRGB(angle::FormatID formatID);
 angle::FormatID ConvertToLinear(angle::FormatID formatID);
-bool IsOverridableLinearFormat(angle::FormatID formatID);
+bool IsOverridableLinearOrSRGBFormat(angle::FormatID formatID);
 
 template <bool swizzledLuma = true>
 const gl::ColorGeneric AdjustBorderColor(const angle::ColorGeneric &borderColorGeneric,

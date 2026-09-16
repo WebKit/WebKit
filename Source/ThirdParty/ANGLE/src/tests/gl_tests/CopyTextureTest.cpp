@@ -497,21 +497,19 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
     {
         // The texture is initialized as 2x2.  If the componentCount is 1 or 3, then the input data
         // will have a row pitch of 2 or 6, which needs to be padded to 4 or 8 respectively.
-        uint8_t srcColorsPadded[4 * 4];
+        std::array<uint8_t, 4 * 4> srcColorsPadded = {};
         size_t srcRowPitch =
             2 * componentCount + (componentCount == 1 || componentCount == 3 ? 2 : 0);
         size_t inputRowPitch = 2 * componentCount;
         for (size_t row = 0; row < 2; ++row)
         {
-            ANGLE_UNSAFE_TODO(memcpy(&srcColorsPadded[row * srcRowPitch],
-                                     &srcColors[row * inputRowPitch], inputRowPitch));
-            ANGLE_UNSAFE_TODO(memset(&srcColorsPadded[row * srcRowPitch + inputRowPitch], 0,
-                                     srcRowPitch - inputRowPitch));
+            ANGLE_UNSAFE_TODO(memcpy(srcColorsPadded.data() + row * srcRowPitch,
+                                     srcColors + row * inputRowPitch, inputRowPitch));
         }
 
         glBindTexture(target, mTextures[0]);
         glTexImage2D(target, 0, sourceFormat, 2, 2, 0, sourceFormat, GL_UNSIGNED_BYTE,
-                     srcColorsPadded);
+                     srcColorsPadded.data());
     }
 
     void testCopyTexture(GLenum sourceTarget,
@@ -570,7 +568,7 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
             EXPECT_GL_NO_ERROR();
 
             // Check that FB is complete.
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             if (flipY)
             {
@@ -674,7 +672,7 @@ class CopyTextureVariationsTest : public ANGLETest<CopyTextureVariationsTestPara
                 sourceFormat != GL_ALPHA)
             {
                 // Check that FB is complete.
-                EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
             }
 
             if (flipY)
@@ -773,7 +771,7 @@ TEST_P(CopyTextureTest, ImmutableTexture)
     EXPECT_GL_NO_ERROR();
 
     // Check that FB is complete.
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     EXPECT_PIXEL_COLOR_EQ(0, 0, pixels);
 
@@ -896,7 +894,7 @@ TEST_P(CopyTextureTest, RedefineDestinationTexture)
     EXPECT_GL_NO_ERROR();
 
     // Check that FB is complete.
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     EXPECT_PIXEL_COLOR_EQ(1, 1, pixels[3]);
     EXPECT_GL_NO_ERROR();
@@ -1150,7 +1148,7 @@ TEST_P(CopyTextureTest, CopySubTextureOffset)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, transparentPixels);
 
     // Check that FB is complete.
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     glCopySubTextureCHROMIUM(mTextures[0], 0, GL_TEXTURE_2D, mTextures[1], 0, 1, 1, 0, 0, 1, 1,
                              false, false, false);
@@ -1355,7 +1353,7 @@ TEST_P(CopyTextureTest, CubeMapTarget)
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, textures[1], 0);
 
             // Check that FB is complete.
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             EXPECT_PIXEL_COLOR_EQ(0, 0, pixels[face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i]);
 
@@ -1555,7 +1553,7 @@ TEST_P(CopyTextureTest, CubeMapTargetBGRA)
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, textures[1], 0);
 
             // Check that FB is complete.
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             GLColor converted = pixels[face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i];
             std::swap(converted.R, converted.B);
@@ -1621,7 +1619,7 @@ TEST_P(CopyTextureTest, CubeMapTargetRGB)
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, face, textures[1], 0);
 
             // Check that FB is complete.
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             const uint8_t *faceData =
                 &ANGLE_UNSAFE_TODO(pixels[(face - GL_TEXTURE_CUBE_MAP_POSITIVE_X + i) * 16]);
@@ -1688,7 +1686,7 @@ TEST_P(CopyTextureTest, CopyToMipmap)
                                destLevel);
 
         // Check that FB is complete.
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
         EXPECT_PIXEL_COLOR_EQ(0, 0, pixels[0]);
 

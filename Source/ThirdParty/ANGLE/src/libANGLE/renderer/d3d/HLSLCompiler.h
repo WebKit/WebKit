@@ -54,7 +54,7 @@ class HLSLCompiler : angle::NonCopyable
                                   const std::string &profile,
                                   const std::vector<CompileConfig> &configs,
                                   const D3D_SHADER_MACRO *overrideMacros,
-                                  ID3DBlob **outCompiledBlob,
+                                  angle::ComPtr<ID3DBlob> *outCompiledBlob,
                                   std::string *outDebugInfo);
 
     angle::Result disassembleBinary(d3d::Context *context,

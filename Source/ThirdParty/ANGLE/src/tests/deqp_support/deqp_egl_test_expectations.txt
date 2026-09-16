@@ -107,6 +107,9 @@
 362486580 LINUX NVIDIA VULKAN : dEQP-EGL.functional.mutable_render_buffer.querySurface = FAIL
 362486580 LINUX NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.*.local_array.* = SKIP
 
+// New failures for Linux/NVIDIA GTX 1660 when upgrading to Ubuntu 24.04 with driver 595.91.07.
+557268102 LINUX NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.*_block.compute = SKIP
+
 // Mac failures
 42261255 MAC : dEQP-EGL.functional.negative_api.copy_buffers = FAIL
 42261255 MAC : dEQP-EGL.functional.negative_api.swap_interval = FAIL

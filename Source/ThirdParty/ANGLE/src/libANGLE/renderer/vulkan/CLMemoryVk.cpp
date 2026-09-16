@@ -125,24 +125,30 @@ angle::Result CLMemoryVk::map(uint8_t *&ptrOut, size_t offset)
     return angle::Result::Continue;
 }
 
-angle::Result CLMemoryVk::copyTo(void *dst, size_t srcOffset, size_t size)
+// Copy `size` bytes in this memory from `offset` into provided host `dst` pointer
+angle::Result CLMemoryVk::copyTo(void *dst, size_t offset, size_t size)
 {
+    ASSERT(offset + size <= getSize());
+
     uint8_t *src = nullptr;
     ANGLE_TRY(mapBufferHelper(src));
     ANGLE_UNSAFE_TODO({
-        src += srcOffset;
+        src += offset;
         std::memcpy(dst, src, size);
     })
     unmapBufferHelper();
     return angle::Result::Continue;
 }
 
-angle::Result CLMemoryVk::copyFrom(const void *src, size_t srcOffset, size_t size)
+// Copy `size` bytes from host `src` pointer into this memory at `offset`
+angle::Result CLMemoryVk::copyFrom(const void *src, size_t offset, size_t size)
 {
+    ASSERT(offset + size <= getSize());
+
     uint8_t *dst = nullptr;
     ANGLE_TRY(mapBufferHelper(dst));
     ANGLE_UNSAFE_TODO({
-        dst += srcOffset;
+        dst += offset;
         std::memcpy(dst, src, size);
     })
     unmapBufferHelper();
@@ -222,9 +228,7 @@ angle::Result CLBufferVk::syncHost(CLBufferVk::SyncHostDirection direction)
         case CLBufferVk::SyncHostDirection::FromHost:
             if (getFlags().intersects(CL_MEM_USE_HOST_PTR) && !supportsZeroCopy())
             {
-                ANGLE_CL_IMPL_TRY_ERROR(
-                    setDataImpl(static_cast<const uint8_t *>(getHostPtr()), getSize(), 0),
-                    CL_OUT_OF_RESOURCES);
+                ANGLE_TRY(copyFrom(getHostPtr(), 0, getSize()));
             }
             break;
         case CLBufferVk::SyncHostDirection::ToHost:
@@ -290,13 +294,14 @@ angle::Result CLBufferVk::create(void *hostPtr)
         }
 
         ANGLE_CL_IMPL_TRY_ERROR(mBuffer.init(mContext, createInfo, memFlags), CL_OUT_OF_RESOURCES);
-        // We need to copy the data from hostptr in the case of CHP buffer.
-        if (getFlags().intersects(CL_MEM_COPY_HOST_PTR))
+        // We need to copy the data from the supplied hostPtr in the following cases
+        // - CHP
+        // - UHP and no zero copy is supported
+        if (getFlags().intersects(CL_MEM_COPY_HOST_PTR) ||
+            (getFlags().intersects(CL_MEM_USE_HOST_PTR) && !supportsZeroCopy()))
         {
-            ANGLE_CL_IMPL_TRY_ERROR(setDataImpl(static_cast<uint8_t *>(hostPtr), getSize(), 0),
-                                    CL_OUT_OF_RESOURCES);
+            ANGLE_TRY(copyFrom(hostPtr, 0, getSize()));
         }
-        ANGLE_TRY(syncHost(CLBufferVk::SyncHostDirection::FromHost));
     }
     return angle::Result::Continue;
 }
@@ -478,33 +483,6 @@ angle::Result CLBufferVk::getRect(const cl::BufferRect &bufferRect,
                                   void *outData)
 {
     return updateRect(UpdateRectOperation::Read, outData, dataRect, bufferRect);
-}
-
-// offset is for mapped pointer
-angle::Result CLBufferVk::setDataImpl(const uint8_t *data, size_t size, size_t offset)
-{
-    // buffer cannot be in use state
-    ASSERT(mBuffer.valid());
-    ASSERT(!isCurrentlyInUse());
-    ASSERT(size + offset <= getSize());
-    ASSERT(data != nullptr);
-
-    // Assuming host visible buffers for now
-    // TODO: http://anglebug.com/42267019
-    if (!mBuffer.isHostVisible())
-    {
-        UNIMPLEMENTED();
-        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
-    }
-
-    uint8_t *mapPointer = nullptr;
-    ANGLE_TRY(mBuffer.mapWithOffset(mContext, &mapPointer, offset));
-    ASSERT(mapPointer != nullptr);
-
-    ANGLE_UNSAFE_TODO(std::memcpy(mapPointer, data, size));
-    mBuffer.unmap(mRenderer);
-
-    return angle::Result::Continue;
 }
 
 bool CLBufferVk::isCurrentlyInUse() const

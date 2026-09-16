@@ -160,12 +160,14 @@ INIT_DICT = {
 PLS_DISABLE_LIST = {
     "glBeginTransformFeedback",
     "glBindFramebuffer",
+    "glBindImageTexture",
     "glBlitFramebuffer",
     "glCopyTexImage2D",
     "glDiscardFramebufferEXT",
     "glDrawBuffers",
     "glFramebufferMemorylessPixelLocalStorageANGLE",
     "glFramebufferRenderbuffer",
+    "glGenerateMipmap",
     "glInvalidateFramebuffer",
     "glInvalidateSubFramebuffer",
     "glStartTilingQCOM",
@@ -528,8 +530,7 @@ void EGLAPIENTRY EGL_{name}({params})
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {{
-        ANGLE_SCOPED_GLOBAL_LOCK();
-        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+        {egl_lock}{packed_display_conversions}EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
         {packed_gl_enum_conversions}
 
@@ -560,7 +561,7 @@ void EGLAPIENTRY EGL_{name}({params})
     Thread *thread = egl::GetCurrentThread();
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 
-    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    {packed_display_conversions}EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -590,8 +591,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
     {{
-        {egl_lock}
-        EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+        {egl_lock}{packed_display_conversions}EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
         {packed_gl_enum_conversions}
 
@@ -624,7 +624,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
 
-    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+    {packed_display_conversions}EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
     {packed_gl_enum_conversions}
 
@@ -1283,6 +1283,7 @@ EGL_SOURCE_INCLUDES = """\
 #include "libGLESv2/entry_points_egl_autogen.h"
 #include "libGLESv2/entry_points_egl_ext_autogen.h"
 
+#include "libANGLE/EGLSync.h"
 #include "libANGLE/capture/capture_egl_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationEGL_autogen.h"
@@ -1303,6 +1304,7 @@ EGL_EXT_HEADER_INCLUDES = """\
 EGL_EXT_SOURCE_INCLUDES = """\
 #include "libGLESv2/entry_points_egl_ext_autogen.h"
 
+#include "libANGLE/EGLSync.h"
 #include "libANGLE/capture/capture_egl_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationEGL_autogen.h"
@@ -1782,12 +1784,8 @@ def is_egl_sync_entry_point(cmd_name):
     return False
 
 
-# egl entry points whose code path writes to resources that can be accessed
-# by both EGL Sync APIs and EGL Non-Sync APIs
-def is_egl_entry_point_accessing_both_sync_and_non_sync_API_resources(cmd_name):
-    if cmd_name in ["eglTerminate", "eglLabelObjectKHR", "eglReleaseThread", "eglInitialize"]:
-        return True
-    return False
+def is_lockless_display_egl_entry_point(cmd_name):
+    return is_lockless_egl_entry_point(cmd_name) or is_egl_sync_entry_point(cmd_name)
 
 
 def is_cmd_map_buffer_range(cmd_name):
@@ -2208,29 +2206,45 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     # initializeWithoutValidation.
     attrib_map_init = []
 
+    dpy_param = None
+    dpy_raw_param_name = None
+    sync_param = None
+    sync_raw_param_name = None
+    if api == apis.EGL:
+        for param in params:
+            param_type = just_the_type_packed(param, packed_enums)
+            if param_type.split(' ')[0] == "egl::Display":
+                dpy_param = just_the_name_packed(param, packed_enums)
+                dpy_raw_param_name = just_the_name(param)
+            elif param_type == "egl::SyncID":
+                sync_param = just_the_name_packed(param, packed_enums)
+                sync_raw_param_name = just_the_name(param)
+
     for param in params:
         param_name = just_the_name(param)
 
         if param_name in packed_enums:
+            if api == apis.EGL and param_name == dpy_raw_param_name:
+                continue
             internal_name = param_name + "Packed"
             internal_type = packed_enums[param_name]
-            packed_gl_enum_conversions += [
-                "\n        " + internal_type + " " + internal_name + " = PackParam<" +
-                internal_type + ">(" + param_name + ");"
-            ]
+            if api == apis.EGL and param_name == sync_raw_param_name:
+                packed_gl_enum_conversions += [
+                    f"\n        egl::SyncID {internal_name} = PackParam<egl::SyncID>({param_name});\n"
+                    f"        egl::ScopedSyncRef {internal_name}Ref = GetSyncIfValid(validDisplay, {internal_name});\n"
+                    f"        egl::Sync *{internal_name}Object = {internal_name}Ref.get();"
+                ]
+            else:
+                packed_gl_enum_conversions += [
+                    "\n        " + internal_type + " " + internal_name + " = PackParam<" +
+                    internal_type + ">(" + param_name + ");"
+                ]
 
             if 'AttributeMap' in internal_type:
                 attrib_map_init.append(internal_name + ".initializeWithoutValidation();")
 
     labeled_object = get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params,
                                                         packed_enums)
-
-    dpy_param = None
-    if api == apis.EGL:
-        for param in params:
-            if just_the_type_packed(param, packed_enums).split(' ')[0] == "egl::Display":
-                dpy_param = just_the_name_packed(param, packed_enums)
-                break
 
     decl_params = params[:]
 
@@ -2255,24 +2269,46 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
     context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK({name}, thread{extra_lock_params});"
     val_prefix = ""
 
-    if api == apis.EGL and name in EGL_CONTEXT_LOCK_USES_DPY:
-        assert dpy_param, f"Expected egl::Display param for {cmd_name}"
-        packed_gl_enum_conversions += [
-            f"\n        const egl::Display *validDisplay = GetDisplayIfValid({dpy_param});"
-        ]
-        context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY({name}, thread, validDisplay{extra_lock_params});"
-        labeled_object = "validDisplay"
-        internal_val_params = ["validDisplay" if p == dpy_param else p for p in internal_params]
-    elif api == apis.EGL and dpy_param and labeled_object == f"GetDisplayIfValid({dpy_param})" and dpy_param in internal_params:
-        labeled_object = "validDisplay"
-        internal_val_params = [
-            "validDisplay" if (p == dpy_param and name != "QueryString") else p
-            for p in internal_params
-        ]
-        indent = "        " if is_lockless_egl_entry_point(cmd_name) else "            "
-        val_prefix = f"const egl::Display *validDisplay = GetDisplayIfValid({dpy_param});\n{indent}    "
-    else:
-        internal_val_params = internal_params
+    packed_display_conversions = ""
+    if api == apis.EGL and dpy_param:
+        if is_lockless_display_egl_entry_point(cmd_name):
+            packed_display_conversions = (
+                f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
+                f"    egl::ScopedDisplayRef {dpy_param}Ref = GetDisplayIfValid({dpy_param});\n"
+                f"    const egl::Display *validDisplay = {dpy_param}Ref.get();\n\n    ")
+        else:
+            packed_display_conversions = (
+                f"egl::Display *{dpy_param} = PackParam<egl::Display *>({dpy_raw_param_name});\n"
+                f"        egl::ScopedDisplayRefAndLock {dpy_param}Lock = GetDisplayAndLockIfValid({dpy_param});\n"
+                f"        const egl::Display *validDisplay = {dpy_param}Lock.get();\n\n        ")
+        if name in EGL_CONTEXT_LOCK_USES_DPY:
+            context_lock_statement = f"ANGLE_EGL_SCOPED_CONTEXT_LOCK_DPY({name}, thread, validDisplay{extra_lock_params});"
+        if labeled_object == f"GetDisplayIfValid({dpy_param})":
+            labeled_object = "validDisplay"
+
+    if api == apis.EGL:
+        if sync_param and (labeled_object == f"GetSyncIfValid({dpy_param}, {sync_param})" or
+                           labeled_object == f"GetSyncIfValid(validDisplay, {sync_param})"):
+            labeled_object = f"{sync_param}Object"
+
+    internal_val_params = internal_params
+    if api == apis.EGL:
+        if dpy_param:
+            internal_val_params = [
+                "validDisplay" if (p == dpy_param and name != "QueryString") else p
+                for p in internal_params
+            ]
+        if sync_param:
+            internal_val_params = [
+                f"{sync_param}Object" if p == sync_param else p for p in internal_val_params
+            ]
+
+    internal_stub_params = internal_params
+    if api == apis.EGL:
+        if sync_param:
+            internal_stub_params = [
+                f"{sync_param}Object" if p == sync_param else p for p in internal_stub_params
+            ]
 
     internal_val_str = ", ".join(internal_val_params)
     if return_type == "void":
@@ -2295,7 +2331,7 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
         "params":
             ", ".join(decl_params),
         "internal_params":
-            ", ".join(internal_params),
+            ", ".join(internal_stub_params),
         "attrib_map_init":
             "\n".join(attrib_map_init),
         "context_private_internal_params":
@@ -2308,6 +2344,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             validation_statement,
         "initialization":
             initialization,
+        "packed_display_conversions":
+            packed_display_conversions,
         "packed_gl_enum_conversions":
             "".join(packed_gl_enum_conversions),
         "pass_params":
@@ -2341,11 +2379,15 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             get_preamble(api, cmd_name, params),
         "epilog":
             get_epilog(api, cmd_name),
-        "egl_lock":
-            get_egl_lock(cmd_name),
     }
 
+    if not is_lockless_egl_entry_point(cmd_name):
+        format_params["egl_lock"] = get_egl_lock(cmd_name, dpy_param)
+
     template = get_def_template(api, cmd_name, return_type, has_errcode_ret)
+    if is_lockless_egl_entry_point(cmd_name):
+        assert "{egl_lock}" not in template, (
+            f"Lockless entry point {cmd_name} must not use a template containing {{egl_lock}}")
     return template.format(**format_params)
 
 
@@ -2514,11 +2556,14 @@ def get_validation_params(api, cmd_name, params, cmd_packed_gl_enums, packed_par
     packed_gl_enums = get_packed_enums(api, cmd_packed_gl_enums, cmd_name, packed_param_types,
                                        params)
     last = -1 if params and just_the_name(params[-1]) == "errcode_ret" else None
-    return ", ".join([
-        make_param(
-            const_pointer_type(param, packed_gl_enums),
-            just_the_name_packed(param, packed_gl_enums)) for param in params[:last]
-    ])
+    val_params = []
+    for param in params[:last]:
+        param_type = const_pointer_type(param, packed_gl_enums)
+        param_name = just_the_name_packed(param, packed_gl_enums)
+        if api == apis.EGL and param_type == "egl::SyncID":
+            param_type = "const egl::Sync *"
+        val_params.append(make_param(param_type, param_name))
+    return ", ".join(val_params)
 
 
 def get_context_private_call_params(api, cmd_name, params, cmd_packed_gl_enums,
@@ -3573,13 +3618,12 @@ def get_context_lock(api, cmd_name):
     return "SCOPED_SHARE_CONTEXT_LOCK(context);"
 
 
-def get_egl_lock(cmd_name):
-    if is_egl_sync_entry_point(cmd_name):
-        return "ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();"
-    if is_egl_entry_point_accessing_both_sync_and_non_sync_API_resources(cmd_name):
-        return "ANGLE_SCOPED_GLOBAL_EGL_AND_EGL_SYNC_LOCK();"
-    else:
-        return "ANGLE_SCOPED_GLOBAL_LOCK();"
+def get_egl_lock(cmd_name, dpy_param):
+    assert not is_lockless_egl_entry_point(cmd_name), (
+        f"get_egl_lock() must not be called for lockless entry point {cmd_name}")
+    if dpy_param:
+        return ""
+    return "ANGLE_SCOPED_GLOBAL_LOCK();"
 
 
 def get_prepare_swap_buffers_call(api, cmd_name, params):
@@ -3700,6 +3744,19 @@ def get_epilog(api, cmd_name):
     return epilog
 
 
+def get_stub_params(api, cmd_name, params, cmd_packed_egl_enums, packed_param_types):
+    packed_enums = get_packed_enums(api, cmd_packed_egl_enums, cmd_name, packed_param_types,
+                                    params)
+    stub_params = []
+    for param in params:
+        param_type = just_the_type_packed(param, packed_enums)
+        param_name = just_the_name_packed(param, packed_enums)
+        if api == apis.EGL and param_type == "egl::SyncID":
+            param_type = "egl::Sync *"
+        stub_params.append(make_param(param_type, param_name))
+    return ", ".join(stub_params)
+
+
 def write_stubs_header(api, annotation, title, data_source, out_file, all_commands, commands,
                        cmd_packed_egl_enums, packed_param_types):
 
@@ -3721,8 +3778,8 @@ def write_stubs_header(api, annotation, title, data_source, out_file, all_comman
             del params[-1]
         return_type = proto_text[:-len(cmd_name)].strip()
 
-        internal_params = get_internal_params(api, cmd_name, params, cmd_packed_egl_enums,
-                                              packed_param_types)
+        internal_params = get_stub_params(api, cmd_name, params, cmd_packed_egl_enums,
+                                          packed_param_types)
         stubs.append("%s %s(%s);" % (return_type, strip_api_prefix(cmd_name), internal_params))
 
     args = {

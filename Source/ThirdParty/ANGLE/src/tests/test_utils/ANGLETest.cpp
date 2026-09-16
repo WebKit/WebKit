@@ -1563,9 +1563,8 @@ void ANGLETestBase::checkD3D11SDKLayersMessages()
                                             EGL_D3D11_DEVICE_ANGLE, &device));
     ID3D11Device *d3d11Device = reinterpret_cast<ID3D11Device *>(device);
 
-    ID3D11InfoQueue *infoQueue = nullptr;
-    HRESULT hr =
-        d3d11Device->QueryInterface(__uuidof(infoQueue), reinterpret_cast<void **>(&infoQueue));
+    angle::ComPtr<ID3D11InfoQueue> infoQueue;
+    HRESULT hr = d3d11Device->QueryInterface(IID_PPV_ARGS(&infoQueue));
     if (SUCCEEDED(hr))
     {
         UINT64 numStoredD3DDebugMessages =
@@ -1596,8 +1595,6 @@ void ANGLETestBase::checkD3D11SDKLayersMessages()
                    << " D3D11 SDK Layers message(s) detected! Test Failed.\n";
         }
     }
-
-    SafeRelease(infoQueue);
 #endif  // defined(ANGLE_ENABLE_D3D11)
 }
 

@@ -239,7 +239,7 @@ void PixelLocalStoragePlane::setMemoryless(Context *context,
     mMemoryless     = true;
     // The backing texture will get allocated lazily, once we know what dimensions it should be.
     ASSERT(mTextureID.value == 0);
-    mTextureImageIndex = ImageIndex::MakeFromType(TextureType::_2D, 0, 0);
+    mTextureImageIndex = ImageIndex::Make2D(0);
     mUsage             = usage;
 }
 
@@ -255,8 +255,11 @@ void PixelLocalStoragePlane::setTextureBacked(Context *context,
     mMemoryless     = false;
     mTextureID      = tex->id();
     mTextureObserver.bind(tex);
-    mTextureImageIndex = ImageIndex::MakeFromType(tex->getType(), level, layer);
-    mUsage             = usage;
+    mTextureImageIndex = tex->getType() == TextureType::_2D
+                             ? ImageIndex::Make2D(level)
+                             : ImageIndex::MakeFromType(tex->getType(), level, layer);
+    ASSERT(tex->getType() != TextureType::_2D || !mTextureImageIndex.hasLayer());
+    mUsage = usage;
 }
 
 void PixelLocalStoragePlane::onSubjectStateChange(angle::SubjectIndex index,
@@ -315,7 +318,7 @@ void PixelLocalStoragePlane::ensureBackingTextureIfMemoryless(Context *context, 
     // Internal textures backing memoryless planes are always 2D and not mipmapped.
     ASSERT(mTextureImageIndex.getType() == TextureType::_2D);
     ASSERT(mTextureImageIndex.getLevelIndex() == 0);
-    ASSERT(mTextureImageIndex.getLayerIndex() == 0);
+    ASSERT(!mTextureImageIndex.hasLayer());
 
     Texture *tex = nullptr;
     if (mTextureID.value != 0)
@@ -485,8 +488,7 @@ void PixelLocalStoragePlane::bindToImage(Context *context, GLuint unit, bool nee
         }
     }
     context->bindImageTexture(unit, mTextureID, mTextureImageIndex.getLevelIndex(), GL_FALSE,
-                              mTextureImageIndex.getLayerIndex(), GL_READ_WRITE,
-                              imageBindingFormat);
+                              getTextureLayer(), GL_READ_WRITE, imageBindingFormat);
 }
 
 const Texture *PixelLocalStoragePlane::getBackingTexture(const Context *context) const
@@ -668,15 +670,8 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
 
     void onBegin(Context *context, GLsizei n, const GLenum loadops[], Extents plsExtents) override
     {
-        // Save the image bindings so we can restore them during onEnd().
         const State &state = context->getState();
         ASSERT(static_cast<size_t>(n) <= state.getImageUnits().size());
-        mSavedImageBindings.clear();
-        mSavedImageBindings.reserve(n);
-        for (GLsizei i = 0; i < n; ++i)
-        {
-            mSavedImageBindings.emplace_back(state.getImageUnit(i));
-        }
 
         Framebuffer *framebuffer = state.getDrawFramebuffer();
         if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
@@ -727,10 +722,6 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         }
         else
         {
-            // Save the default framebuffer width/height so we can restore it during onEnd().
-            mSavedFramebufferDefaultWidth  = framebuffer->getDefaultWidth();
-            mSavedFramebufferDefaultHeight = framebuffer->getDefaultHeight();
-
             // Specify the framebuffer width/height explicitly in case we end up rendering
             // exclusively to shader images.
             framebuffer->setDefaultWidth(context, plsExtents.width);
@@ -811,19 +802,11 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
 
     void onEnd(Context *context, GLsizei n, const GLenum storeops[]) override
     {
-        // Restore the image bindings. Since glBindImageTexture and any commands that modify
-        // textures are banned while PLS is active, these will all still be alive and valid.
-        ASSERT(mSavedImageBindings.size() == static_cast<size_t>(n));
-        for (GLuint unit = 0; unit < mSavedImageBindings.size(); ++unit)
+        for (GLsizei unit = 0; unit < n; ++unit)
         {
-            ImageUnit &binding = mSavedImageBindings[unit];
-            context->bindImageTexture(unit, binding.texture.id(), binding.level, binding.layered,
-                                      binding.layer, binding.access, binding.format);
-
-            // BindingPointers have to be explicitly cleaned up.
-            binding.texture.set(context, nullptr);
+            context->bindImageTexture(unit, PackParam<TextureID>(0u), 0, GL_FALSE, 0, GL_READ_ONLY,
+                                      GL_R32UI);
         }
-        mSavedImageBindings.clear();
 
         if (context->getLimitations().noRasterOrderGroupWithoutAttachmentZero)
         {
@@ -851,8 +834,8 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         {
             // Restore the default framebuffer width/height.
             Framebuffer *framebuffer = context->getState().getDrawFramebuffer();
-            framebuffer->setDefaultWidth(context, mSavedFramebufferDefaultWidth);
-            framebuffer->setDefaultHeight(context, mSavedFramebufferDefaultHeight);
+            framebuffer->setDefaultWidth(context, 0);
+            framebuffer->setDefaultHeight(context, 0);
         }
 
         // We need ALL_BARRIER_BITS during end() because GL_SHADER_IMAGE_ACCESS_BARRIER_BIT doesn't
@@ -869,15 +852,10 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
     // D3D and ES require us to pack all PLS formats into r32f, r32i, or r32ui images.
     FramebufferID mScratchFramebufferForClearing{};
 
-    // Saved values to restore during onEnd().
-    std::vector<ImageUnit> mSavedImageBindings;
     // If mPLSOptions.plsRenderPassNeedsColorAttachmentWorkaround.
     bool mHadColorAttachment0;
     std::array<bool, 4> mSavedColorMask;
     DrawBuffersVector<GLenum> mSavedDrawBuffers;
-    // If !mPLSOptions.plsRenderPassNeedsColorAttachmentWorkaround.
-    GLint mSavedFramebufferDefaultWidth;
-    GLint mSavedFramebufferDefaultHeight;
 };
 
 // Implements pixel local storage via framebuffer fetch.

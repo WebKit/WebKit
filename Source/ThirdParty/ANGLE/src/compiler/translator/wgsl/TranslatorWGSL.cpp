@@ -2729,7 +2729,7 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
 
     // TODO(anglebug.com/42267100): just use the struct mode to avoid a rewrite of the interface
     // block by ReduceInterfaceBlocks into a struct.
-    DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock);
+    DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock, SH_WGSL_OUTPUT);
     ASSERT(getShaderType() != GL_COMPUTE_SHADER);
     driverUniforms.addGraphicsDriverUniformsToShader(root, &getSymbolTable());
 
@@ -2771,6 +2771,15 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
         {
             return false;
         }
+
+        if (aggregateTypesUsedForUniforms > 0)
+        {
+            // Requires MonomorphizeUnsupportedFunctions() to have been run already.
+            if (!RewriteStructSamplers(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
+        }
     }
     else
     {
@@ -2802,15 +2811,6 @@ bool TranslatorWGSL::preTranslateTreeModifications(TIntermBlock *root,
 
         // Replace root's sequence with |replacement|.
         root->replaceAllChildren(std::move(replacement));
-    }
-
-    if (aggregateTypesUsedForUniforms > 0)
-    {
-        // Requires MonomorphizeUnsupportedFunctions() to have been run already.
-        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
     }
 
     // Replace array of array of opaque uniforms with a flattened array.  This is run after

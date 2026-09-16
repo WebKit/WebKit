@@ -326,12 +326,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     }
     vk::BufferHelper *getPossiblyEmulatedTextureBuffer(vk::ErrorContext *context) const;
 
-    bool isSRGBOverrideEnabled() const
-    {
-        return mState.getSRGBOverride() != gl::SrgbOverride::Default;
-    }
-
-    angle::Result updateSrgbDecodeState(ContextVk *contextVk, const gl::SamplerState &samplerState)
+    void updateSrgbDecodeState(const gl::SamplerState &samplerState)
     {
         ASSERT(mImage != nullptr && mImage->valid());
         const gl::SrgbDecode srgbDecode  = (samplerState.getSRGBDecode() == GL_SKIP_DECODE_EXT)
@@ -339,11 +334,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                : gl::SrgbDecode::Default;
         const angle::Format &imageFormat = mImage->getActualFormat();
         mImageView.updateSrgbDecode(imageFormat, srgbDecode);
-        if (mImageView.hasColorspaceOverrideForRead(*mImage))
-        {
-            ANGLE_TRY(ensureMutable(contextVk));
-        }
-        return angle::Result::Continue;
     }
 
     angle::Result ensureRenderable(ContextVk *contextVk, TextureUpdateResult *updateResultOut);
@@ -612,7 +602,6 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                                     : VK_IMAGE_TILING_OPTIMAL;
     }
 
-    angle::Result ensureMutable(ContextVk *contextVk);
     angle::Result refreshImageViews(ContextVk *contextVk);
     void initImageUsageFlags(ContextVk *contextVk,
                              const angle::Format &intendedFormat,

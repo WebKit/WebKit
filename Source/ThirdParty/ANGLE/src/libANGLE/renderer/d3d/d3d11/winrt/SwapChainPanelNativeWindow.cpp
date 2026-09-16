@@ -80,8 +80,7 @@ HRESULT RunOnUIThread(CODE &&code, const ComPtr<ICoreDispatcher> &dispatcher)
         result = dispatcher->TryEnqueueWithPriority(DispatcherQueuePriority_Normal, handler.Get(),
                                                     &enqueued);
 #else
-        result = dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(),
-                                      asyncAction.GetAddressOf());
+        result = dispatcher->RunAsync(CoreDispatcherPriority_Normal, handler.Get(), &asyncAction);
 #endif
         if (FAILED(result))
         {
@@ -177,7 +176,7 @@ bool SwapChainPanelNativeWindow::initialize(EGLNativeWindowType window, IPropert
 #else
         result = swapChainPanelDependencyObject->get_Dispatcher(
 #endif
-            mSwapChainPanelDispatcher.GetAddressOf());
+            &mSwapChainPanelDispatcher);
     }
 
     if (SUCCEEDED(result))
@@ -222,7 +221,7 @@ bool SwapChainPanelNativeWindow::registerForSizeChangeEvents()
     ComPtr<ISizeChangedEventHandler> sizeChangedHandler;
     ComPtr<IFrameworkElement> frameworkElement;
     HRESULT result = Microsoft::WRL::MakeAndInitialize<SwapChainPanelSizeChangedHandler>(
-        sizeChangedHandler.ReleaseAndGetAddressOf(), this->shared_from_this());
+        &sizeChangedHandler, this->shared_from_this());
 
     if (SUCCEEDED(result))
     {
@@ -268,7 +267,7 @@ HRESULT SwapChainPanelNativeWindow::createSwapChain(ID3D11Device *device,
                                                     unsigned int width,
                                                     unsigned int height,
                                                     bool containsAlpha,
-                                                    IDXGISwapChain1 **swapChain)
+                                                    ComPtr<IDXGISwapChain1> *swapChain)
 {
     if (device == nullptr || factory == nullptr || swapChain == nullptr || width == 0 ||
         height == 0)
@@ -291,14 +290,12 @@ HRESULT SwapChainPanelNativeWindow::createSwapChain(ID3D11Device *device,
     swapChainDesc.AlphaMode =
         containsAlpha ? DXGI_ALPHA_MODE_PREMULTIPLIED : DXGI_ALPHA_MODE_IGNORE;
 
-    *swapChain = nullptr;
-
     ComPtr<IDXGISwapChain1> newSwapChain;
     ComPtr<ISwapChainPanelNative> swapChainPanelNative;
     Size currentPanelSize = {};
 
-    HRESULT result = factory->CreateSwapChainForComposition(device, &swapChainDesc, nullptr,
-                                                            newSwapChain.ReleaseAndGetAddressOf());
+    HRESULT result =
+        factory->CreateSwapChainForComposition(device, &swapChainDesc, nullptr, &newSwapChain);
 
     if (SUCCEEDED(result))
     {
@@ -320,7 +317,7 @@ HRESULT SwapChainPanelNativeWindow::createSwapChain(ID3D11Device *device,
         // to perform the runtime-scale behavior.  This swapchain is cached here because there are
         // no methods for retreiving the currently configured on from ISwapChainPanelNative.
         mSwapChain = newSwapChain;
-        result     = newSwapChain.CopyTo(swapChain);
+        *swapChain = std::move(newSwapChain);
     }
 
     // If the host is responsible for scaling the output of the swapchain, then

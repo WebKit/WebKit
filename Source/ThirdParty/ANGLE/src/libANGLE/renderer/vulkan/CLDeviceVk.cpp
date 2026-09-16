@@ -68,7 +68,7 @@ cl_ulong CLDeviceVk::getSingleFpConfig() const
 cl_ulong CLDeviceVk::getHalfFpConfig() const
 {
     cl_ulong halfFpConfig = 0;
-    if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
+    if (mRenderer->getFeatures().supportsClFp16.enabled)
     {
         halfFpConfig |= CL_FP_INF_NAN;
         if (mRenderer->getFeatures().supportsRoundingModeRteFp16.enabled)
@@ -93,7 +93,7 @@ cl_ulong CLDeviceVk::getHalfFpConfig() const
 cl_ulong CLDeviceVk::getDoubleFpConfig() const
 {
     cl_ulong doubleFpConfig = 0;
-    if (mRenderer->getFeatures().supportsShaderFloat64.enabled)
+    if (mRenderer->getFeatures().supportsClFp64.enabled)
     {
         doubleFpConfig |=
             CL_FP_INF_NAN | CL_FP_ROUND_TO_NEAREST | CL_FP_ROUND_TO_ZERO | CL_FP_DENORM;
@@ -455,12 +455,13 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
                                                              .name    = "cl_arm_import_memory"});
         }
     }
-    if (mRenderer->getFeatures().supportsShaderFloat16.enabled)
+    // Check for fp16 and fp64 support.
+    if (mRenderer->getFeatures().supportsClFp16.enabled)
     {
         versionedExtensionList.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_fp16"});
     }
-    if (mRenderer->getFeatures().supportsShaderFloat64.enabled)
+    if (mRenderer->getFeatures().supportsClFp64.enabled)
     {
         versionedExtensionList.push_back(
             cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_fp64"});

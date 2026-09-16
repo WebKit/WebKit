@@ -28,6 +28,7 @@ samples utility functions
 
 #include <assert.h>
 #include <string.h>
+#include <array>
 #include <cstdlib>
 #include <iterator>
 
@@ -884,18 +885,18 @@ void init_swap_chain(struct sample_info &info, VkImageUsageFlags usageFlags)
     }
 
     // Find a supported composite alpha mode - one of these is guaranteed to be set
-    VkCompositeAlphaFlagBitsKHR compositeAlpha         = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    VkCompositeAlphaFlagBitsKHR compositeAlphaFlags[4] = {
+    VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    constexpr std::array<VkCompositeAlphaFlagBitsKHR, 4> compositeAlphaFlags = {
         VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
         VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR,
         VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR,
         VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
     };
-    for (uint32_t i = 0; i < sizeof(compositeAlphaFlags); i++)
+    for (VkCompositeAlphaFlagBitsKHR flag : compositeAlphaFlags)
     {
-        if (surfCapabilities.supportedCompositeAlpha & ANGLE_UNSAFE_TODO(compositeAlphaFlags[i]))
+        if (surfCapabilities.supportedCompositeAlpha & flag)
         {
-            compositeAlpha = ANGLE_UNSAFE_TODO(compositeAlphaFlags[i]);
+            compositeAlpha = flag;
             break;
         }
     }

@@ -43,11 +43,6 @@ DisplayImpl::~DisplayImpl()
     ASSERT(mState.surfaceMap.empty());
 }
 
-egl::Error DisplayImpl::prepareForCall()
-{
-    return egl::NoError();
-}
-
 egl::Error DisplayImpl::releaseThread()
 {
     return egl::NoError();

@@ -2678,25 +2678,6 @@ void PixelLocalStorageTest::doStateRestorationTest()
     }
     glDrawBuffers(MAX_DRAW_BUFFERS, drawBuffers.data());
 
-    std::array<GLenum, 3> imageAccesses = {GL_READ_ONLY, GL_WRITE_ONLY, GL_READ_WRITE};
-    std::array<GLenum, 4> imageFormats  = {GL_RGBA8, GL_R32UI, GL_R32I, GL_R32F};
-    std::vector<GLTexture> images;
-    if (isContextVersionAtLeast(3, 1))
-    {
-        for (int i = 0; i < MAX_PIXEL_LOCAL_STORAGE_PLANES; ++i)
-        {
-            GLuint tex = images.emplace_back();
-            glBindTexture(GL_TEXTURE_2D_ARRAY, tex);
-            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 3, GL_RGBA8, 8, 8, 5);
-            GLboolean layered = i % 2;
-            glBindImageTexture(i, images.back(), i % 3, layered, layered == GL_FALSE ? i % 5 : 0,
-                               imageAccesses[i % 3], imageFormats[i % 4]);
-        }
-
-        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 17);
-        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 1);
-    }
-
     PLSTestTexture boundTex(GL_RGBA8, 1, 1);
     glBindTexture(GL_TEXTURE_2D, boundTex);
 
@@ -2729,12 +2710,12 @@ void PixelLocalStorageTest::doStateRestorationTest()
             glGetIntegeri_v(GL_IMAGE_BINDING_LAYER, i, &layer);
             glGetIntegeri_v(GL_IMAGE_BINDING_ACCESS, i, &access);
             glGetIntegeri_v(GL_IMAGE_BINDING_FORMAT, i, &format);
-            EXPECT_EQ(static_cast<GLuint>(name), images[i]);
-            EXPECT_EQ(level, i % 3);
-            EXPECT_EQ(layered, i % 2);
-            EXPECT_EQ(layer, layered == GL_FALSE ? i % 5 : 0);
-            EXPECT_EQ(static_cast<GLuint>(access), imageAccesses[i % 3]);
-            EXPECT_EQ(static_cast<GLuint>(format), imageFormats[i % 4]);
+            EXPECT_EQ(name, 0);
+            EXPECT_EQ(level, 0);
+            EXPECT_EQ(layered, GL_FALSE);
+            EXPECT_EQ(layer, 0);
+            EXPECT_EQ(access, GL_READ_ONLY);
+            EXPECT_EQ(format, GL_R32UI);
         }
 
         GLint defaultWidth, defaultHeight;
@@ -2742,8 +2723,8 @@ void PixelLocalStorageTest::doStateRestorationTest()
                                     &defaultWidth);
         glGetFramebufferParameteriv(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT,
                                     &defaultHeight);
-        EXPECT_EQ(defaultWidth, 17);
-        EXPECT_EQ(defaultHeight, 1);
+        EXPECT_EQ(defaultWidth, 0);
+        EXPECT_EQ(defaultHeight, 0);
     }
 
     for (int i = 0; i < MAX_COLOR_ATTACHMENTS; ++i)
@@ -3005,6 +2986,12 @@ void PixelLocalStorageTest::doImplicitDisablesTest_Framebuffer()
         glFramebufferParameteri(GL_READ_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 0);
         CHECK_ENDS_PLS_WITH_READ_FBO(
             glFramebufferParameteri(GL_READ_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 23));
+
+        GLTexture tex;
+        glBindTexture(GL_TEXTURE_2D, tex);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, 4, 4);
+        ASSERT_GL_NO_ERROR();
+        CHECK_ENDS_PLS(glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI));
     }
 
     glFramebufferMemorylessPixelLocalStorageANGLE(2, GL_RGBA8, GL_NONE);
@@ -3041,6 +3028,7 @@ void PixelLocalStorageTest::doImplicitDisablesTest_TextureAttachments()
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     CHECK_ENDS_PLS_WITH_READ_FBO(
         glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex2D, 0));
+    CHECK_ENDS_PLS(glGenerateMipmap(GL_TEXTURE_2D));
 
     GLTexture tex2DArray;
     glBindTexture(GL_TEXTURE_2D_ARRAY, tex2DArray);
@@ -3059,6 +3047,7 @@ void PixelLocalStorageTest::doImplicitDisablesTest_TextureAttachments()
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     CHECK_ENDS_PLS_WITH_READ_FBO(
         glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex2DArray, 0, 0));
+    CHECK_ENDS_PLS(glGenerateMipmap(GL_TEXTURE_2D_ARRAY));
 
     GLTexture tex3d;
     glBindTexture(GL_TEXTURE_3D, tex3d);
@@ -3076,6 +3065,7 @@ void PixelLocalStorageTest::doImplicitDisablesTest_TextureAttachments()
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
     CHECK_ENDS_PLS_WITH_READ_FBO(
         glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex3d, 0, 0));
+    CHECK_ENDS_PLS(glGenerateMipmap(GL_TEXTURE_3D));
 
     if (EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"))
     {
@@ -4467,7 +4457,7 @@ TEST_P(PixelLocalStorageTest, DefaultRPDescSizeLeak_BetweenFBOs)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
         ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
@@ -4511,7 +4501,7 @@ TEST_P(PixelLocalStorageTest, DefaultRPDescSizeLeak_SameFBO)
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 4, 4);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
         ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.0f);
@@ -4875,10 +4865,6 @@ TEST_P(PixelLocalStorageTest, RedefineBoundAttachmentsConflict)
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
         EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
-        // 3. glGenerateMipmap
-        glGenerateMipmap(GL_TEXTURE_2D);
-        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-
         // Attempt to redefine texNonFB (NOT bound to FB) - should succeed
         glBindTexture(GL_TEXTURE_2D, texNonFB);
 
@@ -4886,11 +4872,7 @@ TEST_P(PixelLocalStorageTest, RedefineBoundAttachmentsConflict)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, W, H, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         EXPECT_GL_NO_ERROR();
 
-        // 2. glGenerateMipmap
-        glGenerateMipmap(GL_TEXTURE_2D);
-        EXPECT_GL_NO_ERROR();
-
-        // 3. glTexStorage2D on texNonFBStorage (NOT bound to FB) - should succeed
+        // 2. glTexStorage2D on texNonFBStorage (NOT bound to FB) - should succeed
         glBindTexture(GL_TEXTURE_2D, texNonFBStorage);
         glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, W, H);
         EXPECT_GL_NO_ERROR();
@@ -6019,6 +6001,79 @@ TEST_P(PixelLocalStorageValidationTest, BeginPixelLocalStorageANGLE_context_stat
         EXPECT_GL_SINGLE_ERROR_MSG(
             "Attempted to begin pixel local storage with GL_DITHER enabled.");
         ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
+    }
+
+    if (isContextVersionAtLeast(3, 1))
+    {
+        // INVALID_OPERATION is generated if framebuffer default dimensions are not zeros.
+        {
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 1);
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 0);
+            ASSERT_GL_NO_ERROR();
+            glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG("Draw framebuffer default width or height are not zeros.");
+            ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
+
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 0);
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 1);
+            ASSERT_GL_NO_ERROR();
+            glBeginPixelLocalStorageANGLE(1, GLenumArray({GL_LOAD_OP_ZERO_ANGLE}));
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG("Draw framebuffer default width or height are not zeros.");
+            ASSERT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
+
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, 0);
+            glFramebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, 0);
+        }
+
+        // INVALID_OPERATION is generated if image units overlapping with PLS planes are not empty.
+        {
+            std::vector<PLSTestTexture> texs;
+            for (int i = 0; i < MAX_PIXEL_LOCAL_STORAGE_PLANES; ++i)
+            {
+                texs.emplace_back(GL_RGBA8);
+                glFramebufferTexturePixelLocalStorageANGLE(i, texs[i], 0, 0, 0);
+            }
+            ASSERT_GL_NO_ERROR();
+
+            GLTexture tex;
+            glBindTexture(GL_TEXTURE_2D, tex);
+            glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32UI, 4, 4);
+            ASSERT_GL_NO_ERROR();
+
+            GLint maxImageUnits;
+            glGetIntegerv(GL_MAX_IMAGE_UNITS, &maxImageUnits);
+            ASSERT_GL_NO_ERROR();
+            for (GLint unit = 0; unit < maxImageUnits; ++unit)
+            {
+                glBindImageTexture(unit, tex, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
+                ASSERT_GL_NO_ERROR();
+
+                glBeginPixelLocalStorageANGLE(
+                    MAX_PIXEL_LOCAL_STORAGE_PLANES,
+                    std::vector<GLenum>(MAX_PIXEL_LOCAL_STORAGE_PLANES, GL_DONT_CARE).data());
+
+                if (unit < MAX_PIXEL_LOCAL_STORAGE_PLANES)
+                {
+                    EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+                    EXPECT_GL_SINGLE_ERROR_MSG(
+                        "An image unit overlapping with a PLS plane has a texture bound.");
+                    EXPECT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE, 0);
+                }
+                else
+                {
+                    EXPECT_GL_NO_ERROR();
+                    EXPECT_GL_INTEGER(GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE,
+                                      MAX_PIXEL_LOCAL_STORAGE_PLANES);
+                    glEndPixelLocalStorageImplicitANGLE();
+                    EXPECT_GL_NO_ERROR();
+                }
+
+                glBindImageTexture(unit, 0, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32UI);
+                ASSERT_GL_NO_ERROR();
+            }
+        }
     }
 }
 
@@ -8321,7 +8376,7 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
 
 #define CHECK_TEXTURE_2D_MODIFICATION(FN) \
     CHECK_TEXTURE_2D_MODIFICATION_MSG(    \
-        FN, "Operation not permitted on an active pixel local storage backing texture.")
+        FN, "Pixel local storage is active and the texture is bound as its plane.")
 
 #define CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(FN, MSG) \
     glBindTexture(GL_TEXTURE_2D_ARRAY, pls2darray);      \
@@ -8334,7 +8389,7 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
 
 #define CHECK_TEXTURE_2D_ARRAY_MODIFICATION(FN) \
     CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(    \
-        FN, "Operation not permitted on an active pixel local storage backing texture.")
+        FN, "Pixel local storage is active and the texture is bound as its plane.")
 
     std::vector<uint8_t> imageData(H * W * 4);
 
@@ -8343,14 +8398,6 @@ TEST_P(PixelLocalStorageValidationTest, ModifyTextureDuringPLS)
 
     CHECK_TEXTURE_2D_ARRAY_MODIFICATION(glTexSubImage3D(
         GL_TEXTURE_2D_ARRAY, 0, 0, 0, 1, W, H, 1, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data()));
-
-    CHECK_TEXTURE_2D_MODIFICATION_MSG(
-        glGenerateMipmap(GL_TEXTURE_2D),
-        "Operation not permitted while pixel local storage is active.");
-
-    CHECK_TEXTURE_2D_ARRAY_MODIFICATION_MSG(
-        glGenerateMipmap(GL_TEXTURE_2D_ARRAY),
-        "Operation not permitted while pixel local storage is active.");
 
     if (EnsureGLExtensionEnabled("GL_ANGLE_robust_client_memory"))
     {

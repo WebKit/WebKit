@@ -27,29 +27,40 @@
 namespace rx
 {
 
-cl::Memory *GetCLKernelArgumentMemoryHandle(const CLKernelArgument &kernelArgument)
+// Setup the CLKernelArgument with info from ClspvKernelArgument
+CLKernelArgument::CLKernelArgument(const CLContextVk *context, const ClspvKernelArgument &info)
+    : mCompiledInfo(info), mSize(0), mHandle(nullptr)
 {
-    if (!kernelArgument.used)
+    mArgInfo.typeQualifier    = mCompiledInfo.info.typeQualifier;
+    mArgInfo.addressQualifier = mCompiledInfo.info.addressQualifier;
+    mArgInfo.accessQualifier  = mCompiledInfo.info.accessQualifier;
+    mArgInfo.typeName         = mCompiledInfo.info.typeName;
+    mArgInfo.name             = mCompiledInfo.info.name;
+}
+
+cl::Memory *CLKernelArgument::getMemoryHandle() const
+{
+    if (!mCompiledInfo.used)
     {
         return nullptr;
     }
-
-    return cl::Memory::Cast(static_cast<cl_mem>(kernelArgument.handle));
+    return cl::Memory::Cast(static_cast<cl_mem>(mHandle));
 }
 
-// Function to check if a kernel argument is read only. This will be used to insert appropriate
-// barriers in the command buffer. Ideally, we could use the kernel argument access qualifier to
-// determine read only attribute. For now, the query is based on the cl memory flags to keep the
-// existing functionality in tact.
-bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument)
+cl::Sampler *CLKernelArgument::getSamplerHandle() const
+{
+    ASSERT(mCompiledInfo.type == NonSemanticClspvReflectionArgumentSampler);
+    return cl::Sampler::Cast(*static_cast<const cl_sampler *>(mHandle));
+}
+
+bool CLKernelArgument::isReadOnly() const
 {
     // if not used, can safely assume readonly
-    if (!kernelArgument.used)
+    if (!mCompiledInfo.used)
     {
         return true;
     }
-
-    switch (kernelArgument.type)
+    switch (getReflectionType())
     {
         case NonSemanticClspvReflectionArgumentPodUniform:
         case NonSemanticClspvReflectionArgumentUniform:
@@ -64,7 +75,7 @@ bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument)
         case NonSemanticClspvReflectionArgumentStorageImage:
         case NonSemanticClspvReflectionArgumentSampledImage:
         {
-            return kernelArgument.info.accessQualifier == CL_KERNEL_ARG_ACCESS_READ_ONLY;
+            return mArgInfo.accessQualifier == CL_KERNEL_ARG_ACCESS_READ_ONLY;
         }
         default:
         {
@@ -73,18 +84,17 @@ bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument)
     }
 }
 
-CLKernelVk::CLKernelVk(const cl::Kernel &kernel,
-                       std::string &name,
-                       std::string &attributes,
-                       CLKernelArguments &args)
+CLKernelVk::CLKernelVk(const cl::Kernel &kernel, std::string &name, std::string &attributes)
     : CLKernelImpl(kernel),
       mProgram(&kernel.getProgram().getImpl<CLProgramVk>()),
       mContext(&kernel.getProgram().getContext().getImpl<CLContextVk>()),
       mName(name),
       mAttributes(attributes),
-      mArgs(args),
+      mArgs(),
       mPodBuffer(nullptr),
-      mLocalMemoryArgSizes(args.size(), 0)
+      mLocalMemoryArgSizes(
+          mProgram->getDeviceProgramData(mName.c_str())->getKernelArguments(mName.c_str()).size(),
+          0)
 {
     mShaderProgramHelper.setShader(gl::ShaderType::Compute,
                                    mKernel.getProgram().getImpl<CLProgramVk>().getShaderModule());
@@ -110,16 +120,22 @@ angle::Result CLKernelVk::init()
             nullptr);
     }
 
+    // Setup the arguments
+    for (auto &clspvArg : deviceProgramData->getKernelArguments(mName.c_str()))
+    {
+        mArgs.push_back(std::make_shared<CLKernelArgument>(mContext, clspvArg));
+    }
+
     vk::DescriptorSetLayoutDesc &descriptorSetLayoutDesc =
         mDescriptorSetLayoutDescs[DescriptorSetIndex::KernelArguments];
     VkPushConstantRange pcRange = deviceProgramData->pushConstRange;
     size_t podBufferSize        = 0;
 
     bool podFound = false;
-    for (const auto &arg : getArgs())
+    for (const auto arg : getArgs())
     {
         VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-        switch (arg.type)
+        switch (arg->getReflectionType())
         {
             case NonSemanticClspvReflectionArgumentStorageBuffer:
                 descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -131,24 +147,28 @@ angle::Result CLKernelVk::init()
             case NonSemanticClspvReflectionArgumentPodStorageBuffer:
             case NonSemanticClspvReflectionArgumentPointerUniform:
             {
-                uint32_t newPodBufferSize = arg.podStorageBufferOffset + arg.podStorageBufferSize;
+                uint32_t newPodBufferSize =
+                    arg->getPodStorageBufferOffset() + arg->getPodStorageBufferSize();
                 podBufferSize = newPodBufferSize > podBufferSize ? newPodBufferSize : podBufferSize;
                 if (podFound)
                 {
                     continue;
                 }
-                descType = arg.type == NonSemanticClspvReflectionArgumentPodStorageBuffer
-                               ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
-                               : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                descType =
+                    arg->getReflectionType() == NonSemanticClspvReflectionArgumentPodStorageBuffer
+                        ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+                        : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 podFound = true;
                 break;
             }
             case NonSemanticClspvReflectionArgumentPodPushConstant:
             case NonSemanticClspvReflectionArgumentPointerPushConstant:
                 // Get existing push constant range and see if we need to update
-                if (arg.pushConstOffset + arg.pushConstantSize > pcRange.offset + pcRange.size)
+                if (arg->getPushConstantOffset() + arg->getPushConstantSize() >
+                    pcRange.offset + pcRange.size)
                 {
-                    pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
+                    pcRange.size =
+                        arg->getPushConstantOffset() + arg->getPushConstantSize() - pcRange.offset;
                 }
                 continue;
             case NonSemanticClspvReflectionArgumentSampledImage:
@@ -171,7 +191,7 @@ angle::Result CLKernelVk::init()
         }
         if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
         {
-            descriptorSetLayoutDesc.addBinding(arg.descriptorBinding, descType, 1,
+            descriptorSetLayoutDesc.addBinding(arg->getDescriptorBinding(), descType, 1,
                                                VK_SHADER_STAGE_COMPUTE_BIT, nullptr);
         }
     }
@@ -233,32 +253,50 @@ angle::Result CLKernelVk::init()
 angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *argValue)
 {
     auto &arg = mArgs.at(argIndex);
-    if (arg.used)
+    if (arg->getUsed())
     {
-        switch (arg.type)
+        switch (arg->getReflectionType())
         {
             case NonSemanticClspvReflectionArgumentPodPushConstant:
+            {
                 ASSERT(mPodArgumentPushConstants.size() >=
-                       arg.pushConstantSize + arg.pushConstOffset);
-                arg.handle     = &mPodArgumentPushConstants[arg.pushConstOffset];
-                arg.handleSize = std::min(argSize, static_cast<size_t>(arg.pushConstantSize));
+                       arg->getPushConstantSize() + arg->getPushConstantOffset());
+                void *handle = &mPodArgumentPushConstants[arg->getPushConstantOffset()];
+                size_t handleSize =
+                    (argSize > arg->getPushConstantSize() ? arg->getPushConstantSize() : argSize);
                 if (argSize > 0 && argValue != nullptr)
                 {
                     // Copy the contents since app is free to delete/reassign the contents after
-                    ANGLE_UNSAFE_TODO(memcpy(arg.handle, argValue, arg.handleSize));
+                    ANGLE_UNSAFE_TODO(memcpy(handle, argValue, handleSize));
                 }
+                arg->set(handleSize, handle);
                 break;
+            }
             case NonSemanticClspvReflectionArgumentPodUniform:
             case NonSemanticClspvReflectionArgumentPodStorageBuffer:
-                ASSERT(mPodBuffer->getSize() >= argSize + arg.podUniformOffset);
+            {
+                ASSERT(mPodBuffer->getSize() >= argSize + arg->getPodUniformOffset());
                 if (argSize > 0 && argValue != nullptr)
                 {
                     ANGLE_TRY(mPodBuffer->getImpl<CLBufferVk>().copyFrom(
-                        argValue, arg.podStorageBufferOffset, argSize));
+                        argValue, arg->getPodStorageBufferOffset(), argSize));
                 }
                 break;
+            }
             case NonSemanticClspvReflectionArgumentUniform:
             case NonSemanticClspvReflectionArgumentStorageBuffer:
+            {
+                ASSERT(argSize == sizeof(cl_mem *));
+                size_t handleSize = argSize;
+                void *handle      = nullptr;
+                // Argument can be null ptr
+                if (argValue && *static_cast<const cl_mem *>(argValue))
+                {
+                    handle = *static_cast<const cl_mem *>(argValue);
+                }
+                arg->set(handleSize, handle);
+                break;
+            }
             case NonSemanticClspvReflectionArgumentStorageImage:
             case NonSemanticClspvReflectionArgumentSampledImage:
             case NonSemanticClspvReflectionArgumentUniformTexelBuffer:
@@ -268,28 +306,25 @@ angle::Result CLKernelVk::setArg(cl_uint argIndex, size_t argSize, const void *a
             {
                 ASSERT(argSize == sizeof(cl_mem *));
                 cl_mem memHandle = *static_cast<const cl_mem *>(argValue);
-                arg.handle       = memHandle;
-                arg.handleSize = argSize;
 
                 if (cl::Memory::Cast(memHandle)->getFlags().intersects(CL_MEM_READ_ONLY) &&
-                    !IsCLKernelArgumentReadonly(arg))
+                    !arg->isReadOnly())
                 {
                     WARN() << "The cl_mem argument at index:" << argIndex
                            << " is setup as read-only, and the kernel is writing to it -- This "
                               "could lead to undefined behavior";
                 }
+                arg->set(argSize, memHandle);
                 break;
             }
             case NonSemanticClspvReflectionArgumentWorkgroup:
-                ASSERT(arg.workgroupBufferElemSize != 0);
+                ASSERT(arg->getWorkGroupElementSize() != 0);
                 mLocalMemoryArgSizes[argIndex] = argSize;
-                arg.handle                     = const_cast<void *>(argValue);
-                arg.handleSize                 = argSize;
+                arg->set(argSize, const_cast<void *>(argValue));
                 break;
             default:
                 // Just store ptr and size (if we end up here)
-                arg.handle     = const_cast<void *>(argValue);
-                arg.handleSize = argSize;
+                arg->set(argSize, const_cast<void *>(argValue));
                 break;
         }
     }
@@ -302,15 +337,9 @@ angle::Result CLKernelVk::createInfo(CLKernelImpl::Info *info) const
     info->functionName = mName;
     info->attributes   = mAttributes;
     info->numArgs      = static_cast<cl_uint>(mArgs.size());
-    for (const auto &arg : mArgs)
+    for (const auto arg : mArgs)
     {
-        ArgInfo argInfo;
-        argInfo.name             = arg.info.name;
-        argInfo.typeName         = arg.info.typeName;
-        argInfo.accessQualifier  = arg.info.accessQualifier;
-        argInfo.addressQualifier = arg.info.addressQualifier;
-        argInfo.typeQualifier    = arg.info.typeQualifier;
-        info->args.push_back(std::move(argInfo));
+        info->args.push_back(arg->getArgInfo());
     }
 
     auto &ctx = mKernel.getProgram().getContext();
@@ -427,17 +456,19 @@ angle::Result CLKernelVk::getOrCreateComputePipeline(vk::PipelineCacheAccess *pi
         constantDataOffset += sizeof(uint32_t);
     }
     // Populate kernel specialization constants (if any)
-    for (const auto &arg : mArgs)
+    for (const auto arg : mArgs)
     {
-        if (arg.used && arg.type == NonSemanticClspvReflectionArgumentWorkgroup)
+        if (arg->getUsed() &&
+            arg->getReflectionType() == NonSemanticClspvReflectionArgumentWorkgroup)
         {
-            ASSERT(arg.workgroupBufferElemSize != 0);
+            ASSERT(arg->getWorkGroupElementSize() != 0);
 
             specConstantData.push_back(
-                static_cast<uint32_t>(arg.handleSize / arg.workgroupBufferElemSize));
-            mapEntries.push_back(VkSpecializationMapEntry{.constantID = arg.workgroupBufferSpecId,
-                                                          .offset     = constantDataOffset,
-                                                          .size       = sizeof(uint32_t)});
+                static_cast<uint32_t>(arg->getSize() / arg->getWorkGroupElementSize()));
+            mapEntries.push_back(
+                VkSpecializationMapEntry{.constantID = arg->getWorkGroupBufferSpecId(),
+                                         .offset     = constantDataOffset,
+                                         .size       = sizeof(uint32_t)});
             constantDataOffset += sizeof(uint32_t);
         }
     }

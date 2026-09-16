@@ -402,16 +402,6 @@
                 <enum name="EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE"/>
             </require>
         </extension>
-        <extension name="EGL_ANGLE_platform_angle_device_context_volatile_cgl" supported="egl">
-            <require>
-                <enum name="EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE"/>
-            </require>
-        </extension>
-        <extension name="EGL_ANGLE_platform_angle_device_context_volatile_eagl" supported="egl">
-            <require>
-                <enum name="EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE"/>
-            </require>
-        </extension>
         <extension name="EGL_ANGLE_platform_angle_device_id" supported="egl">
             <require>
                 <enum name="EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE"/>
@@ -623,8 +613,6 @@
     <enums namespace="EGL" start="0x34A0" end="0x34AF" vendor="ANGLE">
         <enum value="0x34A0" name="EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE"/>
         <enum value="0x34A1" name="EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE"/>
-        <enum value="0x34A2" name="EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_EAGL_ANGLE"/>
-        <enum value="0x34A3" name="EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE"/>
         <enum value="0x34A4" name="EGL_PLATFORM_VULKAN_DISPLAY_MODE_SIMPLE_ANGLE"/>
         <enum value="0x34A5" name="EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE"/>
         <enum value="0x34A6" name="EGL_METAL_DEVICE_ANGLE"/>

@@ -479,7 +479,7 @@ angle::Result ResourceManager11::allocate(d3d::Context *context,
                                           Resource11<T> *resourceOut)
 {
     ID3D11Device *device = renderer->getDevice();
-    T *resource          = nullptr;
+    angle::ComPtr<T> resource;
 
     GetInitDataFromD3D11<T> *shadowInitData = initData;
     if (!shadowInitData && mInitializeAllocations)
@@ -492,12 +492,12 @@ angle::Result ResourceManager11::allocate(d3d::Context *context,
 
     if (!shadowInitData && mInitializeAllocations)
     {
-        ANGLE_TRY(ClearResource(context, renderer, desc, resource));
+        ANGLE_TRY(ClearResource(context, renderer, desc, resource.Get()));
     }
 
     ASSERT(resource);
     incrResource(GetResourceTypeFromD3D11<T>(), ComputeMemoryUsage(desc));
-    *resourceOut = std::move(Resource11<T>(resource, this));
+    *resourceOut = std::move(Resource11<T>(std::move(resource), this));
     return angle::Result::Continue;
 }
 

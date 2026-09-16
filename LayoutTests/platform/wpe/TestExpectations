@@ -1302,3 +1302,7 @@ webkit.org/b/324152 platform/glib/damage/animations-drop-shadow-color.html [ Pas
 # Gardening 2026-09-16
 webkit.org/b/324334 [ Debug ] fast/canvas/webgl/largeBuffer.html [ Crash Pass ]
 webkit.org/b/324337 [ arm64 ] http/tests/navigation/javascriptlink-frames.html [ Failure Pass ]
+
+# ANGLE now loses hardened WebGL contexts on any backend error, so a driver OOM here reports CONTEXT_LOST_WEBGL instead of INVALID_VALUE (chromium:552538802).
+webkit.org/b/324374 webgl/1.0.x/conformance/textures/misc/texture-size-limit.html [ Failure ]
+webkit.org/b/324374 webgl/2.0.y/conformance/textures/misc/texture-size-limit.html [ Failure ]

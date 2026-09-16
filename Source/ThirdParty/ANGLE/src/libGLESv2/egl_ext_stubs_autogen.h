@@ -35,7 +35,7 @@ struct Config;
 
 EGLint ClientWaitSyncKHR(Thread *thread,
                          egl::Display *dpyPacked,
-                         egl::SyncID syncPacked,
+                         egl::Sync *syncPacked,
                          EGLint flags,
                          EGLTimeKHR timeout);
 EGLImageKHR CreateImageKHR(Thread *thread,
@@ -68,8 +68,8 @@ EGLint DebugMessageControlKHR(Thread *thread,
                               const AttributeMap &attrib_listPacked);
 EGLBoolean DestroyImageKHR(Thread *thread, egl::Display *dpyPacked, ImageID imagePacked);
 EGLBoolean DestroyStreamKHR(Thread *thread, egl::Display *dpyPacked, egl::Stream *streamPacked);
-EGLBoolean DestroySyncKHR(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked);
-EGLint DupNativeFenceFDANDROID(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked);
+EGLBoolean DestroySyncKHR(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked);
+EGLint DupNativeFenceFDANDROID(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked);
 EGLBoolean GetMscRateANGLE(Thread *thread,
                            egl::Display *dpyPacked,
                            SurfaceID surfacePacked,
@@ -82,7 +82,7 @@ EGLDisplay GetPlatformDisplayEXT(Thread *thread,
                                  const AttributeMap &attrib_listPacked);
 EGLBoolean GetSyncAttribKHR(Thread *thread,
                             egl::Display *dpyPacked,
-                            egl::SyncID syncPacked,
+                            egl::Sync *syncPacked,
                             EGLint attribute,
                             EGLint *value);
 EGLint LabelObjectKHR(Thread *thread,
@@ -190,7 +190,7 @@ EGLBoolean SetDamageRegionKHR(Thread *thread,
                               EGLint n_rects);
 EGLBoolean SignalSyncKHR(Thread *thread,
                          egl::Display *dpyPacked,
-                         egl::SyncID syncPacked,
+                         egl::Sync *syncPacked,
                          EGLenum mode);
 EGLBoolean StreamAttribKHR(Thread *thread,
                            egl::Display *dpyPacked,
@@ -216,7 +216,7 @@ EGLBoolean SwapBuffersWithDamageKHR(Thread *thread,
                                     const EGLint *rects,
                                     EGLint n_rects);
 EGLBoolean UnlockSurfaceKHR(Thread *thread, egl::Display *dpyPacked, SurfaceID surfacePacked);
-EGLint WaitSyncKHR(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked, EGLint flags);
+EGLint WaitSyncKHR(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked, EGLint flags);
 EGLDeviceEXT CreateDeviceANGLE(Thread *thread,
                                EGLint device_type,
                                void *native_device,
@@ -278,7 +278,7 @@ EGLBoolean ExportVkImageANGLE(Thread *thread,
                               ImageID imagePacked,
                               void *vk_image,
                               void *vk_image_create_info);
-void *CopyMetalSharedEventANGLE(Thread *thread, egl::Display *dpyPacked, egl::SyncID syncPacked);
+void *CopyMetalSharedEventANGLE(Thread *thread, egl::Display *dpyPacked, egl::Sync *syncPacked);
 void WaitUntilWorkScheduledANGLE(Thread *thread, egl::Display *dpyPacked);
 void SetValidationEnabledANGLE(Thread *thread, EGLBoolean validationState);
 }  // namespace egl

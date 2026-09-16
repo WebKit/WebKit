@@ -143,6 +143,7 @@ class ErrorSet : angle::NonCopyable
 
     const GLenum mResetStrategy;
     const bool mLoseContextOnOutOfMemory;
+    const bool mLoseContextOnInternalError;
 
     // Context-loss handling
     bool mContextLostForced;

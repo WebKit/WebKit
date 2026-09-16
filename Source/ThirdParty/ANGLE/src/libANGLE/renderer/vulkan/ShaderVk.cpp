@@ -85,6 +85,11 @@ std::shared_ptr<ShaderTranslateTask> ShaderVk::compile(const gl::Context *contex
         options->addVulkanDepthCorrection = true;
     }
 
+    if (contextVk->getFeatures().preferPrecomputedVertexTransform.enabled)
+    {
+        options->preferPrecomputedVertexTransform = true;
+    }
+
     if (contextVk->getFeatures().supportsTransformFeedbackExtension.enabled)
     {
         options->addVulkanXfbExtensionSupportCode = true;

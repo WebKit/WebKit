@@ -1162,11 +1162,6 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         addExtensionPrerequisite("GL_EXT_texture_storage");
     }
 
-    if (traceNameIs("real_racing3"))
-    {
-        addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
-    }
-
     if (traceNameIs("blade_and_soul_revolution"))
     {
         addExtensionPrerequisite("GL_EXT_texture_buffer");

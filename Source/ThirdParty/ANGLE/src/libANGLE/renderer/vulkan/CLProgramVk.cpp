@@ -466,11 +466,10 @@ angle::Result CLProgramVk::createKernel(const cl::Kernel &kernel,
     ASSERT(devProgram != nullptr);
 
     // Create kernel
-    CLKernelArguments kernelArgs = devProgram->getKernelArguments(name);
     std::string kernelAttributes = devProgram->getKernelAttributes(name);
     std::string kernelName       = std::string(name ? name : "");
-    CLKernelVk::Ptr kernelImpl   = CLKernelVk::Ptr(
-        new (std::nothrow) CLKernelVk(kernel, kernelName, kernelAttributes, kernelArgs));
+    CLKernelVk::Ptr kernelImpl =
+        CLKernelVk::Ptr(new (std::nothrow) CLKernelVk(kernel, kernelName, kernelAttributes));
     if (kernelImpl == nullptr)
     {
         ERR() << "Could not create kernel obj!";

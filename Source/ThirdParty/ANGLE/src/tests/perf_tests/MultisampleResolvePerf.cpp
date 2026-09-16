@@ -11,7 +11,7 @@
 
 #include "ANGLEPerfTest.h"
 #include "common/unsafe_buffers.h"
-
+#include "test_utils/ANGLETest.h"
 #include "util/shader_utils.h"
 
 namespace
@@ -121,7 +121,7 @@ void MultisampleResolvePerf::initializeBenchmark()
         glBindFramebuffer(GL_FRAMEBUFFER, mResolveFramebuffer[i]);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
                                   mResolveColor[i]);
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
 
     if (param.withDepthStencil)
@@ -130,7 +130,7 @@ void MultisampleResolvePerf::initializeBenchmark()
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size, size);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                                   mResolveDepthStencil);
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
 
     if (param.samples > 0)
@@ -155,7 +155,7 @@ void MultisampleResolvePerf::initializeBenchmark()
                                       mMSAADepthStencil);
         }
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
     else
     {
@@ -171,7 +171,7 @@ void MultisampleResolvePerf::initializeBenchmark()
                                       mResolveDepthStencil);
         }
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
 
     GLenum bufs[3] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_COLOR_ATTACHMENT2};

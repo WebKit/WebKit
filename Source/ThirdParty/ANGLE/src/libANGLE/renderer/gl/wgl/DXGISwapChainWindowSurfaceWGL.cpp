@@ -43,8 +43,6 @@ DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceS
       mSwapChainFlags(0),
       mDepthBufferFormat(GL_NONE),
       mFirstSwap(true),
-      mSwapChain(nullptr),
-      mSwapChain1(nullptr),
       mFramebufferID(0),
       mColorRenderbufferID(0),
       mRenderbufferBufferHandle(nullptr),
@@ -83,8 +81,6 @@ DXGISwapChainWindowSurfaceWGL::~DXGISwapChainWindowSurfaceWGL()
         mDepthRenderbufferID = 0;
     }
 
-    SafeRelease(mSwapChain);
-    SafeRelease(mSwapChain1);
 }
 
 egl::Error DXGISwapChainWindowSurfaceWGL::initialize(const egl::Display *display)
@@ -201,9 +197,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(const gl::Context *contex
     const TextureGL *textureGL = GetImplAs<TextureGL>(texture);
     GLuint textureID           = textureGL->getTextureID();
 
-    ID3D11Texture2D *colorBuffer = nullptr;
-    HRESULT result               = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-                                                         reinterpret_cast<void **>(&colorBuffer));
+    angle::ComPtr<ID3D11Texture2D> colorBuffer;
+    HRESULT result = mSwapChain->GetBuffer(0, IID_PPV_ARGS(&colorBuffer));
     if (FAILED(result))
     {
         std::ostringstream err;
@@ -211,9 +206,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(const gl::Context *contex
         return egl::Error(EGL_BAD_ALLOC, err.str());
     }
 
-    mTextureHandle = mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer, textureID,
+    mTextureHandle = mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer.Get(), textureID,
                                                        GL_TEXTURE_2D, WGL_ACCESS_READ_WRITE_NV);
-    SafeRelease(colorBuffer);
     if (mTextureHandle == nullptr)
     {
         std::ostringstream err;
@@ -392,28 +386,24 @@ egl::Error DXGISwapChainWindowSurfaceWGL::checkForResize()
     return egl::NoError();
 }
 
-static IDXGIFactory *GetDXGIFactoryFromDevice(ID3D11Device *device)
+static angle::ComPtr<IDXGIFactory> GetDXGIFactoryFromDevice(ID3D11Device *device)
 {
-    IDXGIDevice *dxgiDevice = nullptr;
-    HRESULT result =
-        device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void **>(&dxgiDevice));
+    angle::ComPtr<IDXGIDevice> dxgiDevice;
+    HRESULT result = device->QueryInterface(IID_PPV_ARGS(&dxgiDevice));
     if (FAILED(result))
     {
         return nullptr;
     }
 
-    IDXGIAdapter *dxgiAdapter = nullptr;
-    result = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void **>(&dxgiAdapter));
-    SafeRelease(dxgiDevice);
+    angle::ComPtr<IDXGIAdapter> dxgiAdapter;
+    result = dxgiDevice->GetParent(IID_PPV_ARGS(&dxgiAdapter));
     if (FAILED(result))
     {
         return nullptr;
     }
 
-    IDXGIFactory *dxgiFactory = nullptr;
-    result =
-        dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void **>(&dxgiFactory));
-    SafeRelease(dxgiAdapter);
+    angle::ComPtr<IDXGIFactory> dxgiFactory;
+    result = dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
     if (FAILED(result))
     {
         return nullptr;
@@ -444,15 +434,14 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         mTextureHandle = nullptr;
     }
 
-    IDXGIFactory *dxgiFactory = GetDXGIFactoryFromDevice(mDevice);
+    angle::ComPtr<IDXGIFactory> dxgiFactory = GetDXGIFactoryFromDevice(mDevice);
     if (dxgiFactory == nullptr)
     {
         return egl::Error(EGL_BAD_NATIVE_WINDOW, "Failed to query the DXGIFactory.");
     }
 
-    IDXGIFactory2 *dxgiFactory2 = nullptr;
-    HRESULT result              = dxgiFactory->QueryInterface(__uuidof(IDXGIFactory2),
-                                                              reinterpret_cast<void **>(&dxgiFactory2));
+    angle::ComPtr<IDXGIFactory2> dxgiFactory2;
+    HRESULT result = dxgiFactory.As(&dxgiFactory2);
     if (SUCCEEDED(result))
     {
         ASSERT(dxgiFactory2 != nullptr);
@@ -476,8 +465,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
 
         result = dxgiFactory2->CreateSwapChainForHwnd(mDevice, mWindow, &swapChainDesc, nullptr,
                                                       nullptr, &mSwapChain1);
-        SafeRelease(dxgiFactory2);
-        SafeRelease(dxgiFactory);
         if (FAILED(result))
         {
             std::ostringstream err;
@@ -486,7 +473,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         }
 
         mSwapChain = mSwapChain1;
-        mSwapChain->AddRef();
     }
     else
     {
@@ -509,7 +495,6 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_DISCARD;
 
         result = dxgiFactory->CreateSwapChain(mDevice, &swapChainDesc, &mSwapChain);
-        SafeRelease(dxgiFactory);
         if (FAILED(result))
         {
             std::ostringstream err;
@@ -518,9 +503,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
         }
     }
 
-    ID3D11Texture2D *colorBuffer = nullptr;
-    result                       = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-                                                         reinterpret_cast<void **>(&colorBuffer));
+    angle::ComPtr<ID3D11Texture2D> colorBuffer;
+    result = mSwapChain->GetBuffer(0, IID_PPV_ARGS(&colorBuffer));
     if (FAILED(result))
     {
         std::ostringstream err;
@@ -530,9 +514,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
 
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mColorRenderbufferID);
     mRenderbufferBufferHandle =
-        mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer, mColorRenderbufferID,
+        mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer.Get(), mColorRenderbufferID,
                                           GL_RENDERBUFFER, WGL_ACCESS_READ_WRITE_NV);
-    SafeRelease(colorBuffer);
     if (mRenderbufferBufferHandle == nullptr)
     {
         std::ostringstream err;
@@ -543,8 +526,8 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
     // Rebind the surface to the texture if needed.
     if (hadBoundSurface)
     {
-        mTextureHandle = mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, colorBuffer, mTextureID,
-                                                           GL_TEXTURE_2D, WGL_ACCESS_READ_WRITE_NV);
+        mTextureHandle = mFunctionsWGL->dxRegisterObjectNV(
+            mDeviceHandle, colorBuffer.Get(), mTextureID, GL_TEXTURE_2D, WGL_ACCESS_READ_WRITE_NV);
         if (mTextureHandle == nullptr)
         {
             std::ostringstream err;

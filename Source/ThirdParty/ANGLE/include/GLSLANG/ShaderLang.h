@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 423
+#define ANGLE_SH_VERSION 424
 
 enum ShShaderSpec
 {
@@ -398,7 +398,10 @@ struct ShCompileOptions
     // Always write explicit location layout qualifiers for fragment outputs.
     uint64_t explicitFragmentLocations : 1;
 
-    uint64_t unused : 1;
+    // Precompute the vertex pre-rotation swap + Y-flip into a driver uniform (transformXY) so the
+    // injected ANGLETransformPosition reduces to two dot products instead of a per-vertex
+    // ternary/unpack/multiply.  When unset, the original ternary+flip path is emitted.
+    uint64_t preferPrecomputedVertexTransform : 1;
 
     // Avoid complex expressions in struct constructors to work around driver bugs.
     uint64_t avoidComplexExpressionsInStructConstructor : 1;

@@ -10,6 +10,7 @@
 
 #include "ANGLEPerfTest.h"
 
+#include "test_utils/ANGLETest.h"
 #include "util/gles_loader_autogen.h"
 
 namespace
@@ -166,12 +167,12 @@ void BlitFramebufferPerf::initializeBenchmark()
     glBindRenderbuffer(GL_RENDERBUFFER, mReadRenderbuffer);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, param.samples, format, size, size);
     glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, attachment, GL_RENDERBUFFER, mReadRenderbuffer);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_READ_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
 
     glBindRenderbuffer(GL_RENDERBUFFER, mDrawRenderbuffer);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 0, format, size, size);
     glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, attachment, GL_RENDERBUFFER, mDrawRenderbuffer);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
 
     ASSERT_GL_NO_ERROR();
 }

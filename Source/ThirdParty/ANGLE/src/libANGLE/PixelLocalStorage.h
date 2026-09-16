@@ -52,7 +52,12 @@ class PixelLocalStoragePlane : angle::NonCopyable, public angle::ObserverInterfa
     GLenum getInternalformat() const { return mInternalformat; }
     GLuint getTextureName() const { return mMemoryless ? 0 : mTextureID.value; }
     GLuint getTextureLevel() const { return mMemoryless ? 0 : mTextureImageIndex.getLevelIndex(); }
-    GLint getTextureLayer() const { return mMemoryless ? 0 : mTextureImageIndex.getLayerIndex(); }
+    GLint getTextureLayer() const
+    {
+        // GL uses layer 0 for 2D textures; ImageIndex represents them without a layer.
+        return mMemoryless || !mTextureImageIndex.hasLayer() ? 0
+                                                             : mTextureImageIndex.getLayerIndex();
+    }
     GLbitfield getUsage() const { return mUsage; }
 
     bool isMemoryless() const { return mMemoryless; }

@@ -1842,14 +1842,16 @@ bool ValidateCompressedTexImage(const Context *context,
         Texture *texture = context->getTextureByType(texType);
         ASSERT(texture != nullptr);
 
-        if (ANGLE_UNLIKELY(!ValidateNoActivePLSConflict(context, entryPoint, texture->id())))
-        {
-            return false;
-        }
-
         if (ANGLE_UNLIKELY(texture->getImmutableFormat()))
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kTextureIsImmutable);
+            return false;
+        }
+
+        // The command may be called on a texture that currently has a renderable internal format.
+        if (ANGLE_UNLIKELY(!ValidateNotAttachmentWithActivePLS(context, entryPoint, texture->id())))
+        {
+            // Error already generated.
             return false;
         }
     }

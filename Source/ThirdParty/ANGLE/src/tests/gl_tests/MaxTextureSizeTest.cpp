@@ -245,7 +245,7 @@ TEST_P(MaxTextureSizeTest, RenderToTexture)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
 
     EXPECT_GL_NO_ERROR();
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     const int frameCount = 64;
     for (int i = 0; i < frameCount; i++)

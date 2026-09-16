@@ -485,6 +485,7 @@ fn prepare_to_monomorphize(
         replacement_params,
         function.return_type_id,
         function.return_precision,
+        function.return_precise,
         function.return_decorations.clone(),
     );
     let new_function_id = state.ir_meta.add_function(new_function);

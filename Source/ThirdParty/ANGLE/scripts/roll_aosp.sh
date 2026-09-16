@@ -78,8 +78,8 @@ function generate_Android_bp_file() {
             "build_angle_end2end_tests_library = true"
             "build_angle_trace_tests = false"
 
-            # Disable Perfetto
-            "angle_enable_perfetto = false"
+            # Link with Perfetto Static Library
+            "angle_enable_perfetto = true"
 
             # This has no effect in Android.bp file, but is listed here to make the point.
             # The actual flags are added in generate_android_bp.py file.

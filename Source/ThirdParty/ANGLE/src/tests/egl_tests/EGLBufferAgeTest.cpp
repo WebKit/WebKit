@@ -8,6 +8,7 @@
 //
 
 #include <gtest/gtest.h>
+#include <array>
 #include "common/unsafe_buffers.h"
 
 #include "test_utils/ANGLETest.h"
@@ -347,7 +348,7 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
 
     const angle::GLColor kLightGray(191, 191, 191, 255);  // 0.75
     const angle::GLColor kDarkGray(64, 64, 64, 255);      // 0.25
-    const angle::GLColor kColorSet[] = {
+    const std::array<angle::GLColor, 15> kColorSet = {
         GLColor::blue,  GLColor::cyan,   kDarkGray,      GLColor::green,   GLColor::red,
         GLColor::white, GLColor::yellow, GLColor::black, GLColor::magenta, kLightGray,
         GLColor::black,  // Extra loops until color cycled through
@@ -355,21 +356,21 @@ TEST_P(EGLBufferAgeTest, VerifyContents)
 
     EGLint age                   = 0;
     angle::GLColor expectedColor = GLColor::black;
-    int loopCount                = (sizeof(kColorSet) / sizeof(kColorSet[0]));
+    int loopCount                = static_cast<int>(kColorSet.size());
     for (int i = 0; i < loopCount; i++)
     {
         age = queryAge(surface);
         if (age > 0)
         {
             // Check that color/content is what we expect
-            expectedColor = ANGLE_UNSAFE_TODO(kColorSet[i - age]);
+            expectedColor = kColorSet[i - age];
             EXPECT_PIXEL_COLOR_EQ(1, 1, expectedColor);
         }
 
-        float red   = ANGLE_UNSAFE_TODO(kColorSet[i]).R / 255.0;
-        float green = ANGLE_UNSAFE_TODO(kColorSet[i]).G / 255.0;
-        float blue  = ANGLE_UNSAFE_TODO(kColorSet[i]).B / 255.0;
-        float alpha = ANGLE_UNSAFE_TODO(kColorSet[i]).A / 255.0;
+        float red   = kColorSet[i].R / 255.0f;
+        float green = kColorSet[i].G / 255.0f;
+        float blue  = kColorSet[i].B / 255.0f;
+        float alpha = kColorSet[i].A / 255.0f;
 
         glClearColor(red, green, blue, alpha);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -467,14 +468,14 @@ TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
 
     const angle::GLColor kLightGray(191, 191, 191, 255);  // 0.75
     const angle::GLColor kDarkGray(64, 64, 64, 255);      // 0.25
-    const angle::GLColor kColorSet[] = {
+    const std::array<angle::GLColor, 15> kColorSet = {
         GLColor::blue,  GLColor::cyan,   kDarkGray,      GLColor::green,   GLColor::red,
         GLColor::white, GLColor::yellow, GLColor::black, GLColor::magenta, kLightGray,
         GLColor::black,  // Extra loops until color cycled through
         GLColor::black, GLColor::black,  GLColor::black, GLColor::black};
 
     angle::GLColor expectedColor = GLColor::black;
-    int loopCount                = (sizeof(kColorSet) / sizeof(kColorSet[0]));
+    int loopCount                = static_cast<int>(kColorSet.size());
     for (int i = 0; i < loopCount; i++)
     {
         age = queryAge(surface);
@@ -484,7 +485,7 @@ TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
             // the previous loops.
             if (age <= i)
             {
-                expectedColor = ANGLE_UNSAFE_TODO(kColorSet[i - age]);
+                expectedColor = kColorSet[i - age];
             }
             else if (age <= i + 6)
             {
@@ -498,9 +499,9 @@ TEST_P(EGLBufferAgeTest, VerifyContentsAfterSwapBehaviorSwitch)
             EXPECT_PIXEL_COLOR_EQ(1, 1, expectedColor);
         }
 
-        glUniform4fv(colorLocation, 1, ANGLE_UNSAFE_TODO(kColorSet[i]).toNormalizedVector().data());
+        glUniform4fv(colorLocation, 1, kColorSet[i].toNormalizedVector().data());
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
-        ANGLE_UNSAFE_TODO(EXPECT_PIXEL_COLOR_EQ(0, 0, kColorSet[i]));
+        EXPECT_PIXEL_COLOR_EQ(0, 0, kColorSet[i]);
         eglSwapBuffers(mDisplay, surface);
     }
 

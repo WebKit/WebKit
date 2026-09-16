@@ -53,8 +53,8 @@ class ViewportTest : public ANGLETest<>
         // Firstly ensure that no errors have been hit.
         EXPECT_GL_NO_ERROR();
 
-        GLint viewportSize[4];
-        glGetIntegerv(GL_VIEWPORT, viewportSize);
+        std::array<GLint, 4> viewportSize;
+        glGetIntegerv(GL_VIEWPORT, viewportSize.data());
 
         // Clear to green. Might be a scissored clear, if scissorSize != window size
         glClearColor(0, 1, 0, 1);
@@ -341,8 +341,8 @@ TEST_P(ViewportTest, Overflow)
     glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
     glEnableVertexAttribArray(positionLocation);
 
-    constexpr int kMaxSize            = std::numeric_limits<int>::max();
-    const int kTestViewportSizes[][4] = {
+    constexpr int kMaxSize = std::numeric_limits<int>::max();
+    constexpr std::array<std::array<int, 4>, 4> kTestViewportSizes = {{
         {
             kMaxSize,
             kMaxSize,
@@ -367,13 +367,12 @@ TEST_P(ViewportTest, Overflow)
             kMaxSize,
             kMaxSize,
         },
-    };
+    }};
 
-    for (const int *viewportSize : kTestViewportSizes)
+    for (const auto &viewportSize : kTestViewportSizes)
     {
         // Set the viewport.
-        ANGLE_UNSAFE_TODO(
-            glViewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]));
+        glViewport(viewportSize[0], viewportSize[1], viewportSize[2], viewportSize[3]);
 
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertices.size()));

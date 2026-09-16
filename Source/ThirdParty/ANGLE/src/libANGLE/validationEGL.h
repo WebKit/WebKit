@@ -61,19 +61,21 @@ bool ValidateConfig(const ValidationContext *val, const Display *display, const 
 bool ValidateContext(const ValidationContext *val, const Display *display, gl::ContextID contextID);
 bool ValidateImage(const ValidationContext *val, const Display *display, ImageID imageID);
 bool ValidateDevice(const ValidationContext *val, const Device *device);
-bool ValidateSync(const ValidationContext *val, const Display *display, SyncID sync);
+bool ValidateSync(const ValidationContext *val, const Display *display, const Sync *sync);
 
 // Return the requested object only if it is valid (otherwise nullptr)
 const Thread *GetThreadIfValid(const Thread *thread);
-const Display *GetDisplayIfValid(const Display *display);
-Display *GetDisplayIfValid(Display *display);
+ScopedConstDisplayRef GetDisplayIfValid(const Display *display);
+ScopedDisplayRef GetDisplayIfValid(Display *display);
+ScopedConstDisplayRefAndLock GetDisplayAndLockIfValid(const Display *display);
+ScopedDisplayRefAndLock GetDisplayAndLockIfValid(Display *display);
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID);
 const Image *GetImageIfValid(const Display *display, ImageID imageID);
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream);
 const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID);
 gl::Context *GetContextIfValid(Display *display, gl::ContextID contextID);
 const Device *GetDeviceIfValid(const Device *device);
-const Sync *GetSyncIfValid(const Display *display, SyncID sync);
+ScopedSyncRef GetSyncIfValid(const Display *display, SyncID sync);
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,
                                              const Display *display,
                                              ObjectType objectType,
@@ -208,14 +210,6 @@ typename std::remove_reference<PackedT>::type PackParam(FromT from)
             return RETVAL;                                                \
         }                                                                 \
     } while (0)
-
-#if ANGLE_USE_DISPLAY_PREPARE_FOR_CALL
-#    define ANGLE_EGL_TRY_PREPARE_FOR_CALL_RETURN ANGLE_EGL_TRY_RETURN
-#    define ANGLE_EGL_TRY_PREPARE_FOR_CALL ANGLE_EGL_TRY
-#else
-#    define ANGLE_EGL_TRY_PREPARE_FOR_CALL_RETURN(...)
-#    define ANGLE_EGL_TRY_PREPARE_FOR_CALL(...)
-#endif
 
 #define ANGLE_EGLBOOLEAN_TRY(EXPR)           \
     do                                       \

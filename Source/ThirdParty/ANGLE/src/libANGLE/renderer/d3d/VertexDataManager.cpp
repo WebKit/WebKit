@@ -527,9 +527,14 @@ angle::Result VertexDataManager::reserveSpaceForAttrib(const gl::Context *contex
         int64_t maxByte        = GetMaxAttributeByteOffsetForDraw(attrib, binding, maxVertexCount);
 
         ASSERT(bufferD3D->getSize() <= static_cast<size_t>(std::numeric_limits<int64_t>::max()));
-        ANGLE_CHECK(GetImplAs<ContextD3D>(context),
-                    maxByte <= static_cast<int64_t>(bufferD3D->getSize()),
-                    gl::err::kInsufficientVertexBufferSize, GL_INVALID_OPERATION);
+        if (ANGLE_UNLIKELY(maxByte > static_cast<int64_t>(bufferD3D->getSize())))
+        {
+            // TODO: this should be moved to the validation layer http://anglebug.com/552538802
+            context->getMutableErrorSetForValidation()->validationError(
+                angle::EntryPoint::Invalid, GL_INVALID_OPERATION,
+                gl::err::kInsufficientVertexBufferSize);
+            return angle::Result::Stop;
+        }
     }
     return mStreamingBuffer.reserveVertexSpace(context, attrib, binding, totalCount,
                                                clampedInstances, baseInstance);
