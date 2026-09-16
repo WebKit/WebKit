@@ -5774,7 +5774,6 @@
 		41B7ED6F206965900087D853 /* NetworkMDNSRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkMDNSRegister.cpp; sourceTree = "<group>"; };
 		41B7ED70206965900087D853 /* NetworkMDNSRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkMDNSRegister.h; sourceTree = "<group>"; };
 		41B7ED71206965900087D853 /* NetworkMDNSRegister.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkMDNSRegister.messages.in; sourceTree = "<group>"; };
-		41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RTCWebKitEncodedFrameInfo.h; sourceTree = "<group>"; };
 		41BDE4772E01707700142A13 /* LibWebRTCDnsResolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LibWebRTCDnsResolverFactory.h; path = Network/webrtc/LibWebRTCDnsResolverFactory.h; sourceTree = "<group>"; };
 		41BDE4782E01707700142A13 /* LibWebRTCDnsResolverFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCDnsResolverFactory.cpp; path = Network/webrtc/LibWebRTCDnsResolverFactory.cpp; sourceTree = "<group>"; };
 		41C14BC226DE6A2F00685BF5 /* LibWebRTCNetworkManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCNetworkManager.cpp; path = Network/webrtc/LibWebRTCNetworkManager.cpp; sourceTree = "<group>"; };
@@ -10622,7 +10621,6 @@
 				41B28B081F83AD3E00FB52AC /* RTCPacketOptions.h */,
 				4666D1452B02E1E800FC5416 /* RTCPacketOptions.serialization.in */,
 				4149E97C2E95204700DA5303 /* RTCSocketCreationFlags.h */,
-				41B8D85628C9B8D100E5FA37 /* RTCWebKitEncodedFrameInfo.h */,
 				FA7036C32D72882A00083D04 /* RunJavaScriptParameters.h */,
 				0738ABBC304BD9CA00987FFB /* RunJavaScriptParameters.swift */,
 				077DBAFE303AAE74000AA8FC /* RunJavaScriptResult.h */,

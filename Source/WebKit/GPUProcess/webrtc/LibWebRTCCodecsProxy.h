@@ -39,18 +39,16 @@
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/WebRTCVideoDecoder.h>
+#include <WebCore/WebRTCVideoEncoder.h>
 #include <atomic>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
+#include <wtf/UniqueRef.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
 class Semaphore;
-}
-
-namespace webrtc {
-using LocalEncoder = void*;
 }
 
 namespace WebCore {
@@ -117,8 +115,10 @@ private:
     void doDecoderTask(VideoDecoderIdentifier, NOESCAPE Function<void(Decoder&)>&&);
 
     struct Encoder {
-        webrtc::LocalEncoder webrtcEncoder { nullptr };
-        std::unique_ptr<SharedVideoFrameReader> frameReader;
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Encoder);
+
+        UniqueRef<WebCore::WebRTCVideoEncoder> webrtcEncoder;
+        UniqueRef<SharedVideoFrameReader> frameReader;
         Deque<CompletionHandler<void(bool)>> encodingCallbacks;
         WebCore::VideoCodecType codecType { WebCore::VideoCodecType::H264 };
         bool useLowLatency { false };
@@ -132,7 +132,7 @@ private:
     WebCore::ProcessIdentity m_resourceOwner;
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     HashMap<VideoDecoderIdentifier, Decoder> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
-    HashMap<VideoEncoderIdentifier, Encoder> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<VideoEncoderIdentifier, UniqueRef<Encoder>> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
     std::atomic<bool> m_hasEncodersOrDecoders { false };
 
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
