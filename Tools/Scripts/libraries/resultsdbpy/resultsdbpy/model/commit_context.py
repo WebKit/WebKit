@@ -339,7 +339,7 @@ class CommitContext(object):
             ) if getattr(commit, key)]
 
             # Never overwrite an existing commit with an empty commit/author
-            if not all(commit.branch, commit.author, commit.message):
+            if not all((commit.branch, commit.author, commit.message)):
                 for ref in refs:
                     for row in self.cassandra.select_from_table(
                         self.CommitByRef.__table_name__, limit=1,

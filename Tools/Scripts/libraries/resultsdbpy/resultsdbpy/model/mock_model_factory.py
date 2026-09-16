@@ -199,8 +199,8 @@ class MockModelFactory(object):
                     continue
 
                 timestamp_to_use = current
-                if (complete_configuration.platform == 'Mac' and complete_configuration.version <= Configuration.version_to_integer('10.13')) \
-                   or (complete_configuration.platform == 'iOS' and complete_configuration.version <= Configuration.version_to_integer('11')):
+                if (complete_configuration.platform == 'mac' and complete_configuration.version <= Configuration.version_to_integer('10.13')) \
+                   or (complete_configuration.platform == 'ios' and complete_configuration.version <= Configuration.version_to_integer('11')):
                     timestamp_to_use = old
 
                 cls.iterate_all_commits(model, lambda commits: model.upload_context.upload_test_results(complete_configuration, commits, suite=suite, test_results=test_results, timestamp=timestamp_to_use))
@@ -252,8 +252,8 @@ class MockModelFactory(object):
                     continue
 
                 timestamp_to_use = current
-                if (complete_configuration.platform == 'Mac' and complete_configuration.version <= Configuration.version_to_integer('10.13')) \
-                   or (complete_configuration.platform == 'iOS' and complete_configuration.version <= Configuration.version_to_integer('11')):
+                if (complete_configuration.platform == 'mac' and complete_configuration.version <= Configuration.version_to_integer('10.13')) \
+                   or (complete_configuration.platform == 'ios' and complete_configuration.version <= Configuration.version_to_integer('11')):
                     timestamp_to_use = old
 
                 cls.iterate_all_commits(model, lambda commits: model.archive_context.register(archive, complete_configuration, commits, suite=suite, timestamp=timestamp_to_use))

@@ -59,7 +59,7 @@ class EWSContextTest(WaitForDockerTestCase):
 
     def _find(self, test, flaky=False):
         return self.model.ews_context.find_for_tests(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', tests=[test], recent=True, flaky=flaky,
         ).get(test, {})
 
@@ -109,7 +109,7 @@ class EWSContextTest(WaitForDockerTestCase):
         reported = sorted(self.DEFAULT_TEST_RESULTS['results'])
 
         found = self.model.ews_context.find_for_tests(
-            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
             suite='layout-tests', tests=reported + ['fast/never/reported.html'],
             recent=True, flaky=False,
         )
@@ -133,7 +133,7 @@ class EWSContextTest(WaitForDockerTestCase):
 
         def rows_per_configuration(limit):
             found = self.model.ews_context.find_for_tests(
-                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
                 suite='layout-tests', tests=reported, recent=True, flaky=False, limit=limit,
             )
             self.assertEqual(sorted(found), reported)
@@ -168,7 +168,7 @@ class EWSContextTest(WaitForDockerTestCase):
         try:
             configuration_context.search_for_recent_configuration = record
             found = self.model.ews_context.find_for_tests(
-                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
                 suite='layout-tests', tests=reported, recent=True, flaky=False,
             )
         finally:
@@ -248,7 +248,7 @@ class EWSContextTest(WaitForDockerTestCase):
 
         def start_times_within(cutoff):
             results = self.model.ews_context.find_for_tests(
-                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                configurations=[Configuration(platform='mac', style='Release', flavor='wk1')],
                 suite='layout-tests', tests=[self.REGRESSION_TEST], flaky=False, recent=False,
                 begin_query_time=cutoff,
             ).get(self.REGRESSION_TEST, {})
@@ -273,7 +273,7 @@ class EWSContextTest(WaitForDockerTestCase):
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
 
             stored = self.model.ews_context.record_results(
-                Configuration(platform='Mac', version='13.0.0', is_simulator=False, architecture='arm64', style='Release', flavor='wk1'),
+                Configuration(platform='mac', version='13.0.0', is_simulator=False, architecture='arm64', style='Release', flavor='wk1'),
                 [webkit.commits['main'][-1]], 'layout-tests', self.DEFAULT_TEST_RESULTS,
             )
 
@@ -288,7 +288,7 @@ class EWSContextTest(WaitForDockerTestCase):
             # A partial configuration cannot be written, and must not be reported as stored.
             with self.assertRaises(TypeError):
                 self.model.ews_context.record_results(
-                    Configuration(platform='Mac', style='Release'),
+                    Configuration(platform='mac', style='Release'),
                     [webkit.commits['main'][-1]], 'layout-tests', self.DEFAULT_TEST_RESULTS,
                 )
 

@@ -69,10 +69,10 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='Mac')], suite='layout-tests', recent=True)
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='mac')], suite='layout-tests', recent=True)
         self.assertEqual(6, len(results))
         for config, values in results.items():
-            self.assertEqual(config, Configuration(platform='Mac'))
+            self.assertEqual(config, Configuration(platform='mac'))
             self.assertEqual(5, len(values))
             for value in values:
                 self.assertEqual(value['test_results'], MockModelFactory.layout_test_results())
@@ -82,7 +82,7 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='Mac')], suite='layout-tests', limit=2, recent=True)
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='mac')], suite='layout-tests', limit=2, recent=True)
         self.assertEqual(sum([len(value) for value in results.values()]), 12)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -90,10 +90,10 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', is_simulator=True)], suite='layout-tests', branch='branch-a', recent=True)
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='ios', is_simulator=True)], suite='layout-tests', branch='branch-a', recent=True)
         self.assertEqual(3, len(results))
         for config, values in results.items():
-            self.assertEqual(config, Configuration(platform='iOS', is_simulator=True))
+            self.assertEqual(config, Configuration(platform='ios', is_simulator=True))
             self.assertEqual(2, len(values))
             for value in values:
                 self.assertEqual(value['test_results'], MockModelFactory.layout_test_results())
@@ -103,8 +103,8 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        self.assertEqual(0, len(self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', sdk='15A432')], suite='layout-tests', recent=True)))
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', sdk='15A432')], suite='layout-tests', recent=False)
+        self.assertEqual(0, len(self.model.upload_context.find_test_results(configurations=[Configuration(platform='ios', sdk='15A432')], suite='layout-tests', recent=True)))
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='ios', sdk='15A432')], suite='layout-tests', recent=False)
         self.assertEqual(6, len(results))
         for config, values in results.items():
             self.assertEqual(config.version, 11000000)
@@ -117,17 +117,17 @@ class UploadContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra)
         MockModelFactory.add_mock_results(self.model)
 
-        configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+        configuration_to_search = Configuration(platform='ios', version='12.0.0', is_simulator=True, style='Asan')
         results = self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False)
         self.assertEqual(1, len(results))
 
         MockModelFactory.add_mock_results(self.model, configuration=Configuration(
-            platform='iOS', version='12.0.0', sdk='16A405', is_simulator=True, architecture='x86_64', style='Asan',
+            platform='ios', version='12.0.0', sdk='16A405', is_simulator=True, architecture='x86_64', style='Asan',
         ))
 
         results = self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False)
         self.assertEqual(2, len(results))
-        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='iOS', sdk='16A405')], suite='layout-tests', recent=False)
+        results = self.model.upload_context.find_test_results(configurations=[Configuration(platform='ios', sdk='16A405')], suite='layout-tests', recent=False)
         self.assertEqual(1, len(results))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -136,7 +136,7 @@ class UploadContextTest(WaitForDockerTestCase):
         MockModelFactory.add_mock_results(self.model)
 
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+            configuration_to_search = Configuration(platform='ios', version='12.0.0', is_simulator=True, style='Asan')
             configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
             self.model.upload_context.process_test_results(
                 configuration=configuration,
@@ -155,7 +155,7 @@ class UploadContextTest(WaitForDockerTestCase):
         MockModelFactory.add_mock_results(self.model)
 
         with MockModelFactory.safari(), MockModelFactory.webkit():
-            configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+            configuration_to_search = Configuration(platform='ios', version='12.0.0', is_simulator=True, style='Asan')
             configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
 
             self.model.upload_context.process_test_results(

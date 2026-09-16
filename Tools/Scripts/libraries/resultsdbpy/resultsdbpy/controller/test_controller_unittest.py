@@ -81,7 +81,7 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_results(self, client, **kwargs):
-        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-charset.html?platform=iOS&style=Debug')
+        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-charset.html?platform=ios&style=Debug')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
 
@@ -96,18 +96,18 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_results_by_sdk(self, client, **kwargs):
-        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-cached-bom.html?platform=iOS&style=Debug&is_simulator=True&recent=False')
+        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-cached-bom.html?platform=ios&style=Debug&is_simulator=True&recent=False')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
 
-        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-cached-bom.html?platform=iOS&style=Debug&is_simulator=True&recent=False&sdk=15A432')
+        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-cached-bom.html?platform=ios&style=Debug&is_simulator=True&recent=False&sdk=15A432')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_results_by_commit(self, client, **kwargs):
-        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=iOS&style=Debug&after_id=6&before_id=1abe25b443e9')
+        response = client.get(self.URL + '/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=ios&style=Debug&after_id=6&before_id=1abe25b443e9')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         for i in range(2):
@@ -120,7 +120,7 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_results_by_time(self, client, **kwargs):
-        response = client.get(f'{self.URL}/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=iOS&style=Debug&recent=False&after_time={time.time() - 60 * 60}')
+        response = client.get(f'{self.URL}/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=ios&style=Debug&recent=False&after_time={time.time() - 60 * 60}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 2)
         for i in range(2):
@@ -133,7 +133,7 @@ class TestControllerTest(FlaskTestCase, WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_no_results_by_time(self, client, **kwargs):
-        response = client.get(self.URL + f'/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=iOS&style=Debug&recent=False&after_time={time.time() + 1}')
+        response = client.get(self.URL + f'/api/results/layout-tests/fast/encoding/css-link-charset.html?platform=ios&style=Debug&recent=False&after_time={time.time() + 1}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 0)
 
