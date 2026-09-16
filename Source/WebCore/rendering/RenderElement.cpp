@@ -82,6 +82,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGResourceContainer.h"
@@ -2530,6 +2531,26 @@ void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shou
 
     if (shouldUpdateState)
         setFragmentedFlowState(FragmentedFlowState::NotInsideFlow);
+}
+
+bool RenderElement::multiColumnSpannerReevaluationNeededForStyleChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle) const
+{
+    // Traps column-span:all descendants; see RenderTreeBuilder::MultiColumn::isValidColumnSpanner().
+    auto trapsSpanner = [&](const Style::ComputedStyle& style) {
+        return canContainFixedPositionObjects(&style);
+    };
+    if (trapsSpanner(oldStyle) == trapsSpanner(newStyle)) // Bail unless trapping status flipped.
+        return false;
+
+    if (!is<RenderMultiColumnFlow>(enclosingFragmentedFlow()))
+        return false;
+
+    // Only rebuild if there is a spanner (or candidate) in the subtree to re-evaluate.
+    for (auto& descendant : descendantsOfType<RenderElement>(*this)) {
+        if (descendant.style().columnSpan() == ColumnSpan::All || is<RenderMultiColumnSpannerPlaceholder>(descendant))
+            return true;
+    }
+    return false;
 }
 
 void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
