@@ -81,11 +81,7 @@ my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
 }
-my $forceOptimizationLevel;
-if (!checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$forceOptimizationLevel)
-    && !checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$forceOptimizationLevel)) {
-    $forceOptimizationLevel="";
-}
+my $forceOptimizationLevel = passedForceOptimizationLevel();
 my $workspace;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--workspace", \$workspace)) {
     $workspace="";
@@ -130,15 +126,7 @@ if ($ltoMode && $ltoMode ne "full" && $ltoMode ne "thin" && $ltoMode ne "none") 
     exit 1;
 }
 
-if ($forceOptimizationLevel
-    && $forceOptimizationLevel ne "none"
-    && $forceOptimizationLevel ne "O0"
-    && $forceOptimizationLevel ne "O1"
-    && $forceOptimizationLevel ne "O2"
-    && $forceOptimizationLevel ne "O3"
-    && $forceOptimizationLevel ne "Os"
-    && $forceOptimizationLevel ne "Ofast"
-    && $forceOptimizationLevel ne "Og") {
+if ($forceOptimizationLevel && !isValidForceOptimizationLevel($forceOptimizationLevel)) {
     printUsage();
     exit 1;
 }
@@ -159,12 +147,8 @@ updateOrDeleteConfigurationFile("TSan", $enableTSAN, $disableTSAN);
 updateOrDeleteConfigurationFile("UBSan", $enableUBSAN, $disableUBSAN);
 updateOrDeleteConfigurationFile("LibFuzzer", $enableLibFuzzer, $disableLibFuzzer);
 
-if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
-    unlink "$baseProductDir/ForceOptimizationLevel";
-} elsif ($forceOptimizationLevel) {
-    open ForceOptimizationLevel, ">", "$baseProductDir/ForceOptimizationLevel" or die;
-    print ForceOptimizationLevel substr($forceOptimizationLevel, 1) . "\n";
-    close ForceOptimizationLevel;
+if ($forceOptimizationLevel) {
+    recordForceOptimizationLevel($forceOptimizationLevel);
 }
 
 if ($ltoMode) {

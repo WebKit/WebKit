@@ -136,6 +136,7 @@ BEGIN {
        &isLinux
        &isMacCatalystWebKit
        &isPlayStation
+       &isValidForceOptimizationLevel
        &isWPE
        &isWin
        &isWindows
@@ -158,6 +159,7 @@ BEGIN {
        &parseAvailableXcodeSDKs
        &passedBuildSystem
        &passedConfiguration
+       &passedForceOptimizationLevel
        &plistPathFromBundle
        &portName
        &prependToEnvironmentVariableList
@@ -165,6 +167,7 @@ BEGIN {
        &productDir
        &prohibitUnknownPort
        &recordBuildSettings
+       &recordForceOptimizationLevel
        &recordedConfiguration
        &relativeScriptsDir
        &removeCMakeCache
@@ -713,6 +716,39 @@ sub passedSanitizer($)
     return $passedSanitizers{$sanitizer};
 }
 
+# The optimization level given on this command line, under either spelling, or
+# "none" to stop forcing one.
+my $passedForceOptimizationLevel;
+my $searchedForPassedForceOptimizationLevel;
+sub passedForceOptimizationLevel()
+{
+    unless ($searchedForPassedForceOptimizationLevel) {
+        $searchedForPassedForceOptimizationLevel = 1;
+        checkForArgumentAndRemoveFromARGVGettingValue("--force-optimization-level", \$passedForceOptimizationLevel)
+            or checkForArgumentAndRemoveFromARGVGettingValue("--force-opt", \$passedForceOptimizationLevel);
+    }
+    return $passedForceOptimizationLevel;
+}
+
+sub isValidForceOptimizationLevel($)
+{
+    my ($level) = @_;
+    return grep { $_ eq $level } qw(none O0 O1 O2 O3 Os Ofast Og);
+}
+
+# "none" stops forcing a level, which is the absence of the setting rather than
+# a value for it.
+sub recordForceOptimizationLevel($)
+{
+    my ($level) = @_;
+    if ($level eq "none") {
+        determineBaseProductDir();
+        unlink File::Spec->catfile($baseProductDir, "ForceOptimizationLevel");
+        return;
+    }
+    writeBuildSetting("ForceOptimizationLevel", substr($level, 1));
+}
+
 sub determineASanIsEnabled
 {
     return if defined $asanIsEnabled;
@@ -1214,6 +1250,18 @@ sub cmakeCocoaTreeName
     return "cmake-$xcodeSDKPlatformName";
 }
 
+# The directory a Cocoa CMake build puts its products in, matching the binaryDir
+# of the presets in CMakePresets.json. A sanitizer or a forced optimization level
+# gets a directory of its own, since the products are built with other flags.
+sub cmakeCocoaConfigurationName($)
+{
+    my ($configurationName) = @_;
+    $configurationName = "ASan" if asanIsEnabled();
+    $configurationName = "TSan" if tsanIsEnabled();
+    $configurationName .= "O" . forceOptimizationLevel() if defined forceOptimizationLevel();
+    return $configurationName;
+}
+
 # The directory Xcode builds into, whether or not this invocation selected the
 # CMake tree. Products only Xcode knows how to build (Safari and the frameworks
 # above WebKit) live here even when WebKit itself came from the CMake tree.
@@ -1239,11 +1287,7 @@ sub determineConfigurationProductDir
     } elsif (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
         $configurationProductDir = "$baseProductDir/$portName/$configuration";
     } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
-        # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
-        my $cmakeConfiguration = $configuration;
-        $cmakeConfiguration = "ASan" if asanIsEnabled();
-        $cmakeConfiguration = "TSan" if tsanIsEnabled();
-        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), $cmakeConfiguration);
+        $configurationProductDir = File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), cmakeCocoaConfigurationName($configuration));
     } else {
         $configurationProductDir = xcodeConfigurationProductDir();
     }
@@ -1274,10 +1318,7 @@ sub webkitProductDir()
 {
     return productDir() unless isAppleCocoaWebKit() && isCMakeBuild();
     determineBaseProductDir();
-    my $cmakeConfiguration = recordedConfiguration();
-    $cmakeConfiguration = "ASan" if asanIsEnabled();
-    $cmakeConfiguration = "TSan" if tsanIsEnabled();
-    return File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), $cmakeConfiguration);
+    return File::Spec->catdir($baseProductDir, cmakeCocoaTreeName(), cmakeCocoaConfigurationName(recordedConfiguration()));
 }
 
 sub determineCurrentSVNRevision
@@ -2985,6 +3026,17 @@ sub generateBuildSystemFromCMakeProject
         push @args, "-DCMAKE_BUILD_TYPE=Debug";
     }
 
+    # The compiler reads the configuration's own flags after CMAKE_<LANG>_FLAGS,
+    # so a forced optimization level has to replace them, as the DebugO3 preset
+    # does. The rest of each set is what CMake and the presets use.
+    if (defined forceOptimizationLevel()) {
+        my $optimization = "-O" . forceOptimizationLevel();
+        my ($buildType, $flags) = ($config =~ /debug/i) ? ("DEBUG", "-g $optimization") : ("RELEASE", "$optimization -DNDEBUG -g");
+        foreach my $language ("C", "CXX", "OBJC", "OBJCXX") {
+            push @args, "-DCMAKE_${language}_FLAGS_${buildType}=\"$flags\"";
+        }
+    }
+
     push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=thread" if tsanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=undefined" if ubsanIsEnabled();
@@ -3317,6 +3369,10 @@ sub recordBuildSettings()
     writeBuildSetting("BuildSystem", passedBuildSystem()) if passedBuildSystem() && isAppleCocoaWebKit();
     for my $sanitizer ("ASan", "TSan") {
         writeBuildSetting($sanitizer, "YES") if passedSanitizer($sanitizer);
+    }
+    if (my $level = passedForceOptimizationLevel()) {
+        die "Unknown optimization level \"$level\".\n" unless isValidForceOptimizationLevel($level);
+        recordForceOptimizationLevel($level);
     }
 }
 

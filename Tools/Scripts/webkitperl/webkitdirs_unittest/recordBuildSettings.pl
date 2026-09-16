@@ -33,7 +33,7 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 5);
+plan(tests => 7);
 
 no warnings qw(redefine prototype);
 *webkitdirs::isAppleCocoaWebKit = sub () { 1 };
@@ -45,7 +45,7 @@ setBaseProductDir($base);
 # A setting recorded earlier that this command line does not mention.
 writeBuildSetting("TSan", "YES");
 
-@ARGV = ("--debug", "--cmake", "--asan", "leftover");
+@ARGV = ("--debug", "--cmake", "--asan", "--force-opt=O3", "leftover");
 setConfiguration();
 recordBuildSettings();
 
@@ -65,3 +65,8 @@ is(settingIs("Configuration"), "Debug", "--debug is recorded");
 is(settingIs("BuildSystem"), "CMake", "--cmake is recorded");
 is(settingIs("ASan"), "YES", "--asan is recorded");
 is(settingIs("TSan"), "YES", "a setting not given is left alone");
+is(settingIs("ForceOptimizationLevel"), "3", "--force-opt is recorded");
+
+# "none" stops forcing a level, which is the absence of the setting.
+recordForceOptimizationLevel("none");
+is(settingIs("ForceOptimizationLevel"), undef, "--force-opt=none removes the setting");

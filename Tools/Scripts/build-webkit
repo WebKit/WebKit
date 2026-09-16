@@ -121,10 +121,14 @@ Usage: $programName [options] [options to pass to build system]
   --release                         Compile with Release configuration
   --cmake                           Build with CMake
   --xcode                           Build with Xcode
+  --asan                            Compile with the clang address sanitizer
+  --tsan                            Compile with the clang thread sanitizer
+  --force-optimization-level=<level>, --force-opt=<level>
+                                    Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
 
-  The configuration, build system and sanitizers given above are remembered, so
-  that later commands act on this build without being given them again. Use
-  set-webkit-configuration to change them without building.
+  The configuration, build system, sanitizers and optimization level given above
+  are remembered, so that later commands act on this build without being given
+  them again. Use set-webkit-configuration to change them without building.
 
   --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
   --architecture=<architecture>     Compile for a specific architecture (or architectures)
