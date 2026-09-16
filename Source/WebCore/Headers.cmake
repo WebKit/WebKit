@@ -2111,6 +2111,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ScreenOrientationType.h
     page/ScriptTrackingPrivacyCategory.h
     page/ScrollBehavior.h
+    page/ScrollIntoViewContainer.h
     page/ScrollIntoViewOptions.h
     page/ScrollLogicalPosition.h
     page/ScrollOptions.h

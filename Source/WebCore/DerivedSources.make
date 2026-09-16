@@ -1649,6 +1649,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/Screen.idl \
     $(WebCore)/page/ScreenOrientation.idl \
     $(WebCore)/page/ScrollBehavior.idl \
+    $(WebCore)/page/ScrollIntoViewContainer.idl \
     $(WebCore)/page/ScrollIntoViewOptions.idl \
     $(WebCore)/page/ScrollLogicalPosition.idl \
     $(WebCore)/page/ScrollOptions.idl \

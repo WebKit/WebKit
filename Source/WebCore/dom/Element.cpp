@@ -1300,7 +1300,8 @@ void Element::scrollIntoView(Variant<bool, ScrollIntoViewOptions>&& arg)
         .alignX = physicalAlignX,
         .alignY = physicalAlignY,
         .behavior = options.behavior,
-        .skipScrollingTargetElement = SkipScrollingTargetElement::Yes
+        .skipScrollingTargetElement = SkipScrollingTargetElement::Yes,
+        .container = options.container
     };
     LocalFrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, visibleOptions);
 }
