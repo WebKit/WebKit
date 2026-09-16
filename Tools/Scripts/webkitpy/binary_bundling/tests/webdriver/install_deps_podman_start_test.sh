@@ -32,6 +32,11 @@ case "${CURRENT_DISTRO}" in
     ;;
     ubuntu|debian)
         export DEBIAN_FRONTEND=noninteractive
+        if grep -q bullseye /etc/os-release; then
+            # Debian 11 is EOL
+            echo 'deb http://archive.debian.org/debian bullseye main' > /etc/apt/sources.list
+            echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+        fi
         apt update
         apt upgrade -y
         apt install -y python3-pil python3-numpy python3-pip
