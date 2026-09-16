@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,28 @@
 
 #pragma once
 
-#include <wtf/Platform.h>
+#if USE(AVFOUNDATION)
 
-#if PLATFORM(COCOA)
-
+#include "GPUVideoEncoderVTB.h"
 #include <WebCore/HEVCUtilities.h>
-#include <wtf/Vector.h>
-
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-struct PlatformMediaCapabilitiesInfo;
+class GPUVideoEncoderVTBH265 final : public GPUVideoEncoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(GPUVideoEncoderVTBH265);
+public:
+    GPUVideoEncoderVTBH265(bool useAnnexB, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    ~GPUVideoEncoderVTBH265() = default;
 
-WEBCORE_EXPORT std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters&, bool hasAlphaChannel, bool hdrSupport);
-std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViParameters&, bool hasAlphaChannel, bool hdrSupport);
+private:
+    CMVideoCodecType codecType() const final;
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&) final;
 
-WEBCORE_EXPORT Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
+    Lock m_bitstreamParserLock;
+    HEVCBitstreamParser m_bitstreamParser WTF_GUARDED_BY_LOCK(m_bitstreamParserLock);
+};
 
 }
 
-#endif
+#endif // USE(AVFOUNDATION)
