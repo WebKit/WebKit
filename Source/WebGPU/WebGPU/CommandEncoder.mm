@@ -118,7 +118,7 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
 
     commandBuffer.label = fromAPI(descriptor.label).createNSString().get();
 
-    auto commandEncoder = CommandEncoder::create(commandBuffer, *this, m_commandEncoderId++);
+    auto commandEncoder = CommandEncoder::create(commandBuffer, *this, generateCommandEncoderId());
     m_commandEncoderMap.set(commandEncoder->uniqueId(), commandEncoder.ptr());
     return commandEncoder;
 }
@@ -168,6 +168,11 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
 
 CommandEncoder::CommandEncoder(Device& device)
     : m_device(device)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // Invalid encoders take an id from the same counter as valid ones, so ~CommandEncoder() never
+    // reads an uninitialized m_uniqueId nor evicts a live encoder. rdar://178679545
+    , m_uniqueId(device.generateCommandEncoderId())
+#endif
 {
 }
 
