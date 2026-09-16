@@ -36,7 +36,19 @@ struct CookieListItem {
 
     static CookieListItem fromCookie(Cookie&& cookie)
     {
-        return { WTF::move(cookie.name), WTF::move(cookie.value) };
+        CookieListItem c = { WTF::move(cookie.name), WTF::move(cookie.value) };
+
+#if OS(DARWIN)
+        // On Cocoa, cookie names/values are stored as UTF-8 bytes reinterpreted as Latin-1
+        // (see CookieStorageSessionCocoa.mm) because CFNetwork only preserves Latin-1
+        // characters. CookieListItem is only used by the Cookie Store API in JS/DOM, so
+        // reverse that trick here by force re-interpreting the bytes as UTF-8, allowing for
+        // lossy conversion. Other platforms decode cookies as proper Unicode strings already.
+        c.name = String::fromUTF8ReplacingInvalidSequences(c.name.span8());
+        c.value = String::fromUTF8ReplacingInvalidSequences(c.value.span8());
+#endif
+
+        return c;
     }
 };
 

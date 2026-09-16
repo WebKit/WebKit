@@ -1,0 +1,15 @@
+This test checks that cookie names and values containing Unicode characters outside the Latin-1 range round-trip through document.cookie without being truncated or dropped. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookie value with non-Latin-1 characters followed by more ASCII text
+PASS document.cookie.indexOf('unicodeValue=start日本語end') != -1 is true
+Cookie name containing a non-Latin-1 character
+PASS document.cookie.indexOf('☕coffee=black') != -1 is true
+Cookie value with a character outside the Basic Multilingual Plane
+PASS document.cookie.indexOf('cookieEmoji=before🍪after') != -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -274,7 +274,15 @@ std::pair<String, bool> CookieStorageSession::cookiesForSession(const URL& first
             if (includeSecureCookies == IncludeSecureCookies::No)
                 continue;
         }
-        cookiesBuilder.append(cookiesBuilder.isEmpty() ? ""_s : "; "_s, [cookie name], '=', [cookie value]);
+        String cookieName { [cookie name] };
+        String cookieValue { [cookie value] };
+        if (cookiesFor == CookiesFor::DOMAccess) {
+            // When constructing cookie strings for DOM access, reinterpret the cookie name and value
+            // as UTF-8, allowing for lossy conversion.
+            cookieName = String::fromUTF8ReplacingInvalidSequences(cookieName.span8());
+            cookieValue = String::fromUTF8ReplacingInvalidSequences(cookieValue.span8());
+        }
+        cookiesBuilder.append(cookiesBuilder.isEmpty() ? ""_s : "; "_s, cookieName, '=', cookieValue);
     }
     return { cookiesBuilder.toString(), didAccessSecureCookies };
 
@@ -373,7 +381,14 @@ static RetainPtr<NSHTTPCookie> parseDOMCookie(String cookieString, NSURL* cookie
     if (auto dayFirst = CookieUtil::cookieStringWithDayFirstExpires(cookieString))
         cookieString = WTF::move(*dayFirst);
 
-    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:cookieString.createNSString().get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
+    // Encode the string as UTF-8 and create a ISO-Latin1 string of those bytes which get passed into the
+    // _cookieForSetCookieString function. Constructing a string with the UTF-8 bytes reinterpreted as
+    // Latin-1 is the way to get CFNetwork to preserve those UTF-8 bytes when parsing the cookie.
+    auto utf8CookieString = cookieString.utf8();
+    auto utf8CookieStringSpan = utf8CookieString.span();
+    RetainPtr latin1CookieString = adoptNS([[NSString alloc] initWithBytes:utf8CookieStringSpan.data() length:utf8CookieStringSpan.size() encoding:NSISOLatin1StringEncoding]);
+
+    return adjustScriptWrittenCookie([NSHTTPCookie _cookieForSetCookieString:latin1CookieString.get() forURL:cookieURL partition:nsStringNilIfEmpty(partition).get()], cappedLifetime);
 }
 
 void CookieStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, const String& cookieString, ThirdPartyCookieBlockingDecision thirdPartyCookieBlockingDecision, std::optional<Seconds> cappedLifetime, const String& partition) const
