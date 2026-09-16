@@ -38,4 +38,13 @@ TEMPLATES=(
     WebViewPreferencesChangedGenerated.mm.erb
 )
 
-/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy ${TEMPLATES[@]/#/--template ${TEMPLATES_DIR}/} --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ ${PREFERENCES_DIR}/UnifiedWebPreferences.yaml
+# Only the first match is used, since the file can be present both in the build output and in the SDK.
+PREFERENCES_ADDITIONS=()
+for SEARCH_PATH in ${WEBKITADDITIONS_HEADER_SEARCH_PATHS}; do
+    if [ -f "${SEARCH_PATH}/WebPreferencesAdditions.yaml" ]; then
+        PREFERENCES_ADDITIONS=("${SEARCH_PATH}/WebPreferencesAdditions.yaml")
+        break
+    fi
+done
+
+/usr/bin/env ruby ${WTF_BUILD_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy ${TEMPLATES[@]/#/--template ${TEMPLATES_DIR}/} --outputDir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy/ ${PREFERENCES_DIR}/UnifiedWebPreferences.yaml "${PREFERENCES_ADDITIONS[@]}"

@@ -78,8 +78,11 @@ all : \
     JSCWebPreferenceOptions.h \
 #
 
-JSCWebPreferenceOptions.h : $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb
-	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend JavaScriptCore --outputDir . --template $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+# Only the first match is used, since the file can be present both in the build output and in the SDK.
+WEB_PREFERENCES_ADDITIONS = $(firstword $(wildcard $(addsuffix /WebPreferencesAdditions.yaml, $(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
+JSCWebPreferenceOptions.h : $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb
+	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend JavaScriptCore --outputDir . --template $(JavaScriptCore)/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS)
 
 # JavaScript builtins.
 

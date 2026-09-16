@@ -76,6 +76,9 @@ JS%.h JS%.cpp : %.idl $(SCRIPTS) $(IDL_ATTRIBUTES_FILE) $(IDL_FILE_NAMES_LIST) $
 #
 
 
+# Only the first match is used, since the file can be present both in the build output and in the SDK.
+WEB_PREFERENCES_ADDITIONS = $(firstword $(wildcard $(addsuffix /WebPreferencesAdditions.yaml, $(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
 WEB_PREFERENCES_GENERATED_FILES = \
     TestOptionsGeneratedWebKitLegacyKeyMapping.cpp \
     TestOptionsGeneratedKeys.h \
@@ -83,5 +86,5 @@ WEB_PREFERENCES_GENERATED_FILES = \
 
 all : $(WEB_PREFERENCES_GENERATED_FILES)
 
-$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
-	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --template $< $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS)
+	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --template $< $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS)

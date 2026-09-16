@@ -74,6 +74,8 @@ def defaultValueFor(name, options, frontend)
   value.is_a?(Hash) ? value : { "default" => value }
 end
 
+PREFERENCES_FILE_NAMES = %w{ UnifiedWebPreferences.yaml WebPreferencesAdditions.yaml }
+
 SETTINGS_KEYS = %w{
   comment condition defaultValue disableInLockdownMode inspectorOverride refinedType
   status type webcoreExcludeFromInternalSettings webcoreGetter webcoreImplementation
@@ -103,6 +105,8 @@ def load(path)
     exit(-1)
   end
 
+  return {} if !parsed
+
   previousName = nil
   parsed.keys.each do |name|
     if previousName != nil and previousName > name
@@ -112,7 +116,7 @@ def load(path)
     previousName = name
   end
 
-  validate(path, parsed) unless File.basename(path) == "UnifiedWebPreferences.yaml"
+  validate(path, parsed) unless PREFERENCES_FILE_NAMES.include?(File.basename(path))
 
   parsed
 end

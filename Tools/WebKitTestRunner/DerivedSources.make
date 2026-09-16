@@ -44,6 +44,9 @@ FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE = platform-enabled-swift-args.$(WK_CURR
 FEATURE_AND_PLATFORM_FLAGS := $(shell cat $(FEATURE_AND_PLATFORM_FLAGS_RESPONSE_FILE))
 FEATURE_AND_PLATFORM_DEFINES := $(patsubst -D%, %, $(filter -D%, $(FEATURE_AND_PLATFORM_FLAGS)))
 
+# Only the first match is used, since the file can be present both in the build output and in the SDK.
+WEB_PREFERENCES_ADDITIONS = $(firstword $(wildcard $(addsuffix /WebPreferencesAdditions.yaml, $(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
 WEB_PREFERENCES_TEMPLATES = \
     $(WebKitTestRunner)/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb \
 #
@@ -52,8 +55,8 @@ WEB_PREFERENCES_PATTERNS = $(subst .erb,,$(WEB_PREFERENCES_FILES))
 
 all : $(WEB_PREFERENCES_FILES)
 
-$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
-	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS)
+	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WEB_PREFERENCES_ADDITIONS)
 
 
 INJECTED_BUNDLE_INTERFACES = \
