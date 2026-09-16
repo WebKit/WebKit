@@ -54,6 +54,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
+    evaluateBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        this._executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, callbackTimeout)
+            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
+            .catch(error => { resultCallback(frameID, callbackID, error); });
+    }
+
     nodeForIdentifier(identifier)
     {
         this._clearStaleNodes();
@@ -177,6 +184,78 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 if (timeoutIdentifier) {
                     clearTimeout(timeoutIdentifier);
                 }
+            });
+    }
+
+    _bidiExceptionResult(error)
+    {
+        let object = error && typeof error === "object" ? error : {};
+        let exception;
+        try {
+            exception = this.serializeBidiRemoteValue(error);
+        } catch {
+            exception = { type: "error" };
+        }
+        return {
+            success: false,
+            error: {
+                name: object.name || "Error",
+                message: object.message || String(error),
+                stack: object.stack || "",
+                exception: exception
+            }
+        };
+    }
+
+    _executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, callbackTimeout)
+    {
+        let timeoutPromise;
+        let timeoutIdentifier = 0;
+        if (callbackTimeout >= 0) {
+            timeoutPromise = new Promise((resolve, reject) => {
+                timeoutIdentifier = setTimeout(() => {
+                    reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
+                }, callbackTimeout);
+            });
+        }
+
+        let executionPromise;
+        try {
+            let lines = functionDeclaration.split("\n");
+            let prefixLines = [];
+            while (lines.length && lines[0].startsWith("//"))
+                prefixLines.push(lines.shift());
+
+            let prefix = prefixLines.join("\n");
+            if (prefix)
+                prefix += "\n";
+
+            let functionValue = evaluate(prefix + "(" + lines.join("\n") + ")");
+            if (typeof functionValue !== "function")
+                throw new TypeError("Script did not evaluate to a function.");
+
+            this._clearStaleNodes();
+            let argumentValues = argumentStrings.map(this._jsonParse, this);
+            let result = Reflect.apply(functionValue, undefined, argumentValues);
+
+            if (awaitPromise && result && typeof result.then === "function") {
+                executionPromise = result.then(value => {
+                    return { success: true, result: this.serializeBidiRemoteValue(value, maxObjectDepth) };
+                }, error => this._bidiExceptionResult(error));
+            } else
+                executionPromise = Promise.resolve({ success: true, result: this.serializeBidiRemoteValue(result, maxObjectDepth) });
+        } catch (error) {
+            executionPromise = Promise.resolve(this._bidiExceptionResult(error));
+        }
+
+        executionPromise = executionPromise.catch(error => this._bidiExceptionResult(error));
+        let promises = [executionPromise];
+        if (timeoutPromise)
+            promises.push(timeoutPromise);
+        return Promise.race(promises)
+            .finally(() => {
+                if (timeoutIdentifier)
+                    clearTimeout(timeoutIdentifier);
             });
     }
 
@@ -403,7 +482,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
                 return { type: "object", value: {} };
 
             // Check depth limit.
-            if (depth >= maxObjectDepth)
+            if (maxObjectDepth >= 0 && depth >= maxObjectDepth)
                 return { type: "object", value: {} };
 
             visitedObjects.add(value);
