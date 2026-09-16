@@ -94,11 +94,12 @@ if (!window.internals) {
     shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
     shouldBe('ogShadow.firstChild.textContent', '"New Group"');
 
-    // Remove optgroup label attribute - should hide the label div.
+    // Remove optgroup label attribute - the label div stays, with an empty label.
     debug("");
     debug("After removing optgroup label attribute:");
     og.removeAttribute("label");
-    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"none"');
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
+    shouldBe('ogShadow.firstChild.textContent', '""');
 
     // Re-add optgroup label attribute.
     debug("");
@@ -107,13 +108,24 @@ if (!window.internals) {
     shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
     shouldBe('ogShadow.firstChild.textContent', '"Re-added"');
 
-    // Test optgroup created without label attribute initially has no shadow root.
+    // A legend that is not the first element child does not supply the label.
+    debug("");
+    debug("After appending legend as the last child of optgroup:");
+    var trailingLegend = document.createElement("legend");
+    trailingLegend.textContent = "Trailing legend";
+    og.append(trailingLegend);
+    shouldBe('getComputedStyle(ogShadow.firstChild).display', '"block"');
+    shouldBe('ogShadow.firstChild.textContent', '"Re-added"');
+    trailingLegend.remove();
+
+    // Test optgroup created without label attribute still gets a shadow root.
     debug("");
     debug("Optgroup without label attribute:");
     var og2 = document.createElement("optgroup");
     select.appendChild(og2);
     var og2Shadow = internals.shadowRoot(og2);
-    shouldBeTrue('og2Shadow === null');
+    shouldBeTrue('og2Shadow !== null');
+    shouldBe('og2Shadow.firstChild.textContent', '""');
 
     // Setting label attribute creates shadow root.
     debug("");
@@ -202,11 +214,11 @@ if (!window.internals) {
     var og7 = document.createElement("optgroup");
     select.appendChild(og7);
     var og7Shadow = internals.shadowRoot(og7);
-    shouldBeTrue('og7Shadow === null');
+    shouldBeTrue('og7Shadow !== null');
     select.remove();
     og7.setAttribute("label", "Added while disconnected");
     og7Shadow = internals.shadowRoot(og7);
-    shouldBeTrue('og7Shadow === null');
+    shouldBeTrue('og7Shadow !== null');
     document.body.appendChild(select);
     og7Shadow = internals.shadowRoot(og7);
     shouldBeTrue('og7Shadow !== null');

@@ -29,7 +29,6 @@
 #include "ElementIterator.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLNames.h"
-#include "HTMLOptGroupElement.h"
 #include "SelectionRestorationMode.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -61,30 +60,6 @@ RefPtr<HTMLFormElement> HTMLLegendElement::formForBindings() const
 {
     // FIXME: The downcast should be unnecessary, but the WPT was written before https://github.com/WICG/webcomponents/issues/1072 was resolved. Update once the WPT has been updated.
     return dynamicDowncast<HTMLFormElement>(retargetReferenceTargetForBindings(form()));
-}
-
-auto HTMLLegendElement::insertionSteps(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> NeedsPostConnectionSteps
-{
-    auto result = HTMLElement::insertionSteps(insertionType, parentOfInsertedTree);
-
-    if (parentNode() != &parentOfInsertedTree)
-        return result;
-    
-    if (RefPtr optgroup = dynamicDowncast<HTMLOptGroupElement>(parentNode()))
-        optgroup->legendChildAdded();
-
-    return result;
-}
-
-void HTMLLegendElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
-{
-    HTMLElement::removingSteps(removalType, oldParentOfRemovedTree);
-
-    if (parentNode())
-        return;
-
-    if (RefPtr optgroup = dynamicDowncast<HTMLOptGroupElement>(oldParentOfRemovedTree))
-        optgroup->legendChildRemoved();
 }
 
 } // namespace WebCore

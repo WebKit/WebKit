@@ -727,8 +727,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 # Untriaged.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/selectedcontent-restore.optional.html [ Skip ]
 
-# <optgroup label> renders bold + black rather than as a gray legend.
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-rendering.html [ ImageOnlyFailure ]
 # Our selectedcontent avoids overflow, but test expects it.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-button-text-and-icon-clipping.html [ ImageOnlyFailure ]
 # Overflow handling differences.
@@ -736,6 +734,8 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-o
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-clipping.html [ ImageOnlyFailure ]
 # The picker-icon's negative margin glyph adjustment (margin-block-start: -0.25em) shifts the icon, which the reference doesn't account for.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-display-block.tentative.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-legend-not-first.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-rendering.html [ Pass ImageOnlyFailure ]
 
 # List boxes/<select multiple>.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/ [ Skip ]
