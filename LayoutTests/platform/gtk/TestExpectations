@@ -1300,3 +1300,67 @@ webkit.org/b/319324 inspector/canvas/create-context-webgl.html [ Failure Pass ]
 webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
+
+webkit.org/b/320354 compositing/animation/animated-composited-inside-hidden.html [ Timeout Pass ]
+webkit.org/b/320354 compositing/backgrounds/fixed-background-on-descendant.html [ Timeout Pass ]
+
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
+
+webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]
+
+webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
+
+webkit.org/b/322025 fast/animation/request-animation-frame-during-modal.html [ Failure Pass ]
+
+# Gardening 2026-08-26
+webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Failure ]
+webkit.org/b/322626 fast/events/touch/touch-target-limited.html [ Timeout ]
+webkit.org/b/322630 media/video-background-tab-playback.html [ Failure Pass ]
+webkit.org/b/322631 [ Release ] media/media-controller-playbackrate.html [ Pass Failure ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-subtree-modified-remove.html [ Pass Crash ]
+webkit.org/b/322635 [ Debug ] fast/mediastream/play-newly-added-audio-track.html [ Pass Timeout ]
+webkit.org/b/322636 [ Debug ] http/tests/incremental/split-hex-entities.pl [ Pass Timeout ]
+webkit.org/b/322638 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_block_downloads.tentative.html [ Pass Failure ]
+webkit.org/b/322640 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/synthetic-mouse-enter-leave-over-out-button-state-after-target-removed.tentative.html?buttonType=MIDDLE&button=1&buttons=4 [ Pass Failure ]
+webkit.org/b/322643 [ Debug ] imported/w3c/web-platform-tests/webrtc/receiver-track-live.https.html [ Pass Failure ]
+webkit.org/b/322644 [ Debug ] inspector/dom-debugger/event-interval-breakpoints.html [ Pass Timeout ]
+webkit.org/b/322645 [ Debug ] js/weakref-finalizationregistry.html [ Pass Timeout ]
+webkit.org/b/322647 [ Debug ] media/video-multiple-concurrent-playback.html [ Pass Failure ]
+webkit.org/b/322648 [ Debug ] navigation-api/navigation-api-rate-limit-history-api.html [ Pass Failure ]
+webkit.org/b/322650 [ Debug ] webrtc/video-h264.html [ Pass Failure ]
+webkit.org/b/322651 [ Debug ] webrtc/video-remote-mute.html [ Pass Failure ]
+webkit.org/b/322652 [ Debug ] workers/btoa-oom.html [ Pass Timeout ]
+webkit.org/b/322811 [ Debug ] fast/mediastream/applyConstraints-with-takePhoto.html [ Pass Timeout ]
+webkit.org/b/322818 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_cmp.wast.js.html [ Pass Timeout ]
+webkit.org/b/322819 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f64x2_cmp.wast.js.html [ Pass Timeout ]
+webkit.org/b/319070 [ Debug ] imported/w3c/web-platform-tests/wasm/core/simd/simd_f32x4_rounding.wast.js.html [ Pass Timeout ]
+webkit.org/b/322820 [ Release ] media/video-seek-past-end-paused.html [ Failure Pass ]
+webkit.org/b/323007 [ Debug ] media/video-seek-with-negative-playback.html [ Pass Timeout Failure ]
+webkit.org/b/322632 [ Release ] inspector/dom-debugger/dom-breakpoint-attribute-modified.html [ Pass Crash ]
+webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/static-router-main-resource.https.html [ Crash Failure Pass ]
+
+# Gardening 2026-09-08
+webkit.org/b/323667 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-disabled-tracks.https.html [ Crash Pass Timeout ]
+
+# Gardening 2026-09-09
+webkit.org/b/323784 css3/filters/filter-repaint-blur-nested-pixel-moving-filter.html [ ImageOnlyFailure ]
+webkit.org/b/323666 [ Release ] imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-senderCaptureTimeOffset.html [ Crash Pass ]
+webkit.org/b/323778 [ Debug ] media/media-source/media-source-addsourcebuffer-after-canplaytype.html [ Crash Pass ]
+
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/held.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/idlharness.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/ifAvailable.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/lock-attributes.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-exclusive.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/323779 imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.sharedworker.html [ Failure Pass ]
+
+# Gardening 2026-09-15
+webkit.org/b/324249 [ Release ] fullscreen/full-screen-enter-while-exiting.html [ Timeout Pass ]
+webkit.org/b/324251 [ Debug ] fast/mediastream/stream-switch.html [ Slow Pass ]
+webkit.org/b/324252 fast/parser/entity-comment-in-textarea.html [ Timeout Pass ]
+webkit.org/b/324253 imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html [ Failure Pass ]
+webkit.org/b/324254 imported/w3c/web-platform-tests/svg/animations/use-animate-display-none-symbol-2.html [ ImageOnlyFailure Pass ]
+webkit.org/b/324255 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Failure Pass ]
+webkit.org/b/324256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure Pass ]
+webkit.org/b/324257 inspector/runtime/getCollectionEntries.html [ Failure Pass ]
