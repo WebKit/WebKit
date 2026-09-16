@@ -106,23 +106,31 @@ public:
 
     void setPort(uint64_t port) { m_port = port; }
 
-    // Returns true when a GDB remote client is present at the transport layer — either a TCP
-    // socket has been accepted or an RWI handler has been registered. This is a wire-level check
-    // only: the debugger may not have completed its startup sequence yet.
-    JS_EXPORT_PRIVATE bool NODELETE hasDebugger() const;
+    // Session lifecycle. Each stage implies the one before it:
+    //
+    //          start()/startRWI()                accept()                library list
+    //   (off) --------------------> isInService ----------> isConnected --------------> hasSentLibraryList
+    //
+    // reset() on disconnect drops back to inService; in RWI mode isConnected survives, since its
+    // handler is never unregistered. hasContinued() is test-only and outside the lattice.
 
-    // Non-blocking check: returns true once the debugger has sent its first 'c' (continue).
-    // This is used for test only.
-    bool hasContinued() const { return m_hasContinued.load(std::memory_order_acquire); }
+    // The reply channel is open: an accepted TCP socket, or a registered RWI handler. TCP: reset()
+    // closes the socket and this goes false. RWI: the handler is never unregistered, so it stays
+    // true with or without LLDB attached.
+    JS_EXPORT_PRIVATE bool NODELETE isConnected() const;
 
-    // True once the debugger has completed its startup exchange ('?' + first qXfer:libraries:read),
-    // which is the point at which we consider the debugger fully ready to handle breakpoints, traps, and new module loads.
-    bool isDebuggerReady() const
+    // Set only by QueryHandler, on the final ('l') chunk of any qXfer:libraries:read -- including
+    // the re-queries a new instance triggers, so not a once-per-session bit. Cleared by reset().
+    bool hasSentLibraryList() const
     {
-        bool ready = m_isDebuggerReady.load(std::memory_order_acquire);
-        RELEASE_ASSERT(!ready || hasDebugger());
-        return ready;
+        bool sent = m_hasSentLibraryList.load(std::memory_order_acquire);
+        RELEASE_ASSERT(!sent || isConnected());
+        return sent;
     }
+
+    // Test-only: backs $vm.hasDebuggerContinued(), which JSTests spin on to delay a dynamic module
+    // load until LLDB has attached and resumed. Set on the first 'c'/'C', cleared by reset().
+    bool hasContinued() const { return m_hasContinued.load(std::memory_order_acquire); }
 
     JS_EXPORT_PRIVATE void handlePacket(StringView packet);
 
@@ -172,7 +180,7 @@ private:
     // Set once on start()/startRWI() and never cleared — DebugServer is a process-lifetime singleton.
     std::atomic<bool> m_isInService { false };
     std::atomic<bool> m_hasContinued { false };
-    std::atomic<bool> m_isDebuggerReady { false };
+    std::atomic<bool> m_hasSentLibraryList { false };
     uint16_t m_port { defaultPort };
     SocketType m_serverSocket { invalidSocketValue };
     SocketType m_clientSocket { invalidSocketValue };

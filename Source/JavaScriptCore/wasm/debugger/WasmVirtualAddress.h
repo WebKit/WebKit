@@ -112,6 +112,8 @@ public:
     static constexpr uint64_t INVALID_END = 0xFFFFFFFFFFFFFFFFULL;
 
     static constexpr uint32_t MAX_ID = 0x3FFFFFFF; // Bits 61-32. IDs are never reused, so this also bounds how many instances one session may create.
+    static constexpr uint32_t INVALID_ID = MAX_ID + 1;
+    static_assert(INVALID_ID > MAX_ID, "the sentinel must not be encodable");
 
     VirtualAddress()
         : m_value(0)

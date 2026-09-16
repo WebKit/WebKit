@@ -68,7 +68,7 @@ void WasmDebuggerDispatcher::initializeConnection(IPC::Connection& connection)
 void WasmDebuggerDispatcher::resetServer()
 {
     JSC::Wasm::DebugServer& debugServer = JSC::Wasm::DebugServer::singleton();
-    if (!debugServer.hasDebugger())
+    if (!debugServer.isConnected())
         return;
     debugServer.reset();
 }
@@ -79,7 +79,7 @@ void WasmDebuggerDispatcher::dispatchMessage(const String& message)
     // Safe to call even when main thread is blocked.
     JSC::Wasm::DebugServer& debugServer = JSC::Wasm::DebugServer::singleton();
 
-    if (!debugServer.hasDebugger()) {
+    if (!debugServer.isConnected()) {
         RELEASE_LOG_ERROR(Inspector, "WasmDebugServer has no debug client");
         return;
     }
