@@ -10702,6 +10702,7 @@ void WebPageProxy::showBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&& safeBro
     m_uiClient->didShowSafeBrowsingWarning();
 }
 
+<<<<<<< HEAD
 void WebPageProxy::removeSuspendedPagesBeforeNavigation(WebProcessProxy& process)
 {
     // It is difficult to get history right if we have several WebPage objects inside a single WebProcess for the same
@@ -10712,6 +10713,9 @@ void WebPageProxy::removeSuspendedPagesBeforeNavigation(WebProcessProxy& process
 }
 
 void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navigation, Ref<BrowsingContextGroup>&& browsingContextGroupForSwap, Ref<WebProcessProxy>&& processForNavigation, WebCore::ProcessSwapDisposition processSwapDisposition, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
+=======
+void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navigation, Ref<BrowsingContextGroup>&& browsingContextGroupForSwap, Ref<WebProcessProxy>&& processForNavigation, WebCore::ProcessSwapDisposition processSwapDisposition, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
+>>>>>>> c3e6d5676f11 (Add ownership check on existingLoaderToResume in NetworkConnectionToWebProcess::scheduleResourceLoad)
 {
     auto preventProcessShutdown = processForNavigation->shutdownPreventingScope();
 
@@ -10734,28 +10738,38 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
         RefPtr navigation = m_navigationState->navigation(navigationID);
         RefPtr mainFrame = m_mainFrame;
         if (!navigation || !mainFrame)
-            return completionHandler(false);
+            return completionHandler(std::nullopt);
 
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());
 
+<<<<<<< HEAD
         removeSuspendedPagesBeforeNavigation(processForNavigation);
 
         continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, browsingContextGroupForSwap, WTF::move(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, processSwapDisposition, nullptr, originalNavigationStartTime);
         completionHandler(true);
+=======
+        auto destinationWebProcessIdentifier = processForNavigation->coreProcessIdentifier();
+        continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, browsingContextGroupForSwap, WTF::move(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, processSwapDisposition, nullptr);
+        completionHandler(destinationWebProcessIdentifier);
+>>>>>>> c3e6d5676f11 (Add ownership check on existingLoaderToResume in NetworkConnectionToWebProcess::scheduleResourceLoad)
     };
 
     protect(protect(websiteDataStore())->networkProcess())->addAllowedFirstPartyForCookies(process, domain, LoadedWebArchive::No, WTF::move(addCookiesCompletionHandler));
 }
 
+<<<<<<< HEAD
 void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
+=======
+void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
+>>>>>>> c3e6d5676f11 (Add ownership check on existingLoaderToResume in NetworkConnectionToWebProcess::scheduleResourceLoad)
 {
     // FIXME: When site isolation is enabled, this should probably switch the BrowsingContextGroup. <rdar://116203642>
     ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup);
     RefPtr navigation = m_navigationState->navigation(navigationID);
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerBrowsingContextGroupSwitchForNavigation: bcgDecision=%u, navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, static_cast<unsigned>(browsingContextGroupSwitchDecision), navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (!navigation)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     m_openedMainFrameName = { };
     setBrowsingContextGroup(BrowsingContextGroup::create());
@@ -10775,6 +10789,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
     performProcessSwapForNavigationResponse(*navigation, m_browsingContextGroup.copyRef(), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, originalNavigationStartTime, WTF::move(completionHandler));
 }
 
+<<<<<<< HEAD
 // A Site maps to at most one FrameProcess in a BrowsingContextGroup. Moving a site into an enhanced
 // security process is therefore only possible when the process it uses now is used solely by the frame
 // this navigation replaces, so that process is gone by the time the navigation commits. Anything else
@@ -10801,16 +10816,19 @@ static bool canMoveSiteToEnhancedSecurityProcess(BrowsingContextGroup& browsingC
 }
 
 void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIdentifier navigationID, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
+=======
+void WebPageProxy::triggerProcessSwapForEnhancedSecurity(WebCore::NavigationIdentifier navigationID, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier> destinationWebProcess)>&& completionHandler)
+>>>>>>> c3e6d5676f11 (Add ownership check on existingLoaderToResume in NetworkConnectionToWebProcess::scheduleResourceLoad)
 {
     RefPtr navigation = m_navigationState->navigation(navigationID);
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "triggerProcessSwapForEnhancedSecurity: navigation=%p, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, navigation.get(), existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (!navigation)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     ASSERT(responseSite.protocol() == "http"_s);
     if (!shouldUseEnhancedSecurityHeuristics(protect(preferences()))
         || !internals().enhancedSecurityTracker.shouldEnableForInsecureResponse(*navigation, hasOpenedPage()))
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     Ref browsingContextGroupForSwap = (m_provisionalPage && m_provisionalPage->navigationID() == navigationID)
         ? Ref { m_provisionalPage->browsingContextGroup() }
