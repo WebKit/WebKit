@@ -106,7 +106,7 @@ PageInspectorController::PageInspectorController(Page& page, std::unique_ptr<Ins
     auto pageContext = pageAgentContext();
 
     auto consoleAgent = makeUniqueRef<PageConsoleAgent>(pageContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
+    m_instrumentingAgents->setWebConsoleAgent(protect(consoleAgent).ptr());
     m_agents.append(WTF::move(consoleAgent));
 }
 
@@ -169,7 +169,7 @@ void PageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<PageRuntimeAgent>(pageContext));
 
     auto debuggerAgent = makeUniqueRef<PageDebuggerAgent>(pageContext);
-    auto debuggerAgentPtr = debuggerAgent.ptr();
+    CheckedPtr debuggerAgentPtr = debuggerAgent.ptr();
     m_agents.append(WTF::move(debuggerAgent));
 
     m_agents.append(makeUniqueRef<PageNetworkAgent>(pageContext, m_inspectorBackendClient.get()));
@@ -182,7 +182,7 @@ void PageInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<InspectorIndexedDBAgent>(pageContext));
 
     auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(pageContext);
-    m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgent.ptr());
+    m_instrumentingAgents->setPersistentScriptProfilerAgent(protect(scriptProfilerAgent).ptr());
     m_agents.append(WTF::move(scriptProfilerAgent));
 
 #if ENABLE(RESOURCE_USAGE)
@@ -513,7 +513,7 @@ void PageInspectorController::frontendInitialized()
 {
     if (m_pauseAfterInitialization) {
         m_pauseAfterInitialization = false;
-        if (auto* debuggerAgent = m_instrumentingAgents->enabledPageDebuggerAgent())
+        if (CheckedPtr debuggerAgent = m_instrumentingAgents->enabledPageDebuggerAgent())
             std::ignore = debuggerAgent->pause();
     }
 }

@@ -26,9 +26,13 @@
 #include "config.h"
 #include "WorkerDOMDebuggerAgent.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace WebCore {
 
 using namespace Inspector;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerDOMDebuggerAgent);
 
 WorkerDOMDebuggerAgent::WorkerDOMDebuggerAgent(WorkerAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorDOMDebuggerAgent(context, debuggerAgent)

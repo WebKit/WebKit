@@ -60,6 +60,8 @@ class FrameCSSAgent final : public InspectorAgentBase, public Inspector::CSSBack
     WTF_MAKE_TZONE_ALLOCATED(FrameCSSAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameCSSAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     FrameCSSAgent(FrameAgentContext&);
     ~FrameCSSAgent();
 

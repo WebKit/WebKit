@@ -35,10 +35,13 @@ class DOMWrapperWorld;
 class LocalFrame;
 class UserGestureEmulationScope;
 
-class FrameDebuggerAgent final : public WebDebuggerAgent {
+class FrameDebuggerAgent final : public WebDebuggerAgent, public CanMakeCheckedPtr<FrameDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(FrameDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(FrameDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameDebuggerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     FrameDebuggerAgent(FrameAgentContext&);
     ~FrameDebuggerAgent();
     bool enabled() const;

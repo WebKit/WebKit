@@ -32,15 +32,19 @@
 #include <JavaScriptCore/AugmentableInspectorController.h>
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <JavaScriptCore/InspectorAlternateBackendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace Inspector {
 
 template<typename TBackendDispatcher, typename TAlternateDispatcher>
-class AlternateDispatchableAgent final : public InspectorAgentBase {
+class AlternateDispatchableAgent final : public InspectorAgentBase, public CanMakeCheckedPtr<AlternateDispatchableAgent<TBackendDispatcher, TAlternateDispatcher>> {
     WTF_MAKE_TZONE_ALLOCATED_TEMPLATE(AlternateDispatchableAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AlternateDispatchableAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr<AlternateDispatchableAgent>);
+
     AlternateDispatchableAgent(const String& domainName, AugmentableInspectorController& controller, std::unique_ptr<TAlternateDispatcher> alternateDispatcher)
         : InspectorAgentBase(domainName)
         , m_alternateDispatcher(WTF::move(alternateDispatcher))

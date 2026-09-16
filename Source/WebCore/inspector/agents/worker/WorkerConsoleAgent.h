@@ -34,6 +34,7 @@ namespace WebCore {
 class WorkerConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WorkerConsoleAgent);
     WTF_MAKE_TZONE_ALLOCATED(WorkerConsoleAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WorkerConsoleAgent);
 public:
     WorkerConsoleAgent(WorkerAgentContext&);
     ~WorkerConsoleAgent();

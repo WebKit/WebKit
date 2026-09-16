@@ -46,10 +46,13 @@ class RenderElement;
 class RenderLayer;
 class WeakPtrImplWithEventTargetData;
 
-class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
+class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorLayerTreeAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorLayerTreeAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorLayerTreeAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorLayerTreeAgent(WebAgentContext&);
     ~InspectorLayerTreeAgent();
 

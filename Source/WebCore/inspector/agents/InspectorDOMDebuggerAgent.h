@@ -55,10 +55,13 @@ class RegisteredEventListener;
 class ResourceRequest;
 class ScriptExecutionContext;
 
-class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
+class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener, public CanMakeCheckedPtr<InspectorDOMDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMDebuggerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorDOMDebuggerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     ~InspectorDOMDebuggerAgent() override;
 
     // InspectorAgentBase
@@ -95,7 +98,7 @@ protected:
     virtual void enable();
     virtual void disable();
 
-    Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
+    CheckedPtr<Inspector::InspectorDebuggerAgent> m_debuggerAgent;
 
 private:
     void breakOnURLIfNeeded(const String&);

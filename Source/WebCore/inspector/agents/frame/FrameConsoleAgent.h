@@ -40,6 +40,7 @@ namespace WebCore {
 class FrameConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(FrameConsoleAgent);
     WTF_MAKE_TZONE_ALLOCATED(FrameConsoleAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FrameConsoleAgent);
 public:
     FrameConsoleAgent(FrameAgentContext&);
     ~FrameConsoleAgent();

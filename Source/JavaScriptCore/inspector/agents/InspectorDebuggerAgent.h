@@ -46,6 +46,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace Inspector {
 
@@ -57,7 +58,8 @@ class JS_EXPORT_PRIVATE InspectorDebuggerAgent
     : public InspectorAgentBase
     , public DebuggerBackendDispatcherHandler
     , public JSC::Debugger::Client
-    , public JSC::Debugger::Observer {
+    , public JSC::Debugger::Observer
+    , public CanMakeWeakPtr<InspectorDebuggerAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDebuggerAgent);
 public:

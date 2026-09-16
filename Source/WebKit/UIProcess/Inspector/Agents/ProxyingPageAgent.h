@@ -54,6 +54,8 @@ class ProxyingPageAgent final : public RefCounted<ProxyingPageAgent>, public Web
     WTF_MAKE_TZONE_ALLOCATED(ProxyingPageAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ProxyingPageAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     ProxyingPageAgent(WebKit::WebPageAgentContext&);
     ~ProxyingPageAgent();
 

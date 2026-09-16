@@ -58,9 +58,8 @@ namespace Inspector {
 // commands via IPC and doesn't share any state with InspectorNetworkAgent in the WebProcess.
 //
 // It inherits InspectorWebAgentBase so subclasses can register with AgentRegistry,
-// and AbstractCanMakeCheckedPtr so InstrumentingAgents can hold CheckedPtr to it.
 // Concrete subclasses must use CanMakeCheckedPtr and WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR.
-class NetworkAgentInstrumentation : public WebCore::InspectorAgentBase, public AbstractCanMakeCheckedPtr {
+class NetworkAgentInstrumentation : public WebCore::InspectorAgentBase {
 public:
     ~NetworkAgentInstrumentation() override = default;
 

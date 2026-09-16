@@ -77,8 +77,8 @@ void JSGlobalObjectConsoleClient::messageWithTypeAndLevel(MessageType type, Mess
     m_consoleAgent->addMessageToConsole(makeUnique<ConsoleMessage>(MessageSource::ConsoleAPI, type, level, message, WTF::move(arguments), globalObject));
 
     if (type == MessageType::Assert) {
-        if (m_debuggerAgent)
-            m_debuggerAgent->handleConsoleAssert(message);
+        if (CheckedPtr agent = m_debuggerAgent)
+            agent->handleConsoleAssert(message);
     }
 }
 
@@ -142,22 +142,22 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::JSGlobalObject*, const String&
 
 void JSGlobalObjectConsoleClient::startConsoleProfile()
 {
-    if (m_debuggerAgent) {
-        m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
-        std::ignore = m_debuggerAgent->setBreakpointsActive(false);
+    if (CheckedPtr agent = m_debuggerAgent) {
+        m_profileRestoreBreakpointActiveValue = agent->breakpointsActive();
+        std::ignore = agent->setBreakpointsActive(false);
     }
 
-    if (m_scriptProfilerAgent)
-        std::ignore = m_scriptProfilerAgent->startTracking(true);
+    if (CheckedPtr agent = m_scriptProfilerAgent)
+        std::ignore = agent->startTracking(true);
 }
 
 void JSGlobalObjectConsoleClient::stopConsoleProfile()
 {
-    if (m_scriptProfilerAgent)
-        std::ignore = m_scriptProfilerAgent->stopTracking();
+    if (CheckedPtr agent = m_scriptProfilerAgent)
+        std::ignore = agent->stopTracking();
 
-    if (m_debuggerAgent)
-        std::ignore = m_debuggerAgent->setBreakpointsActive(m_profileRestoreBreakpointActiveValue);
+    if (CheckedPtr agent = m_debuggerAgent)
+        std::ignore = agent->setBreakpointsActive(m_profileRestoreBreakpointActiveValue);
 }
 
 void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)

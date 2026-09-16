@@ -33,10 +33,13 @@ namespace WebCore {
 
 class ServiceWorkerGlobalScope;
 
-class ServiceWorkerAgent final : public InspectorAgentBase, public Inspector::ServiceWorkerBackendDispatcherHandler {
+class ServiceWorkerAgent final : public InspectorAgentBase, public Inspector::ServiceWorkerBackendDispatcherHandler, public CanMakeCheckedPtr<ServiceWorkerAgent> {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerAgent);
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     ServiceWorkerAgent(WorkerAgentContext&);
     ~ServiceWorkerAgent();
 

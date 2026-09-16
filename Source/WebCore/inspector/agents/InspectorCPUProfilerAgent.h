@@ -32,13 +32,17 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspector::CPUProfilerBackendDispatcherHandler {
+class InspectorCPUProfilerAgent final : public InspectorAgentBase, public Inspector::CPUProfilerBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorCPUProfilerAgent>, public CanMakeWeakPtr<InspectorCPUProfilerAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorCPUProfilerAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorCPUProfilerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorCPUProfilerAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     InspectorCPUProfilerAgent(PageAgentContext&);
     ~InspectorCPUProfilerAgent();
 

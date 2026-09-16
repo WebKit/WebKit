@@ -80,7 +80,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerOrWorkletGlobalScope&
     auto workerContext = workerAgentContext();
 
     auto consoleAgent = makeUniqueRef<WorkerConsoleAgent>(workerContext);
-    m_instrumentingAgents->setWebConsoleAgent(consoleAgent.ptr());
+    m_instrumentingAgents->setWebConsoleAgent(protect(consoleAgent).ptr());
     m_agents.append(WTF::move(consoleAgent));
 }
 
@@ -107,8 +107,9 @@ void WorkerInspectorController::frontendInitialized()
     if (m_pauseAfterInitialization) {
         m_pauseAfterInitialization = false;
 
-        std::ignore = ensureDebuggerAgent().enable();
-        std::ignore = ensureDebuggerAgent().pause();
+        CheckedRef debuggerAgent = ensureDebuggerAgent();
+        std::ignore = debuggerAgent->enable();
+        std::ignore = debuggerAgent->pause();
     }
 
     if (m_isAutomaticInspection && is<ServiceWorkerGlobalScope>(m_globalScope)) {
@@ -243,7 +244,7 @@ void WorkerInspectorController::createLazyAgents()
     m_agents.append(makeUniqueRef<WorkerWorkerAgent>(workerContext));
 
     auto scriptProfilerAgent = makeUniqueRef<InspectorScriptProfilerAgent>(workerContext);
-    m_instrumentingAgents->setPersistentScriptProfilerAgent(scriptProfilerAgent.ptr());
+    m_instrumentingAgents->setPersistentScriptProfilerAgent(protect(scriptProfilerAgent).ptr());
     m_agents.append(WTF::move(scriptProfilerAgent));
 }
 

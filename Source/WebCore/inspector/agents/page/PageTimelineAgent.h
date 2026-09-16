@@ -42,6 +42,8 @@ class PageTimelineAgent final : public InspectorTimelineAgent, public CanMakeWea
     WTF_MAKE_TZONE_ALLOCATED(PageTimelineAgent);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageTimelineAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     PageTimelineAgent(PageAgentContext&);
     ~PageTimelineAgent();
 

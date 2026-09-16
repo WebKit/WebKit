@@ -48,10 +48,13 @@ class LocalFrame;
 class Page;
 class SecurityOrigin;
 
-class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
+class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent, public CanMakeCheckedPtr<PageRuntimeAgent> {
     WTF_MAKE_NONCOPYABLE(PageRuntimeAgent);
     WTF_MAKE_TZONE_ALLOCATED(PageRuntimeAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageRuntimeAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     PageRuntimeAgent(PageAgentContext&);
     ~PageRuntimeAgent();
 

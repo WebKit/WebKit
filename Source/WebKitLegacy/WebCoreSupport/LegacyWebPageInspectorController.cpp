@@ -189,10 +189,13 @@ private:
     FrontendChannel::MessageHandler m_handler;
 };
 
-class EmptyBrowserAgent final : public Inspector::InspectorAgentBase, public Inspector::BrowserBackendDispatcherHandler {
+class EmptyBrowserAgent final : public Inspector::InspectorAgentBase, public Inspector::BrowserBackendDispatcherHandler, public CanMakeCheckedPtr<EmptyBrowserAgent> {
     WTF_MAKE_NONCOPYABLE(EmptyBrowserAgent);
     WTF_MAKE_TZONE_ALLOCATED(EmptyBrowserAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(EmptyBrowserAgent);
 public:
+    OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
+
     explicit EmptyBrowserAgent(Inspector::BackendDispatcher& backendDispatcher)
         : Inspector::InspectorAgentBase("Browser"_s)
         , m_backendDispatcher(Inspector::BrowserBackendDispatcher::create(backendDispatcher, this))

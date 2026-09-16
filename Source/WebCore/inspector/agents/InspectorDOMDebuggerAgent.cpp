@@ -64,8 +64,8 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, I
     , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(protect(context.backendDispatcher), this))
     , m_injectedScriptManager(context.injectedScriptManager)
 {
-    if (m_debuggerAgent)
-        m_debuggerAgent->addListener(*this);
+    if (CheckedPtr agent = m_debuggerAgent)
+        agent->addListener(*this);
 }
 
 InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent() = default;
@@ -118,8 +118,8 @@ void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend(Inspector::Disconn
 
 void InspectorDOMDebuggerAgent::discardAgent()
 {
-    if (m_debuggerAgent)
-        m_debuggerAgent->removeListener(*this);
+    if (CheckedPtr agent = m_debuggerAgent)
+        agent->removeListener(*this);
     m_debuggerAgent = nullptr;
 }
 
@@ -316,7 +316,7 @@ void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptEx
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }
 
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
+    protect(m_debuggerAgent)->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTF::move(eventData));
 }
 
 void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
@@ -357,7 +357,7 @@ void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExe
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    protect(m_debuggerAgent)->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
@@ -370,7 +370,7 @@ void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
         return;
 
     auto breakReason = oneShot ? Inspector::DebuggerFrontendDispatcher::Reason::Timeout : Inspector::DebuggerFrontendDispatcher::Reason::Interval;
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, breakReason);
+    protect(m_debuggerAgent)->schedulePauseForSpecialBreakpoint(*breakpoint, breakReason);
 }
 
 void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
@@ -382,7 +382,7 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    protect(m_debuggerAgent)->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::willFireAnimationFrame()
@@ -394,7 +394,7 @@ void InspectorDOMDebuggerAgent::willFireAnimationFrame()
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
+    protect(m_debuggerAgent)->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
 }
 
 void InspectorDOMDebuggerAgent::didFireAnimationFrame()
@@ -406,7 +406,7 @@ void InspectorDOMDebuggerAgent::didFireAnimationFrame()
     if (!breakpoint)
         return;
 
-    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+    protect(m_debuggerAgent)->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
 void InspectorDOMDebuggerAgent::willSendRequest(ResourceRequest& request)
@@ -488,7 +488,7 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("breakpointURL"_s, breakpointURL);
     eventData->setString("url"_s, url);
-    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::URL, WTF::move(eventData), WTF::move(breakpoint));
+    protect(m_debuggerAgent)->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::URL, WTF::move(eventData), WTF::move(breakpoint));
 }
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)

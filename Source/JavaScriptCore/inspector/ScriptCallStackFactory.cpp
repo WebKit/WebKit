@@ -84,7 +84,7 @@ public:
     {
         AsyncStackTrace* parentStackTrace = nullptr;
         if (auto* debugger = m_globalObject->debugger()) {
-            if (auto* debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
+            if (CheckedPtr debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
                 parentStackTrace = debuggerAgent->currentParentStackTrace();
         }
 
@@ -205,7 +205,7 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::JSGlobalObject* glo
 
     AsyncStackTrace* parentStackTrace = nullptr;
     if (auto* debugger = globalObject->debugger()) {
-        if (auto* debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
+        if (CheckedPtr debuggerAgent = dynamicDowncast<InspectorDebuggerAgent>(debugger->client()))
             parentStackTrace = debuggerAgent->currentParentStackTrace();
     }
     return ScriptCallStack::create(WTF::move(frames), stackTrace.size() > maxStackSize, parentStackTrace);

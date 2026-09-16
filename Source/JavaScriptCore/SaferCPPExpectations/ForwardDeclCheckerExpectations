@@ -20,8 +20,6 @@ heap/HeapProfiler.h
 heap/HeapSnapshotBuilder.h
 heap/SlotVisitor.h
 inspector/InspectorBackendDispatchers.h
-inspector/JSGlobalObjectConsoleClient.h
-inspector/JSGlobalObjectInspectorController.h
 jit/JIT.h
 jit/JITCode.h
 jit/JITWorklistThread.h
