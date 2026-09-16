@@ -291,7 +291,7 @@ void TextureMapper::drawNumber(int number, const Color& color, const FloatPoint&
 #if USE(CAIRO)
     int pointSize = 8;
 
-    CString counterString = String::number(number).ascii();
+    auto counterString = String::number(number).ascii();
     // cairo_text_extents() requires a cairo_t, so dimensions need to be guesstimated.
     int width = counterString.length() * pointSize * 1.2;
     int height = pointSize * 1.5;

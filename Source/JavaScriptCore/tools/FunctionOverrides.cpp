@@ -227,7 +227,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (hasDisallowedCharacters(delimiterStart, delimiterLength))
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Delimiter '", delimiter, "' cannot have '{', '}', or whitespace:\n", line, "\n"));
 
-    CString terminatorCString = makeString('}', delimiter).ascii();
+    auto terminatorCString = makeString('}', delimiter).ascii();
     const char* terminator = terminatorCString.data();
     line = delimiterEnd; // Start from the {.
 

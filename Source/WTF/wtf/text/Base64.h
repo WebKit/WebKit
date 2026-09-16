@@ -67,7 +67,7 @@ WTF_EXPORT_PRIVATE String base64EncodeToString(std::span<const std::byte>, Optio
 String base64EncodeToString(std::span<const uint8_t>, OptionSet<Base64EncodeOption> = { });
 
 WTF_EXPORT_PRIVATE String base64EncodeToStringReturnNullIfOverflow(std::span<const std::byte>, OptionSet<Base64EncodeOption> = { });
-String base64EncodeToStringReturnNullIfOverflow(const CString&, OptionSet<Base64EncodeOption> = { });
+String base64EncodeToStringReturnNullIfOverflow(const Latin1CString&, OptionSet<Base64EncodeOption> = { });
 
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(std::span<const std::byte>, OptionSet<Base64DecodeOption> = { });
 WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOption> = { });
@@ -112,7 +112,7 @@ inline String base64EncodeToStringReturnNullIfOverflow(std::span<const uint8_t> 
     return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input), options);
 }
 
-inline String base64EncodeToStringReturnNullIfOverflow(const CString& input, OptionSet<Base64EncodeOption> options)
+inline String base64EncodeToStringReturnNullIfOverflow(const Latin1CString& input, OptionSet<Base64EncodeOption> options)
 {
     return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input.span()), options);
 }

@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
 namespace TestWebKitAPI {
@@ -38,7 +39,7 @@ static void expectSHA1(CString input, int repeat, CString expected)
 {
     SHA1 sha1;
     for (int i = 0; i < repeat; ++i)
-        sha1.addBytes(input);
+        sha1.addBytes(std::as_bytes(input.span()));
     CString actual = sha1.computeHexDigest();
 
     ASSERT_EQ(expected.length(), actual.length());

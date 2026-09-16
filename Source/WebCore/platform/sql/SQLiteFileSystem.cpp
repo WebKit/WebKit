@@ -150,7 +150,7 @@ String SQLiteFileSystem::computeHashForFileName(StringView fileName)
 {
     auto cryptoDigest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
     auto utf8FileName = fileName.utf8();
-    cryptoDigest->addBytes(byteCast<uint8_t>(utf8FileName.span()));
+    cryptoDigest->addBytes(std::as_bytes(utf8FileName.span()));
     return cryptoDigest->toHexString();
 }
 

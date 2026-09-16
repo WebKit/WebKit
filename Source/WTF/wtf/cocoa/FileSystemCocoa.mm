@@ -89,8 +89,8 @@ String createTemporaryZipArchive(const String& path)
 
     RetainPtr coordinator = adoptNS([[NSFileCoordinator alloc] initWithFilePresenter:nil]);
     [coordinator coordinateReadingItemAtURL:[NSURL fileURLWithPath:path.createNSString().get()] options:NSFileCoordinatorReadingWithoutChanges error:nullptr byAccessor:[&](NSURL *newURL) mutable {
-        CString archivePath([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
-        int fd = mkostemp(archivePath.mutableSpanIncludingNullTerminator().data(), O_CLOEXEC);
+        UTF8CString archivePath { byteCast<char8_t>([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation) };
+        int fd = mkostemp(byteCast<char>(archivePath.mutableSpanIncludingNullTerminator().data()), O_CLOEXEC);
         if (fd == -1)
             return;
         close(fd);
@@ -103,8 +103,8 @@ String createTemporaryZipArchive(const String& path)
         };
 
         auto copier = BOMCopierNew();
-        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), bridge_cast(options)))
-            temporaryFile = String::fromUTF8(archivePath.span());
+        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.legacyCStringPointer(), bridge_cast(options)))
+            temporaryFile = String { archivePath };
         BOMCopierFree(copier);
     }];
 

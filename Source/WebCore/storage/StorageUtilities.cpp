@@ -82,7 +82,7 @@ String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOrig
 {
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
     auto originString = origin.toString().utf8();
-    crypto->addBytes(byteCast<uint8_t>(originString.span()));
+    crypto->addBytes(std::as_bytes(originString.span()));
     crypto->addBytes(salt);
     return base64URLEncodeToString(crypto->computeHash());
 }

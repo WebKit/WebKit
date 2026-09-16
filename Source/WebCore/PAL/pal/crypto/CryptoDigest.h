@@ -28,6 +28,7 @@
 #include <pal/crypto/CryptoTypes.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -45,6 +46,7 @@ public:
     PAL_EXPORT ~CryptoDigest();
 
     PAL_EXPORT void addBytes(std::span<const uint8_t>);
+    void addBytes(std::span<const std::byte> input) { addBytes(byteCast<uint8_t>(input)); }
     PAL_EXPORT Vector<uint8_t> computeHash();
     String toHexString();
     PAL_EXPORT CryptoDigest();

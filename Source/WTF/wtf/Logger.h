@@ -368,7 +368,7 @@ private:
     }
 
 #if USE(OS_LOG)
-    WTF_EXPORT_PRIVATE static void osLog(WTFLogChannel&, const CString& message);
+    WTF_EXPORT_PRIVATE static void osLog(WTFLogChannel&, const UTF8CString& message);
 #endif
 
     template<typename... Argument>

@@ -59,19 +59,21 @@ static inline const char* resolveDefaultLocale(const char* locale)
 
 #else
 
-static inline CString copyShortASCIIString(CFStringRef string)
+static inline ASCIICString copyShortASCIIString(CFStringRef string)
 {
     if (!string)
-        return CString(""_s);
+        return ASCIICString { ""_s };
 
     std::span<char> buffer;
-    auto result = CString::newUninitialized(CFStringGetLength(string) + 1, buffer);
-    if (!CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII))
-        return CString(""_s);
+    auto result = ASCIICString::newUninitialized(CFStringGetLength(string), buffer);
+    // CFStringGetCString() writes the null terminator, for which CStringBuffer has already reserved room.
+    auto bufferIncludingNullTerminator = result.mutableSpanIncludingNullTerminator();
+    if (!CFStringGetCString(string, bufferIncludingNullTerminator.data(), bufferIncludingNullTerminator.size(), kCFStringEncodingASCII))
+        return ASCIICString { ""_s };
     return result;
 }
 
-static CString copyDefaultLocale()
+static ASCIICString copyDefaultLocale()
 {
 #if !PLATFORM(IOS_FAMILY)
     RetainPtr locale = checked_cf_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier));
@@ -88,7 +90,7 @@ static inline const char* resolveDefaultLocale(const char* locale)
         return locale;
     // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
     // So, instead of passing null to ICU, we pass the name of the user's selected locale.
-    static NeverDestroyed<CString> defaultLocale = copyDefaultLocale();
+    static NeverDestroyed<ASCIICString> defaultLocale = copyDefaultLocale();
     return defaultLocale.get().data();
 }
 

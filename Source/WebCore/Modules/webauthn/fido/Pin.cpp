@@ -376,7 +376,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(PINUVAuthProtocol protocol, 
 
     // The following calculates a SHA-256 digest of the PIN, and shrink to the left 16 bytes.
     auto crypto = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(byteCast<uint8_t>(pin.span()));
+    crypto->addBytes(std::as_bytes(pin.span()));
     auto pinHash = crypto->computeHash();
     pinHash.shrink(16);
 

@@ -29,7 +29,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF::Persistence {
@@ -49,43 +48,6 @@ std::optional<AtomString> Coder<AtomString>::decodeForPersistence(Decoder& decod
         return std::nullopt;
 
     return { AtomString { WTF::move(*string) } };
-}
-
-void Coder<CString>::encodeForPersistence(Encoder& encoder, const CString& string)
-{
-    // Special case the null string.
-    if (string.isNull()) {
-        encoder << std::numeric_limits<uint32_t>::max();
-        return;
-    }
-
-    uint32_t length = string.length();
-    encoder << length;
-    encoder.encodeFixedLengthData(byteCast<uint8_t>(string.span()));
-}
-
-std::optional<CString> Coder<CString>::decodeForPersistence(Decoder& decoder)
-{
-    std::optional<uint32_t> length;
-    decoder >> length;
-    if (!length)
-        return std::nullopt;
-
-    if (length == std::numeric_limits<uint32_t>::max()) {
-        // This is the null string.
-        return CString();
-    }
-
-    // Before allocating the string, make sure that the decoder buffer is big enough.
-    if (!decoder.bufferIsLargeEnoughToContain<char>(*length))
-        return std::nullopt;
-
-    std::span<char> buffer;
-    CString string = CString::newUninitialized(*length, buffer);
-    if (!decoder.decodeFixedLengthData(byteCast<uint8_t>(buffer)))
-        return std::nullopt;
-
-    return string;
 }
 
 void Coder<String>::encodeForPersistence(Encoder& encoder, const String& string)

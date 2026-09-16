@@ -655,8 +655,7 @@ Vector<char> asciiDebug(StringImpl* impl)
             buffer.append('\\', 'u', hex(ch, 4));
         }
     }
-    CString narrowString = buffer.toString().ascii();
-    return { narrowString.spanIncludingNullTerminator() };
+    return { buffer.toString().ascii().spanIncludingNullTerminator() };
 }
 
 Vector<char> asciiDebug(String& string)

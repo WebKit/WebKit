@@ -332,7 +332,6 @@ template<> struct Coder<class> { \
 }
 
 DECLARE_CODER(AtomString);
-DECLARE_CODER(CString);
 DECLARE_CODER(Seconds);
 DECLARE_CODER(String);
 DECLARE_CODER(SHA1::Digest);

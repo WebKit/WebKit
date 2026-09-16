@@ -50,7 +50,7 @@ static void expect(PAL::Crypto::CryptoDigest::Algorithm algorithm, const CString
     auto cryptoDigest = PAL::Crypto::CryptoDigest::create(algorithm);
 
     for (int i = 0; i < repeat; ++i)
-        cryptoDigest->addBytes(byteCast<uint8_t>(input.span()));
+        cryptoDigest->addBytes(std::as_bytes(input.span()));
 
     CString actual = toHex(cryptoDigest->computeHash());
 
