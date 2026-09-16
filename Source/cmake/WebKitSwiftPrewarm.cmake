@@ -5,12 +5,20 @@
 # Warms the implicit Clang module cache, so the consumer's swiftc finds them
 # already built instead of compiling them serially.
 function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
+    # Options that name the consumer's own build artifacts. The prewarm compiles
+    # a different set of sources, so letting it inherit these would have it
+    # write the consumer's dependency file and rebuild stamp with its own
+    # dependencies.
+    set(_excluded_options
+        "(-emit-clang-header-path|-import-underlying-module|--emit-ninja-depfile|--ninja-depfile-target|--ninja-depfile-exclude|--emit-compile-stamp)"
+    )
+
     cmake_path(GET _swift_source STEM _prewarm)
 
     add_library(${_prewarm} OBJECT "${_swift_source}")
 
     get_target_property(_opts ${_consumer} COMPILE_OPTIONS)
-    list(FILTER _opts EXCLUDE REGEX "(-emit-clang-header-path|-import-underlying-module)")
+    list(FILTER _opts EXCLUDE REGEX "${_excluded_options}")
     target_compile_options(${_prewarm} PRIVATE ${_opts})
 
     get_target_property(_opts ${_consumer} COMPILE_DEFINITIONS)
@@ -28,7 +36,7 @@ function(WEBKIT_ADD_SWIFT_PREWARM _consumer _swift_source)
 
         get_target_property(_opts ${_target} INTERFACE_COMPILE_OPTIONS)
         if (_opts)
-            list(FILTER _opts EXCLUDE REGEX "(-emit-clang-header-path|-import-underlying-module)")
+            list(FILTER _opts EXCLUDE REGEX "${_excluded_options}")
             target_compile_options(${_prewarm} PRIVATE ${_opts})
         endif ()
 

@@ -1534,6 +1534,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         if (NOT EXISTS "${_swift_depfile}")
             file(WRITE "${_swift_depfile}" "")
         endif ()
+        set(_compile_stamp "${CMAKE_CURRENT_BINARY_DIR}/${_target}.swift-compile.stamp")
         target_compile_options(${_target} PRIVATE
             # Used by swift-wrapper.py to merge per-object dependencies into a
             # depfile for the whole driver.
@@ -1546,24 +1547,30 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
             "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_trigger_path}>"
             "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_header_tmp_path}>"
             "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${_header_path}>"
-            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule>")
-        # Trigger when the .resp file of platform flags changes.
-        #
-        # Also trigger when the depfile itself changes, which is needed to
-        # cause Ninja to ingest changes made to it. swiftc-wrapper.py only
-        # rewrites the file when it actually changes, so this settles instead
-        # of looping.
-        set(_trigger_deps "${_resp_path}" "${_swift_depfile}")
+            "$<$<COMPILE_LANGUAGE:Swift>:--ninja-depfile-exclude=${CMAKE_CURRENT_BINARY_DIR}/${_module_name}.swiftmodule>"
+            "$<$<COMPILE_LANGUAGE:Swift>:--emit-compile-stamp=${_compile_stamp}>")
+        # The depfile is an input because ninja only ingests one when the edge
+        # declaring it runs, and swiftc-wrapper.py writes it after the module
+        # compiles. rebuild_trigger.py leaves the trigger's mtime alone on those
+        # runs, so the module does not recompile for nothing.
+        set(_trigger_touch_deps "${_resp_path}")
         if (NOT (DEFINED ${_target}_SWIFT_INTEROP_SOURCES OR
             _skip_swift_cxx_header))
-            list(APPEND _trigger_deps "${_header_stamp_path}")
+            list(APPEND _trigger_touch_deps "${_header_stamp_path}")
         endif ()
         add_custom_command(
             OUTPUT "${_trigger_path}"
-            DEPENDS ${_trigger_deps}
+            DEPENDS ${_trigger_touch_deps} "${_swift_depfile}"
             DEPFILE "${_swift_depfile}"
-            COMMAND ${CMAKE_COMMAND} -E touch "${_trigger_path}"
+            COMMAND ${Python_EXECUTABLE}
+                "${CMAKE_SOURCE_DIR}/Tools/Scripts/swift/rebuild_trigger.py"
+                --trigger "${_trigger_path}"
+                --depfile "${_swift_depfile}"
+                --stamp "${_compile_stamp}"
+                --root "${CMAKE_BINARY_DIR}"
+                ${_trigger_touch_deps}
             COMMENT "Propagating ${_target} Swift dependencies"
+            VERBATIM
         )
         target_sources(${_target} PRIVATE "${_trigger_path}")
         add_custom_target(${_target}_SwiftRebuildTrigger DEPENDS "${_trigger_path}")

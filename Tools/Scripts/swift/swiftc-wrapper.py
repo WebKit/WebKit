@@ -4,6 +4,7 @@
 #   - relays the command line through a response file on Windows
 #   - forwards the MSVC-style linker switches that CMake's own defaults inject
 #   - merges per-frontend depfiles into one depfile for the whole module
+#   - records when the module last compiled, for rebuild_trigger.py
 #   - optionally runs another wrapper in the compiler's place, so a tool that
 #     needs to spawn swiftc itself can be nested below this one
 #
@@ -25,6 +26,8 @@ import sys
 import tempfile
 from collections import namedtuple
 from pathlib import Path
+
+import depfile
 
 # Swift's C++ interop changes which imported members are @unsafe between
 # toolchain versions, so an `unsafe` that is required on one toolchain emits
@@ -67,19 +70,6 @@ def quote_response_file_token(arg):
 # WebKitMacros.cmake passes; absent when the caller didn't ask for a depfile.
 DepfileRequest = namedtuple("DepfileRequest", "path target excludes")
 
-# Depfiles are Makefile syntax, not shell syntax: a space is escaped with a
-# backslash, and a backslash before anything else stays literal so that Windows
-# paths survive. Implement Make-style quoting rules instead of using shlex.
-_UNESCAPED_SPACE = re.compile(r"(?<!\\)\s+")
-
-
-def _escape(path):
-    return path.replace(" ", "\\ ")
-
-
-def _unescape(path):
-    return path.replace("\\ ", " ")
-
 
 def _canonical(path):
     """A spelling-insensitive key for paths that name the same file."""
@@ -94,16 +84,6 @@ def excluded_paths(request):
     excludes.setdefault(_canonical(request.target), request.target)
     excludes.setdefault(_canonical(request.path), request.path)
     return excludes
-
-
-def parse_depfile(path):
-    """Yield the dependencies recorded in one Makefile-syntax depfile."""
-    text = Path(path).read_text(errors="replace").replace("\\\n", " ")
-    for rule in text.splitlines():
-        _, _, deps = rule.partition(" : ")
-        for dep in _UNESCAPED_SPACE.split(deps.strip()):
-            if dep:
-                yield _unescape(dep)
 
 
 def dependency_files(output_file_map):
@@ -132,28 +112,53 @@ def write_ninja_depfile(request, output_file_map):
         )
 
     excludes = excluded_paths(request)
-    deps = dict.fromkeys(
+    # Sorted: swiftc reports a dependency once per frontend job that saw it, so
+    # discovery order follows job scheduling and would rewrite this file, and
+    # cost a build, for a dependency set that did not change.
+    deps = sorted({
         dep
         for source in sources
-        for dep in parse_depfile(source)
+        for dep in depfile.parse(source)
         if _canonical(dep) not in excludes
-    )
+    })
 
-    lines = [f"{_escape(request.target)}:"]
-    lines += (f"  {_escape(dep)}" for dep in deps)
+    lines = [f"{depfile.escape(request.target)}:"]
+    lines += (f"  {depfile.escape(dep)}" for dep in deps)
     content = " \\\n".join(lines) + "\n"
 
     try:
-        # Only rewrite the depfile when it changes, otherwise the rebuild
-        # trigger causes the module to rebuild forever.
-        if Path(request.path).read_text() == content:
-            return
+        previous = Path(request.path).read_text()
     except OSError:
-        pass
+        previous = None
+    # Only rewrite the depfile when it changes, otherwise the rebuild trigger
+    # causes the module to rebuild forever.
+    if previous == content:
+        return
+    if previous is not None:
+        report_dependency_change(request, previous, deps)
 
     scratch = request.path + ".tmp"
     Path(scratch).write_text(content)
     os.replace(scratch, request.path)
+
+
+def report_dependency_change(request, previous, deps):
+    """Say what changed, so a build that is not a no-op explains itself.
+
+    Rewriting the depfile costs one more build: ninja ingests it only by
+    re-running the edge that declares it, and that edge is upstream of this
+    compile.
+    """
+    was = set(depfile.parse_text(previous))
+    now = set(deps)
+    added = sorted(now - was)
+    removed = sorted(was - now)
+    name = Path(request.path).name
+    sys.stderr.write(f"{name}: {len(added)} added, {len(removed)} removed\n")
+    for path in added[:8]:
+        sys.stderr.write(f"  + {path}\n")
+    for path in removed[:8]:
+        sys.stderr.write(f"  - {path}\n")
 
 
 def write_response_file(args):
@@ -173,6 +178,7 @@ def main(argv):
     depfile_path = None
     depfile_target = None
     depfile_excludes = []
+    stamp_path = None
     inner_wrapper = None
     for arg in argv:
         if arg.startswith("--original-swift-compiler="):
@@ -185,6 +191,8 @@ def main(argv):
             depfile_target = arg[len("--ninja-depfile-target="):]
         elif arg.startswith("--ninja-depfile-exclude="):
             depfile_excludes.append(arg[len("--ninja-depfile-exclude="):])
+        elif arg.startswith("--emit-compile-stamp="):
+            stamp_path = arg[len("--emit-compile-stamp="):]
         elif os.name == "nt" and arg.startswith("/") and len(arg) > 1:
             # Work around a bug in CMake: Its MSVC defaults
             # (Platform/Windows-MSVC.cmake) put raw linker switches like
@@ -193,9 +201,9 @@ def main(argv):
         else:
             args.append(arg)
 
-    depfile = None
+    depfile_request = None
     if depfile_path and depfile_target and not linking:
-        depfile = DepfileRequest(depfile_path, depfile_target, frozenset(depfile_excludes))
+        depfile_request = DepfileRequest(depfile_path, depfile_target, frozenset(depfile_excludes))
 
     if inner_wrapper:
         flat_command = [inner_wrapper, f"--original-swift-compiler={real_swiftc}"] + args
@@ -239,8 +247,10 @@ def main(argv):
     finally:
         if response_file:
             os.remove(response_file)
-        if depfile and rc == 0:
-            write_ninja_depfile(depfile, args[args.index('-output-file-map') + 1])
+        if depfile_request and rc == 0:
+            write_ninja_depfile(depfile_request, args[args.index('-output-file-map') + 1])
+        if stamp_path and rc == 0 and not linking:
+            Path(stamp_path).touch()
 
 
 if __name__ == "__main__":
