@@ -288,6 +288,19 @@ public:
     CommonData common;
     FixedVector<DFG::OSREntryData> m_osrEntry;
     DFG::OSRExitStream m_osrExits;
+    CodeLocationLabel<JSInternalPtrTag> m_osrExitEntrances;
+
+    CodeLocationLabel<JSInternalPtrTag> osrExitEntrance(unsigned exitIndex)
+    {
+        return m_osrExitEntrances.labelAtOffset(exitIndex * osrExitEntranceSize);
+    }
+
+    unsigned osrExitIndexForReturnPC(void* returnPC) const
+    {
+        size_t offset = reinterpret_cast<uintptr_t>(returnPC) - m_osrExitEntrances.dataLocation<uintptr_t>();
+        ASSERT(offset && !(offset % osrExitEntranceSize));
+        return offset / osrExitEntranceSize - 1;
+    }
     FixedVector<DFG::SpeculationRecovery> m_speculationRecovery;
     FixedVector<SimpleJumpTable> m_switchJumpTables;
     FixedVector<StringJumpTable> m_stringSwitchJumpTables;

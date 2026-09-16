@@ -417,6 +417,8 @@ protected:
     Vector<InlineCacheWrapper<JITPrivateBrandAccessGenerator>, 4> m_privateBrandAccesses;
     Vector<JSDirectCallRecord, 4> m_jsDirectCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
+    Label m_firstOSRExitEntrance;
+    Label m_lastOSRExitEntrance;
     Vector<Vector<Label>> m_exitSiteLabels;
     Vector<DFG::OSREntryData> m_osrEntry;
     Vector<DFG::OSRExit> m_osrExit;

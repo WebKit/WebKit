@@ -195,6 +195,8 @@ public:
         : CodeLocationCommon<tag>(CodePtr<tag>(location)) { }
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 template<PtrTag tag>
 template<PtrTag resultTag>
 inline CodeLocationInstruction<resultTag> CodeLocationCommon<tag>::instructionAtOffset(int offset)
@@ -266,5 +268,7 @@ inline CodeLocationConvertibleLoad<resultTag> CodeLocationCommon<tag>::convertib
     ASSERT_VALID_CODE_OFFSET(offset);
     return CodeLocationConvertibleLoad<resultTag>(tagCodePtr<resultTag>(dataLocation<char*>() + offset));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC

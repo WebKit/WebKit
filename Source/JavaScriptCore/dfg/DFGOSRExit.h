@@ -118,14 +118,10 @@ struct OSRExit : public OSRExitBase {
     using OSRExitBase::OSRExitBase;
     OSRExit(ExitKind, JSValueSource, MethodOfGettingAValueProfile, SpeculativeJIT*, unsigned streamIndex, unsigned recoveryIndex = UINT_MAX);
 
-    CodeLocationLabel<JSInternalPtrTag> m_patchableJumpLocation;
-
     JSValueSource m_jsValueSource;
     MethodOfGettingAValueProfile m_valueProfile;
     
     unsigned m_recoveryIndex { UINT_MAX };
-
-    CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch() const { return CodeLocationJump<JSInternalPtrTag>(m_patchableJumpLocation); }
 
     unsigned m_streamIndex { 0 };
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
@@ -161,7 +157,6 @@ private:
 //     2         8-byte InlineCallFrame pointer, then the LEB128 signed delta
 //   LEB128      signed delta of m_streamIndex
 //   LEB128      signed delta of m_dfgNodeIndex
-//   LEB128      signed delta of m_patchableJumpLocation's offset from the code start (linked DFG only)
 //   [byte]      bit 5: the GPRReg of m_jsValueSource
 //   [LEB128]    bit 6: its offset
 //   [byte]      bit 7: the Kind of m_valueProfile, then its origin payload and its LEB128 operand bits
@@ -175,7 +170,7 @@ public:
     };
 
     OSRExitStream() = default;
-    OSRExitStream(const Vector<OSRExit>&, CodeLocationLabel<JSInternalPtrTag> codeStart);
+    explicit OSRExitStream(const Vector<OSRExit>&);
 
     unsigned size() const { return m_size; }
     OSRExit at(unsigned index) const;
@@ -188,7 +183,6 @@ private:
         CodeOrigin codeOrigin { BytecodeIndex(0) };
         unsigned streamIndex { 0 };
         uint32_t dfgNodeIndex { 0 };
-        unsigned patchableJumpOffset { 0 };
     };
 
     OSRExit decode(size_t& offset, PreviousExit&) const;
@@ -196,7 +190,6 @@ private:
     FixedVector<uint8_t> m_bytes;
     FixedVector<uint32_t> m_chunkOffsets;
     FixedVector<ExceptionHandlerExit> m_exceptionHandlerExits;
-    CodeLocationLabel<JSInternalPtrTag> m_codeStart;
     unsigned m_size { 0 };
 };
 

@@ -133,9 +133,8 @@ static CodeOrigin decodeCodeOrigin(std::span<const uint8_t> bytes, size_t& offse
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits, CodeLocationLabel<JSInternalPtrTag> codeStart)
+OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits)
     : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))
-    , m_codeStart(codeStart)
     , m_size(exits.size())
 {
     Vector<uint8_t> bytes;
@@ -175,11 +174,6 @@ OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits, CodeLocationLabel<JSI
         previous.streamIndex = exit.m_streamIndex;
         WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_dfgNodeIndex - previous.dfgNodeIndex));
         previous.dfgNodeIndex = exit.m_dfgNodeIndex;
-        if (codeStart) {
-            unsigned patchableJumpOffset = exit.m_patchableJumpLocation.dataLocation<char*>() - codeStart.dataLocation<char*>();
-            WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(patchableJumpOffset - previous.patchableJumpOffset));
-            previous.patchableJumpOffset = patchableJumpOffset;
-        }
         if (flags & hasJSValueSourceBit) {
             if (flags & jsValueSourceIsAddressBit) {
                 bytes.append(static_cast<uint8_t>(exit.m_jsValueSource.base()));
@@ -215,11 +209,6 @@ OSRExit OSRExitStream::decode(size_t& offset, PreviousExit& previous) const
 
     OSRExit exit(kind, previous.codeOrigin, codeOriginForExitProfile, !!(flags & wasHoistedBit), previous.dfgNodeIndex);
     exit.m_streamIndex = previous.streamIndex;
-    if (m_codeStart) {
-        previous.patchableJumpOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
-        CodeLocationLabel<JSInternalPtrTag> codeStart = m_codeStart;
-        exit.m_patchableJumpLocation = codeStart.labelAtOffset(previous.patchableJumpOffset);
-    }
     if (flags & hasJSValueSourceBit) {
         GPRReg gpr = static_cast<GPRReg>(bytes[offset++]);
         if (flags & jsValueSourceIsAddressBit)
@@ -346,8 +335,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
     // really be profitable.
     DeferGCForAWhile deferGC(vm);
 
-    uint32_t exitIndex = vm.osrExitIndex;
     JITCode* jitCode = codeBlock->jitCode()->dfg();
+    uint32_t exitIndex = jitCode->isUnlinked() ? vm.osrExitIndex : jitCode->osrExitIndexForReturnPC(vm.osrExitReturnPC);
     OSRExit exit = jitCode->m_osrExits.at(exitIndex);
 
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
@@ -403,7 +392,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* cal
     if (jitCode->isUnlinked())
         codeBlock->dfgJITData()->setExitJumpTableEntry(exitIndex, exitCode.code());
     else
-        MacroAssembler::repatchJump(exit.codeLocationForRepatch(), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
+        MacroAssembler::replaceWithJump(jitCode->osrExitEntrance(exitIndex), CodeLocationLabel<OSRExitPtrTag>(exitCode.code()));
 
     vm.osrExitJumpDestination = exitCode.code().taggedPtr();
 }
