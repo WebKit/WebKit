@@ -911,7 +911,16 @@ Ref<FrameTreeSyncData> WebFrameProxy::calculateFrameTreeSyncData() const
     bool isSecureForPaymentSession = false;
 #endif
 
-    return FrameTreeSyncData::create(isSecureForPaymentSession, securityOrigin(), m_documentSecurityPolicy, m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin), url().protocol().toString(), IntRect { }, ScrollPosition { }, FrameGeometrySyncData { });
+    return FrameTreeSyncData::create(
+        isSecureForPaymentSession,
+        securityOrigin(),
+        m_documentSecurityPolicy,
+        m_effectiveSandboxFlags.contains(WebCore::SandboxFlag::Origin),
+        url().protocol().toString(),
+        // FIXME: figure out why remoteFrameRect doesn't sync.
+        m_remoteFrameRect.value_or(IntRect { }),
+        m_frameScrollPosition,
+        m_frameGeometry);
 }
 
 Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const

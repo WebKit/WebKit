@@ -326,6 +326,12 @@ public:
     std::optional<WebCore::IntRect> remoteFrameRect() const { return m_remoteFrameRect; }
     void setRemoteFrameRect(WebCore::IntRect rect) { m_remoteFrameRect = rect; }
 
+    std::optional<WebCore::ScrollPosition> frameScrollPosition() const { return m_frameScrollPosition; }
+    void setFrameScrollPosition(WebCore::ScrollPosition scrollPosition) { m_frameScrollPosition = scrollPosition; }
+
+    const WebCore::FrameGeometrySyncData frameGeometry() const LIFETIME_BOUND { return m_frameGeometry; }
+    void setFrameGeometry(WebCore::FrameGeometrySyncData data) { m_frameGeometry = WTF::move(data); }
+
     void takeSnapshotOfNode(WebCore::JSHandleIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmapHandle>&&)>&&);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -405,6 +411,8 @@ private:
     std::optional<WebCore::DocumentSecurityPolicy> m_documentSecurityPolicy;
     RefPtr<WebCore::SecurityOrigin> m_documentSecurityOrigin;
     HashSet<WebCore::SecurityOriginData> m_cspOriginsThatUpgradeInsecureNavigations;
+    WebCore::ScrollPosition m_frameScrollPosition;
+    WebCore::FrameGeometrySyncData m_frameGeometry;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 } // namespace WebKit
