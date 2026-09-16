@@ -1076,7 +1076,7 @@ ExceptionOr<void> InputType::stepUp(int n)
     return applyStep(n, AnyStepHandling::Reject, DispatchNoEvent);
 }
 
-void InputType::stepUpFromRenderer(int n)
+void InputType::stepUpOrDown(int n)
 {
     // The differences from stepUp()/stepDown():
     //
