@@ -40,7 +40,6 @@ public:
     virtual ~RenderInline();
 
 
-    LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
 
 
