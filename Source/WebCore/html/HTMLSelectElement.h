@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class HTMLOptionsCollection;
+class SelectFallbackButtonElement;
 class SelectPopoverElement;
 class ShadowRoot;
 
@@ -102,6 +103,7 @@ public:
     Ref<HTMLCollection> selectedOptions();
 
     void optionElementChildrenChanged();
+    void buttonElementChildrenChanged();
     void updateButtonText(HTMLOptionElement* = nullptr, int optionIndex = -1);
     void invalidateButtonText();
 
@@ -191,13 +193,15 @@ public:
 
     bool isDevolvableWidget() const override { return true; }
 
-    void updateSelectedContent(HTMLOptionElement* = nullptr) const;
+    void updateSelectedContent(HTMLOptionElement*);
 
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
 
     WEBCORE_EXPORT bool usesBaseAppearancePicker() const;
     SelectPopoverElement* NODELETE pickerPopoverElement() const;
+    Element* NODELETE buttonElement() const;
+    String buttonLabelText(StringView selectedContentText) const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
     void queuePickerCloseForAppearanceChange();
@@ -326,7 +330,7 @@ private:
 
     std::optional<int> m_lastActiveIndex;
 
-    WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> m_buttonSlot;
+    WeakPtr<SelectFallbackButtonElement, WeakPtrImplWithEventTargetData> m_fallbackButton;
     WeakPtr<SelectPopoverElement, WeakPtrImplWithEventTargetData> m_popover;
 
 #if !PLATFORM(IOS_FAMILY)
