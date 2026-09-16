@@ -45,6 +45,10 @@
 #import "VideoPresentationManagerMessages.h"
 #import "VideoPresentationManagerProxyMessages.h"
 #import "WKVideoView.h"
+#import "WKWebViewInternal.h"
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
+#import "WKFullScreenWindowControllerIOS.h"
+#endif
 #import "WebFrameProxy.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
@@ -63,6 +67,7 @@
 #import <WebCore/VideoPresentationInterfaceTVOS.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebAVPlayerLayerView.h>
+#import <algorithm>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/LoggerHelper.h>
 #import <wtf/MachSendRightAnnotated.h>
@@ -203,10 +208,41 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
+@interface WKVideoAvailabilityButtonTarget : NSObject
+- (instancetype)initWithManager:(WebKit::VideoPresentationManagerProxy&)manager;
+- (void)videoViewerModeAvailabilityButtonTapped:(id)sender;
+@end
+
+@implementation WKVideoAvailabilityButtonTarget {
+    WeakPtr<WebKit::VideoPresentationManagerProxy> _manager;
+}
+
+- (instancetype)initWithManager:(WebKit::VideoPresentationManagerProxy&)manager
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _manager = manager;
+    return self;
+}
+
+- (void)videoViewerModeAvailabilityButtonTapped:(id)sender
+{
+    if (RefPtr manager = _manager.get())
+        manager->enterVideoViewerMode();
+}
+
+@end
+
 #endif
 
 namespace WebKit {
 using namespace WebCore;
+
+#if PLATFORM(IOS_FAMILY)
+static constexpr CGFloat videoViewerModeAvailabilityButtonSize = 44;
+static constexpr CGFloat videoViewerModeAvailabilityButtonMargin = 16;
+#endif
 
 template <typename Message>
 void VideoPresentationManagerProxy::sendToWebProcess(PlaybackSessionContextIdentifier contextId, Message&& message)
@@ -246,6 +282,22 @@ void VideoPresentationManagerProxy::requestHideAndExitFullscreen()
 }
 
 void VideoPresentationManagerProxy::applicationDidBecomeActive()
+{
+}
+
+void VideoPresentationManagerProxy::updateVideoViewerModeInsets()
+{
+}
+
+void VideoPresentationManagerProxy::updateVideoViewerModeAvailability()
+{
+}
+
+void VideoPresentationManagerProxy::enterVideoViewerMode()
+{
+}
+
+void VideoPresentationManagerProxy::layOutVideoViewerModeAvailabilityButton()
 {
 }
 #else
@@ -1161,6 +1213,12 @@ void VideoPresentationManagerProxy::setupFullscreenWithID(IPC::Connection& conne
     UNUSED_PARAM(hasObjectViewBox);
     RefPtr rootNode = downcast<RemoteLayerTreeDrawingAreaProxy>(*page->drawingArea()).remoteLayerTreeHost().rootNode();
     RetainPtr parentView = rootNode ? rootNode->uiView() : nil;
+    if (videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
+        if (RetainPtr webView = page->cocoaView()) {
+            interface->setVideoViewerModeHostView(webView.get());
+            interface->setVideoViewerModeInsets(page->computedObscuredInset());
+        }
+    }
     interface->setupFullscreen(screenRect, videoDimensions, parentView.get(), videoFullscreenMode, allowsPictureInPicture, standby, blocksReturnToFullscreenFromPictureInPicture);
 #else
     UNUSED_PARAM(blocksReturnToFullscreenFromPictureInPicture);
@@ -1634,6 +1692,11 @@ void VideoPresentationManagerProxy::didCleanupFullscreen(PlaybackSessionContextI
 
     sendToWebProcess(contextId, Messages::VideoPresentationManager::DidCleanupFullscreen(contextId.object()));
 
+#if PLATFORM(IOS_FAMILY)
+    m_videoViewerModeEntryRequested = false;
+    updateVideoViewerModeAvailability();
+#endif
+
     if (!hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow)) {
         interface->setMode(HTMLMediaElementEnums::VideoFullscreenModeNone, VideoPresentationModel::ShouldNotifyMediaElement::No);
         removeClientForContext(contextId);
@@ -1724,6 +1787,96 @@ AVPlayerViewController *VideoPresentationManagerProxy::playerViewController(Play
     if (RefPtr interface = findInterface(identifier))
         return interface->avPlayerViewController();
     return nil;
+}
+
+void VideoPresentationManagerProxy::updateVideoViewerModeInsets()
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
+    for (auto& [model, interface] : m_contextMap.values()) {
+        if (interface->hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow))
+            interface->setVideoViewerModeInsets(page->computedObscuredInset());
+    }
+
+    layOutVideoViewerModeAvailabilityButton();
+}
+
+void VideoPresentationManagerProxy::updateVideoViewerModeAvailability()
+{
+    RefPtr page = m_page.get();
+    RetainPtr webView = page ? page->cocoaView() : nil;
+
+    bool inElementFullscreen = false;
+#if ENABLE(FULLSCREEN_API)
+    inElementFullscreen = [[webView fullScreenWindowController] isFullScreen];
+#endif
+
+    bool available = webView
+        && page->preferences().videoViewerModeEnabled()
+        && m_playbackSessionManagerProxy->canEnterVideoFullscreen()
+        && !hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow)
+        && !m_videoViewerModeEntryRequested
+        && !inElementFullscreen;
+
+    if (!available) {
+        [m_videoViewerModeAvailabilityButton removeFromSuperview];
+        m_videoViewerModeAvailabilityButton = nil;
+        m_videoViewerModeAvailabilityButtonTarget = nil;
+        return;
+    }
+
+    if (!m_videoViewerModeAvailabilityButton) {
+        m_videoViewerModeAvailabilityButtonTarget = adoptNS([[WKVideoAvailabilityButtonTarget alloc] initWithManager:*this]);
+
+        RetainPtr button = [UIButton buttonWithType:UIButtonTypeSystem];
+        [button setImage:[UIImage systemImageNamed:@"popcorn.fill"] forState:UIControlStateNormal];
+        [button setTintColor:[UIColor whiteColor]];
+        [button setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.55]];
+        [button setAutoresizingMask:(UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin)];
+        [button setAccessibilityLabel:@"Video Viewer"];
+        [[button layer] setCornerRadius:videoViewerModeAvailabilityButtonSize / 2];
+        [[button layer] setCornerCurve:kCACornerCurveContinuous];
+        [button addTarget:m_videoViewerModeAvailabilityButtonTarget.get() action:@selector(videoViewerModeAvailabilityButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+
+        m_videoViewerModeAvailabilityButton = button;
+    }
+
+    if ([m_videoViewerModeAvailabilityButton superview] != webView.get())
+        [webView addSubview:m_videoViewerModeAvailabilityButton.get()];
+
+    layOutVideoViewerModeAvailabilityButton();
+}
+
+void VideoPresentationManagerProxy::layOutVideoViewerModeAvailabilityButton()
+{
+    RefPtr page = m_page.get();
+    RetainPtr webView = page ? page->cocoaView() : nil;
+    if (!m_videoViewerModeAvailabilityButton || !webView)
+        return;
+
+    auto obscuredInsets = page->computedObscuredInset();
+    UIEdgeInsets safeAreaInsets = [webView safeAreaInsets];
+    CGFloat rightInset = std::max<CGFloat>(safeAreaInsets.right, obscuredInsets.right()) + videoViewerModeAvailabilityButtonMargin;
+    CGFloat bottomInset = std::max<CGFloat>(safeAreaInsets.bottom, obscuredInsets.bottom()) + videoViewerModeAvailabilityButtonMargin;
+
+    CGRect bounds = [webView bounds];
+    [m_videoViewerModeAvailabilityButton setFrame:CGRectMake(
+        CGRectGetMaxX(bounds) - rightInset - videoViewerModeAvailabilityButtonSize,
+        CGRectGetMaxY(bounds) - bottomInset - videoViewerModeAvailabilityButtonSize,
+        videoViewerModeAvailabilityButtonSize, videoViewerModeAvailabilityButtonSize)];
+}
+
+void VideoPresentationManagerProxy::enterVideoViewerMode()
+{
+    RefPtr interface = m_playbackSessionManagerProxy->controlsManagerInterface();
+    if (!interface)
+        return;
+
+    m_videoViewerModeEntryRequested = true;
+    updateVideoViewerModeAvailability();
+    interface->enterInWindowFullscreen();
 }
 
 #endif // PLATFORM(IOS_FAMILY)

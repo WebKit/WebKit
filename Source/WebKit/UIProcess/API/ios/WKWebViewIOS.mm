@@ -304,6 +304,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self _updateFixedColorExtensionViewFrames];
 #endif
     [_warningView setContentInset:[self _computedObscuredInsetForWarningView]];
+    [self _updateVideoViewerModeInsets];
+}
+
+- (void)_updateVideoViewerModeInsets
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr page = _page) {
+        if (RefPtr videoPresentationManager = page->videoPresentationManager())
+            videoPresentationManager->updateVideoViewerModeInsets();
+    }
+#endif
 }
 
 - (void)_registerForNotifications
@@ -740,6 +751,17 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 #if ENABLE(FULLSCREEN_API)
     if (_fullScreenWindowController)
         [_fullScreenWindowController videoControlsManagerDidChange];
+#endif
+    [self _updateVideoViewerModeAvailability];
+}
+
+- (void)_updateVideoViewerModeAvailability
+{
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (RefPtr page = _page) {
+        if (RefPtr videoPresentationManager = page->videoPresentationManager())
+            videoPresentationManager->updateVideoViewerModeAvailability();
+    }
 #endif
 }
 
@@ -3038,6 +3060,7 @@ static CGFloat liveResizeMinimumWidthDifference()
 
     [self _scheduleVisibleContentRectUpdate];
     [_warningView setContentInset:[self _computedObscuredInsetForWarningView]];
+    [self _updateVideoViewerModeInsets];
 }
 #endif
 

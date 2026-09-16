@@ -28,7 +28,10 @@
 #include <wtf/Platform.h>
 #if PLATFORM(IOS_FAMILY)
 
+#include <CoreGraphics/CGAffineTransform.h>
+#include <WebCore/BoxExtents.h>
 #include <WebCore/EventListener.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/HTMLMediaElementEnums.h>
 #include <WebCore/ImmersiveVideoMetadata.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -52,10 +55,12 @@ OBJC_CLASS UIImage;
 OBJC_CLASS UIViewController;
 OBJC_CLASS UIWindow;
 OBJC_CLASS UIView;
+OBJC_CLASS UIPanGestureRecognizer;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSError;
 OBJC_CLASS WKSPlayableViewControllerHost;
 OBJC_CLASS WebAVPlayerController;
+OBJC_CLASS WebAVVideoViewerGestureHandler;
 
 namespace WebCore {
 
@@ -118,6 +123,18 @@ public:
     virtual bool cleanupExternalPlayback() { return false; }
     virtual void didSetPlayerIdentifier() { }
 
+    enum class GestureState : uint8_t {
+        Began,
+        Changed,
+        Ended,
+        Cancelled
+    };
+
+    WEBCORE_EXPORT void requestExitVideoViewerMode();
+    WEBCORE_EXPORT void videoViewerModeDismissGestureChanged(GestureState, FloatSize translation, FloatSize velocity);
+    WEBCORE_EXPORT void setVideoViewerModeInsets(const FloatBoxExtent&);
+    WEBCORE_EXPORT void setVideoViewerModeHostView(UIView*);
+
     enum class ExitFullScreenReason {
         DoneButtonTapped,
         FullScreenButtonTapped,
@@ -149,8 +166,9 @@ public:
 
         bool hasFullscreen() const { return hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard); }
         bool hasPictureInPicture() const { return hasMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); }
+        bool hasInWindow() const { return hasMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow); }
 
-        bool hasVideo() const { return m_mode & (HTMLMediaElementEnums::VideoFullscreenModeStandard | HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); }
+        bool hasVideo() const { return m_mode & (HTMLMediaElementEnums::VideoFullscreenModeStandard | HTMLMediaElementEnums::VideoFullscreenModePictureInPicture | HTMLMediaElementEnums::VideoFullscreenModeInWindow); }
     };
 
     RefPtr<VideoPresentationModel> videoPresentationModel() const { return m_videoPresentationModel; }
@@ -232,6 +250,12 @@ protected:
     bool m_changingStandbyOnly { false };
     bool m_allowsPictureInPicturePlayback { false };
     RetainPtr<UIWindow> m_parentWindow;
+    FloatBoxExtent m_videoViewerModeInsets;
+    RetainPtr<UIView> m_videoViewerModeHostView;
+    bool m_videoViewerModeFadingOut { false };
+    RetainPtr<UIView> m_videoViewerBackdropView;
+    RetainPtr<UIPanGestureRecognizer> m_videoViewerDismissPanGesture;
+    RetainPtr<WebAVVideoViewerGestureHandler> m_videoViewerGestureHandler;
 
     virtual void finalizeSetup();
     virtual void updateRouteSharingPolicy() = 0;
@@ -262,6 +286,19 @@ protected:
     virtual void transferVideoViewToFullscreen() { }
     WEBCORE_EXPORT virtual void returnVideoView();
     WEBCORE_EXPORT virtual bool shouldCreateWindow() const;
+    virtual void setCanIncludePlaybackControlsWhenInline(bool) { }
+    virtual void setPrefersFullScreenStyleForEmbeddedMode(bool) { }
+    virtual void setExcludesPlaybackControlsCloseButton(bool) { }
+    virtual void flashPlaybackControls(Seconds) { }
+    virtual void setVideoHeightFraction(float) { }
+    virtual void setVideoCornerRadius(float) { }
+    virtual FloatRect videoViewerModeVideoRect() const { return { }; }
+    void setUpVideoViewerMode();
+    void tearDownVideoViewerMode();
+    void updateVideoViewerModeLayout();
+    void prepareVideoViewerModeForEntryAnimation();
+    void animateVideoViewerModeVisible(bool, Function<void()>&& completionHandler);
+    CGAffineTransform videoViewerModeInlineTransform() const;
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };
