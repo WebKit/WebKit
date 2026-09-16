@@ -57,6 +57,9 @@ UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSiz
         if (auto fixedMarginStart = axisSizes.marginStart.tryFixed())
             return LayoutUnit { fixedMarginStart->resolveZoom(gridItem.usedZoom()) };
 
+        if (axisSizes.marginStart.isKnownZero())
+            return { };
+
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
     };
@@ -64,6 +67,9 @@ UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSiz
     auto marginEnd = [&] -> LayoutUnit {
         if (auto fixedMarginEnd = axisSizes.marginEnd.tryFixed())
             return LayoutUnit { fixedMarginEnd->resolveZoom(gridItem.usedZoom()) };
+
+        if (axisSizes.marginEnd.isKnownZero())
+            return { };
 
         ASSERT_NOT_IMPLEMENTED_YET();
         return { };
