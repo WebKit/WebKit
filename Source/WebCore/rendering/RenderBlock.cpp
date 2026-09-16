@@ -2704,16 +2704,6 @@ void RenderBlock::setPageLogicalOffset(LayoutUnit logicalOffset)
     rareData->m_pageLogicalOffset = logicalOffset;
 }
 
-void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
-{
-    // FIXME: This is wrong for block-flows that are horizontal.
-    // https://bugs.webkit.org/show_bug.cgi?id=46781
-    FloatRect logicalRect { { }, borderBoxSize() };
-    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
-        quads.append(localToAbsoluteQuad(logicalRect, MapCoordinatesMode::UseTransforms, wasFixed));
-}
-
 LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();

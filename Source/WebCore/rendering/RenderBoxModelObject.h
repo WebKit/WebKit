@@ -100,6 +100,7 @@ public:
     virtual LayoutRect firstFragmentBorderBoxRect() const;
     virtual LayoutUnit paddingBoxLogicalWidth() const;
     virtual LayoutUnit paddingBoxLogicalHeight() const;
+    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed = nullptr) const override;
 
     // These return the CSS computed padding values.
     inline LayoutUnit computedCSSPaddingTop() const;

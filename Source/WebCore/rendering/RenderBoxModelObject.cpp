@@ -1134,6 +1134,12 @@ LayoutUnit RenderBoxModelObject::paddingBoxLogicalHeight() const
     return logicalHeight;
 }
 
+void RenderBoxModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
+{
+    for (auto rect : localBorderBoxRects())
+        quads.append(localToAbsoluteQuad(rect, MapCoordinatesMode::UseTransforms, wasFixed));
+}
+
 LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
 {
     auto boundingBoxOfFragments = [&]() -> IntRect {

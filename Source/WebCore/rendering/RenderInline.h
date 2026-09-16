@@ -39,7 +39,6 @@ public:
     RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
 
-    void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
     LayoutSize offsetFromContainer(const RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const final;
 
