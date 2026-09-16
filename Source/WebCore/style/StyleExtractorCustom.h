@@ -148,6 +148,14 @@ public:
     static RefPtr<CSSValue> extractBorderImageShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractBorderInlineShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractBorderRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderBlockEndRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderBlockStartRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderBottomRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderInlineEndRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderInlineStartRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderLeftRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderRightRadiusShorthand(ExtractorState&);
+    static RefPtr<CSSValue> extractBorderTopRadiusShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractColumnsShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractContainerShorthand(ExtractorState&);
     static RefPtr<CSSValue> extractFlexFlowShorthand(ExtractorState&);
@@ -248,6 +256,14 @@ public:
     static void extractBorderImageShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractBorderInlineShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractBorderRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderBlockEndRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderBlockStartRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderBottomRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderInlineEndRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderInlineStartRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderLeftRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderRightRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
+    static void extractBorderTopRadiusShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractColumnsShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractContainerShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
     static void extractFlexFlowShorthandSerialization(ExtractorState&, StringBuilder&, const CSS::SerializationContext&);
@@ -1780,6 +1796,53 @@ inline void extractBorderRadiusShorthandSerialization(ExtractorState& state, Str
     builder.append(extractBorderRadiusShorthand(state, propertyID)->cssText(context));
 }
 
+inline RefPtr<CSSValue> extractBorderRadiusSideShorthand(ExtractorState& state, const StylePropertyShorthand& shorthand)
+{
+    auto longhands = shorthand.properties();
+    auto firstValue = ExtractorGenerated::extractValue(state, longhands[0]);
+    auto secondValue = ExtractorGenerated::extractValue(state, longhands[1]);
+    if (!firstValue || !secondValue)
+        return nullptr;
+
+    Ref firstX = firstValue->first();
+    Ref firstY = firstValue->second();
+    Ref secondX = secondValue->first();
+    Ref secondY = secondValue->second();
+
+    bool showHorizontalSecond = !firstX->equals(secondX);
+    bool showVerticalSecond = !firstY->equals(secondY);
+
+    CSSValueListBuilder horizontalRadii;
+    horizontalRadii.append(firstX.copyRef());
+    if (showHorizontalSecond)
+        horizontalRadii.append(secondX.copyRef());
+
+    CSSValueListBuilder verticalRadii;
+    verticalRadii.append(firstY.copyRef());
+    if (showVerticalSecond)
+        verticalRadii.append(secondY.copyRef());
+
+    bool includeVertical = horizontalRadii.size() != verticalRadii.size();
+    if (!includeVertical) {
+        for (unsigned i = 0; i < horizontalRadii.size(); ++i) {
+            if (!horizontalRadii[i]->equals(verticalRadii[i])) {
+                includeVertical = true;
+                break;
+            }
+        }
+    }
+
+    if (!includeVertical)
+        return CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(horizontalRadii)));
+    return CSSValueList::createSlashSeparated(CSSValueList::createSpaceSeparated(WTF::move(horizontalRadii)), CSSValueList::createSpaceSeparated(WTF::move(verticalRadii)));
+}
+
+inline void extractBorderRadiusSideShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context, const StylePropertyShorthand& shorthand)
+{
+    if (auto value = extractBorderRadiusSideShorthand(state, shorthand))
+        builder.append(value->cssText(context));
+}
+
 template<CSSPropertyID property> inline Ref<CSSValue> extractFillLayerPropertyShorthand(ExtractorState& state, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty)
 {
     static_assert(property == CSSPropertyBackground || property == CSSPropertyMask);
@@ -2788,6 +2851,94 @@ inline void ExtractorCustom::extractBorderRadiusShorthandSerialization(Extractor
 {
     // FIXME: Do this more efficiently without creating and destroying a CSSValue object.
     builder.append(extractBorderRadiusShorthand(state)->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderBlockEndRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderBlockEndRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderBlockEndRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderBlockEndRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderBlockStartRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderBlockStartRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderBlockStartRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderBlockStartRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderBottomRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderBottomRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderBottomRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderBottomRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderInlineEndRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderInlineEndRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderInlineEndRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderInlineEndRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderInlineStartRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderInlineStartRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderInlineStartRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderInlineStartRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderLeftRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderLeftRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderLeftRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderLeftRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderRightRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderRightRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderRightRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderRightRadiusShorthand(state))
+        builder.append(value->cssText(context));
+}
+
+inline RefPtr<CSSValue> ExtractorCustom::extractBorderTopRadiusShorthand(ExtractorState& state)
+{
+    return WebCore::Style::extractBorderRadiusSideShorthand(state, borderTopRadiusShorthand());
+}
+
+inline void ExtractorCustom::extractBorderTopRadiusShorthandSerialization(ExtractorState& state, StringBuilder& builder, const CSS::SerializationContext& context)
+{
+    if (auto value = extractBorderTopRadiusShorthand(state))
+        builder.append(value->cssText(context));
 }
 
 inline RefPtr<CSSValue> ExtractorCustom::extractColumnsShorthand(ExtractorState& state)

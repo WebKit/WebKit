@@ -816,6 +816,14 @@ CSSBaselineSourceEnabled:
   humanReadableDescription: "Enable CSS baseline-source"
   defaultValue: false
 
+CSSBorderRadiusSideShorthandsEnabled:
+  type: bool
+  category: css
+  status: stable
+  humanReadableName: "CSS border-*-radius side shorthands"
+  humanReadableDescription: "Enable support for the border-radius side shorthand physical & logical properties"
+  defaultValue: true
+
 CSSCalcMixEnabled:
   type: bool
   category: css

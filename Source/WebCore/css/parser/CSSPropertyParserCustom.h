@@ -154,6 +154,7 @@ public:
     static bool consumeBorderSpacingShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeBorderRadiusShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeWebkitBorderRadiusShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
+    static bool consumeBorderRadiusSideShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeBorderImageShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeWebkitBorderImageShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
     static bool consumeMaskBorderShorthand(CSSParserTokenRange&, PropertyParserState&, const StylePropertyShorthand&, PropertyParserResult&);
@@ -736,6 +737,19 @@ inline bool PropertyParserCustom::consumeWebkitBorderRadiusShorthand(CSSParserTo
     result.addPropertyForCurrentShorthand(state, CSSPropertyBorderTopRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->topRight()));
     result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomRightRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomRight()));
     result.addPropertyForCurrentShorthand(state, CSSPropertyBorderBottomLeftRadius, WebCore::CSS::createCSSValue(state.pool, borderRadius->bottomLeft()));
+    return true;
+}
+
+inline bool PropertyParserCustom::consumeBorderRadiusSideShorthand(CSSParserTokenRange& range, PropertyParserState& state, const StylePropertyShorthand& shorthand, PropertyParserResult& result)
+{
+    ASSERT(shorthand.length() == 2);
+    auto side = consumeUnresolvedBorderRadiusSide(range, state);
+    if (!side)
+        return false;
+
+    auto longhands = shorthand.properties();
+    result.addPropertyForCurrentShorthand(state, longhands[0], WebCore::CSS::createCSSValue(state.pool, side->first()));
+    result.addPropertyForCurrentShorthand(state, longhands[1], WebCore::CSS::createCSSValue(state.pool, side->second()));
     return true;
 }
 

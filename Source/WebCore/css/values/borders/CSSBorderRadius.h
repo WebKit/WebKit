@@ -71,6 +71,23 @@ inline BorderRadius BorderRadius::defaultValue()
 
 template<> struct Serialize<BorderRadius> { void operator()(StringBuilder&, const SerializationContext&, const BorderRadius&); };
 
+// <'border-top-radius'>, <'border-right-radius'>, <'border-bottom-radius'>, <'border-left-radius'>, and their logical equivalents.
+// <length-percentage [0,∞]>{1,2} [ / <length-percentage [0,∞]>{1,2} ]?
+// https://drafts.csswg.org/css-borders-4/#corner-sizing-side-shorthands
+struct BorderRadiusSide {
+    using LengthPercentage = CSS::LengthPercentage<Nonnegative>;
+    using Axis = SpaceSeparatedArray<LengthPercentage, 2>;
+    using Corner = MinimallySerializingSpaceSeparatedSize<LengthPercentage>;
+
+    Axis horizontal;
+    Axis vertical;
+
+    Corner first() const  { return { horizontal.value[0], vertical.value[0] }; }
+    Corner second() const { return { horizontal.value[1], vertical.value[1] }; }
+
+    bool operator==(const BorderRadiusSide&) const = default;
+};
+
 } // namespace CSS
 } // namespace WebCore
 
