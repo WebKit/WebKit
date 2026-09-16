@@ -351,7 +351,7 @@ struct CommaSeparatedEnumSet {
     static CommaSeparatedEnumSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
     {
         Container result;
-        for (auto&& value : range)
+        for (Ref value : range)
             result.add(mapper(value));
         return result;
     }
@@ -434,7 +434,7 @@ struct SpaceSeparatedOrderedHashSet {
     static SpaceSeparatedOrderedHashSet map(SizedRange&& range, NOESCAPE Mapper&& mapper)
     {
         Container result;
-        for (auto&& value : range)
+        for (Ref value : range)
             result.add(mapper(value));
         return result;
     }
