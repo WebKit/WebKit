@@ -79,6 +79,7 @@ public:
     void launchSharedWorker(WebSharedWorker&);
     void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&, CompletionHandler<void(bool)>&&);
     void terminateSharedWorker(const WebSharedWorker&);
+    void updateSharedWorkerOwnerFrameIdentifiers(const WebSharedWorker&);
 
     void suspendSharedWorker(WebCore::SharedWorkerIdentifier);
     void resumeSharedWorker(WebCore::SharedWorkerIdentifier);

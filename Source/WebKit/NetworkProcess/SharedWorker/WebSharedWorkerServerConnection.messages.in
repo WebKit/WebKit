@@ -27,7 +27,7 @@
     DispatchedTo=Networking
 ]
 messages -> WebSharedWorkerServerConnection {
-    RequestSharedWorker(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::TransferredMessagePort port, struct WebCore::WorkerOptions workerOptions)
+    RequestSharedWorker(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::TransferredMessagePort port, struct WebCore::WorkerOptions workerOptions)
     SharedWorkerObjectIsGoingAway(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
     SuspendForBackForwardCache(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
     ResumeForBackForwardCache(struct WebCore::SharedWorkerKey sharedWorkerKey, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)
