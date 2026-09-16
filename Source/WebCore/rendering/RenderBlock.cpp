@@ -2335,13 +2335,20 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
     if (auto fixedLogicalWidth = logicalWidth.tryFixed(); !isRenderTableCell() && fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())))) {
         m_minContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
         m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
-    } else if (logicalWidth.isMaxContent()) {
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-        m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
     } else if (shouldComputeLogicalWidthFromAspectRatio()) {
         m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
+    } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
+        // Either keyword makes both contributions that one size, so the box neither shrinks below it
+        // nor grows past it. Both sit behind the aspect-ratio branch: a ratio transfers the block size
+        // across, and that transferred size is what the keyword then stands for, not the content based
+        // one, which for an empty box with `height: 100px; aspect-ratio: 1/1` would be zero.
+        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
+        if (logicalWidth.isMaxContent())
+            m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
+        else
+            m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
     } else
         std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
 
