@@ -165,7 +165,7 @@ void EarlyHintsResourceLoader::startPreconnectTask(const URL& baseURL, const Lin
 
     addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString("Preconnecting to "_s, url.string(), " due to early hint"_s));
 #else
-    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), originalRequest.url());
+    startPreconnectTaskAfterContentRuleListCheck(WTF::move(parameters), baseURL);
 #endif // RC_REMOVE_SEC_ACCEL_3
 #else
     UNUSED_PARAM(baseURL);
