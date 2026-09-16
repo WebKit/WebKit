@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function trigger()
+{
+    let face = new FontFace('MyTestFam', 'local(Helvetica)');
+
+    face.loaded;
+    document.fonts.add(face);
+
+    let reentered = false;
+    Object.defineProperty(FontFace.prototype, 'then', {
+        configurable: true,
+        get() {
+            if (reentered)
+                return undefined;
+            reentered = true;
+            for (let sizeIndex = 0; sizeIndex < 40; sizeIndex++) {
+                let context = new OffscreenCanvas(10, 10).getContext('2d');
+                context.font = (11 + sizeIndex) + 'px MyTestFam';
+                context.measureText('a');
+            }
+            reentered = false;
+            return undefined;
+        }
+    });
+
+    let context = new OffscreenCanvas(10, 10).getContext('2d');
+    context.font = '10px MyTestFam';
+    context.measureText('a');
+
+    document.write('PASS if no crash');
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = function() { setTimeout(trigger, 0); };
+</script>
+</body>
+</html>
