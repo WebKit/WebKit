@@ -319,14 +319,7 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 IntRect ColorInputType::elementRectRelativeToMainFrameView() const
 {
     ASSERT(element());
-    Ref element = *this->element();
-    CheckedPtr renderer = element->renderer();
-    if (!renderer)
-        return IntRect();
-
-    Ref document = element->document();
-    RefPtr view = element->document().view();
-    return view->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
+    return protect(element())->boundingBoxInMainFrameViewCoordinates();
 }
 
 std::optional<FrameIdentifier> ColorInputType::rootFrameID() const

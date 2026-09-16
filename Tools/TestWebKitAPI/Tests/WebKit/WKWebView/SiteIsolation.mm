@@ -3610,6 +3610,123 @@ TEST(SiteIsolation, FirstRectForCharacterRangeInScrolledCrossOriginIframeWithScr
         }
     );
 }
+
+static void checkValidationMessageAnchorInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, void (^prepareBeforeSubmit)(TestWKWebView *, WKFrameInfo *) = nil)
+{
+    HTTPServer server({
+        { "/control"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 120px; top: 130px;' required></body>"_s } },
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    auto validationBubbleAnchorRect = [webView]() -> NSRect {
+        NSDictionary *contents = [webView _contentsOfUserInterfaceItem:@"validationBubble"][@"validationBubble"];
+        NSDictionary *anchorRect = contents[@"anchorRect"];
+        if (!anchorRect)
+            return NSZeroRect;
+        return NSMakeRect([anchorRect[@"x"] doubleValue], [anchorRect[@"y"] doubleValue], [anchorRect[@"width"] doubleValue], [anchorRect[@"height"] doubleValue]);
+    };
+
+    // The bare <input required> in /control has no enclosing <form>, so reportValidity() is called
+    // directly on the input; in /subframe (and the equivalent main-frame markup below) the input is
+    // wrapped in a <form> so the same call can be made from either the form or the input.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/control"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView objectByEvaluatingJavaScript:@"input.reportValidity()"];
+    [webView waitForNextPresentationUpdate];
+    NSRect controlRect = validationBubbleAnchorRect();
+    EXPECT_FALSE(NSIsEmptyRect(controlRect));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    if (prepareBeforeSubmit)
+        prepareBeforeSubmit(webView.get(), childFrameInfo.get());
+
+    // form.reportValidity() (like Element::focus()) is a no-op for cross-origin non-main-frame
+    // iframes without a user gesture; retry until the validation bubble lands (bounded, so a
+    // regression fails the assertion below rather than hanging). If the message were mis-routed
+    // to the main frame's process, this would spin until the timeout with an empty rect.
+    NSRect rect = NSZeroRect;
+    EXPECT_TRUE(Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"form.reportValidity()" inFrame:childFrameInfo.get()];
+        [webView waitForNextPresentationUpdate];
+        rect = validationBubbleAnchorRect();
+        return !NSIsEmptyRect(rect);
+    }, 500));
+
+    EXPECT_NEAR(rect.origin.x, controlRect.origin.x, 2);
+    EXPECT_NEAR(rect.origin.y, controlRect.origin.y, 2);
+}
+
+static ASCIILiteral defaultCrossOriginIframeRequiredInputHTML = "<body style='margin: 0'><form id='form'><input id='input' style='position: absolute; left: 20px; top: 30px;' required></form></body>"_s;
+static ASCIILiteral tallCrossOriginIframeRequiredInputHTML = "<body style='margin: 0; min-height: 1000px'><form id='form'><input id='input' style='position: absolute; left: 20px; top: 530px;' required></form></body>"_s;
+
+TEST(SiteIsolation, ValidationMessageAnchorInCrossOriginIframe)
+{
+    checkValidationMessageAnchorInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeRequiredInputHTML
+    );
+}
+
+TEST(SiteIsolation, ValidationMessageAnchorInCrossOriginIframeWithScrolledMainFrame)
+{
+    checkValidationMessageAnchorInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        defaultCrossOriginIframeRequiredInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, ValidationMessageAnchorInScrolledCrossOriginIframe)
+{
+    checkValidationMessageAnchorInCrossOriginIframe(
+        "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeRequiredInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
+
+TEST(SiteIsolation, ValidationMessageAnchorInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkValidationMessageAnchorInCrossOriginIframe(
+        "<body style='margin: 0; height: 2000px'><iframe id='iframe' style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s,
+        tallCrossOriginIframeRequiredInputHTML,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        }
+    );
+}
 #endif
 
 TEST(SiteIsolation, SetFocusedFrame)

@@ -2231,7 +2231,7 @@ public:
     void logScrollingEvent(uint32_t eventType, MonotonicTime, uint64_t);
 
     // Form validation messages.
-    void showValidationMessage(const WebCore::IntRect& anchorClientRect, String&& message, std::optional<WebCore::FrameIdentifier>&& rootFrameID);
+    void showValidationMessage(const WebCore::IntRect& anchorClientRect, String&& message);
     void hideValidationMessage();
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     void showValidationMessageWithMainFrameRect(const WebCore::IntRect& mainFrameAnchorRect);

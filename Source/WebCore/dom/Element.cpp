@@ -1965,6 +1965,13 @@ IntRect Element::boundingBoxInRootViewCoordinates() const
     return IntRect();
 }
 
+IntRect Element::boundingBoxInMainFrameViewCoordinates() const
+{
+    if (CheckedPtr renderer = this->renderer())
+        return protect(document().view())->contentsToMainFrameView(renderer->absoluteBoundingBoxRect());
+    return IntRect();
+}
+
 static bool layoutOverflowRectContainsAllDescendants(const RenderBox& renderBox)
 {
     if (renderBox.isRenderView())

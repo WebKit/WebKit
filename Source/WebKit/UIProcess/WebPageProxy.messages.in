@@ -64,7 +64,7 @@ messages -> WebPageProxy {
     TranslateAccessibilityAnnouncementStrings(Vector<String> strings, String targetLocaleIdentifier) -> (Vector<String> translatedStrings)
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    ShowValidationMessage(WebCore::IntRect anchorRect, String message, std::optional<WebCore::FrameIdentifier> rootFrameID)
+    ShowValidationMessage(WebCore::IntRect anchorRect, String message)
     HideValidationMessage()
 #endif
 

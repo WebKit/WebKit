@@ -31,8 +31,6 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/DocumentView.h>
 #include <WebCore/Element.h>
-#include <WebCore/LocalFrame.h>
-#include <WebCore/LocalFrameView.h>
 #include <WebCore/NodeDocument.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -67,13 +65,9 @@ void WebValidationMessageClient::showValidationMessage(const Element& anchor, St
         hideValidationMessage(*currentAnchor);
 
     m_currentAnchor = anchor;
-    m_currentAnchorRect = anchor.boundingBoxInRootViewCoordinates();
+    m_currentAnchorRect = anchor.boundingBoxInMainFrameViewCoordinates();
 
-    std::optional<FrameIdentifier> rootFrameID;
-    if (RefPtr view = anchor.document().view())
-        rootFrameID = view->rootFrameID();
-
-    Ref { *m_page }->send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, WTF::move(message), rootFrameID));
+    Ref { *m_page }->send(Messages::WebPageProxy::ShowValidationMessage(m_currentAnchorRect, WTF::move(message)));
 }
 
 void WebValidationMessageClient::hideValidationMessage(const Element& anchor)
@@ -111,7 +105,7 @@ void WebValidationMessageClient::updateValidationBubbleStateIfNeeded()
 
     // We currently hide the validation bubble if its position is outdated instead of trying
     // to update its position.
-    if (m_currentAnchorRect != anchor->boundingBoxInRootViewCoordinates())
+    if (m_currentAnchorRect != anchor->boundingBoxInMainFrameViewCoordinates())
         hideValidationMessage(*anchor);
 }
 
