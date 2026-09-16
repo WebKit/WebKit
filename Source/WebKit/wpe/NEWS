@@ -1,3 +1,19 @@
+=================
+WPE WebKit 2.54.0
+=================
+
+What's new in WPE WebKit 2.54.0?
+
+  - Improve the WPEPlatform documentation, adding a tutorial on how to write
+    new platform implementations and a guide to aid migration from libwpe.
+  - Take into account the layer transform when deciding the sampling options of compositing tiles.
+  - Fix toggle buttons not respecting dark mode.
+  - Fix clipping of single child layer which has filter outsets.
+  - Fix noise artifacts in Intel Arc GPUs when using the i915 driver.
+  - Fix rumble effects with versions of libmanette older than 1.0.0.
+  - Fix the build with older versions of libmanette from the 0.2.x series.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.53.92
 ==================
