@@ -1761,6 +1761,23 @@ llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadat
     loadi OpPutById::Metadata::m_oldStructureID[t5], t2
     bineq t2, JSCell::m_structureID[t0], .opPutByIdSlow
 
+    # Field types: enforce the claim on the value BEFORE anything is mutated. It has to be here rather than next
+    # to the store, because the transition path below writes the object's new structureID first -- bailing after
+    # that would leave the object claiming a property whose slot was never written.
+    #
+    # Registers: t0 (base), t2 (old structure ID) and t5 (metadata) are live and must survive, so only t1 and t3
+    # are used. NOT t4 -- t4 is the interpreter PC (const PC = t4, LowLevelInterpreter.asm:350); clobbering it
+    # sends the interpreter off a garbage PC and surfaces much later as a write barrier on an unmarked cell.
+    # The value is loaded before the claim is tested because loadConstantOrVariable's constant path overwrites
+    # `value` before it uses `index`, so index and value cannot share a register.
+    get(m_value, t1)
+    loadConstantOrVariable(size, t1, t3)
+    loadi OpPutById::Metadata::m_expectedFieldType[t5], t1
+    btiz t1, .opPutByIdFieldTypeChecked
+    btqnz t3, notCellMask, .opPutByIdSlow
+    bineq t1, JSCell::m_structureID[t3], .opPutByIdSlow
+.opPutByIdFieldTypeChecked:
+
     # At this point, we have:
     # t0 -> object base
     # t2 -> current structure ID

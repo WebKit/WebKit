@@ -37,6 +37,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGDoesGC.h"
 #include "DFGOperations.h"
+#include "DFGMayExit.h"
 #include "DFGSlowPathGenerator.h"
 #include "DateInstance.h"
 #include "HasOwnPropertyCache.h"
@@ -1441,6 +1442,18 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 {
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
+    // Diagnostic: flag a speculation on a node whose mayExit() is DoesNotExit, the assertion condition at appendOSRExit.
+    if (Options::logFieldTypes()) [[unlikely]] {
+        if ((type & ~SpecCellCheck) && m_currentNode && mayExit(m_graph, m_currentNode) == DoesNotExit) {
+            dataLogLn("[fieldtype] FILLCELL-WOULD-EXIT currentNode=", m_currentNode->op(),
+                " edgeNode=", edge->op(),
+                " edgeIndex=D@", edge->index(),
+                " proved=", edge.isProved(),
+                " useKind=", edge.useKind(),
+                " type=", SpeculationDump(type),
+                " offset=", edge->hasStorageAccessData() ? edge->storageAccessData().offset : invalidOffset);
+        }
+    }
     ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCellCheck));
 
     m_interpreter.filter(value, SpecCellCheck);
@@ -5118,6 +5131,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case CheckNotEmpty: {
         compileCheckNotEmpty(node);
+        break;
+    }
+
+    case CheckFieldType: {
+        compileCheckFieldType(node);
         break;
     }
 

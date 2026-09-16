@@ -151,6 +151,7 @@ JSC_DECLARE_JIT_OPERATION(operationNewEmptyArray, char*, (VM*, Structure*));
 
 static constexpr unsigned sortScratchSlotCount = 16;
 JSC_DECLARE_JIT_OPERATION(operationAcquireSortScratch, JSCell*, (VM*));
+JSC_DECLARE_JIT_OPERATION(operationRecordFieldTypesForMaterializedObject, void, (VM*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSize, char*, (JSGlobalObject*, Structure*, int32_t, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewArrayWithSizeAndHint, char*, (JSGlobalObject*, Structure*, int32_t, int32_t, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewInt8ArrayWithSize, char*, (JSGlobalObject*, Structure*, intptr_t, char*));
@@ -427,6 +428,10 @@ JSC_DECLARE_JIT_OPERATION(operationCompareStringLessEq, uintptr_t, (JSGlobalObje
 JSC_DECLARE_JIT_OPERATION(operationCompareStringGreater, uintptr_t, (JSGlobalObject*, JSString*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationCompareStringGreaterEq, uintptr_t, (JSGlobalObject*, JSString*, JSString*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationNotifyWrite, void, (VM*, InlineWatchpointSet*));
+// Field types: generalise the record for a field whose store just violated it. Takes the record
+// directly rather than (owner, offset) so the runtime does no lookup -- records are never removed from
+// the VM's table, so a baked pointer stays valid for the VM's lifetime, exactly as operationNotifyWrite
+// bakes a WatchpointSet*.
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowForVarargs, void, (JSGlobalObject*));
 JSC_DECLARE_JIT_OPERATION(operationSizeOfVarargs, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue arguments, uint32_t firstVarArgOffset));
 JSC_DECLARE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject*, int32_t firstElementDest, EncodedJSValue arguments, uint32_t offset, uint32_t length, uint32_t mandatoryMinimum));

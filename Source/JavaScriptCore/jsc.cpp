@@ -4608,6 +4608,22 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             vm.heap.collectNow(Sync, CollectionScope::Full);
         }
 
+        if (Options::dumpParsePatternStats()) {
+            uint64_t dots = vm.parseDotAccess().load(std::memory_order_relaxed);
+            uint64_t chained = vm.parseChainedDotAccess().load(std::memory_order_relaxed);
+            uint64_t deep = vm.parseDeepChainAccess().load(std::memory_order_relaxed);
+            uint64_t assigns = vm.parseDotAssign().load(std::memory_order_relaxed);
+            uint64_t news = vm.parseNewExpr().load(std::memory_order_relaxed);
+            uint64_t lits = vm.parseObjectLiteralProp().load(std::memory_order_relaxed);
+            // chainedPerMille of ALL property reads is the scale-free form: it does not care how big the program is,
+            // only how chain-shaped its property access is.
+            dataLogLn("[parsestats] dots=", dots, " chained=", chained, " deep=", deep,
+                " dotAssigns=", assigns, " newExprs=", news, " objectLiterals=", lits,
+                " chainedPerMille=", dots ? (1000 * chained / dots) : 0,
+                " deepPerMille=", dots ? (1000 * deep / dots) : 0,
+                " chainedPerShapeSite=", (news + lits) ? (100 * chained / (news + lits)) : 0);
+        }
+
         if (options.m_dumpSamplingProfilerData) {
 #if ENABLE(SAMPLING_PROFILER)
             JSLockHolder locker(&vm);

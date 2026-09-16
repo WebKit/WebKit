@@ -644,6 +644,11 @@ public:
     // This is a debug function for checking who marked the target cell.
     void dumpVerifierMarkerData(HeapCell*);
 
+
+    // A violation seen before marking is attributable to the mutator window since the last collection; one
+    // seen after marking, to this collection itself.
+    enum class FieldTypeVerificationPhase : uint8_t { BeforeMarking, AfterMarking };
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;
@@ -834,6 +839,17 @@ private:
     bool shouldSweepSynchronously();
 
     void verifyGC();
+
+    // See Options::validateFieldTypes. Walks live objects and checks each recorded field type.
+    void validateFieldTypes(FieldTypeVerificationPhase);
+    // Candidates recorded by the BeforeMarking pass, whose liveness is conservative. The AfterMarking pass
+    // confirms them as pre-existing or drops them silently, so the verifier never emits a false positive.
+    Vector<std::pair<HeapCell*, int>> m_preMarkingFieldTypeCandidates;
+    unsigned m_fieldTypeViolationsSeen { 0 };
+    // A whole-heap walk per collection cannot keep up with collectContinuously (1ms period): it hard-timed out
+    // four wasm/stress tests, and a test that never finishes verifies nothing. Only consulted in that mode.
+    unsigned m_fieldTypeVerificationSampleCounter { 0 };
+    static constexpr unsigned fieldTypeVerificationSampleIntervalWhenCollectingContinuously = 64;
     void verifierMark();
 
     Lock m_lock;

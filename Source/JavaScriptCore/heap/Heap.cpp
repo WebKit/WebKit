@@ -1556,6 +1556,11 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
     }
 
+    // The pre pass exists for attribution: a violation seen here was produced by the mutator since the last
+    // collection, before any of this collection's weak processing ran. Advisory only, see validateFieldTypes.
+    if (Options::validateFieldTypes()) [[unlikely]]
+        validateFieldTypes(FieldTypeVerificationPhase::BeforeMarking);
+
     ASSERT(m_collectionScope);
     bool isFullGC = m_collectionScope.value() == CollectionScope::Full;
     if (Options::useGCSignpost()) [[unlikely]] {
@@ -1817,6 +1822,16 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         cancelDeferredWorkIfNeeded();
         reapWeakHandles();
         reconcileWeakGCHashTables();
+        // Not inside reconcileWeakGCHashTables: that returns early unless this is a Full
+        // collection, and a structure can die in an Eden collection too. isMarked reports out-of-scope cells
+        // as marked, so running this every collection never over-prunes.
+        if (auto* fieldTypes = vm().fieldTypeWatchpoints())
+            fieldTypes->pruneAfterMarking(vm());
+
+        // After pruneAfterMarking: a claim naming a structure that died in this collection is stale by
+        // definition, so reporting it is noise.
+        if (Options::validateFieldTypes()) [[unlikely]]
+            validateFieldTypes(FieldTypeVerificationPhase::AfterMarking);
         sweepArrayBuffers();
         snapshotUnswept();
         reconcileWeakReferencesAtGCEnd(); // Must precede clearCurrentlyExecuting: CodeBlock::reconcileWeakReferencesAtGCEnd queries which CodeBlocks are currently executing.
@@ -3521,6 +3536,269 @@ void Heap::dumpVerifierMarkerData(HeapCell* cell)
     dataLogLn("\n" "GC Verifier: Found marked cell ", RawPointer(cell), " with MarkerData:");
     visitor.dumpMarkerData(cell);
 }
+
+// The JSC counterpart of V8's field-type heap verification (objects-debug.cc:638): without it an unsound
+// store path surfaces much later as a crash in unrelated JIT code, with it the violated field is named,
+// along with its owner, offset, claimed structure and the structure actually present, at the next collection.
+void Heap::validateFieldTypes(FieldTypeVerificationPhase phase)
+{
+    // Sample under collectContinuously: at its 1ms period a whole-heap walk per collection turned four
+    // wasm/stress tests into 300-second timeouts. Both phases sample together so the pairing holds.
+    if (Options::collectContinuously()) [[unlikely]] {
+        if (phase == FieldTypeVerificationPhase::BeforeMarking)
+            ++m_fieldTypeVerificationSampleCounter;
+        if (m_fieldTypeVerificationSampleCounter % fieldTypeVerificationSampleIntervalWhenCollectingContinuously)
+            return;
+    }
+
+    // BeforeMarking reports and never fails, and that is forced: mark bits still belong to the previous cycle,
+    // so isMarked would exclude everything allocated since (precisely where a mutator-window violation lives)
+    // and MarkedBlock::Handle::isLive is conservative. A violation seen there is a lead, not a proof.
+    bool recordOnly = phase == FieldTypeVerificationPhase::BeforeMarking;
+    if (recordOnly)
+        m_preMarkingFieldTypeCandidates.clear();
+    auto* table = vm().fieldTypeWatchpoints();
+    if (!table || !table->size())
+        return;
+
+    unsigned violations = 0;
+    // Distinct (owner, offset) pairs, so violations is counted in fields, not objects.
+    HashSet<uint64_t> violatedFieldsThisPass;
+    // A butterfly that cannot be walked is a different kind of defect from a false claim; both still fail.
+    unsigned inconsistentButterflies = 0;
+    unsigned deadCellViolations = 0;
+    {
+        // Not HeapIterationScope + forEachLiveCell: this runs at the end of marking with the allocators
+        // already stopped, and HeapIterationScope stops them again, tripping ASSERT(!m_lastActiveBlock) in
+        // LocalAllocator::stopAllocating in debug builds only.
+        auto visit = [&] (HeapCell* heapCell, HeapCell::Kind kind) -> IterationStatus {
+                if (!isJSCellKind(kind))
+                    return IterationStatus::Continue;
+                JSCell* cell = static_cast<JSCell*>(heapCell);
+                // isLive() is conservative -- true for every atom of a fully-allocated block -- so this walk is
+                // handed dead-but-unswept cells, which can hold a value contradicting a claim established after
+                // they died and so read as a real violation. isMarked is the precise question, post-marking
+                // only. Rejected cells are still evaluated, counted apart, to expose a pre pass on garbage.
+                bool cellIsDead = !recordOnly && !isMarked(cell);
+                if (!cell->isObject())
+                    return IterationStatus::Continue;
+
+                Structure* structure = cell->structure();
+                if (!structure || structure->isDictionary())
+                    return IterationStatus::Continue;
+
+                JSObject* object = asObject(cell);
+                PropertyOffset maxOffset = structure->maxOffset();
+                if (maxOffset == invalidOffset)
+                    return IterationStatus::Continue;
+
+                // Checked before touching any property. Out-of-line storage comes from auxiliarySpace, so a
+                // butterfly can never share a MarkedBlock with its owner; when it does, the (structure,
+                // butterfly) pair is inconsistent, which is what the concurrent marker died on in markAuxiliary.
+                if (structure->outOfLineSize()) {
+                    Butterfly* butterfly = object->butterfly();
+                    bool bad = !butterfly;
+                    if (!bad && !cell->isPreciseAllocation()) {
+                        void* butterflyBase = butterfly->base(0, structure->outOfLineCapacity());
+                        bad = MarkedBlock::blockFor(butterflyBase) == MarkedBlock::blockFor(cell);
+                    }
+                    if (bad) {
+                        dataLogLn("\n" "INCONSISTENT BUTTERFLY: object ", RawPointer(cell),
+                            " class=", structure->classInfoForCells()->className,
+                            " structure=", structure->id().bits(),
+                            " maxOffset=", maxOffset,
+                            " outOfLineSize=", structure->outOfLineSize(),
+                            " butterfly=", RawPointer(butterfly),
+                            " transitionKind=", static_cast<unsigned>(structure->transitionKind()),
+                            " transitionProperty=", structure->transitionPropertyName() ? String(structure->transitionPropertyName()) : "<none>"_str);
+                        ++inconsistentButterflies;
+                        return IterationStatus::Continue;
+                    }
+                }
+
+                for (PropertyOffset offset = 0; offset <= maxOffset; ++offset) {
+                    if (!structure->isValidOffset(offset))
+                        continue;
+
+                    // Resolve the owner the way the consumer does: the nearest ancestor that added this offset.
+                    // Inline rather than calling Structure::findOffsetOwner, which is itself under test here;
+                    // ownerAgrees below reports any disagreement. Taking the nearest ancestor holding a record
+                    // instead is wrong: after `delete o.f` frees an offset and a later `o.g = ...` reuses it,
+                    // the surviving claim for `f` cannot bind this object, since the compiler resolves the
+                    // owner with findOffsetOwner and never sees it.
+                    Structure* owner = nullptr;
+                    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+                        if (candidate->transitionKind() == TransitionKind::PropertyAddition
+                            && candidate->transitionOffset() == offset) {
+                            owner = candidate;
+                            break;
+                        }
+                    }
+                    if (!owner)
+                        continue;
+                    StructureID expected = table->expectedFor(owner->id(), offset);
+                    if (!expected) {
+                        // No claim binds this field; a record on a farther ancestor names a property that used
+                        // to live here, which is information, never a failure.
+                        if (Options::logFieldTypes()) [[unlikely]] {
+                            for (Structure* candidate = owner->previousID(); candidate; candidate = candidate->previousID()) {
+                                if (StructureID stale = table->expectedFor(candidate->id(), offset)) {
+                                    dataLogLn("[fieldtype] NON-BINDING stale claim at a reused offset: owner=",
+                                        candidate->id().bits(), " offset=", offset, " expected=", stale.bits(),
+                                        " recordedProperty=", candidate->transitionPropertyName() ? String(candidate->transitionPropertyName()) : "<none>"_str,
+                                        " nowOwnedBy=", owner->id().bits());
+                                    break;
+                                }
+                            }
+                        }
+                        continue;
+                    }
+
+                    // V8's FieldType::NowStable guard (objects-debug.cc:648): once an object has transitioned
+                    // away from the claimed structure, every compilation that adopted the claim is jettisoned,
+                    // so the record is merely stale rather than unsound.
+                    Structure* expectedStructure = expected.decode();
+                    if (!expectedStructure || expectedStructure->transitionWatchpointSet().hasBeenInvalidated())
+                        continue;
+
+                    JSValue value = object->getDirect(offset);
+                    // An empty slot is uninitialised, exactly as V8 skips IsUninitializedHole.
+                    if (!value)
+                        continue;
+
+                    StructureID observed = value.isCell() ? value.asCell()->structureID() : StructureID();
+                    if (observed == expected)
+                        continue;
+
+                    if (recordOnly) {
+                        // Record, do not report. See m_preMarkingFieldTypeCandidates.
+                        m_preMarkingFieldTypeCandidates.append({ heapCell, static_cast<int>(offset) });
+                        continue;
+                    }
+                    if (cellIsDead) {
+                        ++deadCellViolations;
+                        continue;
+                    }
+                    bool preExisting = false;
+                    for (auto& candidate : m_preMarkingFieldTypeCandidates) {
+                        if (candidate.first == heapCell && candidate.second == static_cast<int>(offset)) {
+                            preExisting = true;
+                            break;
+                        }
+                    }
+                    uint64_t violatedFieldKey = (static_cast<uint64_t>(owner->id().bits()) << 32) | static_cast<uint32_t>(offset);
+                    if (violatedFieldsThisPass.add(violatedFieldKey).isNewEntry)
+                        ++violations;
+                    Structure* resolved = structure->findOffsetOwner(offset);
+                    UniquedStringImpl* name = owner->transitionPropertyName();
+                    // A field bad on the first collection after its object appears was born bad, from an
+                    // unhooked creation path; one that turns bad later was overwritten by an unhooked store.
+                    ASCIILiteral valueKind = "other"_s;
+                    if (value.isUndefined()) valueKind = "undefined"_s;
+                    else if (value.isNull()) valueKind = "null"_s;
+                    else if (value.isBoolean()) valueKind = "boolean"_s;
+                    else if (value.isInt32()) valueKind = "int32"_s;
+                    else if (value.isNumber()) valueKind = "double"_s;
+                    else if (value.isCell()) valueKind = "cell"_s;
+                    CellContainer container = cell->cellContainer();
+                    // Claims are keyed on (owner, offset), but dictionary flattening and deletion reassign
+                    // offsets: a name mismatch means the claim was re-pointed, not violated by a store.
+                    String nameAtOffsetNow = "<none>"_str;
+                    for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+                        if (entry.offset() == offset) {
+                            nameAtOffsetNow = String(entry.key());
+                            break;
+                        }
+                    }
+                    UniquedStringImpl* ownerName = owner->transitionPropertyName();
+                    dataLogLn("    ownerRecordedProperty=", ownerName ? String(ownerName) : "<none>"_str,
+                        " propertyAtOffsetNow=", nameAtOffsetNow,
+                        " namesMatch=", ownerName && nameAtOffsetNow == String(ownerName),
+                        " ownerHasBeenDictionary=", owner->hasBeenDictionary(),
+                        " ownerTransitionKind=", static_cast<unsigned>(owner->transitionKind()));
+                    dataLogLn("    valueKind=", valueKind,
+                        " newlyAllocated=", container.isNewlyAllocated(cell),
+                        " expectedClass=", expectedStructure->classInfoForCells()->className);
+                    // funnelWrites discriminates: a field no C++ store wrote after the claim was made cannot have been falsified by a store.
+                    if (RefPtr record = table->recordFor(owner->id(), offset)) {
+                        dataLogLn("    claimSite=", record->claimSite(),
+                            " creationsSeen=", record->creationsSeen(),
+                            " funnelWrites=", record->funnelWrites(),
+                            " funnelViolations=", record->funnelViolations());
+                    }
+                    dataLogLn("\n" "FIELD TYPE VIOLATION: preExisting=", preExisting,
+                        " (preExisting means it was already violated BEFORE this collection began, i.e. the "
+                        "mutator produced it; otherwise this collection did) object ", RawPointer(cell),
+                        " class=", structure->classInfoForCells()->className,
+                        " property=", name ? String(name) : "<none>"_str,
+                        " valueClass=", value.isCell() ? value.asCell()->classInfo()->className : "<not cell>"_s,
+                        " structure=", structure->id().bits(),
+                        " owner=", owner->id().bits(),
+                        " offset=", offset,
+                        " expected=", expected.bits(),
+                        " observed=", observed.bits(),
+                        " valueIsCell=", value.isCell(),
+                        // If findOffsetOwner disagrees with the ancestor holding the record, owner resolution is the bug.
+                        " findOffsetOwner=", resolved ? resolved->id().bits() : 0,
+                        " ownerAgrees=", resolved == owner,
+                        " hasBeenDictionary=", structure->hasBeenDictionary(),
+                        " transitionKind=", static_cast<unsigned>(structure->transitionKind()));
+                    {
+                        StringPrintStream names;
+                        unsigned printed = 0;
+                        for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+                            if (printed++ >= 8)
+                                break;
+                            names.print(" ", String(entry.key()), "@", entry.offset());
+                        }
+                        dataLogLn("    object properties:", names.toString());
+                    }
+                    // continue, not return: a return would hide this object's later violated fields.
+                    continue;
+                }
+                return IterationStatus::Continue;
+        };
+
+        m_objectSpace.forEachBlock([&] (MarkedBlock::Handle* block) {
+            block->forEachLiveCell([&] (size_t, HeapCell* heapCell, HeapCell::Kind kind) -> IterationStatus {
+                return visit(heapCell, kind);
+            });
+        });
+        // Large objects live outside MarkedBlocks, and a wide object with many properties ends up here.
+        for (PreciseAllocation* allocation : m_objectSpace.preciseAllocations()) {
+            if (allocation->isLive())
+                visit(allocation->cell(), allocation->attributes().cellKind);
+        }
+    }
+
+    // Gated on logFieldTypes, not validateFieldTypes: a violated field on a cell this collection proved dead
+    // is not a soundness failure, since nothing can read it and no compilation depends on it.
+    if (deadCellViolations && Options::logFieldTypes()) [[unlikely]] {
+        dataLogLn("[fieldtype] ", deadCellViolations, " violated field(s) found on cells this collection proved DEAD "
+            "(not counted; they explain pre-marking reports, where liveness is conservative).");
+    }
+
+    if (recordOnly)
+        return;   // the pre pass reports nothing; the post pass adjudicates what it recorded
+
+    if (inconsistentButterflies) {
+        dataLogLn("FIELD TYPE: ", inconsistentButterflies, " object(s) with an inconsistent (structure, butterfly) "
+            "pair. This is heap corruption, not a false claim -- see the INCONSISTENT BUTTERFLY reports above.");
+        RELEASE_ASSERT(!inconsistentButterflies, inconsistentButterflies);
+    }
+
+    if (violations) {
+        // Deduplicated by (owner, offset) so a field counts once however many objects hold it.
+        m_fieldTypeViolationsSeen += violations;
+        dataLogLn("FIELD TYPE VIOLATIONS: ", violations, " field(s) this collection, ",
+            m_fieldTypeViolationsSeen, " cumulative. FAILING.");
+        // Fail rather than carry on: a verifier that finds corruption and continues is one people learn to
+        // ignore. Only the post-marking pass reaches here; the pre pass returned above at recordOnly because
+        // its liveness is conservative. Anyone enumerating a fresh outbreak can drop this locally.
+        RELEASE_ASSERT(!violations, violations, m_fieldTypeViolationsSeen);
+    }
+}
+
 
 void Heap::verifyGC()
 {

@@ -495,7 +495,37 @@ public:
     ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
     JSValue getDirect(Locker<JSCellLock>&, Concurrency, Structure* expectedStructure, PropertyOffset) const;
     JSValue getDirectConcurrently(Locker<JSCellLock>&, Structure* expectedStructure, PropertyOffset) const;
-    void putDirectOffset(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
+    void putDirectOffset(VM& vm, PropertyOffset offset, JSValue value)
+    {
+        // Informational, hence logFieldTypes and not validateFieldTypes: this reports any C++ store path
+        // contradicting a live field-type claim, with a backtrace naming the path, but it also fires on stores
+        // that are benign by design, and validateFieldTypes must speak only when a claim is left false on a
+        // live object. Compile-gated rather than option-gated because putDirectOffset is the universal C++
+        // store primitive and Options accessors read the mutable g_jscConfig page, so the load cannot be
+        // hoisted out of a parser loop: ~1.48M instructions per json-parse-inspector parse for a pure
+        // diagnostic. Flip the macro to 1 to get it back in a release build.
+#define JSC_FIELD_TYPE_DIAGNOSTIC_STORE_PROBE ASSERT_ENABLED
+#if JSC_FIELD_TYPE_DIAGNOSTIC_STORE_PROBE
+        if (Options::logFieldTypes()) [[unlikely]]
+            reportFieldTypeViolatingStoreForDiagnostics(vm, offset, value);
+#else
+        UNUSED_PARAM(offset);
+#endif
+        locationForOffset(offset)->set(vm, this, value);
+    }
+
+    JS_EXPORT_PRIVATE void reportFieldTypeViolatingStoreForDiagnostics(VM&, PropertyOffset, JSValue);
+
+    // putDirectOffset minus the diagnostic, for the one caller that knowingly writes a value contradicting a
+    // live claim in a window where nothing can observe it: operationMaterializeObjectInOSR's dummy fill, with
+    // the real values arriving from operationPopulateObjectInOSR. No JS runs between the two (both are called
+    // from the OSR exit stub) and neither can collect, since DeferGCForAWhile's destructor calls
+    // decrementDeferralDepth() rather than DeferGC's decrementDeferralDepthAndGCIfNeeded().
+    void putDirectOffsetDuringMaterialization(VM& vm, PropertyOffset offset, JSValue value)
+    {
+        locationForOffset(offset)->set(vm, this, value);
+    }
+
     void putDirectWithoutBarrier(PropertyOffset offset, JSValue value) { locationForOffset(offset)->setWithoutWriteBarrier(value); }
 
     JS_EXPORT_PRIVATE bool putDirectNativeIntrinsicGetter(VM&, JSGlobalObject*, Identifier, NativeFunction, Intrinsic, unsigned attributes);

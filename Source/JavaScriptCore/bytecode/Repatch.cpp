@@ -1103,6 +1103,18 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
             }
         }
 
+        if (Options::logFieldTypes()) [[unlikely]] {
+            const char* kindStr = slot.type() == PutPropertySlot::NewProperty ? "NewProperty"
+                : (slot.type() == PutPropertySlot::ExistingProperty ? "ExistingProperty" : "other");
+            Structure* ftOwner = slot.isCacheablePut() ? oldStructure->findOffsetOwner(slot.cachedOffset()) : nullptr;
+            dataLogLn("[fieldtype] IC-PUT kind=", kindStr,
+                " cacheable=", slot.isCacheablePut(),
+                " oldStructure=", oldStructure->id().bits(),
+                " newStructure=", baseValue.isCell() ? baseValue.asCell()->structure()->id().bits() : 0,
+                " offset=", slot.isCacheablePut() ? slot.cachedOffset() : invalidOffset,
+                " resolvedOwner=", ftOwner ? ftOwner->id().bits() : 0);
+        }
+
         if (!newCase && slot.base() == baseValue && slot.isCacheablePut()) {
             if (slot.type() == PutPropertySlot::ExistingProperty) {
                 // This assert helps catch bugs if we accidentally forget to disable caching
@@ -1115,10 +1127,34 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
 
                 oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
 
+                // Field types: InlineAccess::generateSelfPropertyReplace emits a bare inline stub that
+                // checks only the BASE's structure and then stores, bypassing InlineCacheCompiler and so
+                // the Replace handler's field-type compare. Declining it for a recorded field routes the
+                // store to the full handler, which does check.
+                //
+                // Evidence this is required: with it absent,
+                // JSTests/stress/field-type-replace-store-through-jit.js fails deterministically under
+                // --useFTLJIT=true --useConcurrentJIT=false with eager thresholds, reading 999 through the
+                // wrong layout, and the log shows a replace IC cached for the very field that was narrowed
+                // ("IC-PUT kind=ExistingProperty resolvedOwner=<the narrowed owner>") with no generalize
+                // event of any kind afterwards.
+                bool fieldTypeNeedsFullHandler = false;
+                if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+                    if (auto* table = vm.fieldTypeWatchpoints()) {
+                        if (Structure* fieldTypeOwner = oldStructure->findOffsetOwner(slot.cachedOffset())) {
+                            // recordForStoreSite: a bare self-replace stub has nowhere to bake a check,
+                            // so if no record exists yet the field must be poisoned now.
+                            RefPtr record = table->recordForStoreSite(fieldTypeOwner->id(), slot.cachedOffset(), "byid-inline-self-replace");
+                            fieldTypeNeedsFullHandler = fieldTypeClaimForcesGeneratedHandler(record.get(), "inline-self-replace"_s);
+                        }
+                    }
+                }
+
                 if (propertyCache.cacheType() == CacheType::Unset
                     && InlineAccess::canGenerateSelfPropertyReplace(propertyCache, slot.cachedOffset())
                     && !oldStructure->needImpurePropertyWatchpoint()
-                    && !isGlobalProxy) {
+                    && !isGlobalProxy
+                    && !fieldTypeNeedsFullHandler) {
 
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(propertyCache, oldStructure, slot.cachedOffset());
                     if (generatedCodeInline) {

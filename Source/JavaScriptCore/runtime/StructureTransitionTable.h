@@ -279,6 +279,18 @@ public:
 
     Structure* trySingleTransition() const;
 
+    // V8's Map::is_stable() analogue. V8 clears is_stable via NotifyLeafMapLayoutChange, whose live caller path is
+    // Map::CopyDropDescriptors -- reached from ShareDescriptor/CopyAddDescriptor whenever a new map is derived from
+    // this one. So is_stable() means "this map is a leaf of the transition tree", and this is that predicate.
+    // Conservative in the safe direction: once a TransitionMap has been allocated a second transition existed, so
+    // report true without inspecting it.
+    bool hasAnyTransition() const
+    {
+        if (!isUsingSingleSlot())
+            return true;
+        return !!trySingleTransition();
+    }
+
     void reconcileWeakReferencesAtGCEnd(VM&, CollectionScope);
 
 private:

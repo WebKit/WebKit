@@ -91,6 +91,27 @@ public:
     DesiredWatchpoints& watchpoints() LIFETIME_BOUND { return m_watchpoints; }
     DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_identifiers; }
     DesiredWeakReferences& weakReferences() LIFETIME_BOUND { return m_weakReferences; }
+
+    // A CheckFieldType node bakes the address of the record's claim slot, so the record must outlive the
+    // generated code: the plan holds a reference during compilation, CommonData keeps it afterwards.
+    void keepFieldTypeRecordAlive(FieldTypeRecord& record)
+    {
+        if (!m_fieldTypeRecordsKeptAlive.contains(&record))
+            m_fieldTypeRecordsKeptAlive.append(&record);
+    }
+
+
+    // Field-type records this compilation has proven it will violate (a constant of the wrong structure, a
+    // double, or a store where no check can be emitted). These must not be generalized by calling out from
+    // generated code: a transitioning store lowers to ReallocatePropertyStorage -> PutByOffset ->
+    // PutStructure, and in that window the structureID is nuked and the (structure, butterfly) pair
+    // inconsistent, so firing a watchpoint there defers GC and jettisons code while an object is nuked.
+    // Applied in Plan::finalize instead, on the mutator thread with GC deferred and nothing mid-transition.
+    void addFieldTypeToGeneralize(FieldTypeRecord& record)
+    {
+        if (!m_fieldTypesToGeneralize.contains(&record))
+            m_fieldTypesToGeneralize.append(&record);
+    }
     DesiredTransitions& transitions() LIFETIME_BOUND { return m_transitions; }
     RecordedStatuses& recordedStatuses() LIFETIME_BOUND { return *m_recordedStatuses.get(); }
 
@@ -131,6 +152,8 @@ private:
     DesiredWatchpoints m_watchpoints;
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
+    Vector<RefPtr<FieldTypeRecord>> m_fieldTypesToGeneralize;
+    Vector<RefPtr<FieldTypeRecord>> m_fieldTypeRecordsKeptAlive;
     DesiredTransitions m_transitions;
     std::unique_ptr<RecordedStatuses> m_recordedStatuses;
 

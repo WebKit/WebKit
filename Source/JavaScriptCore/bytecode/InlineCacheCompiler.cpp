@@ -3597,6 +3597,39 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
     case AccessCase::IndexedTrueKeyReplace:
     case AccessCase::IndexedFalseKeyReplace: {
         ASSERT(canBeViaGlobalProxy(accessCase.m_type));
+        // A cached replace store writes the property with nothing else observing the value, so check it
+        // here, before the store, so that bailing leaves the object untouched. Bailing to repatch converges
+        // after one miss: the generic path generalises the record and the regenerated handler emits nothing.
+        if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+            if (auto* table = vm.fieldTypeWatchpoints()) {
+                if (Structure* fieldTypeOwner = accessCase.structure()->findOffsetOwner(accessCase.m_offset)) {
+                    // recordForStoreSite, not recordFor: with no record this handler emits no check, so the
+                    // field has to be poisoned now.
+                    RefPtr record = table->recordForStoreSite(fieldTypeOwner->id(), accessCase.m_offset, "ic-replace");
+                    if (StructureID expectedFieldType = record ? record->expected() : StructureID()) {
+                        // Track the baked identity weakly: a dead expected structure's ID can be recycled
+                        // for a live Structure that this compare would then match, passing a violating store.
+                        m_weakStructures.append(expectedFieldType);
+                        // failAndIgnore, NOT failAndRepatch: this checks the VALUE's shape, and a value that
+                        // does not fit is not a missing access case -- there is nothing a new case could do
+                        // differently. Repatching here asks for a regenerated handler, which consults the same
+                        // still-live record and emits the same check, so the site never converges. Measured on
+                        // JetStream3 FlightPlanner: 84,010 consultations on a single (owner, offset) against 195
+                        // C++ replace stores for the whole run, and -12.91%. failAndIgnore bumps the countdown so
+                        // the slow path leaves the handler alone; the generic store then runs
+                        // maintainFieldTypeRecord, which withdraws the claim, and the next regeneration emits no
+                        // check at all. That is the convergence the old comment here claimed and did not get.
+                        if (Options::useFieldTypeICChecks()) [[likely]] {
+                            m_failAndIgnore.append(jit.branchIfNotCell(valueRegs));
+                            m_failAndIgnore.append(jit.branch32(
+                                CCallHelpers::NotEqual,
+                                CCallHelpers::Address(valueRegs.payloadGPR(), JSCell::structureIDOffset()),
+                                CCallHelpers::TrustedImm32(expectedFieldType.bits())));
+                        }
+                    }
+                }
+            }
+        }
         GPRReg base = baseGPR;
         if (accessCase.viaGlobalProxy()) {
             // This aint pretty, but the path that structure checks loads the real base into scratchGPR.
@@ -3660,6 +3693,35 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         bool allocating = accessCase.newStructure()->outOfLineCapacity() != accessCase.structure()->outOfLineCapacity();
         bool reallocating = allocating && accessCase.structure()->outOfLineCapacity();
         bool allocatingInline = allocating && !accessCase.structure()->couldHaveIndexingHeader();
+
+        // A transition store creates the property, so this handler is the only observer of the value on this
+        // path; without a check the record would freeze on whatever the first object stored. Emitted before
+        // any mutation, and before makeDefaultScratchAllocator/preserveReusedRegistersByPushing below:
+        // m_failAndRepatch skips restoreReusedRegistersByPopping, so bailing from after the push would
+        // return with SP still decremented.
+        if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+            if (auto* table = vm.fieldTypeWatchpoints()) {
+                if (Options::logFieldTypes()) [[unlikely]] {
+                    dataLogLn("[fieldtype] IC-TRANSITION-GEN newStructure=", accessCase.newStructure()->id().bits(),
+                        " offset=", accessCase.m_offset,
+                        " expected=", table->expectedFor(accessCase.newStructure()->id(), accessCase.m_offset).bits());
+                }
+                RefPtr transitionRecord = table->recordForStoreSite(accessCase.newStructure()->id(), accessCase.m_offset, "ic-transition");
+                if (StructureID expectedFieldType = transitionRecord ? transitionRecord->expected() : StructureID()) {
+                    // Weakly tracked against StructureID recycling; see the Replace case above.
+                    m_weakStructures.append(expectedFieldType);
+                    // failAndIgnore, not failAndRepatch -- see the Replace case above: a value-shape miss is
+                    // not a missing access case, and repatching on it makes the site regenerate forever.
+                    if (Options::useFieldTypeICChecks()) [[likely]] {
+                        m_failAndIgnore.append(jit.branchIfNotCell(valueRegs));
+                        m_failAndIgnore.append(jit.branch32(
+                            CCallHelpers::NotEqual,
+                            CCallHelpers::Address(valueRegs.payloadGPR(), JSCell::structureIDOffset()),
+                            CCallHelpers::TrustedImm32(expectedFieldType.bits())));
+                    }
+                }
+            }
+        }
 
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
 
@@ -7381,7 +7443,19 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                 case AccessCase::Replace: {
                     ASSERT(canBeViaGlobalProxy(accessCase.m_type));
                     ASSERT(accessCase.conditionSet().isEmpty());
-                    if (!accessCase.viaGlobalProxy()) {
+                    // PutByIdReplaceHandler is a pre-compiled shared thunk with nowhere to bake this field's
+                    // expected StructureID, so decline it for a recorded field and fall through to the
+                    // generated handler; otherwise a DFG speculation that exits lands here unchecked.
+                    bool fieldTypeNeedsGeneratedHandler = false;
+                    if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+                        if (auto* table = vm.fieldTypeWatchpoints()) {
+                            if (Structure* fieldTypeOwner = accessCase.structure()->findOffsetOwner(accessCase.m_offset)) {
+                                RefPtr record = table->recordForStoreSite(fieldTypeOwner->id(), accessCase.m_offset, "ic-replace");
+                                fieldTypeNeedsGeneratedHandler = fieldTypeClaimForcesGeneratedHandler(record.get(), "ById-Replace"_s);
+                            }
+                        }
+                    }
+                    if (!accessCase.viaGlobalProxy() && !fieldTypeNeedsGeneratedHandler) {
                         auto code = vm.getCTIStub(CommonJITThunkID::PutByIdReplaceHandler).retagged<JITStubRoutinePtrTag>();
                         auto stub = createPreCompiledICJITStubRoutine(WTF::move(code), vm, codeBlock);
                         connectWatchpointSets(stub.get(), { }, { });
@@ -7395,7 +7469,25 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     bool reallocating = allocating && accessCase.structure()->outOfLineCapacity();
                     bool allocatingInline = allocating && !accessCase.structure()->couldHaveIndexingHeader();
                     collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
+                    // The handlers selected below are pre-compiled shared thunks with nowhere to bake this
+                    // field's expected StructureID, so for a field with a live record decline them and fall
+                    // through to the generated handler, whose Transition case emits the check. Otherwise a
+                    // DFG speculation that exits lands on an unchecked baseline handler, nothing generalises
+                    // the record, and the stale claim survives.
+                    bool fieldTypeNeedsGeneratedHandler = false;
+                    if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+                        if (auto* table = vm.fieldTypeWatchpoints()) {
+                            RefPtr record = table->recordForStoreSite(accessCase.newStructure()->id(), accessCase.m_offset, "ic-transition");
+                            fieldTypeNeedsGeneratedHandler = fieldTypeClaimForcesGeneratedHandler(record.get(), "ById-Transition"_s);
+                            if (Options::logFieldTypes()) [[unlikely]] {
+                                dataLogLn("[fieldtype] IC-TRANSITION-DECLINE-CHECK newStructure=", accessCase.newStructure()->id().bits(),
+                                    " oldStructure=", accessCase.structure()->id().bits(), " offset=", accessCase.m_offset,
+                                    " haveRecord=", !!record, " expected=", record ? record->expected().bits() : 0,
+                                    " needsGenerated=", fieldTypeNeedsGeneratedHandler);
+                            }
+                        }
+                    }
+                    if (checkingConditions.isEmpty() && !fieldTypeNeedsGeneratedHandler) {
                         MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
                         if (!allocating)
                             code = vm.getCTIStub(CommonJITThunkID::PutByIdTransitionNonAllocatingHandler).retagged<JITStubRoutinePtrTag>();
@@ -7729,7 +7821,30 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                 case AccessCase::IndexedFalseKeyReplace: {
                     ASSERT(canBeViaGlobalProxy(accessCase.m_type));
                     ASSERT(accessCase.conditionSet().isEmpty());
-                    if (!accessCase.viaGlobalProxy()) {
+                    // The ByVal Replace thunks are pre-compiled and shared, so decline them for a claimed
+                    // field and fall through to the generated handler, as the ById Replace site above does.
+                    bool fieldTypeNeedsGeneratedHandler = false;
+                    if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+                        if (auto* table = vm.fieldTypeWatchpoints()) {
+                            if (Structure* fieldTypeOwner = accessCase.structure()->findOffsetOwner(accessCase.m_offset)) {
+                                RefPtr record = table->recordForStoreSite(fieldTypeOwner->id(), accessCase.m_offset, "ic-replace");
+                                fieldTypeNeedsGeneratedHandler = fieldTypeClaimForcesGeneratedHandler(record.get(), "ByVal-Replace"_s);
+                            } else {
+                                // Owner unresolvable (a dictionary, or offsets reused after a deletion). Walk
+                                // the ancestry rather than allow the unchecked thunk; allowing is the unsound
+                                // direction.
+                                for (Structure* candidate = accessCase.structure(); candidate; candidate = candidate->previousID()) {
+                                    if (RefPtr record = table->recordFor(candidate->id(), accessCase.m_offset)) {
+                                        if (fieldTypeClaimForcesGeneratedHandler(record.get(), "ByVal-Replace-ancestry"_s)) {
+                                            fieldTypeNeedsGeneratedHandler = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (!accessCase.viaGlobalProxy() && !fieldTypeNeedsGeneratedHandler) {
                         MacroAssemblerCodeRef<JITStubRoutinePtrTag> code;
                         switch (accessCase.m_type) {
                         case AccessCase::Replace:
@@ -7766,7 +7881,17 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                     bool reallocating = allocating && accessCase.structure()->outOfLineCapacity();
                     bool allocatingInline = allocating && !accessCase.structure()->couldHaveIndexingHeader();
                     collectConditions(accessCase, watchedConditions, checkingConditions);
-                    if (checkingConditions.isEmpty()) {
+                    // The ByVal shared thunks are pre-compiled like the ById thunks above, and this decline
+                    // once covered the ById family only, leaving the whole PutByVal family storing to claimed
+                    // fields with no check. op_put_private_name in particular is always a ByVal access.
+                    bool fieldTypeNeedsGeneratedHandler = false;
+                    if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+                        if (auto* table = vm.fieldTypeWatchpoints()) {
+                            RefPtr record = table->recordForStoreSite(accessCase.newStructure()->id(), accessCase.m_offset, "ic-transition");
+                            fieldTypeNeedsGeneratedHandler = fieldTypeClaimForcesGeneratedHandler(record.get(), "ByVal-Transition"_s);
+                        }
+                    }
+                    if (checkingConditions.isEmpty() && !fieldTypeNeedsGeneratedHandler) {
                         auto selectTransitionHandler = [&](CommonJITThunkID nonAlloc, CommonJITThunkID reallocOOL, CommonJITThunkID newlyAlloc, CommonJITThunkID realloc) -> MacroAssemblerCodeRef<JITStubRoutinePtrTag> {
                             if (!allocating)
                                 return vm.getCTIStub(nonAlloc).retagged<JITStubRoutinePtrTag>();

@@ -514,7 +514,95 @@ private:
     bool handleTypedArrayConstructor(Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks, CodeSpecializationKind);
     template<typename ChecksFunctor>
     bool handleConstantFunction(Node* callTargetNode, Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, Node* newTarget, const ChecksFunctor& insertChecks);
-    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
+    Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value, Structure* fieldTypeOwner = nullptr);
+
+    // Emits the field-type store check on the stored value while OSR exit is still legal, i.e. before the
+    // property-storage allocation opens the nuked window. Returns true if a check was emitted or the store
+    // was decided statically, in which case the backend must leave the store alone.
+    bool hoistFieldTypeCheckForTransition(Structure* owner, PropertyOffset offset, Node* value)
+    {
+        if (!Options::useFieldTypeAssumptions())
+            return false;
+        if (!Options::useFieldTypeStoreHoist()) [[unlikely]]
+            return false;
+        if (!owner || offset == invalidOffset || !value)
+            return false;
+        auto* table = m_vm->fieldTypeWatchpoints();
+        if (!table)
+            return false;
+
+        // The emitted check loads the claim, so a site compiled while no claim existed still honours a claim
+        // that appears later, and its exit is what lets the baseline store record the claim in the first place.
+        RefPtr record = table->ensureRecordForStoreSite(owner->id(), offset);
+        if (!record)
+            return false;
+
+        // Decide constants statically: emitting a check the abstract interpreter can disprove would make
+        // the CFA prove a reachable block unreachable.
+        if (value->hasConstant()) {
+            JSValue constant = value->asJSValue();
+            StructureID expectedID = record->expected();
+
+            // A constant that can satisfy no structure claim, or that contradicts the existing one, withdraws it.
+            if (!constant || !constant.isCell() || (expectedID && constant.asCell()->structureID() != expectedID)) {
+                m_graph.m_plan.addFieldTypeToGeneralize(*record);
+                return true;
+            }
+
+            if (expectedID)
+                return true;
+
+            // Unclaimed and the constant is a cell, so it may become the claim: fall through to the loading
+            // check rather than generalizing, which would sink the claim permanently because establish()
+            // refuses afterwards. Safe for the CFA because CheckFieldType teaches it nothing.
+        }
+
+        // A claim is monotone: it can be withdrawn but never changed to another structure, so an existing
+        // claim can be baked into a CheckStructure, which CSE and LICM understand, as long as this code
+        // depends on the record and so is jettisoned on withdrawal. Unclaimed fields must load instead.
+        // HALF 1 of the check-based dependency. Baking the claim into a CheckStructure requires depending on the
+        // record, and that dependency is what discards 282 CodeBlocks on raytrace when the claim is contradicted
+        // (todo/24: both registration paths off recovers 107%). Falling through to the LOAD form below emits
+        // CheckFieldType, which reads record->addressOfExpected() at runtime and exits on withdrawal, so it needs
+        // no dependency at all. Sound by construction; the cost is that CSE and LICM cannot see through it.
+        if (StructureID claimed = Options::useFieldTypeStoreSideLoadedCheck() ? StructureID() : record->expected()) {
+            if (Structure* expected = claimed.decode()) {
+                // Only a baked claim needs the dependency. Registering it for an unclaimed record turns every
+                // ordinary non-cell creation into a jettison event: 599 of them on delta-blue.
+                if (Options::useFieldTypeWatchpointRegistration()) [[likely]] {
+                    if (Options::logFieldTypes()) [[unlikely]]
+                        dataLogLn("[fieldtype] REGISTER-WATCHPOINT parser owner=", owner->id().bits(), " offset=", offset);
+                    record->noteDependent();
+                    m_graph.watchpoints().addLazily(record->watchpoints());
+                }
+                // Measurement leg: emit nothing but still report the store handled, so fieldTypeCheckHoisted stays
+                // set, the DFG/FTL backend fail-safe does not generalize, and the claim survives. Isolates this
+                // check's own cost from claim liveness. Unsound; never ship on.
+                if (!Options::useFieldTypeHoistedCheckEmission()) [[unlikely]]
+                    return true;
+                // The must-move counter for that leg: it has to reach zero when the option is off, or the
+                // option is not being read and its measurement is of nothing.
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] HOIST-EMIT-BAKED parser owner=", owner->id().bits(), " offset=", offset);
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(expected)), value);
+                return true;
+            }
+        }
+
+        // A generalized record must emit nothing: its WatchpointSet has already fired, so DesiredWatchpoints
+        // would discard every compilation, and CheckFieldType would load a zero claim and exit forever.
+        if (record->isGeneralized())
+            return false;
+
+
+        // The record must outlive the code, because CheckFieldType bakes the address of its claim slot.
+        m_graph.m_plan.keepFieldTypeRecordAlive(*record);
+        // Must-NOT-move counter: the emission gate touches only the baked check, so this path is unaffected.
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] HOIST-EMIT-LOADED parser owner=", owner->id().bits(), " offset=", offset);
+        addToGraph(CheckFieldType, OpInfo(record.get()), Edge(value, UntypedUse));
+        return true;
+    }
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, Node* unwrapped, unsigned identifierNumber, SpeculatedType prediction);
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
@@ -6849,7 +6937,7 @@ Node* ByteCodeParser::handleGetByOffset(
 
 Node* ByteCodeParser::handlePutByOffset(
     Node* base, unsigned identifier, PropertyOffset offset,
-    Node* value)
+    Node* value, Structure* fieldTypeOwner)
 {
     Node* propertyStorage;
     if (isInlineOffset(offset))
@@ -6857,9 +6945,22 @@ Node* ByteCodeParser::handlePutByOffset(
     else
         propertyStorage = addToGraph(GetButterfly, base);
     
+    // Replace sites need the check too: one that emitted nothing would silently violate a claim
+    // established after it was compiled.
+    bool hoistedHere = false;
+    if (fieldTypeOwner)
+        hoistedHere = hoistFieldTypeCheckForTransition(fieldTypeOwner, offset, value);
+
     StorageAccessData* data = m_graph.m_storageAccessData.add();
     data->offset = offset;
     data->identifierNumber = identifier;
+    // Resolve the owner at parse time, never during lowering: the lowering-time abstract structure set is
+    // not reliably finite, so re-deriving it there silently emits no check in live compilations.
+    if (fieldTypeOwner) {
+        data->fieldTypeOwner = m_graph.registerStructure(fieldTypeOwner);
+        // Only report hoisted when a check was really emitted; otherwise the backend must still do its own.
+        data->fieldTypeCheckHoisted = hoistedHere;
+    }
     
     Node* result = addToGraph(PutByOffset, OpInfo(data), Edge(propertyStorage, KnownStorageUse), Edge(base), Edge(value));
     
@@ -7237,7 +7338,25 @@ Node* ByteCodeParser::replace(Node* base, unsigned identifier, const PutByVarian
     RELEASE_ASSERT(variant.kind() == PutByVariant::Replace);
 
     checkReplacement(base, m_graph.identifiers()[identifier], variant.offset(), variant.structure());
-    return handlePutByOffset(base, identifier, variant.offset(), value);
+
+    // Every structure the variant admits must agree on the offset owner; otherwise one check cannot maintain
+    // all of their records, so pass null and claim nothing.
+    Structure* fieldTypeOwner = nullptr;
+    for (unsigned i = variant.structureSet().size(); i--;) {
+        Structure* candidate = variant.structureSet()[i]->findOffsetOwner(variant.offset());
+        if (!candidate) {
+            fieldTypeOwner = nullptr;
+            break;
+        }
+        if (!fieldTypeOwner)
+            fieldTypeOwner = candidate;
+        else if (fieldTypeOwner != candidate) {
+            fieldTypeOwner = nullptr;
+            break;
+        }
+    }
+
+    return handlePutByOffset(base, identifier, variant.offset(), value, fieldTypeOwner);
 }
 
 void ByteCodeParser::simplifyGetByStatus(Node* base, GetByStatus& getByStatus)
@@ -7833,7 +7952,10 @@ void ByteCodeParser::handlePutById(
         }
 
         ASSERT(variant.oldStructureForTransition()->transitionWatchpointSetHasBeenInvalidated());
-    
+
+        // Emit the check before the allocation below, which opens the nuked window where no exit is legal.
+        bool hoistedFieldTypeCheck = hoistFieldTypeCheckForTransition(variant.newStructure(), variant.offset(), value);
+
         Node* propertyStorage;
         Transition* transition = m_graph.m_transitions.add(
             m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
@@ -7862,6 +7984,9 @@ void ByteCodeParser::handlePutById(
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
+        // This PutByOffset creates the property, so the transition's new structure is the offset owner.
+        data->fieldTypeOwner = m_graph.registerStructure(variant.newStructure());
+        data->fieldTypeCheckHoisted = hoistedFieldTypeCheck;
         
         // NOTE: We could GC at this point because someone could insert an operation that GCs.
         // That's fine because:
@@ -8010,7 +8135,10 @@ void ByteCodeParser::handlePutPrivateNameById(
         }
     
         ASSERT(variant.oldStructureForTransition()->transitionWatchpointSetHasBeenInvalidated());
-    
+
+        // Emit the check before the allocation below, which opens the nuked window where no exit is legal.
+        bool hoistedFieldTypeCheck = hoistFieldTypeCheckForTransition(variant.newStructure(), variant.offset(), value);
+
         Node* propertyStorage;
         Transition* transition = m_graph.m_transitions.add(
             m_graph.registerStructure(variant.oldStructureForTransition()), m_graph.registerStructure(variant.newStructure()));
@@ -8038,6 +8166,9 @@ void ByteCodeParser::handlePutPrivateNameById(
         StorageAccessData* data = m_graph.m_storageAccessData.add();
         data->offset = variant.offset();
         data->identifierNumber = identifierNumber;
+        // This PutByOffset creates the property, so the transition's new structure is the offset owner.
+        data->fieldTypeOwner = m_graph.registerStructure(variant.newStructure());
+        data->fieldTypeCheckHoisted = hoistedFieldTypeCheck;
         
         // NOTE: We could GC at this point because someone could insert an operation that GCs.
         // That's fine because:

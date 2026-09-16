@@ -288,6 +288,15 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         out.print(comma, pointerDumpInContext(node->transition(), context));
         out.print(", ID:"_s, node->transition()->next->id().bits());
     }
+    if (node->op() == CheckFieldType) {
+        if (FieldTypeRecord* record = node->fieldTypeRecord()) {
+            out.print(comma, "owner:"_s, record->owner().bits(), ", offset:"_s, record->offset(),
+                ", expected:"_s, record->expected().bits());
+            if (record->isGeneralized())
+                out.print(", generalized"_s);
+        } else
+            out.print(comma, "<null record>"_s);
+    }
     if (node->hasCellOperand()) {
         if (!node->cellOperand()->value() || !node->cellOperand()->value().isCell())
             out.print(comma, "invalid cell operand: "_s, node->cellOperand()->value());
@@ -1414,6 +1423,471 @@ JSValue Graph::tryGetConstantProperty(const AbstractValue& base, PropertyOffset 
     return tryGetConstantProperty(base.m_value, base.m_structure, offset);
 }
 
+// Turns the runtime-recorded field type into an abstract value; a clear result means no information and the
+// caller falls back to heapTop. Never infer a field type from this compilation's own speculation:
+// CheckStructure(GetByOffset(...)) shows the field held T at some point, not always, and using it is unsound.
+// Soundness rests on three mechanisms: the C++ store paths generalize the record (JSObjectInlines.h
+// maintainFieldTypeRecord); every JIT and IC store path either checks inline or declines the site and
+// generalizes, so do not delete that store-side machinery; and tryWatch() below, which catches the object
+// already in the field transitioning with no store to the field at all.
+AbstractValue Graph::fieldTypeAssumptionValue(
+    RegisteredStructure baseStructure, PropertyOffset offset, StructureClobberState clobberState,
+    FieldTypeNarrowingGuard guard)
+{
+    AbstractValue result;
+
+    if (!Options::useFieldTypeAssumptions())
+        return result;
+    if (!Options::useFieldTypeNarrowing()) [[unlikely]]
+        return result;
+    if (!baseStructure || offset == invalidOffset)
+        return result;
+    // Unlinked code cannot hold structure-identity dependencies.
+    if (m_plan.isUnlinked())
+        return result;
+
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table || !table->sizeRelaxed())
+        return result;
+
+    bool logging = Options::logFieldTypes();
+
+    // Offsets are inherited by every descendant of the structure that introduced them, so the record
+    // is keyed on the owner. Safe off-thread: previousID() is written for concurrent use.
+    Structure* loadSite = baseStructure.get();
+    Structure* owner = fieldTypeOwnerFor(loadSite, offset);
+    if (!owner) {
+        if (logging) [[unlikely]]
+            dataLogLn("[fieldtype] DECLINE no-owner loadSite=", loadSite->id().bits(), " offset=", offset);
+        return result;
+    }
+
+    RefPtr record = fieldTypeRecordFor(owner, offset);
+    StructureID expectedID = fieldTypeExpectedFor(owner, offset);
+    if (!expectedID) {
+        if (logging) [[unlikely]] {
+            // "absent" means no creation path recorded this field, a coverage bug, while "generalized" means
+            // the field really is polymorphic. Ask the table, since fieldTypeRecordFor nulls out both.
+            const char* why = "absent";
+            if (auto* table = m_vm.fieldTypeWatchpoints(); table && table->hasEntryFor(owner->id(), offset))
+                why = "generalized";
+            dataLogLn("[fieldtype] DECLINE ", why, " owner=", owner->id().bits(), " offset=", offset);
+        }
+        return result;
+    }
+
+    // No property-replacement-watchpoint requirement, which cost 7.4% on delta-blue: every tier checks
+    // replace stores inline instead, and the paths with nowhere to bake an expected StructureID (the
+    // PutByIdReplaceHandler thunk, the InlineAccess stub, the LLInt metadata cache) decline and generalize.
+
+    Structure* expected = expectedID.decode();
+    if (!expected)
+        return result;
+
+    // BLAST-RADIUS CAP. A withdrawal fires a CodeBlockJettisoningWatchpoint, and JSC's DFG has exactly one
+    // currency for a watchpoint-backed assumption -- every DesiredWatchpoints path installs one, so there is no
+    // cheap "exit instead of jettison" to move onto. What IS controllable is how many CodeBlocks a single
+    // withdrawal can discard. Measured on raytrace: THREE claims (direction 107 dependents, color 106,
+    // position 69) account for 282 invalidated CodeBlocks and the whole 5.2-point regression, and the claims are
+    // contradicted only after those dependents have accrued, so no admission or provenance rule can see it coming
+    // (seven count axes plus provenance are all closed, todo/24).
+    //
+    // Declining to narrow is SOUND unconditionally: it forgoes an optimisation and registers no dependency.
+    if (unsigned cap = Options::fieldTypeMaxDependentsPerClaim()) [[unlikely]] {
+        if (record->dependents() >= cap) {
+            if (logging) [[unlikely]]
+                dataLogLn("[fieldtype] DECLINE dependent-cap owner=", owner->id().bits(), " offset=", offset,
+                    " dependents=", record->dependents());
+            return result;
+        }
+    }
+
+    if (!tryWatch(expected)) {
+        if (logging) [[unlikely]]
+            dataLogLn("[fieldtype] DECLINE not-watchable expected=", expectedID.bits());
+        return result;
+    }
+
+    // BLAST-RADIUS CAP, measured for acorn-wtb 2026-08-26. The cap above is the whole mechanism; the maxima that
+    // make it usable are: delta-blue 556 dependents on its widest claim, acorn-wtb 2,544 and 738, babel-wtb 32.
+    // A threshold in (556, 738) therefore blocks acorn's two widest claims -- including Token.type, whose 738
+    // dependents span 29 functions and take 22 CodeBlocks down at one instant (verified/17) -- while declining
+    // NOTHING on delta-blue. It cannot help babel-wtb, whose regression is therefore not fan-out driven.
+    // PAY FOR WHAT YOU USE. If this claim has been narrowed on repeatedly and has never once let
+    // DFGConstantFoldingPhase fold a structure check, the narrowing is buying nothing while its dependency exposes
+    // every consumer to a jettison on withdrawal -- acorn-wtb's 4,498 narrowings fold ~2 checks and cost 36
+    // CodeBlocks (verified/17, verified/19). Declining is sound with no further argument: it forgoes an
+    // optimisation and registers no dependency. See FieldTypeRecord::noteNarrowing for the measured densities.
+    if (Options::useFieldTypeFoldGatedNarrowing() && record) [[unlikely]] {
+        if (record->narrowingHasProvedWorthless()) {
+            if (logging) [[unlikely]] {
+                dataLogLn("[fieldtype] DECLINE foldless owner=", owner->id().bits(), " offset=", offset,
+                    " narrowings=", record->narrowings(), " folds=0");
+            }
+            return result;
+        }
+        record->noteNarrowing();
+    }
+
+
+    // Fired whenever a store generalizes the field, which jettisons this compilation.
+    //
+    // CEILING MEASUREMENT for the only untried lever on the raytrace family. These two lines are where the 282
+    // dependents come from -- store-side registration sheds none of them (REGISTER-WATCHPOINT 61 -> 0 leaves the
+    // counts at 121/107/60). The sound fix would emit a CheckFieldType at the narrowed load, which loads
+    // record->addressOfExpected() at runtime and needs no dependency, so a withdrawal would cost one OSR exit per
+    // function instead of jettisoning every dependent. That is a restructuring of how the AI and
+    // ConstantFoldingPhase cooperate, since narrowing happens in the abstract interpreter which cannot insert
+    // nodes. Skipping the registration measures the BENEFIT half alone -- UNSOUND (narrowed code is never
+    // invalidated) but it bounds what the sound version could recover before it is worth building.
+    // HALF 2: with a CheckFieldType inserted at the load (DFGConstantFoldingPhase), the narrowing is justified by
+    // a runtime check rather than by this dependency, so the compilation must not be jettisoned on withdrawal --
+    // it exits and recompiles instead. Keep the record alive because CheckFieldType bakes its claim-slot address.
+    //
+    // FIXED 2026-08-26. This used to `return result` here, i.e. narrow NOTHING, so the option measured
+    // `useFieldTypeNarrowing=0` PLUS redundant checks -- which is how a ~12.5-point item was retired on a
+    // "delta-blue -13.2%" taken against zero narrowing. It now falls through and narrows; the only thing the
+    // option changes is WHO justifies the narrowing, a runtime check instead of a jettisoning watchpoint.
+    //
+    // Requires a live `record`: the check bakes record->addressOfExpected(), so a word-only claim (no entry, hence
+    // no address) has nothing to load and must keep the watchpoint. Requires LoadedCheck: MultiGetByOffset gets no
+    // check inserted, so dropping its dependency would leave a narrowing that outlives the claim.
+    bool narrowingIsGuardedByLoadedCheck = Options::useFieldTypeConsumerLoadedCheck()
+        && !Options::fieldTypeMeasureLoadedCheckCostOnly()
+        && guard == FieldTypeNarrowingGuard::LoadedCheck
+        && record;
+    if (narrowingIsGuardedByLoadedCheck) [[unlikely]]
+        m_plan.keepFieldTypeRecordAlive(*record);
+
+    // RISK PROBE: keep the record alive so the inserted CheckFieldType has a slot address to bake, but do NOT
+    // return -- fall through and narrow as usual. delta-blue then pays the check while keeping the folding, which
+    // isolates the cost of loading from the loss of narrowing that the broken leg was measuring.
+    if (Options::fieldTypeMeasureLoadedCheckCostOnly()) [[unlikely]]
+        m_plan.keepFieldTypeRecordAlive(*record);
+
+    if (logging) [[unlikely]] {
+        // The compiling CodeBlock is what makes this actionable: the (owner, offset) pair alone cannot say which
+        // function the narrowing lands in, so a disassembly-level comparison has no target to aim at.
+        dataLogLn("[fieldtype] NARROW loadSite=", loadSite->id().bits(), " owner=", owner->id().bits(),
+            " offset=", offset, " expected=", expectedID.bits(),
+            " inFunc=", m_codeBlock->inferredNameWithHash(),
+            " tier=", m_codeBlock->jitType());
+    }
+
+    if (Options::useDollarVM()) [[unlikely]]
+        m_vm.fieldTypeNarrowCount().fetch_add(1, std::memory_order_relaxed);
+    // The runtime check subsumes the dependency: CheckFieldType reloads the claim on every execution, so a
+    // withdrawal makes the compare fail and the site OSR-exits. Registering here as well would reintroduce exactly
+    // the jettison this is removing -- 36 CodeBlocks on acorn-wtb from 3 withdrawals, one of which fans out to 738
+    // dependents and takes 22 CodeBlocks down at the same instant.
+    if (Options::useFieldTypeConsumerWatchpointRegistration() && !narrowingIsGuardedByLoadedCheck) [[likely]] {
+        record->noteDependent();
+        watchpoints().addLazily(record->watchpoints());
+    }
+
+    result.set(*this, registerStructure(expected));
+    if (clobberState == StructuresAreClobbered)
+        result.clobberStructures(*this);
+    return result;
+}
+
+// The owner comes from StorageAccessData, not the base's structure: at a creating PutByOffset the base still
+// carries the old structure (PutByOffset then PutStructure), which does not own the offset.
+RefPtr<FieldTypeRecord> Graph::fieldTypeRecordForStore(const StorageAccessData& data)
+{
+    if (!Options::useFieldTypeAssumptions())
+        return nullptr;
+    if (!data.fieldTypeOwner || data.offset == invalidOffset)
+        return nullptr;
+
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return nullptr;
+
+    // recordForStoreSite, not fieldTypeRecordFor: a site compiled with no check must not leave the field claimable.
+    RefPtr record = table->recordForStoreSite(data.fieldTypeOwner->id(), data.offset, "dfg-owner-known");
+    if (!record || !record->expected()) {
+        if (Options::logFieldTypes()) [[unlikely]] {
+            dataLogLn("[fieldtype] STORE-DECLINE no-record (owner-known) owner=", data.fieldTypeOwner->id().bits(), " offset=", data.offset);
+        }
+        return nullptr;
+    }
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] STORE-CHECK (owner-known) owner=", data.fieldTypeOwner->id().bits(), " offset=", data.offset, " expected=", fieldTypeExpectedFor(data.fieldTypeOwner.get(), data.offset).bits());
+    return record;
+}
+
+Structure* Graph::commonFieldTypeOwner(const StructureSet& set, PropertyOffset offset)
+{
+    Structure* owner = nullptr;
+    for (unsigned i = set.size(); i--;) {
+        Structure* candidate = set[i]->findOffsetOwner(offset);
+        if (!candidate)
+            return nullptr;
+        if (!owner)
+            owner = candidate;
+        else if (owner != candidate)
+            return nullptr;
+    }
+    return owner;
+}
+
+StructureID Graph::provenSingleStructure(const AbstractValue& value)
+{
+    if (value.m_type & ~SpecCell)
+        return StructureID();
+    if (!value.m_structure.isFinite() || value.m_structure.size() != 1)
+        return StructureID();
+    Structure* structure = value.m_structure.at(0).get();
+    return structure ? structure->id() : StructureID();
+}
+
+bool Graph::handleMaterializedField(Structure* structure, PropertyOffset offset, StructureID provenValueStructure)
+{
+    if (!Options::useFieldTypeAssumptions() || !structure || structure->isDictionary() || offset == invalidOffset)
+        return false;
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return false;
+    Structure* owner = structure->findOffsetOwner(offset);
+    if (!owner) {
+        // No single claim describes this field, so fall back to what this path did before.
+        poisonFieldTypeAcrossAncestry(structure, offset);
+        return false;
+    }
+    StructureID claimed = table->expectedFor(owner->id(), offset);
+    if (!claimed) {
+        poisonFieldTypeForUncheckedWrite(structure, offset);
+        return false;
+    }
+    if (provenValueStructure && provenValueStructure == claimed) {
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] MATERIALIZE-PROVEN owner=", owner->id().bits(), " offset=", offset, " claimed=", claimed.bits());
+        return false;
+    }
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] MATERIALIZE-NEEDS-RECORD owner=", owner->id().bits(), " offset=", offset,
+            " claimed=", claimed.bits(), " proven=", provenValueStructure.bits());
+    return true;
+}
+
+
+Edge Graph::storedValueEdge(Node* node)
+{
+    switch (node->op()) {
+    case PutByOffset:
+        return node->child3();
+    case MultiPutByOffset:
+        return node->child2();
+    default:
+        return Edge();
+    }
+}
+
+void Graph::poisonFieldTypeAcrossAncestry(Structure* base, PropertyOffset offset, StructureID provenValueStructure)
+{
+    if (!Options::useFieldTypeUncheckedWritePoisoning()) [[unlikely]]
+        return;
+    if (!Options::useFieldTypeAssumptions() || !base || offset == invalidOffset)
+        return;
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return;
+    for (Structure* candidate = base; candidate; candidate = candidate->previousID()) {
+        // recordFor, not recordForStoreSite: creating an entry for every ancestor at this offset pollutes the
+        // table with unrelated properties that merely share it, which the C++ replace hook then withdraws.
+        RefPtr record = table->recordFor(candidate->id(), offset);
+        if (record && record->expected()) {
+            if (Options::useFieldTypeAncestryProof() && provenValueStructure && record->expected() == provenValueStructure) {
+                // The store provably satisfies this claim, so it cannot violate it. Sound with no dependency:
+                // claims only ever generalise, never re-point.
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] ANCESTRY-PROVEN owner=", candidate->id().bits(), " offset=", offset);
+                continue;
+            }
+            if (Options::logFieldTypes()) [[unlikely]]
+                dataLogLn("[fieldtype] POISON-UNPROVABLE-OWNER owner=", candidate->id().bits(), " offset=", offset);
+            m_plan.addFieldTypeToGeneralize(*record);
+        }
+    }
+}
+
+void Graph::poisonAllFieldTypesAtOffset(PropertyOffset offset)
+{
+    if (!Options::useFieldTypeUncheckedWritePoisoning()) [[unlikely]]
+        return;
+    if (!Options::useFieldTypeAssumptions() || offset == invalidOffset)
+        return;
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return;
+    // The enumerated walk below reaches every MATERIALISED claim. A word-only claim (useFieldTypeLazyEntries)
+    // has no table entry and is therefore invisible to it, so record the offset instead: from here no word-only
+    // claim at this offset may be established or materialised, which is what keeps one from ever being narrowed
+    // on behind this unchecked store. Word-only claims have no dependents, so nothing compiled needs discarding.
+    table->notePoisonedOffset(offset);
+    Vector<RefPtr<FieldTypeRecord>> victims = table->recordsAtOffset(offset);
+    if (Options::logFieldTypes() && !victims.isEmpty()) [[unlikely]]
+        dataLogLn("[fieldtype] POISON-ALL-AT-OFFSET offset=", offset, " count=", victims.size());
+    for (auto& record : victims) {
+        if (record)
+            m_plan.addFieldTypeToGeneralize(*record);
+    }
+}
+
+void Graph::poisonFieldTypeForUncheckedWrite(Structure* structure, PropertyOffset offset)
+{
+    if (!Options::useFieldTypeUncheckedWritePoisoning()) [[unlikely]]
+        return;
+    if (!Options::useFieldTypeAssumptions())
+        return;
+    if (!structure || offset == invalidOffset)
+        return;
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return;
+    Structure* owner = structure->findOffsetOwner(offset);
+    if (!owner)
+        return;
+
+    // recordForStoreSite, so a field with no record yet is poisoned too: a later claim would be falsified here.
+    RefPtr record = table->recordForStoreSite(owner->id(), offset, "dfg-unchecked-write");
+    if (record && record->expected()) {
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] POISON-UNCHECKED-WRITE owner=", owner->id().bits(), " offset=", offset);
+        m_plan.addFieldTypeToGeneralize(*record);
+    }
+}
+
+Structure* Graph::fieldTypeOwnerFor(Structure* site, PropertyOffset offset)
+{
+    if (!site || offset == invalidOffset)
+        return nullptr;
+    if (!Options::useFieldTypeCompilerOwnerMemo()) [[unlikely]]
+        return site->findOffsetOwner(offset);
+    uint64_t key = fieldTypeMemoKey(site->id(), offset);
+    auto memo = m_fieldTypeOwnerMemo.find(key);
+    if (memo != m_fieldTypeOwnerMemo.end()) [[likely]]
+        return memo->value;
+    Structure* owner = site->findOffsetOwner(offset);
+    m_fieldTypeOwnerMemo.add(key, owner);
+    return owner;
+}
+
+RefPtr<FieldTypeRecord> Graph::fieldTypeRecordFor(Structure* owner, PropertyOffset offset)
+{
+    if (!Options::useFieldTypeAssumptions())
+        return nullptr;
+    if (!owner || offset == invalidOffset)
+        return nullptr;
+
+    // Memoised, record and expected together: the mutator may generalize concurrently, so this must give
+    // exactly one answer per compilation. See the header.
+    uint64_t key = fieldTypeMemoKey(owner->id(), offset);
+    auto memo = m_fieldTypeRecordMemo.find(key);
+    if (memo != m_fieldTypeRecordMemo.end())
+        return memo->value.expected ? memo->value.record : nullptr;
+
+    FieldTypeDecision decision;
+    if (auto* table = m_vm.fieldTypeWatchpoints()) {
+        RefPtr record = table->recordFor(owner->id(), offset);
+        if (record) {
+            StructureID expected = record->expected();
+            if (expected) {
+                decision.record = WTF::move(record);
+                decision.expected = expected;
+            }
+        }
+    }
+    m_fieldTypeRecordMemo.add(key, decision);
+    return decision.expected ? decision.record : nullptr;
+}
+
+// The expected structure this compilation committed to for (owner, offset), or a null StructureID if it
+// declined. Always use this rather than FieldTypeRecord::expected(), which can change under us.
+StructureID Graph::fieldTypeExpectedFor(Structure* owner, PropertyOffset offset)
+{
+    if (!owner || offset == invalidOffset)
+        return StructureID();
+    if (!fieldTypeRecordFor(owner, offset))
+        return StructureID();
+    auto memo = m_fieldTypeRecordMemo.find(fieldTypeMemoKey(owner->id(), offset));
+    ASSERT(memo != m_fieldTypeRecordMemo.end());
+    return memo->value.expected;
+}
+
+RefPtr<FieldTypeRecord> Graph::fieldTypeRecordForStore(const StorageAccessData& data, const StructureAbstractValue& baseStructures, StructureID provenValueStructure)
+{
+    // A creating store already knows its owner; nothing to resolve.
+    if (data.fieldTypeOwner)
+        return fieldTypeRecordForStore(data);
+
+    if (!Options::useFieldTypeAssumptions())
+        return nullptr;
+    // isFinite() excludes Top and clobbered sets, where not every base structure is known and no owner can be proven.
+    if (data.offset == invalidOffset || !baseStructures.isFinite() || !baseStructures.size()) {
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] STORE-DECLINE base-not-finite offset=", data.offset, " finite=", baseStructures.isFinite(), " size=", baseStructures.isFinite() ? baseStructures.size() : 0);
+        // The base could be any object, so no claim at this offset can survive this store.
+        poisonAllFieldTypesAtOffset(data.offset);
+        return nullptr;
+    }
+
+    auto* table = m_vm.fieldTypeWatchpoints();
+    if (!table)
+        return nullptr;
+
+    // Every possible base structure must agree on the owner, or one check cannot maintain all their records.
+    Structure* owner = nullptr;
+    for (size_t i = baseStructures.size(); i--;) {
+        Structure* candidate = fieldTypeOwnerFor(baseStructures.at(i).get(), data.offset);
+        if (!candidate) {
+            // Unprovable owner (a dictionary, or offsets reused after deletion): subtract the claims.
+            for (size_t j = baseStructures.size(); j--;)
+                poisonFieldTypeAcrossAncestry(baseStructures.at(j).get(), data.offset, provenValueStructure);
+            return nullptr;
+        }
+        if (!owner)
+            owner = candidate;
+        else if (owner != candidate) {
+            for (size_t j = baseStructures.size(); j--;)
+                poisonFieldTypeAcrossAncestry(baseStructures.at(j).get(), data.offset, provenValueStructure);
+            return nullptr;
+        }
+    }
+    if (!owner) {
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] STORE-DECLINE no-owner offset=", data.offset);
+        return nullptr;
+    }
+
+    // recordForStoreSite POISONS as a side effect of being asked: on a new entry it inserts the permanently-
+    // generalised (null) record and returns nullptr, so this function then declines the very check it is capable
+    // of emitting. Measured consequence: STORE-CHECK is **0** on raytrace, delta-blue, chai-wtb and babel-wtb
+    // alike, against 565 / 173 / 79 / 1747 STORE-DECLINE(no-record) -- the store-side check never fires anywhere
+    // in the suite, while the pre-emptive poisoning destroys claims the hot functions were narrowing on. Turning
+    // the whole store-site machinery off recovers **raytrace +6.01 points (112%)** and *improves* delta-blue
+    // (+9.47% -> +9.88%), so the poisoning is pure cost on both sides of the ledger.
+    //
+    // With this option false the lookup does not poison. UNSOUND until the "claim established later" hole is
+    // closed: a store site compiled with no check must be invalidated if a claim forms afterwards, which the
+    // emitted check cannot do by itself -- it loads addressOfExpected() and exits when it reads ZERO
+    // (DFGSpeculativeJIT.cpp:14831), which covers WITHDRAWAL but not ESTABLISHMENT. The verifier
+    // (validateFieldTypes=1) is the gate for that hole, and it is the reason this ships behind a flag.
+    RefPtr record = Options::useFieldTypeDFGStoreSitePoisoning()
+        ? table->recordForStoreSite(owner->id(), data.offset)
+        : table->recordFor(owner->id(), data.offset);
+    if (!record || !record->expected()) {
+        if (Options::logFieldTypes()) [[unlikely]] {
+            dataLogLn("[fieldtype] STORE-DECLINE no-record owner=", owner->id().bits(), " offset=", data.offset);
+        }
+        return nullptr;
+    }
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] STORE-CHECK owner=", owner->id().bits(), " offset=", data.offset, " expected=", fieldTypeExpectedFor(owner, data.offset).bits());
+    return record;
+}
+
 AbstractValue Graph::inferredValueForProperty(
     const AbstractValue& base, PropertyOffset offset,
     StructureClobberState clobberState)
@@ -1423,6 +1897,12 @@ AbstractValue Graph::inferredValueForProperty(
         result.set(*this, *freeze(value), clobberState);
         return result;
     }
+
+    // Single structure, so DFGConstantFoldingPhase can resolve the owner and insert a CheckFieldType after the load.
+    AbstractValue inferred = fieldTypeAssumptionValue(
+        base.m_structure.onlyStructure(), offset, clobberState, FieldTypeNarrowingGuard::LoadedCheck);
+    if (!inferred.isClear())
+        return inferred;
 
     return AbstractValue::heapTop();
 }
@@ -1434,6 +1914,13 @@ AbstractValue Graph::inferredValueForProperty(const AbstractValue& base, const R
         result.set(*this, *freeze(value), clobberState);
         return result;
     }
+
+    // MultiGetByOffset merges over a structure set. DFGConstantFoldingPhase deliberately inserts no CheckFieldType
+    // here, so this narrowing has no runtime guard and must keep the watchpoint dependency.
+    AbstractValue inferred = fieldTypeAssumptionValue(
+        structureSet.onlyStructure(), offset, clobberState, FieldTypeNarrowingGuard::WatchpointOnly);
+    if (!inferred.isClear())
+        return inferred;
 
     return AbstractValue::heapTop();
 }

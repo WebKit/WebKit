@@ -308,6 +308,12 @@ namespace JSC { namespace DFG {
     macro(RecordRegExpCachedResult, NodeMustGenerate | NodeHasVarArgs) \
     macro(CheckIsConstant, NodeMustGenerate) \
     macro(CheckNotEmpty, NodeMustGenerate) \
+    /* Speculates that child1's structure equals the field type LOADED from a FieldTypeRecord's slot. */\
+    /* OpInfo is the FieldTypeRecord*. Unlike CheckStructure this bakes an ADDRESS, not a value, so the */\
+    /* generated code always sees the current claim: a site compiled before a claim existed still */\
+    /* honours it, and a site whose claim was generalised stops matching. This is V8's shape -- its */\
+    /* store handler bakes the descriptor index and LOADS the field type (accessor-assembler.cc:2431). */\
+    macro(CheckFieldType, NodeMustGenerate) \
     macro(AssertNotEmpty, NodeMustGenerate) \
     macro(CheckBadValue, NodeMustGenerate) \
     macro(AssertInBounds, NodeMustGenerate) \
