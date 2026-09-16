@@ -567,6 +567,8 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
     }
     case CSSSelector::Relation::ShadowSlotted: {
         // We continue matching in the scope where this rule came from.
+        if (checkingContext.styleScopeOrdinal < Style::ScopeOrdinal::FirstSlot)
+            return MatchResult::fails(Match::SelectorFailsCompletely);
         auto slot = Style::assignedSlotForScopeOrdinal(protect(*context.element), checkingContext.styleScopeOrdinal);
         if (!slot)
             return MatchResult::fails(Match::SelectorFailsCompletely);

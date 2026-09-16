@@ -1,0 +1,12 @@
+Test that a slotted light-DOM element forwarded through more than one shadow tree shows the ::slotted() styles from every shadow tree it is slotted through.
+
+Slotted
+
+== Running test suite: CSS.ShadowSlottedNestedStyle
+-- Running test case: CSS.ShadowSlottedNestedStyle.DeeplySlottedElement
+Number of ::slotted() rules found: 2
+PASS: Should find the outer ::slotted(span) rule (first shadow tree).
+PASS: Should find the inner ::slotted(*) rule (second/forwarded shadow tree).
+PASS: The inner ::slotted(*) rule should include its `color` property.
+PASS: The `color` property should be `red`.
+

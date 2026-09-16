@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("CSS.ShadowSlottedStyle");
+
+    suite.addTestCase({
+        name: "CSS.ShadowSlottedStyle.SlottedElement",
+        description: "A slotted light-DOM element should be shown the ::slotted() styles that target it from the shadow tree.",
+        test(resolve, reject) {
+            documentNode.querySelector("#slotted-node", (nodeId) => {
+                if (!nodeId) {
+                    InspectorTest.fail("Slotted node not found.");
+                    reject();
+                    return;
+                }
+
+                let node = WI.domManager.nodeForId(nodeId);
+                let nodeStyles = WI.cssManager.stylesForNode(node);
+                nodeStyles.refresh().then(() => {
+                    let slottedStyle = nodeStyles.matchedRules.map((match) => match.style).find((style) => style.selectorText && style.selectorText.includes("::slotted"));
+                    InspectorTest.expectThat(slottedStyle, "Should find the ::slotted() rule from the shadow tree.");
+                    if (slottedStyle) {
+                        let colorProperty = slottedStyle.enabledProperties.find((property) => property.name === "color");
+                        InspectorTest.expectThat(colorProperty, "The ::slotted() rule should include its `color` property.");
+                        InspectorTest.expectEqual(colorProperty?.value, "red", "The `color` property should be `red`.");
+                    }
+                    resolve();
+                }).catch(reject);
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that a slotted light-DOM element shows the <code>::slotted()</code> styles that target it from the shadow tree.</p>
+<div id="shadow-host"><span id="slotted-node">Slotted</span></div>
+<script>
+(function() {
+    let shadowRoot = document.getElementById("shadow-host").attachShadow({mode: "open"});
+    shadowRoot.innerHTML = `<style>::slotted(span) { color: red; }</style><slot></slot>`;
+})();
+</script>
+</body>
+</html>
