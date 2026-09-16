@@ -1275,6 +1275,45 @@ LayoutRect RenderBoxModelObject::borderBoxRectInContainer() const
 
     return boundingBoxOfFragments();
 }
+auto RenderBoxModelObject::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRects
+{
+    // RepaintOutlineBounds is unused for inlines.
+
+    // Only first-letter renderers are allowed in here during layout. They mutate the tree triggering repaints.
+#ifndef NDEBUG
+    auto insideSelfPaintingInlineBox = [&] {
+        if (hasSelfPaintingLayer())
+            return true;
+        auto* containingBlock = this->containingBlock();
+        for (auto* ancestor = this->parent(); ancestor && ancestor != containingBlock; ancestor = ancestor->parent()) {
+            if (ancestor->hasSelfPaintingLayer())
+                return true;
+        }
+        return false;
+    };
+    ASSERT_UNUSED(insideSelfPaintingInlineBox, !view().frameView().layoutContext().isPaintOffsetCacheEnabled() || style().pseudoElementType() == PseudoElementType::FirstLetter || insideSelfPaintingInlineBox());
+#endif
+
+    if (!firstLegacyInlineBoxFor(*this) && !LayoutIntegration::LineLayout::containing(*this))
+        return { };
+
+    auto repaintRect = visualOverflowRect();
+    repaintRect.inflate(LayoutUnit { style().usedOutlineSize(style().usedZoomForLength(), style().deviceScaleFactor()) });
+    return { repaintRect };
+}
+
+
+LayoutRect RenderBoxModelObject::rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const
+{
+    auto rect = RenderLayerModelObject::rectWithOutlineForRepaint(repaintContainer, outlineWidth);
+    if (!isInlineBox())
+        return rect;
+
+    for (auto& child : childrenOfType<RenderElement>(*this))
+        rect.unite(child.rectWithOutlineForRepaint(repaintContainer, outlineWidth));
+    return rect;
+}
+
 LayoutRect RenderBoxModelObject::visualOverflowRect() const
 {
     if (auto* layout = LayoutIntegration::LineLayout::containing(*this)) {
