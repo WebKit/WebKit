@@ -45,6 +45,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageDecoderAVFManager);
 
 RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     ASSERT(RemoteImageDecoderAVF::canDecodeType(mimeType));
 
     if (!WebProcess::singleton().mediaPlaybackEnabled())
@@ -63,6 +66,9 @@ RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(F
 
 void RemoteImageDecoderAVFManager::deleteRemoteImageDecoder(const ImageDecoderIdentifier& identifier)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     m_remoteImageDecoders.take(identifier);
     if (auto gpuProcessConnection = m_gpuProcessConnection.get())
         gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::DeleteDecoder(identifier), 0);
@@ -121,6 +127,9 @@ void RemoteImageDecoderAVFManager::setUseGPUProcess(bool useGPUProcess)
 
 void RemoteImageDecoderAVFManager::encodedDataStatusChanged(const ImageDecoderIdentifier& identifier, uint64_t frameCount, const WebCore::IntSize& size, bool hasTrack)
 {
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    assertIsMainRunLoop();
+#endif
     if (!m_remoteImageDecoders.contains(identifier))
         return;
 

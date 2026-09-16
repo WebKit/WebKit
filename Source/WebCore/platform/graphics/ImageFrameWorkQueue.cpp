@@ -106,7 +106,11 @@ void ImageFrameWorkQueue::start()
         }
 
         // Ensure destruction happens on creation thread.
-        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)] () mutable { });
+        callOnMainThread([protectedThis = WTF::move(protectedThis), protectedWorkQueue = WTF::move(protectedWorkQueue), protectedSource = WTF::move(protectedSource)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            , protectedDecoder = WTF::move(protectedDecoder)
+#endif
+            ] () mutable { });
     });
 }
 
