@@ -3352,6 +3352,12 @@ void WebPageProxy::setObscuredContentInsets(const WebCore::FloatBoxExtent& obscu
 #else
     send(Messages::WebPage::SetObscuredContentInsets(m_internals->obscuredContentInsets));
 #endif
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (&webProcess == &legacyMainFrameProcess())
+            return;
+        webProcess.send(Messages::WebPage::SetObscuredContentInsets(m_internals->obscuredContentInsets), pageID);
+    });
 }
 
 const WebCore::FloatBoxExtent& WebPageProxy::obscuredContentInsets() const
