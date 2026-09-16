@@ -8837,6 +8837,15 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         m_sessionHistoryTraversalQueue->traversalDidSettle();
         recordFirstPartyVisit(request.url());
+
+#if ENABLE(GPU_PROCESS) && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
+        // The new document has no media sessions, and the GPU process hears that over a connection that is
+        // not ordered against this commit. Withdraw the page's candidacy so the election cannot disagree.
+        if (restoredFromBackForwardCache == RestoredFromBackForwardCache::No) {
+            if (RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated())
+                gpuProcess->withdrawNowPlayingCandidatesForPage(*this);
+        }
+#endif
     }
 
     if (frame->provisionalFrame()) {

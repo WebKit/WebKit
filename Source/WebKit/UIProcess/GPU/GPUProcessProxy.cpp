@@ -588,6 +588,12 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
     ExtensionCapabilityGranter::invalidateGrants(moveToVector(std::exchange(extensionCapabilityGrants(), { }).values()));
 #endif
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    // The election dies with the process, and a replacement starts with no candidates, so it has no owner change
+    // to report. Retire the current owner here or its page keeps claiming the NowPlaying session forever.
+    nowPlayingOwnerDidChange(std::nullopt);
+#endif
+
     if (keptAliveGPUProcessProxy() == this)
         keptAliveGPUProcessProxy() = nullptr;
     if (singleton() == this)
@@ -780,6 +786,59 @@ void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessI
     if (auto process = WebProcessProxy::processForIdentifier(webProcessIdentifier))
         process->requestTermination(ProcessTerminationReason::RequestedByGPUProcess, invalidMessageName);
 }
+
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+static RefPtr<WebPageProxy> pageForNowPlayingOwner(const WebCore::QualifiedPageIdentifier& owner)
+{
+    RefPtr process = WebProcessProxy::processForIdentifier(owner.processIdentifier());
+    if (!process)
+        return nullptr;
+
+    // Under site isolation a page has a different WebCore::PageIdentifier in each of the processes hosting its
+    // frames, so the identifier only resolves within the process the GPU process saw it in.
+    for (Ref page : process->pages()) {
+        if (page->webPageIDInProcess(*process) == owner.object())
+            return page.ptr();
+    }
+    return nullptr;
+}
+
+void GPUProcessProxy::nowPlayingOwnerDidChange(std::optional<WebCore::QualifiedPageIdentifier> ownerPage)
+{
+    if (m_nowPlayingOwnerPage == ownerPage)
+        return;
+
+    if (auto previousOwnerPage = std::exchange(m_nowPlayingOwnerPage, ownerPage)) {
+        if (RefPtr page = pageForNowPlayingOwner(*previousOwnerPage))
+            page->hasActiveNowPlayingSessionChanged(false);
+    }
+
+    if (ownerPage) {
+        if (RefPtr page = pageForNowPlayingOwner(*ownerPage))
+            page->hasActiveNowPlayingSessionChanged(true);
+    }
+}
+
+void GPUProcessProxy::withdrawNowPlayingCandidatesForPage(WebPageProxy& page)
+{
+    Ref protectedPage { page };
+
+    bool wasOwner = false;
+    page.forEachWebContentProcess([&](auto& process, auto pageID) {
+        WebCore::QualifiedPageIdentifier identifier { pageID, process.coreProcessIdentifier() };
+        wasOwner |= m_nowPlayingOwnerPage == identifier;
+        send(Messages::GPUProcess::WithdrawNowPlayingCandidate(identifier), 0);
+    });
+
+    if (!wasOwner)
+        return;
+
+    // Forget the owner as well, so the election result that follows the withdrawal is reported rather than
+    // dropped as unchanged.
+    m_nowPlayingOwnerPage = std::nullopt;
+    protectedPage->hasActiveNowPlayingSessionChanged(false);
+}
+#endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, LayerHostingContextID contextID)

@@ -116,6 +116,7 @@ messages -> GPUProcess : AuxiliaryProcess {
 #endif
 
     SetNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)
+    WithdrawNowPlayingCandidate(WebCore::QualifiedPageIdentifier page)
 }
 
 #endif // ENABLE(GPU_PROCESS)

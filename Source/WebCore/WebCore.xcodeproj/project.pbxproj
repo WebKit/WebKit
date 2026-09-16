@@ -7196,7 +7196,6 @@
 		ECA680C71E67724500731D20 /* StringUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680C61E67724500731D20 /* StringUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDB04F3A278E5539008D3678 /* libwebrtc.dylib in Product Dependencies */ = {isa = PBXBuildFile; fileRef = EDB04F39278E5531008D3678 /* libwebrtc.dylib */; platformFilters = (ios, macos, tvos, ); };
-		EDB1CA5E2E0000000000AC02 /* MediaSessionManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = EDB1CA5E2E0000000000AC01 /* MediaSessionManagerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
 		EE042903F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EE042901F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp */; };
@@ -23423,7 +23422,6 @@
 		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorMac.mm; sourceTree = "<group>"; };
 		EDB04F39278E5531008D3678 /* libwebrtc.dylib */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libwebrtc.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		EDB1CA5E2E0000000000AC01 /* MediaSessionManagerClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionManagerClient.h; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
 		EDEC98020AED7E170059137F /* WebCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		EE042901F1A0DE0100A1B2C3 /* JSDOMBindingFacade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBindingFacade.cpp; sourceTree = "<group>"; };
@@ -44124,7 +44122,6 @@
 				FD31606B12B026F700C1A359 /* HRTFPanner.h */,
 				839BE6D424F58755004DF50F /* IIRFilter.cpp */,
 				839BE6D224F58755004DF50F /* IIRFilter.h */,
-				EDB1CA5E2E0000000000AC01 /* MediaSessionManagerClient.h */,
 				07FDA6B32E16CA53008482F8 /* MediaSessionManagerInterface.cpp */,
 				07307B792DA06AEC00A5EF65 /* MediaSessionManagerInterface.h */,
 				FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */,
@@ -47821,7 +47818,6 @@
 				416ECAE525B58CC400B34DA5 /* MediaSessionGroupIdentifier.h in Headers */,
 				CDA9593F2412BAE000910EEF /* MediaSessionHelperIOS.h in Headers */,
 				414460A22412994500814BE7 /* MediaSessionIdentifier.h in Headers */,
-				EDB1CA5E2E0000000000AC02 /* MediaSessionManagerClient.h in Headers */,
 				417F7AEF2139BF6F00FBA7EC /* MediaSessionManagerCocoa.h in Headers */,
 				07307B7A2DA07F8D00A5EF65 /* MediaSessionManagerInterface.h in Headers */,
 				07638A991884487200E15A1B /* MediaSessionManagerIOS.h in Headers */,

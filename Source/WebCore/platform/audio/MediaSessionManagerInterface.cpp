@@ -29,7 +29,6 @@
 #include "AudioSession.h"
 #include "Document.h"
 #include "Logging.h"
-#include "MediaSessionManagerClient.h"
 #include "NowPlayingInfo.h"
 #include "Page.h"
 #include "PlatformMediaSession.h"
@@ -49,42 +48,13 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSessionManagerInterface);
 
-class PageMediaSessionManagerClient final : public MediaSessionManagerClient {
-    WTF_MAKE_TZONE_ALLOCATED(PageMediaSessionManagerClient);
-public:
-    explicit PageMediaSessionManagerClient(std::optional<PageIdentifier> pageIdentifier)
-        : m_pageIdentifier(pageIdentifier) { }
-
-private:
-    void hasActiveNowPlayingSessionChanged(PlatformMediaSessionInterface*) final
-    {
-        if (RefPtr page = m_pageIdentifier ? Page::fromPageIdentifier(*m_pageIdentifier) : nullptr)
-            page->hasActiveNowPlayingSessionChanged();
-    }
-
-    Markable<PageIdentifier> m_pageIdentifier;
-};
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PageMediaSessionManagerClient);
-
 MediaSessionManagerInterface::MediaSessionManagerInterface(std::optional<PageIdentifier> pageIdentifier)
     : m_pageIdentifier(pageIdentifier)
-    , m_client(makeUnique<PageMediaSessionManagerClient>(pageIdentifier))
 #if !RELEASE_LOG_DISABLED
     , m_stateLogTimer(makeUniqueRef<Timer>(*this, &MediaSessionManagerInterface::dumpSessionStates))
     , m_logger(AggregateLogger::create(this))
 #endif
 {
-}
-
-MediaSessionManagerClient& MediaSessionManagerInterface::client() const
-{
-    return *m_client;
-}
-
-void MediaSessionManagerInterface::setClient(std::unique_ptr<MediaSessionManagerClient>&& client)
-{
-    m_client = WTF::move(client);
 }
 
 MediaSessionManagerInterface::~MediaSessionManagerInterface()
@@ -288,21 +258,6 @@ void MediaSessionManagerInterface::nowPlayingMetadataChanged(const NowPlayingMet
     m_nowPlayingMetadataObservers.forEach([&] (auto& observer) {
         observer(metadata);
     });
-}
-
-bool MediaSessionManagerInterface::hasActiveNowPlayingSessionInGroup(std::optional<MediaSessionGroupIdentifier> mediaSessionGroupIdentifier)
-{
-    bool hasActiveNowPlayingSession = false;
-
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    forEachSessionInGroup(mediaSessionGroupIdentifier, [&](auto& session) {
-        hasActiveNowPlayingSession |= session.isActiveNowPlayingSession();
-    });
-#else
-    UNUSED_PARAM(mediaSessionGroupIdentifier);
-#endif
-
-    return hasActiveNowPlayingSession;
 }
 
 void MediaSessionManagerInterface::enqueueTaskOnMainThread(Function<void()>&& task)

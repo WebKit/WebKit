@@ -2554,12 +2554,6 @@ void WebChromeClient::setIsInRedo(bool isInRedo)
         page->setIsInRedo(isInRedo);
 }
 
-void WebChromeClient::hasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSession)
-{
-    if (RefPtr page = m_page.get())
-        page->hasActiveNowPlayingSessionChanged(hasActiveNowPlayingSession);
-}
-
 #if ENABLE(GPU_PROCESS)
 void WebChromeClient::getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const
 {

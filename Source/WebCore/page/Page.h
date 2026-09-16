@@ -1343,10 +1343,6 @@ public:
     TextEffectController& textEffectController() { return m_textEffectController.get(); }
 #endif
 
-    bool hasActiveNowPlayingSession() const { return m_hasActiveNowPlayingSession; }
-    void hasActiveNowPlayingSessionChanged();
-    void updateActiveNowPlayingSessionNow();
-
 #if PLATFORM(IOS_FAMILY)
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
 #endif
@@ -1882,9 +1878,6 @@ private:
 #endif
 
     HashSet<std::pair<URL, ScriptTrackingPrivacyCategory>> m_scriptTrackingPrivacyReports;
-
-    bool m_hasActiveNowPlayingSession { false };
-    Timer m_activeNowPlayingSessionUpdateTimer;
 
     std::unique_ptr<LoginStatus> m_lastAuthentication;
 

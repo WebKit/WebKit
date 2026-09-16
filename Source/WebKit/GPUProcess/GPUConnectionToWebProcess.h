@@ -173,6 +173,7 @@ public:
         std::optional<WebCore::NowPlayingInfo> info;
     };
     const HashMap<WebCore::PageIdentifier, UniqueRef<NowPlayingCandidate>>& nowPlayingCandidates() const LIFETIME_BOUND { return m_nowPlayingCandidates; }
+    void clearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier>);
     void becomeNowPlayingOwner(WebCore::PageIdentifier);
     void becomeRemoteCommandFallbackTarget();
     void resignNowPlayingManagerClient();
@@ -318,7 +319,6 @@ private:
     void createGPU(WebGPUIdentifier, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGPU(WebGPUIdentifier);
 
-    void clearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier>);
     void setNowPlayingInfoForPage(WebCore::NowPlayingInfo&&, std::optional<WebCore::PageIdentifier>);
     void setNowPlayingCandidateState(WebCore::NowPlayingCandidateState&&);
     void nowPlayingClientDidClose();

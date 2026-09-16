@@ -134,24 +134,13 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 #endif
 
     ASSERT(!m_webProcessConnections.contains(identifier));
-    updateNowPlayingArbiterActive(newConnection->sharedPreferencesForWebProcessValue());
     m_webProcessConnections.add(identifier, WTF::move(newConnection));
-}
-
-void GPUProcess::updateNowPlayingArbiterActive(const SharedPreferencesForWebProcess& sharedPreferences)
-{
-    // Under site isolation the eligible sessions are scattered across processes, so the GPU process elects the
-    // single system owner. Once enabled it stays enabled so an unarbitrated process cannot steal the panel.
-    if (sharedPreferences.remoteMediaSessionManagerEnabled || sharedPreferences.siteIsolationEnabled)
-        m_isNowPlayingArbiterActive = true;
 }
 
 void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
-    if (RefPtr connection = m_webProcessConnections.get(identifier)) {
+    if (RefPtr connection = m_webProcessConnections.get(identifier))
         connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferencesForWebProcess));
-        updateNowPlayingArbiterActive(connection->sharedPreferencesForWebProcessValue());
-    }
     completionHandler();
 }
 
@@ -166,8 +155,7 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
 
-    if (m_isNowPlayingArbiterActive)
-        recomputeNowPlayingOwner();
+    recomputeNowPlayingOwner();
 
     tryExitIfUnusedAndUnderMemoryPressure();
 }
@@ -412,9 +400,6 @@ struct NowPlayingSeat {
 
 void GPUProcess::recomputeNowPlayingOwner()
 {
-    if (!m_isNowPlayingArbiterActive)
-        return;
-
     RefPtr<GPUConnectionToWebProcess> winningConnection;
     std::optional<NowPlayingCandidateState> winnerState;
     std::optional<PageIdentifier> winnerPage;
@@ -495,8 +480,24 @@ void GPUProcess::recomputeNowPlayingOwner()
             seatedConnection->becomeRemoteCommandFallbackTarget();
     }
 
+    auto ownerPage = [&]() -> std::optional<QualifiedPageIdentifier> {
+        if (!eligibleOwner)
+            return std::nullopt;
+        return QualifiedPageIdentifier { eligibleOwner->page, eligibleOwner->process };
+    }();
+    auto previousOwnerPage = [&]() -> std::optional<QualifiedPageIdentifier> {
+        if (!m_activeNowPlayingOwner)
+            return std::nullopt;
+        return QualifiedPageIdentifier { m_activeNowPlayingOwner->page, m_activeNowPlayingOwner->process };
+    }();
+
     m_activeNowPlayingOwner = eligibleOwner;
     m_remoteCommandTarget = commandTarget;
+
+    // The UI process owns the per-page "is the NowPlaying session" state, so it hears the election result
+    // directly rather than through the content processes, none of which can see the whole picture.
+    if (ownerPage != previousOwnerPage)
+        protect(parentProcessConnection())->send(Messages::GPUProcessProxy::NowPlayingOwnerDidChange(ownerPage), 0);
 }
 
 void GPUProcess::setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)
@@ -509,6 +510,14 @@ void GPUProcess::setNowPlayingFallbackSession(std::optional<WebCore::QualifiedMe
         return;
 
     recomputeNowPlayingOwner();
+}
+
+void GPUProcess::withdrawNowPlayingCandidate(WebCore::QualifiedPageIdentifier page)
+{
+    // Sent by the UI process when a page commits a new main-frame load. The page re-enters the election on
+    // its next candidate push if it still has an eligible session.
+    if (RefPtr connection = webProcessConnection(page.processIdentifier()))
+        connection->clearNowPlayingInfoForPage(page.object());
 }
 
 void GPUProcess::nowPlayingClientDidClose(WebCore::ProcessIdentifier process)

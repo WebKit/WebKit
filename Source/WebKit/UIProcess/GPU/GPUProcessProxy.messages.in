@@ -35,6 +35,10 @@ messages -> GPUProcessProxy {
 
     SetMediaCodecCapabilities(struct WebKit::GPUProcessMediaCodecCapabilities mediaCodecCapabilities)
 
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    NowPlayingOwnerDidChange(std::optional<WebCore::QualifiedPageIdentifier> ownerPage)
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     VoiceActivityDetected()
     StartMonitoringCaptureDeviceRotation(WebCore::PageIdentifier pageID, String devicePersistentId);
