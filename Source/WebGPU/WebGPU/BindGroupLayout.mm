@@ -475,7 +475,11 @@ NSString* BindGroupLayout::errorValidatingDynamicOffsets(std::span<const uint32_
 static bool isEqual(const WGPUBufferBindingLayout& entry, const WGPUBufferBindingLayout& otherEntry)
 {
     if (entry.type > WGPUBufferBindingType_ReadOnlyStorage || otherEntry.type > WGPUBufferBindingType_ReadOnlyStorage)
+#ifdef RC_REMOVE_SEC_ACCEL_3
         return true;
+#else
+        return entry.type == otherEntry.type;
+#endif
 
     return entry.type == otherEntry.type && entry.hasDynamicOffset == otherEntry.hasDynamicOffset && entry.minBindingSize == otherEntry.minBindingSize && entry.bufferSizeForBinding == otherEntry.bufferSizeForBinding;
 }
