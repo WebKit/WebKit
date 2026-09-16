@@ -69,6 +69,7 @@ namespace WebCore {
 class AXObjectCache;
 class Color;
 class FragmentedSharedBuffer;
+class FrameView;
 class GraphicsContext;
 class Element;
 class HTMLPlugInElement;
@@ -261,6 +262,16 @@ public:
             return inverseTransform->mapPoint(value);
     }
 
+    // Under site isolation the "root view" above is the local root, not the main frame. These finish
+    // the walk up the remote ancestors, in process.
+    // FIXME: The remote hop omits the ancestor's page scale and obscured content insets.
+    // FIXME: A RemoteFrameView's scroll position only syncs on change, so it reads zero for a frame
+    // that entered its process after the main frame was scrolled.
+    // FIXME: boundsOnScreen(), the accessibility screen conversions and autoscroll need this too.
+    WebCore::FloatPoint convertFromRootViewToMainFrameView(WebCore::FloatPoint) const;
+    WebCore::FloatRect convertFromRootViewToMainFrameView(WebCore::FloatRect) const;
+    void convertTextIndicatorFromRootViewToMainFrameView(WebCore::TextIndicator&) const;
+
     WebCore::IntRect boundsOnScreen() const;
 
     bool showContextMenuAtPoint(const WebCore::IntPoint&);
@@ -380,6 +391,9 @@ protected:
 private:
     bool documentFinishedLoading() const { return m_documentFinishedLoading; }
     void ensureDataBufferLength(uint64_t) WTF_REQUIRES_LOCK(m_streamedDataLock);
+
+    // The view convertFromPluginToRootView() lands in: this process's root frame, whichever kind it is.
+    RefPtr<WebCore::FrameView> rootFrameView() const;
 
     bool NODELETE haveStreamedDataForRange(uint64_t offset, size_t count) const WTF_REQUIRES_LOCK(m_streamedDataLock);
     // This just checks whether the CFData is large enough; it doesn't know if we filled this range with data.
