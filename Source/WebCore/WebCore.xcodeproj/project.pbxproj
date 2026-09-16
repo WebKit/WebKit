@@ -1821,7 +1821,7 @@
 		4650AD1926FCCA650047F7AD /* WorkerThreadMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 4650AD1726FCCA5A0047F7AD /* WorkerThreadMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		465307D01DB6EE4800E4137C /* JSUIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E045EF1DAA104F00B0D8B9 /* JSUIEventInit.h */; };
 		46531BB42D616BCE008D8EFC /* CSSPropertyParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7C5E602BE2A8FB00AE645C /* CSSPropertyParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		46531BB52D616D7A008D8EFC /* CSSCustomPropertySyntax.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7C5E4B2BE2A8FB00AE645C /* CSSCustomPropertySyntax.h */; };
+		46531BB52D616D7A008D8EFC /* CSSCustomPropertySyntax.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7C5E4B2BE2A8FB00AE645C /* CSSCustomPropertySyntax.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4664D1A62964FCE8006FE0C5 /* GamepadHapticActuator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4664D1A22964FCD4006FE0C5 /* GamepadHapticActuator.cpp */; };
 		4664D1A72964FCF0006FE0C5 /* GamepadEffectParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 4664D1A42964FCD5006FE0C5 /* GamepadEffectParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4664D1A82964FCF7006FE0C5 /* GamepadHapticActuator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4664D1A12964FCD4006FE0C5 /* GamepadHapticActuator.h */; };
@@ -5652,8 +5652,10 @@
 		BCC0E8761BFE70E9008F7F50 /* HTMLPictureElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0F3CA2D98568E0065B859 /* LayoutRange.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0F3BD2D9850DA0065B859 /* LayoutRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0F3D22D99A2270065B859 /* CSSURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0F3D12D99A2270065B859 /* CSSURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1EE518E5ED7854C9B3BB1291 /* CSSTypeSpecifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AA321BD6D035E8292E5CB4E /* CSSTypeSpecifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC0F3D62D99BDD90065B859 /* CSSURLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0F3D52D99BDD90065B859 /* CSSURLValue.h */; };
 		BCC0F3DA2D99D4860065B859 /* StyleURL.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC0F3D92D99D4860065B859 /* StyleURL.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C82ACAE0E24A5249B6C8784B /* StyleTypeSpecifier.h in Headers */ = {isa = PBXBuildFile; fileRef = CE0C2099825255908A525A56 /* StyleTypeSpecifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCC5BE010C0E93110011C2DB /* JSCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC5BDFF0C0E93110011C2DB /* JSCSSStyleSheet.h */; };
 		BCC9ECA92FED9AE0006C8BAD /* CSSPrimitiveNumeric+Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC9ECA82FED9A69006C8BAD /* CSSPrimitiveNumeric+Forward.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCCBAD410C18C14200CE890F /* JSHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BCCBAD3F0C18C14200CE890F /* JSHTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -20521,12 +20523,15 @@
 		BCC0E8741BFE70E9008F7F50 /* HTMLPictureElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPictureElement.h; sourceTree = "<group>"; };
 		BCC0F3BD2D9850DA0065B859 /* LayoutRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutRange.h; sourceTree = "<group>"; };
 		BCC0F3D12D99A2270065B859 /* CSSURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSURL.h; sourceTree = "<group>"; };
+		2AA321BD6D035E8292E5CB4E /* CSSTypeSpecifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSTypeSpecifier.h; sourceTree = "<group>"; };
+		DD089D74978D52F3A208C61F /* CSSTypeSpecifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTypeSpecifier.cpp; sourceTree = "<group>"; };
 		BCC0F3D32D99A9DC0065B859 /* CSSURL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSURL.cpp; sourceTree = "<group>"; };
 		BCC0F3D42D99BDD90065B859 /* CSSURLValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSURLValue.cpp; sourceTree = "<group>"; };
 		BCC0F3D52D99BDD90065B859 /* CSSURLValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSURLValue.h; sourceTree = "<group>"; };
 		BCC0F3D72D99C9BA0065B859 /* StyleFilterReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleFilterReference.h; sourceTree = "<group>"; };
 		BCC0F3D82D99C9CF0065B859 /* StyleFilterReference.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleFilterReference.cpp; sourceTree = "<group>"; };
 		BCC0F3D92D99D4860065B859 /* StyleURL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleURL.h; sourceTree = "<group>"; };
+		CE0C2099825255908A525A56 /* StyleTypeSpecifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleTypeSpecifier.h; sourceTree = "<group>"; };
 		BCC0F3DB2D9A1D100065B859 /* StyleURL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleURL.cpp; sourceTree = "<group>"; };
 		BCC38E8E2C25E0270013821F /* CSSPropertyParserConsumer+Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+Image.cpp"; sourceTree = "<group>"; };
 		BCC38E8F2C25E0270013821F /* CSSPropertyParserConsumer+Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+Image.h"; sourceTree = "<group>"; };
@@ -39376,6 +39381,8 @@
 				BC66AF5B2F7D8EBA00345E91 /* CSSString.h */,
 				BC05ACCD2CEE600D00750CB1 /* CSSSymbol.cpp */,
 				BC05ACCC2CEE600D00750CB1 /* CSSSymbol.h */,
+				DD089D74978D52F3A208C61F /* CSSTypeSpecifier.cpp */,
+				2AA321BD6D035E8292E5CB4E /* CSSTypeSpecifier.h */,
 				BCB271E52CC0142C00265123 /* CSSUnevaluatedCalc.cpp */,
 				BCB271E42CC0142C00265123 /* CSSUnevaluatedCalc.h */,
 				BCC0F3D32D99A9DC0065B859 /* CSSURL.cpp */,
@@ -39452,6 +39459,7 @@
 				28A097C5302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h */,
 				BC66AF5A2F7D8E4000345E91 /* StyleString.cpp */,
 				BC66AF592F7D8D3B00345E91 /* StyleString.h */,
+				CE0C2099825255908A525A56 /* StyleTypeSpecifier.h */,
 				BCA1C700000000000000000A /* StyleUnevaluatedCalcSize.cpp */,
 				BCA1C7000000000000000009 /* StyleUnevaluatedCalcSize.h */,
 				BC38D4F22D480063004BE2FF /* StyleUnevaluatedCalculation.cpp */,
@@ -45394,6 +45402,7 @@
 				715AD7212050513F00D592DC /* CSSTransition.h in Headers */,
 				E17B491616A9B094001C8839 /* CSSTransitionEvent.h in Headers */,
 				2A538A2F26F0105200965FC8 /* CSSTranslate.h in Headers */,
+				1EE518E5ED7854C9B3BB1291 /* CSSTypeSpecifier.h in Headers */,
 				BCB272002CC1EB8B00265123 /* CSSUnevaluatedCalc.h in Headers */,
 				371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */,
 				0F6B707A237BC36D0052CA47 /* CSSUnits.h in Headers */,
@@ -49640,6 +49649,7 @@
 				BC4F32B32E89C4DA00F6AEC1 /* StyleTranslateTransformFunction.h in Headers */,
 				E4DEAA1817A93DC3000E0430 /* StyleTreeResolver.h in Headers */,
 				CD671CA02F5D0A7F00B387A2 /* StyleTreeResolverInlines.h in Headers */,
+				C82ACAE0E24A5249B6C8784B /* StyleTypeSpecifier.h in Headers */,
 				BCA1C700000000000000000B /* StyleUnevaluatedCalcSize.h in Headers */,
 				BCD67C362D23113B0079EB9C /* StyleUnevaluatedCalculation.h in Headers */,
 				E42E76DC1C7AF77600E3614D /* StyleUpdate.h in Headers */,

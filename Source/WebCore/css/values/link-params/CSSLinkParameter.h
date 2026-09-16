@@ -27,17 +27,45 @@
 
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSDeclarationValue.h>
+#include <WebCore/CSSTypeSpecifier.h>
 #include <WebCore/CSSValueTypes.h>
 
 namespace WebCore {
 namespace CSS {
 
-// The arguments of param(): a name and the value it sets, serialized comma
-// separated. The comma is always present, so an empty value is not coalesced
-// away: param(--a, ) is valid where param(--a) is not.
-// https://github.com/w3c/csswg-drafts/issues/13767
+// <param-spec> = color | accent-color | [ <dashed-ident> <css-type>? ]
+struct ParamSpec {
+    // The <dashed-ident> alternative, whose default comes from the same-named custom
+    // property on the element. The name and type are space separated.
+    struct Custom {
+        CustomIdent name;
+        std::optional<TypeSpecifier> type;
+
+        bool operator==(const Custom&) const = default;
+    };
+
+    Variant<Keyword::Color, Keyword::AccentColor, Custom> value;
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        return WTF::switchOn(value, std::forward<F>(f)...);
+    }
+
+    bool operator==(const ParamSpec&) const = default;
+};
+
+template<size_t I> const auto& get(const ParamSpec::Custom& custom)
+{
+    if constexpr (!I)
+        return custom.name;
+    else if constexpr (I == 1)
+        return custom.type;
+}
+
+// The arguments of param(): a spec and the value it sets, serialized comma
+// separated. The comma is always present, so an empty value is not coalesced away.
 struct LinkParameter {
-    CustomIdent name;
+    ParamSpec spec;
     DeclarationValue value;
 
     bool operator==(const LinkParameter&) const = default;
@@ -46,12 +74,12 @@ struct LinkParameter {
 template<size_t I> const auto& get(const LinkParameter& parameter)
 {
     if constexpr (!I)
-        return parameter.name;
+        return parameter.spec;
     else if constexpr (I == 1)
         return parameter.value;
 }
 
-// <param()> = param( <dashed-ident> , <declaration-value>? )
+// <param()> = param( <param-spec> , <declaration-value>? )
 // https://drafts.csswg.org/css-link-params/#funcdef-param
 using ParamFunction = FunctionNotation<CSSValueParam, LinkParameter>;
 
@@ -67,5 +95,7 @@ struct LinkParameters : ListOrNone<LinkParameterList> {
 } // namespace CSS
 } // namespace WebCore
 
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ParamSpec::Custom, 2)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::ParamSpec)
 DEFINE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinkParameter, 2)
 DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::CSS::LinkParameters)

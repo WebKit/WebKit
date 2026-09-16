@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSPropertyParserConsumer+LinkParameters.h"
 
+#include "CSSCustomPropertySyntax.h"
 #include "CSSLinkParameter.h"
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
@@ -39,8 +40,37 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-// <param()> = param( <dashed-ident> , <declaration-value>? )
+// <param()>    = param( <param-spec> , <declaration-value>? )
+// <param-spec> = color | accent-color | [ <dashed-ident> <css-type>? ]
 // https://drafts.csswg.org/css-link-params/#funcdef-param
+static std::optional<CSS::ParamSpec> consumeParamSpec(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    switch (range.peek().id()) {
+    case CSSValueColor:
+        range.consumeIncludingWhitespace();
+        return CSS::ParamSpec { CSS::Keyword::Color { } };
+    case CSSValueAccentColor:
+        range.consumeIncludingWhitespace();
+        return CSS::ParamSpec { CSS::Keyword::AccentColor { } };
+    default:
+        break;
+    }
+
+    auto name = consumeUnresolvedDashedIdent(range, state);
+    if (!name)
+        return { };
+
+    std::optional<CSS::TypeSpecifier> type;
+    if (!range.atEnd() && range.peek().type() != CommaToken) {
+        auto syntax = CSSCustomPropertySyntax::consumeType(range);
+        if (!syntax)
+            return { };
+        type = CSS::TypeSpecifier { WTF::move(*syntax) };
+    }
+
+    return CSS::ParamSpec { CSS::ParamSpec::Custom { WTF::move(*name), WTF::move(type) } };
+}
+
 RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyParserState& state)
 {
     if (range.peek().functionId() != CSSValueParam)
@@ -48,8 +78,8 @@ RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyP
 
     auto arguments = consumeFunction(range);
 
-    auto name = consumeUnresolvedDashedIdent(arguments, state);
-    if (!name)
+    auto spec = consumeParamSpec(arguments, state);
+    if (!spec)
         return nullptr;
 
     // The value may be empty but the comma is required.
@@ -63,7 +93,7 @@ RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyP
     if (CSSSubstitutionParser::containsSubstitutionFunctions(arguments, state.context))
         return nullptr;
 
-    return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { WTF::move(*name), CSS::DeclarationValue { CSSVariableData::create(arguments) } } });
+    return CSSParamValue::create(CSS::ParamFunction { CSS::LinkParameter { WTF::move(*spec), CSS::DeclarationValue { CSSVariableData::create(arguments) } } });
 }
 
 } // namespace CSSPropertyParserHelpers
