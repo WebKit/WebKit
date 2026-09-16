@@ -30,6 +30,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/StructuredCloneTags.h>
 #include <WebCore/FileSystemHandleGlobalIdentifier.h>
+#include <WebCore/ImageBufferTransferIdentifier.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -114,6 +115,11 @@ public:
     WEBCORE_EXPORT size_t memoryCost() const;
 
     using NonSerializedDataToken = WebCore::NonSerializedDataToken;
+
+    // Must be called before encoding for a cross-process send. The returned identifiers let the
+    // process brokering delivery hand ownership to the recipient.
+    WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> sinkBuffersIntoTransferHandles();
+    WEBCORE_EXPORT Vector<ImageBufferTransferIdentifier> transferredImageBufferIdentifiers() const;
 
     WEBCORE_EXPORT std::unique_ptr<Vector<JSC::ArrayBufferContents>>& sharedBufferContentsArray();
     WEBCORE_EXPORT std::optional<NonSerializedDataToken> nonSerializedDataToken() const;

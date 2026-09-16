@@ -219,6 +219,30 @@ void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferIdenti
     MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
 }
 
+void RemoteRenderingBackend::moveSerializedBufferToTransferHeap(RemoteSerializedImageBufferIdentifier serializedIdentifier, WebCore::ImageBufferTransferIdentifier transferIdentifier)
+{
+    assertIsCurrent(workQueue());
+    RefPtr imageBuffer = m_sharedResourceCache->takeSerializedImageBuffer(serializedIdentifier);
+    MESSAGE_CHECK(imageBuffer, "Missing SerializedImageBuffer");
+    bool success = GPUProcess::singleton().depositTransferredImageBuffer(transferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier(), imageBuffer.releaseNonNull());
+    MESSAGE_CHECK(success, "Duplicate transferred ImageBuffer");
+}
+
+void RemoteRenderingBackend::takeTransferredBuffer(WebCore::ImageBufferTransferIdentifier transferIdentifier, RenderingResourceIdentifier imageBufferIdentifier, RemoteGraphicsContextIdentifier contextIdentifier)
+{
+    assertIsCurrent(workQueue());
+    // Ownership is handed over before the broker releases the message naming this buffer, so a
+    // claim that cannot be satisfied means the sender was never given this identifier.
+    RefPtr imageBuffer = GPUProcess::singleton().takeTransferredImageBuffer(transferIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier());
+    MESSAGE_CHECK(imageBuffer, "Missing transferred ImageBuffer");
+
+    ImageBufferCreationContext creationContext;
+    adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
+    imageBuffer->transferToNewContext(creationContext);
+    auto result = m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(imageBuffer.releaseNonNull(), imageBufferIdentifier, contextIdentifier, *this));
+    MESSAGE_CHECK(result.isNewEntry, "Duplicate ImageBuffer");
+}
+
 void RemoteRenderingBackend::createSnapshotRecorder(RemoteSnapshotRecorderIdentifier identifier, RemoteSnapshotIdentifier snapshotIdentifier)
 {
     assertIsCurrent(workQueue());

@@ -94,6 +94,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/SerializedScriptValue.h>
 #include <WebCore/StorageAccessQuirks.h>
 #include <WebCore/WebTransportHeaderValidation.h>
 #include <optional>
@@ -1873,11 +1874,27 @@ void NetworkConnectionToWebProcess::takeAllMessagesForPort(const MessagePortIden
         // Now that the receiving process has been authenticated and is about to take possession,
         // record the destination for any ports being transferred so the receiver can entangle them.
         CheckedRef registry = m_networkProcess->messagePortChannelRegistry();
+        Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers;
         for (auto& message : messages) {
             for (auto& transferredPort : message.transferredPorts)
                 registry->recordPendingTransferDestination(transferredPort.first, m_webProcessIdentifier);
+            if (RefPtr serializedValue = message.message)
+                transferIdentifiers.appendVector(serializedValue->transferredImageBufferIdentifiers());
         }
-        callback(WTF::move(messages), nextMessageBatchIdentifier(WTF::move(deliveryCallback)));
+
+        auto deliver = [callback = WTF::move(callback), messages = WTF::move(messages), deliveryCallback = WTF::move(deliveryCallback), protectedThis] () mutable {
+            callback(WTF::move(messages), protectedThis->nextMessageBatchIdentifier(WTF::move(deliveryCallback)));
+        };
+
+        if (transferIdentifiers.isEmpty()) {
+            deliver();
+            return;
+        }
+
+        // This process brokers the handover but has no GPU process connection, so the UI process
+        // performs it. Held back until it has: the recipient's claims travel on its own connection
+        // and could otherwise overtake the handover.
+        protect(m_networkProcess)->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::AuthorizeImageBufferTransfers(WTF::move(transferIdentifiers), m_webProcessIdentifier), WTF::move(deliver));
     });
 }
 

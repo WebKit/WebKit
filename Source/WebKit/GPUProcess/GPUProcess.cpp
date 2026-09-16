@@ -166,6 +166,8 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
 
+    removeTransferredImageBuffersForProcess(connection.webProcessIdentifier());
+
     if (m_isNowPlayingArbiterActive)
         recomputeNowPlayingOwner();
 
@@ -542,6 +544,56 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
     RELEASE_LOG(WebRTC, "GPUProcess::updateSandboxAccess: Adding %zu extensions", extensions.size());
     for (auto& extension : extensions)
         SandboxExtension::consumePermanently(extension);
+}
+
+void GPUProcess::authorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier>&& identifiers, WebCore::ProcessIdentifier destinationProcess, CompletionHandler<void()>&& completionHandler)
+{
+    setTransferredImageBufferOwners(identifiers, destinationProcess);
+    // Replied to so the broker can hold the message back until the handover has happened. The
+    // recipient's claims arrive on its own connection and could otherwise overtake it.
+    completionHandler();
+}
+
+bool GPUProcess::depositTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier identifier, WebCore::ProcessIdentifier owner, Ref<WebCore::ImageBuffer>&& imageBuffer)
+{
+    Locker locker(m_globalResourceLocker);
+    return m_transferredImageBuffers.add(identifier, TransferredImageBuffer {
+        owner, WTF::move(imageBuffer)
+    }).isNewEntry;
+}
+
+void GPUProcess::setTransferredImageBufferOwners(const Vector<WebCore::ImageBufferTransferIdentifier>& identifiers, WebCore::ProcessIdentifier newOwner)
+{
+    Locker locker(m_globalResourceLocker);
+    for (auto identifier : identifiers) {
+        auto iterator = m_transferredImageBuffers.find(identifier);
+        if (iterator == m_transferredImageBuffers.end())
+            continue;
+        iterator->value.owner = newOwner;
+    }
+}
+
+RefPtr<WebCore::ImageBuffer> GPUProcess::takeTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier identifier, WebCore::ProcessIdentifier claimingProcess)
+{
+    Locker locker(m_globalResourceLocker);
+    auto iterator = m_transferredImageBuffers.find(identifier);
+    if (iterator == m_transferredImageBuffers.end())
+        return nullptr;
+    if (iterator->value.owner != claimingProcess)
+        return nullptr;
+    RefPtr imageBuffer = WTF::move(iterator->value.imageBuffer);
+    m_transferredImageBuffers.remove(iterator);
+    return imageBuffer;
+}
+
+void GPUProcess::removeTransferredImageBuffersForProcess(WebCore::ProcessIdentifier processIdentifier)
+{
+    Locker locker(m_globalResourceLocker);
+    // Keyed on the owner only: once ownership has moved on, the depositing process going away must
+    // not take the buffer from the process it was handed to.
+    m_transferredImageBuffers.removeIf([&](auto& entry) {
+        return entry.value.owner == processIdentifier;
+    });
 }
 
 Ref<RemoteSnapshot> GPUProcess::getOrCreateSnapshot(RemoteSnapshotIdentifier snapshotIdentifier)

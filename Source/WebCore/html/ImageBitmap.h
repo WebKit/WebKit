@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/IDLTypes.h>
+#include <WebCore/ImageBuffer.h>
 #include <WebCore/ScriptWrappable.h>
 #include <atomic>
 #include <wtf/RefCounted.h>
@@ -74,13 +75,26 @@ template<typename> class ExceptionOr;
 class DetachedImageBitmap {
 public:
     DetachedImageBitmap(const DetachedImageBitmap&);
-    DetachedImageBitmap(DetachedImageBitmap&&);
+    WEBCORE_EXPORT DetachedImageBitmap(DetachedImageBitmap&&);
     WEBCORE_EXPORT ~DetachedImageBitmap();
     DetachedImageBitmap& operator=(DetachedImageBitmap&&);
     size_t memoryCost() const;
+
+    WEBCORE_EXPORT DetachedImageBitmap(std::optional<ImageBufferTransferHandle>&&, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
+
+    // Returns nullopt if the buffer cannot cross a process boundary, leaving the bitmap unsendable.
+    WEBCORE_EXPORT std::optional<ImageBufferTransferHandle> sinkBufferIntoTransferHandle();
+
+    const std::optional<ImageBufferTransferHandle>& transferHandle() const LIFETIME_BOUND { return m_transferHandle; }
+    bool originClean() const { return m_originClean; }
+    bool premultiplyAlpha() const { return m_premultiplyAlpha; }
+    bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
+
 private:
     DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
-    UniqueRef<SerializedImageBuffer> m_bitmap;
+    // Exactly one of these is set.
+    std::unique_ptr<SerializedImageBuffer> m_bitmap;
+    std::optional<ImageBufferTransferHandle> m_transferHandle;
     bool m_originClean : 1 { false };
     bool m_premultiplyAlpha : 1 { false };
     bool m_forciblyPremultiplyAlpha : 1 { false };
@@ -121,7 +135,7 @@ public:
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, ColorSpace, float resolutionScale = 1);
 
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, ColorSpace);
-    static Ref<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);
+    static RefPtr<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);
     static Ref<ImageBitmap> create(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
 
     ~ImageBitmap();
