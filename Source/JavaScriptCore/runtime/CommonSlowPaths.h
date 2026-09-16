@@ -243,6 +243,13 @@ inline JSArray* allocateNewArrayBuffer(VM& vm, Structure* structure, JSCellButte
         ASSERT(hasSlowPutArrayStorage(structure->indexingMode()));
         ASSERT(globalObject->isHavingABadTime());
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        // DFG StoreBarrierInsertionPhase requires that a node does not run any GC safepoints
+        // after the node result is allocated (so that GC cannot yet see the result). So
+        // skip GC across switchToSlowPutArrayStorage allocations. The ForAWhile means the
+        // scope exit will not run the GC even if it was deferred during the scope.
+        DeferGCForAWhile deferGC(vm);
+#endif
         result->switchToSlowPutArrayStorage(vm);
         ASSERT(result->butterfly() != immutableButterfly->toButterfly());
         ASSERT(!result->butterfly()->arrayStorage()->m_sparseMap.get());
