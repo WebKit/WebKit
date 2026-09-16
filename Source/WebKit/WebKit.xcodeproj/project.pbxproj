@@ -1593,7 +1593,6 @@
 		5C76C0072ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C76C0062ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift */; };
 		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5C7E075A2DF0596B00C61A6C /* SwiftDemoLogoConfirmation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7E07582DF0596B00C61A6C /* SwiftDemoLogoConfirmation.h */; };
 		5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */; };
 		5C826D6B26D482EF008AEC91 /* PrivateClickMeasurementStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C826D6826D46B44008AEC91 /* PrivateClickMeasurementStore.h */; };
 		5C826D6C26D482F2008AEC91 /* PrivateClickMeasurementDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C826D6926D482EA008AEC91 /* PrivateClickMeasurementDatabase.h */; };
@@ -1649,7 +1648,6 @@
 		5CF250AF2EE06491006A7172 /* IPCTesterReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CF250AE2EE06491006A7172 /* IPCTesterReceiver.swift */; };
 		5CF62B9628D4436A00C0EAE0 /* DaemonCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF62B9428D4436A00C0EAE0 /* DaemonCoders.h */; };
 		5CFC9C812B71809600F8D289 /* CoreIPCCFDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC9C7F2B717EFA00F8D289 /* CoreIPCCFDictionary.mm */; };
-		5CFFD8482DEF511C00C421F5 /* SwiftDemoLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFFD8472DEF511B00C421F5 /* SwiftDemoLogo.swift */; };
 		5EEC724C2DC1B30700D012DD /* BidiStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EEC724B2DC1B30700D012DD /* BidiStorageAgent.cpp */; };
 		5EEC724E2DC1B31800D012DD /* BidiStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EEC724D2DC1B31300D012DD /* BidiStorageAgent.h */; };
 		5EEC72502DC1B32100D012DD /* BidiSessionAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5EEC724F2DC1B32000D012DD /* BidiSessionAgent.cpp */; };
@@ -6801,7 +6799,6 @@
 		5C76C0062ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBackForwardListMessageReceiver.swift; sourceTree = "<group>"; };
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
-		5C7E07582DF0596B00C61A6C /* SwiftDemoLogoConfirmation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftDemoLogoConfirmation.h; sourceTree = "<group>"; };
 		5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieJar.cpp; sourceTree = "<group>"; };
 		5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieJar.h; sourceTree = "<group>"; };
 		5C80B3DB23690D8D0086E6DE /* RemoteWorkerInitializationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerInitializationData.h; sourceTree = "<group>"; };
@@ -6978,7 +6975,6 @@
 		5CFC9C7F2B717EFA00F8D289 /* CoreIPCCFDictionary.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCCFDictionary.mm; sourceTree = "<group>"; };
 		5CFC9C802B717EFA00F8D289 /* CoreIPCCFDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCCFDictionary.h; sourceTree = "<group>"; };
 		5CFECB031E1ED1C800F88504 /* LegacyCustomProtocolManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCustomProtocolManager.cpp; sourceTree = "<group>"; };
-		5CFFD8472DEF511B00C421F5 /* SwiftDemoLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDemoLogo.swift; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		5E55104100000000000A0001 /* SessionHistoryTraversalQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SessionHistoryTraversalQueue.cpp; sourceTree = "<group>"; };
 		5E55104100000000000A0002 /* SessionHistoryTraversalQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionHistoryTraversalQueue.h; sourceTree = "<group>"; };
@@ -16373,8 +16369,6 @@
 				5CCD53262ED9D2F40001626D /* StdlibExtras.swift */,
 				515C415A207D74E000726E02 /* SuspendedPageProxy.cpp */,
 				515C415B207D74E100726E02 /* SuspendedPageProxy.h */,
-				5CFFD8472DEF511B00C421F5 /* SwiftDemoLogo.swift */,
-				5C7E07582DF0596B00C61A6C /* SwiftDemoLogoConfirmation.h */,
 				318A1F04204F4764003480BC /* SystemPreviewController.cpp */,
 				3157135D2040A9B20084F9CF /* SystemPreviewController.h */,
 				A38A12E123C93AC700FABFA9 /* TextChecker.cpp */,
@@ -19052,7 +19046,6 @@
 				7BE5134C29768F0E00814F18 /* StreamServerConnectionBuffer.h in Headers */,
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				57FD318622B3516C008D0E8B /* SubFrameSOAuthorizationSession.h in Headers */,
-				5C7E075A2DF0596B00C61A6C /* SwiftDemoLogoConfirmation.h in Headers */,
 				2D0FD45E2F75127900B1A53C /* SwipeProgressTrackerMac.h in Headers */,
 				448AC24E267135A700B28921 /* SynapseSPI.h in Headers */,
 				4459984222833E8700E61373 /* SyntheticEditingCommandType.h in Headers */,
@@ -22416,7 +22409,6 @@
 				575B1BB923CE9C0B0020639A /* SimulatedInputDispatcher.cpp in Sources */,
 				0773A93B3023B0FB002C57FE /* SpatialShim.swift in Sources */,
 				5CCD53272ED9D2F40001626D /* StdlibExtras.swift in Sources */,
-				5CFFD8482DEF511C00C421F5 /* SwiftDemoLogo.swift in Sources */,
 				5CAAA85029BFBE99003340AE /* TCCSoftLink.mm in Sources */,
 				07A1B2C42F900D010000ABCD /* TestWebKitAPILibraryAdditions.swift in Sources */,
 				E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */,
