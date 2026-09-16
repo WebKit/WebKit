@@ -30,6 +30,9 @@
 #if PLATFORM(COCOA)
 
 #include <WebCore/HEVCUtilities.h>
+#include <wtf/Vector.h>
+
+typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace WebCore {
 
@@ -37,6 +40,10 @@ struct PlatformMediaCapabilitiesInfo;
 
 WEBCORE_EXPORT std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters&, bool hasAlphaChannel, bool hdrSupport);
 std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViParameters&, bool hasAlphaChannel, bool hdrSupport);
+
+// Converts a sample buffer emitted from a VideoToolbox HEVC encoder (hvcC format) into an Annex B
+// buffer suitable for RTP, prepending the VPS/SPS/PPS parameter sets on keyframes.
+WEBCORE_EXPORT Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,53 +21,31 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
 #pragma once
 
-#include <optional>
-#include <span>
+#if USE(AVFOUNDATION)
+
+#include "WebRTCVideoEncoderVTB.h"
+#include <WebCore/HEVCUtilities.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class BitReader {
+class WebRTCVideoEncoderVTBH265 final : public WebRTCVideoEncoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(WebRTCVideoEncoderVTBH265);
 public:
-    explicit BitReader(std::span<const uint8_t> data)
-        : m_data(data)
-    {
-    }
-
-    std::optional<uint64_t> NODELETE read(size_t);
-    std::optional<bool> NODELETE readBit();
-    template <typename T> std::optional<T> read()
-    {
-        static_assert(std::is_unsigned<T>::value);
-        auto value = readBytes(sizeof(T));
-        if (!value)
-            return { };
-        return static_cast<T>(*value);
-    }
-    size_t NODELETE bitOffset() const;
-    bool NODELETE skipBytes(size_t);
-    size_t byteOffset() const { return m_index; }
-
-    // Sticky-state helpers: once a read fails, ok() becomes false and every
-    // subsequent call to these helpers returns 0/false without touching m_index further.
-    bool ok() const { return !m_invalid; }
-    uint32_t NODELETE readBits(size_t bits);
-    bool NODELETE readFlag();
-    void NODELETE consumeBits(size_t bits);
-    uint32_t NODELETE readExpGolomb();
-    int32_t NODELETE readSignedExpGolomb();
+    WebRTCVideoEncoderVTBH265(bool useAnnexB, WebRTCVideoEncoderCallback&&, WebRTCVideoEncoderDescriptionCallback&&, WebRTCVideoEncoderErrorCallback&&);
+    ~WebRTCVideoEncoderVTBH265() = default;
 
 private:
-    std::optional<uint64_t> readBytes(size_t bytes) { return read(bytes * 8); }
-    std::span<const uint8_t> m_data;
-    size_t m_index { 0 };
-    uint8_t m_currentByte { 0 };
-    size_t m_remainingBits { 0 };
-    bool m_invalid { false };
+    CMVideoCodecType codecType() const final;
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, WebRTCVideoEncoderFrameInfo&&) final;
+
+    HEVCBitstreamParser m_bitstreamParser;
 };
 
 }
+
+#endif // USE(AVFOUNDATION)

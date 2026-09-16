@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(AVFOUNDATION)
+
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/VideoFrame.h>
@@ -72,3 +74,5 @@ protected:
 };
 
 }
+
+#endif

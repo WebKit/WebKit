@@ -730,11 +730,14 @@ platform/text/cocoa/LocalizedDateCache.mm @nonARC
 platform/text/cocoa/TextBoundaries.mm @nonARC
 platform/text/mac/TextCheckingMac.mm @nonARC
 platform/video-codecs/cocoa/VideoDecoderVTB.mm @nonARC
+platform/video-codecs/cocoa/VideoEncoderVTB.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoder.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTB.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBVP9.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoEncoder.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoEncoderVTB.mm @nonARC
+platform/video-codecs/cocoa/WebRTCVideoEncoderVTBH265.mm @nonARC
 platform/xr/cocoa/PlatformXRPose.cpp
 rendering/AttachmentLayout.mm @nonARC
 rendering/cocoa/RenderThemeCocoa.mm @nonARC
