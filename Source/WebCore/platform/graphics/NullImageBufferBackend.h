@@ -48,11 +48,14 @@ public:
     bool canMapBackingStore() const override;
     String debugDescription() const override;
 
+    void releaseGraphicsContext() override;
+    bool hasGraphicsContext() const override;
+
 protected:
     using ImageBufferBackend::ImageBufferBackend;
     unsigned bytesPerRow() const override;
 
-    NullGraphicsContext m_context;
+    std::unique_ptr<NullGraphicsContext> m_context;
 };
 
 } // namespace WebCore

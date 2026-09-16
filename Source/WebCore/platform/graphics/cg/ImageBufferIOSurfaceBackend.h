@@ -69,6 +69,7 @@ protected:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
+    bool hasGraphicsContext() const override;
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;
