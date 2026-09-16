@@ -575,9 +575,8 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
 {
     // https://w3c.github.io/webdriver-bidi/#command-script-getRealms
 
-    // Dedicated workers owned directly by a top-level document and shared workers are supported.
-    // FIXME: Implement iframe-owned and nested dedicated workers, service workers,
-    // and generic worker realms.
+    // Dedicated workers owned directly by a top-level document, shared workers, and service workers are supported.
+    // FIXME: Implement iframe-owned and nested dedicated workers and generic worker realms.
 
     // FIXME: Implement worklet realm support (paint-worklet, audio-worklet, worklet).
     // https://bugs.webkit.org/show_bug.cgi?id=304301
@@ -603,9 +602,14 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
     }
 
     // Unsupported realm types are valid filters, but there are no matching realms yet.
-    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::DedicatedWorker && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::SharedWorker) {
+    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::Window && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::DedicatedWorker && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::SharedWorker && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::ServiceWorker) {
         auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
         callback(WTF::move(realmsArray));
+        return;
+    }
+
+    if (optionalRealmType == Inspector::Protocol::BidiScript::RealmType::ServiceWorker) {
+        collectSharedAndServiceWorkerRealms(WTF::move(optionalRealmType), WTF::move(contextHandleFilter), { }, WTF::move(callback));
         return;
     }
 
@@ -972,7 +976,7 @@ std::optional<RealmIdentifier> BidiScriptAgent::synchronizeSharedWorkerRealm(Web
 void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
 {
     if (pagesToProcess.isEmpty()) {
-        collectSharedWorkerRealms(WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
+        collectSharedAndServiceWorkerRealms(WTF::move(optionalRealmType), WTF::move(contextHandleFilter), WTF::move(accumulated), WTF::move(callback));
         return;
     }
 
@@ -1043,29 +1047,43 @@ void BidiScriptAgent::processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& page
     });
 }
 
-void BidiScriptAgent::collectSharedWorkerRealms(std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
+void BidiScriptAgent::collectSharedAndServiceWorkerRealms(std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
 {
     auto realmsArray = JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>::create();
     for (auto& realmInfo : accumulated) {
         if (realmInfo)
             realmsArray->addItem(realmInfo.releaseNonNull());
     }
-    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::SharedWorker) {
+
+    auto finishCollection = [weakThis = WeakPtr { *this }, optionalRealmType, contextHandleFilter, realmsArray, callback = WTF::move(callback)]() mutable {
+        CheckedPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        bool includeServiceWorkerRealms = !contextHandleFilter && (!optionalRealmType || *optionalRealmType == Inspector::Protocol::BidiScript::RealmType::ServiceWorker);
+        if (includeServiceWorkerRealms) {
+            for (auto& [realmIdentifier, realmInfo] : protectedThis->m_activeRealms) {
+                if (realmInfo.type == Inspector::Protocol::BidiScript::RealmType::ServiceWorker)
+                    realmsArray->addItem(protectedThis->createProtocolRealmInfo(realmIdentifier, realmInfo).releaseNonNull());
+            }
+        }
+
         callback(WTF::move(realmsArray));
+    };
+
+    if (optionalRealmType && *optionalRealmType != Inspector::Protocol::BidiScript::RealmType::SharedWorker) {
+        finishCollection();
         return;
     }
 
     RefPtr session = m_session.get();
     RefPtr processPool = session ? session->processPool() : nullptr;
     if (!processPool) {
-        callback(WTF::move(realmsArray));
+        finishCollection();
         return;
     }
 
-    Ref callbackAggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, realmsArray, callback = WTF::move(callback)]() mutable {
-        if (weakThis)
-            callback(WTF::move(realmsArray));
-    });
+    Ref callbackAggregator = CallbackAggregator::create(WTF::move(finishCollection));
     for (Ref process : borrow(processPool->processes()).get()) {
         process->sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetSharedWorkerRealms(), [weakThis = WeakPtr { *this }, process = process.copyRef(), contextHandleFilter, realmsArray, callbackAggregator](Vector<std::tuple<WebCore::SharedWorkerIdentifier, Vector<WebCore::FrameIdentifier>, Vector<WebCore::FrameIdentifier>, WebCore::SecurityOriginData>>&& workerRealms) mutable {
             CheckedPtr protectedThis = weakThis.get();
