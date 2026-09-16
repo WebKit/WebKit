@@ -75,6 +75,9 @@ AllowedSPI*.toml @emw-apple
 /Source/WTF @WebKit/jsc-reviewers
 /Tools/TestWebKitAPI/Tests/WTF @WebKit/jsc-reviewers
 
+# Tree-wide configuration that merely lives under WTF, not WTF code itself.
+/Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml
+
 # ================================================================================
 # JavaScriptCore
 
