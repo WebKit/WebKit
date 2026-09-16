@@ -500,7 +500,7 @@ HeapSnapshot = class HeapSnapshot
             // edgeData is the index.
             break;
         default:
-            console.error("Unexpected edge type: " + edgeType);
+            console.assert(false, edgeType, edgeData);
             break;
         }
 

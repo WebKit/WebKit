@@ -1153,12 +1153,17 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         lineNumberIssues.push(issue);
 
-        if (issue.level === WI.IssueMessage.Level.Error)
+        switch (issue.level) {
+        case WI.IssueMessage.Level.Error:
             this.addStyleClassToLine(lineNumber, WI.SourceCodeTextEditor.LineErrorStyleClassName);
-        else if (issue.level === WI.IssueMessage.Level.Warning)
+            break;
+        case WI.IssueMessage.Level.Warning:
             this.addStyleClassToLine(lineNumber, WI.SourceCodeTextEditor.LineWarningStyleClassName);
-        else
-            console.error("Unknown issue level");
+            break;
+        default:
+            console.assert(false, issue);
+            break;
+        }
 
         var widget = this._issueWidgetForLine(lineNumber);
         if (widget) {
@@ -1995,7 +2000,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         function didGetDetails(error, response)
         {
             if (error) {
-                console.error(error);
+                WI.reportInternalError(error);
                 this._dismissPopover();
                 return;
             }

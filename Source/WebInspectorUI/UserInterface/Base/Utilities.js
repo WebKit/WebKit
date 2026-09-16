@@ -1115,21 +1115,6 @@ Object.defineProperty(String, "format",
         if (!format || !substitutions || !substitutions.length)
             return {formattedResult: append(initialValue, format), unusedSubstitutions: substitutions};
 
-        function prettyFunctionName()
-        {
-            return "String.format(\"" + format + "\", \"" + Array.from(substitutions).join("\", \"") + "\")";
-        }
-
-        function warn(msg)
-        {
-            console.warn(prettyFunctionName() + ": " + msg);
-        }
-
-        function error(msg)
-        {
-            console.error(prettyFunctionName() + ": " + msg);
-        }
-
         var result = initialValue;
         var tokens = String.tokenizeFormatString(format);
         var usedSubstitutionIndexes = {};
@@ -1144,7 +1129,7 @@ Object.defineProperty(String, "format",
             }
 
             if (token.type !== "specifier") {
-                error("Unknown token type \"" + token.type + "\" found.");
+                console.assert(false, token);
                 continue;
             }
 
@@ -1152,13 +1137,13 @@ Object.defineProperty(String, "format",
             if (substitutionIndex >= substitutions.length) {
                 // If there are not enough substitutions for the current substitutionIndex
                 // just output the format specifier literally and move on.
-                error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (substitutionIndex + 1) + ", so substitution was skipped.");
+                console.assert(false, substitutionIndex, substitutions);
                 result = append(result, "%" + (token.precision > -1 ? token.precision : "") + token.specifier);
                 continue;
             }
 
             if (!(token.specifier in formatters)) {
-                warn(`Unsupported format specifier "%${token.specifier}" will be ignored.`);
+                console.assert(false, token, formatters);
                 result = append(result, "%" + token.specifier);
                 ++ignoredUnknownSpecifierCount;
                 continue;
@@ -1762,7 +1747,7 @@ async function retryUntil(predicate, {delay, retries} = {})
         await Promise.delay(delay);
     }
 
-    console.assert(false, "retryUntil exceeded the maximum number of retries.", predicate, retries);
+    console.assert(false, predicate, retries);
     return null;
 }
 

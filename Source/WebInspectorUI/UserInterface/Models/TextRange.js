@@ -131,7 +131,7 @@ WI.TextRange = class TextRange
         let startColumn = this._startColumn + deltaStartColumn;
         let endLine = this._endLine + deltaEndLine;
         let endColumn = this._endColumn + deltaEndColumn;
-        console.assert(startLine >= 0 && startColumn >= 0 && endLine >= 0 && endColumn >= 0, `Cannot have negative numbers in TextRange ${startLine}:${startColumn}...${endLine}:${endColumn}`);
+        console.assert(startLine >= 0 && startColumn >= 0 && endLine >= 0 && endColumn >= 0, startLine, startColumn, endLine, endColumn);
 
         return new WI.TextRange(startLine, startColumn, endLine, endColumn);
     }

@@ -121,7 +121,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
                 } else
                     cell.classList.add(WI.ScriptTreeElement.AnonymousScriptIconStyleClassName);
             } else
-                console.error("Unknown SourceCode subclass.");
+                console.assert(false, value.sourceCode);
 
             // Give the whole cell a tooltip and keep it up to date.
             value.populateLiveDisplayLocationTooltip(cell);
@@ -173,7 +173,7 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
                         } else
                             cell.classList.add(WI.ScriptTreeElement.AnonymousScriptIconStyleClassName);
                     } else
-                        console.error("Unknown SourceCode subclass.");
+                        console.assert(false, sourceCode);
 
                     var titleElement = document.createElement("span");
                     callFrame.sourceCodeLocation.populateLiveDisplayLocationString(titleElement, "textContent");

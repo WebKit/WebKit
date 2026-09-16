@@ -114,7 +114,7 @@ WI.Cookie = class Cookie
         case WI.Cookie.SameSiteType.Strict:
             return WI.unlocalizedString("Strict");
         default:
-            console.error("Invalid SameSite type", sameSiteType);
+            console.assert(false, sameSiteType);
             return sameSiteType;
         }
     }
@@ -170,29 +170,21 @@ WI.Cookie = class Cookie
                 continue;
 
             let match = attribute.match(/^(?<name>[^\s=]+)(?:=(?<value>.*))?$/);
-            if (!match) {
-                console.error("Failed to parse Set-Cookie attribute:", attribute);
+            if (!match)
                 continue;
-            }
 
             let attributeName = match.groups.name;
             let attributeValue = match.groups.value;
             switch (attributeName.toLowerCase()) {
             case "expires":
-                console.assert(attributeValue);
                 expires = new Date(attributeValue);
-                if (isNaN(expires.getTime())) {
-                    console.warn("Invalid Expires date:", attributeValue);
+                if (isNaN(expires.getTime()))
                     expires = null;
-                }
                 break;
             case "max-age":
-                console.assert(attributeValue);
                 maxAge = parseInt(attributeValue, 10);
-                if (isNaN(maxAge) || !/^\d+$/.test(attributeValue)) {
-                    console.warn("Invalid MaxAge value:", attributeValue);
+                if (isNaN(maxAge) || !/^\d+$/.test(attributeValue))
                     maxAge = null;
-                }
                 break;
             case "path":
                 console.assert(attributeValue);
@@ -218,7 +210,6 @@ WI.Cookie = class Cookie
                 partitioned = true;
                 break;
             default:
-                console.warn("Unknown Cookie attribute:", attribute);
                 break;
             }
         }

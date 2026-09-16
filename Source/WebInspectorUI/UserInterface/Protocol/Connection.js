@@ -102,9 +102,6 @@ InspectorBackend.Connection = class InspectorBackendConnection
     {
         console.assert(this._pendingResponses.size >= 0);
 
-        if (messageObject.error && messageObject.error.code !== -32_000)
-            console.error("Request with id = " + messageObject["id"] + " failed. " + JSON.stringify(messageObject.error));
-
         let sequenceId = messageObject["id"];
         console.assert(this._pendingResponses.has(sequenceId), sequenceId, this._target ? this._target.identifier : "(unknown)", this._pendingResponses);
 
@@ -120,8 +117,6 @@ InspectorBackend.Connection = class InspectorBackendConnection
             this._dispatchResponseToCallback(command, request, messageObject, callback);
         else if (typeof promise === "object")
             this._dispatchResponseToPromise(command, messageObject, promise);
-        else
-            console.error("Received a command response without a corresponding callback or promise.", messageObject, command);
 
         InspectorBackend.currentDispatchState.request = null;
         InspectorBackend.currentDispatchState.response = null;
@@ -169,25 +164,25 @@ InspectorBackend.Connection = class InspectorBackendConnection
 
         let agent = this._target._agents[domainName];
         if (!agent) {
-            console.error(`Protocol Error: Attempted to dispatch method '${qualifiedName}' for non-existing domain '${domainName}'`, messageObject);
+            console.assert(false, qualifiedName, domainName, messageObject);
             return;
         }
 
         let dispatcher = agent._dispatcher;
         if (!dispatcher) {
-            console.error(`Protocol Error: Missing dispatcher for domain '${domainName}', for event '${qualifiedName}'`, messageObject);
+            console.assert(false, domainName, qualifiedName, messageObject);
             return;
         }
 
         let event = agent._events[eventName];
         if (!event) {
-            console.error(`Protocol Error: Attempted to dispatch an unspecified method '${qualifiedName}'`, messageObject);
+            console.assert(false, qualifiedName, messageObject);
             return;
         }
 
         let handler = dispatcher[eventName];
         if (!handler) {
-            console.error(`Protocol Error: Attempted to dispatch an unimplemented method '${qualifiedName}'`, messageObject);
+            console.assert(false, qualifiedName, messageObject);
             return;
         }
 

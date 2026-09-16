@@ -129,7 +129,7 @@ WI.DOMTree = class DOMTree extends WI.Object
                 return;
 
             if (error) {
-                console.error(JSON.stringify(error));
+                WI.reportInternalError(error);
 
                 this._rootDOMNode = null;
                 dispatchCallbacks.call(this);

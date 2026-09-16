@@ -223,7 +223,7 @@ WI.BoxShadowEditor = class BoxShadowEditor extends WI.Object
             return;
         }
 
-        console.assert();
+        console.assert(false, event);
     }
 
     // Private

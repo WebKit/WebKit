@@ -349,7 +349,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!(treeElement instanceof WI.RecordingActionTreeElement))
             return;
 
-        console.assert(this._recording, "Missing recording for action tree element.", treeElement);
+        console.assert(this._recording, treeElement);
         this._recording[WI.CanvasSidebarPanel.SelectedActionSymbol] = treeElement.representedObject;
 
         const onlyExisting = true;
@@ -445,7 +445,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
         if (this._scopeBar) {
             let scopeBarItem = this._scopeBar.item(this._recording.displayName);
-            console.assert(scopeBarItem, "Missing scopeBarItem for recording.", this._recording);
+            console.assert(scopeBarItem, this._recording);
             scopeBarItem.selected = true;
         }
 

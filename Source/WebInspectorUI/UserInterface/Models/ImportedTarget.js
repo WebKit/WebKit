@@ -81,19 +81,19 @@ WI.ImportedTarget = class ImportedTarget
 
     hasDomain(domainName)
     {
-        console.assert(false, "not reached");
+        console.assert(false, domainName);
         return false;
     }
 
     hasCommand(qualifiedName, parameterName)
     {
-        console.assert(false, "not reached");
+        console.assert(false, qualifiedName, parameterName);
         return false;
     }
 
     hasEvent(qualifiedName, parameterName)
     {
-        console.assert(false, "not reached");
+        console.assert(false, qualifiedName, parameterName);
         return false;
     }
 };

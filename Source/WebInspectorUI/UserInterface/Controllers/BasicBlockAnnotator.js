@@ -94,7 +94,7 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
 
         this._script.target.RuntimeAgent.getBasicBlocks(sourceID, function(error, basicBlocks) {
             if (error) {
-                console.error("Error in getting basic block locations: " + error);
+                WI.reportInternalError(error, {cause: "Failed to get basic block locations."});
                 return;
             }
 
@@ -138,7 +138,7 @@ WI.BasicBlockAnnotator = class BasicBlockAnnotator extends WI.Annotator
 
     _highlightTextForBasicBlock(basicBlock)
     {
-        console.assert(basicBlock.startOffset <= basicBlock.endOffset && basicBlock.startOffset >= 0 && basicBlock.endOffset >= 0, "" + basicBlock.startOffset + ":" + basicBlock.endOffset);
+        console.assert(basicBlock.startOffset <= basicBlock.endOffset && basicBlock.startOffset >= 0 && basicBlock.endOffset >= 0, basicBlock);
         console.assert(!basicBlock.hasExecuted);
 
         let startPosition = this.sourceCodeTextEditor.originalPositionToCurrentPosition(basicBlock.startPosition);

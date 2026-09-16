@@ -272,7 +272,7 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
             return new WI.DetailsSectionSimpleRow(WI.UIString("Stretch", "Stretch @ Font Details Sidebar Property", "Property title for `font-stretch`."));
         }
 
-        console.assert(false, "Should not be reached.", propertyName);
+        console.assert(false, propertyName);
     }
 
     _formatPropertyValue(propertyName, propertyValue)

@@ -37,7 +37,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         console.assert(isPassthrough === undefined || typeof isPassthrough === "boolean", isPassthrough);
         console.assert(disabled === undefined || typeof disabled === "boolean", disabled);
 
-        console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || localResource.isMappedToDirectory, localResource);
+        console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || !localResource.mappedFilePath || localResource.isMappedToDirectory, localResource);
         console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || isRegex, isRegex);
         console.assert(type !== WI.LocalResourceOverride.InterceptType.ResponseMappedDirectory || isPassthrough, isPassthrough);
 
@@ -93,7 +93,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.UIString("Response Override", "Response Override @ Local Override Network Stage", "Text indicating that the local override replaces the response of the network activity.");
         }
 
-        console.assert(false, "Unknown type: ", type);
+        console.assert(false, type);
         return "";
     }
 
@@ -112,7 +112,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.UIString("Response", "Response @ Local Override Type", "Text indicating that the local override intercepts the response phase of network activity.");
         }
 
-        console.assert(false, "Unknown type: ", type);
+        console.assert(false, type);
         return "";
     }
 
@@ -132,7 +132,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.UIString("Timeout", "Timeout @ Local Override Type", "Text indicating that the local override will block the network activity with an timeout error.");
         }
 
-        console.assert(false, "Unknown resource error type: ", resourceErrorType);
+        console.assert(false, resourceErrorType);
         return "";
     }
 
@@ -201,7 +201,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return WI.NetworkManager.NetworkStage.Response;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, this._type);
         return null;
     }
 
@@ -304,7 +304,7 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
             return true;
         }
 
-        console.assert(false, "not reached");
+        console.assert(false, this._type);
         return false;
     }
 

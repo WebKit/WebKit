@@ -155,8 +155,6 @@ WI.ServerTimingEntry = class ServerTimingEntry
 
                 if (parseParameter)
                     parseParameter(paramValue, entry);
-                else
-                    console.warn("Unknown Server-Timing parameter:", paramName, paramValue);
             }
 
             entries.push(entry);
@@ -176,7 +174,6 @@ WI.ServerTimingEntry = class ServerTimingEntry
     set duration(duration)
     {
         if (this._duration !== undefined) {
-            console.warn("Ignoring redundant duration.");
             return;
         }
 
@@ -186,7 +183,6 @@ WI.ServerTimingEntry = class ServerTimingEntry
     set description(description)
     {
         if (this._description !== undefined) {
-            console.warn("Ignoring redundant description.");
             return;
         }
 

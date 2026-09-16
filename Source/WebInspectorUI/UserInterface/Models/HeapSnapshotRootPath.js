@@ -167,7 +167,7 @@ WI.HeapSnapshotRootPath = class HeapSnapshotRootPath
             return this.appendVariableName(edge.to, edge.data);
         }
 
-        console.error("Unexpected edge type", edge.type);
+        console.assert(false, edge.type);
     }
 };
 

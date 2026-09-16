@@ -300,7 +300,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             return;
         }
 
-        console.assert();
+        console.assert(false, this.representedObject);
     }
 
     _updateShader(shaderType)
@@ -319,7 +319,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             return;
         }
 
-        console.assert();
+        console.assert(false, shaderType);
     }
 
     _editorFocused(event)
@@ -362,6 +362,6 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             return;
         }
 
-        console.assert();
+        console.assert(false, event.target);
     }
 };

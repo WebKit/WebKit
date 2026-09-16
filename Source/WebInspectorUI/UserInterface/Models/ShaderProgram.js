@@ -66,7 +66,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
                 || programType === ShaderProgram.ProgramType.Vertex;
         }
 
-        console.assert();
+        console.assert(false, contextType, programType);
         return false;
     }
 
@@ -84,7 +84,7 @@ WI.ShaderProgram = class ShaderProgram extends WI.Object
             return shaderType === ShaderProgram.ShaderType.Vertex;
         }
 
-        console.assert();
+        console.assert(false, programType, shaderType);
         return false;
     }
 
