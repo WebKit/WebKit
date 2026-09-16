@@ -8463,3 +8463,5 @@ http/tests/media/media-controls-context-menu-anchor-in-iframe.html [ Skip ]
 # webkit.org/b/324231
 accessibility/line-clamp-text.html [ Skip ]
 accessibility/isolated-tree/line-clamp-text.html [ Skip ]
+
+imported/w3c/web-platform-tests/editing/other/paste-as-plaintext-data.tentative.https.html [ Skip ] # timeout
