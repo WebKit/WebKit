@@ -257,7 +257,9 @@ private:
     Ref<const RTT> createCanonicalRTT(const Projection&);
 
     SegmentedVector<Subtype, 64> m_subtypeStorage;
-    SegmentedVector<Projection, 64> m_projectionStorage;
+    // Projections need to be compact-allocated, as they're referenced via
+    // compact pointers that strip the objects' MTE tags
+    SegmentedVector<Projection, 64, 0, SegmentedVectorGrowthPolicy::Constant, FastCompactMalloc> m_projectionStorage;
     SegmentedVector<RecursionGroup, 16> m_recursionGroupStorage;
     UncheckedKeyHashSet<const Projection*, ProjectionHash> m_projectionDedup;
 };
