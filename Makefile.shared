@@ -8,6 +8,9 @@ ifneq (,$(WORKSPACE_PATH))
 CONFIG_OPTIONS += --workspace=$(WORKSPACE_PATH)
 endif
 
+# FIXME: Support triggering a CMake-based build via Make.
+CONFIG_OPTIONS += --xcode
+
 # FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
 # happen in the workspace. When this is only passed on the command line, it
 # invalidates build results made in the IDE (rdar://88135402).
