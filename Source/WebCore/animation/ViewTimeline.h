@@ -76,7 +76,7 @@ public:
     static Ref<ViewTimeline> create(const Style::ScopedName&, ScrollAxis, const Style::ViewTimelineInsetItem&, const Style::ZoomFactor&);
 
     const Element* NODELETE subject() const;
-    const WeakStyleable subjectStyleable() const { return m_subject; }
+    const WeakStyleable& subjectStyleable() const LIFETIME_BOUND { return m_subject; }
     void setSubject(Element*);
     void setSubject(const Styleable&);
 

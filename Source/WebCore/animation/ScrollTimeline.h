@@ -79,7 +79,7 @@ public:
 
     std::optional<WebAnimationTime> currentTime(UseCachedCurrentTime = UseCachedCurrentTime::Yes) override;
     Style::SingleAnimationRange defaultRange() const override;
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> timelineScopeDeclaredElement() const { return m_timelineScopeElement; }
+    Element* NODELETE timelineScopeDeclaredElement() const { return m_timelineScopeElement.get(); }
     void setTimelineScopeElement(const Element&);
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
