@@ -26,8 +26,9 @@
     DispatchedTo=WebContent
 ]
 messages -> WebSharedWorkerContextManagerConnection {
-    LaunchSharedWorker(struct WebCore::ClientOrigin origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, struct WebCore::WorkerOptions workerOptions, struct WebCore::WorkerFetchResult workerFetchResult, struct WebCore::WorkerInitializationData workerInitializationData)
+    LaunchSharedWorker(struct WebCore::ClientOrigin origin, WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, struct WebCore::WorkerOptions workerOptions, struct WebCore::WorkerFetchResult workerFetchResult, struct WebCore::WorkerInitializationData workerInitializationData, Vector<WebCore::FrameIdentifier> activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier> attachedOwnerFrameIdentifiers)
     PostConnectEvent(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, WebCore::TransferredMessagePort port, WebCore::SecurityOriginData sourceOrigin) -> (bool success)
+    SetSharedWorkerOwnerFrameIdentifiers(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, Vector<WebCore::FrameIdentifier> activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier> attachedOwnerFrameIdentifiers)
     TerminateSharedWorker(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier)
     UpdatePreferencesStore(struct WebKit::WebPreferencesStore store)
     SetUserAgent(String userAgent)

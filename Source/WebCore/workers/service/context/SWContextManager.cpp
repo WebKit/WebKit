@@ -78,9 +78,20 @@ void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerTh
         });
     }
 
+    ServiceWorkerThread::ExecutionReadyCallback executionReadyCallback;
+#if ENABLE(WEBDRIVER_BIDI)
+    auto threadProxyWeakPtr = ThreadSafeWeakPtr { *threadProxy };
+    executionReadyCallback = [threadProxyWeakPtr = WTF::move(threadProxyWeakPtr)](ScriptExecutionContextIdentifier executionContextIdentifier, SecurityOriginData&& origin) mutable {
+        callOnMainThread([threadProxyWeakPtr = WTF::move(threadProxyWeakPtr), executionContextIdentifier, origin = WTF::move(origin)]() mutable {
+            if (RefPtr threadProxy = threadProxyWeakPtr.get())
+                threadProxy->serviceWorkerGlobalScopeBecameExecutionReady(executionContextIdentifier, WTF::move(origin));
+        });
+    };
+#endif
+
     threadProxy->thread().start([jobDataIdentifier, serviceWorkerIdentifier](const String& exceptionMessage, bool doesHandleFetch) {
         SWContextManager::singleton().startedServiceWorker(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage, doesHandleFetch);
-    });
+    }, WTF::move(executionReadyCallback));
     if (m_serviceWorkerCreationCallback)
         m_serviceWorkerCreationCallback(serviceWorkerIdentifier.toUInt64());
 }
@@ -217,6 +228,9 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     Ref thread = serviceWorker.thread();
     thread->stop([this, identifier, serviceWorker = Ref { serviceWorker }, completionHandler = WTF::move(completionHandler)]() mutable {
         m_pendingServiceWorkerTerminationRequests.remove(identifier);
+#if ENABLE(WEBDRIVER_BIDI)
+        serviceWorker->serviceWorkerGlobalScopeTerminated();
+#endif
 
         if (RefPtr connection = SWContextManager::singleton().connection())
             connection->workerTerminated(identifier);

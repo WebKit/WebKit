@@ -40,8 +40,11 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/NavigationIdentifier.h>
+#include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ShareableBitmap.h>
+#include <WebCore/SharedWorkerIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
@@ -199,6 +202,7 @@ public:
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
+    void removeServiceWorkerRealmsForProcess(WebCore::ProcessIdentifier);
     void setViewportForPage(WebPageProxy&, std::optional<int> width, std::optional<int> height, std::optional<double> devicePixelRatio, Inspector::CommandCallback<void>&&);
 #endif
     void willClosePage(const WebPageProxy&);
@@ -379,6 +383,12 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
+    void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier);
+    void scriptSharedWorkerRealmStateChanged(WebCore::SharedWorkerIdentifier, Vector<WebCore::FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<WebCore::FrameIdentifier>&& attachedOwnerFrameIdentifiers, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptSharedWorkerRealmDestroyed(WebCore::SharedWorkerIdentifier);
+    void scriptServiceWorkerRealmCreated(WebCore::ScriptExecutionContextIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
+    void scriptServiceWorkerRealmDestroyed(WebCore::ScriptExecutionContextIdentifier);
 #endif
 
     // Platform-dependent implementations.

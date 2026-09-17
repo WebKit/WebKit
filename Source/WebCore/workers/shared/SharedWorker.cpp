@@ -89,6 +89,10 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
     if (!document.hasBrowsingContext())
         return Exception { ExceptionCode::InvalidStateError, "No browsing context"_s };
 
+    auto ownerFrameIdentifier = document.frameID();
+    if (!ownerFrameIdentifier)
+        return Exception { ExceptionCode::InvalidStateError, "No owner frame"_s };
+
     auto url = document.encodingParseURL(compliantScriptURLString.releaseReturnValue());
     if (!url.isValid())
         return Exception { ExceptionCode::SyntaxError, "Invalid script URL"_s };
@@ -121,7 +125,7 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, Variant<
         return sharedWorker;
     }
 
-    protect(sharedWorkerMainThreadConnection())->requestSharedWorker(key, sharedWorker->identifier(), WTF::move(transferredPort), options);
+    protect(sharedWorkerMainThreadConnection())->requestSharedWorker(key, sharedWorker->identifier(), *ownerFrameIdentifier, WTF::move(transferredPort), options);
     return sharedWorker;
 }
 

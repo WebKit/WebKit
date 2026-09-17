@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ServiceWorkerThreadProxy.h"
 
+#include "AutomationInstrumentation.h"
 #include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "DocumentLoader.h"
@@ -104,6 +105,28 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
 
     m_serviceWorkerThread->clearProxies();
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void ServiceWorkerThreadProxy::serviceWorkerGlobalScopeBecameExecutionReady(ScriptExecutionContextIdentifier executionContextIdentifier, SecurityOriginData&& origin)
+{
+    ASSERT(isMainThread());
+    if (m_automationRealmExecutionContextIdentifier)
+        return;
+
+    m_automationRealmExecutionContextIdentifier = executionContextIdentifier;
+    AutomationInstrumentation::scriptServiceWorkerRealmCreated(executionContextIdentifier, origin);
+}
+
+void ServiceWorkerThreadProxy::serviceWorkerGlobalScopeTerminated()
+{
+    ASSERT(isMainThread());
+    if (!m_automationRealmExecutionContextIdentifier)
+        return;
+
+    AutomationInstrumentation::scriptServiceWorkerRealmDestroyed(*m_automationRealmExecutionContextIdentifier);
+    m_automationRealmExecutionContextIdentifier = std::nullopt;
+}
+#endif
 
 void ServiceWorkerThreadProxy::setLastNavigationWasAppInitiated(bool wasAppInitiated)
 {

@@ -528,10 +528,20 @@ WorkerObjectProxy& ServiceWorkerThread::workerObjectProxy() const
     return m_workerObjectProxy.get();
 }
 
-void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
+void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback, ExecutionReadyCallback&& executionReadyCallback)
 {
     m_state = State::Starting;
     startHeartBeatTimer();
+
+    Function<void(SecurityOriginData&&)> globalScopeCreatedCallback;
+    if (executionReadyCallback) {
+        globalScopeCreatedCallback = [executionReadyCallback = WTF::move(executionReadyCallback), weakThis = ThreadSafeWeakPtr { *this }](SecurityOriginData&& origin) mutable {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr globalScope = protectedThis->globalScope())
+                    executionReadyCallback(globalScope->identifier(), WTF::move(origin));
+            }
+        };
+    }
 
     WorkerThread::start([callback = WTF::move(callback), weakThis = ThreadSafeWeakPtr { *this }](auto& errorMessage) mutable {
 #ifndef NDEBUG
@@ -544,7 +554,7 @@ void ServiceWorkerThread::start(Function<void(const String&, bool)>&& callback)
             doesHandleFetch = protectedThis->doesHandleFetch();
         }
         callback(errorMessage, doesHandleFetch);
-    });
+    }, WTF::move(globalScopeCreatedCallback));
 }
 
 void ServiceWorkerThread::finishedStarting()
