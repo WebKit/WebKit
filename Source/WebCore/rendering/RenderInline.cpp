@@ -99,15 +99,6 @@ ASCIILiteral RenderInline::renderName() const
     return "RenderInline"_s;
 }
 
-bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-    const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
-{
-    ASSERT(layer());
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        return lineLayout->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction, this);
-    return false;
-}
-
 void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
 {
     if (!parent())

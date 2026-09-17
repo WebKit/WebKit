@@ -4989,10 +4989,37 @@ RenderLayer::HitLayer RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* 
     return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.ptr(), zOffset);
 }
 
+bool RenderLayer::hitTestContentForRenderer(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset, HitTestFilter hitTestFilter) const
+{
+    if (!renderer().isInlineBox())
+        return renderer().hitTest(request, result, hitTestLocation, accumulatedOffset, hitTestFilter);
+
+    // An inline box has no box of its own to hit test. Its fragments are part of the containing block's inline content.
+    CheckedRef inlineBox = downcast<RenderBoxModelObject>(renderer());
+    CheckedPtr lineLayout = LayoutIntegration::LineLayout::containing(inlineBox.get());
+    if (!lineLayout)
+        return false;
+
+    auto hitTestForAction = [&](HitTestAction hitTestAction) {
+        return lineLayout->hitTest(request, result, hitTestLocation, accumulatedOffset, hitTestAction, inlineBox.ptr());
+    };
+
+    // See RenderObject::hitTest for the phase order.
+    if (hitTestFilter != HitTestFilter::Self) {
+        if (hitTestForAction(HitTestAction::Foreground) || hitTestForAction(HitTestAction::Float) || hitTestForAction(HitTestAction::ChildBlockBackgrounds))
+            return true;
+    }
+
+    if (hitTestFilter != HitTestFilter::Descendants)
+        return hitTestForAction(HitTestAction::BlockBackground);
+
+    return false;
+}
+
 bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const HitTestLocation& hitTestLocation, HitTestFilter hitTestFilter) const
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
-    if (!renderer().hitTest(request, result, hitTestLocation, toLayoutPoint(layerBounds.location() - rendererLocation()), hitTestFilter)) {
+    if (!hitTestContentForRenderer(request, result, hitTestLocation, toLayoutPoint(layerBounds.location() - rendererLocation()), hitTestFilter)) {
         // It's wrong to set innerNode, but then claim that you didn't hit anything, unless it is
         // a rect-based test.
         ASSERT(!result.innerNode() || (request.resultIsElementList() && result.listBasedTestResult().size()));
