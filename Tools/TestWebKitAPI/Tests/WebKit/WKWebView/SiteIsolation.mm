@@ -171,6 +171,7 @@
 @interface NavigationDelegateWithUnresponsiveCallback : NSObject<WKNavigationDelegate>
 @property (nonatomic, readonly) BOOL didBecomeUnresponsive;
 @property (nonatomic, readonly) BOOL didBecomeResponsive;
+@property (nonatomic, copy) void (^decidePolicyForNavigationActionWithPreferences)(WKNavigationAction *, WKWebpagePreferences *, void (^)(WKNavigationActionPolicy, WKWebpagePreferences *));
 - (void)waitForDidFinishNavigation;
 @end
 
@@ -204,6 +205,13 @@
 - (void)_webViewWebProcessDidBecomeResponsive:(WKWebView *)webView
 {
     _didBecomeResponsive = true;
+}
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
+{
+    if (_decidePolicyForNavigationActionWithPreferences)
+        _decidePolicyForNavigationActionWithPreferences(navigationAction, preferences, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
@@ -7128,6 +7136,15 @@ TEST(SiteIsolation, UnresponsiveProcessMousedown)
 
     RetainPtr configuration = server.httpsProxyConfiguration();
     RetainPtr navigationDelegate = adoptNS([NavigationDelegateWithUnresponsiveCallback new]);
+
+    // The two iframes must be in different processes for this test to distinguish a hung process
+    // from one that recovered, so keep w3.org out of the shared process.
+    navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if ([navigationAction.request.URL.host isEqualToString:@"w3.org"])
+            preferences._allowSharedProcess = NO;
+        decisionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
     enableSiteIsolation(configuration.get());
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     webView.get().navigationDelegate = navigationDelegate.get();
