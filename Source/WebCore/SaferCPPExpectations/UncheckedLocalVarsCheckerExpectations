@@ -10,6 +10,7 @@ editing/Editing.cpp
 [ macOS ] html/HTMLMediaElement.cpp
 inspector/InspectorOverlay.cpp
 inspector/agents/InspectorDOMAgent.cpp
+inspector/agents/InspectorDOMDebuggerAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
