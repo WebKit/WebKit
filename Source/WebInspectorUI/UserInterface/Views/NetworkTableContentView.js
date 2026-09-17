@@ -2255,7 +2255,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         // Parse Content-Type from response headers
         let mimeType = "";
-        let contentType = redirect.responseHeaders["content-type"] || redirect.responseHeaders["Content-Type"];
+        let contentType = redirect.responseHeaders.get(WI.HTTPHeader.ContentType);
         if (contentType) {
             let match = contentType.match(/^([^;]+)/);
             if (match)
@@ -2336,8 +2336,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         else if (typeof firstLine === "number")
             size += 15 + (secondLine ? secondLine.length : 0); // "HTTP/1.1 " + status code + " " + status text + "\r\n"
 
-        for (let name in headers) {
-            let value = headers[name];
+        for (let [name, value] of headers) {
             size += name.length + 2 + (value ? value.length : 0) + 2; // "name: value\r\n"
         }
 

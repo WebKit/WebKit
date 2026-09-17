@@ -78,7 +78,7 @@ public:
     // NetworkBackendDispatcherHandler
     CommandResult<void> enable() final;
     CommandResult<void> disable() final;
-    CommandResult<void> setExtraHTTPHeaders(Ref<JSON::Object>&&) final;
+    CommandResult<void> setExtraHTTPHeaders(Ref<JSON::Array>&&) final;
     void getResponseBody(const Protocol::Network::RequestId&, Ref<GetResponseBodyCallback>&&) final;
     CommandResult<void> setResourceCachingDisabled(bool) final;
     CommandResult<void> setClearResourceDataOnNavigate(bool) final;
@@ -89,9 +89,9 @@ public:
     CommandResult<void> addInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     CommandResult<void> removeInterception(const String& url, Protocol::Network::NetworkStage, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
     CommandResult<void> interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage) final;
-    CommandResult<void> interceptWithRequest(const Protocol::Network::RequestId&, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData) final;
-    CommandResult<void> interceptWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers) final;
-    CommandResult<void> interceptRequestWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers) final;
+    CommandResult<void> interceptWithRequest(const Protocol::Network::RequestId&, const String& url, const String& method, RefPtr<JSON::Array>&& headers, const String& postData) final;
+    CommandResult<void> interceptWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Array>&& headers) final;
+    CommandResult<void> interceptRequestWithResponse(const Protocol::Network::RequestId&, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Array>&& headers) final;
     CommandResult<void> interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType) final;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     CommandResult<void> setEmulatedConditions(std::optional<int>&& bandwidth, std::optional<int>&& latency) final;

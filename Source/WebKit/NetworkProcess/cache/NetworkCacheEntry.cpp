@@ -265,7 +265,7 @@ void Entry::asJSON(StringBuilder& json, const Storage::RecordInfo& info) const
         "\"bodyShareCount\": "_s, info.bodyShareCount, ",\n"_s
         "\"headers\": {\n"_s);
     bool firstHeader = true;
-    for (auto& header : m_response.httpHeaderFields()) {
+    for (auto& header : m_response.httpHeaderFields().combined()) {
         json.append(std::exchange(firstHeader, false) ? ""_s : ",\n"_s, "    "_s);
         json.appendQuotedJSONString(header.key);
         json.append(": "_s);

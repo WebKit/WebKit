@@ -837,8 +837,9 @@ std::optional<WebCore::FetchOptions> Coder<WebCore::FetchOptions>::decodeForPers
 // so that the headers stored in the cache stays valid even after HTTPHeaderName.in gets updated.
 void Coder<WebCore::HTTPHeaderMap>::encodeForPersistence(Encoder& encoder, const WebCore::HTTPHeaderMap& headers)
 {
-    encoder << static_cast<uint64_t>(headers.size());
-    for (auto& keyValue : headers) {
+    auto combinedHeaders = headers.combined();
+    encoder << static_cast<uint64_t>(combinedHeaders.size());
+    for (auto& keyValue : combinedHeaders) {
         encoder << keyValue.key;
         encoder << keyValue.value;
     }

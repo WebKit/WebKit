@@ -172,8 +172,7 @@ void FrameNetworkAgentProxy::willSendRequest(ResourceLoaderIdentifier resourceID
 
     // Apply the inspector's extra request headers to the mutable outgoing request, like the legacy
     // InspectorNetworkAgent::willSendRequest.
-    for (auto& header : m_extraRequestHeaders)
-        request.setHTTPHeaderField(header.key, header.value);
+    ResourceUtilities::addExtraHTTPHeaderFields(request, m_extraRequestHeaders);
 
     RefPtr protectedLoader = loader;
     RefPtr page = m_page.get();
@@ -209,8 +208,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
 
     // Apply the inspector's extra request headers here too, so Ping/Beacon loads carry them like
     // the legacy path (InspectorNetworkAgent funnels both willSendRequest paths through one core).
-    for (auto& header : m_extraRequestHeaders)
-        request.setHTTPHeaderField(header.key, header.value);
+    ResourceUtilities::addExtraHTTPHeaderFields(request, m_extraRequestHeaders);
 
     RefPtr protectedLoader = loader;
     RefPtr page = m_page.get();

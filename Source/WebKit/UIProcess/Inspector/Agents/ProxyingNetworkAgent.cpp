@@ -41,6 +41,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/ProcessQualified.h>
 #include <tuple>
 #include <utility>
@@ -87,21 +88,12 @@ static Protocol::Page::ResourceType toProtocolResourceType(ResourceType type)
     return Protocol::Page::ResourceType::Other;
 }
 
-static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
-{
-    auto headersValue = Protocol::Network::Headers::create().release();
-    auto headersObject = headersValue->asObject();
-    for (const auto& header : headers)
-        headersObject->setString(header.key, header.value);
-    return headersValue;
-}
-
 static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const ResourceRequest& request)
 {
     auto requestObject = Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
-        .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(request.httpHeaderFields()))
         .release();
 
     if (RefPtr body = request.httpBody()) {
@@ -147,7 +139,7 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(response.httpHeaderFields()))
         .setMimeType(response.mimeType())
         .setSource(toProtocolResponseSource(response.source()))
         .release();
@@ -302,15 +294,13 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
+CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Array>&& headers)
 {
-    HTTPHeaderMap headerMap;
-    for (auto& entry : headers.get()) {
-        Ref value = entry.value;
-        if (auto stringValue = value->asString(); !!stringValue)
-            headerMap.set(entry.key, stringValue);
-    }
-    m_extraRequestHeaders = WTF::move(headerMap);
+    auto headerMap = ResourceUtilities::httpHeaderMapFromPayload(headers);
+    if (!headerMap)
+        return makeUnexpected(headerMap.error());
+
+    m_extraRequestHeaders = WTF::move(*headerMap);
 
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
@@ -503,17 +493,17 @@ CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Netw
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Array>&&, const String&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Array>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Array>&&)
 {
     return { };
 }

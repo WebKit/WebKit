@@ -28,6 +28,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <WebCore/CachedResource.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -42,6 +43,8 @@ class DocumentLoader;
 class FragmentedSharedBuffer;
 class LocalFrame;
 class Page;
+class ResourceRequest;
+class ResourceResponse;
 class ScriptExecutionContext;
 class TextResourceDecoder;
 }
@@ -102,6 +105,10 @@ struct SearchResult {
 using LoadResourceCompletionHandler = CompletionHandler<void(std::expected<std::tuple<String /* content */, String /* mimeType */, int /* status */>, String /* error */>&&)>;
 
 namespace ResourceUtilities {
+
+WEBCORE_EXPORT Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForHeaders(const WebCore::HTTPHeaderMap&);
+WEBCORE_EXPORT Protocol::ErrorStringOr<WebCore::HTTPHeaderMap> httpHeaderMapFromPayload(const JSON::Array&);
+WEBCORE_EXPORT void addExtraHTTPHeaderFields(WebCore::ResourceRequest&, const WebCore::HTTPHeaderMap&);
 
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
 WEBCORE_EXPORT Vector<WebCore::CachedResource*> cachedResourcesForFrame(WebCore::LocalFrame*);

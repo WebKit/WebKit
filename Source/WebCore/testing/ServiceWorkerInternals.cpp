@@ -144,7 +144,7 @@ Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(Scri
 
 Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& response)
 {
-    return WTF::map(response.internalResponseHeaders(), [](auto& keyValue) {
+    return WTF::map(response.internalResponseHeaders().combined(), [](const auto& keyValue) {
         return keyValue.key;
     });
 }

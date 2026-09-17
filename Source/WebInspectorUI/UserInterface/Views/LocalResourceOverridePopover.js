@@ -85,7 +85,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 return null;
         }
 
-        let headers = {};
+        let headers = new WI.HTTPHeaderMap;
         for (let node of this._headersDataGrid.children) {
             let {name, value} = node.data;
             if (!name || !value)
@@ -96,7 +96,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
                 if (name.toLowerCase() === "set-cookie")
                     continue;
             }
-            headers[name] = value;
+            headers.add(name, value);
         }
 
         switch (data.type) {
@@ -153,7 +153,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         if (!data.responseMIMEType && data.requestURL) {
             data.responseMIMEType = WI.mimeTypeForFileExtension(WI.fileExtensionForURL(data.requestURL));
             if (data.type === WI.LocalResourceOverride.InterceptType.Response || data.type === WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork)
-                headers["Content-Type"] = data.responseMIMEType;
+                headers.add("Content-Type", data.responseMIMEType);
         }
 
         // No change.
@@ -199,8 +199,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             valueData.statusText = undefined;
         }
 
-        let requestHeaders = localResource?.requestHeaders ?? {};
-        let responseHeaders = localResource?.responseHeaders ?? {};
+        let requestHeaders = localResource?.requestHeaders ?? new WI.HTTPHeaderMap;
+        let responseHeaders = localResource?.responseHeaders ?? new WI.HTTPHeaderMap;
 
         let popoverContentElement = document.createElement("div");
         popoverContentElement.className = "local-resource-override-popover-content";
@@ -681,14 +681,14 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
             initializeHeaders &&= isRequest || isResponse;
             if (initializeHeaders) {
                 let headers = isRequest ? requestHeaders : responseHeaders;
-                for (let name in headers) {
+                for (let [name, value] of headers) {
                     if (!isRequest) {
                         if (name.toLowerCase() === "content-type")
                             continue;
                         if (name.toLowerCase() === "set-cookie")
                             continue;
                     }
-                    addDataGridNodeForHeader(name, headers[name]);
+                    addDataGridNodeForHeader(name, value);
                 }
             }
 

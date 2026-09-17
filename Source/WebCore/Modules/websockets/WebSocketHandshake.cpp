@@ -191,9 +191,9 @@ void WebSocketHandshake::setClientHandshakeRequestHeaders(const HTTPHeaderMap& h
         if (auto httpHeaderName = header.keyAsHTTPHeaderName) {
             if (isStandardWebSocketHandshakeRequestHeader(*httpHeaderName))
                 continue;
-            filtered.set(*httpHeaderName, header.value);
+            filtered.add(*httpHeaderName, header.value);
         } else
-            filtered.setUncommonHeader(header.key, header.value);
+            filtered.addUncommonHeader(header.key, header.value);
     }
     m_clientHandshakeRequestHeaders = WTF::move(filtered);
 }
@@ -256,9 +256,9 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Functi
     request.setIsAppInitiated(m_isAppInitiated);
     for (const auto& header : m_clientHandshakeRequestHeaders) {
         if (auto httpHeaderName = header.keyAsHTTPHeaderName)
-            request.setHTTPHeaderField(*httpHeaderName, header.value);
+            request.addHTTPHeaderField(*httpHeaderName, header.value);
         else
-            request.setHTTPHeaderField(header.key, header.value);
+            request.addHTTPHeaderField(header.key, header.value);
     }
     return request;
 }
@@ -563,9 +563,9 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
                 }
                 sawSecWebSocketProtocolHeaderField = true;
             }
-
-            m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
         }
+
+        m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
     }
     return data;
 }

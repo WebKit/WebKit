@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoader.h"
@@ -56,6 +57,51 @@ namespace Inspector {
 namespace ResourceUtilities {
 
 using namespace WebCore;
+
+Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForHeaders(const HTTPHeaderMap& headers)
+{
+    auto result = JSON::ArrayOf<Protocol::Network::Header>::create();
+    for (auto& header : headers) {
+        result->addItem(Protocol::Network::Header::create()
+            .setName(header.key)
+            .setValue(header.value)
+            .release());
+    }
+    return result;
+}
+
+Protocol::ErrorStringOr<HTTPHeaderMap> httpHeaderMapFromPayload(const JSON::Array& headers)
+{
+    HTTPHeaderMap result;
+    for (auto& value : headers) {
+        auto header = value->asObject();
+        if (!header)
+            return makeUnexpected("Header must be an object"_s);
+        auto name = header->getString("name"_s);
+        auto headerValue = header->getString("value"_s);
+        if (name.isNull() || headerValue.isNull())
+            return makeUnexpected("Header name and value must be strings"_s);
+        result.add(name, headerValue);
+    }
+    return result;
+}
+
+void addExtraHTTPHeaderFields(ResourceRequest& request, const HTTPHeaderMap& extraHeaders)
+{
+    // Remove and then add so that duplicate headers are added separately.
+    for (const auto& header : extraHeaders) {
+        if (header.keyAsHTTPHeaderName)
+            request.removeHTTPHeaderField(*header.keyAsHTTPHeaderName);
+        else
+            request.removeHTTPHeaderField(header.key);
+    }
+    for (const auto& header : extraHeaders) {
+        if (header.keyAsHTTPHeaderName)
+            request.addHTTPHeaderField(*header.keyAsHTTPHeaderName, header.value);
+        else
+            request.addHTTPHeaderField(header.key, header.value);
+    }
+}
 
 Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::ResourceType resourceType)
 {

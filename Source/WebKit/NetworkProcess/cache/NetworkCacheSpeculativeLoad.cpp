@@ -212,7 +212,7 @@ bool requestsHeadersMatch(const ResourceRequest& speculativeValidationRequest, c
     if (speculativeRequest.httpHeaderFields() != actualRequest.httpHeaderFields()) {
         LOG(NetworkCacheSpeculativePreloading, "Cannot reuse speculatively validated entry because HTTP headers used for validation do not match");
 #if !LOG_DISABLED
-        dumpHTTPHeadersDiff(speculativeRequest.httpHeaderFields(), actualRequest.httpHeaderFields());
+        dumpHTTPHeadersDiff(speculativeRequest.httpHeaderFields().combined(), actualRequest.httpHeaderFields().combined());
 #endif
         return false;
     }
