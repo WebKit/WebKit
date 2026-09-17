@@ -243,6 +243,11 @@ struct Tree {
 
 size_t computeDepth(const Tree&);
 
+// Distinct from computeDepth(): substitution multiplies a tree rather than deepening it, so the two
+// bound different things.
+size_t computeNodeCount(const Tree&);
+size_t computeNodeCount(const Child&);
+
 // Math Operators.
 
 struct Sum {

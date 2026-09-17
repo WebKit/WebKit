@@ -28,11 +28,13 @@ namespace WebCore {
 namespace Style {
 namespace Calculation {
 
+struct Child;
 struct Tree;
 
 // MARK: Copying
 
 Tree copy(const Tree&);
+Child copy(const Child&);
 
 } // namespace Calculation
 } // namespace Style

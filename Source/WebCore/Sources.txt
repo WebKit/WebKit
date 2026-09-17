@@ -3358,6 +3358,7 @@ style/UserAgentStyle.cpp @header:RenderStyleGetters @cost:6
 style/calc/StyleCalculationTree+Conversion.cpp @header:RenderStyleGetters @cost:7
 style/calc/StyleCalculationTree+Copy.cpp
 style/calc/StyleCalculationTree+Evaluation.cpp
+style/calc/StyleCalculationTree+Substitution.cpp
 style/calc/StyleCalculationTree.cpp
 style/calc/StyleCalculationValue.cpp
 style/computed/data/StyleAppleColorFilterData.cpp @cost:5
@@ -3557,6 +3558,7 @@ style/values/overflow/StyleTextOverflow.cpp
 style/values/overflow/StyleOverflowClipMargin.cpp
 style/values/page/StylePageSize.cpp
 style/values/pointerevents/StyleTouchAction.cpp
+style/values/primitives/StyleCalcSizeValue+Interpolation.cpp
 style/values/primitives/StyleCalcSizeValue.cpp
 style/values/primitives/StyleCustomIdent.cpp
 style/values/primitives/StyleDeclarationValue.cpp

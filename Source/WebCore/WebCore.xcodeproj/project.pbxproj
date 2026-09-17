@@ -19695,6 +19695,8 @@
 		BC4630612E9B098600EA911F /* StyleCalculationTree+Copy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "StyleCalculationTree+Copy.cpp"; sourceTree = "<group>"; };
 		BC4630622E9B098600EA911F /* StyleCalculationTree+Evaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Evaluation.h"; sourceTree = "<group>"; };
 		BC4630632E9B098600EA911F /* StyleCalculationTree+Evaluation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "StyleCalculationTree+Evaluation.cpp"; sourceTree = "<group>"; };
+		BCA1C8000000000000000001 /* StyleCalculationTree+Substitution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Substitution.h"; sourceTree = "<group>"; };
+		BCA1C8000000000000000002 /* StyleCalculationTree+Substitution.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "StyleCalculationTree+Substitution.cpp"; sourceTree = "<group>"; };
 		BC4630642E9B098600EA911F /* StyleCalculationTree+Traversal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalculationTree+Traversal.h"; sourceTree = "<group>"; };
 		BC4630652E9B098600EA911F /* StyleCalculationValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalculationValue.h; sourceTree = "<group>"; };
 		BC4630662E9B098600EA911F /* StyleCalculationValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalculationValue.cpp; sourceTree = "<group>"; };
@@ -20309,8 +20311,11 @@
 		BCA1C5000000000000000007 /* CSSPropertyParserConsumer+CalcSize.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+CalcSize.cpp"; sourceTree = "<group>"; };
 		BCA1C5000000000000000008 /* CSSPropertyParserConsumer+CalcSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+CalcSize.h"; sourceTree = "<group>"; };
 		BCA1C6000000000000000001 /* StyleSizeOrKeyword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSizeOrKeyword.h; sourceTree = "<group>"; };
+		BCA1C8000000000000000005 /* StyleSizeOrKeyword+Blending.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleSizeOrKeyword+Blending.h"; sourceTree = "<group>"; };
 		BCA1C6000000000000000003 /* StyleSizeOrKeyword+CSSValueConversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleSizeOrKeyword+CSSValueConversion.h"; sourceTree = "<group>"; };
 		BCA1C7000000000000000001 /* StyleCalcSizeValue+Evaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalcSizeValue+Evaluation.h"; sourceTree = "<group>"; };
+		BCA1C8000000000000000003 /* StyleCalcSizeValue+Interpolation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalcSizeValue+Interpolation.h"; sourceTree = "<group>"; };
+		BCA1C8000000000000000004 /* StyleCalcSizeValue+Interpolation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "StyleCalcSizeValue+Interpolation.cpp"; sourceTree = "<group>"; };
 		BCA1C7000000000000000002 /* StyleCalcSizeValue+Serialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StyleCalcSizeValue+Serialization.h"; sourceTree = "<group>"; };
 		BCA1C7000000000000000003 /* StyleCalcSizeValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleCalcSizeValue.cpp; sourceTree = "<group>"; };
 		BCA1C7000000000000000004 /* StyleCalcSizeValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleCalcSizeValue.h; sourceTree = "<group>"; };
@@ -38274,6 +38279,8 @@
 				BC4630602E9B098600EA911F /* StyleCalculationTree+Copy.h */,
 				BC4630632E9B098600EA911F /* StyleCalculationTree+Evaluation.cpp */,
 				BC4630622E9B098600EA911F /* StyleCalculationTree+Evaluation.h */,
+				BCA1C8000000000000000002 /* StyleCalculationTree+Substitution.cpp */,
+				BCA1C8000000000000000001 /* StyleCalculationTree+Substitution.h */,
 				BC4630642E9B098600EA911F /* StyleCalculationTree+Traversal.h */,
 				BC46305F2E9B098600EA911F /* StyleCalculationTree.cpp */,
 				BC46305E2E9B098600EA911F /* StyleCalculationTree.h */,
@@ -39410,6 +39417,8 @@
 			isa = PBXGroup;
 			children = (
 				BCA1C7000000000000000001 /* StyleCalcSizeValue+Evaluation.h */,
+				BCA1C8000000000000000004 /* StyleCalcSizeValue+Interpolation.cpp */,
+				BCA1C8000000000000000003 /* StyleCalcSizeValue+Interpolation.h */,
 				BCA1C7000000000000000002 /* StyleCalcSizeValue+Serialization.h */,
 				BCA1C7000000000000000003 /* StyleCalcSizeValue.cpp */,
 				BCA1C7000000000000000004 /* StyleCalcSizeValue.h */,
@@ -39455,6 +39464,7 @@
 				BCB271EE2CC0156E00265123 /* StylePrimitiveNumericTypes.h */,
 				BCD9F05B2E1C297600D1C3DF /* StyleRatio.cpp */,
 				BC23875F2D84A59400698102 /* StyleRatio.h */,
+				BCA1C8000000000000000005 /* StyleSizeOrKeyword+Blending.h */,
 				BCA1C6000000000000000003 /* StyleSizeOrKeyword+CSSValueConversion.h */,
 				BCA1C6000000000000000001 /* StyleSizeOrKeyword.h */,
 				28A097C6302E767800E50E45 /* StyleSnapLengthAsBorderWidth.cpp */,

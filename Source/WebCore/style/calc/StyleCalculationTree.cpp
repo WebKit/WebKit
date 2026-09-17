@@ -235,6 +235,31 @@ size_t computeDepth(const Tree& tree)
     return computeDepth(tree.root);
 }
 
+size_t computeNodeCount(const Child& root)
+{
+    size_t total = 1;
+    forAllChildren(root, WTF::makeVisitor(
+        [&](const std::optional<Child>& child) {
+            if (child)
+                total += computeNodeCount(*child);
+        },
+        [&](const Child& child) {
+            total += computeNodeCount(child);
+        },
+        [&](const ChildOrNone& childOrNone) {
+            if (childOrNone.holdsAlternative<Child>())
+                total += computeNodeCount(get<Child>(childOrNone));
+        },
+        [&](const auto&) { }
+    ));
+    return total;
+}
+
+size_t computeNodeCount(const Tree& tree)
+{
+    return computeNodeCount(tree.root);
+}
+
 template<typename Op>
 static auto dumpVariadic(TextStream&, const IndirectNode<Op>&, ASCIILiteral prefix, ASCIILiteral between) -> TextStream&;
 

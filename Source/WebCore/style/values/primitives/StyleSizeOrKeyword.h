@@ -61,7 +61,9 @@ struct SizeOrKeyword : PrimitiveNumericOrKeywordOrOptionalCalcSize<LengthPercent
     }
 };
 
-template<typename T> concept SizeOrKeywordDerived = WTF::IsBaseOfTemplate<SizeOrKeyword, T>::value && VariantLike<T>;
+// Written as a refinement of LengthPercentageOrKeywordDerived so that specializations constrained on
+// it are more specialized than ones constrained on that, rather than ambiguous with them.
+template<typename T> concept SizeOrKeywordDerived = LengthPercentageOrKeywordDerived<T> && WTF::IsBaseOfTemplate<SizeOrKeyword, T>::value;
 
 } // namespace Style
 } // namespace WebCore
