@@ -936,6 +936,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
         auto heightFromAspectRatio = blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatio(), isRenderReplaced()) - borderAndPaddingLogicalHeight();
         if (firstChild())
             heightFromAspectRatio = std::max(heightFromAspectRatio, *intrinsicContentHeight);
+        if (logicalMinHeight.isCalcSize())
+            heightFromAspectRatio = resolveCalcSizeLogicalHeight(logicalMinHeight.get<Style::UnevaluatedCalcSize>(), heightFromAspectRatio, 0_lu);
         logicalMinHeight = Style::MinimumSize::Fixed { heightFromAspectRatio / styleToUse.usedZoomForLength().value };
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
@@ -2761,8 +2763,12 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         // CSS Sizing 4 section 5.1: "A preferred aspect ratio only ever has an effect if at least one of the
         // box's sizes is automatic." Width is the ratio-dependent axis here; it must be auto for the
         // aspect ratio to determine it. (Height as ratio-dependent is handled by shouldComputeLogicalHeightFromAspectRatio.)
-        if (style().logicalWidth().isAuto() && shouldComputeLogicalWidthFromAspectRatio())
-            return constrainLogicalWidthByMinMax(computeLogicalWidthFromAspectRatio(), containerWidthInInlineDirection, containingBlock, AllowIntrinsic::No);
+        if (style().logicalWidth().isAuto() && shouldComputeLogicalWidthFromAspectRatio()) {
+            auto logicalWidthFromAspectRatio = computeLogicalWidthFromAspectRatio();
+            if (auto& styleLogicalWidth = style().logicalWidth(); styleLogicalWidth.isCalcSize())
+                logicalWidthFromAspectRatio = resolveCalcSizeLogicalWidth(styleLogicalWidth.get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthFromAspectRatio - borderAndPaddingLogicalWidth()), containerWidthInInlineDirection) + borderAndPaddingLogicalWidth();
+            return constrainLogicalWidthByMinMax(logicalWidthFromAspectRatio, containerWidthInInlineDirection, containingBlock, AllowIntrinsic::No);
+        }
 
         auto preferredWidth = computeLogicalWidthUsing(usedLogicalWidthLength, containerWidthInInlineDirection, containingBlock);
         return constrainLogicalWidthByMinMax(preferredWidth, containerWidthInInlineDirection, containingBlock);
@@ -3429,6 +3435,10 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             if (intrinsicHeight && style().boxSizing() == BoxSizing::ContentBox)
                 *intrinsicHeight -= RenderBox::borderBefore() + RenderBox::paddingBefore() + RenderBox::borderAfter() + RenderBox::paddingAfter();
             auto heightFromAspectRatio = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatio(), is<RenderReplaced>(*this));
+            if (computedLogicalHeight.isCalcSize()) {
+                auto keywordContentLogicalHeight = std::max(0_lu, heightFromAspectRatio - borderAndPaddingLogicalHeight());
+                heightFromAspectRatio = adjustBorderBoxLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(computedLogicalHeight.get<Style::UnevaluatedCalcSize>(), keywordContentLogicalHeight, 0_lu));
+            }
             return constrainLogicalHeightByMinMax(heightFromAspectRatio, intrinsicHeight, isComputingIntrinsicSize);
         }
 
@@ -5387,6 +5397,11 @@ void RenderBox::applyAutomaticContentBasedMinimumSize(LayoutUnit& minLogicalWidt
     // aspect ratio that is neither a replaced element nor a scroll container is its
     // min-content size capped by its maximum size." https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
     auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicKeywordLogicalWidths();
+    if (auto& logicalMinWidth = style().logicalMinWidth(); logicalMinWidth.isCalcSize()) {
+        auto calcSizeLogicalMinWidth = logicalMinWidth.get<Style::UnevaluatedCalcSize>();
+        minContentLogicalWidth = resolveCalcSizeLogicalWidth(calcSizeLogicalMinWidth, minContentLogicalWidth, 0_lu);
+        maxContentLogicalWidth = resolveCalcSizeLogicalWidth(calcSizeLogicalMinWidth, maxContentLogicalWidth, 0_lu);
+    }
     minLogicalWidth = std::max(minLogicalWidth, minContentLogicalWidth);
     maxLogicalWidth = std::max(maxLogicalWidth, maxContentLogicalWidth);
 }
