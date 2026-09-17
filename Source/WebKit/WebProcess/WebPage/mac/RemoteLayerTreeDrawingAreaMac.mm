@@ -91,6 +91,8 @@ void RemoteLayerTreeDrawingAreaMac::willCommitMainFrameData(MainFrameData& data)
     if (!frameView)
         return;
 
+    data.viewSize = m_webPage->size();
+
     if (RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForPageScale())
         data.pageScalingLayerID = renderViewGraphicsLayer->primaryLayerID();
 
