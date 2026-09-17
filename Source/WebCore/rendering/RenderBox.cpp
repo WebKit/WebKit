@@ -2982,10 +2982,9 @@ LayoutUnit RenderBox::resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSi
     return resolveCalcSizeContentSize(calcSize, keywordContentLogicalWidth, percentResolutionLogicalWidth, borderAndPaddingLogicalWidth());
 }
 
-LayoutUnit RenderBox::resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalHeight) const
+LayoutUnit RenderBox::resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalHeight, LayoutUnit percentageBaseLogicalHeight) const
 {
-    // Percentages have no containing block height to resolve against here, so they resolve against zero.
-    return resolveCalcSizeContentSize(calcSize, keywordContentLogicalHeight, 0_lu, borderAndPaddingLogicalHeight());
+    return resolveCalcSizeContentSize(calcSize, keywordContentLogicalHeight, percentageBaseLogicalHeight, borderAndPaddingLogicalHeight());
 }
 
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
@@ -3716,8 +3715,9 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return keywordLogicalHeight;
 
     auto calcSize = logicalHeight.template get<Style::UnevaluatedCalcSize>();
+    auto percentageBaseLogicalHeight = calcSize.hasPercentage() ? computePercentageLogicalHeight(Style::PreferredSize { Style::PreferredSize::Percentage { 100 } }).value_or(0_lu) : 0_lu;
     auto keywordContentLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(*keywordLogicalHeight);
-    return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight));
+    return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight, percentageBaseLogicalHeight));
 }
 
 std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsing(const Style::PreferredSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const

@@ -6,7 +6,7 @@ PASS resolved height for height in definite height container: calc-size(any, 31%
 PASS resolved height for height in auto height container: calc-size(31%, size)
 PASS resolved height for height in definite height container: calc-size(31%, size)
 PASS resolved height for height in auto height container: calc-size(max-content, 31%)
-FAIL resolved height for height in definite height container: calc-size(max-content, 31%) assert_equals: expected "31px" but got "0px"
+PASS resolved height for height in definite height container: calc-size(max-content, 31%)
 PASS resolved height for height in auto height container: calc-size(fit-content, 72px)
 PASS resolved height for height in definite height container: calc-size(fit-content, 72px)
 PASS resolved height for height in auto height container: calc-size(37px, 93px)

@@ -368,7 +368,7 @@ public:
     LayoutUnit computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
 
     LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const;
-    LayoutUnit resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalHeight) const;
+    LayoutUnit resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalHeight, LayoutUnit percentageBaseLogicalHeight) const;
     LayoutUnit resolveCalcSizeContentSize(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentSize, LayoutUnit percentResolutionSize, LayoutUnit borderAndPadding) const;
 
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::PreferredSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;

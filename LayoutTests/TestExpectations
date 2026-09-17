@@ -4810,7 +4810,6 @@ imported/w3c/web-platform-tests/css/css-values/ch-unit-019.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-values/resolution-with-percentage-without-context.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-scroll-vw-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/vh-update-and-transition-in-subframe.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-flex-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-flex-009.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-scroll-vw-002.html [ ImageOnlyFailure ]
