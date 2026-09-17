@@ -80,6 +80,13 @@ private:
     void tryToStartPictureInPicture() final;
     void stopPictureInPicture() final;
     void setShowsPlaybackControls(bool) final;
+    void setCanIncludePlaybackControlsWhenInline(bool) final;
+    void setPrefersFullScreenStyleForEmbeddedMode(bool) final;
+    void setExcludesPlaybackControlsCloseButton(bool) final;
+    void flashPlaybackControls(Seconds) final;
+    void setVideoHeightFraction(float) final;
+    void setVideoCornerRadius(float) final;
+    FloatRect videoViewerModeVideoRect() const final;
     void setContentDimensions(const FloatSize&) final;
     void setAllowsPictureInPicturePlayback(bool) final;
     bool isExternalPlaybackActive() const final;

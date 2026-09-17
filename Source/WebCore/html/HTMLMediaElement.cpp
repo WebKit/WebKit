@@ -7961,6 +7961,9 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
                 element.setFullscreenMode(mode);
                 element.configureMediaControls();
 
+                if (mode == VideoFullscreenModeInWindow && !element.videoUsesElementFullscreen())
+                    element.setVideoFullscreenStandbyInternal(false);
+
                 client.enterVideoFullscreenForVideoElement(*asVideo, element.m_videoFullscreenMode, element.m_videoFullscreenStandby);
                 if (element.m_videoFullscreenStandby)
                     return;
@@ -7991,8 +7994,9 @@ void HTMLMediaElement::exitFullscreen()
     m_waitingToEnterFullscreen = false;
 
 #if ENABLE(FULLSCREEN_API)
+    bool inWindowFullscreenIsSeparateFromElementFullscreen = m_videoFullscreenMode == VideoFullscreenModeInWindow && !videoUsesElementFullscreen();
     Ref fullscreen = protect(document())->fullscreen();
-    if (fullscreen->fullscreenElement() == this) {
+    if (!inWindowFullscreenIsSeparateFromElementFullscreen && fullscreen->fullscreenElement() == this) {
         if (fullscreen->isFullscreen()) {
             setChangingVideoFullscreenMode(true);
             fullscreen->fullyExitFullscreen();

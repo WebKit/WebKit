@@ -1304,6 +1304,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return completionHandler(false);
 
         strongSelf->_fullScreenState = WebKit::InFullScreen;
+        [[strongSelf _webView] _updateVideoViewerModeAvailability];
 
         if (strongSelf->_exitRequested) {
             strongSelf->_exitRequested = NO;
@@ -1548,6 +1549,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _fullScreenState = WebKit::NotInFullScreen;
     OBJC_ALWAYS_LOG(OBJC_LOGIDENTIFIER);
 
+    [self._webView _updateVideoViewerModeAvailability];
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
@@ -1697,6 +1700,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
+    return YES;
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+#if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
+    bool isFullScreenDismissalGesture = gestureRecognizer == _startDismissGestureRecognizer.get() || gestureRecognizer == _interactivePanDismissGestureRecognizer.get();
+    if (isFullScreenDismissalGesture && [_fullscreenViewController isinWindowFullscreenActive])
+        return NO;
+#endif
     return YES;
 }
 

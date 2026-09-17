@@ -48,8 +48,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS UIButton;
 OBJC_CLASS WKLayerHostView;
 OBJC_CLASS WKSPlayableViewControllerHost;
+OBJC_CLASS WKVideoAvailabilityButtonTarget;
 OBJC_CLASS WKVideoView;
 OBJC_CLASS WebAVPlayerLayer;
 OBJC_CLASS WebAVPlayerLayerView;
@@ -205,6 +207,9 @@ public:
     RefPtr<WebCore::PlatformVideoPresentationInterface> returningToStandbyInterface() const;
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;
     RetainPtr<WKVideoView> createViewWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatSize& initialSize, const WebCore::FloatSize& nativeSize, float hostingScaleFactor);
+    void updateVideoViewerModeInsets();
+    void updateVideoViewerModeAvailability();
+    void enterVideoViewerMode();
 #endif
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
@@ -325,6 +330,13 @@ private:
 #endif
 
     bool m_mockVideoPresentationModeEnabled { false };
+#if PLATFORM(IOS_FAMILY)
+    void layOutVideoViewerModeAvailabilityButton();
+
+    RetainPtr<UIButton> m_videoViewerModeAvailabilityButton;
+    RetainPtr<WKVideoAvailabilityButtonTarget> m_videoViewerModeAvailabilityButtonTarget;
+    bool m_videoViewerModeEntryRequested { false };
+#endif
     WebCore::FloatSize m_mockPictureInPictureWindowSize { DefaultMockPictureInPictureWindowWidth, DefaultMockPictureInPictureWindowHeight };
 
     WeakPtr<WebPageProxy> m_page;

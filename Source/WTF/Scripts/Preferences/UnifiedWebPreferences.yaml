@@ -6635,6 +6635,16 @@ VideoRendererUseDecompressionSessionForProtected:
     WebKitLegacy: false
   sharedPreferenceForWebProcess: true
 
+VideoViewerModeEnabled:
+  type: bool
+  status: internal
+  category: media
+  defaultsOverridable: true
+  humanReadableName: "Video Viewer Mode"
+  humanReadableDescription: "Present video in an embedded player over the web content"
+  condition: PLATFORM(IOS_FAMILY)
+  defaultValue: false
+
 ViewGestureDebuggingEnabled:
   type: bool
   status: embedder

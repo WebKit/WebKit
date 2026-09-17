@@ -40,6 +40,8 @@
 #import <UIKit/UILabel.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIWindow.h>
+#import <algorithm>
+#import <cmath>
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <pal/spi/ios/UIKitSPI.h>
@@ -63,6 +65,69 @@
 @property (nonatomic, assign, setter=_setIgnoreAppSupportedOrientations:) BOOL _ignoreAppSupportedOrientations;
 @end
 
+@interface WebAVVideoViewerGestureHandler : NSObject<UIGestureRecognizerDelegate>
+- (instancetype)initWithInterface:(WebCore::VideoPresentationInterfaceIOS&)interface;
+- (void)exitGestureRecognized:(id)sender;
+- (void)dismissGestureChanged:(UIPanGestureRecognizer *)recognizer;
+@end
+
+@implementation WebAVVideoViewerGestureHandler {
+    ThreadSafeWeakPtr<WebCore::VideoPresentationInterfaceIOS> _interface;
+}
+
+- (instancetype)initWithInterface:(WebCore::VideoPresentationInterfaceIOS&)interface
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _interface = ThreadSafeWeakPtr { interface };
+    return self;
+}
+
+- (void)exitGestureRecognized:(id)sender
+{
+    if (RefPtr interface = _interface.get())
+        interface->requestExitVideoViewerMode();
+}
+
+- (void)dismissGestureChanged:(UIPanGestureRecognizer *)recognizer
+{
+    RefPtr interface = _interface.get();
+    if (!interface)
+        return;
+
+    auto state = WebCore::VideoPresentationInterfaceIOS::GestureState::Cancelled;
+    switch ([recognizer state]) {
+    case UIGestureRecognizerStateBegan:
+        state = WebCore::VideoPresentationInterfaceIOS::GestureState::Began;
+        break;
+    case UIGestureRecognizerStateChanged:
+        state = WebCore::VideoPresentationInterfaceIOS::GestureState::Changed;
+        break;
+    case UIGestureRecognizerStateEnded:
+        state = WebCore::VideoPresentationInterfaceIOS::GestureState::Ended;
+        break;
+    default:
+        break;
+    }
+
+    UIView *view = [recognizer view];
+    CGPoint translation = [recognizer translationInView:view];
+    CGPoint velocity = [recognizer velocityInView:view];
+    interface->videoViewerModeDismissGestureChanged(state, WebCore::FloatSize(translation.x, translation.y), WebCore::FloatSize(velocity.x, velocity.y));
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (![gestureRecognizer isKindOfClass:PAL::getUIPanGestureRecognizerClassSingleton()])
+        return YES;
+
+    CGPoint translation = [(UIPanGestureRecognizer *)gestureRecognizer translationInView:[gestureRecognizer view]];
+    return std::abs(translation.y) >= std::abs(translation.x);
+}
+
+@end
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceIOS);
@@ -82,6 +147,11 @@ static UIColor *greyUIColor()
     return (UIColor *)[PAL::getUIColorClassSingleton() colorWithRed:164.0 / 255.0 green:164.0 / 255.0 blue:164.0 / 255.0 alpha:1];
 }
 
+static UIColor *videoViewerBackdropUIColor()
+{
+    return (UIColor *)[PAL::getUIColorClassSingleton() colorWithWhite:0 alpha:0.85];
+}
+
 #if !LOG_DISABLED
 static const char* boolString(bool val)
 {
@@ -91,6 +161,32 @@ static const char* boolString(bool val)
 
 static const Seconds defaultWatchdogTimerInterval { 1_s };
 static bool ignoreWatchdogForDebugging = false;
+
+static constexpr Seconds videoViewerModeInitialControlsDuration = 3_s;
+static constexpr float videoViewerModeVideoHeightFraction = 0.8;
+static constexpr float videoViewerModeVideoCornerRadius = 20;
+static constexpr NSTimeInterval videoViewerModeTransitionDuration = 0.4;
+static constexpr CGFloat videoViewerModeTransitionBounce = 0.15;
+static constexpr CGFloat videoViewerModeDismissDistanceRatio = 0.25;
+static constexpr CGFloat videoViewerModeDismissVelocity = 500;
+static constexpr CGFloat videoViewerModeDismissMaximumScaleReduction = 0.25;
+static constexpr CGFloat videoViewerModeDismissProgressDistanceRatio = 0.5;
+
+static CGAffineTransform transformMappingVideoRectToInlineRect(CGRect inlineRect, CGRect videoRect, CGRect hostBounds)
+{
+    if (CGRectIsEmpty(inlineRect) || CGRectIsEmpty(videoRect) || CGRectIsEmpty(hostBounds))
+        return CGAffineTransformIdentity;
+
+    CGFloat scale = CGRectGetWidth(inlineRect) / CGRectGetWidth(videoRect);
+    if (!std::isfinite(scale) || scale <= 0)
+        return CGAffineTransformIdentity;
+
+    CGFloat hostCenterX = CGRectGetMidX(hostBounds);
+    CGFloat hostCenterY = CGRectGetMidY(hostBounds);
+    CGFloat dx = CGRectGetMidX(inlineRect) - hostCenterX - scale * (CGRectGetMidX(videoRect) - hostCenterX);
+    CGFloat dy = CGRectGetMidY(inlineRect) - hostCenterY - scale * (CGRectGetMidY(videoRect) - hostCenterY);
+    return CGAffineTransformScale(CGAffineTransformMakeTranslation(dx, dy), scale, scale);
+}
 
 static UIViewController *fallbackViewController(UIView *view)
 {
@@ -300,7 +396,217 @@ void VideoPresentationInterfaceIOS::preparedToReturnToInline(bool visible, const
 
 bool VideoPresentationInterfaceIOS::shouldCreateWindow() const
 {
+    if (m_targetMode.hasInWindow())
+        return false;
+
     return ![[m_parentView window] _isHostedInAnotherProcess] && !m_window && !PAL::currentUserInterfaceIdiomIsVision();
+}
+
+void VideoPresentationInterfaceIOS::setUpVideoViewerMode()
+{
+    RetainPtr playerViewControllerView = [playerViewController() view];
+    RetainPtr hostView = [playerViewControllerView superview];
+    if (!hostView)
+        return;
+
+    m_videoViewerModeFadingOut = false;
+
+    if (!m_videoViewerGestureHandler)
+        m_videoViewerGestureHandler = adoptNS([[WebAVVideoViewerGestureHandler alloc] initWithInterface:*this]);
+
+    if (!m_videoViewerBackdropView) {
+        m_videoViewerBackdropView = adoptNS([PAL::allocUIViewInstance() initWithFrame:[hostView bounds]]);
+        [m_videoViewerBackdropView setBackgroundColor:videoViewerBackdropUIColor()];
+        [m_videoViewerBackdropView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+
+        RetainPtr tapGesture = adoptNS([PAL::allocUITapGestureRecognizerInstance() initWithTarget:m_videoViewerGestureHandler.get() action:@selector(exitGestureRecognized:)]);
+        [m_videoViewerBackdropView addGestureRecognizer:tapGesture.get()];
+    }
+
+    if (!m_videoViewerDismissPanGesture) {
+        m_videoViewerDismissPanGesture = adoptNS([PAL::allocUIPanGestureRecognizerInstance() initWithTarget:m_videoViewerGestureHandler.get() action:@selector(dismissGestureChanged:)]);
+        [m_videoViewerDismissPanGesture setDelegate:m_videoViewerGestureHandler.get()];
+        [m_videoViewerDismissPanGesture setMaximumNumberOfTouches:1];
+    }
+
+    if ([m_videoViewerDismissPanGesture view] != playerViewControllerView.get())
+        [playerViewControllerView addGestureRecognizer:m_videoViewerDismissPanGesture.get()];
+
+    [hostView insertSubview:m_videoViewerBackdropView.get() belowSubview:playerViewControllerView.get()];
+
+    [playerViewControllerView setHidden:NO];
+
+    if (!m_currentMode.hasInWindow()) {
+        [m_videoViewerBackdropView setAlpha:0];
+        [playerViewControllerView setAlpha:0];
+    }
+
+    setCanIncludePlaybackControlsWhenInline(true);
+    setPrefersFullScreenStyleForEmbeddedMode(true);
+    setExcludesPlaybackControlsCloseButton(true);
+
+    setVideoHeightFraction(videoViewerModeVideoHeightFraction);
+    setVideoCornerRadius(videoViewerModeVideoCornerRadius);
+
+    updateVideoViewerModeLayout();
+}
+
+void VideoPresentationInterfaceIOS::updateVideoViewerModeLayout()
+{
+    if (!m_videoViewerBackdropView)
+        return;
+
+    RetainPtr playerViewController = this->playerViewController();
+    RetainPtr playerViewControllerView = [playerViewController view];
+    RetainPtr hostView = [playerViewControllerView superview];
+    if (!hostView)
+        return;
+
+    UIEdgeInsets hostSafeAreaInsets = [hostView safeAreaInsets];
+    UIEdgeInsets additionalSafeAreaInsets = UIEdgeInsetsMake(
+        std::max<CGFloat>(0, m_videoViewerModeInsets.top() - hostSafeAreaInsets.top),
+        std::max<CGFloat>(0, m_videoViewerModeInsets.left() - hostSafeAreaInsets.left),
+        std::max<CGFloat>(0, m_videoViewerModeInsets.bottom() - hostSafeAreaInsets.bottom),
+        std::max<CGFloat>(0, m_videoViewerModeInsets.right() - hostSafeAreaInsets.right));
+
+    CGRect hostBounds = [hostView bounds];
+
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [m_videoViewerBackdropView setFrame:hostBounds];
+    [playerViewControllerView setBounds:CGRectMake(0, 0, CGRectGetWidth(hostBounds), CGRectGetHeight(hostBounds))];
+    [playerViewControllerView setCenter:CGPointMake(CGRectGetMidX(hostBounds), CGRectGetMidY(hostBounds))];
+    [playerViewControllerView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+    [playerViewController setAdditionalSafeAreaInsets:additionalSafeAreaInsets];
+    [playerViewControllerView layoutIfNeeded];
+    [CATransaction commit];
+}
+
+void VideoPresentationInterfaceIOS::setVideoViewerModeHostView(UIView* hostView)
+{
+    m_videoViewerModeHostView = hostView;
+}
+
+void VideoPresentationInterfaceIOS::setVideoViewerModeInsets(const FloatBoxExtent& insets)
+{
+    if (m_videoViewerModeInsets == insets)
+        return;
+
+    m_videoViewerModeInsets = insets;
+    updateVideoViewerModeLayout();
+}
+
+CGAffineTransform VideoPresentationInterfaceIOS::videoViewerModeInlineTransform() const
+{
+    RetainPtr playerViewControllerView = [playerViewController() view];
+    RetainPtr hostView = [playerViewControllerView superview];
+    if (!hostView || !m_parentView)
+        return CGAffineTransformIdentity;
+
+    return transformMappingVideoRectToInlineRect([m_parentView convertRect:m_inlineRect toView:hostView.get()], videoViewerModeVideoRect(), [hostView bounds]);
+}
+
+void VideoPresentationInterfaceIOS::prepareVideoViewerModeForEntryAnimation()
+{
+    RetainPtr playerViewControllerView = [playerViewController() view];
+    CGAffineTransform inlineTransform = videoViewerModeInlineTransform();
+
+    setShowsPlaybackControls(false);
+    [playerViewControllerView setTransform:inlineTransform];
+    [playerViewControllerView setAlpha:CGAffineTransformIsIdentity(inlineTransform) ? 0 : 1];
+    [m_videoViewerBackdropView setAlpha:0];
+}
+
+void VideoPresentationInterfaceIOS::animateVideoViewerModeVisible(bool visible, Function<void()>&& completionHandler)
+{
+    RetainPtr playerViewControllerView = [playerViewController() view];
+    CGAffineTransform inlineTransform = videoViewerModeInlineTransform();
+    bool canZoom = !CGAffineTransformIsIdentity(inlineTransform);
+
+    if (!visible)
+        setShowsPlaybackControls(false);
+
+    auto animations = makeBlockPtr([backdropView = m_videoViewerBackdropView, playerViewControllerView, inlineTransform, canZoom, visible] {
+        [backdropView setAlpha:visible ? 1 : 0];
+        [playerViewControllerView setTransform:visible ? CGAffineTransformIdentity : inlineTransform];
+        if (!canZoom)
+            [playerViewControllerView setAlpha:visible ? 1 : 0];
+    });
+
+    auto completion = makeBlockPtr([protectedThis = Ref { *this }, visible, completionHandler = WTF::move(completionHandler)](BOOL) mutable {
+        if (visible) {
+            protectedThis->setShowsPlaybackControls(true);
+            protectedThis->flashPlaybackControls(videoViewerModeInitialControlsDuration);
+        }
+        if (completionHandler)
+            completionHandler();
+    });
+
+    [PAL::getUIViewClassSingleton() animateWithSpringDuration:videoViewerModeTransitionDuration bounce:videoViewerModeTransitionBounce initialSpringVelocity:0 delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction) animations:animations.get() completion:completion.get()];
+}
+
+void VideoPresentationInterfaceIOS::videoViewerModeDismissGestureChanged(GestureState state, FloatSize translation, FloatSize velocity)
+{
+    if (m_videoViewerModeFadingOut)
+        return;
+
+    RetainPtr playerViewControllerView = [playerViewController() view];
+    RetainPtr hostView = [playerViewControllerView superview];
+    if (!hostView)
+        return;
+
+    CGFloat hostHeight = CGRectGetHeight([hostView bounds]);
+    if (hostHeight <= 0)
+        return;
+
+    switch (state) {
+    case GestureState::Began:
+        setShowsPlaybackControls(false);
+        [[fallthrough]];
+    case GestureState::Changed: {
+        CGFloat progress = std::min<CGFloat>(1, std::abs(translation.height()) / (hostHeight * videoViewerModeDismissProgressDistanceRatio));
+        CGFloat scale = 1 - progress * videoViewerModeDismissMaximumScaleReduction;
+        [playerViewControllerView setTransform:CGAffineTransformScale(CGAffineTransformMakeTranslation(translation.width(), translation.height()), scale, scale)];
+        [m_videoViewerBackdropView setAlpha:1 - progress];
+        return;
+    }
+    case GestureState::Ended:
+        if (std::abs(translation.height()) > hostHeight * videoViewerModeDismissDistanceRatio || std::abs(velocity.height()) > videoViewerModeDismissVelocity) {
+            requestExitVideoViewerMode();
+            return;
+        }
+        break;
+    case GestureState::Cancelled:
+        break;
+    }
+
+    animateVideoViewerModeVisible(true, nullptr);
+}
+
+void VideoPresentationInterfaceIOS::tearDownVideoViewerMode()
+{
+    m_videoViewerModeFadingOut = false;
+    clearMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow, VideoPresentationModel::ShouldNotifyMediaElement::No);
+    [m_videoViewerBackdropView setAlpha:1];
+    [[playerViewController() view] setAlpha:1];
+    [[playerViewController() view] setTransform:CGAffineTransformIdentity];
+    setExcludesPlaybackControlsCloseButton(false);
+    setVideoHeightFraction(1);
+    setVideoCornerRadius(0);
+    [playerViewController() setAdditionalSafeAreaInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+    m_videoViewerModeInsets = { };
+    [[m_videoViewerDismissPanGesture view] removeGestureRecognizer:m_videoViewerDismissPanGesture.get()];
+    m_videoViewerDismissPanGesture = nil;
+    [m_videoViewerBackdropView removeFromSuperview];
+    m_videoViewerBackdropView = nil;
+    m_videoViewerGestureHandler = nil;
+    m_videoViewerModeHostView = nil;
+}
+
+void VideoPresentationInterfaceIOS::requestExitVideoViewerMode()
+{
+    if (RefPtr model = videoPresentationModel())
+        model->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone);
 }
 
 void VideoPresentationInterfaceIOS::doSetup()
@@ -351,7 +657,14 @@ void VideoPresentationInterfaceIOS::doSetup()
     setupPlayerViewController();
 
     if (UIViewController *playerViewController = this->playerViewController()) {
-        if (m_viewController) {
+        if (m_targetMode.hasInWindow() && m_videoViewerModeHostView) {
+            if ([playerViewController parentViewController]) {
+                [playerViewController willMoveToParentViewController:nil];
+                [playerViewController.view removeFromSuperview];
+                [playerViewController removeFromParentViewController];
+            }
+            [m_videoViewerModeHostView addSubview:playerViewController.view];
+        } else if (m_viewController) {
             [m_viewController addChildViewController:playerViewController];
             [[m_viewController view] addSubview:playerViewController.view];
             [playerViewController didMoveToParentViewController:m_viewController.get()];
@@ -365,11 +678,14 @@ void VideoPresentationInterfaceIOS::doSetup()
         [playerViewController.view setNeedsLayout];
         [playerViewController.view layoutIfNeeded];
 
-        if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby) {
+        if (m_targetStandby && !m_currentMode.hasVideo() && !m_returningToStandby && !m_targetMode.hasInWindow()) {
             [m_window setHidden:YES];
             [playerViewController.view setHidden:YES];
         }
     }
+
+    if (m_targetMode.hasInWindow())
+        setUpVideoViewerMode();
 
     [CATransaction commit];
 
@@ -414,7 +730,9 @@ void VideoPresentationInterfaceIOS::setInlineRect(const FloatRect& inlineRect, b
     m_inlineIsVisible = visible;
     m_hasUpdatedInlineRect = true;
 
-    if (playerViewController() && m_parentView) {
+    bool inVideoViewerMode = m_currentMode.hasInWindow() || m_targetMode.hasInWindow();
+
+    if (playerViewController() && m_parentView && !inVideoViewerMode) {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
         playerViewController().view.frame = [m_parentView convertRect:inlineRect toView:playerViewController().view.superview];
@@ -451,6 +769,14 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
     m_standby = m_targetStandby;
 
     [playerViewController().view layoutIfNeeded];
+
+    if (m_targetMode.hasInWindow() && !m_currentMode.hasInWindow()) {
+        setMode(HTMLMediaElementEnums::VideoFullscreenModeInWindow, VideoPresentationModel::ShouldNotifyMediaElement::No);
+        updateVideoViewerModeLayout();
+        prepareVideoViewerModeForEntryAnimation();
+        animateVideoViewerModeVisible(true, nullptr);
+    }
+
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
         [m_window setHidden:NO];
         presentFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
@@ -555,6 +881,14 @@ void VideoPresentationInterfaceIOS::doExitFullscreen()
     }
     m_exitFullscreenNeedInlineRect = false;
 
+    if (m_currentMode.hasInWindow() && !m_targetMode.hasInWindow() && !m_videoViewerModeFadingOut) {
+        m_videoViewerModeFadingOut = true;
+        animateVideoViewerModeVisible(false, [this, protectedThis = Ref { *this }] {
+            doExitFullscreen();
+        });
+        return;
+    }
+
     if (m_currentMode.hasMode(HTMLMediaElementEnums::VideoFullscreenModeStandard)) {
         dismissFullscreen(true, [this, protectedThis = Ref { *this }](BOOL success, NSError *error) {
             exitFullscreenHandler(success, error, NextAction::NeedsExitFullScreen);
@@ -636,6 +970,8 @@ void VideoPresentationInterfaceIOS::cleanupFullscreen()
         return;
     }
     m_cleanupNeedsReturnVideoContentLayer = false;
+
+    tearDownVideoViewerMode();
 
     if (m_window) {
         [m_window setHidden:YES];

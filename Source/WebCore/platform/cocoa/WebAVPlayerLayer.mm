@@ -78,6 +78,8 @@ private:
     RetainPtr<CALayer> _captionsLayer;
     WebCore::FloatRect _targetVideoFrame;
     CGSize _videoDimensions;
+    CGFloat _videoHeightFraction;
+    CGFloat _videoCornerRadius;
     RetainPtr<NSString> _videoGravity;
     RetainPtr<NSString> _previousVideoGravity;
     std::unique_ptr<WebCore::WebAVPlayerLayerPresentationModelClient> _presentationModelClient;
@@ -99,6 +101,8 @@ private:
         self.name = @"WebAVPlayerLayer";
         _presentationModelClient = WTF::makeUnique<WebCore::WebAVPlayerLayerPresentationModelClient>(self);
         _showingCaptionPreview = NO;
+        _videoHeightFraction = 1;
+        _videoCornerRadius = 0;
     }
     return self;
 }
@@ -151,6 +155,45 @@ private:
 - (void)setVideoSublayer:(nullable CALayer *)videoSublayer
 {
     _videoSublayer = videoSublayer;
+    [self _updateVideoSublayerCornerRadius];
+}
+
+- (CGFloat)videoHeightFraction
+{
+    return _videoHeightFraction;
+}
+
+- (void)setVideoHeightFraction:(CGFloat)videoHeightFraction
+{
+    if (_videoHeightFraction == videoHeightFraction)
+        return;
+
+    _videoHeightFraction = videoHeightFraction;
+    [self setNeedsLayout];
+}
+
+- (CGFloat)videoCornerRadius
+{
+    return _videoCornerRadius;
+}
+
+- (void)setVideoCornerRadius:(CGFloat)videoCornerRadius
+{
+    if (_videoCornerRadius == videoCornerRadius)
+        return;
+
+    _videoCornerRadius = videoCornerRadius;
+    [self _updateVideoSublayerCornerRadius];
+}
+
+- (void)_updateVideoSublayerCornerRadius
+{
+    bool hasCornerRadius = _videoCornerRadius > 0;
+    [_videoSublayer setCornerRadius:_videoCornerRadius];
+    [_videoSublayer setMasksToBounds:hasCornerRadius];
+#if PLATFORM(IOS_FAMILY)
+    [_videoSublayer setCornerCurve:hasCornerRadius ? kCACornerCurveContinuous : kCACornerCurveCircular];
+#endif
 }
 
 - (CALayer*)videoSublayer
@@ -191,17 +234,27 @@ private:
     [self setNeedsLayout];
 }
 
+- (CGRect)_boundsAvailableForVideo
+{
+    CGRect bounds = self.bounds;
+    if (_videoHeightFraction <= 0 || _videoHeightFraction >= 1)
+        return bounds;
+
+    return CGRectInset(bounds, 0, CGRectGetHeight(bounds) * (1 - _videoHeightFraction) / 2);
+}
+
 - (WebCore::FloatRect)calculateTargetVideoFrame
 {
     WebCore::FloatRect targetVideoFrame;
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
+    CGRect boundsAvailableForVideo = [self _boundsAvailableForVideo];
 
     if ([AVLayerVideoGravityResize isEqualToString:self.videoGravity])
-        targetVideoFrame = self.bounds;
+        targetVideoFrame = boundsAvailableForVideo;
     else if ([AVLayerVideoGravityResizeAspect isEqualToString:self.videoGravity])
-        targetVideoFrame = WebCore::largestRectWithAspectRatioInsideRect(videoAspectRatio, self.bounds);
+        targetVideoFrame = WebCore::largestRectWithAspectRatioInsideRect(videoAspectRatio, boundsAvailableForVideo);
     else if ([AVLayerVideoGravityResizeAspectFill isEqualToString:self.videoGravity])
-        targetVideoFrame = WebCore::smallestRectWithAspectRatioAroundRect(videoAspectRatio, self.bounds);
+        targetVideoFrame = WebCore::smallestRectWithAspectRatioAroundRect(videoAspectRatio, boundsAvailableForVideo);
     else
         ASSERT_NOT_REACHED();
 

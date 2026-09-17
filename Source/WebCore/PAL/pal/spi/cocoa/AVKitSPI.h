@@ -124,6 +124,7 @@ typedef NS_ENUM(NSInteger, AVPlayerControllerStatus) {
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <AVKit/AVPlayerViewControllerConfiguration.h>
 #import <AVKit/AVPlayerViewController_Private.h>
 
 #if HAVE(AVPLAYERCONTROLLER)
@@ -256,6 +257,16 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 @end
 
+typedef NS_OPTIONS(NSUInteger, AVPlayerControls) {
+    AVPlayerControlsNone = 0,
+    AVPlayerControlsCloseButton = 1 << 7,
+};
+
+@interface AVPlayerViewControllerConfiguration : NSObject <NSCopying>
+@property (nonatomic) BOOL prefersFullScreenStyleForEmbeddedMode;
+@property (nonatomic) AVPlayerControls excludedControls;
+@end
+
 @interface AVPlayerViewController ()
 - (instancetype)initWithPlayerLayerView:(__AVPlayerLayerView *)playerLayerView;
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError *))completionHandler;
@@ -270,6 +281,8 @@ typedef NS_ENUM(NSInteger, AVPlayerViewControllerExitFullScreenReason) {
 @property (nonatomic, strong, nullable) AVPlayerController *playerController;
 @property (nonatomic, readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property (nonatomic, readonly) BOOL pictureInPictureWasStartedWhenEnteringBackground;
+@property (nonatomic) BOOL canIncludePlaybackControlsWhenInline;
+@property (nonatomic, readwrite, copy) AVPlayerViewControllerConfiguration *configuration;
 - (void)setWebKitOverrideRouteSharingPolicy:(NSUInteger)routeSharingPolicy routingContextUID:(NSString *)routingContextUID;
 @end
 
