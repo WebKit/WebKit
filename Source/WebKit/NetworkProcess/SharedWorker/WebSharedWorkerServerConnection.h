@@ -28,6 +28,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SharedPreferencesForWebProcess.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SharedWorkerObjectIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
@@ -91,7 +92,7 @@ private:
     uint64_t messageSenderDestinationID() const final { return 0; }
 
     // IPC messages.
-    void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
+    void requestSharedWorker(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, WebCore::TransferredMessagePort&&, WebCore::WorkerOptions&&);
     void sharedWorkerObjectIsGoingAway(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
     void suspendForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);
     void resumeForBackForwardCache(WebCore::SharedWorkerKey&&, WebCore::SharedWorkerObjectIdentifier);

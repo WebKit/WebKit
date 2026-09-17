@@ -49,6 +49,15 @@ SharedWorkerThreadProxy* SharedWorkerContextManager::sharedWorker(SharedWorkerId
     return m_workerMap.get(sharedWorkerIdentifier);
 }
 
+Vector<Ref<SharedWorkerThreadProxy>> SharedWorkerContextManager::sharedWorkers() const
+{
+    Vector<Ref<SharedWorkerThreadProxy>> result;
+    result.reserveInitialCapacity(m_workerMap.size());
+    for (Ref worker : m_workerMap.values())
+        result.append(WTF::move(worker));
+    return result;
+}
+
 void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
     auto worker = m_workerMap.take(sharedWorkerIdentifier);
@@ -61,14 +70,16 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
     // FIXME: We should be able to deal with the thread being unresponsive here.
 
     Ref thread = worker->thread();
-    thread->stop([worker = WTF::move(worker)]() mutable {
+    thread->stop([worker = WTF::move(worker), sharedWorkerIdentifier]() mutable {
+        ASSERT(isMainThread());
+        worker->workerTerminated();
+        if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
+            connection->sharedWorkerTerminated(sharedWorkerIdentifier);
+
         // Spin the runloop before releasing the shared worker thread proxy, as there would otherwise be
         // a race towards its destruction.
         callOnMainThread([worker = WTF::move(worker)] { });
     });
-
-    if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
-        connection->sharedWorkerTerminated(sharedWorkerIdentifier);
 }
 
 void SharedWorkerContextManager::suspendSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
@@ -112,7 +123,13 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
     auto result = m_workerMap.add(proxy->identifier(), proxy.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    proxy->thread().start([](const String& /*exceptionMessage*/) { });
+    auto weakProxy = ThreadSafeWeakPtr { proxy.get() };
+    proxy->thread().start([](const String& /* exceptionMessage */) { }, [weakProxy = WTF::move(weakProxy)](SecurityOriginData&& origin) mutable {
+        callOnMainThread([weakProxy = WTF::move(weakProxy), origin = WTF::move(origin)]() mutable {
+            if (RefPtr proxy = weakProxy.get())
+                proxy->workerBecameExecutionReady(WTF::move(origin));
+        });
+    });
 }
 
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
@@ -128,6 +145,13 @@ void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdenti
         downcast<SharedWorkerGlobalScope>(scriptExecutionContext).postConnectEvent(WTF::move(transferredPort), sourceOrigin);
     });
     completionHandler(true);
+}
+
+void SharedWorkerContextManager::Connection::setSharedWorkerOwnerFrameIdentifiers(SharedWorkerIdentifier sharedWorkerIdentifier, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers)
+{
+    ASSERT(isMainThread());
+    if (RefPtr proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier))
+        proxy->setOwnerFrameIdentifiers(WTF::move(activeOwnerFrameIdentifiers), WTF::move(attachedOwnerFrameIdentifiers));
 }
 
 void SharedWorkerContextManager::Connection::terminateSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)

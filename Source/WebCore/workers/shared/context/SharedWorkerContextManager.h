@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/TransferredMessagePort.h>
 #include <wtf/AbstractRefCounted.h>
@@ -43,6 +44,7 @@ public:
     WEBCORE_EXPORT static SharedWorkerContextManager& NODELETE singleton();
 
     SharedWorkerThreadProxy* sharedWorker(SharedWorkerIdentifier) const;
+    Vector<Ref<SharedWorkerThreadProxy>> sharedWorkers() const;
     void stopSharedWorker(SharedWorkerIdentifier);
     void suspendSharedWorker(SharedWorkerIdentifier);
     void resumeSharedWorker(SharedWorkerIdentifier);
@@ -63,6 +65,7 @@ public:
 
         // IPC message handlers.
         WEBCORE_EXPORT void postConnectEvent(SharedWorkerIdentifier, TransferredMessagePort&&, const SecurityOriginData& sourceOrigin, CompletionHandler<void(bool)>&&);
+        WEBCORE_EXPORT void setSharedWorkerOwnerFrameIdentifiers(SharedWorkerIdentifier, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers);
         WEBCORE_EXPORT void terminateSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void suspendSharedWorker(SharedWorkerIdentifier);
         WEBCORE_EXPORT void resumeSharedWorker(SharedWorkerIdentifier);

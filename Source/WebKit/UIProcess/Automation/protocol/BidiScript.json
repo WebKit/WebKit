@@ -76,16 +76,24 @@
                 { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the realm." },
                 { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
                 { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
-                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." },
+                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." }
             ]
         },
         {
             "id": "RealmType",
-            "description": "The type of a JavaScript realm. Currently only 'window' is supported; worker and worklet types will be added in future implementations.",
+            "description": "The type of a JavaScript realm.",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RealmType",
             "type": "string",
             "enum": [
-                "window"
+                "window",
+                "dedicated-worker",
+                "shared-worker",
+                "service-worker",
+                "worker",
+                "paint-worklet",
+                "audio-worklet",
+                "worklet"
             ]
         },
         {
@@ -292,7 +300,8 @@
                 { "name": "realm", "$ref": "BidiScript.Realm", "description": "Unique identifier of the realm." },
                 { "name": "origin", "type": "string", "description": "The serialized origin of the realm." },
                 { "name": "type", "$ref": "BidiScript.RealmType", "description": "The type of the realm." },
-                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." }
+                { "name": "context", "$ref": "BidiBrowsingContext.BrowsingContext", "optional": true, "description": "Browsing context of the realm. Not present for worklet/worker realms." },
+                { "name": "owners", "type": "array", "items": { "$ref": "BidiScript.Realm" }, "optional": true, "description": "Owner realms of a dedicated worker realm." }
             ]
         },
         {

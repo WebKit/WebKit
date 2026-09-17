@@ -26,6 +26,8 @@
 #pragma once
 
 #include <WebCore/ClientOrigin.h>
+#include <WebCore/FrameIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SharedWorkerIdentifier.h>
 #include <WebCore/WorkerBadgeProxy.h>
 #include <WebCore/WorkerDebuggerProxy.h>
@@ -34,6 +36,7 @@
 #include <WebCore/WorkerOptions.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -58,6 +61,15 @@ public:
     SharedWorkerIdentifier NODELETE identifier() const;
     SharedWorkerThread& thread() { return m_workerThread; }
 
+    const Vector<FrameIdentifier>& activeOwnerFrameIdentifiers() const { return m_activeOwnerFrameIdentifiers; }
+    const Vector<FrameIdentifier>& attachedOwnerFrameIdentifiers() const { return m_attachedOwnerFrameIdentifiers; }
+    void setOwnerFrameIdentifiers(Vector<FrameIdentifier>&&, Vector<FrameIdentifier>&&);
+
+    bool isExecutionReady() const { return !!m_automationSecurityOrigin; }
+    const std::optional<SecurityOriginData>& automationSecurityOrigin() const { return m_automationSecurityOrigin; }
+    void workerBecameExecutionReady(SecurityOriginData&&);
+    void workerTerminated();
+
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
@@ -68,7 +80,7 @@ public:
     void setDidBeginCheckedPtrDeletion() final { CanMakeThreadSafeCheckedPtr<SharedWorkerThreadProxy>::setDidBeginCheckedPtrDeletion(); }
 
 private:
-    WEBCORE_EXPORT SharedWorkerThreadProxy(Ref<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
+    WEBCORE_EXPORT SharedWorkerThreadProxy(Ref<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, Vector<FrameIdentifier>&& activeOwnerFrameIdentifiers, Vector<FrameIdentifier>&& attachedOwnerFrameIdentifiers, CacheStorageProvider&);
 
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
 
@@ -106,6 +118,9 @@ private:
     WeakRef<CacheStorageProvider> m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };
+    Vector<FrameIdentifier> m_activeOwnerFrameIdentifiers;
+    Vector<FrameIdentifier> m_attachedOwnerFrameIdentifiers;
+    std::optional<SecurityOriginData> m_automationSecurityOrigin;
     ClientOrigin m_clientOrigin;
 };
 
