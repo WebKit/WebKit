@@ -668,7 +668,9 @@ ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexL
     : m_flexItem(flexLayoutItem.renderer)
     , m_mainAxisIsInlineAxis(flexLayoutItem.mainAxisIsInlineAxis)
 {
-    if (flexBasis.isAuto())
+    // A plain `auto` means the width property, so leave the item's own width in place. A calc-size()
+    // with an auto basis still has a calculation to apply, so it is installed like any other value.
+    if (flexBasis.isAuto() && !flexBasis.isCalcSize())
         return;
 
     if (m_mainAxisIsInlineAxis)

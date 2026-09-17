@@ -656,7 +656,16 @@ bool FlexFormattingUtils::isBalance(const RenderFlexibleBox& flexBox)
 Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const RenderBox& flexItem)
 {
     auto flexBasis = flexItem.style().flexBasis();
-    if (flexBasis.isAuto())
+
+    // A calc-size() with an auto basis keeps its calculation, which `auto` there is the basis of, so
+    // replacing the whole value would throw the calculation away. Only the inline axis can resolve
+    // one, so a main axis in the block direction still takes the preferred main size as it did.
+    auto canResolveCalcSizeOnMainAxis = [&] {
+        CheckedRef flexBox = downcast<RenderFlexibleBox>(*flexItem.parent());
+        return isHorizontalFlow(flexBox) == flexItem.isHorizontalWritingMode();
+    };
+
+    if (flexBasis.isAuto() && !(flexBasis.isCalcSize() && canResolveCalcSizeOnMainAxis()))
         flexBasis = preferredMainSizeLengthForFlexItem(flexItem).asFlexBasis();
     return flexBasis;
 }
