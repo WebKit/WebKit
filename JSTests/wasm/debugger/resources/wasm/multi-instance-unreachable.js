@@ -26,17 +26,18 @@ var wasm = new Uint8Array([
     0x00,                   // function index 0
 
     // [0x1e] Code section: 1 function body
-    0x0a, 0x06,             // section id=10, size=6
+    0x0a, 0x07,             // section id=10, size=7
     0x01,                   // 1 function body
 
     // [0x21] func_a body
-    0x04,                   // body size=4
+    0x05,                   // body size=5
     0x00,                   // 0 local declarations
     0x01,                   // [0x23] nop
-    0x00,                   // [0x24] unreachable
-    0x0b,                   // [0x25] end
+    0x01,                   // [0x24] nop
+    0x00,                   // [0x25] unreachable
+    0x0b,                   // [0x26] end
 
-    // [0x26] Name section: custom section "name", subsection 0 = module name "mymodule"
+    // [0x27] Name section: custom section "name", subsection 0 = module name "mymodule"
     0x00, 0x10,             // section id=0 (custom), payload size=16
     0x04, 0x6e, 0x61, 0x6d, 0x65,          // custom section name: "name" (length=4)
     0x00, 0x09,             // subsection 0 (module name), subsection size=9

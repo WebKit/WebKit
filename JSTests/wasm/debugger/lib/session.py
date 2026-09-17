@@ -95,7 +95,7 @@ class DebugSession:
         self._verbose = verbose
         self._name = name
         self._jsc_ready = threading.Event()
-        self._jsc_socket_error = None
+        self._jsc_error = None
         self._jsc = None  # initialized before try so close() is always safe to call
         self._lldb = None
 
@@ -126,16 +126,26 @@ class DebugSession:
                                ready_event=self._jsc_ready)
             self._start_reader(self._jsc.stderr, "JSC", "stderr", to_queue=False)
 
-            # Step 2 — wait for JS to finish loading all modules.
-            if not self._jsc_ready.wait(timeout=60.0):
-                raise TimeoutError(
-                    f"[{self._name}] JSC did not print DEBUGGER_READY within 60 s"
-                )
+            # Step 2 — wait for the modules to load. JSC exits when the server cannot bind and
+            # only says why under --verbose-wasm-debugger, so the exit code is the signal.
+            deadline = time.monotonic() + 60.0
+            while not self._jsc_ready.wait(timeout=0.1):
+                status = self._jsc.poll()
+                if status is not None:
+                    reason = self._jsc_error or "no reason given, re-run with --verbose-wasm-debugger"
+                    raise RuntimeError(
+                        f"[{self._name}] JSC exited with code {status} before printing "
+                        f"DEBUGGER_READY ({reason})"
+                    )
+                if time.monotonic() >= deadline:
+                    raise TimeoutError(
+                        f"[{self._name}] JSC did not print DEBUGGER_READY within 60 s"
+                    )
 
-            # DEBUGGER_READY comes from the JS fixture and says nothing about the server: a
-            # failed bind otherwise surfaces 60 s later as a misleading LLDB timeout.
-            if self._jsc_socket_error:
-                raise RuntimeError(f"[{self._name}] {self._jsc_socket_error}")
+            # DEBUGGER_READY comes from the JS fixture, so a bind that failed without taking the
+            # process down is only visible here.
+            if self._jsc_error:
+                raise RuntimeError(f"[{self._name}] {self._jsc_error}")
 
             # Step 3 — all modules are loaded; connect LLDB now. Any module-load
             # notifications that fired before this point are irrelevant to LLDB.
@@ -264,10 +274,9 @@ class DebugSession:
                     continue
                 if self._verbose:
                     print(f"[{self._name}][{proc_name}][{kind}] {line}")
-                # JSC only emits this under --verbose-wasm-debugger; without it a failed bind is
-                # silent and the session still fails, just with the slower LLDB timeout.
-                if "[Debugger] Failed to " in line:
-                    self._jsc_socket_error = line
+                # Verbose-gated in JSC, so a normal run relies on the exit-code poll above.
+                if "[Debugger] Failed to " in line or "failed to start the WebAssembly debug server" in line:
+                    self._jsc_error = line
                 if ready_event and "DEBUGGER_READY" in line:
                     ready_event.set()
                 if to_queue:

@@ -2062,13 +2062,13 @@ class MultiInstanceUnreachableOwnSiteTestCase:
 
         # A site on instance 0's own `unreachable`. The patch byte and the instruction are both
         # 0x00, so there is no displaced opcode to replay on resume -- the trap has to propagate.
-        self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000000000025", patterns=["Breakpoint 1"])
         # FIXME: Cannot be looped; the breakpoint only reports on its first hit. LLDB's z0/step/Z0
         # dance assumes the step retires one instruction, but a wasm trap unwinds to JS, so step()
         # resumes all and the JS catch re-enters the export while the site is still lifted.
         self.session.cmd(
             "c",
-            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000024: unreachable"],
+            patterns=["Process 1 stopped", "stop reason = breakpoint 1", "->  0x4000000000000025: unreachable"],
         )
         self.session.cmd(
             "c",
@@ -2085,7 +2085,7 @@ class MultiInstanceUnreachableForeignSiteTestCase:
         # A site on idle instance 1's `unreachable` only. Instance 0 must not stop for a
         # breakpoint it never asked for, but it must still trap on the instruction itself --
         # skipping it would swallow the program's own trap and hang.
-        self.session.cmd("b 0x4000000100000024", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000100000025", patterns=["Breakpoint 1"])
         for _ in range(3):
             self.session.cmd(
                 "c",
@@ -2102,11 +2102,11 @@ class MultiInstanceUnreachableBothSitesTestCase:
         # Sites on both instances' `unreachable`. Instance 0 stops for its own, then traps; the
         # sibling's site never claims the stop. Single-pass for the reason spelled out in
         # MultiInstanceUnreachableOwnSiteTestCase -- do not wrap these in a loop.
-        self.session.cmd("b 0x4000000100000024", patterns=["Breakpoint 1"])
-        self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 2"])
+        self.session.cmd("b 0x4000000100000025", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000000000025", patterns=["Breakpoint 2"])
         self.session.cmd(
             "c",
-            patterns=["Process 1 stopped", "stop reason = breakpoint 2", "->  0x4000000000000024: unreachable"],
+            patterns=["Process 1 stopped", "stop reason = breakpoint 2", "->  0x4000000000000025: unreachable"],
         )
         self.session.cmd(
             "c",
@@ -2131,15 +2131,17 @@ class MultiInstanceUnreachableStepTestCase:
         # Stepping onto, and then off, a real `unreachable` while instance 1's site keeps the
         # preceding nop patched. The first si crosses the shared patch; the second executes the
         # unreachable, which must surface as the trap rather than as another breakpoint stop.
-        self.session.cmd("b 0x4000000100000023", patterns=["Breakpoint 1"])
-        self.session.cmd("b 0x4000000000000023", patterns=["Breakpoint 2"])
+        self.session.cmd("b 0x4000000100000024", patterns=["Breakpoint 1"])
+        self.session.cmd("b 0x4000000000000024", patterns=["Breakpoint 2"])
         for _ in range(3):
             self.session.cmd(
                 "c",
-                patterns=["Process 1 stopped", "stop reason = breakpoint 2", "->  0x4000000000000023: nop"],
+                patterns=["Process 1 stopped", "stop reason = breakpoint 2", "->  0x4000000000000024: nop"],
             )
-            self.session.cmd("si")
-            self.session.cmd("dis", patterns=["->  0x4000000000000024: unreachable"])
+            self.session.cmd(
+                "si",
+                patterns=["stop reason = instruction step into", "->  0x4000000000000025: unreachable"],
+            )
             self.session.cmd("si", patterns=["Unreachable code should not be executed"])
 
         self.session.cmd("br del -f", patterns=["All breakpoints removed. (2 breakpoints)"])
