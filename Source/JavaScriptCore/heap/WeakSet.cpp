@@ -35,18 +35,19 @@ WeakSet::~WeakSet()
 {
     if (isOnList())
         remove();
-    
-    JSC::Heap& heap = *this->heap();
-    while (WeakBlock* block = m_blocks.removeHead())
-        WeakBlock::destroy(heap, block);
-    ASSERT(m_blocks.isEmpty());
+
+    // Sweeping a container hands back every block in its WeakSet, and a container is always swept
+    // before it is freed - at VM teardown through lastChanceToFinalize as much as in a collection.
+    // Destroying a block here instead would dangle the Weak<>s still pointing into it.
+    RELEASE_ASSERT(m_blocks.isEmpty());
 }
 
 void WeakSet::lastChanceToFinalize()
 {
-    forEachBlock([](WeakBlock& block) {
-        block.lastChanceToFinalize();
-    });
+    for (WeakBlock* block = m_blocks.head(); block; block = block->next()) {
+        WeakBlock::IterationScope iterationScope(*block);
+        block->lastChanceToFinalize();
+    }
 }
 
 void WeakSet::reap()
@@ -56,82 +57,135 @@ void WeakSet::reap()
     });
 }
 
-void WeakSet::sweep()
+void WeakSet::didBecomeEmpty(WeakBlock* block)
 {
-    for (WeakBlock* block = m_blocks.head(); block;) {
-        heap()->sweepNextLogicallyEmptyWeakBlock();
-
-        WeakBlock* nextBlock = block->next();
-        block->sweep();
-        if (block->isLogicallyEmptyButNotFree()) {
-            // If this WeakBlock is logically empty, but still has Weaks pointing into it,
-            // we can't destroy it just yet. Detach it from the WeakSet and hand ownership
-            // to the Heap so we don't pin down the entire MarkedBlock or PreciseAllocation.
-            m_blocks.remove(block);
-            heap()->addLogicallyEmptyWeakBlock(block);
-            block->disconnectContainer();
-        }
-        block = nextBlock;
-    }
-
-    resetAllocator();
+    ASSERT(block->isEmpty());
+    tryReleaseBlock(block);
 }
 
-void WeakSet::shrink()
+void WeakSet::tryReleaseBlock(WeakBlock* block)
 {
-    WeakBlock* next;
-    for (WeakBlock* block = m_blocks.head(); block; block = next) {
-        next = block->next();
+    // The fast path allocates out of m_currentBlock without consulting the list, so that one block
+    // stays put; a later sweep() or shrink() collects it once the allocator has moved on.
+    if (block == m_currentBlock)
+        return;
 
-        if (block->isEmpty())
-            removeAllocator(block);
-    }
+    bool isEmpty = block->isEmpty();
+    if (!isEmpty && !block->hasOnlyFinalizedHandles())
+        return;
 
-    resetAllocator();
-    
+    if (block == m_nextAllocator)
+        m_nextAllocator = block->next();
+
+    m_blocks.remove(block);
+    if (isEmpty)
+        heap()->returnWeakBlockToPool(block);
+    else
+        heap()->addDetachedWeakBlock(block);
+
     if (m_blocks.isEmpty() && isOnList())
         remove();
 }
 
-WeakBlock::FreeCell* WeakSet::findAllocator(CellContainer container)
+void WeakSet::sweep()
 {
-    if (WeakBlock::FreeCell* allocator = tryFindAllocator())
-        return allocator;
+    // WeakBlock::sweep calls finalizer and it can allocate/deallocate WeakImpls. This means,
+    //
+    // 1. New WeakBlock can be allocated and chained to m_blocks during iteration.
+    // 2. WeakBlocks get empty and removed from m_blocks.
+    //
+    // So our approach is,
+    //
+    // 1. We are iterating doubly-linked list, so it is fine when a new WeakBlock is appended to m_blocks.
+    // 2. During sweeping, we mark WeakBlock via WeakBlock::IterationScope. This defers empty / logically-empty chaining.
+    //    Thus we do not unchain the currently swept block from m_blocks.
+    // 3. Once the scope is closed the block is no longer held, so it can be released right away. Its
+    //    successor has to be read first, because releasing pools the block and may free it outright.
+    WeakBlock* next;
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        {
+            WeakBlock::IterationScope iterationScope(*block);
+            block->sweep();
+        }
+        next = block->next();
+        tryReleaseBlock(block);
+    }
+
+    detachAllocator();
+
+    // A finalizer above can clear the last live handle in a block the first walk already released
+    // its hold on. Nothing revisits a block when its live count reaches zero, so classify whatever
+    // survived now that every finalizer has run.
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
+        tryReleaseBlock(block);
+    }
+
+    resetAllocator();
+
+    if (m_blocks.isEmpty() && isOnList())
+        remove();
+}
+
+void WeakSet::shrink()
+{
+    detachAllocator();
+
+    WeakBlock* next;
+    for (WeakBlock* block = m_blocks.head(); block; block = next) {
+        next = block->next();
+
+        if (block->isEmpty()) {
+            m_blocks.remove(block);
+            heap()->returnWeakBlockToPool(block);
+        }
+    }
+
+    resetAllocator();
+
+    if (m_blocks.isEmpty() && isOnList())
+        remove();
+}
+
+WeakBlock* WeakSet::findAllocator(CellContainer container)
+{
+    if (WeakBlock* block = tryFindAllocator())
+        return block;
 
     return addAllocator(container);
 }
 
-WeakBlock::FreeCell* WeakSet::tryFindAllocator()
+WeakBlock* WeakSet::tryFindAllocator()
 {
     while (m_nextAllocator) {
         WeakBlock* block = m_nextAllocator;
         m_nextAllocator = m_nextAllocator->next();
 
-        WeakBlock::SweepResult sweepResult = block->takeSweepResult();
-        if (sweepResult.freeList)
-            return sweepResult.freeList;
+        if (block->hasFreeCell())
+            return m_currentBlock = block;
     }
 
     return nullptr;
 }
 
-WeakBlock::FreeCell* WeakSet::addAllocator(CellContainer container)
+WeakBlock* WeakSet::addAllocator(CellContainer container)
 {
     if (!isOnList())
         heap()->objectSpace().addActiveWeakSet(this);
-    
-    WeakBlock* block = WeakBlock::create(*heap(), container);
-    heap()->didAllocate(WeakBlock::blockSize);
-    m_blocks.append(block);
-    WeakBlock::SweepResult sweepResult = block->takeSweepResult();
-    ASSERT(!sweepResult.isNull() && sweepResult.freeList);
-    return sweepResult.freeList;
-}
 
-void WeakSet::removeAllocator(WeakBlock* block)
-{
-    m_blocks.remove(block);
-    WeakBlock::destroy(*heap(), block);
+    WeakBlock* block = heap()->takeWeakBlockFromPool();
+    if (block)
+        block->reattach(container);
+    else {
+        block = WeakBlock::create(*heap(), container);
+        // Only a block that is new memory counts against the eden trigger. One taken from the
+        // pool adds no footprint.
+        heap()->didAllocate(WeakBlock::blockSize);
+    }
+
+    m_blocks.append(block);
+    ASSERT(block->hasFreeCell());
+    return m_currentBlock = block;
 }
 
 } // namespace JSC

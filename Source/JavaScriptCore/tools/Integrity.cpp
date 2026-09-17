@@ -266,10 +266,10 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
         AUDIT_VERIFY(!Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
 
     WeakSet& weakSet = cell->cellContainer().weakSet();
-    AUDIT_VERIFY(!weakSet.m_allocator || isSanePointer(weakSet.m_allocator),
-        "cell %p cell.type %d weakSet.allocator %p", cell, cell->type(), weakSet.m_allocator);
+    AUDIT_VERIFY(!weakSet.m_currentBlock || isSanePointer(weakSet.m_currentBlock),
+        "cell %p cell.type %d weakSet.currentBlock %p", cell, cell->type(), weakSet.m_currentBlock);
     AUDIT_VERIFY(!weakSet.m_nextAllocator || isSanePointer(weakSet.m_nextAllocator),
-        "cell %p cell.type %d weakSet.allocator %p", cell, cell->type(), weakSet.m_nextAllocator);
+        "cell %p cell.type %d weakSet.nextAllocator %p", cell, cell->type(), weakSet.m_nextAllocator);
 
     // If we're currently destructing the cell, then we can't rely on its
     // structure being good. Skip the following tests which rely on structure.

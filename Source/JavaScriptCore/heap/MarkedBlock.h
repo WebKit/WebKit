@@ -162,7 +162,7 @@ public:
         void unsweepWithNoNewlyAllocated();
         
         inline void shrink();
-            
+
         // While allocating from a free list, MarkedBlock temporarily has bogus
         // cell liveness data. To restore accurate cell liveness data, call one
         // of these functions:

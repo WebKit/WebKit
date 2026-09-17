@@ -31,6 +31,7 @@
 #include "HeapAnalyzer.h"
 #include "JSCInlines.h"
 #include "WeakHandleOwner.h"
+#include <wtf/FastMalloc.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -40,65 +41,91 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakBlock);
 
 WeakBlock* WeakBlock::create(JSC::Heap& heap, CellContainer container)
 {
+    void* memory = WeakBlockMalloc::alignedMalloc(blockSize, blockSize);
+    // blockFor() masks a slot address back to its block, so an unaligned block would silently
+    // corrupt an unrelated one.
+    RELEASE_ASSERT(blockContaining(memory) == memory);
     heap.didAllocateBlock(WeakBlock::blockSize);
-    return new (NotNull, WeakBlockMalloc::malloc(blockSize)) WeakBlock(container);
-
+    ++heap.m_weakBlockCount;
+    return new (NotNull, memory) WeakBlock(heap, container);
 }
 
 void WeakBlock::destroy(JSC::Heap& heap, WeakBlock* block)
 {
     RELEASE_ASSERT(!block->next() && !block->prev());
+    ASSERT(!block->m_isIterationTarget);
     block->~WeakBlock();
     WeakBlockMalloc::free(block);
+    --heap.m_weakBlockCount;
     heap.didFreeBlock(WeakBlock::blockSize);
 }
 
-WeakBlock::WeakBlock(CellContainer container)
+WeakBlock::WeakBlock(JSC::Heap& heap, CellContainer container)
     : DoublyLinkedListNode<WeakBlock>()
     , m_container(container)
+    , m_heap(heap)
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
         new (NotNull, weakImpl) WeakImpl;
-        addToFreeList(&m_sweepResult.freeList, weakImpl);
+        pushFreeCell(weakImpl);
     }
 
     ASSERT(isEmpty());
+    assertFreeListIsConsistent();
+}
+
+void WeakBlock::didBecomeEmpty()
+{
+    ASSERT(isEmpty());
+
+    switch (m_ownership) {
+    case Ownership::Attached:
+        // A walk that runs finalizers is holding this block; WeakSet::sweep collects it afterwards.
+        if (m_isIterationTarget)
+            return;
+        m_container.weakSet().didBecomeEmpty(this);
+        break;
+    case Ownership::Detached:
+        // A detached block is on no WeakSet and is never swept, reaped or visited, and every slot in
+        // it is already finalized, so only this call can change it. That makes returning it to the
+        // Heap safe at any reentrancy depth, including from within a finalizer.
+        ASSERT(!m_container);
+        m_heap.releaseDetachedWeakBlock(this);
+        break;
+    case Ownership::Pooled:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 void WeakBlock::lastChanceToFinalize()
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
-        if (weakImpl->state() >= WeakImpl::Finalized)
+        WeakImpl::State state = weakImpl->state();
+        if (state >= WeakImpl::Finalized)
             continue;
-        weakImpl->setState(WeakImpl::Dead);
+        if (state == WeakImpl::Live) {
+            weakImpl->setState(WeakImpl::Dead);
+            --m_liveCount;
+            ++m_deadCount;
+        }
         finalize(weakImpl);
     }
 }
 
 void WeakBlock::sweep()
 {
-    // If a block is completely empty, a sweep won't have any effect.
-    if (isEmpty())
-        return;
-
-    SweepResult sweepResult;
-    for (size_t i = 0; i < weakImplCount(); ++i) {
+    for (size_t i = 0; m_deadCount && i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
+        // finalize() calls out to a WeakHandleOwner, which may clear handles in this block or any
+        // other. Clearing only pushes onto a free list, so the rest of this scan stays valid.
         if (weakImpl->state() == WeakImpl::Dead)
             finalize(weakImpl);
-        if (weakImpl->state() == WeakImpl::Deallocated)
-            addToFreeList(&sweepResult.freeList, weakImpl);
-        else {
-            sweepResult.blockIsFree = false;
-            if (weakImpl->state() == WeakImpl::Live)
-                sweepResult.blockIsLogicallyEmpty = false;
-        }
     }
 
-    m_sweepResult = sweepResult;
-    ASSERT(!m_sweepResult.isNull());
+    ASSERT(!m_deadCount);
+    assertFreeListIsConsistent();
 }
 
 template<typename ContainerType, typename Visitor>
@@ -118,7 +145,7 @@ void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
         JSValue jsValue = weakImpl->jsValue();
         if (visitor.isMarked(container, jsValue.asCell()))
             continue;
-        
+
         ASCIILiteral reason = ""_s;
         ASCIILiteral* reasonPtr = nullptr;
         if (heapAnalyzer) [[unlikely]]
@@ -141,13 +168,13 @@ void WeakBlock::specializedVisit(ContainerType& container, Visitor& visitor)
 template<typename Visitor>
 ALWAYS_INLINE void WeakBlock::visitImpl(Visitor& visitor)
 {
-    // If a block is completely empty, a visit won't have any effect.
-    if (isEmpty())
+    // specializedVisit only ever acts on a live handle.
+    if (!m_liveCount)
         return;
 
     // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
     ASSERT(m_container);
-    
+
     if (m_container.isPreciseAllocation())
         specializedVisit(m_container.preciseAllocation(), visitor);
     else
@@ -159,26 +186,25 @@ void WeakBlock::visit(SlotVisitor& visitor) { visitImpl(visitor); }
 
 void WeakBlock::reap()
 {
-    // If a block is completely empty, a reaping won't have any effect.
-    if (isEmpty())
+    if (!m_liveCount)
         return;
 
     // If this WeakBlock doesn't belong to a CellContainer, we won't even be here.
     ASSERT(m_container);
-    
-    HeapVersion markingVersion = m_container.heap()->objectSpace().markingVersion();
+
+    HeapVersion markingVersion = m_heap.objectSpace().markingVersion();
 
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];
-        if (weakImpl->state() > WeakImpl::Dead)
+        if (weakImpl->state() != WeakImpl::Live)
             continue;
 
-        if (m_container.isMarked(markingVersion, weakImpl->jsValue().asCell())) {
-            ASSERT(weakImpl->state() == WeakImpl::Live);
+        if (m_container.isMarked(markingVersion, weakImpl->jsValue().asCell()))
             continue;
-        }
 
         weakImpl->setState(WeakImpl::Dead);
+        --m_liveCount;
+        ++m_deadCount;
     }
 }
 

@@ -78,23 +78,10 @@ void BlockDirectory::noteBlockMayBeStealable(unsigned index)
 MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 {
     Locker locker(bitvectorLock());
-    auto stealable = stealableBits();
-    for (;;) {
-        m_emptyCursor = stealable.findBit(m_emptyCursor, true);
-        if (m_emptyCursor >= m_blocks.size())
-            return nullptr;
+    m_emptyCursor = stealableBits().findBit(m_emptyCursor, true);
+    if (m_emptyCursor >= m_blocks.size())
+        return nullptr;
 
-        // A block still holding WeakBlocks is the expensive kind to hand over: the subspace taking it
-        // has no use for that capacity, and releasing it means chasing a cold pointer chain. Reading
-        // the head of the chain costs nothing, so pass over those and find one that is free to give.
-        //
-        // FIXME: We should explore the better way to handle it. We should have unified better WeakBlock
-        // allocator with pooling, instead of pooling in each MarkedBlock's WeakSet. Then, this becomes
-        // always empty.
-        if (!m_blocks[m_emptyCursor]->weakSet().head())
-            break;
-        m_emptyCursor++;
-    }
     dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", m_emptyCursor, " in use (findEmptyBlockToSteal) for ", *this);
     setIsInUse(m_emptyCursor, true);
     return m_blocks[m_emptyCursor];

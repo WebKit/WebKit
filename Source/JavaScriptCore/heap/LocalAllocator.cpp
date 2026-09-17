@@ -218,18 +218,18 @@ void* LocalAllocator::tryAllocateWithoutCollecting(size_t cellSize)
             RELEASE_ASSERT(block->alignedMemoryAllocator() == allocator);
 
             block->sweep(nullptr);
-
-            // findEmptyBlockToSteal only hands over blocks that have no WeakBlocks left, so there is
-            // no weak capacity to reclaim here. What this does is take the now-empty WeakSet off
-            // MarkedSpace's list of active ones before the block changes owner.
-            block->shrink();
+            // A block must own no WeakBlock before it changes cell size and owner: a survivor would
+            // go on reading mark bits for cells that no longer exist at those addresses. Sweeping an
+            // empty block leaves it that way, since every handle in it is reaped dead and finalized.
+            RELEASE_ASSERT(!block->weakSet().head());
+            ASSERT(!block->weakSet().isOnList());
 
             block->removeFromDirectory();
             m_directory->addBlock(block);
             return allocateIn(block, cellSize);
         }
     }
-    
+
     return nullptr;
 }
 

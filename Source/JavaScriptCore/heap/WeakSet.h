@@ -41,6 +41,7 @@ class Analyzer;
 class WeakSet : public BasicRawSentinelNode<WeakSet> {
     friend class LLIntOffsetsExtractor;
     friend class Integrity::Analyzer;
+    friend class WeakBlock;
 
 public:
     static WeakImpl* allocate(JSValue, WeakHandleOwner* = nullptr, void* context = nullptr);
@@ -59,7 +60,6 @@ public:
     void reap();
     void sweep();
     JS_EXPORT_PRIVATE void shrink();
-    void resetAllocator();
 
     static constexpr ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(WeakSet, m_vm); }
 
@@ -73,18 +73,29 @@ public:
     }
 
 private:
-    JS_EXPORT_PRIVATE WeakBlock::FreeCell* findAllocator(CellContainer);
-    WeakBlock::FreeCell* NODELETE tryFindAllocator();
-    WeakBlock::FreeCell* addAllocator(CellContainer);
-    void removeAllocator(WeakBlock*);
+    JS_EXPORT_PRIVATE WeakBlock* findAllocator(CellContainer);
+    WeakBlock* NODELETE tryFindAllocator();
+    WeakBlock* addAllocator(CellContainer);
 
-    WeakBlock::FreeCell* m_allocator { nullptr };
+    JS_EXPORT_PRIVATE void didBecomeEmpty(WeakBlock*);
+
+    void tryReleaseBlock(WeakBlock*);
+
+    void detachAllocator();
+    void resetAllocator();
+
+    WeakBlock* m_currentBlock { nullptr };
     WeakBlock* m_nextAllocator { nullptr };
     DoublyLinkedList<WeakBlock> m_blocks;
     // m_vm must be a pointer (instead of a reference) because the JSCLLIntOffsetsExtractor
-    // cannot handle it being a reference.
+    // cannot handle it being a reference. LowLevelInterpreter.asm reaches it by name, through
+    // PreciseAllocationVMOffset.
     VM* const m_vm;
 };
+
+// PreciseAllocation embeds a WeakSet by value and rounds headerSize() up from its own size, so this
+// size is part of the precise-allocation cell layout.
+static_assert(sizeof(WeakSet) == 7 * sizeof(void*));
 
 inline WeakSet::WeakSet(VM& vm)
     : m_vm(&vm)
@@ -120,9 +131,15 @@ ALWAYS_INLINE void WeakSet::deallocate(WeakImpl* weakImpl)
     weakImpl->clear();
 }
 
+inline void WeakSet::detachAllocator()
+{
+    m_currentBlock = nullptr;
+    m_nextAllocator = nullptr;
+}
+
 inline void WeakSet::resetAllocator()
 {
-    m_allocator = nullptr;
+    m_currentBlock = nullptr;
     m_nextAllocator = m_blocks.head();
 }
 

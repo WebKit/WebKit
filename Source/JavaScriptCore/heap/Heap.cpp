@@ -499,8 +499,10 @@ Heap::~Heap()
     m_mutatorMarkStack->clear();
     m_raceMarkStack->clear();
     
-    for (WeakBlock* block : m_logicallyEmptyWeakBlocks)
+    while (WeakBlock* block = m_detachedWeakBlocks.removeHead())
         WeakBlock::destroy(*this, block);
+    destroyAllPooledWeakBlocks();
+    ASSERT(!m_weakBlockCount);
 }
 
 void Heap::dumpHeapStatisticsAtVMDestruction()
@@ -610,10 +612,8 @@ void Heap::lastChanceToFinalize()
     Wasm::TypeInformation::cleanupIfRequested();
 #endif
 
-    sweepAllLogicallyEmptyWeakBlocks();
-    
     m_objectSpace.freeMemory();
-    
+
     dataLogIf(Options::logGC(), (MonotonicTime::now() - before).milliseconds(), "ms]\n");
 }
 
@@ -1314,6 +1314,7 @@ void Heap::sweepSynchronously()
     }
     m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
+    destroyAllPooledWeakBlocks();
 #if ENABLE(WEBASSEMBLY)
     Wasm::TypeInformation::cleanupIfRequested();
 #endif
@@ -1369,8 +1370,6 @@ void Heap::collectNow(Synchronousness synchronousness, GCRequest request)
             dataLogIf(Options::logGC(), "]\n");
         }
         m_objectSpace.assertNoUnswept();
-        
-        sweepAllLogicallyEmptyWeakBlocks();
         return;
     } }
     RELEASE_ASSERT_NOT_REACHED();
@@ -1824,8 +1823,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         deleteUnmarkedCompiledCode();
     }
 
-    notifyIncrementalSweeper();
-    
+    m_sweeper->startSweeping(*this);
+
     m_codeBlocks->iterateCurrentlyExecuting(
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
@@ -2560,16 +2559,6 @@ void Heap::deleteSourceProviderCaches()
         vm().clearSourceProviderCaches();
 }
 
-void Heap::notifyIncrementalSweeper()
-{
-    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
-        if (!m_logicallyEmptyWeakBlocks.isEmpty())
-            m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
-    }
-
-    m_sweeper->startSweeping(*this);
-}
-
 double Heap::projectedGCRateLimitingValue(MonotonicTime now)
 {
     if (!m_lastGCEndTime) {
@@ -2816,43 +2805,65 @@ bool Heap::shouldDoFullCollection()
     return *m_currentRequest.scope == CollectionScope::Full;
 }
 
-void Heap::addLogicallyEmptyWeakBlock(WeakBlock* block)
+void Heap::addDetachedWeakBlock(WeakBlock* block)
 {
     RELEASE_ASSERT(!block->next() && !block->prev());
-    m_logicallyEmptyWeakBlocks.append(block);
+    ASSERT(&block->heap() == this);
+    block->setDetached();
+    m_detachedWeakBlocks.append(block);
 }
 
-void Heap::sweepAllLogicallyEmptyWeakBlocks()
+void Heap::releaseDetachedWeakBlock(WeakBlock* block)
 {
-    if (m_logicallyEmptyWeakBlocks.isEmpty())
-        return;
-
-    m_indexOfNextLogicallyEmptyWeakBlockToSweep = 0;
-    while (sweepNextLogicallyEmptyWeakBlock()) { }
+    ASSERT(&block->heap() == this);
+    m_detachedWeakBlocks.remove(block);
+    returnWeakBlockToPool(block);
 }
 
-bool Heap::sweepNextLogicallyEmptyWeakBlock()
+void Heap::returnWeakBlockToPool(WeakBlock* block)
 {
-    if (m_indexOfNextLogicallyEmptyWeakBlockToSweep == WTF::notFound)
-        return false;
-
-    WeakBlock* block = m_logicallyEmptyWeakBlocks[m_indexOfNextLogicallyEmptyWeakBlockToSweep];
     RELEASE_ASSERT(!block->next() && !block->prev());
+    ASSERT(&block->heap() == this);
+    ASSERT(block->isEmpty());
 
-    block->sweep();
-    if (block->isEmpty()) {
-        std::swap(m_logicallyEmptyWeakBlocks[m_indexOfNextLogicallyEmptyWeakBlockToSweep], m_logicallyEmptyWeakBlocks.last());
-        m_logicallyEmptyWeakBlocks.removeLast();
+    if (m_pooledWeakBlockCount >= maxPooledWeakBlocks()) {
         WeakBlock::destroy(*this, block);
-    } else
-        m_indexOfNextLogicallyEmptyWeakBlockToSweep++;
-
-    if (m_indexOfNextLogicallyEmptyWeakBlockToSweep >= m_logicallyEmptyWeakBlocks.size()) {
-        m_indexOfNextLogicallyEmptyWeakBlockToSweep = WTF::notFound;
-        return false;
+        return;
     }
 
-    return true;
+    block->setPooled();
+    m_pooledWeakBlocks.push(block);
+    ++m_pooledWeakBlockCount;
+}
+
+unsigned Heap::maxPooledWeakBlocks()
+{
+    unsigned divisor = Options::weakBlockPoolDivisor();
+    if (!divisor)
+        return 0;
+
+    // One spare per divisor MarkedBlocks, so a bigger heap keeps a proportionally bigger cache.
+    // The floor covers a heap too small for the ratio to name anything; the ceiling keeps the
+    // cache from becoming a memory sink in its own right.
+    constexpr unsigned minPooledWeakBlocks = 8;
+    constexpr unsigned maxPooledWeakBlocksEver = 1024;
+    size_t pooled = m_objectSpace.capacity() / (MarkedBlock::blockSize * static_cast<size_t>(divisor));
+    return clampTo<unsigned>(pooled, minPooledWeakBlocks, maxPooledWeakBlocksEver);
+}
+
+WeakBlock* Heap::takeWeakBlockFromPool()
+{
+    WeakBlock* block = m_pooledWeakBlocks.removeHead();
+    if (block)
+        --m_pooledWeakBlockCount;
+    return block;
+}
+
+void Heap::destroyAllPooledWeakBlocks()
+{
+    while (WeakBlock* block = m_pooledWeakBlocks.removeHead())
+        WeakBlock::destroy(*this, block);
+    m_pooledWeakBlockCount = 0;
 }
 
 size_t Heap::visitCount()

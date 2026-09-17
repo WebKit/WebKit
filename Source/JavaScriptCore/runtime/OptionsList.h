@@ -246,6 +246,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Unsigned, preciseAllocationCutoff, 100000, Normal, nullptr) \
     v(Bool, dumpSizeClasses, false, Normal, nullptr) \
     v(Bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
+    v(Unsigned, weakBlockPoolDivisor, 16, Normal, "MarkedBlocks per empty WeakBlock the Heap keeps pooled for reuse. 0 pools nothing.") \
     v(Bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     v(Bool, dumpZappedCellCrashData, false, Normal, nullptr) \
     \
