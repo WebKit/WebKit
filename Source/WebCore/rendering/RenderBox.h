@@ -632,7 +632,7 @@ protected:
     std::optional<LayoutUnit> computeSizingKeywordLogicalContentHeightUsing(const Style::FlexBasis& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const;
 
     LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize& logicalWidth, LayoutUnit keywordContentBoxLogicalWidth, LayoutUnit availableLogicalWidth) const;
-    LayoutUnit resolveCalcSizeLogicalWidthContribution(const Style::PreferredSize& logicalWidth, LayoutUnit keywordContentBoxLogicalWidth) const;
+    LayoutUnit resolveCalcSizeLogicalWidthContribution(const Style::UnevaluatedCalcSize& logicalWidth, LayoutUnit keywordContentBoxLogicalWidth) const;
 
     LayoutRect localOutlineBoundsRepaintRect() const;
 

@@ -2352,8 +2352,8 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
         else if (logicalWidth.isMaxContent())
             minContentLogicalWidth = maxContentLogicalWidth;
 
-        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth, minContentLogicalWidth);
-        m_maxContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth, maxContentLogicalWidth);
+        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth.get<Style::UnevaluatedCalcSize>(), minContentLogicalWidth);
+        m_maxContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(logicalWidth.get<Style::UnevaluatedCalcSize>(), maxContentLogicalWidth);
     } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
         // Either keyword stands for one size, so the box neither shrinks below it nor grows past it.
         // This sits behind the aspect-ratio branch because a ratio transfers the block size across,

@@ -1039,7 +1039,7 @@ void RenderTable::computeIntrinsicLogicalWidthContributions()
         // Cell spacing is part of the table's used width under the basis keyword, so `size` keeps it.
         auto keywordLogicalWidth = styleLogicalWidth.isMaxContent() ? m_maxContentLogicalWidthContribution : m_minContentLogicalWidthContribution;
         auto borderAndPadding = borderAndPaddingLogicalWidth();
-        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(styleLogicalWidth, std::max(0_lu, keywordLogicalWidth - borderAndPadding)) + borderAndPadding;
+        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidthContribution(styleLogicalWidth.get<Style::UnevaluatedCalcSize>(), std::max(0_lu, keywordLogicalWidth - borderAndPadding)) + borderAndPadding;
         m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
     }
 
