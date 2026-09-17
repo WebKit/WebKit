@@ -428,11 +428,11 @@ static void testSharedBytecodeBreakpoints()
         CHECK(breakpoint->owner == owner, "The breakpoint should pin the module that owns its bytecode");
 
         auto action = breakpointManager->trapActionFor(sharedPC, addresses[0]);
-        CHECK(action && action->stopType == Breakpoint::Type::Regular, "The instance holding the site should stop");
+        CHECK(action && action->stopReason == DebugState::Reason::Breakpoint, "The instance holding the site should stop");
         CHECK(action->displacedOpcode == originalBytecode, "Resuming should dispatch the displaced opcode");
         for (size_t i = 1; i < addresses.size(); ++i) {
             action = breakpointManager->trapActionFor(sharedPC, addresses[i]);
-            CHECK(action && !action->stopType, "Instance ", addresses[i].instanceId(), " holds no site here and must not stop");
+            CHECK(action && !action->stopReason, "Instance ", addresses[i].instanceId(), " holds no site here and must not stop");
             CHECK(action->displacedOpcode == originalBytecode, "It should still resume through the patch");
         }
 
@@ -453,7 +453,7 @@ static void testSharedBytecodeBreakpoints()
             CHECK(breakpointManager->removeBreakpointAt(addresses[i]), "Site ", addresses[i], " should be removable");
             CHECK(*sharedPC != originalBytecode, "The bytecode must stay patched while another site refers to it");
             action = breakpointManager->trapActionFor(sharedPC, addresses[i]);
-            CHECK(action && !action->stopType, "The instance whose site was removed must stop no longer");
+            CHECK(action && !action->stopReason, "The instance whose site was removed must stop no longer");
         }
         CHECK(breakpointManager->removeBreakpointAt(addresses.last()), "The last site should be removable");
         CHECK(*sharedPC == originalBytecode, "Removing the last site should restore the displaced opcode");
@@ -467,11 +467,11 @@ static void testSharedBytecodeBreakpoints()
         breakpointManager->setStepBreakpoint(*owner, pc);
         CHECK(breakpointManager->hasOneTimeBreakpoints(), "A step onto a PC held by a site must still register as one-time");
         action = breakpointManager->trapActionFor(sharedPC, addresses[1]);
-        CHECK(action && action->stopType == Breakpoint::Type::Regular, "A step must not mask the site's stop reason");
+        CHECK(action && action->stopReason == DebugState::Reason::Breakpoint, "A step must not mask the site's stop reason");
         // A step belongs to the debuggee VM rather than to an instance, so whichever instance
         // reaches the PC completes it.
         action = breakpointManager->trapActionFor(sharedPC, addresses[0]);
-        CHECK(action && action->stopType == Breakpoint::Type::Step, "An instance holding no site should still complete the step");
+        CHECK(action && action->stopReason == DebugState::Reason::Step, "An instance holding no site should still complete the step");
 
         // The step outlives the last site: LLDB removes it before the step lands.
         CHECK(breakpointManager->removeBreakpointAt(addresses[1]), "The remaining site should be removable");
@@ -486,6 +486,27 @@ static void testSharedBytecodeBreakpoints()
         CHECK(*sharedPC != originalBytecode, "Completing the step must not disarm the site sharing its PC");
         CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "The site should outlive the step");
         CHECK(*sharedPC == originalBytecode, "Removing the last site should restore the displaced opcode");
+
+        // The reverse order. Unreachable today since every stop clears claims before LLDB is
+        // notified, but stopTheWorld's FIXME would preserve them, so the order must not matter.
+        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
+        action = breakpointManager->trapActionFor(sharedPC, addresses[0]);
+        CHECK(action && action->stopReason == DebugState::Reason::Breakpoint, "A site installed after a claim still outranks it");
+        action = breakpointManager->trapActionFor(sharedPC, addresses[1]);
+        CHECK(action && action->stopReason == DebugState::Reason::Step, "A siteless instance still completes a claim armed before the site");
+        breakpointManager->clearAllOneTimeBreakpoints();
+        CHECK(*sharedPC != originalBytecode, "Clearing the claim must not disarm the site installed after it");
+        CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "The site outliving that claim should be removable");
+        CHECK(*sharedPC == originalBytecode, "Removing it should restore the displaced opcode");
+
+        // And a claim outliving a site installed after it.
+        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
+        CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "That site should be removable");
+        CHECK(*sharedPC != originalBytecode, "The claim armed before it must keep the byte patched");
+        breakpointManager->clearAllOneTimeBreakpoints();
+        CHECK(*sharedPC == originalBytecode, "Clearing the last claim should restore the displaced opcode");
 
         // Nothing patched the byte, so a trap there is a genuine unreachable.
         CHECK(!breakpointManager->trapActionFor(sharedPC, addresses[0]), "An unpatched PC should report no breakpoint");

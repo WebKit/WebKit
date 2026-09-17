@@ -60,27 +60,27 @@ Ref<Breakpoint> BreakpointManager::ensurePatched(const ModuleInformation& owner,
 
     Ref<Breakpoint> breakpoint = Breakpoint::create(owner, pc);
     breakpoint->patchBreakpoint();
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Patched the byte at ", RawPointer(pc));
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Patched the byte at ", breakpoint.get());
     return m_breakpoints.set(pc, WTF::move(breakpoint)).iterator->value;
 }
 
-void BreakpointManager::releasePatchIfUnused(uint8_t* pc)
+void BreakpointManager::releasePatchIfUnused(Ref<Breakpoint> breakpoint)
 {
-    auto it = m_breakpoints.find(pc);
-    RELEASE_ASSERT(it != m_breakpoints.end());
-    if (it->value->siteCount || m_oneTimeBreakpoints.contains(pc))
+    if (!breakpoint->isUnused())
         return;
 
-    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Restoring ", it->value);
-    it->value->restorePatch();
-    m_breakpoints.remove(it);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Restoring ", breakpoint.get());
+    breakpoint->restorePatch();
+    m_breakpoints.remove(breakpoint->pc);
 }
 
 void BreakpointManager::setStepBreakpoint(const ModuleInformation& owner, uint8_t* pc)
 {
     Locker locker { m_lock };
-    ensurePatched(owner, pc);
-    m_oneTimeBreakpoints.add(pc);
+    Ref<Breakpoint> breakpoint = ensurePatched(owner, pc);
+    if (!breakpoint->oneTimeClaim)
+        m_oneTimeBreakpoints.append(breakpoint);
+    breakpoint->oneTimeClaim = DebugStopReason::Step;
 }
 
 RefPtr<Breakpoint> BreakpointManager::breakpointAt(const uint8_t* pc)
@@ -118,7 +118,7 @@ bool BreakpointManager::removeSiteImpl(VirtualAddress address)
     // removal but the last.
     RELEASE_ASSERT(breakpoint->siteCount);
     breakpoint->siteCount--;
-    releasePatchIfUnused(breakpoint->pc);
+    releasePatchIfUnused(breakpoint);
     return true;
 }
 
@@ -160,21 +160,21 @@ std::optional<BreakpointManager::TrapAction> BreakpointManager::trapActionFor(co
 
     TrapAction action { it->value->originalBytecode, std::nullopt };
     // A site names one instance; a sibling sharing the patched byte has no breakpoint here. A
-    // site wins over a step at the same byte, so a step never masks a user breakpoint's reason.
+    // site wins over a claim at the same byte, so a claim never masks a user breakpoint's reason.
     if (m_addressToBreakpoint.get(hitAddress) == it->value.ptr())
-        action.stopType = Breakpoint::Type::Regular;
-    else if (m_oneTimeBreakpoints.contains(const_cast<uint8_t*>(pc)))
-        action.stopType = Breakpoint::Type::Step;
+        action.stopReason = DebugStopReason::Breakpoint;
+    else
+        action.stopReason = it->value->oneTimeClaim;
     return action;
 }
 
 void BreakpointManager::clearAllOneTimeBreakpoints()
 {
     Locker locker { m_lock };
-    // Cleared first so releasePatchIfUnused can free unreferenced patches.
-    auto steppedPCs = std::exchange(m_oneTimeBreakpoints, { });
-    for (uint8_t* pc : steppedPCs)
-        releasePatchIfUnused(pc);
+    for (Ref<Breakpoint>& breakpoint : std::exchange(m_oneTimeBreakpoints, { })) {
+        breakpoint->oneTimeClaim = std::nullopt;
+        releasePatchIfUnused(breakpoint);
+    }
     dataLogLnIf(Options::verboseWasmDebugger(), "[BreakpointManager] Cleared all one-time breakpoints");
 }
 

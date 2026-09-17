@@ -58,7 +58,7 @@ public:
     struct TrapAction {
         OpType displacedOpcode { OpType::Unreachable }; // The opcode the patch replaced; resuming dispatches it.
         // Absent when nothing at this PC belongs to the instance that reached it.
-        std::optional<Breakpoint::Type> stopType;
+        std::optional<DebugStopReason> stopReason;
     };
 
     bool hasOneTimeBreakpoints();
@@ -87,12 +87,12 @@ public:
 
 private:
     Ref<Breakpoint> ensurePatched(const ModuleInformation& owner, uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
-    void releasePatchIfUnused(uint8_t* pc) WTF_REQUIRES_LOCK(m_lock);
+    void releasePatchIfUnused(Ref<Breakpoint>) WTF_REQUIRES_LOCK(m_lock);
     bool removeSiteImpl(VirtualAddress) WTF_REQUIRES_LOCK(m_lock);
 
     mutable Lock m_lock;
     UncheckedKeyHashMap<uint8_t*, Ref<Breakpoint>> m_breakpoints WTF_GUARDED_BY_LOCK(m_lock);
-    UncheckedKeyHashSet<uint8_t*> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
+    Vector<Ref<Breakpoint>> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
     UncheckedKeyHashMap<VirtualAddress, Ref<Breakpoint>> m_addressToBreakpoint WTF_GUARDED_BY_LOCK(m_lock);
 };
 

@@ -142,8 +142,8 @@ OpType ExecutionHandler::handleDebuggerTrapIfNeeded(CallFrame* callFrame, JSWebA
     if (exceptionType == Wasm::ExceptionType::Unreachable) {
         VirtualAddress address = VirtualAddress::toVirtual(instance, callee->functionIndex(), pc);
         if (auto action = m_breakpointManager->trapActionFor(pc, address)) {
-            if (action->stopType) {
-                debuggee.debugState()->setBreakpointStopData(*action->stopType, address, action->displacedOpcode, pc, mc, stack, callee, instance, callFrame);
+            if (action->stopReason) {
+                debuggee.debugState()->setBreakpointStopData(*action->stopReason, address, action->displacedOpcode, pc, mc, stack, callee, instance, callFrame);
                 dataLogLnIf(Options::verboseWasmDebugger(), "[Code][handleDebuggerTrapIfNeeded] Breakpoint with ", *debuggee.debugState()->stopData);
                 stopTheWorld(debuggee, StopTheWorldEvent::WasmProgramStop);
             } else {

@@ -98,16 +98,19 @@ private:
     BitField m_event { NoEvent };
 };
 
+// Why the VM stopped. Always set when isStopped. Drives GDB wire protocol signal and reason.
+enum class DebugStopReason : uint8_t {
+    // Debugger-imposed stop: passive VM (no WASM context) or WASM function prologue.
+    // Also used for new module load stops (isNewModuleLoad flag is set in that case).
+    Interrupted,
+    Breakpoint, // A user-set breakpoint was hit (reason:breakpoint)
+    Step, // A step breakpoint was hit (reason:trace)
+    WasmTrap, // Wasm trap / exception
+};
+
 class Breakpoint final : public ThreadSafeRefCounted<Breakpoint> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Breakpoint, JS_EXPORT_PRIVATE);
 public:
-    // Why a stop happened, which is a property of the hit rather than of the patched byte: one
-    // byte can carry both an LLDB site and a step at once.
-    enum class Type : uint8_t {
-        Regular = 0, // A site LLDB installed (Z0), reported as reason:breakpoint.
-        Step = 1, // A one-time breakpoint serving a step, reported as reason:trace.
-    };
-
     static Ref<Breakpoint> create(const ModuleInformation& owner, uint8_t* pc)
     {
         return adoptRef(*new Breakpoint(owner, pc));
@@ -116,20 +119,23 @@ public:
     void patchBreakpoint() { *pc = static_cast<uint8_t>(OpType::Unreachable); }
     void restorePatch() { *pc = static_cast<uint8_t>(originalBytecode); }
 
+    bool isUnused() const { return !siteCount && !oneTimeClaim; }
+
     void dump(PrintStream& out) const
     {
         out.print("Breakpoint(pc:", RawPointer(pc));
         out.print(", *pc:", (int)*pc);
         out.print(", originalBytecode:", RawHex(static_cast<unsigned>(originalBytecode)));
-        out.print(", siteCount:", siteCount, ")");
+        out.print(", siteCount:", siteCount, ", oneTimeClaim:", oneTimeClaim, ")");
     }
 
     // Keeps the bytecode buffer alive.
     RefPtr<const ModuleInformation> owner;
     uint8_t* pc { nullptr };
     OpType originalBytecode { OpType::Unreachable };
-    // LLDB sites referring to this byte, one per instance. The patch outlives all of them.
+    // Independent claims, able to coexist; the patch is restored once neither remains.
     unsigned siteCount { 0 };
+    std::optional<DebugStopReason> oneTimeClaim; // Step or Interrupted while armed.
 
 private:
     Breakpoint(const ModuleInformation& owner, uint8_t* pc)
@@ -171,15 +177,7 @@ struct StopData {
 struct DebugState {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(DebugState);
 
-    // Why the VM stopped. Always set when isStopped. Drives GDB wire protocol signal and reason.
-    enum class Reason : uint8_t {
-        // Debugger-imposed stop: passive VM (no WASM context) or WASM function prologue.
-        // Also used for new module load stops (isNewModuleLoad flag is set in that case).
-        Interrupted,
-        Breakpoint, // A user-set breakpoint was hit (reason:breakpoint)
-        Step, // A step breakpoint was hit (reason:trace)
-        WasmTrap, // Wasm trap / exception
-    };
+    using Reason = DebugStopReason;
 
     DebugState() = default;
 
@@ -198,16 +196,10 @@ struct DebugState {
         stopData = makeUnique<StopData>(VirtualAddress::toVirtual(instance, callee->functionIndex(), pc), OpType::ExtAtomic, pc, mc, stack, callee, instance, callFrame);
     }
 
-    void setBreakpointStopData(Breakpoint::Type type, VirtualAddress address, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
+    void setBreakpointStopData(Reason reason, VirtualAddress address, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
     {
-        switch (type) {
-        case Breakpoint::Type::Step:
-            stopReason = Reason::Step;
-            break;
-        case Breakpoint::Type::Regular:
-            stopReason = Reason::Breakpoint;
-            break;
-        }
+        RELEASE_ASSERT(reason == Reason::Breakpoint || reason == Reason::Step);
+        stopReason = reason;
         stopData = makeUnique<StopData>(address, originalBytecode, pc, mc, stack, callee, instance, callFrame);
     }
 
