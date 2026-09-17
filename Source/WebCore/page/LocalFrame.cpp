@@ -288,6 +288,18 @@ RefPtr<LocalFrame> LocalFrame::localMainFrame()
     return dynamicDowncast<LocalFrame>(mainFrame());
 }
 
+JSC::Debugger* LocalFrame::debugger() const
+{
+    // FrameInspectorController holds the frame's own debugger, which only exists under site
+    // isolation and only once something is debugging this frame.
+    if (auto* frameDebugger = m_inspectorController->attachedDebugger())
+        return frameDebugger;
+
+    if (auto* page = this->page())
+        return page->debugger();
+    return nullptr;
+}
+
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
 {
     m_destructionObservers.add(observer);
