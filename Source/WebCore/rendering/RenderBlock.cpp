@@ -2348,6 +2348,24 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
             maxContentLogicalWidth = minContentLogicalWidth;
         else if (logicalWidth.isMaxContent())
             minContentLogicalWidth = maxContentLogicalWidth;
+        else if (logicalWidth.isAuto() && overridingLogicalWidthForFlexBasisComputation()) {
+            // A flex-basis standing in for the main size, where `auto` means the width property
+            // rather than the width this box would otherwise take.
+            auto styleContribution = [&]() -> std::optional<LayoutUnit> {
+                auto& styleLogicalWidth = styleToUse.logicalWidth();
+                if (auto fixedLogicalWidth = styleLogicalWidth.tryFixed())
+                    return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+                if (styleLogicalWidth.isCalcSize()) {
+                    auto keywordLogicalWidth = styleLogicalWidth.isMinContent() ? minContentLogicalWidth : maxContentLogicalWidth;
+                    return resolveCalcSizeLogicalWidth(styleLogicalWidth.get<Style::UnevaluatedCalcSize>(), keywordLogicalWidth, 0_lu);
+                }
+                return { };
+            }();
+            if (styleContribution) {
+                minContentLogicalWidth = *styleContribution;
+                maxContentLogicalWidth = *styleContribution;
+            }
+        }
 
         m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidth(logicalWidth.get<Style::UnevaluatedCalcSize>(), minContentLogicalWidth, 0_lu);
         m_maxContentLogicalWidthContribution = resolveCalcSizeLogicalWidth(logicalWidth.get<Style::UnevaluatedCalcSize>(), maxContentLogicalWidth, 0_lu);
