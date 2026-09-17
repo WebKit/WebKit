@@ -78,6 +78,8 @@ public:
     const AtomString& name() const LIFETIME_BOUND { return m_keyframesRule->name(); }
     void setName(const AtomString&);
 
+    StyleRuleKeyframes& keyframesRule() const LIFETIME_BOUND { return m_keyframesRule.get(); }
+
     CSSRuleList& cssRules();
 
     void appendRule(const String& rule);

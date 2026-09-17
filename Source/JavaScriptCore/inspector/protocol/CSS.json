@@ -87,7 +87,8 @@
             "description": "CSS rule collection for a single pseudo style.",
             "properties": [
                 { "name": "pseudoId", "$ref": "PseudoId" },
-                { "name": "matches", "type": "array", "items": { "$ref": "RuleMatch" }, "description": "Matches of CSS rules applicable to the pseudo style."}
+                { "name": "matches", "type": "array", "items": { "$ref": "RuleMatch" }, "description": "Matches of CSS rules applicable to the pseudo style."},
+                { "name": "keyframes", "type": "array", "items": { "$ref": "CSSRule" }, "optional": true, "description": "The rules of all <code>@keyframes</code> referenced by the computed <code>animation-name</code> list." }
             ]
         },
         {
@@ -256,7 +257,7 @@
             "type": "object",
             "description": "CSS @media (as well as other users of media queries, like @import, <style>, <link>, etc.), @supports, and @layer descriptor.",
             "properties": [
-                { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule", "layer-rule", "layer-import-rule", "container-rule", "scope-rule", "starting-style-rule", "style-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, \"layer-rule\" if specified by an @layer rule, \"container-rule\" if specified by an @container rule, \"scope-rule\" if specified by a @scope rule, \"starting-style-rule\" if specified by a @starting-style rule, \"style-rule\" if specified by a CSSStyleRule containing the rule inside this grouping." },
+                { "name": "type", "type": "string", "enum": ["media-rule", "media-import-rule", "media-link-node", "media-style-node", "supports-rule", "layer-rule", "layer-import-rule", "container-rule", "scope-rule", "starting-style-rule", "style-rule", "keyframes-rule"], "description": "Source of the media query: \"media-rule\" if specified by a @media rule, \"media-import-rule\" if specified by an @import rule, \"media-link-node\" if specified by a \"media\" attribute in a linked style sheet's LINK tag, \"media-style-node\" if specified by a \"media\" attribute in an inline style sheet's STYLE tag, \"supports-rule\" if specified by an @supports rule, \"layer-rule\" if specified by an @layer rule, \"container-rule\" if specified by an @container rule, \"scope-rule\" if specified by a @scope rule, \"starting-style-rule\" if specified by a @starting-style rule, \"style-rule\" if specified by a CSSStyleRule containing the rule inside this grouping, \"keyframes-rule\" if specified by a CSSKeyframesRule containing the rules inside this grouping." },
                 { "name": "ruleId", "$ref": "CSSRuleId", "optional": true, "description": "The CSS rule identifier for the `@rule` (absent for non-editable grouping rules) or the nesting parent style rule's selector. In CSSOM terms, this is the parent rule of either the previous Grouping for a CSSRule, or of a CSSRule itself."},
                 { "name": "text", "type": "string", "optional": true, "description": "Query text if specified by a @media, @supports, or @container rule. Layer name (or not present for anonymous layers) for @layer rules." },
                 { "name": "sourceURL", "type": "string", "optional": true, "description": "URL of the document containing the CSS grouping." },
@@ -324,12 +325,14 @@
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId" },
                 { "name": "includePseudo", "type": "boolean", "optional": true, "description": "Whether to include pseudo styles (default: true)." },
-                { "name": "includeInherited", "type": "boolean", "optional": true, "description": "Whether to include inherited styles (default: true)." }
+                { "name": "includeInherited", "type": "boolean", "optional": true, "description": "Whether to include inherited styles (default: true)." },
+                { "name": "includeKeyframes", "type": "boolean", "optional": true, "description": "Whether to include <code>@keyframes</code> rules (default: true)." }
             ],
             "returns": [
                 { "name": "matchedCSSRules", "type": "array", "items": { "$ref": "RuleMatch" }, "optional": true, "description": "CSS rules matching this node, from all applicable stylesheets." },
                 { "name": "pseudoElements", "type": "array", "items": { "$ref": "PseudoIdMatches" }, "optional": true, "description": "Pseudo style matches for this node." },
-                { "name": "inherited", "type": "array", "items": { "$ref": "InheritedStyleEntry" }, "optional": true, "description": "A chain of inherited styles (from the immediate node parent up to the DOM tree root)." }
+                { "name": "inherited", "type": "array", "items": { "$ref": "InheritedStyleEntry" }, "optional": true, "description": "A chain of inherited styles (from the immediate node parent up to the DOM tree root)." },
+                { "name": "keyframes", "type": "array", "items": { "$ref": "CSSRule" }, "optional": true, "description": "The rules of all <code>@keyframes</code> referenced by the computed <code>animation-name</code> list." }
             ]
         },
         {
