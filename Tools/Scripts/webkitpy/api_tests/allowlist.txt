@@ -487,9 +487,24 @@ TestWebKitAPI.WKWebExtensionAPILocalization
 TestWebKitAPI.WKWebExtensionAPINamespace
 TestWebKitAPI.WKWebExtensionContext
 TestWebKitAPI.WKWebExtensionController
-TestWebKitAPI.WKWebExtensionControllerConfiguration
-TestWebKitAPI.WKWebExtensionDataRecord
-TestWebKitAPI.WKWebExtensionMatchPattern
+TestWebKitAPI.WKWebExtensionControllerConfigurationTests/copying()
+TestWebKitAPI.WKWebExtensionControllerConfigurationTests/defaultWebsiteDataStoreWithCopyAndCoding()
+TestWebKitAPI.WKWebExtensionControllerConfigurationTests/initialization()
+TestWebKitAPI.WKWebExtensionControllerConfigurationTests/secureCoding()
+TestWebKitAPI.WKWebExtensionControllerConfigurationTests/webViewConfigurationWithCopyAndCoding()
+TestWebKitAPI.WKWebExtensionDataRecordTests/getDataRecords()
+TestWebKitAPI.WKWebExtensionDataRecordTests/getDataRecordsForMultipleContexts()
+TestWebKitAPI.WKWebExtensionDataRecordTests/removeDataRecords()
+TestWebKitAPI.WKWebExtensionDataRecordTests/removeDataRecordsForMultipleContexts()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/allowFileSchemeOption()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/customURLScheme()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/matchPatternMatchesPattern()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/matchPatternMatchesURL()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/matchesAllHosts()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/matchesAllURLs()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/patternCacheAndEquality()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/patternDescriptions()
+TestWebKitAPI.WKWebExtensionMatchPatternTests/patternValidity()
 TestWebKitAPI.WKWebExtensionTabTests/openTabs()
 TestWebKitAPI.WKWebExtensionWindowTests/focusedWindow()
 TestWebKitAPI.WKWebExtensionWindowTests/openWindows()
@@ -5436,27 +5451,27 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEvent
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEventForSubresource
 [ ios ] TestWebKitAPI.WKWebExtensionAPIWebRequest.SendHeadersEventWithRequestHeaders
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.Create
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.CreateIncognitoWithPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.CreateIncognitoWithoutPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.CreateWithRelativeURL
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.CreateWithRelativeURLs
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.CreatedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.Errors
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.FocusChangedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetAll
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetAllWithPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetCurrent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetCurrentFromOptionsPage
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetCurrentWindowAfterTabMove
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetLastFocused
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetLastFocusedWithPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.GetLastFocusedWithoutPrivateAccess
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.Remove
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.RemoveListenerDuringEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.RemoveUnsupported
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.RemovedEvent
-[ ios ] TestWebKitAPI.WKWebExtensionAPIWindows.Update
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/create()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createIncognitoWithoutPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURL()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createWithRelativeURLs()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/createdEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/errors()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/focusChangedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getAll()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getAllWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrentFromOptionsPage()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getCurrentWindowAfterTabMove()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocused()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocusedWithPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/getLastFocusedWithoutPrivateAccess()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/remove()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeListenerDuringEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removeUnsupported()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/removedEvent()
+[ ios ] TestWebKitAPI.WKWebExtensionAPIWindowsTests/update()
 [ ios ] TestWebKitAPI.WKWebView.AlwaysShowsScroller
 [ ios ] TestWebKitAPI.WKWebView.AuxiliaryWindowsShareLocalStorage
 [ ios ] TestWebKitAPI.WKWebView.DiagnosticLoggingDelegateAfterClose
