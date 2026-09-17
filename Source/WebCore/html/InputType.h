@@ -260,7 +260,7 @@ public:
     virtual bool getAllowedValueStep(Decimal*) const;
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual ExceptionOr<void> stepUp(int);
-    virtual void stepUpFromRenderer(int);
+    virtual void stepUpOrDown(int);
     virtual String badInputText() const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
