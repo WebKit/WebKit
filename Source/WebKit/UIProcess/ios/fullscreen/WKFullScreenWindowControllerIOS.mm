@@ -1042,6 +1042,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WKSurroundingsEffectType targetEffect = prefersAutoDimming ? WebKit::DefaultFullscreenSurroundingsEffect : WKSurroundingsEffectTypeNone;
     if ([WKSurroundingsEffectManager shared].currentEffect != targetEffect)
         [WKSurroundingsEffectManager shared].currentEffect = targetEffect;
+
+    WebKit::setLightspillEnabledForElementFullscreenLayer([_window layer], prefersAutoDimming);
 #endif
 }
 
