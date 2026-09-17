@@ -126,7 +126,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         // https://github.com/unicode-org/icu/commit/53dd621e3a5cff3b78b557c405f1b1d6f125b468
         UDISPCTX_NO_SUBSTITUTE,
     };
-    m_localeCString = m_locale.utf8();
+    m_localeCString = m_locale.ascii();
     m_displayNames = std::unique_ptr<ULocaleDisplayNames, ULocaleDisplayNamesDeleter>(uldn_openForContext(m_localeCString.data(), contexts, std::size(contexts), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize DisplayNames"_s);
@@ -146,7 +146,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
     RETURN_IF_EXCEPTION(scope, { });
 
     // https://tc39.es/proposal-intl-displaynames/#sec-canonicalcodefordisplaynames
-    auto canonicalizeCodeForDisplayNames = [](Type type, String&& code) -> CString {
+    auto canonicalizeCodeForDisplayNames = [](Type type, String&& code) -> ASCIICString {
         ASSERT(code.containsOnlyASCII());
         switch (type) {
         case Type::Language: {
@@ -190,7 +190,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
 
     Vector<char16_t, 32> buffer;
     UErrorCode status = U_ZERO_ERROR;
-    CString canonicalCode;
+    ASCIICString canonicalCode;
     switch (m_type) {
     case Type::Language: {
         if (!isUnicodeLanguageId(code)) {

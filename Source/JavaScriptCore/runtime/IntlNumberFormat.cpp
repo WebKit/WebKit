@@ -409,7 +409,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     m_signDisplay = intlOption<SignDisplay>(globalObject, options, Identifier::fromString(vm, "signDisplay"_s), { { "auto"_s, SignDisplay::Auto }, { "never"_s, SignDisplay::Never }, { "always"_s, SignDisplay::Always }, { "exceptZero"_s, SignDisplay::ExceptZero }, { "negative"_s, SignDisplay::Negative } }, "signDisplay must be either \"auto\", \"never\", \"always\", \"exceptZero\", or \"negative\""_s, SignDisplay::Auto);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.utf8() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).utf8();
+    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
     dataLogLnIf(IntlNumberFormatInternal::verbose, "dataLocaleWithExtensions:(", dataLocaleWithExtensions , ")");
 
     // Options are obtained. Configure formatter here.
@@ -540,7 +540,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     auto upconverted = skeletonView.upconvertedCharacters();
 
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), dataLocaleWithExtensions.legacyCStringPointer(), &status));
+    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), dataLocaleWithExtensions.data(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "Failed to initialize NumberFormat"_s);
         return;
@@ -566,7 +566,7 @@ UNumberRangeFormatter* IntlNumberFormat::createNumberRangeFormatterIfNecessary(J
     auto upconverted = skeletonView.upconvertedCharacters();
 
     UErrorCode status = U_ZERO_ERROR;
-    m_numberRangeFormatter = std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter>(unumrf_openForSkeletonWithCollapseAndIdentityFallback(upconverted.get(), skeletonView.length(), UNUM_RANGE_COLLAPSE_AUTO, UNUM_IDENTITY_FALLBACK_APPROXIMATELY, m_dataLocaleWithExtensions.legacyCStringPointer(), nullptr, &status));
+    m_numberRangeFormatter = std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter>(unumrf_openForSkeletonWithCollapseAndIdentityFallback(upconverted.get(), skeletonView.length(), UNUM_RANGE_COLLAPSE_AUTO, UNUM_IDENTITY_FALLBACK_APPROXIMATELY, m_dataLocaleWithExtensions.data(), nullptr, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize NumberFormat"_s);
         return nullptr;
@@ -1479,7 +1479,7 @@ IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalO
     if (!std::isfinite(result))
         return IntlMathematicalValue { result };
 
-    return IntlMathematicalValue { IntlMathematicalValue::NumberType::Integer, trimmed[0] == '-', trimmed.utf8() };
+    return IntlMathematicalValue { IntlMathematicalValue::NumberType::Integer, trimmed[0] == '-', trimmed.ascii() };
 }
 
 } // namespace JSC

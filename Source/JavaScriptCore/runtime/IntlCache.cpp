@@ -58,7 +58,7 @@ IntlCache::IntlCache()
 
 IntlCache::~IntlCache() = default;
 
-UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString& locale, UErrorCode& status)
+UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const ASCIICString& locale, UErrorCode& status)
 {
     auto generator = std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>>(udatpg_open(locale.data(), &status));
     if (U_FAILURE(status))
@@ -68,7 +68,7 @@ UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString&
     return m_cachedDateTimePatternGenerator.get();
 }
 
-Vector<char16_t, 32> IntlCache::getBestDateTimePattern(const CString& locale, std::span<const char16_t> skeleton, UErrorCode& status)
+Vector<char16_t, 32> IntlCache::getBestDateTimePattern(const ASCIICString& locale, std::span<const char16_t> skeleton, UErrorCode& status)
 {
     // Always use ICU date format generator, rather than our own pattern list and matcher.
     auto sharedGenerator = getSharedPatternGenerator(locale, status);
@@ -81,7 +81,7 @@ Vector<char16_t, 32> IntlCache::getBestDateTimePattern(const CString& locale, st
     return patternBuffer;
 }
 
-Vector<char16_t, 32> IntlCache::getFieldDisplayName(const CString& locale, UDateTimePatternField field, UDateTimePGDisplayWidth width, UErrorCode& status)
+Vector<char16_t, 32> IntlCache::getFieldDisplayName(const ASCIICString& locale, UDateTimePatternField field, UDateTimePGDisplayWidth width, UErrorCode& status)
 {
     auto sharedGenerator = getSharedPatternGenerator(locale, status);
     if (U_FAILURE(status))
@@ -98,8 +98,12 @@ String IntlCache::canonicalizeUnicodeLocaleID(const String& languageTag)
     constexpr unsigned maxCachedTagLength = 100;
     constexpr unsigned maxCacheEntries = 64;
 
-    if (languageTag.isEmpty() || languageTag.length() > maxCachedTagLength || !languageTag.containsOnlyASCII())
-        return JSC::canonicalizeUnicodeLocaleID(languageTag.utf8());
+    // A language tag is ASCII, so a tag that is not can never canonicalize.
+    if (!languageTag.containsOnlyASCII())
+        return { };
+
+    if (languageTag.isEmpty() || languageTag.length() > maxCachedTagLength)
+        return JSC::canonicalizeUnicodeLocaleID(languageTag.ascii());
 
     auto cached = m_cachedCanonicalizedLocaleIDs.find(languageTag);
     if (cached != m_cachedCanonicalizedLocaleIDs.end())

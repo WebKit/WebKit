@@ -127,6 +127,8 @@ public:
     WTF_EXPORT_PRIVATE RetainPtr<NSString> createNSStringWithoutCopying() const;
 #endif
 
+    WTF_EXPORT_PRIVATE ASCIICString ascii() const;
+
     WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> tryGetUTF8(ConversionMode = LenientConversion) const;
     WTF_EXPORT_PRIVATE UTF8CString utf8(ConversionMode = LenientConversion) const;
 

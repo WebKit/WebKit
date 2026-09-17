@@ -134,7 +134,7 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
     };
 
     UErrorCode status = U_ZERO_ERROR;
-    m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.utf8().legacyCStringPointer(), toUListFormatterType(m_type), toUListFormatterWidth(m_style), &status));
+    m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.ascii().data(), toUListFormatterType(m_type), toUListFormatterWidth(m_style), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize ListFormat"_s);
         return;

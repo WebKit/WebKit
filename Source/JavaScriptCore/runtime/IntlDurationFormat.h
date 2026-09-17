@@ -93,7 +93,7 @@ public:
     const UnitData* units() const { return m_units; }
     unsigned fractionalDigits() const { return m_fractionalDigits; }
     const String& numberingSystem() const LIFETIME_BOUND;
-    const UTF8CString& dataLocaleWithExtensions() const LIFETIME_BOUND { return m_dataLocaleWithExtensions; }
+    const ASCIICString& dataLocaleWithExtensions() const LIFETIME_BOUND { return m_dataLocaleWithExtensions; }
 
     UNumberFormatter* createNumberFormatterIfNecessary(JSGlobalObject*, TemporalUnit, const String& skeleton) const;
 
@@ -116,7 +116,7 @@ private:
     String m_locale;
     String m_dataLocale;
     mutable String m_numberingSystem;
-    UTF8CString m_dataLocaleWithExtensions;
+    ASCIICString m_dataLocaleWithExtensions;
     unsigned m_fractionalDigits { 0 };
     Style m_style { Style::Long };
     UnitData m_units[numberOfTemporalUnits] { };

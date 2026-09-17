@@ -101,7 +101,7 @@ void IntlSegmenter::initializeSegmenter(JSGlobalObject* globalObject, JSValue lo
     }
 
     UErrorCode status = U_ZERO_ERROR;
-    m_segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(ubrk_open(type, m_locale.utf8().legacyCStringPointer(), nullptr, 0, &status));
+    m_segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(ubrk_open(type, m_locale.ascii().data(), nullptr, 0, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize Segmenter"_s);
         return;

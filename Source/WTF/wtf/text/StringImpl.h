@@ -333,6 +333,9 @@ public:
 
     bool isSubString() const { return bufferOwnership() == BufferSubstring; }
 
+    static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const Latin1Character> characters);
+    static WTF_EXPORT_PRIVATE ASCIICString asciiForCharacters(std::span<const char16_t> characters);
+
     static WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> utf8ForCharacters(std::span<const Latin1Character> characters);
     static WTF_EXPORT_PRIVATE std::expected<UTF8CString, UTF8ConversionError> utf8ForCharacters(std::span<const char16_t> characters, ConversionMode = LenientConversion);
     static WTF_EXPORT_PRIVATE std::expected<size_t, UTF8ConversionError> utf8ForCharactersIntoBuffer(std::span<const char16_t> characters, ConversionMode, Vector<char8_t, 1024>&);

@@ -106,6 +106,13 @@ bool StringView::endsWithIgnoringASCIICase(StringView suffix) const
     return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
+ASCIICString StringView::ascii() const
+{
+    if (is8Bit())
+        return StringImpl::asciiForCharacters(span8());
+    return StringImpl::asciiForCharacters(span16());
+}
+
 std::expected<UTF8CString, UTF8ConversionError> StringView::tryGetUTF8(ConversionMode mode) const
 {
     if (isNull())

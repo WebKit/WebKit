@@ -41,6 +41,29 @@ StringView stringViewFromUTF8(String& ref, const char* characters)
     return ref;
 }
 
+TEST(WTF, StringViewASCII)
+{
+    // Null StringView.
+    EXPECT_STREQ("", StringView().ascii().data());
+
+    // Empty StringView.
+    EXPECT_STREQ("", emptyStringView().ascii().data());
+
+    // 8-bit StringView.
+    String eightBit("foobar"_s);
+    EXPECT_STREQ("foobar", StringView(eightBit).ascii().data());
+
+    // Substring, to check the view's own length is used rather than the underlying string's.
+    EXPECT_STREQ("oob", StringView(eightBit).substring(1, 3).ascii().data());
+
+    // Characters outside 32..127 become '?', in both 8-bit and 16-bit views.
+    String backingStore;
+    EXPECT_STREQ("caf?", stringViewFromUTF8(backingStore, "caf\xC3\xA9").ascii().data());
+    EXPECT_STREQ("caf?", stringViewFromUTF8(backingStore, "caf\xE6\xBC\xA2").ascii().data());
+    String withTab("a\tb"_s);
+    EXPECT_STREQ("a?b", StringView(withTab).ascii().data());
+}
+
 TEST(WTF, StringViewStartsWithEmptyVsNull)
 {
     StringView nullView;

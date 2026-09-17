@@ -311,7 +311,7 @@ static Vector<StringView> unicodeExtensionComponents(StringView extension)
     return subtags;
 }
 
-Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& tag)
+Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const ASCIICString& tag)
 {
     if (!tag.length())
         return { };
@@ -723,7 +723,7 @@ bool isUnicodeLocaleIdentifierType(StringView string)
 }
 
 // https://tc39.es/ecma402/#sec-canonicalizeunicodelocaleid
-String canonicalizeUnicodeLocaleID(const CString& tag)
+String canonicalizeUnicodeLocaleID(const ASCIICString& tag)
 {
     auto buffer = localeIDBufferForLanguageTagWithNullTerminator(tag);
     if (buffer.isEmpty())
@@ -739,7 +739,7 @@ String canonicalizeUnicodeLocaleID(const CString& tag)
 String canonicalizeUnicodeLocaleID(const StringView tag)
 {
     ASSERT(tag.containsOnlyASCII());
-    return canonicalizeUnicodeLocaleID(tag.utf8());
+    return canonicalizeUnicodeLocaleID(tag.ascii());
 }
 
 Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue locales)
@@ -1171,7 +1171,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
     });
 
     UErrorCode status = U_ZERO_ERROR;
-    auto defaultSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(locale.utf8().legacyCStringPointer(), &status));
+    auto defaultSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(locale.ascii().data(), &status));
     ASSERT(U_SUCCESS(status));
     auto defaultSystemName = String::fromLatin1(unumsys_getName(defaultSystem.get()));
 
@@ -1183,7 +1183,7 @@ Vector<String> numberingSystemsForLocale(const String& locale)
 String defaultNumberingSystemForLocale(const String& dataLocale)
 {
     UErrorCode status = U_ZERO_ERROR;
-    auto defaultSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(dataLocale.utf8().legacyCStringPointer(), &status));
+    auto defaultSystem = std::unique_ptr<UNumberingSystem, ICUDeleter<unumsys_close>>(unumsys_open(dataLocale.ascii().data(), &status));
     ASSERT(U_SUCCESS(status));
     return String::fromLatin1(unumsys_getName(defaultSystem.get()));
 }
@@ -1191,7 +1191,7 @@ String defaultNumberingSystemForLocale(const String& dataLocale)
 String defaultCalendarForLocale(const String& dataLocale)
 {
     UErrorCode status = U_ZERO_ERROR;
-    auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", dataLocale.utf8().legacyCStringPointer(), false, &status));
+    auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", dataLocale.ascii().data(), false, &status));
     ASSERT(U_SUCCESS(status));
     int32_t length;
     const char* name = uenum_next(calendars.get(), &length, &status);

@@ -134,7 +134,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     setNumberFormatDigitOptions(globalObject, this, options, 0, 3, m_notation);
     RETURN_IF_EXCEPTION(scope, void());
 
-    auto locale = m_locale.utf8();
+    auto locale = m_locale.ascii();
     UErrorCode status = U_ZERO_ERROR;
 
     StringBuilder skeletonBuilder;
@@ -145,7 +145,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     StringView skeletonView { skeletonBuilder };
     auto upconverted = skeletonView.upconvertedCharacters();
 
-    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), locale.legacyCStringPointer(), &status));
+    m_numberFormatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), locale.data(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
@@ -153,7 +153,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
 
     vm.heap.reportExtraMemoryAllocated(this, estimatedUNumberFormatterSize);
 
-    m_numberRangeFormatter = std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter>(unumrf_openForSkeletonWithCollapseAndIdentityFallback(upconverted.get(), skeletonView.length(), UNUM_RANGE_COLLAPSE_NONE, UNUM_IDENTITY_FALLBACK_RANGE, locale.legacyCStringPointer(), nullptr, &status));
+    m_numberRangeFormatter = std::unique_ptr<UNumberRangeFormatter, UNumberRangeFormatterDeleter>(unumrf_openForSkeletonWithCollapseAndIdentityFallback(upconverted.get(), skeletonView.length(), UNUM_RANGE_COLLAPSE_NONE, UNUM_IDENTITY_FALLBACK_RANGE, locale.data(), nullptr, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;
@@ -161,7 +161,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
 
     vm.heap.reportExtraMemoryAllocated(this, estimatedUNumberRangeFormatterSize);
 
-    m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(locale.legacyCStringPointer(), m_type == Type::Ordinal ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL, &status));
+    m_pluralRules = std::unique_ptr<UPluralRules, UPluralRulesDeleter>(uplrules_openForType(locale.data(), m_type == Type::Ordinal ? UPLURAL_TYPE_ORDINAL : UPLURAL_TYPE_CARDINAL, &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize PluralRules"_s);
         return;

@@ -236,7 +236,7 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
 
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    m_dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.utf8() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).utf8();
+    m_dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow }, { "digital"_s, Style::Digital } }, "style must be either \"long\", \"short\", \"narrow\", or \"digital\""_s, Style::Short);
     RETURN_IF_EXCEPTION(scope, void());
@@ -283,7 +283,7 @@ void IntlDurationFormat::initializeDurationFormat(JSGlobalObject* globalObject, 
 
         // 5. Perform ! CreateDataPropertyOrThrow(lfOpts, "type", "unit").
         UErrorCode status = U_ZERO_ERROR;
-        m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.utf8().legacyCStringPointer(), ULISTFMT_TYPE_UNITS, toUListFormatterWidth(m_style), &status));
+        m_listFormat = std::unique_ptr<UListFormatter, UListFormatterDeleter>(ulistfmt_openForType(m_locale.ascii().data(), ULISTFMT_TYPE_UNITS, toUListFormatterWidth(m_style), &status));
         if (U_FAILURE(status)) {
             throwTypeError(globalObject, scope, "failed to initialize DurationFormat"_s);
             return;
@@ -298,7 +298,7 @@ const String& IntlDurationFormat::numberingSystem() const
     return m_numberingSystem;
 }
 
-static String retrieveSeparator(const CString& locale, const String& numberingSystem)
+static String retrieveSeparator(const ASCIICString& locale, const String& numberingSystem)
 {
     ASCIILiteral fallbackTimeSeparator = ":"_s;
     UErrorCode status = U_ZERO_ERROR;
@@ -311,7 +311,7 @@ static String retrieveSeparator(const CString& locale, const String& numberingSy
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
-    auto numberingSystemBundle = std::unique_ptr<UResourceBundle, ICUDeleter<ures_close>>(ures_getByKey(numberElementsBundle.get(), numberingSystem.utf8().legacyCStringPointer(), nullptr, &status));
+    auto numberingSystemBundle = std::unique_ptr<UResourceBundle, ICUDeleter<ures_close>>(ures_getByKey(numberElementsBundle.get(), numberingSystem.ascii().data(), nullptr, &status));
     if (U_FAILURE(status))
         return fallbackTimeSeparator;
 
@@ -677,7 +677,7 @@ UNumberFormatter* IntlDurationFormat::createNumberFormatterIfNecessary(JSGlobalO
     StringView skeletonView(skeleton);
     auto upconverted = skeletonView.upconvertedCharacters();
     UErrorCode status = U_ZERO_ERROR;
-    formatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), m_dataLocaleWithExtensions.legacyCStringPointer(), &status));
+    formatter = std::unique_ptr<UNumberFormatter, UNumberFormatterDeleter>(unumf_openForSkeletonAndLocale(upconverted.get(), skeletonView.length(), m_dataLocaleWithExtensions.data(), &status));
     if (U_FAILURE(status)) [[unlikely]] {
         formatter = nullptr;
         throwTypeError(globalObject, scope, "Failed to initialize NumberFormat"_s);

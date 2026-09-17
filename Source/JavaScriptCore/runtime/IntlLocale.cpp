@@ -79,7 +79,7 @@ class LocaleIDBuilder final {
 public:
     bool initialize(const String&);
     bool canonicalize();
-    CString toCanonical();
+    ASCIICString toCanonical();
 
     void overrideLanguageScriptRegionVariants(StringView language, StringView script, StringView region, StringView variants = { });
     bool setKeywordValue(ASCIILiteral key, StringView value);
@@ -97,7 +97,7 @@ bool LocaleIDBuilder::initialize(const String& tag)
     return m_buffer.size();
 }
 
-CString LocaleIDBuilder::toCanonical()
+ASCIICString LocaleIDBuilder::toCanonical()
 {
     ASSERT(m_buffer.size());
 
@@ -105,7 +105,7 @@ CString LocaleIDBuilder::toCanonical()
     if (!buffer)
         return { };
 
-    return canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::move(buffer.value())).span();
+    return ASCIICString { canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::move(buffer.value())).span() };
 }
 
 bool LocaleIDBuilder::canonicalize()
@@ -960,7 +960,7 @@ JSValue IntlLocale::timeZones(JSGlobalObject* globalObject)
         return jsUndefined();
 
     UErrorCode status = U_ZERO_ERROR;
-    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, region.utf8().legacyCStringPointer(), nullptr, &status));
+    auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_openTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, region.ascii().data(), nullptr, &status));
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);
         return { };

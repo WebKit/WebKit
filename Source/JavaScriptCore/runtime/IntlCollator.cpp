@@ -83,7 +83,7 @@ Vector<String> IntlCollator::sortLocaleData(const String& locale, RelevantExtens
         keyLocaleData.append({ });
 
         UErrorCode status = U_ZERO_ERROR;
-        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", locale.utf8().legacyCStringPointer(), false, &status));
+        auto enumeration = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucol_getKeywordValuesForLocale("collation", locale.ascii().data(), false, &status));
         if (U_SUCCESS(status)) {
             const char* pointer;
             int32_t length = 0;
@@ -206,26 +206,26 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
 
     // UCollator does not offer an option to configure "usage" via ucol_setAttribute. So we need to pass this option via locale.
-    UTF8CString dataLocaleWithExtensions;
+    ASCIICString dataLocaleWithExtensions;
     switch (m_usage) {
     case Usage::Sort:
         if (collation.isNull())
-            dataLocaleWithExtensions = resolved.dataLocale.utf8();
+            dataLocaleWithExtensions = resolved.dataLocale.ascii();
         else
-            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-"_s, m_collation).utf8();
+            dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-"_s, m_collation).ascii();
         break;
     case Usage::Search:
         // searchLocaleData filters out "co" unicode extension. However, we need to pass "co" to ICU when Usage::Search is specified.
         // So we need to pass "co" unicode extension through locale. Since the other relevant extensions are handled via ucol_setAttribute,
         // we can just use dataLocale
         // Since searchLocaleData filters out "co" unicode extension, "collation" option is just ignored.
-        dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search"_s).utf8();
+        dataLocaleWithExtensions = makeString(resolved.dataLocale, "-u-co-search"_s).ascii();
         break;
     }
     dataLogLnIf(IntlCollatorInternal::verbose, "locale:(", resolved.locale, "),dataLocaleWithExtensions:(", dataLocaleWithExtensions, ")");
 
     UErrorCode status = U_ZERO_ERROR;
-    m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(dataLocaleWithExtensions.legacyCStringPointer(), &status));
+    m_collator = std::unique_ptr<UCollator, UCollatorDeleter>(ucol_open(dataLocaleWithExtensions.data(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize Collator"_s);
         return;

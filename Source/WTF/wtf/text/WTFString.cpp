@@ -387,36 +387,9 @@ Vector<String> String::splitAllowingEmptyEntries(StringView separator) const
 
 ASCIICString String::ascii() const
 {
-    // Printable ASCII characters 32..127 and the null character are
-    // preserved, characters outside of this range are converted to '?'.
-
-    if (isEmpty()) {
-        std::span<char> characterBuffer;
-        return ASCIICString::newUninitialized(0, characterBuffer);
-    }
-
-    if (this->is8Bit()) {
-        auto characters = this->span8();
-
-        std::span<char> characterBuffer;
-        auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
-
-        size_t characterBufferIndex = 0;
-        for (auto character : characters)
-            characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : byteCast<char>(character);
-
-        return result;        
-    }
-
-    auto characters = span16();
-    std::span<char> characterBuffer;
-    auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
-
-    size_t characterBufferIndex = 0;
-    for (auto character : characters)
-        characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : static_cast<char>(character);
-
-    return result;
+    if (is8Bit())
+        return StringImpl::asciiForCharacters(span8());
+    return StringImpl::asciiForCharacters(span16());
 }
 
 Latin1CString String::latin1() const

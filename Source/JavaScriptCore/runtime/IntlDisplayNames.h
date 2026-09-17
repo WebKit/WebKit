@@ -79,7 +79,7 @@ private:
     String m_locale;
     // FIXME: We should store it only when m_type is Currency.
     // https://bugs.webkit.org/show_bug.cgi?id=213773
-    CString m_localeCString;
+    ASCIICString m_localeCString;
     Style m_style { Style::Long };
     Type m_type { Type::Language };
     Fallback m_fallback { Fallback::Code };

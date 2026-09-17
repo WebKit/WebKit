@@ -60,8 +60,8 @@ public:
 
     static void ensureLanguageChangeObserver();
 
-    Vector<char16_t, 32> getBestDateTimePattern(const CString& locale, std::span<const char16_t> skeleton, UErrorCode&);
-    Vector<char16_t, 32> getFieldDisplayName(const CString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
+    Vector<char16_t, 32> getBestDateTimePattern(const ASCIICString& locale, std::span<const char16_t> skeleton, UErrorCode&);
+    Vector<char16_t, 32> getFieldDisplayName(const ASCIICString& locale, UDateTimePatternField, UDateTimePGDisplayWidth, UErrorCode&);
 
     String canonicalizeUnicodeLocaleID(const String& languageTag);
 
@@ -93,7 +93,7 @@ private:
     static constexpr size_t dateTimeFormatImplCacheCapacity = 4;
     using DateTimeFormatImplCache = WTF::TinyLRUCache<IntlDateTimeFormatImplKey, RefPtr<const IntlDateTimeFormatImpl>, dateTimeFormatImplCacheCapacity>;
 
-    UDateTimePatternGenerator* getSharedPatternGenerator(const CString& locale, UErrorCode& status)
+    UDateTimePatternGenerator* getSharedPatternGenerator(const ASCIICString& locale, UErrorCode& status)
     {
         if (m_cachedDateTimePatternGenerator) {
             if (locale == m_cachedDateTimePatternGeneratorLocale)
@@ -102,10 +102,10 @@ private:
         return cacheSharedPatternGenerator(locale, status);
     }
 
-    UDateTimePatternGenerator* cacheSharedPatternGenerator(const CString& locale, UErrorCode&);
+    UDateTimePatternGenerator* cacheSharedPatternGenerator(const ASCIICString& locale, UErrorCode&);
 
     std::unique_ptr<UDateTimePatternGenerator, ICUDeleter<udatpg_close>> m_cachedDateTimePatternGenerator;
-    CString m_cachedDateTimePatternGeneratorLocale;
+    ASCIICString m_cachedDateTimePatternGeneratorLocale;
     UncheckedKeyHashMap<String, String> m_cachedCanonicalizedLocaleIDs;
 
     static std::atomic<uint64_t> s_languagesEpoch;

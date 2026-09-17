@@ -179,7 +179,7 @@ TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
-Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
+Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const ASCIICString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
@@ -211,7 +211,7 @@ bool NODELETE isUnicodeRegionSubtag(StringView);
 bool NODELETE isUnicodeVariantSubtag(StringView);
 bool isUnicodeLanguageId(StringView);
 JS_EXPORT_PRIVATE bool isStructurallyValidLanguageTag(StringView);
-String canonicalizeUnicodeLocaleID(const CString& languageTag);
+String canonicalizeUnicodeLocaleID(const ASCIICString& languageTag);
 JS_EXPORT_PRIVATE String canonicalizeUnicodeLocaleID(const StringView);
 
 bool NODELETE isWellFormedCurrencyCode(StringView);

@@ -87,7 +87,7 @@ private:
 
     String keywordValue(ASCIILiteral, bool isBoolean = false) const;
 
-    CString m_localeID;
+    ASCIICString m_localeID;
 
     String m_maximal;
     String m_minimal;

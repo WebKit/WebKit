@@ -90,7 +90,7 @@ namespace IntlDateTimeFormatInternal {
 static constexpr bool verbose = false;
 }
 
-static std::unique_ptr<UDateFormat, UDateFormatDeleter> openDateFormat(const CString& dataLocale, const String& timeZone, std::span<const char16_t> pattern, UErrorCode& status)
+static std::unique_ptr<UDateFormat, UDateFormatDeleter> openDateFormat(const ASCIICString& dataLocale, const String& timeZone, std::span<const char16_t> pattern, UErrorCode& status)
 {
     auto timeZoneView = StringView(timeZone).upconvertedCharacters();
     auto* dateFormat = udat_open(UDAT_PATTERN, UDAT_PATTERN, dataLocale.data(), timeZoneView.get(), timeZone.length(), pattern.data(), pattern.size(), &status);
@@ -194,7 +194,7 @@ Vector<String> IntlDateTimeFormat::localeData(const String& locale, RelevantExte
     switch (key) {
     case RelevantExtensionKey::Ca: {
         UErrorCode status = U_ZERO_ERROR;
-        auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", locale.utf8().legacyCStringPointer(), false, &status));
+        auto calendars = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucal_getKeywordValuesForLocale("calendar", locale.ascii().data(), false, &status));
         ASSERT(U_SUCCESS(status));
 
         int32_t nameLength;
@@ -845,8 +845,8 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         if (!impl->m_numberingSystem.isNull())
             localeBuilder.append("-nu-"_s, impl->m_numberingSystem);
     }
-    impl->m_dataLocaleWithExtensions = localeBuilder.toString().utf8();
-    const UTF8CString& dataLocaleWithExtensions = impl->m_dataLocaleWithExtensions;
+    impl->m_dataLocaleWithExtensions = localeBuilder.toString().ascii();
+    const ASCIICString& dataLocaleWithExtensions = impl->m_dataLocaleWithExtensions;
 
     JSValue tzValue = jsUndefined();
     if (options) {
@@ -976,7 +976,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         UErrorCode status = U_ZERO_ERROR;
         String timeZoneForICU = impl->m_timeZone.toICUString();
         StringView timeZoneView(timeZoneForICU);
-        auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(impl->m_timeStyle), parseUDateFormatStyle(impl->m_dateStyle), dataLocaleWithExtensions.legacyCStringPointer(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
+        auto dateFormatFromStyle = std::unique_ptr<UDateFormat, UDateFormatDeleter>(udat_open(parseUDateFormatStyle(impl->m_timeStyle), parseUDateFormatStyle(impl->m_dateStyle), dataLocaleWithExtensions.data(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), nullptr, -1, &status));
         if (U_FAILURE(status)) [[unlikely]] {
             throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
             return;
@@ -1751,12 +1751,12 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
         if (m_impl->m_hourCycle != HourCycle::None)
             localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
     }
-    auto dataLocaleWithExtensions = localeBuilder.toString().utf8();
+    auto dataLocaleWithExtensions = localeBuilder.toString().ascii();
 
     UErrorCode status = U_ZERO_ERROR;
     String timeZoneForICU = m_impl->m_timeZone.toICUString();
     StringView timeZoneView(timeZoneForICU);
-    m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.legacyCStringPointer(), skeleton.span().data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
+    m_dateIntervalFormat = std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(udtitvfmt_open(dataLocaleWithExtensions.data(), skeleton.span().data(), skeleton.size(), timeZoneView.upconvertedCharacters(), timeZoneView.length(), &status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize DateIntervalFormat"_s);
         return nullptr;
@@ -2636,10 +2636,10 @@ IntlDateTimeFormat::createTemporalIntervalFormat(UDateFormat* tempFormat, Tempor
     localeBuilder.append(m_impl->m_dataLocale, "-u-ca-"_s, ensureCalendar(), "-nu-"_s, ensureNumberingSystem());
     if (m_impl->m_hourCycle != HourCycle::None)
         localeBuilder.append("-hc-"_s, hourCycleString(m_impl->m_hourCycle));
-    auto localeWithExt = localeBuilder.toString().utf8();
+    auto localeWithExt = localeBuilder.toString().ascii();
 
     return std::unique_ptr<UDateIntervalFormat, UDateIntervalFormatDeleter>(
-        udtitvfmt_open(localeWithExt.legacyCStringPointer(), tempSkeleton.span().data(), tempSkeleton.size(),
+        udtitvfmt_open(localeWithExt.data(), tempSkeleton.span().data(), tempSkeleton.size(),
         tzView.upconvertedCharacters(), tzView.length(), &status));
 }
 

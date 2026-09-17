@@ -114,7 +114,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
 
     m_numberingSystem = resolved.extensions[static_cast<unsigned>(RelevantExtensionKey::Nu)];
     m_dataLocale = resolved.dataLocale;
-    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.utf8() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).utf8();
+    auto dataLocaleWithExtensions = m_numberingSystem.isNull() ? m_dataLocale.ascii() : makeString(m_dataLocale, "-u-nu-"_s, m_numberingSystem).ascii();
 
     m_style = intlOption<Style>(globalObject, options, vm.propertyNames->style, { { "long"_s, Style::Long }, { "short"_s, Style::Short }, { "narrow"_s, Style::Narrow } }, "style must be either \"long\", \"short\", or \"narrow\""_s, Style::Long);
     RETURN_IF_EXCEPTION(scope, void());
@@ -135,7 +135,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     RETURN_IF_EXCEPTION(scope, void());
 
     UErrorCode status = U_ZERO_ERROR;
-    auto numberFormat = std::unique_ptr<UNumberFormat, ICUDeleter<unum_close>>(unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.legacyCStringPointer(), nullptr, &status));
+    auto numberFormat = std::unique_ptr<UNumberFormat, ICUDeleter<unum_close>>(unum_open(UNUM_DECIMAL, nullptr, 0, dataLocaleWithExtensions.data(), nullptr, &status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;
@@ -161,7 +161,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
     unum_setAttribute(numberFormat.get(), UNUM_MINIMUM_GROUPING_DIGITS, useLocaleDefault);
 
     // ureldatefmt_open adopts the UNumberFormat, so we release ownership here.
-    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.legacyCStringPointer(), numberFormat.release(), icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
+    m_relativeDateTimeFormatter = std::unique_ptr<URelativeDateTimeFormatter, URelativeDateTimeFormatterDeleter>(ureldatefmt_open(dataLocaleWithExtensions.data(), numberFormat.release(), icuStyle, UDISPCTX_CAPITALIZATION_FOR_STANDALONE, &status));
     if (U_FAILURE(status)) [[unlikely]] {
         throwTypeError(globalObject, scope, "failed to initialize RelativeTimeFormat"_s);
         return;

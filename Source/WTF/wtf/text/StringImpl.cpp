@@ -1578,6 +1578,31 @@ size_t NODELETE StringImpl::sizeInBytes() const
     return size + sizeof(*this);
 }
 
+template<typename CharacterType> static ASCIICString asciiForCharactersInternal(std::span<const CharacterType> characters)
+{
+    // Printable ASCII characters 32..127 and the null character are
+    // preserved, characters outside of this range are converted to '?'.
+
+    std::span<char> characterBuffer;
+    auto result = ASCIICString::newUninitialized(characters.size(), characterBuffer);
+
+    size_t characterBufferIndex = 0;
+    for (auto character : characters)
+        characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : static_cast<char>(character);
+
+    return result;
+}
+
+ASCIICString StringImpl::asciiForCharacters(std::span<const Latin1Character> characters)
+{
+    return asciiForCharactersInternal(characters);
+}
+
+ASCIICString StringImpl::asciiForCharacters(std::span<const char16_t> characters)
+{
+    return asciiForCharactersInternal(characters);
+}
+
 std::expected<UTF8CString, UTF8ConversionError> StringImpl::utf8ForCharacters(std::span<const Latin1Character> source)
 {
     return tryGetUTF8ForCharacters([] (std::span<const char8_t> converted) {

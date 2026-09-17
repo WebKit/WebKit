@@ -233,7 +233,7 @@ public:
 
     String m_locale;
     String m_dataLocale;
-    UTF8CString m_dataLocaleWithExtensions;
+    ASCIICString m_dataLocaleWithExtensions;
     mutable String m_calendar;
     mutable String m_numberingSystem;
     TimeZone m_timeZone;
