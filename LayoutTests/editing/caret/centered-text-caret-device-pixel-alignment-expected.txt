@@ -1,0 +1,13 @@
+Caret position in centered text must track the device-pixel grid at a device scale factor of 2, so it does not jump as the run width changes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS caretOffset(101, 1) is 42
+PASS caretOffset(101, 2) is 58
+PASS caretOffset(101, 3) is 74
+PASS caretOffset(100, 3) is 74
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
