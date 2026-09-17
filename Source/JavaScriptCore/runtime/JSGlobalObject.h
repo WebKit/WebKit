@@ -673,7 +673,6 @@ public:
     String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
     WeakPtr<ConsoleClient> m_consoleClient;
-    std::optional<unsigned> m_stackTraceLimit;
     Weak<FunctionExecutable> m_executableForCachedFunctionExecutableForFunctionConstructor;
 
     TrustedTypesEnforcement m_trustedTypesEnforcement { TrustedTypesEnforcement::None };
@@ -737,8 +736,7 @@ public:
     WatchpointSet& ensureReferencedPropertyWatchpointSet(UniquedStringImpl*);
 #endif
 
-    std::optional<unsigned> stackTraceLimit() const { return m_stackTraceLimit; }
-    void setStackTraceLimit(std::optional<unsigned> value) { m_stackTraceLimit = value; }
+    std::optional<unsigned> stackTraceLimit() const;
 
     JS_EXPORT_PRIVATE void startSignpost(String&&);
     JS_EXPORT_PRIVATE void stopSignpost(String&&);

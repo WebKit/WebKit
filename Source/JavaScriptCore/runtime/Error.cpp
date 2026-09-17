@@ -167,13 +167,13 @@ private:
 
 std::unique_ptr<Vector<StackFrame>> getStackTrace(VM& vm, JSObject* obj, bool useCurrentFrame, JSCell* ownerOfCallLinkInfo, CallLinkInfo* callLinkInfo, JSCell* subclassCaller)
 {
-    JSGlobalObject* globalObject = obj->realm();
-    if (!globalObject->stackTraceLimit())
+    std::optional<unsigned> stackTraceLimit = obj->realm()->stackTraceLimit();
+    if (!stackTraceLimit)
         return nullptr;
 
     size_t framesToSkip = useCurrentFrame ? 0 : 1;
     std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>();
-    vm.interpreter.getStackTrace(obj, *stackTrace, framesToSkip, globalObject->stackTraceLimit().value_or(0), subclassCaller, ownerOfCallLinkInfo, callLinkInfo);
+    vm.interpreter.getStackTrace(obj, *stackTrace, framesToSkip, *stackTraceLimit, subclassCaller, ownerOfCallLinkInfo, callLinkInfo);
     return stackTrace;
 }
 

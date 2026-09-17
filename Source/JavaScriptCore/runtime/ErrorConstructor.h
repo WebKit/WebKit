@@ -30,7 +30,6 @@ class GetterSetter;
 class ErrorConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
 
     static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype)
     {
@@ -46,9 +45,6 @@ public:
 private:
     ErrorConstructor(VM&, Structure*);
     void finishCreation(VM&, ErrorPrototype*);
-
-    static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
-    static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ErrorConstructor, InternalFunction);
 

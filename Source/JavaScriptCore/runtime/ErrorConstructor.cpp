@@ -47,7 +47,7 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
     Base::finishCreation(vm, 1, vm.propertyNames->Error.string(), PropertyAdditionMode::WithoutStructureTransition);
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject->stackTraceLimit().value_or(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
+    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(Options::defaultErrorStackTraceLimit()), static_cast<unsigned>(PropertyAttribute::None));
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->captureStackTrace, errorConstructorCaptureStackTrace, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("isError"_s, errorConstructorIsError, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public, ErrorIsErrorIntrinsic);
@@ -77,35 +77,6 @@ JSC_DEFINE_HOST_FUNCTION(callErrorConstructor, (JSGlobalObject* globalObject, Ca
     JSValue options = callFrame->argument(1);
     Structure* errorStructure = globalObject->errorStructure();
     return JSValue::encode(ErrorInstance::create(globalObject, errorStructure, message, options, nullptr, TypeNothing, ErrorType::Error, false));
-}
-
-bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
-{
-    VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = uncheckedDowncast<ErrorConstructor>(cell);
-
-    if (propertyName == vm.propertyNames->stackTraceLimit) {
-        std::optional<unsigned> limit;
-        if (value.isNumber()) {
-            double effectiveLimit = value.asNumber();
-            if (!std::isnan(effectiveLimit))
-                limit = static_cast<unsigned>(std::clamp(effectiveLimit, 0., static_cast<double>(std::numeric_limits<unsigned>::max())));
-        }
-        thisObject->globalObject()->setStackTraceLimit(limit);
-    }
-
-    return Base::put(thisObject, globalObject, propertyName, value, slot);
-}
-
-bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, DeletePropertySlot& slot)
-{
-    VM& vm = globalObject->vm();
-    ErrorConstructor* thisObject = uncheckedDowncast<ErrorConstructor>(cell);
-
-    if (propertyName == vm.propertyNames->stackTraceLimit)
-        thisObject->globalObject()->setStackTraceLimit(std::nullopt);
-
-    return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }
 
 JSC_DEFINE_HOST_FUNCTION(errorConstructorCaptureStackTrace, (JSGlobalObject* globalObject, CallFrame* callFrame))
