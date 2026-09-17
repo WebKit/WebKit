@@ -326,15 +326,6 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
 
     data->startPosition = FloatPoint(fragment.x, fragment.y);
 
-    // Subtract baseline shift so the returned position reflects the y attribute
-    // value, not the visually shifted position. This matches Chrome/Firefox behavior.
-    if (fragment.baselineShift) {
-        if (queryData->isVerticalText)
-            data->startPosition.move(-fragment.baselineShift, 0);
-        else
-            data->startPosition.move(0, fragment.baselineShift);
-    }
-
     if (startPosition) {
         SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, startPosition);
         if (queryData->isVerticalText)
@@ -345,10 +336,20 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
 
     AffineTransform fragmentTransform;
     fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
-    if (fragmentTransform.isIdentity())
-        return true;
+    if (!fragmentTransform.isIdentity())
+        data->startPosition = fragmentTransform.mapPoint(data->startPosition);
 
-    data->startPosition = fragmentTransform.mapPoint(data->startPosition);
+    // Subtract the baseline shift so the returned position reflects the y attribute value,
+    // not the visually shifted position (matching Chrome/Firefox). This must happen after the
+    // orientation transform: for rotated (vertical) glyphs the shift is along a screen axis,
+    // so subtracting it pre-transform leaves a residual that depends on the rotation.
+    if (fragment.baselineShift) {
+        if (queryData->isVerticalText)
+            data->startPosition.move(-fragment.baselineShift, 0);
+        else
+            data->startPosition.move(0, fragment.baselineShift);
+    }
+
     return true;
 }
 
@@ -388,15 +389,6 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
 
     data->endPosition = FloatPoint(fragment.x, fragment.y);
 
-    // Subtract baseline shift so the returned position reflects the y attribute
-    // value, not the visually shifted position. This matches Chrome/Firefox behavior.
-    if (fragment.baselineShift) {
-        if (queryData->isVerticalText)
-            data->endPosition.move(-fragment.baselineShift, 0);
-        else
-            data->endPosition.move(0, fragment.baselineShift);
-    }
-
     SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset, startPosition + 1);
     if (queryData->isVerticalText)
         data->endPosition.move(0, metrics.height());
@@ -405,10 +397,18 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
 
     AffineTransform fragmentTransform;
     fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
-    if (fragmentTransform.isIdentity())
-        return true;
+    if (!fragmentTransform.isIdentity())
+        data->endPosition = fragmentTransform.mapPoint(data->endPosition);
 
-    data->endPosition = fragmentTransform.mapPoint(data->endPosition);
+    // Subtract the baseline shift after the orientation transform; see
+    // startPositionOfCharacterCallback for why this must follow the transform.
+    if (fragment.baselineShift) {
+        if (queryData->isVerticalText)
+            data->endPosition.move(-fragment.baselineShift, 0);
+        else
+            data->endPosition.move(0, fragment.baselineShift);
+    }
+
     return true;
 }
 
