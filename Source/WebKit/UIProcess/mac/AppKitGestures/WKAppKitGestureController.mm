@@ -1929,7 +1929,8 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     if (gestureRecognizer == _singleClickGestureRecognizer
         && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
-        && [otherGestureRecognizer.view isKindOfClass:NSScrollView.class])
+        && [otherGestureRecognizer.view isKindOfClass:NSScrollView.class]
+        && !isCatchingDeceleratingScroll(otherGestureRecognizer))
         return YES;
 
     // Allow the single click GR to be simultaneously recognized with any of those from the text
