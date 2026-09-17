@@ -39,6 +39,7 @@
 #import "WKError.h"
 #import "WKWebView.h"
 #import "WebAuthenticationRequestData.h"
+#import "WebFrameProxy.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/AllAcceptedCredentialsOptions.h>
@@ -592,12 +593,58 @@ static String relyingPartyIdentifierForRequest(const WebAuthenticationRequestDat
     });
 }
 
+static NSDictionary *headlessBrowsingContextForPage(WebPageProxy& page)
+{
+    return page.configuration().headlessBrowsingContext();
+}
+
+static bool isSameSiteAsMainFrame(WebPageProxy& page, const WebCore::SecurityOriginData& origin)
+{
+    RefPtr mainFrame = page.mainFrame();
+    if (!mainFrame)
+        return false;
+
+    RegistrableDomain domain { origin };
+    return !domain.isEmpty() && domain == RegistrableDomain { mainFrame->documentSecurityOriginData() };
+}
+
+static bool isRequestFromMainFrameSite(WebPageProxy& page, const WebAuthenticationRequestData& requestData)
+{
+    if (!requestData.globalFrameID)
+        return false;
+
+    RefPtr frame = WebFrameProxy::webFrame(requestData.globalFrameID->frameID);
+    if (!frame)
+        return false;
+
+    if (frame->isMainFrame())
+        return true;
+
+    // A subframe may drive the request as long as it is same-site with the top-level document,
+    // which is what the headless browsing session is scoped to.
+    return isSameSiteAsMainFrame(page, frame->documentSecurityOriginData());
+}
+
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
 {
     RefPtr webPageProxy = m_webPageProxy.get();
     if (!webPageProxy) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
         return;
+    }
+
+    RetainPtr headlessBrowsingContext = headlessBrowsingContextForPage(*webPageProxy);
+    if (headlessBrowsingContext) {
+        if (![getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getCanRelyingPartyPerformPasskeyRequestsDuringHeadlessBrowsing:context:completionHandler:)]) {
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
+
+        if (!isRequestFromMainFrameSite(*webPageProxy, requestData)) {
+            RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not allowed from a cross-site subframe during headless browsing.");
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
     }
 
     auto relyingPartyIdentifier = relyingPartyIdentifierForRequest(requestData);
@@ -639,11 +686,81 @@ void WebAuthenticatorCoordinatorProxy::performRequestWithValidatedRelyingPartyId
         return;
     }
 
-    if (webPageProxy->configuration().backgroundTextExtractionEnabled()) {
-        handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+    RetainPtr headlessBrowsingContext = headlessBrowsingContextForPage(*webPageProxy);
+    if (headlessBrowsingContext) {
+        if (![getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getCanRelyingPartyPerformPasskeyRequestsDuringHeadlessBrowsing:context:completionHandler:)]) {
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
+
+        if (!isRequestFromMainFrameSite(*webPageProxy, requestData)) {
+            RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not allowed from a cross-site subframe during headless browsing.");
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
+
+        auto callerOrigin = requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { };
+        [getASCWebKitSPISupportClassSingleton() getCanRelyingPartyPerformPasskeyRequestsDuringHeadlessBrowsing:callerOrigin.securityOrigin()->domain().createNSString().get() context:headlessBrowsingContext.get() completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, requestData = WTF::move(requestData), handler = WTF::move(handler)](BOOL canPerformPasskeyRequests) mutable {
+            ensureOnMainRunLoop([weakThis = WTF::move(weakThis), requestData = WTF::move(requestData), handler = WTF::move(handler), canPerformPasskeyRequests] mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!canPerformPasskeyRequests || !protectedThis) {
+                    handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+                    return;
+                }
+
+                protectedThis->notifyClientAndPerformRequest(WTF::move(requestData), WTF::move(handler));
+            });
+        }).get()];
+
         return;
     }
 
+    continuePerformRequest(WTF::move(requestData), WTF::move(handler));
+}
+
+static bool isUsableAuthenticatorResponse(const WebCore::AuthenticatorResponseData& response)
+{
+    if (!response.rawId)
+        return false;
+
+    if (response.isAuthenticatorAttestationResponse)
+        return !!response.attestationObject;
+
+    return response.authenticatorData && response.signature;
+}
+
+void WebAuthenticatorCoordinatorProxy::notifyClientAndPerformRequest(WebAuthenticationRequestData&& requestData, RequestCompletionHandler&& handler)
+{
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy || requestData.mediation == MediationRequirement::Conditional) {
+        continuePerformRequest(WTF::move(requestData), WTF::move(handler));
+        return;
+    }
+
+    auto callerOrigin = requestData.frameInfo ? requestData.frameInfo->securityOrigin : WebCore::SecurityOriginData { };
+    auto relyingParty = callerOrigin.securityOrigin()->domain();
+
+    webPageProxy->uiClient().willPerformPublicKeyCredentialRequest(relyingParty, [weakThis = WeakPtr { *this }, relyingParty, requestData = WTF::move(requestData), handler = WTF::move(handler)](bool allow) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!allow || !protectedThis) {
+            handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+            return;
+        }
+
+        RequestCompletionHandler notifyingHandler = [protectedThis = RefPtr { weakThis.get() }, relyingParty, handler = WTF::move(handler)](const WebCore::AuthenticatorResponseData& response, AuthenticatorAttachment attachment, const WebCore::ExceptionData& exception) mutable {
+            if (RefPtr webPageProxy = protectedThis->m_webPageProxy.get())
+                webPageProxy->uiClient().didFinishPublicKeyCredentialRequest(relyingParty, isUsableAuthenticatorResponse(response));
+
+            handler(response, attachment, exception);
+        };
+
+        protectedThis->continuePerformRequest(WTF::move(requestData), WTF::move(notifyingHandler));
+    });
+}
+
+void WebAuthenticatorCoordinatorProxy::continuePerformRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
+{
+    RefPtr webPageProxy = m_webPageProxy.get();
 #if HAVE(UNIFIED_ASC_AUTH_UI)
     if (!protect(webPageProxy->preferences())->webAuthenticationASEnabled()) {
         auto context = contextForRequest(WTF::move(requestData));
@@ -1347,19 +1464,6 @@ static inline void getCanCurrentProcessAccessPasskeyForRelyingParty(const WebCor
     handler(false);
 }
 
-static inline void getArePasskeysDisallowedForRelyingParty(const WebCore::SecurityOriginData& data, CompletionHandler<void(bool)>&& handler)
-{
-    if ([getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getArePasskeysDisallowedForRelyingParty:withCompletionHandler:)]) {
-        [getASCWebKitSPISupportClassSingleton() getArePasskeysDisallowedForRelyingParty:data.securityOrigin()->domain().createNSString().get() withCompletionHandler:makeBlockPtr([handler = WTF::move(handler)](BOOL result) mutable {
-            ensureOnMainRunLoop([handler = WTF::move(handler), result]() mutable {
-                handler(result);
-            });
-        }).get()];
-        return;
-    }
-    handler(false);
-}
-
 void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
     auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
@@ -1410,8 +1514,23 @@ void WebAuthenticatorCoordinatorProxy::getClientCapabilities(IPC::Untrusted<WebC
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(IPC::Untrusted<SecurityOriginData>&& untrustedOrigin, QueryCompletionHandler&& handler)
 {
     auto data = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-    if (m_webPageProxy->configuration().backgroundTextExtractionEnabled()) {
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy) {
         handler(false);
+        return;
+    }
+
+    RetainPtr headlessBrowsingContext = headlessBrowsingContextForPage(*webPageProxy);
+    if (headlessBrowsingContext) {
+        if (isSameSiteAsMainFrame(*webPageProxy, data) && [getASCWebKitSPISupportClassSingleton() respondsToSelector:@selector(getCanRelyingPartyPerformPasskeyRequestsDuringHeadlessBrowsing:context:completionHandler:)]) {
+            [getASCWebKitSPISupportClassSingleton() getCanRelyingPartyPerformPasskeyRequestsDuringHeadlessBrowsing:data.securityOrigin()->domain().createNSString().get() context:headlessBrowsingContext.get() completionHandler:makeBlockPtr([handler = WTF::move(handler)](BOOL canPerformPasskeyRequests) mutable {
+                ensureOnMainRunLoop([handler = WTF::move(handler), canPerformPasskeyRequests]() mutable {
+                    handler(canPerformPasskeyRequests);
+                });
+            }).get()];
+        } else
+            handler(false);
+
         return;
     }
 
@@ -1433,9 +1552,7 @@ void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvail
         }
 #endif
 
-        getArePasskeysDisallowedForRelyingParty(data, [handler = WTF::move(handler)](bool passkeysDisallowed) mutable {
-            handler(!passkeysDisallowed);
-        });
+        handler(true);
     });
 }
 

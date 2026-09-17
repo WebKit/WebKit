@@ -104,6 +104,11 @@ void WebAuthenticatorCoordinator::cancel(CompletionHandler<void()>&& handler)
     protect(m_webPage)->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::Cancel(), WTF::move(handler));
 }
 
+bool WebAuthenticatorCoordinator::shouldBypassDocumentFocusRequirement() const
+{
+    return protect(m_webPage)->backgroundTextExtractionEnabled();
+}
+
 void WebAuthenticatorCoordinator::getClientCapabilities(const SecurityOrigin& origin, CapabilitiesCompletionHandler&& handler)
 {
     protect(m_webPage)->sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetClientCapabilities(origin.data()), WTF::move(handler));

@@ -183,6 +183,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @property (nonatomic, setter=_setSystemTextExtractionEnabled:) BOOL _systemTextExtractionEnabled WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 @property (nonatomic, setter=_setBackgroundTextExtractionEnabled:) BOOL _backgroundTextExtractionEnabled WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+@property (nonatomic, copy, setter=_setHeadlessBrowsingContext:) NSDictionary<NSString *, id> *_headlessBrowsingContext WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 @end
 
