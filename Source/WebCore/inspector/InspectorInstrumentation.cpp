@@ -1007,6 +1007,8 @@ bool InspectorInstrumentation::willInterceptImpl(InstrumentingAgents& instrument
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         return networkAgent->willIntercept(request);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        return networkProxy->willIntercept(request);
     return false;
 }
 
@@ -1014,6 +1016,8 @@ bool InspectorInstrumentation::shouldInterceptRequestImpl(InstrumentingAgents& i
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         return networkAgent->shouldInterceptRequest(loader);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        return networkProxy->shouldInterceptRequest(loader);
     return false;
 }
 
@@ -1021,6 +1025,8 @@ bool InspectorInstrumentation::shouldInterceptResponseImpl(InstrumentingAgents& 
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         return networkAgent->shouldInterceptResponse(response);
+    if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        return networkProxy->shouldInterceptResponse(response);
     return false;
 }
 
@@ -1028,12 +1034,16 @@ void InspectorInstrumentation::interceptRequestImpl(InstrumentingAgents& instrum
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->interceptRequest(loader, WTF::move(handler));
+    else if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->interceptRequest(loader, WTF::move(handler));
 }
 
 void InspectorInstrumentation::interceptResponseImpl(InstrumentingAgents& instrumentingAgents, const ResourceResponse& response, ResourceLoaderIdentifier identifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
 {
     if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->interceptResponse(response, identifier, WTF::move(handler));
+    else if (CheckedPtr networkProxy = instrumentingAgents.enabledNetworkProxy())
+        networkProxy->interceptResponse(response, identifier, WTF::move(handler));
 }
 
 // JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
