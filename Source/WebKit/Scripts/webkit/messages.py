@@ -1672,6 +1672,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::UsedLegacyTLS': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::UsedPortalTransform': ['<WebCore/PortalTransform.h>'],
         'WebCore::VideoFrameRotation': ['<WebCore/VideoFrame.h>'],
+        'WebCore::GPUVideoEncoderFrameInfo': ['<WebCore/GPUVideoEncoder.h>'],
         'WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
         'WebCore::VideoPresetData': ['<WebCore/VideoPreset.h>'],
         'WebCore::JSHandleIdentifier': ['<WebCore/WebKitJSHandle.h>'],
@@ -1878,7 +1879,6 @@ def headers_for_type(type, for_implementation_file=False):
         'WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'WTF::UnixFileDescriptor': ['<wtf/unix/UnixFileDescriptor.h>'],
         'WTF::SystemMemoryPressureStatus': ['<wtf/MemoryPressureHandler.h>'],
-        'webrtc::WebKitEncodedFrameInfo': ['"RTCWebKitEncodedFrameInfo.h"'],
     }
 
     headers = []
