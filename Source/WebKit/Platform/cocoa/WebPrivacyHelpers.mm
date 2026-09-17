@@ -595,6 +595,15 @@ class TrackerAddressLookupInfo {
 public:
     enum class CanBlock : bool { No, Yes };
 
+    // Single lock shared by both tracker lookup tables below, guarding their population, refresh,
+    // and lookups. A raw pointer into a table can never escape its critical section because the
+    // matchingInfo() helpers that return such pointers are private to their classes.
+    static Lock& trackerLookupLock()
+    {
+        static Lock lock;
+        return lock;
+    }
+
     TrackerAddressLookupInfo(WebCore::IPAddress&& network, unsigned netMaskLength, String&& owner, String&& host, CanBlock canBlock)
         : m_network { WTF::move(network) }
         , m_netMaskLength { netMaskLength }
@@ -636,6 +645,7 @@ public:
                     return;
                 }
 
+                Locker locker { trackerLookupLock() };
                 version4List().clear();
                 version6List().clear();
 
@@ -659,7 +669,28 @@ public:
         });
     }
 
-    static const TrackerAddressLookupInfo* find(const WebCore::IPAddress& address)
+    // Looks up the entry matching address and, while holding the lock, invokes function with it,
+    // returning whether a match was found. The entry reference passed to function is valid only for
+    // the duration of the call (while the lock is held) and must not escape it.
+    template<typename Function>
+    static bool find(const WebCore::IPAddress& address, NOESCAPE const Function& function)
+    {
+        Locker locker { trackerLookupLock() };
+        auto* info = matchingInfo(address);
+        if (!info)
+            return false;
+        function(*info);
+        return true;
+    }
+
+    static bool contains(const WebCore::IPAddress& address)
+    {
+        Locker locker { trackerLookupLock() };
+        return matchingInfo(address);
+    }
+
+private:
+    static const TrackerAddressLookupInfo* matchingInfo(const WebCore::IPAddress& address) WTF_REQUIRES_LOCK(trackerLookupLock())
     {
         auto& list = address.isIPv4() ? version4List() : version6List();
         if (list.isEmpty())
@@ -688,17 +719,16 @@ public:
             }
         }
 
-        if (list[upper].contains(address))
+        if (list[upper].containsAddress(address))
             return &list[upper];
 
-        if (upper != lower && list[lower].contains(address))
+        if (upper != lower && list[lower].containsAddress(address))
             return &list[lower];
 
         return nullptr;
     }
 
-private:
-    static Vector<TrackerAddressLookupInfo>& version4List()
+    static Vector<TrackerAddressLookupInfo>& version4List() WTF_REQUIRES_LOCK(trackerLookupLock())
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -706,7 +736,7 @@ private:
         return sharedList.get();
     }
 
-    static Vector<TrackerAddressLookupInfo>& version6List()
+    static Vector<TrackerAddressLookupInfo>& version6List() WTF_REQUIRES_LOCK(trackerLookupLock())
     {
         static NeverDestroyed sharedList = [] {
             return Vector<TrackerAddressLookupInfo> { };
@@ -714,7 +744,7 @@ private:
         return sharedList.get();
     }
 
-    bool contains(const WebCore::IPAddress& address) const
+    bool containsAddress(const WebCore::IPAddress& address) const
     {
         return m_network.matchingNetMaskLength(address) >= m_netMaskLength;
     }
@@ -770,26 +800,48 @@ public:
                     return;
                 }
 
-                Locker locker { domainListLock };
-
+                // Readers walk this map and read the entries' CStrings under
+                // TrackerAddressLookupInfo::trackerLookupLock() (via find()/contains()), so the
+                // writer must hold it too — otherwise it races the map structure and frees CString
+                // buffers out from under a concurrent reader.
+                Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
                 for (WPTrackingDomain *domain in domains)
                     list().set(String::fromLatin1([domain.host UTF8String]), TrackerDomainLookupInfo { domain });
             }];
         });
     }
 
-    static const TrackerDomainLookupInfo find(String host)
+    // Looks up the entry for host and, while holding the lock, invokes function with it if it names
+    // a known tracker (a matching entry with a non-empty owner), returning whether it did. The entry
+    // reference passed to function is valid only for the duration of the call and must not escape it.
+    template<typename Function>
+    static bool find(const String& host, NOESCAPE const Function& function)
     {
-        Locker locker { domainListLock };
-        if (!list().isValidKey(host))
-            return { };
-        return list().get(host);
+        Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
+        auto* info = matchingInfo(host);
+        if (!info || !info->owner().length())
+            return false;
+        function(*info);
+        return true;
+    }
+
+    static bool contains(const String& host)
+    {
+        Locker locker { TrackerAddressLookupInfo::trackerLookupLock() };
+        auto* info = matchingInfo(host);
+        return info && info->owner().length();
     }
 
 private:
-    static Lock domainListLock;
+    static const TrackerDomainLookupInfo* matchingInfo(const String& host) WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
+    {
+        if (!list().isValidKey(host))
+            return nullptr;
+        auto it = list().find(host);
+        return it != list().end() ? &it->value : nullptr;
+    }
 
-    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& NODELETE list() WTF_REQUIRES_LOCK(domainListLock)
+    static MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>& NODELETE list() WTF_REQUIRES_LOCK(TrackerAddressLookupInfo::trackerLookupLock())
     {
         static NeverDestroyed<MemoryCompactRobinHoodHashMap<String, TrackerDomainLookupInfo>> map;
         return map.get();
@@ -798,8 +850,6 @@ private:
     UTF8CString m_owner;
     CanBlock m_canBlock { CanBlock::No };
 };
-
-Lock TrackerDomainLookupInfo::domainListLock;
 
 void configureForAdvancedPrivacyProtections(NSURLSession *session)
 {
@@ -822,21 +872,36 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
         return;
 
     setTrackerLookupCallback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
+        // The networking stack reads *owner and *hostName after this block returns (it copies them
+        // before the next lookup on this thread), so the strings must outlive the block without
+        // being tied to the lookup lists, which are refreshed on the WebPrivacy thread. Hold them in
+        // per-thread UTF8CStrings populated via isolatedCopy(): each copy owns its own CStringBuffer,
+        // referenced only by this thread, so nothing races the refresh — CStringBuffer is not
+        // ThreadSafeRefCounted, so we must never share a buffer across threads. NeverDestroyed avoids
+        // an exit-time destructor; each assignment releases the previous copy's buffer.
+        static thread_local NeverDestroyed<UTF8CString> lastOwner;
+        static thread_local NeverDestroyed<UTF8CString> lastHost;
+
         if (auto address = ipAddress(endpoint)) {
-            if (auto* info = TrackerAddressLookupInfo::find(*address)) {
-                *owner = info->owner().legacyCStringPointer();
-                *hostName = info->host().legacyCStringPointer();
-                *canBlock = info->canBlock() != TrackerAddressLookupInfo::CanBlock::No;
-            }
+            bool matched = TrackerAddressLookupInfo::find(*address, [&](auto& info) {
+                lastOwner.get() = info.owner().isolatedCopy();
+                lastHost.get() = info.host().isolatedCopy();
+                *owner = lastOwner.get().legacyCStringPointer();
+                *hostName = lastHost.get().legacyCStringPointer();
+                *canBlock = info.canBlock() != TrackerAddressLookupInfo::CanBlock::No;
+            });
+            if (matched)
+                return;
         }
 
         if (auto host = hostname(endpoint)) {
             auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String::fromLatin1(*host)) } };
-            if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
-                *owner = info.owner().legacyCStringPointer();
+            TrackerDomainLookupInfo::find(domain.string(), [&](auto& info) {
+                lastOwner.get() = info.owner().isolatedCopy();
+                *owner = lastOwner.get().legacyCStringPointer();
                 *hostName = *host;
                 *canBlock = info.canBlock() != TrackerDomainLookupInfo::CanBlock::No;
-            }
+            });
         }
     });
 }
@@ -847,12 +912,12 @@ bool isKnownTrackerAddressOrDomain(StringView host)
     TrackerDomainLookupInfo::populateIfNeeded();
 
     if (auto address = URL::hostIsIPAddress(host) ? WebCore::IPAddress::fromString(host.toStringWithoutCopying()) : std::nullopt) {
-        if (TrackerAddressLookupInfo::find(*address))
+        if (TrackerAddressLookupInfo::contains(*address))
             return true;
     }
 
     auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, host) } };
-    return TrackerDomainLookupInfo::find(domain.string()).owner().length();
+    return TrackerDomainLookupInfo::contains(domain.string());
 }
 
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest& request)
@@ -869,10 +934,11 @@ bool isRequestBlockable(const WebCore::ResourceRequest& request)
     if (domain == "tainted.example" || IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain))
         return true;
 
-    if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
-        return info.canBlock() == TrackerDomainLookupInfo::CanBlock::WithDefaultProtections;
-    }
-    return false;
+    bool blockable = false;
+    TrackerDomainLookupInfo::find(domain.string(), [&](auto& info) {
+        blockable = info.canBlock() == TrackerDomainLookupInfo::CanBlock::WithDefaultProtections;
+    });
+    return blockable;
 }
 #else
 

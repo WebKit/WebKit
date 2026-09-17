@@ -245,6 +245,7 @@ public:
     std::span<const CharacterType> spanIncludingNullTerminator() const LIFETIME_BOUND { return byteCast<CharacterType>(CString::spanIncludingNullTerminator()); }
     std::span<CharacterType> mutableSpan() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpan()); }
     std::span<CharacterType> mutableSpanIncludingNullTerminator() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpanIncludingNullTerminator()); }
+    CStringWithEncoding isolatedCopy() const { return CStringWithEncoding { span() }; }
 
     // This is the escape hatch for external C functions and printf-style formatting. It is named for the
     // destination rather than the contents: const char* is what C string interfaces take, which is why this
