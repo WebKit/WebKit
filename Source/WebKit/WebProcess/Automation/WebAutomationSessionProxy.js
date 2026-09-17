@@ -33,6 +33,7 @@ const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 // script has replaced them.
 const convertToString = String;
 const dateToISOString = Date.prototype.toISOString;
+const jsonParse = JSON.parse;
 const jsonStringify = JSON.stringify;
 const mapForEach = Map.prototype.forEach;
 const promiseThen = Promise.prototype.then;
@@ -126,6 +127,16 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     error = { name: "Error", message: convertToString(error) };
                 resultCallback(frameID, callbackID, error);
             });
+    }
+
+    executePreloadScript(functionDeclaration, argumentStrings)
+    {
+        // A trailing line comment must end before the closing parenthesis.
+        let functionValue = evaluate("(\n" + functionDeclaration + "\n)");
+        if (typeof functionValue !== "function")
+            throw new TypeError("Script did not evaluate to a function.");
+
+        reflectApply(functionValue, null, argumentStrings.map(argument => jsonParse(argument)));
     }
 
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)

@@ -88,12 +88,14 @@
 #include <WebCore/ScriptController.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/WindowProxy.h>
+#include <wtf/Borrow.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/text/MakeString.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
+#include "InjectedBundle.h"
 #include <JavaScriptCore/CallData.h>
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
@@ -1912,6 +1914,76 @@ void WebAutomationSessionProxy::getBidiRealmInfo(WebCore::PageIdentifier pageID,
         return completionHandler(std::nullopt);
 
     completionHandler(WTF::move(realmIdentifier));
+}
+
+void WebAutomationSessionProxy::setPreloadScripts(Vector<BidiPreloadScript>&& registrations)
+{
+    m_preloadScriptRegistrations = WTF::move(registrations);
+}
+
+void WebAutomationSessionProxy::addPreloadScript(BidiPreloadScript&& registration, CompletionHandler<void()>&& completionHandler)
+{
+    m_preloadScriptRegistrations.append(WTF::move(registration));
+    completionHandler();
+}
+
+void WebAutomationSessionProxy::removePreloadScript(PreloadScriptIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    m_preloadScriptRegistrations.removeFirstMatching([identifier](const auto& registration) {
+        return registration.identifier == identifier;
+    });
+    completionHandler();
+}
+
+void WebAutomationSessionProxy::runPreloadScriptsForFrame(WebFrame& frame)
+{
+    if (m_preloadScriptRegistrations.isEmpty())
+        return;
+
+    RefPtr page = frame.page();
+    RefPtr coreFrame = frame.coreLocalFrame();
+    if (!page || !page->isControlledByAutomation() || !coreFrame || !protect(coreFrame->script())->canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+        return;
+
+    RefPtr document = coreFrame->document();
+    if (!document)
+        return;
+
+    // A preload can run nested JavaScript or detach the frame. Keep this document's list stable.
+    auto registrations = m_preloadScriptRegistrations;
+    auto pageIdentifier = page->webPageProxyIdentifier();
+    auto sessionID = page->sessionID();
+    for (const auto& registration : borrow(registrations)) {
+        if (registration.targetTopLevelBrowsingContextIdentifiers && !registration.targetTopLevelBrowsingContextIdentifiers->contains(pageIdentifier))
+            continue;
+        if (registration.targetStorageSessionIdentifier && *registration.targetStorageSessionIdentifier != sessionID)
+            continue;
+        if (frame.coreLocalFrame() != coreFrame || coreFrame->document() != document || !coreFrame->page())
+            return;
+        runPreloadScript(frame, registration);
+    }
+}
+
+void WebAutomationSessionProxy::runPreloadScript(WebFrame& frame, const BidiPreloadScript& registration)
+{
+    JSGlobalContextRef context = frame.jsContext();
+    auto* scriptObject = scriptObjectForFrame(frame);
+    ASSERT(scriptObject);
+
+    JSValueRef exception = nullptr;
+    JSObjectRef argumentArray = toJSArray(context, registration.serializedArguments, toJSValue, &exception);
+    if (exception) {
+        InjectedBundle::reportException(context, exception);
+        return;
+    }
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, registration.functionDeclaration),
+        argumentArray
+    };
+    callPropertyFunction(context, scriptObject, "executePreloadScript"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception)
+        InjectedBundle::reportException(context, exception);
 }
 
 void WebAutomationSessionProxy::addMessageToConsole(WebCore::FrameIdentifier frameID, const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)

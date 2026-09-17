@@ -29,6 +29,7 @@
 
 #include "WebDriverBidiBackendDispatchers.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
+#include <pal/SessionID.h>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -57,6 +58,7 @@ public:
 
     bool isValidUserContext(const String& userContextID) const;
     String userContextForPage(const WebPageProxy&) const;
+    String userContextForSessionID(PAL::SessionID) const;
 
 private:
     struct BidiUserContextDeletionRecord;

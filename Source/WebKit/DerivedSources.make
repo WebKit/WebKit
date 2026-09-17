@@ -693,6 +693,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/IPC/TransferString.serialization.in \
 	Platform/cocoa/MediaPlaybackTargetContextSerialized.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
+	Shared/Automation/BidiPreloadScript.serialization.in \
 	Shared/JavaScriptEvaluationResult.serialization.in \
 	Shared/API/APIArray.serialization.in \
 	Shared/API/APIData.serialization.in \

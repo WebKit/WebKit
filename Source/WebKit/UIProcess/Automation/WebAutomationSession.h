@@ -100,6 +100,7 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebPageInspectorController;
 class WebProcessPool;
+class WebProcessProxy;
 
 #if ENABLE(REMOTE_INSPECTOR)
 class InspectorPassthroughChannel;
@@ -198,6 +199,7 @@ public:
     void mouseEventsFlushedForPage(const WebPageProxy&);
     void wheelEventsFlushedForPage(const WebPageProxy&);
 #if ENABLE(WEBDRIVER_BIDI)
+    void synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy&) const;
     void didCreatePage(WebPageProxy&);
     // browsingContext.navigate: loads `url` in the page, or in `frameHandle`'s frame when it is not empty, and resolves with the
     // requested URL and the navigation id. Unlike the classic command, a navigation that fails or whose context closes is an error.
@@ -288,7 +290,6 @@ public:
     void waitForNavigationToComplete(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<Inspector::Protocol::Automation::PageLoadStrategy>&&, std::optional<double>&& pageLoadTimeout, Inspector::CommandCallback<void>&&) override;
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
     // Unlike the classic command, a user prompt does not end the evaluation: it completes when the script does.
-    void evaluateJavaScriptFunctionForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& forceUserGesture, Inspector::CommandCallback<String>&&);
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
     void locateNodesForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, Inspector::CommandCallback<String>&&);
 #if ENABLE(WEBDRIVER_BIDI)
@@ -422,10 +423,6 @@ private:
     void forgetDestroyedFrames();
     Vector<Inspector::CommandCallback<void>> takePendingPageNavigationCallbacks(HashMap<WebPageProxyIdentifier, Vector<PendingPageNavigationCallback>>&, const WebPageProxy&, API::Navigation* finishedNavigation, UnboundWaits, NavigationNotification = NavigationNotification::LoadEnded);
     enum class SameDocumentNavigation : bool { No, Yes };
-    enum class UserPromptEndsEvaluation : bool { No, Yes };
-    // The callbacks a user prompt ends early (Yes) are kept apart from those it leaves running (No).
-    HashMap<uint64_t, Inspector::CommandCallback<String>>& evaluateJavaScriptFunctionCallbacks(UserPromptEndsEvaluation);
-    void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, UserPromptEndsEvaluation, Inspector::CommandCallback<String>&&);
     void waitForNavigationToCompleteOnPage(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&& = nullptr, SameDocumentNavigation = SameDocumentNavigation::No);
     void waitForHistoryTraversalToComplete(WebPageProxy&, Inspector::Protocol::Automation::PageLoadStrategy, Seconds, Inspector::CommandCallback<void>&&, RefPtr<API::Navigation>&&);
     bool hasPendingNavigationCallbacks() const;

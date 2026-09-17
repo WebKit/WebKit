@@ -52,6 +52,9 @@ struct FocusedElementInformationIdentifierType;
 using FocusedElementInformationIdentifier = MonotonicObjectIdentifier<FocusedElementInformationIdentifierType>;
 
 #if ENABLE(WEBDRIVER_BIDI)
+struct PreloadScriptIdentifierType;
+using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType>;
+
 struct RealmIdentifierType;
 using NonProcessQualifiedRealmIdentifier = ObjectIdentifier<RealmIdentifierType>;
 using RealmIdentifier = WebCore::ProcessQualified<NonProcessQualifiedRealmIdentifier>;

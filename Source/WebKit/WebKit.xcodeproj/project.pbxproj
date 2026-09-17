@@ -2037,6 +2037,7 @@
 		99C607EB26FA9D4900A0953F /* _WKInspectorIBActions.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C607EA26FA9D4800A0953F /* _WKInspectorIBActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
+		CFB8850381354E68AA59B709 /* BidiPreloadScript.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB8850181354E68AA59B709 /* BidiPreloadScript.h */; };
 		99D808292E85F04200A3EFCC /* WebAutomationSessionMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */; };
 		99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07AC25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h */; };
@@ -7828,6 +7829,8 @@
 		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
 		99CA66C8203668220074F35E /* EnterFullscreen.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = EnterFullscreen.js; sourceTree = "<group>"; };
+		CFB8850181354E68AA59B709 /* BidiPreloadScript.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BidiPreloadScript.h; sourceTree = "<group>"; };
+		CFB8850281354E68AA59B709 /* BidiPreloadScript.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = BidiPreloadScript.serialization.in; sourceTree = "<group>"; };
 		99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAutomationSessionMacros.h; sourceTree = "<group>"; };
 		99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationDelegate.h; sourceTree = "<group>"; };
 		99F642D21FABE378009621E9 /* CoordinateSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoordinateSystem.h; sourceTree = "<group>"; };
@@ -15877,6 +15880,8 @@
 		99D808282E85F04200A3EFCC /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				CFB8850181354E68AA59B709 /* BidiPreloadScript.h */,
+				CFB8850281354E68AA59B709 /* BidiPreloadScript.serialization.in */,
 				99D808272E85F04200A3EFCC /* WebAutomationSessionMacros.h */,
 			);
 			path = Automation;
@@ -19313,6 +19318,7 @@
 				F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */,
 				990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,
+				CFB8850381354E68AA59B709 /* BidiPreloadScript.h in Headers */,
 				99D808292E85F04200A3EFCC /* WebAutomationSessionMacros.h in Headers */,
 				1C0A19581C90068F00FE0EBB /* WebAutomationSessionMessages.h in Headers */,
 				1C0A19471C8FF1A800FE0EBB /* WebAutomationSessionProxy.h in Headers */,

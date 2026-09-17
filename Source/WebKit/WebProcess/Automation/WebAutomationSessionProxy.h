@@ -41,6 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
+#include "BidiPreloadScript.h"
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
@@ -79,6 +80,9 @@ public:
 
     void didClearWindowObjectForFrame(WebFrame&);
     void willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier);
+#if ENABLE(WEBDRIVER_BIDI)
+    void runPreloadScriptsForFrame(WebFrame&);
+#endif
 
     struct JSCallbackIdentifierType { };
     using JSCallbackIdentifier = ObjectIdentifier<JSCallbackIdentifierType>;
@@ -134,6 +138,10 @@ private:
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
 #if ENABLE(WEBDRIVER_BIDI)
+    void setPreloadScripts(Vector<BidiPreloadScript>&&);
+    void addPreloadScript(BidiPreloadScript&&, CompletionHandler<void()>&&);
+    void removePreloadScript(PreloadScriptIdentifier, CompletionHandler<void()>&&);
+    void runPreloadScript(WebFrame&, const BidiPreloadScript&);
     std::optional<RealmIdentifier> realmIdentifierForFrame(WebCore::FrameIdentifier) const;
     void getBidiRealmInfo(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
     void addMessageToConsole(WebCore::FrameIdentifier, const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) override;
@@ -161,6 +169,8 @@ private:
     // the UI-process copy.
     HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
+    Vector<BidiPreloadScript> m_preloadScriptRegistrations;
+
     struct DedicatedWorkerRealmInfo {
         RealmIdentifier realmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
         RealmIdentifier ownerRealmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
