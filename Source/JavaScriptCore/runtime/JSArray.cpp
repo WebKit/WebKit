@@ -1268,6 +1268,7 @@ bool JSArray::setLength(JSGlobalObject* globalObject, unsigned newLength, bool t
             return true;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH // This check ensures that we can do fast push.
             || (newLength >= MIN_SPARSE_ARRAY_INDEX
+                && newLength > butterfly->vectorLength()
                 && !isDenseEnoughForVector(newLength, countElements()))) {
             RELEASE_AND_RETURN(scope, setLengthWithArrayStorage(
                 globalObject, newLength, throwException,
