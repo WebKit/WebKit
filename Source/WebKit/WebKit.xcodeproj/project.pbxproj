@@ -1591,6 +1591,8 @@
 		5C66A4B52320962400EA4D44 /* WKHTTPCookieStoreRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C66A4B42320961400EA4D44 /* WKHTTPCookieStoreRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C6E7D882323620500C2159D /* WKWebsiteDataStoreConfigurationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C6E7D86232361E700C2159D /* WKWebsiteDataStoreConfigurationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C76C0072ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C76C0062ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift */; };
+		AD5E1A052F9000010000AA05 /* RemoteMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5E1A012F9000010000AA01 /* RemoteMesh.swift */; };
+		AD5E1A062F9000010000AA06 /* RemoteMeshMessageReceiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5E1A042F9000010000AA04 /* RemoteMeshMessageReceiver.swift */; };
 		5C795D70229F373F003FF1C4 /* WKContextMenuElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5C795D71229F3757003FF1C4 /* WKContextMenuElementInfoPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C7FB47021E97DC5009E3241 /* WebCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7FB46F21E97C0C009E3241 /* WebCookieJar.h */; };
@@ -3675,8 +3677,8 @@
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0D02BE3129B6D0F7005852BF /* WebGPUInternalError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternalError.h; sourceTree = "<group>"; };
 		0D02BE3229B6D0F8005852BF /* WebGPUInternalError.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUInternalError.cpp; sourceTree = "<group>"; };
-		0D078EB42E7387FA00A9B266 /* RemoteMesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMesh.h; sourceTree = "<group>"; };
-		0D078EB52E7387FA00A9B266 /* RemoteMesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMesh.cpp; sourceTree = "<group>"; };
+		AD5E1A012F9000010000AA01 /* RemoteMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMesh.swift; sourceTree = "<group>"; };
+		AD5E1A022F9000010000AA02 /* RemoteMeshSwiftUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMeshSwiftUtilities.h; sourceTree = "<group>"; };
 		0D078EB62E7387FA00A9B266 /* RemoteMesh.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMesh.messages.in; sourceTree = "<group>"; };
 		0D078EBA2E738BCD00A9B266 /* ModelObjectHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModelObjectHeap.h; sourceTree = "<group>"; };
 		0D078EBB2E738BCD00A9B266 /* ModelObjectHeap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ModelObjectHeap.cpp; sourceTree = "<group>"; };
@@ -6797,6 +6799,7 @@
 		5C74300E21500492004BFA17 /* WKWebProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcess.h; sourceTree = "<group>"; };
 		5C74300F21500492004BFA17 /* WKWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebProcess.cpp; sourceTree = "<group>"; };
 		5C76C0062ED9F46F00615579 /* WebBackForwardListMessageReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBackForwardListMessageReceiver.swift; sourceTree = "<group>"; };
+		AD5E1A042F9000010000AA04 /* RemoteMeshMessageReceiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMeshMessageReceiver.swift; sourceTree = "<group>"; };
 		5C7706731D111D8B0012700F /* WebSocketProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketProvider.cpp; path = Network/WebSocketProvider.cpp; sourceTree = "<group>"; };
 		5C7C88DC1D0F41A0009D2F6D /* WebSocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketProvider.h; path = Network/WebSocketProvider.h; sourceTree = "<group>"; };
 		5C7FB46E21E97C0B009E3241 /* WebCookieJar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieJar.cpp; sourceTree = "<group>"; };
@@ -10083,9 +10086,9 @@
 				0D653B372F3453C40022454D /* ModelRenderer.swift */,
 				0D653B382F3453C40022454D /* ModelTypes.h */,
 				0D653B392F3453C40022454D /* ModelUtils.swift */,
-				0D078EB52E7387FA00A9B266 /* RemoteMesh.cpp */,
-				0D078EB42E7387FA00A9B266 /* RemoteMesh.h */,
 				0D078EB62E7387FA00A9B266 /* RemoteMesh.messages.in */,
+				AD5E1A012F9000010000AA01 /* RemoteMesh.swift */,
+				AD5E1A022F9000010000AA02 /* RemoteMeshSwiftUtilities.h */,
 				0D433CF42F857D62004ED8DF /* USDModel+Deformation.swift */,
 				0D653B3A2F3453C40022454D /* USDModel.swift */,
 				0D653B302F34517E0022454D /* WebKitMesh.h */,
@@ -13859,6 +13862,7 @@
 				07E691C62E9EB5C4000C7E3C /* RemoteMediaSessionManagerMessages.h */,
 				07E691C72E9EB5C4000C7E3C /* RemoteMediaSessionManagerProxyMessageReceiver.cpp */,
 				07E691C82E9EB5C4000C7E3C /* RemoteMediaSessionManagerProxyMessages.h */,
+				AD5E1A042F9000010000AA04 /* RemoteMeshMessageReceiver.swift */,
 				1AC1338318590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp */,
 				1AC1338418590C4600F3EC05 /* RemoteObjectRegistryMessages.h */,
 				1C55A5A1275457CB00EB7E95 /* RemotePipelineLayoutMessageReceiver.cpp */,
@@ -22396,6 +22400,8 @@
 				2D72A1FA212BF46E00517A20 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				2DC18FB4218A6E9E0025A88D /* RemoteLayerTreeViews.mm in Sources */,
 				0701789E23BE9CFC005F0FAA /* RemoteMediaPlayerMIMETypeCache.cpp in Sources */,
+				AD5E1A052F9000010000AA05 /* RemoteMesh.swift in Sources */,
+				AD5E1A062F9000010000AA06 /* RemoteMeshMessageReceiver.swift in Sources */,
 				1AF572302D690813008266F2 /* RemoteScrollingTreeCocoa.mm in Sources */,
 				0738ABBD304BD9CA00987FFB /* RunJavaScriptParameters.swift in Sources */,
 				0782B70C304680930011880F /* RunJavaScriptResult.swift in Sources */,

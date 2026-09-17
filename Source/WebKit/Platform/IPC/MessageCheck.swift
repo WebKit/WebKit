@@ -23,7 +23,7 @@
 
 #if compiler(>=6.2.3)
 
-#if ENABLE_BACK_FORWARD_LIST_SWIFT || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
+#if ENABLE_BACK_FORWARD_LIST_SWIFT || ENABLE_GPU_PROCESS_MODEL || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
 
 import WebKit_Internal
 import wtf
@@ -92,6 +92,12 @@ func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection) 
     connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
 }
 
+/// Stream receivers are handed the StreamServerConnection: marking the Connection underneath it
+/// would leave the stream running.
+func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.StreamServerConnection) {
+    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
+}
+
 private func logFailedMessageCheck(
     _ reason: StaticString,
     function: StaticString,
@@ -106,6 +112,6 @@ private func logFailedMessageCheck(
     )
 }
 
-#endif // ENABLE_BACK_FORWARD_LIST_SWIFT || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
+#endif // ENABLE_BACK_FORWARD_LIST_SWIFT || ENABLE_GPU_PROCESS_MODEL || (ENABLE_IPC_TESTING_API && ENABLE_IPC_TESTING_SWIFT)
 
 #endif // compiler(>=6.2.3)
