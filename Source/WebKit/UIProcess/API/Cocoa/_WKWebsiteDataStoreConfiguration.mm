@@ -31,6 +31,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
 
 static void checkURLArgument(NSURL *url)
 {
@@ -73,7 +74,7 @@ static void checkURLArgument(NSURL *url)
 
     auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid || !uuid->isValid())
-        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().legacyCStringPointer()];
+        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", UTF8CString { identifier.UUIDString }.legacyCStringPointer()];
 
     API::Object::constructInWrapper<WebKit::WebsiteDataStoreConfiguration>(self, *uuid);
 

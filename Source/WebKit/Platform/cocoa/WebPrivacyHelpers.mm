@@ -607,16 +607,16 @@ public:
     TrackerAddressLookupInfo(WPNetworkAddressRange *range)
         : m_network { ipAddress(range.address).value() }
         , m_netMaskLength { static_cast<unsigned>(range.netMaskLength) }
-        , m_owner { range.owner.UTF8String }
-        , m_host { range.host.UTF8String }
+        , m_owner { range.owner }
+        , m_host { range.host }
         , m_canBlock { CanBlock::Yes } // FIXME: Grab this from WPNetworkAddressRange as well, once it's available.
     {
     }
 
     TrackerAddressLookupInfo() = default;
 
-    const CString& NODELETE owner() const { return m_owner; }
-    const CString& NODELETE host() const { return m_host; }
+    const UTF8CString& NODELETE owner() const { return m_owner; }
+    const UTF8CString& NODELETE host() const { return m_host; }
 
     CanBlock NODELETE canBlock() const { return m_canBlock; }
 
@@ -721,8 +721,8 @@ private:
 
     WebCore::IPAddress m_network { WTF::HashTableEmptyValue };
     unsigned m_netMaskLength { 0 };
-    CString m_owner;
-    CString m_host;
+    UTF8CString m_owner;
+    UTF8CString m_host;
     CanBlock m_canBlock { CanBlock::No };
 };
 
@@ -737,14 +737,14 @@ public:
     }
 
     TrackerDomainLookupInfo(WPTrackingDomain *domain)
-        : m_owner { domain.owner.UTF8String }
+        : m_owner { domain.owner }
         , m_canBlock { domain.canBlock ? CanBlock::WithAdvancedPrivacyProtections : CanBlock::No }
     {
     }
 
     TrackerDomainLookupInfo() = default;
 
-    const CString& NODELETE owner() const { return m_owner; }
+    const UTF8CString& NODELETE owner() const { return m_owner; }
 
     CanBlock NODELETE canBlock() const { return m_canBlock; }
 
@@ -795,7 +795,7 @@ private:
         return map.get();
     }
 
-    CString m_owner;
+    UTF8CString m_owner;
     CanBlock m_canBlock { CanBlock::No };
 };
 
@@ -824,8 +824,8 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
     setTrackerLookupCallback(context.get(), ^(nw_endpoint_t endpoint, const char** hostName, const char** owner, bool* canBlock) {
         if (auto address = ipAddress(endpoint)) {
             if (auto* info = TrackerAddressLookupInfo::find(*address)) {
-                *owner = info->owner().data();
-                *hostName = info->host().data();
+                *owner = info->owner().legacyCStringPointer();
+                *hostName = info->host().legacyCStringPointer();
                 *canBlock = info->canBlock() != TrackerAddressLookupInfo::CanBlock::No;
             }
         }
@@ -833,7 +833,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
         if (auto host = hostname(endpoint)) {
             auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String::fromLatin1(*host)) } };
             if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
-                *owner = info.owner().data();
+                *owner = info.owner().legacyCStringPointer();
                 *hostName = *host;
                 *canBlock = info.canBlock() != TrackerDomainLookupInfo::CanBlock::No;
             }

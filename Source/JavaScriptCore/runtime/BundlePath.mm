@@ -37,15 +37,15 @@
 
 namespace JSC {
 
-const CString* constantBundlePath = nullptr;
+const UTF8CString* constantBundlePath = nullptr;
 
-const CString& bundlePath()
+const UTF8CString& bundlePath()
 {
     if (!constantBundlePath) {
         @autoreleasepool {
             NSBundle* myBundle = [NSBundle bundleForClass:[JSJavaScriptCoreFinder class]];
 
-            constantBundlePath = new CString([[myBundle bundlePath] UTF8String]);
+            constantBundlePath = new UTF8CString { myBundle.bundlePath };
         }
     }
 

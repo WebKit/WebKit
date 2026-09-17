@@ -30,6 +30,7 @@
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/text/CString.h>
 
 @interface WKUserDefaults : NSUserDefaults {
 @private
@@ -162,7 +163,7 @@
     for (RetainPtr domain : domains) {
         auto userDefaults = adoptNS([[WKUserDefaults alloc] initWithSuiteName:domain.get()]);
         if (!userDefaults) {
-            SAFE_WTFLOGALWAYS("Could not init user defaults instance for domain %s", String(domain.get()).utf8());
+            SAFE_WTFLOGALWAYS("Could not init user defaults instance for domain %s", UTF8CString { domain });
             continue;
         }
         userDefaults->m_observer = self;

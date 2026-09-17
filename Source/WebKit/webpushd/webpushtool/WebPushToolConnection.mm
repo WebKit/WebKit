@@ -43,6 +43,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/darwin/DispatchExtras.h>
+#import <wtf/text/CString.h>
 
 namespace WebPushTool {
 
@@ -85,7 +86,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 
     xpc_connection_set_event_handler(m_connection.get(), [](xpc_object_t event) {
         if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-            SAFE_FPRINTF(stderr, "Unexpected XPC connection issue: %s\n", String(event.debugDescription).utf8());
+            SAFE_FPRINTF(stderr, "Unexpected XPC connection issue: %s\n", UTF8CString { event.debugDescription });
             return;
         }
 

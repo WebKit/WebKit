@@ -92,6 +92,7 @@
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/CString.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
@@ -1809,10 +1810,10 @@ static RefPtr<Icon> iconForAttachment(const String& fileName, const String& atta
     RetainPtr nsTitle = title.createNSString();
     if (RetainPtr<NSString> fileExtension = nsTitle.get().pathExtension; fileExtension.get().length) {
         if (auto icon = Icon::createIconForFileExtension(fileExtension.get())) {
-            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", String(fileExtension.get()).utf8());
+            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", UTF8CString { fileExtension });
             return icon;
         }
-        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", String(fileExtension.get()).utf8());
+        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", UTF8CString { fileExtension });
     } else
         LOG_ATTACHMENT("-> No file extension in title! Will fallback to public.data icon");
 

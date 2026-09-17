@@ -77,6 +77,7 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/persistence/PersistentDecoder.h>
 #import <wtf/persistence/PersistentEncoder.h>
+#import <wtf/text/CString.h>
 
 #if HAVE(NW_PROXY_CONFIG)
 #import <Network/Network.h>
@@ -542,7 +543,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
     auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid || !uuid->isValid())
-        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().legacyCStringPointer()];
+        [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", UTF8CString { identifier.UUIDString }.legacyCStringPointer()];
 
     return wrapper(WebKit::WebsiteDataStore::dataStoreForIdentifier(*uuid)).autorelease();
 }

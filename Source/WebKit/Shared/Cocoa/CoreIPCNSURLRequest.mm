@@ -31,6 +31,7 @@
 #import <WebCore/ResourceLoadPriority.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/text/CString.h>
 
 #if PLATFORM(COCOA) && HAVE(WK_SECURE_CODING_NSURLREQUEST)
 
@@ -149,7 +150,7 @@ static void populateAppProperties(NSDictionary *protocolPropertiesDict, Protocol
             continue;
 
         if (isReservedProtocolPropertyKeyPrefix(key.get())) {
-            RELEASE_LOG_INFO_FORWARDABLE(API, CoreIpcNsurlRequestPropertyKeyNotAllowed, String(key.get()).utf8());
+            RELEASE_LOG_INFO_FORWARDABLE(API, CoreIpcNsurlRequestPropertyKeyNotAllowed, UTF8CString { key });
             continue;
         }
 

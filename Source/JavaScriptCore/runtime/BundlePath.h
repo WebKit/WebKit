@@ -30,6 +30,6 @@
 
 namespace JSC {
 
-const CString& bundlePath();
+const UTF8CString& bundlePath();
 
 } // namespace JSC

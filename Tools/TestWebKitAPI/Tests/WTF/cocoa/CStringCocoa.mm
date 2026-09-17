@@ -39,6 +39,29 @@ template<typename StringType> concept HasCreateNSString = requires(const StringT
     string.createNSString();
 };
 
+template<typename StringType> concept HasNSStringConstructor = requires(NSString *string) {
+    StringType { string };
+};
+
+TEST(WTF, CStringWithEncodingFromNSString)
+{
+    UTF8CString utf8String { @"Water🍉Melon" };
+    EXPECT_TRUE(utf8String == UTF8CString { u8"Water🍉Melon"_span });
+
+    // nil becomes a null string, like String(NSString *), rather than the empty string that
+    // createNSString() produces going the other way.
+    UTF8CString nullString { (NSString *)nil };
+    EXPECT_TRUE(nullString.isNull());
+    UTF8CString emptyString { @"" };
+    EXPECT_FALSE(emptyString.isNull());
+    EXPECT_TRUE(emptyString.isEmpty());
+
+    // Only UTF-8 can be converted to without the conversion silently failing.
+    static_assert(HasNSStringConstructor<UTF8CString>);
+    static_assert(!HasNSStringConstructor<Latin1CString>);
+    static_assert(!HasNSStringConstructor<ASCIICString>);
+}
+
 TEST(WTF, CStringWithEncodingCreateNSString)
 {
     // The encoding is in the type, so each alias picks the right NSStringEncoding.
