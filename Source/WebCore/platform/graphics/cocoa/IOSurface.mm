@@ -1049,19 +1049,6 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
-{
-    switch (state) {
-    case SetNonVolatileResult::Valid:
-        ts << "valid"_s;
-        break;
-    case SetNonVolatileResult::Empty:
-        ts << "empty"_s;
-        break;
-    }
-    return ts;
-}
-
 TextStream& operator<<(TextStream& ts, const IOSurface& surface)
 {
     return ts << "IOSurface "_s << surface.surfaceID() << " name "_s << [surfaceNameToNSString(surface.name()) UTF8String] << " size "_s << surface.size() << " format "_s << (surface.m_format ? surface.m_format->format : IOSurface::Format::BGRX)
