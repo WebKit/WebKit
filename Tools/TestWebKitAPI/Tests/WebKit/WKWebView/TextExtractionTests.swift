@@ -1155,6 +1155,36 @@ struct TextExtractionTests {
     }
 
     @Test
+    func disabledControlsAreMarkedInTextTree() async throws {
+        try await webView.load(
+            html: """
+                <button id='enabled'>Sign in</button>\
+                <button id='gated' disabled>Log in</button>\
+                <select disabled><option>Choice</option></select>\
+                <fieldset disabled><input name='code'></fieldset>
+                """
+        )
+
+        let configuration = extractionConfigurationWithFilteringDisabled()
+        configuration.outputFormat = .textTree
+
+        let lines = try await webView.debugText(configuration).split(separator: "\n")
+        func line(containing text: String) throws -> Substring {
+            try #require(lines.first { $0.contains(text) })
+        }
+
+        let gatedButton = try line(containing: "'Log in'")
+        let enabledButton = try line(containing: "'Sign in'")
+        let nestedInput = try line(containing: "name=code")
+        let menu = try line(containing: "select")
+
+        #expect(gatedButton.contains("disabled"))
+        #expect(!enabledButton.contains("disabled"))
+        #expect(nestedInput.contains("disabled"))
+        #expect(menu.contains("disabled"))
+    }
+
+    @Test
     func extractFromDocumentWithoutBody() async throws {
         let url = try #require(URL(string: "data:application/xml,<root><item>hello%20world</item></root>"))
         try await webView.loadAndWait(URLRequest(url: url))

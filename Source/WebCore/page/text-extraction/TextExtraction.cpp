@@ -636,6 +636,25 @@ static bool isInDisabledFormControl(Node& node)
     return control && control->isDisabledFormControl();
 }
 
+static bool isDisabledControlItem(Node& node, const ItemData& data)
+{
+    bool isControl = WTF::switchOn(data,
+        [](ContainerType type) {
+            return type == ContainerType::Button;
+        },
+        [](const TextFormControlData&) {
+            return true;
+        },
+        [](const SelectData&) {
+            return true;
+        },
+        [](auto&) {
+            return false;
+        });
+
+    return isControl && isInDisabledFormControl(node);
+}
+
 enum class IncludeAssociatedLabels : bool { No, Yes };
 
 static String normalizedLabelText(Element& element, IncludeAssociatedLabels includeAssociatedLabels = IncludeAssociatedLabels::No)
@@ -1467,8 +1486,10 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
         item->isVisuallyClickable = looksVisuallyClickable(*renderer);
     }
 
-    if (item)
+    if (item) {
         item->visualBlockContainerNumber = context.currentVisualBlockContainerNumber();
+        item->isDisabled = isDisabledControlItem(node, item->data);
+    }
 
     ASSERT_IMPLIES(isScrollable, item);
 

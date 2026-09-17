@@ -1291,6 +1291,9 @@ static void setCommonJSONProperties(JSON::Object& jsonObject, const TextExtracti
     if (!item.title.isEmpty())
         jsonObject.setString("title"_s, aggregator.redactedText(item.title));
 
+    if (item.isDisabled)
+        jsonObject.setBoolean("disabled"_s, true);
+
     if (!item.eventListeners.isEmpty())
         jsonObject.setArray("events"_s, eventListenerTypesToJSONArray(item.eventListeners));
 
@@ -1455,8 +1458,6 @@ static void populateJSONForItem(JSON::Object& jsonObject, const TextExtraction::
                 jsonObject.setBoolean("required"_s, true);
             if (controlData.isReadonly)
                 jsonObject.setBoolean("readonly"_s, true);
-            if (controlData.isDisabled)
-                jsonObject.setBoolean("disabled"_s, true);
             if (controlData.isChecked)
                 jsonObject.setBoolean("checked"_s, true);
             if (controlData.editable.isSecure)
@@ -1542,6 +1543,11 @@ static TextExtractionParts partsForItem(const TextExtraction::Item& item, const 
 
     if (item.nodeIdentifier)
         parts.append(makeString("uid="_s, aggregator.stringForIdentifiers(item.frameIdentifier, *item.nodeIdentifier)));
+
+    if (item.isDisabled) {
+        parts.append("disabled"_s);
+        cachedParts.append("disabled"_s);
+    }
 
     if ((item.children.isEmpty() || includeRectForParentItem == IncludeRectForParentItem::Yes) && aggregator.includeRects() && !aggregator.useHTMLOutput()) {
         auto rect = makeString("["_s,
@@ -1912,9 +1918,6 @@ static void addPartsForItem(const TextExtraction::Item& item, std::optional<Node
 
                 if (controlData.isReadonly)
                     appendBoth("readonly"_s);
-
-                if (controlData.isDisabled)
-                    appendBoth("disabled"_s);
 
                 if (controlData.isChecked)
                     appendBoth("checked"_s);
