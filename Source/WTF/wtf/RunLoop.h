@@ -51,6 +51,8 @@
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/OptionCountedSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -411,6 +413,94 @@ private:
 #endif
 };
 
+#if USE(GLIB_EVENT_LOOP)
+
+// Activity observers (used to implement WebCore::RunLoopObserver)
+//
+// This must be defined here rather than in its own header: RunLoop refers to it
+// through Ref<>, and the Swift C++ interop importer requires the definition of a
+// reference counted type to be reachable from every module which mentions it.
+class ActivityObserver : public ThreadSafeRefCounted<ActivityObserver> {
+    WTF_MAKE_TZONE_ALLOCATED(ActivityObserver);
+public:
+    using Callback = std::function<void()>;
+
+    static Ref<ActivityObserver> create(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+    {
+        return adoptRef(*new ActivityObserver(WTF::move(runLoop), isRepeating, order, activities, WTF::move(callback)));
+    }
+
+    ~ActivityObserver()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void start()
+    {
+        if (ASSERT_ENABLED) {
+            Locker lock { m_callbackLock };
+            ASSERT(m_callback);
+        }
+        if (auto runLoop = m_runLoop.get())
+            runLoop->observeActivity(*this);
+    }
+
+    void stop()
+    {
+        {
+            Locker lock { m_callbackLock };
+            if (!m_callback)
+                return;
+
+            m_callback = nullptr;
+        }
+
+        if (auto runLoop = m_runLoop.get())
+            runLoop->unobserveActivity(*this);
+    }
+
+    uint8_t order() const { return m_order; }
+    OptionSet<RunLoop::Activity> activities() const { return m_activities; }
+
+    void notify()
+    {
+        Callback callback;
+        {
+            Locker lock { m_callbackLock };
+            if (!m_callback)
+                return;
+
+            callback = m_callback;
+        }
+
+        callback();
+
+        if (!m_isRepeating)
+            stop();
+    }
+
+private:
+    ActivityObserver(Ref<RunLoop>&& runLoop, bool isRepeating, uint8_t order, OptionSet<RunLoop::Activity> activities, Callback&& callback)
+        : m_runLoop(WTF::move(runLoop))
+        , m_isRepeating(isRepeating)
+        , m_order(order)
+        , m_activities(activities)
+        , m_callback(WTF::move(callback))
+    {
+        ASSERT(m_callback);
+    }
+
+private:
+    ThreadSafeWeakPtr<RunLoop> m_runLoop;
+    bool m_isRepeating { false };
+    uint8_t m_order { 0 };
+    OptionSet<RunLoop::Activity> m_activities;
+    mutable Lock m_callbackLock;
+    Callback m_callback WTF_GUARDED_BY_LOCK(m_callbackLock);
+};
+
+#endif // USE(GLIB_EVENT_LOOP)
+
 inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
 {
     RELEASE_ASSERT(runLoop.isCurrent());
@@ -424,3 +514,7 @@ using WTF::RunLoop;
 using WTF::RunLoopMode;
 using WTF::assertIsCurrent;
 using WTF::callOnRunLoop;
+
+#if USE(GLIB_EVENT_LOOP)
+using WTF::ActivityObserver;
+#endif
