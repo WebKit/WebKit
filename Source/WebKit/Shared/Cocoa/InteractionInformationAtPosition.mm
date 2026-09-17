@@ -82,6 +82,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool needsPointerTouchCompatibilityQuirk,
 #endif
     WebCore::FloatPoint&& adjustedPointForNodeRespondingToClickEvents,
+    std::optional<WebCore::IntPoint>&& automationAdjustedInteractionLocation,
     URL&& url,
     URL&& imageURL,
     URL&& modelURL,
@@ -155,6 +156,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , needsPointerTouchCompatibilityQuirk(needsPointerTouchCompatibilityQuirk)
 #endif
     , adjustedPointForNodeRespondingToClickEvents(WTF::move(adjustedPointForNodeRespondingToClickEvents))
+    , automationAdjustedInteractionLocation(WTF::move(automationAdjustedInteractionLocation))
     , url(WTF::move(url))
     , imageURL(WTF::move(imageURL))
     , modelURL(WTF::move(modelURL))

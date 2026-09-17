@@ -1226,6 +1226,63 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .bug("https://webkit.org/b/324408", "A mouse drag starting just off a thin range input slider track does not move it"),
+        arguments: ThinSliderDragStart.allCases
+    )
+    func mouseDragOverThinRangeInputChangesValue(dragStart: ThinSliderDragStart) async throws {
+        let html = """
+            <style>
+                input[type=range] {
+                    -webkit-appearance: none;
+                    border: none;
+                    background-color: transparent;
+                    display: block;
+                    margin: 0;
+                    width: 232px;
+                }
+                input[type=range]::-webkit-slider-runnable-track {
+                    background: #888;
+                    border: none;
+                    height: .12rem;
+                }
+                input[type=range]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    border: 1px solid #333;
+                    border-radius: 50%;
+                    background: #fff;
+                    width: 12px;
+                    height: 12px;
+                    margin-top: -.38rem;
+                }
+            </style>
+            <body style="margin: 0; width: 4000px; height: 4000px;">
+                <div id="slider-box" style="margin: 100px 10px 0; padding: 28px 0; width: 252px;">
+                    <input id="slider" type="range" min="-4" max="4" step="0.1" value="0">
+                </div>
+                <script>
+                    const slider = document.getElementById("slider");
+                    window.sliderValue = Number(slider.value);
+                    window.sliderEvents = [];
+                    slider.addEventListener("input", () => { window.sliderValue = Number(slider.value); });
+                    for (const type of ["mousedown", "mousemove", "mouseup"])
+                        slider.addEventListener(type, event => window.sliderEvents.push(event.type));
+                </script>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let track = try await screenBounds(ofElementWithID: "slider")
+
+        try await dragAcrossThinRangeInput(startingFrom: dragStart, track: track)
+
+        #expect(try await sliderValue() > 0)
+        #expect(try await sliderEvents().first == "mousedown")
+        #expect(try await settledScrollPosition() == .zero)
+    }
+
+    @Test(
         .bug("https://webkit.org/b/323383", "<model> element in orbit stage mode does not rotate on press drag"),
         arguments: [false, true]
     )
@@ -2162,6 +2219,44 @@ extension AppKitGesturesTests.Basic {
                 duration: .seconds(0.2),
                 pressAndWait: .seconds(0.2)
             )
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+    }
+
+    enum ThinSliderDragStart: Sendable, CaseIterable {
+        case onTrack
+
+        case justAbove
+
+        case justBelow
+
+        static let nearMiss: CGFloat = 6
+
+        static let fractionAcrossTrack: CGFloat = 0.8
+
+        func startY(forTrack track: CGRect) -> CGFloat {
+            switch self {
+            case .onTrack: track.midY
+            case .justAbove: track.minY - Self.nearMiss
+            case .justBelow: track.maxY + Self.nearMiss
+            }
+        }
+    }
+
+    private func dragAcrossThinRangeInput(
+        startingFrom start: ThinSliderDragStart,
+        track: CGRect
+    ) async throws {
+        let startPoint = CGPoint(
+            x: track.minX + track.width * ThinSliderDragStart.fractionAcrossTrack,
+            y: start.startY(forTrack: track)
+        )
+        let endPoint = CGPoint(x: track.maxX, y: startPoint.y)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: startPoint, end: endPoint, duration: .seconds(0.2), release: true)
         }
 
         await page.waitForPendingMouseEvents()

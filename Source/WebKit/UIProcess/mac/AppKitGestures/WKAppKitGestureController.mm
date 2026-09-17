@@ -82,6 +82,10 @@
 #define WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(pageID, fmt, ...) RELEASE_LOG_DEBUG(ViewGestures, "[pageProxyID=%llu] %s: " fmt, pageID, std::source_location::current().function_name(), ##__VA_ARGS__)
 #define WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_ERROR(pageID, fmt, ...) RELEASE_LOG_ERROR(ViewGestures, "[pageProxyID=%llu] %s: " fmt, pageID, std::source_location::current().function_name(), ##__VA_ARGS__)
 
+static constexpr int sharedPositionInformationToleranceRadius = 15;
+static constexpr int panPositionInformationToleranceRadius = sharedPositionInformationToleranceRadius;
+static constexpr int mouseDownPositionInformationToleranceRadius = sharedPositionInformationToleranceRadius;
+
 static WebCore::FloatSize translationInView(NSPanGestureRecognizer *gesture, WKWebView *view)
 {
     auto translation = WebCore::toFloatSize(WebCore::FloatPoint { [gesture translationInView:view] });
@@ -833,7 +837,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 break;
 
             RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown
-                location:[mouseTrackingGesture startLocationInWindow]
+                location:[self _adjustedMouseDownLocationInWindow:[mouseTrackingGesture startLocationInWindow]]
                 modifierFlags:modifierFlags
                 timestamp:timestamp
                 windowNumber:windowNumber
@@ -929,7 +933,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
 
-    WebKit::InteractionInformationRequest request { WebCore::IntPoint { [gesture locationInView:webView.get()] } };
+    auto request = [self _positionInformationRequestAtLocation:[gesture locationInView:webView.get()]];
     request.includeImageData = true;
 
     // The token keeps the image-analysis deferral open until the async analysis chain finishes (or is
@@ -1053,7 +1057,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
 
-    WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInView } };
+    auto request = [self _positionInformationRequestAtLocation:locationInView];
     _positionInformationManager->doAfterUpdate(request, [weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const auto& optionalInfo) {
         if (!optionalInfo)
             return;
@@ -1171,7 +1175,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
-    WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
+    auto request = [self _positionInformationRequestAtLocation:locationInViewCoordinates];
 
     const auto& information = _positionInformationManager->currentInformation();
 
@@ -1190,9 +1194,43 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return shouldBegin;
 }
 
-- (BOOL)_positionInformationRequestIsValidAtLocation:(NSPoint)locationInViewCoordinates withRadius:(NSInteger)radius
+- (WebKit::InteractionInformationRequest)_positionInformationRequestAtLocation:(NSPoint)locationInViewCoordinates
 {
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
+    request.inputSource = WebKit::WebEventInputSource::Automation;
+    return request;
+}
+
+- (NSPoint)_adjustedMouseDownLocationInWindow:(NSPoint)locationInWindow
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return locationInWindow;
+
+    auto adjustedLocationInView = _positionInformationManager->currentInformation().automationAdjustedInteractionLocation;
+    if (!adjustedLocationInView)
+        return locationInWindow;
+
+    auto locationInView = [webView convertPoint:locationInWindow fromView:nil];
+    if (![self _positionInformationRequestIsValidAtLocation:locationInView withRadius:mouseDownPositionInformationToleranceRadius])
+        return locationInWindow;
+
+    NSPoint adjustedLocationInViewCoordinates = *adjustedLocationInView;
+
+    static constexpr int maximumInteractionAdjustmentDistance = 48;
+    if (std::abs(adjustedLocationInViewCoordinates.x - locationInView.x) > maximumInteractionAdjustmentDistance
+        || std::abs(adjustedLocationInViewCoordinates.y - locationInView.y) > maximumInteractionAdjustmentDistance)
+        return locationInWindow;
+
+    if (!NSPointInRect(adjustedLocationInViewCoordinates, [webView bounds]))
+        return locationInWindow;
+
+    return [webView convertPoint:adjustedLocationInViewCoordinates toView:nil];
+}
+
+- (BOOL)_positionInformationRequestIsValidAtLocation:(NSPoint)locationInViewCoordinates withRadius:(NSInteger)radius
+{
+    auto request = [self _positionInformationRequestAtLocation:locationInViewCoordinates];
     return _positionInformationManager->currentIsApproximatelyValid(request, radius);
 }
 
@@ -1238,7 +1276,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!webView)
         return NO;
 
-    static constexpr int panPositionInformationToleranceRadius = 15;
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius];
 
     const auto& information = _positionInformationManager->currentInformation();

@@ -110,6 +110,7 @@ struct InteractionInformationAtPosition {
         bool needsPointerTouchCompatibilityQuirk,
 #endif
         WebCore::FloatPoint&& adjustedPointForNodeRespondingToClickEvents,
+        std::optional<WebCore::IntPoint>&& automationAdjustedInteractionLocation,
         URL&&,
         URL&& imageURL,
         URL&& modelURL,
@@ -192,6 +193,9 @@ struct InteractionInformationAtPosition {
     bool needsPointerTouchCompatibilityQuirk { false };
 #endif
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
+
+    std::optional<WebCore::IntPoint> automationAdjustedInteractionLocation;
+
     URL url;
     URL imageURL;
     URL modelURL;
