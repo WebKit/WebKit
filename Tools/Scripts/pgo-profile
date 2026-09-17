@@ -5,14 +5,13 @@ import logging
 import os
 import subprocess
 
-from webkitpy.llvm_profile_utils import (LLVMProfileData, simplify_profile_weights,
-                                         merge_raw_profiles_in_directory_by_prefixes)
+from webkitpy.llvm_profile_utils import (LLVMProfileData, merge_raw_profiles_in_directory,
+                                         resolve_profiled_frameworks, weighted_profiles_for_framework)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger()
 
 
-PROFILED_DYLIBS = ['JavaScriptCore', 'WebCore', 'WebKit']
 BENCHMARK_GROUP_WEIGHTS = [('speedometer3', 0.6), ('jetstream3', 0.2), ('motionmark', 0.2)]
 
 
@@ -77,7 +76,8 @@ def merge_parser(subparsers, parent_parser):
 
 def merge(args):
     directory = assert_directory(args.directory)
-    merge_raw_profiles_in_directory_by_prefixes(PROFILED_DYLIBS, directory)
+    frameworks = resolve_profiled_frameworks([directory], suffix='.profraw')
+    merge_raw_profiles_in_directory(frameworks, directory)
 
 
 def combine_parser(subparsers, parent_parser):
@@ -97,30 +97,28 @@ def combine(args):
 
     out = assert_directory(args.output)
     args = vars(args)
-    profile_weight_pairs = []
+    directory_weight_pairs = []
 
     for i in range(0, len(BENCHMARK_GROUP_WEIGHTS)):
         group, weight = BENCHMARK_GROUP_WEIGHTS[i]
         if args[group]:
             profile_group = assert_directory(args[group])
-            profile_weight_pairs.append((profile_group, weight))
+            directory_weight_pairs.append((profile_group, weight))
 
-    assert len(profile_weight_pairs) > 0, 'Must specify at least one group.'
+    assert len(directory_weight_pairs) > 0, 'Must specify at least one group.'
 
-    profile_weight_pairs = simplify_profile_weights(profile_weight_pairs)
-    logger.info(f'Simplified group weights: {profile_weight_pairs}')
+    frameworks = resolve_profiled_frameworks([directory for directory, _ in directory_weight_pairs])
 
-    for lib in PROFILED_DYLIBS:
-        logger.info(f'Merging {lib}')
-        weighted_profiles = [(os.path.join(path, f'{lib}.profdata'), weight)
-                             for path, weight in profile_weight_pairs]
+    for framework in frameworks:
+        weighted_profiles = weighted_profiles_for_framework(framework, directory_weight_pairs)
 
-        output_file = os.path.join(out, f'{lib}.profdata')
+        logger.info(f'Merging {framework.name} with simplified weights: {weighted_profiles}')
+        output_file = os.path.join(out, f'{framework.name}.profdata')
         merge_process = LLVMProfileData.merge(output_file, weighted_profiles=weighted_profiles)
         logger.info(f'stdout: {merge_process.stdout}')
         logger.info(f'stderr: {merge_process.stderr}')
         merge_process.check_returncode()
-        logger.info(f'{lib} is successfully merged')
+        logger.info(f'{framework.name} is successfully merged')
 
 
 def compress_parser(subparsers, parent_parser):
@@ -131,9 +129,11 @@ def compress_parser(subparsers, parent_parser):
     parser.set_defaults(func=compress)
     return parser
 
+
 def decompress_parser(subparsers, parent_parser):
     parser = subparsers.add_parser('decompress', parents=[parent_parser],
-                                   help='Decompress *.profdata files so that they can be checked in.')
+                                   help='Decompress checked-in *.profdata.compressed files back into '
+                                        'the *.profdata files we can build with.')
     parser.add_argument('--input', help='Path to the directory containing the input *.profdata.compressed files.')
     parser.add_argument('--output', help='Path to the directory where the output will be placed.')
     parser.set_defaults(func=decompress)
@@ -143,32 +143,29 @@ def decompress_parser(subparsers, parent_parser):
 def compress(args):
     out = assert_directory(args.output)
     input_directory = assert_directory(args.input)
+    frameworks = resolve_profiled_frameworks([input_directory])
 
-    for lib in PROFILED_DYLIBS:
-        logger.info(f'Compressing {lib}')
-        input_file = os.path.join(input_directory, f'{lib}.profdata')
-        output_file = os.path.join(out, f'{lib}.profdata.compressed')
+    for framework in frameworks:
+        logger.info(f'Compressing {framework.name}')
+        input_file = os.path.join(input_directory, f'{framework.name}.profdata')
+        output_file = os.path.join(out, f'{framework.name}.profdata.compressed')
 
-        compress_process = LLVMProfileData.compress(input_file, output_file)
-        logger.info(f'stdout: {compress_process.stdout}')
-        logger.info(f'stderr: {compress_process.stderr}')
-        compress_process.check_returncode()
-        logger.info(f'{lib} is successfully compressed')
+        LLVMProfileData.compress(input_file, output_file)
+        logger.info(f'{framework.name} is successfully compressed')
+
 
 def decompress(args):
     out = assert_directory(args.output)
     input_directory = assert_directory(args.input)
+    frameworks = resolve_profiled_frameworks([input_directory], suffix='.profdata.compressed')
 
-    for lib in PROFILED_DYLIBS:
-        logger.info(f'Decompressing {lib}')
-        input_file = os.path.join(input_directory, f'{lib}.profdata.compressed')
-        output_file = os.path.join(out, f'{lib}.profdata')
+    for framework in frameworks:
+        logger.info(f'Decompressing {framework.name}')
+        input_file = os.path.join(input_directory, f'{framework.name}.profdata.compressed')
+        output_file = os.path.join(out, f'{framework.name}.profdata')
 
-        compress_process = LLVMProfileData.decompress(input_file, output_file)
-        logger.info(f'stdout: {compress_process.stdout}')
-        logger.info(f'stderr: {compress_process.stderr}')
-        compress_process.check_returncode()
-        logger.info(f'{lib} is successfully compressed')
+        LLVMProfileData.decompress(input_file, output_file)
+        logger.info(f'{framework.name} is successfully decompressed')
 
 
 if __name__ == '__main__':
@@ -188,5 +185,8 @@ if __name__ == '__main__':
     try:
         args.func(args)
     except subprocess.CalledProcessError as e:
-        logger.error(e.stdout)
+        if e.stdout:
+            logger.error(e.stdout)
+        if e.stderr:
+            logger.error(e.stderr)
         raise e
