@@ -98,13 +98,10 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return false;
 #endif
 
-    if (name == "notifications"_s) {
-        // FIXME: <rdar://problem/57202210> Add support for browser.notifications.
-        // Notifications are currently only available in test mode as an empty stub.
-        if (!extensionContext->inTestingMode())
-            return false;
-        goto finish;
-    }
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+    if (name == "notifications"_s)
+        return (extensionContext->inTestingMode() || (page && page->corePage() && page->corePage()->settings().webExtensionNotificationsEnabled())) && extensionContext->hasPermission("notifications"_s);
+#endif
 
     if (name == "pageAction"_s)
         return !extensionContext->supportsManifestVersion(3) && doesDictionaryExist(extensionContext->manifest(), "page_action"_s);
@@ -125,7 +122,6 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
     if (name == "dom"_s || name == "extension"_s || name == "i18n"_s || name == "permissions"_s || name == "runtime"_s || name == "tabs"_s || name == "windows"_s)
         return true;
 
-finish:
     // The rest of the property names marked dynamic in WebExtensionAPINamespace.idl match permission names.
     // Check for the permission to determine if the property is allowed to be accessed.
     return extensionContext->hasPermission(name);

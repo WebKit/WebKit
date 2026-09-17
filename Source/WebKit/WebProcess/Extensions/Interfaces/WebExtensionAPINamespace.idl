@@ -61,7 +61,7 @@
 
     [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPIMenus menus;
 
-    [MainWorldOnly, Dynamic, Platform=COCOA] readonly attribute WebExtensionAPINotifications notifications;
+    [MainWorldOnly, Dynamic, Platform=COCOA, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] readonly attribute WebExtensionAPINotifications notifications;
 
     [MainWorldOnly, Dynamic, Platform=COCOA, Conditional=WK_WEB_EXTENSIONS_OFFSCREEN] readonly attribute WebExtensionAPIOffscreen offscreen;
 

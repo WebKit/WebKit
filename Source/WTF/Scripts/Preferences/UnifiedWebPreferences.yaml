@@ -7015,6 +7015,15 @@ WebExtensionBookmarksEnabled:
   condition: ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
   defaultValue: false
 
+WebExtensionNotificationsEnabled:
+  type: bool
+  status: testable
+  category: extensions
+  humanReadableName: "WebExtension Notifications API"
+  humanReadableDescription: "Enable support for WebExtensions using the Notifications API"
+  condition: ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+  defaultValue: false
+
 WebExtensionOffscreenEnabled:
   type: bool
   status: stable
