@@ -2440,6 +2440,12 @@ void WebPage::close(CompletionHandler<void()>&& completionHandler)
     completionHandler();
 }
 
+void WebPage::dispatchPendingNavigateEventForProcessSwap(std::optional<WebCore::FrameIdentifier> frameID, Markable<PolicyListenerIdentifier> policyListenerID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
+    completionHandler(!webFrame || !policyListenerID || webFrame->dispatchPendingNavigateEventAfterNavigationPolicy(*policyListenerID));
+}
+
 void WebPage::tryClose(CompletionHandler<void(bool)>&& completionHandler)
 {
     RefPtr coreFrame = m_mainFrame->coreLocalFrame();

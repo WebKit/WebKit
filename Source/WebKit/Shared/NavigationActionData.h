@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FrameInfoData.h"
+#include "PolicyListenerIdentifier.h"
 #include "WebHitTestResultData.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyIdentifier.h"
@@ -93,6 +94,7 @@ struct NavigationActionData {
     WebCore::ResourceRequest request;
     String invalidURLString;
     std::optional<WebCore::NavigationRequester> requester;
+    Markable<PolicyListenerIdentifier> pendingNavigateEventPolicyListenerID;
 
     // `originalRequest` is sent as nullopt when it equals `request`; resolve it here.
     const WebCore::ResourceRequest& originalRequestOrFallback() const { return originalRequest ? *originalRequest : request; }

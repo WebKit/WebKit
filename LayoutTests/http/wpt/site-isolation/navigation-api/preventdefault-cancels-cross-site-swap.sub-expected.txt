@@ -1,0 +1,3 @@
+
+PASS preventDefault() cancels a cross-site process-swapping main frame navigation (Site Isolation)
+

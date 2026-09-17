@@ -162,6 +162,7 @@ public:
     PolicyListenerIdentifier setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, PolicyCheckKind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument = { }, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader = { });
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(PolicyListenerIdentifier, PolicyDecision&&);
+    bool dispatchPendingNavigateEventAfterNavigationPolicy(PolicyListenerIdentifier);
 
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
