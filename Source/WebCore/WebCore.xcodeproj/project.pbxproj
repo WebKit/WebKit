@@ -2200,9 +2200,6 @@
 		517139061BF64DEC000D5F01 /* MemoryObjectStoreCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */; };
 		517139081BF64DEF000D5F01 /* MemoryCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 517139021BF64DE3000D5F01 /* MemoryCursor.h */; };
 		51714EA81CF4E4B1004723C4 /* IDBActiveDOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EA91CF65899004723C4 /* GCObservation.cpp */; };
-		51714EAD1CF65951004723C4 /* GCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAA1CF65899004723C4 /* GCObservation.h */; };
-		51714EB11CF665CE004723C4 /* JSGCObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 51714EAF1CF6654A004723C4 /* JSGCObservation.h */; };
 		51741D0F0B07259A00ED442C /* BackForwardClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0B0B07259A00ED442C /* BackForwardClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51741D110B07259A00ED442C /* HistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51741D0D0B07259A00ED442C /* HistoryItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5174E20810A1F44F00F95E6F /* PopStateEvent.h */; };
@@ -6588,7 +6585,6 @@
 		DE5F860E1FA2386B006DB63A /* UnifiedSource479.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85CF1FA23850006DB63A /* UnifiedSource479.cpp */; };
 		DE5F860F1FA2386B006DB63A /* UnifiedSource480.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DE5F85D31FA23859006DB63A /* UnifiedSource480.cpp */; };
 		DE5F86111FA239DA006DB63A /* InternalSettingsGenerated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */; settings = {COMPILER_FLAGS = "-fno-profile-instr-generate -fno-coverage-mapping"; }; };
-		DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
 		DE5F861D1FA2815B006DB63A /* WebAccessibilityObjectWrapperMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */; };
 		DE5F861E1FA281FD006DB63A /* WebAccessibilityObjectWrapperBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm */; };
 		DE5F86501FA2AF24006DB63A /* UnifiedSource51-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F86361FA2AF04006DB63A /* UnifiedSource51-nonARC.mm */; };
@@ -12873,11 +12869,6 @@
 		517139031BF64DE3000D5F01 /* MemoryObjectStoreCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryObjectStoreCursor.cpp; sourceTree = "<group>"; };
 		517139041BF64DE3000D5F01 /* MemoryObjectStoreCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryObjectStoreCursor.h; sourceTree = "<group>"; };
 		51714EA71CF4DE87004723C4 /* IDBActiveDOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBActiveDOMObject.h; sourceTree = "<group>"; };
-		51714EA91CF65899004723C4 /* GCObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCObservation.cpp; sourceTree = "<group>"; };
-		51714EAA1CF65899004723C4 /* GCObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCObservation.h; sourceTree = "<group>"; };
-		51714EAB1CF65899004723C4 /* GCObservation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GCObservation.idl; sourceTree = "<group>"; };
-		51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGCObservation.cpp; sourceTree = "<group>"; };
-		51714EAF1CF6654A004723C4 /* JSGCObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGCObservation.h; sourceTree = "<group>"; };
 		51715FE824CD05DD002C97E6 /* GamepadConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GamepadConstants.cpp; sourceTree = "<group>"; };
 		51715FE924CD05DD002C97E6 /* GamepadConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GamepadConstants.h; sourceTree = "<group>"; };
 		5171A0752A1721330049390C /* BufferedChangeEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BufferedChangeEvent.h; sourceTree = "<group>"; };
@@ -27675,9 +27666,6 @@
 				E18D83E6243F71D1009247D6 /* FakeXRRigidTransformInit.idl */,
 				E18D83DF243F71CD009247D6 /* FakeXRViewInit.h */,
 				E18D83E2243F71CF009247D6 /* FakeXRViewInit.idl */,
-				51714EA91CF65899004723C4 /* GCObservation.cpp */,
-				51714EAA1CF65899004723C4 /* GCObservation.h */,
-				51714EAB1CF65899004723C4 /* GCObservation.idl */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
 				417DA4CE13734326007C57FB /* Internals.h */,
 				41813F9113818AD60057AAA4 /* Internals.idl */,
@@ -27784,8 +27772,6 @@
 				52A0BE6527C227E00046611E /* JSFakeXRJointStateInit.cpp */,
 				5273CCAE2564576D00850007 /* JSFakeXRRigidTransformInit.cpp */,
 				5273CCAF2564576E00850007 /* JSFakeXRViewInit.cpp */,
-				51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */,
-				51714EAF1CF6654A004723C4 /* JSGCObservation.h */,
 				417DA71B13735DFA007C57FB /* JSInternals.cpp */,
 				417DA71C13735DFA007C57FB /* JSInternals.h */,
 				A7B4EA7814C9348400C8F5BF /* JSInternalSettings.cpp */,
@@ -44306,12 +44292,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F44423D529FAC55000124DB5 /* CocoaColorSerialization.h in Headers */,
-				51714EAD1CF65951004723C4 /* GCObservation.h in Headers */,
 				417DA6DA13734E6E007C57FB /* Internals.h in Headers */,
 				A7BF7EE014C9175A0014489D /* InternalSettings.h in Headers */,
 				53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */,
 				4136EC0D23838A47000ADBCE /* InternalsSetLike.h in Headers */,
-				51714EB11CF665CE004723C4 /* JSGCObservation.h in Headers */,
 				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
 				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
@@ -49351,6 +49335,7 @@
 				BC63ACAE2F04A5A6007B62C4 /* StyleCounterReset.h in Headers */,
 				BC63ACAD2F04A5A6007B62C4 /* StyleCounterSet.h in Headers */,
 				BC966B422E280AAB0028A7AF /* StyleCounterStyle.h in Headers */,
+				EEFD8C093057F92800800C98 /* StyleCurrentAccentColor.h in Headers */,
 				BCF0BCEC2BEE8ED000F42CCD /* StyleCurrentColor.h in Headers */,
 				BC2272AD0E82E8F300E7F975 /* StyleCursor.h in Headers */,
 				3084F8532F64404900EC9C6E /* StyleCustomIdent.h in Headers */,
@@ -50456,7 +50441,6 @@
 				1CFAE4212A4D8A140004AE37 /* WebGPUImageCopyBuffer.h in Headers */,
 				1CFAE3FC2A4D8A140004AE37 /* WebGPUImageCopyExternalImage.h in Headers */,
 				1CFAE3DF2A4D8A140004AE37 /* WebGPUImageCopyTexture.h in Headers */,
-				EEFD8C093057F92800800C98 /* StyleCurrentAccentColor.h in Headers */,
 				1CFAE3E12A4D8A140004AE37 /* WebGPUImageCopyTextureTagged.h in Headers */,
 				1CFAE4122A4D8A140004AE37 /* WebGPUImageDataLayout.h in Headers */,
 				1CFAE3CC2A4D8A140004AE37 /* WebGPUIndexFormat.h in Headers */,
@@ -51241,7 +51225,6 @@
 			files = (
 				F44423D929FACF3B00124DB5 /* CocoaColorSerialization.mm in Sources */,
 				CDFD83462DC04BC600CE19C4 /* EventTargetForTesting.cpp in Sources */,
-				51714EAC1CF65951004723C4 /* GCObservation.cpp in Sources */,
 				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
 				E179F0DA1B9774FE00ED0A27 /* Internals.mm in Sources */,
 				A7BF7EDF14C9175A0014489D /* InternalSettings.cpp in Sources */,
@@ -51254,7 +51237,6 @@
 				52A0BE6627C227E10046611E /* JSFakeXRJointStateInit.cpp in Sources */,
 				5273CCB32564576F00850007 /* JSFakeXRRigidTransformInit.cpp in Sources */,
 				5273CCB42564576F00850007 /* JSFakeXRViewInit.cpp in Sources */,
-				DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */,
 				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
 				A740B5A714C935AF00A77FA4 /* JSInternalSettings.cpp in Sources */,
 				53ED3FDE167A88E7006762E6 /* JSInternalSettingsGenerated.cpp in Sources */,

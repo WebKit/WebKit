@@ -1,9 +1,12 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/gc.js');
     importScripts('shared.js');
 }
 
 description("Verify that that cursors weakly hold request, and work if request is GC'd");
+
+const cursorCount = 1000;
 
 indexedDBTest(prepareDatabase, onOpen);
 
@@ -28,13 +31,27 @@ function checkCursor(cursor, target, message)
         testFailed(message + ": cursor.extra is " + cursor.extra + ", should be " + target.extra);
 }
 
-function isAnyCollected(observers)
+var checkedPendingRequests = false;
+
+function continuedCursorSuccess(event)
 {
-    for (let observer of observers) {
-        if (observer.wasCollected)
-            return true;
+    // A WeakRef keeps its target alive for the rest of the turn it was created in, so this check
+    // cannot run in the turn that created cursorRefs. Here the other requests are still pending.
+    if (!checkedPendingRequests) {
+        checkedPendingRequests = true;
+        debug("Ensure requests are not released if they are pending.");
+        evalAndLog("gc()");
+        shouldBeFalse("anyCollected(cursorRefs)");
+        shouldBeFalse("anyCollected(cursorRequestRefs)");
     }
-    return false;
+
+    cursor = event.target.result;
+    var target = { key: "key2", value: "value2", extra: "456" };
+    checkCursor(cursor, target, "Examine cursor after continue()");
+    if (event.target.extra != "123") {
+        testFailed("Examine cursor after continue(): event.target.extra is " + event.target.extra + ", should be 123");
+    }
+    cursors.push(cursor);
 }
 
 function onOpen(evt)
@@ -44,13 +61,13 @@ function onOpen(evt)
     evalAndLog("tx = db.transaction('store', 'readonly')");
     evalAndLog("store = tx.objectStore('store')");
 
-    debug("Create 1000 cursorRequests and check their results in otherRequestSuccess().");
+    debug("Create " + cursorCount + " cursorRequests and check their results in otherRequestSuccess().");
     cursorRequests = [];
-    cursorRequestObservers = [];
-    for (let i = 0; i < 1000; ++i) {
+    cursorRequestRefs = [];
+    for (let i = 0; i < cursorCount; ++i) {
         cursorRequest = store.openCursor();
         cursorRequests.push(cursorRequest);
-        cursorRequestObservers.push(internals.observeGC(cursorRequest));
+        cursorRequestRefs.push(new WeakRef(cursorRequest));
         cursorRequest = null;
     }
 
@@ -63,7 +80,7 @@ function onOpen(evt)
         evalAndLog("gc()");
 
         cursors = [];
-        cursorObservers = [];
+        cursorRefs = [];
         var target = { key:"key1", value:"value1" };
         for (var i = 0; i < cursorRequests.length; i++) {
             cursor = cursorRequests[i].result;
@@ -71,36 +88,24 @@ function onOpen(evt)
             cursorRequests[i].extra = "123";
             cursor.extra = "456";
             cursors.push(cursor);
-            cursorObservers.push(internals.observeGC(cursor));
+            cursorRefs.push(new WeakRef(cursor));
             cursor = null;
 
             // Assign a new handler to inspect the request and cursor indirectly.
-            cursorRequests[i].onsuccess = (event)=>{
-                cursor = event.target.result;
-                var target = { key: "key2", value:"value2", extra:"456" };
-                checkCursor(cursor, target, "Examine cursor after continue()");
-                if (event.target.extra != "123") {
-                    testFailed("Examine cursor after continue(): event.target.extra is " + event.target.extra + ", should be 123");
-                }
-                cursors.push(cursor);
-            };
+            cursorRequests[i].onsuccess = continuedCursorSuccess;
         }
 
         debug("Ensure requests are not released if cursors are still around.");
-        evalAndLog("cursorRequests = null");
+        nukeArray(cursorRequests);
         evalAndLog("gc()");
-        shouldBeFalse("isAnyCollected(cursorRequestObservers)");
+        shouldBeFalse("anyCollected(cursorRequestRefs)");
 
         for (var i = 0; i < cursors.length; i++) {
             cursors[i].continue();
         }
 
-        debug("Ensure requests are not released if they are pending.");
-        evalAndLog("cursors = null"); 
-        evalAndLog("gc()");
-        shouldBeFalse("isAnyCollected(cursorObservers)");
-        shouldBeFalse("isAnyCollected(cursorRequestObservers)");
-        cursors = []; 
+        // The pending-request check happens in the first continuedCursorSuccess().
+        nukeArray(cursors);
 
         evalAndLog("finalRequest = store.get(0)");
         finalRequest.onsuccess = function finalRequestSuccess(evt) {
@@ -111,17 +116,16 @@ function onOpen(evt)
     tx.oncomplete = onTransactionComplete;
 }
 
-function onTransactionComplete(evt)
+async function onTransactionComplete(evt)
 {
     preamble(evt);
     debug("Ensure requests and cursors are released after transaction commits.");
 
     shouldBeNonNull("cursors");
-    shouldBe("cursors.length", "1000");
-    evalAndLog("cursors = null");
-    evalAndLog("gc()");
-    shouldBeTrue("isAnyCollected(cursorObservers)");
-    shouldBeTrue("isAnyCollected(cursorRequestObservers)");
+    shouldBe("cursors.length", "cursorCount");
+    nukeArray(cursors);
+    collected = await gcUntil(() => anyCollected(cursorRefs) && anyCollected(cursorRequestRefs));
+    shouldBeTrue("collected");
 
     finishJSTest();
 }

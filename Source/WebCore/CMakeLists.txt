@@ -2597,7 +2597,6 @@ set(WebCoreTestSupport_IDL_INCLUDES
 )
 
 set(WebCoreTestSupport_IDL_FILES
-    testing/GCObservation.idl
     testing/InternalSettings.idl
     testing/Internals.idl
     testing/InternalsMapLike.idl
@@ -2619,7 +2618,6 @@ set(WebCoreTestSupport_IDL_FILES
 list(APPEND WebCoreTestSupport_SOURCES
     bindings/js/JSMallocStatisticsCustom.cpp
     testing/EventTargetForTesting.cpp
-    testing/GCObservation.cpp
     testing/InternalSettings.cpp
     testing/Internals.cpp
     testing/InternalsMapLike.cpp

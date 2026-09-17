@@ -1239,8 +1239,6 @@ enum ContentsFormat {
 
     boolean hasHistoryActionActivation();
 
-    GCObservation? observeGC(any observed);
-
     undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);
     undefined setBaseWritingDirection(BaseWritingDirection direction);
 

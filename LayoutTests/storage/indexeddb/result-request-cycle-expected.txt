@@ -16,24 +16,23 @@ onOpen():
 db = event.target.result
 tx = db.transaction('store')
 store = tx.objectStore('store')
-getRequest = store.get('key1')
+Issue 100 get requests for 'key1'.
 getRequest2 = store.get('key2')
+getRequest3 = store.get('key2')
 
 ():
 Verify that the request's result can be accessed lazily:
 gc()
-result = getRequest.result
-PASS result.value is "value1"
-result.source = getRequest
+PASS results[0].value is "value1"
 PASS getRequest2.result.value is "value2"
-getRequest = null
+Ensure requests are not released while their results are referenced.
 gc()
-PASS getRequestObervation.wasCollected is false
-PASS resultObservation.wasCollected is false
-result = null
+PASS anyCollected(requestRefs) is false
+PASS anyCollected(resultRefs) is false
+Ensure requests and results are released once the results are dropped.
 gc()
-PASS getRequestObervation.wasCollected is true
-PASS resultObservation.wasCollected is true
+PASS anyCollected(requestRefs) is true
+PASS anyCollected(resultRefs) is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

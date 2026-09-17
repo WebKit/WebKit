@@ -91,7 +91,6 @@ class FetchRequest;
 class FetchResponse;
 class FileSystemHandle;
 class File;
-class GCObservation;
 class HTMLAnchorElement;
 class HTMLAttachmentElement;
 class HTMLCanvasElement;
@@ -1063,8 +1062,6 @@ public:
     bool NODELETE hasHistoryActionActivation();
 
     bool consumeHistoryActionUserActivation();
-
-    RefPtr<GCObservation> observeGC(JSC::JSValue);
 
     enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
     void setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection);

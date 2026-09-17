@@ -2133,7 +2133,6 @@ $(PROJECT_DIR)/testing/FakeXRJointStateInit.idl
 $(PROJECT_DIR)/testing/FakeXRRigidTransformInit.idl
 $(PROJECT_DIR)/testing/FakeXRViewInit.idl
 $(PROJECT_DIR)/testing/FakeXRWorldInit.idl
-$(PROJECT_DIR)/testing/GCObservation.idl
 $(PROJECT_DIR)/testing/InternalSettings.idl
 $(PROJECT_DIR)/testing/Internals.idl
 $(PROJECT_DIR)/testing/InternalsMapLike.idl

@@ -31,6 +31,33 @@ function nukeArray(array)
     array.length = 0;
 }
 
+function turnEventLoop()
+{
+    return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+function anyCollected(weakRefs)
+{
+    return weakRefs.some((weakRef) => !weakRef.deref());
+}
+
+// A WeakRef keeps its target alive until the end of the turn in which the WeakRef was created or
+// last dereferenced, so turn the event loop before collecting: a gc() in the same turn as the
+// previous check would find everything that check read still pinned, and clear nothing.
+// Because the GC is conservative, predicate should ask whether *any* of many objects was collected
+// rather than whether one particular object was; see nukeArray above.
+async function gcUntil(predicate, options = {})
+{
+    let gcCount = options.gcCount ?? 20;
+    for (let counter = 0; counter < gcCount; ++counter) {
+        await turnEventLoop();
+        gc();
+        if (predicate())
+            return true;
+    }
+    return false;
+}
+
 async function testDocumentIsNotLeaked(init, options = {})
 {
     let gcCount = options.gcCount ?? 50;

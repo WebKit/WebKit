@@ -1,9 +1,12 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/gc.js');
     importScripts('shared.js');
 }
 
 description("Verify that IDBRequest is not leaked when there is a reference cycle for result attribute");
+
+const requestCount = 100;
 
 indexedDBTest(prepareDatabase, onOpen);
 
@@ -23,33 +26,51 @@ function onOpen(evt)
     evalAndLog("tx = db.transaction('store')");
     evalAndLog("store = tx.objectStore('store')");
 
-    evalAndLog("getRequest = store.get('key1')");
-    getRequest.onsuccess = (evt) => {
+    debug("Issue " + requestCount + " get requests for 'key1'.");
+    getRequests = [];
+    for (let i = 0; i < requestCount; ++i)
+        getRequests.push(store.get('key1'));
+
+    results = [];
+    requestRefs = [];
+    resultRefs = [];
+
+    // A WeakRef keeps its target alive for the rest of the turn it was created in, so the
+    // references are taken here and every collection check happens in a later event handler.
+    getRequests[requestCount - 1].onsuccess = (evt) => {
         preamble(evt);
 
         debug("Verify that the request's result can be accessed lazily:");
         evalAndLog("gc()");
 
-        evalAndLog("result = getRequest.result");
-        shouldBeEqualToString("result.value", "value1");
-        evalAndLog("result.source = getRequest");
+        for (let i = 0; i < requestCount; ++i) {
+            let result = getRequests[i].result;
+            result.source = getRequests[i];
+            results.push(result);
+            requestRefs.push(new WeakRef(getRequests[i]));
+            resultRefs.push(new WeakRef(result));
+        }
+        shouldBeEqualToString("results[0].value", "value1");
     }
 
     evalAndLog("getRequest2 = store.get('key2')");
-    getRequest2.onsuccess = (evt) => {
+    getRequest2.onsuccess = () => {
         shouldBeEqualToString("getRequest2.result.value", "value2");
 
-        getRequestObervation = internals.observeGC(getRequest);
-        resultObservation = internals.observeGC(result);
-        evalAndLog("getRequest = null");
+        debug("Ensure requests are not released while their results are referenced.");
+        nukeArray(getRequests);
         evalAndLog("gc()");
-        shouldBeFalse("getRequestObervation.wasCollected");
-        shouldBeFalse("resultObservation.wasCollected");
+        shouldBeFalse("anyCollected(requestRefs)");
+        shouldBeFalse("anyCollected(resultRefs)");
+    }
 
-        evalAndLog("result = null");
+    evalAndLog("getRequest3 = store.get('key2')");
+    getRequest3.onsuccess = () => {
+        debug("Ensure requests and results are released once the results are dropped.");
+        nukeArray(results);
         evalAndLog("gc()");
-        shouldBeTrue("getRequestObervation.wasCollected");
-        shouldBeTrue("resultObservation.wasCollected");
+        shouldBeTrue("anyCollected(requestRefs)");
+        shouldBeTrue("anyCollected(resultRefs)");
     }
 
     tx.oncomplete = finishJSTest;

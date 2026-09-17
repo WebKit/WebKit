@@ -7,8 +7,8 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-PASS cursorObservers.length is 1000
-PASS anyCollected is true
+PASS cursorRefs.length is cursorCount
+PASS collected is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

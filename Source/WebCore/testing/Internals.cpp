@@ -108,7 +108,6 @@
 #include "FrameMemoryMonitor.h"
 #include "FrameSelection.h"
 #include "FrameSnapshotting.h"
-#include "GCObservation.h"
 #include "GraphicsLayer.h"
 #include "HEVCUtilities.h"
 #include "HTMLAnchorElement.h"
@@ -6704,13 +6703,6 @@ bool Internals::consumeHistoryActionUserActivation()
             return window->consumeHistoryActionUserActivation();
     }
     return false;
-}
-
-RefPtr<GCObservation> Internals::observeGC(JSC::JSValue value)
-{
-    if (!value.isObject())
-        return nullptr;
-    return GCObservation::create(asObject(value));
 }
 
 void Internals::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection)

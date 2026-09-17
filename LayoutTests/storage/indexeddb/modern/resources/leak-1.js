@@ -1,68 +1,70 @@
 description("This tests that certain IDB object relationships don't cause leaks.");
 
-evalAndLog('dbname = "leak-1"');
-database = null;
+const databaseCount = 20;
 
-function prepareDatabase() {
-    let openRequest = indexedDB.open(dbname);
-    openRequest.onupgradeneeded = (event) => {
-        debug("Initial upgrade needed: Old version - " + event.oldVersion + " New version - " + event.newVersion);
-        database = openRequest.result;
-        versionChangeTransactionObserver = internals.observeGC(openRequest.transaction);
-        openRequestObserver = internals.observeGC(openRequest);
-        databaseObserver = internals.observeGC(database);
-        objectStoreObserver = internals.observeGC(database.createObjectStore("foo"));
-    }
+evalAndLog('dbnamePrefix = "leak-1"');
+
+databases = [];
+versionChangeTransactionRefs = [];
+openRequestRefs = [];
+databaseRefs = [];
+objectStoreRefs = [];
+transactionRefs = [];
+requestRefs = [];
+
+function prepareDatabase(index) {
+    let dbname = dbnamePrefix + "-" + index;
+    let deleteRequest = indexedDB.deleteDatabase(dbname);
     return new Promise((resolve, reject) => {
-        openRequest.onsuccess = resolve;
-        openRequest.onerror = reject;
+        deleteRequest.onerror = reject;
+        deleteRequest.onsuccess = () => {
+            let openRequest = indexedDB.open(dbname);
+            openRequest.onupgradeneeded = () => {
+                let database = openRequest.result;
+                databases[index] = database;
+                versionChangeTransactionRefs.push(new WeakRef(openRequest.transaction));
+                openRequestRefs.push(new WeakRef(openRequest));
+                databaseRefs.push(new WeakRef(database));
+                objectStoreRefs.push(new WeakRef(database.createObjectStore("foo")));
+            }
+            openRequest.onsuccess = () => resolve();
+            openRequest.onerror = reject;
+        };
     });
 }
 
-function performDatabaseOperation() {
-    let transaction = database.transaction("foo");
+function performDatabaseOperation(index) {
+    let transaction = databases[index].transaction("foo");
     let promise = new Promise((resolve, reject) => {
-        transaction.oncomplete = resolve;
+        transaction.oncomplete = () => resolve();
         transaction.onerror = reject;
     });
     let request = transaction.objectStore("foo").get("foo");
-    transactionObserver = internals.observeGC(transaction);
-    requestObserver = internals.observeGC(request);
-    database = null;
+    transactionRefs.push(new WeakRef(transaction));
+    requestRefs.push(new WeakRef(request));
+    databases[index] = null;
     return promise;
 }
 
-function testSucceeded()
+function forEachDatabase(callback)
 {
-    return transactionObserver.wasCollected 
-        && requestObserver.wasCollected 
-        && versionChangeTransactionObserver.wasCollected 
-        && databaseObserver.wasCollected
-        && openRequestObserver.wasCollected
-        && objectStoreObserver.wasCollected;
-}
-
-function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return Promise.all(Array.from({ length: databaseCount }, (unused, index) => callback(index)));
 }
 
 async function test()
 {
-    await prepareDatabase();
-    await performDatabaseOperation();
+    debug("Open " + databaseCount + " databases and run a transaction against each.");
+    await forEachDatabase(prepareDatabase);
+    await forEachDatabase(performDatabaseOperation);
+    nukeArray(databases);
 
-    var gcCountDown = 10;
-    while (gcCountDown-- && !testSucceeded()) {
-        gc();
-        await sleep(100);
-    }
-
-    shouldBeTrue("transactionObserver.wasCollected");
-    shouldBeTrue("requestObserver.wasCollected");
-    shouldBeTrue("versionChangeTransactionObserver.wasCollected");
-    shouldBeTrue("databaseObserver.wasCollected");
-    shouldBeTrue("openRequestObserver.wasCollected");
-    shouldBeTrue("objectStoreObserver.wasCollected");
+    collected = await gcUntil(() => anyCollected(versionChangeTransactionRefs)
+        && anyCollected(openRequestRefs)
+        && anyCollected(databaseRefs)
+        && anyCollected(objectStoreRefs)
+        && anyCollected(transactionRefs)
+        && anyCollected(requestRefs));
+    shouldBeTrue("collected");
 
     finishJSTest();
 }

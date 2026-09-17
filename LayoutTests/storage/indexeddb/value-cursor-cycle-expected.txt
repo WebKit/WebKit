@@ -16,24 +16,16 @@ onOpen():
 db = event.target.result
 tx = db.transaction('store')
 store = tx.objectStore('store')
-cursorRequest = store.openCursor()
+Open 100 cursors.
 getRequest = store.get('key')
-
-openCursorRequestSuccess():
 PASS getRequest.result.name is "value"
-cursor = cursorRequest.result
-PASS cursor is non-null.
-value = cursor.value
-PASS value.name is "value"
-value.cycle = cursor
-cursor = null
-cursorRequest = null
-gc()
-PASS cursorObservation.wasCollected is false
-value = null
-gc()
-PASS cursorObservation.wasCollected is true
-PASS valueObservation.wasCollected is true
+Give every cursor a value that refers back to the cursor.
+PASS cursors.length is cursorCount
+PASS values[0].name is "value"
+Ensure cursors are not released while their values are referenced.
+PASS anyCollected(cursorRefs) is false
+Ensure cursors and values are released once the values are dropped.
+PASS collected is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

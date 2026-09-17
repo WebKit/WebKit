@@ -17,18 +17,15 @@ onOpen():
 db = event.target.result
 tx = db.transaction('store')
 store = tx.objectStore('store')
-request = store.get('key')
+Issue 100 get requests.
 
-onTransactionComplete():
+():
 db.close()
-PASS typeof request.result is "object"
-request.result.x = 123
-PASS request.result.x is 123
-request.result.leak = request
-observer = internals.observeGC(request)
-request = null
-gc()
-PASS observer.wasCollected is true
+PASS typeof requests[0].result is "object"
+requests[0].result.x = 123
+PASS requests[0].result.x is 123
+Give every request a result that refers back to the request.
+PASS collected is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

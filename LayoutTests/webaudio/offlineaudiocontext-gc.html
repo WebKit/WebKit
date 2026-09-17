@@ -5,41 +5,46 @@
 <script src="../resources/gc.js"></script>
 <script>
 
-function createContext() {
-    let context = new OfflineAudioContext(2, 1000, 44100);
-    if (window.internals)
-        return internals.observeGC(context);
-}
+const contextCount = 20;
 
-function createRenderingContext(completeCallback) {
-    let context = new OfflineAudioContext(2, 1000, 44100);
-    let node = context.createBufferSource();
-    node.connect(context.destination);
-    node.start();
-    context.oncomplete = completeCallback;
-    context.startRendering();
-    if (window.internals)
-        return internals.observeGC(context);
-}
-
-test(() => {
-    let observer = createContext();
-    gc();
-    if (window.internals)
-        assert_true(observer.wasCollected);
+promise_test(async () => {
+    let contextRefs = [];
+    for (let i = 0; i < contextCount; ++i)
+        contextRefs.push(new WeakRef(new OfflineAudioContext(2, 1000, 44100)));
+    assert_true(await gcUntil(() => anyCollected(contextRefs)));
 }, "GC a newly created offline audio context");
 
 promise_test(async () => {
-    let complete = false;
-    let observer = createRenderingContext(() => complete = true);
-    while (!complete) {
-        gc();
-        if (window.internals)
-            assert_false(observer.wasCollected);
-        await new Promise(resolve => setTimeout(resolve, 50));
+    let contexts = [];
+    let contextRefs = [];
+    let pending = contextCount;
+    let resolveAllComplete;
+    let allComplete = new Promise((resolve) => resolveAllComplete = resolve);
+
+    for (let i = 0; i < contextCount; ++i) {
+        let context = new OfflineAudioContext(2, 1000, 44100);
+        let node = context.createBufferSource();
+        node.connect(context.destination);
+        node.start();
+        context.oncomplete = () => {
+            if (!--pending)
+                resolveAllComplete();
+        };
+        contexts.push(context);
+        contextRefs.push(new WeakRef(context));
     }
+
+    // A WeakRef keeps its target alive for the rest of the turn it was created in, so rendering
+    // must start in a later turn. Rendering completes on the main thread, so it cannot finish
+    // mid-turn: below, the contexts are reachable through rendering alone.
+    await turnEventLoop();
+    for (let context of contexts)
+        context.startRendering();
+    nukeArray(contexts);
     gc();
-    if (window.internals)
-        assert_true(observer.wasCollected);
+    assert_false(anyCollected(contextRefs));
+
+    await allComplete;
+    assert_true(await gcUntil(() => anyCollected(contextRefs)));
 }, "GC a rendering offline audio context");
 </script>

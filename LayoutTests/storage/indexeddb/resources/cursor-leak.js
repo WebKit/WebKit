@@ -1,16 +1,14 @@
 if (this.importScripts) {
     importScripts('../../../resources/js-test.js');
+    importScripts('../../../resources/gc.js');
     importScripts('shared.js');
 }
 
 description('Verify that that cursors weakly hold script value properties');
 
-if (window.internals) {
-    indexedDBTest(prepareDatabase, onOpen);
-} else {
-    testFailed('This test requires access to the Internals object');
-    finishJSTest();
-}
+const cursorCount = 1000;
+
+indexedDBTest(prepareDatabase, onOpen);
 
 function prepareDatabase(evt)
 {
@@ -26,30 +24,24 @@ function onOpen(evt)
     db = evt.target.result;
     tx = db.transaction('store', 'readonly');
     store = tx.objectStore('store');
-    cursorObservers = [];
-    for (let i = 0; i < 1000; ++i) {
+    cursorRefs = [];
+    for (let i = 0; i < cursorCount; ++i) {
         store.openCursor().onsuccess = (event) => {
             cursor = event.target.result
             cursor.key.cursor = cursor;
             cursor.primaryKey.cursor = cursor;
             cursor.value.cursor = cursor;
-            cursorObservers.push(internals.observeGC(cursor));
+            cursorRefs.push(new WeakRef(cursor));
             cursor = null;
         };
     }
-    tx.oncomplete = function() {
+    tx.oncomplete = async function() {
         db.close();
-        shouldBe('cursorObservers.length', '1000');
+        shouldBe('cursorRefs.length', 'cursorCount');
 
-        gc();
+        collected = await gcUntil(() => anyCollected(cursorRefs));
 
-        anyCollected = false;
-        for (let observer of cursorObservers) {
-            if (observer.wasCollected)
-                anyCollected = true;
-        }
-
-        shouldBeTrue('anyCollected');
+        shouldBeTrue('collected');
         finishJSTest();
     };
 }
