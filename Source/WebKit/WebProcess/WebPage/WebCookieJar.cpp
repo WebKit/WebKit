@@ -211,6 +211,8 @@ void WebCookieJar::allCookiesDeleted()
 
 void WebCookieJar::clearCache()
 {
+    for (auto& document : Document::allDocuments())
+        document->invalidateDOMCookieCache();
     m_cache->clear();
 }
 
