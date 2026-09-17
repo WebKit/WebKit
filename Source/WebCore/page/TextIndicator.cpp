@@ -225,7 +225,7 @@ static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndi
     return snapshotOptions;
 }
 
-static RefPtr<Image> takeSnapshot(LocalFrame& frame, IntRect rect, SnapshotOptions&& options, float& scaleFactor, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
+static RefPtr<BitmapImage> takeSnapshot(LocalFrame& frame, IntRect rect, SnapshotOptions&& options, float& scaleFactor, const Vector<FloatRect>& clipRectsInDocumentCoordinates)
 {
     auto buffer = snapshotFrameRectWithClip(frame, rect, clipRectsInDocumentCoordinates, WTF::move(options));
     if (!buffer)

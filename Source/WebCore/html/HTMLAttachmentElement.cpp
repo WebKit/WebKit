@@ -927,7 +927,7 @@ void HTMLAttachmentElement::updateImage()
     m_imageElement->removeAttribute(srcAttr);
 }
 
-void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<BitmapImage>& icon, const WebCore::FloatSize& iconSize)
 {
     ASSERT(!isWideLayout());
     if (!icon) {

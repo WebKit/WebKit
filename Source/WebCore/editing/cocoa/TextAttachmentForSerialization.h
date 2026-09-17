@@ -28,7 +28,7 @@
 #include <wtf/Platform.h>
 #if PLATFORM(COCOA)
 
-#include <WebCore/Image.h>
+#include <WebCore/BitmapImage.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -50,7 +50,7 @@ struct TextAttachmentFileWrapper {
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 struct MultiRepresentationHEICAttachmentSingleImage {
-    RefPtr<Image> image;
+    RefPtr<BitmapImage> image;
     FloatSize size;
 };
 

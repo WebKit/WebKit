@@ -3263,7 +3263,7 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, bool premu
     // Images without encoded data are backed by image buffers, which hold premultiplied alpha.
     RefPtr data = image.data();
     if (!data)
-        return { image.currentNativeImage(), AlphaPremultiplication::Premultiplied };
+        return { image.currentNativeImage(sourceConcreteSize(image)), AlphaPremultiplication::Premultiplied };
     bool hasAlpha = !image.currentFrameKnownToBeOpaque();
     if (ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) {
         auto decodedImage = BitmapImage::create(nullptr, premultiplyAlpha ? AlphaOption::Premultiplied : AlphaOption::NotPremultiplied, ignoreGammaAndColorProfile ? GammaAndColorProfileOption::Ignored : GammaAndColorProfileOption::Applied);
@@ -3272,7 +3272,7 @@ static TexImageSourceImage nativeImageForTexImageSource(Image& image, bool premu
             return { };
         return { decodedImage->currentNativeImage(), std::nullopt };
     }
-    return { image.currentNativeImage(), std::nullopt };
+    return { image.currentNativeImage(sourceConcreteSize(image)), std::nullopt };
 }
 
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
@@ -3401,7 +3401,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validationResult.returnValue())
         return { };
 
-    RefPtr imageForRender = protect(source.cachedImage())->imageForRenderer(protect(source.renderer()).get());
+    RefPtr imageForRender = protect(source.cachedImage())->image();
     if (!imageForRender)
         return { };
 
@@ -4273,9 +4273,12 @@ RefPtr<NativeImage> WebGLRenderingContextBase::drawImageIntoBuffer(Image& image,
         return nullptr;
     }
 
-    FloatRect srcRect(FloatPoint(), image.size());
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    FloatRect srcRect(FloatPoint(), imageSize.size());
     FloatRect destRect(FloatPoint(), size);
-    buf->context().drawImage(image, destRect, srcRect);
+    buf->context().drawImage(image, imageSize, destRect, srcRect);
     // FIXME: createNativeImageReference() does not make sense for GPUP.
     // Instead, should fix by GPUP side upload.
     return buf->createNativeImageReference();

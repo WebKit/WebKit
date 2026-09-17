@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
+Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char *name)
 {
     auto path = webKitBundlePath(StringView::fromLatin1(name), "png"_s, "icons"_s);
     auto data = FileSystem::readEntireFile(path);

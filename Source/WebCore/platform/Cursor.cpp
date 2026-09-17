@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Cursor.h"
 
-#include "Image.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include <wtf/Assertions.h>
@@ -37,9 +36,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Cursor);
 
-IntPoint determineHotSpot(Image* image, const IntPoint& specifiedHotSpot)
+IntPoint determineHotSpot(BitmapImage* image, const IntPoint& specifiedHotSpot)
 {
-    if (image->isNull())
+    if (!image || image->isNull())
         return IntPoint();
 
     // Hot spot must be inside cursor rectangle.
@@ -152,7 +151,7 @@ const Cursor& Cursor::fromType(Cursor::Type type)
     return pointerCursor();
 }
 
-Cursor::Cursor(Image* image, const IntPoint& hotSpot)
+Cursor::Cursor(BitmapImage* image, const IntPoint& hotSpot)
     : m_type(Type::Custom)
     , m_image(image)
     , m_hotSpot(determineHotSpot(image, hotSpot))
@@ -160,7 +159,7 @@ Cursor::Cursor(Image* image, const IntPoint& hotSpot)
 }
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
-Cursor::Cursor(Image* image, const IntPoint& hotSpot, float scale)
+Cursor::Cursor(BitmapImage* image, const IntPoint& hotSpot, float scale)
     : m_type(Type::Custom)
     , m_image(image)
     , m_hotSpot(determineHotSpot(image, hotSpot))

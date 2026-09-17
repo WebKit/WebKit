@@ -656,13 +656,31 @@ void HTMLImageElement::setPictureElement(HTMLPictureElement* pictureElement)
 {
     m_pictureElement = pictureElement;
 }
-    
+
 LayoutSize HTMLImageElement::naturalSize() const
 {
+    // https://html.spec.whatwg.org/multipage/embedded-content.html#dom-img-naturalwidth
+    // https://html.spec.whatwg.org/multipage/embedded-content.html#dom-img-naturalheight
+
+    // 1. If the image is not available, then return 0.
     RefPtr image = m_imageLoader->image();
-    if (!image)
+    if (!image || !image->hasImage())
         return { };
-    return image->unclampedImageSizeForRenderer(protect(renderer()).get(), 1.0f, CachedImage::IntrinsicSize, m_imageDevicePixelRatio);
+
+    // 2. Return the respective component of the image's density-corrected natural width and height, in CSS pixels.
+
+    // NOTE: Since the density-corrected natural width and height of an image take into account any orientation specified in its metadata, naturalWidth and naturalHeight reflect the dimensions after applying any rotation needed to correctly orient the image, regardless of the value of the 'image-orientation' property.
+
+    CheckedPtr renderer = this->renderer();
+    CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer);
+    auto naturalDimensions = renderImage ? renderImage->imageResource().naturalDimensions()
+        : image->naturalDimensions(renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+
+    return LayoutSize { ObjectSizeNegotiation::defaultSizingAlgorithm(naturalDimensions,
+        ObjectSizeNegotiation::SpecifiedSize::none(), {
+            .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize,
+            .density = m_imageDevicePixelRatio
+        }).size() };
 }
 
 unsigned HTMLImageElement::width()
@@ -715,6 +733,18 @@ unsigned HTMLImageElement::naturalWidth() const
 unsigned HTMLImageElement::naturalHeight() const
 {
     return naturalSize().height().toUnsigned();
+}
+
+RefPtr<NativeImage> HTMLImageElement::sourceNativeImage() const
+{
+    RefPtr cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return nullptr;
+    // FIXME: Doesn't check hasImage() to match expectations of callers. Is this good?
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return nullptr;
+    return image->currentNativeImage(sourceConcreteSize(*image));
 }
 
 bool HTMLImageElement::isURLAttribute(const Attribute& attribute) const

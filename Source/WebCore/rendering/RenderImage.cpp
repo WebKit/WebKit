@@ -51,6 +51,7 @@
 #include "LineSelection.h"
 #include "LocalFrame.h"
 #include "LogicalSelectionOffsetCachesInlines.h"
+#include "ObjectSizeNegotiation.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
@@ -69,6 +70,7 @@
 #include "SVGSVGElement.h"
 #include "SelectionGeometry.h"
 #include "Settings.h"
+#include "StyleImageDrawingExtras.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+InitialInlines.h"
 #include "TextPainter.h"
@@ -204,7 +206,7 @@ static const int maxAltTextHeight = 256;
 IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
 {
     ASSERT_ARG(newImage, newImage);
-    ASSERT_ARG(newImage, newImage->imageForRenderer(this));
+    ASSERT_ARG(newImage, newImage->image());
 
     FloatSize imageSize;
     if (newImage->willPaintBrokenImage()) {
@@ -212,7 +214,7 @@ IntSize RenderImage::imageSizeForError(CachedImage* newImage) const
         imageSize = brokenImageAndImageScaleFactor.first->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
     } else
-        imageSize = protect(newImage->imageForRenderer(this))->size();
+        imageSize = newImage->hasImage() ? selfReportedSize(*protect(newImage->image()), imageOrientation()) : FloatSize { };
 
     // imageSize() returns 0 for the error image. We need the true size of the
     // error image, so we have to get it by grabbing image() directly.
@@ -227,7 +229,7 @@ ImageSizeChangeType RenderImage::setImageSizeForAltText(CachedImage* newImage /*
     // An img that represents nothing is a replaced element with natural dimensions of 0.
     // https://html.spec.whatwg.org/multipage/rendering.html#images-3
     if (!imageRepresentsNothing()) {
-        if (newImage && newImage->imageForRenderer(this))
+        if (newImage && newImage->image())
             imageSize = imageSizeForError(newImage);
         else if (!m_altText.isEmpty() || newImage) {
             // If we'll be displaying either text or an image, add a little padding.
@@ -308,7 +310,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         return;
 
     // At a zoom level of 1 the image is guaranteed to have an integer size.
-    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().imageSize(1.0f)));
+    incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(imageResource().intrinsicSize(1.0f)));
 
     ImageSizeChangeType imageSizeChange = ImageSizeChangeNone;
 
@@ -328,7 +330,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(element()));
 
-    if (RefPtr image = cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr image = cachedImage(); image && image->currentFrameIsComplete()) {
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }
@@ -341,19 +343,19 @@ void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
     setIntrinsicSize(newSize);
 }
 
-void RenderImage::updateInnerContentRect()
+IntSize RenderImage::imageContainerSize() const
 {
-    // Propagate container size to image resource.
-    IntSize containerSize = isDimensionlessSVG()
+    return isDimensionlessSVG()
         ? flooredIntSize(contentBoxRect().size())
         : flooredIntSize(replacedContentRect().size());
+}
 
-    if (!containerSize.isEmpty()) {
-        URL imageSourceURL;
-        if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
-            imageSourceURL = imageElement->currentURL();
-        imageResource().setContainerContext(containerSize, imageSourceURL);
-    }
+Style::ImageDrawingExtras RenderImage::imageDrawingExtras() const
+{
+    URL imageSourceURL;
+    if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        imageSourceURL = imageElement->currentURL();
+    return imageResource().drawingExtras(imageSourceURL);
 }
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
@@ -375,24 +377,13 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
     if (imageSourceHasChangedSize && setNeedsLayoutIfNeededAfterIntrinsicSizeChange())
         return;
 
-    if (everHadLayout() && !selfNeedsLayout()) {
-        // The inner content rectangle is calculated during layout, but may need an update now
-        // (unless the box has already been scheduled for layout). In order to calculate it, we
-        // may need values from the containing block, though, so make sure that we're not too
-        // early. It may be that layout hasn't even taken place once yet.
-
-        // FIXME: we should not have to trigger another call to setContainerContextForRenderer()
-        // from here, since it's already being done during layout.
-        updateInnerContentRect();
-    }
-
     if (parent()) {
         auto repaintRect = replacedContentRect();
         if (rect) {
             // The image changed rect is in source image coordinates (pre-zooming),
             // so map from the bounds of the image to the contentsBox.
             RefPtr<Image> srcImg = imageResource().image(flooredIntSize(contentBoxSize()));
-            FloatSize sourceSize = srcImg->size() / style().usedZoom();
+            auto sourceSize = sizeSampledAt(*srcImg).value_or(FloatSize(imageContainerSize())) / style().usedZoom();
             repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), sourceSize), repaintRect)));
         }
         // FIXME: This needs to account for filter outsets: webkit.org/b/293553.
@@ -552,11 +543,15 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
     RefPtr image = imageResource().image();
     auto& context = paintInfo.context();
 
-    if (shouldDisplayBrokenImageIcon() && !image->isNull() && usableSize.width() >= image->width() && usableSize.height() >= image->height()) {
+    auto brokenIconSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } }).size();
+    if (shouldDisplayBrokenImageIcon() && !brokenIconSize.isEmpty() && usableSize.width() >= brokenIconSize.width() && usableSize.height() >= brokenIconSize.height()) {
         // Call brokenImage() explicitly to ensure we get the broken image icon at the appropriate resolution.
         auto brokenImageAndImageScaleFactor = protect(cachedImage())->brokenImage(deviceScaleFactor);
-        image = brokenImageAndImageScaleFactor.first.get();
-        FloatSize imageSize = image->size();
+        RefPtr brokenImage = brokenImageAndImageScaleFactor.first.get();
+        image = brokenImage;
+        FloatSize imageSize = brokenImage->size();
         imageSize.scale(1 / brokenImageAndImageScaleFactor.second);
 
         // Center the error image, accounting for border and padding.
@@ -568,7 +563,7 @@ void RenderImage::paintMissingImageState(PaintInfo& paintInfo, const LayoutPoint
             centerY = 0;
         imageOffset = LayoutSize(borderWidths.left() + padding.left() + centerX + missingImageBorderWidth, borderWidths.top() + padding.top() + centerY + missingImageBorderWidth);
 
-        context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
+        context.drawBitmapImage(*brokenImage, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), FloatRect { { }, brokenImage->size(imageOrientation()) }, { imageOrientation() });
         errorPictureDrawn = true;
     }
 
@@ -649,7 +644,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
 
     if (context.detectingContentfulPaint()) {
-        if (!context.contentfulPaintDetected() && cachedImage() && protect(cachedImage())->canRender(this, deviceScaleFactor) && !contentBoxRect.isEmpty())
+        if (!context.contentfulPaintDetected() && cachedImage() && protect(cachedImage())->canRender(imageOrientation(), deviceScaleFactor) && !contentBoxRect.isEmpty())
             context.setContentfulPaintDetected();
         return;
     }
@@ -665,7 +660,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     bool showBorderForIncompleteImage = settings().incompleteImageBorderEnabled();
 
     RefPtr<Image> img = imageResource().image(flooredIntSize(contentBoxRect.size()));
-    if (!img || img->isNull()) {
+    if (!img || hasNothingToDraw(*img)) {
         if (showBorderForIncompleteImage)
             paintIncompleteImageOutline(paintInfo, paintOffset, missingImageBorderWidth);
 
@@ -710,7 +705,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         else
             protect(page())->addRelevantRepaintedObject(*this, visibleRect);
 
-        if (protect(cachedImage())->currentFrameIsComplete(this)) {
+        if (protect(cachedImage())->currentFrameIsComplete()) {
             if (auto styleable = Styleable::fromRenderer(*this)) {
                 auto localVisibleRect = visibleRect;
                 localVisibleRect.moveBy(-paintOffset);
@@ -783,7 +778,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         return ImageDrawResult::DidNothing;
 
     RefPtr<Image> img = imageResource().image(flooredIntSize(rect.size()));
-    if (!img || img->isNull())
+    if (!img || hasNothingToDraw(*img))
         return ImageDrawResult::DidNothing;
 
     // FIXME: Document when image != img.get().
@@ -810,8 +805,18 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         drawResult = paintInfo.context().drawMultiRepresentationHEIC(*img, style().fontCascade().primaryFont(), rect, options);
 #endif
 
-    if (drawResult == ImageDrawResult::DidNothing)
-        drawResult = paintInfo.context().drawImage(*img, rect, options);
+    if (drawResult == ImageDrawResult::DidNothing) {
+        auto usedZoom = style().usedZoom();
+        auto containerSize = FloatSize(imageContainerSize());
+        auto sampledSize = sizeSampledAt(*img);
+        auto orientedSampledSize = sizeSampledAt(*img, options.orientation());
+        auto concreteObjectSize = sampledSize
+            ? ConcreteObjectSize::fixed(*sampledSize)
+            : ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom);
+        auto sourceRect = orientedSampledSize ? FloatRect { { }, *orientedSampledSize } : FloatRect { { }, containerSize };
+        auto extras = imageDrawingExtras();
+        drawResult = paintInfo.context().drawImage(*img, concreteObjectSize, rect, sourceRect, options, &extras);
+    }
 
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
@@ -857,7 +862,7 @@ bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
 
     // Check for image with alpha.
-    return cachedImage() && protect(cachedImage())->currentFrameKnownToBeOpaque(this);
+    return cachedImage() && protect(cachedImage())->currentFrameKnownToBeOpaque();
 }
 
 bool RenderImage::computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset)
@@ -940,8 +945,6 @@ void RenderImage::layout()
 
     LayoutSize oldSize = contentBoxRect().size();
     RenderReplaced::layout();
-
-    updateInnerContentRect();
 
     if (hasShadowContent())
         layoutShadowContent(oldSize);

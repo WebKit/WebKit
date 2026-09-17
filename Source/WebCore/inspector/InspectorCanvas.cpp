@@ -883,12 +883,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&](const Ref<HTMLImageElement>& imageElement) {
             String dataURL = "data:,"_s;
 
-            if (RefPtr cachedImage = imageElement->cachedImage()) {
-                RefPtr<Image> image = cachedImage->image();
-                if (image && image != &Image::nullImage()) {
-                    dataURL = encodeDataURL(image->currentNativeImage(), "image/png"_s);
-                }
-            }
+            if (RefPtr nativeImage = imageElement->sourceNativeImage())
+                dataURL = encodeDataURL(WTF::move(nativeImage), "image/png"_s);
 
             index = indexForData(dataURL);
         },
@@ -954,11 +950,8 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
         [&](const Ref<CSSStyleImageValue>& cssImageValue) {
             String dataURL = "data:,"_s;
 
-            if (RefPtr cachedImage = cssImageValue->image()) {
-                RefPtr image = cachedImage->image();
-                if (image && image != &Image::nullImage())
-                    dataURL = encodeDataURL(image->currentNativeImage(), "image/png"_s);
-            }
+            if (RefPtr nativeImage = cssImageValue->sourceNativeImage())
+                dataURL = encodeDataURL(WTF::move(nativeImage), "image/png"_s);
 
             index = indexForData(dataURL);
         },

@@ -1718,9 +1718,9 @@ header: <WebCore/TextIndicator.h>
     WebCore::FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor;
-    RefPtr<WebCore::Image> contentImageWithHighlight;
-    RefPtr<WebCore::Image> contentImageWithoutSelection;
-    RefPtr<WebCore::Image> contentImage;
+    RefPtr<WebCore::BitmapImage> contentImageWithHighlight;
+    RefPtr<WebCore::BitmapImage> contentImageWithoutSelection;
+    RefPtr<WebCore::BitmapImage> contentImage;
     WebCore::Color estimatedBackgroundColor;
     WebCore::TextIndicatorPresentationTransition presentationTransition;
     OptionSet<WebCore::TextIndicatorOption> options;
@@ -1962,7 +1962,7 @@ header: <WebCore/KeyboardScroll.h>
 
 header: <WebCore/NotificationResources.h>
 [RefCounted] class WebCore::NotificationResources {
-    RefPtr<WebCore::Image> icon();
+    RefPtr<WebCore::BitmapImage> icon();
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
@@ -6145,7 +6145,7 @@ header: <WebCore/AppleVisualEffect.h>
 #endif
 
 [CustomHeader, Nested] struct WebCore::Cursor::CustomCursorIPCData {
-    Ref<WebCore::Image> image;
+    Ref<WebCore::BitmapImage> image;
     [Validator='Ref { *image }->rect().contains(*hotSpot)'] WebCore::IntPoint hotSpot;
 #if ENABLE(MOUSE_CURSOR_SCALE)
     float scaleFactor;
@@ -6164,6 +6164,11 @@ header: <WebCore/AppleVisualEffect.h>
 
 header: <WebCore/Image.h>
 [RefCounted] class WebCore::Image {
+    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
+};
+
+header: <WebCore/BitmapImage.h>
+[RefCounted] class WebCore::BitmapImage {
     RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
 };
 
@@ -6288,7 +6293,7 @@ header: <WebCore/TextAttachmentForSerialization.h>
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 [CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentSingleImage {
-    RefPtr<WebCore::Image> image;
+    RefPtr<WebCore::BitmapImage> image;
     WebCore::FloatSize size;
 }
 

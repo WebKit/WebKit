@@ -29,13 +29,22 @@
 #include "RenderImageResource.h"
 
 #include "CachedImage.h"
+#include "Font.h"
+#include "FontCascadeInlines.h"
+#include "Image.h"
 #include "NullGraphicsContext.h"
 #include "RenderElement.h"
+#include "RenderImage.h"
 #include "RenderObjectDocument.h"
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "StyleImageDrawingExtras.h"
 #include "StyleInvalidImage.h"
 #include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#include "MultiRepresentationHEICMetrics.h"
+#endif
 
 namespace WebCore {
 
@@ -142,21 +151,78 @@ bool RenderImageResource::currentFrameIsComplete() const
 {
     if (!m_styleImage)
         return false;
-    return protect(m_styleImage)->currentFrameIsComplete(m_renderer.get());
+    return protect(m_styleImage)->currentFrameIsComplete();
 }
 
-void RenderImageResource::setContainerContext(const IntSize& imageContainerSize, const URL& url)
+Style::ImageDrawingExtras RenderImageResource::drawingExtras(const URL& url) const
 {
     if (!m_styleImage || !m_renderer)
-        return;
-    protect(m_styleImage)->setContainerContextForRenderer(*m_renderer, imageContainerSize, m_renderer->style().usedZoom(), url);
+        return { };
+    return protect(m_styleImage)->drawingExtrasForRenderer(*m_renderer, url);
 }
 
-LayoutSize RenderImageResource::imageSize(float multiplier, CachedImage::SizeType type) const
+NaturalDimensions RenderImageResource::naturalDimensions() const
+{
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(m_renderer.get()); renderImage && renderImage->isMultiRepresentationHEIC())
+        return NaturalDimensions::fixed(renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC().size());
+#endif
+
+    if (!m_styleImage)
+        return NaturalDimensions::none();
+    return protect(m_styleImage)->naturalDimensions(m_renderer.get());
+}
+
+bool RenderImageResource::hasDecodedImage() const
 {
     if (!m_styleImage)
+        return false;
+
+    RefPtr selected = protect(m_styleImage)->selectedImage();
+    if (!selected)
+        return false;
+
+    if (selected->isGeneratedImage())
+        return true;
+
+    RefPtr cachedImage = selected->cachedImage();
+    return cachedImage && cachedImage->hasImage();
+}
+
+bool RenderImageResource::isSizedByBox() const
+{
+    if (!hasDecodedImage())
+        return false;
+    auto dimensions = naturalDimensions();
+    return !dimensions.width || !dimensions.height;
+}
+
+float RenderImageResource::density() const
+{
+    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(m_renderer.get()))
+        return renderImage->imageDevicePixelRatio();
+    return 1;
+}
+
+LayoutSize RenderImageResource::intrinsicSize(float multiplier) const
+{
+    if (!hasDecodedImage())
         return { };
-    return LayoutSize(protect(m_styleImage)->imageSize(m_renderer.get(), multiplier, type));
+
+    auto size = ObjectSizeNegotiation::defaultSizingAlgorithm(naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(), {
+            .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize,
+            .density = density()
+        }).size();
+
+    size.scale(multiplier);
+
+    return LayoutSize(size / protect(m_styleImage)->imageScaleFactor());
+}
+
+FloatSize RenderImageResource::sourceCoordinateSize() const
+{
+    return selfReportedSize(image());
 }
 
 } // namespace WebCore

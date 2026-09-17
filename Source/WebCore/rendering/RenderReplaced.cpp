@@ -517,7 +517,7 @@ static FloatSize computeIntrinsicSizeForRenderer(const RenderReplaced& replacedR
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(replacedRenderer)) {
         auto intrinsicSize = FloatSize { renderImage->intrinsicLogicalWidth(), renderImage->intrinsicLogicalHeight() };
         // Our intrinsicSize is empty if we're rendering generated images with relative width/height. Figure out the right intrinsic size to use.
-        if (intrinsicSize.isEmpty() && (renderImage->imageResource().imageHasRelativeWidth() || renderImage->imageResource().imageHasRelativeHeight())) {
+        if (intrinsicSize.isEmpty() && renderImage->imageResource().isSizedByBox()) {
             CheckedPtr containingBlock = renderImage->isOutOfFlowPositioned() ? renderImage->container() : renderImage->containingBlock();
             if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(containingBlock)) {
                 intrinsicSize.setWidth(renderBox->contentBoxLogicalWidth());

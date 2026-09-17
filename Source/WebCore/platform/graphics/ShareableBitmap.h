@@ -51,8 +51,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
+class BitmapImage;
 class GraphicsContext;
-class Image;
 class NativeImage;
 
 inline constexpr auto unspecifiedPixelFormat = std::optional<PixelFormat> { };
@@ -201,7 +201,7 @@ public:
 
     // This creates a bitmap image that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
-    WEBCORE_EXPORT RefPtr<Image> createImage();
+    WEBCORE_EXPORT RefPtr<BitmapImage> createImage();
 
     WEBCORE_EXPORT PlatformImagePtr createBasePlatformImage(BackingStoreCopy = CopyBackingStore, ShouldInterpolate = ShouldInterpolate::No);
 

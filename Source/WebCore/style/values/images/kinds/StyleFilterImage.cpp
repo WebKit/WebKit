@@ -140,7 +140,7 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
         return &WebCore::Image::nullImage();
 
     auto image = styleImage->image(renderer, size, destinationContext, isForFirstLine);
-    if (!image || image->isNull())
+    if (!image || WebCore::hasNothingToDraw(*image))
         return &WebCore::Image::nullImage();
 
     auto preferredFilterRenderingModes = protect(renderer->page())->preferredFilterRenderingModes(destinationContext);
@@ -162,7 +162,10 @@ RefPtr<WebCore::Image> FilterImage::image(const RenderElement* renderElement, co
         return &WebCore::Image::nullImage();
 
     auto filteredImage = sourceImage->filteredNativeImage(*cssFilter, [&](GraphicsContext& context) {
-        context.drawImage(*image, sourceImageRect);
+        auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+            ObjectSizeNegotiation::SpecifiedSize::none(),
+            { .defaultObjectSize = size });
+        context.drawImage(*image, imageSize, sourceImageRect, FloatRect { { }, imageSize.size() });
     });
     if (!filteredImage)
         return &WebCore::Image::nullImage();
@@ -177,7 +180,7 @@ bool FilterImage::knownToBeOpaque(const RenderElement&) const
 FloatSize FilterImage::fixedSize(const RenderElement& renderer) const
 {
     if (RefPtr image = m_image)
-        return image->imageSize(&renderer, 1);
+        return image->selfReportedSize(&renderer);
     return { };
 }
 

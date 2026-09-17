@@ -30,6 +30,7 @@
 #include "AffineTransform.h"
 #include "BitmapImage.h"
 #include "DeprecatedGlobalSettings.h"
+#include "GeneratedImage.h"
 #include "GraphicsContext.h"
 #include "ImageAdapter.h"
 #include "ImageObserver.h"
@@ -191,29 +192,24 @@ void Image::fillWithSolidColor(GraphicsContext& ctxt, const FloatRect& dstRect, 
     ctxt.setCompositeOperation(previousOperator);
 }
 
-RefPtr<NativeImage> Image::nativeImage(const ColorSpace&)
+RefPtr<NativeImage> Image::nativeImageAtIndex(unsigned, ConcreteObjectSize)
 {
     return nullptr;
 }
 
-RefPtr<NativeImage> Image::nativeImageAtIndex(unsigned)
+RefPtr<NativeImage> Image::currentNativeImage(ConcreteObjectSize)
 {
-    return nativeImage();
+    return nullptr;
 }
 
-RefPtr<NativeImage> Image::currentNativeImage()
+RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ConcreteObjectSize concreteObjectSize, ImageOrientation)
 {
-    return nativeImage();
+    return currentNativeImage(concreteObjectSize);
 }
 
-RefPtr<NativeImage> Image::currentPreTransformedNativeImage(ImageOrientation)
+void Image::drawPattern(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
-    return currentNativeImage();
-}
-
-void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
-{
-    RefPtr tileImage = currentPreTransformedNativeImage(options.orientation());
+    RefPtr tileImage = currentPreTransformedNativeImage(concreteObjectSize, options.orientation());
     if (!tileImage)
         return;
 
@@ -223,7 +219,7 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
         observer->didDraw(*this);
 }
 
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (auto color = singlePixelSolidColor()) {
         fillWithSolidColor(ctxt, destRect, *color, options.compositeOperator());
@@ -232,10 +228,11 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 
     ASSERT_IMPLIES(isBitmapImage(), !hasSolidColor());
 
-    FloatSize intrinsicTileSize = size();
-    if (hasRelativeWidth())
+    auto naturalDimensions = this->naturalDimensions();
+    FloatSize intrinsicTileSize = concreteObjectSize.size();
+    if (!naturalDimensions.width)
         intrinsicTileSize.setWidth(scaledTileSize.width());
-    if (hasRelativeHeight())
+    if (!naturalDimensions.height)
         intrinsicTileSize.setHeight(scaledTileSize.height());
 
     FloatSize scale(scaledTileSize / intrinsicTileSize);
@@ -253,26 +250,26 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        return draw(ctxt, destRect, visibleSrcRect, options);
+        return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
     }
 
     // When using accelerated drawing, it's faster to stretch an image than to tile it.
     if (ctxt.renderingMode() == RenderingMode::Accelerated) {
-        if (size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
+        if (concreteObjectSize.size().width() == 1 && intersection(oneTileRect, destRect).height() == destRect.height()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX(0);
             visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
             visibleSrcRect.setWidth(1);
             visibleSrcRect.setHeight(destRect.height() / scale.height());
-            return draw(ctxt, destRect, visibleSrcRect, options);
+            return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
         }
-        if (size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
+        if (concreteObjectSize.size().height() == 1 && intersection(oneTileRect, destRect).width() == destRect.width()) {
             FloatRect visibleSrcRect;
             visibleSrcRect.setX((destRect.x() - oneTileRect.x()) / scale.width());
             visibleSrcRect.setY(0);
             visibleSrcRect.setWidth(destRect.width() / scale.width());
             visibleSrcRect.setHeight(1);
-            return draw(ctxt, destRect, visibleSrcRect, options);
+            return draw(ctxt, concreteObjectSize, destRect, visibleSrcRect, options, extras);
         }
     }
 
@@ -303,7 +300,7 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
                 FloatRect fromRect(toFloatPoint(currentTileRect.location() - oneTileRect.location()), currentTileRect.size());
                 fromRect.scale(1 / scale.width(), 1 / scale.height());
 
-                result = draw(ctxt, toRect, fromRect, options);
+                result = draw(ctxt, concreteObjectSize, toRect, fromRect, options, extras);
                 if (result == ImageDrawResult::DidRequestDecoding)
                     return result;
                 toX += currentTileRect.width();
@@ -317,13 +314,13 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
 
     AffineTransform patternTransform = AffineTransform().scaleNonUniform(scale.width(), scale.height());
     FloatRect tileRect(FloatPoint(), intrinsicTileSize);
-    drawPattern(ctxt, destRect, tileRect, patternTransform, oneTileRect.location(), spacing, options);
+    drawPattern(ctxt, concreteObjectSize, destRect, tileRect, patternTransform, oneTileRect.location(), spacing, options, extras);
     startAnimation();
     return ImageDrawResult::DidDraw;
 }
 
 // FIXME: Merge with the other drawTiled eventually, since we need a combination of both for some things.
-ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options)
+ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {    
     if (auto color = singlePixelSolidColor()) {
         fillWithSolidColor(ctxt, dstRect, *color, options.compositeOperator());
@@ -398,21 +395,9 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
         vPhase -= (dstRect.height() - scaledTileHeight) / 2;
 
     FloatPoint patternPhase(dstRect.x() - hPhase, dstRect.y() - vPhase);
-    drawPattern(ctxt, dstRect, srcRect, patternTransform, patternPhase, spacing, options);
+    drawPattern(ctxt, concreteObjectSize, dstRect, srcRect, patternTransform, patternPhase, spacing, options, extras);
     startAnimation();
     return ImageDrawResult::DidDraw;
-}
-
-void Image::computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    intrinsicRatio = size();
-    intrinsicWidth = intrinsicRatio.width();
-    intrinsicHeight = intrinsicRatio.height();
-}
-
-FloatSize Image::sourceSize(ImageOrientation orientation) const
-{
-    return size(orientation);
 }
 
 void Image::startAnimationAsynchronously()
@@ -431,14 +416,18 @@ ColorSpace Image::colorSpace()
 
 RefPtr<ShareableBitmap> Image::toShareableBitmap() const
 {
-    RefPtr bitmap = ShareableBitmap::create({ IntSize(size()) });
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    RefPtr bitmap = ShareableBitmap::create({ IntSize(imageSize.size()) });
     if (!bitmap)
         return nullptr;
     std::unique_ptr graphicsContext = bitmap->createGraphicsContext();
     if (!graphicsContext)
         return nullptr;
 
-    graphicsContext->drawImage(const_cast<Image&>(*this), IntPoint());
+    auto imageRect = FloatRect { { }, imageSize.size() };
+    graphicsContext->drawImage(const_cast<Image&>(*this), imageSize, imageRect, imageRect);
     return bitmap;
 }
 
@@ -447,10 +436,55 @@ void Image::dump(TextStream& ts) const
     if (isAnimated())
         ts.dumpProperty("animated"_s, isAnimated());
 
-    if (isNull())
-        ts.dumpProperty("is-null-image"_s, true);
+    auto naturalDimensions = this->naturalDimensions();
+    if (naturalDimensions.width)
+        ts.dumpProperty("natural-width"_s, *naturalDimensions.width);
+    if (naturalDimensions.height)
+        ts.dumpProperty("natural-height"_s, *naturalDimensions.height);
+    if (naturalDimensions.aspectRatio)
+        ts.dumpProperty("natural-aspect-ratio"_s, *naturalDimensions.aspectRatio);
+}
 
-    ts.dumpProperty("size"_s, size());
+std::optional<FloatSize> sizeSampledAt(const Image& image, ImageOrientation orientation)
+{
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+        return bitmapImage->size(orientation);
+#if USE(CG)
+    if (RefPtr pdfDocumentImage = dynamicDowncast<PDFDocumentImage>(image))
+        return pdfDocumentImage->size(orientation);
+#endif
+    if (RefPtr generatedImage = dynamicDowncast<GeneratedImage>(image))
+        return generatedImage->constructedSize();
+    return std::nullopt;
+}
+
+FloatSize selfReportedSize(const Image& image, ImageOrientation orientation)
+{
+    // FIXME: Make this a virtual function on Image.
+
+    if (auto sampledSize = sizeSampledAt(image, orientation))
+        return *sampledSize;
+    if (RefPtr svgImage = dynamicDowncast<SVGImage>(image))
+        return svgImage->documentSize();
+    return { };
+}
+
+bool hasNothingToDraw(const Image& image)
+{
+    // FIXME: Make this a virtual function on Image.
+
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+        return bitmapImage->isNull();
+    if (RefPtr svgImage = dynamicDowncast<SVGImage>(image))
+        return !svgImage->hasRenderableRoot();
+    return false;
+}
+
+ConcreteObjectSize sourceConcreteSize(const Image& image)
+{
+    return ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
 }
 
 TextStream& operator<<(TextStream& ts, const Image& image)
@@ -469,8 +503,6 @@ TextStream& operator<<(TextStream& ts, const Image& image)
         ts << "svg image"_s;
     else if (image.isSVGResourceImage())
         ts << "svg resource image"_s;
-    else if (image.isSVGImageForContainer())
-        ts << "svg image for container"_s;
     else if (image.isPDFDocumentImage())
         ts << "pdf image"_s;
 

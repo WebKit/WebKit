@@ -146,7 +146,13 @@ LayoutSize ImageDocument::imageSize()
     RefPtr cachedImage = imageElement->cachedImage();
     if (!cachedImage)
         return { };
-    return cachedImage->imageSizeForRenderer(protect(imageElement->renderer()).get(), frame() ? frame()->pageZoomFactor() : 1);
+    RefPtr image = cachedImage->hasImage() ? cachedImage->image() : nullptr;
+    if (!image)
+        return { };
+    CheckedPtr renderer = imageElement->renderer();
+    auto size = selfReportedSize(*image, renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage));
+    size.scale(frame() ? frame()->pageZoomFactor() : 1);
+    return LayoutSize(size);
 }
 
 void ImageDocument::updateDuringParsing()
@@ -191,7 +197,9 @@ void ImageDocument::finishedParsing()
         // Report the natural image size in the page title, regardless of zoom level.
         // At a zoom level of 1 the image is guaranteed to have an integer size.
         updateStyleIfNeeded();
-        IntSize size = flooredIntSize(cachedImage->imageSizeForRenderer(protect(imageElement->renderer()).get(), 1));
+        CheckedPtr titleRenderer = imageElement->renderer();
+        RefPtr titleImage = cachedImage->hasImage() ? cachedImage->image() : nullptr;
+        IntSize size = titleImage ? flooredIntSize(selfReportedSize(*titleImage, titleRenderer ? titleRenderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage))) : IntSize { };
         if (size.width()) {
             // Compute the title. We use the decoded filename of the resource, falling
             // back on the hostname if there is no path.

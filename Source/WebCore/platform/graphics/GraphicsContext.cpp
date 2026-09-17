@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "BidiResolver.h"
+#include "BitmapImage.h"
 #include "DisplayList.h"
 #include "Filter.h"
 #include "FilterImage.h"
@@ -328,36 +329,42 @@ void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect&
     systemImage.draw(*this, destinationRect);
 }
 
-ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
+ImageDrawResult GraphicsContext::drawImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    return drawImage(image, FloatRect(destination, image.size()), FloatRect(FloatPoint(), image.size()), imagePaintingOptions);
+    return image.draw(*this, concreteObjectSize, destination, source, options, extras);
 }
 
-ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destination, ImagePaintingOptions imagePaintingOptions)
+ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    FloatRect srcRect(FloatPoint(), image.size(imagePaintingOptions.orientation()));
-    return drawImage(image, destination, srcRect, imagePaintingOptions);
+    auto concreteObjectSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } });
+    return drawImage(image, concreteObjectSize, destination, source, options, extras);
 }
 
-ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawBitmapImage(BitmapImage& image, const FloatPoint& destination, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    return image.draw(*this, destination, source, options);
+    auto concreteObjectSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } });
+    auto size = concreteObjectSize.size();
+    return drawImage(image, concreteObjectSize, { destination, size }, { { }, size }, options, extras);
 }
 
-ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
-    return image.drawTiled(*this, destination, source, tileSize, spacing, options);
+    return image.drawTiled(*this, concreteObjectSize, destination, source, tileSize, spacing, options, extras);
 }
 
-ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
-    Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options)
+ImageDrawResult GraphicsContext::drawTiledImage(Image& image, ConcreteObjectSize concreteObjectSize, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor,
+    Image::TileRule hRule, Image::TileRule vRule, ImagePaintingOptions options, const ImageDrawingExtras* extras)
 {
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.
-        return drawImage(image, destination, source, options);
+        return drawImage(image, concreteObjectSize, destination, source, options, extras);
     }
 
-    return image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator(), options.interpolationQuality() });
+    return image.drawTiled(*this, concreteObjectSize, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator(), options.interpolationQuality() }, extras);
 }
 
 RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)

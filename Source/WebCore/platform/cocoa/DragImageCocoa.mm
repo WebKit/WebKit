@@ -97,7 +97,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
 
         if (orientation != ImageOrientation::Orientation::None) {
             // Construct a correctly-rotated copy of the image to use as the drag image.
-            FloatSize imageSize = image->size(orientation);
+            FloatSize imageSize = bitmapImage->size(orientation);
             RetainPtr<NSImage> rotatedDragImage = adoptNS([[NSImage alloc] initWithSize:(NSSize)(imageSize)]);
             [rotatedDragImage lockFocus];
 
@@ -126,7 +126,8 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
         }
     }
 
-    FloatSize imageSize = image->size();
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(), { .defaultObjectSize = { } }).size();
     auto dragImage = image->adapter().snapshotNSImage();
     [dragImage setSize:(NSSize)imageSize];
     return dragImage;

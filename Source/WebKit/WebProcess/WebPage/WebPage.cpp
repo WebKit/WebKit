@@ -3573,12 +3573,8 @@ RefPtr<ShareableBitmap> WebPage::shareableBitmapForNodeIncludingOffscreen(Node& 
         }
 
         if (imageElement) {
-            if (RefPtr cachedImage = imageElement->cachedImage()) {
-                if (RefPtr image = cachedImage->image()) {
-                    if (RefPtr nativeImage = image->currentNativeImage())
-                        bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
-                }
-            }
+            if (RefPtr nativeImage = imageElement->sourceNativeImage())
+                bitmap = ShareableBitmap::createFromImageDraw(*nativeImage, ColorSpace::SRGB());
         } else if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(node)) {
             if (RefPtr imageBuffer = canvasElement->makeRenderingResultsAvailable()) {
                 if (RefPtr nativeImage = imageBuffer->copyNativeImage())
@@ -10862,7 +10858,8 @@ void WebPage::takeSnapshotForTargetedElement(NodeIdentifier nodeID, ScriptExecut
     if (!context)
         return completion({ });
 
-    context->drawImage(*image, FloatPoint::zero());
+    auto imageRect = image->rect();
+    context->drawBitmapImage(*image, imageRect, imageRect);
     completion(bitmap->createHandle(SharedMemory::Protection::ReadOnly));
 }
 

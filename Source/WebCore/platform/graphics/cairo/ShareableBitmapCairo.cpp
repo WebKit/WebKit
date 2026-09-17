@@ -128,7 +128,7 @@ void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)
     static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createCairoSurface.
 }
 
-RefPtr<Image> ShareableBitmap::createImage()
+RefPtr<BitmapImage> ShareableBitmap::createImage()
 {
     RefPtr<cairo_surface_t> surface = createCairoSurface();
     if (!surface)

@@ -145,18 +145,18 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 
 @interface WebRevealHighlight : NSObject<UIRVPresenterHighlightDelegate>
 
-- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::Image>&&)image;
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::BitmapImage>&&)image;
 
 @end
 
 @implementation WebRevealHighlight {
-    RefPtr<WebCore::Image> _image;
+    RefPtr<WebCore::BitmapImage> _image;
     CGRect _highlightRect;
     BOOL _highlighting;
     UIView *_view;
 }
 
-- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::Image>&&)image
+- (instancetype)initWithHighlightRect:(NSRect)highlightRect view:(UIView *)view image:(RefPtr<WebCore::BitmapImage>&&)image
 {
     if (!(self = [super init]))
         return nil;
@@ -169,7 +169,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
     return self;
 }
 
-- (void)setImage:(RefPtr<WebCore::Image>&&)image
+- (void)setImage:(RefPtr<WebCore::BitmapImage>&&)image
 {
     _image = WTF::move(image);
 }

@@ -25,6 +25,7 @@
 #include "SVGImageElement.h"
 
 #include "CSSPropertyNames.h"
+#include "CachedImage.h"
 #include "ContainerNodeInlines.h"
 #include "HTMLParserIdioms.h"
 #include "LegacyRenderSVGImage.h"
@@ -70,6 +71,18 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
 CachedImage* SVGImageElement::cachedImage() const
 {
     return m_imageLoader->image();
+}
+
+RefPtr<NativeImage> SVGImageElement::sourceNativeImage() const
+{
+    RefPtr cachedImage = this->cachedImage();
+    if (!cachedImage)
+        return nullptr;
+    // FIXME: Doesn't check hasImage() to match expectations of callers. Is this good?
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return nullptr;
+    return image->currentNativeImage(sourceConcreteSize(*image));
 }
 
 bool SVGImageElement::renderingTaintsOrigin() const

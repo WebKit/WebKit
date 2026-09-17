@@ -26,11 +26,13 @@
 #include "config.h"
 #include "ImageQualityController.h"
 
+#include "BitmapImage.h"
 #include "DocumentView.h"
 #include "FrameDestructionObserverInlines.h"
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
+#include "PDFDocumentImage.h"
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObjectInlines.h"
@@ -133,18 +135,27 @@ InterpolationQuality ImageQualityController::chooseInterpolationQualityForSVG(Gr
     return InterpolationQuality::Default;
 }
 
+static std::optional<FloatSize> sizeOfImageWithSizeOfItsOwn(Image& image)
+{
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+        return bitmapImage->size();
+#if USE(CG)
+    if (RefPtr pdfDocumentImage = dynamicDowncast<PDFDocumentImage>(image))
+        return pdfDocumentImage->size();
+#endif
+    return std::nullopt;
+}
+
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void* layer, const LayoutSize& size)
 {
-    // If the image is not a bitmap image, then none of this is relevant and we just paint at high quality.
-    if (!(image.isBitmapImage() || image.isPDFDocumentImage()) || context.paintingDisabled())
+    auto sizeOfImage = sizeOfImageWithSizeOfItsOwn(image);
+    if (!sizeOfImage || context.paintingDisabled())
         return InterpolationQuality::Default;
 
     if (std::optional<InterpolationQuality> styleInterpolation = interpolationQualityFromStyle(object->style()))
         return styleInterpolation.value();
 
-    // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
-    // is actually being scaled.
-    IntSize imageSize(image.width(), image.height());
+    IntSize imageSize(*sizeOfImage);
 
     // Look ourselves up in the hashtables.
     auto i = m_objectLayerSizeMap.find(object);
@@ -181,7 +192,7 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
 
     // There is no need to hash scaled images that always use low quality mode when the page demands it. This is the iChat case.
     if (m_renderView->page().inLowQualityImageInterpolationMode()) {
-        double totalPixels = static_cast<double>(image.width()) * static_cast<double>(image.height());
+        double totalPixels = static_cast<double>(imageSize.width()) * static_cast<double>(imageSize.height());
         if (totalPixels > cInterpolationCutoff)
             return InterpolationQuality::Low;
     }

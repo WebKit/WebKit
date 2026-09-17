@@ -351,7 +351,11 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
             return;
         }
 
-        imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
+        auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(bitmapImage->naturalDimensions(),
+            ObjectSizeNegotiation::SpecifiedSize::none(),
+            { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+        auto imageRect = FloatRect { { }, imageSize.size() };
+        imageBuffer->context().drawImage(bitmapImage.get(), imageSize, imageRect, imageRect);
         m_data = { SharedBuffer::create(encodeData(WTF::move(imageBuffer), "image/png"_s)) };
     }
 }

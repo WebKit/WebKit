@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <WebCore/BitmapImage.h>
 #include <WebCore/FloatRect.h>
-#include <WebCore/Image.h>
 #include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -138,9 +138,9 @@ struct TextIndicatorData {
     FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor { 1 };
-    RefPtr<Image> contentImageWithHighlight;
-    RefPtr<Image> contentImageWithoutSelection;
-    RefPtr<Image> contentImage;
+    RefPtr<BitmapImage> contentImageWithHighlight;
+    RefPtr<BitmapImage> contentImageWithoutSelection;
+    RefPtr<BitmapImage> contentImage;
     Color estimatedBackgroundColor;
     TextIndicatorPresentationTransition presentationTransition { TextIndicatorPresentationTransition::None };
     OptionSet<TextIndicatorOption> options;
@@ -178,12 +178,12 @@ public:
     float contentImageScaleFactor() const { return m_data.contentImageScaleFactor; }
     void setContentImageScaleFactor(float contentImageScaleFactor) { m_data.contentImageScaleFactor = contentImageScaleFactor; }
 
-    Image* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
-    Image* contentImageWithoutSelection() const { return m_data.contentImageWithoutSelection.get(); }
-    void setContentImageWithoutSelection(Image* contentImageWithoutSelection) { m_data.contentImageWithoutSelection = contentImageWithoutSelection; }
+    BitmapImage* contentImageWithHighlight() const { return m_data.contentImageWithHighlight.get(); }
+    BitmapImage* contentImageWithoutSelection() const { return m_data.contentImageWithoutSelection.get(); }
+    void setContentImageWithoutSelection(BitmapImage* contentImageWithoutSelection) { m_data.contentImageWithoutSelection = contentImageWithoutSelection; }
 
-    Image* contentImage() const { return m_data.contentImage.get(); }
-    void setContentImage(Image* contentImage) { m_data.contentImage = contentImage; }
+    BitmapImage* contentImage() const { return m_data.contentImage.get(); }
+    void setContentImage(BitmapImage* contentImage) { m_data.contentImage = contentImage; }
 
     TextIndicatorPresentationTransition presentationTransition() const { return m_data.presentationTransition; }
     void setPresentationTransition(TextIndicatorPresentationTransition transition) { m_data.presentationTransition = transition; }

@@ -54,6 +54,8 @@ public:
         return adoptRef(*new PDFDocumentImage(observer));
     }
 
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
+
     unsigned cachedSubimageCreateCountForTesting() const { return m_cachedSubimageCreateCountForTesting; }
     unsigned cachedSubimageDrawCountForTesting() const { return m_cachedSubimageDrawCountForTesting; }
 
@@ -69,8 +71,7 @@ private:
 
     void destroyDecodedData(bool destroyAll = true) override;
 
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) override;
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
+    NaturalDimensions unorientedNaturalDimensions() const override;
 
     bool shouldDrawFromCachedSubimage(GraphicsContext&) const override;
     bool mustDrawFromCachedSubimage(GraphicsContext&) const override;
@@ -79,7 +80,7 @@ private:
 
     ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
     ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) override;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }

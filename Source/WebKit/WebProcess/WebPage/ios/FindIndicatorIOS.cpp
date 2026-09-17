@@ -91,7 +91,10 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
     for (const auto& path : paths)
         context.fillPath(path);
 
-    context.drawImage(*indicatorImage, overlay.bounds());
+    auto imageSize = WebCore::ObjectSizeNegotiation::defaultSizingAlgorithm(indicatorImage->naturalDimensions(),
+        WebCore::ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = WebCore::ObjectSizeNegotiation::defaultObjectSize });
+    context.drawImage(*indicatorImage, imageSize, overlay.bounds(), WebCore::FloatRect { { }, imageSize.size() });
 }
 
 bool FindIndicatorIOS::update(WebCore::LocalFrame* selectedFrame, bool isShowingOverlay, bool shouldAnimate)

@@ -33,6 +33,7 @@
 #include "RenderStyleConstants.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleImage.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/Vector.h>
 
@@ -247,12 +248,19 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
 
     InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
 
+    auto usedZoom = style.usedZoom();
+    auto sampledSize = sizeSampledAt(*image);
+    auto concreteObjectSize = sampledSize
+        ? ConcreteObjectSize::fixed(*sampledSize)
+        : ConcreteObjectSize::fixed(FloatSize(source) / usedZoom, usedZoom);
+    auto extras = renderer ? styleImage->drawingExtrasForRenderer(*renderer) : Style::ImageDrawingExtras { };
+
     for (ImagePiece piece = MinPiece; piece < MaxPiece; ++piece) {
         if ((piece == MiddlePiece && !ninePieceImage.slice().fill) || isEmptyPieceRect(piece, destinationRects, sourceRects))
             continue;
 
         if (isCornerPiece(piece)) {
-            graphicsContext.drawImage(*image, destinationRects[piece], sourceRects[piece], options);
+            graphicsContext.drawImage(*image, concreteObjectSize, destinationRects[piece], sourceRects[piece], options, &extras);
             continue;
         }
 
@@ -264,7 +272,7 @@ static void paintNinePieceImage(const T& ninePieceImage, GraphicsContext& graphi
             ? static_cast<Image::TileRule>(ninePieceImage.repeat().verticalRule())
             : Image::StretchTile;
 
-        graphicsContext.drawTiledImage(*image, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, options);
+        graphicsContext.drawTiledImage(*image, concreteObjectSize, destinationRects[piece], sourceRects[piece], tileScales[piece], hRule, vRule, options, &extras);
     }
 }
 

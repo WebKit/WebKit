@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "AutoscrollController.h"
 #include "BackForwardController.h"
+#include "BitmapImage.h"
 #include "BoundaryPointInlines.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -124,6 +125,7 @@
 #include "ResourceLoadObserver.h"
 #include "SVGDocument.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGImage.h"
 #include "SVGNames.h"
 #include "ScrollAnimator.h"
 #include "ScrollLatchingController.h"
@@ -137,6 +139,7 @@
 #include "StyleCachedImage.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleCursor.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "Styleable.h"
 #include "TextEvent.h"
@@ -1743,23 +1746,21 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (!renderElement && renderer && renderer->parent())
                 renderElement = renderer->parent();
 
+            IntSize svgCursorSize;
             if (renderElement) {
-                RefPtr image = cachedImage->image();
-                if (image && image->drawsSVGImage()) {
-                    // For SVG cursors, scale the image size with device resolution so
-                    // on high-DPI displays SVG images get crisp rendering.
+                if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
                     RefPtr page = frame->page();
                     float deviceScale = page ? page->deviceScaleFactor() : 1.0f;
 
-                    FloatSize scaledSize = image->size() * deviceScale;
-                    styleImage->setContainerContextForRenderer(*renderElement, scaledSize, deviceScale);
-
+                    svgCursorSize = roundedIntSize(selfReportedSize(*svgImage) * deviceScale);
                     renderer = renderElement;
                     scale *= deviceScale;
                 }
             }
 
-            FloatSize size = protect(cachedImage->imageForRenderer(renderer))->size();
+            FloatSize size = svgCursorSize.isEmpty()
+                ? selfReportedSize(*protect(cachedImage->image()))
+                : FloatSize { svgCursorSize };
             if (cachedImage->errorOccurred())
                 continue;
             // Limit the size of cursors (in UI pixels) so that they cannot be
@@ -1778,7 +1779,21 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (!visibleContentRect.contains(cursorRect))
                 continue;
 
-            RefPtr image = cachedImage->imageForRenderer(renderer);
+            RefPtr<BitmapImage> image;
+
+            // FIXME: Is eagerly rasterizing ok?
+
+            RefPtr cachedImageImage = cachedImage->image();
+            if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImageImage)) {
+                auto extras = renderElement ? styleImage->drawingExtrasForRenderer(*renderElement) : Style::ImageDrawingExtras { };
+                auto rasterizedSize = svgCursorSize.isEmpty() ? expandedIntSize(size) : svgCursorSize;
+                if (RefPtr nativeImage = svgImage->nativeImage(FloatSize { rasterizedSize }, ColorSpace::SRGB(), &extras))
+                    image = BitmapImage::create(WTF::move(nativeImage));
+            } else
+                image = dynamicDowncast<BitmapImage>(cachedImageImage);
+
+            if (!image)
+                continue;
 #if ENABLE(MOUSE_CURSOR_SCALE)
             // Ensure no overflow possible in calculations above.
             if (scale < minimumCursorScale)

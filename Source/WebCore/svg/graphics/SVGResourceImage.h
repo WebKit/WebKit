@@ -46,8 +46,8 @@ private:
     SVGResourceImage(RenderSVGResourceContainer&, const Style::URL&);
     SVGResourceImage(LegacyRenderSVGResourceContainer&, const Style::URL&);
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }) final;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
     bool isSVGResourceImage() const final { return true; }
 

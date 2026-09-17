@@ -790,8 +790,12 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
 
     // The source rectangle is in the image's own coordinate space, the destination in the space the
     // orientation maps it onto, which is the one the copy's origin and size are expressed in.
-    auto sourceRect = FloatRect { { }, image->size(ImageOrientation::Orientation::None) };
-    auto destinationRect = FloatRect { { }, image->size() };
+    auto unoriented = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(ImageOrientation::Orientation::None),
+        ObjectSizeNegotiation::SpecifiedSize::none(), { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    auto oriented = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(), { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    auto sourceRect = FloatRect { { }, unoriented.size() };
+    auto destinationRect = FloatRect { { }, oriented.size() };
     if (sourceRect.isEmpty() || destinationRect.isEmpty())
         return { };
 
@@ -805,7 +809,7 @@ static GPUResidentSource gpuResidentSourceForImageElement(ScriptExecutionContext
     // CoreGraphics decodes to premultiplied alpha, so compositing over the buffer's transparent
     // black leaves the decoded channels untouched; the copy is lossless for as long as the
     // destination wants premultiplied alpha too.
-    imageBuffer->context().drawImage(*image, destinationRect, sourceRect, { CompositeOperator::Copy, ImageOrientation::Orientation::FromImage });
+    imageBuffer->context().drawImage(*image, oriented, destinationRect, sourceRect, { CompositeOperator::Copy, ImageOrientation::Orientation::FromImage });
     return { WTF::move(imageBuffer) };
 }
 #endif // HAVE(IOSURFACE) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)

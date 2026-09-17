@@ -97,7 +97,11 @@ DragImageRef createDragImageFromImage(Image* image, ImageOrientation orientation
 
     buffer->context().translate(0, imageSize.height());
     buffer->context().scale({ adjustedImageScale, -adjustedImageScale });
-    buffer->context().drawImage(*image, FloatPoint { }, { orientation });
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    auto imageRect = FloatRect { { }, imageSize.size() };
+    buffer->context().drawImage(*image, imageSize, imageRect, imageRect, { orientation });
 
     RefPtr nativeImage = ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
     if (!nativeImage)
@@ -201,7 +205,11 @@ DragImageRef createDragImageForRange(LocalFrame& frame, const SimpleRange& range
     RetainPtr render = adoptNS([PAL::allocUIGraphicsImageRendererInstance() initWithSize:image->size()]);
     UIImage *finalImage = [render imageWithActions:[&image](UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContextCG context(rendererContext.CGContext);
-        context.drawImage(image, FloatPoint());
+        auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+            ObjectSizeNegotiation::SpecifiedSize::none(),
+            { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+        auto imageRect = FloatRect { { }, imageSize.size() };
+        context.drawImage(image, imageSize, imageRect, imageRect);
     }];
 
     return finalImage.CGImage;

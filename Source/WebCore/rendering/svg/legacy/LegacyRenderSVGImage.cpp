@@ -44,6 +44,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGVisitedRendererTracking.h"
+#include "StyleImageDrawingExtras.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -94,24 +95,8 @@ bool LegacyRenderSVGImage::updateImageViewport()
     m_objectBoundingBox = calculateObjectBoundingBox();
 
     bool updatedViewport = false;
-    URL imageSourceURL = protect(document())->encodingParseURL(protect(imageElement())->imageSourceURL());
-
-    // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
-    // by setting the image's container size to its intrinsic size.
-    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
-    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (RefPtr cachedImage = imageResource().cachedImage()) {
-            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
-            if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
-                imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
-                updatedViewport = true;
-            }
-        }
-    }
 
     if (oldBoundaries != m_objectBoundingBox) {
-        if (!updatedViewport)
-            imageResource().setContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
         updatedViewport = true;
         m_needsBoundariesUpdate = true;
     }
@@ -191,6 +176,22 @@ void LegacyRenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         paintOutline(childPaintInfo, IntRect(boundingBox));
 }
 
+IntSize LegacyRenderSVGImage::imageContainerSize() const
+{
+    // preserveAspectRatio=none forces non-uniform scaling, achieved by laying the document
+    // out at its own size and letting the destination rect stretch it.
+    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
+    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
+        if (RefPtr cachedImage = imageResource().cachedImage(); cachedImage && cachedImage->hasImage()) {
+            auto size = selfReportedSize(*protect(cachedImage->image()));
+            size.scale(style().usedZoom());
+            return roundedIntSize(size);
+        }
+    }
+
+    return enclosingIntRect(m_objectBoundingBox).size();
+}
+
 void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
 {
     RefPtr<Image> image = imageResource().image();
@@ -198,7 +199,8 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
         return;
 
     FloatRect destRect = m_objectBoundingBox;
-    FloatRect srcRect(0, 0, image->width(), image->height());
+    auto sampledSize = sizeSampledAt(*image);
+    FloatRect srcRect { { }, sampledSize.value_or(FloatSize { imageContainerSize() }) };
 
     imageElement().preserveAspectRatio().transformRect(destRect, srcRect);
 
@@ -213,7 +215,13 @@ void LegacyRenderSVGImage::paintForeground(PaintInfo& paintInfo)
     };
 
     auto& context = paintInfo.context();
-    context.drawImage(*image, destRect, srcRect, options);
+    auto usedZoom = style().usedZoom();
+    auto containerSize = FloatSize { imageContainerSize() };
+    auto concreteObjectSize = sampledSize
+        ? ConcreteObjectSize::fixed(*sampledSize)
+        : ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom);
+    auto extras = imageResource().drawingExtras(protect(document())->encodingParseURL(protect(imageElement())->imageSourceURL()));
+    context.drawImage(*image, concreteObjectSize, destRect, srcRect, options, &extras);
 
     RefPtr cachedImage = imageResource().cachedImage();
     if (cachedImage && !context.paintingDisabled())
@@ -269,7 +277,7 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     // Eventually notify parent resources, that we've changed.
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
 
-    // Update the SVGImageCache sizeAndScales entry in case image loading finished after layout.
+    // Recompute the object bounding box in case image loading finished after layout.
     // (https://bugs.webkit.org/show_bug.cgi?id=99489)
     m_objectBoundingBox = FloatRect();
     if (updateImageViewport())
@@ -279,7 +287,7 @@ void LegacyRenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
 
     repaint();
 
-    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete()) {
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }

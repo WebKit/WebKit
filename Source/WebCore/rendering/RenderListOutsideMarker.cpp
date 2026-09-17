@@ -252,7 +252,7 @@ void RenderListOutsideMarker::imageChanged(WrappedImagePtr o, const IntRect* rec
                 if (element)
                     element->invalidateStyleAndRenderersForSubtree();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
-            } else if (borderBoxSize() != LayoutSize(image->imageSize(this, style().usedZoom()))) {
+            } else if (borderBoxSize() != markerImageSize()) {
                 updateInlineMarginsAndContent();
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             } else
@@ -268,6 +268,13 @@ void RenderListOutsideMarker::updateInlineMarginsAndContent()
     updateInlineMargins();
 }
 
+LayoutSize RenderListOutsideMarker::markerImageSize() const
+{
+    // FIXME: This is a somewhat arbitrary width.
+    LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
+    return calculateImageIntrinsicDimensions(listMarkerImage(style()).get(), { bulletWidth, bulletWidth }, ScaleByUsedZoom::Yes);
+}
+
 void RenderListOutsideMarker::updateContent()
 {
     if (hasContentProperty()) {
@@ -277,10 +284,7 @@ void RenderListOutsideMarker::updateContent()
     }
 
     if (isImage()) {
-        // FIXME: This is a somewhat arbitrary width.
-        LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
-        LayoutSize defaultBulletSize(bulletWidth, bulletWidth);
-        setContentContainerImageSize(calculateImageIntrinsicDimensions(listMarkerImage(style()).get(), defaultBulletSize, ScaleByUsedZoom::Yes));
+        setContentContainerImageSize(markerImageSize());
         return;
     }
 

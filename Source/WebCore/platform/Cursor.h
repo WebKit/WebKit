@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/Image.h>
+#include <WebCore/BitmapImage.h>
 #include <WebCore/IntPoint.h>
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>
@@ -130,7 +130,7 @@ public:
     using Type = PlatformCursorType;
 
     struct CustomCursorIPCData {
-        Ref<Image> image;
+        Ref<BitmapImage> image;
         IntPoint hotSpot;
 #if ENABLE(MOUSE_CURSOR_SCALE)
         float scaleFactor { 0 };
@@ -143,11 +143,11 @@ public:
 
     WEBCORE_EXPORT static const Cursor& NODELETE fromType(Cursor::Type);
 
-    WEBCORE_EXPORT Cursor(Image*, const IntPoint& hotSpot);
+    WEBCORE_EXPORT Cursor(BitmapImage*, const IntPoint& hotSpot);
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
     // Hot spot is in image pixels.
-    WEBCORE_EXPORT Cursor(Image*, const IntPoint& hotSpot, float imageScaleFactor);
+    WEBCORE_EXPORT Cursor(BitmapImage*, const IntPoint& hotSpot, float imageScaleFactor);
 #endif
 
     explicit Cursor(Type);
@@ -155,7 +155,7 @@ public:
     IPCData ipcData() const;
 
     Type type() const;
-    RefPtr<Image> image() const { return m_image; }
+    RefPtr<BitmapImage> image() const { return m_image; }
     const IntPoint& hotSpot() const LIFETIME_BOUND { return m_hotSpot; }
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
@@ -171,7 +171,7 @@ private:
     void ensurePlatformCursor() const;
 
     Type m_type { Type::Invalid };
-    RefPtr<Image> m_image;
+    RefPtr<BitmapImage> m_image;
     IntPoint m_hotSpot;
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
@@ -186,7 +186,7 @@ private:
 
 };
 
-IntPoint determineHotSpot(Image*, const IntPoint& specifiedHotSpot);
+IntPoint determineHotSpot(BitmapImage*, const IntPoint& specifiedHotSpot);
 
 WEBCORE_EXPORT const Cursor& NODELETE pointerCursor();
 const Cursor& NODELETE crossCursor();
@@ -251,7 +251,7 @@ inline std::optional<Cursor> Cursor::fromIPCData(IPCData&& ipcData)
         return cursorReference;
     }, [](std::optional<CustomCursorIPCData>&& imageData) -> std::optional<Cursor> {
         if (!imageData)
-            return Cursor { &Image::nullImage(), IntPoint() };
+            return Cursor { nullptr, IntPoint() };
         ASSERT(imageData->image->rect().contains(imageData->hotSpot));
 #if ENABLE(MOUSE_CURSOR_SCALE)
         return Cursor(imageData->image.ptr(), imageData->hotSpot, imageData->scaleFactor);

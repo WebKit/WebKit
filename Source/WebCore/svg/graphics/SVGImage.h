@@ -40,17 +40,11 @@ class Page;
 class RenderReplaced;
 class SVGSVGElement;
 class SVGImageChromeClient;
-class SVGImageForContainer;
 class Settings;
 
 class SVGImage final : public Image {
 public:
-    struct ContainerContext {
-        FloatSize containerSize { };
-        float containerZoom { 1 };
-        URL initialFragmentURL { };
-        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
-    };
+    FloatSize documentSize() const { return m_intrinsicSize; }
 
     static Ref<SVGImage> create(ImageObserver* observer) { return adoptRef(*new SVGImage(observer)); }
     WEBCORE_EXPORT static void tryCreateFromData(std::span<const uint8_t>, CompletionHandler<void(RefPtr<SVGImage>&&)>&&);
@@ -63,14 +57,9 @@ public:
 
     void subresourcesAreFinished(Document*, CompletionHandler<void()>&&) final;
 
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }
 
     bool renderingTaintsOrigin() const final;
 
-    bool hasIntrinsicWidth() const final;
-    bool hasIntrinsicHeight() const final;
-    bool hasRelativeWidth() const final;
-    bool hasRelativeHeight() const final;
 
     // Start the animation from the beginning.
     void startAnimation() final;
@@ -85,23 +74,25 @@ public:
     Page* internalPage() { return m_page.get(); }
     WEBCORE_EXPORT RefPtr<SVGSVGElement> rootElement() const;
 
+    bool hasRenderableRoot() const;
+
     FloatSize resolvedIntrinsicSize(float density = 1.0f) const;
 
-    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB());
+    RefPtr<NativeImage> nativeImage(const FloatSize&, const ColorSpace& = ColorSpace::SRGB(), const ImageDrawingExtras* = nullptr);
+
+    RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize concreteObjectSize) final { return nativeImage(concreteObjectSize.size()); }
+    RefPtr<NativeImage> nativeImageAtIndex(unsigned, ConcreteObjectSize concreteObjectSize) final { return nativeImage(concreteObjectSize.size()); }
 
 private:
     friend class SVGImageChromeClient;
-    friend class SVGImageForContainer;
 
     virtual ~SVGImage();
 
     String filenameExtension() const final;
 
-    void setContainerSize(const FloatSize&) final;
+    void setContainerSize(const FloatSize&);
     IntSize containerSize() const;
-    bool usesContainerSize() const final { return true; }
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool hasNaturalAspectRatio() const final;
+    NaturalDimensions unorientedNaturalDimensions() const final;
 
     void reportApproximateMemoryCost() const;
     EncodedDataStatus dataChanged(bool allDataReceived) final;
@@ -113,14 +104,12 @@ private:
     bool currentFrameIsComplete() const final { return !!m_page; }
 
     bool hasHDRContent() const final;
-    RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB()) final;
 
     void startAnimationTimerFired();
 
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }) final;
-    ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
-    void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { });
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) final;
 
     void applyLinkParameters(const Style::LinkParameters&);
 

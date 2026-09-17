@@ -8362,7 +8362,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             return;
 
         auto promise = std::exchange(protectedThis->m_artworkImagePromise, { });
-        RefPtr nativeImage = image ? image->nativeImage() : nullptr;
+        RefPtr nativeImage = image ? image->currentNativeImage(ConcreteObjectSize::fixed(selfReportedSize(*image))) : nullptr;
         if (!nativeImage) {
             promise->reject(Exception { ExceptionCode::InvalidAccessError, "No image retrieved."_s });
             return;

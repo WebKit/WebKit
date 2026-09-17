@@ -28,29 +28,31 @@
 #include "FloatSize.h"
 #include "GeneratedImage.h"
 #include "Image.h"
+#include "ImageDrawingExtras.h"
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class CrossfadeGeneratedImage final : public GeneratedImage {
 public:
-    static Ref<CrossfadeGeneratedImage> create(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
+    static Ref<CrossfadeGeneratedImage> create(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, std::unique_ptr<ImageDrawingExtras> fromExtras = nullptr, std::unique_ptr<ImageDrawingExtras> toExtras = nullptr)
     {
-        return adoptRef(*new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, size));
+        return adoptRef(*new CrossfadeGeneratedImage(fromImage, toImage, percentage, crossfadeSize, WTF::move(fromExtras), WTF::move(toExtras)));
     }
 
-    void setContainerSize(const FloatSize&) override { }
-    bool usesContainerSize() const override { return false; }
-    bool hasRelativeWidth() const override { return false; }
-    bool hasRelativeHeight() const override { return false; }
-
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override { return m_crossfadeSize; }
+    NaturalDimensions unorientedNaturalDimensions() const final
+    {
+        if (constructedSize().isEmpty())
+            return NaturalDimensions::none();
+        return NaturalDimensions::fixed(constructedSize());
+    }
 
 private:
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) override;
-    void drawPattern(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override;
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
 
-    CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize&);
+    CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, std::unique_ptr<ImageDrawingExtras> fromExtras, std::unique_ptr<ImageDrawingExtras> toExtras);
 
     bool isCrossfadeGeneratedImage() const override { return true; }
     void dump(WTF::TextStream&) const override;
@@ -60,8 +62,10 @@ private:
     const Ref<Image> m_fromImage;
     const Ref<Image> m_toImage;
 
+    const std::unique_ptr<ImageDrawingExtras> m_fromExtras;
+    const std::unique_ptr<ImageDrawingExtras> m_toExtras;
+
     float m_percentage;
-    FloatSize m_crossfadeSize;
 };
 
 }

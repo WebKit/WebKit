@@ -399,7 +399,6 @@ svg/SVGUseElement.cpp
 svg/SVGViewSpec.h
 svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
-svg/graphics/SVGImageForContainer.h
 svg/properties/SVGAnimatedDecoratedProperty.h
 svg/properties/SVGAnimatedPrimitiveProperty.h
 svg/properties/SVGAnimatedPropertyAnimatorImpl.h

@@ -2623,6 +2623,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferResourceLimits.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
+    platform/graphics/ImageDrawingExtras.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageObserver.h
     platform/graphics/ImageOrientation.h
@@ -2672,6 +2673,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Model.h
     platform/graphics/ModelContext.h
     platform/graphics/NativeImage.h
+    platform/graphics/NaturalDimensions.h
+    platform/graphics/ObjectSizeNegotiation.h
     platform/graphics/NullGraphicsContext.h
     platform/graphics/NullImageBufferBackend.h
     platform/graphics/Path.h
@@ -3397,6 +3400,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/grid/StyleGridTrackSizingDirection.h
 
     style/values/images/StyleGradient.h
+    style/values/images/StyleImageDrawingExtras.h
     style/values/images/StyleImageOrNone.h
     style/values/images/StyleImageOrientation.h
     style/values/images/StyleImageWrapper.h
@@ -3642,8 +3646,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
 
     svg/graphics/SVGImage.h
-    svg/graphics/SVGImageCache.h
-    svg/graphics/SVGImageForContainer.h
 
     svg/graphics/filters/SVGFilterExpression.h
     svg/graphics/filters/SVGFilterRenderer.h

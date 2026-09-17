@@ -105,38 +105,12 @@ void GeneratedImage::evictCachedGeneratedImage(FloatSize size)
     m_images.remove(size);
 }
 
-FloatSize GeneratedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType) const
+NaturalDimensions GeneratedImage::naturalDimensions(const RenderElement* renderer) const
 {
-    if (!m_fixedSize)
-        return m_containerSize;
+    if (!m_fixedSize || !renderer)
+        return NaturalDimensions::none();
 
-    if (!renderer)
-        return { };
-
-    FloatSize fixedSize = this->fixedSize(*renderer);
-    if (multiplier == 1.0f)
-        return fixedSize;
-
-    float width = fixedSize.width() * multiplier;
-    float height = fixedSize.height() * multiplier;
-
-    // Don't let images that have a width/height >= 1 shrink below 1 device pixel when zoomed.
-    float deviceScaleFactor = protect(renderer->document())->deviceScaleFactor();
-    if (fixedSize.width() > 0)
-        width = std::max<float>(1 / deviceScaleFactor, width);
-    if (fixedSize.height() > 0)
-        height = std::max<float>(1 / deviceScaleFactor, height);
-
-    return { width, height };
-}
-
-void GeneratedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // At a zoom level of 1 the image is guaranteed to have a device pixel size.
-    FloatSize size = floorSizeToDevicePixels(LayoutSize(this->imageSize(renderer, 1)), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
-    intrinsicWidth = size.width();
-    intrinsicHeight = size.height();
-    intrinsicRatio = size;
+    return NaturalDimensions::fixed(floorSizeToDevicePixels(LayoutSize(fixedSize(*renderer)), protect(renderer->document())->deviceScaleFactor()));
 }
 
 // MARK: Client support.

@@ -29,6 +29,7 @@
 #include "StyleCrossfadeImage.h"
 
 #include "AnimationUtilities.h"
+#include "BitmapImage.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSValuePool.h"
 #include "CachedImage.h"
@@ -36,7 +37,8 @@
 #include "CrossfadeGeneratedImage.h"
 #include "DeprecatedCSSOMValue.h"
 #include "RenderElement.h"
-#include "SVGImageForContainer.h"
+#include "SVGImage.h"
+#include "StyleImageDrawingExtras.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/PointerComparison.h>
@@ -176,23 +178,21 @@ RefPtr<WebCore::Image> CrossfadeImage::image(const RenderElement* renderer, cons
     RefPtr protectedFromImage = fromImage;
     RefPtr protectedToImage = toImage;
 
-    if (RefPtr fromSVGImage = dynamicDowncast<SVGImage>(protectedFromImage)) {
-        auto fromURL = m_cachedFromImage ? protect(m_cachedFromImage)->url() : WTF::URL();
-        protectedFromImage = SVGImageForContainer::create(fromSVGImage.get(), { .containerSize = size, .initialFragmentURL = fromURL });
-    }
-    if (RefPtr toSVGImage = dynamicDowncast<SVGImage>(protectedToImage)) {
-        auto toURL = m_cachedToImage ? protect(m_cachedToImage)->url() : WTF::URL();
-        protectedToImage = SVGImageForContainer::create(toSVGImage.get(), { .containerSize = size, .initialFragmentURL = toURL });
-    }
+    auto extrasFor = [](const CachedResourceHandle<WebCore::CachedImage>& cachedImage, const WebCore::Image* image) -> std::unique_ptr<WebCore::ImageDrawingExtras> {
+        if (!image || !image->isSVGImage())
+            return nullptr;
+        return makeUnique<ImageDrawingExtras>(cachedImage ? protect(cachedImage)->url() : WTF::URL());
+    };
 
-    return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer), size);
+    return CrossfadeGeneratedImage::create(*protectedFromImage, *protectedToImage, m_progress.value.value, fixedSize(*renderer),
+        extrasFor(m_cachedFromImage, protectedFromImage.get()), extrasFor(m_cachedToImage, protectedToImage.get()));
 }
 
-bool CrossfadeImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CrossfadeImage::currentFrameIsComplete() const
 {
-    if (m_from && !protect(m_from)->currentFrameIsComplete(renderer))
+    if (m_from && !protect(m_from)->currentFrameIsComplete())
         return false;
-    if (m_to && !protect(m_to)->currentFrameIsComplete(renderer))
+    if (m_to && !protect(m_to)->currentFrameIsComplete())
         return false;
     return true;
 }
@@ -211,8 +211,8 @@ FloatSize CrossfadeImage::fixedSize(const RenderElement& renderer) const
     if (!m_from || !m_to)
         return { };
 
-    auto fromImageSize = protect(m_from)->imageSize(&renderer, 1);
-    auto toImageSize = protect(m_to)->imageSize(&renderer, 1);
+    auto fromImageSize = protect(m_from)->selfReportedSize(&renderer);
+    auto toImageSize = protect(m_to)->selfReportedSize(&renderer);
 
     // Rounding issues can cause transitions between images of equal size to return
     // a different fixed size; avoid performing the interpolation if the images are the same size.

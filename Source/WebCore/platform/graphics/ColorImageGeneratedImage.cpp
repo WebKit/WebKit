@@ -35,29 +35,29 @@
 namespace WebCore {
 
 ColorImageGeneratedImage::ColorImageGeneratedImage(const Color& color, const FloatSize& size)
-    : m_color(color)
+    : GeneratedImage(size)
+    , m_color(color)
 {
-    setContainerSize(size);
 }
 
-ImageDrawResult ColorImageGeneratedImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect&, ImagePaintingOptions options)
+ImageDrawResult ColorImageGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect&, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     Image::fillWithSolidColor(context, destinationRect, m_color, options.compositeOperator());
     return ImageDrawResult::DidDraw;
 }
 
-void ColorImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void ColorImageGeneratedImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     if (spacing.isZero()) {
         Image::fillWithSolidColor(context, destinationRect, m_color, options.compositeOperator());
         return;
     }
 
-    auto imageBuffer = context.createAlignedImageBuffer(size());
+    auto imageBuffer = context.createAlignedImageBuffer(concreteObjectSize.size());
     if (!imageBuffer)
         return;
 
-    imageBuffer->context().fillRect(FloatRect { { }, size() }, m_color);
+    imageBuffer->context().fillRect(FloatRect { { }, concreteObjectSize.size() }, m_color);
     context.drawPattern(*imageBuffer, destinationRect, sourceRect, patternTransform, phase, spacing, options);
 }
 

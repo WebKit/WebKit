@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ShapeOutsideInfo.h"
 
+#include "BitmapImage.h"
 #include "BoxLayoutShape.h"
 #include "DocumentPage.h"
 #include "FloatingObjects.h"
@@ -271,7 +272,6 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
 
             Ref styleImage = shapeImage.image.value;
             auto logicalImageSize = renderer.calculateImageIntrinsicDimensions(styleImage.ptr(), boxSize, RenderImage::ScaleByUsedZoom::Yes);
-            styleImage->setContainerContextForRenderer(renderer, logicalImageSize, style.usedZoom());
 
             auto logicalMarginRect = shapeImageMarginRect(renderer, boxSize);
             auto* renderImage = dynamicDowncast<RenderImage>(renderer);
@@ -281,7 +281,16 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
             auto physicalImageSize = writingMode.isHorizontal() ? logicalImageSize : logicalImageSize.transposedSize();
 
             RefPtr image = styleImage->image(const_cast<RenderBox*>(&renderer), physicalImageSize, NullGraphicsContext());
-            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin);
+
+            auto usedZoom = style.usedZoom();
+            std::optional<FloatSize> sampledSize;
+            if (image)
+                sampledSize = sizeSampledAt(*image);
+            auto sourceSize = sampledSize.value_or(FloatSize(roundedIntSize(logicalImageSize)));
+            auto concreteObjectSize = sampledSize
+                ? ConcreteObjectSize::fixed(*sampledSize)
+                : ConcreteObjectSize::fixed(FloatSize(logicalImageSize) / usedZoom, usedZoom);
+            return LayoutShape::createRasterShape(image.get(), shapeImageThreshold.value, logicalImageRect, logicalMarginRect, writingMode, logicalMargin, concreteObjectSize, sourceSize);
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto geometry = computeGeometryForBoxShape(shapeOutside.effectiveCSSBox(), renderer);

@@ -23,6 +23,7 @@
 #include "config.h"
 #include "SVGFEImageElement.h"
 
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "CachedResourceRequest.h"
 #include "ContainerNodeInlines.h"
@@ -263,16 +264,16 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
 RefPtr<FilterEffect> SVGFEImageElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const
 {
     if (RefPtr cachedImage = m_cachedImage) {
-        RefPtr image = cachedImage->imageForRenderer(renderer());
-        if (!image || image->isNull())
+        RefPtr image = cachedImage->image();
+        if (!image || hasNothingToDraw(*image))
             return nullptr;
 
-        RefPtr nativeImage = image->currentPreTransformedNativeImage();
+        auto size = selfReportedSize(*image);
+        RefPtr nativeImage = image->currentPreTransformedNativeImage(ConcreteObjectSize::fixed(size));
         if (!nativeImage)
             return nullptr;
 
-        auto imageRect = FloatRect { { }, image->size() };
-        return FEImage::create({ nativeImage.releaseNonNull() }, imageRect, preserveAspectRatio());
+        return FEImage::create({ nativeImage.releaseNonNull() }, FloatRect { { }, size }, preserveAspectRatio());
     }
 
     auto [imageBuffer, imageRect] = imageBufferForEffect(destinationContext);

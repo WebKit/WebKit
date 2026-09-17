@@ -28,7 +28,6 @@
 #include <WebCore/ImageObserver.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutSize.h>
-#include <WebCore/SVGImageCache.h>
 #include <WebCore/StyleLinkParameters.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -40,8 +39,6 @@ class CachedResourceLoader;
 class WeakPtrImplWithEventTargetData;
 class MemoryCache;
 class NativeImage;
-class RenderElement;
-class RenderObject;
 class SecurityOrigin;
 
 class CachedImage final : public CachedResource {
@@ -53,37 +50,23 @@ public:
     virtual ~CachedImage();
 
     WEBCORE_EXPORT Image* image() const; // Returns the nullImage() if the image is not available yet.
-    WEBCORE_EXPORT Image* imageForRenderer(const RenderObject*); // Returns the nullImage() if the image is not available yet.
     bool hasImage() const { return m_image.get(); }
-    bool currentFrameKnownToBeOpaque(const RenderElement*);
-    bool currentFrameIsComplete(const RenderElement*);
+    bool currentFrameKnownToBeOpaque();
+    bool currentFrameIsComplete();
 
-    std::pair<WeakPtr<Image>, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
+    std::pair<WeakPtr<BitmapImage>, float> brokenImage(float deviceScaleFactor) const; // Returns an image and the image's resolution scale factor.
     bool NODELETE willPaintBrokenImage() const;
 
-    bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
+    bool canRender(ImageOrientation, float multiplier);
 
     void setAllowsOrientationOverride(bool b) { m_allowsOrientationOverride = b; }
     bool allowsOrientationOverride() const { return m_allowsOrientationOverride; }
 
-    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&, const Style::LinkParameters&);
-    bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
-    bool imageHasNaturalAspectRatio() const { return m_image && m_image->hasNaturalAspectRatio(); }
-    bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
-    bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
 
     void updateBuffer(const FragmentedSharedBuffer&) override;
     void finishLoading(const FragmentedSharedBuffer*, const NetworkLoadMetrics&) override;
 
-    enum SizeType {
-        UsedSize,
-        IntrinsicSize
-    };
-    WEBCORE_EXPORT FloatSize imageSizeForRenderer(const RenderElement*) const;
-    // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
-    LayoutSize imageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
-    LayoutSize unclampedImageSizeForRenderer(const RenderElement*, float multiplier, SizeType = UsedSize, float density = 1.0f) const;
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
+    NaturalDimensions naturalDimensions(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
 
     bool hasHDRContent() const;
 
@@ -108,7 +91,6 @@ public:
     bool allowsAnimation(const Image&) const;
 
 private:
-    FloatSize internalImageSizeForRenderer(const RenderElement*, float multiplier, SizeType, float density) const;
 
     void clear();
 
@@ -186,21 +168,10 @@ private:
 
     void didReplaceSharedBufferContents() override;
 
-    struct ContainerContext {
-        LayoutSize containerSize;
-        float containerZoom;
-        URL imageURL;
-        Style::LinkParameters linkParameters { CSS::Keyword::None { } };
-    };
-
-    using ContainerContextRequests = HashMap<SingleThreadWeakRef<const CachedImageClient>, ContainerContext>;
-    ContainerContextRequests m_pendingContainerContextRequests;
-
     SingleThreadWeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;
-    std::unique_ptr<SVGImageCache> m_svgImageCache;
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     std::optional<bool> m_axCustomColorModeShouldAdjust;

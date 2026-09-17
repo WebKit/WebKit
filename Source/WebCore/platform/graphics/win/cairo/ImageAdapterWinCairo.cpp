@@ -69,7 +69,9 @@ bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
 
     GraphicsContextCairo gc(platformImage.get());
 
-    auto imageSize = image().size();
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image().naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
     auto destinationRect = FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight);
 
     if (auto nativeImage = size ? nativeImageOfSize(*size) : nullptr) {
@@ -78,8 +80,8 @@ bool ImageAdapter::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
         return true;
     }
 
-    auto sourceRect = FloatRect { { }, imageSize };
-    gc.drawImage(image(), destinationRect, sourceRect, { CompositeOperator::Copy });
+    auto sourceRect = FloatRect { { }, imageSize.size() };
+    gc.drawImage(image(), imageSize, destinationRect, sourceRect, { CompositeOperator::Copy });
     return true;
 }
 

@@ -553,7 +553,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto textIndicator = WebCore::TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(margin, margin));
 
     if (textIndicator) {
-        if (WebCore::Image* image = textIndicator->contentImage()) {
+        if (WebCore::BitmapImage* image = textIndicator->contentImage()) {
             auto contentImage = image->nativeImage()->platformImage();
             *cgImage = contentImage.autorelease();
         }
@@ -648,7 +648,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return cachedImage->imageForRenderer(renderer)->adapter().nsImage();
+    return cachedImage->image()->adapter().nsImage();
 }
 
 #endif
@@ -676,7 +676,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->adapter().tiffRepresentation();
+    return (__bridge NSData *)cachedImage->image()->adapter().tiffRepresentation();
 }
 
 #endif

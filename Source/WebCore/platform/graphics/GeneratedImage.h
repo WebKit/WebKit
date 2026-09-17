@@ -32,25 +32,23 @@ namespace WebCore {
 
 class GeneratedImage : public Image {
 public:
-    void setContainerSize(const FloatSize& size) override { m_size = size; }
-    bool usesContainerSize() const override { return true; }
-    bool hasIntrinsicWidth() const override { return false; }
-    bool hasIntrinsicHeight() const override { return false; }
-    bool hasRelativeWidth() const override { return true; }
-    bool hasRelativeHeight() const override { return true; }
-    void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) override;
-
-    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override { return m_size; }
+    FloatSize constructedSize() const { return m_size; }
 
 protected:
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) override = 0;
-    void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) override = 0;
+    NaturalDimensions unorientedNaturalDimensions() const override { return NaturalDimensions::none(); }
+
+    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override = 0;
+    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override = 0;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }
     bool currentFrameIsComplete() const override { return true; }
 
     GeneratedImage() = default;
+    explicit GeneratedImage(const FloatSize& size)
+        : m_size(size)
+    {
+    }
 
 private:
     bool isGeneratedImage() const override { return true; }

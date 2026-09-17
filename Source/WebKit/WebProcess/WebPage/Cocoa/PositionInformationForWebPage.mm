@@ -63,6 +63,7 @@
 #import <WebCore/LocalFrameInlines.h>
 #import <WebCore/Model.h>
 #import <WebCore/NodeDocument.h>
+#import <WebCore/ObjectSizeNegotiation.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
@@ -201,8 +202,14 @@ static std::optional<std::pair<WebCore::RenderImage&, WebCore::Image&>> imageRen
     if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
         return std::nullopt;
 
-    RefPtr image = protect(renderImage->cachedImage())->imageForRenderer(renderImage);
-    if (!image || image->width() <= 1 || image->height() <= 1)
+    RefPtr image = protect(renderImage->cachedImage())->image();
+    if (!image)
+        return std::nullopt;
+
+    auto naturalSize = WebCore::ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        WebCore::ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } }).size();
+    if (naturalSize.width() <= 1 || naturalSize.height() <= 1)
         return std::nullopt;
 
     return { { *renderImage, *image } };
@@ -258,7 +265,8 @@ static void imagePositionInformation(WebPage& page, WebCore::Element& element, c
     info.isImage = true;
 #if PLATFORM(IOS_FAMILY)
     // UIImageDataWriteToSavedPhotosAlbum works with resource data, and thus only for bitmap images.
-    info.hasSaveableImage = image.isBitmapImage() && !image.isNull();
+    RefPtr bitmapImage = dynamicDowncast<WebCore::BitmapImage>(image);
+    info.hasSaveableImage = bitmapImage && !bitmapImage->isNull();
 #endif
     info.imageURL = page.applyLinkDecorationFiltering(protect(element.document())->encodingParseURL(protect(renderImage.cachedImage())->url().string()), WebCore::LinkDecorationFilteringTrigger::Unspecified);
     info.imageMIMEType = image.mimeType();

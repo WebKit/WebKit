@@ -42,6 +42,7 @@ public:
     SVGImageElement& NODELETE imageElement() const;
 
     bool updateImageViewport();
+    IntSize imageContainerSize() const;
     void setNeedsBoundariesUpdate() override { m_needsBoundariesUpdate = true; }
     void setNeedsTransformUpdate() override { m_needsTransformUpdate = true; }
 

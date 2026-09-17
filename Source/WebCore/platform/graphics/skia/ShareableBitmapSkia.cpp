@@ -111,7 +111,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
     context.platformContext()->drawImageRect(image.get(), scaledSrcRect, scaledDestRect, { }, &paint, { });
 }
 
-RefPtr<Image> ShareableBitmap::createImage()
+RefPtr<BitmapImage> ShareableBitmap::createImage()
 {
     return BitmapImage::create(createPlatformImage(BackingStoreCopy::DontCopyBackingStore));
 }

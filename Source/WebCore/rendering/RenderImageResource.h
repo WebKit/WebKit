@@ -28,6 +28,7 @@
 #include <WebCore/CachedImage.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/StyleImage.h>
+#include <WebCore/StyleImageDrawingExtras.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -60,18 +61,18 @@ public:
     bool currentFrameIsComplete() const;
     bool errorOccurred() const { return m_styleImage && m_styleImage->errorOccurred(); }
 
-    void setContainerContext(const IntSize&, const URL&);
+    Style::ImageDrawingExtras drawingExtras(const URL& = { }) const;
 
-    bool imageHasRelativeWidth() const { return m_styleImage && m_styleImage->imageHasRelativeWidth(); }
-    bool imageHasRelativeHeight() const { return m_styleImage && m_styleImage->imageHasRelativeHeight(); }
-
-    inline LayoutSize imageSize(float multiplier) const { return imageSize(multiplier, CachedImage::UsedSize); }
-    inline LayoutSize intrinsicSize(float multiplier) const { return imageSize(multiplier, CachedImage::IntrinsicSize); }
+    bool isSizedByBox() const;
+    bool hasDecodedImage() const;
+    NaturalDimensions naturalDimensions() const;
+    LayoutSize intrinsicSize(float multiplier) const;
+    FloatSize sourceCoordinateSize() const;
 
     WrappedImagePtr imagePtr() const { return m_styleImage ? m_styleImage->data() : nullptr; }
 
 private:
-    LayoutSize imageSize(float multiplier, CachedImage::SizeType) const;
+    float density() const;
 
     SingleThreadWeakPtr<RenderElement> m_renderer;
     RefPtr<Style::Image> m_styleImage;

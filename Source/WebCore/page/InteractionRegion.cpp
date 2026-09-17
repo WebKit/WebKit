@@ -339,11 +339,11 @@ static bool cachedImageIsPhoto(const CachedImage& cachedImage)
     if (cachedImage.errorOccurred())
         return false;
 
-    RefPtr image = cachedImage.image();
-    if (!image || !image->isBitmapImage())
+    RefPtr bitmapImage = dynamicDowncast<BitmapImage>(cachedImage.image());
+    if (!bitmapImage)
         return false;
 
-    if (image->nativeImage() && image->nativeImage()->hasAlpha())
+    if (RefPtr nativeImage = bitmapImage->nativeImage(); nativeImage && nativeImage->hasAlpha())
         return false;
 
     return true;
@@ -355,13 +355,17 @@ static RefPtr<Image> findIconImage(const RenderObject& renderer)
         if (!renderImage->cachedImage() || renderImage->cachedImage()->errorOccurred())
             return nullptr;
 
-        RefPtr image = protect(*renderImage->cachedImage())->imageForRenderer(renderImage);
+        RefPtr image = protect(*renderImage->cachedImage())->image();
         if (!image)
             return nullptr;
 
-        if (image->isSVGImageForContainer()
-            || (image->isBitmapImage() && image->nativeImage() && image->nativeImage()->hasAlpha()))
+        if (image->isSVGImage())
             return image;
+
+        if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image)) {
+            if (RefPtr nativeImage = bitmapImage->nativeImage(); nativeImage && nativeImage->hasAlpha())
+                return image;
+        }
     }
 
     return nullptr;
@@ -567,7 +571,9 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(const Render
         auto size = boundingSize(regionRenderer, transform);
         auto generateAndCachePath = [&] {
             LayoutRect imageRect(FloatPoint(), size);
-            Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
+            auto iconSize = iconImage ? ObjectSizeNegotiation::defaultSizingAlgorithm(iconImage->naturalDimensions(),
+                ObjectSizeNegotiation::SpecifiedSize::none(), { .defaultObjectSize = { } }).size() : FloatSize { };
+            Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0, ConcreteObjectSize::fixed(iconSize), iconSize);
             LayoutShape::DisplayPaths paths;
             shape->buildDisplayPaths(paths);
             auto path = paths.shape;

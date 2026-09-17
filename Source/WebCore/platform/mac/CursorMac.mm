@@ -137,9 +137,9 @@ static RetainPtr<NSCursor> cursor(ASCIILiteral)
 
 #if ENABLE(CUSTOM_CURSOR_SUPPORT)
 #if ENABLE(MOUSE_CURSOR_SCALE)
-static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot, float scale)
+static RetainPtr<NSCursor> createCustomCursor(BitmapImage* image, const IntPoint& hotSpot, float scale)
 #else
-static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)
+static RetainPtr<NSCursor> createCustomCursor(BitmapImage* image, const IntPoint& hotSpot)
 #endif
 {
     // FIXME: The cursor won't animate.  Not sure if that's a big deal.
@@ -149,14 +149,15 @@ static RetainPtr<NSCursor> createCustomCursor(Image* image, const IntPoint& hotS
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
 #if ENABLE(MOUSE_CURSOR_SCALE)
-    NSSize size = NSMakeSize(image->width() / scale, image->height() / scale);
+    auto cursorSize = image->size();
+    NSSize size = NSMakeSize(cursorSize.width() / scale, cursorSize.height() / scale);
     NSSize expandedSize = NSMakeSize(ceil(size.width), ceil(size.height));
 
     // Pad the image with transparent pixels so it has an integer boundary.
     if (size.width != expandedSize.width || size.height != expandedSize.height) {
         RetainPtr<NSImage> expandedImage = adoptNS([[NSImage alloc] initWithSize:expandedSize]);
         NSRect toRect = NSMakeRect(0, expandedSize.height - size.height, size.width, size.height);
-        NSRect fromRect = NSMakeRect(0, 0, image->width(), image->height());
+        NSRect fromRect = NSMakeRect(0, 0, cursorSize.width(), cursorSize.height());
 
         [expandedImage lockFocus];
         [nsImage drawInRect:toRect fromRect:fromRect operation:NSCompositingOperationSourceOver fraction:1];
