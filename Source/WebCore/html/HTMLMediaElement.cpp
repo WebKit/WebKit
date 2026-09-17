@@ -6313,6 +6313,9 @@ void HTMLMediaElement::handlePlaybackPositionChanged()
 
             ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, ") or <= 0, pausing");
 
+            // Queue a task to fire a simple event named timeupdate at the media element.
+            scheduleTimeupdateEvent(false);
+
             // If the media element does not have a current media controller, and the media element
             // has still ended playback and paused is false,
             if (!m_mediaController && !m_paused) {
@@ -6781,6 +6784,12 @@ bool HTMLMediaElement::endedPlayback() const
     // A media element is said to have ended playback when the element's
     // readyState attribute is HAVE_METADATA or greater,
     if (m_readyState < HAVE_METADATA)
+        return false;
+
+    // While a seek is in flight, currentMediaTime() reports the seek target (the official
+    // playback position), not the current playback position that ended playback is defined in
+    // terms of; wait until finishSeek() runs before it can be ended.
+    if (m_seeking)
         return false;
 
     // and the current playback position is the end of the media resource and the direction
