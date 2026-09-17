@@ -656,7 +656,8 @@ bool FlexFormattingUtils::isBalance(const RenderFlexibleBox& flexBox)
 Style::FlexBasis FlexFormattingUtils::flexBasisForFlexItem(const RenderBox& flexItem)
 {
     auto flexBasis = flexItem.style().flexBasis();
-    if (flexBasis.isAuto())
+
+    if (flexBasis.isAuto() && !(flexBasis.isCalcSize() && mainAxisIsFlexItemInlineAxis(flexItem)))
         flexBasis = preferredMainSizeLengthForFlexItem(flexItem).asFlexBasis();
     return flexBasis;
 }
