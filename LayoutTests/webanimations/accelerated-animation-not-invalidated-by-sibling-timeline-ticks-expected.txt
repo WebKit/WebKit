@@ -1,3 +1,0 @@
-
-PASS A fully accelerated animation must not invalidate style only because another non-accelerated animation is running.
-
