@@ -39,7 +39,7 @@ case "${CURRENT_DISTRO}" in
         fi
         apt update
         apt upgrade -y
-        apt install -y python3-pil python3-numpy python3-pip
+        apt install -y python3-pil python3-numpy python3-pip tar xz-utils
         python3 -m pip config set global.break-system-packages true
         pip3 install selenium==4.24.0
     ;;
