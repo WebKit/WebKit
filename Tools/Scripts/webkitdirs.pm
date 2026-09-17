@@ -969,6 +969,8 @@ sub unversionedSDKNameFromSDK($)
 
 sub availableXcodeSDKs
 {
+    return () unless isDarwin();
+
     # Looking for SDKs in known locations is much faster than calling through to xcodebuild.
     chomp(my $developerDir = `xcode-select -p`);
     my @availableSDKDirectories = bsd_glob("$developerDir/Platforms/*.platform/Developer/SDKs/*");
@@ -1467,6 +1469,7 @@ sub argumentsForXcode()
 sub determineConfiguredXcodeWorkspaceOrDefault()
 {
     return if defined $configuredXcodeWorkspace;
+    return unless isAppleCocoaWebKit();
     determineBaseProductDir();
 
     if (open WORKSPACE, "$baseProductDir/Workspace") {
