@@ -3031,9 +3031,42 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
         logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
 
     if constexpr (std::same_as<SizeType, Style::PreferredSize> || std::same_as<SizeType, Style::FlexBasis>) {
-        if (sizesLogicalWidthToFitContent())
-            return std::max(minContentLogicalWidthContribution(), std::min(maxContentLogicalWidthContribution(), logicalWidthResult));
+        // In calc-size(auto, size * 2), `auto` stands for the width the box would have taken.
+        // max-width has no auto, and min-width: auto returned above.
+        auto isCalcSizeOnAuto = logicalWidth.isCalcSize() && logicalWidth.isAuto();
+
+        if (sizesLogicalWidthToFitContent()) {
+            // The contributions already carry the calculation, so shrink-to-fit has to read the
+            // content based widths here or the calculation lands twice.
+            auto shrinkToFitBounds = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+                if (!isCalcSizeOnAuto)
+                    return { minContentLogicalWidthContribution(), maxContentLogicalWidthContribution() };
+                auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+                auto borderAndPadding = borderAndPaddingLogicalWidth();
+                return { minContentLogicalWidth + borderAndPadding, maxContentLogicalWidth + borderAndPadding };
+            }();
+            logicalWidthResult = std::max(shrinkToFitBounds.first, std::min(shrinkToFitBounds.second, logicalWidthResult));
+        }
+
+        if (isCalcSizeOnAuto) {
+            // On flex-basis, `auto` means the width property rather than the width this box would
+            // otherwise take, so resolve that first and let it stand for `size`. Identical values on
+            // both properties would recurse, so those keep the plain auto width.
+            if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
+                if (auto overridingLogicalWidth = overridingLogicalWidthForFlexBasisComputation(); overridingLogicalWidth && *overridingLogicalWidth == logicalWidth) {
+                    // A calc-size() over an auto basis is not the plain auto that leaves nothing
+                    // to resolve here.
+                    auto& styleLogicalWidth = style().logicalWidth();
+                    auto styleLogicalWidthResolves = !styleLogicalWidth.isAuto() || styleLogicalWidth.isCalcSize();
+                    if (styleLogicalWidthResolves && !(styleLogicalWidth == logicalWidth))
+                        logicalWidthResult = computeLogicalWidthUsingGeneric(styleLogicalWidth, availableLogicalWidth, containingBlock);
+                }
+            }
+
+            return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthResult - borderAndPaddingLogicalWidth()), availableLogicalWidth) + borderAndPaddingLogicalWidth();
+        }
     }
+
     return logicalWidthResult;
 }
 
