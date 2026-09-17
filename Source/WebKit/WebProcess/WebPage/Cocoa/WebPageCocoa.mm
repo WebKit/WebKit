@@ -3593,9 +3593,12 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
         if (document->quirks().needsYouTubeMouseOutQuirk()) {
             if (RefPtr frame = document->frame()) {
                 PlatformMouseEvent event { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, m_potentialTapInputSource, pointerId };
+                RefPtr<Element> newHoveredNode;
                 if (!nodeRespondingToClick.isConnected())
                     frame->eventHandler().dispatchSyntheticMouseMove(event);
-                frame->eventHandler().dispatchSyntheticMouseOut(event);
+                else
+                    newHoveredNode = nodeRespondingToClick.parentElementInComposedTree();
+                frame->eventHandler().dispatchSyntheticMouseOut(event, newHoveredNode.get());
             }
         }
     }

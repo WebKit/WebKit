@@ -67,9 +67,9 @@ VisibleSelection EventHandler::selectClosestWordFromHitTestResultBasedOnLookup(c
 
 #if ENABLE(TWO_PHASE_CLICKS)
 
-void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent)
+void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent, Node* newHoveredNode)
 {
-    updateMouseEventTargetNode(eventNames().mouseoutEvent, nullptr, platformMouseEvent, FireMouseOverOut::Yes);
+    updateMouseEventTargetNode(eventNames().mouseoutEvent, newHoveredNode, platformMouseEvent, FireMouseOverOut::Yes);
 }
 
 void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platformMouseEvent)
