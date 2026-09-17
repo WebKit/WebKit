@@ -2483,7 +2483,7 @@ bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effec
         return false;
 
     auto target = effect.targetStyleable();
-    return target && target->element.localName() == "ea-network-nav"_s;
+    return target && protect(target->element)->localName() == "ea-network-nav"_s;
 }
 
 bool Quirks::shouldDisableThreadedAnimationsQuirk() const

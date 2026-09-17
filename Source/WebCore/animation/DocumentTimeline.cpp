@@ -244,7 +244,7 @@ bool DocumentTimeline::animationCanBeRemoved(WebAnimation& animation)
         return false;
 
     auto target = keyframeEffect->targetStyleable();
-    if (!target || !target->element.isDescendantOf(*m_document))
+    if (!target || !protect(target->element)->isDescendantOf(*m_document))
         return false;
 
 IGNORE_GCC_WARNINGS_BEGIN("dangling-reference")
