@@ -154,6 +154,7 @@ public:
     void removeDestructionObserver(FrameDestructionObserver&);
 
     WEBCORE_EXPORT void willDetachPage();
+    WEBCORE_EXPORT bool broadcastSampledFixedContainerEdgeColorsIfNeeded();
 
     inline Document* document() const; // Defined in LocalFrameInlines.h
     inline LocalFrameView* view() const; // Defined in DocumentView.h

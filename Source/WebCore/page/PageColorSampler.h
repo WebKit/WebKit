@@ -25,13 +25,17 @@
 
 #pragma once
 
+#include <WebCore/BoxSides.h>
 #include <WebCore/Color.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class IntRect;
 class LayoutRect;
+class LocalFrame;
 class Page;
+template<typename> class RectEdges;
 
 enum class PredominantColorType : uint8_t;
 
@@ -42,6 +46,11 @@ public:
 
     static constexpr auto nearlyTransparentAlphaThreshold = 0.1;
     static Variant<PredominantColorType, Color> predominantColor(Page&, const LayoutRect&);
+
+    // Site isolation: a subframe samples its own per-edge content colors so the
+    // main-frame process can substitute them into fixedContainerEdges where a remote frame paints.
+    static RectEdges<Color> sampleFixedContainerEdgeColors(LocalFrame&);
+    static std::optional<Color> remoteFrameSyncedEdgeColor(Page&, const IntRect&, BoxSide);
 };
 
 } // namespace WebCore

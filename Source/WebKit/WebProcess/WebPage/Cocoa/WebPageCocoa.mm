@@ -2372,6 +2372,34 @@ void WebPage::setObscuredContentInsetsFenced(const FloatBoxExtent& obscuredConte
     setObscuredContentInsets(obscuredContentInsets);
 }
 
+void WebPage::updateSampledFixedContainerEdgeColorsIfNeeded()
+{
+    RefPtr page = corePage();
+    if (!page)
+        return;
+
+    // The main-frame process samples its own content in willCommitMainFrameData, using this flag.
+    if (page->localMainFrame())
+        return;
+
+    // The main frame only asks for edges when this is enabled; sampling otherwise is pure overhead.
+    if (!page->settings().contentInsetBackgroundFillEnabled())
+        return;
+
+    if (!std::exchange(m_needsFixedContainerEdgesUpdate, false))
+        return;
+
+    // A process can host several local roots. Sampling only the committing one would let it consume
+    // the flag and starve the rest.
+    bool sampledEveryRootFrame = true;
+    for (Ref rootFrame : copyToVectorOf<Ref<WebCore::LocalFrame>>(page->rootFrames()))
+        sampledEveryRootFrame &= rootFrame->broadcastSampledFixedContainerEdgeColorsIfNeeded();
+
+    // Nothing to sample yet, so retry once there is. Until then this is only a few state checks.
+    if (!sampledEveryRootFrame)
+        m_needsFixedContainerEdgesUpdate = true;
+}
+
 void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, WebCore::FrameIdentifier rootFrameID)
 {
     RefPtr rootFrame = WebProcess::singleton().webFrame(rootFrameID);

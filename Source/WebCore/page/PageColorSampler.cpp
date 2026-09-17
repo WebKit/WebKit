@@ -28,11 +28,13 @@
 
 #include "ColorHash.h"
 #include "ColorSerialization.h"
+#include "ContainerNodeInlines.h"
 #include "ContentfulPaintChecker.h"
 #include "Document.h"
 #include "DocumentView.h"
 #include "Element.h"
 #include "FixedContainerEdges.h"
+#include "FrameInlines.h"
 #include "FrameSnapshotting.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
@@ -50,6 +52,7 @@
 #include "Page.h"
 #include "PixelBuffer.h"
 #include "RegistrableDomain.h"
+#include "RemoteFrame.h"
 #include "RenderImage.h"
 #include "RenderObjectInlines.h"
 #include "Settings.h"
@@ -296,34 +299,54 @@ bool PageColorSampler::colorsAreSimilar(const Color& a, const Color& b)
     return distance <= maxDistanceSquaredForSimilarColors;
 }
 
-Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
+// Under site isolation the fixed-container sampling snapshot is empty
+// where a cross-site iframe paints (its pixels live in another process). Find a RemoteFrame whose
+// painted area overlaps the sample rect and return the edge color that frame's process reported up
+// via FrameTreeSyncData, so the parent's fixedContainerEdges matches the non-isolated result.
+std::optional<Color> PageColorSampler::remoteFrameSyncedEdgeColor(Page& page, const IntRect& sampleRect, BoxSide side)
 {
-    RefPtr frame = page.localMainFrame();
-    if (!frame)
-        return PredominantColorType::None;
+    RefPtr mainFrame = page.localMainFrame();
+    if (!mainFrame)
+        return std::nullopt;
 
-    RefPtr view = frame->view();
-    if (!view)
-        return PredominantColorType::None;
+    // Pick the remote frame under the sample strip's midpoint, mirroring findFixedContainer's
+    // midpoint hit-test, so a frame that merely clips a corner of the strip isn't chosen.
+    auto midpoint = sampleRect.center();
 
-    RefPtr document = frame->document();
-    if (!document)
-        return PredominantColorType::None;
+    for (RefPtr<Frame> frame = mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame.get());
+        if (!remoteFrame)
+            continue;
 
-    static constexpr OptionSet snapshotFlags {
-        SnapshotFlags::ExcludeSelectionHighlighting,
-        SnapshotFlags::PaintEverythingExcludingSelection,
-        SnapshotFlags::ExcludeReplacedContentExceptForIFrames,
-        SnapshotFlags::ExcludeText,
-        SnapshotFlags::FixedAndStickyLayersOnly,
-    };
+        RefPtr owner = remoteFrame->ownerElement();
+        if (!owner)
+            continue;
 
-    auto colorSpace = ColorSpace::SRGB();
-    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { snapshotFlags, PixelFormat::BGRA8, colorSpace });
-    if (!snapshot)
-        return PredominantColorType::None;
+        CheckedPtr renderer = owner->renderer();
+        if (!renderer || !renderer->absoluteBoundingBoxRect().contains(midpoint))
+            continue;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
+        auto syncedColor = remoteFrame->frameTreeSyncData().sampledFixedContainerEdgeColors.at(side);
+        if (syncedColor.isVisible())
+            return syncedColor;
+    }
+
+    return std::nullopt;
+}
+
+// The main frame propagates these into child frame views, so a subframe sampling its own content
+// must use the same set or the isolated result will differ from the non-isolated one.
+static constexpr OptionSet predominantColorSnapshotFlags {
+    SnapshotFlags::ExcludeSelectionHighlighting,
+    SnapshotFlags::PaintEverythingExcludingSelection,
+    SnapshotFlags::ExcludeReplacedContentExceptForIFrames,
+    SnapshotFlags::ExcludeText,
+    SnapshotFlags::FixedAndStickyLayersOnly,
+};
+
+static Variant<PredominantColorType, Color> predominantColorOfSnapshot(ImageBuffer& snapshot, ColorSpace colorSpace)
+{
+    auto pixelBuffer = snapshot.getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot.truncatedLogicalSize() });
     if (!pixelBuffer)
         return PredominantColorType::None;
 
@@ -332,7 +355,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     static constexpr auto bytesPerPixel = 4;
 
     auto isNearlyTransparent = [](const Color& color) {
-        return color.alphaAsFloat() < nearlyTransparentAlphaThreshold;
+        return color.alphaAsFloat() < PageColorSampler::nearlyTransparentAlphaThreshold;
     };
 
     auto numberOfBytes = pixelBuffer->bytes().size();
@@ -382,7 +405,7 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
             continue;
         }
 
-        if (!colorsAreSimilar(*mostFrequentColor, color))
+        if (!PageColorSampler::colorsAreSimilar(*mostFrequentColor, color))
             continue;
 
         mostFrequentColorCount += count;
@@ -396,6 +419,72 @@ Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& pa
     }
 
     return PredominantColorType::Multiple;
+}
+
+Variant<PredominantColorType, Color> PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
+{
+    RefPtr frame = page.localMainFrame();
+    if (!frame)
+        return PredominantColorType::None;
+
+    RefPtr view = frame->view();
+    if (!view)
+        return PredominantColorType::None;
+
+    RefPtr document = frame->document();
+    if (!document)
+        return PredominantColorType::None;
+
+    auto colorSpace = ColorSpace::SRGB();
+    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), { predominantColorSnapshotFlags, PixelFormat::BGRA8, colorSpace });
+    if (!snapshot)
+        return PredominantColorType::None;
+
+    return predominantColorOfSnapshot(*snapshot, colorSpace);
+}
+
+static Color sampleEdgeStripColor(LocalFrame& frame, const IntRect& stripRect)
+{
+    if (stripRect.isEmpty())
+        return { };
+
+    auto colorSpace = ColorSpace::SRGB();
+    auto snapshot = snapshotFrameRect(frame, stripRect, { predominantColorSnapshotFlags, PixelFormat::BGRA8, colorSpace });
+    if (!snapshot)
+        return { };
+
+    // Same consensus rules as the main frame. No single color means an invalid one, leaving the
+    // main frame with its own result.
+    auto predominantColor = predominantColorOfSnapshot(*snapshot, colorSpace);
+    if (auto* color = std::get_if<Color>(&predominantColor))
+        return *color;
+
+    return { };
+}
+
+RectEdges<Color> PageColorSampler::sampleFixedContainerEdgeColors(LocalFrame& frame)
+{
+    // Sample a thin strip along each edge of this (subframe) frame's own content,
+    // so its process can report per-edge colors up for the main frame's fixedContainerEdges.
+    RectEdges<Color> edgeColors;
+
+    RefPtr view = frame.view();
+    if (!view || !frame.document())
+        return edgeColors;
+
+    static constexpr int thickness = 2;
+
+    // What the frame shows, not its whole scrollable contents, so a scrolled frame does not report
+    // hidden colors and the snapshot cost tracks the viewport. Already in contents coordinates.
+    auto visibleRect = view->visibleContentRect();
+    if (visibleRect.width() < thickness || visibleRect.height() < thickness)
+        return edgeColors;
+
+    edgeColors.setAt(BoxSide::Top, sampleEdgeStripColor(frame, { visibleRect.x(), visibleRect.y(), visibleRect.width(), thickness }));
+    edgeColors.setAt(BoxSide::Bottom, sampleEdgeStripColor(frame, { visibleRect.x(), visibleRect.maxY() - thickness, visibleRect.width(), thickness }));
+    edgeColors.setAt(BoxSide::Left, sampleEdgeStripColor(frame, { visibleRect.x(), visibleRect.y(), thickness, visibleRect.height() }));
+    edgeColors.setAt(BoxSide::Right, sampleEdgeStripColor(frame, { visibleRect.maxX() - thickness, visibleRect.y(), thickness, visibleRect.height() }));
+    return edgeColors;
 }
 
 } // namespace WebCore

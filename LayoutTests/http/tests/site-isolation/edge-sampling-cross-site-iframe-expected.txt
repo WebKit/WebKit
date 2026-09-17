@@ -1,0 +1,10 @@
+PASS Loaded cross-site iframes
+PASS color.top is "rgb(255, 120, 0)"
+PASS color.right is "rgb(175, 82, 222)"
+PASS color.bottom is "rgb(0, 122, 255)"
+PASS color.left is "rgb(52, 199, 89)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

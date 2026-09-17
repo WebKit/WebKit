@@ -352,6 +352,9 @@ void RemoteLayerTreeDrawingArea::updateRendering()
             visibleRect.intersect(*exposedRect);
     }
 
+    // Sampling snapshots content, which can run layout, so keep it out of the per-root transactions.
+    webPage->updateSampledFixedContainerEdgeColorsIfNeeded();
+
     webPage->finalizeRenderingUpdate({ });
 
     willStartRenderingUpdateDisplay();
