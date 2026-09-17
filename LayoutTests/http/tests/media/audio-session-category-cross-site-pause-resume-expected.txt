@@ -1,0 +1,31 @@
+
+** A cross-site frame starts WebAudio, so its process chooses AmbientSound.
+EXPECTED (frameResult.state == 'running') OK
+EXPECTED (frameResult.category == 'AmbientSound') OK
+
+** Start a video-only stream, as a live stream does before its audio arrives.
+EXPECTED (video.audioTracks.length == '0') OK
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+
+** The audio track arrives while already playing.
+EXPECTED (video.audioTracks.length == '1') OK
+
+** Unmuting makes it audible, so the category becomes MediaPlayback.
+RUN(video.muted = false)
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+EXPECTED (internals.systemAudioSessionCategory() == 'MediaPlayback') OK
+
+** Pause.
+RUN(video.pause())
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+
+** Resume. The category must come back to MediaPlayback, on this
+** process and on the session the other processes share.
+RUN(video.play())
+EXPECTED (video.paused == 'false') OK
+EXPECTED (video.muted == 'false') OK
+EXPECTED (internals.audioSessionCategory() == 'MediaPlayback') OK
+EXPECTED (internals.systemAudioSessionCategory() == 'MediaPlayback') OK
+END OF TEST
+
