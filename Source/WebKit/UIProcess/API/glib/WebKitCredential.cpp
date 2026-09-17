@@ -41,8 +41,8 @@ struct _WebKitCredential {
     }
 
     WebCore::Credential credential;
-    CString username;
-    CString password;
+    UTF8CString username;
+    UTF8CString password;
 };
 
 G_DEFINE_BOXED_TYPE(WebKitCredential, webkit_credential, webkit_credential_copy, webkit_credential_free)
@@ -209,7 +209,7 @@ const gchar* webkit_credential_get_username(WebKitCredential* credential)
 
     if (credential->username.isNull())
         credential->username = credential->credential.user().utf8();
-    return credential->username.data();
+    return credential->username.legacyCStringPointer();
 }
 
 /**
@@ -228,7 +228,7 @@ const gchar* webkit_credential_get_password(WebKitCredential* credential)
 
     if (credential->password.isNull())
         credential->password = credential->credential.password().utf8();
-    return credential->password.data();
+    return credential->password.legacyCStringPointer();
 }
 
 /**

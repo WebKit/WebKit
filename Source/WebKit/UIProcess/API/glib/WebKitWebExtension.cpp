@@ -56,10 +56,10 @@ struct _WebKitWebExtensionPrivate {
     GRefPtr<GFile> path;
     RefPtr<WebExtension> extension;
     CString defaultLocale;
-    CString displayName;
-    CString displayShortName;
+    UTF8CString displayName;
+    UTF8CString displayShortName;
     CString displayVersion;
-    CString displayDescription;
+    UTF8CString displayDescription;
     CString displayActionLabel;
     CString version;
     GRefPtr<GPtrArray> requestedPermissions;
@@ -636,14 +636,14 @@ const gchar* webkit_web_extension_get_display_name(WebKitWebExtension* extension
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayName.isNull())
-        return priv->displayName.data();
+        return priv->displayName.legacyCStringPointer();
 
     auto displayName = priv->extension->displayName();
     if (displayName.isEmpty())
         return nullptr;
 
     priv->displayName = displayName.utf8();
-    return priv->displayName.data();
+    return priv->displayName.legacyCStringPointer();
 }
 
 /**
@@ -663,14 +663,14 @@ const gchar* webkit_web_extension_get_display_short_name(WebKitWebExtension* ext
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayShortName.isNull())
-        return priv->displayShortName.data();
+        return priv->displayShortName.legacyCStringPointer();
 
     auto displayShortName = priv->extension->displayShortName();
     if (displayShortName.isEmpty())
         return nullptr;
 
     priv->displayShortName = displayShortName.utf8();
-    return priv->displayShortName.data();
+    return priv->displayShortName.legacyCStringPointer();
 }
 
 /**
@@ -717,14 +717,14 @@ const gchar* webkit_web_extension_get_display_description(WebKitWebExtension* ex
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayDescription.isNull())
-        return priv->displayDescription.data();
+        return priv->displayDescription.legacyCStringPointer();
 
     auto displayDescription = priv->extension->displayDescription();
     if (displayDescription.isEmpty())
         return nullptr;
 
     priv->displayDescription = displayDescription.utf8();
-    return priv->displayDescription.data();
+    return priv->displayDescription.legacyCStringPointer();
 }
 
 /**

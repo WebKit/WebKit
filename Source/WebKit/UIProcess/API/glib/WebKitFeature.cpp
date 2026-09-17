@@ -123,16 +123,20 @@ struct _WebKitFeature {
     }
 
     RefPtr<API::Feature> feature;
-    CString identifier { toIdentifier(feature->key()) };
-    CString name { feature->name().utf8() };
-    CString details { feature->details().utf8() };
+    ASCIICString identifier { toIdentifier(feature->key()) };
+    UTF8CString name { feature->name().utf8() };
+    UTF8CString details { feature->details().utf8() };
     int referenceCount { 1 };
 
-    static CString toIdentifier(const String& key)
+    static ASCIICString toIdentifier(const String& key)
     {
-        if (key.endsWith("Enabled"_s))
-            return StringView(key).left(key.length() - (sizeof("Enabled") - 1)).utf8();
-        return key.utf8();
+        static constexpr auto enabledPrefix = "Enabled"_s;
+        if (key.endsWith(enabledPrefix)) {
+            auto result = StringView(key).left(key.length() - enabledPrefix.length());
+            ASSERT(result.containsOnlyASCII());
+            return ASCIICString(spanReinterpretCast<const char>(result.span8()));
+        }
+        return key.ascii();
     }
 };
 
@@ -226,7 +230,7 @@ const char* webkit_feature_get_identifier(WebKitFeature* feature)
 const char* webkit_feature_get_name(WebKitFeature* feature)
 {
     g_return_val_if_fail(feature, nullptr);
-    return feature->name.length() ? feature->name.data() : nullptr;
+    return feature->name.isEmpty() ? nullptr : feature->name.legacyCStringPointer();
 }
 
 /**
@@ -251,7 +255,7 @@ const char* webkit_feature_get_name(WebKitFeature* feature)
 const char* webkit_feature_get_details(WebKitFeature* feature)
 {
     g_return_val_if_fail(feature, nullptr);
-    return feature->details.length() ? feature->details.data() : nullptr;
+    return feature->details.isEmpty() ? nullptr : feature->details.legacyCStringPointer();
 }
 
 /**

@@ -41,9 +41,9 @@ using namespace WebKit;
 
 struct _WebKitBackForwardListItemPrivate {
     RefPtr<WebBackForwardListItem> webListItem;
-    CString uri;
-    CString title;
-    CString originalURI;
+    ASCIICString uri;
+    UTF8CString title;
+    ASCIICString originalURI;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitBackForwardListItem, webkit_back_forward_list_item, G_TYPE_INITIALLY_UNOWNED, GInitiallyUnowned)
@@ -111,7 +111,7 @@ const gchar* webkit_back_forward_list_item_get_uri(WebKitBackForwardListItem* li
     if (url.isEmpty())
         return 0;
 
-    priv->uri = url.utf8();
+    priv->uri = url.ascii();
     return priv->uri.data();
 }
 
@@ -134,7 +134,7 @@ const gchar* webkit_back_forward_list_item_get_title(WebKitBackForwardListItem* 
         return 0;
 
     priv->title = title.utf8();
-    return priv->title.data();
+    return priv->title.legacyCStringPointer();
 }
 
 /**
@@ -157,6 +157,6 @@ const gchar* webkit_back_forward_list_item_get_original_uri(WebKitBackForwardLis
     if (originalURL.isEmpty())
         return 0;
 
-    priv->originalURI = originalURL.utf8();
+    priv->originalURI = originalURL.ascii();
     return priv->originalURI.data();
 }

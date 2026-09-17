@@ -53,9 +53,9 @@ struct _WebKitWebExtensionContextPrivate {
 #if ENABLE(WK_WEB_EXTENSIONS)
     RefPtr<WebKit::WebExtensionContext> context;
     GWeakPtr<WebKitWebExtension> extension;
-    CString baseURI;
-    CString optionsPageURI;
-    CString overrideNewTabPageURI;
+    ASCIICString baseURI;
+    ASCIICString optionsPageURI;
+    ASCIICString overrideNewTabPageURI;
 #endif
 };
 
@@ -319,7 +319,7 @@ const gchar* webkit_web_extension_context_get_base_uri(WebKitWebExtensionContext
     auto baseURI = priv->context->baseURL();
     g_return_val_if_fail(!baseURI.isEmpty(), nullptr);
 
-    priv->baseURI = baseURI.string().utf8();
+    priv->baseURI = baseURI.string().ascii();
     return priv->baseURI.data();
 }
 
@@ -378,7 +378,7 @@ const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensio
     if (optionsPageURI.isEmpty())
         return nullptr;
 
-    priv->optionsPageURI = optionsPageURI.string().utf8();
+    priv->optionsPageURI = optionsPageURI.string().ascii();
     return priv->optionsPageURI.data();
 }
 
@@ -454,7 +454,7 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
     if (overrideNewTabPageURI.isEmpty())
         return nullptr;
 
-    priv->overrideNewTabPageURI = overrideNewTabPageURI.string().utf8();
+    priv->overrideNewTabPageURI = overrideNewTabPageURI.string().ascii();
     return priv->overrideNewTabPageURI.data();
 }
 

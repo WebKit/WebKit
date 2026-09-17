@@ -59,9 +59,9 @@ struct _WebKitURISchemeRequestPrivate {
     RefPtr<WebURLSchemeTask> task;
 
     RefPtr<WebPageProxy> initiatingPage;
-    CString uri;
-    CString uriScheme;
-    CString uriPath;
+    ASCIICString uri;
+    ASCIICString uriScheme;
+    ASCIICString uriPath;
 
     GRefPtr<WebKitURISchemeResponse> response;
     GRefPtr<GCancellable> cancellable;
@@ -109,7 +109,7 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriScheme.isNull())
-        request->priv->uriScheme = request->priv->task->request().url().protocol().toString().utf8();
+        request->priv->uriScheme = request->priv->task->request().url().protocol().toString().ascii();
 
     return request->priv->uriScheme.data();
 }
@@ -127,7 +127,7 @@ const char* webkit_uri_scheme_request_get_uri(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uri.isNull())
-        request->priv->uri = request->priv->task->request().url().string().utf8();
+        request->priv->uri = request->priv->task->request().url().string().ascii();
 
     return request->priv->uri.data();
 }
@@ -145,7 +145,7 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriPath.isNull())
-        request->priv->uriPath = request->priv->task->request().url().path().toString().utf8();
+        request->priv->uriPath = request->priv->task->request().url().path().toString().ascii();
 
     return request->priv->uriPath.data();
 }
@@ -180,7 +180,7 @@ const gchar* webkit_uri_scheme_request_get_http_method(WebKitURISchemeRequest* r
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (!request->priv->httpMethod)
-        request->priv->httpMethod = g_intern_string(request->priv->task->request().httpMethod().utf8().legacyCStringPointer());
+        request->priv->httpMethod = g_intern_string(request->priv->task->request().httpMethod().ascii().data());
 
     return request->priv->httpMethod;
 }
@@ -245,7 +245,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         auto contentType = String::fromLatin1(webKitURISchemeResponseGetContentType(resp).data());
         ResourceResponse response(URL { priv->task->request().url() }, extractMIMETypeFromMediaType(contentType), webKitURISchemeResponseGetStreamLength(resp), String { emptyString() });
         response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
-        const CString& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
+        const auto& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);

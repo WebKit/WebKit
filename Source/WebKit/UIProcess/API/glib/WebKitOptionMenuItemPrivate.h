@@ -46,8 +46,8 @@ struct _WebKitOptionMenuItem {
     {
     }
 
-    CString label;
-    CString tooltip;
+    UTF8CString label;
+    UTF8CString tooltip;
     bool isGroupLabel { false };
     bool isGroupChild { false };
     bool isEnabled { true };

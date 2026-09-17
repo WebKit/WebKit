@@ -57,7 +57,7 @@ struct _WebKitWebsitePoliciesPrivate {
     {
     }
     RefPtr<API::WebsitePolicies> websitePolicies;
-    CString customUserAgent;
+    ASCIICString customUserAgent;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebsitePolicies, webkit_website_policies, G_TYPE_OBJECT, GObject)
@@ -128,7 +128,7 @@ static void webkitWebsitePoliciesSetProperty(GObject* object, guint propID, cons
         break;
     case PROP_CUSTOM_USER_AGENT:
         if (const auto* customUserAgent = g_value_get_string(value))
-            policies->priv->websitePolicies->setCustomUserAgent(String::fromUTF8(customUserAgent));
+            policies->priv->websitePolicies->setCustomUserAgent(String::fromLatin1(customUserAgent));
         break;
     case PROP_UPGRADE_TO_HTTPS_POLICY:
         webkitWebsitePoliciesSetUpgradeToHTTPSPolicy(policies, static_cast<WebKitUpgradeToHTTPSPolicy>(g_value_get_enum(value)));
@@ -298,7 +298,7 @@ const gchar* webkit_website_policies_get_custom_user_agent(WebKitWebsitePolicies
 
     if (policies->priv->customUserAgent.isNull()) {
         const auto& newCustomUserAgent = policies->priv->websitePolicies->customUserAgent();
-        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? CString() : newCustomUserAgent.utf8();
+        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? ASCIICString() : newCustomUserAgent.ascii();
     }
     return policies->priv->customUserAgent.data();
 }
