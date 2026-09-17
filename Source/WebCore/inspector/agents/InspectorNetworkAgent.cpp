@@ -177,7 +177,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
     auto requestObject = Inspector::Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(request.httpHeaderFields()))
         .release();
 
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
@@ -229,7 +229,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(response.httpHeaderFields()))
         .setMimeType(response.mimeType())
         .setSource(responseSource(response.source()))
         .release();
@@ -317,8 +317,7 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
 
     m_resourcesData->resourceCreated(requestId, loaderId, type);
 
-    for (auto& entry : m_extraRequestHeaders)
-        request.setHTTPHeaderField(entry.key, entry.value);
+    ResourceUtilities::addExtraHTTPHeaderFields(request, m_extraRequestHeaders);
 
     auto protocolResourceType = ResourceUtilities::resourceTypeToProtocol(type);
 
@@ -637,14 +636,13 @@ void InspectorNetworkAgent::didCreateWebSocket(WebSocketChannelIdentifier identi
 
 void InspectorNetworkAgent::willSendWebSocketHandshakeRequest(WebSocketChannelIdentifier, ResourceRequest& request)
 {
-    for (auto& entry : m_extraRequestHeaders)
-        request.setHTTPHeaderField(entry.key, entry.value);
+    ResourceUtilities::addExtraHTTPHeaderFields(request, m_extraRequestHeaders);
 }
 
 void InspectorNetworkAgent::didSendWebSocketHandshakeRequest(WebSocketChannelIdentifier identifier, const ResourceRequest& request)
 {
     auto requestObject = Inspector::Protocol::Network::WebSocketRequest::create()
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(request.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketWillSendHandshakeRequest(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WallTime::now().secondsSinceEpoch().seconds(), WTF::move(requestObject));
 }
@@ -654,7 +652,7 @@ void InspectorNetworkAgent::didReceiveWebSocketHandshakeResponse(WebSocketChanne
     auto responseObject = Inspector::Protocol::Network::WebSocketResponse::create()
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(response.httpHeaderFields()))
         .release();
     m_frontendDispatcher->webSocketHandshakeResponseReceived(IdentifiersFactory::requestId(identifier.toUInt64()), timestamp(), WTF::move(responseObject));
 }
@@ -778,16 +776,13 @@ void InspectorNetworkAgent::continuePendingResponses()
     m_pendingInterceptResponses.clear();
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Array>&& protocolHeaders)
 {
-    m_extraRequestHeaders.clear();
+    auto headers = ResourceUtilities::httpHeaderMapFromPayload(protocolHeaders);
+    if (!headers)
+        return makeUnexpected(headers.error());
 
-    for (auto& entry : headers.get()) {
-        auto stringValue = protect(entry.value)->asString();
-        if (!!stringValue)
-            m_extraRequestHeaders.set(entry.key, stringValue);
-    }
-
+    m_extraRequestHeaders = WTF::move(*headers);
     return { };
 }
 
@@ -1056,8 +1051,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptContinu
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const Inspector::Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Object>&& headers, const String& postData)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRequest(const Inspector::Protocol::Network::RequestId& requestId, const String& url, const String& method, RefPtr<JSON::Array>&& protocolHeaders, const String& postData)
 {
+    auto headers = protocolHeaders ? ResourceUtilities::httpHeaderMapFromPayload(*protocolHeaders) : Inspector::Protocol::ErrorStringOr<HTTPHeaderMap> { HTTPHeaderMap { } };
+    if (!headers)
+        return makeUnexpected(headers.error());
+
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
     if (!pendingRequest)
         return makeUnexpected("Missing pending intercept request for given requestId"_s);
@@ -1071,15 +1070,8 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithReq
         request.setURL(URL({ }, url));
     if (!!method)
         request.setHTTPMethod(method);
-    if (headers) {
-        HTTPHeaderMap explicitHeaders;
-        for (auto& [key, value] : *headers) {
-            auto headerValue = protect(value)->asString();
-            if (!!headerValue)
-                explicitHeaders.add(key, headerValue);
-        }
-        request.setHTTPHeaderFields(WTF::move(explicitHeaders));
-    }
+    if (headers)
+        request.setHTTPHeaderFields(WTF::move(*headers));
     if (!!postData) {
         auto buffer = base64Decode(postData);
         if (!buffer)
@@ -1093,8 +1085,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithReq
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, std::optional<int>&& status, const String& statusText, RefPtr<JSON::Array>&& protocolHeaders)
 {
+    auto headers = protocolHeaders ? ResourceUtilities::httpHeaderMapFromPayload(*protocolHeaders) : Inspector::Protocol::ErrorStringOr<HTTPHeaderMap> { HTTPHeaderMap { } };
+    if (!headers)
+        return makeUnexpected(headers.error());
+
     auto pendingInterceptResponse = m_pendingInterceptResponses.take(requestId);
     if (!pendingInterceptResponse)
         return makeUnexpected("Missing pending intercept response for given requestId"_s);
@@ -1109,13 +1105,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
     if (!!mimeType)
         overrideResponse.setMimeType(String { mimeType });
     if (headers) {
-        HTTPHeaderMap explicitHeaders;
-        for (auto& header : *headers) {
-            auto headerValue = protect(header.value)->asString();
-            if (!!headerValue)
-                explicitHeaders.add(header.key, headerValue);
-        }
-        overrideResponse.setHTTPHeaderFields(WTF::move(explicitHeaders));
+        overrideResponse.setHTTPHeaderFields(WTF::move(*headers));
         overrideResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, overrideResponse.mimeType());
     }
 
@@ -1134,8 +1124,12 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Object>&& headers)
+Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequestWithResponse(const Inspector::Protocol::Network::RequestId& requestId, const String& content, bool base64Encoded, const String& mimeType, int status, const String& statusText, Ref<JSON::Array>&& protocolHeaders)
 {
+    auto headers = ResourceUtilities::httpHeaderMapFromPayload(protocolHeaders);
+    if (!headers)
+        return makeUnexpected(headers.error());
+
     auto pendingRequest = m_pendingInterceptRequests.take(requestId);
     if (!pendingRequest)
         return makeUnexpected("Missing pending intercept request for given requestId"_s);
@@ -1160,13 +1154,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
     response.setSource(ResourceResponse::Source::InspectorOverride);
     response.setHTTPStatusCode(status);
     response.setHTTPStatusText(String { statusText });
-    HTTPHeaderMap explicitHeaders;
-    for (auto& header : headers.get()) {
-        auto headerValue = protect(header.value)->asString();
-        if (!!headerValue)
-            explicitHeaders.add(header.key, headerValue);
-    }
-    response.setHTTPHeaderFields(WTF::move(explicitHeaders));
+    response.setHTTPHeaderFields(WTF::move(*headers));
     response.setHTTPHeaderField(HTTPHeaderName::ContentType, response.mimeType());
     loader->didReceiveResponse(WTF::move(response), [loader, buffer = data.releaseNonNull()]() {
         if (loader->reachedTerminalState())

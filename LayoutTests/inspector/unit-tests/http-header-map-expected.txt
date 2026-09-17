@@ -1,0 +1,19 @@
+Tests common and uncommon header storage.
+
+
+== Running test suite: HTTPHeaderMap
+-- Running test case: HTTPHeaderMap.CommonAndUncommonHeaders
+PASS: Size should include both common and uncommon fields.
+PASS: Capitalized constants should find both cookie fields.
+PASS: Common fields should be classified without regard to input casing.
+PASS: Iteration should capitalize common names and preserve uncommon names.
+PASS: Combined iteration should include uncommon fields.
+PASS: Copies should not share mutable common storage.
+PASS: Copies should preserve uncommon fields.
+PASS: The testing accessor should combine uncommon values.
+PASS: Deleting a common name should remove all of its fields.
+PASS: Deleted common names should no longer be present.
+PASS: Serialization should include both stores with their stored casing.
+PASS: Clear should empty both stores.
+PASS: Clearing a map should not change its copy.
+

@@ -214,10 +214,10 @@ function absoluteURL(partialURL, baseURL)
     return baseURLPrefix + resolveDotsInPath(basePath + partialURL);
 }
 
-function parseQueryString(queryString, arrayResult)
+function parseQueryString(queryString)
 {
     if (!queryString)
-        return arrayResult ? [] : {};
+        return [];
 
     function decode(string)
     {
@@ -229,7 +229,7 @@ function parseQueryString(queryString, arrayResult)
         }
     }
 
-    var parameters = arrayResult ? [] : {};
+    let parameters = [];
     for (let parameterString of queryString.split("&")) {
         let index = parameterString.indexOf("=");
         if (index === -1)
@@ -238,10 +238,7 @@ function parseQueryString(queryString, arrayResult)
         let name = decode(parameterString.substring(0, index));
         let value = decode(parameterString.substring(index + 1));
 
-        if (arrayResult)
-            parameters.push({name, value});
-        else
-            parameters[name] = value;
+        parameters.push({name, value});
     }
 
     return parameters;

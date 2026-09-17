@@ -63,14 +63,20 @@ PASS: Full Resource timing responseStart should be '0.5'.
 PASS: Full Resource timing responseEnd should be '0.6'.
 
 Request Headers:
-{
-  "Test-Request-Header": "Test Request Header Value"
-}
+[
+  {
+    "name": "Test-Request-Header",
+    "value": "Test Request Header Value"
+  }
+]
 
 Response Headers:
-{
-  "Test-Response-Header": "Test Response Header Value"
-}
+[
+  {
+    "name": "Test-Response-Header",
+    "value": "Test Response Header Value"
+  }
+]
 
 Content:
 Test Content

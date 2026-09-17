@@ -34,7 +34,7 @@ function test()
             InspectorTest.expectEqual(redirect.requestMethod, "POST", "Redirected request method should be `POST`");
             InspectorTest.expectEqual(redirect.responseStatusCode, 302, "Redirected request status code should be `302`.");
             InspectorTest.expectEqual(redirect.responseStatusText, "Found", "Redirected request status text should be `Found`.");
-            InspectorTest.expectEqual(redirect.responseHeaders["Location"], "redirect.py", "Redirected request response should have a location header of `redirect.py`");
+            InspectorTest.expectEqual(redirect.responseHeaders.get(WI.HTTPHeader.Location), "redirect.py", "Redirected request response should have a location header of `redirect.py`");
         }
     });
 

@@ -96,7 +96,7 @@ static Ref<Protocol::Network::Request> buildObjectForResourceRequest(const Resou
     auto requestObject = Protocol::Network::Request::create()
         .setUrl(request.url().string())
         .setMethod(request.httpMethod())
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(request.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(request.httpHeaderFields()))
         .release();
 
     if (RefPtr body = request.httpBody()) {
@@ -150,7 +150,7 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
         .setUrl(response.url().string())
         .setStatus(response.httpStatusCode())
         .setStatusText(response.httpStatusText())
-        .setHeaders(ResourceUtilities::buildObjectForHeaders(response.httpHeaderFields()))
+        .setHeaders(ResourceUtilities::buildArrayForHeaders(response.httpHeaderFields()))
         .setMimeType(response.mimeType())
         .setSource(toProtocolResponseSource(response.source()))
         .release();
@@ -314,15 +314,13 @@ CommandResult<void> ProxyingNetworkAgent::disable()
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Object>&& headers)
+CommandResult<void> ProxyingNetworkAgent::setExtraHTTPHeaders(Ref<JSON::Array>&& protocolHeaders)
 {
-    HTTPHeaderMap headerMap;
-    for (auto& entry : headers.get()) {
-        Ref value = entry.value;
-        if (auto stringValue = value->asString(); !!stringValue)
-            headerMap.set(entry.key, stringValue);
-    }
-    m_extraRequestHeaders = WTF::move(headerMap);
+    auto headers = ResourceUtilities::httpHeaderMapFromPayload(protocolHeaders);
+    if (!headers)
+        return makeUnexpected(headers.error());
+
+    m_extraRequestHeaders = WTF::move(*headers);
 
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
@@ -515,17 +513,17 @@ CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Netw
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Array>&&, const String&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Array>&&)
 {
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
+CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Array>&&)
 {
     return { };
 }

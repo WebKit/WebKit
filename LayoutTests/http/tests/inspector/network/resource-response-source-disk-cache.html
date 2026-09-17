@@ -40,6 +40,7 @@ function test()
                         InspectorTest.expectEqual(resource.statusCode, statusCode, `statusCode should be ${statusCode}`);
                     if (responseSource)
                         InspectorTest.expectEqual(resource.responseSource, responseSource, `responseSource should be ${String(responseSource)}`);
+                    InspectorTest.expectEqual(resource.responseHeaders.get(WI.HTTPHeader.ContentType), "image/png", "Response headers should retain the content type.");
                     return resource.requestContentFromBackend();
                 }).then((responseContent) => {
                     InspectorTest.expectTrue(responseContent.body.length, "Response `body` should not be empty.");

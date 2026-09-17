@@ -159,7 +159,7 @@ WI.HARBuilder = class HARBuilder
             url: resource.url || "",
             httpVersion: WI.Resource.displayNameForProtocol(resource.protocol) || "",
             cookies: HARBuilder.cookies(resource.requestCookies, null),
-            headers: HARBuilder.headers(resource.requestHeaders),
+            headers: resource.requestHeaders,
             queryString: resource.queryStringParameters || [],
             headersSize: !isNaN(resource.requestHeadersTransferSize) ? resource.requestHeadersTransferSize : -1,
             bodySize: !isNaN(resource.requestBodyTransferSize) ? resource.requestBodyTransferSize : -1,
@@ -178,9 +178,9 @@ WI.HARBuilder = class HARBuilder
             statusText: resource.statusText || "",
             httpVersion: WI.Resource.displayNameForProtocol(resource.protocol) || "",
             cookies: HARBuilder.cookies(resource.responseCookies, resource.requestSentDate),
-            headers: HARBuilder.headers(resource.responseHeaders),
+            headers: resource.responseHeaders,
             content: HARBuilder.content(resource, content),
-            redirectURL: resource.responseHeaders.valueForCaseInsensitiveKey("Location") || "",
+            redirectURL: resource.responseHeaders.get(WI.HTTPHeader.Location) || "",
             headersSize: !isNaN(resource.responseHeadersTransferSize) ? resource.responseHeadersTransferSize : -1,
             bodySize: !isNaN(resource.responseBodyTransferSize) ? resource.responseBodyTransferSize : -1,
         };
@@ -220,16 +220,6 @@ WI.HARBuilder = class HARBuilder
 
             result.push(json);
         }
-
-        return result;
-    }
-
-    static headers(headers)
-    {
-        let result = [];
-
-        for (let key in headers)
-            result.push({name: key, value: headers[key]});
 
         return result;
     }
@@ -320,7 +310,7 @@ WI.HARBuilder = class HARBuilder
             url: redirect.url || "",
             httpVersion: "", // Not available for redirects
             cookies: [], // Not available for redirects
-            headers: HARBuilder.headers(redirect.requestHeaders),
+            headers: redirect.requestHeaders,
             queryString: [], // Could parse from URL if needed
             headersSize: -1,
             bodySize: -1,
@@ -334,12 +324,12 @@ WI.HARBuilder = class HARBuilder
             statusText: redirect.responseStatusText || "",
             httpVersion: "", // Not available for redirects
             cookies: [], // Not available for redirects
-            headers: HARBuilder.headers(redirect.responseHeaders),
+            headers: redirect.responseHeaders,
             content: {
                 size: 0,
                 mimeType: "x-unknown",
             },
-            redirectURL: redirect.responseHeaders.Location || redirect.responseHeaders.location || "",
+            redirectURL: redirect.responseHeaders.get(WI.HTTPHeader.Location) || "",
             headersSize: -1,
             bodySize: -1,
         };
