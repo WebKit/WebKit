@@ -581,6 +581,42 @@ static bool verifyClampedIndirectIndexBufferData(id<MTLBuffer> buffer, uint64_t 
 }
 #endif // RC_REMOVE_SEC_ACCEL_3
 
+id<MTLBuffer> Buffer::snapshotRangeBeforeClear(Queue& queue, NSUInteger offset, NSUInteger size)
+{
+    if (offset >= m_buffer.length)
+        return nil;
+
+    size = std::min<NSUInteger>(size, m_buffer.length - offset);
+    if (!size)
+        return nil;
+
+    id<MTLBuffer> snapshot = m_device->safeCreateBuffer(size, MTLStorageModePrivate);
+    if (!snapshot)
+        return nil;
+
+    queue.copyBuffer(m_buffer, offset, snapshot, 0, size);
+    return snapshot;
+}
+
+void Buffer::restoreSnapshotAfterCommit(CommandBuffer& commandBuffer, Queue& queue, id<MTLBuffer> snapshot, NSUInteger offset)
+{
+    commandBuffer.addPostCommitHandler([queue = protect(queue), snapshot, offset, protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
+        [mtlCommandBuffer waitUntilCompleted];
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        protectedThis->m_clearedForCommandBuffer = 0;
+#endif // RC_REMOVE_SEC_ACCEL_3
+        if (!snapshot)
+            return;
+
+        protectedThis->indirectBufferInvalidated();
+        if (protectedThis->isDestroyed())
+            return;
+
+        queue->copyBuffer(snapshot, 0, protectedThis->m_buffer, offset, snapshot.length);
+        queue->finalizeBlitCommandEncoder();
+    });
+}
+
 void Buffer::clearIndexBufferForCommandBuffer(CommandBuffer& commandBuffer)
 {
 #ifndef RC_REMOVE_SEC_ACCEL_3
@@ -590,7 +626,7 @@ void Buffer::clearIndexBufferForCommandBuffer(CommandBuffer& commandBuffer)
     m_clearedForCommandBuffer = commandBufferIdentity;
 #endif // RC_REMOVE_SEC_ACCEL_3
     Ref queue = m_device->getQueue();
-    SUPPRESS_UNCOUNTED_ARG Vector<uint8_t> priorData = borrow(*this)->getBufferContents();
+    id<MTLBuffer> priorData = snapshotRangeBeforeClear(queue, 0, m_buffer.length);
 
     queue->clearBuffer(m_buffer);
     queue->finalizeBlitCommandEncoder();
@@ -600,18 +636,7 @@ void Buffer::clearIndexBufferForCommandBuffer(CommandBuffer& commandBuffer)
         [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
     ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-    commandBuffer.addPostCommitHandler([queue, priorData = WTF::move(priorData), protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
-        [mtlCommandBuffer waitUntilCompleted];
-#ifdef RC_REMOVE_SEC_ACCEL_3
-        queue->writeBuffer(*protectedThis.ptr(), 0, priorData.mutableSpan());
-#else
-        protectedThis->m_clearedForCommandBuffer = 0;
-        // priorData goes out of scope with this handler, but a restore this large is staged through a
-        // newBufferWithBytesNoCopy MTLBuffer the GPU reads after the commit, so hand the bytes
-        // over instead of lending them.
-        queue->writeBuffer(*protectedThis.ptr(), 0, WTF::move(priorData));
-#endif
-    });
+    restoreSnapshotAfterCommit(commandBuffer, queue, priorData, 0);
 }
 
 void Buffer::takeSlowIndexValidationPath(CommandBuffer& commandBuffer, uint32_t firstIndex, uint32_t indexCount, MTLIndexType indexType, uint32_t primitiveOffset, uint32_t vertexCount)
@@ -684,9 +709,10 @@ void Buffer::takeSlowIndirectIndexValidationPath(CommandBuffer& commandBuffer, B
         verified = verifyIndexBufferData<uint32_t>(apiIndexBuffer.buffer(), args.indexStart, args.indexCount, minVertexCount > static_cast<int64_t>(args.baseVertex) ? minVertexCount - args.baseVertex : 0, primitiveOffset);
 
     if (!verified) {
-        SUPPRESS_UNCOUNTED_ARG Vector<uint8_t> priorData = borrow(*this)->getBufferContents();
+        constexpr NSUInteger clearedSize = sizeof(MTLDrawPrimitivesIndirectArguments);
+        id<MTLBuffer> priorData = snapshotRangeBeforeClear(queue, indirectOffset, clearedSize);
 
-        queue->clearBuffer(m_buffer, indirectOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+        queue->clearBuffer(m_buffer, indirectOffset, clearedSize);
         queue->finalizeBlitCommandEncoder();
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -694,19 +720,7 @@ void Buffer::takeSlowIndirectIndexValidationPath(CommandBuffer& commandBuffer, B
             [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
         ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
-        commandBuffer.addPostCommitHandler([queue, priorData = WTF::move(priorData), protectedThis = protect(*this)](id<MTLCommandBuffer> mtlCommandBuffer) mutable {
-            [mtlCommandBuffer waitUntilCompleted];
-
-#ifdef RC_REMOVE_SEC_ACCEL_3
-            queue->writeBuffer(*protectedThis.ptr(), 0, priorData.mutableSpan());
-#else
-            // As in takeSlowIndexValidationPath() above: nothing bounds an indirect buffer below
-            // maxBufferSize, so this restore can be large enough to be staged through a
-            // newBufferWithBytesNoCopy MTLBuffer the GPU reads after the commit. Hand the bytes over
-            // instead of lending them, since priorData goes out of scope with this handler.
-            queue->writeBuffer(*protectedThis.ptr(), 0, WTF::move(priorData));
-#endif
-        });
+        restoreSnapshotAfterCommit(commandBuffer, queue, priorData, indirectOffset);
     }
 }
 
