@@ -43,22 +43,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Thunks);
 
 using namespace DFG;
 
-enum class FrameAndStackAdjustmentRequirement {
-    Needed, 
-    NotNeeded 
-};
-
 static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
-    VM& vm, CodePtr<CFunctionPtrTag> generationFunction, PtrTag resultTag, const char* name, unsigned extraPopsToRestore, FrameAndStackAdjustmentRequirement frameAndStackAdjustmentRequirement)
+    AssemblyHelpers& jit, VM& vm, CodePtr<CFunctionPtrTag> generationFunction, PtrTag resultTag, const char* name)
 {
-    AssemblyHelpers jit(nullptr);
-
-    if (frameAndStackAdjustmentRequirement == FrameAndStackAdjustmentRequirement::Needed) {
-        // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
-        adjustFrameAndStackInOSRExitCompilerThunk<FTL::JITCode>(jit, vm, JITType::FTLJIT);
-    }
-    
-    // Note that the "return address" will be the ID that we pass to the generation function.
+    // Note that the ID that we pass to the generation function is on top of the stack.
 
     constexpr GPRReg stackPointerRegister = MacroAssembler::stackPointerRegister;
     constexpr GPRReg framePointerRegister = MacroAssembler::framePointerRegister;
@@ -101,9 +89,9 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 
     jit.loadPtr(MacroAssembler::Address(stackPointerRegister, numberOfRequiredPops * pushToSaveByteOffset), framePointerRegister);
 
-    // When we came in here, there was an additional thing pushed to the stack (extraPopsToRestore).
-    // Some clients want it popped before proceeding. Also add 1 for the pushToSave of the framePointerRegister.
-    numberOfRequiredPops += 1 + extraPopsToRestore;
+    // When we came in here, the ID was pushed to the stack. Pop it before proceeding.
+    // Also add 1 for the pushToSave of the framePointerRegister.
+    numberOfRequiredPops += 2;
     jit.addPtr(MacroAssembler::TrustedImm32(numberOfRequiredPops * pushToSaveByteOffset), stackPointerRegister);
 
     // Put the return address wherever the return instruction wants it. On all platforms, this
@@ -128,16 +116,22 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
 
 MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 {
-    unsigned extraPopsToRestore = 0;
-    return genericGenerationThunkGenerator(
-        vm, operationCompileFTLOSRExit, OSRExitPtrTag, "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
+    AssemblyHelpers jit(nullptr);
+
+#if CPU(ARM64)
+    jit.pushToSave(ARM64Registers::lr);
+#endif
+
+    // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
+    adjustFrameAndStackInOSRExitCompilerThunk<FTL::JITCode>(jit, vm, JITType::FTLJIT);
+
+    return genericGenerationThunkGenerator(jit, vm, operationCompileFTLOSRExit, OSRExitPtrTag, "FTL OSR exit generation thunk");
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& vm)
 {
-    unsigned extraPopsToRestore = 1;
-    return genericGenerationThunkGenerator(
-        vm, operationCompileFTLLazySlowPath, JITStubRoutinePtrTag, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);
+    AssemblyHelpers jit(nullptr);
+    return genericGenerationThunkGenerator(jit, vm, operationCompileFTLLazySlowPath, JITStubRoutinePtrTag, "FTL lazy slow path generation thunk");
 }
 
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)

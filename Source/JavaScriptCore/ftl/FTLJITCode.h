@@ -80,6 +80,16 @@ public:
     int osrExitLocalsOffset() const { return m_osrExitLocalsOffset; }
     void setOSRExitLocalsOffset(int offset) { m_osrExitLocalsOffset = offset; }
 
+    unsigned osrExitIndexForReturnPC(void* returnPC) const
+    {
+        uintptr_t entrance = reinterpret_cast<uintptr_t>(returnPC) - DFG::osrExitEntranceSize;
+        size_t index = m_osrExit.findIf([&](const OSRExit& exit) {
+            return exit.m_entrance.dataLocation<uintptr_t>() == entrance;
+        });
+        RELEASE_ASSERT(index != notFound);
+        return index;
+    }
+
     unsigned numberOfCompiledDFGNodes() const { return m_numberOfCompiledDFGNodes; }
     void setNumberOfCompiledDFGNodes(unsigned numberOfCompiledDFGNodes)
     {

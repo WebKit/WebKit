@@ -294,12 +294,6 @@ FixedVector<B3::ValueRep> OSRExit::valueReps(const JITCode& jitCode) const
     return jitCode.osrExitValueReps.decode(m_valueRepsOffset);
 }
 
-CodeLocationJump<JSInternalPtrTag> OSRExit::codeLocationForRepatch(CodeBlock* ftlCodeBlock) const
-{
-    UNUSED_PARAM(ftlCodeBlock);
-    return m_patchableJump;
-}
-
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

@@ -31,9 +31,9 @@
 
 namespace JSC { namespace FTL {
 
-// Takes the call frame and the index of the exit, and returns the address to
-// jump to.
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*, unsigned exitID));
+// Takes the call frame and the return address of the call that the exit made to the
+// OSR exit generation thunk, and returns the address to jump to.
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*, void* returnPC));
 
 } } // namespace JSC::FTL
 

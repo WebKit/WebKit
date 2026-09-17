@@ -139,10 +139,10 @@ public:
 
     // Call this once we have a place to emit the OSR exit jump and we have data about how the state
     // should be recovered. This effectively emits code that does the exit, though the code is really a
-    // patchable jump and we emit the real code lazily. The description of how to emit the real code is
-    // up to the OSRExit object, which this creates. Note that it's OK to drop the OSRExitHandle object
-    // on the ground. It contains information that is mostly not useful if you use this API, since after
-    // this call, the OSRExit is simply ready to go.
+    // call to the OSR exit generation thunk and we emit the real code lazily. The description of how to
+    // emit the real code is up to the OSRExit object, which this creates. Note that it's OK to drop the
+    // OSRExitHandle object on the ground. It contains information that is mostly not useful if you use
+    // this API, since after this call, the OSRExit is simply ready to go.
     Ref<OSRExitHandle> emitOSRExit(
         State&, ExitKind, const DFG::NodeOrigin&, CCallHelpers&, const B3::StackmapGenerationParams&,
         uint32_t dfgNodeIndex, unsigned offset);
@@ -176,9 +176,8 @@ struct OSRExit : public DFG::OSRExitBase {
     unsigned m_valueRepsOffset;
     OSRExitDescriptor* m_descriptor;
     // This tells us where to place a jump.
-    CodeLocationJump<JSInternalPtrTag> m_patchableJump;
+    CodeLocationLabel<JSInternalPtrTag> m_entrance;
 
-    CodeLocationJump<JSInternalPtrTag> NODELETE codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);

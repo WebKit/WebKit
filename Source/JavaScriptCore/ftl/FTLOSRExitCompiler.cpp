@@ -167,13 +167,9 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
         jit.loadPtr(vm.addressOfCallFrameForCatch(), MacroAssembler::framePointerRegister);
         jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)),
             MacroAssembler::framePointerRegister, CCallHelpers::stackPointerRegister);
-
-        // Do a pushToSave because that's what the exit compiler below expects the stack
-        // to look like because that's the last thing the ExitThunkGenerator does. The code
-        // below doesn't actually use the value that was pushed, but it does rely on the
-        // general shape of the stack being as it is in the non-exception OSR case.
-        jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(0xbadbeef));
     }
+
+    jit.subPtr(CCallHelpers::TrustedImm32(MacroAssembler::pushToSaveByteOffset()), CCallHelpers::stackPointerRegister);
 
     // We need scratch space to save all registers, to build up the JS stack, to deal with unwind
     // fixup, pointers to all of the objects we materialize, and the elements inside those objects
@@ -215,9 +211,7 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
             registerScratch, materializationToPointer);
     };
     
-    // Note that we come in here, the stack used to be as B3 left it except that someone called pushToSave().
-    // We don't care about the value they saved. But, we do appreciate the fact that they did it, because we use
-    // that slot for saveAllRegisters().
+    // Note that the stack is as B3 left it except for the slot that we made above for saveAllRegisters().
 
     saveAllRegisters(jit, registerScratch);
     
@@ -658,10 +652,8 @@ static MacroAssemblerCodeRef<OSRExitPtrTag> compileStub(VM& vm, unsigned exitID,
         );
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFrame, unsigned exitID))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame* callFrame, void* returnPC))
 {
-    dataLogLnIf(shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(), "Compiling OSR exit with exitID = ", exitID);
-
     VM& vm = callFrame->deprecatedVM();
     // Don't need an ActiveScratchBufferScope here because we DeferGCForAWhile below.
 
@@ -684,6 +676,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
     DeferGCForAWhile deferGC(vm);
 
     JITCode* jitCode = codeBlock->jitCode()->ftl();
+    unsigned exitID = jitCode->osrExitIndexForReturnPC(returnPC);
+    dataLogLnIf(shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(), "Compiling OSR exit with exitID = ", exitID);
+
     OSRExit& exit = jitCode->m_osrExit[exitID];
     FixedOperands<ExitValue> exitValues = exit.m_descriptor->values(*jitCode);
     FixedVector<B3::ValueRep> valueReps = exit.valueReps(*jitCode);
@@ -710,7 +705,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
     jitCode->m_osrExitStubs.append({ exitID, compileStub(vm, exitID, jitCode, exit, exitValues, valueReps, codeBlock) });
     CodePtr<OSRExitPtrTag> code = jitCode->m_osrExitStubs.last().code.code();
 
-    MacroAssembler::repatchJump(exit.codeLocationForRepatch(codeBlock), CodeLocationLabel<OSRExitPtrTag>(code));
+    MacroAssembler::replaceWithJump(exit.m_entrance, CodeLocationLabel<OSRExitPtrTag>(code));
     return code.taggedPtr();
 }
 
