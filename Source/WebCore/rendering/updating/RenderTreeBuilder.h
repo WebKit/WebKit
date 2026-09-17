@@ -119,6 +119,7 @@ private:
     class FormControls;
     class Block;
     class BlockFlow;
+    class Canvas;
     class Inline;
     class SVG;
 #if ENABLE(MATHML)
@@ -135,6 +136,7 @@ private:
     BlockFlow& blockFlowBuilder() LIFETIME_BOUND { return m_blockFlowBuilder; }
     Inline& inlineBuilder() LIFETIME_BOUND { return m_inlineBuilder; }
     SVG& svgBuilder() LIFETIME_BOUND { return m_svgBuilder; }
+    Canvas& canvasBuilder() LIFETIME_BOUND { return m_canvasBuilder; }
 #if ENABLE(MATHML)
     MathML& mathMLBuilder() LIFETIME_BOUND { return m_mathMLBuilder; }
 #endif
@@ -155,6 +157,7 @@ private:
     const UniqueRef<BlockFlow> m_blockFlowBuilder;
     const UniqueRef<Inline> m_inlineBuilder;
     const UniqueRef<SVG> m_svgBuilder;
+    const UniqueRef<Canvas> m_canvasBuilder;
 #if ENABLE(MATHML)
     const UniqueRef<MathML> m_mathMLBuilder;
 #endif

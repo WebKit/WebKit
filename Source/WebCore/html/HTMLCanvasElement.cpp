@@ -194,7 +194,7 @@ bool HTMLCanvasElement::canContainRangeEndPoint() const
 
 bool HTMLCanvasElement::canStartSelection() const
 {
-    return false;
+    return layoutSubtree() && HTMLElement::canStartSelection();
 }
 
 ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
