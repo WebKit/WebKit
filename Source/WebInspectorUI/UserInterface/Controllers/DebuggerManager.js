@@ -103,7 +103,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._activeCallFrame = null;
 
-        this._internalWebKitScripts = [];
+        this._internalWebKitScripts = new WI.Multimap;
         this._targetDebuggerDataMap = new Map;
 
         // Used to detect deleted probe actions.
@@ -983,19 +983,19 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         // Only clear state belonging to the target that was cleared. The Debugger domain's
         // targetTypes includes "frame", so a subframe appearing emits this for its own target.
-        this._internalWebKitScripts = this._internalWebKitScripts.filter((script) => script.target !== target);
+        this._internalWebKitScripts.delete(target);
         this._targetDebuggerDataMap.delete(target);
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = true;
 
         // Mark this target's breakpoints as unresolved. They will be reported as resolved when
-        // breakpointResolved is called as the page loads.
+        // breakpointResolved is called as the page loads. A breakpoint can be resolved in more
+        // than one target, so only drop the locations belonging to the cleared target.
         for (let breakpoint of this._breakpoints) {
-            if (breakpoint.sourceCodeLocation.sourceCode?.target !== target)
-                continue;
+            breakpoint.clearResolvedLocationsForTarget(target);
 
-            breakpoint.clearResolvedLocations();
-            breakpoint.sourceCodeLocation.sourceCode = null;
+            if (breakpoint.sourceCodeLocation.sourceCode?.target === target)
+                breakpoint.sourceCodeLocation.sourceCode = null;
         }
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
@@ -1144,7 +1144,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         }
 
         if (isWebKitInternalScript(script.sourceURL)) {
-            this._internalWebKitScripts.push(script);
+            this._internalWebKitScripts.add(script.target, script);
             if (!WI.settings.engineeringShowInternalScripts.value)
                 return;
         }
@@ -1753,7 +1753,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     _handleEngineeringShowInternalScriptsSettingChanged(event)
     {
         let eventType = WI.settings.engineeringShowInternalScripts.value ? WI.DebuggerManager.Event.ScriptAdded : WI.DebuggerManager.Event.ScriptRemoved;
-        for (let script of this._internalWebKitScripts)
+        for (let script of this._internalWebKitScripts.values())
             this.dispatchEventToListeners(eventType, {script});
     }
 
