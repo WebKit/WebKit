@@ -4000,11 +4000,20 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
             return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
 
-        if (maxLogicalWidth.isMinContent()) {
-            if (!hasFixedLogicalWidth())
-                return minIntrinsicLogicalWidth;
+        if (maxLogicalWidth.isMinContent() || (maxLogicalWidth.isCalcSize() && maxLogicalWidth.isMaxContent())) {
+            auto keywordLogicalWidth = [&] {
+                if (hasFixedLogicalWidth()) {
+                    if (maxLogicalWidth.isMaxContent())
+                        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, contentBoxLogicalWidth(), { });
+                    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
+                }
+                return maxLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            }();
 
-            return computeSizingKeywordLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
+            // A calc-size() caps at the result of its calculation, not at the size of its basis.
+            if (maxLogicalWidth.isCalcSize())
+                return resolveCalcSizeLogicalWidth(maxLogicalWidth.get<Style::UnevaluatedCalcSize>(), keywordLogicalWidth, 0_lu);
+            return keywordLogicalWidth;
         }
 
         return LayoutUnit::max();
@@ -4018,10 +4027,21 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         // A min-content minimum floors the contribution at the box's own min-content size,
         // so a smaller max-width cannot clamp it below that (min wins over max).
         if (minLogicalWidth.isMinContent() || minLogicalWidth.isMaxContent()) {
-            if (hasFixedLogicalWidth())
-                return computeSizingKeywordLogicalWidthUsing(minLogicalWidth, contentBoxLogicalWidth(), { });
+            auto keywordLogicalWidth = [&] {
+                // The bare keyword, not the whole value: a calc-size() would otherwise have its
+                // calculation applied here and again below.
+                if (hasFixedLogicalWidth()) {
+                    if (minLogicalWidth.isMaxContent())
+                        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, contentBoxLogicalWidth(), { });
+                    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
+                }
+                return minLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            }();
 
-            return minLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            // A calc-size() floors at the result of its calculation, not at the size of its basis.
+            if (minLogicalWidth.isCalcSize())
+                return resolveCalcSizeLogicalWidth(minLogicalWidth.get<Style::UnevaluatedCalcSize>(), keywordLogicalWidth, 0_lu);
+            return keywordLogicalWidth;
         }
 
         return { };

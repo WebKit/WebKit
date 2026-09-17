@@ -48,7 +48,6 @@ struct RenderBoxOverridingSizes;
 
 enum class AvailableLogicalHeightType : bool { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
 
-
 enum class StretchingMode { Normal, Explicit };
 
 enum class IsComputingIntrinsicSize : bool { No, Yes };
@@ -134,7 +133,6 @@ public:
 
     // https://www.w3.org/TR/css-transforms-1/#reference-box
     FloatRect referenceBoxRect(CSSBoxType) const override;
-
 
     // Don't use this; it doesn't make sense in a future world with corner-shape. Use BorderShape instead.
     WEBCORE_EXPORT LayoutRoundedRectRadii borderRadii() const;
@@ -366,7 +364,6 @@ public:
     LayoutUnit computeLogicalWidthUsing(const Style::MinimumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
     LayoutUnit computeLogicalWidthUsing(const Style::MaximumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
     LayoutUnit computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
-
 
     // Content sizes in and out; see the definition for what box-sizing does to the calculation.
     LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const;
