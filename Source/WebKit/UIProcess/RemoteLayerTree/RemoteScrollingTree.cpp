@@ -340,6 +340,17 @@ void RemoteScrollingTree::updateTimelinesRegistration(WebCore::ProcessIdentifier
         m_progressBasedTimelineRegistry = nullptr;
 }
 
+void RemoteScrollingTree::removeTimelines(WebCore::ProcessIdentifier processIdentifier)
+{
+    ASSERT(isMainRunLoop());
+    Locker locker { m_progressBasedTimelineRegistryLock };
+    if (!m_progressBasedTimelineRegistry)
+        return;
+    m_progressBasedTimelineRegistry->remove(processIdentifier);
+    if (m_progressBasedTimelineRegistry->isEmpty())
+        m_progressBasedTimelineRegistry = nullptr;
+}
+
 RefPtr<const RemoteAnimationTimeline> RemoteScrollingTree::timeline(const TimelineID& timelineID) const
 {
     Locker locker { m_progressBasedTimelineRegistryLock };

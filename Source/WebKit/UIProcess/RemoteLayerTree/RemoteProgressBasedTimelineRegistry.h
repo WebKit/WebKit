@@ -42,6 +42,7 @@ public:
 
     bool isEmpty() const { return m_timelines.isEmpty(); }
     void update(const RemoteScrollingTree&, WebCore::ProcessIdentifier, const WebCore::AcceleratedTimelinesUpdate&);
+    void remove(WebCore::ProcessIdentifier);
     RemoteProgressBasedTimeline* NODELETE get(const TimelineID&) const;
     void updateTimelinesForNode(const WebCore::ScrollingTreeScrollingNode&);
     HashSet<Ref<RemoteProgressBasedTimeline>> timelinesForScrollingNodeIDForTesting(WebCore::ScrollingNodeID) const;

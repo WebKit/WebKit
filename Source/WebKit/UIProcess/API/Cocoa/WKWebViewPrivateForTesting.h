@@ -223,8 +223,10 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (NSString *)_webContentProcessVariantForFrame:(nullable _WKFrameHandle *)frameHandle;
 
 #if defined(ENABLE_THREADED_ANIMATIONS) && ENABLE_THREADED_ANIMATIONS
-- (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID;
+- (NSString *)_animationStackForLayerWithIDInMainFrame:(unsigned long long)layerID;
+- (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID processID:(uint64_t)processID;
 - (NSString *)_progressBasedTimelinesForScrollingNodeID:(uint64_t)scrollingNodeID processID:(uint64_t)processID;
+- (NSString *)_monotonicTimelinesForProcessID:(uint64_t)processID;
 #endif
 - (bool)_displayLinkWantsHighFrameRate;
 

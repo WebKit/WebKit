@@ -699,7 +699,7 @@ void UIScriptControllerCocoa::setObscuredInsets(double top, double right, double
 #if ENABLE(THREADED_ANIMATIONS)
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::animationStackForLayerWithID(uint64_t layerID) const
 {
-    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _animationStackForLayerWithID:layerID]));
+    return adopt(JSStringCreateWithCFString((CFStringRef) [webView() _animationStackForLayerWithIDInMainFrame:layerID]));
 }
 
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::progressBasedTimelinesForScrollingNodeID(unsigned long long scrollingNodeID, unsigned long long processID) const

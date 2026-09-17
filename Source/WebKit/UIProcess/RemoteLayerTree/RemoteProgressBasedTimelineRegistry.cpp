@@ -130,6 +130,11 @@ void RemoteProgressBasedTimelineRegistry::update(const RemoteScrollingTree& scro
         m_timelines.remove(processIdentifier);
 }
 
+void RemoteProgressBasedTimelineRegistry::remove(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_timelines.remove(processIdentifier);
+}
+
 RemoteProgressBasedTimeline* RemoteProgressBasedTimelineRegistry::get(const TimelineID& timelineID) const
 {
     auto it = m_timelines.find(timelineID.processIdentifier());

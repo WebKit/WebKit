@@ -92,6 +92,7 @@
 
 #if ENABLE(THREADED_ANIMATIONS)
 #import "RemoteAnimationStack.h"
+#import "RemoteMonotonicTimeline.h"
 #import "RemoteProgressBasedTimeline.h"
 #endif
 
@@ -1415,14 +1416,26 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 }
 
 #if ENABLE(THREADED_ANIMATIONS)
-- (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID
+- (NSString *)_animationStackForLayerWithIDInMainFrame:(unsigned long long)layerID
+{
+    return [self _animationStackForLayerWithID:layerID processID:_page->legacyMainFrameProcess().coreProcessIdentifier().toUInt64()];
+}
+
+- (NSString *)_animationStackForLayerWithID:(unsigned long long)layerID processID:(uint64_t)processID
 {
     auto animationStack = [&] -> RefPtr<const WebKit::RemoteAnimationStack> {
-        if (!layerID)
+        if (!ObjectIdentifier<WebCore::PlatformLayerIdentifierType>::isValidIdentifier(layerID)
+            || !ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
             return nullptr;
-        WebCore::PlatformLayerIdentifier platformLayerID { ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID), _page->legacyMainFrameProcess().coreProcessIdentifier() };
-        if (RefPtr nodeStack = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(protect(_page->drawingArea()))->animationStackForNodeWithIDForTesting(platformLayerID))
-            return nodeStack;
+
+        WebCore::PlatformLayerIdentifier platformLayerID {
+            ObjectIdentifier<WebCore::PlatformLayerIdentifierType>(layerID),
+            ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)
+        };
+        if (RefPtr drawingAreaProxy = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(_page->drawingArea())) {
+            if (RefPtr nodeStack = drawingAreaProxy->animationStackForNodeWithIDForTesting(platformLayerID))
+                return nodeStack;
+        }
         if (CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy())
             return scrollingCoordinator->animationStackForNodeWithIDForTesting(platformLayerID);
         return nullptr;
@@ -1447,6 +1460,28 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
             ObjectIdentifier<WebCore::ScrollingNodeIDType>(scrollingNodeID),
             ObjectIdentifier<WebCore::ProcessIdentifierType>(processID)
         });
+    }();
+
+    Ref convertedTimelines = JSON::Array::create();
+    for (auto& timeline : timelines)
+        convertedTimelines->pushObject(timeline->toJSONForTesting());
+
+    Ref object = JSON::Object::create();
+    object->setArray("timelines"_s, WTF::move(convertedTimelines));
+    return object->toJSONString().createNSString().autorelease();
+}
+
+- (NSString *)_monotonicTimelinesForProcessID:(uint64_t)processID
+{
+    auto timelines = [&] -> HashSet<Ref<WebKit::RemoteMonotonicTimeline>> {
+        if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(processID))
+            return { };
+
+        CheckedPtr scrollingCoordinator = _page->scrollingCoordinatorProxy();
+        if (!scrollingCoordinator)
+            return { };
+
+        return scrollingCoordinator->monotonicTimelinesForProcessForTesting(ObjectIdentifier<WebCore::ProcessIdentifierType>(processID));
     }();
 
     Ref convertedTimelines = JSON::Array::create();

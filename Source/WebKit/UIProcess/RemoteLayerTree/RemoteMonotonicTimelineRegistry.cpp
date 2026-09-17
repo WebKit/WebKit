@@ -87,6 +87,11 @@ void RemoteMonotonicTimelineRegistry::update(WebCore::ProcessIdentifier processI
     removeDestroyedTimelines();
 }
 
+void RemoteMonotonicTimelineRegistry::remove(WebCore::ProcessIdentifier processIdentifier)
+{
+    m_timelines.remove(processIdentifier);
+}
+
 RemoteMonotonicTimeline* RemoteMonotonicTimelineRegistry::get(const TimelineID& timelineID) const
 {
     auto it = m_timelines.find(timelineID.processIdentifier());
@@ -107,6 +112,14 @@ void RemoteMonotonicTimelineRegistry::advanceCurrentTime(MonotonicTime now)
         for (auto& timeline : timelines)
             timeline->updateCurrentTime(now);
     }
+}
+
+HashSet<Ref<RemoteMonotonicTimeline>> RemoteMonotonicTimelineRegistry::timelinesForProcessForTesting(WebCore::ProcessIdentifier processIdentifier) const
+{
+    auto iterator = m_timelines.find(processIdentifier);
+    if (iterator == m_timelines.end())
+        return { };
+    return iterator->value;
 }
 
 } // namespace WebKit

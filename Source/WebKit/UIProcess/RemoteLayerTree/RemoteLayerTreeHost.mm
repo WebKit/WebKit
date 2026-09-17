@@ -548,6 +548,13 @@ void RemoteLayerTreeHost::remotePageProcessDidTerminate(WebCore::ProcessIdentifi
 {
     for (auto layerID : m_hostedLayersInProcess.take(processIdentifier))
         layerWillBeRemoved(processIdentifier, layerID);
+
+#if ENABLE(THREADED_ANIMATIONS)
+    for (auto& [layerID, node] : m_nodes) {
+        if (layerID.processIdentifier() == processIdentifier)
+            animationsWereRemovedFromNode(node);
+    }
+#endif
 }
 
 } // namespace WebKit

@@ -6934,6 +6934,135 @@ TEST(SiteIsolation, RemoteProcessTerminationAfterDisablingSiteIsolation)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"location.host"], "example.com");
 }
 
+#if ENABLE(THREADED_ANIMATIONS)
+static NSUInteger arrayCountInJSONString(NSString *json, NSString *key)
+{
+    if (!json.length)
+        return 0;
+    id object = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil];
+    if (![object isKindOfClass:NSDictionary.class])
+        return 0;
+    id array = [object objectForKey:key];
+    return [array isKindOfClass:NSArray.class] ? [array count] : 0;
+}
+
+static NSUInteger animationCountForLayer(TestWKWebView *webView, uint64_t layerID, uint64_t processID)
+{
+    return arrayCountInJSONString([webView _animationStackForLayerWithID:layerID processID:processID], @"animations");
+}
+
+static NSUInteger progressBasedTimelineCount(TestWKWebView *webView, uint64_t scrollingNodeID, uint64_t processID)
+{
+    return arrayCountInJSONString([webView _progressBasedTimelinesForScrollingNodeID:scrollingNodeID processID:processID], @"timelines");
+}
+
+static NSUInteger monotonicTimelineCount(TestWKWebView *webView, uint64_t processID)
+{
+    return arrayCountInJSONString([webView _monotonicTimelinesForProcessID:processID], @"timelines");
+}
+
+TEST(SiteIsolation, RemoteTimelinesAndAnimationsClearedWhenIframeProcessCrashes)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe width='400' height='400' src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html>"
+            "<style>"
+            "body { margin: 0 }"
+            "#scroller { width: 200px; height: 200px; overflow: scroll }"
+            "#scroller > div { height: 2000px }"
+            ".target { width: 100px; height: 100px; background-color: green }"
+            "</style>"
+            "<div id='scroller'><div></div></div>"
+            "<div id='progressTarget' class='target'></div>"
+            "<div id='monotonicTarget' class='target'></div>"
+            "<script>"
+            "document.getElementById('progressTarget').animate({ translate: ['0px', '100px'] }, { timeline: new ScrollTimeline({ source: document.getElementById('scroller') }) });"
+            "document.getElementById('monotonicTarget').animate({ opacity: [1, 0] }, { duration: 1000000, iterations: Infinity });"
+            "</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    // Query the frame tree before the kill; -mainFrame waits for a reply from every process with no
+    // timeout. The subframe load can still be in flight when the main frame finishes navigating.
+    pid_t mainFramePID = [webView mainFrame].info._processIdentifier;
+    RetainPtr<WKFrameInfo> childFrame;
+    EXPECT_TRUE(Util::waitFor([&] {
+        childFrame = [webView firstChildFrame];
+        return [childFrame _processIdentifier] && [childFrame _processIdentifier] != mainFramePID;
+    }));
+    pid_t iframePID = [childFrame _processIdentifier];
+
+    // The scroller and the animation targets only acquire a scrolling node and composited layers once
+    // the animations have started, so poll until the subframe can report all four identifiers.
+    RetainPtr<NSDictionary> identifiers = [webView objectByCallingAsyncFunction:
+        @"let progressLayerID = 0;"
+        @"let monotonicLayerID = 0;"
+        @"let scrollingNodeID = 0;"
+        @"let processID = 0;"
+        @"for (let i = 0; i < 100 && !processID; ++i) {"
+        @"    await new Promise(resolve => setTimeout(resolve, 16));"
+        @"    try {"
+        @"        const scroller = internals.scrollingNodeIDForNode(document.getElementById('scroller'));"
+        @"        progressLayerID = internals.layerIDForElement(document.getElementById('progressTarget'));"
+        @"        monotonicLayerID = internals.layerIDForElement(document.getElementById('monotonicTarget'));"
+        @"        scrollingNodeID = scroller.nodeIdentifier;"
+        @"        processID = scroller.processIdentifier;"
+        @"    } catch (e) { }"
+        @"}"
+        @"return { progressLayerID, monotonicLayerID, scrollingNodeID, processID };"
+        withArguments:@{ } inFrame:childFrame.get() inContentWorld:WKContentWorld.pageWorld];
+
+    uint64_t progressLayerID = [[identifiers objectForKey:@"progressLayerID"] unsignedLongLongValue];
+    uint64_t monotonicLayerID = [[identifiers objectForKey:@"monotonicLayerID"] unsignedLongLongValue];
+    uint64_t scrollingNodeID = [[identifiers objectForKey:@"scrollingNodeID"] unsignedLongLongValue];
+    uint64_t processID = [[identifiers objectForKey:@"processID"] unsignedLongLongValue];
+    EXPECT_NE(progressLayerID, 0ull);
+    EXPECT_NE(monotonicLayerID, 0ull);
+    EXPECT_NE(scrollingNodeID, 0ull);
+    EXPECT_NE(processID, 0ull);
+
+    // Nothing below would be meaningful if the UI process never took on the subframe's threaded
+    // animations in the first place.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return progressBasedTimelineCount(webView.get(), scrollingNodeID, processID)
+            && monotonicTimelineCount(webView.get(), processID)
+            && animationCountForLayer(webView.get(), progressLayerID, processID)
+            && animationCountForLayer(webView.get(), monotonicLayerID, processID);
+    }));
+
+    kill(iframePID, SIGKILL);
+    while (processStillRunning(iframePID))
+        Util::spinRunLoop();
+
+    Util::waitFor([&] {
+        return !progressBasedTimelineCount(webView.get(), scrollingNodeID, processID)
+            && !monotonicTimelineCount(webView.get(), processID)
+            && !animationCountForLayer(webView.get(), progressLayerID, processID)
+            && !animationCountForLayer(webView.get(), monotonicLayerID, processID);
+    });
+
+    // Asserted one at a time so a failure names the state that outlived the crashed process.
+    EXPECT_EQ(0u, progressBasedTimelineCount(webView.get(), scrollingNodeID, processID));
+    EXPECT_EQ(0u, monotonicTimelineCount(webView.get(), processID));
+    EXPECT_EQ(0u, animationCountForLayer(webView.get(), progressLayerID, processID));
+    EXPECT_EQ(0u, animationCountForLayer(webView.get(), monotonicLayerID, processID));
+}
+#endif // ENABLE(THREADED_ANIMATIONS)
+
 #if defined(NDEBUG) && PLATFORM(MAC)
 TEST(SiteIsolation, UnresponsiveProcessKeydown)
 {
