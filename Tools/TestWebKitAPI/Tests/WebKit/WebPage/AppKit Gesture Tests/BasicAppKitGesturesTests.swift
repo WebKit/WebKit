@@ -1769,6 +1769,47 @@ extension AppKitGesturesTests.Basic {
         #expect(end.y - start.y > 20)
     }
 
+    @Test(
+        .bug("https://webkit.org/b/324361", "Diagonal rubber-banding doesn't work, snaps to a single axis")
+    )
+    func diagonalPullAtCornerRubberBandsBothAxes() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        // Record the rubber-banding offset while it happens, so we can see how far we got
+        // regardless of where in the snap animation we are when we ask.
+        try await page.callJavaScript {
+            """
+            window._minimumSeenScrollOffset = { x: 0, y: 0 };
+            window.addEventListener("scroll", () => {
+                const minimum = window._minimumSeenScrollOffset;
+                minimum.x = Math.min(minimum.x, window.pageXOffset);
+                minimum.y = Math.min(minimum.y, window.pageYOffset);
+            }, { passive: true });
+            """
+        }
+
+        let start = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let end = CGPoint(x: start.x + 250, y: start.y + 250)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(0.4), release: false)
+            composer.advanceTime(0.4)
+            composer._wk_mouseUp()
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let minimumOffset = try await page.callJavaScript(returning: [Double].self) {
+            "return [window._minimumSeenScrollOffset.x, window._minimumSeenScrollOffset.y];"
+        }
+
+        try #require(minimumOffset.count == 2)
+
+        #expect(minimumOffset[0] < -10)
+        #expect(minimumOffset[1] < -10)
+    }
+
     @Test
     func shallowScrollLocksToHorizontalAxis() async throws {
         try await loadScrollableGrid()

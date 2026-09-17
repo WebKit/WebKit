@@ -1516,23 +1516,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool canScrollVertically = [_panGestureRecognizer _canPanVertically] && !(pinnedState.top() && pinnedState.bottom());
     gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, prefersUnlockedScroll, [gesture timestamp]) };
 
-    // This clamping is a workaround for the fact that if an axis is pinned,
-    // the scrolling tree turns it into a rubberband, and the orthogonal delta
-    // is discarded, which stops panning for the rest of the gesture. (if a
-    // transient zoom + pan sequence occurs simultaneously)
-    //
-    // The clamp applies only to the wheel event that reaches the page, though,
-    // since the swipe tracker has to see the unclamped delta, or else it is
-    // unable to determine PendingSwipeTracker::scrollEventCanBecomeSwipe().
-    //
-    // FIXME: Fold this into WKDirectionalScrollLockTracker as a hard clamp applied
-    // _after_ the directional lock heuristics, for the events that reach the page.
-    auto clampedGestureDelta = gestureDelta;
-    if (!canScrollVertically)
-        clampedGestureDelta.setHeight(0);
-    if (!canScrollHorizontally)
-        clampedGestureDelta.setWidth(0);
-
     auto granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent;
     bool directionInvertedFromDevice = false;
     auto phase = toWebEventPhase(gesture.state);
@@ -1572,7 +1555,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
     }
 
-    [webView _protectedPage]->handleNativeWheelEvent(makeWheelEvent(clampedGestureDelta));
+    [webView _protectedPage]->handleNativeWheelEvent(makeWheelEvent(gestureDelta));
 }
 
 #pragma mark - Momentum Handling

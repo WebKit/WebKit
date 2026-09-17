@@ -1656,7 +1656,7 @@ public:
     WebCore::RectEdges<bool> NODELETE pinnedState() const;
     WebCore::RectEdges<bool> pinnedStateIncludingAncestorsAtPoint(WebCore::FloatPoint);
 
-    WebCore::RectEdges<bool> rubberBandableEdgesRespectingHistorySwipe() const;
+    WebCore::RectEdges<bool> rubberBandableEdgesRespectingHistorySwipe(const WebWheelEvent&) const;
     WebCore::RectEdges<bool> NODELETE rubberBandableEdges() const;
     void NODELETE setRubberBandableEdges(WebCore::RectEdges<bool>);
     void NODELETE setRubberBandsAtLeft(bool);

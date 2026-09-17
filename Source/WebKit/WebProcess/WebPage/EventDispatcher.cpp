@@ -152,9 +152,7 @@ void EventDispatcher::internalWheelEvent(PageIdentifier pageID, const WebWheelEv
         // FIXME: It's pretty horrible that we're updating the back/forward state here.
         // WebCore should always know the current state and know when it changes so the
         // scrolling tree can be notified.
-        // We only need to do this at the beginning of the gesture.
-        if (platformWheelEvent.phase() == PlatformWheelEventPhase::Began)
-            scrollingTree->setClientAllowedMainFrameRubberBandableEdges(rubberBandableEdges);
+        scrollingTree->setClientAllowedMainFrameRubberBandableEdges(rubberBandableEdges);
 
         auto processingSteps = scrollingTree->determineWheelEventProcessing(platformWheelEvent);
         bool useMainThreadForScrolling = processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling);
