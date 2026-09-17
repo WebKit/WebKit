@@ -27,6 +27,7 @@
 #include "PropertyTable.h"
 
 #include "JSCJSValueInlines.h"
+#include "StructureInlines.h"
 #include <wtf/MathExtras.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -210,15 +211,31 @@ bool PropertyTable::isFrozen() const
     return result;
 }
 
-PropertyOffset PropertyTable::renumberPropertyOffsets(JSObject* object, unsigned inlineCapacity, Vector<JSValue>& values)
+PropertyOffset PropertyTable::renumberPropertyOffsets(Structure& structure, JSObject* object, unsigned inlineCapacity, Vector<JSValue>& values,
+    std::array<uint64_t, Structure::s_rawDoubleMaskWords>& renumberedRawDoubleMask)
 {
     ASSERT(values.size() == size());
     unsigned i = 0;
     PropertyOffset offset = invalidOffset;
     forEachPropertyMutable([&](auto& entry) {
-        values[i] = object->getDirect(entry.offset());
+        PropertyOffset oldOffset = entry.offset();
+        // Ask the mask BEFORE the value is read and BEFORE the entry moves: at this point it still describes the
+        // pre-compaction layout, and it is the only authority on what the slot physically holds.
+        bool wasRawDouble = structure.isRawDoubleOffset(oldOffset);
+        // RAW-DOUBLE AWARE. The bare read handed back bits(d) as a JSValue and the write-back below then re-encoded
+        // it through a raw-aware writer, so 1.5 became 1.375 in storage and a raw 0.0 became the EMPTY JSValue.
+        // repro/bugs/06-repro-dictionary-flatten-stale-mask.js.
+        values[i] = object->getDirect(structure, oldOffset);
         offset = offsetForPropertyNumber(i, inlineCapacity);
         entry.setOffset(offset);
+        // Carry the mask bit to the NEW offset. Derived from the OLD MASK, never re-derived from the attributes: the
+        // mask is deliberately a subset of the attributes, because setRawDoubleOffset DECLINES offsets it cannot
+        // represent, and a declined slot is legitimately boxed. Out of range declines here for the same reason.
+        if (wasRawDouble) [[unlikely]] {
+            unsigned bit = static_cast<unsigned>(offset);
+            if (bit < Structure::s_rawDoubleMaskBits)
+                renumberedRawDoubleMask[bit / 64] |= 1ULL << (bit % 64);
+        }
         ++i;
         return IterationStatus::Continue;
     });

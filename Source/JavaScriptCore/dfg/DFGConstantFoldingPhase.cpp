@@ -667,7 +667,8 @@ private:
                 if (data.cases.size() != 1)
                     break;
                 
-                emitGetByOffset(indexInBlock, node, baseValue, data.cases[0], data.identifierNumber);
+                if (!emitGetByOffset(indexInBlock, node, baseValue, data.cases[0], data.identifierNumber))
+                    break;
                 changed = true;
                 break;
             }
@@ -706,8 +707,9 @@ private:
                 if (data.variants.size() != 1)
                     break;
                 
-                emitPutByOffset(
-                    indexInBlock, node, baseValue, data.variants[0], data.identifierNumber);
+                if (!emitPutByOffset(
+                        indexInBlock, node, baseValue, data.variants[0], data.identifierNumber))
+                    break;
                 changed = true;
                 break;
             }
@@ -834,7 +836,8 @@ private:
                 if (status.numVariants() == 1) {
                     unsigned identifierNumber = m_graph.identifiers().ensure(identifier.uid());
                     addFilterStatus();
-                    emitGetByOffset(indexInBlock, node, baseValue, status[0], identifierNumber);
+                    if (!emitGetByOffset(indexInBlock, node, baseValue, status[0], identifierNumber))
+                        break;
                     changed = true;
                     break;
                 }
@@ -997,6 +1000,7 @@ private:
 
                                     if (structure->hasPolyProto()) {
                                         StorageAccessData* data = m_graph.m_storageAccessData.add();
+                                        data->rawDoubleRep = m_graph.rawDoubleRepFor(structure, knownPolyProtoOffset);
                                         data->offset = knownPolyProtoOffset;
                                         data->identifierNumber = m_graph.identifiers().ensure(m_graph.m_vm.propertyNames->builtinNames().polyProtoName().impl());
                                         NodeOrigin origin = node->origin.withInvalidExit();
@@ -1375,6 +1379,7 @@ private:
                         StorageAccessData& data = *m_graph.m_storageAccessData.add();
                         data.offset = offsets[i];
                         data.identifierNumber = identifierNumber;
+                        data.rawDoubleRep = m_graph.rawDoubleRepFor(descriptorStructure, offsets[i]);
                         Node* getByOffset = m_insertionSet.insertNode(indexInBlock, SpecBytecodeTop, GetByOffset, origin, OpInfo(&data), storageEdge, Edge(descriptorEdge.node(), KnownCellUse));
                         slotEdges[i] = Edge(getByOffset, UntypedUse);
                     } else {
@@ -2262,59 +2267,103 @@ private:
         return changed;
     }
     
-    void emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const MultiGetByOffsetCase& getCase, unsigned identifierNumber)
+    bool emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const MultiGetByOffsetCase& getCase, unsigned identifierNumber)
     {
         // When we get to here we have already emitted all of the requisite checks for everything.
         // So, we just need to emit what the method object tells us to emit.
         
-        addBaseCheck(indexInBlock, node, baseValue, getCase.set());
-
         GetByOffsetMethod method = getCase.method();
-        
+
+        // Narrow this case's set if it disagrees about the offset it is about to load, for the same reason as the
+        // variant path below. Computed here because addBaseCheck is what installs the guard.
+        //
+        // ONLY FOR Load. GetByOffsetMethod::offset() asserts kind() == Load || kind() == LoadFromPrototype, and a case
+        // whose method is Constant carries no offset at all -- asking for one tripped
+        // "ASSERTION FAILED: kind() == Load || kind() == LoadFromPrototype" on richards, deltablue, 3d-raytrace and
+        // v8-richards under --ra, before the switch below got the chance to fold the Constant case. LoadFromPrototype
+        // is excluded as well: there the slot belongs to the PROTOTYPE, so its arm derives the representation from the
+        // prototype's own structure rather than from this base set, and a single structure can never be mixed.
+        StructureSet caseCheckSet = getCase.set().toStructureSet();
+        RawDoubleRep caseRep = RawDoubleRep::Boxed;
+        if (method.kind() == GetByOffsetMethod::Load) {
+            bool caseIsMixed = false;
+            caseRep = m_graph.rawDoubleRepFor(caseCheckSet, method.offset(), caseIsMixed);
+            if (caseIsMixed) [[unlikely]] {
+                // DO NOT NARROW -- decline the fold instead. Excluding the raw structures is correct but pins the site
+                // on a permanent BadCache exit; on Box2D that cost Overall -2.85% and Box2D -41% (07-PLAN 5at).
+                // Leaving the node as a by-id lets the raw-aware IC handler absorb both representations with no exit.
+                dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+                    "[rawdouble] DECLINED fold of MIXED MultiGetByOffsetCase at offset ", method.offset());
+                return false;
+            }
+        }
+        addBaseCheck(indexInBlock, node, baseValue, caseCheckSet);
+
         switch (method.kind()) {
         case GetByOffsetMethod::Invalid:
             RELEASE_ASSERT_NOT_REACHED();
-            return;
+            return false;
             
         case GetByOffsetMethod::Constant:
             m_graph.convertToConstant(node, method.constant());
-            return;
+            return true;
             
         case GetByOffsetMethod::Load:
-            emitGetByOffset(indexInBlock, node, node->child1(), identifierNumber, method.offset());
-            return;
+            // Load: the slot is on the base, so this case's own structure set owns the offset -- already computed
+            // (and narrowed if it disagreed) above, before the base check that enforces it.
+            emitGetByOffset(indexInBlock, node, node->child1(), identifierNumber, method.offset(), caseRep);
+            return true;
             
         case GetByOffsetMethod::LoadFromPrototype: {
             Node* child = m_insertionSet.insertConstant(
                 indexInBlock, node->origin, method.prototype());
+            // LoadFromPrototype: the PROTOTYPE owns the offset, not the base (07-PLAN 5y). Frozen structure, for
+            // the same reason as the parser's copy of this case -- it must match the structure the graph guards on.
             emitGetByOffset(
-                indexInBlock, node, Edge(child, KnownCellUse), identifierNumber, method.offset());
-            return;
+                indexInBlock, node, Edge(child, KnownCellUse), identifierNumber, method.offset(),
+                m_graph.rawDoubleRepFor(method.prototype()->structure(), method.offset()));
+            return true;
         } }
         
         RELEASE_ASSERT_NOT_REACHED();
+        return false;
     }
     
-    void emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const GetByVariant& variant, unsigned identifierNumber)
+    bool emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const GetByVariant& variant, unsigned identifierNumber)
     {
         Edge childEdge = node->child1();
 
-        addBaseCheck(indexInBlock, node, baseValue, variant.structureSet());
+        // MIXED-SITE NARROWING, same rule as the parser's load(): decide the representation BEFORE the base check,
+        // because the check is what makes a disagreeing set uniform. Raw members are dropped and take an ordinary
+        // CheckStructure exit; Boxed is preferred as the surviving subset. 07-PLAN 5af.
+        StructureSet getCheckSet = variant.structureSet();
+        bool getIsMixed = false;
+        RawDoubleRep getRep = m_graph.rawDoubleRepFor(getCheckSet, variant.offset(), getIsMixed);
+        if (getIsMixed) [[unlikely]] {
+        // DO NOT NARROW -- decline the fold instead. Excluding the raw structures is correct but pins the site on a
+        // permanent BadCache exit; on Box2D that cost Overall -2.85% and Box2D -41% (07-PLAN 5at). Leaving the node as
+        // a by-id lets the raw-aware IC handler absorb both representations with no exit.
+            dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+                "[rawdouble] DECLINED fold of MIXED GetByVariant at offset ", variant.offset());
+            return false;
+        }
+        addBaseCheck(indexInBlock, node, baseValue, getCheckSet);
         
         // We aren't set up to handle prototype stuff.
         DFG_ASSERT(m_graph, node, variant.conditionSet().isEmpty());
 
         if (JSValue value = m_graph.tryGetConstantProperty(baseValue.m_value, *m_graph.addStructureSet(variant.structureSet()), variant.offset())) {
             m_graph.convertToConstant(node, m_graph.freeze(value));
-            return;
+            return true;
         }
         
-        emitGetByOffset(indexInBlock, node, childEdge, identifierNumber, variant.offset());
+        emitGetByOffset(indexInBlock, node, childEdge, identifierNumber, variant.offset(), getRep);
+        return true;
     }
     
     void emitGetByOffset(
         unsigned indexInBlock, Node* node, Edge childEdge, unsigned identifierNumber,
-        PropertyOffset offset)
+        PropertyOffset offset, RawDoubleRep rawDoubleRep)
     {
         childEdge.setUseKind(KnownCellUse);
         
@@ -2331,16 +2380,57 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = offset;
         data.identifierNumber = identifierNumber;
+        data.rawDoubleRep = rawDoubleRep;
         
         node->convertToGetByOffset(data, propertyStorage, childEdge);
     }
 
-    void emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByVariant& variant, unsigned identifierNumber)
+    bool emitPutByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const PutByVariant& variant, unsigned identifierNumber)
     {
         NodeOrigin origin = node->origin;
         Edge childEdge = node->child1();
 
-        addBaseCheck(indexInBlock, node, baseValue, variant.oldStructure());
+        // For a Replace the existing structures own the slot; narrow them if they disagree. A Transition's
+        // destination is a single structure and cannot be mixed.
+        StructureSet putCheckSet = variant.oldStructure();
+        RawDoubleRep putRep = RawDoubleRep::Boxed;
+        if (variant.kind() != PutByVariant::Transition) {
+            bool putIsMixed = false;
+            putRep = m_graph.rawDoubleRepFor(putCheckSet, variant.offset(), putIsMixed);
+            if (putIsMixed) [[unlikely]] {
+            // DO NOT NARROW -- decline the fold instead. Excluding the raw structures is correct but pins the site on a
+            // permanent BadCache exit; on Box2D that cost Overall -2.85% and Box2D -41% (07-PLAN 5at). Leaving the node as
+            // a by-id lets the raw-aware IC handler absorb both representations with no exit.
+                dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+                    "[rawdouble] DECLINED fold of MIXED PutByVariant at offset ", variant.offset());
+                return false;
+            }
+        } else
+            putRep = m_graph.rawDoubleRepFor(variant.newStructure(), variant.offset());
+
+        // A raw slot can encode only a NUMBER. A non-number needs the representation widened, and no JIT store can
+        // perform a structure transition (07-PLAN 5bj). FixupPhase enforces that invariant with a NumberUse Check --
+        // but FixupPhase HAS ALREADY RUN by the time this phase creates PutByOffset nodes, so a node born here is
+        // never visited and reaches lowering with an unconstrained value. That is exactly what the Octane raytrace
+        // failure reported: `FTL store UNPROVEN-VALUE into raw slot valueType=BytecodeTop`.
+        //
+        // So insert the Check here too, rather than declining the fold. DECLINING WAS MEASURED AND IS FAR WORSE:
+        // it fires only twice in raytrace, but both are in `Vector(x,y,z)`, which the benchmark constructs
+        // constantly, and sending those stores to the by-id path -- where the IC then declines to cache a raw slot
+        // and falls to the C++ writer every time -- cost **+76% on raytrace** and 5 points of the L2 ladder win.
+        // Keeping the fold preserves static resolution; the Check costs one type test and makes the raw-slot
+        // invariant proven at lowering, so the store helpers' unproven-value arm becomes unreachable.
+        if (putRep == RawDoubleRep::Raw) [[unlikely]] {
+            SpeculatedType valueType = m_state.forNode(node->child2()).m_type;
+            if (valueType & ~(SpecInt32Only | SpecFullDouble)) {
+                dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+                    "[rawdouble] CHECKED folded RAW put at offset ", variant.offset(),
+                    " valueType=", SpeculationDump(valueType));
+                m_insertionSet.insertNode(indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child2().node(), NumberUse));
+            }
+        }
+        addBaseCheck(indexInBlock, node, baseValue, putCheckSet);
 
         node->child1().setUseKind(KnownCellUse);
         childEdge.setUseKind(KnownCellUse);
@@ -2392,6 +2482,14 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
+        if (variant.kind() == PutByVariant::Transition)
+            data.rawDoubleRep = m_graph.rawDoubleRepFor(variant.newStructure(), variant.offset());
+        else {
+            bool isMixed = false;
+            data.rawDoubleRep = m_graph.rawDoubleRepFor(variant.structure(), variant.offset(), isMixed);
+            dataLogLnIf(isMixed && Options::dumpDoubleFieldSplitCensus(),
+                "[rawdouble] MIXED PutByVariant at offset ", variant.offset());
+        }
         
         node->convertToPutByOffset(data, propertyStorage, childEdge);
         node->origin.exitOK = canExit;
@@ -2410,6 +2508,7 @@ private:
                 indexInBlock + 1, SpecNone, PutStructure, origin.withInvalidExit(), OpInfo(transition),
                 childEdge);
         }
+        return true;
     }
 
     void emitDeleteByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const DeleteByVariant& variant, unsigned identifierNumber)
@@ -2440,6 +2539,7 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
+        data.rawDoubleRep = m_graph.rawDoubleRepFor(variant.newStructure(), variant.offset());
 
         Node* clearValue = m_insertionSet.insertNode(indexInBlock, SpecNone, JSConstant, origin, OpInfo(m_graph.freezeStrong(JSValue())));
         m_insertionSet.insertNode(

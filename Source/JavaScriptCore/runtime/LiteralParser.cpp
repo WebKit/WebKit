@@ -1507,8 +1507,14 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
             auto property = [&, &vm = vm] ALWAYS_INLINE_LAMBDA -> Variant<ExistingProperty, Identifier> {
                 if (Structure* transition = originalStructure->trySingleTransition()) {
                     // This check avoids hash lookup and refcount churn in the common case of a matching single transition.
+                    // RepresentationDouble is ALLOWED here. It is not a user-visible attribute -- it says the slot
+                    // holds raw IEEE-754 bits -- and putDirectOffset below is raw-aware, so a numeric JSON value
+                    // stores correctly. Rejecting it (which `!transitionPropertyAttributes()` used to do) drops the
+                    // whole object off this fast path as soon as one earlier object of the same shape gave the field a
+                    // double, which for JSON is essentially always: json-parse-inspector -4.69%. A non-number value is
+                    // diverted to the generic path at the store site below, where the value is finally known.
                     SUPPRESS_UNCOUNTED_ARG if (transition->transitionKind() == TransitionKind::PropertyAddition
-                        && !transition->transitionPropertyAttributes()
+                        && !(transition->transitionPropertyAttributes() & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble))
                         && equalIdentifier(transition->transitionPropertyName(), m_lexer.currentToken())) {
                         if constexpr (parserMode == StrictJSON)
                             return ExistingProperty { transition, transition->transitionOffset() };
@@ -1520,6 +1526,24 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                     if (SUPPRESS_UNCOUNTED_LOCAL AtomStringImpl* ident = existingIdentifier(vm, m_lexer.currentToken())) {
                         PropertyOffset offset = 0;
                         Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(originalStructure, ident, 0, offset);
+                        // The transition table deliberately excludes PropertyAttribute::RepresentationDouble from the
+                        // key, so asking for attributes 0 can return a transition whose slot is RAW -- created by an
+                        // earlier `o.a = <double>` on this same shape. This fast path then stores through
+                        // putDirectOffset and installs that structure, leaving a NaN-boxed JSValue in a slot every
+                        // reader de-biases. For a boxed Int32 0 (0xfffe000000000000) the read adds 2^49 and overflows
+                        // to exactly 0, i.e. the EMPTY JSValue, which trips crashDueToEmptyValueAtValidOffset.
+                        // Reproduced by JSON.parse(JSON.stringify({a: -0.0})) once {a: <double>} already exists.
+                        //
+                        // Declining mirrors the single-transition path above, which already requires
+                        // !transitionPropertyAttributes() and so has always rejected raw transitions; the two were
+                        // simply inconsistent. The fallback is the generic putDirect below, which is raw-aware and
+                        // widens the representation when the JSON value is not a number.
+                        // Only RepresentationDouble is tolerated, for the reason given on the single-transition
+                        // path above; any user-visible attribute still declines. The correctness hazard the previous
+                        // unconditional decline guarded against -- storing a NaN-boxed non-number into a raw slot --
+                        // is handled at the store site instead, where `value` is known.
+                        if (newStructure && (newStructure->transitionPropertyAttributes() & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble))) [[unlikely]]
+                            newStructure = nullptr;
                         if (newStructure) [[likely]] {
                             if constexpr (parserMode == StrictJSON)
                                 return ExistingProperty { newStructure, offset };
@@ -1561,6 +1585,12 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 ASSERT(object->structure() == originalStructure);
             }
 
+            // NOTE: a per-property divert used to live here, sending a non-number away from a claimed slot to the
+            // generic putDirect because putDirectOffsetRawDoubleAware could not represent it and failed closed. The
+            // writer gives the claim up itself now, so this loop carries none of that. It was measurable: this
+            // function also hosts the lexer, and the extra code stopped WTF's SIMD character-scan helpers being
+            // inlined into it -- SIMD::bitOr2 59 -> 0 samples, SIMD::equal 25 -> 0, SIMD::load 35 -> 2, against a
+            // scalar isJSONWhiteSpace 6 -> 49. See repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md.
             // When creating JSON object in this fast path, we know the following.
             //   1. The object is definitely JSFinalObject.
             //   2. The object rarely has duplicate properties.
@@ -1584,7 +1614,11 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
                 // is running at the same time we put without transitioning.
                 ASSERT(!object->getDirect(offset) || !JSValue::encode(object->getDirect(offset)));
-                object->putDirectOffset(vm, offset, value);
+                // Pass the DESTINATION structure: this->structure() is still originalStructure until the
+                // setStructure() below, and originalStructure does not own `offset`, so the bare overload asks the
+                // wrong authority about rawness. Harmless today because the fast path now declines raw transitions,
+                // but the bare overload is what made that decline necessary in the first place.
+                object->putDirectOffset(vm, *newStructure, offset, value);
                 object->setStructure(vm, newStructure);
                 ASSERT(!newStructure->mayBePrototype()); // There is no way to make it prototype object.
             } else {

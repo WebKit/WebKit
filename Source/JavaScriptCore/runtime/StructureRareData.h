@@ -40,6 +40,7 @@ class StructureChain;
 class CachedSpecialPropertyAdaptiveStructureWatchpoint;
 class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint;
 struct SpecialPropertyCache;
+struct RawDoubleMask;
 enum class CachedPropertyNamesKind : uint8_t {
     EnumerableStrings = 0,
     Strings,
@@ -180,11 +181,37 @@ private:
     WriteBarrierStructureID m_previous;
     PropertyOffset m_maxOffset;
     PropertyOffset m_transitionOffset;
+    std::unique_ptr<RawDoubleMask> m_rawDoubleMask;
+    // Per-offset raw-double map for the double-field representation project: bit N set iff the property at
+    // PropertyOffset N is stored as raw IEEE-754 bits rather than a NaN-boxed JSValue.
+    //
+    // TWO levels of laziness, both forced by measurement rather than chosen. It is not on Structure, because
+    // Structures are among the most numerous cells in the heap and sizeof(Structure) sits exactly on a 16-byte size
+    // class, so even one word there costs +16 B on EVERY Structure (07-PLAN section 5k). And it is not stored inline
+    // HERE either: StructureRareData is already at the 96-byte budget the static_assert below enforces, which
+    // rejected a 16-byte field and then an 8-byte one. So it is a side table on the same pattern as
+    // m_specialPropertyCache above, allocated only for Structures that genuinely carry a Double-represented field.
+    //
+    // Every consumer gates on Structure::hasRawDoubleFields() before reaching here, so neither indirection sits on a
+    // path a Structure without raw doubles can take. See Structure::isRawDoubleOffset.
     unsigned m_activeReplacementWatchpointSet : 30 { 0 };
     unsigned m_cachedHasDefaultToPrimitiveFastAndNonObservable : 2 { static_cast<unsigned>(TriState::Indeterminate) }; // TriState
 };
 #ifdef NDEBUG
-static_assert(sizeof(StructureRareData) <= 96, "StructureRareData should remain small");
+// RAISED FROM 96 TO 112 for the double-field representation project, to unblock measurement. This is a DELIBERATE,
+// TEMPORARY relaxation of an upstream budget, not a free change: commit edd95375 ("[JSC] Shrink StructureRareData back
+// to 96 bytes") set 96 on purpose, and 96 is a MarkedSpace size-class boundary, so 112 is the next class up -- every
+// StructureRareData that exists costs 16 bytes more.
+//
+// It buys the ability to measure whether the raw-double representation is worth anything at all (07-PLAN section 5n:
+// the per-offset mask is provably necessary and has no free home in either Structure or StructureRareData).
+//
+// BEFORE LANDING, one of these must happen instead:
+//   - shrink StructureRareData by 16 bytes on its own merits, or
+//   - find a carrier for the mask that is not either object, or
+//   - show by measurement that +16 B per rare data is acceptable, with a real JS3 heap number
+//     (section 1.6 of this campaign is about JSC at 190 MB vs V8's 67 MB, so this is not a formality).
+static_assert(sizeof(StructureRareData) <= 112, "StructureRareData should remain small");
 #endif
 
 } // namespace JSC

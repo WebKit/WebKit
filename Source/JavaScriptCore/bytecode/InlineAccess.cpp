@@ -199,6 +199,19 @@ bool InlineAccess::generateSelfPropertyAccess(PropertyInlineCache& propertyCache
     jit.loadValue(
         MacroAssembler::Address(storage, offsetRelativeToBase(offset)), value);
 
+    // RAW-DOUBLE RECONSTRUCTION. `structure` and `offset` are both known HERE, at repatch time, so this needs no flag
+    // and no branch: one unconditional add on the raw path and literally nothing on the boxed path.
+    //
+    // This replaces DECLINING the inline access, which is what 5ak did. Declining was correct but it is what made the
+    // JetStream3 screen a NET LOSS: Overall -2.85%, raytrace -53.6%, Box2D -37.5%, splay -36.8%, and the ablation in
+    // 5aq pinned the whole of splay's regression on the decline gates (-35.10% -> +0.13%, p=0.98). These benchmarks
+    // are dominated by double-field LOADS, and the repatching self-access is the fast path those loads take.
+    //
+    // If the extra instruction does not fit the fixed-size inline hole, linkCodeInline returns false and the caller
+    // falls back to the handler -- i.e. exactly the old declined behaviour. So this cannot regress correctness, and
+    // the worst case is the status quo. See 07-PLAN 5ar.
+    // NOTE: a raw-double re-box used to be emitted here. Dead under guarantee-only storage -- the slot is a JSValue.
+
     return linkCodeInline("property access", jit, *repatchingIC);
 }
 
@@ -247,6 +260,23 @@ bool InlineAccess::generateSelfPropertyReplace(PropertyInlineCache& propertyCach
         return false;
 
     ASSERT(canGenerateSelfPropertyReplace(propertyCache, offset));
+
+    // RAW-DOUBLE SLOTS CANNOT USE THE INLINE REPLACE. The load side (generateSelfPropertyAccess) reconstructs with
+    // one unconditional add because boxing a raw double is pure arithmetic. The STORE side cannot: converting a
+    // JSValue to raw bits needs a type test (Int32 vs boxed double) plus a bail for non-numbers, and there is
+    // neither a spare register nor room in the fixed-size inline hole for that.
+    //
+    // Emitting the bare storeValue below anyway writes box(d) into a slot every raw reader then de-biases, so
+    // storing 0.0 lands 2^49 and reads back as bits 0 -- the EMPTY JSValue. Observed on Box2D as
+    // b2Body.m_angularDamping (offset 72, attrsSayDouble=true, maskRaw=true) reaching putInlineForJSObject with an
+    // empty value; --useAccessInlining=0 was the only ablation that made it go away.
+    //
+    // Returning false makes the caller fall back to the handler, which IS raw-aware, and DFG/FTL still resolve the
+    // access statically -- so only one inline fast path is given up.
+    // CLAIM, not encoding: this inline path cannot bail, and in Phase A a claim-violating store must still reach
+    // the C++ widening path.
+    if (structure->isRawDoubleOffset(offset))
+        return false;
 
     CCallHelpers jit;
 

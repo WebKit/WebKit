@@ -14015,6 +14015,21 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
 
                 JSValueOperand value(this, edge);
                 GPRReg baseGPR = isInlineOffset(entry.offset()) ? resultGPR : storageGPR;
+                // RAW-DOUBLE. A sunken object's slots are written here for the first time, so a slot the materialised
+                // structure marks raw has to receive bits(d) rather than a JSValue. Unlike FTL's copy of this loop we
+                // do have the Edge, so the conversion can usually be decided statically.
+                // ASK THE CLAIM, NOT THE ENCODING. A claimed slot must receive a double-ENCODED JSValue even
+                // when the value is an Int32, so this conversion is required whenever the claim is live. It used
+                // to be gated on slotHoldsRawDouble(), which is constant-false under guarantee-only storage --
+                // meaning a sunk object materialising an Int32 into a claimed slot stored it verbatim and a
+                // claim-trusting reader de-biased a tagged integer. No reproduction was constructed (sinking did
+                // not fire for the cases tried), but the gate was provably wrong, so it is corrected here.
+                if (structure->isRawDoubleOffset(entry.offset())) [[unlikely]] {
+                    GPRTemporary rawBits(this);
+                    emitRawDoubleBitsForStore(value.gpr(), m_state.forNode(edge).m_type, rawBits.gpr(), entry.offset());
+                    store64(rawBits.gpr(), Address(baseGPR, offsetRelativeToBase(entry.offset())));
+                    continue;
+                }
                 storeValue(
                     value.gpr(),
                     Address(baseGPR, offsetRelativeToBase(entry.offset())));
@@ -14836,6 +14851,43 @@ void SpeculativeJIT::compilePutByIdWithThis(Node* node)
     noResult(node);
 }
 
+// The representation recorded on the node when it was created, which is the ONLY sound source: it was computed from
+// a definite structure set, whereas re-deriving it here from m_state.forNode(base) is subject to clobbers widening
+// the abstract value, so a reader could fail to prove what the writer proved. 07-PLAN 5ab/5ad.
+auto SpeculativeJIT::recordedRawDoubleProof(const StorageAccessData& data) -> RawDoubleProof
+{
+    // DIAGNOSTIC, mirroring FTL's. Does the representation recorded at node-creation time still agree with the
+    // structures that can actually reach this access? A Boxed record on a live-raw slot is the bits(d)-2^49 half of
+    // the bug and a Raw record on a live-boxed slot is the bits(d)+2^49 half, so both directions are reported.
+    // TRANSITION PUTS ARE EXEMPT: the abstract state at a transition store still holds the OLD structure, which
+    // legitimately does not have the property yet, so comparing against it produces false positives.
+    if (Options::dumpDoubleFieldSplitCensus() && Options::useRawDoubleFieldStorage()) [[unlikely]] {
+        Edge baseEdge = m_currentNode->op() == PutByOffset ? m_currentNode->child2() : m_currentNode->child2();
+        AbstractValue& value = m_state.forNode(baseEdge);
+        if (value.m_structure.isFinite() && !value.m_structure.isClear()) {
+            bool anyRaw = false;
+            bool allRaw = true;
+            value.m_structure.forEach([&](RegisteredStructure structure) {
+                bool raw = structure->isRawDoubleOffset(data.offset);
+                anyRaw |= raw;
+                allRaw &= raw;
+            });
+            bool recordedRaw = data.rawDoubleRep == RawDoubleRep::Raw;
+            bool hasProperty = true;
+            value.m_structure.forEach([&](RegisteredStructure structure) {
+                if (!structure->isValidOffset(data.offset))
+                    hasProperty = false;
+            });
+            if (hasProperty && (recordedRaw != allRaw || anyRaw != allRaw)) {
+                dataLogLn("[rawdouble] DFG LOWERING MISMATCH op=", Graph::opName(m_currentNode->op()),
+                    " offset=", data.offset, " recorded=", recordedRaw ? "Raw" : "Boxed",
+                    " liveAllRaw=", allRaw, " liveAnyRaw=", anyRaw, " setSize=", value.m_structure.size());
+            }
+        }
+    }
+    return data.rawDoubleRep == RawDoubleRep::Raw ? RawDoubleProof::Raw : RawDoubleProof::Boxed;
+}
+
 void SpeculativeJIT::compileGetByOffset(Node* node)
 {
     StorageAccessData& storageAccessData = node->storageAccessData();
@@ -14850,6 +14902,22 @@ void SpeculativeJIT::compileGetByOffset(Node* node)
         GPRReg scratch2GPR = scratch2.gpr();
         FPRReg resultFPR = result.fpr();
 
+        // A slot proven raw already holds an IEEE-754 double, so unboxRealNumberDouble is skipped entirely -- that
+        // drops the bias subtract and the Int32 discrimination branch, leaving just the load.
+        //
+        // There is no Unknown case: mixed sites decline static resolution upstream (parser and
+        // ConstantFoldingPhase), so the representation recorded on the node is always definite. 07-PLAN 5ab.
+        switch (recordedRawDoubleProof(storageAccessData)) {
+        case RawDoubleProof::Raw:
+            // The claim buys the dispatch, not the bias: load the boxed JSValue and un-bias unconditionally.
+            loadDouble(Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)), scratch1FPR);
+            unboxDoubleAsDouble(scratch1FPR, resultFPR);
+            doubleResult(resultFPR, node);
+            return;
+        case RawDoubleProof::Boxed:
+            break;
+        }
+
         loadDouble(Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)), scratch1FPR);
         unboxRealNumberDouble(node, scratch1FPR, resultFPR, scratch2GPR);
         doubleResult(resultFPR, node);
@@ -14862,8 +14930,71 @@ void SpeculativeJIT::compileGetByOffset(Node* node)
     GPRReg storageGPR = storage.gpr();
     GPRReg resultGPR = result.gpr();
 
+    // NOTE: this path used to re-box, because a raw slot held bits(d) rather than a JSValue and handing it back
+    // untouched made every consumer read bits(d)-2^49 as a double -- the 1.375 signature that survived nine other
+    // reader fixes (07-PLAN 5ad). Under guarantee-only storage the slot IS a JSValue whether claimed or not, so
+    // there is nothing to reconcile and no representation to consult.
     loadValue(Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)), resultGPR);
     jsValueResult(resultGPR, node);
+}
+
+// box(d) == bits(d) + 2^49, so a boxed double de-biases with one subtract; an Int32 must be converted to a double and
+// then reinterpreted. `known` is the abstract type where the caller has one and SpecFullTop where it does not, in which
+// case the dispatch becomes a runtime one. Shared by every DFG store into a raw slot -- compilePutByOffset and object
+// materialisation -- so the two cannot drift apart, and mirrors FTL's rawDoubleBitsForStore exactly.
+void SpeculativeJIT::emitRawDoubleBitsForStore(GPRReg valueGPR, SpeculatedType known, GPRReg destGPR, PropertyOffset offsetForDiagnostics)
+{
+    // THE SCRATCH FPR IS ALLOCATED UP FRONT, BEFORE ANY BRANCH, and that is required rather than tidy.
+    // FPRTemporary can spill to make room, and the register allocator records the offset at which it did.
+    // Constructing it inside the Int32 arm of the mixed dispatch below puts that allocation inside the region the
+    // notInt32/done jumps span, which trips
+    // AbstractMacroAssembler::RegisterAllocationOffset::checkOffsets -- "Unsafe branch over register allocation" on a
+    // debug build, and a SIGSEGV on release once enough stores are raw for that arm to be reached at all. Found by
+    // the debug assertion after rawDoubleMarkIntegerCreations took PutByOffset raw coverage from 0 to 100%.
+    // Hoisting costs one FPR on the two single-representation paths, which are straight-line code anyway.
+    FPRTemporary asDouble(this);
+
+    // A boxed double is ALREADY the wanted encoding; an Int32 is converted and then boxed. Mirrors FTL's
+    // rawDoubleBitsForStore.
+    auto fromBoxedDouble = [&] {
+        move(valueGPR, destGPR);
+    };
+    auto fromInt32 = [&] {
+        convertInt32ToDouble(valueGPR, asDouble.fpr());
+        moveDoubleTo64(asDouble.fpr(), destGPR);
+        // BIAS IN THE GPR, and NOT via boxDoubleAsDouble(x, x). That helper writes the 2^49 constant into its
+        // RESULT register before adding, so aliasing input and result clobbers the input and computes
+        // 2*DoubleEncodeOffset instead of bits(d)+DoubleEncodeOffset -- a silently WRONG VALUE stored into a claimed
+        // slot. It is guarded by ASSERT(inputFPR != resultFPR), which a --release build does not compile, so this
+        // survived a full release stress sweep and 13 JetStream3 tests and was caught only by the --ra run
+        // (183 of 184 failures). Boxing is a 64-bit integer add, so doing it here is exactly equivalent and needs
+        // no second FPR.
+        add64(TrustedImm64(JSValue::DoubleEncodeOffset), destGPR);
+    };
+
+    if (!(known & ~SpecFullDouble)) {
+        fromBoxedDouble();
+        return;
+    }
+    if (!(known & ~SpecInt32Only)) {
+        fromInt32();
+        return;
+    }
+    if (!(known & ~(SpecInt32Only | SpecFullDouble))) {
+        JumpList done;
+        Jump notInt32 = branchIfNotInt32(valueGPR);
+        fromInt32();
+        done.append(jump());
+        notInt32.link(this);
+        fromBoxedDouble();
+        done.link(this);
+        return;
+    }
+    // A non-number needs the representation widened, which a store cannot do on its own. Counted, not corrupted.
+    dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+        "[rawdouble] DFG store UNPROVEN-VALUE into raw slot offset=", offsetForDiagnostics,
+        " valueType=", SpeculationDump(known));
+    move(valueGPR, destGPR);
 }
 
 void SpeculativeJIT::compilePutByOffset(Node* node)
@@ -14883,6 +15014,32 @@ void SpeculativeJIT::compilePutByOffset(Node* node)
 
         speculate(node, node->child2());
 
+        // A RAW SLOT MUST NEVER HOLD AN IMPURE NaN. Raw storage does not delete the 2^49 bias, it MOVES it to the
+        // readers -- and every JSValue-producing reader applies it unconditionally, with no NaN test
+        // (LowLevelInterpreter64.asm .opGetByIdRawDouble, compileGetByOffset's JSValue arm, the FTL twins,
+        // InlineAccess.cpp, InlineCacheCompiler.cpp, JSObject::getDirectRawDoubleAware). For an impure NaN,
+        // bits(d) + 2^49 leaves double space (PureNaN.h), so the reader hands JavaScript a value that passes
+        // isCell() whose pointer is the low bits of the NaN payload -- a fake cell at a SCRIPT-CHOSEN address. A
+        // Float64Array element is a live source of one: an in-bounds Float64Array GetByVal is typed SpecFullDouble,
+        // which includes SpecDoubleImpureNaN.
+        //
+        // The previous comment here claimed the opposite -- "purifyNaN exists only because an impure NaN plus 2^49
+        // overflows into pointer space; raw storage never applies the bias, so an impure NaN stays one and is
+        // harmless". That is exactly backwards: raw storage defers the bias, it does not avoid it.
+        //
+        // So the invariant belongs to the SLOT, not the reader, and it is not a new one -- the abstract interpreter
+        // already assumes it, since a double-result GetByOffset is typed at most SpecBytecodeDouble, which excludes
+        // SpecDoubleImpureNaN. Boxed slots satisfy it because boxing purifies; a raw slot must purify at the store.
+        // Purifying is unobservable: JavaScript cannot see a NaN payload held in a property slot.
+        // repro/bugs/01-repro-impure-nan-fake-cell.js.
+        switch (recordedRawDoubleProof(storageAccessData)) {
+        case RawDoubleProof::Raw:
+            // A claimed store is byte-identical to an unclaimed one -- boxing already purifies -- so fall straight
+            // through to the shared path below rather than duplicating it.
+        case RawDoubleProof::Boxed:
+            break;
+        }
+
         if (m_state.forNode(node->child3()).couldBeType(SpecDoubleImpureNaN))
             purifyNaN(valueFPR, scratch1FPR);
         else
@@ -14901,7 +15058,17 @@ void SpeculativeJIT::compilePutByOffset(Node* node)
     GPRReg valueGPR = value.gpr();
 
     speculate(node, node->child2());
-    storeValue(valueGPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
+    // A CLAIMED slot must receive a double-ENCODED JSValue even when the value handed in is an Int32, or a reader
+    // that skips the three-way dispatch de-biases a tagged integer. Anything unproven falls through unconverted;
+    // see emitRawDoubleBitsForStore.
+    auto putProof = recordedRawDoubleProof(storageAccessData);
+    GPRTemporary rawBits(this);
+    GPRReg toStoreGPR = valueGPR;
+    if (putProof == RawDoubleProof::Raw) {
+        toStoreGPR = rawBits.gpr();
+        emitRawDoubleBitsForStore(valueGPR, m_state.forNode(node->child3()).m_type, toStoreGPR, storageAccessData.offset);
+    }
+    storeValue(toStoreGPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
     noResult(node);
 }
 

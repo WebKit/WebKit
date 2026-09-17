@@ -1850,6 +1850,49 @@ JSObject* AccessCase::tryGetAlternateBase() const
     return result;
 }
 
+// See the declaration. Two corrections, and getting either wrong reintroduces the 1.625/1.375 bug class:
+//
+// (a) TRANSITIONS. structure() returns previousID() for every transition kind, i.e. the structure the object had
+//     BEFORE the store, which does not have the new property at all. Asking it about the new offset answers false.
+//     Measured when this was wrong: 18 000 of 20 000 objects, 1934.5 reading back as 2077.
+//
+// (b) PROTOTYPE LOADS. For a prototype hit the slot lives on the HOLDER, not the receiver. Asking the receiver is
+//     wrong in both directions, and the false-positive direction would add 2^49 to a genuine JSValue that may be a
+//     pointer.
+//
+// Delete and SetPrivateBrand also carry a newStructure, but they remove or rebrand rather than store a value, so they
+// are deliberately excluded and fall through to structure().
+Structure* AccessCase::structureOwningAccessedSlot() const
+{
+    switch (m_type) {
+    case AccessCase::Transition:
+    case AccessCase::IndexedUndefinedKeyTransition:
+    case AccessCase::IndexedNullKeyTransition:
+    case AccessCase::IndexedTrueKeyTransition:
+    case AccessCase::IndexedFalseKeyTransition:
+        return newStructure();
+    default:
+        if (JSObject* holder = tryGetAlternateBase())
+            return holder->structure();
+        // (c) POLY-PROTO CHAINS. tryGetAlternateBase() answers null whenever conditionSet() is empty, which is exactly
+        //     the poly-proto case: the holder is not a constant object, it is reached by walking m_chain at run time.
+        //     Falling through to structure() then hands back the RECEIVER's structure, which does not own the slot, so
+        //     the raw-double question was asked of the wrong Structure and answered false. The generated stub therefore
+        //     emitted a bare load with no 2^49 reconstruction and returned bits(d) as a JSValue -- 1.5 read back as
+        //     1.375. Reproduced by a get_by_id on a prototype-held double field once the site goes 3-way polymorphic
+        //     and the IC switches from the pre-compiled Load thunk (which is raw-aware) to a generated stub.
+        //
+        //     The chain's last structure IS the holder's, and the compiler already bakes it into the stub's guard, so
+        //     it is available here. This mirrors PolyProtoAccessChain::slotBaseStructure(), inlined because that
+        //     overload takes a VM& this const getter has no access to (and does not use it).
+        if (PolyProtoAccessChain* chain = polyProtoAccessChain()) {
+            if (!chain->chain().isEmpty())
+                return chain->chain().last().decode();
+        }
+        return structure();
+    }
+}
+
 } // namespace JSC
 
 #endif

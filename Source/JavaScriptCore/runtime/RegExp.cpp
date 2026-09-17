@@ -248,7 +248,7 @@ Structure* RegExp::ensureGroupsStructure(VM& vm, JSGlobalObject* globalObject)
     for (auto& name : m_rareData->m_captureGroupNames) {
         if (name.isEmpty())
             continue;
-        structure = Structure::addPropertyTransition(vm, structure, Identifier::fromString(vm, name), 0, offset);
+        structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, Identifier::fromString(vm, name), 0, offset);
         // Callers store via putDirectOffset assuming sequential inline offsets.
         if (offset != expectedOffset || structure->isDictionary())
             return nullptr;

@@ -56,6 +56,450 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+// ============================================================================================================
+// PHASE 0 GO/NO-GO CENSUS -- double-field representation. See
+// analysis/prompt/box2d/01-DESIGN-double-field-representation.md section 8.
+//
+// If a property's representation became part of transition identity, which shapes would SPLIT? A
+// (structure, offset) that receives both an Int32 and a non-integer double answers "this one would": the two
+// stores would take different transitions, and JSC has no per-instance migration to reunify them, so the split
+// is permanent polymorphism at every site that sees both objects.
+//
+// Run with --useJIT=0. Every store then funnels through the C++ putDirectOffset leg; a JIT run bypasses it and
+// undercounts. This is a census, not a perf run.
+// ============================================================================================================
+namespace {
+
+struct SplitCensusKinds {
+    uint64_t int32 { 0 };
+    uint64_t nonIntDouble { 0 };
+    uint64_t intAsDouble { 0 };
+    uint64_t other { 0 };
+};
+
+static Lock& splitCensusLock()
+{
+    static LazyNeverDestroyed<Lock> lock;
+    static std::once_flag once;
+    std::call_once(once, [] { lock.construct(); });
+    return lock.get();
+}
+
+static uint64_t g_reprMatch { 0 };
+static uint64_t g_gcAmbiguousDoubles { 0 };
+static uint64_t g_gcAmbiguousZero { 0 };
+static uint64_t g_reprStaleInt32 { 0 };
+static uint64_t g_reprStaleOther { 0 };
+
+using SplitCensusMap = UncheckedKeyHashMap<uint64_t, SplitCensusKinds>;
+static SplitCensusMap& splitCensusMap()
+{
+    static LazyNeverDestroyed<SplitCensusMap> map;
+    static std::once_flag once;
+    std::call_once(once, [] { map.construct(); });
+    return map.get();
+}
+
+static void dumpSplitCensus()
+{
+    Locker locker { splitCensusLock() };
+    auto& map = splitCensusMap();
+    uint64_t keys = 0, splitKeys = 0, pureDoubleKeys = 0, pureInt32Keys = 0;
+    uint64_t storesInSplit = 0, storesTotal = 0, storesPureDouble = 0;
+    // B16: how many double-bearing fields land OUT OF LINE (offset >= firstOutOfLineOffset = 64)? Inline offsets are
+    // bounded by JSFinalObject::maxInlineCapacity = 62, so they fit a single uint64 bitmask on the Structure -- which
+    // is what makes a lock-free, allocation-free "is offset N raw?" test possible on a GC thread, where
+    // forEachPropertyConcurrently cannot be used because it allocates (StructureInlines.h:77,83). The GC must have
+    // that test or it traces raw double bits as pointers and crashes (07-PLAN 5h). Out-of-line offsets are unbounded
+    // and would need a variable-length mask; if their share is ~0, the design can refuse the Double representation
+    // out of line and keep the whole mechanism to one word.
+    uint64_t inlineDoubleKeys = 0, outOfLineDoubleKeys = 0;
+    uint64_t inlineDoubleStores = 0, outOfLineDoubleStores = 0;
+    uint64_t numericOnlyMixedKeys = 0, storesNumericOnlyMixed = 0;
+    uint64_t disqualifiedKeys = 0, storesDisqualified = 0;
+    int maxDoubleOffset = -1;
+    for (auto& entry : map) {
+        auto& k = entry.value;
+        uint64_t stores = k.int32 + k.nonIntDouble + k.intAsDouble + k.other;
+        storesTotal += stores;
+        ++keys;
+        bool sawDouble = k.nonIntDouble || k.intAsDouble;
+        bool sawInt32 = !!k.int32;
+        if (sawDouble) {
+            int offset = static_cast<int>(static_cast<uint32_t>(entry.key));
+            maxDoubleOffset = std::max(maxDoubleOffset, offset);
+            if (offset < firstOutOfLineOffset) {
+                ++inlineDoubleKeys;
+                inlineDoubleStores += stores;
+            } else {
+                ++outOfLineDoubleKeys;
+                outOfLineDoubleStores += stores;
+            }
+        }
+        // GAP-1 SIZING. "WOULD SPLIT" lumps together two situations that are not remotely equivalent, and the
+        // difference is the whole question for a promote-when-proven scheme:
+        //
+        //   numeric-only  -- saw Int32 AND double but never anything else. An Int32 coerces LOSSLESSLY into a raw
+        //                    double slot (putDirectOffsetRawDoubleAware does exactly that), so this field COULD be
+        //                    raw. It is not today only because the creating store happened to be the Int32 -- the
+        //                    `this.x = 0` idiom. This is the recoverable coverage.
+        //   disqualified  -- saw a genuine non-number ("other"). A raw slot cannot hold it at any price.
+        if (sawDouble && sawInt32 && !k.other) {
+            ++numericOnlyMixedKeys;
+            storesNumericOnlyMixed += stores;
+        }
+        if (sawDouble && k.other) {
+            ++disqualifiedKeys;
+            storesDisqualified += stores;
+        }
+        if (sawDouble && (sawInt32 || k.other)) {
+            ++splitKeys;
+            storesInSplit += stores;
+        } else if (sawDouble) {
+            ++pureDoubleKeys;
+            storesPureDouble += stores;
+        } else if (sawInt32 && !k.other)
+            ++pureInt32Keys;
+    }
+    dataLogLn("[dbl-census] (structure,offset) keys=", keys, " stores=", storesTotal);
+    dataLogLn("[dbl-census]   GAP1 RECOVERABLE (Int32+double, never a non-number): keys=", numericOnlyMixedKeys,
+        " stores=", storesNumericOnlyMixed);
+    dataLogLn("[dbl-census]   DISQUALIFIED (saw a genuine non-number)            : keys=", disqualifiedKeys,
+        " stores=", storesDisqualified);
+    dataLogLn("[dbl-census]   WOULD SPLIT (saw a double AND a non-double): keys=", splitKeys,
+        " stores=", storesInSplit);
+    dataLogLn("[dbl-census]   pure-double keys (the beneficiaries)        : keys=", pureDoubleKeys,
+        " stores=", storesPureDouble);
+    dataLogLn("[dbl-census]   pure-Int32 keys (would lose Int32 spec if normalised): keys=", pureInt32Keys);
+    {
+        uint64_t dblKeys = inlineDoubleKeys + outOfLineDoubleKeys;
+        uint64_t dblStores = inlineDoubleStores + outOfLineDoubleStores;
+        dataLogLn("[dbl-offset] double-bearing keys: inline(<", static_cast<int>(firstOutOfLineOffset), ")=", inlineDoubleKeys,
+            " outOfLine=", outOfLineDoubleKeys, "   max double offset=", maxDoubleOffset);
+        dataLogLn("[dbl-offset] double-bearing stores: inline=", inlineDoubleStores, " outOfLine=", outOfLineDoubleStores);
+        if (dblKeys) {
+            dataLogLn("[dbl-offset] OUT-OF-LINE SHARE: ", (outOfLineDoubleKeys * 100.0) / dblKeys, "% of keys, ",
+                dblStores ? (outOfLineDoubleStores * 100.0) / dblStores : 0.0, "% of stores",
+                "   <- if ~0, a single uint64 inline mask suffices and out-of-line doubles stay boxed");
+            // Histogram in 64-offset bands. The mask width question is not "what is the max offset" but "how many
+            // words would cover almost everything": if the out-of-line doubles cluster in 64..127, a two-word mask
+            // with a slow path past 128 is sufficient and stays allocation-free on the GC thread.
+            for (unsigned band = 0; band < 8; ++band) {
+                uint64_t bandKeys = 0, bandStores = 0;
+                for (auto& entry : map) {
+                    auto& k = entry.value;
+                    if (!(k.nonIntDouble || k.intAsDouble))
+                        continue;
+                    unsigned offset = static_cast<uint32_t>(entry.key);
+                    if (offset / 64 != band)
+                        continue;
+                    ++bandKeys;
+                    bandStores += k.int32 + k.nonIntDouble + k.intAsDouble + k.other;
+                }
+                if (bandKeys)
+                    dataLogLn("[dbl-offset]   band [", band * 64, "..", band * 64 + 63, "]: keys=", bandKeys, " stores=", bandStores);
+            }
+            // CONTIGUITY, per Structure. Structure has exactly 2 free padding bytes at +26 (dump-class-layout), so a
+            // [firstRawOffset, lastRawOffset] pair of uint8s would cost NOTHING at all -- strictly better than a
+            // 16-byte mask -- but only if a Structure's raw-double offsets form one unbroken run. Report, per
+            // Structure that has any: the span (last-first+1) versus the count. span == count means contiguous.
+            UncheckedKeyHashMap<uint32_t, std::tuple<unsigned, unsigned, unsigned>> perStructure;
+            for (auto& entry : map) {
+                auto& k = entry.value;
+                if (!(k.nonIntDouble || k.intAsDouble))
+                    continue;
+                uint32_t sid = static_cast<uint32_t>(entry.key >> 32);
+                unsigned offset = static_cast<uint32_t>(entry.key);
+                auto it = perStructure.find(sid);
+                if (it == perStructure.end())
+                    perStructure.add(sid, std::make_tuple(offset, offset, 1u));
+                else {
+                    auto& [lo, hi, n] = it->value;
+                    lo = std::min(lo, offset);
+                    hi = std::max(hi, offset);
+                    ++n;
+                }
+            }
+            uint64_t contigStructures = 0, gappyStructures = 0, worstSpan = 0;
+            for (auto& e : perStructure) {
+                auto [lo, hi, n] = e.value;
+                unsigned span = hi - lo + 1;
+                if (span == n)
+                    ++contigStructures;
+                else {
+                    ++gappyStructures;
+                    worstSpan = std::max<uint64_t>(worstSpan, span);
+                }
+            }
+            dataLogLn("[dbl-contig] structures with raw-double fields: contiguous=", contigStructures,
+                " gappy=", gappyStructures, " worst gappy span=", worstSpan,
+                "   <- contiguous ones are describable by a [first,last] uint8 pair in Structure's 2 free padding bytes");
+            // A [first,last] RANGE cannot describe a gappy Structure without OVER-claiming, and over-claiming is the
+            // unsafe direction (says raw, slot is boxed -> GC traces double bits as a pointer). But the invariant is
+            // one-directional, so a gappy Structure can simply DECLINE the range and leave all its double fields
+            // boxed. What that forfeits is the question: count the stores that would be given up.
+            uint64_t contigStores = 0, gappyStores = 0;
+            for (auto& entry : map) {
+                auto& k = entry.value;
+                if (!(k.nonIntDouble || k.intAsDouble))
+                    continue;
+                uint32_t sid = static_cast<uint32_t>(entry.key >> 32);
+                auto it = perStructure.find(sid);
+                if (it == perStructure.end())
+                    continue;
+                auto [lo, hi, n] = it->value;
+                uint64_t stores = k.int32 + k.nonIntDouble + k.intAsDouble + k.other;
+                if ((hi - lo + 1) == n)
+                    contigStores += stores;
+                else
+                    gappyStores += stores;
+            }
+            uint64_t allDblStores = contigStores + gappyStores;
+            dataLogLn("[dbl-contig] stores on contiguous structures=", contigStores, " on gappy=", gappyStores,
+                "   FORFEIT IF RANGE-ONLY: ", allDblStores ? (gappyStores * 100.0) / allDblStores : 0.0, "% of double stores");
+        }
+    }
+    if (Options::validateDoubleFieldRepresentation()) {
+        // PHASE 1 VALIDATOR. Each of these is a store that Phase 2 must either normalise (Int32 -> double) or widen
+        // (structure transition to Tagged). The ratio to matching stores is the size of the Phase 2 problem.
+        dataLogLn("[dbl-repr] structure says Double, value IS a double  : ", g_reprMatch);
+        dataLogLn("[dbl-repr] structure says Double, value is an Int32  : ", g_reprStaleInt32, "   <- Phase 2 normalises these");
+        dataLogLn("[dbl-repr] structure says Double, value is neither   : ", g_reprStaleOther, "   <- Phase 2 must WIDEN these");
+        uint64_t stale = g_reprStaleInt32 + g_reprStaleOther;
+        uint64_t total = stale + g_reprMatch;
+        if (total)
+            dataLogLn("[dbl-repr] STALENESS: ", (stale * 100.0) / total, "% of stores to Double-represented fields");
+    }
+    dataLogLn("[gc-ambig] double stores whose RAW bits look like a cell pointer: ", g_gcAmbiguousDoubles,
+        "  of which exactly 0.0: ", g_gcAmbiguousZero,
+        "   <- only these need the collector to skip them");
+    if (keys) {
+        dataLogLn("[dbl-census]   SPLIT SHARE: ", (splitKeys * 100.0) / keys, "% of keys, ",
+            storesTotal ? (storesInSplit * 100.0) / storesTotal : 0.0, "% of stores");
+    }
+}
+
+} // anonymous namespace
+
+// Out-of-line half of getDirect(Structure&, PropertyOffset). Only reached when the Structure's summary bit says at
+// least one property is Double-represented, so the table walk is rare by construction.
+#if ASSERT_ENABLED
+// Development-time detector for the unhooked-path bug class. With --useRawDoubleFieldStorage=1 on a Debug build, any
+// C++ reader that reaches the unchecked getDirect(PropertyOffset) for a Double-represented field fails HERE, naming the
+// offset, instead of silently returning a wrong double. Run the test suite this way to enumerate the reachable
+// offenders empirically rather than auditing ~140 call sites by hand.
+void JSObject::assertNotRawDoubleFieldRead(PropertyOffset) const
+{
+    // Nothing to check any more: guarantee-only storage keeps every slot a NaN-boxed JSValue, so an unchecked
+    // getDirect(PropertyOffset) is correct on a claimed field too. The audit this guarded is obsolete.
+}
+#endif // ASSERT_ENABLED
+
+// Guarantee-only storage means a claimed slot IS an ordinary NaN-boxed JSValue, so there is no reconstruction left to
+// do. Kept as a one-liner rather than deleted so the ~70 Structure-aware call sites and JSONObject need no churn;
+// JSObject::getDirect(Structure&, PropertyOffset) forwards straight to getDirect(offset) and adds no code at all.
+JSValue JSObject::getDirectRawDoubleAware(Structure&, PropertyOffset offset) const
+{
+    return getDirect(offset);
+}
+
+// Out-of-line half of putDirectOffset(VM&, Structure&, PropertyOffset, JSValue). Only reached when the destination
+// Structure's summary bit says at least one property is Double-represented.
+//
+// INVARIANT MAINTAINED HERE: a slot the Structure marks Double always holds a bare IEEE-754 double. Three cases:
+//
+//   double  -> store the bits raw, with no bias. No purifyNaN is needed HERE, but NOT because an impure NaN is
+//              harmless in a raw slot -- it is not. Every JSValue-producing reader boxes a raw slot with a bare
+//              `+ 2^49` and no NaN test, so an impure NaN there becomes a fake cell at a script-chosen address
+//              (repro/bugs/01). It is unnecessary only because the input is a JSValue, and JSValue::isDouble() is
+//              definitionally equivalent to !isImpureNaN(asDouble()) (compare PureNaN.h with JSCJSValue.h's
+//              isDouble/asDouble), so anything reaching this arm is already pure. The UNBOXED-double writers --
+//              DFG and FTL compilePutByOffset's DoubleRepUse arms -- have no such guarantee and purify explicitly.
+//   Int32   -> coerce to double and store raw. Lossless for every int32, and observationally invisible because JS
+//              has one number type: `o.x = 1` then `o.x === 1` still holds. This is what V8 does for a
+//              Double-representation field, and it is what keeps `o.x = 1.5; o.x = 2` on the fast representation
+//              instead of widening the shape on the first integer store.
+//   other   -> REPRESENTATION VIOLATION. Cannot be stored raw and must not be stored boxed either, because other
+//              objects sharing this Structure already hold raw doubles in this slot, so clearing the mark in place
+//              would make THEIR slots be read as boxed. Widening requires a structure transition, which is the
+//              caller's job -- putDirectInternal does it before calling here. Anything that reaches this point has
+//              bypassed that, so this case is a RELEASE_ASSERT below rather than a silent boxed store.
+void JSObject::putDirectOffsetRawDoubleAware(VM& vm, Structure& structure, PropertyOffset offset, JSValue value)
+{
+    // The census lives here now rather than in the inline caller; see the comment on JSObject::putDirectOffset.
+    if (Options::dumpDoubleFieldSplitCensus() || Options::validateDoubleFieldRepresentation()) [[unlikely]]
+        noteDoubleFieldSplitCensus(offset, value);
+
+    // WRITER-SIDE TRACE. The empty-value detector reports the SYMPTOM (a raw slot read back as JSValue()) but not
+    // which store produced the slot contents. NOTE a mismatch between `structure` and this->structure() is NORMAL
+    // here -- the add-property path stores before setStructure, which is why this overload takes the destination
+    // structure explicitly (measured: 2.68M benign mismatches on Box2D, all numeric).
+    if (Options::dumpRawDoubleCorruption() && Options::useRawDoubleFieldStorage()
+        && structure.isRawDoubleOffset(offset) && value.isNumber()
+        && !std::bit_cast<uint64_t>(value.isInt32() ? static_cast<double>(value.asInt32()) : value.asDouble())) [[unlikely]] {
+        // Include the OBJECT identity and both structures. Pairing this with the reader's log by object pointer is
+        // what distinguishes "the object later transitioned to a structure that forgot the mask" from "two shapes
+        // exist". Also record whether the object's CURRENT structure agrees, and the lineage link between them.
+        Structure* own = this->structure();
+        dataLogLn("[rawdouble] C++ raw store of 0.0 offset=", offset,
+            " object=", RawPointer(this),
+            " storeStructure=", RawPointer(&structure),
+            " storeSaysRaw=", structure.isRawDoubleOffset(offset),
+            " objectStructure=", RawPointer(own),
+            " objectSaysRaw=", own->isRawDoubleOffset(offset),
+            " objectIsPrevOfStore=", (structure.previousID() == own),
+            " storeIsPrevOfObject=", (own->previousID() == &structure),
+            " class=", structure.classInfoForCells()->className);
+    }
+
+    // THE CLAIM, not the encoding, decides whether coercion is needed: a claimed slot must hold a DOUBLE-encoded
+    // JSValue even when the value handed in is an Int32, or a reader that skips the dispatch de-biases a tagged
+    // integer. This is V8's rule that a Double-representation field absorbs a Smi (22-DESIGN section 2a).
+    //
+    // ONE RARE-DATA WALK, NOT THREE. Nearly every store that reaches this function is here only because the
+    // structure carries a claim at some OTHER offset -- on json-parse-inspector that is ~1.9M stores per run
+    // (13 disqualified keys with 1,720,146 stores plus 61 pure-double keys with 216,590), against 2569 shapes of
+    // which only 61 are claimed. The old shape asked Options::useRawDoubleFieldStorage(), then isRawDoubleOffset()
+    // (summary bit -> rare data -> mask), which internally asked claimGivenUp() (rare data -> mask -> watchpoint
+    // again). The option test is redundant -- rawDoubleMaskIfAny() already folds it in -- and both remaining
+    // questions can be answered from a single mask pointer.
+    const RawDoubleMask* mask = structure.rawDoubleMaskIfAny();
+    bool claimAlive = mask && Structure::maskSaysRawDouble(mask, offset)
+        && !(Options::useDoubleFieldClaimInvalidation() && mask->claimRecord && mask->claimRecord->givenUp);
+    if (!claimAlive) {
+        locationForOffset(offset)->set(vm, this, value);
+        return;
+    }
+
+    // Int32 -> double-ENCODED JSValue, per V8's rule that a Double-representation field absorbs a Smi.
+    // jsDoubleNumber is the non-canonicalising constructor; jsNumber would fold 2.0 straight back to an Int32 and
+    // reintroduce exactly the value this arm exists to prevent.
+    if (value.isInt32())
+        value = jsDoubleNumber(static_cast<double>(value.asInt32()));
+    // A NON-DOUBLE IS REPRESENTABLE NOW, so give the claim up here rather than failing closed. Under raw storage this
+    // was a RELEASE_ASSERT because bare IEEE-754 bits simply could not hold a string or a cell, so every caller had to
+    // widen the structure BEFORE storing -- and that obligation is what forced the JSON fast path to carry a
+    // per-property "is this slot claimed and is my value a non-number" divert in LiteralParser's hottest loop.
+    // Clearing the claim costs nothing here (the slot always held a JSValue) and fires the lineage watchpoint, which
+    // is exactly what a violating store is supposed to do. So the writer is now fail-SAFE, and the divert is deleted.
+    if (!value.isDouble()) [[unlikely]] {
+        structure.giveUpClaim(vm, offset, "non-numeric store into a claimed field");
+        locationForOffset(offset)->set(vm, this, value);
+        return;
+    }
+    locationForOffset(offset)->set(vm, this, value);
+}
+
+bool JSObject::widenDoubleRepresentation(VM& vm, PropertyName propertyName)
+{
+    Structure* structure = this->structure();
+    if (!structure->hasRawDoubleFields()) [[likely]]
+        return false;
+
+    unsigned attributes = 0;
+    PropertyOffset offset = structure->get(vm, propertyName, attributes);
+    if (offset == invalidOffset || !attributesSayDoubleRepresentation(attributes))
+        return false;
+
+    // PHASE B2: give the claim up instead of forking. No transition, no new Structure, and no slot rewrite -- under
+    // boxed slots the slot already holds a valid JSValue, so clearing the claim is the entire migration. The caller
+    // then stores the violating value through the ordinary boxed path.
+    //
+    // Gated on boxed slots as well as the option: doing this under RAW storage would leave bare IEEE-754 bits in a
+    // slot every reader has just been told is an ordinary JSValue, which is repro/bugs/01 with extra steps.
+    if (Options::useBoxedDoubleFieldSlots() && Options::useDoubleFieldClaimInvalidation()) [[unlikely]] {
+        structure->giveUpClaim(vm, offset, "double-field claim violated by a non-numeric store");
+        // Report true so the caller disables caching for THIS put: an inline cache armed while the claim was live is
+        // stale, and the jettison only covers DFG/FTL code, not IC stubs.
+        return true;
+    }
+
+    // Read the raw double BEFORE the transition -- afterwards the structure no longer claims the slot is raw, so the
+    // raw-double-aware reader would stop reconstructing and hand back bits(d)-2^49 as a double (the 1.375 direction of
+    // the bug documented in OptionsList.h).
+    JSValue existing = getDirectRawDoubleAware(*structure, offset);
+
+    // DIAGNOSIS: every widening is a per-object structure transition, so it invalidates any monomorphic speculation
+    // on the old structure. Counting them is how the Box2D tier-up collapse was attributed. See 07-PLAN 5at.
+    dataLogLnIf(Options::dumpDoubleFieldSplitCensus(), "[rawdouble] WIDEN ", String(propertyName.uid()),
+        " offset=", offset, " existingWas=", existing);
+
+    DeferredStructureTransitionWatchpointFire deferred(vm, structure);
+    Structure* widened = Structure::attributeChangeTransition(vm, structure, propertyName,
+        attributes & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble), &deferred);
+    ASSERT(!widened->isRawDoubleOffset(offset));
+
+    // WRITE THE BOXED VALUE BEFORE INSTALLING THE BOXED STRUCTURE. Doing it the other way round leaves a window in
+    // which the structure says "boxed" while the slot still holds raw bits -- the one state the concurrent marker
+    // must never observe, because that is where it follows a double as a pointer. With this order the marker sees
+    // either the raw-claiming old structure (and skips the slot) or the boxed new one (and the slot is already
+    // boxed). The offset is preserved by an attribute-change transition, so this rewrites the same slot.
+    putDirectOffset(vm, *widened, offset, existing);
+    setStructure(vm, widened);
+    return true;
+}
+
+void JSObject::noteDoubleFieldSplitCensus(PropertyOffset offset, JSValue value)
+{
+    if (!Options::dumpDoubleFieldSplitCensus() && !Options::validateDoubleFieldRepresentation()) [[likely]]
+        return;
+    if (offset == invalidOffset)
+        return;
+
+    if (Options::validateDoubleFieldRepresentation()) [[unlikely]] {
+        // Ask the structure what representation it declared for this offset, then compare against what is actually
+        // being stored. A mismatch is not a bug in Phase 1 (nothing consumes the bit yet) -- it is the measurement.
+        Structure* structure = this->structure();
+        bool declaredDouble = false;
+        structure->forEachProperty(structure->vm(), [&](const PropertyTableEntry& entry) -> bool {
+            if (entry.offset() != offset)
+                return true;
+            declaredDouble = attributesSayDoubleRepresentation(entry.attributes());
+            return false;
+        });
+        if (declaredDouble) {
+            Locker locker { splitCensusLock() };
+            if (value.isDouble())
+                ++g_reprMatch;
+            else if (value.isInt32())
+                ++g_reprStaleInt32;
+            else
+                ++g_reprStaleOther;
+        }
+    }
+
+    if (!Options::dumpDoubleFieldSplitCensus())
+        return;
+
+    static std::once_flag registerDump;
+    std::call_once(registerDump, [] { atexit(dumpSplitCensus); });
+
+    uint64_t key = (static_cast<uint64_t>(this->structureID().bits()) << 32) | static_cast<uint32_t>(offset);
+    Locker locker { splitCensusLock() };
+    auto& kinds = splitCensusMap().add(key, SplitCensusKinds { }).iterator->value;
+    if (value.isInt32())
+        ++kinds.int32;
+    else if (value.isDouble()) {
+        double d = value.asDouble();
+        // B20: would this double's RAW bits be mistaken for a cell pointer by the collector? Only bits < 2^48
+        // collide -- +0.0 and the positive subnormals. Every other double, including -0.0, is already invisible to
+        // the GC. If this count is dominated by 0.0, the scan-side mask may be replaceable by a store-side fix.
+        uint64_t rawBits = std::bit_cast<uint64_t>(d);
+        if (!(rawBits & 0xffff000000000000ULL)) {
+            ++g_gcAmbiguousDoubles;
+            if (!rawBits)
+                ++g_gcAmbiguousZero;
+
+        }
+        if (d == std::trunc(d) && std::isfinite(d))
+            ++kinds.intAsDouble;
+        else
+            ++kinds.nonIntDouble;
+    } else
+        ++kinds.other;
+}
+
+
 // We keep track of the size of the last array after it was grown. We use this
 // as a simple heuristic for as the value to grow the next array from size 0.
 // This value is capped by the constant FIRST_VECTOR_GROW defined in
@@ -81,6 +525,12 @@ const ClassInfo JSObject::s_info = { "Object"_s, nullptr, nullptr, nullptr, CREA
 const ClassInfo JSObjectWithButterfly::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSObjectWithButterfly) };
 
 const ClassInfo JSFinalObject::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalObject) };
+
+// NOTE: the collector used to consult StructureRareData's raw-double mask here and SKIP claimed slots, because a
+// bare IEEE-754 double below 2^48 is indistinguishable from a cell pointer (0.0 traces as a null cell). Guarantee-only
+// storage keeps every slot a NaN-boxed JSValue whether claimed or not, so there is nothing to skip and nothing to
+// consult -- the plain bulk append is correct again. Deleting this removed inline code from the hottest marking path;
+// see repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md.
 
 template<typename Visitor>
 ALWAYS_INLINE void JSObjectWithButterfly::markAuxiliaryAndVisitOutOfLineProperties(Visitor& visitor, Butterfly* butterfly, Structure* structure, PropertyOffset maxOffset)
@@ -455,7 +905,12 @@ void JSObject::analyzeHeap(JSCell* cell, HeapAnalyzer& analyzer)
 
     Structure* structure = thisObject->structure();
     for (const auto& entry : structure->getPropertiesConcurrently()) {
-        JSValue toValue = thisObject->getDirect(entry.offset());
+        // RAW-DOUBLE AWARE. Read as a JSValue, a raw slot produces a spurious edge to a script-chosen address (any
+        // double whose bit pattern is below 2^48 satisfies isCell()) and suppresses the real edge for slots that do
+        // hold cells. HeapSnapshotBuilder only stores the pointer and json() drops unknown targets, so this corrupts
+        // snapshot data rather than dereferencing -- but the snapshot is Web Inspector-facing. No lock hazard:
+        // getPropertiesConcurrently() has fully returned and released the structure lock before this runs.
+        JSValue toValue = thisObject->getDirect(*structure, entry.offset());
         if (toValue && toValue.isCell())
             analyzer.analyzePropertyNameEdge(thisObject, toValue.asCell(), entry.key());
     }
@@ -496,8 +951,9 @@ void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
 
     if (Structure* structure = thisObject->visitButterfly(visitor)) {
-        if (unsigned storageSize = structure->inlineSize())
+        if (unsigned storageSize = structure->inlineSize()) {
             visitor.appendValuesHidden(thisObject->inlineStorage(), storageSize);
+        }
     }
 }
 
@@ -4270,6 +4726,12 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
 
             PropertyOffset offset;
             if (Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, 0, offset)) {
+                // A raw-double slot cannot hold a non-number, and this batching path has no way to widen: it stores
+                // through putDirectOffset and installs one structure at the end. Stop batching here and let the
+                // generic putDirectInternal below take over, which widens the transition target. Without this the
+                // store lands a cell pointer in a slot every reader de-biases as a double.
+                if (!JSValue::decode(values[index]).isNumber() && newStructure->isRawDoubleOffset(offset)) [[unlikely]]
+                    return std::nullopt;
                 structure = newStructure;
                 return offset;
             }
@@ -4277,6 +4739,9 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
             unsigned currentAttributes;
             offset = structure->get(vm, propertyName, currentAttributes);
             if (offset != invalidOffset) {
+                // Same hazard for a REPLACE of an existing raw slot with a non-number.
+                if (!JSValue::decode(values[index]).isNumber() && structure->isRawDoubleOffset(offset)) [[unlikely]]
+                    return std::nullopt;
                 structure->didReplaceProperty(offset);
                 return offset;
             }
@@ -4310,8 +4775,15 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
             nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
         }
 
+        // The DESTINATION structure must be passed explicitly: these stores all happen BEFORE the setStructure()
+        // below, so this->structure() is still the old one, which owns neither the new offsets nor their mask bits.
+        // The bare overload therefore stored BOXED into slots the installed structure claims are raw, and every
+        // raw-aware reader then added 2^49 -- the 1.625 direction. It bites because
+        // addPropertyTransitionToExistingStructure() is called with attributes 0 while the transition table masks
+        // RepresentationDouble out of the key, so it legitimately returns a structure whose slot IS raw.
+        // Reproduced via Object.assign: Math.PI copied out as 3.391592653589793.
         for (unsigned index = 0; index < offsets.size(); ++index)
-            putDirectOffset(vm, offsets[index], JSValue::decode(values[index]));
+            putDirectOffset(vm, *structure, offsets[index], JSValue::decode(values[index]));
         setStructure(vm, structure);
 
         // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.

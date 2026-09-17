@@ -37,6 +37,7 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
+
 namespace DOMJIT {
 class GetterSetter;
 }

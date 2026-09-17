@@ -769,7 +769,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
             metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
 
-            if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
+            if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()
+                && structure->inlineCachesCanAccessSlotDirectly(slot.cachedOffset())) {
                 {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
                     metadata.m_structureID = structure->id();
@@ -803,6 +804,23 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
         return;
     
     if (structure->needImpurePropertyWatchpoint())
+        return;
+
+    // RAW-DOUBLE SLOTS ON A PROTOTYPE. This is the ProtoLoad path, reached only when slot.slotBase() != baseValue,
+    // so the cached offset belongs to the HOLDER, not the receiver -- setProtoLoadMode() stores slot.slotBase()
+    // precisely because the fast path must read the holder. The gate must therefore ask the HOLDER's structure, and
+    // asking `structure` (the receiver's) is exactly what let this through: a receiver with no Double-represented
+    // field of its own answers hasRawDoubleFields()==false, so the cache is installed and LLInt's ProtoLoad fast
+    // path reads the holder's raw slot as a NaN-boxed JSValue.
+    //
+    // Bisected rather than guessed: --useLLIntICs=0 was correct while every other tier configuration was wrong,
+    // and a shape bisection showed "double on the prototype, no own double" wrong, "own doubles only" correct.
+    // The Default-mode site below needs no equivalent change because it is guarded by slot.slotBase() == baseValue,
+    // so there the receiver genuinely does own the offset. Third instance of the same "asked the wrong structure"
+    // mistake; see 07-PLAN section 5y.
+    //
+    // The isUnset case needs no check: setUnsetMode caches a MISS and never reads a slot.
+    if (slot.isValue() && slot.slotBase() && !slot.slotBase()->structure()->inlineCachesCanAccessSlotDirectly(slot.cachedOffset()))
         return;
 
     if (structure->isDictionary()) {
@@ -902,6 +920,8 @@ static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeB
             metadata.hitCountForLLIntCaching = 0;
         
             if (structure->propertyAccessesAreCacheable() && !structure->needImpurePropertyWatchpoint()) {
+                // NOTE: a GetByIdMode::RawDouble arm used to be selected here, whose fast path boxed the loaded
+                // word with a single add. Dead under guarantee-only storage -- the word IS a JSValue.
                 metadata.defaultMode.structureID = structure->id();
                 metadata.defaultMode.cachedOffset = slot.cachedOffset();
                 vm.writeBarrier(codeBlock);
@@ -1069,6 +1089,17 @@ LLINT_SLOW_PATH_DECL(slow_path_instanceof)
     LLINT_RETURN(jsBoolean(result));
 }
 
+// The offset as the LLInt put fast path wants it. Bit 31 says "this slot is CLAIMED, take the checked arm"; bit 30
+// says "the slot is boxed, so bail but do not apply the bias". See PutByIdFlags.h.
+// The offset as the LLInt put fast path wants it: bit 31 says "this slot is CLAIMED, take the checked arm", which
+// bails an Int32 or a non-number to C++. There is no encoding bit any more -- the slot is always a boxed JSValue.
+static ALWAYS_INLINE unsigned putByIdCachedOffsetWithClaimFlags(Structure* structure, PropertyOffset offset)
+{
+    if (!structure->isRawDoubleOffset(offset)) [[likely]]
+        return static_cast<unsigned>(offset);
+    return static_cast<unsigned>(offset) | putByIdRawDoubleOffsetFlag;
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
 {
     LLINT_BEGIN();
@@ -1133,7 +1164,10 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
 
                         ConcurrentJSLocker locker(codeBlock->m_lock);
                         metadata.m_oldStructureID = oldStructure->id();
-                        metadata.m_offset = slot.cachedOffset();
+                        // A raw-double slot is CACHED, with the high bit of the offset marking it, rather than
+                        // declined. The asm fast path turns a boxed double into raw bits with one subtract and sends
+                        // an Int32 or a non-number to this slow path. See putByIdRawDoubleOffsetFlag.
+                        metadata.m_offset = putByIdCachedOffsetWithClaimFlags(newStructure, slot.cachedOffset());
                         metadata.m_newStructureID = newStructure->id();
                         if (chain)
                             metadata.m_structureChain.set(vm, codeBlock, chain);
@@ -1152,7 +1186,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                 {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
                     metadata.m_oldStructureID = newStructure->id();
-                    metadata.m_offset = slot.cachedOffset();
+                    // Replace case: same raw-double marking as the transition case above.
+                    metadata.m_offset = putByIdCachedOffsetWithClaimFlags(newStructure, slot.cachedOffset());
                 }
                 vm.writeBarrier(codeBlock);
             }
@@ -1290,7 +1325,15 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
             metadata.m_structureID = StructureID();
             metadata.m_offset = 0;
 
-            if (!structure->isUncacheableDictionary()) {
+            // DECLINE A RAW-DOUBLE SLOT. op_get_private_name's LLInt fast path is a bare
+            // loadPropertyAtVariableOffset guarded only by a structure-ID compare, and OpGetPrivateName has no
+            // GetByIdModeMetadata, so there is no RawDouble arm to route it to -- an IC armed on a raw slot hands
+            // bits(d) to JavaScript verbatim on every execution after the first. Same gate, same reason, as
+            // slow_path_get_by_id_direct above and both arms of slow_path_put_private_name below. The gate is
+            // PER-OFFSET, so only the individual raw field loses its IC; the C++ slow path is raw-aware.
+            // repro/bugs/03-repro-private-field-unchecked-read.js.
+            if (!structure->isUncacheableDictionary()
+                && structure->inlineCachesCanAccessSlotDirectly(slot.cachedOffset())) {
                 {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
                     metadata.m_structureID = structure->id();
@@ -1402,7 +1445,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         && baseValue.isCell()
         && slot.isCacheablePut()
         && subscript.isCell()
-        && oldStructure->propertyAccessesAreCacheable()) {
+        && oldStructure->propertyAccessesAreCacheable()
+        && oldStructure->inlineCachesCanAccessSlotDirectly(slot.cachedOffset())) {
         {
             StructureID oldStructureID = metadata.m_oldStructureID;
             if (oldStructureID) {
@@ -1427,7 +1471,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         JSCell* baseCell = baseValue.asCell();
         Structure* newStructure = baseCell->structure();
         
-        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
+        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()
+            && newStructure->inlineCachesCanAccessSlotDirectly(slot.cachedOffset())) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 DeferGC deferGC(vm);
                 if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && oldStructure == newStructure->previousID()) {

@@ -276,7 +276,9 @@ public:
     Structure* trySingleTransition() { return m_transitionTable.trySingleTransition(); }
 
     JS_EXPORT_PRIVATE static Structure* addPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&);
-    JS_EXPORT_PRIVATE static Structure* addNewPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext, DeferredStructureTransitionWatchpointFire* = nullptr);
+    enum class MayReplaceExistingTransition : bool { No = false, Yes = true };
+
+    JS_EXPORT_PRIVATE static Structure* addNewPropertyTransition(VM&, Structure*, PropertyName, unsigned attributes, PropertyOffset&, PutPropertySlot::Context = PutPropertySlot::UnknownContext, DeferredStructureTransitionWatchpointFire* = nullptr, MayReplaceExistingTransition = MayReplaceExistingTransition::No);
     static Structure* addPropertyTransitionToExistingStructureConcurrently(Structure*, UniquedStringImpl* uid, unsigned attributes, PropertyOffset&);
     static Structure* addPropertyTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     static Structure* removeNewPropertyTransition(VM&, Structure*, PropertyName, PropertyOffset&, DeferredStructureTransitionWatchpointFire* = nullptr);
@@ -286,6 +288,34 @@ public:
     static Structure* changePrototypeTransition(VM&, Structure*, JSValue prototype, DeferredStructureTransitionWatchpointFire&);
     static Structure* changeGlobalProxyTargetTransition(VM&, Structure*, JSGlobalObject*, DeferredStructureTransitionWatchpointFire&);
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransition(VM&, Structure*, PropertyName, unsigned attributes, DeferredStructureTransitionWatchpointFire* = nullptr);
+
+    // Returns a Structure identical to `structure` except that `offset` is guaranteed NOT to be Double-represented,
+    // so an arbitrary JSValue may be stored there. Returns `structure` unchanged in the overwhelmingly common case:
+    // one bit test (hasRawDoubleFields(), inside isRawDoubleOffset).
+    //
+    // WHY THIS EXISTS. StructureTransitionTable::Hash::Key masks PropertyAttribute::RepresentationDouble out of the
+    // key for every transition kind EXCEPT PropertyAttributeChange, which makes "give me the transition for
+    // attributes A" ambiguous for the rest: the cached answer may claim the slot raw even though the caller passed
+    // the bit clear, because some earlier double store created it. Callers that can absorb either answer (a numeric
+    // store) need nothing. Callers that CANNOT -- the replace arm of putDirectInternal, and engine-internal builders
+    // that lay out a fixed shape and then store cells into it -- must say so, and this is how.
+    JS_EXPORT_PRIVATE static Structure* ensureBoxedRepresentation(VM&, Structure*, PropertyName, PropertyOffset,
+        DeferredStructureTransitionWatchpointFire* = nullptr);
+
+    // addPropertyTransition that additionally guarantees the new property's slot is BOXED. For engine-internal
+    // structure builders, which lay out a fixed shape once and then store arbitrary JSValues into it by offset. They
+    // pass the representation bit clear, but the ADD transition key masks it, so they can be served a raw-claiming
+    // sibling created by an unrelated script store of a double under the same property name -- after which storing a
+    // boolean into the slot trips putDirectOffsetRawDoubleAware's RELEASE_ASSERT, which is NOT compiled out in
+    // release. repro/bugs/07-repro-descriptor-structure-adopts-raw-transition.js.
+    // Builds a SECOND PropertyAddition child whose attributes lack RepresentationDouble, and lets the transition table
+    // overwrite the entry with it, so a raw claim a script has disproved stops being handed out to future adds. Never
+    // touches a live slot. See the long comment on the definition in Structure.cpp.
+    JS_EXPORT_PRIVATE static Structure* replaceRawPropertyAdditionWithBoxed(VM&, Structure*, PropertyName,
+        unsigned attributes, PropertyOffset&, DeferredStructureTransitionWatchpointFire* = nullptr);
+
+    JS_EXPORT_PRIVATE static Structure* addPropertyTransitionForBoxedSlot(VM&, Structure*, PropertyName,
+        unsigned attributes, PropertyOffset&);
     static Structure* attributeChangeTransitionToExistingStructureConcurrently(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* attributeChangeTransitionToExistingStructure(Structure*, PropertyName, unsigned attributes, PropertyOffset&);
     JS_EXPORT_PRIVATE static Structure* toCacheableDictionaryTransition(VM&, Structure*, DeferredStructureTransitionWatchpointFire* = nullptr);
@@ -837,6 +867,134 @@ public:
     DEFINE_BITFIELD(bool, hasUnderscoreProtoPropertyExcludingOriginalProto, HasUnderscoreProtoPropertyExcludingOriginalProto, 1, 28);
     DEFINE_BITFIELD(bool, hasNonConfigurableProperties, HasNonConfigurableProperties, 1, 29);
     DEFINE_BITFIELD(bool, hasNonConfigurableReadOnlyOrGetterSetterProperties, HasNonConfigurableReadOnlyOrGetterSetterProperties, 1, 30);
+    // Summary bit for the double-field representation project: true if ANY property of this Structure carries
+    // PropertyAttribute::RepresentationDouble. Lets a reader that must ask "is offset N raw-double?" exit on a single
+    // bit test in the overwhelmingly common case; only structures where this is true pay a property-table walk.
+    // See analysis/prompt/box2d/07-PLAN-double-field.md section 5e. Bit 31 was the last free bit in m_bitField.
+    DEFINE_BITFIELD(bool, hasRawDoubleFields, HasRawDoubleFields, 1, 31);
+
+    // Per-offset companion to the summary bit above. The mask itself lives in StructureRareData, NOT here: Structures
+    // are among the most numerous cells in the heap and sizeof(Structure) sits exactly on a 16-byte size class, so an
+    // inline mask would cost +16 bytes on EVERY Structure to serve the small minority that carry a Double-represented
+    // field. Every caller gates on hasRawDoubleFields() first, so the rare-data indirection is only taken on
+    // Structures that have already answered yes, and rare data is allocated lazily.
+    //
+    // Safe to call from ANY thread, including a GC marking thread: it reads only words written before the Structure
+    // is published, takes no lock and allocates nothing. Answers false for offsets it cannot describe, which is the
+    // safe direction of the one-directional invariant (see StructureRareData::m_rawDoubleMask).
+    static constexpr unsigned s_rawDoubleMaskWords = 2;
+    static constexpr unsigned s_rawDoubleMaskBits = s_rawDoubleMaskWords * 64;
+
+    // isRawDoubleOffset SPLIT IN TWO, so a caller that walks many offsets on ONE structure pays the
+    // structure-level part once instead of per offset. isRawDoubleOffset is exactly their composition, so there is
+    // still one implementation of each half and no second predicate that could drift from the first -- drift between
+    // two predicates answering the same question is what produced the use-after-free in repro/bugs/05.
+    //
+    // The structure-level half: null means no offset on this structure can be raw. Folds in the summary bit, the
+    // option, and the two dependent loads into StructureRareData.
+    inline const RawDoubleMask* rawDoubleMaskIfAny() const;
+
+    // The per-offset half: one bound check and one bit test. Static because it needs nothing from the Structure once
+    // the mask is in hand.
+    static ALWAYS_INLINE bool maskSaysRawDouble(const RawDoubleMask*, PropertyOffset);
+
+    // Two compares and no loads. False means DEFINITELY not claimed; true means "ask the mask". See
+    // m_rawDoubleFirstOffset.
+    // Recompute [first, last] from the mask bits. Called after a claim is cleared: widening-only ranges are correct
+    // but leave a cleared offset inside the range forever, so every later store to it takes the out-of-line writer
+    // for nothing. json-parse-inspector has 13 DISQUALIFIED keys carrying 1,720,166 stores -- i.e. violated claims --
+    // which is exactly that case at scale. Cheap: one 128-bit scan, once per violation.
+    inline void renarrowRawDoubleRange();
+
+    // Two compares plus one bit test. False means DEFINITELY not claimed; true means "ask the mask".
+    //
+    // DO NOT "OPTIMISE" THE hasRawDoubleFields() TEST AWAY. It looks redundant -- an unclaimed Structure carries
+    // first=UINT8_MAX/last=0, so the two compares alone already answer false -- and removing it does cut ~6 KB of
+    // __text across the 82 inlined putDirectOffset call sites, with NO change in behaviour (the census confirms
+    // zero extra stores reach the out-of-line writer, and renarrowRawDoubleRange does restore the sentinel).
+    // It was measured anyway and it is 1.25 points WORSE: json-parse-inspector -1.48% -> -2.73% at n=120.
+    //
+    // That is the finding, not a fluke: this regression is driven by code LAYOUT, and layout is not monotonic in
+    // code size. Doc 26 established the same thing from the other direction (421 KB of never-executed code netted
+    // +0.3 overall, random-signed, +-2.3 per test). So shrinking the patch locally is not a fix strategy -- it just
+    // reshuffles which benchmark pays. See repro/bugs/open/28-POST-REBASE-JS3-SWEEP.md.
+    ALWAYS_INLINE bool mightHaveClaimAt(PropertyOffset offset) const
+    {
+        if (!hasRawDoubleFields()) [[likely]]
+            return false;
+        unsigned o = static_cast<unsigned>(offset);
+        return o >= m_rawDoubleFirstOffset && o <= m_rawDoubleLastOffset;
+    }
+
+    inline bool isRawDoubleOffset(PropertyOffset) const;
+
+
+    // PHASE B1: the claim invalidation channel, shared with every descendant Structure. Null unless this lineage
+    // actually claims a field and --useDoubleFieldClaimWatchpoint is on. See RawDoubleMask::claimRecord.
+    inline InlineWatchpointSet* claimWatchpointIfAny() const;
+    inline void ensureClaimWatchpoint(VM&);
+
+    // PHASE B2: has this lineage's claim been given up? Folded into isRawDoubleOffset, so no consumer can miss it.
+    inline bool claimGivenUp() const;
+    // Give the claim up: clear the bit and fire, so every reader and every future compile agrees at once. Main
+    // thread only -- fireAll jettisons dependent code.
+    bool giveUpClaim(VM&, PropertyOffset, const char* reason);
+
+    // Can an INLINE CACHE -- an LLInt metadata cache or a Repatch stub -- read and write this Structure's property
+    // slots directly, as raw JSValues?
+    //
+    // DELIBERATELY NOT FOLDED INTO propertyAccessesAreCacheable(). That predicate has 42 users, including DFG
+    // abstract interpretation, ObjectPropertyConditionSet and PropertyCondition. Turning it off for a Structure
+    // carrying a Double-represented field would stop DFG and FTL resolving these accesses to GetByOffset/PutByOffset
+    // -- and that is precisely the path that handles raw doubles for FREE, because it knows the offset and the
+    // structure statically and can prove the representation at compile time. Folding them together would defeat the
+    // optimisation it is meant to protect.
+    //
+    // The inline caches genuinely cannot: their offset arrives in a register at runtime, so honouring the per-offset
+    // mask would mean walking it on every property access in asm. They decline instead, and the access funnels to the
+    // C++ slow path, which is raw-aware. Costs those objects the interpreter/baseline fast path, which is acceptable
+    // because DFG and FTL -- where the time actually goes -- keep theirs.
+    //
+    // THE OPTION CHECK IS LOAD-BEARING, and it now lives inside isRawDoubleOffset() rather than being applied by each
+    // caller. It used to be applied here because hasRawDoubleFields() was driven by useDoubleFieldRepresentation
+    // alone, which defaults true, so testing the summary bit by itself would have disabled inline caching for every
+    // double-field object in a default build. Marking is now gated on useRawDoubleFieldStorage too
+    // (JSObjectInlines.h), so hasRawDoubleFields() IMPLIES storage is enabled and the two can no longer disagree --
+    // the divergence between a gated writer and an ungated collector is what freed 20000/20000 live objects in
+    // repro/bugs/05-repro-gc-option-gating-uaf.js.
+    inline bool inlineCachesCanAccessPropertySlotsDirectly() const; // Defined in StructureInlines.h.
+
+    // PER-OFFSET form of the same question, for the callers that already hold the offset and so can decline only the
+    // one access instead of every access on the Structure. Same load-bearing option check.
+    inline bool inlineCachesCanAccessSlotDirectly(PropertyOffset) const; // Defined in StructureInlines.h.
+
+
+    // Returns false if the offset cannot be represented, so a caller that MUST know the field is raw (a writer about
+    // to store raw bits) can decline rather than create a slot no reader will recognise.
+    inline bool setRawDoubleOffset(VM&, PropertyOffset);
+
+    // WRITE-SIDE VALIDATOR for the invariant `per-offset mask <=> RepresentationDouble attribute`. The mask is DERIVED
+    // from the attributes, so the two disagreeing means the derivation was skipped or undone. Checking it where the
+    // structure is BUILT rather than where a slot is read is the point: every read-side validator in this project has
+    // been either perturbing (the census hides the crash it was meant to catch) or silently broken
+    // (getPropertiesConcurrently returns empty without a materialised table). This one walks the real table and
+    // RELEASE_ASSERTs, so lldb breaks with the creating path still on the stack. See 07-PLAN 5aw.
+    JS_EXPORT_PRIVATE void validateRawDoubleMaskAgreement(VM&, const char* site);
+    inline void clearRawDoubleOffset(PropertyOffset);
+    inline void copyRawDoubleMaskFrom(VM&, const Structure* other);
+
+    // Replace the WHOLE per-offset map at once. flattenDictionaryStructure is the only operation that MOVES existing
+    // properties between offsets rather than adding or removing one, and setRawDoubleOffset/clearRawDoubleOffset
+    // cannot express a permutation: applied bit by bit they would transiently claim a slot they have not moved yet,
+    // and the concurrent collector reads this map without a lock.
+    inline void renumberRawDoubleMask(const std::array<uint64_t, s_rawDoubleMaskWords>&);
+
+    // WHY did isRawDoubleOffset() answer false? JSObject.h cannot include StructureInlines.h, so the read-side
+    // detector there cannot ask the mask directly and has been reduced to printing the ATTRIBUTES as a stand-in.
+    // That is what made a lost mask indistinguishable from a mask that was never set. Out-of-line and diagnostic
+    // only. Returns: 0 no summary bit, 1 no rare data, 2 null mask, 3 offset not representable, 4 bit clear,
+    // 5 bit set.
+    JS_EXPORT_PRIVATE unsigned rawDoubleMaskDebugState(PropertyOffset) const;
 
     enum class StructureVariant : uint8_t {
         Normal,
@@ -1005,6 +1163,23 @@ private:
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;
+
+    // CLAIMED-OFFSET RANGE: a CONSERVATIVE SUPERSET of the offsets this Structure claims as double-only. An offset
+    // outside [first, last] is definitely not claimed, so the caller can take its fast path with no dependent loads
+    // at all -- where asking the real question means Structure -> StructureRareData -> unique_ptr -> mask bits, three
+    // dependent loads. Inside the range, the mask is still consulted for the exact answer.
+    //
+    // WHY A RANGE IS ENOUGH, measured: the census reports claimed offsets are CONTIGUOUS on 40 of 41 structures
+    // (`[dbl-contig] contiguous=40 gappy=1`), and a range-only test would forfeit 0.00031% of double stores -- 6 of
+    // 1.9M on json-parse-inspector. It is only used to skip work, never to claim, so the one gappy structure costs a
+    // mask walk it would have done anyway.
+    //
+    // FREE IN SPACE: these two bytes sit in the padding between m_maxOffset and the 4-byte-aligned m_propertyHash,
+    // so sizeof(Structure) is unchanged -- which matters, because Structures are among the most numerous cells in the
+    // heap and the type sits exactly on a 16-byte size class (see StructureRareData.h's note on the same problem).
+    // Empty range: first > last, so every test fails.
+    uint8_t m_rawDoubleFirstOffset { UINT8_MAX };
+    uint8_t m_rawDoubleLastOffset { 0 };
 
     uint32_t m_propertyHash;
     SeenProperties m_seenProperties;

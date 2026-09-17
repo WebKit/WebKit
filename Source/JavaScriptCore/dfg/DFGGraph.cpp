@@ -319,6 +319,10 @@ void Graph::dump(PrintStream& out, const char* prefixStr, Node* node, DumpContex
         StorageAccessData& storageAccessData = node->storageAccessData();
         out.print(comma, "id"_s, storageAccessData.identifierNumber, "{"_s, identifiers()[storageAccessData.identifierNumber], "}"_s);
         out.print(", "_s, static_cast<ptrdiff_t>(storageAccessData.offset));
+        // The storage representation is what decides whether codegen applies the 2^49 bias, so it belongs in the dump
+        // -- without it a --dumpGraphAtEachPhase trace cannot distinguish a correct access from the 1.625/1.375 bug.
+        if (storageAccessData.rawDoubleRep == RawDoubleRep::Raw)
+            out.print(", rawDouble"_s);
     }
     if (node->hasMultiGetByOffsetData()) {
         MultiGetByOffsetData& data = node->multiGetByOffsetData();
@@ -2348,6 +2352,99 @@ UncheckedKeyHashMap<Node*, uint32_t> Graph::collectIRDumpDebugInfo(IRDumpDebugIn
         }
     }
     return nodeToLineIndex;
+}
+
+
+// PHASE B1: register the claim's invalidation channel with this compilation. The V8 equivalent is
+// DependOnFieldRepresentation -- compiled code that trusts "this field is only ever a double" becomes dependent on
+// that fact, and Phase B2's clear-and-fire jettisons it.
+//
+// Called from EVERY path that answers Raw, so no site can trust a claim without taking the dependency. Inert on its
+// own: adding to DesiredWatchpoints changes no generated code, only what invalidates it, and in B1 nothing fires.
+void Graph::registerClaimWatchpointIfNeeded(Structure* structure)
+{
+    if (!Options::useDoubleFieldClaimWatchpoint()) [[likely]]
+        return;
+    if (!structure) [[unlikely]]
+        return;
+    if (InlineWatchpointSet* set = structure->claimWatchpointIfAny()) {
+        watchpoints().addLazily(*set);
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(), "[rawdouble] CLAIM-WATCHPOINT registered structure=",
+            RawPointer(structure), " stillValid=", set->isStillValid());
+    }
+}
+
+RawDoubleRep Graph::rawDoubleRepFor(Structure* structure, PropertyOffset offset)
+{
+    if (!Options::useRawDoubleFieldStorage())
+        return RawDoubleRep::Boxed;
+    // RACE DETECTOR. This runs on the JIT COMPILER THREAD, and isRawDoubleOffset walks lazily-published state
+    // (summary bit -> rare data -> mask pointer -> bits) with no fence and no lock. The Octane raytrace segfault is
+    // deterministically concurrency-dependent (16/16 with concurrent JIT, 0/16 without, 5ay), and the mask is the
+    // prime suspect -- but "prime suspect" is not proof, and fixing an unverified mechanism has failed four times in
+    // this investigation. So ASK TWICE: if the same query on the same structure and offset ever answers differently,
+    // the state is mutating underneath the compiler thread and the race is proven at this exact site.
+    if (Options::dumpRawDoubleCorruption() && structure) [[unlikely]] {
+        bool a = structure->isRawDoubleOffset(offset);
+        WTF::storeLoadFence();
+        bool b = structure->isRawDoubleOffset(offset);
+        if (a != b) {
+            dataLogLn("[rawdouble] RACE PROVEN on compiler thread: structure=", RawPointer(structure),
+                " offset=", offset, " first=", a, " second=", b,
+                " summaryBit=", structure->hasRawDoubleFields(), " hasRareData=", structure->hasRareData());
+        }
+    }
+    if (structure && structure->isRawDoubleOffset(offset)) {
+        registerClaimWatchpointIfNeeded(structure);
+        return RawDoubleRep::Raw;
+    }
+    return RawDoubleRep::Boxed;
+}
+
+// Unanimity is required: one node is one block with one representation, so a set whose members disagree cannot be
+// served by either answer. Such a set reports Boxed AND sets isMixed, and the caller must narrow.
+template<typename SetType>
+static RawDoubleRep rawDoubleRepForSetImpl(const SetType& set, PropertyOffset offset, bool& isMixed)
+{
+    isMixed = false;
+    if (!Options::useRawDoubleFieldStorage())
+        return RawDoubleRep::Boxed;
+    bool anyRaw = false;
+    bool allRaw = true;
+    bool sawAny = false;
+    for (auto structure : set) {
+        sawAny = true;
+        bool raw = structure->isRawDoubleOffset(offset);
+        anyRaw |= raw;
+        allRaw &= raw;
+    }
+    if (!sawAny)
+        return RawDoubleRep::Boxed;
+    if (allRaw)
+        return RawDoubleRep::Raw;
+    if (anyRaw)
+        isMixed = true;
+    return RawDoubleRep::Boxed;
+}
+
+RawDoubleRep Graph::rawDoubleRepFor(const StructureSet& set, PropertyOffset offset, bool& isMixed)
+{
+    RawDoubleRep result = rawDoubleRepForSetImpl(set, offset, isMixed);
+    if (result == RawDoubleRep::Raw) {
+        for (auto structure : set)
+            registerClaimWatchpointIfNeeded(structure);
+    }
+    return result;
+}
+
+RawDoubleRep Graph::rawDoubleRepFor(const RegisteredStructureSet& set, PropertyOffset offset, bool& isMixed)
+{
+    RawDoubleRep result = rawDoubleRepForSetImpl(set, offset, isMixed);
+    if (result == RawDoubleRep::Raw) {
+        for (auto structure : set)
+            registerClaimWatchpointIfNeeded(structure.get());
+    }
+    return result;
 }
 
 } } // namespace JSC::DFG

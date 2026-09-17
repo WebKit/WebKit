@@ -478,7 +478,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
 
         if (forceICFailure(globalObject))
             return GiveUpOnCache;
-        
+
         // FIXME: Cache property access for immediates.
         if (!baseValue.isCell())
             return GiveUpOnCache;
@@ -584,6 +584,11 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 && slot.slotBase() == baseValue
                 && !slot.watchpointSet()
                 && !structure->needImpurePropertyWatchpoint()
+                // NO LONGER DECLINED FOR RAW-DOUBLE SLOTS. InlineAccess::generateSelfPropertyAccess now emits the
+                // 2^49 bias itself -- it has the structure and offset at repatch time, so it costs one add on the raw
+                // path and nothing on the boxed path, and linkCodeInline falls back to the handler if it does not fit.
+                // Declining here instead (5ak) was correct but cost Overall -2.85% on JetStream3, with the whole of
+                // splay's -35% attributed to the decline gates by ablation. See 07-PLAN 5aq/5ar.
                 && !loadTargetFromProxy) {
                 bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(propertyCache, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
@@ -1118,6 +1123,10 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (propertyCache.cacheType() == CacheType::Unset
                     && InlineAccess::canGenerateSelfPropertyReplace(propertyCache, slot.cachedOffset())
                     && !oldStructure->needImpurePropertyWatchpoint()
+                    // Store mirror of the load gate above: generateSelfPropertyReplace patches a bare storeProperty,
+                    // so it would write a NaN-boxed JSValue into a raw slot. Falls through to createReplace, whose
+                    // handler is raw-aware.
+                    && oldStructure->inlineCachesCanAccessSlotDirectly(slot.cachedOffset())
                     && !isGlobalProxy) {
 
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(propertyCache, oldStructure, slot.cachedOffset());
@@ -1147,7 +1156,20 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                     return RetryCacheLater;
 
                 PropertyOffset offset;
-                Structure* newStructure = Structure::addPropertyTransitionToExistingStructureConcurrently(oldStructure, ident.impl(), static_cast<unsigned>(PropertyAttribute::None), offset);
+                // The transition table is keyed on the FULL attributes byte, which since the double-field
+                // representation project includes PropertyAttribute::RepresentationDouble (PropertySlot.h). Looking up
+                // with a hardcoded None therefore MISSES the transition a double-valued store created, and the caller
+                // then forks a second structure that differs from the object's real one only in that bit -- caught by
+                // the ASSERT below with transitionPropertyAttributes 0 vs 1. The store has already happened, so the
+                // object's own structure is the authority on which transition was taken.
+                // Take ONLY the representation bit from the object's own structure, never the whole attributes byte.
+                // Passing the full transitionPropertyAttributes() here changes the lookup for every property whose
+                // transition carries any real attribute (ReadOnly, DontEnum, ...), so the IC could find a different
+                // transition than the one the store actually took and cache the wrong offset.
+                unsigned transitionAttributes = static_cast<unsigned>(PropertyAttribute::None);
+                if (Structure* currentStructure = baseValue.asCell()->structure(); currentStructure->previousID() == oldStructure)
+                    transitionAttributes |= currentStructure->transitionPropertyAttributes() & propertyRepresentationMask;
+                Structure* newStructure = Structure::addPropertyTransitionToExistingStructureConcurrently(oldStructure, ident.impl(), transitionAttributes, offset);
                 if (!newStructure || !newStructure->propertyAccessesAreCacheable())
                     return GiveUpOnCache;
 

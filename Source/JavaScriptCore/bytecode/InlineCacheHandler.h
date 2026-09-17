@@ -110,6 +110,7 @@ public:
     static constexpr ptrdiff_t offsetOfUid() { return OBJECT_OFFSETOF(InlineCacheHandler, m_uid); }
     static constexpr ptrdiff_t offsetOfStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, m_structureID); }
     static constexpr ptrdiff_t offsetOfOffset() { return OBJECT_OFFSETOF(InlineCacheHandler, m_offset); }
+    static constexpr ptrdiff_t offsetOfIsRawDoubleField() { return OBJECT_OFFSETOF(InlineCacheHandler, m_isRawDoubleField); }
     static constexpr ptrdiff_t offsetOfNewStructureID() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_newStructureID); }
     static constexpr ptrdiff_t offsetOfNewSize() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_newSize); }
     static constexpr ptrdiff_t offsetOfOldSize() { return OBJECT_OFFSETOF(InlineCacheHandler, u.s2.m_oldSize); }
@@ -121,6 +122,7 @@ public:
 
     StructureID structureID() const { return m_structureID; }
     PropertyOffset offset() const { return m_offset; }
+    bool isRawDoubleField() const { return m_isRawDoubleField; }
     JSCell* holder() const { return u.s1.m_holder; }
     size_t newSize() const { return u.s2.m_newSize; }
     size_t oldSize() const { return u.s2.m_oldSize; }
@@ -149,6 +151,20 @@ protected:
     PropertyOffset m_offset { invalidOffset };
     CacheType m_cacheType { CacheType::Unset };
     bool m_makesJSCalls { false };
+    // Does the cached slot hold a RAW IEEE-754 double rather than a NaN-boxed JSValue? Set once at handler
+    // creation from Structure::isRawDoubleOffset(offset), where both the structure and the offset are known.
+    //
+    // WHY A FLAG ON THE HANDLER, rather than a check in the generated code. The property-access stubs are SHARED
+    // THUNKS -- one piece of code for every (structure, offset) pair, with the offset loaded from
+    // offsetOfOffset() at runtime -- so there is no per-access-case place to specialise. And the caches cannot
+    // simply decline to cache these slots: GetByStatus/PutByStatus are derived from the cache's recorded state,
+    // so declining leaves the DFG and FTL unable to resolve the access to GetByOffset/PutByOffset, which is
+    // exactly the path that handles raw doubles for free. Measured: declining turned 26 GetByOffset + 16
+    // PutByOffset into 40 GetById + 16 PutById and grew the FTL code 404 -> 2134 instructions.
+    //
+    // Fits in the padding between m_makesJSCalls and the 8-aligned m_uid, so it costs no memory.
+    // See analysis/prompt/box2d/07-PLAN-double-field.md section 5w.
+    bool m_isRawDoubleField { false };
     UniquedStringImpl* m_uid { nullptr };
 
     union {

@@ -323,7 +323,10 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObje
                 offset = thisObject->getDirectOffset(vm, vm.propertyNames->prototype, attributes);
                 ASSERT(isValidOffset(offset));
             }
-            slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
+            // Structure-aware: `prototype` is an ordinary own property here, so a script store of a double
+            // (`f.prototype = 1.5`) marks it Double-represented and the slot holds raw bits. The unchecked
+            // getDirect would hand back bits(d) as a JSValue -- 1.5 reads back as 1.375.
+            slot.setValue(thisObject, attributes, thisObject->getDirect(*thisObject->structure(), offset), offset);
             return true;
         }
     }
@@ -465,7 +468,12 @@ String getCalculatedDisplayName(VM& vm, JSObject* object)
     // This function may be called when the mutator isn't running and we are lazily generating a stack trace.
     PropertyOffset offset = structure->getConcurrently(vm.propertyNames->displayName.impl(), attributes);
     if (offset != invalidOffset && !(attributes & (PropertyAttribute::Accessor | PropertyAttribute::CustomAccessorOrValue))) {
-        JSValue displayName = object->getDirect(offset);
+        // Structure-aware, and it MUST be: `displayName` is an ordinary own property, so `f.displayName = 5e-324`
+        // marks it Double-represented and the slot holds raw bits 0x1. The unchecked getDirect returns that word as
+        // a JSValue, isCell() is true because bits < 2^49 with bit 1 clear, and isString() below dereferences a
+        // pointer the script chose outright. Reached from StackVisitor whenever a stack trace names the function.
+        // isRawDoubleOffset is lock-free and allocation-free, so it is legal on this off-mutator path.
+        JSValue displayName = object->getDirect(*structure, offset);
         if (displayName && displayName.isString())
             return asString(displayName)->tryGetValueWithoutGC();
     }
