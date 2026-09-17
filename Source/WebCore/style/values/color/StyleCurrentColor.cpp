@@ -26,11 +26,17 @@
 
 #include "config.h"
 #include "StyleCurrentColor.h"
+#include "StyleResolvedColors.h"
 
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 namespace Style {
+
+WebCore::Color resolveColor(const CurrentColor&, const ResolvedColors& resolvedColors)
+{
+    return resolvedColors.currentColor();
+}
 
 // MARK: - Serialization
 
