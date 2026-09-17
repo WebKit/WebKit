@@ -189,6 +189,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     bool isEquivalentToClassSelector() const { return m_isEquivalentToClassSelector; }
     bool NODELETE isHostPseudoClass() const;
     bool NODELETE isScopePseudoClass() const;
+    bool NODELETE isHasPseudoClass() const;
 
     Relation relation() const { return static_cast<Relation>(m_relation); }
     Match match() const { return static_cast<Match>(m_match); }

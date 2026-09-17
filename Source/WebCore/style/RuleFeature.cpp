@@ -386,7 +386,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                         subContext.outerCompoundSelectors.append(selector);
                 }
 
-                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClass() == CSSSelector::PseudoClass::Has) {
+                if (selector->isHasPseudoClass()) {
                     subContext.hasPseudoClass = selector;
                     // If :has() is inside a :is()/:not() argument and the walk has crossed a
                     // combinator before reaching :has(), :has() sits in an ancestor compound

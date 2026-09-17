@@ -82,7 +82,7 @@ private:
 
     struct RuleInformation {
         bool hasSlottedPseudoElementRules { false };
-        bool hasHostPseudoClassRules { false };
+        bool hasRulesMatchingShadowHost { false };
         bool hasHostPseudoClassRulesMatchingInShadowTree { false };
         bool hasUserAgentPartRules { false };
         bool hasCuePseudoElementRules { false };

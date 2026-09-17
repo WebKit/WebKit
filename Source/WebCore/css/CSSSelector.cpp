@@ -960,6 +960,11 @@ bool CSSSelector::isScopePseudoClass() const
     return match() == Match::PseudoClass && pseudoClass() == PseudoClass::Scope;
 }
 
+bool CSSSelector::isHasPseudoClass() const
+{
+    return match() == Match::PseudoClass && pseudoClass() == PseudoClass::Has;
+}
+
 bool CSSSelector::hasScope() const
 {
     return visitSimpleSelectors([] (auto& selector) {

@@ -378,18 +378,9 @@ void ElementRuleCollector::matchHostPseudoClassRules(DeclarationOrigin origin)
     if (!shadowRules)
         return;
 
-    auto collect = [&] (const auto& rules) {
-        if (rules.isEmpty())
-            return;
-
-        MatchRequest hostMatchRequest { *shadowRules, ScopeOrdinal::Shadow };
-        collectMatchingRulesForList(&rules, hostMatchRequest);
-    };
-
-    if (shadowRules->hasHostOrScopePseudoClassRulesInUniversalBucket())
-        collect(shadowRules->universalRules());
-
-    collect(shadowRules->hostPseudoClassRules());
+    MatchRequest hostMatchRequest { *shadowRules, ScopeOrdinal::Shadow };
+    collectMatchingRulesForList(shadowRules->shadowHostRulesInUniversalBucket(), hostMatchRequest);
+    collectMatchingRulesForList(shadowRules->hostPseudoClassRules(), hostMatchRequest);
 }
 
 void ElementRuleCollector::matchSlottedPseudoElementRules(DeclarationOrigin origin)
@@ -557,6 +548,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
     auto matchBasedOnRuleHash = ruleData.matchBasedOnRuleHash();
+    ASSERT(styleScopeOrdinal != ScopeOrdinal::Shadow || matchBasedOnRuleHash == MatchBasedOnRuleHash::None);
     if (matchBasedOnRuleHash != MatchBasedOnRuleHash::None && element().isHTMLElement()) {
         ASSERT_WITH_MESSAGE(!m_pseudoElementRequest, "If we match based on the rule hash while collecting for a particular pseudo element ID, we would add incorrect rules for that pseudo element ID. We should never end in ruleMatches() with a pseudo element if the ruleData cannot match any pseudo element.");
 
@@ -596,6 +588,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
             ASSERT_WITH_MESSAGE(!SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &ignoreSpecificity) || !m_pseudoElementRequest, "When matching pseudo elements, we should never compile a selector checker without context unless it cannot match anything.");
 #endif
             bool selectorMatches = SelectorCompiler::ruleCollectorSimpleSelectorChecker(compiledSelector, &element(), &specificity);
+            // Compiled selectors do not implement featureless matching, so they must never claim to match the shadow host.
+            ASSERT(styleScopeOrdinal != ScopeOrdinal::Shadow || !selectorMatches);
 
             return selectorMatches;
         }
@@ -622,6 +616,8 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     if (compilerEnabled && compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
         compiledSelector.wasUsed();
         selectorMatches = SelectorCompiler::ruleCollectorSelectorCheckerWithCheckingContext(compiledSelector, &element(), &context, &specificity);
+        // Compiled selectors do not implement featureless matching, so they must never claim to match the shadow host.
+        ASSERT(styleScopeOrdinal != ScopeOrdinal::Shadow || !selectorMatches);
     } else
 #endif // ENABLE(CSS_SELECTOR_JIT)
     {

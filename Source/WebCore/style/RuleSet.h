@@ -111,6 +111,7 @@ public:
     const RuleDataVector& cuePseudoRules() const LIFETIME_BOUND { return m_cuePseudoRules; }
 #endif
     const RuleDataVector& hostPseudoClassRules() const LIFETIME_BOUND { return m_hostPseudoClassRules; }
+    const RuleDataVector& shadowHostRulesInUniversalBucket() const LIFETIME_BOUND { return m_shadowHostRulesInUniversalBucket; }
     const RuleDataVector& slottedPseudoElementRules() const LIFETIME_BOUND { return m_slottedPseudoElementRules; }
     const RuleDataVector& partPseudoElementRules() const LIFETIME_BOUND { return m_partPseudoElementRules; }
     const RuleDataVector& focusPseudoClassRules() const LIFETIME_BOUND { return m_focusPseudoClassRules; }
@@ -132,7 +133,7 @@ public:
     bool hasAttributeRules() const { return !m_attributeLocalNameRules.isEmpty(); }
     bool hasUserAgentPartRules() const { return !m_userAgentPartRules.isEmpty(); }
     bool hasHostPseudoClassRulesMatchingInShadowTree() const { return m_hasHostPseudoClassRulesMatchingInShadowTree; }
-    bool hasHostOrScopePseudoClassRulesInUniversalBucket() const { return m_hasHostOrScopePseudoClassRulesInUniversalBucket; }
+    bool hasRulesMatchingShadowHost() const { return !m_hostPseudoClassRules.isEmpty() || !m_shadowHostRulesInUniversalBucket.isEmpty(); }
 
     static constexpr auto cascadeLayerPriorityForPresentationalHints = std::numeric_limits<CascadeLayerPriority>::min();
     static constexpr auto cascadeLayerPriorityForUnlayered = std::numeric_limits<CascadeLayerPriority>::max();
@@ -226,6 +227,7 @@ private:
     RuleDataVector m_cuePseudoRules;
 #endif
     RuleDataVector m_hostPseudoClassRules;
+    RuleDataVector m_shadowHostRulesInUniversalBucket;
     RuleDataVector m_slottedPseudoElementRules;
     RuleDataVector m_partPseudoElementRules;
     RuleDataVector m_focusPseudoClassRules;
@@ -261,7 +263,6 @@ private:
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };
-    bool m_hasHostOrScopePseudoClassRulesInUniversalBucket { false };
 
     // For checking against re-entrancy.
     bool m_isBuilding { false };
