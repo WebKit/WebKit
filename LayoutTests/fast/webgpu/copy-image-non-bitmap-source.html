@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<script>
+if (window.testRunner) { testRunner.dumpAsText(); testRunner.waitUntilDone(); }
+
+// GPUQueue.copyExternalImageToTexture() used to assume that any image an <img> can hold is
+// either a BitmapImage or an SVGImage, and dereferenced the result of the SVGImage cast
+// unconditionally. A PDF document loaded into an <img> is neither, so it crashed the web
+// process (rdar://187345349). It also derived the source byte offsets from the CGImage
+// metadata without checking them against the amount of pixel data actually available.
+
+const sources = [
+    // A single-page PDF, which loads as a PDFDocumentImage: neither BitmapImage nor SVGImage.
+    { name: "PDF", src: "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA4IDhdIC9Db250ZW50cyA0IDAgUiAvUmVzb3VyY2VzIDw8ID4+ID4+CmVuZG9iago0IDAgb2JqCjw8IC9MZW5ndGggMzEgPj4Kc3RyZWFtCjEgMCAwIFJHIDEgMCAwIHJnIDAgMCA4IDggcmUgZgplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA1CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxNSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDUgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjI5NQolJUVPRgo=" },
+    // An SVG, to keep the SVGImage path covered.
+    { name: "SVG", src: "data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'8\' height=\'8\'%3E%3Crect width=\'8\' height=\'8\' fill=\'blue\'/%3E%3C/svg%3E" },
+    // An 8-bit grayscale PNG, which decodes to fewer than four bytes per pixel.
+    { name: "grayscale PNG", src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAAAAADhZOFXAAAAU0lEQVR4nAFIALf/AAAgQGCAoMDgAAQkRGSEpMTkAAgoSGiIqMjoAAwsTGyMrMzsABAwUHCQsNDwABQ0VHSUtNT0ABg4WHiYuNj4ABw8XHycvNz8FUQfgStz92UAAAAASUVORK5CYII=" },
+];
+
+async function loadImage(src)
+{
+    const image = document.createElement("img");
+    await new Promise(resolve => {
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = src;
+    });
+    return image;
+}
+
+async function copyImage(device, image, format, flipY)
+{
+    const texture = device.createTexture({
+        size: [8, 8],
+        format: format,
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+    });
+    device.queue.copyExternalImageToTexture({ source: image, flipY: flipY }, { texture: texture }, [8, 8]);
+    await device.queue.onSubmittedWorkDone();
+    texture.destroy();
+}
+
+onload = async () => {
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        if (!adapter) {
+            console.log("FAIL: No WebGPU adapter available");
+            if (window.testRunner) testRunner.notifyDone();
+            return;
+        }
+        const device = await adapter.requestDevice();
+
+        for (const source of sources) {
+            const image = await loadImage(source.src);
+            for (const format of ["rgba8unorm", "bgra8unorm"]) {
+                for (const flipY of [false, true]) {
+                    // Any validation error is fine here; not crashing is what matters.
+                    device.pushErrorScope("validation");
+                    await copyImage(device, image, format, flipY);
+                    await device.popErrorScope();
+                }
+            }
+            console.log("PASS: copied from " + source.name + " without crashing");
+        }
+    } catch (e) {
+        console.log("FAIL: " + e);
+    }
+
+    if (window.testRunner) testRunner.notifyDone();
+};
+</script>
+This test passes if it does not crash and prints PASS for every source.

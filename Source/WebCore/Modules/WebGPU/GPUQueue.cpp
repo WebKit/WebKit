@@ -450,10 +450,14 @@ static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<Vid
     clampDimension(backingCopySize, 0, width);
     clampDimension(backingCopySize, 1, height);
 
-    auto sizeInBytes = height * CGImageGetBytesPerRow(platformImage.get());
     auto byteSpan = span(pixelDataCfData.get());
+    CheckedSize sizeInBytes = CheckedSize(height) * CGImageGetBytesPerRow(platformImage.get());
+    // The metadata is not guaranteed to describe how much data the provider actually gave us.
+    if (sizeInBytes.hasOverflowed() || !sizeInBytes.value() || sizeInBytes.value() > byteSpan.size())
+        return callback({ }, 0, 0);
+
     vImage_Buffer bgra {
-        .data = const_cast<unsigned char*>(&byteSpan[0]),
+        .data = const_cast<unsigned char*>(byteSpan.data()),
         .height = height,
         .width = width,
         .rowBytes = byteSpan.size() / height
@@ -461,12 +465,14 @@ static void getImageBytesFromVideoFrame(WebGPU::Queue& backing, const RefPtr<Vid
     constexpr std::array<uint8_t, 4> permuteMap { 2, 1, 0, 3 };
     vImagePermuteChannels_ARGB8888(&bgra, &bgra, permuteMap.data(), kvImageNoFlags);
 
-    return callback(byteSpan.first(sizeInBytes), width, height);
+    return callback(byteSpan.first(sizeInBytes.value()), width, height);
 }
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO) && ENABLE(WEB_CODECS)
-static void clipTo8bitsPerChannel(std::span<const uint8_t> data, size_t bitsPerComponent, Vector<uint8_t>& byteSpanBacking)
+// Returns false if bitsPerComponent isn't a component size we know how to narrow, in which
+// case byteSpanBacking is left untouched and the caller must not use it.
+static bool clipTo8bitsPerChannel(std::span<const uint8_t> data, size_t bitsPerComponent, Vector<uint8_t>& byteSpanBacking)
 {
     RELEASE_ASSERT(bitsPerComponent != 8);
 
@@ -475,12 +481,18 @@ static void clipTo8bitsPerChannel(std::span<const uint8_t> data, size_t bitsPerC
         auto uint16Span = unsafeMakeSpan(static_cast<const uint16_t*>(static_cast<const void*>(data.data())), byteSpanBacking.size());
         for (size_t i = 0; i < uint16Span.size(); ++i)
             byteSpanBacking[i] = std::min<uint8_t>(255, uint16Span[i]);
-    } else if (bitsPerComponent == 32) {
+        return true;
+    }
+
+    if (bitsPerComponent == 32) {
         byteSpanBacking.resize(data.size() / 4);
         auto uint32Span = unsafeMakeSpan(static_cast<const uint32_t*>(static_cast<const void*>(data.data())), byteSpanBacking.size());
         for (size_t i = 0; i < uint32Span.size(); ++i)
             byteSpanBacking[i] = std::min<uint8_t>(255, uint32Span[i]);
+        return true;
     }
+
+    return false;
 }
 #endif
 
@@ -512,13 +524,11 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
             bool isSVG = false;
             if (image)
                 nativeImage = image->nativeImage();
-            else {
-                RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image());
-                RefPtr texturePtr = destination.texture.get();
-                if (texturePtr) {
-                    nativeImage = svgImage->nativeImage(FloatSize(texturePtr->width(), texturePtr->height()));
-                    isSVG = true;
-                }
+            else if (RefPtr svgImage = dynamicDowncast<SVGImage>(cachedImage->image())) {
+                // An <img> can also hold a PDFDocumentImage, which is neither a BitmapImage nor an
+                // SVGImage; there is nothing to read pixels from in that case.
+                nativeImage = svgImage->nativeImage(FloatSize(destination.texture->width(), destination.texture->height()));
+                isSVG = true;
             }
 
             if (!nativeImage)
@@ -551,7 +561,8 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
             auto rawHeight = CGImageGetHeight(platformImage.get());
 
             // We need to account for EXIF orientation which may swap width/height.
-            auto orientation = protect(imageElement->image())->orientation().orientation();
+            RefPtr sourceImage = cachedImage->image();
+            auto orientation = sourceImage ? sourceImage->orientation().orientation() : ImageOrientation::Orientation::None;
             bool orientationSwapsDimensions = orientation == ImageOrientation::Orientation::OriginLeftTop
                 || orientation == ImageOrientation::Orientation::OriginRightTop
                 || orientation == ImageOrientation::Orientation::OriginRightBottom
@@ -563,17 +574,28 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
             if (!orientedWidth || !orientedHeight || !rawWidth || !rawHeight)
                 return callback({ }, 0, 0);
 
-            auto sizeInBytes = rawHeight * CGImageGetBytesPerRow(platformImage.get());
             auto bitsPerComponent = CGImageGetBitsPerComponent(platformImage.get());
             auto byteSpan = span(pixelDataCfData.get());
             Vector<uint8_t> byteSpanBacking;
             if (bitsPerComponent != 8) {
-                clipTo8bitsPerChannel(byteSpan, bitsPerComponent, byteSpanBacking);
+                if (!clipTo8bitsPerChannel(byteSpan, bitsPerComponent, byteSpanBacking))
+                    return callback({ }, 0, 0);
                 byteSpan = byteSpanBacking.span();
-                sizeInBytes = byteSpan.size();
             }
 
-            auto requiredSize = orientedWidth * orientedHeight * 4;
+            // CGImageGetBytesPerRow() describes the image as CoreGraphics decoded it; narrowing to
+            // 8 bits per component above shortened every row by the same factor.
+            auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get()) / (bitsPerComponent / 8);
+            // Don't trust the metadata to agree with how much data the provider actually gave us.
+            CheckedSize checkedSizeInBytes = CheckedSize(rawHeight) * bytesPerRow;
+            if (checkedSizeInBytes.hasOverflowed())
+                return callback({ }, 0, 0);
+            auto sizeInBytes = std::min(checkedSizeInBytes.value(), byteSpan.size());
+
+            CheckedSize checkedRequiredSize = CheckedSize(orientedWidth) * orientedHeight * 4U;
+            if (checkedRequiredSize.hasOverflowed())
+                return callback({ }, 0, 0);
+            auto requiredSize = checkedRequiredSize.value();
             auto alphaInfo = CGImageGetAlphaInfo(platformImage.get());
             bool channelLayoutIsRGB = false;
             bool isBGRA = toPixelFormat(destination.texture->format()) == PixelFormat::BGRA8;
@@ -607,14 +629,17 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
                     return isBGRA ? channelsXBGR : channelsXRGB;
                 }
                 }
+                // CGImageGetAlphaInfo() is not guaranteed to return one of the enumerators above.
+                return isBGRA ? channelsBGRX : channelsRGBX;
             }();
 
             if (sizeInBytes == requiredSize && channelLayoutIsRGB && orientation == ImageOrientation::Orientation::OriginTopLeft)
                 return callback(byteSpan.first(sizeInBytes), rawWidth, rawHeight);
 
-            auto bytesPerRow = CGImageGetBytesPerRow(platformImage.get()) / (bitsPerComponent / 8);
             Vector<uint8_t> tempBuffer(FillWith { }, requiredSize, 255);
             auto bytesPerPixel = sizeInBytes / (rawWidth * rawHeight);
+            if (!bytesPerPixel)
+                return callback({ }, 0, 0);
             bool flipY = sourceDescriptor.flipY;
             needsYFlip = false;
             int direction = flipY ? -1 : 1;
@@ -624,6 +649,14 @@ static void imageBytesForSource(WebGPU::Queue& backing, const GPUImageCopyExtern
                 --maxChannelIndex;
                 alphaIndex = 1;
             }
+
+            // Every byteSpan read below is sourceY * bytesPerRow + sourceX * bytesPerPixel + offset,
+            // where sourceY < rawHeight, sourceX < rawWidth and offset <= bytesPerPixel - 1. Prove
+            // the largest of those stays within the data the provider handed us, rather than
+            // inferring it from the CGImage metadata.
+            CheckedSize maximumByteOffset = CheckedSize(rawHeight - 1) * bytesPerRow + CheckedSize(rawWidth) * bytesPerPixel;
+            if (maximumByteOffset.hasOverflowed() || maximumByteOffset.value() > byteSpan.size())
+                return callback({ }, 0, 0);
 
             auto mapDestinationToSource = [&orientation, &rawWidth, &rawHeight](size_t x, size_t y) -> std::pair<size_t, size_t> {
                 switch (orientation) {
