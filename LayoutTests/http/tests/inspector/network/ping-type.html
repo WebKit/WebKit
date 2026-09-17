@@ -58,7 +58,7 @@ function test()
         InspectorTest.expectEqual(resource.type, WI.Resource.Type.Ping, "Resource should be Ping type.");
         InspectorTest.expectEqual(resource.requestMethod, "POST", "Resource should be a POST request.");
         InspectorTest.expectEqual(resource.requestData, "PING", "Resource data should be 'PING'.");
-        InspectorTest.log("Ping-To: " + resource.requestHeaders.valueForCaseInsensitiveKey("Ping-To"));
+        InspectorTest.log("Ping-To: " + resource.requestHeaders.get("Ping-To"));
     }
 
     addTestCase({

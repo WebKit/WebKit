@@ -14,5 +14,10 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    if (event.request.url.includes("nph-response-header-entries.py")) {
+        event.respondWith(fetch(event.request.url).then((response) => response.clone()));
+        return;
+    }
+
     event.respondWith(fetch(event.request.url));
 });

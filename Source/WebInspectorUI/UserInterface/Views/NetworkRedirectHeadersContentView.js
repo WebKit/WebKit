@@ -120,6 +120,6 @@ WI.NetworkRedirectHeadersContentView = class NetworkRedirectHeadersContentView e
 
     _createSortedArrayForHeaders(headers)
     {
-        return Object.entries(headers).sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
+        return Array.from(headers).sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
     }
 };

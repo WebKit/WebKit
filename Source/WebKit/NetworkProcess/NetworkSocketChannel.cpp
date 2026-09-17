@@ -161,6 +161,11 @@ void NetworkSocketChannel::didReceiveHandshakeResponse(ResourceResponse&& respon
     send(Messages::WebSocketChannel::DidReceiveHandshakeResponse { response });
 }
 
+bool NetworkSocketChannel::shouldCaptureExtraNetworkLoadMetrics() const
+{
+    return m_connectionToWebProcess->captureExtraNetworkLoadMetricsEnabled();
+}
+
 IPC::Connection* NetworkSocketChannel::messageSenderConnection() const
 {
     return &m_connectionToWebProcess->connection();

@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptableDocumentParser.h"
 #include "SharedBuffer.h"
@@ -69,6 +70,62 @@ namespace Inspector {
 namespace ResourceUtilities {
 
 using namespace WebCore;
+
+Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForHeaders(const HTTPHeaderMap& headers)
+{
+    auto result = JSON::ArrayOf<Protocol::Network::Header>::create();
+    for (const auto& header : headers) {
+        result->addItem(Protocol::Network::Header::create()
+            .setName(header.key)
+            .setValue(header.value)
+            .release());
+    }
+    return result;
+}
+
+Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForResponseHeaders(const ResourceResponse& response)
+{
+    if (response.source() == ResourceResponse::Source::Network || response.source() == ResourceResponse::Source::Unknown) {
+        if (const auto* metrics = response.deprecatedNetworkLoadMetricsOrNull()) {
+            if (RefPtr additionalMetrics = metrics->additionalNetworkLoadMetricsForWebInspector) {
+                auto result = JSON::ArrayOf<Protocol::Network::Header>::create();
+                for (const auto& [name, value] : additionalMetrics->rawResponseHeaders) {
+                    if (!response.httpHeaderFields().contains(name))
+                        continue;
+                    result->addItem(Protocol::Network::Header::create()
+                        .setName(name)
+                        .setValue(value)
+                        .release());
+                }
+                if (result->length())
+                    return result;
+            }
+        }
+    }
+    return buildArrayForHeaders(response.httpHeaderFields());
+}
+
+Protocol::ErrorStringOr<HTTPHeaderMap> httpHeaderMapFromPayload(const JSON::Array& headers)
+{
+    HTTPHeaderMap result;
+    for (auto& value : headers) {
+        auto header = value->asObject();
+        if (!header)
+            return makeUnexpected("Header must be an object"_s);
+        auto name = header->getString("name"_s);
+        auto headerValue = header->getString("value"_s);
+        if (name.isNull() || headerValue.isNull())
+            return makeUnexpected("Header name and value must be strings"_s);
+        result.add(name, headerValue);
+    }
+    return result;
+}
+
+void addExtraHTTPHeaderFields(ResourceRequest& request, const HTTPHeaderMap& extraHeaders)
+{
+    for (const auto& header : extraHeaders)
+        request.setHTTPHeaderField(header.key, header.value);
+}
 
 Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::ResourceType resourceType)
 {
@@ -478,15 +535,6 @@ void loadResource(ScriptExecutionContext& context, const String& urlString, Load
         client->setLoader(WTF::move(loader));
 }
 
-Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
-{
-    auto headersValue = Inspector::Protocol::Network::Headers::create().release();
-    auto headersObject = headersValue->asObject();
-    for (const auto& header : headers)
-        headersObject->setString(header.key, header.value);
-    return headersValue;
-}
-
 static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
@@ -521,7 +569,7 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
         if (!additionalMetrics->connectionIdentifier.isNull())
             metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
         if (!additionalMetrics->requestHeaders.isEmpty())
-            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+            metrics->setRequestHeaders(buildArrayForHeaders(additionalMetrics->requestHeaders));
         if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
             metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
         if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())

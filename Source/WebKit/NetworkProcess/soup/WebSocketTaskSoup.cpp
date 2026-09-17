@@ -31,6 +31,7 @@
 #include "NetworkSocketChannel.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/ThreadableWebSocketChannel.h>
@@ -139,6 +140,27 @@ String WebSocketTask::acceptedExtensions() const
     return result.toStringPreserveCapacity();
 }
 
+WebCore::ResourceResponse WebSocketTask::handshakeResponse() const
+{
+    WebCore::ResourceResponse response(m_handshakeMessage.get());
+    RefPtr channel = m_channel.get();
+    if (!channel || !channel->shouldCaptureExtraNetworkLoadMetrics())
+        return response;
+
+    auto metrics = Box<WebCore::NetworkLoadMetrics>::create();
+    auto additionalMetrics = WebCore::AdditionalNetworkLoadMetricsForWebInspector::create();
+    auto& headers = additionalMetrics->rawResponseHeaders;
+    SoupMessageHeadersIter iterator;
+    soup_message_headers_iter_init(&iterator, soup_message_get_response_headers(m_handshakeMessage.get()));
+    const char* name;
+    const char* value;
+    while (soup_message_headers_iter_next(&iterator, &name, &value))
+        headers.append({ String::fromLatin1(name), String::fromLatin1(value) });
+    metrics->additionalNetworkLoadMetricsForWebInspector = WTF::move(additionalMetrics);
+    response.setDeprecatedNetworkLoadMetrics(WTF::move(metrics));
+    return response;
+}
+
 void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
 {
     m_connection = WTF::move(connection);
@@ -153,7 +175,7 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
 
     if (RefPtr channel = m_channel.get()) {
         channel->didConnect(String::fromLatin1(soup_websocket_connection_get_protocol(m_connection.get())), acceptedExtensions());
-        channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
+        channel->didReceiveHandshakeResponse(handshakeResponse());
     }
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
     m_handshakeMessage = nullptr;
@@ -194,7 +216,7 @@ void WebSocketTask::didFail(String&& errorMessage)
 
     m_receivedDidFail = true;
     if (m_handshakeMessage) {
-        channel->didReceiveHandshakeResponse(m_handshakeMessage.get());
+        channel->didReceiveHandshakeResponse(handshakeResponse());
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }

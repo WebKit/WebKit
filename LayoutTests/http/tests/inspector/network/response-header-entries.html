@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/inspector-test.js"></script>
+<script>
+let headerRequestController;
+
+function loadHeaderResponse(mode)
+{
+    headerRequestController = new AbortController;
+    fetch(`resources/nph-response-header-entries.py?mode=${mode}`, {signal: headerRequestController.signal})
+        .then((response) => {
+            TestPage.dispatchEventToFrontend("PublicResponseHeaders", {cookie: response.headers.get("set-cookie")});
+            return response.text();
+        })
+        .catch((error) => {
+            if (error.name !== "AbortError")
+                TestPage.dispatchEventToFrontend("UnexpectedFetchError", error.message);
+        });
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.ResponseHeaderEntries");
+
+    InspectorTest.addEventListener("UnexpectedFetchError", (event) => {
+        InspectorTest.fail(event.data);
+    });
+
+    function logHeaders(headers)
+    {
+        InspectorTest.log("x-example: " + JSON.stringify(headers.getAll("x-example")));
+        InspectorTest.log("www-authenticate: " + JSON.stringify(headers.getAll("www-authenticate")));
+        InspectorTest.log("set-cookie: " + JSON.stringify(headers.getAll("set-cookie")));
+    }
+
+    suite.addTestCase({
+        name: "Network.ResponseHeaderEntries.BeforeCompletion",
+        async test() {
+            let [event, publicHeaders] = await Promise.all([
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.awaitEvent("PublicResponseHeaders"),
+                InspectorTest.evaluateInPage('loadHeaderResponse("stream")'),
+            ]);
+            let resource = event.target;
+            InspectorTest.expectEqual(resource.statusCode, 200, "The response should succeed.");
+            InspectorTest.expectFalse(resource.finished || resource.failed, "Original fields should be available before the body finishes.");
+            logHeaders(resource.responseHeaders);
+            InspectorTest.expectNull(publicHeaders.data.cookie, "Public response headers should not expose Set-Cookie.");
+            let originalFields = JSON.stringify(resource.responseHeaders);
+            let failed = resource.awaitEvent(WI.Resource.Event.LoadingDidFail);
+            await InspectorTest.evaluateInPage("headerRequestController.abort()");
+            await failed;
+            InspectorTest.expectTrue(resource.canceled, "The unfinished response should be canceled.");
+            InspectorTest.expectEqual(JSON.stringify(resource.responseHeaders), originalFields, "Canceling the body should retain the response fields.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Network.ResponseHeaderEntries.Redirect",
+        async test() {
+            let [event, publicHeaders] = await Promise.all([
+                WI.Resource.awaitEvent(WI.Resource.Event.LoadingDidFinish),
+                InspectorTest.awaitEvent("PublicResponseHeaders"),
+                InspectorTest.evaluateInPage('loadHeaderResponse("redirect")'),
+            ]);
+            let resource = event.target;
+            InspectorTest.expectEqual(resource.redirects.length, 1, "The redirect should be recorded.");
+            InspectorTest.log("redirect cache-control: " + JSON.stringify(resource.redirects[0].responseHeaders.getAll("cache-control")));
+            InspectorTest.log("final cache-control: " + JSON.stringify(resource.responseHeaders.getAll("cache-control")));
+            logHeaders(resource.responseHeaders);
+            InspectorTest.expectNull(publicHeaders.data.cookie, "Public response headers should not expose Set-Cookie.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests original response fields before completion, after cancellation, and across redirects.</p>
+</body>
+</html>

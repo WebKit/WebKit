@@ -408,6 +408,9 @@ void CurlRequest::didReceiveHeaderFromMultipart(Vector<String>&& headers)
     for (auto& header : headers)
         response.headers.append(WTF::move(header));
 
+    if (RefPtr additionalMetrics = response.networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector)
+        additionalMetrics->parseRawResponseHeaders(response.headers);
+
     invokeDidReceiveResponse(response, [this] {
         runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
             if (isCompletedOrCancelled() || !m_multipartHandle)
@@ -647,6 +650,7 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
         if (auto* additionalMetrics = networkLoadMetrics->additionalNetworkLoadMetricsForWebInspector.get()) {
             additionalMetrics->requestHeaderBytesSent = m_requestHeaderSize;
             additionalMetrics->requestHeaders = m_requestHeaders;
+            additionalMetrics->parseRawResponseHeaders(m_response.headers);
         }
     }
 

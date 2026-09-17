@@ -44,7 +44,7 @@ function test()
         loadedHandler(resource) {
             InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Custom-Header"), "Custom-Header-Value", "Should be able to see X-Custom-Header.");
         }
     });
 
@@ -55,7 +55,7 @@ function test()
         loadedHandler(resource) {
             InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Custom-Header"), "Custom-Header-Value", "Should be able to see X-Custom-Header.");
         }
     });
 
@@ -66,7 +66,7 @@ function test()
         loadedHandler(resource) {
             InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Custom-Header"), "Custom-Header-Value", "Should be able to see X-Custom-Header.");
         }
     });
 
@@ -77,7 +77,7 @@ function test()
         loadedHandler(resource) {
             InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header which would have otherwise been filtered.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Custom-Header"), "Custom-Header-Value", "Should be able to see X-Custom-Header which would have otherwise been filtered.");
         }
     });
 
@@ -88,7 +88,7 @@ function test()
         loadedHandler(resource) {
             InspectorTest.expectEqual(resource.mimeType, "application/json", "MIMEType should be 'application/json'.");
             InspectorTest.expectEqual(resource.statusCode, 200, "Status code should be 200.");
-            InspectorTest.expectEqual(resource.responseHeaders["X-Custom-Header"], "Custom-Header-Value", "Should be able to see X-Custom-Header.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Custom-Header"), "Custom-Header-Value", "Should be able to see X-Custom-Header.");
         }
     });
 

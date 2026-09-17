@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../inspector/resources/inspector-test.js"></script>
+<script>
+function createWebSocketConnection()
+{
+    new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/inspector/response-header-entries");
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WebSocket.ResponseHeaderEntries");
+    suite.addTestCase({
+        name: "WebSocket.ResponseHeaderEntries.Handshake",
+        async test() {
+            let [responseReceivedEvent] = await Promise.all([
+                WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived),
+                InspectorTest.evaluateInPage("createWebSocketConnection()"),
+            ]);
+            let resource = responseReceivedEvent.target;
+            InspectorTest.expectTrue(resource instanceof WI.WebSocketResource, "The handshake should create a WebSocket resource.");
+            InspectorTest.expectEqual(resource.statusCode, 101, "The handshake should succeed.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Example"), "one,two, three", "Legacy handshake fields should remain combined.");
+            InspectorTest.expectTrue(resource.responseHeaders instanceof WI.HTTPHeaderMap, "Handshake headers should use HTTPHeaderMap.");
+            InspectorTest.log(`x-example: ${JSON.stringify(resource.responseHeaders.getAll("x-example"))}`);
+            InspectorTest.log(`www-authenticate: ${JSON.stringify(resource.responseHeaders.getAll("www-authenticate"))}`);
+            InspectorTest.expectEqual(resource.responseHeaders.getAll("set-cookie").length, 0, "Handshake entries should not bypass cookie sanitization.");
+        },
+    });
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests original WebSocket response fields and legacy compatibility.</p>
+</body>
+</html>
