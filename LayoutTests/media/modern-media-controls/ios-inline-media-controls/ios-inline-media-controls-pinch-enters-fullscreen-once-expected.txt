@@ -1,0 +1,14 @@
+Testing that IOSInlineMediaControls only enters fullscreen once per pinch gesture.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS fullscreenRequestCount is 1
+PASS fullscreenRequestCount is 1
+PASS fullscreenRequestCount is 1
+PASS fullscreenRequestCount is 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
