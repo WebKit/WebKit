@@ -271,6 +271,7 @@ private:
     Vector<InspectorOverlay::Grid> m_activeGridOverlays;
     Vector<InspectorOverlay::Flex> m_activeFlexOverlays;
 
+    bool m_isVisible { false };
     bool m_indicating { false };
     bool m_showPaintRects { false };
     bool m_showRulers { false };

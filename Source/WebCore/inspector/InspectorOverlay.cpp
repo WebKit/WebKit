@@ -664,13 +664,15 @@ bool InspectorOverlay::shouldShowOverlay() const
 void InspectorOverlay::update()
 {
     if (!shouldShowOverlay()) {
-        m_client->hideHighlight();
+        if (std::exchange(m_isVisible, false))
+            m_client->hideHighlight();
         return;
     }
 
     if (!protect(page())->mainFrame().virtualView())
         return;
 
+    m_isVisible = true;
     m_client->highlight();
 }
 
