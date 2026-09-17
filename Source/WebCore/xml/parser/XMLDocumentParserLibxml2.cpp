@@ -845,6 +845,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         }
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> markupInsertionCountIncrementer;
     std::optional<CustomElementReactionStack> customElementReactionStack;
     if (willConstructCustomElement) [[unlikely]] {
@@ -857,6 +858,26 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     bool shouldUseNullCustomElementRegistry = false;
     bool handledAttributes = handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, numNamespaces, shouldUseNullCustomElementRegistry);
     bool success = handledAttributes ? handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes, shouldUseNullCustomElementRegistry) : false;
+#else
+    // Copy every span libxml2 owns into WebKit-owned storage here, before any code that can
+    // run script such as performMicrotaskCheckpoint().
+    Vector<Attribute> prefixedAttributes;
+    bool shouldUseNullCustomElementRegistry = false;
+    bool handledAttributes = handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, numNamespaces, shouldUseNullCustomElementRegistry);
+    bool success = handledAttributes ? handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes, shouldUseNullCustomElementRegistry) : false;
+
+    std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> markupInsertionCountIncrementer;
+    std::optional<CustomElementReactionStack> customElementReactionStack;
+    if (willConstructCustomElement) [[unlikely]] {
+        markupInsertionCountIncrementer.emplace(m_currentNode->document());
+        m_currentNode->document().eventLoop().performMicrotaskCheckpoint();
+        // Draining the microtask queue may have stopped or detached this parser, in which case we
+        // must not keep building the tree.
+        if (isStopped())
+            return;
+        customElementReactionStack.emplace(m_currentNode->document().globalObject());
+    }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     RefPtr registry = shouldUseNullCustomElementRegistry ? nullptr : CustomElementRegistry::registryForNodeOrTreeScope(*m_currentNode, m_currentNode->treeScope());
     auto newElement = m_currentNode->document().createElement(qName, true, registry.get());
