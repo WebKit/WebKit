@@ -62,6 +62,8 @@ private:
 
     void highlight() override;
     void hideHighlight() override;
+    void highlightFrame(WebCore::LocalFrame&) override;
+    void hideHighlightForFrame(WebCore::LocalFrame&) override;
 
 #if PLATFORM(IOS_FAMILY)
     void showInspectorIndication() override;
@@ -96,7 +98,14 @@ private:
     void animationEndedForLayer(WebCore::LocalFrame*, const WebCore::GraphicsLayer*);
 
     WeakPtr<WebPage> m_page;
+
+    // The page-level highlight overlay. Kept separate from the per-frame map: it is no frame's overlay.
     WeakPtr<WebCore::PageOverlay> m_highlightOverlay;
+
+    // Frame-scoped highlight overlays, keyed by local root. Separate lifetimes from m_paintRectOverlays.
+    WeakHashMap<WebCore::LocalFrame, RefPtr<WebCore::PageOverlay>> m_frameHighlightOverlays;
+
+    RefPtr<WebCore::PageOverlay> ensureHighlightOverlayForFrame(WebCore::LocalFrame&);
 
     // Paint-rect overlays are per local root frame: under Site Isolation one process can host several
     // local roots, each with its own compositing tree, so each needs its own Document overlay.
