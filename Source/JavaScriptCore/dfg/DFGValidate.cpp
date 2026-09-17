@@ -120,7 +120,7 @@ public:
         // interpreter's tuple values, FTL's m_tupleValues) holds exactly one entry per slot, so
         // two producers sharing a range means one of them silently reads the other's results.
         {
-            Vector<Node*> tupleOwners(FillWith { }, m_graph.m_tupleData.size(), nullptr);
+            Vector<Node*> tupleOwners(m_graph.m_tupleData.size(), nullptr);
             for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
                 BasicBlock* block = m_graph.block(blockIndex);
                 if (!block)
