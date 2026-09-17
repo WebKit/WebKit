@@ -49,6 +49,13 @@ SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER = 'org.webkit.swift'
 USER_TOOLCHAINS_DIR = '/Users/buildbot/Library/Developer/Toolchains'
 
 
+def needs_swift_toolchain_setup(step):
+    canonical_swift_tag = step.getProperty('canonical_swift_tag')
+    if not canonical_swift_tag:
+        return False
+    return step.getProperty('current_swift_tag', '') != canonical_swift_tag or not step.getProperty('has_swift_toolchain', False)
+
+
 class ShellMixin(object):
     WINDOWS_SHELL_PLATFORMS = ['win', 'playstation']
 
@@ -345,7 +352,7 @@ class CheckOutSwiftProject(git.Git, AddToLogMixin):
         return SUCCESS
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        return needs_swift_toolchain_setup(self)
 
     def getResultSummary(self):
         if self.results == SKIPPED:
@@ -391,7 +398,7 @@ class UpdateSwiftCheckouts(steps.ShellSequence, ShellMixin):
         defer.returnValue(rc)
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        return needs_swift_toolchain_setup(self)
 
     def getResultSummary(self):
         if self.results == SKIPPED:

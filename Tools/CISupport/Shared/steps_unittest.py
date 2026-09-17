@@ -626,6 +626,7 @@ class TestCheckOutSwiftProject(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_already_up_to_date(self):
         self.configureStep()
         self.setProperty('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.setProperty('has_swift_toolchain', True)
         self.expect_outcome(result=SKIPPED, state_string='swift-project is already up to date')
         return self.run_step()
 
@@ -657,6 +658,7 @@ class TestUpdateSwiftCheckouts(BuildStepMixinAdditions, unittest.TestCase):
     def test_skipped_already_up_to_date(self):
         self.configureStep()
         self.setProperty('current_swift_tag', 'swift-6.3-DEVELOPMENT-SNAPSHOT')
+        self.setProperty('has_swift_toolchain', True)
         self.expect_outcome(result=SKIPPED, state_string='Swift checkout is already up to date')
         return self.run_step()
 

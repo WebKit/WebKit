@@ -48,7 +48,7 @@ import socket
 import sys
 import time
 
-from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR
+from Shared.steps import ShellMixin, SetBuildSummary, SetO3OptimizationLevel, WaitForDuration, InstallSwiftToolchain, SWIFT_TOOLCHAIN_NAME, SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER, SWIFT_DIR, USER_TOOLCHAINS_DIR, needs_swift_toolchain_setup
 from Shared import generate_s3_url
 
 if sys.version_info < (3, 9):  # noqa: UP036
@@ -7935,7 +7935,7 @@ class BuildSwift(steps.ShellSequence, ShellMixin):
         return {'step': 'Successfully built Swift'}
 
     def doStepIf(self, step):
-        return self.getProperty('canonical_swift_tag') and self.getProperty('current_swift_tag', '') != self.getProperty('canonical_swift_tag')
+        return needs_swift_toolchain_setup(self)
 
 
 # FIXME: Share static analyzer steps with build-webkit-org since they have a lot of similarities
