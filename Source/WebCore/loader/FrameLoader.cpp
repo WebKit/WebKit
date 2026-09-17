@@ -4226,6 +4226,25 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_quickRedirectComing = false;
 }
 
+bool FrameLoader::dispatchPendingNavigateEventForProcessSwap(NavigationIdentifier navigationID)
+{
+    RefPtr policyDocumentLoader = m_policyDocumentLoader;
+    if (!policyDocumentLoader)
+        return true;
+
+    // A fresh navigation has no navigationID here: the UI process assigns one in the policy reply, and
+    // that reply is what this dispatch gates. So only match when the WebProcess already knows an ID (a
+    // redirect or continuing load); otherwise the frame's single outstanding policy check identifies it.
+    if (auto knownID = policyDocumentLoader->navigationID(); knownID && *knownID != navigationID)
+        return true;
+
+    auto pendingDispatchNavigateEvent = policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent();
+    if (!pendingDispatchNavigateEvent)
+        return true;
+
+    return pendingDispatchNavigateEvent();
+}
+
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a

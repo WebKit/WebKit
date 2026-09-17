@@ -2366,6 +2366,7 @@ private:
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
+    void dispatchPendingNavigateEventForProcessSwap(std::optional<WebCore::FrameIdentifier>, WebCore::NavigationIdentifier, CompletionHandler<void(bool)>&&);
     void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);

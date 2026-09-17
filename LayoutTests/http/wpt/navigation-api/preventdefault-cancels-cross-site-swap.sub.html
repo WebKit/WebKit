@@ -1,0 +1,77 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: preventDefault() cancels a cross-site process-swapping main frame navigation (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<a id="a"></a>
+<!--
+  Under Site Isolation a cross-site main frame navigation is approved by the client as
+  NavigationPolicyDecision::LoadWillContinueInAnotherProcess, which is not ContinueLoad, so
+  FrameLoader::continueLoadAfterNavigationPolicy returns early and never reaches the push/replace
+  navigate event dispatch. The event then never fires and preventDefault() cannot be called.
+
+  The upstream WPT imported/w3c/web-platform-tests/navigation-api/navigate-event/
+  navigate-anchor-cross-origin.html covers the same click but calls done() synchronously from the
+  handler, so it also passes when the navigation is not really cancelled and merely fired the event.
+  This test keeps the document alive past the point where the destination could have committed.
+
+  Failure mode: if the navigation is not cancelled this document is replaced mid-test, so the
+  failure surfaces as the harness losing the test rather than as an assertion. That is intentional
+  -- a destroyed document cannot report on itself. The subframe variant of this test asserts from a
+  surviving parent instead.
+-->
+<script>
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/navigation-api/resources/preventdefault-destination.html";
+
+function waitFor(predicate, timeoutMs, description) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+            if (predicate()) {
+                resolve();
+                return;
+            }
+            if (Date.now() - start >= timeoutMs) {
+                reject(new Error(`timed out waiting for ${description}`));
+                return;
+            }
+            setTimeout(tick, 25);
+        };
+        tick();
+    });
+}
+
+promise_test(async t => {
+    const startURL = location.href;
+    window.__marker = "alive";
+
+    let event = null;
+    navigation.onnavigate = t.step_func(e => {
+        navigation.onnavigate = null;
+        event = { cancelable: e.cancelable, canIntercept: e.canIntercept, destination: e.destination.url };
+        e.preventDefault();
+    });
+
+    a.href = REMOTE;
+    a.click();
+
+    // The navigate event for a cross-document navigation fires only after the client's navigation
+    // policy decision comes back, so it is asynchronous even though the click is not.
+    await waitFor(() => event !== null, 4000, "the navigate event");
+
+    assert_true(event.cancelable, "navigate event is cancelable");
+    assert_false(event.canIntercept, "a cross-site navigation cannot be intercepted");
+    assert_equals(event.destination, REMOTE, "destination is the cross-site URL");
+
+    // The cancelled navigation would have had to fetch REMOTE to commit, so waiting for our own
+    // fetch of it bounds that round trip by something real rather than by a guessed sleep. The
+    // extra turn afterwards lets an already-arrived response commit if it was going to.
+    await fetch(REMOTE, { mode: "no-cors" });
+    await new Promise(resolve => t.step_timeout(resolve, 500));
+
+    assert_equals(location.href, startURL, "document is still on its original URL");
+    assert_equals(window.__marker, "alive", "the original document was not replaced");
+}, "preventDefault() cancels a cross-site process-swapping main frame navigation (Site Isolation)");
+</script>
+</body>

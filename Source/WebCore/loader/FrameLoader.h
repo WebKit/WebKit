@@ -39,6 +39,7 @@
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/NavigationAction.h>
 #include <WebCore/NavigationHistoryBehavior.h>
+#include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -139,6 +140,11 @@ public:
     WEBCORE_EXPORT void loadFrameRequest(FrameLoadRequest&&, Event*, RefPtr<const FormSubmission>&&, std::optional<PrivateClickMeasurement>&& = std::nullopt); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(FrameLoadRequest&&, std::optional<NavigationRequester>&& crossSiteRequester = std::nullopt);
+
+    // Driven by the UI process between the client's navigation policy decision and the process swap,
+    // because continueLoadAfterNavigationPolicy returns early for that decision and never reaches the
+    // pending navigate event.
+    WEBCORE_EXPORT bool dispatchPendingNavigateEventForProcessSwap(NavigationIdentifier);
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(Ref<Archive>&&);
