@@ -28,11 +28,13 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSImportRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSParserContext.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserState.h"
 #include "CSSPropertyParsing.h"
+#include "CSSRule.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -434,7 +436,7 @@ Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(protect(dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(compoundId))));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(compoundId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -501,8 +503,7 @@ Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
     // FIXME <https://webkit.org/b/317684>: Reconsider whether accessing rawAction.newRuleId here is safe.
-    RefPtr styleRule = dynamicDowncast<CSSStyleRule>(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
-    auto rule = inspectorStyleSheet->buildObjectForRule(styleRule);
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -774,10 +775,14 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(cons
     if (RefPtr shadowRoot = element.shadowRoot())
         styleResolver.inspectorCSSOMWrappers().collectScopeWrappers(protect(shadowRoot->styleScope()));
 
-    return buildObjectForRule(protect(styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule)));
+    if (RefPtr cssomWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForRuleInSheets(styleRule))
+        return buildObjectForRule(cssomWrapper.get());
+
+    RefPtr nestedDeclarationsWrapper = styleResolver.inspectorCSSOMWrappers().getWrapperForNestedDeclarationsRuleInSheets(styleRule);
+    return buildObjectForRule(nestedDeclarationsWrapper.get());
 }
 
-RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(CSSStyleRule* rule)
+RefPtr<Inspector::Protocol::CSS::CSSRule> FrameCSSAgent::buildObjectForRule(CSSRule* rule)
 {
     if (!rule)
         return nullptr;

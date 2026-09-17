@@ -34,6 +34,7 @@
 #include "CSSLayerBlockRule.h"
 #include "CSSLayerStatementRule.h"
 #include "CSSMediaRule.h"
+#include "CSSNestedDeclarations.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSRule.h"
 #include "CSSScopeRule.h"
@@ -43,6 +44,7 @@
 #include "CSSSupportsRule.h"
 #include "Document.h"
 #include "ExtensionStyleSheets.h"
+#include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyle.h"
@@ -95,6 +97,11 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
             // Eagerly collect rules nested in this style rule.
             collect(uncheckedDowncast<CSSStyleRule>(cssRule.get()));
             break;
+        case StyleRuleType::NestedDeclarations: {
+            auto& nestedDecl = uncheckedDowncast<CSSNestedDeclarations>(*cssRule);
+            m_nestedDeclarationsRuleToCSSOMWrapperMap.add(&nestedDecl.nestedDeclarationsRule(), nestedDecl);
+            break;
+        }
         default:
             break;
         }
@@ -161,6 +168,11 @@ void InspectorCSSOMWrappers::collectScopeWrappers(Scope& styleScope)
 CSSStyleRule* InspectorCSSOMWrappers::getWrapperForRuleInSheets(const StyleRule* rule)
 {
     return m_styleRuleToCSSOMWrapperMap.get(rule);
+}
+
+CSSNestedDeclarations* InspectorCSSOMWrappers::getWrapperForNestedDeclarationsRuleInSheets(const StyleRule* rule)
+{
+    return m_nestedDeclarationsRuleToCSSOMWrapperMap.get(rule);
 }
 
 } // namespace Style

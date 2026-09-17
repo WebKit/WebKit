@@ -32,6 +32,12 @@
     background: var(--background-color-content);
     border-bottom: 0.5px solid var(--text-color-quaternary);
     -webkit-user-select: text;
+
+    --css-declaration-nesting-indent: 6px;
+    /* Set by SpreadsheetCSSStyleDeclarationSection.prototype._renderGroupings. */
+    --css-declaration-nesting-depth: 0;
+
+    padding-inline-start: calc(var(--css-declaration-nesting-depth) * var(--css-declaration-nesting-indent));
 }
 
 .spreadsheet-css-declaration.selecting,
@@ -60,6 +66,21 @@
 
 .spreadsheet-css-declaration .header-groupings > .grouping {
     color: var(--text-color);
+}
+
+/* Pull each grouping back out of the indentation applied for the levels below it. */
+.spreadsheet-css-declaration .header-groupings > .grouping,
+.spreadsheet-css-declaration > .grouping-close-braces > .grouping-close-brace {
+    margin-inline-start: calc((var(--grouping-depth, 0) - var(--css-declaration-nesting-depth)) * var(--css-declaration-nesting-indent));
+}
+
+.spreadsheet-css-declaration > .grouping-close-braces > .grouping-close-brace {
+    padding-inline-start: var(--css-declaration-horizontal-padding);
+}
+
+.spreadsheet-css-declaration .header-groupings > .grouping > .open-brace,
+.spreadsheet-css-declaration > .grouping-close-braces > .grouping-close-brace {
+    color: var(--text-color-tertiary);
 }
 
 .spreadsheet-css-declaration .origin {
@@ -105,7 +126,7 @@
     -webkit-user-modify: read-only;
 }
 
-.spreadsheet-css-declaration .selector > .icon {
+.spreadsheet-css-declaration :is(.selector, .grouping) > .icon {
     width: 16px;
     height: 16px;
     margin-top: -1px;
@@ -116,6 +137,10 @@
 
 .spreadsheet-css-declaration .selector > .icon + * {
     padding-inline-start: 2px;
+}
+
+.spreadsheet-css-declaration .header-groupings > .grouping > .icon {
+    margin-inline-end: 2px;
 }
 
 .spreadsheet-css-declaration .selector > span {

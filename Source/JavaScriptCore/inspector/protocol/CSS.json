@@ -175,7 +175,7 @@
                 { "name": "origin", "$ref": "StyleSheetOrigin", "description": "Parent stylesheet's origin."},
                 { "name": "style", "$ref": "CSSStyle", "description": "Associated style declaration." },
                 { "name": "groupings", "type": "array", "items": { "$ref": "Grouping" }, "optional": true, "description": "Grouping list array (for rules involving @media/@supports). The array enumerates CSS groupings starting with the innermost one, going outwards." },
-                { "name": "isImplicitlyNested", "type": "boolean", "optional": true, "description": "<code>true</code> if this style is for a rule implicitly wrapping properties declared inside of CSSGrouping." }
+                { "name": "isImplicitlyNested", "type": "boolean", "optional": true, "description": "<code>true</code> if this is a nested declarations rule holding declarations interleaved with other rules inside a style rule or nested grouping rule. Such a rule has no selector of its own, it matches whatever its nesting parent style rule matches." }
             ]
         },
         {

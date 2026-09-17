@@ -61,18 +61,10 @@ function test()
         name: "CSS.getMatchedStyleForNode.NestingStyleGrouping.NormalProperty",
         description: "Non-nested properties should be visible even when nested style rules are present.",
         selector: "#outerA",
-        expectedAuthoredRuleCount: 3,
+        expectedAuthoredRuleCount: 4,
         authoredRulesHandler(rules) {
             expectRuleAtIndex(rules, 0, {
-                selectorText: "&",
-                colorPropertyValue: "yellow",
-                groupings: [
-                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
-                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
-                ],
-            });
-            expectRuleAtIndex(rules, 1, {
-                selectorText: "&",
+                selectorText: "",
                 isImplicitlyNested: true,
                 colorPropertyValue: "purple",
                 groupings: [
@@ -80,7 +72,24 @@ function test()
                     {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
                 ],
             });
+            expectRuleAtIndex(rules, 1, {
+                selectorText: "&",
+                colorPropertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
             expectRuleAtIndex(rules, 2, {
+                selectorText: "",
+                isImplicitlyNested: true,
+                colorPropertyValue: "blue",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
+            expectRuleAtIndex(rules, 3, {
                 selectorText: "#outerA",
                 colorPropertyValue: "red",
             });
@@ -91,25 +100,20 @@ function test()
         name: "CSS.getMatchedStyleForNode.NestingStyleGrouping.NestedRulePropertyWithImplicitAmpersand",
         description: "Nested rules with an implicit ampersand should have a grouping representing the outer style rule.",
         selector: "#outerA .innerA",
-        expectedAuthoredRuleCount: 4,
+        expectedAuthoredRuleCount: 5,
         authoredRulesHandler(rules) {
             expectRuleAtIndex(rules, 0, {
-                selectorText: ".innerA",
+                // The CSS parser materializes the implied nesting selector into the parsed selector so it
+                // contributes specificity, so the authored `.innerA` is reported as `& .innerA` here. The
+                // authored text is available separately, per selector, in `selectorList.selectors`.
+                selectorText: "& .innerA",
                 colorPropertyValue: "green",
                 groupings: [
                     {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
                 ],
             });
             expectRuleAtIndex(rules, 1, {
-                selectorText: "&",
-                colorPropertyValue: "yellow",
-                groupings: [
-                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
-                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
-                ],
-            });
-            expectRuleAtIndex(rules, 2, {
-                selectorText: "&",
+                selectorText: "",
                 isImplicitlyNested: true,
                 colorPropertyValue: "purple",
                 groupings: [
@@ -117,7 +121,24 @@ function test()
                     {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
                 ],
             });
+            expectRuleAtIndex(rules, 2, {
+                selectorText: "&",
+                colorPropertyValue: "yellow",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
             expectRuleAtIndex(rules, 3, {
+                selectorText: "",
+                isImplicitlyNested: true,
+                colorPropertyValue: "blue",
+                groupings: [
+                    {type: WI.CSSGrouping.Type.MediaRule, text: "(min-width: 0px)"},
+                    {type: WI.CSSGrouping.Type.StyleRule, text: "#outerA"},
+                ],
+            });
+            expectRuleAtIndex(rules, 4, {
                 selectorText: "#outerA",
                 colorPropertyValue: "red",
             });
@@ -148,8 +169,8 @@ function test()
         color: red;
 
         @media(min-width: 0px) {
-            background-color: blue;
-            
+            color: blue;
+
             & {
                 color: yellow;
             }

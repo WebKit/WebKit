@@ -337,8 +337,13 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         this._groupingElements = [];
 
-        if (!this._style.groupings.length) {
+        let groupings = this._renderedGroupings;
+
+        this._element.style.setProperty("--css-declaration-nesting-depth", groupings.length);
+
+        if (!groupings.length) {
             this._groupingsContainerElement?.remove();
+            this._groupingCloseBracesElement?.remove();
             return;
         }
 
@@ -348,43 +353,77 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         } else
             this._groupingsContainerElement.removeChildren();
 
-        let groupings = this._style.groupings;
-        for (let i = groupings.length - 1; i >= 0; --i) {
-            let grouping = groupings[i];
+        if (!this._groupingCloseBracesElement) {
+            this._groupingCloseBracesElement = document.createElement("div");
+            this._groupingCloseBracesElement.classList.add("grouping-close-braces");
+        } else
+            this._groupingCloseBracesElement.removeChildren();
 
-            if (!grouping.prefix && !grouping.text)
-                continue;
+        for (let depth = 0; depth < groupings.length; ++depth) {
+            let grouping = groupings[depth];
 
             let groupingTypeElement = this._groupingsContainerElement.appendChild(document.createElement("div"));
             groupingTypeElement.classList.add("grouping");
+            groupingTypeElement.style.setProperty("--grouping-depth", depth);
 
-            if (!grouping.text) {
+            if (grouping.text) {
+                if (grouping.prefix)
+                    groupingTypeElement.textContent = grouping.prefix + " ";
+
+                let groupingTextElement = groupingTypeElement.appendChild(document.createElement("span"));
+                groupingTextElement.textContent = grouping.text;
+                groupingTextElement.representedGrouping = grouping;
+
+                if (grouping.editable) {
+                    let groupingTextField = new WI.SpreadsheetRuleHeaderField(this, groupingTextElement);
+
+                    grouping.addEventListener(WI.CSSGrouping.Event.TextChanged, function(event) {
+                        groupingTextElement.textContent = grouping.text;
+                    }, this);
+
+                    // Used by _handleSpreadsheetGroupingFieldWillNavigate to allow tabbing between grouping editors.
+                    groupingTextElement.associatedTextField = groupingTextField;
+                }
+
+                this._groupingElements.push(groupingTextElement);
+            } else
                 groupingTypeElement.textContent = grouping.prefix;
-                continue;
-            }
 
-            if (grouping.prefix)
-                groupingTypeElement.textContent = grouping.prefix + " ";
+            // Setting `textContent` above clears any existing child, so place the icon afterwards.
+            if (!depth)
+                groupingTypeElement.prepend(this._ensureIconElement());
 
-            let groupingTextElement = groupingTypeElement.appendChild(document.createElement("span"));
-            groupingTextElement.textContent = grouping.text;
-            groupingTextElement.representedGrouping = grouping;
+            let openBraceElement = groupingTypeElement.appendChild(document.createElement("span"));
+            openBraceElement.classList.add("open-brace");
+            openBraceElement.textContent = " {";
 
-            if (grouping.editable) {
-                let groupingTextField = new WI.SpreadsheetRuleHeaderField(this, groupingTextElement);
-
-                grouping.addEventListener(WI.CSSGrouping.Event.TextChanged, function(event) {
-                    groupingTextElement.textContent = grouping.text;
-                }, this);
-
-                // Used by _handleSpreadsheetGroupingFieldWillNavigate to allow tabbing between grouping editors.
-                groupingTextElement.associatedTextField = groupingTextField;
-            }
-
-            this._groupingElements.push(groupingTextElement);
+            let closeBraceElement = document.createElement("div");
+            closeBraceElement.classList.add("grouping-close-brace");
+            closeBraceElement.style.setProperty("--grouping-depth", depth);
+            closeBraceElement.textContent = "}";
+            this._groupingCloseBracesElement.prepend(closeBraceElement);
         }
 
         this._element.insertBefore(this._groupingsContainerElement, this._headerElement);
+        this._element.append(this._groupingCloseBracesElement);
+    }
+
+    // The groupings that get rendered, ordered outermost first. `WI.CSSStyleDeclaration.prototype.groupings`
+    // is ordered innermost first and can contain groupings with nothing to show.
+    get _renderedGroupings()
+    {
+        return this._style.groupings.filter((grouping) => grouping.prefix || grouping.text).reverse();
+    }
+
+    _ensureIconElement()
+    {
+        if (!this._iconElement) {
+            this._iconElement = document.createElement("img");
+            this._iconElement.classList.add("icon");
+            WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
+        }
+
+        return this._iconElement;
     }
 
     _renderSelector()
@@ -428,12 +467,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             selectorElement.classList.add(WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName);
         };
 
-        if (!this._iconElement) {
-            this._iconElement = document.createElement("img");
-            this._iconElement.classList.add("icon");
-            WI.addMouseDownContextMenuHandlers(this._iconElement, this._populateIconElementContextMenu.bind(this));
-        }
-        this._selectorElement.appendChild(this._iconElement);
+        if (!this._renderedGroupings.length)
+            this._selectorElement.appendChild(this._ensureIconElement());
 
         switch (this._style.type) {
         case WI.CSSStyleDeclaration.Type.Rule:
@@ -452,8 +487,11 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
                     if (i < selectors.length - 1)
                         this._selectorElement.append(", ");
                 }
-            } else
+            } else if (!this._style.ownerRule.isImplicitlyNested) {
+                // A nested declarations rule has no selector of its own. The groupings rendered above,
+                // including the nesting parent style rule, provide the context for its declarations.
                 appendSelectorTextKnownToMatch(this._style.ownerRule.selectorText);
+            }
 
             this._element.classList.toggle("pseudo-selector", hasMatchingPseudoSelector);
             break;
@@ -565,7 +603,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
             });
         }
 
-        if (!this._style.inherited && InspectorBackend.hasCommand("CSS.addRule")) {
+        if (!this._style.inherited && !this._style.ownerRule?.isImplicitlyNested && InspectorBackend.hasCommand("CSS.addRule")) {
             let generateSelector = () => {
                 if (this._style.type === WI.CSSStyleDeclaration.Type.Attribute)
                     return this._style.node.displayName;
@@ -718,12 +756,13 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         let node = this._style.node;
 
-        if (!this._style.ownerRule) {
+        // Inline styles and nested declarations rules have no selector of their own to match other nodes with.
+        let selectorText = this._style.ownerRule ? this._selectorElement.textContent.trim() : "";
+        if (!selectorText) {
             node.highlight();
             return;
         }
 
-        let selectorText = this._selectorElement.textContent.trim();
         if (node.frame)
             WI.domManager.highlightSelector(selectorText, node.frame.id);
         else
