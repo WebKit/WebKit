@@ -2904,8 +2904,6 @@ fast/mediastream/get-user-media-constraints.html [ Failure ]
 fast/mediastream/get-user-media-ideal-constraints.html [ Failure ]
 fast/mediastream/image-capture-grabFrame.html [ Failure ]
 
-webkit.org/b/324108 webrtc/disable-encryption.html [ Pass Crash ]
-
 # No AudioSession category handling in WPE/GTK ports.
 fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 http/tests/webrtc/audioSessionInFrames.html [ Failure ]
