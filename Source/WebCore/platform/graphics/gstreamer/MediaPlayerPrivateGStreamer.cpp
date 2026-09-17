@@ -4297,7 +4297,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
         return;
 
     Ref frame = VideoFrameGStreamer::create(WTF::move(sample), { IntSize(*presentationSize), { *m_videoInfo } });
-    context.drawVideoFrame(frame, rect, m_videoSourceOrientation, false);
+    context.drawVideoFrame(frame, rect, ShouldDiscardAlpha::No, { m_videoSourceOrientation });
 }
 
 ColorSpace MediaPlayerPrivateGStreamer::colorSpace()

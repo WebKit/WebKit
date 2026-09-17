@@ -1617,6 +1617,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::SharedWorkerObjectIdentifierID': ['"GeneratedSerializers.h"'],
         'WebCore::ShareDataWithParsedURL': ['<WebCore/ShareData.h>'],
         'WebCore::ShouldContinuePolicyCheck': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::ShouldDiscardAlpha': ['<WebCore/GraphicsContext.h>'],
         'WebCore::ShouldFocusElement': ['<WebCore/FocusControllerTypes.h>'],
         'WebCore::ShouldGoToHistoryItem': ['<WebCore/LocalFrameLoaderClient.h>'],
         'WebCore::ShouldNotifyWhenResolved': ['<WebCore/ServiceWorkerTypes.h>'],

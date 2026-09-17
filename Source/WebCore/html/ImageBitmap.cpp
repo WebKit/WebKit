@@ -588,7 +588,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawVideoFrame(*internalFrame, destRect, ImageOrientation::Orientation::None, true);
+    bitmapData->context().drawVideoFrame(*internalFrame, destRect, ShouldDiscardAlpha::Yes);
 
     auto imageBitmap = create(bitmapData.releaseNonNull(), originClean);
     completionHandler(WTF::move(imageBitmap));

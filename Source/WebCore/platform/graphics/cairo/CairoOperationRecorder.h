@@ -104,7 +104,7 @@ private:
     WebCore::IntRect clipBounds() const override;
     void clipToImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect&) override;
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const WebCore::VideoFrame&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha) override;
+    void drawVideoFrame(const WebCore::VideoFrame&, const WebCore::FloatRect& destination, WebCore::ShouldDiscardAlpha, WebCore::ImagePaintingOptions) override;
 #endif
 
     void applyDeviceScaleFactor(float) override;
