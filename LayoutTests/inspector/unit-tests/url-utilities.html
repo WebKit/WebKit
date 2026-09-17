@@ -426,30 +426,32 @@ function test()
         name: "parseQueryString",
         test() {
             function test(queryString, expected) {
-                InspectorTest.expectShallowEqual(parseQueryString(queryString), expected, `The query '${queryString}' was parsed successfully.`);
+                InspectorTest.expectEqual(JSON.stringify(parseQueryString(queryString)), JSON.stringify(expected), `The query '${queryString}' was parsed successfully.`);
             }
 
-            test("a", {a: ""});
-            test("a&b", {a: "", b: ""});
+            test("", []);
+            test("a", [{name: "a", value: ""}]);
+            test("a&b", [{name: "a", value: ""}, {name: "b", value: ""}]);
 
-            test("a=", {a: ""});
-            test("a=&b=", {a: "", b: ""});
+            test("a=", [{name: "a", value: ""}]);
+            test("a=&b=", [{name: "a", value: ""}, {name: "b", value: ""}]);
 
-            test("a=1", {a: "1"});
-            test("a=1&b=2", {a: "1", b: "2"});
+            test("a=1", [{name: "a", value: "1"}]);
+            test("a=1&b=2", [{name: "a", value: "1"}, {name: "b", value: "2"}]);
+            test("a=1&b=2&a=1", [{name: "a", value: "1"}, {name: "b", value: "2"}, {name: "a", value: "1"}]);
 
-            test("a==1", {a: "=1"});
-            test("a==1&b==2", {a: "=1", b: "=2"});
+            test("a==1", [{name: "a", value: "=1"}]);
+            test("a==1&b==2", [{name: "a", value: "=1"}, {name: "b", value: "=2"}]);
 
-            test("a=1=", {a: "1="});
-            test("a=1=&b=2=", {a: "1=", b: "2="});
+            test("a=1=", [{name: "a", value: "1="}]);
+            test("a=1=&b=2=", [{name: "a", value: "1="}, {name: "b", value: "2="}]);
 
-            test("a==1=", {a: "=1="});
-            test("a==1=&b==2=", {a: "=1=", b: "=2="});
+            test("a==1=", [{name: "a", value: "=1="}]);
+            test("a==1=&b==2=", [{name: "a", value: "=1="}, {name: "b", value: "=2="}]);
 
-            test("a&b=1&c==2=&d&e=3&f==4=", {a: "", b: "1", c: "=2=", d: "", e: "3", f: "=4="});
+            test("a&b=1&c==2=&d&e=3&f==4=", [{name: "a", value: ""}, {name: "b", value: "1"}, {name: "c", value: "=2="}, {name: "d", value: ""}, {name: "e", value: "3"}, {name: "f", value: "=4="}]);
 
-            test("a=foo%20bar&b=123%3A456", {a: "foo bar", b: "123:456"});
+            test("a=foo%20bar&b=123%3A456", [{name: "a", value: "foo bar"}, {name: "b", value: "123:456"}]);
 
             return true;
         }

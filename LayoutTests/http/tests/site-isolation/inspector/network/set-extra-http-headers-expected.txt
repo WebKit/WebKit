@@ -5,4 +5,7 @@ Test that Network.setExtraHTTPHeaders is forwarded to the WebContent process and
 == Running test suite: SiteIsolation.Network.SetExtraHTTPHeaders
 -- Running test case: SiteIsolation.Network.SetExtraHTTPHeaders.AppliedToCrossOriginIFrameRequest
 PASS: The cross-origin iframe's request should carry the inspector's extra HTTP header.
+PASS: Repeated extra headers should remain separate fields across processes.
+PASS: The cross-origin iframe's request should carry both common header values.
+PASS: Repeated common headers should remain separate fields across processes.
 

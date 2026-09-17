@@ -69,7 +69,7 @@ function test()
         description: "Load a resource from the network without Cookies, we should not see any Cookie headers.",
         expression: `triggerNetworkLoadWithoutCookie()`,
         loadHandler(resource) {
-            InspectorTest.expectThat(!resource.requestHeaders.valueForCaseInsensitiveKey("Cookie"), "Request should not have a 'Cookie' header.");
+            InspectorTest.expectThat(!resource.requestHeaders.get(WI.HTTPHeader.Cookie), "Request should not have a 'Cookie' header.");
         }
     });
 
@@ -78,7 +78,7 @@ function test()
         description: "Load a resource from the network with Cookies, we should be able to see Cookie headers.",
         expression: `triggerNetworkLoadWithCookie()`,
         loadHandler(resource) {
-            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Cookie"), "InspectorTestCookie=1234", "'Cookie' header value should be `InspectorTestCookie=1234`.");
+            InspectorTest.expectEqual(resource.requestHeaders.get(WI.HTTPHeader.Cookie), "InspectorTestCookie=1234", "'Cookie' header value should be `InspectorTestCookie=1234`.");
         }
     });
 
@@ -88,8 +88,8 @@ function test()
         expression: `triggerNetworkLoadWithoutBasicAuthentication()`,
         loadHandler(resource) {
             InspectorTest.expectEqual(resource.statusCode, 401, "Resource should have a 401 status code.");
-            InspectorTest.expectThat(resource.responseHeaders.valueForCaseInsensitiveKey("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
-            InspectorTest.expectThat(!resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Request should not have a 'Authorization' header.");
+            InspectorTest.expectThat(resource.responseHeaders.get("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
+            InspectorTest.expectThat(!resource.requestHeaders.get(WI.HTTPHeader.Authorization), "Request should not have a 'Authorization' header.");
         }
     });
 
@@ -99,9 +99,9 @@ function test()
         expression: `triggerNetworkLoadWithBasicAuthenticationFailure()`,
         loadHandler(resource) {
             InspectorTest.expectEqual(resource.statusCode, 401, "Resource should have a 401 status code.");
-            InspectorTest.expectThat(resource.responseHeaders.valueForCaseInsensitiveKey("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
+            InspectorTest.expectThat(resource.responseHeaders.get("WWW-Authenticate"), "Response should have a 'WWW-Authenticate' response header for the failure.");
             // FIXME: <https://webkit.org/b/170489> Web Inspector: Include NetworkLoadMetrics with failed loads
-            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Basic YmFkVXNlcm5hbWU6YmFkUGFzc3dvcmQ=", "'Authorization' header value should be for badUsername:badPassword.");
+            InspectorTest.expectEqual(resource.requestHeaders.get(WI.HTTPHeader.Authorization), "Basic YmFkVXNlcm5hbWU6YmFkUGFzc3dvcmQ=", "'Authorization' header value should be for badUsername:badPassword.");
         }
     });
 
@@ -111,7 +111,7 @@ function test()
         expression: `triggerNetworkLoadWithBasicAuthenticationSuccess()`,
         loadHandler(resource) {
             InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 status code.");
-            InspectorTest.expectEqual(resource.requestHeaders.valueForCaseInsensitiveKey("Authorization"), "Basic Z29vZFVzZXJuYW1lOmdvb2RQYXNzd29yZA==", "'Authorization' header value should be for goodUsername:goodPassword.");
+            InspectorTest.expectEqual(resource.requestHeaders.get(WI.HTTPHeader.Authorization), "Basic Z29vZFVzZXJuYW1lOmdvb2RQYXNzd29yZA==", "'Authorization' header value should be for goodUsername:goodPassword.");
         }
     });
 

@@ -218,7 +218,7 @@ WI.ResourceSizesContentView = class ResourceSizesContentView extends WI.ContentV
 
         this._resourceBytesElement.textContent = this._formattedSizeComponent(decodedSize || 0);
 
-        let contentEncoding = this._resource.responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
+        let contentEncoding = this._resource.responseHeaders.get(WI.HTTPHeader.ContentEncoding);
         if (contentEncoding)
             compressionString += ` (${contentEncoding.toLowerCase()})`;
 

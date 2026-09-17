@@ -26,7 +26,7 @@ function test()
         name: "Network.setExtraHTTPHeaders.WebSocket.Request",
         description: "Headers set via Network.setExtraHTTPHeaders should be included in the WebSocket handshake request.",
         async test() {
-            await NetworkAgent.setExtraHTTPHeaders({[headerName]: headerValue});
+            await NetworkAgent.setExtraHTTPHeaders([{name: headerName, value: headerValue}]);
 
             let [resourceWasAddedEvent, inspectedPageWebSocketMessageEvent] = await Promise.all([
                 WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
@@ -36,7 +36,7 @@ function test()
 
             let webSocketResource = resourceWasAddedEvent.data.resource;
             InspectorTest.expectThat(webSocketResource instanceof WI.WebSocketResource, "Resource should be a WebSocket.");
-            InspectorTest.expectEqual(webSocketResource.requestHeaders.valueForCaseInsensitiveKey(headerName), headerValue, `Resource request headers should include "${headerName}: ${headerValue}".`);
+            InspectorTest.expectEqual(webSocketResource.requestHeaders.get(headerName), headerValue, `Resource request headers should include "${headerName}: ${headerValue}".`);
 
             let echoedHeaderValue = inspectedPageWebSocketMessageEvent.data;
             InspectorTest.expectEqual(echoedHeaderValue, headerValue, `Server should have received header "${headerName}" with value "${headerValue}".`);
