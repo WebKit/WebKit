@@ -39,6 +39,7 @@ class CachedImage;
 class DeferredPromise;
 class HTMLAttachmentElement;
 class HTMLFormElement;
+class NativeImage;
 class HTMLImageLoader;
 class HTMLMapElement;
 class Image;
@@ -87,6 +88,7 @@ public:
     const AtomString& NODELETE altText() const;
 
     WEBCORE_EXPORT CachedImage* NODELETE cachedImage() const;
+    WEBCORE_EXPORT RefPtr<NativeImage> sourceNativeImage() const;
 
     void NODELETE setLoadManually(bool);
 

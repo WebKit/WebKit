@@ -39,6 +39,7 @@
 #include "MediaImage.h"
 #include "MediaMetadataInit.h"
 #include "NodeInlinesLight.h"
+#include "ObjectSizeNegotiation.h"
 #include "SpaceSplitString.h"
 #include <ranges>
 #include <wtf/TZoneMallocInlines.h>
@@ -274,10 +275,19 @@ void MediaMetadata::tryNextArtworkImage(uint32_t index, Vector<Pair>&& artworks)
         RefPtr strongThis = weakThis;
         if (!strongThis)
             return;
-        if (image && image->data() && image->width() && image->height()) {
-            IntSize size { int(image->width()), int(image->height()) };
+        auto naturalSizeOf = [](const RefPtr<Image>& image) -> FloatSize {
+            if (!image)
+                return { };
+            return ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+                ObjectSizeNegotiation::SpecifiedSize::none(),
+                { .defaultObjectSize = { } }).size();
+        };
+        auto naturalSize = naturalSizeOf(image);
+        if (image && image->data() && naturalSize.width() && naturalSize.height()) {
+            IntSize size { int(naturalSize.width()), int(naturalSize.height()) };
             float imageScore = imageDimensionsScore(size.width(), size.height(), s_minimumSize, s_idealSize);
-            if (!index || (strongThis->m_artworkImage && (imageDimensionsScore(protect(strongThis->m_artworkImage)->width(), protect(strongThis->m_artworkImage)->height(), s_minimumSize, s_idealSize) < imageScore))) {
+            auto artworkSize = naturalSizeOf(strongThis->m_artworkImage);
+            if (!index || (strongThis->m_artworkImage && (imageDimensionsScore(artworkSize.width(), artworkSize.height(), s_minimumSize, s_idealSize) < imageScore))) {
                 strongThis->m_artworkImageSrc = artworkImageSrc;
                 strongThis->setArtworkImage(image);
                 strongThis->metadataUpdated();

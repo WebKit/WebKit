@@ -78,6 +78,7 @@
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
+#include "SVGImage.h"
 #include "SVGImageElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptTrackingPrivacyCategory.h"
@@ -1550,8 +1551,11 @@ static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, ImageS
 {
     if (!cachedImage)
         return { };
-    LayoutSize size = cachedImage->imageSizeForRenderer(renderer, 1.0f); // FIXME: Not sure about this.
-    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !protect(cachedImage->image())->hasRelativeWidth())
+    RefPtr sourceImage = cachedImage->hasImage() ? cachedImage->image() : nullptr;
+    if (!sourceImage)
+        return { };
+    LayoutSize size { selfReportedSize(*sourceImage, renderer ? renderer->imageOrientation() : ImageOrientation(ImageOrientation::Orientation::FromImage)) };
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && protect(cachedImage->image())->naturalDimensions().width)
         size.scale(renderImage->imageDevicePixelRatio());
     return size;
 }
@@ -1594,7 +1598,8 @@ static inline FloatSize size(CSSStyleImageValue& image)
     if (!cachedImage)
         return FloatSize();
 
-    return cachedImage->imageSizeForRenderer(nullptr, 1.0f);
+    RefPtr sourceImage = cachedImage->hasImage() ? cachedImage->image() : nullptr;
+    return sourceImage ? selfReportedSize(*sourceImage) : FloatSize { };
 }
 
 #if ENABLE(WEB_CODECS)
@@ -1745,7 +1750,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
 }
 #endif
 
-ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage& cachedImage, const RenderObject* renderer, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
+ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, CachedImage& cachedImage, const RenderObject*, const FloatRect& imageRect, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, const BlendMode& blendMode, ImageOrientation orientation)
 {
     if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
@@ -1774,7 +1779,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (!hasInvertibleTransform()) [[unlikely]]
         return { };
 
-    RefPtr<Image> image = cachedImage.imageForRenderer(renderer);
+    RefPtr<Image> image = cachedImage.image();
     if (!image)
         return { };
 
@@ -1782,16 +1787,13 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     ImageObserverDisableScope imageObserverDisabler(*image, drawsSVGImage);
     auto shouldPostProcess { true };
 
-    if (drawsSVGImage)
-        image->setContainerSize(imageRect.size());
-
     if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
         if (image->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled()) {
             // FIXME: This draws the SDR base image, so an animated HDR image loses its HDR
             // content: the copy is backed by a NativeImageSource, which never reports a gain
             // map and always prefers DecodingDestination::Base.
-            bitmapImage = BitmapImage::create(image->nativeImage());
+            bitmapImage = BitmapImage::create(bitmapImage->nativeImage());
             if (!bitmapImage)
                 return { };
             image = bitmapImage.copyRef();
@@ -1813,21 +1815,23 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
 #endif
     };
 
+    auto concreteObjectSize = ConcreteObjectSize::fixed(sizeSampledAt(*image).value_or(imageRect.size()));
+
     auto willUpdateContentsOptions = shouldPostProcess ? defaultWillUpdateContentsOptions() : defaultWillUpdateContentsOptionsWithoutPostProcessing();
 
     if (rectContainsCanvas(normalizedDstRect)) {
         willUpdateEntireContents(willUpdateContentsOptions);
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else if (isFullCanvasCompositeMode(op)) {
         willUpdateEntireContents(willUpdateContentsOptions);
         fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op, options.drawsHDRContent(), options.allowAcceleratedApplyGainMap());
     } else if (op == CompositeOperator::Copy) {
         willUpdateEntireContents(willUpdateContentsOptions);
         clearCanvas();
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     } else {
         willUpdateContents(targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, willUpdateContentsOptions);
-        c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
+        c->drawImage(*image, concreteObjectSize, normalizedDstRect, normalizedSrcRect, options);
     }
 
     return { };
@@ -2102,7 +2106,10 @@ void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const In
 
 static void drawImageToContext(Image& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
 {
-    context.drawImage(image, dest, src, options);
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    context.drawImage(image, imageSize, dest, src, options);
 }
 
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
@@ -2273,7 +2280,7 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     );
 }
 
-ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CachedImage& cachedImage, RenderElement* renderer, bool repeatX, bool repeatY)
+ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(CachedImage& cachedImage, RenderElement*, bool repeatX, bool repeatY)
 {
     bool originClean = cachedImage.isOriginClean(protect(canvasBase())->securityOrigin());
 
@@ -2286,11 +2293,18 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(C
     if (protect(cachedImage.image())->drawsSVGImage())
         originClean = false;
 
-    RefPtr image = cachedImage.imageForRenderer(renderer);
+    RefPtr image = cachedImage.image();
     if (!image)
         return Exception { ExceptionCode::InvalidStateError };
 
-    RefPtr nativeImage = image->nativeImage();
+    RefPtr<NativeImage> nativeImage;
+    if (RefPtr svgImage = dynamicDowncast<SVGImage>(image)) {
+        auto concreteSize = ObjectSizeNegotiation::defaultSizingAlgorithm(svgImage->naturalDimensions(),
+            ObjectSizeNegotiation::SpecifiedSize::none(),
+            { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+        nativeImage = svgImage->nativeImage(concreteSize.size());
+    } else if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image))
+        nativeImage = bitmapImage->nativeImage();
     if (!nativeImage)
         return Exception { ExceptionCode::InvalidStateError };
 
@@ -2311,12 +2325,9 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(H
     if (cachedImage->status() == CachedResource::LoadError)
         return Exception { ExceptionCode::InvalidStateError };
 
-    // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
+    // An image with no natural width or height has nothing to tile.
+    auto naturalDimensions = cachedImage->naturalDimensions();
+    if (!naturalDimensions.width.value_or(0) || !naturalDimensions.height.value_or(0))
         return nullptr;
 
     return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);
@@ -2337,12 +2348,9 @@ ExceptionOr<RefPtr<CanvasPattern>> CanvasRenderingContext2DBase::createPattern(S
     if (!cachedImage->image())
         return nullptr;
 
-    // Image may have a zero-width or a zero-height.
-    float intrinsicWidth = 0;
-    float intrinsicHeight = 0;
-    FloatSize intrinsicRatio;
-    cachedImage->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-    if (intrinsicWidth == 0 || intrinsicHeight == 0)
+    // An image with no natural width or height has nothing to tile.
+    auto naturalDimensions = cachedImage->naturalDimensions();
+    if (!naturalDimensions.width.value_or(0) || !naturalDimensions.height.value_or(0))
         return nullptr;
 
     return createPattern(*cachedImage, protect(imageElement.renderer()).get(), repeatX, repeatY);

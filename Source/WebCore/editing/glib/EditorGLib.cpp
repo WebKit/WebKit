@@ -96,7 +96,7 @@ static bool getImageForElement(Element& element, RefPtr<Image>& image)
     if (!cachedImage || cachedImage->errorOccurred())
         return false;
 
-    image = cachedImage->imageForRenderer(renderer);
+    image = cachedImage->image();
     return image;
 }
 

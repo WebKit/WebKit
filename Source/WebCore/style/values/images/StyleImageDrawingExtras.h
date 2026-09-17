@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,29 +24,34 @@
 
 #pragma once
 
-#include "Color.h"
-#include "GeneratedImage.h"
+#include <WebCore/ImageDrawingExtras.h>
+#include <WebCore/StyleLinkParameters.h>
+#include <wtf/TypeCasts.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
+namespace Style {
 
-class FloatSize;
-
-class ColorImageGeneratedImage final : public GeneratedImage {
+class ImageDrawingExtras final : public WebCore::ImageDrawingExtras {
 public:
-    static Ref<ColorImageGeneratedImage> create(const Color& color, const FloatSize& size)
+    ImageDrawingExtras(WTF::URL fragmentURL = { }, LinkParameters linkParameters = { CSS::Keyword::None { } })
+        : WebCore::ImageDrawingExtras(Type::Style)
+        , m_fragmentURL(WTF::move(fragmentURL))
+        , m_linkParameters(WTF::move(linkParameters))
     {
-        return adoptRef(*new ColorImageGeneratedImage(color, size));
     }
 
+    const WTF::URL& fragmentURL() const { return m_fragmentURL; }
+    const LinkParameters& linkParameters() const { return m_linkParameters; }
+
 private:
-    ColorImageGeneratedImage(const Color&, const FloatSize&);
-
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-
-    void dump(WTF::TextStream&) const override;
-
-    Color m_color;
+    WTF::URL m_fragmentURL;
+    LinkParameters m_linkParameters;
 };
 
+} // namespace Style
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Style::ImageDrawingExtras)
+    static bool isType(const WebCore::ImageDrawingExtras& extras) { return extras.type() == WebCore::ImageDrawingExtras::Type::Style; }
+SPECIALIZE_TYPE_TRAITS_END()

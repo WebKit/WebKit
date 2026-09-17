@@ -120,40 +120,18 @@ bool MultiImage::errorOccurred() const
     return m_selectedImage && protect(m_selectedImage)->errorOccurred();
 }
 
-FloatSize MultiImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+NaturalDimensions MultiImage::naturalDimensions(const RenderElement* renderer) const
+{
+    if (!m_selectedImage)
+        return NaturalDimensions::none();
+    return protect(m_selectedImage)->naturalDimensions(renderer);
+}
+
+ImageDrawingExtras MultiImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
 {
     if (!m_selectedImage)
         return { };
-    return protect(m_selectedImage)->imageSize(renderer, multiplier, sizeType);
-}
-
-bool MultiImage::imageHasRelativeWidth() const
-{
-    return m_selectedImage && protect(m_selectedImage)->imageHasRelativeWidth();
-}
-
-bool MultiImage::imageHasRelativeHeight() const
-{
-    return m_selectedImage && protect(m_selectedImage)->imageHasRelativeHeight();
-}
-
-void MultiImage::computeIntrinsicDimensions(const RenderElement* element, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->computeIntrinsicDimensions(element, intrinsicWidth, intrinsicHeight, intrinsicRatio);
-}
-
-bool MultiImage::usesImageContainerSize() const
-{
-    return m_selectedImage && protect(m_selectedImage)->usesImageContainerSize();
-}
-
-void MultiImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
-{
-    if (!m_selectedImage)
-        return;
-    protect(m_selectedImage)->setContainerContextForRenderer(renderer, containerSize, containerZoom, url);
+    return protect(m_selectedImage)->drawingExtrasForRenderer(renderer, url);
 }
 
 void MultiImage::addClient(RenderElement& renderer)
@@ -184,9 +162,9 @@ RefPtr<WebCore::Image> MultiImage::image(const RenderElement* renderer, const Fl
     return protect(m_selectedImage)->image(renderer, size, destinationContext, isForFirstLine);
 }
 
-bool MultiImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool MultiImage::currentFrameIsComplete() const
 {
-    return m_selectedImage && protect(m_selectedImage)->currentFrameIsComplete(renderer);
+    return m_selectedImage && protect(m_selectedImage)->currentFrameIsComplete();
 }
 
 float MultiImage::imageScaleFactor() const

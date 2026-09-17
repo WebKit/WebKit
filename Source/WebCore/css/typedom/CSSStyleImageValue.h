@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Document;
+class NativeImage;
 class WeakPtrImplWithEventTargetData;
 
 class CSSStyleImageValue final : public CSSStyleValue {
@@ -47,6 +48,9 @@ public:
     void serialize(StringBuilder&, OptionSet<SerializationArguments>) const final;
 
     CachedImage* image() { return m_cssValue->cachedImage(); }
+
+    RefPtr<NativeImage> sourceNativeImage() const;
+
     bool isLoadedFromOpaqueSource() const { return m_cssValue->isLoadedFromOpaqueSource(); }
     Document* NODELETE document() const;
     

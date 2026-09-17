@@ -91,7 +91,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
     if (!tentativeCachedImage || tentativeCachedImage->errorOccurred())
         return;
 
-    image = tentativeCachedImage->imageForRenderer(renderImage.get());
+    image = tentativeCachedImage->image();
     if (!image)
         return;
 

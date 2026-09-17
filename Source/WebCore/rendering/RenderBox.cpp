@@ -2238,7 +2238,7 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
     bool isNonEmpty;
     RefPtr styleImage = Style::findLayerUsedImage(style().backgroundLayers(), image, isNonEmpty);
     if (styleImage && isNonEmpty) {
-        incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(styleImage->imageSize(this, style().usedZoom())));
+        incrementVisuallyNonEmptyPixelCountIfNeeded(flooredIntSize(calculateImageIntrinsicDimensions(styleImage.get(), borderBoxRect().size(), ScaleByUsedZoom::Yes)));
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
     }

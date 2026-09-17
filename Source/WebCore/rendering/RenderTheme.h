@@ -46,6 +46,7 @@ class HTMLInputElement;
 class HTMLMediaElement;
 class HTMLMeterElement;
 class Icon;
+class Image;
 class Page;
 class RenderAttachment;
 class RenderBox;

@@ -36,6 +36,7 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/NativeImage.h>
+#include <WebCore/ObjectSizeNegotiation.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RenderImage.h>
 #include <WebCore/RenderObjectDocument.h>
@@ -85,14 +86,20 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!cachedImage || cachedImage->errorOccurred())
         return { };
 
-    RefPtr image = cachedImage->imageForRenderer(&renderImage);
-    if (!image || image->width() <= 1 || image->height() <= 1)
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return { };
+
+    auto naturalSize = WebCore::ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        WebCore::ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } }).size();
+    if (naturalSize.width() <= 1 || naturalSize.height() <= 1)
         return { };
 
     if (options.allowAnimatedImages == AllowAnimatedImages::No && image->isAnimated())
         return { };
 
-    auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);
+    auto bitmapSize = WebCore::selfReportedSize(*image, renderImage.imageOrientation());
     if (options.screenSizeInPixels) {
         auto scaledSize = largestRectWithAspectRatioInsideRect(bitmapSize.width() / bitmapSize.height(), { FloatPoint(), *options.screenSizeInPixels }).size();
         bitmapSize = scaledSize.width() < bitmapSize.width() ? scaledSize : bitmapSize;
@@ -107,7 +114,13 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateSh
     if (!graphicsContext)
         return { };
 
-    graphicsContext->drawImage(*image, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), { renderImage.imageOrientation() });
+    auto orientation = renderImage.imageOrientation();
+    if (orientation == WebCore::ImageOrientation::Orientation::FromImage)
+        orientation = image->orientation();
+    auto imageSize = WebCore::ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        WebCore::ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = WebCore::ObjectSizeNegotiation::defaultObjectSize });
+    graphicsContext->drawImage(*image, imageSize, FloatRect(0, 0, bitmapSize.width(), bitmapSize.height()), FloatRect { { }, imageSize.size() }, { renderImage.imageOrientation() });
     return sharedBitmap;
 }
 

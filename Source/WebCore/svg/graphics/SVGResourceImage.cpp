@@ -55,7 +55,7 @@ SVGResourceImage::SVGResourceImage(LegacyRenderSVGResourceContainer& renderResou
 {
 }
 
-ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     if (CheckedPtr masker = dynamicDowncast<RenderSVGResourceMasker>(m_renderResource.get())) {
         if (masker->drawContentIntoContext(context, destinationRect, sourceRect, options))
@@ -69,15 +69,16 @@ ImageDrawResult SVGResourceImage::draw(GraphicsContext& context, const FloatRect
     return ImageDrawResult::DidNothing;
 }
 
-void SVGResourceImage::drawPattern(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void SVGResourceImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
-    RefPtr imageBuffer = context.createImageBuffer(size());
+    RefPtr imageBuffer = context.createImageBuffer(concreteObjectSize.size());
     if (!imageBuffer)
         return;
 
     // Fill with the SVG resource.
     GraphicsContext& graphicsContext = imageBuffer->context();
-    graphicsContext.drawImage(*this, FloatPoint());
+    auto imageRect = FloatRect { { }, concreteObjectSize.size() };
+    graphicsContext.drawImage(*this, ConcreteObjectSize::fixed(imageRect.size()), imageRect, imageRect);
 
     // Tile the image buffer into the context.
     context.drawPattern(*imageBuffer, destinationRect, sourceRect, patternTransform, phase, spacing, options);

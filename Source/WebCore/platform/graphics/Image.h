@@ -33,6 +33,8 @@
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImagePaintingOptions.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/NaturalDimensions.h>
+#include <WebCore/ObjectSizeNegotiation.h>
 #include <wtf/ForbidHeapAllocation.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
@@ -47,6 +49,7 @@ class FloatPoint;
 class FloatSize;
 class FragmentedSharedBuffer;
 class GraphicsContext;
+class ImageDrawingExtras;
 class NativeImage;
 class ShareableBitmap;
 class Timer;
@@ -72,14 +75,13 @@ public:
     virtual bool isNamedImageGeneratedImage() const { return false; }
     virtual bool isGradientImage() const { return false; }
     virtual bool NODELETE isSVGImage() const { return false; }
-    virtual bool NODELETE isSVGImageForContainer() const { return false; }
     virtual bool isSVGResourceImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
 
     virtual void subresourcesAreFinished(Document*, CompletionHandler<void()>&&);
 
-    bool NODELETE drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
+    bool NODELETE drawsSVGImage() const { return isSVGImage(); }
 
     virtual unsigned frameCount() const { return 1; }
 
@@ -93,26 +95,23 @@ public:
     virtual bool renderingTaintsOrigin() const { return false; }
 
     WEBCORE_EXPORT static Image& nullImage();
-    bool isNull() const { return size().isEmpty(); }
 
-    virtual void setContainerSize(const FloatSize&) { }
-    virtual bool usesContainerSize() const { return false; }
-    virtual bool hasIntrinsicWidth() const { return true; }
-    virtual bool hasIntrinsicHeight() const { return true; }
-    // FIXME: hasRelativeWidth/Height should be deduplicated with hasIntrinsicWidth/Height.
-    virtual bool hasRelativeWidth() const { return false; }
-    virtual bool hasRelativeHeight() const { return false; }
-    virtual void computeIntrinsicDimensions(float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio);
-    virtual bool hasNaturalAspectRatio() const { return true; }
 
-    virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
-    virtual FloatSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage) const;
+    // https://drafts.csswg.org/css-images-3/#natural-dimensions
+    NaturalDimensions naturalDimensions(ImageOrientation requestedOrientation = ImageOrientation::Orientation::FromImage) const
+    {
+        auto orientation = requestedOrientation.orientation() == ImageOrientation::Orientation::FromImage ? this->orientation() : requestedOrientation;
+        return unorientedNaturalDimensions().oriented(orientation);
+    }
+
     virtual bool hasDensityCorrectedSize() const { return false; }
-    FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
-    float width() const { return size().width(); }
-    float height() const { return size().height(); }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
-    virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
+    virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::None; }
+
+protected:
+    virtual NaturalDimensions unorientedNaturalDimensions() const = 0;
+
+public:
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /* allDataReceived */) { return EncodedDataStatus::Unknown; }
@@ -159,12 +158,11 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
-    virtual RefPtr<NativeImage> nativeImage(const ColorSpace& = ColorSpace::SRGB());
-    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned);
-    virtual RefPtr<NativeImage> currentNativeImage();
-    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation = ImageOrientation::Orientation::FromImage);
+    virtual RefPtr<NativeImage> nativeImageAtIndex(unsigned, ConcreteObjectSize);
+    virtual RefPtr<NativeImage> currentNativeImage(ConcreteObjectSize);
+    virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ConcreteObjectSize, ImageOrientation = ImageOrientation::Orientation::FromImage);
 
-    virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
+    virtual void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
 
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }
@@ -192,9 +190,9 @@ protected:
 
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
-    virtual ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
-    ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { });
-    ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions = { });
+    virtual ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) = 0;
+    ImageDrawResult drawTiled(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
+    ImageDrawResult drawTiled(GraphicsContext&, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr);
 
     // Supporting tiled drawing
     virtual std::optional<Color> singlePixelSolidColor() const;
@@ -212,6 +210,12 @@ private:
     std::unique_ptr<Timer> m_animationStartTimer;
     WEBCORE_EXPORT static bool gSystemAllowsAnimationControls;
 };
+
+// FIXME: Make these better.
+WEBCORE_EXPORT ConcreteObjectSize sourceConcreteSize(const Image&);
+WEBCORE_EXPORT std::optional<FloatSize> sizeSampledAt(const Image&, ImageOrientation = ImageOrientation::Orientation::FromImage);
+WEBCORE_EXPORT FloatSize selfReportedSize(const Image&, ImageOrientation = ImageOrientation::Orientation::FromImage);
+WEBCORE_EXPORT bool hasNothingToDraw(const Image&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,29 +24,31 @@
 
 #pragma once
 
-#include "Color.h"
-#include "GeneratedImage.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/ImageOrientation.h>
+#include <optional>
 
 namespace WebCore {
 
-class FloatSize;
+// https://drafts.csswg.org/css-images-3/#natural-dimensions
+struct NaturalDimensions {
+    std::optional<float> width;
+    std::optional<float> height;
+    std::optional<FloatSize> aspectRatio;
 
-class ColorImageGeneratedImage final : public GeneratedImage {
-public:
-    static Ref<ColorImageGeneratedImage> create(const Color& color, const FloatSize& size)
+    NaturalDimensions oriented(ImageOrientation orientation) const
     {
-        return adoptRef(*new ColorImageGeneratedImage(color, size));
+        ASSERT(orientation.orientation() != ImageOrientation::Orientation::FromImage);
+        if (!orientation.usesWidthAsHeight())
+            return *this;
+        return { height, width, aspectRatio ? std::make_optional(aspectRatio->transposedSize()) : std::nullopt };
     }
 
-private:
-    ColorImageGeneratedImage(const Color&, const FloatSize&);
+    static NaturalDimensions none() { return { }; }
+    static NaturalDimensions fixed(FloatSize size) { return { size.width(), size.height(), size }; }
+    static NaturalDimensions fixed(float width, float height) { return fixed(FloatSize { width, height }); }
 
-    ImageDrawResult draw(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-    void drawPattern(GraphicsContext&, ConcreteObjectSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }, const ImageDrawingExtras* = nullptr) override;
-
-    void dump(WTF::TextStream&) const override;
-
-    Color m_color;
+    bool operator==(const NaturalDimensions&) const = default;
 };
 
 } // namespace WebCore

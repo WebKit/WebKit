@@ -31,6 +31,7 @@
 #include "CSSStyleImageValue.h"
 
 #include "CSSSerializationContext.h"
+#include "CachedImage.h"
 #include "Document.h"
 
 #include <wtf/TZoneMallocInlines.h>
@@ -53,6 +54,18 @@ void CSSStyleImageValue::serialize(StringBuilder& builder, OptionSet<Serializati
 Document* CSSStyleImageValue::document() const
 {
     return m_document.get();
+}
+
+RefPtr<NativeImage> CSSStyleImageValue::sourceNativeImage() const
+{
+    RefPtr cachedImage = m_cssValue->cachedImage();
+    if (!cachedImage)
+        return nullptr;
+    // FIXME: Doesn't check hasImage() to match expectations of callers. Is this good?
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return nullptr;
+    return image->currentNativeImage(sourceConcreteSize(*image));
 }
 
 RefPtr<CSSValue> CSSStyleImageValue::toCSSValue() const

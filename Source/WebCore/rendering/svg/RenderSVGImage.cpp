@@ -46,6 +46,7 @@
 #include "SVGImageIntrinsicSizing.h"
 #include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
+#include "StyleImageDrawingExtras.h"
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -149,7 +150,7 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         return ImageDrawResult::DidNothing;
 
     RefPtr<Image> image = imageResource().image();
-    if (!image || image->isNull())
+    if (!image || hasNothingToDraw(*image))
         return ImageDrawResult::DidNothing;
 
     ImagePaintingOptions options {
@@ -164,7 +165,14 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
         style().dynamicRangeLimit().toPlatformDynamicRangeLimit()
     };
 
-    auto drawResult = paintInfo.context().drawImage(*image, rect, sourceRect, options);
+    auto usedZoom = style().usedZoom();
+    auto containerSize = FloatSize { imageContainerSize() };
+    auto sampledSize = sizeSampledAt(*image);
+    auto concreteObjectSize = sampledSize
+        ? ConcreteObjectSize::fixed(*sampledSize)
+        : ConcreteObjectSize::fixed(containerSize / usedZoom, usedZoom);
+    auto extras = imageDrawingExtras();
+    auto drawResult = paintInfo.context().drawImage(*image, concreteObjectSize, rect, sourceRect, options, &extras);
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         protect(imageResource().cachedImage())->addClientWaitingForAsyncDecoding(protect(cachedImageClient()));
 
@@ -186,13 +194,13 @@ void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& pa
     }
 
     RefPtr<Image> image = imageResource().image();
-    if (!image || image->isNull()) {
+    if (!image || hasNothingToDraw(*image)) {
         protect(page())->addRelevantUnpaintedObject(*this, visualOverflowRectEquivalent());
         return;
     }
 
     FloatRect contentBoxRect = borderBoxRectEquivalent();
-    FloatRect replacedContentRect(0, 0, image->width(), image->height());
+    FloatRect replacedContentRect { { }, sizeSampledAt(*image).value_or(FloatSize { imageContainerSize() }) };
     imageElement().preserveAspectRatio().transformRect(contentBoxRect, replacedContentRect);
 
     contentBoxRect.moveBy(paintOffset);
@@ -257,40 +265,37 @@ bool RenderSVGImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
+IntSize RenderSVGImage::imageContainerSize() const
+{
+    // preserveAspectRatio=none forces non-uniform scaling, achieved by laying the document
+    // out at its own size and letting the destination rect stretch it.
+    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
+    if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
+        if (RefPtr cachedImage = imageResource().cachedImage(); cachedImage && cachedImage->hasImage()) {
+            auto size = selfReportedSize(*protect(cachedImage->image()));
+            size.scale(style().usedZoom());
+            return roundedIntSize(size);
+        }
+    }
+
+    return enclosingIntRect(m_objectBoundingBox).size();
+}
+
+Style::ImageDrawingExtras RenderSVGImage::imageDrawingExtras() const
+{
+    return imageResource().drawingExtras(protect(document())->encodingParseURL(imageElement().imageSourceURL()));
+}
+
 bool RenderSVGImage::updateImageViewport()
 {
     auto oldBoundaries = m_objectBoundingBox;
     m_objectBoundingBox = calculateObjectBoundingBox();
-
-    bool updatedViewport = false;
-    Ref imageElement = this->imageElement();
-    URL imageSourceURL = protect(document())->encodingParseURL(imageElement->imageSourceURL());
-
-    // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
-    // by setting the image's container size to its intrinsic size.
-    // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
-    if (imageElement->preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
-        if (RefPtr cachedImage = imageResource().cachedImage()) {
-            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().usedZoom());
-            if (intrinsicSize != imageResource().imageSize(style().usedZoom())) {
-                imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
-                updatedViewport = true;
-            }
-        }
-    }
-
-    if (oldBoundaries != m_objectBoundingBox) {
-        if (!updatedViewport)
-            imageResource().setContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
-        updatedViewport = true;
-    }
-
-    return updatedViewport;
+    return oldBoundaries != m_objectBoundingBox;
 }
 
 void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
 {
-    // Update the SVGImageCache sizeAndScales entry in case image loading finished after layout.
+    // Recompute the object bounding box in case image loading finished after layout.
     // (https://bugs.webkit.org/show_bug.cgi?id=99489)
     m_objectBoundingBox = FloatRect();
     if (updateImageViewport())
@@ -302,7 +307,7 @@ void RenderSVGImage::repaintOrMarkForLayout(const IntRect* rect)
     if (rect) {
         // The image changed rect is in source image coordinates (pre-zooming),
         // so map from the bounds of the image to the contentsBox.
-        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageResource().imageSize(1.0f)), repaintRect)));
+        repaintRect.intersect(enclosingIntRect(mapRect(*rect, FloatRect(FloatPoint(), imageResource().sourceCoordinateSize()), repaintRect)));
     }
 
     repaintRectangle(enclosingLayoutRect(repaintRect));
@@ -347,7 +352,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->deferRecomputeIsIgnoredIfNeeded(protect(imageElement()).ptr());
 
-    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete(this)) {
+    if (RefPtr image = imageResource().cachedImage(); image && image->currentFrameIsComplete()) {
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), image);
     }

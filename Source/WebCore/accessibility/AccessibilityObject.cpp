@@ -45,6 +45,7 @@
 #include "AccessibilityObjectInlines.h"
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
+#include "BitmapImage.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -3309,18 +3310,25 @@ static RefPtr<Image> imageFromRenderer(RenderObject* renderer)
 
 FloatSize AccessibilityObject::imageDataSize() const
 {
-    if (RefPtr image = imageFromRenderer(renderer()))
-        return image->size();
+    if (RefPtr image = imageFromRenderer(renderer())) {
+        // FIXME: Is this right?
+        return ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+            ObjectSizeNegotiation::SpecifiedSize::none(), { .defaultObjectSize = { } }).size();
+    }
     return { };
 }
 
 RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters& parameters) const
 {
     RefPtr image = imageFromRenderer(renderer());
-    if (!image || image->isNull())
+    if (!image || hasNothingToDraw(*image))
         return nullptr;
 
-    auto nativeSize = image->size();
+    // FIXME: Is this right?
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = ObjectSizeNegotiation::defaultObjectSize });
+    auto nativeSize = imageSize.size();
     if (nativeSize.isEmpty())
         return nullptr;
 
@@ -3343,7 +3351,7 @@ RefPtr<SharedBuffer> AccessibilityObject::imageData(const AXImageDataParameters&
         return nullptr;
 
     // Draw the source image scaled into the buffer.
-    imageBuffer->context().drawImage(*image, FloatRect({ }, bufferSize), FloatRect({ }, nativeSize));
+    imageBuffer->context().drawImage(*image, imageSize, FloatRect({ }, bufferSize), FloatRect({ }, nativeSize));
 
     // Determine the extraction rect from subrect parameters or full image.
     IntRect extractionRect;

@@ -34,7 +34,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageAdapter);
 
 #if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN) && !PLATFORM(WPE)
-Ref<Image> ImageAdapter::loadPlatformResource(const char* resource)
+Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char* resource)
 {
     WTFLogAlways("WARNING: trying to load platform resource '%s'", resource);
     return BitmapImage::create();
@@ -50,13 +50,13 @@ RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size)
     unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        RefPtr nativeImage = protect(image())->nativeImageAtIndex(i);
+        RefPtr nativeImage = protect(image())->nativeImageAtIndex(i, sourceConcreteSize(image()));
         if (nativeImage && nativeImage->size() == size)
             return nativeImage;
     }
 
     // Fallback to the first frame image if we can't find the right size
-    return protect(image())->nativeImageAtIndex(0);
+    return protect(image())->nativeImageAtIndex(0, sourceConcreteSize(image()));
 }
 
 Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
@@ -65,7 +65,7 @@ Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
     unsigned count = protect(image())->frameCount();
 
     for (unsigned i = 0; i < count; ++i) {
-        if (RefPtr nativeImage = protect(image())->nativeImageAtIndex(i))
+        if (RefPtr nativeImage = protect(image())->nativeImageAtIndex(i, sourceConcreteSize(image())))
             nativeImages.append(nativeImage.releaseNonNull());
     }
 

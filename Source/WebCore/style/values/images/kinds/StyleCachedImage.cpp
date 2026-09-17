@@ -216,7 +216,7 @@ bool CachedImage::canRender(const RenderElement* renderer, float multiplier) con
         return true;
     if (!m_cachedImage)
         return false;
-    return protect(m_cachedImage)->canRender(renderer, multiplier);
+    return protect(m_cachedImage)->canRender(renderer ? renderer->imageOrientation() : WebCore::ImageOrientation(WebCore::ImageOrientation::Orientation::FromImage), multiplier);
 }
 
 bool CachedImage::isPending() const
@@ -240,69 +240,29 @@ bool CachedImage::errorOccurred() const
     return m_cachedImage->errorOccurred();
 }
 
-FloatSize CachedImage::imageSize(const RenderElement* renderer, float multiplier, WebCore::CachedImage::SizeType sizeType) const
+FloatSize CachedImage::selfReportedSize(const RenderElement* renderer) const
+{
+    if (m_cachedImage) {
+        if (RefPtr image = protect(m_cachedImage)->image(); image && image->drawsSVGImage())
+            return WebCore::selfReportedSize(*image);
+    }
+    return Image::selfReportedSize(renderer);
+}
+
+NaturalDimensions CachedImage::naturalDimensions(const RenderElement* renderer) const
 {
     if (isRenderSVGResource(renderer))
-        return m_containerSize;
+        return NaturalDimensions::none();
+
     if (!m_cachedImage)
-        return { };
-    float density = 1.0f;
-    if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer))
-        density = renderImage->imageDevicePixelRatio();
-    return protect(m_cachedImage)->imageSizeForRenderer(renderer, multiplier, sizeType, density) / m_scaleFactor;
+        return NaturalDimensions::none();
+
+    return protect(m_cachedImage)->naturalDimensions(renderer ? renderer->imageOrientation() : WebCore::ImageOrientation(WebCore::ImageOrientation::Orientation::None));
 }
 
-bool CachedImage::imageHasRelativeWidth() const
+ImageDrawingExtras CachedImage::drawingExtrasForRenderer(const RenderElement& renderer, const WTF::URL& url) const
 {
-    if (!m_cachedImage)
-        return false;
-    return protect(m_cachedImage)->imageHasRelativeWidth();
-}
-
-bool CachedImage::imageHasRelativeHeight() const
-{
-    if (!m_cachedImage)
-        return false;
-    return protect(m_cachedImage)->imageHasRelativeHeight();
-}
-
-bool CachedImage::imageHasNaturalAspectRatio() const
-{
-    if (!m_cachedImage)
-        return false;
-    return m_cachedImage->imageHasNaturalAspectRatio();
-}
-
-void CachedImage::computeIntrinsicDimensions(const RenderElement* renderer, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio)
-{
-    // In case of an SVG resource, we should return the container size.
-    if (isRenderSVGResource(renderer)) {
-        FloatSize size = floorSizeToDevicePixels(LayoutSize(m_containerSize), renderer ? protect(renderer->document())->deviceScaleFactor() : 1);
-        intrinsicWidth = size.width();
-        intrinsicHeight = size.height();
-        intrinsicRatio = size;
-        return;
-    }
-
-    if (!m_cachedImage)
-        return;
-
-    protect(m_cachedImage)->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
-}
-
-bool CachedImage::usesImageContainerSize() const
-{
-    if (!m_cachedImage)
-        return false;
-    return protect(m_cachedImage)->usesImageContainerSize();
-}
-
-void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, const FloatSize& containerSize, float containerZoom, const WTF::URL& url)
-{
-    m_containerSize = containerSize;
-    if (!m_cachedImage)
-        return;
-    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved, renderer.style().linkParameters());
+    return { !url.isNull() ? url : m_url.resolved, renderer.style().linkParameters() };
 }
 
 void CachedImage::addClient(RenderElement& renderer)
@@ -349,12 +309,12 @@ RefPtr<WebCore::Image> CachedImage::image(const RenderElement* renderer, const F
     if (!m_cachedImage)
         return nullptr;
 
-    return protect(m_cachedImage)->imageForRenderer(renderer);
+    return protect(m_cachedImage)->image();
 }
 
-bool CachedImage::currentFrameIsComplete(const RenderElement* renderer) const
+bool CachedImage::currentFrameIsComplete() const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete(renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameIsComplete();
 }
 
 float CachedImage::imageScaleFactor() const
@@ -362,9 +322,9 @@ float CachedImage::imageScaleFactor() const
     return m_scaleFactor;
 }
 
-bool CachedImage::knownToBeOpaque(const RenderElement& renderer) const
+bool CachedImage::knownToBeOpaque(const RenderElement&) const
 {
-    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque(&renderer);
+    return m_cachedImage && protect(m_cachedImage)->currentFrameKnownToBeOpaque();
 }
 
 bool CachedImage::usesDataProtocol() const

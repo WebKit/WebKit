@@ -43,6 +43,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSPlaneLayout.h"
 #include "NativeImage.h"
+#include "ObjectSizeNegotiation.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 #include "SVGImageElement.h"
@@ -106,7 +107,10 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
             RefPtr image = imageElement->cachedImage() ? protect(imageElement->cachedImage())->image() : nullptr;
             if (!image)
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-            if (!image->width() || !image->height())
+            auto naturalSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+                ObjectSizeNegotiation::SpecifiedSize::none(),
+                { .defaultObjectSize = { } }).size();
+            if (naturalSize.isEmpty())
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
             return { };
         },
@@ -117,7 +121,10 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
             RefPtr image = imageElement->cachedImage() ? protect(imageElement->cachedImage())->image() : nullptr;
             if (!image)
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no data"_s };
-            if (!image->width() || !image->height())
+            auto naturalSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+                ObjectSizeNegotiation::SpecifiedSize::none(),
+                { .defaultObjectSize = { } }).size();
+            if (naturalSize.isEmpty())
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has a bad size"_s };
             return { };
         },
@@ -177,7 +184,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             if (!init.timestamp)
                 return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-            auto image = protect(imageElement)->cachedImage()->image()->currentNativeImage();
+            RefPtr image = protect(imageElement)->sourceNativeImage();
             if (!image)
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
@@ -187,7 +194,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             if (!init.timestamp)
                 return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-            auto image = protect(imageElement)->cachedImage()->image()->currentNativeImage();
+            RefPtr image = protect(imageElement)->sourceNativeImage();
             if (!image)
                 return Exception { ExceptionCode::InvalidStateError,  "Image element has no video frame"_s };
 
@@ -197,7 +204,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
             if (!init.timestamp)
                 return Exception { ExceptionCode::TypeError,  "timestamp is not provided"_s };
 
-            auto image = protect(cssImage)->image()->image()->currentNativeImage();
+            RefPtr image = protect(cssImage)->sourceNativeImage();
             if (!image)
                 return Exception { ExceptionCode::InvalidStateError,  "CSS Image has no video frame"_s };
 

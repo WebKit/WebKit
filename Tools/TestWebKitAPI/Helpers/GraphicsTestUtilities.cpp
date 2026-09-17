@@ -28,7 +28,6 @@
 
 #include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/Image.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/PixelBuffer.h>
@@ -59,16 +58,7 @@ static Color imageBufferPixelAt(const ImageBuffer& imageBuffer, FloatPoint point
     return ::testing::AssertionSuccess();
 }
 
-::testing::AssertionResult imagePixelIs(Color expected, Image& image, FloatPoint point, unsigned tolerance)
-{
-    RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
-    if (!buffer)
-        return ::testing::AssertionFailure() << "failed to allocate temp buffer";
-    buffer->context().drawImage(image, { 0, 0, 1, 1 }, { point, FloatSize { 1, 1 } });
-    return imageBufferPixelIs(expected, *buffer, { 0, 0 }, tolerance);
-}
-
-::testing::AssertionResult imagePixelIs(Color expected, NativeImage& image, FloatPoint point, unsigned tolerance)
+::testing::AssertionResult nativeImagePixelsIs(Color expected, NativeImage& image, FloatPoint point, unsigned tolerance)
 {
     RefPtr buffer = ImageBuffer::create({ 1, 1 }, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.0f, ColorSpace::SRGB(),PixelFormat::BGRA8); // NOLINT
     if (!buffer)

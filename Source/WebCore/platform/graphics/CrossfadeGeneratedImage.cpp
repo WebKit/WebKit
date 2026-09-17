@@ -33,18 +33,22 @@
 
 namespace WebCore {
 
-CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, const FloatSize& size)
-    : m_fromImage(fromImage)
+CrossfadeGeneratedImage::CrossfadeGeneratedImage(Image& fromImage, Image& toImage, float percentage, const FloatSize& crossfadeSize, std::unique_ptr<ImageDrawingExtras> fromExtras, std::unique_ptr<ImageDrawingExtras> toExtras)
+    : GeneratedImage(crossfadeSize)
+    , m_fromImage(fromImage)
     , m_toImage(toImage)
+    , m_fromExtras(WTF::move(fromExtras))
+    , m_toExtras(WTF::move(toExtras))
     , m_percentage(percentage)
-    , m_crossfadeSize(crossfadeSize)
 {
-    setContainerSize(size);
 }
 
-static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, CompositeOperator operation, float opacity, const FloatSize& targetSize)
+static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, CompositeOperator operation, float opacity, const FloatSize& targetSize, const ImageDrawingExtras* extras)
 {
-    FloatSize imageSize = image.size();
+    auto concreteSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image.naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = targetSize });
+    FloatSize imageSize = concreteSize.size();
 
     // A zero-sized image would produce a non-finite scale below, poisoning the CTM.
     if (imageSize.isEmpty())
@@ -68,7 +72,7 @@ static void drawCrossfadeSubimage(GraphicsContext& context, Image& image, Compos
     if (targetSize != imageSize)
         context.scale(targetSize / imageSize);
 
-    context.drawImage(image, IntPoint(), options);
+    context.drawImage(image, concreteSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize }, options, extras);
 
     if (useTransparencyLayer)
         context.endTransparencyLayer();
@@ -82,16 +86,16 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext& context)
 
     GraphicsContextStateSaver stateSaver(context);
 
-    context.clip(FloatRect(FloatPoint(), m_crossfadeSize));
+    context.clip(FloatRect(FloatPoint(), constructedSize()));
     context.beginTransparencyLayer(1);
 
-    drawCrossfadeSubimage(context, m_fromImage.get(), CompositeOperator::SourceOver, 1 - m_percentage, m_crossfadeSize);
-    drawCrossfadeSubimage(context, m_toImage.get(), CompositeOperator::PlusLighter, m_percentage, m_crossfadeSize);
+    drawCrossfadeSubimage(context, m_fromImage.get(), CompositeOperator::SourceOver, 1 - m_percentage, constructedSize(), m_fromExtras.get());
+    drawCrossfadeSubimage(context, m_toImage.get(), CompositeOperator::PlusLighter, m_percentage, constructedSize(), m_toExtras.get());
 
     context.endTransparencyLayer();
 }
 
-ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, ConcreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -107,9 +111,9 @@ ImageDrawResult CrossfadeGeneratedImage::draw(GraphicsContext& context, const Fl
     return ImageDrawResult::DidDraw;
 }
 
-void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void CrossfadeGeneratedImage::drawPattern(GraphicsContext& context, ConcreteObjectSize concreteObjectSize, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
-    auto imageBuffer = context.createImageBuffer(size());
+    auto imageBuffer = context.createImageBuffer(concreteObjectSize.size());
     if (!imageBuffer)
         return;
 

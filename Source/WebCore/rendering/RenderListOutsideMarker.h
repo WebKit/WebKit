@@ -104,6 +104,7 @@ private:
 
     void updateInlineMargins();
     void updateContent();
+    LayoutSize markerImageSize() const;
     void updateContentContainerText(const ListMarkerTextContent&);
     void setContentContainerImageSize(LayoutSize);
     void layoutContentContainer(RenderBlockFlow&);

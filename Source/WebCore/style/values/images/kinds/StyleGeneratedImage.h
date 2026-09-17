@@ -51,14 +51,7 @@ protected:
 
     WrappedImagePtr data() const final { return this; }
 
-    FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const final;
-    void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) final;
-    bool imageHasRelativeWidth() const final { return !m_fixedSize; }
-    bool imageHasRelativeHeight() const final { return !m_fixedSize; }
-    bool usesImageContainerSize() const final { return !m_fixedSize; }
-    void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float, const WTF::URL& = WTF::URL()) final { m_containerSize = containerSize; }
-    bool imageHasNaturalDimensions() const final { return !usesImageContainerSize(); }
-    bool imageHasNaturalAspectRatio() const final { return !usesImageContainerSize(); }
+    NaturalDimensions naturalDimensions(const RenderElement*) const final;
 
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
@@ -76,7 +69,6 @@ protected:
     void saveCachedImageForSize(FloatSize, WebCore::GeneratedImage&);
     void evictCachedGeneratedImage(FloatSize);
 
-    FloatSize m_containerSize;
     bool m_fixedSize;
     SingleThreadWeakHashCountedSet<RenderElement> m_clients;
     HashMap<FloatSize, std::unique_ptr<CachedGeneratedImage>> m_images;

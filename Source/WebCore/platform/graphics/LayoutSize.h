@@ -42,11 +42,6 @@ namespace WebCore {
 
 class LayoutPoint;
 
-enum AspectRatioFit {
-    AspectRatioFitShrink,
-    AspectRatioFitGrow
-};
-
 class LayoutSize {
 public:
     LayoutSize() = default;

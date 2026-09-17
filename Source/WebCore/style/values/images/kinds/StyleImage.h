@@ -29,6 +29,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/Image.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/StyleImageDrawingExtras.h>
 #include <WebCore/StyleURL.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
@@ -79,19 +80,18 @@ public:
     virtual bool hasClient(RenderElement&) const = 0;
 
     // Size / scale.
-    virtual FloatSize imageSize(const RenderElement*, float multiplier, WebCore::CachedImage::SizeType = WebCore::CachedImage::UsedSize) const = 0;
-    virtual bool usesImageContainerSize() const = 0;
-    virtual void computeIntrinsicDimensions(const RenderElement*, float& intrinsicWidth, float& intrinsicHeight, FloatSize& intrinsicRatio) = 0;
-    virtual bool imageHasRelativeWidth() const = 0;
-    virtual bool imageHasRelativeHeight() const = 0;
+
+    virtual NaturalDimensions naturalDimensions(const RenderElement*) const = 0;
     virtual float imageScaleFactor() const { return 1; }
-    virtual bool imageHasNaturalDimensions() const { return true; }
-    virtual bool imageHasNaturalAspectRatio() const { return true; }
+    virtual FloatSize selfReportedSize(const RenderElement* renderer) const
+    {
+        return ObjectSizeNegotiation::defaultSizingAlgorithm(naturalDimensions(renderer), ObjectSizeNegotiation::SpecifiedSize::none(), { }).size();
+    }
 
     // Platform Image.
     virtual RefPtr<WebCore::Image> image(const RenderElement*, const FloatSize&, const GraphicsContext& destinationContext, bool isForFirstLine = false) const = 0;
     virtual WebCore::CachedImage* cachedImage() const { return nullptr; }
-    virtual bool currentFrameIsComplete(const RenderElement*) const { return true; }
+    virtual bool currentFrameIsComplete() const { return true; }
 
     // Multiple Image selection.
     virtual Image* selectedImage() { return this; }
@@ -99,7 +99,7 @@ public:
 
     // Rendering.
     virtual bool canRender(const RenderElement*, float /*multiplier*/) const { return true; }
-    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float, const WTF::URL& = WTF::URL()) = 0;
+    virtual ImageDrawingExtras drawingExtrasForRenderer(const RenderElement&, const WTF::URL& = WTF::URL()) const { return { }; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;
 
     // Derived type.

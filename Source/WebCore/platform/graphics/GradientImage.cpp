@@ -33,14 +33,14 @@
 namespace WebCore {
 
 GradientImage::GradientImage(Gradient& generator, const FloatSize& size)
-    : m_gradient(generator)
+    : GeneratedImage(size)
+    , m_gradient(generator)
 {
-    setContainerSize(size);
 }
 
 GradientImage::~GradientImage() = default;
 
-ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+ImageDrawResult GradientImage::draw(GraphicsContext& destContext, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(options.compositeOperator(), options.blendMode());
@@ -49,15 +49,15 @@ ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRec
     if (destRect.size() != srcRect.size())
         destContext.scale(destRect.size() / srcRect.size());
     destContext.translate(-srcRect.location());
-    destContext.fillRect(FloatRect(FloatPoint(), size()), m_gradient.get());
+    destContext.fillRect(FloatRect(FloatPoint(), concreteObjectSize.size()), m_gradient.get());
     return ImageDrawResult::DidDraw;
 }
 
-void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
-    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+void GradientImage::drawPattern(GraphicsContext& destContext, ConcreteObjectSize concreteObjectSize, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
+    const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options, const ImageDrawingExtras* )
 {
     // Allow the generator to provide visually-equivalent tiling parameters for better performance.
-    FloatSize adjustedSize = size();
+    FloatSize adjustedSize = concreteObjectSize.size();
     FloatRect adjustedSrcRect = srcRect;
     m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect, spacing);
 

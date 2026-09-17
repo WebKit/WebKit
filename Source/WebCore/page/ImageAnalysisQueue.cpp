@@ -38,6 +38,7 @@
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
 #include "LocalFrameViewInlines.h"
+#include "ObjectSizeNegotiation.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderObjectDocument.h"
@@ -81,7 +82,13 @@ void ImageAnalysisQueue::enqueueIfNeeded(HTMLImageElement& element)
         return;
 
     RefPtr image = cachedImage->image();
-    if (!image || image->width() < minimumWidthForAnalysis || image->height() < minimumHeightForAnalysis)
+    if (!image)
+        return;
+
+    auto imageSize = ObjectSizeNegotiation::defaultSizingAlgorithm(image->naturalDimensions(),
+        ObjectSizeNegotiation::SpecifiedSize::none(),
+        { .defaultObjectSize = { } }).size();
+    if (imageSize.width() < minimumWidthForAnalysis || imageSize.height() < minimumHeightForAnalysis)
         return;
 
     bool shouldAddToQueue = [&] {
