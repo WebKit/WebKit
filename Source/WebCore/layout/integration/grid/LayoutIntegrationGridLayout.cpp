@@ -152,6 +152,7 @@ static inline Layout::GridLayoutConstraints constraintsForGridContent(const Layo
 
 void GridLayout::updateGridItemRenderers()
 {
+    CheckedRef renderGrid = gridBoxRenderer();
     CheckedRef layoutState = this->layoutState();
     auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
     auto contentBoxOffset = LayoutPoint(gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop());
@@ -161,6 +162,8 @@ void GridLayout::updateGridItemRenderers()
         auto& gridItemGeometry = layoutState->geometryForBox(layoutBox);
         auto borderBoxRect = Layout::BoxGeometry::borderBoxRect(gridItemGeometry);
 
+        auto oldGridItemRect = renderer->borderBoxRectInContainer();
+
         renderer->setLocation(contentBoxOffset + borderBoxRect.topLeft());
         renderer->setBorderBoxWidth(borderBoxRect.width());
         renderer->setBorderBoxHeight(borderBoxRect.height());
@@ -169,6 +172,9 @@ void GridLayout::updateGridItemRenderers()
         renderer->setMarginAfter(gridItemGeometry.marginAfter());
         renderer->setMarginStart(gridItemGeometry.marginStart());
         renderer->setMarginEnd(gridItemGeometry.marginEnd());
+
+        if (!renderGrid->selfNeedsLayout() && renderer->checkForRepaintDuringLayout())
+            renderer->repaintDuringLayoutIfMoved(oldGridItemRect);
     }
 }
 

@@ -404,6 +404,8 @@ void RenderGrid::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
     if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
+    LayoutRepainter repainter(*this);
+
     // The layoutBlock was handling the layout of both the grid and grid lanes implementations.
     // This caused a huge amount of branching code to handle grid lanes specific cases. Splitting up the code
     // to layout will simplify both implementations.
@@ -411,6 +413,10 @@ void RenderGrid::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
         layoutGrid(relayoutChildren);
     else
         layoutGridLanes(relayoutChildren);
+
+    updateLayerTransform();
+
+    repainter.repaintAfterLayout();
 }
 
 static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid)
@@ -444,8 +450,6 @@ const std::optional<LayoutUnit> RenderGrid::availableLogicalHeightForContentBox(
 
 void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 {
-
-    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
 
@@ -565,10 +569,6 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
         m_trackSizingAlgorithm.reset();
     }
 
-    updateLayerTransform();
-
-    repainter.repaintAfterLayout();
-
     m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
 
@@ -631,7 +631,6 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
 {
     ASSERT(isGridLanes());
 
-    LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
         RenderGridLayoutState gridLayoutState;
@@ -754,10 +753,6 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
 
         m_trackSizingAlgorithm.reset();
     }
-
-    updateLayerTransform();
-
-    repainter.repaintAfterLayout();
 
     m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
