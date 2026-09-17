@@ -1631,6 +1631,11 @@ void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& targ
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
 }
 
+void BytecodeGenerator::emitJumpIfNotReflectConstruct(RegisterID* cond, Label& target)
+{
+    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::reflectConstructFunction), target.bind(this));
+}
+
 void BytecodeGenerator::emitJumpIfNotEvalFunction(RegisterID* cond, Label& target)
 {
     OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::evalFunction), target.bind(this));

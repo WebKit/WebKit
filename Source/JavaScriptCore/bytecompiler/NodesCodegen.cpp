@@ -2518,6 +2518,56 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
     return returnValue.unsafeGet();
 }
 
+RegisterID* ReflectConstructFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ASSERT(m_args->m_listNode && m_args->m_listNode->m_next);
+    ArgumentListNode* argumentsListNode = m_args->m_listNode->m_next;
+    ArgumentListNode* newTargetNode = argumentsListNode->m_next;
+
+    RefPtr<RegisterID> function = generator.tempDestination(dst);
+    RefPtr<RegisterID> returnValue = generator.finalDestination(dst, function.get());
+
+    unsigned argumentCount = 0;
+    for (ArgumentListNode* argument = m_args->m_listNode; argument; argument = argument->m_next)
+        ++argumentCount;
+    CallArguments callArguments(generator, nullptr, argumentCount);
+
+    generator.emitNode(callArguments.thisRegister(), m_base);
+    if (m_base->isOptionalChainBase())
+        generator.emitOptionalCheck(callArguments.thisRegister());
+    generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
+    generator.emitGetById(function.get(), callArguments.thisRegister(), generator.propertyNames().construct);
+    if (isOptionalCall())
+        generator.emitOptionalCheck(function.get());
+
+    unsigned argumentIndex = 0;
+    for (ArgumentListNode* argument = m_args->m_listNode; argument; argument = argument->m_next)
+        generator.emitNode(callArguments.argumentRegister(argumentIndex++), argument->m_expr);
+
+    RegisterID* target = callArguments.argumentRegister(0);
+    RegisterID* argumentsList = callArguments.argumentRegister(1);
+    RegisterID* newTarget = newTargetNode ? callArguments.argumentRegister(2) : target;
+
+    // FIXME: A simple array literal as the arguments list could become the arguments of an op_construct, which saves the array.
+    Ref<Label> realCall = generator.newLabel();
+    Ref<Label> end = generator.newLabel();
+    generator.emitDebugHook(WillExecuteExpression, divotStart());
+    generator.emitJumpIfNotReflectConstruct(function.get(), realCall.get());
+    generator.emitJumpIfFalse(generator.emitIsConstructor(generator.newTemporary(), target), realCall.get());
+    if (newTargetNode)
+        generator.emitJumpIfFalse(generator.emitIsConstructor(generator.newTemporary(), newTarget), realCall.get());
+    if (!argumentsListNode->m_expr->isArrayLiteral())
+        generator.emitJumpIfFalse(generator.emitIsObject(generator.newTemporary(), argumentsList), realCall.get());
+    generator.emitConstructVarargs(returnValue.get(), target, newTarget, argumentsList, generator.newTemporary(), 0, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    generator.emitJump(end.get());
+
+    generator.emitLabel(realCall.get());
+    RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+    generator.emitLabel(end.get());
+    generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
+    return ret;
+}
+
 // ------------------------------ PostfixNode ----------------------------------
 
 static RegisterID* emitIncOrDec(BytecodeGenerator& generator, RegisterID* srcDst, Operator oper)

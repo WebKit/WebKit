@@ -31,7 +31,6 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(reflectObjectConstruct);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectDefineProperty);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectGetOwnPropertyDescriptor);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectGetPrototypeOf);
@@ -39,6 +38,11 @@ static JSC_DECLARE_HOST_FUNCTION(reflectObjectIsExtensible);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectPreventExtensions);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectSet);
 static JSC_DECLARE_HOST_FUNCTION(reflectObjectSetPrototypeOf);
+
+static JSValue initializeReflectConstructFunction(VM&, JSObject* object)
+{
+    return object->realm()->linkTimeConstant(LinkTimeConstant::reflectConstructFunction);
+}
 
 }
 
@@ -53,7 +57,7 @@ const ClassInfo ReflectObject::s_info = { "Reflect"_s, &Base::s_info, &reflectOb
 /* Source for ReflectObject.lut.h
 @begin reflectObjectTable
     apply                    JSBuiltin                             DontEnum|Function 3
-    construct                reflectObjectConstruct                DontEnum|Function 2
+    construct                initializeReflectConstructFunction    DontEnum|PropertyCallback
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
     deleteProperty           JSBuiltin                             DontEnum|Function 2
     get                      JSBuiltin                             DontEnum|Function 2
