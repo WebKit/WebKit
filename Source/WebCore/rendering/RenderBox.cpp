@@ -3050,16 +3050,13 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
             // both properties would recurse, so those keep the plain auto width.
             if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
                 if (auto overridingLogicalWidth = overridingLogicalWidthForFlexBasisComputation(); overridingLogicalWidth && *overridingLogicalWidth == logicalWidth) {
-                    // A calc-size() over an auto basis is not the plain auto that leaves nothing
-                    // to resolve here.
                     auto& styleLogicalWidth = style().logicalWidth();
-                    auto styleLogicalWidthResolves = !styleLogicalWidth.isAuto() || styleLogicalWidth.isCalcSize();
-                    if (styleLogicalWidthResolves && !(styleLogicalWidth == logicalWidth))
+                    if (!styleLogicalWidth.isAuto() && !(styleLogicalWidth == logicalWidth))
                         logicalWidthResult = computeLogicalWidthUsingGeneric(styleLogicalWidth, availableLogicalWidth, containingBlock);
                 }
             }
 
-            return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthResult - borderAndPaddingLogicalWidth()), availableLogicalWidth) + borderAndPaddingLogicalWidth();
+            return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthResult - borderAndPaddingLogicalWidth()), availableLogicalWidth);
         }
     }
 
@@ -3728,9 +3725,14 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
 
     if (logicalHeight.isCalcSize() && keywordLogicalHeight) {
         auto calcSize = logicalHeight.template get<Style::UnevaluatedCalcSize>();
-        // Percentages have no containing block height to resolve against here, so they resolve against zero.
+        // A percentage in the calculation resolves against the height a 100% would take.
+        auto percentResolutionLogicalHeight = [&]() -> LayoutUnit {
+            if (!calcSize.hasPercentage())
+                return 0_lu;
+            return computePercentageLogicalHeight(Style::PreferredSize { Style::PreferredSize::Percentage { 100 } }).value_or(0_lu);
+        }();
         auto keywordContentLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(*keywordLogicalHeight);
-        return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight, 0_lu));
+        return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight, percentResolutionLogicalHeight));
     }
 
     return keywordLogicalHeight;
