@@ -1,0 +1,14 @@
+maximumNestedInlineFormattingContextCount limits how many inline formatting contexts can nest inside each other. Nesting that stays within a single context, and plain block-in-block nesting, are not affected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelectorAll('.blockInInline').length is nestingDepth
+PASS renderedCount('.blockInInline') is maximumNestedInlineFormattingContextCount
+PASS renderedCount('.float') is maximumNestedInlineFormattingContextCount
+PASS renderedCount('.atomicInline') is maximumNestedInlineFormattingContextCount
+PASS renderedCount('.block') is nestingDepth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

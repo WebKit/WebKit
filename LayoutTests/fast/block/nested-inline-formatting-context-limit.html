@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inline formatting contexts nested inside each other have a count limit.</title>
+<style>
+.blockInInline, .float, .atomicInline, .block { width: 1px; height: 1px; }
+.float { float: left; }
+.atomicInline { display: inline-block; }
+</style>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="blockInInlineNesting"></div>
+<div id="floatNesting"></div>
+<div id="atomicInlineNesting"></div>
+<div id="blockNesting"></div>
+<script>
+description("maximumNestedInlineFormattingContextCount limits how many inline formatting contexts can nest inside each other. Nesting that stays within a single context, and plain block-in-block nesting, are not affected.");
+
+const maximumNestedInlineFormattingContextCount = 10;
+const nestingDepth = 30;
+
+if (window.internals)
+    internals.settings.setMaximumNestedInlineFormattingContextCount(maximumNestedInlineFormattingContextCount);
+
+// Each level is a block box inside an inline box, so LineBuilder lays it out and enters a new context.
+function buildBlockInInlineChain(root, depth)
+{
+    let container = root;
+    for (let i = 0; i < depth; ++i) {
+        const inlineBox = document.createElement("span");
+        const block = document.createElement("div");
+        block.className = "blockInInline";
+        inlineBox.appendChild(block);
+        container.appendChild(inlineBox);
+        container = block;
+    }
+}
+
+// A float is laid out by the containing inline formatting context, so each level enters a new one.
+function buildFloatChain(root, depth)
+{
+    let container = root;
+    for (let i = 0; i < depth; ++i) {
+        const float = document.createElement("div");
+        float.className = "float";
+        container.appendChild(float);
+        container = float;
+    }
+}
+
+// Atomic inline-level boxes are inline content, so each level enters a new context too.
+function buildAtomicInlineChain(root, depth)
+{
+    let container = root;
+    for (let i = 0; i < depth; ++i) {
+        const atomicInline = document.createElement("div");
+        atomicInline.className = "atomicInline";
+        container.appendChild(atomicInline);
+        container = atomicInline;
+    }
+}
+
+// Nesting inline boxes stays within one context and nesting blocks enters none, so neither counts.
+function buildBlockChain(root, depth)
+{
+    let container = root;
+    for (let i = 0; i < depth; ++i) {
+        const inlineBox = document.createElement("span");
+        const block = document.createElement("div");
+        block.className = "block";
+        container.appendChild(inlineBox);
+        container.appendChild(block);
+        container = block;
+    }
+}
+
+buildBlockInInlineChain(document.getElementById("blockInInlineNesting"), nestingDepth);
+buildFloatChain(document.getElementById("floatNesting"), nestingDepth);
+buildAtomicInlineChain(document.getElementById("atomicInlineNesting"), nestingDepth);
+buildBlockChain(document.getElementById("blockNesting"), nestingDepth);
+
+function renderedCount(selector)
+{
+    return Array.from(document.querySelectorAll(selector)).filter(element => element.getClientRects().length).length;
+}
+
+shouldBe("document.querySelectorAll('.blockInInline').length", "nestingDepth");
+shouldBe("renderedCount('.blockInInline')", "maximumNestedInlineFormattingContextCount");
+shouldBe("renderedCount('.float')", "maximumNestedInlineFormattingContextCount");
+shouldBe("renderedCount('.atomicInline')", "maximumNestedInlineFormattingContextCount");
+shouldBe("renderedCount('.block')", "nestingDepth");
+</script>
+</body>
+</html>

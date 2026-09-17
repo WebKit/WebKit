@@ -159,6 +159,7 @@ bool NODELETE defaultLinearMediaPlayerEnabled();
 bool NODELETE defaultShouldEnableScreenOrientationAPI();
 bool defaultPopoverAttributeEnabled();
 bool defaultUseGPUProcessForDOMRenderingEnabled();
+unsigned NODELETE defaultMaximumNestedInlineFormattingContextCount();
 
 #if USE(LIBWEBRTC)
 bool defaultPeerConnectionEnabledAvailable();

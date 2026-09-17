@@ -3735,6 +3735,15 @@ MaxParseDuration:
   webKitLegacyPreferenceKey: WebKitMaxParseDurationPreferenceKey
   defaultValue: -1
 
+MaximumNestedInlineFormattingContextCount:
+  type: uint32_t
+  status: embedder
+  # Matches SettingsBase::defaultMaximumRenderTreeDepth. Nested contexts can never outnumber the
+  # render tree depth, so the shared default doesn't limit anything by itself.
+  defaultValue:
+    default: 512
+    WebKit: WebKit::defaultMaximumNestedInlineFormattingContextCount()
+
 MediaAudioCodecIDsAllowedInLockdownMode:
   type: String
   status: embedder

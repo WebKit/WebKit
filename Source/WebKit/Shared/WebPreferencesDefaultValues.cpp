@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPreferencesDefaultValues.h"
 
+#include <WebCore/SettingsBase.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -281,6 +282,16 @@ SUPPRESS_NODELETE bool defaultShouldEnableScreenOrientationAPI()
 #else
     return false;
 #endif
+}
+
+SUPPRESS_NODELETE unsigned defaultMaximumNestedInlineFormattingContextCount()
+{
+#if PLATFORM(IOS)
+    // Mail renders messages from clients that nest markup pathologically, in processes with small stacks.
+    if (WTF::IOSApplication::isMaild() || WTF::IOSApplication::isMobileMail())
+        return 100;
+#endif
+    return WebCore::SettingsBase::defaultMaximumRenderTreeDepth;
 }
 
 #if USE(LIBWEBRTC)

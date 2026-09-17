@@ -131,6 +131,7 @@ private:
         bool resolvedFirstLineAndLetterChild { false };
         bool needsUpdateQueryContainerDependentStyle { false };
         IsInDisplayNoneTree isInDisplayNoneTree { IsInDisplayNoneTree::No };
+        unsigned nestedInlineFormattingContextCount { 0 };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         // Used to determine whether the AXObjectCache has already propagated down font and color updates for the current subtree.
@@ -159,6 +160,8 @@ private:
 #endif
     void popParent();
     void popParentsToDepth(unsigned depth);
+
+    void incrementNestedInlineFormattingContextCountIfNeeded(Parent&);
 
     DescendantsToResolve computeDescendantsToResolve(const ElementUpdate&, const Style::ComputedStyle* existingStyle, Validity) const;
     static std::optional<ResolutionType> determineResolutionType(const Element&, const Style::ComputedStyle*, DescendantsToResolve, OptionSet<Change> parentChange);
@@ -195,9 +198,8 @@ private:
 
     void collectChangedAnchorNames(const Style::ComputedStyle&, const Style::ComputedStyle* currentStyle);
 
-    static unsigned maximumRenderTreeDepth();
-
     const CheckedRef<Document> m_document;
+    const unsigned m_maximumNestedInlineFormattingContextCount;
     std::unique_ptr<Style::ComputedStyle> m_computedDocumentElementStyle;
 
     Vector<Ref<Scope>, 4> m_scopeStack;
