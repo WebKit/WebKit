@@ -491,6 +491,7 @@ protected:
     template<typename LengthType>
     bool readArrayBufferViewImpl(VM& vm, JSValue& arrayBufferView)
     {
+        auto scope = DECLARE_THROW_SCOPE(vm);
         if (!isSafeToRecurse())
             return false;
         ArrayBufferViewSubtag arrayBufferViewSubtag;
@@ -503,6 +504,7 @@ protected:
         if (!read(byteLength))
             return false;
         JSValue arrayBufferValue = readTerminal();
+        RETURN_IF_EXCEPTION(scope, false);
         if (!arrayBufferValue || !arrayBufferValue.inherits<JSArrayBuffer>())
             return false;
         JSObject* arrayBufferObj = asObject(arrayBufferValue);
@@ -535,6 +537,7 @@ protected:
             if (!view)
                 return false;
             arrayBufferView = view->wrap(m_lexicalGlobalObject, m_globalObject);
+            RETURN_IF_EXCEPTION(scope, false);
             return true;
         };
 

@@ -44,6 +44,7 @@
 #include "HeapSnapshotBuilder.h"
 #include "InitializeThreading.h"
 #include "Interpreter.h"
+#include "IteratorOperations.h"
 #include "JIT.h"
 #include "JITOperationList.h"
 #include "JITSizeStatistics.h"
@@ -327,9 +328,11 @@ public:
         SideChannels sideChannels;
     };
 
-    static Result serialize(JSGlobalObject* globalObject, JSValue value, Vector<uint8_t>& out)
+    static Result serialize(JSGlobalObject* globalObject, JSValue value, Vector<uint8_t>& out, const ArgList& transferList = ArgList())
     {
         JSCCloneSerializer serializer(globalObject, out);
+        for (unsigned i = 0; i < transferList.size(); ++i)
+            serializer.m_transferredArrayBuffers.add(asObject(transferList.at(i)), i);
         auto code = serializer.Base::serialize(value);
         return { code, serializer.takeSideChannels() };
     }
@@ -395,6 +398,7 @@ static EncodedJSValue throwSerializationError(JSGlobalObject* globalObject, Thro
 
 static JSC_DECLARE_HOST_FUNCTION(functionAtob);
 static JSC_DECLARE_HOST_FUNCTION(functionBtoa);
+static JSC_DECLARE_HOST_FUNCTION(functionStructuredClone);
 
 static JSC_DECLARE_HOST_FUNCTION(functionDisassembleBase64);
 
@@ -758,6 +762,7 @@ private:
 
         addFunction(vm, "atob"_s, functionAtob, 1);
         addFunction(vm, "btoa"_s, functionBtoa, 1);
+        addFunction(vm, "structuredClone"_s, functionStructuredClone, 1);
         addFunction(vm, "disassembleBase64"_s, functionDisassembleBase64, 1);
         addFunction(vm, "debug"_s, functionDebug, 1);
         addFunction(vm, "describe"_s, functionDescribe, 1);
@@ -1779,6 +1784,80 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
         return JSValue::encode(throwException(globalObject, scope, createOutOfMemoryError(globalObject)));
 
     return JSValue::encode(jsString(vm, encodedString));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionStructuredClone, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!callFrame->argumentCount())
+        return throwVMError(globalObject, scope, createNotEnoughArgumentsError(globalObject));
+
+    MarkedArgumentBuffer transferredObjects;
+    Vector<Ref<ArrayBuffer>> transferredBuffers;
+
+    JSValue optionsValue = callFrame->argument(1);
+    if (!optionsValue.isUndefinedOrNull()) {
+        JSObject* options = optionsValue.getObject();
+        if (!options)
+            return throwVMTypeError(globalObject, scope, "structuredClone options must be an object."_s);
+
+        JSValue transfer = options->get(globalObject, Identifier::fromString(vm, "transfer"_s));
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (!transfer.isUndefined()) {
+            HashSet<ArrayBuffer*> visited;
+            forEachInIterable(globalObject, transfer, [&](VM& vm, JSGlobalObject* globalObject, JSValue value) {
+                auto scope = DECLARE_THROW_SCOPE(vm);
+                RefPtr arrayBuffer = toPossiblySharedArrayBuffer(vm, value);
+                if (!arrayBuffer) {
+                    throwTypeError(globalObject, scope, "structuredClone transfer list can only contain ArrayBuffers"_s);
+                    return;
+                }
+                if (!visited.add(arrayBuffer.get()).isNewEntry) {
+                    throwTypeError(globalObject, scope, "Duplicate transferable for structured clone"_s);
+                    return;
+                }
+                transferredObjects.appendWithCrashOnOverflow(value);
+                transferredBuffers.append(arrayBuffer.releaseNonNull());
+            });
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    }
+
+    Vector<uint8_t> data;
+    auto [code, sideChannels] = JSCCloneSerializer::serialize(globalObject, callFrame->argument(0), data, ArgList(transferredObjects));
+    RETURN_IF_EXCEPTION(scope, { });
+    if (code != SerializationReturnCode::SuccessfullyCompleted)
+        return throwSerializationError(globalObject, scope, code);
+
+    for (auto& arrayBuffer : transferredBuffers) {
+        if (arrayBuffer->isDetached() || arrayBuffer->isShared() || !arrayBuffer->isDetachable())
+            return throwSerializationError(globalObject, scope, SerializationReturnCode::DataCloneError);
+    }
+
+    ArrayBufferContentsArray transferredContents(transferredBuffers.size());
+    for (size_t i = 0; i < transferredBuffers.size(); ++i) {
+        if (!transferredBuffers[i]->transferTo(vm, transferredContents[i]))
+            return throwSerializationError(globalObject, scope, SerializationReturnCode::DataCloneError);
+    }
+
+    CloneDeserializationSideChannels deserializationSideChannels {
+        .arrayBufferContents = &transferredContents,
+        .sharedBuffers = &sideChannels.sharedBuffers,
+#if ENABLE(WEBASSEMBLY)
+        .wasmModules = &sideChannels.wasmModules,
+        .wasmMemoryHandles = &sideChannels.wasmMemoryHandles,
+#endif
+    };
+
+    auto result = JSCCloneDeserializer::deserialize(globalObject, data.span(), deserializationSideChannels);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (result.code != SerializationReturnCode::SuccessfullyCompleted)
+        return throwSerializationError(globalObject, scope, result.code);
+
+    return JSValue::encode(result.value);
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDisassembleBase64, (JSGlobalObject* globalObject, CallFrame* callFrame))
