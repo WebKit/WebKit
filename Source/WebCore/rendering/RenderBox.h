@@ -367,6 +367,7 @@ public:
 
     // Content sizes in and out; see the definition for what box-sizing does to the calculation.
     LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const;
+    LayoutUnit resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalHeight, LayoutUnit percentResolutionLogicalHeight) const;
 
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::PreferredSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::MinimumSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
