@@ -54,7 +54,7 @@ function test() {
             let nodeId = await containerNode.querySelector("#heading");
             InspectorTest.expectNotNull(nodeId, "Should get a nodeId for '#heading'.");
 
-            let node = WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+            let node = WI.domManager.nodeForId(nodeId);
             InspectorTest.expectNotNull(node, "Frontend should resolve the nodeId to a DOMNode.");
             InspectorTest.expectEqual(node.nodeName(), "H1", "Resolved node should be an H1.");
             InspectorTest.expectEqual(node.getAttribute("id"), "heading", "Resolved node id should be 'heading'.");
@@ -77,7 +77,7 @@ function test() {
             let nodeIds = await containerNode.querySelectorAll("li.item");
             InspectorTest.expectEqual(nodeIds.length, 2, "Should return two li.item nodeIds.");
             for (let nodeId of nodeIds) {
-                let node = WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+                let node = WI.domManager.nodeForId(nodeId);
                 InspectorTest.expectNotNull(node, "Frontend should resolve each nodeId.");
                 InspectorTest.expectEqual(node.nodeName(), "LI", "Resolved node should be LI.");
             }
@@ -89,7 +89,7 @@ function test() {
         description: "getOuterHTML should return the serialized subtree of a frame-target node.",
         async test() {
             let headingId = await containerNode.querySelector("#heading");
-            let heading = WI.domManager.nodeForIdInFrameTarget(headingId, frameTarget);
+            let heading = WI.domManager.nodeForId(headingId);
             let outerHTML = await heading.getOuterHTML();
             InspectorTest.expectEqual(outerHTML, `<h1 id="heading">Cross-Origin Heading</h1>`, "Should serialize the H1 subtree.");
         }
@@ -173,18 +173,20 @@ function test() {
         name: "SiteIsolation.DOM.Queries.Search.ScopedToSubtree",
         description: "performSearch with a nodeIds subtree filter should only match within those subtrees.",
         async test() {
-            let listId = await containerNode.querySelector("#list");
-            InspectorTest.expectNotNull(listId, "Should find #list for scoping.");
+            let listNode = WI.domManager.nodeForId(await containerNode.querySelector("#list"));
+            InspectorTest.expectNotNull(listNode, "Should find #list for scoping.");
+            if (!listNode)
+                return;
 
             let unscoped = await frameTarget.DOMAgent.performSearch.invoke({query: "heading"});
             InspectorTest.expectGreaterThanOrEqual(unscoped.resultCount, 1, "Unscoped search should match the H1.");
             await frameTarget.DOMAgent.discardSearchResults(unscoped.searchId);
 
-            let scoped = await frameTarget.DOMAgent.performSearch.invoke({query: "heading", nodeIds: [listId]});
+            let scoped = await frameTarget.DOMAgent.performSearch.invoke({query: "heading", nodeIds: [listNode.backendNodeId]});
             InspectorTest.expectEqual(scoped.resultCount, 0, "Search scoped to #list should not match H1.");
             await frameTarget.DOMAgent.discardSearchResults(scoped.searchId);
 
-            let scopedPositive = await frameTarget.DOMAgent.performSearch.invoke({query: "Item", nodeIds: [listId]});
+            let scopedPositive = await frameTarget.DOMAgent.performSearch.invoke({query: "Item", nodeIds: [listNode.backendNodeId]});
             InspectorTest.expectGreaterThanOrEqual(scopedPositive.resultCount, 1, "Search scoped to #list should match 'Item'.");
             await frameTarget.DOMAgent.discardSearchResults(scopedPositive.searchId);
         }

@@ -383,6 +383,8 @@ Ref<Inspector::Protocol::DOM::Node> FrameDOMAgent::buildObjectForNode(Node* node
         }
     } else if (RefPtr document = dynamicDowncast<Document>(*node)) {
         value->setDocumentURL(InspectorDOMAgent::documentURLString(document.get()));
+        value->setBaseURL(InspectorDOMAgent::documentBaseURLString(document.get()));
+        value->setXmlVersion(document->xmlVersion());
         // FIXME: <https://webkit.org/b/298980> Set frameId for frame targets to enable frontend frame-to-target association.
     } else if (RefPtr doctype = dynamicDowncast<DocumentType>(*node)) {
         value->setPublicId(doctype->publicId());

@@ -17,14 +17,13 @@ function test() {
         await frameTarget.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test"});
     }
 
-    // Resolve an element in the frame document via a live backend querySelector. The frame target
-    // returns a frame-local nodeId; nodeForIdInFrameTarget scopes it and hands back the cached
-    // DOMNode instance (the same one the DOMManager event handlers mutate).
+    // Resolve an element in the frame document via a live backend querySelector, and hand back the
+    // cached DOMNode instance (the same one the DOMManager event handlers mutate).
     async function querySelectorInFrame(selector) {
-        let rawId = await frameDoc.querySelector(selector);
-        if (!rawId)
+        let nodeId = await frameDoc.querySelector(selector);
+        if (!nodeId)
             return null;
-        return WI.domManager.nodeForIdInFrameTarget(rawId, frameTarget);
+        return WI.domManager.nodeForId(nodeId);
     }
 
     // Only consider events whose node belongs to our frame target (ignore any page-target churn).

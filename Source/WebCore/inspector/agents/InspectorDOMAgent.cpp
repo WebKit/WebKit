@@ -1909,7 +1909,7 @@ String InspectorDOMAgent::documentURLString(Document* document)
     return document->url().string();
 }
 
-static String documentBaseURLString(Document* document)
+String InspectorDOMAgent::documentBaseURLString(Document* document)
 {
     return document->encodingParseURL(emptyString()).string();
 }
