@@ -1,0 +1,8 @@
+
+PASS used width, min-width: min-content; max-width: 50px — no width, for comparison: min-width floors above the 50px maximum
+PASS shrink-to-fit parent, min-width: min-content; max-width: 50px — no width, for comparison: min-width floors above the 50px maximum
+PASS used width, width: 200px; min-width: min-content; max-width: 50px — the 200px must not be read as the min-content size
+PASS shrink-to-fit parent, width: 200px; min-width: min-content; max-width: 50px — the 200px must not be read as the min-content size
+PASS used width, width: 200px; max-width: 50px — no min-width, for comparison
+PASS shrink-to-fit parent, width: 200px; max-width: 50px — no min-width, for comparison
+

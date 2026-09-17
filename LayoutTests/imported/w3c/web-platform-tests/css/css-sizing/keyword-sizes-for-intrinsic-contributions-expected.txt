@@ -11,35 +11,23 @@ PASS .test 9
 PASS .test 10
 PASS .test 11
 PASS .test 12
-FAIL .test 13 assert_equals:
-<div class="test min-width" data-expected-width="70"><div style="min-width: min-content">XXX XXX</div></div>
-width expected 70 but got 10
+PASS .test 13
 FAIL .test 14 assert_equals:
 <div class="test min-width" data-expected-width="70"><div style="min-width: fit-content">XXX XXX</div></div>
 width expected 70 but got 10
-FAIL .test 15 assert_equals:
-<div class="test min-width" data-expected-width="150"><div style="min-width: max-content">XXX XXX</div></div>
-width expected 150 but got 10
+PASS .test 15
 PASS .test 16
-FAIL .test 17 assert_equals:
-<div class="test min-width" data-expected-width="70"><div style="min-width: min-content">XXX XXX</div></div>
-width expected 70 but got 10
+PASS .test 17
 FAIL .test 18 assert_equals:
 <div class="test min-width" data-expected-width="90"><div style="min-width: fit-content">XXX XXX</div></div>
 width expected 90 but got 10
-FAIL .test 19 assert_equals:
-<div class="test min-width" data-expected-width="150"><div style="min-width: max-content">XXX XXX</div></div>
-width expected 150 but got 10
+PASS .test 19
 PASS .test 20
-FAIL .test 21 assert_equals:
-<div class="test min-width" data-expected-width="70"><div style="min-width: min-content">XXX XXX</div></div>
-width expected 70 but got 10
+PASS .test 21
 FAIL .test 22 assert_equals:
 <div class="test min-width" data-expected-width="150"><div style="min-width: fit-content">XXX XXX</div></div>
 width expected 150 but got 10
-FAIL .test 23 assert_equals:
-<div class="test min-width" data-expected-width="150"><div style="min-width: max-content">XXX XXX</div></div>
-width expected 150 but got 10
+PASS .test 23
 PASS .test 24
 PASS .test 25
 FAIL .test 26 assert_equals:

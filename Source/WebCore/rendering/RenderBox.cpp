@@ -3955,18 +3955,22 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
     auto& minLogicalWidth = style().logicalMinWidth();
     auto& maxLogicalWidth = style().logicalMaxWidth();
 
+    // A fixed inline width has already replaced the incoming contributions with itself in
+    // computeIntrinsicLogicalWidthContributions(), so a keyword minimum or maximum cannot read the
+    // content based size back out of them and has to measure it again.
+    // (A zero-width deprecated flex item still flexes, so its 0 is not a usable fixed width.)
+    auto hasFixedLogicalWidth = [&] {
+        auto fixedLogicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth()).tryFixed();
+        return fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())));
+    };
+
     auto usedMaxLogicalWidth = [&] {
         // FIXME: We should be able to handle other values for the max logical width here.
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
             return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
 
         if (maxLogicalWidth.isMinContent()) {
-            // max-width: min-content normally resolves to the content-based min-content size,
-            // but a box with its own fixed inline width derives the size from that width instead.
-            // (A zero-width deprecated flex item still flexes, so its 0 is not a usable fixed width.)
-            auto fixedLogicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth()).tryFixed();
-            bool hasFixedLogicalWidth = fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())));
-            if (!hasFixedLogicalWidth)
+            if (!hasFixedLogicalWidth())
                 return minIntrinsicLogicalWidth;
 
             return computeSizingKeywordLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
@@ -3980,13 +3984,14 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         if (auto fixedMinLogicalWidth = minLogicalWidth.tryFixed(); fixedMinLogicalWidth && fixedMinLogicalWidth->isPositive())
             return adjustContentBoxLogicalWidthForBoxSizing(*fixedMinLogicalWidth);
 
-        if (minLogicalWidth.isMaxContent())
-            return maxIntrinsicLogicalWidth;
-
         // A min-content minimum floors the contribution at the box's own min-content size,
         // so a smaller max-width cannot clamp it below that (min wins over max).
-        if (minLogicalWidth.isMinContent())
-            return minIntrinsicLogicalWidth;
+        if (minLogicalWidth.isMinContent() || minLogicalWidth.isMaxContent()) {
+            if (hasFixedLogicalWidth())
+                return computeSizingKeywordLogicalWidthUsing(minLogicalWidth, contentBoxLogicalWidth(), { });
+
+            return minLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+        }
 
         return { };
     }();
