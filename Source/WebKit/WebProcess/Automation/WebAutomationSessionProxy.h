@@ -33,6 +33,8 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -81,12 +83,16 @@ public:
 
     void cancelPendingEvaluateJavaScriptCallbacks();
 
+    bool isKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
+    void addKnownReference(WebCore::FrameIdentifier, const String& nodeHandle);
+
 private:
     explicit WebAutomationSessionProxy(const String& sessionIdentifier);
     JSObjectRef scriptObject(JSGlobalContextRef);
     void setScriptObject(JSGlobalContextRef, JSObjectRef);
     JSObjectRef scriptObjectForFrame(WebFrame&);
-    WebCore::Element* elementForNodeHandle(WebFrame&, const String&);
+    std::expected<Ref<WebCore::Element>, String> elementForNodeHandle(WebFrame&, const String&);
+    static String errorTypeFromJavaScriptExceptionName(const String& exceptionName);
     WebCore::AccessibilityObject* getAccessibilityObjectForNode(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String nodeHandle, String& error);
 
     void ensureObserverForFrame(WebFrame&);
@@ -125,6 +131,16 @@ private:
 
     HashMap<WebCore::FrameIdentifier, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
     HashMap<WebCore::FrameIdentifier, Ref<WebAutomationDOMWindowObserver>> m_frameObservers;
+
+    // Outlives the page's global object, which is where the JS-side maps live, so a
+    // reference minted in a previous document can still be told apart from one this
+    // navigable never issued.
+    //
+    // Only a cache in front of WebAutomationSession, which holds the authoritative copy
+    // and survives the process swaps this cannot. Evicting an entry therefore costs one
+    // synchronous lookup, never a wrong answer, so it is bounded far more tightly than
+    // the UI-process copy.
+    HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownReferences;
 #if ENABLE(WEBDRIVER_BIDI)
     HashMap<WebCore::FrameIdentifier, RealmIdentifier> m_frameToRealmIdentifier;
 #endif

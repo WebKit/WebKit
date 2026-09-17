@@ -376,6 +376,12 @@ void WebAutomationSession::didDestroyFrame(FrameIdentifier frameID)
         callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
     for (auto& callback : m_pendingEagerNavigationInBrowsingContextCallbacksPerFrame.take(frameID))
         callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
+
+    // The spec's navigable seen nodes map is weak between a navigable and its set, so
+    // the set dies with the navigable. Note this runs after a process swap has already
+    // moved the set onto the replacement frame's identifier, so it drops nothing that
+    // is still reachable.
+    m_knownNodeReferences.remove(frameID);
 }
 
 std::optional<FrameIdentifier> WebAutomationSession::webFrameIDForHandle(const String& handle, bool& frameNotFound)
@@ -3222,6 +3228,40 @@ static String logEntryTypeForMessage(const JSC::MessageSource& messageSource)
     return "console"_s;
 }
 #endif // ENABLE(WEBDRIVER_BIDI)
+
+// A reference this session never issued must report "no such element", so the record
+// cannot be probabilistic and cannot be dropped wholesale. It can be bounded: a client
+// holding a handle older than this many issued since, in the same frame, is beyond what
+// any real automation script does, and the cost of being wrong is the pre-fix error
+// rather than a crash. Roughly 1 MB per frame at this size.
+static constexpr unsigned maxKnownNodeReferencesPerFrame = 10000;
+
+void WebAutomationSession::transferKnownNodeReferences(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID)
+{
+    auto references = m_knownNodeReferences.take(oldFrameID);
+    if (references.isEmpty())
+        return;
+
+    auto& destination = m_knownNodeReferences.add(newFrameID, ListHashSet<String>()).iterator->value;
+    for (auto& reference : references)
+        destination.add(reference);
+    while (destination.size() > maxKnownNodeReferencesPerFrame)
+        destination.removeFirst();
+}
+
+void WebAutomationSession::addKnownNodeReference(WebCore::FrameIdentifier frameID, const String& nodeHandle)
+{
+    auto& references = m_knownNodeReferences.add(frameID, ListHashSet<String>()).iterator->value;
+    references.add(nodeHandle);
+    if (references.size() > maxKnownNodeReferencesPerFrame)
+        references.removeFirst();
+}
+
+void WebAutomationSession::isKnownNodeReference(WebCore::FrameIdentifier frameID, const String& nodeHandle, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto findResult = m_knownNodeReferences.find(frameID);
+    completionHandler(findResult != m_knownNodeReferences.end() && findResult->value.contains(nodeHandle));
+}
 
 void WebAutomationSession::logEntryAdded(const JSC::MessageSource& messageSource, const JSC::MessageLevel& messageLevel, const String& messageText, const JSC::MessageType& messageType, const WallTime& timestamp)
 {
