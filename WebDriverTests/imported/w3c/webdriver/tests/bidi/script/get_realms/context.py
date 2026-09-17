@@ -68,3 +68,44 @@ async def test_context(
         ],
         result,
     )
+
+
+@pytest.mark.asyncio
+async def test_iframe_context(
+    bidi_session,
+    test_origin,
+    test_page_same_origin_frame,
+    top_context,
+):
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"],
+        url=test_page_same_origin_frame,
+        wait="complete",
+    )
+
+    contexts = await bidi_session.browsing_context.get_tree(root=top_context["context"])
+    assert len(contexts) == 1
+    frames = contexts[0]["children"]
+    assert len(frames) == 1
+    frame_context = frames[0]["context"]
+
+    frame_context_result = await bidi_session.script.evaluate(
+        raw_result=True,
+        expression="1 + 2",
+        target=ContextTarget(frame_context),
+        await_promise=False,
+    )
+
+    result = await bidi_session.script.get_realms(context=frame_context)
+
+    recursive_compare(
+        [
+            {
+                "context": frame_context,
+                "origin": test_origin,
+                "realm": frame_context_result["realm"],
+                "type": "window",
+            },
+        ],
+        result,
+    )
