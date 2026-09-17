@@ -862,6 +862,107 @@ TEST_P(LineLoopTestES3, UseAsUBOThenUpdateThenLineLoopUIntIndexBuffer)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that the closing segment of a line loop is rendered when drawing into a framebuffer object.
+// Backends that emulate line loops as a line strip plus a separate draw for the closing segment
+// have to issue that second draw; this reads back texels that only the closing edge covers.
+TEST_P(LineLoopTestES3, LineLoopClosingSegmentIntoFramebuffer)
+{
+    constexpr GLsizei kSize = 8;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+    glViewport(0, 0, kSize, kSize);
+    glDisable(GL_BLEND);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    // An axis-aligned square whose corners land exactly on the pixel centers of columns and rows 1
+    // and 6. The vertices are ordered so that the three explicit segments are the bottom, right and
+    // top edges; the left edge, column 1, is covered only by the closing segment.
+    constexpr GLfloat kLow     = (1.5f / kSize) * 2.0f - 1.0f;
+    constexpr GLfloat kHigh    = (6.5f / kSize) * 2.0f - 1.0f;
+    const GLfloat kPositions[] = {kLow, kLow, kHigh, kLow, kHigh, kHigh, kLow, kHigh};
+
+    constexpr GLushort kIndices[] = {0, 1, 2, 3};
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(kIndices), kIndices, GL_STATIC_DRAW);
+
+    glUseProgram(mProgram);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, kPositions);
+    glUniform4f(mColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    // Both the array and the element draw paths generate the closing segment separately.
+    for (bool indexed : {false, true})
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        if (indexed)
+        {
+            glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, nullptr);
+        }
+        else
+        {
+            glDrawArrays(GL_LINE_LOOP, 0, 4);
+        }
+        ASSERT_GL_NO_ERROR();
+
+        // The three explicit segments.
+        EXPECT_PIXEL_COLOR_EQ(3, 1, GLColor::red) << "indexed: " << indexed;
+        EXPECT_PIXEL_COLOR_EQ(6, 3, GLColor::red) << "indexed: " << indexed;
+        EXPECT_PIXEL_COLOR_EQ(3, 6, GLColor::red) << "indexed: " << indexed;
+
+        // The closing segment, away from the corners it shares with the bottom and top edges.
+        EXPECT_PIXEL_COLOR_EQ(1, 3, GLColor::red) << "indexed: " << indexed;
+        EXPECT_PIXEL_COLOR_EQ(1, 4, GLColor::red) << "indexed: " << indexed;
+
+        // Nothing was drawn inside the loop.
+        EXPECT_PIXEL_COLOR_EQ(3, 3, GLColor::black) << "indexed: " << indexed;
+    }
+}
+
+// Test that a line loop draw into a framebuffer whose draw buffer 0 has no attachment does not
+// crash. The framebuffer is complete, but the draw renders nowhere, so a backend may skip it
+// entirely; the draw for the closing segment has to be skipped along with it, otherwise it is
+// recorded on a render pass that was never set up for drawing.
+TEST_P(LineLoopTestES3, LineLoopWithNothingBoundToDrawBufferZero)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 16, 16);
+
+    // Attach the texture to COLOR_ATTACHMENT1 only. Draw buffer 0 is COLOR_ATTACHMENT0, which has
+    // no attachment, and draw buffer 1 is NONE.
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture, 0);
+    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+
+    const GLfloat kPositions[] = {-0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f};
+
+    glUseProgram(mProgram);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, kPositions);
+    glUniform4f(mColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+    static const GLushort kIndices[] = {0, 1, 2, 3};
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_SHORT, kIndices);
+
+    glFinish();
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test an edge case in the D3D11 backend where a large index array of GL_UNSIGNED_BYTE
 // drawn as a GL_LINE_LOOP is widened to 32-bits internally and overflows.
 // Disabled because it slow and triggers an internal error.
