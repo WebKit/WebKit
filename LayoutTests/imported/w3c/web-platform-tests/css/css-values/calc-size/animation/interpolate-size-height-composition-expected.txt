@@ -1,5 +1,5 @@
 
-FAIL Compositing: property <height> underlying [fit-content] from add [100px] to add [200px] at (-0.3) should be [120px] assert_equals: expected "120px " but got "119.98px "
+PASS Compositing: property <height> underlying [fit-content] from add [100px] to add [200px] at (-0.3) should be [120px]
 PASS Compositing: property <height> underlying [fit-content] from add [100px] to add [200px] at (0) should be [150px]
 PASS Compositing: property <height> underlying [fit-content] from add [100px] to add [200px] at (0.5) should be [200px]
 PASS Compositing: property <height> underlying [fit-content] from add [100px] to add [200px] at (1) should be [250px]

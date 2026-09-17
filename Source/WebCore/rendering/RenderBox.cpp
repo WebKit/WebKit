@@ -2973,7 +2973,7 @@ LayoutUnit RenderBox::resolveCalcSizeContentSize(const Style::UnevaluatedCalcSiz
 {
     auto isContentBox = style().boxSizing() == BoxSizing::ContentBox;
     auto basis = isContentBox ? keywordContentSize : keywordContentSize + borderAndPadding;
-    auto resolved = LayoutUnit { calcSize.evaluate(percentResolutionSize, style().usedZoomForLength(), basis) };
+    auto resolved = LayoutUnit::fromFloatRound(calcSize.evaluate(percentResolutionSize, style().usedZoomForLength(), basis));
     return isContentBox ? resolved : std::max(0_lu, resolved - borderAndPadding);
 }
 
