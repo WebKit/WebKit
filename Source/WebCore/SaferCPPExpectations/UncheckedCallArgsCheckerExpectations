@@ -134,6 +134,7 @@ inspector/DOMEditor.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
 inspector/InspectorFrontendHost.cpp
+inspector/InspectorInstrumentation.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorOverlayLabel.cpp
 inspector/InspectorStyleSheet.cpp
