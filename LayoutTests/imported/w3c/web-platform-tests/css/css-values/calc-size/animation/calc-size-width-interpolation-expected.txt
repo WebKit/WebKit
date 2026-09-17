@@ -1,60 +1,60 @@
 
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS Web Animations: property <width> from [calc-size(auto, size)] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions with transition: all: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px] assert_equals: expected "250px " but got "200px "
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px] assert_equals: expected "300px " but got "200px "
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.25) should be [250px]
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.5) should be [300px]
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS Web Animations: property <width> from neutral to [calc-size(auto, size * 2)] at (1.25) should be [450px]
 PASS CSS Transitions: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (-0.25) should be [0]
 PASS CSS Transitions: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (0) should be [0]
 PASS CSS Transitions: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (0.25) should be [25px]
@@ -83,86 +83,86 @@ PASS Web Animations: property <width> from [calc-size(min-content, 0px)] to [cal
 PASS Web Animations: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (0.75) should be [75px]
 PASS Web Animations: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (1) should be [100px]
 PASS Web Animations: property <width> from [calc-size(min-content, 0px)] to [calc-size(min-content, size)] at (1.25) should be [125px]
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px] assert_equals: expected "150px " but got "200px "
+PASS CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (-0.25) should be [150px]
 PASS Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0) should be [200px]
-FAIL Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px] assert_equals: expected "350px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px] assert_equals: expected "450px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (0.75) should be [350px]
+PASS Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS Web Animations: property <width> from [auto] to [calc-size(auto, size * 2)] at (1.25) should be [450px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px]
 PASS CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (0) should be [200px]
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px]
 PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (0) should be [200px]
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px]
 PASS CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0) should be [200px]
-FAIL CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px]
+PASS Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (-0.25) should be [237.5px]
 PASS Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0) should be [200px]
-FAIL Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px] assert_equals: expected "15px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px] assert_equals: expected "312.5px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px] assert_equals: expected "487.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px] assert_equals: expected "15px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px] assert_equals: expected "312.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px] assert_equals: expected "487.5px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px] assert_equals: expected "15px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px] assert_equals: expected "312.5px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px] assert_equals: expected "487.5px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px] assert_equals: expected "15px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px] assert_equals: expected "312.5px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px] assert_equals: expected "400px " but got "200px "
-FAIL Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px] assert_equals: expected "487.5px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (0.75) should be [87.5px]
+PASS Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1) should be [50px]
+PASS Web Animations: property <width> from [auto] to [calc-size(any, 50px)] at (1.25) should be [12.5px]
+PASS CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px]
+PASS CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px]
+PASS CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px]
+PASS CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Transitions with transition: all: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px]
+PASS CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px]
+PASS CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px]
+PASS CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px]
+PASS CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS CSS Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px]
+PASS Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (-0.1) should be [15.000000000000007px]
+PASS Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0) should be [50px]
+PASS Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (0.75) should be [312.5px]
+PASS Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1) should be [400px]
+PASS Web Animations: property <width> from [calc-size(any, 50px)] to [calc-size(auto, size * 2)] at (1.25) should be [487.5px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px]
 PASS CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (0) should be [200px]
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px]
+PASS CSS Transitions: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px]
 PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (0) should be [200px]
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px]
+PASS CSS Transitions with transition: all: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px]
 PASS CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (0) should be [200px]
-FAIL CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px] assert_equals: expected "237.5px " but got "200px "
+PASS CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px]
+PASS CSS Animations: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px]
+PASS Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (-0.25) should be [237.5px]
 PASS Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (0) should be [200px]
-FAIL Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px] assert_equals: expected "87.5px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px] assert_equals: expected "50px " but got "200px "
-FAIL Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px] assert_equals: expected "12.5px " but got "200px "
+PASS Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (0.75) should be [87.5px]
+PASS Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (1) should be [50px]
+PASS Web Animations: property <width> from [auto] to [calc-size(50px, size)] at (1.25) should be [12.5px]
 PASS CSS Transitions: property <width> from [min-content] to [calc-size(min-content, size * 2)] at (-0.25) should be [75px]
 PASS CSS Transitions: property <width> from [min-content] to [calc-size(min-content, size * 2)] at (0) should be [100px]
 PASS CSS Transitions: property <width> from [min-content] to [calc-size(min-content, size * 2)] at (0.75) should be [175px]
@@ -711,24 +711,24 @@ PASS Web Animations: property <width> from [calc-size(37px, 200px)] to [calc-siz
 PASS Web Animations: property <width> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 7% + 12px)] at (0.75) should be [125px]
 PASS Web Animations: property <width> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 7% + 12px)] at (1) should be [100px]
 PASS Web Animations: property <width> from [calc-size(37px, 200px)] to [calc-size(37px, size * 2 + 7% + 12px)] at (1.25) should be [75px]
-FAIL CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px] assert_equals: expected "337.5px " but got "300px "
+PASS CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px]
 PASS CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0) should be [300px]
-FAIL CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px] assert_equals: expected "187.5px " but got "300px "
-FAIL CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px] assert_equals: expected "150px " but got "300px "
-FAIL CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px] assert_equals: expected "112.5px " but got "300px "
-FAIL CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px] assert_equals: expected "337.5px " but got "300px "
+PASS CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px]
+PASS CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px]
+PASS CSS Transitions: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px]
+PASS CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px]
 PASS CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0) should be [300px]
-FAIL CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px] assert_equals: expected "187.5px " but got "300px "
-FAIL CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px] assert_equals: expected "150px " but got "300px "
-FAIL CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px] assert_equals: expected "112.5px " but got "300px "
-FAIL CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px] assert_equals: expected "337.5px " but got "300px "
+PASS CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px]
+PASS CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px]
+PASS CSS Transitions with transition: all: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px]
+PASS CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px]
 PASS CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0) should be [300px]
-FAIL CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px] assert_equals: expected "187.5px " but got "300px "
-FAIL CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px] assert_equals: expected "150px " but got "300px "
-FAIL CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px] assert_equals: expected "112.5px " but got "300px "
-FAIL Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px] assert_equals: expected "337.5px " but got "300px "
+PASS CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px]
+PASS CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px]
+PASS CSS Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px]
+PASS Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (-0.25) should be [337.5px]
 PASS Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0) should be [300px]
-FAIL Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px] assert_equals: expected "187.5px " but got "300px "
-FAIL Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px] assert_equals: expected "150px " but got "300px "
-FAIL Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px] assert_equals: expected "112.5px " but got "300px "
+PASS Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (0.75) should be [187.5px]
+PASS Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1) should be [150px]
+PASS Web Animations: property <width> from [inherit] to [calc-size(auto, size * 0.5)] at (1.25) should be [112.5px]
 

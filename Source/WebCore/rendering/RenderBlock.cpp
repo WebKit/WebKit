@@ -2339,9 +2339,10 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
         m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-    } else if (logicalWidth.isCalcSize() && !logicalWidth.isAuto()) {
-        // A calc-size() contributes the result of its calculation, not the size of its basis. An
-        // `auto` basis has no intrinsic width to stand for, so it is left to the content based branch.
+    } else if (logicalWidth.isCalcSize()) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis:
+        // min-content and max-content each collapse both contributions to one size, while fit-content
+        // and `auto` depend on the space available, so each contribution keeps its own.
         auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
         if (logicalWidth.isMinContent())
             maxContentLogicalWidth = minContentLogicalWidth;

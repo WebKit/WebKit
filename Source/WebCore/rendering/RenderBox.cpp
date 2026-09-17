@@ -3017,10 +3017,28 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
         logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
 
     if constexpr (std::same_as<SizeType, Style::PreferredSize> || std::same_as<SizeType, Style::FlexBasis>) {
+        // In calc-size(auto, size * 2), `auto` stands for the width the box would have taken.
+        // max-width has no auto, and min-width: auto returned above.
+        if (logicalWidth.isCalcSize() && logicalWidth.isAuto())
+            return computeCalcSizeOnAutoLogicalWidth(logicalWidth, logicalWidthResult, availableLogicalWidth);
+
         if (sizesLogicalWidthToFitContent())
             return std::max(minContentLogicalWidthContribution(), std::min(maxContentLogicalWidthContribution(), logicalWidthResult));
     }
+
     return logicalWidthResult;
+}
+
+template<typename SizeType> LayoutUnit RenderBox::computeCalcSizeOnAutoLogicalWidth(const SizeType& logicalWidth, LayoutUnit autoLogicalWidth, LayoutUnit availableLogicalWidth) const
+{
+    if (sizesLogicalWidthToFitContent()) {
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+        auto borderAndPadding = borderAndPaddingLogicalWidth();
+        autoLogicalWidth = std::max(minContentLogicalWidth + borderAndPadding, std::min(maxContentLogicalWidth + borderAndPadding, autoLogicalWidth));
+    }
+
+    auto borderAndPadding = borderAndPaddingLogicalWidth();
+    return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, autoLogicalWidth - borderAndPadding), availableLogicalWidth) + borderAndPadding;
 }
 
 LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
