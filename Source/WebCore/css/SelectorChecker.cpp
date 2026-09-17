@@ -791,63 +791,20 @@ static inline bool NODELETE tagMatches(const Element& element, const CSSSelector
     return namespaceURI == starAtom() || namespaceURI == element.namespaceURI();
 }
 
-static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList*);
-
-// https://drafts.csswg.org/selectors-4/#featureless
-static bool isSimpleSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& selector)
-{
-    if (selector.match() != CSSSelector::Match::PseudoClass)
-        return false;
-    if (selector.isHostPseudoClass() || selector.isScopePseudoClass())
-        return true;
-    switch (selector.pseudoClass()) {
-    case CSSSelector::PseudoClass::Is:
-    case CSSSelector::PseudoClass::Where:
-    case CSSSelector::PseudoClass::WebKitAny:
-    case CSSSelector::PseudoClass::Not:
-        return isSelectorListAllowedToMatchFeaturelessShadowHost(selector.selectorList());
-    default:
-        return false;
-    }
-}
-
-static bool isCompoundSelectorAllowedToMatchFeaturelessShadowHost(const CSSSelector& firstInCompound)
-{
-    // :has() is allowed only if some other simple selector in its compound is.
-    bool hasAllowedSimpleSelector = false;
-    bool containsHas = false;
-    for (auto* simpleSelector = &firstInCompound; simpleSelector; simpleSelector = simpleSelector->followingInCompound()) {
-        if (simpleSelector->match() == CSSSelector::Match::PseudoClass && simpleSelector->pseudoClass() == CSSSelector::PseudoClass::Has) {
-            containsHas = true;
-            continue;
-        }
-        if (!isSimpleSelectorAllowedToMatchFeaturelessShadowHost(*simpleSelector))
-            return false;
-        hasAllowedSimpleSelector = true;
-    }
-    return hasAllowedSimpleSelector || !containsHas;
-}
-
-static bool isSelectorListAllowedToMatchFeaturelessShadowHost(const CSSSelectorList* selectorList)
-{
-    if (!selectorList)
-        return false;
-    for (auto& selector : *selectorList) {
-        if (isCompoundSelectorAllowedToMatchFeaturelessShadowHost(selector))
-            return true;
-    }
-    return false;
-}
-
 bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& context, MatchType& matchType) const
 {
     CheckedRef element = *context.element;
     const CSSSelector& selector = *context.selector;
 
     if (context.mustMatchHostPseudoClass) {
-        // The featureless shadow host only matches the simple selectors it is allowed to, and functional pseudo-classes that may contain one of those.
+        // :host doesn't combine with anything except pseudo elements.
         bool isPseudoElement = selector.match() == CSSSelector::Match::PseudoElement;
-        if (!selector.isHostPseudoClass() && !isPseudoElement && !selector.isScopePseudoClass() && selector.match() != CSSSelector::Match::HasScope && !selector.selectorList())
+        // FIXME: We do not support combining :host with :not() functional pseudoclass. Combination with functional pseudoclass has been allowed for the useful :is(:host) ; but combining with :not() doesn't sound useful like :host():not(:not(:host))
+        // https://bugs.webkit.org/show_bug.cgi?id=283062
+        bool isNotPseudoClass = selector.match() == CSSSelector::Match::PseudoClass && selector.pseudoClass() == CSSSelector::PseudoClass::Not;
+
+        // We can early return when we know it's neither :host, :scope (which can match when the scoping root is the shadow host), a compound :is(:host) , a pseudo-element, nor the implicit :has() scope sentinel anchored at the host.
+        if (!selector.isHostPseudoClass() && !isPseudoElement && !selector.isScopePseudoClass() && selector.match() != CSSSelector::Match::HasScope && (!selector.selectorList() || isNotPseudoClass))
             return false;
     }
 
@@ -909,12 +866,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         // Handle :not up front.
         if (selector.pseudoClass() == CSSSelector::PseudoClass::Not) {
             const CSSSelectorList* selectorList = selector.selectorList();
-
-            if (context.mustMatchHostPseudoClass) {
-                if (!isSelectorListAllowedToMatchFeaturelessShadowHost(selectorList))
-                    return false;
-                context.matchedHostPseudoClass = true;
-            }
 
             for (auto& subselector : *selectorList) {
                 LocalContext subcontext(context);
