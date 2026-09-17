@@ -29,12 +29,12 @@
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
 #include "BitmapTexturePool.h"
-#include "CoordinatedPlatformLayerBufferExternalOES.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
-#include "CoordinatedPlatformLayerBufferYUV.h"
 #include "GraphicsTypesGL.h"
 
 #if USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferExternalOES.h"
+#include "CoordinatedPlatformLayerBufferYUV.h"
 #include "TextureMapper.h"
 #else
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"

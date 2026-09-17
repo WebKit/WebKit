@@ -28,8 +28,6 @@
 
 #if USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "BitmapTexturePool.h"
-#include "CoordinatedPlatformLayerBufferRGB.h"
-#include "CoordinatedPlatformLayerBufferYUV.h"
 #include "DMABufBuffer.h"
 #include "GLContext.h"
 #include "PlatformDisplay.h"
@@ -42,6 +40,8 @@
 
 #if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferExternalOES.h"
+#include "CoordinatedPlatformLayerBufferRGB.h"
+#include "CoordinatedPlatformLayerBufferYUV.h"
 #include "TextureMapper.h"
 #endif
 
