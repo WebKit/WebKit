@@ -1,0 +1,16 @@
+
+PASS Don't set cookie with an uppercase month in an expires in the past via HTTP headers
+PASS Don't set cookie with a lowercase month in an expires in the past via HTTP headers
+PASS Don't set cookie with an uppercase day name in an expires in the past via HTTP headers
+PASS Don't set cookie with a lowercase day name in an expires in the past via HTTP headers
+PASS Don't set cookie with uppercase full day and month names in an expires in the past via HTTP headers
+PASS Don't set cookie with uppercase names and a dash separated date in an expires in the past via HTTP headers
+PASS Don't set cookie with uppercase names and no comma in an expires in the past via HTTP headers
+PASS Don't set cookie with an uppercase month in an expires in the past via document.cookie
+PASS Don't set cookie with a lowercase month in an expires in the past via document.cookie
+PASS Don't set cookie with an uppercase day name in an expires in the past via document.cookie
+PASS Don't set cookie with a lowercase day name in an expires in the past via document.cookie
+PASS Don't set cookie with uppercase full day and month names in an expires in the past via document.cookie
+PASS Don't set cookie with uppercase names and a dash separated date in an expires in the past via document.cookie
+PASS Don't set cookie with uppercase names and no comma in an expires in the past via document.cookie
+

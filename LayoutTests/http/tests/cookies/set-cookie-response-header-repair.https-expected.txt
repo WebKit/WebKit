@@ -1,0 +1,16 @@
+Tests the Set-Cookie response header repair path: repeated headers, attribute preservation, and that a comma-bearing value does not synthesize a cookie.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repeated Set-Cookie: cookie "a" was repaired to a persistent cookie
+PASS repeated Set-Cookie: cookie "b" was repaired to a persistent cookie
+PASS attribute preservation: cookie was repaired to a persistent cookie
+PASS attribute preservation: HttpOnly survived the repair
+PASS attribute preservation: Secure survived the repair
+PASS attribute preservation: SameSite=Strict survived the repair
+PASS comma-bearing value: no cookie was synthesized
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

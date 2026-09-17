@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('Tests the Set-Cookie response header repair path: repeated headers, attribute preservation, and that a comma-bearing value does not synthesize a cookie.');
+jsTestIsAsync = true;
+
+function cookieNamed(name)
+{
+    return internals.getCookies().find(cookie => cookie.name === name) || null;
+}
+
+function load(url)
+{
+    return new Promise(resolve => {
+        const frame = document.createElement('iframe');
+        frame.onload = () => { frame.remove(); resolve(); };
+        frame.src = url;
+        document.body.appendChild(frame);
+    });
+}
+
+const resource = 'resources/set-repeated-cookies-needing-repair.py';
+
+onload = async () => {
+    // Repeated Set-Cookie headers, both carrying the month-before-day ordering CFNetwork rejects.
+    // CFNetwork coalesces them into one comma-joined header, so this exercises the split as well
+    // as the date repair. A rejected date leaves a session cookie rather than dropping it, so
+    // isSession is what distinguishes a repaired cookie from an unrepaired one.
+    await load(resource + '?case=repeated');
+
+    for (const [name, value] of [['a', '1'], ['b', '2']]) {
+        const cookie = cookieNamed(name);
+        if (!cookie) {
+            testFailed('repeated Set-Cookie: cookie "' + name + '" is missing entirely');
+            continue;
+        }
+        if (cookie.value !== value)
+            testFailed('repeated Set-Cookie: cookie "' + name + '" has value "' + cookie.value + '", expected "' + value + '"');
+        else if (cookie.isSession)
+            testFailed('repeated Set-Cookie: cookie "' + name + '" is session scoped, so its Expires was not repaired');
+        else
+            testPassed('repeated Set-Cookie: cookie "' + name + '" was repaired to a persistent cookie');
+    }
+
+    // The repair re-stores the cookie through an NSHTTPCookie property dictionary. Everything
+    // protective about the cookie has to survive that round trip; silently dropping HttpOnly or
+    // Secure would make a cookie readable from script that was not before.
+    await load(resource + '?case=attributes');
+
+    const flagged = cookieNamed('secure_flags');
+    if (!flagged)
+        testFailed('attribute preservation: cookie is missing entirely');
+    else {
+        if (flagged.isSession)
+            testFailed('attribute preservation: cookie is session scoped, so its Expires was not repaired');
+        else
+            testPassed('attribute preservation: cookie was repaired to a persistent cookie');
+
+        for (const [flag, label] of [['isHttpOnly', 'HttpOnly'], ['isSecure', 'Secure'], ['isSameSiteStrict', 'SameSite=Strict']]) {
+            if (flagged[flag])
+                testPassed('attribute preservation: ' + label + ' survived the repair');
+            else
+                testFailed('attribute preservation: ' + label + ' was lost by the repair');
+        }
+    }
+
+    // A single cookie whose value contains ", name=" splits into two segments, and the trailing
+    // fragment parses as a well-formed cookie of its own. The repair must not store it: CFNetwork
+    // saw one cookie, and inventing a second one the server never sent would be worse than not
+    // repairing at all. The guard is that the expires-only repair re-stores a cookie only when one
+    // with that exact name and value is already in the jar.
+    await load(resource + '?case=commavalue');
+
+    if (cookieNamed('synthesized'))
+        testFailed('comma-bearing value: the repair synthesized a cookie the server never sent');
+    else
+        testPassed('comma-bearing value: no cookie was synthesized');
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

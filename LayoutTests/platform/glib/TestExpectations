@@ -282,6 +282,10 @@ http/tests/resourceLoadStatistics/only-accept-first-party-cookies-with-third-par
 http/tests/cookies/multiple-cookies-iframes.https.html [ Skip ]
 http/tests/cookies/multiple-cookies.https.html [ Skip ]
 
+# Asserts a CFNetwork-specific Set-Cookie repair. libsoup has the same month-before-day defect but
+# it is being fixed in libsoup itself rather than worked around in WebKit, so this does not apply.
+http/tests/cookies/set-cookie-response-header-repair.https.html [ Skip ]
+
 # Failures from upgrading mixed-content
 imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Failure ]
 imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/video-upgrade.https.sub.html [ Failure ]
