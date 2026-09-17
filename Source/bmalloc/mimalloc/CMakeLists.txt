@@ -8,7 +8,11 @@ set(MI_BUILD_TESTS OFF CACHE BOOL "Build mimalloc tests" FORCE)
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-add_subdirectory(mimalloc)
+if (CMAKE_VERSION VERSION_LESS "3.25")
+    message(FATAL_ERROR "CMake 3.25 is required for USE_MIMALLOC, but current CMake version is ${CMAKE_VERSION}")
+endif ()
+
+add_subdirectory(mimalloc EXCLUDE_FROM_ALL)
 WEBKIT_ADD_TARGET_CXX_FLAGS(mimalloc-obj
     -Wno-undef
     -Wno-cast-align)
