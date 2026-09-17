@@ -127,38 +127,16 @@ def write_ninja_depfile(request, output_file_map):
     content = " \\\n".join(lines) + "\n"
 
     try:
-        previous = Path(request.path).read_text()
+        # Only rewrite the depfile when it changes, otherwise the rebuild
+        # trigger causes the module to rebuild forever.
+        if Path(request.path).read_text() == content:
+            return
     except OSError:
-        previous = None
-    # Only rewrite the depfile when it changes, otherwise the rebuild trigger
-    # causes the module to rebuild forever.
-    if previous == content:
-        return
-    if previous is not None:
-        report_dependency_change(request, previous, deps)
+        pass
 
     scratch = request.path + ".tmp"
     Path(scratch).write_text(content)
     os.replace(scratch, request.path)
-
-
-def report_dependency_change(request, previous, deps):
-    """Say what changed, so a build that is not a no-op explains itself.
-
-    Rewriting the depfile costs one more build: ninja ingests it only by
-    re-running the edge that declares it, and that edge is upstream of this
-    compile.
-    """
-    was = set(depfile.parse_text(previous))
-    now = set(deps)
-    added = sorted(now - was)
-    removed = sorted(was - now)
-    name = Path(request.path).name
-    sys.stderr.write(f"{name}: {len(added)} added, {len(removed)} removed\n")
-    for path in added[:8]:
-        sys.stderr.write(f"  + {path}\n")
-    for path in removed[:8]:
-        sys.stderr.write(f"  - {path}\n")
 
 
 def write_response_file(args):
