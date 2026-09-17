@@ -536,6 +536,14 @@ void BifurcatedGraphicsContext::drawGlyphs(const Font& font, std::span<const Gly
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::drawGlyphsImmediate(const FontBase& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& point, FontSmoothingMode fontSmoothingMode)
+{
+    m_primaryContext.drawGlyphsImmediate(font, glyphs, advances, point, fontSmoothingMode);
+    m_secondaryContext.drawGlyphsImmediate(font, glyphs, advances, point, fontSmoothingMode);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::drawEmphasisMarks(const FontCascade& cascade, const TextRun& run, const AtomString& mark, const FloatPoint& point, unsigned from, std::optional<unsigned> to)
 {
     m_primaryContext.drawEmphasisMarks(cascade, run, mark, point, from, to);
