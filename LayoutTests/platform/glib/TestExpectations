@@ -638,8 +638,6 @@ webkit.org/b/314179 media/media-source/media-managedmse-waiting-at-gap.html [ Fa
 
 webkit.org/b/307141 media/media-source/media-source-seek-and-play.html [ Failure Pass ]
 
-webkit.org/b/312871 media/media-source/media-source-seek-to-zero-then-play.html [ Timeout ]
-
 webkit.org/b/315030 media/media-source/media-source-webm-seek-singlekeyframe.html [ Timeout Pass ]
 
 # NOTIFICATION_EVENT tests
