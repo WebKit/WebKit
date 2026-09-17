@@ -1,5 +1,15 @@
 
 
-FAIL Filterable select option:filtered behavior promise_test: Unhandled rejection with value: object "SyntaxError: ':filtered' is not a valid selector."
-FAIL Case folding promise_test: Unhandled rejection with value: object "SyntaxError: ':filtered' is not a valid selector."
+𐐨
+
+𐐨
+
+
+FAIL sibling idref: Filterable select option:filtered behavior promise_test: Unhandled rejection with value: object "SyntaxError: ':filtered' is not a valid selector."
+FAIL sibling idref: Case folding promise_test: Unhandled rejection with value: object "SyntaxError: ':filtered' is not a valid selector."
+PASS nested listbox: Filterable select option:filtered behavior
+PASS nested listbox: Case folding
+PASS nested dropdown: Filterable select option:filtered behavior
+PASS nested dropdown: Case folding
+FAIL Sibling input and select pattern should not support dropdown select elements. promise_test: Unhandled rejection with value: object "SyntaxError: ':filtered' is not a valid selector."
 

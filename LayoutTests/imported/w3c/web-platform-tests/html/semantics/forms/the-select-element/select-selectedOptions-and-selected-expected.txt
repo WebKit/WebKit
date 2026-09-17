@@ -1,0 +1,4 @@
+
+
+PASS HTMLSelectElement's selectedOptions and HTMLOptionElement's selected
+

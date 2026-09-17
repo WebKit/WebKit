@@ -1,0 +1,4 @@
+
+
+FAIL <selectedcontent> should be up to date after form restoration. assert_equals: Selectedcontent element should contain selected options. expected "<div>one</div><div>two</div>" but got ""
+

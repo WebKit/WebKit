@@ -11,6 +11,9 @@
 <style>
 :root {
   color-scheme: dark;
+  /* Setting will-change:transform here and in the reference file fixes
+     subpixel rendering differences of rounded corners. */
+  will-change: transform;
 }
 select, select::picker(select) {
   appearance: base-select;

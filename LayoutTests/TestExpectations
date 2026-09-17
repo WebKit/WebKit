@@ -737,11 +737,29 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customiz
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-legend-not-first.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-optgroup-rendering.html [ Pass ImageOnlyFailure ]
 
+# The reference reconstructs Chrome's base-select UA metrics with its own inline styles rather than
+# linking resources/customizable-select-styles.css, so update.css cannot bring it in line with ours.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-base-toggle-invalidation.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-ordering.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-appearance-writing-modes.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-picker-icon-content-none.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-single-base-appearance-rendering.html [ ImageOnlyFailure ]
+# The selected content fills the line (UA flex: 1 on ::field-content), so justify-content has no effect.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-appearance-base-display.html [ ImageOnlyFailure ]
+# update.css gets this close, but ~2px of option/checkmark inline geometry still differs.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-pseudo-ordering.html [ ImageOnlyFailure ]
+# update.css gets this close too; all that differs is update.css's mask approximation of the UA-drawn
+# ::picker-icon glyph, which does not rasterize identically on Intel. The fix belongs upstream, in the
+# shared reference styles.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/select-base-overflow.html [ ImageOnlyFailure ]
+
 # List boxes/<select multiple>.
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-listbox/ [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select-multiple-popup/select-multiple-popup-appearance.tentative.html [ ImageOnlyFailure ]
 
 ## -- General <select> tests -- ##
+# Untriaged: times out driving the native popup menu and a color picker.
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/multiple-pickers-crash.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-restore-invalid-option.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-many-options.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple-size-1.html [ ImageOnlyFailure ]
@@ -8218,7 +8236,7 @@ imported/w3c/web-platform-tests/html/semantics/document-metadata/the-style-eleme
 imported/w3c/web-platform-tests/html/semantics/forms/customizable-combobox/customizable-combobox-appearance.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/input-text-datalist-removal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-text-overflow-ellipsis-scroll.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-target/form-target-blank-useractivation-multi-globals.html [ Skip ] # timeout
 
 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open_fires_resize.tentative.html [ Skip ] # timeout

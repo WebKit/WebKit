@@ -12,4 +12,5 @@ PASS set and reset (HTMLOptionsCollection)
 PASS get display:none
 PASS reset to display:none
 PASS set selectedIndex=-1
+PASS removing a non-selected option with nothing selected asks for a reset
 

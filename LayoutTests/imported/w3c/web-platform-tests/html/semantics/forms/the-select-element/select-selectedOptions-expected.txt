@@ -7,4 +7,6 @@ PASS .selectedOptions without the 'multiple' attribute but more than one selecte
 PASS .selectedOptions should return `HTMLCollection` instance
 PASS .selectedOptions should always return the same value - [SameObject]
 PASS .selectedOptions should return the same object after selection changes - [SameObject]
+PASS .selectedOptions should not go stale when a form reset runs the selectedness setting algorithm on a script-created select
+PASS .selectedOptions should not go stale when the selectedness setting algorithm runs on a script-created select
 

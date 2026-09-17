@@ -10,11 +10,12 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/combobox-selected-option-text-removal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/combobox-selected-option-text-removal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/combobox-selected-option-text-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-add.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection-namedItem.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/common-HTMLOptionsCollection.html
@@ -22,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/list-box-important-colors-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/list-box-important-colors-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/list-box-important-colors.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/multiple-pickers-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/option-selectedness-script-mutation.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering-ref.html
@@ -34,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-attribute-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-clear-reappend.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-click-does-not-open-picker.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-defineProperty.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-dropdown-vs-listbox-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-dropdown-vs-listbox-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-dropdown-vs-listbox.html
@@ -54,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-marker-visible-overflow-ref.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-marker-visible-overflow.tentative-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-marker-visible-overflow.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple-resize-does-not-autoscroll.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple-size-1-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple-size-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-multiple-size-1.html
@@ -72,6 +76,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-required-attribute.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-restore-invalid-option.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-root-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions-and-selected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions-and-value.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions-nesting.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-selectedOptions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/select-setcustomvalidity.html

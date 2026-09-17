@@ -1,0 +1,8 @@
+
+
+PASS An option inside a wrapper element can be the placeholder label option.
+PASS Selecting past the wrapped placeholder label option validates the select.
+PASS An option inside an optgroup is not the placeholder label option.
+PASS An option inside a wrapped optgroup is not the placeholder label option.
+PASS A multiple select has no placeholder label option.
+

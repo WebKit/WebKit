@@ -10,13 +10,11 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-filtered-pseudo.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-keyboard-behavior.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/select-beforefilter.tentative.html

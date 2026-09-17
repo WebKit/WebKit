@@ -1,0 +1,7 @@
+
+
+FAIL Input tags should parse inside select if there are no options first. assert_equals: expected "<button>button</button><input>" but got "<button>button</button>"
+FAIL Input tags should parse inside select if nested in another tag assert_equals: expected "<div><input></div>" but got "<div></div>"
+PASS Input tags should close select when directly inside an <option>
+PASS Input tags should close select when placed after an <option>
+

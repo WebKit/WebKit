@@ -1,0 +1,7 @@
+
+
+PASS Selectedcontent element removal steps.
+PASS Selectedcontent element insertion steps.
+FAIL Option element insertion steps. assert_equals: The selectedcontent should be updated after option post-connection steps. expected "two" but got "one"
+FAIL Option element removal steps. assert_equals: The selectedcontent element should be updated after a microtask. expected "two" but got "one"
+
