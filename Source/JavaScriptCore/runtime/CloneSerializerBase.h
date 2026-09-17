@@ -366,8 +366,15 @@ protected:
         }
     }
 
+    static bool terminalWithException(SerializationReturnCode& code)
+    {
+        code = SerializationReturnCode::ExistingExceptionError;
+        return true;
+    }
+
     bool dumpArrayBufferView(JSObject* obj, SerializationReturnCode& code)
     {
+        auto scope = DECLARE_THROW_SCOPE(m_lexicalGlobalObject->vm());
         write(ArrayBufferViewTag);
         switch (obj->type()) {
 #define JSC_WRITE_ARRAY_BUFFER_VIEW_SUBTAG(name) \
@@ -411,7 +418,9 @@ protected:
             return true;
         }
 
-        return dumpIfTerminal(static_cast<Derived*>(this)->toJSArrayBuffer(*arrayBuffer), code);
+        JSValue jsArrayBuffer = static_cast<Derived*>(this)->toJSArrayBuffer(*arrayBuffer);
+        RETURN_IF_EXCEPTION(scope, terminalWithException(code));
+        RELEASE_AND_RETURN(scope, dumpIfTerminal(jsArrayBuffer, code));
     }
 
     ALWAYS_INLINE bool dumpIfTerminal(JSValue value, SerializationReturnCode& code)
@@ -420,6 +429,7 @@ protected:
         // Derived will still be an incomplete type
         static_assert(StructuredCloneSerializerHandler<Derived>,
             "Derived class must satisfy StructuredCloneSerializerHandler");
+        auto scope = DECLARE_THROW_SCOPE(m_lexicalGlobalObject->vm());
         if (value.isNull()) {
             write(NullTag);
             return true;
@@ -450,7 +460,9 @@ protected:
             return true;
         }
         if (value.isString()) {
-            dumpString(asString(value)->value(m_lexicalGlobalObject));
+            auto string = asString(value)->value(m_lexicalGlobalObject);
+            RETURN_IF_EXCEPTION(scope, terminalWithException(code));
+            dumpString(string);
             return true;
         }
         if (value.isBigInt()) {
@@ -481,6 +493,7 @@ protected:
             if (!addToObjectPoolIfNotDupe<TrueObjectTag, FalseObjectTag>(booleanObject))
                 return true;
             auto tag = booleanObject->internalValue().toBoolean(m_lexicalGlobalObject) ? TrueObjectTag : FalseObjectTag;
+            RETURN_IF_EXCEPTION(scope, terminalWithException(code));
             write(tag);
             appendObjectPoolTag(tag);
             return true;
@@ -489,6 +502,7 @@ protected:
             if (!addToObjectPoolIfNotDupe<EmptyStringObjectTag, StringObjectTag>(stringObject))
                 return true;
             auto str = asString(stringObject->internalValue())->value(m_lexicalGlobalObject);
+            RETURN_IF_EXCEPTION(scope, terminalWithException(code));
             dumpStringObject(str);
             return true;
         }
@@ -562,6 +576,7 @@ protected:
             if (writeObjectReferenceIfDupe<ArrayBufferViewTag>(obj))
                 return true;
             bool success = dumpArrayBufferView(obj, code);
+            RETURN_IF_EXCEPTION(scope, terminalWithException(code));
             addToObjectPool<ArrayBufferViewTag>(obj);
             return success;
         }
@@ -605,11 +620,14 @@ protected:
         // Give Derived (the embedder) first refusal. This lets error-like platform objects, such
         // as WebCore's DOMException (which is an ErrorInstance), be serialized as themselves
         // rather than as generic Errors by the ErrorInstance path below.
-        if (static_cast<Derived*>(this)->dumpDerivedTerminal(obj, code))
+        bool isDerivedTerminal = static_cast<Derived*>(this)->dumpDerivedTerminal(obj, code);
+        RETURN_IF_EXCEPTION(scope, terminalWithException(code));
+        if (isDerivedTerminal)
             return true;
 
         if (auto* errorInstance = dynamicDowncast<ErrorInstance>(obj)) {
             auto errorInformation = extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, *errorInstance);
+            RETURN_IF_EXCEPTION(scope, terminalWithException(code));
             if (!errorInformation)
                 return false;
 
@@ -634,10 +652,13 @@ protected:
 
     JSValue getProperty(JSObject* object, const Identifier& propertyName)
     {
+        auto scope = DECLARE_THROW_SCOPE(m_lexicalGlobalObject->vm());
         PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
-        if (object->methodTable()->getOwnPropertySlot(object, m_lexicalGlobalObject, propertyName, slot))
-            return slot.getValue(m_lexicalGlobalObject, propertyName);
-        return JSValue();
+        bool found = object->methodTable()->getOwnPropertySlot(object, m_lexicalGlobalObject, propertyName, slot);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!found)
+            return { };
+        RELEASE_AND_RETURN(scope, slot.getValue(m_lexicalGlobalObject, propertyName));
     }
 
     SerializationReturnCode serialize(JSValue in)
@@ -684,8 +705,7 @@ protected:
 
                     propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
+                    RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
@@ -698,8 +718,7 @@ protected:
                     break;
                 }
                 inValue = array->getDirectIndex(m_lexicalGlobalObject, index);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
                 if (!inValue) {
                     indexStack.last()++;
                     goto arrayStartVisitIndexedMember;
@@ -707,7 +726,9 @@ protected:
 
                 write(index);
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (dumpIfTerminal(inValue, terminalCode)) {
+                bool isTerminal = dumpIfTerminal(inValue, terminalCode);
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
+                if (isTerminal) {
                     if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                         return terminalCode;
                     indexStack.last()++;
@@ -742,8 +763,7 @@ protected:
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 inObject->methodTable()->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
             }
             startVisitNamedMember:
             [[fallthrough]];
@@ -759,8 +779,7 @@ protected:
                     break;
                 }
                 inValue = getProperty(object, properties[index]);
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
 
                 if (!inValue) {
                     // Property was removed during serialisation
@@ -769,11 +788,10 @@ protected:
                 }
                 write(properties[index].string());
 
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (!dumpIfTerminal(inValue, terminalCode)) {
+                bool isTerminal = dumpIfTerminal(inValue, terminalCode);
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
+                if (!isTerminal) {
                     stateStack.append(WalkerState::ObjectEndVisitNamedMember);
                     goto stateUnknown;
                 }
@@ -782,9 +800,6 @@ protected:
                 [[fallthrough]];
             }
             case WalkerState::ObjectEndVisitNamedMember: {
-                if (scope.exception()) [[unlikely]]
-                    return SerializationReturnCode::ExistingExceptionError;
-
                 indexStack.last()++;
                 goto startVisitNamedMember;
             }
@@ -812,8 +827,7 @@ protected:
                     ASSERT(is<JSMap>(*object));
                     propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
+                    RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
                     goto startVisitNamedMember;
@@ -858,8 +872,7 @@ protected:
                     ASSERT(is<JSSet>(*object));
                     propertyStack.append(PropertyNameArrayBuilder(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable()->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
-                    if (scope.exception()) [[unlikely]]
-                        return SerializationReturnCode::ExistingExceptionError;
+                    RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
                     goto startVisitNamedMember;
@@ -875,7 +888,9 @@ protected:
             stateUnknown:
             case WalkerState::StateUnknown: {
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
-                if (dumpIfTerminal(inValue, terminalCode)) {
+                bool isTerminal = dumpIfTerminal(inValue, terminalCode);
+                RETURN_IF_EXCEPTION(scope, SerializationReturnCode::ExistingExceptionError);
+                if (isTerminal) {
                     if (terminalCode != SerializationReturnCode::SuccessfullyCompleted)
                         return terminalCode;
                     break;
