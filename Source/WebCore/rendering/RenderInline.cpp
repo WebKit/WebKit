@@ -87,12 +87,6 @@ void RenderInline::styleDidChange(Style::Difference diff, const Style::ComputedS
     propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
 }
 
-void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
-        lineLayout->paint(paintInfo, paintOffset, this);
-}
-
 ASCIILiteral RenderInline::renderName() const
 {
     if (isRelativelyPositioned())
@@ -129,7 +123,6 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
     // FIXME: We can do better.
     repaint();
 }
-
 
 bool RenderInline::requiresLayer() const
 {
