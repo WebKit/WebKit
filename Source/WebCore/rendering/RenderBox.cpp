@@ -3051,12 +3051,13 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
             if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
                 if (auto overridingLogicalWidth = overridingLogicalWidthForFlexBasisComputation(); overridingLogicalWidth && *overridingLogicalWidth == logicalWidth) {
                     auto& styleLogicalWidth = style().logicalWidth();
-                    if (!styleLogicalWidth.isAuto() && !(styleLogicalWidth == logicalWidth))
+                    auto styleLogicalWidthResolves = !styleLogicalWidth.isAuto() || styleLogicalWidth.isCalcSize();
+                    if (styleLogicalWidthResolves && !(styleLogicalWidth == logicalWidth))
                         logicalWidthResult = computeLogicalWidthUsingGeneric(styleLogicalWidth, availableLogicalWidth, containingBlock);
                 }
             }
 
-            return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthResult - borderAndPaddingLogicalWidth()), availableLogicalWidth);
+            return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, logicalWidthResult - borderAndPaddingLogicalWidth()), availableLogicalWidth) + borderAndPaddingLogicalWidth();
         }
     }
 
@@ -3544,7 +3545,27 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeLogicalH
         }
         return { };
     }
-    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, intrinsicContentHeight))
+
+    // On flex-basis, `auto` means the block size property rather than the height this box would otherwise take.
+    auto contentHeightForAutoBasis = [&]() -> std::optional<LayoutUnit> {
+        if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
+            if (!logicalHeight.isCalcSize() || !logicalHeight.isAuto())
+                return intrinsicContentHeight;
+            auto overridingLogicalHeight = overridingLogicalHeightForFlexBasisComputation();
+            if (!overridingLogicalHeight || !(*overridingLogicalHeight == logicalHeight))
+                return intrinsicContentHeight;
+            auto& styleLogicalHeight = style().logicalHeight();
+            auto styleLogicalHeightResolves = !styleLogicalHeight.isAuto() || styleLogicalHeight.isCalcSize();
+            if (!styleLogicalHeightResolves || styleLogicalHeight == logicalHeight)
+                return intrinsicContentHeight;
+            if (auto borderBoxLogicalHeight = computeLogicalHeightUsing(styleLogicalHeight, intrinsicContentHeight))
+                return std::max(0_lu, *borderBoxLogicalHeight - borderAndPaddingLogicalHeight());
+            return intrinsicContentHeight;
+        } else
+            return intrinsicContentHeight;
+    };
+
+    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, contentHeightForAutoBasis()))
         return adjustBorderBoxLogicalHeightForBoxSizing(*computedContentAndScrollbarLogicalHeight);
     return { };
 }

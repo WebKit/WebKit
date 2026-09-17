@@ -673,6 +673,10 @@ ScopedFlexBasisAsFlexItemMainSize::ScopedFlexBasisAsFlexItemMainSize(const FlexL
     if (flexBasis.isAuto() && !flexBasis.isCalcSize())
         return;
 
+    auto& mainSize = m_mainAxisIsInlineAxis ? m_flexItem->style().logicalWidth() : m_flexItem->style().logicalHeight();
+    if (flexBasis == mainSize)
+        return;
+
     if (m_mainAxisIsInlineAxis)
         m_flexItem->setOverridingBorderBoxLogicalWidthForFlexBasisComputation(WTF::move(flexBasis));
     else

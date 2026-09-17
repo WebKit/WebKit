@@ -29,7 +29,7 @@ PASS resolved value for width resulting from flex-basis: auto and width: auto
 PASS resolved value for width resulting from flex-basis: calc-size(auto, size * 2) and width: auto
 PASS resolved value for width resulting from flex-basis: auto and width: calc-size(auto, size * 1.5 + 5px)
 PASS resolved value for width resulting from flex-basis: calc-size(auto, size + 14px) and width: calc-size(auto, size * 1.5)
-FAIL resolved value for width resulting from flex-basis: auto and width: calc-size(max-content, size + 12px) assert_equals: resulting width is correct expected "612px" but got "600px"
+PASS resolved value for width resulting from flex-basis: auto and width: calc-size(max-content, size + 12px)
 FAIL resolved value for width resulting from flex-basis: calc-size(auto, size + 4px) and width: calc-size(fit-content, size + 12px) assert_equals: resulting width is correct expected "516px" but got "616px"
 PASS resolved value for width resulting from flex-basis: 472px and width: calc-size(fit-content, size + 12px)
 FAIL resolved value for width resulting from flex-basis: calc-size(content, size * 1.5 + 4px) and width: 321px assert_equals: resulting width is correct expected "904px" but got "600px"
