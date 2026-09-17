@@ -789,8 +789,7 @@ void FlexFormattingContext::setFlexItemCountsForFirstAndLastLine(const FlexLines
 LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     auto flexBasis = flexFormattingUtils().flexBasisForFlexItem(flexLayoutItem);
-    // A plain auto flex basis is the main size property itself (see flexBasisForFlexItem()), so the item is measured as is.
-    if (flexBasis.isAuto() && !flexBasis.isCalcSize())
+    if (flexBasis == flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem).asFlexBasis())
         return computeFlexBaseSize(flexLayoutItem, flexBasis);
 
     // Otherwise the item is measured with its used flex basis in place of its main size.

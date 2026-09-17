@@ -3535,7 +3535,36 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeLogicalH
         }
         return { };
     }
-    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, intrinsicContentHeight))
+
+    // On flex-basis, `auto` means the block size property rather than the height this box would otherwise take.
+    auto shouldUseBlockSizePropertyForAutoBasis = [&] {
+        // Only the block size property has an auto to stand in for, and only it can be compared with one.
+        if constexpr (!std::same_as<SizeType, Style::PreferredSize>)
+            return false;
+        else {
+            if (!logicalHeight.isCalcSize() || !logicalHeight.isAuto())
+                return false;
+
+            auto overridingLogicalHeight = overridingLogicalHeightForFlexBasisComputation();
+            if (!overridingLogicalHeight || !(*overridingLogicalHeight == logicalHeight))
+                return false;
+
+            // The same value on both properties would resolve the calculation against its own result.
+            auto& styleLogicalHeight = style().logicalHeight();
+            auto styleLogicalHeightResolves = !styleLogicalHeight.isAuto() || styleLogicalHeight.isCalcSize();
+            return styleLogicalHeightResolves && !(styleLogicalHeight == logicalHeight);
+        }
+    }();
+
+    auto contentHeightForAutoBasis = [&]() -> std::optional<LayoutUnit> {
+        if (shouldUseBlockSizePropertyForAutoBasis) {
+            if (auto borderBoxLogicalHeight = computeLogicalHeightUsing(style().logicalHeight(), intrinsicContentHeight))
+                return std::max(0_lu, *borderBoxLogicalHeight - borderAndPaddingLogicalHeight());
+        }
+        return intrinsicContentHeight;
+    }();
+
+    if (auto computedContentAndScrollbarLogicalHeight = computeContentAndScrollbarLogicalHeightUsing(logicalHeight, contentHeightForAutoBasis))
         return adjustBorderBoxLogicalHeightForBoxSizing(*computedContentAndScrollbarLogicalHeight);
     return { };
 }
