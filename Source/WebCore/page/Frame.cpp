@@ -349,12 +349,33 @@ void Frame::stopForBackForwardCache()
 void Frame::updateFrameTreeSyncData(Ref<FrameTreeSyncData>&& data)
 {
     m_frameTreeSyncData = WTF::move(data);
+
+    // FIXME: de-duplicate this logic with Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData&)
+    if (RefPtr view = virtualView())
+        view->scrollTo(m_frameTreeSyncData->frameScrollPosition);
+
+    for (RefPtr child = tree().firstChild(); child; child = child->tree().nextSibling()) {
+        RefPtr localChild = dynamicDowncast<LocalFrame>(child);
+        if (!localChild)
+            continue;
+
+        if (RefPtr localChildView = localChild->view()) {
+            localChildView->invalidateForFrameOwnerColorSchemeChange();
+            protect(localChildView->layoutContext())->scheduleLayout();
+        }
+    }
 }
 
 void Frame::updateFrameTreeSyncData(const FrameTreeSyncSerializationData& data)
 {
     if (static_cast<FrameTreeSyncDataType>(data.value.index()) != FrameTreeSyncDataType::FrameGeometry) {
         protect(frameTreeSyncData())->update(data);
+
+        if (static_cast<FrameTreeSyncDataType>(data.value.index()) == FrameTreeSyncDataType::FrameScrollPosition) {
+            if (RefPtr view = virtualView())
+                view->scrollTo(m_frameTreeSyncData->frameScrollPosition);
+        }
+
         return;
     }
 

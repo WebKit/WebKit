@@ -2261,7 +2261,7 @@ unsigned NODELETE Page::renderingUpdateCount() const
 
 void Page::syncLocalFrameInfoToRemote()
 {
-    ASSERT(mainFrame().tree().containsRemoteFrame());
+    ASSERT(m_settings->siteIsolationEnabled());
 
     forEachLocalFrame([] (LocalFrame& frame) {
         RefPtr<LocalFrameView> frameView = frame.view();
@@ -2281,9 +2281,6 @@ void Page::syncLocalFrameInfoToRemote()
 #endif
 
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-            if (!child->tree().containsRemoteFrame())
-                continue;
-
             auto absoluteToChildFrameOwnerLocalTransform = frameView->absoluteToChildFrameOwnerLocalTransform(*child);
             auto contentBoxLocation = frameView->childFrameOwnerContentBoxLocation(*child);
 
@@ -2339,10 +2336,8 @@ void Page::syncLocalFrameInfoToRemote()
             ));
         }
 
-        if (childrenFrameLayoutInfo.isEmpty()) {
-            ASSERT(!frame.tree().containsRemoteFrame());
+        if (childrenFrameLayoutInfo.isEmpty())
             return;
-        }
 
         frame.loader().client().broadcastFrameGeometryToOtherProcesses({
             frameView->layoutViewportRect(),
@@ -2650,7 +2645,7 @@ void Page::doAfterUpdateRendering()
 
     computeSampledPageTopColorIfNecessary();
 
-    if (mainFrame().tree().containsRemoteFrame())
+    if (m_settings->siteIsolationEnabled())
         syncLocalFrameInfoToRemote();
 }
 

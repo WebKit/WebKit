@@ -51,8 +51,6 @@ public:
     WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
 
-    void clearLastBroadcastFrameGeometry() { m_lastBroadcastFrameGeometry = std::nullopt; }
-
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
     void applyWebsitePolicies(WebsitePoliciesData&&) final;

@@ -9243,8 +9243,22 @@ void WebPageProxy::broadcastFrameTreeSyncData(IPC::Connection& connection, Frame
         }
     }
 
-    if (data.value.index() == std::to_underlying(WebCore::FrameTreeSyncDataType::FrameRect))
+    switch (static_cast<WebCore::FrameTreeSyncDataType>(data.value.index())) {
+    case WebCore::FrameTreeSyncDataType::FrameRect:
         webFrameProxy->setRemoteFrameRect(std::get<IntRect>(data.value));
+        break;
+
+    case WebCore::FrameTreeSyncDataType::FrameScrollPosition:
+        webFrameProxy->setFrameScrollPosition(std::get<ScrollPosition>(data.value));
+        break;
+
+    case WebCore::FrameTreeSyncDataType::FrameGeometry:
+        webFrameProxy->setFrameGeometry(std::get<FrameGeometrySyncData>(data.value));
+        break;
+
+    default:
+        break;
+    }
 
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (webProcess == process)

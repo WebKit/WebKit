@@ -10730,12 +10730,8 @@ TEST(SiteIsolation, CrossSiteIframeOpenWindowWithBlobURL)
 
 #if PLATFORM(MAC)
 
-NSPoint testColorPickerPopoverLocation(const String& iframeSource)
+NSPoint testColorPickerPopoverLocation(const String& mainPageSource, const String& iframeSource)
 {
-    auto mainPageSource =
-        "<iframe id=iframe style='margin: 100px; width: 400px; height: 300px;' src='https://webkit.org/iframe' onload='load()'></iframe>"_s
-        "<script>function load() { alert('loaded'); }</script>"_s;
-
     HTTPServer server({
         { "/mainframe"_s, { mainPageSource } },
         { "/iframe"_s, { iframeSource } }
@@ -10767,16 +10763,24 @@ NSPoint testColorPickerPopoverLocation(const String& iframeSource)
 
 TEST(SiteIsolation, ColorInputPickerLocationInCrossSiteIframe)
 {
+    auto mainPageSource =
+        "<iframe id=iframe style='margin: 100px; width: 400px; height: 300px;' src='https://webkit.org/iframe' onload='load()'></iframe>"_s
+        "<script>function load() { alert('loaded'); }</script>"_s;
+
     auto iframeSource =
         "<!DOCTYPE html>"_s
         "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s;
 
-    auto pickerLocation = testColorPickerPopoverLocation(iframeSource);
+    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 
 TEST(SiteIsolation, ColorInputPickerLocationInScrolledCrossSiteIframe)
 {
+    auto mainPageSource =
+        "<iframe id=iframe style='margin: 100px; width: 400px; height: 300px;' src='https://webkit.org/iframe' onload='load()'></iframe>"_s
+        "<script>function load() { alert('loaded'); }</script>"_s;
+
     auto iframeSource =
         "<!DOCTYPE html>"_s
         "<div style='height: 1000px'></div>"_s
@@ -10784,7 +10788,33 @@ TEST(SiteIsolation, ColorInputPickerLocationInScrolledCrossSiteIframe)
         "<div style='height: 1000px'></div>"_s
         "<script>onload = () => window.scroll(0, 1000);</script>"_s;
 
-    auto pickerLocation = testColorPickerPopoverLocation(iframeSource);
+    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
+    EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
+}
+
+TEST(SiteIsolation, ColorInputPickerLocationInDelayLoadedCrossSiteIframe)
+{
+    auto mainPageSource =
+        "<div style='height: 1000px'></div>"_s
+        "<iframe id=iframe style='margin: 100px; width: 400px; height: 300px;'></iframe>"_s
+        "<div style='height: 1000px'></div>"_s
+        "<script>"_s
+        "  window.scroll(0, 1000);"_s
+        "  requestAnimationFrame(() => {"_s
+        "    requestAnimationFrame(() => {"_s
+        "      requestAnimationFrame(() => {"_s
+        "        iframe.onload = () => alert('loaded');"_s
+        "        iframe.src = 'https://webkit.org/iframe';"_s
+        "      });"_s
+        "    });"_s
+        "  });"_s
+        "</script>"_s;
+
+    auto iframeSource =
+        "<!DOCTYPE html>"_s
+        "<input style='margin: 50px; appearance: none; width: 50px; height: 50px;' type='color'>"_s;
+
+    auto pickerLocation = testColorPickerPopoverLocation(mainPageSource, iframeSource);
     EXPECT_EQ(pickerLocation, NSMakePoint(168, 168));
 }
 

@@ -1423,14 +1423,10 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
     coreFrame->updateFrameTreeSyncData(data);
     auto dataType = static_cast<FrameTreeSyncDataType>(data.value.index());
 
+    // FIXME: de-duplicate this logic with allFrameTreeSyncDataChangedInAnotherProcess.
     switch (dataType) {
     case FrameTreeSyncDataType::FrameRect:
         frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
-        break;
-
-    case FrameTreeSyncDataType::FrameScrollPosition:
-        if (RefPtr view = coreFrame->virtualView())
-            view->scrollTo(coreFrame->frameTreeSyncData().frameScrollPosition);
         break;
 
     case FrameTreeSyncDataType::FrameGeometry:
@@ -1467,29 +1463,8 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     if (coreFrame) {
         coreFrame->updateFrameTreeSyncData(WTF::move(data));
         updateChildFrameVisibleRectsFromParent(*coreFrame);
-    }
-
-    // UIProcess sends this message when the frame associated with frameID navigates or is newly
-    // added to this page. Since UIProcess doesn't store any geometry, the FrameGeometrySyncData in
-    // this message is empty.
-    //
-    // 1. If this frame is one of our own local frames, then its geometry was cleared from all
-    //    processes, so we should clear our last-sent geometry cache.
-    // 2. If this frame is a descendant of one of our local frames, its process may have just been
-    //    added to the page and have no geometry data, so we need to send it our frame geometry.
-    //
-    // We send the frame geometry if needed by clearing our cached frame geometry and triggering a
-    // rendering update, which eventually broadcasts a FrameGeometry IPC.
-    bool needsGeometryRebroadcast = false;
-    protect(m_page)->forEachLocalFrame([&](LocalFrame& localFrame) {
-        if (auto* client = dynamicDowncast<WebLocalFrameLoaderClient>(localFrame.loader().client()))
-            client->clearLastBroadcastFrameGeometry();
-        needsGeometryRebroadcast |= localFrame.tree().hasRemoteFrameDescendant();
-    });
-
-    if (needsGeometryRebroadcast) {
-        if (RefPtr drawingArea = this->drawingArea())
-            drawingArea->triggerRenderingUpdate();
+        updateRemoteIntersectionObservers();
+        updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
     }
 }
 
