@@ -650,18 +650,18 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this._destroyed)
             return;
 
-        // FIXME: <https://webkit.org/b/298980> Highlighting cross-origin frame nodes requires page-level coordination.
-        if (this.owningTarget)
-            return;
+        // The two-second auto-hide timeout lives on DOMManager, not here.
+        WI.domManager.cancelPendingHighlightHide();
 
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        let target = this.owningTarget || WI.assumingMainTarget();
 
-        let target = WI.assumingMainTarget();
+        // Each target holds its own highlight state, so clear the others. Otherwise highlighting a
+        // node inside a frame leaves the page target still highlighting the owner iframe element,
+        // and both draw at once.
+        WI.domManager.hideDOMNodeHighlight({exceptTargets: new Set([target])});
+
         target.DOMAgent.highlightNode.invoke({
-            nodeId: this.id,
+            nodeId: this.backendNodeId,
             ...WI.DOMManager.buildHighlightConfigs(mode),
         });
     }

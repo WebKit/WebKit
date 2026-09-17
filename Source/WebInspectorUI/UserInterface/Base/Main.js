@@ -2084,7 +2084,7 @@ WI._domStorageWasInspected = function(event)
 
 WI._domNodeWasInspected = function(event)
 {
-    WI.domManager.highlightDOMNodeForTwoSeconds(event.data.node.id);
+    WI.domManager.highlightDOMNodeForTwoSeconds(event.data.node);
 
     InspectorFrontendHost.bringToFront();
 

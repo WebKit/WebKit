@@ -26,6 +26,7 @@
 #pragma once
 
 #include "EventTarget.h"
+#include "InspectorOverlay.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
@@ -61,7 +62,7 @@ class FrameDOMAgent final : public InspectorAgentBase, public Inspector::DOMBack
 public:
     OVERRIDE_ABSTRACT_CAN_MAKE_CHECKEDPTR(CanMakeCheckedPtr);
 
-    FrameDOMAgent(FrameAgentContext&);
+    FrameDOMAgent(FrameAgentContext&, InspectorOverlay&);
     ~FrameDOMAgent();
 
     // InspectorAgentBase
@@ -185,6 +186,12 @@ private:
 
     RefPtr<Node> nodeForPath(const String& path);
 
+    void innerHighlightQuad(std::unique_ptr<FloatQuad>, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
+    Inspector::CommandResult<void> innerHighlightNode(std::optional<int>&& nodeId, const String& objectId, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+    Inspector::CommandResult<void> innerHighlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+
+    InspectorOverlay& overlay() const { return m_overlay.get(); }
+
     struct InspectorEventListener {
         Inspector::Protocol::DOM::EventListenerId identifier { 1 };
         RefPtr<EventTarget> eventTarget;
@@ -224,6 +231,7 @@ private:
     const Ref<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     WeakRef<InstrumentingAgents> m_instrumentingAgents;
     WeakRef<LocalFrame> m_inspectedFrame;
+    WeakRef<InspectorOverlay> m_overlay;
     const CheckedRef<Inspector::InjectedScriptManager> m_injectedScriptManager;
 
     WeakHashMap<Node, Inspector::Protocol::DOM::NodeId, WeakPtrImplWithEventTargetData> m_nodeToId;

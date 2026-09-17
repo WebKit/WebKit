@@ -587,8 +587,8 @@
         },
         {
             "name": "highlightRect",
-            "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.",
-            "targetTypes": ["page"],
+            "description": "Highlights given rectangle. Coordinates are absolute with respect to the target's viewport: the main frame viewport for a page target, or the frame's own viewport for a frame target.",
+            "targetTypes": ["itml", "frame", "page"],
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -601,8 +601,8 @@
         },
         {
             "name": "highlightQuad",
-            "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport.",
-            "targetTypes": ["page"],
+            "description": "Highlights given quad. Coordinates are absolute with respect to the target's viewport: the main frame viewport for a page target, or the frame's own viewport for a frame target.",
+            "targetTypes": ["itml", "frame", "page"],
             "parameters": [
                 { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
                 { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
