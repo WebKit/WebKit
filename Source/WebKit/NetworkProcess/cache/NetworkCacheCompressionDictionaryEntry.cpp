@@ -73,7 +73,15 @@ CompressionDictionaryEntry::CompressionDictionaryEntry(const Key& key, Info&& in
 CompressionDictionaryEntry::CompressionDictionaryEntry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)
+    , m_sourceStorageRecord(storageEntry)
 {
+}
+
+RefPtr<WebCore::FragmentedSharedBuffer> CompressionDictionaryEntry::buffer() const
+{
+    if (!m_buffer)
+        m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.span());
+    return m_buffer;
 }
 
 Storage::Record CompressionDictionaryEntry::encodeAsStorageRecord() const

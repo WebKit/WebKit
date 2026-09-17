@@ -669,6 +669,13 @@ void ResourceResponseBase::addUncommonHTTPHeaderField(const String& name, const 
     m_httpHeaderFields.addUncommonHeader(name, value);
 }
 
+void ResourceResponseBase::removeHTTPHeaderField(HTTPHeaderName name)
+{
+    lazyInit(AllFields);
+    updateHeaderParsedState(name);
+    m_httpHeaderFields.remove(name);
+}
+
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const
 {
     lazyInit(AllFields);

@@ -124,6 +124,7 @@ public:
 
     bool timingAllowFailedFlag() const { return m_timingAllowFailedFlag; }
     bool navigationTAOCheckPassed() const { return m_navigationTAOCheckPassed; }
+    bool isSameOriginRequest() const { return m_isSameOriginRequest; }
 
 private:
     NetworkLoadChecker(NetworkProcess&, NetworkResourceLoader*, NetworkSchemeRegistry*, WebCore::FetchOptions&&, PAL::SessionID, std::optional<WebPageProxyIdentifier>, WebCore::HTTPHeaderMap&&, URL&&, DocumentURL&&,  RefPtr<WebCore::SecurityOrigin>&&, RefPtr<WebCore::SecurityOrigin>&& topOrigin, RefPtr<WebCore::SecurityOrigin>&& parentOrigin, WebCore::PreflightPolicy, String&& referrer, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, bool shouldCaptureExtraNetworkLoadMetrics, LoadType requestLoadType);

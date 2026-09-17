@@ -5367,3 +5367,6 @@ webkit.org/b/319150 imported/w3c/web-platform-tests/loading/early-hints/iframe-p
 
 # New test in the css/css-shadow import. Fails on GTK and WPE, passes on macOS.
 imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.html [ Failure ]
+
+# Compression Dictionary Transport is implemented here, so unskip what the generic expectations skip.
+webkit.org/b/295249 imported/w3c/web-platform-tests/fetch/compression-dictionary [ Pass ]

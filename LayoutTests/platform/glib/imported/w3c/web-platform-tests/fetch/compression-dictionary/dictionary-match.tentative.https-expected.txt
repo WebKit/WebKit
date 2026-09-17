@@ -1,0 +1,10 @@
+
+PASS Dictionary with unknown match-dest is not used for fetch() API
+PASS Dictionary registration with empty match-dest list acts as wildcard
+PASS Dictionary registration with matching fetch destination
+PASS Dictionary with non-matching match-dest is not used
+PASS Dictionary registration with unknown match-dest and empty string matches fetch destination
+PASS Best match algorithm prioritizes dictionaries with longer match patterns
+PASS match-dest presence takes priority over longer match patterns
+PASS Most recently fetched dictionary takes priority when match lengths are equal
+
