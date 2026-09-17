@@ -1254,6 +1254,38 @@ extension AppKitGesturesTests.Basic {
         #expect(try await entityTransformDidChange(from: initialEntityTransform))
     }
 
+    @Test(arguments: verticalDragOverManipulationSurfaceArguments)
+    func verticalDragOverManipulationSurface(styleValue: String, reachesContent: Bool) async throws {
+        let surface = try await loadManipulationSurface(styleValue: styleValue)
+
+        let start = CGPoint(x: surface.bounds.midX, y: surface.bounds.maxY - manipulationSurfaceDragInset)
+        let end = CGPoint(x: surface.bounds.midX, y: surface.bounds.minY + manipulationSurfaceDragInset)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        try await expectDrag(from: start, to: end, over: surface, reachesContent: reachesContent)
+    }
+
+    @Test
+    func horizontalDragOverManipulationSurface() async throws {
+        let surface = try await loadManipulationSurface(styleValue: "pan-x pan-y")
+
+        let start = CGPoint(x: surface.bounds.minX + manipulationSurfaceDragInset, y: surface.bounds.midY)
+        let end = CGPoint(x: surface.bounds.maxX - manipulationSurfaceDragInset, y: surface.bounds.midY)
+
+        await recap.play { composer in
+            composer._wk_drag(withStart: start, end: end, duration: .seconds(1))
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        try await expectDrag(from: start, to: end, over: surface, reachesContent: true)
+    }
+
     @Test(
         .bug("rdar://176317069", "REGRESSION(312023@main): Text cannot be selected with press + drag gesture"),
         arguments: [true, false]
@@ -2460,6 +2492,91 @@ extension AppKitGesturesTests.Basic {
         var rect = CGRect(viewportRect)
         rect.origin.y += Self.topInset
         return NSPoint(x: rect.midX, y: contentView.frame.height - rect.midY)
+    }
+}
+
+// MARK: - Manipulation Surface Helpers
+
+private let manipulationSurfaceDragInset: CGFloat = 60
+
+extension AppKitGesturesTests.Basic {
+    struct ManipulationSurface {
+        let bounds: CGRect
+
+        let initialScrollY: Double
+    }
+
+    fileprivate func loadManipulationSurface(styleValue: String) async throws -> ManipulationSurface {
+        let url = try #require(Bundle.testResources.url(forResource: "manipulation-surface", withExtension: "html"))
+        try await page.load(url).wait()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript(
+            arguments: ["elementID": "surface", "styleValue": styleValue],
+            script: styleAdjustmentForManipulationSurfaceScript
+        )
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript {
+            #"document.getElementById("surface").scrollIntoView({ block: "center" });"#
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let scrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+        try #require(scrollPosition.y > 0)
+
+        return ManipulationSurface(
+            bounds: try await screenBounds(ofElementWithID: "surface"),
+            initialScrollY: scrollPosition.y
+        )
+    }
+
+    private func manipulationSurfaceEvents() async throws -> (down: Int, move: Int, up: Int, wheel: Int, translation: CGSize) {
+        let values = try await page.callJavaScript(returning: [Double].self) {
+            """
+            const events = window.surfaceEvents;
+            return [events.down, events.move, events.up, events.wheel, events.dx, events.dy];
+            """
+        }
+
+        try #require(values.count == 6)
+
+        return (
+            down: Int(values[0]),
+            move: Int(values[1]),
+            up: Int(values[2]),
+            wheel: Int(values[3]),
+            translation: CGSize(width: values[4], height: values[5])
+        )
+    }
+
+    fileprivate func expectDrag(
+        from start: CGPoint,
+        to end: CGPoint,
+        over surface: ManipulationSurface,
+        reachesContent: Bool
+    ) async throws {
+        let events = try await manipulationSurfaceEvents()
+        let scrollPosition = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        guard reachesContent else {
+            #expect(events.down == 0)
+            #expect(events.up == 0)
+            #expect(events.wheel > 0)
+
+            #expect(scrollPosition.y > surface.initialScrollY)
+            return
+        }
+
+        #expect(events.down == 1)
+        #expect(events.up == 1)
+        #expect(events.move > 0)
+        #expect(events.wheel == 0)
+
+        #expect(abs(events.translation.width - (end.x - start.x)) < manipulationSurfaceDragInset)
+        #expect(abs(events.translation.height - (end.y - start.y)) < manipulationSurfaceDragInset)
+
+        #expect(scrollPosition.y == surface.initialScrollY)
     }
 }
 
