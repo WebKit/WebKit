@@ -61,7 +61,10 @@ private:
 
     void pullAudioData();
 
-    GUniquePtr<GstAudioConverter> m_sampleConverter;
+    std::optional<size_t> gstAudioConverterInputFramesForOutput(size_t outputFrames, size_t availableFrames);
+
+    Lock m_sampleConverterLock;
+    GUniquePtr<GstAudioConverter> m_sampleConverter WTF_GUARDED_BY_LOCK(m_sampleConverterLock);
     GstAudioInfo m_inputStreamDescription;
     GstAudioInfo m_outputStreamDescription;
 

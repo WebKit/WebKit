@@ -5355,7 +5355,6 @@ webkit.org/b/324247 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode
 # Gardening 2026-09-16
 webkit.org/b/324335 [ Debug ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
 webkit.org/b/324339 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText.html [ ImageOnlyFailure Pass ]
-webkit.org/b/324340 webrtc/audio-replace-track-to-webaudio.html [ Crash Pass ]
 
 # End: Common failures between GTK and WPE.
 

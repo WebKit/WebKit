@@ -78,21 +78,25 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
     auto data = static_cast<const GStreamerAudioData&>(audioData);
     auto desc = static_cast<const GStreamerAudioStreamDescription&>(streamDescription);
 
-    if (m_sampleConverter && !gst_audio_info_is_equal(&m_inputStreamDescription, &desc.getInfo())) {
-        GST_ERROR("Audio format renegotiation is not possible yet.");
-        m_sampleConverter = nullptr;
-    }
+    {
+        Locker locker { m_sampleConverterLock };
+        if (m_sampleConverter && !gst_audio_info_is_equal(&m_inputStreamDescription, &desc.getInfo())) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=324342
+            GST_ERROR("Audio format renegotiation is not possible yet.");
+            m_sampleConverter = nullptr;
+        }
 
-    if (!m_sampleConverter) {
-        m_inputStreamDescription = desc.getInfo();
-        m_outputStreamDescription = libwebrtcAudioFormat(LibWebRTCAudioFormat::sampleRate, desc.numberOfChannels());
+        if (!m_sampleConverter) {
+            m_inputStreamDescription = desc.getInfo();
+            m_outputStreamDescription = libwebrtcAudioFormat(LibWebRTCAudioFormat::sampleRate, desc.numberOfChannels());
 #ifndef GST_DISABLE_GST_DEBUG
-        GRefPtr inputCaps = adoptGRef(gst_audio_info_to_caps(&m_inputStreamDescription));
-        GRefPtr outputCaps = adoptGRef(gst_audio_info_to_caps(&m_outputStreamDescription));
-        GST_TRACE("Converting from %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, inputCaps.get(), outputCaps.get());
+            GRefPtr inputCaps = adoptGRef(gst_audio_info_to_caps(&m_inputStreamDescription));
+            GRefPtr outputCaps = adoptGRef(gst_audio_info_to_caps(&m_outputStreamDescription));
+            GST_TRACE("Converting from %" GST_PTR_FORMAT " to %" GST_PTR_FORMAT, inputCaps.get(), outputCaps.get());
 #endif
-        m_sampleConverter.reset(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE, &m_inputStreamDescription,
-            &m_outputStreamDescription, nullptr));
+            m_sampleConverter.reset(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_IN_WRITABLE, &m_inputStreamDescription,
+                &m_outputStreamDescription, nullptr));
+        }
     }
 
     {
@@ -106,19 +110,26 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
     });
 }
 
-static std::optional<size_t> gstAudioConverterInputFramesForOutput(GstAudioConverter* converter, size_t outputFrames, size_t availableFrames)
+std::optional<size_t> RealtimeOutgoingAudioSourceLibWebRTC::gstAudioConverterInputFramesForOutput(size_t outputFrames, size_t availableFrames)
 {
+    assertIsHeld(m_sampleConverterLock);
+
+    if (!m_sampleConverter) [[unlikely]] {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+
     // gst_audio_converter_get_in_frames() derives its answer from the resampler phase and leaves out the
     // filter history the resampler has yet to accumulate, so on its own it asks for fewer frames than a
     // whole chunk needs and the resampler then reads past the end of its input. Only get_out_frames()
     // accounts for that history, so it decides both whether a chunk fits and how large it has to be.
-    if (gst_audio_converter_get_out_frames(converter, availableFrames) < outputFrames)
+    if (gst_audio_converter_get_out_frames(m_sampleConverter.get(), availableFrames) < outputFrames)
         return std::nullopt;
 
     // With a fractional ratio the phase estimate can also sit one frame above what the accumulated
     // history makes sufficient, so never start the search beyond the frames actually available.
-    auto inputFrames = std::min<size_t>(gst_audio_converter_get_in_frames(converter, outputFrames), availableFrames);
-    while (gst_audio_converter_get_out_frames(converter, inputFrames) < outputFrames)
+    auto inputFrames = std::min<size_t>(gst_audio_converter_get_in_frames(m_sampleConverter.get(), outputFrames), availableFrames);
+    while (gst_audio_converter_get_out_frames(m_sampleConverter.get(), inputFrames) < outputFrames)
         inputFrames++;
 
     return inputFrames;
@@ -126,6 +137,12 @@ static std::optional<size_t> gstAudioConverterInputFramesForOutput(GstAudioConve
 
 void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
 {
+    Locker sampleConverterLocker { m_sampleConverterLock };
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=324342
+    if (!m_sampleConverter)
+        return;
+
     if (!GST_AUDIO_INFO_IS_VALID(&m_inputStreamDescription) || !GST_AUDIO_INFO_IS_VALID(&m_outputStreamDescription)) {
         GST_INFO("No stream description set yet.");
         return;
@@ -133,7 +150,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
 
     size_t outChunkSampleCount = LibWebRTCAudioFormat::chunkSampleCount;
     size_t outBufferSize = outChunkSampleCount * m_outputStreamDescription.bpf;
-    m_audioBuffer.grow(outBufferSize);
+    m_audioBuffer.resize(outBufferSize);
 
     Locker locker { m_adapterLock };
     while (gst_adapter_available(m_adapter.get())) {
@@ -146,7 +163,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
             if (inChunkSampleCount > availableFrames)
                 break;
         } else {
-            auto frames = gstAudioConverterInputFramesForOutput(m_sampleConverter.get(), outChunkSampleCount, availableFrames);
+            auto frames = gstAudioConverterInputFramesForOutput(outChunkSampleCount, availableFrames);
             if (!frames)
                 break;
             inChunkSampleCount = *frames;
