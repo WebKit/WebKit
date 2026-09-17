@@ -869,12 +869,17 @@ std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minMaxMainSizesForFlexI
     // useContentBasedMinimumSize covers both auto-equivalent cases: min:auto with
     // non-scrollable overflow (§ 4.5) and block-axis intrinsic keywords (CSS Sizing
     // 3 § 5.2 makes those behave like auto, regardless of overflow).
-    if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem))
-        return { computeContentBasedMinMainSize(flexLayoutItem, maxExtent), resolvedMax };
+    auto minSize = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
+    if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem)) {
+        auto contentBasedMinMainSize = computeContentBasedMinMainSize(flexLayoutItem, maxExtent);
+        // The automatic minimum is what an auto basis on the minimum size stands for.
+        if (minSize.isCalcSize())
+            contentBasedMinMainSize = integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, minSize.get<Style::UnevaluatedCalcSize>(), contentBasedMinMainSize, m_constraints.mainAxisSizeForLengthResolution);
+        return { contentBasedMinMainSize, resolvedMax };
+    }
 
-    auto min = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
-    if (!min.isAuto())
-        return { computeUsedNonAutoMinMainSize(flexLayoutItem, min), resolvedMax };
+    if (!minSize.isAuto())
+        return { computeUsedNonAutoMinMainSize(flexLayoutItem, minSize), resolvedMax };
 
     // min:auto on a scroll container — spec says the automatic minimum size is zero.
     return { 0_lu, resolvedMax };
