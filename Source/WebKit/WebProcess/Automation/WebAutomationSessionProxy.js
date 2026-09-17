@@ -47,6 +47,24 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
+    executePreloadScript(functionString, argumentStrings)
+    {
+        let lines = functionString.split("\n");
+        let prefixLines = [];
+        while (lines && lines[0].startsWith("//"))
+            prefixLines.push(lines.shift());
+
+        let prefix = prefixLines.join("\n");
+        if (prefix)
+            prefix += "\n";
+
+        let functionValue = evaluate(prefix + "(" + lines.join("\n") + ")");
+        if (typeof functionValue !== "function")
+            throw new TypeError("Script did not evaluate to a function.");
+
+        functionValue.apply(null, argumentStrings.map(this._jsonParse, this));
+    }
+
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
     {
         this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)

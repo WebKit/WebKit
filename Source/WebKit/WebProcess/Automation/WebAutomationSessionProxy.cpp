@@ -80,6 +80,7 @@
 #include <wtf/UUID.h>
 
 #if ENABLE(WEBDRIVER_BIDI)
+#include "InjectedBundle.h"
 #include <WebCore/AutomationInstrumentation.h>
 #include <WebCore/DOMWrapperWorld.h>
 #endif
@@ -406,6 +407,9 @@ void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
     willDestroyGlobalObjectForFrame(frame.frameID());
+#if ENABLE(WEBDRIVER_BIDI)
+    runPreloadScriptsForFrame(frame);
+#endif
 }
 
 void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)
@@ -1198,6 +1202,75 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 #if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSessionProxy::addPreloadScript(PreloadScriptIdentifier identifier, String functionDeclaration, Vector<String> serializedArguments, std::optional<Vector<WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers, bool targetsDefaultUserContext, std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers, CompletionHandler<void()>&& completionHandler)
+{
+    if (m_preloadScriptRegistrations.containsIf([identifier](const auto& registration) {
+        return registration.identifier == identifier;
+    })) {
+        completionHandler();
+        return;
+    }
+
+    m_preloadScriptRegistrations.append(PreloadScriptRegistration {
+        identifier,
+        WTF::move(functionDeclaration),
+        WTF::move(serializedArguments),
+        WTF::move(targetTopLevelBrowsingContextIdentifiers),
+        targetsDefaultUserContext,
+        WTF::move(targetNonDefaultUserContextStorageSessionIdentifiers)
+    });
+    completionHandler();
+}
+
+void WebAutomationSessionProxy::removePreloadScript(PreloadScriptIdentifier identifier, CompletionHandler<void()>&& completionHandler)
+{
+    m_preloadScriptRegistrations.removeFirstMatching([identifier](const auto& registration) {
+        return registration.identifier == identifier;
+    });
+    completionHandler();
+}
+
+void WebAutomationSessionProxy::runPreloadScriptsForFrame(WebFrame& frame)
+{
+    RefPtr page = frame.page();
+    if (!page || !page->isControlledByAutomation())
+        return;
+
+    for (const auto& registration : m_preloadScriptRegistrations) {
+        if (registration.targetTopLevelBrowsingContextIdentifiers && !registration.targetTopLevelBrowsingContextIdentifiers->contains(page->webPageProxyIdentifier()))
+            continue;
+        if (registration.targetNonDefaultUserContextStorageSessionIdentifiers) {
+            bool targetsCurrentUserContext = registration.targetsDefaultUserContext || registration.targetNonDefaultUserContextStorageSessionIdentifiers->contains(page->sessionID());
+            if (!targetsCurrentUserContext)
+                continue;
+        }
+        runPreloadScript(frame, registration.functionDeclaration, registration.serializedArguments);
+    }
+}
+
+void WebAutomationSessionProxy::runPreloadScript(WebFrame& frame, const String& functionDeclaration, const Vector<String>& serializedArguments)
+{
+    JSObjectRef scriptObject = scriptObjectForFrame(frame);
+    ASSERT(scriptObject);
+
+    JSGlobalContextRef context = frame.jsContext();
+    JSValueRef exception = nullptr;
+    JSObjectRef argumentArray = toJSArray(context, serializedArguments, toJSValue, &exception);
+    if (exception) {
+        InjectedBundle::reportException(context, exception);
+        return;
+    }
+
+    JSValueRef functionArguments[] = {
+        toJSValue(context, functionDeclaration),
+        argumentArray
+    };
+
+    callPropertyFunction(context, scriptObject, "executePreloadScript"_s, std::size(functionArguments), functionArguments, &exception);
+    if (exception)
+        InjectedBundle::reportException(context, exception);
+}
+
 void WebAutomationSessionProxy::addMessageToConsole(const JSC::MessageSource& source, const JSC::MessageLevel& level, const String& messageText, const JSC::MessageType& type, const WallTime& timestamp)
 {
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::LogEntryAdded(source, level, messageText, type, timestamp), 0);

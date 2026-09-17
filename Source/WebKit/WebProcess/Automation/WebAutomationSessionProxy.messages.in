@@ -51,6 +51,8 @@ messages -> WebAutomationSessionProxy {
     DeleteCookie(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String cookieName) -> (std::optional<String> errorType)
 
 #if ENABLE(WEBDRIVER_BIDI)
+    AddPreloadScript(WebKit::PreloadScriptIdentifier identifier, String functionDeclaration, Vector<String> serializedArguments, std::optional<Vector<WebKit::WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers, bool targetsDefaultUserContext, std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers) -> ()
+    RemovePreloadScript(WebKit::PreloadScriptIdentifier identifier) -> ()
     EnsureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 #endif
 }

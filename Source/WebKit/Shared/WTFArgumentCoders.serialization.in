@@ -164,6 +164,7 @@ template: struct WebKit::PDFPluginIdentifierType
 template: struct WebKit::PageGroupIdentifierType
 template: struct WebKit::PolicyListenerIdentifierType
 #if ENABLE(WEBDRIVER_BIDI)
+template: struct WebKit::PreloadScriptIdentifierType
 template: struct WebKit::RealmIdentifierType
 #endif
 template: struct WebKit::RemoteAudioDestinationIdentifierType

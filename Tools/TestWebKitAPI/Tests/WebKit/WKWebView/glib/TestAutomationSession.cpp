@@ -21,7 +21,13 @@
 
 #include "TestMain.h"
 #include <gio/gio.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/JSONValues.h>
+#endif
 #include <wtf/UUID.h>
+#if ENABLE(WEBDRIVER_BIDI)
+#include <wtf/Vector.h>
+#endif
 #include <wtf/glib/SocketConnection.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -40,6 +46,12 @@ public:
             static_cast<AutomationTest*>(userData)->setConnection(SocketConnection::create(WTF::move(connection), s_messageHandlers, userData));
         }, this);
         g_main_loop_run(m_mainLoop.get());
+    }
+
+    ~AutomationTest()
+    {
+        if (m_connection)
+            m_connection->close();
     }
 
     struct Target {
@@ -76,6 +88,17 @@ public:
     {
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
+#if ENABLE(WEBDRIVER_BIDI)
+        auto transportValue = JSON::Value::parseJSON(String::fromUTF8(message));
+        auto transportMessage = transportValue ? transportValue->asObject() : nullptr;
+        if (transportMessage && transportMessage->getString("method"_s) == "Automation.bidiMessageSent"_s) {
+            if (auto parameters = transportMessage->getObject("params"_s)) {
+                auto bidiValue = JSON::Value::parseJSON(parameters->getString("message"_s));
+                if (auto bidiMessage = bidiValue ? bidiValue->asObject() : nullptr)
+                    m_bidiMessages.append(bidiMessage.releaseNonNull());
+            }
+        }
+#endif
         m_message = message;
         g_main_loop_quit(m_mainLoop.get());
     }
@@ -90,6 +113,122 @@ public:
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
     }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    String browsingContextHandleFromLastResponse() const
+    {
+        auto responseValue = JSON::Value::parseJSON(String::fromUTF8(m_message.data()));
+        g_assert_true(!!responseValue);
+        auto response = responseValue->asObject();
+        g_assert_true(!!response);
+        auto result = response->getObject("result"_s);
+        g_assert_true(!!result);
+        auto browsingContext = result->getString("handle"_s);
+        g_assert_false(browsingContext.isEmpty());
+        return browsingContext;
+    }
+
+    void loadHTMLAndWaitForTitle(WebKitWebView* webView, const char* html, const char* expectedTitle)
+    {
+        struct LoadState {
+            GMainLoop* mainLoop;
+            const char* expectedTitle;
+            bool didFinish { false };
+            bool timedOut { false };
+        } loadState { m_mainLoop.get(), expectedTitle };
+        auto loadChangedHandler = g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView* webView, WebKitLoadEvent loadEvent, LoadState* loadState) {
+            if (loadEvent != WEBKIT_LOAD_FINISHED)
+                return;
+            loadState->didFinish = true;
+            if (!g_strcmp0(webkit_web_view_get_title(webView), loadState->expectedTitle))
+                g_main_loop_quit(loadState->mainLoop);
+        }), &loadState);
+        auto titleChangedHandler = g_signal_connect(webView, "notify::title", G_CALLBACK(+[](WebKitWebView* webView, GParamSpec*, LoadState* loadState) {
+            if (loadState->didFinish && !g_strcmp0(webkit_web_view_get_title(webView), loadState->expectedTitle))
+                g_main_loop_quit(loadState->mainLoop);
+        }), &loadState);
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& loadState = *static_cast<LoadState*>(userData);
+            loadState.timedOut = true;
+            g_main_loop_quit(loadState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &loadState);
+
+        webkit_web_view_load_html(webView, html, nullptr);
+        while (!loadState.timedOut && (!loadState.didFinish || g_strcmp0(webkit_web_view_get_title(webView), expectedTitle)))
+            g_main_loop_run(m_mainLoop.get());
+        if (!loadState.timedOut)
+            g_source_remove(timeoutID);
+        g_signal_handler_disconnect(webView, loadChangedHandler);
+        g_signal_handler_disconnect(webView, titleChangedHandler);
+        if (loadState.timedOut)
+            g_test_message("Timed out waiting for title '%s'; current title is '%s'", expectedTitle, webkit_web_view_get_title(webView));
+        g_assert_false(loadState.timedOut);
+        g_assert_cmpstr(webkit_web_view_get_title(webView), ==, expectedTitle);
+    }
+
+    Ref<JSON::Object> sendBidiCommandAndWait(int commandIdentifier, const String& method, Ref<JSON::Object>&& parameters)
+    {
+        auto command = JSON::Object::create();
+        command->setInteger("id"_s, commandIdentifier);
+        command->setString("method"_s, method);
+        command->setObject("params"_s, WTF::move(parameters));
+
+        auto automationParameters = JSON::Object::create();
+        automationParameters->setString("message"_s, command->toJSONString());
+        sendCommandToBackend("processBidiMessage"_s, automationParameters->toJSONString());
+
+        auto response = waitForBidiMessage([commandIdentifier](const JSON::Object& message) {
+            auto responseIdentifier = message.getInteger("id"_s);
+            return responseIdentifier && *responseIdentifier == commandIdentifier;
+        });
+        g_assert_true(!!response);
+        g_assert_true(response->getString("type"_s) == "success"_s);
+        return response.releaseNonNull();
+    }
+
+    template<typename Predicate>
+    RefPtr<JSON::Object> takeBidiMessage(Predicate&& predicate)
+    {
+        for (size_t index = 0; index < m_bidiMessages.size(); ++index) {
+            if (!predicate(m_bidiMessages[index].get()))
+                continue;
+            auto message = m_bidiMessages[index].copyRef();
+            m_bidiMessages.removeAt(index);
+            return message;
+        }
+        return nullptr;
+    }
+
+    template<typename Predicate>
+    RefPtr<JSON::Object> waitForBidiMessage(Predicate&& predicate)
+    {
+        struct WaitState {
+            GMainLoop* mainLoop;
+            bool timedOut { false };
+        } waitState { m_mainLoop.get() };
+        auto timeoutID = g_timeout_add_seconds(10, [](gpointer userData) -> gboolean {
+            auto& waitState = *static_cast<WaitState*>(userData);
+            waitState.timedOut = true;
+            g_main_loop_quit(waitState.mainLoop);
+            return G_SOURCE_REMOVE;
+        }, &waitState);
+
+        while (!waitState.timedOut) {
+            if (auto message = takeBidiMessage(predicate)) {
+                g_source_remove(timeoutID);
+                return message;
+            }
+            g_main_loop_run(m_mainLoop.get());
+        }
+
+        for (auto& message : m_bidiMessages) {
+            auto serializedMessage = message->toJSONString().utf8();
+            g_test_message("Unmatched BiDi message: %s", reinterpret_cast<const char*>(serializedMessage.data()));
+        }
+        return nullptr;
+    }
+#endif
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
     {
@@ -249,6 +388,9 @@ public:
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
     CString m_message;
+#if ENABLE(WEBDRIVER_BIDI)
+    Vector<Ref<JSON::Object>> m_bidiMessages;
+#endif
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -256,13 +398,13 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
         [](SocketConnection&, GVariant*, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.m_connection = nullptr;
-        }}
+        } }
     },
     { "DidStartAutomationSession", std::pair<CString, SocketConnection::MessageCallback> { "(ss)",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
             auto& test = *static_cast<AutomationTest*>(userData);
             test.didStartAutomationSession(parameters);
-        }}
+        } }
     },
     { "SetTargetList", std::pair<CString, SocketConnection::MessageCallback> { "(ta(tsssb))",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
@@ -281,7 +423,7 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
                     break;
                 }
             }
-        }}
+        } }
     },
     { "SendMessageToFrontend", std::pair<CString, SocketConnection::MessageCallback> { "(tts)",
         [](SocketConnection&, GVariant* parameters, gpointer userData) {
@@ -290,9 +432,106 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
             const char* message;
             g_variant_get(parameters, "(tt&s)", &connectionID, &targetID, &message);
             test.receivedMessage(connectionID, targetID, message);
-        }}
+        } }
     }
 };
+
+#if ENABLE(WEBDRIVER_BIDI)
+static Ref<JSON::Object> preloadScriptParameters(const String& functionDeclaration)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("functionDeclaration"_s, functionDeclaration);
+    return parameters;
+}
+
+static String addPreloadScript(AutomationTest& test, int commandIdentifier, Ref<JSON::Object>&& parameters)
+{
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "script.addPreloadScript"_s, WTF::move(parameters));
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    auto scriptIdentifier = result->getString("script"_s);
+    g_assert_false(scriptIdentifier.isEmpty());
+    return scriptIdentifier;
+}
+
+static void removePreloadScript(AutomationTest& test, int commandIdentifier, const String& scriptIdentifier)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("script"_s, scriptIdentifier);
+    test.sendBidiCommandAndWait(commandIdentifier, "script.removePreloadScript"_s, WTF::move(parameters));
+}
+
+static void testAutomationSessionPreloadScriptsRunAtDocumentStart(AutomationTest* test, gconstpointer)
+{
+    test->setupIfNeeded();
+
+    auto firstScriptParameters = preloadScriptParameters("() => { window.preloadTrace = window.preloadTrace || []; window.preloadTrace.push('first'); }"_s);
+    auto defaultUserContexts = JSON::Array::create();
+    defaultUserContexts->pushString("default"_s);
+    firstScriptParameters->setArray("userContexts"_s, WTF::move(defaultUserContexts));
+    auto firstScriptIdentifier = addPreloadScript(*test, 1, WTF::move(firstScriptParameters));
+
+    auto firstWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createTopLevelBrowsingContext(firstWebView.get()));
+    auto firstBrowsingContext = test->browsingContextHandleFromLastResponse();
+
+    auto subscribeParameters = JSON::Object::create();
+    auto events = JSON::Array::create();
+    events->pushString("log.entryAdded"_s);
+    subscribeParameters->setArray("events"_s, WTF::move(events));
+    auto subscribeResponse = test->sendBidiCommandAndWait(2, "session.subscribe"_s, WTF::move(subscribeParameters));
+    auto subscribeResult = subscribeResponse->getObject("result"_s);
+    g_assert_true(!!subscribeResult);
+    auto logSubscriptionIdentifier = subscribeResult->getString("subscription"_s);
+    g_assert_false(logSubscriptionIdentifier.isEmpty());
+
+    auto throwingScriptIdentifier = addPreloadScript(*test, 3, preloadScriptParameters("() => { throw new Error('expected preload failure'); }"_s));
+    auto thirdScriptIdentifier = addPreloadScript(*test, 4, preloadScriptParameters("() => { window.preloadTrace = window.preloadTrace || []; window.preloadTrace.push('third'); }"_s));
+
+    auto contextScriptParameters = preloadScriptParameters("() => { window.contextScopedPreload = true; }"_s);
+    auto contexts = JSON::Array::create();
+    contexts->pushString(firstBrowsingContext);
+    contextScriptParameters->setArray("contexts"_s, WTF::move(contexts));
+    auto contextScriptIdentifier = addPreloadScript(*test, 5, WTF::move(contextScriptParameters));
+
+    auto removedScriptIdentifier = addPreloadScript(*test, 6, preloadScriptParameters("() => { window.removedPreloadRan = true; }"_s));
+    removePreloadScript(*test, 7, removedScriptIdentifier);
+
+    static constexpr auto initialDocument = "<!doctype html><script>document.title = (window.preloadTrace ? window.preloadTrace.join(',') : 'missing') + ':' + (window.contextScopedPreload === true) + ':' + (window.removedPreloadRan === true) + ':initial';</script>";
+    auto waitForExpectedPreloadError = [test] {
+        auto exceptionEvent = test->waitForBidiMessage([](const JSON::Object& message) {
+            if (message.getString("method"_s) != "log.entryAdded"_s)
+                return false;
+            auto parameters = message.getObject("params"_s);
+            return parameters && parameters->getString("text"_s) == "Error: expected preload failure"_s;
+        });
+        g_assert_true(!!exceptionEvent);
+        g_assert_true(exceptionEvent->getObject("params"_s)->getString("level"_s) == "error"_s);
+    };
+
+    test->loadHTMLAndWaitForTitle(firstWebView.get(), initialDocument, "first,third:true:false:initial");
+    waitForExpectedPreloadError();
+
+    removePreloadScript(*test, 8, throwingScriptIdentifier);
+    auto unsubscribeParameters = JSON::Object::create();
+    auto subscriptions = JSON::Array::create();
+    subscriptions->pushString(logSubscriptionIdentifier);
+    unsubscribeParameters->setArray("subscriptions"_s, WTF::move(subscriptions));
+    test->sendBidiCommandAndWait(9, "session.unsubscribe"_s, WTF::move(unsubscribeParameters));
+
+    auto secondWebView = test->createWebView("is-controlled-by-automation", TRUE, nullptr);
+    g_assert_true(test->createNewWindow(secondWebView.get()));
+
+    test->loadHTMLAndWaitForTitle(secondWebView.get(), initialDocument, "first,third:false:false:initial");
+
+    auto uncontrolledWebView = test->createWebView();
+    test->loadHTMLAndWaitForTitle(uncontrolledWebView.get(), initialDocument, "missing:false:false:initial");
+
+    removePreloadScript(*test, 10, firstScriptIdentifier);
+    removePreloadScript(*test, 11, thirdScriptIdentifier);
+    removePreloadScript(*test, 12, contextScriptIdentifier);
+}
+#endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
@@ -328,6 +567,10 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_cmpuint(test->m_target.id, >, 0);
     ASSERT_CMP_CSTRING(test->m_target.name, ==, sessionID);
     g_assert_false(test->m_target.isPaired);
+
+#if ENABLE(WEBDRIVER_BIDI)
+    testAutomationSessionPreloadScriptsRunAtDocumentStart(test, nullptr);
+#endif
 
     // Will fail to create a browsing context when not creating a web view (or not handling the signal).
     g_assert_false(test->createTopLevelBrowsingContext(nullptr));

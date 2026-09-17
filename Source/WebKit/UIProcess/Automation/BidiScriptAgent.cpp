@@ -35,19 +35,20 @@
 #include "PageLoadState.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionMacros.h"
+#include "WebAutomationSessionProxyMessages.h"
 #include "WebDriverBidiProcessor.h"
 #include "WebDriverBidiProtocolObjects.h"
 #include "WebFrameMetrics.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
-#include <wtf/HexNumber.h>
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -634,6 +635,32 @@ void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, 
     processRealmsForPagesAsync(WTF::move(pagesToProcess), WTF::move(optionalRealmType), WTF::move(contextHandleFilter), { }, WTF::move(callback));
 }
 
+static std::optional<PAL::SessionID> storageSessionIdentifierFromNonDefaultUserContext(const String& userContext)
+{
+    ASSERT(userContext != "default"_s);
+    auto identifier = parseInteger<uint64_t>(userContext, 16);
+    if (!identifier || !PAL::SessionID::isValidSessionIDValue(*identifier))
+        return std::nullopt;
+    return PAL::SessionID(*identifier);
+}
+
+void BidiScriptAgent::sendPreloadScriptRegistrationToProcess(WebProcessProxy& process, PreloadScriptIdentifier identifier, const PreloadScriptInfo& script, CompletionHandler<void()>&& completionHandler)
+{
+    // FIXME: Execute preload scripts in the sandbox realm specified by addPreloadScript. <https://webkit.org/b/305819>
+    if (!script.sandbox.isEmpty()) {
+        completionHandler();
+        return;
+    }
+
+    process.sendWithAsyncReply(Messages::WebAutomationSessionProxy::AddPreloadScript(identifier, script.functionDeclaration, script.serializedArguments, script.targetTopLevelBrowsingContextIdentifiers, script.targetsDefaultUserContext, script.targetNonDefaultUserContextStorageSessionIdentifiers), WTF::move(completionHandler));
+}
+
+void BidiScriptAgent::synchronizePreloadScriptRegistrationsWithProcess(WebProcessProxy& process) const
+{
+    for (const auto& [identifier, script] : m_preloadScripts)
+        sendPreloadScriptRegistrationToProcess(process, identifier, script, [] { });
+}
+
 void BidiScriptAgent::addPreloadScript(const String& functionDeclaration, RefPtr<JSON::Array>&& optionalArguments, RefPtr<JSON::Array>&& optionalContexts, const String& optionalSandbox, RefPtr<JSON::Array>&& optionalUserContexts, Inspector::CommandCallback<String>&& callback)
 {
     // FIXME: Add resource limits to prevent denial of service <https://webkit.org/b/288057>
@@ -644,58 +671,80 @@ void BidiScriptAgent::addPreloadScript(const String& functionDeclaration, RefPtr
     // Validate mutual exclusion of contexts and userContexts
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalContexts && optionalUserContexts, InvalidParameter, "contexts and userContexts are mutually exclusive"_s);
 
-    Variant<AllContextsTag, Vector<String>> contexts { AllContextsTag { } };
+    RefPtr session = m_session.get();
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
+
+    Vector<String> serializedArguments;
+    if (optionalArguments) {
+        for (auto& argument : *optionalArguments) {
+            Ref localValue = deserializeLocalValue(argument.get());
+            serializedArguments.append(localValue->toJSONString());
+        }
+    }
+
+    std::optional<Vector<WebPageProxyIdentifier>> targetTopLevelBrowsingContextIdentifiers;
     if (optionalContexts) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!optionalContexts->length(), InvalidParameter, "contexts array cannot be empty"_s);
 
-        Vector<String> contextList;
+        Vector<WebPageProxyIdentifier> topLevelBrowsingContextIdentifiers;
         for (auto& value : *optionalContexts) {
             String context;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!value->asString(context), InvalidParameter, "contexts array must contain only strings"_s);
 
             // Look up the context first, then check if it's a top-level context per spec.
-            RefPtr session = m_session.get();
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
-
             RefPtr page = session->webPageProxyForHandle(context);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, FrameNotFound);
 
             // Check if it's a top-level context (page handle format starts with "page-")
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!context.startsWith("page-"_s), InvalidParameter, "contexts must be top-level browsing contexts"_s);
 
-            contextList.append(context);
+            topLevelBrowsingContextIdentifiers.append(page->identifier());
         }
-        contexts = WTF::move(contextList);
+        targetTopLevelBrowsingContextIdentifiers = WTF::move(topLevelBrowsingContextIdentifiers);
     }
 
-    std::optional<Vector<String>> userContexts;
+    bool targetsDefaultUserContext = false;
+    std::optional<Vector<PAL::SessionID>> targetNonDefaultUserContextStorageSessionIdentifiers;
     if (optionalUserContexts) {
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!optionalUserContexts->length(), InvalidParameter, "userContexts array cannot be empty"_s);
 
-        Vector<String> userContextList;
+        Vector<PAL::SessionID> storageSessionIdentifiers;
         for (auto& value : *optionalUserContexts) {
             String userContext;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!value->asString(userContext), InvalidParameter, "userContexts array must contain only strings"_s);
 
             // Validate userContext ID actually exists
-            RefPtr session = m_session.get();
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->isValidUserContext(userContext), NoSuchUserContext);
 
-            userContextList.append(userContext);
+            if (userContext == "default"_s) {
+                targetsDefaultUserContext = true;
+                continue;
+            }
+
+            auto storageSessionIdentifier = storageSessionIdentifierFromNonDefaultUserContext(userContext);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!storageSessionIdentifier, InternalError);
+            storageSessionIdentifiers.append(*storageSessionIdentifier);
         }
-        userContexts = WTF::move(userContextList);
+        targetNonDefaultUserContextStorageSessionIdentifiers = WTF::move(storageSessionIdentifiers);
     }
 
     m_preloadScripts.append(std::make_pair(scriptID, PreloadScriptInfo {
         functionDeclaration,
-        WTF::move(optionalArguments),
-        WTF::move(contexts),
+        WTF::move(serializedArguments),
+        WTF::move(targetTopLevelBrowsingContextIdentifiers),
         optionalSandbox,
-        WTF::move(userContexts)
+        targetsDefaultUserContext,
+        WTF::move(targetNonDefaultUserContextStorageSessionIdentifiers)
     }));
 
-    callback(makeString("preload-"_s, scriptID.toUInt64()));
+    Ref callbackAggregator = CallbackAggregator::create([callback = WTF::move(callback), scriptID] {
+        callback(makeString("preload-"_s, scriptID.toUInt64()));
+    });
+
+    if (RefPtr processPool = session->processPool()) {
+        for (Ref process : borrow(processPool->processes()).get())
+            sendPreloadScriptRegistrationToProcess(process, scriptID, m_preloadScripts.last().second, [callbackAggregator] { });
+    }
 }
 
 void BidiScriptAgent::removePreloadScript(const String& script, Inspector::CommandCallback<void>&& callback)
@@ -716,70 +765,17 @@ void BidiScriptAgent::removePreloadScript(const String& script, Inspector::Comma
 
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!found, NoSuchScript);
 
-    callback({ });
-}
+    Ref callbackAggregator = CallbackAggregator::create([callback = WTF::move(callback)] {
+        callback({ });
+    });
 
-void BidiScriptAgent::executePreloadScriptsForContext(const String& browsingContext, const String& frameHandle)
-{
-    RefPtr session = m_session.get();
-    if (!session)
-        return;
-
-    for (const auto& [scriptID, scriptInfo] : m_preloadScripts) {
-        // Check if this script applies to the current browsing context
-        bool appliesToContext = WTF::switchOn(scriptInfo.contexts,
-            [&] (const AllContextsTag&) {
-                return true;
-            },
-            [&] (const Vector<String>& contextList) {
-                return contextList.contains(browsingContext);
-            });
-        if (!appliesToContext)
-            continue;
-
-        // Check if this script applies to the current user context
-        if (scriptInfo.userContexts) {
-            RefPtr page = session->webPageProxyForHandle(browsingContext);
-            if (!page)
-                continue; // Skip if page no longer exists
-
-            // Get the user context ID for this browsing context
-            String pageUserContextID;
-            if (page->sessionID() == PAL::SessionID::defaultSessionID())
-                pageUserContextID = "default"_s;
-            else
-                pageUserContextID = makeString(hex(page->sessionID().toUInt64(), 16));
-
-            // Check if the script's userContexts list includes this context
-            if (!scriptInfo.userContexts->contains(pageUserContextID))
-                continue;
+    if (RefPtr session = m_session.get()) {
+        if (RefPtr processPool = session->processPool()) {
+            for (Ref process : borrow(processPool->processes()).get())
+                process->sendWithAsyncReply(Messages::WebAutomationSessionProxy::RemovePreloadScript(scriptID), [callbackAggregator] { });
         }
-
-        // FIXME: Execute preload scripts in the sandbox realm specified by addPreloadScript. <https://webkit.org/b/305819>
-        // FIXME: Create channels and remote references for preload script arguments in the target realm. <https://webkit.org/b/288057>
-
-        // Deserialize LocalValue arguments into plain JSON values for script evaluation.
-        auto argumentsArray = JSON::Array::create();
-        if (scriptInfo.arguments) {
-            for (unsigned i = 0; i < scriptInfo.arguments->length(); ++i) {
-                Ref argValue = scriptInfo.arguments->get(i);
-                argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
-            }
-        }
-
-        session->evaluateJavaScriptFunction(
-            browsingContext,
-            frameHandle,
-            scriptInfo.functionDeclaration,
-            WTF::move(argumentsArray),
-            false,
-            false,
-            std::nullopt,
-            [](auto) { }
-        );
     }
 }
-
 
 RefPtr<Inspector::Protocol::BidiScript::RealmInfo> BidiScriptAgent::createRealmInfoForFrame(const FrameInfoData& frameInfo)
 {
