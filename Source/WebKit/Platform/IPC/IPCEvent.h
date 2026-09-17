@@ -151,10 +151,18 @@ struct EventSignalPair {
 inline std::optional<EventSignalPair> createEventSignalPair()
 {
     Semaphore event;
+#if OS(LINUX)
+    if (!event)
+        return std::nullopt;
+#endif
 #if PLATFORM(WIN)
     Semaphore signal(Win32Handle { event.m_semaphoreHandle });
 #else
     Semaphore signal(event.m_fd.duplicate());
+#endif
+#if OS(LINUX)
+    if (!signal)
+        return std::nullopt;
 #endif
     return EventSignalPair { Event { WTF::move(event) }, Signal { WTF::move(signal) } };
 }

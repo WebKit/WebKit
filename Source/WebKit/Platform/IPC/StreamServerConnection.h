@@ -67,6 +67,7 @@ class StreamServerConnectionClient : public StreamMessageReceiver, public CanMak
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamServerConnectionClient);
 public:
     virtual void didReceiveInvalidMessage(StreamServerConnection&, MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) = 0;
+    virtual void didRunOutOfMessages() { }
 
 protected:
     virtual ~StreamServerConnectionClient() = default;
