@@ -55,7 +55,7 @@ ShareableBitmapConfiguration::ShareableBitmapConfiguration(const NativeImage& im
 
 ColorSpace ShareableBitmapConfiguration::validateColorSpace(const ColorSpace& colorSpace)
 {
-    if (auto colorSpaceAsRGB = colorSpace.asRGB())
+    if (auto colorSpaceAsRGB = colorSpace.asRGBModelMayBeExtended())
         return *colorSpaceAsRGB;
 
     return ColorSpace::ExtendedSRGB();

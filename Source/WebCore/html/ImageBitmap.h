@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/IDLTypes.h>
+#include <WebCore/ImageTypes.h>
 #include <WebCore/ScriptWrappable.h>
 #include <atomic>
 #include <wtf/RefCounted.h>
@@ -117,7 +118,7 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, Promise&&);
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
-    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1);
+    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1, DrawsHDRContent = DrawsHDRContent::No);
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, ColorSpace, float resolutionScale = 1);
 
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, ColorSpace);

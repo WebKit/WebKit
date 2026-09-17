@@ -1,0 +1,111 @@
+Tests that createImageBitmap() preserves HDR (extended-range float16) values from its synthesized sources, and that drawImage() of the result keeps them in a float16 canvas and clamps them in an SDR one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+
+- ImageData source, globalCompositeOperation = "source-over"
+PASS imageData float16 -> float16 ("source-over"): red is 3.5
+PASS imageData float16 -> float16 ("source-over"): green is 0.6
+PASS imageData float16 -> float16 ("source-over"): blue is 0
+PASS imageData float16 -> float16 ("source-over"): alpha is 1
+PASS imageData float16 -> unorm8 ("source-over"): red is 1
+PASS imageData float16 -> unorm8 ("source-over"): green is 0.6
+PASS imageData float16 -> unorm8 ("source-over"): blue is 0
+PASS imageData float16 -> unorm8 ("source-over"): alpha is 1
+PASS imageData unorm8 -> float16 ("source-over"): red is 0.6
+PASS imageData unorm8 -> float16 ("source-over"): green is 0.6
+PASS imageData unorm8 -> float16 ("source-over"): blue is 0
+PASS imageData unorm8 -> float16 ("source-over"): alpha is 1
+PASS imageData unorm8 -> unorm8 ("source-over"): red is 0.6
+PASS imageData unorm8 -> unorm8 ("source-over"): green is 0.6
+PASS imageData unorm8 -> unorm8 ("source-over"): blue is 0
+PASS imageData unorm8 -> unorm8 ("source-over"): alpha is 1
+
+- ImageData source, globalCompositeOperation = "copy"
+PASS imageData float16 -> float16 ("copy"): red is 3.5
+PASS imageData float16 -> float16 ("copy"): green is 0.6
+PASS imageData float16 -> float16 ("copy"): blue is 0
+PASS imageData float16 -> float16 ("copy"): alpha is 1
+PASS imageData float16 -> unorm8 ("copy"): red is 1
+PASS imageData float16 -> unorm8 ("copy"): green is 0.6
+PASS imageData float16 -> unorm8 ("copy"): blue is 0
+PASS imageData float16 -> unorm8 ("copy"): alpha is 1
+PASS imageData unorm8 -> float16 ("copy"): red is 0.6
+PASS imageData unorm8 -> float16 ("copy"): green is 0.6
+PASS imageData unorm8 -> float16 ("copy"): blue is 0
+PASS imageData unorm8 -> float16 ("copy"): alpha is 1
+PASS imageData unorm8 -> unorm8 ("copy"): red is 0.6
+PASS imageData unorm8 -> unorm8 ("copy"): green is 0.6
+PASS imageData unorm8 -> unorm8 ("copy"): blue is 0
+PASS imageData unorm8 -> unorm8 ("copy"): alpha is 1
+
+- ImageData source, globalCompositeOperation = "source-in"
+PASS imageData float16 -> float16 ("source-in"): red is 3.5
+PASS imageData float16 -> float16 ("source-in"): green is 0.6
+PASS imageData float16 -> float16 ("source-in"): blue is 0
+PASS imageData float16 -> float16 ("source-in"): alpha is 1
+PASS imageData float16 -> unorm8 ("source-in"): red is 1
+PASS imageData float16 -> unorm8 ("source-in"): green is 0.6
+PASS imageData float16 -> unorm8 ("source-in"): blue is 0
+PASS imageData float16 -> unorm8 ("source-in"): alpha is 1
+PASS imageData unorm8 -> float16 ("source-in"): red is 0.6
+PASS imageData unorm8 -> float16 ("source-in"): green is 0.6
+PASS imageData unorm8 -> float16 ("source-in"): blue is 0
+PASS imageData unorm8 -> float16 ("source-in"): alpha is 1
+PASS imageData unorm8 -> unorm8 ("source-in"): red is 0.6
+PASS imageData unorm8 -> unorm8 ("source-in"): green is 0.6
+PASS imageData unorm8 -> unorm8 ("source-in"): blue is 0
+PASS imageData unorm8 -> unorm8 ("source-in"): alpha is 1
+
+- canvas source
+PASS canvas float16 -> float16 ("source-over"): red is 3.5
+PASS canvas float16 -> float16 ("source-over"): green is 0.6
+PASS canvas float16 -> float16 ("source-over"): blue is 0
+PASS canvas float16 -> float16 ("source-over"): alpha is 1
+PASS canvas float16 -> unorm8 ("source-over"): red is 1
+PASS canvas float16 -> unorm8 ("source-over"): green is 0.6
+PASS canvas float16 -> unorm8 ("source-over"): blue is 0
+PASS canvas float16 -> unorm8 ("source-over"): alpha is 1
+PASS canvas unorm8 -> float16 ("source-over"): red is 0.6
+PASS canvas unorm8 -> float16 ("source-over"): green is 0.6
+PASS canvas unorm8 -> float16 ("source-over"): blue is 0
+PASS canvas unorm8 -> float16 ("source-over"): alpha is 1
+PASS canvas unorm8 -> unorm8 ("source-over"): red is 0.6
+PASS canvas unorm8 -> unorm8 ("source-over"): green is 0.6
+PASS canvas unorm8 -> unorm8 ("source-over"): blue is 0
+PASS canvas unorm8 -> unorm8 ("source-over"): alpha is 1
+
+- imageBitmap source
+PASS imageBitmap float16 -> float16 ("source-over"): red is 3.5
+PASS imageBitmap float16 -> float16 ("source-over"): green is 0.6
+PASS imageBitmap float16 -> float16 ("source-over"): blue is 0
+PASS imageBitmap float16 -> float16 ("source-over"): alpha is 1
+PASS imageBitmap float16 -> unorm8 ("source-over"): red is 1
+PASS imageBitmap float16 -> unorm8 ("source-over"): green is 0.6
+PASS imageBitmap float16 -> unorm8 ("source-over"): blue is 0
+PASS imageBitmap float16 -> unorm8 ("source-over"): alpha is 1
+PASS imageBitmap unorm8 -> float16 ("source-over"): red is 0.6
+PASS imageBitmap unorm8 -> float16 ("source-over"): green is 0.6
+PASS imageBitmap unorm8 -> float16 ("source-over"): blue is 0
+PASS imageBitmap unorm8 -> float16 ("source-over"): alpha is 1
+PASS imageBitmap unorm8 -> unorm8 ("source-over"): red is 0.6
+PASS imageBitmap unorm8 -> unorm8 ("source-over"): green is 0.6
+PASS imageBitmap unorm8 -> unorm8 ("source-over"): blue is 0
+PASS imageBitmap unorm8 -> unorm8 ("source-over"): alpha is 1
+
+- destination rect covers the canvas
+PASS imageData float16 -> float16 ("source-over", covers canvas): red is 3.5
+PASS imageData float16 -> float16 ("source-over", covers canvas): green is 0.6
+PASS imageData float16 -> float16 ("source-over", covers canvas): blue is 0
+PASS imageData float16 -> float16 ("source-over", covers canvas): alpha is 1
+PASS imageData float16 -> unorm8 ("source-over", covers canvas): red is 1
+PASS imageData float16 -> unorm8 ("source-over", covers canvas): green is 0.6
+PASS imageData float16 -> unorm8 ("source-over", covers canvas): blue is 0
+PASS imageData float16 -> unorm8 ("source-over", covers canvas): alpha is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

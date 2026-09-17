@@ -159,7 +159,7 @@ bool operator==(const ColorSpace& a, const ColorSpace& b)
 #endif
 }
 
-std::optional<ColorSpace> ColorSpace::asRGB() const
+std::optional<ColorSpace> ColorSpace::asRGBModelMayBeExtended() const
 {
 #if USE(CG)
     // Avoid refing colorSpace here as this is performance-sensitive code.
@@ -168,9 +168,6 @@ std::optional<ColorSpace> ColorSpace::asRGB() const
         colorSpace = CGColorSpaceGetBaseColorSpace(colorSpace);
 
     if (CGColorSpaceGetModel(colorSpace) != kCGColorSpaceModelRGB)
-        return std::nullopt;
-
-    if (usesExtendedRange())
         return std::nullopt;
 
     return ColorSpace(colorSpace);

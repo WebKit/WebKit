@@ -138,18 +138,69 @@ Ref<ImageBitmap> ImageBitmap::create(Ref<ImageBuffer> bitmap, bool originClean, 
     return adoptRef(*new ImageBitmap(WTF::move(bitmap), originClean, premultiplyAlpha, forciblyPremultiplyAlpha));
 }
 
-RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, ColorSpace colorSpace, float resolutionScale)
+static ColorSpace closestRGBModelColorSpace(const ColorSpace& colorSpace, DrawsHDRContent drawsHDRContent)
 {
-    // FIXME: Should avoid converting color space and pixel format of image sources.
-    auto imageBufferColorSpace = colorSpace.asRGB();
-    if (!imageBufferColorSpace) {
+    if (auto rgbColorSpace = colorSpace.asRGBModelMayBeExtended()) {
+        if (drawsHDRContent == DrawsHDRContent::Yes && !rgbColorSpace->usesExtendedRange()) {
+            if (auto extended = rgbColorSpace->asExtended())
+                return WTF::move(*extended);
+        }
+        return WTF::move(*rgbColorSpace);
+    }
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3) || ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
+    if (drawsHDRContent == DrawsHDRContent::Yes || colorSpace.usesExtendedRange()) {
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
-        imageBufferColorSpace = ColorSpace::DisplayP3();
+        return ColorSpace::ExtendedDisplayP3();
 #else
-        imageBufferColorSpace = ColorSpace::SRGB();
+        return ColorSpace::ExtendedSRGB();
 #endif
     }
-    return ImageBuffer::create(size, renderingMode, RenderingPurpose::Canvas, resolutionScale, *imageBufferColorSpace, PixelFormat::BGRA8, scriptExecutionContext.graphicsClient());
+#endif
+
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    return ColorSpace::DisplayP3();
+#else
+    return ColorSpace::SRGB();
+#endif
+}
+
+static PixelFormat imageBufferPixelFormat(const ColorSpace& colorSpace)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (colorSpace.usesExtendedRange())
+        return PixelFormat::RGBA16F;
+#else
+    UNUSED_PARAM(colorSpace);
+#endif
+    return PixelFormat::BGRA8;
+}
+
+static AllowExtendedColorSpace allowExtendedColorSpace(const ImageData& imageData)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (imageData.pixelFormat() == ImageDataPixelFormat::RgbaFloat16)
+        return AllowExtendedColorSpace::Yes;
+#else
+    UNUSED_PARAM(imageData);
+#endif
+    return AllowExtendedColorSpace::No;
+}
+
+static Ref<PixelBuffer> pixelBufferForImageData(const ImageData& imageData)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    return imageData.pixelBuffer();
+#else
+    return imageData.byteArrayPixelBuffer();
+#endif
+}
+
+RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, ColorSpace colorSpace, float resolutionScale, DrawsHDRContent drawsHDRContent)
+{
+    // FIXME: Should avoid converting color space and pixel format of image sources.
+    auto imageBufferColorSpace = closestRGBModelColorSpace(colorSpace, drawsHDRContent);
+    return ImageBuffer::create(size, renderingMode, RenderingPurpose::Canvas, resolutionScale, imageBufferColorSpace, imageBufferPixelFormat(imageBufferColorSpace), scriptExecutionContext.graphicsClient());
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmapCompletionHandler&& completionHandler)
@@ -462,7 +513,8 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace());
+    auto drawsHDRContent = imageForRenderer->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace(), 1, drawsHDRContent);
     const bool originClean = !taintsOrigin(*cachedImage);
     if (!bitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
@@ -474,7 +526,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
         orientation = ImageOrientation::Orientation::None;
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+    bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
 
     // 7. Create a new ImageBitmap object.
     // 9. If the origin of image's image is not the same origin as the origin specified by the
@@ -878,7 +930,8 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace());
+    auto drawsHDRContent = image->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace(), 1, drawsHDRContent);
     if (!bitmapData) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
         return;
@@ -889,7 +942,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
         orientation = ImageOrientation::Orientation::None;
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
 
     const bool originClean = true;
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
@@ -924,7 +977,8 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     }
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
-    RefPtr bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), toColorSpace(imageData->colorSpace()));
+    auto imageDataColorSpace = toColorSpace(imageData->colorSpace(), allowExtendedColorSpace(imageData.get()));
+    RefPtr bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageDataColorSpace);
 
     const bool originClean = true;
     if (!bitmapData) {
@@ -937,7 +991,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     const auto alphaPremultiplication = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha);
     const bool premultiplyAlpha = alphaPremultiplication == AlphaPremultiplication::Premultiplied;
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation != ImageBitmapOptions::Orientation::FlipY) {
-        bitmapData->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
+        bitmapData->putPixelBuffer(pixelBufferForImageData(imageData.get()).get(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
 
         auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
         completionHandler(WTF::move(imageBitmap));
@@ -946,12 +1000,12 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     // 6.3. Set imageBitmap's bitmap data to image's image data, cropped to the
     //      source rectangle with formatting.
-    RefPtr tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode(scriptExecutionContext), toColorSpace(imageData->colorSpace()));
+    RefPtr tempBitmapData = createImageBuffer(scriptExecutionContext, imageData->size(), bufferRenderingMode(scriptExecutionContext), imageDataColorSpace);
     if (!tempBitmapData) {
         completionHandler(createBlankImageBuffer(scriptExecutionContext, true));
         return;
     }
-    tempBitmapData->putPixelBuffer(imageData->byteArrayPixelBuffer().get(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
+    tempBitmapData->putPixelBuffer(pixelBufferForImageData(imageData.get()).get(), IntRect(0, 0, imageData->width(), imageData->height()), { }, alphaPremultiplication);
     FloatRect destRect(FloatPoint(), outputSize);
     bitmapData->context().drawImageBuffer(*tempBitmapData, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(ImageOrientation::Orientation::None) });
 
