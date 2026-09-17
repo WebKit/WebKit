@@ -89,6 +89,7 @@ my $startTime = time();
 my $archs32bit = 0;
 my $useCCache = -1;
 my $exportCompileCommands = 0;
+my $swiftBrowser;
 
 my @features = getFeatureOptionList();
 
@@ -165,6 +166,7 @@ Usage: $programName [options] [options to pass to build system]
 
   --only-webkit                     Build only the WebKit project
   --only=<scheme>                   Build only the given scheme, instead of the entire project (Xcode builds only)
+  --[no-]swiftbrowser               Build SwiftBrowser, which is on by default (Mac CMake builds only)
 
   --skip-library-update             Skip the check to see if windows libraries are up to date
 
@@ -191,6 +193,7 @@ my %options = (
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
     'use-ccache!' => \$useCCache,
+    'swiftbrowser!' => \$swiftBrowser,
     'export-compile-commands' => \$exportCompileCommands
 );
 
@@ -339,6 +342,8 @@ if (isCMakeBuild() && !isAnyWindows() && !isWin()) {
             push @cmakeArgs, VIDEO_DECODING_LIMIT;
         }
     }
+
+    push @cmakeArgs, "-DENABLE_SWIFTBROWSER=" . ($swiftBrowser ? "ON" : "OFF") if defined $swiftBrowser;
 
     buildCMakeProjectOrExit($clean, $prefixPath, $makeArgs, @featureArgs, @cmakeArgs);
 }

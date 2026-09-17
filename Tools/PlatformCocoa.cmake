@@ -6,6 +6,13 @@ if (ENABLE_MINIBROWSER AND ENABLE_WEBKIT)
     add_subdirectory(MiniBrowser/mac)
 endif ()
 
+# A WEBKIT_OPTION would reach cmakeconfig.h, so turning SwiftBrowser on or off
+# would rebuild everything that includes it.
+option(ENABLE_SWIFTBROWSER "Build SwiftBrowser" ON)
+if (ENABLE_SWIFTBROWSER AND ENABLE_WEBKIT)
+    add_subdirectory(SwiftBrowser)
+endif ()
+
 # WebKitTestRunner for layout tests (https://bugs.webkit.org/show_bug.cgi?id=231776).
 # DumpRenderTree is WK1-only -- not built here.
 option(ENABLE_WEBKIT_TEST_RUNNER "Build WebKitTestRunner for layout tests" ON)
