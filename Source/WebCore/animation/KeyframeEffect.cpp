@@ -2992,6 +2992,16 @@ void KeyframeEffect::computeHasReferenceFilter()
     }();
 }
 
+static HashSet<CSSPropertyID> allAcceleratedAnimationProperties([[maybe_unused]] const Settings& settings)
+{
+    HashSet<CSSPropertyID> allProperties { CSSProperty::allAcceleratedAnimationProperties(settings) };
+#if PLATFORM(IOS_FAMILY)
+    if (settings.acceleratedClipPathAnimationEnabled())
+        allProperties.add(CSSPropertyClipPath);
+#endif
+    return allProperties;
+}
+
 void KeyframeEffect::computeAnimationIsAcceleratedAndAffectsAnchorGeometry()
 {
     m_animationIsAcceleratedAndAffectsAnchorGeometry = [&]() {
@@ -3006,7 +3016,7 @@ void KeyframeEffect::computeAnimationIsAcceleratedAndAffectsAnchorGeometry()
             if (!protectedDocument)
                 return false;
 
-            HashSet<CSSPropertyID> geometryAffectingAcceleratedProperty { CSSProperty::allAcceleratedAnimationProperties(protectedDocument->settings()) };
+            HashSet<CSSPropertyID> geometryAffectingAcceleratedProperty { allAcceleratedAnimationProperties(protectedDocument->settings()) };
             // Allow properties we know don't affect geometry.
             geometryAffectingAcceleratedProperty.remove(CSSPropertyOpacity);
             geometryAffectingAcceleratedProperty.remove(CSSPropertyFilter);
@@ -3178,6 +3188,8 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const S
         return previousStyle.offsetAnchor() != currentStyle.offsetAnchor();
     case CSSPropertyOffsetRotate:
         return previousStyle.offsetRotate() != currentStyle.offsetRotate();
+    case CSSPropertyClipPath:
+        return previousStyle.clipPath() != currentStyle.clipPath();
     case CSSPropertyFilter:
         return previousStyle.filter() != currentStyle.filter();
     case CSSPropertyBackdropFilter:
@@ -3215,7 +3227,7 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const Style::ComputedSty
         auto& settings = document()->settings();
 
         ASSERT(previousStyle && currentStyle);
-        for (auto property : CSSProperty::allAcceleratedAnimationProperties(settings)) {
+        for (auto property : allAcceleratedAnimationProperties(settings)) {
             if (acceleratedPropertyDidChange(property, *previousStyle, *currentStyle, settings)) {
                 scheduleAssociatedAcceleratedEffectStackUpdate();
                 return;
