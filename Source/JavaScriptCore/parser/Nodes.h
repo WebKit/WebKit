@@ -231,9 +231,15 @@ namespace JSC {
         bool isOptionalChainBase() const { return m_isOptionalChainBase; }
         void setIsOptionalChainBase() { m_isOptionalChainBase = true; }
 
+        // Parentheses are otherwise transparent here, but `(x) = f` must not name f "x" the way
+        // `x = f` does: the spec's IsIdentifierRef is false for a parenthesized operand.
+        bool isParenthesized() const { return m_isParenthesized; }
+        void setIsParenthesized() { m_isParenthesized = true; }
+
     private:
         ResultType m_resultType;
         bool m_isOptionalChainBase { false };
+        bool m_isParenthesized { false };
     };
 
     class StatementNode : public Node {

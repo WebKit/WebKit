@@ -79,9 +79,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 3
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 3
-test/language/expressions/assignment/fn-name-lhs-cover.js:
-  default: 3
-  strict mode: 3
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 3
   strict mode: 3
@@ -143,8 +140,6 @@ test/staging/sm/Date/two-digit-years.js:
   strict mode: 3
 test/staging/sm/Function/arguments-parameter-shadowing.js:
   default: 3
-test/staging/sm/Function/function-name-assignment.js:
-  default: 3
 test/staging/sm/Function/function-toString-builtin-name.js:
   default: 3
   strict mode: 3
@@ -174,9 +169,6 @@ test/staging/sm/expressions/exponentiation-unparenthesised-unary.js:
   default: 3
   strict mode: 3
 test/staging/sm/expressions/object-literal-computed-property-evaluation.js:
-  default: 3
-  strict mode: 3
-test/staging/sm/expressions/short-circuit-compound-assignment-anon-fns.js:
   default: 3
   strict mode: 3
 test/staging/sm/extensions/function-caller-skips-eval-frames.js:

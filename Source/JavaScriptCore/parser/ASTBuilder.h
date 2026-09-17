@@ -195,6 +195,7 @@ public:
         return new (m_parserArena) NewTargetNode(location);
     }
     ExpressionNode* createImportMetaExpr(const JSTokenLocation& location, ExpressionNode* expr) { return new (m_parserArena) ImportMetaNode(location, expr); }
+    void setIsParenthesized(ExpressionNode* expr) { expr->setIsParenthesized(); }
     bool isMetaProperty(ExpressionNode* node) { return node->isMetaProperty(); }
     bool isNewTarget(ExpressionNode* node) { return node->isNewTarget(); }
     bool isImportMeta(ExpressionNode* node) { return node->isImportMeta(); }
@@ -1201,7 +1202,7 @@ private:
             tryInferNameInPatternWithIdentifier(ident, defaultValue);
         } else if (pattern->isAssignmentElementNode()) {
             const ExpressionNode* assignmentTarget = static_cast<AssignmentElementNode*>(pattern)->assignmentTarget();
-            if (assignmentTarget->isResolveNode()) {
+            if (assignmentTarget->isResolveNode() && !assignmentTarget->isParenthesized()) {
                 const Identifier& ident = static_cast<const ResolveNode*>(assignmentTarget)->identifier();
                 tryInferNameInPatternWithIdentifier(ident, defaultValue);
             }
@@ -1635,22 +1636,26 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
 
         if (op == Operator::Equal) {
-            if (expr->isBaseFuncExprNode()) {
-                auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
-                metadata->setEcmaName(resolve->identifier());
-            } else if (expr->isClassExprNode())
-                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            if (!resolve->isParenthesized()) {
+                if (expr->isBaseFuncExprNode()) {
+                    auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
+                    metadata->setEcmaName(resolve->identifier());
+                } else if (expr->isClassExprNode())
+                    static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            }
             AssignResolveNode* node = new (m_parserArena) AssignResolveNode(location, resolve->identifier(), expr, AssignmentContext::AssignmentExpression);
             setExceptionLocation(node, start, divot, end);
             return node;
         }
 
         if (op == Operator::CoalesceEq || op == Operator::OrEq || op == Operator::AndEq) {
-            if (expr->isBaseFuncExprNode()) {
-                auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
-                metadata->setEcmaName(resolve->identifier());
-            } else if (expr->isClassExprNode())
-                static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            if (!resolve->isParenthesized()) {
+                if (expr->isBaseFuncExprNode()) {
+                    auto metadata = static_cast<BaseFuncExprNode*>(expr)->metadata();
+                    metadata->setEcmaName(resolve->identifier());
+                } else if (expr->isClassExprNode())
+                    static_cast<ClassExprNode*>(expr)->setEcmaName(resolve->identifier());
+            }
             return new (m_parserArena) ShortCircuitReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, start, end);
         }
 
