@@ -91,7 +91,7 @@ void HTMLSelectedContentElement::postConnectionSteps()
         m_owningSelect = nearestAncestorSelect;
         nearestAncestorSelect->registerSelectedContentElement();
     }
-    nearestAncestorSelect->updateSelectedContent();
+    nearestAncestorSelect->updateSelectedContent(nullptr);
 }
 
 void HTMLSelectedContentElement::removingSteps(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)

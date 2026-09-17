@@ -18,7 +18,7 @@ jsTestIsAsync = true;
 function buttonText()
 {
     const shadow = internals.shadowRoot(select);
-    return shadow.querySelector("slot[name=buttonSlot]").firstElementChild.textContent.trim();
+    return shadow.querySelector("slot[name=buttonSlot] + div").textContent.trim();
 }
 
 async function selectRowAndAssertButtonText(row, text)
