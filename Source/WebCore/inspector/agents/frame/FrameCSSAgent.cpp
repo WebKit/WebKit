@@ -49,6 +49,7 @@
 #include "FrameDOMAgent.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
+#include "InspectorCSSAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
 #include "InspectorIdentifierRegistry.h"
@@ -509,75 +510,13 @@ Inspector::CommandResult<Ref<Inspector::Protocol::CSS::CSSRule>> FrameCSSAgent::
     return rule.releaseNonNull();
 }
 
-Inspector::CommandResult<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>> FrameCSSAgent::getSupportedCSSProperties()
+Inspector::CommandResult<std::tuple<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>>, Ref<JSON::ArrayOf<String> /* colors */>>> FrameCSSAgent::getSupportedCSSProperties()
 {
     RefPtr page = m_inspectedFrame->page();
     if (!page)
         return makeUnexpected("No page for frame"_s);
 
-    auto cssProperties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
-
-    auto& settings = page->settings();
-    auto parserContext = CSSParserContext { settings };
-
-    for (auto propertyID : allCSSProperties()) {
-        if (!isExposed(propertyID, &settings))
-            continue;
-
-        auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
-            .setName(nameString(propertyID))
-            .release();
-
-        auto aliases = CSSProperty::aliasesForProperty(propertyID);
-        if (!aliases.isEmpty()) {
-            auto aliasesArray = JSON::ArrayOf<String>::create();
-            for (auto& alias : aliases)
-                aliasesArray->addItem(alias);
-            property->setAliases(WTF::move(aliasesArray));
-        }
-
-        auto shorthand = shorthandForProperty(propertyID);
-        if (shorthand.length()) {
-            auto longhands = JSON::ArrayOf<String>::create();
-            for (auto longhand : shorthand) {
-                if (isExposed(longhand, &settings))
-                    longhands->addItem(nameString(longhand));
-            }
-            if (longhands->length())
-                property->setLonghands(WTF::move(longhands));
-        }
-
-        if (CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(propertyID)) {
-            auto propertyParserState = CSS::PropertyParserState {
-                .context = parserContext,
-            };
-            auto values = JSON::ArrayOf<String>::create();
-            for (auto valueID : allCSSValueKeywords()) {
-                if (CSSPropertyParsing::isKeywordValidForStyleProperty(propertyID, valueID, propertyParserState))
-                    values->addItem(nameString(valueID));
-            }
-            if (values->length())
-                property->setValues(WTF::move(values));
-        } else {
-            auto validKeywords = CSSProperty::validKeywordsForProperty(propertyID);
-            if (!validKeywords.empty()) {
-                auto values = JSON::ArrayOf<String>::create();
-                for (auto valueID : validKeywords) {
-                    if (CSSProperty::isKeywordValidForPropertyValues(propertyID, valueID, parserContext))
-                        values->addItem(nameString(valueID));
-                }
-                if (values->length())
-                    property->setValues(WTF::move(values));
-            }
-        }
-
-        if (CSSProperty::isInheritedProperty(propertyID))
-            property->setInherited(true);
-
-        cssProperties->addItem(WTF::move(property));
-    }
-
-    return cssProperties;
+    return InspectorCSSAgent::buildSupportedCSSProperties(page->settings());
 }
 
 Inspector::CommandResult<Ref<JSON::ArrayOf<String>>> FrameCSSAgent::getSupportedSystemFontFamilyNames()

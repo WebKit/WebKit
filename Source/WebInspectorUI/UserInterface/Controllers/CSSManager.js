@@ -66,13 +66,45 @@ WI.CSSManager = class CSSManager extends WI.Object
         if (this._propertyNameCompletions)
             return;
 
-        target.CSSAgent.getSupportedCSSProperties((error, cssProperties) => {
+        target.CSSAgent.getSupportedCSSProperties((error, properties, colors) => {
             if (error)
                 return;
 
-            this._propertyNameCompletions = new WI.CSSPropertyNameCompletions(cssProperties);
+            for (let property of properties) {
+                if (property.aliases) {
+                    for (let alias of property.aliases)
+                        WI.CSSKeywordCompletions.PropertyNameForAlias.set(alias, property.name);
+                }
 
-            WI.CSSKeywordCompletions.addCustomCompletions(cssProperties);
+                if (property.longhands) {
+                    for (let longhand of property.longhands) {
+                        WI.CSSKeywordCompletions.LonghandPropertyNamesForShorthandPropertyName.add(property.name, longhand);
+                        WI.CSSKeywordCompletions.ShorthandPropertyNamesForLonghandPropertyName.add(longhand, property.name);
+                    }
+                }
+
+                if (property.values) {
+                    for (let value of property.values)
+                        WI.CSSKeywordCompletions.KeywordsForPropertyName.add(property.name, value);
+                }
+
+                if (property.inherited)
+                    WI.CSSKeywordCompletions.InheritedPropertyNames.add(property.name);
+
+                // COMPATIBILITY (macOS X.Y, iOS X.Y): the `isColorAware` property of `CSS.CSSPropertyInfo` did not exist yet.
+                if (property.isColorAware)
+                    WI.CSSKeywordCompletions.ColorAwareProperties.add(property.name);
+
+                // COMPATIBILITY (macOS X.Y, iOS X.Y): the `isEasingAware` property of `CSS.CSSPropertyInfo` did not exist yet.
+                if (property.isEasingAware)
+                    WI.CSSKeywordCompletions.EasingAwareProperties.add(property.name);
+            }
+
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): the `colors` parameter of `CSS.getSupportedCSSProperties` did not exist yet.
+            if (colors)
+                WI.CSSKeywordCompletions.ColorValues = colors;
+
+            this._propertyNameCompletions = new WI.CSSPropertyNameCompletions(properties);
 
             // CodeMirror is not included by tests so we shouldn't assume it always exists.
             // If it isn't available we skip MIME type associations.
@@ -89,7 +121,7 @@ WI.CSSManager = class CSSManager extends WI.Object
                 return name.replace(/^-[^-]+-/, "").replace(/\(\)$/, "").toLowerCase();
             }
 
-            for (let property of cssProperties) {
+            for (let property of properties) {
                 // Properties can also be value keywords, like when used in a transition.
                 // So we add them to both lists.
                 let codeMirrorPropertyName = nameForCodeMirror(property.name);
@@ -97,17 +129,14 @@ WI.CSSManager = class CSSManager extends WI.Object
                 valueKeywordsForCodeMirror[codeMirrorPropertyName] = true;
             }
 
-            for (let propertyName in WI.CSSKeywordCompletions._propertyKeywordMap) {
-                let keywords = WI.CSSKeywordCompletions._propertyKeywordMap[propertyName];
-                for (let keyword of keywords) {
-                    // Skip numbers, like the ones defined for font-weight.
-                    if (keyword === WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder || !isNaN(Number(keyword)))
-                        continue;
-                    valueKeywordsForCodeMirror[nameForCodeMirror(keyword)] = true;
-                }
+            for (let [propertyName, keyword] of WI.CSSKeywordCompletions.KeywordsForPropertyName) {
+                // Skip numbers, like the ones defined for font-weight.
+                if (keyword === WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder || !isNaN(Number(keyword)))
+                    continue;
+                valueKeywordsForCodeMirror[nameForCodeMirror(keyword)] = true;
             }
 
-            for (let color of WI.CSSKeywordCompletions._colors)
+            for (let color of WI.CSSKeywordCompletions.ColorValues)
                 colorKeywordsForCodeMirror[nameForCodeMirror(color)] = true;
 
             // TODO: Remove these keywords once they are built-in codemirror or once we get values from WebKit itself.
@@ -137,8 +166,10 @@ WI.CSSManager = class CSSManager extends WI.Object
                 if (error)
                     return;
 
-                WI.CSSKeywordCompletions.addPropertyCompletionValues("font-family", fontFamilyNames);
-                WI.CSSKeywordCompletions.addPropertyCompletionValues("font", fontFamilyNames);
+                for (let fontFamilyName of fontFamilyNames) {
+                    WI.CSSKeywordCompletions.KeywordsForPropertyName.add("font-family", fontFamilyName);
+                    WI.CSSKeywordCompletions.KeywordsForPropertyName.add("font", fontFamilyName);
+                }
             });
         }
     }
