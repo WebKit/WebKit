@@ -35,7 +35,6 @@ media/restore-from-page-cache.html [ Timeout ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Skip ]
 fast/loader/stateobjects/pushstate-in-iframe.html [ Timeout ]
 http/tests/navigation/cross-site-iframe-nav-with-bfcache.html [ Timeout ]
-http/tests/navigation-api/different-origin-entries-removed-after-bfcache.html [ Failure Timeout ]
 
 ########################
 # Tests that Text fail #
