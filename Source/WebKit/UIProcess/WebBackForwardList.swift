@@ -1050,7 +1050,7 @@ final class WebBackForwardList {
     ) {
         // Also reached from C++ (WebPageProxy::backForwardAddItemShared), so this rather than
         // the caller is the catch site.
-        dispatchMessage(on: connection) { () throws(InvalidMessage) in
+        dispatchMessage(on: connection, message: .WebBackForwardList_BackForwardAddItem) { () throws(InvalidMessage) in
             try addItemInternal(
                 connection: connection,
                 navigatedFrameState: navigatedFrameState,
@@ -1145,6 +1145,7 @@ final class WebBackForwardList {
         handlingProvisionalMessage = handling
     }
 
+    @MainActor
     func backForwardAddItem(connection: IPC.Connection, navigatedFrameState: WebKit.RefFrameState) throws(InvalidMessage) {
         if let page = page.get() {
             try addItemInternal(
@@ -1155,6 +1156,7 @@ final class WebBackForwardList {
         }
     }
 
+    @MainActor
     func backForwardSetChildItem(
         connection: IPC.Connection,
         frameItemID: WebCore.BackForwardFrameItemIdentifier,
@@ -1172,6 +1174,7 @@ final class WebBackForwardList {
         }
     }
 
+    @MainActor
     func backForwardClearChildren(
         connection: IPC.Connection,
         itemID: WebCore.BackForwardItemIdentifier,
@@ -1182,6 +1185,7 @@ final class WebBackForwardList {
         }
     }
 
+    @MainActor
     func backForwardUpdateItem(connection: IPC.Connection, frameState: WebKit.RefFrameState) throws(InvalidMessage) {
         let process = WebKit.WebProcessProxy.fromConnection(connection)
 
@@ -1254,6 +1258,7 @@ final class WebBackForwardList {
         targetFrameItem.updateFrameStatePayload(consuming: newFrameState)
     }
 
+    @MainActor
     func backForwardGoToItem(connection: IPC.Connection, itemID: WebCore.BackForwardItemIdentifier) throws(InvalidMessage) {
         // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
         // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
@@ -1265,12 +1270,12 @@ final class WebBackForwardList {
         try goToItemInternal(itemID: itemID)
     }
 
+    @MainActor
     func backForwardListContainsItem(
         connection: IPC.Connection,
-        itemID: WebCore.BackForwardItemIdentifier,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardListContainsItemCompletionHandler
-    ) {
-        completionHandler.pointee(itemForID(identifier: itemID) != nil)
+        itemID: WebCore.BackForwardItemIdentifier
+    ) -> Bool {
+        itemForID(identifier: itemID) != nil
     }
 
     @used
@@ -1280,7 +1285,7 @@ final class WebBackForwardList {
         do {
             try goToItemInternal(itemID: itemID)
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .WebBackForwardList_BackForwardGoToItem)
         }
     }
 
@@ -1304,28 +1309,27 @@ final class WebBackForwardList {
         }
     }
 
+    @MainActor
     func backForwardAllItems(
         connection: IPC.Connection,
-        frameID: WebCore.FrameIdentifier,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardAllItemsCompletionHandler
-    ) {
+        frameID: WebCore.FrameIdentifier
+    ) -> WebKit.VectorRefFrameState {
         var frameStates: [WebKit.FrameState] = []
         for item in entries {
             if let frameItem = item.mainFrameItem().childItemForFrameID(frameID) {
                 frameStates.append(frameItem.copyFrameStateWithChildren().ptr())
             }
         }
-        completionHandler.pointee(consuming: WebKit.VectorRefFrameState(array: frameStates))
+        return WebKit.VectorRefFrameState(array: frameStates)
     }
 
+    @MainActor
     func backForwardItemAtIndexForWebContent(
         connection: IPC.Connection,
         delta: Int32,
-        frameID: WebCore.FrameIdentifier,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardItemAtIndexForWebContentCompletionHandler
-    ) throws(InvalidMessage) {
-        let reply = try itemAtIndexForWebContent(delta: delta, frameID: frameID)
-        completionHandler.pointee(consuming: reply)
+        frameID: WebCore.FrameIdentifier
+    ) throws(InvalidMessage) -> WebKit.RefPtrFrameState {
+        try itemAtIndexForWebContent(delta: delta, frameID: frameID)
     }
 
     private func itemAtIndexForWebContent(
@@ -1345,11 +1349,11 @@ final class WebBackForwardList {
         return WebKit.RefPtrFrameState(frameItem.copyFrameStateWithChildren().ptr())
     }
 
+    @MainActor
     func backForwardListCounts(
-        connection: IPC.Connection,
-        completionHandler: CompletionHandlers.WebBackForwardList.BackForwardListCountsCompletionHandler
-    ) {
-        completionHandler.pointee(consuming: rawCounts())
+        connection: IPC.Connection
+    ) -> WebKit.WebBackForwardListCounts {
+        rawCounts()
     }
 }
 

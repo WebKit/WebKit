@@ -437,9 +437,7 @@ void Connection::removeMessageReceiver(ReceiverName receiverName, uint64_t desti
 template<typename MessageReceiverType>
 void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageReceiver, UniqueRef<Decoder>&& decoder)
 {
-#if ASSERT_ENABLED
-    ++m_inDispatchMessageCount;
-#endif
+++m_inDispatchMessageCount;
 
     messageLog().add(decoder->messageName());
 
@@ -454,9 +452,7 @@ void Connection::dispatchMessageReceiverMessage(MessageReceiverType& messageRece
     } else
         messageReceiver.didReceiveMessage(*this, decoder.get());
 
-#if ASSERT_ENABLED
-    --m_inDispatchMessageCount;
-#endif
+--m_inDispatchMessageCount;
 
 #if ENABLE(IPC_TESTING_API)
     if (decoder->hasErrorString())
@@ -1478,9 +1474,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
     }
 
-#if ASSERT_ENABLED
-    ++m_inDispatchMessageCount;
-#endif
+++m_inDispatchMessageCount;
 
     bool isDispatchingMessageWhileWaitingForSyncReply = (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::Yes)
         || (message->shouldDispatchMessageWhenWaitingForSyncReply() == ShouldDispatchWhenWaitingForSyncReply::YesDuringUnboundedIPC && UnboundedSynchronousIPCScope::hasOngoingUnboundedSyncIPC());
@@ -1500,9 +1494,7 @@ void Connection::dispatchMessage(UniqueRef<Decoder> message)
 
     m_didReceiveInvalidMessage |= !message->isValid();
 
-#if ASSERT_ENABLED
-    --m_inDispatchMessageCount;
-#endif
+--m_inDispatchMessageCount;
 
     // FIXME: For synchronous messages, we should not decrement the counter until we send a response.
     // Otherwise, we would deadlock if processing the message results in a sync message back after we exit this function.
@@ -1760,6 +1752,31 @@ bool Connection::shouldCrashOnMessageCheckFailure()
 void Connection::setShouldCrashOnMessageCheckFailure(bool shouldCrash)
 {
     s_shouldCrashOnMessageCheckFailure = shouldCrash;
+}
+
+void Connection::markMessageAsInvalid(MessageName messageName, const String& error)
+{
+    // A failed check during dispatch is reported by Connection::dispatchMessage, once the handler
+    // has returned.
+    if (isDispatchingMessage()) {
+        markCurrentlyDispatchedMessageAsInvalid(error);
+        return;
+    }
+
+    // Work that outlived the dispatch of the message that caused it - a Swift handler which
+    // suspended, for instance - has no dispatch left to report through, so report here. The caller
+    // supplies the message name because the connection no longer knows it.
+#if ENABLE(IPC_TESTING_API)
+    if (!error.isNull())
+        setErrorString(error);
+    if (m_ignoreInvalidMessageForTesting)
+        return;
+#else
+    UNUSED_PARAM(error);
+#endif
+    if (!isValid())
+        return;
+    protect(client())->didReceiveInvalidMessage(*this, messageName, { });
 }
 
 void Connection::logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line)
