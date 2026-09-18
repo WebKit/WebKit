@@ -39,3 +39,34 @@ enum class Inspector::ResourceType : uint8_t {
     EventSource,
     Other,
 };
+
+header: <WebCore/InspectorResourceUtilities.h>
+
+enum class Inspector::InitiatorType : uint8_t {
+    Parser,
+    Script,
+    Other,
+};
+
+[CustomHeader] struct Inspector::InitiatorCallFrame {
+    String functionName;
+    String sourceURL;
+    uint32_t sourceID;
+    unsigned lineNumber;
+    unsigned columnNumber;
+};
+
+[CustomHeader] struct Inspector::InitiatorStackTrace {
+    Vector<Inspector::InitiatorCallFrame> callFrames;
+    bool truncated;
+    bool topCallFrameIsBoundary;
+    std::unique_ptr<Inspector::InitiatorStackTrace> parentStackTrace;
+};
+
+[CustomHeader] struct Inspector::InitiatorData {
+    Inspector::InitiatorType type;
+    std::unique_ptr<Inspector::InitiatorStackTrace> stackTrace;
+    String parserURL;
+    std::optional<int> parserLineNumber;
+    std::optional<int> nodeId;
+};
