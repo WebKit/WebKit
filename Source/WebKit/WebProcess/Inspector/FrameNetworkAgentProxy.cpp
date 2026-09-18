@@ -51,7 +51,10 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
 #include <WebCore/ProcessQualified.h>
+#include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 
@@ -401,6 +404,32 @@ void FrameNetworkAgentProxy::setInitialScriptContent(ResourceLoaderIdentifier re
 void FrameNetworkAgentProxy::mainFrameNavigated(DocumentLoader&)
 {
     m_resourcesData->clear();
+}
+
+bool FrameNetworkAgentProxy::willIntercept(const ResourceRequest&)
+{
+    return false;
+}
+
+bool FrameNetworkAgentProxy::shouldInterceptRequest(const ResourceLoader&)
+{
+    return false;
+}
+
+bool FrameNetworkAgentProxy::shouldInterceptResponse(const ResourceResponse&)
+{
+    return false;
+}
+
+// Unreachable while the predicates above decline; resumes the load rather than dropping the handler.
+void FrameNetworkAgentProxy::interceptRequest(ResourceLoader& loader, Function<void(const ResourceRequest&)>&& handler)
+{
+    handler(loader.request());
+}
+
+void FrameNetworkAgentProxy::interceptResponse(const ResourceResponse& response, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&& handler)
+{
+    handler(response, nullptr);
 }
 
 } // namespace WebKit
