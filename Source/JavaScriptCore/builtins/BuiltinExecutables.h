@@ -55,10 +55,6 @@ struct BuiltinSourceMetadata {
     unsigned sourceLength { 0 };
     unsigned parametersStart { 0 };
     unsigned parameterCount { 0 };
-    unsigned lineCount { 0 };
-    unsigned endColumn { 0 };
-    unsigned offsetOfLastNewline { 0 };
-    unsigned positionBeforeLastNewlineLineStartOffset { 0 };
     int closeBraceOffsetFromEnd { 0 };
     bool isAsyncFunction { false };
     bool isInStrictContext { false };

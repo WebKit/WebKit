@@ -142,16 +142,12 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     URL url({ }, overridden);
     Ref<SourceProvider> newProvider = StringSourceProvider::create(newProviderString, SourceOrigin { url }, overridden, SourceTaintedOrigin::Untainted);
 
-    info.firstLine = 1;
-    info.lineCount = 1; // Faking it. This doesn't really matter for now.
-    info.startColumn = 1;
-    info.endColumn = 1; // Faking it. This doesn't really matter for now.
     info.parametersStartOffset = newProviderString.find('(');
     info.functionStart = 0;
     info.functionEnd = newProviderString.length() - 1;
 
     info.sourceCode =
-        SourceCode(WTF::move(newProvider), info.parametersStartOffset, info.functionEnd + 1, 1, 1);
+        SourceCode(WTF::move(newProvider), info.parametersStartOffset, info.functionEnd + 1);
 }
     
 bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, FunctionOverrides::OverrideInfo& result)

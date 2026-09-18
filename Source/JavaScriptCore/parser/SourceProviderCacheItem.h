@@ -44,10 +44,8 @@ struct SourceProviderCacheItemCreationParameters {
         return usedVariables.span().first(freeVariableCount);
     }
 
-    unsigned lastTokenLine { 0 };
     unsigned lastTokenStartOffset { 0 };
     unsigned lastTokenEndOffset { 0 };
-    unsigned lastTokenLineStartOffset { 0 };
     unsigned endFunctionOffset { 0 };
     unsigned parameterCount { 0 };
     unsigned freeVariableCount { 0 };
@@ -78,10 +76,7 @@ public:
     {
         JSToken token;
         token.m_type = isBodyArrowExpression ? static_cast<JSTokenType>(tokenType) : CLOSEBRACE;
-        token.m_data.offset = lastTokenStartOffset;
         token.m_startPosition.offset = lastTokenStartOffset;
-        token.m_startPosition.line = lastTokenLine;
-        token.m_startPosition.lineStartOffset = lastTokenLineStartOffset;
         token.m_endPosition.offset = lastTokenEndOffset;
         // token.m_location.sourceOffset is initialized once by the client. So,
         // we do not need to set it here.
@@ -101,15 +96,13 @@ public:
     bool needsFullActivation : 1;
     unsigned endFunctionOffset : 31;
     bool usesEval : 1;
-    unsigned lastTokenLine : 31;
-    bool strictMode : 1;
     unsigned lastTokenStartOffset : 31;
-    unsigned expectedSuperBinding : 1; // SuperBinding
+    bool strictMode : 1;
     unsigned lastTokenEndOffset: 31;
-    bool needsSuperBinding: 1;
+    unsigned expectedSuperBinding : 1; // SuperBinding
     unsigned parameterCount : 31;
+    bool needsSuperBinding: 1;
     bool taintedByWithScope : 1;
-    unsigned lastTokenLineStartOffset : 31;
     bool isBodyArrowExpression : 1;
     unsigned tokenType : 24; // JSTokenType
     unsigned innerArrowFunctionFeatures : 6; // InnerArrowFunctionCodeFeatures
@@ -134,15 +127,13 @@ inline SourceProviderCacheItem::SourceProviderCacheItem(const SourceProviderCach
     , needsFullActivation(parameters.needsFullActivation)
     , endFunctionOffset(parameters.endFunctionOffset)
     , usesEval(parameters.usesEval)
-    , lastTokenLine(parameters.lastTokenLine)
-    , strictMode(parameters.lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)
     , lastTokenStartOffset(parameters.lastTokenStartOffset)
-    , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
+    , strictMode(parameters.lexicallyScopedFeatures & StrictModeLexicallyScopedFeature)
     , lastTokenEndOffset(parameters.lastTokenEndOffset)
-    , needsSuperBinding(parameters.needsSuperBinding)
+    , expectedSuperBinding(static_cast<unsigned>(parameters.expectedSuperBinding))
     , parameterCount(parameters.parameterCount)
+    , needsSuperBinding(parameters.needsSuperBinding)
     , taintedByWithScope(parameters.lexicallyScopedFeatures & TaintedByWithScopeLexicallyScopedFeature)
-    , lastTokenLineStartOffset(parameters.lastTokenLineStartOffset)
     , isBodyArrowExpression(parameters.isBodyArrowExpression)
     , tokenType(static_cast<unsigned>(parameters.tokenType))
     , innerArrowFunctionFeatures(static_cast<unsigned>(parameters.innerArrowFunctionFeatures))

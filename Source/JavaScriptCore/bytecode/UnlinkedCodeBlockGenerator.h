@@ -74,7 +74,7 @@ public:
     void setNumParameters(unsigned newValue) { m_codeBlock->setNumParameters(newValue); }
 
     UnlinkedMetadataTable& metadata() { return m_codeBlock->metadata(); }
-    void addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn);
+    void addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset);
     void addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
     void addOpProfileControlFlowBytecodeOffset(JSInstructionStream::Offset offset)
     {

@@ -154,8 +154,8 @@ s_JSCCombinedCode + 71
 ;
 
 constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {
-    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 6, 0, 70, 68, 3, false, true },
-    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 6, 0, 70, 68, 3, false, true },
+    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 3, false, true },
+    /* internalClashingNamesIsReadableStreamLockedCode */ { 71, 10, 1, 3, false, true },
 };
 static_assert(2 == JSC::numberOfBuiltinCodes);
 

@@ -36,14 +36,11 @@ class UnlinkedGlobalCodeBlock : public UnlinkedCodeBlock {
 public:
     typedef UnlinkedCodeBlock Base;
 
-    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
+    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables)
     {
         m_features = features;
         m_lexicallyScopedFeatures = lexicallyScopedFeatures;
         m_hasCapturedVariables = hasCapturedVariables;
-        m_lineCount = lineCount;
-        // For the UnlinkedCodeBlock, startColumn is always 0.
-        m_endColumn = endColumn;
     }
 
     StringImpl* sourceURLDirective() const { return m_sourceURLDirective.get(); }
@@ -55,9 +52,6 @@ public:
     bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
     LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
     bool hasCapturedVariables() const { return m_hasCapturedVariables; }
-    unsigned lineCount() const { return m_lineCount; }
-    ALWAYS_INLINE unsigned startColumn() const { return 0; }
-    unsigned endColumn() const { return m_endColumn; }
 
 protected:
     UnlinkedGlobalCodeBlock(VM& vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
@@ -78,8 +72,6 @@ private:
     CodeFeatures m_features { NoFeatures };
     LexicallyScopedFeatures m_lexicallyScopedFeatures { NoLexicallyScopedFeatures };
     bool m_hasCapturedVariables { false };
-    unsigned m_lineCount { 0 };
-    unsigned m_endColumn { UINT_MAX };
 
     PackedRefPtr<StringImpl> m_sourceURLDirective;
     PackedRefPtr<StringImpl> m_sourceMappingURLDirective;

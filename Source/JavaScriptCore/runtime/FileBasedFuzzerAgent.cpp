@@ -106,7 +106,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
     }
     if (!generated) {
         if (Options::dumpFuzzerAgentPredictions())
-            dataLogLn(MAGENTA(BOLD(target.info.instPC)), " ", BOLD(YELLOW(target.opcodeId)), " missing prediction for: ", RED(BOLD(target.lookupKey)), " ", GREEN(target.sourceFilename), ":", CYAN(target.info.lineColumn.line), ":", CYAN(target.info.lineColumn.column), " divot: ", target.info.divot, " -", target.info.startOffset, " +", target.info.endOffset, " name: '", YELLOW(codeBlock->inferredName()), "' source: '", BLUE(sourceUpToDivot), BLUE(BOLD(sourceAfterDivot)), "'");
+            dataLogLn(MAGENTA(BOLD(target.info.instPC)), " ", BOLD(YELLOW(target.opcodeId)), " missing prediction for: ", RED(BOLD(target.lookupKey)), " ", GREEN(target.sourceFilename), " divot: ", target.info.divot, " -", target.info.startOffset, " +", target.info.endOffset, " name: '", YELLOW(codeBlock->inferredName()), "' source: '", BLUE(sourceUpToDivot), BLUE(BOLD(sourceAfterDivot)), "'");
 
         RELEASE_ASSERT_WITH_MESSAGE(!Options::requirePredictionForFileBasedFuzzerAgent(), "Missing expected prediction in FuzzerAgent");
         return original;

@@ -413,7 +413,6 @@ public:
 
     const SourceCode& source() const LIFETIME_BOUND { return m_ownerExecutable->source(); }
     unsigned sourceOffset() const { return m_ownerExecutable->source().startOffset(); }
-    unsigned firstLineColumnOffset() const { return m_ownerExecutable->startColumn(); }
 
     String nameForRegister(VirtualRegister);
 

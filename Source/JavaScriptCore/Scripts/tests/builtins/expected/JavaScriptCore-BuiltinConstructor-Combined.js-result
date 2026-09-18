@@ -153,8 +153,8 @@ s_JSCCombinedCode + 2046
 ;
 
 constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {
-    /* builtinConstructorFromCode */ { 2046, 10, 1, 72, 0, 2045, 2043, 3, false, true },
-    /* builtinConstructorOfCode */ { 294, 10, 0, 12, 0, 293, 291, 3, false, true },
+    /* builtinConstructorFromCode */ { 2046, 10, 1, 3, false, true },
+    /* builtinConstructorOfCode */ { 294, 10, 0, 3, false, true },
 };
 static_assert(2 == JSC::numberOfBuiltinCodes);
 

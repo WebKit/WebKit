@@ -1773,20 +1773,12 @@ public:
     void encode(Encoder& encoder, const SourceCode& sourceCode)
     {
         Base::encode(encoder, sourceCode);
-        m_firstLine = sourceCode.firstLine().zeroBasedInt();
-        m_startColumn = sourceCode.startColumn().zeroBasedInt();
     }
 
     void decode(Decoder& decoder, SourceCode& sourceCode) const
     {
         Base::decode(decoder, sourceCode);
-        sourceCode.m_firstLine = OrdinalNumber::fromZeroBasedInt(m_firstLine);
-        sourceCode.m_startColumn = OrdinalNumber::fromZeroBasedInt(m_startColumn);
     }
-
-private:
-    int m_firstLine;
-    int m_startColumn;
 };
 
 class CachedSourceCodeWithoutProvider : public CachedObject<SourceCode> {
@@ -1796,8 +1788,6 @@ public:
         m_hasProvider = !!sourceCode.provider();
         m_startOffset = sourceCode.startOffset();
         m_endOffset = sourceCode.endOffset();
-        m_firstLine = sourceCode.firstLine().zeroBasedInt();
-        m_startColumn = sourceCode.startColumn().zeroBasedInt();
     }
 
     void decode(Decoder& decoder, SourceCode& sourceCode) const
@@ -1806,16 +1796,12 @@ public:
             sourceCode.m_provider = decoder.provider();
         sourceCode.m_startOffset = m_startOffset;
         sourceCode.m_endOffset = m_endOffset;
-        sourceCode.m_firstLine = OrdinalNumber::fromZeroBasedInt(m_firstLine);
-        sourceCode.m_startColumn = OrdinalNumber::fromZeroBasedInt(m_startColumn);
     }
 
 private:
     bool m_hasProvider;
     int m_startOffset;
     int m_endOffset;
-    int m_firstLine;
-    int m_startColumn;
 };
 
 class CachedTDZEnvironmentLink : public CachedObject<TDZEnvironmentLink> {
@@ -1842,20 +1828,16 @@ class CachedJSTextPosition : public CachedObject<JSTextPosition> {
 public:
     void encode(Encoder&, const JSTextPosition& position)
     {
-        m_line = position.line;
         m_offset = position.offset;
-        m_lineStartOffset = position.lineStartOffset;
     }
 
     JSTextPosition decode(Decoder&) const
     {
-        return JSTextPosition { m_line, m_offset, m_lineStartOffset };
+        return JSTextPosition { m_offset };
     }
 
 private:
-    int m_line;
     int m_offset;
-    int m_lineStartOffset;
 };
 
 class CachedClassElementDefinition : public CachedObject<UnlinkedFunctionExecutable::ClassElementDefinition> {
@@ -1917,11 +1899,7 @@ public:
     void encode(Encoder&, const UnlinkedFunctionExecutable&);
     UnlinkedFunctionExecutable* decode(Decoder&) const;
 
-    unsigned NODELETE firstLineOffset() const { return m_firstLineOffset; }
-    unsigned NODELETE lineCount() const { return m_lineCount; }
     unsigned NODELETE unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
-    unsigned NODELETE unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
-    unsigned NODELETE unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned NODELETE startOffset() const { return m_startOffset; }
     unsigned NODELETE sourceLength() const { return m_sourceLength; }
     unsigned NODELETE parametersStartOffset() const { return m_parametersStartOffset; }
@@ -1959,14 +1937,10 @@ public:
 private:
     CachedFunctionExecutableMetadata m_mutableMetadata;
 
-    unsigned m_firstLineOffset : 31;
-    unsigned m_lineCount : 31;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_unlinkedFunctionStart : 31;
     unsigned m_isBuiltinDefaultClassConstructor : 1;
-    unsigned m_unlinkedBodyStartColumn : 31;
     unsigned m_constructAbility: 1;
-    unsigned m_unlinkedBodyEndColumn : 31;
     unsigned m_startOffset : 31;
     unsigned m_scriptMode: 1; // JSParserScriptMode
     unsigned m_sourceLength : 31;
@@ -2106,8 +2080,6 @@ public:
         m_features = codeBlock.m_features;
         m_lexicallyScopedFeatures = codeBlock.m_lexicallyScopedFeatures;
         m_hasCapturedVariables = codeBlock.m_hasCapturedVariables;
-        m_lineCount = codeBlock.m_lineCount;
-        m_endColumn = codeBlock.m_endColumn;
         m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.get());
         m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceMappingURLDirective.get());
     }
@@ -2118,8 +2090,6 @@ public:
         codeBlock.m_features = m_features;
         codeBlock.m_lexicallyScopedFeatures = m_lexicallyScopedFeatures;
         codeBlock.m_hasCapturedVariables = m_hasCapturedVariables;
-        codeBlock.m_lineCount = m_lineCount;
-        codeBlock.m_endColumn = m_endColumn;
         codeBlock.m_sourceURLDirective = m_sourceURLDirective.decode(decoder);
         codeBlock.m_sourceMappingURLDirective = m_sourceMappingURLDirective.decode(decoder);
     }
@@ -2128,8 +2098,6 @@ private:
     CodeFeatures m_features;
     LexicallyScopedFeatures m_lexicallyScopedFeatures;
     bool m_hasCapturedVariables;
-    unsigned m_lineCount;
-    unsigned m_endColumn;
     CachedRefPtr<CachedStringImpl> m_sourceURLDirective;
     CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
 };
@@ -2354,11 +2322,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_mutableMetadata.m_lexicallyScopedFeatures = executable.m_lexicallyScopedFeatures;
     m_mutableMetadata.m_hasCapturedVariables = executable.m_hasCapturedVariables;
 
-    m_firstLineOffset = executable.m_firstLineOffset;
-    m_lineCount = executable.m_lineCount;
     m_unlinkedFunctionStart = executable.m_unlinkedFunctionStart;
-    m_unlinkedBodyStartColumn = executable.m_unlinkedBodyStartColumn;
-    m_unlinkedBodyEndColumn = executable.m_unlinkedBodyEndColumn;
     m_startOffset = executable.m_startOffset;
     m_sourceLength = executable.m_sourceLength;
     m_parametersStartOffset = executable.m_parametersStartOffset;
@@ -2403,15 +2367,8 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
 
 ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, const CachedFunctionExecutable& cachedExecutable)
     : Base(decoder.vm(), decoder.vm().unlinkedFunctionExecutableStructure.get())
-    , m_firstLineOffset(cachedExecutable.firstLineOffset())
-    , m_isGeneratedFromCache(true)
-    , m_lineCount(cachedExecutable.lineCount())
     , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
     , m_unlinkedFunctionStart(cachedExecutable.unlinkedFunctionStart())
-    , m_isBuiltinFunction(cachedExecutable.isBuiltinFunction())
-    , m_unlinkedBodyStartColumn(cachedExecutable.unlinkedBodyStartColumn())
-    , m_isBuiltinDefaultClassConstructor(cachedExecutable.isBuiltinDefaultClassConstructor())
-    , m_unlinkedBodyEndColumn(cachedExecutable.unlinkedBodyEndColumn())
     , m_constructAbility(cachedExecutable.constructAbility())
     , m_startOffset(cachedExecutable.startOffset())
     , m_scriptMode(cachedExecutable.scriptMode())
@@ -2423,6 +2380,9 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
     , m_parameterCount(cachedExecutable.parameterCount())
     , m_singletonHasBeenInvalidated(false)
+    , m_isGeneratedFromCache(true)
+    , m_isBuiltinFunction(cachedExecutable.isBuiltinFunction())
+    , m_isBuiltinDefaultClassConstructor(cachedExecutable.isBuiltinDefaultClassConstructor())
     , m_privateBrandRequirement(cachedExecutable.privateBrandRequirement())
     , m_features(cachedExecutable.features())
     , m_constructorKind(cachedExecutable.constructorKind())

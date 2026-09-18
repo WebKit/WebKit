@@ -35,9 +35,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/CachedBytecode.h>
 #include <JavaScriptCore/CodeBlockHash.h>
 #include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/LineColumn.h>
 #include <JavaScriptCore/SourceOrigin.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
+#include <optional>
+#include <span>
 #include <wtf/Lock.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/SIMDHelpers.h>
+#include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +65,100 @@ enum class SourceProviderSourceType : uint8_t {
 };
 
 using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
+
+// JavaScript has four line terminators, not two: ECMA-262 #11.3 adds LS and PS to LF and CR.
+template<typename CharType> ALWAYS_INLINE bool isLineTerminator(CharType);
+
+template<> ALWAYS_INLINE bool isLineTerminator<Latin1Character>(Latin1Character character)
+{
+    return character == '\r' || character == '\n';
+}
+
+template<> ALWAYS_INLINE bool isLineTerminator<char16_t>(char16_t character)
+{
+    // (c & ~1) == 0x2028 covers both LS (U+2028) and PS (U+2029).
+    return character == '\r' || character == '\n' || (character & ~1) == 0x2028;
+}
+
+// Equivalent to `character < 0xE` for an 8-bit source: for c >= 0xE the subtraction is at most
+// 0xF1, and for c < 0xE it wraps to a value with bit 13 set, which no Latin-1 character reaches.
+template<typename CharType>
+ALWAYS_INLINE bool characterNeedsLiteralSpecialHandling(CharType character)
+{
+    return (static_cast<unsigned>(character) - 0xE) & 0x2000;
+}
+
+template<typename CharType>
+ALWAYS_INLINE bool isCRLFPair(CharType first, CharType second)
+{
+    return first == '\r' && second == '\n';
+}
+
+template<typename CharType>
+ALWAYS_INLINE size_t lineStartAfterTerminator(std::span<const CharType> text, size_t indexOfTerminator)
+{
+    ASSERT(indexOfTerminator < text.size());
+    ASSERT(isLineTerminator(text[indexOfTerminator]));
+    if (indexOfTerminator + 1 < text.size() && isCRLFPair(text[indexOfTerminator], text[indexOfTerminator + 1]))
+        return indexOfTerminator + 2;
+    return indexOfTerminator + 1;
+}
+
+template<typename CharType>
+ALWAYS_INLINE const CharType* findLineTerminator(std::span<const CharType> text)
+{
+    using UnsignedType = SameSizeUnsignedInteger<CharType>;
+    auto vectorMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
+        constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
+        constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
+        auto matches = SIMD::bitOr(SIMD::equal(input, lineFeedMask), SIMD::equal(input, carriageReturnMask));
+        if constexpr (!std::is_same_v<CharType, Latin1Character>) {
+            // LS and PS are single UTF-16 code units, so they compare directly in a 16-bit lane.
+            constexpr auto lineSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
+            constexpr auto paragraphSeparatorMask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
+            matches = SIMD::bitOr(matches, SIMD::equal(input, lineSeparatorMask), SIMD::equal(input, paragraphSeparatorMask));
+        }
+        return SIMD::findFirstNonZeroIndex(matches);
+    };
+    auto scalarMatch = [](CharType character) ALWAYS_INLINE_LAMBDA {
+        return isLineTerminator(character);
+    };
+    return SIMD::find(text, vectorMatch, scalarMatch);
+}
+
+class LineStartTable {
+    WTF_MAKE_NONCOPYABLE(LineStartTable);
+public:
+    LineStartTable() = default;
+
+    // Positions within the provider's own text. An inline <script> starts partway into its
+    // document, and that offset is not applied here.
+    struct PositionInfo {
+        unsigned line { 0 };
+        unsigned column { 0 };
+        unsigned lineStart { 0 };
+        unsigned lineEnd { 0 }; // excludes the line terminator, so [lineStart, lineEnd) is the text
+    };
+
+    JS_EXPORT_PRIVATE PositionInfo positionInfoForOffset(StringView text, unsigned offset);
+    // Out-of-range input clamps rather than fails: a line past the end gives the end of the text,
+    // and a column past the end of its line gives that line's end.
+    JS_EXPORT_PRIVATE unsigned offsetForPosition(StringView text, unsigned line0Based, unsigned column0Based);
+
+    bool isBuilt() const
+    {
+        Locker locker { m_lock };
+        return !!m_lineStarts;
+    }
+
+private:
+    template<typename CharType> static Vector<unsigned> build(std::span<const CharType>);
+    const Vector<unsigned>& ensureBuilt(StringView) WTF_REQUIRES_LOCK(m_lock);
+
+    mutable Lock m_lock;
+    std::optional<Vector<unsigned>> m_lineStarts WTF_GUARDED_BY_LOCK(m_lock);
+    unsigned m_builtForLength WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
 
 class SourceProvider : public ThreadSafeRefCounted<SourceProvider> {
 public:
@@ -125,6 +225,38 @@ public:
 
     JS_EXPORT_PRIVATE CString sourceCodeDumpFilePath(const CString& dumpDirectory);
 
+    LineStartTable::PositionInfo positionInfoForOffset(unsigned offset)
+    {
+        return m_lineStartTable.positionInfoForOffset(source(), offset);
+    }
+
+    unsigned offsetForPosition(unsigned line0Based, unsigned column0Based)
+    {
+        return m_lineStartTable.offsetForPosition(source(), line0Based, column0Based);
+    }
+
+    // An inline <script> shifts every line of its document, but shifts the column only on its first
+    // line, since later lines begin where their own line begins.
+    LineColumn documentLineColumnForOffset(unsigned offset)
+    {
+        auto info = positionInfoForOffset(offset);
+        return {
+            m_startPosition.m_line.oneBasedInt() + info.line,
+            info.line ? info.column + 1 : m_startPosition.m_column.oneBasedInt() + info.column,
+        };
+    }
+
+    LineColumn documentZeroBasedLineColumnForOffset(unsigned offset)
+    {
+        auto info = positionInfoForOffset(offset);
+        return {
+            m_startPosition.m_line.zeroBasedInt() + info.line,
+            info.line ? info.column : m_startPosition.m_column.zeroBasedInt() + info.column,
+        };
+    }
+
+    bool lineStartTableIsBuilt() const { return m_lineStartTable.isBuilt(); }
+
 private:
     JS_EXPORT_PRIVATE virtual void lockUnderlyingBufferImpl();
     JS_EXPORT_PRIVATE virtual void unlockUnderlyingBufferImpl();
@@ -146,6 +278,8 @@ private:
     std::atomic<bool> m_sourceCodeDumped { false };
     Lock m_sourceCodeDumpLock;
     CString m_sourceCodeDumpFilePath WTF_GUARDED_BY_LOCK(m_sourceCodeDumpLock);
+
+    LineStartTable m_lineStartTable;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);

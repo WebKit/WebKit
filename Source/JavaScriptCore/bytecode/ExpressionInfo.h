@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/LineColumn.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/IterationStatus.h>
@@ -44,7 +43,7 @@ class ExpressionInfo {
     WTF_MAKE_NONCOPYABLE(ExpressionInfo);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(ExpressionInfo);
 public:
-    enum class FieldID : uint8_t { InstPC, Divot, Start, End, Line, Column };
+    enum class FieldID : uint8_t { InstPC, Divot, Start, End };
 
     class Decoder;
 
@@ -61,14 +60,12 @@ public:
         void NODELETE reset()
         {
             instPC = 0;
-            lineColumn = { 0, 0 };
             divot = 0;
             startOffset = 0;
             endOffset = 0;
         }
 
         InstPC instPC { 0 };
-        LineColumn lineColumn;
         unsigned divot { 0 };
         unsigned startOffset { 0 }; // This value is relative to divot.
         unsigned endOffset { 0 }; // This value is relative to divot.
@@ -84,7 +81,7 @@ public:
 
     class Encoder {
     public:
-        void encode(InstPC, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn);
+        void encode(InstPC, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         template<typename RemapFunc>
         void remap(Vector<unsigned>&& adjustments, RemapFunc);
@@ -153,7 +150,6 @@ public:
         unsigned divot() const { return m_entry.divot; }
         unsigned startOffset() const { return m_entry.startOffset; }
         unsigned endOffset() const { return m_entry.endOffset; }
-        LineColumn lineColumn() const { return m_entry.lineColumn; }
 
     private:
         struct Wide {
@@ -180,7 +176,6 @@ public:
 
     ~ExpressionInfo() = default;
 
-    LineColumn lineColumnForInstPC(InstPC);
     Entry NODELETE entryForInstPC(InstPC);
 
     bool isEmpty() const { return !m_numberOfEncodedInfo; };
@@ -248,24 +243,18 @@ private:
 
     // Number of bits of each field in Basic encoding.
     static constexpr unsigned instPCBits = 5;
-    static constexpr unsigned divotBits = 7;
-    static constexpr unsigned startBits = 6;
-    static constexpr unsigned endBits = 6;
-    static constexpr unsigned lineBits = 3;
-    static constexpr unsigned columnBits = 5;
-    static_assert(instPCBits + divotBits + startBits + endBits + lineBits + columnBits == bitsPerWord);
+    static constexpr unsigned divotBits = 11;
+    static constexpr unsigned startBits = 8;
+    static constexpr unsigned endBits = 8;
+    static_assert(instPCBits + divotBits + startBits + endBits == bitsPerWord);
 
     // Bias values used for the signed diff values which make it easier to do range checks on these.
     static constexpr unsigned divotBias = (1 << divotBits) / 2;
-    static constexpr unsigned lineBias = (1 << lineBits) / 2;
-    static constexpr unsigned columnBias = (1 << columnBits) / 2;
 
     static constexpr unsigned instPCShift = bitsPerWord - instPCBits;
     static constexpr unsigned divotShift = instPCShift - divotBits;
     static constexpr unsigned startShift = divotShift - startBits;
     static constexpr unsigned endShift = startShift - endBits;
-    static constexpr unsigned lineShift = endShift - lineBits;
-    static constexpr unsigned columnShift = lineShift - columnBits;
 
     static constexpr unsigned specialHeader = (1 << instPCBits) - 1;
     static constexpr unsigned wideHeader = specialHeader - 1;
@@ -274,10 +263,6 @@ private:
     static constexpr unsigned maxBiasedDivotValue = (1 << divotBits) - 1;
     static constexpr unsigned maxStartValue = (1 << startBits) - 1;
     static constexpr unsigned maxEndValue = (1 << endBits) - 1;
-    static constexpr unsigned maxBiasedLineValue = (1 << lineBits) - 1;
-
-    static constexpr unsigned sameAsDivotValue = (1 << columnBits) - 1;
-    static constexpr unsigned maxBiasedColumnValue = sameAsDivotValue - 1;
 
     // Number of bits in Wide / Special encodings.
     static constexpr unsigned specialValueBits = 26;
@@ -317,9 +302,7 @@ private:
 
     static constexpr unsigned numberOfWordsBetweenChapters = 10000;
 
-    using LineColumnMap = UncheckedKeyHashMap<InstPC, LineColumn, WTF::IntHash<InstPC>, WTF::UnsignedWithZeroKeyHashTraits<InstPC>>;
 
-    mutable LineColumnMap m_cachedLineColumns;
     unsigned m_numberOfChapters;
     unsigned m_numberOfEncodedInfo;
     unsigned m_numberOfEncodedInfoExtensions;

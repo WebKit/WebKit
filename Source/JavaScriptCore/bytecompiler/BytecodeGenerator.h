@@ -628,29 +628,13 @@ namespace JSC {
                 return;
 
             unsigned sourceOffset = m_scopeNode->source().startOffset();
-            unsigned firstLine = m_scopeNode->source().firstLine().oneBasedInt();
 
             unsigned divotOffset = divot.offset - sourceOffset;
             unsigned startOffset = divot.offset - divotStart.offset;
             unsigned endOffset = divotEnd.offset - divot.offset;
 
-            unsigned line = divot.line;
-            ASSERT(line >= firstLine);
-            line -= firstLine;
-
-            unsigned lineStart = divot.lineStartOffset;
-            if (lineStart > sourceOffset)
-                lineStart -= sourceOffset;
-            else
-                lineStart = 0;
-
-            if (divotOffset < lineStart)
-                return;
-
-            unsigned column = divotOffset - lineStart;
-
             unsigned instructionOffset = instructions().size();
-            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset, { line, column });
+            m_codeBlock->addExpressionInfo(instructionOffset, divotOffset, startOffset, endOffset);
         }
 
 

@@ -36,10 +36,6 @@ class ScriptExecutable;
 
 struct FunctionOverrideInfo {
     SourceCode sourceCode;
-    unsigned firstLine;
-    unsigned lineCount;
-    unsigned startColumn;
-    unsigned endColumn;
     unsigned parametersStartOffset;
     unsigned functionStart;
     unsigned functionEnd;

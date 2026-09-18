@@ -306,7 +306,10 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
     else {
         auto* jsModuleRecord = uncheckedDowncast<JSModuleRecord>(&moduleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
-        InspectorInstrumentation::willEvaluateScript(protect(m_frame), sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
+        // A module's SourceCode spans its whole provider, so this is the same position the provider
+        // holds. Asking the SourceCode to derive it would build the line-start table on every module.
+        auto startPosition = jsSourceCode.provider()->startPosition();
+        InspectorInstrumentation::willEvaluateScript(protect(m_frame), sourceURL.string(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
     }
     auto returnValue = moduleRecord.evaluate(&lexicalGlobalObject, awaitedValue, resumeMode);
     InspectorInstrumentation::didEvaluateScript(protect(m_frame));

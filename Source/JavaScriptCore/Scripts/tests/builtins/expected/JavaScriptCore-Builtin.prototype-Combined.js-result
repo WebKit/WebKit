@@ -193,10 +193,10 @@ s_JSCCombinedCode + 2694
 ;
 
 constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {
-    /* builtinPrototypeEveryCode */ { 762, 10, 1, 27, 0, 761, 759, 3, false, true },
-    /* builtinPrototypeForEachCode */ { 694, 10, 1, 23, 0, 693, 691, 3, false, true },
-    /* builtinPrototypeMatchCode */ { 1238, 10, 1, 50, 0, 1237, 1235, 3, false, true },
-    /* builtinPrototypeTestCode */ { 504, 10, 1, 26, 0, 503, 501, 3, false, true },
+    /* builtinPrototypeEveryCode */ { 762, 10, 1, 3, false, true },
+    /* builtinPrototypeForEachCode */ { 694, 10, 1, 3, false, true },
+    /* builtinPrototypeMatchCode */ { 1238, 10, 1, 3, false, true },
+    /* builtinPrototypeTestCode */ { 504, 10, 1, 3, false, true },
 };
 static_assert(4 == JSC::numberOfBuiltinCodes);
 
