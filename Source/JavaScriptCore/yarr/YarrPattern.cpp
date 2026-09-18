@@ -1341,12 +1341,7 @@ public:
                 if (namedGroupIndicesIter == m_pattern.m_namedGroupToParenIndices.end())
                     continue;
 
-                unsigned namedGroupSubpatternId = namedGroupIndicesIter->value.last();
-                if (namedGroupSubpatternId == term->backReferenceSubpatternId) {
-                    term->backReferenceSubpatternId = 0;
-                    continue;
-                }
-                term->backReferenceSubpatternId = namedGroupSubpatternId;
+                term->backReferenceSubpatternId = namedGroupIndicesIter->value.last();
                 term->convertToNamedBackreference();
                 m_pattern.m_containsBackreferences = true;
             } else if (term->backReferenceSubpatternId && term->backReferenceSubpatternId <= m_pattern.m_numSubpatterns) {
@@ -1793,10 +1788,6 @@ public:
         m_alternative->m_terms.append(PatternTerm::NamedForwardReference(m_flags));
         PatternTerm& term = m_alternative->lastTerm();
         term.m_matchDirection = parenthesisMatchDirection();
-        // We record the current subpatternId, which we use when we try to convert to a back reference.
-        // To convert this forward reference to a back reference, the patternId for the named groups must be greater than the
-        // subpatternId we save here. We'll change it then.
-        term.backReferenceSubpatternId = m_pattern.m_numSubpatterns;
         m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex(), subpatternName));
     }
 
