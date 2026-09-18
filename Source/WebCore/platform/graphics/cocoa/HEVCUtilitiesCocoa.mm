@@ -293,16 +293,6 @@ Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef hvccSampleBu
     return annexBBuffer;
 }
 
-static PlatformVideoColorSpace defaultHEVCPlatformVideoColorSpace()
-{
-    return {
-        PlatformVideoColorPrimaries::Bt709,
-        PlatformVideoTransferCharacteristics::Iec6196621,
-        PlatformVideoMatrixCoefficients::Bt709,
-        true
-    };
-}
-
 RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> data)
 {
     auto naluIndices = findHEVCNaluIndices(data);
@@ -347,7 +337,7 @@ RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> d
         }, {
             .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
             .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
-            .colorSpace = defaultHEVCPlatformVideoColorSpace(),
+            .colorSpace = colorSpaceFromFormatDescription(description.get()).value_or(PlatformVideoColorSpace { }),
             .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(hvcCData.get()) } },
         }
     });
@@ -461,7 +451,7 @@ RefPtr<VideoInfo> createVideoInfoFromHVCC(std::span<const uint8_t> hvcc)
         }, {
             .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
             .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
-            .colorSpace = defaultHEVCPlatformVideoColorSpace(),
+            .colorSpace = colorSpaceFromFormatDescription(description.get()).value_or(PlatformVideoColorSpace { }),
             .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(hvcc) } },
         }
     });

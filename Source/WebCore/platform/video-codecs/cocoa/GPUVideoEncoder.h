@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/VideoCodecType.h>
 #include <WebCore/VideoEncoderScalabilityMode.h>
 #include <WebCore/VideoFrame.h>
@@ -53,7 +54,7 @@ struct GPUVideoEncoderFrameInfo {
 };
 
 using GPUVideoEncoderCallback = Function<void(std::span<const uint8_t>, const GPUVideoEncoderFrameInfo&)>;
-using GPUVideoEncoderDescriptionCallback = Function<void(std::span<const uint8_t>)>;
+using GPUVideoEncoderDescriptionCallback = Function<void(std::span<const uint8_t>, const PlatformVideoColorSpace&)>;
 using GPUVideoEncoderErrorCallback = Function<void(bool isFrameDropped)>; // isFrameDropped is false in case of encoder error, and true if encoder decided to drop frame (say to ensure bitrate is respected).
 
 class GPUVideoEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUVideoEncoder> {

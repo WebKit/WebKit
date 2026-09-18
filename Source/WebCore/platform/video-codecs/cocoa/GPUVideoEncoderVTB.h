@@ -28,6 +28,7 @@
 #if USE(AVFOUNDATION)
 
 #include "GPUVideoEncoder.h"
+#include "PlatformVideoColorSpace.h"
 #include "VideoEncoderVTBSession.h"
 #include <memory>
 #include <wtf/BlockPtr.h>
@@ -48,9 +49,10 @@ protected:
     bool useAnnexB() const { return m_useAnnexB; }
     bool needsToSendDescription() const { return m_needsToSendDescription; }
     void setNeedsToSendDescription(bool value) { m_needsToSendDescription = value; }
+    const PlatformVideoColorSpace& colorSpace() const { return m_colorSpace; }
 
     void notifyEncodedFrame(std::span<const uint8_t>, const GPUVideoEncoderFrameInfo&);
-    void notifyDescription(std::span<const uint8_t>);
+    void notifyDescription(std::span<const uint8_t>, const PlatformVideoColorSpace&);
     void notifyError();
     void notifyFrameDropped();
 
@@ -79,6 +81,7 @@ private:
     bool m_useAnnexB { true };
     bool m_isLowLatencyEnabled { true };
     bool m_needsToSendDescription { false };
+    PlatformVideoColorSpace m_colorSpace;
     const UniqueRef<GPUVideoEncoderBitrateAdjuster> m_bitrateAdjuster;
 };
 

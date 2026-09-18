@@ -28,8 +28,10 @@
 
 #if USE(AVFOUNDATION)
 
+#import "Logging.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <CoreMedia/CMFormatDescription.h>
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cf/VideoToolboxSoftLink.h>
 

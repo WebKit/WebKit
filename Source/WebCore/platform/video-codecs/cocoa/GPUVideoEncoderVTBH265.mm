@@ -88,7 +88,7 @@ bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
         if (RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms))) {
             if (RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("hvcC")))) {
                 setNeedsToSendDescription(false);
-                notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions.get()), static_cast<size_t>(CFDataGetLength(sampleExtensions))));
+                notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions.get()), static_cast<size_t>(CFDataGetLength(sampleExtensions))), colorSpace());
             }
         }
     }

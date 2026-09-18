@@ -63,6 +63,7 @@ private:
     }
 
     const RetainPtr<VTCompressionSessionRef> m_compressionSession;
+    mutable RetainPtr<CFDictionaryRef> m_supportedProperties;
 };
 
 }

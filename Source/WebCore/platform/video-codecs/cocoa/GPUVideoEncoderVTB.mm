@@ -28,6 +28,7 @@
 
 #if USE(AVFOUNDATION)
 
+#import "CMUtilities.h"
 #import <algorithm>
 #import <cmath>
 #import <wtf/Lock.h>
@@ -136,9 +137,9 @@ void GPUVideoEncoderVTB::notifyEncodedFrame(std::span<const uint8_t> data, const
     m_callback(data, info);
 }
 
-void GPUVideoEncoderVTB::notifyDescription(std::span<const uint8_t> data)
+void GPUVideoEncoderVTB::notifyDescription(std::span<const uint8_t> data, const PlatformVideoColorSpace& colorSpace)
 {
-    m_descriptionCallback(data);
+    m_descriptionCallback(data, colorSpace);
 }
 
 void GPUVideoEncoderVTB::notifyError()
@@ -178,6 +179,9 @@ bool GPUVideoEncoderVTB::resetCompressionSession()
     if (!m_encoder)
         return false;
 
+    // A reset means a new session with a new SPS/PPS, make sure it gets sent to the receiver.
+    setNeedsToSendDescription(!useAnnexB());
+
     configureCompressionSession();
     return true;
 }
@@ -188,6 +192,20 @@ void GPUVideoEncoderVTB::configureCompressionSession()
     Ref encoder = *m_encoder;
     encoder->setProperty(PAL::kVTCompressionPropertyKey_RealTime, m_isLowLatencyEnabled ? kCFBooleanTrue : kCFBooleanFalse);
     encoder->setProperty(PAL::kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanFalse);
+
+    if (m_colorSpace.primaries) {
+        if (RetainPtr primaries = convertToCMColorPrimaries(*m_colorSpace.primaries))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_ColorPrimaries, primaries.get());
+    }
+    if (m_colorSpace.transfer) {
+        if (RetainPtr transferFunction = convertToCMTransferFunction(*m_colorSpace.transfer))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_TransferFunction, transferFunction.get());
+    }
+    if (m_colorSpace.matrix) {
+        if (RetainPtr matrix = convertToCMYCbCRMatrix(*m_colorSpace.matrix))
+            encoder->setProperty(PAL::kVTCompressionPropertyKey_YCbCrMatrix, matrix.get());
+    }
+
     setEncoderBitrateBps(m_targetBitrateBps);
 
     // A relatively large value for keyframe emission (7200 frames or 4 minutes).
@@ -224,6 +242,15 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
     if (!m_encoder && !resetCompressionSession()) {
         notifyError();
         return;
+    }
+
+    auto colorSpace = computeVideoFrameColorSpace(pixelBuffer);
+    if (colorSpace != m_colorSpace) {
+        m_colorSpace = colorSpace;
+        if (!resetCompressionSession()) {
+            notifyError();
+            return;
+        }
     }
 
     RetainPtr<CFDictionaryRef> frameProperties;

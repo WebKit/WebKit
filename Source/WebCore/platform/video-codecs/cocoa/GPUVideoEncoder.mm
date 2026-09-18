@@ -147,7 +147,9 @@ RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(VideoCodecType codecType, bool u
         callback(unsafeMakeSpan(buffer, size), toGPUVideoEncoderFrameInfo(info));
     });
     auto newConfigurationBlock = makeBlockPtr([descriptionCallback = WTF::move(descriptionCallback)](const uint8_t* buffer, size_t size) {
-        descriptionCallback(unsafeMakeSpan(buffer, size));
+        // This backend has no way to report the color space it actually encoded with, so we report a fixed default.
+        PlatformVideoColorSpace colorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = true };
+        descriptionCallback(unsafeMakeSpan(buffer, size), colorSpace);
     });
     auto errorBlock = makeBlockPtr([errorCallback = WTF::move(errorCallback)](bool isFrameDropped) {
         errorCallback(isFrameDropped);

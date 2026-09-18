@@ -31,6 +31,7 @@
 
 #import "CMUtilities.h"
 #import "HEVCUtilitiesCocoa.h"
+#import "Logging.h"
 #import "TrackInfo.h"
 #import <wtf/BlockPtr.h>
 
@@ -70,6 +71,7 @@ void GPUVideoDecoderVTBH265::setFormat(std::span<const uint8_t> data, uint16_t w
 
     RefPtr videoInfo = createVideoInfoFromHVCC(data);
     if (!videoInfo) {
+        RELEASE_LOG_ERROR(WebRTC, "GPUVideoDecoderVTBH265::setFormat use default video info");
         videoInfo = VideoInfo::create({
             {
                 .codecName = kCMVideoCodecType_HEVC
