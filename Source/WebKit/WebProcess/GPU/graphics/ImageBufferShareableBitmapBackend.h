@@ -68,7 +68,11 @@ public:
     virtual ~ImageBufferShareableBitmapBackend();
 
     bool canMapBackingStore() const final;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    WebCore::GraphicsContext& context() final { return *m_context; }
+#else
     WebCore::GraphicsContext& context() final;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     std::optional<ImageBufferBackendHandle> createBackendHandle(WebCore::SharedMemory::Protection = WebCore::SharedMemory::Protection::ReadWrite) const final;
     RefPtr<WebCore::ShareableBitmap> bitmap() const final { return m_bitmap.ptr(); }
@@ -84,14 +88,20 @@ public:
     void putPixelBuffer(const WebCore::PixelBufferSourceView&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat) final;
 
 private:
+#ifndef RC_REMOVE_SEC_ACCEL_3
     void adoptGraphicsContext(std::unique_ptr<WebCore::GraphicsContext>&&);
 
+#endif // RC_REMOVE_SEC_ACCEL_3
     unsigned bytesPerRow() const final;
     String debugDescription() const final;
 
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    void releaseGraphicsContext() final { /* Do nothing. This is only relevant for IOSurface backends */ }
+#else
     void releaseGraphicsContext() final;
     bool hasGraphicsContext() const final { return !!m_context; }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     const Ref<WebCore::ShareableBitmap> m_bitmap;
     std::unique_ptr<WebCore::GraphicsContext> m_context;

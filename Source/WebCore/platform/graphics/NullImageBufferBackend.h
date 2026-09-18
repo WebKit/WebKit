@@ -48,14 +48,20 @@ public:
     bool canMapBackingStore() const override;
     String debugDescription() const override;
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
     void releaseGraphicsContext() override;
     bool hasGraphicsContext() const override;
 
+#endif // RC_REMOVE_SEC_ACCEL_3
 protected:
     using ImageBufferBackend::ImageBufferBackend;
     unsigned bytesPerRow() const override;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    NullGraphicsContext m_context;
+#else
     std::unique_ptr<NullGraphicsContext> m_context;
+#endif // RC_REMOVE_SEC_ACCEL_3
 };
 
 } // namespace WebCore

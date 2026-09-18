@@ -533,12 +533,14 @@ void ImageBuffer::releaseGraphicsContext()
         return backend->releaseGraphicsContext();
 }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
 bool ImageBuffer::hasGraphicsContext() const
 {
     if (auto* backend = ensureBackend())
         return backend->hasGraphicsContext();
     return false;
 }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 bool ImageBuffer::setVolatile()
 {

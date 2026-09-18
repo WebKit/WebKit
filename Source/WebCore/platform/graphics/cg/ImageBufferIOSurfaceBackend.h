@@ -70,7 +70,9 @@ protected:
 
     bool isInUse() const override;
     void releaseGraphicsContext() override;
+#ifndef RC_REMOVE_SEC_ACCEL_3
     bool hasGraphicsContext() const override;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     bool setVolatile() final;
     SetNonVolatileResult setNonVolatile() final;

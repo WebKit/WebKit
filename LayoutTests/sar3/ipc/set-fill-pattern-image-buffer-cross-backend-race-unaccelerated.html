@@ -77,7 +77,7 @@ window.setTimeout(async () => {
     if (!window.IPC)
         return window.testRunner?.notifyDone();
     try {
-        CoreIPC = (await import('./coreipc.js')).CoreIPC;
+        CoreIPC = (await import('../../ipc/coreipc.js')).CoreIPC;
         CoreIPC.typeInfo['WebCore::PlatformColorSpace'] = [{ type: 'std::optional<WebKit::CoreIPCCGColorSpace>', name: 'alias' }];
 
         // Three RemoteRenderingBackend instances => three GPU process work-queue threads.

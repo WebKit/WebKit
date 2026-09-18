@@ -149,6 +149,9 @@ public:
 
     virtual bool isInUse() const { return false; }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
+#else
     // Destroys the GraphicsContext, dropping the state it holds. The state can
     // reference resources owned by other objects, so this is how an ImageBuffer
     // is detached from its surroundings.
@@ -156,6 +159,7 @@ public:
     // Backends that cannot destroy their context must leave hasGraphicsContext() true;
     // such an ImageBuffer must not be handed to a different owner.
     virtual bool hasGraphicsContext() const { return true; }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     virtual void transferToNewContext(const ImageBufferCreationContext&) { }
 
