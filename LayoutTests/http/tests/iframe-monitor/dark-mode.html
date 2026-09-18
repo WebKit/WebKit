@@ -20,6 +20,7 @@ onload = async () => {
     if (setupDone) {
         // Make sure iframe load is done after rule is set correctly.
         const stage = document.querySelector('#stage');
+        const base = 'http://localhost:8080/iframe-monitor/resources';
 
         stage.innerHTML = `
             <style>
@@ -27,13 +28,13 @@ onload = async () => {
                 footer { color-scheme: dark; }
             </style>
             <header>
-                <iframe name="frame1" src="./resources/--eligible--/iframe.html"></iframe>
+                <iframe name="frame1" src="${base}/--eligible--/iframe.html"></iframe>
             </header>
             <main>
-                <iframe name="frame2" src="./resources/--eligible--/iframe.html"></iframe>
+                <iframe name="frame2" src="${base}/--eligible--/iframe.html"></iframe>
             </main>
             <footer>
-                <iframe name="frame3" src="./resources/--eligible--/iframe.html"></iframe>
+                <iframe name="frame3" src="${base}/--eligible--/iframe.html"></iframe>
             </footer>
         `;
 
