@@ -1,8 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
 <html>
 <head>
-<script src="../../resources/accessibility-helper.js"></script>
-<script src="../../resources/js-test.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -32,7 +32,7 @@ line; the 20x20 image doesn't fit alongside any letter so it gets its own line):
   I
   J
 -->
-<div id="editable" contenteditable="true" style="word-break: break-all; font-size: 100pt; width: 50px; line-height: 1;">ABCDE<img id="icon" src="../resources/cake.png" width="20" height="20" onload="runTest()">FGHIJ</div>
+<div id="editable" contenteditable="true" style="word-break: break-all; font-size: 100pt; width: 50px; line-height: 1;">ABCDE<img id="icon" src="../../resources/cake.png" width="20" height="20" onload="runTest()">FGHIJ</div>
 
 <script>
 var output = "Verifies that lineIndexForTextMarker reports the actual line index for an inline replaced element (not the previously-hardcoded 0), and doesn't hang when called on a marker beyond the replaced element.\n\n";
