@@ -82,6 +82,10 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         case "node":
             if (!value)
                 return emDash;
+            if (!(value instanceof WI.DOMNode)) {
+                cell.classList.add(WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName);
+                return value.displayName;
+            }
             cell.classList.add(WI.DOMTreeElementPathComponent.iconClassNameForNode(value));
             return WI.linkifyNodeReference(value);
         }

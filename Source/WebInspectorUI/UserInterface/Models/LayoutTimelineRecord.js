@@ -31,6 +31,7 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
         console.assert(eventType);
         console.assert(!quad || quad instanceof WI.Quad);
+        console.assert(!domNode || domNode instanceof WI.DOMNode || domNode.displayName);
 
         if (eventType in WI.LayoutTimelineRecord.EventType)
             eventType = WI.LayoutTimelineRecord.EventType[eventType];
@@ -39,6 +40,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         this._quad = quad || null;
         this._area = area || null;
         this._domNode = domNode || null;
+        this._domNodeDisplayName = domNode?.displayName || null;
+        this._domNodeCSSPath = domNode instanceof WI.DOMNode ? WI.cssPath(domNode, {full: true}) : (domNode?.cssPath || null);
     }
 
     // Static
@@ -73,9 +76,29 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad} = json;
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad, domNodeDisplayName, domNodeCSSPath} = json;
         quad = quad ? WI.Quad.fromJSON(quad) : null;
-        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad});
+
+        let documentNode = null;
+        if (InspectorBackend.hasDomain("DOM"))
+            documentNode = await WI.domManager.requestDocument();
+
+        let domNode = null;
+        if (documentNode && domNodeCSSPath) {
+            try {
+                let nodeId = await documentNode.querySelector(domNodeCSSPath);
+                if (nodeId)
+                    domNode = WI.domManager.nodeForId(nodeId);
+            } catch { }
+        }
+        if (!domNode && domNodeDisplayName) {
+            domNode = {
+                displayName: domNodeDisplayName,
+                cssPath: domNodeCSSPath,
+            };
+        }
+
+        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, domNode});
     }
 
     toJSON()
@@ -89,6 +112,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
             startTime: this.startTime,
             endTime: this.endTime,
             quad: this._quad || undefined,
+            domNodeDisplayName: this._domNodeDisplayName || undefined,
+            domNodeCSSPath: this._domNodeCSSPath || undefined,
         };
     }
 
