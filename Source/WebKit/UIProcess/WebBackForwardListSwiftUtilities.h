@@ -48,10 +48,6 @@ using SpanConstChar = std::span<const char>;
 void doLog(const WTF::String& msg); // rdar://168139823
 void doLoadingReleaseLog(const WTF::String& msg); // rdar://168139823
 
-// Swift does not import AuxiliaryProcessProxy::connection() through WebProcessProxy in every
-// configuration, so reach it from C++ instead.
-IPC::Connection& connectionForProcess(WebKit::WebProcessProxy&);
-
 // Workaround for rdar://162357139
 template<typename T>
 inline bool contentsMatch(const T& lhs, const T& rhs)

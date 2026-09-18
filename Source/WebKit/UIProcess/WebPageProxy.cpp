@@ -12733,9 +12733,13 @@ void WebPageProxy::backForwardAddItemShared(IPC::Connection& connection, Ref<Fra
 #endif
 }
 
-void WebPageProxy::backForwardGoToItemShared(BackForwardItemIdentifier itemID)
+void WebPageProxy::backForwardGoToItemShared(IPC::Connection& connection, BackForwardItemIdentifier itemID)
 {
-    backForwardList().backForwardGoToItemShared(itemID);
+#if ENABLE(BACK_FORWARD_LIST_SWIFT)
+    backForwardList().backForwardGoToItemShared(&connection, itemID);
+#else
+    backForwardList().backForwardGoToItemShared(connection, itemID);
+#endif
 }
 
 void WebPageProxy::compositionWasCanceled()

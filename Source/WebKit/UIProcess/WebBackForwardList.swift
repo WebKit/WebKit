@@ -1274,17 +1274,13 @@ final class WebBackForwardList {
     }
 
     @used
-    // Entry point for C++ (WebPageProxy::backForwardGoToItemShared), which is outside message
-    // dispatch and so has no connection to hand. A failed check is marked against the page's main
-    // frame process, as in C++, and only once it has failed: asking that process for a connection it
-    // no longer has is fatal.
-    func backForwardGoToItemShared(itemID: WebCore.BackForwardItemIdentifier) {
+    // Also reached from C++ (WebPageProxy::backForwardGoToItemShared), so this rather than the
+    // caller is the catch site.
+    func backForwardGoToItemShared(connection: IPC.Connection, itemID: WebCore.BackForwardItemIdentifier) {
         do {
             try goToItemInternal(itemID: itemID)
         } catch {
-            if let webPageProxy = page.get() {
-                markMessageInvalid(error, on: connectionForProcess(webPageProxy.legacyMainFrameProcess()))
-            }
+            markMessageInvalid(error, on: connection)
         }
     }
 

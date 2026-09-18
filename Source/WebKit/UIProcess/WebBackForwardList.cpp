@@ -888,7 +888,7 @@ void WebBackForwardList::replaceFrameStateForChild(WebBackForwardListItem& item,
     targetFrameItem->updateFrameStatePayload(WTF::move(newFrameState));
 }
 
-void WebBackForwardList::backForwardGoToItem(BackForwardItemIdentifier itemID)
+void WebBackForwardList::backForwardGoToItem(IPC::Connection& connection, BackForwardItemIdentifier itemID)
 {
     // On process swap, we tell the previous process to ignore the load, which causes it to restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
@@ -898,7 +898,7 @@ void WebBackForwardList::backForwardGoToItem(BackForwardItemIdentifier itemID)
             return;
     }
 
-    backForwardGoToItemShared(itemID);
+    backForwardGoToItemShared(connection, itemID);
 }
 
 void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID, CompletionHandler<void(bool)>&& completionHandler)
@@ -906,10 +906,10 @@ void WebBackForwardList::backForwardListContainsItem(WebCore::BackForwardItemIde
     completionHandler(itemForID(itemID));
 }
 
-void WebBackForwardList::backForwardGoToItemShared(BackForwardItemIdentifier itemID)
+void WebBackForwardList::backForwardGoToItemShared(IPC::Connection& connection, BackForwardItemIdentifier itemID)
 {
     if (RefPtr webPageProxy = m_page.get())
-        MESSAGE_CHECK(Ref { webPageProxy->legacyMainFrameProcess() }, !WebKit::isInspectorPage(*webPageProxy));
+        MESSAGE_CHECK_BASE(!WebKit::isInspectorPage(*webPageProxy), connection);
 
     RefPtr item = itemForID(itemID);
     if (!item)
@@ -1120,11 +1120,6 @@ void doLog(const WTF::String& msg)
 void doLoadingReleaseLog(const WTF::String& msg)
 {
     RELEASE_LOG(Loading, "%s", msg.utf8());
-}
-
-IPC::Connection& connectionForProcess(WebKit::WebProcessProxy& process)
-{
-    return process.connection();
 }
 
 // Workarounds for rdar://171011011
