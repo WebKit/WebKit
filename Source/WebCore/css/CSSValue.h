@@ -141,6 +141,7 @@ public:
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isScrollValue() const { return m_classType == ClassType::Scroll; }
     bool isStringValue() const { return m_classType == ClassType::String; }
+    bool isSymbolsFunctionValue() const { return m_classType == ClassType::SymbolsFunction; }
     bool isTextShadowPropertyValue() const { return m_classType == ClassType::TextShadowProperty; }
     bool isTransformListValue() const { return m_classType == ClassType::TransformList; }
     bool isURL() const { return m_classType == ClassType::URL; }
@@ -280,6 +281,7 @@ protected:
         ValuePair,
         String,
         Substitution,
+        SymbolsFunction,
         View,
         WebkitBoxReflect,
 

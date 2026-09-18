@@ -97,6 +97,7 @@
 #include "CSSShorthandSubstitutionValue.h"
 #include "CSSStringValue.h"
 #include "CSSSubstitutionValue.h"
+#include "CSSSymbolsFunctionValue.h"
 #include "CSSTextShadowPropertyValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSTransformListValue.h"
@@ -284,6 +285,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESC
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSValuePair>(*this));
     case Substitution:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSSubstitutionValue>(*this));
+    case SymbolsFunction:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSSymbolsFunctionValue>(*this));
     case View:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSViewValue>(*this));
     case WebkitBoxReflect:

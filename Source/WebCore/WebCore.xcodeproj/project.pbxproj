@@ -20259,6 +20259,8 @@
 		BC9156362FC0D87D00C668BF /* CSSClipValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSClipValue.cpp; sourceTree = "<group>"; };
 		BC9156372FC0DBD700C668BF /* CSSContentValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSContentValue.h; sourceTree = "<group>"; };
 		BC9156382FC0DBD700C668BF /* CSSContentValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSContentValue.cpp; sourceTree = "<group>"; };
+		12E04D155C7D3877A20F3E79 /* CSSSymbolsFunctionValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSSymbolsFunctionValue.h; sourceTree = "<group>"; };
+		EC0F6A5F4EBD4BD4F5C47D0C /* CSSSymbolsFunctionValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSymbolsFunctionValue.cpp; sourceTree = "<group>"; };
 		BC926F7E0C0552470082776B /* JSHTMLFrameSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElement.cpp; sourceTree = "<group>"; };
 		BC926F7F0C0552470082776B /* JSHTMLFrameSetElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLFrameSetElement.h; sourceTree = "<group>"; };
 		BC9439C2116CF4940048C750 /* JSNodeCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNodeCustom.h; sourceTree = "<group>"; };
@@ -42370,6 +42372,8 @@
 				FD677734195CAB200072E0D3 /* CSSSupportsRule.cpp */,
 				FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */,
 				FC63BDB2167AABAC00F9380F /* CSSSupportsRule.idl */,
+				EC0F6A5F4EBD4BD4F5C47D0C /* CSSSymbolsFunctionValue.cpp */,
+				12E04D155C7D3877A20F3E79 /* CSSSymbolsFunctionValue.h */,
 				BC3078F22D0368A000630D75 /* CSSTextShadowPropertyValue.cpp */,
 				BC3078F32D0368A000630D75 /* CSSTextShadowPropertyValue.h */,
 				9AB1F37F18E2489A00534743 /* CSSToLengthConversionData.cpp */,

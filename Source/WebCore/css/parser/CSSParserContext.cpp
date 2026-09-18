@@ -135,6 +135,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssIfFunctionEnabled { settings.cssIfFunctionEnabled() }
     , cssInheritFunctionEnabled { settings.cssInheritFunctionEnabled() }
     , cssFontPaletteMixFunctionEnabled { settings.cssFontPaletteMixFunctionEnabled() }
+    , cssSymbolsFunctionEnabled { settings.cssSymbolsFunctionEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
     StaticCSSValuePool::init();
@@ -191,6 +192,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         context.cssIfFunctionEnabled,
         context.cssInheritFunctionEnabled,
         context.cssFontPaletteMixFunctionEnabled,
+        context.cssSymbolsFunctionEnabled,
         context.legacyFontFaceAttributeMode
     );
     add(hasher, context.baseURL, context.charset, context.propertySettings, context.mode, context.enclosingRuleType, bits);

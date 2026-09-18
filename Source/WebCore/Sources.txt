@@ -1066,6 +1066,7 @@ css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp @cost:3
 css/CSSStyleSheetObservableArray.cpp @cost:4
 css/CSSSupportsRule.cpp
+css/CSSSymbolsFunctionValue.cpp
 css/CSSTextShadowPropertyValue.cpp
 css/CSSToLengthConversionData.cpp @header:RenderStyleGetters
 css/CSSTransformListValue.cpp

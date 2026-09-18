@@ -27,15 +27,41 @@
 
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSKeyword.h>
+#include <WebCore/CSSString.h>
 #include <WebCore/CSSValueTypes.h>
 
 namespace WebCore {
 namespace CSS {
 
+// <symbols-type> = cyclic | numeric | alphabetic | symbolic | fixed
+// https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
+using SymbolsType = Variant<Keyword::Cyclic, Keyword::Numeric, Keyword::Alphabetic, Keyword::Symbolic, Keyword::Fixed>;
+
+// symbols() = symbols( <symbols-type>? [ <string> | <image> ]+ )
+// https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+// FIXME: Add support for <image> symbols.
+struct SymbolsParameters {
+    // The `<symbols-type>` keyword, or `std::nullopt` for the default (`symbolic`).
+    std::optional<SymbolsType> system;
+    SpaceSeparatedVector<String> symbols;
+
+    bool operator==(const SymbolsParameters&) const = default;
+};
+using SymbolsFunction = FunctionNotation<CSSValueSymbols, SymbolsParameters>;
+
+template<size_t I> const auto& get(const SymbolsParameters& value)
+{
+    if constexpr (!I)
+        return value.system;
+    else
+        return value.symbols;
+}
+
 // <counter-style> = <custom-ident excluding=none>
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 struct CounterStyle {
     // Stores predefined style types using their Keyword representation.
+    // FIXME: Add symbols function.
     Variant<Keyword, CustomIdent> identifier;
 
     bool operator==(const CounterStyle&) const = default;
@@ -46,3 +72,4 @@ DEFINE_TYPE_WRAPPER_GET(CounterStyle, identifier);
 } // namespace WebCore
 
 DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(WebCore::CSS::CounterStyle)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::SymbolsParameters, 2)
