@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,13 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// https://drafts.csswg.org/cssom-view/#dictdef-scrollintoviewoptions
-dictionary ScrollIntoViewOptions : ScrollOptions {
-    // No default values so we can distinguish an author-specified alignment (which must be honored)
-    // from an unspecified one (which defaults to start/nearest and may be adjusted for scroll-snap-align).
-    [ImplementedAs=blockPosition] ScrollLogicalPosition block;
-    [ImplementedAs=inlinePosition] ScrollLogicalPosition inline;
-    ScrollIntoViewContainer container = "all";
+#pragma once
+
+namespace WebCore {
+
+enum class ScrollIntoViewContainer : bool {
+    All,
+    Nearest
 };
+
+}

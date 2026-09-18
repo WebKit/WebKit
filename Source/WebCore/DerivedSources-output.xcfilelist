@@ -2911,6 +2911,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollAxis.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollAxis.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollBehavior.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollBehavior.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewContainer.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewContainer.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollIntoViewOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollLogicalPosition.cpp

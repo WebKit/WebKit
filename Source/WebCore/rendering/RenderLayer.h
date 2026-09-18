@@ -59,6 +59,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/ScrollAlignment.h>
 #include <WebCore/ScrollBehavior.h>
+#include <WebCore/ScrollIntoViewContainer.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/InlineWeakPtr.h>
 #include <wtf/Markable.h>
@@ -163,6 +164,7 @@ struct ScrollRectToVisibleOptions {
     AllowScrollingOverflowHidden allowScrollingOverflowHidden { AllowScrollingOverflowHidden::Yes };
     std::optional<LayoutRect> visibilityCheckRect { std::nullopt };
     SkipScrollingTargetElement skipScrollingTargetElement { SkipScrollingTargetElement::No };
+    ScrollIntoViewContainer container { ScrollIntoViewContainer::All };
 };
 
 enum class UpdateBackingSharingFlags {

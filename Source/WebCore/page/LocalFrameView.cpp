@@ -3591,6 +3591,8 @@ bool LocalFrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const R
             adjustedRect = layer->ensureLayerScrollableArea()->scrollRectToVisible(adjustedRect, adjustedOptions);
             if (adjustedOptions.visibilityCheckRect)
                 adjustedOptions.visibilityCheckRect->setLocation(adjustedRect.location());
+            if (options.container == ScrollIntoViewContainer::Nearest)
+                return true;
         }
         // FIXME: Make scroll adjustments work for more than just fixedpos elements.
         if (insideFixed)
@@ -3659,7 +3661,10 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
     // See https://bugs.webkit.org/show_bug.cgi?id=205059
     setScrollPosition(scrollPosition, scrollPositionChangeOptionsForElement(*this, element.get(), options));
 
-    if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::No && !safeToPropagateScrollToParent()) 
+    if (options.container == ScrollIntoViewContainer::Nearest)
+        return;
+
+    if (options.shouldAllowCrossOriginScrolling == ShouldAllowCrossOriginScrolling::No && !safeToPropagateScrollToParent())
         return;
 
     // FIXME: ideally need to determine if this <iframe> is inside position:fixed.

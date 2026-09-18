@@ -1479,6 +1479,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/Screen.idl
     page/ScreenOrientation.idl
     page/ScrollBehavior.idl
+    page/ScrollIntoViewContainer.idl
     page/ScrollIntoViewOptions.idl
     page/ScrollLogicalPosition.idl
     page/ScrollOptions.idl
