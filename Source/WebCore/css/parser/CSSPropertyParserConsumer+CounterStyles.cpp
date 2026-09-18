@@ -58,23 +58,6 @@ bool isPredefinedCounterStyle(CSSValueID valueID)
     return valueID >= CSSValueDisc && valueID <= CSSValueEthiopicNumeric;
 }
 
-std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
-{
-    // <counter-style> = <counter-style-name excluding=none> | <symbols()>
-    // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
-
-    // FIXME: Implement support for `symbols()`.
-
-    if (isPredefinedCounterStyle(range.peek().id()))
-        return CSS::CounterStyle { CSS::Keyword { range.consumeIncludingWhitespace().id() } };
-
-    auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
-    if (!customIdent)
-        return { };
-
-    return CSS::CounterStyle { WTF::move(*customIdent) };
-}
-
 // <symbols-type> = cyclic | numeric | alphabetic | symbolic | fixed
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-symbols-type
 static std::optional<CSS::SymbolsType> consumeUnresolvedSymbolsType(CSSParserTokenRange& range)
@@ -116,6 +99,23 @@ static std::optional<CSS::SymbolsFunction> consumeUnresolvedSymbolsFunction(CSSP
         system = std::nullopt;
 
     return CSS::SymbolsFunction { system, WTF::move(symbols) };
+}
+
+std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
+{
+    // <counter-style> = <counter-style-name excluding=none> | <symbols()>
+    // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
+
+    if (isPredefinedCounterStyle(range.peek().id()))
+        return CSS::CounterStyle { CSS::Keyword { range.consumeIncludingWhitespace().id() } };
+
+    // FIXME: Add symbols() function support.
+
+    auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
+    if (!customIdent)
+        return { };
+
+    return CSS::CounterStyle { WTF::move(*customIdent) };
 }
 
 RefPtr<CSSValue> consumeCounterStyle(CSSParserTokenRange& range, CSS::PropertyParserState& state)
