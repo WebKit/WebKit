@@ -2533,9 +2533,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/DoubleRect.h
     platform/graphics/DoubleSize.h
     platform/graphics/FloatLine.h
+    platform/graphics/FloatPlane3D.h
     platform/graphics/FloatPoint.h
     platform/graphics/FloatPoint3D.h
     platform/graphics/FloatPolygon.h
+    platform/graphics/FloatPolygon3D.h
     platform/graphics/FloatQuad.h
     platform/graphics/FloatRect.h
     platform/graphics/FloatRoundedRect.h

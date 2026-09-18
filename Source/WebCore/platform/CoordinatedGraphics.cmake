@@ -49,15 +49,11 @@ if (USE_TEXTURE_MAPPER)
     )
 else ()
     list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/FloatPlane3D.cpp
-        platform/graphics/texmap/FloatPolygon3D.cpp
         platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
         platform/graphics/texmap/TextureMapperAnimation.cpp
     )
 
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/FloatPlane3D.h
-        platform/graphics/texmap/FloatPolygon3D.h
         platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
         platform/graphics/texmap/TextureMapperAnimation.h
         platform/graphics/texmap/TextureMapperFlags.h

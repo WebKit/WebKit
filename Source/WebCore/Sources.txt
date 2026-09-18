@@ -2687,10 +2687,12 @@ platform/graphics/DoublePoint.cpp
 platform/graphics/DoubleRect.cpp
 platform/graphics/DoubleSize.cpp
 platform/graphics/FloatLine.cpp
+platform/graphics/FloatPlane3D.cpp
 platform/graphics/FloatPoint.cpp
 platform/graphics/FloatPoint3D.cpp
 platform/graphics/FloatPointGraph.cpp
 platform/graphics/FloatPolygon.cpp
+platform/graphics/FloatPolygon3D.cpp
 platform/graphics/FloatQuad.cpp
 platform/graphics/FloatRect.cpp
 platform/graphics/FloatRoundedRect.cpp
