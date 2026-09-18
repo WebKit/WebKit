@@ -48,11 +48,11 @@ protected:
 
     uint16_t width() const { return m_width; }
     uint16_t height() const { return m_height; }
+    void setFrameSize(uint16_t width, uint16_t height) final;
 
 private:
     void flush() final;
     void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) override;
-    void setFrameSize(uint16_t width, uint16_t height) final;
     void colorSpaceOverrideChanged() final;
 
     void updateFormat(const VideoInfo&);

@@ -525,6 +525,79 @@ Vector<uint8_t> parseRbsp(std::span<const uint8_t> data)
     return out;
 }
 
+std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t> data)
+{
+    for (auto& index : findHEVCNaluIndices(data)) {
+        if (!index.payloadSize)
+            continue;
+        auto nalu = data.subspan(index.payloadStartOffset, index.payloadSize);
+        if (hevcNaluType(nalu.front()) == HEVCNaluType::Vps)
+            return HEVCBitstreamParser::parseVpsMaxNumReorderPics(nalu);
+    }
+    return std::nullopt;
+}
+
+std::optional<uint8_t> findHVCCMaxNumReorderPics(std::span<const uint8_t> hvcc)
+{
+    // ISO/IEC 14496-15 8.3.3.1 HEVCDecoderConfigurationRecord is at a minimum 23 bytes long
+    // (fixed fields up to and including numOfArrays), before the NAL unit arrays begin.
+    constexpr size_t fixedHeaderSize = 23;
+    if (hvcc.size() < fixedHeaderSize)
+        return std::nullopt;
+
+    BitReader reader { hvcc };
+    // configurationVersion: u(8) -- unused.
+    reader.read(8);
+    // general_profile_space(2), general_tier_flag(1), general_profile_idc(5) -- unused.
+    reader.read(8);
+    // general_profile_compatibility_flags: u(32) -- unused.
+    reader.read(32);
+    // general_constraint_indicator_flags: u(48) -- unused.
+    reader.read(48);
+    // general_level_idc: u(8) -- unused.
+    reader.read(8);
+    // reserved(4), min_spatial_segmentation_idc(12) -- unused.
+    reader.read(16);
+    // reserved(6), parallelismType(2) -- unused.
+    reader.read(8);
+    // reserved(6), chroma_format_idc(2) -- unused.
+    reader.read(8);
+    // reserved(5), bit_depth_luma_minus8(3) -- unused.
+    reader.read(8);
+    // reserved(5), bit_depth_chroma_minus8(3) -- unused.
+    reader.read(8);
+    // avgFrameRate: u(16) -- unused.
+    reader.read(16);
+    // constantFrameRate(2), numTemporalLayers(3), temporalIdNested(1), lengthSizeMinusOne(2) -- unused.
+    if (!reader.read<uint8_t>())
+        return std::nullopt;
+
+    auto numOfArrays = reader.read<uint8_t>();
+    if (!numOfArrays)
+        return std::nullopt;
+
+    for (size_t i = 0; i < *numOfArrays; ++i) {
+        // array_completeness(1), reserved(1), NAL_unit_type(6)
+        auto arrayHeader = reader.read<uint8_t>();
+        if (!arrayHeader)
+            return std::nullopt;
+        auto numNalus = reader.read<uint16_t>();
+        if (!numNalus)
+            return std::nullopt;
+        bool isVps = (*arrayHeader & 0x3f) == static_cast<uint8_t>(HEVCNaluType::Vps);
+        for (size_t j = 0; j < *numNalus; ++j) {
+            auto size = reader.read<uint16_t>();
+            if (!size || !*size)
+                return std::nullopt;
+            if (!reader.skipBytes(*size))
+                return std::nullopt;
+            if (isVps)
+                return HEVCBitstreamParser::parseVpsMaxNumReorderPics(hvcc.subspan(reader.byteOffset() - *size, *size));
+        }
+    }
+    return std::nullopt;
+}
+
 namespace {
 
 // When n == 0, returns UINT32_MAX (matches libwebrtc's H265::Log2Ceiling(0) == -1).
@@ -881,6 +954,47 @@ std::optional<HEVCBitstreamParser::ShortTermRefPicSet> HEVCBitstreamParser::pars
         return std::nullopt;
 
     return result;
+}
+
+std::optional<uint8_t> HEVCBitstreamParser::parseVpsMaxNumReorderPics(std::span<const uint8_t> data)
+{
+    if (data.size() <= hevcNaluHeaderSize)
+        return std::nullopt;
+
+    auto rbsp = parseRbsp(data.subspan(hevcNaluHeaderSize));
+    BitReader reader(rbsp.span());
+
+    // vps_video_parameter_set_id: u(4), vps_base_layer_internal_flag: u(1),
+    // vps_base_layer_available_flag: u(1), vps_max_layers_minus1: u(6) -- all unused.
+    reader.consumeBits(4 + 1 + 1 + 6);
+    // vps_max_sub_layers_minus1: u(3)
+    uint32_t vpsMaxSubLayersMinus1 = reader.readBits(3);
+    if (!reader.ok() || vpsMaxSubLayersMinus1 > 6)
+        return std::nullopt;
+    // vps_temporal_id_nesting_flag: u(1), vps_reserved_0xffff_16bits: u(16) -- unused.
+    reader.consumeBits(1 + 16);
+
+    if (!parseProfileTierLevel(true, vpsMaxSubLayersMinus1, reader))
+        return std::nullopt;
+
+    // vps_sub_layer_ordering_info_present_flag: u(1)
+    bool vpsSubLayerOrderingInfoPresentFlag = reader.readFlag();
+    uint32_t maxNumReorderPics = 0;
+    for (uint32_t i = vpsSubLayerOrderingInfoPresentFlag ? 0 : vpsMaxSubLayersMinus1; i <= vpsMaxSubLayersMinus1; ++i) {
+        // vps_max_dec_pic_buffering_minus1: ue(v) -- unused.
+        reader.readExpGolomb();
+        // vps_max_num_reorder_pics: ue(v)
+        uint32_t numReorderPics = reader.readExpGolomb();
+        // vps_max_latency_increase_plus1: ue(v) -- unused.
+        reader.readExpGolomb();
+        if (!reader.ok())
+            return std::nullopt;
+        maxNumReorderPics = std::max(maxNumReorderPics, numReorderPics);
+    }
+
+    // Matches libwebrtc's ComputeH265ReorderSizeFromVPS, which clamps to a max of 16.
+    constexpr uint32_t maxSupportedReorderPics = 16;
+    return static_cast<uint8_t>(std::min(maxNumReorderPics, maxSupportedReorderPics));
 }
 
 std::optional<HEVCBitstreamParser::SpsState> HEVCBitstreamParser::parseSps(std::span<const uint8_t> data)

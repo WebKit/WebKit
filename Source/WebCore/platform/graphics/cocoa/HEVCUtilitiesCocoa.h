@@ -30,6 +30,7 @@
 #if PLATFORM(COCOA)
 
 #include <WebCore/HEVCUtilities.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
@@ -37,11 +38,22 @@ typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 namespace WebCore {
 
 struct PlatformMediaCapabilitiesInfo;
+class VideoInfo;
 
 WEBCORE_EXPORT std::optional<PlatformMediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters&, bool hasAlphaChannel, bool hdrSupport);
 std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViParameters&, bool hasAlphaChannel, bool hdrSupport);
 
 WEBCORE_EXPORT Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
+
+// Look for a leading VPS+SPS+PPS triplet in an HEVC Annex B chunk. If found, returns a VideoInfo describing it.
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t>);
+
+// Converts an HEVC Annex B chunk into hvcC-style length-prefixed NAL units suitable for a CMSampleBuffer.
+WEBCORE_EXPORT Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t>);
+
+// Parses an HEVC decoder configuration record ("hvcC" box) directly into a VideoInfo, deriving
+// width/height from the embedded parameter sets. Returns nullptr on failure.
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromHVCC(std::span<const uint8_t>);
 
 }
 

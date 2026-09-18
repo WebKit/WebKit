@@ -28,10 +28,15 @@
 
 #if PLATFORM(COCOA)
 
+#import "BitReader.h"
+#import "CMUtilities.h"
+#import "FormatDescriptionUtilities.h"
 #import "FourCC.h"
 #import "HEVCUtilities.h"
 #import "Logging.h"
 #import "PlatformMediaCapabilitiesInfo.h"
+#import "TrackInfo.h"
+#import <algorithm>
 #import <wtf/FlipBytes.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -286,6 +291,180 @@ Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef hvccSampleBu
     }
 
     return annexBBuffer;
+}
+
+static PlatformVideoColorSpace defaultHEVCPlatformVideoColorSpace()
+{
+    return {
+        PlatformVideoColorPrimaries::Bt709,
+        PlatformVideoTransferCharacteristics::Iec6196621,
+        PlatformVideoMatrixCoefficients::Bt709,
+        true
+    };
+}
+
+RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t> data)
+{
+    auto naluIndices = findHEVCNaluIndices(data);
+
+    // We search for the first VPS in the data.
+    std::optional<size_t> vpsIndex;
+    for (size_t i = 0; i < naluIndices.size(); ++i) {
+        auto& index = naluIndices[i];
+        if (index.payloadSize && hevcNaluType(data.subspan(index.payloadStartOffset, index.payloadSize).front()) == HEVCNaluType::Vps) {
+            vpsIndex = i;
+            break;
+        }
+    }
+    if (!vpsIndex || *vpsIndex + 2 >= naluIndices.size())
+        return nullptr;
+
+    // The next two NAL units are taken as SPS and PPS.
+    std::array<std::span<const uint8_t>, 3> paramSets;
+    for (size_t i = 0; i < paramSets.size(); ++i) {
+        auto& index = naluIndices[*vpsIndex + i];
+        paramSets[i] = data.subspan(index.payloadStartOffset, index.payloadSize);
+    }
+    std::array<const uint8_t*, 3> paramSetPointers { paramSets[0].data(), paramSets[1].data(), paramSets[2].data() };
+    std::array<size_t, 3> paramSetSizes { paramSets[0].size(), paramSets[1].size(), paramSets[2].size() };
+
+    CMFormatDescriptionRef rawDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateFromHEVCParameterSets(kCFAllocatorDefault, paramSetPointers.size(), paramSetPointers.data(), paramSetSizes.data(), 4, nullptr, &rawDescription) != noErr)
+        return nullptr;
+    RetainPtr description = adoptCF(rawDescription);
+
+    RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(description.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+    RetainPtr hvcCData = sampleExtensionsDict ? dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict.get(), CFSTR("hvcC"))) : nullptr;
+    if (!hvcCData)
+        return nullptr;
+
+    auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(description.get());
+    auto presentationDimensions = PAL::CMVideoFormatDescriptionGetPresentationDimensions(description.get(), true, true);
+
+    return VideoInfo::create({
+        {
+            .codecName = kCMVideoCodecType_HEVC
+        }, {
+            .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
+            .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
+            .colorSpace = defaultHEVCPlatformVideoColorSpace(),
+            .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(hvcCData.get()) } },
+        }
+    });
+}
+
+Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t> data)
+{
+    Vector<uint8_t> result;
+    auto naluIndices = findHEVCNaluIndices(data);
+
+    // We skip the leading VPS/SPS/PPS triplet, if present as it belongs in the format description, not in the per-sample data.
+    size_t startIndex = 0;
+    if (!naluIndices.isEmpty() && naluIndices[0].payloadSize && hevcNaluType(data[naluIndices[0].payloadStartOffset]) == HEVCNaluType::Vps)
+        startIndex = std::min<size_t>(3, naluIndices.size());
+
+    for (size_t i = startIndex; i < naluIndices.size(); ++i) {
+        auto& index = naluIndices[i];
+        if (!index.payloadSize)
+            continue;
+        uint32_t length = flipBytesIfLittleEndian(static_cast<uint32_t>(index.payloadSize), false);
+        result.append(asByteSpan(length));
+        result.append(data.subspan(index.payloadStartOffset, index.payloadSize));
+    }
+
+    return result;
+}
+
+RefPtr<VideoInfo> createVideoInfoFromHVCC(std::span<const uint8_t> hvcc)
+{
+    // ISO/IEC 14496-15 8.3.3.1 HEVCDecoderConfigurationRecord is at a minimum 23 bytes long
+    // (fixed fields up to and including numOfArrays), before the NAL unit arrays begin.
+    constexpr size_t fixedHeaderSize = 23;
+    if (hvcc.size() < fixedHeaderSize)
+        return nullptr;
+
+    BitReader reader { hvcc };
+    // configurationVersion: u(8) -- unused.
+    reader.read(8);
+    // general_profile_space(2), general_tier_flag(1), general_profile_idc(5) -- unused.
+    reader.read(8);
+    // general_profile_compatibility_flags: u(32) -- unused.
+    reader.read(32);
+    // general_constraint_indicator_flags: u(48) -- unused.
+    reader.read(48);
+    // general_level_idc: u(8) -- unused.
+    reader.read(8);
+    // reserved(4), min_spatial_segmentation_idc(12) -- unused.
+    reader.read(16);
+    // reserved(6), parallelismType(2) -- unused.
+    reader.read(8);
+    // reserved(6), chroma_format_idc(2) -- unused.
+    reader.read(8);
+    // reserved(5), bit_depth_luma_minus8(3) -- unused.
+    reader.read(8);
+    // reserved(5), bit_depth_chroma_minus8(3) -- unused.
+    reader.read(8);
+    // avgFrameRate: u(16) -- unused.
+    reader.read(16);
+    // constantFrameRate(2), numTemporalLayers(3), temporalIdNested(1), lengthSizeMinusOne(2)
+    auto misc = reader.read<uint8_t>();
+    if (!misc)
+        return nullptr;
+    size_t lengthSize = (*misc & 0x3) + 1;
+
+    auto numOfArrays = reader.read<uint8_t>();
+    if (!numOfArrays)
+        return nullptr;
+
+    Vector<Vector<uint8_t>> paramSets;
+    for (size_t i = 0; i < *numOfArrays; ++i) {
+        // array_completeness(1), reserved(1), NAL_unit_type(6) -- unused.
+        if (!reader.read<uint8_t>())
+            return nullptr;
+        auto numNalus = reader.read<uint16_t>();
+        if (!numNalus)
+            return nullptr;
+        for (size_t j = 0; j < *numNalus; ++j) {
+            auto size = reader.read<uint16_t>();
+            if (!size || !*size)
+                return nullptr;
+            if (!reader.skipBytes(*size))
+                return nullptr;
+            paramSets.append({ hvcc.subspan(reader.byteOffset() - *size, *size) });
+        }
+    }
+    if (paramSets.isEmpty())
+        return nullptr;
+
+    Vector<const uint8_t*> paramSetPointers { paramSets.size(),
+        [&paramSets](auto index) {
+            return paramSets[index].span().data();
+        }
+    };
+    Vector<size_t> paramSetSizes { paramSets.size(),
+        [&paramSets](auto index) {
+            return paramSets[index].size();
+        }
+    };
+
+    CMFormatDescriptionRef rawDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateFromHEVCParameterSets(kCFAllocatorDefault, paramSetPointers.size(), paramSetPointers.span().data(), paramSetSizes.span().data(), lengthSize, nullptr, &rawDescription) != noErr)
+        return nullptr;
+    RetainPtr description = adoptCF(rawDescription);
+
+    auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(description.get());
+    auto presentationDimensions = PAL::CMVideoFormatDescriptionGetPresentationDimensions(description.get(), true, true);
+
+    return VideoInfo::create({
+        {
+            .codecName = kCMVideoCodecType_HEVC
+        }, {
+            .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
+            .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
+            .colorSpace = defaultHEVCPlatformVideoColorSpace(),
+            .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), SharedBuffer::create(hvcc) } },
+        }
+    });
 }
 
 }

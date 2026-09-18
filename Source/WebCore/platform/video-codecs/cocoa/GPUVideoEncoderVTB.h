@@ -27,8 +27,8 @@
 
 #if USE(AVFOUNDATION)
 
-#include "VideoEncoderVTBSession.h"
 #include "GPUVideoEncoder.h"
+#include "VideoEncoderVTBSession.h"
 #include <memory>
 #include <wtf/BlockPtr.h>
 

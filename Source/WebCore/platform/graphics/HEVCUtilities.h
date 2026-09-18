@@ -120,6 +120,15 @@ WEBCORE_EXPORT HEVCNaluType hevcNaluType(uint8_t);
 // Removes emulation prevention bytes (the trailing byte of any 0x00 0x00 0x03 sequence).
 WEBCORE_EXPORT Vector<uint8_t> parseRbsp(std::span<const uint8_t>);
 
+// Scans an Annex B chunk for a VPS NAL unit and returns its vps_max_num_reorder_pics (maxed
+// across sub-layers), or std::nullopt if no VPS is present or parsing fails.
+WEBCORE_EXPORT std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t>);
+
+// Scans an HEVC decoder configuration record ("hvcC" box) for an embedded VPS NAL unit and
+// returns its vps_max_num_reorder_pics (maxed across sub-layers), or std::nullopt if no VPS is
+// present or parsing fails.
+WEBCORE_EXPORT std::optional<uint8_t> findHVCCMaxNumReorderPics(std::span<const uint8_t>);
+
 // Stateful H.265 Annex B bitstream parser used to recover the QP of the most recently parsed slice.
 class WEBCORE_EXPORT HEVCBitstreamParser {
     WTF_MAKE_TZONE_ALLOCATED(HEVCBitstreamParser);
@@ -128,6 +137,10 @@ public:
 
     void parseBitstream(std::span<const uint8_t>);
     std::optional<int> lastSliceQP() const;
+
+    // Parses a VPS NAL unit (including its 2-byte header) per H.265 section 7.3.2.1, returning
+    // vps_max_num_reorder_pics maxed across sub-layers (clamped to 16), or std::nullopt on failure.
+    static std::optional<uint8_t> parseVpsMaxNumReorderPics(std::span<const uint8_t>);
 
 private:
     struct ProfileTierLevel {
