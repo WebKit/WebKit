@@ -86,7 +86,7 @@ struct _WebKitWebInspectorPrivate {
     }
 
     RefPtr<WebInspectorUIProxy> webInspector;
-    CString inspectedURI;
+    ASCIICString inspectedURI;
     unsigned attachedHeight;
     bool canAttach;
 };
@@ -312,7 +312,7 @@ private:
 
     void inspectedURLChanged(WebInspectorUIProxy&, const String& url) override
     {
-        auto uri = url.utf8();
+        auto uri = url.ascii();
         if (uri == m_inspector->priv->inspectedURI)
             return;
         m_inspector->priv->inspectedURI = uri;

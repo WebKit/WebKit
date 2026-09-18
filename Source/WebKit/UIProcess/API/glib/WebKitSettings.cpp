@@ -87,7 +87,7 @@ struct _WebKitSettingsPrivate {
     CString pictographFontFamily;
     CString mathFontFamily;
     CString defaultCharset;
-    CString userAgent;
+    ASCIICString userAgent;
     CString mediaContentTypesRequiringHardwareSupport;
 #if ENABLE(WEB_RTC)
     CString webrtcUDPPortsRange;
@@ -3317,7 +3317,7 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
     } else
         userAgentString = WebCore::standardUserAgent(emptyString());
 
-    auto newUserAgent = userAgentString.utf8();
+    auto newUserAgent = userAgentString.ascii();
     if (newUserAgent == priv->userAgent)
         return;
 

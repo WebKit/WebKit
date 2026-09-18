@@ -20,15 +20,16 @@
 #include "config.h"
 #include "WebKitDOMEvent.h"
 
-#include <WebCore/CSSImportRule.h>
+#include "ConvertToUTF8String.h"
 #include "DOMObjectCache.h"
-#include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/JSExecState.h>
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTargetPrivate.h"
 #include "WebKitDOMPrivate.h"
-#include "ConvertToUTF8String.h"
+#include <WebCore/CSSImportRule.h>
+#include <WebCore/Document.h>
+#include <WebCore/ExceptionCode.h>
+#include <WebCore/EventTargetInlines.h>
+#include <WebCore/JSExecState.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

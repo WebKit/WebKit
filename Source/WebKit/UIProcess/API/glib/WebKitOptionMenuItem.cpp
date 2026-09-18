@@ -88,7 +88,7 @@ const gchar* webkit_option_menu_item_get_label(WebKitOptionMenuItem* item)
 {
     g_return_val_if_fail(item, nullptr);
 
-    return item->label.data();
+    return item->label.legacyCStringPointer();
 }
 
 /**
@@ -105,7 +105,7 @@ const gchar* webkit_option_menu_item_get_tooltip(WebKitOptionMenuItem* item)
 {
     g_return_val_if_fail(item, nullptr);
 
-    return item->tooltip.isNull() ? nullptr : item->tooltip.data();
+    return item->tooltip.isNull() ? nullptr : item->tooltip.legacyCStringPointer();
 }
 
 /**

@@ -25,7 +25,7 @@
 #include <wtf/text/WTFString.h>
 
 struct _WebKitScriptDialog {
-    _WebKitScriptDialog(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
+    _WebKitScriptDialog(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
         : type(type)
         , message(message)
         , defaultText(defaultText)
@@ -34,11 +34,11 @@ struct _WebKitScriptDialog {
     }
 
     unsigned type;
-    CString message;
-    CString defaultText;
+    UTF8CString message;
+    UTF8CString defaultText;
 
     bool confirmed { false };
-    CString text;
+    UTF8CString text;
 
     Function<void(bool, const String&)> completionHandler;
 
@@ -53,7 +53,7 @@ struct _WebKitScriptDialog {
     int referenceCount { 1 };
 };
 
-WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler);
+WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler);
 bool webkitScriptDialogIsRunning(WebKitScriptDialog*);
 void webkitScriptDialogAccept(WebKitScriptDialog*);
 void webkitScriptDialogDismiss(WebKitScriptDialog*);

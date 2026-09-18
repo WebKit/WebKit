@@ -72,7 +72,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWebResourcePrivate {
     RefPtr<WebFrameProxy> frame;
-    CString uri;
+    ASCIICString uri;
     GRefPtr<WebKitURIResponse> response;
     bool isMainResource;
 };
@@ -231,12 +231,12 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
             G_TYPE_TLS_CERTIFICATE_FLAGS);
 }
 
-static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CString& requestURI)
+static void webkitWebResourceUpdateURI(WebKitWebResource* resource, ASCIICString&& requestURI)
 {
     if (resource->priv->uri == requestURI)
         return;
 
-    resource->priv->uri = requestURI;
+    resource->priv->uri = WTF::move(requestURI);
     g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_URI]);
 }
 
@@ -244,7 +244,7 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
 {
     WebKitWebResource* resource = WEBKIT_WEB_RESOURCE(g_object_new(WEBKIT_TYPE_WEB_RESOURCE, NULL));
     resource->priv->frame = &frame;
-    resource->priv->uri = request.url().string().utf8();
+    resource->priv->uri = request.url().string().ascii();
     resource->priv->isMainResource = frame.isMainFrame() && request.requester() == WebCore::ResourceRequestRequester::Main;
     return resource;
 }
@@ -252,7 +252,8 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
 void webkitWebResourceSentRequest(WebKitWebResource* resource, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&& redirectResponse)
 {
     GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
-    webkitWebResourceUpdateURI(resource, webkit_uri_request_get_uri(uriRequest.get()));
+    ASCIICString requestURI { webkit_uri_request_get_uri(uriRequest.get()) };
+    webkitWebResourceUpdateURI(resource, WTF::move(requestURI));
     GRefPtr<WebKitURIResponse> uriRedirectResponse = !redirectResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResponse)) : nullptr;
     g_signal_emit(resource, signals[SENT_REQUEST], 0, uriRequest.get(), uriRedirectResponse.get());
 }

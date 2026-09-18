@@ -394,9 +394,9 @@ struct _WebKitWebViewPrivate {
 
     RefPtr<API::PageConfiguration> configurationForNextRelatedView;
     WebKitWebView* relatedView;
-    CString title;
+    UTF8CString title;
     CString customTextEncoding;
-    CString activeURI;
+    ASCIICString activeURI;
     bool isActiveURIChangeBlocked;
     bool isLoading;
 #if !ENABLE(2022_GLIB_API)
@@ -440,7 +440,7 @@ struct _WebKitWebViewPrivate {
 #endif
     GRefPtr<GCancellable> faviconCancellable;
 
-    CString faviconURI;
+    ASCIICString faviconURI;
     unsigned long faviconChangedHandlerID;
 #endif
 
@@ -522,7 +522,7 @@ void PageLoadStateObserver::didChangeActiveURL()
 {
     if (m_webView->priv->isActiveURIChangeBlocked)
         return;
-    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().string().utf8();
+    m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().string().ascii();
     g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
     g_object_thaw_notify(G_OBJECT(m_webView));
 }
@@ -802,12 +802,12 @@ static void webkitWebViewRequestFavicon(WebKitWebView* webView)
     webkitFaviconDatabaseGetFaviconInternal(database, priv->activeURI.data(), webkitWebViewIsEphemeral(webView), priv->faviconCancellable.get(), gotFaviconCallback, webView);
 }
 
-static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* faviconURI)
+static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, ASCIICString&& faviconURI)
 {
     if (webView->priv->faviconURI == faviconURI)
         return;
 
-    webView->priv->faviconURI = faviconURI;
+    webView->priv->faviconURI = WTF::move(faviconURI);
     webkitWebViewRequestFavicon(webView);
 }
 
@@ -816,7 +816,7 @@ static void faviconChangedCallback(WebKitFaviconDatabase*, const char* pageURI, 
     if (webView->priv->activeURI != pageURI)
         return;
 
-    webkitWebViewUpdateFaviconURI(webView, faviconURI);
+    webkitWebViewUpdateFaviconURI(webView, ASCIICString { faviconURI });
 }
 #endif // PLATFORM(GTK)
 
@@ -1237,7 +1237,7 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
 #endif
     case PROP_TITLE:
-        g_value_set_string(value, webView->priv->title.data());
+        g_value_set_string(value, webView->priv->title.legacyCStringPointer());
         break;
     case PROP_ESTIMATED_LOAD_PROGRESS:
         g_value_set_double(value, webkit_web_view_get_estimated_load_progress(webView));
@@ -2781,7 +2781,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webView->priv->isActiveURIChangeBlocked = false;
         break;
     case WEBKIT_LOAD_COMMITTED: {
-        auto activeURL = getPage(webView).pageLoadState().activeURL().string().utf8();
+        auto activeURL = getPage(webView).pageLoadState().activeURL().string().ascii();
         // Active URL is trusted now. If it's different to our active URI, due to the
         // update block before WEBKIT_LOAD_STARTED, we update it here to be in sync
         // again with the page load state.
@@ -2792,7 +2792,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 #if PLATFORM(GTK)
         if (auto* database = webkitWebViewGetFaviconDatabase(webView)) {
             GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
-            webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
+            webkitWebViewUpdateFaviconURI(webView, ASCIICString { faviconURI.get() });
         }
 #endif
         break;
@@ -2960,7 +2960,7 @@ void webkitWebViewClosePage(WebKitWebView* webView)
     g_signal_emit(webView, signals[CLOSE], 0, NULL);
 }
 
-void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& message, Function<void()>&& completionHandler)
+void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const UTF8CString& message, Function<void()>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
     webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_ALERT, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool, const String&) {
@@ -2972,7 +2972,7 @@ void webkitWebViewRunJavaScriptAlert(WebKitWebView* webView, const CString& mess
     webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
+void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const UTF8CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
     webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
@@ -2984,7 +2984,7 @@ void webkitWebViewRunJavaScriptConfirm(WebKitWebView* webView, const CString& me
     webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& message, const CString& defaultText, Function<void(const String&)>&& completionHandler)
+void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const UTF8CString& message, const UTF8CString& defaultText, Function<void(const String&)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
     webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_PROMPT, message, defaultText, [webView, completionHandler = WTF::move(completionHandler)](bool, const String& result) {
@@ -2996,7 +2996,7 @@ void webkitWebViewRunJavaScriptPrompt(WebKitWebView* webView, const CString& mes
     webkit_script_dialog_unref(webView->priv->currentScriptDialog);
 }
 
-void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const CString& message, Function<void(bool)>&& completionHandler)
+void webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView* webView, const UTF8CString& message, Function<void(bool)>&& completionHandler)
 {
     ASSERT(!webView->priv->currentScriptDialog);
     webView->priv->currentScriptDialog = webkitScriptDialogCreate(WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM, message, { }, [webView, completionHandler = WTF::move(completionHandler)](bool result, const String&) {
@@ -3773,7 +3773,7 @@ const gchar* webkit_web_view_get_title(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
-    return webView->priv->title.data();
+    return webView->priv->title.legacyCStringPointer();
 }
 
 /**
@@ -4024,7 +4024,7 @@ cairo_surface_t* webkit_web_view_get_favicon(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     if (webView->priv->activeURI.isNull())
-        return 0;
+        return nullptr;
 
     return webView->priv->favicon.get();
 }

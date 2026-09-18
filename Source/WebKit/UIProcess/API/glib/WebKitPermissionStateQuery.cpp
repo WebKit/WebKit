@@ -58,7 +58,7 @@ struct _WebKitPermissionStateQuery {
         webkit_security_origin_unref(securityOrigin);
     }
 
-    CString permissionName;
+    UTF8CString permissionName;
     WebKitSecurityOrigin* securityOrigin;
     CompletionHandler<void(std::optional<WebCore::PermissionState>)> completionHandler;
     int referenceCount { 1 };
@@ -129,7 +129,7 @@ webkit_permission_state_query_get_name(WebKitPermissionStateQuery* query)
 {
     g_return_val_if_fail(query, nullptr);
 
-    return query->permissionName.data();
+    return query->permissionName.legacyCStringPointer();
 }
 
 /**

@@ -201,7 +201,7 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
     GRefPtr<GTask> task = adoptGRef(g_task_new(database, cancellable, callback, userData));
     WebKitFaviconDatabasePrivate* priv = database->priv;
     priv->iconDatabase->loadIconsForPageURL(String::fromUTF8(pageURI), isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
-        [task = WTF::move(task), pageURI = CString(pageURI)](Vector<PlatformImagePtr>&& icons) {
+        [task = WTF::move(task), pageURI = ASCIICString(pageURI)](Vector<PlatformImagePtr>&& icons) {
             if (icons.isEmpty()) {
                 g_task_return_new_error(task.get(), WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN,
                     _("Unknown favicon for page %s"), pageURI.data());
