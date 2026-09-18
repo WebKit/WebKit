@@ -111,6 +111,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
     Vector<MarkedText> markedTexts;
     RenderHighlight renderHighlight;
     auto& parentRenderer = *renderer.parent();
+    RefPtr textNode = renderer.textNode();
     if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {
         for (auto& highlightName : highlightRegistry->highlightNames()) {
             CheckedPtr renderStyle = parentRenderer.lazyPseudoElementStyle({ PseudoElementType::Highlight, highlightName });
@@ -118,28 +119,18 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 continue;
             if (renderStyle->textDecorationLineInEffect().isNone() && phase == PaintPhase::Decoration)
                 continue;
-            for (auto& highlightRange : highlightRegistry->map().get(highlightName)->highlightRanges()) {
+            RefPtr highlight = highlightRegistry->map().get(highlightName);
+            for (auto& highlightRange : textNode ? highlight->highlightRangesFor(*textNode) : highlight->highlightRanges()) {
                 if (!renderHighlight.setRenderRange(highlightRange))
                     continue;
                 if (auto* staticRange = dynamicDowncast<StaticRange>(highlightRange->range()); staticRange
                     && (!staticRange->computeValidity() || staticRange->collapsed()))
                     continue;
-                // FIXME: Potentially move this check elsewhere, to where we collect this range information.
-                auto hasRenderer = [&] {
-                    IntersectingNodeRange nodes(makeSimpleRange(highlightRange->range()));
-                    for (Ref iterator : nodes) {
-                        if (iterator->renderer())
-                            return true;
-                    }
-                    return false;
-                }();
-                if (!hasRenderer)
-                    continue;
 
                 auto [highlightStart, highlightEnd] = renderHighlight.rangeForTextBox(renderer, selectableRange);
 
                 if (highlightStart < highlightEnd) {
-                    int currentPriority = highlightRegistry->map().get(highlightName)->priority();
+                    int currentPriority = highlight->priority();
                     // If we can just append it to the end, do that instead.
                     if (markedTexts.isEmpty() || markedTexts.last().priority <= currentPriority)
                         markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlightName, currentPriority });
@@ -160,7 +151,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 
     auto appendMarkedTextHighlights = [&](const HighlightRegistry& registry, MarkedText::Type markedTextType) {
         for (Ref highlight : registry.map().values()) {
-            for (Ref highlightRange : highlight->highlightRanges()) {
+            for (Ref highlightRange : textNode ? highlight->highlightRangesFor(*textNode) : highlight->highlightRanges()) {
                 if (!renderHighlight.setRenderRange(highlightRange))
                     continue;
 
