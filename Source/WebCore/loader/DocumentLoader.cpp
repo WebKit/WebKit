@@ -2548,6 +2548,14 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
     return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
 }
 
+bool DocumentLoader::hasCrossOriginRedirect() const
+{
+    if (m_hasCrossOriginRedirect)
+        return true;
+    const auto* metrics = m_response.deprecatedNetworkLoadMetricsOrNull();
+    return metrics && metrics->crossOriginRedirect();
+}
+
 // https://www.w3.org/TR/css-view-transitions-2/#navigation-can-trigger-a-cross-document-view-transition
 CanTriggerCrossDocumentViewTransition DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument, bool fromBackForwardCache)
 {
@@ -2570,10 +2578,8 @@ CanTriggerCrossDocumentViewTransition DocumentLoader::navigationCanTriggerCrossD
     if (!newOrigin->isSameOriginAs(protect(oldDocument.securityOrigin())))
         return CanTriggerCrossDocumentViewTransition::No;
 
-    if (const auto* metrics = response().deprecatedNetworkLoadMetricsOrNull(); metrics && !fromBackForwardCache) {
-        if (metrics->crossOriginRedirect())
-            return CanTriggerCrossDocumentViewTransition::No;
-    }
+    if (!fromBackForwardCache && hasCrossOriginRedirect())
+        return CanTriggerCrossDocumentViewTransition::No;
 
     if (*m_triggeringAction.navigationAPIType() == NavigationNavigationType::Traverse)
         return CanTriggerCrossDocumentViewTransition::Yes;

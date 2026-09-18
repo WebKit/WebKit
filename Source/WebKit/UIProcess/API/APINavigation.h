@@ -117,7 +117,9 @@ public:
     const WebCore::ResourceRequest& currentRequest() const LIFETIME_BOUND { return m_currentRequest; }
 
     bool currentRequestIsRedirect() const { return m_lastNavigationAction && !m_lastNavigationAction->redirectResponse.isNull(); }
-    bool currentRequestIsCrossSiteRedirect() const;
+
+    bool hasCrossOriginRedirect() const { return m_hasCrossOriginRedirect; }
+    void setHasCrossOriginRedirect() { m_hasCrossOriginRedirect = true; }
 
     WebKit::WebBackForwardListItem* targetItem() const;
     WebKit::WebBackForwardListFrameItem* targetFrameItem() const { return m_targetFrameItem.get(); }
@@ -245,6 +247,7 @@ private:
     bool m_hadSafeBrowsingWarning : 1 { false };
     bool m_hasStorageForCurrentSite : 1 { false };
     bool m_isEnhancedSecurityLinkForCurrentSite : 1 { false };
+    bool m_hasCrossOriginRedirect : 1 { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;
     MonotonicTime m_requestStart { MonotonicTime::now() };

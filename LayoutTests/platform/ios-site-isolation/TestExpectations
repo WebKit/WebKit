@@ -333,7 +333,6 @@ http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Fa
 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/dynamic-import-is-prohibited.https.html [ Failure ]
 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/no-view-transition-with-cross-origin-redirect.sub.html [ Failure ]
 imported/w3c/web-platform-tests/css/selectors/media/media-playback-state-timing.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/srcdoc-history-entries.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/same-origin-top-navigation-without-user-activation.window.html [ Failure ]
