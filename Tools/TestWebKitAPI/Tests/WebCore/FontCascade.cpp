@@ -29,6 +29,7 @@
 #include <WebCore/FontCache.h>
 #include <WebCore/FontCascade.h>
 #include <WebCore/FontCascadeFonts.h>
+#include <WebCore/FontCascadeInlines.h>
 #include <WebCore/TextRun.h>
 #include <WebCore/TextShapingResultAndDisplayList.h>
 #include <wtf/WeakHashSet.h>
@@ -210,4 +211,45 @@ TEST(FontCascadeTest, ComplexTextRetainsSystemFallbackFonts)
     }
     ASSERT_TRUE(hasUsedFallbackFont);
 }
+
+#if PLATFORM(COCOA)
+// Synthetic bold smears ink at paint time and must not change how wide text measures. The simplified
+// measuring fast path reads Font::widthForGlyph() directly, while the general simple path goes through
+// WidthIterator, so the two only agree as long as neither folds the synthetic bold offset into advances.
+// RenderText::computeCanUseSimplifiedTextMeasuring() and TextUtil::canUseSimplifiedTextMeasuring() rely
+// on that to let synthetically bolded text take the fast path at all; if the offset is ever added back
+// to advances, those guards have to come back and this is what should fail first. rdar://187588326
+TEST(FontCascadeTest, SyntheticBoldMeasuresTheSameOnBothSimpleTextPaths)
+{
+    constexpr float fontSize = 16;
+
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setUsedSize(fontSize);
+    FontCascade unboldedFontCascade(WTF::move(description));
+    unboldedFontCascade.update();
+
+    // The same font, flagged the way the font cache flags a bold weight in a family that has no bold face.
+    FontPlatformData syntheticBoldPlatformData(RetainPtr { unboldedFontCascade.primaryFont().platformData().ctFont() }, fontSize, true);
+    FontCascade fontCascade(syntheticBoldPlatformData);
+
+    // Otherwise the run would not be emboldened at all and the expectations below would hold trivially.
+    EXPECT_GT(fontCascade.primaryFont().syntheticBoldOffset(), 0);
+
+    String text = "the quick brown fox"_str;
+    TextRun run { text };
+    ASSERT_NE(fontCascade.codePath(run), CodePath::Complex);
+
+    // Both measuring functions memoize into the same cache, so it has to be cleared between them.
+    fontCascade.fonts()->glyphGeometryCache().clear();
+    auto simplifiedWidth = fontCascade.widthForTextUsingSimplifiedMeasuring(text);
+    fontCascade.fonts()->glyphGeometryCache().clear();
+    auto generalWidth = fontCascade.width(run);
+    EXPECT_NEAR(simplifiedWidth, generalWidth, 0.0001);
+
+    // Both paths must also land on the width of the very same glyphs measured without synthetic bold.
+    unboldedFontCascade.fonts()->glyphGeometryCache().clear();
+    EXPECT_NEAR(simplifiedWidth, unboldedFontCascade.width(run), 0.0001);
+}
+#endif
 }

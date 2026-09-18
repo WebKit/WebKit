@@ -788,8 +788,6 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const FontC
         return false;
 
     Ref primaryFont = fontCascade.primaryFont();
-    if (primaryFont->syntheticBoldOffset())
-        return false;
 
     if (textContent.is8Bit())
         return canUseSimplifiedTextMeasuringForCharacters(textContent.span8(), fontCascade, primaryFont, whitespaceIsCollapsed);

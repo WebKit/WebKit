@@ -386,7 +386,6 @@ NEVER_INLINE float FontCascade::widthForSimpleTextSlow(StringView text, TextDire
 #else
     GlyphBuffer glyphBuffer;
     Ref font = primaryFont();
-    ASSERT(!font->syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
 
     auto addGlyphsFromText = [&](GlyphBuffer& glyphBuffer, const Font& font, auto characters) {
         for (size_t i = 0; i < characters.size(); ++i) {
