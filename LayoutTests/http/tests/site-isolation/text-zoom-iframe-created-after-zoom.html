@@ -1,0 +1,89 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a cross-origin iframe created after a text zoom change resolves style at the current zoom rather than at 1");
+
+jsTestIsAsync = true;
+
+const childURL = "http://localhost:8000/site-isolation/resources/text-zoom-frame.html";
+const iframeWidth = 420;
+const iframeHeight = 44;
+
+var earlyPid, latePid, unzoomedTextWidth, earlyTextWidth, lateTextWidth;
+
+var resolveReport = null;
+window.addEventListener("message", event => {
+    const resolve = resolveReport;
+    resolveReport = null;
+    if (resolve)
+        resolve(event.data);
+});
+
+function ask(frame)
+{
+    return new Promise(resolve => {
+        resolveReport = resolve;
+        frame.contentWindow.postMessage("measure", "*");
+    });
+}
+
+function addFrame()
+{
+    return new Promise(resolve => {
+        const frame = document.createElement("iframe");
+        frame.width = iframeWidth;
+        frame.height = iframeHeight;
+        frame.frameBorder = "0";
+        frame.onload = () => resolve(frame);
+        frame.src = childURL;
+        document.body.appendChild(frame);
+    });
+}
+
+async function settled(frame)
+{
+    let previous = null;
+    let stable = 0;
+    let report = null;
+    for (let attempt = 0; attempt < 60 && stable < 3; ++attempt) {
+        await new Promise(requestAnimationFrame);
+        report = await ask(frame);
+        stable = report.textW === previous ? stable + 1 : 0;
+        previous = report.textW;
+    }
+    return report;
+}
+
+async function run()
+{
+    const early = await addFrame();
+    unzoomedTextWidth = (await settled(early)).textW;
+
+    eventSender.textZoomIn();
+    eventSender.textZoomIn();
+    const earlyReport = await settled(early);
+
+    const late = await addFrame();
+    const lateReport = await settled(late);
+
+    earlyPid = earlyReport.pid;
+    latePid = lateReport.pid;
+    shouldBe("latePid", "earlyPid");
+
+    earlyTextWidth = earlyReport.textW;
+    lateTextWidth = lateReport.textW;
+    shouldBeTrue("earlyTextWidth > unzoomedTextWidth");
+    shouldBe("lateTextWidth", "earlyTextWidth");
+
+    eventSender.textZoomOut();
+    eventSender.textZoomOut();
+    finishJSTest();
+}
+
+run();
+</script>
+</body>
+</html>

@@ -652,6 +652,11 @@ public:
     WEBCORE_EXPORT void setViewScaleFactor(float);
     float viewScaleFactor() const { return m_viewScaleFactor; }
 
+    WEBCORE_EXPORT void setPageZoomFactor(float);
+    float pageZoomFactor() const { return m_pageZoomFactor; }
+    WEBCORE_EXPORT void setTextZoomFactor(float);
+    float textZoomFactor() const { return m_textZoomFactor; }
+
     WEBCORE_EXPORT void setZoomedOutPageScaleFactor(float);
     float zoomedOutPageScaleFactor() const { return m_zoomedOutPageScaleFactor; }
 
@@ -1539,6 +1544,9 @@ private:
     HashSet<WeakRef<LocalFrame>> m_rootFrames;
     const UniqueRef<EditorClient> m_editorClient;
 
+    // Declared before m_mainFrame so a local main frame can read them as m_mainFrame is built.
+    float m_pageZoomFactor { 1 };
+    float m_textZoomFactor { 1 };
     Ref<Frame> m_mainFrame;
     String m_mainFrameURLFragment;
 

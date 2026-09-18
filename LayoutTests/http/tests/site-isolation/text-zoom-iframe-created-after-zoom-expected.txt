@@ -1,0 +1,12 @@
+Tests that a cross-origin iframe created after a text zoom change resolves style at the current zoom rather than at 1
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS latePid is earlyPid
+PASS earlyTextWidth > unzoomedTextWidth is true
+PASS lateTextWidth is earlyTextWidth
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -165,20 +165,20 @@ struct OverrideScreenSize {
     FloatSize size;
 };
 
-static inline float NODELETE parentPageZoomFactor(LocalFrame* frame)
+static inline float NODELETE parentPageZoomFactor(Page& page, Frame* parent)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
-    if (!parent)
-        return 1;
-    return parent->pageZoomFactor();
+    SUPPRESS_UNCOUNTED_LOCAL auto* localParent { dynamicDowncast<LocalFrame>(parent) };
+    if (!localParent)
+        return page.pageZoomFactor();
+    return localParent->pageZoomFactor();
 }
 
-static inline float NODELETE parentTextZoomFactor(LocalFrame* frame)
+static inline float NODELETE parentTextZoomFactor(Page& page, Frame* parent)
 {
-    SUPPRESS_UNCOUNTED_LOCAL auto* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());
-    if (!parent)
-        return 1;
-    return parent->textZoomFactor();
+    SUPPRESS_UNCOUNTED_LOCAL auto* localParent { dynamicDowncast<LocalFrame>(parent) };
+    if (!localParent)
+        return page.textZoomFactor();
+    return localParent->textZoomFactor();
 }
 
 static const LocalFrame& NODELETE rootFrame(const LocalFrame& frame, Frame* parent)
@@ -199,8 +199,8 @@ LocalFrame::LocalFrame(Page& page, ClientCreator&& clientCreator, FrameIdentifie
     , m_rangedSelectionBase(makeUniqueRef<VisibleSelection>())
     , m_rangedSelectionInitialExtent(makeUniqueRef<VisibleSelection>())
 #endif
-    , m_pageZoomFactor(parentPageZoomFactor(this))
-    , m_textZoomFactor(parentTextZoomFactor(this))
+    , m_pageZoomFactor(parentPageZoomFactor(page, parent))
+    , m_textZoomFactor(parentTextZoomFactor(page, parent))
     , m_rootFrame(WebCore::rootFrame(*this, parent))
     , m_sandboxFlags(sandboxFlags)
     , m_parentFrameOrOpenerReferrerPolicy(referrerPolicy)
@@ -1134,12 +1134,16 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     }
 }
 
-float LocalFrame::usedZoomForChild(const Frame& child) const
+float LocalFrame::cssZoomForChild(const Frame& child) const
 {
-    if (CheckedPtr ownerRenderer = child.ownerRenderer())
+    CheckedPtr ownerRenderer { child.ownerRenderer() };
+    if (!ownerRenderer)
+        return 1;
+
+    if (RefPtr document = this->document(); document && document->printing())
         return ownerRenderer->style().usedZoom();
 
-    return 1.0;
+    return ownerRenderer->style().usedZoom() / m_pageZoomFactor;
 }
 
 void LocalFrame::suspendActiveDOMObjectsAndAnimations()
