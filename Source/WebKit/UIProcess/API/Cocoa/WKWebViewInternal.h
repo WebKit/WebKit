@@ -822,12 +822,6 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const std::optional<WebCore::Exce
 @end
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-@interface WKWebView (_WKWebViewPrintFormatter)
-@property (nonatomic, readonly) id <_WKWebViewPrintProvider> _printProvider;
-@end
-#endif
-
 WebCore::CocoaColor *sampledFixedPositionContentColor(const WebCore::FixedContainerEdges&, WebCore::BoxSide);
 
 #if ENABLE(TWO_PHASE_CLICKS)

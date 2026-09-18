@@ -1168,9 +1168,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark Printing
 
-@interface WKContentView (_WKWebViewPrintFormatter) <_WKWebViewPrintProvider>
-@end
-
 @implementation WKContentView (_WKWebViewPrintFormatter)
 
 - (std::optional<WebCore::FrameIdentifier>)_frameIdentifierForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
@@ -1185,11 +1182,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
-}
-
-- (BOOL)_wk_printFormatterRequiresMainThread
-{
-    return NO;
 }
 
 - (RetainPtr<_WKPrintFormattingAttributes>)_attributesForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
