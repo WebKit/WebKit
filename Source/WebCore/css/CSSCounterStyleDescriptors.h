@@ -122,7 +122,7 @@ struct CSSCounterStyleDescriptors {
     }
     void setExplicitlySetDescriptors(const StyleProperties&);
     bool NODELETE isValid() const;
-    static bool NODELETE areSymbolsValidForSystem(System, const Vector<Symbol>&, const AdditiveSymbols&);
+    static bool NODELETE areSymbolsValidForSystem(System, size_t symbolsCount, size_t additiveSymbolsCount);
 
     void setName(Name);
     void setSystem(System);
