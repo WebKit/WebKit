@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-authnrselection.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-challenge.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-rp.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-sharedarraybuffer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-badargs-user.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-clientdata.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/createcredential-cross-origin-iframe.https.sub.html
@@ -44,6 +45,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-allowcredentials.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-attachment.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-badargs-rpid.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-badargs-sharedarraybuffer.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-badargs-userverification.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-extensions.https.html
 /LayoutTests/imported/w3c/web-platform-tests/webauthn/getcredential-hints.https.html

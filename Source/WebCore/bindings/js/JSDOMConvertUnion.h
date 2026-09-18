@@ -466,7 +466,7 @@ template<> struct Converter<IDLBufferSource> : DefaultConverter<IDLBufferSource>
 
     static Result convert(JSC::JSGlobalObject& globalObject, JSC::JSValue value)
     {
-        return WebCore::convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBufferView>, IDLAllowSharedAdaptor<IDLArrayBuffer>>>(globalObject, value);
+        return WebCore::convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(globalObject, value);
     }
 };
 
