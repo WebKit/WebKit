@@ -303,28 +303,30 @@ std::optional<WebCore::IntSize> getDisplaySize(WebCore::IntSize originalSize, in
     return computedSize;
 }
 
+static bool isProtocolAllowedByEnvironment(StringView protocol)
+{
+    auto additionalProtocols = StringView::fromLatin1(std::getenv("WEBKIT_GST_ALLOWED_URI_PROTOCOLS"));
+    for (auto additionalProtocol : additionalProtocols.split(',')) {
+        if (additionalProtocol.trim(deprecatedIsSpaceOrNewline).toString().convertToLowercaseWithoutLocale() == protocol)
+            return true;
+    }
+    return false;
+}
+
 bool isProtocolAllowed(const WTF::URL& url)
 {
-    HashSet<String> allowedProtocols = { "blob"_s, "data"_s, "file"_s, "http"_s, "https"_s };
+    static NeverDestroyed<HashSet<String>> allowedProtocols = std::initializer_list<String> {
+        "blob"_s, "data"_s, "file"_s, "http"_s, "https"_s,
 #if ENABLE(MEDIA_SOURCE)
-    allowedProtocols.add("mediasourceblob"_s);
+        "mediasourceblob"_s,
 #endif
 #if ENABLE(MEDIA_STREAM)
-    allowedProtocols.add("mediastream"_s);
+        "mediastream"_s,
 #endif
+    };
 
-    // Parse and add protocols from environment variable
-    auto additionalProtocols = String::fromLatin1(std::getenv("WEBKIT_GST_ALLOWED_URI_PROTOCOLS"));
-    if (!additionalProtocols.isEmpty()) {
-        for (auto protocols : additionalProtocols.split(',')) {
-            auto trimmedProtocol = protocols.trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
-            if (!trimmedProtocol.isEmpty())
-                allowedProtocols.add(trimmedProtocol);
-        }
-    }
-
-    auto protocol = url.protocol().toString().convertToLowercaseWithoutLocale();
-    bool isAllowed = allowedProtocols.contains(protocol);
+    auto protocol = url.protocol();
+    bool isAllowed = !protocol.isEmpty() && (allowedProtocols->contains<StringViewHashTranslator>(protocol) || isProtocolAllowedByEnvironment(protocol));
 
     GST_DEBUG("URL: %s", url.string().utf8().legacyCStringPointer());
     GST_DEBUG("Requested protocol: %s (allowed: %s)", protocol.utf8().legacyCStringPointer(), isAllowed ? "yes" : "no");
