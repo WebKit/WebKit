@@ -38,7 +38,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 
 OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
-    : parentClass(definition->parentClass)
+    : parentClass(nullptr)
     , prototypeClass(nullptr)
     , initialize(definition->initialize)
     , finalize(definition->finalize)
@@ -75,6 +75,8 @@ OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass*
         
     if (protoClass)
         prototypeClass = JSClassRetain(protoClass);
+    if (definition->parentClass)
+        parentClass = JSClassRetain(definition->parentClass);
 }
 
 OpaqueJSClass::~OpaqueJSClass()
@@ -91,6 +93,8 @@ OpaqueJSClass::~OpaqueJSClass()
 
     if (prototypeClass)
         JSClassRelease(prototypeClass);
+    if (parentClass)
+        JSClassRelease(parentClass);
 }
 
 Ref<OpaqueJSClass> OpaqueJSClass::createNoAutomaticPrototype(const JSClassDefinition* definition)

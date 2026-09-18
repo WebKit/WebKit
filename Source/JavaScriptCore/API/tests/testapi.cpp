@@ -132,6 +132,7 @@ public:
     void topCallFrameAccess();
     void markedJSValueArrayAndGC();
     void classDefinitionWithJSSubclass();
+    void classDefinitionRetainsParentClass();
     void proxyReturnedWithJSSubclassing();
     void testJSObjectSetOnGlobalObjectSubclassDefinition();
     void testBigInt();
@@ -668,6 +669,32 @@ void TestAPI::classDefinitionWithJSSubclass()
     check(functionReturnsTrue("(function (subclass, Superclass) { return subclass instanceof Superclass; })", subclass, Superclass), "JS subclass should instanceof the Superclass");
 
     JSClassRelease(jsClass);
+}
+
+void TestAPI::classDefinitionRetainsParentClass()
+{
+    // A JSClass must retain its JSClassDefinition.parentClass. Otherwise, releasing
+    // the caller's reference to the parent leaves the child with a dangling pointer
+    // that is dereferenced when the child materializes its prototype chain.
+    JSClassDefinition parentDefinition = kJSClassDefinitionEmpty;
+    parentDefinition.className = "Parent";
+    JSClassRef parentClass = JSClassCreate(&parentDefinition);
+
+    JSClassDefinition childDefinition = kJSClassDefinitionEmpty;
+    childDefinition.className = "Child";
+    childDefinition.parentClass = parentClass;
+    JSClassRef childClass = JSClassCreate(&childDefinition);
+
+    // Drop the caller's reference to the parent. If the child did not retain it, the
+    // OpaqueJSClass is now freed and the child holds a dangling parentClass pointer.
+    JSClassRelease(parentClass);
+
+    // Making an object of the child class walks the parent chain to build the
+    // prototype, dereferencing parentClass. This is a use-after-free without the fix.
+    JSObjectRef object = JSObjectMake(context, childClass, nullptr);
+    check(JSValueIsObject(context, object), "creating an object of a class with a released parent class should succeed");
+
+    JSClassRelease(childClass);
 }
 
 void TestAPI::proxyReturnedWithJSSubclassing()
@@ -1218,6 +1245,7 @@ int testCAPIViaCpp(const char* filter)
     RUN(promiseEarlyHandledRejections());
     RUN(markedJSValueArrayAndGC());
     RUN(classDefinitionWithJSSubclass());
+    RUN(classDefinitionRetainsParentClass());
     RUN(proxyReturnedWithJSSubclassing());
     RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());
 
