@@ -5356,6 +5356,9 @@ webkit.org/b/324247 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode
 webkit.org/b/324335 [ Debug ] accessibility/accessible-name-chain-depth-no-crash.html [ Timeout Pass ]
 webkit.org/b/324339 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/text/canvas.2d.fillText.html [ ImageOnlyFailure Pass ]
 
+# Gardening 2026-09-18
+imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-border-area-corner-shape.html [ Pass ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
