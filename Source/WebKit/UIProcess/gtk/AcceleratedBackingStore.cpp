@@ -36,6 +36,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DMABufBuffer.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/NativeImage.h>
@@ -214,10 +215,32 @@ AcceleratedBackingStore::AcceleratedBackingStore(WebPageProxy& webPage)
     : m_webPage(webPage)
     , m_fenceMonitor([this] {
         if (m_webPage)
-            gtk_widget_queue_draw(m_webPage->viewWidget());
+            queuePendingDamageDraw();
     })
     , m_legacyMainFrameProcess(webPage.legacyMainFrameProcess())
 {
+}
+
+void AcceleratedBackingStore::queuePendingDamageDraw()
+{
+    auto* viewWidget = m_webPage->viewWidget();
+
+#if !USE(GTK4)
+    // GTK4 hands the damage to the texture builder, but on GTK3 the widget has to be
+    // invalidated per rect, otherwise every frame repaints and uploads the whole view.
+    if (!m_pendingDamageRects.isEmpty() && m_committedBuffer) {
+        auto deviceScaleFactor = m_webPage->deviceScaleFactor();
+        for (const auto& rect : m_pendingDamageRects) {
+            FloatRect scaledRect(rect);
+            scaledRect.scale(1 / deviceScaleFactor);
+            auto widgetRect = enclosingIntRect(scaledRect);
+            gtk_widget_queue_draw_area(viewWidget, widgetRect.x(), widgetRect.y(), widgetRect.width(), widgetRect.height());
+        }
+        return;
+    }
+#endif
+
+    gtk_widget_queue_draw(viewWidget);
 }
 
 AcceleratedBackingStore::~AcceleratedBackingStore()
