@@ -24,3 +24,9 @@
  */
 
 #import "TestWebKitAPISupport.h"
+
+// Only TestIPC has this header; for every other test target the include is skipped. Xcode resolves
+// it through the target's header map, which is keyed on the basename.
+#if __has_include("SwiftDeferredReplySupport.h")
+#import "SwiftDeferredReplySupport.h"
+#endif

@@ -42,12 +42,14 @@ final class IPCTesterReceiver {
         return messageForwarder
     }
 
+    // Deliberately async, to exercise a handler that defers its reply. Sibling receivers reply
+    // immediately; both shapes go through the same generated dispatch.
+    @MainActor
     func asyncMessage(
         connection: IPC.Connection,
-        arg1: UInt32,
-        completionHandler: CompletionHandlers.IPCTesterReceiver.AsyncMessageCompletionHandler
-    ) {
-        completionHandler.pointee(arg1 + 2)
+        arg1: UInt32
+    ) async -> UInt32 {
+        arg1 + 2
     }
 }
 

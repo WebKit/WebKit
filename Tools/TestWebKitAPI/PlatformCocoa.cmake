@@ -631,6 +631,45 @@ list(APPEND TestWTF_SOURCES
     Tests/WTF/cocoa/SwiftCxxInteropTests.swift
 )
 
+# A Swift IPC receiver TestIPC's C++ drives over a real connection. The Swift lives here rather than
+# in TestIPC because the C++ which calls it includes a generated interop header: were both in one
+# target, that C++ would depend on its own target's Swift compile.
+add_library(TestIPCLibrary OBJECT
+    ${TESTWEBKITAPI_DIR}/Tests/IPC/SwiftDeferredReplySupport.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/IPC/SwiftDeferredReplyReceiver.swift
+)
+WEBKIT_TEST_SWIFT_HELPER_LIBRARY(TestIPCLibrary TestIPC)
+
+set(_testipc_swift_header_dir "${CMAKE_CURRENT_BINARY_DIR}/SwiftHeaders")
+set(_testipc_swift_header "${_testipc_swift_header_dir}/TestIPCLibrary-Swift.h")
+file(MAKE_DIRECTORY "${_testipc_swift_header_dir}")
+webkit_target_add_swift_options(TestIPCLibrary
+    "-emit-clang-header-path ${_testipc_swift_header}.tmp"
+    "-import-objc-header ${TESTWEBKITAPI_DIR}/Tests/IPC/SwiftDeferredReplySupport.h"
+)
+target_include_directories(TestIPCLibrary PRIVATE ${TESTWEBKITAPI_DIR}/Tests/IPC)
+
+# The header is a side effect of the Swift compile, which ninja does not know about, so copying it
+# gives it a declared producer. Without that the C++ which includes it can be compiled first, and
+# picks up whatever the previous build left behind.
+add_custom_command(
+    OUTPUT "${_testipc_swift_header}"
+    DEPENDS "${_testwebkitapi_swiftmodule_dir}/TestIPCLibrary.swiftmodule"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_testipc_swift_header}.tmp" "${_testipc_swift_header}"
+    COMMENT "Copying TestIPCLibrary Swift/C++ interop header"
+    VERBATIM
+)
+add_custom_target(TestIPCLibrary_SwiftCxxHeader DEPENDS "${_testipc_swift_header}")
+
+target_include_directories(TestIPC PRIVATE
+    "${_testipc_swift_header_dir}"
+    ${TESTWEBKITAPI_DIR}/Tests/IPC
+)
+add_dependencies(TestIPC TestIPCLibrary TestIPCLibrary_SwiftCxxHeader)
+set_source_files_properties(${TESTWEBKITAPI_DIR}/Tests/IPC/SwiftDeferredReplyTests.cpp
+    PROPERTIES OBJECT_DEPENDS "${_testipc_swift_header}"
+)
+
 add_library(TestWebKitAPILibrary OBJECT
     ${TESTWEBKITAPI_DIR}/TestWebKitAPILibrary/TestWebKitAPILibrary.swift
 

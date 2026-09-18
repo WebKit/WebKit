@@ -73,23 +73,30 @@ func mayThrowInvalidMessage<T>(_ result: T) throws(InvalidMessage) -> T {
     result
 }
 
+@inline(__always)
+@discardableResult
+nonisolated(nonsending) func mayThrowInvalidMessage<T>(_ result: T) async throws(InvalidMessage) -> T {
+    result
+}
+
 // Returns false if the message was invalid, so that generated dispatch can send a default reply.
 @discardableResult
 func dispatchMessage(
     on connection: IPC.Connection,
+    message: IPC.MessageName,
     body: () throws(InvalidMessage) -> Void
 ) -> Bool {
     do {
         try body()
     } catch {
-        markMessageInvalid(error, on: connection)
+        markMessageInvalid(error, on: connection, message: message)
         return false
     }
     return true
 }
 
-func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection) {
-    connection.markCurrentlyDispatchedMessageAsInvalid(WTF.String(error.reason.description))
+func markMessageInvalid(_ error: InvalidMessage, on connection: IPC.Connection, message: IPC.MessageName) {
+    connection.markMessageAsInvalid(message, WTF.String(error.reason.description))
 }
 
 private func logFailedMessageCheck(
