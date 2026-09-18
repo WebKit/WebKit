@@ -67,6 +67,7 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
+#include "RenderTreeBuilderCanvas.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderInline.h"
@@ -182,6 +183,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_blockFlowBuilder(makeUniqueRef<BlockFlow>(*this))
     , m_inlineBuilder(makeUniqueRef<Inline>(*this))
     , m_svgBuilder(makeUniqueRef<SVG>(*this))
+    , m_canvasBuilder(makeUniqueRef<Canvas>(*this))
 #if ENABLE(MATHML)
     , m_mathMLBuilder(makeUniqueRef<MathML>(*this))
 #endif
@@ -394,6 +396,11 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent)) {
         svgBuilder().attach(*svgRoot, WTF::move(child), beforeChild);
+        return;
+    }
+
+    if (auto* canvasRoot = dynamicDowncast<RenderHTMLCanvas>(parent)) {
+        canvasBuilder().attach(*canvasRoot, WTF::move(child), beforeChild);
         return;
     }
 
