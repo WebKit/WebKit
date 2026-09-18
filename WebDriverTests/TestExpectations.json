@@ -2218,8 +2218,10 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_date": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}},
-                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/324566"}}
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/324566"}
+                }
             },
             "test_input_append": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182331"}}
