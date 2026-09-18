@@ -10924,11 +10924,16 @@ static void swizzledRequestDOMPasteAccess(id, SEL,
 
 namespace TestWebKitAPI {
 
-TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
+static ASCIILiteral defaultDOMPasteMainframeHTML = "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
+static ASCIILiteral scrolledMainFrameDOMPasteMainframeHTML = "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
+static ASCIILiteral defaultDOMPasteSubframeHTML = "<!DOCTYPE html><body style='margin: 0'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s;
+static ASCIILiteral tallDOMPasteSubframeHTML = "<!DOCTYPE html><body style='margin: 0; min-height: 1000px'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s;
+
+static void checkDOMPasteAccessRectInCrossOriginIframe(const String& mainframeHTML, const String& subframeHTML, CGFloat expectedX, CGFloat expectedY, void (^prepareBeforeFocusing)(TestWKWebView *, WKFrameInfo *) = nil)
 {
     HTTPServer server({
-        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
-        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><textarea style='margin: 50px; width: 100px; height: 50px; border: none; padding: 0;'></textarea></body>"_s } }
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/iframe"_s, { subframeHTML } }
     }, HTTPServer::Protocol::HttpsProxy);
 
     SiteIsolationDOMPaste::capturedElementRect = CGRectZero;
@@ -10945,14 +10950,67 @@ TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
     [navigationDelegate waitForDidFinishNavigation];
     [webView waitForNextPresentationUpdate];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
 
-    [webView evaluateJavaScript:@"document.querySelector('textarea').focus(); document.execCommand('paste')" inFrame:[webView firstChildFrame] completionHandler:nil];
+    if (prepareBeforeFocusing)
+        prepareBeforeFocusing(webView.get(), childFrameInfo.get());
+
+    [webView evaluateJavaScript:@"document.querySelector('textarea').focus(); document.execCommand('paste')" inFrame:childFrameInfo.get() completionHandler:nil];
 
     Util::run(&SiteIsolationDOMPaste::receivedRequest);
 
-    // The iframe is at (100, 100) in main-frame coordinates, so the rect should be converted from subframe coords.
-    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.x, 100);
-    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.y, 100);
+    // Without a real touch event, the reported rect comes from a hit-test at the origin of the
+    // subframe's viewport (i.e. the enclosing <body>), converted to main-frame coordinates -- not
+    // from the focused <textarea>'s own bounds.
+    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.x, expectedX);
+    EXPECT_EQ(SiteIsolationDOMPaste::capturedElementRect.origin.y, expectedY);
+}
+
+TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframe)
+{
+    checkDOMPasteAccessRectInCrossOriginIframe(defaultDOMPasteMainframeHTML, defaultDOMPasteSubframeHTML, 100, 100);
+}
+
+TEST(SiteIsolation, DOMPasteAccessRectInCrossOriginIframeWithScrolledMainFrame)
+{
+    checkDOMPasteAccessRectInCrossOriginIframe(scrolledMainFrameDOMPasteMainframeHTML, defaultDOMPasteSubframeHTML, 100, 100,
+        ^(TestWKWebView *webView, WKFrameInfo *) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+        });
+}
+
+TEST(SiteIsolation, DOMPasteAccessRectInScrolledCrossOriginIframe)
+{
+    checkDOMPasteAccessRectInCrossOriginIframe(defaultDOMPasteMainframeHTML, tallDOMPasteSubframeHTML, 100, -400,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        });
+}
+
+TEST(SiteIsolation, DOMPasteAccessRectInScrolledCrossOriginIframeWithScrolledMainFrame)
+{
+    checkDOMPasteAccessRectInCrossOriginIframe(scrolledMainFrameDOMPasteMainframeHTML, tallDOMPasteSubframeHTML, 100, -400,
+        ^(TestWKWebView *webView, WKFrameInfo *childFrameInfo) {
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400)"];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] == 400;
+            }));
+            [webView waitForNextPresentationUpdate];
+
+            [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 500)" inFrame:childFrameInfo];
+            EXPECT_TRUE(Util::waitFor([&] {
+                return [[webView objectByEvaluatingJavaScript:@"window.scrollY" inFrame:childFrameInfo] intValue] == 500;
+            }));
+            [webView waitForNextPresentationUpdate];
+        });
 }
 
 TEST(SiteIsolation, ApplyAutocorrectionInCrossOriginIframe)

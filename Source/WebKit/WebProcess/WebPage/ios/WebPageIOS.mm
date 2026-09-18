@@ -846,7 +846,7 @@ IntRect WebPage::rectForElementAtInteractionLocation() const
     RefPtr hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
         return IntRect();
-    return protect(result.innerNodeFrame()->view())->contentsToRootView(protect(hitNode->renderer())->absoluteBoundingBoxRect(true));
+    return protect(result.innerNodeFrame()->view())->contentsToMainFrameView(protect(hitNode->renderer())->absoluteBoundingBoxRect(true));
 }
 
 void WebPage::updateSelectionAppearance()
