@@ -27,6 +27,7 @@
 #include <wtf/Borrow.h>
 
 #include "Helpers/Test.h"
+#include <optional>
 #include <wtf/CanBorrow.h>
 
 namespace TestWebKitAPI {
@@ -118,6 +119,18 @@ TEST(WTF_Borrow, DestroyAfterBorrowEndsIsFine)
 }
 
 // The CanBorrow assertions are debug-only for now; see the FIXMEs in CanBorrow.h.
+
+TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(OutOfOrderReleaseCrashes))
+{
+    auto shouldCrash = [] {
+        Borrowable object;
+        std::optional<Borrow<Borrowable>> outer;
+        outer.emplace(object);
+        Borrow inner(object);
+        outer.reset();
+    };
+    ASSERT_DEATH_IF_SUPPORTED(shouldCrash(), "");
+}
 
 TEST(WTF_BorrowDeathTest, MAYBE_ASSERT_ENABLED_DEATH_TEST(DestroyWhileBorrowedCrashes))
 {
