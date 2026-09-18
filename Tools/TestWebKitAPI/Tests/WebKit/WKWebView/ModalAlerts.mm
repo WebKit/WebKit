@@ -27,6 +27,7 @@
 
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKPreferences.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -309,6 +310,80 @@ TEST(WebKit, SlowBeforeUnloadHandlerSingleClosePageCall)
 
     EXPECT_EQ(1U, viewDidCloseCallCount);
     EXPECT_FALSE([webView _isClosed]);
+}
+
+// A UI delegate that merely implements the beforeunload panel, so that
+// Chrome::canRunBeforeUnloadConfirmPanel() is true and beforeunload gets dispatched at all.
+@interface BeforeUnloadPanelUIDelegate : NSObject <WKUIDelegate>
+@end
+
+@implementation BeforeUnloadPanelUIDelegate
+
+- (void)_webView:(WKWebView *)webView runBeforeUnloadConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL result))completionHandler
+{
+    completionHandler(YES);
+}
+
+@end
+
+// Sets a beforeunload handler on the subframe, navigates it, and reports how many times
+// beforeunload had run by the time the location setter returned.
+static NSString * const navigateSubframeAndCountBeforeUnloadScript =
+    @"window.beforeUnloadCount = 0;"
+    @"const childWindow = document.getElementById('child').contentWindow;"
+    @"childWindow.onbeforeunload = () => { window.beforeUnloadCount++; };"
+    @"childWindow.location.href = 'about:blank?target';"
+    @"window.beforeUnloadCount";
+
+// "Prompt to unload" is part of navigating, so beforeunload has to have been dispatched by the time
+// the location setter returns.
+// https://html.spec.whatwg.org/multipage/browsing-the-web.html#navigate
+TEST(WebKit, BeforeUnloadIsDispatchedByLocationSetter)
+{
+    RetainPtr uiDelegate = adoptNS([[BeforeUnloadPanelUIDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<iframe id='child' src='about:blank'></iframe>"];
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    __block bool consultedPolicyDelegate = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        consultedPolicyDelegate = true;
+        decisionHandler(WKNavigationActionPolicyAllow);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    id count = [webView objectByEvaluatingJavaScript:navigateSubframeAndCountBeforeUnloadScript];
+
+    EXPECT_TRUE(consultedPolicyDelegate);
+    EXPECT_EQ(1, [count intValue]);
+}
+
+// The client gets to decide the navigation policy before beforeunload is dispatched, so a
+// navigation the client rejects must not run beforeunload handlers at all.
+TEST(WebKit, BeforeUnloadNotDispatchedWhenNavigationPolicyCancels)
+{
+    RetainPtr uiDelegate = adoptNS([[BeforeUnloadPanelUIDelegate alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setUIDelegate:uiDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<iframe id='child' src='about:blank'></iframe>"];
+
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    __block bool consultedPolicyDelegate = false;
+    navigationDelegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        consultedPolicyDelegate = true;
+        decisionHandler(WKNavigationActionPolicyCancel);
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    id count = [webView objectByEvaluatingJavaScript:navigateSubframeAndCountBeforeUnloadScript];
+
+    EXPECT_TRUE(consultedPolicyDelegate);
+    EXPECT_EQ(0, [count intValue]);
+
+    // Nor asynchronously, once the canceled navigation has had a chance to settle.
+    TestWebKitAPI::Util::runFor(0.1_s);
+    EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"window.beforeUnloadCount"] intValue]);
 }
 
 #endif
