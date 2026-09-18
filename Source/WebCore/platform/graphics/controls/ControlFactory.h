@@ -51,7 +51,8 @@ class TextAreaPart;
 class TextFieldPart;
 class ToggleButtonPart;
 
-class ControlFactory : public ThreadSafeRefCounted<ControlFactory> {
+// Ensure AppKit objects are always deallocated on the main thread.
+class ControlFactory : public ThreadSafeRefCounted<ControlFactory, WTF::DestructionThread::MainRunLoop> {
     WTF_MAKE_TZONE_ALLOCATED(ControlFactory);
 public:
     virtual ~ControlFactory() = default;

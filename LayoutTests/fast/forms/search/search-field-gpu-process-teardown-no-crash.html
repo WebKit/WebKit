@@ -1,0 +1,30 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseGPUProcessForDOMRenderingEnabled=true ] -->
+<html>
+<body>
+<div id="host" style="will-change: transform"><input type="search" value="text"></div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+// Paint the search field via the GPU process. This lazily creates a
+// ControlFactoryMac (with a cached NSSearchFieldCell) on the RemoteRenderingBackend
+// work queue, owned by the layer's RemoteImageBufferGraphicsContext.
+requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+        // Drop the compositing layer so its RemoteImageBufferGraphicsContext (and the
+        // last reference to its ControlFactory) is destroyed on the work queue.
+        // ControlFactoryMac's cached AppKit cells must not be released off the main thread.
+        document.getElementById("host").remove();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                document.body.textContent = "PASS if the GPU process did not crash.";
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            });
+        });
+    });
+});
+</script>
+</body>
+</html>
