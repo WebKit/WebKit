@@ -64,7 +64,6 @@ enum class RestrictedOpenerType : uint8_t;
 void configureForAdvancedPrivacyProtections(NSURLSession *);
 bool isKnownTrackerAddressOrDomain(StringView host);
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&);
-bool isRequestBlockable(const WebCore::ResourceRequest&);
 void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>&&);
 
 class ListDataObserver : public RefCountedAndCanMakeWeakPtr<ListDataObserver> {
@@ -225,6 +224,25 @@ private:
 };
 
 #define HAVE_RESOURCE_MONITOR_URLS_GET_SOURCE 1
+
+class DefaultContentRuleListController {
+public:
+    static DefaultContentRuleListController& NODELETE singleton();
+
+    void prepare(CompletionHandler<void(WKContentRuleList *)>&&);
+    Ref<ListDataObserver> observeUpdates(Function<void()>&&);
+
+    void setContentRuleListStore(API::ContentRuleListStore&);
+    API::ContentRuleListStore* contentRuleListStore() const { return m_contentRuleListStore.get(); }
+
+private:
+    friend class NeverDestroyed<DefaultContentRuleListController, MainRunLoopAccessTraits>;
+    DefaultContentRuleListController() = default;
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    WeakHashSet<ListDataObserver> m_observers;
+    RefPtr<API::ContentRuleListStore> m_contentRuleListStore;
+};
 
 class ConsistentPrivacyQuirkController : public ListDataController<ConsistentPrivacyQuirkController, ScriptTrackingPrivacyRules> {
 private:

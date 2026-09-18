@@ -355,15 +355,6 @@ bool NetworkSession::isTrackingPreventionEnabled() const
     return !!m_resourceLoadStatistics;
 }
 
-bool NetworkSession::isRequestBlockable(const WebCore::ResourceRequest& request)
-{
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    return WebKit::isRequestBlockable(request);
-#else
-    return false;
-#endif
-}
-
 IsKnownCrossSiteTracker NetworkSession::isRequestToKnownCrossSiteTracker(const ResourceRequest& request)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

@@ -2727,6 +2727,22 @@ void WebProcess::setResourceMonitorContentRuleListAsync(WebCompiledContentRuleLi
     setResourceMonitorContentRuleList(WTF::move(ruleListData));
     completionHandler();
 }
+
+void WebProcess::setDefaultContentRuleList(WebCompiledContentRuleListData&& ruleListData)
+{
+    WEBPROCESS_RELEASE_LOG(ResourceLoadStatistics, "setDefaultContentRuleList");
+
+    auto identifier = ruleListData.identifier;
+    RefPtr compiledContentRuleList = WebCompiledContentRuleList::create(WTF::move(ruleListData));
+    if (!compiledContentRuleList) {
+        WEBPROCESS_RELEASE_LOG_ERROR(ResourceLoadStatistics, "setDefaultContentRuleList: Failed to create rule list");
+        return;
+    }
+
+    auto backend = makeUnique<WebCore::ContentExtensions::ContentExtensionsBackend>();
+    backend->addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), { }, ContentExtensions::ContentExtension::ShouldCompileCSS::No);
+    m_defaultContentExtensionBackend = WTF::move(backend);
+}
 #endif
 
 void WebProcess::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument, std::optional<WebCore::MediaSessionIdentifier> targetSession)

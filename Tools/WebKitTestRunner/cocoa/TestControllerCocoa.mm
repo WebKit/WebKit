@@ -200,6 +200,11 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
     [WKContentRuleListStore _setContentRuleListStoreForResourceMonitorURLsControllerForTesting:[WKContentRuleListStore storeWithURL:url.get()]];
 
+    String defaultContentRuleListStoreFolder = makeString(String::fromUTF8(dumpRenderTreeTemp), "/DefaultContentRuleList/"_s, getpid());
+    RetainPtr<NSURL> defaultContentRuleListStoreURL = [NSURL fileURLWithPath:defaultContentRuleListStoreFolder.createNSString().get()];
+
+    [WKContentRuleListStore _setContentRuleListStoreForDefaultContentRuleListControllerForTesting:[WKContentRuleListStore storeWithURL:defaultContentRuleListStoreURL.get()]];
+
 #if ENABLE(DNS_SERVER_FOR_TESTING) && !ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS)
     // See NetworkProcess::platformInitializeNetworkProcessCocoa for supporting a local DNS resolver when ENABLE(DNS_SERVER_FOR_TESTING_IN_NETWORKING_PROCESS).
     static dispatch_once_t once;

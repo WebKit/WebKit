@@ -35,6 +35,7 @@
 - (void)_invalidateContentRuleListHeaderForIdentifier:(NSString *)identifier;
 - (void)_getContentRuleListSourceForIdentifier:(NSString *)identifier completionHandler:(void (^)(NSString *))completionHandler;
 + (void)_setContentRuleListStoreForResourceMonitorURLsControllerForTesting:(WKContentRuleListStore *)store;
++ (void)_setContentRuleListStoreForDefaultContentRuleListControllerForTesting:(WKContentRuleListStore *)store;
 
 + (instancetype)defaultStoreWithLegacyFilename;
 + (instancetype)storeWithURLAndLegacyFilename:(NSURL *)url;

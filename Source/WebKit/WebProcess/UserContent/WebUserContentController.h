@@ -93,6 +93,7 @@ private:
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     const WebCore::ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const LIFETIME_BOUND override { return m_contentExtensionBackend; }
+    const WebCore::ContentExtensions::ContentExtensionsBackend* defaultContentExtensionBackend() const LIFETIME_BOUND override;
 #endif
 
     // IPC::MessageReceiver.

@@ -221,6 +221,17 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 #endif
 }
 
++ (void)_setContentRuleListStoreForDefaultContentRuleListControllerForTesting:(WKContentRuleListStore *)store
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RetainPtr protectedStore = store;
+    Ref apiStore = *(protectedStore->_contentRuleListStore);
+    WebKit::DefaultContentRuleListController::singleton().setContentRuleListStore(apiStore.get());
+#else
+    UNUSED_PARAM(store);
+#endif
+}
+
 + (instancetype)defaultStoreWithLegacyFilename
 {
 #if ENABLE(CONTENT_EXTENSIONS)

@@ -508,6 +508,11 @@ void WebUserContentController::removeAllContentRuleLists()
 {
     m_contentExtensionBackend.removeAllContentExtensions();
 }
+
+const WebCore::ContentExtensions::ContentExtensionsBackend* WebUserContentController::defaultContentExtensionBackend() const
+{
+    return WebProcess::singleton().defaultContentExtensionBackend();
+}
 #endif
 
 void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& world, const std::optional<UserScriptIdentifier>& userScriptIdentifier, UserScript&& userScript, InjectUserScriptImmediately immediately)

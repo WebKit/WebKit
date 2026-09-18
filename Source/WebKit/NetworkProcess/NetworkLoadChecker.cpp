@@ -367,45 +367,11 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
             return;
         }
 
-        if (weakThis->shouldBlockForTrackingPolicy(result.value().request)) {
-            handler(weakThis->accessControlErrorForValidationHandler("Blocked by tracking protections"_s));
-            return;
-        }
-
         weakThis->continueCheckingRequestOrDoSyntheticRedirect(WTF::move(originalRequest), WTF::move(result.value().request), WTF::move(handler));
     });
 #else
     this->continueCheckingRequestOrDoSyntheticRedirect(WTF::move(originalRequest), WTF::move(request), WTF::move(handler));
 #endif
-}
-
-bool NetworkLoadChecker::shouldBlockForTrackingPolicy(const ResourceRequest& request)
-{
-    if (!m_webPageProxyID)
-        return false;
-
-    RefPtr networkResourceLoader = m_networkResourceLoader.get();
-    if (!networkResourceLoader)
-        return false;
-
-    if (!networkResourceLoader->parameters().mayBlockNetworkRequest)
-        return false;
-
-    CheckedPtr networkSession = m_networkProcess->networkSession(m_sessionID);
-    if (!networkSession || !networkSession->isTrackingPreventionEnabled())
-        return false;
-
-    if (RefPtr topOrigin = networkResourceLoader->parameters().topOrigin) {
-        if (RegistrableDomain(request.url()).matches(topOrigin->data()))
-            return false;
-    }
-
-    if (NetworkSession::isRequestBlockable(request)) {
-        LOAD_CHECKER_RELEASE_LOG("shouldBlockForTrackingPolicy - Blocked by tracking protections");
-        return true;
-    }
-
-    return false;
 }
 
 void NetworkLoadChecker::continueCheckingRequestOrDoSyntheticRedirect(ResourceRequest&& originalRequest, ResourceRequest&& currentRequest, ValidationHandler&& handler)

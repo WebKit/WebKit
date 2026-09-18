@@ -56,10 +56,6 @@
 #import <WebKitAdditions/WebPrivacyHelpersAdditions.mm>
 #endif
 
-#if !defined(IS_REQUEST_UNCONDITIONALLY_BLOCKABLE)
-#define IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain) false
-#endif
-
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 #if !defined(WebKit_libnetworkLibrary_SoftLinked)
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
@@ -562,6 +558,56 @@ void ResourceMonitorURLsController::getSource(CompletionHandler<void(String&&)>&
     }];
 }
 
+DefaultContentRuleListController& DefaultContentRuleListController::singleton()
+{
+    static MainRunLoopNeverDestroyed<DefaultContentRuleListController> sharedInstance;
+    return sharedInstance.get();
+}
+
+void DefaultContentRuleListController::setContentRuleListStore(API::ContentRuleListStore& store)
+{
+    m_contentRuleListStore = &store;
+}
+
+Ref<ListDataObserver> DefaultContentRuleListController::observeUpdates(Function<void()>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+    if (!m_notificationListener) {
+        m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeDefaultTrackerBlockRules) callback:^{
+            m_observers.forEach([](auto& observer) {
+                observer.invokeCallback();
+            });
+        }]);
+    }
+    Ref observer = ListDataObserver::create(WTF::move(callback));
+    m_observers.add(observer.get());
+    return observer;
+}
+
+void DefaultContentRuleListController::prepare(CompletionHandler<void(WKContentRuleList *)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClassSingleton() instancesRespondToSelector:@selector(loadDefaultContentRuleListForStore:completionHandler:)]) {
+        completionHandler(nullptr);
+        return;
+    }
+
+    static MainRunLoopNeverDestroyed<Vector<CompletionHandler<void(WKContentRuleList *)>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTF::move(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    Ref<API::ContentRuleListStore> store = m_contentRuleListStore ? *m_contentRuleListStore : API::ContentRuleListStore::defaultStoreSingleton();
+
+    [[PAL::getWPResourcesClassSingleton() sharedInstance] loadDefaultContentRuleListForStore:protect(wrapper(store.get())).get() completionHandler:^(WKContentRuleList *list, NSError *error) {
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to load the default content rule list from WebPrivacy: %@", error);
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler(list);
+    }];
+}
+
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
 
 inline static std::optional<WebCore::IPAddress> ipAddress(const struct sockaddr* address)
@@ -924,28 +970,11 @@ WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore:
 {
     return request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()) ? WebCore::IsKnownCrossSiteTracker::Yes : WebCore::IsKnownCrossSiteTracker::No;
 }
-
-bool isRequestBlockable(const WebCore::ResourceRequest& request)
-{
-    TrackerAddressLookupInfo::populateIfNeeded();
-    TrackerDomainLookupInfo::populateIfNeeded();
-
-    auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, request.url().host()) } };
-    if (domain == "tainted.example" || IS_REQUEST_UNCONDITIONALLY_BLOCKABLE(domain))
-        return true;
-
-    bool blockable = false;
-    TrackerDomainLookupInfo::find(domain.string(), [&](auto& info) {
-        blockable = info.canBlock() == TrackerDomainLookupInfo::CanBlock::WithDefaultProtections;
-    });
-    return blockable;
-}
 #else
 
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 bool isKnownTrackerAddressOrDomain(StringView) { return false; }
 WebCore::IsKnownCrossSiteTracker isRequestToKnownCrossSiteTracker(const WebCore::ResourceRequest&) { return WebCore::IsKnownCrossSiteTracker::No; }
-bool isRequestBlockable(const WebCore::ResourceRequest&) { return false; }
 
 #endif
 

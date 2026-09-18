@@ -139,7 +139,6 @@ private:
     bool isAllowedByContentSecurityPolicy(const WebCore::ResourceRequest&, WebCore::ContentSecurityPolicyClient*);
 
     void continueCheckingRequest(WebCore::ResourceRequest&&, ValidationHandler&&);
-    bool shouldBlockForTrackingPolicy(const WebCore::ResourceRequest&);
     void continueCheckingRequestOrDoSyntheticRedirect(WebCore::ResourceRequest&& originalRequest, WebCore::ResourceRequest&& currentRequest, ValidationHandler&&);
 
     bool doesNotNeedCORSCheck(const URL&) const;

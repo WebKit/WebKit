@@ -292,6 +292,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     , m_resourceMonitorRuleListRefreshTimer(RunLoop::mainSingleton(), "WebProcessPool::ResourceMonitorRuleListRefreshTimer"_s, this, &WebProcessPool::loadOrUpdateResourceMonitorRuleList)
+    , m_defaultContentRuleListRefreshTimer(RunLoop::mainSingleton(), "WebProcessPool::DefaultContentRuleListRefreshTimer"_s, this, &WebProcessPool::loadOrUpdateDefaultContentRuleList)
 #endif
 #if PLATFORM(COCOA)
     , m_screenPropertiesUpdateTimer(RunLoop::mainSingleton(), "WebProcessPool::ScreenPropertiesUpdateTimer"_s, this, &WebProcessPool::screenPropertiesUpdateTimerFired)
@@ -1138,6 +1139,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     registerDisplayConfigurationCallback();
     registerHighDynamicRangeChangeCallback();
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    process.updateDefaultContentRuleList();
+#endif
 }
 
 void WebProcessPool::prewarmProcess()
@@ -3131,7 +3136,84 @@ String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
     return "[]"_s;
 }
 
+void WebProcessPool::platformLoadDefaultContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>&&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(nullptr);
+}
+
+void WebProcessPool::platformObserveDefaultContentRuleListUpdates()
+{
+    notImplemented();
+}
+
 #endif
+
+constexpr static Seconds defaultContentRuleListCheckInterval = 24_h;
+
+WebCompiledContentRuleList* WebProcessPool::cachedDefaultContentRuleList()
+{
+    if (m_defaultContentRuleListCache)
+        return m_defaultContentRuleListCache.get();
+
+    loadOrUpdateDefaultContentRuleList();
+    return nullptr;
+}
+
+void WebProcessPool::loadOrUpdateDefaultContentRuleList()
+{
+    if (m_defaultContentRuleListLoading || m_defaultContentRuleListFailed)
+        return;
+
+    WEBPROCESSPOOL_RELEASE_LOG(ResourceLoadStatistics, "loadOrUpdateDefaultContentRuleList: rule list is requested");
+
+    m_defaultContentRuleListLoading = true;
+    platformObserveDefaultContentRuleListUpdates();
+
+    platformLoadDefaultContentRuleList([weakThis = WeakPtr { *this }](RefPtr<WebCompiledContentRuleList>&& ruleList) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_defaultContentRuleListLoading = false;
+
+        auto finishPendingLoads = makeScopeExit([protectedThis] {
+            for (auto& completionHandler : std::exchange(protectedThis->m_defaultContentRuleListLoadHandlersForTesting, { }))
+                completionHandler();
+        });
+
+        if (!ruleList) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebProcessPool::loadOrUpdateDefaultContentRuleList: failed to load rule list");
+            protectedThis->m_defaultContentRuleListFailed = true;
+            return;
+        }
+
+        protectedThis->m_defaultContentRuleListCache = ruleList;
+
+        if (!protectedThis->m_defaultContentRuleListRefreshTimer.isActive()) {
+            auto interval = defaultContentRuleListCheckInterval + Seconds::fromHours(cryptographicallyRandomUnitInterval());
+            protectedThis->m_defaultContentRuleListRefreshTimer.startOneShot(interval);
+        }
+
+        for (Ref process : protectedThis->m_processes)
+            process->updateDefaultContentRuleList();
+    });
+}
+
+void WebProcessPool::defaultContentRuleListDidChange()
+{
+    m_defaultContentRuleListFailed = false;
+    loadOrUpdateDefaultContentRuleList();
+}
+
+void WebProcessPool::loadDefaultContentRuleListForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    m_defaultContentRuleListCache = nullptr;
+    m_defaultContentRuleListFailed = false;
+    m_defaultContentRuleListRefreshTimer.stop();
+    m_defaultContentRuleListLoadHandlersForTesting.append(WTF::move(completionHandler));
+    loadOrUpdateDefaultContentRuleList();
+}
 
 #endif
 

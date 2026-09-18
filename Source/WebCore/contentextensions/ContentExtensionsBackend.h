@@ -75,7 +75,7 @@ public:
     WEBCORE_EXPORT Vector<ActionsFromContentRuleList> actionsForResourceLoad(const ResourceLoadInfo&, const RuleListFilter& = { [](const String&) { return ShouldSkipRuleList::No; } }) const;
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
-    ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, const RuleListFilter&) const;
+    ContentRuleListResults processContentRuleListsForLoad(Page&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader, const RuleListFilter&) const;
     WEBCORE_EXPORT ContentRuleListResults processContentRuleListsForPingLoad(const URL&, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod);
     bool processContentRuleListsForResourceMonitoring(const URL&, const URL& mainDocumentURL, const URL& frameURL, OptionSet<ResourceType>);
 
@@ -102,6 +102,8 @@ private:
 WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&, const URL& redirectURL = URL { });
 WEBCORE_EXPORT void applyResultsToRequestIfCrossOriginRedirect(ContentRuleListResults&&, Page*, ResourceRequest&);
 std::optional<String> customTrackerBlockingMessageForConsole(const ContentRuleListResults&, const URL& urlString = { }, const URL& mainDocumentURL = { });
+void applyHTTPSUpgradeIfNeeded(ContentRuleListResults&, Page&, const URL&, const URL& redirectFrom);
+void reportContentRuleListResultsToConsole(const ContentRuleListResults&, const URL&, OptionSet<ResourceType>, DocumentLoader& initiatingDocumentLoader);
 
 } // namespace WebCore::ContentExtensions
 } // namespace WebCore

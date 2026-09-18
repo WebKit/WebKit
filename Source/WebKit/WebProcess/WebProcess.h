@@ -40,6 +40,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/BackForwardFrameItemIdentifier.h>
 #include <WebCore/CaptionUserPreferences.h>
+#include <WebCore/ContentExtensionsBackend.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -435,6 +436,9 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     void setResourceMonitorContentRuleList(WebCompiledContentRuleListData&&);
     void setResourceMonitorContentRuleListAsync(WebCompiledContentRuleListData&&, CompletionHandler<void()>&&);
+
+    void setDefaultContentRuleList(WebCompiledContentRuleListData&&);
+    const WebCore::ContentExtensions::ContentExtensionsBackend* defaultContentExtensionBackend() const LIFETIME_BOUND { return m_defaultContentExtensionBackend.get(); }
 #endif
 
     bool areAllPagesThrottleable() const;
@@ -977,6 +981,10 @@ private:
     bool m_mediaPlaybackEnabled { false };
 
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    std::unique_ptr<WebCore::ContentExtensions::ContentExtensionsBackend> m_defaultContentExtensionBackend;
+#endif
 
 #if ENABLE(NOTIFY_BLOCKING)
     HashMap<String, int> m_notifyTokens;
