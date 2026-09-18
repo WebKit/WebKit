@@ -81,6 +81,7 @@
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/RemoteUserInputEventData.h>
 #import <WebCore/ShareableResource.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/UserAgent.h>
@@ -489,18 +490,28 @@ void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(co
     sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), Messages::WebPage::RequestRVItemInCurrentSelectedRange::Reply { WTF::move(callbackFunction) });
 }
 
-void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
+void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(std::optional<WebCore::FrameIdentifier> frameID, IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
 {
     if (!hasRunningProcess())
         return callbackFunction(false, RevealItem());
 
-    dispatchAfterCurrentContextMenuEvent([weakThis = WeakPtr { *this }, point, callbackFunction = WTF::move(callbackFunction)] (bool handled) mutable {
-        if (!weakThis || handled) {
+    dispatchAfterCurrentContextMenuEvent([weakThis = WeakPtr { *this }, frameID, point, callbackFunction = WTF::move(callbackFunction)] (bool handled) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || handled) {
             callbackFunction(false, RevealItem());
             return;
         }
 
-        protect(weakThis->legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(point), WTF::move(callbackFunction), weakThis->webPageIDInMainFrameProcess());
+        protectedThis->sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(frameID, point), Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView::Reply { [weakThis = WTF::move(weakThis), callbackFunction = WTF::move(callbackFunction)] (auto&& reply) mutable {
+            WTF::switchOn(WTF::move(reply), [&](PrepareSelectionForContextMenuResult&& result) {
+                callbackFunction(result.shouldShowMenu, result.item);
+            }, [&](WebCore::RemoteUserInputEventData&& remoteUserInputEventData) {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return callbackFunction(false, RevealItem());
+                protectedThis->prepareSelectionForContextMenuWithLocationInView(remoteUserInputEventData.targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), WTF::move(callbackFunction));
+            });
+        } });
     });
 }
 #endif

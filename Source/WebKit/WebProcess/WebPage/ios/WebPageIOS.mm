@@ -2138,29 +2138,36 @@ void WebPage::requestRVItemInCurrentSelectedRange(CompletionHandler<void(const W
     completionHandler(RevealItem(revealItemForCurrentSelection()));
 }
 
-void WebPage::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& completionHandler)
+void WebPage::prepareSelectionForContextMenuWithLocationInView(std::optional<WebCore::FrameIdentifier> frameID, IntPoint point, CompletionHandler<void(Variant<PrepareSelectionForContextMenuResult, WebCore::RemoteUserInputEventData>&&)>&& completionHandler)
 {
     constexpr OptionSet hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-    RefPtr localMainFrame = protect(m_page)->localMainFrame();
-    if (!localMainFrame)
-        return completionHandler(false, { });
-    Ref frame = *localMainFrame;
-    auto result = frame->eventHandler().hitTestResultAtPoint(point, hitType);
+    RefPtr localRootFrame = this->localRootFrame(frameID);
+    if (!localRootFrame)
+        return completionHandler({ });
+
+    // The long press landed on a cross-origin frame, whose content lives in another process; ask the
+    // UI process to re-dispatch this into that frame's process rather than selecting the frame owner.
+    if (auto remoteUserInputEventData = remoteUserInputEventDataForSelectionGesture(localRootFrame.get(), point))
+        return completionHandler(WTF::move(*remoteUserInputEventData));
+
+    Ref frame = *localRootFrame;
+    RefPtr view = frame->view();
+    if (!view)
+        return completionHandler({ });
+
+    auto pointInContents = view->rootViewToContents(point);
+    auto result = frame->eventHandler().hitTestResultAtPoint(pointInContents, hitType);
     RefPtr hitNode = result.innerNonSharedNode();
     if (!hitNode)
-        return completionHandler(false, { });
+        return completionHandler({ });
 
-    if (RefPtr view = frame->view()) {
-        auto pointInContents = view->rootViewToContents(point);
-
-        if (protect(frame->selection())->contains(pointInContents))
-            return completionHandler(true, revealItemForCurrentSelection());
-    }
+    if (protect(frame->selection())->contains(pointInContents))
+        return completionHandler(PrepareSelectionForContextMenuResult { true, revealItemForCurrentSelection() });
 
     auto sendEditorStateAndCallCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](RevealItem&& item) mutable {
         layoutIfNeeded();
         sendEditorStateUpdate();
-        completionHandler(true, WTF::move(item));
+        completionHandler(PrepareSelectionForContextMenuResult { true, WTF::move(item) });
     };
 
     if (is<HTMLImageElement>(*hitNode) && hitNode->hasEditableStyle()) {

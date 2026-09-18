@@ -11599,6 +11599,39 @@ TEST(SiteIsolation, SelectionInCrossOriginIframeIsContainedByContentView)
 }
 #endif // HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 
+#if HAVE(UI_EDIT_MENU_INTERACTION)
+TEST(SiteIsolation, EditMenuSelectsWordInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='display: block; position: absolute; top: 100px; left: 100px; width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0; font: 50px/60px monospace'>Hello world</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get() addToWindow:YES]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    __block bool done = false;
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(140, 130) completion:^(BOOL shouldPresentMenu) {
+        EXPECT_TRUE(shouldPresentMenu);
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_WK_STREQ("Hello", [webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+#endif // HAVE(UI_EDIT_MENU_INTERACTION)
+
 } // namespace TestWebKitAPI
 
 @interface SiteIsolationInputSessionWebView : TestWKWebView

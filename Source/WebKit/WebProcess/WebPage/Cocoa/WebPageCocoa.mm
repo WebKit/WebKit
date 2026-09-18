@@ -2531,7 +2531,7 @@ WebCore::IntPoint WebPage::mainFrameCoordinatesToRootView(WebCore::IntPoint poin
     return roundedIntPoint(view->convertFromRootViewAcrossIsolatedFrames(WebCore::FloatPoint { point }));
 }
 
-static std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventDataForSelectionGesture(WebCore::LocalFrame* localRootFrame, WebCore::IntPoint point)
+std::optional<WebCore::RemoteUserInputEventData> WebPage::remoteUserInputEventDataForSelectionGesture(WebCore::LocalFrame* localRootFrame, WebCore::IntPoint point)
 {
     if (!localRootFrame)
         return std::nullopt;

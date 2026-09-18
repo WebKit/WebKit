@@ -68,6 +68,11 @@ private:
     mutable RetainPtr<RVItem> m_item;
 };
 
+struct PrepareSelectionForContextMenuResult {
+    bool shouldShowMenu { false };
+    RevealItem item;
+};
+
 }
 
 #endif // ENABLE(REVEAL)

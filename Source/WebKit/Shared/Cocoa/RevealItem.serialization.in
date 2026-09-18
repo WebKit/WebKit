@@ -34,4 +34,9 @@ class WebKit::RevealItem {
     WebKit::RevealItemRange selectedRange();
 };
 
+[CustomHeader] struct WebKit::PrepareSelectionForContextMenuResult {
+    bool shouldShowMenu;
+    WebKit::RevealItem item;
+};
+
 #endif

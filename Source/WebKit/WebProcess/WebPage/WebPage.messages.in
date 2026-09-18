@@ -115,7 +115,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ClearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::FloatPoint location)
 #if ENABLE(REVEAL)
     RequestRVItemInCurrentSelectedRange() -> (WebKit::RevealItem item)
-    PrepareSelectionForContextMenuWithLocationInView(WebCore::IntPoint point) -> (bool shouldShowMenu, WebKit::RevealItem item)
+    PrepareSelectionForContextMenuWithLocationInView(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point) -> (Variant<WebKit::PrepareSelectionForContextMenuResult, WebCore::RemoteUserInputEventData> result)
 #endif
     WillInsertFinalDictationResult()
     DidInsertFinalDictationResult()
