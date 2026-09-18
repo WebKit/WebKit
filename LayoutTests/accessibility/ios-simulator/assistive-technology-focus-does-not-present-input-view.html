@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+</head>
+<body>
+
+<input id="text-field" type="text">
+<select id="select"><option>foo</option><option>bar</option></select>
+
+<script>
+var output = "This test ensures an assistive technology moving focus does not present the focused element's input view. Doing so would open a picker for a control the user only moved their cursor to, rather than activated.\n\n";
+
+var inputSessionAfterTappingTextField = false;
+var inputSessionAfterAssistiveTechnologyFocus = true;
+
+async function waitForNoInputSession() {
+    for (var attempt = 0; attempt < 60; attempt++) {
+        inputSessionAfterAssistiveTechnologyFocus = await UIHelper.hasInputSession();
+        if (!inputSessionAfterAssistiveTechnologyFocus)
+            return;
+        await sleep(50);
+    }
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Tapping is a real activation, so it should start an input session.
+        await UIHelper.activateElement(document.getElementById("text-field"));
+        await UIHelper.waitForKeyboardToShow();
+        inputSessionAfterTappingTextField = await UIHelper.hasInputSession();
+        output += expect("inputSessionAfterTappingTextField", "true");
+
+        // Moving accessibility focus to the select is navigation, not activation.
+        accessibilityController.accessibleElementById("select").takeFocus();
+        await waitForNoInputSession();
+        output += expect("inputSessionAfterAssistiveTechnologyFocus", "false");
+
+        // The select is still focused, so the input view was suppressed rather than focus failing.
+        output += expect("document.activeElement.id", "'select'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

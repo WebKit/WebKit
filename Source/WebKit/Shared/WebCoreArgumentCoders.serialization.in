@@ -7378,6 +7378,7 @@ struct WebCore::FocusOptions {
     WebCore::FocusRemovalEventsMode removalEventsMode;
     WebCore::FocusTrigger trigger;
     WebCore::FocusVisibility visibility;
+    bool preventInputViewPresentation;
 };
 
 enum class WebKit::CommitTiming : bool;

@@ -2848,6 +2848,7 @@ void WebPage::emitDeferredFocusedElementUpdate(PendingFocusedElementUpdate&& pen
         return;
 
     information->preventScroll = pending.options.preventScroll;
+    information->preventInputViewPresentation = pending.options.preventInputViewPresentation;
     information->isFocusingWithValidationMessage = pending.isFocusingWithValidationMessage;
     send(Messages::WebPageProxy::ElementDidFocus(information.value(), pending.userIsInteracting, pending.recentlyBlurredElementSnapshot, pending.activityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(pending.userData.get()).get())));
 }

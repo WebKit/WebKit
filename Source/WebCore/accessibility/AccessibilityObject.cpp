@@ -1706,7 +1706,7 @@ bool AccessibilityObject::pressPreservingFocus()
     // as assistive technology is concerned, focus never left where it was before the action.
     cache->beginSuppressingFocusChange(originalFocusedElement.get());
     if (originalFocusedElement)
-        originalFocusedElement->focus();
+        originalFocusedElement->focus({ .preventInputViewPresentation = true });
     else
         document->setFocusedElement(nullptr);
 

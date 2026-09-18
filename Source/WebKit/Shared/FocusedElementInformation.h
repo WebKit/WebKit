@@ -167,6 +167,7 @@ struct FocusedElementInformation {
     bool shouldHideSoftTopScrollEdgeEffect { false };
     bool isFocusingWithValidationMessage { false };
     bool preventScroll { false };
+    bool preventInputViewPresentation { false };
 
     FocusedElementInformationIdentifier identifier;
     Markable<WebCore::ScrollingNodeID> containerScrollingNodeID;

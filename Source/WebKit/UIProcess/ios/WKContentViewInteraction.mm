@@ -8573,6 +8573,9 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (information.isFocusingWithValidationMessage && !_isFocusingElementWithKeyboard)
         shouldShowInputView = NO;
 
+    if (information.preventInputViewPresentation && startInputSessionPolicy == _WKFocusStartsInputSessionPolicyAuto)
+        shouldShowInputView = NO;
+
     if (blurPreviousNode) {
         // Defer view updates until the end of this function to avoid a noticeable flash when switching focus
         // between elements that require the keyboard.

@@ -1,0 +1,10 @@
+This test ensures an assistive technology moving focus does not present the focused element's input view. Doing so would open a picker for a control the user only moved their cursor to, rather than activated.
+
+PASS: inputSessionAfterTappingTextField === true
+PASS: inputSessionAfterAssistiveTechnologyFocus === false
+PASS: document.activeElement.id === 'select'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

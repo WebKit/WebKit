@@ -4725,7 +4725,7 @@ void AccessibilityNodeObject::setFocused(bool on)
     // If we return from setFocusedElement and our element has been removed from a tree, axObjectCache() may be null.
     if (CheckedPtr cache = axObjectCache()) {
         cache->setIsSynchronizingSelection(true);
-        protect(downcast<Element>(*m_node))->focus();
+        protect(downcast<Element>(*m_node))->focus({ .preventInputViewPresentation = true });
         cache->setIsSynchronizingSelection(false);
     }
 }
