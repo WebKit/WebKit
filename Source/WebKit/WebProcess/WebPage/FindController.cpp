@@ -44,6 +44,7 @@
 #include <WebCore/FloatQuad.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameInlines.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
@@ -59,7 +60,10 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RemoteFrame.h>
+#include <WebCore/RenderBox.h>
 #include <WebCore/RenderObject.h>
+#include <WebCore/RenderWidget.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SimpleRange.h>
 #include <wtf/Forward.h>
@@ -450,17 +454,21 @@ void FindController::updateFindPageOverlay(bool shouldShowOverlay)
             m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
         return;
     }
-
+    RefPtr corePage = protect(m_webPage.get())->corePage();
+    RefPtr rootFrame = corePage->localMainOrRootFrame();
     RefPtr findPageOverlay = m_findPageOverlay.get();
     if (!findPageOverlay) {
         findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+        findPageOverlay->setAssociatedFrame(rootFrame.get());
         m_findPageOverlay = findPageOverlay.get();
 #if ENABLE(PDF_PLUGIN)
         if (RefPtr pluginView = mainFramePlugIn(); pluginView && !pluginView->drawsFindOverlay())
             findPageOverlay->setNeedsSynchronousScrolling(true);
 #endif
         m_webPage->corePage()->pageOverlayController().installPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
-    }
+    } else
+        findPageOverlay->setAssociatedFrame(rootFrame.get());
+
     findPageOverlay->setNeedsDisplay();
 }
 
@@ -785,9 +793,14 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
         return pluginView->rectsForTextMatchesInRect(clipRect);
 #endif
 
+    RefPtr corePage = protect(m_webPage.get())->corePage();
+    RefPtr<Frame> rootFrame = corePage->localMainOrRootFrame();
+    RefPtr rootView = rootFrame ? rootFrame->virtualView() : nullptr;
+    if (!rootView)
+        return { };
+
     Vector<FloatRect> rects;
-    RefPtr mainFrameView = protect(protect(protect(m_webPage.get())->corePage())->mainFrame())->virtualView();
-    for (RefPtr frame = m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr frame = rootFrame; frame; frame = frame->tree().traverseNext(rootFrame.get())) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
@@ -796,14 +809,44 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
             continue;
 
         for (FloatRect rect : protect(document->markers())->renderedRectsForMarkers(DocumentMarkerType::TextMatch)) {
-            if (!localFrame->isMainFrame())
-                rect = mainFrameView->windowToContents(protect(localFrame->view())->contentsToWindow(enclosingIntRect(rect)));
+            if (localFrame != rootFrame)
+                rect = rootView->windowToContents(protect(localFrame->view())->contentsToWindow(enclosingIntRect(rect)));
 
             if (rect.isEmpty() || !rect.intersects(clipRect))
                 continue;
 
             rects.append(rect);
         }
+    }
+
+    return rects;
+}
+
+Vector<FloatRect> FindController::rectsForRemoteChildFramesInRect(IntRect clipRect)
+{
+    RefPtr corePage = protect(m_webPage.get())->corePage();
+    RefPtr<Frame> rootFrame = corePage ? corePage->localMainOrRootFrame() : nullptr;
+    RefPtr rootView = rootFrame ? rootFrame->virtualView() : nullptr;
+    if (!rootView)
+        return { };
+
+    Vector<FloatRect> rects;
+    for (RefPtr frame = rootFrame; frame; frame = frame->tree().traverseNext(rootFrame.get())) {
+        RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(frame.get());
+        if (!remoteFrame)
+            continue;
+
+        CheckedPtr ownerRenderer = remoteFrame->ownerRenderer();
+        RefPtr ownerElement = remoteFrame->ownerElement();
+        RefPtr ownerView = ownerElement ? ownerElement->document().view() : nullptr;
+        if (!ownerRenderer || !ownerView)
+            continue;
+
+        FloatRect rect = rootView->windowToContents(ownerView->contentsToWindow(ownerRenderer->absoluteContentQuad().enclosingBoundingBox()));
+        if (rect.isEmpty() || !rect.intersects(clipRect))
+            continue;
+
+        rects.append(rect);
     }
 
     return rects;
@@ -835,12 +878,9 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
 
     IntRect borderInflatedDirtyRect = dirtyRect;
     borderInflatedDirtyRect.inflate(borderWidth);
-    Vector<FloatRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
 
     // Draw the background.
     graphicsContext.fillRect(dirtyRect, overlayBackgroundColor);
-
-    Vector<Path> whiteFramePaths = PathUtilities::pathsWithShrinkWrappedRects(rects, findIndicatorRadius);
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -849,6 +889,9 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     graphicsContext.setDropShadow({ { shadowOffsetX, shadowOffsetY }, shadowBlurRadius, shadowColor, ShadowRadiusMode::Default });
     graphicsContext.setStrokeColor(Color::white);
     graphicsContext.setStrokeThickness(borderWidth * 2);
+
+    Vector<FloatRect> rects = rectsForTextMatchesInRect(borderInflatedDirtyRect);
+    Vector<Path> whiteFramePaths = PathUtilities::pathsWithShrinkWrappedRects(rects, findIndicatorRadius);
     for (auto& path : whiteFramePaths)
         graphicsContext.strokePath(path);
 
@@ -859,11 +902,14 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
     for (auto& path : whiteFramePaths)
         graphicsContext.fillPath(path);
 
+    for (auto& rect : rectsForRemoteChildFramesInRect(borderInflatedDirtyRect))
+        graphicsContext.fillRect(rect);
+
     if (!m_findIndicator->isShowing())
         return;
 
     if (RefPtr selectedFrame = frameWithSelection(protect(protect(m_webPage)->corePage()))) {
-        auto findIndicatorRect = protect(selectedFrame->view())->contentsToRootView(enclosingIntRect(protect(selectedFrame->selection())->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
+        auto findIndicatorRect = protect(selectedFrame->view())->contentsToMainFrameView(enclosingIntRect(protect(selectedFrame->selection())->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
         if (findIndicatorRect != m_findIndicator->rect()) {
             // We are underneath painting, so it's not safe to mutate the layer tree synchronously.

@@ -4006,6 +4006,85 @@ TEST(SiteIsolation, FindStringInNestedFrame)
     EXPECT_FALSE([[webView findStringAndWait:@"Missing string" withConfiguration:findConfiguration.get()] matchFound]);
 }
 
+#if PLATFORM(MAC)
+
+static CGRect findIndicatorRectInIsolatedIframe(int mainFrameScrollY, CGFloat topObscuredInset = 0, bool setInsetsAfterLoad = false)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0; height: 2000px'><iframe style='display: block; margin-left: 100px; margin-top: 500px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<!DOCTYPE html><body style='margin: 0'><p style='margin: 50px'>Hello world</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    if (topObscuredInset) {
+        [webView _setAutomaticallyAdjustsContentInsets:NO];
+        if (!setInsetsAfterLoad)
+            [webView setObscuredContentInsets:NSEdgeInsetsMake(topObscuredInset, 0, 0, 0)];
+    }
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    if (topObscuredInset && setInsetsAfterLoad) {
+        [webView setObscuredContentInsets:NSEdgeInsetsMake(topObscuredInset, 0, 0, 0)];
+        [webView waitForNextPresentationUpdate];
+    }
+
+    if (mainFrameScrollY) {
+        [webView objectByEvaluatingJavaScript:[NSString stringWithFormat:@"window.scrollTo(0, %d)", mainFrameScrollY]];
+        while ([[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue] != mainFrameScrollY)
+            Util::spinRunLoop();
+        [webView waitForNextPresentationUpdate];
+    }
+
+    [webView _findString:@"Hello world" options:_WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowFindIndicator | _WKFindOptionsShowOverlay maxCount:1];
+
+    CGRect rect = CGRectNull;
+    while (CGRectIsNull(rect)) {
+        Util::spinRunLoop();
+        rect = [webView _textIndicatorBoundingRectForTesting];
+    }
+    return rect;
+}
+
+TEST(SiteIsolation, FindStringIndicatorPositionInIsolatedIframe)
+{
+    auto rect = findIndicatorRectInIsolatedIframe(0);
+
+    EXPECT_NEAR(CGRectGetMinX(rect), 150, 5);
+    EXPECT_NEAR(CGRectGetMinY(rect), 550, 5);
+    EXPECT_GE(CGRectGetMinY(rect), 500);
+    EXPECT_LE(CGRectGetMaxY(rect), 800);
+}
+
+TEST(SiteIsolation, FindStringIndicatorPositionWithScrolledMainFrame)
+{
+    auto rect = findIndicatorRectInIsolatedIframe(400);
+
+    EXPECT_NEAR(CGRectGetMinX(rect), 150, 5);
+    EXPECT_NEAR(CGRectGetMinY(rect), 150, 5);
+}
+
+TEST(SiteIsolation, FindStringIndicatorPositionWithObscuredContentInsets)
+{
+    auto rect = findIndicatorRectInIsolatedIframe(0, 100);
+
+    EXPECT_NEAR(CGRectGetMinX(rect), 150, 5);
+    EXPECT_NEAR(CGRectGetMinY(rect), 650, 5);
+}
+
+TEST(SiteIsolation, FindStringIndicatorPositionWithObscuredContentInsetsChangedAfterLoad)
+{
+    auto rect = findIndicatorRectInIsolatedIframe(0, 100, true);
+
+    EXPECT_NEAR(CGRectGetMinX(rect), 150, 5);
+    EXPECT_NEAR(CGRectGetMinY(rect), 650, 5);
+}
+
+#endif // PLATFORM(MAC)
+
 TEST(SiteIsolation, FindStringSelection)
 {
     auto mainframeHTML = "<p>Hello world</p>"

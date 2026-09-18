@@ -103,6 +103,8 @@ private:
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 
+    Vector<WebCore::FloatRect> rectsForRemoteChildFramesInRect(WebCore::IntRect clipRect);
+
     void updateFindUIAfterFindingAllMatches(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void updateFindUIAfterIncrementalFind(bool found, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount, WebCore::DidWrap, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 

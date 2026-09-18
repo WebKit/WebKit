@@ -395,9 +395,17 @@ void PageOverlayController::didChangeViewExposedRect()
 void PageOverlayController::didScrollFrame(LocalFrame& frame)
 {
     for (auto overlayAndLayer : m_overlayGraphicsLayers) {
-        if (overlayAndLayer.key.overlayType() == PageOverlay::OverlayType::View || !frame.isMainFrame())
-            Ref { overlayAndLayer.value }->setNeedsDisplay();
-        Ref { overlayAndLayer.key }->didScrollFrame(frame);
+        Ref overlay = overlayAndLayer.key;
+
+        RefPtr overlayRootFrame = overlay->associatedFrame();
+        if (!overlayRootFrame)
+            overlayRootFrame = m_page->localMainFrame();
+        const bool scrollMovesContentRelativeToOverlay = &frame != overlayRootFrame.get();
+
+        if (overlay->overlayType() == PageOverlay::OverlayType::View || scrollMovesContentRelativeToOverlay)
+            protect(overlayAndLayer.value)->setNeedsDisplay();
+
+        overlay->didScrollFrame(frame);
     }
 }
 
