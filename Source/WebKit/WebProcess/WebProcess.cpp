@@ -2307,14 +2307,17 @@ void WebProcess::setOptInCookiePartitioningEnabled(bool enabled)
 
 void WebProcess::ensureAutomationSessionProxy(const String& sessionIdentifier)
 {
+    if (m_automationSessionProxy && m_automationSessionProxy->sessionIdentifier() == sessionIdentifier)
+        return;
+    if (RefPtr automationSessionProxy = std::exchange(m_automationSessionProxy, nullptr))
+        automationSessionProxy->endAutomationSession();
     m_automationSessionProxy = WebAutomationSessionProxy::create(sessionIdentifier);
 }
 
 void WebProcess::destroyAutomationSessionProxy()
 {
-    if (RefPtr automationSessionProxy = m_automationSessionProxy)
-        automationSessionProxy->cancelPendingEvaluateJavaScriptCallbacks();
-    m_automationSessionProxy = nullptr;
+    if (RefPtr automationSessionProxy = std::exchange(m_automationSessionProxy, nullptr))
+        automationSessionProxy->endAutomationSession();
 }
 
 void WebProcess::prefetchDNS(const String& hostname)

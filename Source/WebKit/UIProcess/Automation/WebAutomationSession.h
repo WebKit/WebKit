@@ -289,9 +289,10 @@ public:
     void evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&) override;
     // Unlike the classic command, a user prompt does not end the evaluation: it completes when the script does.
     void evaluateJavaScriptFunctionForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& forceUserGesture, Inspector::CommandCallback<String>&&);
-    void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
     void locateNodesForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& locator, std::optional<Vector<String>>&& startNodeIdentifiers, std::optional<uint64_t> maxNodeCount, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<WebCore::FrameIdentifier> containerFrameID, Inspector::CommandCallback<String>&&);
 #if ENABLE(WEBDRIVER_BIDI)
+    void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double>&& callbackTimeout, Inspector::CommandCallbackOf<String, RealmIdentifier>&&);
+    void releaseBidiHandles(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<RealmIdentifier> expectedRealmIdentifier, Vector<String>&&, Inspector::CommandCallback<void>&&);
     void getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
     void evaluateBidiCallFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<RealmIdentifier>, const String& functionDeclaration, Ref<JSON::Array>&& arguments, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool userActivation, std::optional<double>&& callbackTimeout, Inspector::CommandCallbackOf<String, RealmIdentifier>&&);
 #endif
@@ -611,9 +612,9 @@ private:
     HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateJavaScriptFunctionCallbacks;
     // BiDi script callbacks are kept apart from m_evaluateJavaScriptFunctionCallbacks because a user prompt must not end a BiDi command early;
     // script execution continues until the prompt is handled and the script finishes.
-    HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateBidiScriptCallbacks;
+    HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateJavaScriptFunctionForBidiCallbacks;
 #if ENABLE(WEBDRIVER_BIDI)
-    HashMap<uint64_t, Inspector::CommandCallbackOf<String, RealmIdentifier>> m_evaluateBidiCallFunctionCallbacks;
+    HashMap<uint64_t, Inspector::CommandCallbackOf<String, RealmIdentifier>> m_bidiScriptResultCallbacks;
 #endif
 
     enum class WindowTransitionedToState {

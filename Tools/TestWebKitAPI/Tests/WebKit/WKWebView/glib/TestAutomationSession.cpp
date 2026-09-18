@@ -1161,6 +1161,165 @@ static void testBidiIframeRealmDestroyedWhenIframeProcessTerminates(AutomationTe
 #endif
 #endif
 
+#if ENABLE(WEBDRIVER_BIDI)
+static void verifyClassicHandleProperty(AutomationTest& test, const String& browsingContext, const String& handlePropertyValue)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("browsingContextHandle"_s, browsingContext);
+    parameters->setString("function"_s, "function(value) { return value.handle; }"_s);
+    auto arguments = JSON::Array::create();
+    auto argument = JSON::Object::create();
+    argument->setString("handle"_s, handlePropertyValue);
+    arguments->pushString(argument->toJSONString());
+    parameters->setArray("arguments"_s, WTF::move(arguments));
+
+    auto response = test.waitForResponse(test.sendCommandToBackend("evaluateJavaScriptFunction"_s, parameters->toJSONString()));
+    g_assert_true(!!response);
+    auto commandResult = response->getObject("result"_s);
+    g_assert_true(!!commandResult);
+    auto resultValue = JSON::Value::parseJSON(commandResult->getString("result"_s));
+    g_assert_true(!!resultValue);
+    g_assert_true(resultValue->asString() == handlePropertyValue);
+}
+
+static Ref<JSON::Object> objectLocalValueWithHandlePropertyAndNestedReference(const String& handle)
+{
+    auto handleValue = JSON::Object::create();
+    handleValue->setString("type"_s, "string"_s);
+    handleValue->setString("value"_s, handle);
+
+    auto handleProperty = JSON::Array::create();
+    handleProperty->pushString("handle"_s);
+    handleProperty->pushObject(WTF::move(handleValue));
+
+    auto remoteReference = JSON::Object::create();
+    remoteReference->setString("handle"_s, handle);
+
+    auto nestedProperty = JSON::Array::create();
+    nestedProperty->pushString("nested"_s);
+    nestedProperty->pushObject(WTF::move(remoteReference));
+
+    auto properties = JSON::Array::create();
+    properties->pushArray(WTF::move(handleProperty));
+    properties->pushArray(WTF::move(nestedProperty));
+
+    auto localValue = JSON::Object::create();
+    localValue->setString("type"_s, "object"_s);
+    localValue->setArray("value"_s, WTF::move(properties));
+    return localValue;
+}
+
+static Ref<JSON::Object> browsingContextTarget(const String& browsingContext)
+{
+    auto target = JSON::Object::create();
+    target->setString("context"_s, browsingContext);
+    return target;
+}
+
+static void verifyExceptionOwnership(AutomationTest& test, const String& browsingContext, int commandIdentifier, const String& resultOwnership, bool expectsHandle)
+{
+    auto parameters = JSON::Object::create();
+    parameters->setString("expression"_s, "throw { marker: 42 }"_s);
+    parameters->setBoolean("awaitPromise"_s, false);
+    parameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    parameters->setString("resultOwnership"_s, resultOwnership);
+
+    auto response = test.sendBidiCommandAndWait(commandIdentifier, "script.evaluate"_s, WTF::move(parameters));
+    auto result = response->getObject("result"_s);
+    g_assert_true(!!result);
+    g_assert_true(result->getString("type"_s) == "exception"_s);
+    auto exceptionDetails = result->getObject("exceptionDetails"_s);
+    g_assert_true(!!exceptionDetails);
+    auto exception = exceptionDetails->getObject("exception"_s);
+    g_assert_true(!!exception);
+    if (expectsHandle)
+        g_assert_false(exception->getString("handle"_s).isEmpty());
+    else
+        g_assert_true(exception->getString("handle"_s).isEmpty());
+}
+
+static void verifyDisownHandleLifecycle(AutomationTest& test, const String& browsingContext)
+{
+    auto evaluateParameters = JSON::Object::create();
+    evaluateParameters->setString("expression"_s, "({ marker: 42 })"_s);
+    evaluateParameters->setBoolean("awaitPromise"_s, false);
+    evaluateParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    evaluateParameters->setString("resultOwnership"_s, "root"_s);
+
+    auto evaluateResponse = test.sendBidiCommandAndWait(100, "script.evaluate"_s, WTF::move(evaluateParameters));
+    auto evaluateResult = evaluateResponse->getObject("result"_s);
+    g_assert_true(!!evaluateResult);
+    auto remoteValue = evaluateResult->getObject("result"_s);
+    g_assert_true(!!remoteValue);
+    auto handle = remoteValue->getString("handle"_s);
+    g_assert_false(handle.isEmpty());
+
+    verifyClassicHandleProperty(test, browsingContext, handle);
+
+    // A sandbox target must not release the default realm's handle.
+    auto sandboxTarget = browsingContextTarget(browsingContext);
+    sandboxTarget->setString("sandbox"_s, "different-realm"_s);
+    auto sandboxDisownParameters = JSON::Object::create();
+    auto sandboxHandles = JSON::Array::create();
+    sandboxHandles->pushString(handle);
+    sandboxDisownParameters->setArray("handles"_s, WTF::move(sandboxHandles));
+    sandboxDisownParameters->setObject("target"_s, WTF::move(sandboxTarget));
+    test.sendBidiCommandAndWait(105, "script.disown"_s, WTF::move(sandboxDisownParameters));
+
+    auto callFunctionParameters = JSON::Object::create();
+    callFunctionParameters->setString("functionDeclaration"_s, "(value, directReference) => typeof value.handle === 'string' && value.nested === directReference && directReference.marker"_s);
+    callFunctionParameters->setBoolean("awaitPromise"_s, false);
+    callFunctionParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    auto arguments = JSON::Array::create();
+    arguments->pushObject(objectLocalValueWithHandlePropertyAndNestedReference(handle));
+    arguments->pushObject(remoteValue.copyRef().releaseNonNull());
+    callFunctionParameters->setArray("arguments"_s, WTF::move(arguments));
+
+    auto callFunctionResponse = test.sendBidiCommandAndWait(101, "script.callFunction"_s, WTF::move(callFunctionParameters));
+    auto callFunctionResult = callFunctionResponse->getObject("result"_s);
+    g_assert_true(!!callFunctionResult);
+    auto callFunctionRemoteValue = callFunctionResult->getObject("result"_s);
+    g_assert_true(!!callFunctionRemoteValue);
+    g_assert_true(callFunctionRemoteValue->getString("type"_s) == "number"_s);
+    auto marker = callFunctionRemoteValue->getDouble("value"_s);
+    g_assert_true(marker && *marker == 42);
+
+    auto disown = [&](int commandIdentifier, Ref<JSON::Object>&& target) {
+        auto parameters = JSON::Object::create();
+        auto handles = JSON::Array::create();
+        handles->pushString(handle);
+        handles->pushString("unknown-handle"_s);
+        parameters->setArray("handles"_s, WTF::move(handles));
+        parameters->setObject("target"_s, WTF::move(target));
+        test.sendBidiCommandAndWait(commandIdentifier, "script.disown"_s, WTF::move(parameters));
+    };
+
+    auto realm = evaluateResult->getString("realm"_s);
+    g_assert_false(realm.isEmpty());
+    auto realmTarget = JSON::Object::create();
+    realmTarget->setString("realm"_s, realm);
+    disown(102, realmTarget.copyRef());
+    disown(103, WTF::move(realmTarget));
+
+    auto releasedHandleParameters = JSON::Object::create();
+    releasedHandleParameters->setString("functionDeclaration"_s, "(value) => value.nested.marker"_s);
+    releasedHandleParameters->setBoolean("awaitPromise"_s, false);
+    releasedHandleParameters->setObject("target"_s, browsingContextTarget(browsingContext));
+    auto releasedHandleArguments = JSON::Array::create();
+    releasedHandleArguments->pushObject(objectLocalValueWithHandlePropertyAndNestedReference(handle));
+    releasedHandleParameters->setArray("arguments"_s, WTF::move(releasedHandleArguments));
+
+    test.sendBidiCommand(104, "script.callFunction"_s, WTF::move(releasedHandleParameters));
+    auto releasedHandleResponse = test.waitForBidiMessage([](const JSON::Object& message) {
+        return message.getInteger("id"_s) == 104;
+    });
+    g_assert_true(!!releasedHandleResponse);
+    g_assert_true(releasedHandleResponse->getString("type"_s) == "error"_s);
+    g_assert_true(releasedHandleResponse->getString("error"_s) == "no such handle"_s);
+    g_assert_true(releasedHandleResponse->getString("message"_s).contains(handle));
+}
+#endif
+
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
     auto sessionID = createVersion4UUIDString().utf8();
@@ -1218,6 +1377,9 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
 #if ENABLE(WEBDRIVER_BIDI)
     auto topLevelBrowsingContext = test->browsingContextHandleFromLastResponse();
     verifyIframeRealmEnumeration(*test, webView.get(), topLevelBrowsingContext);
+    verifyDisownHandleLifecycle(*test, topLevelBrowsingContext);
+    verifyExceptionOwnership(*test, topLevelBrowsingContext, 106, "root"_s, true);
+    verifyExceptionOwnership(*test, topLevelBrowsingContext, 107, "none"_s, false);
 #endif
 
     auto newWebViewInWindow = test->createWebView(
