@@ -36,6 +36,8 @@ G_DECLARE_FINAL_TYPE (WPEDisplayQtQuick, wpe_display_qtquick, WPE, DISPLAY_QTQUI
 
 WPEDisplay *wpe_display_qtquick_new (void);
 
+WPEInputMethodContext *wpe_display_qtquick_get_input_method_context(WPEDisplay*);
+
 G_END_DECLS
 
 #endif /* WPEDisplayQtQuick_h */
