@@ -83,13 +83,23 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     if (!m_parameters.processIdentifier->toUInt64() || m_parameters.connectionIdentifier.handle.value() <= 0)
         return false;
 
-#if ENABLE(DEVELOPER_MODE)
-    // Check last remaining options for JSC testing
+    // The remaining arguments configure JSC, and must be applied before InitializeWebKit2().
+    bool enableSharedArrayBuffer = false;
     for (auto& arg : argvSpan.subspan(argIndex)) {
-        if (CStringView::unsafeFromUTF8(arg) == "--configure-jsc-for-testing"_s)
+        auto option = CStringView::unsafeFromUTF8(arg);
+#if ENABLE(DEVELOPER_MODE)
+        if (option == "--configure-jsc-for-testing"_s)
             JSC::Config::configureForTesting();
-    }
 #endif
+        if (option == "--enable-shared-array-buffer"_s)
+            enableSharedArrayBuffer = true;
+    }
+
+    if (enableSharedArrayBuffer) {
+        JSC::Options::initialize([] {
+            JSC::Options::useSharedArrayBuffer() = true;
+        });
+    }
 
     return true;
 }
