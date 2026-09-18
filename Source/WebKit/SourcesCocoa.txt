@@ -345,6 +345,7 @@ UIProcess/API/Cocoa/_WKWebPushDaemonConnection.mm @nonARC
 UIProcess/API/Cocoa/_WKWebPushMessage.mm @nonARC
 UIProcess/API/Cocoa/_WKWebPushSubscriptionData.mm @nonARC
 UIProcess/API/Cocoa/_WKWebExtension.mm @nonARC
+UIProcess/API/Cocoa/_WKWebExtensionNotification.mm
 UIProcess/API/Cocoa/_WKWebExtensionSidebar.mm
 UIProcess/API/Cocoa/_WKWebPushAction.mm @nonARC
 UIProcess/API/Cocoa/_WKWebsiteDataSize.mm @nonARC

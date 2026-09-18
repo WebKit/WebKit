@@ -25,6 +25,7 @@
 
 #import <WebKit/WKWebExtensionControllerDelegate.h>
 
+@class _WKWebExtensionNotification;
 @class _WKWebExtensionSidebar;
 @class _WKWebExtensionBookmark;
 @protocol _WKWebExtensionBookmark;
@@ -223,6 +224,45 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  @param completionHandler A block to call with the moved bookmark node or an error.
  */
 - (void)_webExtensionController:(WKWebExtensionController *)controller moveBookmarkWithIdentifier:(NSString *)bookmarkId toParent:(nullable NSString *)parentId atIndex:(nullable NSNumber *)index forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSObject<_WKWebExtensionBookmark> *, NSError *))completionHandler;
+
+/*!
+ @abstract Called when an extension requests that a notification be presented to the user.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification that should be presented.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be presented.
+ @discussion This method is called in response to `browser.notifications.create()`. The app is responsible for displaying the notification using its native notification facilities and for reporting the user's interaction back to WebKit. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller presentNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when an extension updates the properties of an already-presented notification.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification whose properties have changed and should be re-presented.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be updated.
+ @discussion This method is called in response to `browser.notifications.update()`. WebKit merges the changed properties before calling this method, so the provided notification always reflects the notification's current state. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller updateNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called when an extension clears a previously-presented notification.
+ @param controller The web extension controller initiating the request.
+ @param notification The notification that should be dismissed.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a single error argument, which should be provided if the notification could not be cleared.
+ @discussion This method is called in response to `browser.notifications.clear()`, or when a notification is otherwise no longer needed. The app should dismiss the corresponding notification if it is still visible. Default implementation does nothing.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller clearNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+/*!
+ @abstract Called to determine whether an extension is currently permitted to present notifications.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @param completionHandler A block that must be called upon completion. It takes a boolean indicating whether the extension may present notifications, and an optional error argument.
+ @discussion This method is called in response to `browser.notifications.getPermissionLevel()`. Default implementation returns `NO`.
+ */
+- (void)_webExtensionController:(WKWebExtensionController *)controller mayPresentNotificationsForExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(BOOL mayPresent, NSError * _Nullable error))completionHandler;
 @end
 
 WK_HEADER_AUDIT_END(nullability, sendability)

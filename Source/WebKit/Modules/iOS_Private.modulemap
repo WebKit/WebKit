@@ -3160,6 +3160,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module _WKWebExtensionNotification {
+    header "_WKWebExtensionNotification.h"
+    export *
+  }
+
   explicit module _WKWebExtensionPrivate {
     header "_WKWebExtensionPrivate.h"
     export *
