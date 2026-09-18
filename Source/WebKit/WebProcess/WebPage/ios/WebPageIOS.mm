@@ -2768,7 +2768,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformationWitho
         }
         information.selectedIndex = element->selectedIndex();
         information.isMultiSelect = element->multiple();
-        information.usesBaseAppearancePicker = element->usesBaseAppearancePicker();
+        information.optionsAreRenderedWithBaseAppearance = element->optionsAreRenderedWithBaseAppearance();
     } else if (RefPtr element = dynamicDowncast<HTMLTextAreaElement>(*focusedElement)) {
         information.autocapitalizeType = element->autocapitalizeType();
         information.isAutocorrect = element->shouldAutocorrect();

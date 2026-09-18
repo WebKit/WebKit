@@ -16613,6 +16613,7 @@
 		93C4F6E91108F9A50099D0DB /* AccessibilityScrollbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollbar.h; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8677 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = html.css; sourceTree = "<group>"; };
 		93CA4C9909DF93FA00DF8678 /* htmlSwitchControl.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = htmlSwitchControl.css; sourceTree = "<group>"; };
+		49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = selectMultipleAndListBox.css; sourceTree = "<group>"; };
 		93CA4C9F09DF93FA00DF8677 /* quirks.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = quirks.css; sourceTree = "<group>"; };
 		93CA4CA209DF93FA00DF8677 /* svg.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = svg.css; sourceTree = "<group>"; };
 		93CCF0260AF6C52900018E89 /* NavigationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationAction.h; sourceTree = "<group>"; };
@@ -42473,6 +42474,7 @@
 				BC23888F2D8C816C00698102 /* PropertySetCSSDescriptors.cpp */,
 				BC2388902D8C816C00698102 /* PropertySetCSSDescriptors.h */,
 				93CA4C9F09DF93FA00DF8677 /* quirks.css */,
+				49B34A467D95111C120F93C7 /* selectMultipleAndListBox.css */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
 				432D3FE718A8658400D7DC03 /* SelectorCheckerTestFunctions.h */,

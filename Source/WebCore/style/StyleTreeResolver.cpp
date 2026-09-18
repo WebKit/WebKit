@@ -475,12 +475,14 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
             auto* select = option->ownerSelectElement();
             if (!select)
                 return { };
-            auto* pickerElement = select->pickerPopoverElement();
-            if (!pickerElement)
-                return { };
-            auto* pickerStyle = m_update->elementStyle(*pickerElement);
-            if (!pickerStyle || pickerStyle->usedAppearance() != StyleAppearance::Base)
-                return { };
+            if (!select->isBaseListBox(m_update->elementStyle(*select))) {
+                auto* pickerElement = select->pickerPopoverElement();
+                if (!pickerElement)
+                    return { };
+                auto* pickerStyle = m_update->elementStyle(*pickerElement);
+                if (!pickerStyle || pickerStyle->usedAppearance() != StyleAppearance::Base)
+                    return { };
+            }
         } else {
             if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
                 return { };
@@ -492,7 +494,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (pseudoElementIdentifier.type == PseudoElementType::PickerIcon) {
         if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
             return { };
-        if (auto* select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->usesMenuList())
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->isDropDownBox(elementUpdate.style.get()))
             return { };
     }
 
