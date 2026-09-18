@@ -235,7 +235,7 @@ private:
 #endif // PLATFORM(GTK)
     }
 
-    void windowFrame(WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler) final
+    void windowFrame(WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler) final
     {
 #if PLATFORM(GTK)
         GdkRectangle geometry = { 0, 0, 0, 0 };

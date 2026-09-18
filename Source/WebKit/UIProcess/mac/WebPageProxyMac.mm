@@ -205,11 +205,12 @@ void WebPageProxy::searchTheWeb(const String& string)
 void WebPageProxy::windowAndViewFramesChanged(const FloatRect& viewFrameInWindowCoordinates, const FloatPoint& accessibilityViewCoordinates)
 {
     // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
-    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, viewFrameInWindowCoordinates, accessibilityViewCoordinates] (FloatRect windowFrameInScreenCoordinates) {
+    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, viewFrameInWindowCoordinates, accessibilityViewCoordinates] (std::optional<FloatRect> frameFromUIClient) {
         RefPtr pageClient = this->pageClient();
         if (!pageClient)
             return;
 
+        FloatRect windowFrameInScreenCoordinates = windowFrameRespectingHostingWindow(*pageClient, frameFromUIClient);
         FloatRect windowFrameInUnflippedScreenCoordinates = pageClient->convertToUserSpace(windowFrameInScreenCoordinates);
 
         m_viewWindowCoordinates = makeUnique<ViewWindowCoordinates>();

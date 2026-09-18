@@ -134,7 +134,9 @@ public:
     virtual void setIsResizable(WebKit::WebPageProxy&, bool) { }
 
     virtual void setWindowFrame(WebKit::WebPageProxy&, const WebCore::FloatRect&) { }
-    virtual void windowFrame(WebKit::WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler) { completionHandler({ }); }
+    // std::nullopt means the client does not supply a window frame, as opposed to deliberately
+    // reporting an empty one. WebPageProxy only substitutes the hosting window in the former case.
+    virtual void windowFrame(WebKit::WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler) { completionHandler(std::nullopt); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() const { return false; }
     virtual void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy&, WTF::String&&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(true); }

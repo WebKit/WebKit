@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -439,6 +439,7 @@ public:
 #endif
 #if PLATFORM(MAC)
     virtual WebCore::IntRect rootViewToWindow(const WebCore::IntRect&) = 0;
+    virtual std::optional<WebCore::FloatRect> windowFrameInDeviceSpace() const { return std::nullopt; }
 #endif
 #if ENABLE(TWO_PHASE_CLICKS)
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;

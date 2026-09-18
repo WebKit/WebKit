@@ -11531,19 +11531,36 @@ void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
         m_uiClient->setWindowFrame(*this, pageClient->convertToDeviceSpace(newWindowFrame));
 }
 
+FloatRect WebPageProxy::windowFrameRespectingHostingWindow(const PageClient& pageClient, std::optional<FloatRect> frameFromUIClient)
+{
+#if PLATFORM(MAC)
+    if (!frameFromUIClient) {
+        if (auto hostingWindowFrame = pageClient.windowFrameInDeviceSpace())
+            return *hostingWindowFrame;
+    }
+#else
+    UNUSED_PARAM(pageClient);
+#endif
+    return frameFromUIClient.value_or(FloatRect { });
+}
+
 void WebPageProxy::getWindowFrame(CompletionHandler<void(const FloatRect&)>&& reply)
 {
-    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, reply = WTF::move(reply)] (FloatRect frame) mutable {
+    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, reply = WTF::move(reply)] (std::optional<FloatRect> frame) mutable {
         RefPtr pageClient = this->pageClient();
-        reply(pageClient ? pageClient->convertToUserSpace(frame) : FloatRect { });
+        if (!pageClient)
+            return reply(FloatRect { });
+        reply(pageClient->convertToUserSpace(windowFrameRespectingHostingWindow(*pageClient, frame)));
     });
 }
 
 void WebPageProxy::getWindowFrameWithCallback(Function<void(FloatRect)>&& completionHandler)
 {
-    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (FloatRect frame) {
+    m_uiClient->windowFrame(*this, [this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (std::optional<FloatRect> frame) {
         RefPtr pageClient = this->pageClient();
-        completionHandler(pageClient ? pageClient->convertToUserSpace(frame) : FloatRect { });
+        if (!pageClient)
+            return completionHandler(FloatRect { });
+        completionHandler(pageClient->convertToUserSpace(windowFrameRespectingHostingWindow(*pageClient, frame)));
     });
 }
 

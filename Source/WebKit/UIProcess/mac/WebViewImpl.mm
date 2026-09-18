@@ -2635,6 +2635,8 @@ void WebViewImpl::viewDidMoveToWindow()
         dismissContentRelativeChildWindowsWithAnimation(false);
         m_page->closeSharedPreviewPanelIfNecessary();
 
+        updateWindowAndViewFrames();
+
         if (m_immediateActionGestureRecognizer) {
             // Work around <rdar://problem/22646404> by explicitly cancelling the animation.
             cancelImmediateActionAnimation();

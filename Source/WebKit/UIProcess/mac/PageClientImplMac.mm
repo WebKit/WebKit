@@ -545,6 +545,14 @@ IntRect PageClientImpl::rootViewToWindow(const WebCore::IntRect& rect)
     return enclosingIntRect(tempRect);
 }
 
+std::optional<FloatRect> PageClientImpl::windowFrameInDeviceSpace() const
+{
+    RetainPtr window = activeWindow();
+    if (!window)
+        return std::nullopt;
+    return FloatRect { [window frame] };
+}
+
 IntPoint PageClientImpl::accessibilityScreenToRootView(const IntPoint& point)
 {
     return screenToRootView(point);

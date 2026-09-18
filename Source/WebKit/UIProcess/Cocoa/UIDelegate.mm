@@ -1114,24 +1114,24 @@ void UIDelegate::UIClient::setWindowFrame(WebKit::WebPageProxy&, const WebCore::
     [delegate _webView:uiDelegate->m_webView.get().get() setWindowFrame:frame];
 }
 
-void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler)
+void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
     if (!uiDelegate->m_delegateMethods.webViewGetWindowFrameWithCompletionHandler)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
     
     RetainPtr delegate = uiDelegatePrivate();
     if (!delegate)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
     
     [delegate _webView:uiDelegate->m_webView.get().get() getWindowFrameWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:getWindowFrameWithCompletionHandler:))](CGRect frame) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
-        completionHandler(frame);
+        completionHandler(WebCore::FloatRect { frame });
     }).get()];
 }
 

@@ -1979,10 +1979,10 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.setWindowFrame(toAPI(&page), toAPI(frame), m_client.base.clientInfo);
         }
 
-        void windowFrame(WebPageProxy& page, Function<void(WebCore::FloatRect)>&& completionHandler) final
+        void windowFrame(WebPageProxy& page, Function<void(std::optional<WebCore::FloatRect>)>&& completionHandler) final
         {
             if (!m_client.getWindowFrame)
-                return completionHandler({ });
+                return completionHandler(std::nullopt);
 
             completionHandler(toFloatRect(m_client.getWindowFrame(toAPI(&page), m_client.base.clientInfo)));
         }

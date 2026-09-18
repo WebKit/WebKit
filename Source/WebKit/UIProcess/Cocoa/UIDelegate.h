@@ -134,7 +134,7 @@ private:
         void pageDidScroll(WebPageProxy*) final;
         void setIsResizable(WebPageProxy&, bool) final;
         void setWindowFrame(WebPageProxy&, const WebCore::FloatRect&) final;
-        void windowFrame(WebPageProxy&, Function<void(WebCore::FloatRect)>&&) final;
+        void windowFrame(WebPageProxy&, Function<void(std::optional<WebCore::FloatRect>)>&&) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
 
         // Printing.
