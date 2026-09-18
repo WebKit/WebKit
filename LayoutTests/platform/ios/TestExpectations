@@ -1099,6 +1099,7 @@ fast/events/input-event-insert-link.html [ Failure ]
 
 # No tab navigation support on iOS
 fast/events/sequential-focus-navigation-after-clicking-editable-text.html [ Failure ]
+fast/events/sequential-focus-navigation-after-clicking-focusable-container.html [ Failure ]
 fast/shadow-dom/focus-on-iframe.html [ Failure ]
 webkit.org/b/116046 fast/events/sequential-focus-navigation-starting-point.html [ Skip ]
 webkit.org/b/159240 fast/events/remove-focus-navigation-starting-point-crash.html [ Skip ]
