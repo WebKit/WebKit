@@ -41,10 +41,13 @@ static constexpr std::array expediaGroupDomains {
     "hotels.com"_s, "mrjet.se"_s, "orbitz.com"_s, "travelocity.ca"_s,
     "travelocity.com"_s, "wotif.co.nz"_s, "wotif.com"_s
 };
+static constexpr std::array facebookGroupCallDomains { "facebook.com"_s, "messenger.com"_s };
 static constexpr std::array microsoftTeamsHosts { "teams.live.com"_s, "teams.microsoft.com"_s };
 static constexpr std::array naverHostsWithoutSimulatedMouseEvents { "tv.naver.com"_s, "mail.naver.com"_s, "m.naver.com"_s };
 static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
 static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
+
+static constexpr auto chromeUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"_s;
 
 static constexpr auto bestBuyLanguageScript = "Object.defineProperty(navigator,'language',{get:function(){return'en-US'}});Object.defineProperty(navigator,'languages',{get:function(){return['en-US','en']}});"_s;
 
@@ -137,7 +140,6 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("airindiaexpress.com"_s),
         .behaviors = { needsAirIndiaExpressLayeringQuirk } },
 
-    // Note: There is a userAgent override for rdar://117771731, see needsCustomUserAgentOverride()
     // airtable.com rdar://49124313
     { .match = URLMatch::domain("airtable.com"_s),
         .behaviors = { shouldDispatchSimulatedMouseEventsQuirk } },
@@ -150,6 +152,11 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsQuirk,
         },
         .site = QuirkSite::Amazon },
+
+    // amazon.com rdar://117771731
+    { .match = URLMatch::anyTopLevelDomain("amazon"_s).when(pathIs("/gp/video/"_s)),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent)) },
+        .isAvailable = iOS },
 
     { .match = URLMatch::domain("amazon.design"_s),
         .behaviors = { needsAmazonDesignMenuViewportUnitQuirk } },
@@ -347,6 +354,11 @@ static constexpr Quirk fullTable[] = {
         },
         .site = QuirkSite::Facebook },
 
+    // facebook.com and messenger.com group calls fall back to an unsupported-browser page for Safari.
+    // The site serves "/groupcall/ROOM:", but pathStartsWith() requires a lowercased pattern.
+    { .match = URLMatch::domain(facebookGroupCallDomains).when(pathStartsWith("/groupcall/room:"_s)),
+        .behaviors = { needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent)) } },
+
     // flipkart.com rdar://49648520
     { .match = URLMatch::domain("flipkart.com"_s),
         .behaviors = { shouldDispatchSimulatedMouseEventsQuirk } },
@@ -357,6 +369,12 @@ static constexpr Quirk fullTable[] = {
 
     { .match = URLMatch::host("play.geforcenow.com"_s),
         .behaviors = { needsGeforcenowWarningDisplayNoneQuirk } },
+
+    // github.com https://bugs.webkit.org/show_bug.cgi?id=319011 rdar://181825035
+    // github.com serves Safari some JS that tries to adjust the scroll position, which interferes
+    // with WebKit's scroll to fragment implementation. A Chrome-like UA takes the working code path.
+    { .match = URLMatch::domain("github.com"_s),
+        .behaviors = { needsChromeCompatibilityUserAgentQuirk(QuirkParameters::fromChromeCompatibilityVersion("151"_s)) } },
 
     // gizmodo.com rdar://102227302
     { .match = URLMatch::domain("gizmodo.com"_s),
@@ -510,6 +528,8 @@ static constexpr Quirk fullTable[] = {
             needsMozillaFileTypeForDataTransferQuirk,
             // outlook.live.com: rdar://152277211
             mayNeedToIgnoreContentObservation,
+            // Outlook detects Safari and handles selections incorrectly in their rich text editor roosterjs.
+            needsUserAgentStringOverrideQuirk(QuirkParameters::fromUserAgent(chromeUserAgent)),
         },
         .site = QuirkSite::Outlook },
 
@@ -618,6 +638,10 @@ static constexpr Quirk fullTable[] = {
     // Pandora: <rdar://100243111>.
     { .match = URLMatch::domain("pandora.com"_s),
         .behaviors = { shouldExposeShowModalDialog } },
+
+    // mms.pinduoduo.com https://bugs.webkit.org/b/318201
+    { .match = URLMatch::host("mms.pinduoduo.com"_s),
+        .behaviors = { needsChromeCompatibilityUserAgentQuirk(QuirkParameters::fromChromeCompatibilityVersion("149"_s)) } },
 
     // pinterest.com rdar://104979314
     // FIXME: Remove this Quirk if Pinterest decides to trigger this notification from an user gesture (rdar://165745719)
@@ -741,6 +765,8 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onSliderRole)),
             // tiktok.com rdar://174179805
             shouldComputeSimulatedMouseEventMovementDeltaQuirk,
+            // FIXME(rdar://148759791): Remove this once TikTok removes the outdated error message.
+            needsChromeCompatibilityUserAgentQuirk(QuirkParameters::fromChromeCompatibilityVersion("136"_s)),
         },
         .site = QuirkSite::TikTok },
 
@@ -961,6 +987,12 @@ consteval bool everyQuirkCarriesWhatItDeclares()
                     return false;
 
                 if (parametersNeeded.contains(QuirkParametersNeeded::NeedsScript) && behavior.parameters->script.isEmpty())
+                    return false;
+
+                if (parametersNeeded.contains(QuirkParametersNeeded::NeedsUserAgent) && behavior.parameters->userAgent.isEmpty())
+                    return false;
+
+                if (parametersNeeded.contains(QuirkParametersNeeded::NeedsChromeCompatibilityVersion) && behavior.parameters->chromeCompatibilityVersion.isEmpty())
                     return false;
             }
 

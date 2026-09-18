@@ -176,6 +176,7 @@ https://www.linkedin.com/
     (none)
 https://outlook.live.com/
     NeedsMozillaFileTypeForDataTransferQuirk
+    NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldPreventDispatchOfTouchEventQuirk
 https://live.com/

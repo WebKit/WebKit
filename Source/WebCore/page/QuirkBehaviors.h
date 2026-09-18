@@ -189,6 +189,7 @@ enum class QuirkBehaviorID {
     NeedsAirIndiaExpressLayeringQuirk,
     NeedsBodyScrollbarWidthNoneDisabledQuirk,
     NeedsCanPlayAfterSeekedQuirk,
+    NeedsChromeCompatibilityUserAgentQuirk,
     NeedsChromeMediaControlsPseudoElementQuirk,
     NeedsCNNCaptionQuirk,
     NeedsLimitedMatroskaSupportQuirk,
@@ -228,6 +229,7 @@ enum class QuirkBehaviorID {
     NeedsSupportsProgressMonitoringQuirk,
     NeedsSuppressPostLayoutBoundaryEventsQuirk,
     NeedsTikTokOverflowingContentQuirk,
+    NeedsUserAgentStringOverrideQuirk,
     NeedsVideoShouldMaintainAspectRatioQuirk,
     NeedsWebKitMediaTextTrackDisplayQuirk,
     NeedsYouTubeCaptionQuirk,
@@ -332,8 +334,10 @@ enum class QuirkBehaviorID {
 using QuirkBitSet = WTF::BitSet<static_cast<size_t>(QuirkBehaviorID::NumberOfIDs)>;
 
 struct QuirkParameters {
-    ASCIILiteral script;
+    ASCIILiteral script = ""_s;
     std::optional<URLMatch> scriptURLCondition { std::nullopt };
+    ASCIILiteral userAgent = ""_s;
+    ASCIILiteral chromeCompatibilityVersion = ""_s;
 
     static consteval QuirkParameters fromScript(ASCIILiteral script)
     {
@@ -349,10 +353,26 @@ struct QuirkParameters {
             .scriptURLCondition = scriptURLCondition
         };
     }
+
+    static consteval QuirkParameters fromUserAgent(ASCIILiteral userAgent)
+    {
+        return QuirkParameters {
+            .userAgent = userAgent
+        };
+    }
+
+    static consteval QuirkParameters fromChromeCompatibilityVersion(ASCIILiteral chromeCompatibilityVersion)
+    {
+        return QuirkParameters {
+            .chromeCompatibilityVersion = chromeCompatibilityVersion
+        };
+    }
 };
 
 enum class QuirkParametersNeeded : uint8_t {
     NeedsScript = 1 << 0,
+    NeedsUserAgent = 1 << 1,
+    NeedsChromeCompatibilityVersion = 1 << 2,
 };
 
 enum class QuirkConditionsSupported : uint8_t {
@@ -421,6 +441,7 @@ inline constexpr QuirkBehavior mayNeedToIgnoreContentObservation { WebCore::Quir
 inline constexpr QuirkBehavior needsAirIndiaExpressLayeringQuirk { WebCore::QuirkBehaviorID::NeedsAirIndiaExpressLayeringQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsBodyScrollbarWidthNoneDisabledQuirk { WebCore::QuirkBehaviorID::NeedsBodyScrollbarWidthNoneDisabledQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsCanPlayAfterSeekedQuirk { WebCore::QuirkBehaviorID::NeedsCanPlayAfterSeekedQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior needsChromeCompatibilityUserAgentQuirk { WebCore::QuirkBehaviorID::NeedsChromeCompatibilityUserAgentQuirk, BuildCondition::cocoa, QuirkParametersNeeded::NeedsChromeCompatibilityVersion };
 inline constexpr QuirkBehavior needsChromeMediaControlsPseudoElementQuirk { WebCore::QuirkBehaviorID::NeedsChromeMediaControlsPseudoElementQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsCNNCaptionQuirk { WebCore::QuirkBehaviorID::NeedsCNNCaptionQuirk, BuildCondition::cocoa };
 inline constexpr QuirkBehavior needsLimitedMatroskaSupportQuirk { WebCore::QuirkBehaviorID::NeedsLimitedMatroskaSupportQuirk, BuildCondition::mediaRecorder && BuildCondition::cocoaWebMPlayer };
@@ -460,6 +481,7 @@ inline constexpr QuirkBehavior needsSeekingSupportDisabledQuirk { WebCore::Quirk
 inline constexpr QuirkBehavior needsSupportsProgressMonitoringQuirk { WebCore::QuirkBehaviorID::NeedsSupportsProgressMonitoringQuirk, BuildCondition::mediaSource };
 inline constexpr QuirkBehavior needsSuppressPostLayoutBoundaryEventsQuirk { WebCore::QuirkBehaviorID::NeedsSuppressPostLayoutBoundaryEventsQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsTikTokOverflowingContentQuirk { WebCore::QuirkBehaviorID::NeedsTikTokOverflowingContentQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior needsUserAgentStringOverrideQuirk { WebCore::QuirkBehaviorID::NeedsUserAgentStringOverrideQuirk, BuildCondition::always, QuirkParametersNeeded::NeedsUserAgent };
 inline constexpr QuirkBehavior needsVideoShouldMaintainAspectRatioQuirk { WebCore::QuirkBehaviorID::NeedsVideoShouldMaintainAspectRatioQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsWebKitMediaTextTrackDisplayQuirk { WebCore::QuirkBehaviorID::NeedsWebKitMediaTextTrackDisplayQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsYouTubeCaptionQuirk { WebCore::QuirkBehaviorID::NeedsYouTubeCaptionQuirk, BuildCondition::cocoa };

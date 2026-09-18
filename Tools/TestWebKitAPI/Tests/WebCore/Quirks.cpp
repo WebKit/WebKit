@@ -597,10 +597,8 @@ TEST_F(QuirksTest, NeedsCustomUserAgentOverrideGroupCall)
 
 TEST_F(QuirksTest, NeedsCustomUserAgentOverrideIsRegistrableDomainGranularity)
 {
-    EXPECT_EQ(customUserAgentFor("https://app.101edu.co/"_s).has_value(), customUserAgentFor("https://101edu.co/"_s).has_value());
-    EXPECT_EQ(customUserAgentFor("https://app.aktiv.com/"_s).has_value(), customUserAgentFor("https://aktiv.com/"_s).has_value());
-    EXPECT_FALSE(customUserAgentFor("https://app.101edu.co/"_s).has_value());
-    EXPECT_FALSE(customUserAgentFor("https://app.aktiv.com/"_s).has_value());
+    EXPECT_TRUE(customUserAgentFor("https://web.messenger.com/groupcall/ROOM:12345"_s).has_value());
+    EXPECT_FALSE(customUserAgentFor("https://messenger.com.example.com/groupcall/ROOM:12345"_s).has_value());
 }
 
 #if PLATFORM(COCOA)

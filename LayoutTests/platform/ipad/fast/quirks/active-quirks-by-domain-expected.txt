@@ -197,6 +197,7 @@ https://outlook.live.com/
     MayNeedToIgnoreContentObservation
     NeedsChromeOSNavigatorUserAgentQuirk
     NeedsMozillaFileTypeForDataTransferQuirk
+    NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://live.com/
     NeedsChromeOSNavigatorUserAgentQuirk
@@ -294,6 +295,7 @@ https://www.thesaurus.com/
     NeedsAnchorToBeMouseFocusableQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.tiktok.com/
+    NeedsChromeCompatibilityUserAgentQuirk
     NeedsTikTokOverflowingContentQuirk
     ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk

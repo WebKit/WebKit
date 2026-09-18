@@ -176,6 +176,7 @@ https://www.linkedin.com/
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
     NeedsMozillaFileTypeForDataTransferQuirk
+    NeedsUserAgentStringOverrideQuirk
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
@@ -265,6 +266,7 @@ https://www.theguardian.com/
 https://www.thesaurus.com/
     NeedsAnchorToBeMouseFocusableQuirk
 https://www.tiktok.com/
+    NeedsChromeCompatibilityUserAgentQuirk
     NeedsTikTokOverflowingContentQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
 https://trix-editor.org/
