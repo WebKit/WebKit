@@ -3331,10 +3331,17 @@ String AccessibilityNodeObject::textForLabelElements(Vector<Ref<HTMLElement>>&& 
     // "...if more than one label is associated; concatenate by DOM order, delimited by spaces."
     StringBuilder result;
 
+    RefPtr thisElement = this->element();
+    bool referencedByARIA = thisElement && (thisElement->hasAttributeWithoutSynchronization(aria_labelledbyAttr)
+        || thisElement->hasAttributeWithoutSynchronization(aria_labeledbyAttr));
+
     WeakPtr cache = axObjectCache();
     for (auto& labelElement : labelElements) {
         RefPtr label = cache ? cache->getOrCreate(labelElement.get()) : nullptr;
         if (!label)
+            continue;
+
+        if (!referencedByARIA && label->isARIAHidden())
             continue;
 
         if (label.get() == this) {
