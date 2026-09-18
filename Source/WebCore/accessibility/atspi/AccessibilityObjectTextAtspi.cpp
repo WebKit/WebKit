@@ -95,12 +95,12 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             g_variant_get(parameters, "(iu)", &offset, &granularityType);
             int start = 0, end = 0;
             auto text = atspiObject->textAtOffset(offset, atspiGranularityToTextGranularity(static_cast<Atspi::TextGranularityType>(granularityType)), start, end);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.data(), start, end));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.legacyCStringPointer(), start, end));
         } else if (!g_strcmp0(methodName, "GetText")) {
             int start, end;
             g_variant_get(parameters, "(ii)", &start, &end);
             auto text = atspiObject->text(start, end);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", text.isNull() ? "" : text.data()));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", text.isNull() ? "" : text.legacyCStringPointer()));
         } else if (!g_strcmp0(methodName, "SetCaretOffset")) {
             int offset;
             g_variant_get(parameters, "(i)", &offset);
@@ -113,7 +113,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             g_variant_get(parameters, "(iu)", &offset, &boundaryType);
             int start = 0, end = 0;
             auto text = atspiObject->textAtOffset(offset, atspiBoundaryToTextGranularity(static_cast<Atspi::TextBoundaryType>(boundaryType)), start, end);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.data(), start, end));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.legacyCStringPointer(), start, end));
         } else if (!g_strcmp0(methodName, "GetTextAfterOffset"))
             g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");
         else if (!g_strcmp0(methodName, "GetCharacterAtOffset")) {
@@ -326,7 +326,7 @@ bool AccessibilityObject::allowsTextRanges() const
     return true;
 }
 
-CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
+UTF8CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
@@ -347,7 +347,7 @@ CString AccessibilityObjectAtspi::text(int startOffset, int endOffset) const
         return utf8Text;
 
     GUniquePtr<char> substring(g_utf8_substring(utf8Text.legacyCStringPointer(), startOffset, endOffset));
-    return substring.get();
+    return UTF8CString { byteCast<char8_t>(substring.get()) };
 }
 
 static inline int adjustInputOffset(unsigned utf16Offset, bool hasListMarkerAtStart)
@@ -462,7 +462,7 @@ IntPoint AccessibilityObjectAtspi::boundaryOffset(unsigned utf16Offset, TextGran
     return { startOffset, adjustOutputOffset(m_coreObject->indexForVisiblePosition(endPostion), m_hasListMarkerAtStart) };
 }
 
-CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity granularity, int& startOffset, int& endOffset) const
+UTF8CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity granularity, int& startOffset, int& endOffset) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();
@@ -485,7 +485,7 @@ CString AccessibilityObjectAtspi::textAtOffset(int offset, TextGranularity granu
     }
 
     GUniquePtr<char> substring(g_utf8_substring(utf8Text.legacyCStringPointer(), startOffset, endOffset));
-    return substring.get();
+    return UTF8CString { byteCast<char8_t>(substring.get()) };
 }
 
 int AccessibilityObjectAtspi::characterAtOffset(int offset) const

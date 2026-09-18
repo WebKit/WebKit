@@ -84,8 +84,8 @@ public:
     void serialize(GVariantBuilder*) const;
 
     WEBCORE_EXPORT String id() const;
-    WEBCORE_EXPORT CString name() const;
-    WEBCORE_EXPORT CString description() const;
+    WEBCORE_EXPORT UTF8CString name() const;
+    WEBCORE_EXPORT UTF8CString description() const;
     WEBCORE_EXPORT String locale() const;
     WEBCORE_EXPORT Atspi::Role role() const;
     WEBCORE_EXPORT unsigned childCount() const;
@@ -197,8 +197,8 @@ private:
 
     static TextGranularity atspiBoundaryToTextGranularity(Atspi::TextBoundaryType);
     static TextGranularity atspiGranularityToTextGranularity(Atspi::TextGranularityType);
-    CString text(int, int) const;
-    CString textAtOffset(int, TextGranularity, int&, int&) const;
+    UTF8CString text(int, int) const;
+    UTF8CString textAtOffset(int, TextGranularity, int&, int&) const;
     int characterAtOffset(int) const;
     std::optional<unsigned> characterOffset(char16_t, int) const;
     std::optional<unsigned> characterIndex(char16_t, unsigned) const;

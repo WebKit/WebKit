@@ -437,9 +437,9 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
         atspiObject->updateBackingStore();
 
         if (!g_strcmp0(propertyName, "Name"))
-            return g_variant_new_string(atspiObject->name().data());
+            return g_variant_new_string(atspiObject->name().legacyCStringPointer());
         if (!g_strcmp0(propertyName, "Description"))
-            return g_variant_new_string(atspiObject->description().data());
+            return g_variant_new_string(atspiObject->description().legacyCStringPointer());
         if (!g_strcmp0(propertyName, "Locale"))
             return g_variant_new_string(atspiObject->locale().utf8().legacyCStringPointer());
         if (!g_strcmp0(propertyName, "AccessibleId")) {
@@ -641,10 +641,10 @@ int AccessibilityObjectAtspi::indexInParentForChildrenChanged(AccessibilityAtspi
     return indexInParent();
 }
 
-CString AccessibilityObjectAtspi::name() const
+UTF8CString AccessibilityObjectAtspi::name() const
 {
     if (!m_coreObject)
-        return "";
+        return ""_s;
 
     if (m_coreObject->role() == AccessibilityRole::ListBoxOption || m_coreObject->role() == AccessibilityRole::MenuListOption) {
         auto value = m_coreObject->stringValue();
@@ -669,13 +669,13 @@ CString AccessibilityObjectAtspi::name() const
             return text.text.utf8();
     }
 
-    return "";
+    return ""_s;
 }
 
-CString AccessibilityObjectAtspi::description() const
+UTF8CString AccessibilityObjectAtspi::description() const
 {
     if (!m_coreObject)
-        return "";
+        return ""_s;
 
     Vector<AccessibilityText> textOrder;
     m_coreObject->accessibilityText(textOrder);
@@ -696,7 +696,7 @@ CString AccessibilityObjectAtspi::description() const
         nameTextAvailable = true;
     }
 
-    return "";
+    return ""_s;
 }
 
 String AccessibilityObjectAtspi::locale() const
@@ -1160,11 +1160,11 @@ void AccessibilityObjectAtspi::serialize(GVariantBuilder* builder) const
     buildInterfaces(&interfacesBuilder);
     g_variant_builder_add(builder, "@as", g_variant_new("as", &interfacesBuilder));
 
-    g_variant_builder_add(builder, "s", name().data());
+    g_variant_builder_add(builder, "s", name().legacyCStringPointer());
 
     g_variant_builder_add(builder, "u", role());
 
-    g_variant_builder_add(builder, "s", description().data());
+    g_variant_builder_add(builder, "s", description().legacyCStringPointer());
 
     GVariantBuilder statesBuilder = G_VARIANT_BUILDER_INIT(G_VARIANT_TYPE("au"));
     buildStates(&statesBuilder);

@@ -507,7 +507,7 @@ void AccessibilityAtspi::stateChanged(AccessibilityObjectAtspi& atspiObject, con
         g_variant_new("(siiva{sv})", name, value, 0, g_variant_new_string("0"), nullptr), nullptr);
 }
 
-void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, const char* changeType, CString&& text, unsigned offset, unsigned length)
+void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, const char* changeType, UTF8CString&& text, unsigned offset, unsigned length)
 {
 #if ENABLE(DEVELOPER_MODE)
     notifyTextChanged(atspiObject);
@@ -520,7 +520,7 @@ void AccessibilityAtspi::textChanged(AccessibilityObjectAtspi& atspiObject, cons
         return;
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().legacyCStringPointer(), "org.a11y.atspi.Event.Object", "TextChanged",
-        g_variant_new("(siiva{sv})", changeType, offset, length, g_variant_new_string(text.data()), nullptr), nullptr);
+        g_variant_new("(siiva{sv})", changeType, offset, length, g_variant_new_string(text.legacyCStringPointer()), nullptr), nullptr);
 }
 
 void AccessibilityAtspi::textAttributesChanged(AccessibilityObjectAtspi& atspiObject)
