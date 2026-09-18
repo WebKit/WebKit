@@ -115,6 +115,10 @@ void SessionHost::dispatchMessage(const String& message)
 
     auto responseHandler = m_commandRequests.take(*sequenceID);
     ASSERT(responseHandler);
+    if (!responseHandler) {
+        RELEASE_LOG_ERROR(SessionHost, "    RECV inspector #%04d: unknown sequenceID", *sequenceID);
+        return;
+    }
 
     CommandResponse response;
     if (auto errorObject = messageObject->getObject("error"_s)) {
