@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
+#include "AcceleratedAnimations.h"
 #include "BoxExtents.h"
 #include "Color.h"
 #include "CoordinatedBackingStoreProxy.h"
@@ -39,7 +40,6 @@
 #include "SkiaCompositingLayerImageSetBatch.h"
 #include "SkiaCompositingLayerOverlapRegions.h"
 #include "SkiaDamageRegion.h"
-#include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
@@ -88,7 +88,7 @@ public:
     void setOpacity(float);
     void setBlendMode(BlendMode);
     void setContentsRect(const FloatRect& rect) { m_contentsRect = rect; }
-    void setAnimations(const TextureMapperAnimations& animations) { m_animations = animations; }
+    void setAnimations(const AcceleratedAnimations& animations) { m_animations = animations; }
     void setContentsTiling(const FloatSize& size, const FloatSize& phase) { m_contentsTiling = { size, phase }; }
     void setClipPath(SkPath&& clipPath) { m_clipPath = WTF::move(clipPath); }
     void setMask(RefPtr<SkiaCompositingLayer>&&);
@@ -361,7 +361,7 @@ private:
     } m_backdrop;
     bool m_isBackdropRoot { false };
     bool m_shouldBlend { false };
-    TextureMapperAnimations m_animations;
+    AcceleratedAnimations m_animations;
     std::optional<AnimationsState> m_animationsState;
     struct {
         TransformationMatrix combined;

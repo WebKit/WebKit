@@ -466,23 +466,23 @@ std::optional<SkiaCompositingLayer::AnimationsState> SkiaCompositingLayer::syncA
         return std::nullopt;
     }
 
-    TextureMapperAnimation::ApplicationResult applicationResults;
-    m_animations.apply(applicationResults, time);
+    AcceleratedAnimation::ApplyResult applyResult;
+    m_animations.apply(applyResult, time);
 
     AnimationsState state;
-    state.transform = applicationResults.transform;
+    state.transform = applyResult.transform;
     if (state.transform) {
         // Calculate localTransform 50ms in the future.
-        TextureMapperAnimation::ApplicationResult futureResults;
-        m_animations.apply(futureResults, time + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
-        state.futureTransform = futureResults.transform;
+        AcceleratedAnimation::ApplyResult futureApplyResult;
+        m_animations.apply(futureApplyResult, time + 50_ms);
+        state.futureTransform = futureApplyResult.transform;
     }
-    state.opacity = applicationResults.opacity;
-    if (applicationResults.filters) {
-        state.filter = { SkiaCompositingLayerFilters::create(*applicationResults.filters), applicationResults.filters->outsets() };
-        state.filterOperations = applicationResults.filters;
+    state.opacity = applyResult.opacity;
+    if (applyResult.filters) {
+        state.filter = { SkiaCompositingLayerFilters::create(*applyResult.filters), applyResult.filters->outsets() };
+        state.filterOperations = applyResult.filters;
     }
-    state.isRunning = applicationResults.hasRunningAnimations;
+    state.isRunning = applyResult.hasRunningAnimations;
 
     damageIfOpacityChanged(&state);
     damageIfFilterChanged(&state);

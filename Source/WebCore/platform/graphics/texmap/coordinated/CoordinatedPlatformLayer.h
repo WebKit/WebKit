@@ -32,7 +32,6 @@
 #include "FloatPoint3D.h"
 #include "FloatSize.h"
 #include "PlatformLayerIdentifier.h"
-#include "TextureMapperAnimation.h"
 #include "TransformationMatrix.h"
 #include <wtf/EnumSet.h>
 #include <wtf/Lock.h>
@@ -40,7 +39,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
-#if !USE(TEXTURE_MAPPER)
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapperAnimation.h"
+#else
+#include "AcceleratedAnimations.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
@@ -187,7 +189,11 @@ public:
     void setBackdropShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
     void setIsBackdropRoot(bool) WTF_REQUIRES_LOCK(m_lock);
 
+#if USE(TEXTURE_MAPPER)
     void setAnimations(const TextureMapperAnimations&) WTF_REQUIRES_LOCK(m_lock);
+#else
+    void setAnimations(const AcceleratedAnimations&) WTF_REQUIRES_LOCK(m_lock);
+#endif
 
     RefPtr<CoordinatedPlatformLayer> parent() const WTF_REQUIRES_LOCK(m_lock);
 
@@ -356,7 +362,11 @@ private:
     FloatRoundedRect m_backdropRect WTF_GUARDED_BY_LOCK(m_lock);
     Path m_backdropShapePath WTF_GUARDED_BY_LOCK(m_lock);
     bool m_isBackdropRoot WTF_GUARDED_BY_LOCK(m_lock) { false };
+#if USE(TEXTURE_MAPPER)
     TextureMapperAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
+#else
+    AcceleratedAnimations m_animations WTF_GUARDED_BY_LOCK(m_lock);
+#endif
     ThreadSafeWeakPtr<CoordinatedPlatformLayer> m_parent WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Ref<CoordinatedPlatformLayer>> m_children WTF_GUARDED_BY_LOCK(m_lock);
     EventRegion m_eventRegion WTF_GUARDED_BY_LOCK(m_lock);

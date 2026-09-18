@@ -759,7 +759,11 @@ void CoordinatedPlatformLayer::setIsBackdropRoot(bool isBackdropRoot)
     notifyCompositionRequired();
 }
 
+#if USE(TEXTURE_MAPPER)
 void CoordinatedPlatformLayer::setAnimations(const TextureMapperAnimations& animations)
+#else
+void CoordinatedPlatformLayer::setAnimations(const AcceleratedAnimations& animations)
+#endif
 {
     assertIsHeld(m_lock);
     m_animations = animations;

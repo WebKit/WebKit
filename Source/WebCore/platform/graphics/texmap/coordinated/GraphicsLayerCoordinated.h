@@ -29,9 +29,14 @@
 #include "Damage.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
-#include "TextureMapperAnimation.h"
 #include <wtf/EnumSet.h>
 #include <wtf/OptionSet.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapperAnimation.h"
+#else
+#include "AcceleratedAnimations.h"
+#endif
 
 namespace WebCore {
 class CoordinatedPlatformLayer;
@@ -234,7 +239,11 @@ private:
     RefPtr<NativeImage> m_contentsImage;
     Color m_contentsColor;
     RefPtr<CoordinatedPlatformLayer> m_backdropLayer;
+#if USE(TEXTURE_MAPPER)
     TextureMapperAnimations m_animations;
+#else
+    AcceleratedAnimations m_animations;
+#endif
 };
 
 } // namespace WebCore

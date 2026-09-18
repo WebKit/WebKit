@@ -722,7 +722,11 @@ bool GraphicsLayerCoordinated::addAnimation(const GraphicsLayerKeyframeValueList
         return false;
     }
 
+#if USE(TEXTURE_MAPPER)
     m_animations.add(TextureMapperAnimation(animationName, valueList, *animation, MonotonicTime::now() - Seconds(timeOffset), 0_s, TextureMapperAnimation::State::Playing));
+#else
+    m_animations.add(AcceleratedAnimation::create(animationName, valueList, *animation), MonotonicTime::now() - Seconds(timeOffset));
+#endif
     noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
     return true;
 }
@@ -765,8 +769,13 @@ void GraphicsLayerCoordinated::transformRelatedPropertyDidChange()
 Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCoordinated::acceleratedAnimationsForTesting() const
 {
     Vector<GraphicsLayer::AcceleratedAnimationForTesting> animations;
+#if USE(TEXTURE_MAPPER)
     for (auto& animation : m_animations.animations())
         animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimation::State::Playing ? 1.0 : 0.0, false, false });
+#else
+    for (const auto& entry : m_animations.animations())
+        animations.append({ animatedPropertyIDAsString(entry.animation->keyframes().property()), entry.playback.state == AcceleratedAnimation::State::Playing ? 1.0 : 0.0, false, false });
+#endif
     return animations;
 }
 
@@ -949,9 +958,15 @@ void GraphicsLayerCoordinated::computeLayerTransformIfNeeded(bool affectedByTran
 
     if (affectedByTransformAnimation) {
         client().getCurrentTransform(this, currentTransform);
+#if USE(TEXTURE_MAPPER)
         TextureMapperAnimation::ApplicationResult futureApplicationResults;
         m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
         futureTransform = futureApplicationResults.transform.value_or(currentTransform);
+#else
+        AcceleratedAnimation::ApplyResult futureApplyResult;
+        m_animations.apply(futureApplyResult, MonotonicTime::now() + 50_ms);
+        futureTransform = futureApplyResult.transform.value_or(currentTransform);
+#endif
     }
 
     m_layerTransform.current.setLocalTransform(currentTransform);
@@ -1077,10 +1092,19 @@ void GraphicsLayerCoordinated::updateAnimations()
 {
     assertIsHeld(m_platformLayer->lock());
 
+#if USE(TEXTURE_MAPPER)
     m_animations.setTranslate(client().transformMatrixForProperty(AnimatedProperty::Translate));
     m_animations.setRotate(client().transformMatrixForProperty(AnimatedProperty::Rotate));
     m_animations.setScale(client().transformMatrixForProperty(AnimatedProperty::Scale));
     m_animations.setTransform(client().transformMatrixForProperty(AnimatedProperty::Transform));
+#else
+    m_animations.setTransforms({
+        .translate = client().transformMatrixForProperty(AnimatedProperty::Translate),
+        .rotate = client().transformMatrixForProperty(AnimatedProperty::Rotate),
+        .scale = client().transformMatrixForProperty(AnimatedProperty::Scale),
+        .transform = client().transformMatrixForProperty(AnimatedProperty::Transform)
+    });
+#endif
 
     m_platformLayer->setAnimations(m_animations);
 }
