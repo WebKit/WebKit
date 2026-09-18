@@ -39,7 +39,7 @@ namespace WebCore {
 
 // Be careful with this quirk: it's an invitation for sites to use JavaScript
 // that works in Chrome that WebKit cannot handle. Prefer other quirks instead.
-static bool urlRequiresChromeBrowser(const String& domain, const String& baseDomain)
+static bool urlRequiresChromeBrowser(StringView domain, StringView baseDomain)
 {
     // Needed for fonts on many sites to work with WebKit.
     // https://bugs.webkit.org/show_bug.cgi?id=147296
@@ -81,7 +81,7 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
 // quirk is good for websites that do macOS-specific things we don't want on
 // other platforms, and when the risk of the website doing Firefox-specific
 // things is relatively low.
-static bool urlRequiresFirefoxBrowser(const String& domain, const String& baseDomain)
+static bool urlRequiresFirefoxBrowser(StringView domain, StringView baseDomain)
 {
     // Red Hat Bugzilla displays a warning page when performing searches with WebKitGTK's standard
     // user agent.
@@ -112,7 +112,7 @@ static bool urlRequiresFirefoxBrowser(const String& domain, const String& baseDo
     return false;
 }
 
-static bool urlRequiresMacintoshPlatform(const String& domain, const String& baseDomain, UserAgentType userAgentType)
+static bool urlRequiresMacintoshPlatform(StringView domain, StringView baseDomain, UserAgentType userAgentType)
 {
     // At least finance.yahoo.com displays a mobile version with WebKitGTK's standard user agent.
     if (userAgentType != UserAgentType::Mobile && baseDomain == "yahoo.com"_s)
@@ -169,7 +169,7 @@ static bool urlRequiresMacintoshPlatform(const String& domain, const String& bas
     return false;
 }
 
-static bool urlRequiresAndroidPlatform([[maybe_unused]] const String& baseDomain)
+static bool urlRequiresAndroidPlatform([[maybe_unused]] StringView baseDomain)
 {
 #if ENABLE(WEBXR) && PLATFORM(WPE)
     // When WebXR is available the model viewer support provides a better UX.
@@ -180,7 +180,7 @@ static bool urlRequiresAndroidPlatform([[maybe_unused]] const String& baseDomain
     return false;
 }
 
-static bool urlRequiresUnbrandedUserAgent(const String& domain)
+static bool urlRequiresUnbrandedUserAgent(StringView domain)
 {
     // Google uses an ugly fallback login page if application branding is
     // appended to WebKitGTK's standard user agent.
@@ -204,7 +204,7 @@ UserAgentQuirks UserAgentQuirks::quirksForURL(const URL& url, UserAgentType user
 {
     ASSERT(!url.isNull());
 
-    String domain = url.host().toString();
+    auto domain = url.host();
     UserAgentQuirks quirks;
     String baseDomain = PublicSuffixStore::singleton().topPrivatelyControlledDomain(domain);
 
