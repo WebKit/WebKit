@@ -2138,6 +2138,11 @@ void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, c
     completionHandler();
 }
 
+void WebsiteDataStore::setIPAddressSpaceOverridesForTesting(const String& overrides, CompletionHandler<void()>&& completionHandler)
+{
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::SetIPAddressSpaceOverridesForTesting(m_sessionID, overrides), WTF::move(completionHandler));
+}
+
 void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)
 {
     protect(networkProcess())->send(Messages::NetworkProcess::SetShouldSendPrivateTokenIPCForTesting(sessionID(), enabled), 0);

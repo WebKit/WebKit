@@ -460,8 +460,8 @@ void NetworkDataTaskCocoa::didReceiveResponse(WebCore::ResourceResponse&& respon
     }
 #endif
     auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get()));
-    if (resolvedIPAddress)
-        response.setIPAddressSpace(WebCore::classifyIPAddressSpace(*resolvedIPAddress));
+    if (CheckedPtr session = networkSession())
+        response.setIPAddressSpace(session->classifyConnectionAddressSpace(resolvedIPAddress, response.url()));
     NetworkDataTask::didReceiveResponse(WTF::move(response), negotiatedLegacyTLS, privateRelayed, resolvedIPAddress, WTF::move(completionHandler));
 }
 
@@ -469,8 +469,9 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 {
     WTFEmitSignpost(m_task.get(), DataTask, "redirect");
 
-    if (auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get())))
-        redirectResponse.setIPAddressSpace(WebCore::classifyIPAddressSpace(*resolvedIPAddress));
+    auto resolvedIPAddress = WebCore::IPAddress::fromString(lastRemoteIPAddress(m_task.get()));
+    if (CheckedPtr session = networkSession())
+        redirectResponse.setIPAddressSpace(session->classifyConnectionAddressSpace(resolvedIPAddress, redirectResponse.url()));
 
     networkLoadMetrics().hasCrossOriginRedirect = networkLoadMetrics().hasCrossOriginRedirect || !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url(), WebCore::EmptyOriginAccessPatterns::singleton());
 

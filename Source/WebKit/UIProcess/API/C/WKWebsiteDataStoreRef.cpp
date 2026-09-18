@@ -825,6 +825,14 @@ void WKWebsiteDataStoreSetStorageAccessForTesting(WKWebsiteDataStoreRef dataStor
     store->setResourceLoadStatisticsShouldBlockThirdPartyCookiesForTesting(blocked, WebCore::ThirdPartyCookieBlockingMode::All, [callbackAggregator] { });
 }
 
+void WKWebsiteDataStoreSetIPAddressSpaceOverridesForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef overrides, void* context, WKWebsiteDataStoreSetIPAddressSpaceOverridesForTestingFunction completionHandler)
+{
+    Ref store = *WebKit::toImpl(dataStoreRef);
+    store->setIPAddressSpaceOverridesForTesting(protect(WebKit::toImpl(overrides))->string(), [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
 void WKWebsiteDataStoreFlushNetworkProcessIPC(WKWebsiteDataStoreRef dataStore, void* context, WKWebsiteDataStoreFlushNetworkProcessIPCCallback callback)
 {
     if (RefPtr networkProcess = protect(WebKit::toImpl(dataStore))->networkProcess()) {

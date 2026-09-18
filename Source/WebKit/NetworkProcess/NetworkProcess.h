@@ -335,6 +335,7 @@ public:
     void NODELETE setPrivateClickMeasurementEnabled(bool);
     bool NODELETE privateClickMeasurementEnabled() const;
     void setPrivateClickMeasurementDebugMode(PAL::SessionID, bool);
+    void setIPAddressSpaceOverridesForTesting(PAL::SessionID, String&&, CompletionHandler<void()>&&);
 
 #if HAVE(ENHANCED_SECURITY_LINKS)
     void setIsEnhancedSecurityLinksEnabled(bool);

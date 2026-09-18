@@ -238,6 +238,9 @@ WK_EXPORT void WKWebsiteDataStoreSetStorageAccessPermissionForTesting(WKWebsiteD
 typedef void (*WKWebsiteDataStoreSetStorageAccessForTestingFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStorageAccessForTesting(WKWebsiteDataStoreRef dataStoreRef, bool blocked, void* context, WKWebsiteDataStoreSetStorageAccessForTestingFunction completionHandler);
 
+typedef void (*WKWebsiteDataStoreSetIPAddressSpaceOverridesForTestingFunction)(void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreSetIPAddressSpaceOverridesForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef overrides, void* context, WKWebsiteDataStoreSetIPAddressSpaceOverridesForTestingFunction completionHandler);
+
 typedef void (*WKWebsiteDataStoreFlushNetworkProcessIPCCallback)(void* context);
 WK_EXPORT void WKWebsiteDataStoreFlushNetworkProcessIPC(WKWebsiteDataStoreRef dataStore, void* context, WKWebsiteDataStoreFlushNetworkProcessIPCCallback callback);
 
