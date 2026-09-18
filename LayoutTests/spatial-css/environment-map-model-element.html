@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="../model-element/resources/model-element-test-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const blueResource = "../model-element/resources/blue.hdr";
+const redResource = "../model-element/resources/red.hdr";
+const blueMap = "blue.hdr";
+const redMap = "red.hdr";
+const modelResource = "../model-element/resources/cube.usdz";
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, modelResource);
+    model.setAttribute("environmentmap", blueResource);
+    await model.ready;
+
+    await waitForEnvironmentMap(model, value => value.endsWith(blueMap), "the attribute's map");
+    assert_equals(getComputedStyle(model).environmentMap, "auto", "the property is at its initial value");
+}, "environment-map: auto defers to the environmentmap attribute");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "sunset", src: redResource });
+
+    const [model] = createModelAndSource(t, modelResource);
+    model.setAttribute("environmentmap", blueResource);
+    model.style.environmentMap = '"sunset"';
+    await model.ready;
+
+    const value = await waitForEnvironmentMap(model, map => map.endsWith(redMap), "the CSS map");
+    assert_true(value.endsWith(redMap), `${value} comes from CSS, not the attribute`);
+}, "A named environment map overrides the environmentmap attribute");
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, modelResource);
+    model.setAttribute("environmentmap", blueResource);
+    model.style.environmentMap = "none";
+    await model.ready;
+
+    await waitForEnvironmentMap(model, value => value === "none", "the lighting to be disabled");
+}, "environment-map: none overrides the environmentmap attribute");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "sunset", src: redResource });
+
+    const [model] = createModelAndSource(t, modelResource);
+    model.setAttribute("environmentmap", blueResource);
+    model.style.environmentMap = '"sunset"';
+    await model.ready;
+    await waitForEnvironmentMap(model, value => value.endsWith(redMap), "the CSS map");
+
+    model.style.environmentMap = "auto";
+    await waitForEnvironmentMap(model, value => value.endsWith(blueMap), "the attribute's map again");
+}, "Reverting environment-map to auto hands control back to the attribute");
+
+</script>
+</body>
+</html>

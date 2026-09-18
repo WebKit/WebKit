@@ -38,6 +38,51 @@ extension Logger {
     fileprivate static let realityKitEntity = Logger(subsystem: "com.apple.WebKit", category: "RealityKitEntity")
 }
 
+@MainActor
+final class EnvironmentMapTransition {
+    private static let duration: TimeInterval = 0.35
+
+    private let from: EnvironmentResource
+    private let to: EnvironmentResource
+    private weak var entity: WKRKEntity?
+    private var elapsed: TimeInterval = 0
+    private var didFinish = false
+
+    init(from: EnvironmentResource, to: EnvironmentResource, entity: WKRKEntity) {
+        self.from = from
+        self.to = to
+        self.entity = entity
+    }
+
+    var nearestEndpoint: EnvironmentResource {
+        fraction < 0.5 ? from : to
+    }
+
+    func begin() {
+        entity?.setImageBasedLightSource(.blend(from, to, 0))
+    }
+
+    func tick(deltaTime: TimeInterval) {
+        guard !didFinish else { return }
+
+        elapsed += deltaTime
+
+        guard let entity else { return }
+
+        guard fraction < 1 else {
+            didFinish = true
+            entity.environmentMapTransitionDidFinish(to: to)
+            return
+        }
+
+        entity.setImageBasedLightSource(.blend(from, to, fraction))
+    }
+
+    private var fraction: Float {
+        Float(min(max(elapsed / Self.duration, 0), 1))
+    }
+}
+
 @objc
 @implementation
 extension WKRKEntity {
@@ -60,6 +105,21 @@ extension WKRKEntity {
     private var backingCurrentTime: TimeInterval = 0
 
     private static var defaultEnvironmentResource: EnvironmentResource?
+
+    @nonobjc
+    private lazy var imageBasedLight: Entity = {
+        let created = Entity()
+        created.name = "WebKit:ImageBasedLight"
+        entity.addChild(created)
+        return created
+    }()
+
+    @nonobjc
+    private var displayedEnvironment: EnvironmentResource?
+    @nonobjc
+    private var environmentMapTransition: EnvironmentMapTransition?
+    @nonobjc
+    private var environmentMapTransitionSubscription: (any Cancellable)?
 
     #if !canImport(CoreRE)
     @nonobjc
@@ -326,7 +386,13 @@ extension WKRKEntity {
         }
     }
 
-    private static func resizedImage(_ imageSource: CGImageSource) -> CGImage? {
+    @concurrent
+    private static func resizedImage(from data: Data) async -> CGImage? {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+            Logger.realityKitEntity.error("Cannot get CGImageSource from IBL image data.")
+            return nil
+        }
+
         guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any] else {
             Logger.realityKitEntity.error("Resizing IBL image: image source properties are not valid")
             return nil
@@ -416,21 +482,61 @@ extension WKRKEntity {
     }
 
     @nonobjc
+    final func setImageBasedLightSource(_ source: ImageBasedLightComponent.Source) {
+        imageBasedLight.components.set(ImageBasedLightComponent(source: source))
+        entity.components.set(ImageBasedLightReceiverComponent(imageBasedLight: imageBasedLight))
+    }
+
+    @nonobjc
     private final func applyIBL(_ environment: EnvironmentResource) {
-        entity.components[VirtualEnvironmentProbeComponent.self] = .init(source: .single(.init(environment: environment)))
-        entity.components[ImageBasedLightComponent.self] = .init(source: .none)
-        entity.components[ImageBasedLightReceiverComponent.self] = .init(imageBasedLight: entity)
+        let previous = environmentMapTransition?.nearestEndpoint ?? displayedEnvironment
+
+        displayedEnvironment = environment
+
+        guard let previous, previous !== environment else {
+            endEnvironmentMapTransition()
+            setImageBasedLightSource(.single(environment))
+            return
+        }
+
+        startEnvironmentMapTransition(from: previous, to: environment)
+    }
+
+    @nonobjc
+    private final func endEnvironmentMapTransition() {
+        environmentMapTransitionSubscription = nil
+        environmentMapTransition = nil
+    }
+
+    @nonobjc
+    private final func startEnvironmentMapTransition(from: EnvironmentResource, to: EnvironmentResource) {
+        endEnvironmentMapTransition()
+
+        guard let scene = entity.scene else {
+            setImageBasedLightSource(.single(to))
+            return
+        }
+
+        let transition = EnvironmentMapTransition(from: from, to: to, entity: self)
+        transition.begin()
+
+        environmentMapTransition = transition
+        environmentMapTransitionSubscription = scene.subscribe(to: SceneEvents.Update.self) { [weak self] event in
+            guard let transition = self?.environmentMapTransition else { return }
+            transition.tick(deltaTime: event.deltaTime)
+        }
+    }
+
+    @nonobjc
+    final func environmentMapTransitionDidFinish(to environment: EnvironmentResource) {
+        endEnvironmentMapTransition()
+        setImageBasedLightSource(.single(environment))
     }
 
     @objc(applyIBLData:attributionHandler:withCompletion:)
     func applyIBLData(_ data: Data, attributionHandler: @MainActor @Sendable @escaping (REAssetRef) -> Void) async -> Bool {
-        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
-            Logger.realityKitEntity.error("Cannot get CGImageSource from IBL image data.")
-            return false
-        }
-
-        guard let cgImage = Self.resizedImage(imageSource) else {
-            Logger.realityKitEntity.error("Cannot get CGImage from CGImageSource.")
+        guard let cgImage = await Self.resizedImage(from: data) else {
+            Logger.realityKitEntity.error("Cannot get CGImage from IBL image data.")
             return false
         }
 
@@ -479,6 +585,16 @@ extension WKRKEntity {
         entity.components[ImageBasedLightComponent.self] = .init(source: .none)
         entity.components[ImageBasedLightReceiverComponent.self] = nil
         #endif
+    }
+
+    func removeIBL() {
+        endEnvironmentMapTransition()
+        displayedEnvironment = nil
+
+        guard entity.components.has(ImageBasedLightReceiverComponent.self) else { return }
+
+        imageBasedLight.components.remove(ImageBasedLightComponent.self)
+        entity.components.remove(ImageBasedLightReceiverComponent.self)
     }
 
     private func animationPlaybackStateDidUpdate() {

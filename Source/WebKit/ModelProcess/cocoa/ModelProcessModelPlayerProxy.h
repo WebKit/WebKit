@@ -166,7 +166,11 @@ public:
     void setPaused(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&) final;
     Seconds currentTime(WebCore::NodeIdentifier) const final;
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
-    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
+    void setEnvironmentMapData(Ref<WebCore::SharedBuffer>&&);
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP) && ENABLE(SPATIAL_PORTAL)
+    void disableEnvironmentMap() final;
+    void enableSystemEnvironmentMap() final;
+#endif
     void setHasPortal(bool) final;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
@@ -220,6 +224,8 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
     simd_float4x4 contentTransformMatrix() const;
 #endif
+    using EnvironmentMapKind = WebCore::EnvironmentMapKind;
+
     void updateTransform();
     void applyEnvironmentMapDataAndRelease(CompletionHandler<void()>&&);
     void applyStageModeOperationToDriver();
@@ -231,6 +237,8 @@ private:
     RESRT childEntityTransformSRT(const TrackedModel&) const;
 #endif
     void applyDefaultIBL();
+    void removeIBL();
+    RetainPtr<WKRKEntity> environmentMapTargetEntity() const;
     void updateForCurrentStageMode();
     void setUpLoadedEntity(WebCore::NodeIdentifier, WKRKEntity *);
     simd_float3 reportingModelScale() const;
@@ -277,6 +285,7 @@ private:
     bool m_entityTransformSetByScript { false };
 
     RefPtr<WebCore::SharedBuffer> m_transientEnvironmentMapData;
+    EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
     bool m_hasPortal { true };
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::UsedPortalTransform m_portalTransform;

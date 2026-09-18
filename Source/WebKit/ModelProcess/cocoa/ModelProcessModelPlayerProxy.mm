@@ -971,8 +971,14 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
             protectedThis->triggerModelLoadedCallbacks(true);
 #endif
         });
-    } else
+    } else {
+#if ENABLE(SPATIAL_PORTAL)
+        if (!m_isSpatialPortal)
+            [loadedEntity applyDefaultIBL];
+#else
         [loadedEntity applyDefaultIBL];
+#endif
+    }
 
     send(Messages::ModelProcessModelPlayer::DidFinishLoading(nodeID, WebCore::FloatPoint3D(boundingBoxCenter.x, boundingBoxCenter.y, boundingBoxCenter.z), WebCore::FloatPoint3D(boundingBoxExtents.x, boundingBoxExtents.y, boundingBoxExtents.z)));
 }
@@ -1428,14 +1434,53 @@ void ModelProcessModelPlayerProxy::setCurrentTime(WebCore::NodeIdentifier nodeID
     completionHandler();
 }
 
-void ModelProcessModelPlayerProxy::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
+void ModelProcessModelPlayerProxy::setEnvironmentMapData(Ref<WebCore::SharedBuffer>&& data)
 {
+    ASSERT(data->size());
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     m_persistedEnvironmentMapData = data.copyRef();
 #endif
+    m_environmentMapKind = EnvironmentMapKind::Custom;
     m_transientEnvironmentMapData = WTF::move(data);
-    if (m_modelRKEntity)
+
+    if (environmentMapTargetEntity())
         applyEnvironmentMapDataAndRelease([] { });
+}
+
+#if ENABLE(SPATIAL_PORTAL)
+
+void ModelProcessModelPlayerProxy::disableEnvironmentMap()
+{
+    if (m_environmentMapKind == EnvironmentMapKind::None)
+        return;
+
+    m_environmentMapKind = EnvironmentMapKind::None;
+
+    if (environmentMapTargetEntity())
+        applyEnvironmentMapDataAndRelease([] { });
+}
+
+void ModelProcessModelPlayerProxy::enableSystemEnvironmentMap()
+{
+    if (m_environmentMapKind == EnvironmentMapKind::Default)
+        return;
+
+    m_environmentMapKind = EnvironmentMapKind::Default;
+    m_transientEnvironmentMapData = nullptr;
+
+    if (environmentMapTargetEntity())
+        applyEnvironmentMapDataAndRelease([] { });
+}
+
+#endif // ENABLE(SPATIAL_PORTAL)
+
+RetainPtr<WKRKEntity> ModelProcessModelPlayerProxy::environmentMapTargetEntity() const
+{
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_isSpatialPortal && m_containerEntityWrapper)
+        return m_containerEntityWrapper;
+#endif
+    return m_modelRKEntity;
 }
 
 void ModelProcessModelPlayerProxy::beginStageModeTransform(const WebCore::TransformationMatrix& transform)
@@ -1511,9 +1556,36 @@ static void setIBLAssetOwnership(const String& attributionTaskID, REAssetRef ibl
 
 void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease(CompletionHandler<void()>&& completion)
 {
-    if (m_transientEnvironmentMapData) {
-        if (m_transientEnvironmentMapData->size() > 0) {
-            [m_modelRKEntity applyIBLData:m_transientEnvironmentMapData->createNSData().get() attributionHandler:makeBlockPtr([weakThis = WeakPtr { *this }] (REAssetRef coreEnvironmentResourceAsset) {
+    RefPtr data = std::exchange(m_transientEnvironmentMapData, nullptr);
+
+    switch (m_environmentMapKind) {
+    case EnvironmentMapKind::None:
+        removeIBL();
+        completion();
+        return;
+
+    case EnvironmentMapKind::Default:
+        applyDefaultIBL();
+        completion();
+        return;
+
+    case EnvironmentMapKind::Custom:
+        if (!data) {
+#if ENABLE(SPATIAL_PORTAL)
+            if (m_isSpatialPortal) {
+                completion();
+                return;
+            }
+#endif
+            applyDefaultIBL();
+            completion();
+            return;
+        }
+
+        {
+            RetainPtr entity = environmentMapTargetEntity();
+            RetainPtr nsData = data->createNSData();
+            [entity applyIBLData:nsData.get() attributionHandler:makeBlockPtr([weakThis = WeakPtr { *this }] (REAssetRef coreEnvironmentResourceAsset) {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis || !protectedThis->m_attributionTaskID || !coreEnvironmentResourceAsset)
                     return;
@@ -1532,15 +1604,8 @@ void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease(CompletionH
 
                 protectedThis->send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(succeeded));
             }).get()];
-        } else {
-            applyDefaultIBL();
-            completion();
-            send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(true));
         }
-        m_transientEnvironmentMapData = nullptr;
-    } else {
-        applyDefaultIBL();
-        completion();
+        return;
     }
 }
 
@@ -1729,7 +1794,14 @@ void ModelProcessModelPlayerProxy::parentToContainer(WKRKEntity *childEntity)
 
 void ModelProcessModelPlayerProxy::applyDefaultIBL()
 {
-    [m_modelRKEntity applyDefaultIBL];
+    RetainPtr entity = environmentMapTargetEntity();
+    [entity applyDefaultIBL];
+}
+
+void ModelProcessModelPlayerProxy::removeIBL()
+{
+    RetainPtr entity = environmentMapTargetEntity();
+    [entity removeIBL];
 }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
@@ -1776,7 +1848,7 @@ void ModelProcessModelPlayerProxy::captureStateForReload()
     // the immersive/non-immersive coordinate spaces differ (see modelStandardizedTransformSRT), so a
     // captured matrix would be in the wrong space after the boundary. didFinishLoading recomputes
     // transform via computeTransform(true) for the new presentation mode.
-    if (m_persistedEnvironmentMapData)
+    if (m_environmentMapKind == EnvironmentMapKind::Custom)
         m_transientEnvironmentMapData = m_persistedEnvironmentMapData;
 }
 

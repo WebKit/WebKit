@@ -111,8 +111,13 @@
 #if ENABLE(SPATIAL_PORTAL)
 #include "ElementAncestorIteratorInlines.h"
 #include "SpatialPortalController.h"
+#include "StyleEnvironmentMap.h"
 #include "StyleTransformResolver.h"
 #include "TransformOperationData.h"
+#endif
+
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+#include "EnvironmentMapLoader.h"
 #endif
 
 namespace WebCore {
@@ -175,13 +180,6 @@ HTMLModelElement::~HTMLModelElement()
 {
     if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
-
-#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    if (m_environmentMapResource) {
-        m_environmentMapResource->removeClient(*this);
-        m_environmentMapResource = nullptr;
-    }
-#endif
 
     LazyLoadModelObserver::unobserve(*this, protect(document()));
 
@@ -527,6 +525,10 @@ void HTMLModelElement::spatialPortalContextDidChange()
     updateStageMode();
 #endif
 
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP) && ENABLE(SPATIAL_PORTAL)
+    environmentMapStyleDidChange();
+#endif
+
     queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [](auto& element) {
         element.deletePendingModelPlayer();
         element.deleteModelPlayer();
@@ -570,10 +572,6 @@ void HTMLModelElement::dataReceived(CachedResource& resource, const SharedBuffer
 {
     if (&resource == m_resource)
         m_data.append(buffer);
-#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    else if (&resource == m_environmentMapResource)
-        m_environmentMapData.append(buffer);
-#endif
     else
         ASSERT_NOT_REACHED();
 }
@@ -582,10 +580,6 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
 {
     if (&resource == m_resource)
         modelResourceFinished();
-#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    else if (&resource == m_environmentMapResource)
-        environmentMapResourceFinished();
-#endif
 }
 
 // MARK: - ModelPlayerClient overrides.
@@ -687,7 +681,7 @@ void HTMLModelElement::didConvertModelData(ModelPlayer& modelPlayer, Ref<SharedB
 
 void HTMLModelElement::didFinishEnvironmentMapLoading(ModelPlayer&, bool succeeded)
 {
-    if (!m_environmentMapURL.isEmpty() && !m_environmentMapReadyPromise->isFulfilled()) {
+    if (m_environmentMapKind == EnvironmentMapKind::Custom && !m_environmentMapReadyPromise->isFulfilled()) {
         if (succeeded)
             m_environmentMapReadyPromise->resolve();
         else {
@@ -927,8 +921,10 @@ void HTMLModelElement::createModelPlayer()
     modelPlayer->load(nodeID, *model, contentSize(), isForImmersive);
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    if (m_environmentMapData)
-        modelPlayer->setEnvironmentMap(m_environmentMapData.takeBufferAsContiguous().get());
+    if (m_environmentMapKind == EnvironmentMapKind::None)
+        modelPlayer->disableEnvironmentMap();
+    if (RefPtr environmentMapData = std::exchange(m_environmentMapData, nullptr))
+        modelPlayer->setEnvironmentMap(environmentMapData.releaseNonNull(), m_environmentMapURL);
     else if (!m_environmentMapURL.isEmpty())
         environmentMapRequestResource();
 #endif
@@ -1054,8 +1050,10 @@ void HTMLModelElement::reloadModelPlayer()
     modelPlayer->reload(nodeID, *model, contentSize(), *animationState, WTF::move(*transformState));
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    if (m_environmentMapData)
-        modelPlayer->setEnvironmentMap(m_environmentMapData.takeBufferAsContiguous().get());
+    if (m_environmentMapKind == EnvironmentMapKind::None)
+        modelPlayer->disableEnvironmentMap();
+    if (RefPtr environmentMapData = std::exchange(m_environmentMapData, nullptr))
+        modelPlayer->setEnvironmentMap(environmentMapData.releaseNonNull(), m_environmentMapURL);
     else if (!m_environmentMapURL.isEmpty())
         environmentMapRequestResource();
 #endif
@@ -1703,31 +1701,90 @@ const URL& HTMLModelElement::environmentMap() const
     return m_environmentMapURL;
 }
 
-void HTMLModelElement::setEnvironmentMap(const URL& url)
+void HTMLModelElement::setEffectiveEnvironmentMap(EnvironmentMapKind kind, const URL& url)
 {
-    if (url == m_environmentMapURL)
+    if (kind == m_environmentMapKind && url == m_environmentMapURL)
         return;
 
+    m_environmentMapKind = kind;
     m_environmentMapURL = url;
+    m_environmentMapFailed = false;
     m_environmentMapDataMemoryCost.store(0, std::memory_order_relaxed);
 
     environmentMapResetAndReject(Exception { ExceptionCode::AbortError });
     m_environmentMapReadyPromise = makeUniqueRef<EnvironmentMapPromise>();
 
-    if (m_environmentMapURL.isEmpty()) {
-        // sending a message with empty data to indicate resource removal
-        if (m_modelPlayer)
-            m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
+    RefPtr modelPlayer = m_modelPlayer;
+
+    switch (m_environmentMapKind) {
+    case EnvironmentMapKind::None:
+        if (modelPlayer)
+            modelPlayer->disableEnvironmentMap();
         reportExtraMemoryCost();
         return;
-    }
 
-    environmentMapRequestResource();
+    case EnvironmentMapKind::Default:
+        if (modelPlayer)
+            modelPlayer->enableSystemEnvironmentMap();
+        reportExtraMemoryCost();
+        return;
+
+    case EnvironmentMapKind::Custom:
+        environmentMapRequestResource();
+        return;
+    }
+}
+
+static EnvironmentMapKind environmentMapKindForURL(const URL& url)
+{
+    return url.isEmpty() ? EnvironmentMapKind::Default : EnvironmentMapKind::Custom;
 }
 
 void HTMLModelElement::updateEnvironmentMap()
 {
-    setEnvironmentMap(selectEnvironmentMapURL());
+#if ENABLE(SPATIAL_PORTAL)
+    if (isInsidePortal()) {
+        setEffectiveEnvironmentMap(EnvironmentMapKind::Default, URL { });
+        return;
+    }
+
+    if (document().settings().spatialPortalEnabled()) {
+        if (CheckedPtr style = existingComputedStyle()) {
+            auto& environmentMap = style->environmentMap();
+            if (environmentMap.isNone()) {
+                setEffectiveEnvironmentMap(EnvironmentMapKind::None, URL { });
+                return;
+            }
+            if (!environmentMap.isAuto()) {
+                auto resolvedURL = resolvedEnvironmentMapURL(*this, environmentMap).value_or(URL { });
+                setEffectiveEnvironmentMap(environmentMapKindForURL(resolvedURL), resolvedURL);
+                return;
+            }
+        }
+    }
+#endif
+
+    auto attributeURL = selectEnvironmentMapURL();
+    setEffectiveEnvironmentMap(environmentMapKindForURL(attributeURL), attributeURL);
+}
+
+#if ENABLE(SPATIAL_PORTAL)
+
+void HTMLModelElement::environmentMapStyleDidChange()
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::ModelElement, [](auto& element) {
+        element.updateEnvironmentMap();
+    });
+}
+
+#endif
+
+String HTMLModelElement::effectiveEnvironmentMapForTesting() const
+{
+    if (RefPtr modelPlayer = m_modelPlayer)
+        return modelPlayer->environmentMapForTesting();
+
+    return "no player"_s;
 }
 
 URL HTMLModelElement::selectEnvironmentMapURL() const
@@ -1747,54 +1804,48 @@ URL HTMLModelElement::selectEnvironmentMapURL() const
 
 void HTMLModelElement::environmentMapRequestResource()
 {
-    auto request = createResourceRequest(m_environmentMapURL, FetchOptions::Destination::Environmentmap);
-    auto resource = protect(document().cachedResourceLoader())->requestEnvironmentMapResource(WTF::move(request));
-    if (!resource.has_value()) {
-        if (!m_environmentMapReadyPromise->isFulfilled())
-            m_environmentMapReadyPromise->reject(Exception { ExceptionCode::NetworkError });
-        // sending a message with empty data to indicate resource removal
-        if (m_modelPlayer)
-            m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
-        return;
-    }
+    if (!m_environmentMapLoader)
+        m_environmentMapLoader = EnvironmentMapLoader::create();
 
-    m_environmentMapData.empty();
-
-    m_environmentMapResource = resource.value();
-    m_environmentMapResource->addClient(*this);
+    RefPtr loader = m_environmentMapLoader;
+    loader->load(*this, m_environmentMapURL, [weakThis = WeakPtr { *this }, url = m_environmentMapURL](RefPtr<SharedBuffer>&& data) {
+        if (RefPtr element = weakThis.get())
+            element->environmentMapDidLoad(url, WTF::move(data));
+    });
 }
 
 void HTMLModelElement::environmentMapResetAndReject(Exception&& exception)
 {
-    m_environmentMapData.reset();
+    m_environmentMapData = nullptr;
 
-    if (m_environmentMapResource) {
-        m_environmentMapResource->removeClient(*this);
-        m_environmentMapResource = nullptr;
-    }
+    if (RefPtr loader = m_environmentMapLoader)
+        loader->cancel();
 
     if (!m_environmentMapReadyPromise->isFulfilled())
         m_environmentMapReadyPromise->reject(WTF::move(exception));
 }
 
-void HTMLModelElement::environmentMapResourceFinished()
+void HTMLModelElement::environmentMapDidLoad(const URL& url, RefPtr<SharedBuffer>&& data)
 {
-    int status = m_environmentMapResource->response().httpStatusCode();
-    if (m_environmentMapResource->loadFailedOrCanceled() || (status && !isHttpOkStatus(status))) {
-        environmentMapResetAndReject(Exception { ExceptionCode::NetworkError });
+    if (m_environmentMapURL != url)
+        return;
 
-        // sending a message with empty data to indicate resource removal
-        if (m_modelPlayer)
-            m_modelPlayer->setEnvironmentMap(SharedBuffer::create());
+    if (!data) {
+        environmentMapResetAndReject(Exception { ExceptionCode::NetworkError });
+        m_environmentMapFailed = true;
+
+        if (RefPtr modelPlayer = m_modelPlayer)
+            modelPlayer->enableSystemEnvironmentMap();
         return;
     }
-    if (m_modelPlayer) {
-        m_environmentMapDataMemoryCost.store(m_environmentMapData.size(), std::memory_order_relaxed);
-        m_modelPlayer->setEnvironmentMap(m_environmentMapData.takeBufferAsContiguous().get());
+
+    if (RefPtr modelPlayer = m_modelPlayer) {
+        m_environmentMapDataMemoryCost.store(data->size(), std::memory_order_relaxed);
+        modelPlayer->setEnvironmentMap(data.releaseNonNull(), m_environmentMapURL);
+        return;
     }
 
-    m_environmentMapResource->removeClient(*this);
-    m_environmentMapResource = nullptr;
+    m_environmentMapData = WTF::move(data);
 }
 
 #endif

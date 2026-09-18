@@ -1,0 +1,8 @@
+
+PASS A named environment map is resolved and loaded for a spatial portal
+PASS A spatial portal defaults to auto
+PASS environment-map: none disables the lighting
+PASS A name with no @environment-map rule falls back to auto
+PASS A name matching a rule with an unimplemented format falls back to auto
+PASS A named map whose src fails to load falls back to the default lighting
+

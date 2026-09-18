@@ -19108,6 +19108,11 @@
 		B658FFA01522EF3A00DD5595 /* JSRadioNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRadioNodeList.h; sourceTree = "<group>"; };
 		B658FFA31522EFAA00DD5595 /* RadioNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RadioNodeList.cpp; sourceTree = "<group>"; };
 		B658FFA41522EFAA00DD5595 /* RadioNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioNodeList.h; sourceTree = "<group>"; };
+		B65C81DB305DD4BF00DE9CAF /* CSSEnvironmentMapRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSEnvironmentMapRule.h; sourceTree = "<group>"; };
+		B65C81DC305DD4BF00DE9CAF /* CSSEnvironmentMapRule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSEnvironmentMapRule.cpp; sourceTree = "<group>"; };
+		B65C81DD305DD4BF00DE9CAF /* CSSEnvironmentMapRule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CSSEnvironmentMapRule.idl; sourceTree = "<group>"; };
+		B65C81DE305DD4E200DE9CAF /* EnvironmentMapLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EnvironmentMapLoader.h; sourceTree = "<group>"; };
+		B65C81DF305DD4E200DE9CAF /* EnvironmentMapLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentMapLoader.cpp; sourceTree = "<group>"; };
 		B6621297300A6EA900330D60 /* SpatialPortalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialPortalController.h; sourceTree = "<group>"; };
 		B6621298300A6EA900330D60 /* SpatialPortalController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SpatialPortalController.cpp; sourceTree = "<group>"; };
 		B6D8146E2EE0C39C00397547 /* SpatialImageTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpatialImageTypes.h; sourceTree = "<group>"; };
@@ -32362,6 +32367,8 @@
 			isa = PBXGroup;
 			children = (
 				BC2B412227335E0C00A2D191 /* dummy */,
+				B65C81DF305DD4E200DE9CAF /* EnvironmentMapLoader.cpp */,
+				B65C81DE305DD4E200DE9CAF /* EnvironmentMapLoader.h */,
 				71A3D1802562B8250064E2A6 /* HTMLModelElement.cpp */,
 				71A3D17D2562B8240064E2A6 /* HTMLModelElement.h */,
 				71A3D17F2562B8240064E2A6 /* HTMLModelElement.idl */,
@@ -42157,6 +42164,9 @@
 				BC5C89BA2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h */,
 				BCD2C6EE2D0F4B7300F77591 /* CSSEasingFunctionValue.cpp */,
 				BCD2C6ED2D0F4B5B00F77591 /* CSSEasingFunctionValue.h */,
+				B65C81DC305DD4BF00DE9CAF /* CSSEnvironmentMapRule.cpp */,
+				B65C81DB305DD4BF00DE9CAF /* CSSEnvironmentMapRule.h */,
+				B65C81DD305DD4BF00DE9CAF /* CSSEnvironmentMapRule.idl */,
 				FB965B8217BBB62C00E835B9 /* CSSFilterImageValue.cpp */,
 				FB965B8117BBB5F900E835B9 /* CSSFilterImageValue.h */,
 				BC3078B72D00D34300630D75 /* CSSFilterValue.cpp */,

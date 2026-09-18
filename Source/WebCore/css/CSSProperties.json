@@ -14188,6 +14188,35 @@
                 }
             }
         },
+        "@environment-map": {
+            "name": {
+                "codegen-properties": {
+                    "parser-grammar": "<string>"
+                },
+                "specification": {
+                    "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#descdef-environment-map-name"
+                }
+            },
+            "format": {
+                "values": [
+                    "equirectangular"
+                ],
+                "codegen-properties": {
+                    "parser-grammar": "<<values>>"
+                },
+                "specification": {
+                    "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#descdef-environment-map-format"
+                }
+            },
+            "src": {
+                "codegen-properties": {
+                    "parser-grammar": "<url>"
+                },
+                "specification": {
+                    "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#descdef-environment-map-src"
+                }
+            }
+        },
         "@font-face": {
             "font-family": {
                 "codegen-properties": {

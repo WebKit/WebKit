@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const blueMap = "blue.hdr";
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "studio", src: "../model-element/resources/blue.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"studio"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    const value = await waitForEnvironmentMap(portal, map => map.endsWith(blueMap), '"studio" resolves to blue.hdr');
+    assert_true(value.endsWith(blueMap), `${value} is the map declared by the rule`);
+}, "A named environment map is resolved and loaded for a spatial portal");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_equals(effectiveEnvironmentMap(portal), "auto", "the initial value is the default lighting");
+}, "A spatial portal defaults to auto");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    portal.style.environmentMap = "none";
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_equals(effectiveEnvironmentMap(portal), "none", "no image-based light at all");
+}, "environment-map: none disables the lighting");
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"nonexistent"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_equals(effectiveEnvironmentMap(portal), "auto", "an unresolved name falls back to auto");
+}, "A name with no @environment-map rule falls back to auto");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "broken", format: "cubemap", src: "../model-element/resources/blue.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"broken"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_equals(effectiveEnvironmentMap(portal), "auto", "an inert rule leaves the default lighting in place");
+}, "A name matching a rule with an unimplemented format falls back to auto");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "studio", src: "../model-element/resources/blue.hdr" });
+    declareEnvironmentMap(t, { name: "missing", src: "../model-element/resources/does-not-exist.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"studio"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+    await waitForEnvironmentMap(portal, map => map.endsWith(blueMap), "the working map to load");
+
+    portal.style.environmentMap = '"missing"';
+    await waitForEnvironmentMap(portal, map => map === "auto", "the failed load to fall back");
+}, "A named map whose src fails to load falls back to the default lighting");
+
+</script>
+</body>
+</html>

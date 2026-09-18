@@ -29,6 +29,7 @@
 #include "config.h"
 #include "RuleSet.h"
 
+#include "CSSEnvironmentMapRule.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSPositionTryRule.h"
@@ -726,6 +727,15 @@ const RefPtr<const StyleRulePositionTry> RuleSet::positionTryRuleForName(const A
 {
     return m_positionTryRules.get(name);
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+
+RefPtr<const StyleRuleEnvironmentMap> RuleSet::environmentMapRuleForName(const AtomString& name) const
+{
+    return m_environmentMapRules.get(name);
+}
+
+#endif // ENABLE(SPATIAL_PORTAL)
 
 WTF::String RuleSet::selectorsForDebugging() const
 {

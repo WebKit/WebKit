@@ -60,6 +60,7 @@ namespace WebCore {
 class CachedResourceRequest;
 class DOMMatrixReadOnly;
 class DOMPointReadOnly;
+class EnvironmentMapLoader;
 class Event;
 class Exception;
 class FloatPoint;
@@ -136,7 +137,10 @@ public:
     EnvironmentMapPromise& environmentMapReady() { return m_environmentMapReadyPromise.get(); }
 
     const URL& environmentMap() const;
-    void setEnvironmentMap(const URL&);
+#if ENABLE(SPATIAL_PORTAL)
+    void environmentMapStyleDidChange();
+#endif
+    WEBCORE_EXPORT String effectiveEnvironmentMapForTesting() const;
 #endif
 
     void enterFullscreen();
@@ -333,9 +337,10 @@ private:
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     void updateEnvironmentMap();
     URL selectEnvironmentMapURL() const;
+    void setEffectiveEnvironmentMap(EnvironmentMapKind, const URL&);
     void environmentMapRequestResource();
     void environmentMapResetAndReject(Exception&&);
-    void environmentMapResourceFinished();
+    void environmentMapDidLoad(const URL&, RefPtr<SharedBuffer>&&);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)
@@ -405,10 +410,12 @@ private:
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
     URL m_environmentMapURL;
-    SharedBufferBuilder m_environmentMapData;
+    RefPtr<SharedBuffer> m_environmentMapData;
     mutable std::atomic<size_t> m_environmentMapDataMemoryCost { 0 };
+    EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
+    bool m_environmentMapFailed { false };
 
-    CachedResourceHandle<CachedRawResource> m_environmentMapResource;
+    RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
 

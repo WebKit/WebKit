@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+
+    /* environment-map goes through the cascade like any other property, so a media query picks the
+       map for the current appearance. */
+    #themed { environment-map: "day"; }
+    @media (prefers-color-scheme: dark) {
+        #themed { environment-map: "night"; }
+    }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const blueMap = "blue.hdr";
+const redMap = "red.hdr";
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "day", src: "../model-element/resources/blue.hdr" });
+    declareEnvironmentMap(t, { name: "night", src: "../model-element/resources/red.hdr" });
+
+    testRunner.setUseDarkAppearanceForTesting(false);
+    t.add_cleanup(() => testRunner.setUseDarkAppearanceForTesting(false));
+
+    const portal = createPortal(t);
+    portal.id = "themed";
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    assert_equals(getComputedStyle(portal).environmentMap, '"day"', "the light-mode name is used");
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the light-mode map");
+
+    testRunner.setUseDarkAppearanceForTesting(true);
+    await UIHelper.renderingUpdate();
+
+    assert_equals(getComputedStyle(portal).environmentMap, '"night"', "the dark-mode name is used");
+    await waitForEnvironmentMap(portal, value => value.endsWith(redMap), "the dark-mode map");
+
+    testRunner.setUseDarkAppearanceForTesting(false);
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the light-mode map again");
+}, "A media query can select a different environment map per color scheme");
+
+</script>
+</body>
+</html>

@@ -31,16 +31,20 @@
 #include "AbortSignal.h"
 #include "ContainerNodeInlines.h"
 #include "Document.h"
+#include "DocumentEventLoop.h"
 #include "DocumentPage.h"
 #include "Element.h"
 #include "ElementInlines.h"
+#include "EnvironmentMapLoader.h"
 #include "EventListener.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "GraphicsLayer.h"
 #include "HTMLModelElement.h"
 #include "IntersectionObserver.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
+#include "Logging.h"
 #include "Model.h"
 #include "ModelPlayer.h"
 #include "ModelPlayerClient.h"
@@ -55,6 +59,8 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerModelObject.h"
 #include "ResourceError.h"
+#include "SharedBuffer.h"
+#include "StyleEnvironmentMap.h"
 #include "StylePortalTransform.h"
 #include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -247,6 +253,11 @@ void SpatialPortalController::prepareForRemoval()
 {
     m_portalAction = PortalActionKind::None;
     updateGestureHandling();
+
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    if (m_environmentMapLoader)
+        m_environmentMapLoader->cancel();
+#endif
 
     stopObservingPortalVisibility();
 }
@@ -454,6 +465,10 @@ ModelPlayer* SpatialPortalController::ensureModelPlayer()
     m_modelPlayer->setPortalTransform(m_portalTransform);
     m_modelPlayer->setPortalAction(m_portalAction);
 
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    pushEnvironmentMapToPlayer(*m_modelPlayer);
+#endif
+
     return m_modelPlayer.get();
 }
 
@@ -499,6 +514,124 @@ void SpatialPortalController::setPortalAction(PortalActionKind kind)
 
     updateGestureHandling();
 }
+
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+
+void SpatialPortalController::environmentMapStyleDidChange()
+{
+    RefPtr element = m_portalElement.get();
+    if (!element)
+        return;
+
+    protect(element->document().eventLoop())->queueTask(TaskSource::ModelElement, [weakThis = WeakPtr { *this }] {
+        if (CheckedPtr controller = weakThis.get())
+            controller->updateEnvironmentMap();
+    });
+}
+
+void SpatialPortalController::updateEnvironmentMap()
+{
+    RefPtr element = m_portalElement.get();
+    if (!element)
+        return;
+
+    CheckedPtr style = element->existingComputedStyle();
+    if (!style)
+        return;
+
+    auto& environmentMap = style->environmentMap();
+
+    auto kind = EnvironmentMapKind::Default;
+    URL url;
+    if (environmentMap.isNone())
+        kind = EnvironmentMapKind::None;
+    else if (!environmentMap.isAuto()) {
+        if (auto resolvedURL = resolvedEnvironmentMapURL(*element, environmentMap)) {
+            kind = EnvironmentMapKind::Custom;
+            url = WTF::move(*resolvedURL);
+        }
+    }
+
+    if (m_environmentMapKind == kind && m_environmentMapURL == url)
+        return;
+
+    m_environmentMapKind = kind;
+    m_environmentMapURL = WTF::move(url);
+    m_environmentMapData = nullptr;
+    m_environmentMapFailed = false;
+
+    if (RefPtr loader = m_environmentMapLoader)
+        loader->cancel();
+
+    if (m_environmentMapKind != EnvironmentMapKind::Custom) {
+        if (RefPtr player = m_modelPlayer)
+            pushEnvironmentMapToPlayer(*player);
+        return;
+    }
+
+    startEnvironmentMapLoad();
+}
+
+void SpatialPortalController::startEnvironmentMapLoad()
+{
+    RefPtr element = m_portalElement.get();
+    if (!element)
+        return;
+
+    if (!m_environmentMapLoader)
+        m_environmentMapLoader = EnvironmentMapLoader::create();
+
+    RefPtr loader = m_environmentMapLoader;
+    loader->load(*element, m_environmentMapURL, [weakThis = WeakPtr { *this }, url = m_environmentMapURL](RefPtr<SharedBuffer>&& data) {
+        if (CheckedPtr controller = weakThis.get())
+            controller->environmentMapDidLoad(url, WTF::move(data));
+    });
+}
+
+void SpatialPortalController::environmentMapDidLoad(const URL& url, RefPtr<SharedBuffer>&& data)
+{
+    if (m_environmentMapKind != EnvironmentMapKind::Custom || m_environmentMapURL != url)
+        return;
+
+    m_environmentMapData = WTF::move(data);
+    m_environmentMapFailed = !m_environmentMapData;
+
+    if (m_environmentMapFailed)
+        RELEASE_LOG_ERROR(ModelElement, "%p - SpatialPortalController failed to load the environment map, falling back to the default lighting", this);
+
+    if (RefPtr player = m_modelPlayer)
+        pushEnvironmentMapToPlayer(*player);
+}
+
+void SpatialPortalController::pushEnvironmentMapToPlayer(ModelPlayer& player) const
+{
+    switch (m_environmentMapKind) {
+    case EnvironmentMapKind::None:
+        player.disableEnvironmentMap();
+        return;
+
+    case EnvironmentMapKind::Default:
+        player.enableSystemEnvironmentMap();
+        return;
+
+    case EnvironmentMapKind::Custom:
+        if (RefPtr environmentMapData = m_environmentMapData)
+            player.setEnvironmentMap(environmentMapData.releaseNonNull(), m_environmentMapURL);
+        else if (m_environmentMapFailed)
+            player.enableSystemEnvironmentMap();
+        return;
+    }
+}
+
+String SpatialPortalController::effectiveEnvironmentMapForTesting() const
+{
+    if (RefPtr player = m_modelPlayer)
+        return player->environmentMapForTesting();
+
+    return "no player"_s;
+}
+
+#endif // ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
 
 void SpatialPortalController::updateGestureHandling()
 {

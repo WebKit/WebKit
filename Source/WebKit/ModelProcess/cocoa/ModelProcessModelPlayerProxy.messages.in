@@ -44,7 +44,11 @@ messages -> ModelProcessModelPlayerProxy {
     SetPlaybackRate(WebCore::NodeIdentifier nodeID, double playbackRate) -> (double effectivePlaybackRate) Async
     SetPaused(WebCore::NodeIdentifier nodeID, bool paused) -> (bool succeeded) Async
     SetCurrentTime(WebCore::NodeIdentifier nodeID, Seconds currentTime) -> () Async
-    SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
+    SetEnvironmentMapData(Ref<WebCore::SharedBuffer> data)
+#if ENABLE(SPATIAL_PORTAL)
+    [EnabledBy=SpatialPortalEnabled] DisableEnvironmentMap()
+    [EnabledBy=SpatialPortalEnabled] EnableSystemEnvironmentMap()
+#endif
     SetHasPortal(bool hasPortal)
 #if ENABLE(SPATIAL_PORTAL)
     [EnabledBy=SpatialPortalEnabled] SetPortalTransform(struct WebCore::UsedPortalTransform portalTransform)

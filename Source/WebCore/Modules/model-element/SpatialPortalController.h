@@ -28,6 +28,7 @@
 #if ENABLE(SPATIAL_PORTAL)
 
 #include <WebCore/LayoutSize.h>
+#include <WebCore/ModelPlayer.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/PortalAction.h>
 #include <WebCore/PortalTransform.h>
@@ -36,6 +37,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,6 +45,7 @@ namespace WebCore {
 
 class Color;
 class Element;
+class EnvironmentMapLoader;
 class GraphicsLayer;
 class HTMLModelElement;
 class IntersectionObserver;
@@ -55,6 +58,7 @@ class PortalModelPlayerClient;
 class PortalVisibilityChangeClient;
 class RenderBox;
 class ResourceError;
+class SharedBuffer;
 class SpatialPortalEventListener;
 class WeakPtrImplWithEventTargetData;
 
@@ -90,6 +94,11 @@ public:
     const std::optional<TransformationMatrix>& resolvedPortalTransform() const { return m_resolvedPortalTransform; }
 
     void setPortalAction(PortalActionKind);
+
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    void environmentMapStyleDidChange();
+    WEBCORE_EXPORT String effectiveEnvironmentMapForTesting() const;
+#endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE_INTERACTION)
     WEBCORE_EXPORT static CheckedPtr<SpatialPortalController> interactiveControllerForHitTestedElement(Element*);
@@ -132,6 +141,14 @@ private:
     LayoutSize portalContentSize() const;
     void updateGestureHandling();
 
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+
+    void pushEnvironmentMapToPlayer(ModelPlayer&) const;
+    void updateEnvironmentMap();
+    void startEnvironmentMapLoad();
+    void environmentMapDidLoad(const URL&, RefPtr<SharedBuffer>&&);
+#endif
+
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
@@ -151,6 +168,13 @@ private:
     std::optional<TransformationMatrix> m_resolvedPortalTransform;
     UsedPortalTransform m_portalTransform;
     PortalActionKind m_portalAction { PortalActionKind::None };
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    URL m_environmentMapURL;
+    RefPtr<SharedBuffer> m_environmentMapData;
+    RefPtr<EnvironmentMapLoader> m_environmentMapLoader;
+    EnvironmentMapKind m_environmentMapKind { EnvironmentMapKind::Default };
+    bool m_environmentMapFailed { false };
+#endif
     bool m_handlesGesture { false };
     bool m_isIntersectingViewport { false };
 };

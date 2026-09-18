@@ -78,6 +78,11 @@ void RenderModel::styleDidChange(Style::Difference difference, const Style::Comp
     if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit())
         protect(modelElement())->dynamicRangeLimitDidChange(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
 #endif
+
+#if ENABLE(SPATIAL_PORTAL) && ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    if (!oldStyle || style().environmentMap() != oldStyle->environmentMap())
+        protect(modelElement())->environmentMapStyleDidChange();
+#endif
 }
 
 void RenderModel::update()

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "StyleSheetContents.h"
 
+#include "CSSEnvironmentMapRule.h"
 #include "CSSImportRule.h"
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
@@ -588,6 +589,7 @@ bool StyleSheetContents::traverseSubresources(NOESCAPE const Function<bool(const
         case StyleRuleType::PositionTry:
         case StyleRuleType::Function:
         case StyleRuleType::FunctionDeclarations:
+        case StyleRuleType::EnvironmentMap:
             return false;
         };
         ASSERT_NOT_REACHED();
@@ -644,6 +646,13 @@ bool StyleSheetContents::mayDependOnBaseURL() const
             return protect(uncheckedDowncast<StyleRule>(rule))->properties().mayDependOnBaseURL();
         case StyleRuleType::FontFace:
             return protect(uncheckedDowncast<StyleRuleFontFace>(rule))->properties().mayDependOnBaseURL();
+#if ENABLE(SPATIAL_PORTAL)
+        case StyleRuleType::EnvironmentMap:
+            return protect(uncheckedDowncast<StyleRuleEnvironmentMap>(rule))->properties().mayDependOnBaseURL();
+#else
+        case StyleRuleType::EnvironmentMap:
+            return false;
+#endif
         case StyleRuleType::Import:
         case StyleRuleType::CounterStyle:
         case StyleRuleType::Media:
