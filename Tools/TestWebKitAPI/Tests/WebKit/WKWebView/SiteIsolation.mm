@@ -11189,6 +11189,157 @@ TEST(SiteIsolation, SelectAllAndCopyInCrossOriginIframe)
     EXPECT_WK_STREQ("subframe text", [UIPasteboard.generalPasteboard string]);
 }
 
+// Selection commands are sent to the process containing the focused frame. These tests put the
+// selection in a cross-origin iframe and check that each command takes effect there; if the message
+// is routed to the main frame's process instead it finds no selection and silently does nothing.
+
+static constexpr auto mainFrameWithCrossOriginIframe = "<body style='margin: 0'>main frame text<iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s;
+
+struct SiteIsolatedViewWithFocusedIframe {
+    RetainPtr<TestWKWebView> webView;
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<WKFrameInfo> childFrame;
+};
+
+static SiteIsolatedViewWithFocusedIframe siteIsolatedViewWithFocusedIframe(const HTTPServer& server)
+{
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+    [webView focusInWindow];
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    [webView evaluateJavaScript:@"document.getElementById('iframe').focus()" completionHandler:nil];
+    while (![childFrame _isFocused]) {
+        Util::spinRunLoop();
+        childFrame = [webView firstChildFrame];
+    }
+
+    return { WTF::move(webView), WTF::move(navigationDelegate), WTF::move(childFrame) };
+}
+
+TEST(SiteIsolation, SelectWordInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    // Put the caret inside "subframe" so that selecting a word has to extend the selection in the
+    // iframe's process.
+    [webView objectByEvaluatingJavaScript:@"getSelection().collapse(document.body.firstChild, 3)" inFrame:childFrame.get()];
+
+    [webView select:nil];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"subframe"];
+    }));
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"getSelection().toString()"]);
+}
+
+TEST(SiteIsolation, SelectWordBackwardInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    // Caret at the end of "subframe text"; selecting the word backward must select "text".
+    [webView objectByEvaluatingJavaScript:@"getSelection().collapse(document.body.firstChild, 13)" inFrame:childFrame.get()];
+
+    [webView selectWordBackwardForTesting];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"text"];
+    }));
+}
+
+TEST(SiteIsolation, SelectWordForReplacementInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().collapse(document.body.firstChild, 3)" inFrame:childFrame.get()];
+
+    [[webView textInputContentView] selectWordForReplacement];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"subframe"];
+    }));
+}
+
+TEST(SiteIsolation, MoveSelectionByOffsetInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    [webView objectByEvaluatingJavaScript:@"getSelection().collapse(document.body.firstChild, 3)" inFrame:childFrame.get()];
+
+    [[webView textInputContentView] moveByOffset:-1];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView selectionRangeHasStartOffset:2 endOffset:2 inFrame:childFrame.get()];
+    }));
+}
+
+TEST(SiteIsolation, MoveSelectionAtBoundaryInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    // Caret in the middle of "subframe"; moving to the word boundary to the left lands at offset 0.
+    [webView objectByEvaluatingJavaScript:@"getSelection().collapse(document.body.firstChild, 3)" inFrame:childFrame.get()];
+
+    __block bool didMoveSelection = false;
+    [[webView textInputContentView] moveSelectionAtBoundary:UITextGranularityWord inDirection:UITextLayoutDirectionLeft completionHandler:^{
+        didMoveSelection = true;
+    }];
+    Util::run(&didMoveSelection);
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [webView selectionRangeHasStartOffset:0 endOffset:0 inFrame:childFrame.get()];
+    }));
+}
+
+TEST(SiteIsolation, ReplaceSelectedTextInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { mainFrameWithCrossOriginIframe } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0' contenteditable>subframe text</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate, childFrame] = siteIsolatedViewWithFocusedIframe(server);
+
+    [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"getSelection().toString()" inFrame:childFrame.get()] isEqualToString:@"subframe text"];
+    }));
+
+    [[webView textInputContentView] replaceText:@"subframe text" withText:@"replaced"];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()] isEqualToString:@"replaced"];
+    }));
+}
+
 TEST(SiteIsolation, SelectionBoundingRectInCrossOriginIframeUsesMainFrameCoordinates)
 {
     HTTPServer server({

@@ -422,7 +422,7 @@ void WebPageProxy::replaceDictatedText(const String& oldText, const String& newT
 
 void WebPageProxy::replaceSelectedText(const String& oldText, const String& newText)
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::ReplaceSelectedText(oldText, newText), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::ReplaceSelectedText(oldText, newText));
 }
 
 void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, CompletionHandler<void(WebAutocorrectionData)>&& callback)
@@ -467,14 +467,17 @@ void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(granularity, direction), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::moveSelectionAtBoundaryWithDirection"_s)] () mutable {
+    RefPtr frame = focusedOrMainFrame();
+    Ref process = processContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt);
+    auto backgroundActivity = protect(process->throttler())->backgroundActivity("WebPageProxy::moveSelectionAtBoundaryWithDirection"_s);
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(granularity, direction), Messages::WebPage::MoveSelectionAtBoundaryWithDirection::Reply { [callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)] () mutable {
         callbackFunction();
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection direction, CompletionHandler<void(bool)>&& callback)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::BeginSelectionInDirection(direction), WTF::move(callback), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::BeginSelectionInDirection(direction), WTF::move(callback));
 }
 
 #if ENABLE(REVEAL)
@@ -483,7 +486,7 @@ void WebPageProxy::requestRVItemInCurrentSelectedRange(CompletionHandler<void(co
     if (!hasRunningProcess())
         return callbackFunction(RevealItem());
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), WTF::move(callbackFunction), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::RequestRVItemInCurrentSelectedRange(), Messages::WebPage::RequestRVItemInCurrentSelectedRange::Reply { WTF::move(callbackFunction) });
 }
 
 void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(IntPoint point, CompletionHandler<void(bool, const RevealItem&)>&& callbackFunction)
@@ -523,7 +526,7 @@ void WebPageProxy::getSelectionContext(CompletionHandler<void(const String&, con
 {
     if (!hasRunningProcess())
         return callbackFunction({ }, { }, { });
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::GetSelectionContext(), WTF::move(callbackFunction), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::GetSelectionContext(), Messages::WebPage::GetSelectionContext::Reply { WTF::move(callbackFunction) });
 }
 
 void WebPageProxy::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSet<WebEventModifier> modifiers, WebKit::TapIdentifier requestID)
@@ -660,20 +663,17 @@ void WebPageProxy::applicationDidBecomeActive()
 
 void WebPageProxy::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ExtendSelection(granularity), [completionHandler = WTF::move(completionHandler)]() mutable {
-        if (completionHandler)
-            completionHandler();
-    }, webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::ExtendSelection(granularity), WTF::move(completionHandler));
 }
 
 void WebPageProxy::selectWordBackward()
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::SelectWordBackward(), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::SelectWordBackward());
 }
 
 void WebPageProxy::extendSelectionForReplacement(CompletionHandler<void()>&& completion)
 {
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::ExtendSelectionForReplacement(), WTF::move(completion), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::ExtendSelectionForReplacement(), WTF::move(completion));
 }
 
 void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
@@ -694,7 +694,7 @@ void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const S
 
 void WebPageProxy::storeSelectionForAccessibility(bool shouldStore)
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::StoreSelectionForAccessibility(shouldStore), webPageIDInMainFrameProcess());
+    sendToFocusedOrMainFrameProcess(Messages::WebPage::StoreSelectionForAccessibility(shouldStore));
 }
 
 void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& callbackFunction)
@@ -704,9 +704,12 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
         return;
     }
     
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::MoveSelectionByOffset(offset), [callbackFunction = WTF::move(callbackFunction), backgroundActivity = protect(m_legacyMainFrameProcess->throttler())->backgroundActivity("WebPageProxy::moveSelectionByOffset"_s)] () mutable {
+    RefPtr frame = focusedOrMainFrame();
+    Ref process = processContainingFrame(frame ? std::optional(frame->frameID()) : std::nullopt);
+    auto backgroundActivity = protect(process->throttler())->backgroundActivity("WebPageProxy::moveSelectionByOffset"_s);
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::MoveSelectionByOffset(offset), Messages::WebPage::MoveSelectionByOffset::Reply { [callbackFunction = WTF::move(callbackFunction), backgroundActivity = WTF::move(backgroundActivity)] () mutable {
         callbackFunction();
-    }, webPageIDInMainFrameProcess());
+    } });
 }
 
 void WebPageProxy::interpretKeyEvent(IPC::Connection& connection, EditorState&& state, KeyEventInterpretationContext&& context, CompletionHandler<void(bool)>&& completionHandler)
@@ -1297,7 +1300,7 @@ void WebPageProxy::updateSelectionWithDelta(int64_t locationDelta, int64_t lengt
         return;
     }
 
-    protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::UpdateSelectionWithDelta(locationDelta, lengthDelta), WTF::move(completionHandler), webPageIDInMainFrameProcess());
+    sendWithAsyncReplyToFocusedOrMainFrameProcess(Messages::WebPage::UpdateSelectionWithDelta(locationDelta, lengthDelta), WTF::move(completionHandler));
 }
 
 WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() const
