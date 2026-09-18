@@ -5476,14 +5476,18 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
 bool RenderBox::requiresLayer() const
 {
     return RenderBoxModelObject::requiresLayer()
+        || isDocumentElementRenderer()
+        || hasTransformRelatedProperty()
+        || hasHiddenBackface()
+        || hasReflection()
+        || isRenderViewTransitionCapture()
         || hasNonVisibleOverflow()
         || style().specifiesColumns()
         || style().usedContain().contains(Style::ContainValue::Layout)
-        || !style().usedZIndex().isAuto()
 #if ENABLE(SPATIAL_PORTAL)
         || style().spatial() == SpatialType::Portal
 #endif
-        || hasRunningAcceleratedAnimations();
+        || !style().usedZIndex().isAuto();
 }
 
 void RenderBox::updateFloatPainterAfterSelfPaintingLayerChange()

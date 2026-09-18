@@ -125,20 +125,13 @@ void RenderInline::imageChanged(WrappedImagePtr image, const IntRect*)
         if (auto styleable = Styleable::fromRenderer(*this))
             protect(document())->didLoadImage(protect(styleable->element).get(), protect(styleImage->cachedImage()));
     }
-
     // FIXME: We can do better.
     repaint();
 }
 
-
 bool RenderInline::requiresLayer() const
 {
-    return isInFlowPositioned()
-        || createsGroup()
-        || hasClipPath()
-        || style().willChange().canCreateStackingContext()
-        || hasRunningAcceleratedAnimations()
-        || requiresRenderingConsolidationForViewTransition();
+    return RenderBoxModelObject::requiresLayer() || style().willChange().canCreateStackingContext();
 }
 
 } // namespace WebCore
