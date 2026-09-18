@@ -2867,14 +2867,9 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
     if (RefPtr historyItemFrame = WebProcess::singleton().webFrame(item->frameID()); historyItemFrame && historyItemFrame->page() == this)
         targetFrame = historyItemFrame.releaseNonNull();
 
-    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame()) {
-        if (targetLocalFrame->loader().asyncBackForwardNavigationWasCancelled()) {
-            WEBPAGE_RELEASE_LOG(Loading, "goToBackForwardItem: Skipping because pending async back/forward traversal was cancelled");
-            targetLocalFrame->loader().clearAsyncBackForwardNavigationState();
-            return;
-        }
+    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame())
         protect(corePage())->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad, parameters.shouldRestoreFromBackForwardCache);
-    } else
+    else
         WEBPAGE_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: No target local frame found for navigationID=%" PRIu64 ", backForwardItemID=%s — navigation silently dropped", parameters.navigationID.toUInt64(), parameters.frameState->itemID->toString().utf8());
 }
 

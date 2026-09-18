@@ -333,7 +333,6 @@ public:
         }
 
         if (page->settings().useUIProcessForBackForwardItemLoading()) {
-            localFrame->loader().setPendingAsyncBackForwardNavigation();
             localFrame->loader().client().dispatchGoToBackForwardItemAtIndex(m_steps);
             return;
         }

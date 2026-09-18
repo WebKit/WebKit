@@ -13982,6 +13982,56 @@ TEST(SiteIsolation, CrossProcessHistoryTraversalGoMinus2)
     EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)2);
 }
 
+TEST(SiteIsolation, CrossProcessHistoryTraversalForwardInSubframeAfterGoMinus2)
+{
+    constexpr auto pageWithIframes = "<iframe src='https://webkit.org/x'></iframe><iframe src='https://apple.com/x'></iframe>"_s;
+    constexpr auto iframeBody = "x"_s;
+
+    HTTPServer server({
+        { "/a"_s, { pageWithIframes } },
+        { "/b"_s, { pageWithIframes } },
+        { "/c"_s, { pageWithIframes } },
+        { "/x"_s, { iframeBody } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto *configuration = server.httpsProxyConfiguration();
+    setFeatureEnabled(configuration, @"MultiProcessBackForwardCacheEnabled", true);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/a"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/b"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/c"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)2);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)0);
+    EXPECT_EQ([webView mainFrame].childFrames.count, 2u);
+
+    [webView evaluateJavaScript:@"history.go(-2)" completionHandler:nil];
+
+    int spins = 0;
+    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/a"] && spins++ < 100)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"https://example.com/a", [[webView URL] absoluteString]);
+
+    // A subframe's history.forward() resolves to the main frame item, so the UIProcess delivers the
+    // GoToBackForwardItem to the main frame's process, not to this subframe's.
+    auto childFrames = [webView mainFrame].childFrames;
+    EXPECT_EQ(childFrames.count, 2u);
+    [webView evaluateJavaScript:@"history.forward()" inFrame:childFrames[1].info completionHandler:nil];
+
+    spins = 0;
+    while (![[[webView URL] absoluteString] isEqualToString:@"https://example.com/b"] && spins++ < 100)
+        TestWebKitAPI::Util::runFor(0.1_s);
+
+    EXPECT_WK_STREQ(@"https://example.com/b", [[webView URL] absoluteString]);
+    EXPECT_EQ([webView backForwardList].backList.count, (NSUInteger)1);
+    EXPECT_EQ([webView backForwardList].forwardList.count, (NSUInteger)1);
+}
+
 TEST(SiteIsolation, CrossProcessHistoryTraversalSameFrameBackTwice)
 {
     constexpr auto pageWithIframes = "<iframe src='https://webkit.org/x'></iframe><iframe src='https://apple.com/x'></iframe>"_s;

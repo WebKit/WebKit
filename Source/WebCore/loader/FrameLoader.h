@@ -367,11 +367,9 @@ public:
     void clearDeferredTraversal();
     void resumeDeferredTraversal();
 
-    WEBCORE_EXPORT void NODELETE setPendingAsyncBackForwardNavigation();
-    WEBCORE_EXPORT void cancelPendingAsyncBackForwardNavigation();
-    bool asyncBackForwardNavigationWasCancelled() const { return m_asyncBackForwardNavigationState == AsyncBackForwardNavigationState::Cancelled; }
-    WEBCORE_EXPORT void clearAsyncBackForwardNavigationState();
-    bool isWaitingForAsyncBackForwardNavigation() const { return m_asyncBackForwardNavigationState != AsyncBackForwardNavigationState::None; }
+    void setWaitingForDelegatedBackForwardLoad() { m_isWaitingForDelegatedBackForwardLoad = true; }
+    WEBCORE_EXPORT void clearWaitingForDelegatedBackForwardLoad();
+    bool isWaitingForDelegatedBackForwardLoad() const { return m_isWaitingForDelegatedBackForwardLoad; }
 
     void setRequiredCookiesVersion(uint64_t version) { m_requiredCookiesVersion = version; }
     uint64_t requiredCookiesVersion() const { return m_requiredCookiesVersion; }
@@ -569,8 +567,9 @@ private:
     URL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
 
-    enum class AsyncBackForwardNavigationState : uint8_t { None, Pending, Cancelled };
-    AsyncBackForwardNavigationState m_asyncBackForwardNavigationState { AsyncBackForwardNavigationState::None };
+    // A child frame whose back/forward load is delegated to the UIProcess still reports isComplete()
+    // on its initial empty document, so this is what keeps its parent from completing.
+    bool m_isWaitingForDelegatedBackForwardLoad { false };
 
     bool m_alwaysAllowLocalWebarchive { false };
 
