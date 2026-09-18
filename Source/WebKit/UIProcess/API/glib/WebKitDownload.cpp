@@ -35,6 +35,7 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/CStringView.h>
 
 using namespace WebKit;
 using namespace WebCore;
