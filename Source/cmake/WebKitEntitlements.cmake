@@ -32,6 +32,11 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
     if (USE_APPLE_INTERNAL_SDK)
         set(_additional_entitlements_script ${WebKitAdditions_HEADERS_DIR}/Scripts/process-additional-entitlements.sh)
     endif ()
+
+    set(_skip_rosetta_breaking_entitlements "")
+    if (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        set(_skip_rosetta_breaking_entitlements 1)
+    endif ()
     add_custom_command(
         OUTPUT ${_arg_OUTPUT}
         COMMAND env
@@ -44,7 +49,7 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
             SDKROOT=${CMAKE_OSX_SYSROOT}
             SDK_VERSION_ACTUAL=${_target_version_actual}
             # Checked by JSC's script, no longer set by the project.
-            SKIP_ROSETTA_BREAKING_ENTITLEMENTS=
+            SKIP_ROSETTA_BREAKING_ENTITLEMENTS=${_skip_rosetta_breaking_entitlements}
             TARGET_MAC_OS_X_VERSION_MAJOR=${_target_version_major}
             WK_PLATFORM_NAME=${WEBKIT_SDK_NAME}
             WK_PROCESSED_XCENT_FILE=${_arg_OUTPUT}
