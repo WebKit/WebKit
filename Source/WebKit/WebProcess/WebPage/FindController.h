@@ -131,6 +131,7 @@ private:
     std::optional<FindMatch> m_lastFoundRange;
     bool m_lastFoundRangeDidWrap { false };
     std::unique_ptr<FindIndicator> m_findIndicator;
+    String m_previousFindString;
 };
 
 } // namespace WebKit

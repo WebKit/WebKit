@@ -264,4 +264,32 @@ TEST(WKWebViewFindString, MatchIndexIsCorrectNavigatingWrapAroundBackwards)
     EXPECT_EQ(0, [findDelegate matchIndex]);
 }
 
+TEST(WKWebViewFindString, MatchIndexResetsWhenSearchStringChanges)
+{
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 200) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadHTMLString:@"<p>word word</p>>"];
+    [webView _setFindDelegate:findDelegate.get()];
+
+    [webView _findString:@"w" options:_WKFindOptionsDetermineMatchIndex maxCount:maxCount];
+    Util::run(&isDone);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+
+    isDone = false;
+    [webView _findString:@"wo" options:_WKFindOptionsDetermineMatchIndex maxCount:maxCount];
+    Util::run(&isDone);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+
+    isDone = false;
+    [webView _findString:@"wor" options:_WKFindOptionsDetermineMatchIndex maxCount:maxCount];
+    Util::run(&isDone);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+
+    isDone = false;
+    [webView _findString:@"word" options:_WKFindOptionsDetermineMatchIndex maxCount:maxCount];
+    Util::run(&isDone);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+}
+
 } // namespace TestWebKitAPI
