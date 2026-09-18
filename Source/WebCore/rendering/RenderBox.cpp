@@ -49,7 +49,6 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
@@ -3084,16 +3083,12 @@ bool RenderBox::sizesLogicalWidthToFitContent() const
 
     // Flexible horizontal boxes lay out children at their intrinsic widths.  Also vertical boxes
     // that don't stretch their kids lay out their children at their intrinsic widths.
-    // FIXME: Think about block-flow here.
-    // https://bugs.webkit.org/show_bug.cgi?id=46473
     if (parent()->isRenderDeprecatedFlexibleBox() && (parent()->style().boxOrient() == BoxOrient::Horizontal || parent()->style().boxAlign() != BoxAlignment::Stretch))
         return true;
 
-    // Button, input, select, textarea, and legend treat width value of 'auto' as 'intrinsic' unless it's in a
-    // stretching column flexbox.
-    // FIXME: Think about block-flow here.
-    // https://bugs.webkit.org/show_bug.cgi?id=46473
-    if (logicalWidth.isAuto() && !isStretchingColumnFlexItem() && isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLButtonElement, HTMLTextAreaElement, HTMLLegendElement>(element()))
+    // Button, input, select, textarea, and the legend a fieldset renders in its border treat width value of
+    // 'auto' as 'intrinsic' unless it's in a stretching column flexbox.
+    if (logicalWidth.isAuto() && !isStretchingColumnFlexItem() && (isAnyOf<HTMLInputElement, HTMLSelectElement, HTMLButtonElement, HTMLTextAreaElement>(element()) || isExcludedAndPlacedInBorder()))
         return true;
 
     if (isHorizontalWritingMode() != containingBlock()->isHorizontalWritingMode())
