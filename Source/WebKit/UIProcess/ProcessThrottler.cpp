@@ -294,8 +294,15 @@ ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleStat
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+#if !USE(RUNNINGBOARD)
+NO_RETURN_DUE_TO_ASSERT
+#endif
 void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 {
+#if !USE(RUNNINGBOARD)
+    ASSERT_NOT_REACHED();
+#endif
+
     assertIfCalledFromBackgroundThread();
 
     bool didChange = m_state != newState;

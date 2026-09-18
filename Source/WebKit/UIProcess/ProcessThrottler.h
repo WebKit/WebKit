@@ -187,7 +187,11 @@ private:
     WeakHashSet<Activity> m_foregroundActivities;
     WeakHashSet<Activity> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;
+#if USE(RUNNINGBOARD)
     ProcessThrottleState m_state { ProcessThrottleState::Suspended };
+#else
+    ProcessThrottleState m_state { ProcessThrottleState::Foreground };
+#endif
     bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
     const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
