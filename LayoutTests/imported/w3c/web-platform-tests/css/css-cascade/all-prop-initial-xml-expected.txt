@@ -197,6 +197,7 @@ PASS inset-block-end
 PASS inset-block-start
 PASS inset-inline-end
 PASS inset-inline-start
+PASS interpolate-size
 PASS isolation
 PASS justify-content
 PASS justify-items

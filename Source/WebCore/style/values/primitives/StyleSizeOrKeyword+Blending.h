@@ -43,30 +43,28 @@ template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrK
     using Numeric = typename StyleType::Numeric;
     using CalcSize = typename StyleType::CalcSize;
 
-    auto canBlend(const StyleType& a, const StyleType& b) -> bool
+    // `interpolate-size` is read from the target style, which for a transition is the after-change style
+    // the spec asks for. FIXME: a keyframe that sets it is not filtered out yet, so its value is used
+    // where the non-animation value should be.
+    auto canBlend(const StyleType& a, const StyleType& b, const ComputedStyle&, const ComputedStyle& toStyle) -> bool
     {
-        if (involvesCalcSize(a, b))
+        if (interpolatesUsingCalcSize(a, b, toStyle.interpolateSize()))
             return !!preparePair(a, b);
         return Base::canBlend(a, b);
     }
-    auto canBlend(const StyleType& a, const StyleType& b, CompositeOperation compositeOperation) -> bool
+    auto canBlend(const StyleType& a, const StyleType& b, const ComputedStyle& fromStyle, const ComputedStyle& toStyle, CompositeOperation) -> bool
     {
-        if (involvesCalcSize(a, b)) {
-            if (compositeOperation != CompositeOperation::Replace)
-                return false;
-            return !!preparePair(a, b);
-        }
-        return Base::canBlend(a, b);
+        return canBlend(a, b, fromStyle, toStyle);
     }
-    auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b) -> bool
+    auto requiresInterpolationForAccumulativeIteration(const StyleType& a, const StyleType& b, const ComputedStyle&, const ComputedStyle& toStyle) -> bool
     {
-        if (involvesCalcSize(a, b))
+        if (interpolatesUsingCalcSize(a, b, toStyle.interpolateSize()))
             return true;
         return Base::requiresInterpolationForAccumulativeIteration(a, b);
     }
-    auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+    auto blend(const StyleType& a, const StyleType& b, const ComputedStyle&, const ComputedStyle& toStyle, const BlendingContext& context) -> StyleType
     {
-        if (involvesCalcSize(a, b)) {
+        if (interpolatesUsingCalcSize(a, b, toStyle.interpolateSize())) {
             if (auto result = blendCalcSize(a, b, context))
                 return *result;
             return context.progress < 0.5 ? a : b;
@@ -75,9 +73,21 @@ template<SizeOrKeywordDerived StyleType> struct Blending<StyleType> : NumericOrK
     }
 
 private:
-    static bool involvesCalcSize(const StyleType& a, const StyleType& b)
+    static bool isBareKeyword(const StyleType& value)
     {
-        return WTF::holdsAlternative<CalcSize>(a) || WTF::holdsAlternative<CalcSize>(b);
+        return !WTF::holdsAlternative<CalcSize>(value) && !WTF::holdsAlternative<Numeric>(value);
+    }
+
+    // A calc-size() on either side always interpolates this way. `allow-keywords` extends it to a bare
+    // <size-keyword> paired with a <length-percentage>.
+    static bool interpolatesUsingCalcSize(const StyleType& a, const StyleType& b, InterpolateSize combining)
+    {
+        if (WTF::holdsAlternative<CalcSize>(a) || WTF::holdsAlternative<CalcSize>(b))
+            return true;
+        if (combining != InterpolateSize::AllowKeywords)
+            return false;
+        return (isBareKeyword(a) && WTF::holdsAlternative<Numeric>(b))
+            || (isBareKeyword(b) && WTF::holdsAlternative<Numeric>(a));
     }
 
     // Interpolating with a calc-size() makes a <length-percentage> act as calc-size(any, value) and a
@@ -125,19 +135,6 @@ private:
 
     static std::optional<StyleType> blendCalcSize(const StyleType& a, const StyleType& b, const BlendingContext& context)
     {
-        // Composition would have to combine the calculations rather than weight them. Accumulating is
-        // a no-op until the second iteration, matching how blend(int) reads currentIteration.
-        if (context.compositeOperation != CompositeOperation::Replace)
-            return { };
-        if (context.iterationCompositeOperation != IterationCompositeOperation::Replace && context.currentIteration)
-            return { };
-
-        // Returning the endpoints as they were written keeps them out of the blended calculation.
-        if (!context.progress)
-            return a;
-        if (context.progress == 1)
-            return b;
-
         auto prepared = preparePair(a, b);
         if (!prepared)
             return { };
@@ -147,8 +144,12 @@ private:
         if (Calculation::computeNodeCount(prepared->from.calculation) + Calculation::computeNodeCount(prepared->to.calculation) > Calculation::maximumCalcSizeNodeCount)
             return { };
 
-        auto calculation = Calculation::Tree { .root = Calculation::blend(WTF::move(prepared->from.calculation.root), WTF::move(prepared->to.calculation.root), context.progress) };
-        return StyleType { CalcSize { makeCalcSizeValue(prepared->basis, WTF::move(calculation)) } };
+        // Composition sums the calculations instead of weighting them, as it does for a plain calc().
+        auto root = context.compositeOperation == CompositeOperation::Replace
+            ? Calculation::blend(WTF::move(prepared->from.calculation.root), WTF::move(prepared->to.calculation.root), context.progress)
+            : Calculation::add(WTF::move(prepared->from.calculation.root), WTF::move(prepared->to.calculation.root));
+
+        return StyleType { CalcSize { makeCalcSizeValue(prepared->basis, Calculation::Tree { .root = WTF::move(root) }) } };
     }
 };
 

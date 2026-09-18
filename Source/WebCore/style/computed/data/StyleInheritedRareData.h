@@ -212,6 +212,7 @@ public:
     PREFERRED_TYPE(RubyAlign) unsigned rubyAlign : 2;
     PREFERRED_TYPE(RubyOverhang) unsigned rubyOverhang : 1;
     PREFERRED_TYPE(TextZoom) unsigned textZoom: 1;
+    PREFERRED_TYPE(InterpolateSize) unsigned interpolateSize : 1;
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
     PREFERRED_TYPE(WebkitTouchCallout) unsigned touchCallout : 1;
 #endif

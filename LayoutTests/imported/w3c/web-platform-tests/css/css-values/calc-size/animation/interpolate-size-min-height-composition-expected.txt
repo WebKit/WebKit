@@ -1,11 +1,11 @@
 
-FAIL Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (-0.3) should be [calc-size(fit-content, (100px + size) * 1.3 + (200px + size) * -0.3)] assert_equals: expected "calc - size ( fit - content , ( 1.3 * ( 100px + size ) ) + ( - 0.3 * ( 200px + size ) ) ) " but got "70px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (0) should be [calc-size(fit-content, (100px + size) * 1 + (200px + size) * 0)] assert_equals: expected "calc - size ( fit - content , ( 1 * ( 100px + size ) ) + ( 0 * ( 200px + size ) ) ) " but got "100px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (0.5) should be [calc-size(fit-content, (100px + size) * 0.5 + (200px + size) * 0.5)] assert_equals: expected "calc - size ( fit - content , ( 0.5 * ( 100px + size ) ) + ( 0.5 * ( 200px + size ) ) ) " but got "150px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (1) should be [calc-size(fit-content, (100px + size) * 0 + (200px + size) * 1)] assert_equals: expected "calc - size ( fit - content , ( 0 * ( 100px + size ) ) + ( 1 * ( 200px + size ) ) ) " but got "200px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (1.5) should be [calc-size(fit-content, (100px + size) * -0.5 + (200px + size) * 1.5)] assert_equals: expected "calc - size ( fit - content , ( - 0.5 * ( 100px + size ) ) + ( 1.5 * ( 200px + size ) ) ) " but got "250px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (-0.3) should be [calc-size(fit-content, 200px + size)] assert_equals: expected "calc - size ( fit - content , 200px + size ) " but got "200px "
-FAIL Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (0) should be [calc-size(fit-content, 200px + size)] assert_equals: expected "calc - size ( fit - content , 200px + size ) " but got "200px "
+PASS Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (-0.3) should be [calc-size(fit-content, (100px + size) * 1.3 + (200px + size) * -0.3)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (0) should be [calc-size(fit-content, (100px + size) * 1 + (200px + size) * 0)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (0.5) should be [calc-size(fit-content, (100px + size) * 0.5 + (200px + size) * 0.5)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (1) should be [calc-size(fit-content, (100px + size) * 0 + (200px + size) * 1)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [100px] to add [200px] at (1.5) should be [calc-size(fit-content, (100px + size) * -0.5 + (200px + size) * 1.5)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (-0.3) should be [calc-size(fit-content, 200px + size)]
+PASS Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (0) should be [calc-size(fit-content, 200px + size)]
 PASS Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (0.5) should be [min-content]
 PASS Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (1) should be [min-content]
 PASS Compositing: property <min-height> underlying [fit-content] from add [200px] to add [min-content] at (1.5) should be [min-content]

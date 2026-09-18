@@ -5398,6 +5398,28 @@
                 "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
+        "interpolate-size": {
+            "animation-type": "not animatable",
+            "inherited": true,
+            "initial": "numeric-only",
+            "values": [
+                "numeric-only",
+                "allow-keywords"
+            ],
+            "codegen-properties": {
+                "computed-style-storage-path": [
+                    "m_inheritedRareData"
+                ],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "InterpolateSize",
+                "parser-grammar": "<<values>>",
+                "settings-flag": "cssCalcSizeFunctionEnabled"
+            },
+            "specification": {
+                "category": "css-values",
+                "url": "https://drafts.csswg.org/css-values-5/#interpolate-size"
+            }
+        },
         "left": {
             "animation-type": "by computed value",
             "initial": "auto",

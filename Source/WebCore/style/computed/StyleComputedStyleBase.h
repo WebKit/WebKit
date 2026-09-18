@@ -120,6 +120,7 @@ enum class Hyphens : uint8_t;
 enum class ImageRendering : uint8_t;
 enum class InputSecurity : bool;
 enum class InsideLink : uint8_t;
+enum class InterpolateSize : bool;
 enum class Isolation : bool;
 enum class ItemPosition : uint8_t;
 enum class Kerning : uint8_t;

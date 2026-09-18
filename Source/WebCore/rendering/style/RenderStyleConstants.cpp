@@ -666,6 +666,15 @@ TextStream& operator<<(TextStream& ts, InsideLink inside)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, InterpolateSize interpolateSize)
+{
+    switch (interpolateSize) {
+    case InterpolateSize::NumericOnly: ts << "numeric-only"_s; break;
+    case InterpolateSize::AllowKeywords: ts << "allow-keywords"_s; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, Isolation isolation)
 {
     switch (isolation) {

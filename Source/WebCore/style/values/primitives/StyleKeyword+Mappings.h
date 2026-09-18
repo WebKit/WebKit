@@ -162,6 +162,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
+#define TYPE InterpolateSize
+#define FOR_EACH(CASE) CASE(NumericOnly) CASE(AllowKeywords)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
 #define TYPE BlockStepAlign
 #define FOR_EACH(CASE) CASE(Auto) CASE(Center) CASE(Start) CASE(End)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS

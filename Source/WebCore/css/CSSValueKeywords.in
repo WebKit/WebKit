@@ -1906,6 +1906,10 @@ both-edges
 // normal
 allow-discrete
 
+// interpolate-size
+numeric-only
+allow-keywords
+
 // resize
 // none
 // both

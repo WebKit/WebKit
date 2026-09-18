@@ -51,6 +51,12 @@ enum class PrintColorAdjust : bool {
     Exact
 };
 
+// https://drafts.csswg.org/css-values-5/#interpolate-size
+enum class InterpolateSize : bool {
+    NumericOnly,
+    AllowKeywords
+};
+
 enum class PseudoElementType : uint8_t {
     // Public:
     FirstLine,
@@ -1207,6 +1213,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, UsedFloat);
 WTF::TextStream& operator<<(WTF::TextStream&, Hyphens);
 WTF::TextStream& operator<<(WTF::TextStream&, ImageRendering);
 WTF::TextStream& operator<<(WTF::TextStream&, InsideLink);
+WTF::TextStream& operator<<(WTF::TextStream&, InterpolateSize);
 WTF::TextStream& operator<<(WTF::TextStream&, Isolation);
 WTF::TextStream& operator<<(WTF::TextStream&, ItemPosition);
 WTF::TextStream& operator<<(WTF::TextStream&, ItemPositionType);

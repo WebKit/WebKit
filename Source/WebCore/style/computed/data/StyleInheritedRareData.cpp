@@ -117,6 +117,7 @@ InheritedRareData::InheritedRareData()
     , rubyAlign(static_cast<unsigned>(ComputedStyle::initialRubyAlign()))
     , rubyOverhang(static_cast<unsigned>(ComputedStyle::initialRubyOverhang()))
     , textZoom(static_cast<unsigned>(ComputedStyle::initialTextZoom()))
+    , interpolateSize(static_cast<unsigned>(ComputedStyle::initialInterpolateSize()))
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
     , touchCallout(static_cast<unsigned>(ComputedStyle::initialTouchCallout()))
 #endif
@@ -226,6 +227,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , rubyAlign(o.rubyAlign)
     , rubyOverhang(o.rubyOverhang)
     , textZoom(o.textZoom)
+    , interpolateSize(o.interpolateSize)
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
     , touchCallout(o.touchCallout)
 #endif
@@ -330,6 +332,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && rubyAlign == o.rubyAlign
         && rubyOverhang == o.rubyOverhang
         && textZoom == o.textZoom
+        && interpolateSize == o.interpolateSize
         && lineSnap == o.lineSnap
         && lineAlign == o.lineAlign
         && hangingPunctuation == o.hangingPunctuation
@@ -448,6 +451,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT_WITH_CAST(RubyOverhang, rubyOverhang);
 
     LOG_IF_DIFFERENT_WITH_CAST(TextZoom, textZoom);
+    LOG_IF_DIFFERENT_WITH_CAST(InterpolateSize, interpolateSize);
 
 #if ENABLE(WEBKIT_TOUCH_CALLOUT_CSS_PROPERTY)
     LOG_IF_DIFFERENT_WITH_CAST(WebkitTouchCallout, touchCallout);
