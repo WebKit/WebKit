@@ -166,7 +166,7 @@ void ProcessLauncher::launchProcess()
 #endif
 
     String executablePath;
-    CString realExecutablePath;
+    UTF8CString realExecutablePath;
     switch (m_launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
         executablePath = executablePathOfWebProcess();
@@ -188,7 +188,7 @@ void ProcessLauncher::launchProcess()
     unsigned nargs = 4; // size of the argv array for g_spawn_async()
 
 #if ENABLE(DEVELOPER_MODE)
-    Vector<CString> prefixArgs;
+    Vector<UTF8CString> prefixArgs;
     if (!m_launchOptions.processCmdPrefix.isNull()) {
         for (auto& arg : m_launchOptions.processCmdPrefix.split(' '))
             prefixArgs.append(arg.utf8());
@@ -207,9 +207,9 @@ void ProcessLauncher::launchProcess()
 #if ENABLE(DEVELOPER_MODE)
     // If there's a prefix command, put it before the rest of the args.
     for (auto& arg : prefixArgs)
-        argv[i++] = const_cast<char*>(arg.data());
+        argv[i++] = const_cast<char*>(arg.legacyCStringPointer());
 #endif
-    argv[i++] = const_cast<char*>(realExecutablePath.data());
+    argv[i++] = const_cast<char*>(realExecutablePath.legacyCStringPointer());
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
 #if ENABLE(DEVELOPER_MODE)

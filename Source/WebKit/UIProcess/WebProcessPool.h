@@ -505,8 +505,8 @@ public:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void setSandboxEnabled(bool);
-    void addSandboxPath(const CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
-    const HashMap<CString, SandboxPermission>& sandboxPaths() const LIFETIME_BOUND { return m_extraSandboxPaths; };
+    void addSandboxPath(const UTF8CString& path, SandboxPermission permission) { m_extraSandboxPaths.add(path, permission); };
+    const HashMap<UTF8CString, SandboxPermission>& sandboxPaths() const LIFETIME_BOUND { return m_extraSandboxPaths; };
     bool sandboxEnabled() const { return m_sandboxEnabled; };
 
     void setUserMessageHandler(Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)>&& handler) { m_userMessageHandler = WTF::move(handler); }
@@ -948,7 +948,7 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     bool m_sandboxEnabled { false };
-    HashMap<CString, SandboxPermission> m_extraSandboxPaths;
+    HashMap<UTF8CString, SandboxPermission> m_extraSandboxPaths;
 
     Function<void(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&)> m_userMessageHandler;
 

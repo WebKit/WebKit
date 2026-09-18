@@ -319,7 +319,7 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
     m_sandboxEnabled = true;
 #if USE(ATSPI)
     if (shouldUseBubblewrap())
-        m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(sandboxedUserRuntimeDirectory().data()), "at-spi-bus"_s));
+        m_sandboxedAccessibilityBusAddress = makeString("unix:path="_s, FileSystem::pathByAppendingComponent(String { sandboxedUserRuntimeDirectory() }, "at-spi-bus"_s));
 #endif
 }
 

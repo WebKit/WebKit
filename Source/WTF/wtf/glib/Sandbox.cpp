@@ -116,9 +116,9 @@ bool checkFlatpakPortalVersion(int version)
     return flatpakPortalVersion != -1 && flatpakPortalVersion >= version;
 }
 
-const CString& sandboxedUserRuntimeDirectory()
+const UTF8CString& sandboxedUserRuntimeDirectory()
 {
-    static LazyNeverDestroyed<CString> userRuntimeDirectory;
+    static LazyNeverDestroyed<UTF8CString> userRuntimeDirectory;
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
 #if PLATFORM(GTK)

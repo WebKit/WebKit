@@ -93,7 +93,7 @@ struct ProcessLaunchOptions {
     bool shouldMakeProcessLaunchFailForTesting { false };
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    HashMap<CString, SandboxPermission> extraSandboxPaths { };
+    HashMap<UTF8CString, SandboxPermission> extraSandboxPaths { };
 #if ENABLE(DEVELOPER_MODE)
     String processCmdPrefix { };
 #endif

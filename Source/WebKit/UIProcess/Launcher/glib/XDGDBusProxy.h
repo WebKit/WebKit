@@ -44,20 +44,20 @@ public:
     ~XDGDBusProxy() = default;
 
     enum class AllowPortals : bool { No, Yes };
-    std::optional<CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
+    std::optional<UTF8CString> dbusSessionProxy(const char* baseDirectory, AllowPortals);
 #if USE(ATSPI)
-    std::optional<CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath, const String& accessibilityBusName);
+    std::optional<UTF8CString> accessibilityProxy(const char* baseDirectory, const String& sandboxedAccessibilityBusPath, const String& accessibilityBusName);
 #endif
 
     void launch(const ProcessLaunchOptions&);
 
 private:
-    static CString makeProxy(const char* baseDirectory, const char* proxyTemplate);
+    static UTF8CString makeProxy(const char* baseDirectory, const char* proxyTemplate);
 
-    Vector<CString> m_args;
-    CString m_dbusSessionProxyPath;
+    Vector<UTF8CString> m_args;
+    UTF8CString m_dbusSessionProxyPath;
 #if USE(ATSPI)
-    CString m_accessibilityProxyPath;
+    UTF8CString m_accessibilityProxyPath;
 #endif
     UnixFileDescriptor m_syncFD;
 };

@@ -30,7 +30,7 @@ WTF_EXPORT_PRIVATE bool shouldUseBubblewrap();
 WTF_EXPORT_PRIVATE bool shouldUsePortal();
 WTF_EXPORT_PRIVATE bool checkFlatpakPortalVersion(int);
 
-WTF_EXPORT_PRIVATE const CString& sandboxedUserRuntimeDirectory();
+WTF_EXPORT_PRIVATE const UTF8CString& sandboxedUserRuntimeDirectory();
 
 } // namespace WTF
 

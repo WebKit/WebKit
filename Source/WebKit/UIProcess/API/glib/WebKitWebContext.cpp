@@ -340,14 +340,13 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 #define INJECTED_BUNDLE_FILENAME "libWPEInjectedBundle.so"
 #endif
 
-static const char* injectedBundleDirectory()
+static UTF8CString injectedBundleDirectory()
 {
     const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH");
     if (bundleDirectory && g_file_test(bundleDirectory, G_FILE_TEST_IS_DIR))
-        return bundleDirectory;
+        return UTF8CString { byteCast<char8_t>(bundleDirectory) };
 
-    static const char* injectedBundlePath = PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
-    return injectedBundlePath;
+    return PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle"_s G_DIR_SEPARATOR_S;
 }
 
 static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
@@ -430,7 +429,7 @@ static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
-    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), INJECTED_BUNDLE_FILENAME, nullptr));
+    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory().legacyCStringPointer(), INJECTED_BUNDLE_FILENAME, nullptr));
 
     WebKitWebContext* webContext = WEBKIT_WEB_CONTEXT(object);
     WebKitWebContextPrivate* priv = webContext->priv;
@@ -1497,7 +1496,7 @@ void webkit_web_context_add_path_to_sandbox(WebKitWebContext* context, const cha
         g_error("Sandbox paths cannot be changed after subprocesses were spawned.");
 
     auto permission = readOnly ? SandboxPermission::ReadOnly : SandboxPermission::ReadWrite;
-    context->priv->processPool->addSandboxPath(path, permission);
+    context->priv->processPool->addSandboxPath(UTF8CString { byteCast<char8_t>(path) }, permission);
 }
 
 #if !ENABLE(2022_GLIB_API)
@@ -1701,7 +1700,7 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
     g_return_if_fail(directory);
 
     context->priv->webProcessExtensionsDirectory = UTF8CString { byteCast<char8_t>(directory) };
-    context->priv->processPool->addSandboxPath(directory, SandboxPermission::ReadOnly);
+    context->priv->processPool->addSandboxPath(context->priv->webProcessExtensionsDirectory, SandboxPermission::ReadOnly);
 }
 
 #if ENABLE(2022_GLIB_API)

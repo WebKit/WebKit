@@ -33,6 +33,7 @@
 #include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebKit {
 
@@ -50,31 +51,29 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     // bubblewrap sandbox we do outside but flatpak offers the ability to create new sandboxes
     // for us using flatpak-spawn.
 
-    GUniquePtr<char> childProcessSocketArg(g_strdup_printf("--forward-fd=%d", childProcessSocket));
-    Vector<CString> flatpakArgs = {
-        "flatpak-spawn",
-        childProcessSocketArg.get(),
-        "--expose-pids",
-        "--watch-bus"
+    Vector<UTF8CString> flatpakArgs = {
+        "flatpak-spawn"_s,
+        makeString("--forward-fd="_s, childProcessSocket).utf8(),
+        "--expose-pids"_s,
+        "--watch-bus"_s
     };
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         flatpakArgs.appendList({
-            "--sandbox",
-            "--no-network",
-            "--sandbox-flag=share-gpu",
-            "--sandbox-flag=share-display",
-            "--sandbox-flag=share-sound",
-            "--sandbox-flag=allow-a11y",
-            "--sandbox-flag=allow-dbus", // Note that this only allows portals and $appid.Sandbox.* access
+            "--sandbox"_s,
+            "--no-network"_s,
+            "--sandbox-flag=share-gpu"_s,
+            "--sandbox-flag=share-display"_s,
+            "--sandbox-flag=share-sound"_s,
+            "--sandbox-flag=allow-a11y"_s,
+            "--sandbox-flag=allow-dbus"_s, // Note that this only allows portals and $appid.Sandbox.* access
         });
 
         // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
         if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
             auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
             if (canPossiblyExposePath(parentDir)) {
-                GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().legacyCStringPointer()));
-                flatpakArgs.append(pathArg.get());
+                flatpakArgs.append(makeString("--sandbox-expose-path="_s, parentDir).utf8());
             }
         }
 
@@ -83,16 +82,14 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
             auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
             if (canPossiblyExposePath(parentDir)) {
-                GUniquePtr<gchar> pathArg(g_strdup_printf("--sandbox-expose-path=%s", parentDir.utf8().legacyCStringPointer()));
-                flatpakArgs.append(pathArg.get());
+                flatpakArgs.append(makeString("--sandbox-expose-path="_s, parentDir).utf8());
             }
         }
 
         for (const auto& pathAndPermission : launchOptions.extraSandboxPaths) {
             if (canPossiblyExposePath(String::fromUTF8WithLatin1Fallback(pathAndPermission.key.span()))) {
-                const char* formatString = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro=%s": "--sandbox-expose-path=%s";
-                GUniquePtr<gchar> pathArg(g_strdup_printf(formatString, pathAndPermission.key.data()));
-                flatpakArgs.append(pathArg.get());
+                auto option = pathAndPermission.value == SandboxPermission::ReadOnly ? "--sandbox-expose-path-ro="_s : "--sandbox-expose-path="_s;
+                flatpakArgs.append(makeString(option, pathAndPermission.key.span()).utf8());
             }
         }
 
@@ -100,8 +97,7 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         RELEASE_ASSERT(isInsideFlatpak());
         if (checkFlatpakPortalVersion(7)) {
             auto busName = launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("accessibilityBusName"_s);
-            GUniquePtr<gchar> a11yOwnNameArg(g_strdup_printf("--sandbox-a11y-own-name=%s", busName.utf8().legacyCStringPointer()));
-            flatpakArgs.append(a11yOwnNameArg.get());
+            flatpakArgs.append(makeString("--sandbox-a11y-own-name="_s, busName).utf8());
         }
 #endif
     }
@@ -110,14 +106,14 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
     GUniquePtr<char*> environ(g_get_environ());
     for (auto* variable : span(environ)) {
         GUniquePtr<char> arg(g_strconcat("--env=", variable, nullptr));
-        flatpakArgs.append(arg.get());
+        flatpakArgs.append(UTF8CString { byteCast<char8_t>(arg.get()) });
     }
 
     Vector<char*> newArgv(argv.size() + flatpakArgs.size());
     size_t i = 0;
 
     for (const auto& arg : flatpakArgs)
-        newArgv[i++] = const_cast<char*>(arg.data());
+        newArgv[i++] = const_cast<char*>(arg.legacyCStringPointer());
     for (const auto& arg : argv)
         newArgv[i++] = arg;
 
