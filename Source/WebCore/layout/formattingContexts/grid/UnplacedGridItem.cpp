@@ -27,7 +27,6 @@
 #include "UnplacedGridItem.h"
 
 #include "LayoutElementBox.h"
-#include "StyleComputedStyle+InitialInlines.h"
 
 namespace WebCore {
 namespace Layout {
@@ -135,13 +134,6 @@ UnplacedGridItem::UnplacedGridItem(const ElementBox& layoutBox, Style::GridPosit
 {
 }
 
-UnplacedGridItem::UnplacedGridItem(WTF::HashTableEmptyValueType)
-    : m_layoutBox(WTF::HashTableEmptyValue)
-    , m_columnPosition(GridPosition::create(Style::ComputedStyle::initialGridItemColumnStart(), Style::ComputedStyle::initialGridItemColumnEnd(), 0, 0))
-    , m_rowPosition(GridPosition::create(Style::ComputedStyle::initialGridItemRowStart(), Style::ComputedStyle::initialGridItemRowEnd(), 0, 0))
-{
-}
-
 bool UnplacedGridItem::hasDefiniteRowPosition() const
 {
     return m_rowPosition.isDefinite();
@@ -182,35 +174,6 @@ std::pair<size_t, size_t> UnplacedGridItem::definiteColumnStartEnd() const
 {
     auto& definitePosition = m_columnPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
-}
-
-bool UnplacedGridItem::operator==(const UnplacedGridItem& other) const
-{
-    // Since the hash table empty value uses CheckedRef's empty value,
-    // we need to check if either |this| or |other| are the empty value
-    // so we do not compare the uninitialized ref.
-    bool isEmpty = isHashTableEmptyValue();
-    if (isEmpty)
-        return other.isHashTableEmptyValue();
-    if (other.isHashTableEmptyValue())
-        return isEmpty;
-
-    return m_layoutBox.ptr() == other.m_layoutBox.ptr() && m_columnPosition == other.m_columnPosition && m_rowPosition == other.m_rowPosition;
-}
-
-void add(Hasher& hasher, const WebCore::Layout::UnplacedGridItem& unplacedGridItem)
-{
-    addArgs(hasher, unplacedGridItem.m_layoutBox.ptr());
-
-    auto addPosition = [&](const auto& position) {
-        if (position.isDefinite()) {
-            auto& definitePosition = position.definitePosition();
-            addArgs(hasher, static_cast<size_t>(0), definitePosition.startLine, definitePosition.endLine);
-        } else
-            addArgs(hasher, static_cast<size_t>(1), position.span());
-    };
-    addPosition(unplacedGridItem.m_columnPosition);
-    addPosition(unplacedGridItem.m_rowPosition);
 }
 
 } // namespace Layout

@@ -50,14 +50,12 @@ public:
     ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
 
     size_t rowsCount() const { return m_gridMatrix.size(); }
-    size_t columnsCount() const { return m_gridMatrix[0].size(); }
+    size_t columnsCount() const { return m_columnsCount; }
 
-    void insertUnplacedGridItem(const UnplacedGridItem&);
-    void insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
+    GridAreaLines insertUnplacedGridItem(const UnplacedGridItem&);
+    GridAreaLines insertDefiniteRowItem(const UnplacedGridItem&, GridAutoFlowOptions);
     void determineImplicitGridColumns(const Vector<UnplacedGridItem>&);
-    void insertAutoPositionedItems(const Vector<UnplacedGridItem>&, GridAutoFlowOptions);
-
-    GridAreas gridAreas() const;
+    GridAreaLines insertAutoPositionedItem(const UnplacedGridItem&, GridAutoFlowOptions);
 
 private:
     using RowCursors = HashMap<size_t, size_t, WTF::DefaultHash<size_t>, WTF::UnsignedWithZeroKeyHashTraits<size_t>>;
@@ -65,15 +63,19 @@ private:
     std::optional<size_t> findColumnPositionForDefiniteRowItem(size_t rowStart, size_t rowEnd, size_t columnSpan, GridAutoFlowOptions) const;
     void growColumnsForDefiniteRowItem(size_t columnSpan, size_t rowStart, size_t rowEnd);
     bool NODELETE isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd) const;
-    void insertItemInArea(const UnplacedGridItem&, size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd);
+    GridAreaLines markAreaAsOccupied(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd);
 
     // Helper functions for auto-positioned items
     void growColumnsToFit(size_t requiredCount);
     void growRowsToFit(size_t requiredRowIndex);
-    void placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem&, GridAutoFlowOptions);
-    void placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem&, GridAutoFlowOptions);
+    GridAreaLines placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem&, GridAutoFlowOptions);
+    GridAreaLines placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem&, GridAutoFlowOptions);
 
     GridMatrix m_gridMatrix;
+
+    // The width of every row. BitVector::size() reports the inline bit capacity rather than the
+    // number of bits asked for, so the grid has to remember how wide it actually is.
+    size_t m_columnsCount { 0 };
 
     // Per-row cursors for sparse packing in Step 2 (definite row items only).
     RowCursors m_rowCursors;
