@@ -153,6 +153,8 @@ public:
     bool hasTextEntryTrait() override;
     bool hasTabBarTrait() override;
     bool hasMenuItemTrait() override;
+    bool hasPopupButtonTrait() override;
+    bool hasButtonTrait() override;
 
     bool isSearchField() const override;
     bool isSwitch() const override;

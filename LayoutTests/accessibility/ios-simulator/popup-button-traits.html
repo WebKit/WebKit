@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<select id="select"><option>Option</option></select>
+<input id="date" type="date">
+<input id="time" type="time">
+<input id="month" type="month">
+<input id="week" type="week">
+<input id="datetime-local" type="datetime-local">
+<input id="color" type="color">
+
+<button id="aria-haspopup" aria-haspopup="listbox">Menu</button>
+<button id="popover-invoker" aria-haspopup="menu" popovertarget="popover">Disclose</button>
+<button id="command-invoker" aria-haspopup="menu" commandfor="popover" command="toggle-popover">Disclose</button>
+<div id="popover" popover>Popover</div>
+
+<input id="text-field" type="text">
+<input id="becomes-date" type="text">
+
+<script>
+var output = "This test ensures only controls that present a picker of their own have the pop-up button trait on iOS. Assistive technologies use the trait to describe the control.\n\n";
+
+function hasPopupButtonTrait(id) {
+    return accessibilityController.accessibleElementById(id).hasPopupButtonTrait;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    for (var id of ["select", "date", "time", "month", "week", "datetime-local", "color", "aria-haspopup"])
+        output += expect(`hasPopupButtonTrait("${id}")`, "true");
+
+    for (var id of ["popover-invoker", "command-invoker"]) {
+        output += expect(`hasPopupButtonTrait("${id}")`, "false");
+        output += expect(`accessibilityController.accessibleElementById("${id}").hasButtonTrait`, "true");
+    }
+
+    var textField = accessibilityController.accessibleElementById("text-field");
+    output += expect("textField.hasPopupButtonTrait", "false");
+    output += expect("textField.hasTextEntryTrait", "true");
+
+    setTimeout(async function() {
+        document.getElementById("becomes-date").type = "date";
+        output += await expectAsync(`hasPopupButtonTrait("becomes-date")`, "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

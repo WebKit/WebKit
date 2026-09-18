@@ -904,8 +904,20 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         if (self.axBackingObject->isPressed())
             traits |= [self _axToggleTrait];
         break;
-    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::ColorWell:
+    case AccessibilityRole::DateTime:
+        // Color, date and time inputs are rendered as buttons that present a picker on iOS, so
+        // they are pop-up buttons.
         traits |= [self _axPopupButtonTrait];
+        break;
+    case AccessibilityRole::PopUpButton:
+        // A select presents a picker owned by the platform, so it is a pop-up button. Other pop-up
+        // buttons that report an expanded state (popover and command invokers) are disclosure controls
+        // rather than pickers, so expose those as plain buttons.
+        if (!protect(self.axBackingObject)->isSelectElement() && protect(self.axBackingObject)->supportsExpanded())
+            traits |= [self _axButtonTrait];
+        else
+            traits |= [self _axPopupButtonTrait];
         break;
     case AccessibilityRole::RadioButton:
         traits |= [self _axRadioButtonTrait] | [self _axToggleTrait];

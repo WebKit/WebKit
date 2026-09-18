@@ -105,6 +105,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (UIAccessibilityTraits)_axTextEntryTrait;
 - (UIAccessibilityTraits)_axTabBarTrait;
 - (UIAccessibilityTraits)_axMenuItemTrait;
+- (UIAccessibilityTraits)_axPopupButtonTrait;
+- (UIAccessibilityTraits)_axButtonTrait;
 - (id)_accessibilityFieldsetAncestor;
 - (BOOL)_accessibilityHasTouchEventListener;
 - (NSString *)accessibilityExpandedTextValue;
@@ -991,6 +993,18 @@ bool AccessibilityUIElementIOS::hasMenuItemTrait()
 {
     UIAccessibilityTraits traits = [m_element accessibilityTraits];
     return (traits & [m_element _axMenuItemTrait]) == [m_element _axMenuItemTrait];
+}
+
+bool AccessibilityUIElementIOS::hasPopupButtonTrait()
+{
+    auto traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axPopupButtonTrait]) == [m_element _axPopupButtonTrait];
+}
+
+bool AccessibilityUIElementIOS::hasButtonTrait()
+{
+    auto traits = [m_element accessibilityTraits];
+    return (traits & [m_element _axButtonTrait]) == [m_element _axButtonTrait];
 }
 
 RefPtr<AccessibilityUIElement> AccessibilityUIElementIOS::fieldsetAncestorElement()

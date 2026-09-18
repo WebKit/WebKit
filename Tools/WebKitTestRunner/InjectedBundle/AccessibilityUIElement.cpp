@@ -556,6 +556,16 @@ bool AccessibilityUIElement::hasPopup() const
     return false;
 }
 
+bool AccessibilityUIElement::hasButtonTrait()
+{
+    return false;
+}
+
+bool AccessibilityUIElement::hasPopupButtonTrait()
+{
+    return false;
+}
+
 bool AccessibilityUIElement::hasTabBarTrait()
 {
     return false;

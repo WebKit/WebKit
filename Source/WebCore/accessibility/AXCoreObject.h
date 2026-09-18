@@ -563,6 +563,8 @@ public:
     bool NODELETE isList() const;
     virtual bool isDescriptionList() const = 0;
     bool isFileUploadButton() const;
+    // True for a native select.
+    bool isSelectElement() const { return elementName() == ElementName::HTML_select; }
     // Returns true for objects whose role implies interactivity. For example, when a screen
     // reader announces "link", it doesn't need to announce "clickable" or "pressable" — that
     // is implicit in the concept of a link.

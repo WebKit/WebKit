@@ -354,6 +354,8 @@ interface AccessibilityUIElement {
     readonly attribute boolean hasTextEntryTrait;
     readonly attribute boolean hasTabBarTrait;
     readonly attribute boolean hasMenuItemTrait;
+    readonly attribute boolean hasPopupButtonTrait;
+    readonly attribute boolean hasButtonTrait;
     AccessibilityUIElement fieldsetAncestorElement();
     AccessibilityUIElement focusableAncestor();
     AccessibilityUIElement editableAncestor();
