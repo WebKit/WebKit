@@ -97,7 +97,7 @@ my $baseProductDir = baseProductDir();
 # Reset before anything reads a marker file, so that printCurrentSettings()
 # below reports the defaults rather than the settings just deleted.
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    for my $fileName (qw(ASan BuildSystem Configuration Coverage ForceOptimizationLevel Fuzzilli LibFuzzer LTO TSan UBSan Workspace)) {
+    for my $fileName (qw(ASan BuildSystem BuildSystem.xcconfig Configuration Coverage ForceOptimizationLevel Fuzzilli LibFuzzer LTO TSan UBSan Workspace)) {
         unlink File::Spec->catfile($baseProductDir, $fileName);
     }
     printCurrentSettings();
@@ -156,6 +156,9 @@ if ($ltoMode) {
     print LTO "$ltoMode";
     close LTO;
 }
+
+# Written last, so that it describes every setting recorded above.
+recordBuildSystemXcodeConfiguration();
 
 printCurrentSettings();
 

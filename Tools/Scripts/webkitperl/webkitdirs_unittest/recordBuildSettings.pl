@@ -33,7 +33,7 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 7);
+plan(tests => 9);
 
 no warnings qw(redefine prototype);
 *webkitdirs::isAppleCocoaWebKit = sub () { 1 };
@@ -70,3 +70,16 @@ is(settingIs("ForceOptimizationLevel"), "3", "--force-opt is recorded");
 # "none" stops forcing a level, which is the absence of the setting.
 recordForceOptimizationLevel("none");
 is(settingIs("ForceOptimizationLevel"), undef, "--force-opt=none removes the setting");
+
+# Date the file in the past rather than compare against the clock, whose
+# resolution is coarser than this test runs at.
+my $configurationPath = File::Spec->catfile($base, "Configuration");
+my $past = time() - 3600;
+utime $past, $past, $configurationPath;
+writeBuildSetting("Configuration", "Debug");
+
+is((stat($configurationPath))[9], $past, "recording a setting that has not changed leaves the file alone");
+
+writeBuildSetting("Configuration", "Release");
+
+isnt((stat($configurationPath))[9], $past, "recording a setting that changed rewrites the file");
