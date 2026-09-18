@@ -2070,7 +2070,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
     descriptionDone = ['Validated committer and reviewer']
     VALIDATORS_FOR = {
         # Allow Ops folks to manually approve to bypass bots
-        'apple': ['webkit-bug-bridge', 'rjepstein', 'JonWBedard', 'ryanhaddad', 'mogey'],
+        'apple': ['webkit-bug-bridge', 'rjepstein', 'JonWBedard', 'ryanhaddad', 'mogey', 'ik128484'],
     }
 
     def __init__(self, *args, **kwargs):
