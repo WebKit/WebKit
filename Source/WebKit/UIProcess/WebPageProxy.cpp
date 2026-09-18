@@ -307,6 +307,7 @@
 #include <optional>
 #include <ranges>
 #include <stdio.h>
+#include <wtf/Box.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/CoroutineUtilities.h>
@@ -6409,8 +6410,16 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
         m_mainFrameWebsitePolicies = mainFrameWebsitePolicies->copy();
 
     // There is no way we'll be able to return to the page in the previous page so close it.
-    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage))
-        protect(legacyMainFrameProcess())->sendPageCloseMessage(identifier(), webPageIDInMainFrameProcess());
+    if (!didSuspendPreviousPage && shouldClosePreviousPage(*provisionalPage)) {
+        // Keep the process alive until message reply, so the current active document could finish dispatching necessary events.
+        auto scope = Box<WebProcessProxy::ShutdownPreventingScopeCounter::Token>::create(protect(legacyMainFrameProcess())->shutdownPreventingScope());
+        RunLoop::mainSingleton().dispatchAfter(WebFrameProxy::unloadEventsExpirationDelay, [scope] {
+            *scope = nullptr;
+        });
+        protect(legacyMainFrameProcess())->sendPageCloseMessage(identifier(), webPageIDInMainFrameProcess(), [scope] {
+            *scope = nullptr;
+        });
+    }
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     if (m_immersive)
