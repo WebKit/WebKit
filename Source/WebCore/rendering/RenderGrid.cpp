@@ -2048,8 +2048,7 @@ const RenderBox* RenderGrid::baselineGridItem(ItemPosition alignment) const
                 auto gridItemAlignment = selfAlignmentForGridItem(*gridItem, LogicalBoxAxis::Block).position();
                 if (rowIndexDeterminingBaseline == GridLayoutFunctions::alignmentContextForBaselineAlignment(gridSpanForGridItem(*gridItem, Style::GridTrackSizingDirection::Rows), gridItemAlignment)) {
                     // FIXME: self-baseline and content-baseline alignment not implemented yet.
-                    baselineGridItem = gridItem.get();
-                    break;
+                    return gridItem.get();
                 }
             }
             if (!baselineGridItem)
