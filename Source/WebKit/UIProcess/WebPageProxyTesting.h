@@ -79,6 +79,10 @@ public:
     void NODELETE setSystemCanPromptForGetDisplayMediaForTesting(bool);
 #endif
 
+#if ENABLE(EXTENSION_CAPABILITIES)
+    bool isDisplayCaptureCapabilityActive() const;
+#endif
+
     void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
 
     void clearBackForwardList(CompletionHandler<void()>&&);

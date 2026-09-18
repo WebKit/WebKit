@@ -3628,6 +3628,7 @@ private:
     void deactivateDisplayCaptureCapability(MediaCapability&);
     bool shouldActivateDisplayCaptureCapability() const;
     bool shouldDeactivateDisplayCaptureCapability() const;
+    bool hasDisplayCaptureAuthorization() const;
 #endif
 
     // These are intentionally private
@@ -3915,6 +3916,8 @@ private:
     RefPtr<UserMediaPermissionRequestManagerProxy> m_userMediaPermissionRequestManager;
     bool m_shouldListenToVoiceActivity { false };
     OptionSet<WebCore::MediaProducerMediaCaptureKind> m_mutedCaptureKindsDesiredByWebApp;
+    bool m_isPromptingForDisplayCapture { false };
+    bool m_hasGrantedDisplayCapture { false };
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

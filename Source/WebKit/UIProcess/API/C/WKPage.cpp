@@ -3518,6 +3518,20 @@ bool WKPageIsEditingCommandEnabledForTesting(WKPageRef pageRef, WKStringRef comm
     return pageForTesting->isEditingCommandEnabled(protect(toImpl(command))->string());
 }
 
+bool WKPageIsDisplayCaptureCapabilityActiveForTesting(WKPageRef pageRef)
+{
+#if ENABLE(EXTENSION_CAPABILITIES)
+    RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return false;
+
+    return pageForTesting->isDisplayCaptureCapabilityActive();
+#else
+    UNUSED_PARAM(pageRef);
+    return false;
+#endif
+}
+
 void WKPageGetStorageAreaMapCountForTesting(WKPageRef pageRef, void* context, WKPageGetStorageAreaMapCountForTestingFunction callback)
 {
     RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
