@@ -19705,11 +19705,14 @@ IGNORE_CLANG_WARNINGS_END
             return false;
         const uint8_t* bitmap = localBitmap->storageBytes().data();
 
+        LBasicBlock checkFirstCharacter = m_out.newBlock();
         LBasicBlock falseCase = m_out.newBlock();
         LBasicBlock operationCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
 
-        LBasicBlock lastNext = m_out.insertNewBlocksBefore(falseCase);
+        m_out.branch(isNotInt32(m_out.load64(base, m_heaps.RegExpObject_lastIndex)), rarely(operationCase), usually(checkFirstCharacter));
+
+        LBasicBlock lastNext = m_out.appendTo(checkFirstCharacter, falseCase);
         emitAnchoredFirstCharacterGuardChain(argument, argumentEdge, bitmap, operationCase, falseCase);
 
         m_out.appendTo(falseCase, operationCase);

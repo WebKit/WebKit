@@ -13530,9 +13530,11 @@ void SpeculativeJIT::emitRegExpTestWithFilter(Node* node, GPRReg globalObjectGPR
 
         if (!localBitmap)
             emitRegExpMinimumLengthFilterGuards(constantMinimumSize, baseGPR, argumentGPR, canBeRope(argumentEdge), scratch1GPR, scratch2GPR, slowCases);
-        else if (position == FirstCharacterFilterPosition::AtStart)
+        else if (position == FirstCharacterFilterPosition::AtStart) {
+            load64(Address(baseGPR, RegExpObject::offsetOfLastIndex()), scratch1GPR);
+            slowCases.append(branchIfNotInt32(scratch1GPR));
             emitRegExpAnchoredFirstCharacterFilterGuards(localBitmap->storageBytes().data(), argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
-        else {
+        } else {
             emitRegExpStickyFirstCharacterFilterGuards(localBitmap->storageBytes().data(), baseGPR, argumentGPR, scratch1GPR, scratch2GPR, resultGPR, slowCases);
             store64(TrustedImm64(JSValue::encode(jsNumber(0))), Address(baseGPR, RegExpObject::offsetOfLastIndex()));
         }
