@@ -60,6 +60,7 @@ public:
     void handleWasmCallStack(StringView packet);
     void handleWasmLocal(StringView packet);
     void handleWasmGlobal(StringView packet);
+    void handleWasmStackValue(StringView packet);
 
 private:
     DebugServer& m_debugServer;

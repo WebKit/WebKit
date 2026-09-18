@@ -88,6 +88,8 @@ void QueryHandler::handleGeneralQuery(StringView packet)
         handleWasmLocal(packet);
     else if (packet.startsWith("qWasmGlobal:"_s))
         handleWasmGlobal(packet);
+    else if (packet.startsWith("qWasmStackValue:"_s))
+        handleWasmStackValue(packet);
     else if (packet.startsWith("qMemoryRegionInfo:"_s))
         m_debugServer.m_memoryHandler->handleMemoryRegionInfo(packet);
     else
@@ -527,6 +529,75 @@ void QueryHandler::handleWasmGlobal(StringView packet)
         break;
     }
     m_debugServer.sendReply(response);
+}
+
+void QueryHandler::handleWasmStackValue(StringView packet)
+{
+    // Format: qWasmStackValue:<frame-index>;<stack-index>
+    // LLDB: Get the value of a source variable that lives on the Wasm operand stack
+    // Reference: [20] in wasm/debugger/README.md
+
+    // WebAssembly Context: An optimized build may leave a variable on the operand stack. An entry is
+    // an untyped 16-byte union, so it is sent whole and LLDB narrows it to the variable's DW_AT_type,
+    // which needs llvm/llvm-project#163646.
+    auto parts = splitWithDelimiters(packet, ":;"_s);
+    if (parts.size() != 3) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+
+    auto parsedFrameIndex = parseInteger<uint32_t>(parts[1]);
+    auto parsedStackIndex = parseInteger<uint32_t>(parts[2]);
+    if (!parsedFrameIndex || !parsedStackIndex) {
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+    uint32_t frameIndex = *parsedFrameIndex;
+    uint32_t stackIndex = *parsedStackIndex;
+
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue frame=", frameIndex, ", index=", stackIndex);
+
+    auto* state = m_debugServer.execution().debuggeeStateForTest();
+    if (state->isStoppedAtSystemCall() || state->isStoppedAtPrologue()) {
+        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+        return;
+    }
+
+    // FIXME: Answer caller frames too. StopData has no operand stack pointer for them, but IPInt does
+    // save one across a call (.ipint_call_common pushes first_non_arg - cfr), so this is implementable.
+    if (frameIndex) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue: only frame 0 is supported");
+        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+        return;
+    }
+
+    auto& stopData = *state->stopData;
+    IPInt::IPIntStackEntry* stackPointer = stopData.stack;
+    if (!stackPointer) {
+        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+        return;
+    }
+
+    // The operand stack grows downwards from stackEnd, so stackEnd is one past the deepest entry.
+    IPInt::FrameAccess frame(stopData.callFrame, stopData.callee.get());
+    IPInt::IPIntStackEntry* stackEnd = frame.stackEnd();
+    if (stackPointer > stackEnd) {
+        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+        return;
+    }
+
+    size_t depth = static_cast<size_t>(stackEnd - stackPointer);
+    if (stackIndex >= depth) {
+        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue: index ", stackIndex, " beyond depth ", depth);
+        m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);
+        return;
+    }
+
+    // LLVM indexes from the bottom of the stack (WebAssemblyDebugFixup.cpp), so 0 is the deepest entry.
+    IPInt::IPIntStackEntry& entry = *(stackEnd - 1 - stackIndex);
+    dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue depth=", depth, " i32=", entry.i32, " i64=", entry.i64);
+
+    m_debugServer.sendReply(toNativeEndianHex(entry.v128));
 }
 
 } // namespace Wasm

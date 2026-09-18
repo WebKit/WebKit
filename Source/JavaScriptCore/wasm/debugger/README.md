@@ -200,14 +200,6 @@ See [RWI_ARCHITECTURE.md](./RWI_ARCHITECTURE.md) for complete setup instructions
 - **Why aggregation is acceptable for now**: A single WebContent process runs a single `WasmDebugServer` that owns all Wasm execution for every page it hosts. Splitting that into per-page debuggables would create multiple LLDB sessions backed by the same VM state, which is architecturally incorrect. Aggregation correctly reflects that one LLDB attach covers all pages in the process.
 - **Future improvement**: If the architecture evolves so that each page gets its own isolated VM (and thus its own `WasmDebugServer`), replace the aggregated URL with a per-page `WasmDebuggerDebuggable` so each URL appears as a distinct, independently attachable target.
 
-### WASM Stack Value Type Support
-
-- **Issue**: Current implementation only supports WASM local variable inspection, missing WASM stack value types
-- **Current Support**: Local variables with types (parameters and locals in function scope)
-- **Missing Support**: Stack values with types
-- **Solution**: Extend debugging protocol to expose WASM operand stack contents with proper type information
-- **Benefits**: Complete variable inspection during debugging, better understanding of WASM execution state
-
 ### Extended Opcode Test Coverage
 
 - **Issue**: Current unit tests only cover base OpType opcodes; ExtGCOpType has partial coverage with stub implementations
@@ -263,3 +255,4 @@ The following references correspond to the numbered citations used throughout th
   [llvm/llvm-project#213176](https://github.com/llvm/llvm-project/pull/213176), resolving
   [llvm/llvm-project#212833](https://github.com/llvm/llvm-project/issues/212833). An ID with no
   live instance answers with an error.
+- [20] [qWasmStackValue](https://lldb.llvm.org/resources/lldbgdbremote.html#qwasmstackvalue)
