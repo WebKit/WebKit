@@ -199,11 +199,20 @@ ExecutionHandler::ResumeMode ExecutionHandler::stopCode(Locker<Lock>& locker, St
     case StopTheWorldEvent::VMActivated:
     case StopTheWorldEvent::AtomicsWaitBlocked:
         RELEASE_ASSERT(m_debuggerState == DebuggerState::InterruptRequested || m_debuggerState == DebuggerState::SwitchRequested);
+        // A prologue has no instruction to report, so arm the function's first and let the
+        // debuggee reach it rather than advertising one it has not run.
+        if (event == StopTheWorldEvent::VMStopped && m_debuggee->debugState()->isStoppedAtPrologue()) {
+            auto& stopData = *m_debuggee->debugState()->stopData;
+            setOneTimeBreakpointAtEntry<DebugStopReason::Interrupted>(stopData.callee.get(), stopData.instance->moduleInformation());
+            dataLogLnIf(Options::verboseWasmDebugger(), "[Code][Stop] Interrupt at a prologue; running on to the first instruction");
+            return ResumeMode::One;
+        }
         m_breakpointManager->clearAllOneTimeBreakpoints();
         notifyDebuggerOfStop();
         break;
     case StopTheWorldEvent::WasmProgramStop:
-        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested || m_debuggerState == DebuggerState::ContinueRequested || m_debuggerState == DebuggerState::SwitchRequested);
+        // InterruptRequested reaches here once an interrupt has been forwarded out of a prologue.
+        RELEASE_ASSERT(m_debuggerState == DebuggerState::StepRequested || m_debuggerState == DebuggerState::ContinueRequested || m_debuggerState == DebuggerState::SwitchRequested || m_debuggerState == DebuggerState::InterruptRequested);
         // FIXME: For module-load stops (isNewModuleLoad), step breakpoints should be preserved
         // so the in-progress step can complete after LLDB resumes. Clearing them here silently
         // cancels any active step. This also affects future LLDB expression evaluation, which can
@@ -436,7 +445,7 @@ void ExecutionHandler::step()
         resumeAll = stepAtBytecode(locker, state);
     else {
         RELEASE_ASSERT(state->isStoppedAtPrologue());
-        setStepBreakpointAtEntry(state->stopData->callee.get(), state->stopData->instance->moduleInformation());
+        setOneTimeBreakpointAtEntry<DebugStopReason::Step>(state->stopData->callee.get(), state->stopData->instance->moduleInformation());
     }
 
     if (resumeAll) {
@@ -464,12 +473,12 @@ bool ExecutionHandler::stepAtBytecode(Locker<Lock>& locker, DebugState* state)
 
     auto setStepBreakpoint = [&](const uint8_t* nextPC) WTF_REQUIRES_LOCK(m_lock) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger][Step][SetOneTimeBreakpoint] current PC=", RawPointer(currentPC), "(", stopData.address, "), next PC=", RawPointer(nextPC));
-        m_breakpointManager->setStepBreakpoint(stopData.instance->moduleInformation(), const_cast<uint8_t*>(nextPC));
+        m_breakpointManager->setOneTimeBreakpoint<DebugStopReason::Step>(stopData.instance->moduleInformation(), const_cast<uint8_t*>(nextPC));
     };
 
     auto setStepBreakpointAtCaller = [&]() WTF_REQUIRES_LOCK(m_lock) {
         if (WasmReturnSite returnSite = getWasmReturnPC(stopData.callFrame))
-            m_breakpointManager->setStepBreakpoint(returnSite.instance->moduleInformation(), returnSite.pc);
+            m_breakpointManager->setOneTimeBreakpoint<DebugStopReason::Step>(returnSite.instance->moduleInformation(), returnSite.pc);
     };
 
     auto setStepBreakpointsFromDebugInfo = [&]() WTF_REQUIRES_LOCK(m_lock) {
@@ -561,7 +570,7 @@ void ExecutionHandler::setStepIntoBreakpointForCall(VM& callerVM, CalleeBits box
             return;
 
         RELEASE_ASSERT(&calleeInstance->vm() == &callerVM);
-        setStepBreakpointAtEntry(downcast<IPIntCallee>(wasmCallee.get()), calleeInstance->moduleInformation());
+        setOneTimeBreakpointAtEntry<DebugStopReason::Step>(downcast<IPIntCallee>(wasmCallee.get()), calleeInstance->moduleInformation());
     }();
 
     stopTheWorld(callerVM, StopTheWorldEvent::WasmStepIntoSiteReached);
@@ -601,15 +610,16 @@ void ExecutionHandler::setStepIntoBreakpointForThrow(VM& throwVM)
 
         JSWebAssemblyInstance* catchInstance = throwVM.callFrameForCatch->wasmInstance();
         RELEASE_ASSERT(&catchInstance->vm() == &throwVM);
-        m_breakpointManager->setStepBreakpoint(catchInstance->moduleInformation(), const_cast<uint8_t*>(handlerPC));
+        m_breakpointManager->setOneTimeBreakpoint<DebugStopReason::Step>(catchInstance->moduleInformation(), const_cast<uint8_t*>(handlerPC));
     }();
 
     stopTheWorld(throwVM, StopTheWorldEvent::WasmStepIntoSiteReached);
 }
 
-void ExecutionHandler::setStepBreakpointAtEntry(IPIntCallee* callee, const ModuleInformation& owner)
+template<DebugStopReason reason>
+void ExecutionHandler::setOneTimeBreakpointAtEntry(IPIntCallee* callee, const ModuleInformation& owner)
 {
-    m_breakpointManager->setStepBreakpoint(owner, const_cast<uint8_t*>(callee->bytecode()));
+    m_breakpointManager->setOneTimeBreakpoint<reason>(owner, const_cast<uint8_t*>(callee->bytecode()));
 }
 
 bool ExecutionHandler::requireModuleAddress(VirtualAddress address)

@@ -74,15 +74,6 @@ void BreakpointManager::releasePatchIfUnused(Ref<Breakpoint> breakpoint)
     m_breakpoints.remove(breakpoint->pc);
 }
 
-void BreakpointManager::setStepBreakpoint(const ModuleInformation& owner, uint8_t* pc)
-{
-    Locker locker { m_lock };
-    Ref<Breakpoint> breakpoint = ensurePatched(owner, pc);
-    if (!breakpoint->oneTimeClaim)
-        m_oneTimeBreakpoints.append(breakpoint);
-    breakpoint->oneTimeClaim = DebugStopReason::Step;
-}
-
 RefPtr<Breakpoint> BreakpointManager::breakpointAt(const uint8_t* pc)
 {
     Locker locker { m_lock };

@@ -198,7 +198,7 @@ struct DebugState {
 
     void setBreakpointStopData(Reason reason, VirtualAddress address, OpType originalBytecode, uint8_t* pc, uint8_t* mc, IPInt::IPIntStackEntry* stack, IPIntCallee* callee, JSWebAssemblyInstance* instance, CallFrame* callFrame)
     {
-        RELEASE_ASSERT(reason == Reason::Breakpoint || reason == Reason::Step);
+        RELEASE_ASSERT(reason == Reason::Breakpoint || reason == Reason::Step || reason == Reason::Interrupted);
         stopReason = reason;
         stopData = makeUnique<StopData>(address, originalBytecode, pc, mc, stack, callee, instance, callFrame);
     }

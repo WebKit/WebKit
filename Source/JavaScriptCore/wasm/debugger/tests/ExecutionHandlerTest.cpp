@@ -464,7 +464,7 @@ static void testSharedBytecodeBreakpoints()
         breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
         breakpointManager->setBreakpointAt(addresses[1], *owner, pc);
         CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "Stepping over a site should remove it");
-        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(*owner, pc);
         CHECK(breakpointManager->hasOneTimeBreakpoints(), "A step onto a PC held by a site must still register as one-time");
         action = breakpointManager->trapActionFor(sharedPC, addresses[1]);
         CHECK(action && action->stopReason == DebugState::Reason::Breakpoint, "A step must not mask the site's stop reason");
@@ -481,7 +481,7 @@ static void testSharedBytecodeBreakpoints()
 
         // A site outliving the step keeps the patch.
         breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
-        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(*owner, pc);
         breakpointManager->clearAllOneTimeBreakpoints();
         CHECK(*sharedPC != originalBytecode, "Completing the step must not disarm the site sharing its PC");
         CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "The site should outlive the step");
@@ -489,7 +489,7 @@ static void testSharedBytecodeBreakpoints()
 
         // The reverse order. Unreachable today since every stop clears claims before LLDB is
         // notified, but stopTheWorld's FIXME would preserve them, so the order must not matter.
-        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(*owner, pc);
         breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
         action = breakpointManager->trapActionFor(sharedPC, addresses[0]);
         CHECK(action && action->stopReason == DebugState::Reason::Breakpoint, "A site installed after a claim still outranks it");
@@ -501,7 +501,7 @@ static void testSharedBytecodeBreakpoints()
         CHECK(*sharedPC == originalBytecode, "Removing it should restore the displaced opcode");
 
         // And a claim outliving a site installed after it.
-        breakpointManager->setStepBreakpoint(*owner, pc);
+        breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(*owner, pc);
         breakpointManager->setBreakpointAt(addresses[0], *owner, pc);
         CHECK(breakpointManager->removeBreakpointAt(addresses[0]), "That site should be removable");
         CHECK(*sharedPC != originalBytecode, "The claim armed before it must keep the byte patched");
@@ -561,7 +561,7 @@ static void testPatchLifetime()
     breakpointManager->setBreakpointAt(address, moduleInfo, pc);
 
     // A step target on a byte a site already patched: clearing it must leave the site armed.
-    breakpointManager->setStepBreakpoint(moduleInfo, pc);
+    breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(moduleInfo, pc);
     CHECK(breakpointManager->hasOneTimeBreakpoints(), "The step target should be pending");
     breakpointManager->clearAllOneTimeBreakpoints();
     CHECK(!breakpointManager->hasOneTimeBreakpoints(), "Clearing should drop the step target");
@@ -572,7 +572,7 @@ static void testPatchLifetime()
 
     // The other order: the site goes away first, the step target holds the patch.
     breakpointManager->setBreakpointAt(address, moduleInfo, pc);
-    breakpointManager->setStepBreakpoint(moduleInfo, pc);
+    breakpointManager->setOneTimeBreakpoint<DebugState::Reason::Step>(moduleInfo, pc);
     CHECK(breakpointManager->removeBreakpointAt(address), "The site should be removable");
     CHECK(*pc != originalBytecode, "The bytecode must stay patched while the step target refers to it");
     breakpointManager->clearAllOneTimeBreakpoints();

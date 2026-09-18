@@ -89,7 +89,8 @@ public:
     String callStackStringFor(uint64_t threadId);
     JS_EXPORT_PRIVATE void reset();
 
-    JS_EXPORT_PRIVATE void setStepBreakpointAtEntry(IPIntCallee*, const ModuleInformation&);
+    template<DebugStopReason reason>
+    void setOneTimeBreakpointAtEntry(IPIntCallee*, const ModuleInformation&);
     void setBreakpoint(StringView packet);
     void removeBreakpoint(StringView packet);
     JS_EXPORT_PRIVATE BreakpointManager* breakpointManager() { return m_breakpointManager.get(); };

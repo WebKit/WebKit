@@ -68,9 +68,10 @@ public:
 
     OpType originalOpcodeAt(const uint8_t* pc);
 
-    // One-time breakpoints serving a step. Not instance scoped: a step belongs to the debuggee
-    // VM, which is the only one running while it is in flight.
-    void setStepBreakpoint(const ModuleInformation& owner, uint8_t* pc);
+    // Not instance scoped: a one-time breakpoint belongs to the debuggee VM, the only one
+    // running while it is armed.
+    template<DebugStopReason reason>
+    void setOneTimeBreakpoint(const ModuleInformation& owner, uint8_t* pc);
     void clearAllOneTimeBreakpoints();
 
     // Breakpoint sites installed by LLDB (Z0/z0), scoped to the instance the address names.
@@ -95,6 +96,17 @@ private:
     Vector<Ref<Breakpoint>> m_oneTimeBreakpoints WTF_GUARDED_BY_LOCK(m_lock);
     UncheckedKeyHashMap<VirtualAddress, Ref<Breakpoint>> m_addressToBreakpoint WTF_GUARDED_BY_LOCK(m_lock);
 };
+
+template<DebugStopReason reason>
+void BreakpointManager::setOneTimeBreakpoint(const ModuleInformation& owner, uint8_t* pc)
+{
+    static_assert(reason == DebugStopReason::Step || reason == DebugStopReason::Interrupted);
+    Locker locker { m_lock };
+    Ref<Breakpoint> breakpoint = ensurePatched(owner, pc);
+    if (!breakpoint->oneTimeClaim)
+        m_oneTimeBreakpoints.append(breakpoint);
+    breakpoint->oneTimeClaim = reason;
+}
 
 } // namespace Wasm
 } // namespace JSC
