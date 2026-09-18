@@ -442,8 +442,10 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
 
 bool RenderReplaced::hasReplacedLogicalHeight() const
 {
+    // A calc-size() over an auto basis decides the used height, unlike the bare keyword, which
+    // leaves it to the intrinsic height and the aspect ratio.
     if (style().logicalHeight().isAuto())
-        return false;
+        return style().logicalHeight().isCalcSize();
 
     if (style().logicalHeight().isFixed())
         return true;
@@ -772,6 +774,11 @@ static inline bool NODELETE hasIntrinsicSize(const RenderReplaced* svgRoot, bool
     return (hasIntrinsicWidth && hasIntrinsicHeight) || ((hasIntrinsicWidth || hasIntrinsicHeight) && svgRoot);
 }
 
+static bool behavesAsAutoSize(const Style::PreferredSize& size, const Style::PreferredSize& otherAxisSize)
+{
+    return size.isAuto() && (!size.isCalcSize() || otherAxisSize.isCalcSize());
+}
+
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(IsComputingIntrinsicSize isComputingIntrinsicSize) const
 {
     auto& style = this->style();
@@ -780,95 +787,108 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(IsComputingIntrinsicSize 
     if (style.logicalWidth().isIntrinsicOrStretch())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style.logicalWidth()), isComputingIntrinsicSize);
 
-    // 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
-    FloatSize intrinsicRatio;
-    FloatSize constrainedSize;
-    computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(constrainedSize, intrinsicRatio);
+    // What follows is the used width of an auto inline size, which is also what the `size`
+    // keyword stands for in a calc-size() over an auto basis.
+    auto autoLogicalWidth = [&] {
+        // 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
+        FloatSize intrinsicRatio;
+        FloatSize constrainedSize;
+        computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(constrainedSize, intrinsicRatio);
 
-    if (style.logicalWidth().isAuto()) {
-        bool computedHeightIsAuto = style.logicalHeight().isAuto();
-        bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
-        bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
+        if (style.logicalWidth().isAuto()) {
+            bool computedHeightIsAuto = behavesAsAutoSize(style.logicalHeight(), style.logicalWidth());
+            bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
+            bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
 
-        // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
-        // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
-        // width or height. There are also elements with intrinsic sizes but without intrinsic ratio (like an iframe).
-        if (auto overridingLogicalHeight = (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasIntrinsicSize(embeddedSVGRoot(), hasIntrinsicWidth, hasIntrinsicHeight) ? this->overridingBorderBoxLogicalHeight() : std::nullopt))
-            return computeReplacedLogicalWidthRespectingMinMaxWidth(contentBoxLogicalHeight(*overridingLogicalHeight) * intrinsicRatio.aspectRatioDouble(), isComputingIntrinsicSize);
+            // For flex or grid items where the logical height has been overriden then we should use that size to compute the replaced width as long as the flex or
+            // grid item has an intrinsic size. It is possible (indeed, common) for an SVG graphic to have an intrinsic aspect ratio but not to have an intrinsic
+            // width or height. There are also elements with intrinsic sizes but without intrinsic ratio (like an iframe).
+            if (auto overridingLogicalHeight = (!intrinsicRatio.isEmpty() && (isFlexItem() || isGridItem()) && hasIntrinsicSize(embeddedSVGRoot(), hasIntrinsicWidth, hasIntrinsicHeight) ? this->overridingBorderBoxLogicalHeight() : std::nullopt))
+                return computeReplacedLogicalWidthRespectingMinMaxWidth(contentBoxLogicalHeight(*overridingLogicalHeight) * intrinsicRatio.aspectRatioDouble(), isComputingIntrinsicSize);
 
-        // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
-        if (computedHeightIsAuto && hasIntrinsicWidth)
-            return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedSize.width(), isComputingIntrinsicSize);
+            // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
+            if (computedHeightIsAuto && hasIntrinsicWidth)
+                return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedSize.width(), isComputingIntrinsicSize);
 
-        if (!intrinsicRatio.isEmpty()) {
-            // If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio;
-            // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
-            // of 'width' is: (used height) * (intrinsic ratio)
-            if (!computedHeightIsAuto || (!hasIntrinsicWidth && hasIntrinsicHeight)) {
-                auto estimatedUsedWidth = [&] {
-                    if (hasIntrinsicWidth)
-                        return LayoutUnit(constrainedSize.width());
+            if (!intrinsicRatio.isEmpty()) {
+                // If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio;
+                // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
+                // of 'width' is: (used height) * (intrinsic ratio)
+                if (!computedHeightIsAuto || (!hasIntrinsicWidth && hasIntrinsicHeight)) {
+                    auto estimatedUsedWidth = [&] {
+                        if (hasIntrinsicWidth)
+                            return LayoutUnit(constrainedSize.width());
 
-                    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes)
-                        return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, IsComputingIntrinsicSize::Yes);
+                        if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes)
+                            return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, IsComputingIntrinsicSize::Yes);
+
+                        auto constrainedLogicalWidth = computeConstrainedLogicalWidth();
+                        return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, IsComputingIntrinsicSize::No);
+                    }();
+
+                    LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
+                    auto boxSizing = style.aspectRatio().hasRatio() ? style.boxSizingForAspectRatio() : BoxSizing::ContentBox;
+                    return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio.aspectRatioDouble(), boxSizing), isComputingIntrinsicSize);
+                }
+
+                // If 'height' and 'width' both have computed values of 'auto' and the
+                // element has an intrinsic ratio but no intrinsic height or width, then
+                // the used value of 'width' is undefined in CSS 2.1. However, it is
+                // suggested that, if the containing block's width does not itself depend
+                // on the replaced element's width, then the used value of 'width' is
+                // calculated from the constraint equation used for block-level,
+                // non-replaced elements in normal flow.
+                if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
+                    bool isFlexItemComputingBaseSize = isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
+                    if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && !isFlexItemComputingBaseSize) {
+                        // When there's a min/max-height and an intrinsic ratio, the preferred width
+                        // should reflect the transferred size constraints from the opposite axis.
+                        auto [transferredMin, transferredMax] = computeMinMaxLogicalWidthFromAspectRatio();
+                        return computeReplacedLogicalWidthRespectingMinMaxWidth(std::clamp(0_lu, transferredMin, transferredMax), IsComputingIntrinsicSize::Yes);
+                    }
 
                     auto constrainedLogicalWidth = computeConstrainedLogicalWidth();
+                    auto [transferredMinLogicalWidth, transferredMaxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
+                    ASSERT(transferredMinLogicalWidth <= transferredMaxLogicalWidth);
+                    constrainedLogicalWidth = std::clamp(constrainedLogicalWidth, transferredMinLogicalWidth, transferredMaxLogicalWidth);
+
+                    // For absolutely positioned elements with both insets set, don't let max-width intrinsic
+                    // keywords constrain the width.
+                    auto& style = this->style();
+                    if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
+                        auto& logicalMinWidth = style.logicalMinWidth();
+                        auto& logicalMaxWidth = style.logicalMaxWidth();
+                        auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
+                        auto maxLogicalWidth = logicalMaxWidth.isIntrinsic() || logicalMaxWidth.isNone() ? constrainedLogicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
+                        return std::max(minLogicalWidth, std::min(constrainedLogicalWidth, maxLogicalWidth));
+                    }
+
                     return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, IsComputingIntrinsicSize::No);
-                }();
-
-                LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
-                auto boxSizing = style.aspectRatio().hasRatio() ? style.boxSizingForAspectRatio() : BoxSizing::ContentBox;
-                return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio.aspectRatioDouble(), boxSizing), isComputingIntrinsicSize);
+                }
             }
 
-            // If 'height' and 'width' both have computed values of 'auto' and the
-            // element has an intrinsic ratio but no intrinsic height or width, then
-            // the used value of 'width' is undefined in CSS 2.1. However, it is
-            // suggested that, if the containing block's width does not itself depend
-            // on the replaced element's width, then the used value of 'width' is
-            // calculated from the constraint equation used for block-level,
-            // non-replaced elements in normal flow.
-            if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
-                bool isFlexItemComputingBaseSize = isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
-                if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && !isFlexItemComputingBaseSize) {
-                    // When there's a min/max-height and an intrinsic ratio, the preferred width
-                    // should reflect the transferred size constraints from the opposite axis.
-                    auto [transferredMin, transferredMax] = computeMinMaxLogicalWidthFromAspectRatio();
-                    return computeReplacedLogicalWidthRespectingMinMaxWidth(std::clamp(0_lu, transferredMin, transferredMax), IsComputingIntrinsicSize::Yes);
-                }
+            // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
+            if (hasIntrinsicWidth)
+                return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedSize.width(), isComputingIntrinsicSize);
 
-                auto constrainedLogicalWidth = computeConstrainedLogicalWidth();
-                auto [transferredMinLogicalWidth, transferredMaxLogicalWidth] = computeMinMaxLogicalWidthFromAspectRatio();
-                ASSERT(transferredMinLogicalWidth <= transferredMaxLogicalWidth);
-                constrainedLogicalWidth = std::clamp(constrainedLogicalWidth, transferredMinLogicalWidth, transferredMaxLogicalWidth);
-
-                // For absolutely positioned elements with both insets set, don't let max-width intrinsic
-                // keywords constrain the width.
-                auto& style = this->style();
-                if (isOutOfFlowPositioned() && !style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) {
-                    auto& logicalMinWidth = style.logicalMinWidth();
-                    auto& logicalMaxWidth = style.logicalMaxWidth();
-                    auto minLogicalWidth = logicalMinWidth.isIntrinsic() ? 0_lu : computeReplacedLogicalWidthUsing(logicalMinWidth);
-                    auto maxLogicalWidth = logicalMaxWidth.isIntrinsic() || logicalMaxWidth.isNone() ? constrainedLogicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
-                    return std::max(minLogicalWidth, std::min(constrainedLogicalWidth, maxLogicalWidth));
-                }
-
-                return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, IsComputingIntrinsicSize::No);
-            }
+            // Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. If 300px is too
+            // wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
+            // Note: We fall through and instead return intrinsicLogicalWidth() here - to preserve existing WebKit behavior, which might or might not be correct, or desired.
+            // Changing this to return cDefaultWidth, will affect lots of test results. Eg. some tests assume that a blank <img> tag (which implies width/height=auto)
+            // has no intrinsic size, which is wrong per CSS 2.1, but matches our behavior since a long time.
         }
 
-        // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
-        if (hasIntrinsicWidth)
-            return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedSize.width(), isComputingIntrinsicSize);
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), isComputingIntrinsicSize);
+    };
 
-        // Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. If 300px is too
-        // wide to fit the device, UAs should use the width of the largest rectangle that has a 2:1 ratio and fits the device instead.
-        // Note: We fall through and instead return intrinsicLogicalWidth() here - to preserve existing WebKit behavior, which might or might not be correct, or desired.
-        // Changing this to return cDefaultWidth, will affect lots of test results. Eg. some tests assume that a blank <img> tag (which implies width/height=auto)
-        // has no intrinsic size, which is wrong per CSS 2.1, but matches our behavior since a long time.
+    if (style.logicalWidth().isCalcSize()) {
+        ASSERT(style.logicalWidth().isAuto());
+        auto calcSizeLogicalWidth = style.logicalWidth().get<Style::UnevaluatedCalcSize>();
+        auto logicalWidth = resolveCalcSizeLogicalWidth(calcSizeLogicalWidth, autoLogicalWidth(), containingBlockLogicalWidthForContent());
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, isComputingIntrinsicSize);
     }
 
-    return computeReplacedLogicalWidthRespectingMinMaxWidth(intrinsicLogicalWidth(), isComputingIntrinsicSize);
+    return autoLogicalWidth();
 }
 
 LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth) const
@@ -882,7 +902,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     FloatSize constrainedSize;
     computeIntrinsicSizesConstrainedByTransferredMinMaxSizes(constrainedSize, intrinsicRatio);
 
-    bool widthIsAuto = style().logicalWidth().isAuto();
+    bool widthIsAuto = behavesAsAutoSize(style().logicalWidth(), style().logicalHeight());
     bool hasIntrinsicWidth = constrainedSize.width() > 0 || (!constrainedSize.width() && shouldRespectZeroIntrinsicWidth()) || shouldApplySizeOrInlineSizeContainment();
     bool hasIntrinsicHeight = constrainedSize.height() > 0 || (!constrainedSize.height() && shouldRespectZeroIntrinsicHeight()) || shouldApplySizeContainment();
 
@@ -1248,7 +1268,10 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
     SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto content = [&](const auto& keyword, const auto& availableLogicalWidth) {
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
-        return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
+        auto borderAndPadding = borderAndPaddingLogicalWidth();
+        if (logicalWidth.isCalcSize())
+            return computeSizingKeywordLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPadding) - borderAndPadding;
+        return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding) - borderAndPadding;
     };
 
     SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalWidth,
@@ -1505,6 +1528,8 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         [&](const CSS::Keyword::Auto&) -> LayoutUnit  {
             if constexpr (std::same_as<SizeType, Style::MinimumSize>)
                 return adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { 0 });
+            else if (logicalHeight.isCalcSize())
+                return content();
             else
                 return intrinsicLogicalHeight();
         },
