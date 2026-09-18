@@ -199,7 +199,7 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
     RetainPtr presentingView = _presentingView.get();
 
-    NSRect windowRect = [retainPtr([presentingView window]) convertRectToScreen:[presentingView convertRect:params.anchorRectInRootView toView:nil]];
+    NSRect windowRect = [retainPtr([presentingView window]) convertRectToScreen:[presentingView convertRect:params.anchorRectInMainFrameView toView:nil]];
     windowRect.origin.y = NSMinY(windowRect) - kCalendarHeight;
     windowRect.size.width = kCalendarWidth;
     windowRect.size.height = kCalendarHeight;

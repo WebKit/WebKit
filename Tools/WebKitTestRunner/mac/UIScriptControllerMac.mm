@@ -42,6 +42,7 @@
 #import <JavaScriptCore/JSValue.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <JavaScriptCore/OpaqueJSString.h>
+#import <WebCore/FloatRect.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <mach/mach_time.h>
@@ -122,6 +123,24 @@ bool UIScriptControllerMac::isShowingDateTimePicker() const
             return true;
     }
     return false;
+}
+
+JSObjectRef UIScriptControllerMac::dateTimePickerRect() const
+{
+    for (NSWindow *childWindow in webView().window.childWindows) {
+        if ([childWindow isKindOfClass:NSClassFromString(@"WKDateTimePickerWindow")]) {
+            auto dateTimePickerFrame = [webView() convertRect:[webView().window convertRectFromScreen:[childWindow frame]] fromView:nil];
+            WebCore::FloatRect rect {
+                static_cast<float>(dateTimePickerFrame.origin.x),
+                static_cast<float>(dateTimePickerFrame.origin.y),
+                static_cast<float>(dateTimePickerFrame.size.width),
+                static_cast<float>(dateTimePickerFrame.size.height)
+            };
+            return m_context->objectFromRect(rect);
+        }
+    }
+
+    return nullptr;
 }
 
 double UIScriptControllerMac::dateTimePickerValue() const

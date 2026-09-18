@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<style>
+  body {
+    padding: 0;
+    margin: 0
+  }
+
+  #dateinput {
+    padding: 0;
+    margin: 0;
+    width: 100px;
+    height: 50px;
+    border: 1px solid black;
+  }
+</style>
+
+<div class="padding"></div>
+<input id="dateinput" type="date">
+<div class="padding"></div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const padding = parseInt(params.get("padding"), 10);
+
+  const style = new CSSStyleSheet();
+  style.replaceSync(`.padding { height: ${padding}px; }`);
+  document.adoptedStyleSheets = [style];
+
+  window.scrollTo(0, padding);
+</script>
