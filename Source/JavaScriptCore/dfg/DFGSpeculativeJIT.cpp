@@ -13962,6 +13962,7 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
     ASSERT(m_graph.varArgChild(node, 0)->dynamicCastConstant<Structure*>() == structure.get());
 
     ObjectMaterializationData& data = node->objectMaterializationData();
+    bool needsFieldTypeRecording = false;
         
     IndexingType indexingType = structure->indexingType();
     bool hasIndexingHeader = hasIndexedProperties(indexingType);
@@ -14015,6 +14016,12 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
                 if (uid != entry.key())
                     continue;
 
+                if (!Options::useFieldTypeMaterializationRecording()) [[unlikely]]
+                    m_graph.poisonFieldTypeForUncheckedWrite(structure.get(), entry.offset());
+                else if (m_graph.handleMaterializedField(structure.get(), entry.offset(),
+                    Graph::provenSingleStructure(m_state.forNode(edge))))
+                    needsFieldTypeRecording = true;
+
                 JSValueOperand value(this, edge);
                 GPRReg baseGPR = isInlineOffset(entry.offset()) ? resultGPR : storageGPR;
                 storeValue(
@@ -14027,6 +14034,13 @@ void SpeculativeJIT::compileMaterializeNewObject(Node* node)
         default:
             break;
         }
+    }
+
+    // Only if some field carries a live claim the compiler could NOT prove the write satisfies. The object is
+    // complete here, so the call is GC-safe; mid-loop it would see a half-initialized object.
+    if (needsFieldTypeRecording) [[unlikely]] {
+        flushRegisters();
+        callOperation(operationRecordFieldTypesForMaterializedObject, TrustedImmPtr(&vm()), resultGPR);
     }
 
     cellResult(resultGPR, node);
@@ -14868,9 +14882,40 @@ void SpeculativeJIT::compileGetByOffset(Node* node)
     jsValueResult(resultGPR, node);
 }
 
+// Speculates that the stored value's structure matches the field type loaded from the record's slot. A zero
+// claim -- none yet, or already generalized -- deliberately fails, so the exit runs the baseline store whose
+// C++ hook records or generalizes the field; the same compiled code then matches, with no recompilation.
+void SpeculativeJIT::compileCheckFieldType(Node* node)
+{
+    FieldTypeRecord* record = node->fieldTypeRecord();
+    JSValueOperand value(this, node->child1());
+    GPRTemporary expected(this);
+    JSValueRegs valueRegs = value.jsValueRegs();
+    GPRReg expectedGPR = expected.gpr();
+
+    JumpList bad;
+    // Empty first: an all-zero empty JSValue would pass a bare NotCellMask test.
+    bad.append(branchIfEmpty(valueRegs));
+    bad.append(branchIfNotCell(valueRegs));
+
+    load32(record->addressOfExpected(), expectedGPR);
+    bad.append(branchTest32(Zero, expectedGPR));
+    bad.append(branch32(NotEqual, Address(valueRegs.payloadGPR(), JSCell::structureIDOffset()), expectedGPR));
+
+    speculationCheck(BadCache, JSValueSource(), node, bad);
+    noResult(node);
+}
+
 void SpeculativeJIT::compilePutByOffset(Node* node)
 {
     StorageAccessData& storageAccessData = node->storageAccessData();
+
+    if (Options::logFieldTypes()) [[unlikely]] {
+        dataLogLn("[fieldtype] DFG-PUTBYOFFSET offset=", storageAccessData.offset,
+            " ownerSet=", !!storageAccessData.fieldTypeOwner,
+            " owner=", storageAccessData.fieldTypeOwner ? storageAccessData.fieldTypeOwner->id().bits() : 0,
+            " doubleRep=", node->child3().useKind() == DoubleRepUse);
+    }
 
     if (node->child3().useKind() == DoubleRepUse) {
         StorageOperand storage(this, node->child1());
@@ -14892,6 +14937,16 @@ void SpeculativeJIT::compilePutByOffset(Node* node)
 
         boxDoubleAsDouble(scratch1FPR, resultFPR);
         storeDouble(resultFPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
+        if (RefPtr record = storageAccessData.fieldTypeCheckHoisted
+            ? nullptr
+            : m_graph.fieldTypeRecordForStore(storageAccessData, m_state.forNode(node->child2()).m_structure,
+                  Graph::storedValueEdge(node) ? Graph::provenSingleStructure(m_state.forNode(Graph::storedValueEdge(node))) : StructureID())) [[unlikely]] {
+            if (storageAccessData.fieldTypeOwner)
+                m_graph.m_plan.weakReferences().addLazily(storageAccessData.fieldTypeOwner.get());
+            // A double can never satisfy a structure field type, and that is known at compile time, so
+            // record the generalization and emit nothing; Plan::finalize applies it before this code runs.
+            m_graph.m_plan.addFieldTypeToGeneralize(*record);
+        }
         noResult(node);
         return;
     }
@@ -14903,6 +14958,44 @@ void SpeculativeJIT::compilePutByOffset(Node* node)
     GPRReg valueGPR = value.gpr();
 
     speculate(node, node->child2());
+
+    // Every store site that knows its owner carries a CheckFieldType node emitted at parse time, so nothing
+    // needs to be emitted here. What remains is the fail-safe for a store whose owner could not be resolved
+    // then: it gives up the claim rather than write unchecked.
+    if (RefPtr record = storageAccessData.fieldTypeCheckHoisted
+        ? nullptr
+        : m_graph.fieldTypeRecordForStore(storageAccessData, m_state.forNode(node->child2()).m_structure,
+                  Graph::storedValueEdge(node) ? Graph::provenSingleStructure(m_state.forNode(Graph::storedValueEdge(node))) : StructureID())) [[unlikely]] {
+        // Decide a constant here and emit no check. Not just an optimisation: the delete lowering stores the
+        // empty JSValue, which `tst value, NotCellMask` reports as a cell, so a cell test would fall through
+        // and dereference address 0.
+        if (node->child3()->isConstant()) {
+            JSValue constant = node->child3()->asJSValue();
+            if (!constant || !constant.isCell() || constant.asCell()->structureID() != record->expected()) {
+                // Nothing may be emitted here: the delete lowering stores this constant inside the nuked
+                // transition window, where no exit and no call out is legal.
+                m_graph.m_plan.addFieldTypeToGeneralize(*record);
+            }
+            storeValue(valueGPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
+            noResult(node);
+            return;
+        }
+
+
+        // Exit is illegal here and always is: mayExit is a property of the node kind, and PutByOffset is in
+        // DFGMayExit.cpp's blanket DoesNotExit set because a transitioning store lowers to PutByOffset ->
+        // NukeStructureAndSetButterfly -> PutStructure, across which the object is deliberately inconsistent.
+        // So this site can only give up the claim, never maintain it; if PutByOffset ever leaves that set,
+        // that becomes a missed speculation -- a perf loss, not a correctness one -- which is what the ASSERT
+        // is watching for.
+        ASSERT(mayExit(m_graph, node) == DoesNotExit);
+        // Keep the owner alive for the record's sake: the plan holds a Ref to the record and generalize()
+        // writes through its owner.
+        if (storageAccessData.fieldTypeOwner)
+            m_graph.m_plan.weakReferences().addLazily(storageAccessData.fieldTypeOwner.get());
+        m_graph.m_plan.addFieldTypeToGeneralize(*record);
+    }
+
     storeValue(valueGPR, Address(storageGPR, offsetRelativeToBase(storageAccessData.offset)));
     noResult(node);
 }

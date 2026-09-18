@@ -2143,6 +2143,10 @@ static JSC_DECLARE_HOST_FUNCTION(functionBaselineJITTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionNoInline);
 static JSC_DECLARE_HOST_FUNCTION(functionTriggerMemoryPressure);
 static JSC_DECLARE_HOST_FUNCTION(functionGC);
+static JSC_DECLARE_HOST_FUNCTION(functionFieldTypeNarrowCount);
+static JSC_DECLARE_HOST_FUNCTION(functionFieldTypeAncestorWithdrawalCount);
+static JSC_DECLARE_HOST_FUNCTION(functionFieldTypeClaimIndexCount);
+static JSC_DECLARE_HOST_FUNCTION(functionFieldTypeDistinctClaims);
 static JSC_DECLARE_HOST_FUNCTION(functionEdenGC);
 static JSC_DECLARE_HOST_FUNCTION(functionGCSweepAsynchronously);
 static JSC_DECLARE_HOST_FUNCTION(functionDumpSubspaceHashes);
@@ -2638,6 +2642,38 @@ JSC_DEFINE_HOST_FUNCTION(functionGC, (JSGlobalObject* globalObject, CallFrame*))
     DollarVMAssertScope assertScope;
     VMInspector::gc(&globalObject->vm());
     return JSValue::encode(jsUndefined());
+}
+
+// How many loads the compiler has narrowed on the strength of a field-type claim. A test asserts this is
+// nonzero; without it the whole field-type suite also passes with the feature off.
+JSC_DEFINE_HOST_FUNCTION(functionFieldTypeNarrowCount, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsNumber(static_cast<double>(globalObject->vm().fieldTypeNarrowCount().load(std::memory_order_relaxed))));
+}
+
+// How many claim-index slots have been consumed out of 65533; they are never reclaimed.
+JSC_DEFINE_HOST_FUNCTION(functionFieldTypeClaimIndexCount, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    auto* table = globalObject->vm().fieldTypeWatchpoints();
+    return JSValue::encode(jsNumber(table ? static_cast<double>(table->claimIndexCount()) : 0));
+}
+
+// How many slots hold distinct claimed structures; a large gap from the count above means duplicates.
+JSC_DEFINE_HOST_FUNCTION(functionFieldTypeDistinctClaims, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    auto* table = globalObject->vm().fieldTypeWatchpoints();
+    return JSValue::encode(jsNumber(table ? static_cast<double>(table->distinctClaimedStructureCount()) : 0));
+}
+
+
+// How many ancestor claims have been withdrawn at a reused offset; the only coverage of that path.
+JSC_DEFINE_HOST_FUNCTION(functionFieldTypeAncestorWithdrawalCount, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsNumber(static_cast<double>(globalObject->vm().fieldTypeAncestorWithdrawalCount().load(std::memory_order_relaxed))));
 }
 
 // Runs a full GC synchronously.
@@ -4663,6 +4699,10 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, alwaysAllow, "triggerMemoryPressure"_s, functionTriggerMemoryPressure, 0);
     addFunction(vm, alwaysAllow, "gc"_s, functionGC, 0);
+    addFunction(vm, alwaysAllow, "fieldTypeNarrowCount"_s, functionFieldTypeNarrowCount, 0);
+    addFunction(vm, alwaysAllow, "fieldTypeAncestorWithdrawalCount"_s, functionFieldTypeAncestorWithdrawalCount, 0);
+    addFunction(vm, alwaysAllow, "fieldTypeClaimIndexCount"_s, functionFieldTypeClaimIndexCount, 0);
+    addFunction(vm, alwaysAllow, "fieldTypeDistinctClaims"_s, functionFieldTypeDistinctClaims, 0);
     addFunction(vm, alwaysAllow, "gcSweepAsynchronously"_s, functionGCSweepAsynchronously, 0);
     addFunction(vm, alwaysAllow, "edenGC"_s, functionEdenGC, 0);
     addFunction(vm, alwaysAllow, "dumpSubspaceHashes"_s, functionDumpSubspaceHashes, 0);

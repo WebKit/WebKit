@@ -569,6 +569,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             dateCache.timeZoneDisplayName(/* isDST */ false);
     }
 
+    // Field types: created eagerly, not lazily on first property creation, which published the table with a
+    // plain store against plain loads. A VM can reach DFG/FTL tier-up before its first property creation, so a
+    // compiler thread could see a non-null pointer before the constructor's stores were visible and take an
+    // uninitialized lock. Creating it here removes the publication instead of synchronising it: the
+    // storeStoreFence below orders it ahead of m_isInService, and nothing can reach a VM not yet in service.
+    // An acquire load in fieldTypeWatchpoints() would instead put an ldar in fieldTypeCreationNeedsNoWork.
+    m_fieldTypeWatchpoints = makeUnique<FieldTypeWatchpointTable>();
+
     // We must set this at the end only after the VM is fully initialized.
     WTF::storeStoreFence();
     m_isInService = true;
@@ -592,6 +600,18 @@ void VM::setCrossTaskToken(RefPtr<CrossTaskToken>&& token)
 
 VM::~VM()
 {
+    // The population behind the per-creation previousID() chase. Reported here rather than through $vm because
+    // the interesting numbers come from JetStream subtests, which run under cli.js and never evaluate a probe
+    // script. Gated on useDollarVM so the two atomics stay off the property-creation path by default.
+    if (Options::useDollarVM() && Options::useFieldTypeAssumptions()) [[unlikely]] {
+        uint64_t total = m_fieldTypeCreationChaseCount.load(std::memory_order_relaxed);
+        if (total) {
+            uint64_t skippable = m_fieldTypeCreationChaseSkippableCount.load(std::memory_order_relaxed);
+            dataLogLn("[fieldtype] CREATION-CHASE total=", total, " skippable=", skippable,
+                " pct=", (skippable * 100) / total);
+        }
+    }
+
     // Remove from VMManager before marking as no longer in service or cancelling traps,
     // so requestStopAllInternal() never iterates a VM with m_isShuttingDown set.
     VMManager::singleton().notifyVMDestruction(*this);
@@ -2155,5 +2175,14 @@ Wasm::DebugState* VM::debugState()
     return m_debugState.get();
 }
 #endif
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FieldTypeWatchpointTable);
+
+FieldTypeWatchpointTable& VM::ensureFieldTypeWatchpoints()
+{
+    // Constructed eagerly by the VM constructor; kept as a named accessor so call sites assert that.
+    ASSERT(m_fieldTypeWatchpoints);
+    return *m_fieldTypeWatchpoints;
+}
 
 } // namespace JSC

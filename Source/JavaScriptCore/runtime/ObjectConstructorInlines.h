@@ -222,6 +222,10 @@ ALWAYS_INLINE bool objectCloneFast(VM& vm, JSFinalObject* target, JSObject* sour
         gcSafeMemcpy(target->inlineStorage(), source->inlineStorage(), sourceStructure->inlineCapacity() * sizeof(EncodedJSValue));
     target->setStructure(vm, sourceStructure);
 
+    // Field types: this object's properties arrived by memcpy, so no per-property hook has seen them. AFTER
+    // setStructure, as every creation hook must be. See recordFieldTypesForCopiedObject.
+    recordFieldTypesForCopiedObject(vm, target, sourceStructure);
+
     vm.writeBarrier(target);
 
     return true;
@@ -271,14 +275,19 @@ ALWAYS_INLINE JSObject* tryCreateObjectViaCloning(VM& vm, JSGlobalObject* global
     dataLogLnIf(verbose, "Use fast cloning!");
 
     unsigned propertyCapacity = source->butterfly() ? sourceStructure->outOfLineCapacity() : 0;
-    if (!propertyCapacity)
-        return JSFinalObject::createWithButterflyCopyingInlineStorage(vm, sourceStructure, nullptr, source->inlineStorage());
+    if (!propertyCapacity) {
+        JSFinalObject* clone = JSFinalObject::createWithButterflyCopyingInlineStorage(vm, sourceStructure, nullptr, source->inlineStorage());
+        recordFieldTypesForCopiedObject(vm, clone, sourceStructure);
+        return clone;
+    }
 
     DeferGC deferGC(vm);
     Butterfly* newButterfly = Butterfly::createUninitialized(vm, nullptr, 0, propertyCapacity, /* hasIndexingHeader */ false, 0);
     // memcpy is fine since newButterfly is not tied to any object yet.
     memcpy(newButterfly->propertyStorage() - propertyCapacity, source->butterfly()->propertyStorage() - propertyCapacity, propertyCapacity * sizeof(EncodedJSValue));
-    return JSFinalObject::createWithButterflyCopyingInlineStorage(vm, sourceStructure, newButterfly, source->inlineStorage());
+    JSFinalObject* clone = JSFinalObject::createWithButterflyCopyingInlineStorage(vm, sourceStructure, newButterfly, source->inlineStorage());
+    recordFieldTypesForCopiedObject(vm, clone, sourceStructure);
+    return clone;
 }
 
 ALWAYS_INLINE bool objectAssignFast(JSGlobalObject* globalObject, JSFinalObject* target, JSObject* source, Vector<UniquedStringImpl*, 8>& properties, MarkedArgumentBuffer& values)

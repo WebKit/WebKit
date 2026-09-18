@@ -962,6 +962,9 @@ private:
         case CheckIsConstant:
             compileCheckIsConstant();
             break;
+        case CheckFieldType:
+            compileCheckFieldType();
+            break;
         case CheckNotEmpty:
             compileCheckNotEmpty();
             break;
@@ -4310,6 +4313,21 @@ private:
     void compileCheckBadValue()
     {
         terminate(BadConstantValue);
+    }
+
+    void compileCheckFieldType()
+    {
+        // See SpeculativeJIT::compileCheckFieldType. Loads the claim rather than baking it, so a zero
+        // claim fails and the exit lets the baseline store record through the C++ hook.
+        FieldTypeRecord* record = m_node->fieldTypeRecord();
+        LValue value = lowJSValue(m_node->child1());
+        LValue expected = m_out.load32(m_out.absolute(record->addressOfExpected()));
+
+        speculate(BadCache, noValue(), nullptr, m_out.isZero64(value));
+        speculate(BadCache, noValue(), nullptr, isNotCell(value, SpecBytecodeTop));
+        speculate(BadCache, noValue(), nullptr, m_out.isZero32(expected));
+        speculate(BadCache, noValue(), nullptr,
+            m_out.notEqual(m_out.load32(value, m_heaps.JSCell_structureID), expected));
     }
 
     void compileCheckNotEmpty()
@@ -12823,19 +12841,162 @@ IGNORE_CLANG_WARNINGS_END
             setJSValue(m_out.phi(Int64, results));
     }
 
+    // Speculate rather than call out: a vmCall per store site grew delta-blue's FTL code by 30%. On exit the
+    // baseline store generalises the record, which jettisons this code, so the recompile emits nothing.
+    void maintainFieldTypeForCreatingStore(const StorageAccessData& data, LValue value)
+    {
+        // See StorageAccessData::fieldTypeCheckHoisted: the check already ran where exit was legal.
+        if (data.fieldTypeCheckHoisted)
+            return;
+        RefPtr record = m_graph.fieldTypeRecordForStore(data, abstractValue(m_node->child2()).m_structure,
+            Graph::storedValueEdge(m_node) ? Graph::provenSingleStructure(abstractValue(Graph::storedValueEdge(m_node))) : StructureID());
+        if (!record) [[likely]]
+            return;
+
+        // The baked expected StructureID is a raw structure identity, so the owner must stay alive.
+        if (data.fieldTypeOwner)
+            m_graph.m_plan.weakReferences().addLazily(data.fieldTypeOwner.get());
+
+        emitFieldTypeCheck(*record, value, provenType(m_node->child3()));
+    }
+
+    // Speculates only where the node's origin permits an OSR exit: a transitioning store lowers to
+    // PutByOffset -> NukeStructureAndSetButterfly -> PutStructure and cannot exit across that window, so
+    // where exit is illegal the claim is given up instead.
+    void emitFieldTypeCheck(FieldTypeRecord& record, LValue value, SpeculatedType valueType)
+    {
+        // The memoised value, not record.expected(); see the DFG counterpart.
+        StructureID baked = m_graph.fieldTypeExpectedFor(record.owner().decode(), record.offset());
+        StructureID bakedID = baked ? baked : record.expected();
+        // Keep the baked structure alive as long as this code: a dead ID can be recycled for an unrelated
+        // live Structure that this compare would match, and weak clearing does not fire the watchpoint.
+        if (Structure* bakedStructure = bakedID.decode())
+            m_graph.m_plan.weakReferences().addLazily(bakedStructure);
+        // HALF 1: load the claim at runtime instead of baking it, so this compilation needs no dependency on the
+        // record. A withdrawal zeroes m_expected, the notEqual below then fails, and the site OSR-exits and
+        // recompiles without a check (isGeneralized declines to emit) -- self-correcting, exactly as the DFG
+        // store-side check already is (DFGSpeculativeJIT.cpp:14831).
+        LValue expected = Options::useFieldTypeStoreSideLoadedCheck()
+            ? m_out.load32(m_out.absolute(record.addressOfExpected()))
+            : m_out.constInt32(bakedID.bits());
+
+        // Both arms are live. PutByOffset is in DFGMayExit.cpp's DoesNotExit set, so a plain FTL store to a
+        // claimed field always surrenders the claim; MultiPutByOffset falls to the default Exits, so it
+        // always speculates -- hence compileMultiPutByOffset must call this before storageForTransition.
+        if (mayExit(m_graph, m_node) != DoesNotExit) {
+            // Population counter for liveness consumer #6 (todo/09's inventory): the only field-type check the
+            // FTL emits itself, as opposed to one the parse-time hoist inserted.
+            if (Options::logFieldTypes()) [[unlikely]]
+                dataLogLn("[fieldtype] FTL-VARIANT-CHECK owner=", record.owner().bits(), " offset=", record.offset());
+            speculate(BadCache, noValue(), nullptr, isNotCell(value, valueType));
+            speculate(BadCache, noValue(), nullptr,
+                m_out.notEqual(m_out.load32(value, m_heaps.JSCell_structureID), expected));
+            return;
+        }
+
+        // Inside the nuked transition window the object's (structure, butterfly) pair is deliberately
+        // inconsistent, so nothing may exit or call out here. Give up the claim; Plan::finalize applies it.
+        m_graph.m_plan.addFieldTypeToGeneralize(record);
+    }
+
+    // A Transition variant's owner is the structure it transitions to; a Replace variant's owner is found by
+    // walking up from each old structure, and all must agree or one compare cannot cover them.
+    void maintainFieldTypeForVariant(const PutByVariant& variant, LValue value, bool valueIsDouble)
+    {
+
+        Structure* owner = nullptr;
+        bool ownerUnprovable = false;
+        if (variant.kind() == PutByVariant::Transition)
+            owner = variant.newStructure();
+        else {
+            for (unsigned j = variant.oldStructure().size(); j--;) {
+                Structure* candidate = variant.oldStructure()[j]->findOffsetOwner(variant.offset());
+                if (!candidate || (owner && owner != candidate)) {
+                    ownerUnprovable = true;
+                    break;
+                }
+                owner = candidate;
+            }
+        }
+
+        // Unprovable owner (a dictionary, or offsets reused after a deletion). Returning without poisoning
+        // would be unsound in the one direction that corrupts: the store then violates any claim it likes.
+        if (ownerUnprovable || !owner) {
+            for (unsigned j = variant.oldStructure().size(); j--;)
+                m_graph.poisonFieldTypeAcrossAncestry(variant.oldStructure()[j], variant.offset(),
+                    Graph::storedValueEdge(m_node) ? Graph::provenSingleStructure(abstractValue(Graph::storedValueEdge(m_node))) : StructureID());
+            return;
+        }
+
+        auto* table = m_graph.m_vm.fieldTypeWatchpoints();
+        if (!table)
+            return;
+
+        // ensureRecordForStoreSite, not fieldTypeRecordFor: returning early when there is no claim yet would
+        // leave this site writing unchecked forever while a claim established later was silently violated.
+        RefPtr record = table->ensureRecordForStoreSite(owner->id(), variant.offset());
+        if (!record || record->isGeneralized())
+            return;
+
+        // A double can never satisfy a structure claim, and that is known at compile time.
+        if (valueIsDouble) {
+            m_graph.m_plan.addFieldTypeToGeneralize(*record);
+            return;
+        }
+
+        if (!record->hasClaim()) {
+            // Give the field up rather than emit a check this path cannot make self-correcting.
+            m_graph.m_plan.addFieldTypeToGeneralize(*record);
+            return;
+        }
+
+        // A baked compare is sound because a claim is monotone, provided we hear about withdrawal. A LOADED
+        // compare (HALF 1) hears about it at runtime and needs no registration.
+        if (Options::useFieldTypeWatchpointRegistration() && !Options::useFieldTypeStoreSideLoadedCheck()) [[likely]] {
+            if (Options::logFieldTypes()) [[unlikely]]
+                dataLogLn("[fieldtype] REGISTER-WATCHPOINT ftl-variant owner=", owner->id().bits(), " offset=", variant.offset());
+            record->noteDependent();
+            m_graph.watchpoints().addLazily(record->watchpoints());
+            m_graph.m_plan.weakReferences().addLazily(owner);
+        }
+        emitFieldTypeCheck(*record, value, provenType(m_node->child2()));
+    }
+
     void compilePutByOffset()
     {
         StorageAccessData& data = m_node->storageAccessData();
+        if (Options::logFieldTypes()) [[unlikely]] {
+            dataLogLn("[fieldtype] FTL-PUTBYOFFSET offset=", data.offset,
+                " ownerSet=", !!data.fieldTypeOwner,
+                " owner=", data.fieldTypeOwner ? data.fieldTypeOwner->id().bits() : 0,
+                " doubleRep=", m_node->child3().useKind() == DoubleRepUse,
+                " mayExit=", mayExit(m_graph, m_node) != DoesNotExit);
+        }
         LValue storage = lowStorage(m_node->child1());
         if (m_node->child3().useKind() == DoubleRepUse) {
             LValue value = lowDouble(m_node->child3());
             if (abstractValue(m_node->child3()).couldBeType(SpecDoubleImpureNaN))
                 value = m_out.purifyNaN(value);
+            // A double is never a cell, so it can never satisfy a structure claim.
+            if (RefPtr record = m_graph.fieldTypeRecordForStore(data, abstractValue(m_node->child2()).m_structure,
+            Graph::storedValueEdge(m_node) ? Graph::provenSingleStructure(abstractValue(Graph::storedValueEdge(m_node))) : StructureID())) [[unlikely]] {
+                if (data.fieldTypeOwner)
+                    m_graph.m_plan.weakReferences().addLazily(data.fieldTypeOwner.get());
+                // The claim is lost either way, and exit is illegal here: mayExit(PutByOffset) is
+                // unconditionally DoesNotExit, and a transitioning store lowers to
+                // ReallocatePropertyStorage -> PutByOffset -> PutStructure, so this node sits in the nuked
+                // window where calling out would jettison code and let a collection see the object.
+                ASSERT(mayExit(m_graph, m_node) == DoesNotExit);
+                m_graph.m_plan.addFieldTypeToGeneralize(*record);
+            }
             storeDoubleProperty(boxDoubleAsDouble(value), storage, data.identifierNumber, data.offset);
             return;
         }
 
-        storeProperty(lowJSValue(m_node->child3()), storage, data.identifierNumber, data.offset);
+        LValue value = lowJSValue(m_node->child3());
+        // Before the store, so exiting leaves the object untouched.
+        maintainFieldTypeForCreatingStore(data, value);
+        storeProperty(value, storage, data.identifierNumber, data.offset);
     }
 
     void compileMultiPutByOffset()
@@ -12878,6 +13039,11 @@ IGNORE_CLANG_WARNINGS_END
             m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
 
             PutByVariant variant = data.variants[i];
+
+            // Must stay before storageForTransition below: this speculates, and storageForTransition nukes
+            // the structure ID and swaps the butterfly, so an exit after that point lands in the nuked
+            // window. mayExit() is per-node and cannot catch it, so ordering is the only enforcement.
+            maintainFieldTypeForVariant(variant, value, m_node->child2().useKind() == DoubleRepUse);
 
             LValue storage;
             if (variant.kind() == PutByVariant::Replace) {
@@ -19196,6 +19362,7 @@ IGNORE_CLANG_WARNINGS_END
                 butterfly = nullptr; // Don't have one, don't need one.
             }
 
+            bool needsFieldTypeRecording = false;
             BitVector setInlineOffsets;
             for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
                 for (unsigned i = data.m_properties.size(); i--;) {
@@ -19204,6 +19371,12 @@ IGNORE_CLANG_WARNINGS_END
                         continue;
                     if (m_graph.identifiers()[descriptor.info()] != entry.key())
                         continue;
+
+                    if (!Options::useFieldTypeMaterializationRecording()) [[unlikely]]
+                        m_graph.poisonFieldTypeForUncheckedWrite(structure.get(), entry.offset());
+                    else if (m_graph.handleMaterializedField(structure.get(), entry.offset(),
+                        Graph::provenSingleStructure(m_state.forNode(m_graph.varArgChild(m_node, 1 + i)))))
+                        needsFieldTypeRecording = true;
 
                     LValue base;
                     if (isInlineOffset(entry.offset())) {
@@ -19219,6 +19392,13 @@ IGNORE_CLANG_WARNINGS_END
                 if (!setInlineOffsets.get(i))
                     m_out.store64(m_out.int64Zero, m_out.address(m_heaps.properties.atAnyNumber(), object, offsetRelativeToBase(i)));
             }
+
+            // Every field now holds its final value and the unset inline slots are zeroed, so the object is complete
+            // and this is GC-safe. Running the creation recorder here is what would have happened had the allocation
+            // not been sunk -- allocation sinking is meant to be transparent. Poisoning instead destroys live claims,
+            // and this one site is the ENTIRE raytrace-family regression (delta-blue has zero of them).
+            if (needsFieldTypeRecording) [[unlikely]]
+                vmCall(Void, operationRecordFieldTypesForMaterializedObject, m_vmValue, object);
 
             results.append(m_out.anchor(object));
             m_out.jump(outerContinuation);

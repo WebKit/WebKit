@@ -303,6 +303,10 @@ op :put_by_id,
         offset: unsigned,
         newStructureID: StructureID,
         structureChain: WriteBarrierBase[StructureChain],
+        # Field types: the structure the stored value must have, or 0 for no check. Lets a claimed field's store
+        # site be CACHED with a check instead of declined -- a declined site stays uncached for the whole run, so
+        # every store there re-enters C++ (measured 84,010 re-entries on one FlightPlanner field).
+        expectedFieldType: StructureID,
     }
 
 op :construct,

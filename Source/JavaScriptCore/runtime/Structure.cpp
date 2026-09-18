@@ -44,6 +44,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+
+
 template<typename DetailsFunc>
 void Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
 {
@@ -562,10 +564,16 @@ bool Structure::holesMustForwardToPrototypeSlow(JSObject* base) const
 Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
 {
     Structure* newStructure = addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset);
-    if (newStructure)
-        return newStructure;
+    if (!newStructure)
+        newStructure = addNewPropertyTransition(vm, structure, propertyName, attributes, offset, PutPropertySlot::UnknownContext);
 
-    return addNewPropertyTransition(vm, structure, propertyName, attributes, offset, PutPropertySlot::UnknownContext);
+    // The only property-addition entry point that adds a property with no value in hand: every caller is a VM
+    // structure builder that writes the field itself without maintaining a field type. Declaring it here
+    // rather than at ~70 write sites is deliberate -- a hand audit missed RegExp.cpp's named-capture-groups
+    // object -- and a missed site is a type-confusion SIGSEGV, since user code can reach the same structure by
+    // adding the same property names in the same order.
+    poisonFieldTypesForVMWrittenProperty(vm, newStructure, offset);
+    return newStructure;
 }
 
 Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset, PutPropertySlot::Context context, DeferredStructureTransitionWatchpointFire* deferred)
@@ -1378,6 +1386,309 @@ StructureFireDetail::StructureFireDetail(ClangVTableWorkaroundTag)
 void StructureFireDetail::dump(PrintStream& out) const
 {
     out.print("Structure transition from ", *m_structure);
+}
+
+// The owner Structure caches this record's claim in a word of its own, so a property creation can test it with
+// a load and a compare instead of a locked hash lookup. The cache must be withdrawn whenever the claim is: a
+// stale-SET word is merely conservative, a stale-CLEAR word is unsound. Out of line because Structure is
+// incomplete where FieldTypeRecord is declared.
+
+void FieldTypeRecord::clearOwnerShapeClaimCache()
+{
+    if (Structure* owner = m_owner.decode()) {
+        // entryWithoutClaim, not zero: zero means "nothing recorded yet" and would send every later creation
+        // of this shape to the table forever, measured at -15.7% on json-parse-inspector.
+        if (owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::offsetWasReused)
+            owner->setFieldTypeClaimIndex(FieldTypeClaimIndex::entryWithoutClaim);
+    }
+}
+
+Structure* FieldTypeWatchpointTable::findOffsetOwnerMemoised(Structure* structure, PropertyOffset offset)
+{
+    // Hash (structure, offset). The multiply is a cheap spreader; the array size is a power of two so the mask is
+    // a single AND. A miss costs exactly what the old code always cost, plus one store.
+    unsigned index = (static_cast<unsigned>(reinterpret_cast<uintptr_t>(structure) >> 4) * 2654435761u
+        + static_cast<unsigned>(offset)) & (offsetOwnerMemoLiveSize() - 1);
+    OffsetOwnerMemoEntry& entry = m_offsetOwnerMemo[index];
+    if (entry.structure == structure && entry.offset == offset) [[likely]] {
+        if (Options::logFieldTypes() || Options::useDollarVM()) [[unlikely]]
+            m_offsetOwnerMemoHits.fetch_add(1, std::memory_order_relaxed);
+        return entry.owner;
+    }
+    if (Options::logFieldTypes() || Options::useDollarVM()) [[unlikely]]
+        m_offsetOwnerMemoMisses.fetch_add(1, std::memory_order_relaxed);
+
+    // A null owner is cached too. findOffsetOwner returns null both for "no owner" and for a SEVERED chain, and
+    // callers already treat null as "be conservative"; caching it changes nothing about that, and it is the case
+    // dictionaries take, which would otherwise walk on every store.
+    Structure* owner = structure->findOffsetOwner(offset);
+    entry.structure = structure;
+    entry.offset = offset;
+    entry.owner = owner;
+    return owner;
+}
+
+CString fieldTypeFieldName(Structure* owner, PropertyOffset offset)
+{
+    CString name("<unknown>");
+    if (!owner)
+        return name;
+    owner->forEachPropertyConcurrently([&](const PropertyTableEntry& entry) -> bool {
+        if (entry.offset() == offset) {
+            if (entry.key())
+                name = entry.key()->utf8();
+            return false;
+        }
+        return true;
+    });
+    return name;
+}
+
+void FieldTypeRecord::reportStabilityAtDependency() const
+{
+    StructureID claimedID = m_expected.load(std::memory_order_relaxed);
+    Structure* claimed = claimedID ? claimedID.decode() : nullptr;
+    if (!claimed)
+        return;
+    // stillLeaf=false means something has already been derived from the claimed shape, i.e. V8's is_stable() would
+    // be clear and Object::OptimalType would have returned Any instead of Class -- so V8 would never have made this
+    // claim, and this dependency would not exist.
+    dataLogLn("[fieldtype] DEP-STABILITY owner=", m_owner.bits(), " offset=", m_offset,
+        " claimed=", claimedID.bits(),
+        " stillLeaf=", claimed->transitionWatchpointSetIsStillValid(),
+        " likelyToFire=", claimed->transitionWatchpointIsLikelyToBeFired(),
+        " dependentsSoFar=", dependents());
+}
+
+void FieldTypeRecord::reportExpensiveWithdrawal(StructureID claimedWas) const
+{
+    Structure* owner = m_owner.decode();
+    if (!owner)
+        return;
+    // transitionPropertyName(), not fieldTypeFieldName(): the latter searches the property table for an entry at
+    // this OFFSET and misattributes whenever an offset has been reused. The owner is by construction the structure
+    // that ADDED this field -- recordAtCreation asserts owner->transitionOffset() == offset -- so its transition
+    // property name is exact. Both are printed so the discrepancy is visible rather than silent.
+    auto* uid = owner->transitionPropertyName();
+    CString name = uid ? uid->utf8() : CString("<none>");
+    CString byOffset = fieldTypeFieldName(owner, m_offset);
+    // owner bits and the CLAIMED VALUE's type are both required: the field NAME here is resolved by walking the
+    // property table for this offset, which misattributes under offset reuse, and the name alone cannot say whether
+    // V8's IsJSReceiverMap gate (which refuses string-valued claims outright) would have prevented this claim.
+    Structure* claimedStructure = claimedWas ? claimedWas.decode() : nullptr;
+    dataLogLn("[fieldtype] EXPENSIVE-WITHDRAWAL field=", name.data(), " byOffset=", byOffset.data(),
+        " owner=", m_owner.bits(),
+        " ownerClass=", owner->classInfoForCells()->className,
+        " offset=", m_offset, " dependents=", dependents(),
+        " claimedType=", claimedStructure ? static_cast<unsigned>(claimedStructure->typeInfo().type()) : 999u,
+        " claimedClass=", claimedStructure ? claimedStructure->classInfoForCells()->className : "<cleared>",
+        " isJSReceiver=", claimedStructure ? (claimedStructure->typeInfo().type() >= ObjectType) : false,
+        " expectedWas=", claimedWas.bits());
+}
+
+// Every withdrawal, named. The question this answers is whether contradiction is a property of the FIELD or of the// individual (adding structure, offset) key: the mechanism keys claims on the latter, so a shape reached by a
+// second transition path re-learns from scratch. acorn-wtb contradicts 4,515 of its 5,762 distinct keys against
+// delta-blue's 5 of 603, so if the doomed keys repeat a small set of NAMES then a name-keyed admission policy can
+// predict them, and declining to claim is sound because it only ever removes information.
+void FieldTypeRecord::reportWithdrawalWithName(bool hadClaim) const
+{
+    Structure* owner = m_owner.decode();
+    if (!owner)
+        return;
+    CString name = fieldTypeFieldName(owner, m_offset);
+    dataLogLn("[fieldtype] WITHDRAW-NAMED field=", name.data(),
+        " ownerClass=", owner->classInfoForCells()->className,
+        " owner=", m_owner.bits(), " offset=", m_offset,
+        " hadClaim=", hadClaim, " dependents=", dependents(),
+        " creationsSeen=", creationsSeen(), " site=", claimSite());
+}
+
+// Reads the owner shape's claim word for the lazy-entry design. Out of line for the same reason as
+// clearShapeClaimCacheFor below: Structure is incomplete inside FieldTypeWatchpointTable. A dead or
+// undecodable owner reports offsetWasReused, which is the "cannot carry a claim in the word" answer and
+// therefore the conservative one -- it forces an eager entry.
+void FieldTypeWatchpointTable::reportContradiction(StructureID owner, PropertyOffset offset, StructureID had, StructureID got)
+{
+    Structure* ownerStructure = owner.decode();
+    Structure* hadStructure = had ? had.decode() : nullptr;
+    Structure* gotStructure = got ? got.decode() : nullptr;
+    auto describe = [](Structure* s) -> const char* {
+        return s ? s->classInfoForCells()->className : "<none>";
+    };
+    auto propCount = [](Structure* s) -> int {
+        if (!s)
+            return -1;
+        int n = 0;
+        s->forEachPropertyConcurrently([&](const PropertyTableEntry&) -> bool { ++n; return true; });
+        return n;
+    };
+    CString name = ownerStructure ? fieldTypeFieldName(ownerStructure, offset) : CString("<dead>");
+    dataLogLn("[fieldtype] CONTRADICTION field=", name.data(),
+        " ownerClass=", describe(ownerStructure),
+        " hadClass=", describe(hadStructure), " hadProps=", propCount(hadStructure),
+        " gotClass=", describe(gotStructure), " gotProps=", propCount(gotStructure),
+        " sameClass=", (hadStructure && gotStructure && hadStructure->classInfoForCells() == gotStructure->classInfoForCells()),
+        " sameProto=", (hadStructure && gotStructure && hadStructure->storedPrototype() == gotStructure->storedPrototype()));
+}
+
+uint16_t FieldTypeWatchpointTable::claimWordFor(StructureID owner, PropertyOffset offset)
+{
+    Structure* structure = owner.decode();
+    if (!structure)
+        return FieldTypeClaimIndex::offsetWasReused;
+    // THE ONE-FIELD-PER-WORD INVARIANT, enforced here rather than assumed by the caller. The ancestor walks in
+    // JSObjectInlines.h:685/833, JSObject.cpp:548, LLIntSlowPaths.cpp:141/225, JITOperations.cpp:1131 and
+    // Heap.cpp:3603 all pass an offset this structure may not add.
+    if (structure->transitionOffset() != offset)
+        return FieldTypeClaimIndex::offsetWasReused;
+    return structure->fieldTypeClaimIndex();
+}
+
+// The claim word on the owner shape is a cache of the table, so clearing it is only ever conservative. Mirrors
+// FieldTypeRecord::clearOwnerShapeClaimCache for the lazy case, where there is no record to route through.
+void FieldTypeWatchpointTable::clearShapeClaimCacheFor(StructureID owner)
+{
+    if (Structure* structure = owner.decode()) {
+        if (structure->fieldTypeClaimIndex() != FieldTypeClaimIndex::offsetWasReused)
+            structure->setFieldTypeClaimIndex(FieldTypeClaimIndex::entryWithoutClaim);
+    }
+}
+
+void FieldTypeWatchpointTable::dumpCreationCensus(VM& vm)
+{
+    Locker locker { m_censusLock };
+    // Delimited because pruneAfterMarking runs per collection: the LAST complete block is the one to read.
+    dataLogLn("[fieldtype] CENSUS-BEGIN keys=", m_creationCensus.size());
+    for (auto& entry : m_creationCensus) {
+        auto& c = entry.value;
+        // The name and the owner class are resolved HERE rather than captured at creation, so the hot path costs
+        // one byte instead of a property-table walk and a pinned name. An owner the GC has already proved dead
+        // must not be touched, and prints as <dead>; every key that acquired a dependent is reachable from live
+        // code, so the population that matters is never <dead>.
+        const char* ownerClass = "<dead>";
+        CString name("<dead>");
+        Structure* owner = c.owner.decode();
+        if (owner && vm.heap.isMarked(owner)) {
+            ownerClass = owner->classInfoForCells()->className;
+            name = fieldTypeFieldName(owner, c.owner ? owner->transitionOffset() : invalidOffset);
+        }
+        dataLogLn("[fieldtype] CENSUS owner=", static_cast<uint32_t>(entry.key >> 32),
+            " offset=", static_cast<int32_t>(static_cast<uint32_t>(entry.key)),
+            " creations=", c.creations,
+            " contradictedAt=", c.contradictedAtCreation,
+            " storeHits=", c.storeHits,
+            " claimedType=", c.claimedType,
+            " ownerIsProto=", c.ownerIsPrototype,
+            " claimedIsLeaf=", c.claimedIsLeaf,
+            " ownerClass=", ownerClass,
+            " field=", name.data());
+    }
+    dataLogLn("[fieldtype] CENSUS-END");
+}
+
+void FieldTypeWatchpointTable::pruneAfterMarking(VM& vm)
+{
+    Locker locker { m_lock };
+    // Unconditional, and deliberately outside the useFieldTypePruneWalk gate below: the memo holds raw
+    // Structure* keyed on raw Structure*, so it must not survive a collection that may have killed either. This
+    // is the whole invalidation protocol for findOffsetOwnerMemoised.
+    clearOffsetOwnerMemo();
+    // Population counter for the GC-time walk: it runs on EVERY collection including Eden, so its cost is
+    // (collections x table size) and no existing counter reports either factor. The earlier "n.s. on all six
+    // bookkeeping tests" verdict for useFieldTypePruneWalk never covered splay, the suite's GC-dominated
+    // benchmark, so this number decides whether that gate is worth re-running there (see F11).
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] PRUNE-WALK entries=", m_records.size());
+    if (Options::logFieldTypes()) [[unlikely]]
+        dumpStoreSiteStats();
+    if (Options::fieldTypeTimeStoreSite()) [[unlikely]]
+        dumpStoreSiteTime();
+    // Reported here, not from ~VM, because jsc's exit path does not reliably run the VM destructor -- the dump
+    // added there printed nothing on a 200k-creation repro. Every collection reprints, so the LAST line covers
+    // the run; the ratio is the quantity of interest and it is stable across collections.
+    if (Options::fieldTypeTimeRecorder()) [[unlikely]] {
+        uint64_t calls = vm.fieldTypeRecorderCalls().load(std::memory_order_relaxed);
+        if (calls) {
+            uint64_t nanos = vm.fieldTypeRecorderNanos().load(std::memory_order_relaxed);
+            dataLogLn("[fieldtype] RECORDER-TIME mode=", Options::fieldTypeTimeRecorder(),
+                " calls=", calls, " totalNanos=", nanos, " nsPerCall=", nanos / calls);
+        }
+    }
+    if (Options::useDollarVM()) [[unlikely]] {
+        uint64_t total = vm.fieldTypeCreationChaseCount().load(std::memory_order_relaxed);
+        if (total) {
+            uint64_t skippable = vm.fieldTypeCreationChaseSkippableCount().load(std::memory_order_relaxed);
+            dataLogLn("[fieldtype] CREATION-CHASE total=", total, " skippable=", skippable,
+                " pct=", (skippable * 100) / total);
+        }
+    }
+    // Population counters for the measurement gates that act on them. Each prints only when non-zero, so a leg that
+    // does not exercise a mechanism produces no line for it and a gate's must-move counter stays readable.
+    if (Options::logFieldTypes() || Options::useDollarVM()) [[unlikely]] {
+        if (uint64_t acq = lockAcquisitions(); acq)
+            dataLogLn("[fieldtype] LOCK-WAIT acquisitions=", acq, " totalNanos=", lockWaitNanos(),
+                " nsPerAcquire=", lockWaitNanos() / acq);
+        if (uint64_t hits = offsetOwnerMemoHits(), misses = offsetOwnerMemoMisses(); hits || misses)
+            dataLogLn("[fieldtype] OWNER-MEMO size=", offsetOwnerMemoLiveSize(), " hits=", hits, " misses=", misses,
+                " hitPct=", (hits + misses) ? (100 * hits / (hits + misses)) : 0);
+        if (Options::logFieldTypes())
+            dumpCreationCensus(vm);
+        if (uint64_t words = wordOnlyClaims())
+            dataLogLn("[fieldtype] LAZY-ENTRIES wordOnlyClaims=", words, " withdrawn=", wordOnlyWithdrawals(),
+                " materialised=", wordOnlyMaterialisations(),
+                " pctNeverMaterialised=", 100 * (words - std::min(words, wordOnlyMaterialisations())) / words,
+                " tableEntries=", sizeRelaxed());
+        if (uint64_t lazy = lazyClaims())
+            dataLogLn("[fieldtype] LAZY-RECORDS lazyClaims=", lazy, " materialised=", lazyMaterialisations(),
+                " pctNeverMaterialised=", lazy ? (100 * (lazy - std::min(lazy, lazyMaterialisations())) / lazy) : 0);
+    }
+    m_records.removeIf([&](auto& entry) {
+        // A dead owner means no live object can reach this entry again. Dropping it bounds the table and makes
+        // the ID-recycling hazard unreachable: no entry survives the collection that killed the structure it
+        // names. Runs for generalised entries too, whose record is null -- hence the owner in the entry.
+        if (!vm.heap.isMarked(entry.value.owner.decode())) {
+            // Mark the record terminal before the entry goes away: a compiler plan or an installed CodeBlock
+            // may hold a Ref and call generalize() later, which writes through m_owner into a dead Structure
+            // whose StructureID may already have been recycled.
+            if (FieldTypeRecord* record = entry.value.record.get()) {
+                record->markTerminalForDeadOwner();
+                // The interned slot and its (bits -> slot) map entry are deliberately left in place: that is
+                // what lets a recycled StructureID intern straight back onto it. See m_slotForClaimedStructure.
+            }
+            return true;
+        }
+
+        // A LAZY claim (StructureID in the entry, no record) needs the same dead-structure handling as a
+        // materialised one, and gets it without allocating: clear the word, clear the owner shape's cache. There is
+        // no watchpoint to fire because nothing can depend on a claim no compiler has consulted.
+        if (!entry.value.record && entry.value.claimed) {
+            if (!vm.heap.isMarked(entry.value.claimed.decode())) {
+                entry.value.claimed = StructureID();
+                FieldTypeWatchpointTable::clearShapeClaimCacheFor(entry.value.owner);
+            }
+            return false;
+        }
+
+        FieldTypeRecord* record = entry.value.record.get();
+        if (!record)
+            return false;
+
+        if (StructureID expected = record->expected()) {
+            if (!vm.heap.isMarked(expected.decode())) {
+                // Withdraw the claim, per record. The interned slot deliberately keeps the dead structure's
+                // bits: nothing ever decodes a slot, the fast path only compares.
+                record->clearExpectedForDeadStructure();
+                // Keep the owner's cached word in step. Leaving it set would be safe -- the fast path only
+                // compares bits, never decodes them -- but it would break the invariant that the word never
+                // claims more than the table does, and cost the field its chance to be re-claimed.
+                record->clearOwnerShapeClaimCache();
+            }
+        }
+        return false;
+    });
+
+    m_recordCount.store(m_records.size(), std::memory_order_relaxed);
+
 }
 
 void Structure::didTransitionFromThisStructureWithoutFiringWatchpoint() const

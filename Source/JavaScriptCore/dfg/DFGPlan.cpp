@@ -524,6 +524,9 @@ Plan::CompilationPath Plan::compileInThreadImpl()
 
 void Plan::finalizeInThread(Ref<JSC::JITCode> jitCode)
 {
+    // Transfer record ownership to the code, so the slots CheckFieldType bakes stay alive with it.
+    if (!m_fieldTypeRecordsKeptAlive.isEmpty())
+        jitCode->dfgCommon()->m_fieldTypeRecords = WTF::move(m_fieldTypeRecordsKeptAlive);
     m_watchpoints.countWatchpoints(m_codeBlock, m_identifiers, jitCode->dfgCommon());
     m_weakReferences.finalize();
     jitCode->shrinkToFit();
@@ -572,6 +575,18 @@ CompilationResult Plan::finalize()
     // We perform multiple stores before emitting a write-barrier. To ensure that no GC happens between store and write-barrier, we should ensure that
     // GC is deferred when this function is called.
     ASSERT(m_vm->heap.isDeferred());
+
+    // Apply the generalizations this compilation proved necessary; see Plan::addFieldTypeToGeneralize for why
+    // not from generated code. Before the validity checks, so revalidation discards this code if it invalidated itself.
+    //
+    // Instrument: that self-invalidation is a cost no other counter in this campaign can see. It is not an OSR
+    // exit and not a jettison -- the code never installs -- so a benchmark can lose compilations to it while its
+    // exit counts stay byte-identical and its "our jettisons" count stays zero. PLAN-FINALIZE gives the
+    // denominator, generalizedHere links the outcome to this mechanism.
+    unsigned fieldTypesGeneralizedHere = m_fieldTypesToGeneralize.size();
+    for (auto& record : m_fieldTypesToGeneralize)
+        record->generalize(*m_vm);
+    m_fieldTypesToGeneralize.clear();
 
     CompilationResult result = [&] {
         if (m_finalizer->isFailed()) {
@@ -633,6 +648,11 @@ CompilationResult Plan::finalize()
 
     // We will establish new references from the code block to things. So, we need a barrier.
     m_vm->writeBarrier(m_codeBlock);
+
+    if (Options::logFieldTypes()) [[unlikely]] {
+        dataLogLn("[fieldtype] PLAN-FINALIZE mode=", m_mode, " result=", result,
+            " generalizedHere=", fieldTypesGeneralizedHere);
+    }
 
     m_callback->compilationDidComplete(m_codeBlock, m_profiledDFGCodeBlock, result);
 

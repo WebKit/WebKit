@@ -30,6 +30,7 @@
 #include "CommonSlowPaths.h"
 #include "DirectArguments.h"
 #include "JSGlobalLexicalEnvironment.h"
+#include "JSObjectInlines.h"
 #include "JSSetInlines.h"
 #include "ScopedArguments.h"
 #include "SymbolTableInlines.h"
@@ -236,8 +237,15 @@ inline void opEnumeratorPutByVal(JSGlobalObject* globalObject, JSValue baseValue
             if (structure->id() == enumerator->cachedStructureID() && !structure->isWatchingReplacement() && !structure->hasReadOnlyOrGetterSetterPropertiesExcludingProto()) {
                 // We'll only match the structure ID if the base is an object.
                 ASSERT(index < enumerator->endStructurePropertyIndex());
+                PropertyOffset offset = index < enumerator->cachedInlineCapacity()
+                    ? index : index - enumerator->cachedInlineCapacity() + firstOutOfLineOffset;
+                // Field types: `for (k in o) o[k] = v` writes a slot at a cached offset, bypassing
+                // putDirectInternal. Defence in depth for the one tier that can check; the durable fix is the
+                // claim withdrawal in JSPropertyNameEnumerator::tryCreate. Before the write and before
+                // scope.release(), as putDirectInternal orders it, since generalize() fires a watchpoint.
+                maintainFieldTypeRecord(vm, structure, offset, value);
                 scope.release();
-                asObject(baseValue)->putDirectOffset(vm, index < enumerator->cachedInlineCapacity() ? index : index - enumerator->cachedInlineCapacity() + firstOutOfLineOffset, value);
+                asObject(baseValue)->putDirectOffset(vm, offset, value);
                 return;
             }
         }

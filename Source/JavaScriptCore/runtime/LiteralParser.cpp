@@ -1587,6 +1587,13 @@ JSValue LiteralParser<CharType, reviverMode>::parseRecursively(VM& vm, uint8_t* 
                 object->putDirectOffset(vm, offset, value);
                 object->setStructure(vm, newStructure);
                 ASSERT(!newStructure->mayBePrototype()); // There is no way to make it prototype object.
+                // Field types: a creation through a cached transition. Only the first object of a JSON shape
+                // takes the else branch below and reaches putDirectInternal, so without this every later
+                // object of that shape creates its properties unhooked and can never withdraw the claim the
+                // first one established. After setStructure, as every creation hook must be: the hook can
+                // allocate and the nuked window opened above is only closed here.
+                if (!fieldTypeCreationNeedsNoWork(vm, newStructure, value)) [[unlikely]]
+                    recordFieldTypeAtCreation(vm, newStructure, offset, value);
             } else {
                 ASSERT(std::holds_alternative<Identifier>(property));
                 auto& ident = std::get<Identifier>(property);

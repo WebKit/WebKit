@@ -145,6 +145,32 @@ public:
     }
 
 private:
+    // Credit a claim when a structure check on a value loaded out of that claimed field folds away. This is the
+    // "did the narrowing earn its dependency" half of useFieldTypeFoldGatedNarrowing; the decline half lives in
+    // Graph::fieldTypeAssumptionValue. Only GetByOffset is attributed: it is the shape the narrowing applies to,
+    // and MultiGetByOffset merges over a structure set so its owner is ambiguous.
+    void noteFieldTypeFoldFor(Node* loaded)
+    {
+        if (!loaded || loaded->op() != GetByOffset)
+            return;
+        PropertyOffset offset = loaded->storageAccessData().offset;
+        if (offset == invalidOffset)
+            return;
+        RegisteredStructure base = m_state.forNode(loaded->child2()).m_structure.onlyStructure();
+        if (!base)
+            return;
+        Structure* owner = m_graph.fieldTypeOwnerFor(base.get(), offset);
+        if (!owner)
+            return;
+        if (RefPtr record = m_graph.fieldTypeRecordFor(owner, offset)) {
+            record->noteFold();
+            if (Options::logFieldTypes()) [[unlikely]] {
+                dataLogLn("[fieldtype] FOLD-CREDIT owner=", owner->id().bits(), " offset=", offset,
+                    " narrowings=", record->narrowings(), " folds=", record->folds());
+            }
+        }
+    }
+
     bool foldConstants(BasicBlock* block)
     {
         // CFAUnreachable, skip
@@ -156,7 +182,7 @@ private:
         for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
             if (!m_state.isValid())
                 break;
-            
+
             Node* node = block->at(indexInBlock);
 
             bool alreadyHandled = false;
@@ -277,11 +303,19 @@ private:
                 }
 
                 if (value.m_structure.isSubsetOf(set)) {
+                    // The fold happened. If the checked value came out of a claimed field, this is the narrowing
+                    // paying for itself, and the claim's fold counter is what keeps useFieldTypeFoldGatedNarrowing
+                    // from cutting off a beneficiary. Attribution is best-effort: the AI state could also have come
+                    // from an earlier CheckStructure, in which case a claim is credited that did not earn it. That
+                    // only makes the gate more permissive, never unsound, since its sole action is to decline.
+                    if (Options::useFieldTypeFoldGatedNarrowing()) [[unlikely]]
+                        noteFieldTypeFoldFor(node->child1().node());
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->remove(m_graph);
                     eliminated = true;
                     break;
                 }
+
 
                 if (node->op() == CheckStructure) {
                     Edge incoming = node->child1();
@@ -641,7 +675,41 @@ private:
                 break;
             }
                 
+            case GetByOffset:
             case MultiGetByOffset: {
+                // HALF 2 of the check-based dependency. The AI narrows a load of a claimed field
+                // (Graph::fieldTypeAssumptionValue via inferredValueForProperty), and today that narrowing is
+                // justified by a CodeBlockJettisoningWatchpoint -- which is what discards 282 CodeBlocks on
+                // raytrace when the claim is contradicted. Insert a CheckFieldType AFTER the load instead: it
+                // loads record->addressOfExpected() and exits if the claim was withdrawn or the structure differs,
+                // so every later use of the narrowed value is guarded by a runtime check that dominates it.
+                // Inserted here rather than in the parser because this phase both runs the AI and has an insertion
+                // set, which is exactly why the store-side hoist lives here too.
+                if ((Options::useFieldTypeConsumerLoadedCheck() || Options::fieldTypeMeasureLoadedCheckCostOnly())) [[unlikely]] {
+                    PropertyOffset fieldOffset = node->op() == GetByOffset
+                        ? node->storageAccessData().offset
+                        : node->multiGetByOffsetData().identifierNumber == UINT_MAX ? invalidOffset : invalidOffset;
+                    // Only the single-structure GetByOffset case is narrowed by fieldTypeAssumptionValue with a
+                    // known owner; MultiGetByOffset merges over a set and is left to the watchpoint path.
+                    if (node->op() == GetByOffset && fieldOffset != invalidOffset) {
+                        RegisteredStructure onlyStructure =
+                            m_state.forNode(node->child2()).m_structure.onlyStructure();
+                        if (onlyStructure) {
+                            if (Structure* owner = m_graph.fieldTypeOwnerFor(onlyStructure.get(), fieldOffset)) {
+                                if (RefPtr record = m_graph.fieldTypeRecordFor(owner, fieldOffset)) {
+                                    if (record->expected() && !record->isGeneralized()) {
+                                        m_graph.m_plan.keepFieldTypeRecordAlive(*record);
+                                        m_insertionSet.insertNode(
+                                            indexInBlock + 1, SpecNone, CheckFieldType, node->origin,
+                                            OpInfo(record.get()), Edge(node, UntypedUse));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (node->op() == GetByOffset)
+                    break;
                 Edge baseEdge = node->child1();
                 Node* base = baseEdge.node();
                 MultiGetByOffsetData& data = node->multiGetByOffsetData();
@@ -2362,6 +2430,12 @@ private:
         bool canExit = true;
         bool didAllocateStorage = false;
 
+        // BEFORE any allocation node is inserted: those open the nuked window, inside which no OSR exit is
+        // legal and no call is safe. See ByteCodeParser::hoistFieldTypeCheckForTransition.
+        bool hoistedFieldTypeCheck = false;
+        if (variant.kind() == PutByVariant::Transition)
+            hoistedFieldTypeCheck = hoistFieldTypeCheckForTransition(indexInBlock, origin, variant.newStructure(), variant.offset(), node->child2());
+
         if (isInlineOffset(variant.offset()))
             propertyStorage = childEdge;
         else if (!variant.reallocatesStorage()) {
@@ -2392,6 +2466,13 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
+        data.fieldTypeCheckHoisted = hoistedFieldTypeCheck;
+        // Carry the field-type owner across the conversion. Losing it here made this store emit no check
+        // at all, which is a silent soundness hole rather than a missed optimisation.
+        if (Structure* owner = variant.kind() == PutByVariant::Transition
+            ? variant.newStructure()
+            : Graph::commonFieldTypeOwner(variant.structureSet(), variant.offset()))
+            data.fieldTypeOwner = m_graph.registerStructure(owner);
         
         node->convertToPutByOffset(data, propertyStorage, childEdge);
         node->origin.exitOK = canExit;
@@ -2440,6 +2521,11 @@ private:
         StorageAccessData& data = *m_graph.m_storageAccessData.add();
         data.offset = variant.offset();
         data.identifierNumber = identifierNumber;
+        // A delete lowered as a store of JSEmpty. Setting the owner makes the emitted check see a
+        // non-cell and generalise the record, which is required: PropertyTable::nextOffset recycles the
+        // freed offset, so any surviving record would describe whatever property lands there next.
+        if (Structure* owner = Graph::commonFieldTypeOwner(variant.oldStructure(), variant.offset()))
+            data.fieldTypeOwner = m_graph.registerStructure(owner);
 
         Node* clearValue = m_insertionSet.insertNode(indexInBlock, SpecNone, JSConstant, origin, OpInfo(m_graph.freezeStrong(JSValue())));
         m_insertionSet.insertNode(
@@ -2605,6 +2691,90 @@ private:
         }
     }
     
+    // The constant-folding counterpart of ByteCodeParser::hoistFieldTypeCheckForTransition. Emits the
+    // field-type check as a CheckStructure on the stored value, inserted before the property-storage
+    // allocation this phase is about to add, i.e. while exit is still legal.
+    bool hoistFieldTypeCheckForTransition(unsigned indexInBlock, NodeOrigin origin, Structure* owner, PropertyOffset offset, Edge valueEdge)
+    {
+        if (!Options::useFieldTypeAssumptions())
+            return false;
+        if (!Options::useFieldTypeStoreHoist()) [[unlikely]]
+            return false;
+        if (!owner || offset == invalidOffset || !valueEdge)
+            return false;
+        auto* table = m_graph.m_vm.fieldTypeWatchpoints();
+        if (!table)
+            return false;
+        RefPtr record = table->ensureRecordForStoreSite(owner->id(), offset);
+        if (!record)
+            return false;
+
+        if (valueEdge->hasConstant()) {
+            JSValue constant = valueEdge->asJSValue();
+            StructureID expectedID = record->expected();
+
+            // A constant that can never satisfy ANY structure claim -- empty, or not a cell -- withdraws the
+            // claim, and so does one that contradicts an existing claim.
+            if (!constant || !constant.isCell() || (expectedID && constant.asCell()->structureID() != expectedID)) {
+                m_graph.m_plan.addFieldTypeToGeneralize(*record);
+                return true;
+            }
+
+            // A cell constant that matches the claim needs no check at all.
+            if (expectedID)
+                return true;
+
+            // UNCLAIMED, and the constant IS a cell, so it may well become the claim. Withdrawing here was a
+            // silent claim sink: since store sites manufacture unclaimed records, storing any constant into a
+            // not-yet-claimed field permanently generalised it, after which establish() refuses forever --
+            // and because expected was already zero, nothing fired and no counter noticed. Fall through to
+            // the loading check instead, which is self-correcting. Safe for the CFA: CheckFieldType
+            // deliberately teaches the abstract interpreter nothing (DFGAbstractInterpreterInlines.h).
+        }
+
+        // A GENERALISED record must emit nothing at all. Two things go wrong otherwise, and both are
+        // expensive rather than incorrect: its WatchpointSet has already fired, so depending on it makes
+        // DesiredWatchpoints discard this compilation at install time -- every compile of the function is
+        // thrown away -- and CheckFieldType would load a zero claim and exit on every execution, thrashing
+        // between exit and recompile. This is V8 declining to specialise the site (access-info.cc:713).
+        if (record->isGeneralized())
+            return false;
+
+        // See ByteCodeParser::hoistFieldTypeCheckForTransition: bake when claimed, load when unclaimed.
+        // HALF 1: forcing the load form drops the dependency the baked form requires; see the parser counterpart.
+        if (StructureID claimed = Options::useFieldTypeStoreSideLoadedCheck() ? StructureID() : record->expected()) {
+            if (Structure* expected = claimed.decode()) {
+                // See ByteCodeParser: depend on the record only when a claim is baked.
+                if (Options::useFieldTypeWatchpointRegistration()) [[likely]] {
+                    if (Options::logFieldTypes()) [[unlikely]]
+                        dataLogLn("[fieldtype] REGISTER-WATCHPOINT cfa owner=", owner->id().bits(), " offset=", offset);
+                    record->noteDependent();
+                    m_graph.watchpoints().addLazily(record->watchpoints());
+                }
+                // Measurement leg: emit nothing but still report the store handled, so fieldTypeCheckHoisted
+                // stays set, the DFG/FTL backend fail-safe does not generalize, and the claim survives.
+                // Isolates this check's own cost from claim liveness. Unsound; never ship on.
+                if (!Options::useFieldTypeHoistedCheckEmission()) [[unlikely]]
+                    return true;
+                // Must-move counter for that leg; see the parser counterpart.
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] HOIST-EMIT-BAKED cfa owner=", owner->id().bits(), " offset=", offset);
+                m_insertionSet.insertNode(indexInBlock, SpecNone, CheckStructure, origin,
+                    OpInfo(m_graph.addStructureSet(expected)), Edge(valueEdge.node(), CellUse));
+                return true;
+            }
+        }
+
+        // No dependency on an unclaimed record; see the parser counterpart.
+        m_graph.m_plan.keepFieldTypeRecordAlive(*record);
+        // Must-NOT-move counter: the emission gate touches only the baked check.
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] HOIST-EMIT-LOADED cfa owner=", owner->id().bits(), " offset=", offset);
+        m_insertionSet.insertNode(indexInBlock, SpecNone, CheckFieldType, origin,
+            OpInfo(record.get()), Edge(valueEdge.node(), UntypedUse));
+        return true;
+    }
+
     void tryFoldAsPutByOffset(Node* node, unsigned indexInBlock, Edge baseEdge, Edge valueEdge, bool isDirect, PrivateFieldPutKind privateFieldPutKind, bool& changed, bool& alreadyHandled)
     {
         if (!Options::useAccessInlining())
