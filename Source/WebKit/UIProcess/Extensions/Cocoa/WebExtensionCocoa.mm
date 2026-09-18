@@ -327,7 +327,11 @@ Expected<Ref<WebCore::Icon>, RefPtr<API::Error>> WebExtension::iconForPath(const
         return makeUnexpected(nullptr);
     }
 
+#if defined(RC_REMOVE_SEC_ACCEL_3)
     auto dataResult = resourceDataForPath(imagePath);
+#else
+    auto dataResult = resourceDataForPath(imagePath, CacheResult::No, SuppressNotFoundErrors::No, AllowInlineResourceURLs::Yes);
+#endif
     if (!dataResult)
         return makeUnexpected(dataResult.error());
 

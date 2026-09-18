@@ -164,6 +164,11 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
 
         @"await browser.test.assertRejects(browser.scripting.registerContentScripts([{ id: '1', matches: ['*://*/*'], js: ['invalidFile.js'] }]), /Invalid resource 'invalidFile.js'/i)",
 
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+        @"await browser.test.assertRejects(browser.scripting.registerContentScripts([{ id: '2', matches: ['*://*/*'], js: ['data:text/javascript;base64,d2luZG93Ll9fcHduZWRfXyA9IHRydWU7'] }]), /Invalid resource/i)",
+        @"await browser.test.assertRejects(browser.scripting.registerContentScripts([{ id: '3', matches: ['*://*/*'], css: ['data:text/css;base64,Ym9keSB7IGNvbG9yOiByZWQgfQ=='] }]), /Invalid resource/i)",
+#endif
+
         @"browser.test.notifyPass()"
     ]);
 
@@ -247,6 +252,58 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
 
     [manager run];
 }
+
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+TEST(WKWebExtensionAPIScripting, ExecuteScriptRejectsDataURLFileMainWorldInjection)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const tabId = details.tabId",
+
+        @"  const injectResults = await browser.scripting.executeScript({",
+        @"    target: { tabId },",
+        @"    files: ['data:text/javascript;base64,d2luZG93Ll9fcHduZWRfXyA9IHRydWU7'],",
+        @"    world: 'MAIN',",
+        @"  })",
+        @"  browser.test.assertEq(injectResults.length, 0, 'The data: URL file should not produce any injection results')",
+
+        @"  const checkResults = await browser.scripting.executeScript({ target: { tabId }, func: () => window.__pwned__ })",
+        @"  browser.test.assertEq(checkResults?.[0]?.result, null, 'The data: URL payload should never have been injected into the page')",
+
+        @"  await browser.test.assertSafeResolve(() => browser.scripting.insertCSS({",
+        @"    target: { tabId },",
+        @"    files: ['data:text/css;base64,Ym9keSB7IGNvbG9yOiByZWQgfQ=='],",
+        @"  }))",
+
+        @"  const colorResults = await browser.scripting.executeScript({ target: { tabId }, func: () => getComputedStyle(document.body).color })",
+        @"  browser.test.assertFalse(colorResults?.[0]?.result === 'rgb(255, 0, 0)', 'The data: URL stylesheet should never have been injected into the page')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto manager = Util::loadExtension(scriptingManifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+#endif
 
 TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
 {
@@ -876,6 +933,53 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
     [manager run];
 }
 
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+TEST(WKWebExtensionAPIScripting, RegisterContentScriptsRejectsDataURLMainWorldInjection)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.webNavigation.onCompleted.addListener(async (details) => {",
+        @"  const tabId = details.tabId",
+
+        @"  await browser.test.assertRejects(browser.scripting.registerContentScripts([{",
+        @"    id: 'malicious',",
+        @"    matches: ['*://localhost/*'],",
+        @"    js: ['data:text/javascript;base64,d2luZG93Ll9fcHduZWRfXyA9IHRydWU7'],",
+        @"    world: 'MAIN',",
+        @"  }]), /Invalid resource/i)",
+
+        @"  const registered = await browser.scripting.getRegisteredContentScripts()",
+        @"  browser.test.assertEq(registered.length, 0, 'The rejected data: URL script should not be registered')",
+
+        @"  const results = await browser.scripting.executeScript({ target: { tabId }, func: () => window.__pwned__ })",
+        @"  browser.test.assertEq(results?.[0]?.result, null, 'The data: URL payload should never have been injected into the page')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto manager = Util::loadExtension(scriptingManifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.requestWithLocalhost();
+    auto *url = urlRequest.URL;
+
+    auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+#endif
+
 TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
 {
     TestWebKitAPI::HTTPServer server({
@@ -1057,6 +1161,10 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  var results",
 
         @"  await browser.scripting.registerContentScripts([{ id: '1', matches: ['*://localhost/*'], js: ['changeBackgroundColorScript.js'] }])",
+
+#if !defined(RC_REMOVE_SEC_ACCEL_3)
+        @"await browser.test.assertRejects(browser.scripting.updateContentScripts([{ id: '1', matches: ['*://*/*'], js: ['data:text/javascript;base64,d2luZG93Ll9fcHduZWRfXyA9IHRydWU7'] }]), /Invalid resource/i)",
+#endif
 
         @"  await browser.scripting.updateContentScripts([{ id: '1', allFrames: true, persistAcrossSessions: false, runAt: 'document_start', world: 'MAIN' }])",
         @"  results = await browser.scripting.getRegisteredContentScripts()",
