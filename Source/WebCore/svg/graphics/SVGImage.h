@@ -33,6 +33,10 @@
 
 namespace WebCore {
 
+namespace DisplayList {
+class DisplayList;
+}
+
 class Element;
 class ImageBuffer;
 class LocalFrameView;
@@ -50,6 +54,10 @@ public:
         float containerZoom { 1 };
         URL initialFragmentURL { };
         Style::LinkParameters linkParameters { CSS::Keyword::None { } };
+
+        // containerSize is stored unzoomed, since that is the size the document lays out at.
+        IntSize roundedContainerSize() const { return roundedIntSize(containerSize); }
+        IntSize zoomedContainerSize() const { return roundedIntSize(containerSize.scaled(containerZoom)); }
     };
 
     static Ref<SVGImage> create(ImageObserver* observer) { return adoptRef(*new SVGImage(observer)); }
@@ -120,6 +128,16 @@ private:
     WEBCORE_EXPORT explicit SVGImage(ImageObserver*);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions = { }) final;
     ImageDrawResult drawForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+    ImageDrawResult drawInternal(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions, const DisplayList::DisplayList* cachedDisplayList);
+
+    RefPtr<const DisplayList::DisplayList> recordContentForContainer(const ContainerContext&, const ColorSpace&);
+    ImageDrawResult drawRecordedContentForContainer(GraphicsContext&, const ContainerContext&, const DisplayList::DisplayList&, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
+
+    static FloatRect adjustedSourceRectForContainer(const ContainerContext&, const FloatRect& srcRect);
+    void prepareForContainer(const ContainerContext&);
+    void paintFrameView(GraphicsContext&, const FloatRect& srcRect);
+
+    bool displayListCacheEnabled() const;
     void drawPatternForContainer(GraphicsContext&, const ContainerContext&, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect& dstRect, ImagePaintingOptions = { });
 
     void applyLinkParameters(const Style::LinkParameters&);
