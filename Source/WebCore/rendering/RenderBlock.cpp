@@ -2339,6 +2339,18 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
         m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
+    } else if (logicalWidth.isCalcSize()) {
+        // A calc-size() contributes the result of its calculation, not the size of its basis:
+        // min-content and max-content each collapse both contributions to one size, while fit-content
+        // and `auto` depend on the space available, so each contribution keeps its own.
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+        if (logicalWidth.isMinContent())
+            maxContentLogicalWidth = minContentLogicalWidth;
+        else if (logicalWidth.isMaxContent())
+            minContentLogicalWidth = maxContentLogicalWidth;
+
+        m_minContentLogicalWidthContribution = resolveCalcSizeLogicalWidth(logicalWidth.get<Style::UnevaluatedCalcSize>(), minContentLogicalWidth, 0_lu);
+        m_maxContentLogicalWidthContribution = resolveCalcSizeLogicalWidth(logicalWidth.get<Style::UnevaluatedCalcSize>(), maxContentLogicalWidth, 0_lu);
     } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
         // Either keyword makes both contributions that one size, so the box neither shrinks below it
         // nor grows past it. Both sit behind the aspect-ratio branch: a ratio transfers the block size
