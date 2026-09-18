@@ -24,7 +24,7 @@
 
 int webKitURISchemeResponseGetStatusCode(const WebKitURISchemeResponse*);
 GInputStream* webKitURISchemeResponseGetStream(const WebKitURISchemeResponse*);
-const CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse*);
-const CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse*);
+const UTF8CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse*);
+const UTF8CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse*);
 uint64_t webKitURISchemeResponseGetStreamLength(const WebKitURISchemeResponse*);
 SoupMessageHeaders* webKitURISchemeResponseGetHeaders(WebKitURISchemeResponse*);

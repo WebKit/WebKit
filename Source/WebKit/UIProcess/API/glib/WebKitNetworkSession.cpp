@@ -89,8 +89,8 @@ struct _WebKitNetworkSessionPrivate {
     GRefPtr<WebKitCookieManager> cookieManager;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
-    CString dataDirectory;
-    CString cacheDirectory;
+    UTF8CString dataDirectory;
+    UTF8CString cacheDirectory;
 
     HashSet<String> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
@@ -117,10 +117,10 @@ static void webkitNetworkSessionSetProperty(GObject* object, guint propID, const
 
     switch (propID) {
     case PROP_DATA_DIRECTORY:
-        session->priv->dataDirectory = g_value_get_string(value);
+        session->priv->dataDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     case PROP_CACHE_DIRECTORY:
-        session->priv->cacheDirectory = g_value_get_string(value);
+        session->priv->cacheDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))

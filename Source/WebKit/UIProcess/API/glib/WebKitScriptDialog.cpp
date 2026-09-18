@@ -30,7 +30,7 @@
 
 G_DEFINE_BOXED_TYPE(WebKitScriptDialog, webkit_script_dialog, webkit_script_dialog_ref, webkit_script_dialog_unref)
 
-WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const CString& message, const CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
+WebKitScriptDialog* webkitScriptDialogCreate(unsigned type, const UTF8CString& message, const UTF8CString& defaultText, Function<void(bool, const String&)>&& completionHandler)
 {
     auto* dialog = static_cast<WebKitScriptDialog*>(fastMalloc(sizeof(WebKitScriptDialog)));
     new (dialog) WebKitScriptDialog(type, message, defaultText, WTF::move(completionHandler));
@@ -110,7 +110,7 @@ const char* webkit_script_dialog_get_message(WebKitScriptDialog* dialog)
 {
     g_return_val_if_fail(dialog, 0);
 
-    return dialog->message.data();
+    return dialog->message.legacyCStringPointer();
 }
 
 /**
@@ -151,7 +151,7 @@ const char* webkit_script_dialog_prompt_get_default_text(WebKitScriptDialog* dia
     g_return_val_if_fail(dialog, 0);
     g_return_val_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_PROMPT, 0);
 
-    return dialog->defaultText.data();
+    return dialog->defaultText.legacyCStringPointer();
 }
 
 /**
@@ -173,7 +173,7 @@ void webkit_script_dialog_prompt_set_text(WebKitScriptDialog* dialog, const char
     g_return_if_fail(dialog);
     g_return_if_fail(dialog->type == WEBKIT_SCRIPT_DIALOG_PROMPT);
 
-    dialog->text = text;
+    dialog->text = UTF8CString { byteCast<char8_t>(text) };
 }
 
 /**
@@ -207,7 +207,7 @@ void webkit_script_dialog_close(WebKitScriptDialog* dialog)
         completionHandler(dialog->confirmed, emptyString());
         break;
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
-        completionHandler(false, String::fromUTF8(dialog->text.data()));
+        completionHandler(false, String { dialog->text });
         break;
     }
 }

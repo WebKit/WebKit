@@ -57,7 +57,7 @@ struct _WebKitWebsitePoliciesPrivate {
     {
     }
     RefPtr<API::WebsitePolicies> websitePolicies;
-    CString customUserAgent;
+    UTF8CString customUserAgent;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebsitePolicies, webkit_website_policies, G_TYPE_OBJECT, GObject)
@@ -298,9 +298,9 @@ const gchar* webkit_website_policies_get_custom_user_agent(WebKitWebsitePolicies
 
     if (policies->priv->customUserAgent.isNull()) {
         const auto& newCustomUserAgent = policies->priv->websitePolicies->customUserAgent();
-        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? CString() : newCustomUserAgent.utf8();
+        policies->priv->customUserAgent = newCustomUserAgent.isEmpty() ? UTF8CString() : newCustomUserAgent.utf8();
     }
-    return policies->priv->customUserAgent.data();
+    return policies->priv->customUserAgent.legacyCStringPointer();
 }
 
 /**

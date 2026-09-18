@@ -55,13 +55,13 @@ struct _WebKitWebExtensionPrivate {
 #if ENABLE(WK_WEB_EXTENSIONS)
     GRefPtr<GFile> path;
     RefPtr<WebExtension> extension;
-    CString defaultLocale;
-    CString displayName;
-    CString displayShortName;
-    CString displayVersion;
-    CString displayDescription;
-    CString displayActionLabel;
-    CString version;
+    UTF8CString defaultLocale;
+    UTF8CString displayName;
+    UTF8CString displayShortName;
+    UTF8CString displayVersion;
+    UTF8CString displayDescription;
+    UTF8CString displayActionLabel;
+    UTF8CString version;
     GRefPtr<GPtrArray> requestedPermissions;
     GRefPtr<GPtrArray> optionalPermissions;
 #endif
@@ -609,14 +609,14 @@ const gchar* webkit_web_extension_get_default_locale(WebKitWebExtension* extensi
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->defaultLocale.isNull())
-        return priv->defaultLocale.data();
+        return priv->defaultLocale.legacyCStringPointer();
 
     auto defaultLocale = priv->extension->defaultLocale();
     if (defaultLocale.isEmpty())
         return nullptr;
 
     priv->defaultLocale = defaultLocale.utf8();
-    return priv->defaultLocale.data();
+    return priv->defaultLocale.legacyCStringPointer();
 }
 
 /**
@@ -636,14 +636,14 @@ const gchar* webkit_web_extension_get_display_name(WebKitWebExtension* extension
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayName.isNull())
-        return priv->displayName.data();
+        return priv->displayName.legacyCStringPointer();
 
     auto displayName = priv->extension->displayName();
     if (displayName.isEmpty())
         return nullptr;
 
     priv->displayName = displayName.utf8();
-    return priv->displayName.data();
+    return priv->displayName.legacyCStringPointer();
 }
 
 /**
@@ -663,14 +663,14 @@ const gchar* webkit_web_extension_get_display_short_name(WebKitWebExtension* ext
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayShortName.isNull())
-        return priv->displayShortName.data();
+        return priv->displayShortName.legacyCStringPointer();
 
     auto displayShortName = priv->extension->displayShortName();
     if (displayShortName.isEmpty())
         return nullptr;
 
     priv->displayShortName = displayShortName.utf8();
-    return priv->displayShortName.data();
+    return priv->displayShortName.legacyCStringPointer();
 }
 
 /**
@@ -690,14 +690,14 @@ const gchar* webkit_web_extension_get_display_version(WebKitWebExtension* extens
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayVersion.isNull())
-        return priv->displayVersion.data();
+        return priv->displayVersion.legacyCStringPointer();
 
     auto displayVersion = priv->extension->displayVersion();
     if (displayVersion.isEmpty())
         return nullptr;
 
     priv->displayVersion = displayVersion.utf8();
-    return priv->displayVersion.data();
+    return priv->displayVersion.legacyCStringPointer();
 }
 
 /**
@@ -717,14 +717,14 @@ const gchar* webkit_web_extension_get_display_description(WebKitWebExtension* ex
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayDescription.isNull())
-        return priv->displayDescription.data();
+        return priv->displayDescription.legacyCStringPointer();
 
     auto displayDescription = priv->extension->displayDescription();
     if (displayDescription.isEmpty())
         return nullptr;
 
     priv->displayDescription = displayDescription.utf8();
-    return priv->displayDescription.data();
+    return priv->displayDescription.legacyCStringPointer();
 }
 
 /**
@@ -748,14 +748,14 @@ const gchar* webkit_web_extension_get_display_action_label(WebKitWebExtension* e
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->displayActionLabel.isNull())
-        return priv->displayActionLabel.data();
+        return priv->displayActionLabel.legacyCStringPointer();
 
     auto displayActionLabel = priv->extension->displayActionLabel();
     if (displayActionLabel.isEmpty())
         return nullptr;
 
     priv->displayActionLabel = displayActionLabel.utf8();
-    return priv->displayActionLabel.data();
+    return priv->displayActionLabel.legacyCStringPointer();
 }
 
 /**
@@ -829,14 +829,14 @@ const gchar* webkit_web_extension_get_version(WebKitWebExtension* extension)
 
     WebKitWebExtensionPrivate* priv = extension->priv;
     if (!priv->version.isNull())
-        return priv->version.data();
+        return priv->version.legacyCStringPointer();
 
     auto version = priv->extension->version();
     if (version.isEmpty())
         return nullptr;
 
     priv->version = version.utf8();
-    return priv->version.data();
+    return priv->version.legacyCStringPointer();
 }
 
 /**

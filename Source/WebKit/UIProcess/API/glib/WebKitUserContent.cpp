@@ -355,7 +355,7 @@ struct _WebKitUserContentFilter {
     }
 
     RefPtr<API::ContentRuleList> contentRuleList;
-    CString identifier;
+    UTF8CString identifier;
     int referenceCount;
 };
 
@@ -417,7 +417,7 @@ void webkit_user_content_filter_unref(WebKitUserContentFilter* userContentFilter
 const char* webkit_user_content_filter_get_identifier(WebKitUserContentFilter* userContentFilter)
 {
     g_return_val_if_fail(userContentFilter, nullptr);
-    return userContentFilter->identifier.data();
+    return userContentFilter->identifier.legacyCStringPointer();
 }
 
 WebKitUserContentFilter* webkitUserContentFilterCreate(RefPtr<API::ContentRuleList>&& contentRuleList)

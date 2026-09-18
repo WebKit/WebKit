@@ -300,12 +300,12 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         GtkWidget* button = webkitScriptDialogImplAddButton(dialog, _("_Close"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplCancel), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
         dialog->priv->entry = gtk_entry_new();
-        gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), scriptDialog->defaultText.data());
+        gtk_entry_set_text(GTK_ENTRY(dialog->priv->entry), scriptDialog->defaultText.legacyCStringPointer());
 #if USE(GTK4)
         gtk_box_insert_child_after(GTK_BOX(dialog->priv->vbox), dialog->priv->entry,
             gtk_widget_get_parent(gtk_widget_get_parent(dialog->priv->swindow)));
@@ -324,7 +324,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("_OK"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
         break;
     }
     case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM: {
@@ -335,7 +335,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         button = webkitScriptDialogImplAddButton(dialog, _("Leave Page"));
         dialog->priv->defaultButton = button;
         g_signal_connect_swapped(button, "clicked", G_CALLBACK(webkitScriptDialogImplConfirm), dialog);
-        webkitScriptDialogImplSetText(dialog, scriptDialog->message.data(), maxSize);
+        webkitScriptDialogImplSetText(dialog, scriptDialog->message.legacyCStringPointer(), maxSize);
         break;
     }
     }
@@ -363,7 +363,7 @@ void webkitScriptDialogImplConfirm(WebKitScriptDialogImpl* dialog)
     case WEBKIT_SCRIPT_DIALOG_ALERT:
         break;
     case WEBKIT_SCRIPT_DIALOG_PROMPT:
-        dialog->priv->dialog->text = gtk_entry_get_text(GTK_ENTRY(dialog->priv->entry));
+        dialog->priv->dialog->text = UTF8CString { byteCast<char8_t>(gtk_entry_get_text(GTK_ENTRY(dialog->priv->entry))) };
         break;
     case WEBKIT_SCRIPT_DIALOG_CONFIRM:
     case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:

@@ -52,9 +52,9 @@ enum {
 
 struct _WebKitNotificationPrivate {
     RefPtr<WebKit::WebNotification> notification;
-    CString title;
-    CString body;
-    CString tag;
+    UTF8CString title;
+    UTF8CString body;
+    UTF8CString tag;
     guint64 id;
 };
 
@@ -231,7 +231,7 @@ const gchar* webkit_notification_get_title(WebKitNotification* notification)
     if (notification->priv->title.isNull())
         notification->priv->title = notification->priv->notification->title().utf8();
 
-    return notification->priv->title.data();
+    return notification->priv->title.legacyCStringPointer();
 }
 
 /**
@@ -251,7 +251,7 @@ const gchar* webkit_notification_get_body(WebKitNotification* notification)
     if (notification->priv->body.isNull())
         notification->priv->body = notification->priv->notification->body().utf8();
 
-    return notification->priv->body.data();
+    return notification->priv->body.legacyCStringPointer();
 }
 
 /**
@@ -271,7 +271,7 @@ const gchar* webkit_notification_get_tag(WebKitNotification* notification)
     if (notification->priv->tag.isNull())
         notification->priv->tag = notification->priv->notification->tag().utf8();
 
-    return notification->priv->tag.length() ? notification->priv->tag.data() : nullptr;
+    return notification->priv->tag.length() ? notification->priv->tag.legacyCStringPointer() : nullptr;
 }
 
 /**

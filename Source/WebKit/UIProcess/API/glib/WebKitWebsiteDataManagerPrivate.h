@@ -25,7 +25,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(2022_GLIB_API)
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&&, CString&&);
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(UTF8CString&&, UTF8CString&&);
 #endif
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
 

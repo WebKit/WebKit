@@ -60,7 +60,7 @@ private:
     void removeAPINotification(WebNotificationIdentifier);
     void closeAPINotification(WebNotificationIdentifier);
 
-    void withdrawAnyPreviousAPINotificationMatchingTag(const CString&);
+    void withdrawAnyPreviousAPINotificationMatchingTag(const UTF8CString&);
 
     void show(WebNotification&, const RefPtr<WebCore::NotificationResources>&);
 

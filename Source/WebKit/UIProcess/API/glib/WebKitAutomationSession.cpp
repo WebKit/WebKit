@@ -71,7 +71,7 @@ struct _WebKitAutomationSessionPrivate {
     RefPtr<WebAutomationSession> session;
     WebKitApplicationInfo* applicationInfo;
     WebKitWebContext* webContext;
-    CString id;
+    UTF8CString id;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -89,7 +89,7 @@ public:
 private:
     String sessionIdentifier() const override
     {
-        return String::fromUTF8(m_session->priv->id.data());
+        return String { m_session->priv->id };
     }
 
     void didDisconnectFromRemote(WebAutomationSession&) override
@@ -222,7 +222,7 @@ static void webkitAutomationSessionGetProperty(GObject* object, guint propID, GV
 
     switch (propID) {
     case PROP_ID:
-        g_value_set_string(value, session->priv->id.data());
+        g_value_set_string(value, session->priv->id.legacyCStringPointer());
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -235,7 +235,7 @@ static void webkitAutomationSessionSetProperty(GObject* object, guint propID, co
 
     switch (propID) {
     case PROP_ID:
-        session->priv->id = g_value_get_string(value);
+        session->priv->id = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, paramSpec);
@@ -249,7 +249,7 @@ static void webkitAutomationSessionConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_automation_session_parent_class)->constructed(object);
 
     session->priv->session = adoptRef(new WebAutomationSession());
-    session->priv->session->setSessionIdentifier(String::fromUTF8(session->priv->id.data()));
+    session->priv->session->setSessionIdentifier(String { session->priv->id });
     session->priv->session->setClient(makeUnique<AutomationSessionClient>(session));
 }
 
@@ -472,7 +472,7 @@ String webkitAutomationSessionGetBrowserVersion(WebKitAutomationSession* session
 const char* webkit_automation_session_get_id(WebKitAutomationSession* session)
 {
     g_return_val_if_fail(WEBKIT_IS_AUTOMATION_SESSION(session), nullptr);
-    return session->priv->id.data();
+    return session->priv->id.legacyCStringPointer();
 }
 
 /**

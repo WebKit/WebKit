@@ -59,9 +59,9 @@ struct _WebKitURISchemeRequestPrivate {
     RefPtr<WebURLSchemeTask> task;
 
     RefPtr<WebPageProxy> initiatingPage;
-    CString uri;
-    CString uriScheme;
-    CString uriPath;
+    UTF8CString uri;
+    UTF8CString uriScheme;
+    UTF8CString uriPath;
 
     GRefPtr<WebKitURISchemeResponse> response;
     GRefPtr<GCancellable> cancellable;
@@ -109,9 +109,9 @@ const char* webkit_uri_scheme_request_get_scheme(WebKitURISchemeRequest* request
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriScheme.isNull())
-        request->priv->uriScheme = request->priv->task->request().url().protocol().toString().utf8();
+        request->priv->uriScheme = request->priv->task->request().url().protocol().utf8();
 
-    return request->priv->uriScheme.data();
+    return request->priv->uriScheme.legacyCStringPointer();
 }
 
 /**
@@ -129,7 +129,7 @@ const char* webkit_uri_scheme_request_get_uri(WebKitURISchemeRequest* request)
     if (request->priv->uri.isNull())
         request->priv->uri = request->priv->task->request().url().string().utf8();
 
-    return request->priv->uri.data();
+    return request->priv->uri.legacyCStringPointer();
 }
 
 /**
@@ -145,9 +145,9 @@ const char* webkit_uri_scheme_request_get_path(WebKitURISchemeRequest* request)
     g_return_val_if_fail(WEBKIT_IS_URI_SCHEME_REQUEST(request), nullptr);
 
     if (request->priv->uriPath.isNull())
-        request->priv->uriPath = request->priv->task->request().url().path().toString().utf8();
+        request->priv->uriPath = request->priv->task->request().url().path().utf8();
 
-    return request->priv->uriPath.data();
+    return request->priv->uriPath.legacyCStringPointer();
 }
 
 /**
@@ -242,16 +242,16 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
 
     WebKitURISchemeResponse* resp = priv->response.get();
     if (!priv->bytesRead) {
-        auto contentType = String::fromLatin1(webKitURISchemeResponseGetContentType(resp).data());
+        String contentType { webKitURISchemeResponseGetContentType(resp) };
         ResourceResponse response(URL { priv->task->request().url() }, extractMIMETypeFromMediaType(contentType), webKitURISchemeResponseGetStreamLength(resp), String { emptyString() });
         response.setTextEncodingName(extractCharsetFromMediaType(contentType).toString());
-        const CString& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
+        const auto& statusMessage = webKitURISchemeResponseGetStatusMessage(resp);
         if (statusMessage.isNull()) {
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);
         } else {
             response.setHTTPStatusCode(webKitURISchemeResponseGetStatusCode(resp));
-            response.setHTTPStatusText(String::fromLatin1(statusMessage.data()));
+            response.setHTTPStatusText(String { statusMessage });
         }
         if (response.mimeType().isEmpty())
             response.setMimeType(MIMETypeRegistry::mimeTypeForPath(response.url().path()));

@@ -73,7 +73,7 @@ typedef enum {
 } WebKitFindControllerOperation;
 
 struct _WebKitFindControllerPrivate {
-    CString searchText;
+    UTF8CString searchText;
     OptionSet<WebKit::FindOptions> findOptions;
     unsigned maxMatchCount;
     WebKitWebView* webView;
@@ -310,7 +310,7 @@ const char* webkit_find_controller_get_search_text(WebKitFindController* findCon
 {
     g_return_val_if_fail(WEBKIT_IS_FIND_CONTROLLER(findController), 0);
 
-    return findController->priv->searchText.data();
+    return findController->priv->searchText.legacyCStringPointer();
 }
 
 /**
@@ -375,7 +375,7 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
 {
     WebKitFindControllerPrivate* priv = findController->priv;
     if (operation == CountOperation) {
-        getPage(findController).countStringMatches(String::fromUTF8(priv->searchText.data()),
+        getPage(findController).countStringMatches(String { priv->searchText },
             priv->findOptions, priv->maxMatchCount);
         return;
     }
@@ -391,12 +391,12 @@ static void webKitFindControllerPerform(WebKitFindController* findController, We
         // extra unmarkAllTextMatches() + markAllTextMatches()
         findOptions.add(WebKit::FindOptions::ShowHighlight);
 
-    getPage(findController).findString(String::fromUTF8(priv->searchText.data()), findOptions, priv->maxMatchCount);
+    getPage(findController).findString(String { priv->searchText }, findOptions, priv->maxMatchCount);
 }
 
 static inline void webKitFindControllerSetSearchData(WebKitFindController* findController, const gchar* searchText, guint32 findOptions, guint maxMatchCount)
 {
-    findController->priv->searchText = searchText;
+    findController->priv->searchText = UTF8CString { byteCast<char8_t>(searchText) };
     findController->priv->findOptions = toWebFindOptions(findOptions);
     findController->priv->maxMatchCount = maxMatchCount;
 }

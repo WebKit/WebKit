@@ -92,8 +92,8 @@ enum {
 
 struct _WebKitWebsiteDataManagerPrivate {
     RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
-    CString baseDataDirectory;
-    CString baseCacheDirectory;
+    UTF8CString baseDataDirectory;
+    UTF8CString baseCacheDirectory;
 
 #if PLATFORM(GTK) || ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
@@ -182,10 +182,10 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
 
     switch (propID) {
     case PROP_BASE_DATA_DIRECTORY:
-        manager->priv->baseDataDirectory = g_value_get_string(value);
+        manager->priv->baseDataDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     case PROP_BASE_CACHE_DIRECTORY:
-        manager->priv->baseCacheDirectory = g_value_get_string(value);
+        manager->priv->baseCacheDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:
@@ -239,26 +239,26 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
     WebKitWebsiteDataManagerPrivate* priv = WEBKIT_WEBSITE_DATA_MANAGER(object)->priv;
     if (!priv->baseDataDirectory.isNull()) {
         if (!priv->localStorageDirectory)
-            priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "localstorage", nullptr));
+            priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "localstorage", nullptr));
         if (!priv->indexedDBDirectory)
-            priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "databases", "indexeddb", nullptr));
+            priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", "indexeddb", nullptr));
         if (!priv->webSQLDirectory)
-            priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "databases", nullptr));
+            priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "databases", nullptr));
         if (!priv->itpDirectory)
-            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "itp", nullptr));
+            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "itp", nullptr));
         if (!priv->swRegistrationsDirectory)
-            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "serviceworkers", nullptr));
+            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.legacyCStringPointer(), "serviceworkers", nullptr));
     }
 
     if (!priv->baseCacheDirectory.isNull()) {
         if (!priv->diskCacheDirectory)
-            priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.data()));
+            priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.legacyCStringPointer()));
         if (!priv->applicationCacheDirectory)
-            priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.data(), "applications", nullptr));
+            priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "applications", nullptr));
         if (!priv->hstsCacheDirectory)
-            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.data()));
+            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.legacyCStringPointer()));
         if (!priv->domCacheDirectory)
-            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.data(), "CacheStorage", nullptr));
+            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.legacyCStringPointer(), "CacheStorage", nullptr));
     }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
@@ -534,7 +534,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
-        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String::fromUTF8(priv->baseCacheDirectory.span()), String::fromUTF8(priv->baseDataDirectory.span()));
+        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String { priv->baseCacheDirectory }, String { priv->baseDataDirectory });
 #if !ENABLE(2022_GLIB_API)
         if (priv->localStorageDirectory)
             configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
@@ -569,7 +569,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 }
 
 #if ENABLE(2022_GLIB_API)
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&& baseDataDirectory, CString&& baseCacheDirectory)
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(UTF8CString&& baseDataDirectory, UTF8CString&& baseCacheDirectory)
 {
     auto* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
     manager->priv->baseDataDirectory = WTF::move(baseDataDirectory);
@@ -654,7 +654,7 @@ const gchar* webkit_website_data_manager_get_base_data_directory(WebKitWebsiteDa
     if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return manager->priv->baseDataDirectory.data();
+    return manager->priv->baseDataDirectory.legacyCStringPointer();
 }
 
 /**
@@ -675,7 +675,7 @@ const gchar* webkit_website_data_manager_get_base_cache_directory(WebKitWebsiteD
     if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return manager->priv->baseCacheDirectory.data();
+    return manager->priv->baseCacheDirectory.legacyCStringPointer();
 }
 
 #if !ENABLE(2022_GLIB_API)
@@ -1084,7 +1084,7 @@ static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataMa
         return { };
 
     if (!manager->priv->baseCacheDirectory.isNull())
-        return FileSystem::pathByAppendingComponents(FileSystem::stringFromFileSystemRepresentation(manager->priv->baseCacheDirectory.data()), std::initializer_list<StringView>({ "icondatabase"_s, "WebpageIcons.db"_s }));
+        return FileSystem::pathByAppendingComponents(FileSystem::stringFromFileSystemRepresentation(manager->priv->baseCacheDirectory.legacyCStringPointer()), std::initializer_list<StringView>({ "icondatabase"_s, "WebpageIcons.db"_s }));
 
     return FileSystem::pathByAppendingComponents(WebsiteDataStore::defaultBaseCacheDirectory(), std::initializer_list<StringView>({ "icondatabase"_s, "WebpageIcons.db"_s }));
 }
@@ -1375,7 +1375,7 @@ struct _WebKitITPFirstParty {
     {
     }
 
-    CString domain;
+    UTF8CString domain;
     bool storageAccessGranted { false };
     GRefPtr<GDateTime> lastUpdated;
     int referenceCount { 1 };
@@ -1475,7 +1475,7 @@ const char* webkit_itp_first_party_get_domain(WebKitITPFirstParty* firstParty)
 {
     g_return_val_if_fail(firstParty, nullptr);
 
-    return firstParty->domain.data();
+    return firstParty->domain.legacyCStringPointer();
 }
 
 /**
@@ -1539,7 +1539,7 @@ struct _WebKitITPThirdParty {
         g_list_free_full(firstParties, reinterpret_cast<GDestroyNotify>(webkit_itp_first_party_unref));
     }
 
-    CString domain;
+    UTF8CString domain;
     GList* firstParties { nullptr };
     int referenceCount { 1 };
 };
@@ -1609,7 +1609,7 @@ const char* webkit_itp_third_party_get_domain(WebKitITPThirdParty* thirdParty)
 {
     g_return_val_if_fail(thirdParty, nullptr);
 
-    return thirdParty->domain.data();
+    return thirdParty->domain.legacyCStringPointer();
 }
 
 /**

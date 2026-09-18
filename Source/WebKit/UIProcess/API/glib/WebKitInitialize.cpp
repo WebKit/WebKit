@@ -75,7 +75,7 @@ static void initializeRemoteInspectorServer()
             ipAddress = ipAddress.substring(1, hostLength - 2);
         }
 
-        return adoptGRef(g_inet_socket_address_new_from_string(ipAddress.toString().utf8().legacyCStringPointer(), *port));
+        return adoptGRef(g_inet_socket_address_new_from_string(ipAddress.utf8().legacyCStringPointer(), *port));
     };
 
     auto inspectorHTTPAddress = parseAddress(httpAddress);

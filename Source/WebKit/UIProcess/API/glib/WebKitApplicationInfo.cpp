@@ -29,7 +29,7 @@
  */
 
 struct _WebKitApplicationInfo {
-    CString name;
+    UTF8CString name;
     uint64_t majorVersion;
     uint64_t minorVersion;
     uint64_t microVersion;
@@ -111,7 +111,7 @@ void webkit_application_info_set_name(WebKitApplicationInfo* info, const char* n
 {
     g_return_if_fail(info);
 
-    info->name = name;
+    info->name = UTF8CString { byteCast<char8_t>(name) };
 }
 
 /**
@@ -132,7 +132,7 @@ const char* webkit_application_info_get_name(WebKitApplicationInfo* info)
     g_return_val_if_fail(info, nullptr);
 
     if (!info->name.isNull())
-        return info->name.data();
+        return info->name.legacyCStringPointer();
 
     return g_get_prgname();
 }

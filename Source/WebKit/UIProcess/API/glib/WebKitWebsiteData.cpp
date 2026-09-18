@@ -57,7 +57,7 @@ struct _WebKitWebsiteData {
     }
 
     WebsiteDataRecord record;
-    CString displayName;
+    UTF8CString displayName;
     int referenceCount { 1 };
 };
 
@@ -196,11 +196,11 @@ const char* webkit_website_data_get_name(WebKitWebsiteData* websiteData)
 
     if (websiteData->displayName.isNull()) {
         if (websiteData->record.displayName == "Local documents on your computer"_s)
-            websiteData->displayName = _("Local files");
+            websiteData->displayName = UTF8CString { byteCast<char8_t>(_("Local files")) };
         else
             websiteData->displayName = websiteData->record.displayName.utf8();
     }
-    return websiteData->displayName.data();
+    return websiteData->displayName.legacyCStringPointer();
 }
 
 /**

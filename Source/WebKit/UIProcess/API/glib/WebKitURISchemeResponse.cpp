@@ -60,8 +60,8 @@ struct _WebKitURISchemeResponsePrivate {
     uint64_t streamLength;
 
     int statusCode { -1 };
-    CString statusMessage;
-    CString contentType;
+    UTF8CString statusMessage;
+    UTF8CString contentType;
     GUniquePtr<SoupMessageHeaders> headers;
 };
 
@@ -133,12 +133,12 @@ GInputStream* webKitURISchemeResponseGetStream(const WebKitURISchemeResponse* re
     return response->priv->stream.get();
 }
 
-const CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse* response)
+const UTF8CString& webKitURISchemeResponseGetStatusMessage(const WebKitURISchemeResponse* response)
 {
     return response->priv->statusMessage;
 }
 
-const CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse* response)
+const UTF8CString& webKitURISchemeResponseGetContentType(const WebKitURISchemeResponse* response)
 {
     return response->priv->contentType;
 }
@@ -185,7 +185,7 @@ void webkit_uri_scheme_response_set_content_type(WebKitURISchemeResponse* respon
 {
     g_return_if_fail(WEBKIT_IS_URI_SCHEME_RESPONSE(response));
 
-    response->priv->contentType = contentType;
+    response->priv->contentType = UTF8CString { byteCast<char8_t>(contentType) };
 }
 
 /**
@@ -226,7 +226,7 @@ void webkit_uri_scheme_response_set_status(WebKitURISchemeResponse* response, gu
 
     response->priv->statusCode = static_cast<gint>(statusCode);
     if (statusMessage)
-        response->priv->statusMessage = statusMessage;
+        response->priv->statusMessage = UTF8CString { byteCast<char8_t>(statusMessage) };
     else
-        response->priv->statusMessage = soup_status_get_phrase(statusCode);
+        response->priv->statusMessage = UTF8CString { byteCast<char8_t>(soup_status_get_phrase(statusCode)) };
 }

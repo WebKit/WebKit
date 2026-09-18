@@ -48,10 +48,10 @@ struct _WebKitWebExtensionMatchPattern {
     }
 
     RefPtr<WebExtensionMatchPattern> matchPattern;
-    CString string { matchPattern->string().utf8() };
-    CString scheme { matchPattern->scheme().utf8() };
-    CString host { matchPattern->host().utf8() };
-    CString path { matchPattern->path().utf8() };
+    UTF8CString string { matchPattern->string().utf8() };
+    UTF8CString scheme { matchPattern->scheme().utf8() };
+    UTF8CString host { matchPattern->host().utf8() };
+    UTF8CString path { matchPattern->path().utf8() };
     bool matchesAllURLs { matchPattern->matchesAllURLs() };
     bool matchesAllHosts { matchPattern->matchesAllHosts() };
     int referenceCount { 1 };
@@ -260,7 +260,7 @@ WebKitWebExtensionMatchPattern* webkit_web_extension_match_pattern_new_with_sche
 const gchar* webkit_web_extension_match_pattern_get_string(WebKitWebExtensionMatchPattern* matchPattern)
 {
     g_return_val_if_fail(matchPattern, nullptr);
-    return matchPattern->string.data();
+    return matchPattern->string.legacyCStringPointer();
 }
 
 /**
@@ -276,7 +276,7 @@ const gchar* webkit_web_extension_match_pattern_get_string(WebKitWebExtensionMat
 const gchar* webkit_web_extension_match_pattern_get_scheme(WebKitWebExtensionMatchPattern* matchPattern)
 {
     g_return_val_if_fail(matchPattern, nullptr);
-    return matchPattern->scheme.data();
+    return matchPattern->scheme.legacyCStringPointer();
 }
 
 /**
@@ -292,7 +292,7 @@ const gchar* webkit_web_extension_match_pattern_get_scheme(WebKitWebExtensionMat
 const gchar* webkit_web_extension_match_pattern_get_host(WebKitWebExtensionMatchPattern* matchPattern)
 {
     g_return_val_if_fail(matchPattern, nullptr);
-    return matchPattern->host.data();
+    return matchPattern->host.legacyCStringPointer();
 }
 
 /**
@@ -308,7 +308,7 @@ const gchar* webkit_web_extension_match_pattern_get_host(WebKitWebExtensionMatch
 const gchar* webkit_web_extension_match_pattern_get_path(WebKitWebExtensionMatchPattern* matchPattern)
 {
     g_return_val_if_fail(matchPattern, nullptr);
-    return matchPattern->path.data();
+    return matchPattern->path.legacyCStringPointer();
 }
 
 /**

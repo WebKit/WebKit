@@ -53,9 +53,9 @@ struct _WebKitWebExtensionContextPrivate {
 #if ENABLE(WK_WEB_EXTENSIONS)
     RefPtr<WebKit::WebExtensionContext> context;
     GWeakPtr<WebKitWebExtension> extension;
-    CString baseURI;
-    CString optionsPageURI;
-    CString overrideNewTabPageURI;
+    UTF8CString baseURI;
+    UTF8CString optionsPageURI;
+    UTF8CString overrideNewTabPageURI;
 #endif
 };
 
@@ -314,13 +314,13 @@ const gchar* webkit_web_extension_context_get_base_uri(WebKitWebExtensionContext
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
     if (!priv->baseURI.isNull())
-        return priv->baseURI.data();
+        return priv->baseURI.legacyCStringPointer();
 
     auto baseURI = priv->context->baseURL();
     g_return_val_if_fail(!baseURI.isEmpty(), nullptr);
 
     priv->baseURI = baseURI.string().utf8();
-    return priv->baseURI.data();
+    return priv->baseURI.legacyCStringPointer();
 }
 
 /**
@@ -372,14 +372,14 @@ const gchar* webkit_web_extension_context_get_options_page_uri(WebKitWebExtensio
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
     if (!priv->optionsPageURI.isNull())
-        return priv->optionsPageURI.data();
+        return priv->optionsPageURI.legacyCStringPointer();
 
     auto optionsPageURI = priv->context->optionsPageURL();
     if (optionsPageURI.isEmpty())
         return nullptr;
 
     priv->optionsPageURI = optionsPageURI.string().utf8();
-    return priv->optionsPageURI.data();
+    return priv->optionsPageURI.legacyCStringPointer();
 }
 
 /**
@@ -448,14 +448,14 @@ const gchar* webkit_web_extension_context_get_override_new_tab_page_uri(WebKitWe
 
     WebKitWebExtensionContextPrivate* priv = context->priv;
     if (!priv->overrideNewTabPageURI.isNull())
-        return priv->overrideNewTabPageURI.data();
+        return priv->overrideNewTabPageURI.legacyCStringPointer();
 
     auto overrideNewTabPageURI = priv->context->overrideNewTabPageURL();
     if (overrideNewTabPageURI.isEmpty())
         return nullptr;
 
     priv->overrideNewTabPageURI = overrideNewTabPageURI.string().utf8();
-    return priv->overrideNewTabPageURI.data();
+    return priv->overrideNewTabPageURI.legacyCStringPointer();
 }
 
 /**

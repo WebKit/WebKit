@@ -434,7 +434,7 @@ void webkitDownloadFinished(WebKitDownload* download)
     g_signal_emit(download, signals[FINISHED], 0, nullptr);
 }
 
-void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, CString&& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
+void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, UTF8CString&& suggestedFilename, CompletionHandler<void(AllowOverwrite, String)>&& completionHandler)
 {
     if (download->priv->isCancelled) {
         completionHandler(AllowOverwrite::No, { });
@@ -443,7 +443,7 @@ void webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* downlo
 
     download->priv->decideDestinationCallback = WTF::move(completionHandler);
     gboolean applicationWillDecideDestination = FALSE;
-    g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &applicationWillDecideDestination);
+    g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.legacyCStringPointer(), &applicationWillDecideDestination);
     if (!applicationWillDecideDestination)
         maybeFinishDecideDestination(download);
 }

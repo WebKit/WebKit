@@ -72,7 +72,7 @@ static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 struct _WebKitWebResourcePrivate {
     RefPtr<WebFrameProxy> frame;
-    CString uri;
+    UTF8CString uri;
     GRefPtr<WebKitURIResponse> response;
     bool isMainResource;
 };
@@ -231,12 +231,13 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
             G_TYPE_TLS_CERTIFICATE_FLAGS);
 }
 
-static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CString& requestURI)
+static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const char8_t* requestURI)
 {
-    if (resource->priv->uri == requestURI)
+    UTF8CString uri { requestURI };
+    if (resource->priv->uri == uri)
         return;
 
-    resource->priv->uri = requestURI;
+    resource->priv->uri = WTF::move(uri);
     g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_URI]);
 }
 
@@ -252,7 +253,7 @@ WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, const WebCore::
 void webkitWebResourceSentRequest(WebKitWebResource* resource, WebCore::ResourceRequest&& request, WebCore::ResourceResponse&& redirectResponse)
 {
     GRefPtr<WebKitURIRequest> uriRequest = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
-    webkitWebResourceUpdateURI(resource, webkit_uri_request_get_uri(uriRequest.get()));
+    webkitWebResourceUpdateURI(resource, byteCast<char8_t>(webkit_uri_request_get_uri(uriRequest.get())));
     GRefPtr<WebKitURIResponse> uriRedirectResponse = !redirectResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResponse)) : nullptr;
     g_signal_emit(resource, signals[SENT_REQUEST], 0, uriRequest.get(), uriRedirectResponse.get());
 }
@@ -314,7 +315,7 @@ const char* webkit_web_resource_get_uri(WebKitWebResource* resource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(resource), 0);
 
-    return resource->priv->uri.data();
+    return resource->priv->uri.legacyCStringPointer();
 }
 
 /**
@@ -379,7 +380,7 @@ void webkit_web_resource_get_data(WebKitWebResource* resource, GCancellable* can
             resourceDataCallback(data, task.get());
         });
     else {
-        String url = String::fromUTF8(resource->priv->uri.data());
+        String url { resource->priv->uri };
         resource->priv->frame->getResourceData(API::URL::create(url).ptr(), [task = WTF::move(task)](API::Data* data) {
             resourceDataCallback(data, task.get());
         });

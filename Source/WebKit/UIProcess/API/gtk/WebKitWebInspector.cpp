@@ -86,7 +86,7 @@ struct _WebKitWebInspectorPrivate {
     }
 
     RefPtr<WebInspectorUIProxy> webInspector;
-    CString inspectedURI;
+    UTF8CString inspectedURI;
     unsigned attachedHeight;
     bool canAttach;
 };
@@ -399,7 +399,7 @@ const char* webkit_web_inspector_get_inspected_uri(WebKitWebInspector* inspector
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_INSPECTOR(inspector), 0);
 
-    return inspector->priv->inspectedURI.data();
+    return inspector->priv->inspectedURI.legacyCStringPointer();
 }
 
 /**

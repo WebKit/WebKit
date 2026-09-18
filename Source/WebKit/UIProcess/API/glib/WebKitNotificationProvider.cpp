@@ -112,7 +112,7 @@ void WebKitNotificationProvider::closeAPINotification(WebNotificationIdentifier 
         webkit_notification_close(notification.get());
 }
 
-void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(const CString& tag)
+void WebKitNotificationProvider::withdrawAnyPreviousAPINotificationMatchingTag(const UTF8CString& tag)
 {
     if (!tag.length())
         return;

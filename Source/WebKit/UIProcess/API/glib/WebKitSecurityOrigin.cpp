@@ -48,8 +48,8 @@ struct _WebKitSecurityOrigin {
     }
 
     WebCore::SecurityOriginData securityOriginData;
-    CString protocol;
-    CString host;
+    UTF8CString protocol;
+    UTF8CString host;
     int referenceCount { 1 };
 };
 
@@ -176,7 +176,7 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
 
     if (origin->protocol.isNull())
         origin->protocol = origin->securityOriginData.protocol().utf8();
-    return origin->protocol.data();
+    return origin->protocol.legacyCStringPointer();
 }
 
 /**
@@ -201,7 +201,7 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
 
     if (origin->host.isNull())
         origin->host = origin->securityOriginData.host().utf8();
-    return origin->host.data();
+    return origin->host.legacyCStringPointer();
 }
 
 /**

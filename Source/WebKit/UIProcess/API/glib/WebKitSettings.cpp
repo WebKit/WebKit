@@ -78,19 +78,19 @@ struct _WebKitSettingsPrivate {
     }
 
     RefPtr<WebPreferences> preferences;
-    CString defaultFontFamily;
-    CString monospaceFontFamily;
-    CString serifFontFamily;
-    CString sansSerifFontFamily;
-    CString cursiveFontFamily;
-    CString fantasyFontFamily;
-    CString pictographFontFamily;
-    CString mathFontFamily;
-    CString defaultCharset;
-    CString userAgent;
-    CString mediaContentTypesRequiringHardwareSupport;
+    UTF8CString defaultFontFamily;
+    UTF8CString monospaceFontFamily;
+    UTF8CString serifFontFamily;
+    UTF8CString sansSerifFontFamily;
+    UTF8CString cursiveFontFamily;
+    UTF8CString fantasyFontFamily;
+    UTF8CString pictographFontFamily;
+    UTF8CString mathFontFamily;
+    UTF8CString defaultCharset;
+    UTF8CString userAgent;
+    UTF8CString mediaContentTypesRequiringHardwareSupport;
 #if ENABLE(WEB_RTC)
-    CString webrtcUDPPortsRange;
+    UTF8CString webrtcUDPPortsRange;
 #endif
     bool allowModalDialogs { false };
     bool zoomTextOnly { false };
@@ -2210,7 +2210,7 @@ const gchar* webkit_settings_get_default_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->defaultFontFamily.data();
+    return settings->priv->defaultFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2226,7 +2226,7 @@ void webkit_settings_set_default_font_family(WebKitSettings* settings, const gch
     g_return_if_fail(defaultFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->defaultFontFamily.data(), defaultFontFamily))
+    if (!g_strcmp0(priv->defaultFontFamily.legacyCStringPointer(), defaultFontFamily))
         return;
 
     String standardFontFamily = String::fromUTF8(defaultFontFamily);
@@ -2247,7 +2247,7 @@ const gchar* webkit_settings_get_monospace_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->monospaceFontFamily.data();
+    return settings->priv->monospaceFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2263,7 +2263,7 @@ void webkit_settings_set_monospace_font_family(WebKitSettings* settings, const g
     g_return_if_fail(monospaceFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->monospaceFontFamily.data(), monospaceFontFamily))
+    if (!g_strcmp0(priv->monospaceFontFamily.legacyCStringPointer(), monospaceFontFamily))
         return;
 
     String fixedFontFamily = String::fromUTF8(monospaceFontFamily);
@@ -2284,7 +2284,7 @@ const gchar* webkit_settings_get_serif_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->serifFontFamily.data();
+    return settings->priv->serifFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2300,7 +2300,7 @@ void webkit_settings_set_serif_font_family(WebKitSettings* settings, const gchar
     g_return_if_fail(serifFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->serifFontFamily.data(), serifFontFamily))
+    if (!g_strcmp0(priv->serifFontFamily.legacyCStringPointer(), serifFontFamily))
         return;
 
     String serifFontFamilyString = String::fromUTF8(serifFontFamily);
@@ -2321,7 +2321,7 @@ const gchar* webkit_settings_get_sans_serif_font_family(WebKitSettings* settings
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->sansSerifFontFamily.data();
+    return settings->priv->sansSerifFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2337,7 +2337,7 @@ void webkit_settings_set_sans_serif_font_family(WebKitSettings* settings, const 
     g_return_if_fail(sansSerifFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->sansSerifFontFamily.data(), sansSerifFontFamily))
+    if (!g_strcmp0(priv->sansSerifFontFamily.legacyCStringPointer(), sansSerifFontFamily))
         return;
 
     String sansSerifFontFamilyString = String::fromUTF8(sansSerifFontFamily);
@@ -2358,7 +2358,7 @@ const gchar* webkit_settings_get_cursive_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->cursiveFontFamily.data();
+    return settings->priv->cursiveFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2374,7 +2374,7 @@ void webkit_settings_set_cursive_font_family(WebKitSettings* settings, const gch
     g_return_if_fail(cursiveFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->cursiveFontFamily.data(), cursiveFontFamily))
+    if (!g_strcmp0(priv->cursiveFontFamily.legacyCStringPointer(), cursiveFontFamily))
         return;
 
     String cursiveFontFamilyString = String::fromUTF8(cursiveFontFamily);
@@ -2395,7 +2395,7 @@ const gchar* webkit_settings_get_fantasy_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->fantasyFontFamily.data();
+    return settings->priv->fantasyFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2411,7 +2411,7 @@ void webkit_settings_set_fantasy_font_family(WebKitSettings* settings, const gch
     g_return_if_fail(fantasyFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->fantasyFontFamily.data(), fantasyFontFamily))
+    if (!g_strcmp0(priv->fantasyFontFamily.legacyCStringPointer(), fantasyFontFamily))
         return;
 
     String fantasyFontFamilyString = String::fromUTF8(fantasyFontFamily);
@@ -2432,7 +2432,7 @@ const gchar* webkit_settings_get_pictograph_font_family(WebKitSettings* settings
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->pictographFontFamily.data();
+    return settings->priv->pictographFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2448,7 +2448,7 @@ void webkit_settings_set_pictograph_font_family(WebKitSettings* settings, const 
     g_return_if_fail(pictographFontFamily);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->pictographFontFamily.data(), pictographFontFamily))
+    if (!g_strcmp0(priv->pictographFontFamily.legacyCStringPointer(), pictographFontFamily))
         return;
 
     String pictographFontFamilyString = String::fromUTF8(pictographFontFamily);
@@ -2471,7 +2471,7 @@ const gchar* webkit_settings_get_math_font_family(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->mathFontFamily.data();
+    return settings->priv->mathFontFamily.legacyCStringPointer();
 }
 
 /**
@@ -2490,12 +2490,12 @@ void webkit_settings_set_math_font_family(WebKitSettings* settings, const gchar*
 
     if (!mathFontFamily) {
         priv->preferences->deleteMathFontFamily();
-        priv->mathFontFamily = CString();
+        priv->mathFontFamily = UTF8CString();
         g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_MATH_FONT_FAMILY]);
         return;
     }
 
-    if (!g_strcmp0(priv->mathFontFamily.data(), mathFontFamily))
+    if (!g_strcmp0(priv->mathFontFamily.legacyCStringPointer(), mathFontFamily))
         return;
 
     auto mathFontFamilyString = String::fromUTF8(mathFontFamily);
@@ -2621,7 +2621,7 @@ const gchar* webkit_settings_get_default_charset(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), 0);
 
-    return settings->priv->defaultCharset.data();
+    return settings->priv->defaultCharset.legacyCStringPointer();
 }
 
 /**
@@ -2637,7 +2637,7 @@ void webkit_settings_set_default_charset(WebKitSettings* settings, const gchar* 
     g_return_if_fail(defaultCharset);
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->defaultCharset.data(), defaultCharset))
+    if (!g_strcmp0(priv->defaultCharset.legacyCStringPointer(), defaultCharset))
         return;
 
     String defaultCharsetString = String::fromUTF8(defaultCharset);
@@ -3294,7 +3294,7 @@ const char* webkit_settings_get_user_agent(WebKitSettings* settings)
 
     WebKitSettingsPrivate* priv = settings->priv;
     ASSERT(!priv->userAgent.isNull());
-    return priv->userAgent.data();
+    return priv->userAgent.legacyCStringPointer();
 }
 
 /**
@@ -4153,7 +4153,7 @@ const gchar* webkit_settings_get_media_content_types_requiring_hardware_support(
     const auto& mediaContentTypesRequiringHardwareSupport = settings->priv->mediaContentTypesRequiringHardwareSupport;
     if (!mediaContentTypesRequiringHardwareSupport.length())
         return nullptr;
-    return mediaContentTypesRequiringHardwareSupport.data();
+    return mediaContentTypesRequiringHardwareSupport.legacyCStringPointer();
 }
 
 /**
@@ -4170,7 +4170,7 @@ void webkit_settings_set_media_content_types_requiring_hardware_support(WebKitSe
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->mediaContentTypesRequiringHardwareSupport.data(), mediaContentTypesRequiringHardwareSupport))
+    if (!g_strcmp0(priv->mediaContentTypesRequiringHardwareSupport.legacyCStringPointer(), mediaContentTypesRequiringHardwareSupport))
         return;
 
     String mediaContentTypesRequiringHardwareSupportString = String::fromUTF8(mediaContentTypesRequiringHardwareSupport);
@@ -4452,7 +4452,7 @@ webkit_settings_get_webrtc_udp_ports_range(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), nullptr);
 #if ENABLE(WEB_RTC)
-    return settings->priv->webrtcUDPPortsRange.data();
+    return settings->priv->webrtcUDPPortsRange.legacyCStringPointer();
 #else
     return nullptr;
 #endif
@@ -4473,7 +4473,7 @@ webkit_settings_set_webrtc_udp_ports_range(WebKitSettings* settings, const gchar
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 #if ENABLE(WEB_RTC)
     WebKitSettingsPrivate* priv = settings->priv;
-    if (!g_strcmp0(priv->webrtcUDPPortsRange.data(), udpPortsRange))
+    if (!g_strcmp0(priv->webrtcUDPPortsRange.legacyCStringPointer(), udpPortsRange))
         return;
 
     auto portRange = String::fromLatin1(udpPortsRange);

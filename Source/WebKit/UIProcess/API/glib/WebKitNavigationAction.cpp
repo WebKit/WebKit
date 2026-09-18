@@ -205,9 +205,9 @@ const char* webkit_navigation_action_get_frame_name(WebKitNavigationAction* navi
         if (auto targetFrameName = navigation->action->targetFrameName(); !!targetFrameName)
             navigation->frameName = targetFrameName.utf8();
         else
-            navigation->frameName = CString();
+            navigation->frameName = UTF8CString();
     }
-    return navigation->frameName->data();
+    return navigation->frameName->legacyCStringPointer();
 }
 
 RefPtr<API::NavigationAction> webkitNavigationActionGetAction(WebKitNavigationAction* navigation)

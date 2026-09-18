@@ -53,7 +53,7 @@ static void webkit_permission_request_interface_init(WebKitPermissionRequestInte
 struct _WebKitMediaKeySystemPermissionRequestPrivate {
     RefPtr<MediaKeySystemPermissionRequest> request;
     bool madeDecision;
-    CString keySystem;
+    UTF8CString keySystem;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE(
@@ -129,6 +129,6 @@ webkit_media_key_system_permission_get_name(WebKitMediaKeySystemPermissionReques
 {
     auto* priv = request->priv;
     if (priv->keySystem.isNull())
-        priv->keySystem = priv->request->keySystem().utf8().legacyCStringPointer();
-    return priv->keySystem.data();
+        priv->keySystem = priv->request->keySystem().utf8();
+    return priv->keySystem.legacyCStringPointer();
 }

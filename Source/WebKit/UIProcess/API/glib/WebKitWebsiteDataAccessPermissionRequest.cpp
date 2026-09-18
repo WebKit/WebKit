@@ -46,8 +46,8 @@ typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
 static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitWebsiteDataAccessPermissionRequestPrivate {
-    CString requestingDomain;
-    CString currentDomain;
+    UTF8CString requestingDomain;
+    UTF8CString currentDomain;
     CompletionHandler<void(bool)> completionHandler;
 };
 
@@ -115,7 +115,7 @@ const char* webkit_website_data_access_permission_request_get_requesting_domain(
 {
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(request), nullptr);
 
-    return request->priv->requestingDomain.data();
+    return request->priv->requestingDomain.legacyCStringPointer();
 }
 
 /**
@@ -132,5 +132,5 @@ const char* webkit_website_data_access_permission_request_get_current_domain(Web
 {
     g_return_val_if_fail(WEBKIT_IS_WEBSITE_DATA_ACCESS_PERMISSION_REQUEST(request), nullptr);
 
-    return request->priv->currentDomain.data();
+    return request->priv->currentDomain.legacyCStringPointer();
 }

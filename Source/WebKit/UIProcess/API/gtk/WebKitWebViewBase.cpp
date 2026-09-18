@@ -315,7 +315,7 @@ struct _WebKitWebViewBasePrivate {
 #if !USE(GTK4)
     ClickCounter clickCounter;
 #endif
-    CString tooltipText;
+    UTF8CString tooltipText;
     IntRect tooltipArea;
     WebHitTestResultData::IsScrollbar mouseIsOverScrollbar;
 #if USE(GTK4)
@@ -1991,7 +1991,7 @@ static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint /* x */, g
         gtk_tooltip_set_tip_area(tooltip, &area);
     } else
         gtk_tooltip_set_tip_area(tooltip, 0);
-    gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
+    gtk_tooltip_set_text(tooltip, priv->tooltipText.legacyCStringPointer());
 
     return TRUE;
 }
@@ -2556,10 +2556,10 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (tooltip && tooltip[0] != '\0') {
-        priv->tooltipText = tooltip;
+        priv->tooltipText = UTF8CString { byteCast<char8_t>(tooltip) };
         gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), TRUE);
     } else {
-        priv->tooltipText = "";
+        priv->tooltipText = ""_s;
         gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), FALSE);
     }
 

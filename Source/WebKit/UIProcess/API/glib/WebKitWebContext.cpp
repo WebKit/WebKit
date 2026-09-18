@@ -254,7 +254,7 @@ struct _WebKitWebContextPrivate {
 
 #if !ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
-    CString faviconDatabaseDirectory;
+    UTF8CString faviconDatabaseDirectory;
 #endif
     GRefPtr<WebKitSecurityManager> securityManager;
     URISchemeHandlerMap uriSchemeHandlers;
@@ -266,10 +266,10 @@ struct _WebKitWebContextPrivate {
 
     HashMap<WebPageProxyIdentifier, WebKitWebView*> webViews;
 
-    CString webProcessExtensionsDirectory;
+    UTF8CString webProcessExtensionsDirectory;
     GRefPtr<GVariant> webProcessExtensionsInitializationUserData;
 
-    CString localStorageDirectory;
+    UTF8CString localStorageDirectory;
 #if ENABLE(REMOTE_INSPECTOR)
 #if PLATFORM(GTK)
     std::unique_ptr<RemoteInspectorProtocolHandler> remoteInspectorProtocolHandler;
@@ -289,7 +289,7 @@ struct _WebKitWebContextPrivate {
 
     WebKitMemoryPressureSettings* memoryPressureSettings;
 
-    CString timeZoneOverride;
+    UTF8CString timeZoneOverride;
 };
 
 static std::array<unsigned, LAST_SIGNAL> signals;
@@ -357,7 +357,7 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
     switch (propID) {
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
-        g_value_set_string(value, context->priv->localStorageDirectory.data());
+        g_value_set_string(value, context->priv->localStorageDirectory.legacyCStringPointer());
         break;
 #endif
 #if !ENABLE(2022_GLIB_API)
@@ -390,7 +390,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     switch (propID) {
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_LOCAL_STORAGE_DIRECTORY:
-        context->priv->localStorageDirectory = g_value_get_string(value);
+        context->priv->localStorageDirectory = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
 #endif
 #if !ENABLE(2022_GLIB_API)
@@ -418,7 +418,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
     case PROP_TIME_ZONE_OVERRIDE: {
         const auto* timeZone = g_value_get_string(value);
         if (isTimeZoneValid(StringView::fromLatin1(timeZone)))
-            context->priv->timeZoneOverride = timeZone;
+            context->priv->timeZoneOverride = UTF8CString { byteCast<char8_t>(timeZone) };
         break;
     }
     default:
@@ -448,11 +448,11 @@ static void webkitWebContextConstructed(GObject* object)
         // Once the settings have been passed to the ProcessPoolConfiguration, we don't need them anymore so we can free them.
         g_clear_pointer(&priv->memoryPressureSettings, webkit_memory_pressure_settings_free);
     }
-    configuration->setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.span()));
+    configuration->setTimeZoneOverride(String { priv->timeZoneOverride });
 
 #if !ENABLE(2022_GLIB_API)
     if (!priv->websiteDataManager)
-        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
+        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.legacyCStringPointer(), nullptr));
 #endif
 
     priv->processPool = WebProcessPool::create(configuration);
@@ -1186,7 +1186,7 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     priv->faviconDatabaseDirectory = directoryPath.utf8();
 
     // Build the full path to the icon database file on disk.
-    GUniquePtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.data(),
+    GUniquePtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.legacyCStringPointer(),
         "WebpageIcons.db", nullptr));
 
     // Setting the path will cause the icon database to be opened.
@@ -1219,7 +1219,7 @@ const gchar* webkit_web_context_get_favicon_database_directory(WebKitWebContext 
     if (priv->faviconDatabaseDirectory.isNull())
         return 0;
 
-    return priv->faviconDatabaseDirectory.data();
+    return priv->faviconDatabaseDirectory.legacyCStringPointer();
 }
 
 /**
@@ -1700,7 +1700,7 @@ void webkit_web_context_set_web_extensions_directory(WebKitWebContext* context, 
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(directory);
 
-    context->priv->webProcessExtensionsDirectory = directory;
+    context->priv->webProcessExtensionsDirectory = UTF8CString { byteCast<char8_t>(directory) };
     context->priv->processPool->addSandboxPath(directory, SandboxPermission::ReadOnly);
 }
 
@@ -1999,7 +1999,7 @@ const gchar* webkit_web_context_get_time_zone_override(WebKitWebContext* context
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
-    return context->priv->timeZoneOverride.data();
+    return context->priv->timeZoneOverride.legacyCStringPointer();
 }
 
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context)
@@ -2018,7 +2018,7 @@ GVariant* webkitWebContextInitializeWebProcessExtensions(WebKitWebContext* conte
 {
     g_signal_emit(context, signals[INITIALIZE_WEB_PROCESS_EXTENSIONS], 0);
     return g_variant_new("(msmv)",
-        context->priv->webProcessExtensionsDirectory.data(),
+        context->priv->webProcessExtensionsDirectory.legacyCStringPointer(),
         context->priv->webProcessExtensionsInitializationUserData.get());
 }
 

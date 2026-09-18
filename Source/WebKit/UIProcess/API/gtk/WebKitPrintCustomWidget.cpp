@@ -68,7 +68,7 @@ enum {
 };
 
 struct _WebKitPrintCustomWidgetPrivate {
-    CString title;
+    UTF8CString title;
     GRefPtr<GtkWidget> widget;
 };
 
@@ -101,7 +101,7 @@ static void webkitPrintCustomWidgetSetProperty(GObject* object, guint propId, co
         printCustomWidget->priv->widget = GTK_WIDGET(g_value_get_object(value));
         break;
     case PROP_TITLE:
-        printCustomWidget->priv->title = g_value_get_string(value);
+        printCustomWidget->priv->title = UTF8CString { byteCast<char8_t>(g_value_get_string(value)) };
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -268,7 +268,7 @@ const gchar* webkit_print_custom_widget_get_title(WebKitPrintCustomWidget* print
 {
     g_return_val_if_fail(WEBKIT_IS_PRINT_CUSTOM_WIDGET(printCustomWidget), nullptr);
 
-    return printCustomWidget->priv->title.data();
+    return printCustomWidget->priv->title.legacyCStringPointer();
 }
 
 void webkitPrintCustomWidgetEmitCustomWidgetApplySignal(WebKitPrintCustomWidget* printCustomWidget)
