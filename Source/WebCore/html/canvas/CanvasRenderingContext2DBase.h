@@ -496,7 +496,7 @@ private:
 
     FloatRect inflatedStrokeRect(const FloatRect&) const;
 
-    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, DrawsHDRContent = DrawsHDRContent::No, AllowAcceleratedApplyGainMap = AllowAcceleratedApplyGainMap::No);
+    template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator, ImagePaintingOptions = { });
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
