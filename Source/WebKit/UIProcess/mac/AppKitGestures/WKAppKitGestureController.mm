@@ -42,6 +42,7 @@
 #import "ViewGestureController.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKMouseTrackingGestureRecognizer.h"
+#import "WKPressGestureRecognizer.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
 #import "WebEventFactory.h"
@@ -341,7 +342,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)setUpSingleClickGestureRecognizer
 {
-    _singleClickGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(singleClickGestureRecognized:)]);
+    _singleClickGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(singleClickGestureRecognized:)]);
     [self configureForSingleClick:_singleClickGestureRecognizer.get()];
     [_singleClickGestureRecognizer setDelegate:self];
     [_singleClickGestureRecognizer setName:@"WKSingleClickGesture"];
@@ -357,7 +358,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)setUpSecondaryClickGestureRecognizer
 {
-    _secondaryClickGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(secondaryClickGestureRecognized:)]);
+    _secondaryClickGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(secondaryClickGestureRecognized:)]);
     [self configureForSecondaryClick:_secondaryClickGestureRecognizer.get()];
     [_secondaryClickGestureRecognizer setCancelPastAllowableMovement:YES];
     [_secondaryClickGestureRecognizer setDelegate:self];
@@ -374,7 +375,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)setUpDragPressGestureRecognizer
 {
-    _dragPressGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(dragPressGestureRecognized:)]);
+    _dragPressGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(dragPressGestureRecognized:)]);
     [self configureForDragPress:_dragPressGestureRecognizer];
     [_dragPressGestureRecognizer setDelegate:self];
     [_dragPressGestureRecognizer setName:@"WKDragPressGesture"];
@@ -390,7 +391,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
 - (void)setUpImageAnalysisGestureRecognizer
 {
-    _imageAnalysisGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureRecognized:)]);
+    _imageAnalysisGestureRecognizer = adoptNS([[WKPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureRecognized:)]);
     [self configureForImageAnalysis:_imageAnalysisGestureRecognizer];
     [_imageAnalysisGestureRecognizer setDelegate:self];
     [_imageAnalysisGestureRecognizer setName:@"WKImageAnalysisGesture"];

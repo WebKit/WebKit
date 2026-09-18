@@ -29,29 +29,12 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
-#import "WKPressGestureRecognizer.h"
 #import <AppKit/AppKit.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
-@interface WKMouseTrackingGestureRecognizer : WKPressGestureRecognizer
-
-// Where the press began, as opposed to -locationInView:, which is the current location.
-@property (nonatomic, readonly) NSPoint startLocationInWindow;
-
-// The current location, rebased onto the location tracking was inherited from, if any.
-@property (nonatomic, readonly) NSPoint mouseLocationInWindow;
-
-@property (nonatomic, readonly) NSSize movementInWindowSinceStart;
-
-// Tracks from this recognizer's own start location.
-- (void)beginTrackingMouse;
-
-// Tracks as the continuation of a recognizer that stopped tracking at `windowLocation`, so that
-// `mouseLocationInWindow` remains continuous across the handoff.
-- (void)beginTrackingMouseInheritedFromWindowLocation:(NSPoint)windowLocation;
-
+@interface WKPressGestureRecognizer : NSPressGestureRecognizer
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

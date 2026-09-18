@@ -429,6 +429,12 @@ module WebKit_Internal [system] {
         export *
     }
 
+    module WKPressGestureRecognizer {
+        requires objc
+        header "../../UIProcess/mac/AppKitGestures/WKPressGestureRecognizer.h"
+        export *
+    }
+
     module WKUserContentControllerInternal {
         requires cplusplus20,objc
         header "../../UIProcess/API/Cocoa/WKUserContentControllerInternal.h"
