@@ -621,13 +621,24 @@ class TestMiniBrowserBundle(shell.ShellCommand, ShellMixin):
     description = ["testing minibrowser bundle"]
     descriptionDone = ["tested minibrowser bundle"]
     haltOnFailure = False
+    warnOnWarnings = True
+    envSetupFailuresRegexp = re.compile(r'\[BUNDLETEST\]\[WARN\] (\d+) distro\(s\) had NON-FATAL environment setup failures')
+    envSetupFailures = 0
 
     @defer.inlineCallbacks
     def run(self):
-        filter_command = ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs minibrowser'
+        filter_command = ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'
         self.command = self.shell_command(filter_command)
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
 
         rc = yield super().run()
+
+        if rc == SUCCESS:
+            match = self.envSetupFailuresRegexp.search(self.log_observer.getStdout())
+            if match:
+                self.envSetupFailures = int(match.group(1))
+                rc = WARNINGS
 
         steps_to_add = [
             GenerateS3URL(
@@ -647,6 +658,12 @@ class TestMiniBrowserBundle(shell.ShellCommand, ShellMixin):
         self.build.addStepsAfterCurrentStep(steps_to_add)
 
         defer.returnValue(rc)
+
+    def getResultSummary(self):
+        if self.results == WARNINGS and self.envSetupFailures:
+            s = 's' if self.envSetupFailures > 1 else ''
+            return {'step': f'tested minibrowser bundle ({self.envSetupFailures} distro{s} skipped: environment setup failure)'}
+        return super().getResultSummary()
 
 
 class ExtractBuiltProduct(shell.ShellCommand):

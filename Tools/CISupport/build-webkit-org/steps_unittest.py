@@ -1818,7 +1818,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs minibrowser'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
                         log_environ=True,
                         timeout=1200,
                         )
@@ -1829,6 +1829,27 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual([GenerateS3URL('gtk-None-release-test-minibrowser-bundle', extension='txt', content_type='text/plain', additions='13'), UploadFileToS3('logs.txt', links={'test-minibrowser-bundle': 'Full logs'}, content_type='text/plain'), UploadMiniBrowserBundleViaSftp()], next_steps)
         return rc
 
+    @defer.inlineCallbacks
+    def test_warnings_test_minibrowser_bundle(self):
+        self.setup_step(TestMiniBrowserBundle())
+        self.setUpPropertiesForTest()
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
+                        log_environ=True,
+                        timeout=1200,
+                        )
+            .log('stdio', stdout="""[BUNDLETEST][ENV-FAIL] Environment setup (deps install) failed on mageia:latest
+[BUNDLETEST][WARN] 2 distro(s) had NON-FATAL environment setup failures (within the 2 allowed): debian:11, mageia:latest
+[PASS][OK] Bundle passed tests on 15 of 17 distros (2 skipped due to env setup failure).""")
+            .exit(0),
+        )
+        self.expect_outcome(result=WARNINGS, state_string='tested minibrowser bundle (2 distros skipped: environment setup failure)')
+        yield self.run_step()
+        self.assertEqual([GenerateS3URL('gtk-None-release-test-minibrowser-bundle', extension='txt', content_type='text/plain', additions='13'), UploadFileToS3('logs.txt', links={'test-minibrowser-bundle': 'Full logs'}, content_type='text/plain'), UploadMiniBrowserBundleViaSftp()], next_steps)
+
     @expectedFailure
     def test_failure_test_minibrowser_bundle(self):
         self.setup_step(TestMiniBrowserBundle())
@@ -1837,7 +1858,7 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs minibrowser'],
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'Tools/Scripts/test-bundle --platform=gtk --bundle-type=universal WebKitBuild/MiniBrowser_gtk_release.tar.xz 2>&1 | python3 Tools/Scripts/filter-test-logs test-bundle'],
                         log_environ=True,
                         timeout=1200,
                         )
