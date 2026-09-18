@@ -47,6 +47,7 @@
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
+#include "ValidationProcedures.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -387,7 +388,7 @@ void WebFrameProxy::didFailProvisionalLoad()
         m_navigateCallback({ }, { });
 }
 
-void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations)
+void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPluginDocument, DocumentSecurityPolicy&& documentSecurityPolicy, HashSet<WebCore::SecurityOriginData>&& cspOriginsThatUpgradeInsecureNavigations, const SecurityOriginData& originReportedByWebProcess)
 {
     m_frameLoadState.didCommitLoad();
 
@@ -404,9 +405,19 @@ void WebFrameProxy::didCommitLoad(const String& contentType, bool containsPlugin
     RefPtr creator = parentFrame() ? parentFrame() : opener();
     updateDocumentSecurityOrigin(creator.get());
 
+    // Record the origin reported by the web content process, to validate against later, if and only
+    // if we do not have a better record.
+    if (MIMETypeRegistry::isWebArchiveMIMEType(contentType))
+        m_committedOriginReportedByWebProcess = originReportedByWebProcess;
+    else if (documentSecurityOriginData().isOpaque() && originReportedByWebProcess.isOpaque())
+        m_committedOriginReportedByWebProcess = originReportedByWebProcess;
+    else
+        m_committedOriginReportedByWebProcess = std::nullopt;
+
     if (RefPtr page = m_page) {
         RefPtr mainFrame = page->mainFrame();
-        protect(process())->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->documentSecurityOriginData() : SecurityOriginData { }, documentSecurityOriginData() });
+        ASSERT(mainFrame);
+        protect(process())->didCommitLoadClientOrigin(ClientOrigin { mainFrame ? mainFrame->committedDocumentSecurityOriginData() : SecurityOriginData { }, committedDocumentSecurityOriginData() });
     }
 
     RefPtr webPage = page();
@@ -920,6 +931,15 @@ Ref<SecurityOrigin> WebFrameProxy::securityOrigin() const
     return *m_documentSecurityOrigin;
 }
 
+SecurityOriginData WebFrameProxy::committedDocumentSecurityOriginData() const
+{
+    // If, and only if, the frame is being used to host an opaque origin,
+    // we trust the origin which was originally sent by the web process.
+    if (m_committedOriginReportedByWebProcess)
+        return *m_committedOriginReportedByWebProcess;
+    return documentSecurityOriginData();
+}
+
 SecurityOriginData WebFrameProxy::documentSecurityOriginData() const
 {
     if (RefPtr origin = m_documentSecurityOrigin)
@@ -1175,13 +1195,7 @@ void WebFrameProxy::updateScrollingMode(WebCore::ScrollbarMode scrollingMode)
 
 void WebFrameProxy::setAppBadge(IPC::Untrusted<WebCore::SecurityOriginData>&& untrustedOrigin, std::optional<uint64_t> badge)
 {
-    auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
-    Ref protectedProcess = process();
-    auto firstPartyAccessResult = protectedProcess->allowsFirstPartyAccess(WebCore::RegistrableDomain { origin });
-    if (firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::SilentFailure)
-        return;
-    MESSAGE_CHECK(firstPartyAccessResult == WebProcessProxy::FirstPartyAccessResult::Pass);
+    EXTRACT_WITH_MESSAGE_CHECK(origin, untrustedOrigin, ProcessSpeaksForDomain { protect(process()), ShouldCheckWithoutSiteIsolation::Yes });
 
     if (RefPtr webPageProxy = m_page.get())
         webPageProxy->uiClient().updateAppBadge(*webPageProxy, origin, badge);
@@ -1189,8 +1203,7 @@ void WebFrameProxy::setAppBadge(IPC::Untrusted<WebCore::SecurityOriginData>&& un
 
 void WebFrameProxy::didChangeCSPOriginsThatUpgradeInsecureNavigations(IPC::Untrusted<HashSet<WebCore::SecurityOriginData>>&& untrustedCspOriginsThatUpgradeInsecureNavigations)
 {
-    auto cspOriginsThatUpgradeInsecureNavigations = WTF::move(untrustedCspOriginsThatUpgradeInsecureNavigations).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
-
+    EXTRACT_WITH_MESSAGE_CHECK(cspOriginsThatUpgradeInsecureNavigations, untrustedCspOriginsThatUpgradeInsecureNavigations, ProcessSpeaksForDomain { protect(process()) });
     setCSPOriginsThatUpgradeInsecureNavigations(WTF::move(cspOriginsThatUpgradeInsecureNavigations));
 }
 
