@@ -1069,6 +1069,7 @@ endif ()
 target_compile_definitions(Skia PRIVATE
     SK_GL
     SK_GANESH
+    SK_GANESH_SMALL_PATH_DISTANCE_FIELD_ALWAYS
 )
 
 #
