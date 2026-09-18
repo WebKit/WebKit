@@ -840,8 +840,9 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
         result = { false, nullptr };
     else {
         auto& codecMap = configuration == Configuration::Decoding ? m_decoderCodecMap : m_encoderCodecMap;
+        auto utf8CodecName = codecName.utf8();
         for (const auto& [codecId, lookupResult] : codecMap) {
-            if (!fnmatch(codecId.utf8().legacyCStringPointer(), codecName.utf8().legacyCStringPointer(), 0)) {
+            if (!fnmatch(codecId.utf8().legacyCStringPointer(), utf8CodecName.legacyCStringPointer(), 0)) {
                 bool isSupported = shouldCheckForHardwareUse ? lookupResult.isUsingHardware : true;
                 if (isSupported) {
                     result.isSupported = true;
