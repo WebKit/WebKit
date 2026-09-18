@@ -31,6 +31,7 @@
 #include <optional>
 #include <span>
 #include <utility>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,13 +54,13 @@ struct GPUVideoEncoderFrameInfo {
 
 using GPUVideoEncoderCallback = Function<void(std::span<const uint8_t>, const GPUVideoEncoderFrameInfo&)>;
 using GPUVideoEncoderDescriptionCallback = Function<void(std::span<const uint8_t>)>;
-using GPUVideoEncoderErrorCallback = Function<void(bool isFrameDropped)>; // isFrameDropped is false in case of encoder error, and true if encoder decided to drop frame, say to ensure bitrate is respected.
+using GPUVideoEncoderErrorCallback = Function<void(bool isFrameDropped)>; // isFrameDropped is false in case of encoder error, and true if encoder decided to drop frame (say to ensure bitrate is respected).
 
-class GPUVideoEncoder {
+class GPUVideoEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUVideoEncoder> {
 public:
     virtual ~GPUVideoEncoder() = default;
 
-    WEBCORE_EXPORT static std::unique_ptr<GPUVideoEncoder> create(VideoCodecType, bool useWebCoreEncoder, const Vector<std::pair<String, String>>& parameters, bool useAnnexB, VideoEncoderScalabilityMode, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+    WEBCORE_EXPORT static RefPtr<GPUVideoEncoder> create(VideoCodecType, bool useWebCoreEncoder, const Vector<std::pair<String, String>>& parameters, bool useAnnexB, VideoEncoderScalabilityMode, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
     virtual void setLowLatency(bool) = 0;
     virtual void initialize(uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) = 0;

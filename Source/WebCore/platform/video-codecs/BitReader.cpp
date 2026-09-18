@@ -27,6 +27,8 @@
 #include "config.h"
 #include "BitReader.h"
 
+#include <algorithm>
+
 namespace WebCore {
 
 std::optional<uint64_t> BitReader::read(size_t bits)
@@ -77,6 +79,91 @@ size_t BitReader::bitOffset() const
 {
     ASSERT(m_index <= m_data.size());
     return (m_remainingBits ? 8 - m_remainingBits : 0) + m_index * 8;
+}
+
+uint32_t BitReader::readBits(size_t bits)
+{
+    ASSERT(bits <= 32);
+    if (m_invalid)
+        return 0;
+
+    auto value = read(bits);
+    if (!value) {
+        m_invalid = true;
+        return 0;
+    }
+    return static_cast<uint32_t>(*value);
+}
+
+bool BitReader::readFlag()
+{
+    if (m_invalid)
+        return false;
+
+    auto value = readBit();
+    if (!value) {
+        m_invalid = true;
+        return false;
+    }
+    return *value;
+}
+
+void BitReader::consumeBits(size_t bits)
+{
+    if (m_invalid)
+        return;
+
+    while (bits) {
+        auto chunk = WTF::min(bits, static_cast<size_t>(32));
+        if (!read(chunk)) {
+            m_invalid = true;
+            return;
+        }
+        bits -= chunk;
+    }
+}
+
+uint32_t BitReader::readExpGolomb()
+{
+    if (m_invalid)
+        return 0;
+
+    unsigned leadingZeroBits = 0;
+    while (true) {
+        auto bit = readBit();
+        if (!bit) {
+            m_invalid = true;
+            return 0;
+        }
+        if (*bit)
+            break;
+        if (++leadingZeroBits > 31) {
+            m_invalid = true;
+            return 0;
+        }
+    }
+
+    if (!leadingZeroBits)
+        return 0;
+
+    auto value = read(leadingZeroBits);
+    if (!value) {
+        m_invalid = true;
+        return 0;
+    }
+    return (1u << leadingZeroBits) - 1 + static_cast<uint32_t>(*value);
+}
+
+int32_t BitReader::readSignedExpGolomb()
+{
+    uint32_t codeNum = readExpGolomb();
+    if (m_invalid)
+        return 0;
+
+    // Table 9-3 / 9-4 mapping from ue(v) to se(v) (shared by H.264 and H.265).
+    if (codeNum & 1)
+        return static_cast<int32_t>((codeNum + 1) / 2);
+    return -static_cast<int32_t>(codeNum / 2);
 }
 
 } // namespace WebCore

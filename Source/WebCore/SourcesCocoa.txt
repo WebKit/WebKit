@@ -730,7 +730,10 @@ platform/text/cocoa/LocalizedDateCache.mm @nonARC
 platform/text/cocoa/TextBoundaries.mm @nonARC
 platform/text/mac/TextCheckingMac.mm @nonARC
 platform/video-codecs/cocoa/GPUVideoEncoder.mm @nonARC
+platform/video-codecs/cocoa/GPUVideoEncoderVTB.mm @nonARC
+platform/video-codecs/cocoa/GPUVideoEncoderVTBH265.mm @nonARC
 platform/video-codecs/cocoa/VideoDecoderVTB.mm @nonARC
+platform/video-codecs/cocoa/VideoEncoderVTBSession.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoder.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTB.mm @nonARC
 platform/video-codecs/cocoa/WebRTCVideoDecoderVTBAV1.mm @nonARC
