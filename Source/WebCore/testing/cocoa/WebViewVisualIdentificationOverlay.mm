@@ -154,7 +154,6 @@ static void drawPattern(void *overlayPtr, CGContextRef ctx)
 
     CGContextSetTextDrawingMode(ctx, kCGTextFill);
 
-    CGContextSetTextMatrix(ctx, CGAffineTransformIdentity);
     CGContextSetTextPosition(ctx, 0, 0);
     CGContextSetFillColorWithColor(ctx, cachedCGColor(WebCore::Color::black).get());
     CTLineDraw(line.get(), ctx);

@@ -278,7 +278,6 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(cstrSpan.data()), cstrSpan.size(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
     auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
-    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextSetTextPosition(context, x, y);
     CTLineDraw(line.get(), context);
 

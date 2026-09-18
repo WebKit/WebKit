@@ -69,10 +69,9 @@ class ComputedStyle;
 
 #if USE(CORE_TEXT)
 AffineTransform computeBaseOverallTextMatrix(const std::optional<AffineTransform>& syntheticOblique);
+AffineTransform computeOverallTextMatrix(const FontBase&);
 AffineTransform computeBaseVerticalTextMatrix(const AffineTransform& previousTextMatrix);
-// The text matrix to use when drawing a run of `font`, including the Y-flip, synthetic oblique and, for vertical
-// fonts, the upright rotation.
-AffineTransform computeTextMatrix(const FontBase&);
+AffineTransform computeVerticalTextMatrix(const FontBase&, const AffineTransform& previousTextMatrix);
 #endif
 
 class TextLayoutDeleter {
