@@ -78,7 +78,7 @@ void PatchpointExceptionHandle::scheduleExitCreationForUnwind(
     
     RefPtr<OSRExitHandle> handle = createHandle(GenericUnwind, params);
 
-    handle->m_jitCode->m_osrExit[handle->m_index].m_exceptionHandlerCallSiteIndex = callSiteIndex;
+    m_state.osrExits[handle->m_index].m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
     HandlerInfo handler = m_handler;
     auto* plan = &m_state.graph.m_plan;

@@ -231,8 +231,9 @@ FixedOperands<ExitValue> OSRExitValues::decode(const JITCode& jitCode, const Bag
     return values;
 }
 
-OSRExitDescriptor::OSRExitDescriptor(DataFormat profileDataFormat, MethodOfGettingAValueProfile valueProfile)
+OSRExitDescriptor::OSRExitDescriptor(unsigned index, DataFormat profileDataFormat, MethodOfGettingAValueProfile valueProfile)
     : m_profileDataFormat(profileDataFormat)
+    , m_index(index)
     , m_valueProfile(valueProfile)
 {
 }
@@ -275,15 +276,13 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     if (exitKind == WillThrowOutOfMemoryError)
         exit.m_exitCallSiteIndex = callSiteIndexForCodeOrigin(state, nodeOrigin.semantic);
 
-    unsigned index = state.jitCode->m_osrExit.size();
-    state.jitCode->m_osrExit.append(WTF::move(exit));
-    return adoptRef(*new OSRExitHandle(index, state.jitCode.get()));
+    unsigned index = state.osrExits.size();
+    state.osrExits.append(WTF::move(exit));
+    return adoptRef(*new OSRExitHandle(index));
 }
 
-OSRExit::OSRExit(
-    OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOrigin codeOrigin,
-    CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset)
-    : OSRExitBase(exitKind, codeOrigin, codeOriginForExitProfile, wasHoisted, dfgNodeIndex)
+OSRExit::OSRExit(const OSRExitDescriptor* descriptor, ExitKind exitKind, CodeOrigin codeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset)
+    : OSRExitBase(exitKind, WTF::move(codeOrigin), WTF::move(codeOriginForExitProfile), wasHoisted, dfgNodeIndex)
     , m_valueRepsOffset(valueRepsOffset)
     , m_descriptor(descriptor)
 {
@@ -292,6 +291,96 @@ OSRExit::OSRExit(
 FixedVector<B3::ValueRep> OSRExit::valueReps(const JITCode& jitCode) const
 {
     return jitCode.osrExitValueReps.decode(m_valueRepsOffset);
+}
+
+static constexpr unsigned codeOriginTagShift = 0;
+static constexpr unsigned profileOriginTagShift = 2;
+static constexpr unsigned wasHoistedBit = 1 << 4;
+
+OSRExitStream::OSRExitStream(const Vector<OSRExit>& exits)
+    : m_chunkOffsets(divideRoundedUp(exits.size(), static_cast<size_t>(exitsPerChunk)))
+    , m_size(exits.size())
+{
+    Vector<uint8_t> bytes;
+    Vector<ExceptionHandlerExit> exceptionHandlerExits;
+    PreviousExit previous;
+    for (unsigned index = 0; index < exits.size(); ++index) {
+        if (!(index % exitsPerChunk)) {
+            m_chunkOffsets[index / exitsPerChunk] = bytes.size();
+            previous = { };
+        }
+
+        const OSRExit& exit = exits[index];
+        CodeOriginTag originTag = codeOriginTag(exit.m_codeOrigin, previous.codeOrigin);
+        CodeOriginTag profileOriginTag = codeOriginTag(exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        unsigned flags = (static_cast<unsigned>(originTag) << codeOriginTagShift) | (static_cast<unsigned>(profileOriginTag) << profileOriginTagShift);
+        if (exit.m_wasHoisted)
+            flags |= wasHoistedBit;
+
+        // FIXME: Pack the ExitKind and the flags into one byte.
+        bytes.append(static_cast<uint8_t>(exit.m_kind));
+        bytes.append(static_cast<uint8_t>(flags));
+        encodeCodeOrigin(bytes, originTag, exit.m_codeOrigin, previous.codeOrigin);
+        previous.codeOrigin = exit.m_codeOrigin;
+        encodeCodeOrigin(bytes, profileOriginTag, exit.m_codeOriginForExitProfile, exit.m_codeOrigin);
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_dfgNodeIndex - previous.dfgNodeIndex));
+        previous.dfgNodeIndex = exit.m_dfgNodeIndex;
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_descriptor->m_index - previous.descriptorIndex));
+        previous.descriptorIndex = exit.m_descriptor->m_index;
+        // FIXME: Store the ValueReps after the exit in this stream instead of their offset.
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_valueRepsOffset - previous.valueRepsOffset));
+        previous.valueRepsOffset = exit.m_valueRepsOffset;
+        WTF::LEBEncoder::encodeInt32(bytes, static_cast<int32_t>(exit.m_entranceOffset - previous.entranceOffset));
+        previous.entranceOffset = exit.m_entranceOffset;
+        if (exit.m_kind == WillThrowOutOfMemoryError)
+            WTF::LEBEncoder::encodeUInt32(bytes, exit.m_exitCallSiteIndex.bits());
+        if (exit.isGenericUnwindHandler())
+            exceptionHandlerExits.append({ exit.m_exceptionHandlerCallSiteIndex, exit.m_valueRepsOffset });
+    }
+    m_bytes = WTF::move(bytes);
+    m_exceptionHandlerExits = WTF::move(exceptionHandlerExits);
+}
+
+OSRExit OSRExitStream::decode(size_t& offset, PreviousExit& previous, const JITCode& jitCode) const
+{
+    std::span<const uint8_t> bytes = m_bytes.span();
+    ExitKind kind = static_cast<ExitKind>(bytes[offset++]);
+    unsigned flags = bytes[offset++];
+    previous.codeOrigin = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, codeOriginTagShift), previous.codeOrigin);
+    CodeOrigin codeOriginForExitProfile = decodeCodeOrigin(bytes, offset, codeOriginTagFromFlags(flags, profileOriginTagShift), previous.codeOrigin);
+    previous.dfgNodeIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.descriptorIndex += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.valueRepsOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+    previous.entranceOffset += WTF::LEBDecoder::decodeInt32OrCrash(bytes, offset);
+
+    OSRExit exit(&jitCode.osrExitDescriptors[previous.descriptorIndex], kind, previous.codeOrigin, WTF::move(codeOriginForExitProfile), !!(flags & wasHoistedBit), previous.dfgNodeIndex, previous.valueRepsOffset);
+    exit.m_entranceOffset = previous.entranceOffset;
+    if (kind == WillThrowOutOfMemoryError)
+        exit.m_exitCallSiteIndex = CallSiteIndex(WTF::LEBDecoder::decodeUInt32OrCrash(bytes, offset));
+    return exit;
+}
+
+OSRExit OSRExitStream::at(unsigned index, const JITCode& jitCode) const
+{
+    RELEASE_ASSERT(index < m_size);
+    size_t offset = m_chunkOffsets[index / exitsPerChunk];
+    PreviousExit previous;
+    for (unsigned i = index % exitsPerChunk; i--;)
+        decode(offset, previous, jitCode);
+    return decode(offset, previous, jitCode);
+}
+
+unsigned OSRExitStream::indexForEntranceOffset(uintptr_t entranceOffset, const JITCode& jitCode) const
+{
+    size_t offset = 0;
+    PreviousExit previous;
+    for (unsigned index = 0; index < m_size; ++index) {
+        if (!(index % exitsPerChunk))
+            previous = { };
+        if (decode(offset, previous, jitCode).m_entranceOffset == entranceOffset)
+            return index;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } } // namespace JSC::FTL

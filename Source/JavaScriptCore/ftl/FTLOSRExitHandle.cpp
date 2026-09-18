@@ -42,13 +42,11 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
     CCallHelpers::Label myLabel = jit.label();
     label = myLabel;
     jit.nearCallThunk(CodeLocationLabel<JITThunkPtrTag>(state.vm().getCTIStub(osrExitGenerationThunkGenerator).code()));
-    RefPtr<OSRExitHandle> self = this;
     jit.addLinkTask(
-        [self, myLabel, compilation] (LinkBuffer& linkBuffer) {
-            auto entrance = linkBuffer.locationOf<JSInternalPtrTag>(myLabel);
-            self->m_jitCode->m_osrExit[self->m_index].m_entrance = entrance;
+        [index = m_index, myLabel, compilation, &state] (LinkBuffer& linkBuffer) {
+            state.osrExits[index].m_entranceOffset = linkBuffer.offsetOf(myLabel);
             if (compilation)
-                compilation->addOSRExitSite({ entrance });
+                compilation->addOSRExitSite({ linkBuffer.locationOf<JSInternalPtrTag>(myLabel) });
         });
 }
 

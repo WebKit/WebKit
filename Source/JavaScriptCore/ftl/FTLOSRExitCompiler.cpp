@@ -679,7 +679,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
     unsigned exitID = jitCode->osrExitIndexForReturnPC(returnPC);
     dataLogLnIf(shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit(), "Compiling OSR exit with exitID = ", exitID);
 
-    OSRExit& exit = jitCode->m_osrExit[exitID];
+    OSRExit exit = jitCode->osrExit(exitID);
     FixedOperands<ExitValue> exitValues = exit.m_descriptor->values(*jitCode);
     FixedVector<B3::ValueRep> valueReps = exit.valueReps(*jitCode);
     
@@ -705,7 +705,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationCompileFTLOSRExit, void*, (CallFrame*
     jitCode->m_osrExitStubs.append({ exitID, compileStub(vm, exitID, jitCode, exit, exitValues, valueReps, codeBlock) });
     CodePtr<OSRExitPtrTag> code = jitCode->m_osrExitStubs.last().code.code();
 
-    MacroAssembler::replaceWithJump(exit.m_entrance, CodeLocationLabel<OSRExitPtrTag>(code));
+    MacroAssembler::replaceWithJump(jitCode->osrExitEntrance(exit), CodeLocationLabel<OSRExitPtrTag>(code));
     return code.taggedPtr();
 }
 
