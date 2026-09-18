@@ -623,7 +623,7 @@ void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItemsGridLanes(
         }
     };
 
-    for (auto definiteItemSpanGroup : definiteItemSizes) {
+    for (auto& definiteItemSpanGroup : definiteItemSizes) {
         increaseSizes.template operator()<TrackSizeComputationPhase::ResolveIntrinsicMinimums>(definiteItemSpanGroup.second);
         increaseSizes.template operator()<TrackSizeComputationPhase::ResolveContentBasedMinimums>(definiteItemSpanGroup.second);
         increaseSizes.template operator()<TrackSizeComputationPhase::ResolveMaxContentMinimums>(definiteItemSpanGroup.second);
@@ -1434,7 +1434,7 @@ private:
     bool isComputingInlineSizeContainment() const override { return renderGrid()->shouldApplyInlineSizeContainment(); }
     bool isComputingSizeOrInlineSizeContainment() const override { return renderGrid()->shouldApplySizeOrInlineSizeContainment(); }
     void accumulateFlexFraction(double& flexFraction, GridIterator&, Style::GridTrackSizingDirection outermostDirection, SingleThreadWeakHashSet<RenderBox>& itemsSet, RenderGridLayoutState&) const;
-    void accumulateFlexFractionGridLanes(double& flexFraction, GridIterator&, Style::GridTrackSizingDirection outermostDirection, unsigned flexTrackIndex, SingleThreadWeakHashSet<RenderBox>& itemsSet, Vector<SingleThreadWeakPtr<RenderBox>> indefiniteItems, RenderGridLayoutState&) const;
+    void accumulateFlexFractionGridLanes(double& flexFraction, GridIterator&, Style::GridTrackSizingDirection outermostDirection, unsigned flexTrackIndex, SingleThreadWeakHashSet<RenderBox>& itemsSet, const Vector<SingleThreadWeakPtr<RenderBox>>& indefiniteItems, RenderGridLayoutState&) const;
 };
 
 void IndefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& gridItem, bool overrideSizeHasChanged) const
@@ -1458,7 +1458,7 @@ static inline double normalizedFlexFraction(const GridTrack& track)
     return track.baseSize() / std::max<double>(1, flexFactor);
 }
 
-void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFraction, GridIterator& iterator, Style::GridTrackSizingDirection direction, unsigned flexTrackIndex, SingleThreadWeakHashSet<RenderBox>& itemsSet, Vector<SingleThreadWeakPtr<RenderBox>> indefiniteItems, RenderGridLayoutState& gridLayoutState) const
+void IndefiniteSizeStrategy::accumulateFlexFractionGridLanes(double& flexFraction, GridIterator& iterator, Style::GridTrackSizingDirection direction, unsigned flexTrackIndex, SingleThreadWeakHashSet<RenderBox>& itemsSet, const Vector<SingleThreadWeakPtr<RenderBox>>& indefiniteItems, RenderGridLayoutState& gridLayoutState) const
 {
     // Definite Items
     while (auto* gridItem = iterator.nextGridItem()) {
