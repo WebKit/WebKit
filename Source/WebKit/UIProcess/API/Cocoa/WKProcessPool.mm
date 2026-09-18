@@ -409,6 +409,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     protect(_processPool->webProcessCache())->clear();
 }
 
+- (void)_loadDefaultContentRuleListForTesting:(void(^)(void))completionHandler
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    protect(*_processPool)->loadDefaultContentRuleListForTesting([completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+#else
+    completionHandler();
+#endif
+}
+
 - (void)_setCachedProcessLifetimeForTesting:(NSTimeInterval)lifetime
 {
     _processPool->webProcessCache().setCachedProcessLifetimeForTesting(Seconds { lifetime });

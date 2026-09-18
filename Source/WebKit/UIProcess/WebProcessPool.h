@@ -599,6 +599,8 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WebCompiledContentRuleList* cachedResourceMonitorRuleList(bool forTesting);
+    WebCompiledContentRuleList* cachedDefaultContentRuleList();
+    void loadDefaultContentRuleListForTesting(CompletionHandler<void()>&&);
     void setResourceMonitorURLsForTesting(const String& rulesText, CompletionHandler<void()>&&);
 #endif
 
@@ -777,6 +779,11 @@ private:
     void platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
     void platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&&);
     String NODELETE platformResourceMonitorRuleListSourceForTesting();
+
+    void loadOrUpdateDefaultContentRuleList();
+    void defaultContentRuleListDidChange();
+    void platformLoadDefaultContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>&&)>&&);
+    void platformObserveDefaultContentRuleListUpdates();
 #endif
 
     const Ref<API::ProcessPoolConfiguration> m_configuration;
@@ -1028,6 +1035,15 @@ private:
     bool m_resourceMonitorRuleListLoading { false };
     bool m_resourceMonitorRuleListFailed { false };
     RunLoop::Timer m_resourceMonitorRuleListRefreshTimer;
+
+    RefPtr<WebCompiledContentRuleList> m_defaultContentRuleListCache;
+    bool m_defaultContentRuleListLoading { false };
+    bool m_defaultContentRuleListFailed { false };
+    RunLoop::Timer m_defaultContentRuleListRefreshTimer;
+    Vector<CompletionHandler<void()>> m_defaultContentRuleListLoadHandlersForTesting;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RefPtr<ListDataObserver> m_defaultContentRuleListUpdateObserver;
+#endif
 #endif
 
 #if PLATFORM(COCOA)

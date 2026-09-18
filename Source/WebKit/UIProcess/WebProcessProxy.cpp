@@ -666,6 +666,10 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     // Delay construction of the WebLockRegistryProxy until the WebProcessProxy has a data store since the data store holds the
     // LocalWebLockRegistry.
     lazyInitialize(m_webLockRegistry, makeUniqueWithoutRefCountedCheck<WebLockRegistryProxy>(*this));
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    updateDefaultContentRuleList();
+#endif
 }
 
 bool WebProcessProxy::isDummyProcessProxy() const
@@ -3643,6 +3647,20 @@ void WebProcessProxy::setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleL
 {
     m_resourceMonitorRuleList = ruleList.get();
     sendWithAsyncReply(Messages::WebProcess::SetResourceMonitorContentRuleListAsync(ruleList->data()), WTF::move(completionHandler));
+}
+
+void WebProcessProxy::updateDefaultContentRuleList()
+{
+    RefPtr dataStore = m_websiteDataStore;
+    if (!dataStore || !dataStore->trackingPreventionEnabled())
+        return;
+
+    RefPtr ruleList = protect(processPool())->cachedDefaultContentRuleList();
+    if (!ruleList || m_defaultContentRuleList == ruleList)
+        return;
+
+    m_defaultContentRuleList = ruleList;
+    send(Messages::WebProcess::SetDefaultContentRuleList(ruleList->data()), 0);
 }
 #endif
 

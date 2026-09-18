@@ -28,12 +28,14 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "LocalFrame.h"
 #include "Page.h"
+#include "Settings.h"
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ContentExtensionCompiler.h"
@@ -148,7 +150,23 @@ static void applyLinkDecorationFilteringIfNeeded(ContentRuleListResults& results
 
 ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom) const
 {
-    auto results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
+    auto results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, ruleListFilter(initiatingDocumentLoader));
+
+    bool shouldUseDefaultContentExtensionBackend = DeprecatedGlobalSettings::trackingPreventionEnabled() && page.settings().scriptTrackingPrivacyNetworkRequestBlockingEnabled();
+    if (auto* defaultBackend = shouldUseDefaultContentExtensionBackend ? defaultContentExtensionBackend() : nullptr) {
+        auto defaultResults = defaultBackend->processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, [](const String&) {
+            return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        });
+
+        auto& defaultSummary = defaultResults.summary;
+        results.summary.madeHTTPS |= defaultSummary.madeHTTPS;
+        results.summary.blockedCookies |= defaultSummary.blockedCookies;
+        if (defaultSummary.blockedLoad && !results.summary.redirected)
+            results.summary.blockedLoad = true;
+    }
+
+    ContentExtensions::applyHTTPSUpgradeIfNeeded(results, page, url, redirectFrom);
+    ContentExtensions::reportContentRuleListResultsToConsole(results, url, resourceType, initiatingDocumentLoader);
 
     if (resourceType.containsAny({ ContentExtensions::ResourceType::TopDocument, ContentExtensions::ResourceType::ChildDocument }))
         applyLinkDecorationFilteringIfNeeded(results, page, url, initiatingDocumentLoader);

@@ -200,6 +200,18 @@ typedef void (^WKWPResourcesGetSourceCompletionHandler)(NSString *, NSError *);
 - (void)requestResourceMonitorRulesSource:(WPResourceRequestOptions *)options completionHandler:(WKWPResourcesGetSourceCompletionHandler)completion;
 @end
 
+typedef void (^WKWPResourcesRuleListCompletionHandler)(WKContentRuleList *, NSError *);
+
+#if !defined(HAS_WEB_PRIVACY_DEFAULT_CONTENT_RULE_LIST_API)
+
+#define WPResourceTypeDefaultTrackerBlockRules ((WPResourceType)12)
+
+#endif
+
+@interface WPResources (Staging_DefaultContentRuleList)
+- (void)loadDefaultContentRuleListForStore:(WKContentRuleListStore *)store completionHandler:(WKWPResourcesRuleListCompletionHandler)completionHandler;
+@end
+
 #if !__has_include(<WebPrivacy/WPFingerprintingScript.h>) || __has_feature(modules)
 
 #define WPResourceTypeFingerprintingScripts ((WPResourceType)9)

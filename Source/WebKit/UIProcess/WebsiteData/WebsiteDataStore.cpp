@@ -54,6 +54,7 @@
 #include "WebProcessCache.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include "WebProcessProxy.h"
 #include "WebPushMessage.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -2028,6 +2029,16 @@ void WebsiteDataStore::setTrackingPreventionEnabled(bool enabled)
 
     for (Ref processPool : processPools())
         processPool->sendToAllProcessesForSession(Messages::WebProcess::SetTrackingPreventionEnabled(enabled), m_sessionID);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    if (enabled) {
+        for (Ref processPool : processPools()) {
+            processPool->forEachProcessForSession(m_sessionID, [](WebProcessProxy& process) {
+                process.updateDefaultContentRuleList();
+            });
+        }
+    }
+#endif
 }
 
 void WebsiteDataStore::setStatisticsTestingCallback(Function<void(const String&)>&& callback)

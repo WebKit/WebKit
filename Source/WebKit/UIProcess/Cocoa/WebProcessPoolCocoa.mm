@@ -1596,6 +1596,32 @@ String WebProcessPool::platformResourceMonitorRuleListSourceForTesting()
     return emptyString();
 #endif
 }
+
+void WebProcessPool::platformLoadDefaultContentRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>&&)>&& completionHandler)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RELEASE_LOG(ResourceLoadStatistics, "WebProcessPool::platformLoadDefaultContentRuleList request to load rule list.");
+
+    DefaultContentRuleListController::singleton().prepare([completionHandler = WTF::move(completionHandler)](WKContentRuleList *list) mutable {
+        completionHandler(createCompiledContentRuleList(list));
+    });
+#else
+    completionHandler(nullptr);
+#endif
+}
+
+void WebProcessPool::platformObserveDefaultContentRuleListUpdates()
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (m_defaultContentRuleListUpdateObserver)
+        return;
+
+    m_defaultContentRuleListUpdateObserver = DefaultContentRuleListController::singleton().observeUpdates([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->defaultContentRuleListDidChange();
+    });
+#endif
+}
 #endif
 
 template <typename Collection>

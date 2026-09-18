@@ -71,6 +71,7 @@ public:
     virtual WebKitBuffer* buffer(const DOMWrapperWorld&, const String&) const = 0;
 #if ENABLE(CONTENT_EXTENSIONS)
     virtual const ContentExtensions::ContentExtensionsBackend& userContentExtensionBackend() const = 0;
+    virtual const ContentExtensions::ContentExtensionsBackend* defaultContentExtensionBackend() const { return nullptr; }
 #endif
 
     void registerForUserMessageHandlerInvalidation(UserContentProviderInvalidationClient&);

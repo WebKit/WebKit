@@ -193,6 +193,12 @@ selectors = [
 ]
 requires = ["ENABLE_SCRIPT_TRACKING_PRIVACY_PROTECTIONS"]
 
+[[not-web-essential]]
+request = "rdar://157886589"
+selectors = [
+    { name = "loadDefaultContentRuleListForStore:completionHandler:", class = "?" },
+]
+
 [[temporary-usage]]
 request = "rdar://157888734"
 cleanup = "rdar://157888769"

@@ -631,6 +631,7 @@ public:
     void requestResourceMonitorRuleLists(bool forTesting);
     void setResourceMonitorRuleListsIfRequired(RefPtr<WebCompiledContentRuleList>);
     void setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleList>, CompletionHandler<void()>&&);
+    void updateDefaultContentRuleList();
 #endif
 
     std::optional<SandboxExtension::Handle> sandboxExtensionForFile(const String& fileName) const;
@@ -996,6 +997,7 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     bool m_resourceMonitorRuleListRequestedBySomePage { false };
     RefPtr<WebCompiledContentRuleList> m_resourceMonitorRuleList;
+    RefPtr<WebCompiledContentRuleList> m_defaultContentRuleList;
 #endif
 #if ENABLE(REMOTE_INSPECTOR) && PLATFORM(COCOA)
     HashMap<WebCore::ServiceWorkerIdentifier, Ref<ServiceWorkerDebuggableProxy>> m_serviceWorkerDebuggableProxies;

@@ -239,7 +239,24 @@ std::optional<String> customTrackerBlockingMessageForConsole(const ContentRuleLi
 #endif
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, const RuleListFilter& ruleListFilter) const
+static URL mainDocumentURLForLoad(const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
+{
+    RefPtr frame = initiatingDocumentLoader.frame();
+    if (!frame)
+        return { };
+
+    if (initiatingDocumentLoader.isLoadingMainResource()
+        && frame->isMainFrame()
+        && resourceType.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
+        return url;
+
+    if (RefPtr page = frame->page())
+        return page->mainFrameURL();
+
+    return { };
+}
+
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const RuleListFilter& ruleListFilter) const
 {
     RefPtr<Document> currentDocument;
     URL mainDocumentURL;
@@ -255,14 +272,9 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         currentDocument = frame->document();
         frameId = mainFrameContext ? 0 : static_cast<double>(frame->frameID().toUInt64());
         parentFrameId = !mainFrameContext && frame->tree().parent() ? static_cast<double>(frame->tree().parent()->frameID().toUInt64()) : -1;
-
-        if (initiatingDocumentLoader.isLoadingMainResource()
-            && frame->isMainFrame()
-            && resourceType.containsAny({ ResourceType::TopDocument, ResourceType::ChildDocument }))
-            mainDocumentURL = url;
-        else if (RefPtr page = frame->page())
-            mainDocumentURL = page->mainFrameURL();
     }
+
+    mainDocumentURL = mainDocumentURLForLoad(url, resourceType, initiatingDocumentLoader);
 
     if (currentDocument && currentDocument->url().isValid())
         frameURL = currentDocument->url();
@@ -273,8 +285,6 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     auto actions = actionsForResourceLoad(resourceLoadInfo, ruleListFilter);
 
     ContentRuleListResults results;
-    if (page.httpsUpgradeEnabled())
-        makeSecureIfNecessary(results, url, redirectFrom);
     results.results.reserveInitialCapacity(actions.size());
     for (const auto& actionsFromContentRuleList : actions) {
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
@@ -364,33 +374,51 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         results.results.append({ contentRuleListIdentifier, WTF::move(result) });
     }
 
-    if (currentDocument) {
-        if (results.summary.madeHTTPS) {
-            ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
-            String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from "_s, url.string(), " to "_s, newProtocol));
-        }
+    return results;
+}
 
-        if (results.shouldBlock()) {
-            String consoleMessage;
-            if (auto message = customTrackerBlockingMessageForConsole(results, url, mainDocumentURL))
-                consoleMessage = WTF::move(*message);
-            else
-                consoleMessage = makeString("Content blocker prevented frame displaying "_s, mainDocumentURL.string(), " from loading a resource from "_s, url.string());
-            currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTF::move(consoleMessage));
-        
-            // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).
-            // https://developers.google.com/optimize/
-            if (currentDocument->settings().googleAntiFlickerOptimizationQuirkEnabled()
-                && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
-                    || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s)))) {
-                if (RefPtr frame = currentDocument->frame())
-                    frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
-            }
-        }
+void applyHTTPSUpgradeIfNeeded(ContentRuleListResults& results, Page& page, const URL& url, const URL& redirectFrom)
+{
+    if (!page.httpsUpgradeEnabled())
+        return;
+
+    makeSecureIfNecessary(results, url, redirectFrom);
+}
+
+void reportContentRuleListResultsToConsole(const ContentRuleListResults& results, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader)
+{
+    if (!results.summary.madeHTTPS && !results.shouldBlock())
+        return;
+
+    RefPtr frame = initiatingDocumentLoader.frame();
+    RefPtr currentDocument = frame ? frame->document() : nullptr;
+    if (!currentDocument)
+        return;
+
+    if (results.summary.madeHTTPS) {
+        ASSERT(url.protocolIs("http"_s) || url.protocolIs("ws"_s));
+        String newProtocol = url.protocolIs("http"_s) ? "https"_s : "wss"_s;
+        currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Promoted URL from "_s, url.string(), " to "_s, newProtocol));
     }
 
-    return results;
+    if (!results.shouldBlock())
+        return;
+
+    auto mainDocumentURL = mainDocumentURLForLoad(url, resourceType, initiatingDocumentLoader);
+
+    String consoleMessage;
+    if (auto message = customTrackerBlockingMessageForConsole(results, url, mainDocumentURL))
+        consoleMessage = WTF::move(*message);
+    else
+        consoleMessage = makeString("Content blocker prevented frame displaying "_s, mainDocumentURL.string(), " from loading a resource from "_s, url.string());
+    currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTF::move(consoleMessage));
+
+    // Quirk for content-blocker interference with Google's anti-flicker optimization (rdar://problem/45968770).
+    // https://developers.google.com/optimize/
+    if (currentDocument->settings().googleAntiFlickerOptimizationQuirkEnabled()
+        && ((equalLettersIgnoringASCIICase(url.host(), "www.google-analytics.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/analytics.js"_s))
+            || (equalLettersIgnoringASCIICase(url.host(), "www.googletagmanager.com"_s) && equalLettersIgnoringASCIICase(url.path(), "/gtm.js"_s))))
+        frame->script().evaluateIgnoringException(ScriptSourceCode { "try { window.dataLayer.hide.end(); console.log('Called window.dataLayer.hide.end() in frame ' + document.URL + ' because the content blocker blocked the load of the https://www.google-analytics.com/analytics.js script'); } catch (e) { }"_s, JSC::SourceTaintedOrigin::Untainted });
 }
 
 ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod)
