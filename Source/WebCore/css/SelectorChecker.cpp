@@ -394,6 +394,9 @@ SelectorChecker::MatchResult SelectorChecker::matchRecursively(CheckingContext& 
             if (context.element->userAgentPart() != part)
                 return MatchResult::fails(Match::SelectorFailsLocally);
 
+            if (RefPtr select = dynamicDowncast<HTMLSelectElement>(root->host()); select && !select->supportsPickerPseudoElement())
+                return MatchResult::fails(Match::SelectorFailsLocally);
+
             break;
         }
         case CSSSelector::PseudoElement::WebKitUnknown:
@@ -1338,6 +1341,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
 
         case CSSSelector::PseudoClass::InternalSelectPopover:
             return matchesSelectPopoverPseudoClass(element);
+
+        case CSSSelector::PseudoClass::InternalSelectDisplaySizeOne:
+            return matchesSelectDisplaySizeOnePseudoClass(element);
 
         case CSSSelector::PseudoClass::InternalUsesMenulist:
             return matchesUsesMenulistPseudoClass(element);

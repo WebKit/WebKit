@@ -232,18 +232,6 @@ String pdfDocumentTypeDescription()
 }
 
 #if PLATFORM(IOS_FAMILY)
-String htmlSelectMultipleItems(size_t count)
-{
-    switch (count) {
-    case 0:
-        return WEB_UI_STRING("0 Items", "Present the element <select multiple> when no <option> items are selected (iOS only)");
-    case 1:
-        return WEB_UI_STRING("1 Item", "Present the element <select multiple> when a single <option> is selected (iOS only)");
-    default:
-        return WEB_UI_FORMAT_CFSTRING("%zu Items", "Present the number of selected <option> items in a <select multiple> element (iOS only)", count);
-    }
-}
-
 String fileButtonChooseMediaFileLabel()
 {
     return WEB_UI_STRING("Choose Media (Single)", "Title for file button used in HTML forms for media files");

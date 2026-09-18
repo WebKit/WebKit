@@ -50,6 +50,9 @@
             "conditional": "ENABLE(FULLSCREEN_API)"
         },
         "-internal-media-document": {},
+        "-internal-select-display-size-one": {
+            "comment": "Display size because box type (list box, drop down) depends on appearance."
+        },
         "-internal-select-popover": {},
         "-internal-uses-menulist": {},
         "-webkit-any": {

@@ -136,6 +136,7 @@ using PseudoClassesSet = UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<C
     v(operationMatchesModalPseudoClass) \
     v(operationMatchesHtmlDocumentPseudoClass) \
     v(operationMatchesActiveViewTransitionPseudoClass) \
+    v(operationMatchesSelectDisplaySizeOnePseudoClass) \
     v(operationMatchesSelectPopoverPseudoClass) \
     v(operationMatchesUsesMenulistPseudoClass) \
     v(operationIsUserInvalid) \
@@ -297,6 +298,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesO
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesPopoverOpenPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesActiveViewTransitionPseudoClass, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSelectDisplaySizeOnePseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesSelectPopoverPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesUsesMenulistPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
@@ -1102,6 +1104,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesUsesMenulistPseudoClass, bool,
     return matchesUsesMenulistPseudoClass(element);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesSelectDisplaySizeOnePseudoClass, bool, (const Element& element))
+{
+    COUNT_SELECTOR_OPERATION(operationMatchesSelectDisplaySizeOnePseudoClass);
+    return matchesSelectDisplaySizeOnePseudoClass(element);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesEvenLessGoodPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesEvenLessGoodPseudoClass);
@@ -1293,6 +1301,10 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
 
     case CSSSelector::PseudoClass::InternalUsesMenulist:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesUsesMenulistPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClass::InternalSelectDisplaySizeOne:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesSelectDisplaySizeOnePseudoClass));
         return FunctionType::SimpleSelectorChecker;
 
     // These pseudo-classes only have meaning with scrollbars.

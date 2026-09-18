@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT unsigned length() const;
 
     unsigned size() const { return m_size; }
+    unsigned NODELETE displaySize() const;
     bool multiple() const { return m_multiple; }
 
     bool NODELETE usesMenuList() const;
@@ -196,7 +197,22 @@ public:
     void NODELETE registerSelectedContentElement();
     void NODELETE unregisterSelectedContentElement();
 
+    enum class BaseAppearanceBoxTypes : bool { DropDownBoxWithoutMultiple, All };
+    BaseAppearanceBoxTypes NODELETE baseAppearanceBoxTypes() const;
+
+    // Without a style these read the one already committed, which is stale during style resolution.
+    enum class BoxType : bool { DropDownBox, ListBox };
+    BoxType NODELETE boxType(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE usesBaseAppearance(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE isDropDownBox(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE isBaseDropDownBox(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE isBaseListBox(const Style::ComputedStyle* = nullptr) const;
+
     WEBCORE_EXPORT bool usesBaseAppearancePicker() const;
+    bool optionsAreRenderedWithBaseAppearance() const;
+    bool NODELETE supportsPickerPseudoElement() const;
+    void pickOrToggleOption(HTMLOptionElement&);
+    bool handleNavigationKeydown(KeyboardEvent&, int currentListIndex);
     SelectPopoverElement* NODELETE pickerPopoverElement() const;
     void openPickerForUserInteraction(std::optional<bool> focusVisible = std::nullopt);
     void hidePickerPopoverElement();
@@ -207,8 +223,8 @@ public:
         ASCIILiteral previous;
         WritingMode writingMode { };
     };
-    NavigationKeyIdentifiers pickerNavigationKeyIdentifiers() const;
-    int computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers) const;
+    NavigationKeyIdentifiers pickerNavigationKeyIdentifiers();
+    int computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers);
     void focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible = std::nullopt, PickerScrollMode = PickerScrollMode::Nearest);
     int typeAheadMatchIndex(KeyboardEvent&);
 
@@ -279,6 +295,8 @@ private:
     void menuListDefaultEventHandler(Event&);
     bool platformHandleKeydownEvent(KeyboardEvent*);
     void listBoxDefaultEventHandler(Event&);
+    void baseAppearanceListBoxDefaultEventHandler(Event&);
+    Element* NODELETE optionScrollingContainer();
     void setOptionsChangedOnRenderer();
     size_t searchOptionsForValue(const String&, size_t listIndexStart, size_t listIndexEnd) const;
 
@@ -289,7 +307,7 @@ private:
     int firstSelectableListIndex() const;
     int lastSelectableListIndex() const;
     int nextSelectableListIndexPageAway(int startIndex, SkipDirection) const;
-    int nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection, WritingMode) const;
+    int nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection, WritingMode);
 
     void childrenChanged(const ChildChange&) final;
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
