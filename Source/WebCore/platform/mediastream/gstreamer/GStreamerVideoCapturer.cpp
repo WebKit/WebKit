@@ -136,6 +136,14 @@ GstElement* GStreamerVideoCapturer::createConverter()
     auto* bin = gst_bin_new(nullptr);
     auto* videorate = makeGStreamerElement("videorate"_s, "videorate"_s);
 
+    // The capture pipeline runs with a zero base time (see GStreamerCapturer::setupPipeline), so buffer
+    // timestamps are absolute clock times. videorate has to start counting at the first buffer it receives:
+    // with its default (the segment start, 0) it fills the gap between 0 and the first PTS with duplicates of
+    // the first frame -- uptime x framerate of them, pushed as fast as the CPU allows -- so the stream appears
+    // frozen on its first frame for minutes on any machine that has been up for a few hours. drop-only used
+    // to imply this; it is no longer set on GStreamer >= 1.28 (see below), but skip-to-first is still needed.
+    g_object_set(videorate, "skip-to-first", TRUE, nullptr);
+
     // The workaround below doesn't seem necessary anymore in GStreamer 1.28 and beyond.
     // Fixed by: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/6f623af4d745efaacd0c8639b99536def4a65c78
     if (!gst_check_version(1, 28, 0)) {
