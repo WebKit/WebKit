@@ -74,6 +74,7 @@
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
 #import "_WKDownloadInternal.h"
+#import <ImageIO/ImageIO.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Color.h>
 #import <WebCore/Cursor.h>
@@ -90,6 +91,7 @@
 #import <WebCore/ShareData.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/UTIRegistry.h>
 #import <WebCore/ValidationBubble.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
@@ -479,9 +481,16 @@ void PageClientImpl::positionInformationDidChange(const InteractionInformationAt
     [contentView() _positionInformationDidChange:info];
 }
 
-void PageClientImpl::saveImageToLibrary(Ref<SharedBuffer>&& imageBuffer)
+void PageClientImpl::saveImageToLibrary(const Ref<SharedBuffer>& imageBuffer)
 {
-    RetainPtr<NSData> imageData = imageBuffer->createNSData();
+    RetainPtr<NSData> imageData = toNSData(imageBuffer->span());
+    RetainPtr source = adoptCF(CGImageSourceCreateWithData((__bridge CFDataRef)imageData.get(), nullptr));
+    if (!source)
+        return;
+    RetainPtr type = CGImageSourceGetType(source.get());
+    if (!type || !WebCore::isSupportedImageType(type.get()))
+        return;
+
     UIImageDataWriteToSavedPhotosAlbum(imageData.get(), nil, NULL, NULL);
 }
 

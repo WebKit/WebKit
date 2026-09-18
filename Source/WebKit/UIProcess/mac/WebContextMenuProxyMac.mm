@@ -507,7 +507,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem(ShareMenuItemT
     if (hitTestData.imageSharedMemory) {
         if (usePlaceholder)
             [items addObject:adoptNS([[NSImage alloc] init]).get()];
-        else if (auto image = adoptNS([[NSImage alloc] initWithData:protect(*hitTestData.imageSharedMemory)->toNSData().get()])) {
+        else if (RetainPtr image = createCocoaImageRestrictedToSupportedTypes(protect(*hitTestData.imageSharedMemory)->toNSData().get())) {
             RetainPtr title = hitTestData.imageText.createNSString();
             if (![title length])
                 title = WEB_UI_NSSTRING(@"Image", "Fallback title for images in the share sheet");
