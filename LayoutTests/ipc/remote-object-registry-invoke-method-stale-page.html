@@ -1,0 +1,39 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=false ] -->
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function done()
+{
+    document.getElementById("result").textContent = "PASS if no crash.";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+async function main()
+{
+    if (!window.IPC)
+        return done();
+
+    const stalePageProxyID = IPC.webPageProxyID + 1000000n;
+
+    for (const messageName of ["RemoteObjectRegistry_InvokeMethod", "RemoteObjectRegistry_CallReplyBlock", "RemoteObjectRegistry_ReleaseUnusedReplyBlock"]) {
+        IPC.sendMessage("UI", stalePageProxyID, IPC.messages[messageName].name, new Uint8Array(0));
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+    done();
+}
+
+window.onload = () => { main().catch(done); };
+</script>
+</head>
+<body>
+<p>Tests that a RemoteObjectRegistry message addressed to a page that no longer exists is dropped instead of terminating the WebContent process.</p>
+<p id="result">FAIL</p>
+</body>
+</html>

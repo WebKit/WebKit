@@ -39,7 +39,7 @@ class WebPageProxy;
 
 @interface _WKRemoteObjectRegistry ()
 
-@property (nonatomic, readonly) WebKit::RemoteObjectRegistry& remoteObjectRegistry;
+@property (nonatomic, readonly) WebKit::RemoteObjectRegistry* remoteObjectRegistry;
 
 - (id)_initWithWebPage:(std::reference_wrapper<WebKit::WebPage>)messageSender;
 - (id)_initWithWebPageProxy:(std::reference_wrapper<WebKit::WebPageProxy>)messageSender;

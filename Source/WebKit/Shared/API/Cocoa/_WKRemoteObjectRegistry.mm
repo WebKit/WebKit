@@ -187,9 +187,9 @@ static uint64_t NODELETE generateReplyIdentifier()
     remoteObjectRegistry->sendInvocation(WebKit::RemoteObjectInvocation(interface.identifier, [encoder rootObjectDictionary], WTF::move(replyInfo)));
 }
 
-- (WebKit::RemoteObjectRegistry&)remoteObjectRegistry
+- (WebKit::RemoteObjectRegistry*)remoteObjectRegistry
 {
-    return *_remoteObjectRegistry;
+    return _remoteObjectRegistry.get();
 }
 
 static NSString *replyBlockSignature(Protocol *protocol, SEL selector, NSUInteger blockIndex)
