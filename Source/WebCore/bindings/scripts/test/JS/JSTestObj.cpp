@@ -955,7 +955,7 @@ template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionar
         bufferSourceValueValue = WebCore::get(object, &lexicalGlobalObject, Identifier::fromString(vm, "bufferSourceValue"_s));
         RETURN_IF_EXCEPTION(throwScope, ConversionResultException { });
     }
-    auto bufferSourceValueConversionResult = convert<IDLOptional<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>>(lexicalGlobalObject, bufferSourceValueValue);
+    auto bufferSourceValueConversionResult = convert<IDLOptional<IDLBufferSource>>(lexicalGlobalObject, bufferSourceValueValue);
     if (bufferSourceValueConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue dictionaryMemberValue;
@@ -1239,7 +1239,7 @@ template<> ConversionResult<IDLDictionary<TestObj::Dictionary>> convertDictionar
         throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, "requiredBufferSourceValue"_s, "TestDictionary"_s, "(ArrayBufferView or ArrayBuffer)"_s);
         return ConversionResultException { };
     }
-    auto requiredBufferSourceValueConversionResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, requiredBufferSourceValueValue);
+    auto requiredBufferSourceValueConversionResult = convert<IDLBufferSource>(lexicalGlobalObject, requiredBufferSourceValueValue);
     if (requiredBufferSourceValueConversionResult.hasException(throwScope)) [[unlikely]]
         return ConversionResultException { };
     JSValue restrictedDoubleValue;
@@ -1593,8 +1593,8 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithoutDefault"_s), booleanWithoutDefaultValue);
     }
-    if (!IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::isNullValue(dictionary.bufferSourceValue)) {
-        auto bufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, throwScope, IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::extractValueFromNullable(dictionary.bufferSourceValue));
+    if (!IDLBufferSource::isNullValue(dictionary.bufferSourceValue)) {
+        auto bufferSourceValueValue = toJS<IDLBufferSource>(lexicalGlobalObject, globalObject, throwScope, IDLBufferSource::extractValueFromNullable(dictionary.bufferSourceValue));
         RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "bufferSourceValue"_s), bufferSourceValueValue);
     }
@@ -1681,7 +1681,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     auto nullableUnionMemberValue = toJS<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(lexicalGlobalObject, globalObject, throwScope, dictionary.nullableUnionMember);
     RETURN_IF_EXCEPTION(throwScope, { });
     result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableUnionMember"_s), nullableUnionMemberValue);
-    auto requiredBufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, throwScope, dictionary.requiredBufferSourceValue);
+    auto requiredBufferSourceValueValue = toJS<IDLBufferSource>(lexicalGlobalObject, globalObject, throwScope, dictionary.requiredBufferSourceValue);
     RETURN_IF_EXCEPTION(throwScope, { });
     result->putDirect(vm, JSC::Identifier::fromString(vm, "requiredBufferSourceValue"_s), requiredBufferSourceValueValue);
     if (!IDLDouble::isNullValue(dictionary.restrictedDouble)) {
@@ -2519,6 +2519,9 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_singleConditionalOve
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_attachShadowRoot);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_operationWithExternalDictionaryParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceParameter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_allowSharedBufferSourceParameter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testReturnValueOptimization);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_conditionallyExposedToWorkerFunction);
@@ -3014,7 +3017,7 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
 
 /* Hash table for prototype */
 
-static const std::array<HashTableValue, 302> JSTestObjPrototypeTableValues {
+static const std::array<HashTableValue, 305> JSTestObjPrototypeTableValues {
     HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObjConstructor, 0 } },
     HashTableValue { "readOnlyLongAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyLongAttr, 0 } },
     HashTableValue { "readOnlyStringAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyStringAttr, 0 } },
@@ -3348,6 +3351,9 @@ static const std::array<HashTableValue, 302> JSTestObjPrototypeTableValues {
     HashTableValue { "attachShadowRoot"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_attachShadowRoot, 1 } },
     HashTableValue { "operationWithExternalDictionaryParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_operationWithExternalDictionaryParameter, 1 } },
     HashTableValue { "bufferSourceParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_bufferSourceParameter, 1 } },
+    HashTableValue { "allowSharedBufferSourceParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_allowSharedBufferSourceParameter, 1 } },
+    HashTableValue { "annotatedBufferSourceMembersParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameter, 1 } },
+    HashTableValue { "nullableBufferSourceMemberParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter, 1 } },
     HashTableValue { "testReturnValueOptimization"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_testReturnValueOptimization, 2 } },
     HashTableValue { "conditionallyExposedToWindowFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction, 0 } },
     HashTableValue { "conditionallyExposedToWorkerFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_conditionallyExposedToWorkerFunction, 0 } },
@@ -11513,7 +11519,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bufferSourceParamet
     if (callFrame->argumentCount() < 1) [[unlikely]]
         return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
     EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
-    auto dataConversionResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(*lexicalGlobalObject, argument0.value());
+    auto dataConversionResult = convert<IDLBufferSource>(*lexicalGlobalObject, argument0.value());
     if (dataConversionResult.hasException(throwScope)) [[unlikely]]
        return encodedJSValue();
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.bufferSourceParameter(dataConversionResult.releaseReturnValue()); })));
@@ -11522,6 +11528,69 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_bufferSourceParamet
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_bufferSourceParameterBody>(*lexicalGlobalObject, *callFrame, "bufferSourceParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_allowSharedBufferSourceParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLAllowSharedAdaptor<IDLBufferSource>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.allowSharedBufferSourceParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_allowSharedBufferSourceParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_allowSharedBufferSourceParameterBody>(*lexicalGlobalObject, *callFrame, "allowSharedBufferSourceParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBuffer>, IDLAllowSharedAdaptor<IDLArrayBufferView>>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.annotatedBufferSourceMembersParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameterBody>(*lexicalGlobalObject, *callFrame, "annotatedBufferSourceMembersParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_nullableBufferSourceMemberParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLUnion<IDLNull, IDLArrayBufferView, IDLArrayBuffer>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.nullableBufferSourceMemberParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_nullableBufferSourceMemberParameterBody>(*lexicalGlobalObject, *callFrame, "nullableBufferSourceMemberParameter");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_testReturnValueOptimizationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)

@@ -8013,7 +8013,14 @@ sub GetBaseIDLType
         my $promiseType = $type->extendedAttributes->{BypassDocumentFullyActiveCheck} ? "IDLPromiseIgnoringSuspension" : "IDLPromise";
         return "${promiseType}<" . GetIDLType($interface, @{$type->subtypes}[0]) . ">";
     }
-    return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">" if $type->isUnion;
+    if ($type->isUnion) {
+        my @subtypes = @{$type->subtypes};
+        if (scalar(@subtypes) == 2 && !grep { $_->isNullable || scalar(keys %{$_->extendedAttributes}) } @subtypes) {
+            my %names = map { $_->name => 1 } @subtypes;
+            return "IDLBufferSource" if $names{"ArrayBufferView"} && $names{"ArrayBuffer"};
+        }
+        return "IDLUnion<" . join(", ", GetIDLUnionMemberTypes($interface, $type)) . ">";
+    }
     return "IDLCallbackFunction<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackFunction($type);
     return "IDLCallbackInterface<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackInterface($type);
 

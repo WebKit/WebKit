@@ -10,6 +10,8 @@
         },
         "prototype": {
             "addEventListener": "type, listener, [useCapture]",
+            "allowSharedBufferSourceParameter": "data",
+            "annotatedBufferSourceMembersParameter": "data",
             "any": "a, b",
             "attachShadowRoot": "init",
             "bigInt64": "destination",
@@ -96,6 +98,7 @@
             "methodWithUSVStringArgTreatingNullAsEmptyString": "str",
             "methodWithUnsignedLongSequence": "unsignedLongSequence",
             "methodWithXPathNSResolverParameter": "resolver",
+            "nullableBufferSourceMemberParameter": "data",
             "nullableStringSpecialMethod": "index",
             "objMethodWithArgs": "longArg, strArg, objArg",
             "octetMethodWithArgs": "octetArg, strArg, objArg",

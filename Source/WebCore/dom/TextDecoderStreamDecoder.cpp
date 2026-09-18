@@ -43,7 +43,7 @@ TextDecoderStreamDecoder::TextDecoderStreamDecoder(Ref<TextDecoder>&& textDecode
 {
 }
 
-ExceptionOr<String> TextDecoderStreamDecoder::decode(std::optional<BufferSource::VariantType> value)
+ExceptionOr<String> TextDecoderStreamDecoder::decode(BufferSource value)
 {
     return m_textDecoder->decode(WTF::move(value), { true });
 }

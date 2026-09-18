@@ -483,6 +483,9 @@ enum TestConfidence { "high", "kinda-low" };
     stringifier attribute USVString stringifierAttribute;
 
     undefined bufferSourceParameter(BufferSource data);
+    undefined allowSharedBufferSourceParameter([AllowShared] BufferSource data);
+    undefined annotatedBufferSourceMembersParameter(([AllowShared] ArrayBuffer or [AllowShared] ArrayBufferView) data);
+    undefined nullableBufferSourceMemberParameter((ArrayBufferView? or ArrayBuffer) data);
 
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
 

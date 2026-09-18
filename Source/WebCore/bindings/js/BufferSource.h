@@ -71,9 +71,9 @@ public:
     {
     }
 
-    const VariantType& variant() const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
-        return m_variant;
+        return WTF::switchOn(m_variant, std::forward<F>(f)...);
     }
 
     size_t byteLength() const

@@ -30,7 +30,7 @@
 ] dictionary AuthenticationExtensionsLargeBlobInputs {
     DOMString support;
     boolean read;
-    [OverrideIDLType=IDLBufferSource] BufferSource write;
+    BufferSource write;
 };
 
 [
@@ -38,8 +38,8 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] dictionary AuthenticationExtensionsPRFValues {
-    required [OverrideIDLType=IDLBufferSource] BufferSource first;
-    [OverrideIDLType=IDLBufferSource] BufferSource second;
+    required BufferSource first;
+    BufferSource second;
 };
 
 [
