@@ -75,11 +75,7 @@ UnplacedGridItem::GridPosition UnplacedGridItem::GridPosition::create(const Styl
     int endLine = rawEndLine + static_cast<int>(leadingImplicitTracksCount);
 
     ASSERT(startLine >= 0 && endLine >= 0);
-    // The range is always forward. The span/auto branches derive endLine from startLine, and the
-    // explicit/explicit branch only reaches GFC for single-track placements: grid coverage requires
-    // the end line to be exactly one past the start (a distance of 1), so an inverted placement like
-    // grid-column: 3 / 1 stays on the legacy path and can never underflow span() here.
-    ASSERT(startLine <= endLine);
+    ASSERT(startLine < endLine);
     return DefinitePosition { static_cast<size_t>(startLine), static_cast<size_t>(endLine) };
 }
 
@@ -95,6 +91,16 @@ std::optional<std::pair<int, int>> UnplacedGridItem::resolveDefinitePosition(con
     if (start.isExplicit() && end.isExplicit()) {
         startLine = explicitLineToIndex(start, explicitTrackCount);
         endLine = explicitLineToIndex(end, explicitTrackCount);
+
+        // https://drafts.csswg.org/css-grid-1/#grid-placement-errors
+        // "If the placement for a grid item contains two lines, and the start line is further
+        // end-ward than the end line, swap the two lines."
+        if (startLine > endLine)
+            std::swap(startLine, endLine);
+        // "If the start line is equal to the end line, remove the end line." An item with only a
+        // start line occupies the one track after it.
+        else if (startLine == endLine)
+            endLine = startLine + 1;
     } else if (start.isExplicit() && end.isSpan()) {
         startLine = explicitLineToIndex(start, explicitTrackCount);
         endLine = startLine + end.spanPosition();
