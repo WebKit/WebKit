@@ -219,7 +219,6 @@ webkit.org/b/324276 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.GoToSe
 webkit.org/b/324277 TestWebKitAPI.ProcessSwap.HistoryItemIDConfusion [ Pass Timeout ]
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
 webkit.org/b/324363 [ mac Sequoia+ debug x86_64 ] TestWebKitAPI.ProcessSwap.NavigateCrossSiteBeforePageLoadEnd [ Pass Fail ]
-webkit.org/b/324130 [ mac arm64 siteisolation ] TestWebKitAPI.ProcessSwap.PageCacheWhenNavigatingFromJS [ Timeout ]
 webkit.org/b/321635 [ mac debug Tahoe ] TestWebKitAPI.ProcessSwap.SessionStorage [ Pass Failure ]
 webkit.org/b/324475 [ mac debug Sequoia ] TestWebKitAPI.ProcessSwap.SessionStorage [ Pass Timeout ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
