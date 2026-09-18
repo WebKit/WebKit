@@ -351,7 +351,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
             return;
         }
 
-        imageBuffer->context().drawImage(bitmapImage.get(), FloatPoint::zero());
+        imageBuffer->context().drawBitmapImage(bitmapImage.get(), FloatPoint::zero());
         m_data = { SharedBuffer::create(encodeData(WTF::move(imageBuffer), "image/png"_s)) };
     }
 }

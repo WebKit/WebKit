@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static Ref<Image> loadImageFromGResource(const char* iconName)
+static Ref<BitmapImage> loadImageFromGResource(const char* iconName)
 {
     auto icon = BitmapImage::create();
     GUniquePtr<char> path(g_strdup_printf(IMAGES_GRESOURCE_PATH "/%s", iconName));
@@ -49,7 +49,7 @@ static Ref<Image> loadImageFromGResource(const char* iconName)
     return icon;
 }
 
-Ref<Image> ImageAdapter::loadPlatformResource(const char* name)
+Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char* name)
 {
     return loadImageFromGResource(name);
 }

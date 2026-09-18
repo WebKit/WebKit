@@ -38,11 +38,15 @@ class ImageSource;
 class NativeImage;
 
 class BitmapImage final : public Image {
+    friend class GraphicsContext;
 public:
     WEBCORE_EXPORT static Ref<BitmapImage> create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     WEBCORE_EXPORT static Ref<BitmapImage> create(Ref<NativeImage>&&);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
+    WEBCORE_EXPORT static std::optional<Ref<BitmapImage>> create(RefPtr<ShareableBitmap>&&); // Uses `std::optional<Ref<...>>` to conform to the interface needed by IPC infrastructure.
+
+    WEBCORE_EXPORT static BitmapImage& nullImage();
 
     // Animation
     void startAnimation() final { m_source->startAnimation(); }

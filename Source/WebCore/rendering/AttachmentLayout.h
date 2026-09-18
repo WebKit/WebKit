@@ -27,6 +27,7 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
 
+#include "BitmapImage.h"
 #include "FloatRect.h"
 #include "RenderAttachment.h"
 #include <wtf/RetainPtr.h>
@@ -38,7 +39,6 @@ typedef const struct __CTLine * CTLineRef;
 
 namespace WebCore {
 
-class Image;
 
 #if PLATFORM(MAC)
 
@@ -90,8 +90,8 @@ struct AttachmentLayout {
     AttachmentLayoutStyle style;
     float progress { 0 };
     bool excludeTypographicLeading { false };
-    RefPtr<Image> icon;
-    RefPtr<Image> thumbnailIcon;
+    RefPtr<BitmapImage> icon;
+    RefPtr<BitmapImage> thumbnailIcon;
     Vector<CGPoint> origins;
     int baseline { 0 };
     bool hasProgress { false };

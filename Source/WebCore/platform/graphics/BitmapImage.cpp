@@ -33,6 +33,7 @@
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "NativeImageSource.h"
+#include "ShareableBitmap.h"
 
 namespace WebCore {
 
@@ -53,9 +54,26 @@ RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
     return adoptRef(*new BitmapImage(nativeImage.releaseNonNull()));
 }
 
+std::optional<Ref<BitmapImage>> BitmapImage::create(RefPtr<ShareableBitmap>&& bitmap)
+{
+    if (!bitmap)
+        return std::nullopt;
+    RefPtr image = bitmap->createImage();
+    if (!image)
+        return std::nullopt;
+    return image.releaseNonNull();
+}
+
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
 {
     return create(NativeImage::create(WTF::move(platformImage)));
+}
+
+BitmapImage& BitmapImage::nullImage()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<Ref<BitmapImage>> nullImage = BitmapImage::create();
+    return nullImage->get();
 }
 
 BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)

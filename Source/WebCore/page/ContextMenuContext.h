@@ -28,9 +28,9 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include <WebCore/BitmapImage.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/HitTestResult.h>
-#include <WebCore/Image.h>
 
 namespace WebCore {
 
@@ -75,11 +75,11 @@ public:
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    void setPotentialQRCodeNodeSnapshotImage(Image* image) { m_potentialQRCodeNodeSnapshotImage = image; }
-    Image* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
+    void setPotentialQRCodeNodeSnapshotImage(BitmapImage* image) { m_potentialQRCodeNodeSnapshotImage = image; }
+    BitmapImage* potentialQRCodeNodeSnapshotImage() const { return m_potentialQRCodeNodeSnapshotImage.get(); }
 
-    void setPotentialQRCodeViewportSnapshotImage(Image* image) { m_potentialQRCodeViewportSnapshotImage = image; }
-    Image* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
+    void setPotentialQRCodeViewportSnapshotImage(BitmapImage* image) { m_potentialQRCodeViewportSnapshotImage = image; }
+    BitmapImage* potentialQRCodeViewportSnapshotImage() const { return m_potentialQRCodeViewportSnapshotImage.get(); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)
@@ -101,8 +101,8 @@ private:
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    RefPtr<Image> m_potentialQRCodeNodeSnapshotImage;
-    RefPtr<Image> m_potentialQRCodeViewportSnapshotImage;
+    RefPtr<BitmapImage> m_potentialQRCodeNodeSnapshotImage;
+    RefPtr<BitmapImage> m_potentialQRCodeViewportSnapshotImage;
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS)

@@ -228,19 +228,19 @@ void CachedImage::allClientsRemoved()
         image->resetAnimation();
 }
 
-std::pair<WeakPtr<Image>, float> CachedImage::brokenImage(float deviceScaleFactor) const
+std::pair<WeakPtr<BitmapImage>, float> CachedImage::brokenImage(float deviceScaleFactor) const
 {
     if (deviceScaleFactor >= 3) {
-        static NeverDestroyed<Image*> brokenImageVeryHiRes(&ImageAdapter::loadPlatformResource("missingImage@3x").leakRef());
+        static NeverDestroyed<BitmapImage*> brokenImageVeryHiRes(&ImageAdapter::loadPlatformResource("missingImage@3x").leakRef());
         return std::make_pair(WeakPtr { *brokenImageVeryHiRes }, 3);
     }
 
     if (deviceScaleFactor >= 2) {
-        static NeverDestroyed<Image*> brokenImageHiRes(&ImageAdapter::loadPlatformResource("missingImage@2x").leakRef());
+        static NeverDestroyed<BitmapImage*> brokenImageHiRes(&ImageAdapter::loadPlatformResource("missingImage@2x").leakRef());
         return std::make_pair(WeakPtr { *brokenImageHiRes }, 2);
     }
 
-    static NeverDestroyed<Image*> brokenImageLoRes(&ImageAdapter::loadPlatformResource("missingImage").leakRef());
+    static NeverDestroyed<BitmapImage*> brokenImageLoRes(&ImageAdapter::loadPlatformResource("missingImage").leakRef());
     return std::make_pair(WeakPtr { *brokenImageLoRes }, 1);
 }
 

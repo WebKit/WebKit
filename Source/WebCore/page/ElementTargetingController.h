@@ -43,9 +43,9 @@
 
 namespace WebCore {
 
+class BitmapImage;
 class Element;
 class Document;
-class Image;
 class Node;
 class Page;
 
@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT uint64_t numberOfVisibilityAdjustmentRects();
     WEBCORE_EXPORT bool resetVisibilityAdjustments(const Vector<TargetedElementIdentifiers>&);
 
-    WEBCORE_EXPORT RefPtr<Image> snapshotIgnoringVisibilityAdjustment(NodeIdentifier, ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT RefPtr<BitmapImage> snapshotIgnoringVisibilityAdjustment(NodeIdentifier, ScriptExecutionContextIdentifier);
 
     WEBCORE_EXPORT static RefPtr<Element> elementFromSelectors(Document&, const TargetedElementSelectors&);
     WEBCORE_EXPORT static TargetedElementSelectors selectorsForElement(Element&);

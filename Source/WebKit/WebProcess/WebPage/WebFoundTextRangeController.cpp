@@ -541,7 +541,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
         for (const auto& path : paths)
             graphicsContext.fillPath(path);
 
-        graphicsContext.drawImage(*indicatorImage, textBoundingRectInRootViewCoordinates);
+        graphicsContext.drawBitmapImage(*indicatorImage, textBoundingRectInRootViewCoordinates);
     }
 }
 

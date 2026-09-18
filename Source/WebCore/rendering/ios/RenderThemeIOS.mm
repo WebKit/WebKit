@@ -1343,13 +1343,13 @@ LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment&) cons
 
 static void paintAttachmentIcon(GraphicsContext& context, AttachmentLayout& info)
 {
-    RefPtr<Image> iconImage;
+    RefPtr<BitmapImage> iconImage;
     if (info.thumbnailIcon)
         iconImage = info.thumbnailIcon;
     else if (info.icon)
         iconImage = info.icon;
     
-    context.drawImage(*iconImage, info.iconRect);
+    context.drawBitmapImage(*iconImage, info.iconRect, FloatRect { { }, iconImage->size() });
 }
 
 static void paintAttachmentProgress(GraphicsContext& context, AttachmentLayout& info)

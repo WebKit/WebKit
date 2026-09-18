@@ -175,8 +175,8 @@ private:
 #endif
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
-    void setPotentialQRCodeNodeSnapshotImage(WebCore::Image&);
-    void setPotentialQRCodeViewportSnapshotImage(WebCore::Image&);
+    void setPotentialQRCodeNodeSnapshotImage(WebCore::BitmapImage&);
+    void setPotentialQRCodeViewportSnapshotImage(WebCore::BitmapImage&);
 
     RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeNodeSnapshotImage;
     RefPtr<WebCore::ShareableBitmap> m_potentialQRCodeViewportSnapshotImage;

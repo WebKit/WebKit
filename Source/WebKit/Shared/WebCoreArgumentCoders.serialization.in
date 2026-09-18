@@ -1723,9 +1723,9 @@ header: <WebCore/TextIndicator.h>
     WebCore::FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;
     float contentImageScaleFactor;
-    RefPtr<WebCore::Image> contentImageWithHighlight;
-    RefPtr<WebCore::Image> contentImageWithoutSelection;
-    RefPtr<WebCore::Image> contentImage;
+    RefPtr<WebCore::BitmapImage> contentImageWithHighlight;
+    RefPtr<WebCore::BitmapImage> contentImageWithoutSelection;
+    RefPtr<WebCore::BitmapImage> contentImage;
     WebCore::Color estimatedBackgroundColor;
     WebCore::TextIndicatorPresentationTransition presentationTransition;
     OptionSet<WebCore::TextIndicatorOption> options;
@@ -1967,7 +1967,7 @@ header: <WebCore/KeyboardScroll.h>
 
 header: <WebCore/NotificationResources.h>
 [RefCounted] class WebCore::NotificationResources {
-    RefPtr<WebCore::Image> icon();
+    RefPtr<WebCore::BitmapImage> icon();
 };
 
 [RefCounted] class WebCore::IdentityTransformOperation {
@@ -6172,6 +6172,11 @@ header: <WebCore/Image.h>
     RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
 };
 
+header: <WebCore/BitmapImage.h>
+[RefCounted] class WebCore::BitmapImage {
+    RefPtr<WebCore::ShareableBitmap> toShareableBitmap();
+};
+
 [AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::FilterFunction subclasses {
     WebCore::SVGFilterRenderer
     WebCore::FEBlend
@@ -6293,7 +6298,7 @@ header: <WebCore/TextAttachmentForSerialization.h>
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
 
 [CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentSingleImage {
-    RefPtr<WebCore::Image> image;
+    RefPtr<WebCore::BitmapImage> image;
     WebCore::FloatSize size;
 }
 

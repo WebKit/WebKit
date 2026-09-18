@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
+Ref<BitmapImage> ImageAdapter::loadPlatformResource(const char *name)
 {
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
     NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"png"];
@@ -69,7 +69,7 @@ Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
     // Two theories are bad installs (image files are missing), and too-many-open-files.
     // See rdar://5607381
     ASSERT_NOT_REACHED();
-    return Image::nullImage();
+    return BitmapImage::nullImage();
 }
 
 RetainPtr<CFDataRef> ImageAdapter::tiffRepresentation(const Vector<Ref<NativeImage>>& nativeImages)

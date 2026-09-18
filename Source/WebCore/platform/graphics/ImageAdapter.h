@@ -57,6 +57,7 @@ typedef struct HBITMAP__ *HBITMAP;
 
 namespace WebCore {
 
+class BitmapImage;
 class Image;
 class IntSize;
 
@@ -68,7 +69,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT static Ref<Image> loadPlatformResource(const char* name);
+    WEBCORE_EXPORT static Ref<BitmapImage> loadPlatformResource(const char* name);
 #if PLATFORM(WIN)
     WEBCORE_EXPORT static RefPtr<NativeImage> nativeImageOfHBITMAP(HBITMAP);
 #endif

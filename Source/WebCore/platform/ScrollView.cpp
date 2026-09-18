@@ -27,6 +27,7 @@
 #include "ScrollView.h"
 
 #include "AccessibilityRegionContext.h"
+#include "BitmapImage.h"
 #include "CornerRadii.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
@@ -1472,11 +1473,11 @@ void ScrollView::paintScrollbars(GraphicsContext& context, const IntRect& rect)
 
 void ScrollView::paintPanScrollIcon(GraphicsContext& context)
 {
-    static NeverDestroyed<Ref<Image>> panScrollIcon = ImageAdapter::loadPlatformResource("panIcon");
+    static NeverDestroyed<Ref<BitmapImage>> panScrollIcon = ImageAdapter::loadPlatformResource("panIcon");
     IntPoint iconGCPoint = m_panScrollIconPoint;
     if (parent())
         iconGCPoint = protect(parent())->windowToContents(iconGCPoint);
-    context.drawImage(panScrollIcon.get(), iconGCPoint);
+    context.drawBitmapImage(panScrollIcon.get(), iconGCPoint);
 }
 
 void ScrollView::paint(GraphicsContext& context, const IntRect& rect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)

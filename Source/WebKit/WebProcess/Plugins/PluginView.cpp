@@ -551,7 +551,7 @@ void PluginView::paint(GraphicsContext& context, const IntRect& dirtyRect, Widge
             RefPtr image = transientPaintingSnapshot->createImage();
             if (!image)
                 return;
-            context.drawImage(*image, frameRect());
+            context.drawBitmapImage(*image, frameRect());
         } else {
             auto deviceScaleFactor = 1;
             if (auto* page = m_pluginElement->document().page())
