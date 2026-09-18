@@ -33,7 +33,6 @@ struct WebKit::FrameInfoData {
     String frameName;
     WebCore::FrameIdentifier frameID;
     Markable<WebKit::WebPageProxyIdentifier> webPageProxyID;
-    Markable<WebCore::FrameIdentifier> parentFrameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;
     WTF::ProcessID processID;
     bool isFocused;

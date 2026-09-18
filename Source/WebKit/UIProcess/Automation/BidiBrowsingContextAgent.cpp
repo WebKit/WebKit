@@ -364,8 +364,9 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::ge
     // https://w3c.github.io/webdriver-bidi/#original-opener
 
     if (includeParentID == IncludeParentID::Yes) {
-        if (tree.info.parentFrameID)
-            info->setParent(getBrowsingContextID(tree.info.parentFrameID.value()));
+        RefPtr frame = WebFrameProxy::webFrame(tree.info.frameID);
+        if (RefPtr parent = frame ? frame->parentFrame() : nullptr)
+            info->setParent(getBrowsingContextID(parent->frameID()));
         else
             info->setParentIsNull();
     }
