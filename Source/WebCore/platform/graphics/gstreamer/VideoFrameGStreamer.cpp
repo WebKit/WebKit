@@ -169,6 +169,9 @@ static RefPtr<ImageGStreamer> convertSampleToImage(const GRefPtr<GstSample>& sam
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
 {
+    if (!ensureGStreamerInitialized()) [[unlikely]]
+        return nullptr;
+
     ensureVideoFrameDebugCategoryInitialized();
     GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Creating VideoFrame from native image");
 
