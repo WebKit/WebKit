@@ -37,16 +37,12 @@ enum class QuirkSite : uint8_t {
     BankOfAmerica,
     Bing,
     CBSSports,
-    EA,
     Facebook,
     GoogleDocs,
     GoogleProperty,
     GoogleMaps,
     GoogleSearch,
     LinkedIn,
-    MyBinder,
-    NBA,
-    Netflix,
     Outlook,
     Reddit,
     SoundCloud,
@@ -221,6 +217,7 @@ enum class QuirkBehaviorID {
     NeedsNavigatorUserAgentDataQuirk,
     NeedsNowPlayingFullscreenSwapQuirk,
     NeedsPartitionedCookiesQuirk,
+    NeedsPerDocumentAutoplayBehaviorQuirk,
     NeedsSuppressedPauseEventOnFullscreenExitQuirk,
     NeedsPreloadAutoQuirk,
     NeedsResettingTransitionCancelsRunningTransitionQuirk,
@@ -253,6 +250,7 @@ enum class QuirkBehaviorID {
     ShouldBlockFetchWithNewlineAndLessThan,
     ShouldBypassAsyncScriptDeferring,
     ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions,
+    ShouldComputeSimulatedMouseEventMovementDeltaQuirk,
     ShouldDelayReloadWhenRegisteringServiceWorker,
     ShouldDisableAdSkippingInPip,
     ShouldDisableDataURLPaddingValidation,
@@ -300,6 +298,7 @@ enum class QuirkBehaviorID {
     ShouldNavigatorPluginsBeEmpty,
     ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk,
     ShouldPreventDispatchOfTouchEventQuirk,
+    ShouldPreventKeyframeEffectAccelerationQuirk,
     ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk,
     ShouldReportDocumentAsVisibleIfActivePIPQuirk,
     ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk,
@@ -450,6 +449,7 @@ inline constexpr QuirkBehavior needsMozillaFileTypeForDataTransferQuirk { WebCor
 inline constexpr QuirkBehavior needsNavigatorUserAgentDataQuirk { WebCore::QuirkBehaviorID::NeedsNavigatorUserAgentDataQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsNowPlayingFullscreenSwapQuirk { WebCore::QuirkBehaviorID::NeedsNowPlayingFullscreenSwapQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior needsPartitionedCookiesQuirk { WebCore::QuirkBehaviorID::NeedsPartitionedCookiesQuirk, BuildCondition::always };
+inline constexpr QuirkBehavior needsPerDocumentAutoplayBehaviorQuirk { WebCore::QuirkBehaviorID::NeedsPerDocumentAutoplayBehaviorQuirk, !BuildCondition::mac };
 inline constexpr QuirkBehavior needsSuppressedPauseEventOnFullscreenExitQuirk { WebCore::QuirkBehaviorID::NeedsSuppressedPauseEventOnFullscreenExitQuirk, BuildCondition::iOS };
 inline constexpr QuirkBehavior needsPreloadAutoQuirk { WebCore::QuirkBehaviorID::NeedsPreloadAutoQuirk, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior needsResettingTransitionCancelsRunningTransitionQuirk { WebCore::QuirkBehaviorID::NeedsResettingTransitionCancelsRunningTransitionQuirk, BuildCondition::always };
@@ -482,6 +482,7 @@ inline constexpr QuirkBehavior shouldAvoidScrollingWhenFocusedContentIsVisibleQu
 inline constexpr QuirkBehavior shouldBlockFetchWithNewlineAndLessThan { WebCore::QuirkBehaviorID::ShouldBlockFetchWithNewlineAndLessThan, BuildCondition::always };
 inline constexpr QuirkBehavior shouldBypassAsyncScriptDeferring { WebCore::QuirkBehaviorID::ShouldBypassAsyncScriptDeferring, BuildCondition::always };
 inline constexpr QuirkBehavior shouldComparareUsedValuesForBorderWidthForTriggeringTransitions { WebCore::QuirkBehaviorID::ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions, BuildCondition::always };
+inline constexpr QuirkBehavior shouldComputeSimulatedMouseEventMovementDeltaQuirk { WebCore::QuirkBehaviorID::ShouldComputeSimulatedMouseEventMovementDeltaQuirk, BuildCondition::touchEvents || BuildCondition::touchEventRegions };
 inline constexpr QuirkBehavior shouldDelayReloadWhenRegisteringServiceWorker { WebCore::QuirkBehaviorID::ShouldDelayReloadWhenRegisteringServiceWorker, BuildCondition::always };
 inline constexpr QuirkBehavior shouldDisableAdSkippingInPip { WebCore::QuirkBehaviorID::ShouldDisableAdSkippingInPip, BuildCondition::pipSkipPreroll };
 inline constexpr QuirkBehavior shouldDisableDataURLPaddingValidation { WebCore::QuirkBehaviorID::ShouldDisableDataURLPaddingValidation, BuildCondition::always };
@@ -529,6 +530,7 @@ inline constexpr QuirkBehavior shouldLayOutAtMinimumWindowWidthWhenIgnoringScali
 inline constexpr QuirkBehavior shouldNavigatorPluginsBeEmpty { WebCore::QuirkBehaviorID::ShouldNavigatorPluginsBeEmpty, BuildCondition::iOSFamily };
 inline constexpr QuirkBehavior shouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk { WebCore::QuirkBehaviorID::ShouldOmitTouchEventDOMAttributesForDesktopWebsiteQuirk, BuildCondition::touchEvents };
 inline constexpr QuirkBehavior shouldPreventDispatchOfTouchEventQuirk { WebCore::QuirkBehaviorID::ShouldPreventDispatchOfTouchEventQuirk, BuildCondition::touchEvents || BuildCondition::touchEventRegions };
+inline constexpr QuirkBehavior shouldPreventKeyframeEffectAccelerationQuirk { WebCore::QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk { WebCore::QuirkBehaviorID::ShouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk, BuildCondition::always };
 inline constexpr QuirkBehavior shouldReportDocumentAsVisibleIfActivePIPQuirk { WebCore::QuirkBehaviorID::ShouldReportDocumentAsVisibleIfActivePIPQuirk, BuildCondition::pictureInPictureAPI };
 inline constexpr QuirkBehavior shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk { WebCore::QuirkBehaviorID::ShouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk, BuildCondition::always };

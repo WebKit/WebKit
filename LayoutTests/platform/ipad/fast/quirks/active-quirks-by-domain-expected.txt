@@ -77,7 +77,7 @@ https://www.dictionary.com/
 https://www.disneyplus.com/
     ShouldHideCoarsePointerCharacteristicsQuirk
 https://www.ea.com/
-    (none)
+    ShouldPreventKeyframeEffectAccelerationQuirk
 https://www.espn.com/
     AllowLayeredFullscreenVideos
     NeedsSuppressedPauseEventOnFullscreenExitQuirk
@@ -85,6 +85,7 @@ https://www.espn.com/
 https://www.facebook.com/
     NeedsFacebookRemoveNotSupportedQuirk
     RequiresUserGestureToPauseInPictureInPictureQuirk
+    ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
     ShouldEnableCameraAndMicrophonePermissionStateQuirk
@@ -232,8 +233,10 @@ https://www.messenger.com/
     ShouldEnableRemoteTrackLabelQuirk
 https://www.netflix.com/
     NeedsNetflixVolumeSliderQuirk
+    NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsSeekingSupportDisabledQuirk
 https://www.nba.com/
+    NeedsPerDocumentAutoplayBehaviorQuirk
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.nfl.com/
     ShouldSuppressHLSSubtitles
@@ -292,6 +295,7 @@ https://www.thesaurus.com/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.tiktok.com/
     NeedsTikTokOverflowingContentQuirk
+    ShouldComputeSimulatedMouseEventMovementDeltaQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
     ShouldDispatchSimulatedMouseEventsQuirk
 https://trix-editor.org/

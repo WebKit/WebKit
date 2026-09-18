@@ -69,7 +69,7 @@ https://www.dictionary.com/
 https://www.disneyplus.com/
     (none)
 https://www.ea.com/
-    (none)
+    ShouldPreventKeyframeEffectAccelerationQuirk
 https://www.espn.com/
     ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
 https://www.facebook.com/

@@ -303,7 +303,7 @@ static constexpr Quirk fullTable[] = {
         .isAvailable = iOSFamily && desktopContentModeQuirks },
 
     { .match = URLMatch::domain("ea.com"_s),
-        .site = QuirkSite::EA },
+        .behaviors = { shouldPreventKeyframeEffectAccelerationQuirk } },
 
     { .match = URLMatch::domain("espn.com"_s),
         .behaviors = {
@@ -342,6 +342,8 @@ static constexpr Quirk fullTable[] = {
             shouldEnableRTCEncodedStreamsQuirk,
             // facebook.com rdar://174179871
             shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onSliderRole)),
+            // facebook.com rdar://174179871
+            shouldComputeSimulatedMouseEventMovementDeltaQuirk,
         },
         .site = QuirkSite::Facebook },
 
@@ -569,8 +571,8 @@ static constexpr Quirk fullTable[] = {
     { .match = URLMatch::domain("nba.com"_s),
         .behaviors = {
             needsScriptToEvaluateBeforeRunningScriptFromURLQuirk(QuirkParameters::fromScript(nbaSeekBarFixScript)),
+            needsPerDocumentAutoplayBehaviorQuirk,
         },
-        .site = QuirkSite::NBA,
         .isAvailable = iOSFamily },
 
     { .match = URLMatch::domain("nba.com"_s).when(smallScreen()),
@@ -580,7 +582,6 @@ static constexpr Quirk fullTable[] = {
     // mybinder.org rdar://51770057
     { .match = URLMatch::domain("mybinder.org"_s),
         .behaviors = { shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onDockerPanelTabBar)) },
-        .site = QuirkSite::MyBinder,
         .isAvailable = touchEvents || touchEventRegions },
 
     // naver.com rdar://48068610
@@ -595,8 +596,9 @@ static constexpr Quirk fullTable[] = {
             needsNetflixVolumeSliderQuirk,
             // netflix.com https://bugs.webkit.org/show_bug.cgi?id=304608
             shouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick,
-        },
-        .site = QuirkSite::Netflix },
+            // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
+            needsPerDocumentAutoplayBehaviorQuirk,
+        } },
 
     { .match = URLMatch::domain("netflix.com"_s),
         .behaviors = { needsNowPlayingFullscreenSwapQuirk },
@@ -737,6 +739,8 @@ static constexpr Quirk fullTable[] = {
             shouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
             // tiktok.com rdar://174179805
             shouldDispatchSimulatedMouseEventsQuirk.when(elementMatchesSelector(onSliderRole)),
+            // tiktok.com rdar://174179805
+            shouldComputeSimulatedMouseEventMovementDeltaQuirk,
         },
         .site = QuirkSite::TikTok },
 

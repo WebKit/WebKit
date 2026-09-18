@@ -283,7 +283,7 @@ bool Quirks::needsPerDocumentAutoplayBehavior() const
     ASSERT(document->isTopDocument());
     return allowedAutoplayQuirks(document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
 #else
-    return m_quirksData.isSite(QuirkSite::Netflix) || m_quirksData.isSite(QuirkSite::NBA);
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsPerDocumentAutoplayBehaviorQuirk);
 #endif
 }
 
@@ -551,7 +551,7 @@ bool Quirks::shouldComputeSimulatedMouseEventMovementDelta() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.isSite(QuirkSite::TikTok) || m_quirksData.isSite(QuirkSite::Facebook);
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldComputeSimulatedMouseEventMovementDeltaQuirk);
 }
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
@@ -594,7 +594,7 @@ bool Quirks::needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommand() const
 
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    return m_quirksData.isSite(QuirkSite::GoogleDocs);
+    return m_quirksData.isBehaviorEnabled(QuirkBehaviorID::NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk);
 }
 
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199587
@@ -2479,7 +2479,7 @@ bool Quirks::shouldRewriteMediaRangeRequestForURL(const URL& url) const
 // rdar://106770785
 bool Quirks::shouldPreventKeyframeEffectAcceleration(const KeyframeEffect& effect) const
 {
-    if (!needsQuirks() || !m_quirksData.isSite(QuirkSite::EA))
+    if (!needsQuirks() || !m_quirksData.isBehaviorEnabled(QuirkBehaviorID::ShouldPreventKeyframeEffectAccelerationQuirk))
         return false;
 
     auto target = effect.targetStyleable();
