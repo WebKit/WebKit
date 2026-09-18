@@ -1106,6 +1106,8 @@ WI.Table = class Table extends WI.View
         let updateOffsetThreshold = rowHeight * 10;
         let overflowPadding = updateOffsetThreshold * 3;
 
+        let heightChanged = isNaN(this._cachedHeight);
+
         let scrollTop = this._calculateScrollTop();
         let scrollableOffsetHeight = this._calculateOffsetHeight();
 
@@ -1117,7 +1119,7 @@ WI.Table = class Table extends WI.View
         let belowTopThreshold = !currentTopMargin || scrollTop > currentTopMargin + updateOffsetThreshold;
         let aboveBottomThreshold = !currentBottomMargin || scrollTop + scrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
 
-        if (belowTopThreshold && aboveBottomThreshold && !isNaN(this._previousRevealedRowCount))
+        if (belowTopThreshold && aboveBottomThreshold && !heightChanged && !isNaN(this._previousRevealedRowCount))
             return;
 
         let numberOfRows = this.numberOfRows;

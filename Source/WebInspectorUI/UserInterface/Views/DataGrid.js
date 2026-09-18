@@ -1144,23 +1144,22 @@ WI.DataGrid = class DataGrid extends WI.View
         let updateOffsetThreshold = rowHeight * 5;
         let overflowPadding = updateOffsetThreshold * 3;
 
-        if (isNaN(this._cachedScrollTop))
-            this._cachedScrollTop = this._scrollContainerElement.scrollTop;
+        let heightChanged = isNaN(this._cachedScrollableOffsetHeight);
 
-        if (isNaN(this._cachedScrollableOffsetHeight))
-            this._cachedScrollableOffsetHeight = this._scrollContainerElement.offsetHeight;
+        let scrollTop = this._calculateScrollTop();
+        let scrollableOffsetHeight = this._calculateOffsetHeight();
 
-        let visibleRowCount = Math.ceil((this._cachedScrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
+        let visibleRowCount = Math.ceil((scrollableOffsetHeight + (overflowPadding * 2)) / rowHeight);
 
         if (!focusedDataGridNode) {
             let currentTopMargin = this._topDataTableMarginHeight;
             let currentBottomMargin = this._bottomDataTableMarginHeight;
             let currentTableBottom = currentTopMargin + (visibleRowCount * rowHeight);
 
-            let belowTopThreshold = !currentTopMargin || this._cachedScrollTop > currentTopMargin + updateOffsetThreshold;
-            let aboveBottomThreshold = !currentBottomMargin || this._cachedScrollTop + this._cachedScrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
+            let belowTopThreshold = !currentTopMargin || scrollTop > currentTopMargin + updateOffsetThreshold;
+            let aboveBottomThreshold = !currentBottomMargin || scrollTop + scrollableOffsetHeight < currentTableBottom - updateOffsetThreshold;
 
-            if (belowTopThreshold && aboveBottomThreshold && !isNaN(this._previousRevealedRowCount))
+            if (belowTopThreshold && aboveBottomThreshold && !heightChanged && !isNaN(this._previousRevealedRowCount))
                 return;
         }
 
@@ -1170,12 +1169,12 @@ WI.DataGrid = class DataGrid extends WI.View
 
         if (focusedDataGridNode) {
             let focusedIndex = revealedRows.indexOf(focusedDataGridNode);
-            let firstVisibleRowIndex = this._cachedScrollTop / rowHeight;
+            let firstVisibleRowIndex = scrollTop / rowHeight;
             if (focusedIndex < firstVisibleRowIndex || focusedIndex > firstVisibleRowIndex + visibleRowCount)
-                this._scrollContainerElement.scrollTop = this._cachedScrollTop = (focusedIndex * rowHeight) - (this._cachedScrollableOffsetHeight / 2) + (rowHeight / 2);
+                this._scrollContainerElement.scrollTop = this._cachedScrollTop = (focusedIndex * rowHeight) - (scrollableOffsetHeight / 2) + (rowHeight / 2);
         }
 
-        let topHiddenRowCount = Math.max(0, Math.floor((this._cachedScrollTop - overflowPadding) / rowHeight));
+        let topHiddenRowCount = Math.max(0, Math.floor((scrollTop - overflowPadding) / rowHeight));
         let bottomHiddenRowCount = Math.max(0, this._previousRevealedRowCount - topHiddenRowCount - visibleRowCount);
 
         let marginTop = topHiddenRowCount * rowHeight;
@@ -1206,6 +1205,20 @@ WI.DataGrid = class DataGrid extends WI.View
 
         dataTableBodyElementFragment.appendChild(this._fillerRowElement);
         this.dataTableBodyElement.appendChild(dataTableBodyElementFragment);
+    }
+
+    _calculateOffsetHeight()
+    {
+        if (isNaN(this._cachedScrollableOffsetHeight))
+            this._cachedScrollableOffsetHeight = this._scrollContainerElement.realOffsetHeight;
+        return this._cachedScrollableOffsetHeight;
+    }
+
+    _calculateScrollTop()
+    {
+        if (isNaN(this._cachedScrollTop))
+            this._cachedScrollTop = this._scrollContainerElement.scrollTop;
+        return this._cachedScrollTop;
     }
 
     addPlaceholderNode()
