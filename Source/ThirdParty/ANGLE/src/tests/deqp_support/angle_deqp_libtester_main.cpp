@@ -169,6 +169,9 @@ ANGLE_LIBTESTER_EXPORT dEQPTestResult deqp_libtester_run(const char *caseName)
                     std::cout << "Compatiblity warning! " << result.getDescription() << std::endl;
                     return dEQPTestResult::Pass;
                 default:
+                    // Detailed result goes to the (suppressed) .qpa log so print why test
+                    // failed.
+                    std::cout << "Failed! " << result.getDescription() << std::endl;
                     return dEQPTestResult::Fail;
             }
         }

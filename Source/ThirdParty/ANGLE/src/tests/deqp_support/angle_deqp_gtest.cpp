@@ -691,20 +691,9 @@ void dEQPTest::SetUpTestSuite()
 
     TestSuite *testSuite = TestSuite::GetInstance();
 
-    std::stringstream logNameStream;
-    logNameStream << "TestResults";
-    if (testSuite->getBatchId() != -1)
-    {
-        logNameStream << "-Batch" << std::setfill('0') << std::setw(3) << testSuite->getBatchId();
-    }
-    logNameStream << ".qpa";
-
-    std::stringstream logArgStream;
-    logArgStream << "--deqp-log-filename="
-                 << testSuite->reserveTestArtifactPath(logNameStream.str());
-
-    std::string logNameString = logArgStream.str();
-    argv.push_back(logNameString.c_str());
+    // WebKit's EWS integration does not use dEQP's .qpa logs. Deliberately suppress them
+    // to avoid cluttering the runtime directory.
+    argv.push_back("--deqp-log-filename=/dev/null");
 
     if (!gLogImages)
     {
