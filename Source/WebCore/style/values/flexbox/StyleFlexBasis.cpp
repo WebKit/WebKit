@@ -32,6 +32,14 @@ namespace Style {
 
 std::optional<PreferredSize> FlexBasis::tryPreferredSize() const
 {
+    if (isContent())
+        return { };
+
+    // switchOn() hands a keyword-basis calc-size() to the keyword visitor, which would rebuild this
+    // as the bare keyword and drop the calculation, so carry it across directly.
+    if (isCalcSize())
+        return PreferredSize { get<typename NumericOrKeyword::CalcSize>() };
+
     return WTF::switchOn(*this,
         [&](const CSS::Keyword::Content&) -> std::optional<PreferredSize> {
             return { };

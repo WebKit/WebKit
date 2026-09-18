@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>calc-size() with an intrinsic basis on a list box</title>
+<link rel="help" href="https://drafts.csswg.org/css-values-5/#calc-size">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<style>
+  .shrink { display: inline-block; }
+</style>
+
+<div id="log"></div>
+<div id="container"></div>
+
+<script>
+// A list box sizes itself from its options and its own chrome, which differs between UAs, so every
+// expectation is derived from what this UA reports for the basis keyword on an identical control.
+const cases = [
+  { basis: "max-content", width: "calc-size(max-content, size)",        expected: ref => ref },
+  { basis: "max-content", width: "calc-size(max-content, size * 2)",    expected: ref => ref * 2 },
+  { basis: "max-content", width: "calc-size(max-content, size + 25px)", expected: ref => ref + 25 },
+  { basis: "min-content", width: "calc-size(min-content, size)",        expected: ref => ref },
+  { basis: "min-content", width: "calc-size(min-content, size + 25px)", expected: ref => ref + 25 },
+];
+
+const container = document.getElementById("container");
+
+function addListBox(width) {
+  const shrink = document.createElement("div");
+  shrink.className = "shrink";
+  shrink.innerHTML = "<select size='2'><option>aaaaaaaaaa</option><option>bb</option></select>";
+  shrink.firstChild.style.width = width;
+  container.appendChild(shrink);
+  return shrink;
+}
+
+const references = {
+  "max-content": addListBox("max-content"),
+  "min-content": addListBox("min-content"),
+};
+
+for (const testCase of cases)
+  testCase.shrink = addListBox(testCase.width);
+
+for (const testCase of cases) {
+  test(() => {
+    const reference = references[testCase.basis].getBoundingClientRect().width;
+    assert_greater_than(reference, 0, "the " + testCase.basis + " reference should be measurable");
+    assert_equals(testCase.shrink.getBoundingClientRect().width, testCase.expected(reference),
+                  "against a " + testCase.basis + " reference of " + reference + "px");
+  }, "shrink-to-fit parent of a list box with width: " + testCase.width);
+}
+</script>
