@@ -1008,7 +1008,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRe
     auto navigationID = policyDocumentLoader ? policyDocumentLoader->navigationID() : std::nullopt;
 
     Ref frame = m_frame;
-    uint64_t listenerID = frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::No, WebFrame::PolicyCheckKind::Navigation);
+    auto listenerID = frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::No, WebFrame::PolicyCheckKind::Navigation);
 
     bool isShowingInitialAboutBlank = m_localFrame->loader().stateMachine().isDisplayingInitialEmptyDocument();
     auto activeDocumentCOOPValue = m_localFrame->document() ? protect(m_localFrame->document())->crossOriginOpenerPolicy().value : CrossOriginOpenerPolicyValue::SameOrigin;
@@ -1032,7 +1032,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
     Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument;
     if (auto* document = localFrame->document())
         initiatingDocument = document->identifier();
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::No, WebFrame::PolicyCheckKind::NewWindow, initiatingDocument);
+    auto listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::No, WebFrame::PolicyCheckKind::NewWindow, initiatingDocument);
 
     auto& mouseEventData = navigationAction.mouseEventData();
     NavigationActionData navigationActionData {

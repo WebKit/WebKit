@@ -597,6 +597,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::NonProcessQualifiedContentWorldIdentifier"_s,
         "WebKit::PDFPluginIdentifier"_s,
         "WebKit::PageGroupIdentifier"_s,
+        "WebKit::PolicyListenerIdentifier"_s,
         "WebKit::QuotaIncreaseRequestIdentifier"_s,
         "WebKit::RealmIdentifier"_s,
         "WebKit::RemoteAudioDestinationIdentifier"_s,

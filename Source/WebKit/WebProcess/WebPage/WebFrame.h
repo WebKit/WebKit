@@ -31,6 +31,7 @@
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "PolicyDecision.h"
+#include "PolicyListenerIdentifier.h"
 #include "TransactionID.h"
 #include "WKBase.h"
 #include "WebLocalFrameLoaderClient.h"
@@ -158,9 +159,9 @@ public:
     // document that made it: once the frame has a different document, the check can no longer be honored. A
     // download attribute check also carries the load it was made for, which a newer navigation can replace.
     enum class PolicyCheckKind : uint8_t { Navigation, DownloadAttribute, NewWindow };
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, PolicyCheckKind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument = { }, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader = { });
+    PolicyListenerIdentifier setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, PolicyCheckKind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument = { }, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader = { });
     void invalidatePolicyListeners();
-    void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
+    void didReceivePolicyDecision(PolicyListenerIdentifier, PolicyDecision&&);
 
     void didFinishLoadInAnotherProcess();
     void removeFromTree();
@@ -345,7 +346,7 @@ private:
         SingleThreadWeakPtr<WebCore::DocumentLoader> downloadAttributePolicyDocumentLoader;
         WebCore::FramePolicyFunction policyFunction;
     };
-    HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
+    HashMap<PolicyListenerIdentifier, PolicyCheck> m_pendingPolicyChecks;
 
     bool initiatingDocumentIsStillCurrent(const PolicyCheck&) const;
     bool newerNavigationOwnsDownloadAttributePolicyCheckLoad(const PolicyCheck&) const;

@@ -154,12 +154,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-static uint64_t NODELETE generateListenerID()
-{
-    static uint64_t uniqueListenerID = 1;
-    return uniqueListenerID++;
-}
-
 void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame)
 {
     m_coreFrame = coreFrame;
@@ -392,9 +386,9 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, PolicyCheckKind kind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader)
+PolicyListenerIdentifier WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, PolicyCheckKind kind, Markable<WebCore::ScriptExecutionContextIdentifier> initiatingDocument, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader)
 {
-    auto policyListenerID = generateListenerID();
+    auto policyListenerID = PolicyListenerIdentifier::generate();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
         forNavigationAction,
         kind,
@@ -663,7 +657,7 @@ void WebFrame::invalidatePolicyListeners()
     // download: https://html.spec.whatwg.org/multipage/links.html#downloading-hyperlinks
     m_policyDownloadID = { };
 
-    HashMap<uint64_t, PolicyCheck> policyChecksToCancel;
+    HashMap<PolicyListenerIdentifier, PolicyCheck> policyChecksToCancel;
     for (auto& [listenerID, policyCheck] : std::exchange(m_pendingPolicyChecks, { })) {
         if (policyCheck.kind != PolicyCheckKind::Navigation && initiatingDocumentIsStillCurrent(policyCheck))
             m_pendingPolicyChecks.add(listenerID, WTF::move(policyCheck));
@@ -676,7 +670,7 @@ void WebFrame::invalidatePolicyListeners()
         policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& policyDecision)
+void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, PolicyDecision&& policyDecision)
 {
     if (RefPtr page = m_page.get()) {
 #if ENABLE(APP_BOUND_DOMAINS)

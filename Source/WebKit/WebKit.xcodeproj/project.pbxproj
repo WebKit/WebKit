@@ -6015,6 +6015,7 @@
 		49DC1DDF27E5128F00C1CB36 /* CSPExtensionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CSPExtensionUtilities.mm; sourceTree = "<group>"; };
 		49DC1DE027E5129000C1CB36 /* CSPExtensionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSPExtensionUtilities.h; sourceTree = "<group>"; };
 		49ECA41B23FCA4860023358D /* PolicyDecision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PolicyDecision.h; sourceTree = "<group>"; };
+		B1A7F0E42C9D4A1100E5C3D7 /* PolicyListenerIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PolicyListenerIdentifier.h; sourceTree = "<group>"; };
 		49FBEFFA239AD97800BD032F /* _WKResourceLoadStatisticsThirdParty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadStatisticsThirdParty.h; sourceTree = "<group>"; };
 		49FBEFFB239ADB1800BD032F /* _WKResourceLoadStatisticsFirstParty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKResourceLoadStatisticsFirstParty.h; sourceTree = "<group>"; };
 		49FBEFFC239B011D00BD032F /* _WKResourceLoadStatisticsFirstParty.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKResourceLoadStatisticsFirstParty.mm; sourceTree = "<group>"; };
@@ -10585,6 +10586,7 @@
 				F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */,
 				49ECA41B23FCA4860023358D /* PolicyDecision.h */,
 				86D1967229A4E25F0083B077 /* PolicyDecision.serialization.in */,
+				B1A7F0E42C9D4A1100E5C3D7 /* PolicyListenerIdentifier.h */,
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				2D4EDA892AFA220B003396F7 /* PrintInfo.serialization.in */,
