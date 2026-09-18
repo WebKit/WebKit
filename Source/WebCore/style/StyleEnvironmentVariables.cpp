@@ -113,8 +113,16 @@ void EnvironmentVariables::setLinkParameters(const LinkParameters& parameters)
     m_linkParameterValues.clear();
 
     for (auto& parameter : parameters) {
-        auto name = parameter->spec.name();
-        m_linkParameterValues.set(name, CustomProperty::createForVariableData(name, parameter->value.value.copyRef()));
+        auto& name = parameter->spec.name();
+        auto set = [&](Ref<CSSVariableData>&& value) {
+            m_linkParameterValues.set(name, CustomProperty::createForVariableData(name, WTF::move(value)));
+        };
+
+        WTF::switchOn(parameter->resolved,
+            [&](LinkParameter::Unresolved) { set(parameter->value.value.copyRef()); },
+            [](LinkParameter::Invalid) { },
+            [&](const Ref<CSSVariableData>& resolved) { set(resolved.copyRef()); }
+        );
     }
 
     Ref<Document> document = m_document.get();
