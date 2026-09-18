@@ -623,6 +623,7 @@ if (ENABLE_WEBKIT)
             Tests/IPC/StreamConnectionEncoderTests.cpp
             Tests/IPC/StreamConnectionTests.cpp
             Tests/IPC/StreamConnectionWorkQueueTests.cpp
+            Tests/IPC/SwiftDeferredReplyTests.cpp
             Tests/IPC/ThreadSafeObjectHeapTests.cpp
             Tests/IPC/TransferStringTests.cpp
             Tests/IPC/WebFoundTextRangeTests.cpp
