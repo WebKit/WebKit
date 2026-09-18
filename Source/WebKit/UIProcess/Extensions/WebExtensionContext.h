@@ -1196,6 +1196,8 @@ private:
 #elif ENABLE(2022_GLIB_API)
     GRefPtr<WebKitWebView> m_backgroundWebView;
     GWeakPtr<WebKitWebExtensionContext> m_delegate;
+    GRefPtr<GPtrArray> changedMatchPatterns;
+    GRefPtr<GPtrArray> changedPermissions;
 #endif
     Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_backgroundWebViewActivity;
     RefPtr<API::Error> m_backgroundContentLoadError;
