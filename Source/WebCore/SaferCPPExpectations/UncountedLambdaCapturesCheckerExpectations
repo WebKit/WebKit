@@ -1,67 +1,31 @@
-[ macOS ] Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
-[ macOS ] Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
-[ macOS ] Modules/mediastream/PeerConnectionBackend.cpp
 Modules/mediastream/RTCDataChannel.cpp
-[ macOS ] Modules/mediastream/RTCPeerConnection.cpp
-[ macOS ] Modules/mediastream/RTCRtpSender.cpp
-[ macOS ] Modules/push-api/PushDatabase.cpp
-[ macOS ] Modules/webaudio/OfflineAudioDestinationNode.cpp
-[ macOS ] Modules/webcodecs/WebCodecsAudioDecoder.cpp
-[ macOS ] Modules/webcodecs/WebCodecsAudioEncoder.cpp
-[ macOS ] Modules/webcodecs/WebCodecsBase.cpp
-[ macOS ] Modules/webcodecs/WebCodecsVideoDecoder.cpp
-[ macOS ] Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webdatabase/DatabaseThread.cpp
 animation/KeyframeEffect.cpp
-[ macOS ] contentextensions/ContentExtensionsBackend.cpp
-[ macOS ] crypto/SubtleCrypto.cpp
-[ macOS ] css/CSSPrimitiveValue.cpp
-[ macOS ] css/CSSValue.cpp
-[ macOS ] css/StyleRule.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
-[ macOS ] dom/CustomElementDefaultARIA.cpp
-[ macOS ] dom/RejectedPromiseTracker.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
-[ macOS ] loader/NetscapePlugInStreamLoader.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
-[ macOS ] page/cocoa/ResourceUsageOverlayCocoa.mm
 page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/PreviewConverter.cpp
 platform/ScrollableArea.cpp
-[ macOS ] platform/cocoa/NetworkExtensionContentFilter.mm
-[ macOS ] platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
-[ macOS ] platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
-[ macOS ] platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
-[ macOS ] platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
-[ macOS ] platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
-[ macOS ] platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
-[ macOS ] platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
-[ macOS ] rendering/RenderBox.cpp
 rendering/RenderElement.cpp
 rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
-[ macOS ] rendering/RenderReplaced.cpp
 rendering/RenderText.cpp
 rendering/svg/RenderSVGText.cpp
 style/StyleCustomProperty.cpp
 style/Styleable.cpp
 style/computed/data/StyleCustomPropertyData.cpp
-[ macOS ] style/values/StyleValueTypes.h
 style/values/backgrounds/StyleFillLayers.h
-[ macOS ] style/values/filter-effects/StyleFilterInterpolation.h
 style/values/grid/StyleGridTrackBreadth.cpp
 style/values/images/StyleGradient.cpp
 style/values/primitives/StyleKeyword+CSSValueCreation.h
 style/values/primitives/StyleKeyword+Serialization.h
 style/values/primitives/StylePrimitiveNumericTypes+Conversions.h
-[ macOS ] workers/WorkerMessagingProxy.cpp
-[ macOS ] workers/WorkerOrWorkletThread.cpp
-[ macOS ] workers/shared/SharedWorkerObjectConnection.cpp
