@@ -1223,7 +1223,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthRespectingMinMaxWidth(Layo
 template<typename SizeType>
 LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logicalWidth) const
 {
-    auto calculateContainerWidth = [&] {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto calculateContainerWidth = [&] {
         if (isOutOfFlowPositioned()) {
             PositionedLayoutConstraints constraints(*this, LogicalBoxAxis::Inline);
             return constraints.containingSize();
@@ -1233,7 +1233,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         return perpendicularContainingBlockLogicalHeight();
     };
 
-    auto percentageOrCalc = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalWidth) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto percentageOrCalc = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalWidth) {
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
         if (auto containerWidth = calculateContainerWidth(); containerWidth > 0 || (!containerWidth && (containingBlock()->style().logicalWidth().isSpecified()))) {
@@ -1245,13 +1245,13 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidthUsing(const SizeType& logi
         return 0_lu;
     };
 
-    auto content = [&](const auto& keyword, const auto& availableLogicalWidth) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto content = [&](const auto& keyword, const auto& availableLogicalWidth) {
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
         return computeSizingKeywordLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
     };
 
-    return WTF::switchOn(logicalWidth,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalWidth,
         [&](const typename SizeType::Fixed& fixedLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(fixedLogicalWidth);
         },
@@ -1387,7 +1387,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
         ASSERT(!replacedMaxLogicalHeightComputesAsNone());
 #endif
 
-    auto percentageOrCalculated = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalHeight) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto percentageOrCalculated = [&](Style::IsPercentageOrCalcOrCalcSize auto const& logicalHeight) {
         auto* container = isOutOfFlowPositioned() ? this->container() : containingBlock();
         while (container && container->shouldSkipForPercentageResolution()) {
             // Stop at rendering context root.
@@ -1458,11 +1458,11 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeightUsingGeneric(const SizeTy
             return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate<LayoutUnit>(logicalHeight, availableHeight, style().usedZoomForLength()));
     };
 
-    auto content = [&] {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto content = [&] {
         return adjustContentBoxLogicalHeightForBoxSizing(computeSizingKeywordLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
     };
 
-    return WTF::switchOn(logicalHeight,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalHeight,
         [&](const typename SizeType::Fixed& fixedLogicalHeight) -> LayoutUnit {
             return adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight.resolveZoom(style().usedZoomForLength()) });
         },

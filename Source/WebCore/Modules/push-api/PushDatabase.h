@@ -28,11 +28,8 @@
 #include <WebCore/EpochTimeStamp.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <WebCore/SQLiteDatabase.h>
-#include <WebCore/SQLiteStatement.h>
-#include <WebCore/SQLiteStatementAutoResetScope.h>
 #include <span>
 #include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Markable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -118,16 +115,18 @@ public:
     WEBCORE_EXPORT void setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier&, const String& securityOrigin, bool, CompletionHandler<void(bool recordsChanged)>&&);
 
 private:
-    PushDatabase(Ref<WorkQueue>&&, UniqueRef<WebCore::SQLiteDatabase>&&);
+    // Owns the SQLite connection and the prepared statement cache. Only touched on the work queue,
+    // and kept alive by every block dispatched there, so that PushDatabase itself never needs to be
+    // captured by those blocks. This lets ~PushDatabase run as soon as the last client reference is
+    // gone, which is what guarantees the database file is closed synchronously at that point.
+    class Storage;
 
-    WebCore::SQLiteStatementAutoResetScope cachedStatementOnQueue(ASCIILiteral query);
-    template<typename... Args> WebCore::SQLiteStatementAutoResetScope bindStatementOnQueue(ASCIILiteral query, Args&&...);
+    PushDatabase(Ref<WorkQueue>&&, UniqueRef<WebCore::SQLiteDatabase>&&);
 
     void dispatchOnWorkQueue(Function<void()>&&);
 
     const Ref<WorkQueue> m_queue;
-    UniqueRef<WebCore::SQLiteDatabase> m_db;
-    HashMap<ASCIILiteral, UniqueRef<WebCore::SQLiteStatement>> m_statements;
+    const Ref<Storage> m_storage;
 };
 
 } // namespace WebCore

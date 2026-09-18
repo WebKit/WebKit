@@ -46,7 +46,7 @@ template<> Ref<DeprecatedCSSOMValue> makeListDeprecatedCSSOMValue<SerializationS
 template<VariantLike CSSType> struct DeprecatedCSSOMValueCreation<CSSType> {
     template<typename... Rest> Ref<DeprecatedCSSOMValue> operator()(CSSValuePool& pool, CSSStyleDeclaration& owner, const CSSType& value, Rest&&... rest)
     {
-        return WTF::switchOn(value, [&](const auto& alternative) { return createDeprecatedCSSOMValue(pool, owner, alternative, std::forward<Rest>(rest)...); });
+        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(value, [&](const auto& alternative) { return createDeprecatedCSSOMValue(pool, owner, alternative, std::forward<Rest>(rest)...); });
     }
 };
 

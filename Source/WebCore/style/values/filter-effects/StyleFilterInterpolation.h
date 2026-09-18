@@ -42,7 +42,7 @@ auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Styl
 {
     ASSERT(from.index() == to.index());
 
-    return WTF::visit(WTF::makeVisitor(
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
         [&]<typename T>(const T& fromValue, const T& toValue) -> FilterValue {
             return Style::blend(fromValue, toValue, fromStyle, toStyle, context);
         },
@@ -55,7 +55,7 @@ auto blendFilterValue(const FilterValue& from, const FilterValue& to, const Styl
 template<typename FilterValue>
 auto blendFilterValueFromOnly(const FilterValue& from, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
-    return WTF::visit(WTF::makeVisitor(
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& fromValue) -> FilterValue {
             return Style::blend(fromValue, FunctionNotation<C, T> { T::passthroughForInterpolation() }, fromStyle, toStyle, context);
         },
@@ -68,7 +68,7 @@ auto blendFilterValueFromOnly(const FilterValue& from, const Style::ComputedStyl
 template<typename FilterValue>
 auto blendFilterValueToOnly(const FilterValue& to, const Style::ComputedStyle& fromStyle, const Style::ComputedStyle& toStyle, const BlendingContext& context) -> FilterValue
 {
-    return WTF::visit(WTF::makeVisitor(
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::visit(WTF::makeVisitor(
         [&]<CSSValueID C, typename T>(const FunctionNotation<C, T>& toValue) -> FilterValue {
             return Style::blend(FunctionNotation<C, T> { T::passthroughForInterpolation() }, toValue, fromStyle, toStyle, context);
         },

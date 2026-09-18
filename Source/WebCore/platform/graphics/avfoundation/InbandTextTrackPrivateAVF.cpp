@@ -508,7 +508,7 @@ bool InbandTextTrackPrivateAVF::processVTTFileHeader(CMFormatDescriptionRef form
         return false;
 
     auto identifier = LOGIDENTIFIER;
-    notifyMainThreadClient([headerData = WTF::move(headerData), identifier, this](auto& client) {
+    notifyMainThreadClient([headerData = WTF::move(headerData), identifier, this, protectedThis = Ref { *this }](auto& client) {
         // A WebVTT header is terminated by "One or more WebVTT line terminators" so append two line feeds to make sure the parser
         // reccognizes this string as a full header.
         auto header = makeString(headerData, "\n\n"_s);

@@ -336,21 +336,24 @@ void RTCPeerConnection::createOffer(RTCOfferOptions&& options, Ref<DeferredPromi
         }
     }
 
-    chainOperation(WTF::move(promise), [this, options = WTF::move(options)](Ref<DeferredPromise>&& promise) mutable {
-        if (m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveLocalOffer) {
+    chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, options = WTF::move(options)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        if (protectedThis->m_signalingState != RTCSignalingState::Stable && protectedThis->m_signalingState != RTCSignalingState::HaveLocalOffer) {
             promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
-        protect(*m_backend)->createOffer(WTF::move(options), [this, protectedThis = Ref { *this }, promise = PeerConnection::SessionDescriptionPromise(WTF::move(promise))](auto&& result) mutable {
-            if (isClosed())
+        protect(*protectedThis->m_backend)->createOffer(WTF::move(options), [protectedThis = protectedThis.releaseNonNull(), promise = PeerConnection::SessionDescriptionPromise(WTF::move(promise))](auto&& result) mutable {
+            if (protectedThis->isClosed())
                 return;
             if (result.hasException()) {
                 promise.reject(result.releaseException());
                 return;
             }
             // https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-offer steps 4,5 and 6.
-            m_lastCreatedOffer = result.returnValue().sdp;
-            m_isLastCreatedOfferFresh = true;
+            protectedThis->m_lastCreatedOffer = result.returnValue().sdp;
+            protectedThis->m_isLastCreatedOfferFresh = true;
             promise.resolve(result.releaseReturnValue());
         });
     });
@@ -364,21 +367,24 @@ void RTCPeerConnection::createAnswer(RTCAnswerOptions&& options, Ref<DeferredPro
         return;
     }
 
-    chainOperation(WTF::move(promise), [this, options = WTF::move(options)](Ref<DeferredPromise>&& promise) mutable {
-        if (m_signalingState != RTCSignalingState::HaveRemoteOffer && m_signalingState != RTCSignalingState::HaveLocalPranswer) {
+    chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, options = WTF::move(options)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        if (protectedThis->m_signalingState != RTCSignalingState::HaveRemoteOffer && protectedThis->m_signalingState != RTCSignalingState::HaveLocalPranswer) {
             promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
-        protect(*m_backend)->createAnswer(WTF::move(options), [this, protectedThis = Ref { *this }, promise = PeerConnection::SessionDescriptionPromise(WTF::move(promise))](auto&& result) mutable {
-            if (isClosed())
+        protect(*protectedThis->m_backend)->createAnswer(WTF::move(options), [protectedThis = protectedThis.releaseNonNull(), promise = PeerConnection::SessionDescriptionPromise(WTF::move(promise))](auto&& result) mutable {
+            if (protectedThis->isClosed())
                 return;
             if (result.hasException()) {
                 promise.reject(result.releaseException());
                 return;
             }
             // https://w3c.github.io/webrtc-pc/#dfn-final-steps-to-create-an-answer steps 4,5 and 6.
-            m_lastCreatedAnswer = result.returnValue().sdp;
-            m_isLastCreatedAnswerFresh = true;
+            protectedThis->m_lastCreatedAnswer = result.returnValue().sdp;
+            protectedThis->m_isLastCreatedAnswerFresh = true;
             promise.resolve(result.releaseReturnValue());
         });
     });
@@ -434,20 +440,23 @@ void RTCPeerConnection::setLocalDescription(RTCLocalSessionDescriptionInit&& loc
     RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetLocalDescription, logIdentifier(), localDescription.sdp.utf8());
 #endif
 
-    chainOperation(WTF::move(promise), [this, localDescription = WTF::move(localDescription)](Ref<DeferredPromise>&& promise) mutable {
-        auto type = typeForSetLocalDescription(localDescription.type, m_signalingState);
+    chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, localDescription = WTF::move(localDescription)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        auto type = typeForSetLocalDescription(localDescription.type, protectedThis->m_signalingState);
         String sdp = localDescription.sdp;
         if (localDescription.type) {
             if (type == RTCSdpType::Offer && sdp.isEmpty())
-                sdp = m_lastCreatedOffer;
+                sdp = protectedThis->m_lastCreatedOffer;
             else if (type == RTCSdpType::Answer && sdp.isEmpty())
-                sdp = m_lastCreatedAnswer;
+                sdp = protectedThis->m_lastCreatedAnswer;
 
-            if (type == RTCSdpType::Offer && sdp != m_lastCreatedOffer && !isSdpFingerprintValid(m_lastCreatedOffer, sdp)) {
+            if (type == RTCSdpType::Offer && sdp != protectedThis->m_lastCreatedOffer && !isSdpFingerprintValid(protectedThis->m_lastCreatedOffer, sdp)) {
                 promise->reject(ExceptionCode::InvalidModificationError, "Local description does not match the last created offer"_s);
                 return;
             }
-            if ((type == RTCSdpType::Answer || type == RTCSdpType::Pranswer) && sdp != m_lastCreatedAnswer && !isSdpFingerprintValid(m_lastCreatedAnswer, sdp)) {
+            if ((type == RTCSdpType::Answer || type == RTCSdpType::Pranswer) && sdp != protectedThis->m_lastCreatedAnswer && !isSdpFingerprintValid(protectedThis->m_lastCreatedAnswer, sdp)) {
                 promise->reject(ExceptionCode::InvalidModificationError, "Local description does not match the last created answer"_s);
                 return;
             }
@@ -455,16 +464,16 @@ void RTCPeerConnection::setLocalDescription(RTCLocalSessionDescriptionInit&& loc
             // Parameterless setLocalDescription: reuse the cached last created offer/answer
             // only when it still represents the current system state, per
             // https://w3c.github.io/webrtc-pc/#dom-peerconnection-setlocaldescription.
-            if (type == RTCSdpType::Offer && m_isLastCreatedOfferFresh)
-                sdp = m_lastCreatedOffer;
-            else if (type == RTCSdpType::Answer && m_isLastCreatedAnswerFresh)
-                sdp = m_lastCreatedAnswer;
+            if (type == RTCSdpType::Offer && protectedThis->m_isLastCreatedOfferFresh)
+                sdp = protectedThis->m_lastCreatedOffer;
+            else if (type == RTCSdpType::Answer && protectedThis->m_isLastCreatedAnswerFresh)
+                sdp = protectedThis->m_lastCreatedAnswer;
         }
 
         RefPtr<RTCSessionDescription> description;
         if (!sdp.isEmpty() || (type != RTCSdpType::Offer && type != RTCSdpType::Answer))
             description = RTCSessionDescription::create(type, WTF::move(sdp));
-        protect(*m_backend)->setLocalDescription(description.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTF::move(promise))](ExceptionOr<void>&& result) mutable {
+        protect(*protectedThis->m_backend)->setLocalDescription(description.get(), [protectedThis = protectedThis.releaseNonNull(), promise = DOMPromiseDeferred<void>(WTF::move(promise))](ExceptionOr<void>&& result) mutable {
             if (protectedThis->isClosed())
                 return;
             promise.settle(WTF::move(result));
@@ -484,14 +493,17 @@ void RTCPeerConnection::setRemoteDescription(RTCSessionDescriptionInit&& remoteD
     RELEASE_LOG_FORWARDABLE(WebRTC, RtcPeerConnectionSetRemoteDescription, logIdentifier(), remoteDescription.sdp.utf8());
 #endif
 
-    chainOperation(WTF::move(promise), [this, remoteDescription = WTF::move(remoteDescription)](Ref<DeferredPromise>&& promise) mutable {
+    chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, remoteDescription = WTF::move(remoteDescription)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
         auto description = RTCSessionDescription::create(WTF::move(remoteDescription));
-        if (description->type() == RTCSdpType::Offer && m_signalingState != RTCSignalingState::Stable && m_signalingState != RTCSignalingState::HaveRemoteOffer) {
+        if (description->type() == RTCSdpType::Offer && protectedThis->m_signalingState != RTCSignalingState::Stable && protectedThis->m_signalingState != RTCSignalingState::HaveRemoteOffer) {
             auto rollbackDescription = RTCSessionDescription::create(RTCSdpType::Rollback, String { emptyString() });
-            protect(*m_backend)->setLocalDescription(rollbackDescription.ptr(), [this, protectedThis = Ref { *this }, description = WTF::move(description), promise = WTF::move(promise)](auto&&) mutable {
-                if (isClosed())
+            protect(*protectedThis->m_backend)->setLocalDescription(rollbackDescription.ptr(), [protectedThis = protectedThis.releaseNonNull(), description = WTF::move(description), promise = WTF::move(promise)](auto&&) mutable {
+                if (protectedThis->isClosed())
                     return;
-                protect(*m_backend)->setRemoteDescription(description.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTF::move(promise))](ExceptionOr<void>&& result) mutable {
+                protect(*protectedThis->m_backend)->setRemoteDescription(description.get(), [protectedThis = protectedThis.copyRef(), promise = DOMPromiseDeferred<void>(WTF::move(promise))](ExceptionOr<void>&& result) mutable {
                     if (protectedThis->isClosed())
                         return;
                     promise.settle(WTF::move(result));
@@ -499,7 +511,7 @@ void RTCPeerConnection::setRemoteDescription(RTCSessionDescriptionInit&& remoteD
             });
             return;
         }
-        protect(*m_backend)->setRemoteDescription(description.get(), [promise = DOMPromiseDeferred<void>(WTF::move(promise))](auto&& result) mutable {
+        protect(*protectedThis->m_backend)->setRemoteDescription(description.get(), [promise = DOMPromiseDeferred<void>(WTF::move(promise))](auto&& result) mutable {
             promise.settle(WTF::move(result));
         });
     });
@@ -537,8 +549,11 @@ void RTCPeerConnection::addIceCandidate(Candidate&& rtcCandidate, Ref<DeferredPr
         return;
     }
 
-    chainOperation(WTF::move(promise), [this, candidate = WTF::move(candidate)](Ref<DeferredPromise>&& promise) mutable {
-        protect(*m_backend)->addIceCandidate(candidate.get(), [protectedThis = Ref { *this }, promise = DOMPromiseDeferred<void>(WTF::move(promise))](auto&& result) mutable {
+    chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, candidate = WTF::move(candidate)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
+            return;
+        protect(*protectedThis->m_backend)->addIceCandidate(candidate.get(), [protectedThis = protectedThis.releaseNonNull(), promise = DOMPromiseDeferred<void>(WTF::move(promise))](auto&& result) mutable {
             if (protectedThis->isClosed())
                 return;
             promise.settle(WTF::move(result));
@@ -1192,7 +1207,7 @@ void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<
         return;
     }
 
-    promise->whenSettled([this, pendingActivity = makePendingActivity(*this)] {
+    promise->whenSettled([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)] {
         ASSERT(m_hasPendingOperation);
         if (isClosed()) {
             for (auto& operation : std::exchange(m_operations, { }))

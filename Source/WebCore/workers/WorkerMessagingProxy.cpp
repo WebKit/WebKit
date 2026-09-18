@@ -199,7 +199,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
 
     // Pass a RefPtr to the WorkerUserGestureForwarder, if present, into the main thread
     // task; the m_userGestureForwarder ivar may be cleared after this function returns.
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, message = WTF::move(message), userGestureForwarder = m_userGestureForwarder](auto& context) mutable {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, message = WTF::move(message), userGestureForwarder = m_userGestureForwarder](auto& context) mutable {
         RefPtr workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
@@ -233,7 +233,7 @@ void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& func
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, function = WTF::move(function)](auto&) mutable {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, function = WTF::move(function)](auto&) mutable {
         RefPtr workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
             return;
@@ -365,7 +365,7 @@ void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessag
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber](auto&) {
         RefPtr workerObject = this->workerObject();
         if (!workerObject)
             return;
@@ -381,7 +381,7 @@ void WorkerMessagingProxy::reportErrorToWorkerObject(const String& errorMessage)
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this,  errorMessage =  errorMessage.isolatedCopy()] (auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }, errorMessage = errorMessage.isolatedCopy()] (auto&) {
         if (RefPtr workerObject = this->workerObject())
             workerObject->reportError(errorMessage);
     });
@@ -458,7 +458,7 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }](auto&) {
         workerGlobalScopeDestroyedInternal();
     });
 }
@@ -468,7 +468,7 @@ void WorkerMessagingProxy::workerGlobalScopeClosed()
     if (!m_scriptExecutionContextIdentifier)
         return;
 
-    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this](auto&) {
+    ScriptExecutionContext::postTaskTo(*m_scriptExecutionContextIdentifier, [this, protectedThis = Ref { *this }](auto&) {
         terminateWorkerGlobalScope();
     });
 }

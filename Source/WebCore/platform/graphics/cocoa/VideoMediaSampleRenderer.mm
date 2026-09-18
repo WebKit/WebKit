@@ -600,35 +600,35 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
 
         m_isDecodingSample = true;
 
-        decodePromise->whenSettled(dispatcher(), [weakThis = ThreadSafeWeakPtr { *this }, this, decodingFlags, flushId = flushId, startTime = MonotonicTime::now(), numberOfSamples = PAL::CMSampleBufferGetNumSamples(cmSample.get())](auto&& result) {
+        decodePromise->whenSettled(dispatcher(), [weakThis = ThreadSafeWeakPtr { *this }, decodingFlags, flushId = flushId, startTime = MonotonicTime::now(), numberOfSamples = PAL::CMSampleBufferGetNumSamples(cmSample.get())](auto&& result) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;
 
-            assertIsCurrent(dispatcher().get());
+            assertIsCurrent(protectedThis->dispatcher().get());
 
-            m_isDecodingSample = false;
+            protectedThis->m_isDecodingSample = false;
 
-            if (flushId != m_flushId || (!result && result.error() == noErr)) {
-                ALWAYS_LOG(LOGIDENTIFIER, "Decoder was flushed");
-                decodeNextSampleIfNeeded();
+            if (flushId != protectedThis->m_flushId || (!result && result.error() == noErr)) {
+                ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "Decoder was flushed");
+                protectedThis->decodeNextSampleIfNeeded();
                 return;
             }
 
-            m_totalVideoFrames += numberOfSamples;
+            protectedThis->m_totalVideoFrames += numberOfSamples;
 
             if (!result) {
                 // Invalidating a session while a sample is in flight is reported either as an
                 // invalid session or as a decoder malfunction, depending on how far that sample
                 // had got. Both mean the session is gone and a flush is what resumes decoding.
                 if (result.error() == kVTInvalidSessionErr || result.error() == kVTVideoDecoderMalfunctionErr) {
-                    ALWAYS_LOG(LOGIDENTIFIER, "VTDecompressionSession got invalidated (", result.error(), "), requesting flush");
-                    invalidateDecompressionSession();
+                    ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "VTDecompressionSession got invalidated (", result.error(), "), requesting flush");
+                    protectedThis->invalidateDecompressionSession();
                     return;
                 }
 
-                m_gotDecodingError = true;
-                ++m_corruptedVideoFrames;
+                protectedThis->m_gotDecodingError = true;
+                ++protectedThis->m_corruptedVideoFrames;
 
                 callOnMainThread([protectedThis, status = result.error()] {
                     assertIsMainThread();
@@ -640,25 +640,25 @@ void VideoMediaSampleRenderer::decodeNextSampleIfNeeded()
 
             if (LOG_CHANNEL(MediaPerformance).level >= WTFLogLevel::Debug) {
                 auto now = MonotonicTime::now();
-                m_frameRateMonitor.update();
+                protectedThis->m_frameRateMonitor.update();
                 OSType format = '----';
                 MediaTime presentationTime = MediaTime::invalidTime();
                 if (RetainPtr firstFrame = result->isEmpty() ? nullptr : (*result)[0]) {
-                    RetainPtr imageBuffer = imageForSample(static_cast<CMSampleBufferRef>(firstFrame.get()));
+                    RetainPtr imageBuffer = protectedThis->imageForSample(static_cast<CMSampleBufferRef>(firstFrame.get()));
                     format = CVPixelBufferGetPixelFormatType(imageBuffer.get());
                     presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetOutputPresentationTimeStamp(firstFrame.get()));
                 }
-                LogPerformance("VideoMediaSampleRenderer pts:%0.2f minimum upcoming:%0.2f decoding rate:%0.1fHz rolling:%0.1f decoder rate:%0.1fHz compressed queue:%zu decoded queue:%zu hw:%d format:%s", presentationTime.toDouble(), m_lastMinimumUpcomingPresentationTime.toDouble(), 1.0f / Seconds { now - std::exchange(m_timeSinceLastDecode, now) }.value(), m_frameRateMonitor.observedFrameRate(), 1.0f / Seconds { now - startTime }.value(), compressedSamplesCount(), decodedSamplesCount(), protectedThis->decompressionSession()->isHardwareAccelerated(), &FourCC(format).string()[0]);
+                LogPerformance("VideoMediaSampleRenderer pts:%0.2f minimum upcoming:%0.2f decoding rate:%0.1fHz rolling:%0.1f decoder rate:%0.1fHz compressed queue:%zu decoded queue:%zu hw:%d format:%s", presentationTime.toDouble(), protectedThis->m_lastMinimumUpcomingPresentationTime.toDouble(), 1.0f / Seconds { now - std::exchange(protectedThis->m_timeSinceLastDecode, now) }.value(), protectedThis->m_frameRateMonitor.observedFrameRate(), 1.0f / Seconds { now - startTime }.value(), protectedThis->compressedSamplesCount(), protectedThis->decodedSamplesCount(), protectedThis->decompressionSession()->isHardwareAccelerated(), &FourCC(format).string()[0]);
             }
 
             if (!decodingFlags.contains(WebCoreDecompressionSession::DecodingFlag::NonDisplaying)) {
                 for (auto& decodedFrame : *result) {
                     if (decodedFrame)
-                        decodedFrameAvailable(MediaSampleAVFObjC::create(decodedFrame.get(), 0), flushId);
+                        protectedThis->decodedFrameAvailable(MediaSampleAVFObjC::create(decodedFrame.get(), 0), flushId);
                 }
             }
 
-            decodeNextSampleIfNeeded();
+            protectedThis->decodeNextSampleIfNeeded();
         });
     }
 }

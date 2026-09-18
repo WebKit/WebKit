@@ -99,7 +99,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& identifi
     bool shouldStart = result.first;
     auto newSources = WTF::move(result.second);
 
-    postTask([this, newSources = WTF::move(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
+    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
         assertIsCurrent(m_queue.get());
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
@@ -157,7 +157,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& ident
     bool shouldStop = result.first;
     auto newSources = WTF::move(result.second);
 
-    postTask([this, newSources = WTF::move(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
+    postTask([this, protectedThis = Ref { *this }, newSources = WTF::move(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
         assertIsCurrent(m_queue.get());
 
         m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTF::move(newSources);
@@ -203,7 +203,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::postTask(Function<void()>&& call
 void IncomingAudioMediaStreamTrackRendererUnit::newAudioChunkPushed(uint64_t currentAudioSampleCount)
 {
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    postTask([this, currentAudioSampleCount] {
+    postTask([this, protectedThis = Ref { *this }, currentAudioSampleCount] {
         renderAudioChunk(currentAudioSampleCount);
     });
 }

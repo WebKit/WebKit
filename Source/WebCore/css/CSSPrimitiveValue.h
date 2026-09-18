@@ -69,7 +69,7 @@ public:
     using Calc = CSS::UnevaluatedCalcBase;
     using Raw = CSS::UnconstrainedPrimitiveNumericRaw;
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(NOESCAPE F&&... f) const
     {
         auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
         if (isCalculated())

@@ -61,7 +61,7 @@ void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::Share
     Ref loader = SharedWorkerScriptLoader::create(WTF::move(url), *workerObject, WTF::move(workerOptions));
     m_loaders.add(loaderIdentifier, loader.copyRef());
 
-    loader->load([this, loaderIdentifier, completionHandler = WTF::move(completionHandler)](WorkerFetchResult&& fetchResult, WorkerInitializationData&& initializationData) mutable {
+    loader->load([this, protectedThis = Ref { *this }, loaderIdentifier, completionHandler = WTF::move(completionHandler)](WorkerFetchResult&& fetchResult, WorkerInitializationData&& initializationData) mutable {
         CONNECTION_RELEASE_LOG("fetchScriptInClient: finished script load, success=%d", fetchResult.error.isNull());
         RefPtr loader = m_loaders.take(loaderIdentifier);
         ASSERT(loader);

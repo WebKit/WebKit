@@ -119,7 +119,7 @@ template<typename StyleType> using CSSType = std::decay_t<decltype(toCSS(std::de
 
 template<typename To, typename From, typename... Rest> auto toCSSOnTupleLike(const From& tupleLike, Rest&&... rest) -> To
 {
-    return WTF::apply([&](const auto& ...x) { return To { toCSS(x, rest...)... }; }, tupleLike);
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...x) { return To { toCSS(x, rest...)... }; }, tupleLike);
 }
 
 // Standard NonConverting type mappings (identity mappings):
@@ -256,7 +256,7 @@ inline constexpr ToStyleNoConversionDataRequiredInvoker toStyleNoConversionDataR
 // Conversion Utilities
 template<typename To, typename From, typename... Rest> auto toStyleOnTupleLike(const From& tupleLike, Rest&&... rest) -> To
 {
-    return WTF::apply([&](const auto& ...x) { return To { toStyle(x, rest...)... }; }, tupleLike);
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...x) { return To { toStyle(x, rest...)... }; }, tupleLike);
 }
 
 template<typename To, typename From, typename... Rest> auto toStyleNoConversionDataRequiredOnTupleLike(const From& tupleLike, Rest&&... rest) -> To
@@ -425,7 +425,7 @@ template<TupleLike StyleType> struct CSSValueCreation<StyleType> {
 
             CSSValueListBuilder list;
 
-            auto caller = WTF::makeVisitor(
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto caller = WTF::makeVisitor(
                 [&]<OptionalLike T>(const T& element) {
                     if (!element)
                         return;
@@ -617,7 +617,7 @@ template<typename StyleType, typename... Rest> void serializationForCSSOnOptiona
 template<typename StyleType, typename... Rest> void serializationForCSSOnTupleLike(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ComputedStyle& style, const StyleType& value, ASCIILiteral separator, Rest&&... rest)
 {
     auto swappedSeparator = ""_s;
-    auto caller = WTF::makeVisitor(
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto caller = WTF::makeVisitor(
         [&]<OptionalLike T>(const T& element) {
             if (!element)
                 return;
@@ -1023,7 +1023,7 @@ template<typename StyleType> auto equalsForBlendingOnTupleLike(const StyleType& 
 
 template<typename StyleType> auto equalsForBlendingOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
-    return WTF::apply([&](const auto& ...pair) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::equalsForBlending(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) && ...);
     }, WTF::tuple_zip(a, b));
 }
@@ -1037,7 +1037,7 @@ template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const 
 
 template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
-    return WTF::apply([&](const auto& ...pair) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::canBlend(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) && ...);
     }, WTF::tuple_zip(a, b));
 }
@@ -1051,7 +1051,7 @@ template<typename StyleType> auto requiresInterpolationForAccumulativeIterationO
 
 template<typename StyleType> auto requiresInterpolationForAccumulativeIterationOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle) -> bool
 {
-    return WTF::apply([&](const auto& ...pair) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...pair) {
         return (WebCore::Style::requiresInterpolationForAccumulativeIteration(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle) || ...);
     }, WTF::tuple_zip(a, b));
 }
@@ -1065,7 +1065,7 @@ template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const Sty
 
 template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const StyleType& b, const Style::ComputedStyle& aStyle, const Style::ComputedStyle& bStyle, const auto& context) -> StyleType
 {
-    return WTF::apply([&](const auto& ...pair) {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::apply([&](const auto& ...pair) {
         return StyleType { WebCore::Style::blend(std::get<0>(pair), std::get<1>(pair), aStyle, bStyle, context)... };
     }, WTF::tuple_zip(a, b));
 }

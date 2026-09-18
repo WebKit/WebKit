@@ -180,7 +180,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     m_isKeyChunkRequired = true;
 
     if (m_internalEncoder) {
-        queueControlMessageAndProcess({ *this, [this, config]() mutable {
+        queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, config]() mutable {
             blockControlMessageQueue();
 
             protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, config = WTF::move(config)] (auto&&) mutable {
@@ -199,7 +199,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     }
 
     bool isSupportedCodec = isSupportedEncoderCodec(config);
-    queueControlMessageAndProcess({ *this, [this, config = WTF::move(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, config = WTF::move(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         RefPtr context = scriptExecutionContext();
 
         blockControlMessageQueue();
@@ -304,7 +304,7 @@ ExceptionOr<void> WebCodecsAudioEncoder::encode(Ref<WebCodecsAudioData>&& frame)
     if (state() != WebCodecsCodecState::Configured)
         return Exception { ExceptionCode::InvalidStateError, "AudioEncoder is not configured"_s };
 
-    queueCodecControlMessageAndProcess({ *this, [this, audioData = WTF::move(audioData), timestamp = frame->timestamp(), duration = frame->duration()]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, audioData = WTF::move(audioData), timestamp = frame->timestamp(), duration = frame->duration()]() mutable {
         // FIXME: These checks are not yet spec-compliant. See also https://github.com/w3c/webcodecs/issues/716
         if (m_baseConfiguration.numberOfChannels != audioData->numberOfChannels()
             || m_baseConfiguration.sampleRate != audioData->sampleRate()) {
@@ -341,7 +341,7 @@ void WebCodecsAudioEncoder::flush(Ref<DeferredPromise>&& promise)
     }
 
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())

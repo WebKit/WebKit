@@ -156,7 +156,7 @@ void RealtimeOutgoingAudioSourceCocoa::pullAudioData()
     if (isSilenced() != m_sampleConverter->muted())
         m_sampleConverter->setMuted(isSilenced());
 
-    m_sampleConverter->pullAvailableSamplesAsChunks(bufferList, chunkSampleCount, m_readCount, [this, numberOfChannels] {
+    m_sampleConverter->pullAvailableSamplesAsChunks(bufferList, chunkSampleCount, m_readCount, [this, protectedThis = Ref { *this }, numberOfChannels] {
         m_readCount += chunkSampleCount;
         sendAudioFrames(m_audioBuffer.span(), LibWebRTCAudioFormat::sampleSize, LibWebRTCAudioFormat::sampleRate, numberOfChannels, chunkSampleCount);
     });

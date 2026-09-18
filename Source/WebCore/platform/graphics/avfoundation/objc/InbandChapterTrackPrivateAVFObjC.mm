@@ -58,7 +58,7 @@ void InbandChapterTrackPrivateAVFObjC::processChapters(RetainPtr<NSArray<AVTimed
         return;
 
     auto identifier = LOGIDENTIFIER;
-    auto createChapterCue = ([this, identifier] (AVMetadataItem *item, int chapterNumber) mutable {
+    auto createChapterCue = ([this, protectedThis = Ref { *this }, identifier] (AVMetadataItem *item, int chapterNumber) mutable {
         if (!hasClients())
             return;
         ASSERT(hasOneClient());

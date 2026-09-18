@@ -48,7 +48,7 @@ void WebCodecsBase::queueCodecControlMessageAndProcess(WebCodecsControlMessage&&
 {
     incrementCodecQueueSize();
     // message holds a strong ref to ourselves already.
-    queueControlMessageAndProcess({ *this, [this, message = WTF::move(message)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, message = WTF::move(message)]() mutable {
         if (isCodecSaturated())
             return WebCodecsControlMessageOutcome::NotProcessed;
         decrementCodecQueueSizeAndScheduleDequeueEvent();

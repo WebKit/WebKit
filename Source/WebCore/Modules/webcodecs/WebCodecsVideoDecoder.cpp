@@ -148,7 +148,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     m_isKeyChunkRequired = true;
 
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
         RefPtr context = scriptExecutionContext();
 
         auto identifier = context->identifier();
@@ -217,7 +217,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::decode(Ref<WebCodecsEncodedVideoChunk>&
         m_isKeyChunkRequired = false;
     }
 
-    queueCodecControlMessageAndProcess({ *this, [this, chunk = WTF::move(chunk)]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, chunk = WTF::move(chunk)]() mutable {
         incrementCodecOperationCount();
         Ref internalDecoder = *m_internalDecoder;
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->decode({ chunk->span(), chunk->type() == WebCodecsEncodedVideoChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { * this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
@@ -243,7 +243,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
         Ref internalDecoder = *m_internalDecoder;
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(internalDecoder->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();

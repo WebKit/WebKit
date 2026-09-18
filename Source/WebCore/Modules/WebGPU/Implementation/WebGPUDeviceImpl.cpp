@@ -325,7 +325,7 @@ RefPtr<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor
 }
 
 template <typename T>
-static auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
+static auto convertToBacking(const ComputePipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, NOESCAPE T&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -370,7 +370,7 @@ RefPtr<ComputePipeline> DeviceImpl::createComputePipeline(const ComputePipelineD
 }
 
 template <typename T>
-static auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, T&& callback)
+static auto convertToBacking(const RenderPipelineDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext, NOESCAPE T&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -393,9 +393,9 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
         };
     });
 
-    auto backingAttributes = descriptor.vertex.buffers.map([&convertToBackingContext](const auto& buffer) -> Vector<WGPUVertexAttribute> {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto backingAttributes = descriptor.vertex.buffers.map([&convertToBackingContext](const auto& buffer) -> Vector<WGPUVertexAttribute> {
         if (buffer) {
-            return buffer->attributes.map([&convertToBackingContext](const auto& attribute) {
+            SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return buffer->attributes.map([&convertToBackingContext](const auto& attribute) {
                 return WGPUVertexAttribute {
                     convertToBackingContext.convertToBacking(attribute.format),
                     attribute.offset,
@@ -466,7 +466,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
 
     Vector<std::optional<WGPUBlendState>> blendStates;
     if (descriptor.fragment) {
-        blendStates = descriptor.fragment->targets.map([&convertToBackingContext](const auto& target) -> std::optional<WGPUBlendState> {
+        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE blendStates = descriptor.fragment->targets.map([&convertToBackingContext](const auto& target) -> std::optional<WGPUBlendState> {
             if (target && target->blend) {
                 return WGPUBlendState {
                     {

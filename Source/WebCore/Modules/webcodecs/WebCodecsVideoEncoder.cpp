@@ -158,7 +158,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
     m_isKeyChunkRequired = true;
 
     if (m_internalEncoder) {
-        queueControlMessageAndProcess({ *this, [this, config]() mutable {
+        queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, config]() mutable {
             if (isSameConfigurationExceptBitrateAndFramerate(m_baseConfiguration, config)) {
                 updateRates(config);
                 return WebCodecsControlMessageOutcome::Processed;
@@ -180,7 +180,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
     }
 
     bool isSupportedCodec = isSupportedEncoderCodec(config, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, config = WTF::move(config), isSupportedCodec]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, config = WTF::move(config), isSupportedCodec]() mutable {
         if (isSupportedCodec && m_internalEncoder && isSameConfigurationExceptBitrateAndFramerate(m_baseConfiguration, config)) {
             updateRates(config);
             return WebCodecsControlMessageOutcome::Processed;
@@ -297,7 +297,7 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
     if (state() != WebCodecsCodecState::Configured)
         return Exception { ExceptionCode::InvalidStateError, "VideoEncoder is not configured"_s };
 
-    queueCodecControlMessageAndProcess({ *this, [this, internalFrame = internalFrame.releaseNonNull(), timestamp = frame->timestamp(), duration = frame->duration(), options = WTF::move(options)]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, internalFrame = internalFrame.releaseNonNull(), timestamp = frame->timestamp(), duration = frame->duration(), options = WTF::move(options)]() mutable {
         incrementCodecOperationCount();
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->encode({ WTF::move(internalFrame), timestamp, duration }, options.keyFrame), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
@@ -325,7 +325,7 @@ void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
     }
 
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalEncoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())

@@ -117,7 +117,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
 
     auto request = requestOrException.releaseReturnValue()->resourceRequest();
     auto requestStart = MonotonicTime::now();
-    queryCache(WTF::move(request), options, ShouldRetrieveResponses::Yes, [this, callback = WTF::move(callback), requestStart](auto&& result) mutable {
+    queryCache(WTF::move(request), options, ShouldRetrieveResponses::Yes, [this, protectedThis = Ref { *this }, callback = WTF::move(callback), requestStart](auto&& result) mutable {
         if (result.hasException()) {
             callback(result.releaseException());
             return;
@@ -158,7 +158,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
     }
 
     auto requestStart = MonotonicTime::now();
-    queryCache(WTF::move(resourceRequest), options, ShouldRetrieveResponses::Yes, [this, promise = WTF::move(promise), requestStart]<typename Result> (Result&& result) mutable {
+    queryCache(WTF::move(resourceRequest), options, ShouldRetrieveResponses::Yes, [this, protectedThis = Ref { *this }, promise = WTF::move(promise), requestStart]<typename Result> (Result&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTF::move(promise), result = std::forward<Result>(result), requestStart](auto& cache) mutable {
             if (result.hasException()) {
                 promise.reject(result.releaseException());
@@ -314,7 +314,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             taskHandler->error(Exception { ExceptionCode::AbortError, "Request signal is aborted"_s });
             return;
         }
-        FetchResponse::fetch(*scriptExecutionContext, request.get(), [this, request, taskHandler](auto&& result) mutable {
+        FetchResponse::fetch(*scriptExecutionContext, request.get(), [this, protectedThis = Ref { *this }, request, taskHandler](auto&& result) mutable {
 
             if (taskHandler->isDone())
                 return;
@@ -498,7 +498,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
         resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
     }
 
-    queryCache(WTF::move(resourceRequest), options, ShouldRetrieveResponses::No, [this, promise = WTF::move(promise)](auto&& result) mutable {
+    queryCache(WTF::move(resourceRequest), options, ShouldRetrieveResponses::No, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)](auto&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::DOMManipulation, [promise = WTF::move(promise), result = WTF::move(result)](auto& cache) mutable {
             if (result.hasException()) {
                 promise.reject(result.releaseException());

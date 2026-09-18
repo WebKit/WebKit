@@ -551,7 +551,7 @@ static bool NODELETE isSupportedExportKey(CryptoAlgorithmIdentifier identifier)
     }
 }
 
-RefPtr<DeferredPromise> getPromise(DeferredPromise* index, WeakPtr<SubtleCrypto> weakThis)
+RefPtr<DeferredPromise> getPromise(SubtleCrypto::PendingPromiseIdentifier index, WeakPtr<SubtleCrypto> weakThis)
 {
     if (weakThis)
         return weakThis->m_pendingPromises.take(index);
@@ -612,7 +612,7 @@ void SubtleCrypto::encrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(key.algorithmIdentifier());
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& cipherText) mutable {
@@ -652,7 +652,7 @@ void SubtleCrypto::decrypt(JSC::JSGlobalObject& state, AlgorithmIdentifier&& alg
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(key.algorithmIdentifier());
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& plainText) mutable {
@@ -690,7 +690,7 @@ void SubtleCrypto::sign(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algori
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(key.algorithmIdentifier());
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& signature) mutable {
@@ -729,7 +729,7 @@ void SubtleCrypto::doVerify(JSC::JSGlobalObject& state, AlgorithmIdentifier&& al
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(key.algorithmIdentifier());
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](bool result) mutable {
@@ -757,7 +757,7 @@ void SubtleCrypto::digest(JSC::JSGlobalObject& state, AlgorithmIdentifier&& algo
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& digest) mutable {
@@ -785,7 +785,7 @@ void SubtleCrypto::generateKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&&
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](KeyOrKeyPair&& keyOrKeyPair) mutable {
@@ -866,7 +866,7 @@ void SubtleCrypto::deriveKey(JSC::JSGlobalObject& state, AlgorithmIdentifier&& a
     auto importAlgorithm = CryptoAlgorithmRegistry::singleton().create(importParams->identifier);
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis, importAlgorithm = WTF::move(importAlgorithm), importParams = crossThreadCopyImportParams(*importParams), extractable, keyUsagesBitmap](const Vector<uint8_t>& derivedKey) mutable {
@@ -917,7 +917,7 @@ void SubtleCrypto::deriveBits(JSC::JSGlobalObject& state, AlgorithmIdentifier&& 
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](const Vector<uint8_t>& derivedKey) mutable {
@@ -952,7 +952,7 @@ void SubtleCrypto::importKey(JSC::JSGlobalObject& state, KeyFormat format, KeyDa
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(params->identifier);
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](CryptoKey& key) mutable {
@@ -989,7 +989,7 @@ void SubtleCrypto::exportKey(KeyFormat format, CryptoKey& key, Ref<DeferredPromi
 
     auto algorithm = CryptoAlgorithmRegistry::singleton().create(key.algorithmIdentifier());
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
@@ -1063,7 +1063,7 @@ void SubtleCrypto::wrapKey(JSC::JSGlobalObject& state, KeyFormat format, CryptoK
 
     RefPtr context = scriptExecutionContext();
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis, wrapAlgorithm, wrappingKey = protect(wrappingKey), wrapParams = WTF::move(wrapParams), isEncryption, context, workQueue = m_workQueue](SubtleCrypto::KeyFormat format, KeyData&& key) mutable {
@@ -1168,7 +1168,7 @@ void SubtleCrypto::unwrapKey(JSC::JSGlobalObject& state, KeyFormat format, Buffe
         return;
     }
 
-    auto index = promise.ptr();
+    auto index = PendingPromiseIdentifier::generate();
     m_pendingPromises.add(index, WTF::move(promise));
     WeakPtr weakThis { *this };
     auto callback = [index, weakThis, format, importAlgorithm, unwrappedKeyAlgorithm = crossThreadCopyImportParams(*unwrappedKeyAlgorithm), extractable, keyUsagesBitmap](const Vector<uint8_t>& bytes) mutable {

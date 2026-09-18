@@ -3559,13 +3559,13 @@ LayoutUnit RenderBox::blockAxisMarginForStretch() const
 
 template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsingGeneric(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
 {
-    auto intrinsic = [&] -> std::optional<LayoutUnit> {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto intrinsic = [&] -> std::optional<LayoutUnit> {
         if (intrinsicContentHeight)
             return adjustIntrinsicLogicalHeightForBoxSizing(*intrinsicContentHeight);
         return { };
     };
 
-    auto minMaxContent = [&] -> std::optional<LayoutUnit> {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto minMaxContent = [&] -> std::optional<LayoutUnit> {
         // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
         // If that happens, this code will have to change.
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(this)) {
@@ -3596,7 +3596,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return intrinsic();
     };
 
-    return WTF::switchOn(logicalHeight,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalHeight,
         [&](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> {
             return minMaxContent();
         },
@@ -3678,13 +3678,13 @@ std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsi
 
 template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    auto keywordSize = [&] {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordSize = [&] {
         // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
         // If that happens, this code will have to change.
         return computeSizingKeywordLogicalContentHeightUsing(logicalHeight, intrinsicContentHeight, borderAndPaddingLogicalHeight());
     };
 
-    return WTF::switchOn(logicalHeight,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalHeight,
         [&](const typename SizeType::Fixed& fixedLogicalHeight) -> std::optional<LayoutUnit> {
             return LayoutUnit { fixedLogicalHeight.resolveZoom(style().usedZoomForLength()) };
         },
@@ -4261,7 +4261,7 @@ void RenderBox::computeOutOfFlowPositionedLogicalWidth(LogicalExtentComputedValu
 
 template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogicalWidthUsing(const SizeType& logicalWidth, const PositionedLayoutConstraints& inlineConstraints) const
 {
-    auto fallback = [&] -> LayoutUnit {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto fallback = [&] -> LayoutUnit {
         bool shrinkToFit = inlineConstraints.insetFitsContent() || !inlineConstraints.alignmentAppliesStretch(ItemPosition::Stretch);
         if (shrinkToFit) {
             auto preferredWidth = maxContentLogicalWidthContribution() - inlineConstraints.bordersPlusPadding();
@@ -4271,14 +4271,14 @@ template<typename SizeType> LayoutUnit RenderBox::computeOutOfFlowPositionedLogi
         return inlineConstraints.availableContentSpace();
     };
 
-    auto intrinsic = [&](const auto& keyword) -> LayoutUnit {
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto intrinsic = [&](const auto& keyword) -> LayoutUnit {
         auto availableSpace = inlineConstraints.containingSize();
         availableSpace -= inlineConstraints.insetBeforeValue();
         availableSpace -= inlineConstraints.insetAfterValue();
         return std::max(0_lu, computeSizingKeywordLogicalWidthUsing(keyword, availableSpace, inlineConstraints.bordersPlusPadding()) - inlineConstraints.bordersPlusPadding());
     };
 
-    return WTF::switchOn(logicalWidth,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalWidth,
         [&](const typename SizeType::Fixed& fixedLogicalWidth) -> LayoutUnit {
             return adjustContentBoxLogicalWidthForBoxSizing(fixedLogicalWidth);
         },

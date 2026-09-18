@@ -126,7 +126,7 @@ static_assert(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), "CSS value should 
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 
-template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor)
+template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESCAPE Visitor&& visitor)
 {
     using enum CSSValue::ClassType;
     switch (m_classType) {
@@ -293,7 +293,7 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor) const
+template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(NOESCAPE Visitor&& visitor) const
 {
     return const_cast<CSSValue&>(*this).visitDerived([&](auto& value) {
         return std::invoke(std::forward<Visitor>(visitor), std::as_const(value));

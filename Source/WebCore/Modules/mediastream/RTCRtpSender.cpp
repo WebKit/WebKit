@@ -122,28 +122,29 @@ void RTCRtpSender::replaceTrack(RefPtr<MediaStreamTrack>&& withTrack, Ref<Deferr
         return;
     }
 
-    protect(m_connection)->chainOperation(WTF::move(promise), [this, weakThis = WeakPtr { *this }, withTrack = WTF::move(withTrack)](Ref<DeferredPromise>&& promise) mutable {
-        if (!weakThis)
+    protect(m_connection)->chainOperation(WTF::move(promise), [weakThis = WeakPtr { *this }, withTrack = WTF::move(withTrack)](Ref<DeferredPromise>&& promise) mutable {
+        RefPtr protectedThis = weakThis;
+        if (!protectedThis)
             return;
-        if (isStopped()) {
+        if (protectedThis->isStopped()) {
             promise->reject(ExceptionCode::InvalidStateError);
             return;
         }
 
-        if (!m_backend->replaceTrack(*this, withTrack.get())) {
+        if (!protectedThis->m_backend->replaceTrack(*protectedThis, withTrack.get())) {
             promise->reject(ExceptionCode::InvalidModificationError);
             return;
         }
 
-        RefPtr context = m_connection->scriptExecutionContext();
+        RefPtr context = protectedThis->m_connection->scriptExecutionContext();
         if (!context)
             return;
 
-        context->postTask([this, protectedThis = Ref { *this }, withTrack = WTF::move(withTrack), promise = WTF::move(promise)](auto&) mutable {
-            if (!m_connection || m_connection->isClosed())
+        context->postTask([protectedThis = protectedThis.releaseNonNull(), withTrack = WTF::move(withTrack), promise = WTF::move(promise)](auto&) mutable {
+            if (!protectedThis->m_connection || protectedThis->m_connection->isClosed())
                 return;
 
-            m_track = WTF::move(withTrack);
+            protectedThis->m_track = WTF::move(withTrack);
             promise->resolve();
         });
     });

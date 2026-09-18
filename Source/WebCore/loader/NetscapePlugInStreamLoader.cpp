@@ -128,7 +128,6 @@ void NetscapePlugInStreamLoader::willSendRequest(ResourceRequest&& request, cons
 
 void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response, CompletionHandler<void()>&& policyCompletionHandler)
 {
-    Ref<NetscapePlugInStreamLoader> protectedThis(*this);
     CompletionHandlerCallingScope completionHandlerCaller(WTF::move(policyCompletionHandler));
 
     if (RefPtr client = m_client.get())
@@ -139,7 +138,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
         return;
 
     ResourceResponse responseForClosure = response;
-    ResourceLoader::didReceiveResponse(WTF::move(response), [this, protectedThis = WTF::move(protectedThis), response = WTF::move(responseForClosure), completionHandlerCaller = WTF::move(completionHandlerCaller)]() mutable {
+    ResourceLoader::didReceiveResponse(WTF::move(response), [this, protectedThis = Ref { *this }, response = WTF::move(responseForClosure), completionHandlerCaller = WTF::move(completionHandlerCaller)]() mutable {
         // Don't continue if the stream is cancelled
         RefPtr client = m_client.get();
         if (!client)
@@ -159,8 +158,6 @@ void NetscapePlugInStreamLoader::didReceiveResponse(ResourceResponse&& response,
 
 void NetscapePlugInStreamLoader::didReceiveBuffer(const FragmentedSharedBuffer& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    Ref protectedThis { *this };
-
     if (RefPtr client = m_client.get())
         client->didReceiveData(*this, buffer.makeContiguous());
 

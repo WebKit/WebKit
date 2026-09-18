@@ -28,6 +28,7 @@
 #include "Helpers/Utilities.h"
 #include <WebCore/PushDatabase.h>
 #include <WebCore/SQLiteDatabase.h>
+#include <WebCore/SQLiteStatement.h>
 #include <algorithm>
 #include <iterator>
 #include <ranges>

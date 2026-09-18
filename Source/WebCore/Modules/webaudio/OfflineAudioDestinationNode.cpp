@@ -120,12 +120,11 @@ void OfflineAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
         return completionHandler(Exception { ExceptionCode::InvalidStateError, "Already started rendering"_s });
 
     m_startedRendering = true;
-    Ref protectedThis { *this };
 
-    auto offThreadRendering = [this, protectedThis = WTF::move(protectedThis)]() mutable {
+    auto offThreadRendering = [this, protectedThis = Ref { *this }]() mutable {
         auto result = renderOnAudioThread();
-        callOnMainThread([this, result, currentSampleFrame = this->currentSampleFrame(), protectedThis = WTF::move(protectedThis)]() mutable {
-            context().postTask([this, protectedThis = WTF::move(protectedThis), result, currentSampleFrame]() mutable {
+        callOnMainThread([this, protectedThis = Ref { *this }, result, currentSampleFrame = this->currentSampleFrame()]() mutable {
+            context().postTask([this, protectedThis = Ref { *this }, result, currentSampleFrame]() mutable {
                 m_startedRendering = false;
                 switch (result) {
                 case RenderResult::Failure:

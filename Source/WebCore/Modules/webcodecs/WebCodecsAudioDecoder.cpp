@@ -125,7 +125,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
     m_isKeyChunkRequired = true;
 
     bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
-    queueControlMessageAndProcess({ *this, [this, codec = config.codec, config = createAudioDecoderConfig(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, codec = config.codec, config = createAudioDecoderConfig(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         blockControlMessageQueue();
 
         if (!isSupportedCodec) {
@@ -183,7 +183,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::decode(Ref<WebCodecsEncodedAudioChunk>&
         m_isKeyChunkRequired = false;
     }
 
-    queueCodecControlMessageAndProcess({ *this, [this, chunk = WTF::move(chunk)]() mutable {
+    queueCodecControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, chunk = WTF::move(chunk)]() mutable {
         incrementCodecOperationCount();
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalDecoder)->decode({ chunk->span(), chunk->type() == WebCodecsEncodedAudioChunkType::Key, chunk->timestamp(), chunk->duration() }), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this)] (auto&& result) {
             RefPtr protectedThis = weakThis.get();
@@ -209,7 +209,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::flush(Ref<DeferredPromise>&& promise)
 
     m_isKeyChunkRequired = true;
     m_pendingFlushPromises.append(promise);
-    queueControlMessageAndProcess({ *this, [this, promise = WTF::move(promise)]() mutable {
+    queueControlMessageAndProcess({ *this, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
         protect(scriptExecutionContext())->enqueueTaskWhenSettled(protect(*m_internalDecoder)->flush(), TaskSource::MediaElement, [weakThis = ThreadSafeWeakPtr { *this }, pendingActivity = makePendingActivity(*this), promise = WTF::move(promise)] (auto&&) {
             promise->resolve();
             if (RefPtr protectedThis = weakThis.get())

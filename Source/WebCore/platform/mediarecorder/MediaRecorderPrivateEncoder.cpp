@@ -205,14 +205,14 @@ void MediaRecorderPrivateEncoder::pause()
 {
     assertIsMainThread();
 
-    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
         assertIsCurrent(queueSingleton());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        m_isPaused = true;
-        m_previousSegmentVideoDurationUs = currentEndTime().toMicroseconds();
-        RefPtr converter = audioConverter();
+        protectedThis->m_isPaused = true;
+        protectedThis->m_previousSegmentVideoDurationUs = protectedThis->currentEndTime().toMicroseconds();
+        RefPtr converter = protectedThis->audioConverter();
         if (!converter)
             return;
         converter->drain()->whenSettled(queueSingleton(), [weakThis] {
@@ -225,7 +225,7 @@ void MediaRecorderPrivateEncoder::pause()
                 LOG(MediaStream, "MediaRecorderPrivateEncoder::stopRecording rejecting m_pendingAudioFramePromise");
             }
         });
-        LOG(MediaStream, "MediaRecorderPrivateEncoder::pause m_currentVideoDuration:%f", m_previousSegmentVideoDurationUs / 1000000.0);
+        LOG(MediaStream, "MediaRecorderPrivateEncoder::pause m_currentVideoDuration:%f", protectedThis->m_previousSegmentVideoDurationUs / 1000000.0);
     });
 }
 
@@ -233,13 +233,13 @@ void MediaRecorderPrivateEncoder::resume()
 {
     assertIsMainThread();
 
-    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this] {
+    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
         assertIsCurrent(queueSingleton());
         if (RefPtr protectedThis = weakThis.get()) {
-            m_currentVideoSegmentStartTime.reset();
-            m_isPaused = false;
-            m_needKeyFrame = true;
-            LOG(MediaStream, "MediaRecorderPrivateEncoder:resume at:%f", m_previousSegmentVideoDurationUs / 1000000.0);
+            protectedThis->m_currentVideoSegmentStartTime.reset();
+            protectedThis->m_isPaused = false;
+            protectedThis->m_needKeyFrame = true;
+            LOG(MediaStream, "MediaRecorderPrivateEncoder:resume at:%f", protectedThis->m_previousSegmentVideoDurationUs / 1000000.0);
         }
     });
 }
@@ -432,19 +432,19 @@ void MediaRecorderPrivateEncoder::appendVideoFrame(VideoFrame& frame)
     if (m_isStopped)
         return;
 
-    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, frame = Ref { frame }, audioTime = lastEnqueuedAudioTime(), now = MonotonicTime::now()] mutable {
+    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, frame = Ref { frame }, audioTime = lastEnqueuedAudioTime(), now = MonotonicTime::now()] mutable {
         assertIsCurrent(queueSingleton());
         if (RefPtr protectedThis = weakThis.get()) {
-            if (m_isPaused)
+            if (protectedThis->m_isPaused)
                 return;
-            auto nextVideoFrameTime = currentTime(audioTime, now);
-            if (!m_currentVideoSegmentStartTime) {
-                m_currentVideoSegmentStartTime = now;
+            auto nextVideoFrameTime = protectedThis->currentTime(audioTime, now);
+            if (!protectedThis->m_currentVideoSegmentStartTime) {
+                protectedThis->m_currentVideoSegmentStartTime = now;
                 // We take the time before m_previousSegmentVideoDurationUs is set so that the first frame will always appear to have a timestamp of 0 but with a longer duration.
-                nextVideoFrameTime = MediaTime(m_previousSegmentVideoDurationUs, 1000000);
+                nextVideoFrameTime = MediaTime(protectedThis->m_previousSegmentVideoDurationUs, 1000000);
             }
-            m_lastRawVideoFrameReceived = nextVideoFrameTime;
-            appendVideoFrame(nextVideoFrameTime, WTF::move(frame));
+            protectedThis->m_lastRawVideoFrameReceived = nextVideoFrameTime;
+            protectedThis->appendVideoFrame(nextVideoFrameTime, WTF::move(frame));
         }
     });
 }
@@ -476,13 +476,13 @@ void MediaRecorderPrivateEncoder::appendVideoFrame(MediaTime sampleTime, Ref<Vid
         });
         GenericNonExclusivePromise::Producer producer;
         m_videoEncoderCreationPromise = producer.promise();
-        promise->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
+        promise->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
             assertIsCurrent(queueSingleton());
             if (RefPtr protectedThis = weakThis.get(); protectedThis && result) {
-                m_videoEncoder = WTF::move(*result);
-                Ref { *m_videoEncoder }->setRates(videoBitRate(), 0);
-                m_videoEncoderCreationPromise = nullptr;
-                return encodePendingVideoFrames(MediaTime::positiveInfiniteTime());
+                protectedThis->m_videoEncoder = WTF::move(*result);
+                Ref { *protectedThis->m_videoEncoder }->setRates(protectedThis->videoBitRate(), 0);
+                protectedThis->m_videoEncoderCreationPromise = nullptr;
+                return protectedThis->encodePendingVideoFrames(MediaTime::positiveInfiniteTime());
             }
             return GenericPromise::createAndResolve();
         })->chainTo(WTF::move(producer));
@@ -1000,21 +1000,21 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::flushPendingData(const MediaTim
     ASSERT(!m_pendingFlush, "flush are serialized");
     m_pendingFlush++;
 
-    return GenericPromise::all(WTF::move(promises))->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, this, currentTime] {
+    return GenericPromise::all(WTF::move(promises))->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, currentTime] {
         assertIsCurrent(queueSingleton());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndResolve();
-        return waitForMatchingAudio(currentTime);
-    })->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, this, currentTime](auto&& result) {
+        return protectedThis->waitForMatchingAudio(currentTime);
+    })->whenSettled(queueSingleton(), [weakThis = ThreadSafeWeakPtr { *this }, currentTime](auto&& result) {
         assertIsCurrent(queueSingleton());
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return GenericPromise::createAndResolve();
 
-        auto endMuxedTime = flushToEndSegment(currentTime);
+        auto endMuxedTime = protectedThis->flushToEndSegment(currentTime);
 
-        m_pendingFlush--;
+        protectedThis->m_pendingFlush--;
 
         if (endMuxedTime.isInvalid())
             return GenericPromise::createAndResolve();
@@ -1026,17 +1026,17 @@ Ref<GenericPromise> MediaRecorderPrivateEncoder::flushPendingData(const MediaTim
         // If writer requires segments to start with keyframes:
         // 4: We have muxed data for all tracks (Ending the current segment before frames of all kind have been amended results in a broken file) and
         // 5: We have accumulated more than m_minimumSegmentDuration of content or we are paused.
-        if (!m_isStopped && !m_interleavedFrames.isEmpty() && result
-            && (m_isPaused || !segmentsMustStartWithVideoKeyframe() || (hasMuxedDataSinceEndSegment() && (endMuxedTime - m_startLastSegmentTime >= m_minimumSegmentDuration)))) {
-            if (endMuxedTime - m_startLastSegmentTime >= m_minimumSegmentDuration)
-                m_startLastSegmentTime = endMuxedTime;
-            m_nextVideoFrameMuxedShouldBeKeyframe = segmentsMustStartWithVideoKeyframe();
-            m_hasMuxedAudioFrameSinceEndSegment = false;
-            m_hasMuxedVideoFrameSinceEndSegment = false;
+        if (!protectedThis->m_isStopped && !protectedThis->m_interleavedFrames.isEmpty() && result
+            && (protectedThis->m_isPaused || !protectedThis->segmentsMustStartWithVideoKeyframe() || (protectedThis->hasMuxedDataSinceEndSegment() && (endMuxedTime - protectedThis->m_startLastSegmentTime >= protectedThis->m_minimumSegmentDuration)))) {
+            if (endMuxedTime - protectedThis->m_startLastSegmentTime >= protectedThis->m_minimumSegmentDuration)
+                protectedThis->m_startLastSegmentTime = endMuxedTime;
+            protectedThis->m_nextVideoFrameMuxedShouldBeKeyframe = protectedThis->segmentsMustStartWithVideoKeyframe();
+            protectedThis->m_hasMuxedAudioFrameSinceEndSegment = false;
+            protectedThis->m_hasMuxedVideoFrameSinceEndSegment = false;
             GenericPromise::Producer producer;
             Ref promise = producer.promise();
-            LOG(MediaStream, "MediaRecorderPrivateEncoder::flushPendingData writing %zu frames start:%f end:%f", m_interleavedFrames.size(), m_interleavedFrames.first()->presentationTime().toDouble(), m_interleavedFrames.last()->presentationEndTime().toDouble());
-            m_writer->writeFrames(std::exchange(m_interleavedFrames, { }), endMuxedTime)->chainTo(WTF::move(producer));
+            LOG(MediaStream, "MediaRecorderPrivateEncoder::flushPendingData writing %zu frames start:%f end:%f", protectedThis->m_interleavedFrames.size(), protectedThis->m_interleavedFrames.first()->presentationTime().toDouble(), protectedThis->m_interleavedFrames.last()->presentationEndTime().toDouble());
+            protectedThis->m_writer->writeFrames(std::exchange(protectedThis->m_interleavedFrames, { }), endMuxedTime)->chainTo(WTF::move(producer));
             return promise;
         }
         return GenericPromise::createAndResolve();

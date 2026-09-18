@@ -280,7 +280,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
         ContentRuleListResults::Result result;
         for (const auto& action : actionsFromContentRuleList.actions) {
-            WTF::visit(WTF::makeVisitor([&](const BlockLoadAction&) {
+            WTF::switchOn(action.data(), [&](const BlockLoadAction&) {
                 if (results.summary.redirected)
                     return;
 
@@ -349,7 +349,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
                 // We create a requestId here since ResourceRequest objects don't have one, and it's a non-optional parameter.
                 // We set documentLifecycle to null because that will require Safari API to be implemented.
                 page.chrome().client().contentRuleListMatchedRule({ { reportIdentifierAction.identifier, reportIdentifierAction.string, contentRuleListIdentifier }, { frameId, parentFrameId, initiatingDocumentLoader.request().httpMethod(), requestId, -1, resourceTypeToStringForMatchedRule(resourceType), url.string(), initiator, documentId, std::nullopt, frameType, std::nullopt } });
-            }), action.data());
+            });
         }
 
         if (!actionsFromContentRuleList.sawIgnorePreviousRules) {

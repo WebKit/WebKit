@@ -57,7 +57,7 @@ const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thi
     if (it == m_map.end())
         return nullAtom();
 
-    return WTF::visit(WTF::makeVisitor([&](const AtomString& stringValue) -> const AtomString& {
+    return WTF::switchOn(it->value, [&](const AtomString& stringValue) -> const AtomString& {
         return stringValue;
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) -> const AtomString& {
         auto* elementValue = weakElementValue.get();
@@ -76,7 +76,7 @@ const AtomString& CustomElementDefaultARIA::valueForAttribute(const Element& thi
         }
         // FIXME: This should probably be using the idList we just built.
         return nullAtom();
-    }), it->value);
+    });
 }
 
 bool CustomElementDefaultARIA::hasAttribute(const QualifiedName& name) const
@@ -91,7 +91,7 @@ RefPtr<Element> CustomElementDefaultARIA::elementForAttribute(const Element& thi
         return nullptr;
 
     RefPtr<Element> result;
-    WTF::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
+    WTF::switchOn(it->value, [&](const AtomString& stringValue) {
         if (thisElement.isInTreeScope())
             result = protect(thisElement.treeScope())->elementByIdResolvingReferenceTarget(stringValue);
     }, [&](const WeakPtr<Element, WeakPtrImplWithEventTargetData>& weakElementValue) {
@@ -100,7 +100,7 @@ RefPtr<Element> CustomElementDefaultARIA::elementForAttribute(const Element& thi
             result = WTF::move(elementValue);
     }, [&](const Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>&) {
         RELEASE_ASSERT_NOT_REACHED();
-    }), it->value);
+    });
     return result;
 }
 
@@ -115,7 +115,7 @@ std::optional<Vector<Ref<Element>>> CustomElementDefaultARIA::elementsForAttribu
     if (it == m_map.end())
         return std::nullopt;
     Vector<Ref<Element>> result;
-    WTF::visit(WTF::makeVisitor([&](const AtomString& stringValue) {
+    WTF::switchOn(it->value, [&](const AtomString& stringValue) {
         if (thisElement.isInTreeScope()) {
             SpaceSplitString idList { stringValue, SpaceSplitString::ShouldFoldCase::No };
             result = WTF::compactMap(idList, [&](auto& id) {
@@ -133,7 +133,7 @@ std::optional<Vector<Ref<Element>>> CustomElementDefaultARIA::elementsForAttribu
             if (RefPtr element = weakElement.get(); element && isElementVisible(*element, thisElement))
                 result.append(element.releaseNonNull());
         }
-    }), it->value);
+    });
     return result;
 }
 

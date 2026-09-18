@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 #include "CryptoKeyFormat.h"
 #include <JavaScriptCore/Strong.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
@@ -61,6 +62,9 @@ public:
 
     using KeyFormat = CryptoKeyFormat;
 
+    enum class PendingPromiseIdentifierType { };
+    using PendingPromiseIdentifier = AtomicObjectIdentifier<PendingPromiseIdentifierType>;
+
     using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
     using KeyDataVariant = Variant<Ref<JSC::ArrayBufferView>, Ref<JSC::ArrayBuffer>, JsonWebKey>;
 
@@ -81,10 +85,10 @@ private:
     explicit SubtleCrypto(ScriptExecutionContext*);
 
     void addAuthenticatedEncryptionWarningIfNecessary(CryptoAlgorithmIdentifier);
-    inline friend RefPtr<DeferredPromise> getPromise(DeferredPromise*, WeakPtr<SubtleCrypto>);
+    inline friend RefPtr<DeferredPromise> getPromise(PendingPromiseIdentifier, WeakPtr<SubtleCrypto>);
 
     const Ref<WorkQueue> m_workQueue;
-    HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
+    HashMap<PendingPromiseIdentifier, Ref<DeferredPromise>> m_pendingPromises;
 };
 
 } // namespace WebCore

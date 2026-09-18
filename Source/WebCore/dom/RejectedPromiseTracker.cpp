@@ -144,8 +144,9 @@ void RejectedPromiseTracker::promiseHandled(JSDOMGlobalObject& globalObject, JSP
     if (!m_outstandingRejectedPromises.remove(&promise))
         return;
 
-    m_context->postTask([this, rejectedPromise = DOMPromise::create(globalObject, promise)] (ScriptExecutionContext&) mutable {
-        reportRejectionHandled(WTF::move(rejectedPromise));
+    m_context->postTask([rejectedPromise = DOMPromise::create(globalObject, promise)] (ScriptExecutionContext& context) mutable {
+        if (CheckedPtr tracker = context.rejectedPromiseTracker())
+            tracker->reportRejectionHandled(WTF::move(rejectedPromise));
     });
 }
 
@@ -157,8 +158,9 @@ void RejectedPromiseTracker::processQueueSoon()
         return;
 
     Vector<UnhandledPromise> items = WTF::move(m_aboutToBeNotifiedRejectedPromises);
-    m_context->postTask([this, items = WTF::move(items)] (ScriptExecutionContext&) mutable {
-        reportUnhandledRejections(WTF::move(items));
+    m_context->postTask([items = WTF::move(items)] (ScriptExecutionContext& context) mutable {
+        if (CheckedPtr tracker = context.rejectedPromiseTracker())
+            tracker->reportUnhandledRejections(WTF::move(items));
     });
 }
 

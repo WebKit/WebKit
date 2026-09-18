@@ -471,9 +471,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         DEBUG_LOG(LOGIDENTIFIER, "Transceiver states: ", *transceiverStates);
     ASSERT(m_setDescriptionCallback);
 
-    ActiveDOMObject::queueTaskKeepingObjectAlive(protect(m_peerConnection).get(), TaskSource::Networking, [this, callback = WTF::move(m_setDescriptionCallback), descriptionStates = WTF::move(descriptionStates), transceiverStates = WTF::move(transceiverStates), sctpBackend = WTF::move(sctpBackend), maxMessageSize](auto& peerConnection) mutable {
-        UNUSED_PARAM(this);
-
+    ActiveDOMObject::queueTaskKeepingObjectAlive(protect(m_peerConnection).get(), TaskSource::Networking, [logIdentifier = LOGIDENTIFIER, callback = WTF::move(m_setDescriptionCallback), descriptionStates = WTF::move(descriptionStates), transceiverStates = WTF::move(transceiverStates), sctpBackend = WTF::move(sctpBackend), maxMessageSize](auto& peerConnection) mutable {
         if (peerConnection.isClosed())
             return;
 
@@ -495,14 +493,14 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         if (descriptionStates) {
             peerConnection.updateDescriptions(WTF::move(*descriptionStates));
             if (peerConnection.isClosed()) {
-                DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed after descriptions update");
+                DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed after descriptions update");
                 return;
             }
         }
 
         peerConnection.processIceTransportChanges();
         if (peerConnection.isClosed()) {
-            DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed after ICE transport changes");
+            DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed after ICE transport changes");
             return;
         }
 
@@ -523,42 +521,42 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
                     processRemoteTracks(*transceiver, WTF::move(transceiverState), addList, removeList, trackEventList, muteTrackList);
             }
 
-            DEBUG_LOG(LOGIDENTIFIER, "Processing ", muteTrackList.size(), " muted tracks");
+            DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Processing ", muteTrackList.size(), " muted tracks");
             for (auto& track : muteTrackList) {
                 track->setShouldFireMuteEventImmediately(true);
                 protect(track->source())->setMuted(true);
                 track->setShouldFireMuteEventImmediately(false);
                 if (peerConnection.isClosed()) {
-                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while processing muted tracks");
+                    DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while processing muted tracks");
                     return;
                 }
             }
 
-            DEBUG_LOG(LOGIDENTIFIER, "Removing ", removeList.size(), " tracks");
+            DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Removing ", removeList.size(), " tracks");
             for (auto& pair : removeList) {
                 pair.stream->privateStream().removeTrack(pair.track->privateTrack());
                 if (peerConnection.isClosed()) {
-                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while removing tracks");
+                    DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while removing tracks");
                     return;
                 }
             }
 
-            DEBUG_LOG(LOGIDENTIFIER, "Adding ", addList.size(), " tracks");
+            DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Adding ", addList.size(), " tracks");
             for (auto& pair : addList) {
                 Ref { pair.stream }->addTrackFromPlatform(pair.track.copyRef());
                 if (peerConnection.isClosed()) {
-                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while adding tracks");
+                    DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while adding tracks");
                     return;
                 }
             }
 
-            DEBUG_LOG(LOGIDENTIFIER, "Dispatching ", trackEventList.size(), " track events");
+            DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "Dispatching ", trackEventList.size(), " track events");
             for (auto& event : trackEventList) {
                 RefPtr track = event->track();
-                ALWAYS_LOG(LOGIDENTIFIER, "Dispatching track event for track ", track->id());
+                ALWAYS_LOG_WITH_THIS(&peerConnection, logIdentifier, "Dispatching track event for track ", track->id());
                 peerConnection.dispatchEvent(event);
                 if (peerConnection.isClosed()) {
-                    DEBUG_LOG(LOGIDENTIFIER, "PeerConnection closed while dispatching track events");
+                    DEBUG_LOG_WITH_THIS(&peerConnection, logIdentifier, "PeerConnection closed while dispatching track events");
                     return;
                 }
             }

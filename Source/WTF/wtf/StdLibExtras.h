@@ -539,7 +539,7 @@ concept DerivedFromOrConvertibleTo = std::is_base_of_v<Base, Derived> || std::is
 // MS ABI mangler failing on pack expansions in constrained function templates when the
 // concept (HasSwitchOn) involves a call to a variadic member template.
 // https://github.com/llvm/llvm-project/issues/191588
-template<class V, class... F> ALWAYS_INLINE constexpr decltype(auto) switchOn(V&& v, F&&... f)
+template<class V, class... F> ALWAYS_INLINE constexpr decltype(auto) switchOn(V&& v, NOESCAPE F&&... f)
 {
     if constexpr (HasSwitchOn<V>)
         return std::forward<V>(v).switchOn(std::forward<F>(f)...);
@@ -569,14 +569,14 @@ template<size_t Minimum = 0, class F, class V> ALWAYS_INLINE decltype(auto) visi
 #undef WTF_INDEX_VISIT_CASE
 }
 
-template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, NOESCAPE F&&... f) -> decltype(visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
 {
     return visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
 }
 
 #else
 
-template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE constexpr auto switchOn(V&& v, F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
+template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE constexpr auto switchOn(V&& v, NOESCAPE F&&... f) -> decltype(WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
 {
     return WTF::visit(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v)));
 }
@@ -771,7 +771,7 @@ template<class F, class Tuple> ALWAYS_INLINE constexpr decltype(auto) visitTuple
     );
 }
 
-template<typename Tuple, typename... F> ALWAYS_INLINE constexpr auto switchOnTupleAtIndex(size_t index, Tuple&& tuple, F&&... f) -> decltype(visitTupleElementAtIndex(WTF::makeVisitor(std::forward<F>(f)...), index, std::forward<Tuple>(tuple)))
+template<typename Tuple, typename... F> ALWAYS_INLINE constexpr auto switchOnTupleAtIndex(size_t index, Tuple&& tuple, NOESCAPE F&&... f) -> decltype(visitTupleElementAtIndex(WTF::makeVisitor(std::forward<F>(f)...), index, std::forward<Tuple>(tuple)))
 {
     return visitTupleElementAtIndex(WTF::makeVisitor(std::forward<F>(f)...), index, std::forward<Tuple>(tuple));
 }
@@ -1370,7 +1370,7 @@ constexpr decltype(auto) apply_impl(F&& functor, T&& tupleLike, std::index_seque
 }
 
 template<class F, class T>
-constexpr decltype(auto) apply(F&& functor, T&& tupleLike)
+constexpr decltype(auto) apply(NOESCAPE F&& functor, T&& tupleLike)
 {
     return apply_impl(std::forward<F>(functor), std::forward<T>(tupleLike), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<T>>> { });
 }

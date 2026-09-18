@@ -188,7 +188,7 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
 #endif
 
     if (!m_childThreads.isEmptyIgnoringNullReferences()) {
-        m_runWhenLastChildThreadIsGone = [this, protectedThis = WTF::move(protectedThis)]() mutable {
+        m_runWhenLastChildThreadIsGone = [this, protectedThis = Ref { *this }]() mutable {
             destroyWorkerGlobalScope(WTF::move(protectedThis));
         };
         return;
@@ -263,7 +263,7 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
     if (!m_threadCreationAndGlobalScopeLock.tryLock()) {
         // The thread is still starting, spin the runloop and try again to avoid deadlocks if the worker thread
         // needs to interact with the main thread during startup.
-        callOnMainThread([this, stoppedCallback = WTF::move(stoppedCallback)]() mutable {
+        callOnMainThread([this, protectedThis = Ref { *this }, stoppedCallback = WTF::move(stoppedCallback)]() mutable {
             stop(WTF::move(stoppedCallback));
         });
         return;
