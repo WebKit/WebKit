@@ -193,6 +193,22 @@ void NonCompositedFrameRenderer::updateRendering()
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
 
+#if ENABLE(DAMAGE_TRACKING)
+    // A rendering update that dirtied nothing, like the one pointer motion over static content
+    // schedules, would present a frame identical to the previous one and make the UI process
+    // repaint the view for nothing.
+    if (m_hasRenderedFrame && !m_forcedRepaintAsyncCallback && m_frameDamage && m_frameDamage->isEmpty()) {
+        webPage->didUpdateRendering();
+        if (RefPtr drawingArea = webPage->drawingArea()) {
+            drawingArea->willStartRenderingUpdateDisplay();
+            drawingArea->didCompleteRenderingUpdateDisplay();
+            drawingArea->dispatchPendingCallbacksAfterEnsuringDrawing();
+        }
+        WTFEndSignpost(this, NonCompositedRenderingUpdate);
+        return;
+    }
+#endif
+
     IntSize scaledSize = webPage->size();
     scaledSize.scale(webPage->deviceScaleFactor());
 
@@ -262,6 +278,9 @@ void NonCompositedFrameRenderer::updateRendering()
     }
 
     m_surface->didRenderFrame();
+#if ENABLE(DAMAGE_TRACKING)
+    m_hasRenderedFrame = true;
+#endif
     webPage->didUpdateRendering();
 
     if (drawingArea) {
