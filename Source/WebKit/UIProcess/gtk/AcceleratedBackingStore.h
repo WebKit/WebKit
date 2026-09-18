@@ -97,6 +97,7 @@ private:
     void didDestroyBuffer(uint64_t id);
     void frame(uint64_t id, Rects&&, WTF::UnixFileDescriptor&&);
     void frameDone();
+    void queuePendingDamageDraw();
 
     void ensureGLContext();
     bool swapBuffersIfNeeded();
