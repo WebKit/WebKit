@@ -891,6 +891,40 @@ std::span<JSBigInt::Digit, N * 2> JSBigInt::squareCombaFixed(std::span<const Dig
     return result;
 }
 
+template<typename DigitType>
+static std::span<DigitType> clampedSubspan(std::span<DigitType> x, size_t offset, size_t length)
+{
+    if (offset >= x.size())
+        return { };
+    x = x.subspan(offset);
+    if (x.size() > length)
+        x = x.first(length);
+    return x;
+}
+
+ALWAYS_INLINE static std::span<JSBigInt::Digit> forEachSlidingColumn(std::span<const JSBigInt::Digit> xWindow, std::span<const JSBigInt::Digit> y, std::span<JSBigInt::Digit> result, NOESCAPE const Invocable<JSBigInt::Digit(std::span<const JSBigInt::Digit>)> auto& computeColumn)
+{
+    // Steady state
+    for (; !result.empty() && xWindow.size() >= y.size(); result = result.subspan(1), xWindow = xWindow.subspan(1))
+        result.front() = computeColumn(xWindow.first(y.size()));
+
+    // Shrinking
+    for (; !result.empty() && !xWindow.empty(); result = result.subspan(1), xWindow = xWindow.subspan(1))
+        result.front() = computeColumn(xWindow);
+
+    return result;
+}
+
+ALWAYS_INLINE static std::span<JSBigInt::Digit> accumulateSlidingColumns(std::span<const JSBigInt::Digit> xWindow, std::span<const JSBigInt::Digit> y, std::span<JSBigInt::Digit> result, DigitColumnAccumulator<CarryForm::Flags>& accumulator)
+{
+    return forEachSlidingColumn(xWindow, y, result, [&](std::span<const JSBigInt::Digit> xPart) ALWAYS_INLINE_LAMBDA {
+        auto yDigit = y.rbegin();
+        for (JSBigInt::Digit xDigit : xPart)
+            accumulator.mac(xDigit, *yDigit++);
+        return accumulator.storeAndShift();
+    });
+}
+
 std::span<JSBigInt::Digit> JSBigInt::multiplySingle(std::span<const Digit> multiplicand, Digit multiplier, std::span<Digit> result)
 {
     RELEASE_ASSERT(result.size() > multiplicand.size());
@@ -909,173 +943,184 @@ std::span<JSBigInt::Digit> JSBigInt::multiplySingle(std::span<const Digit> multi
 }
 
 // Z := X * Y.
-// O(n²) "schoolbook" multiplication algorithm. Optimized to minimize
+// O(n^2) "schoolbook" multiplication algorithm. Optimized to minimize
 // bounds and overflow checks: rather than looping over X for every digit
-// of Y (or vice versa), we loop over Z. The {BODY} macro above is what
-// computes one of Z's digits as a sum of the products of relevant digits
-// of X and Y. This yields a nearly 2x improvement compared to more obvious
+// of Y (or vice versa), we loop over Z. The foldProduct below is what folds
+// one product of relevant digits of X and Y into the digit of Z being
+// computed. This yields a nearly 2x improvement compared to more obvious
 // implementations.
 // This method is *highly* performance sensitive even for the advanced
 // algorithms, which use this as the base case of their recursive calls.
-#define MULTIPLY_BODY(min, max) \
-    do { \
-        for (uint32_t j = min; j <= max; j++) { \
-            auto [low, high] = digitMul(x[j], y[i - j]); \
-            zi = digitAdd(zi, low, carry); \
-            next = digitAdd(next, high, nextCarry); \
-        } \
-        result[i] = zi; \
-    } while (0)
-
-std::span<JSBigInt::Digit> JSBigInt::multiplySchoolbook(std::span<const Digit> xSpan, std::span<const Digit> ySpan, std::span<Digit> resultSpan)
+std::span<JSBigInt::Digit> JSBigInt::multiplySchoolbook(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
 {
-    RELEASE_ASSERT(xSpan.size() >= ySpan.size());
-    RELEASE_ASSERT(resultSpan.size() >= xSpan.size() + ySpan.size());
-    RELEASE_ASSERT(xSpan.size());
-    RELEASE_ASSERT(ySpan.size());
+    RELEASE_ASSERT(!y.empty());
+    RELEASE_ASSERT(x.size() >= y.size());
+    // Rejecting a wrapped product length is what lets the compiler discharge the bound checks on
+    // the writes below, which it cannot do against a sum that might have overflowed.
+    size_t fullSize = x.size() + y.size();
+    RELEASE_ASSERT(fullSize >= y.size());
+    RELEASE_ASSERT(result.size() >= fullSize);
+    // Narrowing result to the digits this writes ties each column index to the span's own size, so
+    // the standard library's bound check on each write is hoisted out of the loops below.
+    result = result.first(fullSize);
 
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
+    // zi is the digit of Z being computed and next the carry into the one above it, each with its
+    // own carry counter. They live across columns, so foldProduct can take just the two digits.
+    Digit zi = 0, next = 0, nextCarry = 0, carry = 0;
+    auto foldProduct = [&](Digit xDigit, Digit yDigit) ALWAYS_INLINE_LAMBDA {
+        auto [low, high] = digitMul(xDigit, yDigit);
+        zi = digitAdd(zi, low, carry);
+        next = digitAdd(next, high, nextCarry);
+    };
 
-    Digit next = 0, nextCarry = 0, carry = 0;
+    auto xHead = x.first(y.size());
+    auto resultHead = result.first(y.size());
+
     // Unrolled first iteration: it's trivial.
     {
-        auto [low, high] = digitMul(x[0], y[0]);
-        result[0] = low;
+        auto [low, high] = digitMul(xHead[0], y[0]);
+        resultHead[0] = low;
         next = high;
     }
     size_t i = 1;
     // Unrolled second iteration: a little less setup.
-    if (i < ySpan.size()) {
-        Digit zi = next;
+    if (i < resultHead.size()) {
+        zi = next;
         next = 0;
-        MULTIPLY_BODY(0, 1);
+        for (size_t j = 0; j <= 1; j++)
+            foldProduct(xHead[j], y[i - j]);
+        resultHead[i] = zi;
         i++;
     }
 
-    // Main part: since xSpan.size() >= ySpan.size() > i, no bounds checks are needed.
-    for (; i < ySpan.size(); i++) {
+    // Main part: since x.size() >= y.size() > i, no bounds checks are needed.
+    for (; i < resultHead.size(); i++) {
         Digit temp = 0;
-        Digit zi = digitAdd(next, carry, temp);
+        zi = digitAdd(next, carry, temp);
         next = nextCarry + temp;
         carry = 0;
         nextCarry = 0;
-        MULTIPLY_BODY(0, i);
+        for (size_t j = 0; j <= i; j++)
+            foldProduct(xHead[j], y[i - j]);
+        resultHead[i] = zi;
     }
 
-    // Last part: i exceeds y now, we have to be careful about bounds.
-    size_t loopEnd = xSpan.size() + ySpan.size() - 2;
-    for (; i <= loopEnd; i++) {
-        size_t maxXIndex = std::min<size_t>(i, xSpan.size() - 1);
-        size_t maxYIndex = ySpan.size() - 1;
-        size_t minXIndex = i - maxYIndex;
+    // Last part: i exceeds y now, so each remaining column but the last is a sliding window.
+    forEachSlidingColumn(x.subspan(1), y, result.subspan(resultHead.size()), [&](std::span<const Digit> xPart) ALWAYS_INLINE_LAMBDA {
+        auto yDigit = y.rbegin();
         Digit temp = 0;
-        Digit zi = digitAdd(next, carry, temp);
+        zi = digitAdd(next, carry, temp);
         next = nextCarry + temp;
         carry = 0;
         nextCarry = 0;
-        MULTIPLY_BODY(minXIndex, maxXIndex);
-    }
+        for (Digit xDigit : xPart)
+            foldProduct(xDigit, *yDigit++);
+        return zi;
+    });
 
     // Write the last digit.
     Digit temp = 0;
-    result[i++] = digitAdd(next, carry, temp);
+    result.back() = digitAdd(next, carry, temp);
     ASSERT(!temp);
-    return resultSpan.first(i);
+    return result;
 }
 
-#undef MULTIPLY_BODY
-
 // For the needs of cachedMod, computes only the low result.size() digits of X * Y.
-void JSBigInt::multiplySpecialLow(std::span<const Digit> xSpan, std::span<const Digit> ySpan, std::span<Digit> resultSpan)
+void JSBigInt::multiplySpecialLow(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
 {
-    RELEASE_ASSERT(ySpan.size() >= 1);
-    RELEASE_ASSERT(xSpan.size() >= 2);
-    RELEASE_ASSERT(xSpan.size() >= ySpan.size() - 1);
-    RELEASE_ASSERT(resultSpan.size());
-
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
+    RELEASE_ASSERT(y.size() >= 1);
+    RELEASE_ASSERT(x.size() >= 2);
+    RELEASE_ASSERT(x.size() >= y.size() - 1);
+    RELEASE_ASSERT(!result.empty());
 
     DigitColumnAccumulator<CarryForm::Flags> accumulator;
-    size_t lastColumn = resultSpan.size() - 1;
-    size_t mainEnd = std::min({ xSpan.size(), ySpan.size(), lastColumn });
+    size_t lastColumn = result.size() - 1;
     size_t column = 0;
 
     // Expanding phase: both operands still cover the whole column, so the term range is exactly
-    // [0, column] and needs no clamping.
-    for (; column < mainEnd; ++column) {
+    // [0, column] and needs no clamping. Narrowing all three spans to the length this runs for
+    // bounds every index by its own span's size, which is what the compiler can discharge.
+    auto xHead = x;
+    if (xHead.size() > y.size())
+        xHead = xHead.first(y.size());
+    if (xHead.size() > lastColumn)
+        xHead = xHead.first(lastColumn);
+    auto yHead = y.first(xHead.size());
+    auto resultHead = result.first(xHead.size());
+    for (; column < xHead.size(); ++column) {
         for (size_t j = 0; j <= column; ++j)
-            accumulator.mac(x[j], y[column - j]);
-        result[column] = accumulator.storeAndShift();
+            accumulator.mac(xHead[j], yHead[column - j]);
+        resultHead[column] = accumulator.storeAndShift();
     }
 
-    // Shrinking phase: the term range is clipped at both ends.
-    for (; column <= lastColumn; ++column) {
-        size_t maxYIndex = std::min<size_t>(column, ySpan.size() - 1);
-        size_t minXIndex = column - maxYIndex;
-        size_t maxXIndex = std::min<size_t>(column, xSpan.size() - 1);
-        for (size_t j = minXIndex; j <= maxXIndex; ++j)
-            accumulator.mac(x[j], y[column - j]);
+    // The expanding phase stops short of Y only when X or the result runs out first, so at most one
+    // column is still clipped at the Y end. Peel it, and the rest is the sliding window over X.
+    if (column < y.size() && column <= lastColumn) {
+        auto yPart = y.first(column + 1);
+        auto xPart = clampedSubspan(x, 0, yPart.size());
+        auto yDigit = yPart.rbegin();
+        for (Digit xDigit : xPart)
+            accumulator.mac(xDigit, *yDigit++);
         result[column] = accumulator.storeAndShift();
+        ++column;
     }
+
+    if (column > lastColumn)
+        return;
+
+    ASSERT(column >= y.size());
+    auto trailing = accumulateSlidingColumns(x.subspan(std::min(column + 1 - y.size(), x.size())), y, result.subspan(column), accumulator);
+    // Columns past the end of X have no terms of their own and only flush the accumulator.
+    for (Digit& digit : trailing)
+        digit = accumulator.storeAndShift();
 }
 
 // For the needs of cachedMod, computes only product digits from startPosition and onward.
 // result[startPosition] corresponds to product digit startPosition.
 // The accumulator state from positions below startPosition is lost, so the computed digits are an
 // *approximate* value.
-void JSBigInt::multiplySpecialHigh(std::span<const Digit> xSpan, std::span<const Digit> ySpan, std::span<Digit> resultSpan, size_t startPosition)
+void JSBigInt::multiplySpecialHigh(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result, size_t startPosition)
 {
-    RELEASE_ASSERT(xSpan.size() >= ySpan.size());
-    RELEASE_ASSERT(ySpan.size() >= 1);
-    size_t fullSize = xSpan.size() + ySpan.size();
+    RELEASE_ASSERT(y.size() >= 1);
+    RELEASE_ASSERT(x.size() >= y.size());
+    // Rejecting a wrapped product length is what lets the compiler discharge the bound checks on
+    // the writes below, which it cannot do against a sum that might have overflowed.
+    size_t fullSize = x.size() + y.size();
+    RELEASE_ASSERT(fullSize >= y.size());
     RELEASE_ASSERT(startPosition < fullSize);
-    RELEASE_ASSERT(resultSpan.size() >= fullSize);
-
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
+    RELEASE_ASSERT(result.size() >= fullSize);
+    result = result.first(fullSize);
 
     DigitColumnAccumulator<CarryForm::Flags> accumulator;
     size_t column = startPosition;
 
-    // Expanding phase: column < ySpan.size(), so the term range starts at 0.
-    for (; column < ySpan.size(); ++column) {
+    // Expanding phase: column < y.size(), so the term range starts at 0.
+    for (; column < y.size(); ++column) {
         for (size_t j = 0; j <= column; ++j)
             accumulator.mac(x[j], y[column - j]);
         result[column] = accumulator.storeAndShift();
     }
 
-    // Shrinking phase: the term range is clipped at both ends.
-    size_t lastColumn = fullSize - 2;
-    for (; column <= lastColumn; ++column) {
-        size_t minXIndex = column - (ySpan.size() - 1);
-        size_t maxXIndex = std::min<size_t>(column, xSpan.size() - 1);
-        for (size_t j = minXIndex; j <= maxXIndex; ++j)
-            accumulator.mac(x[j], y[column - j]);
-        result[column] = accumulator.storeAndShift();
-    }
+    // X runs out one column before the result does, so the walk leaves exactly the last column.
+    auto trailing = accumulateSlidingColumns(x.subspan(column + 1 - y.size()), y, result.subspan(column), accumulator);
+    ASSERT_UNUSED(trailing, trailing.size() == 1);
 
     ASSERT(accumulator.fitsInLow());
-    result[column] = accumulator.low();
+    result.back() = accumulator.low();
 }
 
 // Product scanning costs less per single-digit product than multiplySchoolbook (one
-// add-with-carry chain instead of two counter accumulations) but more per result column (it shifts
-// its three-digit running sum). A shape has O(x * y) products and only x + y - 1 columns, so the
-// balance is set by the smaller operand: product scanning wins once the columns are long, and again
-// on very thin shapes, where multiplySchoolbook's expanding phase all but vanishes and it clamps the
-// term range on nearly every column instead.
+// add-with-carry chain instead of two counter accumulations), and multiplySchoolbook answers with
+// its first two columns unrolled outright, which is most of the work on the smallest shapes. So
+// multiplySchoolbook keeps the shapes that are barely more than that unrolled head, and product
+// scanning takes the long columns and the very thin shapes, where the head is a vanishing share of
+// the column count.
 //
-// These bounds are deliberately coarse. Between them the two are within a few percent, and that
-// margin is smaller than the swing caused by where multiplyComba's short inner loops happen to land
-// relative to a cache line: measuring the same shapes across four builds whose only difference was
-// padding ahead of multiplyComba moved individual shapes by up to 6 points and flipped signs. Only
-// bounds whose sign held across all four are encoded here, so do not narrow them without
-// re-measuring the same way.
+// These bounds are coarse and lean towards multiplySchoolbook; product scanning measures ahead
+// between them as well. Do not move them off a single build: multiplyComba swings up to 6 points on
+// where its short inner loops land relative to a cache line, and measuring the same shapes across
+// four builds whose only difference was padding ahead of multiplyComba moved individual shapes by
+// up to 6 points and flipped signs. Only bounds whose sign held across all four are encoded here.
 static constexpr size_t minCombaSmallerSize = 8;
 static constexpr size_t maxCombaThinSmallerSize = 2;
 static constexpr size_t minCombaThinLargerSize = 16;
@@ -1087,69 +1132,59 @@ static constexpr bool shouldUseComba(size_t largerSize, size_t smallerSize)
 
 // Z := X * Y by product scanning. Each column's running sum lives in three digits, so every
 // product feeds a single add-with-carry chain instead of materializing a carry bit per addend.
-// Splitting the column walk into ramp-up, steady and ramp-down phases makes every loop bound exact,
-// so no column pays for clamping its term range.
-//
-// The shift is more per-column work than multiplySchoolbook does, so this is not a win at every
-// shape; see shouldUseComba.
-std::span<JSBigInt::Digit> JSBigInt::multiplyComba(std::span<const Digit> xSpan, std::span<const Digit> ySpan, std::span<Digit> resultSpan)
+// This has no unrolled head, so it is not a win at every shape; see shouldUseComba.
+std::span<JSBigInt::Digit> JSBigInt::multiplyComba(std::span<const Digit> x, std::span<const Digit> y, std::span<Digit> result)
 {
-    RELEASE_ASSERT(xSpan.size() >= ySpan.size());
-    RELEASE_ASSERT(resultSpan.size() >= xSpan.size() + ySpan.size());
-    RELEASE_ASSERT(ySpan.size());
-
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
-    const size_t xSize = xSpan.size();
-    const size_t ySize = ySpan.size();
+    RELEASE_ASSERT(!y.empty());
+    RELEASE_ASSERT(x.size() >= y.size());
+    // Rejecting a wrapped product length is what lets the compiler discharge the bound checks on
+    // the writes below, which it cannot do against a sum that might have overflowed.
+    size_t fullSize = x.size() + y.size();
+    RELEASE_ASSERT(fullSize >= y.size());
+    RELEASE_ASSERT(result.size() >= fullSize);
+    result = result.first(fullSize);
 
     DigitColumnAccumulator<CarryForm::Flags> accumulator;
-    for (size_t i = 0; i < ySize; ++i) {
+
+    // Ramp up: every column starts at x[0], because y does not yet reach back that far.
+    size_t i = 0;
+    for (; i < y.size(); ++i) {
         for (size_t j = 0; j <= i; ++j)
             accumulator.mac(x[j], y[i - j]);
         result[i] = accumulator.storeAndShift();
     }
-    for (size_t i = ySize; i < xSize; ++i) {
-        for (size_t j = i - ySize + 1; j <= i; ++j)
-            accumulator.mac(x[j], y[i - j]);
-        result[i] = accumulator.storeAndShift();
-    }
-    for (size_t i = xSize; i < xSize + ySize - 1; ++i) {
-        for (size_t j = i - ySize + 1; j <= xSize - 1; ++j)
-            accumulator.mac(x[j], y[i - j]);
-        result[i] = accumulator.storeAndShift();
-    }
+
+    accumulateSlidingColumns(x.subspan(1), y, result.subspan(i, x.size() - 1), accumulator);
+
     ASSERT(accumulator.fitsInLow());
-    result[xSize + ySize - 1] = accumulator.low();
-    return resultSpan.first(xSize + ySize);
+    result.back() = accumulator.low();
+    return result;
 }
 
 // Compile-time-specialized forms of multiplySpecialLow / multiplySpecialHigh for cachedMod. The
 // loops below are ordinary loops, but every bound is a compile-time constant, so the index
 // arithmetic folds away and the compiler is free to unroll as far as it pays off.
 //
-// These must accumulate in exactly the same order as the generic versions: multiplySpecialHigh is
+// These must produce exactly the same digits as the generic versions: multiplySpecialHigh is
 // deliberately approximate (it drops the carry coming from columns below StartPosition), and the
-// error bound that cachedMod's corrective loop relies on depends on that accumulation order.
+// error bound cachedMod's corrective loop relies on is derived from that StartPosition and from
+// which products land in each column. Their order within a column is free, since the accumulator
+// carries every column exactly.
 
 // Accumulates x[j] * y[i - j] for j in [min, max] into acc.
-ALWAYS_INLINE static void multiplySpecialColumn(const JSBigInt::Digit* x, const JSBigInt::Digit* y, size_t i, size_t min, size_t max, DigitColumnAccumulator<CarryForm::Flags>& acc)
+template<size_t XSize, size_t YSize>
+ALWAYS_INLINE static void multiplySpecialColumn(std::span<const JSBigInt::Digit, XSize> x, std::span<const JSBigInt::Digit, YSize> y, size_t i, size_t min, size_t max, DigitColumnAccumulator<CarryForm::Flags>& acc)
 {
     for (size_t j = min; j <= max; ++j)
         acc.mac(x[j], y[i - j]);
 }
 
 template<size_t XSize, size_t YSize, size_t StartPosition>
-ALWAYS_INLINE void JSBigInt::multiplySpecialHighFixed(std::span<const Digit, XSize> xSpan, std::span<const Digit, YSize> ySpan, std::span<Digit, XSize + YSize> resultSpan)
+ALWAYS_INLINE void JSBigInt::multiplySpecialHighFixed(std::span<const Digit, XSize> x, std::span<const Digit, YSize> y, std::span<Digit, XSize + YSize> result)
 {
     static_assert(XSize >= YSize && YSize >= 1);
     static_assert(StartPosition < XSize + YSize);
     constexpr size_t loopEnd = XSize + YSize - 2;
-
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
 
     DigitColumnAccumulator<CarryForm::Flags> acc;
     for (size_t i = StartPosition; i <= loopEnd; ++i) {
@@ -1163,16 +1198,12 @@ ALWAYS_INLINE void JSBigInt::multiplySpecialHighFixed(std::span<const Digit, XSi
 }
 
 template<size_t XSize, size_t YSize, size_t RSize>
-ALWAYS_INLINE void JSBigInt::multiplySpecialLowFixed(std::span<const Digit, XSize> xSpan, std::span<const Digit, YSize> ySpan, std::span<Digit, RSize> resultSpan)
+ALWAYS_INLINE void JSBigInt::multiplySpecialLowFixed(std::span<const Digit, XSize> x, std::span<const Digit, YSize> y, std::span<Digit, RSize> result)
 {
     static_assert(XSize >= 2 && YSize >= 1 && RSize >= 2);
     static_assert(XSize + 1 >= YSize);
     constexpr size_t loopEnd = RSize - 1;
     constexpr size_t mainEnd = std::min({ XSize, YSize, loopEnd });
-
-    const auto* x = xSpan.data();
-    const auto* y = ySpan.data();
-    auto* result = resultSpan.data();
 
     DigitColumnAccumulator<CarryForm::Flags> acc;
     size_t i = 0;
@@ -1224,14 +1255,6 @@ static size_t karatsubaLength(size_t n)
         i++;
     }
     return n << i;
-}
-
-template<typename DigitType>
-static std::span<DigitType> clampedSubspan(std::span<DigitType> x, size_t offset, size_t length)
-{
-    if (offset >= x.size())
-        return { };
-    return x.subspan(offset, std::min(length, x.size() - offset));
 }
 
 JSBigInt::Digit JSBigInt::inplaceAddAndPropagate(std::span<Digit> z, std::span<const Digit> x)
