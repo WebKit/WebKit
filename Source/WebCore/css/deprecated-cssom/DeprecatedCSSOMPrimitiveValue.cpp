@@ -368,6 +368,9 @@ ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCount
             },
             [](const CSS::CustomIdent& customIdent) -> String {
                 return customIdent.value.string();
+            },
+            [](const CSS::SymbolsFunction& symbolsFunction) -> String {
+                return CSS::serializationForCSS(CSS::defaultSerializationContext(), symbolsFunction);
             }
         );
     };
