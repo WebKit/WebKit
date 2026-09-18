@@ -301,9 +301,6 @@ public:
 
     static constexpr ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
 
-    // O(n) operation. Use getICStatusMap() unless you really only intend to get one stub info.
-    PropertyInlineCache* findPropertyCache(CodeOrigin);
-
     const JITCodeMap& jitCodeMap();
 
     std::optional<CodeOrigin> findPC(void* pc);

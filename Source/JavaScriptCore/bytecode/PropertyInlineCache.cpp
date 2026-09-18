@@ -760,7 +760,6 @@ void HandlerPropertyInlineCache::initializeFromUnlinkedPropertyInlineCache(VM& v
     default:
         break;
     }
-    doneLocation = unlinkedPropertyCache.doneLocation;
     m_identifier = unlinkedPropertyCache.m_identifier;
     m_globalObject = codeBlock->globalObject();
     callSiteIndex = CallSiteIndex(BytecodeIndex(unlinkedPropertyCache.bytecodeIndex.offset()));
@@ -785,7 +784,6 @@ void HandlerPropertyInlineCache::initializeFromDFGUnlinkedPropertyInlineCache(Co
     default:
         break;
     }
-    doneLocation = unlinkedPropertyCache.doneLocation;
     m_identifier = unlinkedPropertyCache.m_identifier;
     callSiteIndex = unlinkedPropertyCache.callSiteIndex;
     codeOrigin = unlinkedPropertyCache.codeOrigin;

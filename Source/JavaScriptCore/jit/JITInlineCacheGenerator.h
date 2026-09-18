@@ -78,7 +78,7 @@ public:
         LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer,
         CodeLocationLabel<JITStubRoutinePtrTag> start);
 
-    JSC::UnlinkedPropertyInlineCache* m_unlinkedPropertyCache { nullptr };
+    BaselineUnlinkedPropertyInlineCache* m_baselineUnlinkedPropertyCache { nullptr };
 
     template<typename PropertyInlineCache>
     static void setUpPropertyInlineCacheImpl(PropertyInlineCache& propertyCache, CodeBlock* codeBlock, AccessType accessType, CacheType cacheType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSet& usedRegisters)

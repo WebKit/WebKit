@@ -53,8 +53,8 @@ class JITCode;
 class JITCompiler;
 
 struct UnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {
-    CodeOrigin codeOrigin;
     CallSiteIndex callSiteIndex;
+    CodeOrigin codeOrigin;
 };
 
 struct UnlinkedCallLinkInfo : JSC::UnlinkedCallLinkInfo {

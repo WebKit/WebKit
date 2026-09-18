@@ -70,12 +70,11 @@ JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock*, CompileTimeProperty
             m_propertyCache = propertyCache;
         },
         [&](BaselineUnlinkedPropertyInlineCache* propertyCache) {
-            m_unlinkedPropertyCache = propertyCache;
+            m_baselineUnlinkedPropertyCache = propertyCache;
         }
 #if ENABLE(DFG_JIT)
         ,
-        [&](DFG::UnlinkedPropertyInlineCache* propertyCache) {
-            m_unlinkedPropertyCache = propertyCache;
+        [&](DFG::UnlinkedPropertyInlineCache*) {
         }
 #endif
         ), propertyCache);
@@ -87,7 +86,7 @@ void JITInlineCacheGenerator::finalize(
     ASSERT(m_propertyCache);
     auto& repatchingIC = downcast<RepatchingPropertyInlineCache>(*m_propertyCache);
     repatchingIC.startLocation = start;
-    m_propertyCache->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
+    repatchingIC.doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
     repatchingIC.m_slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
     repatchingIC.slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }

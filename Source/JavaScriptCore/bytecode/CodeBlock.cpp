@@ -1949,22 +1949,6 @@ void CodeBlock::getICStatusMap(ICStatusMap& result)
     getICStatusMap(locker, result);
 }
 
-#if ENABLE(JIT)
-PropertyInlineCache* CodeBlock::findPropertyCache(CodeOrigin codeOrigin)
-{
-    ConcurrentJSLocker locker(m_lock);
-    PropertyInlineCache* result = nullptr;
-    forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
-        if (propertyCache.codeOrigin == codeOrigin) {
-            result = &propertyCache;
-            return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    });
-    return result;
-}
-#endif
-
 template<typename Visitor>
 void CodeBlock::visitOSRExitTargets(const ConcurrentJSLocker&, Visitor& visitor)
 {

@@ -1147,10 +1147,6 @@ void InlineCacheCompiler::succeed()
         m_jit->ret();
         return;
     }
-    if (m_propertyCache.isHandlerIC()) {
-        m_jit->farJump(CCallHelpers::Address(m_propertyCache.propertyCacheGPR(), PropertyInlineCache::offsetOfDoneLocation()), JSInternalPtrTag);
-        return;
-    }
     m_success.append(m_jit->jump());
 }
 

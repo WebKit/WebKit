@@ -93,6 +93,7 @@ public:
     PCToCodeOriginMap* pcToCodeOriginMap() LIFETIME_BOUND override { return m_pcToCodeOriginMap.get(); }
 
     CodeLocationLabel<JSInternalPtrTag> getCallLinkDoneLocationForBytecodeIndex(BytecodeIndex) const;
+    CodeLocationLabel<JSInternalPtrTag> getPropertyInlineCacheDoneLocationForBytecodeIndex(BytecodeIndex) const;
 
     double livenessRate() const { return m_livenessRate; }
     void setLivenessRate(double rate) { m_livenessRate = rate; }

@@ -66,6 +66,15 @@ CodeLocationLabel<JSInternalPtrTag> BaselineJITCode::getCallLinkDoneLocationForB
     return result->doneLocation;
 }
 
+CodeLocationLabel<JSInternalPtrTag> BaselineJITCode::getPropertyInlineCacheDoneLocationForBytecodeIndex(BytecodeIndex bytecodeIndex) const
+{
+    for (auto& unlinkedPropertyCache : m_unlinkedPropertyInlineCaches) {
+        if (unlinkedPropertyCache.bytecodeIndex == bytecodeIndex)
+            return unlinkedPropertyCache.doneLocation;
+    }
+    return { };
+}
+
 BaselineJITData::BaselineJITData(unsigned propertyCacheSize, unsigned poolSize, CodeBlock* codeBlock)
     : Base(propertyCacheSize, poolSize)
     , m_globalObject(codeBlock->globalObject())

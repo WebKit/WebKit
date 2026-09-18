@@ -260,9 +260,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         case InlineCallFrame::ProxyObjectLoadCall:
         case InlineCallFrame::ProxyObjectStoreCall:
         case InlineCallFrame::ProxyObjectInCall: {
-            PropertyInlineCache* propertyCache = baselineCodeBlockForCaller->findPropertyCache(CodeOrigin(callBytecodeIndex));
-            RELEASE_ASSERT(propertyCache, callInstruction.opcodeID());
-            jumpTarget = propertyCache->doneLocation.retagged<JSEntryPtrTag>();
+            jumpTarget = static_cast<const BaselineJITCode*>(baselineCodeBlockForCaller->jitCode().get())->getPropertyInlineCacheDoneLocationForBytecodeIndex(callBytecodeIndex).retagged<JSEntryPtrTag>();
+            RELEASE_ASSERT(jumpTarget, callInstruction.opcodeID());
             break;
         }
 
