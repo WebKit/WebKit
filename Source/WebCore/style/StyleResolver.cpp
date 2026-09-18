@@ -374,29 +374,55 @@ UnadjustedStyle Resolver::unadjustedStyleForCachedMatchResult(Element& element, 
     };
 }
 
-std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& element, const Style::ComputedStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe) const
+// animation-timing-function and animation-composition in a keyframe describe the composite operation
+// and timing function between this keyframe and the next. interpolate-size is not animatable.
+static bool isAnimatedInKeyframe(CSSPropertyID property)
 {
-    // Add all the animating properties to the keyframe.
-    bool hasRevert = false;
+    switch (property) {
+    case CSSPropertyAnimationTimingFunction:
+    case CSSPropertyAnimationComposition:
+    case CSSPropertyInterpolateSize:
+        return false;
+    default:
+        return true;
+    }
+}
+
+static void addAnimatedProperties(BlendingKeyframe& blendingKeyframe, const StyleRuleKeyframe& keyframe, WritingMode writingMode)
+{
     for (auto propertyReference : keyframe.properties()) {
         auto unresolvedProperty = propertyReference.id();
-        // The animation-composition and animation-timing-function within keyframes are special
-        // because they are not animated; they just describe the composite operation and timing
-        // function between this keyframe and the next.
         if (CSSProperty::isDirectionAwareProperty(unresolvedProperty))
             blendingKeyframe.setContainsDirectionAwareProperty(true);
-        if (RefPtr value = propertyReference.value()) {
-            auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, elementStyle.writingMode());
-            if (resolvedProperty != CSSPropertyAnimationTimingFunction && resolvedProperty != CSSPropertyAnimationComposition) {
-                if (RefPtr customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
-                    blendingKeyframe.addProperty(customValue->name());
-                else
-                    blendingKeyframe.addProperty(resolvedProperty);
-            }
-            if (isValueID(*value, CSSValueRevert))
-                hasRevert = true;
-        }
+
+        RefPtr value = propertyReference.value();
+        if (!value)
+            continue;
+
+        auto resolvedProperty = CSSProperty::resolveDirectionAwareProperty(unresolvedProperty, writingMode);
+        if (!isAnimatedInKeyframe(resolvedProperty))
+            continue;
+
+        if (RefPtr customValue = dynamicDowncast<CSSCustomPropertyValue>(*value))
+            blendingKeyframe.addProperty(customValue->name());
+        else
+            blendingKeyframe.addProperty(resolvedProperty);
     }
+}
+
+static bool hasRevertValue(const StyleRuleKeyframe& keyframe)
+{
+    for (auto propertyReference : keyframe.properties()) {
+        RefPtr value = propertyReference.value();
+        if (value && isValueID(*value, CSSValueRevert))
+            return true;
+    }
+    return false;
+}
+
+std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& element, const Style::ComputedStyle& elementStyle, const ResolutionContext& context, const StyleRuleKeyframe& keyframe, BlendingKeyframe& blendingKeyframe) const
+{
+    addAnimatedProperties(blendingKeyframe, keyframe, elementStyle.writingMode());
 
     auto state = State(element, nullptr, context.documentElementStyle, context.treeResolutionState.get());
 
@@ -409,7 +435,7 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     if (pseudoElementIdentifier)
         collector.setPseudoElementRequest(*pseudoElementIdentifier);
 
-    if (hasRevert) {
+    if (hasRevertValue(keyframe)) {
         // In the animation origin, 'revert' rolls back the cascaded value to the user level.
         // Therefore, we need to collect UA and user rules.
         collector.setMedium(m_mediaQueryEvaluator);
@@ -420,6 +446,10 @@ std::unique_ptr<Style::ComputedStyle> Resolver::styleForKeyframe(Element& elemen
     Builder builder(*state.style(), builderContext(state), collector.matchResult());
     builder.state().setIsBuildingKeyframeStyle();
     builder.applyAllProperties();
+
+    // Ignore interpolate-size in keyframes. The element's computed value applies.
+    // https://drafts.csswg.org/css-values-5/#interpolate-size
+    state.style()->setInterpolateSize(elementStyle.interpolateSize());
 
     if (state.style()->usesViewportUnits())
         element.document().setHasStyleWithViewportUnits();
