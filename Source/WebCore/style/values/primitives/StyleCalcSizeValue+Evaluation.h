@@ -27,18 +27,17 @@
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleUnevaluatedCalcSize.h>
 #include <WebCore/StyleValueTypes.h>
+#include <optional>
 
 namespace WebCore {
 namespace Style {
 
-// Resolves the basis, binds it to the `size` keyword, then resolves the calculation. A keyword basis
-// stands for the element's intrinsic size, which only layout knows, so callers check
-// behavesAsKeyword() and degrade to the keyword before reaching here.
-// FIXME: Resolve keyword bases in layout, so calc-size(auto, size * 2) works.
-WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, double percentResolutionLength, ZoomFactor);
-
-// Clamps the result to the property's range, as Calculation::Value::evaluate() does for a calc().
-WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, CSS::Range, double percentResolutionLength, ZoomFactor);
+// Resolves the basis, substitutes it for the `size` keyword, then resolves the calculation, clamping
+// to the property's range as Calculation::Value::evaluate() does for a calc().
+//
+// A keyword basis is the element's intrinsic size, which only layout knows, so layout passes it in as
+// `keywordBasis`. Callers without one check behavesAsKeyword() and degrade to the keyword instead.
+WEBCORE_EXPORT double evaluateCalcSize(const CalcSizeValue&, CSS::Range, double percentResolutionLength, ZoomFactor, std::optional<double> keywordBasis = std::nullopt);
 
 template<typename T> concept IsPercentageOrCalcOrCalcSize = IsPercentageOrCalc<T> || std::same_as<T, UnevaluatedCalcSize>;
 
