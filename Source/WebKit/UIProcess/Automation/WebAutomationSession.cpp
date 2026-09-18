@@ -1552,6 +1552,18 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
 
 void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&& callback)
 {
+    evaluateJavaScriptFunctionWithValueMode(browsingContextHandle, frameHandle, function, WTF::move(arguments), WTF::move(expectsImplicitCallbackArgument), WTF::move(forceUserGesture), WTF::move(callbackTimeout), false, WTF::move(callback));
+}
+
+#if ENABLE(WEBDRIVER_BIDI)
+void WebAutomationSession::evaluateJavaScriptFunctionForBidi(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&& callback)
+{
+    evaluateJavaScriptFunctionWithValueMode(browsingContextHandle, frameHandle, function, WTF::move(arguments), WTF::move(expectsImplicitCallbackArgument), WTF::move(forceUserGesture), WTF::move(callbackTimeout), true, WTF::move(callback));
+}
+#endif
+
+void WebAutomationSession::evaluateJavaScriptFunctionWithValueMode(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& function, Ref<JSON::Array>&& arguments, std::optional<bool>&& expectsImplicitCallbackArgument, std::optional<bool>&& forceUserGesture, std::optional<double>&& callbackTimeout, bool usesBidiValueSemantics, Inspector::CommandCallback<String>&& callback)
+{
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
 
@@ -1566,7 +1578,7 @@ void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol:
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTF::move(callback));
 
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->webPageIDInProcessForFrame(frameID), frameID, function, argumentsVector, expectsImplicitCallbackArgument.value_or(false), forceUserGesture.value_or(false), WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID] (String&& result, String&& errorType) {
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction(page->webPageIDInProcessForFrame(frameID), frameID, function, argumentsVector, expectsImplicitCallbackArgument.value_or(false), forceUserGesture.value_or(false), WTF::move(callbackTimeout), usesBidiValueSemantics), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID] (String&& result, String&& errorType) {
         auto callback = protectedThis->m_evaluateJavaScriptFunctionCallbacks.take(callbackID);
         if (!callback)
             return;
@@ -2679,6 +2691,7 @@ static WebEventModifier NODELETE protocolModifierToWebEventModifier(Inspector::P
 }
 #endif // ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
 
+#if ENABLE(WEBDRIVER_BIDI)
 static String normalizedBidiScriptEvaluationError(const String& errorType, const String& errorDetails)
 {
     using ErrorMessage = Inspector::Protocol::Automation::ErrorMessage;
@@ -2695,7 +2708,7 @@ static String normalizedBidiScriptEvaluationError(const String& errorType, const
     return STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, details);
 }
 
-void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
+void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& expression, bool awaitPromise, std::optional<double> maxObjectDepth, std::optional<double> maxDomDepth, const String& includeShadowTree, bool resultOwnershipRoot, std::optional<double>&& callbackTimeout, CommandCallback<String>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!page, FrameNotFound, "The browsing context is no longer available."_s);
@@ -2706,7 +2719,7 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
     uint64_t callbackID = m_nextEvaluateJavaScriptCallbackID++;
     m_evaluateJavaScriptFunctionCallbacks.set(callbackID, WTF::move(callback));
 
-    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiScript(page->webPageIDInProcessForFrame(frameID), frameID, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID] (String&& result, String&& errorType) {
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::EvaluateBidiScript(page->webPageIDInProcessForFrame(frameID), frameID, expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, resultOwnershipRoot, WTF::move(callbackTimeout)), CompletionHandler<void(String&&, String&&)> { [protectedThis = Ref { *this }, callbackID] (String&& result, String&& errorType) {
         auto callback = protectedThis->m_evaluateJavaScriptFunctionCallbacks.take(callbackID);
         if (!callback)
             return;
@@ -2719,6 +2732,23 @@ void WebAutomationSession::evaluateBidiScript(const Inspector::Protocol::Automat
         callback(WTF::move(result));
     } });
 }
+
+void WebAutomationSession::releaseBidiHandles(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, Vector<String>&& handles, Inspector::CommandCallback<void>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, FrameNotFound);
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ReleaseBidiHandles(page->webPageIDInProcessForFrame(frameID), frameID, WTF::move(handles)), CompletionHandler<void(String&&)> { [callback = WTF::move(callback)] (String&& errorType) mutable {
+        if (!errorType.isEmpty())
+            return callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_MESSAGE_AND_DETAILS(errorType, emptyString())));
+        callback({ });
+    } });
+}
+#endif
 
 void WebAutomationSession::performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle& handle, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton mouseButton, Inspector::Protocol::Automation::MouseInteraction mouseInteraction, Ref<JSON::Array>&& keyModifierStrings, CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&& callback)
 {

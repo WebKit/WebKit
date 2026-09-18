@@ -296,18 +296,19 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     // FIXME: handle custom `this` option.
     // FIXME: handle `userActivation` option.
 
-    // Deserialize LocalValue arguments into plain JSON values for script evaluation.
-    // FIXME: Implement RemoteReference and Channel types for arguments <https://webkit.org/b/288057>
+    // Preserve the typed LocalValue representation until it reaches the target realm, where
+    // RemoteReferences and nested values can be deserialized without losing their distinction.
+    // FIXME: Implement Channel types for arguments <https://webkit.org/b/288057>
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
         for (unsigned i = 0; i < arguments->length(); ++i) {
             Ref argValue = arguments->get(i);
-            argumentsArray->pushValue(deserializeLocalValue(argValue.get()));
+            argumentsArray->pushString(argValue->toJSONString());
         }
     }
 
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
-    session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
+    session->evaluateJavaScriptFunctionForBidi(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, optionalUserActivation.value_or(false), std::nullopt, [callback = WTF::move(callback), realmID](Inspector::CommandResult<String>&& stringResult) {
         if (!stringResult) {
             if (stringResult.error().startsWith("JavaScriptError"_s)) {
                 String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
@@ -328,21 +329,13 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         auto resultValue = JSON::Value::parseJSON(stringResult.value());
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue, InternalError, "Failed to parse callFunction result as JSON"_s);
 
-        auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-            .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-            .release();
-
-        resultObject->setValue(resultValue.releaseNonNull());
-
-        callback({ { EvaluateResultType::Success, realmID, WTF::move(resultObject), nullptr } });
+        auto remoteValue = deserializeRemoteValue(resultValue.get());
+        callback({ { EvaluateResultType::Success, realmID, WTF::move(remoteValue), nullptr } });
     });
 }
 
 void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& target, CommandCallback<void>&& callback)
 {
-    // FIXME: WebProcess forwarding to actually release JavaScript objects will be added
-    // once resultOwnership="root" support is implemented. https://bugs.webkit.org/show_bug.cgi?id=288059
-
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
 
@@ -374,19 +367,25 @@ void BidiScriptAgent::disown(Ref<JSON::Array>&& handles, Ref<JSON::Object>&& tar
     auto pageAndFrameHandles = session->extractBrowsingContextHandles(browsingContext);
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
 
-    // Validate handles array elements.
+    auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
+
+    Vector<String> handleStrings;
+    handleStrings.reserveInitialCapacity(handles->length());
     for (size_t i = 0; i < handles->length(); ++i) {
         String handleString;
         if (!handles->get(i)->asString(handleString))
             ASYNC_FAIL_WITH_PREDEFINED_ERROR(InvalidParameter);
+        handleStrings.append(WTF::move(handleString));
     }
 
-    // FIXME: Implement WebProcess forwarding to release JavaScript objects.
-    // https://bugs.webkit.org/show_bug.cgi?id=288059
-    ASYNC_FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
+    session->releaseBidiHandles(topLevelContextHandle, frameHandle, WTF::move(handleStrings), [callback = WTF::move(callback)](Inspector::CommandResult<void>&& result) mutable {
+        if (!result)
+            return callback(makeUnexpected(result.error()));
+        callback({ });
+    });
 }
 
-void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&&, RefPtr<JSON::Object>&& optionalSerializationOptions, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
+void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<JSON::Object>&& target, std::optional<Inspector::Protocol::BidiScript::ResultOwnership>&& optionalResultOwnership, RefPtr<JSON::Object>&& optionalSerializationOptions, std::optional<bool>&&, CommandCallbackOf<Inspector::Protocol::BidiScript::EvaluateResultType, String, RefPtr<Inspector::Protocol::BidiScript::RemoteValue>, RefPtr<Inspector::Protocol::BidiScript::ExceptionDetails>>&& callback)
 {
     RefPtr session = m_session.get();
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session, InternalError);
@@ -424,7 +423,7 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
 
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
+    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, optionalResultOwnership && *optionalResultOwnership == Inspector::Protocol::BidiScript::ResultOwnership::Root, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)

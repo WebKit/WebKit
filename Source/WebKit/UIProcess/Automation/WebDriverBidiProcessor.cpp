@@ -157,9 +157,12 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
     case Inspector::Protocol::Automation::ErrorMessage::FrameNotFound:
         return "no such frame"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NodeNotFound:
+    case Inspector::Protocol::Automation::ErrorMessage::StaleNode:
         return "no such node"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchHandle:
+        return "no such handle"_s;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidNodeIdentifier:
-        return "no such element"_s;
+        return "no such node"_s;
     case Inspector::Protocol::Automation::ErrorMessage::InvalidElementState:
         return "invalid element state"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NoJavaScriptDialog:
