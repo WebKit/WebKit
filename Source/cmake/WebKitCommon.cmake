@@ -597,19 +597,30 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         # Recorded now, so that a tree that is only configured is already the one
         # later commands resolve, and again on every build, so that the settings
         # are those of the build made last.
+        #
+        # Best-effort: set-webkit-configuration dies in some legitimate
+        # environments (an OpenSource-only checkout using an internal SDK).
+        # Do not fail the configure, and only add the target when recording
+        # worked, so that the same failure does not just move to the first
+        # build.
         execute_process(
             COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
                     --cmake ${_recorded_settings}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMAND_ERROR_IS_FATAL ANY
+            RESULT_VARIABLE _record_settings_result
+            ERROR_VARIABLE _record_settings_error
         )
-        add_custom_target(RecordBuildSettings ALL
-            COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
-                    --cmake ${_recorded_settings}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Recording the build settings for later commands"
-            VERBATIM
-        )
+        if (NOT _record_settings_result EQUAL 0)
+            message(STATUS "Not recording the build settings: set-webkit-configuration failed: ${_record_settings_error}")
+        else ()
+            add_custom_target(RecordBuildSettings ALL
+                COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
+                        --cmake ${_recorded_settings}
+                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+                COMMENT "Recording the build settings for later commands"
+                VERBATIM
+            )
+        endif ()
     endif ()
 
     # -----------------------------------------------------------------------------
