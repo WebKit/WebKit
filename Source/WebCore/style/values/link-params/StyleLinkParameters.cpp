@@ -30,6 +30,7 @@
 #include "CSSLinkParameter.h"
 #include "CSSParamValue.h"
 #include "CSSParserTokenRange.h"
+#include "CSSURLModifiers.h"
 #include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
 #include "StyleBuilderChecking.h"
@@ -66,6 +67,23 @@ const AtomString& ParamSpec::name() const
         [](CSS::Keyword::AccentColor) -> const AtomString& { return nameStringForSerialization(CSSValueAccentColor); },
         [](const Custom& custom) -> const AtomString& { return custom.name.value; }
     );
+}
+
+LinkParameters linkParametersForResource(const LinkParameters& fromProperty, const CSS::URLModifiers& fromURL)
+{
+    auto& fromURLParameters = fromURL.linkParameters;
+    if (fromURLParameters.isEmpty())
+        return fromProperty;
+
+    auto countFromProperty = fromProperty.size();
+
+    return LinkParameterList::createWithSizeFromGenerator(countFromProperty + fromURLParameters.size(), [&](size_t i) -> ParamFunction {
+        if (i < countFromProperty)
+            return fromProperty[i];
+
+        auto& parameter = fromURLParameters[i - countFromProperty];
+        return ParamFunction { LinkParameter { toStyleParamSpec(parameter->spec), DeclarationValue { parameter->value.value.copyRef() } } };
+    });
 }
 
 auto CSSValueConversion<LinkParameter>::operator()(BuilderState& state, const CSSValue& value) -> LinkParameter

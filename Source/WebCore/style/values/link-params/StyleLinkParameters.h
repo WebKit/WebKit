@@ -31,6 +31,11 @@
 #include <WebCore/StyleValueTypes.h>
 
 namespace WebCore {
+
+namespace CSS {
+struct URLModifiers;
+}
+
 namespace Style {
 
 // <param-spec> = color | accent-color | [ <dashed-ident> <css-type>? ]
@@ -94,6 +99,11 @@ using LinkParameterList = CommaSeparatedFixedVector<ParamFunction>;
 struct LinkParameters : ListOrNone<LinkParameterList> {
     using ListOrNone<LinkParameterList>::ListOrNone;
 };
+
+// Appends the param() modifiers from a resource's url() to the parameters set by the
+// link-parameters property on the element referencing it.
+// https://drafts.csswg.org/css-link-params/#setting
+LinkParameters linkParametersForResource(const LinkParameters& fromProperty, const CSS::URLModifiers& fromURL);
 
 // MARK: - Conversion
 

@@ -147,6 +147,15 @@ TextStream& operator<<(TextStream& ts, const URL& value)
         });
         ts << ")"_s;
     }
+    for (auto& parameter : value.modifiers.linkParameters) {
+        ts << " param("_s;
+        parameter->spec.switchOn(
+            [&](CSS::Keyword::Color) { ts << "color"_s; },
+            [&](CSS::Keyword::AccentColor) { ts << "accent-color"_s; },
+            [&](const CSS::ParamSpec::Custom& custom) { ts << custom.name.value; }
+        );
+        ts << ", "_s << parameter->value << ")"_s;
+    }
 
     ts << ")";
 
