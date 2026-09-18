@@ -958,6 +958,9 @@ static void webkitMediaStreamSrcDispose(GObject* object)
         priv->stream->removeObserver(*priv->mediaStreamObserver);
         priv->mediaStreamObserver = nullptr;
         priv->stream = nullptr;
+        priv->tracks.clear();
+        priv->probes.clear();
+        priv->probeData.clear();
     });
 
     G_OBJECT_CLASS(webkit_media_stream_src_parent_class)->dispose(object);
