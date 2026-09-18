@@ -348,11 +348,12 @@ static void cacheBaselineAlignedGridItems(const RenderGrid& grid, GridTrackSizin
                 algorithm.cacheBaselineAlignedItem(gridItem, Style::GridTrackSizingDirection::Columns, cachingRowSubgridsForRootGrid);
         }
 
+        bool cachingRowSubgridsForRootGridInner = cachingRowSubgridsForRootGrid;
         if (inner && cachingRowSubgridsForRootGrid)
-            cachingRowSubgridsForRootGrid = GridLayoutFunctions::isOrthogonalGridItem(*algorithm.renderGrid(), *inner) ? inner->isSubgridColumns() : inner->isSubgridRows();
+            cachingRowSubgridsForRootGridInner = GridLayoutFunctions::isOrthogonalGridItem(*algorithm.renderGrid(), *inner) ? inner->isSubgridColumns() : inner->isSubgridRows();
 
         if (innerAlignmentContextTypes)
-            cacheBaselineAlignedGridItems(*inner, algorithm, innerAlignmentContextTypes, callback, cachingRowSubgridsForRootGrid);
+            cacheBaselineAlignedGridItems(*inner, algorithm, innerAlignmentContextTypes, callback, cachingRowSubgridsForRootGridInner);
     }
 }
 
