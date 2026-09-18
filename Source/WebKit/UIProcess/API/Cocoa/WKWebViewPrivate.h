@@ -674,6 +674,10 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 - (void)_filterExtractedString:(NSString *)string options:(_WKTextExtractionFilterOptions)options completionHandler:(void(^)(NSString *))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewPrivateAdditions.h>
+#endif
+
 @end
 
 @interface WKWebView (WKTextExtractionPrivate)

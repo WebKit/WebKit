@@ -757,6 +757,10 @@ typedef NS_OPTIONS(NSUInteger, WKWebViewDataType) {
 @property (strong, nullable) NSRefreshController *refreshController WK_API_AVAILABLE(macos(27.0));
 #endif
 
+#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
+#import <WebKitAdditions/WKWebViewAdditions.h>
+#endif
+
 @end
 
 #if !TARGET_OS_IPHONE
