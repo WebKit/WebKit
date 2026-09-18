@@ -65,9 +65,6 @@ accessibility/mac/text-marker-word-nav.html [ Failure ]
 accessibility/mac/selected-visible-position-range.html [ Failure ]
 accessibility/mac/text-marker-word-nav.html [ Timeout ]
 
-# We compute the wrong line index relative to what is actually visually laid out.
-accessibility/mac/replaced-element-line-index-hang.html [ Failure ]
-
 accessibility/mac/html5-input-number.html [ Timeout ]
 
 # Fails because we don't get paint calls for SVG shapes and thus can't cache a path for them.
