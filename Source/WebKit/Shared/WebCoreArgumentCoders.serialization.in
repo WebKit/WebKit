@@ -1356,9 +1356,14 @@ using WebCore::ScrollPosition = WebCore::IntPoint;
 
 header: <WebCore/FrameGeometrySyncData.h>
 struct WebCore::FrameGeometrySyncData {
-    WebCore::LayoutRect layoutViewportRect;
     WebCore::IntSize contentsSize;
     HashMap<WebCore::FrameIdentifier, Ref<WebCore::RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
+};
+
+header: <WebCore/FrameGeometrySyncData.h>
+[CustomHeader] struct WebCore::FrameViewportInfo {
+    WebCore::LayoutRect layoutViewportRect;
+    WebCore::ScrollPosition scrollPosition;
 };
 
 header: <WebCore/VP9Utilities.h>

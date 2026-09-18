@@ -3827,7 +3827,7 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
 
     if (oldPosition != newPosition) {
         if (RefPtr page = m_frame->page(); page && page->mainFrame().tree().containsRemoteFrame())
-            static_cast<Frame&>(m_frame).loaderClient().broadcastFrameScrollPositionToOtherProcesses(newPosition);
+            page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
     }
 }
 

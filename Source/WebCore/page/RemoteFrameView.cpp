@@ -82,7 +82,7 @@ void RemoteFrameView::setFrameRect(const IntRect& newRect)
 
 LayoutRect RemoteFrameView::layoutViewportRect() const
 {
-    return m_frame->frameTreeSyncData().frameGeometry.layoutViewportRect;
+    return m_frame->frameTreeSyncData().frameViewportInfo.layoutViewportRect;
 }
 
 IntSize RemoteFrameView::contentsSize() const

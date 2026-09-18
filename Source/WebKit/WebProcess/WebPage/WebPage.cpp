@@ -1428,13 +1428,14 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
         frame->updateFrameRectFromRemote(coreFrame->frameTreeSyncData().frameRect);
         break;
 
-    case FrameTreeSyncDataType::FrameScrollPosition:
-        if (RefPtr view = coreFrame->virtualView())
-            view->scrollTo(coreFrame->frameTreeSyncData().frameScrollPosition);
-        break;
-
     case FrameTreeSyncDataType::FrameGeometry:
         updateChildFrameVisibleRectsFromParent(*coreFrame);
+        updateRemoteIntersectionObservers();
+        break;
+
+    case FrameTreeSyncDataType::FrameViewportInfo:
+        if (RefPtr view = coreFrame->virtualView())
+            view->scrollTo(coreFrame->frameTreeSyncData().frameViewportInfo.scrollPosition);
         updateRemoteIntersectionObservers();
         break;
 
@@ -1445,7 +1446,7 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 #if ENABLE(PDF_HUD)
     switch (dataType) {
     case FrameTreeSyncDataType::FrameRect:
-    case FrameTreeSyncDataType::FrameScrollPosition:
+    case FrameTreeSyncDataType::FrameViewportInfo:
     case FrameTreeSyncDataType::FrameGeometry:
         updatePDFHUDLocationsAfterRemoteFrameGeometryChange();
         break;
@@ -1457,7 +1458,11 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
 
 void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, Ref<WebCore::FrameTreeSyncData>&& data)
 {
-    ASSERT(m_page->settings().siteIsolationEnabled());
+    RefPtr page = m_page;
+    if (!page)
+        return;
+
+    ASSERT(page->settings().siteIsolationEnabled());
 
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
     if (!frame || frame->page() != this)
@@ -1470,27 +1475,17 @@ void WebPage::allFrameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameI
     }
 
     // UIProcess sends this message when the frame associated with frameID navigates or is newly
-    // added to this page. Since UIProcess doesn't store any geometry, the FrameGeometrySyncData in
-    // this message is empty.
+    // added to this page. Since UIProcess doesn't store any geometry, the FrameGeometrySyncData and
+    // FrameViewportInfo in this message are empty, and we have to re-send our geometry to the new
+    // frame process.
     //
-    // 1. If this frame is one of our own local frames, then its geometry was cleared from all
-    //    processes, so we should clear our last-sent geometry cache.
-    // 2. If this frame is a descendant of one of our local frames, its process may have just been
-    //    added to the page and have no geometry data, so we need to send it our frame geometry.
-    //
-    // We send the frame geometry if needed by clearing our cached frame geometry and triggering a
-    // rendering update, which eventually broadcasts a FrameGeometry IPC.
-    bool needsGeometryRebroadcast = false;
-    protect(m_page)->forEachLocalFrame([&](LocalFrame& localFrame) {
-        if (auto* client = dynamicDowncast<WebLocalFrameLoaderClient>(localFrame.loader().client()))
-            client->clearLastBroadcastFrameGeometry();
-        needsGeometryRebroadcast |= localFrame.tree().hasRemoteFrameDescendant();
+    // FIXME: this scales quadratically with the number of frames.
+    page->forEachLocalFrame([](LocalFrame& localFrame) {
+        if (RefPtr client = dynamicDowncast<WebLocalFrameLoaderClient>(localFrame.loader().client()))
+            client->clearLastBroadcastFrameTreeSyncData();
     });
 
-    if (needsGeometryRebroadcast) {
-        if (RefPtr drawingArea = this->drawingArea())
-            drawingArea->triggerRenderingUpdate();
-    }
+    page->scheduleRenderingUpdate(RenderingUpdateStep::SyncLocalFrameInfoToRemote);
 }
 
 void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreFrame)

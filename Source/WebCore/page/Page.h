@@ -317,6 +317,7 @@ enum class RenderingUpdateStep : uint32_t {
     PrepareCanvasesForDisplayOrFlush    = 1 << 21,
     CaretAnimation                      = 1 << 22,
     FocusFixup                          = 1 << 23,
+    SyncLocalFrameInfoToRemote          = 1 << 24,
     UpdateValidationMessagePositions    = 1 << 25,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     AccessibilityRegionUpdate           = 1 << 26,
@@ -365,6 +366,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::UpdateContentRelevancy,
     RenderingUpdateStep::PerformPendingViewTransitions,
     RenderingUpdateStep::AdjustVisibility,
+    RenderingUpdateStep::SyncLocalFrameInfoToRemote,
 };
 
 constexpr auto perRootFrameRenderingUpdateSteps = OptionSet<RenderingUpdateStep> {

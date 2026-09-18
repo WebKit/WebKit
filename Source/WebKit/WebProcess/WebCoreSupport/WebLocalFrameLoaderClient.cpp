@@ -1084,6 +1084,12 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
     });
 }
 
+void WebLocalFrameLoaderClient::clearLastBroadcastFrameTreeSyncData()
+{
+    m_lastBroadcastFrameGeometry = std::nullopt;
+    m_lastBroadcastFrameViewportInfo = std::nullopt;
+}
+
 void WebLocalFrameLoaderClient::applyWebsitePolicies(WebsitePoliciesData&& websitePolicies)
 {
     RefPtr documentLoader = protect(m_localFrame->loader())->loaderForWebsitePolicies();
@@ -1144,6 +1150,10 @@ void WebLocalFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(Frame
         if (m_lastBroadcastFrameGeometry == *frameGeometry)
             return;
         m_lastBroadcastFrameGeometry = *frameGeometry;
+    } else if (auto* viewportInfo = std::get_if<FrameViewportInfo>(&data.value)) {
+        if (m_lastBroadcastFrameViewportInfo == *viewportInfo)
+            return;
+        m_lastBroadcastFrameViewportInfo = *viewportInfo;
     }
 
     WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(WTF::move(data));

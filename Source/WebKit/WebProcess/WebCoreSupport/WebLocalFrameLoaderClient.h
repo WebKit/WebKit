@@ -51,7 +51,7 @@ public:
     WebLocalFrameLoaderClient(WebCore::LocalFrame&, WebCore::FrameLoader&, Ref<WebFrame>&&, ScopeExit<Function<void()>>&&);
     ~WebLocalFrameLoaderClient();
 
-    void clearLastBroadcastFrameGeometry() { m_lastBroadcastFrameGeometry = std::nullopt; }
+    void clearLastBroadcastFrameTreeSyncData();
 
     bool frameHasCustomContentProvider() const { return m_frameHasCustomContentProvider; }
 
@@ -321,6 +321,7 @@ private:
     WeakRef<WebCore::LocalFrame> m_localFrame;
 
     std::optional<WebCore::FrameGeometrySyncData> m_lastBroadcastFrameGeometry;
+    std::optional<WebCore::FrameViewportInfo> m_lastBroadcastFrameViewportInfo;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

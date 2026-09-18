@@ -29,6 +29,7 @@
 #include <WebCore/IntSize.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/RemoteFrameLayoutInfo.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -38,10 +39,12 @@ class TextStream;
 
 namespace WebCore {
 
+// Geometry for a frame that is sent from a parent frame process to remote child frame processes
+// when Site Isolation is enabled. The data in this struct generally doesn't change while scrolling,
+// which enables optimizations like not sending this payload if it hasn't changed.
 struct FrameGeometrySyncData {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(FrameGeometrySyncData, WEBCORE_EXPORT);
 
-    LayoutRect layoutViewportRect;
     IntSize contentsSize;
     HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
 };
@@ -49,5 +52,17 @@ struct FrameGeometrySyncData {
 WEBCORE_EXPORT bool operator==(const FrameGeometrySyncData&, const FrameGeometrySyncData&);
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameGeometrySyncData&);
+
+// Unlike FrameGeometrySyncData, the data in this struct does change while scrolling.
+struct FrameViewportInfo {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED_EXPORT(FrameViewportInfo, WEBCORE_EXPORT);
+
+    LayoutRect layoutViewportRect;
+    ScrollPosition scrollPosition;
+
+    friend bool operator==(const FrameViewportInfo&, const FrameViewportInfo&) = default;
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FrameViewportInfo&);
 
 } // namespace WebCore

@@ -32,8 +32,8 @@ FrameDocumentSecurityPolicy : std::optional<WebCore::DocumentSecurityPolicy> [He
 FrameDocumentIsSandboxedOrigin : bool
 FrameURLProtocol : String [Headers=<wtf/text/WTFString.h>]
 FrameRect : WebCore::IntRect [Headers=<WebCore/IntRect.h>]
-FrameScrollPosition : WebCore::ScrollPosition [Headers=<WebCore/ScrollTypes.h>]
 
 ## Layout information for Intersection Observer
 
 FrameGeometry : WebCore::FrameGeometrySyncData [Headers=<WebCore/FrameGeometrySyncData.h>]
+FrameViewportInfo : WebCore::FrameViewportInfo [Headers=<WebCore/FrameGeometrySyncData.h>]
