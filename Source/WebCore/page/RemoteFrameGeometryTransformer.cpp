@@ -55,12 +55,7 @@ RemoteFrameGeometryTransformer& RemoteFrameGeometryTransformer::operator=(Remote
 // scale.
 FloatPoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(FloatPoint pointInContents) const
 {
-    Ref localView = m_localView;
-    Ref remoteFrame = Ref { m_remoteView }->frame();
-    auto local = localView->absoluteToChildFrameOwnerLocalTransform(remoteFrame).projectPoint(pointInContents);
-    FloatPoint contentBoxLocation = localView->childFrameOwnerContentBoxLocation(remoteFrame);
-    local.moveBy(-contentBoxLocation);
-    return local;
+    return Ref { m_remoteView }->convertFromRootView(Ref { m_localView }->contentsToRootView(pointInContents));
 }
 
 IntPoint RemoteFrameGeometryTransformer::transformToRemoteFrameCoordinates(IntPoint pointInContents) const
