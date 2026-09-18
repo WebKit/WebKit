@@ -58,4 +58,18 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSBigInt64ArrayConstructor, InternalFunction
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSBigUint64ArrayConstructor, InternalFunction);
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSDataViewConstructor, InternalFunction);
 
+template<> const ClassInfo JSInt8ArrayConstructor::s_info;
+template<> const ClassInfo JSInt16ArrayConstructor::s_info;
+template<> const ClassInfo JSInt32ArrayConstructor::s_info;
+template<> const ClassInfo JSUint8ArrayConstructor::s_info;
+template<> const ClassInfo JSUint8ClampedArrayConstructor::s_info;
+template<> const ClassInfo JSUint16ArrayConstructor::s_info;
+template<> const ClassInfo JSUint32ArrayConstructor::s_info;
+template<> const ClassInfo JSFloat16ArrayConstructor::s_info;
+template<> const ClassInfo JSFloat32ArrayConstructor::s_info;
+template<> const ClassInfo JSFloat64ArrayConstructor::s_info;
+template<> const ClassInfo JSBigInt64ArrayConstructor::s_info;
+template<> const ClassInfo JSBigUint64ArrayConstructor::s_info;
+template<> const ClassInfo JSDataViewConstructor::s_info;
+
 } // namespace JSC
