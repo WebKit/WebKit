@@ -77,6 +77,7 @@ class Frame;
 class FormState;
 class FormSubmission;
 class FrameLoadRequest;
+class FrameLoadRequestBase;
 class FrameNetworkingContext;
 class HistoryController;
 class HistoryItem;
@@ -494,7 +495,7 @@ private:
 
     void updateRequestAndAddExtraFields(Frame&, ResourceRequest&, IsMainResource, FrameLoadType, ShouldUpdateAppInitiatedValue, IsServiceWorkerNavigationLoad, WillOpenInNewWindow, Document*);
 
-    bool dispatchNavigateEvent(FrameLoadType, const FrameLoadRequest&, bool isSameDocument, FormState* = nullptr, Event* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
+    bool dispatchNavigateEvent(FrameLoadType, const FrameLoadRequestBase&, const URL& destinationURL, bool isSameDocument, FormState* = nullptr, Event* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr);
     bool shouldDispatchNavigateEventForHistoryTraversal(const HistoryItem&, const HistoryItem* fromItem);
 
     WeakRef<LocalFrame> m_frame;
@@ -587,8 +588,6 @@ private:
     uint64_t m_requiredCookiesVersion { 0 };
 
     const Ref<DocumentPrefetcher> m_documentPrefetcher;
-
-    Function<bool()> m_pendingDispatchNavigateEvent;
 
     bool m_needsCancellationForContentRuleListCrossOriginRedirect { false };
 };

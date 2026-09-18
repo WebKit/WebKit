@@ -125,9 +125,6 @@ public:
     std::optional<NavigationNavigationType> navigationAPIType() const { return m_navigationAPIType; }
     void setNavigationAPIType(NavigationNavigationType navigationAPIType) { m_navigationAPIType = navigationAPIType; }
 
-    void setPendingDispatchNavigateEvent(std::function<bool()>&& function) { m_pendingDispatchNavigateEvent = WTF::move(function); }
-    std::function<bool()> takePendingDispatchNavigateEvent() { return std::exchange(m_pendingDispatchNavigateEvent, nullptr); }
-
     // Whether UIProcess has already made the policy decision for this navigation.
     PolicyAlreadyDecided policyAlreadyDecided() const { return m_policyAlreadyDecided; }
     void setPolicyAlreadyDecided(PolicyAlreadyDecided value) { m_policyAlreadyDecided = value; }
@@ -142,7 +139,6 @@ private:
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     std::optional<BackForwardItemIdentifier> m_sourceBackForwardItemIdentifier;
     std::optional<PrivateClickMeasurement> m_privateClickMeasurement;
-    std::function<bool()> m_pendingDispatchNavigateEvent;
 
     NavigationType m_type { NavigationType::Other };
     std::optional<NavigationNavigationType> m_navigationAPIType;
