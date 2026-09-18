@@ -89,6 +89,7 @@ private:
 #if ENABLE(DAMAGE_TRACKING)
     std::optional<WebCore::Damage> m_frameDamage;
     std::optional<Vector<WebCore::Region>> m_frameDamageHistoryForTesting;
+    bool m_hasRenderedFrame { false };
 #endif
 };
 
