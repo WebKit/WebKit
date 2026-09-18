@@ -542,7 +542,7 @@ void CoordinatedPlatformLayer::setContentsBuffer(std::unique_ptr<CoordinatedPlat
         notifyCompositionRequired();
 }
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 void CoordinatedPlatformLayer::replaceCurrentContentsBufferWithCopy()
 {
     Locker locker { m_lock };

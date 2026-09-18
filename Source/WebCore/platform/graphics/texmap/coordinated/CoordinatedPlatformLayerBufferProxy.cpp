@@ -40,7 +40,7 @@ Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::cr
 
 CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayer>&& layer)
     : m_layer(WTF::move(layer))
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     , m_compositingRunLoop(m_layer->compositingRunLoop())
 #endif
 {
@@ -49,7 +49,7 @@ CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy(Ref<Coo
 CoordinatedPlatformLayerBufferProxy::~CoordinatedPlatformLayerBufferProxy()
 {
     ASSERT(!m_layer);
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     ASSERT(!m_compositingRunLoop);
 #endif
 }
@@ -58,7 +58,7 @@ void CoordinatedPlatformLayerBufferProxy::invalidate()
 {
     assertIsMainThread();
     m_layer = nullptr;
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     m_compositingRunLoop = nullptr;
 #endif
 }
@@ -98,7 +98,7 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
     layer->requestComposition(CompositionReason::VideoFrame);
 }
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTexture(ShouldWait shouldWait)
 {
     RefPtr layer = m_layer;

@@ -31,6 +31,7 @@
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GraphicsTypesGL.h"
+#include "PlatformDisplay.h"
 
 #if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferExternalOES.h"
@@ -39,11 +40,14 @@
 #else
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPixmap.h>
+#include <skia/core/SkSurface.h>
 #include <skia/gpu/ganesh/GrYUVABackendTextures.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/gpu/ganesh/SkSurfaceGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/private/chromium/GrPromiseImageTexture.h>
 #include <skia/private/chromium/SkImageChromium.h>
@@ -88,22 +92,6 @@ CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<Vid
 }
 
 CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;
-
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
-{
-    if (!m_buffer || !is<CoordinatedPlatformLayerBufferRGB>(*m_buffer))
-        return nullptr;
-
-    auto& buffer = downcast<CoordinatedPlatformLayerBufferRGB>(*m_buffer);
-    auto textureID = buffer.textureID();
-    if (!textureID)
-        return nullptr;
-
-    auto size = buffer.size();
-    auto texture = BitmapTexture::create(size);
-    texture->copyFromExternalTexture(textureID, { IntPoint::zero(), size }, { });
-    return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
-}
 
 #if USE(TEXTURE_MAPPER)
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
@@ -159,6 +147,22 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
 #endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
 
 #if USE(GSTREAMER_GL)
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
+{
+    if (!m_buffer || !is<CoordinatedPlatformLayerBufferRGB>(*m_buffer))
+        return nullptr;
+
+    auto& buffer = downcast<CoordinatedPlatformLayerBufferRGB>(*m_buffer);
+    auto textureID = buffer.textureID();
+    if (!textureID)
+        return nullptr;
+
+    auto size = buffer.size();
+    auto texture = BitmapTexture::create(size);
+    texture->copyFromExternalTexture(textureID, { IntPoint::zero(), size }, { });
+    return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
+}
+
 static std::optional<CoordinatedPlatformLayerBufferYUV::Format> yuvFormatFromGstVideoFormat(GstVideoFormat format)
 {
     switch (format) {
@@ -314,6 +318,38 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
 #else
 
 #if USE(GSTREAMER_GL)
+std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
+{
+    if (!m_image)
+        return nullptr;
+
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+    auto imageInfo = SkImageInfo::Make(m_image->width(), m_image->height(), kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB());
+    auto surface = SkSurfaces::RenderTarget(grContext, skgpu::Budgeted::kNo, imageInfo, 0, kTopLeft_GrSurfaceOrigin, nullptr);
+    if (!surface)
+        return nullptr;
+
+    auto* canvas = surface->getCanvas();
+    if (!canvas)
+        return nullptr;
+
+    SkPaint paint;
+    paint.setBlendMode(SkBlendMode::kSrc);
+    canvas->drawImage(m_image, 0, 0, SkSamplingOptions(SkFilterMode::kNearest, SkMipmapMode::kNone), &paint);
+    grContext->flushAndSubmit(surface.get(), GrSyncCpu::kNo);
+
+    auto image = surface->makeImageSnapshot();
+    if (!image)
+        return nullptr;
+
+    auto flags = m_flags;
+    flags.remove({ TextureMapperFlags::ShouldFlipTexture, TextureMapperFlags::ShouldPremultiply });
+    // We can't use CoordinatedPlatformLayerBufferSkiaImage::create here because we don't want the
+    // image to be re-wrapped into a promise image.
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(image), flags);
+}
+
 class PromiseGLVideoFrameContext final : public ThreadSafeRefCounted<PromiseGLVideoFrameContext> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PromiseGLVideoFrameContext);
 public:
@@ -373,7 +409,7 @@ static bool isSinglePlaneGLMemory(GstGLMemory* memory, GstVideoInfo* videoInfo, 
 
     return false;
 }
-#endif
+#endif // USE(GSTREAMER_GL)
 
 void CoordinatedPlatformLayerBufferVideo::createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, bool gstGLEnabled)
 {
@@ -615,18 +651,7 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageForYUVGLMemory(std::uni
             std::unique_ptr<PromiseGLVideoPlaneContext> planeContext(static_cast<PromiseGLVideoPlaneContext*>(userData));
         }, reinterpret_cast<void**>(planeContexts.data()));
 }
-#endif
-
-sk_sp<SkImage> CoordinatedPlatformLayerBufferVideo::skiaImage()
-{
-    if (m_image)
-        return m_image;
-
-    if (m_buffer)
-        return m_buffer->skiaImage();
-
-    return nullptr;
-}
+#endif // USE(GSTREAMER_GL)
 #endif
 
 } // namespace WebCore

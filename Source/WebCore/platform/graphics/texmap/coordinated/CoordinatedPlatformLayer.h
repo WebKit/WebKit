@@ -168,7 +168,7 @@ public:
     float contentsScale() const WTF_REQUIRES_LOCK(m_lock);
     enum class RequireComposition : bool { No, Yes };
     void setContentsBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&, std::optional<Damage>&& = std::nullopt, RequireComposition = RequireComposition::Yes) WTF_REQUIRES_LOCK(m_lock);
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     void replaceCurrentContentsBufferWithCopy();
 #endif
     void setContentsImage(NativeImage*) WTF_REQUIRES_LOCK(m_lock);

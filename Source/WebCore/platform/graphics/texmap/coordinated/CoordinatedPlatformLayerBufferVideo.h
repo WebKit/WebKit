@@ -44,7 +44,9 @@ public:
     CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&&, IntSize&&, std::optional<GstVideoDecoderPlatform>, bool gstGLEnabled, OptionSet<TextureMapperFlags>, const sk_sp<GrContextThreadSafeProxy>&);
     virtual ~CoordinatedPlatformLayerBufferVideo();
 
+#if USE(GSTREAMER_GL)
     std::unique_ptr<CoordinatedPlatformLayerBuffer> copyBuffer() const;
+#endif
 
 private:
 #if USE(TEXTURE_MAPPER)
@@ -60,7 +62,7 @@ private:
     void createBufferFromMappedFrameIfNeeded();
 
 #else
-    sk_sp<SkImage> skiaImage() override;
+    sk_sp<SkImage> skiaImage() override { return m_image; }
 
     void createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>&, bool gstGLEnabled);
 
@@ -82,8 +84,8 @@ private:
 
     Ref<VideoFrameGStreamer> m_videoFrame;
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
 #if USE(TEXTURE_MAPPER)
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> m_buffer;
     std::optional<GstMappedFrame> m_mappedVideoFrame;
 #else
     sk_sp<SkImage> m_image;

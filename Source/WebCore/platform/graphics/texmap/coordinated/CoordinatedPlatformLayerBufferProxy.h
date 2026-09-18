@@ -55,7 +55,7 @@ public:
     void setInitialDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
     void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&);
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     enum class ShouldWait : bool { No, Yes };
     void dropCurrentBufferWhilePreservingTexture(ShouldWait);
 #endif
