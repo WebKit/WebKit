@@ -25,11 +25,9 @@ function test() {
     }
 
     async function querySelectorBackend(parent, selector) {
-        // containerNode.querySelector returns a raw frame-local id; nodeForIdInFrameTarget
-        // scopes it and resolves the underlying DOMNode so we can read backendNodeId.
-        let rawId = await parent.querySelector(selector);
-        if (!rawId) return null;
-        return WI.domManager.nodeForIdInFrameTarget(rawId, frameTarget);
+        let nodeId = await parent.querySelector(selector);
+        if (!nodeId) return null;
+        return WI.domManager.nodeForId(nodeId);
     }
 
     suite.addTestCase({

@@ -67,6 +67,7 @@ WI.ExecutionContext = class ExecutionContext
     get id() { return this._id; }
     get type() { return this._type; }
     get name() { return this._name; }
+    get frameId() { return this._frameId; }
 
     get frame()
     {

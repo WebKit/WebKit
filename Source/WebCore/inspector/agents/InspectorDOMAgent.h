@@ -100,6 +100,7 @@ public:
     static String toErrorString(Exception&&);
 
     static String documentURLString(Document*);
+    static String documentBaseURLString(Document*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.

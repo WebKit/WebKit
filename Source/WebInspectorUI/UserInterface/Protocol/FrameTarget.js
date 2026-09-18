@@ -52,7 +52,8 @@ WI.FrameTarget = class FrameTarget extends WI.Target
             this._executionContext = null;
         }
 
-        this._executionContextList.add(context);
+        if (!this._executionContextList.add(context))
+            return;
 
         if (context.type === WI.ExecutionContext.Type.Normal)
             this._executionContext = context;

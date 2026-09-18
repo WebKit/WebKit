@@ -56,7 +56,7 @@ function test() {
             await new Promise((resolve) => containerNode.getChildNodes(resolve));
 
             let headingId = await containerNode.querySelector("#heading");
-            headingNode = WI.domManager.nodeForIdInFrameTarget(headingId, frameTarget);
+            headingNode = WI.domManager.nodeForId(headingId);
             InspectorTest.expectNotNull(headingNode, "Should find #heading.");
         }
     });

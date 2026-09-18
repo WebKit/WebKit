@@ -1,0 +1,18 @@
+Tests that navigating a cross-origin frame replaces the page execution context recorded on its WI.Frame.
+
+
+== Running test suite: SiteIsolation.Runtime.FrameExecutionContextAfterNavigation
+-- Running test case: SiteIsolation.Runtime.FrameExecutionContextAfterNavigation.InitialContext
+PASS: The cross-origin subframe should appear in the frame model with a page execution context.
+PASS: The page execution context should be reported by the frame's own frame target.
+PASS: The page execution context should carry the frame's identifier.
+PASS: Evaluation should reach the cross-origin document.
+
+-- Running test case: SiteIsolation.Runtime.FrameExecutionContextAfterNavigation.NavigateWithinSite
+PASS: The navigated frame should get a replacement page execution context.
+PASS: WI.Frame.Event.ExecutionContextAdded should fire for the replacement context.
+PASS: The replacement context should be reported by a frame target.
+PASS: The previous execution context should no longer belong to the frame.
+PASS: A same-site navigation should reuse the frame's existing frame target.
+PASS: Evaluation should reach the new document.
+

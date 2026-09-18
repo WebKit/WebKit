@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<script src="../../../inspector/resources/inspector-test.js"></script>
+<script>
+var passphrase = "main-frame";
+
+function crossOriginHost() {
+    return location.hostname === "localhost" ? "127.0.0.1" : "localhost";
+}
+
+function addCrossOriginSubframe() {
+    let iframe = document.createElement("iframe");
+    iframe.id = "subframe";
+    iframe.src = `http://${crossOriginHost()}:8000/site-isolation/inspector/runtime/resources/frame-execution-context.html`;
+    document.body.appendChild(iframe);
+}
+
+function navigateSubframeWithinSite() {
+    let iframe = document.getElementById("subframe");
+    iframe.src = `http://${crossOriginHost()}:8000/site-isolation/inspector/runtime/resources/frame-execution-context.html?after-navigation`;
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Runtime.FrameExecutionContextAfterNavigation");
+
+    let subframe = null;
+
+    function evaluatePassphrase() {
+        return new Promise((resolve, reject) => {
+            WI.runtimeManager.evaluateInInspectedWindow("passphrase", {objectGroup: "test"}, (remoteObject, wasThrown) => {
+                if (!remoteObject || wasThrown) {
+                    reject(new Error("Failed to evaluate the passphrase in the selected execution context."));
+                    return;
+                }
+
+                resolve(remoteObject.value);
+            });
+        });
+    }
+
+    // A cross-origin child commits in its own process, so its WI.Frame only appears once
+    // Page.frameNavigated reaches the frontend from the page's process, which can trail the
+    // child's own Runtime.executionContextCreated. Poll rather than wait on a single event.
+    //
+    // The budget is generous because the first cross-origin subframe may have to launch a fresh
+    // WebContent process, which is slow on debug and ASan builds.
+    const pollAttempts = 600;
+    const pollIntervalMs = 20;
+
+    function poll(condition) {
+        return (async () => {
+            for (let attempt = 0; attempt < pollAttempts; ++attempt) {
+                let result = condition();
+                if (result)
+                    return result;
+                await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+            }
+            return null;
+        })();
+    }
+
+    function awaitSubframeWithExecutionContext() {
+        return poll(() => {
+            let frame = WI.networkManager.frames.find((frame) => frame !== WI.networkManager.mainFrame && frame.url && frame.url.includes("/frame-execution-context.html"));
+            return frame?.pageExecutionContext ? frame : null;
+        });
+    }
+
+    function awaitReplacementExecutionContext(previousExecutionContext) {
+        return poll(() => {
+            let context = subframe.pageExecutionContext;
+            return context && context !== previousExecutionContext ? context : null;
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.FrameExecutionContextAfterNavigation.InitialContext",
+        description: "A cross-origin frame's page execution context should come from its own frame target.",
+        async test() {
+            InspectorTest.evaluateInPage(`addCrossOriginSubframe()`);
+
+            subframe = await awaitSubframeWithExecutionContext();
+            InspectorTest.expectNotNull(subframe, "The cross-origin subframe should appear in the frame model with a page execution context.");
+            if (!subframe)
+                return;
+
+            InspectorTest.expectThat(subframe.pageExecutionContext.target instanceof WI.FrameTarget, "The page execution context should be reported by the frame's own frame target.");
+            InspectorTest.expectEqual(subframe.pageExecutionContext.frameId, subframe.id, "The page execution context should carry the frame's identifier.");
+
+            WI.runtimeManager.activeExecutionContext = subframe.pageExecutionContext;
+            InspectorTest.expectEqual(await evaluatePassphrase(), "before-navigation", "Evaluation should reach the cross-origin document.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Runtime.FrameExecutionContextAfterNavigation.NavigateWithinSite",
+        description: "Navigating a cross-origin frame within its own site should replace its page execution context.",
+        async test() {
+            InspectorTest.assert(subframe, "Requires the subframe from the previous test case.");
+
+            let previousExecutionContext = subframe.pageExecutionContext;
+
+            let addedContexts = [];
+            let listener = subframe.addEventListener(WI.Frame.Event.ExecutionContextAdded, (event) => {
+                addedContexts.push(event.data.context);
+            });
+
+            InspectorTest.evaluateInPage(`navigateSubframeWithinSite()`);
+
+            let newExecutionContext = await awaitReplacementExecutionContext(previousExecutionContext);
+            subframe.removeEventListener(WI.Frame.Event.ExecutionContextAdded, listener);
+
+            InspectorTest.expectNotNull(newExecutionContext, "The navigated frame should get a replacement page execution context.");
+            if (!newExecutionContext)
+                return;
+
+            InspectorTest.expectThat(addedContexts.includes(newExecutionContext), "WI.Frame.Event.ExecutionContextAdded should fire for the replacement context.");
+            InspectorTest.expectThat(newExecutionContext.target instanceof WI.FrameTarget, "The replacement context should be reported by a frame target.");
+            InspectorTest.expectFalse(subframe.executionContextList.contexts.includes(previousExecutionContext), "The previous execution context should no longer belong to the frame.");
+
+            // A same-site navigation keeps the frame in its process, so the same frame target
+            // reports again. The cross-site case, where the frame swaps process and a replacement
+            // frame target starts numbering realms from 1 again, is not covered here: a frame does
+            // not survive that swap in the frontend's frame model today.
+            InspectorTest.expectEqual(newExecutionContext.target, previousExecutionContext.target, "A same-site navigation should reuse the frame's existing frame target.");
+
+            WI.runtimeManager.activeExecutionContext = newExecutionContext;
+            InspectorTest.expectEqual(await evaluatePassphrase(), "after-navigation", "Evaluation should reach the new document.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<body onload="runTest()">
+<p>Tests that navigating a cross-origin frame replaces the page execution context recorded on its WI.Frame.</p>
+</body>

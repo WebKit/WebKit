@@ -230,13 +230,52 @@ WI.Frame = class Frame extends WI.Object
         this._executionContextPromise = null;
     }
 
+    // Drop every context minted by `target`. RuntimeManager dispatches on context.target, so once
+    // the target is gone its contexts would silently evaluate over a dead connection.
+    removeExecutionContextsForTarget(target)
+    {
+        let contexts = this._executionContextList.contexts;
+        if (!contexts.some((context) => context.target === target))
+            return;
+
+        let survivors = contexts.filter((context) => context.target !== target);
+        this.clearExecutionContexts();
+        for (let context of survivors)
+            this.addExecutionContext(context);
+    }
+
     addExecutionContext(context)
     {
-        let pageExecutionContext = this._executionContextList.pageExecutionContext;
-        if (context.type === WI.ExecutionContext.Type.Normal && pageExecutionContext && context.id !== pageExecutionContext.id)
+        let contexts = this._executionContextList.contexts;
+
+        // Adopting a frame target's already-reported realms can offer the same context more than
+        // once. Bail before anything below can clear the list or fire a second added event.
+        if (contexts.includes(context))
+            return;
+
+        let isFrameTargetContext = context.target instanceof WI.FrameTarget;
+        let hasFrameTargetContext = contexts.some((existing) => existing.target instanceof WI.FrameTarget);
+
+        // The page target and the frame's own frame target can each announce the frame's main-world
+        // realm, with an identifier minted by their own agent, and the protocol cannot retract
+        // either one. The frame target owns the frame, so its report wins. Reading the current list
+        // rather than latching keeps that order-independent, and lets the page target back in if the
+        // list is cleared before the frame target reports again -- a latch would leave such a frame
+        // with no context at all, which is worse than a duplicate.
+        if (!isFrameTargetContext && hasFrameTargetContext)
+            return;
+
+        if (isFrameTargetContext && !hasFrameTargetContext && contexts.length)
             this.clearExecutionContexts();
 
-        this._executionContextList.add(context);
+        let pageExecutionContext = this._executionContextList.pageExecutionContext;
+        // The target is part of a context's identity: every target numbers its realms from 1, so
+        // comparing ids alone would mistake a replacement target's realm for the existing one.
+        if (context.type === WI.ExecutionContext.Type.Normal && pageExecutionContext && (pageExecutionContext.target !== context.target || pageExecutionContext.id !== context.id))
+            this.clearExecutionContexts();
+
+        if (!this._executionContextList.add(context))
+            return;
 
         this.dispatchEventToListeners(WI.Frame.Event.ExecutionContextAdded, {context});
 

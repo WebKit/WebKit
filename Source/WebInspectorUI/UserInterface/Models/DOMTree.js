@@ -122,7 +122,7 @@ WI.DOMTree = class DOMTree extends WI.Object
         // Bump the request identifier. This prevents pending callbacks for previous requests from completing.
         var requestIdentifier = ++this._requestIdentifier;
 
-        function rootObjectAvailable(error, result)
+        function rootObjectAvailable(executionContextTarget, error, result)
         {
             // Check to see if we have been invalidated (if the callbacks were cleared).
             if (!this._pendingRootDOMNodeRequests || requestIdentifier !== this._requestIdentifier)
@@ -137,7 +137,7 @@ WI.DOMTree = class DOMTree extends WI.Object
             }
 
             // Convert the RemoteObject to a DOMNode by asking the backend to push it to us.
-            var remoteObject = WI.RemoteObject.fromPayload(result);
+            var remoteObject = WI.RemoteObject.fromPayload(result, executionContextTarget);
             remoteObject.pushNodeToFrontend(rootDOMNodeAvailable.bind(this, remoteObject));
         }
 
@@ -193,9 +193,11 @@ WI.DOMTree = class DOMTree extends WI.Object
         if (this._frame.isMainFrame())
             WI.domManager.requestDocument(mainDocumentAvailable.bind(this));
         else {
-            let target = WI.assumingMainTarget();
-            var contextId = this._frame.pageExecutionContext.id;
-            target.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this));
+            // A context identifier is only meaningful to the agent that minted it, so evaluate on the
+            // context's own target rather than assuming the main target.
+            let executionContext = this._frame.pageExecutionContext;
+            let executionContextTarget = executionContext.target;
+            executionContextTarget.RuntimeAgent.evaluate.invoke({expression: appendWebInspectorSourceURL("document"), objectGroup: "", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, contextId: executionContext.id, returnByValue: false, generatePreview: false}, rootObjectAvailable.bind(this, executionContextTarget));
         }
     }
 
