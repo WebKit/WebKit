@@ -59,8 +59,8 @@ static GridNamedLinesMap initializeImplicitNamedGridLines(const GridNamedAreaMap
 
 GridTemplateAreas::GridTemplateAreas(GridNamedAreaMap&& map)
     : map { WTF::move(map) }
-    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Columns) }
-    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(map, GridTrackSizingDirection::Rows) }
+    , implicitNamedGridColumnLines { initializeImplicitNamedGridLines(this->map, GridTrackSizingDirection::Columns) }
+    , implicitNamedGridRowLines { initializeImplicitNamedGridLines(this->map, GridTrackSizingDirection::Rows) }
 {
 }
 
