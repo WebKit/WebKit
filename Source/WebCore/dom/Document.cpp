@@ -9278,6 +9278,12 @@ void Document::checkCompleted()
         frame->loader().checkCompleted();
 }
 
+void Document::checkLoadComplete()
+{
+    if (RefPtr frame = this->frame())
+        frame->loader().checkLoadComplete();
+}
+
 double Document::monotonicTimestamp() const
 {
     RefPtr loader = this->loader();
