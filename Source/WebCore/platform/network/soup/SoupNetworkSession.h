@@ -66,8 +66,8 @@ public:
 
     void setProxySettings(const SoupNetworkProxySettings&);
 
-    static void setInitialAcceptLanguages(const CString&);
-    void setAcceptLanguages(const CString&);
+    static void setInitialAcceptLanguages(const UTF8CString&);
+    void setAcceptLanguages(const UTF8CString&);
 
     WEBCORE_EXPORT void setIgnoreTLSErrors(bool);
     std::optional<ResourceError> checkTLSErrors(const URL&, GTlsCertificate*, GTlsCertificateFlags);

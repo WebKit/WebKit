@@ -30,7 +30,7 @@ enum class WebCore::SoupNetworkProxySettingsMode : uint8_t {
 
 struct WebCore::SoupNetworkProxySettings {
     WebCore::SoupNetworkProxySettingsMode mode;
-    CString defaultProxyURL;
-    Vector<CString> ignoreHosts;
-    HashMap<CString, CString> proxyMap;
+    UTF8CString defaultProxyURL;
+    Vector<UTF8CString> ignoreHosts;
+    HashMap<UTF8CString, UTF8CString> proxyMap;
 }

@@ -51,7 +51,7 @@ static IPAddressSpace resolvedIPAddressSpace(SoupMessage* soupMessage)
     return classifyIPAddressSpace(*resolvedIPAddress);
 }
 
-ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& sniffedContentType)
+ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const UTF8CString& sniffedContentType)
 {
     m_url = soupURIToURL(soup_message_get_uri(soupMessage));
 
@@ -79,7 +79,7 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     String contentType;
     const char* officialType = soup_message_headers_get_one(responseHeaders, "Content-Type");
     if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != officialType)
-        contentType = String::fromLatin1(sniffedContentType.data());
+        contentType = String { sniffedContentType };
     else
         contentType = String::fromLatin1(officialType);
     setMimeType(extractMIMETypeFromMediaType(contentType));

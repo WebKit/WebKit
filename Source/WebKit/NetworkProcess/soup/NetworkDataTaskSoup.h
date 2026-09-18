@@ -84,7 +84,7 @@ private:
     bool acceptCertificate(GTlsCertificate*, GTlsCertificateFlags);
 
     static void didSniffContentCallback(SoupMessage*, const char* contentType, GHashTable* parameters, NetworkDataTaskSoup*);
-    void didSniffContent(CString&&);
+    void didSniffContent(UTF8CString&&);
 
     bool persistentCredentialStorageEnabled() const;
     void applyAuthenticationToRequest(WebCore::ResourceRequest&);
@@ -163,7 +163,7 @@ private:
     WebCore::Credential m_credentialForPersistentStorage;
     WebCore::ResourceRequest m_currentRequest;
     WebCore::ResourceResponse m_response;
-    CString m_sniffedContentType;
+    UTF8CString m_sniffedContentType;
     Vector<uint8_t> m_readBuffer;
     uint64_t m_bodyDataTotalBytesSent { 0 };
     GRefPtr<GFile> m_downloadDestinationFile;

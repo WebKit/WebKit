@@ -31,7 +31,7 @@
 
 struct _WebKitAutoconfigProxyResolverPrivate {
     GRefPtr<GDBusProxy> pacRunner;
-    CString autoconfigURL;
+    UTF8CString autoconfigURL;
 };
 
 static void webkitAutoconfigProxyResolverInterfaceInit(GProxyResolverInterface*);
@@ -43,7 +43,7 @@ static void webkit_autoconfig_proxy_resolver_class_init(WebKitAutoconfigProxyRes
 {
 }
 
-GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const CString& autoconfigURL)
+GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const UTF8CString& autoconfigURL)
 {
     GUniqueOutPtr<GError> error;
     GRefPtr<GDBusProxy> pacRunner = adoptGRef(g_dbus_proxy_new_for_bus_sync(G_BUS_TYPE_SESSION,
@@ -64,7 +64,7 @@ GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const CString& autoconf
 static gchar** webkitAutoconfigProxyResolverLookup(GProxyResolver* proxyResolver, const char* uri, GCancellable* cancellable, GError** error)
 {
     auto* priv = WEBKIT_AUTOCONFIG_PROXY_RESOLVER(proxyResolver)->priv;
-    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_sync(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.data(), uri),
+    GRefPtr<GVariant> variant = adoptGRef(g_dbus_proxy_call_sync(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.legacyCStringPointer(), uri),
         G_DBUS_CALL_FLAGS_NONE, -1, cancellable, error));
     if (!variant)
         return nullptr;
@@ -78,7 +78,7 @@ static void webkitAutoconfigProxyResolverLookupAsync(GProxyResolver* proxyResolv
 {
     GTask* task = g_task_new(proxyResolver, cancellable, callback, userData);
     auto* priv = WEBKIT_AUTOCONFIG_PROXY_RESOLVER(proxyResolver)->priv;
-    g_dbus_proxy_call(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.data(), uri), G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
+    g_dbus_proxy_call(priv->pacRunner.get(), "Lookup", g_variant_new("(ss)", priv->autoconfigURL.legacyCStringPointer(), uri), G_DBUS_CALL_FLAGS_NONE, -1, cancellable,
         [](GObject* source, GAsyncResult* result, gpointer userData) {
             GRefPtr<GTask> task = adoptGRef(G_TASK(userData));
             GUniqueOutPtr<GError> error;

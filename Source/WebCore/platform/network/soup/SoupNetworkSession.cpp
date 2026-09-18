@@ -48,9 +48,9 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SoupNetworkSession);
 
-static CString& initialAcceptLanguages()
+static UTF8CString& initialAcceptLanguages()
 {
-    static NeverDestroyed<CString> storage;
+    static NeverDestroyed<UTF8CString> storage;
     return storage.get();
 }
 
@@ -281,16 +281,16 @@ void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settin
     case SoupNetworkProxySettings::Mode::Custom:
         resolver = adoptGRef(g_simple_proxy_resolver_new(nullptr, nullptr));
         if (!m_proxySettings.defaultProxyURL.isNull())
-            g_simple_proxy_resolver_set_default_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), m_proxySettings.defaultProxyURL.data());
+            g_simple_proxy_resolver_set_default_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), m_proxySettings.defaultProxyURL.legacyCStringPointer());
         if (!m_proxySettings.ignoreHosts.isEmpty()) {
-            auto ignoreHosts = m_proxySettings.ignoreHosts.map([](const CString& host) {
-                return const_cast<char*>(host.data());
+            auto ignoreHosts = m_proxySettings.ignoreHosts.map([](const UTF8CString& host) {
+                return const_cast<char*>(host.legacyCStringPointer());
             });
             ignoreHosts.append(nullptr);
             g_simple_proxy_resolver_set_ignore_hosts(G_SIMPLE_PROXY_RESOLVER(resolver.get()), ignoreHosts.mutableSpan().data());
         }
         for (const auto& iter : m_proxySettings.proxyMap)
-            g_simple_proxy_resolver_set_uri_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), iter.key.data(), iter.value.data());
+            g_simple_proxy_resolver_set_uri_proxy(G_SIMPLE_PROXY_RESOLVER(resolver.get()), iter.key.legacyCStringPointer(), iter.value.legacyCStringPointer());
         break;
     case SoupNetworkProxySettings::Mode::Auto:
         resolver = webkitAutoconfigProxyResolverNew(m_proxySettings.defaultProxyURL);
@@ -301,14 +301,14 @@ void SoupNetworkSession::setProxySettings(const SoupNetworkProxySettings& settin
     soup_session_abort(m_soupSession.get());
 }
 
-void SoupNetworkSession::setInitialAcceptLanguages(const CString& languages)
+void SoupNetworkSession::setInitialAcceptLanguages(const UTF8CString& languages)
 {
     initialAcceptLanguages() = languages;
 }
 
-void SoupNetworkSession::setAcceptLanguages(const CString& languages)
+void SoupNetworkSession::setAcceptLanguages(const UTF8CString& languages)
 {
-    soup_session_set_accept_language(m_soupSession.get(), languages.data());
+    soup_session_set_accept_language(m_soupSession.get(), languages.legacyCStringPointer());
 }
 
 void SoupNetworkSession::setIgnoreTLSErrors(bool ignoreTLSErrors)

@@ -35,7 +35,7 @@
 
 struct _WebKitDirectoryInputStreamPrivate {
     GRefPtr<GFileEnumerator> enumerator;
-    CString uri;
+    UTF8CString uri;
 
     GRefPtr<GBytes> buffer;
     bool readDone;
@@ -58,7 +58,7 @@ static GBytes* webkitDirectoryInputStreamCreateHeader(WebKitDirectoryInputStream
         "<thead>"
         "<th align=\"left\">%s</th><th align=\"right\">%s</th><th align=\"right\">%s</th>"
         "</thead>",
-        stream->priv->uri.data(),
+        stream->priv->uri.legacyCStringPointer(),
         static_cast<int>(WebCore::directoryUserAgentStyleSheet.size()),
         WebCore::directoryUserAgentStyleSheet.data(),
         static_cast<int>(WebCore::directoryJavaScript.size()),
@@ -90,7 +90,7 @@ static GBytes* webkitDirectoryInputStreamCreateRow(WebKitDirectoryInputStream *s
 
     GUniquePtr<char> markupName(g_markup_escape_text(name, -1));
     GUniquePtr<char> escapedName(g_uri_escape_string(name, nullptr, FALSE));
-    GUniquePtr<char> path(g_build_filename(stream->priv->uri.data(), escapedName.get(), nullptr));
+    GUniquePtr<char> path(g_build_filename(stream->priv->uri.legacyCStringPointer(), escapedName.get(), nullptr));
     GUniquePtr<char> formattedSize(g_file_info_get_file_type(info) == G_FILE_TYPE_REGULAR ? g_format_size(g_file_info_get_size(info)) : nullptr);
     GUniquePtr<char> formattedName(g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY ? g_strdup_printf("1.%s", path.get()) : g_strdup_printf("%s", path.get()));
     GRefPtr<GDateTime> modificationTime = adoptGRef(g_file_info_get_modification_date_time(info));
@@ -181,7 +181,7 @@ webkit_directory_input_stream_class_init(WebKitDirectoryInputStreamClass* klass)
     inputStreamClass->close_fn = webkitDirectoryInputStreamClose;
 }
 
-GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&& enumerator, CString&& uri)
+GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&& enumerator, UTF8CString&& uri)
 {
     auto* stream = WEBKIT_DIRECTORY_INPUT_STREAM(g_object_new(WEBKIT_TYPE_DIRECTORY_INPUT_STREAM, nullptr));
     stream->priv->enumerator = WTF::move(enumerator);

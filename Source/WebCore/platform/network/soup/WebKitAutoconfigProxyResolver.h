@@ -52,4 +52,4 @@ struct _WebKitAutoconfigProxyResolverClass {
 
 GType webkit_autoconfig_proxy_resolver_get_type(void);
 
-GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const CString&);
+GRefPtr<GProxyResolver> webkitAutoconfigProxyResolverNew(const UTF8CString&);

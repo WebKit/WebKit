@@ -48,7 +48,7 @@ struct SoupNetworkProxySettings {
     {
     }
 
-    SoupNetworkProxySettings(Mode proxyMode, CString&& defaultURL, Vector<CString>&& hosts, HashMap<CString, CString>&& map)
+    SoupNetworkProxySettings(Mode proxyMode, UTF8CString&& defaultURL, Vector<UTF8CString>&& hosts, HashMap<UTF8CString, UTF8CString>&& map)
         : mode(proxyMode)
         , defaultProxyURL(WTF::move(defaultURL))
         , ignoreHosts(WTF::move(hosts))
@@ -71,9 +71,9 @@ struct SoupNetworkProxySettings {
     }
 
     Mode mode { Mode::Default };
-    CString defaultProxyURL;
-    Vector<CString> ignoreHosts;
-    HashMap<CString, CString> proxyMap;
+    UTF8CString defaultProxyURL;
+    Vector<UTF8CString> ignoreHosts;
+    HashMap<UTF8CString, UTF8CString> proxyMap;
 };
 
 } // namespace WebCore

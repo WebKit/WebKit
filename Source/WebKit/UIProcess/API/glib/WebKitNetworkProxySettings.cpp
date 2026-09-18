@@ -89,10 +89,10 @@ WebKitNetworkProxySettings* webkit_network_proxy_settings_new(const char* defaul
     new (proxySettings) WebKitNetworkProxySettings;
     if (defaultProxyURI) {
         g_return_val_if_fail(URL(String::fromUTF8(defaultProxyURI)).isValid(), nullptr);
-        proxySettings->settings.defaultProxyURL = defaultProxyURI;
+        proxySettings->settings.defaultProxyURL = UTF8CString { byteCast<char8_t>(defaultProxyURI) };
     }
     for (auto* host : span(ignoreHosts))
-        proxySettings->settings.ignoreHosts.append(CString(host));
+        proxySettings->settings.ignoreHosts.append(UTF8CString { byteCast<char8_t>(host) });
     return proxySettings;
 }
 
@@ -152,5 +152,5 @@ void webkit_network_proxy_settings_add_proxy_for_scheme(WebKitNetworkProxySettin
     g_return_if_fail(proxyURI);
     g_return_if_fail(URL(String::fromUTF8(proxyURI)).isValid());
 
-    proxySettings->settings.proxyMap.add(scheme, proxyURI);
+    proxySettings->settings.proxyMap.add(UTF8CString { byteCast<char8_t>(scheme) }, UTF8CString { byteCast<char8_t>(proxyURI) });
 }

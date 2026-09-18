@@ -47,7 +47,7 @@ public:
     {
     }
 
-    ResourceResponse(SoupMessage*, const CString& sniffedContentType = CString());
+    ResourceResponse(SoupMessage*, const UTF8CString& sniffedContentType = { });
 
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
     void updateFromSoupMessageHeaders(SoupMessageHeaders*);

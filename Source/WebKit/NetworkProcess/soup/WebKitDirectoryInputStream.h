@@ -52,4 +52,4 @@ struct _WebKitDirectoryInputStreamClass {
 
 GType webkit_directory_input_stream_get_type(void);
 
-GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&&, CString&& uri);
+GRefPtr<GInputStream> webkitDirectoryInputStreamNew(GRefPtr<GFileEnumerator>&&, UTF8CString&& uri);
