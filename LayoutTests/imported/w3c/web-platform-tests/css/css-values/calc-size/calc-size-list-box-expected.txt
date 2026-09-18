@@ -1,0 +1,7 @@
+
+PASS shrink-to-fit parent of a list box with width: calc-size(max-content, size)
+PASS shrink-to-fit parent of a list box with width: calc-size(max-content, size * 2)
+PASS shrink-to-fit parent of a list box with width: calc-size(max-content, size + 25px)
+PASS shrink-to-fit parent of a list box with width: calc-size(min-content, size)
+PASS shrink-to-fit parent of a list box with width: calc-size(min-content, size + 25px)
+

@@ -117,7 +117,7 @@ CSS::CalcSizeFunction toCSSCalcSizeFunction(const CalcSizeValue& value)
     return CSS::CalcSizeFunction { CSS::CalcSizeParameters { WTF::move(basis), Calculation::toCSS(value.calculation(), options) } };
 }
 
-double evaluateCalcSize(const CalcSizeValue& value, double percentResolutionLength, ZoomFactor usedZoom)
+static double evaluateCalcSize(const CalcSizeValue& value, double percentResolutionLength, ZoomFactor usedZoom, std::optional<double> keywordBasis)
 {
     auto basis = WTF::switchOn(value.basis(),
         [&](const Calculation::Tree& tree) -> double {
@@ -127,13 +127,15 @@ double evaluateCalcSize(const CalcSizeValue& value, double percentResolutionLeng
             });
         },
         [&](const Ref<CalcSizeValue>& nested) -> double {
-            return evaluateCalcSize(nested.get(), percentResolutionLength, usedZoom);
+            return evaluateCalcSize(nested.get(), percentResolutionLength, usedZoom, keywordBasis);
         },
         [&](const CSS::Keyword::Any&) -> double {
             // `size` is invalid with an `any` basis, so this is never read.
             return 0;
         },
         [&](const auto&) -> double {
+            if (keywordBasis)
+                return *keywordBasis;
             ASSERT_NOT_REACHED("A keyword basis is resolved by layout, not here");
             return 0;
         }
@@ -146,9 +148,9 @@ double evaluateCalcSize(const CalcSizeValue& value, double percentResolutionLeng
     });
 }
 
-double evaluateCalcSize(const CalcSizeValue& value, CSS::Range range, double percentResolutionLength, ZoomFactor usedZoom)
+double evaluateCalcSize(const CalcSizeValue& value, CSS::Range range, double percentResolutionLength, ZoomFactor usedZoom, std::optional<double> keywordBasis)
 {
-    auto result = evaluateCalcSize(value, percentResolutionLength, usedZoom);
+    auto result = evaluateCalcSize(value, percentResolutionLength, usedZoom, keywordBasis);
     if (std::isnan(result))
         return 0;
     return CSS::clampToRange<double>(result, range);
