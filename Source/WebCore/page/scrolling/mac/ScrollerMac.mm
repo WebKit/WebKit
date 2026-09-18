@@ -295,7 +295,7 @@ enum class FeatureToAnimate {
             duration:duration]);
     } else {
         // If we don't need to initialize the animation, just reset the values in case they have changed.
-        [_expansionTransitionAnimation setStartValue:[scrollerImp uiStateTransitionProgress]];
+        [_expansionTransitionAnimation setStartValue:[scrollerImp expansionTransitionProgress]];
         [_expansionTransitionAnimation setEndValue:1.0];
         [_expansionTransitionAnimation setDuration:duration];
     }
