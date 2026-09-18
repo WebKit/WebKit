@@ -86,6 +86,15 @@ void SpeechRecognitionRemoteRealtimeMediaSource::setStorage(ConsumerSharedCARing
 
 #endif
 
+std::optional<uint32_t> SpeechRecognitionRemoteRealtimeMediaSource::audioBufferFrameCount() const
+{
+#if PLATFORM(COCOA)
+    if (m_ringBuffer)
+        return m_ringBuffer->frameCount();
+#endif
+    return std::nullopt;
+}
+
 void SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
 {
 #if PLATFORM(COCOA)
