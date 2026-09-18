@@ -29,7 +29,8 @@ import WebKit_Internal
 @objc
 @implementation
 extension WKPressGestureRecognizer {
-    override func shouldRequireFailure(of gestureRecognizer: NSGestureRecognizer) -> Bool {
+    @_implementationOnly
+    open override func shouldRequireFailure(of gestureRecognizer: NSGestureRecognizer) -> Bool {
         // The inherited implementation makes a press wait on any press with a longer `minimumPressDuration`.
         // WebKit's presses are disambiguated by the content under the cursor, not by duration, so that
         // would only serialize them, holding the shorter drag behind the longer secondary click.
