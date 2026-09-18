@@ -5370,3 +5370,8 @@ webkit.org/b/319150 imported/w3c/web-platform-tests/loading/early-hints/iframe-p
 
 # New test in the css/css-shadow import. Fails on GTK and WPE, passes on macOS.
 imported/w3c/web-platform-tests/css/css-shadow/part/pseudo-classes-after-part.html [ Failure ]
+
+# Early Hints preloading is Cocoa-only for now: 103 responses reach the handler via
+# didReceiveInformationalResponse, which the soup backend receives (for timing) but does not yet
+# forward. Skip on GTK/WPE until soup wires it up.
+imported/w3c/web-platform-tests/loading/early-hints [ Skip ]
