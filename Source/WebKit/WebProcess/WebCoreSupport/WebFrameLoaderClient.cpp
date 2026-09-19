@@ -220,6 +220,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         }
     }
     auto listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument ? WebFrame::PolicyCheckKind::DownloadAttribute : WebFrame::PolicyCheckKind::Navigation, downloadAttributeInitiatingDocument, WTF::move(downloadAttributePolicyDocumentLoader));
+    if (navigationAction.hasPendingDispatchNavigateEvent())
+        navigationActionData->pendingNavigateEventPolicyListenerID = listenerID;
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {

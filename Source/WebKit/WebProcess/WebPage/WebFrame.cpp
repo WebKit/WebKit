@@ -670,6 +670,17 @@ void WebFrame::invalidatePolicyListeners()
         policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
+bool WebFrame::dispatchPendingNavigateEventAfterNavigationPolicy(PolicyListenerIdentifier listenerID)
+{
+    // invalidatePolicyListeners() drops Navigation checks, so an absent check means the frame has moved
+    // on to another navigation. Answering true then leaves the swap proceeding as it did before.
+    RefPtr coreFrame = coreLocalFrame();
+    if (!coreFrame || !m_pendingPolicyChecks.contains(listenerID))
+        return true;
+
+    return coreFrame->loader().dispatchPendingNavigateEventAfterNavigationPolicy();
+}
+
 void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, PolicyDecision&& policyDecision)
 {
     if (RefPtr page = m_page.get()) {

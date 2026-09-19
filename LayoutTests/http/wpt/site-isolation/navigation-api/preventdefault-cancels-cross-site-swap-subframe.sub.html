@@ -1,0 +1,67 @@
+<!doctype html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta charset="utf-8">
+<title>Navigation API: preventDefault() cancels a cross-site process-swapping subframe navigation (Site Isolation)</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<!--
+  Same cancellation as the main frame variant, but driven from a same-origin subframe so that this
+  document survives either outcome. That turns "the navigation was not cancelled" into an ordinary
+  assertion failure -- the parent can see the subframe's URL, and loses same-origin access to it if
+  the cross-site destination committed -- instead of a lost test.
+-->
+<script>
+const REMOTE = "http://{{hosts[alt][]}}:{{ports[http][0]}}/WebKit/site-isolation/navigation-api/resources/preventdefault-destination.html";
+const CANCELLER = "resources/preventdefault-canceller.html?remote=" + encodeURIComponent(REMOTE);
+
+function waitFor(predicate, timeoutMs, description) {
+    return new Promise((resolve, reject) => {
+        const start = Date.now();
+        const tick = () => {
+            if (predicate()) {
+                resolve();
+                return;
+            }
+            if (Date.now() - start >= timeoutMs) {
+                reject(new Error(`timed out waiting for ${description}`));
+                return;
+            }
+            setTimeout(tick, 25);
+        };
+        tick();
+    });
+}
+
+promise_test(async t => {
+    const reports = [];
+    const onMessage = e => reports.push(e.data);
+    window.addEventListener("message", onMessage);
+    t.add_cleanup(() => window.removeEventListener("message", onMessage));
+
+    const iframe = document.createElement("iframe");
+    const loaded = new Promise(resolve => iframe.onload = () => resolve());
+    iframe.src = CANCELLER;
+    document.body.appendChild(iframe);
+    await loaded;
+
+    const originalURL = iframe.contentWindow.location.href;
+
+    await waitFor(() => reports.length > 0, 4000, "the subframe's navigate event");
+    assert_true(reports[0].cancelable, "subframe navigate event is cancelable");
+    assert_equals(reports[0].destination, REMOTE, "destination is the cross-site URL");
+
+    // Bound the destination's round trip by a real fetch of it rather than a guessed sleep.
+    await fetch(REMOTE, { mode: "no-cors" });
+    await new Promise(resolve => t.step_timeout(resolve, 500));
+
+    let currentURL;
+    try {
+        currentURL = iframe.contentWindow.location.href;
+    } catch (e) {
+        assert_unreached(`subframe committed the cross-site destination (lost same-origin access: ${e})`);
+    }
+    assert_equals(currentURL, originalURL, "subframe is still on its original URL");
+    assert_equals(iframe.contentWindow.__canceller, "alive", "the subframe document was not replaced");
+}, "preventDefault() cancels a cross-site process-swapping subframe navigation (Site Isolation)");
+</script>
+</body>

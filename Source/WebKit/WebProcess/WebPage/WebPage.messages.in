@@ -317,6 +317,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     Close() -> ()
     TryClose() -> (bool shouldClose)
+    DispatchPendingNavigateEventForProcessSwap(std::optional<WebCore::FrameIdentifier> frameID, Markable<WebKit::PolicyListenerIdentifier> policyListenerID) -> (bool proceed)
     DispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData navigatingFrameOrigin)
 
     SetEditable(bool editable)

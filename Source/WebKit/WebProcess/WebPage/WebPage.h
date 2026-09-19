@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "PolicyListenerIdentifier.h"
 #include "RemoteSnapshotIdentifier.h"
 #include "RunJavaScriptResult.h"
 #include "SandboxExtension.h"
@@ -2370,6 +2371,7 @@ private:
 
     // Actions
     void tryClose(CompletionHandler<void(bool)>&&);
+    void dispatchPendingNavigateEventForProcessSwap(std::optional<WebCore::FrameIdentifier>, Markable<PolicyListenerIdentifier>, CompletionHandler<void(bool)>&&);
     void dispatchCrossOriginBeforeUnloadCheckForFrame(WebCore::FrameIdentifier, WebCore::SecurityOriginData&&);
     void platformDidReceiveLoadParameters(const LoadParameters&);
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
