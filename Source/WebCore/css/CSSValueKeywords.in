@@ -1787,6 +1787,7 @@ symbols
 
 // @counter-style `system` descriptor values
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+// https://www.w3.org/TR/css-counter-styles-3/#funcdef-symbols
 cyclic
 numeric
 // alphabetic

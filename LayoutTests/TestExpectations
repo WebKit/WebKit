@@ -6653,9 +6653,6 @@ http/tests/misc/heic-accept-header.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
 
-# Missing counter-style integration with symbols() rdar://106084071
-imported/w3c/web-platform-tests/css/css-counter-styles/symbols-function [ Skip ]
-
 webkit.org/b/297734 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/descriptor-calc.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ ImageOnlyFailure ]

@@ -109,7 +109,12 @@ std::optional<CSS::CounterStyle> consumeUnresolvedCounterStyle(CSSParserTokenRan
     if (isPredefinedCounterStyle(range.peek().id()))
         return CSS::CounterStyle { CSS::Keyword { range.consumeIncludingWhitespace().id() } };
 
-    // FIXME: Add symbols() function support.
+    if (range.peek().functionId() == CSSValueSymbols) {
+        auto symbolsFunction = consumeUnresolvedSymbolsFunction(range, state);
+        if (!symbolsFunction)
+            return { };
+        return CSS::CounterStyle { WTF::move(*symbolsFunction) };
+    }
 
     auto customIdent = consumeUnresolvedCustomIdentExcluding(range, state, { CSSValueNone });
     if (!customIdent)

@@ -57,12 +57,11 @@ template<size_t I> const auto& get(const SymbolsParameters& value)
         return value.symbols;
 }
 
-// <counter-style> = <custom-ident excluding=none>
+// <counter-style> = <custom-ident excluding=none> | <symbols()>
 // https://drafts.csswg.org/css-counter-styles-3/#typedef-counter-style
 struct CounterStyle {
     // Stores predefined style types using their Keyword representation.
-    // FIXME: Add symbols function.
-    Variant<Keyword, CustomIdent> identifier;
+    Variant<Keyword, CustomIdent, SymbolsFunction> identifier;
 
     bool operator==(const CounterStyle&) const = default;
 };

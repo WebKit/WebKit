@@ -549,6 +549,45 @@ TEST(WKWebView, AttributedStringFromListWithCustomListStyleTypes)
     EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
 }
 
+TEST(WKWebView, AttributedStringFromListWithSymbolsFunctionListStyleType)
+{
+    static constexpr auto html = R"""(
+    <body contenteditable dir='auto'>
+        <ol style='list-style-type: symbols("*");'>
+            <li>A</li>
+            <li>B</li>
+        </ol>
+        <ul style='list-style-type: symbols("*");'>
+            <li>C</li>
+            <li>D</li>
+        </ul>
+    </body>
+    )"""_s;
+
+    // The anonymous counter style defined by `symbols(...)` has no Cocoa `NSTextList` equivalent, so it should
+    // fall back to the default marker for ordered and unordered lists, respectively.
+    const DecomposedAttributedText expected { {
+        DecomposedAttributedText::OrderedList { 1, {
+            "\t1\tA\n"_s,
+            "\t2\tB\n"_s,
+        } },
+        DecomposedAttributedText::UnorderedList { {
+            "\t•\tC\n"_s,
+            "\t•\tD\n"_s,
+        } },
+    } };
+
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:html.createNSString().get()];
+
+    RetainPtr string = [webView _contentsAsAttributedString];
+    auto actual = decompose(string.get());
+
+    TextStream stream;
+    stream << "expected " << actual << " to equal " << expected;
+    EXPECT_EQ(actual, expected) << stream.release().utf8().toStdString();
+}
+
 TEST(WKWebView, AttributedStringWithoutNetworkLoads)
 {
     [TestProtocol registerWithScheme:@"https"];
