@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AcceleratedFiltersEnabled=false ] -->
+<meta charset="utf-8">
+<title>backdrop-filter: SVG reference filter with filterUnits=userSpaceOnUse resolves against the element</title>
+<link rel="help" href="https://drafts.fxtf.org/filter-effects-2/#BackdropFilterProperty">
+<link rel="match" href="backdrop-filter-svg-userspaceonuse-expected.html">
+<!-- The element is deliberately away from the origin: a userSpaceOnUse filter region resolves
+     from the filter element's literal x/y/width/height, which must land on the filtered element,
+     not on the page origin. -->
+
+<div class="fuchsiabox"></div>
+<div class="filter"></div>
+
+<svg width="0" height="0">
+  <filter id="invert" filterUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"
+          color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<style>
+.fuchsiabox {
+  position: absolute;
+  background: fuchsia;
+  width: 100px;
+  height: 100px;
+  top: 120px;
+  left: 140px;
+}
+.filter {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 120px;
+  left: 140px;
+  backdrop-filter: url(#invert);
+}
+</style>
