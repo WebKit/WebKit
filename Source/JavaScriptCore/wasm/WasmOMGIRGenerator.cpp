@@ -2254,22 +2254,84 @@ void OMGIRGenerator::emitMemoryFill(Value* dstAddressValue, Value* targetValue, 
 
 auto OMGIRGenerator::addMemoryInit(unsigned dataSegmentIndex, ExpressionType dstAddress, ExpressionType srcAddress, ExpressionType length, uint8_t memoryIndex) -> PartialResult
 {
-    auto dstAddressValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
+    auto* dstAddressValue = addressOperand(m_info.memory(memoryIndex).isMemory64(), dstAddress);
+    auto* srcAddressValue = pointerOfInt32(get(srcAddress));
+    auto* lengthValue = pointerOfInt32(get(length));
 
-    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmMemoryInit,
-        instanceValue(),
-        constant(Int32, dataSegmentIndex),
-        dstAddressValue, get(srcAddress), get(length), constant(Int32, memoryIndex));
-
-    {
+    auto emitCCall = [&] {
+        Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmMemoryInit,
+            instanceValue(),
+            constant(Int32, dataSegmentIndex),
+            dstAddressValue, srcAddressValue, lengthValue, constant(Int32, memoryIndex));
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
             m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, constant(Int32, 0)));
-
         check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    };
+
+    if (memoryIndex || dataSegmentIndex >= BitVector::maxInlineBitCount()) {
+        emitCCall();
+        return { };
+    }
+
+    auto* bits = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfPassiveDataSegments()));
+    auto* isInline = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), BitVector::inlineBitMask()));
+
+    auto* inlinePath = m_proc.addBlock();
+    auto* slowPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
+
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), isInline,
+        FrequentedBlock(inlinePath), FrequentedBlock(slowPath, FrequencyClass::Rare));
+    inlinePath->addPredecessor(m_currentBlock);
+    slowPath->addPredecessor(m_currentBlock);
+
+    m_currentBlock = inlinePath;
+    {
+        auto* memorySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(JSWebAssemblyInstance::offsetOfCachedMemory0Size()));
+        m_heaps.decorateMemory(&m_heaps.JSWebAssemblyInstance_cachedMemory0Size, memorySize);
+        auto* dstSum = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), dstAddressValue, lengthValue);
+        auto* dstSumOverflowed = m_currentBlock->appendNew<Value>(m_proc, Below, origin(), dstSum, dstAddressValue);
+        Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(), dstSumOverflowed, m_currentBlock->appendNew<Value>(m_proc, Above, origin(), dstSum, memorySize));
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
+        check->setGenerator([=, this, origin = this->origin()](CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsMemoryAccess);
+        });
+    }
+    {
+        auto* dropped = m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), bits, constant(pointerType(), static_cast<uintptr_t>(1) << dataSegmentIndex)),
+            constant(pointerType(), 0));
+        auto* segmentSize = m_currentBlock->appendNew<Value>(m_proc, B3::Select, origin(), dropped,
+            constant(pointerType(), 0),
+            constant(pointerType(), m_info.data[dataSegmentIndex]->sizeInBytes()));
+        auto* srcSum = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), srcAddressValue, lengthValue);
+        auto* srcSumOverflowed = m_currentBlock->appendNew<Value>(m_proc, Below, origin(), srcSum, srcAddressValue);
+        Value* outOfBounds = m_currentBlock->appendNew<Value>(m_proc, BitOr, origin(), srcSumOverflowed, m_currentBlock->appendNew<Value>(m_proc, Above, origin(), srcSum, segmentSize));
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), outOfBounds);
+        check->setGenerator([=, this, origin = this->origin()](CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
 
+    auto* srcPointer = m_currentBlock->appendNew<Value>(m_proc, Add, origin(),
+        constant(pointerType(), std::bit_cast<uintptr_t>(m_info.data[dataSegmentIndex]->span().data())),
+        srcAddressValue);
+    m_currentBlock->appendNew<BulkMemoryValue>(
+        m_proc, MemoryCopy, origin(),
+        m_currentBlock->appendNew<WasmAddressValue>(m_proc, origin(), dstAddressValue, GPRInfo::wasmBaseMemoryPointer),
+        srcPointer,
+        lengthValue);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = slowPath;
+    emitCCall();
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
     return { };
 }
 
