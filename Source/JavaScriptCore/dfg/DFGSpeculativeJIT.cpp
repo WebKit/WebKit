@@ -15264,6 +15264,8 @@ void SpeculativeJIT::compilePutCellButterflySlot(Node* node)
 
 void SpeculativeJIT::compileArraySortCompact(Node* node)
 {
+    bool isDouble = node->arrayMode().type() == Array::Double;
+
     SpeculateCellOperand array(this, node->child1());
     SpeculateInt32Operand length(this, node->child2());
 
@@ -15280,6 +15282,13 @@ void SpeculativeJIT::compileArraySortCompact(Node* node)
     GPRReg valueGPR = value.gpr();
     GPRReg butterflyGPR = butterfly.gpr();
 
+    std::optional<FPRTemporary> fp;
+    FPRReg fpReg = InvalidFPRReg;
+    if (isDouble) {
+        fp.emplace(this);
+        fpReg = fp->fpr();
+    }
+
     loadPtr(&vm().m_cachedSortScratch, scratchGPR);
     move(TrustedImmPtr(nullptr), butterflyGPR);
     storePtr(butterflyGPR, &vm().m_cachedSortScratch);
@@ -15293,11 +15302,17 @@ void SpeculativeJIT::compileArraySortCompact(Node* node)
     move(lengthGPR, counterGPR);
     auto loop = label();
     auto done = branchSub32(Signed, counterGPR, TrustedImm32(1), counterGPR);
-    load64(BaseIndex(butterflyGPR, counterGPR, TimesEight, 0), valueGPR);
     JumpList holes;
-    holes.append(branchTest64(Zero, valueGPR));
-    if (node->arrayMode().type() == Array::Contiguous)
-        holes.append(branch64(Equal, valueGPR, TrustedImm64(JSValue::encode(jsUndefined()))));
+    if (isDouble) {
+        loadDouble(BaseIndex(butterflyGPR, counterGPR, TimesEight, 0), fpReg);
+        holes.append(branchIfNaN(fpReg));
+        boxDouble(fpReg, valueGPR);
+    } else {
+        load64(BaseIndex(butterflyGPR, counterGPR, TimesEight, 0), valueGPR);
+        holes.append(branchTest64(Zero, valueGPR));
+        if (node->arrayMode().type() == Array::Contiguous)
+            holes.append(branch64(Equal, valueGPR, TrustedImm64(JSValue::encode(jsUndefined()))));
+    }
     store64(valueGPR, BaseIndex(scratchGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()));
     jump().linkTo(loop, this);
 
@@ -15310,6 +15325,8 @@ void SpeculativeJIT::compileArraySortCompact(Node* node)
 
 void SpeculativeJIT::compileArraySortCommit(Node* node)
 {
+    bool isDouble = node->arrayMode().type() == Array::Double;
+
     SpeculateCellOperand array(this, node->child1());
     SpeculateCellOperand storage(this, node->child2());
     SpeculateInt32Operand length(this, node->child3());
@@ -15324,6 +15341,17 @@ void SpeculativeJIT::compileArraySortCommit(Node* node)
     GPRReg counterGPR = counter.gpr();
     GPRReg butterflyGPR = butterfly.gpr();
 
+    std::optional<GPRTemporary> value;
+    GPRReg valueGPR = InvalidGPRReg;
+    std::optional<FPRTemporary> fp;
+    FPRReg fpReg = InvalidFPRReg;
+    if (isDouble) {
+        value.emplace(this);
+        valueGPR = value->gpr();
+        fp.emplace(this);
+        fpReg = fp->fpr();
+    }
+
     // If array.length gets modified during sorting, let's reject commit and do OSR exit.
     loadPtr(Address(arrayGPR, JSObject::butterflyOffset()), butterflyGPR);
     speculationCheck(BadIndexingType, JSValueSource(), node, branch32(NotEqual, Address(butterflyGPR, Butterfly::offsetOfPublicLength()), lengthGPR));
@@ -15331,7 +15359,12 @@ void SpeculativeJIT::compileArraySortCommit(Node* node)
     move(lengthGPR, counterGPR);
     auto loop = label();
     auto done = branchSub32(Signed, counterGPR, TrustedImm32(1), counterGPR);
-    transfer64(BaseIndex(storageGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()), BaseIndex(butterflyGPR, counterGPR, TimesEight, 0));
+    if (isDouble) {
+        load64(BaseIndex(storageGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()), valueGPR);
+        unboxDouble(valueGPR, valueGPR, fpReg);
+        storeDouble(fpReg, BaseIndex(butterflyGPR, counterGPR, TimesEight, 0));
+    } else
+        transfer64(BaseIndex(storageGPR, counterGPR, TimesEight, JSCellButterfly::offsetOfData()), BaseIndex(butterflyGPR, counterGPR, TimesEight, 0));
     jump().linkTo(loop, this);
 
     done.link(this);
