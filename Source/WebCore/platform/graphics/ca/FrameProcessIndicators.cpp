@@ -42,7 +42,7 @@
 namespace WebCore {
 
 static constexpr float padding = 3;
-static constexpr float fontSize = 12;
+static constexpr float fontSize = 14;
 static constexpr float borderWidth = 4;
 static constexpr float depthStaggerStep = 12;
 
@@ -90,8 +90,12 @@ void FrameProcessIndicators::updateGeometry(const FloatRect& bounds)
 
     // Stagger indicators by frame nesting depth so co-located frames (e.g. a mainframe and an
     // iframe both anchored at the page origin) don't draw their labels directly on top of each other.
-    float stagger = m_graphicsLayer ? m_graphicsLayer->frameProcessIndicatorDepth() * depthStaggerStep : 0;
-    m_indicatorLayer->setPosition({ location.x() + stagger, location.y() + stagger, 1 });
+    float staggerX = m_graphicsLayer ? m_graphicsLayer->frameProcessIndicatorDepth() * depthStaggerStep : 0;
+    auto font = makeFont();
+    auto [textTop, textBottom] = textVerticalBounds(font);
+    auto textBoxHeight = 2 * padding + textBottom - textTop;
+    float staggerY = m_graphicsLayer ? m_graphicsLayer->frameProcessIndicatorDepth() * textBoxHeight : 0;
+    m_indicatorLayer->setPosition({ location.x() + staggerX, location.y() + staggerY, 1 });
 }
 
 void FrameProcessIndicators::updateContentsScale(float contentsScale)
@@ -144,7 +148,10 @@ void FrameProcessIndicators::platformCALayerPaintContents(PlatformCALayer* layer
     auto indicatorSize = layer->bounds().size();
 
     context.setFillColor(m_backgroundColor);
-    context.fillRect(FloatRect { 0, borderWidth, indicatorSize.width() - borderWidth, indicatorSize.height() - borderWidth });
+    float topLeftInset = 0;
+    if (!m_graphicsLayer || !m_graphicsLayer->frameProcessIndicatorDepth())
+        topLeftInset = borderWidth;
+    context.fillRect(FloatRect { topLeftInset, topLeftInset, indicatorSize.width() - topLeftInset, indicatorSize.height() - topLeftInset });
     context.setFillColor(textColor);
     context.drawText(font, TextRun(m_text), { padding, padding - textTop });
 }
