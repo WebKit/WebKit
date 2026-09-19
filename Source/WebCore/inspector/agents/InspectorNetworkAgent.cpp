@@ -633,7 +633,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
+    CachedResource::Type resourceRequestType = CachedResource::Type::Unknown;
     if (resourceData)
         resourceRequestType = resourceData->cachedResource()->type();
 
