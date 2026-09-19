@@ -36,7 +36,7 @@
 #include <wtf/text/CStringView.h>
 
 #if USE(GSTREAMER_GL)
-#include "GraphicsTypesGL.h"
+#include <WebCore/GraphicsTypesGL.h>
 #endif
 
 namespace WebCore {
