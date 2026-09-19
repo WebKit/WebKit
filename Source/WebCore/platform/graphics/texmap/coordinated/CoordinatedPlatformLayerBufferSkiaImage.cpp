@@ -27,8 +27,22 @@
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(SKIA) && !USE(TEXTURE_MAPPER)
-#include "PlatformDisplay.h"
 #include "SkiaUtilities.h"
+
+#if ENABLE(WEBGL)
+#include "GLContext.h"
+#include "PlatformDisplay.h"
+#include <epoxy/egl.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkColorSpace.h>
+#include <skia/core/SkImage.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
+#include <skia/private/chromium/GrPromiseImageTexture.h>
+#include <skia/private/chromium/SkImageChromium.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
 
 namespace WebCore {
 
@@ -40,6 +54,67 @@ std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLaye
     sk_sp<SkImage> skiaImage = image->isTextureBacked() ? SkiaUtilities::createPromiseImageIfNeeded(image, threadSafeGrContext) : image;
     return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), flags);
 }
+
+#if ENABLE(WEBGL)
+struct PromiseWebGLImageContext {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(PromiseWebGLImageContext);
+
+    PromiseWebGLImageContext(unsigned texture, const IntSize& textureSize, std::unique_ptr<GLFence>&& glFence)
+        : textureID(texture)
+        , size(textureSize)
+        , fence(WTF::move(glFence))
+    {
+    }
+
+    sk_sp<GrPromiseImageTexture> promiseImageTexture()
+    {
+        auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+        if (!glContext || !glContext->makeContextCurrent())
+            return nullptr;
+
+        if (fence) {
+            fence->serverWait();
+            fence = nullptr;
+        }
+
+        GrGLTextureInfo externalTexture;
+        externalTexture.fTarget = GL_TEXTURE_2D;
+        externalTexture.fID = textureID;
+        externalTexture.fFormat = GL_RGBA8;
+        return GrPromiseImageTexture::Make(GrBackendTextures::MakeGL(size.width(), size.height(), skgpu::Mipmapped::kNo, externalTexture));
+    }
+
+    unsigned textureID { 0 };
+    IntSize size;
+    std::unique_ptr<GLFence> fence;
+};
+
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PromiseWebGLImageContext);
+
+std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLayerBufferSkiaImage::create(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+{
+    if (!threadSafeGrContext)
+        return nullptr;
+
+    auto backendFormat = threadSafeGrContext->defaultBackendFormat(kRGBA_8888_SkColorType, GrRenderable::kYes);
+    ASSERT(backendFormat.isValid());
+
+    auto context = makeUnique<PromiseWebGLImageContext>(textureID, size, WTF::move(fence));
+    auto origin = flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
+    auto alphaType = flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
+    auto skiaImage = SkImages::PromiseTextureFrom(threadSafeGrContext, backendFormat, SkISize::Make(size.width(), size.height()), skgpu::Mipmapped::kNo,
+        origin, kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB(),
+        +[](void* userData) -> sk_sp<GrPromiseImageTexture> {
+            auto& context = *static_cast<PromiseWebGLImageContext*>(userData);
+            return context.promiseImageTexture();
+        },
+        +[](void* userData) {
+            std::unique_ptr<PromiseWebGLImageContext> context(static_cast<PromiseWebGLImageContext*>(userData));
+        }, context.release());
+
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), flags);
+}
+#endif
 
 CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&& image, OptionSet<TextureMapperFlags> flags)
     : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { image->width(), image->height() }, flags, nullptr)

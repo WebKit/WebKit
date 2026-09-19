@@ -47,7 +47,11 @@
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
+#if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferRGB.h"
+#else
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
+#endif
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #include "TextureMapperFlags.h"
 #else
@@ -432,7 +436,12 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
         flags.add(TextureMapperFlags::ShouldBlend);
     auto fboSize = getInternalFramebufferSize();
     auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTF::move(fence)));
+#if USE(TEXTURE_MAPPER)
+    auto buffer = CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTF::move(fence));
+#else
+    auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(m_compositorTextureID, fboSize, flags, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
+#endif
+    m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 #endif
 }
 
