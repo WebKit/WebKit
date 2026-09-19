@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src='resources/cookies-test-pre.js'></script>
+</head>
+<body>
+<script>
+description('This test checks that cookie names and values containing Unicode characters outside the Latin-1 range round-trip through cookieStore.set()/get()/getAll() without being corrupted. See: rdar://124266311 Correct the encoding of cookies sent/received from CFNetwork');
+jsTestIsAsync = true;
+
+onload = async () => {
+    await cookieStore.set('unicodeValue', 'start日本語end');
+    let item = await cookieStore.get('unicodeValue');
+    if (item && item.value === 'start日本語end')
+        testPassed("cookieStore.get('unicodeValue') returned the value unchanged");
+    else
+        testFailed("cookieStore.get('unicodeValue') returned an unexpected value: " + (item ? item.value : item));
+    await cookieStore.delete('unicodeValue');
+
+    await cookieStore.set('☕coffee', 'black');
+    let all = await cookieStore.getAll('☕coffee');
+    if (all.length === 1 && all[0].name === '☕coffee' && all[0].value === 'black')
+        testPassed("cookieStore.getAll('☕coffee') returned the cookie with its Unicode name unchanged");
+    else
+        testFailed("cookieStore.getAll('☕coffee') did not return the expected cookie");
+    await cookieStore.delete('☕coffee');
+
+    await cookieStore.set('cookieEmoji', 'before🍪after');
+    item = await cookieStore.get('cookieEmoji');
+    if (item && item.value === 'before🍪after')
+        testPassed("cookieStore.get('cookieEmoji') returned a value with a character outside the Basic Multilingual Plane unchanged");
+    else
+        testFailed("cookieStore.get('cookieEmoji') returned an unexpected value: " + (item ? item.value : item));
+    await cookieStore.delete('cookieEmoji');
+
+    finishJSTest();
+};
+</script>
+<script src='resources/cookies-test-post.js'></script>
+</body>
+</html>

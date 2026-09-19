@@ -205,9 +205,18 @@ CookieStore::~CookieStore()
 
 static String normalize(const String& string)
 {
-    if (string.contains(isTabOrSpace<char16_t>))
-        return string.trim(isTabOrSpace);
-    return string;
+    String normalized = string;
+    if (normalized.contains(isTabOrSpace<char16_t>))
+        normalized = normalized.trim(isTabOrSpace);
+
+#if OS(DARWIN)
+    // Encode the string as UTF-8 and create a ISO-Latin1 string of those bytes. Constructing a
+    // string with the UTF-8 bytes reinterpreted as Latin-1 is the way to get CFNetwork to preserve
+    // those UTF-8 bytes when parsing the cookie.
+    return String(byteCast<Latin1Character>(normalized.utf8().span()));
+#else
+    return normalized;
+#endif
 }
 
 static bool containsInvalidCharacters(const String& string)
@@ -385,8 +394,9 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
             return;
     }
 
-    // FIXME: <rdar://85515842> Obtain the encoded length without allocating and encoding.
-    if (cookie.name.utf8().length() + cookie.value.utf8().length() > maximumNameValuePairSize) {
+    // cookie.name and cookie.value have already been encoded to UTF-8 bytes reinterpreted as
+    // Latin-1 by normalize(), so their length() is already the encoded byte count.
+    if (cookie.name.length() + cookie.value.length() > maximumNameValuePairSize) {
         promise->reject(Exception { ExceptionCode::TypeError, makeString("The size of the cookie name and value must not be greater than "_s, maximumNameValuePairSize, " bytes"_s) });
         return;
     }
@@ -524,7 +534,7 @@ void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise
     }
 
     CookieInit initOptions;
-    initOptions.name = normalize(options.name);
+    initOptions.name = WTF::move(options.name);
     initOptions.value = emptyString();
     initOptions.domain = WTF::move(options.domain);
     initOptions.path = WTF::move(options.path);

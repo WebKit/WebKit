@@ -782,6 +782,11 @@ editing/secure-input/reset-state-on-navigation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 
+# rdar://187726444 CFNetwork has a bug that rejects a cookie whose name/value pair is well under
+# the 4096-byte limit once it contains enough multi-byte-encoded characters, so cookieStore.set()
+# fails here even though the size check itself is correct.
+http/tests/cookies/cookie-store-set-size-limit-with-unicode-characters.https.html [ Failure ]
+
 #rdar://92629515 (REGRESSION(Ventura): [ Ventura ] media/media-can-play-av1.html is a constant text failure)
 media/media-can-play-av1.html [ Skip ]
 

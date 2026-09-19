@@ -7547,6 +7547,11 @@ imported/w3c/web-platform-tests/css/css-tables/subpixel-collapsed-borders-003.ht
 
 http/tests/cookies/js-get-and-set-http-only-cookie.html [ Failure ]
 
+# rdar://187726444 CFNetwork has a bug that rejects a cookie whose name/value pair is well under
+# the 4096-byte limit once it contains enough multi-byte-encoded characters, so cookieStore.set()
+# fails here even though the size check itself is correct.
+http/tests/cookies/cookie-store-set-size-limit-with-unicode-characters.https.html [ Failure ]
+
 webkit.org/b/152439 compositing/overflow/dynamic-composited-scrolling-status.html [ Pass Failure ]
 
 webkit.org/b/173178 [ Release ] svg/animations/svglength-element-removed-crash.svg [ Skip ]
