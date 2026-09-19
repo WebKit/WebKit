@@ -1136,10 +1136,15 @@ void RenderElement::styleDidChange(Style::Difference diff, const Style::Computed
     if (!m_parent)
         return;
 
-    // When style containment changes, quote depth scoping boundaries change,
-    // so all quotes need to be recalculated.
-    if (oldStyle && oldStyle->usedContain().contains(Style::ContainValue::Style) != m_style.usedContain().contains(Style::ContainValue::Style))
-        view().setHasQuotesNeedingUpdate(true);
+    // When effective style containment changes, quote and counter scoping
+    // boundaries change, so all quotes and the counter tree need to be recalculated.
+    if (oldStyle && element()) {
+        bool oldAppliesStyleContainment = Style::ContainmentChecker { *oldStyle, *element() }.shouldApplyStyleContainment();
+        if (oldAppliesStyleContainment != shouldApplyStyleContainment()) {
+            view().setHasQuotesNeedingUpdate(true);
+            view().setHasCounterTreeNeedingUpdate(true);
+        }
+    }
 
     if (diff == Style::DifferenceResult::Layout || diff == Style::DifferenceResult::Overflow) {
         RenderCounter::rendererStyleChanged(*this, oldStyle, m_style);
