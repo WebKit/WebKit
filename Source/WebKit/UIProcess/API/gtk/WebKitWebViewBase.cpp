@@ -61,6 +61,7 @@
 #include "WebKitWebViewAccessible.h"
 #include "WebKitWebViewBaseInternal.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyGtk.h"
@@ -2650,6 +2651,14 @@ void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
 
     priv->windowWasAlreadyInFullScreen = false;
 
+    if (WEBKIT_IS_WEB_VIEW(webkitWebViewBase)) {
+        webkitWebViewFullscreenWindow(WEBKIT_WEB_VIEW(webkitWebViewBase), [webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
+            if (webViewBase->priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen)
+                webkitWebViewBaseDidEnterFullScreen(webViewBase.get());
+        });
+        return;
+    }
+
     if (priv->toplevelOnScreenWindow)
         gtk_window_fullscreen(priv->toplevelOnScreenWindow->window());
 }
@@ -2676,7 +2685,20 @@ void webkitWebViewBaseExitFullScreen(WebKitWebViewBase* webkitWebViewBase)
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
 
-    if (!webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(webkitWebViewBase) || priv->windowWasAlreadyInFullScreen) {
+    if (priv->windowWasAlreadyInFullScreen) {
+        webkitWebViewBaseDidExitFullScreen(webkitWebViewBase);
+        return;
+    }
+
+    if (WEBKIT_IS_WEB_VIEW(webkitWebViewBase)) {
+        webkitWebViewUnfullscreenWindow(WEBKIT_WEB_VIEW(webkitWebViewBase), [webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
+            if (webViewBase->priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen)
+                webkitWebViewBaseDidExitFullScreen(webViewBase.get());
+        });
+        return;
+    }
+
+    if (!webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(webkitWebViewBase)) {
         webkitWebViewBaseDidExitFullScreen(webkitWebViewBase);
         return;
     }
