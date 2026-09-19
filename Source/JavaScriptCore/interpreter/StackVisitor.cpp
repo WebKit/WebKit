@@ -32,10 +32,12 @@
 #include "InlineCallFrame.h"
 #include "JSCInlines.h"
 #include "NativeCallee.h"
+#include "Options.h"
 #include "RegisterAtOffsetList.h"
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"
 #include "WebAssemblyFunction.h"
+#include <wtf/HexNumber.h>
 #include <wtf/text/MakeString.h>
 
 namespace JSC {
@@ -386,9 +388,11 @@ String StackVisitor::Frame::functionName() const
     String traceLine;
 
     switch (codeType()) {
-    case CodeType::Wasm:
-        traceLine = makeString(m_wasmFunctionIndexOrName);
+    case CodeType::Wasm: {
+        if (m_wasmFunctionIndexOrName.nameSection() && !m_wasmFunctionIndexOrName.isIndex())
+            traceLine = makeString(m_wasmFunctionIndexOrName.name()->span());
         break;
+    }
     case CodeType::Eval:
         traceLine = "eval code"_s;
         break;
@@ -428,9 +432,30 @@ String StackVisitor::Frame::sourceURL() const
     case CodeType::Native:
         traceLine = "[native code]"_s;
         break;
-    case CodeType::Wasm:
-        traceLine = "[wasm code]"_s;
+    case CodeType::Wasm: {
+        auto moduleName = m_wasmFunctionIndexOrName.nameSection() ? m_wasmFunctionIndexOrName.moduleName() : std::span<const char8_t> { };
+        std::optional<uint32_t> bytecodeOffset;
+#if ENABLE(WEBASSEMBLY)
+        if (Options::enableWasmDebugger() && m_callee.isNativeCallee()) {
+            auto* wasmCallee = uncheckedDowncast<Wasm::Callee>(m_callee.asNativeCallee());
+            if (wasmCallee->compilationMode() == Wasm::CompilationMode::IPIntMode) {
+                auto& ipintCallee = uncheckedDowncast<Wasm::IPIntCallee>(*wasmCallee);
+                bytecodeOffset = ipintCallee.moduleBytecodeOffsetBase() + wasmCallSiteIndex().bits();
+            }
+        }
+#endif
+        if (bytecodeOffset) {
+            auto offset = hex(*bytecodeOffset, Lowercase);
+            if (!moduleName.empty())
+                traceLine = makeString(moduleName, ":wasm-function["_s, m_wasmFunctionIndex, "]:0x"_s, offset);
+            else
+                traceLine = makeString("wasm-function["_s, m_wasmFunctionIndex, "]:0x"_s, offset);
+        } else if (!moduleName.empty())
+            traceLine = makeString(moduleName, ":wasm-function["_s, m_wasmFunctionIndex, ']');
+        else
+            traceLine = makeString("wasm-function["_s, m_wasmFunctionIndex, ']');
         break;
+    }
     }
     return traceLine.isNull() ? emptyString() : traceLine;
 }
