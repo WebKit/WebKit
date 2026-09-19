@@ -4787,11 +4787,11 @@ void CaptureShareGroupMidExecutionSetup(
     }
 
     // Capture EGL Sync Objects
-    const egl::SyncMap &eglSyncMap = context->getDisplay()->getSyncsForCapture();
+    const egl::ScopedSyncMap eglSyncMap = context->getDisplay()->getSyncsForCapture();
     for (const auto &eglSyncIter : eglSyncMap)
     {
         egl::SyncID eglSyncID    = {eglSyncIter.first};
-        const egl::Sync *eglSync = eglSyncIter.second.get();
+        const egl::Sync *eglSync = eglSyncIter.second;
         EGLSync eglSyncObject    = gl::unsafe_int_to_pointer_cast<EGLSync>(eglSyncID.value);
 
         if (!eglSync)

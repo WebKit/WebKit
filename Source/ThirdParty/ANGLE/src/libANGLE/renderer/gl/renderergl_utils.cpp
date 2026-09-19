@@ -2414,7 +2414,8 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                             IsPowerVR(vendor));
 
     ANGLE_FEATURE_CONDITION(features, adjustSrcDstRegionForBlitFramebuffer,
-                            IsLinux() || (IsAndroid() && isNvidia) || (IsWindows() && isNvidia) ||
+                            IsLinux() || (IsAndroid() && (isNvidia || isMali)) ||
+                                (IsWindows() && isNvidia) ||
                                 (IsApple() && functions->standard == STANDARD_GL_ES));
 
     ANGLE_FEATURE_CONDITION(features, clipSrcRegionForBlitFramebuffer,
@@ -2716,9 +2717,10 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
     ANGLE_FEATURE_CONDITION(features, dontInvalidateIncompleteFBOs,
                             !isMesa && isQualcomm && qualcommVersion < 881);
 
-    // glGenerateMipmap may silently fail on mesa, leaving mips that are expected to be recreated to
-    // match the base level in their original shape, hidden from ANGLE and its validation.
-    ANGLE_FEATURE_CONDITION(features, recreateMipmapLevelsBeforeGenerate, isMesa);
+    // glGenerateMipmap may silently fail on mesa or mali. The failure mode is different on each
+    // driver, but in both cases ensuring that the full mip chain is explicitly defined prior to
+    // mipmap generation avoids the problem.
+    ANGLE_FEATURE_CONDITION(features, recreateMipmapLevelsBeforeGenerate, isMesa || isMali);
 
     // http://crbug.com/498828605
     ANGLE_FEATURE_CONDITION(features, expandFragmentOutputsToVec4, isAMD && isMesa);
@@ -2780,7 +2782,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
                             IsPowerVR(vendor) && IsAndroid());
 
     // crbug.com/553172761
-    ANGLE_FEATURE_CONDITION(features, useTexSubImageForHostTwiddledNpotUploads,
+    ANGLE_FEATURE_CONDITION(features, useTexSubImageForClientDataNpotUploads,
                             false /* IsPowerVR(vendor) */);
 
     // Mac Intel drivers are unable to allocate buffers larger than ~1gb

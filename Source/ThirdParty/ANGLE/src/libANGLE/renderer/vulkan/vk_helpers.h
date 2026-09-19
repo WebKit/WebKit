@@ -2449,6 +2449,7 @@ class ImageHelper final : public Resource, public angle::Subject
     using ImageFormats = angle::FixedVector<VkFormat, kImageColorspaceOverrideFormatCount>;
     static const void *DeriveCreateInfoPNext(
         ErrorContext *context,
+        angle::FormatID intendedFormatID,
         angle::FormatID actualFormatID,
         const void *pNext,
         VkImageFormatListCreateInfoKHR *imageFormatListInfoStorage,
@@ -3144,20 +3145,6 @@ class ImageHelper final : public Resource, public angle::Subject
 
         void release(Renderer *renderer);
 
-        // Returns true if the update's layer range exact matches [layerIndex,
-        // layerIndex+layerCount) range.  To support VK_REMAINING_ARRAY_LAYERS, the number of layers
-        // in the image is also passed in.
-        bool matchesLayerRange(gl::OwnerLayer layerIndex,
-                               uint32_t layerCount,
-                               uint32_t imageLayerCount) const;
-        // Returns true if the update is to any layer within range of [layerIndex,
-        // layerIndex+layerCount)
-        bool intersectsLayerRange(gl::OwnerLayer layerIndex,
-                                  uint32_t layerCount,
-                                  uint32_t imageLayerCount) const;
-        void getDestSubresource(uint32_t imageLayerCount,
-                                gl::OwnerLayer *baseLayerOut,
-                                uint32_t *layerCountOut) const;
         VkImageAspectFlags getDestAspectFlags() const;
 
         UpdateSource updateSource;
@@ -3473,6 +3460,19 @@ class ImageHelper final : public Resource, public angle::Subject
     void adjustLayerRange(const SubresourceUpdates &levelUpdates,
                           gl::OwnerLayer *layerStart,
                           gl::OwnerLayer *layerEnd);
+
+    // Returns true if the update's layer range exactly matches [layerIndex, layerIndex+layerCount).
+    bool matchesLayerRange(const SubresourceUpdate &update,
+                           gl::OwnerLayer layerIndex,
+                           uint32_t layerCount) const;
+    // Returns true if the update is to any layer within range of [layerIndex,
+    // layerIndex+layerCount).
+    bool intersectsLayerRange(const SubresourceUpdate &update,
+                              gl::OwnerLayer layerIndex,
+                              uint32_t layerCount) const;
+    void getDestSubresource(const SubresourceUpdate &update,
+                            gl::OwnerLayer *baseLayerOut,
+                            uint32_t *layerCountOut) const;
 
     // Copy most of state and move VkImage/VkDeviceMemory from other ImageHelper. This should not be
     // used for general usage. It is specifically for stageSelfUpdate and falling back from tile

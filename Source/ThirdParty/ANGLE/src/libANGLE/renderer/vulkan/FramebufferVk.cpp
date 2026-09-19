@@ -1450,7 +1450,7 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
     bool flipY                          = false;
     bool noClip                         = false;
 
-    UtilsVk::BlitResolveParameters params;
+    UtilsVk::BlitResolveParameters params = {};
     params.stretch[0] = static_cast<float>(stretch[0]);
     params.stretch[1] = static_cast<float>(stretch[1]);
     params.renderArea = getRotatedCompleteRenderArea(contextVk);
@@ -2025,7 +2025,7 @@ angle::Result FramebufferVk::generateFragmentShadingRateWithCompute(
 {
     ASSERT(activeFocalPoints.size() < gl::IMPLEMENTATION_MAX_FOCAL_POINTS);
 
-    UtilsVk::GenerateFragmentShadingRateParameters shadingRateParams;
+    UtilsVk::GenerateFragmentShadingRateParameters shadingRateParams = {};
     shadingRateParams.textureWidth          = foveatedAttachmentWidth;
     shadingRateParams.textureHeight         = foveatedAttachmentHeight;
     shadingRateParams.attachmentBlockWidth  = fragmentShadingRateBlockWidth;
@@ -4047,7 +4047,7 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
             mRenderPassDesc.hasStencilUnresolveAttachment())
         {
             // Unresolve attachments using a separate renderpass.
-            UtilsVk::UnresolveParameters params;
+            UtilsVk::UnresolveParameters params = {};
             params.unresolveColorMask  = mRenderPassDesc.getColorUnresolveAttachmentMask();
             params.unresolveDepth      = mRenderPassDesc.hasDepthUnresolveAttachment();
             params.unresolveStencil    = mRenderPassDesc.hasStencilUnresolveAttachment();
@@ -4125,7 +4125,7 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
     if (anyUnresolve)
     {
         // Unresolve attachments if any.
-        UtilsVk::UnresolveParameters params;
+        UtilsVk::UnresolveParameters params = {};
         params.unresolveColorMask = unresolveColorMask;
         params.unresolveDepth     = unresolveDepth;
         params.unresolveStencil   = unresolveStencil;

@@ -247,10 +247,10 @@ class Resource11Base : angle::NonCopyable
         UpdateDebugNameWithD3D();
     }
 
-    void set(T *object)
+    void set(angle::ComPtr<T> object)
     {
         ASSERT(!valid());
-        data().object.Attach(object);
+        data().object = std::move(object);
     }
 
     bool valid() const { return (data().object != nullptr); }
@@ -329,9 +329,9 @@ class Resource11 : public Resource11Base<ResourceT, TypedData<ResourceT>>
     friend class SharedResource11;
     friend class ResourceManager11;
 
-    Resource11(ResourceT *object, ResourceManager11 *manager)
+    Resource11(angle::ComPtr<ResourceT> object, ResourceManager11 *manager)
     {
-        this->data().object.Attach(object);
+        this->data().object  = std::move(object);
         this->data().manager = manager;
     }
 };

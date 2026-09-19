@@ -11,6 +11,7 @@
 #include "angle_gl.h"
 
 #include "common/utilities.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/EGLImplFactory.h"
 #include "libANGLE/renderer/EGLReusableSync.h"
 #include "libANGLE/renderer/EGLSyncImpl.h"

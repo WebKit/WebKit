@@ -18,6 +18,7 @@
 #include "platform/Feature.h"
 #include "platform/PlatformMethods.h"
 #include "util/OSWindow.h"
+#include "util/capture/scoped_capture_exclude.h"
 
 namespace
 {
@@ -938,8 +939,7 @@ bool EGLWindow::makeCurrent(EGLSurface draw, EGLSurface read, EGLContext context
 
     if (isGLInitialized())
     {
-        if (eglMakeCurrent(mDisplay, draw, read, context) == EGL_FALSE ||
-            eglGetError() != EGL_SUCCESS)
+        if (eglMakeCurrent(mDisplay, draw, read, context) == EGL_FALSE || hasError())
         {
             fprintf(stderr, "Error during eglMakeCurrent.\n");
             return false;
@@ -958,7 +958,7 @@ bool EGLWindow::makeCurrent(EGLContext context)
 
 bool EGLWindow::setSwapInterval(EGLint swapInterval)
 {
-    if (eglSwapInterval(mDisplay, swapInterval) == EGL_FALSE || eglGetError() != EGL_SUCCESS)
+    if (eglSwapInterval(mDisplay, swapInterval) == EGL_FALSE || hasError())
     {
         fprintf(stderr, "Error during eglSwapInterval.\n");
         return false;
@@ -969,6 +969,9 @@ bool EGLWindow::setSwapInterval(EGLint swapInterval)
 
 bool EGLWindow::hasError() const
 {
+    // This eglGetError() call is a harness-injected error check and not part of the trace,
+    // so prevent re-recording it during trace upgrades
+    angle::ScopedCaptureExclude skipRecording;
     return eglGetError() != EGL_SUCCESS;
 }
 

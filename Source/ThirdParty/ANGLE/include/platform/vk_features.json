@@ -2251,6 +2251,36 @@
             "description": [
                 "Enables alpha channel image format."
             ]
+        },
+        {
+            "name": "prefer_precomputed_vertex_transform",
+            "category": "Features",
+            "description": [
+                "Precompute the vertex pre-rotation swap and Y-flip into a driver uniform (a ",
+                "2x2 matrix) so the injected vertex-shader transform reduces to two dot products ",
+                "instead of a per-vertex ternary/unpack/multiply. Reduces per-vertex instructions."
+            ]
+        },
+        {
+            "name": "debug_supports_cl_fp64",
+            "category": "Features",
+            "description": [
+                "Debug feature to force-enable cl_khr_fp64 support for OpenCL."
+            ]
+        },
+        {
+            "name": "supports_cl_fp16",
+            "category": "Features",
+            "description": [
+                "FP16 support for OpenCL."
+            ]
+        },
+        {
+            "name": "supports_cl_fp64",
+            "category": "Features",
+            "description": [
+                "FP64 support for OpenCL."
+            ]
         }
     ]
 }

@@ -277,12 +277,11 @@ void BufferSubDataBenchmark::initializeBenchmark()
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    std::vector<uint8_t> zeroData(params.bufferSize);
-    ANGLE_UNSAFE_TODO(memset(&zeroData[0], 0, zeroData.size()));
+    std::vector<uint8_t> zeroData(params.bufferSize, 0);
 
     glGenBuffers(1, &mBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-    glBufferData(GL_ARRAY_BUFFER, params.bufferSize, &zeroData[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, params.bufferSize, zeroData.data(), GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(0, params.vertexComponentCount, params.vertexType,
                           params.vertexNormalized, 0, 0);
@@ -300,14 +299,14 @@ void BufferSubDataBenchmark::initializeBenchmark()
     mNumTris = static_cast<int>(params.updateSize / triDataSize);
     for (int i = 0, offset = 0; i < mNumTris; ++i)
     {
-        ANGLE_UNSAFE_TODO(memcpy(mUpdateData + offset, &data[0], triDataSize));
+        ANGLE_UNSAFE_BUFFERS(memcpy(mUpdateData + offset, data.data(), triDataSize));
         offset += triDataSize;
     }
 
     if (params.updateSize == 0)
     {
         mNumTris = 1;
-        glBufferSubData(GL_ARRAY_BUFFER, 0, data.size(), &data[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, data.size(), data.data());
     }
 
     // Set the viewport

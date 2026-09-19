@@ -18,6 +18,9 @@ pub fn generate(ir: &mut IR, options: &compile::Options) {
         transform::run!(monomorphize_unsupported_functions, ir, &transform_options);
     }
 
+    transform::run!(rewrite_struct_samplers, ir);
+    transform::run!(rewrite_array_of_array_of_opaque_uniforms, ir);
+
     {
         let transform_options = transform::spirv::pass1::Options {};
         transform::run!(spirv::pass1, ir, &transform_options);

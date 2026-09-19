@@ -868,22 +868,6 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                     vkDeviceUuidSpecified = true;
                     break;
 
-                case EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE:
-                    // The property does not have an effect if it's not active, so do not check
-                    // for non-support.
-                    switch (value)
-                    {
-                        case EGL_FALSE:
-                        case EGL_TRUE:
-                            break;
-                        default:
-                            val->setError(EGL_BAD_ATTRIBUTE,
-                                          "Invalid value for "
-                                          "EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_"
-                                          "CGL_ANGLE attrib");
-                            return false;
-                    }
-                    break;
                 case EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE:
                 case EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE:
                     if (!clientExtensions.platformANGLEDeviceId)
@@ -1310,10 +1294,11 @@ bool ValidateLabeledObject(const ValidationContext *val,
 
         case ObjectType::Sync:
         {
-            Sync *sync    = static_cast<Sync *>(object);
-            SyncID syncID = PackParam<SyncID>(sync);
-            ANGLE_VALIDATION_TRY(ValidateSync(val, display, syncID));
-            *outLabeledObject = sync;
+            Sync *sync            = static_cast<Sync *>(object);
+            SyncID syncID         = PackParam<SyncID>(sync);
+            ScopedSyncRef syncRef = display->getSync(syncID);
+            ANGLE_VALIDATION_TRY(ValidateSync(val, display, syncRef.get()));
+            *outLabeledObject = syncRef.get();
             break;
         }
 
@@ -1755,17 +1740,15 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
 
 bool ValidateGetSyncAttribBase(const ValidationContext *val,
                                const Display *display,
-                               SyncID sync,
+                               const Sync *sync,
                                EGLint attribute)
 {
     ANGLE_VALIDATION_TRY(ValidateSync(val, display, sync));
 
-    const Sync *syncObj = display->getSync(sync);
-
     switch (attribute)
     {
         case EGL_SYNC_CONDITION_KHR:
-            switch (syncObj->getType())
+            switch (sync->getType())
             {
                 case EGL_SYNC_FENCE_KHR:
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
@@ -2636,11 +2619,11 @@ bool ValidateDevice(const ValidationContext *val, const Device *device)
     return true;
 }
 
-bool ValidateSync(const ValidationContext *val, const Display *display, SyncID sync)
+bool ValidateSync(const ValidationContext *val, const Display *display, const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
-    if (!display->isValidSync(sync))
+    if (!sync)
     {
         if (val)
         {
@@ -2844,24 +2827,44 @@ const Thread *GetThreadIfValid(const Thread *thread)
     return thread;
 }
 
-const Display *GetDisplayIfValid(const Display *display)
+ScopedConstDisplayRef GetDisplayIfValid(const Display *display)
 {
     if (!ValidateDisplayPointer(nullptr, display))
     {
-        return nullptr;
+        return ScopedConstDisplayRef();
     }
 
-    return display;
+    return ScopedConstDisplayRef(*display);
 }
 
-Display *GetDisplayIfValid(Display *display)
+ScopedDisplayRef GetDisplayIfValid(Display *display)
 {
     if (!ValidateDisplayPointer(nullptr, display))
     {
-        return nullptr;
+        return ScopedDisplayRef();
     }
 
-    return display;
+    return ScopedDisplayRef(*display);
+}
+
+ScopedConstDisplayRefAndLock GetDisplayAndLockIfValid(const Display *display)
+{
+    if (!ValidateDisplayPointer(nullptr, display))
+    {
+        return ScopedConstDisplayRefAndLock();
+    }
+
+    return ScopedConstDisplayRefAndLock(*display);
+}
+
+ScopedDisplayRefAndLock GetDisplayAndLockIfValid(Display *display)
+{
+    if (!ValidateDisplayPointer(nullptr, display))
+    {
+        return ScopedDisplayRefAndLock();
+    }
+
+    return ScopedDisplayRefAndLock(*display);
 }
 
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID)
@@ -2897,10 +2900,10 @@ const Device *GetDeviceIfValid(const Device *device)
     return ValidateDevice(nullptr, device) ? device : nullptr;
 }
 
-const Sync *GetSyncIfValid(const Display *display, SyncID syncID)
+ScopedSyncRef GetSyncIfValid(const Display *display, SyncID syncID)
 {
     // display->getSync() - validates syncID
-    return ValidateDisplay(nullptr, display) ? display->getSync(syncID) : nullptr;
+    return ValidateDisplay(nullptr, display) ? display->getSync(syncID) : ScopedSyncRef();
 }
 
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,
@@ -4631,7 +4634,7 @@ bool ValidateCreateSyncKHR(const ValidationContext *val,
     return ValidateCreateSyncBase(val, display, type, attribs, true);
 }
 
-bool ValidateDestroySync(const ValidationContext *val, const Display *display, SyncID sync)
+bool ValidateDestroySync(const ValidationContext *val, const Display *display, const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateSync(val, display, sync));
     return true;
@@ -4639,14 +4642,14 @@ bool ValidateDestroySync(const ValidationContext *val, const Display *display, S
 
 bool ValidateDestroySyncKHR(const ValidationContext *val,
                             const Display *dpyPacked,
-                            SyncID syncPacked)
+                            const Sync *syncPacked)
 {
     return ValidateDestroySync(val, dpyPacked, syncPacked);
 }
 
 bool ValidateClientWaitSync(const ValidationContext *val,
                             const Display *display,
-                            SyncID sync,
+                            const Sync *sync,
                             EGLint flags,
                             EGLTime timeout)
 {
@@ -4656,7 +4659,7 @@ bool ValidateClientWaitSync(const ValidationContext *val,
 
 bool ValidateClientWaitSyncKHR(const ValidationContext *val,
                                const Display *dpyPacked,
-                               SyncID syncPacked,
+                               const Sync *syncPacked,
                                EGLint flags,
                                EGLTimeKHR timeout)
 {
@@ -4665,7 +4668,7 @@ bool ValidateClientWaitSyncKHR(const ValidationContext *val,
 
 bool ValidateWaitSync(const ValidationContext *val,
                       const Display *display,
-                      SyncID sync,
+                      const Sync *sync,
                       EGLint flags)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
@@ -4700,7 +4703,7 @@ bool ValidateWaitSync(const ValidationContext *val,
 
 bool ValidateWaitSyncKHR(const ValidationContext *val,
                          const Display *dpyPacked,
-                         SyncID syncPacked,
+                         const Sync *syncPacked,
                          EGLint flags)
 {
     return ValidateWaitSync(val, dpyPacked, syncPacked, flags);
@@ -4708,7 +4711,7 @@ bool ValidateWaitSyncKHR(const ValidationContext *val,
 
 bool ValidateGetSyncAttrib(const ValidationContext *val,
                            const Display *display,
-                           SyncID sync,
+                           const Sync *sync,
                            EGLint attribute,
                            const EGLAttrib *value)
 {
@@ -4722,7 +4725,7 @@ bool ValidateGetSyncAttrib(const ValidationContext *val,
 
 bool ValidateGetSyncAttribKHR(const ValidationContext *val,
                               const Display *display,
-                              SyncID sync,
+                              const Sync *sync,
                               EGLint attribute,
                               const EGLint *value)
 {
@@ -6722,7 +6725,7 @@ bool ValidateCreateNativeClientBufferANDROID(const ValidationContext *val,
 
 bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
                                        const Display *display,
-                                       SyncID sync)
+                                       const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
@@ -6739,7 +6742,7 @@ bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
 
 bool ValidateDupNativeFenceFDANDROID(const ValidationContext *val,
                                      const Display *display,
-                                     SyncID sync)
+                                     const Sync *sync)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
@@ -6763,16 +6766,14 @@ bool ValidatePrepareSwapBuffersANGLE(const ValidationContext *val,
 
 bool ValidateSignalSyncKHR(const ValidationContext *val,
                            const Display *display,
-                           SyncID sync,
+                           const Sync *sync,
                            EGLenum mode)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
 
     ANGLE_VALIDATION_TRY(ValidateSync(val, display, sync));
 
-    const Sync *syncObj = display->getSync(sync);
-
-    if (syncObj->getType() == EGL_SYNC_REUSABLE_KHR)
+    if (sync->getType() == EGL_SYNC_REUSABLE_KHR)
     {
         if (!display->getExtensions().reusableSyncKHR)
         {

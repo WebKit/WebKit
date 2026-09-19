@@ -24,7 +24,6 @@
 
 #    include "libANGLE/renderer/d3d/d3d11/converged/CompositorNativeWindow11.h"
 #    include "util/OSWindow.h"
-#    include "util/com_utils.h"
 #    include "util/test_utils.h"
 
 using namespace angle;
@@ -67,13 +66,9 @@ class EGLDirectCompositionTest : public ANGLETest<>
 
         ASSERT_TRUE(SUCCEEDED(hr));
 
-        void *fac = nullptr;
-        hr        = mRoHelper.GetActivationFactory(act, __uuidof(IActivationFactory), &fac);
-        ASSERT_TRUE(SUCCEEDED(hr));
-
         ComPtr<IActivationFactory> compositorFactory;
-
-        compositorFactory.Attach((IActivationFactory *)fac);
+        hr = mRoHelper.GetActivationFactory(act, IID_PPV_ARGS(&compositorFactory));
+        ASSERT_TRUE(SUCCEEDED(hr));
 
         hr = compositorFactory->ActivateInstance(&mCompositor);
         ASSERT_TRUE(SUCCEEDED(hr));
@@ -81,7 +76,7 @@ class EGLDirectCompositionTest : public ANGLETest<>
         // Create a DesktopWindowTarget against native window (HWND)
         CreateDesktopWindowTarget(mCompositor, static_cast<HWND>(nativeWindow), mDesktopTarget);
 
-        ASSERT_TRUE(SUCCEEDED(mCompositor->CreateSpriteVisual(mAngleHost.GetAddressOf())));
+        ASSERT_TRUE(SUCCEEDED(mCompositor->CreateSpriteVisual(&mAngleHost)));
 
         ComPtr<IVisual> angleVis;
         ASSERT_TRUE(SUCCEEDED(mAngleHost.As(&angleVis)));
@@ -103,7 +98,7 @@ class EGLDirectCompositionTest : public ANGLETest<>
         DispatcherQueueOptions options{sizeof(DispatcherQueueOptions), DQTYPE_THREAD_CURRENT,
                                        DQTAT_COM_STA};
 
-        auto hr = mRoHelper.CreateDispatcherQueueController(options, controller.GetAddressOf());
+        auto hr = mRoHelper.CreateDispatcherQueueController(options, &controller);
 
         ASSERT_TRUE(SUCCEEDED(hr));
     }
@@ -117,8 +112,7 @@ class EGLDirectCompositionTest : public ANGLETest<>
         ComPtr<ICompositorDesktopInterop> interop;
         ASSERT_TRUE(SUCCEEDED(compositor.As(&interop)));
 
-        ASSERT_TRUE(SUCCEEDED(interop->CreateDesktopWindowTarget(
-            window, true, reinterpret_cast<abi::IDesktopWindowTarget **>(target.GetAddressOf()))));
+        ASSERT_TRUE(SUCCEEDED(interop->CreateDesktopWindowTarget(window, true, &target)));
     }
 
     void Init()

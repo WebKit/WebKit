@@ -132,8 +132,7 @@ void DebugAnnotatorContext11::initialize(ID3D11DeviceContext *context)
     if (IsWindows10OrLater())
     {
         mAnnotationThread = angle::GetCurrentThreadUniqueId();
-        mUserDefinedAnnotation.Attach(
-            d3d11::DynamicCastComObject<ID3DUserDefinedAnnotation>(context));
+        mUserDefinedAnnotation = angle::DynamicCastComObject<ID3DUserDefinedAnnotation>(context);
     }
 }
 

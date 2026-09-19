@@ -319,10 +319,10 @@ void DepthStencilFormatsTestBase::depthStencilReadbackCase(const ReadbackTestPar
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
 
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // use the default texture to render with while we return to the depth texture.
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -753,10 +753,10 @@ void main()
                              nullptr);
                 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                        colorTex, 0);
-                EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
             }
 
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             // use the default texture to render with while we return to the depth texture.
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -804,10 +804,9 @@ void main()
             std::vector<GLfloat> expectedMax;
             if (filterMode == GL_NEAREST)
             {
-                GLfloat init[] = {d00, d00, d10, d10, d00, d00, d10, d10,
-                                  d01, d01, d11, d11, d01, d01, d11, d11};
-                expectedMin.insert(expectedMin.begin(), init, ANGLE_UNSAFE_TODO(init + 16));
-                expectedMax.insert(expectedMax.begin(), init, ANGLE_UNSAFE_TODO(init + 16));
+                expectedMin = {d00, d00, d10, d10, d00, d00, d10, d10,
+                               d01, d01, d11, d11, d01, d01, d11, d11};
+                expectedMax = expectedMin;
 
                 for (int i = 0; i < 16; i++)
                 {
@@ -817,16 +816,14 @@ void main()
             }
             else
             {
-                GLfloat initMin[] = {
+                expectedMin = {
                     d00 - eps, d00, d00, d10 - eps, d00,       d00, d00, d10,
                     d00,       d00, d00, d10,       d01 - eps, d01, d01, d11 - eps,
                 };
-                GLfloat initMax[] = {
+                expectedMax = {
                     d00 + eps, d10, d10, d10 + eps, d01,       d11, d11, d11,
                     d01,       d11, d11, d11,       d01 + eps, d11, d11, d11 + eps,
                 };
-                expectedMin.insert(expectedMin.begin(), initMin, ANGLE_UNSAFE_TODO(initMin + 16));
-                expectedMax.insert(expectedMax.begin(), initMax, ANGLE_UNSAFE_TODO(initMax + 16));
             }
             for (int yy = 0; yy < destRes; ++yy)
             {
@@ -972,7 +969,7 @@ TEST_P(DepthStencilFormatsTestES3, DrawWithLargeViewport)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
                                framebufferStencilTexture, 0);
 
-        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         GLint kStencilRef = 4;

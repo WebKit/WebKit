@@ -111,7 +111,7 @@ class SurfaceD3D : public SurfaceImpl
     EGLint mSwapInterval;
 
     HANDLE mShareHandle;
-    IUnknown *mD3DTexture;
+    angle::ComPtr<IUnknown> mD3DTexture;
 
     EGLenum mBuftype;
 };

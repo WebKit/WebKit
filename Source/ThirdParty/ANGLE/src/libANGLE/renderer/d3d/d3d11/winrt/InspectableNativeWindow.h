@@ -66,7 +66,7 @@ class InspectableNativeWindow
                                     unsigned int width,
                                     unsigned int height,
                                     bool containsAlpha,
-                                    IDXGISwapChain1 **swapChain)                   = 0;
+                                    ComPtr<IDXGISwapChain1> *swapChain)            = 0;
 
     bool getClientRect(RECT *rect)
     {

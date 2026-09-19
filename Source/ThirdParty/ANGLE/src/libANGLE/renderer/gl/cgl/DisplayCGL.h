@@ -41,7 +41,6 @@ class DisplayCGL : public DisplayGL
 
     egl::Error initialize(egl::Display *display) override;
     void terminate() override;
-    egl::Error prepareForCall() override;
     egl::Error releaseThread() override;
 
     egl::Error makeCurrent(egl::Display *display,
@@ -126,7 +125,6 @@ class DisplayCGL : public DisplayGL
     // is unref'd for the last time, this is set to the time of that last unref. If it isn't
     // activated again in 10 seconds, the discrete GPU pixel format is deleted.
     double mLastDiscreteGPUUnrefTime;
-    bool mDeviceContextIsVolatile = false;
 };
 
 }  // namespace rx

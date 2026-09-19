@@ -439,16 +439,52 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
                                            SymbolType::AngleInternal);
     TIntermSymbol *positionSymbol = new TIntermSymbol(positionVar);
 
-    // swapXY ? position.yx : position.xy
-    TIntermTyped *swapXY = driverUniforms->getSwapXY();
+    TIntermTyped *rotatedFlippedXY = nullptr;
 
-    TIntermTyped *xy        = new TIntermSwizzle(positionSymbol, {0, 1});
-    TIntermTyped *swappedXY = new TIntermSwizzle(positionSymbol->deepCopy(), {1, 0});
-    TIntermTyped *rotatedXY = new TIntermTernary(swapXY, swappedXY, xy);
+    if (compileOptions.preferPrecomputedVertexTransform)
+    {
+        // The XY transformation is encoded as a pre-computed 2x2 matrix stored in the driver
+        // uniforms (transformXY).  The CPU pre-multiplies the swap and flip so the shader only
+        // needs two dot products:
+        //
+        //   result.x = dot(position.xy, transformXY.xy)
+        //   result.y = dot(position.xy, transformXY.zw)
+        //
+        // When not swapped: transformXY = (fx, 0, 0, fy)  -> (fx*x,      fy*y     )
+        // When swapped:     transformXY = (0,  fy, fx, 0) -> (fx*y,      fy*x     )
+        TIntermTyped *transformXY = driverUniforms->getTransformXY();
 
-    // (swapXY ? position.yx : position.xy) * flipXY
-    TIntermTyped *flipXY = driverUniforms->getFlipXY(symbolTable, DriverUniformFlip::PreFragment);
-    TIntermTyped *rotatedFlippedXY = new TIntermBinary(EOpMul, rotatedXY, flipXY);
+        TIntermTyped *xy = new TIntermSwizzle(positionSymbol, {0, 1});
+
+        // dot(position.xy, transformXY.xy)
+        TIntermTyped *transformXYxy = new TIntermSwizzle(transformXY, {0, 1});
+        TIntermSequence dotXArgs    = {xy, transformXYxy};
+        TIntermTyped *rotatedX = CreateBuiltInFunctionCallNode("dot", &dotXArgs, *symbolTable, 100);
+
+        // dot(position.xy, transformXY.zw)
+        TIntermTyped *transformXYzw = new TIntermSwizzle(transformXY->deepCopy(), {2, 3});
+        TIntermSequence dotYArgs    = {xy->deepCopy(), transformXYzw};
+        TIntermTyped *rotatedY = CreateBuiltInFunctionCallNode("dot", &dotYArgs, *symbolTable, 100);
+
+        // vec2(rotatedX, rotatedY)
+        const TType *vec2Type    = StaticType::GetBasic<EbtFloat, EbpHigh, 2>();
+        TIntermSequence vec2Args = {rotatedX, rotatedY};
+        rotatedFlippedXY         = TIntermAggregate::CreateConstructor(*vec2Type, &vec2Args);
+    }
+    else
+    {
+        // swapXY ? position.yx : position.xy
+        TIntermTyped *swapXY = driverUniforms->getSwapXY();
+
+        TIntermTyped *xy        = new TIntermSwizzle(positionSymbol, {0, 1});
+        TIntermTyped *swappedXY = new TIntermSwizzle(positionSymbol->deepCopy(), {1, 0});
+        TIntermTyped *rotatedXY = new TIntermTernary(swapXY, swappedXY, xy);
+
+        // (swapXY ? position.yx : position.xy) * flipXY
+        TIntermTyped *flipXY =
+            driverUniforms->getFlipXY(symbolTable, DriverUniformFlip::PreFragment);
+        rotatedFlippedXY = new TIntermBinary(EOpMul, rotatedXY, flipXY);
+    }
 
     // (gl_Position.z + gl_Position.w) / 2
     TIntermTyped *z = new TIntermSwizzle(positionSymbol->deepCopy(), {2});
@@ -659,22 +695,22 @@ bool TranslatorSPIRV::translateImpl(TIntermBlock *root,
         {
             return false;
         }
-    }
 
-    if (aggregateTypesUsedForUniforms > 0)
-    {
-        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
+        if (aggregateTypesUsedForUniforms > 0)
+        {
+            if (!RewriteStructSamplers(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
+        }
+
+        // Replace array of array of opaque uniforms with a flattened array.  This is run after
+        // MonomorphizeUnsupportedFunctions and RewriteStructSamplers so that it's not possible for
+        // an array of array of opaque type to be partially subscripted and passed to a function.
+        if (!RewriteArrayOfArrayOfOpaqueUniforms(this, root, &getSymbolTable()))
         {
             return false;
         }
-    }
-
-    // Replace array of array of opaque uniforms with a flattened array.  This is run after
-    // MonomorphizeUnsupportedFunctions and RewriteStructSamplers so that it's not possible for an
-    // array of array of opaque type to be partially subscripted and passed to a function.
-    if (!RewriteArrayOfArrayOfOpaqueUniforms(this, root, &getSymbolTable()))
-    {
-        return false;
     }
 
     if (!FlagSamplersForTexelFetch(this, root, &getSymbolTable(), &mUniforms))
@@ -1141,8 +1177,9 @@ bool TranslatorSPIRV::translate(TIntermBlock *root,
     mUniqueToSpirvIdMap.clear();
     mFirstUnusedSpirvId = 0;
 
-    DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock);
-    DriverUniformExtended driverUniformsExt(DriverUniformMode::InterfaceBlock);
+    DriverUniform driverUniforms(DriverUniformMode::InterfaceBlock, SH_SPIRV_VULKAN_OUTPUT);
+    DriverUniformExtended driverUniformsExt(DriverUniformMode::InterfaceBlock,
+                                            SH_SPIRV_VULKAN_OUTPUT);
 
     const bool useExtendedDriverUniforms = compileOptions.addVulkanXfbEmulationSupportCode;
 

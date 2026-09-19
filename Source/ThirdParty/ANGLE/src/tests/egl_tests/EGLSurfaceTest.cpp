@@ -1437,17 +1437,17 @@ TEST_P(EGLSurfaceTestD3D11, CreateDirectCompositionSurface)
     }
 
     angle::ComPtr<IDCompositionDevice> dcompDevice;
-    HRESULT hr = createDComp(d3d11Device.Get(), IID_PPV_ARGS(dcompDevice.GetAddressOf()));
+    HRESULT hr = createDComp(d3d11Device.Get(), IID_PPV_ARGS(&dcompDevice));
     ASSERT_TRUE(SUCCEEDED(hr));
 
     angle::ComPtr<IDCompositionSurface> dcompSurface;
     hr = dcompDevice->CreateSurface(100, 100, DXGI_FORMAT_B8G8R8A8_UNORM,
-                                    DXGI_ALPHA_MODE_PREMULTIPLIED, dcompSurface.GetAddressOf());
+                                    DXGI_ALPHA_MODE_PREMULTIPLIED, &dcompSurface);
     ASSERT_TRUE(SUCCEEDED(hr));
 
     angle::ComPtr<ID3D11Texture2D> texture;
     POINT updateOffset;
-    hr = dcompSurface->BeginDraw(nullptr, IID_PPV_ARGS(texture.GetAddressOf()), &updateOffset);
+    hr = dcompSurface->BeginDraw(nullptr, IID_PPV_ARGS(&texture), &updateOffset);
     ASSERT_TRUE(SUCCEEDED(hr));
 
     const EGLint configAttributes[] = {

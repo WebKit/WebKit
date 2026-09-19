@@ -39,6 +39,9 @@ class AffectedFile_mock():
     def NewContents(self):
         return self._new_contents
 
+    def ChangedContents(self):
+        return [(i + 1, line) for i, line in enumerate(self._new_contents)]
+
 
 class InputAPI_mock():
 
@@ -48,6 +51,7 @@ class InputAPI_mock():
         self.affected_files = affected_files
         self.os_path = os.path
         self.json = json
+        self.re = __import__('re')
 
     def PresubmitLocalPath(self):
         return self.cwd
@@ -64,7 +68,9 @@ class _PresubmitResult(object):
     fatal = False
     should_prompt = False
 
-    def __init__(self, message, long_text=''):
+    def __init__(self, message, items=None, long_text='', locations=None):
+        self.items = items or []
+        self.locations = locations or []
         self._message = message
 
     def __eq__(self, other):
@@ -93,8 +99,16 @@ class _PresubmitNotifyResult(_PresubmitResult):
     pass
 
 
+class _PresubmitResultLocation(object):
+
+    def __init__(self, file_path, start_line, end_line):
+        self.file_path = file_path
+        self.start_line = start_line
+        self.end_line = end_line
+
 class OutputAPI_mock():
     PresubmitResult = _PresubmitResult
     PresubmitError = _PresubmitError
     PresubmitPromptWarning = _PresubmitPromptWarning
     PresubmitNotifyResult = _PresubmitNotifyResult
+    PresubmitResultLocation = _PresubmitResultLocation

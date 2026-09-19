@@ -8,6 +8,8 @@
 
 #include "libANGLE/renderer/metal/ProgramExecutableMtl.h"
 
+#include <array>
+
 #include "common/span_util.h"
 #include "common/unsafe_buffers.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
@@ -395,7 +397,6 @@ DefaultUniformBlockMtl::~DefaultUniformBlockMtl() = default;
 ProgramExecutableMtl::ProgramExecutableMtl(const gl::ProgramExecutable *executable)
     : ProgramExecutableImpl(executable),
       mProgramHasFlatAttributes(false),
-      mShadowCompareModes{},
       mProgramSerialId(GenerateProgramSerialId())
 {
     mCurrentShaderVariants.fill(nullptr);
@@ -1140,7 +1141,6 @@ angle::Result ProgramExecutableMtl::updateTextures(const gl::Context *glContext,
             mCurrentShaderVariants[shaderType]->translatedSrcInfo
                 ? *mCurrentShaderVariants[shaderType]->translatedSrcInfo
                 : mMslShaderTranslateInfo[shaderType];
-        bool hasDepthSampler = false;
 
         for (uint32_t textureIndex = 0; textureIndex < mExecutable->getSamplerBindings().size();
              ++textureIndex)
@@ -1170,26 +1170,11 @@ angle::Result ProgramExecutableMtl::updateTextures(const gl::Context *glContext,
                     ANGLE_TRY(contextMtl->getIncompleteTexture(glContext, textureType,
                                                                samplerBinding.format, &texture));
                 }
-                const gl::SamplerState *samplerState =
-                    sampler ? &sampler->getSamplerState() : &texture->getSamplerState();
                 TextureMtl *textureMtl = mtl::GetImpl(texture);
-                if (samplerBinding.format == gl::SamplerFormat::Shadow)
-                {
-                    hasDepthSampler                  = true;
-                    ANGLE_UNSAFE_TODO(mShadowCompareModes[textureSlot]) =
-                        mtl::MslGetShaderShadowCompareMode(samplerState->getCompareMode(),
-                                                           samplerState->getCompareFunc());
-                }
                 ANGLE_TRY(textureMtl->bindToShader(glContext, cmdEncoder, shaderType, sampler,
                                                    textureSlot, samplerSlot));
             }  // for array elements
         }      // for sampler bindings
-
-        if (hasDepthSampler)
-        {
-            cmdEncoder->setData(shaderType, mShadowCompareModes,
-                                mtl::kShadowSamplerCompareModesBindingIndex);
-        }
 
         for (const gl::ImageBinding &imageBinding : mExecutable->getImageBindings())
         {
@@ -1618,13 +1603,13 @@ void ProgramExecutableMtl::getUniformImpl(GLint location, T *v, GLenum entryPoin
     // are uint-sized: ES 3.0 Section 2.12.6.3 "Uniform Buffer Object Storage".
     else if (gl::VariableComponentType(linkedUniform.getType()) == GL_BOOL)
     {
-        bool bVals[4] = {0};
+        std::array<bool, 4> bVals = {0};
         ReadFromDefaultUniformBlockWithElementSize(
-            linkedUniform.getElementComponents(), locationInfo.arrayIndex, bVals, baseComponentSize,
-            layoutInfo, &uniformBlock.uniformData);
+            linkedUniform.getElementComponents(), locationInfo.arrayIndex, bVals.data(),
+            baseComponentSize, layoutInfo, &uniformBlock.uniformData);
         for (int bCol = 0; bCol < linkedUniform.getElementComponents(); ++bCol)
         {
-            unsigned int data              = ANGLE_UNSAFE_TODO(bVals[bCol]);
+            unsigned int data              = bVals[bCol];
             ANGLE_UNSAFE_TODO(*(v + bCol)) = static_cast<T>(data);
         }
     }

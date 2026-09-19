@@ -1340,7 +1340,7 @@ TEST_P(MSRTTTest, GenerateMipmapTest)
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                          texture, 0, 4);
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, kSize, kSize);
@@ -3541,7 +3541,7 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
         GLenum attach2Point;  // The attachment point of the second surface
     } AttachmentCombination;
 
-    AttachmentCombination attachmentCombinations[] = {
+    constexpr std::array<AttachmentCombination, 4> attachmentCombinations = {{
         // INVALID combinations
         {0, 1, GL_COLOR_ATTACHMENT0,
          GL_DEPTH_ATTACHMENT},  // first = Regular; second = MultisampledRenderToTexture
@@ -3551,10 +3551,9 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
          GL_DEPTH_ATTACHMENT},  // first = MultisampledRenderToTexture; second = Regular
         {1, 0, GL_COLOR_ATTACHMENT0,
          GL_STENCIL_ATTACHMENT},  // first = MultisampledRenderToTexture; second = Regular
-    };
+    }};
 
-    for (uint32_t i = 0; i < sizeof(attachmentCombinations) / sizeof((attachmentCombinations)[0]);
-         i++)
+    for (const AttachmentCombination &combination : attachmentCombinations)
     {
         GLsizei samples = 0;
         glGetIntegerv(GL_MAX_SAMPLES, &samples);
@@ -3565,7 +3564,7 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
 
         GLRenderbuffer colorRenderbuffer;
         glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
-        if (ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach1 == 0)
+        if (combination.attach1 == 0)
         {
             // Regular multisampling
             glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA4, 64, 64);
@@ -3576,18 +3575,17 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, samples, GL_RGBA4, 64, 64);
         }
         ASSERT_GL_NO_ERROR();
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                                  ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach1Point,
-                                  GL_RENDERBUFFER, colorRenderbuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, combination.attach1Point, GL_RENDERBUFFER,
+                                  colorRenderbuffer);
         EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
         // Depth/stencil renderbuffer, potentially with a different sample count.
         GLRenderbuffer dsRenderbuffer;
         glBindRenderbuffer(GL_RENDERBUFFER, dsRenderbuffer);
-        if (ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach2 == 0)
+        if (combination.attach2 == 0)
         {
             // Regular multisampling mode
-            if (ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach2Point == GL_DEPTH_ATTACHMENT)
+            if (combination.attach2Point == GL_DEPTH_ATTACHMENT)
             {
                 // GL_DEPTH_ATTACHMENT
                 glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT16, 64,
@@ -3603,7 +3601,7 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
         else
         {
             // Multisampled render to texture mode
-            if (ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach2Point == GL_DEPTH_ATTACHMENT)
+            if (combination.attach2Point == GL_DEPTH_ATTACHMENT)
             {
                 // GL_DEPTH_ATTACHMENT
                 glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, samples, GL_DEPTH_COMPONENT16,
@@ -3617,9 +3615,8 @@ TEST_P(MSRTTES3Test, FramebufferCompletenessMixedMultisamplingMode)
             }
         }
         ASSERT_GL_NO_ERROR();
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER,
-                                  ANGLE_UNSAFE_TODO(attachmentCombinations[i]).attach2Point,
-                                  GL_RENDERBUFFER, dsRenderbuffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, combination.attach2Point, GL_RENDERBUFFER,
+                                  dsRenderbuffer);
         EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE,
                          glCheckFramebufferStatus(GL_FRAMEBUFFER));
     }

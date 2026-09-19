@@ -4164,7 +4164,7 @@ impl Result {
 //     instruction::make!(negate, ir_meta, operand)
 //     instruction::make!(add, ir_meta, lhs, rhs)
 macro_rules! make {
-        ($func:ident, $ir_meta:expr, $($params:expr),*) => {
+        ($func:ident, $ir_meta:expr$(, $params:expr)*$(,)*) => {
             instruction::$func($ir_meta, $($params),*)
         }
     }
@@ -4173,9 +4173,9 @@ pub(crate) use make;
 //
 //     instruction::make_with_result_id!(negate, ir_meta, result_id, operand)
 macro_rules! make_with_result_id {
-        ($func:ident, $ir_meta:expr, $result:expr, $($params:expr),*) => {
+        ($func:ident, $ir_meta:expr, $result:expr$(, $params:expr)*$(,)*) => {
             {
-                let mut inst = instruction::$func($ir_meta, $($params),*);
+                let mut inst = instruction::$func($ir_meta $(, $params)*);
                 inst.override_result_id($ir_meta, $result);
                 inst
             }

@@ -343,6 +343,10 @@ fn mapped_name(name: &Name, user_prefix: &'static str) -> String {
     // GLSL ES 3.00.6 section 3.9: the maximum length of an identifier is 1024 characters.
     const MAX_ESSL_IDENTIFIER_LENGTH: usize = 1024;
 
+    // Reflection info is always gathered before transformations may transform the interface
+    // variables, because those transformations shouldn't be visible to the application.
+    debug_assert!(name.suffix.is_none());
+
     let prefix = match name.source {
         // Make sure unnamed interface blocks remain unnamed.
         // Also, if the identifier length is already close to the limit, we can't prefix it.  This
@@ -871,8 +875,7 @@ fn new_common_shader_variable(
             Decoration::RasterOrdered => var.raster_ordered = true,
             // Some information is either internal, pertains only to InterfaceBlocks or not reported
             // at the API level.
-            Decoration::Precise
-            | Decoration::Interpolant
+            Decoration::Interpolant
             | Decoration::Shared
             | Decoration::Coherent
             | Decoration::Restrict

@@ -35,7 +35,7 @@ angle::Result FenceSetHelper(const gl::Context *context, FenceClass *fence)
         ANGLE_TRY_HR(context11, result, "Failed to create event query");
     }
 
-    fence->mRenderer->getDeviceContext()->End(fence->mQuery);
+    fence->mRenderer->getDeviceContext()->End(fence->mQuery.Get());
     return angle::Result::Continue;
 }
 
@@ -50,8 +50,8 @@ angle::Result FenceTestHelper(const gl::Context *context,
     UINT getDataFlags = (flushCommandBuffer ? 0 : D3D11_ASYNC_GETDATA_DONOTFLUSH);
 
     Context11 *context11 = GetImplAs<Context11>(context);
-    HRESULT result =
-        fence->mRenderer->getDeviceContext()->GetData(fence->mQuery, nullptr, 0, getDataFlags);
+    HRESULT result = fence->mRenderer->getDeviceContext()->GetData(fence->mQuery.Get(), nullptr, 0,
+                                                                   getDataFlags);
     ANGLE_TRY_HR(context11, result, "Failed to get query data");
 
     ASSERT(result == S_OK || result == S_FALSE);
@@ -63,12 +63,9 @@ angle::Result FenceTestHelper(const gl::Context *context,
 // FenceNV11
 //
 
-FenceNV11::FenceNV11(Renderer11 *renderer) : FenceNVImpl(), mRenderer(renderer), mQuery(nullptr) {}
+FenceNV11::FenceNV11(Renderer11 *renderer) : FenceNVImpl(), mRenderer(renderer) {}
 
-FenceNV11::~FenceNV11()
-{
-    SafeRelease(mQuery);
-}
+FenceNV11::~FenceNV11() = default;
 
 angle::Result FenceNV11::set(const gl::Context *context, GLenum condition)
 {
@@ -118,7 +115,7 @@ angle::Result FenceNV11::finish(const gl::Context *context)
 // We still opt to use QPC. In the present and moving forward, most newer systems will not suffer
 // from buggy implementations.
 
-Sync11::Sync11(Renderer11 *renderer) : SyncImpl(), mRenderer(renderer), mQuery(nullptr)
+Sync11::Sync11(Renderer11 *renderer) : SyncImpl(), mRenderer(renderer)
 {
     LARGE_INTEGER counterFreqency = {};
     BOOL success                  = QueryPerformanceFrequency(&counterFreqency);
@@ -127,10 +124,7 @@ Sync11::Sync11(Renderer11 *renderer) : SyncImpl(), mRenderer(renderer), mQuery(n
     mCounterFrequency = counterFreqency.QuadPart;
 }
 
-Sync11::~Sync11()
-{
-    SafeRelease(mQuery);
-}
+Sync11::~Sync11() = default;
 
 angle::Result Sync11::set(const gl::Context *context, GLenum condition, GLbitfield flags)
 {

@@ -22,20 +22,10 @@ namespace rx
 NativeWindow11Win32::NativeWindow11Win32(EGLNativeWindowType window,
                                          bool hasAlpha,
                                          bool directComposition)
-    : NativeWindow11(window),
-      mDirectComposition(directComposition),
-      mHasAlpha(hasAlpha),
-      mDevice(nullptr),
-      mCompositionTarget(nullptr),
-      mVisual(nullptr)
+    : NativeWindow11(window), mDirectComposition(directComposition), mHasAlpha(hasAlpha)
 {}
 
-NativeWindow11Win32::~NativeWindow11Win32()
-{
-    SafeRelease(mCompositionTarget);
-    SafeRelease(mDevice);
-    SafeRelease(mVisual);
-}
+NativeWindow11Win32::~NativeWindow11Win32() = default;
 
 bool NativeWindow11Win32::initialize()
 {
@@ -58,7 +48,7 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
                                              UINT width,
                                              UINT height,
                                              UINT samples,
-                                             IDXGISwapChain **swapChain)
+                                             angle::ComPtr<IDXGISwapChain> *swapChain)
 {
     if (device == nullptr || factory == nullptr || swapChain == nullptr || width == 0 ||
         height == 0)
@@ -86,10 +76,9 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
 
         if (!mDevice)
         {
-            IDXGIDevice *dxgiDevice = d3d11::DynamicCastComObject<IDXGIDevice>(device);
-            HRESULT result          = createDComp(dxgiDevice, __uuidof(IDCompositionDevice),
-                                         reinterpret_cast<void **>(&mDevice));
-            SafeRelease(dxgiDevice);
+            angle::ComPtr<IDXGIDevice> dxgiDevice =
+                angle::DynamicCastComObject<IDXGIDevice>(device);
+            HRESULT result = createDComp(dxgiDevice.Get(), IID_PPV_ARGS(&mDevice));
 
             if (FAILED(result))
             {
@@ -116,7 +105,7 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
             }
         }
 
-        IDXGIFactory2 *factory2             = d3d11::DynamicCastComObject<IDXGIFactory2>(factory);
+        angle::ComPtr<IDXGIFactory2> factory2 = angle::DynamicCastComObject<IDXGIFactory2>(factory);
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width                 = width;
         swapChainDesc.Height                = height;
@@ -132,22 +121,21 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
         swapChainDesc.AlphaMode =
             mHasAlpha ? DXGI_ALPHA_MODE_PREMULTIPLIED : DXGI_ALPHA_MODE_IGNORE;
         swapChainDesc.Flags         = 0;
-        IDXGISwapChain1 *swapChain1 = nullptr;
+        angle::ComPtr<IDXGISwapChain1> swapChain1;
         HRESULT result =
             factory2->CreateSwapChainForComposition(device, &swapChainDesc, nullptr, &swapChain1);
         if (SUCCEEDED(result))
         {
-            *swapChain = static_cast<IDXGISwapChain *>(swapChain1);
+            mVisual->SetContent(swapChain1.Get());
+            mCompositionTarget->SetRoot(mVisual.Get());
+            *swapChain = std::move(swapChain1);
         }
-        mVisual->SetContent(swapChain1);
-        mCompositionTarget->SetRoot(mVisual);
-        SafeRelease(factory2);
         return result;
     }
 
     // Use IDXGIFactory2::CreateSwapChainForHwnd if DXGI 1.2 is available to create a
     // DXGI_SWAP_EFFECT_SEQUENTIAL swap chain.
-    IDXGIFactory2 *factory2 = d3d11::DynamicCastComObject<IDXGIFactory2>(factory);
+    angle::ComPtr<IDXGIFactory2> factory2 = angle::DynamicCastComObject<IDXGIFactory2>(factory);
     if (factory2 != nullptr)
     {
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -164,15 +152,14 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
         swapChainDesc.SwapEffect    = DXGI_SWAP_EFFECT_SEQUENTIAL;
         swapChainDesc.AlphaMode     = DXGI_ALPHA_MODE_UNSPECIFIED;
         swapChainDesc.Flags         = 0;
-        IDXGISwapChain1 *swapChain1 = nullptr;
+        angle::ComPtr<IDXGISwapChain1> swapChain1;
         HRESULT result = factory2->CreateSwapChainForHwnd(device, getNativeWindow(), &swapChainDesc,
                                                           nullptr, nullptr, &swapChain1);
         if (SUCCEEDED(result))
         {
             factory2->MakeWindowAssociation(getNativeWindow(), DXGI_MWA_NO_ALT_ENTER);
-            *swapChain = static_cast<IDXGISwapChain *>(swapChain1);
+            *swapChain = std::move(swapChain1);
         }
-        SafeRelease(factory2);
         return result;
     }
 
@@ -194,10 +181,12 @@ HRESULT NativeWindow11Win32::createSwapChain(ID3D11Device *device,
     swapChainDesc.Windowed           = TRUE;
     swapChainDesc.SwapEffect         = DXGI_SWAP_EFFECT_DISCARD;
 
-    HRESULT result = factory->CreateSwapChain(device, &swapChainDesc, swapChain);
+    angle::ComPtr<IDXGISwapChain> newSwapChain;
+    HRESULT result = factory->CreateSwapChain(device, &swapChainDesc, &newSwapChain);
     if (SUCCEEDED(result))
     {
         factory->MakeWindowAssociation(getNativeWindow(), DXGI_MWA_NO_ALT_ENTER);
+        *swapChain = std::move(newSwapChain);
     }
     return result;
 }

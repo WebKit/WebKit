@@ -24,12 +24,12 @@ namespace
 {
 
 egl::Error GetD3D11TextureInfo(EGLenum buftype,
-                               ID3D11Texture2D *texture11,
+                               angle::ComPtr<ID3D11Texture2D> texture11,
                                size_t *width,
                                size_t *height,
                                const angle::Format **angleFormat,
-                               IUnknown **object,
-                               IUnknown **device)
+                               angle::ComPtr<IUnknown> *object,
+                               angle::ComPtr<IUnknown> *device)
 {
     D3D11_TEXTURE2D_DESC textureDesc;
     texture11->GetDesc(&textureDesc);
@@ -48,18 +48,16 @@ egl::Error GetD3D11TextureInfo(EGLenum buftype,
                 break;
 
             default:
-                SafeRelease(texture11);
                 std::ostringstream err;
                 err << "Unknown client buffer texture format: " << textureDesc.Format;
                 return egl::Error(EGL_BAD_PARAMETER, err.str());
         }
     }
 
-    ID3D11Device *d3d11Device = nullptr;
+    angle::ComPtr<ID3D11Device> d3d11Device;
     texture11->GetDevice(&d3d11Device);
     if (d3d11Device == nullptr)
     {
-        SafeRelease(texture11);
         return egl::Error(EGL_BAD_PARAMETER,
                           "Could not query the D3D11 device from the client buffer.");
     }
@@ -80,20 +78,12 @@ egl::Error GetD3D11TextureInfo(EGLenum buftype,
 
     if (device)
     {
-        *device = d3d11Device;
-    }
-    else
-    {
-        SafeRelease(d3d11Device);
+        *device = std::move(d3d11Device);
     }
 
     if (object)
     {
-        *object = texture11;
-    }
-    else
-    {
-        SafeRelease(texture11);
+        *object = std::move(texture11);
     }
 
     return egl::NoError();
@@ -106,17 +96,17 @@ egl::Error GetD3DTextureInfo(EGLenum buftype,
                              size_t *width,
                              size_t *height,
                              const angle::Format **angleFormat,
-                             IUnknown **object,
-                             IUnknown **device)
+                             angle::ComPtr<IUnknown> *object,
+                             angle::ComPtr<IUnknown> *device)
 {
     if (buftype == EGL_D3D_TEXTURE_ANGLE)
     {
         IUnknown *buffer           = static_cast<IUnknown *>(clientBuffer);
-        ID3D11Texture2D *texture11 = nullptr;
+        angle::ComPtr<ID3D11Texture2D> texture11;
         if (SUCCEEDED(buffer->QueryInterface<ID3D11Texture2D>(&texture11)))
         {
-            return GetD3D11TextureInfo(buftype, texture11, width, height, angleFormat, object,
-                                       device);
+            return GetD3D11TextureInfo(buftype, std::move(texture11), width, height, angleFormat,
+                                       object, device);
         }
         else
         {
@@ -126,14 +116,12 @@ egl::Error GetD3DTextureInfo(EGLenum buftype,
     else if (buftype == EGL_D3D_TEXTURE_2D_SHARE_HANDLE_ANGLE)
     {
         ASSERT(d3d11Device);
-        HANDLE shareHandle         = static_cast<HANDLE>(clientBuffer);
-        ID3D11Texture2D *texture11 = nullptr;
-        HRESULT result = d3d11Device->OpenSharedResource(shareHandle, __uuidof(ID3D11Texture2D),
-                                                         reinterpret_cast<void **>(&texture11));
+        HANDLE shareHandle = static_cast<HANDLE>(clientBuffer);
+        angle::ComPtr<ID3D11Texture2D> texture11;
+        HRESULT result = d3d11Device->OpenSharedResource(shareHandle, IID_PPV_ARGS(&texture11));
         if (FAILED(result) && d3d11Device1)
         {
-            result = d3d11Device1->OpenSharedResource1(shareHandle, __uuidof(ID3D11Texture2D),
-                                                       reinterpret_cast<void **>(&texture11));
+            result = d3d11Device1->OpenSharedResource1(shareHandle, IID_PPV_ARGS(&texture11));
         }
 
         if (FAILED(result))
@@ -143,7 +131,8 @@ egl::Error GetD3DTextureInfo(EGLenum buftype,
             return egl::Error(EGL_BAD_PARAMETER, err.str());
         }
 
-        return GetD3D11TextureInfo(buftype, texture11, width, height, angleFormat, object, device);
+        return GetD3D11TextureInfo(buftype, std::move(texture11), width, height, angleFormat,
+                                   object, device);
     }
     else
     {
@@ -178,8 +167,6 @@ D3DTextureSurfaceWGL::D3DTextureSurfaceWGL(const egl::SurfaceState &state,
       mHeight(0),
       mColorFormat(nullptr),
       mDeviceHandle(nullptr),
-      mObject(nullptr),
-      mKeyedMutex(nullptr),
       mBoundObjectTextureHandle(nullptr),
       mBoundObjectRenderbufferHandle(nullptr),
       mFramebufferID(0),
@@ -190,9 +177,6 @@ D3DTextureSurfaceWGL::D3DTextureSurfaceWGL(const egl::SurfaceState &state,
 D3DTextureSurfaceWGL::~D3DTextureSurfaceWGL()
 {
     ASSERT(mBoundObjectTextureHandle == nullptr);
-
-    SafeRelease(mObject);
-    SafeRelease(mKeyedMutex);
 
     if (mDeviceHandle)
     {
@@ -227,7 +211,7 @@ egl::Error D3DTextureSurfaceWGL::ValidateD3DTextureClientBuffer(EGLenum buftype,
 
 egl::Error D3DTextureSurfaceWGL::initialize(const egl::Display *display)
 {
-    IUnknown *device = nullptr;
+    angle::ComPtr<IUnknown> device;
     ANGLE_TRY(GetD3DTextureInfo(mBuftype, mClientBuffer, mDisplayD3D11Device, mDisplayD3D11Device1,
                                 &mWidth, &mHeight, &mColorFormat, &mObject, &device));
 
@@ -245,11 +229,10 @@ egl::Error D3DTextureSurfaceWGL::initialize(const egl::Display *display)
     }
 
     // Grab the keyed mutex, if one exists
-    mObject->QueryInterface(&mKeyedMutex);
+    mObject.As(&mKeyedMutex);
 
     ASSERT(device != nullptr);
-    egl::Error error = mDisplay->registerD3DDevice(device, &mDeviceHandle);
-    SafeRelease(device);
+    egl::Error error = mDisplay->registerD3DDevice(device.Get(), &mDeviceHandle);
     if (error.isError())
     {
         return error;
@@ -257,8 +240,9 @@ egl::Error D3DTextureSurfaceWGL::initialize(const egl::Display *display)
 
     mFunctionsGL->genRenderbuffers(1, &mColorRenderbufferID);
     mStateManager->bindRenderbuffer(GL_RENDERBUFFER, mColorRenderbufferID);
-    mBoundObjectRenderbufferHandle = mFunctionsWGL->dxRegisterObjectNV(
-        mDeviceHandle, mObject, mColorRenderbufferID, GL_RENDERBUFFER, WGL_ACCESS_READ_WRITE_NV);
+    mBoundObjectRenderbufferHandle =
+        mFunctionsWGL->dxRegisterObjectNV(mDeviceHandle, mObject.Get(), mColorRenderbufferID,
+                                          GL_RENDERBUFFER, WGL_ACCESS_READ_WRITE_NV);
     if (mBoundObjectRenderbufferHandle == nullptr)
     {
         std::ostringstream err;
@@ -329,7 +313,7 @@ egl::Error D3DTextureSurfaceWGL::querySurfacePointerANGLE(EGLint attribute, void
             break;
 
         case EGL_DXGI_KEYED_MUTEX_ANGLE:
-            *value = mKeyedMutex;
+            *value = mKeyedMutex.Get();
             break;
 
         default:
@@ -349,7 +333,7 @@ egl::Error D3DTextureSurfaceWGL::bindTexImage(const gl::Context *context,
     GLuint textureID           = textureGL->getTextureID();
 
     mBoundObjectTextureHandle = mFunctionsWGL->dxRegisterObjectNV(
-        mDeviceHandle, mObject, textureID, GL_TEXTURE_2D, WGL_ACCESS_READ_WRITE_NV);
+        mDeviceHandle, mObject.Get(), textureID, GL_TEXTURE_2D, WGL_ACCESS_READ_WRITE_NV);
     if (mBoundObjectTextureHandle == nullptr)
     {
         DWORD error = GetLastError();

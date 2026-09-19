@@ -276,6 +276,8 @@ std::shared_ptr<ShaderTranslateTask> ShaderD3D::compile(const gl::Context *conte
 
     const std::string &source = mState.getSource();
 
+    options->removeInactiveVariables = true;
+
 #if !defined(ANGLE_ENABLE_WINDOWS_UWP)
     if (gl::DebugAnnotationsActive(context))
     {

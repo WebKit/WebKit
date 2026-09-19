@@ -455,8 +455,10 @@ def get_min_reqs(args, traces):
     ]
     # List of extensions which de facto imply others. The implied extensions are removed
     # from the RequiredExtensions list for wider platform support: http://anglebug.com/380026310
-    implied_extension_filter = [("GL_OES_compressed_ETC1_RGB8_texture",
-                                 "GL_EXT_compressed_ETC1_RGB8_sub_texture")]
+    implied_extension_filter = [
+        ("GL_OES_compressed_ETC1_RGB8_texture", "GL_EXT_compressed_ETC1_RGB8_sub_texture"),
+        ("GL_EXT_shader_framebuffer_fetch", "GL_ARM_shader_framebuffer_fetch")
+    ]
     default_args = ["--no-warmup"]
 
     skipped_traces = []

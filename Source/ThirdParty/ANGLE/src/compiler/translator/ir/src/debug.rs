@@ -265,7 +265,13 @@ fn name_str(name: &Name, temp_prefix: &'static str, user_prefix: &'static str, i
             _ => "",
         },
         name.name,
-        if name.source == NameSource::Temporary { format!("_{id}") } else { "".to_string() }
+        if name.source == NameSource::Temporary {
+            format!("_{id}")
+        } else if let Some(suffix) = name.suffix {
+            format!("_{}", suffix)
+        } else {
+            "".to_string()
+        }
     )
 }
 
@@ -319,7 +325,6 @@ fn image_internal_format_str(format: ImageInternalFormat) -> String {
 fn decoration_str(decoration: Decoration) -> String {
     match decoration {
         Decoration::Invariant => "invariant".to_string(),
-        Decoration::Precise => "precise".to_string(),
         Decoration::Interpolant => "interpolant".to_string(),
         Decoration::Smooth => "smooth".to_string(),
         Decoration::Flat => "flat".to_string(),
@@ -366,12 +371,15 @@ fn decoration_str(decoration: Decoration) -> String {
     }
 }
 
-fn decoration_list(precision: Precision, decorations: &Decorations) -> String {
+fn decoration_list(precision: Precision, precise: bool, decorations: &Decorations) -> String {
     let mut result = Vec::new();
     match precision {
         Precision::NotApplicable => {}
         _ => result.push(precision_str(precision).to_string()),
     };
+    if precise {
+        result.push("precise".to_string());
+    }
 
     decorations.decorations.iter().for_each(|&decoration| {
         result.push(decoration_str(decoration));
@@ -380,8 +388,13 @@ fn decoration_list(precision: Precision, decorations: &Decorations) -> String {
     result.join(", ")
 }
 
-fn append_decorations(result: &mut String, precision: Precision, decorations: &Decorations) {
-    let decorations = decoration_list(precision, decorations);
+fn append_decorations(
+    result: &mut String,
+    precision: Precision,
+    precise: bool,
+    decorations: &Decorations,
+) {
+    let decorations = decoration_list(precision, precise, decorations);
     if !decorations.is_empty() {
         *result = format!("{result} [{decorations}]");
     }
@@ -393,7 +406,7 @@ fn field_str(field: &Field, index: usize) -> String {
         name_str(&field.name, TEMP_STRUCT_FIELD_PREFIX, USER_VARIABLE_PREFIX, index as u32),
         type_id_str(field.type_id)
     );
-    append_decorations(&mut result, field.precision, &field.decorations);
+    append_decorations(&mut result, field.precision, field.precise, &field.decorations);
     result
 }
 
@@ -475,7 +488,12 @@ fn function_prototype_str(id: FunctionId, function: &Function) -> String {
     let name = name_str(&function.name, TEMP_FUNCTION_PREFIX, USER_VARIABLE_PREFIX, id.id);
 
     let mut return_type = type_id_str(function.return_type_id);
-    append_decorations(&mut return_type, function.return_precision, &function.return_decorations);
+    append_decorations(
+        &mut return_type,
+        function.return_precision,
+        function.return_precise,
+        &function.return_decorations,
+    );
 
     let params = function
         .params
@@ -1035,9 +1053,9 @@ fn dump_variables(ir_meta: &IRMeta, result: &mut String) {
             name,
             initializer,
             built_in,
-            loop_variable
+            loop_variable,
         );
-        append_decorations(&mut formatted, v.precision, &v.decorations);
+        append_decorations(&mut formatted, v.precision, v.precise, &v.decorations);
 
         append_on_new_line(result, formatted, 1);
     });
@@ -1069,7 +1087,7 @@ fn dump_instruction(
             (
                 format!("{} {:>6} = ", register_id_str(id), type_id),
                 opcode_str(&instruction.op),
-                decoration_list(instruction.result.precision, &Decorations::new_none()),
+                decoration_list(instruction.result.precision, false, &Decorations::new_none()),
             )
         }
         BlockInstruction::Void(op) => ("".to_string(), opcode_str(op), "".to_string()),
@@ -1118,7 +1136,7 @@ fn dump_block(
 
         let mut formatted =
             format!("Input: {} ({})", register_id_str(input.id), type_id_str(input.type_id));
-        append_decorations(&mut formatted, input.precision, &Decorations::new_none());
+        append_decorations(&mut formatted, input.precision, false, &Decorations::new_none());
         append_on_new_line(result, formatted, indent);
     });
 

@@ -8,8 +8,13 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLKERNELVK_H_
 
+#include <memory>
+#include <string>
+#include "common/hash_containers.h"
+#include "libANGLE/renderer/vulkan/CLContextVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
@@ -21,52 +26,61 @@
 namespace rx
 {
 
-struct CLKernelArgument
+class CLKernelArgument
 {
-    CLKernelImpl::ArgInfo info{};
-    uint32_t type     = 0;
-    uint32_t ordinal  = 0;
-    size_t handleSize = 0;
-    void *handle      = nullptr;
-    bool used         = false;
+  public:
+    CLKernelArgument(const CLContextVk *context, const ClspvKernelArgument &info);
+    ~CLKernelArgument() = default;
 
-    // Shared operand words/regions for "OpExtInst" type spv instructions
-    // (starts from spv word index/offset 7 and onward)
-    // https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpExtInst
-    // https://github.com/google/clspv/blob/main/docs/OpenCLCOnVulkan.md#kernels
-    union
+    bool isReadOnly() const;
+    cl::Memory *getMemoryHandle() const;
+    uint32_t getReflectionType() const { return mCompiledInfo.type; }
+    uint32_t getDescriptorBinding() const { return mCompiledInfo.descriptorBinding; }
+    uint32_t getPushConstantOffset() const { return mCompiledInfo.pushConstOffset; }
+    uint32_t getPushConstantSize() const { return mCompiledInfo.pushConstantSize; }
+    uint32_t getPodUniformOffset() const { return mCompiledInfo.podUniformOffset; }
+    uint32_t getPodStorageBufferOffset() const { return mCompiledInfo.podStorageBufferOffset; }
+    uint32_t getPodStorageBufferSize() const { return mCompiledInfo.podStorageBufferSize; }
+    uint32_t getWorkGroupElementSize() const { return mCompiledInfo.workgroupBufferElemSize; }
+    uint32_t getWorkGroupBufferSpecId() const { return mCompiledInfo.workgroupBufferSpecId; }
+    bool getUsed() const { return mCompiledInfo.used; }
+    cl::Sampler *getSamplerHandle() const;
+    size_t getSize() const { return mSize; }
+    const std::string &getTypeName() const { return mCompiledInfo.info.typeName; }
+    const std::string &getVariableName() const { return mCompiledInfo.info.name; }
+    int32_t getSpecConstantIndex() const { return mSpecConstantIndex; }
+    cl_kernel_arg_type_qualifier getTypeQualifier() const
     {
-        uint32_t op3;
-        uint32_t descriptorSet;
-        uint32_t pushConstOffset;
-        uint32_t workgroupBufferSpecId;
-    };
-    union
+        return mCompiledInfo.info.typeQualifier;
+    }
+    cl_kernel_arg_address_qualifier getAddressQualifier() const
     {
-        uint32_t op4;
-        uint32_t descriptorBinding;
-        uint32_t pushConstantSize;
-        uint32_t workgroupBufferElemSize;
-    };
-    union
+        return mCompiledInfo.info.addressQualifier;
+    }
+    cl_kernel_arg_access_qualifier getAccessQualifier() const
     {
-        uint32_t op5;
-        uint32_t podStorageBufferOffset;
-        uint32_t podUniformOffset;
-        uint32_t pointerUniformOffset;
-    };
-    union
+        return mCompiledInfo.info.accessQualifier;
+    }
+    CLKernelImpl::ArgInfo getArgInfo() const { return mArgInfo; }
+
+    void set(size_t size, void *handle)
     {
-        uint32_t op6;
-        uint32_t podStorageBufferSize;
-        uint32_t podUniformSize;
-        uint32_t pointerUniformSize;
-    };
+        mSize   = size;
+        mHandle = handle;
+    }
+    void setSpecConstantIndex(int32_t index) { mSpecConstantIndex = index; }
+
+  private:
+    ClspvKernelArgument mCompiledInfo;
+    CLKernelImpl::ArgInfo mArgInfo;
+    size_t mSize;
+    void *mHandle;
+
+    // For kernel arguments of type ArgumentWorkgroup, cache the kernel's spec constant index
+    int32_t mSpecConstantIndex = -1;
 };
-using CLKernelArguments = std::vector<CLKernelArgument>;
-using CLKernelArgsMap   = angle::HashMap<std::string, CLKernelArguments>;
-bool IsCLKernelArgumentReadonly(const CLKernelArgument &kernelArgument);
-cl::Memory *GetCLKernelArgumentMemoryHandle(const CLKernelArgument &kernelArgument);
+// Vector of arguments used by a kernel
+using CLKernelArguments = std::vector<std::shared_ptr<CLKernelArgument>>;
 
 class CLKernelVk : public CLKernelImpl
 {
@@ -82,10 +96,7 @@ class CLKernelVk : public CLKernelImpl
     // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#CL_DEVICE_MAX_PARAMETER_SIZE
     using KernelSpecConstants = angle::FastVector<KernelSpecConstant, 128>;
 
-    CLKernelVk(const cl::Kernel &kernel,
-               std::string &name,
-               std::string &attributes,
-               CLKernelArguments &args);
+    CLKernelVk(const cl::Kernel &kernel, std::string &name, std::string &attributes);
     ~CLKernelVk() override;
 
     angle::Result init();
@@ -97,8 +108,9 @@ class CLKernelVk : public CLKernelImpl
     angle::Result initPipelineLayout();
 
     CLProgramVk *getProgram() { return mProgram; }
-    const std::string &getKernelName() { return mName; }
-    const CLKernelArguments &getArgs() { return mArgs; }
+    const std::string &getKernelName() const { return mName; }
+    const CLKernelArguments &getArgs() const { return mArgs; }
+
     const vk::PipelineLayout &getPipelineLayout() const { return *mPipelineLayout; }
     vk::DescriptorSetLayoutPointerArray &getDescriptorSetLayouts() { return mDescriptorSetLayouts; }
     cl::Kernel &getFrontendObject() { return const_cast<cl::Kernel &>(mKernel); }

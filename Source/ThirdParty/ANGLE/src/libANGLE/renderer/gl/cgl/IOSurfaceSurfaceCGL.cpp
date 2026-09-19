@@ -13,6 +13,8 @@
 #include <OpenGL/CGLIOSurface.h>
 #include <OpenGL/OpenGL.h>
 
+#include <array>
+
 #include "common/debug.h"
 #include "common/gl/cgl/FunctionsCGL.h"
 #include "common/unsafe_buffers.h"
@@ -44,7 +46,7 @@ struct IOSurfaceFormatInfo
 };
 
 // clang-format off
-static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
+static constexpr std::array<IOSurfaceFormatInfo, 8> kIOSurfaceFormats = {{
     {GL_RED,      GL_UNSIGNED_BYTE,                1, GL_RED,  GL_RED,  GL_UNSIGNED_BYTE              },
     {GL_RED,      GL_UNSIGNED_SHORT,               2, GL_RED,  GL_RED,  GL_UNSIGNED_SHORT             },
     {GL_RG,       GL_UNSIGNED_BYTE,                2, GL_RG,   GL_RG,   GL_UNSIGNED_BYTE              },
@@ -53,14 +55,14 @@ static const IOSurfaceFormatInfo kIOSurfaceFormats[] = {
     {GL_BGRA_EXT, GL_UNSIGNED_BYTE,                4, GL_RGBA, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV   },
     {GL_RGB10_A2, GL_UNSIGNED_INT_2_10_10_10_REV,  4, GL_RGBA, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV},
     {GL_RGBA,     GL_HALF_FLOAT,                   8, GL_RGBA, GL_RGBA, GL_HALF_FLOAT                 },
-};
+}};
 // clang-format on
 
 int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
 {
-    for (int i = 0; i < static_cast<int>(ArraySize(kIOSurfaceFormats)); ++i)
+    for (int i = 0; i < static_cast<int>(kIOSurfaceFormats.size()); ++i)
     {
-        const auto &formatInfo = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[i]);
+        const auto &formatInfo = kIOSurfaceFormats[i];
         if (formatInfo.internalFormat == internalFormat && formatInfo.type == type)
         {
             return i;
@@ -171,7 +173,7 @@ egl::Error IOSurfaceSurfaceCGL::bindTexImage(const gl::Context *context,
     GLuint textureID           = textureGL->getTextureID();
     stateManager->bindTexture(gl::TextureType::Rectangle, textureID);
 
-    const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
+    const auto &format = kIOSurfaceFormats[mFormatIndex];
     CGLError error     = CGLTexImageIOSurface2D(
         mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
         format.nativeFormat, format.nativeType, mIOSurface, mPlane);
@@ -261,7 +263,7 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     // However, the caller might supply us non-public pixel format, which makes exhaustive checks
     // problematic.
     if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
-        ANGLE_UNSAFE_TODO(kIOSurfaceFormats[formatIndex].componentBytes))
+        kIOSurfaceFormats[formatIndex].componentBytes)
     {
         WARN() << "IOSurface bytes per elements does not match the pbuffer internal format.";
     }
@@ -286,7 +288,7 @@ angle::Result IOSurfaceSurfaceCGL::initializeAlphaChannel(const gl::Context *con
 
 bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
 {
-    const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
+    const auto &format = kIOSurfaceFormats[mFormatIndex];
     return format.internalFormat == GL_RGB;
 }
 
@@ -299,7 +301,7 @@ egl::Error IOSurfaceSurfaceCGL::attachToFramebuffer(const gl::Context *context,
     {
         GLuint textureID = 0;
         mFunctions->genTextures(1, &textureID);
-        const auto &format = ANGLE_UNSAFE_TODO(kIOSurfaceFormats[mFormatIndex]);
+        const auto &format = kIOSurfaceFormats[mFormatIndex];
         mStateManager->bindTexture(gl::TextureType::Rectangle, textureID);
         CGLError error = CGLTexImageIOSurface2D(
             mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,

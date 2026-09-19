@@ -15,16 +15,15 @@ import unittest
 from angle_presubmit_utils import *
 
 def SetCWDToAngleFolder():
-    angle_folder = "angle"
-    cwd = os.path.dirname(os.path.abspath(__file__))
-    cwd = cwd.split(angle_folder)[0] + angle_folder
-    os.chdir(cwd)
+    angle_folder = pathlib.Path(__file__).resolve().parents[1]
+    os.chdir(angle_folder)
 
 
 SetCWDToAngleFolder()
 
 loader = importlib.machinery.SourceFileLoader('PRESUBMIT', 'PRESUBMIT.py')
 PRESUBMIT = loader.load_module()
+
 
 
 class CommitMessageFormattingCheckTest(unittest.TestCase):
@@ -673,6 +672,258 @@ class RestrictedTracesCheckTest(unittest.TestCase):
                 json.dump(original_data, f, indent=2)
                 f.write('\n')
 
+
+class CheckUnsafeBuffersSafetyCommentsTest(unittest.TestCase):
+
+    def testNoUsage(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '', 'src/libANGLE/Foo.cpp', new_contents=[
+                    'void Foo() {',
+                    '    int x = 0;',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testValidUsageSameLine(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0); // SAFETY: safe',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testValidUsagePrecedingLine(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: safe',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testValidUsagePrecedingLineWithOtherComments(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: safe',
+                    '    // some other info',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testValidUsageBrokenLine(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: safe',
+                    '    int very_long_line_due_lots_of_stuff = line_broken_by_clang_format +',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testValidUsageSafetyCommentWithCodeSyntax(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: Explanation too large to desplay in one line of comment and use of c++ syntax',
+                    '    // to justify usage.... This is safe because',
+                    '    // dummy[1] = dummy[0]++; is safe',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testInvalidUsageCommentSeparatedByForLoop(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: safe',
+                    '    for(int b = 0; b < buffer_size; b++){',
+                    '       ANGLE_UNSAFE_BUFFERS(dummy[b] += x);',
+                    '    }'
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+
+    def testInvalidUsageNoComment(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+        self.assertIn('ANGLE_UNSAFE_BUFFERS usage must be accompanied', errors[0].items[0])
+
+    def testInvalidUsageCommentNotSafety(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // this is a comment but not safety',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+
+    def testInvalidUsageCommentSeparatedByCode(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // SAFETY: safe',
+                    '    int x = 0;',
+                    '    ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+
+    def testIgnoreCommentedUsage(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    // ANGLE_UNSAFE_BUFFERS(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckUnsafeBuffersSafetyComments(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+
+class CheckBannedPatternsTest(unittest.TestCase):
+
+    def testNoUsage(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '', 'src/libANGLE/Foo.cpp', new_contents=[
+                    'void Foo() {',
+                    '    int x = 0;',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckNoBannedPatterns(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
+
+    def testBannedUnsafeTodo(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    'void Foo() {',
+                    '    ANGLE_UNSAFE_TODO(ptr[0] = 0);',
+                    '}',
+                ])
+        ]
+        errors = PRESUBMIT._CheckNoBannedPatterns(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+        self.assertIn('A banned pattern was used.', errors[0]._message)
+        self.assertIn('src/libANGLE/Foo.cpp:2:', errors[0]._message)
+        self.assertIn('Do not introduce new instances of ANGLE_UNSAFE_TODO', errors[0]._message)
+        self.assertEqual(1, len(errors[0].locations))
+        loc = errors[0].locations[0]
+        self.assertEqual('src/libANGLE/Foo.cpp', loc.file_path)
+        self.assertEqual(2, loc.start_line)
+        self.assertEqual(2, loc.end_line)
+
+    def testBannedPragma(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '', 'src/libANGLE/Foo.cpp', new_contents=[
+                    '#pragma allow_unsafe_buffers',
+                ])
+        ]
+        errors = PRESUBMIT._CheckNoBannedPatterns(mock_input_api, OutputAPI_mock())
+        self.assertEqual(1, len(errors))
+        self.assertIn('A banned pattern was used.', errors[0]._message)
+        self.assertIn('src/libANGLE/Foo.cpp:1:', errors[0]._message)
+        self.assertIn('#pragma allow_unsafe_buffers is discouraged', errors[0]._message)
+        self.assertEqual(1, len(errors[0].locations))
+        loc = errors[0].locations[0]
+        self.assertEqual('src/libANGLE/Foo.cpp', loc.file_path)
+        self.assertEqual(1, loc.start_line)
+        self.assertEqual(1, loc.end_line)
+
+    def testCommentedUsageIgnored(self):
+        mock_input_api = InputAPI_mock('')
+        mock_input_api.source_files = [
+            AffectedFile_mock(
+                '',
+                'src/libANGLE/Foo.cpp',
+                new_contents=[
+                    '// ANGLE_UNSAFE_TODO(ptr[0] = 0);',
+                    '// #pragma allow_unsafe_buffers',
+                ])
+        ]
+        errors = PRESUBMIT._CheckNoBannedPatterns(mock_input_api, OutputAPI_mock())
+        self.assertEqual(0, len(errors))
 
 if __name__ == '__main__':
     unittest.main()

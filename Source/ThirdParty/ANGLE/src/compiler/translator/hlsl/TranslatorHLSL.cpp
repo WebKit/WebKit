@@ -96,7 +96,8 @@ bool BuildExtractedSamplerNameMap(TIntermBlock *root,
 
     for (size_t index = 0; index < variables.size(); ++index)
     {
-        const std::string name = std::string(kExtractedSamplerNamePrefix) + std::to_string(index);
+        const std::string name =
+            std::string(kExtractedSamplerNamePrefix) + '_' + std::to_string(index);
         auto variable          = variables.find(name);
         if (variable == variables.end())
         {
@@ -280,11 +281,11 @@ bool TranslatorHLSL::translate(TIntermBlock *root,
             {
                 return false;
             }
-        }
 
-        if (!RewriteStructSamplers(this, root, &getSymbolTable()))
-        {
-            return false;
+            if (!RewriteStructSamplers(this, root, &getSymbolTable()))
+            {
+                return false;
+            }
         }
 
         if (!BuildExtractedSamplerNameMap(root, extractedSamplerPaths, &extractedSamplerNames))

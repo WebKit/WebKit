@@ -28,6 +28,7 @@ constexpr const char kFlipXY[]           = "flipXY";
 constexpr const char kMisc[]             = "misc";
 constexpr const char kBaseInstance[]     = "baseInstance";
 constexpr const char kAcbBufferOffsets[] = "acbBufferOffsets";
+constexpr const char kTransformXY[]      = "transformXY";
 
 // Extended uniforms
 constexpr const char kXfbBufferOffsets[]       = "xfbBufferOffsets";
@@ -110,6 +111,16 @@ TFieldList *DriverUniform::createUniformFields(TSymbolTable *symbolTable)
                        ImmutableString(kGraphicsDriverUniformNames[uniformIndex]), TSourceLoc(),
                        SymbolType::AngleInternal);
         driverFieldList->push_back(driverUniformField);
+    }
+
+    // transformXY is only used by the Vulkan (SPIR-V) backend, so it's not added to the driver
+    // uniforms for other backends.
+    if (mOutputType == SH_SPIRV_VULKAN_OUTPUT)
+    {
+        TField *transformXYField =
+            new TField(new TType(EbtFloat, EbpHigh, EvqGlobal, 4), ImmutableString(kTransformXY),
+                       TSourceLoc(), SymbolType::AngleInternal);
+        driverFieldList->push_back(transformXYField);
     }
 
     return driverFieldList;
@@ -401,6 +412,11 @@ TIntermTyped *DriverUniform::getLayeredFramebuffer() const
     };
     return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtBool, EbpUndefined>(),
                                                &args);
+}
+
+TIntermTyped *DriverUniform::getTransformXY() const
+{
+    return createDriverUniformRef(kTransformXY);
 }
 
 //

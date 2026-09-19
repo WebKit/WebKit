@@ -91,8 +91,8 @@ class D3DTextureSurfaceWGL : public SurfaceWGL
     const angle::Format *mColorFormat;
 
     HANDLE mDeviceHandle;
-    IUnknown *mObject;
-    IDXGIKeyedMutex *mKeyedMutex;
+    angle::ComPtr<IUnknown> mObject;
+    angle::ComPtr<IDXGIKeyedMutex> mKeyedMutex;
     HANDLE mBoundObjectTextureHandle;
     HANDLE mBoundObjectRenderbufferHandle;
 

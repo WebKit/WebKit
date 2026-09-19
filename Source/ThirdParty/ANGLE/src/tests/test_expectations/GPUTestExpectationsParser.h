@@ -90,7 +90,9 @@ class GPUTestExpectationsParser
 
     // Config is optional.
     bool loadTestExpectationsFromFileImpl(const GPUTestConfig *config, const std::string &path);
-    bool loadTestExpectationsImpl(const GPUTestConfig *config, const std::string &data);
+
+    template <typename InputStream>
+    bool loadTestExpectationsImpl(const GPUTestConfig *config, InputStream &dataStream);
 
     int32_t getTestExpectationImpl(const GPUTestConfig *config, const std::string &testName);
 

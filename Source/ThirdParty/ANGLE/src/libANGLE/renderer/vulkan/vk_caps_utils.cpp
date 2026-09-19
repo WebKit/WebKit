@@ -531,12 +531,10 @@ void Renderer::ensureCapsInitialized() const
 
     // Enable EXT_srgb_write_control if either of these conditions are met -
     // - VK_KHR_swapchain_mutable_format is supported
-    // - VK_KHR_image_format_list is supported and exposeNonConformantExtensionsAndVersions is
-    // enabled
+    // - exposeNonConformantExtensionsAndVersions is enabled
     mNativeExtensions.sRGBWriteControlEXT =
         getFeatures().supportsSwapchainMutableFormat.enabled ||
-        (getFeatures().supportsImageFormatList.enabled &&
-         getFeatures().exposeNonConformantExtensionsAndVersions.enabled);
+        getFeatures().exposeNonConformantExtensionsAndVersions.enabled;
 
     // Vulkan natively supports io interface block.
     mNativeExtensions.shaderIoBlocksOES = true;

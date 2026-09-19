@@ -190,6 +190,7 @@ int main(int argc, char *argv[])
                                 break;
                             case 'h':
                                 output = SH_HLSL_4_1_OUTPUT;
+                                compileOptions.removeInactiveVariables = true;
                                 break;
                             case 'm':
                                 output = SH_MSL_METAL_OUTPUT;

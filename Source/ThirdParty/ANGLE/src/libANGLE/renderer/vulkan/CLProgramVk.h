@@ -93,7 +93,7 @@ class CLProgramVk : public CLProgramImpl
             return containsKernel(kernelName) ? getKernelArgsMap().at(kernelName).size() : 0;
         }
 
-        const CLKernelArgsMap &getKernelArgsMap() const { return reflectionData.kernelArgsMap; }
+        const ClspvKernelArgsMap &getKernelArgsMap() const { return reflectionData.kernelArgsMap; }
 
         bool containsKernel(const std::string &name) const
         {
@@ -119,13 +119,13 @@ class CLProgramVk : public CLProgramImpl
             return 0;
         }
 
-        CLKernelArguments getKernelArguments(const std::string &kernelName) const
+        ClspvKernelArguments getKernelArguments(const std::string &kernelName) const
         {
-            CLKernelArguments kargsCopy;
+            ClspvKernelArguments kargsCopy;
             if (containsKernel(kernelName))
             {
-                const CLKernelArguments &kargs = getKernelArgsMap().at(kernelName);
-                for (const CLKernelArgument &karg : kargs)
+                const ClspvKernelArguments &kargs = getKernelArgsMap().at(kernelName);
+                for (const ClspvKernelArgument &karg : kargs)
                 {
                     kargsCopy.push_back(karg);
                 }

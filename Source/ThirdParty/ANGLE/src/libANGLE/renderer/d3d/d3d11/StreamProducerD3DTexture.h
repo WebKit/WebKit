@@ -9,6 +9,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_STREAM11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_STREAM11_H_
 
+#include "common/angleutils.h"
 #include "libANGLE/renderer/StreamProducerImpl.h"
 
 namespace rx
@@ -35,7 +36,7 @@ class StreamProducerD3DTexture : public StreamProducerImpl
   private:
     Renderer11 *mRenderer;
 
-    ID3D11Texture2D *mTexture;
+    angle::ComPtr<ID3D11Texture2D> mTexture;
     UINT mArraySlice;
     UINT mPlaneOffset;
 };

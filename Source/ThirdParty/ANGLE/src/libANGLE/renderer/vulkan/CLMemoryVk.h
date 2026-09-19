@@ -132,7 +132,6 @@ class CLBufferVk : public CLMemoryVk
     angle::Result mapBufferHelper(uint8_t *&ptrOut) override;
     angle::Result mapParentBufferHelper(uint8_t *&ptrOut) override;
     void unmapBufferHelper() override;
-    angle::Result setDataImpl(const uint8_t *data, size_t size, size_t offset);
     angle::Result createWithProperties();
 
     enum class UpdateRectOperation

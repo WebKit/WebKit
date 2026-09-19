@@ -266,7 +266,7 @@ void WebGLFramebufferTest::testDepthStencilDepthStencil(GLint width, GLint heigh
             glRenderbufferStorage(GL_RENDERBUFFER, test.firstFormat, width, height);
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, test.firstAttach, GL_RENDERBUFFER, firstRb);
 
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             // TODO(jmadill): Remove clear - this should be implicit in WebGL_
             glClear(GL_DEPTH_BUFFER_BIT);
@@ -300,7 +300,7 @@ void WebGLFramebufferTest::testDepthStencilDepthStencil(GLint width, GLint heigh
             }
 
             // If the first attachment is not restored this may fail
-            EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
             EXPECT_GL_NO_ERROR();
 
             // If the first attachment is not restored this may fail.
@@ -884,7 +884,7 @@ TEST_P(WebGLFramebufferTest, DepthStencilAttachmentOrdering)
 
         // Framebuffer should be complete now with a depth-stencil format
         EXPECT_GL_NO_ERROR();
-        EXPECT_GLENUM_EQ(glCheckFramebufferStatus(GL_FRAMEBUFFER), GL_FRAMEBUFFER_COMPLETE);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     }
 }
 

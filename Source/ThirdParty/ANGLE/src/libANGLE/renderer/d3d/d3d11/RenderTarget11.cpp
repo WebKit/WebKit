@@ -24,39 +24,36 @@ namespace
 {
 bool GetTextureProperties(ID3D11Resource *resource, unsigned int *mipLevels, unsigned int *samples)
 {
-    ID3D11Texture1D *texture1D = d3d11::DynamicCastComObject<ID3D11Texture1D>(resource);
+    angle::ComPtr<ID3D11Texture1D> texture1D =
+        angle::DynamicCastComObject<ID3D11Texture1D>(resource);
     if (texture1D)
     {
         D3D11_TEXTURE1D_DESC texDesc;
         texture1D->GetDesc(&texDesc);
-        SafeRelease(texture1D);
-
         *mipLevels = texDesc.MipLevels;
         *samples   = 0;
 
         return true;
     }
 
-    ID3D11Texture2D *texture2D = d3d11::DynamicCastComObject<ID3D11Texture2D>(resource);
+    angle::ComPtr<ID3D11Texture2D> texture2D =
+        angle::DynamicCastComObject<ID3D11Texture2D>(resource);
     if (texture2D)
     {
         D3D11_TEXTURE2D_DESC texDesc;
         texture2D->GetDesc(&texDesc);
-        SafeRelease(texture2D);
-
         *mipLevels = texDesc.MipLevels;
         *samples   = texDesc.SampleDesc.Count > 1 ? texDesc.SampleDesc.Count : 0;
 
         return true;
     }
 
-    ID3D11Texture3D *texture3D = d3d11::DynamicCastComObject<ID3D11Texture3D>(resource);
+    angle::ComPtr<ID3D11Texture3D> texture3D =
+        angle::DynamicCastComObject<ID3D11Texture3D>(resource);
     if (texture3D)
     {
         D3D11_TEXTURE3D_DESC texDesc;
         texture3D->GetDesc(&texDesc);
-        SafeRelease(texture3D);
-
         *mipLevels = texDesc.MipLevels;
         *samples   = 0;
 

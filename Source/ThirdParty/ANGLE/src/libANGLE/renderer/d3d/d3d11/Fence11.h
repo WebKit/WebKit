@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_FENCE11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_FENCE11_H_
 
+#include "common/angleutils.h"
 #include "libANGLE/renderer/FenceNVImpl.h"
 #include "libANGLE/renderer/SyncImpl.h"
 
@@ -38,7 +39,7 @@ class FenceNV11 : public FenceNVImpl
                                          GLboolean *outFinished);
 
     Renderer11 *mRenderer;
-    ID3D11Query *mQuery;
+    angle::ComPtr<ID3D11Query> mQuery;
 };
 
 class Sync11 : public SyncImpl
@@ -67,7 +68,7 @@ class Sync11 : public SyncImpl
                                          GLboolean *outFinished);
 
     Renderer11 *mRenderer;
-    ID3D11Query *mQuery;
+    angle::ComPtr<ID3D11Query> mQuery;
     LONGLONG mCounterFrequency;
 };
 

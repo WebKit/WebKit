@@ -794,8 +794,8 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
-    FeatureInfo useTexSubImageForHostTwiddledNpotUploads = {
-        "useTexSubImageForHostTwiddledNpotUploads",
+    FeatureInfo useTexSubImageForClientDataNpotUploads = {
+        "useTexSubImageForClientDataNpotUploads",
         FeatureCategory::OpenGLWorkarounds,
         &members,
     };

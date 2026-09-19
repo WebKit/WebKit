@@ -1371,15 +1371,12 @@ angle::Result TextureMtl::getRenderTarget(ContextMtl *context,
             : static_cast<gl::RenderToTextureImageIndex>(PackSampleCount(implicitSamples));
 
     RenderTargetMtl &rtt = mRenderTargets[imageIndex][renderToTextureIndex];
-    if (!rtt.getTexture())
-    {
-        auto &imageDef = getImageDefinition(imageIndex);
-        ANGLE_CHECK_ASSERT(context, imageDef.image && imageDef.image->valid());
-        // Cube map is special, the image is already the view of its layer.
-        GLuint layer = imageIndex.getType() == gl::TextureType::CubeMap ? 0 : GetImageLayerIndexFrom(imageIndex);
-        const mtl::Format &mtlFormat = context->getPixelFormat(imageDef.formatID);
-        rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, mtlFormat);
-    }
+    auto &imageDef = getImageDefinition(imageIndex);
+    ANGLE_CHECK_ASSERT(context, imageDef.image && imageDef.image->valid());
+    // Cube map is special, the image is already the view of its layer.
+    GLuint layer = imageIndex.getType() == gl::TextureType::CubeMap ? 0 : GetImageLayerIndexFrom(imageIndex);
+    const mtl::Format &mtlFormat = context->getPixelFormat(imageDef.formatID);
+    rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, mtlFormat);
 
     if (implicitSamples > 1 && !rtt.getImplicitMSTexture())
     {

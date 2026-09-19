@@ -8,6 +8,7 @@
 //
 
 #include "matrix_utils.h"
+#include <array>
 #include "common/unsafe_buffers.h"
 
 #include "gmock/gmock.h"
@@ -178,11 +179,8 @@ TEST(MatrixUtilsTest, MatrixDeterminantTest)
 
 TEST(MatrixUtilsTest, 2x2MatrixInverseTest)
 {
-    float inputElements[]    = {2.0f, 5.0f, 3.0f, 7.0f};
-    unsigned int numElements = 4;
-    std::vector<float> input(inputElements, ANGLE_UNSAFE_TODO(inputElements + numElements));
-    Matrix<float> inputMatrix(std::move(input), 2);
-    float identityElements[] = {1.0f, 0.0f, 0.0f, 1.0f};
+    Matrix<float> inputMatrix({2.0f, 5.0f, 3.0f, 7.0f}, 2);
+    constexpr std::array identityElements = {1.0f, 0.0f, 0.0f, 1.0f};
     // A * inverse(A) = I, where I is identity matrix.
     Matrix<float> result = inputMatrix * inputMatrix.inverse();
     EXPECT_THAT(result.elements(), testing::ElementsAreArray(identityElements));
@@ -190,26 +188,26 @@ TEST(MatrixUtilsTest, 2x2MatrixInverseTest)
 
 TEST(MatrixUtilsTest, 3x3MatrixInverseTest)
 {
-    float inputElements[]    = {11.0f, 23.0f, 37.0f, 13.0f, 29.0f, 41.0f, 19.0f, 31.0f, 43.0f};
-    unsigned int numElements = 9;
-    std::vector<float> input(inputElements, ANGLE_UNSAFE_TODO(inputElements + numElements));
-    Matrix<float> inputMatrix(std::move(input), 3);
-    float identityElements[] = {1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f};
+    Matrix<float> inputMatrix({11.0f, 23.0f, 37.0f, 13.0f, 29.0f, 41.0f, 19.0f, 31.0f, 43.0f}, 3);
+    constexpr std::array identityElements = {
+        1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+    };
     // A * inverse(A) = I, where I is identity matrix.
     Matrix<float> result                    = inputMatrix * inputMatrix.inverse();
     angle::Span<const float> resultElements = result.elements();
     const float floatFaultTolarance         = 0.000001f;
-    for (size_t i = 0; i < numElements; i++)
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance));
+    for (size_t i = 0; i < identityElements.size(); i++)
+    {
+        EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance);
+    }
 }
 
 TEST(MatrixUtilsTest, 4x4MatrixInverseTest)
 {
-    unsigned int numElements = 16;
-    float inputElements[]    = {29.0f, 43.0f, 61.0f, 79.0f, 31.0f, 47.0f, 67.0f, 83.0f,
-                                37.0f, 53.0f, 71.0f, 89.0f, 41.0f, 59.0f, 73.0f, 97.0f};
-    Matrix<float> inputMatrix(inputElements, 4);
-    float identityElements[] = {
+    Matrix<float> inputMatrix({29.0f, 43.0f, 61.0f, 79.0f, 31.0f, 47.0f, 67.0f, 83.0f, 37.0f, 53.0f,
+                               71.0f, 89.0f, 41.0f, 59.0f, 73.0f, 97.0f},
+                              4);
+    constexpr std::array identityElements = {
         1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
     };
@@ -217,8 +215,10 @@ TEST(MatrixUtilsTest, 4x4MatrixInverseTest)
     Matrix<float> result                    = inputMatrix * inputMatrix.inverse();
     angle::Span<const float> resultElements = result.elements();
     const float floatFaultTolarance         = 0.00001f;
-    for (unsigned int i = 0; i < numElements; i++)
-        ANGLE_UNSAFE_TODO(EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance));
+    for (size_t i = 0; i < identityElements.size(); i++)
+    {
+        EXPECT_NEAR(resultElements[i], identityElements[i], floatFaultTolarance);
+    }
 }
 
 // Tests constructors for mat4; using raw float*, std::vector<float>,

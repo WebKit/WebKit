@@ -72,7 +72,7 @@ void CheckForCurrentMemoryAllocations(vk::Renderer *renderer, vk::MemoryLogSever
             std::stringstream outStream;
 
             outStream << "Currently allocated size for memory allocation type ("
-                      << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[i]) << "): "
+                      << vk::kMemoryAllocationTypeMessage[i] << "): "
                       << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsSize(i)
                       << " | Count: "
                       << renderer->getMemoryAllocationTracker()->getActiveMemoryAllocationsCount(i)
@@ -118,7 +118,7 @@ void LogPendingMemoryAllocation(vk::Renderer *renderer, vk::MemoryLogSeverity se
         std::stringstream outStream;
 
         outStream << "Pending allocation size for memory allocation type ("
-                  << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)])
+                  << vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)]
                   << ") for heap index " << memoryHeapIndex << " (type index " << memoryTypeIndex
                   << "): " << allocSize;
 
@@ -279,7 +279,7 @@ void MemoryAllocationTracker::onMemoryAllocImpl(vk::MemoryAllocationType allocTy
 
         INFO() << "Memory allocation: (id " << memAllocLogInfo.id << ") for object "
                << memAllocLogInfo.handle << " | Size: " << memAllocLogInfo.size
-               << " | Type: " << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[allocTypeIndex])
+               << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
                << " | Memory type index: " << memoryTypeIndex
                << " | Heap index: " << memAllocLogInfo.memoryHeapIndex;
 
@@ -342,8 +342,8 @@ void MemoryAllocationTracker::onMemoryDeallocImpl(vk::MemoryAllocationType alloc
                 mActivePerHeapMemoryAllocationsSize[allocTypeIndex][memoryHeapIndex] -= size;
 
                 INFO() << "Memory deallocation: (id " << memInfoEntry->id << ") for object "
-                       << memInfoEntry->handle << " | Size: " << memInfoEntry->size << " | Type: "
-                       << ANGLE_UNSAFE_TODO(vk::kMemoryAllocationTypeMessage[allocTypeIndex])
+                       << memInfoEntry->handle << " | Size: " << memInfoEntry->size
+                       << " | Type: " << vk::kMemoryAllocationTypeMessage[allocTypeIndex]
                        << " | Memory type index: " << memoryTypeIndex
                        << " | Heap index: " << memInfoEntry->memoryHeapIndex;
 

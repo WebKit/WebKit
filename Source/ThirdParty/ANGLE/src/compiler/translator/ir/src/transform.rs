@@ -14,7 +14,9 @@ pub mod localized_workarounds;
 pub mod monomorphize_unsupported_functions;
 pub mod propagate_precision;
 pub mod remove_unused_framebuffer_fetch;
+pub mod rewrite_array_of_array_of_opaque_uniforms;
 pub mod rewrite_pixel_local_storage;
+pub mod rewrite_struct_samplers;
 pub mod scalarize_vec_and_mat_constructor_args;
 pub mod sort_uniforms;
 

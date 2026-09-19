@@ -7083,10 +7083,9 @@ void main() { col = vec4(0, 0, 1, 1); })";
     EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::blue);
 }
 
-// Tests that cached pointers in VertexArrayVk are reset if the DynamicBuffer for merged streamed
-// attributes is resized and one of the merged attributes becomes inactive in subsequent draws
-// without rebinding the VAO. See crbug.com/549587685.
-TEST_P(VertexAttributeResizeTest, ResizeMergedStreamedAttribAndSwitchProgram)
+// Shared body for the two tests below. `interposeOtherVAO` is the ONLY difference
+// between them, so any behavioural difference is attributable to it alone.
+static void RunMergedStreamedAttribResize(bool interposeOtherVAO)
 {
     // Program 1: active 0, 1.
     constexpr char kLocalVS01[] = R"(#version 300 es
@@ -7107,7 +7106,8 @@ void main() {
     vC = vec4(1.0);
 })";
 
-    // Program 3: active 2 only.
+    // Program 3: active 2 only. Location 2 makes getMaxActiveAttribLocation() 3, so the
+    // vertex-buffer dirty-bit handler walks slots 0..2 and therefore touches slot 1.
     constexpr char kLocalVS2[] = R"(#version 300 es
 layout(location = 2) in vec4 a2;
 out vec4 vC;
@@ -7116,7 +7116,7 @@ void main() {
     vC = a2;
 })";
 
-    // Program 4: active 3 only.
+    // Program 4: active 3 only, used to groom the freed block.
     constexpr char kLocalVS3[] = R"(#version 300 es
 layout(location = 3) in vec4 a3;
 out vec4 vC;
@@ -7142,9 +7142,7 @@ void main() {
     // address ranges -> merged into ONE allocation under slot 0's index.
     std::vector<float> clientData(2048 * 8, 0.0f);
 
-    // Client-memory array 2 for slot 3 (separate, NO overlap -> no merge -> its own
-    // mStreamedVertexBuffers[3] DynamicBuffer, whose new blocks allocate fresh
-    // standalone BufferHelpers via make_unique).
+    // Client-memory array 2 for slot 3 (separate, NO overlap -> no merge).
     std::vector<float> clientData3(4096 * 4, 0.0f);
 
     // slot 2: a normal GL-buffer attrib (non-streaming)
@@ -7153,6 +7151,20 @@ void main() {
     const std::vector<float> normData(12, 0.0f);
     glBufferData(GL_ARRAY_BUFFER, normData.size() * sizeof(float), normData.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // A second, entirely buffer-backed VAO. It streams nothing, so binding it drives
+    // mCurrentActiveStreamingAttribsMask to empty while its reset is applied to itself.
+    GLVertexArray vaoOther;
+    GLBuffer bufOther;
+    glBindVertexArray(vaoOther);
+    glBindBuffer(GL_ARRAY_BUFFER, bufOther);
+    const std::vector<float> otherData(64, 0.0f);
+    glBufferData(GL_ARRAY_BUFFER, otherData.size() * sizeof(float), otherData.data(),
+                 GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 16, nullptr);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
 
     // default VAO: slots 0, 1, 3 client-memory streaming; slot 2 normal buffer
     glBindVertexArray(0);
@@ -7170,24 +7182,33 @@ void main() {
     glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 16, clientData3.data());
     ASSERT_GL_NO_ERROR();
 
-    // Step 1: Draw 1 with prog01. Slots 0+1 active -> client-attrib merge -> single alloc under
-    // index 0.
+    // Step 1: slots 0+1 active -> client-attrib merge -> single allocation under index 0.
+    // mCurrentArrayBuffers[0] and [1] both point at that one block.
+    // mCurrentActiveStreamingAttribsMask is now {0, 1}.
     glUseProgram(prog01);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     ASSERT_GL_NO_ERROR();
 
-    // Step 2: Draw 2 with prog0. Slot 0 only active, 1200 verts -> realloc of
-    // mStreamedVertexBuffers[0]. Old block goes in-flight, but slot 1 retains a cached pointer to
-    // it.
+    // Step 2: the bypass. Draw once on the buffer-backed VAO.
+    if (interposeOtherVAO)
+    {
+        glBindVertexArray(vaoOther);
+        glUseProgram(prog0);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        ASSERT_GL_NO_ERROR();
+        glBindVertexArray(0);
+    }
+
+    // Step 3: slot 0 only active, streaming much bigger vertices to trigger backend streaming
+    // buffer reallocation.
     glUseProgram(prog0);
     glDrawArrays(GL_TRIANGLES, 0, 1200);
     ASSERT_GL_NO_ERROR();
 
-    // Step 3: glFinish advances queue serial -> old block is released and destroyed.
+    // Step 4: advance the queue serial -> the old block is released and destroyed.
     glFinish();
 
-    // Step 4: Groom draws with prog3 (slot 3 only active) with increasing vertex counts.
-    // Each draw that doesn't fit the current block allocates a new block, reusing the freed memory.
+    // Step 5: groom, so the freed block is handed back out to a live BufferHelper.
     glUseProgram(prog3);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     ASSERT_GL_NO_ERROR();
@@ -7196,17 +7217,31 @@ void main() {
     glDrawArrays(GL_TRIANGLES, 0, 2400);
     ASSERT_GL_NO_ERROR();
 
-    // Step 5: Draw with prog2 (slot 2 only active).
-    // Slot 2 is a normal buffer (not streamed). The stale pointer for slot 1 must be reset
-    // so it is not accessed when marking vertex buffers as read.
+    // Step 6: slot 2 only active. Slot 2 is buffer-backed, so nothing is streamed, but
+    // getMaxActiveAttribLocation() is 3 and the vertex-buffer dirty-bit handler marks
+    // slots 0..2 as read unconditionally. Slot 1 is read here, and it is stale.
     glUseProgram(prog2);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     ASSERT_GL_NO_ERROR();
 
-    // Second draw to verify stability.
     glDrawArrays(GL_TRIANGLES, 0, 3);
     ASSERT_GL_NO_ERROR();
     glFinish();
+}
+
+// Tests that cached pointers in VertexArrayVk are reset if the DynamicBuffer for merged streamed
+// attributes is resized and one of the merged attributes becomes inactive in subsequent draws
+// without rebinding the VAO. See crbug.com/549587685.
+TEST_P(VertexAttributeResizeTest, ResizeMergedStreamedAttribSameVAOControl)
+{
+    RunMergedStreamedAttribResize(false);
+}
+
+// Similar to ResizeMergedStreamedAttribSameVAOControl, except that the active-attrib set narrows
+// while a different VAO is bound.
+TEST_P(VertexAttributeResizeTest, ResizeMergedStreamedAttribSwitchProgramUnderOtherVAO)
+{
+    RunMergedStreamedAttribResize(true);
 }
 
 // Ensure a large offset is not interpreted as negative.

@@ -1778,7 +1778,7 @@ angle::Result WindowSurfaceVk::createSwapchain(vk::ErrorContext *context)
         VkImageCreateFlags unusedCreateFlags = 0;
         const void *pNext                    = nullptr;
         pNext                                = vk::ImageHelper::DeriveCreateInfoPNext(
-            context, actualFormatID, pNext, &imageFormatListInfo, &imageFormats,
+            context, intendedFormatID, actualFormatID, pNext, &imageFormatListInfo, &imageFormats,
             vk::ImageFormatReinterpretability::ColorspaceOverrides, &unusedCreateFlags);
         if (pNext != nullptr)
         {

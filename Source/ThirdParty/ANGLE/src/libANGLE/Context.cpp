@@ -424,14 +424,16 @@ void GetObjectLabelBase(const std::string &objectLabel,
     }
 }
 
-GLsizei GetMarkerLength(GLsizei length, const char *marker)
+GLsizei GetMarkerLength(GLsizei length, const char *marker, GLsizei maxLength)
 {
     if (length == 0)
     {
-        return static_cast<GLsizei>(
+        length = static_cast<GLsizei>(
             std::min<size_t>(strlen(marker), std::numeric_limits<GLsizei>::max()));
     }
-    return length;
+    // https://crbug.com/524435922: Cap debug marker length to prevent driver or validation layer
+    // issues with large labels.
+    return std::min(length, maxLength);
 }
 
 enum SubjectIndexes : angle::SubjectIndex
@@ -3222,7 +3224,9 @@ void Context::insertEventMarker(GLsizei length, const char *marker)
     }
 
     // If <length> is 0 then <marker> is assumed to be null-terminated.
-    ANGLE_CONTEXT_TRY(mImplementation->insertEventMarker(GetMarkerLength(length, marker), marker));
+    ANGLE_CONTEXT_TRY(mImplementation->insertEventMarker(
+        GetMarkerLength(length, marker, static_cast<GLsizei>(getCaps().maxDebugMessageLength)),
+        marker));
 }
 
 void Context::pushGroupMarker(GLsizei length, const char *marker)
@@ -3241,8 +3245,9 @@ void Context::pushGroupMarker(GLsizei length, const char *marker)
     else
     {
         // If <length> is 0 then <marker> is assumed to be null-terminated.
-        ANGLE_CONTEXT_TRY(
-            mImplementation->pushGroupMarker(GetMarkerLength(length, marker), marker));
+        ANGLE_CONTEXT_TRY(mImplementation->pushGroupMarker(
+            GetMarkerLength(length, marker, static_cast<GLsizei>(getCaps().maxDebugMessageLength)),
+            marker));
     }
     mState.incrementGroupMarkers();
 }
@@ -3325,11 +3330,6 @@ void Context::handleError(GLenum errorCode,
                           unsigned int line)
 {
     mErrors.handleError(errorCode, message, file, function, line);
-
-    if (isHardenedContext() && getFrontendFeatures().loseHardenedContextOnBackendError.enabled)
-    {
-        markContextLost(GraphicsResetStatus::UnknownContextReset);
-    }
 }
 
 // Get one of the recorded errors and clear its flag, if any.
@@ -10405,6 +10405,8 @@ ErrorSet::ErrorSet(Debug *debug,
     : mDebug(debug),
       mResetStrategy(GetResetStrategy(attribs)),
       mLoseContextOnOutOfMemory(frontendFeatures.loseContextOnOutOfMemory.enabled),
+      mLoseContextOnInternalError(frontendFeatures.loseHardenedContextOnBackendError.enabled &&
+                                  (GetWebGLContext(attribs) || GetHardenedContext(attribs))),
       mContextLostForced(false),
       mResetStatus(GraphicsResetStatus::NoError),
       mErrorMessageCount(0),
@@ -10432,8 +10434,9 @@ void ErrorSet::handleError(GLenum errorCode,
                            const char *function,
                            unsigned int line)
 {
-    if (errorCode == GL_OUT_OF_MEMORY && mResetStrategy == GL_LOSE_CONTEXT_ON_RESET_EXT &&
-        mLoseContextOnOutOfMemory)
+    if (mLoseContextOnInternalError ||
+        (errorCode == GL_OUT_OF_MEMORY && mResetStrategy == GL_LOSE_CONTEXT_ON_RESET_EXT &&
+         mLoseContextOnOutOfMemory))
     {
         markContextLost(GraphicsResetStatus::UnknownContextReset);
     }
