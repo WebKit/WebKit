@@ -37,15 +37,22 @@ should_restrict_header_replacement_based_on_feature = True
 def read_content_from_webkit_additions(built_products_directory, sdk_root_directory, filename):
     library_headers_folder_path = os.environ.get('WK_LIBRARY_HEADERS_FOLDER_PATH', '').removeprefix('/')
     additions_path = os.path.join(library_headers_folder_path, "WebKitAdditions", filename)
-    try:
-        file_in_build_directory = open(os.path.join(built_products_directory, additions_path), "r")
-        return file_in_build_directory.read()
-    except Exception as ex:
+
+    unexpected_errors = []
+    for directory in (built_products_directory, sdk_root_directory):
         try:
-            file_in_sdk_root = open(os.path.join(sdk_root_directory, additions_path), "r")
-            return file_in_sdk_root.read()
+            with open(os.path.join(directory, additions_path), "r") as file:
+                return file.read()
+        except FileNotFoundError:
+            pass
         except Exception as ex:
-            return ""
+            unexpected_errors.append(ex)
+
+    if unexpected_errors:
+        for ex in unexpected_errors:
+            print("error: could not read <WebKitAdditions/%s>: %s" % (filename, ex), file=sys.stderr)
+        sys.exit(1)
+    return ""
 
 
 def check_should_do_replacement(built_products_directory, sdk_root_directory):
