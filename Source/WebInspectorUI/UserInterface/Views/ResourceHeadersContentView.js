@@ -275,7 +275,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
             if (this._resource.initialPriority !== WI.Resource.NetworkPriority.Unknown &&
                 this._resource.initialPriority !== this._resource.priority) {
-                priorityText += WI.UIString(" (initially %s)", WI.Resource.displayNameForPriority(this._resource.initialPriority));
+                priorityText += WI.UIString(" (initially %s)").format(WI.Resource.displayNameForPriority(this._resource.initialPriority));
             }
 
             this._summarySection.appendKeyValuePair(WI.UIString("Priority"), priorityText);
