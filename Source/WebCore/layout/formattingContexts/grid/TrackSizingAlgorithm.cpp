@@ -536,8 +536,6 @@ static Vector<size_t> indexesForUnfrozenAffectedTracks(const Vector<size_t>& spa
 
 // Distributes space equally among trackIndexes in successive rounds, freezing tracks (per
 // spaceDistributedToTrack, below) as needed, until space is exhausted or no tracks remain unfrozen.
-// FIXME: https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items update to handle flex tracks
-// which do not distribute space equally, but according to their flex factor.
 static void distributeSpaceEquallyAmongTracks(LayoutUnit& space, const Vector<size_t>& trackIndexes,
     const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>& itemIncurredIncreases, ExtraSpaceDistributionTarget target, SpaceDistributionLimit limit)
 {
@@ -576,6 +574,60 @@ static void distributeSpaceEquallyAmongTracks(LayoutUnit& space, const Vector<si
         }
         unfrozenTrackIndexes = indexesForUnfrozenAffectedTracks(trackIndexes, unsizedTracks, itemIncurredIncreases, target, limit);
     }
+}
+
+// https://drafts.csswg.org/css-grid-1/#algo-spanning-flex-items
+static void distributeSpaceAmongFlexibleTracks(LayoutUnit& spaceToDistribute, const TrackIndexes& spannedAffectedTracks,
+    const UnsizedTracks& unsizedTracks, Vector<LayoutUnit>& itemIncurredIncreases)
+{
+    if (spannedAffectedTracks.isEmpty())
+        return;
+
+    auto flexFactor = [&](size_t trackIndex) {
+        // Only flexible tracks are affected in this phase, per isTrackAffectedForSpaceDistributionInPhase.
+        ASSERT(unsizedTracks[trackIndex].trackSizingFunction.max.isFlex());
+        return unsizedTracks[trackIndex].trackSizingFunction.max.flex().value;
+    };
+
+    double flexFactorSum = 0;
+    for (auto trackIndex : spannedAffectedTracks)
+        flexFactorSum += flexFactor(trackIndex);
+
+    // Track the difference between the ideal share (double, the track's fraction of the flex factor
+    // sum) and the snapped share (LayoutUnit, rounding down from the ideal share).
+    double lastTrackRoundingError = 0;
+    auto distributeToTrack = [&](size_t trackIndex, double share) {
+        // Carry the fraction lost when snapping the previous track so flooring errors don't accumulate.
+        share += lastTrackRoundingError;
+
+        LayoutUnit spaceDistributed { share };
+        lastTrackRoundingError = share - spaceDistributed.toDouble();
+        ASSERT(lastTrackRoundingError >= 0);
+
+        itemIncurredIncreases[trackIndex] += spaceDistributed;
+        spaceToDistribute -= spaceDistributed;
+    };
+
+    // "if the sum of the flexible sizing functions of all flexible tracks spanned by the item is
+    // greater than or equal to one, distributing space to such tracks according to the ratios of
+    // their flexible sizing functions rather than distributing space equally; and if the sum is less
+    // than one, distributing that proportion of space according to the ratios of their flexible
+    // sizing functions..."
+    // A span of 0fr tracks has no ratios to distribute by, so all of its space is distributed equally below.
+    if (flexFactorSum) {
+        auto spaceDistributedByRatio = std::min(flexFactorSum, 1.0) * spaceToDistribute.toDouble();
+        for (auto trackIndex : spannedAffectedTracks)
+            distributeToTrack(trackIndex, spaceDistributedByRatio * flexFactor(trackIndex) / flexFactorSum);
+    }
+
+    // "...and the rest equally"
+    if (flexFactorSum < 1) {
+        auto equalShare = spaceToDistribute.toDouble() / spannedAffectedTracks.size();
+        for (auto trackIndex : spannedAffectedTracks)
+            distributeToTrack(trackIndex, equalShare);
+    }
+    // All space should be distributed to flexible tracks as they do not have growth limits.
+    ASSERT(spaceToDistribute < LayoutUnit::epsilon());
 }
 
 // https://drafts.csswg.org/css-grid-1/#algo-spanning-items
@@ -677,7 +729,7 @@ static bool isTrackAffectedForSpaceDistributionInPhase(const UnsizedTrack& track
 // intrinsic maximums.
 static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistributionTarget, AffectedTrackSizingFunction affectedTrackSizingFunction,
     const TrackIndexes& affectedTracksIndexes, const Vector<LayoutUnit>& sizeContributions, const GridItemIndexes& accommodatedItemsIndexes,
-    const PlacedGridItemSpanList& gridItemSpanList, UnsizedTracks& unsizedTracks, LayoutUnit gapSize)
+    const PlacedGridItemSpanList& gridItemSpanList, UnsizedTracks& unsizedTracks, LayoutUnit gapSize, ResolveIntrinsicTrackSizesPhase phase)
 {
     ASSERT(accommodatedItemsIndexes.size() == sizeContributions.size());
 
@@ -720,7 +772,10 @@ static TrackIndexes distributeExtraSpace(ExtraSpaceDistributionTarget spaceDistr
 
         // 2.2. Distribute space up to limits:
         Vector<LayoutUnit> itemIncurredIncreases(unsizedTracks.size());
-        distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
+        if (phase == ResolveIntrinsicTrackSizesPhase::FlexibleTracks)
+            distributeSpaceAmongFlexibleTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases);
+        else
+            distributeSpaceEquallyAmongTracks(spaceToDistribute, spannedAffectedTracks, unsizedTracks, itemIncurredIncreases, spaceDistributionTarget, SpaceDistributionLimit::UpToGrowthLimit);
 
         // https://drafts.csswg.org/css-grid-1/#extra-space
         // 2.3. "Distribute space to non-affected tracks: If extra space remains at this point, and
@@ -836,14 +891,14 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
     auto minimumSizeContributions = isSizedUnderMinOrMaxContentConstraint(resolveIntrinsicTrackSizesContext.axisConstraint)
         ? limitedContentContributions(minContentContributions(trackSizingItems, spanningItems, gridItemSizingFunctions), fixedMaxTrackSizingFunctionSums, minimumContributionsList)
         : minimumContributionsList;
-    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::IntrinsicMinimum, tracksWithIntrinsicMinimums, minimumSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::IntrinsicMinimum, tracksWithIntrinsicMinimums, minimumSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
 
     // 2. For content-based minimums: continue to distribute extra space to the base sizes of tracks with
     // a min track sizing function of min-content or max-content, to accommodate the items' min-content
     // contributions.
     auto minContentSizeContributions = minContentContributions(trackSizingItems, spanningItems, gridItemSizingFunctions);
     auto tracksWithContentBasedMinimums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::ContentBasedMinimum, phase);
-    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::ContentBasedMinimum, tracksWithContentBasedMinimums, minContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::ContentBasedMinimum, tracksWithContentBasedMinimums, minContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
 
     // 3. For max-content minimums: if the grid container is being sized under a max-content constraint
     if (scenario == AxisConstraint::FreeSpaceScenario::MaxContent) {
@@ -851,13 +906,13 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
         // of auto or max-content, to accommodate the items' limited max-content contributions...
         auto tracksWithAutoOrMaxContentMinimums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::AutoOrMaxContentMinimum, phase);
         auto limitedMaxContentSizeContributions = limitedContentContributions(maxContentContributions(trackSizingItems, spanningItems, gridItemSizingFunctions), fixedMaxTrackSizingFunctionSums, minimumContributionsList);
-        distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::AutoOrMaxContentMinimum, tracksWithAutoOrMaxContentMinimums, limitedMaxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+        distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::AutoOrMaxContentMinimum, tracksWithAutoOrMaxContentMinimums, limitedMaxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
     }
     // ...In all cases, distribute to tracks with a max-content min track sizing function
     // to accommodate the items' max-content contributions.
     auto tracksWithMaxContentMinimums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::MaxContentMinimum, phase);
     auto maxContentSizeContributions = maxContentContributions(trackSizingItems, spanningItems, gridItemSizingFunctions);
-    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::MaxContentMinimum, tracksWithMaxContentMinimums, maxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+    distributeExtraSpace(ExtraSpaceDistributionTarget::BaseSizes, AffectedTrackSizingFunction::MaxContentMinimum, tracksWithMaxContentMinimums, maxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
 
     // 4. If at this point any track's growth limit is now less than its base size, increase its
     //    growth limit to match its base size.
@@ -869,7 +924,7 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
         // 5. For intrinsic maximums: distribute extra space to the growth limits of tracks with an
         //    intrinsic max track sizing function, to accommodate these items' min-content contributions.
         auto tracksWithIntrinsicMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::IntrinsicMaximum, phase);
-        auto tracksWhoseGrowthLimitBecameFinite = distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::IntrinsicMaximum, tracksWithIntrinsicMaximums, minContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+        auto tracksWhoseGrowthLimitBecameFinite = distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::IntrinsicMaximum, tracksWithIntrinsicMaximums, minContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
         // "Mark any tracks whose growth limit changed from infinite to finite in this step as
         // infinitely growable for the next step."
         auto infinitelyGrowableTracks = ScopedInfinitelyGrowableTracks { unsizedTracks, tracksWhoseGrowthLimitBecameFinite };
@@ -877,7 +932,7 @@ static void resolveIntrinsicTrackSizesWithSpanningItems(const ResolveIntrinsicTr
         // 6. For max-content maximums: distribute extra space to the growth limits of tracks with a
         //    max-content max track sizing function, to accommodate these items' max-content contributions.
         auto tracksWithMaxContentMaximums = affectedTracks(unsizedTracks, AffectedTrackSizingFunction::MaxContentMaximum, phase);
-        distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::MaxContentMaximum, tracksWithMaxContentMaximums, maxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize);
+        distributeExtraSpace(ExtraSpaceDistributionTarget::GrowthLimits, AffectedTrackSizingFunction::MaxContentMaximum, tracksWithMaxContentMaximums, maxContentSizeContributions, spanningItems, gridItemSpanList, unsizedTracks, gapSize, phase);
     }
 }
 
