@@ -178,6 +178,8 @@ public:
     void synchronizeAttribute(const QualifiedName&);
     void synchronizeAllAttributes();
 
+    const QualifiedName& attributeNameForSynchronization(const QualifiedName&) const;
+
     void commitPropertyChange(SVGProperty*) override;
     void commitPropertyChange(SVGAnimatedPropertyBase&);
 
@@ -230,6 +232,8 @@ protected:
 
 private:
     virtual void clearTarget() { }
+
+    bool hasStoredAttribute(const QualifiedName&) const;
 
     void invalidateLayerRequirementForFEImageReference(const SVGElement& referencingElement);
     void buildPendingResourcesIfNeeded();
