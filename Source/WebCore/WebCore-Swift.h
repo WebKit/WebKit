@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(modules)
+#pragma once
 
-#if USE(APPKIT)
-#import <AppKit/AppKit.h>
-#else
-#import <UIKit/UIKit.h>
+// Anything in WebCore needing to use Swift types or functions should include
+// this rather than WebCoreSwift-Generated.h directly.
+
+#ifdef __swift__
+#warning "You're including WebCore-Swift.h from a C++ header file - don't do that. This may cause circular Swift<->C++ dependencies and build problems."
 #endif
 
-#import <WebCore/CocoaView.h>
+// WebCoreSwift-Generated.h is emitted by WebCore's Swift compilation, so its
+// includers must build in the sub-target ordered after it.
+#if defined(BUILDING_WITH_CMAKE) && !defined(WEBCORE_COMPILING_SWIFT_INTEROP_SUBTARGET)
+#error "This source includes WebCore-Swift.h; add it to WebCore_SWIFT_INTEROP_SOURCES in Source/WebCore/CMakeLists.txt."
+#endif
 
-WEBCORE_EXPORT
-@interface WebViewVisualIdentificationOverlay : NSObject
+// If Swift function parameters or return types depend on C++ types, the
+// relevant headers must be included here.
 
-+ (void)installForWebViewIfNeeded:(CocoaView *)view kind:(NSString *)kind deprecated:(BOOL)isDeprecated;
-
-@end
-
-#endif // !__has_feature(modules)
+#include "WebCoreSwift-Generated.h"

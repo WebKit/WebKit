@@ -27,6 +27,8 @@
 
 #import <wtf/Platform.h>
 
+#if !__has_feature(modules)
+
 #if ENABLE(WRITING_TOOLS)
 
 #if PLATFORM(IOS_FAMILY)
@@ -68,3 +70,5 @@ constexpr auto CocoaWritingToolsResultTable = NSWritingToolsResultTable;
 #endif // PLATFORM(IOS_FAMILY)
 
 #endif // ENABLE(WRITING_TOOLS)
+
+#endif // !__has_feature(modules)

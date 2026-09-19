@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !__has_feature(modules)
+
 DECLARE_SYSTEM_HEADER
 
 #import <wtf/Platform.h>
@@ -70,3 +72,5 @@ WTF_EXTERN_C_END
 
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
+
+#endif // !__has_feature(modules)
