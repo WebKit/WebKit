@@ -123,6 +123,11 @@ static bool consumePositionTryDescriptor(CSSParserTokenRange&, const CSSParserCo
 // @function descriptors.
 static bool consumeFunctionDescriptor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, CSS::PropertyParserResult&);
 
+#if ENABLE(SPATIAL_PORTAL)
+// @environment-map descriptors.
+static bool consumeEnvironmentMapDescriptor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, CSS::PropertyParserResult&);
+#endif
+
 // MARK: - CSSPropertyID parsing
 
 template<typename CharacterType> static CSSPropertyID cssPropertyID(std::span<const CharacterType> characters)
@@ -259,6 +264,11 @@ bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important
     case StyleRuleType::Function:
         parseSuccess = consumeFunctionDescriptor(range, context, property, result);
         break;
+#if ENABLE(SPATIAL_PORTAL)
+    case StyleRuleType::EnvironmentMap:
+        parseSuccess = consumeEnvironmentMapDescriptor(range, context, property, result);
+        break;
+#endif
     default:
         parseSuccess = consumeStyleProperty(range, context, property, important, ruleType, result, namespaceMap);
         break;
@@ -803,6 +813,27 @@ bool consumeViewTransitionDescriptor(CSSParserTokenRange& range, const CSSParser
     result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), IsImportant::No);
     return true;
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+
+bool consumeEnvironmentMapDescriptor(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, CSS::PropertyParserResult& result)
+{
+    auto state = CSS::PropertyParserState {
+        .context = context,
+        .currentRule = StyleRuleType::EnvironmentMap,
+        .currentProperty = property,
+        .important = IsImportant::No,
+    };
+
+    RefPtr parsedValue = CSSPropertyParsing::parseEnvironmentMapDescriptor(range, property, state);
+    if (!parsedValue || !range.atEnd())
+        return false;
+
+    result.addProperty(state, property, CSSPropertyInvalid, WTF::move(parsedValue), IsImportant::No);
+    return true;
+}
+
+#endif // ENABLE(SPATIAL_PORTAL)
 
 // Checks whether a CSS property is allowed in @position-try.
 static bool propertyAllowedInPositionTryRule(CSSPropertyID property)

@@ -131,7 +131,12 @@ private:
     void setPaused(WebCore::NodeIdentifier, bool, CompletionHandler<void(bool succeeded)>&&) final;
     Seconds currentTime(WebCore::NodeIdentifier) const final;
     void setCurrentTime(WebCore::NodeIdentifier, Seconds, CompletionHandler<void()>&&) final;
-    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
+    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data, const URL& sourceURL) final;
+    String environmentMapForTesting() const final;
+#if ENABLE(SPATIAL_PORTAL)
+    void disableEnvironmentMap() final;
+    void enableSystemEnvironmentMap() final;
+#endif
     void setHasPortal(bool) final;
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
@@ -159,6 +164,8 @@ private:
     std::optional<WebCore::FloatPoint3D> m_boundingBoxCenter;
     std::optional<WebCore::FloatPoint3D> m_boundingBoxExtents;
     bool m_hasPortal { true };
+    WebCore::EnvironmentMapKind m_environmentMapKind { WebCore::EnvironmentMapKind::Default };
+    URL m_environmentMapURL;
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::UsedPortalTransform m_portalTransform;
     WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };

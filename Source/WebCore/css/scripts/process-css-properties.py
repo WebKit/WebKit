@@ -3364,8 +3364,14 @@ class GenerationContext:
         with to.indent():
             to.write(f"switch (id) {{")
 
+            # Both @font-face and @environment-map use `src`.
+            seen_property_ids = set()
             for item in iterable:
-                to.write(f"case {mapping_to_property(item).id}:")
+                property_id = mapping_to_property(item).id
+                if property_id in seen_property_ids:
+                    continue
+                seen_property_ids.add(property_id)
+                to.write(f"case {property_id}:")
 
             with to.indent():
                 to.write(f"return true;")

@@ -70,6 +70,10 @@ class ColorSpace;
 class FloatSize;
 struct ModelPlayerGraphicsLayerConfiguration;
 
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+enum class EnvironmentMapKind : uint8_t { None, Default, Custom };
+#endif
+
 class WEBCORE_EXPORT ModelPlayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ModelPlayer, WTF::DestructionThread::Main> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ModelPlayer, WEBCORE_EXPORT);
 public:
@@ -153,7 +157,10 @@ public:
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
-    virtual void setEnvironmentMap(Ref<SharedBuffer>&& data);
+    virtual void setEnvironmentMap(Ref<SharedBuffer>&& data, const URL& sourceURL);
+    virtual void disableEnvironmentMap();
+    virtual void enableSystemEnvironmentMap();
+    virtual String environmentMapForTesting() const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_PORTAL)

@@ -491,10 +491,41 @@ void ModelProcessModelPlayer::setCurrentTime(WebCore::NodeIdentifier nodeID, Sec
     });
 }
 
-void ModelProcessModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
+void ModelProcessModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data, const URL& sourceURL)
 {
-    send(Messages::ModelProcessModelPlayerProxy::SetEnvironmentMap(WTF::move(data)));
+    m_environmentMapKind = WebCore::EnvironmentMapKind::Custom;
+    m_environmentMapURL = sourceURL;
+    send(Messages::ModelProcessModelPlayerProxy::SetEnvironmentMapData(WTF::move(data)));
 }
+
+String ModelProcessModelPlayer::environmentMapForTesting() const
+{
+    switch (m_environmentMapKind) {
+    case WebCore::EnvironmentMapKind::None:
+        return "none"_s;
+    case WebCore::EnvironmentMapKind::Default:
+        return "auto"_s;
+    case WebCore::EnvironmentMapKind::Custom:
+        return m_environmentMapURL.string();
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+#if ENABLE(SPATIAL_PORTAL)
+
+void ModelProcessModelPlayer::disableEnvironmentMap()
+{
+    m_environmentMapKind = WebCore::EnvironmentMapKind::None;
+    send(Messages::ModelProcessModelPlayerProxy::DisableEnvironmentMap());
+}
+
+void ModelProcessModelPlayer::enableSystemEnvironmentMap()
+{
+    m_environmentMapKind = WebCore::EnvironmentMapKind::Default;
+    send(Messages::ModelProcessModelPlayerProxy::EnableSystemEnvironmentMap());
+}
+
+#endif
 
 void ModelProcessModelPlayer::setHasPortal(bool hasPortal)
 {

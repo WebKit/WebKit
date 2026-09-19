@@ -43,6 +43,7 @@ CSSAtRuleID cssAtRuleID(StringView name)
         { "charset"_s,               CSSAtRuleCharset },
         { "container"_s,             CSSAtRuleContainer },
         { "counter-style"_s,         CSSAtRuleCounterStyle },
+        { "environment-map"_s,       CSSAtRuleEnvironmentMap },
         { "font-face"_s,             CSSAtRuleFontFace },
         { "font-feature-values"_s,   CSSAtRuleFontFeatureValues },
         { "font-palette-values"_s,   CSSAtRuleFontPaletteValues },

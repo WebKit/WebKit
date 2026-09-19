@@ -81,6 +81,7 @@ public:
     bool isStartingStyleRule() const { return type() == StyleRuleType::StartingStyle; }
     bool isViewTransitionRule() const { return type() == StyleRuleType::ViewTransition; }
     bool isPositionTryRule() const { return type() == StyleRuleType::PositionTry; }
+    bool isEnvironmentMapRule() const { return type() == StyleRuleType::EnvironmentMap; }
 
     Ref<StyleRuleBase> copy() const;
 

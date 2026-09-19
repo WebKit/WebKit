@@ -35,6 +35,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertySyntax.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSEnvironmentMapRule.h"
 #include "CSSFontFamilyNameValue.h"
 #include "CSSFontFeatureValuesRule.h"
 #include "CSSKeywordValueInlines.h"
@@ -503,6 +504,10 @@ RefPtr<StyleRuleBase> CSSParser::consumeAtRule(CSSParserTokenRange& range, Allow
         return consumePositionTryRule(prelude, block);
     case CSSAtRuleFunction:
         return consumeFunctionRule(prelude, block);
+#if ENABLE(SPATIAL_PORTAL)
+    case CSSAtRuleEnvironmentMap:
+        return consumeEnvironmentMapRule(prelude, block);
+#endif
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -1101,6 +1106,30 @@ RefPtr<StyleRuleViewTransition> CSSParser::consumeViewTransitionRule(CSSParserTo
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::ViewTransition);
     return StyleRuleViewTransition::create(createStyleProperties(declarations, m_context.mode));
 }
+
+#if ENABLE(SPATIAL_PORTAL)
+
+RefPtr<StyleRuleEnvironmentMap> CSSParser::consumeEnvironmentMapRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    if (!m_context.propertySettings.spatialPortalEnabled)
+        return nullptr;
+
+    if (!prelude.atEnd())
+        return nullptr;
+
+    if (RefPtr observerWrapper = m_observerWrapper.get()) {
+        unsigned endOffset = observerWrapper->endOffset(prelude);
+        observerWrapper->observer().startRuleHeader(StyleRuleType::EnvironmentMap, observerWrapper->startOffset(prelude));
+        observerWrapper->observer().endRuleHeader(endOffset);
+        observerWrapper->observer().startRuleBody(endOffset);
+        observerWrapper->observer().endRuleBody(endOffset);
+    }
+
+    auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::EnvironmentMap);
+    return StyleRuleEnvironmentMap::create(createStyleProperties(declarations, m_context.mode));
+}
+
+#endif // ENABLE(SPATIAL_PORTAL)
 
 RefPtr<StyleRulePositionTry> CSSParser::consumePositionTryRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
@@ -1791,6 +1820,7 @@ static bool NODELETE ruleDoesNotAllowImportant(StyleRuleType type)
         || type == StyleRuleType::Keyframe
         || type == StyleRuleType::PositionTry
         || type == StyleRuleType::ViewTransition
+        || type == StyleRuleType::EnvironmentMap
         || type == StyleRuleType::Function;
 }
 

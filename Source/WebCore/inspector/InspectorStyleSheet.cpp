@@ -132,6 +132,7 @@ static RuleFlatteningStrategy NODELETE flatteningStrategyForStyleRuleType(StyleR
     case StyleRuleType::FontPaletteValues:
     case StyleRuleType::Property:
     case StyleRuleType::ViewTransition:
+    case StyleRuleType::EnvironmentMap:
     case StyleRuleType::Function:
     case StyleRuleType::FunctionDeclarations:
         // These rule types do not contain rules that apply directly to an element (i.e. these rules should not appear

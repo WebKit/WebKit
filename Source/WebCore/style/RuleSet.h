@@ -40,6 +40,9 @@ class StyleSheetContents;
 class StyleRuleFunction;
 class StyleRulePositionTry;
 class StyleRuleViewTransition;
+#if ENABLE(SPATIAL_PORTAL)
+class StyleRuleEnvironmentMap;
+#endif
 
 namespace MQ {
 class MediaQueryEvaluator;
@@ -148,6 +151,10 @@ public:
     Vector<Ref<const StyleRuleScope>> scopeRulesFor(const RuleData&) const;
 
     const RefPtr<const StyleRulePositionTry> NODELETE positionTryRuleForName(const AtomString&) const;
+
+#if ENABLE(SPATIAL_PORTAL)
+    RefPtr<const StyleRuleEnvironmentMap> NODELETE environmentMapRuleForName(const AtomString&) const;
+#endif
 
     WTF::String selectorsForDebugging() const;
 
@@ -260,6 +267,10 @@ private:
 
     // @position-try
     HashMap<AtomString, Ref<const StyleRulePositionTry>> m_positionTryRules;
+
+#if ENABLE(SPATIAL_PORTAL)
+    HashMap<AtomString, Ref<const StyleRuleEnvironmentMap>> m_environmentMapRules;
+#endif
 
     bool m_hasHostPseudoClassRulesMatchingInShadowTree { false };
     bool m_hasViewportDependentMediaQueries { false };

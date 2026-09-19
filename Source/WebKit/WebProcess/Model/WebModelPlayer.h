@@ -141,7 +141,7 @@ private:
 
     void setStageMode(WebCore::StageModeOperation) final;
     void notifyEntityTransformUpdated();
-    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&&) final;
+    void setEnvironmentMap(Ref<WebCore::SharedBuffer>&&, const URL&) final;
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     void setDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit, float currentEDRHeadroom, bool suppressEDR) final;

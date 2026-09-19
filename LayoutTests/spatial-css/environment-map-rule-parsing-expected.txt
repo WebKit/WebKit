@@ -1,0 +1,10 @@
+
+PASS @environment-map accepts valid descriptors
+PASS @environment-map rejects invalid descriptors
+PASS @environment-map is exposed as a CSSEnvironmentMapRule
+PASS @environment-map round-trips through cssText
+PASS duplicate names both stay in cssRules
+PASS @environment-map drops unknown descriptors
+PASS @environment-map takes no prelude
+PASS @supports at-rule(@environment-map)
+

@@ -66,6 +66,9 @@ class StyleRulePositionTry;
 class StyleRuleSupports;
 class StyleRuleViewport;
 class StyleRuleViewTransition;
+#if ENABLE(SPATIAL_PORTAL)
+class StyleRuleEnvironmentMap;
+#endif
 class StyleSheetContents;
 class ImmutableStyleProperties;
 class Element;
@@ -176,6 +179,9 @@ private:
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePositionTry> consumePositionTryRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleFunction> consumeFunctionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+#if ENABLE(SPATIAL_PORTAL)
+    RefPtr<StyleRuleEnvironmentMap> consumeEnvironmentMapRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+#endif
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

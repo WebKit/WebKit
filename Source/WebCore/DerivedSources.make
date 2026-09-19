@@ -1019,6 +1019,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSConditionRule.idl \
     $(WebCore)/css/CSSContainerRule.idl \
     $(WebCore)/css/CSSCounterStyleRule.idl \
+    $(WebCore)/css/CSSEnvironmentMapRule.idl \
     $(WebCore)/css/CSSFontFaceDescriptors.idl \
     $(WebCore)/css/CSSFontFaceRule.idl \
     $(WebCore)/css/CSSFontFeatureValuesRule.idl \
