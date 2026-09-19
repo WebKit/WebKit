@@ -882,13 +882,31 @@ void BBQJIT::emitZeroExtendAddressOperand(bool is64Bit, Value operand)
     return { };
 }
 
+template<typename Func>
+void BBQJIT::emitPassiveBitClear(ptrdiff_t bitVectorOffset, unsigned bitIndex, Func operation)
+{
+    if (bitIndex >= BitVector::maxInlineBitCount()) {
+        Vector<Value, 8> arguments = { instanceValue(), Value::fromI32(bitIndex) };
+        emitCCall(operation, arguments);
+        return;
+    }
+
+    m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, bitVectorOffset), wasmScratchGPR);
+    JumpList slowPath;
+    slowPath.append(m_jit.branchTest64(ResultCondition::Zero, wasmScratchGPR, TrustedImm64(static_cast<int64_t>(BitVector::inlineBitMask()))));
+    m_jit.andPtr(TrustedImmPtr(static_cast<size_t>(~(static_cast<uintptr_t>(1) << bitIndex))), wasmScratchGPR);
+    m_jit.storePtr(wasmScratchGPR, Address(GPRInfo::wasmContextInstancePointer, bitVectorOffset));
+    MacroAssembler::Label done(m_jit);
+    m_slowPaths.append({ origin(), WTF::move(slowPath), WTF::move(done), copyBindings(), [bitIndex, operation](BBQJIT&, CCallHelpers& jit) {
+        jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        jit.setupArguments<Func>(GPRInfo::wasmContextInstancePointer, TrustedImm32(bitIndex));
+        jit.callOperation<OperationPtrTag>(operation);
+    } });
+}
+
 [[nodiscard]] PartialResult BBQJIT::addElemDrop(unsigned elementIndex)
 {
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        Value::fromI32(elementIndex)
-    };
-    emitCCall(&operationWasmElemDrop, arguments);
+    emitPassiveBitClear(JSWebAssemblyInstance::offsetOfPassiveElements(), elementIndex, &operationWasmElemDrop);
 
     LOG_INSTRUCTION("ElemDrop", elementIndex);
     return { };
@@ -1224,8 +1242,7 @@ Address BBQJIT::materializePointer(Location pointerLocation, uint64_t uoffset, W
 
 [[nodiscard]] PartialResult BBQJIT::addDataDrop(unsigned dataSegmentIndex)
 {
-    Vector<Value, 8> arguments = { instanceValue(), Value::fromI32(dataSegmentIndex) };
-    emitCCall(&operationWasmDataDrop, arguments);
+    emitPassiveBitClear(JSWebAssemblyInstance::offsetOfPassiveDataSegments(), dataSegmentIndex, &operationWasmDataDrop);
 
     LOG_INSTRUCTION("DataDrop", dataSegmentIndex);
     return { };
