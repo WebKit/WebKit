@@ -48,7 +48,7 @@ void FindStringCallbackAggregator::foundString(std::optional<FrameIdentifier> fr
         return;
 
     m_matchCount += matchCount;
-    m_matches.set(*frameID, didWrap);
+    m_matches.set(*frameID, FrameMatchResult { matchCount, didWrap });
 }
 
 RefPtr<WebFrameProxy> FindStringCallbackAggregator::incrementFrame(WebFrameProxy& frame)
@@ -76,6 +76,17 @@ bool FindStringCallbackAggregator::shouldTargetFrame(WebFrameProxy& frame, WebFr
     return false;
 }
 
+uint32_t FindStringCallbackAggregator::globalIndexOffsetForFrame(const WebFrameProxy& targetFrame)
+{
+    uint32_t offset = 0;
+    RefPtr mainFrame = m_page->mainFrame();
+    for (RefPtr frame = mainFrame; frame && frame != &targetFrame; frame = frame->traverseNext(mainFrame)) {
+        if (auto it = m_matches.find(frame->frameID()); it != m_matches.end())
+            offset += it->value.matchCount;
+    }
+    return offset;
+}
+
 FindStringCallbackAggregator::~FindStringCallbackAggregator()
 {
     RefPtr protectedPage = m_page.get();
@@ -94,7 +105,7 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     do {
         auto it = m_matches.find(frameContainingMatch->frameID());
         if (it != m_matches.end()) {
-            if (shouldTargetFrame(*frameContainingMatch, *focusedFrame, it->value))
+            if (shouldTargetFrame(*frameContainingMatch, *focusedFrame, it->value.didWrap))
                 break;
         }
         frameContainingMatch = incrementFrame(*frameContainingMatch);
@@ -103,15 +114,16 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     auto message = Messages::WebPage::SelectLastFoundRange(m_string, m_options, m_maxMatchCount);
     bool shouldReportMatchesCount = willFindAllMatches(m_options);
     auto matchCount = shouldReportMatchesCount ? m_matchCount : 1;
-    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
+    Ref targetFrame = frameContainingMatch ? *frameContainingMatch : *focusedFrame;
+    uint32_t indexOffset = globalIndexOffsetForFrame(targetFrame);
+    auto completionHandler = [protectedPage = Ref { *protectedPage }, string = m_string, matchCount, indexOffset, completionHandler = WTF::move(m_completionHandler)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, int32_t matchIndex, bool didWrap) mutable {
         if (!frameID)
             protectedPage->findClient().didFailToFindString(protectedPage.ptr(), string);
         else
-            protectedPage->findClient().didFindString(protectedPage.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
+            protectedPage->findClient().didFindString(protectedPage.ptr(), string, matchRects, matchCount, indexOffset + matchIndex, didWrap);
         completionHandler(frameID.has_value());
     };
 
-    Ref targetFrame = frameContainingMatch ? *frameContainingMatch : *focusedFrame;
     protect(targetFrame->process())->sendWithAsyncReply(WTF::move(message), WTF::move(completionHandler), protectedPage->webPageIDInProcess(protect(targetFrame->process())));
     if (frameContainingMatch && focusedFrame && focusedFrame->process() != frameContainingMatch->process())
         protectedPage->clearSelection(focusedFrame->frameID());
