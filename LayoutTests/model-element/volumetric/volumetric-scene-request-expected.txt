@@ -1,0 +1,10 @@
+
+PASS Requesting a volumetric scene without transient activation is rejected
+PASS Requesting a volumetric scene for a plain element is rejected even with activation
+PASS A loaded model enters a volumetric scene with transient activation
+PASS Requesting a volumetric scene while already presented is rejected
+PASS Exiting a volumetric scene returns the model inline
+PASS A model can re-enter a volumetric scene after exiting
+PASS Exiting before a volumetric scene opens cancels the request
+PASS Changing the source of a presented model keeps its volumetric scene
+

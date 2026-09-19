@@ -69,10 +69,13 @@ public:
 }
 #endif
 #include <WebCore/Color.h>
+#include <WebCore/FloatSize.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
+#include <WebCore/LayoutSize.h>
 #include <WebCore/ModelPlayer.h>
 #include <WebCore/ModelPlayerAnimationState.h>
 #include <WebCore/ModelPlayerIdentifier.h>
+#include <WebCore/ModelPresentationMode.h>
 #include <WebCore/NodeIdentifier.h>
 #include <WebCore/StageModeOperations.h>
 #include <WebCore/TransformationMatrix.h>
@@ -185,6 +188,12 @@ public:
     void exitImmersivePresentation(CompletionHandler<void()>&&) final;
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void enterVolumetricPresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&&) final;
+    void exitVolumetricPresentation(CompletionHandler<void()>&&) final;
+    void updateVolumetricPresentationSize(const WebCore::FloatSize&) final;
+#endif
+
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
     void disableUnloadDelayForTesting() { m_unloadDelayDisabledForTesting = true; }
@@ -217,6 +226,11 @@ private:
     RESRT modelStandardizedTransformSRT(RESRT originalSRT) const;
     RESRT modelLocalizedTransformSRT(RESRT originalSRT) const;
     void computeTransform(bool);
+    void applyPresentationTransform();
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void applyVolumetricPresentationTransform();
+    void setGroundingShadowsEnabled(bool);
+#endif
 #if ENABLE(SPATIAL_PORTAL)
     simd_float4x4 contentTransformMatrix() const;
 #endif
@@ -231,6 +245,10 @@ private:
     RESRT childEntityTransformSRT(const TrackedModel&) const;
 #endif
     void applyDefaultIBL();
+    bool shouldApplyIBL() const;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void updateIBLReceiver();
+#endif
     void updateForCurrentStageMode();
     void setUpLoadedEntity(WebCore::NodeIdentifier, WKRKEntity *);
     simd_float3 reportingModelScale() const;
@@ -298,9 +316,34 @@ private:
     bool m_unloadDelayDisabledForTesting { false };
     static uint64_t gObjectCountForTesting;
 
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    WebCore::ModelPresentationMode m_presentationMode { WebCore::ModelPresentationMode::Inline };
+    void setPresentationMode(WebCore::ModelPresentationMode);
+#endif
+    bool isPresentedInline() const
+    {
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        return m_presentationMode == WebCore::ModelPresentationMode::Inline;
+#else
+        return true;
+#endif
+    }
+    bool isImmersive() const
+    {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-    bool m_immersivePresentation { false };
+        return m_presentationMode == WebCore::ModelPresentationMode::Immersive;
+#else
+        return false;
+#endif
+    }
+
     WebCore::LayoutSize m_layoutSize { };
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    WebCore::FloatSize m_volumeSizeInMeters;
+#endif
+
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     RefPtr<WebCore::Model> m_currentModel;
     RefPtr<WebCore::SharedBuffer> m_persistedEnvironmentMapData;
     std::optional<int> m_loadedEntityMemoryLimit;
@@ -308,7 +351,6 @@ private:
 
     void triggerModelLoadedCallbacks(bool);
     void ensureModelLoaded(CompletionHandler<void(bool)>&&);
-    void setImmersivePresentation(bool);
     void teardownEntity();
     void captureStateForReload();
 #endif

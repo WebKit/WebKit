@@ -6435,6 +6435,8 @@
 		52C25B432D0C12F700A26AB8 /* PortalPresentationManagerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PortalPresentationManagerProxy.mm; sourceTree = "<group>"; };
 		52C25B442D0C1B9100A26AB8 /* WKPageHostedPortalView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPageHostedPortalView.h; sourceTree = "<group>"; };
 		52C25B452D0C1B9100A26AB8 /* WKPageHostedPortalView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPageHostedPortalView.mm; sourceTree = "<group>"; };
+		4C8E2A1D3D5F60718293A4D3 /* WKPortalVolumetricSceneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPortalVolumetricSceneController.h; sourceTree = "<group>"; };
+		4C8E2A1E3D5F60718293A4D4 /* WKPortalVolumetricSceneController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPortalVolumetricSceneController.mm; sourceTree = "<group>"; };
 		52C3C26428651F860005BE6E /* WKBrowsingContextHandlePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandlePrivate.h; sourceTree = "<group>"; };
 		52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorConfiguration.h; sourceTree = "<group>"; };
 		52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualService.mm; sourceTree = "<group>"; };
@@ -6472,6 +6474,8 @@
 		53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkActivityTracker.cpp; sourceTree = "<group>"; };
 		540D14C72B840E9A007FD5DE /* ModelProcessModelPlayerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelProcessModelPlayerProxy.mm; sourceTree = "<group>"; };
 		541A3D0A2B5F2BA3009CE0D6 /* ModelProcessConnectionParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionParameters.serialization.in; sourceTree = "<group>"; };
+		4C8E2A1B3D5F60718293A4D1 /* VolumetricSceneContentContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VolumetricSceneContentContext.h; sourceTree = "<group>"; };
+		4C8E2A1C3D5F60718293A4D2 /* VolumetricSceneContentContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = VolumetricSceneContentContext.serialization.in; sourceTree = "<group>"; };
 		541A3D0B2B5F3948009CE0D6 /* GPUProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		541A3D0C2B5F3968009CE0D6 /* ModelProcessConnectionInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelProcessConnectionInfo.serialization.in; sourceTree = "<group>"; };
 		54BBB5E22B732B2000BF1A8A /* Info-embedded.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-embedded.plist"; sourceTree = "<group>"; };
@@ -10697,6 +10701,8 @@
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
 				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,
 				46C52F892B94366000D9890E /* VisitedLinkTableIdentifier.h */,
+				4C8E2A1B3D5F60718293A4D1 /* VolumetricSceneContentContext.h */,
+				4C8E2A1C3D5F60718293A4D2 /* VolumetricSceneContentContext.serialization.in */,
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,
 				516BF1D12AE5CD42009A0204 /* WebBackForwardListCounts.serialization.in */,
 				020E13122CA5F2F1002C616E /* WebBackForwardListFrameItem.cpp */,
@@ -12767,6 +12773,8 @@
 				52C25B452D0C1B9100A26AB8 /* WKPageHostedPortalView.mm */,
 				A15EEDE41E301CEE000069B0 /* WKPasswordView.h */,
 				A15EEDE31E301CEE000069B0 /* WKPasswordView.mm */,
+				4C8E2A1D3D5F60718293A4D3 /* WKPortalVolumetricSceneController.h */,
+				4C8E2A1E3D5F60718293A4D4 /* WKPortalVolumetricSceneController.mm */,
 				0FCB4E4418BBE044000FCFC9 /* WKScrollView.h */,
 				0FCB4E4518BBE044000FCFC9 /* WKScrollView.mm */,
 				F416F1BE2C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h */,

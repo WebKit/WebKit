@@ -368,6 +368,12 @@ messages -> WebPageProxy {
     DidReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier> nodeID)
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    [EnabledBy=SpatialPortalEnabled] PresentVolumetricScene(WebCore::NodeIdentifier element, struct WebKit::VolumetricSceneContentContext contentContext) -> (bool success)
+    [EnabledBy=SpatialPortalEnabled] UpdateVolumetricSceneContentContext(WebCore::NodeIdentifier element, struct WebKit::VolumetricSceneContentContext contentContext)
+    [EnabledBy=SpatialPortalEnabled] DismissVolumetricScene(WebCore::NodeIdentifier element)
+#endif
+
 #if PLATFORM(COCOA)
     # Dictionary support.
     DidPerformDictionaryLookup(struct WebCore::DictionaryPopupInfo dictionaryPopupInfo)

@@ -450,6 +450,10 @@
 #include "SpatialPortalController.h"
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "ElementVolumetricScene.h"
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
 #endif
@@ -9035,6 +9039,13 @@ std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element&
         transform->m31(), transform->m32(), transform->m33(), transform->m34(),
         transform->m41(), transform->m42(), transform->m43(), transform->m44()
     };
+}
+#endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+String Internals::volumetricScenePresentationMode(Element& element)
+{
+    return ElementVolumetricScene::presentationModeForTesting(element);
 }
 #endif
 

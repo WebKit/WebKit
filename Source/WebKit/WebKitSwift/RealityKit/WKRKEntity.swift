@@ -481,6 +481,41 @@ extension WKRKEntity {
         #endif
     }
 
+    // Without a receiver the entity is lit by the scene's environment instead of by the probe applyIBL() set,
+    // which is also what applyDefaultIBL() falls back to when EnvironmentResource is unavailable.
+    @objc(setIBLReceiverEnabled:)
+    func setIBLReceiverEnabled(_ enabled: Bool) {
+        guard enabled else {
+            entity.components[ImageBasedLightReceiverComponent.self] = nil
+            return
+        }
+        // An entity that loaded while the page's lighting was suppressed has no probe to receive from yet.
+        guard entity.components.has(VirtualEnvironmentProbeComponent.self) else {
+            applyDefaultIBL()
+            return
+        }
+        entity.components[ImageBasedLightReceiverComponent.self] = .init(imageBasedLight: entity)
+    }
+
+    @objc(setGroundingShadowsEnabled:)
+    func setGroundingShadowsEnabled(_ enabled: Bool) {
+        applyGroundingShadows(to: entity, castsShadow: enabled)
+    }
+
+    // Applied to the whole subtree: the shadow is cast by the descendant meshes, not by the root.
+    @nonobjc
+    private final func applyGroundingShadows(to entity: Entity, castsShadow: Bool) {
+        if castsShadow {
+            entity.components.set(GroundingShadowComponent(castsShadow: true))
+        } else {
+            entity.components.remove(GroundingShadowComponent.self)
+        }
+
+        for child in entity.children {
+            applyGroundingShadows(to: child, castsShadow: castsShadow)
+        }
+    }
+
     private func animationPlaybackStateDidUpdate() {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
     }

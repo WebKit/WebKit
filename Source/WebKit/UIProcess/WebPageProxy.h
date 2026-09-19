@@ -681,6 +681,9 @@ struct WebPageCreationParameters;
 struct WebPageProxyIdentifierType;
 struct WebPopupItem;
 struct WebPreferencesStore;
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+struct VolumetricSceneContentContext;
+#endif
 struct WebSpeechSynthesisVoice;
 struct WebURLSchemeHandlerIdentifierType;
 struct WebUndoStepIDType;
@@ -3018,6 +3021,17 @@ public:
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
     RefPtr<PortalPresentationManagerProxy> portalPresentationManagerProxy() const;
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // From the web process.
+    void presentVolumetricScene(WebCore::NodeIdentifier, VolumetricSceneContentContext, CompletionHandler<void(bool)>&&);
+    void updateVolumetricSceneContentContext(WebCore::NodeIdentifier, VolumetricSceneContentContext);
+    void dismissVolumetricScene(WebCore::NodeIdentifier);
+
+    // To the web process, from PortalPresentationManagerProxy.
+    void volumetricSceneDidClose(WebCore::NodeIdentifier);
+    void updateVolumetricSceneSize(WebCore::NodeIdentifier, WebCore::FloatSize volumeSizeInMeters);
 #endif
 
     bool canStartNavigationSwipeAtLastInteractionLocation() const;
