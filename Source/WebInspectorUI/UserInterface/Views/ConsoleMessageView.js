@@ -490,7 +490,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             var parameter = this._createRemoteObjectIfNeeded(this._message.parameters[0]);
 
             parameter.findFunctionSourceCodeLocation().then((result) => {
-                if (result === WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound || result === WI.RemoteObject.SourceCodeLocationPromise.MissingObjectId)
+                if (!result)
                     return;
 
                 let link = WI.linkifySourceCode(result.sourceCode, new WI.SourceCodePosition(result.lineNumber, result.columnNumber), {

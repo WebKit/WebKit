@@ -37,31 +37,27 @@ WI.InspectorObserver = class InspectorObserver extends InspectorBackend.Dispatch
         });
     }
 
-    inspect(payload, hints)
+    async inspect(payload, hints)
     {
-        let remoteObject = WI.RemoteObject.fromPayload(payload, WI.mainTarget);
+        using remoteObject = WI.RemoteObject.fromPayload(payload, WI.mainTarget);
         if (remoteObject.subtype === "node") {
-            WI.domManager.inspectNodeObject(remoteObject);
+            await WI.domManager.inspectNodeObject(remoteObject);
             return;
         }
 
         if (remoteObject.type === "function") {
-            remoteObject.findFunctionSourceCodeLocation().then((sourceCodeLocation) => {
-                if (sourceCodeLocation instanceof WI.SourceCodeLocation) {
-                    WI.showSourceCodeLocation(sourceCodeLocation, {
-                        ignoreNetworkTab: true,
-                        ignoreSearchTab: true,
-                    });
-                }
-            });
-            remoteObject.release();
+            let sourceCodeLocation = await remoteObject.findFunctionSourceCodeLocation();
+            if (sourceCodeLocation) {
+                WI.showSourceCodeLocation(sourceCodeLocation, {
+                    ignoreNetworkTab: true,
+                    ignoreSearchTab: true,
+                });
+            }
             return;
         }
 
         if (hints.domStorageId)
             WI.domStorageManager.inspectDOMStorage(hints.domStorageId);
-
-        remoteObject.release();
     }
 
     activateExtraDomains(domains)

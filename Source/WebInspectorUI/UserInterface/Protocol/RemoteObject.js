@@ -563,22 +563,29 @@ WI.RemoteObject = class RemoteObject
     async findFunctionSourceCodeLocation()
     {
         if (!this._isFunction() || !this._objectId)
-            return WI.RemoteObject.SourceCodeLocationPromise.MissingObjectId;
+            return null;
 
         let location;
         try {
             let {details} = await this._target.DebuggerAgent.getFunctionDetails(this._objectId);
             location = details.location;
         } catch {
-            return WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound;
+            return null;
         }
 
         let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, this._target);
+        if (!sourceCode)
+            return null;
 
-        if (!sourceCode || (!WI.settings.engineeringShowInternalScripts.value && isWebKitInternalScript(sourceCode.sourceURL)))
-            return WI.RemoteObject.SourceCodeLocationPromise.NoSourceFound
+        if (!WI.settings.engineeringShowInternalScripts.value && isWebKitInternalScript(sourceCode.sourceURL))
+            return null;
 
         return sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
+    }
+
+    [Symbol.dispose]()
+    {
+        this.release();
     }
 
     // Private
