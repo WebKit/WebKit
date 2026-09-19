@@ -434,6 +434,7 @@
 #include <JavaScriptCore/StrongSet.h>
 #include <JavaScriptCore/Structure.h>
 #include <JavaScriptCore/StructureID.h>
+#include <JavaScriptCore/StructureInlinesLight.h>
 #include <JavaScriptCore/StructureRareData.h>
 #include <JavaScriptCore/StructureTransitionTable.h>
 #include <JavaScriptCore/Subspace.h>
