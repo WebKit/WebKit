@@ -4484,6 +4484,62 @@ TEST(ProcessSwap, LoadUnload)
     }
 }
 
+static constexpr auto unloadOnClientRedirectBytes = R"PSONRESOURCE(
+<script>
+for (const type of ['pagehide', 'visibilitychange', 'unload']) {
+    window.addEventListener(type, function(event) {
+        window.webkit.messageHandlers.pson.postMessage(window.location.href + " - " + type);
+    });
+}
+window.addEventListener('load', function(event) {
+    setTimeout(() => window.location.replace("pson://www.apple.com/main.html"), 0);
+});
+</script>
+)PSONRESOURCE"_s;
+
+// A client-side redirect never suspends the previous page, so its process is shut down as soon as
+// the new one commits. The unload events of the previous page still need to be delivered.
+TEST(ProcessSwap, UnloadEventsOnCrossSiteClientRedirect)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    // A cached process outlives the swap, which would hide an early shutdown.
+    processPoolConfiguration.get().usesWebProcessCache = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:unloadOnClientRedirectBytes];
+    [handler addMappingFromURLString:@"pson://www.apple.com/main.html" toData:"<body>apple</body>"_s];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    RetainPtr messageHandler = adoptNS([[PSONMessageHandler alloc] init]);
+    [[webViewConfiguration userContentController] addScriptMessageHandler:messageHandler.get() name:@"pson"];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    while (![[[webView URL] absoluteString] isEqualToString:@"pson://www.apple.com/main.html"])
+        TestWebKitAPI::Util::runFor(0.05_s);
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_NE(webkitPID, [webView _webProcessIdentifier]);
+
+    for (unsigned i = 0; [receivedMessages count] < 3 && i < 40; ++i)
+        TestWebKitAPI::Util::runFor(0.05_s);
+
+    EXPECT_EQ(3u, [receivedMessages count]);
+    EXPECT_TRUE([receivedMessages containsObject:@"pson://www.webkit.org/main.html - pagehide"]);
+    EXPECT_TRUE([receivedMessages containsObject:@"pson://www.webkit.org/main.html - visibilitychange"]);
+    EXPECT_TRUE([receivedMessages containsObject:@"pson://www.webkit.org/main.html - unload"]);
+}
+
 TEST(ProcessSwap, WebInspector)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();

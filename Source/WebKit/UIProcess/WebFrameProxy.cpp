@@ -123,8 +123,6 @@ using namespace WebCore;
 
 class WebPageProxy;
 
-static constexpr Seconds unloadEventsExpirationDelay { 1_s };
-
 class FrameProcessRefWithExpiration : public RefCountedAndCanMakeWeakPtr<FrameProcessRefWithExpiration> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(FrameProcessRefWithExpiration);
 public:
