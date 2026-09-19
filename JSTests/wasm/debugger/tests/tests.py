@@ -487,6 +487,53 @@ class SwiftWasmGlobalTestCase:
         self.session.cmd("br del -f", patterns=["All breakpoints removed."])
 
 
+class SwiftWasmOperandStackTestCase:
+    test_file = "resources/swift-wasm/operand-stack-test/main.js"
+
+    def execute(self):
+        # i32 on the operand stack, read with qWasmStackValue. produce(7) == 7 * 3 + 1 == 22.
+        self.session.cmd("b operand-stack-test.swift:19")
+        self.session.cmd(
+            "c",
+            patterns=[
+                "Process 1 stopped",
+                "stop reason = breakpoint",
+                "-> 19  \t    consume(r)",
+            ],
+        )
+        self.session.cmd("v r", patterns=["(Int32) r = 22"])
+        self.session.cmd("v n", patterns=["(Int32) n = 7"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # Wasm locals, read with qWasmLocal. a == produce(7) == 22, c == produce(9) == 28.
+        # `n` is not checked here: at -O its local is reused once its last use has passed.
+        self.session.cmd("b operand-stack-test.swift:28")
+        self.session.cmd(
+            "c",
+            patterns=[
+                "Process 1 stopped",
+                "stop reason = breakpoint",
+                "-> 28  \t    consume(b)",
+            ],
+        )
+        self.session.cmd("v a", patterns=["(Int32) a = 22"])
+        self.session.cmd("v c", patterns=["(Int32) c = 28"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # i64 on the operand stack. A reply narrowed to the wrong width truncates this to 21.
+        self.session.cmd("b operand-stack-test.swift:37")
+        self.session.cmd(
+            "c",
+            patterns=[
+                "Process 1 stopped",
+                "stop reason = breakpoint",
+                "-> 37  \t    consume64(r64)",
+            ],
+        )
+        self.session.cmd("v r64", patterns=["(Int64) r64 = 4294967317"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
 class NopDropSelectEndTestCase:
     test_file = "resources/wasm/nop-drop-select-end.js"
 
@@ -2390,4 +2437,11 @@ ALL_TESTS = [
     StreamingModuleSourceURLTestCase,
     StreamingModuleLoadTestCase,
     SwiftWasmFatalErrorTestCase,
+]
+
+# Tests that are runnable by name but excluded from a default sweep, because they need something the
+# default environment does not provide. Everything in ALL_TESTS passes on the `xcrun --find lldb`
+# default (validated against Apple's lldb-2100.0.15.202); these do not.
+OPT_IN_TESTS = [
+    SwiftWasmOperandStackTestCase,  # Needs an LLDB carrying llvm/llvm-project#163646; see QueryHandler::handleWasmStackValue.
 ]

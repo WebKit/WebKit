@@ -5,6 +5,10 @@
 #
 # Usage:
 #   ./build.sh <test-folder>   # build if folder exists, scaffold a new Swift package otherwise
+#
+# If the manifest fails to link with "tapi error: malformed file ... unknown architecture", the host
+# SDK is newer than the toolchain. Pin an older one:
+#   SDKROOT=/Applications/Xcode.app/.../SDKs/MacOSX26.4.sdk ./build.sh <test-folder>
 
 set -e
 

@@ -14,7 +14,7 @@ from pathlib import Path
 from lib.session import DebugSession
 from lib.environment import WebKitEnvironment
 from lib.utils import log_pass, log_fail, log_info, log_header, set_verbose
-from tests.tests import ALL_TESTS
+from tests.tests import ALL_TESTS, OPT_IN_TESTS
 from tests.jsc import JavaScriptCoreTestCase
 
 
@@ -85,7 +85,8 @@ def main():
     parser.add_argument("--parallel", "-p", type=int, nargs="?", const=-1, metavar="N",
                         help="Parallel workers (omit N for auto-detect)")
     parser.add_argument("--lldb", metavar="PATH",
-                        help="LLDB to test against (default: xcrun --find lldb)")
+                        help="LLDB to test against (default: xcrun --find lldb). "
+                             "Tests in OPT_IN_TESTS need a newer LLDB than that default")
 
     build_group = parser.add_mutually_exclusive_group()
     build_group.add_argument("--debug",   action="store_true", help="Use Debug build")
@@ -100,7 +101,7 @@ def main():
     build_config = "Debug" if args.debug else "Release" if args.release else None
     env = WebKitEnvironment(Path(__file__), build_config, args.lldb)
 
-    all_tests = list(ALL_TESTS) + [JavaScriptCoreTestCase]
+    all_tests = list(ALL_TESTS) + list(OPT_IN_TESTS) + [JavaScriptCoreTestCase]
 
     if args.list:
         for cls in all_tests:
@@ -118,7 +119,8 @@ def main():
             log_info("No matching tests found.")
             sys.exit(1)
     else:
-        tests = all_tests
+        # Opt-in tests are selectable by name but never part of a default sweep.
+        tests = [cls for cls in all_tests if cls not in OPT_IN_TESTS]
 
     # OS-assigned ports: a fixed base is collidable by anything else on the machine, and the bind
     # failure is silent. Every probe is held until all ports are picked, so they cannot repeat.
