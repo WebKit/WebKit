@@ -304,16 +304,6 @@ selectors = [
 ]
 requires = ["PLATFORM_VISION"]
 
-[[temporary-usage]]
-request = "rdar://165789536"
-cleanup = "rdar://173046822"
-selectors = [
-    { name = "cancelAllAnimations", class = "?" },
-    { name = "cancelAnimationForSuggestionWithUUID:", class = "?" },
-    { name = "startAnimationForSuggestionWithUUID:writingDirection:effectType:completion:", class = "?" },
-]
-requires = ["ENABLE_WRITING_TOOLS_TEXT_EFFECTS"]
-
 [[staging]]
 request = "rdar://171222829"
 selectors = [

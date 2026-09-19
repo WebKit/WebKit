@@ -184,14 +184,6 @@ symbols = [
 ]
 
 [[temporary-usage]]
-request = "rdar://165789536"
-cleanup = "rdar://173046822"
-classes = [
-    "_WTTextEffectManager",
-    "_WTTextPreview",
-]
-
-[[temporary-usage]]
 requires = [ "HAVE_CORE_TEXT_GLYPHHASCOMPLEXCOLOR_FUNCTION" ]
 request = "rdar://168960112"
 cleanup = "rdar://170480216"
