@@ -26,6 +26,9 @@
 #pragma once
 
 #import <wtf/Platform.h>
+
+#if !__has_feature(modules)
+
 #if ENABLE(GAMEPAD) && PLATFORM(COCOA)
 
 #import <WebCore/GameControllerSPI.h>
@@ -102,3 +105,5 @@ SPECIALIZE_OBJC_TYPE_TRAITS(GCMouse, WebCore::getGCMouseClassSingleton())
 #endif
 
 #endif // ENABLE(GAMEPAD) && PLATFORM(COCOA)
+
+#endif // !__has_feature(modules)

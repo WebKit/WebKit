@@ -3289,7 +3289,37 @@ if (NOT USE_HEADER_MAPS)
     endif ()
 endif ()
 
+if (SWIFT_REQUIRED AND APPLE)
+    # FIXME: Remove SwiftStub.swift once WebCore has real Swift sources.
+    target_sources(WebCore PRIVATE ${WEBCORE_DIR}/SwiftStub.swift)
+
+    webkit_target_add_swift_options(WebCore
+        "-library-level spi"
+        "-enable-experimental-feature SafeInteropWrappers"
+        "-Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib"
+    )
+
+    # C++ sources that include WebCoreSwift-Generated.h.
+    set(WebCore_SWIFT_INTEROP_SOURCES SwiftStubInterop.cpp)
+
+    WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER(WebCore WebCore
+        "${WebCore_PRIVATE_HEADERS_DIR}"
+        "WebCoreSwift-Generated.h")
+endif ()
+
 WEBKIT_FRAMEWORK(WebCore)
+
+if (DEFINED WebCore_SWIFT_INTEROP_SOURCES)
+    WEBKIT_DEFINE_SUBTARGET(WebCore_SwiftInterop WebCore ${WebCore_SWIFT_INTEROP_SOURCES})
+    WEBKIT_REUSE_PREFIX_HEADER(WebCore_SwiftInterop WebCore WebCorePrefix.h PREFIX_LANGUAGES CXX OBJCXX)
+    target_compile_definitions(WebCore_SwiftInterop PRIVATE WEBCORE_COMPILING_SWIFT_INTEROP_SUBTARGET)
+
+    set(_interop_objs "$<FILTER:$<TARGET_OBJECTS:WebCore_SwiftInterop>,EXCLUDE,\\.(g|p)ch$>")
+    set(_interop_rsp "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/WebCore_SwiftInterop.dir/$<CONFIG>/objects.rsp")
+    file(GENERATE OUTPUT "${_interop_rsp}" CONTENT "$<JOIN:${_interop_objs},\n>")
+    target_link_options(WebCore PRIVATE "@${_interop_rsp}")
+    set_property(TARGET WebCore APPEND PROPERTY LINK_DEPENDS "${_interop_objs};${_interop_rsp}")
+endif ()
 
 if (USE_APPLE_INTERNAL_SDK)
     WEBKIT_TARGET_USE_PGO(WebCore PROFILE WebCore)
@@ -3315,9 +3345,9 @@ if (DEFINED WebCore_EXTRA_LINK_OPTIONS)
     target_link_options(WebCore PRIVATE ${WebCore_EXTRA_LINK_OPTIONS})
 endif ()
 
-# WebCore has no Swift sources. When SWIFT_REQUIRED is ON, CMake may select the
-# Swift linker for targets that transitively depend on Swift libraries (PAL).
-# Force CXX linker -- swiftc mishandles -I include paths during linking.
+# When SWIFT_REQUIRED is ON, CMake selects the Swift linker for targets that
+# have Swift sources or transitively depend on Swift libraries (PAL). Force the
+# CXX linker -- swiftc mishandles -I include paths during linking.
 set_target_properties(WebCore PROPERTIES LINKER_LANGUAGE CXX)
 
 if (APPLE)

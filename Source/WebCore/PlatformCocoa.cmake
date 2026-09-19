@@ -1680,11 +1680,18 @@ WEBKIT_COPY_FILES(WebCore_CopyAudioResources
     FLATTENED NO_SYMLINK)
 add_dependencies(WebCore WebCore_CopyAudioResources)
 
-# Stage the in-tree WebCore_Private module map into the framework bundle so the
-# Swift Clang importer finds it as a real module via -F (as JavaScriptCore does,
-# and as iOS does below).
+# Stage the in-tree WebCore module maps into the framework bundle so the Swift
+# Clang importer finds them as real modules via -F (as JavaScriptCore does, and
+# as iOS does below). -import-underlying-module needs the public one.
 if (SWIFT_REQUIRED)
     set(_webcore_modules_dir "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebCore.framework/Versions/A/Modules")
+    add_custom_command(
+        OUTPUT "${_webcore_modules_dir}/module.modulemap"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${WEBCORE_DIR}/WebCore.modulemap" "${_webcore_modules_dir}/module.modulemap"
+        MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore.modulemap"
+        VERBATIM)
     add_custom_command(
         OUTPUT "${_webcore_modules_dir}/module.private.modulemap"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${_webcore_modules_dir}"
@@ -1693,6 +1700,7 @@ if (SWIFT_REQUIRED)
         MAIN_DEPENDENCY "${WEBCORE_DIR}/WebCore_Private.modulemap"
         VERBATIM)
     add_custom_target(WebCore_CopyPrivateModuleMap ALL DEPENDS
+        "${_webcore_modules_dir}/module.modulemap"
         "${_webcore_modules_dir}/module.private.modulemap")
     add_dependencies(WebCore WebCore_CopyPrivateModuleMap)
 endif ()
@@ -1842,6 +1850,8 @@ add_custom_command(TARGET WebCore POST_BUILD
         "${_wc_fw}/Info.plist"
     COMMENT "Installing WebCore.framework resources (flat iOS layout)")
 
+configure_file("${WEBCORE_DIR}/WebCore.modulemap"
+               "${_wc_fw}/Modules/module.modulemap" COPYONLY)
 configure_file("${WEBCORE_DIR}/WebCore_Private.modulemap"
                "${_wc_fw}/Modules/module.private.modulemap" COPYONLY)
 
