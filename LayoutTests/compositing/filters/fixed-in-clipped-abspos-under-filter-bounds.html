@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The clip property on an absolutely positioned ancestor clips a fixed position layer below the filter, so the filter outsets must not widen that clip</title>
+<style>
+.filtered {
+    width: 300px;
+    height: 300px;
+    filter: blur(10px);
+}
+.clipped {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 300px;
+    clip: rect(0 100px 100px 0);
+}
+.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 250px solid green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="filtered">
+    <div class="clipped">
+        <div class="fixed"></div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>

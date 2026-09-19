@@ -475,6 +475,7 @@ private:
     bool hasVisibleNonCompositedDescendants() const;
 
     bool shouldClipCompositedBounds() const;
+    static IntOutsets intersectClipsSampledByFilters(const RenderLayer&, const RenderLayer& rootLayer, LayoutRect& clipRect);
 
     bool hasTiledBackingFlatteningLayer() const { return (m_childContainmentLayer && m_isFrameLayerWithTiledBacking); }
     GraphicsLayer* tileCacheFlatteningLayer() const { return m_isFrameLayerWithTiledBacking ? m_childContainmentLayer.get() : nullptr; }
