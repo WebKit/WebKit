@@ -1622,6 +1622,11 @@ void ModelProcessModelPlayerProxy::setPortalAction(WebCore::PortalActionKind kin
 
 WebCore::StageModeOperation ModelProcessModelPlayerProxy::effectiveStageModeOperation() const
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (isVolumetric())
+        return WebCore::StageModeOperation::Orbit;
+#endif
+
 #if ENABLE(SPATIAL_PORTAL)
     if (m_portalAction == WebCore::PortalActionKind::Orbit)
         return WebCore::StageModeOperation::Orbit;
@@ -1808,6 +1813,9 @@ void ModelProcessModelPlayerProxy::updateIBLReceiver()
 
 void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentationMode mode)
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    auto previousMode = m_presentationMode;
+#endif
     m_presentationMode = mode;
 
     switch (mode) {
@@ -1827,7 +1835,25 @@ void ModelProcessModelPlayerProxy::setPresentationMode(WebCore::ModelPresentatio
     }
 
     m_entityTransformToRestore = std::nullopt;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (previousMode == WebCore::ModelPresentationMode::Inline && isVolumetric())
+        m_inlineRotationToRestore = m_transformSRT.rotation;
+    else if (previousMode == WebCore::ModelPresentationMode::Volumetric && isPresentedInline()) {
+        // Teardown destroys the volume's input surface without an end event.
+        endStageModeInteraction();
+        restoreInlineRotationAfterVolumetricPresentation();
+    } else if (!isVolumetric())
+        m_inlineRotationToRestore = std::nullopt;
+#endif
+
     applyPresentationTransform();
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE) && HAVE(CORE_RE)
+    // Must follow the placement, taking up an operation recenters the pivot on the content's bounds.
+    bool wasVolumetric = previousMode == WebCore::ModelPresentationMode::Volumetric;
+    if (wasVolumetric != isVolumetric())
+        applyStageModeOperationToDriver();
+#endif
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     updateIBLReceiver();
 #endif
@@ -1897,6 +1923,21 @@ void ModelProcessModelPlayerProxy::applyVolumetricPresentationTransform()
 #if HAVE(CORE_RE)
     if (m_stageModeInteractionDriver)
         [m_stageModeInteractionDriver setContainerTransformInPortal];
+#endif
+}
+
+void ModelProcessModelPlayerProxy::restoreInlineRotationAfterVolumetricPresentation()
+{
+    auto rotation = std::exchange(m_inlineRotationToRestore, std::nullopt);
+    // A page that asked for orbit keeps the user's rotations while in volumetric
+    if (!rotation || effectiveStageModeOperation() != WebCore::StageModeOperation::None)
+        return;
+
+    m_transformSRT.rotation = *rotation;
+
+#if HAVE(CORE_RE)
+    if (m_stageModeInteractionDriver)
+        [m_stageModeInteractionDriver clearInteractionRotationAndOrbitState];
 #endif
 }
 

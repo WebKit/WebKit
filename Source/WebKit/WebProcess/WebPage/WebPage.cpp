@@ -6232,6 +6232,12 @@ void WebPage::requestInteractiveModelElementAtPoint(IntPoint clientPosition)
         send(Messages::WebPageProxy::DidReceiveInteractiveModelElement(std::nullopt));
 }
 
+void WebPage::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+{
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().stageModeSessionDidBegin(nodeID, transform);
+}
+
 void WebPage::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
 {
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))

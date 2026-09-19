@@ -237,6 +237,7 @@ private:
     void applyPresentationTransform();
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     void applyVolumetricPresentationTransform();
+    void restoreInlineRotationAfterVolumetricPresentation();
     void setGroundingShadowsEnabled(bool);
 #endif
 #if ENABLE(SPATIAL_PORTAL)
@@ -345,10 +346,20 @@ private:
 #endif
     }
 
+    bool isVolumetric() const
+    {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        return m_presentationMode == WebCore::ModelPresentationMode::Volumetric;
+#else
+        return false;
+#endif
+    }
+
     WebCore::LayoutSize m_layoutSize { };
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     WebCore::FloatSize m_volumeSizeInMeters;
+    std::optional<simd_quatf> m_inlineRotationToRestore;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)

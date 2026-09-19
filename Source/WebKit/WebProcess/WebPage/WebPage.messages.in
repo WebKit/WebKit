@@ -411,6 +411,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
 #if ENABLE(MODEL_PROCESS)
     RequestInteractiveModelElementAtPoint(WebCore::IntPoint clientPosition)
+    StageModeSessionDidBegin(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
     StageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier> nodeID, WebCore::TransformationMatrix transform)
     StageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier> nodeID)
 #endif

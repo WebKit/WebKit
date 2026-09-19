@@ -4589,6 +4589,11 @@ void WebPageProxy::requestInteractiveModelElementAtPoint(const IntPoint clientPo
     send(Messages::WebPage::RequestInteractiveModelElementAtPoint(clientPosition));
 }
 
+void WebPageProxy::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+{
+    send(Messages::WebPage::StageModeSessionDidBegin(nodeID, transform));
+}
+
 void WebPageProxy::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
 {
     send(Messages::WebPage::StageModeSessionDidUpdate(nodeID, transform));

@@ -246,6 +246,8 @@
 		07AF79DD2D6938A1004E8D3A /* Foundation+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 073EFBB72D0F448500FAE7CF /* Foundation+Extras.swift */; };
 		07AF79DF2D693BAA004E8D3A /* SwiftUI+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07AF79DE2D693BAA004E8D3A /* SwiftUI+Extras.swift */; };
 		07AF79E12D693DD7004E8D3A /* WKScrollGeometryAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07AF79E02D693DD7004E8D3A /* WKScrollGeometryAdapter.swift */; };
+		4C8E2A213D5F60718293A4D7 /* WKPortalVolumetricGestureController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C8E2A1F3D5F60718293A4D5 /* WKPortalVolumetricGestureController.h */; };
+		4C8E2A223D5F60718293A4D8 /* WKPortalVolumetricGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */; };
 		07AF79E92D695195004E8D3A /* WKUIDelegateInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AF79E82D695195004E8D3A /* WKUIDelegateInternal.h */; };
 		07BAEEA12ED056EE00251691 /* WebURLSchemeTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124271E6D3F1F002B2820 /* WebURLSchemeTask.h */; };
 		07CB79962CE9435700199C49 /* WebPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB79952CE9435700199C49 /* WebPage.swift */; };
@@ -6437,6 +6439,8 @@
 		52C25B452D0C1B9100A26AB8 /* WKPageHostedPortalView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPageHostedPortalView.mm; sourceTree = "<group>"; };
 		4C8E2A1D3D5F60718293A4D3 /* WKPortalVolumetricSceneController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPortalVolumetricSceneController.h; sourceTree = "<group>"; };
 		4C8E2A1E3D5F60718293A4D4 /* WKPortalVolumetricSceneController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPortalVolumetricSceneController.mm; sourceTree = "<group>"; };
+		4C8E2A1F3D5F60718293A4D5 /* WKPortalVolumetricGestureController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPortalVolumetricGestureController.h; sourceTree = "<group>"; };
+		4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKPortalVolumetricGestureController.swift; sourceTree = "<group>"; };
 		52C3C26428651F860005BE6E /* WKBrowsingContextHandlePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextHandlePrivate.h; sourceTree = "<group>"; };
 		52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorConfiguration.h; sourceTree = "<group>"; };
 		52CDC5BE2731DA0C00A3E3EB /* VirtualService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VirtualService.mm; sourceTree = "<group>"; };
@@ -11079,6 +11083,8 @@
 				E1AEA22D14687BDB00804569 /* WKFullKeyboardAccessWatcher.h */,
 				E1AEA22E14687BDB00804569 /* WKFullKeyboardAccessWatcher.mm */,
 				07CB79972CE943E400199C49 /* WKNavigationDelegateAdapter.swift */,
+				4C8E2A1F3D5F60718293A4D5 /* WKPortalVolumetricGestureController.h */,
+				4C8E2A203D5F60718293A4D6 /* WKPortalVolumetricGestureController.swift */,
 				1AD01BCB1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.h */,
 				1AD01BCA1905D54900C9C45F /* WKReloadFrameErrorRecoveryAttempter.mm */,
 				E555CC8F2EA0C165008957E0 /* WKScreenTimeConfigurationObserver.h */,
@@ -19823,6 +19829,7 @@
 				0739EAF2301562100066ED1B /* WKPDFPageNumberIndicator.h in Headers */,
 				7C135AA9173B0BCA00586AE2 /* WKPluginInformation.h in Headers */,
 				2DABA7741A817EE600EF0F1A /* WKPluginLoadPolicy.h in Headers */,
+				4C8E2A213D5F60718293A4D7 /* WKPortalVolumetricGestureController.h in Headers */,
 				1AFDD3171891C94700153970 /* WKPreferences.h in Headers */,
 				1A3C888018A5ABAE00C4C962 /* WKPreferencesInternal.h in Headers */,
 				7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */,
@@ -22792,6 +22799,7 @@
 				3323520F303EC02F003C7F3B /* WKMouseTrackingGestureRecognizer.swift in Sources */,
 				07CB79982CE943E400199C49 /* WKNavigationDelegateAdapter.swift in Sources */,
 				0739F9AB301572270066ED1B /* WKPDFPageNumberIndicator.mm in Sources */,
+				4C8E2A223D5F60718293A4D8 /* WKPortalVolumetricGestureController.swift in Sources */,
 				33A1B4E43050A1C0007F2D11 /* WKPressGestureRecognizer.swift in Sources */,
 				E31869C42B1A7C2400571519 /* WKProcessExtension.mm in Sources */,
 				07AF79E12D693DD7004E8D3A /* WKScrollGeometryAdapter.swift in Sources */,

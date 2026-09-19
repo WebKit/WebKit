@@ -1228,9 +1228,11 @@ bool HTMLModelElement::canSetEntityTransform() const
 
 bool HTMLModelElement::supportsStageModeInteraction() const
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == ModelPresentationMode::Volumetric)
+        return true;
+#endif
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
-    // The inline box is blank while the content is presented elsewhere, so a hit-test over it must not drive
-    // stage mode.
     if (m_presentationMode != ModelPresentationMode::Inline)
         return false;
 #endif

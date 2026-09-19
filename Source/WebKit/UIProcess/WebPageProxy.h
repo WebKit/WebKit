@@ -1346,6 +1346,7 @@ public:
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(WebCore::IntPoint);
     void didReceiveInteractiveModelElement(std::optional<WebCore::NodeIdentifier>);
+    void stageModeSessionDidBegin(WebCore::NodeIdentifier, const WebCore::TransformationMatrix&);
     void stageModeSessionDidUpdate(std::optional<WebCore::NodeIdentifier>, const WebCore::TransformationMatrix&);
     void stageModeSessionDidEnd(std::optional<WebCore::NodeIdentifier>);
 #endif

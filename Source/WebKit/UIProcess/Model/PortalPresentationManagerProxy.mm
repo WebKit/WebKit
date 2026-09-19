@@ -42,6 +42,7 @@
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 #import "WKPortalVolumetricSceneController.h"
 #import "WebPreferences.h"
+#import <WebCore/TransformationMatrix.h>
 #import <wtf/BlockPtr.h>
 #endif
 
@@ -157,6 +158,14 @@ void PortalPresentationManagerProxy::invalidateAllModels()
 
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
+// Stage mode packs the drag location into a translation, in points
+static WebCore::TransformationMatrix stageModeTransformForLocation(CGPoint location)
+{
+    WebCore::TransformationMatrix transform;
+    transform.translate3d(location.x, location.y, 0);
+    return transform;
+}
+
 void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier nodeID, const VolumetricSceneContentContext& contentContext, CompletionHandler<void(bool)>&& completion)
 {
     RefPtr webPageProxy = m_page.get();
@@ -206,6 +215,23 @@ void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier
 
         if (RefPtr page = protectedThis->m_page.get())
             page->updateVolumetricSceneSize(nodeID, volumeSizeInMeters);
+
+        [sceneController installInputSurfaceWithBegan:makeBlockPtr([weakThis, nodeID](CGPoint location) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidBegin(nodeID, stageModeTransformForLocation(location));
+            }
+        }).get() changed:makeBlockPtr([weakThis, nodeID](CGPoint location) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidUpdate(nodeID, stageModeTransformForLocation(location));
+            }
+        }).get() ended:makeBlockPtr([weakThis, nodeID] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidEnd(nodeID);
+            }
+        }).get()];
 
         [sceneController setVolumeSizeChangedHandler:makeBlockPtr([weakThis, nodeID](WebCore::FloatSize volumeSizeInMeters) {
             RefPtr protectedThis = weakThis.get();

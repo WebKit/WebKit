@@ -31,7 +31,9 @@
 #import "Logging.h"
 #import "MRUIKitSPI.h"
 #import "UIKitSPI.h"
+#import "WKPortalVolumetricGestureController.h"
 #import <algorithm>
+#import <cmath>
 #import <wtf/BlockPtr.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
@@ -142,6 +144,8 @@ static std::optional<uint64_t> volumetricSceneTokenFromActivities(NSSet<NSUserAc
     RetainPtr<UIWindowScene> _volumetricScene;
     RetainPtr<UIWindow> _volumetricWindow;
     RetainPtr<_UIRemoteView> _hostedContentView;
+    RetainPtr<WKPortalVolumetricGestureController> _inputGestureController;
+    RetainPtr<UIViewController> _inputHostingController;
     BlockPtr<void(BOOL)> _pendingCompletion;
     BlockPtr<void()> _closeHandler;
     BlockPtr<void(WebCore::FloatSize)> _volumeSizeChangedHandler;
@@ -216,6 +220,19 @@ static std::optional<uint64_t> volumetricSceneTokenFromActivities(NSSet<NSUserAc
     [_hostedContentView layer].zPosition = std::min(boundsSize.width, boundsSize.height) / 2;
 }
 
+- (void)_applyInputSurfaceExtents
+{
+    if (!_inputGestureController)
+        return;
+
+    float width = _volumeSizeInMeters.width();
+    float height = _volumeSizeInMeters.height();
+    if (!std::isfinite(width) || !std::isfinite(height) || width <= 0 || height <= 0)
+        return;
+
+    [_inputGestureController updateProxyExtentsWithWidth:width height:height depth:std::min(width, height)];
+}
+
 - (void)updateLayoutForVolumeSize
 {
     if (![self _containerView])
@@ -232,6 +249,7 @@ static std::optional<uint64_t> volumetricSceneTokenFromActivities(NSSet<NSUserAc
     _volumeSizeInMeters = volumeSizeInMeters;
 
     [self _applyContentPlacement];
+    [self _applyInputSurfaceExtents];
 
     if (_volumeSizeChangedHandler)
         _volumeSizeChangedHandler(_volumeSizeInMeters);
@@ -253,8 +271,48 @@ static std::optional<uint64_t> volumetricSceneTokenFromActivities(NSSet<NSUserAc
 
     [self _applyContentPlacement];
 
+    // A rebind re-adds the content above the input surface.
+    if (_inputHostingController)
+        [container bringSubviewToFront:[_inputHostingController view]];
+
     _volumeSizeInMeters = [self _currentVolumeSizeInMeters];
+    [self _applyInputSurfaceExtents];
     return _volumeSizeInMeters;
+}
+
+- (void)installInputSurfaceWithBegan:(void (^)(CGPoint))began changed:(void (^)(CGPoint))changed ended:(void (^)(void))ended
+{
+    UIView *container = [self _containerView];
+    if (!container || _inputGestureController)
+        return;
+
+    _inputGestureController = adoptNS([[WKPortalVolumetricGestureController alloc] init]);
+    [_inputGestureController setOnDragBegan:began];
+    [_inputGestureController setOnDragChanged:changed];
+    [_inputGestureController setOnDragEnded:ended];
+
+    _inputHostingController = [_inputGestureController makeHostingController];
+
+    RetainPtr rootViewController = [_volumetricWindow rootViewController];
+    [rootViewController addChildViewController:_inputHostingController.get()];
+    [[_inputHostingController view] setFrame:container.bounds];
+    [[_inputHostingController view] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+    [container addSubview:[_inputHostingController view]];
+    [_inputHostingController didMoveToParentViewController:rootViewController.get()];
+
+    [self _applyInputSurfaceExtents];
+}
+
+- (void)_removeInputSurface
+{
+    if (_inputHostingController) {
+        [_inputHostingController willMoveToParentViewController:nil];
+        [[_inputHostingController view] removeFromSuperview];
+        [_inputHostingController removeFromParentViewController];
+        _inputHostingController = nil;
+    }
+
+    _inputGestureController = nil;
 }
 
 // Supplying a configuration binds our delegate class to the new scene, which is both how the scene reaches
@@ -350,6 +408,8 @@ static std::optional<uint64_t> volumetricSceneTokenFromActivities(NSSet<NSUserAc
     [self _failPresentation];
 
     _volumeSizeChangedHandler = nil;
+
+    [self _removeInputSurface];
 
     [_hostedContentView removeFromSuperview];
     _hostedContentView = nil;

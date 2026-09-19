@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#pragma once
+
 #import <wtf/Platform.h>
 
-#if ENABLE(MODEL_PROCESS)
+#if PLATFORM(VISION) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
-#import "WKRKEntity.h"
-#import <simd/simd.h>
+#import <UIKit/UIKit.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-typedef NS_ENUM(NSInteger, WKStageModeOperation) {
-    WKStageModeOperationNone = 0,
-    WKStageModeOperationOrbit,
-};
-
-#if HAVE(CORE_RE)
-
+// Captures spatial drags over a volumetric scene, which has no glass for a UIPanGestureRecognizer to sit on. An
+// invisible RealityKit entity fills the volume instead; nothing arrives until it is given a non-degenerate box.
 NS_SWIFT_UI_ACTOR
-@protocol WKStageModeInteractionAware <NSObject>
-- (void)stageModeInteractionDidUpdateModel;
+@interface WKPortalVolumetricGestureController : NSObject
+
+@property (nonatomic, copy, nullable) void (^onDragBegan)(CGPoint);
+@property (nonatomic, copy, nullable) void (^onDragChanged)(CGPoint);
+@property (nonatomic, copy, nullable) void (^onDragEnded)(void);
+
+- (UIViewController *)makeHostingController;
+
+// Extents in meters, not points.
+- (void)updateProxyExtentsWithWidth:(float)width height:(float)height depth:(float)depth;
+
 @end
-
-NS_SWIFT_UI_ACTOR
-@interface WKStageModeInteractionDriver : NSObject
-@property (nonatomic, readonly) REEntityRef interactionContainerRef;
-@property (nonatomic, readonly) bool stageModeInteractionInProgress;
-
-- (instancetype)initWithModel:(WKRKEntity *)model container:(REEntityRef)container delegate:(id<WKStageModeInteractionAware> _Nullable)delegate;
-- (void)setContainerTransformInPortal;
-- (void)interactionDidBegin:(simd_float4x4)transform;
-- (void)interactionDidUpdate:(simd_float4x4)transform;
-- (void)interactionDidEnd;
-- (void)operationDidUpdate:(WKStageModeOperation)operation;
-- (void)removeInteractionContainerFromSceneOrParent;
-- (void)clearInteractionRotation;
-- (void)clearInteractionRotationAndOrbitState;
-@end
-
-#endif // HAVE(CORE_RE)
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 
-#endif // ENABLE(MODEL_PROCESS)
+#endif // PLATFORM(VISION) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)

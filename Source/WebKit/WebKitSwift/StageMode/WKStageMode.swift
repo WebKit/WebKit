@@ -117,6 +117,16 @@ extension WKStageModeInteractionDriver {
         recenterInteractionPivotOnContent()
     }
 
+    // Also resets the simulator's yaw and pitch, which `applySimulatorState()` writes to the pivots absolutely.
+    func clearInteractionRotationAndOrbitState() {
+        sceneUpdateSubscription?.cancel()
+        sceneUpdateSubscription = nil
+        driverInitialized = false
+
+        simulator.setCurrentYaw(0, pitch: 0)
+        clearInteractionRotation()
+    }
+
     func interactionDidBegin(_ transform: simd_float4x4) {
         sceneUpdateSubscription?.cancel()
         sceneUpdateSubscription = nil
