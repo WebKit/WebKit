@@ -630,6 +630,25 @@ TEST(CtapPinTest, TestHmacSecretResponseInvalidSize)
     EXPECT_FALSE(response);
 }
 
+TEST(CtapPinTest, TestEncryptHmacSecretOutputRoundTrip)
+{
+    auto keyPairResult = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDH, "P-256"_s, true, CryptoKeyUsageDeriveBits);
+    ASSERT_FALSE(keyPairResult.hasException());
+    auto keyPair = keyPairResult.releaseReturnValue();
+
+    Vector<uint8_t> salt1(FillWith { }, 32, 0xAA);
+    auto request = HmacSecretRequest::create(PINUVAuthProtocol::kPinProtocol1, salt1, std::nullopt, downcast<CryptoKeyEC>(*keyPair.publicKey));
+    ASSERT_TRUE(request);
+
+    Vector<uint8_t> plaintext(FillWith { }, 32, 0x5A);
+    auto encrypted = encryptHmacSecretOutput(PINUVAuthProtocol::kPinProtocol1, downcast<CryptoKeyEC>(*keyPair.privateKey), request->coseKey(), plaintext);
+    ASSERT_TRUE(encrypted);
+
+    auto response = HmacSecretResponse::parse(PINUVAuthProtocol::kPinProtocol1, request->sharedKey(), *encrypted);
+    ASSERT_TRUE(response);
+    EXPECT_TRUE(equalSpans(response->output().span(), plaintext.span()));
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WEB_AUTHN)
