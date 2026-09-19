@@ -35,6 +35,7 @@
 #include "FrameConsoleClient.h"
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
+#include "FrameTree.h"
 #include "HTMLPlugInElement.h"
 #include "HistoryController.h"
 #include "InspectorInstrumentation.h"
@@ -44,6 +45,7 @@
 #include "JSDocument.h"
 #include "JSExecState.h"
 #include "LoadableModuleScript.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
@@ -639,6 +641,72 @@ JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperW
     return result ? result.value() : JSC::JSValue { };
 }
 
+// Script evaluated on behalf of the client (e.g. WKWebView's evaluateJavaScript:) runs as if it were
+// triggered by a user gesture. The transient activation that grants must not outlive the gesture, but
+// taking it back with consumeTransientActivation() would also discard transient activation the user had
+// genuinely given the page, silently breaking activation-gated APIs the page calls afterwards. This
+// scope remembers the activation each window had beforehand, so that only the activation granted by the
+// forced gesture is taken back once the gesture ends.
+class ForcedUserGestureScope {
+    WTF_MAKE_NONCOPYABLE(ForcedUserGestureScope);
+public:
+    ForcedUserGestureScope(LocalFrame& frame, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
+        : m_previousActivations(previousActivations(frame, forceUserGesture, removeTransientActivation))
+        , m_gestureIndicator(forceUserGesture == ForceUserGesture::Yes ? std::optional<IsProcessingUserGesture>(IsProcessingUserGesture::Yes) : std::nullopt, frame.document(), UserGestureType::ActivationTriggering, UserGestureIndicator::ProcessInteractionStyle::Never)
+    {
+        RefPtr token = UserGestureIndicator::currentUserGesture();
+        if (!token || m_previousActivations.isEmpty())
+            return;
+
+        token->addDestructionObserver([previousActivations = WTF::move(m_previousActivations), weakFrame = WeakPtr { frame }](UserGestureToken& token) {
+            bool revokedAnyActivation = false;
+            for (auto& [weakWindow, previousActivationTime] : previousActivations) {
+                if (RefPtr window = weakWindow)
+                    revokedAnyActivation |= window->revokeForcedActivation(token.startTime(), previousActivationTime);
+            }
+
+            if (!revokedAnyActivation)
+                return;
+
+            // Activation is also granted to ancestor frames in other processes, which only know how to
+            // consume it. FIXME: This takes activation away from every frame in those processes rather
+            // than restoring what they had, which needs an equivalent of revokeForcedActivation() in the
+            // UI process.
+            RefPtr frame = weakFrame;
+            if (!frame)
+                return;
+            if (RefPtr page = frame->page(); page && page->mainFrame().tree().containsRemoteFrame())
+                frame->loader().client().didConsumeUserActivation();
+        });
+    }
+
+private:
+    struct PreviousActivation {
+        WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> weakWindow;
+        MonotonicTime activationTime;
+    };
+
+    static Vector<PreviousActivation> previousActivations(LocalFrame& frame, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    {
+        if (forceUserGesture != ForceUserGesture::Yes || removeTransientActivation != RemoveTransientActivation::Yes)
+            return { };
+
+        Vector<PreviousActivation> activations;
+        for (RefPtr frameInTree = &frame.tree().top(); frameInTree; frameInTree = frameInTree->tree().traverseNext()) {
+            RefPtr localFrame = dynamicDowncast<LocalFrame>(frameInTree);
+            if (!localFrame)
+                continue;
+            if (RefPtr window = localFrame->window())
+                activations.append({ *window, window->lastActivationTimestamp() });
+        }
+        return activations;
+    }
+
+    // Declared before m_gestureIndicator so that the activations are captured before the forced gesture grants its own.
+    Vector<PreviousActivation> m_previousActivations;
+    UserGestureIndicator m_gestureIndicator;
+};
+
 ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -651,16 +719,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
     m_frame->loader().client().notifyPageOfAppBoundBehavior();
 #endif
 
-    UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<IsProcessingUserGesture>(IsProcessingUserGesture::Yes) : std::nullopt, m_frame->document(), UserGestureType::ActivationTriggering, UserGestureIndicator::ProcessInteractionStyle::Never);
-
-    if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
-        UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
-            token.forEachImpactedDocument([](Document& document) {
-                if (RefPtr window = document.window())
-                    window->consumeTransientActivation();
-            });
-        });
-    }
+    ForcedUserGestureScope userGestureScope(m_frame, parameters.forceUserGesture, parameters.removeTransientActivation);
 
     if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript, &world) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
