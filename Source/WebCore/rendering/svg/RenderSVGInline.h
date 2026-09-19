@@ -59,12 +59,17 @@ private:
 
     void updateFromStyle() final;
 
-    // Chapter 10.4 of the SVG Specification say that we should use the
-    // object bounding box of the parent text element.
-    // We search for the root text element and take its bounding box.
-    // It is also necessary to take the stroke and repaint rect of
-    // this element, since we need it for filters.
+    // The union of the glyph cells of the text this element contains, per
+    // https://w3c.github.io/svgwg/svg2-draft/coords.html#BoundingBoxes. The stroke, repaint and
+    // decorated boxes below still report the whole 'text' element, because they drive invalidation
+    // and filter regions.
     FloatRect objectBoundingBox() const final;
+
+    // 'objectBoundingBox' units on a text content child element resolve against the whole 'text'
+    // element, not against the box above.
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#ObjectBoundingBoxUnitsTextObjects
+    FloatRect objectBoundingBoxForResources() const final;
+
     FloatRect strokeBoundingBox() const final;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
     FloatRect decoratedBoundingBox() const final;
