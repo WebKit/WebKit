@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBuffer.h"
 
 namespace WebCore {
@@ -43,11 +43,7 @@ public:
     unsigned textureID() const;
 
 private:
-#if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
-#else
-    sk_sp<SkImage> skiaImage() override;
-#endif
 
     RefPtr<BitmapTexture> m_texture;
     unsigned m_textureID { 0 };
@@ -57,4 +53,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_COORDINATED_PLATFORM_LAYER_BUFFER_TYPE(CoordinatedPlatformLayerBufferRGB, Type::RGB)
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
