@@ -422,19 +422,12 @@ float Frame::frameScaleFactor() const
     // https://github.com/w3c/csswg-drafts/issues/9644
     // Check if this frame's owner element (iframe) has CSS zoom applied.
     if (!isMainFrame()) {
-        auto rootZoom = 1.0;
-
-        // FIXME: maybe pageZoomFactor should be available in remote frames?
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame()))
-            rootZoom = localMainFrame->pageZoomFactor();
-
         if (RefPtr parentFrame = tree().parent())
-            rootZoom = parentFrame->usedZoomForChild(*this) / rootZoom;
+            return parentFrame->frameScaleFactorForChild(*this);
 
-        return rootZoom;
+        return 1.0;
     }
 
-    // Main frame is scaled with respect to the container.
     if (page->delegatesScaling())
         return 1;
 
