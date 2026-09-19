@@ -103,8 +103,7 @@ public:
         ApplicationManifest,
 #endif
         SVGDocumentResource,
-        Unknown,
-        LastType = Unknown,
+        LastType = SVGDocumentResource,
     };
     static constexpr unsigned bitWidthOfType = 5;
     static_assert(static_cast<unsigned>(Type::LastType) <= ((1U << bitWidthOfType) - 1));
