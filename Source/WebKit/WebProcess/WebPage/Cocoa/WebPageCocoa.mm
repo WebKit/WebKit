@@ -1518,11 +1518,7 @@ static std::optional<bool> elementHasHiddenVisibility(StyledElement* styledEleme
     if (!inlineStyle)
         return std::nullopt;
 
-    RefPtr value = dynamicDowncast<CSSKeywordValue>(inlineStyle->getPropertyCSSValue(CSSPropertyVisibility));
-    if (!value)
-        return false;
-
-    return value->valueID() == CSSValueHidden;
+    return inlineStyle->propertyAsValueID(CSSPropertyVisibility) == CSSValueHidden;
 }
 
 void WebPage::createTextIndicatorForElementWithID(const String& elementID, CompletionHandler<void(RefPtr<WebCore::TextIndicator>&&)>&& completionHandler)

@@ -530,7 +530,7 @@ bool MediaControlTextTrackContainerElement::isShowing() const
 
     // Following the code from show() and hide() above, we only have
     // to check for the presense of inline display.
-    return (!propertySet || !propertySet->getPropertyCSSValue(CSSPropertyDisplay));
+    return !propertySet || !propertySet->hasProperty(CSSPropertyDisplay);
 }
 
 CueList MediaControlTextTrackContainerElement::currentlyActiveCues() const
