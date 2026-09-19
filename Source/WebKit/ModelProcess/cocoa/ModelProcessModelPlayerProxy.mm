@@ -770,27 +770,130 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
 
 #if ENABLE(SPATIAL_PORTAL)
 
+float ModelProcessModelPlayerProxy::anchorPlacementScale(const TrackedModel& tracked) const
+{
+    if (!tracked.anchorPlacementEntity)
+        return 1;
+
+    float scale = simd_reduce_max(simd_abs([tracked.anchorPlacementEntity transform].scale));
+    return scale > std::numeric_limits<float>::epsilon() ? scale : 1;
+}
+
 RESRT ModelProcessModelPlayerProxy::childEntityTransformSRT(const TrackedModel& tracked) const
 {
     bool hasChildTransform = !simd_equal(tracked.childTransform, matrix_identity_float4x4);
-    if (!hasChildTransform && !m_portalTransform.hasContentTransform()) {
+
+    bool hasContentTransform = !tracked.anchorPlacementEntity && m_portalTransform.hasContentTransform();
+
+    simd_quatf anchorCorrection = tracked.anchorRotationCorrection;
+
+    if (!hasChildTransform && !hasContentTransform) {
         return RESRT {
             .scale = tracked.originalEntityScale,
-            .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)),
+            .rotation = anchorCorrection,
             .translation = simd_make_float3(0, 0, 0),
         };
     }
 
     // The author's `portal-transform` list applies to the whole portal content, so it sits outside of a child's own transform.
-    simd_float4x4 matrix = m_portalTransform.hasContentTransform() ? contentTransformMatrix() : matrix_identity_float4x4;
+    simd_float4x4 matrix = hasContentTransform ? contentTransformMatrix() : matrix_identity_float4x4;
 
     if (hasChildTransform) {
         RESRT childSRT = REMakeSRTFromMatrix(tracked.childTransform);
-        childSRT.translation /= effectivePointsPerMeter(m_layer.get());
+        childSRT.translation /= effectivePointsPerMeter(m_layer.get()) * anchorPlacementScale(tracked);
         matrix = simd_mul(matrix, RESRTMatrix(childSRT));
     }
 
+    matrix = simd_mul(RESRTMatrix(REMakeSRT(simd_make_float3(1, 1, 1), anchorCorrection, simd_make_float3(0, 0, 0))), matrix);
+
     return contentTransformedEntitySRT(matrix, tracked.originalEntityScale);
+}
+
+void ModelProcessModelPlayerProxy::updateAnchorParenting()
+{
+#if HAVE(CORE_RE)
+    if (!m_containerEntity)
+        return;
+
+    for (auto& [nodeID, tracked] : m_trackedModels) {
+        RetainPtr childEntity = tracked->entity;
+        if (!childEntity)
+            continue;
+
+        REEntityRef desiredParent = m_containerEntity.get();
+
+        if (tracked->anchorNode) {
+            if (auto* anchor = trackedModel(*tracked->anchorNode); anchor && anchor->entity) {
+                desiredParent = [anchor->entity coreEntity];
+
+                if (!tracked->anchorPlacement.isEmpty()) {
+                    if (REEntityRef placement = REEntityFindInHierarchyByName(desiredParent, tracked->anchorPlacement.utf8().legacyCStringPointer()))
+                        desiredParent = placement;
+                    else
+                        RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::updateAnchorParenting: the anchor's asset has no entity named '%s', anchoring to its root instead. nodeID=%" PRIu64, this, tracked->anchorPlacement.utf8().legacyCStringPointer(), nodeID.toUInt64());
+                }
+            }
+        }
+
+        if (REEntityGetParent([childEntity coreEntity]) == desiredParent)
+            continue;
+
+        constexpr unsigned maximumAncestorWalk = 512;
+        bool wouldCreateCycle = false;
+        REEntityRef ancestor = desiredParent;
+        for (unsigned depth = 0; ancestor && depth < maximumAncestorWalk; ++depth) {
+            if (ancestor == [childEntity coreEntity]) {
+                wouldCreateCycle = true;
+                break;
+            }
+            ancestor = REEntityGetParent(ancestor);
+        }
+
+        if (wouldCreateCycle) {
+            RELEASE_LOG_ERROR(ModelElement, "%p - ModelProcessModelPlayerProxy::updateAnchorParenting: refusing to anchor nodeID=%" PRIu64 " into its own subtree", this, nodeID.toUInt64());
+            continue;
+        }
+
+        if (desiredParent == m_containerEntity.get()) {
+            tracked->anchorPlacementEntity = nullptr;
+            tracked->anchorRotationCorrection = simd_quaternion(0.0f, simd_make_float3(1, 0, 0));
+            parentToContainer(childEntity.get());
+            continue;
+        }
+
+        RetainPtr placementEntity = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:desiredParent]);
+        [placementEntity setReferenceEntity:m_containerEntityWrapper.get()];
+        tracked->anchorPlacementEntity = placementEntity;
+
+        if (auto* anchor = trackedModel(*tracked->anchorNode); anchor && anchor->entity) {
+            RetainPtr placementInHostFrame = adoptNS([allocWKRKEntityInstance() initWithCoreEntity:desiredParent]);
+            [placementInHostFrame setReferenceEntity:anchor->entity.get()];
+            tracked->anchorRotationCorrection = simd_inverse([placementInHostFrame transform].rotation);
+        }
+
+        [childEntity setParentCoreEntity:desiredParent preservingWorldTransform:NO];
+        [childEntity setReferenceEntity:placementEntity.get()];
+
+
+    }
+#endif // HAVE(CORE_RE)
+}
+
+void ModelProcessModelPlayerProxy::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    dispatch_assert_queue(mainDispatchQueueSingleton());
+
+    auto& tracked = ensureTrackedModel(nodeID);
+
+
+    if (tracked.anchorNode == anchorNode && tracked.anchorPlacement == placement)
+        return;
+
+    tracked.anchorNode = anchorNode;
+    tracked.anchorPlacement = placement;
+
+    updateAnchorParenting();
+    updateTransform();
 }
 
 #endif // ENABLE(SPATIAL_PORTAL)
@@ -892,6 +995,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 
     RELEASE_LOG(ModelElement, "%p - ModelProcessModelPlayerProxy finished loading model nodeID=%" PRIu64 " id=%" PRIu64, this, nodeID.toUInt64(), m_id.toUInt64());
 
+
     RetainPtr<WKRKEntity> loadedEntity;
 #if HAVE(CORE_RE)
     bool canLoadWithRealityKit = [getWKRKEntityClassSingleton() isLoadFromDataAvailable];
@@ -949,6 +1053,10 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
         entityTransformToRestore = std::nullopt;
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+    updateAnchorParenting();
+#endif
+
     if (entityTransformToRestore) {
         setEntityTransform(nodeID, *entityTransformToRestore);
         notifyModelPlayerOfTransformChange();
@@ -995,6 +1103,7 @@ void ModelProcessModelPlayerProxy::didFailLoading(WebCore::REModelLoader& loader
     auto nodeID = it->key;
     m_trackedModels.remove(it);
     clearReportingModelIfNeeded(nodeID);
+
 
     send(Messages::ModelProcessModelPlayer::DidFailLoading(nodeID));
 }
@@ -1133,6 +1242,10 @@ void ModelProcessModelPlayerProxy::unloadModel(WebCore::NodeIdentifier nodeID)
     }
 
     clearReportingModelIfNeeded(nodeID);
+
+#if ENABLE(SPATIAL_PORTAL)
+    updateAnchorParenting();
+#endif
 
     // The portal-wide fit covered the removed model, so it has to be recomputed without it.
     computeTransform(true);
@@ -1744,6 +1857,10 @@ void ModelProcessModelPlayerProxy::teardownEntity()
         tracked->loader = nullptr;
         [tracked->entity setDelegate:nil];
         tracked->entity = nullptr;
+#if ENABLE(SPATIAL_PORTAL)
+        tracked->anchorPlacementEntity = nullptr;
+        tracked->anchorRotationCorrection = simd_quaternion(0.0f, simd_make_float3(1, 0, 0));
+#endif
     }
 #if HAVE(CORE_RE)
     if (m_containerEntity.get())

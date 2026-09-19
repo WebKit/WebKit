@@ -58,6 +58,11 @@ class ResourceError;
 class SpatialPortalEventListener;
 class WeakPtrImplWithEventTargetData;
 
+namespace Style {
+class ComputedStyle;
+struct ScopedName;
+}
+
 // Manages the portal / ModelPlayer for an element with `spatial: portal`.
 class SpatialPortalController : public CanMakeWeakPtr<SpatialPortalController>, public CanMakeCheckedPtr<SpatialPortalController> {
     WTF_MAKE_TZONE_ALLOCATED(SpatialPortalController);
@@ -77,11 +82,13 @@ public:
     void childVisibilityStateChanged(HTMLModelElement&);
     void childWasSuspended(HTMLModelElement&);
     void childTransformDidChange(HTMLModelElement&, const TransformationMatrix&);
+    void childAnchorDidChange(HTMLModelElement&, const Style::ComputedStyle&);
 
     Element* portalElement() const { return m_portalElement.get(); }
     unsigned numberOfHostedModels() const { return m_hostedModels.size(); }
     bool childIsLoaded(NodeIdentifier) const;
     ModelPlayer* playerForChild(NodeIdentifier) const;
+    WEBCORE_EXPORT HTMLModelElement* anchorModelForChild(NodeIdentifier) const;
     void configureGraphicsLayer(GraphicsLayer&, const Color& backgroundColor);
     void sizeMayHaveChanged();
 
@@ -106,6 +113,15 @@ private:
         WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
         RefPtr<Model> loadedModel;
         RefPtr<PlaceholderModelPlayer> placeholder;
+
+        std::optional<NodeIdentifier> anchorNode;
+        String anchorPlacement;
+        bool anchorWarningIssued { false };
+    };
+
+    struct AnchorResolution {
+        std::optional<NodeIdentifier> node;
+        String warning;
     };
 
     void modelDidFinishLoading(ModelPlayer&, NodeIdentifier);
@@ -126,6 +142,11 @@ private:
     void unloadAllChildModels();
     void saveChildState(NodeIdentifier, HostedModel&, bool onSuspend);
     HTMLModelElement* hostedModelElement(NodeIdentifier) const;
+    AnchorResolution resolvedAnchorNode(const HTMLModelElement&, const Style::ComputedStyle&) const;
+    void updateAnchorForChild(const HTMLModelElement&, HostedModel&, const Style::ComputedStyle&);
+    std::optional<NodeIdentifier> anchorNodeForName(NodeIdentifier, const Style::ScopedName&) const;
+    bool anchorChainReaches(NodeIdentifier startNode, NodeIdentifier targetNode) const;
+    void addConsoleWarning(const String&) const;
     void reconfigurePortalLayer();
     void observePortalVisibility();
     void stopObservingPortalVisibility();
