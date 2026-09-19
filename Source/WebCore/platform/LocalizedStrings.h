@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LocalizedStrings_h
-#define LocalizedStrings_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
@@ -321,8 +320,9 @@ namespace WebCore {
     WEBCORE_EXPORT String multipleFileUploadText(unsigned numberOfFiles);
     String unknownFileSizeText();
 
-#if PLATFORM(IOS_FAMILY)
     String htmlSelectMultipleItems(size_t num);
+
+#if PLATFORM(IOS_FAMILY)
     String fileButtonChooseMediaFileLabel();
     String fileButtonChooseMultipleMediaFilesLabel();
     String fileButtonNoMediaFileSelectedLabel();
@@ -523,5 +523,3 @@ namespace WebCore {
 #endif
 
 } // namespace WebCore
-
-#endif // LocalizedStrings_h

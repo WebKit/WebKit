@@ -46,6 +46,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLSlotElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -718,6 +719,33 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     // Let the theme also have a crack at adjusting the style.
     if (style.appearance() != StyleAppearance::None && style.appearance() != StyleAppearance::Base)
         adjustThemeStyle(style, m_parentStyle);
+
+    // A base appearance list box is as many rows tall as its display size.
+    // https://html.spec.whatwg.org/#the-select-element-2
+    // FIXME: Move to the user agent stylesheet as the specification writes it, once a lone
+    // -internal-auto-base() stops caching its substitution across elements, which bakes in the
+    // first element's attr(size). See CSSSubstitutionValue::cacheSimpleReference(). That would also
+    // honor an author height: auto and field-sizing: content, and keep the row size in one place:
+    // this uses the select's line height, but a row is the option's min-block-size.
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(m_element.get()); select && style.logicalHeight().isAuto() && select->isBaseListBox(&style)) {
+        // Fixed lengths are stored unzoomed, so stay in CSS pixels throughout.
+        auto rowHeight = std::max(24.0f, style.usedLineHeight() / style.usedZoomForLength().value);
+        auto logicalHeight = rowHeight * select->displaySize();
+
+        // Rows are content, so grow a border box like RenderListBox::computeLogicalHeight() does.
+        // Percentage padding cannot be resolved here.
+        if (style.boxSizing() == BoxSizing::BorderBox) {
+            logicalHeight += style.usedBorderWidthBefore().unresolvedValue() + style.usedBorderWidthAfter().unresolvedValue();
+            auto writingMode = style.writingMode();
+            auto& padding = style.paddingBox();
+            if (auto before = padding.before(writingMode).tryFixed())
+                logicalHeight += before->unresolvedValue();
+            if (auto after = padding.after(writingMode).tryFixed())
+                logicalHeight += after->unresolvedValue();
+        }
+
+        style.setLogicalHeight(Style::PreferredSize::Fixed { logicalHeight });
+    }
 
     // This should be kept in sync with requiresRenderingConsolidationForViewTransition
     if (style.usedTransformStyle3D() == TransformStyle3D::Preserve3D) {

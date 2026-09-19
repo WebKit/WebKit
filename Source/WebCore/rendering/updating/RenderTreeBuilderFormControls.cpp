@@ -92,17 +92,20 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
         if (!selectElement)
             return;
 
-        RefPtr pickerElement = selectElement->pickerPopoverElement();
-        if (!pickerElement)
-            return;
+        // A list box has no picker, so the select itself decides.
+        CheckedPtr<RenderElement> appearanceRenderer;
+        if (selectElement->isBaseListBox())
+            appearanceRenderer = selectElement->renderer();
+        else if (RefPtr pickerElement = selectElement->pickerPopoverElement())
+            appearanceRenderer = pickerElement->renderer();
 
-        if (CheckedPtr pickerElementRenderer = pickerElement->renderer())
-            updatePseudoElement(PseudoElementType::Checkmark, renderer, pickerElementRenderer->style().usedAppearance(), renderer.firstChild());
+        if (appearanceRenderer)
+            updatePseudoElement(PseudoElementType::Checkmark, renderer, appearanceRenderer->style().usedAppearance(), renderer.firstChild());
 
         return;
     }
 
-    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(renderer.element()); select && select->usesMenuList()) {
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(renderer.element()); select && select->isDropDownBox(&renderer.style())) {
         updatePseudoElement(PseudoElementType::PickerIcon, renderer, renderer.style().usedAppearance());
         return;
     }

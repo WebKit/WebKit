@@ -277,15 +277,22 @@ void HTMLOptionElement::finishParsingChildren()
 
 bool HTMLOptionElement::supportsFocus() const
 {
-    return HTMLElement::supportsFocus() || belongsToBaseAppearancePicker();
+    return HTMLElement::supportsFocus() || isRenderedWithBaseAppearance();
 }
 
 bool HTMLOptionElement::isFocusable() const
 {
     RefPtr select = ownerSelectElement();
-    if (select && select->usesMenuList() && !select->usesBaseAppearancePicker())
+    if (select && select->isDropDownBox() && !select->usesBaseAppearancePicker())
         return false;
     return HTMLElement::isFocusable();
+}
+
+bool HTMLOptionElement::isKeyboardFocusable(const FocusEventData& focusEventData) const
+{
+    if (belongsToBaseAppearanceListBox() && !tabIndexSetExplicitly())
+        return false;
+    return HTMLElement::isKeyboardFocusable(focusEventData);
 }
 
 String HTMLOptionElement::text() const
@@ -318,10 +325,9 @@ bool HTMLOptionElement::accessKeyAction(bool)
     if (!select)
         return false;
 
-    if (select->usesBaseAppearancePicker()) {
-        select->optionSelectedByUser(index(), true);
-        select->hidePickerPopoverElement();
-    } else
+    if (select->optionsAreRenderedWithBaseAppearance())
+        select->pickOrToggleOption(*this);
+    else
         select->accessKeySetSelectedIndex(index());
     return true;
 }
@@ -332,7 +338,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
         return HTMLElement::defaultEventHandler(event);
 
     RefPtr select = ownerSelectElement();
-    if (!select || !select->document().settings().htmlEnhancedSelectEnabled() || !select->usesBaseAppearancePicker())
+    if (!select || !select->document().settings().htmlEnhancedSelectEnabled() || !select->optionsAreRenderedWithBaseAppearance())
         return HTMLElement::defaultEventHandler(event);
 
     auto& eventNames = WebCore::eventNames();
@@ -346,22 +352,13 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
         // [Shift+]Tab closes the picker; fall through to move focus.
         if (keyIdentifier == "U+0009"_s) {
-            select->hidePickerPopoverElement();
+            if (select->usesBaseAppearancePicker())
+                select->hidePickerPopoverElement();
             return HTMLElement::defaultEventHandler(event);
         }
 
-        int currentIndex = select->optionToListIndex(index());
-        int listIndex = select->computeNavigationIndex(keyIdentifier, currentIndex, select->pickerNavigationKeyIdentifiers());
-        if (listIndex >= 0) {
-            auto scrollMode = HTMLSelectElement::PickerScrollMode::Nearest;
-            if (keyIdentifier == "PageDown"_s)
-                scrollMode = HTMLSelectElement::PickerScrollMode::AlignBottom;
-            else if (keyIdentifier == "PageUp"_s)
-                scrollMode = HTMLSelectElement::PickerScrollMode::AlignTop;
-            select->focusOptionAtIndex(listIndex, std::nullopt, scrollMode);
-            keyboardEvent->setDefaultHandled();
+        if (select->handleNavigationKeydown(*keyboardEvent, select->optionToListIndex(index())))
             return;
-        }
     }
 
     if (event.type() == eventNames.keypressEvent) {
@@ -371,8 +368,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
         int keyCode = keyboardEvent->keyCode();
         if (keyCode == '\r' || keyCode == ' ') {
-            select->optionSelectedByUser(index(), true);
-            select->hidePickerPopoverElement();
+            select->pickOrToggleOption(*this);
             keyboardEvent->setDefaultHandled();
             return;
         }
@@ -387,9 +383,10 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
     }
 
     if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
-        select->optionSelectedByUser(index(), true);
-        select->hidePickerPopoverElement();
         event.setDefaultHandled();
+        if (select->isBaseListBox())
+            focus();
+        select->pickOrToggleOption(*this);
         return;
     }
 
@@ -570,6 +567,19 @@ bool HTMLOptionElement::belongsToBaseAppearancePicker() const
 {
     RefPtr select = ownerSelectElement();
     return select && select->usesBaseAppearancePicker();
+}
+
+bool HTMLOptionElement::belongsToBaseAppearanceListBox() const
+{
+    RefPtr select = ownerSelectElement();
+    return select && select->isBaseListBox();
+}
+
+// https://html.spec.whatwg.org/#option-base-appearance
+bool HTMLOptionElement::isRenderedWithBaseAppearance() const
+{
+    RefPtr select = ownerSelectElement();
+    return select && select->optionsAreRenderedWithBaseAppearance();
 }
 
 String HTMLOptionElement::label() const
