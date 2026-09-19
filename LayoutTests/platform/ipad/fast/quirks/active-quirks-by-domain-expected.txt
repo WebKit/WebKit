@@ -125,6 +125,7 @@ https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
     MaybeBypassBackForwardCache
     ShouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk
+    ShouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk
 https://translate.google.com/
     MaybeBypassBackForwardCache
     NeedsGoogleTranslateScrollingQuirk
@@ -192,7 +193,7 @@ https://www.instagram.com/
 https://invideo.io/
     NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
 https://www.linkedin.com/
-    (none)
+    ShouldAllowNativeTapsOnMediaElementsQuirk
 https://outlook.live.com/
     MayNeedToIgnoreContentObservation
     NeedsChromeOSNavigatorUserAgentQuirk
@@ -217,8 +218,16 @@ https://mailchimp.com/
 https://www.marcus.com/
     ShouldExposeShowModalDialog
     ShouldNavigatorPluginsBeEmpty
+https://jalopnik.com/
+    NeedsKinjaLoginStorageAccessQuirk
+https://kotaku.com/
+    NeedsKinjaLoginStorageAccessQuirk
 https://medium.com/
     ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk
+https://www.microsoft.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
+https://microsoft.com/
+    (none)
 https://m365.cloud.microsoft/
     ShouldAllowPopupFromMicrosoftOfficeToOneDrive
 https://cloud.microsoft/
@@ -249,6 +258,10 @@ https://www.pandora.com/
     ShouldExposeShowModalDialog
 https://www.pinterest.com/
     ShouldAllowNotificationPermissionWithoutUserGesture
+https://www.playstation.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
+https://my.playstation.com/
+    NeedsStorageAccessOnLoginButtonClickQuirk
 https://www.premierleague.com/
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldDispatchPlayPauseEventsOnResume
