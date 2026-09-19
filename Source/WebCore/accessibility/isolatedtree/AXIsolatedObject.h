@@ -389,6 +389,8 @@ private:
     bool isMathTable() const final { return boolAttributeValue(AXProperty::IsMathTable); }
     bool isMathTableRow() const final { return boolAttributeValue(AXProperty::IsMathTableRow); }
     bool isMathTableCell() const final { return boolAttributeValue(AXProperty::IsMathTableCell); }
+    bool isMathText() const final { return boolAttributeValue(AXProperty::IsMathText); }
+    bool isMathEmpty() const final { return boolAttributeValue(AXProperty::IsMathEmpty); }
     bool isMathMultiscript() const final { return boolAttributeValue(AXProperty::IsMathMultiscript); }
     bool isMathToken() const final { return boolAttributeValue(AXProperty::IsMathToken); }
     bool isAnonymousMathOperator() const final { return boolAttributeValue(AXProperty::IsAnonymousMathOperator); }

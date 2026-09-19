@@ -2674,6 +2674,8 @@ IsolatedObjectData createIsolatedObjectData(const Ref<AccessibilityObject>& axOb
             setProperty(AXProperty::IsMathTable, object.isMathTable());
             setProperty(AXProperty::IsMathTableRow, object.isMathTableRow());
             setProperty(AXProperty::IsMathTableCell, object.isMathTableCell());
+            setProperty(AXProperty::IsMathText, object.isMathText());
+            setProperty(AXProperty::IsMathEmpty, object.isMathEmpty());
             setProperty(AXProperty::IsMathMultiscript, object.isMathMultiscript());
             setProperty(AXProperty::IsMathToken, object.isMathToken());
             setProperty(AXProperty::MathFencedOpenString, object.mathFencedOpenString().isolatedCopy());
