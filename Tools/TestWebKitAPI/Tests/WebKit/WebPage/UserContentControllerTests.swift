@@ -35,7 +35,7 @@ import struct Foundation.URL
 struct UserContentControllerTests {
     @Test
     func jsBufferInjectsWebKitNamespace() async throws {
-        let buffer = "abc".utf8Span.span.bytes
+        let buffer = Array("abc".utf8).span.bytes
         let configuration = WebPage.Configuration()
         configuration.userContentController.addBuffer(buffer, name: "testBuffer", to: .page)
         defer {
