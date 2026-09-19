@@ -1,0 +1,20 @@
+Tests for the CSS.getMatchedStyleForNode command exposing authored styles for user-agent part pseudo-elements like `::placeholder` and `::file-selector-button`.
+
+
+
+== Running test suite: CSS.getMatchedStylesForNode.UserAgentPartPseudoElement
+-- Running test case: CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.Placeholder
+PASS: Display name should be '::placeholder'.
+PASS: Should have '::placeholder' pseudo-element styles.
+PASS: Should have authored rule for selector 'input::placeholder'.
+PASS: Should have authored rule for selector '#text-field::placeholder'.
+
+-- Running test case: CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.FileSelectorButton
+PASS: Display name should be '::file-selector-button'.
+PASS: Should have '::file-selector-button' pseudo-element styles.
+PASS: Should have authored rule for selector 'input::file-selector-button'.
+PASS: Should have authored rule for selector '#file-field::file-selector-button'.
+
+-- Running test case: CSS.getMatchedStylesForNode.UserAgentPartPseudoElement.NoPlaceholderForNonInput
+PASS: Should not have `::placeholder` pseudo-element styles.
+
