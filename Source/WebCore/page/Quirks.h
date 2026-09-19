@@ -361,6 +361,8 @@ private:
     bool needsQuirks() const;
     URL topDocumentURL() const;
 
+    bool behaviorAppliesToNode(QuirkBehaviorID, const Node*) const;
+
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
 
