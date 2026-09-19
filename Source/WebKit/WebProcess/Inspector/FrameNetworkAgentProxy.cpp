@@ -65,23 +65,6 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameNetworkAgentProxy);
 
-static WebCore::NetworkLoadPriority toNetworkLoadPriority(WebCore::ResourceLoadPriority priority)
-{
-    switch (priority) {
-    case WebCore::ResourceLoadPriority::VeryLow:
-        return WebCore::NetworkLoadPriority::Verylow;
-    case WebCore::ResourceLoadPriority::Low:
-        return WebCore::NetworkLoadPriority::Low;
-    case WebCore::ResourceLoadPriority::Medium:
-        return WebCore::NetworkLoadPriority::Medium;
-    case WebCore::ResourceLoadPriority::High:
-        return WebCore::NetworkLoadPriority::High;
-    case WebCore::ResourceLoadPriority::VeryHigh:
-        return WebCore::NetworkLoadPriority::Veryhigh;
-    }
-    return WebCore::NetworkLoadPriority::Unknown;
-}
-
 static ScopedResourceLoaderIdentifier qualifyResourceID(ResourceLoaderIdentifier resourceID)
 {
     return { resourceID, Process::identifier() };
@@ -329,14 +312,15 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     auto mutableMetrics = networkLoadMetrics;
     if (!mutableMetrics.additionalNetworkLoadMetricsForWebInspector) {
         mutableMetrics.additionalNetworkLoadMetricsForWebInspector = AdditionalNetworkLoadMetricsForWebInspector::create(
-            WebCore::NetworkLoadPriority::Unknown, WebCore::NetworkLoadPriority::Unknown, String(), String(), String(), String(), WebCore::HTTPHeaderMap(),
+            WebCore::NetworkLoadPriority::Unknown, WebCore::ResourceLoadPriority::Low,
+            String(), String(), String(), String(), WebCore::HTTPHeaderMap(),
             std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), std::numeric_limits<uint64_t>::max(), false);
     }
 
     if (resourceLoader) {
         if (auto* cachedResource = resourceLoader->cachedResource()) {
             auto type = cachedResource->type();
-            mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = toNetworkLoadPriority(WebCore::DefaultResourceLoadPriority::forResourceType(type));
+            mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = WebCore::DefaultResourceLoadPriority::forResourceType(type);
         }
     }
 
