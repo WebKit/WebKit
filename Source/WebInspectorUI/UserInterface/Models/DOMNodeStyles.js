@@ -904,6 +904,15 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             return shorthandStyleIndex > propertyStyleIndex;
         }
 
+        function isImportantInDifferentLayer(effectiveProperty, property) {
+            if (!effectiveProperty.important || !property.important || effectiveProperty.ownerStyle.node !== property.ownerStyle.node)
+                return false;
+
+            let effectiveLayers = effectiveProperty.ownerStyle.groupings.filter((grouping) => grouping.isLayer);
+            let propertyLayers = property.ownerStyle.groupings.filter((grouping) => grouping.isLayer);
+            return effectiveLayers.length !== propertyLayers.length || effectiveLayers.some((effectiveLayer, i) => effectiveLayer.text !== propertyLayers[i].text);
+        }
+
         for (var i = 0; i < styles.length; ++i) {
             var style = styles[i];
             var properties = style.enabledProperties;
@@ -947,7 +956,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                             continue;
                         }
 
-                        if (effectiveProperty.important || !property.important || effectiveProperty.ownerStyle.node !== property.ownerStyle.node) {
+                        if ((effectiveProperty.important || !property.important || effectiveProperty.ownerStyle.node !== property.ownerStyle.node) && !isImportantInDifferentLayer(effectiveProperty, property)) {
                             property.overridden = true;
                             property.overridingProperty = effectiveProperty;
                             continue;
