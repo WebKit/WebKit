@@ -6713,6 +6713,8 @@ using WebCore::ServiceWorkerOrClientIdentifier = Variant<WebCore::ScriptExecutio
 
 enum class WebCore::RequiresClipToRect : bool
 
+enum class WebCore::ShouldDiscardAlpha : bool
+
 enum class WebCore::HighlightVisibility : bool
 
 #if OS(WINDOWS)

@@ -331,7 +331,7 @@ void AudioVideoRendererRemote::paintCurrentVideoFrameInContext(GraphicsContext& 
         return;
 
     if (RefPtr videoFrame = currentVideoFrame())
-        context.drawVideoFrame(*videoFrame, rect, ImageOrientation::Orientation::None, false);
+        context.drawVideoFrame(*videoFrame, rect, ShouldDiscardAlpha::No);
 }
 
 RefPtr<NativeImage> AudioVideoRendererRemote::currentNativeImage() const

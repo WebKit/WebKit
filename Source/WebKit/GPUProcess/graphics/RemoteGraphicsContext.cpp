@@ -616,10 +616,10 @@ SharedVideoFrameReader& RemoteGraphicsContext::sharedVideoFrameReader()
     return *m_sharedVideoFrameReader;
 }
 
-void RemoteGraphicsContext::drawVideoFrame(SharedVideoFrame&& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
+void RemoteGraphicsContext::drawVideoFrame(SharedVideoFrame&& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImagePaintingOptions options)
 {
     if (auto videoFrame = sharedVideoFrameReader().read(WTF::move(frame)))
-        context().drawVideoFrame(*videoFrame, destination, orientation, shouldDiscardAlpha);
+        context().drawVideoFrame(*videoFrame, destination, shouldDiscardAlpha, options);
 }
 
 void RemoteGraphicsContext::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)

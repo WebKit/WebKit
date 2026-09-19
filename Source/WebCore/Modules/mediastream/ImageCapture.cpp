@@ -129,8 +129,7 @@ static ImageOrientation NODELETE videoFrameOrientation(const VideoFrame& videoFr
 
 static Ref<ImageBitmap> createImageBitmapViaDrawing(Ref<ImageBuffer>&& imageBuffer, VideoFrame& videoFrame)
 {
-    bool shouldDiscardAlpha = false;
-    imageBuffer->context().drawVideoFrame(videoFrame, { { }, imageBuffer->backendSize() }, videoFrameOrientation(videoFrame), shouldDiscardAlpha);
+    imageBuffer->context().drawVideoFrame(videoFrame, { { }, imageBuffer->backendSize() }, ShouldDiscardAlpha::No, { videoFrameOrientation(videoFrame) });
 
     bool isOriginClean = true;
     return ImageBitmap::create(WTF::move(imageBuffer), isOriginClean);

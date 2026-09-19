@@ -105,7 +105,7 @@ public:
     void drawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
     void drawSystemImage(Ref<WebCore::SystemImage>&&, const WebCore::FloatRect&);
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    void drawVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha);
+    void drawVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect& destination, WebCore::ShouldDiscardAlpha, WebCore::ImagePaintingOptions);
 #endif
     void drawPatternNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions);
     void drawPatternImageBuffer(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions);

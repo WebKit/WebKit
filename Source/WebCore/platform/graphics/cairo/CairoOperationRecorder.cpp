@@ -1181,10 +1181,10 @@ void OperationRecorder::append(std::unique_ptr<PaintingOperation>&& command)
 }
 
 #if ENABLE(VIDEO)
-void OperationRecorder::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ImageOrientation orientation, bool shouldDiscardAlpha)
+void OperationRecorder::drawVideoFrame(const VideoFrame& frame, const FloatRect& destination, ShouldDiscardAlpha shouldDiscardAlpha, ImagePaintingOptions options)
 {
     // FIXME: Not implemented.
-    GraphicsContext::drawVideoFrame(frame, destination, orientation, shouldDiscardAlpha);
+    GraphicsContext::drawVideoFrame(frame, destination, shouldDiscardAlpha, options);
 }
 #endif
 

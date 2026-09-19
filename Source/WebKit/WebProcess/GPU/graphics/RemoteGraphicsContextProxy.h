@@ -141,7 +141,7 @@ private:
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&) final;
     void fillEllipse(const WebCore::FloatRect&) final;
 #if ENABLE(VIDEO)
-    void drawVideoFrame(const WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ImageOrientation, bool shouldDiscardAlpha) final;
+    void drawVideoFrame(const WebCore::VideoFrame&, const WebCore::FloatRect& distination, WebCore::ShouldDiscardAlpha, WebCore::ImagePaintingOptions) final;
 #endif
     void strokePath(const WebCore::Path&) final;
     void strokeRect(const WebCore::FloatRect&, float) final;
