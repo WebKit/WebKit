@@ -82,6 +82,10 @@
 #import <WebCore/SpatialPortalController.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/PositionInformationForWebPageAdditions.mm>
+#endif
+
 namespace WebKit {
 
 static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -355,6 +359,12 @@ static void elementPositionInformation(WebPage& page, WebCore::Element& element,
     info.elementContext = page.contextForElement(element);
 }
 
+static bool isRangeInput(const RefPtr<WebCore::Node>& node)
+{
+    RefPtr input = dynamicDowncast<WebCore::HTMLInputElement>(node);
+    return input && input->isRangeControl() && !input->isDisabledFormControl();
+}
+
 static void selectionPositionInformation(WebPage& page, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     // `request.point` is in the root-view coordinate space.
@@ -437,10 +447,8 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
                 info.isColorInput = true;
         }
 
-        if (!info.isRangeInput) {
-            if (RefPtr input = dynamicDowncast<WebCore::HTMLInputElement>(currentNode); input && input->isRangeControl() && !input->isDisabledFormControl())
-                info.isRangeInput = true;
-        }
+        if (!info.isRangeInput)
+            info.isRangeInput = isRangeInput(currentNode);
 
         if (info.prefersDraggingOverTextSelection || info.isDHTMLDraggable || info.isColorInput || info.isRangeInput)
             break;
@@ -479,6 +487,9 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             }
         }
     }
+
+    if (request.inputSource == WebEventInputSource::Automation)
+        automationAdjustedInteractionPositionInformation(*localMainFrame, *frameView, contentsPoint, info);
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
 
 #if PLATFORM(MACCATALYST)
