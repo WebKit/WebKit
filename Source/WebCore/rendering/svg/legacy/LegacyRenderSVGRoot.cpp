@@ -81,7 +81,8 @@ SVGSVGElement& LegacyRenderSVGRoot::svgSVGElement() const
 
 bool LegacyRenderSVGRoot::hasIntrinsicAspectRatio() const
 {
-    return preferredAspectRatioAsSize().aspectRatioDouble();
+    // Dividing the two components would give NaN for an absent ratio, and NaN converts to true.
+    return !preferredAspectRatioAsSize().isEmpty();
 }
 
 FloatSize LegacyRenderSVGRoot::computeIntrinsicSize() const

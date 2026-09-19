@@ -704,7 +704,11 @@ LayoutRect RenderReplaced::replacedContentRect(const LayoutSize& intrinsicSize) 
 
 std::optional<double> RenderReplaced::preferredAspectRatio() const
 {
-    return preferredAspectRatioAsSize().aspectRatioDouble();
+    auto preferredAspectRatio = preferredAspectRatioAsSize();
+    // Dividing the two components would give NaN for an absent ratio.
+    if (preferredAspectRatio.isEmpty())
+        return std::nullopt;
+    return preferredAspectRatio.aspectRatioDouble();
 }
 
 FloatSize RenderReplaced::preferredAspectRatioAsSize() const

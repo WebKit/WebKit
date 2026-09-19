@@ -2858,11 +2858,11 @@ std::pair<LayoutUnit, LayoutUnit> RenderBox::computeIntrinsicKeywordLogicalWidth
         // For replaced elements with an intrinsic aspect ratio (e.g. <img>) and a
         // specified block size, compute the transferred min/max-content inline size
         // through the intrinsic ratio rather than using the raw natural width.
-        auto preferredRatio = renderReplaced->preferredAspectRatioAsSize().aspectRatioDouble();
+        auto preferredRatio = renderReplaced->preferredAspectRatio();
         if (preferredRatio && style().logicalHeight().isSpecified()) {
             auto computedValues = computeLogicalHeight(logicalHeight(), logicalTop());
             auto contentBlockSize = std::max(0_lu, computedValues.extent - borderAndPaddingLogicalHeight());
-            auto maxLogicalWidth = LayoutUnit { contentBlockSize * preferredRatio };
+            auto maxLogicalWidth = LayoutUnit { contentBlockSize * *preferredRatio };
             auto minLogicalWidth = maxLogicalWidth;
             return { minLogicalWidth, maxLogicalWidth };
         }
