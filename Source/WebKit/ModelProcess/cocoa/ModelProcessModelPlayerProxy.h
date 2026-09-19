@@ -223,8 +223,16 @@ private:
     };
     using TrackedModelMap = HashMap<WebCore::NodeIdentifier, UniqueRef<TrackedModel>>;
 
+    struct MergedBounds {
+        simd_float3 extents;
+        simd_float3 center;
+        float boundingRadius;
+    };
+
     RESRT modelStandardizedTransformSRT(RESRT originalSRT) const;
     RESRT modelLocalizedTransformSRT(RESRT originalSRT) const;
+    enum class ChildTransforms : bool { Excluded, Included };
+    std::optional<MergedBounds> computeMergedBounds(ChildTransforms) const;
     void computeTransform(bool);
     void applyPresentationTransform();
 #if ENABLE(CONNECTED_VOLUMETRIC_SCENE)

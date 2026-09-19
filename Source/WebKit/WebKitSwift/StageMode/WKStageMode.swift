@@ -85,16 +85,36 @@ extension WKStageModeInteractionDriver {
         self.turntableInteractionContainer.setParent(self.interactionContainer, preservingWorldTransform: true)
     }
 
+    @nonobjc
+    private final func recenterInteractionPivotOnContent() {
+        guard interactionContainer.parent != nil else { return }
+
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        let contentEntity = unsafe Entity.fromCore(modelEntity.coreEntity)
+
+        let placement = contentEntity.transformMatrix(relativeTo: nil)
+        interactionContainer.setPosition(modelEntity.interactionPivotPoint, relativeTo: nil)
+        turntableInteractionContainer.position = .zero
+        contentEntity.setTransformMatrix(placement, relativeTo: nil)
+    }
+
     func setContainerTransformInPortal() {
         // Configure entity hierarchy after we have correctly positioned the model
-        interactionContainer.setPosition(modelEntity.interactionPivotPoint, relativeTo: nil)
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         unsafe modelEntity.setParentCore(turntableInteractionContainer.coreEntity, preservingWorldTransform: true)
+        recenterInteractionPivotOnContent()
     }
 
     func removeInteractionContainerFromSceneOrParent() {
         interactionContainer.removeFromParent()
         turntableInteractionContainer.removeFromParent()
+    }
+
+    func clearInteractionRotation() {
+        let identityRotation = simd_quatf(ix: 0, iy: 0, iz: 0, r: 1)
+        interactionContainer.orientation = identityRotation
+        turntableInteractionContainer.orientation = identityRotation
+        recenterInteractionPivotOnContent()
     }
 
     func interactionDidBegin(_ transform: simd_float4x4) {
@@ -148,15 +168,7 @@ extension WKStageModeInteractionDriver {
         stageModeOperation = operation
 
         if operation != .none {
-            let initialCenter = modelEntity.interactionPivotPoint
-            let initialTransform = modelEntity.transform
-            let transformMatrix = Transform(
-                scale: initialTransform.scale,
-                rotation: initialTransform.rotation,
-                translation: initialTransform.translation
-            )
-            interactionContainer.setPosition(initialCenter, relativeTo: nil)
-            modelEntity.interactionContainerDidRecenter(fromTransform: transformMatrix.matrix)
+            recenterInteractionPivotOnContent()
         }
     }
 
