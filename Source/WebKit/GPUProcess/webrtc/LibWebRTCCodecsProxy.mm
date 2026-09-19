@@ -37,6 +37,7 @@
 #import "RemoteVideoFrameIdentifier.h"
 #import "RemoteVideoFrameObjectHeap.h"
 #import "SharedVideoFrame.h"
+#import <WebCore/CMUtilities.h>
 #import <WebCore/CVUtilities.h>
 #import <WebCore/FrameRateMonitor.h>
 #import <WebCore/HEVCUtilitiesCocoa.h>
@@ -166,7 +167,7 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
 
 std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
 {
-    return WebRTCVideoDecoder::create(codecType, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), WTF::move(colorSpaceOverride));
+    return WebRTCVideoDecoder::create(codecType, m_sharedPreferencesForWebProcess.webRTCWebCoreVideoEncodersEnabled, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), WTF::move(colorSpaceOverride));
 }
 
 static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
@@ -361,10 +362,8 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->notifyEncoderResult(identifier, true);
     };
-    auto newConfigurationBlock = [connection = m_connection, identifier](std::span<const uint8_t> buffer) {
-        // Current encoders are limited to this configuration. We might want in the future to let encoders notify which colorSpace they are selecting.
-        PlatformVideoColorSpace colorSpace { .primaries = PlatformVideoColorPrimaries::Bt709, .transfer = PlatformVideoTransferCharacteristics::Iec6196621, .matrix = PlatformVideoMatrixCoefficients::Bt709, .fullRange = true };
-        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, buffer, colorSpace }, 0);
+    auto newConfigurationBlock = [connection = m_connection, identifier](std::span<const uint8_t> buffer, const PlatformVideoColorSpace& encoderColorSpace) {
+        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, buffer, encoderColorSpace }, 0);
     };
 
     bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoEncodersEnabled;
@@ -375,7 +374,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
     }
 
     encoder->setLowLatency(useLowLatency);
-    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(makeUniqueRefFromNonNullUniquePtr(WTF::move(encoder)), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
+    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(encoder.releaseNonNull(), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
     callback(true);
@@ -464,6 +463,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     }
 
 #if !PLATFORM(MACCATALYST)
+    attachColorSpaceToPixelBuffer(sharedVideoFrame.colorSpace, pixelBuffer.get());
     encoder->encodingCallbacks.append(WTF::move(callback));
     encoder->gpuEncoder->encodeFrame(pixelBuffer.get(), Seconds(sharedVideoFrame.time.toDouble()).nanoseconds(), timeStamp, duration, sharedVideoFrame.rotation, shouldEncodeAsKeyFrame);
 #else

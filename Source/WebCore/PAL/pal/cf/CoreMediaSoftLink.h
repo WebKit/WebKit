@@ -58,6 +58,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionGetExtension, C
 #define CMFormatDescriptionGetExtension softLink_CoreMedia_CMFormatDescriptionGetExtension
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionEqual, Boolean, (CMFormatDescriptionRef desc, CMFormatDescriptionRef other), (desc, other))
 #define CMFormatDescriptionEqual softLink_CoreMedia_CMFormatDescriptionEqual
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionGetHEVCParameterSetAtIndex, OSStatus, (CMFormatDescriptionRef videoDesc, size_t parameterSetIndex, const uint8_t** parameterSetPointerOut, size_t* parameterSetSizeOut, size_t* parameterSetCountOut, int* nalUnitHeaderLengthOut), (videoDesc, parameterSetIndex, parameterSetPointerOut, parameterSetSizeOut, parameterSetCountOut, nalUnitHeaderLengthOut))
+#define CMVideoFormatDescriptionGetHEVCParameterSetAtIndex softLink_CoreMedia_CMVideoFormatDescriptionGetHEVCParameterSetAtIndex
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), ())
 #define CMSampleBufferGetTypeID softLink_CoreMedia_CMSampleBufferGetTypeID
 // Manual equivalent of WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer) because
@@ -495,6 +497,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionCameraCalibrat
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionCreateFromH264ParameterSets, OSStatus, (CFAllocatorRef allocator, size_t parameterSetCount, const uint8_t* const* parameterSetPointers, const size_t* parameterSetSizes, int NALUnitHeaderLength, CF_RETURNS_RETAINED CMFormatDescriptionRef* formatDescriptionOut), (allocator, parameterSetCount, parameterSetPointers, parameterSetSizes, NALUnitHeaderLength, formatDescriptionOut))
 #define CMVideoFormatDescriptionCreateFromH264ParameterSets softLink_CoreMedia_CMVideoFormatDescriptionCreateFromH264ParameterSets
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionCreateFromHEVCParameterSets, OSStatus, (CFAllocatorRef allocator, size_t parameterSetCount, const uint8_t* const* parameterSetPointers, const size_t* parameterSetSizes, int NALUnitHeaderLength, CFDictionaryRef extensions, CF_RETURNS_RETAINED CMFormatDescriptionRef* formatDescriptionOut), (allocator, parameterSetCount, parameterSetPointers, parameterSetSizes, NALUnitHeaderLength, extensions, formatDescriptionOut))
+#define CMVideoFormatDescriptionCreateFromHEVCParameterSets softLink_CoreMedia_CMVideoFormatDescriptionCreateFromHEVCParameterSets
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTagInvalid, CMTag)
 #define kCMTagInvalid get_CoreMedia_kCMTagInvalidSingleton()

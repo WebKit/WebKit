@@ -316,7 +316,7 @@ static RetainPtr<CMFormatDescriptionRef> createAudioFormatDescription(const Audi
     return adoptCF(format);
 }
 
-static CFStringRef convertToCMColorPrimaries(PlatformVideoColorPrimaries primaries)
+CFStringRef convertToCMColorPrimaries(PlatformVideoColorPrimaries primaries)
 {
     switch (primaries) {
     case PlatformVideoColorPrimaries::Bt709:
@@ -337,7 +337,7 @@ static CFStringRef convertToCMColorPrimaries(PlatformVideoColorPrimaries primari
     }
 }
 
-static CFStringRef convertToCMTransferFunction(PlatformVideoTransferCharacteristics characteristics)
+CFStringRef convertToCMTransferFunction(PlatformVideoTransferCharacteristics characteristics)
 {
     switch (characteristics) {
     case PlatformVideoTransferCharacteristics::Smpte170m:
@@ -366,7 +366,7 @@ static CFStringRef convertToCMTransferFunction(PlatformVideoTransferCharacterist
     }
 }
 
-static CFStringRef convertToCMYCbCRMatrix(PlatformVideoMatrixCoefficients coefficients)
+CFStringRef convertToCMYCbCRMatrix(PlatformVideoMatrixCoefficients coefficients)
 {
     switch (coefficients) {
     case PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance:
