@@ -2637,6 +2637,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setIsHandledByAboutSchemeHandler(loadParameters.isHandledByAboutSchemeHandler);
     if (loadParameters.isRequestFromClientOrUserInput)
         frameLoadRequest.setIsRequestFromClientOrUserInput();
+    frameLoadRequest.setHasCrossOriginRedirect(loadParameters.hasCrossOriginRedirect);
     if (loadParameters.advancedPrivacyProtections)
         frameLoadRequest.setAdvancedPrivacyProtections(*loadParameters.advancedPrivacyProtections);
     if (loadParameters.originalRequest)

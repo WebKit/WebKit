@@ -1853,6 +1853,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     loader->setOriginalNavigationStartTime(request.originalNavigationStartTime());
     loader->setIsContentRuleListRedirect(request.isContentRuleListRedirect());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
+    loader->setHasCrossOriginRedirect(request.hasCrossOriginRedirect());
     loader->setIsContinuingLoad(request.shouldTreatAsContinuingLoad());
     RefPtr<const SecurityOrigin> initiatorOrigin;
     if (crossSiteRequester) {

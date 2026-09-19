@@ -29,7 +29,6 @@
 #include "BrowsingWarning.h"
 #include "WebBackForwardListFrameItem.h"
 #include "WebBackForwardListItem.h"
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/DebugUtilities.h>
@@ -120,13 +119,6 @@ void Navigation::appendRedirectionURL(const WTF::URL& url)
 {
     if (m_redirectChain.isEmpty() || m_redirectChain.last() != url)
         m_redirectChain.append(url);
-}
-
-bool Navigation::currentRequestIsCrossSiteRedirect() const
-{
-    return currentRequestIsRedirect()
-        && m_lastNavigationAction
-        && RegistrableDomain(m_lastNavigationAction->redirectResponse.url()) != RegistrableDomain(m_currentRequest.url());
 }
 
 WebKit::WebBackForwardListItem* Navigation::targetItem() const
