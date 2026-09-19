@@ -85,25 +85,30 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
         // progress: the available space is not yet known, so it is absent for the automatic minimum size
         // and percentage/calc() minimum sizes resolve against a zero containing block size.
         [&integrationUtils](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit, LayoutUnit gapSize, const AxisConstraint& axisConstraint) {
-            auto& minimumSize = gridItem.inlineAxisSizes().minimumSize;
-            return WTF::switchOn(minimumSize,
+            auto& inlineAxisSizes = gridItem.inlineAxisSizes();
+            auto borderBoxSize = WTF::switchOn(inlineAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding };
                 },
                 [&](const Style::MinimumSize::Percentage& percentage) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding };
                 },
                 [&](const Style::MinimumSize::Calc& calculated) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding };
                 },
-                [&](const CSS::Keyword::Auto&) -> LayoutUnit {
+                [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumInlineSize = gridAreaMaximumSize(gridItem.columnStartLine(), gridItem.columnEndLine(), trackSizingFunctions, gapSize, axisConstraint);
-                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils).value;
+                    return GridLayoutUtils::automaticMinimumInlineSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumInlineSize, integrationUtils);
                 },
-                [](const auto&) -> LayoutUnit {
+                [](const auto&) {
                     ASSERT_NOT_IMPLEMENTED_YET();
-                    return { };
+                    return BorderBoxSize::zeroSized();
                 });
+
+            // "its minimum contribution is the outer size that would result from assuming the item's
+            // used minimum size as its preferred size"
+            auto usedMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, inlineAxisSizes);
+            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
         }
     };
 }
@@ -121,25 +126,30 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
         // progress: the available space is not yet known, so it is absent for the automatic minimum size
         // and percentage/calc() minimum sizes resolve against a zero containing block size.
         [&formattingContext](const PlacedGridItem& gridItem, const TrackSizingFunctionsList& trackSizingFunctions, LayoutUnit borderAndPadding, LayoutUnit inlineAxisConstraint, LayoutUnit gapSize, const AxisConstraint& axisConstraint) {
-            auto& minimumSize = gridItem.blockAxisSizes().minimumSize;
-            return WTF::switchOn(minimumSize,
+            auto& blockAxisSizes = gridItem.blockAxisSizes();
+            auto borderBoxSize = WTF::switchOn(blockAxisSizes.minimumSize,
                 [&](const Style::MinimumSize::Fixed& fixed) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(fixed, gridItem.usedZoom()) }, borderAndPadding };
                 },
                 [&](const Style::MinimumSize::Percentage& percentage) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(percentage, 0_lu) }, borderAndPadding };
                 },
                 [&](const Style::MinimumSize::Calc& calculated) {
-                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding }.value;
+                    return BorderBoxSize { ContentBoxSize { Style::evaluate<LayoutUnit>(calculated, 0_lu, gridItem.usedZoom()) }, borderAndPadding };
                 },
-                [&](const CSS::Keyword::Auto&) -> LayoutUnit {
+                [&](const CSS::Keyword::Auto&) {
                     auto gridAreaMaximumBlockSize = gridAreaMaximumSize(gridItem.rowStartLine(), gridItem.rowEndLine(), trackSizingFunctions, gapSize, axisConstraint);
-                    return GridLayoutUtils::automaticMinimumBlockSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumBlockSize, formattingContext, inlineAxisConstraint).value;
+                    return GridLayoutUtils::automaticMinimumBlockSize(gridItem, borderAndPadding, trackSizingFunctions, { }, gridAreaMaximumBlockSize, formattingContext, inlineAxisConstraint);
                 },
-                [](const auto&) -> LayoutUnit {
+                [](const auto&) {
                     ASSERT_NOT_IMPLEMENTED_YET();
-                    return { };
+                    return BorderBoxSize::zeroSized();
                 });
+
+            // "its minimum contribution is the outer size that would result from assuming the item's
+            // used minimum size as its preferred size"
+            auto usedMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, blockAxisSizes);
+            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
         }
     };
 }
