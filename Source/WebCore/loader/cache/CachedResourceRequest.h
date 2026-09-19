@@ -125,7 +125,7 @@ private:
     String m_charset;
     ResourceLoaderOptions m_options;
     std::optional<ResourceLoadPriority> m_priority;
-    ResourceLoadPriority m_initialPriority;
+    std::optional<ResourceLoadPriority> m_initialPriority;
     RefPtr<Element> m_initiatorElement;
     AtomString m_initiatorType;
     RefPtr<SecurityOrigin> m_origin;
