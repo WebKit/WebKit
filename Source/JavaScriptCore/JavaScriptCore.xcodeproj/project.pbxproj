@@ -805,6 +805,7 @@
 		14F7256614EE265E00B1652B /* WeakHandleOwner.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F7256414EE265E00B1652B /* WeakHandleOwner.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F79F70216EAFD200046D39 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1A28D4CA177B71C80007FA3C /* JSStringRefCPP.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A28D4C9177B71C80007FA3C /* JSStringRefCPP.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB2A6FB9608AD5DF73332D4 /* EmbedderArrayLike.h in Headers */ = {isa = PBXBuildFile; fileRef = CC4EB98783FB499C6AD48B55 /* EmbedderArrayLike.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		22A53A81E6B4474A8AF9AF23 /* JSWebAssemblyStreamingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 157D0D1381AB430AB34617E3 /* JSWebAssemblyStreamingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		233D76752E288A2F00EB9FFB /* basic.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53C3D5E421ECE6CE0087FDFC /* basic.js */; };
@@ -4211,6 +4212,7 @@
 		184E6FFC399E45AABE309649 /* WasmTypeSectionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTypeSectionState.cpp; sourceTree = "<group>"; };
 		1879510614C540FFB561C124 /* JSModuleLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleLoader.cpp; sourceTree = "<group>"; };
 		1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringRefPrivate.h; sourceTree = "<group>"; };
+		1A28D4C9177B71C80007FA3C /* JSStringRefCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringRefCPP.h; sourceTree = "<group>"; };
 		1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptCore.xcconfig; sourceTree = "<group>"; };
 		1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C9051450BA9E8A70081E9D0 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -8101,6 +8103,7 @@
 				1482B74B0A43032800517CFC /* JSStringRef.h */,
 				146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */,
 				146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */,
+				1A28D4C9177B71C80007FA3C /* JSStringRefCPP.h */,
 				1A28D4A7177B71C80007FA3C /* JSStringRefPrivate.h */,
 				53486BBA1C18E84500F6F3AF /* JSTypedArray.cpp */,
 				53486BB61C1795C300F6F3AF /* JSTypedArray.h */,
@@ -12500,6 +12503,7 @@
 				2600B5A7152BAAA70091EE5F /* JSStringJoiner.h in Headers */,
 				BC18C4280E16F5CD00B34460 /* JSStringRef.h in Headers */,
 				BC18C4290E16F5CD00B34460 /* JSStringRefCF.h in Headers */,
+				1A28D4CA177B71C80007FA3C /* JSStringRefCPP.h in Headers */,
 				1A28D4A8177B71C80007FA3C /* JSStringRefPrivate.h in Headers */,
 				0F919D0D157EE0A2004A4E7D /* JSSymbolTableObject.h in Headers */,
 				276B391C2A71D2B600252F4E /* JSSymbolTableObjectInlines.h in Headers */,

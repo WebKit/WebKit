@@ -31,10 +31,10 @@
 
 #import "Helpers/PlatformUtilities.h"
 #import <JavaScriptCore/JSRetainPtr.h>
+#import <JavaScriptCore/JSStringRefCPP.h>
 #import <WebKit/WKBundleFrame.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePagePrivate.h>
-#import <wtf/UniqueArray.h>
 
 namespace TestWebKitAPI {
 
@@ -65,21 +65,19 @@ public:
 
         auto mainFrame = WKBundlePageGetMainFrame(m_page);
         auto scriptContext = WKBundleFrameGetJavaScriptContext(mainFrame);
-        auto script = adopt(JSStringCreateWithUTF8CString("window.getComputedStyle(document.body).getPropertyValue('color')"));
+        JSRetainPtr script = createJSString("window.getComputedStyle(document.body).getPropertyValue('color')"_s);
 
         auto result = JSEvaluateScript(scriptContext, script.get(), nullptr, nullptr, 0, nullptr);
         auto resultString = adopt(JSValueToStringCopy(scriptContext, result, nullptr));
 
-        auto bufferSize = JSStringGetMaximumUTF8CStringSize(resultString.get());
-        auto buffer = makeUniqueArray<char>(bufferSize);
-        JSStringGetUTF8CString(resultString.get(), buffer.get(), bufferSize);
+        auto computedColor = utf8CString(resultString.get());
 
         WKBundlePageSetUseDarkAppearance(m_page, true);
 
         if (!WKBundlePageIsUsingDarkAppearance(m_page))
             WKBundlePostMessage(bundle, Util::toWK("TestFailed").get(), Util::toWK("Switching back to dark mode failed.").get());
 
-        WKBundlePostMessage(bundle, Util::toWK("TestDone").get(), Util::toWK(buffer.get()).get());
+        WKBundlePostMessage(bundle, Util::toWK("TestDone").get(), Util::toWK(computedColor).get());
     }
 
 private:

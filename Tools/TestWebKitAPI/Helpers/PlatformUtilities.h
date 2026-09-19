@@ -36,6 +36,7 @@
 #include "Helpers/Utilities.h"
 #include <string>
 #include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) && defined(__OBJC__)
@@ -96,6 +97,8 @@ NSString *toNS(WKRetainPtr<WKStringRef>);
 #endif // PLATFORM(MAC)
 
 WKRetainPtr<WKStringRef> toWK(const char* utf8String);
+WKRetainPtr<WKStringRef> toWK(const UTF8CString&);
+WKRetainPtr<WKStringRef> toWK(const String&);
 
 #endif // WK_HAVE_C_SPI
 

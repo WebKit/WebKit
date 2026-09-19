@@ -292,7 +292,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name, int retriesRemai
             RefPtr processLauncher = weakThis.get();
             if (!processLauncher)
                 return;
-            LOG_ERROR("Retrying launch of %s (%d retries remaining)", name.characters(), retriesRemaining - 1);
+            LOG_ERROR("Retrying launch of %s (%d retries remaining)", name, retriesRemaining - 1);
             // Each new launch requires a new XPC connection. tryFinishLaunchingProcess destroyed
             // the previous one.
             processLauncher->m_xpcConnection = adoptOSObject(xpc_connection_create(name, nullptr));
@@ -453,7 +453,7 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    Function<void(xpc_object_t)> errorHandlerImpl = [weakProcessLauncher = ThreadSafeWeakPtr { *this }, listeningPort, logName = CString(name), onFailure = WTF::move(onFailure)] (xpc_object_t event) mutable {
+    Function<void(xpc_object_t)> errorHandlerImpl = [weakProcessLauncher = ThreadSafeWeakPtr { *this }, listeningPort, name, onFailure = WTF::move(onFailure)] (xpc_object_t event) mutable {
         ASSERT(!event || xpc_get_type(event) == XPC_TYPE_ERROR);
 
         auto processLauncher = weakProcessLauncher.get();
@@ -464,13 +464,13 @@ void ProcessLauncher::tryFinishLaunchingProcess(ASCIILiteral name, Function<void
             return;
 
 #if ERROR_DISABLED
-        UNUSED_PARAM(logName);
+        UNUSED_PARAM(name);
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", logName.data(), xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8());
+            LOG_ERROR("Error while launching %s: %s", name, xpcDictionaryGetString(event, xpcErrorDescriptionKey).utf8());
         else
-            LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
+            LOG_ERROR("Error while launching %s: No xpc_object_t event available.", name);
 
 #if ASSERT_ENABLED
         mach_port_urefs_t sendRightCount = 0;

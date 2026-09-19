@@ -64,7 +64,7 @@ TEST_F(CookieStorageFile, CustomPath)
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     auto websiteDataStoreConf = adoptWK(WKWebsiteDataStoreConfigurationCreate());
-    WKWebsiteDataStoreConfigurationSetCookieStorageFile(websiteDataStoreConf.get(), Util::toWK(cookieStorageFile.utf8().legacyCStringPointer()).get());
+    WKWebsiteDataStoreConfigurationSetCookieStorageFile(websiteDataStoreConf.get(), Util::toWK(cookieStorageFile).get());
 
     ASSERT_TRUE(WKStringIsEqualToUTF8CString(adoptWK(WKWebsiteDataStoreConfigurationCopyCookieStorageFile(websiteDataStoreConf.get())).get(), cookieStorageFile.utf8().legacyCStringPointer()));
 

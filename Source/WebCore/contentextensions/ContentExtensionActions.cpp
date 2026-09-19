@@ -31,6 +31,7 @@
 #include "ContentExtensionError.h"
 #include "ResourceRequest.h"
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/StdLibExtras.h>
@@ -416,16 +417,6 @@ auto RedirectAction::RegexSubstitutionAction::deserialize(std::span<const uint8_
     return { WTF::move(regexSubstitution), WTF::move(regexFilter) };
 }
 
-static JSRetainPtr<JSStringRef> makeJSString(ASCIILiteral literal)
-{
-    return adopt(JSStringCreateWithUTF8CString(literal));
-}
-
-static JSRetainPtr<JSStringRef> makeJSString(const String& string)
-{
-    return adopt(JSStringCreateWithUTF8CString(string.utf8().legacyCStringPointer()));
-}
-
 void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
 {
     static JSContextGroupRef contextGroup = nullptr;
@@ -439,25 +430,25 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
         return JSValueToObject(context, value, nullptr);
     };
     auto getProperty = [&] (JSValueRef value, ASCIILiteral name) {
-        return JSObjectGetProperty(context, toObject(value), makeJSString(name).get(), nullptr);
+        // Static analysis doesn't understand JSRetainPtr protects the object.
+        SUPPRESS_UNCOUNTED_ARG return JSObjectGetProperty(context, toObject(value), createJSString(name).get(), nullptr);
     };
     auto getArrayValue = [&] (JSValueRef value, size_t index) {
         return JSObjectGetPropertyAtIndex(context, toObject(value), index, nullptr);
     };
     auto valueToWTFString = [&] (JSValueRef value) {
-        auto string = adopt(JSValueToStringCopy(context, value, nullptr));
-        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string.get());
-        Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(string.get(), buffer.mutableSpan().data(), buffer.size());
-        return String::fromUTF8(buffer.span().data());
+        // Static analysis does not recognize JSRetainPtr.
+        SUPPRESS_UNCOUNTED_ARG auto string = adopt(JSValueToStringCopy(context, value, nullptr));
+        SUPPRESS_UNCOUNTED_ARG return String { utf8CString(string.get()) };
     };
 
     // Effectively execute this JavaScript:
     // const regexp = new RegExp(regexFilter);
     // const result = url.match(regexp);
-    JSValueRef regexFilterValue = JSValueMakeString(context, makeJSString(regexFilter).get());
+    // Static analysis does not recognize JSRetainPtr.
+    SUPPRESS_UNCOUNTED_ARG JSValueRef regexFilterValue = JSValueMakeString(context, createJSString(regexFilter).get());
     JSObjectRef regexp = JSObjectMakeRegExp(context, 1, &regexFilterValue, nullptr);
-    JSValueRef urlValue = JSValueMakeString(context, makeJSString(url.string()).get());
+    SUPPRESS_UNCOUNTED_ARG JSValueRef urlValue = JSValueMakeString(context, createJSString(url.string()).get());
     JSObjectRef matchFunction = JSValueToObject(context, getProperty(urlValue, "match"_s), nullptr);
     JSValueRef result = JSObjectCallAsFunction(context, matchFunction, toObject(urlValue), 1, &regexp, nullptr);
     if (!JSValueIsArray(context, result))

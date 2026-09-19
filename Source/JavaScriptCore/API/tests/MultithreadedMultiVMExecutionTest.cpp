@@ -27,14 +27,13 @@
 #include "MultithreadedMultiVMExecutionTest.h"
 
 #include "InitializeThreading.h"
+#include "JSStringRefCPP.h"
 #include "JavaScript.h"
 #include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
 #include <wtf/MainThread.h>
-#include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 static int failuresFound = 0;
 
@@ -86,9 +85,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
             if (exception) {
                 JSStringRef string = JSValueToStringCopy(context, exception, nullptr);
                 if (string) {
-                    Vector<char> buffer(JSStringGetMaximumUTF8CStringSize(string));
-                    JSStringGetUTF8CString(string, buffer.mutableSpan().data(), buffer.size());
-                    SAFE_PRINTF("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, i, CString(buffer.span()));
+                    SAFE_PRINTF("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, i, utf8CString(string));
                     JSStringRelease(string);
                 } else
                     printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d stringifying exception failed\n", threadNumber, i);

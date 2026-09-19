@@ -40,11 +40,6 @@ namespace TestWebKitAPI {
 
 using namespace cbor;
 
-bool eq(const Vector<uint8_t>& cbor, const CString& expect)
-{
-    return equalSpans(cbor.span(), expect.span());
-}
-
 bool eq(const Vector<uint8_t>& cbor, std::span<const uint8_t> expect)
 {
     return equalSpans(cbor.span(), expect);
@@ -54,32 +49,30 @@ TEST(CBORWriterTest, TestWriteUint)
 {
     typedef struct {
         const int64_t value;
-        const CString cbor;
+        const Vector<uint8_t> cbor;
     } UintTestCase;
 
     static const UintTestCase kUintTestCases[] = {
-        // Reminder: must specify length when creating string pieces
-        // with null bytes, else the string will truncate prematurely.
-        { 0, CString(std::span { "\x00", 1 }) },
-        { 1, CString("\x01") },
-        { 10, CString("\x0a") },
-        { 23, CString("\x17") },
-        { 24, CString("\x18\x18") },
-        { 25, CString("\x18\x19") },
-        { 100, CString("\x18\x64") },
-        { 1000, CString("\x19\x03\xe8") },
-        { 1000000, CString(std::span { "\x1a\x00\x0f\x42\x40", 5 }) },
-        { 0xFFFFFFFF, CString("\x1a\xff\xff\xff\xff") },
+        { 0, { 0x00 } },
+        { 1, { 0x01 } },
+        { 10, { 0x0a } },
+        { 23, { 0x17 } },
+        { 24, { 0x18, 0x18 } },
+        { 25, { 0x18, 0x19 } },
+        { 100, { 0x18, 0x64 } },
+        { 1000, { 0x19, 0x03, 0xe8 } },
+        { 1000000, { 0x1a, 0x00, 0x0f, 0x42, 0x40 } },
+        { 0xFFFFFFFF, { 0x1a, 0xff, 0xff, 0xff, 0xff } },
         { 0x100000000,
-            CString(std::span { "\x1b\x00\x00\x00\x01\x00\x00\x00\x00", 9 }) },
+            { 0x1b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 } },
         { std::numeric_limits<int64_t>::max(),
-            CString("\x1b\x7f\xff\xff\xff\xff\xff\xff\xff") }
+            { 0x1b, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } }
     };
 
     for (const UintTestCase& testCase : kUintTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.value));
         ASSERT_TRUE(cbor.has_value());
-        EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
+        EXPECT_TRUE(eq(cbor.value(), testCase.cbor.span()));
     }
 }
 
@@ -87,26 +80,26 @@ TEST(CBORWriterTest, TestWriteNegativeInteger)
 {
     static const struct {
         const int64_t negativeInt;
-        const CString cbor;
+        const Vector<uint8_t> cbor;
     } kNegativeIntTestCases[] = {
-        { -1LL, CString("\x20") },
-        { -10LL, CString("\x29") },
-        { -23LL, CString("\x36") },
-        { -24LL, CString("\x37") },
-        { -25LL, CString("\x38\x18") },
-        { -100LL, CString("\x38\x63") },
-        { -1000LL, CString("\x39\x03\xe7") },
-        { -4294967296LL, CString("\x3a\xff\xff\xff\xff") },
+        { -1LL, { 0x20 } },
+        { -10LL, { 0x29 } },
+        { -23LL, { 0x36 } },
+        { -24LL, { 0x37 } },
+        { -25LL, { 0x38, 0x18 } },
+        { -100LL, { 0x38, 0x63 } },
+        { -1000LL, { 0x39, 0x03, 0xe7 } },
+        { -4294967296LL, { 0x3a, 0xff, 0xff, 0xff, 0xff } },
         { -4294967297LL,
-            CString(std::string { "\x3b\x00\x00\x00\x01\x00\x00\x00\x00", 9 }) },
+            { 0x3b, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00 } },
         { std::numeric_limits<int64_t>::min(),
-            CString("\x3b\x7f\xff\xff\xff\xff\xff\xff\xff") },
+            { 0x3b, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },
     };
 
     for (const auto& testCase : kNegativeIntTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.negativeInt));
         ASSERT_TRUE(cbor.has_value());
-        EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
+        EXPECT_TRUE(eq(cbor.value(), testCase.cbor.span()));
     }
 }
 
@@ -114,18 +107,18 @@ TEST(CBORWriterTest, TestWriteBytes)
 {
     typedef struct {
         const Vector<uint8_t> bytes;
-        const CString cbor;
+        const Vector<uint8_t> cbor;
     } BytesTestCase;
 
     static const BytesTestCase kBytesTestCases[] = {
-        { { }, CString("\x40") },
-        { { 0x01, 0x02, 0x03, 0x04 }, CString("\x44\x01\x02\x03\x04") },
+        { { }, { 0x40 } },
+        { { 0x01, 0x02, 0x03, 0x04 }, { 0x44, 0x01, 0x02, 0x03, 0x04 } },
     };
 
     for (const BytesTestCase& testCase : kBytesTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.bytes));
         ASSERT_TRUE(cbor.has_value());
-        EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
+        EXPECT_TRUE(eq(cbor.value(), testCase.cbor.span()));
     }
 }
 
@@ -133,23 +126,23 @@ TEST(CBORWriterTest, TestWriteString)
 {
     typedef struct {
         const String string;
-        const CString cbor;
+        const Vector<uint8_t> cbor;
     } StringTestCase;
 
     static const StringTestCase kStringTestCases[] = {
-        { emptyString(), CString("\x60") },
-        { "a"_s, CString("\x61\x61") },
-        { "IETF"_s, CString("\x64\x49\x45\x54\x46") },
-        { "\"\\"_s, CString("\x62\x22\x5c") },
-        { String::fromUTF8("\xc3\xbc"), CString("\x62\xc3\xbc") },
-        { String::fromUTF8("\xe6\xb0\xb4"), CString("\x63\xe6\xb0\xb4") },
-        { String::fromUTF8("\xf0\x90\x85\x91"), CString("\x64\xf0\x90\x85\x91") }
+        { emptyString(), { 0x60 } },
+        { "a"_s, { 0x61, 0x61 } },
+        { "IETF"_s, { 0x64, 0x49, 0x45, 0x54, 0x46 } },
+        { "\"\\"_s, { 0x62, 0x22, 0x5c } },
+        { String::fromUTF8("\xc3\xbc"), { 0x62, 0xc3, 0xbc } },
+        { String::fromUTF8("\xe6\xb0\xb4"), { 0x63, 0xe6, 0xb0, 0xb4 } },
+        { String::fromUTF8("\xf0\x90\x85\x91"), { 0x64, 0xf0, 0x90, 0x85, 0x91 } }
     };
 
     for (const StringTestCase& testCase : kStringTestCases) {
         auto cbor = CBORWriter::write(CBORValue(testCase.string));
         ASSERT_TRUE(cbor.has_value());
-        EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
+        EXPECT_TRUE(eq(cbor.value(), testCase.cbor.span()));
     }
 }
 
@@ -332,18 +325,18 @@ TEST(CBORWriterTest, TestWriteSimpleValue)
 {
     static const struct {
         CBORValue::SimpleValue simpleValue;
-        const CString cbor;
+        const Vector<uint8_t> cbor;
     } kSimpleTestCase[] = {
-        { CBORValue::SimpleValue::FalseValue, CString("\xf4") },
-        { CBORValue::SimpleValue::TrueValue, CString("\xf5") },
-        { CBORValue::SimpleValue::NullValue, CString("\xf6") },
-        { CBORValue::SimpleValue::Undefined, CString("\xf7") }
+        { CBORValue::SimpleValue::FalseValue, { 0xf4 } },
+        { CBORValue::SimpleValue::TrueValue, { 0xf5 } },
+        { CBORValue::SimpleValue::NullValue, { 0xf6 } },
+        { CBORValue::SimpleValue::Undefined, { 0xf7 } }
     };
 
     for (const auto& testCase : kSimpleTestCase) {
         auto cbor = CBORWriter::write(CBORValue(testCase.simpleValue));
         ASSERT_TRUE(cbor.has_value());
-        EXPECT_TRUE(eq(cbor.value(), testCase.cbor));
+        EXPECT_TRUE(eq(cbor.value(), testCase.cbor.span()));
     }
 }
 

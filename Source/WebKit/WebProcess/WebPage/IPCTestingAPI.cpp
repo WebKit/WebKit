@@ -53,6 +53,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/OpaqueJSString.h>
@@ -2869,7 +2870,7 @@ JSValueRef JSIPC::objectIdentifiers(JSContextRef context, JSObjectRef thisObject
 
     auto identifiers = IPC::serializedIdentifiers();
     for (size_t i = 0; i < identifiers.size(); i++) {
-        array->putDirectIndex(globalObject, i, toJS(globalObject, JSValueMakeString(context, adopt(JSStringCreateWithUTF8CString(identifiers[i].characters())).get())));
+        array->putDirectIndex(globalObject, i, toJS(globalObject, JSValueMakeString(context, createJSString(identifiers[i]).get())));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     }
 

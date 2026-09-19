@@ -28,6 +28,7 @@
 
 #include "InitializeThreading.h"
 #include "JSContextRefPrivate.h"
+#include "JSStringRefCPP.h"
 #include "JavaScript.h"
 #include "Options.h"
 #include <wtf/CPUTime.h>
@@ -112,10 +113,8 @@ static void testResetAfterTimeout(bool& failed)
 {
     JSValueRef v = nullptr;
     JSValueRef exception = nullptr;
-    const char* reentryScript = "100";
-    JSStringRef script = JSStringCreateWithUTF8CString(reentryScript);
-    v = JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
-    JSStringRelease(script);
+    JSRetainPtr script = createJSString("100"_s);
+    v = JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
     if (exception) {
         printf("FAIL: Watchdog timeout was not reset.\n");
         failed = true;
@@ -178,10 +177,9 @@ int testExecutionTimeLimit()
 
         JSValueRef exception = nullptr;
 
-        JSStringRef currentCPUTimeStr = JSStringCreateWithUTF8CString("currentCPUTime");
-        JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr, currentCPUTimeAsJSFunctionCallback);
-        JSObjectSetProperty(context, globalObject, currentCPUTimeStr, currentCPUTimeFunction, kJSPropertyAttributeNone, nullptr);
-        JSStringRelease(currentCPUTimeStr);
+        JSRetainPtr currentCPUTimeStr = createJSString("currentCPUTime"_s);
+        JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr.get(), currentCPUTimeAsJSFunctionCallback);
+        JSObjectSetProperty(context, globalObject, currentCPUTimeStr.get(), currentCPUTimeFunction, kJSPropertyAttributeNone, nullptr);
 
         /* Test script on another thread: */
         timeLimit = 100_ms + tierAdjustment;
@@ -193,12 +191,12 @@ int testExecutionTimeLimit()
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 #endif
 
-            JSStringRef script = JSStringCreateWithUTF8CString("function foo() { while (true) { } } foo();");
+            JSRetainPtr script = createJSString("function foo() { while (true) { } } foo();"_s);
             exception = nullptr;
             JSValueRef* exn = &exception;
             shouldTerminateCallbackWasCalled = false;
             auto thread = Thread::create("Rogue thread"_s, [=] {
-                JSEvaluateScript(context, script, nullptr, nullptr, 1, exn);
+                JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, exn);
             });
 
             sleep(timeAfterWatchdogShouldHaveFired);
@@ -217,8 +215,6 @@ int testExecutionTimeLimit()
 
             thread->waitForCompletion();
             testResetAfterTimeout(failed);
-
-            JSStringRelease(script);
         }
 
         /* Test script timeout: */
@@ -227,7 +223,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -236,15 +232,12 @@ int testExecutionTimeLimit()
                     "}"
                 "}"
                 "foo();"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
-            JSStringRelease(script);
 
             if (((endTime - startTime) < timeAfterWatchdogShouldHaveFired) && shouldTerminateCallbackWasCalled)
                 printf("PASS: %s script timed out as expected.\n", tierName);
@@ -270,7 +263,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "var startTime = currentCPUTime();"
                 "function recurse(i) {"
                     "'use strict';"
@@ -279,15 +272,12 @@ int testExecutionTimeLimit()
                     "}"
                 "return recurse(i + 1); }"
                 "recurse(0);"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
-            JSStringRelease(script);
 
             if (((endTime - startTime) < timeAfterWatchdogShouldHaveFired) && shouldTerminateCallbackWasCalled)
                 printf("PASS: %s script with infinite tail calls timed out as expected .\n", tierName);
@@ -313,7 +303,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "try {"
@@ -324,17 +314,13 @@ int testExecutionTimeLimit()
                     "} catch(e) { }"
                 "}"
                 "foo();"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
 
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
-            
-            JSStringRelease(script);
 
             if (((endTime - startTime) >= timeAfterWatchdogShouldHaveFired) || !shouldTerminateCallbackWasCalled) {
                 if (!((endTime - startTime) < timeAfterWatchdogShouldHaveFired))
@@ -360,7 +346,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -369,17 +355,13 @@ int testExecutionTimeLimit()
                     "}"
                 "}"
                 "foo();"_s
-            ).utf8();
-            
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             shouldTerminateCallbackWasCalled = false;
 
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
-            
-            JSStringRelease(script);
 
             if (((endTime - startTime) < timeAfterWatchdogShouldHaveFired) && !shouldTerminateCallbackWasCalled)
                 printf("PASS: %s script timed out as expected when no callback is specified.\n", tierName);
@@ -405,7 +387,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
             
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -414,17 +396,13 @@ int testExecutionTimeLimit()
                     "}"
                 "}"
                 "foo();"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             cancelTerminateCallbackWasCalled = false;
 
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
-            
-            JSStringRelease(script);
 
             if (((endTime - startTime) >= timeAfterWatchdogShouldHaveFired) && cancelTerminateCallbackWasCalled && !exception)
                 printf("PASS: %s script timeout was cancelled as expected.\n", tierName);
@@ -450,7 +428,7 @@ int testExecutionTimeLimit()
             Seconds timeAfterExtendedDeadline = 600_ms + tierAdjustment;
             Seconds maxBusyLoopTime = 750_ms + tierAdjustment;
 
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -459,18 +437,14 @@ int testExecutionTimeLimit()
                     "}"
                 "}"
                 "foo();"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             extendTerminateCallbackCalled = 0;
 
             auto startTime = CPUTime::forCurrentThread();
-            JSEvaluateScript(context, script, nullptr, nullptr, 1, &exception);
+            JSEvaluateScript(context, script.get(), nullptr, nullptr, 1, &exception);
             auto endTime = CPUTime::forCurrentThread();
             auto deltaTime = endTime - startTime;
-            
-            JSStringRelease(script);
 
             if ((deltaTime >= timeBeforeExtendedDeadline) && (deltaTime < timeAfterExtendedDeadline) && (extendTerminateCallbackCalled == 2) && exception)
                 printf("PASS: %s script timeout was extended as expected.\n", tierName);
@@ -499,7 +473,7 @@ int testExecutionTimeLimit()
         {
             Seconds timeAfterWatchdogShouldHaveFired = 300_ms + tierAdjustment;
 
-            CString scriptText = makeString(
+            JSRetainPtr script = createJSString(makeString(
                 "function foo() {"
                     "var startTime = currentCPUTime();"
                     "while (true) {"
@@ -508,15 +482,13 @@ int testExecutionTimeLimit()
                     "}"
                 "}"
                 "foo();"_s
-            ).utf8();
-
-            JSStringRef script = JSStringCreateWithUTF8CString(scriptText.data());
+            ));
             exception = nullptr;
             dispatchTerminateCallbackCalled = false;
 
             // We have to do this since blocks can only capture things as const.
             JSGlobalContextRef& contextRef = context;
-            JSStringRef& scriptRef = script;
+            JSRetainPtr<JSStringRef>& scriptRef = script;
             JSValueRef& exceptionRef = exception;
 
             Lock syncLock;
@@ -535,7 +507,7 @@ int testExecutionTimeLimit()
             dispatch_group_t group = dispatch_group_create();
             dispatch_group_async(group, globalDispatchQueueSingleton(0, 0), ^{
                 startTimeRef = CPUTime::forCurrentThread();
-                JSEvaluateScript(contextRef, scriptRef, nullptr, nullptr, 1, &exceptionRef);
+                JSEvaluateScript(contextRef, scriptRef.get(), nullptr, nullptr, 1, &exceptionRef);
                 endTimeRef = CPUTime::forCurrentThread();
                 Locker locker { syncLockRef };
                 didSynchronizeRef = true;
@@ -554,8 +526,6 @@ int testExecutionTimeLimit()
                     printf("FAIL: %s script on dispatch queue timeout callback was not called.\n", tierName);
                 failed = true;
             }
-
-            JSStringRelease(script);
         }
 #endif
 

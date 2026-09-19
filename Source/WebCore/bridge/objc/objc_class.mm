@@ -83,7 +83,7 @@ ObjcClass* ObjcClass::classForIsA(ClassStructPtr isa)
     @result Fills 'buffer' with the ObjectiveC method name that corresponds to 'JSName'.
 */
 typedef Vector<char, 256> JSNameConversionBuffer;
-static inline void convertJSMethodNameToObjc(const CString& jsName, JSNameConversionBuffer& buffer)
+static inline void convertJSMethodNameToObjc(const ASCIICString& jsName, JSNameConversionBuffer& buffer)
 {
     auto characters = jsName.spanIncludingNullTerminator();
     buffer.reserveInitialCapacity(characters.size());
@@ -107,7 +107,7 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
     if (Method* method = m_methodCache.get(name.impl()))
         return method;
 
-    CString jsName = name.ascii();
+    auto jsName = name.ascii();
     JSNameConversionBuffer buffer;
     convertJSMethodNameToObjc(jsName, buffer);
     RetainPtr<NSString> methodName = adoptNS([[NSString alloc] initWithCString:buffer.span().data() encoding:NSASCIIStringEncoding]);
@@ -158,7 +158,7 @@ Field* ObjcClass::fieldNamed(PropertyName propertyName, Instance* instance) cons
 
     RetainPtr thisClass = _isa;
 
-    CString jsName = name.ascii();
+    auto jsName = name.ascii();
     RetainPtr<NSString> fieldName = adoptNS([[NSString alloc] initWithCString:jsName.data() encoding:NSASCIIStringEncoding]);
     RetainPtr<id> targetObject = (downcast<ObjcInstance>(instance))->getObject();
 #if PLATFORM(IOS_FAMILY)

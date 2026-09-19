@@ -40,6 +40,7 @@
 #include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <JavaScriptCore/VMInlines.h>
 #include <WebCore/LogInitialization.h>
@@ -52,7 +53,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UniqueArray.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -348,16 +348,8 @@ static JSValueRef addURLToRedirectCallback(JSContextRef context, JSObjectRef fun
     auto destination = adopt(JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(origin.get());
-    auto originBuffer = makeUniqueArray<char>(maxLength + 1);
-    JSStringGetUTF8CString(origin.get(), originBuffer.get(), maxLength + 1);
-
-    maxLength = JSStringGetMaximumUTF8CStringSize(destination.get());
-    auto destinationBuffer = makeUniqueArray<char>(maxLength + 1);
-    JSStringGetUTF8CString(destination.get(), destinationBuffer.get(), maxLength + 1);
-
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->addURLToRedirect(originBuffer.get(), destinationBuffer.get());
+    controller->addURLToRedirect(utf8CString(origin.get()).toStdString(), utf8CString(destination.get()).toStdString());
 
     return JSValueMakeUndefined(context);
 }
@@ -721,13 +713,8 @@ static JSValueRef setAuthenticationPasswordCallback(JSContextRef context, JSObje
     auto password = adopt(JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(password.get());
-    char* passwordBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(password.get(), passwordBuffer, maxLength + 1);
-    
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setAuthenticationPassword(passwordBuffer);
-    delete[] passwordBuffer;
+    controller->setAuthenticationPassword(utf8CString(password.get()).toStdString());
 
     return JSValueMakeUndefined(context);
 }
@@ -741,13 +728,8 @@ static JSValueRef setAuthenticationUsernameCallback(JSContextRef context, JSObje
     auto username = adopt(JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(username.get());
-    char* usernameBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(username.get(), usernameBuffer, maxLength + 1);
-    
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setAuthenticationUsername(usernameBuffer);
-    delete[] usernameBuffer;
+    controller->setAuthenticationUsername(utf8CString(username.get()).toStdString());
 
     return JSValueMakeUndefined(context);
 }
@@ -1136,12 +1118,8 @@ static JSValueRef setWillSendRequestClearHeaderCallback(JSContextRef context, JS
     auto header = adopt(JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(header.get());
-    auto headerBuffer = makeUniqueArray<char>(maxLength + 1);
-    JSStringGetUTF8CString(header.get(), headerBuffer.get(), maxLength + 1);
-
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setWillSendRequestClearHeader(headerBuffer.get());
+    controller->setWillSendRequestClearHeader(utf8CString(header.get()).toStdString());
 
     return JSValueMakeUndefined(context);
 }
@@ -1224,13 +1202,8 @@ static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef fu
     auto visibility = adopt(JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(visibility.get());
-    char* visibilityBuffer = new char[maxLength + 1];
-    JSStringGetUTF8CString(visibility.get(), visibilityBuffer, maxLength + 1);
-    
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    controller->setPageVisibility(visibilityBuffer);
-    delete[] visibilityBuffer;
+    controller->setPageVisibility(utf8CString(visibility.get()).legacyCStringPointer());
     
     return JSValueMakeUndefined(context);
 }    
@@ -2173,9 +2146,7 @@ void TestRunner::setGeolocationPermissionCommon(bool allow)
 
 void TestRunner::setPOSIXLocale(JSStringRef locale)
 {
-    char localeBuf[32];
-    JSStringGetUTF8CString(locale, localeBuf, sizeof(localeBuf));
-    setlocale(LC_ALL, localeBuf);
+    setlocale(LC_ALL, utf8CString(locale).legacyCStringPointer());
 }
 
 void TestRunner::addURLToRedirect(std::string origin, std::string destination)
@@ -2207,11 +2178,7 @@ void TestRunner::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
 
 void TestRunner::setAccummulateLogsForChannel(JSStringRef channel)
 {
-    size_t maxLength = JSStringGetMaximumUTF8CStringSize(channel);
-    auto buffer = makeUniqueArray<char>(maxLength + 1);
-    JSStringGetUTF8CString(channel, buffer.get(), maxLength + 1);
-
-    WebCoreTestSupport::setLogChannelToAccumulate(String::fromLatin1(buffer.get()));
+    WebCoreTestSupport::setLogChannelToAccumulate(String { utf8CString(channel) });
 }
 
 using CallbackMap = WTF::HashMap<unsigned, JSObjectRef>;
@@ -2301,7 +2268,7 @@ void TestRunner::callUIScriptCallback(unsigned callbackID, JSStringRef result)
 
 void TestRunner::uiScriptDidComplete(const String& result, unsigned callbackID)
 {
-    auto stringRef = adopt(JSStringCreateWithUTF8CString(result.utf8().legacyCStringPointer()));
+    JSRetainPtr stringRef = createJSString(result);
     callUIScriptCallback(callbackID, stringRef.get());
 }
 
@@ -2329,11 +2296,7 @@ void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
             continue;
 
         auto file = adopt(JSValueToStringCopy(context, fileValue, nullptr));
-        size_t fileBufferSize = JSStringGetMaximumUTF8CStringSize(file.get()) + 1;
-        auto fileBuffer = makeUniqueArray<char>(fileBufferSize);
-        JSStringGetUTF8CString(file.get(), fileBuffer.get(), fileBufferSize);
-
-        m_openPanelFiles.push_back(fileBuffer.get());
+        m_openPanelFiles.push_back(utf8CString(file.get()).toStdString());
     }
 }
 

@@ -713,7 +713,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
 
     String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
     auto contentString = makeString("[InternetShortcut]\r\nURL="_s, url, "\r\n"_s);
-    CString content = contentString.latin1();
+    auto content = contentString.latin1();
 
     if (fsPath.length() <= 0)
         return;

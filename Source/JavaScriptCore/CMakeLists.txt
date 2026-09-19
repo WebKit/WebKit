@@ -593,6 +593,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     API/JSScriptRefPrivate.h
     API/JSStringRef.h
     API/JSStringRefCF.h
+    API/JSStringRefCPP.h
     API/JSStringRefPrivate.h
     API/JSTypedArray.h
     API/JSValue.h

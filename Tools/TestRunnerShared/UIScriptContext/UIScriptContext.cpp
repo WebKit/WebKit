@@ -28,6 +28,7 @@
 
 #include "JSBasics.h"
 #include "UIScriptController.h"
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <WebCore/FloatRect.h>
 
 using namespace WTR;
@@ -54,7 +55,7 @@ void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackI
 {
     m_currentScriptCallbackID = scriptCallbackID;
 
-    auto stringRef = adopt(JSStringCreateWithUTF8CString(script.utf8().legacyCStringPointer()));
+    JSRetainPtr stringRef = ::createJSString(script);
 
     JSValueRef exception = nullptr;
     JSValueRef result = JSEvaluateScript(m_context.get(), stringRef.get(), 0, 0, 1, &exception);

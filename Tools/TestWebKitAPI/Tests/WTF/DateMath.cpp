@@ -156,7 +156,7 @@ public:
     explicit ScopedTimeZone(const char* timeZone)
     {
         if (const char* previous = getenv("TZ"))
-            m_previous = CString(previous);
+            m_previous = ASCIICString { previous };
         setenv("TZ", timeZone, 1);
         tzset();
     }
@@ -171,7 +171,7 @@ public:
     }
 
 private:
-    CString m_previous;
+    ASCIICString m_previous;
 };
 #endif
 

@@ -86,6 +86,16 @@ WKRetainPtr<WKStringRef> toWK(const char* utf8String)
     return adoptWK(WKStringCreateWithUTF8CString(utf8String));
 }
 
+WKRetainPtr<WKStringRef> toWK(const UTF8CString& string)
+{
+    return adoptWK(WKStringCreateWithUTF8CStringWithLength(string.legacyCStringPointer(), string.length()));
+}
+
+WKRetainPtr<WKStringRef> toWK(const String& string)
+{
+    return toWK(string.utf8());
+}
+
 #endif // WK_HAVE_C_SPI
 
 std::string toSTD(const char* string)

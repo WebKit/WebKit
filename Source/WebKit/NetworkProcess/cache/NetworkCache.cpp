@@ -775,7 +775,7 @@ void Cache::dumpContentsToFile()
     size_t capacity = m_storage->capacity();
     traverseRecordsOfTypes({ RecordType::Resource, RecordType::CompressionDictionary }, std::nullopt, flags, [fileHandle = WTF::move(fileHandle), totals, capacity](const TraversalRecord* traversalRecord) mutable {
         if (!traversalRecord) {
-            CString writeData = makeString(
+            auto writeData = makeString(
                 "{}\n"
                 "],\n"
                 "\"totals\": {\n"

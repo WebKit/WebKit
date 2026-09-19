@@ -1025,7 +1025,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isAVC1Code
         return { false, nullptr };
     }
 
-    CString levelAsCString = level.ascii();
+    auto levelAsCString = level.ascii();
     if (auto maxVideoResolution = CStringView::unsafeFromUTF8(g_getenv("WEBKIT_GST_MAX_AVC1_RESOLUTION"))) {
         uint8_t levelAsInteger = gst_codec_utils_h264_get_level_idc(levelAsCString.data());
         GST_DEBUG("Maximum video resolution requested: %s, supplied codec level IDC: %u", maxVideoResolution.utf8(), levelAsInteger);

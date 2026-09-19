@@ -198,7 +198,7 @@ FILE* getCgroupFile(ASCIILiteral cgroupControllerName, const UTF8CString& cgroup
 // 2:cpuset:/
 // 1:name=systemd:/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
 // 0::/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
-static UTF8CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* controllerName)
+static UTF8CString getCgroupControllerPath(FILE* cgroupControllerFile, ASCIILiteral controllerName)
 {
     if (!cgroupControllerFile || fseek(cgroupControllerFile, 0, SEEK_SET))
         return { };
@@ -223,17 +223,17 @@ static UTF8CString getCgroupControllerPath(FILE* cgroupControllerFile, const cha
         }
         if (!strcmp(name.data(), controllerName)) {
             cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "name=systemd")) {
             cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "")) {
             cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath);
             return cgroupMemoryControllerPath;
         }
     }
@@ -364,7 +364,7 @@ void MemoryPressureMonitor::start()
             tryOpeningForUnbufferedReading(zoneInfoFile, s_procZoneinfo);
             tryOpeningForUnbufferedReading(cgroupControllerFile, s_procSelfCgroup);
 
-            auto cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile.get(), "memory");
+            auto cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile.get(), "memory"_s);
             memoryController.setMemoryControllerPath(cgroupMemoryControllerPath);
             int usedPercentage = systemMemoryUsedAsPercentage(memInfoFile.get(), zoneInfoFile.get(), &memoryController);
             if (usedPercentage == -1) {

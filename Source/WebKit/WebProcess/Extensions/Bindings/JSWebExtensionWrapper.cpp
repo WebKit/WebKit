@@ -38,6 +38,7 @@
 #include <JavaScriptCore/JSClassRef.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObjectRef.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/JSWeakObjectMapRefPrivate.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/JSDOMGlobalObject.h>
@@ -230,9 +231,7 @@ String toString(JSStringRef string)
     if (!string)
         return nullString();
 
-    Vector<char> buffer(JSStringGetMaximumUTF8CStringSize(string));
-    JSStringGetUTF8CString(string, buffer.mutableSpan().data(), buffer.size());
-    return String::fromUTF8(buffer.span().data());
+    return String { utf8CString(string) };
 }
 
 JSValueRef toWindowObject(JSContextRef context, WebFrame& frame)

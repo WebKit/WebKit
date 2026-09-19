@@ -38,6 +38,7 @@
 #include "WebFrame.h"
 #include <JavaScriptCore/JSCJSValuePropertyInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/Document.h>
@@ -303,7 +304,7 @@ bool JavaScriptEvaluationResult::JSExtractor::processContainersWithoutRecursion(
             break;
         case PendingContainer::ContainerType::Array: {
             JSValueRef exception { nullptr };
-            SUPPRESS_UNCOUNTED_ARG JSValueRef lengthPropertyName = JSValueMakeString(context, adopt(JSStringCreateWithUTF8CString("length")).get());
+            SUPPRESS_UNCOUNTED_ARG JSValueRef lengthPropertyName = JSValueMakeString(context, createJSString("length"_s).get());
             JSValueRef lengthValue = JSObjectGetPropertyForKey(context, object, lengthPropertyName, &exception);
             if (exception)
                 return false;

@@ -28,6 +28,7 @@
 #include "TestRunner.h"
 #include "InjectedBundle.h"
 
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <glib.h>
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -40,14 +41,12 @@ void TestRunner::platformInitialize()
 
 JSRetainPtr<JSStringRef> TestRunner::pathToLocalResource(JSStringRef url)
 {
-    size_t urlSize = JSStringGetMaximumUTF8CStringSize(url);
-    GUniquePtr<gchar> urlString(static_cast<gchar*>(g_malloc(urlSize)));
-    JSStringGetUTF8CString(url, urlString.get(), urlSize);
+    auto urlString = utf8CString(url);
 
-    if (!g_str_has_prefix(urlString.get(), "file:///tmp/LayoutTests/"))
+    if (!g_str_has_prefix(urlString.legacyCStringPointer(), "file:///tmp/LayoutTests/"))
         return JSStringRetain(url);
 
-    const gchar* layoutTestsSuffix = urlString.get() + strlen("file:///tmp/");
+    const gchar* layoutTestsSuffix = urlString.legacyCStringPointer() + strlen("file:///tmp/");
     GUniquePtr<gchar> testPath(g_build_filename(FileSystem::webkitTopLevelDirectory().legacyCStringPointer(), layoutTestsSuffix, nullptr));
     GUniquePtr<gchar> testURI(g_filename_to_uri(testPath.get(), 0, 0));
     return JSStringCreateWithUTF8CString(testURI.get());

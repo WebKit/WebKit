@@ -43,6 +43,7 @@
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <JavaScriptCore/JSStringRefCPP.h>
 #import <WebCore/GeolocationPositionData.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
@@ -279,12 +280,7 @@ void TestRunner::forceImmediateCompletion()
 
 static inline std::string stringFromJSString(JSStringRef jsString)
 {
-    size_t maxBufferSize = JSStringGetMaximumUTF8CStringSize(jsString);
-    char* utf8Buffer = new char[maxBufferSize];
-    size_t bytesWrittenToUTF8Buffer = JSStringGetUTF8CString(jsString, utf8Buffer, maxBufferSize);
-    std::string stdString(utf8Buffer, bytesWrittenToUTF8Buffer - 1); // bytesWrittenToUTF8Buffer includes a trailing \0 which std::string doesn't need.
-    delete[] utf8Buffer;
-    return stdString;
+    return utf8CString(jsString).toStdString();
 }
 
 static inline size_t indexOfSeparatorAfterDirectoryName(const std::string& directoryName, const std::string& fullPath)
@@ -349,7 +345,7 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     NSURL *nsurl = [NSURL URLWithString:urlNS relativeToURL:[[[mainFrame dataSource] response] URL]];
     NSString *nsurlString = [nsurl absoluteString];
 
-    auto absoluteURL = adopt(JSStringCreateWithUTF8CString([nsurlString UTF8String]));
+    JSRetainPtr absoluteURL = createJSString(String { nsurlString });
     DRT::WorkQueue::singleton().queue(new LoadItem(absoluteURL.get(), target));
 }
 

@@ -33,6 +33,7 @@
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #if PLATFORM(COCOA)
 #include <JavaScriptCore/JavaScriptCore.h>
 #else
@@ -117,7 +118,7 @@ RefPtr<WebPage> toWebPage(JSContextRef);
 
 inline JSRetainPtr<JSStringRef> toJSString(const String& string)
 {
-    return JSRetainPtr(Adopt, JSStringCreateWithUTF8CString(!string.isEmpty() ? string.utf8().legacyCStringPointer() : ""));
+    return createJSString(string);
 }
 
 inline JSValueRef toJSValueRefOrJSNull(JSContextRef context, JSValueRef value)

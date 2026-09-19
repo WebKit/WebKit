@@ -34,6 +34,7 @@
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <JavaScriptCore/JSCTestRunnerUtils.h>
+#include <JavaScriptCore/JSStringRefCPP.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebKit/WKBase.h>
 #include <WebKit/WKBundle.h>
@@ -526,9 +527,7 @@ void TestRunner::evaluateScriptInIsolatedWorld(JSContextRef context, unsigned wo
 
 void TestRunner::setPOSIXLocale(JSStringRef locale)
 {
-    char localeBuf[32];
-    JSStringGetUTF8CString(locale, localeBuf, sizeof(localeBuf));
-    setlocale(LC_ALL, localeBuf);
+    setlocale(LC_ALL, utf8CString(locale).legacyCStringPointer());
 }
 
 void TestRunner::setTextDirection(JSContextRef context, JSStringRef direction)
