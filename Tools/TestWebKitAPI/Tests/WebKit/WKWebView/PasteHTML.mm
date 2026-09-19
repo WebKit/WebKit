@@ -28,8 +28,10 @@
 #if PLATFORM(COCOA)
 
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/Color.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
@@ -641,6 +643,70 @@ TEST(PasteHTML, DropsCanvasLikeBackgroundWhenPastingIntoPunchOutEditor)
 
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelectorAll('p')[0].style.backgroundColor"], @"");
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"rich.querySelectorAll('p')[1].style.backgroundColor"], @"rgb(255, 193, 7)");
+}
+
+TEST(PasteHTML, QuotedContentOnPunchedOutBackgroundRemainsLegible)
+{
+    auto webViewFrame = CGRectMake(0, 0, 400, 400);
+
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setColorFilterEnabled:NO];
+    [configuration preferences]._punchOutWhiteBackgroundsInDarkMode = YES;
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame configuration:configuration.get() addToWindow:NO]);
+    RetainPtr window = adoptNS([[UIWindow alloc] initWithFrame:webViewFrame]);
+    [window addSubview:webView.get()];
+#else
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:webViewFrame configuration:configuration.get()]);
+#endif
+
+    [webView _setEditable:YES];
+    [webView forceDarkMode];
+
+    // Punching out requires dark appearance, which requires the document to opt into dark mode.
+    [webView synchronouslyLoadHTMLString:@"<html><head><style>:root { color-scheme: light dark; }</style></head><body dir=auto></body></html>"];
+
+    // Mimics -[BodyFieldIOS addMarkupString:] / _addNode: for a reply.
+    [webView stringByEvaluatingJavaScript:@"(() => {"
+        "    let node = document.createElement('div');"
+        "    node.innerHTML = \"<div id='quoted' style='background-color: #fff; color: #1d1d1f; font: 32px Helvetica;'>HHHHHHHH</div>\";"
+        "    let blockquote = document.createElement('blockquote');"
+        "    blockquote.setAttribute('type', 'cite');"
+        "    blockquote.appendChild(node);"
+        "    document.body.insertBefore(blockquote, document.body.firstChild);"
+        "})()"];
+    [webView waitForNextPresentationUpdate];
+
+    // The DOM is deliberately left alone, so the sender's colors survive into the outgoing message.
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"getComputedStyle(quoted).color"], @"rgb(29, 29, 31)");
+
+    RetainPtr snapshot = [webView snapshotAfterScreenUpdates];
+    TestWebKitAPI::CGImagePixelReader reader { snapshot.get() };
+
+    NSArray *rect = [webView objectByEvaluatingJavaScript:@"(() => { let r = quoted.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; })()"];
+    auto scaleX = reader.width() / CGRectGetWidth(webViewFrame);
+    auto scaleY = reader.height() / CGRectGetHeight(webViewFrame);
+    auto minX = static_cast<unsigned>([rect[0] doubleValue] * scaleX);
+    auto minY = static_cast<unsigned>([rect[1] doubleValue] * scaleY);
+    auto maxX = std::min<unsigned>(reader.width(), minX + [rect[2] doubleValue] * scaleX);
+    auto maxY = std::min<unsigned>(reader.height(), minY + [rect[3] doubleValue] * scaleY);
+
+    auto darkestLuminance = 1.0;
+    auto brightestLuminance = 0.0;
+    for (unsigned y = minY; y < maxY; ++y) {
+        for (unsigned x = minX; x < maxX; ++x) {
+            auto luminance = reader.at(x, y).luminance();
+            darkestLuminance = std::min(darkestLuminance, luminance);
+            brightestLuminance = std::max(brightestLuminance, luminance);
+        }
+    }
+
+    // Fails if the background painted white, which would make the contrast check vacuous.
+    EXPECT_LT(darkestLuminance, 0.1);
+
+    auto wcagContrastRatio = (brightestLuminance + 0.05) / (darkestLuminance + 0.05);
+    EXPECT_GE(wcagContrastRatio, 4.5);
 }
 
 #endif // ENABLE(DARK_MODE_CSS)

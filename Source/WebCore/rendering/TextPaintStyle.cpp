@@ -31,9 +31,12 @@
 #include "FocusController.h"
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
+#include "LocalFrameView.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "PlatformRenderTheme.h"
+#include "RenderElement.h"
+#include "RenderObjectDocument.h"
 #include "RenderObjectInlines.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
@@ -73,6 +76,45 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     if (contrastRatio(darkened, backgroundColor) > contrastRatio(lightened, backgroundColor))
         return darkened;
     return lightened;
+}
+
+// A punched out background paints as transparent, stranding text that was only legible against it.
+static Color adjustColorForPunchedOutBackground(const Color& textColor, const RenderText& renderer, const Style::ComputedStyle& lineStyle)
+{
+    Ref document = renderer.document();
+    if (!document->settings().punchOutWhiteBackgroundsInDarkMode()) [[likely]]
+        return textColor;
+
+    // Only content that brought its own color can be stranded; anything inheriting from the editable
+    // body is already legible. Checked before walking ancestors below, which is the expensive part.
+    if (!lineStyle.hasExplicitlySetColor())
+        return textColor;
+
+    RefPtr frameView = document->view();
+    if (!frameView)
+        return textColor;
+
+    auto styleColorOptions = document->styleColorOptions(&lineStyle);
+
+    auto backdropColor = frameView->documentBackgroundColor();
+    if (!backdropColor.isOpaque())
+        backdropColor = RenderTheme::singleton().systemColor(CSSValueCanvas, styleColorOptions);
+
+    if (!backdropColor.isValid() || textColorIsLegibleAgainstBackgroundColor(textColor, backdropColor))
+        return textColor;
+
+    for (CheckedPtr ancestor = renderer.parent(); ancestor; ancestor = ancestor->parent()) {
+        auto backgroundColor = protect(ancestor->style())->visitedDependentBackgroundColor();
+        if (!backgroundColor.isVisible())
+            continue;
+
+        if (!document->backgroundColorIsPunchedOut(backgroundColor, *ancestor))
+            return textColor;
+
+        return RenderTheme::singleton().systemColor(CSSValueCanvastext, styleColorOptions);
+    }
+
+    return textColor;
 }
 
 TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::ComputedStyle& lineStyle, const PaintInfo& paintInfo)
@@ -119,6 +161,7 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
     }
 
     paintStyle.fillColor = lineStyle.visitedDependentTextFillColorApplyingColorFilter(paintInfo.paintBehavior);
+    paintStyle.fillColor = adjustColorForPunchedOutBackground(paintStyle.fillColor, renderer, lineStyle);
 
     bool forceBackgroundToWhite = false;
     if (frame->document() && protect(frame->document())->printing()) {
