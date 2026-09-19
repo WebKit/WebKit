@@ -194,6 +194,17 @@ private:
     CollapsedBorderValue computeCollapsedBeforeBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue computeCollapsedAfterBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
 
+    CollapsedBorderValue computeCollapsedBeforeBorderForColumn(unsigned effCol, IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue computeCollapsedAfterBorderForColumn(unsigned effCol, IncludeBorderColorOrNot = IncludeBorderColor) const;
+
+    CollapsedBorderValue computeCollapsedStartBorderForRow(unsigned rowIndex, IncludeBorderColorOrNot = IncludeBorderColor) const;
+    CollapsedBorderValue computeCollapsedEndBorderForRow(unsigned rowIndex, IncludeBorderColorOrNot = IncludeBorderColor) const;
+
+    CollapsedBorderValue resolveWinningBeforeBorder(CollapsedBorderValue current, RenderTableCell* previousCell, unsigned colIndex, IncludeBorderColorOrNot) const;
+    CollapsedBorderValue resolveWinningAfterBorder(CollapsedBorderValue current, RenderTableCell* nextCell, unsigned colIndex, IncludeBorderColorOrNot) const;
+    CollapsedBorderValue resolveWinningStartBorder(CollapsedBorderValue current, RenderTableCell* cellBefore, IncludeBorderColorOrNot) const;
+    CollapsedBorderValue resolveWinningEndBorder(CollapsedBorderValue current, bool isEndColumn, IncludeBorderColorOrNot) const;
+
     Style::PreferredSize logicalWidthFromColumns(RenderTableCol* firstColForThisCell, const Style::PreferredSize& widthFromStyle) const;
 
     CollapsedBorderValue emptyBorder() const;

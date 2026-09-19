@@ -144,6 +144,8 @@ public:
     // FIXME: We may want to introduce a structure holding the in-flux layout information.
     LayoutUnit distributeExtraLogicalHeightToRows(LayoutUnit extraLogicalHeight);
 
+    const Vector<LayoutUnit>& rowPositions() const LIFETIME_BOUND { return m_rowPos; }
+
     void paint(PaintInfo&, const LayoutPoint&) override;
 
     void willInsertTableRow(RenderTableRow& child, RenderObject* beforeChild);

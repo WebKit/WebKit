@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<title>CSS Test: Collapsed border with combined colspan and rowspan — borders should be resolved per segment independently</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<link rel="help" href="https://www.w3.org/TR/CSS22/tables.html#border-conflict-resolution">
+<link rel="help" href="https://bugs.webkit.org/show_bug.cgi?id=20840">
+<link rel="match" href="collapsed-border-spanning-001-ref.html">
+<meta name="assert" content="In a border-collapsed table, when a cell has both colspan and rowspan, each segment of its top border and left border should be resolved independently against its respective neighbor. A thick bottom border on one cell above should only affect the top border segment directly above that cell, and a thick right border on one cell to the left should only affect the left border segment directly beside that cell.">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; }
+  td { border: 1px solid orange; padding: 0; width: 100px; height: 30px; color: transparent; }
+</style>
+
+<p>The spanning cell's top border should be thick black only above its first column, and its left border should be thick black only beside its first row.</p>
+
+<table>
+  <tr>
+    <td>aaa</td>
+    <td style="border-bottom: 2px solid black;">bbb</td>
+    <td>ccc</td>
+  </tr>
+  <tr>
+    <td style="border-right: 2px solid black;">ddd</td>
+    <td colspan="2" rowspan="2">eee</td>
+  </tr>
+  <tr>
+    <td>fff</td>
+  </tr>
+</table>

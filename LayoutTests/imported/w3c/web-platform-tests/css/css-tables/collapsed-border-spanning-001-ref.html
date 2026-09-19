@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<title>CSS Test Reference</title>
+<link rel="author" title="Karl Dubost" href="https://otsukare.info/">
+<style>
+  table { border-collapse: collapse; table-layout: fixed; width: 300px; }
+  td { border: 1px solid orange; padding: 0; width: 100px; height: 30px; color: transparent; }
+</style>
+
+<p>The spanning cell's top border should be thick black only above its first column, and its left border should be thick black only beside its first row.</p>
+
+<!-- Reference: the spanning cell is replaced by 4 separate cells.
+     border-style:hidden suppresses internal borders between the cells.
+     Fixed cell height ensures row heights match the test. -->
+<table>
+  <tr>
+    <td>aaa</td>
+    <td style="border-bottom: 2px solid black;">bbb</td>
+    <td>ccc</td>
+  </tr>
+  <tr>
+    <td style="border-right: 2px solid black;">ddd</td>
+    <td style="border-top: 2px solid black; border-left: 2px solid black; border-right-style: hidden; border-bottom-style: hidden;">eee</td>
+    <td style="border-left-style: hidden; border-bottom-style: hidden;">x</td>
+  </tr>
+  <tr>
+    <td>fff</td>
+    <td style="border-top-style: hidden; border-right-style: hidden;">x</td>
+    <td style="border-top-style: hidden; border-left-style: hidden;">x</td>
+  </tr>
+</table>
