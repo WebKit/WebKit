@@ -51,7 +51,7 @@ public:
 
     FloatPoint destinationScrollOffset() const { return m_retargetedScrollOffset.value_or(m_initialDestinationOffset); }
 
-    void setRetargetedScrollOffset(const FloatPoint&);
+    WEBCORE_EXPORT void setRetargetedScrollOffset(const FloatPoint&);
 
 protected:
     virtual FloatPoint predictedDestinationOffset();
@@ -70,10 +70,10 @@ private:
 
 class BasicScrollingMomentumCalculator final : public ScrollingMomentumCalculator {
 public:
-    BasicScrollingMomentumCalculator(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
+    WEBCORE_EXPORT BasicScrollingMomentumCalculator(const ScrollExtents&, const FloatPoint& initialOffset, const FloatSize& initialDelta, const FloatSize& initialVelocity);
 
 private:
-    FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
+    WEBCORE_EXPORT FloatPoint scrollOffsetAfterElapsedTime(Seconds) final;
     Seconds animationDuration() final;
 
     void NODELETE initializeInterpolationCoefficientsIfNecessary();
