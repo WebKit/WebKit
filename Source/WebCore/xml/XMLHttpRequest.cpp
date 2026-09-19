@@ -834,7 +834,7 @@ String XMLHttpRequest::getAllResponseHeaders() const
         return emptyString();
 
     if (!m_allResponseHeaders) {
-        auto headers = WTF::map(m_response.httpHeaderFields(), [](auto& header) {
+        auto headers = WTF::map(m_response.httpHeaderFields().combined(), [](const auto& header) {
             return std::make_pair(header.key, header.value);
         });
 

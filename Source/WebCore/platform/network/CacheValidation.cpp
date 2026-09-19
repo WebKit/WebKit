@@ -97,7 +97,7 @@ void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const Re
 {
     // Freshening stored response upon validation:
     // http://tools.ietf.org/html/rfc7234#section-4.3.4
-    for (const auto& header : validatingResponse.httpHeaderFields()) {
+    for (const auto& header : validatingResponse.httpHeaderFields().combined()) {
         // Entity headers should not be sent by servers when generating a 304
         // response; misconfigured servers send them anyway. We shouldn't allow
         // such headers to update the original request. We'll base this on the

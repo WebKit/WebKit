@@ -62,7 +62,7 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     if (!isOnAccessControlSimpleRequestMethodAllowlist(method))
         return false;
 
-    for (const auto& header : headerMap) {
+    for (const auto& header : headerMap.combined()) {
         if (!header.keyAsHTTPHeaderName || !isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
             return false;
     }
@@ -105,7 +105,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
 
     if (!requestHeaderFields.isEmpty()) {
         Vector<String> unsafeHeaders;
-        for (auto& headerField : requestHeaderFields) {
+        for (auto& headerField : requestHeaderFields.combined()) {
             if (!headerField.keyAsHTTPHeaderName || !isCrossOriginSafeRequestHeader(*headerField.keyAsHTTPHeaderName, headerField.value))
                 unsafeHeaders.append(headerField.key.convertToASCIILowercase());
         }

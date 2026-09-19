@@ -65,7 +65,7 @@ void ResourceResponse::initNSURLResponse() const
 
     // FIXME: We lose the status text and the HTTP version here.
     RetainPtr headerDictionary = adoptNS([[NSMutableDictionary alloc] init]);
-    for (auto& header : m_httpHeaderFields)
+    for (auto& header : m_httpHeaderFields.combined())
         [headerDictionary setObject:header.value.createNSString().get() forKey:header.key.createNSString().get()];
 
     m_nsResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:m_url.createNSURL().get() statusCode:m_httpStatusCode HTTPVersion:(NSString*)kCFHTTPVersion1_1 headerFields:headerDictionary.get()]);

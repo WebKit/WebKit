@@ -731,15 +731,8 @@ ResourceResponse FetchResponse::resourceResponse() const
 {
     auto response = m_internalResponse;
 
-    if (headers().guard() != FetchHeaders::Guard::Immutable) {
-        // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
-        for (auto& header : headers().internalHeaders()) {
-            if (header.keyAsHTTPHeaderName)
-                response.setHTTPHeaderField(*header.keyAsHTTPHeaderName, header.value);
-            else
-                response.setUncommonHTTPHeaderField(header.key, header.value);
-        }
-    }
+    if (headers().guard() != FetchHeaders::Guard::Immutable)
+        response.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
     return response;
 }

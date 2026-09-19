@@ -431,7 +431,7 @@ void CurlHandle::setURL(const URL& url, LocalhostAlias localhostAlias)
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
 {
     if (headers.size()) {
-        for (auto& entry : headers)
+        for (auto& entry : headers.combined())
             appendRequestHeader(entry.key, entry.value);
     }
 }

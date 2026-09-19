@@ -301,7 +301,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     // Cannot just use setAllHTTPHeaderFields here, because it does not remove headers.
     for (NSString *oldHeaderName in [nsRequest allHTTPHeaderFields])
         [nsRequest setValue:nil forHTTPHeaderField:oldHeaderName];
-    for (const auto& header : httpHeaderFields()) {
+    for (const auto& header : httpHeaderFields().combined()) {
         RetainPtr encodedValue = httpHeaderValueUsingSuitableEncoding(header);
         [nsRequest setValue:bridge_cast(encodedValue.get()) forHTTPHeaderField:header.key.createNSString().get()];
     }

@@ -49,8 +49,8 @@ WI.Resource = class Resource extends WI.SourceCode
         this._requestFormParameters = undefined;
         this._requestMethod = requestMethod || null;
         this._requestData = requestData || null;
-        this._requestHeaders = requestHeaders || {};
-        this._responseHeaders = {};
+        this._requestHeaders = new WI.HTTPHeaderMap(requestHeaders);
+        this._responseHeaders = new WI.HTTPHeaderMap;
         this._requestCookies = null;
         this._responseCookies = null;
         this._serverTimingEntries = null;
@@ -476,42 +476,37 @@ WI.Resource = class Resource extends WI.SourceCode
     get queryStringParameters()
     {
         if (this._queryStringParameters === undefined)
-            this._queryStringParameters = parseQueryString(this.urlComponents.queryString, true);
+            this._queryStringParameters = parseQueryString(this.urlComponents.queryString);
         return this._queryStringParameters;
     }
 
     get requestFormParameters()
     {
         if (this._requestFormParameters === undefined)
-            this._requestFormParameters = this.hasRequestFormParameters() ? parseQueryString(this.requestData, true) : null;
+            this._requestFormParameters = this.hasRequestFormParameters() ? parseQueryString(this.requestData) : null;
         return this._requestFormParameters;
     }
 
     get requestDataContentType()
     {
-        return this._requestHeaders.valueForCaseInsensitiveKey("Content-Type") || null;
+        return this._requestHeaders.get(WI.HTTPHeader.ContentType) || null;
     }
 
     get requestCookies()
     {
-        if (!this._requestCookies)
-            this._requestCookies = WI.Cookie.parseCookieRequestHeader(this._requestHeaders.valueForCaseInsensitiveKey("Cookie"));
-
+        this._requestCookies ||= WI.Cookie.parseCookieRequestHeader(this._requestHeaders.get(WI.HTTPHeader.Cookie));
         return this._requestCookies;
     }
 
     get responseCookies()
     {
         if (!this._responseCookies) {
-            // FIXME: The backend sends multiple "Set-Cookie" headers in one "Set-Cookie" with multiple values
-            // separated by ", ". This doesn't allow us to safely distinguish between a ", " that separates
-            // multiple headers or one that may be valid part of a Cookie's value or attribute, such as the
-            // ", " in the the date format "Expires=Tue, 03-Oct-2017 04:39:21 GMT". To improve heuristics
-            // we do a negative lookahead for numbers, but we can still fail on cookie values containing ", ".
-            let rawCombinedHeader = this._responseHeaders.valueForCaseInsensitiveKey("Set-Cookie") || "";
-            let setCookieHeaders = rawCombinedHeader.split(/, (?![0-9])/);
+            let headers = this._responseHeaders.getAll(WI.HTTPHeader.SetCookie) || [];
+            if (WI.networkManager.usesLegacyHeaderCookieParsing)
+                headers = headers.flatMap((cookie) => cookie.split(/, (?![0-9])/));
+
             let cookies = [];
-            for (let header of setCookieHeaders) {
+            for (let header of headers) {
                 let cookie = WI.Cookie.parseSetCookieResponseHeader(header);
                 if (cookie)
                     cookies.push(cookie);
@@ -597,7 +592,7 @@ WI.Resource = class Resource extends WI.SourceCode
         // for estimatedTransferSize. So prefer the "Content-Length" property
         // on mac if it is available.
         if (WI.Platform.name === "mac") {
-            let contentLength = Number(this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"));
+            let contentLength = parseInt(this._responseHeaders.get(WI.HTTPHeader.ContentLength), 10);
             if (!isNaN(contentLength))
                 return contentLength;
         }
@@ -616,7 +611,7 @@ WI.Resource = class Resource extends WI.SourceCode
         // work for chunks with non-trivial encodings. We need a way to
         // get actual transfer size from the network stack.
 
-        return Number(this._responseHeaders.valueForCaseInsensitiveKey("Content-Length") || this._estimatedSize);
+        return parseInt(this._responseHeaders.get(WI.HTTPHeader.ContentLength) || this._estimatedSize);
     }
 
     get estimatedTotalTransferSize()
@@ -636,13 +631,13 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get compressed()
     {
-        let contentEncoding = this._responseHeaders.valueForCaseInsensitiveKey("Content-Encoding");
+        let contentEncoding = this._responseHeaders.get(WI.HTTPHeader.ContentEncoding);
         return !!(contentEncoding && /\b(?:gzip|deflate|br)\b/.test(contentEncoding));
     }
 
     get requestedByteRange()
     {
-        let range = this._requestHeaders.valueForCaseInsensitiveKey("Range");
+        let range = this._requestHeaders.get(WI.HTTPHeader.Range);
         if (!range)
             return null;
 
@@ -668,8 +663,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get serverTiming()
     {
-        if (!this._serverTimingEntries)
-            this._serverTimingEntries = WI.ServerTimingEntry.parseHeaders(this._responseHeaders.valueForCaseInsensitiveKey("Server-Timing"));
+        this._serverTimingEntries ||= WI.ServerTimingEntry.parseHeaders(this._responseHeaders.get(WI.HTTPHeader.ServerTiming));
         return this._serverTimingEntries;
     }
 
@@ -709,7 +703,7 @@ WI.Resource = class Resource extends WI.SourceCode
         if (request.url)
             this._url = request.url;
 
-        this._requestHeaders = request.headers || {};
+        this._requestHeaders = new WI.HTTPHeaderMap(request.headers);
         this._requestCookies = null;
         this._requestMethod = request.method || null;
         this._redirects.push(new WI.Redirect(oldURL, oldMethod, oldHeaders, response.status, response.statusText, response.headers, elapsedTime));
@@ -764,7 +758,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._type = Resource.resolvedType(type, mimeType);
         this._statusCode = statusCode;
         this._statusText = statusText;
-        this._responseHeaders = responseHeaders || {};
+        this._responseHeaders = new WI.HTTPHeaderMap(responseHeaders);
         this._responseCookies = null;
         this._serverTimingEntries = null;
         this._responseReceivedTimestamp = elapsedTime || NaN;
@@ -778,8 +772,8 @@ WI.Resource = class Resource extends WI.SourceCode
         const headerBaseSize = 12; // Length of "HTTP/1.1 ", " ", and "\r\n".
         const headerPad = 4; // Length of ": " and "\r\n".
         this._estimatedResponseHeadersSize = String(this._statusCode).length + this._statusText.length + headerBaseSize;
-        for (let name in this._responseHeaders)
-            this._estimatedResponseHeadersSize += name.length + this._responseHeaders[name].length + headerPad;
+        for (let [name, value] of this._responseHeaders)
+            this._estimatedResponseHeadersSize += name.length + value.length + headerPad;
 
         if (!this._cached) {
             if (statusCode === 304 || (this._responseSource === WI.Resource.ResponseSource.MemoryCache || this._responseSource === WI.Resource.ResponseSource.DiskCache))
@@ -808,7 +802,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
         // The transferSize becomes 0 when status is 304 or Content-Length is available, so
         // notify listeners of that change.
-        if (statusCode === 304 || this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
+        if (statusCode === 304 || this._responseHeaders.get(WI.HTTPHeader.ContentLength))
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
 
         this.dispatchEventToListeners(WI.Resource.Event.ResponseReceived);
@@ -828,7 +822,7 @@ WI.Resource = class Resource extends WI.SourceCode
         if (metrics.connectionIdentifier)
             this._connectionIdentifier = WI.Resource.connectionIdentifierFromPayload(metrics.connectionIdentifier);
         if (metrics.requestHeaders) {
-            this._requestHeaders = metrics.requestHeaders;
+            this._requestHeaders = new WI.HTTPHeaderMap(metrics.requestHeaders);
             this._requestCookies = null;
             this.dispatchEventToListeners(WI.Resource.Event.RequestHeadersDidChange);
         }
@@ -935,7 +929,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this.dispatchEventToListeners(WI.Resource.Event.SizeDidChange, {previousSize});
 
         // The estimatedTransferSize is based off of size when status is not 304 or Content-Length is missing.
-        if (isNaN(this._estimatedTransferSize) && this._statusCode !== 304 && !this._responseHeaders.valueForCaseInsensitiveKey("Content-Length"))
+        if (isNaN(this._estimatedTransferSize) && this._statusCode !== 304 && !this._responseHeaders.get(WI.HTTPHeader.ContentLength))
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
     }
 
@@ -1111,7 +1105,7 @@ WI.Resource = class Resource extends WI.SourceCode
         switch (type) {
         case WI.LocalResourceOverride.InterceptType.Request:
             resourceData.requestMethod = this.requestMethod ?? WI.HTTPUtilities.RequestMethod.GET;
-            resourceData.requestHeaders = {...this.requestHeaders};
+            resourceData.requestHeaders = this.requestHeaders;
             resourceData.requestData = this.requestData ?? "";
             break;
 
@@ -1138,7 +1132,7 @@ WI.Resource = class Resource extends WI.SourceCode
             }
             resourceData.responseContent = content;
             resourceData.responseBase64Encoded = base64Encoded;
-            resourceData.responseHeaders = {...this.responseHeaders};
+            resourceData.responseHeaders = this.responseHeaders;
             break;
         }
 

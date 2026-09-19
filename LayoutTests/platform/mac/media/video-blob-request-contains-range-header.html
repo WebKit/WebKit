@@ -31,8 +31,7 @@ async function test() {
             let resource = (await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded)).data.resource;
 
             InspectorTest.log("Load finished...");
-            InspectorTest.expectNotEqual(resource.requestHeaders["Range"], undefined, "Range request header should not be undefined.");
-            InspectorTest.expectNotNull(resource.requestHeaders["Range"], "Range request header should not be null.");
+            InspectorTest.expectTrue(resource.requestHeaders.has(WI.HTTPHeader.Range), "Range request header should exist.");
         },
     });
 

@@ -89,7 +89,7 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
         return { };
-    headers.set(name, combinedValue);
+    headers.add(name, normalizedValue);
 
     if (guard == FetchHeaders::Guard::RequestNoCors)
         removePrivilegedNoCORSRequestHeaders(headers);
@@ -97,11 +97,11 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
     return { };
 }
 
-static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
+static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, const HTTPHeaderMap& source, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
-    ASSERT(!equalIgnoringASCIICase(header.key, "set-cookie"_s));
-    String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-    auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
+    String combinedValue = source.get(header.key);
+    String normalizedValue = combinedValue.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    auto canWriteResult = canWriteHeader(header.key, normalizedValue, combinedValue, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
@@ -163,7 +163,7 @@ ExceptionOr<void> FetchHeaders::fill(const Init& headerInit)
 ExceptionOr<void> FetchHeaders::fill(const FetchHeaders& otherHeaders)
 {
     for (auto& header : otherHeaders.m_headers) {
-        auto result = appendToHeaderMap(header, m_headers, m_guard);
+        auto result = appendToHeaderMap(header, otherHeaders.m_headers, m_headers, m_guard);
         if (result.hasException())
             return result.releaseException();
     }
@@ -261,16 +261,9 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
     for (auto& header : headers) {
-        String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-        auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
-        if (canWriteResult.hasException())
+        auto result = appendToHeaderMap(header, headers, m_headers, guard);
+        if (result.hasException())
             continue;
-        if (!canWriteResult.releaseReturnValue())
-            continue;
-        if (header.keyAsHTTPHeaderName)
-            m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
-        else
-            m_headers.addUncommonHeader(header.key, header.value);
     }
 }
 
@@ -288,7 +281,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         bool hasSetCookie = !m_headers->m_setCookieValues.isEmpty();
         m_keys.shrink(0);
         m_keys.reserveCapacity(m_headers->m_headers.size() + (hasSetCookie ? 1 : 0));
-        m_keys.appendContainerWithMapping(m_headers->m_headers, [](auto& header) {
+        m_keys.appendContainerWithMapping(m_headers->m_headers.combined(), [](auto& header) {
             ASSERT(!header.key.isNull());
             return header.key.convertToASCIILowercase();
         });

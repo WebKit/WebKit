@@ -20,7 +20,7 @@ RESPONSE: 500 Custom Status Text: Error
 PASS: The cloned header fixture should be reported.
 PASS: The cloned response should pass through the service worker.
 PASS: Cloned header values should remain intact.
-Cloned fields: ["one,two","three"]
+Cloned fields: ["one,two, three"]
 PASS: Cloned public responses should not expose Set-Cookie.
 
 -- Running test case: Resource.ResponseSource.ServiceWorker.Error

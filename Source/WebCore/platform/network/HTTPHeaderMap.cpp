@@ -35,6 +35,7 @@
 #include <utility>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
 
 #if USE(CF)
@@ -67,6 +68,31 @@ HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
     return map;
 }
 
+template<typename Headers, typename Predicate> static String combinedHeaderValue(const Headers& headers, Predicate&& predicate)
+{
+    bool empty = true;
+    StringBuilder builder;
+    for (auto& header : headers) {
+        if (!predicate(header))
+            continue;
+        if (!empty)
+            builder.append(", "_s);
+        builder.append(header.value);
+        empty = false;
+    }
+    return empty ? nullString() : builder.toString();
+}
+
+template<typename Headers, typename Predicate> static Vector<String> matchingHeaderValues(const Headers& headers, Predicate&& predicate)
+{
+    Vector<String> values;
+    for (auto& header : headers) {
+        if (predicate(header))
+            values.append(header.value);
+    }
+    return values;
+}
+
 String HTTPHeaderMap::get(StringView name) const
 {
     HTTPHeaderName headerName;
@@ -78,10 +104,20 @@ String HTTPHeaderMap::get(StringView name) const
 
 String HTTPHeaderMap::getUncommonHeader(StringView name) const
 {
-    auto index = m_uncommonHeaders.findIf([&](auto& header) {
+    return combinedHeaderValue(m_uncommonHeaders, [&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
-    return index != notFound ? m_uncommonHeaders[index].value : String();
+}
+
+Vector<String> HTTPHeaderMap::getAll(StringView name) const
+{
+    HTTPHeaderName headerName;
+    if (findHTTPHeaderName(name, headerName))
+        return getAll(headerName);
+
+    return matchingHeaderValues(m_uncommonHeaders, [&](auto& header) {
+        return equalIgnoringASCIICase(header.key, name);
+    });
 }
 
 #if USE(CF)
@@ -127,8 +163,13 @@ void HTTPHeaderMap::setUncommonHeader(const String& name, const String& value)
     });
     if (index == notFound)
         m_uncommonHeaders.append(UncommonHeader { name, value });
-    else
+    else {
         m_uncommonHeaders[index].value = value;
+        const auto& key = m_uncommonHeaders[index].key;
+        m_uncommonHeaders.removeAllMatching([&](auto& header) {
+            return equalIgnoringASCIICase(header.key, key);
+        }, index + 1);
+    }
 }
 
 void HTTPHeaderMap::add(const String& name, const String& value)
@@ -148,13 +189,7 @@ void HTTPHeaderMap::addUncommonHeader(const String& name, const String& value)
     ASSERT(!findHTTPHeaderName(name, headerName));
 #endif
 
-    auto index = m_uncommonHeaders.findIf([&](auto& header) {
-        return equalIgnoringASCIICase(header.key, name);
-    });
-    if (index == notFound)
-        m_uncommonHeaders.append(UncommonHeader { name, value });
-    else
-        m_uncommonHeaders[index].value = makeString(m_uncommonHeaders[index].value, ", "_s, value);
+    m_uncommonHeaders.append(UncommonHeader { name, value });
 }
 
 void HTTPHeaderMap::append(const String& name, const String& value)
@@ -194,17 +229,23 @@ bool HTTPHeaderMap::remove(const String& name)
     if (findHTTPHeaderName(name, headerName))
         return remove(headerName);
 
-    return m_uncommonHeaders.removeFirstMatching([&](auto& header) {
+    return m_uncommonHeaders.removeAllMatching([&](auto& header) {
         return equalIgnoringASCIICase(header.key, name);
     });
 }
 
 String HTTPHeaderMap::get(HTTPHeaderName name) const
 {
-    auto index = m_commonHeaders.findIf([&](auto& header) {
+    return combinedHeaderValue(m_commonHeaders, [&](auto& header) {
         return header.key == name;
     });
-    return index != notFound ? m_commonHeaders[index].value : String();
+}
+
+Vector<String> HTTPHeaderMap::getAll(HTTPHeaderName name) const
+{
+    return matchingHeaderValues(m_commonHeaders, [&](auto& header) {
+        return header.key == name;
+    });
 }
 
 void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
@@ -214,8 +255,12 @@ void HTTPHeaderMap::set(HTTPHeaderName name, const String& value)
     });
     if (index == notFound)
         m_commonHeaders.append(CommonHeader { name, value });
-    else
+    else {
         m_commonHeaders[index].value = value;
+        m_commonHeaders.removeAllMatching([&](auto& header) {
+            return header.key == name;
+        }, index + 1);
+    }
 }
 
 bool HTTPHeaderMap::contains(HTTPHeaderName name) const
@@ -227,20 +272,38 @@ bool HTTPHeaderMap::contains(HTTPHeaderName name) const
 
 bool HTTPHeaderMap::remove(HTTPHeaderName name)
 {
-    return m_commonHeaders.removeFirstMatching([&](auto& header) {
+    return m_commonHeaders.removeAllMatching([&](auto& header) {
         return header.key == name;
     });
 }
 
 void HTTPHeaderMap::add(HTTPHeaderName name, const String& value)
 {
-    auto index = m_commonHeaders.findIf([&](auto& header) {
-        return header.key == name;
-    });
-    if (index != notFound)
-        m_commonHeaders[index].value = makeString(m_commonHeaders[index].value, ", "_s, value);
-    else
-        m_commonHeaders.append(CommonHeader { name, value });
+    m_commonHeaders.append(CommonHeader { name, value });
+}
+
+HTTPHeaderMap HTTPHeaderMap::combined() const
+{
+    HTTPHeaderMap result;
+    for (auto& header : m_commonHeaders) {
+        auto index = result.m_commonHeaders.findIf([&](auto& existing) {
+            return existing.key == header.key;
+        });
+        if (index == notFound)
+            result.m_commonHeaders.append(header);
+        else
+            result.m_commonHeaders[index].value = makeString(result.m_commonHeaders[index].value, ", "_s, header.value);
+    }
+    for (auto& header : m_uncommonHeaders) {
+        auto index = result.m_uncommonHeaders.findIf([&](auto& existing) {
+            return equalIgnoringASCIICase(existing.key, header.key);
+        });
+        if (index == notFound)
+            result.m_uncommonHeaders.append(header);
+        else
+            result.m_uncommonHeaders[index].value = makeString(result.m_uncommonHeaders[index].value, ", "_s, header.value);
+    }
+    return result;
 }
 
 } // namespace WebCore

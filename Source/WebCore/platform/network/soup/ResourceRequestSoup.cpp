@@ -141,7 +141,7 @@ GRefPtr<GInputStream> ResourceRequest::createBodyStream() const
 
 void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
 {
-    const HTTPHeaderMap& headers = httpHeaderFields();
+    const HTTPHeaderMap& headers = httpHeaderFields().combined();
     if (!headers.isEmpty()) {
         HTTPHeaderMap::const_iterator end = headers.end();
         for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)

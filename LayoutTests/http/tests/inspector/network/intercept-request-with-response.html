@@ -24,11 +24,9 @@ function test()
         InspectorTest.log(`  Status: ${resource.statusCode} ${resource.statusText}`);
         InspectorTest.log(`  Response Source: ${responseSource}`);
         InspectorTest.log(`  Response Headers:`);
-        let keys = Object.keys(resource.responseHeaders);
-        keys.sort();
-        for (let name of keys) {
-            let value = resource.responseHeaders[name];
-            if (!name.startsWith("X-") && !name.startsWith("Content-"))
+        for (let [name, value] of Array.from(resource.responseHeaders).sort((a, b) => a[0].localeCompare(b[0]))) {
+            name = name.toLowerCase();
+            if (!name.startsWith("x-") && !name.startsWith("content-"))
                 value = "<filtered>";
             InspectorTest.log(`    ${name}: ${value}`);
         }

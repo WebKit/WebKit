@@ -44,9 +44,10 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
         metrics = metrics || {};
         timing = timing || {};
+        let responseHeaders = new WI.HTTPHeaderMap(response.headers);
 
         super(request.url, {
-            mimeType: response.mimeType || (response.headers || {}).valueForCaseInsensitiveKey("Content-Type") || null,
+            mimeType: response.mimeType || responseHeaders.get(WI.HTTPHeader.ContentType) || null,
             requestMethod: request.method,
             requestHeaders: request.headers,
             requestData: request.data,
@@ -58,7 +59,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._finishedOrFailedTimestamp = request.finishedTimestamp || NaN;
         this._statusCode = response.statusCode || NaN;
         this._statusText = response.statusText || null;
-        this._responseHeaders = response.headers || {};
+        this._responseHeaders = responseHeaders;
         this._failureReasonText = response.failureReasonText || null;
         this._timingData = new WI.ResourceTimingData(this, timing);
 
@@ -101,16 +102,6 @@ WI.LocalResource = class LocalResource extends WI.Resource
     static resetPathsThatFailedToLoadFromFileSystem()
     {
         WI.LocalResource._pathsThatFailedToLoadFromFileSystem.clear();
-    }
-
-    static headersArrayToHeadersObject(headers)
-    {
-        let result = {};
-        if (headers) {
-            for (let {name, value} of headers)
-                result[name] = value;
-        }
-        return result;
     }
 
     static fromHAREntry(entry, archiveStartWalltime)
@@ -184,14 +175,14 @@ WI.LocalResource = class LocalResource extends WI.Resource
             request: {
                 url: request.url,
                 method: request.method,
-                headers: LocalResource.headersArrayToHeadersObject(request.headers),
+                headers: request.headers,
                 timestamp: requestSentTimestamp,
                 walltime: requestSentWalltime,
                 finishedTimestamp: finishedTimestamp,
                 data: request.postData ? request.postData.text : null,
             },
             response: {
-                headers: LocalResource.headersArrayToHeadersObject(response.headers),
+                headers: response.headers,
                 mimeType: response.content.mimeType,
                 statusCode: response.status,
                 statusText: response.statusText,
@@ -228,11 +219,11 @@ WI.LocalResource = class LocalResource extends WI.Resource
             request: {
                 url: this.url,
                 method: this.requestMethod,
-                headers: this.requestHeaders,
+                headers: this.requestHeaders.toJSON(),
                 data: this.requestData,
             },
             response: {
-                headers: this.responseHeaders,
+                headers: this.responseHeaders.toJSON(),
                 mimeType: this.mimeType,
                 statusCode: this.statusCode,
                 statusText: this.statusText,

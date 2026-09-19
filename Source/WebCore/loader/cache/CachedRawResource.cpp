@@ -326,7 +326,7 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     const HTTPHeaderMap& newHeaders = newRequest.httpHeaderFields();
     const HTTPHeaderMap& oldHeaders = m_resourceRequest.httpHeaderFields();
 
-    for (const auto& header : newHeaders) {
+    for (const auto& header : newHeaders.combined()) {
         if (header.keyAsHTTPHeaderName) {
             if (!shouldIgnoreHeaderForCacheReuse(header.keyAsHTTPHeaderName.value())
                 && header.value != oldHeaders.get(header.keyAsHTTPHeaderName.value()))

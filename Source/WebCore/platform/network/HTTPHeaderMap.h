@@ -28,12 +28,11 @@
 
 #include <WebCore/HTTPHeaderNames.h>
 #include <utility>
+#include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-// FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
 class HTTPHeaderMap {
 public:
@@ -159,6 +158,7 @@ public:
     }
 
     WEBCORE_EXPORT String get(StringView name) const;
+    WEBCORE_EXPORT Vector<String> getAll(StringView name) const;
     WEBCORE_EXPORT void set(const String& name, const String& value);
     WEBCORE_EXPORT void add(const String& name, const String& value);
     void setUncommonHeader(const String& name, const String& value);
@@ -175,6 +175,7 @@ public:
 #endif
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
+    WEBCORE_EXPORT Vector<String> getAll(HTTPHeaderName) const;
     void set(HTTPHeaderName, const String& value);
     void add(HTTPHeaderName, const String& value);
     bool addIfNotPresent(HTTPHeaderName, const String&);
@@ -195,6 +196,7 @@ public:
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String get(ASCIILiteral) const = delete;
+    template<size_t length> Vector<String> getAll(ASCIILiteral) const = delete;
     template<size_t length> void set(ASCIILiteral, const String&) = delete;
     template<size_t length> bool contains(ASCIILiteral) = delete;
     template<size_t length> bool remove(ASCIILiteral) = delete;
@@ -204,19 +206,27 @@ public:
     CommonHeadersVector& commonHeaders() LIFETIME_BOUND { return m_commonHeaders; }
     UncommonHeadersVector& uncommonHeaders() LIFETIME_BOUND { return m_uncommonHeaders; }
 
+    WEBCORE_EXPORT HTTPHeaderMap combined() const;
+
     const_iterator begin() const LIFETIME_BOUND { return const_iterator(*this, 0, 0); }
     const_iterator end() const LIFETIME_BOUND { return const_iterator(*this, m_commonHeaders.size(), m_uncommonHeaders.size()); }
 
     friend bool operator==(const HTTPHeaderMap& a, const HTTPHeaderMap& b)
     {
-        if (a.m_commonHeaders.size() != b.m_commonHeaders.size() || a.m_uncommonHeaders.size() != b.m_uncommonHeaders.size())
+        if (a.m_commonHeaders == b.m_commonHeaders && a.m_uncommonHeaders == b.m_uncommonHeaders)
+            return true;
+        auto aHeaders = a.combined();
+        auto bHeaders = b.combined();
+        if (aHeaders.m_commonHeaders.size() != bHeaders.m_commonHeaders.size() || aHeaders.m_uncommonHeaders.size() != bHeaders.m_uncommonHeaders.size())
             return false;
-        for (auto& commonHeader : a.m_commonHeaders) {
-            if (b.get(commonHeader.key) != commonHeader.value)
+        for (auto& commonHeader : aHeaders.m_commonHeaders) {
+            auto index = bHeaders.m_commonHeaders.findIf([&](auto& other) { return commonHeader.key == other.key; });
+            if (index == notFound || commonHeader.value != bHeaders.m_commonHeaders[index].value)
                 return false;
         }
-        for (auto& uncommonHeader : a.m_uncommonHeaders) {
-            if (b.getUncommonHeader(uncommonHeader.key) != uncommonHeader.value)
+        for (auto& uncommonHeader : aHeaders.m_uncommonHeaders) {
+            auto index = bHeaders.m_uncommonHeaders.findIf([&](auto& other) { return equalIgnoringASCIICase(uncommonHeader.key, other.key); });
+            if (index == notFound || uncommonHeader.value != bHeaders.m_uncommonHeaders[index].value)
                 return false;
         }
         return true;

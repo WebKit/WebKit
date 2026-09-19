@@ -90,7 +90,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& 
 std::optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
     bool validWildcard = m_headers.contains<HashTranslatorASCIILiteral>("*"_s) && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
-    for (const auto& header : requestHeaders) {
+    for (const auto& header : requestHeaders.combined()) {
         if (header.keyAsHTTPHeaderName && isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
             continue;
         if (!m_headers.contains(header.key) && !validWildcard)

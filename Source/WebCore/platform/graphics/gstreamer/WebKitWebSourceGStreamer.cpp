@@ -1053,14 +1053,14 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     // Pack request headers in the http-headers structure.
     GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
-    for (const auto& header : m_request.httpHeaderFields())
+    for (const auto& header : m_request.httpHeaderFields().combined())
         gst_structure_set(headers.get(), header.key.utf8().legacyCStringPointer(), G_TYPE_STRING, header.value.utf8().legacyCStringPointer(), nullptr);
     GST_DEBUG_OBJECT(src.get(), "R%u: Request headers going downstream: %" GST_PTR_FORMAT, m_requestNumber, headers.get());
     gst_structure_set(httpHeaders.get(), "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
 
     // Pack response headers in the http-headers structure.
     headers.reset(gst_structure_new_empty("response-headers"));
-    for (const auto& header : response.httpHeaderFields()) {
+    for (const auto& header : response.httpHeaderFields().combined()) {
         if (auto convertedValue = parseIntegerAllowingTrailingJunk<uint64_t>(header.value))
             gst_structure_set(headers.get(), header.key.utf8().legacyCStringPointer(), G_TYPE_UINT64, *convertedValue, nullptr);
         else
