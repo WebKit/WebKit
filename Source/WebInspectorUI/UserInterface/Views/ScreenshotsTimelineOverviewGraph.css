@@ -26,15 +26,4 @@
 body .sidebar > .panel.navigation.timeline > .timelines-content li.item.screenshots,
 body .timeline-overview > .graphs-container > .timeline-overview-graph.screenshots {
     height: 60px;
-    white-space: nowrap;
-}
-
-.timeline-overview-graph.screenshots > img {
-    position: absolute;
-    border: 1px solid var(--border-color);
-}
-
-.timeline-overview-graph.screenshots > img.selected {
-    z-index: 1;
-    border: 1px solid var(--glyph-color-active);
 }

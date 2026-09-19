@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.TimelineOverviewGraph
+WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.RecordBarTimelineOverviewGraph
 {
     constructor(timeline, timelineOverview)
     {
@@ -45,12 +45,9 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
 
         this._recordsForTarget = new Map;
 
-        this._recordRows = [];
+        this._recordRowCount = 0;
         this._nextRecordRowIndex = 0;
         this._recordRowForTarget = new Map;
-        this._recordBarsForTarget = new Map;
-
-        this.element.removeChildren();
     }
 
     // Protected
@@ -62,54 +59,32 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
         if (this.hidden)
             return;
 
-        let secondsPerPixel = this.timelineOverview.secondsPerPixel;
-        let recordBarIndex = 0;
+        let graphWidth = this.timelineOverview.scrollContainerWidth;
+        if (isNaN(graphWidth)) {
+            this.clearCanvas();
+            return;
+        }
 
-        function createBar(rowElement, recordBars, records, renderMode)
-        {
-            let timelineRecordBar = recordBars[recordBarIndex];
-            if (!timelineRecordBar)
-                timelineRecordBar = recordBars[recordBarIndex] = new WI.TimelineRecordBar(this, records, renderMode);
-            else {
-                timelineRecordBar.renderMode = renderMode;
-                timelineRecordBar.records = records;
-            }
-            timelineRecordBar.refresh(this);
-            if (!timelineRecordBar.element.parentNode)
-                rowElement.appendChild(timelineRecordBar.element);
-            ++recordBarIndex;
-        };
+        for (let target of this._recordsForTarget.keys()) {
+            if (this._recordRowForTarget.has(target))
+                continue;
 
-        for (let [target, [gcRecords, nonGCRecords]] of this._recordsForTarget) {
-            let rowElement = this._recordRowForTarget.getOrInsertComputed(target, () => {
-                if (this._recordRows.length < 5) {
-                    let rowElement = this.element.appendChild(document.createElement("div"));
-                    rowElement.classList.add("graph-row");
-                    this._recordRows.push(rowElement);
-                }
-                return this._recordRows[this._nextRecordRowIndex++ % this._recordRows.length];
-            });
+            if (this._recordRowCount < 5)
+                ++this._recordRowCount;
+            this._recordRowForTarget.set(target, this._nextRecordRowIndex++ % this._recordRowCount);
+        }
 
-            let recordBars = this._recordBarsForTarget.getOrInsert(target, []);
-            recordBarIndex = 0;
-
-            let boundCreateBar = createBar.bind(this, rowElement, recordBars);
-            WI.TimelineRecordBar.createCombinedBars(nonGCRecords, secondsPerPixel, this, boundCreateBar);
-            WI.TimelineRecordBar.createCombinedBars(gcRecords, secondsPerPixel, this, boundCreateBar);
-
-            // Remove the remaining unused TimelineRecordBars.
-            for (; recordBarIndex < recordBars.length; ++recordBarIndex) {
-                recordBars[recordBarIndex].records = null;
-                recordBars[recordBarIndex].element.remove();
+        this.beginRecordBarLayout();
+        if (this._recordRowCount) {
+            let {height, margin} = WI.ScriptTimelineOverviewGraph._dimensionsForRowCount[this._recordRowCount];
+            for (let [target, [gcRecords, nonGCRecords]] of this._recordsForTarget) {
+                let rowIndex = this._recordRowForTarget.get(target);
+                let y = margin + rowIndex * (height + margin);
+                this.addRecordBars(nonGCRecords, y, height, 2, true);
+                this.addRecordBars(gcRecords, y, height, 2, true);
             }
         }
-    }
-
-    updateSelectedRecord()
-    {
-        super.updateSelectedRecord();
-
-        this.updateSelectedRecordBar(this._recordBarsForTarget.values());
+        this.updateCanvas();
     }
 
     // Private
@@ -125,4 +100,12 @@ WI.ScriptTimelineOverviewGraph = class ScriptTimelineOverviewGraph extends WI.Ti
 
         this.needsLayout();
     }
+};
+
+WI.ScriptTimelineOverviewGraph._dimensionsForRowCount = {
+    1: {height: 21, margin: 7},
+    2: {height: 12, margin: 4},
+    3: {height: 8, margin: 3},
+    4: {height: 6.5, margin: 2},
+    5: {height: 6, margin: 1},
 };

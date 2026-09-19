@@ -214,6 +214,7 @@ WI.notifications = new WI.Object;
 
 WI.Notification = {
     GlobalModifierKeysDidChange: "global-modifiers-did-change",
+    SystemAppearanceDidChange: "system-appearance-did-change",
     PageArchiveStarted: "page-archive-started",
     PageArchiveEnded: "page-archive-ended",
     ExtraDomainsActivated: "extra-domains-activated", // COMPATIBILITY (iOS 14.0): Inspector.activateExtraDomains was removed in favor of a declared debuggable type
