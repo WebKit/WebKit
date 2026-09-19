@@ -1,9 +1,9 @@
 
 (Frame scrolling node
-  (scroll position 40 460)
-  (scrollable area size 785 585)
-  (contents size 4016 4042)
-  (requested scroll position 40 460)
+  (scroll position 20 230)
+  (scrollable area size 393 293)
+  (contents size 2008 2021)
+  (requested scroll position 20 230)
   (requested scroll position represents programmatic scroll 1)
   (scrollable area parameters
     (horizontal scroll elasticity 2)
@@ -12,7 +12,6 @@
     (vertical scrollbar mode 0)
     (allows horizontal scrolling 1)
     (allows vertical scrolling 1))
-  (frame scale factor 2.00)
   (layout viewport at (0,230) size 785x585)
   (min layout viewport origin (0,0))
   (max layout viewport origin (1223,1436))
@@ -43,12 +42,11 @@
 )
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 4016.00 4042.00)
+  (bounds 2008.00 2021.00)
   (children 1
     (GraphicsLayer
       (bounds 2008.00 2021.00)
       (contentsOpaque 1)
-      (transform [2.00 0.00 0.00 0.00] [0.00 2.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
       (children 4
         (GraphicsLayer
           (position 0.00 230.00)
