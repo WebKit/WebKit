@@ -117,7 +117,7 @@ private final class Recorder {
 struct SwiftCxxInteropTests {
     @Test
     func wtfFunctionCanBeInvokedFromSwift() async throws {
-        let function = Cxx.IntBoolFunction { argument in
+        let function = Cxx.IntBoolFunction { (argument: Bool) -> CInt in
             argument ? 1 : 0
         }
 
