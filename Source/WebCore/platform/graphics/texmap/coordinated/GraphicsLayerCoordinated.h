@@ -128,8 +128,6 @@ private:
     bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String&, double) override;
     void removeAnimation(const String&, std::optional<AnimatedProperty>) override;
     void pauseAnimation(const String& animationName, double timeOffset) override;
-    void suspendAnimations(MonotonicTime) override;
-    void resumeAnimations() override;
     void transformRelatedPropertyDidChange() override;
     Vector<GraphicsLayer::AcceleratedAnimationForTesting> acceleratedAnimationsForTesting() const override;
 

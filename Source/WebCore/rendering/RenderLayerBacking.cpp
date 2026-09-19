@@ -5265,17 +5265,6 @@ void RenderLayerBacking::notifySubsequentFlushRequired(const GraphicsLayer* laye
     compositor().notifySubsequentFlushRequired(layer);
 }
 
-// This is used for the 'freeze' API, for testing only.
-void RenderLayerBacking::suspendAnimations(MonotonicTime time)
-{
-    m_graphicsLayer->suspendAnimations(time);
-}
-
-void RenderLayerBacking::resumeAnimations()
-{
-    m_graphicsLayer->resumeAnimations();
-}
-
 LayoutRect RenderLayerBacking::compositedBounds() const
 {
     return m_compositedBounds;

@@ -732,14 +732,6 @@ String GraphicsLayer::animationNameForTransition(AnimatedProperty property)
     return makeString("-|transition"_s, static_cast<int>(property), '-');
 }
 
-void GraphicsLayer::suspendAnimations(MonotonicTime)
-{
-}
-
-void GraphicsLayer::resumeAnimations()
-{
-}
-
 void GraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose)
 {
 }

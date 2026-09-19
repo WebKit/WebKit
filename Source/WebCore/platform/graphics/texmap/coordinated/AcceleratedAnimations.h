@@ -51,8 +51,6 @@ public:
     void add(Ref<const AcceleratedAnimation>&&, MonotonicTime);
     void remove(const String&);
     void pause(const String&, Seconds);
-    void suspend(MonotonicTime);
-    void resume();
 
     void apply(AcceleratedAnimation::ApplyResult&, MonotonicTime) const;
 

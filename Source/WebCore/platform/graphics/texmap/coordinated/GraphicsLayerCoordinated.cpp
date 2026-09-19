@@ -743,18 +743,6 @@ void GraphicsLayerCoordinated::pauseAnimation(const String& animationName, doubl
     noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
 }
 
-void GraphicsLayerCoordinated::suspendAnimations(MonotonicTime time)
-{
-    m_animations.suspend(time);
-    noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
-}
-
-void GraphicsLayerCoordinated::resumeAnimations()
-{
-    m_animations.resume();
-    noteLayerPropertyChanged(Change::Animations, ScheduleFlush::Yes);
-}
-
 bool GraphicsLayerCoordinated::isRunningTransformAnimation() const
 {
     return m_animations.hasRunningTransformAnimations();

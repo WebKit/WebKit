@@ -93,8 +93,6 @@ public:
     void remove(const String&);
     void remove(const String&, AnimatedProperty);
     void pause(const String&, Seconds);
-    void suspend(MonotonicTime);
-    void resume();
 
     void apply(TextureMapperAnimation::ApplicationResult&, MonotonicTime, TextureMapperAnimation::KeepInternalState = TextureMapperAnimation::KeepInternalState::No);
 

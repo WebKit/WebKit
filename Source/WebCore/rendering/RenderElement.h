@@ -290,7 +290,6 @@ public:
     // https://www.w3.org/TR/css-transforms-1/#reference-box
     virtual FloatRect referenceBoxRect(CSSBoxType) const;
 
-    virtual void suspendAnimations(MonotonicTime = MonotonicTime()) { }
     std::unique_ptr<Style::ComputedStyle> animatedStyle();
 
     SingleThreadWeakPtr<RenderBlockFlow> pseudoElementRenderer(PseudoElementType) const;

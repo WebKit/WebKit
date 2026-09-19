@@ -350,20 +350,6 @@ void TextureMapperAnimations::pause(const String& name, Seconds offset)
     }
 }
 
-void TextureMapperAnimations::suspend(MonotonicTime time)
-{
-    // FIXME: This seems wrong. `pause` takes time offset (Seconds), not MonotonicTime.
-    // https://bugs.webkit.org/show_bug.cgi?id=183112
-    for (auto& animation : m_animations)
-        animation.pause(time.secondsSinceEpoch());
-}
-
-void TextureMapperAnimations::resume()
-{
-    for (auto& animation : m_animations)
-        animation.resume();
-}
-
 void TextureMapperAnimations::apply(TextureMapperAnimation::ApplicationResult& applicationResults, MonotonicTime time, TextureMapperAnimation::KeepInternalState keepInternalState)
 {
     Vector<TextureMapperAnimation*> translateAnimations;

@@ -4360,37 +4360,6 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const GraphicsLayerKeyframeVal
     return true;
 }
 
-void GraphicsLayerCA::suspendAnimations(MonotonicTime time)
-{
-    double t = PlatformCALayer::currentTimeToMediaTime(time ? time : MonotonicTime::now());
-    RefPtr primaryLayer = this->primaryLayer();
-    primaryLayer->setSpeed(0);
-    primaryLayer->setTimeOffset(t);
-
-    // Suspend the animations on the clones too.
-    if (LayerMap* layerCloneMap = primaryLayerClones()) {
-        for (auto& layer : layerCloneMap->values()) {
-            layer->setSpeed(0);
-            layer->setTimeOffset(t);
-        }
-    }
-}
-
-void GraphicsLayerCA::resumeAnimations()
-{
-    RefPtr primaryLayer = this->primaryLayer();
-    primaryLayer->setSpeed(1);
-    primaryLayer->setTimeOffset(0);
-
-    // Resume the animations on the clones too.
-    if (LayerMap* layerCloneMap = primaryLayerClones()) {
-        for (auto& layer : layerCloneMap->values()) {
-            layer->setSpeed(1);
-            layer->setTimeOffset(0);
-        }
-    }
-}
-
 PlatformCALayer* GraphicsLayerCA::hostLayerForSublayers() const
 {
     if (contentsRectClipsDescendants() && m_contentsClippingLayer)

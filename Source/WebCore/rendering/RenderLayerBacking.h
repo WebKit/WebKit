@@ -204,13 +204,11 @@ public:
     // Notification from the renderer that its content changed.
     void contentChanged(ContentChangeType, const std::optional<FloatRect>&);
 
-    // Interface to start, finish, suspend and resume animations
+    // Interface to start and finish animations.
     bool startAnimation(double timeOffset, const GraphicsLayerAnimation&, const BlendingKeyframes&);
     void animationPaused(double timeOffset, const String& name);
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();
-    void suspendAnimations(MonotonicTime = MonotonicTime());
-    void resumeAnimations();
 
 #if ENABLE(THREADED_ANIMATIONS)
     const AcceleratedEffectStack* NODELETE acceleratedEffectStack() const;

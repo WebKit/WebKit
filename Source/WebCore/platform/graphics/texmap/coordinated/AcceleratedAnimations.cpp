@@ -53,19 +53,6 @@ void AcceleratedAnimations::pause(const String& name, Seconds offset)
     }
 }
 
-void AcceleratedAnimations::suspend(MonotonicTime time)
-{
-    for (auto& entry : m_animations)
-        entry.playback.suspend(time);
-}
-
-void AcceleratedAnimations::resume()
-{
-    auto now = MonotonicTime::now();
-    for (auto& entry : m_animations)
-        entry.playback.resume(now);
-}
-
 void AcceleratedAnimations::apply(AcceleratedAnimation::ApplyResult& applyResult, MonotonicTime time) const
 {
     Vector<const Entry*> translateAnimations;

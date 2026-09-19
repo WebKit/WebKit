@@ -51,18 +51,6 @@ public:
             state = State::Paused;
         }
 
-        void suspend(MonotonicTime time)
-        {
-            if (state == State::Playing)
-                pause(time - startTime);
-        }
-
-        void resume(MonotonicTime time)
-        {
-            if (state == State::Paused)
-                start(time - pauseTime);
-        }
-
         MonotonicTime startTime;
         Seconds pauseTime;
         State state { State::Stopped };

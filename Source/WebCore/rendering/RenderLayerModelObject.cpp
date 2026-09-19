@@ -320,13 +320,6 @@ void RenderLayerModelObject::transformRelatedPropertyDidChange()
     layer()->backing()->transformRelatedPropertyDidChange();
 }
 
-void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
-{
-    if (!layer() || !layer()->backing())
-        return;
-    layer()->backing()->suspendAnimations(time);
-}
-
 TransformationMatrix* RenderLayerModelObject::layerTransform() const
 {
     if (hasLayer())

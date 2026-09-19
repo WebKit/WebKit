@@ -163,9 +163,6 @@ public:
     WEBCORE_EXPORT void setScrollingNodeID(std::optional<ScrollingNodeID>) override;
 #endif
 
-    WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
-    WEBCORE_EXPORT void resumeAnimations() override;
-
     WEBCORE_EXPORT bool addAnimation(const GraphicsLayerKeyframeValueList&, const GraphicsLayerAnimation*, const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
     WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;

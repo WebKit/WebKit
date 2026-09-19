@@ -93,8 +93,6 @@ public:
     void animationFinished(const BlendingKeyframes&) override;
     void transformRelatedPropertyDidChange() override;
 
-    void suspendAnimations(MonotonicTime = MonotonicTime()) override;
-
     // Single source of truth deciding if a SVG renderer should be painted. All SVG renderers
     // use this method to test if they should continue processing in the paint() function or stop.
     bool shouldPaintSVGRenderer(const PaintInfo&, const OptionSet<PaintPhase> relevantPaintPhases = OptionSet<PaintPhase>()) const;

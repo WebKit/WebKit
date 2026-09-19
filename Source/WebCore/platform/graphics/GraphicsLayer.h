@@ -377,8 +377,6 @@ public:
     virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
     virtual void removeAnimation(const String& /*animationName*/, std::optional<AnimatedProperty>) { }
     virtual void transformRelatedPropertyDidChange() { }
-    WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
-    WEBCORE_EXPORT virtual void resumeAnimations();
 
     struct AcceleratedAnimationForTesting {
         String property;
