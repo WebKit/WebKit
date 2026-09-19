@@ -171,7 +171,12 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             this.status = null;
     }
 
-    // Protected (ResourceTreeElement calls this when its Resource changes dynamically for Frames)
+    updateDisplayName()
+    {
+        // Overridden by subclasses if needed.
+
+        this.mainTitle = this._sourceCode.displayName;
+    }
 
     _updateSourceCode(sourceCode)
     {
@@ -186,10 +191,12 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
             oldSupportsScriptBlackboxing = this._sourceCode.supportsScriptBlackboxing;
 
             this._sourceCode.removeEventListener(WI.SourceCode.Event.SourceMapAdded, this.updateSourceMapResources, this);
+            this._sourceCode.removeEventListener(WI.SourceCode.Event.DisplayNameChanged, this.updateDisplayName, this);
         }
 
         this._sourceCode = sourceCode;
         this._sourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, this.updateSourceMapResources, this);
+        this._sourceCode.addEventListener(WI.SourceCode.Event.DisplayNameChanged, this.updateDisplayName, this);
 
         let newSupportsScriptBlackboxing = this._sourceCode.supportsScriptBlackboxing;
         if (oldSupportsScriptBlackboxing !== newSupportsScriptBlackboxing) {
