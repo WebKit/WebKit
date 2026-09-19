@@ -437,11 +437,12 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
     if (!node)
         return { };
 
-    RefPtr frame = node->document().frame();
+    RefPtr frame = protect(node->document())->frame();
     if (!frame)
         return { };
 
-    auto* textChecker = protect(frame->editor())->textChecker();
+    Ref editor = frame->editor();
+    auto* textChecker = editor->textChecker();
     if (!textChecker)
         return { };
 
@@ -459,7 +460,7 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
         Vector<TextCheckingResult> misspellings;
         checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
         for (auto& misspelling : misspellings) {
-            if (auto range = protect(frame->editor())->rangeForTextCheckingResult(misspelling))
+            if (auto range = editor->rangeForTextCheckingResult(misspelling))
                 ranges.append(range);
         }
     } else {
@@ -480,7 +481,7 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     if (!node)
         return std::nullopt;
 
-    RefPtr frame = node->document().frame();
+    RefPtr frame = protect(node->document())->frame();
     if (!frame)
         return std::nullopt;
 
@@ -520,7 +521,7 @@ AXTextMarkerRange AccessibilityObject::textInputMarkedTextMarkerRange() const
     if (!node)
         return { };
 
-    RefPtr frame = node->document().frame();
+    RefPtr frame = protect(node->document())->frame();
     if (!frame)
         return { };
 
@@ -1383,10 +1384,11 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
             // Insert text instead of replacing when the selection length is zero, because replacements
             // aren't performed correctly in certain edge cases like at the the boundary between nodes
             // separated by spaces <p> foo <i>bar</i>[insert here] baz </p>.
+            Ref editor = frame->editor();
             if (textOperationRange.characterRange.length)
-                protect(frame->editor())->replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
+                editor->replaceSelectionWithText(replacementString, Editor::SelectReplacement::Yes, operation.smartReplace == AccessibilityTextOperationSmartReplace::No ? Editor::SmartReplace::No : Editor::SmartReplace::Yes);
             else
-                protect(frame->editor())->insertText(replacementString, /* triggeringEvent */ nullptr);
+                editor->insertText(replacementString, /* triggeringEvent */ nullptr);
 
             result.append(replacementString);
         } else
@@ -1606,7 +1608,7 @@ bool AccessibilityObject::press()
     RefPtr actionElement = this->actionElement();
     if (!actionElement)
         return false;
-    if (RefPtr frame = actionElement->document().frame())
+    if (RefPtr frame = protect(actionElement->document())->frame())
         frame->loader().resetMultipleFormSubmissionProtection();
 
     // Hit test at this location to determine if there is a sub-node element that should act
@@ -2898,7 +2900,7 @@ bool AccessibilityObject::ignoredFromModalPresence() const
         return false;
 
     // We only want to ignore the objects within the same frame as the modal dialog.
-    if (modalNode->document().frame() != this->frame())
+    if (protect(modalNode->document())->frame() != this->frame())
         return false;
 
     // Some objects might be outside of a modal, but are linked to elements inside of it. Don't ignore those.
@@ -3025,7 +3027,7 @@ bool AccessibilityObject::insertText(const String& text)
         return false;
 
     // Use Editor::insertText to mimic typing into the field.
-    Ref editor = protect(renderer())->frame().editor();
+    Ref editor = protect(protect(renderer())->frame())->editor();
     return editor->insertText(text, nullptr);
 }
 
@@ -3610,7 +3612,7 @@ void AccessibilityObject::setFocused(bool focus)
 {
     if (focus) {
         // Ensure that the view is focused and active, otherwise, any attempt to set focus to an object inside it will fail.
-        RefPtr frame = document() ? document()->frame() : nullptr;
+        RefPtr frame = document() ? protect(document())->frame() : nullptr;
         if (frame && frame->selection().isFocusedAndActive())
             return; // Nothing to do, already focused and active.
 
@@ -4173,9 +4175,11 @@ void AccessibilityObject::scrollAreaAndAncestor(std::pair<ScrollableArea*, Acces
 {
     // Search up the parent chain until we find the first one that's scrollable.
     scrollers.first = nullptr;
-    for (scrollers.second = parentObject(); scrollers.second; scrollers.second = protect(scrollers.second)->parentObject()) {
-        if ((scrollers.first = protect(scrollers.second)->getScrollableAreaIfScrollable()))
+    for (scrollers.second = parentObject(); scrollers.second; ) {
+        Ref current = *scrollers.second;
+        if ((scrollers.first = current->getScrollableAreaIfScrollable()))
             break;
+        scrollers.second = current->parentObject();
     }
 }
 

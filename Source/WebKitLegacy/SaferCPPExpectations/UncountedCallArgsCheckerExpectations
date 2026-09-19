@@ -1,14 +1,14 @@
-Storage/InProcessIDBServer.cpp
-Storage/StorageAreaImpl.cpp
-Storage/StorageAreaSync.cpp
-Storage/StorageNamespaceImpl.cpp
-Storage/StorageThread.cpp
-Storage/WebStorageNamespaceProvider.cpp
-WebCoreSupport/PingHandle.h
-WebCoreSupport/SocketStreamHandleImpl.cpp
-WebCoreSupport/SocketStreamHandleImplCFNet.cpp
-WebCoreSupport/WebResourceLoadScheduler.cpp
-WebCoreSupport/WebSocketChannel.cpp
+[ macOS ] Storage/InProcessIDBServer.cpp
+[ macOS ] Storage/StorageAreaImpl.cpp
+[ macOS ] Storage/StorageAreaSync.cpp
+[ macOS ] Storage/StorageNamespaceImpl.cpp
+[ macOS ] Storage/StorageThread.cpp
+[ macOS ] Storage/WebStorageNamespaceProvider.cpp
+[ macOS ] WebCoreSupport/PingHandle.h
+[ macOS ] WebCoreSupport/SocketStreamHandleImpl.cpp
+[ macOS ] WebCoreSupport/SocketStreamHandleImplCFNet.cpp
+[ iOS ] WebCoreSupport/WebResourceLoadScheduler.cpp
+[ macOS ] WebCoreSupport/WebSocketChannel.cpp
 [ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
 [ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
 [ iOS ] ios/WebCoreSupport/WebGeolocation.mm

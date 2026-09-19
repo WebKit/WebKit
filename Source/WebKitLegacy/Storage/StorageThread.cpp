@@ -98,7 +98,7 @@ void StorageThread::terminate()
     m_queue.append(makeUnique<Function<void ()>>([this] {
         performTerminate();
     }));
-    m_thread->waitForCompletion();
+    protect(m_thread)->waitForCompletion();
     ASSERT(m_queue.killed());
     m_thread = nullptr;
 }

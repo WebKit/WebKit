@@ -147,6 +147,7 @@ public:
 #if ENABLE(RESOURCE_USAGE)
     size_t NODELETE externalMemoryCost() const;
 #endif
+    uint32_t owningThreadUID() const { return m_owningThreadUID; }
     bool isContextThread() const { return m_owningThreadUID == currentThreadID(); }
 
 protected:

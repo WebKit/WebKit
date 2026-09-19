@@ -131,9 +131,9 @@ static void contentsQuadToCoordinateSystem(const FrameView* mainView, const Loca
         quad += toIntSize(mainView->scrollPosition());
 }
 
-static Element* NODELETE effectiveElementForNode(Node& node)
+static Element* effectiveElementForNode(Node& node)
 {
-    if (!is<Element>(node) || !node.document().frame())
+    if (!is<Element>(node) || !protect(node.document())->frame())
         return nullptr;
 
     Element* element = nullptr;
@@ -148,13 +148,13 @@ static Element* NODELETE effectiveElementForNode(Node& node)
 
 static void buildRendererHighlight(RenderObject* renderer, const InspectorOverlay::Highlight::Config& highlightConfig, InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    RefPtr containingFrame = renderer->document().frame();
+    RefPtr containingFrame = protect(renderer->document())->frame();
     if (!containingFrame)
         return;
 
     highlight.setDataFromConfig(highlightConfig);
     RefPtr containingView = containingFrame->view();
-    RefPtr mainView = protect(containingFrame->page())->mainFrame().virtualView();
+    RefPtr mainView = protect(protect(containingFrame->page())->mainFrame())->virtualView();
 
     // (Legacy)RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isRenderOrLegacyRenderSVGRoot();
@@ -322,12 +322,12 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
     if (!shapeOutsideInfo)
         return;
 
-    RefPtr containingFrame = node.document().frame();
+    RefPtr containingFrame = protect(node.document())->frame();
     if (!containingFrame)
         return;
 
     RefPtr containingView = containingFrame->view();
-    RefPtr mainView = protect(containingFrame->page())->mainFrame().virtualView();
+    RefPtr mainView = protect(protect(containingFrame->page())->mainFrame())->virtualView();
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
@@ -424,7 +424,8 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-    auto viewportSize = protect(page())->mainFrame().virtualView()->sizeForVisibleContent();
+    auto viewportSize = protect(protect(protect(page())->mainFrame())->virtualView())->sizeForVisibleContent();
+    RefPtr highlightNodeList = m_highlightNodeList;
 
     context.clearRect({ FloatPoint::zero(), viewportSize });
 
@@ -445,9 +446,9 @@ void InspectorOverlay::paint(GraphicsContext& context)
         rulerExclusion.bounds.unite(quadRulerExclusion.bounds);
     }
 
-    if (m_highlightNodeList) {
-        for (unsigned i = 0; i < protect(m_highlightNodeList)->length(); ++i) {
-            if (RefPtr node = protect(m_highlightNodeList)->item(i)) {
+    if (RefPtr highlightNodeList = m_highlightNodeList) {
+        for (unsigned i = 0; i < highlightNodeList->length(); ++i) {
+            if (RefPtr node = highlightNodeList->item(i)) {
                 auto nodeRulerExclusion = drawNodeHighlight(context, *node);
                 rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
 
@@ -482,7 +483,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
     for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
         if (m_nodeGridOverlayConfig && gridOverlay.gridNode) {
-            if (m_highlightNodeList && isInNodeList(protect(*gridOverlay.gridNode), protect(*m_highlightNodeList)))
+            if (highlightNodeList && isInNodeList(protect(*gridOverlay.gridNode), *highlightNodeList))
                 continue;
             if (gridOverlay.gridNode == m_highlightNode.get())
                 continue;
@@ -494,7 +495,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
     for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
         if (m_nodeFlexOverlayConfig && flexOverlay.flexNode) {
-            if (m_highlightNodeList && isInNodeList(protect(*flexOverlay.flexNode), protect(*m_highlightNodeList)))
+            if (highlightNodeList && isInNodeList(protect(*flexOverlay.flexNode), *highlightNodeList))
                 continue;
             if (flexOverlay.flexNode == m_highlightNode.get())
                 continue;
@@ -516,6 +517,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
     if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size())
         return;
 
+    RefPtr highlightNodeList = m_highlightNodeList;
     constexpr bool offsetBoundsByScroll = true;
 
     highlight.type = InspectorOverlay::Highlight::Type::None;
@@ -531,10 +533,10 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
             if (auto flexHighlightOverlay = buildFlexOverlay({ *m_highlightNode, *m_nodeFlexOverlayConfig }))
                 highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
         }
-    } else if (m_highlightNodeList) {
+    } else if (RefPtr highlightNodeList = m_highlightNodeList) {
         highlight.setDataFromConfig(m_nodeHighlightConfig);
-        for (unsigned i = 0; i < protect(m_highlightNodeList)->length(); ++i) {
-            RefPtr node = protect(m_highlightNodeList)->item(i);
+        for (unsigned i = 0; i < highlightNodeList->length(); ++i) {
+            RefPtr node = highlightNodeList->item(i);
 
             InspectorOverlay::Highlight nodeHighlight;
             buildNodeHighlight(*node, m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
@@ -559,7 +561,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
 
     for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
         if (m_nodeGridOverlayConfig && gridOverlay.gridNode) {
-            if (m_highlightNodeList && isInNodeList(protect(*gridOverlay.gridNode), protect(*m_highlightNodeList)))
+            if (highlightNodeList && isInNodeList(protect(*gridOverlay.gridNode), *highlightNodeList))
                 continue;
             if (gridOverlay.gridNode == m_highlightNode.get())
                 continue;
@@ -571,7 +573,7 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
 
     for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
         if (m_nodeFlexOverlayConfig && flexOverlay.flexNode) {
-            if (m_highlightNodeList && isInNodeList(protect(*flexOverlay.flexNode), protect(*m_highlightNodeList)))
+            if (highlightNodeList && isInNodeList(protect(*flexOverlay.flexNode), *highlightNodeList))
                 continue;
             if (flexOverlay.flexNode == m_highlightNode.get())
                 continue;
@@ -622,7 +624,7 @@ void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlig
 void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
     if (highlightConfig.usePageCoordinates)
-        *quad -= toIntSize(protect(page())->mainFrame().virtualView()->scrollPosition());
+        *quad -= toIntSize(protect(protect(protect(page())->mainFrame())->virtualView())->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = WTF::move(quad);
@@ -669,7 +671,7 @@ void InspectorOverlay::update()
         return;
     }
 
-    if (!protect(page())->mainFrame().virtualView())
+    if (!protect(protect(page())->mainFrame())->virtualView())
         return;
 
     m_isVisible = true;
@@ -694,7 +696,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     if (!m_showPaintRects)
         return;
 
-    auto rootRect = protect(page())->mainFrame().virtualView()->contentsToRootView(enclosingIntRect(rect));
+    auto rootRect = protect(protect(protect(page())->mainFrame())->virtualView())->contentsToRootView(enclosingIntRect(rect));
 
     const auto removeDelay = 250_ms;
 
@@ -1162,6 +1164,8 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     if (!element)
         return { };
 
+    Ref document = node.document();
+
     CheckedPtr renderer = node.renderer();
     if (!renderer || renderer->isSkippedContent())
         return { };
@@ -1200,7 +1204,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         elementWidth = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetWidth()), *modelObject));
         elementHeight = String::number(Style::unapplyingZoom<int>(roundToInt(modelObject->offsetHeight()), *modelObject));
     } else {
-        RefPtr containingView = node.document().frame()->view();
+        RefPtr containingView = document->frame()->view();
         IntRect boundingBox = snappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
         elementWidth = String::number(boundingBox.width());
         elementHeight = String::number(boundingBox.height());
@@ -1228,7 +1232,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
     WebCore::AXObjectCache::enableAccessibility();
 
     String elementRole;
-    if (CheckedPtr<AXObjectCache> axObjectCache = protect(node.document())->axObjectCache()) {
+    if (CheckedPtr<AXObjectCache> axObjectCache = document->axObjectCache()) {
         if (RefPtr axObject = axObjectCache->getOrCreate(node); axObject && !axObject->isIgnored())
             elementRole = axObject->computedRoleString();
     }
@@ -1560,7 +1564,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
 
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(230);
 
-    RefPtr pageView = protect(page())->mainFrame().virtualView();
+    RefPtr pageView = protect(protect(page())->mainFrame())->virtualView();
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
@@ -1596,7 +1600,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     float gridStartY = rowPositions[0];
     float gridEndY = rowPositions[rowPositions.size() - 1];
 
-    RefPtr containingFrame = node->document().frame();
+    RefPtr containingFrame = protect(node->document())->frame();
     if (!containingFrame)
         return { };
     RefPtr containingView = containingFrame->view();
@@ -2139,9 +2143,9 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 
     CheckedRef renderFlex = *downcast<RenderFlexibleBox>(renderer);
 
-    auto itemsAtStartOfLine = m_controller->ensureDOMAgent().flexibleBoxRendererCachedItemsAtStartOfLine(renderFlex);
+    auto itemsAtStartOfLine = protect(m_controller)->ensureDOMAgent().flexibleBoxRendererCachedItemsAtStartOfLine(renderFlex);
 
-    RefPtr containingFrame = node->document().frame();
+    RefPtr containingFrame = protect(node->document())->frame();
     if (!containingFrame)
         return { };
     RefPtr containingView = containingFrame->view();

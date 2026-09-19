@@ -75,14 +75,14 @@ Inspector::Protocol::ErrorStringOr<void> PageNetworkAgent::enable()
 Inspector::Protocol::Network::LoaderId PageNetworkAgent::loaderIdentifier(DocumentLoader* loader)
 {
     if (loader)
-        return m_inspectedPage->inspectorController().identifierRegistry().loaderId(loader);
+        return protect(m_inspectedPage->inspectorController().identifierRegistry())->loaderId(loader);
     return { };
 }
 
 Inspector::Protocol::Network::FrameId PageNetworkAgent::frameIdentifier(DocumentLoader* loader)
 {
     if (loader)
-        return m_inspectedPage->inspectorController().identifierRegistry().frameId(loader->frame());
+        return protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(protect(loader->frame()));
     return { };
 }
 
@@ -128,7 +128,7 @@ bool PageNetworkAgent::setEmulatedConditionsInternal(std::optional<uint64_t> ban
 
 ScriptExecutionContext* PageNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
-    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
     if (!frame)
         return nullptr;
 

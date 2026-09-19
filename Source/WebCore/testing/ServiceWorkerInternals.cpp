@@ -109,7 +109,7 @@ void ServiceWorkerInternals::schedulePushSubscriptionChangeEvent(PushSubscriptio
 
 void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
 {
-    event.onResponse([promise = WTF::move(promise), event = Ref { event }] (auto&& result) mutable {
+    event.onResponse([promise = WTF::move(promise), event = Ref { event }] (std::expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result) mutable {
         if (!result.has_value()) {
             String description;
             if (auto& error = result.error())
@@ -178,7 +178,7 @@ void ServiceWorkerInternals::lastNavigationWasAppInitiated(Ref<DeferredPromise>&
                 if (!protectedThis || !protectedThis->m_lastNavigationWasAppInitiatedPromise)
                     return;
 
-                protectedThis->m_lastNavigationWasAppInitiatedPromise->resolve<IDLBoolean>(appInitiated);
+                protect(protectedThis->m_lastNavigationWasAppInitiatedPromise)->resolve<IDLBoolean>(appInitiated);
                 protectedThis->m_lastNavigationWasAppInitiatedPromise = nullptr;
             }, WorkerRunLoop::defaultMode());
         }

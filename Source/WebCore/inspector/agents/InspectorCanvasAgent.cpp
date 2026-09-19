@@ -75,6 +75,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrays.h>
+#include <wtf/CurrentThread.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -148,10 +149,12 @@ void InspectorCanvasAgent::internalEnable()
 
     Ref { m_instrumentingAgents.get() }->setEnabledCanvasAgent(this);
 
+    auto currentThreadUID = currentThreadID();
+
     {
         Locker locker { CanvasRenderingContext::instancesLock() };
         for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
-            if (!context->isContextThread())
+            if (context->owningThreadUID() != currentThreadUID)
                 continue;
             if (!is<CanvasRenderingContext2D>(context)
                 && !is<ImageBitmapRenderingContext>(context)
@@ -165,7 +168,7 @@ void InspectorCanvasAgent::internalEnable()
             )
                 continue;
 
-            if (matchesCurrentContext(context->canvasBase().scriptExecutionContext()))
+            if (matchesCurrentContext(protect(protect(context->canvasBase())->scriptExecutionContext())))
                 bindCanvas(*context, false);
         }
     }
@@ -174,7 +177,7 @@ void InspectorCanvasAgent::internalEnable()
     {
         Locker locker { GPUDevice::instancesLock() };
         for (SUPPRESS_UNCOUNTED_ARG auto* device : GPUDevice::instances()) {
-            if (!device->isContextThread())
+            if (device->owningThreadUID() != currentThreadUID)
                 continue;
             RefPtr scriptExecutionContext = device->scriptExecutionContext();
             if (!scriptExecutionContext)
@@ -192,11 +195,12 @@ void InspectorCanvasAgent::internalEnable()
     {
         Locker locker { WebGLProgram::instancesLock() };
         for (SUPPRESS_UNCOUNTED_ARG auto& [program, contextWebGLBase] : WebGLProgram::instances()) {
-            if (!contextWebGLBase || !contextWebGLBase->isContextThread())
+            if (!contextWebGLBase || contextWebGLBase->owningThreadUID() != currentThreadUID)
                 continue;
 
-            if (matchesCurrentContext(contextWebGLBase->canvasBase().scriptExecutionContext()))
-                didCreateWebGLProgram(protect(*contextWebGLBase), protect(*program));
+            RefPtr context = contextWebGLBase;
+            if (matchesCurrentContext(protect(protect(context->canvasBase())->scriptExecutionContext())))
+                didCreateWebGLProgram(*context, protect(*program));
         }
     }
 #endif
@@ -205,7 +209,7 @@ void InspectorCanvasAgent::internalEnable()
     {
         Locker locker { GPUComputePipeline::instancesLock() };
         for (SUPPRESS_UNCOUNTED_ARG auto& [pipeline, device] : GPUComputePipeline::instances()) {
-            if (!device || !device->isContextThread())
+            if (!device || device->owningThreadUID() != currentThreadUID)
                 continue;
             RefPtr scriptExecutionContext = device->scriptExecutionContext();
             if (!scriptExecutionContext)
@@ -223,7 +227,7 @@ void InspectorCanvasAgent::internalEnable()
     {
         Locker locker { GPURenderPipeline::instancesLock() };
         for (SUPPRESS_UNCOUNTED_ARG auto& [pipeline, device] : GPURenderPipeline::instances()) {
-            if (!device || !device->isContextThread())
+            if (!device || device->owningThreadUID() != currentThreadUID)
                 continue;
             RefPtr scriptExecutionContext = device->scriptExecutionContext();
             if (!scriptExecutionContext)
@@ -926,7 +930,7 @@ void InspectorCanvasAgent::reset()
         inspectorCanvas->setHasActiveInspectorCanvasCallTracer(false);
 
         if (RefPtr context = inspectorCanvas->canvasContext())
-            context->canvasBase().removeObserver(*this);
+            protect(context->canvasBase())->removeObserver(*this);
     }
 
     m_identifierToInspectorCanvas.clear();
@@ -947,7 +951,7 @@ InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& contex
     auto inspectorCanvas = InspectorCanvas::create(context);
     m_identifierToInspectorCanvas.set(inspectorCanvas->identifier(), inspectorCanvas.copyRef());
 
-    context.canvasBase().addObserver(*this);
+    protect(context.canvasBase())->addObserver(*this);
 
     m_frontendDispatcher->canvasAdded(buildObjectForCanvas(inspectorCanvas, captureBacktrace));
 
@@ -1003,7 +1007,7 @@ void InspectorCanvasAgent::unbindCanvas(InspectorCanvas& inspectorCanvas)
         didFinishRecordingCanvasFrame(inspectorCanvas, true);
 
     if (RefPtr context = inspectorCanvas.canvasContext())
-        context->canvasBase().removeObserver(*this);
+        protect(context->canvasBase())->removeObserver(*this);
 
     Vector<InspectorShaderProgram*> programsToRemove;
     for (auto& inspectorProgram : m_identifierToInspectorProgram.values()) {

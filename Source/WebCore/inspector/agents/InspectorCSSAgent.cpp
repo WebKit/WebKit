@@ -580,7 +580,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(compoundId)));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -618,7 +618,7 @@ Inspector::Protocol::ErrorStringOr<Inspector::Protocol::CSS::StyleSheetId> Inspe
 {
     Inspector::Protocol::ErrorString errorString;
 
-    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -692,7 +692,7 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::CSS::CSSRule>> Inspe
     if (performResult.hasException())
         return makeUnexpected(InspectorDOMAgent::toErrorString(performResult.releaseException()));
 
-    auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
+    auto rule = inspectorStyleSheet->buildObjectForRule(protect(inspectorStyleSheet->ruleForId(rawAction.newRuleId())));
     if (!rule)
         return makeUnexpected("Internal error: missing style sheet"_s);
 
@@ -918,7 +918,7 @@ OptionSet<InspectorCSSAgent::LayoutFlag> InspectorCSSAgent::layoutFlagsForNode(N
             // scrollability on document.scrollingElement(), but that makes it impossible to see when both the document
             // and the <body> are scrollable in quirks mode.
         } else if (is<HTMLHtmlElement>(node)) {
-            if (CheckedPtr frameView = node.document().view()) {
+            if (CheckedPtr frameView = protect(node.document())->view()) {
                 if (frameView->isScrollable())
                     layoutFlags.add(InspectorCSSAgent::LayoutFlag::Scrollable);
             }
@@ -1078,7 +1078,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 
     String newStyleSheetId = String::number(m_lastStyleSheetId);
     ++m_lastStyleSheetId;
-    auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_inspectedPage->inspectorController().identifierRegistry(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
+    auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(protect(m_inspectedPage->inspectorController().identifierRegistry()), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Author, this);
     m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
     return m_nodeToInspectorStyleSheet.set(&element, WTF::move(inspectorStyleSheet)).iterator->value;
 }
@@ -1124,7 +1124,7 @@ InspectorStyleSheet& InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
 
     auto id = String::number(m_lastStyleSheetId++);
     RefPtr document = styleSheet->ownerDocument();
-    Ref inspectorStyleSheet = InspectorStyleSheet::create(m_inspectedPage->inspectorController().identifierRegistry(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
+    Ref inspectorStyleSheet = InspectorStyleSheet::create(protect(m_inspectedPage->inspectorController().identifierRegistry()), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
     m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
     if (m_creatingViaInspectorStyleSheet && document)
         m_documentToInspectorStyleSheet.add(document.releaseNonNull(), Vector<Ref<InspectorStyleSheet>>()).iterator->value.append(inspectorStyleSheet);

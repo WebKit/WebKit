@@ -391,7 +391,7 @@ Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildOb
 
 double InspectorNetworkAgent::timestamp()
 {
-    return protect(environment())->executionStopwatch().elapsedTime().seconds();
+    return protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
 }
 
 void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, Inspector::ResourceType type, ResourceLoader* resourceLoader)
@@ -590,7 +590,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
 
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
     if (loader && loader->frameLoader() && m_resourcesData->resourceType(requestId) == ResourceType::Document)
-        m_resourcesData->addResourceSharedBuffer(requestId, loader->frameLoader()->documentLoader()->mainResourceData(), protect(loader->frame()->document())->encoding());
+        m_resourcesData->addResourceSharedBuffer(requestId, protect(loader->frameLoader()->documentLoader())->mainResourceData(), protect(loader->frame()->document())->encoding());
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
 
@@ -621,7 +621,7 @@ void InspectorNetworkAgent::didFailLoading(ResourceLoaderIdentifier identifier, 
         RefPtr frame = loader->frame();
         if (frame && frame->loader().documentLoader() && frame->document()) {
             m_resourcesData->addResourceSharedBuffer(requestId,
-                frame->loader().documentLoader()->mainResourceData(),
+                protect(frame->loader().documentLoader())->mainResourceData(),
                 protect(frame->document())->encoding());
         }
     }
@@ -642,7 +642,7 @@ void InspectorNetworkAgent::didLoadResourceFromMemoryCache(DocumentLoader* loade
 
     m_resourcesData->resourceCreated(requestId, loaderId, resource);
 
-    auto initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : nullptr, &protect(resource)->resourceRequest());
+    auto initiatorObject = buildInitiatorObject(protect(loader->frame() ? loader->frame()->document() : nullptr), &protect(resource)->resourceRequest());
 
     // FIXME: It would be ideal to generate the Network.Response with the MemoryCache source
     // instead of whatever ResourceResponse::Source the CachedResources's response has.
@@ -914,7 +914,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::setExtraHTTPHead
     m_extraRequestHeaders.clear();
 
     for (auto& entry : headers.get()) {
-        auto stringValue = entry.value->asString();
+        auto stringValue = protect(entry.value)->asString();
         if (!!stringValue)
             m_extraRequestHeaders.set(entry.key, stringValue);
     }
@@ -1205,7 +1205,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithReq
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& [key, value] : *headers) {
-            auto headerValue = value->asString();
+            auto headerValue = protect(value)->asString();
             if (!!headerValue)
                 explicitHeaders.add(key, headerValue);
         }
@@ -1242,7 +1242,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptWithRes
     if (headers) {
         HTTPHeaderMap explicitHeaders;
         for (auto& header : *headers) {
-            auto headerValue = header.value->asString();
+            auto headerValue = protect(header.value)->asString();
             if (!!headerValue)
                 explicitHeaders.add(header.key, headerValue);
         }
@@ -1287,13 +1287,13 @@ Inspector::Protocol::ErrorStringOr<void> InspectorNetworkAgent::interceptRequest
         data = SharedBuffer::create(content.utf8().span());
 
     // Mimic data URL load behavior - report didReceiveResponse & didFinishLoading.
-    ResourceResponse response(URL { pendingRequest->m_loader->url() }, String { mimeType }, data->size(), String());
+    ResourceResponse response(URL { protect(pendingRequest->m_loader)->url() }, String { mimeType }, data->size(), String());
     response.setSource(ResourceResponse::Source::InspectorOverride);
     response.setHTTPStatusCode(status);
     response.setHTTPStatusText(String { statusText });
     HTTPHeaderMap explicitHeaders;
     for (auto& header : headers.get()) {
-        auto headerValue = header.value->asString();
+        auto headerValue = protect(header.value)->asString();
         if (!!headerValue)
             explicitHeaders.add(header.key, headerValue);
     }
