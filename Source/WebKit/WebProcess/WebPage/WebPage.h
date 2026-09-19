@@ -1135,8 +1135,8 @@ public:
     static std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventDataForSelectionGesture(WebCore::LocalFrame* localRootFrame, WebCore::IntPoint pointInRootView);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::LocalFrame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
 
-    void requestPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
-    InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
+    void requestPositionInformation(std::optional<WebCore::FrameIdentifier>, const InteractionInformationRequest&, CompletionHandler<void(Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData>&&)>&&);
+    std::optional<InteractionInformationAtPosition> positionInformation(WebCore::LocalFrame&, const InteractionInformationRequest&);
 
     std::optional<WebCore::SimpleRange> rangeForGranularityAtPoint(WebCore::LocalFrame&, const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement);
     void setSelectionRange(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, WebCore::TextGranularity, bool);
@@ -1222,7 +1222,7 @@ public:
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool isCandidate, CompletionHandler<void(bool)>&&);
     void handleAutocorrectionContextRequest();
     void preemptivelySendAutocorrectionContext();
-    void startInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext>&&, WebCore::IntPoint&&);
+    void startInteractionWithElementContextOrPosition(std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::ElementContext>&&, WebCore::IntPoint&&);
     void stopInteraction();
     void performActionOnElement(uint32_t action, const String& authorizationToken, CompletionHandler<void()>&&);
     void performActionOnElements(uint32_t action, const Vector<WebCore::ElementContext>& elements);

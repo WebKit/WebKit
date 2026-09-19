@@ -28,6 +28,7 @@
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiDigitalCredentialsAgent.h"
 #endif
+#include "Connection.h"
 #include "ContextMenuContextData.h"
 #include "EditorState.h"
 #include "EnhancedSecurityTracking.h"
@@ -313,6 +314,9 @@ public:
 #if PLATFORM(COCOA)
     WeakObjCPtr<WKWebView> cocoaView;
     std::optional<TransactionID> firstLayerTreeTransactionIdAfterDidCommitLoad;
+
+    std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> outstandingPositionInformationReply;
+    Markable<WebCore::FrameIdentifier> interactionFrameID;
 #endif
 
 #if USE(GLIB)

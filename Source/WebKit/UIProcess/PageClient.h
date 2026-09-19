@@ -659,7 +659,7 @@ public:
     virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
 
 #if PLATFORM(COCOA)
-    virtual void positionInformationDidChange(const InteractionInformationAtPosition&) = 0;
+    virtual void positionInformationDidChange(const InteractionInformationAtPosition&, std::optional<WebCore::FrameIdentifier>) = 0;
 #endif
 
 #if ENABLE(VIDEO)

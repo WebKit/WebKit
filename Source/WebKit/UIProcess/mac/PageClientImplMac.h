@@ -348,7 +348,7 @@ private:
     void showCaptionDisplaySettings(WebCore::HTMLMediaElementIdentifier, const WebCore::ResolvedCaptionDisplaySettingsOptions&, CompletionHandler<void(std::expected<void, WebCore::ExceptionData>&&)>&&) final;
 #endif
 
-    void positionInformationDidChange(const InteractionInformationAtPosition&) override;
+    void positionInformationDidChange(const InteractionInformationAtPosition&, std::optional<WebCore::FrameIdentifier>) override;
 
     bool isViewVisible(NSView *, NSWindow *) const final;
 
