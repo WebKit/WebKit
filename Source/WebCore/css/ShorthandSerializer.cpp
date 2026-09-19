@@ -357,6 +357,8 @@ String ShorthandSerializer::serialize()
     case CSSPropertyInsetInline:
     case CSSPropertyMarginBlock:
     case CSSPropertyMarginInline:
+    case CSSPropertyMaxSize:
+    case CSSPropertyMinSize:
     case CSSPropertyOverflow:
     case CSSPropertyOverscrollBehavior:
     case CSSPropertyPaddingBlock:
