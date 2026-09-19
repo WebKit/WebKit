@@ -405,7 +405,7 @@ public:
 #if ENABLE(MODEL_CONTEXT)
     virtual void setContentsToModelContext(Ref<ModelContext>, ContentsLayerPurpose) { }
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
     virtual void removeModelContents() { }
 #endif
     virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }

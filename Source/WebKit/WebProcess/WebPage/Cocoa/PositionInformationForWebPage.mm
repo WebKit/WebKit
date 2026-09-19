@@ -82,6 +82,10 @@
 #import <WebCore/SpatialPortalController.h>
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import <WebCore/ElementVolumetricScene.h>
+#endif
+
 namespace WebKit {
 
 static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
@@ -753,8 +757,13 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
         textInteractionPositionInformation(page, *input, request, info);
 
 #if ENABLE(MODEL_PROCESS)
-    if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode))
+    if (RefPtr modelElement = dynamicDowncast<WebCore::HTMLModelElement>(hitTestNode)) {
         info.isInteractiveModel = modelElement->model() && modelElement->supportsStageModeInteraction();
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        if (info.isInteractiveModel && WebCore::ElementVolumetricScene::isPresentedInVolumetricScene(*modelElement))
+            info.isInteractiveModel = false;
+#endif
+    }
 #elif ENABLE(MODEL_ELEMENT_STAGE_MODE)
     // There is no stage mode session in this configuration. Instead, the orbit is driven by mouse events
     // forwarded by HTMLModelElement to the model player. This behavior is gated behind `isInteractive`.

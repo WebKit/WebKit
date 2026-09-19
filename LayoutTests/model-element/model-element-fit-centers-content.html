@@ -1,0 +1,70 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> auto-fit centers content</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+internals.disableModelLoadDelaysForTesting();
+
+const assert_fit_centers_content = (model, description) => {
+    const center = model.boundingBoxCenter;
+    const fitted = model.entityTransform.transformPoint(center);
+    const tolerance = epsilon * Math.max(1, Math.hypot(center.x, center.y, center.z));
+    assert_approx_equals(fitted.x, 0, tolerance, `${description}: content is centered in x`);
+    assert_approx_equals(fitted.y, 0, tolerance, `${description}: content is centered in y`);
+};
+
+const fitUnderOrbit = async (test, asset, rotation) => {
+    const [model] = createModelAndSource(test, asset);
+    model.setAttribute("width", "300px");
+    model.setAttribute("height", "150px");
+    await model.ready;
+
+    if (rotation)
+        model.entityTransform = rotation;
+
+    model.stageMode = "orbit";
+    await sleepForSeconds(0.1);
+    return model;
+};
+
+promise_test(async t => {
+    const model = await fitUnderOrbit(t, "resources/2x2x2-positive.usdz");
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(1, 1, 1));
+    assert_fit_centers_content(model, "unrotated orbit fit");
+}, `<model> orbit fit centers content whose bounding box is off-center`);
+
+promise_test(async t => {
+    const model = await fitUnderOrbit(t, "resources/2x2x2-positive.usdz", new DOMMatrixReadOnly().rotate(0, 0, 40));
+    assert_fit_centers_content(model, "orbit fit rotated about z");
+}, `<model> orbit fit centers off-center content rotated about z`);
+
+promise_test(async t => {
+    const model = await fitUnderOrbit(t, "resources/2x2x2-positive.usdz", new DOMMatrixReadOnly().rotate(25, 35, 45));
+    assert_fit_centers_content(model, "orbit fit under a compound rotation");
+}, `<model> orbit fit centers off-center content under a compound rotation`);
+
+promise_test(async t => {
+    const model = await fitUnderOrbit(t, "resources/2x2x2-center.usdz", new DOMMatrixReadOnly().rotate(25, 35, 45));
+    assert_points_are_equal(model.boundingBoxCenter, new DOMPointReadOnly(0, 0, 0));
+    assert_fit_centers_content(model, "orbit fit of centered content");
+}, `<model> orbit fit centers content whose bounding box is already centered`);
+
+promise_test(async t => {
+    const model = await fitUnderOrbit(t, "resources/2x2x2-positive.usdz", new DOMMatrixReadOnly().rotate(0, 0, 40));
+
+    model.stageMode = "none";
+    await sleepForSeconds(0.1);
+
+    model.setAttribute("height", "300px");
+    await sleepForSeconds(0.1);
+
+    assert_fit_centers_content(model, "inline fit after resize");
+}, `<model> inline fit centers off-center rotated content after a resize`);
+
+</script>
+</body>

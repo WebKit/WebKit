@@ -71,6 +71,8 @@ DECLARE_SYSTEM_HEADER
 #import <UIKit/UIPrintPageRenderer_Private.h>
 #endif
 #import <UIKit/UIResponder_Private.h>
+#import <UIKit/UISceneConfiguration_Private.h>
+#import <UIKit/UISceneSessionActivationRequest_Private.h>
 #import <UIKit/UIScene_Private.h>
 #import <UIKit/UIScrollEvent_Private.h>
 #import <UIKit/UIScrollView_ForWebKitOnly.h>
@@ -153,6 +155,7 @@ DECLARE_SYSTEM_HEADER
 #if PLATFORM(VISION)
 #import <UIKit/UIActivityViewController_Private.h>
 #import <UIKit/UIView+SpatialComputing.h>
+#import <UIKit/_UIVolumetricWindowSceneActivationRequestOptions_ForUIFrameworksOnly.h>
 #endif
 
 #if HAVE(UITOOLTIPINTERACTION)
@@ -1043,6 +1046,22 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 @interface UIScene ()
 @property (nonatomic, readonly) NSString *_sceneIdentifier;
 @end
+
+@interface UISceneConfiguration ()
++ (instancetype)_internalConfigurationWithRole:(UISceneSessionRole)sessionRole sceneClass:(Class)sceneClass delegateClass:(Class)delegateClass storyboard:(UIStoryboard *)storyboard;
+@end
+
+@interface UISceneSessionActivationRequest ()
++ (instancetype)_requestWithConfiguration:(UISceneConfiguration *)configuration;
+@end
+
+#if PLATFORM(VISION)
+
+@interface _UIVolumetricWindowSceneActivationRequestOptions : UIWindowSceneActivationRequestOptions
+@property (nonatomic, assign, setter=_setInternal:, getter=_isInternal) BOOL _internal;
+@end
+
+#endif // PLATFORM(VISION)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 @interface UITouch ()

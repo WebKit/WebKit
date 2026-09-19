@@ -1,0 +1,48 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Connected volumetric scene API surface</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+test(() => {
+    const div = document.createElement("div");
+
+    assert_true('requestVolumetricScene' in div, 'requestVolumetricScene should exist on Element');
+    assert_equals(typeof div.requestVolumetricScene, 'function', 'requestVolumetricScene should be a function');
+
+    assert_true('exitVolumetricScene' in div, 'exitVolumetricScene should exist on Element');
+    assert_equals(typeof div.exitVolumetricScene, 'function', 'exitVolumetricScene should be a function');
+}, 'The volumetric scene API is exposed on Element');
+
+test(t => {
+    const div = document.createElement("div");
+    document.body.appendChild(div);
+    t.add_cleanup(() => div.remove());
+
+    assert_equals(presentationMode(div), "none", 'An element that cannot host a scene reports no mode');
+}, 'A plain element cannot host a volumetric scene');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    assert_equals(presentationMode(model), "inline", 'A loaded model reports its inline mode');
+}, 'A model element can host a volumetric scene and starts inline');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    model.exitVolumetricScene();
+
+    assert_equals(presentationMode(model), "inline", 'Exiting without a scene leaves the mode alone');
+}, 'exitVolumetricScene() on an element with no scene is a no-op');
+</script>
+</body>

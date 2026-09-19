@@ -351,6 +351,12 @@ module WebKit_Internal [system] {
         requires objc
     }
 
+    module WKPortalVolumetricGestureController {
+        header "../../UIProcess/Cocoa/WKPortalVolumetricGestureController.h"
+        export *
+        requires objc
+    }
+
     module WKPreferencesInternal {
         header "../../UIProcess/API/Cocoa/WKPreferencesInternal.h"
         export *

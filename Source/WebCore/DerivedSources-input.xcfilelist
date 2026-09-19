@@ -1499,6 +1499,7 @@ $(PROJECT_DIR)/dom/Element+Fullscreen.idl
 $(PROJECT_DIR)/dom/Element+PointerEvents.idl
 $(PROJECT_DIR)/dom/Element+PointerLock.idl
 $(PROJECT_DIR)/dom/Element+Typedom.idl
+$(PROJECT_DIR)/dom/Element+VolumetricScene.idl
 $(PROJECT_DIR)/dom/Element.idl
 $(PROJECT_DIR)/dom/ElementContentEditable.idl
 $(PROJECT_DIR)/dom/ElementCreationOptions.idl

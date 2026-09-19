@@ -79,6 +79,10 @@
 #import "SpatialPortalController.h"
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import "ElementVolumetricScene.h"
+#endif
+
 namespace WebCore {
 
 static RetainPtr<WebEvent>& currentEventSlot()
@@ -714,6 +718,10 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
 
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(targetElement)) {
         if (modelElement->supportsStageModeInteraction()) {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+            if (ElementVolumetricScene::isPresentedInVolumetricScene(*modelElement))
+                return std::nullopt;
+#endif
             auto transform = TransformationMatrix::identity;
             transform.translate(clientPosition.x(), clientPosition.y());
 
@@ -723,6 +731,31 @@ std::optional<NodeIdentifier> EventHandler::requestInteractiveModelElementAtPoin
     }
 
     return std::nullopt;
+}
+
+void EventHandler::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+{
+    RefPtr node = Node::fromIdentifier(nodeID);
+    if (!node)
+        return;
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (RefPtr element = dynamicDowncast<Element>(node.get())) {
+        if (CheckedPtr controller = element->spatialPortalController(); controller && controller->supportsInteraction()) {
+            controller->beginStageModeTransform(transform);
+            return;
+        }
+    }
+#endif
+
+    RefPtr modelElement = dynamicDowncast<HTMLModelElement>(node);
+    if (!modelElement)
+        return;
+
+    if (!modelElement->supportsStageModeInteraction())
+        return;
+
+    modelElement->beginStageModeTransform(transform);
 }
 
 void EventHandler::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)

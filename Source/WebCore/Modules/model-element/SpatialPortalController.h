@@ -39,6 +39,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include <WebCore/ModelPresentationMode.h>
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -65,6 +69,9 @@ class SpatialPortalController : public CanMakeWeakPtr<SpatialPortalController>, 
     friend class PortalModelPlayerClient;
     friend class PortalIntersectionObserverCallback;
     friend class PortalVisibilityChangeClient;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    friend class ElementVolumetricScene;
+#endif
 public:
     explicit SpatialPortalController(Element&);
     ~SpatialPortalController();
@@ -101,6 +108,10 @@ public:
 
     bool isPortalVisible() const;
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    RefPtr<ModelPlayer> liveModelPlayer() const;
+#endif
+
 private:
     struct HostedModel {
         WeakPtr<HTMLModelElement, WeakPtrImplWithEventTargetData> element;
@@ -132,6 +143,11 @@ private:
     LayoutSize portalContentSize() const;
     void updateGestureHandling();
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    ModelPresentationMode presentationMode() const { return m_presentationMode; }
+    void setPresentationMode(ModelPresentationMode);
+#endif
+
     const WeakPtr<Element, WeakPtrImplWithEventTargetData> m_portalElement;
 
     HashMap<NodeIdentifier, HostedModel> m_hostedModels;
@@ -151,6 +167,9 @@ private:
     std::optional<TransformationMatrix> m_resolvedPortalTransform;
     UsedPortalTransform m_portalTransform;
     PortalActionKind m_portalAction { PortalActionKind::None };
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    ModelPresentationMode m_presentationMode { ModelPresentationMode::Inline };
+#endif
     bool m_handlesGesture { false };
     bool m_isIntersectingViewport { false };
 };

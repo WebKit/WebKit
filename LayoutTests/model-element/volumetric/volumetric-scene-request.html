@@ -1,0 +1,115 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Requesting and exiting a connected volumetric scene</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    // An earlier test's gesture can outlive it when its request never got far enough to spend it.
+    internals.consumeTransientActivation();
+    assert_false(internals.hasTransientActivation(), 'The page has no transient activation');
+
+    await promise_rejects_dom(t, "NotAllowedError", model.requestVolumetricScene(),
+        'Should reject without transient activation');
+
+    assert_equals(presentationMode(model), "inline", 'A rejected request leaves the model inline');
+}, 'Requesting a volumetric scene without transient activation is rejected');
+
+promise_test(async t => {
+    const div = document.createElement("div");
+    document.body.appendChild(div);
+    t.add_cleanup(() => div.remove());
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(div),
+        'Should reject for an element that cannot host a scene');
+}, 'Requesting a volumetric scene for a plain element is rejected even with activation');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+}, 'A loaded model enters a volumetric scene with transient activation');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+
+    await promise_rejects_dom(t, "InvalidStateError", requestVolumetricScene(model),
+        'Should reject while already presented');
+
+    assert_equals(presentationMode(model), "volumetric", 'The established scene is left alone');
+}, 'Requesting a volumetric scene while already presented is rejected');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    await requestVolumetricScene(model);
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+
+    model.exitVolumetricScene();
+
+    await waitForPresentationMode(t, model, "inline");
+}, 'Exiting a volumetric scene returns the model inline');
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+    model.exitVolumetricScene();
+    await waitForPresentationMode(t, model, "inline");
+
+    await requestVolumetricScene(model);
+
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically again');
+}, 'A model can re-enter a volumetric scene after exiting');
+
+// The exit lands in the same task as the request, so the scene has always still been pending.
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+
+    const request = requestVolumetricScene(model);
+    model.exitVolumetricScene();
+
+    await promise_rejects_dom(t, "InvalidStateError", request,
+        'Should reject a request that was exited before its scene opened');
+
+    assert_equals(presentationMode(model), "inline", 'The cancelled request leaves the model inline');
+}, 'Exiting before a volumetric scene opens cancels the request');
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/cube.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await requestVolumetricScene(model);
+    assert_equals(presentationMode(model), "volumetric", 'The model is presented volumetrically');
+
+    source.src = "../resources/heart.usdz";
+    await model.ready;
+
+    assert_equals(internals.modelElementState(model), "Loaded", 'The re-sourced model is loaded');
+    assert_equals(presentationMode(model), "volumetric", 'The scene survives the source change');
+}, 'Changing the source of a presented model keeps its volumetric scene');
+</script>
+</body>

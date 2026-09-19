@@ -39,6 +39,13 @@
 #import <wtf/RefPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import "WKPortalVolumetricSceneController.h"
+#import "WebPreferences.h"
+#import <WebCore/TransformationMatrix.h>
+#import <wtf/BlockPtr.h>
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PortalPresentationManagerProxy);
@@ -142,9 +149,159 @@ void PortalPresentationManagerProxy::invalidateModel(const WebCore::PlatformLaye
 
 void PortalPresentationManagerProxy::invalidateAllModels()
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    hideAllVolumetricScenes();
+#endif
     m_portalPresentations.clear();
     RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy removed all model presentations", this);
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+// Stage mode packs the drag location into a translation, in points
+static WebCore::TransformationMatrix stageModeTransformForLocation(CGPoint location)
+{
+    WebCore::TransformationMatrix transform;
+    transform.translate3d(location.x, location.y, 0);
+    return transform;
+}
+
+void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier nodeID, const VolumetricSceneContentContext& contentContext, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr webPageProxy = m_page.get();
+    if (!webPageProxy)
+        return completion(false);
+
+    if (m_volumetricScenes.contains(nodeID))
+        return completion(false);
+
+    if (protect(webPageProxy->preferences())->mockVolumetricSceneEnabled()) {
+        m_volumetricScenes.add(nodeID, makeUniqueRef<VolumetricScenePresentation>(VolumetricScenePresentation {
+            .contentContext = contentContext.contentLayerHostingContext,
+            .sceneController = nil,
+        }));
+        webPageProxy->updateVolumetricSceneSize(nodeID, WebCore::FloatSize { 1.0f, 0.5f });
+        return completion(true);
+    }
+
+    RetainPtr sceneController = adoptNS([[WKPortalVolumetricSceneController alloc] initWithCloseHandler:makeBlockPtr([weakThis = WeakPtr { *this }, nodeID] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->hideVolumetricScene(nodeID);
+    }).get()]);
+
+    // Recorded before presenting, because the asynchronous completion below looks itself up by node.
+    m_volumetricScenes.add(nodeID, makeUniqueRef<VolumetricScenePresentation>(VolumetricScenePresentation {
+        .contentContext = contentContext.contentLayerHostingContext,
+        .sceneController = sceneController,
+    }));
+
+    [sceneController presentWithCompletion:makeBlockPtr([weakThis = WeakPtr { *this }, nodeID, pid = webPageProxy->legacyMainFrameProcessID(), completion = WTF::move(completion)](BOOL success) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return completion(false);
+
+        auto it = protectedThis->m_volumetricScenes.find(nodeID);
+        if (it == protectedThis->m_volumetricScenes.end())
+            return completion(false);
+
+        if (!success) {
+            RELEASE_LOG_ERROR(ModelElement, "%p - PortalPresentationManagerProxy could not open a volumetric scene for node: %" PRIu64, protectedThis.get(), nodeID.toUInt64());
+            protectedThis->hideVolumetricScene(nodeID);
+            return completion(false);
+        }
+
+        RetainPtr sceneController = it->value->sceneController;
+        auto volumeSizeInMeters = [sceneController hostContentWithContext:it->value->contentContext pid:pid];
+
+        if (RefPtr page = protectedThis->m_page.get())
+            page->updateVolumetricSceneSize(nodeID, volumeSizeInMeters);
+
+        [sceneController installInputSurfaceWithBegan:makeBlockPtr([weakThis, nodeID](CGPoint location) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidBegin(nodeID, stageModeTransformForLocation(location));
+            }
+        }).get() changed:makeBlockPtr([weakThis, nodeID](CGPoint location) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidUpdate(nodeID, stageModeTransformForLocation(location));
+            }
+        }).get() ended:makeBlockPtr([weakThis, nodeID] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                if (RefPtr page = protectedThis->m_page.get())
+                    page->stageModeSessionDidEnd(nodeID);
+            }
+        }).get()];
+
+        [sceneController setVolumeSizeChangedHandler:makeBlockPtr([weakThis, nodeID](WebCore::FloatSize volumeSizeInMeters) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            if (RefPtr page = protectedThis->m_page.get())
+                page->updateVolumetricSceneSize(nodeID, volumeSizeInMeters);
+        }).get()];
+
+        RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy opened a volumetric scene for node: %" PRIu64, protectedThis.get(), nodeID.toUInt64());
+        completion(true);
+    }).get()];
+}
+
+void PortalPresentationManagerProxy::updateVolumetricSceneContentContext(WebCore::NodeIdentifier nodeID, const VolumetricSceneContentContext& contentContext)
+{
+    RefPtr webPageProxy = m_page.get();
+    if (!webPageProxy)
+        return;
+
+    auto it = m_volumetricScenes.find(nodeID);
+    if (it == m_volumetricScenes.end())
+        return;
+
+    auto& presentation = it->value;
+    if (presentation->contentContext == contentContext.contentLayerHostingContext)
+        return;
+
+    presentation->contentContext = contentContext.contentLayerHostingContext;
+
+    if (protect(webPageProxy->preferences())->mockVolumetricSceneEnabled())
+        return;
+
+    RetainPtr sceneController = presentation->sceneController;
+    auto volumeSizeInMeters = [sceneController hostContentWithContext:contentContext.contentLayerHostingContext pid:webPageProxy->legacyMainFrameProcessID()];
+    webPageProxy->updateVolumetricSceneSize(nodeID, volumeSizeInMeters);
+
+    RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy rebound the volumetric scene for node: %" PRIu64, this, nodeID.toUInt64());
+}
+
+void PortalPresentationManagerProxy::hideVolumetricScene(WebCore::NodeIdentifier nodeID)
+{
+    auto iterator = m_volumetricScenes.find(nodeID);
+    if (iterator == m_volumetricScenes.end())
+        return;
+
+    // The scene's close handler re-enters here, so remove from the map before dismissing.
+    RetainPtr sceneController = iterator->value->sceneController;
+    m_volumetricScenes.remove(iterator);
+
+    [sceneController dismissWithCompletion:nil];
+
+    if (RefPtr page = m_page.get())
+        page->volumetricSceneDidClose(nodeID);
+
+    RELEASE_LOG_INFO(ModelElement, "%p - PortalPresentationManagerProxy closed the volumetric scene for node: %" PRIu64, this, nodeID.toUInt64());
+}
+
+void PortalPresentationManagerProxy::hideAllVolumetricScenes()
+{
+    // Exchanged first so re-entering through a close handler cannot mutate the map mid-iteration.
+    auto volumetricScenes = std::exchange(m_volumetricScenes, { });
+    for (auto& [nodeID, presentation] : volumetricScenes) {
+        [presentation->sceneController dismissWithCompletion:nil];
+        if (RefPtr page = m_page.get())
+            page->volumetricSceneDidClose(nodeID);
+    }
+}
+
+#endif // ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 PortalPresentationManagerProxy::PortalPresentation& PortalPresentationManagerProxy::ensurePortalPresentation(Ref<WebCore::ModelContext> modelContext, const WebPageProxy& webPageProxy)
 {
@@ -214,6 +371,27 @@ void PortalPresentationManagerProxy::invalidateModel(const WebCore::PlatformLaye
 void PortalPresentationManagerProxy::invalidateAllModels()
 {
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void PortalPresentationManagerProxy::showVolumetricScene(WebCore::NodeIdentifier, const VolumetricSceneContentContext&, CompletionHandler<void(bool)>&& completion)
+{
+    completion(false);
+}
+
+void PortalPresentationManagerProxy::updateVolumetricSceneContentContext(WebCore::NodeIdentifier, const VolumetricSceneContentContext&)
+{
+}
+
+void PortalPresentationManagerProxy::hideVolumetricScene(WebCore::NodeIdentifier)
+{
+}
+
+void PortalPresentationManagerProxy::hideAllVolumetricScenes()
+{
+}
+
+#endif
 
 }
 

@@ -149,6 +149,12 @@ private:
     void exitImmersivePresentation(CompletionHandler<void()>&&) final;
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void enterVolumetricPresentation(CompletionHandler<void(std::optional<WebCore::LayerHostingContextIdentifier>)>&&) final;
+    void exitVolumetricPresentation(CompletionHandler<void()>&&) final;
+    void updateVolumetricPresentationSize(const WebCore::FloatSize&) final;
+#endif
+
     WebCore::ModelPlayerIdentifier m_id;
     WeakPtr<WebPage> m_page;
     WeakPtr<WebCore::ModelPlayerClient> m_client;
