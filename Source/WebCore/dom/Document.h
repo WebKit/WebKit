@@ -2095,7 +2095,7 @@ public:
 
     String mediaKeysStorageDirectory();
 
-    void invalidateDOMCookieCache();
+    WEBCORE_EXPORT void invalidateDOMCookieCache();
 
     void detachFromFrame();
     void NODELETE willBeDisconnectedFromFrame(Document&);
