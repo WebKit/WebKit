@@ -285,6 +285,20 @@ bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const
     return m_pasteboard->fileContentState() == Pasteboard::FileContentState::MayContainFilePaths;
 }
 
+bool DataTransfer::allowsFileAccess() const
+{
+#if PLATFORM(COCOA)
+    return !forDrag() || forFileDrag();
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    // File drag access is disabled until https://webkit.org/b/271957 is resolved for GTK/WPE ports.
+    // In-memory image paste does not access files on disk, so it is safe to allow.
+    return !forDrag() && m_pasteboard && m_pasteboard->fileContentState() == Pasteboard::FileContentState::InMemoryImage;
+#else
+    // Check https://webkit.org/b/271957 before allowing file access for your port.
+    return false;
+#endif
+}
+
 void DataTransfer::setData(Document& document, const String& type, const String& data)
 {
     if (!canWriteData())
