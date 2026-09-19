@@ -37,9 +37,6 @@ struct ParserFunctionInfo {
     unsigned functionLength = 0;
     unsigned startOffset = 0;
     unsigned endOffset = 0;
-    int startLine = 0;
-    int endLine = 0;
-    unsigned parametersStartColumn = 0;
 };
 
 template <class TreeBuilder>
@@ -47,8 +44,6 @@ struct ParserClassInfo {
     const Identifier* className { nullptr };
     unsigned startOffset { 0 };
     unsigned endOffset { 0 };
-    int startLine { 0 };
-    unsigned startColumn { 0 };
 };
 
 }

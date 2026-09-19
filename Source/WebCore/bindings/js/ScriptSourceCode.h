@@ -44,17 +44,18 @@
 
 namespace WebCore {
 
+// Only the provider is given startPosition; a JSC::SourceCode derives its own from the provider.
 class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, JSC::SourceTaintedOrigin sourceTaintedOrigin, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
         : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
-        , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
+        , m_code(m_provider.copyRef())
     {
     }
 
     ScriptSourceCode(const ScriptBuffer& source, URL&& url = URL(), URL&& preRedirectURL = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
         : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), preRedirectURL.string(), startPosition, sourceType))
-        , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
+        , m_code(m_provider.copyRef())
     {
     }
 
@@ -67,13 +68,13 @@ public:
 
     ScriptSourceCode(const String& source, JSC::SourceTaintedOrigin sourceTaintedOrigin, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
         : m_provider(JSC::StringSourceProvider::create(source, JSC::SourceOrigin { url, WTF::move(scriptFetcher) }, url.string(), sourceTaintedOrigin, startPosition, sourceType))
-        , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
+        , m_code(m_provider.copyRef())
     {
     }
 
     ScriptSourceCode(const ScriptBuffer& source, URL&& url, URL&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
         : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url, WTF::move(scriptFetcher) }, url.string(), preRedirectURL.string(), startPosition, sourceType))
-        , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
+        , m_code(m_provider.copyRef())
     {
     }
 
@@ -84,8 +85,10 @@ public:
     JSC::SourceProvider& provider() { return m_provider.get(); }
     StringView source() const { return m_provider->source(); }
 
-    int startLine() const { return m_code.firstLine().oneBasedInt(); }
-    int startColumn() const { return m_code.startColumn().oneBasedInt(); }
+    // Read on every script evaluation, so these go to the provider directly: deriving from m_code
+    // would build the line-start table on that path.
+    int startLine() const { return m_provider->startPosition().m_line.oneBasedInt(); }
+    int startColumn() const { return m_provider->startPosition().m_column.oneBasedInt(); }
 
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
 

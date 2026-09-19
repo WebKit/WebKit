@@ -206,15 +206,13 @@ static_assert(static_cast<unsigned>(POW) <= 0x00ffffffU, "JSTokenType must be 24
 
 struct JSTextPosition {
     JSTextPosition() = default;
-    JSTextPosition(int _line, int _offset, int _lineStartOffset) 
-        : line(_line)
-        , offset(_offset)
-        , lineStartOffset(_lineStartOffset)
+    explicit JSTextPosition(int _offset)
+        : offset(_offset)
     { 
         checkConsistency();
     }
 
-    JSTextPosition operator+(int adjustment) const { return JSTextPosition(line, offset + adjustment, lineStartOffset); }
+    JSTextPosition operator+(int adjustment) const { return JSTextPosition(offset + adjustment); }
     JSTextPosition operator+(unsigned adjustment) const { return *this + static_cast<int>(adjustment); }
     JSTextPosition operator-(int adjustment) const { return *this + (- adjustment); }
     JSTextPosition operator-(unsigned adjustment) const { return *this + (- static_cast<int>(adjustment)); }
@@ -224,19 +222,13 @@ struct JSTextPosition {
 
     friend bool operator==(const JSTextPosition&, const JSTextPosition&) = default;
 
-    int column() const { return offset - lineStartOffset; }
     void checkConsistency()
     {
-        // FIXME: We should test ASSERT(offset >= lineStartOffset); but that breaks a lot of tests.
-        ASSERT(line >= 0);
         ASSERT(offset >= 0);
-        ASSERT(lineStartOffset >= 0);
     }
 
-    // FIXME: these should be unsigned.
-    int line { -1 };
+    // FIXME: this should be unsigned.
     int offset { -1 };
-    int lineStartOffset { -1 };
 };
 
 union JSTokenData {
@@ -244,11 +236,6 @@ union JSTokenData {
         const Identifier* cooked;
         const Identifier* raw;
         bool isTail;
-    };
-    struct {
-        uint32_t line;
-        uint32_t offset;
-        uint32_t lineStartOffset;
     };
     double doubleValue;
     struct {
@@ -268,8 +255,6 @@ union JSTokenData {
 struct JSTokenLocation {
     JSTokenLocation() = default;
 
-    int line { 0 };
-    unsigned lineStartOffset { 0 };
     unsigned startOffset { 0 };
     unsigned endOffset { 0 };
 };
@@ -283,8 +268,6 @@ struct JSToken {
     JSTokenLocation location() const
     {
         JSTokenLocation result;
-        result.line = m_startPosition.line;
-        result.lineStartOffset = m_startPosition.lineStartOffset;
         result.startOffset = m_startPosition.offset;
         result.endOffset = m_endPosition.offset;
         return result;

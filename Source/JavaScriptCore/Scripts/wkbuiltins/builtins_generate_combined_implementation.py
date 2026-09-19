@@ -94,7 +94,7 @@ class BuiltinsCombinedImplementationGenerator(BuiltinsGenerator):
         lines.append("constinit const JSC::BuiltinSourceMetadata s_JSCBuiltinSourceMetadata[JSC::numberOfBuiltinCodes] = {")
         for data in function_data:
             entry = dict(compute_builtin_source_metadata(data['originalSource']), codeName=data['codeName'])
-            lines.append("    /* %(codeName)s */ { %(sourceLength)d, %(parametersStart)d, %(parameterCount)d, %(lineCount)d, %(endColumn)d, %(offsetOfLastNewline)d, %(positionBeforeLastNewlineLineStartOffset)d, %(closeBraceOffsetFromEnd)d, %(isAsyncFunction)s, %(isInStrictContext)s }," % entry)
+            lines.append("    /* %(codeName)s */ { %(sourceLength)d, %(parametersStart)d, %(parameterCount)d, %(closeBraceOffsetFromEnd)d, %(isAsyncFunction)s, %(isInStrictContext)s }," % entry)
         lines.append("};")
         lines.append("static_assert(%d == JSC::numberOfBuiltinCodes);" % len(function_data))
         return '\n'.join(lines)

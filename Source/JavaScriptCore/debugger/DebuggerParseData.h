@@ -62,17 +62,17 @@ public:
         m_positions.append({ DebuggerPausePositionType::Leave, position });
     }
 
-    void forEachBreakpointLocation(int startLine, int startColumn, int endLine, int endColumn, Function<void(const JSTextPosition&)>&&);
+    void forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider&, Function<void(JSTextPosition)>&&);
 
-    std::optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column);
+    std::optional<JSTextPosition> breakpointLocationForOffset(JSTextPosition, SourceProvider&);
 
     void sort();
 
 private:
     using Positions = Vector<DebuggerPausePosition>;
 
-    Positions::iterator firstPositionAfter(int line, int column);
-    std::optional<JSTextPosition> breakpointLocationForLineColumn(int line, int column, Positions::iterator);
+    Positions::iterator firstPositionAtOrAfter(JSTextPosition);
+    std::optional<JSTextPosition> breakpointLocationForOffset(JSTextPosition, SourceProvider&, Positions::iterator);
 
     Positions m_positions;
 };

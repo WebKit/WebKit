@@ -565,14 +565,13 @@ bool ArrayNode::isSimpleArray() const
     return true;
 }
 
-ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int lineNumber, int startPosition) const
+ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int startPosition) const
 {
     ASSERT(!m_elision);
     ElementNode* ptr = m_element;
     if (!ptr)
         return nullptr;
     JSTokenLocation location;
-    location.line = lineNumber;
     location.startOffset = startPosition;
     ArgumentListNode* head = new (parserArena) ArgumentListNode(location, ptr->value());
     ArgumentListNode* tail = head;
@@ -2472,7 +2471,7 @@ RegisterID* ApplyFunctionCallDotNode::emitBytecode(BytecodeGenerator& generator,
             } else if (m_args->m_listNode->m_next) {
                 ASSERT(m_args->m_listNode->m_next->m_expr->isSimpleArray());
                 ASSERT(!m_args->m_listNode->m_next->m_next);
-                m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.parserArena(), 0, 0);
+                m_args->m_listNode = static_cast<ArrayNode*>(m_args->m_listNode->m_next->m_expr)->toArgumentList(generator.parserArena(), 0);
                 RefPtr<RegisterID> realFunction = generator.move(generator.tempDestination(dst), base.get());
                 CallArguments callArguments(generator, m_args);
                 generator.emitNode(callArguments.thisRegister(), oldList->m_expr);
@@ -5130,7 +5129,7 @@ inline void ScopeNode::emitStatementsBytecode(BytecodeGenerator& generator, Regi
 
 static void emitProgramNodeBytecode(BytecodeGenerator& generator, ScopeNode& scopeNode)
 {
-    generator.emitDebugHook(WillExecuteProgram, JSTextPosition(scopeNode.startLine(), scopeNode.startStartOffset(), scopeNode.startLineStartOffset()));
+    generator.emitDebugHook(WillExecuteProgram, JSTextPosition(scopeNode.startStartOffset()));
 
     RefPtr<RegisterID> dstRegister = generator.newTemporary();
     generator.emitLoad(dstRegister.get(), jsUndefined());
@@ -5142,7 +5141,7 @@ static void emitProgramNodeBytecode(BytecodeGenerator& generator, ScopeNode& sco
         }
     );
 
-    generator.emitDebugHook(DidExecuteProgram, JSTextPosition(scopeNode.lastLine(), scopeNode.startOffset(), scopeNode.lineStartOffset()));
+    generator.emitDebugHook(DidExecuteProgram, JSTextPosition(scopeNode.startOffset()));
     generator.emitReturn(dstRegister.get());
 }
 
@@ -5164,7 +5163,7 @@ void ModuleProgramNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 
 void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
 {
-    generator.emitDebugHook(WillExecuteProgram, JSTextPosition(startLine(), startStartOffset(), startLineStartOffset()));
+    generator.emitDebugHook(WillExecuteProgram, JSTextPosition(startStartOffset()));
 
     RefPtr<RegisterID> dstRegister = generator.newTemporary();
     generator.emitLoad(dstRegister.get(), jsUndefined());
@@ -5175,7 +5174,7 @@ void EvalNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         }
     );
 
-    generator.emitDebugHook(DidExecuteProgram, JSTextPosition(lastLine(), startOffset(), lineStartOffset()));
+    generator.emitDebugHook(DidExecuteProgram, position());
     generator.emitReturn(dstRegister.get());
 }
 
@@ -5195,7 +5194,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     }
 
     generator.emitProfileControlFlow(startStartOffset());
-    generator.emitDebugHook(DidEnterCallFrame, JSTextPosition(startLine(), startStartOffset(), startLineStartOffset()));
+    generator.emitDebugHook(DidEnterCallFrame, JSTextPosition(startStartOffset()));
 
     switch (generator.parseMode()) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
@@ -5224,8 +5223,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             generator.emitPutAsyncGeneratorFields(next.get());
         }
         
-        ASSERT(startOffset() >= lineStartOffset());
-        generator.emitDebugHook(WillLeaveCallFrame, JSTextPosition(lastLine(), startOffset(), lineStartOffset()));
+        generator.emitDebugHook(WillLeaveCallFrame, position());
         generator.emitReturn(generator.generatorRegister());
         break;
     }
@@ -5233,8 +5231,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
     case SourceParseMode::AsyncFunctionMode:
     case SourceParseMode::AsyncMethodMode:
     case SourceParseMode::AsyncArrowFunctionMode: {
-        ASSERT(startOffset() >= lineStartOffset());
-        JSTextPosition divot(firstLine(), startOffset(), lineStartOffset());
+        JSTextPosition divot(startOffset());
 
         if (generator.isAsyncFunctionWithoutAwait()) {
             // async function without await. In this case, we fully inline entire body into wrapper function since there is no need to resume.
@@ -5439,7 +5436,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         }
 
         generator.emitLabel(successLabel.get());
-        generator.emitDebugHook(WillLeaveCallFrame, JSTextPosition(lastLine(), startOffset(), lineStartOffset()));
+        generator.emitDebugHook(WillLeaveCallFrame, position());
         generator.emitReturn(generator.promiseRegister());
         break;
     }
@@ -5507,7 +5504,6 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             else
                 r0 = generator.emitLoad(nullptr, jsUndefined());
             generator.emitProfileType(r0, ProfileTypeBytecodeFunctionReturnStatement); // Do not emit expression info for this profile because it's not in the user's source code.
-            ASSERT(startOffset() >= lineStartOffset());
             generator.emitWillLeaveCallFrameDebugHook();
             generator.emitReturn(r0);
             return;

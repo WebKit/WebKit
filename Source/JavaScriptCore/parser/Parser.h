@@ -1096,7 +1096,6 @@ public:
 
     void overrideConstructorKindForTopLevelFunctionExpressions(ConstructorKind constructorKind) { m_constructorKindForTopLevelFunctionExpressions = constructorKind; }
 
-    JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lastTokenLocation; }
 
     struct CallOrApplyDepthScope {
@@ -1555,9 +1554,7 @@ private:
 
     struct LexerState {
         int startOffset;
-        unsigned oldLineStartOffset;
         JSTokenLocation lastTokenLocation;
-        unsigned oldLineNumber;
         bool hasLineTerminatorBeforeToken;
         JSTokenType lastTokenType;
     };
@@ -1657,24 +1654,9 @@ private:
         return m_token.m_startPosition;
     }
 
-    ALWAYS_INLINE int tokenLine()
-    {
-        return m_token.m_startPosition.line;
-    }
-    
-    ALWAYS_INLINE int tokenColumn()
-    {
-        return tokenStart() - tokenLineStart();
-    }
-
     ALWAYS_INLINE const JSTextPosition& tokenEndPosition()
     {
         return m_token.m_endPosition;
-    }
-    
-    ALWAYS_INLINE unsigned tokenLineStart()
-    {
-        return m_token.m_startPosition.lineStartOffset;
     }
     
     ALWAYS_INLINE JSTokenLocation tokenLocation()
@@ -1837,7 +1819,7 @@ private:
     template <class TreeBuilder> TreeProperty parseProperty(TreeBuilder&);
     template <class TreeBuilder> TreeExpression parsePropertyMethod(TreeBuilder& context, const Identifier* methodName, unsigned functionStart);
     template <class TreeBuilder> TreeProperty parseGetterSetter(TreeBuilder&, PropertyNode::Type, unsigned getterOrSetterStartOffset, ConstructorKind, ClassElementTag);
-    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, SyntaxChecker&, const JSTokenLocation&, int, unsigned functionStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned);
+    template <class TreeBuilder> ALWAYS_INLINE TreeFunctionBody parseFunctionBody(TreeBuilder&, SyntaxChecker&, const JSTokenLocation&, unsigned functionStart, int functionNameStart, int parametersStart, ConstructorKind, SuperBinding, FunctionBodyType, unsigned);
     template <class TreeBuilder> ALWAYS_INLINE bool parseFormalParameters(TreeBuilder&, TreeFormalParameterList, bool isArrowFunction, bool isMethod, unsigned&);
     enum VarDeclarationListContext { ForLoopContext, VarDeclarationContext };
     template <class TreeBuilder> TreeExpression parseVariableDeclarationList(TreeBuilder&, int& declarations, TreeDestructuringPattern& lastPattern, TreeExpression& lastInitializer, JSTextPosition& identStart, JSTextPosition& initStart, JSTextPosition& initEnd, VarDeclarationListContext, DeclarationType, ExportType, bool& forLoopConstDoesNotHaveInitializer);
@@ -1900,7 +1882,7 @@ private:
     
     JSTextPosition lastTokenEndPosition() const
     {
-        return JSTextPosition(m_lastTokenLocation.line, m_lastTokenLocation.endOffset, m_lastTokenLocation.lineStartOffset);
+        return JSTextPosition(m_lastTokenLocation.endOffset);
     }
 
     bool hasError() const
@@ -2036,30 +2018,24 @@ private:
     {
         LexerState result;
         result.startOffset = m_token.m_startPosition.offset;
-        result.oldLineStartOffset = m_token.m_startPosition.lineStartOffset;
         result.lastTokenLocation = m_lastTokenLocation;
-        result.oldLineNumber = m_token.m_startPosition.line;
         // Why is this reading from Lexer fine while we are re-lexing the same token?
         // This is because this flag is updated and indicating whether we have a line
         // terminator before the lexed token, and based on that, we already moved startOffset.
         // So getting this flag and setting it before lexing this token is right.
         result.hasLineTerminatorBeforeToken = m_lexer->hasLineTerminatorBeforeToken();
         result.lastTokenType = m_lastTokenType;
-        ASSERT(static_cast<unsigned>(result.startOffset) >= result.oldLineStartOffset);
         return result;
     }
 
     ALWAYS_INLINE void restoreLexerState(const LexerState& lexerState)
     {
         // setOffset clears lexer errors.
-        m_lexer->setOffset(lexerState.startOffset, lexerState.oldLineStartOffset);
-        m_lexer->setLineNumber(lexerState.oldLineNumber);
+        m_lexer->setOffset(lexerState.startOffset);
         m_lexer->setHasLineTerminatorBeforeToken(lexerState.hasLineTerminatorBeforeToken);
         m_lastTokenType = lexerState.lastTokenType;
         m_token.m_type = lexerState.lastTokenType;
-        m_token.m_startPosition.line = lexerState.lastTokenLocation.line;
         m_token.m_startPosition.offset = lexerState.lastTokenLocation.startOffset;
-        m_token.m_startPosition.lineStartOffset = lexerState.lastTokenLocation.lineStartOffset;
         m_token.m_endPosition.offset = lexerState.lastTokenLocation.endOffset;
         nextWithoutClearingLineTerminator();
     }
@@ -2117,40 +2093,40 @@ private:
         m_errorMessage = String();
     }
 
-    // Fields up to m_parserState are arranged according to access frequency and affinity;
+    // Fields up to m_seenArgumentsDotLength are grouped so that each group fills one cache line.
+    // The grouping follows measured co-access during parsing, not the order the code reads in, so
     // do not rearrange without careful analysis.
     VM& m_vm;
     JSToken m_token;
-    // offset 64
-    const SourceCode* m_source;
-    ParserArena m_parserArena;
-    // offset 128
-    std::unique_ptr<LexerType> m_lexer;
     JSTokenLocation m_lastTokenLocation;
     Scope* m_currentScope { nullptr };
+    // offset 64
+    const SourceCode* m_source;
+    std::unique_ptr<LexerType> m_lexer;
     String m_errorMessage;
     DebuggerParseData* m_debuggerParseData;
+    RefPtr<SourceProviderCache> m_functionCache;
+    RefPtr<ModuleScopeData> m_moduleScopeData;
     JSTokenType m_lastTokenType { ERRORTOK };
     int m_statementDepth;
     FunctionMode m_functionMode;
-    bool m_allowsIn;
     bool m_immediateParentAllowsFunctionDeclarationInStatement;
-    ImplementationVisibility m_implementationVisibility;
     bool m_insideSwitchCaseBody { false };
-    // offset 192
+    bool m_parsingBuiltin;
+    bool m_isEvalContext;
+    // offset 128
     ParserState m_parserState;
+    bool m_allowsIn;
+    ImplementationVisibility m_implementationVisibility;
     SourceParseMode m_parseMode;
     ConstructorKind m_constructorKindForTopLevelFunctionExpressions { ConstructorKind::None };
     bool m_isInsideOrdinaryFunction;
     bool m_seenTaggedTemplateInNonReparsingFunctionMode { false };
     bool m_seenPrivateNameUseInNonReparsingFunctionMode { false };
     bool m_seenArgumentsDotLength { false };
-    bool m_parsingBuiltin;
-    bool m_isEvalContext;
-
-    RefPtr<SourceProviderCache> m_functionCache;
+    // offset 192; too rarely touched for grouping to pay.
+    ParserArena m_parserArena;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };
-    RefPtr<ModuleScopeData> m_moduleScopeData;
     JSParserScriptMode m_scriptMode;
     SuperBinding m_superBinding;
     bool m_hasStackOverflow;
@@ -2166,8 +2142,8 @@ inline void Parser<Lexer<Latin1Character>>::verifyLayout()
 {
 #if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
     static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_source) == JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
-    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_lexer) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
-    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_parserState) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_parserState) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<Latin1Character>>, m_parserArena) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
 #endif
 }
 
@@ -2176,8 +2152,8 @@ inline void Parser<Lexer<char16_t>>::verifyLayout()
 {
 #if !ASSERT_ENABLED && !ASAN_ENABLED && CPU(ARM64) && CPU(ADDRESS64)
     static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_source) == JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
-    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_lexer) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
-    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_parserState) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_parserState) == 2 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
+    static_assert(OBJECT_OFFSETOF(Parser<Lexer<char16_t>>, m_parserArena) == 3 * JSC_CACHE_LINE_SIZE, LAYOUT_DRIFTED_ERROR);
 #endif
 }
 
@@ -2198,34 +2174,27 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
     errMsg = String();
 
     JSTokenLocation startLocation(tokenLocation());
-    ASSERT(m_source->startColumn() > OrdinalNumber::beforeFirst());
-    unsigned startColumn = m_source->startColumn().zeroBasedInt();
 
     auto parseResult = parseInner(calleeName, parsingContext, functionConstructorParametersEndPosition, classElementDefinitions, parentScopePrivateNames);
 
-    int lineNumber = m_lexer->lineNumber();
+    int errorOffset = m_lexer->currentOffset();
     bool lexError = m_lexer->sawError();
     String lexErrorMessage = lexError ? m_lexer->getErrorMessage() : String();
     ASSERT(lexErrorMessage.isNull() != lexError);
     m_lexer->clear();
 
     if (!parseResult || lexError) {
-        errLine = lineNumber;
+        errLine = static_cast<int>(m_source->provider()->documentLineColumnForOffset(errorOffset).line);
         errMsg = !lexErrorMessage.isNull() ? lexErrorMessage : parseResult.error();
     }
 
     std::unique_ptr<ParsedNode> result;
     if (parseResult) {
         JSTokenLocation endLocation;
-        endLocation.line = m_lexer->lineNumber();
-        endLocation.lineStartOffset = m_lexer->currentLineStartOffset();
         endLocation.startOffset = m_lexer->currentOffset();
-        unsigned endColumn = endLocation.startOffset - endLocation.lineStartOffset;
         result = makeUnique<ParsedNode>(m_parserArena,
                                     startLocation,
                                     endLocation,
-                                    startColumn,
-                                    endColumn,
                                     parseResult.value().sourceElements,
                                     WTF::move(parseResult.value().varDeclarations),
                                     WTF::move(parseResult.value().functionDeclarations),
@@ -2237,7 +2206,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     currentScope()->innerArrowFunctionFeatures(),
                                     parseResult.value().numConstants,
                                     WTF::move(m_moduleScopeData));
-        result->setLoc(m_source->firstLine().oneBasedInt(), m_lexer->lineNumber(), m_lexer->currentOffset(), m_lexer->currentLineStartOffset());
+        result->setStartOffset(m_lexer->currentOffset());
         result->setEndOffset(m_lexer->currentOffset());
 
         if (!isFunctionParseMode(parseMode)) {
@@ -2329,7 +2298,6 @@ std::unique_ptr<ParsedNode> parseRootNode(
     LexicallyScopedFeatures lexicallyScopedFeatures, JSParserScriptMode scriptMode, SourceParseMode parseMode,
     ParserError& error,
     ConstructorKind constructorKindForTopLevelFunctionExpressions = ConstructorKind::None,
-    JSTextPosition* positionBeforeLastNewline = nullptr,
     DebuggerParseData* debuggerParseData = nullptr)
 {
     static_assert(std::is_same_v<ParsedNode, ProgramNode> || std::is_same_v<ParsedNode, ModuleProgramNode>);
@@ -2347,10 +2315,7 @@ std::unique_ptr<ParsedNode> parseRootNode(
         Parser<Lexer<Latin1Character>> parser(vm, source, implementationVisibility, builtinMode, lexicallyScopedFeatures, scriptMode, parseMode, FunctionMode::None, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, debuggerParseData, isInsideOrdinaryFunction);
         parser.overrideConstructorKindForTopLevelFunctionExpressions(constructorKindForTopLevelFunctionExpressions);
         result = parser.parse<ParsedNode>(error, name, ParsingContext::Normal);
-        if (positionBeforeLastNewline)
-            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     } else {
-        ASSERT_WITH_MESSAGE(!positionBeforeLastNewline, "BuiltinExecutables should always use a 8-bit string");
         ASSERT_WITH_MESSAGE(constructorKindForTopLevelFunctionExpressions == ConstructorKind::None, "BuiltinExecutables' special constructors should always use a 8-bit string");
         Parser<Lexer<char16_t>> parser(vm, source, implementationVisibility, builtinMode, lexicallyScopedFeatures, scriptMode, parseMode, FunctionMode::None, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, debuggerParseData, isInsideOrdinaryFunction);
         result = parser.parse<ParsedNode>(error, name, ParsingContext::Normal);
@@ -2368,7 +2333,7 @@ std::unique_ptr<ParsedNode> parseRootNode(
     return result;
 }
 
-inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures, ParserError& error, JSTextPosition* positionBeforeLastNewline, std::optional<int> functionConstructorParametersEndPosition)
+inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures, ParserError& error, std::optional<int> functionConstructorParametersEndPosition)
 {
     ASSERT(!source.provider()->source().isNull());
 
@@ -2382,13 +2347,9 @@ inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, 
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<Latin1Character>> parser(vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin, lexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, FunctionMode::None, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, nullptr);
         result = parser.parse<ProgramNode>(error, name, ParsingContext::FunctionConstructor, functionConstructorParametersEndPosition);
-        if (positionBeforeLastNewline)
-            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     } else {
         Parser<Lexer<char16_t>> parser(vm, source, ImplementationVisibility::Public, JSParserBuiltinMode::NotBuiltin, lexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, FunctionMode::None, SuperBinding::NotNeeded, ConstructorKind::None, DerivedContextType::None, isEvalNode, EvalContextType::None, nullptr);
         result = parser.parse<ProgramNode>(error, name, ParsingContext::FunctionConstructor, functionConstructorParametersEndPosition);
-        if (positionBeforeLastNewline)
-            *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }
 
     if (Options::countParseTimes()) [[unlikely]]

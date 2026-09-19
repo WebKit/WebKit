@@ -44,9 +44,9 @@ UnlinkedCodeBlockGenerator::UnlinkedCodeBlockGenerator(VM& vm, UnlinkedCodeBlock
 {
 }
 
-void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, LineColumn lineColumn)
+void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    m_expressionInfoEncoder.encode(instructionOffset, divot, startOffset, endOffset, lineColumn);
+    m_expressionInfoEncoder.encode(instructionOffset, divot, startOffset, endOffset);
 }
 
 void UnlinkedCodeBlockGenerator::addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot)

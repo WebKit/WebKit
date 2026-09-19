@@ -577,43 +577,40 @@ DebuggerParseData& Debugger::debuggerParseData(SourceID sourceID, SourceProvider
     return result.iterator->value;
 }
 
+// The Inspector works in zero-based line and column, everything else works in offsets.
+// These two helpers are the conversion between them.
+static JSTextPosition offsetForInspectorPosition(SourceProvider& provider, int line, int column)
+{
+    auto providerStart = provider.startPosition();
+    int lineInProvider = line - providerStart.m_line.zeroBasedInt();
+    if (lineInProvider < 0)
+        return JSTextPosition(0);
+
+    int columnInProvider = column;
+    if (!lineInProvider) {
+        columnInProvider -= providerStart.m_column.zeroBasedInt();
+        if (columnInProvider < 0)
+            columnInProvider = 0;
+    }
+
+    return JSTextPosition(provider.offsetForPosition(static_cast<unsigned>(lineInProvider), static_cast<unsigned>(columnInProvider)));
+}
+
+static std::pair<int, int> inspectorPositionForOffset(SourceProvider& provider, JSTextPosition offset)
+{
+    auto lineColumn = provider.documentZeroBasedLineColumnForOffset(offset);
+    return { static_cast<int>(lineColumn.line), static_cast<int>(lineColumn.column) };
+}
+
 void Debugger::forEachBreakpointLocation(SourceID sourceID, SourceProvider* sourceProvider, int startLine, int startColumn, int endLine, int endColumn, Function<void(int, int)>&& callback)
 {
-    auto providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
-    auto providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
-
-    // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
-    // Inspector breakpoint line and column values are zero-based but the executable
-    // and CodeBlock line values are one-based while column is zero-based.
-    auto adjustedStartLine = startLine + 1;
-    auto adjustedStartColumn = startColumn;
-    auto adjustedEndLine = endLine + 1;
-    auto adjustedEndColumn = endColumn;
-
-    // Account for a <script>'s start position on the first line only.
-    if (startLine == providerStartLine && startColumn) {
-        ASSERT(providerStartColumn <= startColumn);
-        if (providerStartColumn)
-            adjustedStartColumn -= providerStartColumn;
-    }
-    if (endLine == providerStartLine && endColumn) {
-        ASSERT(providerStartColumn <= endColumn);
-        if (providerStartColumn)
-            adjustedEndColumn -= providerStartColumn;
-    }
+    auto start = offsetForInspectorPosition(*sourceProvider, startLine, startColumn);
+    auto end = offsetForInspectorPosition(*sourceProvider, endLine, endColumn);
 
     auto& parseData = debuggerParseData(sourceID, sourceProvider);
-    parseData.pausePositions.forEachBreakpointLocation(adjustedStartLine, adjustedStartColumn, adjustedEndLine, adjustedEndColumn, [&, callback = WTF::move(callback)] (const JSTextPosition& resolvedPosition) {
-        auto resolvedLine = resolvedPosition.line;
-        auto resolvedColumn = resolvedPosition.column();
-
-        // Re-account for a <script>'s start position on the first line only.
-        if (resolvedLine == providerStartLine && (startColumn || (endLine == providerStartLine && endColumn))) {
-            if (providerStartColumn)
-                resolvedColumn += providerStartColumn;
-        }
-
-        callback(resolvedLine - 1, resolvedColumn);
+    parseData.pausePositions.forEachBreakpointLocation(start, end, *sourceProvider, [&, callback = WTF::move(callback)] (JSTextPosition resolvedPosition) {
+        auto [line, column] = inspectorPositionForOffset(*sourceProvider, resolvedPosition);
+        callback(line, column);
     });
 }
 
@@ -622,36 +619,15 @@ bool Debugger::resolveBreakpoint(Breakpoint& breakpoint, SourceProvider* sourceP
     RELEASE_ASSERT(!breakpoint.isResolved());
     ASSERT(breakpoint.isLinked());
 
-    // FIXME: <https://webkit.org/b/162771> Web Inspector: Adopt TextPosition in Inspector to avoid oneBasedInt/zeroBasedInt ambiguity
-    // Inspector breakpoint line and column values are zero-based but the executable
-    // and CodeBlock line values are one-based while column is zero-based.
-    int line = breakpoint.lineNumber() + 1;
-    int column = breakpoint.columnNumber();
-
-    // Account for a <script>'s start position on the first line only.
-    int providerStartLine = sourceProvider->startPosition().m_line.oneBasedInt(); // One based to match the already adjusted line.
-    int providerStartColumn = sourceProvider->startPosition().m_column.zeroBasedInt(); // Zero based so column zero is zero.
-    if (line == providerStartLine && breakpoint.columnNumber()) {
-        ASSERT(providerStartColumn <= column);
-        if (providerStartColumn)
-            column -= providerStartColumn;
-    }
+    auto offset = offsetForInspectorPosition(*sourceProvider, breakpoint.lineNumber(), breakpoint.columnNumber());
 
     DebuggerParseData& parseData = debuggerParseData(breakpoint.sourceID(), sourceProvider);
-    std::optional<JSTextPosition> resolvedPosition = parseData.pausePositions.breakpointLocationForLineColumn(line, column);
-    if (!resolvedPosition)
+    auto resolved = parseData.pausePositions.breakpointLocationForOffset(offset, *sourceProvider);
+    if (!resolved)
         return false;
 
-    int resolvedLine = resolvedPosition->line;
-    int resolvedColumn = resolvedPosition->column();
-
-    // Re-account for a <script>'s start position on the first line only.
-    if (resolvedLine == providerStartLine && breakpoint.columnNumber()) {
-        if (providerStartColumn)
-            resolvedColumn += providerStartColumn;
-    }
-
-    return breakpoint.resolve(resolvedLine - 1, resolvedColumn);
+    auto [line, column] = inspectorPositionForOffset(*sourceProvider, *resolved);
+    return breakpoint.resolve(line, column);
 }
 
 bool Debugger::setBreakpoint(Breakpoint& breakpoint)

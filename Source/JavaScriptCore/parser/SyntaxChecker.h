@@ -203,7 +203,7 @@ public:
     ExpressionType createFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     ExpressionType createGeneratorFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&, const Identifier&) { return FunctionExpr; }
     ExpressionType createAsyncFunctionBody(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
-    int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, unsigned, unsigned, int, int, int, ImplementationVisibility, LexicallyScopedFeatures, ConstructorKind, SuperBinding, unsigned, SourceParseMode, bool) { return FunctionBodyResult; }
+    int createFunctionMetadata(const JSTokenLocation&, const JSTokenLocation&, int, int, int, ImplementationVisibility, LexicallyScopedFeatures, ConstructorKind, SuperBinding, unsigned, SourceParseMode, bool) { return FunctionBodyResult; }
     ExpressionType createArrowFunctionExpr(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     ExpressionType createMethodDefinition(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return FunctionExpr; }
     void setFunctionNameStart(int, int) { }
@@ -261,29 +261,29 @@ public:
     int createFuncDeclStatement(const JSTokenLocation&, const ParserFunctionInfo<SyntaxChecker>&) { return StatementResult; }
     int createDefineField(const JSTokenLocation&, const Identifier&, int, DefineFieldNode::Type) { return 0; }
     int createClassDeclStatement(const JSTokenLocation&, ClassExpression,
-        const JSTextPosition&, const JSTextPosition&, int, int) { return StatementResult; }
-    int createBlockStatement(const JSTokenLocation&, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
-    int createExprStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
+        const JSTextPosition&, const JSTextPosition&) { return StatementResult; }
+    int createBlockStatement(const JSTokenLocation&, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
+    int createExprStatement(const JSTokenLocation&, int, int) { return StatementResult; }
     int createIfStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
-    int createIfStatement(const JSTokenLocation&, int, int, int, int, int) { return StatementResult; }
-    int createForLoop(const JSTokenLocation&, int, int, int, int, int, int, VariableEnvironment&&, bool) { return StatementResult; }
-    int createForInLoop(const JSTokenLocation&, int, int, int, const JSTokenLocation&, int, int, int, int, int, VariableEnvironment&&) { return StatementResult; }
-    int createForOfLoop(bool, const JSTokenLocation&, int, int, int, const JSTokenLocation&, int, int, int, int, int, VariableEnvironment&&) { return StatementResult; }
+    int createIfStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
+    int createForLoop(const JSTokenLocation&, int, int, int, int, VariableEnvironment&&, bool) { return StatementResult; }
+    int createForInLoop(const JSTokenLocation&, int, int, int, const JSTokenLocation&, int, int, int, VariableEnvironment&&) { return StatementResult; }
+    int createForOfLoop(bool, const JSTokenLocation&, int, int, int, const JSTokenLocation&, int, int, int, VariableEnvironment&&) { return StatementResult; }
     int createEmptyStatement(const JSTokenLocation&) { return StatementResult; }
-    int createDeclarationStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
+    int createDeclarationStatement(const JSTokenLocation&, int) { return StatementResult; }
     int createReturnStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createBreakStatement(const JSTokenLocation&, int, int) { return StatementResult; }
     int createBreakStatement(const JSTokenLocation&, const Identifier*, int, int) { return StatementResult; }
     int createContinueStatement(const JSTokenLocation&, int, int) { return StatementResult; }
     int createContinueStatement(const JSTokenLocation&, const Identifier*, int, int) { return StatementResult; }
-    int createTryStatement(const JSTokenLocation&, int, int, int, int, int, int, VariableEnvironment&&) { return StatementResult; }
-    int createSwitchStatement(const JSTokenLocation&, int, int, int, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
-    int createWhileStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
-    int createWithStatement(const JSTokenLocation&, int, int, int, int, int, int) { return StatementResult; }
-    int createDoWhileStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
+    int createTryStatement(const JSTokenLocation&, int, int, int, int, VariableEnvironment&&) { return StatementResult; }
+    int createSwitchStatement(const JSTokenLocation&, int, int, int, int, VariableEnvironment&&, DeclarationStacks::FunctionStack&&) { return StatementResult; }
+    int createWhileStatement(const JSTokenLocation&, int, int) { return StatementResult; }
+    int createWithStatement(const JSTokenLocation&, int, int, int, int) { return StatementResult; }
+    int createDoWhileStatement(const JSTokenLocation&, int, int) { return StatementResult; }
     int createLabelStatement(const JSTokenLocation&, const Identifier*, int, int, int) { return StatementResult; }
     int createThrowStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
-    int createDebugger(const JSTokenLocation&, int, int) { return StatementResult; }
+    int createDebugger(const JSTokenLocation&) { return StatementResult; }
     int createConstStatement(const JSTokenLocation&, int, int, int) { return StatementResult; }
     int createModuleName(const JSTokenLocation&, const Identifier&) { return ModuleNameResult; }
     ImportSpecifier createImportSpecifier(const JSTokenLocation&, const Identifier&, const Identifier&) { return ImportSpecifierResult; }
@@ -336,7 +336,7 @@ public:
     
     void appendUnaryToken(int& stackDepth, int tok, int) { stackDepth = 1; m_topUnaryToken = tok; }
     int unaryTokenStackLastType(int&) { return m_topUnaryToken; }
-    JSTextPosition unaryTokenStackLastStart(int&) { return JSTextPosition(0, 0, 0); }
+    JSTextPosition unaryTokenStackLastStart(int&) { return JSTextPosition(0); }
     void unaryTokenStackRemoveLast(int& stackDepth) { stackDepth = 0; }
     int unaryTokenStackDepth() const { return 0; }
     void setUnaryTokenStackDepth(int) { }

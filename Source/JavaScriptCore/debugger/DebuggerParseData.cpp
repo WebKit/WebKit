@@ -33,58 +33,44 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-void DebuggerPausePositions::forEachBreakpointLocation(int startLine, int startColumn, int endLine, int endColumn, Function<void(const JSTextPosition&)>&& callback)
+void DebuggerPausePositions::forEachBreakpointLocation(JSTextPosition start, JSTextPosition end, SourceProvider& provider, Function<void(JSTextPosition)>&& callback)
 {
-    auto isAfterEnd = [&] (int line, int column) {
-        return (line == endLine && column >= endColumn) || line > endLine;
-    };
-
     Vector<JSTextPosition> uniquePositions;
-    for (auto it = firstPositionAfter(startLine, startColumn); it != m_positions.end(); ++it) {
-        auto line = it->position.line;
-        auto column = it->position.column();
-
-        if (isAfterEnd(line, column))
+    for (auto it = firstPositionAtOrAfter(start); it != m_positions.end(); ++it) {
+        if (it->position >= end)
             break;
 
-        if (auto resolvedPosition = breakpointLocationForLineColumn(line, column, it)) {
-            if (!isAfterEnd(resolvedPosition->line, resolvedPosition->column()))
-                uniquePositions.appendIfNotContains(*resolvedPosition);
+        if (auto resolved = breakpointLocationForOffset(it->position, provider, it)) {
+            if (*resolved < end)
+                uniquePositions.appendIfNotContains(*resolved);
         }
     }
-    std::ranges::sort(uniquePositions, [](const auto& a, const auto& b) {
-        if (a.line == b.line)
-            return a.column() < b.column();
-        return a.line < b.line;
-    });
+    std::ranges::sort(uniquePositions);
     for (const auto& position : uniquePositions)
         callback(position);
 }
 
-DebuggerPausePositions::Positions::iterator DebuggerPausePositions::firstPositionAfter(int line, int column)
+DebuggerPausePositions::Positions::iterator DebuggerPausePositions::firstPositionAtOrAfter(JSTextPosition offset)
 {
-    DebuggerPausePosition position = { DebuggerPausePositionType::Invalid, JSTextPosition(line, column, 0) };
-    return std::lower_bound(m_positions.begin(), m_positions.end(), position, [] (const DebuggerPausePosition& a, const DebuggerPausePosition& b) {
-        if (a.position.line == b.position.line)
-            return a.position.column() < b.position.column();
-        return a.position.line < b.position.line;
-    });
+    return std::lower_bound(m_positions.begin(), m_positions.end(), offset,
+        [] (const DebuggerPausePosition& position, JSTextPosition offset) {
+            return position.position < offset;
+        });
 }
 
-std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column)
+std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForOffset(JSTextPosition offset, SourceProvider& provider)
 {
-    return breakpointLocationForLineColumn(line, column, firstPositionAfter(line, column));
+    return breakpointLocationForOffset(offset, provider, firstPositionAtOrAfter(offset));
 }
 
-std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column, DebuggerPausePositions::Positions::iterator it)
+std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForOffset(JSTextPosition offset, SourceProvider& provider, DebuggerPausePositions::Positions::iterator it)
 {
     if (it == m_positions.end())
         return std::nullopt;
 
-    ASSERT(line <= it->position.line);
-    ASSERT(line != it->position.line || column <= it->position.column());
+    ASSERT(offset <= it->position);
 
-    if (line == it->position.line && column == it->position.column()) {
+    if (offset == it->position) {
         // Found an exact position match. Roll forward if this was a function Entry.
         // We are guaranteed to have a Leave for an Entry so we don't need to bounds check.
         while (it->type == DebuggerPausePositionType::Enter)
@@ -114,7 +100,9 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
 
     // Determine if we should enter this function or skip past it.
     // If entryStackSize is > 0 we are skipping functions.
-    bool shouldEnterFunction = firstSlidePosition.position.line == line;
+    auto entryLine = provider.positionInfoForOffset(firstSlidePosition.position);
+    bool shouldEnterFunction = static_cast<unsigned>(offset.offset) >= entryLine.lineStart
+        && static_cast<unsigned>(offset.offset) <= entryLine.lineEnd;
     int entryStackSize = shouldEnterFunction ? 0 : 1;
     ++it;
     for (; it != m_positions.end(); ++it) {
@@ -181,7 +169,7 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
     ParserError error;
     std::unique_ptr<RootNode> rootNode = parseRootNode<RootNode>(vm, source, ImplementationVisibility::Public,
         JSParserBuiltinMode::NotBuiltin, lexicallyScopedFeatures, scriptMode, parseMode,
-        error, ConstructorKind::None, nullptr, &debuggerParseData);
+        error, ConstructorKind::None, &debuggerParseData);
     if (!rootNode)
         return false;
 
@@ -193,9 +181,7 @@ bool gatherDebuggerParseData(VM& vm, const SourceCode& source, DebuggerParseData
 bool gatherDebuggerParseDataForSource(VM& vm, SourceProvider* provider, DebuggerParseData& debuggerParseData)
 {
     ASSERT(provider);
-    int startLine = provider->startPosition().m_line.oneBasedInt();
-    int startColumn = provider->startPosition().m_column.oneBasedInt();
-    SourceCode completeSource(*provider, startLine, startColumn);
+    SourceCode completeSource(*provider);
 
     switch (provider->sourceType()) {
     case SourceProviderSourceType::Program:
