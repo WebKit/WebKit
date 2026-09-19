@@ -81,8 +81,11 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
     {
         Locker locker { m_sampleConverterLock };
         if (m_sampleConverter && !gst_audio_info_is_equal(&m_inputStreamDescription, &desc.getInfo())) {
-            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=324342
-            GST_ERROR("Audio format renegotiation is not possible yet.");
+            GST_DEBUG("Audio format changed, clearing audio buffers cache and sample converter");
+            {
+                Locker locker { m_adapterLock };
+                gst_adapter_clear(m_adapter.get());
+            }
             m_sampleConverter = nullptr;
         }
 
@@ -105,9 +108,14 @@ void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime
         auto* buffer = gst_sample_get_buffer(sample.get());
         gst_adapter_push(m_adapter.get(), gst_buffer_ref(buffer));
     }
+
+    Locker locker { m_pullLock };
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = protect(*this)] {
+        Locker locker { protectedThis->m_pullLock };
         protectedThis->pullAudioData();
+        protectedThis->m_pullCondition.notifyOne();
     });
+    m_pullCondition.wait(m_pullLock);
 }
 
 std::optional<size_t> RealtimeOutgoingAudioSourceLibWebRTC::gstAudioConverterInputFramesForOutput(size_t outputFrames, size_t availableFrames)
@@ -137,14 +145,17 @@ std::optional<size_t> RealtimeOutgoingAudioSourceLibWebRTC::gstAudioConverterInp
 
 void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
 {
+    assertIsHeld(m_pullLock);
+
     Locker sampleConverterLocker { m_sampleConverterLock };
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=324342
-    if (!m_sampleConverter)
+    if (!m_sampleConverter) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     if (!GST_AUDIO_INFO_IS_VALID(&m_inputStreamDescription) || !GST_AUDIO_INFO_IS_VALID(&m_outputStreamDescription)) {
-        GST_INFO("No stream description set yet.");
+        ASSERT_NOT_REACHED();
         return;
     }
 
