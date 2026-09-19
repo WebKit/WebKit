@@ -69,6 +69,7 @@ public:
         std::optional<size_t> desiredWidth;
         std::optional<size_t> desiredHeight;
         std::optional<bool> preferAnimation;
+        Vector<Ref<JSC::ArrayBuffer>> transfer { };
     };
 
     struct DecodeOptions {
@@ -76,7 +77,7 @@ public:
         bool completeFramesOnly { true };
     };
 
-    static Ref<WebCodecsImageDecoder> create(ScriptExecutionContext&, Init&&);
+    static ExceptionOr<Ref<WebCodecsImageDecoder>> create(ScriptExecutionContext&, Init&&);
 
     String type() const { return m_type; }
     bool complete() const { return m_completedPromise->isFulfilled(); }

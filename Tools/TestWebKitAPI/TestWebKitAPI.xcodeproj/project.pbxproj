@@ -889,6 +889,7 @@
 				WebCore/URLMatch.cpp,
 				WebCore/URLParserTextEncoding.cpp,
 				WebCore/UserAgentStringParser.cpp,
+				WebCore/WebCodecsBufferTransfer.cpp,
 				WebCore/WebGPUFramePacer.cpp,
 				WebCore/WebTransportHeaderValidation.cpp,
 				WebCore/WellKnownOriginList.cpp,

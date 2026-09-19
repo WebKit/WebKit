@@ -48,6 +48,7 @@
 #include "SVGImageElement.h"
 #include "SecurityOrigin.h"
 #include "VideoColorSpace.h"
+#include "WebCodecsBufferTransfer.h"
 #include "WebCodecsVideoFrameAlgorithms.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/Seconds.h>
@@ -284,6 +285,10 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     ASSERT(init.format);
     auto pixelFormat = init.format.value_or(VideoPixelFormat::I420);
 
+    WebCodecsTransferList transferList { init.transfer };
+    if (auto result = transferList.validate(); result.hasException())
+        return result.releaseException();
+
     if (!isValidVideoFrameBufferInit(init))
         return Exception { ExceptionCode::TypeError, "buffer init is not valid"_s };
 
@@ -327,6 +332,8 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
 
     if (!videoFrame)
         return Exception { ExceptionCode::TypeError, "Unable to create internal resource from data"_s };
+
+    transferList.detachAll(context.vm());
 
     return WebCodecsVideoFrame::create(context, videoFrame.releaseNonNull(), WTF::move(init));
 }

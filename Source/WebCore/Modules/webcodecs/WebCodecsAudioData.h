@@ -51,6 +51,7 @@ public:
         BufferSource data;
         size_t numberOfFrames;
         size_t numberOfChannels;
+        Vector<Ref<JSC::ArrayBuffer>> transfer { };
     };
 
     static ExceptionOr<Ref<WebCodecsAudioData>> create(ScriptExecutionContext&, Init&&);

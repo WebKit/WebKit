@@ -259,8 +259,6 @@
     [Legacy] StructureParam WebCore::PushSubscriptionData.sharedAuthenticationSecret
     [Legacy] StructureParam WebCore::SerializedScriptValueInternals.data
     [Legacy] StructureParam WebCore::ThreadSafeDataBufferImpl.m_data
-    [Legacy] StructureParam WebCore::WebCodecsEncodedAudioChunkData.buffer
-    [Legacy] StructureParam WebCore::WebCodecsEncodedVideoChunkData.buffer
     [Legacy] StructureParam WebCore::WrappedCryptoKey.encryptedKey
     [Legacy] StructureParam JSC::ArrayBuffer.toVector()
     [Legacy] StructureParam WebCore::MockWebAuthenticationConfiguration::HidConfiguration.pinProtocols
@@ -273,6 +271,11 @@
     [NotSentFromWebContent] MessageParamReply WebPageProxy.BindRemoteAccessibilityFrames token
     [NotSentFromWebContent] MessageParamReply WebPageProxy.LoadSynchronousURLSchemeTask data
     [NotSentFromWebContent] MessageParamReply NetworkConnectionToWebProcess.PerformSynchronousLoad data
+}
+
+[UnsafeWrapper] Ref<WebCore::SharedBuffer> {
+    [Legacy] StructureParam WebCore::WebCodecsEncodedAudioChunkData.buffer
+    [Legacy] StructureParam WebCore::WebCodecsEncodedVideoChunkData.buffer
 }
 
 [UnsafeWrapper] Vector<unsigned char> {

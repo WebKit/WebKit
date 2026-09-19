@@ -39,6 +39,7 @@
 #include "ReadableStreamToSharedBufferSink.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
+#include "WebCodecsBufferTransfer.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsImageDecodeResult.h"
 #include "WebCodecsVideoFrame.h"
@@ -53,8 +54,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsImageDecoder);
 
-Ref<WebCodecsImageDecoder> WebCodecsImageDecoder::create(ScriptExecutionContext& context, Init&& init)
+ExceptionOr<Ref<WebCodecsImageDecoder>> WebCodecsImageDecoder::create(ScriptExecutionContext& context, Init&& init)
 {
+    if (auto result = WebCodecsTransferList { init.transfer }.validate(); result.hasException())
+        return result.releaseException();
+
     Ref decoder = adoptRef(*new WebCodecsImageDecoder(context, WTF::move(init)));
     decoder->suspendIfNeeded();
     return decoder;
@@ -66,19 +70,20 @@ WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, In
     , m_completedPromise(makeUniqueRef<CompletedPromise>())
     , m_tracks(WebCodecsImageTrackList::create())
 {
-    RefPtr<SharedBuffer> buffer;
+    WebCodecsTransferList transferList { init.transfer };
 
     // FIXME: Support SharedArrayBuffer.
     WTF::switchOn(init.data,
         [&](const Ref<JSC::ArrayBuffer>& data) {
-            if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, true);
+            Ref buffer = transferList.isEmpty() ? SharedBuffer::create(data->span()) : transferList.takeData(context.vm(), data.ptr(), data->span());
+            setInternalDecoderData(buffer, true);
         },
         [&](const Ref<JSC::ArrayBufferView>& data) {
-            if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, true);
+            Ref buffer = transferList.isEmpty() ? SharedBuffer::create(data->span()) : transferList.takeData(context.vm(), data->possiblySharedBuffer().get(), data->span());
+            setInternalDecoderData(buffer, true);
         },
         [&](const Ref<ReadableStream>& stream) {
+            transferList.detachAll(context.vm());
             sinkStreamToInternalDecoder(stream);
         }
     );

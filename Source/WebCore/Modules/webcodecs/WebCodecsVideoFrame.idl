@@ -36,7 +36,6 @@ typedef (HTMLImageElement
 #endif
 ) CanvasImageSource;
 
-// FIXME: Support Serializable and Transferable.
 [
     ExportMacro=WEBCORE_EXPORT,
     Conditional=WEB_CODECS,
@@ -96,6 +95,7 @@ typedef (HTMLImageElement
     [EnforceRange] unsigned long displayHeight;
 
     VideoColorSpaceInit colorSpace;
+    sequence<ArrayBuffer> transfer = [];
 };
 
 [

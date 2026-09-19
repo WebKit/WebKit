@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
- * Copyright (C) 2023 Igalia S.L
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +27,50 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include <WebCore/SharedBuffer.h>
-#include <WebCore/WebCodecsEncodedAudioChunkType.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
+
+namespace JSC {
+class VM;
+}
 
 namespace WebCore {
 
-struct WebCodecsEncodedAudioChunkData {
-    WebCodecsEncodedAudioChunkType type { WebCodecsEncodedAudioChunkType::Key };
-    int64_t timestamp { 0 };
-    std::optional<uint64_t> duration { 0 };
-    Ref<SharedBuffer> buffer;
+class BufferSource;
+class SharedBuffer;
+template<typename> class ExceptionOr;
+
+WEBCORE_EXPORT Ref<SharedBuffer> adoptArrayBufferContents(JSC::ArrayBufferContents&&);
+
+// The WebCodecs `transfer` init member. validate() must return no exception before any other
+// member is called; until then nothing is detached and the caller may still throw.
+class WebCodecsTransferList {
+    WTF_MAKE_NONCOPYABLE(WebCodecsTransferList);
+public:
+    explicit WebCodecsTransferList(const Vector<Ref<JSC::ArrayBuffer>>& list)
+        : m_list(list)
+    {
+    }
+
+    bool isEmpty() const { return m_list.isEmpty(); }
+
+    ExceptionOr<void> validate() const;
+
+    void detachAll(JSC::VM&) const;
+
+    // Detaches every buffer in the list and returns the bytes of `data`, adopting them without
+    // copying when `data` spans the whole of a buffer in the list.
+    Ref<SharedBuffer> takeData(JSC::VM&, const BufferSource& data) const;
+    Ref<SharedBuffer> takeData(JSC::VM&, JSC::ArrayBuffer* dataBuffer, std::span<const uint8_t> data) const;
+
+private:
+    bool contains(const JSC::ArrayBuffer&) const;
+
+    const Vector<Ref<JSC::ArrayBuffer>>& m_list;
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(WEB_CODECS)

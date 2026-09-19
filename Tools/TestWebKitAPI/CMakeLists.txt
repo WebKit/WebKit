@@ -356,6 +356,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/URLMatch.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/URLPatternTests.cpp
+        Tests/WebCore/WebCodecsBufferTransfer.cpp
         Tests/WebCore/WebGPUFramePacer.cpp
         Tests/WebCore/WebTransportHeaderValidation.cpp
         Tests/WebCore/WellKnownOriginList.cpp
