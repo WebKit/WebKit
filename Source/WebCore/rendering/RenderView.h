@@ -176,6 +176,9 @@ public:
     void addCounterNeedingUpdate(RenderCounter&);
     SingleThreadWeakHashSet<RenderCounter> takeCountersNeedingUpdate();
 
+    bool hasCounterTreeNeedingUpdate() const { return m_hasCounterTreeNeedingUpdate; }
+    void setHasCounterTreeNeedingUpdate(bool b) { m_hasCounterTreeNeedingUpdate = b; }
+
     void incrementRendersWithOutline() { ++m_renderersWithOutlineCount; }
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
     bool hasRenderersWithOutline() const { return m_renderersWithOutlineCount; }
@@ -299,6 +302,7 @@ private:
     bool m_hasQuotesNeedingUpdate { false };
 
     SingleThreadWeakHashSet<RenderCounter> m_countersNeedingUpdate;
+    bool m_hasCounterTreeNeedingUpdate { false };
     unsigned m_renderersWithOutlineCount { 0 };
     unsigned m_renderersWithPixelMovingFilterCount { 0 };
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };

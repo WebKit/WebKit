@@ -118,6 +118,14 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
 
 void RenderTreeUpdater::GeneratedContent::updateCounters()
 {
+    if (m_updater.renderView().hasCounterTreeNeedingUpdate()) {
+        for (auto& renderer : descendantsOfType<RenderElement>(m_updater.renderView())) {
+            if (renderer.hasCounterNodeMap())
+                RenderCounter::destroyCounterNodes(renderer);
+        }
+        m_updater.renderView().setHasCounterTreeNeedingUpdate(false);
+    }
+
     auto update = [&] {
         auto counters = m_updater.renderView().takeCountersNeedingUpdate();
         for (auto& counter : counters)
