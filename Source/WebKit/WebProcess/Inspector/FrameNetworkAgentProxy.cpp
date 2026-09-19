@@ -336,7 +336,7 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
     if (resourceLoader) {
         if (auto* cachedResource = resourceLoader->cachedResource()) {
             auto type = cachedResource->type();
-            mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = toNetworkLoadPriority(DefaultResourceLoadPriority::forResourceType(type));
+            mutableMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = toNetworkLoadPriority(WebCore::DefaultResourceLoadPriority::forResourceType(type));
         }
     }
 
