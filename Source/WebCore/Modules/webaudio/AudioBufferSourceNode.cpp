@@ -184,7 +184,8 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
 
     // Basic sanity checking
     ASSERT(m_buffer);
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return false;
 
     unsigned numberOfChannels = this->numberOfChannels();
@@ -217,8 +218,8 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     // Offset the pointers to the correct offset frame.
     unsigned writeIndex = destinationFrameOffset;
 
-    size_t bufferLength = m_buffer->length();
-    double bufferSampleRate = m_buffer->sampleRate();
+    size_t bufferLength = buffer->length();
+    double bufferSampleRate = buffer->sampleRate();
     double pitchRate = totalPitchRate();
     bool reverse = pitchRate < 0;
 
@@ -251,7 +252,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     // before validating keeps an out-of-range endpoint from producing an inverted range.
     // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
     if (m_isLooping) {
-        double bufferDuration = m_buffer->duration();
+        double bufferDuration = buffer->duration();
         double loopStart = std::clamp(m_loopStart, 0.0, bufferDuration);
         double loopEnd = m_loopEnd <= 0 ? 0 : std::min(m_loopEnd, bufferDuration);
 
@@ -595,14 +596,15 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
     if (grainDuration && (!std::isfinite(*grainDuration) || (*grainDuration < 0)))
         return Exception { ExceptionCode::RangeError, "duration value should be positive"_s };
 
-    context().sourceNodeWillBeginPlayback(*this);
+    Ref context = this->context();
+    context->sourceNodeWillBeginPlayback(*this);
 
     // This synchronizes with process(), it is important to acquire the processLock before the
     // graphLock to avoid a deadlock given that this is the order process() acquires the locks in.
     Locker locker { m_processLock };
 
     // Changing the number of output channels below re-configures the graph.
-    Locker contextLocker { context().graphLock() };
+    Locker contextLocker { context->graphLock() };
 
     m_isGrain = true;
     m_grainOffset = grainOffset;
@@ -611,7 +613,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
     // If 0 is passed in for |when| or if the value is less than currentTime, then the sound will start playing immediately.
     // https://webaudio.github.io/web-audio-api/#dom-audiobuffersourcenode-start-when-offset-duration-when
-    m_startTime = std::max(when, context().currentTime());
+    m_startTime = std::max(when, context->currentTime());
 
     adjustGrainParameters();
 
@@ -628,11 +630,12 @@ void AudioBufferSourceNode::adjustGrainParameters()
 {
     ASSERT(m_processLock.isHeld());
 
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return;
 
     // Do sanity checking of grain parameters versus buffer size.
-    double bufferDuration = m_buffer->duration();
+    double bufferDuration = buffer->duration();
 
     m_grainOffset = std::min(bufferDuration, m_grainOffset);
 
@@ -653,7 +656,7 @@ void AudioBufferSourceNode::adjustGrainParameters()
     // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
     // A whole-frame offset stays whole so that playback at |rate| == 1 is a straight copy of the
     // PCM data rather than a quality-degrading interpolation at a sub-sample position.
-    m_virtualReadIndex = timeToFractionalSampleFrame(m_grainOffset, m_buffer->sampleRate());
+    m_virtualReadIndex = timeToFractionalSampleFrame(m_grainOffset, buffer->sampleRate());
 }
 
 double AudioBufferSourceNode::totalPitchRate()
@@ -697,13 +700,14 @@ float AudioBufferSourceNode::noiseInjectionMultiplier() const
 {
     Locker locker { m_processLock };
 
-    if (!m_buffer)
+    RefPtr buffer = m_buffer;
+    if (!buffer)
         return 0;
 
-    auto multiplier = m_buffer->noiseInjectionMultiplier();
+    auto multiplier = buffer->noiseInjectionMultiplier();
     if (m_isLooping && m_loopStart < m_loopEnd) {
         static constexpr auto noiseMultiplierPerLoop = 0.005;
-        auto loopCount = m_buffer->duration() / (m_loopEnd - m_loopStart);
+        auto loopCount = buffer->duration() / (m_loopEnd - m_loopStart);
         multiplier *= std::max(1.0, noiseMultiplierPerLoop * loopCount);
     }
     return multiplier;

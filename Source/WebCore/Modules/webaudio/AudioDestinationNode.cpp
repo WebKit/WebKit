@@ -84,10 +84,11 @@ void AudioDestinationNode::renderQuantum(AudioBus& destinationBus, size_t number
     }
 
     // Let the context take care of any business at the start of each render quantum.
-    context().handlePreRenderTasks(outputPosition);
+    Ref context = this->context();
+    context->handlePreRenderTasks(outputPosition);
 
     RefPtr<AudioWorkletGlobalScope> workletGlobalScope;
-    if (RefPtr audioWorkletProxy = context().audioWorklet().proxy()) {
+    if (RefPtr audioWorkletProxy = context->audioWorklet().proxy()) {
         if (Ref workletThread = audioWorkletProxy->workletThread(); workletThread->thread() == &Thread::currentSingleton())
             workletGlobalScope = workletThread->globalScope();
     }
@@ -104,10 +105,10 @@ void AudioDestinationNode::renderQuantum(AudioBus& destinationBus, size_t number
     }
 
     // Process nodes which need a little extra help because they are not connected to anything, but still need to process.
-    context().processAutomaticPullNodes(numberOfFrames);
+    context->processAutomaticPullNodes(numberOfFrames);
 
     // Let the context take care of any business at the end of each render quantum.
-    context().handlePostRenderTasks();
+    context->handlePostRenderTasks();
     
     // Advance current sample-frame.
     m_currentSampleFrame += numberOfFrames;

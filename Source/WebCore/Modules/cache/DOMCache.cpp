@@ -115,7 +115,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
         return;
     }
 
-    auto request = requestOrException.releaseReturnValue()->resourceRequest();
+    auto request = protect(requestOrException.returnValue())->resourceRequest();
     auto requestStart = MonotonicTime::now();
     queryCache(WTF::move(request), options, ShouldRetrieveResponses::Yes, [this, protectedThis = Ref { *this }, callback = WTF::move(callback), requestStart](auto&& result) mutable {
         if (result.hasException()) {
@@ -154,7 +154,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
                 promise.reject(requestOrException.releaseException());
             return;
         }
-        resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
+        resourceRequest = protect(requestOrException.returnValue())->resourceRequest();
     }
 
     auto requestStart = MonotonicTime::now();
@@ -495,7 +495,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
                 promise.reject(requestOrException.releaseException());
             return;
         }
-        resourceRequest = requestOrException.releaseReturnValue()->resourceRequest();
+        resourceRequest = protect(requestOrException.returnValue())->resourceRequest();
     }
 
     queryCache(WTF::move(resourceRequest), options, ShouldRetrieveResponses::No, [this, protectedThis = Ref { *this }, promise = WTF::move(promise)](auto&& result) mutable {

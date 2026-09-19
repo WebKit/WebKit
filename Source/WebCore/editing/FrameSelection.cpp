@@ -473,7 +473,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             textControl->scheduleSelectionChangeEvent();
         else if (!m_hasScheduledSelectionChangeEventOnDocument) {
             m_hasScheduledSelectionChangeEventOnDocument = true;
-            document->eventLoop().queueTask(TaskSource::UserInteraction, [weakDocument = WeakPtr { document.get() }] {
+            protect(document->eventLoop())->queueTask(TaskSource::UserInteraction, [weakDocument = WeakPtr { document.get() }] {
                 if (RefPtr document = weakDocument.get()) {
                     document->selection().m_hasScheduledSelectionChangeEventOnDocument = false;
                     document->dispatchEvent(Event::create(eventNames().selectionchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));

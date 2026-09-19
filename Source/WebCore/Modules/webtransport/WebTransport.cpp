@@ -184,7 +184,7 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
     , m_closed(createPromiseAndWrapper(globalObject))
     , m_draining(createPromiseAndWrapper(globalObject))
     , m_datagrams(WTF::move(datagrams))
-    , m_session(context.socketProvider() ? context.socketProvider()->createWebTransportSession(context, *this) : emptySocketProvider()->createWebTransportSession(context, *this))
+    , m_session(context.socketProvider() ? protect(context.socketProvider())->createWebTransportSession(context, *this) : emptySocketProvider()->createWebTransportSession(context, *this))
     , m_datagramSource(WTF::move(datagramSource))
     , m_receiveStreamSource(WTF::move(receiveStreamSource))
     , m_bidirectionalStreamSource(WTF::move(bidirectionalStreamSource))
@@ -569,10 +569,10 @@ void WebTransport::cleanup(Ref<DOMException>&& exception, std::optional<WebTrans
             datagramsWritable->closeIfPossible();
     } else {
         m_state = State::Failed;
-        m_closed.second->rejectWithCallback([&](JSDOMGlobalObject&) {
+        protect(m_closed.second)->rejectWithCallback([&](JSDOMGlobalObject&) {
             return jsException;
         });
-        m_ready.second->rejectWithCallback([&](JSDOMGlobalObject&) {
+        protect(m_ready.second)->rejectWithCallback([&](JSDOMGlobalObject&) {
             return jsException;
         });
         m_bidirectionalStreamSource->error(jsDOMGlobalObject, jsException);

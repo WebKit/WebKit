@@ -380,7 +380,7 @@ ExceptionOr<void> AudioNode::disconnect(AudioParam& destinationParam, unsigned o
 
 float AudioNode::sampleRate() const
 {
-    return context().sampleRate();
+    return protect(context())->sampleRate();
 }
 
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
@@ -458,7 +458,8 @@ ScriptExecutionContext* AudioNode::scriptExecutionContext() const
 
 void AudioNode::processIfNecessary(size_t framesToProcess)
 {
-    ASSERT(context().isAudioThread());
+    Ref context = this->context();
+    ASSERT(context->isAudioThread());
 
     if (!isInitialized())
         return;
@@ -467,7 +468,7 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
     // This handles the "fanout" problem where an output is connected to multiple inputs.
     // The first time we're called during this time slice we process, but after that we don't want to re-process,
     // instead our output(s) will already have the results cached in their bus;
-    double currentTime = context().currentTime();
+    double currentTime = context->currentTime();
     if (m_lastProcessingTime != currentTime) {
         m_lastProcessingTime = currentTime; // important to first update this time because of feedback loops in the rendering graph
 
@@ -475,7 +476,7 @@ void AudioNode::processIfNecessary(size_t framesToProcess)
 
         bool silentInputs = inputsAreSilent();
         if (!silentInputs)
-            m_lastNonSilentTime = (context().currentSampleFrame() + framesToProcess) / static_cast<double>(context().sampleRate());
+            m_lastNonSilentTime = (context->currentSampleFrame() + framesToProcess) / static_cast<double>(context->sampleRate());
 
         if (silentInputs && propagatesSilence()) {
             silenceOutputs();
@@ -498,7 +499,7 @@ void AudioNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 
 bool AudioNode::propagatesSilence() const
 {
-    return m_lastNonSilentTime + latencyTime() + tailTime() < context().currentTime();
+    return m_lastNonSilentTime + latencyTime() + tailTime() < protect(context())->currentTime();
 }
 
 void AudioNode::pullInputs(size_t framesToProcess)
@@ -522,14 +523,15 @@ bool AudioNode::inputsAreSilent()
 void AudioNode::silenceOutputs()
 {
     for (auto& output : m_outputs)
-        output->bus().zero();
+        protect(output->bus())->zero();
 }
 
 void AudioNode::enableOutputsIfNecessary()
 {
-    Locker locker { context().graphLock() };
+    Ref context = this->context();
+    Locker locker { context->graphLock() };
     if (isTailProcessing())
-        context().removeTailProcessingNode(*this);
+        context->removeTailProcessingNode(*this);
 
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
@@ -557,7 +559,7 @@ void AudioNode::disableOutputsIfNecessary()
         // If a node requires tail processing, we defer the disabling of the outputs so that the tail for the node can be output.
         // Otherwise, we can disable the outputs right away.
         if (requiresTailProcessing())
-            context().addTailProcessingNode(*this);
+            protect(context())->addTailProcessingNode(*this);
         else
             disableOutputs();
     }
@@ -591,22 +593,24 @@ void AudioNode::incrementConnectionCount()
 
 void AudioNode::decrementConnectionCount()
 {
+    Ref context = this->context();
+
     // The actually work for deref happens completely within the audio context's graph lock.
     // In the case of the audio thread, we must use a tryLock to avoid glitches.
-    if (auto locker = context().isAudioThread() ? Locker<RecursiveLock>::tryLock(context().graphLock()) : Locker { context().graphLock() }) {
+    if (auto locker = context->isAudioThread() ? Locker<RecursiveLock>::tryLock(context->graphLock()) : Locker { context->graphLock() }) {
         // This is where the real deref work happens.
         decrementConnectionCountWithLock();
     } else {
         // We were unable to get the lock, so put this in a list to finish up later.
-        ASSERT(context().isAudioThread());
-        context().addDeferredDecrementConnectionCount(this);
+        ASSERT(context->isAudioThread());
+        context->addDeferredDecrementConnectionCount(this);
     }
 
     // Once AudioContext::uninitialize() is called there's no more chances for deleteMarkedNodes() to get called, so we call here.
     // We can't call in AudioContext::~AudioContext() since it will never be called as long as any AudioNode is alive
     // because AudioNodes keep a reference to the context.
-    if (context().isAudioThreadFinished())
-        context().deleteMarkedNodes();
+    if (context->isAudioThreadFinished())
+        context->deleteMarkedNodes();
 }
 
 void AudioNode::decrementConnectionCountWithLock()
@@ -642,7 +646,7 @@ void AudioNode::markNodeForDeletionIfNecessary()
         output->disconnectAll(); // This will deref() nodes we're connected to.
 
     // Mark for deletion at end of each render quantum or when context shuts down.
-    context().markForDeletion(*this);
+    protect(context())->markForDeletion(*this);
     m_isMarkedForDeletion = true;
 }
 
@@ -655,14 +659,15 @@ void AudioNode::unmarkNodeForDeletionIfNecessary()
         return;
 
     m_isMarkedForDeletion = false;
-    context().unmarkForDeletion(*this);
+    protect(context())->unmarkForDeletion(*this);
 }
 
 void AudioNode::ref() const
 {
     ++m_normalRefCount;
 
-    if (auto locker = context().isAudioThread() ? Locker<RecursiveLock>::tryLock(context().graphLock()) : Locker { context().graphLock() })
+    Ref context = this->context();
+    if (auto locker = context->isAudioThread() ? Locker<RecursiveLock>::tryLock(context->graphLock()) : Locker { context->graphLock() })
         const_cast<AudioNode*>(this)->unmarkNodeForDeletionIfNecessary();
 
 #if DEBUG_AUDIONODE_REFERENCES
@@ -672,21 +677,23 @@ void AudioNode::ref() const
 
 void AudioNode::deref() const
 {
+    Ref context = const_cast<BaseAudioContext&>(this->context());
+
     // The actual work for deref happens completely within the audio context's graph lock.
     // In the case of the audio thread, we must use a tryLock to avoid glitches.
-    if (auto locker = context().isAudioThread() ? Locker<RecursiveLock>::tryLock(context().graphLock()) : Locker { context().graphLock() })
+    if (auto locker = context->isAudioThread() ? Locker<RecursiveLock>::tryLock(context->graphLock()) : Locker { context->graphLock() })
         derefWithLock();
     else {
         // We were unable to get the lock, so put this in a list to finish up later.
-        ASSERT(context().isAudioThread());
-        const_cast<BaseAudioContext&>(context()).addDeferredDeref(this);
+        ASSERT(context->isAudioThread());
+        context->addDeferredDeref(this);
     }
 
     // Once AudioContext::uninitialize() is called there's no more chances for deleteMarkedNodes() to get called, so we call here.
     // We can't call in AudioContext::~AudioContext() since it will never be called as long as any AudioNode is alive
     // because AudioNodes keep a reference to the context.
-    if (context().isAudioThreadFinished())
-        const_cast<BaseAudioContext&>(context()).deleteMarkedNodes();
+    if (context->isAudioThreadFinished())
+        context->deleteMarkedNodes();
 }
 
 void AudioNode::derefWithLock() const

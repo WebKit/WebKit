@@ -1,15 +1,10 @@
 Modules/mediacapabilities/MediaCapabilities.cpp
-Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/PushSubscription.cpp
 Modules/webaudio/BaseAudioContext.h
-Modules/webaudio/DefaultAudioDestinationNode.cpp
 Modules/webaudio/IIRFilterNode.cpp
-Modules/webaudio/MediaStreamAudioDestinationNode.cpp
 Modules/webaudio/WaveShaperNode.cpp
-Modules/webdatabase/DatabaseManager.cpp
-Modules/webdatabase/SQLTransaction.cpp
 StyleBuilderGenerated.cpp
 StyleExtractorGenerated.cpp
 accessibility/AXObjectCache.cpp
@@ -71,7 +66,6 @@ dom/ElementInternals.cpp
 dom/ElementIteratorInlines.h
 dom/EventLoop.cpp
 dom/IdTargetObserver.cpp
-dom/IdleCallbackController.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/LiveNodeListInlines.h
 dom/MouseRelatedEvent.cpp

@@ -176,8 +176,9 @@ void AudioWorkletNode::initializeAudioParameters(const Vector<AudioParamDescript
 
     Locker locker { m_processLock };
 
+    Ref context = this->context();
     for (auto& descriptor : descriptors) {
-        auto parameter = AudioParam::create(context(), descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
+        auto parameter = AudioParam::create(context, descriptor.name, descriptor.defaultValue, descriptor.minValue, descriptor.maxValue, descriptor.automationRate);
         m_parameters->add(descriptor.name, WTF::move(parameter));
     }
 
@@ -210,7 +211,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
 
     auto zeroOutput = [&] {
         for (unsigned i = 0; i < numberOfOutputs(); ++i)
-            output(i)->bus().zero();
+            protect(output(i)->bus())->zero();
     };
 
     if (!m_processLock.tryLock()) {
@@ -270,7 +271,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
     }
 
     std::optional<ExceptionDetails> exceptionDetails;
-    m_isActiveSource = m_processor->process(m_inputs, m_outputs, m_paramValuesMap, exceptionDetails);
+    m_isActiveSource = protect(m_processor)->process(m_inputs, m_outputs, m_paramValuesMap, exceptionDetails);
     if ((!m_isActiveSource && !hasActiveInputs) || exceptionDetails)
         didFinishProcessingOnRenderingThread(WTF::move(exceptionDetails));
 }
@@ -302,9 +303,9 @@ void AudioWorkletNode::updatePullStatus()
     // If no output is connected, add the node to the automatic pull list.
     // Otherwise, remove it out of the list.
     if (!hasConnectedOutput)
-        context().addAutomaticPullNode(*this);
+        protect(context())->addAutomaticPullNode(*this);
     else
-        context().removeAutomaticPullNode(*this);
+        protect(context())->removeAutomaticPullNode(*this);
 }
 
 void AudioWorkletNode::checkNumberOfChannelsForInput(AudioNodeInput* input)

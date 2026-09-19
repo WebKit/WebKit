@@ -1146,7 +1146,8 @@ static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certifi
             // A WebCrypto BigInteger is big endian with arbitrary leading zero padding, so its length says
             // nothing about its magnitude. Only what is left once the padding is skipped has to fit the
             // int the certificate generator takes.
-            auto bigInteger = parameters.publicExponent->typedSpan();
+            Ref publicExponentBuffer = *parameters.publicExponent;
+            auto bigInteger = publicExponentBuffer->typedSpan();
             size_t firstSignificantByte = 0;
             while (firstSignificantByte < bigInteger.size() && !bigInteger[firstSignificantByte])
                 ++firstSignificantByte;
@@ -1211,7 +1212,7 @@ void RTCPeerConnection::chainOperation(Ref<DeferredPromise>&& promise, Function<
         ASSERT(m_hasPendingOperation);
         if (isClosed()) {
             for (auto& operation : std::exchange(m_operations, { }))
-                operation.first->reject(ExceptionCode::InvalidStateError, "RTCPeerConnection is closed"_s);
+                protect(operation.first)->reject(ExceptionCode::InvalidStateError, "RTCPeerConnection is closed"_s);
             m_hasPendingOperation = false;
             return;
         }

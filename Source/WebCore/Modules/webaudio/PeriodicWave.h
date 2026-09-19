@@ -32,7 +32,7 @@
 #include "PeriodicWaveOptions.h"
 #include <JavaScriptCore/Forward.h>
 #include <memory>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -42,7 +42,7 @@ template<typename> class ExceptionOr;
 
 enum class ShouldDisableNormalization : bool { No, Yes };
 
-class PeriodicWave final : public RefCounted<PeriodicWave> {
+class PeriodicWave final : public ThreadSafeRefCounted<PeriodicWave, WTF::DestructionThread::Main> {
 public:
     static Ref<PeriodicWave> createSine(float sampleRate);
     static Ref<PeriodicWave> createSquare(float sampleRate);

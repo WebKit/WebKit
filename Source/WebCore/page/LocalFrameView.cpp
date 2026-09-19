@@ -4647,7 +4647,7 @@ void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
     ASSERT(document);
 
     m_scheduledToScrollToAnchor = true;
-    document->eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
+    protect(document->eventLoop())->queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

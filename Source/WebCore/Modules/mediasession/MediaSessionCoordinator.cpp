@@ -78,11 +78,12 @@ MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context
 void MediaSessionCoordinator::setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&& privateCoordinator)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_privateCoordinator)
-        m_privateCoordinator->leave();
+    if (RefPtr oldCoordinator = m_privateCoordinator)
+        oldCoordinator->leave();
     m_privateCoordinator = WTF::move(privateCoordinator);
-    m_privateCoordinator->setLogger(m_logger.copyRef(), m_logIdentifier);
-    m_privateCoordinator->setClient(*this);
+    Ref coordinator = *m_privateCoordinator;
+    coordinator->setLogger(m_logger.copyRef(), m_logIdentifier);
+    coordinator->setClient(*this);
     coordinatorStateChanged(MediaSessionCoordinatorState::Waiting);
 }
 
@@ -116,7 +117,7 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
     }
     ASSERT(m_privateCoordinator, "We must be in Waiting state if no private coordinator is set");
 
-    m_privateCoordinator->join([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
+    protect(m_privateCoordinator)->join([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
@@ -152,7 +153,7 @@ void MediaSessionCoordinator::close()
     if (!m_privateCoordinator)
         return;
 
-    m_privateCoordinator->leave();
+    protect(m_privateCoordinator)->leave();
     m_privateCoordinator = nullptr;
 }
 
@@ -173,7 +174,7 @@ void MediaSessionCoordinator::seekTo(double time, DOMPromiseDeferred<void>&& pro
         return;
     }
 
-    m_privateCoordinator->seekTo(time, [protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
+    protect(m_privateCoordinator)->seekTo(time, [protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
@@ -206,7 +207,7 @@ void MediaSessionCoordinator::play(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->play([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
+    protect(m_privateCoordinator)->play([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
@@ -239,7 +240,7 @@ void MediaSessionCoordinator::pause(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    m_privateCoordinator->pause([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
+    protect(m_privateCoordinator)->pause([protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
@@ -272,7 +273,7 @@ void MediaSessionCoordinator::setTrack(const String& track, DOMPromiseDeferred<v
         return;
     }
 
-    m_privateCoordinator->setTrack(track, [protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
+    protect(m_privateCoordinator)->setTrack(track, [protectedThis = Ref { *this }, identifier, promise = WTF::move(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
             promise.reject(Exception { ExceptionCode::InvalidStateError });
             return;
@@ -305,7 +306,7 @@ void MediaSessionCoordinator::metadataChanged(const RefPtr<MediaMetadata>& metad
 
     auto identifier = metadata ? metadata->trackIdentifier() : emptyString();
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", trackIdentifier:", identifier);
-    m_privateCoordinator->trackIdentifierChanged(identifier);
+    protect(m_privateCoordinator)->trackIdentifierChanged(identifier);
 #endif
 }
 
@@ -319,15 +320,16 @@ void MediaSessionCoordinator::positionStateChanged(const std::optional<MediaPosi
     if (m_state != MediaSessionCoordinatorState::Joined)
         return;
 
-    if (!m_privateCoordinator)
+    RefPtr privateCoordinator = m_privateCoordinator;
+    if (!privateCoordinator)
         return;
 
     if (!positionState) {
-        m_privateCoordinator->positionStateChanged({ });
+        privateCoordinator->positionStateChanged({ });
         return;
     }
 
-    m_privateCoordinator->positionStateChanged(MediaPositionState { positionState->duration, positionState->playbackRate, positionState->position });
+    privateCoordinator->positionStateChanged(MediaPositionState { positionState->duration, positionState->playbackRate, positionState->position });
 }
 
 void MediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState playbackState)
@@ -340,7 +342,7 @@ void MediaSessionCoordinator::playbackStateChanged(MediaSessionPlaybackState pla
     if (!m_privateCoordinator)
         return;
 
-    m_privateCoordinator->playbackStateChanged(playbackState);
+    protect(m_privateCoordinator)->playbackStateChanged(playbackState);
 }
 
 void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState readyState)
@@ -353,7 +355,7 @@ void MediaSessionCoordinator::readyStateChanged(MediaSessionReadyState readyStat
     if (!m_privateCoordinator)
         return;
 
-    m_privateCoordinator->readyStateChanged(readyState);
+    protect(m_privateCoordinator)->readyStateChanged(readyState);
 }
 
 void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)

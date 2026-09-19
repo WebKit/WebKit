@@ -141,7 +141,7 @@ void MediaElementAudioSourceNode::provideInput(AudioBus& bus, size_t framesToPro
 
 bool MediaElementAudioSourceNode::wouldTaintOrigin()
 {
-    if (RefPtr origin = context().origin())
+    if (RefPtr origin = protect(context())->origin())
         return m_mediaElement->taintsOrigin(*origin);
 
     return true;

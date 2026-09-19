@@ -57,12 +57,13 @@ void AudioNodeOutput::setNumberOfChannels(unsigned numberOfChannels)
 
     m_desiredNumberOfChannels = numberOfChannels;
 
-    if (context().isAudioThread()) {
+    Ref context = this->context();
+    if (context->isAudioThread()) {
         // If we're in the audio thread then we can take care of it right away (we should be at the very start or end of a rendering quantum).
         updateNumberOfChannels();
     } else {
         // Let the context take care of it in the audio thread in the pre and post render tasks.
-        context().markAudioNodeOutputDirty(this);
+        context->markAudioNodeOutputDirty(this);
     }
 }
 

@@ -44,8 +44,10 @@ AudioSummingJunction::AudioSummingJunction(BaseAudioContext& context)
 
 AudioSummingJunction::~AudioSummingJunction()
 {
-    if (m_renderingStateNeedUpdating && context())
-        context()->removeMarkedSummingJunction(this);
+    if (m_renderingStateNeedUpdating) {
+        if (RefPtr context = this->context())
+            context->removeMarkedSummingJunction(this);
+    }
 }
 
 void AudioSummingJunction::markRenderingStateAsDirty()
@@ -53,7 +55,7 @@ void AudioSummingJunction::markRenderingStateAsDirty()
     ASSERT(context());
     ASSERT(context()->isGraphOwner());
     if (!m_renderingStateNeedUpdating && canUpdateState()) {
-        context()->markSummingJunctionDirty(this);
+        protect(context())->markSummingJunctionDirty(this);
         m_renderingStateNeedUpdating = true;
     }
 }

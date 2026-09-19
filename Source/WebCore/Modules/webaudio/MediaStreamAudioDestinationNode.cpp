@@ -58,7 +58,7 @@ ExceptionOr<Ref<MediaStreamAudioDestinationNode>> MediaStreamAudioDestinationNod
 MediaStreamAudioDestinationNode::MediaStreamAudioDestinationNode(BaseAudioContext& context)
     : AudioBasicInspectorNode(context, NodeTypeMediaStreamAudioDestination)
     , m_source(MediaStreamAudioSource::create(context.sampleRate()))
-    , m_stream(MediaStream::create(*context.document(), MediaStreamPrivate::create(context.document()->logger(), m_source.copyRef())))
+    , m_stream(MediaStream::create(*protect(context.document()), MediaStreamPrivate::create(protect(context.document())->logger(), m_source.copyRef())))
 {
     initialize();
 }
@@ -70,7 +70,7 @@ MediaStreamAudioDestinationNode::~MediaStreamAudioDestinationNode()
 
 void MediaStreamAudioDestinationNode::process(size_t numberOfFrames)
 {
-    m_source->consumeAudio(input(0)->bus(), numberOfFrames);
+    m_source->consumeAudio(protect(input(0)->bus()), numberOfFrames);
 }
 
 void MediaStreamAudioDestinationNode::checkNumberOfChannelsForInput(AudioNodeInput* input)

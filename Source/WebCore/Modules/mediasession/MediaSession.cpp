@@ -648,10 +648,10 @@ void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& 
     }
 
     controller->updateCaptureState(*document, isActive, kind, [weakDocument = WeakPtr { document.get() }, promise = WTF::move(promise)] (auto&& exception) mutable {
-        RefPtr protectedDocument = weakDocument.get();
-        if (!protectedDocument)
+        RefPtr document = weakDocument;
+        if (!document)
             return;
-        protectedDocument->eventLoop().queueTask(TaskSource::MediaElement, [promise = WTF::move(promise), exception = WTF::move(exception)] () mutable {
+        protect(document->eventLoop())->queueTask(TaskSource::MediaElement, [promise = WTF::move(promise), exception = WTF::move(exception)] () mutable {
             if (exception) {
                 promise.reject(WTF::move(*exception));
                 return;

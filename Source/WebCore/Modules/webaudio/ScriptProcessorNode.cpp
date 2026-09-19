@@ -86,7 +86,7 @@ void ScriptProcessorNode::initialize()
     if (isInitialized())
         return;
 
-    float sampleRate = context().sampleRate();
+    float sampleRate = protect(context())->sampleRate();
 
     // Create double buffers on both the input and output sides.
     // These AudioBuffers will be directly accessed in the main thread by JavaScript.
@@ -105,7 +105,8 @@ RefPtr<AudioBuffer> ScriptProcessorNode::createInputBufferForJS(AudioBuffer* inp
         return nullptr;
 
     // As an optimization, we reuse the same buffer as last time when possible.
-    if (!m_cachedInputBufferForJS || !inputBuffer->copyTo(*m_cachedInputBufferForJS))
+    RefPtr cachedInputBufferForJS = m_cachedInputBufferForJS;
+    if (!cachedInputBufferForJS || !inputBuffer->copyTo(*cachedInputBufferForJS))
         m_cachedInputBufferForJS = inputBuffer->clone();
 
     return m_cachedInputBufferForJS;
@@ -114,10 +115,11 @@ RefPtr<AudioBuffer> ScriptProcessorNode::createInputBufferForJS(AudioBuffer* inp
 RefPtr<AudioBuffer> ScriptProcessorNode::createOutputBufferForJS(AudioBuffer& outputBuffer) const
 {
     // As an optimization, we reuse the same buffer as last time when possible.
-    if (!m_cachedOutputBufferForJS || !m_cachedOutputBufferForJS->topologyMatches(outputBuffer))
+    RefPtr cachedOutputBufferForJS = m_cachedOutputBufferForJS;
+    if (!cachedOutputBufferForJS || !cachedOutputBufferForJS->topologyMatches(outputBuffer))
         m_cachedOutputBufferForJS = outputBuffer.clone(AudioBuffer::ShouldCopyChannelData::No);
     else
-        m_cachedOutputBufferForJS->zero();
+        cachedOutputBufferForJS->zero();
 
     return m_cachedOutputBufferForJS;
 }
@@ -213,7 +215,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
 
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.
         // We only wait for script code execution when the context is an offline one for performance reasons.
-        if (context().isOfflineContext()) {
+        if (protect(context())->isOfflineContext()) {
             callOnMainThreadAndWait([this, bufferIndex, protector = Ref { *this }] {
                 fireProcessEvent(bufferIndex);
             });
@@ -239,12 +241,13 @@ void ScriptProcessorNode::fireProcessEvent(unsigned bufferIndex)
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (context().isStopped())
+    Ref context = this->context();
+    if (context->isStopped())
         return;
 
     // Calculate playbackTime with the buffersize which needs to be processed each time when onaudioprocess is called.
     // The outputBuffer being passed to JS will be played after exhausting previous outputBuffer by double-buffering.
-    double playbackTime = (context().currentSampleFrame() + m_bufferSize) / static_cast<double>(context().sampleRate());
+    double playbackTime = (context->currentSampleFrame() + m_bufferSize) / static_cast<double>(context->sampleRate());
 
     auto inputBufferForJS = createInputBufferForJS(inputBuffer);
     auto outputBufferForJS = createOutputBufferForJS(*outputBuffer);

@@ -611,7 +611,7 @@ void WebModelPlayer::scheduleUpdateIfNeeded()
         return;
 
     m_isUpdateScheduled = true;
-    document->eventLoop().queueTask(WebCore::TaskSource::ModelElement, [protectedThis = protect(*this)] {
+    protect(document->eventLoop())->queueTask(WebCore::TaskSource::ModelElement, [protectedThis = protect(*this)] {
         protectedThis->m_isUpdateScheduled = false;
         protectedThis->update();
     });

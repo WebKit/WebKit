@@ -135,7 +135,7 @@ void PannerNode::process(size_t framesToProcess)
 
     // HRTFDatabase should be loaded before proceeding for offline audio context when m_panningModel is "HRTF".
     if (m_panningModel == PanningModelType::HRTF && !m_hrtfDatabaseLoader->isLoaded()) {
-        if (context().isOfflineContext())
+        if (protect(context())->isOfflineContext())
             m_hrtfDatabaseLoader->waitForLoaderThreadCompletion();
         else {
             destination->zero();
@@ -145,7 +145,8 @@ void PannerNode::process(size_t framesToProcess)
 
     invalidateCachedPropertiesIfNecessary();
 
-    if ((hasSampleAccurateValues() || listener().hasSampleAccurateValues()) && (shouldUseARate() || listener().shouldUseARate())) {
+    Ref listener = this->listener();
+    if ((hasSampleAccurateValues() || listener->hasSampleAccurateValues()) && (shouldUseARate() || listener->shouldUseARate())) {
         processSampleAccurateValues(destination, source, framesToProcess);
         return;
     }
@@ -180,7 +181,7 @@ void PannerNode::processOnlyAudioParams(size_t framesToProcess)
     m_orientationY->calculateSampleAccurateValues(valuesSpan);
     m_orientationZ->calculateSampleAccurateValues(valuesSpan);
 
-    listener().updateValuesIfNeeded(framesToProcess);
+    protect(listener())->updateValuesIfNeeded(framesToProcess);
 }
 
 void PannerNode::processSampleAccurateValues(AudioBus& destination, const AudioBus& source, size_t framesToProcess)
@@ -203,17 +204,18 @@ void PannerNode::processSampleAccurateValues(AudioBus& destination, const AudioB
     m_orientationZ->calculateSampleAccurateValues(std::span { orientationZ }.first(framesToProcess));
 
     // Get the automation values from the listener.
-    auto listenerX = listener().positionXValues(AudioUtilities::renderQuantumSize);
-    auto listenerY = listener().positionYValues(AudioUtilities::renderQuantumSize);
-    auto listenerZ = listener().positionZValues(AudioUtilities::renderQuantumSize);
+    Ref listener = this->listener();
+    auto listenerX = listener->positionXValues(AudioUtilities::renderQuantumSize);
+    auto listenerY = listener->positionYValues(AudioUtilities::renderQuantumSize);
+    auto listenerZ = listener->positionZValues(AudioUtilities::renderQuantumSize);
 
-    auto forwardX = listener().forwardXValues(AudioUtilities::renderQuantumSize);
-    auto forwardY = listener().forwardYValues(AudioUtilities::renderQuantumSize);
-    auto forwardZ = listener().forwardZValues(AudioUtilities::renderQuantumSize);
+    auto forwardX = listener->forwardXValues(AudioUtilities::renderQuantumSize);
+    auto forwardY = listener->forwardYValues(AudioUtilities::renderQuantumSize);
+    auto forwardZ = listener->forwardZValues(AudioUtilities::renderQuantumSize);
 
-    auto upX = listener().upXValues(AudioUtilities::renderQuantumSize);
-    auto upY = listener().upYValues(AudioUtilities::renderQuantumSize);
-    auto upZ = listener().upZValues(AudioUtilities::renderQuantumSize);
+    auto upX = listener->upXValues(AudioUtilities::renderQuantumSize);
+    auto upY = listener->upYValues(AudioUtilities::renderQuantumSize);
+    auto upZ = listener->upZValues(AudioUtilities::renderQuantumSize);
 
     // Compute the azimuth, elevation, and total gains for each position.
     std::array<double, AudioUtilities::renderQuantumSize> azimuth;
@@ -288,7 +290,7 @@ ExceptionOr<void> PannerNode::setPosition(float x, float y, float z)
     // This synchronizes with process().
     Locker locker { m_processLock };
 
-    auto now = context().currentTime();
+    auto now = protect(context())->currentTime();
 
     auto result = m_positionX->setValueAtTime(x, now);
     if (result.hasException())
@@ -315,7 +317,7 @@ ExceptionOr<void> PannerNode::setOrientation(float x, float y, float z)
     // This synchronizes with process().
     Locker locker { m_processLock };
 
-    auto now = context().currentTime();
+    auto now = protect(context())->currentTime();
 
     auto result = m_orientationX->setValueAtTime(x, now);
     if (result.hasException())
@@ -555,7 +557,7 @@ float PannerNode::distanceConeGain()
 {
     ASSERT(context().isAudioThread());
     if (!m_cachedConeGain)
-        m_cachedConeGain = calculateDistanceConeGain(position(), orientation(), listener().position(), m_distanceEffect, m_coneEffect);
+        m_cachedConeGain = calculateDistanceConeGain(position(), orientation(), protect(listener())->position(), m_distanceEffect, m_coneEffect);
     return *m_cachedConeGain;
 }
 

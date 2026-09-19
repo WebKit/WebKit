@@ -617,7 +617,7 @@ void HTMLDocumentParser::notifyFinished(PendingScript& pendingScript)
             // This ensures it runs after ALL microtasks (including any created during execution) complete.
             RefPtr document = this->document();
             if (document->eventLoop().microtaskQueue().isPerformingCheckpoint()) {
-                document->eventLoop().queueTask(TaskSource::InternalAsyncTask, [protectedThis = Ref { *this }] {
+                protect(document->eventLoop())->queueTask(TaskSource::InternalAsyncTask, [protectedThis = Ref { *this }] {
                     if (protectedThis->isStopped())
                         return;
                     protectedThis->attemptToRunDeferredScriptsAndEnd();

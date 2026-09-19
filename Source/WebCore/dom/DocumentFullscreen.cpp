@@ -526,7 +526,7 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
     }
 
     // Return promise, and run the remaining steps in parallel.
-    exitingDocument->eventLoop().queueTask(TaskSource::MediaElement, [scope = CompletionHandlerScope(WTF::move(completionHandler)), resetPendingExitFullscreenScope = WTF::move(resetPendingExitFullscreenScope), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER]() mutable {
+    protect(exitingDocument->eventLoop())->queueTask(TaskSource::MediaElement, [scope = CompletionHandlerScope(WTF::move(completionHandler)), resetPendingExitFullscreenScope = WTF::move(resetPendingExitFullscreenScope), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER]() mutable {
         auto completionHandler = scope.release();
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)

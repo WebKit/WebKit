@@ -133,8 +133,8 @@ AuthenticationExtensionsClientOutputsJSON AuthenticationExtensionsClientOutputs:
         std::optional<AuthenticationExtensionsClientOutputsJSON::PRFValuesJSON> prfValues;
         if (prf->results) {
             prfValues = AuthenticationExtensionsClientOutputsJSON::PRFValuesJSON {
-                base64URLEncodeToString(prf->results->first->span()),
-                prf->results->second ? base64URLEncodeToString(prf->results->second->span()) : nullString(),
+                base64URLEncodeToString(protect(prf->results->first)->span()),
+                prf->results->second ? base64URLEncodeToString(protect(prf->results->second)->span()) : nullString(),
             };
         }
         result.prf = AuthenticationExtensionsClientOutputsJSON::PRFOutputsJSON {

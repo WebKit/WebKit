@@ -60,11 +60,11 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
     if (!successCallback && !errorCallback)
         return;
 
-    protect(filesystem())->getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTF::move(matches), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](auto&& result) mutable {
+    protect(filesystem())->getEntry(context, *this, path, flags, [pendingActivity = makePendingActivity(*this), matches = WTF::move(matches), successCallback = WTF::move(successCallback), errorCallback = WTF::move(errorCallback)](ExceptionOr<Ref<FileSystemEntry>>&& result) mutable {
         RefPtr document = pendingActivity->object().document();
         if (result.hasException()) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), exception = result.releaseException(), pendingActivity = WTF::move(pendingActivity)]() mutable {
+                protect(document->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), exception = result.releaseException(), pendingActivity = WTF::move(pendingActivity)]() mutable {
                     errorCallback->invoke(DOMException::create(WTF::move(exception)));
                 });
             }
@@ -73,14 +73,14 @@ void FileSystemDirectoryEntry::getEntry(ScriptExecutionContext& context, const S
         auto entry = result.releaseReturnValue();
         if (!matches(entry)) {
             if (errorCallback && document) {
-                document->eventLoop().queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), pendingActivity = WTF::move(pendingActivity)]() mutable {
+                protect(document->eventLoop())->queueTask(TaskSource::Networking, [errorCallback = WTF::move(errorCallback), pendingActivity = WTF::move(pendingActivity)]() mutable {
                     errorCallback->invoke(DOMException::create(Exception { ExceptionCode::TypeMismatchError, "Entry at given path does not match expected type"_s }));
                 });
             }
             return;
         }
         if (successCallback && document) {
-            document->eventLoop().queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback), entry = WTF::move(entry), pendingActivity = WTF::move(pendingActivity)]() mutable {
+            protect(document->eventLoop())->queueTask(TaskSource::Networking, [successCallback = WTF::move(successCallback), entry = WTF::move(entry), pendingActivity = WTF::move(pendingActivity)]() mutable {
                 successCallback->invoke(WTF::move(entry));
             });
         }

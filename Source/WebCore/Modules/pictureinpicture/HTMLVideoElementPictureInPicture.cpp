@@ -53,7 +53,7 @@ HTMLVideoElementPictureInPicture::HTMLVideoElementPictureInPicture(HTMLVideoElem
     : m_videoElement(videoElement)
     , m_pictureInPictureWindow(PictureInPictureWindow::create(protect(videoElement.document())))
 #if !RELEASE_LOG_DISABLED
-    , m_logger(protect(videoElement)->document().logger())
+    , m_logger(protect(protect(videoElement)->document())->logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
@@ -116,7 +116,8 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         return;
     }
 
-    bool userActivationRequired = !protect(videoElement)->document().pictureInPictureElement();
+    Ref document = protect(videoElement)->document();
+    bool userActivationRequired = !document->pictureInPictureElement();
     if (userActivationRequired && !window->hasTransientActivation()) {
         promise->reject(ExceptionCode::NotAllowedError, "The request is not triggered by a user activation."_s);
         return;
@@ -129,7 +130,7 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
     });
 
     Ref videoElementPictureInPicture = HTMLVideoElementPictureInPicture::from(videoElement);
-    if (protect(videoElement)->document().pictureInPictureElement() == &videoElement) {
+    if (document->pictureInPictureElement() == &videoElement) {
         promise->resolve<IDLInterface<PictureInPictureWindow>>(videoElementPictureInPicture->m_pictureInPictureWindow);
         return;
     }
@@ -174,8 +175,8 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     // 5.1. If pictureInPictureElement is not null, run the exit Picture-in-Picture algorithm.
     //      NOTE: This step is explicitly outside the EventQueue below so that the exit steps
     //      happen both within their own event queue task and before the steps below.
-    if (RefPtr existing = videoElement->document().pictureInPictureElement())
-        HTMLVideoElementPictureInPicture::from(*existing).didExitPictureInPicture();
+    if (RefPtr existing = protect(videoElement->document())->pictureInPictureElement())
+        protect(HTMLVideoElementPictureInPicture::from(*existing))->didExitPictureInPicture();
 
     ActiveDOMObject::queueTaskKeepingObjectAlive(*videoElement, TaskSource::MediaElement, [enterPictureInPicturePromise = std::exchange(m_enterPictureInPicturePromise, nullptr), pictureInPictureWindow = m_pictureInPictureWindow](auto& videoElement) mutable {
 
@@ -207,7 +208,7 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
 
     INFO_LOG(LOGIDENTIFIER);
     m_pictureInPictureWindow->close();
-    videoElement->document().setPictureInPictureElement(nullptr);
+    protect(videoElement->document())->setPictureInPictureElement(nullptr);
 
     ActiveDOMObject::queueTaskKeepingObjectAlive(*videoElement, TaskSource::MediaElement, [exitPictureInPicturePromise = std::exchange(m_exitPictureInPicturePromise, nullptr), pictureInPictureWindow = m_pictureInPictureWindow](auto& videoElement) mutable {
 

@@ -107,11 +107,12 @@ void DefaultAudioDestinationNode::uninitialize()
 void DefaultAudioDestinationNode::clearDestination()
 {
     ASSERT(m_destination);
+    RefPtr destination = m_destination;
     if (m_wasDestinationStarted) {
-        m_destination->stop();
+        destination->stop();
         m_wasDestinationStarted = false;
     }
-    m_destination->clearCallback();
+    destination->clearCallback();
     m_destination = nullptr;
 }
 
@@ -121,7 +122,7 @@ void DefaultAudioDestinationNode::createDestination()
     ASSERT(!m_destination);
     m_destination = platformStrategies()->mediaStrategy()->createAudioDestination({ *this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), sampleRate()
 #if PLATFORM(IOS_FAMILY)
-        , context().sceneIdentifier()
+        , protect(context())->sceneIdentifier()
 #endif
         });
 }
@@ -133,7 +134,7 @@ void DefaultAudioDestinationNode::recreateDestination()
     createDestination();
     if (wasDestinationStarted) {
         m_wasDestinationStarted = true;
-        m_destination->start(dispatchToRenderThreadFunction());
+        protect(m_destination)->start(dispatchToRenderThreadFunction());
     }
 }
 
@@ -174,20 +175,20 @@ void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(std::opt
     };
 
     m_wasDestinationStarted = true;
-    m_destination->start(dispatchToRenderThreadFunction(), WTF::move(innerCompletionHandler));
+    protect(m_destination)->start(dispatchToRenderThreadFunction(), WTF::move(innerCompletionHandler));
 }
 
 void DefaultAudioDestinationNode::resume(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {
-        context().postTask([completionHandler = WTF::move(completionHandler)]() mutable {
+        protect(context())->postTask([completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
         });
         return;
     }
     m_wasDestinationStarted = true;
-    m_destination->start(dispatchToRenderThreadFunction(), [completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    protect(m_destination)->start(dispatchToRenderThreadFunction(), [completionHandler = WTF::move(completionHandler)](bool success) mutable {
         completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to start the audio device"_s }));
     });
 }
@@ -196,14 +197,14 @@ void DefaultAudioDestinationNode::suspend(CompletionHandler<void(std::optional<E
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {
-        context().postTask([completionHandler = WTF::move(completionHandler)]() mutable {
+        protect(context())->postTask([completionHandler = WTF::move(completionHandler)]() mutable {
             completionHandler(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
         });
         return;
     }
 
     m_wasDestinationStarted = false;
-    m_destination->stop([completionHandler = WTF::move(completionHandler)](bool success) mutable {
+    protect(m_destination)->stop([completionHandler = WTF::move(completionHandler)](bool success) mutable {
         completionHandler(success ? std::nullopt : std::make_optional(Exception { ExceptionCode::InvalidStateError, "Failed to stop the audio device"_s }));
     });
 }
@@ -213,15 +214,16 @@ void DefaultAudioDestinationNode::restartRendering()
     if (!m_wasDestinationStarted)
         return;
 
-    m_destination->stop();
-    m_destination->start(dispatchToRenderThreadFunction());
+    RefPtr destination = m_destination;
+    destination->stop();
+    destination->start(dispatchToRenderThreadFunction());
 }
 
 void DefaultAudioDestinationNode::close(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isInitialized());
     uninitialize();
-    context().postTask(WTF::move(completionHandler));
+    protect(context())->postTask(WTF::move(completionHandler));
 }
 
 unsigned DefaultAudioDestinationNode::maxChannelCount() const
@@ -254,12 +256,12 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
 
 unsigned DefaultAudioDestinationNode::framesPerBuffer() const
 {
-    return m_destination ? m_destination->framesPerBuffer() : 0;
+    return m_destination ? protect(m_destination)->framesPerBuffer() : 0;
 }
 
 MediaTime DefaultAudioDestinationNode::outputLatency() const
 {
-    return m_destination ? m_destination->outputLatency() : MediaTime::zeroTime();
+    return m_destination ? protect(m_destination)->outputLatency() : MediaTime::zeroTime();
 }
 
 void DefaultAudioDestinationNode::render(AudioBus& destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)
@@ -290,19 +292,19 @@ void DefaultAudioDestinationNode::isPlayingDidChange()
 
 void DefaultAudioDestinationNode::updateIsEffectivelyPlayingAudio()
 {
-    bool isEffectivelyPlayingAudio = m_destination && m_destination->isPlaying() && !m_isSilent;
+    bool isEffectivelyPlayingAudio = m_destination && protect(m_destination)->isPlaying() && !m_isSilent;
     if (m_isEffectivelyPlayingAudio == isEffectivelyPlayingAudio)
         return;
 
     m_isEffectivelyPlayingAudio = isEffectivelyPlayingAudio;
-    context().isPlayingAudioDidChange();
+    protect(context())->isPlayingAudioDidChange();
 }
 
 #if PLATFORM(IOS_FAMILY)
 void DefaultAudioDestinationNode::setSceneIdentifier(const String& sceneIdentifier)
 {
-    if (m_destination)
-        m_destination->setSceneIdentifier(sceneIdentifier);
+    if (RefPtr destination = m_destination)
+        destination->setSceneIdentifier(sceneIdentifier);
 }
 #endif
 

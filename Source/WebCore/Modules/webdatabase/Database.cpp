@@ -186,8 +186,8 @@ static inline DatabaseGUID guidForOriginAndName(const String& origin, const Stri
 
 Database::Database(DatabaseContext& context, const String& name, const String& expectedVersion, const String& displayName, unsigned long long estimatedSize)
     : m_document(*context.document())
-    , m_contextThreadSecurityOrigin(protect(m_document)->securityOrigin().isolatedCopy())
-    , m_databaseThreadSecurityOrigin(protect(m_document)->securityOrigin().isolatedCopy())
+    , m_contextThreadSecurityOrigin(protect(protect(m_document)->securityOrigin())->isolatedCopy())
+    , m_databaseThreadSecurityOrigin(protect(protect(m_document)->securityOrigin())->isolatedCopy())
     , m_databaseContext(context)
     , m_name((name.isNull() ? emptyString() : name).isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())

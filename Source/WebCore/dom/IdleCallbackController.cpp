@@ -60,7 +60,7 @@ int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callbac
             RefPtr document = checkedThis->m_document.get();
             if (!document)
                 return;
-            document->eventLoop().queueTask(TaskSource::IdleTask, [weakThis = WTF::move(weakThis), handle]() {
+            protect(document->eventLoop())->queueTask(TaskSource::IdleTask, [weakThis = WTF::move(weakThis), handle]() {
                 if (CheckedPtr checkedThis = weakThis.get())
                     checkedThis->invokeIdleCallbackTimeout(handle);
             });
@@ -104,7 +104,7 @@ void IdleCallbackController::startIdlePeriod()
 void IdleCallbackController::queueTaskToInvokeIdleCallbacks()
 {
     Ref document = *m_document;
-    document->eventLoop().queueTask(TaskSource::IdleTask, [weakThis = WeakPtr { *this }, document] {
+    protect(document->eventLoop())->queueTask(TaskSource::IdleTask, [weakThis = WeakPtr { *this }, document] {
         CheckedPtr checkedThis = weakThis.get();
         if (!checkedThis)
             return;

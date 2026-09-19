@@ -489,7 +489,7 @@ void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdent
                 return;
             }
 
-            document->eventLoop().queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTF::move(callback)] () mutable {
+            protect(document->eventLoop())->queueTask(TaskSource::Networking, [document = RefPtr { document }, callback = WTF::move(callback)] () mutable {
                 RefPtr frame = document ? document->frame() : nullptr;
                 RefPtr page = frame ? frame->page() : nullptr;
 

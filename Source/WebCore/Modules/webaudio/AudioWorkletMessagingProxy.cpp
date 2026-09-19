@@ -53,16 +53,18 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
     auto jsRuntimeFlags = document->settings().javaScriptRuntimeFlags();
     RELEASE_ASSERT(document->sessionID());
 
+    RefPtr audioContext = worklet.audioContext();
+
     return {
         document->url(),
         jsRuntimeFlags,
-        worklet.audioContext() ? worklet.audioContext()->sampleRate() : 0.0f,
-        worklet.audioContext() ? worklet.audioContext()->currentSampleFrame() : 0,
+        audioContext ? audioContext->sampleRate() : 0.0f,
+        audioContext ? audioContext->currentSampleFrame() : 0,
         worklet.identifier(),
         *document->sessionID(),
         document->settingsValues(),
         document->referrerPolicy(),
-        worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false,
+        audioContext ? !audioContext->isOfflineContext() : false,
         document->advancedPrivacyProtections(),
         document->noiseInjectionHashSalt(),
         document->agentClusterID(),
@@ -130,8 +132,8 @@ void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&&
 void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)
 {
     ScriptExecutionContext::postTaskTo(m_documentIdentifier, [protectedThis = Ref { *this }, task = WTF::move(task)](ScriptExecutionContext&) {
-        if (protectedThis->m_worklet)
-            task(*protectedThis->m_worklet);
+        if (RefPtr worklet = protectedThis->m_worklet)
+            task(*worklet);
     });
 }
 

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct WebCodecsAudioInternalData {
-    size_t memoryCost() const { return audioData ? audioData->memoryCost() : 0; }
+    size_t memoryCost() const { return audioData ? protect(audioData)->memoryCost() : 0; }
 
     RefPtr<PlatformRawAudioData> audioData;
 };

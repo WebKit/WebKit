@@ -62,7 +62,7 @@ Ref<RTCRtpTransformableFrame> RTCEncodedFrame::rtcFrame(JSC::VM& vm, ShouldNeute
     if (shouldNeuter == ShouldNeuter::Yes && !m_isNeutered) {
         m_isNeutered = true;
         if (m_data) {
-            protect(m_frame)->setData(m_data->span());
+            protect(m_frame)->setData(protect(m_data)->span());
 
             JSC::ArrayBufferContents emptyBuffer;
             bool result = protect(m_data)->transferTo(vm, emptyBuffer);
