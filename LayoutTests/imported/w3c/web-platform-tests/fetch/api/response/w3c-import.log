@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-consume.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error-from-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-error.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-form-data-content-disposition.tentative.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-form-data.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-from-stream.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/response/response-headers-guard.any.js

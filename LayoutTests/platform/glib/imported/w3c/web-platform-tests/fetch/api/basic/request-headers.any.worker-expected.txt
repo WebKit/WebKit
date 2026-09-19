@@ -24,4 +24,5 @@ PASS Fetch with POST and mode "no-cors" needs an Origin header
 PASS Fetch with PUT and mode "same-origin" needs an Origin header
 PASS Fetch with TacO and mode "same-origin" needs an Origin header
 PASS Fetch with TacO and mode "cors" needs an Origin header
+PASS Fetch with POST with FormData body sets Content-Length
 
