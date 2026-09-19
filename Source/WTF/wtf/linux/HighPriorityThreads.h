@@ -33,11 +33,11 @@ typedef struct _GDBusProxy GDBusProxy;
 
 namespace WTF {
 
-class RealTimeThreads : public CanMakeWeakPtr<RealTimeThreads> {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(RealTimeThreads);
-    friend class LazyNeverDestroyed<RealTimeThreads>;
+class HighPriorityThreads : public CanMakeWeakPtr<HighPriorityThreads> {
+    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HighPriorityThreads);
+    friend class LazyNeverDestroyed<HighPriorityThreads>;
 public:
-    WTF_EXPORT_PRIVATE static RealTimeThreads& singleton();
+    WTF_EXPORT_PRIVATE static HighPriorityThreads& singleton();
 
     // Do nothing since this is a singleton.
     void ref() const { }
@@ -48,28 +48,26 @@ public:
     WTF_EXPORT_PRIVATE void setEnabled(bool);
 
 private:
-    RealTimeThreads();
+    HighPriorityThreads();
 
-    void promoteThreadToRealTime(const WTF::Thread&);
-    void demoteThreadFromRealTime(const WTF::Thread&);
-    void demoteAllThreadsFromRealTime();
+    void applyState(const WTF::Thread&, Thread::SchedulingState);
 
 #if USE(GLIB)
-    void realTimeKitMakeThreadRealTime(uint64_t processID, uint64_t threadID, uint32_t priority);
+    void realTimeKitMakeThreadHighPriority(uint64_t processID, uint64_t threadID, int niceLevel);
     void scheduleDiscardRealTimeKitProxy();
     void discardRealTimeKitProxyTimerFired();
-    void setupSignalHandler();
-    static gboolean signalCallback(gint, GIOCondition, gpointer);
 #endif
 
     Ref<ThreadGroup> m_threadGroup;
-    bool m_enabled { true };
+    // Every registered thread shares this state.
+    Thread::SchedulingState m_state { Thread::SchedulingState::Full };
 #if USE(GLIB)
     std::optional<GRefPtr<GDBusProxy>> m_realTimeKitProxy;
+    std::optional<int> m_minNiceLevel; // min nice level we have permission to set.
     RunLoop::Timer m_discardRealTimeKitProxyTimer;
 #endif
 };
 
 } // namespace WTF
 
-using WTF::RealTimeThreads;
+using WTF::HighPriorityThreads;

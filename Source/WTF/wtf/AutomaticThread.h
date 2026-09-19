@@ -140,7 +140,9 @@ protected:
     AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, Seconds timeout = 10_s);
 
     AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, ThreadType, Seconds timeout = 10_s);
-    
+
+    AutomaticThread(const AbstractLocker&, Box<Lock>, Ref<AutomaticThreadCondition>&&, ThreadType, ThreadQOS, Seconds timeout = 10_s);
+
     // To understand PollResult and WorkResult, imagine that poll() and work() are being called like
     // so:
     //
@@ -198,6 +200,7 @@ protected:
     const Ref<AutomaticThreadCondition> m_condition;
     Seconds m_timeout;
     ThreadType m_threadType { ThreadType::Unknown };
+    ThreadQOS m_qos { defaultThreadQOS };
     bool m_isRunning { true };
     bool m_isWaiting { false };
     bool m_hasUnderlyingThread { false };
