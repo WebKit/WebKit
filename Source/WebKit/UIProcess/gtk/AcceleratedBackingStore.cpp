@@ -30,8 +30,11 @@
 #include "AcceleratedSurfaceMessages.h"
 #include "DRMMainDevice.h"
 #include "Display.h"
+#include "DrawingAreaMessages.h"
+#include "DrawingAreaProxy.h"
 #include "HardwareAccelerationManager.h"
 #include "LayerTreeContext.h"
+#include "MessageSenderInlines.h"
 #include "RendererBufferTransportMode.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -782,11 +785,23 @@ void AcceleratedBackingStore::frameDone()
 
 void AcceleratedBackingStore::realize()
 {
+    if (!std::exchange(m_needsFrame, false) || m_pendingBuffer)
+        return;
+
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return;
+
+    if (RefPtr drawingArea = webPage->drawingArea())
+        drawingArea->send(Messages::DrawingArea::DidDiscardBackingStore());
 }
 
 void AcceleratedBackingStore::unrealize()
 {
-    m_committedBuffer = nullptr;
+    if (auto buffer = std::exchange(m_committedBuffer, nullptr)) {
+        m_needsFrame = true;
+        buffer->release();
+    }
 
     if (m_gdkGLContext && m_gdkGLContext.get() == gdk_gl_context_get_current())
         gdk_gl_context_clear_current();

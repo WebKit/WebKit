@@ -3546,6 +3546,12 @@ RendererBufferDescription webkitWebViewBaseGetRendererBufferDescription(WebKitWe
 
 static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
 {
+    while (g_main_context_pending(nullptr))
+        g_main_context_iteration(nullptr, TRUE);
+
+    if (!gtk_widget_get_realized(view))
+        return nullptr;
+
 #if USE(GTK4)
     int width = gtk_widget_get_width(view);
     int height = gtk_widget_get_height(view);
@@ -3554,8 +3560,8 @@ static SkImage* webkitWebViewBaseSnapshotFromWidget(GtkWidget* view)
     int height = gtk_widget_get_allocated_height(view);
 #endif
 
-    while (g_main_context_pending(nullptr))
-        g_main_context_iteration(nullptr, TRUE);
+    if (width <= 0 || height <= 0)
+        return nullptr;
 
     RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height));
     RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));

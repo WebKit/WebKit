@@ -267,6 +267,7 @@ private:
     RefPtr<Buffer> m_committedBuffer;
     Rects m_pendingDamageRects;
     HashMap<uint64_t, RefPtr<Buffer>> m_buffers;
+    bool m_needsFrame { false };
 };
 
 } // namespace WebKit

@@ -1,0 +1,9 @@
+PASS: The initial view paints red.
+PASS: A detached view has no snapshot.
+PASS: Red content returns after reparenting an unchanged view.
+PASS: Red content returns after reparenting in one UI callback.
+PASS: Red content returns after repeated reparenting without damage.
+PASS: Changed content paints while reparenting.
+PASS: Content remains visible after hiding and showing the view.
+PASS: Resizing a detached view reaches the page.
+PASS: Changed content returns after reparenting a hidden and resized view.
