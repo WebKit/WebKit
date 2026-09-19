@@ -84,13 +84,11 @@ enum class GridAvoidanceReason : uint8_t {
     RelativeGridItemHasPercentageInset,
 
     GridItemColumnStartHasLineName,
-    GridItemColumnStartHasNegativeLineNumber,
     GridItemColumnStartHasSpan,
     GridItemHasColumnStartOutsideExplicitGrid,
     GridItemHasUnsupportedColumnEnd,
 
     GridItemRowStartHasLineName,
-    GridItemRowStartHasNegativeLineNumber,
     GridItemRowStartHasSpan,
     GridItemHasRowStartOutsideExplicitGrid,
     GridItemHasUnsupportedRowEnd,
@@ -110,7 +108,6 @@ static bool avoidanceReasonIsColumnPlacementRelated(GridAvoidanceReason gridAvoi
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
-    case GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber:
     case GridAvoidanceReason::GridItemColumnStartHasSpan:
     case GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid:
     case GridAvoidanceReason::GridItemHasUnsupportedColumnEnd:
@@ -124,7 +121,6 @@ static bool avoidanceReasonIsRowPlacementRelated(GridAvoidanceReason gridAvoidan
 {
     switch (gridAvoidanceReason) {
     case GridAvoidanceReason::GridItemRowStartHasLineName:
-    case GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber:
     case GridAvoidanceReason::GridItemRowStartHasSpan:
     case GridAvoidanceReason::GridItemHasRowStartOutsideExplicitGrid:
     case GridAvoidanceReason::GridItemHasUnsupportedRowEnd:
@@ -158,7 +154,7 @@ static bool hasValidColumnEnd(const Style::GridPositionExplicit& explicitColumnS
             return false;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() < 0 || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
+            if (!columnEnd.namedGridLine().value.isEmpty() || columnEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateColumnsCount))
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
@@ -228,7 +224,7 @@ static bool hasValidRowEnd(const Style::GridPositionExplicit& explicitRowStart, 
             return true;
         },
         [&](const Style::GridPositionExplicit&) {
-            if (!rowEnd.namedGridLine().value.isEmpty() || rowEnd.explicitPosition() < 0 || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
+            if (!rowEnd.namedGridLine().value.isEmpty() || rowEnd.explicitPosition() > static_cast<int>(linesFromGridTemplateRowsCount))
                 return false;
 
             // FIXME: Multi-span items are not yet supported in intrinsic sizing
@@ -541,8 +537,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 auto columnStartLineNumber = explicitPosition.position.value;
                 if (!columnStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemColumnStartHasLineName;
-                if (columnStartLineNumber < 0)
-                    return GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber;
                 if (columnStartLineNumber > static_cast<int>(linesFromGridTemplateColumnsCount))
                     return GridAvoidanceReason::GridItemHasColumnStartOutsideExplicitGrid;
                 if (!hasValidColumnEnd(explicitPosition, gridItemStyle->gridItemColumnEnd(), linesFromGridTemplateColumnsCount))
@@ -573,8 +567,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 auto rowStartLineNumber = explicitPosition.position.value;
                 if (!rowStart.namedGridLine().value.isEmpty())
                     return GridAvoidanceReason::GridItemRowStartHasLineName;
-                if (rowStartLineNumber < 0)
-                    return GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber;
                 if (rowStartLineNumber > static_cast<int>(linesFromGridTemplateRowsCount))
                     return GridAvoidanceReason::GridItemHasRowStartOutsideExplicitGrid;
 
@@ -797,9 +789,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemColumnStartHasLineName:
         stream << "grid item column start has line name";
         break;
-    case GridAvoidanceReason::GridItemColumnStartHasNegativeLineNumber:
-        stream << "grid item column start has negative line number";
-        break;
     case GridAvoidanceReason::GridItemColumnStartHasSpan:
         stream << "grid item column start has span";
         break;
@@ -811,9 +800,6 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
         break;
     case GridAvoidanceReason::GridItemRowStartHasLineName:
         stream << "grid item row start has line name";
-        break;
-    case GridAvoidanceReason::GridItemRowStartHasNegativeLineNumber:
-        stream << "grid item row start has negative line number";
         break;
     case GridAvoidanceReason::GridItemRowStartHasSpan:
         stream << "grid item row start has span";
