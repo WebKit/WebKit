@@ -149,21 +149,9 @@ static bool shouldDisableTLS(HTTPServer::Protocol protocol)
     }
 }
 
-static bool useSwiftImplementation(HTTPServer::Protocol protocol)
+static bool useSwiftImplementation(HTTPServer::Protocol)
 {
-    switch (protocol) {
-    case HTTPServer::Protocol::Http:
-    case HTTPServer::Protocol::Https:
-    case HTTPServer::Protocol::HttpsWithLegacyTLS:
-    case HTTPServer::Protocol::HttpsProxy:
-    case HTTPServer::Protocol::HttpsProxyWithAuthentication:
-    case HTTPServer::Protocol::Http2Raw:
-    case HTTPServer::Protocol::Http2:
-    case HTTPServer::Protocol::Http2Proxy:
-        return true;
-    case HTTPServer::Protocol::Http3:
-        return false;
-    }
+    return true;
 }
 
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)

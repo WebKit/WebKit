@@ -358,9 +358,41 @@ extension HTTPServerCore {
             fatalError("HTTP messaging is not available in this configuration")
             #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
 
-        default:
-            fatalError("not yet ported")
+        case .http3:
+            #if HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
+            let quic = makeQUICOptions(identity: identity ?? TestCertificates.identity, verifier: verifier)
+
+            let parameters = NWParameters(quic: quic)
+                .serverMode(true)
+                .attachProtocolListener(true)
+            parameters.defaultProtocolStack.applicationProtocols.insert(Self.makeHTTPMessagingOptions(), at: 0)
+
+            return parameters
+            #else
+            fatalError("HTTP messaging is not available in this configuration")
+            #endif // HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING
         }
+    }
+
+    fileprivate static func makeQUICOptions(
+        identity: SecIdentity,
+        verifier: sec_protocol_verify_t?
+    ) -> NWProtocolQUIC.Options {
+        let options = NWProtocolQUIC.Options(alpn: ["h3"])
+        options.direction = .unidirectional
+
+        let securityOptions = options.securityProtocolOptions
+
+        // `sec_identity_create` nullability is mis-annotated when exposed to Swift.
+        // swift-format-ignore: NeverForceUnwrap
+        sec_protocol_options_set_local_identity(securityOptions, sec_identity_create(identity)!)
+
+        if let verifier {
+            sec_protocol_options_set_peer_authentication_required(securityOptions, true)
+            sec_protocol_options_set_verify_block(securityOptions, verifier, .main)
+        }
+
+        return options
     }
 
     #if hasAttribute(diagnose)
