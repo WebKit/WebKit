@@ -27,8 +27,8 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/WebCodecsEncodedVideoChunkType.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ struct WebCodecsEncodedVideoChunkData {
     WebCodecsEncodedVideoChunkType type { WebCodecsEncodedVideoChunkType::Key };
     int64_t timestamp { 0 };
     std::optional<uint64_t> duration { 0 };
-    Vector<uint8_t> buffer;
+    Ref<SharedBuffer> buffer;
 };
 
 }

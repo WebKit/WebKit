@@ -232,12 +232,11 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
                 if (encoder.state() != WebCodecsCodecState::Configured || encoder.m_encoderCount != encoderCount)
                     return;
 
-                auto chunk = WebCodecsEncodedAudioChunk::create(WebCodecsEncodedAudioChunk::Init {
+                auto chunk = WebCodecsEncodedAudioChunk::create(
                     result.isKeyFrame ? WebCodecsEncodedAudioChunkType::Key : WebCodecsEncodedAudioChunkType::Delta,
                     result.timestamp,
                     result.duration,
-                    JSC::ArrayBuffer::create(result.data)
-                });
+                    SharedBuffer::create(WTF::move(result.data)));
                 encoder.m_output->invoke(WTF::move(chunk), encoder.createEncodedChunkMetadata());
             });
         });

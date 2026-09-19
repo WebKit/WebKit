@@ -95,7 +95,7 @@ struct WebCore::WebCodecsEncodedVideoChunkData {
     WebCore::WebCodecsEncodedVideoChunkType type;
     int64_t timestamp;
     std::optional<uint64_t> duration;
-    Vector<uint8_t> buffer;
+    Ref<WebCore::SharedBuffer> buffer;
 };
 #endif
 
@@ -105,7 +105,7 @@ struct WebCore::WebCodecsEncodedAudioChunkData {
     WebCore::WebCodecsEncodedAudioChunkType type;
     int64_t timestamp;
     std::optional<uint64_t> duration;
-    Vector<uint8_t> buffer;
+    Ref<WebCore::SharedBuffer> buffer;
 };
 #endif
 
