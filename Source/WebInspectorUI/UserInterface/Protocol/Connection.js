@@ -79,6 +79,12 @@ InspectorBackend.Connection = class InspectorBackendConnection
             this._dispatchEvent(messageObject);
     }
 
+    close()
+    {
+        for (let sequenceId of Array.from(this._pendingResponses.keys()))
+            this._dispatchTargetDestroyedResponse(sequenceId);
+    }
+
     runAfterPendingDispatches(callback)
     {
         console.assert(typeof callback === "function");
@@ -154,6 +160,17 @@ InspectorBackend.Connection = class InspectorBackendConnection
             reject(new Error(messageObject["error"].message));
         else
             resolve(messageObject["result"]);
+    }
+
+    _dispatchTargetDestroyedResponse(sequenceId)
+    {
+        this._dispatchResponse({
+            id: sequenceId,
+            error: {
+                code: -32_000,
+                message: "Target was destroyed.",
+            },
+        });
     }
 
     _dispatchEvent(messageObject)
@@ -252,6 +269,11 @@ InspectorBackend.Connection = class InspectorBackendConnection
     _sendMessageToBackend(messageObject)
     {
         InspectorBackend.logProtocolMessage(this, InspectorBackend.ProtocolMessageType.Request, messageObject);
+
+        if (this.target?.isDestroyed) {
+            this._dispatchTargetDestroyedResponse(messageObject.id);
+            return;
+        }
 
         this.sendMessageToBackend(JSON.stringify(messageObject));
     }
