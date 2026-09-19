@@ -41,18 +41,16 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         this.addSubview(this._contentBrowser);
 
         WI.networkManager.addEventListener(WI.NetworkManager.Event.EmulatedConditionChanged, this._handleEmulatedConditionChanged, this);
+        this._handleEmulatedConditionChanged();
     }
 
     // Static
 
     static tabInfo()
     {
-        let hasEmulatedCondition = WI.networkManager.emulatedCondition !== WI.NetworkManager.EmulatedCondition.None;
-
         return {
             identifier: NetworkTabContentView.Type,
-            image: hasEmulatedCondition ? "Images/Warning.svg" : "Images/Network.svg",
-            title: hasEmulatedCondition ? WI.UIString("Network throttling is enabled") : "",
+            image: "Images/Network.svg",
             displayName: WI.UIString("Network", "Network Tab Name", "Name of Network Tab"),
         };
     }
@@ -142,6 +140,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 
         this.tabBarItem.image = hasEmulatedCondition ? "Images/Warning.svg" : "Images/Network.svg";
         this.tabBarItem.title = hasEmulatedCondition ? WI.UIString("Network throttling is enabled") : "";
+        this.tabBarItem.element.classList.toggle("emulated", hasEmulatedCondition);
     }
 };
 
