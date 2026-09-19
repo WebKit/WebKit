@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>fps-mse-clear-then-encrypted-known-key</title>
+    <script src=../../../media-resources/video-test.js></script>
+    <script src=support.js></script>
+    <script src="eme2016.js"></script>
+    <script>
+    // sinf carrying the default_KID of content/elementary-stream-*-keyid-1.*, so that a licence can be
+    // acquired before any media is appended and the parsed init data finds an existing CDM session.
+    const keyid1Sinf = new TextEncoder().encode(JSON.stringify({
+        sinf: [
+            "AAAADGZybWFtcDRhAAAAFHNjaG0AAAAAY2JjcwABAAAAAAA5c2NoaQAAADF0ZW5jAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAABENwoLj77jCjwCAAw3SqKao8=",
+        ]
+    }));
+
+    const clearVideo = '../../../media-resources/media-source/content/test-fragmented-video.mp4';
+    const clearAudio = '../../../media-resources/media-source/content/test-48kHz.m4a';
+    // test-48khz-manifest.json: init is [0, 624), the first one second of audio is [624, 1932).
+    const clearAudioFirstSecond = 1932;
+
+    window.addEventListener('load', async event => {
+        startTest().then(endTest).catch(failTest);
+    });
+
+    async function startTest() {
+        window.video = document.querySelector('video');
+        let keys = await startEME({video: video, setMediaKeys: true, capabilities: [{
+            initDataTypes: ['sinf'],
+            audioCapabilities: [{ contentType: 'audio/mp4', robustness: '' }],
+            videoCapabilities: [{ contentType: 'video/mp4', robustness: '' }],
+            distinctiveIdentifier: 'not-allowed',
+            persistentState: 'not-allowed',
+            sessionTypes: ['temporary'],
+        }]});
+
+        consoleWrite('-');
+        consoleWrite('Acquiring licence before any media is appended');
+
+        let session = keys.createSession();
+        session.generateRequest('sinf', keyid1Sinf);
+        let message = await waitFor(session, 'message');
+        await session.update(await getResponse(message));
+        consoleWrite('PROMISE: session.update() resolved');
+
+        let mediaSource = new MediaSource;
+        video.srcObject = mediaSource;
+        consoleWrite('Created mediaSource');
+        await waitFor(mediaSource, 'sourceopen');
+
+        consoleWrite('-');
+        consoleWrite('Appending Clear Video');
+
+        let videoBuffer = await createBufferAndAppend(mediaSource, 'video/mp4', clearVideo, {silent: true});
+
+        consoleWrite('Appending One Second Of Clear Audio');
+
+        let audioBuffer = mediaSource.addSourceBuffer('audio/mp4');
+        let clearAudioBuffer = await fetchBuffer(clearAudio, {silent: true});
+        audioBuffer.appendBuffer(clearAudioBuffer.slice(0, clearAudioFirstSecond));
+        await waitFor(audioBuffer, 'updateend', true);
+
+        consoleWrite('Appending Encrypted Audio for a key the CDM already holds');
+
+        let encryptedAudioStart = audioBuffer.buffered.end(0);
+        audioBuffer.timestampOffset = encryptedAudioStart;
+        await fetchAndAppend(audioBuffer, 'content/elementary-stream-audio-header-keyid-1.m4a', {silent: true});
+        await fetchAndAppend(audioBuffer, 'content/elementary-stream-audio-payload.m4a', {silent: true});
+
+        consoleWrite('-');
+        consoleWrite('Playing into the encrypted range');
+
+        let playing = waitForEventWithTimeout(video, 'playing', 10000, 'Did not start playing in time');
+        await video.play();
+        await playing;
+
+        // Reaching the encrypted range means the content key was used, so the initialisation data has
+        // been parsed and the player notified.
+        await testExpectedEventuallySilent('video.currentTime', encryptedAudioStart, '>', 10000);
+        testExpected('video.readyState', HTMLMediaElement.HAVE_FUTURE_DATA, '>=');
+
+        consoleWrite('-');
+        consoleWrite('Pausing, then resuming');
+
+        let paused = waitForEventWithTimeout(video, 'pause', 10000, 'Did not pause in time');
+        video.pause();
+        await paused;
+
+        let playingAgain = waitForEventWithTimeout(video, 'playing', 10000, 'Did not resume playing in time');
+        let playPromise = video.play();
+        await playingAgain;
+        await playPromise;
+        consoleWrite('PROMISE: video.play() resolved');
+    }
+    </script>
+</head>
+<body>
+    <video controls width="480"></video>
+</body>
+</html>

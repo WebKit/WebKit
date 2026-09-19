@@ -174,6 +174,10 @@ private:
 
     void maybeUpdateNeedsVideoLayer();
 
+#if (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setWaitingForKey(bool);
+#endif
+
     void ensureWeakOnDispatcher(Function<void(SourceBufferPrivateAVFObjC&)>&&);
     void callOnMainThreadWithPlayer(Function<void(MediaPlayerPrivateMediaSourceAVFObjC&)>&&);
     AudioVideoRenderer& NODELETE renderer() const;
@@ -194,7 +198,7 @@ private:
     const MediaSourceConfiguration m_configuration;
 
     std::optional<FloatSize> m_cachedSize WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
-    std::atomic<bool> m_waitingForKey { true };
+    std::atomic<bool> m_waitingForKey { false };
     std::optional<TrackID> m_enabledVideoTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     std::optional<TrackID> m_protectedTrackID WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get());
     RefPtr<AudioVideoRenderer> m_renderer WTF_GUARDED_BY_CAPABILITY(m_dispatcher.get()); // Never null except when detached.

@@ -1,0 +1,28 @@
+
+PROMISE: requestMediaKeySystemAccess resolved
+PROMISE: createMediaKeys resolved
+FETCH: resources/cert.der OK
+PROMISE: keys.setServerCertificate resolved
+PROMISE: setMediaKeys() resolved
+-
+Acquiring licence before any media is appended
+EVENT(message)
+PROMISE: licenseResponse resolved
+PROMISE: session.update() resolved
+Created mediaSource
+EVENT(sourceopen)
+-
+Appending Clear Video
+Appending One Second Of Clear Audio
+Appending Encrypted Audio for a key the CDM already holds
+-
+Playing into the encrypted range
+EVENT(playing)
+EXPECTED (video.readyState >= '3') OK
+-
+Pausing, then resuming
+EVENT(pause)
+EVENT(playing)
+PROMISE: video.play() resolved
+END OF TEST
+
