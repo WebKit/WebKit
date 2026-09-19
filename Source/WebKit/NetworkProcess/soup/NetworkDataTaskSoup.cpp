@@ -1023,13 +1023,15 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(SoupMessagePriority pr
 {
     switch (priority) {
     case SOUP_MESSAGE_PRIORITY_VERY_LOW:
+        return WebCore::NetworkLoadPriority::Verylow;
     case SOUP_MESSAGE_PRIORITY_LOW:
         return WebCore::NetworkLoadPriority::Low;
     case SOUP_MESSAGE_PRIORITY_NORMAL:
         return WebCore::NetworkLoadPriority::Medium;
     case SOUP_MESSAGE_PRIORITY_HIGH:
-    case SOUP_MESSAGE_PRIORITY_VERY_HIGH:
         return WebCore::NetworkLoadPriority::High;
+    case SOUP_MESSAGE_PRIORITY_VERY_HIGH:
+        return WebCore::NetworkLoadPriority::Veryhigh;
     }
 
     return WebCore::NetworkLoadPriority::Unknown;

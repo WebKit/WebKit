@@ -1546,21 +1546,22 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         int requestPriority = static_cast<int>(m_parameters.request.priority());
         int metricPriority = static_cast<int>(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority);
 
-        networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority =
-            m_parameters.request.initialPriority();
+        if (m_parameters.request.initialPriority().has_value())
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
 
         if (requestPriority != metricPriority) {
             // Priority changed, so update metric to latest value
-            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority =
-                toNetworkLoadPriority(m_parameters.request.priority());
+            WTFLogAlways("Priority changed from %d to %d for %s", metricPriority, requestPriority, m_parameters.request.url().string().utf8().data());
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
         }
     }
 
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, protect(m_bufferedData.buffer()).get(), networkLoadMetrics);
     else {
-        if (!m_bufferedData.isEmpty())
+        if (!m_bufferedData.isEmpty()) {
             sendBuffer(*protect(m_bufferedData.buffer()));
+        }
 
 #if ENABLE(CONTENT_FILTERING)
         if (RefPtr contentFilter = m_contentFilter) {

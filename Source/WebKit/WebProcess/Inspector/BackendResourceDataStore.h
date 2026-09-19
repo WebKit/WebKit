@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/CachedResource.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
@@ -40,6 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class CachedResource;
 class CertificateInfo;
 class ResourceResponse;
 }
@@ -107,6 +109,9 @@ public:
         Inspector::ResourceType type() const { return m_type; }
         void setType(Inspector::ResourceType type) { m_type = type; }
 
+        WebCore::CachedResource::Type requestResourceType() const { return m_cachedResourceType; }
+        void setRequestResourceType(WebCore::CachedResource::Type type) { m_cachedResourceType = type; }
+
         RefPtr<WebCore::TextResourceDecoder> decoder() const { return m_decoder.copyRef(); }
         void setDecoder(RefPtr<WebCore::TextResourceDecoder>&& decoder) { m_decoder = WTF::move(decoder); }
 
@@ -137,6 +142,7 @@ public:
         RefPtr<WebCore::FragmentedSharedBuffer> m_buffer;
         std::unique_ptr<WebCore::CertificateInfo> m_certificateInfo;
         Inspector::ResourceType m_type { Inspector::ResourceType::Other };
+        WebCore::CachedResource::Type m_cachedResourceType { WebCore::CachedResource::Type::RawResource };
         int m_httpStatusCode { 0 };
         bool m_base64Encoded { false };
         bool m_isContentEvicted { false };
@@ -155,7 +161,7 @@ public:
     // Gates capture of each response's TLS certificate; set from the page's certificate-display setting.
     void setSupportsShowingCertificate(bool supports) { m_settings.supportsShowingCertificate = supports; }
 
-    void resourceCreated(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, Inspector::ResourceType);
+    void resourceCreated(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, Inspector::ResourceType, WebCore::CachedResource::Type);
     void responseReceived(WebCore::ResourceLoaderIdentifier, const WebCore::ResourceResponse&, Inspector::ResourceType);
     void setResourceType(WebCore::ResourceLoaderIdentifier, Inspector::ResourceType);
     void setResourceContent(WebCore::ResourceLoaderIdentifier, const String& content, bool base64Encoded = false);
