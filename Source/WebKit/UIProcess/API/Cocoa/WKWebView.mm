@@ -7418,4 +7418,8 @@ static Vector<Ref<API::TargetedElementInfo>> elementsFromWKElements(NSArray<_WKT
 
 @end
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKWebViewAdditionsAfter.mm>)
+#import <WebKitAdditions/WKWebViewAdditionsAfter.mm>
+#endif
+
 #undef WKWEBVIEW_RELEASE_LOG

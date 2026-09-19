@@ -38,7 +38,9 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "RenderObjectInlines.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
+#include "SVGImage.h"
 #include "Settings.h"
 #include "SystemFontDatabase.h"
 #include <wtf/StdLibExtras.h>
@@ -356,6 +358,20 @@ void SettingsBase::mediaTypeOverrideChanged()
 
     page->setNeedsRecalcStyleInAllFrames();
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+void SettingsBase::axCustomColorModeStateChanged()
+{
+    if (m_page)
+        m_page->resetAXCustomColorModeActive();
+}
+
+void SettingsBase::axCustomColorModeAppearanceDetectionChanged()
+{
+    if (m_page)
+        m_page->resetAXCustomColorModeState();
+}
+#endif
 
 void SettingsBase::imagesEnabledChanged()
 {

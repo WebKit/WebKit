@@ -25,6 +25,7 @@
 from __future__ import with_statement
 import argparse
 import glob
+import io
 import os
 import re
 import sys
@@ -32,6 +33,37 @@ import sys
 import webkit.messages
 import webkit.parser
 import webkit.model
+
+
+def find_additions_fragment(receiver_name, additions_dirs):
+    for additions_dir in additions_dirs:
+        path = os.path.join(additions_dir, '%sAdditions.messages.in' % receiver_name)
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def splice_additions(source_file, receiver_name, additions_dirs):
+    fragment_path = find_additions_fragment(receiver_name, additions_dirs)
+    if not fragment_path:
+        return source_file
+
+    lines = source_file.readlines()
+    closing_brace = None
+    for index in reversed(range(len(lines))):
+        if lines[index].strip() == '}':
+            closing_brace = index
+            break
+    if closing_brace is None:
+        sys.stderr.write("Error: no closing brace in %s to splice %s into\n" % (source_file.name, fragment_path))
+        sys.exit(1)
+
+    with open(fragment_path) as fragment_file:
+        fragment_lines = [line for line in fragment_file.readlines()
+                          if not line.startswith('#') or line.startswith(('#if', '#else', '#endif'))]
+
+    return io.StringIO(''.join(lines[:closing_brace] + fragment_lines + lines[closing_brace:]))
+
 
 def main(argv):
     parser = argparse.ArgumentParser(description='Generate message receivers from input files')
@@ -42,6 +74,9 @@ def main(argv):
                         help='Write *MessageReceiver.cpp to a subdirectory mirroring the .messages.in path')
     parser.add_argument('--output-sources', metavar='FILE',
                         help='Write a unified-source list of generated *MessageReceiver.cpp paths to FILE')
+    parser.add_argument('--additions-dir', action='append', default=[], metavar='DIR',
+                        help='Directory to search for <Receiver>Additions.messages.in fragments. May be repeated; '
+                             'the first directory containing a given fragment wins.')
 
     args = parser.parse_args(argv[1:])
 
@@ -72,12 +107,11 @@ def main(argv):
         if args.preserve_subdirs:
             receiver_dirs[receiver_name] = os.path.dirname(message_receiver)
 
-        if os.path.exists('%s/%s.messages.in' % (os.getcwd(), message_receiver)):
-            with open('%s/%s.messages.in' % (os.getcwd(), message_receiver)) as source_file:
-                receiver = webkit.parser.parse(source_file)
-        else:
-            with open('%s/%s.messages.in' % (base_dir, message_receiver)) as source_file:
-                receiver = webkit.parser.parse(source_file)
+        source_path = '%s/%s.messages.in' % (os.getcwd(), message_receiver)
+        if not os.path.exists(source_path):
+            source_path = '%s/%s.messages.in' % (base_dir, message_receiver)
+        with open(source_path) as source_file:
+            receiver = webkit.parser.parse(splice_additions(source_file, receiver_name, args.additions_dir))
 
         receiver.enforce_attribute_constraints()
         receiver.enforce_opaque_ipc_types_usage()
