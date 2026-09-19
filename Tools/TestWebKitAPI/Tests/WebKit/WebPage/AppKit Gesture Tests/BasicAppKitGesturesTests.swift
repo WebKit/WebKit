@@ -471,6 +471,32 @@ extension AppKitGesturesTests.Basic {
         }
     }
 
+    @Test
+    func pressAndHoldOnLinkOpensContextMenuWithoutReleasingClick() async throws {
+        let html = """
+            <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
+            """
+        try await page.load(html: html).wait()
+
+        let linkViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "link"))
+        let linkBounds = screenBounds(ofRectInViewportCoordinates: linkViewportBounds)
+
+        await withSwizzledContextMenu {
+            await recap.play { composer in
+                composer._wk_drag(
+                    withStart: linkBounds.center,
+                    end: linkBounds.center,
+                    duration: .seconds(1.5),
+                    release: false
+                )
+            }
+        }
+
+        await recap.play { composer in
+            composer._wk_mouseUp()
+        }
+    }
+
     @Test(
         .bug(
             "rdar://179184036",
@@ -1347,7 +1373,7 @@ extension AppKitGesturesTests.Basic {
             return screenBounds(ofRectInViewportCoordinates: viewportCoordinates)
         }()
 
-        let dragEnd = CGPoint(x: linkBounds.maxX + 50, y: linkBounds.midY)
+        let dragEnd = CGPoint(x: linkBounds.center.x, y: linkBounds.midY + 200)
 
         await withSwizzledDraggingSession {
             await recap.play { composer in
@@ -1366,6 +1392,33 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == .none)
     }
 
+    @Test
+    func pressDragOnLinkInitiatesDragAndDropWhenContextMenuIsPrevented() async throws {
+        let html = """
+            <a id="link" href="https://webkit.org" style="font-size: 30px; display: block;">WebKit Link</a>
+            <script>
+            document.addEventListener("contextmenu", event => event.preventDefault());
+            </script>
+            """
+        try await page.load(html: html).wait()
+
+        let linkViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "link"))
+        let linkBounds = screenBounds(ofRectInViewportCoordinates: linkViewportBounds)
+
+        let dragEnd = CGPoint(x: linkBounds.center.x, y: linkBounds.midY + 200)
+
+        await withSwizzledDraggingSession {
+            await recap.play { composer in
+                composer._wk_drag(
+                    withStart: linkBounds.center,
+                    end: dragEnd,
+                    duration: .seconds(1.5),
+                    pressAndWait: .seconds(1.0)
+                )
+            }
+        }
+    }
+
     @Test(
         .bug("https://webkit.org/b/315155", "Gesture-driven drag-and-drop does not recognize <img> elements")
     )
@@ -1379,7 +1432,7 @@ extension AppKitGesturesTests.Basic {
         let imgViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
         let imgBounds = screenBounds(ofRectInViewportCoordinates: imgViewportBounds)
 
-        let dragEnd = CGPoint(x: imgBounds.maxX + 50, y: imgBounds.midY)
+        let dragEnd = CGPoint(x: imgBounds.center.x, y: imgBounds.midY + 200)
 
         await withSwizzledDraggingSession {
             await recap.play { composer in
@@ -1609,7 +1662,7 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        let dragEnd = CGPoint(x: imageScreenBounds.maxX + 50, y: imageScreenBounds.midY)
+        let dragEnd = CGPoint(x: imageScreenBounds.center.x, y: imageScreenBounds.midY + 200)
 
         await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
             await withSwizzledDraggingSession {

@@ -140,6 +140,18 @@ enum class ImageAnalysisDeferralOutcome : uint8_t {
     FoundText, // Image with selectable text: allow text selection; prevent drag / context menu.
 };
 
+struct CompletedImageAnalysis {
+    WebCore::ElementContext element;
+    ImageAnalysisDeferralOutcome outcome;
+
+    std::optional<ImageAnalysisDeferralOutcome> outcomeFor(const std::optional<WebCore::ElementContext>& hostElement) const
+    {
+        if (!hostElement || !element.isSameElement(*hostElement))
+            return std::nullopt;
+        return outcome;
+    }
+};
+
 } // namespace WebKit
 
 @interface WKAppKitGestureController (ImageAnalysisDeferralResolution)
@@ -234,6 +246,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<NSPressGestureRecognizer> _imageAnalysisGestureRecognizer;
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisTextSelectionDeferringGestureRecognizer;
     RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDragAndContextMenuDeferringGestureRecognizer;
+
+    std::optional<WebKit::CompletedImageAnalysis> _lastCompletedImageAnalysis;
 
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
     std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
@@ -715,13 +729,10 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     RELEASE_ASSERT(_secondaryClickGestureRecognizer == gesture);
 
-    if (gesture.state == NSGestureRecognizerStateBegan) {
-        [self _handleClickCancelled];
+    if (gesture.state != NSGestureRecognizerStateBegan)
         return;
-    }
 
-    if (gesture.state != NSGestureRecognizerStateEnded)
-        return;
+    [self _handleClickCancelled];
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     auto modifierFlags = [gesture modifierFlags];
@@ -958,19 +969,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
 
         // This dereference is guaranteed to be non-nil due to the `isAnalyzableImageForLiveText` check above.
+        const auto elementContext = *info.hostImageOrVideoElementContext;
+
+        // This dereference is guaranteed to be non-nil due to the `isAnalyzableImageForLiveText` check above.
         RetainPtr cgImage = info.image->createPlatformImage();
         if (!cgImage) {
             // An image we can't rasterize: treat it as an image without text so the press falls
             // through to drag / context menu.
             gestureDeferralToken->setOutcome(WebKit::ImageAnalysisDeferralOutcome::NoText);
+            strongSelf->_lastCompletedImageAnalysis = WebKit::CompletedImageAnalysis { elementContext, WebKit::ImageAnalysisDeferralOutcome::NoText };
             return;
         }
 
         RELEASE_LOG(ImageAnalysis, "Image analysis preflight gesture initiated.");
 
         const auto requestLocation = info.request.point;
-        // This dereference is guaranteed to be non-nil due to the `isAnalyzableImageForLiveText` check above.
-        const auto elementContext = *info.hostImageOrVideoElementContext;
 
         RetainPtr analyzerRequest = WebKit::createImageAnalyzerRequest(cgImage.get(), VKAnalysisTypeText);
         const auto startTime = MonotonicTime::now();
@@ -986,24 +999,40 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             auto hasTextResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeText];
             RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), hasTextResults);
 
-            [webView _protectedPage]->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result.get()), elementContext, requestLocation, [gestureDeferralToken = WTF::move(gestureDeferralToken)](const auto& updateResult) mutable {
+            [webView _protectedPage]->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result.get()), elementContext, requestLocation, [weakSelf, elementContext, gestureDeferralToken = WTF::move(gestureDeferralToken)](const auto& updateResult) mutable {
                 // Text found and injected as an image overlay -> allow the deferred text selection and
                 // prevent the drag / context-menu fallback (Live Text wins). Otherwise -> the reverse.
-                gestureDeferralToken->setOutcome(updateResult == WebKit::TextRecognitionUpdateResult::Text
+                auto outcome = updateResult == WebKit::TextRecognitionUpdateResult::Text
                     ? WebKit::ImageAnalysisDeferralOutcome::FoundText
-                    : WebKit::ImageAnalysisDeferralOutcome::NoText);
+                    : WebKit::ImageAnalysisDeferralOutcome::NoText;
+
+                gestureDeferralToken->setOutcome(outcome);
+
+                if (RetainPtr strongSelf = weakSelf.get())
+                    strongSelf->_lastCompletedImageAnalysis = WebKit::CompletedImageAnalysis { elementContext, outcome };
             });
         });
     });
 }
 
+- (BOOL)_outcome:(WebKit::ImageAnalysisDeferralOutcome)outcome preventsGesturesDeferredBy:(NSGestureRecognizer *)deferringGestureRecognizer
+{
+    // Text found -> Live Text wins: allow the deferred text selection, prevent the drag / context-menu
+    // fallback. No text -> the reverse.
+    if (deferringGestureRecognizer == _imageAnalysisTextSelectionDeferringGestureRecognizer)
+        return outcome == WebKit::ImageAnalysisDeferralOutcome::NoText;
+
+    if (deferringGestureRecognizer == _imageAnalysisDragAndContextMenuDeferringGestureRecognizer)
+        return outcome == WebKit::ImageAnalysisDeferralOutcome::FoundText;
+
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
 - (void)_resolveImageAnalysisDeferralsWithOutcome:(WebKit::ImageAnalysisDeferralOutcome)outcome
 {
-    // The text-selection deferral is prevented unless text was found; the drag / context-menu fallback
-    // deferral is the mirror image. NotApplicable means "not an analyzable image," so neither deferral
-    // should have any opinion -- release both.
-    BOOL preventTextSelection = outcome == WebKit::ImageAnalysisDeferralOutcome::NoText;
-    BOOL preventDragAndContextMenu = outcome == WebKit::ImageAnalysisDeferralOutcome::FoundText;
+    BOOL preventTextSelection = [self _outcome:outcome preventsGesturesDeferredBy:_imageAnalysisTextSelectionDeferringGestureRecognizer.get()];
+    BOOL preventDragAndContextMenu = [self _outcome:outcome preventsGesturesDeferredBy:_imageAnalysisDragAndContextMenuDeferringGestureRecognizer.get()];
 
     // Only resolve a deferral that's still deferring. A deferral may already be resolved by the time the
     // analysis token drops -- e.g. it failed on lift (immediatelyFailsAfterActionEnd) before slow
@@ -1095,8 +1124,19 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 // deferral has no opinion, so release. We only have basic hit-test info here (this request
                 // does not fetch image data), so key off info.isImage; the preflight does the full
                 // analyzability check.
-                if (overLiveTextImage)
+                if (overLiveTextImage) {
+                    auto reusableOutcome = strongSelf->_lastCompletedImageAnalysis.and_then([&](const auto& analysis) {
+                        return analysis.outcomeFor(info.hostImageOrVideoElementContext);
+                    });
+
+                    if (reusableOutcome) {
+                        const bool prevent = [strongSelf _outcome:*reusableOutcome preventsGesturesDeferredBy:strongDeferring.get()];
+                        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "deferral resolved: reusing completed image analysis outcome (prevent=%d)", prevent);
+                        return prevent;
+                    }
+
                     return std::nullopt;
+                }
 
                 return false;
             }
@@ -1151,6 +1191,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _positionInformationManager->invalidate();
     [self resetDOMDoubleClickGestureRecognizer];
     _layerTreeTransactionIdAtLastInteractionStart.reset();
+    _lastCompletedImageAnalysis.reset();
 }
 
 - (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
@@ -1838,6 +1879,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _isSuppressingSingleClickGestureForTextSelection = false;
     _latestClickID.reset();
     _layerTreeTransactionIdAtLastInteractionStart.reset();
+    _lastCompletedImageAnalysis.reset();
     _positionInformationManager->reset();
 }
 
