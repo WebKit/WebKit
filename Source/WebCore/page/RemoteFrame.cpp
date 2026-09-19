@@ -32,6 +32,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "HTMLFrameOwnerElement.h"
 #include "FrameInlines.h"
+#include "Logging.h"
 #include "NodeDocument.h"
 #include "Page.h"
 #include "PrivateClickMeasurement.h"
@@ -100,10 +101,14 @@ void RemoteFrame::disconnectView()
 
 void RemoteFrame::didFinishLoadInAnotherProcess()
 {
+    RELEASE_LOG(Loading, "RemoteFrame::didFinishLoadInAnotherProcess");
+
     m_preventsParentFromBeingComplete = false;
 
-    if (RefPtr ownerElement = this->ownerElement())
+    if (RefPtr ownerElement = this->ownerElement()) {
         protect(ownerElement->document())->checkCompleted();
+        protect(ownerElement->document())->checkLoadComplete();
+    }
 }
 
 bool RemoteFrame::preventsParentFromBeingComplete() const
