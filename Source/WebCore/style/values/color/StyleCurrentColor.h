@@ -37,14 +37,13 @@ struct SerializationContext;
 
 namespace Style {
 
+class ResolvedColors;
+
 struct CurrentColor {
     constexpr bool operator==(const CurrentColor&) const = default;
 };
 
-inline WebCore::Color resolveColor(const CurrentColor&, const WebCore::Color& currentColor)
-{
-    return currentColor;
-}
+WebCore::Color resolveColor(const CurrentColor&, const ResolvedColors&);
 
 constexpr bool containsCurrentColor(const CurrentColor&)
 {

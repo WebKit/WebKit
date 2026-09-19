@@ -60,11 +60,11 @@ Color toStyleColor(const CSS::ContrastColor& unresolved, ColorResolutionState& s
 
 // MARK: - Resolve
 
-WebCore::Color resolveColor(const ContrastColor& contrastColor, const WebCore::Color& currentColor)
+WebCore::Color resolveColor(const ContrastColor& contrastColor, const ResolvedColors& resolvedColors)
 {
     return resolve(
         CSS::ContrastColorResolver {
-            contrastColor.color.resolveColor(currentColor),
+            contrastColor.color.resolveColor(resolvedColors),
         }
     );
 }
