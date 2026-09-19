@@ -208,6 +208,14 @@ void SVGTextQuery::modifyStartEndPositionsRespectingLigatures(Data* queryData, c
     endPosition = fragmentOffsetInBox;
 }
 
+// Identity for lengthAdjust="spacing", which widens the gaps rather than the glyphs.
+static inline float NODELETE lengthAdjustInlineScale(const SVGTextQuery::Data& queryData, const SVGTextFragment& fragment)
+{
+    if (fragment.lengthAdjustTransform.isIdentity())
+        return 1;
+    return queryData.isVerticalText ? fragment.lengthAdjustTransform.d() : fragment.lengthAdjustTransform.a();
+}
+
 // numberOfCharacters() implementation
 bool SVGTextQuery::numberOfCharactersCallback(Data*, const SVGTextFragment&) const
 {
@@ -241,7 +249,9 @@ namespace WebCore {
 bool SVGTextQuery::textLengthCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
     auto* data = downcast<TextLengthData>(queryData);
-    data->textLength += queryData->isVerticalText ? fragment.height : fragment.width;
+    float advance = queryData->isVerticalText ? fragment.height : fragment.width;
+    // lengthAdjustTransform is only ever a one-axis scale, so a single factor scales the advance exactly.
+    data->textLength += advance * lengthAdjustInlineScale(*queryData, fragment);
     return false;
 }
 
@@ -286,7 +296,9 @@ bool SVGTextQuery::subStringLengthCallback(Data* queryData, const SVGTextFragmen
         return false;
 
     SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(*queryData->textRenderer, fragment.characterOffset + startPosition, endPosition - startPosition);
-    data->subStringLength += queryData->isVerticalText ? metrics.height() : metrics.width();
+    float advance = queryData->isVerticalText ? metrics.height() : metrics.width();
+    // lengthAdjustTransform is only ever a one-axis scale, so a single factor scales the advance exactly.
+    data->subStringLength += advance * lengthAdjustInlineScale(*queryData, fragment);
     return false;
 }
 
@@ -344,7 +356,7 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
     }
 
     AffineTransform fragmentTransform;
-    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformRespectingTextLength);
     if (fragmentTransform.isIdentity())
         return true;
 
@@ -404,7 +416,7 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
         data->endPosition.move(metrics.width(), 0);
 
     AffineTransform fragmentTransform;
-    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformRespectingTextLength);
     if (fragmentTransform.isIdentity())
         return true;
 
@@ -447,6 +459,7 @@ bool SVGTextQuery::rotationOfCharacterCallback(Data* queryData, const SVGTextFra
         return false;
 
     AffineTransform fragmentTransform;
+    // Ignores lengthAdjust on purpose: scaling along the inline axis turns no glyph.
     fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
     if (fragmentTransform.isIdentity())
         data->rotation = 0;
@@ -502,7 +515,7 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
     extent.setSize(FloatSize(metrics.width(), metrics.height()));
 
     AffineTransform fragmentTransform;
-    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformRespectingTextLength);
     if (fragmentTransform.isIdentity())
         return;
 

@@ -2562,8 +2562,6 @@ webkit.org/b/163831 svg/custom/acid3-test-77.html [ Failure ]
 
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 
-webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
-
 webkit.org/b/240934 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-on-span.html [ ImageOnlyFailure ]
 
 webkit.org/b/264584 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Failure ]
