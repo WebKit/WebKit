@@ -60,6 +60,7 @@ namespace JSC {
     CASE_OP(OpJnstricteq) \
     CASE_OP(OpJbelow) \
     CASE_OP(OpJbeloweq) \
+    CASE_OP(OpIteratorCloseCheck) \
     case op_switch_imm: { \
         auto bytecode = instruction->as<OpSwitchImm>(); \
         auto& table = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex); \

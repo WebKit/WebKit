@@ -30,6 +30,7 @@
 #include "JIT.h"
 
 #include "BaselineJITRegisters.h"
+#include "BytecodeGenerator.h"
 #include "BytecodeOperandsForCheckpoint.h"
 #include "CacheableIdentifierInlines.h"
 #include "CallFrameShuffler.h"
@@ -460,7 +461,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     constexpr GPRReg nextGPR = baseGPR; // Used as temporary register
     emitGetVirtualRegister(bytecode.m_next, nextGPR);
     JumpList genericCases;
-    genericCases.append(branchIfNotCell(nextGPR));
+    Jump nextIsNotCell = branchIfNotCell(nextGPR);
     genericCases.append(branchIfNotType(nextGPR, SentinelType));
 
     JumpList doneCases;
@@ -469,11 +470,23 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     emitGetVirtualRegister(bytecode.m_iterable, argumentGPR2);
     materializePointerIntoMetadata(bytecode, 0, argumentGPR3);
     callOperation(operationIteratorNextTryFast, argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3);
+    Label storeResult = label();
     emitPutVirtualRegister(bytecode.m_done, returnValueGPR);
     emitPutVirtualRegister(bytecode.m_value, returnValueGPR2);
     doneCases.append(branchIfEmpty(returnValueGPR2));
     emitValueProfilingSite(bytecode, m_bytecodeIndex.withCheckpoint(OpIteratorNext::getValue), returnValueGPR2);
     doneCases.append(jump());
+
+    nextIsNotCell.link(this);
+    emitGetVirtualRegister(bytecode.m_iterator, regT0);
+    genericCases.append(branchIfNotCell(regT0));
+    genericCases.append(branchIfNotType(regT0, SentinelType));
+    loadGlobalObject(argumentGPR0);
+    emitGetVirtualRegister(bytecode.m_iterable, argumentGPR1);
+    addPtr(TrustedImm32(bytecode.m_next.offset() * static_cast<int>(sizeof(Register))), callFrameRegister, argumentGPR2);
+    materializePointerIntoMetadata(bytecode, 0, argumentGPR3);
+    callOperation(operationIteratorNextFastArray, argumentGPR0, argumentGPR1, argumentGPR2, argumentGPR3);
+    jump().linkTo(storeResult, this);
 
     genericCases.link(this);
     load16FromMetadata(bytecode, OpIteratorNext::Metadata::offsetOfIterationMetadata() + IterationModeMetadata::offsetOfSeenModes(), regT0);
@@ -537,6 +550,25 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     doneCases.link(this);
+}
+
+void JIT::emit_op_iterator_close_check(const JSInstruction* instruction)
+{
+    auto bytecode = instruction->as<OpIteratorCloseCheck>();
+    unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
+    emitGetVirtualRegister(bytecode.m_iterator, regT0);
+    JumpList fallThrough;
+    fallThrough.append(branchIfNotCell(regT0));
+    fallThrough.append(branchIfNotType(regT0, SentinelType));
+
+    store8ToMetadata(TrustedImm32(1), bytecode, OpIteratorCloseCheck::Metadata::offsetOfHasSeenFastArray());
+    loadGlobalObject(regT1);
+    addPtr(TrustedImm32(JSGlobalObject::offsetOfArrayIteratorProtocolWatchpointSet()), regT1);
+    addJump(branchIfInlineWatchpointSetIsStillValid(regT1), target);
+
+    JITSlowPathCall(this, slow_path_iterator_close_check).call();
+
+    fallThrough.link(this);
 }
 
 void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)

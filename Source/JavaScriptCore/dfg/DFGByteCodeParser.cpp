@@ -10271,6 +10271,24 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_iterator_next);
         }
 
+        case op_iterator_close_check: {
+            auto bytecode = currentInstruction->as<OpIteratorCloseCheck>();
+            JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
+            Node* iterator = get(bytecode.m_iterator);
+            addToGraph(Phantom, get(bytecode.m_next));
+            addToGraph(Phantom, get(bytecode.m_iterable));
+            if (!bytecode.metadata(codeBlock).m_hasSeenFastArray || !globalObject->arrayIteratorProtocolWatchpointSet().isStillValid()) {
+                addToGraph(Check, Edge(iterator, ObjectUse));
+                NEXT_OPCODE(op_iterator_close_check);
+            }
+
+            m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
+            unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
+            Node* condition = addToGraph(CompareEqPtr, OpInfo(m_graph.freeze(m_vm->fastArraySentinel())), iterator);
+            addToGraph(Branch, OpInfo(branchData(m_currentIndex.offset() + relativeOffset, m_currentIndex.offset() + currentInstruction->size())), condition);
+            LAST_OPCODE(op_iterator_close_check);
+        }
+
         case op_jeq_ptr: {
             auto bytecode = currentInstruction->as<OpJeqPtr>();
             JSValue constant = m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer);
@@ -11883,15 +11901,8 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
         }
 
-        Node* kindNode = jsConstant(jsNumber(static_cast<uint32_t>(IterationKind::Values)));
-        Node* next = jsConstant(m_vm->fastArrayValuesSentinel());
-        Node* iterator = addToGraph(NewInternalFieldObject, OpInfo(m_graph.registerStructure(globalObject->arrayIteratorStructure())));
-        addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), iterator, get(bytecode.m_iterable));
-        addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Kind)), iterator, kindNode);
-        set(bytecode.m_iterator, iterator);
-
-        // Set m_next to the FastArrayValues sentinel so if we exit between here and iterator_next instruction it knows we are in the fast case.
-        set(bytecode.m_next, next);
+        set(bytecode.m_iterator, jsConstant(m_vm->fastArraySentinel()));
+        set(bytecode.m_next, jsConstant(jsNumber(0)));
 
         // Do our set locals. We don't want to exit backwards so move our exit to the next bytecode.
         m_currentIndex = osrExitIndex;
@@ -11930,7 +11941,7 @@ void ByteCodeParser::handleIteratorOpen(const JSInstruction* currentInstruction,
             failedBlock = allocateUntargetableBlock();
 
             Node* isKnownIterFunction = addToGraph(CompareEqPtr, OpInfo(frozenSymbolIteratorFunction), get(bytecode.m_symbolIterator));
-            // Unlike FastArray / FastMap / FastSet, FastArrayValues / Keys / Entries reuses the
+            // Unlike FastMap / FastSet, FastArrayValues / Keys / Entries reuses the
             // input iterator (m_iterator = m_iterable) instead of constructing a fresh one. The
             // iterator therefore carries the iterable's realm, so we need our realm's
             // arrayIteratorStructure for the per-realm arrayIteratorProtocolWatchpointSet to apply
@@ -12442,7 +12453,6 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
     JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObjectFor(currentCodeOrigin());
 
     if (!globalObject->arrayIteratorProtocolWatchpointSet().isStillValid()) {
-        seenModes &= ~static_cast<uint32_t>(IterationMode::FastArray);
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastArrayValues);
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastArrayKeys);
         seenModes &= ~static_cast<uint32_t>(IterationMode::FastArrayEntries);
@@ -12481,16 +12491,42 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
     BytecodeIndex startIndex = m_currentIndex;
 
     auto emitFastArrayIteratorNext = [&](IterationKind kind, JSSentinel* sentinelCell) {
-        m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
+        bool hasIterator = sentinelCell != m_vm->fastArraySentinel();
+        VirtualRegister sentinelOperand = hasIterator ? bytecode.m_next : bytecode.m_iterator;
+        if (hasIterator)
+            m_graph.watchpoints().addLazily(globalObject->arrayIteratorProtocolWatchpointSet());
+
+        auto speculatedGet = [&](VirtualRegister operand, SpeculatedType type, UseKind useKind) {
+            Node* node = addToGraph(IdentityWithProfile, OpInfo(type), get(operand));
+            addToGraph(Check, Edge(node, useKind));
+            return node;
+        };
+        auto getIteratedObject = [&] {
+            if (hasIterator)
+                return addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), get(bytecode.m_iterator));
+            return speculatedGet(bytecode.m_iterable, SpecArray, ArrayUse);
+        };
+        auto getIndex = [&] {
+            if (hasIterator)
+                return addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), get(bytecode.m_iterator));
+            return speculatedGet(bytecode.m_next, SpecInt32Only, Int32Use);
+        };
+        auto setIndex = [&](Node* index) {
+            if (hasIterator)
+                addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(bytecode.m_iterator), index);
+            else
+                set(bytecode.m_next, index);
+        };
+
         numberOfRemainingModes--;
 
         connectFailedBlock();
 
         FrozenValue* frozenSentinel = m_graph.freeze(sentinelCell);
         if (!numberOfRemainingModes)
-            addToGraph(CheckIsConstant, OpInfo(frozenSentinel), get(bytecode.m_next));
+            addToGraph(CheckIsConstant, OpInfo(frozenSentinel), get(sentinelOperand));
         else {
-            Node* isFastSentinel = addToGraph(CompareEqPtr, OpInfo(frozenSentinel), get(bytecode.m_next));
+            Node* isFastSentinel = addToGraph(CompareEqPtr, OpInfo(frozenSentinel), get(sentinelOperand));
 
             emitExitOK();
 
@@ -12515,12 +12551,11 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
         {
             // FIXME: doneIndex is -1 so it seems like we should be able to do CompareBelow(index, length). See: https://bugs.webkit.org/show_bug.cgi?id=210927
-            Node* iterator = get(bytecode.m_iterator);
             Node* doneIndex = jsConstant(jsNumber(JSArrayIterator::doneIndex));
-            Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), iterator);
+            Node* index = getIndex();
             Node* isDone = addToGraph(CompareStrictEq, index, doneIndex);
 
-            Node* iteratedObject = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), iterator);
+            Node* iteratedObject = getIteratedObject();
             Node* butterfly = addToGraph(GetButterfly, iteratedObject);
             Node* length = addToGraph(GetArrayLength, OpInfo(arrayMode.asWord()), Edge(iteratedObject), Edge(butterfly, KnownStorageUse));
             // GetArrayLength is pessimized prior to fixup.
@@ -12541,7 +12576,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             m_currentBlock = doLoadBlock;
             clearCaches();
             keepUsesOfCurrentInstructionAlive(currentInstruction, m_currentIndex.checkpoint());
-            Node* index = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), OpInfo(SpecInt32Only), get(bytecode.m_iterator));
+            Node* index = getIndex();
             Node* one = jsConstant(jsNumber(1));
             Node* newIndex = makeSafe(addToGraph(ArithAdd, index, one));
             Node* falseNode = jsConstant(jsBoolean(false));
@@ -12550,7 +12585,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
             if (kind == IterationKind::Keys)
                 value = index;
             else {
-                Node* iteratedObjectInLoad = addToGraph(GetInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::IteratedObject)), OpInfo(SpecObject), get(bytecode.m_iterator));
+                Node* iteratedObjectInLoad = getIteratedObject();
                 // FIXME: We could consider making this not vararg, since it only uses three child slots.
                 // https://bugs.webkit.org/show_bug.cgi?id=184192
                 addVarArgChild(iteratedObjectInLoad);
@@ -12569,7 +12604,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
             set(bytecode.m_value, value);
             set(bytecode.m_done, falseNode);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(bytecode.m_iterator), newIndex);
+            setIndex(newIndex);
 
             // Do our set locals. We don't want to run our getByVal again so we move to the next bytecode.
             m_currentIndex = osrExitIndex;
@@ -12592,7 +12627,7 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
 
             set(bytecode.m_value, bottomNode);
             set(bytecode.m_done, trueNode);
-            addToGraph(PutInternalField, OpInfo(static_cast<uint32_t>(JSArrayIterator::Field::Index)), get(bytecode.m_iterator), doneIndex);
+            setIndex(doneIndex);
 
             // Do our set locals. We don't want to run this again so we have to move the exit origin forward.
             m_currentIndex = osrExitIndex;
@@ -12605,6 +12640,9 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         m_currentIndex = startIndex;
         generatedCase = true;
     };
+
+    if (seenModes & IterationMode::FastArray)
+        emitFastArrayIteratorNext(IterationKind::Values, m_vm->fastArraySentinel());
 
     if (seenModes & IterationMode::FastArrayValues)
         emitFastArrayIteratorNext(IterationKind::Values, m_vm->fastArrayValuesSentinel());
@@ -12995,8 +13033,8 @@ void ByteCodeParser::handleIteratorNext(const JSInstruction* currentInstruction,
         connectFailedBlock();
 
         // Our profiling could have been incorrect when we got here. For instance, if we LoopHint OSR enter the first time we would
-        // have seen a fast path, m_next holds a fast-iteration sentinel cell. When that happens we need to OSR exit since the
-        // sentinel is not a callable.
+        // have seen a fast path, m_next holds a fast-iteration sentinel cell or index. When that happens we need to OSR exit since
+        // it is not a callable.
         addToGraph(Check, Edge(get(bytecode.m_next), ObjectUse));
 
         Terminality terminality = handleCall<OpIteratorNext>(currentInstruction, Call, CallMode::Regular, nextCheckpoint(), nullptr);

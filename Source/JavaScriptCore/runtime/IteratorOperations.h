@@ -99,6 +99,17 @@ JS_EXPORT_PRIVATE ASCIILiteral getIteratorErrorMessage(IterableValidationResult,
 JS_EXPORT_PRIVATE IterationMode getIterationMode(JSValue iterable);
 JS_EXPORT_PRIVATE IterationMode getIterationMode(VM&, JSGlobalObject*, JSValue iterable, JSValue symbolIterator);
 
+ALWAYS_INLINE bool iteratorNextFastArray(JSGlobalObject* globalObject, JSArray* array, JSValue& indexValue, JSValue& value)
+{
+    int64_t index = indexValue.asAnyInt();
+    auto indexToLoad = JSArrayIterator::nextWithAdvance(array, index);
+    indexValue = jsNumber(index);
+    if (!indexToLoad)
+        return false;
+
+    value = array->getIndex(globalObject, *indexToLoad);
+    return true;
+}
 
 static ALWAYS_INLINE void forEachInMapStorage(VM& vm, JSGlobalObject* globalObject, JSCell* storageCell, JSMap::Helper::Entry startEntry, IterationKind iterationKind, NOESCAPE const auto& callback, NOESCAPE const auto& callbackExceptionHandler)
 {
