@@ -126,7 +126,7 @@ private:
     SecurityOrigin* NODELETE frameDocumentSecurityOrigin() const final;
     std::optional<DocumentSecurityPolicy> NODELETE frameDocumentSecurityPolicy() const final;
     String NODELETE frameURLProtocol() const final;
-    float usedZoomForChild(const Frame&) const final;
+    float frameScaleFactorForChild(const Frame&) const final;
 
     FrameView* NODELETE virtualView() const final;
     void disconnectView() final;

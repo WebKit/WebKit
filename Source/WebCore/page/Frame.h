@@ -157,11 +157,15 @@ public:
     WEBCORE_EXPORT virtual std::optional<DocumentSecurityPolicy> frameDocumentSecurityPolicy() const = 0;
     WEBCORE_EXPORT virtual String frameURLProtocol() const = 0;
 
-    // Scale factor of this frame with respect to the container.
+    // The scale factor of this frame with respect to its container.
+    //
+    // For a main frame whose page does not delegate scaling, this is the page
+    // scale factor. For a subframe, this is the cumulative effect of CSS zoom
+    // values on the frame owner element and its ancestors.
     WEBCORE_EXPORT float frameScaleFactor() const;
 
-    // Scale factor of a child frame with respect to this frame.
-    virtual float usedZoomForChild(const Frame&) const = 0;
+    // The scale factor of a child frame with respect to this frame.
+    virtual float frameScaleFactorForChild(const Frame&) const = 0;
 
     WEBCORE_EXPORT virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize, NotifyUIProcess = NotifyUIProcess::Yes);
 

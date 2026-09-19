@@ -2340,7 +2340,7 @@ void Page::syncLocalFrameInfoToRemote()
                 !!child->ownerRenderer(),
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
-                frame.usedZoomForChild(*child),
+                frame.frameScaleFactorForChild(*child),
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
