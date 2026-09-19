@@ -159,6 +159,12 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_IPC_TESTING_SWIFT PRIVATE OFF)
 endif ()
 
+# iOS launches the auxiliary processes as ExtensionKit extensions; every other
+# platform launches them as XPC services.
+if (WEBKIT_SDK_IS_IOS)
+    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_EXTENSIONKIT PRIVATE ON)
+endif ()
+
 WEBKIT_OPTION_END()
 
 # -----------------------------------------------------------------------------
