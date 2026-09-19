@@ -1549,11 +1549,8 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         if (m_parameters.request.initialPriority().has_value())
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
 
-        if (requestPriority != metricPriority) {
-            // Priority changed, so update metric to latest value
-            LOADER_RELEASE_LOG_DEBUG("Priority changed from %d to %d for %s", metricPriority, requestPriority, m_parameters.request.url().string().utf8().data());
+        if (requestPriority != metricPriority)
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
-        }
     }
 
     if (isSynchronous())
