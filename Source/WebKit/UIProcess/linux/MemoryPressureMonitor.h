@@ -54,7 +54,7 @@ public:
     CGroupMemoryController() = default;
     bool isActive() { return !m_cgroupMemoryControllerPath.isNull(); };
 
-    void setMemoryControllerPath(CString);
+    void setMemoryControllerPath(const UTF8CString&);
 
     size_t getMemoryTotalWithCgroup();
     size_t getMemoryUsageWithCgroup();
@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    CString m_cgroupMemoryControllerPath;
+    UTF8CString m_cgroupMemoryControllerPath;
 
     FILE* m_cgroupMemoryMemswLimitInBytesFile { nullptr };
     FILE* m_cgroupMemoryMemswUsageInBytesFile { nullptr };

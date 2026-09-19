@@ -38,6 +38,7 @@
 #include <wtf/Threading.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebKit {
@@ -52,9 +53,6 @@ static const double s_minUsedMemoryPercentageForPolling = 50;
 static const double s_maxUsedMemoryPercentageForPolling = 85;
 static const int s_memoryPresurePercentageThreshold = 90;
 static const int s_memoryPresurePercentageThresholdCritical = 95;
-// cgroups.7: The usual place for such mounts is under a tmpfs(5)
-// filesystem mounted at /sys/fs/cgroup.
-static const char* s_cgroupMemoryPath = "/sys/fs/cgroup/%s/%s/%s";
 
 // /proc filesystems are directly maintained by the kernel.
 // On open the kernel will provide the process a static copy of the data if the
@@ -168,12 +166,13 @@ static size_t calculateMemoryAvailable(size_t memoryFree, size_t activeFile, siz
     return memoryAvailable;
 }
 
-FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, CString cgroupFileName)
+FILE* getCgroupFile(ASCIILiteral cgroupControllerName, const UTF8CString& cgroupControllerPath, ASCIILiteral cgroupFileName)
 {
-    char cgroupPath[maxCgroupPath];
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, cgroupControllerName.data(), cgroupControllerPath.data(), cgroupFileName.data());
-    LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath);
-    FILE* file = fopen(cgroupPath, "r");
+    // cgroups.7: The usual place for such mounts is under a tmpfs(5)
+    // filesystem mounted at /sys/fs/cgroup.
+    auto cgroupPath = makeString("/sys/fs/cgroup/"_s, cgroupControllerName, '/', cgroupControllerPath.span(), '/', cgroupFileName).utf8();
+    LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath.legacyCStringPointer());
+    FILE* file = fopen(cgroupPath.legacyCStringPointer(), "r");
     if (file)
         setbuf(file, nullptr);
     return file;
@@ -199,12 +198,12 @@ FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, 
 // 2:cpuset:/
 // 1:name=systemd:/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
 // 0::/user.slice/user-1000.slice/user@1000.service/gnome-terminal-server.service
-static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* controllerName)
+static UTF8CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* controllerName)
 {
     if (!cgroupControllerFile || fseek(cgroupControllerFile, 0, SEEK_SET))
-        return CString();
+        return { };
 
-    CString cgroupMemoryControllerPath;
+    UTF8CString cgroupMemoryControllerPath;
     while (!feof(cgroupControllerFile)) {
         unsigned hierarchyId;
         std::array<char, CGROUP_NAME_BUFFER_SIZE + 1> name;
@@ -212,33 +211,33 @@ static CString getCgroupControllerPath(FILE* cgroupControllerFile, const char* c
         name[0] = path[0] = '\0';
         int scanResult = fscanf(cgroupControllerFile, "%u:", &hierarchyId);
         if (scanResult != 1)
-            return CString();
+            return { };
         if (hierarchyId == CGROUP_V2_HIERARCHY) {
             scanResult = fscanf(cgroupControllerFile, ":%" STRINGIFY(PATH_MAX) "[^\n]", path.data());
             if (scanResult != 1)
-                return CString();
+                return { };
         } else {
             scanResult = fscanf(cgroupControllerFile, "%" STRINGIFY(CGROUP_NAME_BUFFER_SIZE) "[^:]:%" STRINGIFY(PATH_MAX) "[^\n]", name.data(), path.data());
             if (scanResult != 2)
-                return CString();
+                return { };
         }
         if (!strcmp(name.data(), controllerName)) {
-            cgroupMemoryControllerPath = CString(path.data());
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath.data());
+            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - %s namespace (hierarchy: %d): %s", controllerName, hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "name=systemd")) {
-            cgroupMemoryControllerPath = CString(path.data());
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
+            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - systemd namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
             return cgroupMemoryControllerPath;
         }
         if (!strcmp(name.data(), "")) {
-            cgroupMemoryControllerPath = CString(path.data());
-            LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.data());
+            cgroupMemoryControllerPath = UTF8CString { byteCast<char8_t>(path.data()) };
+            LOG_VERBOSE(MemoryPressure, "memoryControllerName - empty namespace (hierarchy: %d): %s", hierarchyId, cgroupMemoryControllerPath.legacyCStringPointer());
             return cgroupMemoryControllerPath;
         }
     }
-    return CString();
+    return { };
 }
 
 
@@ -365,7 +364,7 @@ void MemoryPressureMonitor::start()
             tryOpeningForUnbufferedReading(zoneInfoFile, s_procZoneinfo);
             tryOpeningForUnbufferedReading(cgroupControllerFile, s_procSelfCgroup);
 
-            CString cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile.get(), "memory");
+            auto cgroupMemoryControllerPath = getCgroupControllerPath(cgroupControllerFile.get(), "memory");
             memoryController.setMemoryControllerPath(cgroupMemoryControllerPath);
             int usedPercentage = systemMemoryUsedAsPercentage(memInfoFile.get(), zoneInfoFile.get(), &memoryController);
             if (usedPercentage == -1) {
@@ -398,7 +397,7 @@ bool MemoryPressureMonitor::disabled()
     return s_disabled;
 }
 
-void CGroupMemoryController::setMemoryControllerPath(CString memoryControllerPath)
+void CGroupMemoryController::setMemoryControllerPath(const UTF8CString& memoryControllerPath)
 {
     if (memoryControllerPath == m_cgroupMemoryControllerPath)
         return;
@@ -406,15 +405,15 @@ void CGroupMemoryController::setMemoryControllerPath(CString memoryControllerPat
     m_cgroupMemoryControllerPath = memoryControllerPath;
     disposeMemoryController();
 
-    m_cgroupV2MemoryCurrentFile = getCgroupFile("/", memoryControllerPath, CString("memory.current"));
-    m_cgroupV2MemoryMemswMaxFile = getCgroupFile("/", memoryControllerPath, CString("memory.memsw.max"));
-    m_cgroupV2MemoryMaxFile = getCgroupFile("/", memoryControllerPath, CString("memory.max"));
-    m_cgroupV2MemoryHighFile = getCgroupFile("/", memoryControllerPath, CString("memory.high"));
+    m_cgroupV2MemoryCurrentFile = getCgroupFile("/"_s, memoryControllerPath, "memory.current"_s);
+    m_cgroupV2MemoryMemswMaxFile = getCgroupFile("/"_s, memoryControllerPath, "memory.memsw.max"_s);
+    m_cgroupV2MemoryMaxFile = getCgroupFile("/"_s, memoryControllerPath, "memory.max"_s);
+    m_cgroupV2MemoryHighFile = getCgroupFile("/"_s, memoryControllerPath, "memory.high"_s);
 
-    m_cgroupMemoryMemswLimitInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.memsw.limit_in_bytes"));
-    m_cgroupMemoryMemswUsageInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.memsw.usage_in_bytes"));
-    m_cgroupMemoryLimitInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.limit_in_bytes"));
-    m_cgroupMemoryUsageInBytesFile = getCgroupFile("memory", memoryControllerPath, CString("memory.usage_in_bytes"));
+    m_cgroupMemoryMemswLimitInBytesFile = getCgroupFile("memory"_s, memoryControllerPath, "memory.memsw.limit_in_bytes"_s);
+    m_cgroupMemoryMemswUsageInBytesFile = getCgroupFile("memory"_s, memoryControllerPath, "memory.memsw.usage_in_bytes"_s);
+    m_cgroupMemoryLimitInBytesFile = getCgroupFile("memory"_s, memoryControllerPath, "memory.limit_in_bytes"_s);
+    m_cgroupMemoryUsageInBytesFile = getCgroupFile("memory"_s, memoryControllerPath, "memory.usage_in_bytes"_s);
 }
 
 void CGroupMemoryController::disposeMemoryController()
