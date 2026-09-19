@@ -650,18 +650,18 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this._destroyed)
             return;
 
-        // FIXME: <https://webkit.org/b/298980> Highlighting cross-origin frame nodes requires page-level coordination.
-        if (this.owningTarget)
-            return;
+        // The two-second auto-hide timeout lives on DOMManager, not here.
+        WI.domManager.cancelPendingHighlightHide();
 
-        if (this._hideDOMNodeHighlightTimeout) {
-            clearTimeout(this._hideDOMNodeHighlightTimeout);
-            this._hideDOMNodeHighlightTimeout = undefined;
-        }
+        let target = this.owningTarget || WI.assumingMainTarget();
 
-        let target = WI.assumingMainTarget();
+        // Each target holds its own highlight state, so clear the others. Otherwise highlighting a
+        // node inside a frame leaves the page target still highlighting the owner iframe element,
+        // and both draw at once.
+        WI.domManager.hideDOMNodeHighlight({exceptTargets: new Set([target])});
+
         target.DOMAgent.highlightNode.invoke({
-            nodeId: this.id,
+            nodeId: this.backendNodeId,
             ...WI.DOMManager.buildHighlightConfigs(mode),
         });
     }
@@ -672,18 +672,14 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this._destroyed)
             return Promise.reject("ERROR: node is destroyed");
 
-        // FIXME: <https://webkit.org/b/298980> Layout overlays for cross-origin frame nodes are not yet supported.
-        if (this.owningTarget)
-            return Promise.reject("ERROR: not supported on cross-origin frame nodes");
-
         console.assert(Object.values(WI.DOMNode._LayoutContextTypes).includes(this.layoutContextType), this);
 
         console.assert(!color || color instanceof WI.Color, color);
         color ||= this.layoutOverlayColor;
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
         let agentCommandFunction = null;
-        let agentCommandArguments = {nodeId: this.id};
+        let agentCommandArguments = {nodeId: this.backendNodeId};
 
         switch (this.layoutContextType) {
         case WI.DOMNode.LayoutFlag.Grid:
@@ -750,15 +746,11 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this._destroyed)
             return Promise.reject("ERROR: node is destroyed");
 
-        // FIXME: <https://webkit.org/b/298980> Layout overlays for cross-origin frame nodes are not yet supported.
-        if (this.owningTarget)
-            return Promise.reject("ERROR: not supported on cross-origin frame nodes");
-
         console.assert(Object.values(WI.DOMNode._LayoutContextTypes).includes(this.layoutContextType), this);
 
-        let target = WI.assumingMainTarget();
+        let target = this.owningTarget || WI.assumingMainTarget();
         let agentCommandFunction;
-        let agentCommandArguments = {nodeId: this.id};
+        let agentCommandArguments = {nodeId: this.backendNodeId};
 
         switch (this.layoutContextType) {
         case WI.DOMNode.LayoutFlag.Grid:

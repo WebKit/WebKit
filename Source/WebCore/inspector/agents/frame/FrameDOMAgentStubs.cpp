@@ -64,28 +64,8 @@ Inspector::CommandResult<void> FrameDOMAgent::setInspectModeEnabled(bool, RefPtr
 }
 #endif
 
-Inspector::CommandResult<void> FrameDOMAgent::highlightRect(int, int, int, int, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightQuad(Ref<JSON::Array>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
 #if PLATFORM(IOS_FAMILY)
 Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNodeList(Ref<JSON::Array>&&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
@@ -94,44 +74,9 @@ Inspector::CommandResult<void> FrameDOMAgent::highlightSelector(const String&, c
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNode(std::optional<int>&&, const String&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::highlightNodeList(Ref<JSON::Array>&&, Ref<JSON::Object>&&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&, std::optional<bool>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
 #endif
 
-Inspector::CommandResult<void> FrameDOMAgent::hideHighlight()
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
 Inspector::CommandResult<void> FrameDOMAgent::highlightFrame(const String&, RefPtr<JSON::Object>&&, RefPtr<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::showGridOverlay(int, Ref<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::hideGridOverlay(std::optional<int>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::showFlexOverlay(int, Ref<JSON::Object>&&)
-{
-    return makeUnexpected("Not supported for frame targets"_s);
-}
-
-Inspector::CommandResult<void> FrameDOMAgent::hideFlexOverlay(std::optional<int>&&)
 {
     return makeUnexpected("Not supported for frame targets"_s);
 }
