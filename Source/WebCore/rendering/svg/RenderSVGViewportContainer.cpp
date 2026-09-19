@@ -200,7 +200,16 @@ void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& 
 
 void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const
 {
-    applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform), std::nullopt, options);
+    auto supplementalLayerTransform = m_supplementalLayerTransform.isIdentity() ? std::nullopt : std::make_optional(m_supplementalLayerTransform);
+
+    // The transform attribute of the outermost <svg> element is mapped to the CSS transform property of RenderSVGRoot.
+    if (isOutermostSVGViewportContainer()) {
+        Ref useSVGSVGElement = svgSVGElement();
+        applySVGTransform(transform, identity, useSVGSVGElement->supplementalTransform(), style, boundingBox, supplementalLayerTransform, std::nullopt, options);
+        return;
+    }
+
+    applySVGTransform(transform, protect(svgSVGElement()), style, boundingBox, supplementalLayerTransform, std::nullopt, options);
 }
 
 LayoutRect RenderSVGViewportContainer::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy, PaintPhase) const

@@ -449,9 +449,13 @@ void RenderLayerModelObject::mapLocalToSVGContainer(const RenderLayerModelObject
 
 void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const SVGGraphicsElement& graphicsElement, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
 {
-    auto svgTransform = graphicsElement.concatenatedTransform();
-    auto* supplementalTransform = graphicsElement.supplementalTransform(); // SMIL <animateMotion>
+    // SMIL <animateMotion> sets the supplemental transform.
+    // FIXME: Switch from "const AffineTransform*" to "std::optional<AffineTransform>" for supplementalTransform().
+    applySVGTransform(transform, graphicsElement.concatenatedTransform(), graphicsElement.supplementalTransform(), style, boundingBox, preApplySVGTransformMatrix, postApplySVGTransformMatrix, options);
+}
 
+void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, const AffineTransform& svgTransform, const AffineTransform* supplementalTransform, const Style::ComputedStyle& style, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption> options) const
+{
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
     bool hasCSSTransform = !style.transform().isNone()

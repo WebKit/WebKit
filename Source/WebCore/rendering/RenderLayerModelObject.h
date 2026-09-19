@@ -106,6 +106,7 @@ public:
     void mapLocalToSVGContainer(const RenderLayerModelObject* ancestorContainer, TransformState&, OptionSet<MapCoordinatesMode>, bool* wasFixed) const;
 
     void applySVGTransform(TransformationMatrix&, const SVGGraphicsElement&, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
+    void applySVGTransform(TransformationMatrix&, const AffineTransform& svgTransform, const AffineTransform* supplementalTransform, const Style::ComputedStyle&, const FloatRect& boundingBox, const std::optional<AffineTransform>& preApplySVGTransformMatrix, const std::optional<AffineTransform>& postApplySVGTransformMatrix, OptionSet<Style::TransformResolverOption>) const;
     void updateHasSVGTransformFlags();
     virtual bool needsHasSVGTransformFlags() const { ASSERT_NOT_REACHED(); return false; }
 

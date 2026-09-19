@@ -1,0 +1,15 @@
+
+PASS transform="translate(10, 20)" on an outermost svg element computes to matrix(1, 0, 0, 1, 10, 20)
+PASS transform="translate(10)" on an outermost svg element computes to matrix(1, 0, 0, 1, 10, 0)
+PASS transform="scale(2, 3)" on an outermost svg element computes to matrix(2, 0, 0, 3, 0, 0)
+PASS transform="scale(2)" on an outermost svg element computes to matrix(2, 0, 0, 2, 0, 0)
+PASS transform="rotate(45)" on an outermost svg element computes to rotate(45deg)
+PASS transform="rotate(45, 10, 20)" on an outermost svg element computes to translate(10px, 20px) rotate(45deg) translate(-10px, -20px)
+PASS transform="skewX(30)" on an outermost svg element computes to skewX(30deg)
+PASS transform="skewY(30)" on an outermost svg element computes to skewY(30deg)
+PASS transform="matrix(1, 2, 3, 4, 5, 6)" on an outermost svg element computes to matrix(1, 2, 3, 4, 5, 6)
+PASS transform="translate(10, 20) rotate(90)" on an outermost svg element computes to translate(10px, 20px) rotate(90deg)
+PASS An empty transform attribute on an outermost svg element computes to none
+PASS A missing transform attribute on an outermost svg element computes to none
+PASS The transform property overrides the transform attribute on an outermost svg element
+

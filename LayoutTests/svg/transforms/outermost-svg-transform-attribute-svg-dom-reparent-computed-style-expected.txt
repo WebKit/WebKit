@@ -1,0 +1,13 @@
+A transform list set through the SVG DOM, without a transform attribute, maps to the CSS transform property only while the svg element is outermost, including after the element moves.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedTransform(becomesInner) is "translate(10px, 20px)"
+PASS computedTransform(becomesInner) is "none"
+PASS computedTransform(becomesOutermost) is "none"
+PASS computedTransform(becomesOutermost) is "translate(10px, 20px)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

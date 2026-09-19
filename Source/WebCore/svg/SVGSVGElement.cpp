@@ -24,6 +24,9 @@
 #include "config.h"
 #include "SVGSVGElement.h"
 
+#include "CSSFunctionValue.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSTransformListValue.h"
 #include "ContainerNodeInlines.h"
 #include "DOMMatrix2DInit.h"
 #include "DOMWrapperWorld.h"
@@ -35,6 +38,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGViewportContainer.h"
 #include "LocalFrame.h"
+#include "MutableStyleProperties.h"
 #include "NodeName.h"
 #include "RenderBoxInlines.h"
 #include "RenderObjectInlines.h"
@@ -234,6 +238,13 @@ void SVGSVGElement::attributeChanged(const QualifiedName& name, const AtomString
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
+    if (attrName == SVGNames::transformAttr && isOutermostSVGSVGElement()) {
+        InstanceInvalidationGuard guard(*this);
+        invalidateConcatenatedTransformCache();
+        setPresentationalHintStyleIsDirty();
+        return;
+    }
+
     auto isEmbeddedThroughFrameContainingSVGDocument = [](const RenderElement& renderer) -> bool {
         if (CheckedPtr svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer))
             return svgRoot->isEmbeddedThroughFrameContainingSVGDocument();
@@ -300,6 +311,65 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
+}
+
+void SVGSVGElement::collectExtraStyleForPresentationalHints(MutableStyleProperties& style)
+{
+    SVGGraphicsElement::collectExtraStyleForPresentationalHints(style);
+
+    if (!isOutermostSVGSVGElement() || transform().isEmpty())
+        return;
+
+    auto px = [](double value) {
+        return CSSPrimitiveValue::create(value, CSSUnitType::Px);
+    };
+    auto deg = [](double value) {
+        return CSSPrimitiveValue::create(value, CSSUnitType::Deg);
+    };
+
+    CSSValueListBuilder functions;
+    for (const auto& item : transform().items()) {
+        const auto& value = item->value();
+        auto matrix = value.matrix().value();
+        switch (value.type()) {
+        case SVGTransformValue::SVG_TRANSFORM_UNKNOWN:
+            break;
+        case SVGTransformValue::SVG_TRANSFORM_MATRIX: {
+            CSSValueListBuilder arguments;
+            for (double number : { matrix.a(), matrix.b(), matrix.c(), matrix.d(), matrix.e(), matrix.f() })
+                arguments.append(CSSPrimitiveValue::create(number));
+            functions.append(CSSFunctionValue::create(CSSValueMatrix, WTF::move(arguments)));
+            break;
+        }
+        case SVGTransformValue::SVG_TRANSFORM_TRANSLATE:
+            functions.append(CSSFunctionValue::create(CSSValueTranslate, px(matrix.e()), px(matrix.f())));
+            break;
+        case SVGTransformValue::SVG_TRANSFORM_SCALE:
+            functions.append(CSSFunctionValue::create(CSSValueScale, CSSPrimitiveValue::create(matrix.a()), CSSPrimitiveValue::create(matrix.d())));
+            break;
+        case SVGTransformValue::SVG_TRANSFORM_ROTATE: {
+            // CSS rotate() has no center argument, so rotate(a, cx, cy) becomes translate(cx, cy) rotate(a) translate(-cx, -cy).
+            auto center = value.rotationCenter();
+            bool hasCenter = !center.isZero();
+            if (hasCenter)
+                functions.append(CSSFunctionValue::create(CSSValueTranslate, px(center.x()), px(center.y())));
+            functions.append(CSSFunctionValue::create(CSSValueRotate, deg(value.angle())));
+            if (hasCenter)
+                functions.append(CSSFunctionValue::create(CSSValueTranslate, px(-center.x()), px(-center.y())));
+            break;
+        }
+        case SVGTransformValue::SVG_TRANSFORM_SKEWX:
+            functions.append(CSSFunctionValue::create(CSSValueSkewX, deg(value.angle())));
+            break;
+        case SVGTransformValue::SVG_TRANSFORM_SKEWY:
+            functions.append(CSSFunctionValue::create(CSSValueSkewY, deg(value.angle())));
+            break;
+        }
+    }
+
+    if (functions.isEmpty())
+        return;
+    addPropertyToPresentationalHintStyle(style, CSSPropertyTransform, CSSTransformListValue::create(WTF::move(functions)));
 }
 
 Ref<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(SVGRect& rect, SVGElement* referenceElement, bool (*checkFunction)(SVGElement&, SVGRect&))
@@ -542,6 +612,10 @@ Node::NeedsPostConnectionSteps SVGSVGElement::insertionSteps(InsertionType inser
         if (!document->parsing() && !document->processingLoadEvent() && document->loadEventFinished())
             m_timeContainer->begin();
     }
+
+    if (!transform().isEmpty())
+        setPresentationalHintStyleIsDirty();
+
     return SVGGraphicsElement::insertionSteps(insertionType, parentOfInsertedTree);
 }
 
@@ -552,6 +626,10 @@ void SVGSVGElement::removingSteps(RemovalType removalType, ContainerNode& oldPar
         protect(document->svgExtensions())->removeTimeContainer(*this);
         pauseAnimations();
     }
+
+    if (!transform().isEmpty())
+        setPresentationalHintStyleIsDirty();
+
     SVGGraphicsElement::removingSteps(removalType, oldParentOfRemovedTree);
 }
 
@@ -606,7 +684,7 @@ bool SVGSVGElement::selfHasRelativeLengths() const
 
 bool SVGSVGElement::hasTransformRelatedAttributes() const
 {
-    if (SVGGraphicsElement::hasTransformRelatedAttributes())
+    if (isOutermostSVGSVGElement() ? !!supplementalTransform() : SVGGraphicsElement::hasTransformRelatedAttributes())
         return true;
 
     // 'x' / 'y' / 'viewBox' lead to a non-identity supplementalLayerTransform in RenderSVGViewportContainer

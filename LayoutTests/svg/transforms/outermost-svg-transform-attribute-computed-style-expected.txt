@@ -1,0 +1,21 @@
+The transform attribute of an outermost svg element maps to the CSS transform property function by function, not as a single matrix.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS computedTransform('translate(10, 20)') is "translate(10px, 20px)"
+PASS computedTransform('translate(10)') is "translate(10px, 0px)"
+PASS computedTransform('scale(2, 3)') is "scale(2, 3)"
+PASS computedTransform('rotate(45)') is "rotate(45deg)"
+PASS computedTransform('rotate(45, 10, 20)') is "translate(10px, 20px) rotate(45deg) translate(-10px, -20px)"
+PASS computedTransform('skewX(30)') is "skewX(30deg)"
+PASS computedTransform('skewY(30)') is "skewY(30deg)"
+PASS computedTransform('matrix(1, 2, 3, 4, 5, 6)') is "matrix(1, 2, 3, 4, 5, 6)"
+PASS computedTransform('translate(10, 20) rotate(90)') is "translate(10px, 20px) rotate(90deg)"
+PASS computedTransform('rotate(45)'); getComputedStyle(svg).transform is "matrix(0.707107, 0.707107, -0.707107, 0.707107, 0, 0)"
+PASS computedTransform('') is "none"
+PASS svg.computedStyleMap().get('transform').toString() is "none"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
