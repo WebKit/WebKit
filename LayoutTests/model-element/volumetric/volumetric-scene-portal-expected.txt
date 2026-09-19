@@ -1,0 +1,8 @@
+
+PASS A spatial portal can host a volumetric scene and starts inline
+PASS A model inside a portal defers to the portal
+PASS Requesting a volumetric scene for a portal without transient activation is rejected
+PASS A portal hosting a loaded model enters a volumetric scene
+PASS Exiting a volumetric scene returns the portal inline
+PASS Requesting a volumetric scene for a portal that is already presented is rejected
+

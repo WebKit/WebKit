@@ -1,0 +1,115 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true MockVolumetricSceneEnabled=true allowTestOnlyIPC=true ] -->
+<meta charset="utf-8">
+<title>Auto-fit for a connected volumetric scene</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../resources/model-element-test-utils.js"></script>
+<script src="../resources/model-utils.js"></script>
+<script src="resources/volumetric-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+internals.disableModelLoadDelaysForTesting();
+
+const fittedCenter = model => model.entityTransform.transformPoint(model.boundingBoxCenter);
+
+const centerTolerance = model => {
+    const center = model.boundingBoxCenter;
+    return epsilon * Math.max(1, Math.hypot(center.x, center.y, center.z));
+};
+
+const fittedScale = model => {
+    const m = model.entityTransform;
+    return Math.hypot(m.m11, m.m12, m.m13);
+};
+
+const assert_centered_on_volume = (model, description) => {
+    const center = fittedCenter(model);
+    const tolerance = centerTolerance(model);
+    assert_approx_equals(center.x, 0, tolerance, `${description}: content is centered in x`);
+    assert_approx_equals(center.y, 0, tolerance, `${description}: content is centered in y`);
+    assert_approx_equals(center.z, 0, tolerance, `${description}: content is centered in z`);
+};
+
+const waitForVolumetricFit = (test, model) =>
+    test.step_wait(() => Math.abs(fittedCenter(model).z) < centerTolerance(model), 'the volumetric fit is applied');
+
+const presentVolumetrically = async (test, model, rotation) => {
+    if (rotation)
+        model.entityTransform = rotation;
+
+    await requestVolumetricScene(model);
+    await waitForVolumetricFit(test, model);
+};
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await presentVolumetrically(t, model);
+
+    assert_centered_on_volume(model, "volumetric fit");
+}, `A volumetric scene fits the content centered on the volume`);
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await presentVolumetrically(t, model, new DOMMatrixReadOnly().rotate(25, 35, 45));
+
+    assert_centered_on_volume(model, "rotated volumetric fit");
+}, `A volumetric scene fit centers off-center content under a rotation`);
+
+promise_test(async t => {
+    const [unrotated] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    const [rotated] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    await unrotated.ready;
+    await rotated.ready;
+    t.add_cleanup(() => { unrotated.exitVolumetricScene(); rotated.exitVolumetricScene(); });
+
+    await presentVolumetrically(t, unrotated);
+    await presentVolumetrically(t, rotated, new DOMMatrixReadOnly().rotate(25, 35, 45));
+
+    assert_approx_equals(fittedScale(rotated), fittedScale(unrotated), epsilon,
+        'A rotation does not change how large the content is fitted');
+}, `A volumetric scene fit scales the content independently of its rotation`);
+
+promise_test(async t => {
+    const [model] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    await model.ready;
+
+    const inlineFit = model.entityTransform;
+    assert_greater_than(Math.abs(fittedCenter(model).z), centerTolerance(model),
+        'The inline fit sits the content behind its layer');
+
+    await presentVolumetrically(t, model);
+    assert_3d_matrix_not_equals(model.entityTransform, inlineFit);
+
+    model.exitVolumetricScene();
+    await waitForPresentationMode(t, model, "inline");
+
+    await t.step_wait(() => Math.abs(fittedCenter(model).z) > centerTolerance(model),
+        'the inline fit is restored');
+}, `A volumetric scene fit replaces the inline fit and is restored on exit`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "../resources/2x2x2-positive.usdz");
+    await model.ready;
+    t.add_cleanup(() => model.exitVolumetricScene());
+
+    await presentVolumetrically(t, model);
+    const originalScale = fittedScale(model);
+
+    source.src = "../resources/heart.usdz";
+    await model.ready;
+
+    await t.step_wait(() => Math.abs(fittedScale(model) - originalScale) > epsilon,
+        'the arriving content is fitted');
+    assert_centered_on_volume(model, "re-fitted volumetric content");
+}, `A volumetric scene re-fits content that arrives while it is presented`);
+
+</script>
+</body>

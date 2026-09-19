@@ -139,6 +139,11 @@ extension WKRKEntity {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
         entity = unsafe Entity.fromCore(coreEntity)
     }
+
+    var coreEntity: REEntityRef {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe entity.coreEntity
+    }
     #endif
 
     var name: String {
@@ -481,6 +486,41 @@ extension WKRKEntity {
         #endif
     }
 
+    // Without a receiver the entity is lit by the scene's environment instead of by the probe applyIBL() set,
+    // which is also what applyDefaultIBL() falls back to when EnvironmentResource is unavailable.
+    @objc(setIBLReceiverEnabled:)
+    func setIBLReceiverEnabled(_ enabled: Bool) {
+        guard enabled else {
+            entity.components[ImageBasedLightReceiverComponent.self] = nil
+            return
+        }
+        // An entity that loaded while the page's lighting was suppressed has no probe to receive from yet.
+        guard entity.components.has(VirtualEnvironmentProbeComponent.self) else {
+            applyDefaultIBL()
+            return
+        }
+        entity.components[ImageBasedLightReceiverComponent.self] = .init(imageBasedLight: entity)
+    }
+
+    @objc(setGroundingShadowsEnabled:)
+    func setGroundingShadowsEnabled(_ enabled: Bool) {
+        applyGroundingShadows(to: entity, castsShadow: enabled)
+    }
+
+    // Applied to the whole subtree: the shadow is cast by the descendant meshes, not by the root.
+    @nonobjc
+    private final func applyGroundingShadows(to entity: Entity, castsShadow: Bool) {
+        if castsShadow {
+            entity.components.set(GroundingShadowComponent(castsShadow: true))
+        } else {
+            entity.components.remove(GroundingShadowComponent.self)
+        }
+
+        for child in entity.children {
+            applyGroundingShadows(to: child, castsShadow: castsShadow)
+        }
+    }
+
     private func animationPlaybackStateDidUpdate() {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
     }
@@ -496,32 +536,6 @@ extension WKRKEntity {
 
     func removeFromParentEntity() {
         entity.removeFromParent()
-    }
-
-    @objc(interactionContainerDidRecenterFromTransform:)
-    func interactionContainerDidRecenter(fromTransform transform: simd_float4x4) {
-        entity.setTransformMatrix(transform, relativeTo: nil)
-    }
-
-    @objc(recenterEntityAtTransform:)
-    func recenter(at transform: WKEntityTransform) {
-        // Apply the scale and translation of the entity separately from the rotation
-        self.transform = WKEntityTransform(
-            scale: transform.scale,
-            rotation: .init(ix: 0, iy: 0, iz: 0, r: 1),
-            translation: transform.translation
-        )
-
-        // The pivot for the orientation may be different from the center of the model's bounding box
-        // As a result, we offset the translation after the rotation has been applied to recenter it
-        let pivotPoint = interactionPivotPoint
-        self.transform = transform
-        let offset = pivotPoint - interactionPivotPoint
-        self.transform = WKEntityTransform(
-            scale: transform.scale,
-            rotation: transform.rotation,
-            translation: transform.translation + offset
-        )
     }
 }
 
