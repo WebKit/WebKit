@@ -282,7 +282,7 @@ LValue Output::logicalNot(LValue value)
     return m_block->appendNew<B3::Value>(m_proc, B3::Equal, origin(), value, int32Zero);
 }
 
-LValue Output::ctlz32(LValue operand)
+LValue Output::ctlz(LValue operand)
 {
     return m_block->appendNew<B3::Value>(m_proc, B3::Clz, origin(), operand);
 }
