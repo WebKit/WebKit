@@ -427,7 +427,7 @@ WI.HARBuilder = class HARBuilder
     static priority(priority)
     {
         switch (priority) {
-        case WI.Resource.NetworkPriority.Verylow:
+        case WI.Resource.NetworkPriority.VeryLow:
             return "verylow";
         case WI.Resource.NetworkPriority.Low:
             return "low";
@@ -435,7 +435,7 @@ WI.HARBuilder = class HARBuilder
             return "medium";
         case WI.Resource.NetworkPriority.High:
             return "high";
-        case WI.Resource.NetworkPriority.Veryhigh:
+        case WI.Resource.NetworkPriority.VeryHigh:
             return "veryhigh";
         }
 
@@ -502,7 +502,7 @@ WI.HARBuilder = class HARBuilder
         switch (typeof priority === "string" ? priority.toLowerCase() : null) {
         case "verylow":
         case "lowest": // Gecko based HAR tooling equivalent
-            return WI.Resource.NetworkPriority.Verylow;
+            return WI.Resource.NetworkPriority.VeryLow;
         case "low":
             return WI.Resource.NetworkPriority.Low;
         case "medium":
@@ -512,7 +512,7 @@ WI.HARBuilder = class HARBuilder
             return WI.Resource.NetworkPriority.High;
         case "veryhigh":
         case "highest": // Gecko based HAR tooling equivalent
-            return WI.Resource.NetworkPriority.Veryhigh;
+            return WI.Resource.NetworkPriority.VeryHigh;
         }
 
         if (priority)

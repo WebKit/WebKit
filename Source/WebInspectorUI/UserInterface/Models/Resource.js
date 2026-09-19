@@ -243,11 +243,11 @@ WI.Resource = class Resource extends WI.SourceCode
 
         const map = {
             [WI.Resource.NetworkPriority.Unknown]: 0,
-            [WI.Resource.NetworkPriority.Verylow]: 1,
+            [WI.Resource.NetworkPriority.VeryLow]: 1,
             [WI.Resource.NetworkPriority.Low]: 2,
             [WI.Resource.NetworkPriority.Medium]: 3,
             [WI.Resource.NetworkPriority.High]: 4,
-            [WI.Resource.NetworkPriority.Veryhigh]: 5,
+            [WI.Resource.NetworkPriority.VeryHigh]: 5,
         };
 
         let aNum = map[a] || 0;
@@ -258,7 +258,7 @@ WI.Resource = class Resource extends WI.SourceCode
     static displayNameForPriority(priority)
     {
         switch (priority) {
-        case WI.Resource.NetworkPriority.Verylow:
+        case WI.Resource.NetworkPriority.VeryLow:
             return WI.UIString("Very Low", "Very low @ Network Priority", "Very Low network request priority");
         case WI.Resource.NetworkPriority.Low:
             return WI.UIString("Low", "Low @ Network Priority", "Low network request priority");
@@ -266,7 +266,7 @@ WI.Resource = class Resource extends WI.SourceCode
             return WI.UIString("Medium", "Medium @ Network Priority", "Medium network request priority");
         case WI.Resource.NetworkPriority.High:
             return WI.UIString("High", "High @ Network Priority", "High network request priority");
-        case WI.Resource.NetworkPriority.Veryhigh:
+        case WI.Resource.NetworkPriority.VeryHigh:
             return WI.UIString("Very High", "Very high @ Network Priority", "Very High network request priority");
         default:
             return null;
@@ -301,7 +301,7 @@ WI.Resource = class Resource extends WI.SourceCode
     {
         switch (priority) {
         case InspectorBackend.Enum.Network.LoadPriority.Verylow:
-            return WI.Resource.NetworkPriority.Verylow;
+            return WI.Resource.NetworkPriority.VeryLow;
         case InspectorBackend.Enum.Network.LoadPriority.Low:
             return WI.Resource.NetworkPriority.Low;
         case InspectorBackend.Enum.Network.LoadPriority.Medium:
@@ -309,7 +309,7 @@ WI.Resource = class Resource extends WI.SourceCode
         case InspectorBackend.Enum.Network.LoadPriority.High:
             return WI.Resource.NetworkPriority.High;
         case InspectorBackend.Enum.Network.LoadPriority.Veryhigh:
-            return WI.Resource.NetworkPriority.Veryhigh;
+            return WI.Resource.NetworkPriority.VeryHigh;
         default:
             console.error("Unknown metrics priority", priority);
             return WI.Resource.NetworkPriority.Unknown;
@@ -1278,11 +1278,11 @@ WI.Resource.ResponseSource = {
 
 WI.Resource.NetworkPriority = {
     Unknown: Symbol("unknown"),
-    Verylow: Symbol("verylow"),
+    VeryLow: Symbol("very-low"),
     Low: Symbol("low"),
     Medium: Symbol("medium"),
     High: Symbol("high"),
-    Veryhigh: Symbol("veryhigh"),
+    VeryHigh: Symbol("very-high"),
 };
 
 WI.Resource.GroupingMode = {
