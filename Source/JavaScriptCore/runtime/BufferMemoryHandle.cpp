@@ -220,9 +220,7 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     , m_initial(initial)
     , m_maximum(maximum)
 {
-    if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
-        ASSERT(mappedCapacity == size);
-    else {
+    if (sharingMode != MemorySharingMode::Default || mode != MemoryMode::BoundsChecking || mappedCapacity != size) {
 #if ENABLE(WEBASSEMBLY)
         Wasm::activateSignalingMemory();
 #endif
@@ -265,6 +263,15 @@ BufferMemoryHandle::~BufferMemoryHandle()
             case MemorySharingMode::Default: {
                 if (memory == nullBasePointer() && !m_size)
                     return;
+                if (BufferMemoryManager::singleton().isInGrowableOrFastMemory(memory)) {
+                    ASSERT(m_mappedCapacity >= m_size);
+                    ASSERT(!(m_mappedCapacity % PageCount::pageSize));
+                    constexpr bool readable = true;
+                    constexpr bool writable = true;
+                    OSAllocator::protect(memory, m_mappedCapacity, readable, writable);
+                    BufferMemoryManager::singleton().freeGrowableBoundsCheckingMemory(memory, m_mappedCapacity);
+                    break;
+                }
                 Gigacage::freeVirtualPages(Gigacage::Primitive, memory, m_size);
                 break;
             }
