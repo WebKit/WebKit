@@ -46,6 +46,7 @@ struct ImageOrientation;
 struct MarginRect {
     LayoutRect marginRect;
     LayoutRect anchorRect;
+    LayoutBoxExtent scrollMargin;
 };
 
 namespace Layout {
