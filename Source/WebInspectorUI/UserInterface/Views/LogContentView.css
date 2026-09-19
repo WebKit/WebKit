@@ -146,6 +146,11 @@
     border-top: 1px solid hsl(0, 0%, 94%);
 }
 
+.console-virtualization-spacer {
+    flex-shrink: 0;
+    pointer-events: none;
+}
+
 .console-error-level:not(.filtered-out, .filtered-out-by-search),
 .console-error-level:not(.filtered-out, .filtered-out-by-search) + .console-item {
     border-top-color: hsl(0, 100%, 92%);
