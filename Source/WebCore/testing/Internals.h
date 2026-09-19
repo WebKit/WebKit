@@ -1723,6 +1723,10 @@ public:
     std::optional<Vector<double>> NODELETE spatialPortalResolvedTransform(Element&);
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    String volumetricScenePresentationMode(Element&);
+#endif
+
     ExceptionOr<void> copyImageAtLocation(int x, int y);
 
     bool NODELETE hasMediaSessionManager() const;

@@ -317,6 +317,13 @@ public:
     virtual void setHasModelElement(bool) { }
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    virtual void enterVolumetricSceneForElement(Element&, CompletionHandler<void(bool)>&& completion) { completion(false); }
+    virtual void exitVolumetricSceneForElement(Element&) { }
+    // The element reloaded its content, which mints a new hosting context; rebind the existing scene to it.
+    virtual void updateVolumetricSceneForElement(Element&) { }
+#endif
+
     virtual PlatformPageClient platformPageClient() const = 0;
 
     virtual void setCursor(const Cursor&) = 0;
