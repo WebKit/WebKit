@@ -127,6 +127,7 @@ class JSGlobalObject;
     v(applyFunction, nullptr) \
     v(callFunction, nullptr) \
     v(hasOwnPropertyFunction, nullptr) \
+    v(reflectConstructFunction, nullptr) \
     v(createPrivateSymbol, nullptr) \
     v(emptyPropertyNameEnumerator, nullptr) \
     v(sentinelString, nullptr) \
