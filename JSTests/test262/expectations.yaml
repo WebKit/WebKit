@@ -132,9 +132,6 @@ test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopa
   default: 3
 test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js:
   default: 3
-test/staging/sm/ArrayBuffer/slice-species.js:
-  default: 3
-  strict mode: 3
 test/staging/sm/Date/two-digit-years.js:
   default: 3
   strict mode: 3

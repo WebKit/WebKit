@@ -36,9 +36,9 @@ namespace JSArrayBufferPrototypeInternal {
 static constexpr bool verbose = false;
 };
 
-ALWAYS_INLINE bool speciesWatchpointIsValid(JSObject* thisObject, ArrayBufferSharingMode mode)
+ALWAYS_INLINE bool speciesWatchpointIsValid(JSGlobalObject* globalObject, JSObject* thisObject, ArrayBufferSharingMode mode)
 {
-    JSGlobalObject* globalObject = thisObject->realm();
+    ASSERT(thisObject->realm() == globalObject);
     auto* prototype = globalObject->arrayBufferPrototype(mode);
 
     if (globalObject->arrayBufferSpeciesWatchpointSet(mode).state() == ClearWatchpoint) {
@@ -57,10 +57,12 @@ ALWAYS_INLINE std::optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    bool isValid = speciesWatchpointIsValid(thisObject, mode);
-    scope.assertNoException();
-    if (isValid) [[likely]]
-        return std::nullopt;
+    if (thisObject->realm() == globalObject) [[likely]] {
+        bool isValid = speciesWatchpointIsValid(globalObject, thisObject, mode);
+        scope.assertNoException();
+        if (isValid) [[likely]]
+            return std::nullopt;
+    }
 
     RELEASE_AND_RETURN(scope, arrayBufferSpeciesConstructorSlow(globalObject, thisObject, mode));
 }
