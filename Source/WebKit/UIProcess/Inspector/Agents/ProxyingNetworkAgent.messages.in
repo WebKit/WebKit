@@ -32,7 +32,7 @@ messages -> Inspector::ProxyingNetworkAgent {
 
     DataReceived(WebCore::ScopedResourceLoaderIdentifier resourceID, int dataLength, int encodedDataLength, double timestamp)
 
-    LoadingFinished(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String sourceMapURL)
+    LoadingFinished(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String sourceMapURL, WebCore::NetworkLoadMetrics networkLoadMetrics)
 
     LoadingFailed(WebCore::ScopedResourceLoaderIdentifier resourceID, double timestamp, String errorText, bool canceled)
 
