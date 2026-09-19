@@ -1,0 +1,7 @@
+
+PASS A volumetric scene fits the content centered on the volume
+PASS A volumetric scene fit centers off-center content under a rotation
+PASS A volumetric scene fit scales the content independently of its rotation
+PASS A volumetric scene fit replaces the inline fit and is restored on exit
+PASS A volumetric scene re-fits content that arrives while it is presented
+

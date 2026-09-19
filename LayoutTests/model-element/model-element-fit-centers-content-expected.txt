@@ -1,0 +1,7 @@
+
+PASS <model> orbit fit centers content whose bounding box is off-center
+PASS <model> orbit fit centers off-center content rotated about z
+PASS <model> orbit fit centers off-center content under a compound rotation
+PASS <model> orbit fit centers content whose bounding box is already centered
+PASS <model> inline fit centers off-center rotated content after a resize
+
