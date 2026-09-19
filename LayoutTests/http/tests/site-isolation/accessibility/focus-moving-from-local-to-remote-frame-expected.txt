@@ -1,0 +1,8 @@
+Ensures that accessibility returns a remote element from the focused-ui-element API when focus leaves an in-process frame for a remote one, rather than the in-process frame's tree going on claiming focus.
+PASS: focusedObject.isRemotePlatformElement === false
+PASS: focusedObject.isRemotePlatformElement === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

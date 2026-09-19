@@ -898,21 +898,29 @@ AccessibilityObject* AXObjectCache::localFrameLeadingToFocusedFrame()
 #endif // ENABLE(ACCESSIBILITY_LOCAL_FRAME)
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-void AXObjectCache::updateAncestorFramesFocusedObject()
+void AXObjectCache::updateFocusedObjectInOtherLocalFrames()
 {
     AX_ASSERT(isMainThread());
 
     RefPtr document = this->document();
-    RefPtr frame = document ? document->frame() : nullptr;
-    for (RefPtr<Frame> ancestor = frame ? frame->tree().parent() : nullptr; ancestor; ancestor = ancestor->tree().parent()) {
-        RefPtr localAncestorFrame = dynamicDowncast<LocalFrame>(ancestor.get());
-        RefPtr ancestorDocument = localAncestorFrame ? localAncestorFrame->document() : nullptr;
-        // focusedObjectForLocalFrame() returns the AXLocalFrame leading toward the focused subframe
-        // for an ancestor cache, so this points each ancestor tree's focus at the correct child frame.
-        if (CheckedPtr ancestorCache = ancestorDocument ? ancestorDocument->existingAXObjectCache() : nullptr) {
-            RefPtr ancestorFocus = ancestorCache->focusedObjectForLocalFrame();
-            ancestorCache->setIsolatedTreeFocusedObject(ancestorFocus.get());
-        }
+    RefPtr page = document ? document->page() : nullptr;
+    if (!page)
+        return;
+
+    for (RefPtr<Frame> frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
+        RefPtr frameDocument = localFrame ? localFrame->document() : nullptr;
+        CheckedPtr frameCache = frameDocument ? frameDocument->existingAXObjectCache() : nullptr;
+        if (!frameCache || frameCache.get() == this)
+            continue;
+
+        auto focusDidChange = frameCache->setIsolatedTreeFocusedObject(frameCache->focusedObjectForLocalFrame());
+        if (focusDidChange == AXFocusDidChange::No)
+            continue;
+        // It's possible for AppKit to query for the current-focus within this call stack,
+        // e.g. as part of NSAccessibilityHandleFocusChanged, so eagerly process the focus
+        // change we just queued.
+        frameCache->processQueuedIsolatedNodeUpdates();
     }
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE) && ENABLE(ACCESSIBILITY_LOCAL_FRAME)
@@ -937,12 +945,13 @@ AccessibilityObject* AXObjectCache::focusedObjectForNode(Node* focusedNode)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-void AXObjectCache::setIsolatedTreeFocusedObject(AccessibilityObject* focus)
+AXFocusDidChange AXObjectCache::setIsolatedTreeFocusedObject(AccessibilityObject* focus)
 {
     AX_ASSERT(isMainThread());
 
     if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
-        tree->setFocusedNodeID(focus ? std::optional { focus->objectID() } : std::nullopt);
+        return tree->setFocusedNodeID(focus ? std::optional { focus->objectID() } : std::nullopt);
+    return AXFocusDidChange::No;
 }
 #endif
 
@@ -2799,12 +2808,9 @@ void AXObjectCache::handleFocusedUIElementChanged(Element* oldElement, Element* 
     // the case where focus is in a site-isolated sub-frame (returns the AXRemoteFrame).
     setIsolatedTreeFocusedObject(focusedObjectForLocalFrame());
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    // Only the focused frame's own cache runs this handler, so also refresh the isolated-tree focus
-    // of each ancestor local frame. This keeps an ancestor tree (e.g. the main frame's, which
-    // VoiceOver queries for the focused element) pointed at the AXLocalFrame leading toward the
-    // focused subframe, so AXIsolatedObject::focusedUIElementInAnyLocalFrame() can descend
-    // cross-frame to the real focused element.
-    updateAncestorFramesFocusedObject();
+    // Only the focused frame's own cache runs this handler, so the other frames' trees would
+    // otherwise never learn that focus moved.
+    updateFocusedObjectInOtherLocalFrames();
 #endif
 #endif
     platformHandleFocusedUIElementChanged(protect(getOrCreate(oldElement)), protect(getOrCreate(newElement)));

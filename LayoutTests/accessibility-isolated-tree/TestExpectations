@@ -6,8 +6,6 @@ accessibility/isolated-tree [ Pass ]
 accessibility/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/isolated-tree/content-editable-set-inner-text-generates-axvalue-notification.html [ Failure Pass ]
 accessibility/mac/focus-setting-selection-syncronizing-not-clearing.html [ Crash ]
-# Fails because of (1) stale focus ID for the iFrame and (2) iFrame #2 being ignored.
-accessibility/mac/frame-with-title.html [ Failure ]
 accessibility/mac/pseudo-element-text-markers.html [ Failure ]
 accessibility/mac/ruby-hierarchy-roles.html [ Failure Pass ]
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Failure ]

@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../../resources/accessibility-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
 </head>
 <body id="body">
@@ -11,22 +12,40 @@
 <iframe id="frame2" src="image-map2.html" width=100 height=100 name="packageListFrame" >
 </iframe>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This test makes sure that a frame with a title will use that value instead of the name.\n\n";
 
-    description("This test makes sure that a frame with a title will use that value instead of the name.");
+var focusedDescription;
 
-    if (window.accessibilityController) {
+// Read the focused element from inside the focus notification rather than polling for it, so this
+// also checks we answer with the right one at the moment assistive technologies are told to look.
+function focusAndReadFocusedElementAtNotification(id) {
+    return new Promise(resolve => {
+        accessibilityController.addNotificationListener((axElement, notification) => {
+            if (notification != "AXFocusChanged")
+                return;
+            accessibilityController.removeNotificationListener();
+            let focusedElement = accessibilityController.focusedElement;
+            resolve(focusedElement ? focusedElement.description : "no focused element");
+        });
+        document.getElementById(id).focus();
+    });
+}
 
-          document.getElementById("frame1").focus();
-          shouldBe("accessibilityController.focusedElement.description", "'AXDescription: All Packages'");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-          document.getElementById("frame2").focus();
-          shouldBe("accessibilityController.focusedElement.description", "'AXDescription: packageListFrame'");
-    }
+    setTimeout(async function() {
+        focusedDescription = await focusAndReadFocusedElementAtNotification("frame1");
+        output += expect("focusedDescription", "'AXDescription: All Packages'");
 
+        focusedDescription = await focusAndReadFocusedElementAtNotification("frame2");
+        output += expect("focusedDescription", "'AXDescription: packageListFrame'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
 
 </body>
