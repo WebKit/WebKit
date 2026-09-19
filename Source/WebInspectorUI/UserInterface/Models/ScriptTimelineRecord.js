@@ -134,7 +134,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = nodePayload.lineNumber - 1;
 
-                var sourceCodeLocation = sourceCode ? sourceCode.createLazySourceCodeLocation(lineNumber, nodePayload.columnNumber) : null;
+                let sourceCodeLocation = sourceCode?.createSourceCodeLocation(lineNumber, nodePayload.columnNumber) || null;
             }
 
             var isProgramCode = nodePayload.functionName === "(program)";
