@@ -63,8 +63,10 @@ private:
     IDBDatabaseNameAndVersionRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, InfoCallback&&);
 
     // ActiveDOMObject.
-    bool NODELETE virtualHasPendingActivity() const final;
-    void NODELETE stop() final;
+    // Exported because x86_64 emits this class's vtable in WebKitLegacy, which
+    // then needs both overrides out of line; arm64 happens not to.
+    WEBCORE_EXPORT bool NODELETE virtualHasPendingActivity() const final;
+    WEBCORE_EXPORT void NODELETE stop() final;
 
     const Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
     IDBResourceIdentifier m_resourceIdentifier;

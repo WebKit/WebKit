@@ -123,7 +123,7 @@ public:
     bool isValid() const;
 
     void NODELETE ref();
-    void deref();
+    WEBCORE_EXPORT void deref();
 
     void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
     void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, std::optional<Vector<IDBDatabaseNameAndVersion>>&&);

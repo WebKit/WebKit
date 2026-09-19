@@ -2576,6 +2576,7 @@ target_compile_definitions(webrtc PRIVATE
   NON_WINDOWS_DEFINE
   NO_MAIN_THREAD_WRAPPING
   OPENSSL_ASM
+  $<$<STREQUAL:${PORT},Cocoa>:OPENSSL_SMALL>
   OPUS_BUILD
   OPUS_EXPORT=
   RTC_ENABLE_VP9
@@ -3133,10 +3134,13 @@ if (APPLE)
     target_compile_definitions(yasm PRIVATE
         PACKAGE_STRING="yasm 1.3.0"
     )
+    # yasm is a build tool, so it needs to target the host system.
+    set_target_properties(yasm PROPERTIES OSX_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}")
 endif ()
 
 set(vpx_SOURCES
-    Source/third_party/libvpx/source/config/linux/ppc64/vpx_config.c
+    # NOTE: vpx_config.c is absent here; it's architecture specific and
+    # appended below.
     Source/third_party/libvpx/source/libvpx/args.c
     Source/third_party/libvpx/source/libvpx/ivfdec.c
     Source/third_party/libvpx/source/libvpx/ivfenc.c
@@ -3332,15 +3336,15 @@ set(vpx_SOURCES
 )
 
 if (WTF_CPU_X86_64)
-    enable_language(ASM_NASM)
-    # Override the compile command to only pass nasm-compatible flags.
-    # Global add_compile_options() bleeds in Clang flags (-isystem, -iframework, -w) that
-    # nasm doesn't understand, and nasm 3.x doesn't treat -MD as a two-token dep flag.
-    # Mirrors how the Xcode build invokes yasm: format + includes + defines, nothing else.
-    set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <DEFINES> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
+    if (NOT APPLE)
+        # Apple ports assemble the .asm sources with the in-tree yasm below,
+        # matching the Xcode build. Everything else uses nasm.
+        enable_language(ASM_NASM)
+        # Override the compile command to only pass nasm-compatible flags.
+        set(CMAKE_ASM_NASM_COMPILE_OBJECT "<CMAKE_ASM_NASM_COMPILER> <DEFINES> <INCLUDES> -f ${CMAKE_ASM_NASM_OBJECT_FORMAT} -o <OBJECT> <SOURCE>")
+    endif ()
 
     list(APPEND vpx_SOURCES
-        Source/third_party/libvpx/source/config/mac/x64/vpx_config.c
         Source/third_party/libvpx/source/libvpx/vp8/common/x86/bilinear_filter_sse2.c
         Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_mmx.c
         Source/third_party/libvpx/source/libvpx/vp8/common/x86/idct_blk_sse2.c
@@ -3465,7 +3469,9 @@ if (WTF_CPU_X86_64)
         Source/third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm
     )
 
-    set_source_files_properties(${vpx_ASSEMBLY_SOURCES} PROPERTIES LANGUAGE ASM_NASM)
+    if (NOT APPLE)
+        set_source_files_properties(${vpx_ASSEMBLY_SOURCES} PROPERTIES LANGUAGE ASM_NASM)
+    endif ()
 
 elseif (WTF_CPU_ARM64)
     list(APPEND vpx_SOURCES
@@ -3579,12 +3585,16 @@ if (APPLE)
         list(APPEND vpx_INCLUDE_DIRECTORIES
             Source/third_party/libvpx/source/config/mac/x64
         )
+        list(APPEND vpx_SOURCES
+            Source/third_party/libvpx/source/config/mac/x64/vpx_config.c
+        )
     else ()
         # Use the linux configuration instead of iOS on Cocoa arm64 platforms.
         list(APPEND vpx_INCLUDE_DIRECTORIES
             Source/third_party/libvpx/source/config/linux/arm64-highbd
         )
         list(APPEND vpx_SOURCES
+            Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_config.c
             Source/third_party/libvpx/source/libvpx/vpx_ports/aarch64_cpudetect.c
         )
     endif ()
@@ -3593,13 +3603,16 @@ else ()
         list(APPEND vpx_INCLUDE_DIRECTORIES
             Source/third_party/libvpx/source/config/linux/x64
         )
+        list(APPEND vpx_SOURCES
+            Source/third_party/libvpx/source/config/linux/x64/vpx_config.c
+        )
     elseif (WTF_CPU_ARM64)
         list(APPEND vpx_INCLUDE_DIRECTORIES
             Source/third_party/libvpx/source/config/linux/arm64-highbd
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm
         )
         list(APPEND vpx_SOURCES
-            Source/third_party/libvpx/source/config/linux/arm64/vpx_config.c
+            Source/third_party/libvpx/source/config/linux/arm64-highbd/vpx_config.c
             Source/third_party/libvpx/source/libvpx/vpx_ports/aarch64_cpudetect.c
         )
     elseif (WTF_CPU_ADDRESS32 AND WTF_CPU_ARM)
@@ -3627,7 +3640,42 @@ if (APPLE)
 endif ()
 
 if (WTF_CPU_X86_64)
-    add_library(vpx OBJECT ${vpx_SOURCES} ${vpx_ASSEMBLY_SOURCES})
+    if (APPLE)
+        # Assemble the .asm sources with the in-tree yasm, matching the Xcode
+        # build. Other ports assemble them as ASM_NASM sources of the vpx
+        # target instead.
+        set(vpx_ASSEMBLY_OBJECTS "")
+        set(_yasm_include_flags
+            -I${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/config/mac/x64/
+            -I${CMAKE_CURRENT_SOURCE_DIR}/Source/third_party/libvpx/source/libvpx/
+        )
+        foreach (_asm IN LISTS vpx_ASSEMBLY_SOURCES)
+            # Basenames repeat across the vp8/vp9/vpx_dsp trees, so key the object
+            # on the full relative path.
+            string(REGEX REPLACE "[/\\]" "_" _asm_object_name "${_asm}")
+            set(_asm_object "${CMAKE_CURRENT_BINARY_DIR}/vpx-asm/${_asm_object_name}.o")
+            add_custom_command(
+                OUTPUT ${_asm_object}
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/vpx-asm
+                COMMAND $<TARGET_FILE:yasm>
+                    -f macho64
+                    ${_yasm_include_flags}
+                    -o ${_asm_object}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/${_asm}
+                MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/${_asm}
+                DEPENDS yasm
+                COMMENT "Assembling ${_asm}"
+                VERBATIM)
+            list(APPEND vpx_ASSEMBLY_OBJECTS ${_asm_object})
+        endforeach ()
+
+        add_library(vpx OBJECT ${vpx_SOURCES})
+        set_source_files_properties(${vpx_ASSEMBLY_OBJECTS} PROPERTIES
+            EXTERNAL_OBJECT TRUE GENERATED TRUE)
+        target_sources(webrtc PRIVATE ${vpx_ASSEMBLY_OBJECTS})
+    else ()
+        add_library(vpx OBJECT ${vpx_SOURCES} ${vpx_ASSEMBLY_SOURCES})
+    endif ()
     target_compile_options(vpx PRIVATE $<$<COMPILE_LANGUAGE:CXX>:-mavx2>)
     target_compile_options(vpx PRIVATE $<$<COMPILE_LANGUAGE:C>:-mavx2>)
 elseif (WTF_CPU_ARM64)
