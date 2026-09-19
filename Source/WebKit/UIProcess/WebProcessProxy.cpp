@@ -3287,6 +3287,22 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Web
     updateRemoteWorkerProcessAssertion(workerType);
 }
 
+<<<<<<< HEAD
+=======
+std::optional<WebPageProxyIdentifier> WebProcessProxy::remoteWorkerPageProxyID(RemoteWorkerType workerType) const
+{
+    auto& workerInformation = workerType == RemoteWorkerType::SharedWorker ? m_sharedWorkerInformation : m_serviceWorkerInformation;
+    if (!workerInformation)
+        return std::nullopt;
+    return workerInformation->remoteWorkerPageProxyID;
+}
+
+void WebProcessProxy::markProcessAsRecentlyUsed()
+{
+    liveProcessesLRU().moveToLastIfPresent(*this);
+}
+
+>>>>>>> 385caad4d69f (Validate WebPageProxyIdentifier supplied by WebContent process against per-process allow-list)
 #if !USE(GLIB)
 void WebProcessProxy::systemBeep()
 {
