@@ -108,6 +108,8 @@ void ProcessLauncher::launchProcess()
     IPC::SocketPair webkitSocketPair = IPC::createPlatformConnection(SOCK_SEQPACKET, connectionOptions());
     GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", webkitSocketPair.client.value()));
 
+    bool enableSharedArrayBuffer = m_launchOptions.processType == ProcessLauncher::ProcessType::Web && m_client && m_client->shouldEnableSharedArrayBuffer();
+
 #if OS(ANDROID)
     if (auto* processManager = wpe_process_manager_get_default()) {
         WPEProcessType processType;
@@ -147,10 +149,12 @@ void ProcessLauncher::launchProcess()
 #endif
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
-        std::array<char*, 3> argv = {
+        std::array<char*, 4> argv = {
             processIdentifier.get(),
             webkitSocket.get(),
         };
+        if (enableSharedArrayBuffer)
+            argv[2] = const_cast<char*>("--enable-shared-array-buffer");
 
         m_processID = ProcessProviderLibWPE::singleton().launchProcess(m_launchOptions, argv.data(), webkitSocketPair.client.value());
         if (m_processID <= -1)
@@ -202,6 +206,9 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
+    if (enableSharedArrayBuffer)
+        nargs++;
+
     Vector<char*> argv(nargs);
     unsigned i = 0;
 #if ENABLE(DEVELOPER_MODE)
@@ -216,6 +223,8 @@ void ProcessLauncher::launchProcess()
     if (configureJSCForTesting)
         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
 #endif
+    if (enableSharedArrayBuffer)
+        argv[i++] = const_cast<char*>("--enable-shared-array-buffer");
     argv[i++] = nullptr;
 
     // Warning: we want GIO to be able to spawn with posix_spawn() rather than fork()/exec(), in
