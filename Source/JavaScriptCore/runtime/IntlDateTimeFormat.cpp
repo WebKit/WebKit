@@ -340,7 +340,6 @@ void IntlDateTimeFormat::setFormatsFromPattern(IntlDateTimeFormatImpl& impl, Str
             else if (count == 2)
                 impl.m_day = Day::TwoDigit;
             break;
-        case 'a':
         case 'b':
         case 'B':
             if (count <= 3)
