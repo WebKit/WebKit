@@ -37,9 +37,7 @@ typedef unsigned short GLushort;
 typedef unsigned long GLuint;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
-typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
-// FIXME: Currently `[AllowShared] BufferDataSource` is not built well in our compile-time IDL type converter. We need more template specialization for that.
-// But we should replace BufferDataSource to BufferSource since both are completely same time, and we already support `[AllowShared] BufferSource`.
+// FIXME: Replace AllowSharedBufferDataSource with [AllowShared] BufferSource.
 typedef ([AllowShared] ArrayBuffer or [AllowShared] ArrayBufferView) AllowSharedBufferDataSource;
 typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
 typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
