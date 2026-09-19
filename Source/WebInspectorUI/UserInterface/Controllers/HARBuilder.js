@@ -148,6 +148,9 @@ WI.HARBuilder = class HARBuilder
         // WebKit Custom Field `_priority`.
         if (resource.priority !== WI.Resource.NetworkPriority.Unknown)
             entry._priority = HARBuilder.priority(resource.priority);
+        // WebKit Custom Field `_initialPriority`.
+        if (resource.initialPriority !== WI.Resource.NetworkPriority.Unknown)
+            entry._initialPriority = HARBuilder.priority(resource.initialPriority);
 
         return entry;
     }
@@ -424,12 +427,16 @@ WI.HARBuilder = class HARBuilder
     static priority(priority)
     {
         switch (priority) {
+        case WI.Resource.NetworkPriority.Verylow:
+            return "verylow";
         case WI.Resource.NetworkPriority.Low:
             return "low";
         case WI.Resource.NetworkPriority.Medium:
             return "medium";
         case WI.Resource.NetworkPriority.High:
             return "high";
+        case WI.Resource.NetworkPriority.Veryhigh:
+            return "veryhigh";
         }
 
         console.assert();
@@ -445,8 +452,10 @@ WI.HARBuilder = class HARBuilder
 
     static protocolFromHARProtocol(protocol)
     {
-        switch (protocol) {
+        switch (protocol.toUpperCase()) {
         case "HTTP/2":
+        case "HTTP/2.0":
+        case "H2":
             return "h2";
         case "HTTP/1.0":
             return "http/1.0";
@@ -458,6 +467,9 @@ WI.HARBuilder = class HARBuilder
             return "spdy/3";
         case "SPDY/3.1":
             return "spdy/3.1";
+        case "HTTP/3":
+        case "H3":
+            return "h3";
         }
 
         if (protocol)
@@ -487,17 +499,26 @@ WI.HARBuilder = class HARBuilder
 
     static networkPriorityFromHARPriority(priority)
     {
-        switch (priority) {
-        case "low":
-            return WI.Resource.NetworkPriority.Low;
-        case "medium":
-            return WI.Resource.NetworkPriority.Medium;
-        case "high":
-            return WI.Resource.NetworkPriority.High;
+        if (priority) {
+            switch (priority.toLowerCase()) {
+            case "verylow":
+            case "lowest": // Gecko based HAR tooling equivalent
+                return WI.Resource.NetworkPriority.Verylow;
+            case "low":
+                return WI.Resource.NetworkPriority.Low;
+            case "medium":
+            case "normal":
+                return WI.Resource.NetworkPriority.Medium;
+            case "high":
+                return WI.Resource.NetworkPriority.High;
+            case "veryhigh":
+            case "highest": // Gecko based HAR tooling equivalent
+                return WI.Resource.NetworkPriority.Veryhigh;
+            }
+
+            console.warn("Unknown HAR priority value", priority);
         }
 
-        if (priority)
-            console.warn("Unknown HAR priority value", priority);
         return WI.Resource.NetworkPriority.Unknown;
     }
 };

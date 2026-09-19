@@ -73,7 +73,7 @@ public:
     struct RequestData {
         RequestData() { }
 
-        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public)
+        RequestData(URL&& url, URL&& firstPartyForCookies, double timeoutInterval, String&& httpMethod, HTTPHeaderMap&& httpHeaderFields, Vector<String>&& responseContentDispositionEncodingFallbackArray, ResourceRequestCachePolicy cachePolicy, SameSiteDisposition sameSiteDisposition, ResourceLoadPriority priority, ResourceLoadPriority initialPriority, ResourceRequestRequester requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true, bool privacyProxyFailClosedForUnreachableNonMainHosts = false, bool useAdvancedPrivacyProtections = false, bool didFilterLinkDecoration = false, bool isPrivateTokenUsageByThirdPartyAllowed = false, bool wasSchemeOptimisticallyUpgraded = false, IPAddressSpace targetAddressSpace = IPAddressSpace::Public)
             : m_url(WTF::move(url))
             , m_firstPartyForCookies(WTF::move(firstPartyForCookies))
             , m_timeoutInterval(timeoutInterval)
@@ -83,6 +83,7 @@ public:
             , m_cachePolicy(cachePolicy)
             , m_sameSiteDisposition(sameSiteDisposition)
             , m_priority(priority)
+            , m_initialPriority(initialPriority)
             , m_requester(requester)
             , m_isTopSite(isTopSite)
             , m_allowCookies(allowCookies)
@@ -111,6 +112,7 @@ public:
         ResourceRequestCachePolicy m_cachePolicy { ResourceRequestCachePolicy::UseProtocolCachePolicy };
         SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
+        ResourceLoadPriority m_initialPriority { ResourceLoadPriority::Low };
         ResourceRequestRequester m_requester { ResourceRequestRequester::Unspecified };
         bool m_isTopSite : 1 { false };
         bool m_allowCookies : 1 { false };
@@ -238,6 +240,8 @@ public:
 
     WEBCORE_EXPORT ResourceLoadPriority priority() const;
     WEBCORE_EXPORT void setPriority(ResourceLoadPriority);
+    WEBCORE_EXPORT ResourceLoadPriority initialPriority() const;
+    WEBCORE_EXPORT void setInitialPriority(ResourceLoadPriority);
 
     WEBCORE_EXPORT String cachePartition() const;
     bool shouldBlockThirdPartyStorage() const { return m_shouldBlockThirdPartyStorage; }
