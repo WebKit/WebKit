@@ -129,6 +129,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+bool operator==(WebCore::NetworkLoadPriority, WebCore::ResourceLoadPriority);
+
 #if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
 // Upper bounds on what may accumulate in m_deferredMessages while the WebProcess has not yet answered
 // ContinueDidReceiveResponse. Generous for a fast load whose data outruns the content-policy check, but keeps a
@@ -512,7 +514,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTF::move(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = NetworkLoad::create(*this, WTF::move(parameters), *networkSession);
-    
     WeakPtr weakThis { *this };
     RefPtr networkLoad = m_networkLoad;
     if (isSynchronous())
@@ -1542,12 +1543,21 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         logCookieInformation();
 #endif
 
+    if (networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (m_parameters.request.initialPriority().has_value())
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
+
+        if (!(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority == m_parameters.request.priority()))
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
+    }
+
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, protect(m_bufferedData.buffer()).get(), networkLoadMetrics);
     else {
         if (!m_bufferedData.isEmpty()) {
             sendBuffer(*protect(m_bufferedData.buffer()));
         }
+
 #if ENABLE(CONTENT_FILTERING)
         if (RefPtr contentFilter = m_contentFilter) {
             if (!contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
@@ -1646,7 +1656,7 @@ std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapVali
         protect(m_cache)->remove(m_cacheEntryForMaxAgeCapValidation->key());
         m_cacheEntryForMaxAgeCapValidation = nullptr;
     }
-    
+
     if (!existingCacheEntryMatchesNewResponse) {
         if (CheckedPtr networkStorageSession = protect(connectionToWebProcess().networkProcess())->storageSession(sessionID()))
             return networkStorageSession->maxAgeCacheCap(request, NetworkSession::isRequestToKnownCrossSiteTracker(request));
@@ -2945,6 +2955,29 @@ void NetworkResourceLoader::reportNetworkUsageToAllServiceWorkerClients(WebCore:
     }
 }
 #endif
+
+WebCore::NetworkLoadPriority NODELETE NetworkResourceLoader::toNetworkLoadPriority(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return WebCore::NetworkLoadPriority::Verylow;
+    case ResourceLoadPriority::Low:
+        return WebCore::NetworkLoadPriority::Low;
+    case ResourceLoadPriority::Medium:
+        return WebCore::NetworkLoadPriority::Medium;
+    case ResourceLoadPriority::High:
+        return WebCore::NetworkLoadPriority::High;
+    case ResourceLoadPriority::VeryHigh:
+        return WebCore::NetworkLoadPriority::Veryhigh;
+    }
+    ASSERT_NOT_REACHED();
+    return WebCore::NetworkLoadPriority::Unknown;
+}
+
+bool operator==(WebCore::NetworkLoadPriority a, WebCore::ResourceLoadPriority b)
+{
+    return a == NetworkResourceLoader::toNetworkLoadPriority(b);
+}
 
 } // namespace WebKit
 

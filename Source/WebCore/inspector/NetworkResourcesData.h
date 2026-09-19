@@ -75,6 +75,9 @@ public:
         Inspector::ResourceType type() const { return m_type; }
         void setType(Inspector::ResourceType type) { m_type = type; }
 
+        WebCore::CachedResource::Type requestResourceType() const { return m_cachedResourceType; }
+        void setRequestResourceType(WebCore::CachedResource::Type type) { m_cachedResourceType = type; }
+
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
         
@@ -126,6 +129,7 @@ public:
         std::optional<CertificateInfo> m_certificateInfo;
         WeakPtr<CachedResource> m_cachedResource;
         Inspector::ResourceType m_type { Inspector::ResourceType::Other };
+        CachedResource::Type m_cachedResourceType { CachedResource::Type::RawResource };
         int m_httpStatusCode { 0 };
         String m_httpStatusText;
         bool m_isContentEvicted { false };
@@ -147,10 +151,11 @@ public:
     NetworkResourcesData(const Settings&);
     ~NetworkResourcesData();
 
-    void resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType);
-    void resourceCreated(const String& requestId, const String& loaderId, CachedResource&);
+    void resourceCreated(const String& requestId, const String& loaderId, Inspector::ResourceType, CachedResource::Type);
+    void resourceCreated(const String& requestId, const String& loaderId, CachedResource&, CachedResource::Type);
     void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&, Inspector::ResourceType, bool forceBufferData);
     void setResourceType(const String& requestId, Inspector::ResourceType);
+    void setRequestResourceType(const String& requestId, CachedResource::Type);
     Inspector::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
     ResourceData const* maybeAddResourceData(const String& requestId, const SharedBuffer&);

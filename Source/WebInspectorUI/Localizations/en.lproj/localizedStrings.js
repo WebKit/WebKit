@@ -1,6 +1,7 @@
 var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
+localizedStrings[" (initially %s)"] = " (initially %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["% Progress"] = "% Progress";
@@ -90,6 +91,7 @@ localizedStrings["%s cannot be modified"] = "%s cannot be modified";
 localizedStrings["%s delay"] = "%s delay";
 localizedStrings["%s eval\n%s async"] = "%s eval\n%s async";
 localizedStrings["%s interval"] = "%s interval";
+localizedStrings["%s not an array @ HAR import error"] = "%s not an array";
 localizedStrings["%s requests do not have a body"] = "%s requests do not have a body";
 localizedStrings["%s total"] = "%s total";
 localizedStrings["%s transferred"] = "%s transferred";
@@ -1940,8 +1942,10 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
+localizedStrings["Very high @ Network Priority"] = "Very High";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
+localizedStrings["Very low @ Network Priority"] = "Very Low";
 /* Title for Video Codec row in Media Sidebar */
 localizedStrings["Video Codec @ Media Sidebar"] = "Video Codec";
 /* Title for Video Details section in Media Sidebar */
@@ -2121,14 +2125,21 @@ localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["half-equirectangular @ Media Sidebar"] = "Half Equirectangular";
 /* Shown in the 'Type' column of the Network Table for image resources. */
 localizedStrings["image @ Network Tab Resource Type Column Value"] = "image";
-localizedStrings["invalid HAR"] = "invalid HAR";
+localizedStrings["invalid %s @ HAR import error"] = "invalid %s";
+localizedStrings["invalid HAR - %s"] = "invalid HAR - %s";
 localizedStrings["invalid JSON"] = "invalid JSON";
 /* Error message template when failing to parse a JS source map. */
 localizedStrings["invalid \u0022%s\u0022 @ Source Map"] = "invalid \u0022%s\u0022";
 localizedStrings["key"] = "key";
 localizedStrings["line "] = "line ";
+localizedStrings["mainResourceSentWalltime issue @ HAR import error"] = "mainResourceSentWalltime issue";
+localizedStrings["missing entries @ HAR import error"] = "missing entries";
+localizedStrings["missing first page @ HAR import error"] = "missing first page";
 /* Error when a JS source map is missing a starting newline. */
 localizedStrings["missing newline @ Source Map"] = "missing newline";
+localizedStrings["missing pages @ HAR import error"] = "missing pages";
+localizedStrings["missing startedDateTime @ HAR import error"] = "missing startedDateTime";
+localizedStrings["not an object @ HAR import error"] = "not an object";
 /* Placeholder text indicating that no directory has been selected. */
 localizedStrings["no directory selected @ Local Override Popover"] = "no directory selected";
 /* Placeholder text indicating that no file has been selected. */

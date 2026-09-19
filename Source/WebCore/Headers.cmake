@@ -1887,6 +1887,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CrossOriginOpenerPolicy.h
     loader/CrossOriginPreflightResultCache.h
     loader/CustomHeaderFields.h
+    loader/DefaultResourceLoadPriority.h
     loader/DocumentLoadTiming.h
     loader/DocumentLoader.h
     loader/DocumentWriter.h
