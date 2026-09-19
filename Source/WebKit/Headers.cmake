@@ -472,6 +472,7 @@ list(APPEND WebKit_PRIVATE_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebExtensionMatchPatternPrivate.h
     UIProcess/API/Cocoa/_WKWebExtensionMessagePort.h
     UIProcess/API/Cocoa/_WKWebExtensionMessagePortPrivate.h
+    UIProcess/API/Cocoa/_WKWebExtensionNotification.h
     UIProcess/API/Cocoa/_WKWebExtensionPrivate.h
     UIProcess/API/Cocoa/_WKWebExtensionSidebar.h
     UIProcess/API/Cocoa/_WKWebExtensionTab.h
