@@ -113,6 +113,11 @@ public:
 
     WEBCORE_EXPORT bool expandUsingGranularity(TextGranularity granularity);
 
+    // The endpoint of this selection that stays put when the selection is extended to `extent`: whichever
+    // one is further away, measured in characters. Extending moves the nearer endpoint, so a selection
+    // extended to a position inside itself shrinks rather than staying put.
+    WEBCORE_EXPORT Position endpointToPreserveWhenExtendedTo(const Position& extent) const;
+
     // FIXME: Rename to include the word "canonical" and remove the word "first" or remove.
     // We don't yet support multi-range selections, so we only ever have one range to return.
     WEBCORE_EXPORT std::optional<SimpleRange> firstRange() const;

@@ -51,36 +51,44 @@ actor Recap {
     }
 }
 
-enum KeyboardModifier: Sendable {
-    case shift
-    case option
-    case command
+extension Recap {
+    struct KeyboardModifiers: OptionSet, Sendable {
+        let rawValue: UInt8
 
-    fileprivate var hidUsage: UInt {
-        switch self {
-        case .shift: UInt(kHIDUsage_KeyboardLeftShift)
-        case .option: UInt(kHIDUsage_KeyboardLeftAlt)
-        case .command: UInt(kHIDUsage_KeyboardLeftGUI)
+        static let shift = KeyboardModifiers(rawValue: 1 << 0)
+        static let option = KeyboardModifiers(rawValue: 1 << 1)
+        static let command = KeyboardModifiers(rawValue: 1 << 2)
+
+        static let all: KeyboardModifiers = [.shift, .option, .command]
+
+        fileprivate var hidUsages: [UInt] {
+            var usages: [UInt] = []
+            if contains(.shift) { usages.append(UInt(kHIDUsage_KeyboardLeftShift)) }
+            if contains(.option) { usages.append(UInt(kHIDUsage_KeyboardLeftAlt)) }
+            if contains(.command) { usages.append(UInt(kHIDUsage_KeyboardLeftGUI)) }
+            return usages
         }
-    }
 
-    var domName: String {
-        switch self {
-        case .shift: "shift"
-        case .option: "alt"
-        case .command: "meta"
+        var domNames: [String] {
+            var names: [String] = []
+            if contains(.shift) { names.append("shift") }
+            if contains(.option) { names.append("alt") }
+            if contains(.command) { names.append("meta") }
+            return names
         }
     }
 }
 
-private let keyboardOrKeypadUsagePage = UInt(kHIDPage_KeyboardOrKeypad)
-
-private let modifierDelay: TimeInterval = 0.05
-
 extension RCPEventStreamComposer {
+    private static var keyboardOrKeypadUsagePage: UInt { UInt(kHIDPage_KeyboardOrKeypad) }
+
+    private static var modifierDelay: TimeInterval { 0.05 }
+
     /// Composes `body` with `modifiers` physically held down, so that the inner events carry those modifiers.
-    func holdingModifiers(_ modifiers: [KeyboardModifier], _ body: () -> Void) {
-        guard !modifiers.isEmpty else {
+    func holdingModifiers(_ modifiers: Recap.KeyboardModifiers, _ body: () -> Void) {
+        let usages = modifiers.hidUsages
+
+        guard !usages.isEmpty else {
             body()
             return
         }
@@ -88,20 +96,20 @@ extension RCPEventStreamComposer {
         let pointerSender = senderProperties
 
         senderProperties = .keyboardSender()
-        for modifier in modifiers {
-            beginButtonPress(withPage: keyboardOrKeypadUsagePage, usage: modifier.hidUsage)
+        for usage in usages {
+            beginButtonPress(withPage: Self.keyboardOrKeypadUsagePage, usage: usage)
         }
 
-        advanceTime(modifierDelay)
+        advanceTime(Self.modifierDelay)
 
         senderProperties = pointerSender
         body()
 
-        advanceTime(modifierDelay)
+        advanceTime(Self.modifierDelay)
 
         senderProperties = .keyboardSender()
-        for modifier in modifiers.reversed() {
-            endButtonPress(withPage: keyboardOrKeypadUsagePage, usage: modifier.hidUsage)
+        for usage in usages.reversed() {
+            endButtonPress(withPage: Self.keyboardOrKeypadUsagePage, usage: usage)
         }
 
         senderProperties = pointerSender
