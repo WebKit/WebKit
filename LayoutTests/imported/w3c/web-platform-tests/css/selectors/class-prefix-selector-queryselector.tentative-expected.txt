@@ -1,0 +1,8 @@
+
+PASS querySelectorAll(".foo-*") returns matching elements in document order and excludes non-matches (foobar, foo-)
+PASS querySelector(".foo-*") returns the first matching element in document order
+PASS querySelectorAll with a selector list containing a class prefix selector does not duplicate an element that matches more than one branch
+PASS Element.closest() finds an ancestor via the class prefix selector
+PASS Element.closest() matches the element itself first
+PASS Element.closest() returns null when no ancestor matches the class prefix selector
+

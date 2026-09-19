@@ -63,6 +63,7 @@ struct CSSParserContext {
 #endif
     bool gridLanesEnabled : 1 { false };
     bool cssAppearanceBaseEnabled : 1 { false };
+    bool cssClassPrefixSelectorEnabled : 1 { false };
     bool cssPaintingAPIEnabled : 1 { false };
     bool cssTextDecorationLineErrorValues : 1 { false };
     bool cssFlexWrapBalanceEnabled : 1 { false };
