@@ -3107,8 +3107,11 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         }
 
         if (shouldComputeLogicalHeightFromAspectRatio()) {
-            // Only grid is expected to be in a state where it is calculating pref width and having unknown logical width.
-            if (isRenderGrid() && hasInvalidContentLogicalWidths() && !style.logicalWidth().isSpecified())
+            // blockSizeFromAspectRatio() below derives the block size from logicalWidth(), which is still
+            // the previous layout's value while our own content logical widths are being computed. Report
+            // indefinite rather than feed that back, unless the inline size came from style or from a
+            // stretching containing block, in which case it is not stale.
+            if (hasInvalidContentLogicalWidths() && !style.logicalWidth().isSpecified() && !hasStretchedLogicalWidth())
                 return { };
             return blockSizeFromAspectRatio(
                 horizontalBorderAndPaddingExtent(),
