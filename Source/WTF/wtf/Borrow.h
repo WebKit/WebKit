@@ -95,7 +95,8 @@ public:
 
     ~Borrow()
     {
-        m_ref.setIsBorrowed(m_previous);
+        bool wasBorrowed = m_ref.setIsBorrowed(m_previous);
+        ASSERT_UNUSED(wasBorrowed, wasBorrowed);
     }
 
     operator T&() const LIFETIME_BOUND
