@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:h="http://www.w3.org/1999/xhtml" width="400" height="100">
+  <metadata>
+    <h:title>objectBoundingBox pattern units on a tspan resolve against the whole text element</h:title>
+    <h:link rel="help" href="https://w3c.github.io/svgwg/svg2-draft/text.html#ObjectBoundingBoxUnitsTextObjects"/>
+    <h:link rel="match" href="pattern-objectBoundingBox-tspan-expected.svg"/>
+    <h:link rel="stylesheet" type="text/css" href="/fonts/ahem.css"/>
+  </metadata>
+  <!-- The text element spans x=0 to x=400, the tspan only x=200 to x=400. A quarter-width tile
+       is 100 user units against the text and would be 50 against the tspan. -->
+  <pattern id="stripes" patternUnits="objectBoundingBox" x="0" y="0" width="0.25" height="1">
+    <rect width="50" height="100" fill="green"/>
+  </pattern>
+  <text x="0" y="80" font-family="Ahem" font-size="100" fill="black">AA<tspan fill="url(#stripes)">AA</tspan></text>
+</svg>

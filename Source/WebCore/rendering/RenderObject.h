@@ -621,6 +621,12 @@ public:
     virtual FloatRect strokeBoundingBox() const;
     virtual bool objectBoundingBoxIsEmpty() const { return false; }
 
+    // The box that 'objectBoundingBox' units resolve against, which is the object bounding box for
+    // everything but the text content child elements ('tspan', 'textPath', and 'a' inside a text
+    // content element). Those resolve against the whole 'text' element.
+    // https://w3c.github.io/svgwg/svg2-draft/text.html#ObjectBoundingBoxUnitsTextObjects
+    virtual FloatRect objectBoundingBoxForResources() const { return objectBoundingBox(); }
+
     // The objectBoundingBox of a SVG container is affected by the transformations applied on its children -- the container
     // bounding box is a union of all child bounding boxes, mapped through their transformation matrices.
     //
