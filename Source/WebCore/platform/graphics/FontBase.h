@@ -135,6 +135,7 @@ public:
 #if USE(SKIA)
     sk_sp<SkTextBlob> buildTextBlob(std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, FontSmoothingMode) const;
     bool enableAntialiasing(FontSmoothingMode) const;
+    bool supportsOpenTypeAlternateHalfWidths() const;
 #endif
 
     // Returns nullopt if none of the glyphs are OT-SVG glyphs.
@@ -158,13 +159,15 @@ protected:
 
     enum class IsSystemFallbackFontPlaceholder : bool { No, Yes };
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
     enum class SupportsFeature : uint8_t {
         No,
         Yes,
         Unknown
     };
+#endif
 
+#if PLATFORM(COCOA)
     class ComplexColorFormatGlyphs {
     public:
         static ComplexColorFormatGlyphs createWithNoRelevantTables();
@@ -224,6 +227,10 @@ protected:
 
     mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
     mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
+#endif
+
+#if USE(SKIA)
+    mutable SupportsFeature m_supportsOpenTypeAlternateHalfWidths { SupportsFeature::Unknown };
 #endif
 
     FontMetrics m_fontMetrics;
