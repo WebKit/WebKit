@@ -117,7 +117,7 @@ private:
     struct Encoder {
         WTF_MAKE_STRUCT_TZONE_ALLOCATED(Encoder);
 
-        const UniqueRef<WebCore::GPUVideoEncoder> gpuEncoder;
+        const Ref<WebCore::GPUVideoEncoder> gpuEncoder;
         const UniqueRef<SharedVideoFrameReader> frameReader;
         Deque<CompletionHandler<void(bool)>> encodingCallbacks;
         WebCore::VideoCodecType codecType { WebCore::VideoCodecType::H264 };

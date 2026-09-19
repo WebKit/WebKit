@@ -292,6 +292,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/FontCascade.cpp
         Tests/WebCore/FontShadowTests.cpp
         Tests/WebCore/GridPosition.cpp
+        Tests/WebCore/HEVCUtilitiesTests.cpp
         Tests/WebCore/HTMLParserIdioms.cpp
         Tests/WebCore/HTTPHeaderField.cpp
         Tests/WebCore/HTTPHeaderMap.cpp
