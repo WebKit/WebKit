@@ -269,6 +269,8 @@ enum class AXTextChange : uint8_t { Inserted, Deleted, Replaced, AttributesChang
 
 enum class PostTarget { Element, ObservableParent };
 
+enum class AXFocusDidChange : bool { No, Yes };
+
 struct DeferredNotificationData {
     // The renderer or element to post a notification for.
     SingleThreadWeakPtr<RenderObject> renderer { nullptr };
@@ -846,13 +848,12 @@ private:
 
     // Propagates the root of the isolated tree back into the Core and WebKit.
     void setIsolatedTree(Ref<AXIsolatedTree>);
-    void setIsolatedTreeFocusedObject(AccessibilityObject*);
+    AXFocusDidChange setIsolatedTreeFocusedObject(AccessibilityObject*);
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)
-    // Refreshes the isolated-tree focused object of each ancestor local frame, keeping an ancestor
-    // tree (e.g. the main frame's, which VoiceOver queries) pointed at the AXLocalFrame leading
-    // toward the focused subframe. Only the focused frame's own cache handles its focus change, so
-    // ancestor trees would otherwise never learn focus moved into a descendant local frame.
-    void updateAncestorFramesFocusedObject();
+    // Refreshes the isolated-tree focused object of every other local frame in the page. An ancestor
+    // tree (e.g. the main frame's, which VoiceOver queries) gets the AXLocalFrame leading toward the
+    // focused subframe, and a frame that no longer holds focus gets nothing.
+    void updateFocusedObjectInOtherLocalFrames();
 #endif
     void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
