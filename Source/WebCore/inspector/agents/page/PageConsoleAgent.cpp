@@ -111,17 +111,18 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Consol
 
 Inspector::Protocol::ErrorStringOr<void> PageConsoleAgent::setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource source, Inspector::Protocol::Console::ChannelLevel level)
 {
+    Ref inspectedPage = m_inspectedPage;
     switch (level) {
     case Inspector::Protocol::Console::ChannelLevel::Off:
-        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
+        inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::Off, WTFLogLevel::Error);
         return { };
 
     case Inspector::Protocol::Console::ChannelLevel::Basic:
-        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
+        inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Info);
         return { };
 
     case Inspector::Protocol::Console::ChannelLevel::Verbose:
-        m_inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
+        inspectedPage->configureLoggingChannel(Inspector::Protocol::Helpers::getEnumConstantValue(source), WTFLogChannelState::On, WTFLogLevel::Debug);
         return { };
     }
 

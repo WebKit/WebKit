@@ -177,7 +177,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     if (!parentNode)
         return nullptr;
 
-    CheckedPtr cache = protect(m_node)->document().axObjectCache();
+    CheckedPtr cache = protect(protect(m_node)->document())->axObjectCache();
     return cache ? cache->getOrCreate(*parentNode) : nullptr;
 }
 

@@ -1890,7 +1890,7 @@ bool AccessibilityRenderObject::setValue(const String& string)
 
     // We should use the editor's insertText to mimic typing into the field.
     // Also only do this when the field is in editing mode.
-    if (RefPtr frame = renderer->document().frame()) {
+    if (RefPtr frame = protect(renderer->document())->frame()) {
         Ref editor = frame->editor();
         if (element->shouldUseInputMethod()) {
             editor->clearText();
@@ -2381,7 +2381,7 @@ RefPtr<AXCoreObject> AccessibilityRenderObject::accessibilityHitTest(const IntPo
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AccessibilityHitTest };
     HitTestResult hitTestResult { adjustedPoint };
 
-    protect(dynamicDowncast<RenderLayerModelObject>(*m_renderer))->layer()->hitTest(hitType, hitTestResult);
+    protect(protect(dynamicDowncast<RenderLayerModelObject>(*m_renderer))->layer())->hitTest(hitType, hitTestResult);
     RefPtr node = hitTestResult.innerNode();
     if (!node)
         return nullptr;

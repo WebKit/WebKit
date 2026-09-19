@@ -73,7 +73,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::startTrackin
 
     m_tracking = true;
 
-    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds());
 
     return { };
 }
@@ -87,7 +87,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorCPUProfilerAgent::stopTracking
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds());
 
     return { };
 }

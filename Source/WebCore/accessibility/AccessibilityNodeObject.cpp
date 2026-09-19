@@ -414,8 +414,8 @@ Document* AccessibilityNodeObject::document() const
 
 LocalFrameView* AccessibilityNodeObject::documentFrameView() const
 {
-    if (auto* node = this->node())
-        return node->document().view();
+    if (RefPtr node = this->node())
+        return protect(node->document())->view();
     return AccessibilityObject::documentFrameView();
 }
 
@@ -2259,15 +2259,16 @@ bool AccessibilityNodeObject::isDataTable() const
     // When a section of the document is contentEditable, all tables should be
     // treated as data tables, otherwise users may not be able to work with rich
     // text editors that allow creating and editing tables.
-    if (node() && protect(node())->hasEditableStyle())
+    RefPtr node = this->node();
+    if (node && node->hasEditableStyle())
         return true;
 
-    if (RefPtr tableElement = AXTableHelpers::tableElementIncludingAncestors(node(), renderer())) {
+    if (RefPtr tableElement = AXTableHelpers::tableElementIncludingAncestors(node, renderer())) {
         if (AXTableHelpers::tableElementIndicatesAccessibleTable(*tableElement))
             return true;
     }
 
-    RefPtr table = dynamicDowncast<HTMLTableElement>(node());
+    RefPtr table = dynamicDowncast<HTMLTableElement>(node);
     // The following checks should only apply if this is a real <table> element.
     if (!table)
         return false;
@@ -4039,7 +4040,8 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
         // contribute to the owning element's name, not this DOM parent's name.
         // Only skip if the owner is not hidden, as per the ARIA spec, aria-owns must
         // not be resolved when set on an element excluded from the accessibility tree.
-        auto owners = protect(*child)->owners();
+        Ref childObject = *child;
+        auto owners = childObject->owners();
         if (owners.size()) {
             bool isOwnedByOtherObject = false;
             for (const auto& owner : owners) {
@@ -4056,7 +4058,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
                 continue;
         }
 
-        processChild(protect(*child));
+        processChild(childObject);
     }
 
     // Include children that this element owns via aria-owns. These are not in
@@ -4362,7 +4364,7 @@ String AccessibilityNodeObject::stringValue() const
                 continue;
 
             if (auto selectedChildren = child->selectedChildren(); selectedChildren.size())
-                return selectedChildren.first()->stringValue();
+                return protect(selectedChildren.first())->stringValue();
             break;
         }
     }
@@ -5000,7 +5002,7 @@ Vector<Ref<HTMLElement>> labelsForElement(Element* element)
         if (htmlElement->hasAttributeWithoutSynchronization(aria_labelAttr))
             return { };
 
-        if (auto* treeScopeLabels = htmlElement->treeScope().labelElementsForId(idAttribute); treeScopeLabels && !treeScopeLabels->isEmpty()) {
+        if (auto* treeScopeLabels = protect(htmlElement->treeScope())->labelElementsForId(idAttribute); treeScopeLabels && !treeScopeLabels->isEmpty()) {
             result.appendVector(WTF::compactMap(*treeScopeLabels, [] (auto& label) {
                 return RefPtr { dynamicDowncast<HTMLLabelElement>(label.get()) };
             }));

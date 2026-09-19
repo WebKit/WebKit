@@ -100,7 +100,7 @@ void SocketStreamHandleImpl::platformSendHandshake(std::span<const uint8_t> data
     bool secureCookiesAccessed = false;
 
     if (headerFieldProxy) {
-        auto cookieDataFromNetworkSession = cookieDataForHandshake(m_storageSessionProvider ? m_storageSessionProvider->storageSession() : nullptr, *headerFieldProxy);
+        auto cookieDataFromNetworkSession = cookieDataForHandshake(m_storageSessionProvider ? protect(m_storageSessionProvider)->storageSession() : nullptr, *headerFieldProxy);
         if (!cookieDataFromNetworkSession) {
             completionHandler(false, false);
             return;

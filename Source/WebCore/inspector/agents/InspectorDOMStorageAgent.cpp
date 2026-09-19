@@ -213,7 +213,7 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Inspector::Protoco
         return nullptr;
     }
 
-    targetFrame = ResourceUtilities::findFrameWithSecurityOrigin(m_inspectedPage, securityOrigin);
+    targetFrame = ResourceUtilities::findFrameWithSecurityOrigin(protect(m_inspectedPage), securityOrigin);
     if (!targetFrame) {
         errorString = "Missing frame for given securityOrigin"_s;
         return nullptr;

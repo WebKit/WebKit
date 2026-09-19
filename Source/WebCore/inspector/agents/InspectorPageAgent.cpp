@@ -192,7 +192,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
 
 double InspectorPageAgent::timestamp()
 {
-    return protect(environment())->executionStopwatch().elapsedTime().seconds();
+    return protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optional<bool>&& ignoreCache, std::optional<bool>&& revalidateAllResources)
@@ -355,12 +355,13 @@ void InspectorPageAgent::overridePrefersContrast(std::optional<Inspector::Protoc
 void InspectorPageAgent::overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&& value)
 {
 #if ENABLE(DARK_MODE_CSS)
+    Ref inspectedPage = m_inspectedPage;
     if (!value)
-        protect(m_inspectedPage)->setUseDarkAppearanceOverride(std::nullopt);
+        inspectedPage->setUseDarkAppearanceOverride(std::nullopt);
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::Light)
-        protect(m_inspectedPage)->setUseDarkAppearanceOverride(false);
+        inspectedPage->setUseDarkAppearanceOverride(false);
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::Dark)
-        protect(m_inspectedPage)->setUseDarkAppearanceOverride(true);
+        inspectedPage->setUseDarkAppearanceOverride(true);
 #else
     UNUSED_PARAM(value);
 #endif
@@ -751,7 +752,7 @@ void InspectorPageAgent::frameNavigated(LocalFrame& frame)
 
 void InspectorPageAgent::frameDetached(LocalFrame& frame)
 {
-    auto identifier = m_inspectedPage->inspectorController().identifierRegistry().takeFrame(frame);
+    auto identifier = protect(m_inspectedPage->inspectorController().identifierRegistry())->takeFrame(frame);
     if (identifier.isNull())
         return;
     m_frontendDispatcher->frameDetached(identifier);
@@ -759,27 +760,27 @@ void InspectorPageAgent::frameDetached(LocalFrame& frame)
 
 Frame* InspectorPageAgent::frameForId(const Inspector::Protocol::Network::FrameId& frameId)
 {
-    return m_inspectedPage->inspectorController().identifierRegistry().frameForId(frameId);
+    return protect(m_inspectedPage->inspectorController().identifierRegistry())->frameForId(frameId);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
 {
-    return m_inspectedPage->inspectorController().identifierRegistry().frameId(frame);
+    return protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(frame);
 }
 
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
-    return m_inspectedPage->inspectorController().identifierRegistry().loaderId(loader);
+    return protect(m_inspectedPage->inspectorController().identifierRegistry())->loaderId(loader);
 }
 
 RefPtr<LocalFrame> InspectorPageAgent::assertFrame(Inspector::Protocol::ErrorString& errorString, const Inspector::Protocol::Network::FrameId& frameId)
 {
-    return m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    return protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
 }
 
 void InspectorPageAgent::loaderDetachedFromFrame(DocumentLoader& loader)
 {
-    m_inspectedPage->inspectorController().identifierRegistry().takeLoader(loader);
+    protect(m_inspectedPage->inspectorController().identifierRegistry())->takeLoader(loader);
 }
 
 void InspectorPageAgent::accessibilitySettingsDidChange()
@@ -850,13 +851,13 @@ void InspectorPageAgent::didPaint(RenderObject& renderer, const LayoutRect& rect
         return;
 
     LayoutRect absoluteRect = LayoutRect(renderer.localToAbsoluteQuad(FloatRect(rect)).boundingBox());
-    RefPtr view = renderer.document().view();
+    RefPtr view = protect(renderer.document())->view();
 
     LayoutRect rootRect = absoluteRect;
     Ref localFrame = view->frame();
     if (!localFrame->isMainFrame()) {
         IntRect rootViewRect = view->contentsToRootView(snappedIntRect(absoluteRect));
-        rootRect = protect(localFrame->mainFrame().virtualView())->rootViewToContents(rootViewRect);
+        rootRect = protect(protect(localFrame->mainFrame())->virtualView())->rootViewToContents(rootViewRect);
     }
 
     if (m_client->overridesShowPaintRects()) {
@@ -890,12 +891,14 @@ Ref<Inspector::Protocol::Page::Frame> InspectorPageAgent::buildObjectForFrame(Lo
 {
     ASSERT_ARG(frame, frame);
 
+    RefPtr documentLoader = frame->loader().documentLoader();
+    RefPtr document = frame->document();
     auto frameObject = Inspector::Protocol::Page::Frame::create()
         .setId(frameId(frame))
-        .setLoaderId(loaderId(protect(frame->loader().documentLoader())))
-        .setUrl(protect(frame->document())->url().string())
-        .setMimeType(protect(frame->loader().documentLoader())->responseMIMEType())
-        .setSecurityOrigin(protect(frame->document())->securityOrigin().toRawString())
+        .setLoaderId(loaderId(documentLoader))
+        .setUrl(document->url().string())
+        .setMimeType(documentLoader->responseMIMEType())
+        .setSecurityOrigin(protect(document->securityOrigin())->toRawString())
         .release();
     if (frame->tree().parent())
         frameObject->setParentId(frameId(protect(dynamicDowncast<LocalFrame>(frame->tree().parent()))));
@@ -978,9 +981,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(co
     m_emulatedMedia = AtomString(media);
 
     // FIXME: Schedule a rendering update instead of synchronously updating the layout.
-    protect(m_inspectedPage)->updateStyleAfterChangeInEnvironment();
+    Ref inspectedPage = m_inspectedPage;
+    inspectedPage->updateStyleAfterChangeInEnvironment();
 
-    RefPtr document = protect(m_inspectedPage)->localTopDocument();
+    RefPtr document = inspectedPage->localTopDocument();
     if (!document)
         return { };
 

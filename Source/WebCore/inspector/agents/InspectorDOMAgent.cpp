@@ -285,10 +285,10 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
         if (event.type() == eventNames().webkitfullscreenchangeEvent || event.type() == eventNames().fullscreenchangeEvent)
-            data->setBoolean("enabled"_s, !!protect(node->document())->fullscreen().fullscreenElement());
+            data->setBoolean("enabled"_s, !!protect(protect(node->document())->fullscreen())->fullscreenElement());
 #endif // ENABLE(FULLSCREEN_API)
 
-        auto timestamp = protect(domAgent->environment())->executionStopwatch().elapsedTime().seconds();
+        auto timestamp = protect(protect(domAgent->environment())->executionStopwatch())->elapsedTime().seconds();
         domAgent->m_frontendDispatcher->didFireEvent(nodeId, event.type(), timestamp, data->size() ? WTF::move(data) : nullptr);
     }
 
@@ -375,7 +375,7 @@ Vector<Document*> InspectorDOMAgent::documents()
         return { };
 
     Vector<Document*> result;
-    for (RefPtr<Frame> frame = m_document->frame(); frame; frame = frame->tree().traverseNext()) {
+    for (RefPtr<Frame> frame = protect(m_document)->frame(); frame; frame = frame->tree().traverseNext()) {
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -760,7 +760,7 @@ Inspector::Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Node*
 Ref<Inspector::Protocol::DOM::Styleable> InspectorDOMAgent::pushStyleablePathToFrontend(Inspector::Protocol::ErrorString errorString, const Styleable& styleable)
 {
     RefPtr element = elementToPushForStyleable(styleable);
-    auto nodeId = pushNodePathToFrontend(errorString, element ? element.get() : &styleable.element);
+    auto nodeId = pushNodePathToFrontend(errorString, protect(element ? element.get() : &styleable.element));
 
     auto protocolStyleable = Inspector::Protocol::DOM::Styleable::create()
         .setNodeId(nodeId)
@@ -1309,7 +1309,7 @@ void InspectorDOMAgent::focusNode()
 
     ASSERT(m_nodeToFocus);
     auto node = std::exchange(m_nodeToFocus, nullptr);
-    RefPtr frame = node->document().frame();
+    RefPtr frame = protect(node->document())->frame();
     if (!frame)
         return;
 
@@ -1516,7 +1516,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightSelector(co
     RefPtr<Document> document;
 
     if (!!frameId) {
-        RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+        RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
         if (!frame)
             return makeUnexpected(errorString);
 
@@ -1687,7 +1687,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const
 {
     Inspector::Protocol::ErrorString errorString;
 
-    RefPtr frame = m_inspectedPage->inspectorController().identifierRegistry().assertFrame(errorString, frameId);
+    RefPtr frame = protect(m_inspectedPage->inspectorController().identifierRegistry())->assertFrame(errorString, frameId);
     if (!frame)
         return makeUnexpected(errorString);
 
@@ -2020,8 +2020,8 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setLayoutFlags(layoutFlags.releaseNonNull());
     }
 
-    if (RefPtr frameView = node->document().view())
-        value->setFrameId(m_inspectedPage->inspectorController().identifierRegistry().frameId(protect(&frameView->frame())));
+    if (RefPtr frameView = protect(node->document())->view())
+        value->setFrameId(protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(protect(&frameView->frame())));
 
     if (RefPtr element = dynamicDowncast<Element>(*node)) {
         value->setAttributes(buildArrayForElementAttributes(element.get()));
@@ -2055,7 +2055,7 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
                 value->setPseudoElements(pseudoElements.releaseNonNull());
         }
     } else if (RefPtr document = dynamicDowncast<Document>(*node)) {
-        value->setFrameId(m_inspectedPage->inspectorController().identifierRegistry().frameId(protect(document->frame())));
+        value->setFrameId(protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(protect(document->frame())));
         value->setDocumentURL(documentURLString(document.get()));
         value->setBaseURL(documentBaseURLString(document.get()));
         value->setXmlVersion(document->xmlVersion());
@@ -3056,7 +3056,7 @@ void InspectorDOMAgent::mediaMetricsTimerFired()
             iterator->value.isPowerEfficient = isPowerEfficient;
 
             if (auto nodeId = pushNodePathToFrontend(mediaElement.ptr())) {
-                auto timestamp = protect(environment())->executionStopwatch().elapsedTime().seconds();
+                auto timestamp = protect(protect(environment())->executionStopwatch())->elapsedTime().seconds();
                 m_frontendDispatcher->powerEfficientPlaybackStateChanged(nodeId, timestamp, iterator->value.isPowerEfficient);
             }
         }

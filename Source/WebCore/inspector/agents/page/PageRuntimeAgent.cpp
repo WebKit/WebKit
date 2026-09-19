@@ -107,7 +107,7 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
     if (m_ignoreDidClearWindowObject)
         return;
 
-    auto frameId = m_inspectedPage->inspectorController().identifierRegistry().frameId(&frame);
+    auto frameId = protect(m_inspectedPage->inspectorController().identifierRegistry())->frameId(&frame);
     if (frameId.isEmpty())
         return;
 
@@ -158,7 +158,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
         auto& mainGlobalObject = mainWorldGlobalObject(frame);
         notifyContextCreated(frameId, &mainGlobalObject, mainThreadNormalWorldSingleton());
 
-        for (auto& jsWindowProxy : frame.windowProxy().jsWindowProxiesAsVector()) {
+        for (auto& jsWindowProxy : protect(frame.windowProxy())->jsWindowProxiesAsVector()) {
             auto* globalObject = jsWindowProxy->window();
             if (globalObject == &mainGlobalObject)
                 continue;

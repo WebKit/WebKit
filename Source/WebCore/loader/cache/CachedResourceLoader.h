@@ -89,7 +89,7 @@ friend class ResourceCacheValidationSuppressor;
 
 public:
     static Ref<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(*new CachedResourceLoader(documentLoader)); }
-    ~CachedResourceLoader();
+    WEBCORE_EXPORT ~CachedResourceLoader();
 
     ResourceErrorOr<RefPtr<CachedImage>> requestImage(CachedResourceRequest&&, ImageLoading = ImageLoading::Immediate);
     ResourceErrorOr<Ref<CachedCSSStyleSheet>> requestCSSStyleSheet(CachedResourceRequest&&);

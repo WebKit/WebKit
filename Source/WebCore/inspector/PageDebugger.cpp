@@ -81,8 +81,9 @@ void PageDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
-    if (protect(m_page)->debugger() == this)
-        m_page->setDebugger(nullptr);
+    Ref page = m_page;
+    if (page->debugger() == this)
+        page->setDebugger(nullptr);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }

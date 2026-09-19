@@ -59,7 +59,7 @@ public:
         if (m_handle) {
             ASSERT(m_handle->client() == this);
             m_handle->clearClient();
-            m_handle->cancel();
+            protect(m_handle)->cancel();
         }
     }
 

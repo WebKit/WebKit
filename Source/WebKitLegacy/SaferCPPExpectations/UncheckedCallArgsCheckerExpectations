@@ -1,7 +1,7 @@
 Storage/InProcessIDBServer.cpp
 Storage/StorageSyncManager.cpp
 WebCoreSupport/SocketStreamHandleImpl.cpp
-WebCoreSupport/WebSocketChannel.cpp
+[ macOS ] WebCoreSupport/WebSocketChannel.cpp
 [ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
 [ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
 [ iOS ] ios/WebView/WebPDFViewPlaceholder.mm

@@ -143,7 +143,7 @@ void WebStorageNamespaceProvider::cloneSessionStorageNamespaceForPage(WebCore::P
     auto& srcPageSessionStorageNamespaces = srcPageIt->value;
     HashMap<SecurityOriginData, RefPtr<StorageNamespace>> dstPageSessionStorageNamespaces;
     for (auto& [origin, srcNamespace] : srcPageSessionStorageNamespaces)
-        dstPageSessionStorageNamespaces.set(origin, srcNamespace->copy(dstPage));
+        dstPageSessionStorageNamespaces.set(origin, protect(srcNamespace)->copy(dstPage));
 
     auto& dstSessionStorageNamespaces = static_cast<WebStorageNamespaceProvider&>(dstPage.storageNamespaceProvider()).m_sessionStorageNamespaces;
     ASSERT(!dstSessionStorageNamespaces.contains(dstPage));
