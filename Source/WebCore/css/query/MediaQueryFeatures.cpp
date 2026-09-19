@@ -277,7 +277,7 @@ static const RatioSchema& aspectRatioFeatureSchema()
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
             auto& view = *context.document->view();
-            return FloatSize(view.layoutWidth(), view.layoutHeight());
+            return FloatSize(view.layoutSizeIncludingScrollbars());
         }
     };
     return schema;
@@ -432,7 +432,7 @@ static const LengthSchema& heightFeatureSchema()
         "height"_s,
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
-            auto height = protect(context.document->view())->layoutHeight();
+            auto height = protect(context.document->view())->layoutSizeIncludingScrollbars().height();
             if (CheckedPtr renderView = context.document->renderView())
                 height = Style::unapplyingZoom<int>(height, *renderView);
             return height;
@@ -517,7 +517,8 @@ static const IdentifierSchema& orientationFeatureSchema()
 
             Ref view = *context.document->view();
             // Square viewport is portrait.
-            bool isPortrait = view->layoutHeight() >= view->layoutWidth();
+            auto viewportSize = view->layoutSizeIncludingScrollbars();
+            bool isPortrait = viewportSize.height() >= viewportSize.width();
             return MatchingIdentifiers { isPortrait ? CSSValuePortrait : CSSValueLandscape };
         }
     };
@@ -737,7 +738,7 @@ static const LengthSchema& widthFeatureSchema()
         "width"_s,
         MediaQueryDynamicDependency::Viewport,
         [](auto& context) {
-            auto width = protect(context.document->view())->layoutWidth();
+            auto width = protect(context.document->view())->layoutSizeIncludingScrollbars().width();
             if (CheckedPtr renderView = context.document->renderView())
                 width = Style::unapplyingZoom<int>(width, *renderView);
             return width;
