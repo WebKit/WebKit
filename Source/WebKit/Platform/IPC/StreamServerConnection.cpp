@@ -148,13 +148,19 @@ void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName, 
 StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMessages(size_t messageLimit)
 {
     RefPtr<StreamMessageReceiver> currentReceiver;
+    bool didDispatchMessage = false;
     // FIXME: Implement WTF::isValid(ReceiverName).
     uint8_t currentReceiverName = static_cast<uint8_t>(ReceiverName::Invalid);
 
     for (size_t i = 0; i < messageLimit; ++i) {
         auto span = m_buffer.tryAcquire();
-        if (!span)
+        if (!span) {
+            if (didDispatchMessage) {
+                if (CheckedPtr client = m_client)
+                    client->didRunOutOfMessages();
+            }
             return DispatchResult::HasNoMessages;
+        }
         IPC::Decoder decoder { *span, m_currentDestinationID };
         if (!decoder.isValid()) {
             dispatchDidReceiveInvalidMessage(decoder);
@@ -195,6 +201,7 @@ StreamServerConnection::DispatchResult StreamServerConnection::dispatchStreamMes
         }
         if (!processStreamMessage(decoder, *currentReceiver))
             return DispatchResult::HasNoMessages;
+        didDispatchMessage = true;
     }
     return DispatchResult::HasMoreMessages;
 }
