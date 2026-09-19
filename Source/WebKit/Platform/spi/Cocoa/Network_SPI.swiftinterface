@@ -14,3 +14,255 @@ extension Network.NWConnection {
     return __nwHandle()
   }
 }
+
+extension Network.NWProtocolOptions {
+  // static Network.NWProtocolOptions.fromNW(__C.OS_nw_protocol_options) -> Network.NWProtocolOptions?
+  @available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+  @_silgen_name("$s7Network17NWProtocolOptionsC6fromNWyACSgSo22OS_nw_protocol_options_pFZ")
+  public static func __fromNW(_ nw: Network.nw_protocol_options_t) -> Network.NWProtocolOptions?
+}
+
+@available(macOS 15.0, iOS 18.0, watchOS 11.0, tvOS 18.0, visionOS 2.0, *)
+extension Network.NWConnection.ContentContext {
+  // Network.NWConnection.ContentContext.httpRequest.getter : Network.HTTPRequest?
+  @_silgen_name("$s7Network12NWConnectionC14ContentContextC11httpRequestAA11HTTPRequestVSgvg")
+  public func __httpRequest() -> HTTPRequest?
+
+  @_alwaysEmitIntoClient public var httpRequest: HTTPRequest? {
+    return __httpRequest()
+  }
+
+  // Network.NWConnection.ContentContext.httpResponse.getter : Network.HTTPResponse?
+  @_silgen_name("$s7Network12NWConnectionC14ContentContextC12httpResponseAA12HTTPResponseVSgvg")
+  public func __httpResponse() -> HTTPResponse?
+
+  @_alwaysEmitIntoClient public var httpResponse: HTTPResponse? {
+    return __httpResponse()
+  }
+
+  // Network.NWConnection.ContentContext.__allocating_init(response:)
+  // `response` must be `__owned`: an initializer consumes its arguments (`@in`), but a static
+  // function borrows them (`@in_guaranteed`), and the mismatch double-releases the response.
+  @_silgen_name("$s7Network12NWConnectionC14ContentContextC8responseAeA12HTTPResponseV_tcfC")
+  public static func __makeContentContext(response: __owned HTTPResponse) -> Network.NWConnection.ContentContext
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+public struct HTTPField : Swift.Sendable, Swift.Hashable {
+  public struct DynamicTableIndexingStrategy : Swift.Sendable, Swift.Hashable {
+    public static var automatic: HTTPField.DynamicTableIndexingStrategy {
+      get
+    }
+    public static var prefer: HTTPField.DynamicTableIndexingStrategy {
+      get
+    }
+    public static var avoid: HTTPField.DynamicTableIndexingStrategy {
+      get
+    }
+    public static var disallow: HTTPField.DynamicTableIndexingStrategy {
+      get
+    }
+    public static func == (a: HTTPField.DynamicTableIndexingStrategy, b: HTTPField.DynamicTableIndexingStrategy) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public init(name: HTTPField.Name, value: Swift.String)
+  public init(name: HTTPField.Name, value: some Collection<UInt8>)
+  @available(macOS 15.2, iOS 18.2, watchOS 11.2, tvOS 18.2, visionOS 2.2, *)
+  public init(name: HTTPField.Name, lenientValue: some Collection<UInt8>)
+  public var name: HTTPField.Name
+  public var value: Swift.String {
+    get
+    set
+  }
+  public func withUnsafeBytesOfValue<Result, Failure>(_ body: (Swift.UnsafeBufferPointer<Swift.UInt8>) throws(Failure) -> Result) throws(Failure) -> Result where Failure : Swift.Error
+  public var indexingStrategy: HTTPField.DynamicTableIndexingStrategy
+  public static func isValidValue(_ value: Swift.String) -> Swift.Bool
+  public static func isValidValue(_ value: some Collection<UInt8>) -> Swift.Bool
+  public static func == (a: HTTPField, b: HTTPField) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+extension HTTPField {
+  public struct Name : Swift.Sendable {
+    public let rawName: Swift.String
+    public let canonicalName: Swift.String
+    public init?(_ name: Swift.String)
+    @available(macOS 15.2, iOS 18.2, watchOS 11.2, tvOS 18.2, visionOS 2.2, *)
+    public init?(parsed name: Swift.String)
+  }
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+extension HTTPField.Name {
+  public static var authorization: HTTPField.Name {
+    get
+  }
+  public static var cookie: HTTPField.Name {
+    get
+  }
+  public static var ifNoneMatch: HTTPField.Name {
+    get
+  }
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+public struct HTTPFields : Swift.Sendable, Swift.Hashable {
+  public init()
+  public subscript(name: HTTPField.Name) -> Swift.String? {
+    get
+    set
+  }
+  public subscript(values name: HTTPField.Name) -> [Swift.String] {
+    get
+    set
+  }
+  public subscript(fields name: HTTPField.Name) -> [HTTPField] {
+    get
+    set
+  }
+  public func contains(_ name: HTTPField.Name) -> Swift.Bool
+  public static func == (a: HTTPFields, b: HTTPFields) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+public struct HTTPResponse : Swift.Sendable, Swift.Hashable {
+  public struct Status : Swift.Sendable, Swift.Hashable, Swift.ExpressibleByIntegerLiteral, Swift.CustomStringConvertible {
+    public let code: Swift.Int
+    public let reasonPhrase: Swift.String
+    public init(code: Swift.Int, reasonPhrase: Swift.String = "")
+    public init(integerLiteral value: Swift.Int)
+    @frozen public enum Kind {
+      case invalid
+      case informational
+      case successful
+      case redirection
+      case clientError
+      case serverError
+      public static func == (a: HTTPResponse.Status.Kind, b: HTTPResponse.Status.Kind) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
+      public var hashValue: Swift.Int {
+        get
+      }
+    }
+    public var kind: HTTPResponse.Status.Kind {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+    public static func == (lhs: HTTPResponse.Status, rhs: HTTPResponse.Status) -> Swift.Bool
+    public var description: Swift.String {
+      get
+    }
+    public typealias IntegerLiteralType = Swift.Int
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var status: HTTPResponse.Status {
+    get
+    set
+  }
+  public struct PseudoHeaderFields : Swift.Sendable, Swift.Hashable {
+    public var status: HTTPField {
+      get
+      set
+    }
+    public static func == (a: HTTPResponse.PseudoHeaderFields, b: HTTPResponse.PseudoHeaderFields) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var pseudoHeaderFields: HTTPResponse.PseudoHeaderFields
+  public var headerFields: HTTPFields
+  public init(status: HTTPResponse.Status, headerFields: HTTPFields)
+  public static func == (a: HTTPResponse, b: HTTPResponse) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+@available(macOS 14.4, iOS 17.4, watchOS 10.4, tvOS 17.4, *)
+public struct HTTPRequest : Swift.Sendable, Swift.Hashable {
+  public struct Method : Swift.Sendable, Swift.Hashable, Swift.RawRepresentable, Swift.LosslessStringConvertible {
+    public let rawValue: Swift.String
+    public init?(_ method: Swift.String)
+    public init?(rawValue: Swift.String)
+    public var description: Swift.String {
+      get
+    }
+    public typealias RawValue = Swift.String
+  }
+  public var method: HTTPRequest.Method {
+    get
+    set
+  }
+  public var scheme: Swift.String? {
+    get
+    set
+  }
+  public var authority: Swift.String? {
+    get
+    set
+  }
+  public var path: Swift.String? {
+    get
+    set
+  }
+  public var extendedConnectProtocol: Swift.String? {
+    get
+    set
+  }
+  public struct PseudoHeaderFields : Swift.Sendable, Swift.Hashable {
+    public var method: HTTPField {
+      get
+      set
+    }
+    public var scheme: HTTPField? {
+      get
+      set
+    }
+    public var authority: HTTPField? {
+      get
+      set
+    }
+    public var path: HTTPField? {
+      get
+      set
+    }
+    public var extendedConnectProtocol: HTTPField? {
+      get
+      set
+    }
+    public static func == (a: HTTPRequest.PseudoHeaderFields, b: HTTPRequest.PseudoHeaderFields) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var pseudoHeaderFields: HTTPRequest.PseudoHeaderFields
+  public var headerFields: HTTPFields
+  public init(method: HTTPRequest.Method, scheme: Swift.String?, authority: Swift.String?, path: Swift.String?, headerFields: HTTPFields)
+  public static func == (a: HTTPRequest, b: HTTPRequest) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+@available(macOS 26.0, iOS 26.0, watchOS 26.0, tvOS 26.0, visionOS 26.0, *)
+extension Network.NWParametersProvider {
+  public func serverMode(_ val: Swift.Bool) -> Self
+  public func attachProtocolListener(_ val: Swift.Bool) -> Self
+}

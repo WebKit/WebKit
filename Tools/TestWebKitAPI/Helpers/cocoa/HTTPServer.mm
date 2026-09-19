@@ -158,9 +158,9 @@ static bool useSwiftImplementation(HTTPServer::Protocol protocol)
     case HTTPServer::Protocol::HttpsProxy:
     case HTTPServer::Protocol::HttpsProxyWithAuthentication:
     case HTTPServer::Protocol::Http2Raw:
-        return true;
-    case HTTPServer::Protocol::Http2Proxy:
     case HTTPServer::Protocol::Http2:
+    case HTTPServer::Protocol::Http2Proxy:
+        return true;
     case HTTPServer::Protocol::Http3:
         return false;
     }

@@ -22,7 +22,26 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+
+#if USE_APPLE_INTERNAL_SDK
+@_spi(HTTP) @_spi(OHTTP) @_spi(ConnectionExperimental) import Network
+#else
 import Network
+import Network_SPI
+#endif
+
+extension NWConnection.ContentContext {
+    /// `init(response:)` is `@_spi(OHTTP)`. `Network_SPI` cannot redeclare it because an extension written
+    /// outside Network mangles with an extension context, which no exported symbol matches so the public-SDK path
+    /// goes through a factory bound to the real initializer instead.
+    static func makeHTTPMessagingContext(response: HTTPResponse) -> NWConnection.ContentContext {
+        #if USE_APPLE_INTERNAL_SDK
+        NWConnection.ContentContext(response: response)
+        #else
+        NWConnection.ContentContext.__makeContentContext(response: response)
+        #endif
+    }
+}
 
 extension NWConnection {
     func receiveBytes(minimumLength: Int = 1) async -> Data {
@@ -60,10 +79,45 @@ extension NWConnection {
         }
     }
 
-    func send(_ data: some DataProtocol) async throws {
+    func receiveHTTPMessagingRequest() async -> (request: HTTPRequest, body: Data)? {
+        var request: HTTPRequest? = nil
+        var body = Data()
+
+        while true {
+            let (content, context, isComplete, error) = await withCheckedContinuation { continuation in
+                receiveMessage { continuation.resume(returning: ($0, $1, $2, $3)) }
+            }
+
+            // Discard any headers/body already accumulated from earlier chunks: an error mid-stream (e.g. the
+            // client resets the stream after sending headers but before finishing the body) must not be mistaken
+            // by callers for a successfully-received request just because the path happens to already be set.
+            if error != nil {
+                return nil
+            }
+
+            if let httpRequest = context?.httpRequest {
+                request = httpRequest
+            }
+
+            if let content {
+                body.append(content)
+            }
+
+            if isComplete {
+                guard let request else {
+                    return nil
+                }
+
+                return (request, body)
+            }
+        }
+    }
+
+    func send(_ data: some DataProtocol, contentContext: NWConnection.ContentContext = .defaultMessage) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             send(
                 content: data,
+                contentContext: contentContext,
                 completion: .contentProcessed { error in
                     if let error {
                         continuation.resume(throwing: error)
@@ -73,6 +127,19 @@ extension NWConnection {
                 }
             )
         }
+    }
+
+    func sendHTTPMessagingResponse(_ response: HTTPResponseData) async throws {
+        let fields = response.headerFields.reduce(into: HTTPFields()) { partialResult, entry in
+            guard let name = HTTPField.Name(entry.name) else {
+                return
+            }
+
+            partialResult[fields: name].append(HTTPField(name: name, value: entry.value))
+        }
+
+        let httpResponse = HTTPResponse(status: .init(code: Int(response.statusCode)), headerFields: fields)
+        try await send(response.body, contentContext: .makeHTTPMessagingContext(response: httpResponse))
     }
 
     func terminate() async {
