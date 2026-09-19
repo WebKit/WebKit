@@ -319,4 +319,9 @@ void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(ASCIILitera
     m_didReceiveInvalidMessage = true;
 }
 
+void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid(const String& error)
+{
+    markCurrentlyDispatchedMessageAsInvalid(error.isNull() ? ASCIILiteral { } : "Message check failed"_s);
+}
+
 }

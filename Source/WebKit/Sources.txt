@@ -46,7 +46,6 @@ GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp
 GPUProcess/graphics/ShareablePixelBuffer.cpp
 GPUProcess/graphics/SharedFont.cpp
 GPUProcess/graphics/Model/ModelObjectHeap.cpp
-GPUProcess/graphics/Model/RemoteMesh.cpp
 GPUProcess/graphics/WebGPU/RemoteAdapter.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroup.cpp
 GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp

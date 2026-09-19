@@ -870,6 +870,24 @@ def message_to_completion_handler_using_declaration(receiver, message):
     return 'using %s = WTF::RefCountable<Messages::%s::%s::Reply>;' % (completion_handler_name, receiver.name, message.name)
 
 
+# One overload per distinct completion handler type, not per message: messages whose replies have
+# the same parameter types alias the same RefCountable<CompletionHandler<...>>, so an overload each
+# would be a redefinition. Connection::cancelReply<T> reads only T::ReplyArguments, so the first
+# message with a given reply shape stands in for the rest.
+def messages_with_distinct_reply_types(receiver):
+    seen = set()
+    result = []
+    for message in receiver.messages:
+        if message.reply_parameters is None:
+            continue
+        key = tuple(parameter.type for parameter in message.reply_parameters)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(message)
+    return result
+
+
 def message_to_complete_with_default_reply_declaration(receiver, message):
     return 'void completeWithDefaultReply(%sCompletionHandler&);' % message.name
 
@@ -984,7 +1002,7 @@ def generate_messages_header(receiver):
         result.append('\n')
         if reply_messages:
             result.append('\n')
-            result.append('\n\n'.join([message_to_complete_with_default_reply_declaration(receiver, x) for x in reply_messages]))
+            result.append('\n\n'.join([message_to_complete_with_default_reply_declaration(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
             result.append('\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
         result.append('\n')
@@ -1099,6 +1117,13 @@ def swift_dispatch_target_and_function(receiver, message):
 
 def generates_swift_trampoline(receiver, message):
     return bool(receiver.swift_receiver or receiver.swift_receiver_build_enabled_by) and not message.is_async_reply
+
+
+# Swift's -strict-memory-safety rejects naming an imported WTF::Vector without an `unsafe`
+# marker: it cannot see that the Vector owns the buffer its element pointer refers to. Generated
+# dispatch only ever forwards such an argument, so it says so on the handler's behalf.
+def swift_dispatch_needs_unsafe(message):
+    return any('Vector<' in parameter.type for parameter in message.parameters)
 
 
 def handler_function_name(message):
@@ -2238,7 +2263,7 @@ def generate_message_handler(receiver):
             return
         result.append('\n')
         result.append('namespace CompletionHandlers {\nnamespace %s {\n\n' % receiver.name)
-        result.append('\n\n'.join([message_to_complete_with_default_reply_definition(receiver, x) for x in reply_messages]))
+        result.append('\n\n'.join([message_to_complete_with_default_reply_definition(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
         result.append('\n\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
     if_swift_enabled(receiver, result, append_complete_with_default_reply_definitions, None)
@@ -2346,7 +2371,8 @@ def generate_swift_message_handler(receiver):
         if not generates_swift_trampoline(receiver, message):
             continue
 
-        parameters = ['connection: IPC.Connection']
+        connection_type = 'IPC.StreamServerConnection' if receiver.has_attribute(STREAM_ATTRIBUTE) else 'IPC.Connection'
+        parameters = ['connection: %s' % connection_type]
         arguments = ['connection: connection']
         for parameter in message.parameters:
             parameters.append('%s: %s' % (parameter.name, swift_type_name(parameter.type)))
@@ -2366,7 +2392,7 @@ def generate_swift_message_handler(receiver):
         result.append('            return\n')
         result.append('        }\n')
         call = ['try mayThrowInvalidMessage(']
-        call.append('    target.%s(' % handler_function_name(message))
+        call.append('    %starget.%s(' % ('unsafe ' if swift_dispatch_needs_unsafe(message) else '', handler_function_name(message)))
         call.append(',\n'.join(['        %s' % argument for argument in arguments]))
         call.append('    )')
         call.append(')')
