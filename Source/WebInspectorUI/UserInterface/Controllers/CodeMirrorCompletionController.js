@@ -145,6 +145,17 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         return this._suggestionsView.isHandlingClickEvent();
     }
 
+    textWithCurrentCompletion()
+    {
+        let text = this._codeMirror.getValue();
+        if (!this._hasPendingCompletion() || !this._currentCompletion)
+            return text;
+
+        let startIndex = this._codeMirror.indexFromPos({line: this._lineNumber, ch: this._startOffset});
+        let endIndex = this._codeMirror.indexFromPos({line: this._lineNumber, ch: this._endOffset});
+        return text.substring(0, startIndex) + this._currentReplacementText + text.substring(endIndex);
+    }
+
     commitCurrentCompletion()
     {
         this._removeCompletionHint(true, true);
@@ -316,6 +327,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         this._codeMirror.operation(update.bind(this));
 
         delete this._ignoreChange;
+
+        this._delegate?.completionControllerCompletionApplied?.(this);
     }
 
     _commitCompletionHint()

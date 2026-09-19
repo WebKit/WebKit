@@ -361,7 +361,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         consoleSettingsView.addSetting(WI.UIString("Traces:"), WI.settings.consoleAutoExpandTrace, WI.UIString("Auto-expand"));
-        consoleSettingsView.addSetting(WI.UIString("Show:"), WI.settings.showConsoleMessageTimestamps, WI.UIString("Timestamps"));
+
+        let showGroup = consoleSettingsView.addGroup(WI.UIString("Show:"));
+        showGroup.addSetting(WI.settings.showConsoleMessageTimestamps, WI.UIString("Timestamps"));
+        showGroup.addSetting(WI.settings.consoleEvaluationPreviewEnabled, WI.UIString("Evaluation previews"));
 
         // COMPATIBILITY (macOS 14.4, iOS 17.4): `Console.setConsoleClearAPIEnabled` did not exist yet.
         if (InspectorBackend.hasCommand("Console.setConsoleClearAPIEnabled"))
