@@ -68,15 +68,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FrameNetworkAgentProxy);
 static WebCore::NetworkLoadPriority toNetworkLoadPriority(WebCore::ResourceLoadPriority priority)
 {
     switch (priority) {
-    case ResourceLoadPriority::VeryLow:
+    case WebCore::ResourceLoadPriority::VeryLow:
         return WebCore::NetworkLoadPriority::Verylow;
-    case ResourceLoadPriority::Low:
+    case WebCore::ResourceLoadPriority::Low:
         return WebCore::NetworkLoadPriority::Low;
-    case ResourceLoadPriority::Medium:
+    case WebCore::ResourceLoadPriority::Medium:
         return WebCore::NetworkLoadPriority::Medium;
-    case ResourceLoadPriority::High:
+    case WebCore::ResourceLoadPriority::High:
         return WebCore::NetworkLoadPriority::High;
-    case ResourceLoadPriority::VeryHigh:
+    case WebCore::ResourceLoadPriority::VeryHigh:
         return WebCore::NetworkLoadPriority::Veryhigh;
     }
     return WebCore::NetworkLoadPriority::Unknown;
