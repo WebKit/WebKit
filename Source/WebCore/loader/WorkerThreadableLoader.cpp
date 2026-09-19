@@ -183,6 +183,11 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         ASSERT(isMainThread());
         Ref document = downcast<Document>(context);
 
+        if (document->backForwardCacheState() == Document::InBackForwardCache) {
+            didFail(document->identifier(), ResourceError { ResourceError::Type::Cancellation });
+            return;
+        }
+
         // FIXME: If the site requests a local resource, then this will return a non-zero value but the sync path will return a 0 value.
         // Either this should return 0 or the other code path should call a failure callback.
         m_mainThreadLoader = DocumentThreadableLoader::create(document, *this, WTF::move(request), options->options, WTF::move(options->origin), WTF::move(contentSecurityPolicyIsolatedCopy), WTF::move(crossOriginEmbedderPolicyCopy), WTF::move(options->referrer), DocumentThreadableLoader::ShouldLogError::No);
