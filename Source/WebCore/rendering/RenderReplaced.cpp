@@ -941,8 +941,8 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeAspectRatioAdjustedIntr
     auto computedAspectRatio = preferredAspectRatioAsSize().aspectRatioDouble();
     auto computedIntrinsicLogicalWidth = minLogicalWidth;
 
-    if (auto fixedLogicalHeight = style.logicalHeight().tryFixed())
-        computedIntrinsicLogicalWidth = LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio };
+    if (hasReplacedLogicalHeight())
+        computedIntrinsicLogicalWidth = LayoutUnit { computeReplacedLogicalHeightUsing(style.logicalHeight()) * computedAspectRatio };
 
     if (auto fixedLogicalMaxHeight = style.logicalMaxHeight().tryFixed())
         computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMaxHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio });
