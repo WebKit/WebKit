@@ -296,6 +296,9 @@
 		07D637401BB0B11300256CE9 /* WebAudioSourceProviderCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6373E1BB0B11300256CE9 /* WebAudioSourceProviderCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D6A4F41BED5F8800174146 /* MockRealtimeAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07D6A4F81BF2307D00174146 /* AudioTrackPrivateMediaStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */; };
+		07E047C3305A9DB000DFCC4B /* SwiftStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07E047C2305A9DB000DFCC4B /* SwiftStub.swift */; };
+		07E047C5305A9DB000DFCC4B /* SwiftStubInterop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E047C4305A9DB000DFCC4B /* SwiftStubInterop.cpp */; };
+		07E047C7305A9DB000DFCC4B /* WebCore-Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E047C6305A9DB000DFCC4B /* WebCore-Swift.h */; };
 		07E2C0732C1396FE00BE6743 /* WritingToolsTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E2C0722C1396F600BE6743 /* WritingToolsTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07E2C0772C13A9D100BE6743 /* WritingToolsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E2C0742C13A9D100BE6743 /* WritingToolsController.h */; };
 		07E3DFD11A9E786500764CA8 /* MediaPlaybackTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E3DFD01A9E786500764CA8 /* MediaPlaybackTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8176,6 +8179,9 @@
 		07D6A4F21BED5F8800174146 /* MockRealtimeAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockRealtimeAudioSource.h; sourceTree = "<group>"; };
 		07D6A4F61BF2307D00174146 /* AudioTrackPrivateMediaStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioTrackPrivateMediaStream.h; path = platform/mediastream/AudioTrackPrivateMediaStream.h; sourceTree = SOURCE_ROOT; };
 		07DB47062BC27E0A00B5A958 /* WritingSuggestionData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingSuggestionData.h; sourceTree = "<group>"; };
+		07E047C2305A9DB000DFCC4B /* SwiftStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStub.swift; sourceTree = "<group>"; };
+		07E047C4305A9DB000DFCC4B /* SwiftStubInterop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwiftStubInterop.cpp; sourceTree = "<group>"; };
+		07E047C6305A9DB000DFCC4B /* WebCore-Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WebCore-Swift.h"; sourceTree = "<group>"; };
 		07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueCustom.cpp; sourceTree = "<group>"; };
 		07E223CA2A784D1A00C9EDF3 /* vision-volume-container.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "vision-volume-container.js"; sourceTree = "<group>"; };
 		07E2C0722C1396F600BE6743 /* WritingToolsTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WritingToolsTypes.h; sourceTree = "<group>"; };
@@ -24879,6 +24885,9 @@
 			children = (
 				1C09D04B1E31C32800725F18 /* PAL.xcodeproj */,
 				65C97AF208EA908800ACD273 /* config.h */,
+				07E047C2305A9DB000DFCC4B /* SwiftStub.swift */,
+				07E047C4305A9DB000DFCC4B /* SwiftStubInterop.cpp */,
+				07E047C6305A9DB000DFCC4B /* WebCore-Swift.h */,
 				EDEC98020AED7E170059137F /* WebCorePrefix.h */,
 				DDE7487D2F7B42CE008013AB /* WorkAround173516139.h */,
 				530A63461FA3E33D0026A545 /* Sources.txt */,
@@ -50315,6 +50324,7 @@
 				4110A21C28E3441600321D09 /* WebCodecsVideoFrameOutputCallback.h in Headers */,
 				A5B81CB51FAA44620037D1E6 /* WebConsoleAgent.h in Headers */,
 				9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */,
+				07E047C7305A9DB000DFCC4B /* WebCore-Swift.h in Headers */,
 				419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */,
 				2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */,
 				CD5D27781E8318E000D80A3D /* WebCoreDecompressionSession.h in Headers */,
@@ -51433,6 +51443,8 @@
 				B9CA3B412CAB1D3E00B2607C /* SpatialImageControls.cpp in Sources */,
 				41514FDB2E92DC40002074EA /* StreamPipeToUtilities.cpp in Sources */,
 				A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */,
+				07E047C3305A9DB000DFCC4B /* SwiftStub.swift in Sources */,
+				07E047C5305A9DB000DFCC4B /* SwiftStubInterop.cpp in Sources */,
 				C1692DD223D23ABD006E88F7 /* SystemBattery.mm in Sources */,
 				329C0C2328BD96D600F187D2 /* TagName.cpp in Sources */,
 				CE88EE262414467B007F29C2 /* TextAlternativeWithRange.mm in Sources */,

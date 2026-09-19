@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !__has_feature(modules)
+// FIXME: Remove this file once WebCore's C++ calls into its own Swift API.
 
-#if USE(APPKIT)
-#import <AppKit/AppKit.h>
-#else
-#import <UIKit/UIKit.h>
-#endif
+#include "config.h"
 
-#import <WebCore/CocoaView.h>
-
-WEBCORE_EXPORT
-@interface WebViewVisualIdentificationOverlay : NSObject
-
-+ (void)installForWebViewIfNeeded:(CocoaView *)view kind:(NSString *)kind deprecated:(BOOL)isDeprecated;
-
-@end
-
-#endif // !__has_feature(modules)
+#include "WebCore-Swift.h"

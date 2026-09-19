@@ -641,7 +641,9 @@ struct LiveResizeSnapshotState {
 
 - (void)_proofreadingSessionUpdateState:(WebCore::WritingTools::TextSuggestionState)state forSuggestionWithUUID:(NSUUID *)replacementUUID;
 
+#if !__has_feature(modules)
 - (CocoaWritingToolsResultOptions)allowedWritingToolsResultOptions;
+#endif
 
 - (void)_didEndPartialIntelligenceTextAnimation;
 - (BOOL)_writingToolsTextReplacementsFinished;
