@@ -27,6 +27,7 @@
 
 #include "ModuleScriptLoader.h"
 #include "ModuleScriptLoaderClient.h"
+#include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -70,7 +71,7 @@ public:
     JSC::Identifier resolve(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleName, JSC::JSValue importerModuleKey, RefPtr<JSC::ScriptFetcher>, bool useImportMap);
     JSC::JSPromise* fetch(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, const String& referrer, RefPtr<JSC::ScriptFetchParameters>, RefPtr<JSC::ScriptFetcher>);
     JSC::JSValue evaluate(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue moduleKey, JSC::JSValue moduleRecord, RefPtr<JSC::ScriptFetcher>, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
-    JSC::JSPromise* importModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, RefPtr<JSC::ScriptFetchParameters>, const JSC::SourceOrigin&, bool deferred);
+    JSC::JSPromise* importModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, RefPtr<JSC::ScriptFetchParameters>, const JSC::SourceOrigin&, JSC::AbstractModuleRecord::ModulePhase);
     JSC::JSObject* createImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, RefPtr<JSC::ScriptFetcher>);
 
 private:

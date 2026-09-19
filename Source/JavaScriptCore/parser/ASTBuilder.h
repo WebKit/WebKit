@@ -183,9 +183,9 @@ public:
     {
         return new (m_parserArena) SuperNode(location);
     }
-    ExpressionNode* createImportExpr(const JSTokenLocation& location, ExpressionNode* expr, ExpressionNode* option, bool deferred, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
+    ExpressionNode* createImportExpr(const JSTokenLocation& location, ExpressionNode* expr, ExpressionNode* option, ImportCallPhase phase, const JSTextPosition& start, const JSTextPosition& divot, const JSTextPosition& end)
     {
-        auto* node = new (m_parserArena) ImportNode(location, expr, option, deferred);
+        auto* node = new (m_parserArena) ImportNode(location, expr, option, phase);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
@@ -847,9 +847,9 @@ public:
         attributesList->append(key, value);
     }
 
-    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportDeclarationNode::ImportType type, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
+    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportCallPhase phase, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
     {
-        return new (m_parserArena) ImportDeclarationNode(location, type, importSpecifierList, moduleName, importAttributesList);
+        return new (m_parserArena) ImportDeclarationNode(location, phase, importSpecifierList, moduleName, importAttributesList);
     }
 
     StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)

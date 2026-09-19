@@ -179,11 +179,11 @@ namespace JSC {
     {
     }
 
-    inline ImportNode::ImportNode(const JSTokenLocation& location, ExpressionNode* expr, ExpressionNode* option, bool deferred)
+    inline ImportNode::ImportNode(const JSTokenLocation& location, ExpressionNode* expr, ExpressionNode* option, ImportCallPhase phase)
         : ExpressionNode(location)
         , m_expr(expr)
         , m_option(option)
-        , m_deferred(deferred)
+        , m_phase(phase)
     {
     }
 
@@ -882,12 +882,12 @@ namespace JSC {
     {
     }
 
-    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportType type, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
+    inline ImportDeclarationNode::ImportDeclarationNode(const JSTokenLocation& location, ImportCallPhase phase, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
         : ModuleDeclarationNode(location)
         , m_specifierList(importSpecifierList)
         , m_moduleName(moduleName)
         , m_attributesList(importAttributesList)
-        , m_type(type)
+        , m_phase(phase)
     {
     }
 

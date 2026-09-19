@@ -166,8 +166,16 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
                 }
             }
 #endif
-            // 7.b. If in.[[ImportName]] is NAMESPACE-OBJECT, then
-            if (in.type == ImportEntryType::Namespace) {
+            // 7.b. If in.[[Phase]] is source, then
+            // https://tc39.es/proposal-source-phase-imports/
+            if (in.phase == ModulePhase::Source) {
+                JSValue moduleSource = importedModule->getModuleSource(globalObject);
+                RETURN_IF_EXCEPTION(scope, void());
+                bool putResult = false;
+                symbolTablePutTouchWatchpointSet(env, globalObject, in.localName, moduleSource, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+                RETURN_IF_EXCEPTION(scope, void());
+            // 7.c. Else if in.[[ImportName]] is NAMESPACE-OBJECT, then
+            } else if (in.type == ImportEntryType::Namespace) {
                 // 7.b.i. Let namespace be GetModuleNamespace(importedModule, in.[[Phase]]).
                 JSModuleNamespaceObject* ns = importedModule->getModuleNamespace(globalObject, in.phase);
                 RETURN_IF_EXCEPTION(scope, void());
@@ -235,6 +243,8 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
     if (!jsModule) {
         ASSERT(wasmModule);
         if (!wasmModule->moduleEnvironmentMayBeNull()) {
+            if (!wasmModule->instance())
+                return;
             wasmModule->link(globalObject, scriptFetcher);
             JSModuleLoader::attachErrorInfo(globalObject, scope, wasmModule, wasmModule->moduleKey(), ScriptFetchParameters::WebAssembly, JSModuleLoader::ModuleFailure::Kind::Instantiation);
             RETURN_IF_EXCEPTION(scope, void());

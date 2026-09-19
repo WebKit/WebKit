@@ -3834,7 +3834,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
     next();
 
     auto specifierList = context.createImportSpecifierList();
-    auto type = ImportDeclarationNode::ImportType::Normal;
+    auto phase = ImportCallPhase::Evaluation;
 
     if (match(STRING)) {
         // import ModuleSpecifier ;
@@ -3850,7 +3850,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
         }
 
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
-        return context.createImportDeclaration(importLocation, type, specifierList, moduleName, attributesList);
+        return context.createImportDeclaration(importLocation, phase, specifierList, moduleName, attributesList);
     }
 
     bool isFinishedParsingImport = false;
@@ -3860,14 +3860,27 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
         next();
         if (match(TIMES)) {
             // import defer NameSpaceImport FromClause ;
-            type = ImportDeclarationNode::ImportType::Deferred;
+            phase = ImportCallPhase::Defer;
             hasImportDefer = true;
         } else
             // import defer FromClause ;
             restoreSavePoint(context, deferSavePoint);
+    } else if (Options::useSourcePhaseImports() && matchContextualKeyword(m_vm.propertyNames->source)) [[unlikely]] {
+        SavePoint sourceSavePoint = createSavePoint(context);
+        next();
+        // import source ImportedBinding FromClause ;
+        // Not `import source from "mod"` (default binding named "source").
+        if (matchSpecIdentifier() && !matchContextualKeyword(m_vm.propertyNames->from)) {
+            phase = ImportCallPhase::Source;
+            auto specifier = parseImportClauseItem(context, ImportSpecifierType::DefaultImport);
+            failIfFalse(specifier, "Cannot parse the source phase import");
+            context.appendImportSpecifier(specifierList, specifier);
+            isFinishedParsingImport = true;
+        } else
+            restoreSavePoint(context, sourceSavePoint);
     }
 
-    if (matchSpecIdentifier() && !hasImportDefer) {
+    if (matchSpecIdentifier() && !hasImportDefer && !isFinishedParsingImport) {
         // ImportedDefaultBinding :
         // ImportedBinding
         auto specifier = parseImportClauseItem(context, ImportSpecifierType::DefaultImport);
@@ -3922,7 +3935,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
 
-    return context.createImportDeclaration(importLocation, type, specifierList, moduleName, attributesList);
+    return context.createImportDeclaration(importLocation, phase, specifierList, moduleName, attributesList);
 }
 
 template <typename LexerType>
@@ -5503,7 +5516,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
         next();
         JSTextPosition expressionEnd = lastTokenEndPosition();
         bool isImportMeta = false;
-        bool deferred = false;
+        ImportCallPhase phase = ImportCallPhase::Evaluation;
         if (consume(DOT)) {
             if (matchContextualKeyword(m_vm.propertyNames->builtinNames().metaPublicName())) [[likely]] {
                 semanticFailIfFalse(m_scriptMode == JSParserScriptMode::Module, "import.meta is only valid inside modules");
@@ -5512,13 +5525,15 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 isImportMeta = true;
                 next();
             } else if (Options::useImportDefer() && matchContextualKeyword(m_vm.propertyNames->deferKeyword)) {
-                // ImportCall : import . defer ImportCallArguments
-                // https://tc39.es/proposal-defer-import-eval/#sec-import-call-runtime-semantics-evaluation
-                deferred = true;
+                phase = ImportCallPhase::Defer;
+                next();
+                expressionEnd = lastTokenEndPosition();
+            } else if (Options::useSourcePhaseImports() && matchContextualKeyword(m_vm.propertyNames->source)) {
+                phase = ImportCallPhase::Source;
                 next();
                 expressionEnd = lastTokenEndPosition();
             } else {
-                failIfTrue(match(IDENT), Options::useImportDefer() ? "\"import.\" can only be followed with meta or defer" : "\"import.\" can only be followed with meta");
+                failIfTrue(match(IDENT), Options::useSourcePhaseImports() ? "\"import.\" can only be followed with meta, defer, or source" : Options::useImportDefer() ? "\"import.\" can only be followed with meta or defer" : "\"import.\" can only be followed with meta");
                 failDueToUnexpectedToken();
             }
         }
@@ -5537,7 +5552,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
                 }
             }
             consumeOrFail(CLOSEPAREN, "import call expects one or two arguments");
-            base = context.createImportExpr(location, expr, optionExpression, deferred, expressionStart, expressionEnd, lastTokenEndPosition());
+            base = context.createImportExpr(location, expr, optionExpression, phase, expressionStart, expressionEnd, lastTokenEndPosition());
         }
     } else {
         const bool isAsync = matchContextualKeyword(m_vm.propertyNames->async);

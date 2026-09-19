@@ -196,6 +196,9 @@ constexpr bool typeExposedByDefault = true;
     FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(macro) \
     macro(JSArrayBuffer, arrayBuffer, arrayBuffer, JSArrayBuffer, ArrayBuffer, object, typeExposedByDefault) \
 
+class JSAbstractModuleSourceConstructor;
+class JSAbstractModuleSourcePrototype;
+
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro) \
     macro(WebAssemblyCompileError, webAssemblyCompileError, webAssemblyCompileError, ErrorInstance,             CompileError, error,  typeExposedByDefault) \
@@ -464,6 +467,9 @@ public:
     FOR_EACH_SIMPLE_BUILTIN_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(DEFINE_STORAGE_FOR_SIMPLE_TYPE_PROTOTYPE)
     
+    LazyProperty<JSGlobalObject, JSAbstractModuleSourceConstructor> m_abstractModuleSourceConstructor;
+    LazyProperty<JSGlobalObject, JSAbstractModuleSourcePrototype> m_abstractModuleSourcePrototype;
+
 #if ENABLE(WEBASSEMBLY)
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyModuleRecordStructure;
     LazyProperty<JSGlobalObject, Structure> m_webAssemblyFunctionStructure;
@@ -1147,6 +1153,9 @@ public:
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_ACCESSORS_FOR_LAZY_TYPE)
 
 #undef DEFINE_ACCESSORS_FOR_LAZY_TYPE
+
+    JS_EXPORT_PRIVATE JSObject* abstractModuleSourceConstructor();
+    JS_EXPORT_PRIVATE JSObject* abstractModuleSourcePrototype();
 
     inline LazyClassStructure& lazyTypedArrayStructure(TypedArrayType);
     inline const LazyClassStructure& lazyTypedArrayStructure(TypedArrayType) const;
