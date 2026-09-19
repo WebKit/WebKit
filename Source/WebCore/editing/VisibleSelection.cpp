@@ -234,6 +234,19 @@ bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
     return !nonBoundaryShadowTreeRootNode() && visibleStart().previous(rule).isNull() && visibleEnd().next(rule).isNull();
 }
 
+static uint64_t textDistance(const Position& start, const Position& end)
+{
+    auto range = makeSimpleRange(start, end);
+    if (!range)
+        return 0;
+    return characterCount(*range, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+}
+
+Position VisibleSelection::endpointToPreserveWhenExtendedTo(const Position& extent) const
+{
+    return textDistance(start(), extent) <= textDistance(extent, end()) ? end() : start();
+}
+
 void VisibleSelection::appendTrailingWhitespace()
 {
     RefPtr scope = deprecatedEnclosingBlockFlowElement(protect(m_end.deprecatedNode()).get());

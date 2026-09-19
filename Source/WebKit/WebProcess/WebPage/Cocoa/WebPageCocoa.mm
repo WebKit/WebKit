@@ -144,6 +144,7 @@
 #import <WebCore/UTIRegistry.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/UserTypingGestureIndicator.h>
+#import <WebCore/VisibleSelection.h>
 #import <WebCore/VisibleUnits.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/markup.h>
@@ -2907,7 +2908,7 @@ void WebPage::setSelectionRange(std::optional<WebCore::FrameIdentifier> frameID,
     m_initialSelection = range;
 }
 
-void WebPage::updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, TextInteractionSource source, CompletionHandler<void(bool)>&& callback)
+void WebPage::updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, TextInteractionSource source, SelectionExtentAnchor anchor, CompletionHandler<void(bool)>&& callback)
 {
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
 
@@ -2926,6 +2927,16 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point,
 
     auto position = visiblePositionInFocusedNodeForPoint(*frame, localPoint, isInteractingWithFocusedElement);
     auto newRange = rangeForGranularityAtPoint(*frame, localPoint, granularity, isInteractingWithFocusedElement);
+
+    // A gesture that begins by extending has no gesture-start range to measure from; it anchors on the
+    // endpoint of the existing selection that a shift-click would keep. Collapsing the anchor down to
+    // that endpoint makes the extent logic below reproduce shift-click, both for this update and for any
+    // drag that follows.
+    if (anchor == SelectionExtentAnchor::CurrentSelection && position.isNotNull()) {
+        auto anchorPosition = frame->selection().selection().endpointToPreserveWhenExtendedTo(position.deepEquivalent());
+        if (auto anchorRange = makeSimpleRange(anchorPosition.isNotNull() ? anchorPosition : position.deepEquivalent()))
+            m_initialSelection = WTF::move(anchorRange);
+    }
 
     if (position.isNull() || !m_initialSelection || !newRange)
         return callback(false);
