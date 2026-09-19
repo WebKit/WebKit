@@ -322,6 +322,7 @@ private:
 
     std::optional<WebCore::FrameGeometrySyncData> m_lastBroadcastFrameGeometry;
     std::optional<WebCore::FrameViewportInfo> m_lastBroadcastFrameViewportInfo;
+    std::optional<WebCore::RectEdges<WebCore::Color>> m_lastBroadcastSampledFixedContainerEdgeColors;
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections() const final;

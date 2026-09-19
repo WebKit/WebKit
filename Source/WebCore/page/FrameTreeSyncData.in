@@ -37,3 +37,7 @@ FrameRect : WebCore::IntRect [Headers=<WebCore/IntRect.h>]
 
 FrameGeometry : WebCore::FrameGeometrySyncData [Headers=<WebCore/FrameGeometrySyncData.h>]
 FrameViewportInfo : WebCore::FrameViewportInfo [Headers=<WebCore/FrameGeometrySyncData.h>]
+
+## Liquid Glass per-edge colors a child frame sampled from its own content, so the main-frame
+## process can use them for fixedContainerEdges under site isolation.
+SampledFixedContainerEdgeColors : WebCore::RectEdges<WebCore::Color> [Headers=<WebCore/RectEdges.h>,<WebCore/Color.h>]

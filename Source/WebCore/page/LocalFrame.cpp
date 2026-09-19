@@ -95,6 +95,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "PageColorSampler.h"
 #include "PaymentSession.h"
 #include "ProcessWarming.h"
 #include "RemoteFrame.h"
@@ -1055,6 +1056,25 @@ FrameView* LocalFrame::virtualView() const
 FrameLoaderClient& LocalFrame::loaderClient()
 {
     return loader().client();
+}
+
+bool LocalFrame::broadcastSampledFixedContainerEdgeColorsIfNeeded()
+{
+    // Reports this local root's per-edge colors to the main-frame process, which cannot sample a
+    // remote frame itself. Returns false if there is nothing to sample yet, so the caller can retry.
+    ASSERT(isRootFrame());
+    if (isMainFrame())
+        return true;
+
+    // Not sampleTop's visually-non-empty heuristics: a frame whose only content is a background
+    // color is exactly what this samples.
+    if (!contentRenderer())
+        return false;
+
+    // Report even when no color is visible, so a cleared edge stops tinting. Repeats are deduped
+    // in WebLocalFrameLoaderClient.
+    loaderClient().broadcastSampledFixedContainerEdgeColorsToOtherProcesses(PageColorSampler::sampleFixedContainerEdgeColors(*this));
+    return true;
 }
 
 URL LocalFrame::urlForConsoleLog() const

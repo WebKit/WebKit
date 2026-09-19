@@ -1439,6 +1439,14 @@ void WebPage::frameTreeSyncDataChangedInAnotherProcess(FrameIdentifier frameID, 
         updateRemoteIntersectionObservers();
         break;
 
+    case FrameTreeSyncDataType::SampledFixedContainerEdgeColors:
+        // Only the main frame computes fixed container edges; siblings have nothing to recompute.
+        if (protect(corePage())->localMainFrame()) {
+            setNeedsFixedContainerEdgesUpdate();
+            protect(corePage())->scheduleRenderingUpdate(RenderingUpdateStep::LayerFlush);
+        }
+        break;
+
     default:
         break;
     }

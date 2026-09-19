@@ -1,0 +1,89 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SiteIsolationEnabled=true pageTopColorSamplingEnabled=true ContentInsetBackgroundFillEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--
+  Under site isolation the fixed-container edge color is sampled from a cross-site iframe, which is a
+  RemoteFrame in another process. This verifies that each edge is still tinted with its iframe's color
+  (reported up from the iframe's process), matching the non-isolated result. The main page is served
+  from 127.0.0.1; the iframes are loaded from localhost, so they are cross-site (remote under SI).
+-->
+<style>
+    body, html { margin: 0; width: 100%; height: 100%; }
+    .edge { position: fixed; background: transparent; overflow: hidden; }
+    .edge.top    { top: 0; left: 0; right: 0; height: 120px; }
+    .edge.bottom { bottom: 0; left: 0; right: 0; height: 120px; }
+    .edge.left   { left: 0; top: 0; bottom: 0; width: 120px; }
+    .edge.right  { right: 0; top: 0; bottom: 0; width: 120px; }
+    .edge iframe { border: 0; display: block; width: 100%; height: 100%; }
+    .tall { width: 10px; height: 3000px; }
+</style>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+<div class="edge top"><iframe></iframe></div>
+<div class="edge bottom"><iframe></iframe></div>
+<div class="edge left"><iframe></iframe></div>
+<div class="edge right"><iframe></iframe></div>
+<div class="tall"></div>
+<script>
+jsTestIsAsync = true;
+
+var color;
+
+const CROSS_SITE_HOST = "http://localhost:8000";
+const EDGE_COLORS = { top: "ff7800", bottom: "007aff", left: "34c759", right: "af52de" };
+const EXPECTED = {
+    top: "rgb(255, 120, 0)",
+    bottom: "rgb(0, 122, 255)",
+    left: "rgb(52, 199, 89)",
+    right: "rgb(175, 82, 222)",
+};
+
+function loadEdgeFrame(edge)
+{
+    const frame = document.querySelector(`.edge.${edge} iframe`);
+    return new Promise(resolve => {
+        frame.addEventListener("load", resolve, { once: true });
+        frame.src = `${CROSS_SITE_HOST}/site-isolation/resources/solid-color.html?color=${EDGE_COLORS[edge]}`;
+    });
+}
+
+function allEdgesMatch(sampled)
+{
+    return sampled && sampled.top === EXPECTED.top && sampled.right === EXPECTED.right
+        && sampled.bottom === EXPECTED.bottom && sampled.left === EXPECTED.left;
+}
+
+addEventListener("load", async () => {
+    await UIHelper.setObscuredInsets(120, 120, 120, 120);
+    await Promise.all(Object.keys(EDGE_COLORS).map(loadEdgeFrame));
+    testPassed("Loaded cross-site iframes");
+
+    // The edge colors are reported asynchronously (each iframe's process samples its own content and
+    // broadcasts it up, then the main frame recomputes), so poll until they populate rather than
+    // assuming a single presentation update is enough.
+    const maximumUpdates = 20;
+    let updates = 0;
+    for (; updates < maximumUpdates; ++updates) {
+        await UIHelper.ensurePresentationUpdate();
+        color = await UIHelper.fixedContainerEdgeColors();
+        if (allEdgesMatch(color))
+            break;
+    }
+
+    // Say why on failure, without changing the output when it passes.
+    if (updates === maximumUpdates)
+        debug(`Gave up after ${updates} presentation updates; last saw top=${color.top} right=${color.right} bottom=${color.bottom} left=${color.left}`);
+
+    shouldBeEqualToString("color.top", EXPECTED.top);
+    shouldBeEqualToString("color.right", EXPECTED.right);
+    shouldBeEqualToString("color.bottom", EXPECTED.bottom);
+    shouldBeEqualToString("color.left", EXPECTED.left);
+    finishJSTest();
+});
+</script>
+</body>
+</html>

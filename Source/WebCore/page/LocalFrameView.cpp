@@ -2702,7 +2702,21 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
         }
 
         edges.colors.setAt(side, [&] -> FixedContainerEdge {
-            auto samplingResult = PageColorSampler::predominantColor(*page, computeSamplingRect(result.container->renderStyle(), side));
+            auto samplingRect = computeSamplingRect(result.container->renderStyle(), side);
+            auto samplingResult = PageColorSampler::predominantColor(*page, samplingRect);
+
+            // A remote frame's pixels are not in this process's snapshot, so use the color it
+            // reported. Only None means nothing was sampled; Multiple is a real result.
+            auto sampledNothing = [&] {
+                auto* type = std::get_if<PredominantColorType>(&samplingResult);
+                return type && *type == PredominantColorType::None;
+            };
+
+            if (sampledNothing()) {
+                if (auto remoteColor = PageColorSampler::remoteFrameSyncedEdgeColor(*page, snappedIntRect(samplingRect), side))
+                    samplingResult = *remoteColor;
+            }
+
             if (!std::holds_alternative<Color>(samplingResult))
                 return samplingResult;
 

@@ -703,6 +703,7 @@ public:
 
 #if PLATFORM(COCOA)
     void willCommitLayerTree(RemoteLayerTreeTransaction&, WebCore::FrameIdentifier);
+    void updateSampledFixedContainerEdgeColorsIfNeeded();
     void willCommitMainFrameData(MainFrameData&, const TransactionID&);
     void didFlushLayerTreeAtTime(MonotonicTime, bool flushSucceeded);
     std::optional<EditorState> editorStateIfUpdateNeeded();

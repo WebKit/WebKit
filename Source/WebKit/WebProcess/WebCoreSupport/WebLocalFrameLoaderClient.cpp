@@ -1154,6 +1154,12 @@ void WebLocalFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(Frame
         if (m_lastBroadcastFrameViewportInfo == *viewportInfo)
             return;
         m_lastBroadcastFrameViewportInfo = *viewportInfo;
+    } else if (auto* edgeColors = std::get_if<RectEdges<Color>>(&data.value)) {
+        // Only broadcast the sampled edge colors on change, so the main-frame process doesn't
+        // re-run fixedContainerEdges on every unchanged commit.
+        if (m_lastBroadcastSampledFixedContainerEdgeColors == *edgeColors)
+            return;
+        m_lastBroadcastSampledFixedContainerEdgeColors = *edgeColors;
     }
 
     WebFrameLoaderClient::broadcastFrameTreeSyncDataToOtherProcesses(WTF::move(data));
