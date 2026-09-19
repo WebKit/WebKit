@@ -2249,25 +2249,50 @@ void WebPageProxy::selectWithGesture(std::optional<WebCore::FrameIdentifier> fra
     } });
 }
 
-void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
+void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info, std::optional<WebCore::FrameIdentifier> frameID)
 {
     if (RefPtr pageClient = this->pageClient())
-        pageClient->positionInformationDidChange(info);
+        pageClient->positionInformationDidChange(info, frameID);
 }
 
-std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
+std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> WebPageProxy::outstandingPositionInformationReply() const
 {
-    // FIXME: Make this work with site isolation.
-    Ref process = m_legacyMainFrameProcess;
+    return internals().outstandingPositionInformationReply;
+}
 
-    auto asyncReplyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(request), [weakThis = WeakPtr { *this }](InteractionInformationAtPosition&& information) {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didReceivePositionInformation(information);
-    }, webPageIDInMainFrameProcess());
+void WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
+{
+    requestPositionInformationInFrame(std::nullopt, request.point, request);
+}
 
-    if (!asyncReplyID)
-        return std::nullopt;
-    return { { *asyncReplyID, process->connection() } };
+void WebPageProxy::requestPositionInformationInFrame(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint pointInFrameRootViewCoordinates, const InteractionInformationRequest& request)
+{
+    auto requestInFrame = request;
+    requestInFrame.point = pointInFrameRootViewCoordinates;
+
+    Ref process = processContainingFrame(frameID);
+    auto replyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(frameID, requestInFrame), [weakThis = WeakPtr { *this }, frameID, request](Variant<InteractionInformationAtPosition, WebCore::RemoteUserInputEventData>&& reply) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->internals().outstandingPositionInformationReply = std::nullopt;
+
+        WTF::switchOn(WTF::move(reply), [&](InteractionInformationAtPosition&& information) {
+            // The process that answered echoed the request as it saw it, with the point in its own
+            // coordinates. Report what was asked instead, so that callers can match the information
+            // against their own request.
+            information.request = request;
+            protectedThis->didReceivePositionInformation(information, frameID);
+        }, [&](WebCore::RemoteUserInputEventData&& remoteUserInputEventData) {
+            protectedThis->requestPositionInformationInFrame(remoteUserInputEventData.targetFrameID, roundedIntPoint(FloatPoint { remoteUserInputEventData.transformedPoint }), request);
+        });
+    }, webPageIDInProcessForFrame(frameID));
+
+    if (replyID)
+        internals().outstandingPositionInformationReply = { { *replyID, process->connection() } };
+    else
+        internals().outstandingPositionInformationReply = std::nullopt;
 }
 
 void WebPageProxy::selectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& callbackFunction)

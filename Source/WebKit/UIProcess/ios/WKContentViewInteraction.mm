@@ -3337,11 +3337,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([self _currentPositionInformationIsValidForRequest:request])
         return YES;
 
-    if (!protect(_page)->hasRunningProcess())
-        return NO;
-
-    Ref process = _page->legacyMainFrameProcess();
-    if (!process->hasConnection())
+    RefPtr page = _page;
+    if (!page || !page->hasRunningProcess())
         return NO;
 
     if (_isWaitingOnPositionInformation)
@@ -3350,15 +3347,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![self _hasValidOutstandingPositionInformationRequest:request])
         [self requestAsynchronousPositionInformationUpdate:request];
 
-    if (!_lastOutstandingPositionInformationRequest) {
-        ASSERT_NOT_REACHED();
-        return NO;
-    }
-    Ref connection = _lastOutstandingPositionInformationRequest->connection;
-
     _isWaitingOnPositionInformation = YES;
 
-    bool receivedResponse = connection->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::RequestPositionInformation>(_lastOutstandingPositionInformationRequest->replyID, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    bool receivedResponse = false;
+    while (auto reply = page->outstandingPositionInformationReply()) {
+        auto [replyID, connection] = *reply;
+        if (connection->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::RequestPositionInformation>(replyID, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) != IPC::Error::NoError)
+            break;
+        receivedResponse = !page->outstandingPositionInformationReply();
+    }
+
     _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     return _hasValidPositionInformation;
 }
@@ -3368,12 +3366,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([self _currentPositionInformationIsValidForRequest:request])
         return;
 
-    auto replyIDAndConnection = protect(_page)->requestPositionInformation(request);
-    if (!replyIDAndConnection)
-        return;
-    auto [replyID, connection] = *replyIDAndConnection;
+    _lastOutstandingPositionInformationRequest = request;
 
-    _lastOutstandingPositionInformationRequest = OutstandingInteractionInformationRequest { request, replyID, WTF::move(connection) };
+    protect(_page)->requestPositionInformation(request);
 }
 
 - (BOOL)_currentPositionInformationIsValidForRequest:(const WebKit::InteractionInformationRequest&)request
@@ -3383,7 +3378,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_hasValidOutstandingPositionInformationRequest:(const WebKit::InteractionInformationRequest&)request
 {
-    return _lastOutstandingPositionInformationRequest && _lastOutstandingPositionInformationRequest->request.isValidForRequest(request);
+    return _lastOutstandingPositionInformationRequest && _lastOutstandingPositionInformationRequest->isValidForRequest(request);
 }
 
 - (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const WebKit::InteractionInformationRequest&)request radiusForApproximation:(int)radius
@@ -4230,11 +4225,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     _hasValidPositionInformation = NO;
     _positionInformation = { };
+    _positionInformationFrameID = std::nullopt;
 }
 
-- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
+- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info fromFrame:(std::optional<WebCore::FrameIdentifier>)frameID
 {
-    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(_lastOutstandingPositionInformationRequest->request))
+    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
         _lastOutstandingPositionInformationRequest = std::nullopt;
 
     _isWaitingOnPositionInformation = NO;
@@ -4243,6 +4239,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     newInfo.mergeCompatibleOptionalInformation(_positionInformation);
 
     _positionInformation = newInfo;
+    _positionInformationFrameID = frameID;
     _hasValidPositionInformation = _positionInformation.canBeValid;
     if (_actionSheetAssistant)
         [protect(_actionSheetAssistant) updateSheetPosition];
@@ -10286,7 +10283,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant willStartInteractionWithElement:(_WKActivatedElementInfo *)element
 {
-    protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+    protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
 }
 
 - (void)actionSheetAssistantDidStopInteraction:(WKActionSheetAssistant *)assistant
@@ -15203,7 +15200,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
     const auto& url = _positionInformation.url;
 
-    protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+    protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
 
     RetainPtr<UIViewController> previewViewController;
 
@@ -15419,7 +15416,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return strongSelf->_contextMenuLegacyPreviewController.get();
         };
 
-        protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+        protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
 
         continueWithContextMenuConfiguration([UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:contentPreviewProvider actionProvider:actionMenuProvider]);
         return;
@@ -15440,7 +15437,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         if (configurationFromWKUIDelegate) {
-            protect(strongSelf->_page)->startInteractionWithPositionInformation(strongSelf->_positionInformation);
+            protect(strongSelf->_page)->startInteractionWithPositionInformation(strongSelf->_positionInformationFrameID, strongSelf->_positionInformation);
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = YES;
             continueWithContextMenuConfiguration(configurationFromWKUIDelegate);
             return;
@@ -15573,7 +15570,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationWithResult:RetainPtr { scannerResult.coreResult }.get() inView:self context:context.get() menuIdentifier:nil];
     } else {
         configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationForURL:_positionInformation.url.createNSURL().get() identifier:_positionInformation.dataDetectorIdentifier.createNSString().get() selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context.get() menuIdentifier:nil];
-        protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+        protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
     }
 
     _contextMenuActionProviderDelegateNeedsOverride = YES;
@@ -15988,7 +15985,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
         _longPressCanClick = NO;
-        protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+        protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
 
         // Treat animated images like a link preview
         if (isValidURLForImagePreview && _positionInformation.isAnimatedImage) {
@@ -16048,7 +16045,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
 
         auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:alternateURL.get() imageURL:nil userInfo:imageInfo.get() information:_positionInformation]);
-        protect(_page)->startInteractionWithPositionInformation(_positionInformation);
+        protect(_page)->startInteractionWithPositionInformation(_positionInformationFrameID, _positionInformation);
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([uiDelegate respondsToSelector:@selector(_webView:willPreviewImageWithURL:)])
