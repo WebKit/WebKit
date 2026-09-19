@@ -975,6 +975,91 @@ void testStoreLoadStackSlot(int value)
     CHECK_EQ(compileAndRun<int>(proc, value), value);
 }
 
+static constexpr int32_t largeStackSlotBytes = 64 * 1024;
+static constexpr int32_t largeStackOffset0 = 20000;
+static constexpr int32_t largeStackOffset1 = 20016;
+
+void testReuseLargeStackOffset()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
+
+    root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(largeStackSlotBytes));
+
+    Vector<Value*> sources;
+    sources.append(arguments[0]);
+    for (unsigned i = 0; i < 40; ++i) {
+        sources.append(
+            root->appendNew<Value>(proc, Add, Origin(), sources.last(), root->appendNew<ConstPtrValue>(proc, Origin(), 1)));
+    }
+
+    Value* total = root->appendNew<ConstPtrValue>(proc, Origin(), 0);
+    for (Value* value : sources)
+        total = root->appendNew<Value>(proc, Add, Origin(), total, value);
+
+    root->appendNewControlValue(proc, Return, Origin(), total);
+    CHECK_EQ(compileAndRun<intptr_t>(proc, 0), 820);
+}
+
+extern "C" {
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(testReuseLargeStackOffsetIdentity, int, (int));
+}
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(testReuseLargeStackOffsetIdentity, int, (int value))
+{
+    return value;
+}
+
+void testReuseLargeStackOffsetAfterCall()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int, int>(proc, root);
+
+    SlotBaseValue* stack =
+        root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(largeStackSlotBytes));
+
+    root->appendNew<MemoryValue>(proc, Store, Origin(), arguments[0], stack, largeStackOffset0);
+
+    Value* call = root->appendNew<CCallValue>(
+        proc, Int32, Origin(),
+        root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(testReuseLargeStackOffsetIdentity)),
+        arguments[1]);
+
+    root->appendNew<MemoryValue>(proc, Store, Origin(), call, stack, largeStackOffset1);
+
+    Value* first = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), stack, largeStackOffset0);
+    Value* second = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), stack, largeStackOffset1);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(proc, Add, Origin(), first, second));
+
+    CHECK_EQ(compileAndRun<int>(proc, 11, 22), 33);
+}
+
+void testReuseLargeStackOffsetZDefSpill()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int>(proc, root);
+
+    root->appendNew<SlotBaseValue>(proc, Origin(), proc.addStackSlot(largeStackSlotBytes));
+
+    Vector<Value*> sources;
+    sources.append(arguments[0]);
+    for (unsigned i = 0; i < 40; ++i) {
+        sources.append(
+            root->appendNew<Value>(proc, Add, Origin(), sources.last(), root->appendNew<Const32Value>(proc, Origin(), 1)));
+    }
+
+    Value* total = root->appendNew<Const32Value>(proc, Origin(), 0);
+    for (Value* value : sources)
+        total = root->appendNew<Value>(proc, Add, Origin(), total, value);
+
+    root->appendNewControlValue(proc, Return, Origin(), total);
+    CHECK_EQ(compileAndRun<int>(proc, 0), 820);
+}
+
 void testStoreDouble(double input)
 {
     // Simple store from an address in a register.
