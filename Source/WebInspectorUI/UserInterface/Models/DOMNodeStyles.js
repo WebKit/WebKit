@@ -45,6 +45,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._orderedStyles = [];
 
         this._computedPrimaryFont = null;
+        this._renderedFonts = [];
+        this._missingCharacterRanges = [];
 
         this._propertyNameToEffectivePropertyMap = {};
         this._usedCSSVariables = new Set;
@@ -143,6 +145,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     get computedStyle() { return this._computedStyle; }
     get orderedStyles() { return this._orderedStyles; }
     get computedPrimaryFont() { return this._computedPrimaryFont; }
+    get renderedFonts() { return this._renderedFonts; }
+    get missingCharacterRanges() { return this._missingCharacterRanges; }
     get usedCSSVariables() { return this._usedCSSVariables; }
     get allCSSVariables() { return this._allCSSVariables; }
 
@@ -337,12 +341,19 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             fetchedComputedStylesPromise.resolve({significantChange});
         }
 
-        function fetchedFontData(error, fontDataPayload)
+        function fetchedFontData(error, primaryFontPayload, renderedFontPayloads, missingCharacterRanges)
         {
-            if (fontDataPayload)
-                this._computedPrimaryFont = WI.Font.fromPayload(fontDataPayload);
-            else
+            if (error) {
                 this._computedPrimaryFont = null;
+                this._renderedFonts = [];
+                this._missingCharacterRanges = [];
+                fetchedFontDataPromise.resolve();
+                return;
+            }
+
+            this._computedPrimaryFont = WI.Font.fromPayload(primaryFontPayload);
+            this._renderedFonts = renderedFontPayloads?.map((payload) => WI.Font.fromPayload(payload)) || [];
+            this._missingCharacterRanges = missingCharacterRanges || [];
 
             fetchedFontDataPromise.resolve();
         }
@@ -445,6 +456,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     // Protected
 
     mediaQueryResultDidChange()
+    {
+        this._markAsNeedsRefresh();
+    }
+
+    fontDataChanged()
     {
         this._markAsNeedsRefresh();
     }
