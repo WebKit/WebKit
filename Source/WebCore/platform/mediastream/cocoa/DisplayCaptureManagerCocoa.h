@@ -36,9 +36,9 @@ public:
     static DisplayCaptureManagerCocoa& NODELETE singleton();
 
     DisplayCaptureManagerCocoa() = default;
+    virtual ~DisplayCaptureManagerCocoa() = default;
 
 private:
-    virtual ~DisplayCaptureManagerCocoa() = default;
 
     const Vector<CaptureDevice>& captureDevices() final;
 
