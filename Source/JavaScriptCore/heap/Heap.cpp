@@ -127,6 +127,40 @@
 
 namespace JSC {
 
+namespace {
+
+// The heap, if any, that the calling thread is currently doing collection work for. Recorded
+// rather than a plain flag so that currentThreadIsCollectingWithWorldStopped() reads
+// worldIsStopped() at the point of the query: a collector thread spans both the stop-the-world
+// phases and concurrent marking, so the answer changes during its lifetime.
+thread_local Heap* t_currentlyCollectingHeap;
+
+class CurrentlyCollectingHeapScope {
+    WTF_MAKE_NONCOPYABLE(CurrentlyCollectingHeapScope);
+public:
+    explicit CurrentlyCollectingHeapScope(Heap& heap)
+        : m_previous(t_currentlyCollectingHeap)
+    {
+        t_currentlyCollectingHeap = &heap;
+    }
+
+    ~CurrentlyCollectingHeapScope()
+    {
+        t_currentlyCollectingHeap = m_previous;
+    }
+
+private:
+    Heap* m_previous;
+};
+
+} // namespace
+
+bool currentThreadIsCollectingWithWorldStopped()
+{
+    auto* heap = t_currentlyCollectingHeap;
+    return heap && heap->worldIsStopped();
+}
+
 namespace HeapInternal {
 static constexpr bool verbose = false;
 static constexpr bool verboseStop = false;
@@ -317,6 +351,7 @@ private:
     
     WorkResult work() final
     {
+        CurrentlyCollectingHeapScope scope(m_heap);
         m_heap.collectInCollectorThread();
         return WorkResult::Continue;
     }
@@ -1600,6 +1635,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
             Thread::registerGCThread(GCThreadType::Helper);
 
             {
+                CurrentlyCollectingHeapScope scope(*this);
                 ParallelModeEnabler parallelModeEnabler(*visitor);
                 visitor->drainFromShared(SlotVisitor::HelperDrain);
             }

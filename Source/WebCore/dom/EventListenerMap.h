@@ -62,8 +62,8 @@ class EventListenerMap {
 public:
     WEBCORE_EXPORT EventListenerMap();
 
-    bool isEmpty() const { return m_entries.isEmpty(); }
-    bool contains(const AtomString& eventType) const { return find(eventType); }
+    bool isEmpty() const { assertIsOwnerThreadOrGCThreadWithWorldStopped(); return entries().isEmpty(); }
+    bool contains(const AtomString& eventType) const { assertIsOwnerThreadOrGCThreadWithWorldStopped(); return find(eventType); }
     bool NODELETE containsCapturing(const AtomString& eventType) const;
     bool NODELETE containsActive(const AtomString& eventType) const;
 
@@ -71,20 +71,23 @@ public:
     void clearEntriesForTearDown()
     {
         releaseAssertOrSetThreadUID();
-        m_entries.clear();
+        Locker locker { m_lock };
+        entriesForMutation().clear();
     }
 
     void replacePreservingOptions(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, bool useCapture = false);
     bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomString& eventType, EventListener&, bool useCapture);
-    WEBCORE_EXPORT EventListenerVector* NODELETE find(const AtomString& eventType);
-    const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
+    // Returns const so that m_entries cannot be mutated through it while only shared access is
+    // held. Mutating callers use findForMutation(), which requires the lock exclusively.
+    WEBCORE_EXPORT const EventListenerVector* NODELETE find(const AtomString& eventType) const WTF_REQUIRES_SHARED_LOCK(m_lock);
     Vector<AtomString> eventTypes() const;
 
     template<typename CallbackType>
     void enumerateEventListenerTypes(NOESCAPE const CallbackType& callback) const
     {
-        for (auto& entry : m_entries) {
+        assertIsOwnerThread();
+        for (auto& entry : entries()) {
             uint32_t capturingCount = 0;
             uint32_t bubblingCount = 0;
             for (auto& listener : entry.second) {
@@ -100,8 +103,9 @@ public:
     template<typename CallbackType>
     bool containsMatchingEventListener(NOESCAPE const CallbackType& callback) const
     {
-        for (auto& entry : m_entries) {
-            if (callback(entry.first, m_entries))
+        assertIsOwnerThread();
+        for (auto& entry : entries()) {
+            if (callback(entry.first, entries()))
                 return true;
         }
         return false;
@@ -113,7 +117,43 @@ public:
     template<typename Visitor> void visitJSEventListenersInGCThread(Visitor&);
     Lock& lock() LIFETIME_BOUND { return m_lock; }
 
+    // Grants read-only access to m_entries on the thread that owns this map, without locking.
+    // Public because EventTarget and Style::Adjuster reach m_entries through find(). Unlike
+    // releaseAssertOrSetThreadUID() this never claims the map and costs nothing in release
+    // builds, so it is usable on the event dispatch path.
+    void assertIsOwnerThread() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_lock)
+    {
+#if PLATFORM(IOS_FAMILY)
+        if (WebThreadIsEnabled())
+            return;
+#endif
+        ASSERT_WITH_SECURITY_IMPLICATION(!m_threadUID || m_threadUID == currentThreadID());
+    }
+
 private:
+    using Entries = Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4>;
+
+    // The only ways to reach the entries. Thread safety analysis counts a non-const call on a
+    // guarded container as a read, so a mutating call would be accepted under merely shared
+    // access; routing every mutation through an accessor that requires the lock exclusively is
+    // what makes the write half of the invariant enforceable.
+    const Entries& entries() const LIFETIME_BOUND WTF_REQUIRES_SHARED_LOCK(m_lock) { return m_entries; }
+    Entries& entriesForMutation() LIFETIME_BOUND WTF_REQUIRES_LOCK(m_lock) { return m_entries; }
+
+    EventListenerVector* NODELETE findForMutation(const AtomString& eventType) WTF_REQUIRES_LOCK(m_lock);
+
+    // As above, but also permits a collector thread, and only while it has the world stopped:
+    // that is what makes an unlocked read from a thread that does not own the map safe, since
+    // the owning thread cannot be mutating. The hasPendingActivity() and
+    // isReachableFromOpaqueRoots() implementations query the map from the GC in exactly that
+    // state. Concurrent marking is not accepted, so an unlocked read from a GC thread while the
+    // owning thread is running is still caught. Out of line to keep JSC's Heap out of this header.
+#if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    void assertIsOwnerThreadOrGCThreadWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_lock) { }
+#else
+    WEBCORE_EXPORT void assertIsOwnerThreadOrGCThreadWithWorldStopped() const WTF_ASSERTS_ACQUIRED_SHARED_LOCK(m_lock);
+#endif
+
     void releaseAssertOrSetThreadUID()
     {
 #if PLATFORM(IOS_FAMILY)
@@ -130,7 +170,12 @@ private:
         RELEASE_ASSERT(currentThreadMayBeGCThread());
     }
 
-    Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;
+    // Mutated on the owning thread while holding m_lock and read on the GC threads by
+    // visitJSEventListenersInGCThread(), which locks; the owning thread's own reads use
+    // assertIsOwnerThread() instead of locking. Note that thread safety analysis treats a
+    // non-const call on a guarded container as a read, so keeping every mutable path behind
+    // exclusive access is what actually enforces the write half of this.
+    Entries m_entries WTF_GUARDED_BY_LOCK(m_lock);
     Lock m_lock;
     uint32_t m_threadUID { 0 };
 };
@@ -139,7 +184,7 @@ template<typename Visitor>
 void EventListenerMap::visitJSEventListenersInGCThread(Visitor& visitor)
 {
     Locker locker { m_lock };
-    for (auto& entry : m_entries) {
+    for (auto& entry : entries()) {
         for (auto& eventListener : entry.second)
             eventListener->callback().visitJSFunctionInGCThread(visitor);
     }

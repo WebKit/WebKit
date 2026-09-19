@@ -324,6 +324,7 @@ void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
     if (!data)
         return;
 
+    data->eventListenerMap.assertIsOwnerThread();
     if (auto* listenersVector = data->eventListenerMap.find(event.type())) {
         innerInvokeEventListeners(event, *listenersVector, phase);
         return;
@@ -419,9 +420,14 @@ Vector<AtomString> EventTarget::eventTypes() const
 
 const EventListenerVector& EventTarget::eventListeners(const AtomString& eventType)
 {
-    auto* data = eventTargetData();
-    auto* listenerVector = data ? data->eventListenerMap.find(eventType) : nullptr;
     static NeverDestroyed<EventListenerVector> emptyVector;
+
+    auto* data = eventTargetData();
+    if (!data)
+        return emptyVector.get();
+
+    data->eventListenerMap.assertIsOwnerThread();
+    auto* listenerVector = data->eventListenerMap.find(eventType);
     return listenerVector ? *listenerVector : emptyVector.get();
 }
 

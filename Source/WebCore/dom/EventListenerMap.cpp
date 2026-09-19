@@ -37,6 +37,7 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "JSEventListener.h"
+#include <JavaScriptCore/Heap.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -46,8 +47,20 @@ namespace WebCore {
 
 EventListenerMap::EventListenerMap() = default;
 
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+void EventListenerMap::assertIsOwnerThreadOrGCThreadWithWorldStopped() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (WebThreadIsEnabled())
+        return;
+#endif
+    ASSERT_WITH_SECURITY_IMPLICATION(!m_threadUID || m_threadUID == currentThreadID() || JSC::currentThreadIsCollectingWithWorldStopped());
+}
+#endif
+
 bool EventListenerMap::containsCapturing(const AtomString& eventType) const
 {
+    assertIsOwnerThreadOrGCThreadWithWorldStopped();
     auto* listeners = find(eventType);
     if (!listeners)
         return false;
@@ -61,6 +74,7 @@ bool EventListenerMap::containsCapturing(const AtomString& eventType) const
 
 bool EventListenerMap::containsActive(const AtomString& eventType) const
 {
+    assertIsOwnerThreadOrGCThreadWithWorldStopped();
     auto* listeners = find(eventType);
     if (!listeners)
         return false;
@@ -77,17 +91,18 @@ void EventListenerMap::clear()
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    for (auto& entry : m_entries) {
+    for (auto& entry : entriesForMutation()) {
         for (auto& listener : entry.second)
             listener->markAsRemoved();
     }
 
-    m_entries.clear();
+    entriesForMutation().clear();
 }
 
 Vector<AtomString> EventListenerMap::eventTypes() const
 {
-    return m_entries.map([](auto& entry) {
+    assertIsOwnerThread();
+    return entries().map([](auto& entry) {
         return entry.first;
     });
 }
@@ -107,7 +122,7 @@ void EventListenerMap::replacePreservingOptions(const AtomString& eventType, Eve
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    auto* listeners = find(eventType);
+    auto* listeners = findForMutation(eventType);
     ASSERT(listeners);
     size_t index = findListener(*listeners, oldListener, useCapture);
     ASSERT(index != notFound);
@@ -122,14 +137,14 @@ bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& lis
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    if (auto* listeners = find(eventType)) {
+    if (auto* listeners = findForMutation(eventType)) {
         if (findListener(*listeners, listener, options.capture) != notFound)
             return false; // Duplicate listener.
         listeners->append(RegisteredEventListener::create(WTF::move(listener), options));
         return true;
     }
 
-    m_entries.append({ eventType, EventListenerVector { RegisteredEventListener::create(WTF::move(listener), options) } });
+    entriesForMutation().append({ eventType, EventListenerVector { RegisteredEventListener::create(WTF::move(listener), options) } });
     return true;
 }
 
@@ -149,11 +164,12 @@ bool EventListenerMap::remove(const AtomString& eventType, EventListener& listen
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType) {
-            bool wasRemoved = removeListenerFromVector(m_entries[i].second, listener, useCapture);
-            if (m_entries[i].second.isEmpty())
-                m_entries.removeAt(i);
+    auto& entries = entriesForMutation();
+    for (unsigned i = 0; i < entries.size(); ++i) {
+        if (entries[i].first == eventType) {
+            bool wasRemoved = removeListenerFromVector(entries[i].second, listener, useCapture);
+            if (entries[i].second.isEmpty())
+                entries.removeAt(i);
             return wasRemoved;
         }
     }
@@ -161,14 +177,20 @@ bool EventListenerMap::remove(const AtomString& eventType, EventListener& listen
     return false;
 }
 
-EventListenerVector* EventListenerMap::find(const AtomString& eventType)
+const EventListenerVector* EventListenerMap::find(const AtomString& eventType) const
 {
-    for (auto& entry : m_entries) {
+    for (auto& entry : entries()) {
         if (entry.first == eventType)
             return &entry.second;
     }
 
     return nullptr;
+}
+
+EventListenerVector* EventListenerMap::findForMutation(const AtomString& eventType)
+{
+    // Safe to drop the const: this requires m_lock exclusively, so no other thread can be reading.
+    return const_cast<EventListenerVector*>(find(eventType));
 }
 
 static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVector)
@@ -188,17 +210,18 @@ void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomStrin
     releaseAssertOrSetThreadUID();
     Locker locker { m_lock };
 
-    for (unsigned i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].first == eventType) {
-            removeFirstListenerCreatedFromMarkup(m_entries[i].second);
-            if (m_entries[i].second.isEmpty())
-                m_entries.removeAt(i);
+    auto& entries = entriesForMutation();
+    for (unsigned i = 0; i < entries.size(); ++i) {
+        if (entries[i].first == eventType) {
+            removeFirstListenerCreatedFromMarkup(entries[i].second);
+            if (entries[i].second.isEmpty())
+                entries.removeAt(i);
             return;
         }
     }
 }
 
-static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, EventListenerVector& listenerVector, EventTarget* target)
+static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventType, const EventListenerVector& listenerVector, EventTarget* target)
 {
     for (auto& registeredListener : listenerVector) {
         // Event listeners created from markup have already been transfered to the shadow tree during cloning.
@@ -210,7 +233,8 @@ static void copyListenersNotCreatedFromMarkupToTarget(const AtomString& eventTyp
 
 void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarget* target)
 {
-    for (auto& entry : m_entries)
+    assertIsOwnerThread();
+    for (auto& entry : entries())
         copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second, target);
 }
 
