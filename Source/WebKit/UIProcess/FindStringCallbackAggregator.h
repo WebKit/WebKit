@@ -47,6 +47,12 @@ private:
 
     RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
     bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
+    uint32_t globalIndexOffsetForFrame(const WebFrameProxy&);
+
+    struct FrameMatchResult {
+        uint32_t matchCount { 0 };
+        bool didWrap { false };
+    };
 
     WeakPtr<WebPageProxy> m_page;
     String m_string;
@@ -54,7 +60,7 @@ private:
     unsigned m_maxMatchCount;
     uint32_t m_matchCount { 0 };
     CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, bool> m_matches;
+    HashMap<WebCore::FrameIdentifier, FrameMatchResult> m_matches;
 };
 
 } // namespace WebKit

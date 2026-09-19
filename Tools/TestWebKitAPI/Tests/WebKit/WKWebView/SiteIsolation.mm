@@ -4164,6 +4164,46 @@ TEST(SiteIsolation, CountStringMatches)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, FindStringMatchIndexAcrossFrames)
+{
+    auto mainframeHTML = "<p>word word</p>"
+        "<iframe src='https://domain2.com/subframe'></iframe>"_s;
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { "<p>word word</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+
+    [webView loadURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    auto findNextWord = [&] {
+        isDone = false;
+        [webView _findString:@"word" options:_WKFindOptionsWrapAround | _WKFindOptionsDetermineMatchIndex maxCount:100];
+        Util::run(&isDone);
+    };
+
+    findNextWord();
+    EXPECT_EQ(4u, [findDelegate matchesCount]);
+    EXPECT_EQ(0, [findDelegate matchIndex]);
+
+    findNextWord();
+    EXPECT_EQ(4u, [findDelegate matchesCount]);
+    EXPECT_EQ(1, [findDelegate matchIndex]);
+
+    findNextWord();
+    EXPECT_EQ(4u, [findDelegate matchesCount]);
+    EXPECT_EQ(2, [findDelegate matchIndex]);
+
+    findNextWord();
+    EXPECT_EQ(4u, [findDelegate matchesCount]);
+    EXPECT_EQ(3, [findDelegate matchIndex]);
+}
+
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ProcessDisplayNames)
 {
