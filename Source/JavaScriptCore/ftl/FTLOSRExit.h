@@ -120,7 +120,7 @@ struct OSRExitDescriptor {
 private:
     WTF_MAKE_NONCOPYABLE(OSRExitDescriptor);
 public:
-    OSRExitDescriptor(DataFormat profileDataFormat, MethodOfGettingAValueProfile);
+    OSRExitDescriptor(unsigned index, DataFormat profileDataFormat, MethodOfGettingAValueProfile);
 
     // The first argument to the exit call may be a value we wish to profile.
     // If that's the case, the format will be not Invalid and we'll have a
@@ -128,6 +128,7 @@ public:
     // are already aware of this possible off-by-one, so there is no need to
     // correct them.
     DataFormat m_profileDataFormat;
+    unsigned m_index;
     MethodOfGettingAValueProfile m_valueProfile;
 
     OSRExitValues m_values;
@@ -169,19 +170,66 @@ private:
 };
 
 struct OSRExit : public DFG::OSRExitBase {
-    OSRExit(OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset);
+    OSRExit(const OSRExitDescriptor*, ExitKind, CodeOrigin, CodeOrigin codeOriginForExitProfile, bool wasHoisted, uint32_t dfgNodeIndex, unsigned valueRepsOffset);
 
     FixedVector<B3::ValueRep> valueReps(const JITCode&) const;
 
     unsigned m_valueRepsOffset;
-    OSRExitDescriptor* m_descriptor;
+    const OSRExitDescriptor* m_descriptor;
     // This tells us where to place a jump.
-    CodeLocationLabel<JSInternalPtrTag> m_entrance;
+    uint32_t m_entranceOffset { 0 };
 
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         OSRExitBase::considerAddingAsFrequentExitSite(profiledCodeBlock, ExitFromFTL);
     }
+};
+
+// The FTL counterpart of DFG::OSRExitStream, with the same chunks, deltas and origin tags.
+// m_exceptionHandlerExits lists the generic unwind handler exits.
+//
+//   byte        ExitKind
+//   byte        flags:
+//     bits 0-1  origin tag of m_codeOrigin against the previous exit's m_codeOrigin
+//     bits 2-3  origin tag of m_codeOriginForExitProfile against m_codeOrigin
+//     bit 4     m_wasHoisted
+//   the payload of each origin tag, in the order of the flags
+//   LEB128      signed delta of m_dfgNodeIndex
+//   LEB128      signed delta of the index of m_descriptor in JITCode::osrExitDescriptors
+//   LEB128      signed delta of m_valueRepsOffset
+//   LEB128      signed delta of m_entranceOffset
+//   [LEB128]    WillThrowOutOfMemoryError: m_exitCallSiteIndex
+class OSRExitStream {
+public:
+    struct ExceptionHandlerExit {
+        CallSiteIndex callSiteIndex;
+        uint32_t valueRepsOffset;
+    };
+
+    OSRExitStream() = default;
+    explicit OSRExitStream(const Vector<OSRExit>&);
+
+    OSRExit at(unsigned index, const JITCode&) const;
+    unsigned indexForEntranceOffset(uintptr_t, const JITCode&) const;
+    std::span<const ExceptionHandlerExit> exceptionHandlerExits() const LIFETIME_BOUND { return m_exceptionHandlerExits.span(); }
+
+private:
+    static constexpr unsigned exitsPerChunk = 16;
+
+    struct PreviousExit {
+        CodeOrigin codeOrigin { BytecodeIndex(0) };
+        uint32_t dfgNodeIndex { 0 };
+        unsigned descriptorIndex { 0 };
+        unsigned valueRepsOffset { 0 };
+        uint32_t entranceOffset { 0 };
+    };
+
+    OSRExit decode(size_t& offset, PreviousExit&, const JITCode&) const;
+
+    FixedVector<uint8_t> m_bytes;
+    FixedVector<uint32_t> m_chunkOffsets;
+    FixedVector<ExceptionHandlerExit> m_exceptionHandlerExits;
+    unsigned m_size { 0 };
 };
 
 } } // namespace JSC::FTL

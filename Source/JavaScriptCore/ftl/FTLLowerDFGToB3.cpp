@@ -27285,7 +27285,7 @@ IGNORE_CLANG_WARNINGS_END
                 }
             }
         }
-        return &m_ftlState.jitCode->osrExitDescriptors.alloc(lowValue.format(), profile);
+        return &m_ftlState.jitCode->appendOSRExitDescriptor(lowValue.format(), profile);
     }
 
     void appendOSRExit(
