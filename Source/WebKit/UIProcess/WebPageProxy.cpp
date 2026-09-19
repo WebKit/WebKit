@@ -150,6 +150,7 @@
 #include "ViewGestureController.h"
 #include "ViewWindowCoordinates.h"
 #include "WKContextPrivate.h"
+#include "WKPageFindMatchesClient.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebBackForwardCache.h"
@@ -7607,7 +7608,14 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
     class CountStringMatchesCallbackAggregator : public RefCounted<CountStringMatchesCallbackAggregator> {
     public:
         static Ref<CountStringMatchesCallbackAggregator> create(CompletionHandler<void(uint32_t)>&& completionHandler) { return adoptRef(*new CountStringMatchesCallbackAggregator(WTF::move(completionHandler))); }
-        void NODELETE didCountStringMatches(uint32_t matchCount) { m_matchCount += matchCount; }
+        void NODELETE didCountStringMatches(uint32_t matchCount)
+        {
+            static constexpr auto moreThanMaximumMatchCount = static_cast<uint32_t>(kWKMoreThanMaximumMatchCount);
+            if (m_matchCount == moreThanMaximumMatchCount || matchCount == moreThanMaximumMatchCount)
+                m_matchCount = moreThanMaximumMatchCount;
+            else
+                m_matchCount += matchCount;
+        }
         ~CountStringMatchesCallbackAggregator()
         {
             m_completionHandler(m_matchCount);

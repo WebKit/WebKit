@@ -4164,6 +4164,25 @@ TEST(SiteIsolation, CountStringMatches)
         Util::spinRunLoop();
 }
 
+TEST(SiteIsolation, CountStringMatchesOverflowSaturates)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<p>word word word</p><iframe src='https://domain2.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<p>word</p>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    isDone = false;
+    [webView _countStringMatches:@"word" options:0 maxCount:2];
+    Util::run(&isDone);
+
+    EXPECT_EQ(static_cast<uint32_t>(kWKMoreThanMaximumMatchCount), [findDelegate matchesCount]);
+}
+
 #if PLATFORM(MAC)
 TEST(SiteIsolation, ProcessDisplayNames)
 {
