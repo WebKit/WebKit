@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1421,6 +1421,14 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
     if (RefPtr certificate = m_instance->serverCertificate())
         appIdentifier = certificate->makeContiguous()->createNSData();
     auto keyIDs = keyIDsForRequest(m_currentRequest.value());
+    if (keyIDs.isEmpty()) {
+        ERROR_LOG(LOGIDENTIFIER, " Failed, no keyIDs in currentRequest");
+        if (m_updateLicenseCallback) {
+            m_updateLicenseCallback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
+            ASSERT(!m_updateLicenseCallback);
+        }
+        return;
+    }
 
     RetainPtr<NSData> contentIdentifier = protect(keyIDs.first())->makeContiguous()->createNSData();
     @try {
