@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body>
+<video id="video"></video>
+<script>
+    description("Tests that a cross-site media request redirected to the same third-party origin does not leak the third-party cookie (rdar://181913390).");
+    jsTestIsAsync = true;
+
+    const partitionHost = "127.0.0.1:8443";
+    const thirdPartyOrigin = "https://localhost:8443";
+    const thirdPartyBaseUrl = thirdPartyOrigin + "/resourceLoadStatistics/resources";
+    const returnUrl = "https://" + partitionHost + "/resourceLoadStatistics/block-cookies-on-cross-site-media-redirect.https.html";
+    const mediaUrl = thirdPartyBaseUrl + "/cross-site-media-redirect.py";
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        element.onload = onLoadHandler;
+        document.body.appendChild(element);
+    }
+
+    function loadMediaThroughRedirect(onComplete) {
+        const video = document.getElementById("video");
+        video.oncanplaythrough = video.onerror = onComplete;
+        video.src = mediaUrl;
+        video.load();
+    }
+
+    function runTest() {
+        switch (document.location.hash) {
+            case "#step1":
+                document.location.href = thirdPartyBaseUrl + "/set-cookie.py?name=SESSIONID&value=secret123#" + returnUrl + "#step2";
+                break;
+            case "#step2":
+                document.location.hash = "step3";
+                testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
+                    if (!testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                        testFailed("Third-party origin did not get set as prevalent resource.");
+                    testRunner.statisticsUpdateCookieBlocking(runTest);
+                });
+                break;
+            case "#step3":
+                document.location.hash = "step4";
+                fetch(mediaUrl + "?cmd=clear", { mode: "no-cors", cache: "no-store" }).then(function() {
+                    loadMediaThroughRedirect(runTest);
+                });
+                break;
+            case "#step4":
+                document.location.hash = "step5";
+                openIframe(mediaUrl + "?cmd=get", runTest);
+                break;
+            case "#step5":
+                setEnableFeature(false, finishJSTest);
+                break;
+        }
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true, function () {
+            if (testRunner.isStatisticsPrevalentResource(thirdPartyOrigin))
+                testFailed("Third-party origin was classified as prevalent resource before the test starts.");
+            testRunner.dumpChildFramesAsText();
+            document.location.hash = "step1";
+            runTest();
+        });
+    } else {
+        runTest();
+    }
+</script>
+</body>
+</html>
