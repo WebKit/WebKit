@@ -254,6 +254,7 @@ struct _WPEToplevelWaylandPrivate {
         std::optional<uint32_t> width;
         std::optional<uint32_t> height;
         WPEToplevelState state { WPE_TOPLEVEL_STATE_NONE };
+        bool configured { false };
     } pendingState;
 
     struct {
@@ -299,6 +300,12 @@ const struct xdg_surface_listener xdgSurfaceListener = {
         auto* toplevel = WPE_TOPLEVEL(data);
         auto* priv = WPE_TOPLEVEL_WAYLAND(toplevel)->priv;
 
+        // A surface-only configure does not change the toplevel state.
+        if (!priv->pendingState.configured) {
+            xdg_surface_ack_configure(surface, serial);
+            return;
+        }
+
         bool isFixedSize = priv->pendingState.state & (WPE_TOPLEVEL_STATE_FULLSCREEN | WPE_TOPLEVEL_STATE_MAXIMIZED);
         bool wasFixedSize = wpe_toplevel_get_state(toplevel) & (WPE_TOPLEVEL_STATE_FULLSCREEN | WPE_TOPLEVEL_STATE_MAXIMIZED);
         auto width = priv->pendingState.width;
@@ -327,6 +334,7 @@ const struct xdg_toplevel_listener xdgToplevelListener = {
     {
         auto* toplevel = WPE_TOPLEVEL_WAYLAND(data);
         auto* priv = toplevel->priv;
+        priv->pendingState.configured = true;
         if (width && height) {
             priv->pendingState.width = width;
             priv->pendingState.height = height;
