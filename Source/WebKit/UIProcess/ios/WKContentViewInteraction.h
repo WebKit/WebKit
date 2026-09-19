@@ -96,6 +96,12 @@ namespace WTF {
 class TextStream;
 }
 
+namespace IPC {
+class Connection;
+struct AsyncReplyIDType;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
+}
+
 namespace WebCore {
 class Color;
 class FloatQuad;
@@ -549,7 +555,12 @@ struct ImageAnalysisContextMenuActionData {
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
     RetainPtr<WKTextRange> _cachedSelectedTextRange;
 
-    std::optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
+    struct OutstandingInteractionInformationRequest {
+        WebKit::InteractionInformationRequest request;
+        IPC::AsyncReplyID replyID;
+        Ref<IPC::Connection> connection;
+    };
+    std::optional<OutstandingInteractionInformationRequest> _lastOutstandingPositionInformationRequest;
 
     uint64_t _positionInformationCallbackDepth;
     Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;

@@ -1217,7 +1217,7 @@ public:
     void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, SelectWithGestureCompletionHandler&&);
 
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
-    void requestPositionInformation(const InteractionInformationRequest&);
+    std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> requestPositionInformation(const InteractionInformationRequest&);
 
     void selectPositionAtPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);
     void updateSelectionWithExtentPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, RespectSelectionAnchor, CompletionHandler<void(bool)>&&);

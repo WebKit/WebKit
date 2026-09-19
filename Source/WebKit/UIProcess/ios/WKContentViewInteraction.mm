@@ -3347,12 +3347,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (_isWaitingOnPositionInformation)
         return NO;
 
-    _isWaitingOnPositionInformation = YES;
-
     if (![self _hasValidOutstandingPositionInformationRequest:request])
         [self requestAsynchronousPositionInformationUpdate:request];
 
-    bool receivedResponse = protect(process->connection())->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->webPageIDInMainFrameProcess(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
+    if (!_lastOutstandingPositionInformationRequest) {
+        ASSERT_NOT_REACHED();
+        return NO;
+    }
+    Ref connection = _lastOutstandingPositionInformationRequest->connection;
+
+    _isWaitingOnPositionInformation = YES;
+
+    bool receivedResponse = connection->waitForAsyncReplyAndDispatchImmediately<Messages::WebPage::RequestPositionInformation>(_lastOutstandingPositionInformationRequest->replyID, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives) == IPC::Error::NoError;
     _hasValidPositionInformation = receivedResponse && _positionInformation.canBeValid;
     return _hasValidPositionInformation;
 }
@@ -3362,9 +3368,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([self _currentPositionInformationIsValidForRequest:request])
         return;
 
-    _lastOutstandingPositionInformationRequest = request;
+    auto replyIDAndConnection = protect(_page)->requestPositionInformation(request);
+    if (!replyIDAndConnection)
+        return;
+    auto [replyID, connection] = *replyIDAndConnection;
 
-    protect(_page)->requestPositionInformation(request);
+    _lastOutstandingPositionInformationRequest = OutstandingInteractionInformationRequest { request, replyID, WTF::move(connection) };
 }
 
 - (BOOL)_currentPositionInformationIsValidForRequest:(const WebKit::InteractionInformationRequest&)request
@@ -3374,7 +3383,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_hasValidOutstandingPositionInformationRequest:(const WebKit::InteractionInformationRequest&)request
 {
-    return _lastOutstandingPositionInformationRequest && _lastOutstandingPositionInformationRequest->isValidForRequest(request);
+    return _lastOutstandingPositionInformationRequest && _lastOutstandingPositionInformationRequest->request.isValidForRequest(request);
 }
 
 - (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const WebKit::InteractionInformationRequest&)request radiusForApproximation:(int)radius
@@ -4225,7 +4234,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
-    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
+    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(_lastOutstandingPositionInformationRequest->request))
         _lastOutstandingPositionInformationRequest = std::nullopt;
 
     _isWaitingOnPositionInformation = NO;

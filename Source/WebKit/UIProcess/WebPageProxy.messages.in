@@ -195,7 +195,6 @@ messages -> WebPageProxy {
     WillSubmitForm(struct WebKit::FrameInfoData frame, struct WebKit::FrameInfoData sourceFrame, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData, URL requestURL, String method) -> ()
 
 #if PLATFORM(COCOA)
-    DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
     GetAttributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, Vector<WebCore::FrameIdentifier> frameIdentifiers) -> (HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> result) Synchronous
 #endif
 

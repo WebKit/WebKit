@@ -461,7 +461,7 @@ public:
     template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
 
     template<typename> Error waitForAndDispatchImmediately(uint64_t destinationID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
-    template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout); // Main thread only.
+    template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout, OptionSet<WaitForOption> waitForOptions = { }); // Main thread only.
 
     // // Thread-safe, but the reply will be called on the Connection's dispatcher
     template<typename T, typename C>
@@ -981,10 +981,10 @@ template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t de
     return Error::NoError;
 }
 
-template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
+template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     static_assert(T::replyCanDispatchOutOfOrder, "Can only use waitForAsyncReplyAndDispatchImmediately on messages declared with ReplyCanDispatchOutOfOrder");
-    auto decoderOrError = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
+    auto decoderOrError = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, waitForOptions);
     if (!decoderOrError.has_value())
         return decoderOrError.error();
 

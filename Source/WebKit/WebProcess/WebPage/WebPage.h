@@ -1135,7 +1135,7 @@ public:
     static std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventDataForSelectionGesture(WebCore::LocalFrame* localRootFrame, WebCore::IntPoint pointInRootView);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::LocalFrame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
 
-    void requestPositionInformation(const InteractionInformationRequest&);
+    void requestPositionInformation(const InteractionInformationRequest&, CompletionHandler<void(InteractionInformationAtPosition&&)>&&);
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
 
     std::optional<WebCore::SimpleRange> rangeForGranularityAtPoint(WebCore::LocalFrame&, const WebCore::IntPoint&, WebCore::TextGranularity, bool isInteractingWithFocusedElement);

@@ -2806,10 +2806,10 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     return WebKit::positionInformationForWebPage(*this, request);
 }
 
-void WebPage::requestPositionInformation(const InteractionInformationRequest& request)
+void WebPage::requestPositionInformation(const InteractionInformationRequest& request, CompletionHandler<void(InteractionInformationAtPosition&&)>&& completionHandler)
 {
     sendEditorStateUpdate();
-    send(Messages::WebPageProxy::DidReceivePositionInformation(positionInformation(request)));
+    completionHandler(positionInformation(request));
 }
 
 bool WebPage::isAssistableElement(Element& element)

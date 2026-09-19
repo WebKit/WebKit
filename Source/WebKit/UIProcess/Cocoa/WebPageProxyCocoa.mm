@@ -38,6 +38,7 @@
 #import "DataDetectionResult.h"
 #import "ExtensionCapabilityGranter.h"
 #import "InsertTextOptions.h"
+#import "InteractionInformationAtPosition.h"
 #import "LegacyWebArchiveCallbackAggregator.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
@@ -2254,9 +2255,19 @@ void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtP
         pageClient->positionInformationDidChange(info);
 }
 
-void WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
+std::optional<std::pair<IPC::AsyncReplyID, Ref<IPC::Connection>>> WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
 {
-    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::RequestPositionInformation(request), webPageIDInMainFrameProcess());
+    // FIXME: Make this work with site isolation.
+    Ref process = m_legacyMainFrameProcess;
+
+    auto asyncReplyID = process->sendWithAsyncReply(Messages::WebPage::RequestPositionInformation(request), [weakThis = WeakPtr { *this }](InteractionInformationAtPosition&& information) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->didReceivePositionInformation(information);
+    }, webPageIDInMainFrameProcess());
+
+    if (!asyncReplyID)
+        return std::nullopt;
+    return { { *asyncReplyID, process->connection() } };
 }
 
 void WebPageProxy::selectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, CompletionHandler<void()>&& callbackFunction)
