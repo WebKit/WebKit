@@ -42,6 +42,7 @@ enum class AdvancedPrivacyProtections : uint16_t {
     ScriptTrackingPrivacy = 1 << 9,
     FailClosedForAllHosts = 1 << 10,
     StrictFailClosed = 1 << 11,
+    OverrideHardwareConcurrency = 1 << 12,
 };
 
 }

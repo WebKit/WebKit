@@ -552,27 +552,37 @@ TEST(ScriptTrackingPrivacyTests, HardwareConcurrency)
 
     FingerprintingScriptsRequestSwizzler swizzler { @[ @"tainted.example" ] };
 
-    auto computeHardwareConcurrency = [] {
-        RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
-            @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
-            @"test://pure.com/script.js" : @"window.pureValue = navigator.hardwareConcurrency",
-            @"test://tainted.example/script.js" : @"window.taintedValue = navigator.hardwareConcurrency",
-        });
+    RetainPtr webView = setUpWebViewForFingerprintingTests(@"test://top-domain.org/index.html", @{
+        @"test://top-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://other-domain.org/index.html" : simpleIndexHTML.createNSString().autorelease(),
+        @"test://pure.com/script.js" : @"window.pureValue = navigator.hardwareConcurrency",
+        @"test://tainted.example/script.js" : @"window.taintedValue = navigator.hardwareConcurrency",
+    });
 
-        return std::pair {
-            [[webView objectByEvaluatingJavaScript:@"window.pureValue"] intValue],
-            [[webView objectByEvaluatingJavaScript:@"window.taintedValue"] intValue]
-        };
+    auto taintedValue = [&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.taintedValue"] intValue];
     };
 
-    bool observedRandomValue = false;
-    for (int i = 0; i < 5; ++i) {
-        auto [pureValue, taintedValue] = computeHardwareConcurrency();
-        observedRandomValue = pureValue != taintedValue;
-        if (observedRandomValue)
-            break;
-    }
-    EXPECT_TRUE(observedRandomValue);
+    auto load = [&](NSString *urlString) {
+        [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlString]]];
+    };
+
+    auto pureValue = [[webView objectByEvaluatingJavaScript:@"window.pureValue"] intValue];
+    EXPECT_TRUE(pureValue == 4 || pureValue == 8);
+
+    auto valueForTopDomain = taintedValue();
+    EXPECT_TRUE(valueForTopDomain == 4 || valueForTopDomain == 8);
+
+    load(@"test://other-domain.org/index.html");
+    auto valueForOtherDomain = taintedValue();
+    EXPECT_TRUE(valueForOtherDomain == 4 || valueForOtherDomain == 8);
+    EXPECT_NE(valueForTopDomain, valueForOtherDomain);
+
+    load(@"test://other-domain.org/index.html");
+    EXPECT_EQ(valueForOtherDomain, taintedValue());
+
+    load(@"test://top-domain.org/index.html");
+    EXPECT_EQ(valueForTopDomain, taintedValue());
 }
 
 TEST(ScriptTrackingPrivacyTests, SpeechSynthesisGetVoices)

@@ -4076,6 +4076,7 @@ enum class WebCore::AllowsContentJavaScript : bool
     ScriptTrackingPrivacy,
     FailClosedForAllHosts,
     StrictFailClosed,
+    OverrideHardwareConcurrency,
 };
 
 enum class WebCore::ViolationReportType : uint8_t {

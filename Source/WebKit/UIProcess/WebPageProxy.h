@@ -3743,7 +3743,8 @@ private:
     void resetRecentGamepadAccessState();
 #endif
 
-    void adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies&);
+    void adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies&, const URL& destinationURL);
+    bool shouldUseOverrideHardwareConcurrency(const URL&) const;
 
     void setAllowsLayoutViewportHeightExpansion(bool);
     void setBrowsingContextGroup(BrowsingContextGroup&);
@@ -4338,6 +4339,8 @@ private:
     bool m_needsScrollGeometryUpdates { false };
 
     unsigned m_textExtractionCount { 0 };
+
+    bool m_usingOverrideHardwareConcurrency { false };
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<ListDataObserver> m_linkDecorationFilteringDataUpdateObserver;

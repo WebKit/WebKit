@@ -8849,6 +8849,7 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame()) {
         m_sessionHistoryTraversalQueue->traversalDidSettle();
         recordFirstPartyVisit(request.url());
+        m_usingOverrideHardwareConcurrency = shouldUseOverrideHardwareConcurrency(request.url());
 
 #if ENABLE(GPU_PROCESS) && (ENABLE(VIDEO) || ENABLE(WEB_AUDIO))
         // The new document has no media sessions, and the GPU process hears that over a connection that is
@@ -10142,7 +10143,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                     navigation->setWebsitePolicies(protect(m_configuration->defaultWebsitePolicies())->copy());
                 if (RefPtr policies = navigation->websitePolicies()) {
                     navigation->setEffectiveContentMode(effectiveContentModeAfterAdjustingPolicies(*policies, navigation->currentRequest()));
-                    adjustAdvancedPrivacyProtectionsIfNeeded(*policies);
+                    adjustAdvancedPrivacyProtectionsIfNeeded(*policies, navigation->currentRequest().url());
                 }
             }
             receivedNavigationActionPolicyDecision(processInitiatingNavigation, policyAction, navigation.get(), WTF::move(navigationAction), processSwapRequestedByClient, frame, frameInfo, wasNavigationIntercepted, WTF::move(message), WTF::move(completionHandler));
@@ -10332,7 +10333,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #endif
 }
 
-void WebPageProxy::adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies& policies)
+void WebPageProxy::adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies& policies, const URL& destinationURL)
 {
     if (!protect(websiteDataStore())->trackingPreventionEnabled())
         return;
@@ -10340,7 +10341,15 @@ void WebPageProxy::adjustAdvancedPrivacyProtectionsIfNeeded(API::WebsitePolicies
     if (!protect(preferences())->scriptTrackingPrivacyProtectionsEnabled())
         return;
 
-    policies.setAdvancedPrivacyProtections(policies.advancedPrivacyProtections() | AdvancedPrivacyProtections::ScriptTrackingPrivacy);
+    auto protections = policies.advancedPrivacyProtections() | AdvancedPrivacyProtections::ScriptTrackingPrivacy;
+    if (shouldUseOverrideHardwareConcurrency(destinationURL))
+        protections.add(AdvancedPrivacyProtections::OverrideHardwareConcurrency);
+    policies.setAdvancedPrivacyProtections(protections);
+}
+
+bool WebPageProxy::shouldUseOverrideHardwareConcurrency(const URL& url) const
+{
+    return areRegistrableDomainsEqual(url, pageLoadState().url()) ? m_usingOverrideHardwareConcurrency : !m_usingOverrideHardwareConcurrency;
 }
 
 RefPtr<WebPageProxy> WebPageProxy::nonEphemeralWebPageProxy()

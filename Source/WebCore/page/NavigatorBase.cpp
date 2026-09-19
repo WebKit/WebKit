@@ -27,6 +27,7 @@
 #include "config.h"
 #include "NavigatorBase.h"
 
+#include "AdvancedPrivacyProtections.h"
 #include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "GPU.h"
@@ -42,7 +43,6 @@
 #include <wtf/NumberOfCores.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/WeakRandom.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/WTFString.h>
 
@@ -184,10 +184,8 @@ ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutio
 
 int NavigatorBase::hardwareConcurrency(ScriptExecutionContext& context)
 {
-    if (context.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::HardwareConcurrency)) {
-        auto randomSeed = static_cast<unsigned>(context.noiseInjectionHashSalt().value_or(0));
-        return 1 + WeakRandom { randomSeed }.getUint32(63);
-    }
+    if (context.requiresScriptTrackingPrivacyProtection(ScriptTrackingPrivacyCategory::HardwareConcurrency))
+        return context.advancedPrivacyProtections().contains(AdvancedPrivacyProtections::OverrideHardwareConcurrency) ? 8 : 4;
 
     // Enforce a maximum for the number of cores reported to mitigate
     // fingerprinting for the minority of machines with large numbers of cores.
