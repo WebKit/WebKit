@@ -2156,6 +2156,14 @@ static bool styleAffectsLayerGeometry(const Style::ComputedStyle& style)
         || style.border().hasBorderRadius();
 }
 
+static bool filterOutsetsChanged(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+{
+    if (oldStyle.filter() == newStyle.filter())
+        return false;
+
+    return oldStyle.filter().calculateOutsets(oldStyle.usedZoomForLength()) != newStyle.filter().calculateOutsets(newStyle.usedZoomForLength());
+}
+
 static bool recompositeChangeRequiresGeometryUpdate(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     return oldStyle.transform() != newStyle.transform()
@@ -2224,6 +2232,10 @@ void RenderLayerCompositor::layerStyleChanged(Style::Difference diff, RenderLaye
             layer.setNeedsPostLayoutCompositingUpdate();
             layer.setNeedsCompositingGeometryUpdate();
         }
+
+        // The composited bounds of all descendents cover the region a pixel-moving filter samples, not just the nearest composted ones.
+        if (diff >= Style::DifferenceResult::Overflow && oldStyle && filterOutsetsChanged(*oldStyle, newStyle))
+            layer.setDescendantsNeedUpdateBackingAndHierarchyTraversal();
 
         if (diff >= Style::DifferenceResult::Layout) {
             // FIXME: only set flags here if we know we have a composited descendant, but we might not know at this point.
@@ -2639,44 +2651,6 @@ void RenderLayerCompositor::computeExtent(const LayerOverlapMap& overlapMap, con
         // rect that covers all the locations that the fixed element could move to.
         extent.bounds = m_renderView.frameView().fixedScrollableAreaBoundsInflatedForScrolling(extent.bounds);
     }
-}
-
-enum class AncestorTraversal { Continue, Stop };
-
-// This is a simplified version of containing block walking that only handles absolute and fixed position.
-template <typename Function>
-static AncestorTraversal traverseAncestorLayers(const RenderLayer& layer, Function&& function)
-{
-    auto positioningBehavior = layer.renderer().style().position();
-    CheckedPtr nextPaintOrderParent = layer.paintOrderParent();
-
-    for (CheckedPtr<const RenderLayer> ancestorLayer = layer.parent(); ancestorLayer; ancestorLayer = ancestorLayer->parent()) {
-        bool inContainingBlockChain = true;
-
-        switch (positioningBehavior) {
-        case PositionType::Static:
-        case PositionType::Relative:
-        case PositionType::Sticky:
-            break;
-        case PositionType::Absolute:
-            inContainingBlockChain = ancestorLayer->renderer().canContainAbsolutelyPositionedObjects();
-            break;
-        case PositionType::Fixed:
-            inContainingBlockChain = ancestorLayer->renderer().canContainFixedPositionObjects();
-            break;
-        }
-
-        if (function(*ancestorLayer, inContainingBlockChain, ancestorLayer == nextPaintOrderParent) == AncestorTraversal::Stop)
-            return AncestorTraversal::Stop;
-
-        if (inContainingBlockChain)
-            positioningBehavior = ancestorLayer->renderer().style().position();
-        
-        if (ancestorLayer == nextPaintOrderParent)
-            nextPaintOrderParent = ancestorLayer->paintOrderParent();
-    }
-    
-    return AncestorTraversal::Continue;
 }
 
 void RenderLayerCompositor::computeClippingScopes(const RenderLayer& layer, OverlapExtent& extent) const
@@ -3706,9 +3680,6 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
         newStack.insert(0, WTF::move(clipData));
     };
 
-    // Surprisingly, the deprecated CSS "clip" property on abspos ancestors of fixedpos elements clips them <https://github.com/w3c/csswg-drafts/issues/8336>.
-    bool checkAbsoluteAncestorForClip = layer.renderer().isFixedPositioned();
-
     traverseAncestorLayers(layer, [&](const RenderLayer& ancestorLayer, bool isContainingBlockChain, bool /*isPaintOrderAncestor*/) {
         if (&ancestorLayer == compositingAncestor) {
             bool canUseDescendantClip = canUseDescendantClippingLayer(ancestorLayer);
@@ -3720,14 +3691,7 @@ Vector<CompositedClipData> RenderLayerCompositor::computeAncestorClippingStack(c
             return AncestorTraversal::Stop;
         }
 
-        auto ancestorLayerMayClip = [&]() {
-            if (checkAbsoluteAncestorForClip && ancestorLayer.renderer().hasClip())
-                return true;
-
-            return isContainingBlockChain && ancestorLayer.renderer().hasClipOrNonVisibleOverflow();
-        };
-
-        if (ancestorLayerMayClip()) {
+        if (ancestorLayerMayClip(layer, ancestorLayer, isContainingBlockChain)) {
             auto* box = ancestorLayer.renderBox();
             if (!box)
                 return AncestorTraversal::Continue;

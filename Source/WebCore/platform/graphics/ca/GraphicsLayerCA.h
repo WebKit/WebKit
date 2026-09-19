@@ -136,6 +136,7 @@ public:
 
     WEBCORE_EXPORT bool setFilters(const FilterOperations&) override;
     virtual bool filtersCanBeComposited(const FilterOperations&);
+    WEBCORE_EXPORT void setFilterSamplingOutsets(const IntOutsets&) override;
 
     WEBCORE_EXPORT bool setBackdropFilters(const FilterOperations&) override;
     WEBCORE_EXPORT void setBackdropFiltersRect(const FloatRoundedRect&) override;
