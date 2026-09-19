@@ -1,0 +1,545 @@
+Checking source map stepping through realistic minifier transformations (inlining, constant folding, `;` to `,`, and `if` to `&&`).
+
+
+== Running test suite: Debugger.SourceMapStepping.Minified
+-- Running test case: Debugger.SourceMapStepping.Minified.Constants.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT constants:15:5
+     11    }
+     12
+     13    function constants(n) {
+ ->  14        |debugger;
+     15        let scaled = n * RATE;
+     16        return scaled;
+     17    }
+
+ACTION: step-over
+PAUSE AT constants:17:5
+     13    function constants(n) {
+     14        debugger;
+     15        let scaled = n * RATE;
+ ->  16        |return scaled;
+     17    }
+     18
+     19    function sequencing(n) {
+
+ACTION: step-over
+PAUSE AT constants:20:1
+     16        return scaled;
+     17    }
+     18
+ ->  19    |function sequencing(n) {
+     20        debugger;
+     21        step(n);
+     22        step(n);
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:30
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Constants.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT constants:15:5
+     11    }
+     12
+     13    function constants(n) {
+ ->  14        |debugger;
+     15        let scaled = n * RATE;
+     16        return scaled;
+     17    }
+
+ACTION: step-over
+PAUSE AT constants:17:5
+     13    function constants(n) {
+     14        debugger;
+     15        let scaled = n * RATE;
+ ->  16        |return scaled;
+     17    }
+     18
+     19    function sequencing(n) {
+
+ACTION: step-over
+PAUSE AT constants:20:1
+     16        return scaled;
+     17    }
+     18
+ ->  19    |function sequencing(n) {
+     20        debugger;
+     21        step(n);
+     22        step(n);
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:30
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Sequencing.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT sequencing:21:5
+     17    }
+     18
+     19    function sequencing(n) {
+ ->  20        |debugger;
+     21        step(n);
+     22        step(n);
+     23        step(n);
+
+ACTION: step-over
+PAUSE AT sequencing:22:5
+     18
+     19    function sequencing(n) {
+     20        debugger;
+ ->  21        |step(n);
+     22        step(n);
+     23        step(n);
+     24    }
+
+ACTION: step-over
+PAUSE AT sequencing:23:5
+     19    function sequencing(n) {
+     20        debugger;
+     21        step(n);
+ ->  22        |step(n);
+     23        step(n);
+     24    }
+     25
+
+ACTION: step-over
+PAUSE AT sequencing:24:5
+     20        debugger;
+     21        step(n);
+     22        step(n);
+ ->  23        |step(n);
+     24    }
+     25
+     26    function conditional(n) {
+
+ACTION: step-over
+PAUSE AT sequencing:27:1
+     23        step(n);
+     24    }
+     25
+ ->  26    |function conditional(n) {
+     27        debugger;
+     28        if (n) step(n);
+     29        return n;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:31
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Sequencing.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT sequencing:21:5
+     17    }
+     18
+     19    function sequencing(n) {
+ ->  20        |debugger;
+     21        step(n);
+     22        step(n);
+     23        step(n);
+
+ACTION: step-over
+PAUSE AT sequencing:22:5
+     18
+     19    function sequencing(n) {
+     20        debugger;
+ ->  21        |step(n);
+     22        step(n);
+     23        step(n);
+     24    }
+
+ACTION: step-over
+PAUSE AT sequencing:23:5
+     19    function sequencing(n) {
+     20        debugger;
+     21        step(n);
+ ->  22        |step(n);
+     23        step(n);
+     24    }
+     25
+
+ACTION: step-over
+PAUSE AT sequencing:24:5
+     20        debugger;
+     21        step(n);
+     22        step(n);
+ ->  23        |step(n);
+     24    }
+     25
+     26    function conditional(n) {
+
+ACTION: step-over
+PAUSE AT sequencing:27:1
+     23        step(n);
+     24    }
+     25
+ ->  26    |function conditional(n) {
+     27        debugger;
+     28        if (n) step(n);
+     29        return n;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:31
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Conditional.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT conditional:28:5
+     24    }
+     25
+     26    function conditional(n) {
+ ->  27        |debugger;
+     28        if (n) step(n);
+     29        return n;
+     30    }
+
+ACTION: step-over
+PAUSE AT conditional:29:5
+     25
+     26    function conditional(n) {
+     27        debugger;
+ ->  28        |if (n) step(n);
+     29        return n;
+     30    }
+     31
+
+ACTION: step-over
+PAUSE AT conditional:29:9
+     25
+     26    function conditional(n) {
+     27        debugger;
+ ->  28        if (|n) step(n);
+     29        return n;
+     30    }
+     31
+
+ACTION: step-over
+PAUSE AT conditional:30:12
+     26    function conditional(n) {
+     27        debugger;
+     28        if (n) step(n);
+ ->  29        return |n;
+     30    }
+     31
+     32    function step(v) { window.sink = v; }
+
+ACTION: step-over
+PAUSE AT conditional:33:1
+     29        return n;
+     30    }
+     31
+ ->  32    |function step(v) { window.sink = v; }
+     33
+     34    globalThis.inlined = inlined;
+     35    globalThis.constants = constants;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:32
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Conditional.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT conditional:28:5
+     24    }
+     25
+     26    function conditional(n) {
+ ->  27        |debugger;
+     28        if (n) step(n);
+     29        return n;
+     30    }
+
+ACTION: step-over
+PAUSE AT conditional:29:5
+     25
+     26    function conditional(n) {
+     27        debugger;
+ ->  28        |if (n) step(n);
+     29        return n;
+     30    }
+     31
+
+ACTION: step-over
+PAUSE AT conditional:30:12
+     26    function conditional(n) {
+     27        debugger;
+     28        if (n) step(n);
+ ->  29        return |n;
+     30    }
+     31
+     32    function step(v) { window.sink = v; }
+
+ACTION: step-over
+PAUSE AT conditional:33:1
+     29        return n;
+     30    }
+     31
+ ->  32    |function step(v) { window.sink = v; }
+     33
+     34    globalThis.inlined = inlined;
+     35    globalThis.constants = constants;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:32
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Inlined.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT inlined:8:5
+      4    }
+      5
+      6    function inlined(n) {
+ ->   7        |debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+
+ACTION: step-over
+PAUSE AT inlined:9:5
+      5
+      6    function inlined(n) {
+      7        debugger;
+ ->   8        |let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+     11    }
+
+ACTION: step-over
+PAUSE AT inlined:10:9
+      6    function inlined(n) {
+      7        debugger;
+      8        let a = helper(n);
+ ->   9        let |b = helper(a);
+     10        return a + b;
+     11    }
+     12
+
+ACTION: step-over
+PAUSE AT inlined:11:5
+      7        debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+ ->  10        |return a + b;
+     11    }
+     12
+     13    function constants(n) {
+
+ACTION: step-over
+PAUSE AT inlined:14:1
+     10        return a + b;
+     11    }
+     12
+ ->  13    |function constants(n) {
+     14        debugger;
+     15        let scaled = n * RATE;
+     16        return scaled;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:28
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Inlined.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT inlined:8:5
+      4    }
+      5
+      6    function inlined(n) {
+ ->   7        |debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+
+ACTION: step-over
+PAUSE AT inlined:9:5
+      5
+      6    function inlined(n) {
+      7        debugger;
+ ->   8        |let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+     11    }
+
+ACTION: step-over
+PAUSE AT inlined:10:9
+      6    function inlined(n) {
+      7        debugger;
+      8        let a = helper(n);
+ ->   9        let |b = helper(a);
+     10        return a + b;
+     11    }
+     12
+
+ACTION: step-over
+PAUSE AT inlined:11:5
+      7        debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+ ->  10        |return a + b;
+     11    }
+     12
+     13    function constants(n) {
+
+ACTION: step-over
+PAUSE AT inlined:14:1
+     10        return a + b;
+     11    }
+     12
+ ->  13    |function constants(n) {
+     14        debugger;
+     15        let scaled = n * RATE;
+     16        return scaled;
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:28
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Inlining.Disabled
+SOURCE MAP STEPPING: disabled
+PAUSE AT run:5:5
+      1        return v * 2;
+      2    }
+      3    function run(n) {
+ ->   4        |debugger;
+      5        let low = scale(n);
+      6        let high = scale(n + 1);
+      7        return low + high;
+
+ACTION: step-over
+PAUSE AT run:8:5
+      4        debugger;
+      5        let low = scale(n);
+      6        let high = scale(n + 1);
+ ->   7        |return low + high;
+      8    }
+      9    globalThis.run = run;
+     10
+
+ACTION: step-over
+PAUSE AT run:10:1
+      6        let high = scale(n + 1);
+      7        return low + high;
+      8    }
+ ->   9    |globalThis.run = run;
+     10
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:24
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Inlining.Enabled
+SOURCE MAP STEPPING: enabled
+PAUSE AT run:5:5
+      1        return v * 2;
+      2    }
+      3    function run(n) {
+ ->   4        |debugger;
+      5        let low = scale(n);
+      6        let high = scale(n + 1);
+      7        return low + high;
+
+ACTION: step-over
+PAUSE AT run:8:5
+      4        debugger;
+      5        let low = scale(n);
+      6        let high = scale(n + 1);
+ ->   7        |return low + high;
+      8    }
+      9    globalThis.run = run;
+     10
+
+ACTION: step-over
+PAUSE AT run:10:1
+      6        let high = scale(n + 1);
+      7        return low + high;
+      8    }
+ ->   9    |globalThis.run = run;
+     10
+
+ACTION: step-over
+PAUSE AT <anonymous>:1:24
+--- Source Unavailable ---
+
+ACTION: step-over
+RESUMED
+PASS: Stepping should not move backwards in the original source.
+
+-- Running test case: Debugger.SourceMapStepping.Minified.Inlined.StepInto
+SOURCE MAP STEPPING: enabled
+PAUSE AT inlined:8:5
+      4    }
+      5
+      6    function inlined(n) {
+ ->   7        |debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+
+ACTION: step-over
+PAUSE AT inlined:9:5
+      5
+      6    function inlined(n) {
+      7        debugger;
+ ->   8        |let a = helper(n);
+      9        let b = helper(a);
+     10        return a + b;
+     11    }
+
+ACTION: step-in
+PAUSE AT helper:4:5
+      0    const RATE = 10;
+      1
+      2    function helper(v) {
+ ->   3        |return v + 1;
+      4    }
+      5
+      6    function inlined(n) {
+
+ACTION: step-in
+PAUSE AT helper:7:1
+      3        return v + 1;
+      4    }
+      5
+ ->   6    |function inlined(n) {
+      7        debugger;
+      8        let a = helper(n);
+      9        let b = helper(a);
+
+ACTION: step-out
+PAUSE AT inlined:10:9
+      6    function inlined(n) {
+      7        debugger;
+      8        let a = helper(n);
+ ->   9        let |b = helper(a);
+     10        return a + b;
+     11    }
+     12
+
+ACTION: resume
+RESUMED
+

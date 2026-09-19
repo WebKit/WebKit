@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "source-map-stepping-statement.js",
+  "sources": [
+    "source-map-stepping-statement-original.js"
+  ],
+  "sourcesContent": [
+    "function a() {\n    return 1;\n}\nfunction b() {\n    return 2;\n}\nfunction twoStatementsOneLine() {\n    debugger;\n    a(); b();\n}\nfunction oneStatementOneLine() {\n    debugger;\n    a() + b();\n}\nwindow.twoStatementsOneLine = twoStatementsOneLine;\nwindow.oneStatementOneLine = oneStatementOneLine;\n"
+  ],
+  "names": [],
+  "mappings": "aACI,sBAGA,yCAGA,SACA,IAAK,GACT,gCAEI,SACA,IAAM,GACV"
+}

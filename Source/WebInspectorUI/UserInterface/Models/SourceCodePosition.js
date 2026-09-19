@@ -31,6 +31,13 @@ WI.SourceCodePosition = class SourceCodePosition
         this._columnNumber = columnNumber || 0;
     }
 
+    // Static
+
+    static compare(a, b)
+    {
+        return a.lineNumber - b.lineNumber || a.columnNumber - b.columnNumber;
+    }
+
     // Public
 
     get lineNumber() { return this._lineNumber; }
@@ -44,27 +51,17 @@ WI.SourceCodePosition = class SourceCodePosition
 
     equals(position)
     {
-        return this._lineNumber === position.lineNumber && this._columnNumber === position.columnNumber;
+        return WI.SourceCodePosition.compare(this, position) === 0;
     }
 
     isBefore(position)
     {
-        if (this._lineNumber < position.lineNumber)
-            return true;
-        if (this._lineNumber === position.lineNumber && this._columnNumber < position.columnNumber)
-            return true;
-
-        return false;
+        return WI.SourceCodePosition.compare(this, position) < 0;
     }
 
     isAfter(position)
     {
-        if (this._lineNumber > position.lineNumber)
-            return true;
-        if (this._lineNumber === position.lineNumber && this._columnNumber > position.columnNumber)
-            return true;
-
-        return false;
+        return WI.SourceCodePosition.compare(this, position) > 0;
     }
 
     isWithin(startPosition, endPosition)
