@@ -48,6 +48,7 @@
 #import <limits.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/ContactsSPI.h>
+#import <pal/spi/cocoa/WebFilterEvaluatorSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -57,6 +58,7 @@
 #import <pal/cocoa/ContactsSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/PassKitSoftLink.h>
+#import <pal/cocoa/WebContentAnalysisSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
@@ -491,6 +493,9 @@ struct ObjCHolderForTesting {
         RetainPtr<PKPayment>,
         RetainPtr<PKPaymentSetupFeature>,
 #endif
+#if !HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
+        RetainPtr<WebFilterEvaluator>,
+#endif
         RetainPtr<NSShadow>,
         RetainPtr<NSValue>
     > ValueType;
@@ -641,7 +646,7 @@ static bool NSURLCredentialTesting_isEqual(NSURLCredential *a, NSURLCredential *
     return true;
 }
 
-#if USE(PASSKIT)
+#if USE(PASSKIT) || (!HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER))
 static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
 {
     RetainPtr<WKKeyedCoder> aCoder = adoptNS([WKKeyedCoder new]);
@@ -652,7 +657,7 @@ static BOOL wkSecureCoding_isEqual(id a, SEL, id b)
 
     return [[aCoder accumulatedDictionary] isEqual:[bCoder accumulatedDictionary]];
 }
-#endif // USE(PASSKIT)
+#endif // USE(PASSKIT) || (!HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER))
 
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
@@ -677,6 +682,9 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(MAC)
         class_addMethod(PAL::getWKDDActionContextClassSingleton(), @selector(isEqual:), (IMP)wkDDActionContext_isEqual, "v@:@");
+#endif
+#if !HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
+        class_addMethod(PAL::getWebFilterEvaluatorClassSingleton(), @selector(isEqual:), (IMP)wkSecureCoding_isEqual, "v@:@");
 #endif
     });
 
@@ -1998,6 +2006,30 @@ TEST(IPCSerialization, PKPayment)
     EXPECT_TRUE(nilPayment.get() == nil);
 }
 #endif
+
+#if !HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
+
+@interface WebFilterEvaluator (IPCSerializationTesting)
+- (instancetype)initWithCoder:(NSCoder *)coder;
+@end
+
+TEST(IPCSerialization, WebFilterEvaluator)
+{
+    // WebFilterEvaluator does not implement -_initWithWebKitPropertyListData:, so both ends of the
+    // IPC need to go through WKKeyedCoder instead of a WebKit secure coding property list.
+    RetainPtr coder = adoptNS([[WKKeyedCoder alloc] initWithDictionary:@{
+        @"WebContentFilterStateKey": @(kWFEStateBlocked),
+        @"WebContentFilterURLKey": [NSURL URLWithString:@"https://webkit.org/"],
+        @"WebContentFilterPageTitleKey": @"WebKit"
+    }]);
+
+    RetainPtr<WebFilterEvaluator> evaluator = adoptNS([PAL::allocWebFilterEvaluatorInstance() initWithCoder:coder.get()]);
+    EXPECT_NOT_NULL(evaluator.get());
+
+    runTestNS({ evaluator.get() });
+}
+
+#endif // !HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 
 #if PLATFORM(MAC)
 

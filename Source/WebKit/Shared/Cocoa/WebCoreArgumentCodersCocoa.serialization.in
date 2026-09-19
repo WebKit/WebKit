@@ -25,7 +25,7 @@ headers: "ArgumentCodersCocoa.h"
 # FIXME: Make WebFilterEvaluator no longer use WKKeyedCoder once rdar://163060208 is complete.
 #if !HAVE(WEBCONTENTRESTRICTIONS) && HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
 secure_coding_header: <pal/cocoa/WebContentAnalysisSoftLink.h>
-[WebKitSecureCodingClass=PAL::getWebFilterEvaluatorClassSingleton()] webkit_secure_coding WebFilterEvaluator {
+[WebKitSecureCodingClass=PAL::getWebFilterEvaluatorClassSingleton(), SupportWKKeyedCoder] webkit_secure_coding WebFilterEvaluator {
     WebContentFilterStateKey: Number
     WebContentFilterURLKey: URL
     WebContentFilterPageTitleKey: String
