@@ -109,7 +109,7 @@ public:
     void didFailLoadingInsidePortal(const ResourceError&);
     void didUpdateEntityTransformInsidePortal(const TransformationMatrix&);
     void spatialPortalContextDidChange();
-    SpatialPortalController* lastRegisteredPortalController() const;
+    WEBCORE_EXPORT SpatialPortalController* lastRegisteredPortalController() const;
 #endif
 
     std::optional<PlatformLayerIdentifier> layerID() const;
@@ -206,6 +206,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     bool isInsidePortal() const;
     void updateEntityTransformFromCSS();
+    void updateAnchorFromCSS();
 #endif
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);

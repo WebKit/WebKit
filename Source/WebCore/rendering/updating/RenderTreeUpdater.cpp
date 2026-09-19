@@ -478,8 +478,10 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.storeDisplayContentsOrNoneStyle(Style::ComputedStyle::clonePtr(elementUpdateStyle));
 
         // Pushed from here rather than during style resolution, which clears the cached computed style before it runs.
-        if (!elementUpdate.changes.isEmpty())
+        if (!elementUpdate.changes.isEmpty()) {
+            modelInPortal->updateAnchorFromCSS();
             modelInPortal->updateEntityTransformFromCSS();
+        }
     }
 #endif
 
