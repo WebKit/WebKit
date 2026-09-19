@@ -202,12 +202,6 @@ private:
     RefPtr<Image> m_image;
     std::unique_ptr<SVGImageCache> m_svgImageCache;
 
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-    std::optional<bool> m_axCustomColorModeShouldAdjust;
-    RefPtr<NativeImage> m_axCustomColorModeAdjustedTile;
-    FloatSize m_axCustomColorModeAdjustedTileSize;
-#endif
-
     MonotonicTime m_lastUpdateImageDataTime;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_skippingRevalidationDocument;
