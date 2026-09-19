@@ -1,0 +1,8 @@
+
+
+PASS control: a blob: URL with no fragment draws the whole image
+PASS control: a different viewBox() selects a different quadrant
+PASS svgView() applies to a blob: URL image that is in the document
+PASS svgView() applies to a blob: URL image that is not in the document
+PASS two references to one blob: URL with different svgView() fragments do not share a view
+

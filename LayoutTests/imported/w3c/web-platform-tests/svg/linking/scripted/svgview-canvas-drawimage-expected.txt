@@ -1,0 +1,8 @@
+
+
+PASS control: the sprite drawn with no fragment gives four colours
+PASS control: a different viewBox() selects a different quadrant
+PASS svgView() applies when drawing an img that is in the document
+PASS svgView() applies when drawing an Image that is not in the document
+PASS two references to one URL with different svgView() fragments do not share a view
+
