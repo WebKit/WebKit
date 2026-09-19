@@ -115,6 +115,7 @@ WI.ReferencePage.TimelinesTab.MediaAndAnimationsTimeline = new WI.ReferencePage(
 WI.ReferencePage.TimelinesTab.MemoryTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "memory-timeline"});
 WI.ReferencePage.TimelinesTab.NetworkRequestsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "network-timeline"});
 WI.ReferencePage.TimelinesTab.ScreenshotsTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "screenshots-timeline"});
+WI.ReferencePage.TimelinesTab.UserTimingTimeline = new WI.ReferencePage(WI.ReferencePage.TimelinesTab, {topic: "user-timing-timeline"});
 
 WI.ReferencePage.URLBreakpoints = new WI.ReferencePage("url-breakpoints");
 WI.ReferencePage.URLBreakpoints.Configuration = new WI.ReferencePage(WI.ReferencePage.URLBreakpoints, {topic: "configuration"});
