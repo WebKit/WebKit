@@ -69,7 +69,7 @@ class LayoutUnit {
 public:
     constexpr LayoutUnit() : m_value(0) { }
     LayoutUnit(const LayoutUnit&) = default;
-    LayoutUnit(int value) { setValue(value); }
+    constexpr LayoutUnit(int value) { setValue(value); }
     LayoutUnit(unsigned short value) { setValue(value); }
     LayoutUnit(unsigned value) { setValue(value); }
     explicit LayoutUnit(unsigned long value)
@@ -227,7 +227,7 @@ private:
         return ::abs(value) <= std::numeric_limits<int>::max() / kFixedPointDenominator;
     }
 
-    inline void setValue(int value)
+    constexpr void setValue(int value)
     {
         if (value > intMaxForLayoutUnit)
             m_value = std::numeric_limits<int>::max();
@@ -361,7 +361,7 @@ inline double operator*(const double a, const LayoutUnit& b)
     return a * b.toDouble();
 }
 
-inline LayoutUnit operator/(const LayoutUnit& a, const LayoutUnit& b)
+constexpr LayoutUnit operator/(const LayoutUnit& a, const LayoutUnit& b)
 {
     long long rawVal = static_cast<long long>(kFixedPointDenominator) * a.rawValue() / b.rawValue();
     return LayoutUnit::fromRawValue(clampTo<int>(rawVal));
@@ -377,7 +377,7 @@ inline double operator/(const LayoutUnit& a, double b)
     return a.toDouble() / b;
 }
 
-inline LayoutUnit operator/(const LayoutUnit& a, int b)
+constexpr LayoutUnit operator/(const LayoutUnit& a, int b)
 {
     return a / LayoutUnit(b);
 }

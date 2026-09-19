@@ -50,7 +50,7 @@ public:
     LayoutRect(const LayoutPoint& location, const LayoutSize& size)
         : m_location(location), m_size(size) { }
     template<typename T1, typename T2, typename U1, typename U2>
-    LayoutRect(T1 x, T2 y, U1 width, U2 height)
+    constexpr LayoutRect(T1 x, T2 y, U1 width, U2 height)
         : m_location(LayoutPoint(x, y)), m_size(LayoutSize(width, height)) { }
     LayoutRect(const LayoutPoint& topLeft, const LayoutPoint& bottomRight)
         : m_location(topLeft), m_size(LayoutSize(bottomRight.x() - topLeft.x(), bottomRight.y() - topLeft.y())) { }
@@ -314,4 +314,3 @@ FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const LayoutRect&);
 
 } // namespace WebCore
-

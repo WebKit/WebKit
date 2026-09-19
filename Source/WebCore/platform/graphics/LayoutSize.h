@@ -51,7 +51,7 @@ class LayoutSize {
 public:
     LayoutSize() = default;
     LayoutSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
-    template<typename T, typename U> LayoutSize(T width, U height) : m_width(width), m_height(height) { }
+    template<typename T, typename U> constexpr LayoutSize(T width, U height) : m_width(width), m_height(height) { }
 
     explicit LayoutSize(const FloatSize& size) : m_width(size.width()), m_height(size.height()) { }
     
@@ -215,4 +215,3 @@ struct LayoutSizeLimits {
 };
 
 } // namespace WebCore
-
