@@ -73,6 +73,10 @@
 #include <WebCore/TextManipulationItem.h>
 #endif
 
+#if __has_include(<WebKitAdditions/WebPageProxyAdditionsIncludes.h>)
+#include <WebKitAdditions/WebPageProxyAdditionsIncludes.h>
+#endif
+
 namespace API {
 class Attachment;
 class ContentWorld;
@@ -1103,6 +1107,10 @@ public:
     WebCore::Color NODELETE pageExtendedBackgroundColor() const;
 
     WebCore::Color NODELETE sampledPageTopColor() const;
+
+#if __has_include(<WebKitAdditions/WebPageProxyAdditions.h>)
+#include <WebKitAdditions/WebPageProxyAdditions.h>
+#endif
 
     WebCore::Color underPageBackgroundColor() const;
     WebCore::Color NODELETE underPageBackgroundColorIgnoringPlatformColor() const;
@@ -3304,6 +3312,9 @@ private:
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
     void sampledPageTopColorChanged(const WebCore::Color&);
+#if __has_include(<WebKitAdditions/WebPageProxyPrivateAdditions.h>)
+#include <WebKitAdditions/WebPageProxyPrivateAdditions.h>
+#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&);

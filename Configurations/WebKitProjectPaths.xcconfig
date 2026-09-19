@@ -95,6 +95,9 @@ WK_WEBKITADDITIONS_WKWEBVIEW_INPUT_YES_NO = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_
 WK_WEBKITADDITIONS_WKWEBVIEW_PRIVATE_INPUT = $(WK_WEBKITADDITIONS_WKWEBVIEW_PRIVATE_INPUT_$(USE_INTERNAL_SDK)_$(WK_IS_INSTALLHDRS));
 WK_WEBKITADDITIONS_WKWEBVIEW_PRIVATE_INPUT_YES_NO = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WKWebViewPrivateAdditions.h;
 
+WK_WEBKITADDITIONS_WKPREFERENCES_PRIVATE_INPUT = $(WK_WEBKITADDITIONS_WKPREFERENCES_PRIVATE_INPUT_$(USE_INTERNAL_SDK)_$(WK_IS_INSTALLHDRS));
+WK_WEBKITADDITIONS_WKPREFERENCES_PRIVATE_INPUT_YES_NO = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/WKPreferencesPrivateAdditions.h;
+
 // The root directory of the workspace / WebKit repo is determined by how many directories up "Source" or "Tools" is from the SRCROOT.
 WK_WORKSPACE_DIR = $(WK_WORKSPACE_DIR_1_$(SRCROOT:dir:standardizepath:file):standardizepath:default=$(WK_WORKSPACE_DIR_2_$(SRCROOT:dir:standardizepath:dir:standardizepath:file):standardizepath:default=$(WK_WORKSPACE_DIR_3_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath:default=$(WK_WORKSPACE_DIR_4_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath:default=$(WK_WORKSPACE_DIR_5_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath:default=$(WK_WORKSPACE_DIR_6_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath))))));
 WK_WORKSPACE_DIR_1_Source = $(SRCROOT)/../..;

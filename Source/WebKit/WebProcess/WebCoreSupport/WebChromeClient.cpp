@@ -1810,6 +1810,10 @@ void WebChromeClient::sampledPageTopColorChanged() const
         page->sampledPageTopColorChanged();
 }
 
+#if __has_include(<WebKitAdditions/WebChromeClientAdditions.cpp>)
+#include <WebKitAdditions/WebChromeClientAdditions.cpp>
+#endif
+
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 void WebChromeClient::allowImmersiveElement(CompletionHandler<void(bool)>&& completion) const
 {

@@ -100,8 +100,6 @@ public:
     void repaintViewAndCompositedLayers();
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    // Some color-filter decisions depend on how boxes actually end up positioned relative to the content
-    // behind them, which is only known once layout has run.
     void adjustAXCustomColorModeAfterLayout();
 #endif
 

@@ -29,6 +29,7 @@
 
 #include <WebCore/AsyncNodeDeletionQueue.h>
 #include <WebCore/Color.h>
+#include <WebCore/ColorHash.h>
 #include <WebCore/ContainerNode.h>
 #include <WebCore/ContextDestructionObserver.h>
 #include <WebCore/DocumentClasses.h>
@@ -99,6 +100,9 @@ class TextEncoding;
 namespace WebCore {
 
 class AXObjectCache;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+class AXCustomColorModeController;
+#endif
 class AppHighlightStorage;
 class Attr;
 class CanvasBase;
@@ -1658,8 +1662,11 @@ public:
     void didAssociateFormControl(Element&);
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    bool addAXCustomColorModeAdjustedElement(Element&);
-    bool isAXCustomColorModeAdjustedElement(const Element&) const;
+    AXCustomColorModeController* axCustomColorModeControllerIfExists() { return m_axCustomColorModeController.get(); }
+    const AXCustomColorModeController* axCustomColorModeControllerIfExists() const { return m_axCustomColorModeController.get(); }
+    AXCustomColorModeController& axCustomColorModeController();
+
+    bool isAXCustomColorModeActive() const;
 #endif
 
     void adjustStyleColorOptionsIfNeeded(OptionSet<StyleColorOptions>&) const;
@@ -2617,7 +2624,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_axCustomColorModeAdjustedElements;
+    std::unique_ptr<AXCustomColorModeController> m_axCustomColorModeController;
 #endif
 
     const std::unique_ptr<OrientationNotifier> m_orientationNotifier;

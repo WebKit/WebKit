@@ -149,6 +149,10 @@ protected:
     void setNeedsRelayoutAllFrames();
     void mediaTypeOverrideChanged();
     void imagesEnabledChanged();
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void axCustomColorModeStateChanged();
+    void axCustomColorModeAppearanceDetectionChanged();
+#endif
     void userStyleSheetLocationChanged();
     void usesBackForwardCacheChanged();
     void storageBlockingPolicyChanged();
