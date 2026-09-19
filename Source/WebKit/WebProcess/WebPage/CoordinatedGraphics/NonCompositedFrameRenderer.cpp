@@ -38,6 +38,9 @@
 #include <WebCore/Settings.h>
 #include <epoxy/egl.h>
 #include <epoxy/gl.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/core/SkPathBuilder.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>
 
@@ -208,8 +211,6 @@ void NonCompositedFrameRenderer::updateRendering()
         if (m_context)
             PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
 
-        m_surface->clear({ });
-
         canvas->save();
         GraphicsContextSkia graphicsContext(*canvas, m_context ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::DOM);
         graphicsContext.applyDeviceScaleFactor(webPage->deviceScaleFactor());
@@ -240,14 +241,30 @@ void NonCompositedFrameRenderer::updateRendering()
 
 #if ENABLE(DAMAGE_TRACKING)
         if (auto& renderTargetDamage = m_surface->renderTargetDamage()) {
+            // Only the damaged rects are repainted, so the clear has to be clipped to them,
+            // otherwise a non-opaque clear color wipes the rest of the target.
+            SkPathBuilder damagePath;
+            for (const auto& rect : *renderTargetDamage) {
+                auto scaledRect = rect;
+                scaledRect.scale(1 / webPage->deviceScaleFactor());
+                damagePath.addRect(SkRect::MakeXYWH(scaledRect.x(), scaledRect.y(), scaledRect.width(), scaledRect.height()));
+            }
+            canvas->save();
+            canvas->clipPath(damagePath.detach(), SkClipOp::kIntersect, false);
+            m_surface->clear({ });
+            canvas->restore();
+
             for (const auto& rect : *renderTargetDamage) {
                 auto scaledRect = rect;
                 scaledRect.scale(1 / webPage->deviceScaleFactor());
                 drawRect(scaledRect);
             }
-        } else
+        } else {
+            m_surface->clear({ });
             drawRect(webPage->bounds());
+        }
 #else
+        m_surface->clear({ });
         drawRect(webPage->bounds());
 #endif
 
