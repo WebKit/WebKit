@@ -49,6 +49,7 @@
 #import "PDFPluginIdentifier.h"
 #import "PageClient.h"
 #import "PaymentAuthorizationController.h"
+#import "PortalPresentationManagerProxy.h"
 #import "PrintInfo.h"
 #import "ProvisionalPageProxy.h"
 #import "RemoteLayerTreeCommitBundle.h"
@@ -97,6 +98,10 @@
 #import "APILoaderClient.h"
 #import "APINavigationClient.h"
 #import <wtf/text/WTFString.h>
+#endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import "VolumetricSceneContentContext.h"
 #endif
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
@@ -1930,6 +1935,41 @@ RefPtr<PortalPresentationManagerProxy> WebPageProxy::portalPresentationManagerPr
     return internals().portalPresentationManagerProxy;
 }
 #endif
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void WebPageProxy::presentVolumetricScene(WebCore::NodeIdentifier element, VolumetricSceneContentContext contentContext, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr portalPresentationManager = portalPresentationManagerProxy();
+    if (!portalPresentationManager)
+        return completion(false);
+
+    portalPresentationManager->showVolumetricScene(element, contentContext, WTF::move(completion));
+}
+
+void WebPageProxy::updateVolumetricSceneContentContext(WebCore::NodeIdentifier element, VolumetricSceneContentContext contentContext)
+{
+    if (RefPtr portalPresentationManager = portalPresentationManagerProxy())
+        portalPresentationManager->updateVolumetricSceneContentContext(element, contentContext);
+}
+
+void WebPageProxy::dismissVolumetricScene(WebCore::NodeIdentifier element)
+{
+    if (RefPtr portalPresentationManager = portalPresentationManagerProxy())
+        portalPresentationManager->hideVolumetricScene(element);
+}
+
+void WebPageProxy::volumetricSceneDidClose(WebCore::NodeIdentifier element)
+{
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::VolumetricSceneDidClose(element), webPageIDInMainFrameProcess());
+}
+
+void WebPageProxy::updateVolumetricSceneSize(WebCore::NodeIdentifier element, WebCore::FloatSize volumeSizeInMeters)
+{
+    protect(m_legacyMainFrameProcess)->send(Messages::WebPage::UpdateVolumetricSceneSize(element, volumeSizeInMeters), webPageIDInMainFrameProcess());
+}
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS) && ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 #if USE(UICONTEXTMENU)
 

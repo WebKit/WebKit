@@ -419,6 +419,11 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ModelDragEnded(WebCore::NodeIdentifier nodeID)
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    [EnabledBy=SpatialPortalEnabled] VolumetricSceneDidClose(WebCore::NodeIdentifier element)
+    [EnabledBy=SpatialPortalEnabled] UpdateVolumetricSceneSize(WebCore::NodeIdentifier element, WebCore::FloatSize volumeSizeInMeters)
+#endif
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(DRAG_SUPPORT)
     RequestDragStart(std::optional<WebCore::FrameIdentifier> remoteFrameID, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask) -> (struct WebKit::DragInitiationResult result)
     RequestAdditionalItemsForDragSession(std::optional<WebCore::FrameIdentifier> rootFrameID, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, OptionSet<WebCore::DragSourceAction> allowedActionsMask) -> (struct WebKit::DragInitiationResult result)

@@ -155,6 +155,12 @@ private:
     void setHasModelElement(bool) final;
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void enterVolumetricSceneForElement(WebCore::Element&, CompletionHandler<void(bool)>&&) final;
+    void exitVolumetricSceneForElement(WebCore::Element&) final;
+    void updateVolumetricSceneForElement(WebCore::Element&) final;
+#endif
+
     PlatformPageClient platformPageClient() const final;
     void contentsSizeChanged(WebCore::LocalFrame&, const WebCore::IntSize&) const final;
     void intrinsicContentsSizeChanged(const WebCore::IntSize&) const final;

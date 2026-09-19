@@ -250,6 +250,27 @@ void ModelPlayer::exitImmersivePresentation(CompletionHandler<void()>&& completi
 
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void ModelPlayer::enterVolumetricPresentation(CompletionHandler<void(std::optional<LayerHostingContextIdentifier>)>&& completion)
+{
+    ASSERT_NOT_REACHED("ModelPlayer cannot provide a layer context identifier");
+    completion(std::nullopt);
+}
+
+void ModelPlayer::exitVolumetricPresentation(CompletionHandler<void()>&& completion)
+{
+    ASSERT_NOT_REACHED("ModelPlayer cannot exit a volumetric presentation");
+    completion();
+}
+
+void ModelPlayer::updateVolumetricPresentationSize(const FloatSize&)
+{
+    ASSERT_NOT_REACHED("ModelPlayer cannot be presented in a volumetric scene");
+}
+
+#endif
+
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
 void ModelPlayer::setDynamicRangeLimit(PlatformDynamicRangeLimit, float, bool)
 {

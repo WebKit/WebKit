@@ -1495,7 +1495,7 @@ void GraphicsLayerCA::setContentsToModelContext(Ref<ModelContext> modelContext, 
 }
 #endif
 
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL)
+#if ENABLE(MODEL_ELEMENT_IMMERSIVE) || ENABLE(SPATIAL_PORTAL) || ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 void GraphicsLayerCA::removeModelContents()
 {
     if (!m_contentsLayer)
