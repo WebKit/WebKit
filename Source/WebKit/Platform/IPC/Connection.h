@@ -47,6 +47,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
@@ -300,6 +301,54 @@ public:
 
     protected:
         virtual ~Client() { }
+    };
+
+    // Tracks the message a thread is currently dispatching. A failing message check (see
+    // MESSAGE_CHECK_BASE) marks the innermost scope for its connection as invalid, and whoever
+    // created the scope reports it once the message handler has returned.
+    //
+    // The state lives on the dispatching thread's stack rather than on the connection because a
+    // single connection can dispatch on its client run loop and on any number of receive queues
+    // at the same time, and because message dispatch nests when a handler sends sync IPC.
+    class MessageDispatchScope {
+        WTF_MAKE_NONCOPYABLE(MessageDispatchScope);
+        WTF_FORBID_HEAP_ALLOCATION;
+    public:
+        explicit MessageDispatchScope(const Connection& connection)
+            : m_connection(connection)
+            , m_previous(std::exchange(s_current, this))
+        {
+        }
+
+        ~MessageDispatchScope()
+        {
+            ASSERT(s_current == this);
+            s_current = m_previous;
+        }
+
+        bool didReceiveInvalidMessage() const { return m_didReceiveInvalidMessage; }
+
+        // The innermost scope for `connection` on the current thread, or null if this thread is
+        // not dispatching a message for it.
+        static MessageDispatchScope* currentFor(const Connection& connection)
+        {
+            for (auto* scope = s_current; scope; scope = scope->m_previous) {
+                if (&scope->m_connection == &connection)
+                    return scope;
+            }
+            return nullptr;
+        }
+
+    private:
+        friend class Connection;
+
+        // Never dereferenced; the scope only needs the connection's identity, and it never
+        // outlives the dispatch it wraps.
+        SUPPRESS_UNCOUNTED_MEMBER const Connection& m_connection;
+        MessageDispatchScope* const m_previous;
+        bool m_didReceiveInvalidMessage { false };
+
+        static thread_local MessageDispatchScope* s_current;
     };
 
     using Handle = ConnectionHandle;
@@ -585,13 +634,22 @@ public:
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    bool hasErrorString() const { return !m_errorString.isNull(); }
+    bool hasErrorString() const
+    {
+        Locker locker { m_errorStringLock };
+        return !m_errorString.isNull();
+    }
     void setErrorString(const String& error)
     {
-        if (!hasErrorString())
+        Locker locker { m_errorStringLock };
+        if (m_errorString.isNull())
             m_errorString = error;
     }
-    String takeErrorString() { return std::exchange(m_errorString, { }); }
+    String takeErrorString()
+    {
+        Locker locker { m_errorStringLock };
+        return std::exchange(m_errorString, { });
+    }
 #endif
 
 private:
@@ -638,6 +696,10 @@ private:
     void dispatchMessage(Decoder&);
     void dispatchSyncMessage(Decoder&);
     void didFailToSendSyncMessage(Error);
+
+    // Marks the message this thread is currently dispatching for this connection as invalid.
+    // Returns false if this thread is not dispatching a message for this connection.
+    bool markCurrentMessageDispatchScopeAsInvalid();
 
     // Can be called on any thread.
     void enqueueIncomingMessage(UniqueRef<Decoder>) WTF_REQUIRES_LOCK(m_incomingMessagesLock);
@@ -715,12 +777,7 @@ private:
     unsigned m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting { 0 };
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
-    bool m_didReceiveInvalidMessage { false };
     std::optional<uint8_t> m_incomingMessagesThrottlingLevel;
-
-#if ASSERT_ENABLED
-    std::atomic<unsigned> m_inDispatchMessageCount { 0 };
-#endif
 
     // Incoming messages.
 #if ENABLE(UNFAIR_LOCK)
@@ -860,7 +917,8 @@ private:
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    String m_errorString;
+    mutable Lock m_errorStringLock;
+    String m_errorString WTF_GUARDED_BY_LOCK(m_errorStringLock);
 #endif
 
     friend class StreamClientConnection;
@@ -1124,11 +1182,23 @@ void Connection::cancelReply(C&& completionHandler)
         callWithConnectionAndArgsTuple(std::forward<C>(completionHandler), nullptr, WTF::move(emptyReplyTuple));
 }
 
+inline bool Connection::markCurrentMessageDispatchScopeAsInvalid()
+{
+    auto* scope = MessageDispatchScope::currentFor(*this);
+    if (!scope)
+        return false;
+    scope->m_didReceiveInvalidMessage = true;
+    return true;
+}
+
 inline void Connection::markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error)
 {
-    // This should only be called while processing a message.
-    ASSERT(m_inDispatchMessageCount > 0);
-    m_didReceiveInvalidMessage = true;
+    // This should only be called while processing a message. A message check that fails outside of
+    // message dispatch, for instance from an async reply completion handler that ran after its
+    // message handler returned, has no message left to attribute the failure to and therefore
+    // cannot terminate the sender.
+    bool didMarkMessage = markCurrentMessageDispatchScopeAsInvalid();
+    ASSERT_UNUSED(didMarkMessage, didMarkMessage);
 
 #if ENABLE(IPC_TESTING_API)
     if (!error.isNull())
@@ -1140,9 +1210,9 @@ inline void Connection::markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral err
 
 inline void Connection::markCurrentlyDispatchedMessageAsInvalid(const String& error)
 {
-    // This should only be called while processing a message.
-    ASSERT(m_inDispatchMessageCount > 0);
-    m_didReceiveInvalidMessage = true;
+    // This should only be called while processing a message. See the overload above.
+    bool didMarkMessage = markCurrentMessageDispatchScopeAsInvalid();
+    ASSERT_UNUSED(didMarkMessage, didMarkMessage);
 
 #if ENABLE(IPC_TESTING_API)
     if (!error.isNull())

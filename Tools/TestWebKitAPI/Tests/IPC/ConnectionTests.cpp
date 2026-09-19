@@ -27,6 +27,7 @@
 
 #include "IPCTestUtilities.h"
 #include "Helpers/Test.h"
+#include "WorkQueueMessageReceiver.h"
 #include <wtf/Threading.h>
 #include <wtf/threads/BinarySemaphore.h>
 
@@ -1370,6 +1371,41 @@ TEST_P(ConnectionRunLoopTest, SyncMessageDecodeFailureIsCancelled)
 #undef RUN_LOOP_NAME
 #undef LOCAL_STRINGIFY
 
+// A message check failing in a receiver that is dispatched on a work queue rather than on the
+// connection's client run loop must still be reported to the client, so that the sender can be
+// terminated.
+class MockMessageCheckingWorkQueueMessageReceiver final : public IPC::WorkQueueMessageReceiver<WTF::DestructionThread::Any> {
+public:
+    static Ref<MockMessageCheckingWorkQueueMessageReceiver> create() { return adoptRef(*new MockMessageCheckingWorkQueueMessageReceiver); }
+
+private:
+    MockMessageCheckingWorkQueueMessageReceiver() = default;
+
+    void didReceiveMessage(IPC::Connection& connection, IPC::Decoder&) final
+    {
+        connection.markCurrentlyDispatchedMessageAsInvalid("work queue message check"_s);
+    }
+};
+
+TEST_F(ConnectionTest, WorkQueueMessageReceiverMessageCheckIsReported)
+{
+    ASSERT_TRUE(openBoth());
+
+    auto receiverName = IPC::receiverName(MockTestMessage1::name());
+    Ref workQueue = WorkQueue::create("MockMessageCheckingWorkQueueMessageReceiver"_s);
+    Ref receiver = MockMessageCheckingWorkQueueMessageReceiver::create();
+    server()->addWorkQueueMessageReceiver(receiverName, workQueue, receiver);
+
+    for (uint64_t i = 100u; i < 160u; ++i)
+        client()->send(MockTestMessage1 { }, i);
+
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        auto invalidMessage = serverClient().waitForInvalidMessage(kDefaultWaitForTimeout);
+        EXPECT_EQ(invalidMessage, MockTestMessage1::name());
+    }
+
+    server()->removeWorkQueueMessageReceiver(receiverName);
+}
 
 class ConnectionDidReceiveInvalidMessageTest : public testing::TestWithParam<std::tuple<ConnectionTestDirection, InvalidMessageTestType>>, protected ConnectionTestBase {
 public:

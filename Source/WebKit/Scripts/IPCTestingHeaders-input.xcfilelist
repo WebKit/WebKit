@@ -69,5 +69,6 @@ $(SRCROOT)/Platform/IPC/TransferString.h
 $(SRCROOT)/Shared/Cocoa/WKKeyedCoder.h
 $(SRCROOT)/Shared/WebFoundTextRange.h
 $(SRCROOT)/Shared/WebPushDaemonConnectionConfiguration.h
+$(SRCROOT)/Platform/IPC/WorkQueueMessageReceiver.h
 $(SRCROOT)/Shared/Cocoa/XPCEndpoint.h
 $(SRCROOT)/Shared/Cocoa/XPCEndpointClient.h
