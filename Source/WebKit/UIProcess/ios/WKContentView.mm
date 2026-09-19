@@ -682,6 +682,8 @@ typedef NS_ENUM(NSInteger, _WKPrintRenderingCallbackType) {
 
     page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
+    [_inspectorHighlightView scale:([self intrinsicDeviceScaleFactor] * [self _contentZoomScale]) frame:visibleContentRectUpdateInfo.unobscuredContentRect()];
+
     auto layoutViewport = page->unconstrainedLayoutViewportRect();
     page->adjustLayersForLayoutViewport(page->unobscuredContentRect().location(), layoutViewport, page->displayedContentScale());
 

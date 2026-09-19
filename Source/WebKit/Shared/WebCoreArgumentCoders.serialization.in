@@ -5422,6 +5422,18 @@ class WebCore::InspectorOverlayLabel {
     Vector<WebCore::InspectorOverlayLabel> labels;
 };
 
+[Nested] struct WebCore::InspectorOverlayHighlight::RulerData {
+    WebCore::FloatRect bounds;
+    Vector<WebCore::FloatRect> boundsForGuides;
+    WebCore::FloatSize viewportSize;
+    WebCore::FloatBoxExtent obscuredContentInsets;
+    WebCore::IntPoint scrollOffset;
+    WebCore::FloatSize visualViewportSize;
+    float pageScaleFactor;
+    float pageZoomFactor;
+    String fontFamily;
+};
+
 [Nested] enum class WebCore::InspectorOverlayHighlight::Type : uint8_t {
     None,
     Node,
@@ -5440,6 +5452,7 @@ header: <WebCore/InspectorOverlay.h>
     Vector<WebCore::FloatQuad> quads;
     Vector<WebCore::InspectorOverlayHighlight::GridHighlightOverlay> gridHighlightOverlays;
     Vector<WebCore::InspectorOverlayHighlight::FlexHighlightOverlay> flexHighlightOverlays;
+    std::optional<WebCore::InspectorOverlayHighlight::RulerData> rulerData;
     bool usePageCoordinates;
 };
 
