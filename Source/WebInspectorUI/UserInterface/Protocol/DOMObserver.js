@@ -38,8 +38,10 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
 
     inspect(nodeId)
     {
-        if (this._target instanceof WI.FrameTarget)
+        if (this._target instanceof WI.FrameTarget) {
+            WI.domManager.inspectElementInFrameTarget(this._target, nodeId);
             return;
+        }
         WI.domManager.inspectElement(nodeId);
     }
 

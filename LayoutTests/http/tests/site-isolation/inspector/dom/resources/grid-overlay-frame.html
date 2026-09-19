@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cross-Origin Grid Overlay Frame</title>
+    <style>
+        body { margin: 0; }
+        #spacer { height: 400px; }
+        #target {
+            display: grid;
+            grid-template-columns: [start] 80px [middle] 80px [end];
+            grid-template-rows: 40px 40px;
+            grid-template-areas: "top-left top-right"
+                                 "bottom-left bottom-right";
+            gap: 10px;
+            width: 200px;
+        }
+        #not-grid { width: 100px; height: 20px; }
+        #tail { height: 400px; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="spacer"></div>
+        <div id="target">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div id="not-grid">Not a grid</div>
+        <div id="tail"></div>
+    </div>
+</body>
+</html>

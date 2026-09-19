@@ -34,6 +34,7 @@
 #include "CSSSelector.h"
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
+#include "DocumentPage.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventTarget.h"
@@ -166,6 +167,7 @@ public:
     static void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
 
     static void mouseDidMoveOverElement(Page&, const HitTestResult&, OptionSet<PlatformEventModifier>);
+    static void mouseDidMoveOverRemoteFrame(LocalFrame&);
     static bool handleMousePress(LocalFrame&);
     static bool handleTouchEvent(LocalFrame&, Node&);
     static bool forcePseudoState(const Element&, CSSSelector::PseudoClass);
@@ -412,6 +414,7 @@ private:
     static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement);
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, OptionSet<PlatformEventModifier>);
+    static void mouseDidMoveOverRemoteFrameImpl(InstrumentingAgents&, LocalFrame&);
     static bool handleMousePressImpl(InstrumentingAgents&);
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
     static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClass);
@@ -823,6 +826,13 @@ inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const 
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     mouseDidMoveOverElementImpl(protect(instrumentingAgents(page)), result, modifiers);
+}
+
+inline void InspectorInstrumentation::mouseDidMoveOverRemoteFrame(LocalFrame& frame)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (RefPtr page = frame.page())
+        mouseDidMoveOverRemoteFrameImpl(protect(instrumentingAgents(*page)), frame);
 }
 
 inline bool InspectorInstrumentation::handleTouchEvent(LocalFrame& frame, Node& node)
