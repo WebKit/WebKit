@@ -15519,4 +15519,39 @@ TEST(SiteIsolation, UndoEditsRegisteredByMultipleProcesses)
     EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"document.body.textContent" inFrame:childFrame.get()]);
 }
 
+TEST(SiteIsolation, MainFrameFinishesLoadWithCrossOriginAndSameOriginIframes)
+{
+    HTTPServer server({
+        { "/main"_s, {
+            "<body>"
+            "<h2>Cross Origin</h2>"
+            "<iframe width='500' height='500' src='https://webkit.org/cross-origin-iframe'></iframe>"
+            "<h2>Same Origin</h2>"
+            "<iframe width='500' height='500' src='https://example.com/same-origin-iframe'></iframe>"
+            "</body>"_s
+        } },
+        { "/cross-origin-iframe"_s, { "<body><p>Cross-origin content</p></body>"_s } },
+        { "/same-origin-iframe"_s, { "<body><p>Same-origin content</p></body>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame }, { "https://example.com"_s } } },
+        { RemoteFrame, { { "https://webkit.org"_s }, { RemoteFrame } } }
+    });
+
+    EXPECT_WK_STREQ([webView mainFrame].info.securityOrigin.host, "example.com");
+    EXPECT_EQ([webView mainFrame].childFrames.count, 2u);
+
+    auto crossOriginFrame = [webView mainFrame].childFrames[0];
+    auto sameOriginFrame = [webView mainFrame].childFrames[1];
+    EXPECT_WK_STREQ(crossOriginFrame.info.securityOrigin.host, "webkit.org");
+    EXPECT_WK_STREQ(sameOriginFrame.info.securityOrigin.host, "example.com");
+    EXPECT_NE(crossOriginFrame.info._processIdentifier, [webView mainFrame].info._processIdentifier);
+    EXPECT_EQ(sameOriginFrame.info._processIdentifier, [webView mainFrame].info._processIdentifier);
+}
+
 }

@@ -102,8 +102,11 @@ void RemoteFrame::didFinishLoadInAnotherProcess()
 {
     m_preventsParentFromBeingComplete = false;
 
-    if (RefPtr ownerElement = this->ownerElement())
-        protect(ownerElement->document())->checkCompleted();
+    if (RefPtr ownerElement = this->ownerElement()) {
+        Ref document = ownerElement->document();
+        document->checkCompleted();
+        document->checkLoadComplete();
+    }
 }
 
 bool RemoteFrame::preventsParentFromBeingComplete() const
