@@ -5,9 +5,10 @@ function shouldBe(actual, expected) {
 
 // multiplyImpl routes a product to one of three implementations depending on the operand shape:
 // a fully unrolled fixed-size form for equal small sizes, product scanning (Comba), or the
-// schoolbook loop. Comba's column walk is split into ramp-up, steady and ramp-down phases whose
-// bounds differ per phase, so the shapes that matter are the ones that straddle those phase
-// boundaries and the ones that sit either side of the routing thresholds.
+// schoolbook loop. The latter two both walk a head phase and then a window over the larger operand
+// that slides one digit per column and shortens once it runs off the end, so the shapes that matter
+// are the ones that straddle those phase boundaries and the ones that sit either side of the
+// routing thresholds.
 //
 // A Digit is a CPU register, so a given bit width is one digit count on 64-bit targets and twice
 // that on 32-bit ones. Both widths are exercised so the same digit counts are covered either way.
@@ -50,7 +51,9 @@ function check(x, y) {
 
 for (const width of [32, 64]) {
     // Every shape up to 20x20 covers each phase boundary of the column walk, both sides of all
-    // four routing thresholds, and the degenerate single-digit and equal-size cases.
+    // four routing thresholds, and the degenerate single-digit and equal-size cases. The square
+    // and near-square ones matter most: there the window starts out shorter than the smaller
+    // operand, so it is clamped from the first column and never reaches full length.
     for (let larger = 1; larger <= 20; larger++) {
         for (let smaller = 1; smaller <= larger; smaller++) {
             const x = makeOperand(larger, width, larger * 31 + smaller);
@@ -59,8 +62,8 @@ for (const width of [32, 64]) {
         }
     }
 
-    // Wide shapes with a thin second operand, where the ramp-down phase is longest relative to the
-    // rest of the walk.
+    // Wide shapes with a thin second operand, where the window is at full length for nearly the
+    // whole walk and is clamped only at the last few columns.
     for (const larger of [24, 32, 40, 64]) {
         for (const smaller of [1, 2, 3, 4, 5, 8, 16]) {
             const x = makeOperand(larger, width, larger + smaller);
