@@ -622,10 +622,13 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
 
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
-    if (resourceData && resourceData->cachedResource())
+    if (resourceData && resourceData->cachedResource()) {
         sourceMappingURL = ResourceUtilities::sourceMapURLForResource(protect(resourceData->cachedResource()));
+        resourceRequestType = resourceData->cachedResource()->type();
+    }
 
     std::optional<NetworkLoadMetrics> realMetrics;
     if (platformStrategies()->loaderStrategy()->shouldPerformSecurityChecks() && !networkLoadMetrics.isComplete()) {
@@ -633,9 +636,6 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    CachedResource::Type resourceRequestType = CachedResource::Type::Unknown;
-    if (resourceData)
-        resourceRequestType = resourceData->cachedResource()->type();
 
     auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics, resourceRequestType);
 
