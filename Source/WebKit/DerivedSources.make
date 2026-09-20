@@ -127,6 +127,10 @@ endif
 
 to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
 
+# Only the first match is used, since the file can be present both in the build output and in the SDK;
+# use the file from the build.
+find-webkitadditions-file = $(firstword $(wildcard $(addsuffix /$1,$(WEBKITADDITIONS_HEADER_SEARCH_PATHS))))
+
 MESSAGE_RECEIVERS = \
 	LogStream \
 	NetworkProcess/Authentication/AuthenticationManager \
@@ -437,8 +441,18 @@ $(LOG_OUTPUT_FILES) : $(GENERATE_DERIVED_LOG_SOURCES_SCRIPT) $(LOG_IN_FILES) $(F
 
 all : $(GENERATED_MESSAGES_FILES)
 
-$(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(LOG_OUTPUT_FILES) $(MESSAGES_IN_FILES) $(GENERATE_MESSAGE_RECEIVER_SCRIPTS)
-	$(PYTHON) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) --output-dir=IPC $(MESSAGE_RECEIVERS)
+# A receiver may be extended by a <Receiver>Additions.messages.in fragment in WebKitAdditions; see
+# splice_additions() in generate-message-receiver.py. The script finds them by receiver name, but
+# they are listed here as well so make and DerivedSources-input.xcfilelist both track them.
+WEBKITADDITIONS_MESSAGES_IN_FILES = \
+	WebPageProxyAdditions.messages.in \
+#
+
+MESSAGES_IN_ADDITIONS_ARGS := $(foreach D,$(WEBKITADDITIONS_HEADER_SEARCH_PATHS),--additions-dir $D)
+MESSAGES_IN_ADDITIONS_FILES := $(foreach I,$(WEBKITADDITIONS_MESSAGES_IN_FILES),$(call find-webkitadditions-file,$I))
+
+$(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(LOG_OUTPUT_FILES) $(MESSAGES_IN_FILES) $(MESSAGES_IN_ADDITIONS_FILES) $(GENERATE_MESSAGE_RECEIVER_SCRIPTS)
+	$(PYTHON) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) --output-dir=IPC $(MESSAGES_IN_ADDITIONS_ARGS) $(MESSAGE_RECEIVERS)
 
 TEXT_PREPROCESSOR_FLAGS=-E -P -w
 

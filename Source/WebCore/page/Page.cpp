@@ -276,6 +276,10 @@
 #include "DocumentImmersive.h"
 #endif
 
+#if __has_include(<WebKitAdditions/PageAdditions.cpp>)
+#include <WebKitAdditions/PageAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Page);
@@ -540,6 +544,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #endif
 
     settingsDidChange();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    resetAXCustomColorModeActive();
+#endif
 
     if (m_lowPowerModeNotifier->isLowPowerModeEnabled())
         m_throttlingReasons.add(ThrottlingReason::LowPowerMode);
@@ -4679,6 +4687,10 @@ void Page::didChangeMainDocument(Document* newDocument)
     m_pointerCaptureController->reset();
 
     clearSampledPageTopColor();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    resetAXCustomColorModeState();
+#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     clearDeviceOrientationAndMotionPermissions();

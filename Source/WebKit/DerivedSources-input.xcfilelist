@@ -11,6 +11,7 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AppKitGesturesExtras.swi
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/TestWebKitAPILibraryAdditions.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+SystemTextExtraction.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKWebView+WKBannerViewOverlay.swift.in
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebPageProxyAdditions.messages.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebPreferencesAdditions.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebViewRepresentable+Extras.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Compiler.h

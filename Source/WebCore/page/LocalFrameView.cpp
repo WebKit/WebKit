@@ -4869,13 +4869,13 @@ void LocalFrameView::performPostLayoutTasks()
     LOG(Layout, "LocalFrameView %p performPostLayoutTasks", this);
     updateHasReachedSignificantRenderedTextThreshold();
 
+    if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())
+        fireLayoutRelatedMilestonesIfNeeded();
+
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     if (CheckedPtr renderView = this->renderView())
         renderView->adjustAXCustomColorModeAfterLayout();
 #endif
-
-    if (!layoutContext().isLayoutNested() && m_frame->document()->documentElement())
-        fireLayoutRelatedMilestonesIfNeeded();
 
 #if PLATFORM(IOS_FAMILY)
     // Only send layout-related delegate callbacks synchronously for the main frame to
@@ -6217,8 +6217,13 @@ void LocalFrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
         return;
 
     m_contentQualifiesAsVisuallyNonEmpty = true;
-    if (m_frame->isRootFrame())
+    if (m_frame->isRootFrame()) {
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (RefPtr page = m_frame->page())
+            page->didReachVisuallyNonEmptyState();
+#endif
         m_frame->loader().didReachVisuallyNonEmptyState();
+    }
 }
 
 bool LocalFrameView::hasContentfulDescendants() const
