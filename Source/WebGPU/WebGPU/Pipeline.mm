@@ -216,11 +216,23 @@ void compileLibraryAsync(id<MTLDevice> device, Instance& instance, const Library
         return;
     }
 
+    // nil device here means the device is either lost or destroyed, all which report no error
+    if (!device) {
+        callback(nil, nil);
+        return;
+    }
+
     ShaderModule::createLibraryAsync(device, request.msl, request.label, request.deviceState, callOnWebGPUThread<id<MTLLibrary>>(instance, WTF::move(callback)));
 }
 
 void createComputePipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLComputePipelineDescriptor *descriptor, CompletionHandler<void(id<MTLComputePipelineState>, NSError *)>&& callback)
 {
+    // See the comment in compileLibraryAsync(): a lost device is nil and would never call back.
+    if (!device) {
+        callback(nil, nil);
+        return;
+    }
+
     [device newComputePipelineStateWithDescriptor:descriptor options:MTLPipelineOptionNone completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLComputePipelineState>>(instance, WTF::move(callback))](id<MTLComputePipelineState> computePipelineState, MTLComputePipelineReflection *, NSError *error) mutable {
         hopBack(computePipelineState, error);
     }).get()];
@@ -228,6 +240,12 @@ void createComputePipelineStateAsync(id<MTLDevice> device, Instance& instance, M
 
 void createRenderPipelineStateAsync(id<MTLDevice> device, Instance& instance, MTLRenderPipelineDescriptor *descriptor, CompletionHandler<void(id<MTLRenderPipelineState>, NSError *)>&& callback)
 {
+    // See the comment in compileLibraryAsync(): a lost device is nil and would never call back.
+    if (!device) {
+        callback(nil, nil);
+        return;
+    }
+
     [device newRenderPipelineStateWithDescriptor:descriptor completionHandler:makeBlockPtr([hopBack = callOnWebGPUThread<id<MTLRenderPipelineState>>(instance, WTF::move(callback))](id<MTLRenderPipelineState> renderPipelineState, NSError *error) mutable {
         hopBack(renderPipelineState, error);
     }).get()];
