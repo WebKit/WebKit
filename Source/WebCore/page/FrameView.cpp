@@ -625,4 +625,9 @@ IntRect FrameView::contentsToMainFrameView(const IntRect& rect) const
     return convertToRootViewAcrossIsolatedFrames(contentsToView(rect));
 }
 
+FloatRect FrameView::contentsToMainFrameView(FloatRect rect) const
+{
+    return convertToRootViewAcrossIsolatedFrames(contentsToView(rect));
+}
+
 }

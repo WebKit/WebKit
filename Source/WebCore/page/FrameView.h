@@ -138,6 +138,7 @@ public:
     // Similar to contentsToRootView, but also works in Site Isolation mode and will
     // convert all the way to the main frame.
     WEBCORE_EXPORT IntRect contentsToMainFrameView(const IntRect&) const;
+    WEBCORE_EXPORT FloatRect contentsToMainFrameView(FloatRect) const;
 
     WEBCORE_EXPORT virtual LayoutRect layoutViewportRect() const = 0;
 

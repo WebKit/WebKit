@@ -11594,33 +11594,17 @@ void WebPageProxy::requestFrameScreenPosition(FrameIdentifier frameID)
 
     static constexpr float unitRectSize = 1000;
 
-    RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (!frame)
-        return;
-
-    RefPtr parent = frame->parentFrame();
-
-    if (parent) {
-        // For non-main frames, use convertRectToMainFrameCoordinates to chain ContentsToRootViewRect
-        // calls up through the frame hierarchy.
-        convertRectToMainFrameCoordinates(FloatRect(0, 0, unitRectSize, unitRectSize), frameID, [weakThis = WeakPtr { *this }, frameID](std::optional<FloatRect> finalRect) mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis || !finalRect)
-                return;
-            protectedThis->applyAccessibilityFrameScreenPosition(frameID, *finalRect);
-        });
-    } else {
-        // Main frame: apply ContentsToRootViewRect directly to account for main frame scroll.
-        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ContentsToRootViewRect(frameID, FloatRect(0, 0, unitRectSize, unitRectSize)), [weakThis = WeakPtr { *this }, frameID](FloatRect convertedRect) mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            protectedThis->applyAccessibilityFrameScreenPosition(frameID, convertedRect);
-        });
-    }
+    // The frame's own process converts this rect all the way up to main frame view coordinates,
+    // which accounts for the scroll position and transform of this frame and each of its ancestors.
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ContentsToMainFrameViewRect(frameID, FloatRect(0, 0, unitRectSize, unitRectSize)), [weakThis = WeakPtr { *this }, frameID](FloatRect convertedRect) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+        protectedThis->applyAccessibilityFrameScreenPosition(frameID, convertedRect);
+    });
 }
 
-void WebPageProxy::applyAccessibilityFrameScreenPosition(FrameIdentifier frameID, const FloatRect& rootViewRect)
+void WebPageProxy::applyAccessibilityFrameScreenPosition(FrameIdentifier frameID, const FloatRect& mainFrameViewRect)
 {
     static constexpr float unitRectSize = 1000;
 
@@ -11630,7 +11614,7 @@ void WebPageProxy::applyAccessibilityFrameScreenPosition(FrameIdentifier frameID
 
     // This screen rect will be offset based on the scroll of the frame, so when combined with element rects,
     // will properly account for iframe's scroll.
-    auto screenRect = client->rootViewToAccessibilityScreen(enclosingIntRect(rootViewRect));
+    auto screenRect = client->rootViewToAccessibilityScreen(enclosingIntRect(mainFrameViewRect));
 
     AXFrameGeometry geometry;
 #if PLATFORM(MAC)

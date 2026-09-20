@@ -10755,6 +10755,19 @@ void WebPage::contentsToRootViewPoint(FrameIdentifier frameID, FloatPoint point,
     completionHandler(contentsToRootView(frameID, point));
 }
 
+void WebPage::contentsToMainFrameViewRect(FrameIdentifier frameID, FloatRect rect, CompletionHandler<void(FloatRect)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreFrame = webFrame ? webFrame->coreFrame() : nullptr;
+    RefPtr view = coreFrame ? coreFrame->virtualView() : nullptr;
+
+    if (!view) {
+        completionHandler(rect);
+        return;
+    }
+    completionHandler(view->contentsToMainFrameView(rect));
+}
+
 void WebPage::remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frameID, WebCore::DictionaryPopupInfo popupInfo, CompletionHandler<void(WebCore::DictionaryPopupInfo)>&& completionHandler)
 {
     RefPtr textIndicator = popupInfo.textIndicator;
