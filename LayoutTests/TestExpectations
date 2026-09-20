@@ -4794,7 +4794,6 @@ webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/viewport-unit
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-scroll-vhw-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/calc-min-height-block-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/calc-min-width-block-intrinsic-1.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-no-body-height-quirk-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/ch-unit-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/resolution-with-percentage-without-context.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/viewport-units-scrollbars-scroll-vw-001.html [ ImageOnlyFailure ]
