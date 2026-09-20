@@ -61,6 +61,9 @@ private:
     void buildBoxTransformations(SVGChunkTransformMap&) const;
     void processTextLengthSpacingCorrection() const;
 
+    // Reduces a 'textLength' value by the 'textLength' of separately-chunked descendants (nested textLength). webkit.org/b/139210.
+    float adjustedDesiredTextLength(const SVGTextContentElement&, float desiredTextLength) const;
+
     bool isVerticalText() const { return m_chunkStyle.contains(ChunkStyle::VerticalText); }
     float desiredTextLength() const { return m_desiredTextLength; }
 

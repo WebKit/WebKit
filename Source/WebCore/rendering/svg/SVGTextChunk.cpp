@@ -27,6 +27,7 @@
 #include "SVGTextContentElement.h"
 #include "SVGTextFragment.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include <ranges>
 
 namespace WebCore {
@@ -56,10 +57,17 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
         break;
     }
 
+    for (auto box : lineLayoutBoxes.subspan(first, limit - first)) {
+        auto it = fragmentMap.find(makeKey(*box));
+        if (it == fragmentMap.end())
+            continue;
+        m_boxes.append({ box, it->value });
+    }
+
     if (RefPtr textContentElement = SVGTextContentElement::elementFromRenderer(firstBox->renderer().parent())) {
         m_textContentElement = textContentElement.get();
         SVGLengthContext lengthContext(textContentElement.get());
-        m_desiredTextLength = textContentElement->specifiedTextLength().value(lengthContext);
+        m_desiredTextLength = adjustedDesiredTextLength(*textContentElement, textContentElement->specifiedTextLength().value(lengthContext));
 
         switch (textContentElement->lengthAdjust()) {
         case SVGLengthAdjustUnknown:
@@ -72,13 +80,52 @@ SVGTextChunk::SVGTextChunk(const Vector<InlineIterator::SVGTextBoxIterator>& lin
             break;
         }
     }
+}
 
-    for (auto box : lineLayoutBoxes.subspan(first, limit - first)) {
-        auto it = fragmentMap.find(makeKey(*box));
-        if (it == fragmentMap.end())
+float SVGTextChunk::adjustedDesiredTextLength(const SVGTextContentElement& owner, float desiredTextLength) const
+{
+    // Nested 'textLength' (SVG2 §11.2.1, text.html#TextElementTextLengthAttribute): a descendant's own
+    // 'textLength' governs its content exclusively, so the ancestor's covers only the rest, with
+    // advance (ancestor - descendant). Subtract each topmost descendant laid out in a separate
+    // chunk (its advance isn't in our totalLength()). webkit.org/b/139210.
+    if (desiredTextLength <= 0)
+        return desiredTextLength;
+
+    for (Ref descendant : descendantsOfType<SVGTextContentElement>(owner)) {
+        SVGLengthContext descendantLengthContext(descendant.ptr());
+        float descendantTextLength = descendant->specifiedTextLength().value(descendantLengthContext);
+        if (descendantTextLength <= 0)
             continue;
-        m_boxes.append({ box, it->value });
+
+        // Skip nested ones; they're accounted for by their nearest 'textLength' ancestor.
+        bool hasIntermediateTextLength = false;
+        for (RefPtr ancestor = descendant->parentElement(); ancestor && ancestor != &owner; ancestor = ancestor->parentElement()) {
+            RefPtr intermediate = dynamicDowncast<SVGTextContentElement>(*ancestor);
+            if (intermediate && intermediate->specifiedTextLength().value(SVGLengthContext(intermediate.get())) > 0) {
+                hasIntermediateTextLength = true;
+                break;
+            }
+        }
+        if (hasIntermediateTextLength)
+            continue;
+
+        // Skip descendants sharing this chunk; their advance is already in totalLength().
+        bool contentInThisChunk = false;
+        for (auto& boxAndFragments : m_boxes) {
+            auto* container = boxAndFragments.box->renderer().parent();
+            RefPtr containerElement = container ? container->element() : nullptr;
+            if (containerElement && descendant->contains(*containerElement)) {
+                contentInThisChunk = true;
+                break;
+            }
+        }
+        if (contentInThisChunk)
+            continue;
+
+        desiredTextLength -= descendantTextLength;
     }
+
+    return std::max(0.0f, desiredTextLength);
 }
 
 unsigned SVGTextChunk::totalCharacters() const
