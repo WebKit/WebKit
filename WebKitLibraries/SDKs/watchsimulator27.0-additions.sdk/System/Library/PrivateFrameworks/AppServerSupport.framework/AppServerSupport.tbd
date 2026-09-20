@@ -1,0 +1,12 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+install-name:    '/System/Library/PrivateFrameworks/AppServerSupport.framework/AppServerSupport'
+current-version: 3298.4.1
+exports:
+  - targets:         [ i386-watchos-simulator, x86_64-watchos-simulator, arm64-watchos-simulator ]
+    symbols:         [ __launch_get_last_exit_reason_4SB, _launch_get_running_pid_4SB ]
+    objc-classes:    [ LASSProperties4RB, OSLaunchdDeveloperToolsOptions, OSLaunchdDomain, 
+                       OSLaunchdError, OSLaunchdJob, OSLaunchdJobExitStatus, OSLaunchdJobInfo, 
+                       OSLaunchdJobInstanceProperties, OSLaunchdJobProperties ]
+...

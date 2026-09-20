@@ -1,0 +1,25 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/UIIntelligenceSupport.framework/UIIntelligenceSupport
+swift-abi-version: 7
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        symbols: [_$s21UIIntelligenceSupport0A16ElementCollectorC7collectyyAA012IntelligenceC0V7ContentOF, _$s21UIIntelligenceSupport0A16ElementCollectorC7contextAA29IntelligenceCollectionContext_pvg,
+                _$s21UIIntelligenceSupport0A30CollectionRemoteContextWrapperCMn, _$s21UIIntelligenceSupport17IntelligenceImageVMa,
+                _$s21UIIntelligenceSupport17IntelligenceImageVMn, _$s21UIIntelligenceSupport19IntelligenceElementV11boundingBox7content11subelementsACSo6CGRectV_AC7ContentOSayACGtcfC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV11subelementsSayACGvs, _$s21UIIntelligenceSupport19IntelligenceElementV4TextV010attributedE08editable11textOptionsAE10Foundation16AttributedStringV_AE8EditableVSgAA0C17CollectionRequestV0eI0VSgtcfC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV4TextV10AttributesV17SelectedAttributeV10Foundation19AttributedStringKeyAAMc,
+                _$s21UIIntelligenceSupport19IntelligenceElementV4TextV10AttributesV17SelectedAttributeVMa, _$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableV5label6prompt11contentType8isSecure0K7FocusedAGSSSg_A2MS2btcfC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableVMa, _$s21UIIntelligenceSupport19IntelligenceElementV4TextV8EditableVMn,
+                _$s21UIIntelligenceSupport19IntelligenceElementV5ImageV4name15textDescription5imageAESSSg_AiA0cE0VSgtcfC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV7ContentO4baseyA2EmFWC, _$s21UIIntelligenceSupport19IntelligenceElementV7ContentO4textyAeC4TextVcAEmFWC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV7ContentO5imageyAeC5ImageVcAEmFWC, _$s21UIIntelligenceSupport19IntelligenceElementV7ContentO6remoteyAeA0C8FragmentV13RemoteContextVcAEmFWC,
+                _$s21UIIntelligenceSupport19IntelligenceElementV7ContentOMa, _$s21UIIntelligenceSupport19IntelligenceElementVMa,
+                _$s21UIIntelligenceSupport19IntelligenceElementVMn, _$s21UIIntelligenceSupport20IntelligenceFragmentV13RemoteContextVMa,
+                _$s21UIIntelligenceSupport29IntelligenceCollectionContextP012createRemoteE011descriptionAA0C8FragmentV0gE0VSS_tFTj,
+                _$s21UIIntelligenceSupport29IntelligenceCollectionRequestV11TextOptionsVMa, _$s21UIIntelligenceSupport29IntelligenceCollectionRequestV11TextOptionsVMn,
+                _$s21UIIntelligenceSupport29IntelligenceFragmentCollectorC7collectyyAA0C7ElementVF, _$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC06finishD0yyAA0C17FragmentCollectorCF,
+                _$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC15createCollector20remoteContextWrapperAA0c8FragmentG0CAA0ad6RemoteiJ0C_tF,
+                _$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorC6sharedACvgZ, _$s21UIIntelligenceSupport33IntelligenceCollectionCoordinatorCMa]
+...

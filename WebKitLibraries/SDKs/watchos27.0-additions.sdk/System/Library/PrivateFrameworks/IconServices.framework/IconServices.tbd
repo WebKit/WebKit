@@ -1,0 +1,24 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/IconServices.framework/IconServices
+current-version: 728.255
+swift-abi-version: 7
+reexported-libraries:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        libraries: [/System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation]
+exports:
+-       targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+        objc-classes: [ISIcon, ISImageDescriptor]
+reexports:
+-       targets: [armv7k-watchos]
+        objc-classes: [ISImage]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [armv7k-watchos, arm64-watchos, arm64e-watchos, arm64_32-watchos]
+install-name: /System/Library/PrivateFrameworks/IconFoundation.framework/IconFoundation
+current-version: 728.255
+swift-abi-version: 7
+exports: []
+...
