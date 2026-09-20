@@ -536,10 +536,6 @@
 
 #define WEBPAGEPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), m_webPageID.toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
-#if __has_include(<WebKitAdditions/WebPageProxyAdditionsImpl.cpp>)
-#include <WebKitAdditions/WebPageProxyAdditionsImpl.cpp>
-#endif
-
 namespace WebKit {
 
 using namespace WebCore;

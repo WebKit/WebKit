@@ -353,9 +353,6 @@ public:
     virtual void themeColorChanged() const { }
     virtual void pageExtendedBackgroundColorDidChange() const { }
     virtual void sampledPageTopColorChanged() const { }
-#if __has_include(<WebKitAdditions/ChromeClientAdditions.h>)
-#include <WebKitAdditions/ChromeClientAdditions.h>
-#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     virtual void allowImmersiveElement(CompletionHandler<void(bool)>&& completion) const { completion(false); }

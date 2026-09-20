@@ -765,13 +765,6 @@ set(WebCore_SERIALIZATION_IN_FILES
     WebGPU.serialization.in
 )
 
-if (USE_APPLE_INTERNAL_SDK)
-    set(WebKitAdditions_MESSAGES_IN_FILES
-        ${WebKitAdditions_HEADERS_DIR}/WebPageProxyAdditions.messages.in
-    )
-    set(WebKitAdditions_MESSAGES_IN_ARGS --additions-dir ${WebKitAdditions_HEADERS_DIR})
-endif ()
-
 set(WebKit_FRAMEWORKS
     JavaScriptCore
     PAL
@@ -1089,9 +1082,8 @@ macro(GENERATE_MESSAGE_SOURCES _output_source _inputs)
             ${WEBKIT_DIR}/Scripts/webkit/parser.py
             ${WEBKIT_DIR}/Scripts/webkit/untrusted_origins.py
             ${_input_files}
-            ${WebKitAdditions_MESSAGES_IN_FILES}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_messages_stage_dir}
-        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py --preserve-subdirs ${WEBKIT_DIR} ${_inputs} ${WebKitAdditions_MESSAGES_IN_ARGS} --output-dir ${_messages_stage_dir}
+        COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py --preserve-subdirs ${WEBKIT_DIR} ${_inputs} --output-dir ${_messages_stage_dir}
         ${_messages_copy_commands}
         WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
         VERBATIM

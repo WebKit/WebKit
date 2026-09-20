@@ -67,10 +67,6 @@
 #include "WebPaymentCoordinatorProxy.h"
 #endif
 
-#if __has_include(<WebKitAdditions/WebPageProxyAdditionsIncludes.h>)
-#include <WebKitAdditions/WebPageProxyAdditionsIncludes.h>
-#endif
-
 #if ENABLE(DRAG_SUPPORT)
 #include <WebCore/DragActions.h>
 #endif
@@ -275,9 +271,6 @@ public:
     bool alwaysBounceVertical { true };
     bool alwaysBounceHorizontal { true };
     WebCore::Color sampledPageTopColor;
-#if __has_include(<WebKitAdditions/WebPageProxyInternalsAdditions.h>)
-#include <WebKitAdditions/WebPageProxyInternalsAdditions.h>
-#endif
     WebCore::ScrollPinningBehavior scrollPinningBehavior { WebCore::ScrollPinningBehavior::DoNotPin };
     WebCore::IntSize sizeToContentAutoSizeMaximumSize;
     WebCore::Color themeColor;

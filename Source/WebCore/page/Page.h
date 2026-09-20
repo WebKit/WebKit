@@ -74,10 +74,6 @@
 #include <WebCore/AcceleratedTimelinesUpdater.h>
 #endif
 
-#if __has_include(<WebKitAdditions/PageAdditionsIncludes.h>)
-#include <WebKitAdditions/PageAdditionsIncludes.h>
-#endif
-
 namespace JSC {
 class Debugger;
 class JSGlobalObject;
@@ -1809,11 +1805,6 @@ private:
 
     Color m_underPageBackgroundColorOverride;
     std::optional<Color> m_sampledPageTopColor;
-
-#if __has_include(<WebKitAdditions/PageAdditions.h>)
-#include <WebKitAdditions/PageAdditions.h>
-#endif
-
     std::pair<UniqueRef<FixedContainerEdges>, WeakElementEdges> m_fixedContainerEdgesAndElements;
     bool m_userHasInteractedSinceLastPageLoad { false };
     bool m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures { false };

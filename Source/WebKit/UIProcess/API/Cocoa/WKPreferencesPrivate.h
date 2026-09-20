@@ -255,10 +255,6 @@ typedef NS_ENUM(NSInteger, _WKNavigatorWebDriverActivePolicy) {
 
 @end
 
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKPreferencesPrivateAdditions.h>
-#endif
-
 #if TARGET_OS_IPHONE
 
 @interface WKPreferences ()

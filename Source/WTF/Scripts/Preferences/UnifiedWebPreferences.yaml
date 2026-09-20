@@ -133,7 +133,7 @@ AXCustomColorModeEnabled:
   status: embedder
   getter: axCustomColorModeEnabled
   webcoreName: axCustomColorModeEnabled
-  webcoreOnChange: axCustomColorModeStateChanged
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
   condition: ENABLE(AX_CUSTOM_COLOR_MODE)
   defaultValue: false
 
