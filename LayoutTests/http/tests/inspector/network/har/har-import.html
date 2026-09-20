@@ -193,7 +193,7 @@ function test()
         name: "HAR.Import.Gecko",
         description: "Should be able to import a HAR from a Gecko based software.",
         async test() {
-            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/gecko.webkit.org.har.gz";
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/gecko.webkit.org.har";
             let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
             let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
             InspectorTest.expectThat(localResources, "Should be able to import a HAR from Gecko.");
