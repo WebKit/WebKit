@@ -4733,7 +4733,7 @@ void LocalFrameView::scrollToPendingTextFragmentRange()
 
     auto range = *m_pendingTextFragmentIndicatorRange;
     auto rangeText = plainText(range);
-    if (m_pendingTextFragmentIndicatorText != plainText(range))
+    if (m_pendingTextFragmentIndicatorText != rangeText)
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToPendingTextFragmentRange() " << range);
