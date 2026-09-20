@@ -2660,7 +2660,7 @@ std::pair<FixedContainerEdges, WeakElementEdges> LocalFrameView::fixedContainerE
     static constexpr auto minimumOpacityThresholdToClampToSolidColor = 0.75;
 
     auto pageBackgroundColor = page->pageExtendedBackgroundColor();
-    auto blendAgainstPageBackground = [pageBackgroundColor](const Color& color) {
+    auto blendAgainstPageBackground = [&pageBackgroundColor](const Color& color) {
         if (color.isOpaque())
             return color;
 
@@ -2969,7 +2969,7 @@ bool LocalFrameView::useDarkAppearance() const
         return renderer->useDarkAppearance();
 #endif
     if (RefPtr document = m_frame->document())
-        return document->useDarkAppearance(static_cast<const Style::ComputedStyle*>(nullptr));
+        return document->useDarkAppearance(nullptr);
     return false;
 }
 
@@ -2980,7 +2980,7 @@ OptionSet<StyleColorOptions> LocalFrameView::styleColorOptions() const
         return renderer->styleColorOptions();
 #endif
     if (RefPtr document = m_frame->document())
-        return document->styleColorOptions(static_cast<const Style::ComputedStyle*>(nullptr));
+        return document->styleColorOptions(nullptr);
     return { };
 }
 
