@@ -418,6 +418,11 @@ auto InspectorCanvasArgumentProcessor<IDLArrayBufferView>::operator()(InspectorC
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};
 }
 
+auto InspectorCanvasArgumentProcessor<IDLBufferSource>::operator()(InspectorCanvas&, const BufferSource&) -> std::optional<InspectorCanvasProcessedArgument>
+{
+    return { { JSON::Value::create(0), RecordingSwizzleType::TypedArray } };
+}
+
 auto InspectorCanvasArgumentProcessor<IDLFloat32Array>::operator()(InspectorCanvas&, const Ref<JSC::Float32Array>&) -> std::optional<InspectorCanvasProcessedArgument>
 {
     return {{ JSON::Value::create(0), RecordingSwizzleType::TypedArray }};

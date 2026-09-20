@@ -39,7 +39,6 @@ typedef unsigned long      GLuint;
 typedef unsigned long long GLuint64;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
-typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
 typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
 typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
 typedef ([AllowShared] Uint32Array or sequence<GLuint>) Uint32List;

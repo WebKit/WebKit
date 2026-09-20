@@ -83,22 +83,22 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSGlobal
 
 template<> struct JSConverter<IDLBufferSource> {
     static constexpr bool needsState = true;
-    static constexpr bool needsGlobalObject = false;
+    static constexpr bool needsGlobalObject = true;
 
-    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, const BufferSource& bufferSource)
+    static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const BufferSource& bufferSource)
     {
-        auto* jsDOMGlobalObject = uncheckedDowncast<JSDOMGlobalObject>(&lexicalGlobalObject);
-
-        return WTF::switchOn(bufferSource.variant(),
+        return bufferSource.switchOn(
             [&](const Ref<JSC::ArrayBufferView>& buffer) {
-                return toJS(&lexicalGlobalObject, &lexicalGlobalObject, const_cast<Ref<JSC::ArrayBufferView>&>(buffer));
+                return toJS(&lexicalGlobalObject, &globalObject, const_cast<Ref<JSC::ArrayBufferView>&>(buffer));
             },
             [&](const Ref<JSC::ArrayBuffer>& buffer)  {
-                return toJS(&lexicalGlobalObject, jsDOMGlobalObject, const_cast<Ref<JSC::ArrayBuffer>&>(buffer));
+                return toJS(&lexicalGlobalObject, &globalObject, const_cast<Ref<JSC::ArrayBuffer>&>(buffer));
             }
         );
     }
 };
+
+template<> struct JSConverter<IDLAllowSharedAdaptor<IDLBufferSource>> : JSConverter<IDLBufferSource> { };
 
 inline RefPtr<JSC::ArrayBufferView> toPossiblySharedArrayBufferView(JSC::VM&, JSC::JSValue value)
 {
