@@ -796,7 +796,14 @@ LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& 
 
     // Otherwise the item is measured with its used flex basis in place of its main size.
     auto flexBasisAsMainSize = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
-    return computeFlexBaseSize(flexLayoutItem, flexBasis);
+    auto flexBaseSize = computeFlexBaseSize(flexLayoutItem, flexBasis);
+
+    // A `content` basis is not a value the item can be laid out with, so it is measured as max-content
+    // and the calculation is applied to that here.
+    if (flexBasis.isCalcSize() && flexBasis.isContent())
+        return integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, flexBasis.get<Style::UnevaluatedCalcSize>(), flexBaseSize, m_constraints.mainAxisSizeForLengthResolution);
+
+    return flexBaseSize;
 }
 
 LayoutUnit FlexFormattingContext::computeFlexBaseSize(const FlexLayoutItem& flexLayoutItem, const Style::FlexBasis& flexBasis)
