@@ -46,6 +46,10 @@
 #include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
+#ifdef Status
+#undef Status
+#endif
+
 namespace WebCore {
 
 class CachedResourceCallback;
