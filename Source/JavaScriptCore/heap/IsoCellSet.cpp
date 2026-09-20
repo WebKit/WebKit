@@ -68,7 +68,7 @@ Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockS
                 m_done = true;
                 return nullptr;
             }
-            return m_directory.m_blocks[m_index++];
+            return m_directory.m_blocks[m_index++].first;
         }
         
     private:

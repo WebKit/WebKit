@@ -69,8 +69,8 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(JSC::Heap& heap, AlignedMemoryAlloca
 
 MarkedBlock::Handle::Handle(JSC::Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator, void* blockSpace)
     : m_alignedMemoryAllocator(alignedMemoryAllocator)
-    , m_weakSet(heap.vm())
     , m_block(new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this))
+    , m_weakSet(heap.vm())
 {
     heap.didAllocateBlock(blockSize);
 }

@@ -36,7 +36,7 @@ inline void BlockDirectory::forEachBlock(const std::invocable<MarkedBlock::Handl
     assertIsMutatorOrMutatorIsStopped();
     liveBitsView().forEachSetBit(
         [&] (size_t index) {
-            functor(m_blocks[index]);
+            functor(m_blocks[index].first);
         });
 }
 
@@ -45,7 +45,7 @@ inline void BlockDirectory::forEachNotEmptyBlock(const std::invocable<MarkedBloc
     assertIsMutatorOrMutatorIsStopped();
     markingNotEmptyBitsView().forEachSetBit(
         [&] (size_t index) {
-            functor(m_blocks[index]);
+            functor(m_blocks[index].first);
         });
 }
 

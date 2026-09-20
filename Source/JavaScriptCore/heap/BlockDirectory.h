@@ -174,7 +174,9 @@ private:
     
     MarkedBlock::Handle* tryAllocateBlock(Heap&);
     
-    Vector<MarkedBlock::Handle*> m_blocks;
+    // The MarkedBlock is stored next to its Handle so that we can prefetch its header without chasing through
+    // the Handle first. MarkedBlocks are often cold when first accessed so this can accelerate sweeping.
+    Vector<std::pair<MarkedBlock::Handle*, MarkedBlock*>> m_blocks;
     Vector<unsigned> m_freeBlockIndices;
 
     // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run

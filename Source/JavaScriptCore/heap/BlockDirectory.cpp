@@ -84,7 +84,7 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 
     dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", m_emptyCursor, " in use (findEmptyBlockToSteal) for ", *this);
     setIsInUse(m_emptyCursor, true);
-    return m_blocks[m_emptyCursor];
+    return m_blocks[m_emptyCursor].first;
 }
 
 MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
@@ -96,7 +96,10 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
             return nullptr;
         
         unsigned blockIndex = allocator.m_allocationCursor++;
-        MarkedBlock::Handle* result = m_blocks[blockIndex];
+        auto [result, block] = m_blocks[blockIndex];
+        // This block is about to be swept to build a free list, which reads the header. Start the
+        // fetch here so it overlaps the bitvector updates and the lock release below.
+        __builtin_prefetch(block);
         setIsCanAllocate(blockIndex, false);
         dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", blockIndex, " in use (findBlockForAllocation) for ", *this);
         setIsInUse(blockIndex, true);
@@ -123,7 +126,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
         index = m_blocks.size();
 
         size_t oldCapacity = m_blocks.capacity();
-        m_blocks.append(block);
+        m_blocks.append({ block, &block->block() });
         if (m_blocks.capacity() != oldCapacity) {
             ASSERT(m_bits.numBits() == oldCapacity);
             ASSERT(m_blocks.capacity() > oldCapacity);
@@ -133,8 +136,8 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
         }
     } else {
         index = m_freeBlockIndices.takeLast();
-        ASSERT(!m_blocks[index]);
-        m_blocks[index] = block;
+        ASSERT(!m_blocks[index].first);
+        m_blocks[index] = { block, &block->block() };
     }
     
     forEachBitVector(
@@ -155,12 +158,12 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock wil
 {
     assertIsMutatorOrMutatorIsStopped();
     ASSERT(block->directory() == this);
-    ASSERT(m_blocks[block->index()] == block);
+    ASSERT(m_blocks[block->index()].first == block);
     ASSERT(isInUse(block));
     
     subspace()->didRemoveBlock(block->index());
     
-    m_blocks[block->index()] = nullptr;
+    m_blocks[block->index()] = { nullptr, nullptr };
     m_freeBlockIndices.append(block->index());
     
     releaseAssertAcquiredBitVectorLock();
@@ -343,7 +346,7 @@ MarkedBlock::Handle* BlockDirectory::findBlockToSweep(unsigned& unsweptCursor)
         return nullptr;
     dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", unsweptCursor, " in use (findBlockToSweep) for ", *this);
     setIsInUse(unsweptCursor, true);
-    return m_blocks[unsweptCursor];
+    return m_blocks[unsweptCursor].first;
 }
 
 void BlockDirectory::sweep()
@@ -360,7 +363,7 @@ void BlockDirectory::sweep()
         if (index >= m_blocks.size())
             break;
 
-        MarkedBlock::Handle* block = m_blocks[index];
+        MarkedBlock::Handle* block = m_blocks[index].first;
         ASSERT(!isInUse(index));
         dataLogLnIf(BlockDirectoryInternal::verbose, "Setting block ", index, " in use (sweep) for ", *this);
         setIsInUse(index, true);
@@ -392,7 +395,7 @@ void BlockDirectory::shrink()
         setIsInUse(index, true);
         {
             DropLockForScope scope(locker);
-            markedSpace().freeBlock(m_blocks[index]);
+            markedSpace().freeBlock(m_blocks[index].first);
         }
         setIsInUse(index, false);
     }
@@ -402,7 +405,7 @@ void BlockDirectory::shrink()
 MarkedBlock::Handle* BlockDirectory::findMarkedBlockHandleDebug(MarkedBlock* block)
 {
     for (size_t index = 0; index < m_blocks.size(); ++index) {
-        MarkedBlock::Handle* handle = m_blocks[index];
+        MarkedBlock::Handle* handle = m_blocks[index].first;
         if (handle && &handle->block() == block)
             return handle;
     }
@@ -463,7 +466,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlock
                 m_done = true;
                 return nullptr;
             }
-            return m_directory.m_blocks[m_index++];
+            return m_directory.m_blocks[m_index++].first;
         }
         
     private:
