@@ -4416,7 +4416,9 @@ void Document::implicitClose()
     // We used to force a synchronous display and flush here. This really isn't
     // necessary and can in fact be actively harmful if pages are loading at a rate of > 60fps
     // (if your platform is syncing flushes and limiting them to 60fps).
-    if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
+    RefPtr owner = ownerElement();
+    CheckedPtr ownerRenderer = owner ? owner->renderer() : nullptr;
+    if (!owner || (ownerRenderer && !ownerRenderer->needsLayout())) {
         updateStyleIfNeeded();
 
         // Always do a layout after loading if needed.
