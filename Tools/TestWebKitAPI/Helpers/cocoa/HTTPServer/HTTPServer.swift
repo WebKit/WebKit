@@ -21,10 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
-
 import Foundation
-private import TestWebKitAPILibrary.Helpers.cocoa.HTTPServer
 import struct Swift.String
 
 /// A description of an HTTP server route with a path and a response.
@@ -129,7 +126,7 @@ public struct HTTPServer: ~Copyable {
         case httpsProxyWithAuthentication
     }
 
-    private var storage: TestWebKitAPI.RefCountedHTTPServer
+    private let storage: HTTPServerCore
 
     /// Create a server from a group of routes.
     ///
@@ -164,25 +161,20 @@ public struct HTTPServer: ~Copyable {
     /// - Parameters:
     ///   - protocol: The HTTP protocol to use for this server.
     ///   - route: A group of routes that correspond to a mapping of request paths to responses.
-    #if compiler(>=6.4)
-    @diagnose(ForeignReferenceType, as: ignored, reason: "rdar://183449632")
-    #endif
-    public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) {
-        var entries = unsafe TestWebKitAPI.__CxxHTTPServer.ResponseMap()
+    /// - Throws: Any error that happens during creation of the server.
+    public init(protocol: `Protocol`, @RouteBuilder _ route: () -> Route) throws {
+        let responses = route().children
+            .reduce(into: [String: HTTPResponseData]()) { result, child in
+                let path = child.pathComponents.joined()
+                let response = HTTPResponseData(
+                    headerFields: child.headerFields.map { (name: $0.key, value: $0.value) },
+                    body: Data(child.response.utf8)
+                )
 
-        let routes = route().children
-        for child in routes {
-            let path = child.pathComponents.joined()
-            var response = unsafe TestWebKitAPI.HTTPResponse(WTF.String(child.response))
-
-            for (name, value) in child.headerFields {
-                unsafe response.setHeaderField(consuming: .init(name), consuming: .init(value))
+                result[path] = response
             }
 
-            unsafe hashMapSet(&entries, consuming: .init(path), consuming: response)
-        }
-
-        unsafe self.storage = .init(consuming: .init(consuming: entries, .init(`protocol`), consuming: .init(), nil, .init(), .Yes))
+        self.storage = try HTTPServerCore(protocol: .init(`protocol`), responses: responses)
     }
 
     /// Calls the given closure after starting the server, and then closes the server once finished.
@@ -190,43 +182,34 @@ public struct HTTPServer: ~Copyable {
     /// - Parameter body: A closure that will run while this server is active.
     /// - Returns: The return value, if any, of the `body` closure parameter.
     /// - Throws: Any error thrown by `body`.
-    public mutating func run<Result, E>(
-        _ body: (Configuration) async throws(E) -> sending Result
-    ) async throws(E) -> sending Result where E: Error, Result: ~Copyable {
-        await withCheckedContinuation { continuation in
-            unsafe self.storage.pointee.startListening(consuming: .init(continuation))
-        }
+    public mutating func run<Result: ~Copyable>(
+        _ body: (Configuration) async throws -> sending Result
+    ) async throws -> sending Result {
+        try await storage.startListening()
+        let result = try await body(Configuration(port: Int(storage.port)))
 
-        let port = unsafe Int(storage.pointee.port())
-        let configuration = Configuration(port: port)
-
-        let result = try await body(configuration)
-
-        await withCheckedContinuation { continuation in
-            unsafe self.storage.pointee.cancel(consuming: .init(continuation))
-        }
-
+        await storage.cancel()
         return result
     }
 
     /// The number of requests this server has received so far.
     public var totalRequests: Int {
-        unsafe Int(storage.pointee.totalRequests())
+        storage.totalRequests
     }
 }
 
-extension TestWebKitAPI.__CxxHTTPServer.`Protocol` {
+extension HTTPServerCore.`Protocol` {
     fileprivate init(_ protocol: HTTPServer.`Protocol`) {
         self =
             switch `protocol` {
-            case .http: .Http
-            case .https: .Https
-            case .httpsWithLegacyTLS: .HttpsWithLegacyTLS
-            case .http2Raw: .Http2Raw
-            case .http2: .Http2
-            case .http3: .Http3
-            case .httpsProxy: .HttpsProxy
-            case .httpsProxyWithAuthentication: .HttpsProxyWithAuthentication
+            case .http: .http
+            case .https: .https
+            case .httpsWithLegacyTLS: .httpsWithLegacyTLS
+            case .http2Raw: .http2Raw
+            case .http2: .http2
+            case .http3: .http3
+            case .httpsProxy: .httpsProxy
+            case .httpsProxyWithAuthentication: .httpsProxyWithAuthentication
             }
     }
 }
@@ -260,5 +243,3 @@ extension HTTPServer {
         }
     }
 }
-
-#endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN

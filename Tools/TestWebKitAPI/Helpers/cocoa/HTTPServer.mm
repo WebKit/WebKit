@@ -75,224 +75,20 @@ static RetainPtr<HTTPResponseDataBridge> toHTTPResponseDataBridge(const HTTPResp
     return adoptNS([[HTTPResponseDataBridge alloc] initWithStatusCode:response.statusCode headerFields:toNSHeaderFields(response.headerFields) body:toNSData(response.body.span()) behavior:static_cast<HTTPResponseBehaviorBridge>(response.behavior) shouldRespondWith304:response.shouldRespondWith304ToConditionalRequests headerFieldsFor304:toNSDictionary(response.headerFieldsFor304)]);
 }
 
-HTTPServer::RequestData::RequestData(HashMap<String, HTTPResponse>&& responses)
-    : requestMap(WTF::move(responses))
-{
-}
-
-static RetainPtr<nw_protocol_definition_t> proxyDefinition(HTTPServer::Protocol protocol)
-{
-    return adoptNS(nw_framer_create_definition("HttpsProxy", NW_FRAMER_CREATE_FLAGS_DEFAULT, [protocol] (nw_framer_t framer) -> nw_framer_start_result_t {
-
-        __block enum class State {
-            WillRequestCredentials,
-            DidRequestCredentials,
-            WillNotRequestCredentials,
-            PassThrough
-        } state { protocol == HTTPServer::Protocol::HttpsProxyWithAuthentication ? State::WillRequestCredentials : State::WillNotRequestCredentials };
-
-        nw_framer_set_input_handler(framer, ^size_t(nw_framer_t framer) {
-            __block RetainPtr<nw_framer_t> retainedFramer = framer;
-            nw_framer_pass_through_output(framer);
-            nw_framer_parse_input(framer, 1, std::numeric_limits<uint32_t>::max(), nullptr, ^size_t(uint8_t* buffer, size_t bufferLength, bool isComplete) {
-                switch (state) {
-                case State::WillRequestCredentials: {
-                    const char* challengeResponse =
-                        "HTTP/1.1 407 Proxy Authentication Required\r\n"
-                        "Proxy-Authenticate: Basic realm=\"testrealm\"\r\n"
-                        "Content-Length: 0\r\n"
-                        "\r\n";
-                    OSObjectPtr response = adoptOSObject(dispatch_data_create(challengeResponse, strlen(challengeResponse), nullptr, nullptr));
-                    nw_framer_write_output_data(retainedFramer.get(), response.get());
-                    state = State::DidRequestCredentials;
-                    break;
-                }
-                case State::DidRequestCredentials:
-                    EXPECT_TRUE(strnstr(byteCast<char>(buffer), "Proxy-Authorization: Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk\r\n", bufferLength));
-                    [[fallthrough]];
-                case State::WillNotRequestCredentials: {
-                    const char* negotiationResponse = ""
-                        "HTTP/1.1 200 Connection Established\r\n"
-                        "Connection: close\r\n\r\n";
-                    OSObjectPtr response = adoptOSObject(dispatch_data_create(negotiationResponse, strlen(negotiationResponse), nullptr, nullptr));
-                    nw_framer_write_output_data(retainedFramer.get(), response.get());
-                    nw_framer_mark_ready(retainedFramer.get());
-                    state = State::PassThrough;
-                    break;
-                }
-                case State::PassThrough:
-                    nw_framer_deliver_input_no_copy(retainedFramer.get(), bufferLength, adoptNS(nw_framer_message_create(retainedFramer.get())).get(), isComplete);
-                    return 0;
-                }
-                return bufferLength;
-            });
-            return 0;
-        });
-        return nw_framer_start_result_will_mark_ready;
-    }));
-}
-
-static bool shouldDisableTLS(HTTPServer::Protocol protocol)
-{
-    switch (protocol) {
-    case HTTPServer::Protocol::Http:
-    case HTTPServer::Protocol::HttpsProxy:
-    case HTTPServer::Protocol::HttpsProxyWithAuthentication:
-    case HTTPServer::Protocol::Http2Proxy:
-        return true;
-    case HTTPServer::Protocol::Https:
-    case HTTPServer::Protocol::HttpsWithLegacyTLS:
-    case HTTPServer::Protocol::Http2Raw:
-    case HTTPServer::Protocol::Http2:
-    case HTTPServer::Protocol::Http3:
-        return false;
-    }
-}
-
-static bool useSwiftImplementation(HTTPServer::Protocol)
-{
-    return true;
-}
-
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-
-static void attachHTTPMessagingListener(nw_parameters_t parameters)
-{
-    nw_parameters_set_server_mode(parameters, true);
-    nw_parameters_set_attach_protocol_listener(parameters, true);
-    RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
-    RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
-    nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
-}
-
-static RetainPtr<nw_parameters_t> quicListenerParameters(HTTPServer::CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& testIdentity, std::optional<uint16_t> port)
-{
-    RetainPtr identity = adoptNS(sec_identity_create(testIdentity.get()));
-    auto configureQuicConnection = [verifier = WTF::move(verifier), identity = WTF::move(identity)] (nw_protocol_options_t quicConnectionOptions) mutable {
-        RetainPtr options = adoptNS(nw_quic_connection_copy_sec_protocol_options(quicConnectionOptions));
-        sec_protocol_options_set_local_identity(options.get(), identity.get());
-        if (verifier) {
-            sec_protocol_options_set_peer_authentication_required(options.get(), true);
-            sec_protocol_options_set_verify_block(options.get(), makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
-                verifier(metadata, trust, completion);
-            }).get(), mainDispatchQueueSingleton());
-        }
-        sec_protocol_options_add_transport_specific_application_protocol(options.get(), "h3", sec_protocol_transport_quic);
-    };
-
-    RetainPtr parameters = adoptNS(nw_parameters_create_quic_stream(^(nw_protocol_options_t options) {
-        nw_quic_stream_set_is_unidirectional(options, true);
-    }, makeBlockPtr(WTF::move(configureQuicConnection)).get()));
-    if (port)
-        nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().legacyCStringPointer()));
-    attachHTTPMessagingListener(parameters.get());
-    return parameters;
-}
-
-#endif // HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-
-RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& customTestIdentity, std::optional<uint16_t> port)
-{
-    if (protocol != Protocol::Http && !customTestIdentity)
-        customTestIdentity = testIdentity();
-
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-    if (protocol == Protocol::Http3)
-        return quicListenerParameters(WTF::move(verifier), WTF::move(customTestIdentity), port);
-#endif
-
-    auto configureTLS = [protocol, verifier = WTF::move(verifier), testIdentity = WTF::move(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
-        RetainPtr options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
-        RetainPtr identity = adoptNS(sec_identity_create(testIdentity.get()));
-        sec_protocol_options_set_local_identity(options.get(), identity.get());
-        if (protocol == Protocol::HttpsWithLegacyTLS) {
-#if ENABLE(TLS_1_2_DEFAULT_MINIMUM)
-            sec_protocol_options_set_min_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
-#endif
-            sec_protocol_options_set_max_tls_protocol_version(options.get(), tls_protocol_version_TLSv10);
-        }
-        if (verifier) {
-            sec_protocol_options_set_peer_authentication_required(options.get(), true);
-            sec_protocol_options_set_verify_block(options.get(), makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
-                verifier(metadata, trust, completion);
-            }).get(), mainDispatchQueueSingleton());
-        }
-        if (protocol == Protocol::Http2Raw || protocol == Protocol::Http2 || protocol == Protocol::Http2Proxy)
-            sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
-    };
-
-    auto configureTLSBlock = shouldDisableTLS(protocol) ? makeBlockPtr(NW_PARAMETERS_DISABLE_PROTOCOL) : makeBlockPtr(WTF::move(configureTLS));
-    RetainPtr parameters = adoptNS(nw_parameters_create_secure_tcp(configureTLSBlock.get(), NW_PARAMETERS_DEFAULT_CONFIGURATION));
-    if (port)
-        nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().legacyCStringPointer()));
-
-    if (protocol == Protocol::HttpsProxy || protocol == Protocol::HttpsProxyWithAuthentication || protocol == Protocol::Http2Proxy) {
-        RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
-        RetainPtr options = adoptNS(nw_framer_create_options(proxyDefinition(protocol).get()));
-        nw_protocol_stack_prepend_application_protocol(stack.get(), options.get());
-
-        RetainPtr tlsOptions = adoptNS(nw_tls_create_options());
-        configureTLS(tlsOptions.get());
-        nw_protocol_stack_prepend_application_protocol(stack.get(), tlsOptions.get());
-
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-        if (protocol == Protocol::Http2Proxy) {
-            nw_parameters_set_server_mode(parameters.get(), true);
-            nw_parameters_set_attach_protocol_listener(parameters.get(), true);
-            RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
-            nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
-        }
-#endif
-    }
-
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-    if (protocol == Protocol::Http2)
-        attachHTTPMessagingListener(parameters.get());
-#endif
-
-    return parameters;
-}
-
 void HTTPServer::startListening(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_serverBridge) {
-        [m_serverBridge startListeningWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
-            RELEASE_ASSERT(!error);
-            completionHandler();
-        }).get()];
-        return;
-    }
-
-    nw_listener_set_state_changed_handler(m_listener.get(), makeBlockPtr([completionHandler = WTF::move(completionHandler)](nw_listener_state_t state, nw_error_t error) mutable {
-        ASSERT_UNUSED(error, !error);
-        if (state == nw_listener_state_ready)
-            completionHandler();
-    }).get());
-    nw_listener_start(m_listener.get());
+    [m_serverBridge startListeningWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)](NSError *error) mutable {
+        RELEASE_ASSERT(!error);
+        completionHandler();
+    }).get()];
 }
 
 void HTTPServer::cancel(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_serverBridge) {
-        // The Swift implementation terminates its own connections as part of cancelling.
-        [m_serverBridge cancelWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
-            completionHandler();
-        }).get()];
-        return;
-    }
-
-    nw_listener_set_state_changed_handler(m_listener.get(), makeBlockPtr([this, weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](nw_listener_state_t state, nw_error_t error) mutable {
-        ASSERT_UNUSED(error, !error);
-
-        if (!weakThis)
-            return;
-
-        if (state == nw_listener_state_cancelled) {
-            m_listener = nullptr;
-            terminateAllConnections(WTF::move(completionHandler));
-        }
-    }).get());
-    nw_listener_cancel(m_listener.get());
+    // The Swift implementation terminates its own connections as part of cancelling.
+    [m_serverBridge cancelWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler();
+    }).get()];
 }
 
 void HTTPServer::cancel() {
@@ -305,16 +101,9 @@ void HTTPServer::cancel() {
 
 void HTTPServer::terminateAllConnections(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_serverBridge) {
-        [m_serverBridge terminateAllConnectionsWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
-            completionHandler();
-        }).get()];
-        return;
-    }
-
-    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
-    for (auto& connection : std::exchange(m_requestData->connections, { }))
-        connection.terminate([aggregator] { });
+    [m_serverBridge terminateAllConnectionsWithCompletionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler)] mutable {
+        completionHandler();
+    }).get()];
 }
 
 HTTPServer::HTTPServer(
@@ -337,35 +126,16 @@ HTTPServer::HTTPServer(
     std::optional<uint16_t> port,
     DeferListening deferListening
 )
-    : m_requestData(adoptRef(*new RequestData(WTF::move(responses))))
-    , m_protocol(protocol)
+    : m_protocol(protocol)
 {
-    if (useSwiftImplementation(protocol)) {
-        RetainPtr<NSMutableDictionary<NSString *, HTTPResponseDataBridge *>> routes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:m_requestData->requestMap.size()]);
-        for (auto& pair : m_requestData->requestMap)
-            [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:pair.key.createNSString()];
+    RetainPtr<NSMutableDictionary<NSString *, HTTPResponseDataBridge *>> routes = adoptNS([[NSMutableDictionary alloc] initWithCapacity:responses.size()]);
+    for (auto& pair : responses)
+        [routes setObject:toHTTPResponseDataBridge(pair.value) forKey:pair.key.createNSString()];
 
-        auto verifierBlock = verifier ? makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t complete) mutable {
-            verifier(metadata, trust, complete);
-        }) : nil;
-        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithRoutes:routes protocol:static_cast<HTTPServerProtocolBridge>(protocol) port:port.value_or(0) identity:identity certificateVerifier:verifierBlock.get()]);
-    } else {
-        m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, WTF::move(verifier), identity, port).get()));
-        nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-        nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, protocol](nw_connection_t connection) {
-            requestData->connections.append(Connection(connection));
-            nw_connection_set_queue(connection, mainDispatchQueueSingleton());
-            nw_connection_start(connection);
-            if (protocol == Protocol::Http2 || protocol == Protocol::Http3 || protocol == Protocol::Http2Proxy) {
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-                respondToHTTPMessagingRequests(Connection(connection), requestData);
-#else
-                RELEASE_ASSERT_NOT_REACHED();
-#endif
-            } else
-                respondToRequests(Connection(connection), requestData);
-        }).get());
-    }
+    auto verifierBlock = verifier ? makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t complete) mutable {
+        verifier(metadata, trust, complete);
+    }) : nil;
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithRoutes:routes protocol:static_cast<HTTPServerProtocolBridge>(protocol) port:port.value_or(0) identity:identity certificateVerifier:verifierBlock.get()]);
 
     if (deferListening == DeferListening::No) {
         bool done = false;
@@ -377,24 +147,11 @@ HTTPServer::HTTPServer(
 }
 
 HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol protocol)
-    : m_requestData(adoptRef(*new RequestData({ })))
-    , m_protocol(protocol)
+    : m_protocol(protocol)
 {
-    if (useSwiftImplementation(protocol)) {
-        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
-            connectionHandler(Connection(connection));
-        }).get()]);
-    } else {
-        m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get()));
-
-        nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-        nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
-            requestData->connections.append(Connection(connection));
-            nw_connection_set_queue(connection, mainDispatchQueueSingleton());
-            nw_connection_start(connection);
-            connectionHandler(Connection(connection));
-        }).get());
-    }
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+        connectionHandler(Connection(connection));
+    }).get()]);
 
     bool done = false;
     startListening([&] {
@@ -404,25 +161,12 @@ HTTPServer::HTTPServer(Function<void(Connection)>&& connectionHandler, Protocol 
 }
 
 HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& connectionHandler, Protocol protocol)
-    : m_requestData(adoptRef(*new RequestData({ })))
-    , m_protocol(protocol)
+    : m_protocol(protocol)
 {
-    if (useSwiftImplementation(protocol)) {
-        m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
-            // The coroutine handle has to outlive this call, so it stays on the C++ side.
-            requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
-        }).get()]);
-    } else {
-        m_listener = adoptNS(nw_listener_create(listenerParameters(protocol, nullptr, nullptr, { }).get()));
-
-        nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-        nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, connectionHandler = WTF::move(connectionHandler)] (nw_connection_t connection) {
-            requestData->connections.append(Connection(connection));
-            nw_connection_set_queue(connection, mainDispatchQueueSingleton());
-            nw_connection_start(connection);
-            requestData->coroutineHandles.append(connectionHandler(Connection(connection)).handle);
-        }).get());
-    }
+    m_serverBridge = adoptNS([[HTTPServerBridge alloc] initWithProtocol:static_cast<HTTPServerProtocolBridge>(protocol) connectionHandler:makeBlockPtr([coroutineHandles = Vector<CoroutineHandle<ConnectionTask::promise_type>> { }, connectionHandler = WTF::move(connectionHandler)](nw_connection_t connection) mutable {
+        // The coroutine handle has to outlive this call, so it stays on the C++ side.
+        coroutineHandles.append(connectionHandler(Connection(connection)).handle);
+    }).get()]);
 
     bool done = false;
     startListening([&] {
@@ -433,24 +177,12 @@ HTTPServer::HTTPServer(UseCoroutines, Function<ConnectionTask(Connection)>&& con
 
 void HTTPServer::addResponse(String&& path, HTTPResponse&& response)
 {
-    if (m_serverBridge) {
-        [m_serverBridge addResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
-        return;
-    }
-
-    RELEASE_ASSERT(!m_requestData->requestMap.contains(path));
-    m_requestData->requestMap.add(WTF::move(path), WTF::move(response));
+    [m_serverBridge addResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
 }
 
 void HTTPServer::setResponse(String&& path, HTTPResponse&& response)
 {
-    if (m_serverBridge) {
-        [m_serverBridge setResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
-        return;
-    }
-
-    ASSERT(m_requestData->requestMap.contains(path));
-    m_requestData->requestMap.set(WTF::move(path), WTF::move(response));
+    [m_serverBridge setResponse:toHTTPResponseDataBridge(response).get() forPath:path.createNSString()];
 }
 
 void HTTPServer::respondWithChallengeThenOK(Connection connection)
@@ -488,34 +220,22 @@ void HTTPServer::respondWithOK(Connection connection)
 
 size_t HTTPServer::totalConnections() const
 {
-    if (m_serverBridge)
-        return [m_serverBridge totalConnections];
-
-    return m_requestData->connections.size();
+    return [m_serverBridge totalConnections];
 }
 
 size_t HTTPServer::totalRequests() const
 {
-    if (m_serverBridge)
-        return [m_serverBridge totalRequests];
-
-    return m_requestData->requestCount;
+    return [m_serverBridge totalRequests];
 }
 
 String HTTPServer::lastRequestCookies() const
 {
-    if (m_serverBridge)
-        return [m_serverBridge lastRequestCookies];
-
-    return m_requestData->lastRequestCookies;
+    return [m_serverBridge lastRequestCookies];
 }
 
 bool HTTPServer::sawAuthorizationHeader() const
 {
-    if (m_serverBridge)
-        return [m_serverBridge sawAuthorizationHeader];
-
-    return m_requestData->sawAuthorizationHeader;
+    return [m_serverBridge sawAuthorizationHeader];
 }
 
 static ASCIILiteral statusText(unsigned statusCode)
@@ -556,19 +276,6 @@ static Vector<uint8_t> toUTF8Vector(const String& string)
         return true;
     });
     return result;
-}
-
-static Vector<uint8_t> serialize304Response(const HashMap<String, String>& headerFields)
-{
-    constexpr int statusCode = 304;
-
-    StringBuilder responseBuilder;
-    responseBuilder.append("HTTP/1.1 "_s, statusCode, ' ', statusText(statusCode), "\r\n"_s);
-    for (auto& pair : headerFields)
-        responseBuilder.append(pair.key, ": "_s, pair.value, "\r\n"_s);
-    responseBuilder.append("\r\n"_s);
-
-    return toUTF8Vector(responseBuilder.toString());
 }
 
 String HTTPServer::parsePath(const Vector<char>& request)
@@ -624,105 +331,9 @@ String HTTPServer::parseBody(const Vector<char>& request)
     return String::fromUTF8(request.subspan(headerEnd));
 }
 
-static bool isConditionalRequest(std::span<const char> request)
-{
-    auto endOfHeaders = find(request, "\r\n\r\n"_span);
-    if (endOfHeaders == notFound)
-        return false;
-    auto headers = request.first(endOfHeaders);
-    constexpr auto newLine = "\r\n"_span;
-    while (!headers.empty()) {
-        if (spanHasPrefixIgnoringASCIICase(headers, "If-None-Match:"_span))
-            return true;
-        size_t endOfLine = find(headers, newLine);
-        if (endOfLine == notFound)
-            return false;
-        skip(headers, endOfLine + newLine.size());
-    }
-    return false;
-}
-
-void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> requestData)
-{
-    connection.receiveHTTPRequest([connection, requestData] (Vector<char>&& request) mutable {
-        if (!request.size())
-            return;
-
-        requestData->requestCount++;
-        requestData->lastRequestCookies = parseCookies(request);
-        if (!parseAuthorization(request).isEmpty())
-            requestData->sawAuthorizationHeader = true;
-
-        auto path = parsePath(request);
-        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(path), "This HTTPServer does not know how to respond to a request for %s", path.utf8());
-
-        auto response = requestData->requestMap.get(path);
-        if (response.shouldRespondWith304ToConditionalRequests) {
-            if (isConditionalRequest(request.span())) {
-                return connection.send(serialize304Response(response.headerFieldsFor304), [connection, requestData] {
-                    respondToRequests(connection, requestData);
-                });
-            }
-        }
-
-        switch (response.behavior) {
-        case HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest:
-            return connection.terminate();
-        case HTTPResponse::Behavior::SendResponseNormally:
-            return connection.send(response.serialize(), [connection, requestData] {
-                respondToRequests(connection, requestData);
-            });
-        case HTTPResponse::Behavior::NeverSendResponse:
-            return respondToRequests(connection, requestData);
-        }
-    });
-}
-
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-
-// Each HTTP/2 stream (i.e. each request) arrives as its own one-shot pseudo-connection via
-// nw_parameters_set_attach_protocol_listener(); unlike respondToRequests(), this must not recurse
-// to await a second message on the same Connection, since a second request never arrives here.
-void HTTPServer::respondToHTTPMessagingRequests(Connection connection, Ref<RequestData> requestData)
-{
-    connection.receiveHTTPMessagingRequest([connection, requestData] (HTTPRequestData&& request) mutable {
-        // receiveHTTPMessagingRequest() leaves an empty (null-path) HTTPRequestData on error/reset before any data arrives.
-        if (request.path.isNull())
-            return;
-
-        requestData->requestCount++;
-        // HTTP/2 requires lowercase header field names on the wire (RFC 7540 8.1.2).
-        requestData->lastRequestCookies = request.headerFields.get("cookie"_s);
-        if (!request.headerFields.get("authorization"_s).isEmpty())
-            requestData->sawAuthorizationHeader = true;
-
-        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(request.path), "This HTTPServer does not know how to respond to a request for %s", request.path.utf8());
-
-        auto response = requestData->requestMap.get(request.path);
-        if (response.shouldRespondWith304ToConditionalRequests) {
-            if (request.headerFields.contains("if-none-match"_s))
-                return connection.sendHTTPMessagingResponse(HTTPResponse(304, copyToVector(response.headerFieldsFor304)));
-        }
-
-        switch (response.behavior) {
-        case HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest:
-            return connection.terminate();
-        case HTTPResponse::Behavior::SendResponseNormally:
-            return connection.sendHTTPMessagingResponse(response);
-        case HTTPResponse::Behavior::NeverSendResponse:
-            return;
-        }
-    });
-}
-
-#endif // HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-
 uint16_t HTTPServer::port() const
 {
-    if (m_serverBridge)
-        return [m_serverBridge port];
-
-    return nw_listener_get_port(m_listener.get());
+    return [m_serverBridge port];
 }
 
 const char* HTTPServer::scheme() const
@@ -789,79 +400,6 @@ Vector<uint8_t> HTTPResponse::serialize(IncludeContentLength includeContentLengt
     auto bytesToSend = toUTF8Vector(responseBuilder.toString());
     bytesToSend.appendVector(body);
     return bytesToSend;
-}
-
-void H2::Connection::send(Frame&& frame, CompletionHandler<void()>&& completionHandler) const
-{
-    auto frameType = frame.type();
-    auto sendFrame = [tlsConnection = m_tlsConnection, frame = WTF::move(frame), completionHandler = WTF::move(completionHandler)] () mutable {
-        // https://http2.github.io/http2-spec/#rfc.section.4.1
-        Vector<uint8_t> bytes;
-        constexpr size_t frameHeaderLength = 9;
-        bytes.reserveInitialCapacity(frameHeaderLength + frame.payload().size());
-        bytes.append(frame.payload().size() >> 16);
-        bytes.append(frame.payload().size() >> 8);
-        bytes.append(frame.payload().size() >> 0);
-        bytes.append(static_cast<uint8_t>(frame.type()));
-        bytes.append(frame.flags());
-        bytes.append(frame.streamID() >> 24);
-        bytes.append(frame.streamID() >> 16);
-        bytes.append(frame.streamID() >> 8);
-        bytes.append(frame.streamID() >> 0);
-        bytes.appendVector(frame.payload());
-        tlsConnection.send(WTF::move(bytes), WTF::move(completionHandler));
-    };
-
-    if (m_sendServerConnectionPreface && frameType != Frame::Type::Settings) {
-        // https://http2.github.io/http2-spec/#rfc.section.3.5
-        m_sendServerConnectionPreface = false;
-        send(Frame(Frame::Type::Settings, 0, 0, { }), WTF::move(sendFrame));
-    } else
-        sendFrame();
-}
-
-void H2::Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandler) const
-{
-    if (m_expectClientConnectionPreface) {
-        // https://http2.github.io/http2-spec/#rfc.section.3.5
-        constexpr size_t clientConnectionPrefaceLength = 24;
-        if (m_receiveBuffer.size() < clientConnectionPrefaceLength) {
-            m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
-                m_receiveBuffer.appendVector(bytes);
-                receive(WTF::move(completionHandler));
-            });
-            return;
-        }
-        ASSERT(spanHasPrefix(m_receiveBuffer.span(), "PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"_span));
-        m_receiveBuffer.removeAt(0, clientConnectionPrefaceLength);
-        m_expectClientConnectionPreface = false;
-        return receive(WTF::move(completionHandler));
-    }
-
-    // https://http2.github.io/http2-spec/#rfc.section.4.1
-    constexpr size_t frameHeaderLength = 9;
-    if (m_receiveBuffer.size() >= frameHeaderLength) {
-        uint32_t payloadLength = (static_cast<uint32_t>(m_receiveBuffer[0]) << 16)
-            + (static_cast<uint32_t>(m_receiveBuffer[1]) << 8)
-            + (static_cast<uint32_t>(m_receiveBuffer[2]) << 0);
-        if (m_receiveBuffer.size() >= frameHeaderLength + payloadLength) {
-            auto type = static_cast<Frame::Type>(m_receiveBuffer[3]);
-            auto flags = m_receiveBuffer[4];
-            auto streamID = (static_cast<uint32_t>(m_receiveBuffer[5]) << 24)
-                + (static_cast<uint32_t>(m_receiveBuffer[6]) << 16)
-                + (static_cast<uint32_t>(m_receiveBuffer[7]) << 8)
-                + (static_cast<uint32_t>(m_receiveBuffer[8]) << 0);
-            Vector<uint8_t> payload;
-            payload.append(m_receiveBuffer.subspan(frameHeaderLength, payloadLength));
-            m_receiveBuffer.removeAt(0, frameHeaderLength + payloadLength);
-            return completionHandler(Frame(type, flags, streamID, WTF::move(payload)));
-        }
-    }
-    
-    m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
-        m_receiveBuffer.appendVector(bytes);
-        receive(WTF::move(completionHandler));
-    });
 }
 
 Vector<uint8_t> HTTPServer::testCertificate()
@@ -974,8 +512,3 @@ Vector<uint8_t> HTTPServer::testPrivateKey()
 }
 
 } // namespace TestWebKitAPI
-
-void hashMapSet(HashMap<WTF::String, TestWebKitAPI::HTTPResponse>& map, WTF::String&& key, TestWebKitAPI::HTTPResponse&& value)
-{
-    map.set(WTF::move(key), WTF::move(value));
-}

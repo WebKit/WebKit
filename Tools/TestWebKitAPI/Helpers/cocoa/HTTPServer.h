@@ -28,7 +28,6 @@
 #ifdef __cplusplus
 
 #import "Helpers/cocoa/NetworkConnection.h"
-#import <swift/bridging>
 #import <wtf/CanMakeWeakPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
@@ -51,17 +50,6 @@ class HTTPServer final : public CanMakeWeakPtr<HTTPServer> {
     WTF_MAKE_NONCOPYABLE(HTTPServer);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(HTTPServer);
 public:
-    struct RequestData : public ThreadSafeRefCounted<RequestData, WTF::DestructionThread::MainRunLoop> {
-        RequestData(HashMap<String, HTTPResponse>&&);
-
-        size_t requestCount { 0 };
-        HashMap<String, HTTPResponse> requestMap;
-        Vector<Connection> connections;
-        Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
-        String lastRequestCookies;
-        bool sawAuthorizationHeader { false };
-    };
-
     enum class Protocol : uint8_t {
         Http,
         Https,
@@ -112,18 +100,11 @@ public:
     static Vector<uint8_t> testCertificate();
 
 private:
-    static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&, RetainPtr<SecIdentityRef>&&, std::optional<uint16_t> port);
-    static void respondToRequests(Connection, Ref<RequestData>);
-#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-    static void respondToHTTPMessagingRequests(Connection, Ref<RequestData>);
-#endif
     const char* scheme() const;
 
-    Ref<RequestData> m_requestData;
-    RetainPtr<nw_listener_t> m_listener;
     RetainPtr<HTTPServerBridge> m_serverBridge;
     Protocol m_protocol { Protocol::Http };
-} SWIFT_NAME(__CxxHTTPServer);
+};
 
 struct HTTPResponse {
     enum class Behavior : uint8_t {
@@ -180,70 +161,11 @@ struct HTTPResponse {
     HashMap<String, String> headerFieldsFor304;
 };
 
-using RefCountedHTTPServer = WTF::RefCountable<HTTPServer>;
-
-namespace H2 {
-
-// https://http2.github.io/http2-spec/#rfc.section.4.1
-class Frame {
-public:
-
-    // https://http2.github.io/http2-spec/#rfc.section.6
-    enum class Type : uint8_t {
-        Data = 0x0,
-        Headers = 0x1,
-        Priority = 0x2,
-        RSTStream = 0x3,
-        Settings = 0x4,
-        PushPromise = 0x5,
-        Ping = 0x6,
-        GoAway = 0x7,
-        WindowUpdate = 0x8,
-        Continuation = 0x9,
-    };
-
-    Frame(Type type, uint8_t flags, uint32_t streamID, Vector<uint8_t> payload)
-        : m_type(type)
-        , m_flags(flags)
-        , m_streamID(streamID)
-        , m_payload(WTF::move(payload)) { }
-
-    Type type() const { return m_type; }
-    uint8_t flags() const { return m_flags; }
-    uint32_t streamID() const { return m_streamID; }
-    const Vector<uint8_t>& payload() const { return m_payload; }
-
-private:
-    Type m_type;
-    uint8_t m_flags;
-    uint32_t m_streamID;
-    Vector<uint8_t> m_payload;
-};
-
-class Connection : public RefCounted<Connection> {
-public:
-    static Ref<Connection> create(TestWebKitAPI::Connection tlsConnection) { return adoptRef(*new Connection(tlsConnection)); }
-    void send(Frame&&, CompletionHandler<void()>&& = nullptr) const;
-    void receive(CompletionHandler<void(Frame&&)>&&) const;
-private:
-    Connection(TestWebKitAPI::Connection tlsConnection)
-        : m_tlsConnection(tlsConnection) { }
-
-    TestWebKitAPI::Connection m_tlsConnection;
-    mutable bool m_expectClientConnectionPreface { true };
-    mutable bool m_sendServerConnectionPreface { true };
-    mutable Vector<uint8_t> m_receiveBuffer;
-};
-
-} // namespace H2
-
 } // namespace TestWebKitAPI
 
 RetainPtr<SecCertificateRef> testCertificate();
 RetainPtr<SecIdentityRef> testIdentity();
 RetainPtr<SecIdentityRef> testIdentity2();
 void verifyCertificateAndPublicKey(SecTrustRef);
-
-void hashMapSet(HashMap<WTF::String, TestWebKitAPI::HTTPResponse>&, WTF::String&&, TestWebKitAPI::HTTPResponse&&);
 
 #endif // __cplusplus

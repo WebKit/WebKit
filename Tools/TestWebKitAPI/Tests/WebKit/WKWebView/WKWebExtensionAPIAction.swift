@@ -1310,7 +1310,6 @@ struct WKWebExtensionAPIActionTests {
         action.closePopup()
     }
 
-    #if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
     // FIXME when webkit.org/b/314652 is resolved.
     #if WTF_PLATFORM_MAC && !ASSERT_ENABLED
     @Test(.disabled("webkit.org/b/314652"))
@@ -1318,7 +1317,7 @@ struct WKWebExtensionAPIActionTests {
     @Test
     #endif
     func clearTabSpecificActionPropertiesOnNavigation() async throws {
-        var server = HTTPServer(protocol: .http) {
+        var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
                 ""
             }
@@ -1385,7 +1384,6 @@ struct WKWebExtensionAPIActionTests {
             try await manager.run()
         }
     }
-    #endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
     @Test
     func hasUnreadBadgeText() async throws {
@@ -1426,10 +1424,9 @@ struct WKWebExtensionAPIActionTests {
         #expect(!tabAction.hasUnreadBadgeText)
     }
 
-    #if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
     @Test
     func navigationOpensInNewTab() async throws {
-        var server = HTTPServer(protocol: .http) {
+        var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
                 ""
             }
@@ -1463,7 +1460,6 @@ struct WKWebExtensionAPIActionTests {
             #expect(tabConfiguration.shouldBeActive)
         }
     }
-    #endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 
     @Test
     func windowOpenOpensInNewWindow() async throws {
@@ -1576,10 +1572,9 @@ struct WKWebExtensionAPIActionTests {
         try await manager.run()
     }
 
-    #if ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
     @Test
     func subframeNavigation() async throws {
-        var server = HTTPServer(protocol: .http) {
+        var server = try HTTPServer(protocol: .http) {
             Route("/", headerFields: ["Content-Type": "text/html"]) {
                 "<script>browser.test.notifyPass()</script>"
             }
@@ -1606,7 +1601,6 @@ struct WKWebExtensionAPIActionTests {
             try await manager.run()
         }
     }
-    #endif // ENABLE_CXX_INTEROP && compiler(>=6.4) && !SWIFT_WEBKIT_TOOLCHAIN
 }
 
 #endif // ENABLE_WK_WEB_EXTENSIONS

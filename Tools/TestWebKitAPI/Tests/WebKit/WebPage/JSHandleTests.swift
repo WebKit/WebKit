@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI && ENABLE_CXX_INTEROP && compiler(>=6.4)
+#if ENABLE_SWIFTUI
 
 import Testing
 @_spi(Testing) import WebKit
@@ -44,7 +44,7 @@ private struct JSHandleNavigationDecider: WebPage.NavigationDeciding {
 struct JSHandleTests {
     @Test
     func basic() async throws {
-        var server = HTTPServer(protocol: .httpsProxy) {
+        var server = try HTTPServer(protocol: .httpsProxy) {
             Route("/example") {
                 "<iframe id=onlyframe src='https://webkit.org/webkit'></iframe><div id=onlydiv></div>"
             }
@@ -210,4 +210,4 @@ extension WebPage.Configuration {
     }
 }
 
-#endif // ENABLE_SWIFTUI && ENABLE_CXX_INTEROP && compiler(>=6.4)
+#endif // ENABLE_SWIFTUI

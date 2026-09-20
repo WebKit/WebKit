@@ -36,6 +36,7 @@
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/ParsingUtilities.h>
 
 #if HAVE(PRECONNECT_PING)
 @interface SessionDelegate : NSObject <NSURLSessionDataDelegate>
@@ -50,6 +51,140 @@
 #endif
 
 namespace TestWebKitAPI {
+
+#if HAVE(PRECONNECT_PING)
+
+// Hand-rolled HTTP/2 framing. Protocol::Http2Raw only negotiates the "h2" ALPN; the framing
+// is this test's business, so it lives here rather than in HTTPServer.
+namespace H2 {
+
+// https://http2.github.io/http2-spec/#rfc.section.4.1
+class Frame {
+public:
+
+    // https://http2.github.io/http2-spec/#rfc.section.6
+    enum class Type : uint8_t {
+        Data = 0x0,
+        Headers = 0x1,
+        Priority = 0x2,
+        RSTStream = 0x3,
+        Settings = 0x4,
+        PushPromise = 0x5,
+        Ping = 0x6,
+        GoAway = 0x7,
+        WindowUpdate = 0x8,
+        Continuation = 0x9,
+    };
+
+    Frame(Type type, uint8_t flags, uint32_t streamID, Vector<uint8_t> payload)
+        : m_type(type)
+        , m_flags(flags)
+        , m_streamID(streamID)
+        , m_payload(WTF::move(payload)) { }
+
+    Type type() const { return m_type; }
+    uint8_t flags() const { return m_flags; }
+    uint32_t streamID() const { return m_streamID; }
+    const Vector<uint8_t>& payload() const { return m_payload; }
+
+private:
+    Type m_type;
+    uint8_t m_flags;
+    uint32_t m_streamID;
+    Vector<uint8_t> m_payload;
+};
+
+class Connection : public RefCounted<Connection> {
+public:
+    static Ref<Connection> create(TestWebKitAPI::Connection tlsConnection) { return adoptRef(*new Connection(tlsConnection)); }
+    void send(Frame&&, CompletionHandler<void()>&& = nullptr) const;
+    void receive(CompletionHandler<void(Frame&&)>&&) const;
+private:
+    Connection(TestWebKitAPI::Connection tlsConnection)
+    : m_tlsConnection(tlsConnection) { }
+
+    TestWebKitAPI::Connection m_tlsConnection;
+    mutable bool m_expectClientConnectionPreface { true };
+    mutable bool m_sendServerConnectionPreface { true };
+    mutable Vector<uint8_t> m_receiveBuffer;
+};
+
+void Connection::send(Frame&& frame, CompletionHandler<void()>&& completionHandler) const
+{
+    auto frameType = frame.type();
+    auto sendFrame = [tlsConnection = m_tlsConnection, frame = WTF::move(frame), completionHandler = WTF::move(completionHandler)] () mutable {
+        // https://http2.github.io/http2-spec/#rfc.section.4.1
+        Vector<uint8_t> bytes;
+        constexpr size_t frameHeaderLength = 9;
+        bytes.reserveInitialCapacity(frameHeaderLength + frame.payload().size());
+        bytes.append(frame.payload().size() >> 16);
+        bytes.append(frame.payload().size() >> 8);
+        bytes.append(frame.payload().size() >> 0);
+        bytes.append(static_cast<uint8_t>(frame.type()));
+        bytes.append(frame.flags());
+        bytes.append(frame.streamID() >> 24);
+        bytes.append(frame.streamID() >> 16);
+        bytes.append(frame.streamID() >> 8);
+        bytes.append(frame.streamID() >> 0);
+        bytes.appendVector(frame.payload());
+        tlsConnection.send(WTF::move(bytes), WTF::move(completionHandler));
+    };
+
+    if (m_sendServerConnectionPreface && frameType != Frame::Type::Settings) {
+        // https://http2.github.io/http2-spec/#rfc.section.3.5
+        m_sendServerConnectionPreface = false;
+        send(Frame(Frame::Type::Settings, 0, 0, { }), WTF::move(sendFrame));
+    } else
+        sendFrame();
+}
+
+void Connection::receive(CompletionHandler<void(Frame&&)>&& completionHandler) const
+{
+    if (m_expectClientConnectionPreface) {
+        // https://http2.github.io/http2-spec/#rfc.section.3.5
+        constexpr size_t clientConnectionPrefaceLength = 24;
+        if (m_receiveBuffer.size() < clientConnectionPrefaceLength) {
+            m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+                m_receiveBuffer.appendVector(bytes);
+                receive(WTF::move(completionHandler));
+            });
+            return;
+        }
+        ASSERT(spanHasPrefix(m_receiveBuffer.span(), "PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n"_span));
+        m_receiveBuffer.removeAt(0, clientConnectionPrefaceLength);
+        m_expectClientConnectionPreface = false;
+        return receive(WTF::move(completionHandler));
+    }
+
+    // https://http2.github.io/http2-spec/#rfc.section.4.1
+    constexpr size_t frameHeaderLength = 9;
+    if (m_receiveBuffer.size() >= frameHeaderLength) {
+        uint32_t payloadLength = (static_cast<uint32_t>(m_receiveBuffer[0]) << 16)
+        + (static_cast<uint32_t>(m_receiveBuffer[1]) << 8)
+        + (static_cast<uint32_t>(m_receiveBuffer[2]) << 0);
+        if (m_receiveBuffer.size() >= frameHeaderLength + payloadLength) {
+            auto type = static_cast<Frame::Type>(m_receiveBuffer[3]);
+            auto flags = m_receiveBuffer[4];
+            auto streamID = (static_cast<uint32_t>(m_receiveBuffer[5]) << 24)
+            + (static_cast<uint32_t>(m_receiveBuffer[6]) << 16)
+            + (static_cast<uint32_t>(m_receiveBuffer[7]) << 8)
+            + (static_cast<uint32_t>(m_receiveBuffer[8]) << 0);
+            Vector<uint8_t> payload;
+            payload.append(m_receiveBuffer.subspan(frameHeaderLength, payloadLength));
+            m_receiveBuffer.removeAt(0, frameHeaderLength + payloadLength);
+            return completionHandler(Frame(type, flags, streamID, WTF::move(payload)));
+        }
+    }
+
+    m_tlsConnection.receiveBytes([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)] (Vector<uint8_t>&& bytes) mutable {
+        m_receiveBuffer.appendVector(bytes);
+        receive(WTF::move(completionHandler));
+    });
+}
+
+} // namespace H2
+
+#endif
 
 TEST(Preconnect, HTTP)
 {
@@ -130,6 +265,7 @@ TEST(Preconnect, HTTPS)
 }
 
 #if HAVE(PRECONNECT_PING)
+
 static void pingPong(Ref<H2::Connection>&& connection, size_t* headersCount)
 {
     connection->receive([connection, headersCount] (H2::Frame&& frame) mutable {
