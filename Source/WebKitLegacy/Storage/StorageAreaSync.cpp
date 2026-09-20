@@ -70,7 +70,7 @@ inline StorageAreaSync::StorageAreaSync(RefPtr<StorageSyncManager>&& storageSync
     // FIXME: If it can't import, then the default WebKit behavior should be that of private browsing,
     // not silently ignoring it. https://bugs.webkit.org/show_bug.cgi?id=25894
     RefPtr<StorageAreaSync> protector(this);
-    m_syncManager->dispatch([protector] {
+    protect(m_syncManager)->dispatch([protector] {
         protector->performImport();
     });
 }
@@ -107,7 +107,7 @@ void StorageAreaSync::scheduleFinalSync()
     syncTimerFired();
 
     RefPtr<StorageAreaSync> protector(this);
-    m_syncManager->dispatch([protector] {
+    protect(m_syncManager)->dispatch([protector] {
         protector->deleteEmptyDatabase();
     });
 }
@@ -212,7 +212,7 @@ void StorageAreaSync::syncTimerFired()
             disableSuddenTermination();
 
             RefPtr<StorageAreaSync> protector(this);
-            m_syncManager->dispatch([protector] {
+            protect(m_syncManager)->dispatch([protector] {
                 protector->performSync();
             });
         }
@@ -239,7 +239,7 @@ void StorageAreaSync::openDatabase(OpenDatabaseParamType openingStrategy)
 
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 
-    String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+    String databaseFilename = protect(m_syncManager)->fullDatabaseFilename(m_databaseIdentifier);
 
     if (!FileSystem::fileExists(databaseFilename) && openingStrategy == SkipIfNonExistent)
         return;
@@ -349,7 +349,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    m_storageArea->importItems(WTF::move(itemMap));
+    protect(m_storageArea)->importItems(WTF::move(itemMap));
 
     markImported();
 }
@@ -525,7 +525,7 @@ void StorageAreaSync::deleteEmptyDatabase()
             StorageTracker::tracker().deleteOriginWithIdentifier(databaseIdentifier);
         });
     } else {
-        String databaseFilename = m_syncManager->fullDatabaseFilename(m_databaseIdentifier);
+        String databaseFilename = protect(m_syncManager)->fullDatabaseFilename(m_databaseIdentifier);
         if (!FileSystem::deleteFile(databaseFilename))
             LOG_ERROR("Failed to delete database file %s\n", databaseFilename.utf8());
     }

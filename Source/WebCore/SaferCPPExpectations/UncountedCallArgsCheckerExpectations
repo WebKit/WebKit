@@ -1,19 +1,17 @@
 Modules/webaudio/AudioBuffer.cpp
 Modules/webaudio/BaseAudioContext.h
 StyleChangedAnimatablePropertiesGenerated.cpp
-accessibility/AXObjectCache.cpp
-accessibility/AccessibilityListBoxOption.cpp
-accessibility/AccessibilityMenuList.cpp
-accessibility/AccessibilityMenuListOption.cpp
-accessibility/AccessibilityNodeObject.cpp
-accessibility/AccessibilityObject.cpp
-accessibility/AccessibilityObject.h
-accessibility/AccessibilityRenderObject.cpp
+[ iOS ] accessibility/AXObjectCache.cpp
+[ macOS ] accessibility/AccessibilityListBoxOption.cpp
+[ macOS ] accessibility/AccessibilityMenuList.cpp
+[ macOS ] accessibility/AccessibilityMenuListOption.cpp
+[ macOS ] accessibility/AccessibilityNodeObject.cpp
+[ macOS ] accessibility/AccessibilityObject.cpp
+[ macOS ] accessibility/AccessibilityObject.h
+[ macOS ] accessibility/AccessibilityRenderObject.cpp
 [ iOS ] accessibility/ios/AXObjectCacheIOS.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-[ Mac ] accessibility/isolatedtree/AXIsolatedTree.cpp
-[ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 animation/BlendingKeyframes.cpp
 animation/KeyframeEffect.cpp
 animation/StyleOriginatedAnimation.cpp
@@ -146,28 +144,28 @@ html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
-inspector/DOMEditor.cpp
-inspector/InspectorAuditAccessibilityObject.cpp
-inspector/InspectorCanvas.cpp
-inspector/InspectorCanvasCallTracer.cpp
-inspector/InspectorOverlay.cpp
-inspector/InspectorResourceUtilities.cpp
+[ macOS ] inspector/DOMEditor.cpp
+[ macOS ] inspector/InspectorAuditAccessibilityObject.cpp
+[ macOS ] inspector/InspectorCanvas.cpp
+[ macOS ] inspector/InspectorCanvasCallTracer.cpp
+[ macOS ] inspector/InspectorOverlay.cpp
+[ macOS ] inspector/InspectorResourceUtilities.cpp
 inspector/InspectorShaderProgram.cpp
-inspector/InspectorStyleSheet.cpp
-inspector/PageDebugger.cpp
-inspector/agents/InspectorAnimationAgent.cpp
-inspector/agents/InspectorCPUProfilerAgent.cpp
-inspector/agents/InspectorCSSAgent.cpp
-inspector/agents/InspectorCanvasAgent.cpp
-inspector/agents/InspectorDOMAgent.cpp
-inspector/agents/InspectorDOMStorageAgent.cpp
-inspector/agents/InspectorMemoryAgent.cpp
-inspector/agents/InspectorNetworkAgent.cpp
-inspector/agents/InspectorPageAgent.cpp
-inspector/agents/page/PageConsoleAgent.cpp
-inspector/agents/page/PageNetworkAgent.cpp
-inspector/agents/page/PageRuntimeAgent.cpp
-inspector/agents/worker/ServiceWorkerAgent.cpp
+[ macOS ] inspector/InspectorStyleSheet.cpp
+[ macOS ] inspector/PageDebugger.cpp
+[ macOS ] inspector/agents/InspectorAnimationAgent.cpp
+[ macOS ] inspector/agents/InspectorCPUProfilerAgent.cpp
+[ macOS ] inspector/agents/InspectorCSSAgent.cpp
+[ macOS ] inspector/agents/InspectorCanvasAgent.cpp
+[ macOS ] inspector/agents/InspectorDOMAgent.cpp
+[ macOS ] inspector/agents/InspectorDOMStorageAgent.cpp
+[ macOS ] inspector/agents/InspectorMemoryAgent.cpp
+[ macOS ] inspector/agents/InspectorNetworkAgent.cpp
+[ macOS ] inspector/agents/InspectorPageAgent.cpp
+[ macOS ] inspector/agents/page/PageConsoleAgent.cpp
+[ macOS ] inspector/agents/page/PageNetworkAgent.cpp
+[ macOS ] inspector/agents/page/PageRuntimeAgent.cpp
+[ macOS ] inspector/agents/worker/ServiceWorkerAgent.cpp
 loader/ApplicationManifestLoader.cpp
 loader/DocumentLoader.cpp
 loader/FrameLoader.cpp
@@ -368,11 +366,10 @@ svg/properties/SVGAnimatedString.cpp
 svg/properties/SVGAnimatedValueProperty.h
 svg/properties/SVGPointerMemberAccessor.h
 svg/properties/SVGPropertyAccessorImpl.h
-testing/InternalSettings.cpp
-testing/Internals.cpp
+[ iOS ] testing/InternalSettings.cpp
+[ iOS ] testing/Internals.cpp
 testing/LegacyMockCDM.cpp
-[ Mac ] testing/MockMediaSessionCoordinator.cpp
-testing/ServiceWorkerInternals.cpp
+[ macOS ] testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
 workers/service/context/ServiceWorkerThread.cpp
 worklets/PaintWorkletGlobalScope.cpp

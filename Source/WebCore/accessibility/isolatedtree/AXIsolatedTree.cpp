@@ -133,7 +133,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
     axObjectCache.initializeIsolatedTreeGeometry();
 
-    if (RefPtr axRoot = axObjectCache.document() ? axObjectCache.getOrCreate(axObjectCache.document()->view()) : nullptr) {
+    if (RefPtr axRoot = axObjectCache.document() ? axObjectCache.getOrCreate(protect(protect(axObjectCache.document())->view())) : nullptr) {
         tree->updatingSubtree(axRoot.get());
         tree->createEmptyContent(*axRoot);
     }
@@ -215,11 +215,11 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
-    RefPtr axRoot = axObjectCache.getOrCreate(document->view());
+    RefPtr axRoot = axObjectCache.getOrCreate(protect(document->view()));
     if (axRoot)
         tree->generateSubtree(*axRoot);
 
-    if (RefPtr axFocus = axObjectCache.focusedObjectForPage(document->page()))
+    if (RefPtr axFocus = axObjectCache.focusedObjectForPage(protect(document->page())))
         tree->setFocusedNodeID(axFocus->objectID());
     tree->setSelectedTextMarkerRange(document->selection().selection());
     tree->setInitialSortedLiveRegions(axIDs(axObjectCache.sortedLiveRegions()));
@@ -496,11 +496,12 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     // The process of resolving appends can add more IDs to m_unresolvedPendingAppends as we iterate over it, so
     // iterate over an exchanged map instead. Any late-appended IDs will get picked up in the next cycle.
     auto unresolvedPendingAppends = std::exchange(m_unresolvedPendingAppends, { });
+    RefPtr replacingTree = m_replacingTree;
     for (const auto& [axID, sequence] : unresolvedPendingAppends) {
-        if (m_replacingTree) {
+        if (replacingTree) {
             ++counter;
             if (MonotonicTime::now() - lastFeedbackTime > CreationFeedbackInterval) {
-                m_replacingTree->reportLoadingProgress(counter / unresolvedPendingAppends.size());
+                replacingTree->reportLoadingProgress(counter / unresolvedPendingAppends.size());
                 lastFeedbackTime = MonotonicTime::now();
             }
         }
@@ -516,8 +517,8 @@ Vector<AXIsolatedTree::NodeChange> AXIsolatedTree::resolveAppends()
     }
     resolvedAppends.shrinkToFit();
 
-    if (m_replacingTree)
-        m_replacingTree->reportLoadingProgress(1);
+    if (replacingTree)
+        replacingTree->reportLoadingProgress(1);
     return resolvedAppends;
 }
 
@@ -1328,7 +1329,7 @@ void AXIsolatedTree::updateFrameGeometryAndScrollPositionIfNeeded(AXObjectCache&
 {
     if (std::optional geometry = cache.getAndUpdateFrameGeometry()) {
         IntPoint viewOriginScrollPosition;
-        if (CheckedPtr view = cache.document()->view())
+        if (CheckedPtr view = protect(cache.document())->view())
             viewOriginScrollPosition = IntPoint(view->documentScrollPositionRelativeToViewOrigin());
         setFrameGeometry(AXFrameGeometry { *geometry }, viewOriginScrollPosition);
     }
@@ -1375,7 +1376,7 @@ void AXIsolatedTree::updateRootScreenRelativePosition()
     AX_ASSERT(isMainThread());
 
     CheckedPtr cache = m_axObjectCache;
-    if (RefPtr axRoot = cache && cache->document() ? dynamicDowncast<AccessibilityScrollView>(cache->getOrCreate(cache->document()->view())) : nullptr) {
+    if (RefPtr axRoot = cache && cache->document() ? dynamicDowncast<AccessibilityScrollView>(cache->getOrCreate(protect(protect(cache->document())->view()))) : nullptr) {
         queueNodeUpdate(axRoot->objectID(), { AXProperty::ScreenRelativePosition });
 
 #if ENABLE(ACCESSIBILITY_LOCAL_FRAME)

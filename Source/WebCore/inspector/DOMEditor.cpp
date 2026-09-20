@@ -92,7 +92,7 @@ private:
     ExceptionOr<void> perform() final
     {
         if (m_node->parentNode()) {
-            m_removeChildAction = makeUnique<RemoveChildAction>(*m_node->parentNode(), m_node);
+            m_removeChildAction = makeUnique<RemoveChildAction>(protect(*m_node->parentNode()), m_node);
             auto result = m_removeChildAction->perform();
             if (result.hasException())
                 return result.releaseException();

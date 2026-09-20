@@ -102,6 +102,7 @@ public:
 
     virtual ~GPUDevice();
 
+    uint32_t owningThreadUID() const { return m_owningThreadUID; }
     bool isContextThread() const { return m_owningThreadUID == currentThreadID(); }
 
     // ContextDestructionObserver.

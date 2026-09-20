@@ -299,7 +299,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
 
     {
         for (auto& animation : WebAnimation::instances()) {
-            if (existsInCurrentPage(animation->scriptExecutionContext()))
+            if (existsInCurrentPage(protect(animation->scriptExecutionContext())))
                 bindAnimation(animation, nullptr);
         }
     }
@@ -405,7 +405,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::startTracking(
 
     ASSERT(m_trackedStyleOriginatedAnimationData.isEmpty());
 
-    m_frontendDispatcher->trackingStart(protect(environment())->executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingStart(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds());
 
     return { };
 }
@@ -420,7 +420,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorAnimationAgent::stopTracking()
 
     m_trackedStyleOriginatedAnimationData.clear();
 
-    m_frontendDispatcher->trackingComplete(protect(environment())->executionStopwatch().elapsedTime().seconds());
+    m_frontendDispatcher->trackingComplete(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds());
 
     return { };
 }
@@ -495,7 +495,7 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(const Styleable& target, K
             ASSERT_NOT_REACHED();
     }
 
-    m_frontendDispatcher->trackingUpdate(protect(environment())->executionStopwatch().elapsedTime().seconds(), WTF::move(event));
+    m_frontendDispatcher->trackingUpdate(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds(), WTF::move(event));
 }
 
 void InspectorAnimationAgent::didChangeWebAnimationName(WebAnimation& animation)
@@ -695,7 +695,7 @@ void InspectorAnimationAgent::stopTrackingStyleOriginatedAnimation(StyleOriginat
             .setTrackingAnimationId(data->trackingAnimationId)
             .setAnimationState(Inspector::Protocol::Animation::AnimationState::Canceled)
             .release();
-        m_frontendDispatcher->trackingUpdate(protect(environment())->executionStopwatch().elapsedTime().seconds(), WTF::move(event));
+        m_frontendDispatcher->trackingUpdate(protect(protect(environment())->executionStopwatch())->elapsedTime().seconds(), WTF::move(event));
     }
 }
 

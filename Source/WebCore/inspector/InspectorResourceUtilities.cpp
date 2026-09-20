@@ -150,7 +150,7 @@ Vector<CachedResource*> cachedResourcesForFrame(LocalFrame* frame)
 
 bool mainResourceContent(LocalFrame* frame, bool withBase64Encode, String* result)
 {
-    RefPtr<FragmentedSharedBuffer> buffer = frame->loader().documentLoader()->mainResourceData();
+    RefPtr<FragmentedSharedBuffer> buffer = protect(frame->loader().documentLoader())->mainResourceData();
     if (!buffer)
         return false;
     return dataContent(buffer->makeContiguous()->span(), protect(frame->document())->encoding(), withBase64Encode, result);
@@ -253,7 +253,7 @@ RefPtr<CachedResource> cachedResource(const LocalFrame* frame, const URL& url)
     if (url.isNull())
         return nullptr;
 
-    RefPtr cachedResource = protect(frame->document())->cachedResourceLoader().cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
+    RefPtr cachedResource = protect(protect(frame->document())->cachedResourceLoader())->cachedResource(MemoryCache::removeFragmentIdentifierIfNeeded(url));
     if (!cachedResource) {
         ResourceRequest request(URL { url });
         if (RefPtr document = frame->document()) {
@@ -334,7 +334,7 @@ LocalFrame* findFrameWithSecurityOrigin(Page& page, const String& originRawStrin
         SUPPRESS_UNCOUNTED_LOCAL auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (protect(localFrame->document())->securityOrigin().toRawString() == originRawString)
+        if (protect(protect(localFrame->document())->securityOrigin())->toRawString() == originRawString)
             return localFrame;
     }
     return nullptr;
