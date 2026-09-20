@@ -28,6 +28,7 @@
 
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/ResourceLoadPriority.h>
+#include <optional>
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Platform.h>
@@ -134,12 +135,12 @@ public:
 struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<AdditionalNetworkLoadMetricsForWebInspector> {
 
     static Ref<AdditionalNetworkLoadMetricsForWebInspector> create() { return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector()); }
-    WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, ResourceLoadPriority&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
+    WEBCORE_EXPORT static Ref<AdditionalNetworkLoadMetricsForWebInspector> create(NetworkLoadPriority&&, std::optional<ResourceLoadPriority>&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy() const;
     Ref<AdditionalNetworkLoadMetricsForWebInspector> isolatedCopy();
 
     NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
-    ResourceLoadPriority initialPriority { ResourceLoadPriority::Low };
+    std::optional<ResourceLoadPriority> initialPriority;
 
     String remoteAddress;
     String connectionIdentifier;
@@ -156,7 +157,7 @@ struct AdditionalNetworkLoadMetricsForWebInspector : public RefCounted<Additiona
     bool isProxyConnection { false };
 private:
     AdditionalNetworkLoadMetricsForWebInspector() { }
-    AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&&, ResourceLoadPriority&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
+    AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&&, std::optional<ResourceLoadPriority>&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection);
 };
 
 #if PLATFORM(COCOA)
