@@ -39,7 +39,7 @@ PASS: First duplicate http://127.0.0.1:8000/resources/square100.png?duplicate sh
 PASS: - First duplicate priority has been boosted
 PASS: Image http://127.0.0.1:8000/resources/square100.png?3 should have a Low priority
 PASS: - Second duplicate image has not been boosted
-PASS: Beacon https://127.0.0.1:8443/blink/sendbeacon/resources/save-beacon.py?name=same-origin should have Very Low priority
+PASS: Beacon https://127.0.0.1:8443/blink/sendbeacon/resources/save-beacon.py?name=priorities should have Very Low priority
 PASS: Font http://127.0.0.1:8000/resources/Ahem.woff should start with a Medium priority
 PASS: - Font should stay with a Medium priority
 
