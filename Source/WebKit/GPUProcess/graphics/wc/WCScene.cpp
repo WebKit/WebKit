@@ -34,6 +34,7 @@
 #include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
+#include <WebCore/BitmapImage.h>
 #include <WebCore/BitmapTexturePool.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/TextureMapper.h>

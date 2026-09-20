@@ -27,6 +27,7 @@
 #include "config.h"
 #include "Cursor.h"
 
+#include "BitmapImage.h"
 #include "BitmapInfo.h"
 #include "HWndDC.h"
 #include "Image.h"
@@ -91,9 +92,9 @@ static Ref<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCWSTR lpCursorN
 static Ref<SharedCursor> loadCursorByName(const char* name, int x, int y)
 {
     IntPoint hotSpot(x, y);
-    RefPtr<Image> cursorImage(ImageAdapter::loadPlatformResource(name));
-    if (cursorImage && !cursorImage->isNull())
-        return createSharedCursor(cursorImage.get(), hotSpot);
+    Ref cursorImage = ImageAdapter::loadPlatformResource(name);
+    if (!cursorImage->isNull())
+        return createSharedCursor(cursorImage.ptr(), hotSpot);
     return loadSharedCursor(0, IDC_ARROW);
 }
 
