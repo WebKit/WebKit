@@ -143,6 +143,7 @@
 #include "VelocityData.h"
 #include "VisualViewport.h"
 #include "WheelEventTestMonitor.h"
+#include <span>
 #include <wtf/HexNumber.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>
@@ -6078,8 +6079,6 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptio
     ASSERT(!needsStyleRecalc());
     ASSERT(!needsLayout());
 }
-
-#include <span>
 
 template<typename CharacterType>
 static size_t nonWhitespaceLength(std::span<const CharacterType> characters)
