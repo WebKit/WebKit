@@ -129,6 +129,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+bool operator==(WebCore::NetworkLoadPriority, WebCore::ResourceLoadPriority);
+
 #if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
 // Upper bounds on what may accumulate in m_deferredMessages while the WebProcess has not yet answered
 // ContinueDidReceiveResponse. Generous for a fast load whose data outruns the content-policy check, but keeps a
@@ -512,7 +514,6 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTF::move(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = NetworkLoad::create(*this, WTF::move(parameters), *networkSession);
-
     WeakPtr weakThis { *this };
     RefPtr networkLoad = m_networkLoad;
     if (isSynchronous())
@@ -1543,13 +1544,10 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
 #endif
 
     if (networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
-        int requestPriority = static_cast<int>(m_parameters.request.priority());
-        int metricPriority = static_cast<int>(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority);
-
         if (m_parameters.request.initialPriority().has_value())
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority = m_parameters.request.initialPriority().value();
 
-        if (requestPriority != metricPriority)
+        if (!(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority == m_parameters.request.priority()))
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority = toNetworkLoadPriority(m_parameters.request.priority());
     }
 
@@ -2972,8 +2970,13 @@ WebCore::NetworkLoadPriority NODELETE NetworkResourceLoader::toNetworkLoadPriori
     case ResourceLoadPriority::VeryHigh:
         return WebCore::NetworkLoadPriority::Veryhigh;
     }
-
+    ASSERT_NOT_REACHED();
     return WebCore::NetworkLoadPriority::Unknown;
+}
+
+bool operator==(WebCore::NetworkLoadPriority a, WebCore::ResourceLoadPriority b)
+{
+    return a == NetworkResourceLoader::toNetworkLoadPriority(b);
 }
 
 } // namespace WebKit

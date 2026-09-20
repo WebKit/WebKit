@@ -75,8 +75,8 @@ public:
         Inspector::ResourceType type() const { return m_type; }
         void setType(Inspector::ResourceType type) { m_type = type; }
 
-        CachedResource::Type requestResourceType() const { return m_cachedResourceType; }
-        void setRequestResourceType(CachedResource::Type type) { m_cachedResourceType = type; }
+        WebCore::CachedResource::Type requestResourceType() const { return m_cachedResourceType; }
+        void setRequestResourceType(WebCore::CachedResource::Type type) { m_cachedResourceType = type; }
 
         int httpStatusCode() const { return m_httpStatusCode; }
         void setHTTPStatusCode(int httpStatusCode) { m_httpStatusCode = httpStatusCode; }
