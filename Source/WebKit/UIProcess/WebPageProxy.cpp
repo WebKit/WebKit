@@ -11769,7 +11769,7 @@ void WebPageProxy::scheduleAccessibilityFrameGeometryUpdate()
         m_lastAccessibilityFrameGeometryUpdate = MonotonicTime::now();
         updateAccessibilityFrameGeometry();
     } else if (!m_pendingAccessibilityFrameGeometryUpdateTimer || !m_pendingAccessibilityFrameGeometryUpdateTimer->isActive()) {
-        m_pendingAccessibilityFrameGeometryUpdateTimer = RunLoop::mainSingleton().dispatchAfter(updateDelay, [weakThis = WeakPtr { *this }] {
+        m_pendingAccessibilityFrameGeometryUpdateTimer = RunLoop::mainSingleton().scheduleTimer(updateDelay, [weakThis = WeakPtr { *this }] {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

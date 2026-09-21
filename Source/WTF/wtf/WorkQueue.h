@@ -98,6 +98,7 @@ public:
 
     // WorkQueueBase
     void dispatch(Function<void()>&&) override;
+    void dispatchAfter(Seconds, Function<void()>&&) override;
     bool isCurrent() const override;
     void ref() const override { GuaranteedSerialFunctionDispatcher::ref(); }
     void deref() const override { GuaranteedSerialFunctionDispatcher::deref(); }
