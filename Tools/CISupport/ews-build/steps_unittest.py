@@ -9528,7 +9528,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setProperty('remote', 'apple')
         self.expect_hidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expect_outcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @webkit-bug-bridge")
+        self.expect_outcome(result=FAILURE, state_string="Landing changes on 'apple' remote requires validation from @webkit-bug-bridge, @rjepstein, @JonWBedard, @ryanhaddad, @mogey or @ik128484")
         return self.run_step()
 
 
