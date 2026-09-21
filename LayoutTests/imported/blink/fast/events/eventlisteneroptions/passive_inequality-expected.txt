@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
+CONSOLE MESSAGE: Unable to preventDefault() on event of type 'test': Inside passive event listener.
 
 PASS Passive Handler
 PASS Non Passive Handler
