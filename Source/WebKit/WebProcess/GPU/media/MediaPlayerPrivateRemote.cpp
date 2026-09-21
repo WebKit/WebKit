@@ -1169,7 +1169,7 @@ void MediaPlayerPrivateRemote::paintCurrentFrameInContext(GraphicsContext& conte
     RefPtr videoFrame = videoFrameForCurrentTime();
     if (!videoFrame)
         return;
-    context.drawVideoFrame(*videoFrame, rect, ImageOrientation::Orientation::None, false);
+    context.drawVideoFrame(*videoFrame, rect, ShouldDiscardAlpha::No);
 }
 
 RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
