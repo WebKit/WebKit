@@ -8,7 +8,6 @@ Modules/webaudio/WaveShaperNode.cpp
 StyleBuilderGenerated.cpp
 StyleExtractorGenerated.cpp
 accessibility/AXObjectCache.cpp
-[ macOS ] accessibility/AccessibilityListBoxOption.cpp
 accessibility/AccessibilityMathMLElement.cpp
 accessibility/AccessibilityMenuListOption.cpp
 accessibility/AccessibilityNodeObject.cpp
@@ -123,21 +122,17 @@ html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/parser/HTMLDocumentParser.cpp
 html/parser/HTMLParserScheduler.cpp
 html/parser/HTMLScriptRunner.cpp
-[ macOS ] inspector/DOMEditor.cpp
-[ macOS ] inspector/InspectorAuditAccessibilityObject.cpp
 inspector/InspectorFrontendAPIDispatcher.cpp
 inspector/InspectorFrontendHost.cpp
 inspector/InspectorInstrumentation.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorOverlayLabel.cpp
-[ macOS ] inspector/InspectorStyleSheet.cpp
 inspector/PageDebugger.cpp
 inspector/WorkerDebugger.cpp
 inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorCanvasAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
 inspector/agents/InspectorLayerTreeAgent.cpp
-[ macOS ] inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp
 inspector/agents/WebHeapAgent.cpp
 inspector/agents/frame/FrameCSSAgent.cpp
