@@ -27,7 +27,7 @@
 
 // This file is a no-op unless we have a feature where C++ calls into Swift
 // or uses Swift data types.
-#if ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
+#if ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT) || ENABLE(GPU_PROCESS_MODEL)
 
 #ifdef __swift__
 #warning "You're including WebKit-Swift.h from a C++ header file - don't do that. This may cause circular Swift<->C++ dependencies and build problems."
@@ -54,6 +54,9 @@
 #include "WebBackForwardListMessages.h"
 #include "WebBackForwardListSwiftUtilities.h"
 #include "WebPageProxy.h"
+#if ENABLE(GPU_PROCESS_MODEL)
+#include "RemoteMeshSwiftUtilities.h"
+#endif
 
 #ifdef __OBJC__
 #include "WKSeparatedImageView.h"
@@ -80,4 +83,4 @@ IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 IGNORE_CLANG_WARNINGS_END
 
-#endif // ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT)
+#endif // ENABLE(IPC_TESTING_SWIFT) || ENABLE(BACK_FORWARD_LIST_SWIFT) || ENABLE(GPU_PROCESS_MODEL)

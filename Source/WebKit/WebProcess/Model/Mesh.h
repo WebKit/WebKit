@@ -29,6 +29,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -113,7 +114,7 @@ private:
     virtual void setLabelInternal(const String&) = 0;
 
     String m_label;
-};
+} SWIFT_SHARED_REFERENCE(refMesh, derefMesh) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 #define WEBMODEL_WEB_MODEL_PLAYER_DECLARE_DIFFUSE_AND_SPECULAR_TEXTURES \
 WebModel::ImageAsset diffuseTexture { \
@@ -141,4 +142,14 @@ WebModel::ImageAsset specularTexture { \
     .swizzle = { } \
 };
 
+}
+
+inline void refMesh(WebKit::Mesh* obj)
+{
+    obj->ref();
+}
+
+inline void derefMesh(WebKit::Mesh* obj)
+{
+    obj->deref();
 }

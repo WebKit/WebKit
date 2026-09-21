@@ -34,6 +34,7 @@
 #include "StreamServerConnectionBuffer.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/SwiftBridging.h>
 
 namespace IPC {
 
@@ -109,6 +110,8 @@ public:
     };
     DispatchResult dispatchStreamMessages(size_t messageLimit);
     void NODELETE markCurrentlyDispatchedMessageAsInvalid(ASCIILiteral error);
+    // Swift cannot form an ASCIILiteral; mirrors Connection's overload of the same name.
+    void NODELETE markCurrentlyDispatchedMessageAsInvalid(const String& error);
 
     void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();
@@ -165,7 +168,7 @@ private:
     bool m_isDispatchingMessage { false };
 #endif
     friend class StreamConnectionWorkQueue;
-};
+} SWIFT_SHARED_REFERENCE(refStreamServerConnection, derefStreamServerConnection) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
 template<typename T>
 Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase& destinationID)
@@ -217,4 +220,14 @@ inline void markCurrentlyDispatchedMessageAsInvalid(const RefPtr<StreamServerCon
         connection->markCurrentlyDispatchedMessageAsInvalid(error);
 }
 
+}
+
+inline void refStreamServerConnection(IPC::StreamServerConnection* obj)
+{
+    obj->ref();
+}
+
+inline void derefStreamServerConnection(IPC::StreamServerConnection* obj)
+{
+    obj->deref();
 }

@@ -43,6 +43,7 @@
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadAssertions.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -148,8 +149,20 @@ private:
     Ref<ModelObjectHeap> m_modelObjectHeap WTF_GUARDED_BY_CAPABILITY(workQueue());
     const WebGPUIdentifier m_identifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
-};
+} SWIFT_SHARED_REFERENCE(refRemoteGPU, derefRemoteGPU) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
+
+using WeakPtrRemoteGPU = WeakPtr<RemoteGPU>;
 
 } // namespace WebKit
+
+inline void refRemoteGPU(WebKit::RemoteGPU* obj)
+{
+    obj->ref();
+}
+
+inline void derefRemoteGPU(WebKit::RemoteGPU* obj)
+{
+    obj->deref();
+}
 
 #endif // ENABLE(GPU_PROCESS)

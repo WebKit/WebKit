@@ -28,10 +28,13 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "RemoteMesh.h"
 #include <wtf/TZoneMallocInlines.h>
 
 #include "Mesh.h"
+
+#if ENABLE(GPU_PROCESS_MODEL)
+#include "Shared/WebKit-Swift.h"
+#endif
 
 namespace WebKit {
 
@@ -44,10 +47,10 @@ ModelObjectHeap::ModelObjectHeap()
 
 ModelObjectHeap::~ModelObjectHeap() = default;
 
-void ModelObjectHeap::addObject(WebModelIdentifier identifier, RemoteMesh& mesh)
+void ModelObjectHeap::addObject(WebModelIdentifier identifier, std::unique_ptr<RemoteMesh>&& mesh)
 {
 #if ENABLE(GPU_PROCESS_MODEL)
-    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteMesh> { protect(mesh) } });
+    auto result = m_objects.add(identifier, Object { WTF::move(mesh) });
     ASSERT_UNUSED(result, result.isNewEntry);
 #else
     UNUSED_PARAM(identifier);
@@ -70,9 +73,9 @@ WeakPtr<WebKit::Mesh> ModelObjectHeap::convertMeshFromBacking(WebModelIdentifier
 {
 #if ENABLE(GPU_PROCESS_MODEL)
     auto iterator = m_objects.find(identifier);
-    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>>(iterator->value))
+    if (iterator == m_objects.end() || !std::holds_alternative<std::unique_ptr<RemoteMesh>>(iterator->value))
         return nullptr;
-    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>>(iterator->value)->backing();
+    return std::get<std::unique_ptr<RemoteMesh>>(iterator->value)->backingMesh();
 #else
     UNUSED_PARAM(identifier);
     return nullptr;

@@ -964,12 +964,17 @@ endif ()
 
 if (SWIFT_REQUIRED)
     set(WebKit_SWIFT_INTEROP_SOURCES
+        GPUProcess/graphics/Model/ModelObjectHeap.cpp
+
+        GPUProcess/graphics/WebGPU/RemoteGPU.cpp
+
         UIProcess/ProvisionalPageProxy.cpp
         UIProcess/RemotePageProxy.cpp
         UIProcess/WebBackForwardList.cpp
         UIProcess/WebPageProxy.cpp
         UIProcess/Automation/WebAutomationSession.cpp
         WebProcess/WebPage/IPCTestingAPI.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/GPUProcess/graphics/Model/RemoteMeshMessageReceiver.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/Shared/IPCTesterReceiverMessageReceiver.cpp
     )
@@ -1451,8 +1456,13 @@ if (ENABLE_BACK_FORWARD_LIST_SWIFT)
     )
 endif ()
 
-if (ENABLE_BACK_FORWARD_LIST_SWIFT OR ENABLE_IPC_TESTING_SWIFT)
+if (SWIFT_REQUIRED)
+    set_source_files_properties(
+        ${WebKit_DERIVED_SOURCES_DIR}/RemoteMeshMessageReceiver.swift
+        PROPERTIES GENERATED TRUE)
     list(APPEND WebKit_SOURCES
+        ${WebKit_DERIVED_SOURCES_DIR}/RemoteMeshMessageReceiver.swift
+        ${WEBKIT_DIR}/GPUProcess/graphics/Model/RemoteMesh.swift
         ${WEBKIT_DIR}/Platform/IPC/MessageCheck.swift
     )
 endif ()

@@ -26,7 +26,8 @@
 [
     DispatchedFrom=WebContent,
     DispatchedTo=GPU,
-    EnabledBy=ModelElementEnabled
+    EnabledBy=ModelElementEnabled,
+    SwiftReceiver
 ]
 messages -> RemoteMesh Stream {
     void SetLabel(String label)
@@ -41,7 +42,7 @@ messages -> RemoteMesh Stream {
     void Play(bool playing)
     void SetEnvironmentMap(struct WebModel::UpdateTextureDescriptor imageAsset) NotStreamEncodable
     void UpdateContentsHeadroom(float headroom)
-    void UpdateRenderBuffers(unsigned width, unsigned height) -> (Vector<MachSendRight> renderBuffers) NotStreamEncodableReply
+    void UpdateRenderBuffers(uint32_t width, uint32_t height) -> (Vector<MachSendRight> renderBuffers) NotStreamEncodableReply
     void PaintCurrentFrameToImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, uint32_t bufferIndex) -> () Synchronous
 }
 #endif

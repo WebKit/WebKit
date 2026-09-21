@@ -28,12 +28,13 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "ModelConvertFromBackingContext.h"
-#include "ScopedActiveMessageReceiveQueue.h"
 #include "WebModelIdentifier.h"
 #include <functional>
+#include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
+#include <wtf/SwiftBridging.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -42,6 +43,7 @@ class Mesh;
 
 namespace WebKit {
 class Mesh;
+// The Swift model element message receiver; see RemoteMesh.swift.
 class RemoteMesh;
 }
 
@@ -57,7 +59,7 @@ public:
 
     ~ModelObjectHeap();
 
-    void NODELETE addObject(WebModelIdentifier, RemoteMesh&);
+    void NODELETE addObject(WebModelIdentifier, std::unique_ptr<RemoteMesh>&&);
 
     void removeObject(WebModelIdentifier);
 
@@ -75,15 +77,25 @@ private:
     using Object = Variant<
         std::monostate,
 #if ENABLE(GPU_PROCESS_MODEL)
-        IPC::ScopedActiveMessageReceiveQueue<RemoteMesh>
+        std::unique_ptr<RemoteMesh>
 #else
         uint32_t
 #endif
     >;
 
     HashMap<WebModelIdentifier, Object> m_objects;
-};
+} SWIFT_SHARED_REFERENCE(refModelObjectHeap, derefModelObjectHeap) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 
+}
+
+inline void refModelObjectHeap(WebKit::ModelObjectHeap* obj)
+{
+    obj->ref();
+}
+
+inline void derefModelObjectHeap(WebKit::ModelObjectHeap* obj)
+{
+    obj->deref();
 }
 
 #endif // ENABLE(GPU_PROCESS)

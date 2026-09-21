@@ -36,7 +36,6 @@
 #include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
-#include "RemoteMesh.h"
 #include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
 #include "StreamServerConnection.h"
@@ -58,6 +57,8 @@
 
 #if ENABLE(GPU_PROCESS_MODEL)
 #include "ModelTypes.h"
+#include "RemoteMeshSwiftUtilities.h"
+#include "Shared/WebKit-Swift.h"
 #include "WebKitMesh.h"
 #endif
 
@@ -372,9 +373,10 @@ void RemoteGPU::createModelBacking(unsigned width, unsigned height, WebModel::Im
     auto gpuProcessConnection = m_gpuConnectionToWebProcess.get();
     MESSAGE_CHECK(gpuProcessConnection);
 
-    auto mesh = createModelBackingInternal(width, height, WTF::move(diffuseTexture), WTF::move(specularTexture), gpuProcessConnection->webProcessIdentity(), standardDynamicRange, WTF::move(callback));
-    auto remoteMesh = RemoteMesh::create(*m_gpuConnectionToWebProcess.get(), *this, *mesh, objectHeap, protect(*m_streamConnection), identifier, standardDynamicRange);
-    objectHeap->addObject(identifier, remoteMesh);
+    Ref mesh = *createModelBackingInternal(width, height, WTF::move(diffuseTexture), WTF::move(specularTexture), gpuProcessConnection->webProcessIdentity(), standardDynamicRange, WTF::move(callback));
+    Ref streamConnection = *m_streamConnection;
+    auto remoteMesh = WTF::makeUniqueWithoutFastMallocCheck<RemoteMesh>(RemoteMesh::init(mesh.ptr(), WeakPtr { objectHeap.get() }, WeakPtr { *this }, streamConnection.ptr(), identifier, standardDynamicRange));
+    objectHeap->addObject(identifier, WTF::move(remoteMesh));
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);
