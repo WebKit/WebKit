@@ -25,12 +25,18 @@
 
 #pragma once
 
+#include <array>
 #include <optional>
+#include <span>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashTraits.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class BitReader;
 class SharedBuffer;
 struct FourCC;
 
@@ -67,5 +73,134 @@ struct DoViParameters {
 WEBCORE_EXPORT std::optional<DoViParameters> parseDoViCodecParameters(StringView);
 WEBCORE_EXPORT std::optional<DoViParameters> parseDoViDecoderConfigurationRecord(const SharedBuffer&);
 WEBCORE_EXPORT String createDoViCodecParametersString(const DoViParameters&);
+
+// Type values 0-40 are defined in Table 7-1, 48-49 in RFC 7798 sections 4.4.2/4.4.3.
+enum class HEVCNaluType : uint8_t {
+    TrailN = 0,
+    TrailR = 1,
+    TsaN = 2,
+    TsaR = 3,
+    StsaN = 4,
+    StsaR = 5,
+    RadlN = 6,
+    RadlR = 7,
+    BlaWLp = 16,
+    BlaWRadl = 17,
+    BlaNLp = 18,
+    IdrWRadl = 19,
+    IdrNLp = 20,
+    Cra = 21,
+    RsvIrapVcl23 = 23,
+    RsvVcl31 = 31,
+    Vps = 32,
+    Sps = 33,
+    Pps = 34,
+    Aud = 35,
+    PrefixSei = 39,
+    SuffixSei = 40,
+    Ap = 48,
+    Fu = 49,
+    Paci = 50
+};
+
+// See table 7-7 of the H.265 spec.
+enum class HEVCSliceType : uint8_t { B = 0, P = 1, I = 2 };
+
+constexpr size_t hevcNaluHeaderSize = 2;
+
+struct HEVCNaluIndex {
+    size_t startOffset { 0 };
+    size_t payloadStartOffset { 0 };
+    size_t payloadSize { 0 };
+};
+
+WEBCORE_EXPORT Vector<HEVCNaluIndex> findHEVCNaluIndices(std::span<const uint8_t>);
+WEBCORE_EXPORT HEVCNaluType hevcNaluType(uint8_t);
+
+// Removes emulation prevention bytes (the trailing byte of any 0x00 0x00 0x03 sequence).
+WEBCORE_EXPORT Vector<uint8_t> parseRbsp(std::span<const uint8_t>);
+
+// Stateful H.265 Annex B bitstream parser used to recover the QP of the most recently parsed slice.
+class WEBCORE_EXPORT HEVCBitstreamParser {
+    WTF_MAKE_TZONE_ALLOCATED(HEVCBitstreamParser);
+public:
+    HEVCBitstreamParser() = default;
+
+    void parseBitstream(std::span<const uint8_t>);
+    std::optional<int> lastSliceQP() const;
+
+private:
+    struct ProfileTierLevel {
+        int generalProfileIDC { 0 };
+        int generalLevelIDC { 0 };
+    };
+
+    struct ShortTermRefPicSet {
+        uint32_t numNegativePics { 0 };
+        uint32_t numPositivePics { 0 };
+        std::array<int32_t, 64> deltaPocS0 { };
+        std::array<bool, 64> usedByCurrPicS0 { };
+        std::array<int32_t, 64> deltaPocS1 { };
+        std::array<bool, 64> usedByCurrPicS1 { };
+        uint32_t numDeltaPocs { 0 };
+    };
+
+    struct SpsState {
+        uint32_t spsMaxSubLayersMinus1 { 0 };
+        uint32_t chromaFormatIDC { 0 };
+        bool separateColourPlaneFlag { false };
+        uint32_t picWidthInLumaSamples { 0 };
+        uint32_t picHeightInLumaSamples { 0 };
+        uint32_t log2MaxPicOrderCntLsbMinus4 { 0 };
+        std::array<uint32_t, 7> spsMaxDecPicBufferingMinus1 { };
+        uint32_t log2MinLumaCodingBlockSizeMinus3 { 0 };
+        uint32_t log2DiffMaxMinLumaCodingBlockSize { 0 };
+        bool sampleAdaptiveOffsetEnabledFlag { false };
+        uint32_t numShortTermRefPicSets { 0 };
+        Vector<ShortTermRefPicSet> shortTermRefPicSet;
+        bool longTermRefPicsPresentFlag { false };
+        uint32_t numLongTermRefPicsSps { 0 };
+        Vector<bool> usedByCurrPicLtSpsFlag;
+        bool spsTemporalMvpEnabledFlag { false };
+        uint16_t spsId { 0 };
+        uint32_t picWidthInCtbsY { 0 };
+        uint32_t picHeightInCtbsY { 0 };
+        uint32_t bitDepthLumaMinus8 { 0 };
+    };
+
+    struct PpsState {
+        bool dependentSliceSegmentsEnabledFlag { false };
+        bool cabacInitPresentFlag { false };
+        bool outputFlagPresentFlag { false };
+        uint32_t numExtraSliceHeaderBits { 0 };
+        uint32_t numRefIdxL0DefaultActiveMinus1 { 0 };
+        uint32_t numRefIdxL1DefaultActiveMinus1 { 0 };
+        int initQPMinus26 { 0 };
+        bool weightedPredFlag { false };
+        bool weightedBipredFlag { false };
+        bool listsModificationPresentFlag { false };
+        uint16_t ppsId { 0 };
+        uint16_t spsId { 0 };
+        int qpBdOffsetY { 0 };
+    };
+
+    enum class ParseResult { Ok, InvalidStream, UnsupportedStream };
+
+    static std::optional<ProfileTierLevel> parseProfileTierLevel(bool profilePresent, uint32_t maxNumSubLayersMinus1, BitReader&);
+    static bool parseScalingListData(BitReader&);
+    static std::optional<ShortTermRefPicSet> parseShortTermRefPicSet(uint32_t stRpsIndex, uint32_t numShortTermRefPicSets, const Vector<ShortTermRefPicSet>&, uint32_t spsMaxDecPicBufferingMinus1, BitReader&);
+    static std::optional<SpsState> parseSps(std::span<const uint8_t>);
+    static std::optional<PpsState> parsePps(std::span<const uint8_t>, const SpsState*);
+
+    void parseSlice(std::span<const uint8_t>);
+    ParseResult parseNonParameterSetNalu(std::span<const uint8_t>, uint8_t naluType);
+    const PpsState* pps(uint16_t ppsId) const;
+    const SpsState* sps(uint16_t spsId) const;
+
+    HashMap<uint32_t, SpsState, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_sps;
+    HashMap<uint32_t, PpsState, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_pps;
+    std::optional<int32_t> m_lastSliceQPDelta;
+    std::optional<uint16_t> m_lastSlicePpsId;
+};
 
 }

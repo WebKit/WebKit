@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUVideoEncoder.h"
 
+#import "GPUVideoEncoderVTBH265.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -91,10 +92,7 @@ static inline GPUVideoEncoderFrameInfo toGPUVideoEncoderFrameInfo(const webrtc::
 class GPULocalVideoEncoder final : public GPUVideoEncoder {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(GPULocalVideoEncoder);
 public:
-    explicit GPULocalVideoEncoder(webrtc::LocalEncoder encoder)
-        : m_encoder(encoder)
-    {
-    }
+    static Ref<GPULocalVideoEncoder> create(webrtc::LocalEncoder encoder) { return adoptRef(*new GPULocalVideoEncoder(encoder)); }
 
     ~GPULocalVideoEncoder()
     {
@@ -102,7 +100,11 @@ public:
     }
 
 private:
-    void setLowLatency(bool enabled) final { webrtc::setLocalEncoderLowLatency(m_encoder, enabled); }
+    explicit GPULocalVideoEncoder(webrtc::LocalEncoder encoder)
+        : m_encoder(encoder)
+    {
+    }
+
     void initialize(uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate) final { webrtc::initializeLocalEncoder(m_encoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate); }
     void encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, VideoFrame::Rotation rotation, bool isKeyframeRequired) final { webrtc::encodeLocalEncoderFrame(m_encoder, pixelBuffer, timeStampNs, timeStamp, duration, toWebRTCVideoRotation(rotation), isKeyframeRequired); }
     void setRates(uint32_t bitRate, uint32_t frameRate) final { webrtc::setLocalEncoderRates(m_encoder, bitRate, frameRate); }
@@ -112,20 +114,24 @@ private:
 };
 #endif
 
-std::unique_ptr<GPUVideoEncoder> GPUVideoEncoder::create(VideoCodecType codecType, bool useWebCoreEncoder, const Vector<std::pair<String, String>>& parameters, bool useAnnexB, VideoEncoderScalabilityMode scalabilityMode, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
+RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(CreationInfo&& creationInfo, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& callback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
 {
-    UNUSED_PARAM(useWebCoreEncoder);
-    // FIXME: Route to a WebCore-native encoder when useWebCoreEncoder is set.
+    if (creationInfo.useWebCoreEncoder) {
+#if USE(AVFOUNDATION)
+        if (creationInfo.codecType == VideoCodecType::H265)
+            return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+#endif
+    }
 
 #if USE(LIBWEBRTC)
-    ASSERT(codecType == VideoCodecType::H264 || codecType == VideoCodecType::H265);
+    ASSERT(creationInfo.codecType == VideoCodecType::H264 || creationInfo.codecType == VideoCodecType::H265);
 
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().legacyCStringPointer(), parameter.second.utf8().legacyCStringPointer());
 
     webrtc::LocalEncoderScalabilityMode rtcScalabilityMode;
-    switch (scalabilityMode) {
+    switch (creationInfo.scalabilityMode) {
     case VideoEncoderScalabilityMode::L1T1:
         rtcScalabilityMode = webrtc::LocalEncoderScalabilityMode::L1T1;
         break;
@@ -146,16 +152,16 @@ std::unique_ptr<GPUVideoEncoder> GPUVideoEncoder::create(VideoCodecType codecTyp
         errorCallback(isFrameDropped);
     });
 
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { creationInfo.codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, creationInfo.useAnnexB, rtcScalabilityMode, newFrameBlock.get(), newConfigurationBlock.get(), errorBlock.get());
     if (!encoder)
         return nullptr;
 
-    return makeUnique<GPULocalVideoEncoder>(encoder);
+    webrtc::setLocalEncoderLowLatency(encoder, creationInfo.isLowLatencyEnabled);
+
+    return GPULocalVideoEncoder::create(encoder);
 #else
-    UNUSED_PARAM(codecType);
+    UNUSED_PARAM(creationInfo);
     UNUSED_PARAM(parameters);
-    UNUSED_PARAM(useAnnexB);
-    UNUSED_PARAM(scalabilityMode);
     UNUSED_PARAM(callback);
     UNUSED_PARAM(descriptionCallback);
     UNUSED_PARAM(errorCallback);

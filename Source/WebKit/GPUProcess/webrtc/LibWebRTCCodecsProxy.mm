@@ -368,14 +368,20 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
     };
 
     bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoEncodersEnabled;
-    auto encoder = WebCore::GPUVideoEncoder::create(codecType, useWebCoreEncoder, parameters, useAnnexB, scalabilityMode, WTF::move(newFrameBlock), WTF::move(newConfigurationBlock), WTF::move(errorBlock));
+    auto encoder = WebCore::GPUVideoEncoder::create({
+        .codecType = codecType,
+        .useWebCoreEncoder = useWebCoreEncoder,
+        .useAnnexB = useAnnexB,
+        .scalabilityMode = scalabilityMode,
+        .isLowLatencyEnabled = useLowLatency,
+        .queue = workQueue()
+    }, parameters, WTF::move(newFrameBlock), WTF::move(newConfigurationBlock), WTF::move(errorBlock));
     if (!encoder) {
         callback(false);
         return;
     }
 
-    encoder->setLowLatency(useLowLatency);
-    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(makeUniqueRefFromNonNullUniquePtr(WTF::move(encoder)), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
+    auto result = m_encoders.add(identifier, makeUniqueRef<Encoder>(encoder.releaseNonNull(), makeUniqueRef<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner), Deque<CompletionHandler<void(bool)>> { }, codecType, useLowLatency));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
     callback(true);
