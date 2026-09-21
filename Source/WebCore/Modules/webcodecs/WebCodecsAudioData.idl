@@ -24,6 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webcodecs/#audiodata
 
 // FIXME: Support Serializable and Transferable.
 [
@@ -43,7 +44,7 @@
     readonly attribute long long timestamp;
 
     unsigned long allocationSize(optional AudioDataCopyToOptions options = {});
-    undefined copyTo([AllowShared] (ArrayBufferView or ArrayBuffer) destination, AudioDataCopyToOptions options);
+    undefined copyTo(AllowSharedBufferSource destination, AudioDataCopyToOptions options);
     [CallWith=CurrentScriptExecutionContext] WebCodecsAudioData clone();
     undefined close();
 };
@@ -54,7 +55,7 @@
     required AudioSampleFormat format;
     required float sampleRate;
     required [EnforceRange] long long timestamp;
-    required (ArrayBufferView or ArrayBuffer) data;
+    required AllowSharedBufferSource data;
     required [EnforceRange] unsigned long numberOfFrames;
     required [EnforceRange] unsigned long numberOfChannels;
 };

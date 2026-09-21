@@ -68,7 +68,6 @@ WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, In
 {
     RefPtr<SharedBuffer> buffer;
 
-    // FIXME: Support SharedArrayBuffer.
     WTF::switchOn(init.data,
         [&](const Ref<JSC::ArrayBuffer>& data) {
             if (RefPtr buffer = SharedBuffer::create(data->span()))

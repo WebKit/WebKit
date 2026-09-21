@@ -33,7 +33,7 @@ typedef [EnforceRange] unsigned long WebCodecsVideoDecoderConfigSize;
     JSGenerateToNativeObject,
 ] dictionary WebCodecsVideoDecoderConfig {
     required DOMString codec;
-    [AllowShared] (ArrayBufferView or ArrayBuffer) description;
+    AllowSharedBufferSource description;
     WebCodecsVideoDecoderConfigSize codedWidth;
     WebCodecsVideoDecoderConfigSize codedHeight;
     WebCodecsVideoDecoderConfigSize displayAspectWidth;

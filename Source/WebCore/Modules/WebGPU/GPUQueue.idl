@@ -44,13 +44,13 @@ typedef (sequence<GPUIntegerCoordinate> or GPUExtent3DDict) GPUExtent3D;
     undefined writeBuffer(
         GPUBuffer buffer,
         GPUSize64 bufferOffset,
-        [AllowShared](ArrayBufferView or ArrayBuffer) data,
+        AllowSharedBufferSource data,
         optional GPUSize64 dataOffset = 0,
         optional GPUSize64 size);
 
     undefined writeTexture(
         GPUImageCopyTexture destination,
-        [AllowShared](ArrayBufferView or ArrayBuffer) data,
+        AllowSharedBufferSource data,
         GPUImageDataLayout dataLayout,
         GPUExtent3D size);
 

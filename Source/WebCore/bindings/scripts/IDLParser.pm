@@ -602,6 +602,17 @@ sub addBuiltinTypedefs()
     push(@{$bufferSourceType->subtypes}, makeSimpleType("ArrayBuffer"));
     $typedefs{"BufferSource"} = IDLTypedef->new(type => $bufferSourceType);
 
+    # typedef (ArrayBuffer or SharedArrayBuffer or [AllowShared] ArrayBufferView) AllowSharedBufferSource;
+    #
+    # FIXME: SharedArrayBuffer is not a type of its own yet, so [AllowShared] on the
+    # whole union stands in for it.
+
+    my $allowSharedBufferSourceType = IDLType->new(name => "UNION", isUnion => 1);
+    push(@{$allowSharedBufferSourceType->subtypes}, makeSimpleType("ArrayBuffer"));
+    push(@{$allowSharedBufferSourceType->subtypes}, makeSimpleType("ArrayBufferView"));
+    $allowSharedBufferSourceType->extendedAttributes->{AllowShared} = "VALUE_IS_MISSING";
+    $typedefs{"AllowSharedBufferSource"} = IDLTypedef->new(type => $allowSharedBufferSourceType);
+
     # typedef unsigned long long EpochTimeStamp;
 
     my $EpochTimeStampType = IDLType->new(name => "unsigned long long");

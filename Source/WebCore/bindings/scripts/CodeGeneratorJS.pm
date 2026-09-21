@@ -7870,7 +7870,18 @@ sub GetFlattenedMemberTypes
 
     foreach my $memberType (@{$idlUnionType->subtypes}) {
         if ($memberType->isUnion) {
-            push(@flattenedMemberTypes, GetFlattenedMemberTypes($memberType));
+            # A union cannot be annotated once flattened, so [AllowShared] on a nested
+            # union applies to each of its buffer source members instead.
+            # FIXME: Generalize this to any annotation, applied to each member it is
+            # applicable to.
+            my $allowShared = $memberType->extendedAttributes->{AllowShared};
+            foreach my $nestedMemberType (GetFlattenedMemberTypes($memberType)) {
+                if ($allowShared && $codeGenerator->IsBufferSourceType($nestedMemberType)) {
+                    $nestedMemberType = IDLParser::cloneType($nestedMemberType);
+                    $nestedMemberType->extendedAttributes->{AllowShared} = $allowShared;
+                }
+                push(@flattenedMemberTypes, $nestedMemberType);
+            }
         } else {
             push(@flattenedMemberTypes, $memberType);
         }

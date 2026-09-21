@@ -2522,6 +2522,8 @@ static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_bufferSourceParamete
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_allowSharedBufferSourceParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_allowSharedBufferSourceParameterFromTypedef);
+static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_nestedAllowSharedBufferSourceParameter);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_testReturnValueOptimization);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction);
 static JSC_DECLARE_HOST_FUNCTION(jsTestObjPrototypeFunction_conditionallyExposedToWorkerFunction);
@@ -3017,7 +3019,7 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
 
 /* Hash table for prototype */
 
-static const std::array<HashTableValue, 305> JSTestObjPrototypeTableValues {
+static const std::array<HashTableValue, 307> JSTestObjPrototypeTableValues {
     HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObjConstructor, 0 } },
     HashTableValue { "readOnlyLongAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyLongAttr, 0 } },
     HashTableValue { "readOnlyStringAttr"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestObj_readOnlyStringAttr, 0 } },
@@ -3354,6 +3356,8 @@ static const std::array<HashTableValue, 305> JSTestObjPrototypeTableValues {
     HashTableValue { "allowSharedBufferSourceParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_allowSharedBufferSourceParameter, 1 } },
     HashTableValue { "annotatedBufferSourceMembersParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_annotatedBufferSourceMembersParameter, 1 } },
     HashTableValue { "nullableBufferSourceMemberParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter, 1 } },
+    HashTableValue { "allowSharedBufferSourceParameterFromTypedef"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_allowSharedBufferSourceParameterFromTypedef, 1 } },
+    HashTableValue { "nestedAllowSharedBufferSourceParameter"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_nestedAllowSharedBufferSourceParameter, 1 } },
     HashTableValue { "testReturnValueOptimization"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_testReturnValueOptimization, 2 } },
     HashTableValue { "conditionallyExposedToWindowFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_conditionallyExposedToWindowFunction, 0 } },
     HashTableValue { "conditionallyExposedToWorkerFunction"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestObjPrototypeFunction_conditionallyExposedToWorkerFunction, 0 } },
@@ -11591,6 +11595,48 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_nullableBufferSourc
 JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_nullableBufferSourceMemberParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_nullableBufferSourceMemberParameterBody>(*lexicalGlobalObject, *callFrame, "nullableBufferSourceMemberParameter");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_allowSharedBufferSourceParameterFromTypedefBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLAllowSharedAdaptor<IDLBufferSource>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.allowSharedBufferSourceParameterFromTypedef(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_allowSharedBufferSourceParameterFromTypedef, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_allowSharedBufferSourceParameterFromTypedefBody>(*lexicalGlobalObject, *callFrame, "allowSharedBufferSourceParameterFromTypedef");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_nestedAllowSharedBufferSourceParameterBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)
+{
+    auto& vm = JSC::getVM(lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(callFrame);
+    SUPPRESS_UNCOUNTED_LOCAL auto& impl = castedThis->wrapped();
+    if (callFrame->argumentCount() < 1) [[unlikely]]
+        return throwVMError(lexicalGlobalObject, throwScope, createNotEnoughArgumentsError(lexicalGlobalObject));
+    EnsureStillAliveScope argument0 = callFrame->uncheckedArgument(0);
+    auto dataConversionResult = convert<IDLUnion<IDLAllowSharedAdaptor<IDLArrayBuffer>, IDLAllowSharedAdaptor<IDLArrayBufferView>, IDLDOMString>>(*lexicalGlobalObject, argument0.value());
+    if (dataConversionResult.hasException(throwScope)) [[unlikely]]
+       return encodedJSValue();
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&] -> decltype(auto) { return impl.nestedAllowSharedBufferSourceParameter(dataConversionResult.releaseReturnValue()); })));
+}
+
+JSC_DEFINE_HOST_FUNCTION(jsTestObjPrototypeFunction_nestedAllowSharedBufferSourceParameter, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunction_nestedAllowSharedBufferSourceParameterBody>(*lexicalGlobalObject, *callFrame, "nestedAllowSharedBufferSourceParameter");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_testReturnValueOptimizationBody(JSC::JSGlobalObject* lexicalGlobalObject, JSC::CallFrame* callFrame, typename IDLOperation<JSTestObj>::ClassParameter castedThis)

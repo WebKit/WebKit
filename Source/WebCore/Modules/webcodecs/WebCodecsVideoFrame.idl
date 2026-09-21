@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webcodecs/#videoframe
+
 typedef (HTMLImageElement
     or SVGImageElement
     or HTMLCanvasElement
@@ -47,7 +49,7 @@ typedef (HTMLImageElement
 ] interface WebCodecsVideoFrame {
     [CallWith=CurrentScriptExecutionContext] constructor(CanvasImageSource image, optional VideoFrameInit init = {});
     [CallWith=CurrentScriptExecutionContext] constructor(WebCodecsVideoFrame image, optional VideoFrameInit init = {});
-    [CallWith=CurrentScriptExecutionContext] constructor([AllowShared] (ArrayBufferView or ArrayBuffer) data, VideoFrameBufferInit init);
+    [CallWith=CurrentScriptExecutionContext] constructor(AllowSharedBufferSource data, VideoFrameBufferInit init);
 
     readonly attribute VideoPixelFormat? format;
     readonly attribute unsigned long codedWidth;
@@ -61,7 +63,7 @@ typedef (HTMLImageElement
     readonly attribute VideoColorSpace colorSpace;
 
     unsigned long allocationSize(optional VideoFrameCopyToOptions options = {});
-    Promise<sequence<PlaneLayout>> copyTo([AllowShared] (ArrayBufferView or ArrayBuffer) destination, optional VideoFrameCopyToOptions options = {});
+    Promise<sequence<PlaneLayout>> copyTo(AllowSharedBufferSource destination, optional VideoFrameCopyToOptions options = {});
     [CallWith=CurrentScriptExecutionContext] WebCodecsVideoFrame clone();
     undefined close();
 };

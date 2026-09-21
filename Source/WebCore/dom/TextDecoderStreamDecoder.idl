@@ -23,6 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Implementation detail of TextDecoderStream.
+
 [
     Exposed=(Window,Worker),
     PrivateIdentifier,
@@ -30,6 +32,6 @@
     constructor(DOMString label, boolean fatal, boolean ignoreBOM);
 
     [PrivateIdentifier] DOMString encoding();
-    [PrivateIdentifier] DOMString decode([AllowShared] (ArrayBufferView or ArrayBuffer) source);
+    [PrivateIdentifier] DOMString decode(AllowSharedBufferSource source);
     [PrivateIdentifier] DOMString flush();
 };

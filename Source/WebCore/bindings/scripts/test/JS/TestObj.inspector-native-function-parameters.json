@@ -11,6 +11,7 @@
         "prototype": {
             "addEventListener": "type, listener, [useCapture]",
             "allowSharedBufferSourceParameter": "data",
+            "allowSharedBufferSourceParameterFromTypedef": "data",
             "annotatedBufferSourceMembersParameter": "data",
             "any": "a, b",
             "attachShadowRoot": "init",
@@ -98,6 +99,7 @@
             "methodWithUSVStringArgTreatingNullAsEmptyString": "str",
             "methodWithUnsignedLongSequence": "unsignedLongSequence",
             "methodWithXPathNSResolverParameter": "resolver",
+            "nestedAllowSharedBufferSourceParameter": "data",
             "nullableBufferSourceMemberParameter": "data",
             "nullableStringSpecialMethod": "index",
             "objMethodWithArgs": "longArg, strArg, objArg",

@@ -37,7 +37,7 @@
   readonly attribute unsigned long long? duration;
   readonly attribute unsigned long byteLength;
 
-  undefined copyTo([AllowShared] (ArrayBufferView or ArrayBuffer) destination);
+  undefined copyTo(AllowSharedBufferSource destination);
 };
 
 typedef [EnforceRange] long long WebCodecsEncodedAudioChunkInitTimestamp;
@@ -49,5 +49,5 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedAudioChunkInitDuration
   required WebCodecsEncodedAudioChunkType type;
   WebCodecsEncodedAudioChunkInitTimestamp timestamp;
   WebCodecsEncodedAudioChunkInitDuration duration;
-  required [AllowShared] (ArrayBufferView or ArrayBuffer) data;
+  required AllowSharedBufferSource data;
 };

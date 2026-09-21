@@ -24,6 +24,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/webcodecs/#dictdef-audiodecoderconfig
+
 typedef [EnforceRange] unsigned long WebCodecsAudioDecoderConfigSize;
 
 [
@@ -34,5 +36,5 @@ typedef [EnforceRange] unsigned long WebCodecsAudioDecoderConfigSize;
     required DOMString codec;
     required WebCodecsAudioDecoderConfigSize sampleRate;
     required WebCodecsAudioDecoderConfigSize numberOfChannels;
-    (ArrayBufferView or ArrayBuffer) description;
+    AllowSharedBufferSource description;
 };
