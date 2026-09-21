@@ -1,0 +1,29 @@
+<!doctype html>
+<title>SVGPathElement.getPathSegmentAtLength(): no valid path data</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<svg></svg>
+<script>
+// Spec: "If no valid path data exists, returns null."
+//
+// The last three are invalid rather than absent: path data must begin with a
+// moveto, so nothing is parsed and there is no segment to return.
+const CASES = [
+  ["a missing d attribute", undefined],
+  ["an empty d attribute", ""],
+  ["d of closepath only", "Z"],
+  ["d beginning with a lineto", "L 10 10"],
+  ["d beginning with an unknown command", "X 1 2"]
+];
+
+for (const [label, d] of CASES) {
+  test(() => {
+    const path = createPath(d);
+    assert_equals(path.getPathSegmentAtLength(0), null, "at distance 0");
+    assert_equals(path.getPathSegmentAtLength(10), null, "at distance 10");
+  }, `getPathSegmentAtLength() returns null with ${label}`);
+}
+</script>

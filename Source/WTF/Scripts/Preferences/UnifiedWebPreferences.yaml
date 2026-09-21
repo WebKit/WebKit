@@ -5091,6 +5091,14 @@ SVGExternalResourcesEnabled:
   humanReadableDescription: "Enable referencing SVG resources (paint servers, etc.) via external or data: URLs"
   defaultValue: true
 
+SVGPathDataAPIEnabled:
+  type: bool
+  status: preview
+  category: css
+  humanReadableName: "SVG path data API"
+  humanReadableDescription: "Enable getPathData(), setPathData() and getPathSegmentAtLength() on SVGPathElement"
+  defaultValue: false
+
 SWVPDecodersAlwaysEnabled:
   type: bool
   status: internal

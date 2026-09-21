@@ -32,11 +32,17 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGMPathElement.h"
 #include "SVGNames.h"
+#include "SVGPathByteStreamSource.h"
+#include "SVGPathDataSettings.h"
+#include "SVGPathParser.h"
+#include "SVGPathSegmentsBuilder.h"
+#include "SVGPathSegmentsSource.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePropertiesInlines.h"
+#include <cmath>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -134,6 +140,79 @@ void SVGPathElement::attributeChanged(const QualifiedName& name, const AtomStrin
 void SVGPathElement::clearCache()
 {
     PathCache::singleton().clear();
+}
+
+Vector<SVGPathSegment> SVGPathElement::getPathData(SVGPathDataSettings&& settings) const
+{
+    // Deliberately not pathByteStream(): that one prefers the CSS "d" property and
+    // then falls through to the SMIL animated value, and the spec says this mixin
+    // reads the attribute base value and neither of those.
+    auto& byteStream = Ref { m_path }->baseVal()->pathByteStream();
+    if (byteStream.isEmpty())
+        return { };
+
+    Vector<SVGPathSegment> result;
+    SVGPathSegmentsBuilder builder(result);
+    SVGPathByteStreamSource source(byteStream);
+    SVGPathParser::parse(source, builder, settings.normalize ? NormalizedParsing : UnalteredParsing);
+    return result;
+}
+
+void SVGPathElement::setPathData(Vector<SVGPathSegment>&& pathData)
+{
+    // Validation and truncation live in SVGPathSegmentsSource: the parser stops at
+    // the first invalid segment and the byte stream keeps the valid prefix.
+    SVGPathByteStream byteStream;
+    SVGPathSegmentsSource source(pathData);
+    SVGPathParser::parseToByteStream(source, byteStream, UnalteredParsing);
+
+    // Nothing survived, either because the sequence was empty or because its first
+    // segment was not a valid moveto. Both remove the attribute.
+    if (byteStream.isEmpty()) {
+        removeAttribute(SVGNames::dAttr);
+        return;
+    }
+
+    String d;
+    buildStringFromByteStream(byteStream, d, UnalteredParsing);
+
+    // Going through setAttribute rather than writing the byte stream directly is
+    // what fires the MutationObserver record and invalidates <use> instances and
+    // markers. It costs one serialize and one reparse; measured at roughly 1.4x
+    // the direct write, which the bug folder's perf/RESULTS.md records.
+    setAttribute(SVGNames::dAttr, AtomString { d });
+}
+
+std::optional<SVGPathSegment> SVGPathElement::getPathSegmentAtLength(float distance) const
+{
+    // Spec: "If distance is NaN, returns null."
+    if (std::isnan(distance))
+        return std::nullopt;
+
+    // Base value, as for getPathData(), so the segment returned is one of the
+    // segments getPathData() would hand back. Gecko reads the base value here too.
+    auto& byteStream = Ref { m_path }->baseVal()->pathByteStream();
+    if (byteStream.isEmpty())
+        return std::nullopt;
+
+    // Spec: clamp to [0, total-length-of-path]. Like getTotalLength() and
+    // getPointAtLength(), this is the unscaled length: pathLength does not affect
+    // these methods in WebKit.
+    auto clampedDistance = clampTo<float>(distance, 0, getTotalLengthOfSVGPathByteStream(byteStream));
+
+    auto index = getSVGPathSegmentAtLengthFromSVGPathByteStream(byteStream, clampedDistance);
+    if (!index)
+        return std::nullopt;
+
+    Vector<SVGPathSegment> segments;
+    SVGPathSegmentsBuilder builder(segments);
+    SVGPathByteStreamSource source(byteStream);
+    SVGPathParser::parse(source, builder, UnalteredParsing);
+
+    if (*index >= segments.size())
+        return std::nullopt;
+
+    return segments[*index];
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)

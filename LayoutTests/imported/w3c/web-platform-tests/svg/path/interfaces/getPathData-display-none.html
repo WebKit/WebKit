@@ -1,0 +1,38 @@
+<!doctype html>
+<title>SVGPathElement.getPathData() with no renderer</title>
+<link rel="help" href="https://w3c.github.io/svgwg/specs/paths/#InterfaceSVGPathData">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/getPathData-helpers.js"></script>
+
+<style>
+  #hiddenPath { display: none; }
+  #hiddenGroup { display: none; }
+</style>
+<svg>
+  <path id="hiddenPath" d="M 0 0 L 10 10"/>
+  <g id="hiddenGroup"><path id="pathInHiddenGroup" d="M 1 1 L 20 20"/></g>
+  <g style="visibility: hidden"><path id="invisiblePath" d="M 2 2 L 30 30"/></g>
+</svg>
+<script>
+// The mixin reads the d attribute's base value, which exists whether or not the
+// element has a renderer. None of these need layout.
+const EXPECTED = {
+  hiddenPath:         [{ type: "M", values: [0, 0] },  { type: "L", values: [10, 10] }],
+  pathInHiddenGroup:  [{ type: "M", values: [1, 1] },  { type: "L", values: [20, 20] }],
+  invisiblePath:      [{ type: "M", values: [2, 2] },  { type: "L", values: [30, 30] }]
+};
+
+for (const [id, expected] of Object.entries(EXPECTED)) {
+  test(() => {
+    assert_path_data_equals(document.getElementById(id).getPathData(), expected);
+  }, `path.getPathData() on #${id}`);
+}
+
+test(() => {
+  const path = document.getElementById("hiddenPath");
+  path.setPathData([{ type: "M", values: [5, 5] }, { type: "L", values: [6, 6] }]);
+  assert_path_data_equals(path.getPathData(),
+      [{ type: "M", values: [5, 5] }, { type: "L", values: [6, 6] }]);
+}, "path.setPathData() on a display:none path");
+</script>

@@ -1,0 +1,16 @@
+
+PASS round trip: moveto and lineto, absolute
+PASS round trip: moveto and lineto, relative
+PASS round trip: horizontal and vertical
+PASS round trip: cubic and smooth cubic
+PASS round trip: cubic and smooth, relative
+PASS round trip: quadratic and smooth
+PASS round trip: quadratic and smooth, rel
+PASS round trip: arc, absolute
+PASS round trip: arc, relative
+PASS round trip: closepath
+PASS round trip: multiple subpaths
+PASS round trip: implicit repeated lineto
+PASS round trip: implicit lineto after moveto
+PASS round trip is idempotent
+

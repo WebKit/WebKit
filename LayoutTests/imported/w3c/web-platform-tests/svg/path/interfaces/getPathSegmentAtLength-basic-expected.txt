@@ -1,0 +1,7 @@
+
+PASS getPathSegmentAtLength(2.5) returns the segment containing that distance
+PASS getPathSegmentAtLength(7.5) returns the segment containing that distance
+PASS getPathSegmentAtLength(12.5) returns the segment containing that distance
+PASS getPathSegmentAtLength() returns a fresh object on each call
+PASS getPathSegmentAtLength() works on a detached path element
+

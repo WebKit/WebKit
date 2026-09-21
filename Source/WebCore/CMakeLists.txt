@@ -1641,7 +1641,10 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGMetadataElement.idl
     svg/SVGNumber.idl
     svg/SVGNumberList.idl
+    svg/SVGPathData.idl
+    svg/SVGPathDataSettings.idl
     svg/SVGPathElement.idl
+    svg/SVGPathSegment.idl
     svg/SVGPatternElement.idl
     svg/SVGPoint.idl
     svg/SVGPointList.idl

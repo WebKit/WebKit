@@ -1,0 +1,7 @@
+
+PASS getPathSegmentAtLength(NaN) throws TypeError
+PASS getPathSegmentAtLength(Infinity) throws TypeError
+PASS getPathSegmentAtLength(-Infinity) throws TypeError
+PASS getPathSegmentAtLength() with no argument throws TypeError
+PASS getPathSegmentAtLength() with a non-numeric string throws TypeError
+

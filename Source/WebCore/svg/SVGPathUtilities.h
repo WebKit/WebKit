@@ -48,6 +48,14 @@ bool buildAnimatedSVGPathByteStream(const SVGPathByteStream& from, const SVGPath
 bool addToSVGPathByteStream(SVGPathByteStream& streamToAppendTo, const SVGPathByteStream& from, unsigned repeatCount = 1);
 
 unsigned getSVGPathSegAtLengthFromSVGPathByteStream(const SVGPathByteStream&, float length);
+
+// Index of the segment "distance" units along the path, with a distance that falls
+// exactly on a boundary resolving to the LATER segment, per
+// https://w3c.github.io/svgwg/specs/paths/#__svg__SVGPathElement__getPathSegmentAtLength
+// The legacy getSVGPathSegAtLengthFromSVGPathByteStream above resolves such a tie to
+// the earlier segment, which is why this cannot simply call it. "distance" must
+// already be clamped to [0, total length]. std::nullopt for an empty stream.
+std::optional<unsigned> getSVGPathSegmentAtLengthFromSVGPathByteStream(const SVGPathByteStream&, float distance);
 float getTotalLengthOfSVGPathByteStream(const SVGPathByteStream&);
 FloatPoint getPointAtLengthOfSVGPathByteStream(const SVGPathByteStream&, float length);
 

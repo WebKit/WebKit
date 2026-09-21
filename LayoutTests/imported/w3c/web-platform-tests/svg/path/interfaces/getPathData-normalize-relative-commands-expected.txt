@@ -1,0 +1,10 @@
+
+PASS normalize: relative lineto
+PASS normalize: relative horizontal
+PASS normalize: relative vertical
+PASS normalize: relative cubic
+PASS normalize: relative quadratic
+PASS normalize: relative closepath
+PASS normalize: relative lineto after closepath
+PASS normalize: relative arc decomposes into cubics
+
