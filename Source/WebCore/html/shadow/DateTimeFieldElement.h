@@ -29,7 +29,7 @@
 #include "HTMLDivElement.h"
 
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
-#include <wtf/GregorianDateTime.h>
+#include <wtf/PlainGregorianDateTime.h>
 #include <wtf/ValueOrReference.h>
 #include <wtf/WeakPtr.h>
 
@@ -58,7 +58,7 @@ public:
     virtual bool didFieldOwnerTransferFocusToPicker() = 0;
     virtual void didSuppressBlurDueToPickerFocusTransfer() = 0;
     virtual AtomString localeIdentifier() const = 0;
-    virtual const GregorianDateTime& placeholderDate() const = 0;
+    virtual PlainGregorianDateTime placeholderDate() const = 0;
 };
 
 class DateTimeFieldElement : public HTMLDivElement {

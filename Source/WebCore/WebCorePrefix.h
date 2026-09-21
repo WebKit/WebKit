@@ -491,7 +491,6 @@
 #include <wtf/FastTLS.h>
 #include <wtf/FlatteningVariantAdaptor.h>
 #include <wtf/GenericHashKey.h>
-#include <wtf/GregorianDateTime.h>
 #include <wtf/Indenter.h>
 #include <wtf/InlineMap.h>
 #include <wtf/LazyRef.h>
@@ -503,6 +502,7 @@
 #include <wtf/PackedRefPtr.h>
 #include <wtf/PageAllocation.h>
 #include <wtf/ParallelHelperPool.h>
+#include <wtf/PlainGregorianDateTime.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RawValueTraits.h>

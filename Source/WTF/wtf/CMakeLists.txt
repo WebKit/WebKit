@@ -122,7 +122,6 @@ set(WTF_PUBLIC_HEADERS
     GlobalVersion.h
     GraphNodeWorklist.h
     GraphOrdering.h
-    GregorianDateTime.h
     HashCountedSet.h
     HashFunctions.h
     HashIterators.h
@@ -243,6 +242,7 @@ set(WTF_PUBLIC_HEADERS
     ParallelJobsOpenMP.h
     ParallelVectorIterator.h
     ParkingLot.h
+    PlainGregorianDateTime.h
     Platform.h
     PlatformCallingConventions.h
     PlatformCPU.h
@@ -575,7 +575,6 @@ set(WTF_SOURCES
     FileSystem.cpp
     FunctionDispatcher.cpp
     GlobalVersion.cpp
-    GregorianDateTime.cpp
     HashTable.cpp
     HexNumber.cpp
     Int128.cpp
@@ -603,6 +602,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    PlainGregorianDateTime.cpp
     PreciseSum.cpp
     PrintStream.cpp
     ProcessPrivilege.cpp

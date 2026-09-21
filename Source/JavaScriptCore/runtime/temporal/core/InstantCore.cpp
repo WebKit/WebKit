@@ -28,8 +28,7 @@
 
 #include "ISO8601.h"
 #include "TemporalObject.h"
-#include <wtf/DateMath.h>
-#include <wtf/GregorianDateTime.h>
+#include <wtf/PlainGregorianDateTime.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -53,11 +52,11 @@ WTF::String instantToString(ISO8601::ExactTime exactTime, std::optional<int64_t>
     else
         epochMs = exactTime.floorEpochMilliseconds();
 
-    GregorianDateTime gregorianDateTime { static_cast<double>(epochMs), LocalTimeOffset { } };
+    auto gregorianDateTime = PlainGregorianDateTime::fromMilliseconds(static_cast<double>(epochMs));
 
     // 5. Let dateTimeString be ISODateTimeToString(isoDateTime, "iso8601", precision, ~never~).
-    // NOTE: Inlined here — instantToString receives the offset-adjusted GregorianDateTime
-    // rather than PlainDate/PlainTime, so temporalDateTimeToString() cannot be called directly.
+    // NOTE: Inlined here: the fields come from an offset-adjusted time value rather than from a
+    // PlainDate/PlainTime, so temporalDateTimeToString() cannot be called directly.
     // 5.1. Let yearString be PadISOYear(year).
     StringBuilder builder;
     unsigned yearLength = 4;

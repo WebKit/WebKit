@@ -102,7 +102,7 @@
 		27C793CF2C40909D000E1BE8 /* PlatformEnableWin.h in Headers */ = {isa = PBXBuildFile; fileRef = 27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */; };
 		2A0CF001302E77880086000B /* CFTypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A0CF001302E77880086000A /* CFTypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2B70468D2C6BC5F600318C0A /* StdMultimap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B70468C2C6BC5F600318C0A /* StdMultimap.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
+		2CCD892A15C0390200285083 /* PlainGregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* PlainGregorianDateTime.cpp */; };
 		2CDED0EF18115C38004DBA70 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */; };
 		2CDED0F318115C85004DBA70 /* RunLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDED0F118115C85004DBA70 /* RunLoop.cpp */; };
 		3337DB9CE743410FAF076E17 /* StackTrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */; };
@@ -457,7 +457,7 @@
 		DD3DC8F627A4BF8E007E5B61 /* CompactPointerTuple.h in Headers */ = {isa = PBXBuildFile; fileRef = E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8F727A4BF8E007E5B61 /* SimpleStats.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4730A151A825B004123FF /* SimpleStats.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8F827A4BF8E007E5B61 /* FileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = A331D95921F24992009F02AA /* FileSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC8F927A4BF8E007E5B61 /* GregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C05385315BC819000F21B96 /* GregorianDateTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD3DC8F927A4BF8E007E5B61 /* PlainGregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C05385315BC819000F21B96 /* PlainGregorianDateTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCC9BC422382FCE00FFB51C /* AggregateLogger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8FB27A4BF8E007E5B61 /* ExperimentalFeatureNames.h in Headers */ = {isa = PBXBuildFile; fileRef = DF292D55278F9BC600BB2918 /* ExperimentalFeatureNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8FC27A4BF8E007E5B61 /* CryptographicallyRandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47274151A825A004123FF /* CryptographicallyRandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1354,8 +1354,8 @@
 		27C793CE2C40909D000E1BE8 /* PlatformEnableWin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableWin.h; sourceTree = "<group>"; };
 		2A0CF001302E77880086000A /* CFTypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFTypeTraits.h; sourceTree = "<group>"; };
 		2B70468C2C6BC5F600318C0A /* StdMultimap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StdMultimap.h; sourceTree = "<group>"; };
-		2C05385315BC819000F21B96 /* GregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GregorianDateTime.h; sourceTree = "<group>"; };
-		2CCD892915C0390200285083 /* GregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GregorianDateTime.cpp; sourceTree = "<group>"; };
+		2C05385315BC819000F21B96 /* PlainGregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlainGregorianDateTime.h; sourceTree = "<group>"; };
+		2CCD892915C0390200285083 /* PlainGregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlainGregorianDateTime.cpp; sourceTree = "<group>"; };
 		2CDED0EE18115C38004DBA70 /* RunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopCF.cpp; sourceTree = "<group>"; };
 		2CDED0F118115C85004DBA70 /* RunLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoop.cpp; sourceTree = "<group>"; };
 		2CDED0F218115C85004DBA70 /* RunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoop.h; sourceTree = "<group>"; };
@@ -2543,8 +2543,6 @@
 				0F30BA8B1E78708E002CA847 /* GlobalVersion.h */,
 				0FEC84AE1BD825310080FF74 /* GraphNodeWorklist.h */,
 				AA11GRAPHORDERING0000002 /* GraphOrdering.h */,
-				2CCD892915C0390200285083 /* GregorianDateTime.cpp */,
-				2C05385315BC819000F21B96 /* GregorianDateTime.h */,
 				A8A472B3151A825A004123FF /* HashCountedSet.h */,
 				A8A47314151A825B004123FF /* Hasher.h */,
 				A8A472B4151A825A004123FF /* HashFunctions.h */,
@@ -2692,6 +2690,8 @@
 				0FEB3DD01BB7366B009D7AAD /* ParallelVectorIterator.h */,
 				0F824A641B7443A0002E345D /* ParkingLot.cpp */,
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
+				2CCD892915C0390200285083 /* PlainGregorianDateTime.cpp */,
+				2C05385315BC819000F21B96 /* PlainGregorianDateTime.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				7CEF23EB23D1257900F8B904 /* PlatformCallingConventions.h */,
 				7C42307223CE2D8A006E54D0 /* PlatformCPU.h */,
@@ -3722,7 +3722,6 @@
 				DD3DC96B27A4BF8E007E5B61 /* GlobalVersion.h in Headers */,
 				DD3DC87D27A4BF8E007E5B61 /* GraphNodeWorklist.h in Headers */,
 				AA11GRAPHORDERING0000001 /* GraphOrdering.h in Headers */,
-				DD3DC8F927A4BF8E007E5B61 /* GregorianDateTime.h in Headers */,
 				DD3DC8E427A4BF8E007E5B61 /* HashCountedSet.h in Headers */,
 				DD3DC91227A4BF8E007E5B61 /* Hasher.h in Headers */,
 				DD3DC97927A4BF8E007E5B61 /* HashFunctions.h in Headers */,
@@ -3879,6 +3878,7 @@
 				DDF3077A27C086CD006A526F /* PersistentCoders.h in Headers */,
 				DDF3074E27C086CD006A526F /* PersistentDecoder.h in Headers */,
 				DDF3078B27C086CD006A526F /* PersistentEncoder.h in Headers */,
+				DD3DC8F927A4BF8E007E5B61 /* PlainGregorianDateTime.h in Headers */,
 				DD3DC89F27A4BF8E007E5B61 /* Platform.h in Headers */,
 				DD3DC8BC27A4BF8E007E5B61 /* PlatformCallingConventions.h in Headers */,
 				DD3DC8F027A4BF8E007E5B61 /* PlatformCPU.h in Headers */,
@@ -4644,7 +4644,6 @@
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */,
 				0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */,
-				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
 				93B5B44E2213D616004B7AA7 /* HexNumber.cpp in Sources */,
 				E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */,
@@ -4690,6 +4689,7 @@
 				51F1752B1F3D486000C74950 /* PersistentCoders.cpp in Sources */,
 				51F1752C1F3D486000C74950 /* PersistentDecoder.cpp in Sources */,
 				51F1752D1F3D486000C74950 /* PersistentEncoder.cpp in Sources */,
+				2CCD892A15C0390200285083 /* PlainGregorianDateTime.cpp in Sources */,
 				FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */,
 				8AB05DFB2C99482E00738BDD /* PreciseSum.cpp in Sources */,
 				0F9D3362165DBA73005AD387 /* PrintStream.cpp in Sources */,

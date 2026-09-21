@@ -125,6 +125,7 @@ set(TestWTF_SOURCES
     Tests/WTF/PackedRef.cpp
     Tests/WTF/PackedRefPtr.cpp
     Tests/WTF/ParkingLot.cpp
+    Tests/WTF/PlainGregorianDateTime.cpp
     Tests/WTF/PreciseSum.cpp
     Tests/WTF/PriorityQueue.cpp
     Tests/WTF/RapidHash.cpp

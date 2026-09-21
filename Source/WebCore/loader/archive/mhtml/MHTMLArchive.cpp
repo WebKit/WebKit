@@ -47,7 +47,7 @@
 #include <time.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/DateMath.h>
-#include <wtf/GregorianDateTime.h>
+#include <wtf/PlainGregorianDateTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
@@ -138,8 +138,7 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
     String boundary = generateRandomBoundary();
     String endOfResourceBoundary = makeString("--"_s, boundary, "\r\n"_s);
 
-    GregorianDateTime now;
-    now.setToCurrentLocalTime();
+    auto now = PlainGregorianDateTime::currentLocalTime();
     String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffsetInMinute());
 
     StringBuilder stringBuilder;

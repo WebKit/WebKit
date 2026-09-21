@@ -1361,7 +1361,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/PageCount.h
     runtime/ParseInt.h
     runtime/PinballCompletion.h
-    runtime/PlainGregorianDateTime.h
     runtime/PrivateFieldPutKind.h
     runtime/PrivateName.h
     runtime/ProfilerSupport.h

@@ -114,11 +114,11 @@ private:
     bool didFieldOwnerTransferFocusToPicker() final;
     void didSuppressBlurDueToPickerFocusTransfer() final;
     AtomString localeIdentifier() const final;
-    const GregorianDateTime& placeholderDate() const final;
+    PlainGregorianDateTime placeholderDate() const final;
 
     Vector<Ref<DateTimeFieldElement>, maximumNumberOfFields> m_fields;
     WeakPtr<DateTimeEditElementEditControlOwner> m_editControlOwner;
-    GregorianDateTime m_placeholderDate;
+    PlainGregorianDateTime m_placeholderDate;
 };
 
 } // namespace WebCore

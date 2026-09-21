@@ -28,7 +28,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
 
-namespace JSC {
+namespace WTF {
 
 // The broken-down form of an ECMAScript Date, in either local time or UTC. Milliseconds and
 // smaller units are not kept: they are recovered from the Date's time value directly.
@@ -45,13 +45,14 @@ namespace JSC {
 //
 //                                64 in total
 //
-// The fields are laid out by hand rather than with bitfields because the JITs load them out of a
-// DateInstance directly. An all-zero payload is reserved to mean "not computed yet": monthDay is
-// never 0 in a real date, so no valid value collides with it.
+// The fields are laid out by hand rather than with bitfields so that a single load plus a shift and
+// a mask reads one out, which is what JIT-generated code emits. An all-zero payload is reserved to
+// mean "not computed yet": monthDay is never 0 in a real date, so no valid value collides with it.
 class PlainGregorianDateTime {
 public:
     static constexpr int32_t minYear = -271821;
     static constexpr int32_t maxYear = 275760;
+    static constexpr int32_t maxUTCOffsetInMinute = 60 * 24;
 
     constexpr PlainGregorianDateTime() = default;
 
@@ -95,16 +96,16 @@ public:
         ASSERT(hour >= 0 && hour <= 23);
         ASSERT(minute >= 0 && minute <= 59);
         ASSERT(second >= 0 && second <= 59);
-        ASSERT(utcOffsetInMinute >= -(60 * 24) && utcOffsetInMinute <= (60 * 24));
+        ASSERT(utcOffsetInMinute >= -maxUTCOffsetInMinute && utcOffsetInMinute <= maxUTCOffsetInMinute);
 
-        m_payload = (static_cast<uint64_t>(static_cast<uint32_t>(year) & yearMask) << yearOffset)
-            | (static_cast<uint64_t>(month) << monthOffset)
-            | (static_cast<uint64_t>(monthDay) << monthDayOffset)
-            | (static_cast<uint64_t>(weekDay) << weekDayOffset)
-            | (static_cast<uint64_t>(hour) << hourOffset)
-            | (static_cast<uint64_t>(minute) << minuteOffset)
-            | (static_cast<uint64_t>(second) << secondOffset)
-            | (static_cast<uint64_t>(static_cast<uint32_t>(utcOffsetInMinute) & utcOffsetInMinuteMask) << utcOffsetInMinuteOffset)
+        m_payload = ((static_cast<uint64_t>(static_cast<uint32_t>(year)) & yearMask) << yearOffset)
+            | ((static_cast<uint64_t>(month) & monthMask) << monthOffset)
+            | ((static_cast<uint64_t>(monthDay) & monthDayMask) << monthDayOffset)
+            | ((static_cast<uint64_t>(weekDay) & weekDayMask) << weekDayOffset)
+            | ((static_cast<uint64_t>(hour) & hourMask) << hourOffset)
+            | ((static_cast<uint64_t>(minute) & minuteMask) << minuteOffset)
+            | ((static_cast<uint64_t>(second) & secondMask) << secondOffset)
+            | ((static_cast<uint64_t>(static_cast<uint32_t>(utcOffsetInMinute)) & utcOffsetInMinuteMask) << utcOffsetInMinuteOffset)
             | (static_cast<uint64_t>(isDST) << isDSTOffset);
 
         ASSERT(year == this->year());
@@ -117,6 +118,13 @@ public:
         ASSERT(utcOffsetInMinute == this->utcOffsetInMinute());
         ASSERT(isDST == this->isDST());
     }
+
+    // Decomposes a time value that the caller has already shifted into the zone the fields should
+    // read in, which is why there is no offset to pass: utcOffsetInMinute and isDST come out zero.
+    // Returns a value that converts to false for input outside the representable range.
+    WTF_EXPORT_PRIVATE static PlainGregorianDateTime fromMilliseconds(double millisecondsFromEpoch);
+
+    WTF_EXPORT_PRIVATE static PlainGregorianDateTime currentLocalTime();
 
     // Signed, and stored in the topmost bits, so an arithmetic shift sign-extends it.
     int32_t year() const { return static_cast<int32_t>(std::bit_cast<int64_t>(m_payload) >> yearOffset); }
@@ -155,6 +163,9 @@ private:
 
     uint64_t m_payload { 0 };
 };
-static_assert(sizeof(PlainGregorianDateTime) == sizeof(uint64_t));
+static_assert(sizeof(PlainGregorianDateTime) == sizeof(uint64_t), "This is critical to make sure DateInstance is reasonable size");
+static_assert(std::is_trivially_destructible_v<PlainGregorianDateTime>, "This must be met to make DateInstance non-destructible");
 
-} // namespace JSC
+} // namespace WTF
+
+using WTF::PlainGregorianDateTime;

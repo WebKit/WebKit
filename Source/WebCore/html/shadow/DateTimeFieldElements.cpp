@@ -366,9 +366,7 @@ void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)
 
 static int currentYear()
 {
-    GregorianDateTime date;
-    date.setToCurrentLocalTime();
-    return date.year();
+    return PlainGregorianDateTime::currentLocalTime().year();
 }
 
 void DateTimeYearFieldElement::stepDown()

@@ -21,7 +21,7 @@
 #pragma once
 
 #include <JavaScriptCore/JSObject.h>
-#include <JavaScriptCore/PlainGregorianDateTime.h>
+#include <wtf/PlainGregorianDateTime.h>
 
 namespace JSC {
 

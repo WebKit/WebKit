@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include <JavaScriptCore/PlainGregorianDateTime.h>
 #include <wtf/Forward.h>
+#include <wtf/PlainGregorianDateTime.h>
 
 namespace JSC {
 

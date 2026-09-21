@@ -1324,6 +1324,7 @@
 				WTF/PackedRef.cpp,
 				WTF/PackedRefPtr.cpp,
 				WTF/ParkingLot.cpp,
+				WTF/PlainGregorianDateTime.cpp,
 				WTF/PreciseSum.cpp,
 				WTF/PriorityQueue.cpp,
 				WTF/RapidHash.cpp,

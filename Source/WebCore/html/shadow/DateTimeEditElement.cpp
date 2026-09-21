@@ -207,7 +207,7 @@ DateTimeEditElement::DateTimeEditElement(Document& document, DateTimeEditElement
     : HTMLDivElement(document)
     , m_editControlOwner(editControlOwner)
 {
-    m_placeholderDate.setToCurrentLocalTime();
+    m_placeholderDate = PlainGregorianDateTime::currentLocalTime();
 }
 
 DateTimeEditElement::~DateTimeEditElement() = default;
@@ -423,7 +423,7 @@ AtomString DateTimeEditElement::localeIdentifier() const
     return nullAtom();
 }
 
-const GregorianDateTime& DateTimeEditElement::placeholderDate() const
+PlainGregorianDateTime DateTimeEditElement::placeholderDate() const
 {
     return m_placeholderDate;
 }
