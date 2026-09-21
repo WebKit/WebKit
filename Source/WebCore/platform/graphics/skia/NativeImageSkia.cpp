@@ -30,7 +30,10 @@
 #include "GLContext.h"
 #include "GraphicsContextSkia.h"
 #include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 #include "PlatformDisplay.h"
+#include "SkiaSpanExtras.h"
+#include <limits>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win ports
 #include <skia/core/SkColorSpace.h>
 #include <skia/core/SkImage.h>
@@ -153,31 +156,138 @@ ColorSpace NativeImage::colorSpace() const
     return ColorSpace::SRGB();
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+// Maps an SkImageInfo onto a PixelBufferFormat. nullopt for color types PixelBufferFormat
+// cannot name; those images reach withPixels() through readPixels() instead.
+//
+// Deliberately not exported: NativeImage is meant to be the only place that maps a platform
+// image layout to a pixel format. GraphicsContextGLSkia has a copy of this as
+// dataFormatForColorType(), which should be deleted in favour of this one.
+static std::optional<PixelBufferFormat> pixelBufferFormat(const SkImageInfo& imageInfo)
 {
-    if (size() != IntSize(1, 1))
+    std::optional<PixelFormat> pixelFormat;
+    switch (imageInfo.colorType()) {
+    case kRGBA_8888_SkColorType:
+        pixelFormat = PixelFormat::RGBA8;
+        break;
+    case kBGRA_8888_SkColorType:
+        pixelFormat = PixelFormat::BGRA8;
+        break;
+    default:
+        return std::nullopt;
+    }
+
+    std::optional<AlphaPremultiplication> alphaFormat;
+    switch (imageInfo.alphaType()) {
+    case kPremul_SkAlphaType:
+    // An opaque image's alpha is effectively 255, so either alpha format describes it;
+    // convertImagePixels() treats premultiplied as the no-op case.
+    case kOpaque_SkAlphaType:
+        alphaFormat = AlphaPremultiplication::Premultiplied;
+        break;
+    case kUnpremul_SkAlphaType:
+        alphaFormat = AlphaPremultiplication::Unpremultiplied;
+        break;
+    case kUnknown_SkAlphaType:
+        return std::nullopt;
+    }
+
+    if (auto colorSpace = imageInfo.refColorSpace())
+        return PixelBufferFormat { *alphaFormat, *pixelFormat, ColorSpace(colorSpace) };
+    return PixelBufferFormat { *alphaFormat, *pixelFormat, ColorSpace::SRGB() };
+}
+
+std::optional<PixelBufferFormat> NativeImage::pixelSourceFormat() const
+{
+    auto platformImage = this->platformImage();
+    if (!platformImage || platformImage->isTextureBacked())
         return std::nullopt;
 
-    auto platformImage = this->platformImage();
-    if (platformImage->isTextureBacked()) {
-        if (!PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
-            return std::nullopt;
-
-        ASSERT(m_grContext);
-        const auto& imageInfo = platformImage->imageInfo();
-        uint32_t pixel;
-        SkPixmap pixmap(imageInfo, &pixel, imageInfo.minRowBytes());
-        if (!platformImage->readPixels(m_grContext, pixmap, 0, 0))
-            return std::nullopt;
-
-        return pixmap.getColor(0, 0);
-    }
+    auto format = pixelBufferFormat(platformImage->imageInfo());
+    if (!format)
+        return std::nullopt;
 
     SkPixmap pixmap;
     if (!platformImage->peekPixels(&pixmap))
         return std::nullopt;
+    // A stride the borrow cannot describe makes the pixels unreachable, same as a layout that
+    // cannot be named.
+    if (pixmap.rowBytes() > std::numeric_limits<unsigned>::max())
+        return std::nullopt;
 
-    return pixmap.getColor(0, 0);
+    return format;
+}
+
+bool NativeImage::withBorrowedPixels(const IntRect& sourceRect, NOESCAPE const PixelSourceFunctor& functor) const
+{
+    auto platformImage = this->platformImage();
+    if (!platformImage || platformImage->isTextureBacked())
+        return false;
+
+    auto format = pixelBufferFormat(platformImage->imageInfo());
+    if (!format)
+        return false;
+
+    SkPixmap pixmap;
+    if (!platformImage->peekPixels(&pixmap))
+        return false;
+    if (pixmap.rowBytes() > std::numeric_limits<unsigned>::max())
+        return false;
+
+    IntSize size { pixmap.width(), pixmap.height() };
+    if (sourceRect.isEmpty() || !IntRect { { }, size }.contains(sourceRect))
+        return false;
+
+    auto pixmapView = conversionView(*format, size, static_cast<unsigned>(pixmap.rowBytes()), span(pixmap));
+    if (!pixmapView)
+        return false;
+    auto view = conversionSubview(*pixmapView, size, sourceRect);
+    if (!view)
+        return false;
+
+    functor(*view);
+    return true;
+}
+
+// The color type skia reads `pixelFormat` back as, or nullopt when it has none for it.
+static std::optional<SkColorType> colorTypeForReadingBack(PixelFormat pixelFormat)
+{
+    switch (pixelFormat) {
+    case PixelFormat::RGBA8:
+        return kRGBA_8888_SkColorType;
+    case PixelFormat::BGRA8:
+    // BGRX8 is BGRA8 with the alpha ignored; skia has no skip-alpha color type, so read
+    // BGRA8 and let the caller's conversion treat the result as opaque.
+    case PixelFormat::BGRX8:
+        return kBGRA_8888_SkColorType;
+    default:
+        return std::nullopt;
+    }
+}
+
+bool NativeImage::canReadPixelsTo(const PixelBufferFormat& format)
+{
+    return colorTypeForReadingBack(format.pixelFormat).has_value();
+}
+
+bool NativeImage::readPixels(const IntRect& sourceRect, const PixelBufferConversionView& destination) const
+{
+    auto platformImage = this->platformImage();
+    if (!platformImage)
+        return false;
+
+    auto colorType = colorTypeForReadingBack(destination.format.pixelFormat);
+    if (!colorType)
+        return false;
+
+    auto alphaType = destination.format.alphaFormat == AlphaPremultiplication::Premultiplied ? kPremul_SkAlphaType : kUnpremul_SkAlphaType;
+    if (pixelFormatIsOpaque(destination.format.pixelFormat))
+        alphaType = kOpaque_SkAlphaType;
+    auto imageInfo = SkImageInfo::Make(sourceRect.width(), sourceRect.height(), *colorType, alphaType, destination.format.colorSpace.platformColorSpace());
+
+    if (platformImage->isTextureBacked() && !PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
+        return false;
+
+    return platformImage->readPixels(m_grContext, imageInfo, destination.rows.data(), destination.bytesPerRow, sourceRect.x(), sourceRect.y());
 }
 
 void NativeImage::clearSubimages()

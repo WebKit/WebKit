@@ -91,6 +91,43 @@ CheckedUint32 PixelBuffer::computeBufferSize(PixelFormat pixelFormat, const IntS
     return mustFitInInt32(computeRawPixelComponentCount(pixelFormat, size) * bytesPerPixelComponent(pixelFormat));
 }
 
+CheckedUint32 PixelBuffer::computeBytesPerRow(PixelFormat pixelFormat, int width)
+{
+    return mustFitInInt32(CheckedUint32 { width } * bytesPerPixel(pixelFormat));
+}
+
+CheckedUint32 PixelBuffer::computeStridedNoPaddingBufferSize(PixelFormat pixelFormat, const IntSize& size, unsigned bytesPerRow)
+{
+    if (size.isEmpty())
+        return 0;
+
+    auto lastRowBytes = computeBytesPerRow(pixelFormat, size.width());
+    if (lastRowBytes.hasOverflowed())
+        return lastRowBytes;
+    if (bytesPerRow < lastRowBytes.value()) {
+        lastRowBytes.overflowed();
+        return lastRowBytes;
+    }
+
+    return mustFitInInt32(CheckedUint32 { bytesPerRow } * (size.height() - 1) + lastRowBytes);
+}
+
+CheckedUint32 PixelBuffer::computeStridedBufferSize(PixelFormat pixelFormat, const IntSize& size, unsigned bytesPerRow)
+{
+    if (size.isEmpty())
+        return 0;
+
+    auto rowBytes = computeBytesPerRow(pixelFormat, size.width());
+    if (rowBytes.hasOverflowed())
+        return rowBytes;
+    if (bytesPerRow < rowBytes.value()) {
+        rowBytes.overflowed();
+        return rowBytes;
+    }
+
+    return mustFitInInt32(CheckedUint32 { bytesPerRow } * size.height());
+}
+
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, std::span<uint8_t> bytes)
     : m_format(format)
     , m_size(size)

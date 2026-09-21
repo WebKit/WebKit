@@ -48,7 +48,13 @@ public:
 
     static CheckedUint32 NODELETE computePixelCount(const IntSize&);
     static CheckedUint32 NODELETE computePixelComponentCount(PixelFormat, const IntSize&);
+    WEBCORE_EXPORT static CheckedUint32 NODELETE computeBytesPerRow(PixelFormat, int width);
+    // Every row tightly packed.
     WEBCORE_EXPORT static CheckedUint32 NODELETE computeBufferSize(PixelFormat, const IntSize&);
+    // Every row but the last fully strided, the last row tightly packed.
+    WEBCORE_EXPORT static CheckedUint32 NODELETE computeStridedNoPaddingBufferSize(PixelFormat, const IntSize&, unsigned bytesPerRow);
+    // Every row fully strided.
+    WEBCORE_EXPORT static CheckedUint32 NODELETE computeStridedBufferSize(PixelFormat, const IntSize&, unsigned bytesPerRow);
 
     WEBCORE_EXPORT static bool NODELETE supportedPixelFormat(PixelFormat);
 
