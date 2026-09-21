@@ -5020,6 +5020,7 @@ webkit.org/b/310178 css3/font-variant-font-face-override.html [ ImageOnlyFailure
 webkit.org/b/310178 fast/canvas/fill-text-with-font-features.html [ ImageOnlyFailure ]
 
 webkit.org/b/310213 [ Release ] http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Pass Failure ]
+webkit.org/b/306455 http/tests/xmlhttprequest/logout.html [ Failure Pass ]
 
 webkit.org/b/310215 fast/loader/submit-form-while-parsing-2.html [ Pass Failure Timeout ]
 
