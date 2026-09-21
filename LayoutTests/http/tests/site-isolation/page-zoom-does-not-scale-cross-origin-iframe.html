@@ -1,0 +1,40 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<iframe id="frame" style="width: 300px; height: 300px" src="http://localhost:8000/site-isolation/resources/report-inner-width-and-window-clip-width.html" frameborder=0></iframe>
+<script>
+let pendingReport = null;
+
+window.addEventListener("message", event => {
+    if (pendingReport)
+        pendingReport(event.data);
+});
+
+function report()
+{
+    return new Promise(resolve => {
+        pendingReport = resolve;
+        frame.contentWindow.postMessage("report", "*");
+    });
+}
+
+promise_test(async t => {
+    await new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
+    assert_equals((await report()).innerWidth, 300, "innerWidth before zooming");
+
+    eventSender.zoomPageIn(); // zooms by 1.2
+
+    // The window clip rect in the iframe changes when the page is zoomed. Since
+    // frame geometry updates happen asynchronously, we poll until the window
+    // clip rect width changes to its expected value to tell that the page zoom
+    // has been effected.
+    let reported = await report();
+    while (reported.windowClipWidth !== 300 * 1.2) {
+        await new Promise(requestAnimationFrame);
+        reported = await report();
+    }
+
+    assert_equals(reported.innerWidth, 300, "innerWidth after zooming");
+}, "Page zoom does not affect a cross-origin iframe's viewport");
+</script>

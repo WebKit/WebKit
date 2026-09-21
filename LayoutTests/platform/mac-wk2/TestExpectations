@@ -2440,8 +2440,6 @@ fast/animation/request-animation-frame-throttle-inside-overflow-scroll.html [ Pa
 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Pass Failure ]
 webkit.org/b/319501 fast/animation/request-animation-frame-throttle-subframe.html [ Pass Timeout ]
 
-webkit.org/b/318732 http/tests/site-isolation/page-zoom.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/319018 2x media/media-source/* (layout-tests) are flaky timeouts.
 media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure Timeout ]
 media/media-source/media-managedmse-webvtt-track.html [ Pass Timeout ]
