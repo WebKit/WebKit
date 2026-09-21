@@ -17,7 +17,6 @@
 #import "base/RTCVideoCodecInfo.h"
 #if defined(RTC_ENABLE_VP9)
 #import "api/video_codec/RTCVideoDecoderVP9.h"
-#import "RTCVideoDecoderVTBVP9.h"
 #endif
 #if !defined(RTC_DISABLE_H265)
 #import "RTCH265ProfileLevelId.h"
@@ -30,19 +29,16 @@
   bool _supportsH265;
   bool _supportsVP9Profile0;
   bool _supportsVP9Profile2;
-  bool _supportsVP9VTB;
   bool _supportsAv1;
 }
 
-- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 vp9VTB:(bool)supportsVP9VTB av1:(bool)supportsAv1
+- (id)initWithH265:(bool)supportsH265 vp9Profile0:(bool)supportsVP9Profile0 vp9Profile2:(bool)supportsVP9Profile2 av1:(bool)supportsAv1
 {
   self = [super init];
   if (self) {
       _supportsH265 = supportsH265;
       _supportsVP9Profile0 = supportsVP9Profile0;
       _supportsVP9Profile2 = supportsVP9Profile2;
-      // Use kCMVideoCodecType_VP9 once added to CMFormatDescription.h
-      _supportsVP9VTB = (supportsVP9Profile0 || supportsVP9Profile2) && supportsVP9VTB;
       _supportsAv1 = supportsAv1;
   }
   return self;
@@ -113,11 +109,7 @@
 #endif
 #if defined(RTC_ENABLE_VP9)
   } else if ([info.name isEqualToString:kRTCVideoCodecVp9Name]) {
-      if (_supportsVP9VTB) {
-        return [[RTCVideoDecoderVTBVP9 alloc] init];
-      } else {
-        return [RTCVideoDecoderVP9 vp9Decoder];
-      }
+    return [RTCVideoDecoderVP9 vp9Decoder];
 #endif
   }
 

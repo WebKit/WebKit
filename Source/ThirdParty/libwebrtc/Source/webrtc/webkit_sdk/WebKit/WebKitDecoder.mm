@@ -36,7 +36,6 @@
 #import "modules/video_coding/include/video_error_codes.h"
 #import "webkit_sdk/objc/components/video_codec/RTCVideoDecoderH264.h"
 #import "webkit_sdk/objc/components/video_codec/RTCVideoDecoderH265.h"
-#import "webkit_sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.h"
 #import "webkit_sdk/objc/native/src/objc_frame_buffer.h"
 
 @interface WK_RTCLocalVideoH264H265VP9Decoder : NSObject
@@ -51,7 +50,6 @@
 @implementation WK_RTCLocalVideoH264H265VP9Decoder {
     RTCVideoDecoderH264 *m_h264Decoder;
     RTCVideoDecoderH265 *m_h265Decoder;
-    RTCVideoDecoderVTBVP9 *m_vp9Decoder;
 }
 
 - (instancetype)initH264DecoderWithCallback:(webrtc::LocalDecoderCallback)callback {
@@ -84,21 +82,6 @@
     return self;
 }
 
-- (instancetype)initVP9DecoderWithCallback:(webrtc::LocalDecoderCallback)callback {
-    if (self = [super init]) {
-        m_vp9Decoder = [[RTCVideoDecoderVTBVP9 alloc] init];
-        [m_vp9Decoder setCallback:^(RTCVideoFrame *frame, bool isReordered) {
-            if (!frame) {
-              callback(nil, 0, 0, isReordered);
-              return;
-            }
-            auto *buffer = (RTCCVPixelBuffer *)frame.buffer;
-            callback(buffer.pixelBuffer, frame.timeStamp, frame.timeStampNs, isReordered);
-        }];
-    }
-    return self;
-}
-
 - (NSInteger)setFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height {
     if (m_h264Decoder)
         return [m_h264Decoder setAVCFormat:data size:size width:width height:height];
@@ -112,15 +95,10 @@
         return [m_h264Decoder decodeData:data size:size timeStamp:timeStamp];
     if (m_h265Decoder)
         return [m_h265Decoder decodeData:data size:size timeStamp:timeStamp];
-    if (m_vp9Decoder)
-        return [m_vp9Decoder decodeData:data size:size timeStamp:timeStamp];
     return 0;
 }
 
 - (void)setWidth:(uint16_t)width height:(uint16_t)height {
-    if (!m_vp9Decoder)
-        return;
-    [m_vp9Decoder setWidth:width height:height];
 }
 
 - (NSInteger)releaseDecoder {
@@ -128,7 +106,7 @@
         return [m_h264Decoder releaseDecoder];
     if (m_h265Decoder)
         return [m_h265Decoder releaseDecoder];
-    return [m_vp9Decoder releaseDecoder];
+    return WEBRTC_VIDEO_CODEC_OK;
 }
 
 - (void)flush {
@@ -140,7 +118,6 @@
         [m_h265Decoder flush];
         return;
     }
-    [m_vp9Decoder flush];
 }
 
 @end
@@ -298,9 +275,9 @@ std::unique_ptr<VideoDecoder> RemoteVideoDecoderFactory::Create(const Environmen
     return webrtc::CreateVideoDecoderSoftwareFallbackWrapper(environment, m_internalFactory->Create(environment, format), std::move(decoder));
 }
 
-std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitVP9VTB supportsVP9VTB, WebKitAv1 supportsAv1)
+std::unique_ptr<webrtc::VideoDecoderFactory> createWebKitDecoderFactory(WebKitH265 supportsH265, WebKitVP9 supportsVP9, WebKitAv1 supportsAv1)
 {
-    auto internalFactory = ObjCToNativeVideoDecoderFactory([[RTCDefaultVideoDecoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9Profile0:supportsVP9 > WebKitVP9::Off vp9Profile2:supportsVP9 == WebKitVP9::Profile0And2 vp9VTB: supportsVP9VTB == WebKitVP9VTB::On av1:supportsAv1==WebKitAv1::On]);
+    auto internalFactory = ObjCToNativeVideoDecoderFactory([[RTCDefaultVideoDecoderFactory alloc] initWithH265: supportsH265 == WebKitH265::On vp9Profile0:supportsVP9 > WebKitVP9::Off vp9Profile2:supportsVP9 == WebKitVP9::Profile0And2 av1:supportsAv1==WebKitAv1::On]);
     return std::make_unique<RemoteVideoDecoderFactory>(std::move(internalFactory));
 }
 
@@ -313,12 +290,6 @@ void* createLocalH264Decoder(LocalDecoderCallback callback)
 void* createLocalH265Decoder(LocalDecoderCallback callback)
 {
     auto decoder = [[WK_RTCLocalVideoH264H265VP9Decoder alloc] initH265DecoderWithCallback: callback];
-    return (__bridge_retained void*)decoder;
-}
-
-void* createLocalVP9Decoder(LocalDecoderCallback callback)
-{
-    auto decoder = [[WK_RTCLocalVideoH264H265VP9Decoder alloc] initVP9DecoderWithCallback: callback];
     return (__bridge_retained void*)decoder;
 }
 

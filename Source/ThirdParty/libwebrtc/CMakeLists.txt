@@ -2310,7 +2310,6 @@ if (APPLE)
         Source/third_party/libyuv/source/scale.cc
 
         Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoDecoderH265.mm
-        Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm
         Source/webrtc/webkit_sdk/objc/components/video_codec/RTCVideoFrameReorderQueue.mm
         Source/webrtc/webkit_sdk/objc/components/video_codec/RTCCodecSpecificInfoH265.mm
         Source/webrtc/webkit_sdk/objc/api/video_codec/RTCVideoEncoderVP9.mm
