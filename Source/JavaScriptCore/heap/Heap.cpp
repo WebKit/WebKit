@@ -113,6 +113,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/SpinBackoff.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
