@@ -2395,6 +2395,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.originalNavigationStartTime = originalNavigationStartTime;
     loadParameters.advancedPrivacyProtections = navigation.originatorAdvancedPrivacyProtections();
     loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
+    loadParameters.hasCrossOriginRedirect = navigation.hasCrossOriginRedirect();
     loadParameters.navigationUpgradeToHTTPSBehavior = navigationUpgradeToHTTPSBehavior;
     loadParameters.isHandledByAboutSchemeHandler = m_aboutSchemeHandler->canHandleURL(url);
     loadParameters.requiredCookiesVersion = websiteDataStore().cookiesVersion();
@@ -6128,6 +6129,7 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             loadParameters.shouldTreatAsContinuingLoad = navigation->currentRequestIsRedirect() ? ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted : ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
             loadParameters.frameIdentifier = frame->frameID();
             loadParameters.isRequestFromClientOrUserInput = navigationAction->data().isRequestFromClientOrUserInput;
+            loadParameters.hasCrossOriginRedirect = navigation->hasCrossOriginRedirect();
             loadParameters.hadUserGesture = navigationAction->data().userGestureTokenIdentifier.has_value();
             loadParameters.navigationID = navigation->navigationID();
             loadParameters.ownerPermissionsPolicy = navigation->ownerPermissionsPolicy();
@@ -6533,6 +6535,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
         loadParameters.shouldTreatAsContinuingLoad = shouldTreatAsContinuingLoad;
         loadParameters.frameIdentifier = frame.frameID();
         loadParameters.isRequestFromClientOrUserInput = navigation.isRequestFromClientOrUserInput();
+        loadParameters.hasCrossOriginRedirect = navigation.hasCrossOriginRedirect();
         loadParameters.navigationID = navigation.navigationID();
         loadParameters.originalNavigationStartTime = originalNavigationStartTime;
         loadParameters.effectiveSandboxFlags = frame.effectiveSandboxFlags();
@@ -10017,6 +10020,8 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     navigation->setCurrentRequest(ResourceRequest(request));
     navigation->setLastNavigationAction(navigationActionData);
+    if (!navigationActionData.redirectResponse.isNull() && !SecurityOrigin::create(navigationActionData.redirectResponse.url())->isSameOriginAs(SecurityOrigin::create(request.url())))
+        navigation->setHasCrossOriginRedirect();
     if (!navigation->originatingFrameInfo())
         navigation->setOriginatingFrameInfo(originatingFrameInfoData);
     navigation->setDestinationFrameSecurityOrigin(frameInfo.securityOrigin);
