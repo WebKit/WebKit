@@ -59,6 +59,7 @@ def readJSONFile(path):
             del result['debugOutput']
         return result
 
+Speedometer4 = "Speedometer4"
 Speedometer3 = "Speedometer3"
 Speedometer2 = "Speedometer2"
 JetStream3 = "JetStream3"
@@ -83,6 +84,34 @@ def speedometer3Breakdown(jsonObject):
     result[unitMarker] = "ms"
     for test in breakdown._results["Speedometer-3"]["tests"].keys():
         result[test] = breakdown._results["Speedometer-3"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
+    return result
+
+def speedometer4Breakdown(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-4"]["tests"].keys():
+        result[test] = breakdown._results["Speedometer-4"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
+    return result
+
+def speedometer4BreakdownSyncAsync(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-4"]["tests"].keys():
+        syncTime = None
+        asyncTime = None
+        for value in breakdown._results["Speedometer-4"]["tests"][test]["tests"].values():
+            syncArray = value["tests"]["Sync"]["metrics"]["Time"][None]["current"]
+            asyncArray = value["tests"]["Async"]["metrics"]["Time"][None]["current"]
+            if not syncTime:
+                syncTime = syncArray
+                asyncTime = asyncArray
+            else:
+                syncTime = [x + y for x, y in zip(syncTime, syncArray)]
+                asyncTime = [x + y for x, y in zip(asyncTime, asyncArray)]
+        result[test + "-sync"] = syncTime
+        result[test + "-async"] = asyncTime
     return result
 
 def speedometer3BreakdownSyncAsync(jsonObject):
@@ -489,6 +518,9 @@ def detectSpeedometer2(payload):
 def detectSpeedometer3(payload):
     return "Speedometer-3" in payload
 
+def detectSpeedometer4(payload):
+    return "Speedometer-4" in payload
+
 def Speedometer2Results(payload):
     assert detectSpeedometer2(payload)
     results = []
@@ -500,6 +532,13 @@ def Speedometer3Results(payload):
     assert detectSpeedometer3(payload)
     results = []
     for arr in payload["Speedometer-3"]["metrics"]["Score"]["current"]:
+        results.append(numpy.mean(arr))
+    return results
+
+def Speedometer4Results(payload):
+    assert detectSpeedometer4(payload)
+    results = []
+    for arr in payload["Speedometer-4"]["metrics"]["Score"]["current"]:
         results.append(numpy.mean(arr))
     return results
 
@@ -617,6 +656,8 @@ def detectBenchmark(payload):
         return Speedometer2
     if detectSpeedometer3(payload):
         return Speedometer3
+    if detectSpeedometer4(payload):
+        return Speedometer4
     if detectPLT5(payload):
         return PLT5
     if detectCompetitivePLT(payload):
@@ -640,7 +681,7 @@ def detectBenchmark(payload):
     return None
 
 def biggerIsBetter(benchmarkType):
-    if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3, MotionMark1_3_1]:
+    if benchmarkType in [JetStream2, JetStream3, Speedometer2, Speedometer3, Speedometer4, MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3, MotionMark1_3_1]:
         return True
     elif benchmarkType in [PLT5, CompetitivePLT, PLUM3, RAMification]:
         return False
@@ -778,6 +819,16 @@ def main():
 
         if args.csv:
             writeCSV(speedometer3Breakdown(a), speedometer3Breakdown(b), args.csv, args.sort)
+    elif typeA == Speedometer4:
+        if args.detailed_breakdown:
+            dumpBreakdowns(speedometer4BreakdownSyncAsync(a), speedometer4BreakdownSyncAsync(b), args.sort)
+        if args.breakdown:
+            dumpBreakdowns(speedometer4Breakdown(a), speedometer4Breakdown(b), args.sort)
+
+        ttest(typeA, Speedometer4Results(a), Speedometer4Results(b))
+
+        if args.csv:
+            writeCSV(speedometer4Breakdown(a), speedometer4Breakdown(b), args.csv, args.sort)
     elif any(typeA == validMotionMarkTest for validMotionMarkTest in [MotionMark, MotionMark1_1, MotionMark1_1_1, MotionMark1_2, MotionMark1_3, MotionMark1_3_1]):
         if args.breakdown:
             dumpBreakdowns(motionMarkBreakdown(a), motionMarkBreakdown(b), args.sort)
