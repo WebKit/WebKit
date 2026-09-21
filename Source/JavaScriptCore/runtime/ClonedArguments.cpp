@@ -234,6 +234,16 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, JSGlobalObject* globa
     return Base::getOwnPropertySlot(thisObject, globalObject, ident, slot);
 }
 
+void ClonedArguments::getOwnPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode)
+{
+    ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(object);
+    if (propertyNames.includeStringProperties())
+        thisObject->getOwnIndexedPropertyNames(globalObject, propertyNames, mode);
+
+    // https://tc39.es/ecma262/#sec-createunmappedargumentsobject
+    thisObject->appendArgumentsNonIndexPropertyNames(globalObject, propertyNames, mode, JSObject::ArgumentsPropertyOrder::Unmapped, thisObject->m_deletedArgumentSpecials);
+}
+
 void ClonedArguments::getOwnSpecialPropertyNames(JSObject* object, JSGlobalObject* globalObject, PropertyNameArrayBuilder&, DontEnumPropertiesMode mode)
 {
     ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(object);
@@ -261,11 +271,18 @@ bool ClonedArguments::deleteProperty(JSCell* cell, JSGlobalObject* globalObject,
     ClonedArguments* thisObject = uncheckedDowncast<ClonedArguments>(cell);
     VM& vm = globalObject->vm();
     
+    // Strict and non-strict cloned arguments share the initial structure. A sloppy
+    // DeleteNonConfigurable cache on that structure would reject a later configurable callee.
+    bool calleeWasLazy = ident == vm.propertyNames->callee && !thisObject->specialsMaterialized();
     if (ident == vm.propertyNames->callee
         || ident == vm.propertyNames->iteratorSymbol)
         thisObject->materializeSpecialsIfNecessary(globalObject);
-    
-    return Base::deleteProperty(thisObject, globalObject, ident, slot);
+
+    bool deleted = Base::deleteProperty(thisObject, globalObject, ident, slot);
+    recordDeletedArgumentSpecial(vm, thisObject->m_deletedArgumentSpecials, ident, slot, deleted);
+    if (calleeWasLazy)
+        slot.disableCaching();
+    return deleted;
 }
 
 bool ClonedArguments::defineOwnProperty(JSObject* object, JSGlobalObject* globalObject, PropertyName ident, const PropertyDescriptor& descriptor, bool shouldThrow)

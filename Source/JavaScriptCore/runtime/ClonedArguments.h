@@ -46,7 +46,7 @@ static constexpr PropertyOffset clonedArgumentsLengthPropertyOffset = firstOutOf
 class ClonedArguments final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesGetOwnSpecialPropertyNames | OverridesPut;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -78,6 +78,8 @@ public:
         return OBJECT_OFFSETOF(ClonedArguments, m_callee);
     }
 
+    static constexpr ptrdiff_t offsetOfDeletedArgumentSpecials() { return OBJECT_OFFSETOF(ClonedArguments, m_deletedArgumentSpecials); }
+
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {
         ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
@@ -92,6 +94,7 @@ private:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype, IndexingType);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
+    static void getOwnPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
@@ -102,6 +105,7 @@ private:
     void materializeSpecialsIfNecessary(JSGlobalObject*);
     
     WriteBarrier<JSFunction> m_callee; // Set to nullptr when we materialize all of our special properties.
+    uint32_t m_deletedArgumentSpecials { 0 };
 };
 
 } // namespace JSC

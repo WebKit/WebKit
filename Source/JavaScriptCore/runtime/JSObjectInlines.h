@@ -1621,6 +1621,26 @@ inline void JSObject::ensureWritable(VM& vm)
         convertFromCopyOnWrite(vm);
 }
 
+inline bool noteDeletedArgumentSpecial(VM& vm, uint32_t& bits, PropertyName ident)
+{
+    if (ident == vm.propertyNames->length)
+        bits |= JSObject::deletedArgumentLengthBit;
+    else if (ident == vm.propertyNames->callee)
+        bits |= JSObject::deletedArgumentCalleeBit;
+    else if (ident == vm.propertyNames->iteratorSymbol)
+        bits |= JSObject::deletedArgumentIteratorBit;
+    else
+        return false;
+    return true;
+}
+
+// A cached DelById / DelByVal stub removes the property without returning to deleteProperty.
+inline void recordDeletedArgumentSpecial(VM& vm, uint32_t& bits, PropertyName ident, DeletePropertySlot& slot, bool deleted)
+{
+    if (deleted && noteDeletedArgumentSpecial(vm, bits, ident))
+        slot.disableCaching();
+}
+
 } // namespace JSC
 
 

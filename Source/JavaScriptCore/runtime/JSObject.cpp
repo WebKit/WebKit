@@ -2841,6 +2841,72 @@ void JSObject::getOwnNonIndexPropertyNames(JSGlobalObject* globalObject, Propert
     structure()->getPropertyNamesFromStructure(vm, propertyNames, mode);
 }
 
+void JSObject::appendArgumentsNonIndexPropertyNames(JSGlobalObject* globalObject, PropertyNameArrayBuilder& propertyNames, DontEnumPropertiesMode mode, ArgumentsPropertyOrder order, uint32_t deletedSpecials)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    PropertyNameArrayBuilder storedNames(vm, PropertyNameMode::StringsAndSymbols, propertyNames.privateSymbolMode());
+    getOwnNonIndexPropertyNames(globalObject, storedNames, mode);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    const Identifier& lengthName = vm.propertyNames->length;
+    const Identifier& calleeName = vm.propertyNames->callee;
+    const Identifier& iteratorName = vm.propertyNames->iteratorSymbol;
+    const bool includeDontEnum = mode == DontEnumPropertiesMode::Include;
+    const bool injectMissingSpecials = order == ArgumentsPropertyOrder::MappedLazy;
+
+    bool sawLength = false;
+    bool sawCallee = false;
+    bool sawIterator = false;
+    for (const Identifier& propertyName : storedNames) {
+        if (propertyName == lengthName)
+            sawLength = true;
+        else if (propertyName == calleeName)
+            sawCallee = true;
+        else if (propertyName == iteratorName)
+            sawIterator = true;
+    }
+
+    auto shouldHoist = [&](bool saw, uint32_t deletedBit) {
+        if (deletedSpecials & deletedBit)
+            return false;
+        // storedNames is already filtered by DontEnum mode, so an enumerable stored special
+        // stays in Object.keys / for-in order. Inject a missing mapped special only for ownKeys.
+        if (saw)
+            return true;
+        return injectMissingSpecials && includeDontEnum;
+    };
+    bool hoistLength = shouldHoist(sawLength, deletedArgumentLengthBit);
+    bool hoistCallee = shouldHoist(sawCallee, deletedArgumentCalleeBit);
+    bool hoistIterator = shouldHoist(sawIterator, deletedArgumentIteratorBit);
+
+    if (propertyNames.includeStringProperties()) {
+        if (hoistLength)
+            propertyNames.add(lengthName);
+        if (hoistCallee)
+            propertyNames.add(calleeName);
+        for (const Identifier& propertyName : storedNames) {
+            if (propertyName.impl()->isSymbol())
+                continue;
+            if ((hoistLength && propertyName == lengthName) || (hoistCallee && propertyName == calleeName))
+                continue;
+            propertyNames.add(propertyName);
+        }
+    }
+    if (propertyNames.includeSymbolProperties()) {
+        if (hoistIterator)
+            propertyNames.add(iteratorName);
+        for (const Identifier& propertyName : storedNames) {
+            if (!propertyName.impl()->isSymbol())
+                continue;
+            if (hoistIterator && propertyName == iteratorName)
+                continue;
+            propertyNames.add(propertyName);
+        }
+    }
+}
+
 double JSObject::toNumber(JSGlobalObject* globalObject) const
 {
     VM& vm = globalObject->vm();

@@ -154,6 +154,8 @@ public:
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
     
     static constexpr ptrdiff_t offsetOfOverrodeThings() { return OBJECT_OFFSETOF(ScopedArguments, m_overrodeThings); }
+
+    uint32_t& deletedArgumentSpecials() { return m_deletedArgumentSpecials; }
     static constexpr ptrdiff_t offsetOfTotalLength() { return OBJECT_OFFSETOF(ScopedArguments, m_totalLength); }
     static constexpr ptrdiff_t offsetOfTable() { return OBJECT_OFFSETOF(ScopedArguments, m_table); }
     static constexpr ptrdiff_t offsetOfScope() { return OBJECT_OFFSETOF(ScopedArguments, m_scope); }
@@ -175,6 +177,7 @@ private:
     WriteBarrier<JSLexicalEnvironment> m_scope;
     
     AuxiliaryBarrier<WriteBarrier<Unknown>*> m_storage;
+    uint32_t m_deletedArgumentSpecials { 0 };
 };
 
 } // namespace JSC

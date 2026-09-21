@@ -306,8 +306,7 @@ delete_args_test(get_args(13, 24),
 
 delete_args_test(get_args(13, 24, "string", true),
                  "[0: 13, 2: string]", //[1][3] deleted
-                 "[0: 13, 2: arg2, 1: arg1, 6: arg6, foo: bar]"
-//[1] set after formal args [0][2]
+                 "[0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar]"
                  );
 
 function Test11() {

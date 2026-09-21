@@ -98,8 +98,8 @@ Test10.3.2 : [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar]
 PASSED : Test10.3.2 exp: [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar] act : [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar]
 Test10.3.1 : [0: 13, 2: string]
 PASSED : Test10.3.1 exp: [0: 13, 2: string] act : [0: 13, 2: string]
-Test10.3.2 : [0: 13, 2: arg2, 1: arg1, 6: arg6, foo: bar]
-PASSED : Test10.3.2 exp: [0: 13, 2: arg2, 1: arg1, 6: arg6, foo: bar] act : [0: 13, 2: arg2, 1: arg1, 6: arg6, foo: bar]
+Test10.3.2 : [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar]
+PASSED : Test10.3.2 exp: [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar] act : [0: 13, 1: arg1, 2: arg2, 6: arg6, foo: bar]
 Test11 args : sentinel
 PASSED : Test11 args exp: sentinel act : sentinel
 Test12 args : sentinel

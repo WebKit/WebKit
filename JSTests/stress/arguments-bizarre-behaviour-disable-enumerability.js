@@ -21,7 +21,7 @@ for (var s in result[2])
 if (array.join(",") != "")
     throw new Error();
 
-if (Object.keys(result[2]).join(",") != "0")
+if (Object.keys(result[2]).join(",") != "")
     throw new Error();
 
 if (Object.getOwnPropertyDescriptor(result[2], 0).enumerable === true)
