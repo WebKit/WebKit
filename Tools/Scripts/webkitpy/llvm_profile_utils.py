@@ -79,8 +79,12 @@ def weighted_profiles_for_framework(framework, directory_weight_pairs):
 
 
 def locate_binary_xcrun(sdk, binary_name):
-    completed_process = subprocess.run(['/usr/bin/xcrun', '-sdk', sdk, '--find', binary_name],
-                                       check=False, text=True, capture_output=True)
+    try:
+        completed_process = subprocess.run(['/usr/bin/xcrun', '-sdk', sdk, '--find', binary_name],
+                                           check=False, text=True, capture_output=True)
+    except OSError as e:
+        logger.debug(f'Failed to run xcrun: {e}')
+        return None
     if completed_process.returncode:
         return None
     return completed_process.stdout.strip()
