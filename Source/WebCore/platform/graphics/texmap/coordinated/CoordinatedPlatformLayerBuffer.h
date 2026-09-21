@@ -52,15 +52,13 @@ class CoordinatedPlatformLayerBuffer
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CoordinatedPlatformLayerBuffer);
 public:
     enum class Type : uint8_t {
-        RGB,
-#if USE(TEXTURE_MAPPER)
-        YUV,
-        ExternalOES,
-#endif
         HolePunch,
         Video,
         DMABuf,
 #if USE(TEXTURE_MAPPER)
+        RGB,
+        YUV,
+        ExternalOES,
         NativeImage,
 #else
         SkiaImage,
