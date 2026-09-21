@@ -1306,7 +1306,7 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
 
     localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyAllow;
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Succeeded!"];
+    [webView waitForMessages:@[@"Succeeded!"]];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
     cleanUpKeychain();
 }
