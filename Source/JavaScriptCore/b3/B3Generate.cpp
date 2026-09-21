@@ -48,6 +48,7 @@
 #include "B3Procedure.h"
 #include "B3ReduceDoubleToFloat.h"
 #include "B3ReduceStrength.h"
+#include "B3SpecializeSelect.h"
 #include "B3Validate.h"
 #include "CompilerTimingScope.h"
 
@@ -84,6 +85,8 @@ void generateToAir(Procedure& procedure)
     
     if (procedure.optLevel() >= 2) {
         reduceDoubleToFloat(procedure);
+        if (Options::useB3SpecializeSelect())
+            specializeSelect(procedure);
         reduceStrength(procedure, ReduceStrengthPass::Initial);
         if (Options::useB3HoistLoopInvariantValues())
             hoistLoopInvariantValues(procedure);

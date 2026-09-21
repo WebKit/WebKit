@@ -61,9 +61,26 @@ public:
         simplify();
 
         cleanUp();
+
+        substituteIdentities();
     }
 
 private:
+    void replaceWithIdentity(Value* value, Value* newValue)
+    {
+        value->replaceWithIdentity(newValue);
+        m_insertedIdentity = true;
+    }
+
+    void substituteIdentities()
+    {
+        if (!m_insertedIdentity)
+            return;
+
+        for (Value* value : m_procedure.values())
+            value->performSubstitution();
+    }
+
     // This step find values that are used as Double and cannot be converted to Float..
     // It flows the information backward through Phi-Upsilons.
     bool findCandidates()
@@ -86,7 +103,7 @@ private:
                     Value* child = value->child(0);
                     if (child->opcode() == FloatToDouble) {
                         // We don't really need to simplify this early but it simplifies debugging.
-                        value->replaceWithIdentity(child->child(0));
+                        replaceWithIdentity(value, child->child(0));
                     }
                     continue;
                 }
@@ -345,7 +362,7 @@ private:
                 case IToD: {
                     Value* iToF = insertionSet.insert<Value>(index, IToF, value->origin(), value->child(0));
                     value->setType(Float);
-                    value->replaceWithIdentity(iToF);
+                    replaceWithIdentity(value, iToF);
                     m_convertedValue.add(value);
                     break;
                 }
@@ -354,7 +371,7 @@ private:
                     // Typically, this is indirect through Phi-Upsilons.
                     // The Upsilon rounds and the Phi rounds.
                     value->setType(Float);
-                    value->replaceWithIdentity(value->child(0));
+                    replaceWithIdentity(value, value->child(0));
                     m_convertedValue.add(value);
                     break;
                 case Phi:
@@ -409,7 +426,7 @@ private:
             for (unsigned index = 0; index < block->size(); ++index) {
                 Value* value = block->at(index);
                 if (value->opcode() == DoubleToFloat && value->child(0)->type() == Float) {
-                    value->replaceWithIdentity(value->child(0));
+                    replaceWithIdentity(value, value->child(0));
                     continue;
                 }
 
@@ -463,6 +480,8 @@ private:
 
     // Any value that previously produced Double and now produce Float.
     IndexSet<Value*> m_convertedPhis;
+
+    bool m_insertedIdentity { false };
 };
 
 void printGraphIfConverting(Procedure& procedure)

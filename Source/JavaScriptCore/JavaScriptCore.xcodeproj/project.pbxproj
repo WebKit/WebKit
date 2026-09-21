@@ -377,6 +377,7 @@
 		0F69CC89193AC60A0045759E /* DFGFrozenValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F69CC87193AC60A0045759E /* DFGFrozenValue.h */; };
 		0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B1CB71861244C00845D97 /* ArityCheckMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F6B8AD91C4EDDA200969052 /* B3DuplicateTails.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B8AD71C4EDDA200969052 /* B3DuplicateTails.h */; };
+		6192E437515A4BFEB3F5D7BE /* B3SpecializeSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C04B9D08BCC42C1A911CD0F /* B3SpecializeSelect.h */; };
 		0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B8ADB1C4EFAC300969052 /* B3SSACalculator.h */; };
 		0F6B8AE31C4EFE1700969052 /* B3BreakCriticalEdges.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B8ADF1C4EFE1700969052 /* B3BreakCriticalEdges.h */; };
 		0F6B8AE51C4EFE1700969052 /* B3FixSSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F6B8AE11C4EFE1700969052 /* B3FixSSA.h */; };
@@ -3421,6 +3422,8 @@
 		0F69CC87193AC60A0045759E /* DFGFrozenValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGFrozenValue.h; path = dfg/DFGFrozenValue.h; sourceTree = "<group>"; };
 		0F6B1CB71861244C00845D97 /* ArityCheckMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArityCheckMode.h; sourceTree = "<group>"; };
 		0F6B8AD61C4EDDA200969052 /* B3DuplicateTails.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3DuplicateTails.cpp; path = b3/B3DuplicateTails.cpp; sourceTree = "<group>"; };
+		B3CE18FDDC6C48BDAB61B99C /* B3SpecializeSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3SpecializeSelect.cpp; path = b3/B3SpecializeSelect.cpp; sourceTree = "<group>"; };
+		0C04B9D08BCC42C1A911CD0F /* B3SpecializeSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SpecializeSelect.h; path = b3/B3SpecializeSelect.h; sourceTree = "<group>"; };
 		0F6B8AD71C4EDDA200969052 /* B3DuplicateTails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3DuplicateTails.h; path = b3/B3DuplicateTails.h; sourceTree = "<group>"; };
 		0F6B8ADB1C4EFAC300969052 /* B3SSACalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3SSACalculator.h; path = b3/B3SSACalculator.h; sourceTree = "<group>"; };
 		0F6B8ADE1C4EFE1700969052 /* B3BreakCriticalEdges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3BreakCriticalEdges.cpp; path = b3/B3BreakCriticalEdges.cpp; sourceTree = "<group>"; };
@@ -7369,6 +7372,8 @@
 				0FEC84EA1BDACDAC0080FF74 /* B3SlotBaseValue.cpp */,
 				0FEC84EB1BDACDAC0080FF74 /* B3SlotBaseValue.h */,
 				0F2BBD911C5FF3F50023EF23 /* B3SparseCollection.h */,
+				B3CE18FDDC6C48BDAB61B99C /* B3SpecializeSelect.cpp */,
+				0C04B9D08BCC42C1A911CD0F /* B3SpecializeSelect.h */,
 				0F6B8ADB1C4EFAC300969052 /* B3SSACalculator.h */,
 				0F33FCF51C136E2500323F67 /* B3StackmapGenerationParams.cpp */,
 				0F33FCF61C136E2500323F67 /* B3StackmapGenerationParams.h */,
@@ -11497,6 +11502,7 @@
 				4B78E09F29442801003C6682 /* B3SIMDValue.h in Headers */,
 				0FEC85351BDACDAC0080FF74 /* B3SlotBaseValue.h in Headers */,
 				0F2BBD961C5FF3F50023EF23 /* B3SparseCollection.h in Headers */,
+				6192E437515A4BFEB3F5D7BE /* B3SpecializeSelect.h in Headers */,
 				0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */,
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,

@@ -962,13 +962,14 @@ void testCheckSelectAndCSE()
 
 void testCheckSelectAndDeadCheckCSE()
 {
-    // Exercises B3 strength reduction's "select specialization" (specializeSelect) together with pure CSE.
+    // Exercises the specializeSelect phase (B3SpecializeSelect.h) together with reduceStrength's pure
+    // CSE.
     //
-    // When a Check is reached (within selectSpecializationBound) from a Select that has a constant arm,
-    // reduceStrength specializes the Select: it splits the block at the Check, clones the values between
-    // the Select and the Check into a then/else pair of blocks -- substituting the Select's then/else
-    // value in each -- and replaces the originals with Phis at the merge. Void values in that range (such
-    // as an intermediate Check) are removed from the original block and re-emitted in both arms.
+    // When a Check is reached, within selectSpecializationBound, from a Select that has a constant arm,
+    // the phase specializes the Select: it splits the block at the Check, clones the values between the
+    // Select and the Check into a then/else pair of blocks -- substituting the Select's then/else value
+    // in each -- and replaces the originals with Phis at the merge. Void values in that range (such as
+    // an intermediate Check) are removed from the original block and re-emitted in both arms.
     //
     // The IR (single block):
     //
@@ -1003,7 +1004,7 @@ void testCheckSelectAndDeadCheckCSE()
     };
 
     // Defined before the Select so the Select -> triggering-Check run stays within
-    // selectSpecializationBound (== 3): Select, intermediate Check, Add, triggering Check.
+    // selectSpecializationBound: Select, intermediate Check, Add, triggering Check.
     auto* constant = root->appendNew<ConstPtrValue>(proc, Origin(), 42);
 
     // (1) The Select to specialize: at least one data arm is constant.
