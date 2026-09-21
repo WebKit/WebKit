@@ -133,6 +133,7 @@ CSSParserContext::CSSParserContext(const Settings& settings)
     , cssIdentFunctionEnabled { settings.cssIdentFunctionEnabled() }
     , propertySettings { CSSPropertySettings { settings } }
 {
+    StaticCSSValuePool::init();
 }
 
 void add(Hasher& hasher, const CSSParserContext& context)

@@ -7,27 +7,15 @@ layer at (0,0) size 800x600
         text run at (0,0) width 474: "This tests that empty select controls and buttons have the correct baseline."
       RenderBR {BR} at (473,0) size 1x18
       RenderMenuList {SELECT} at (0,19) size 38x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-        RenderBlock {DIV} at (1,1) size 36x18
-          RenderText {#text} at (8,2) size 0x13
-            text run at (8,2) width 0: " "
       RenderText {#text} at (38,18) size 31x19
         text run at (38,18) width 31: " test "
       RenderMenuList {SELECT} at (68,19) size 55x20 [color=#000000D8] [bgcolor=#FFFFFF] [border: (1px solid #000000D8)]
-        RenderBlock {DIV} at (1,1) size 52x18
-          RenderText {#text} at (8,2) size 21x13
-            text run at (8,2) width 21: "test"
       RenderText {#text} at (122,18) size 5x19
         text run at (122,18) width 5: " "
       RenderMenuList {SELECT} at (126,20) size 37x18 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
-        RenderBlock {DIV} at (1,1) size 34x16
-          RenderText {#text} at (8,1) size 0x13
-            text run at (8,1) width 0: " "
       RenderText {#text} at (162,18) size 31x19
         text run at (162,18) width 31: " test "
       RenderMenuList {SELECT} at (192,20) size 53x18 [color=#00008B] [bgcolor=#ADD8E6] [border: (1px solid #00008B)]
-        RenderBlock {DIV} at (1,1) size 50x16
-          RenderText {#text} at (8,1) size 21x13
-            text run at (8,1) width 21: "test"
       RenderText {#text} at (244,18) size 5x19
         text run at (244,18) width 5: " "
       RenderButton {BUTTON} at (248,20) size 17x16 [color=#000000D8] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -47,3 +35,19 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 21x13
             text run at (0,0) width 21: "test"
       RenderText {#text} at (0,0) size 0x0
+layer at (9,28) size 36x18
+  RenderBlock {DIV} at (1,1) size 36x18
+    RenderText {#text} at (8,2) size 0x13
+      text run at (8,2) width 0: " "
+layer at (77,28) size 52x18
+  RenderBlock {DIV} at (1,1) size 52x18
+    RenderText {#text} at (8,2) size 21x13
+      text run at (8,2) width 21: "test"
+layer at (135,29) size 34x16
+  RenderBlock {DIV} at (1,1) size 34x16
+    RenderText {#text} at (8,1) size 0x13
+      text run at (8,1) width 0: " "
+layer at (201,29) size 50x16
+  RenderBlock {DIV} at (1,1) size 50x16
+    RenderText {#text} at (8,1) size 21x13
+      text run at (8,1) width 21: "test"

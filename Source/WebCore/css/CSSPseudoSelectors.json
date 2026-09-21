@@ -548,6 +548,10 @@
         "details-content": {
             "user-agent-part": true
         },
+        "field-content": {
+            "settings-flag": "htmlEnhancedSelectEnabled || cssAppearanceBaseEnabled",
+            "user-agent-part": true
+        },
         "-internal-cue-background": {
             "conditional": "ENABLE(VIDEO)",
             "status": "non-standard",

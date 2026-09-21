@@ -30,9 +30,6 @@ layer at (0,0) size 800x600
                     text run at (1,19) width 38: "Case:"
               RenderTableCell {TD} at (74,45) size 600x32 [r=1 c=1 rs=1 cs=1]
                 RenderMenuList {SELECT} at (1,4) size 341x30 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock {DIV} at (1,1) size 339x28
-                    RenderText {#text} at (5,5) size 96x18
-                      text run at (5,5) width 96: "a_abortinstall"
                 RenderText {#text} at (0,0) size 0x0
               RenderTableCell {TD} at (675,46) size 107x30 [r=1 c=2 rs=1 cs=1]
                 RenderButton {INPUT} at (1,5) size 105x28 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -45,3 +42,7 @@ layer at (87,77) size 591x18
   RenderBlock {DIV} at (3,3) size 591x18
     RenderText {#text} at (0,0) size 120x18
       text run at (0,0) width 120: "http://jimbob/jars/"
+layer at (85,112) size 339x28
+  RenderBlock {DIV} at (1,1) size 339x28
+    RenderText {#text} at (5,5) size 96x18
+      text run at (5,5) width 96: "a_abortinstall"

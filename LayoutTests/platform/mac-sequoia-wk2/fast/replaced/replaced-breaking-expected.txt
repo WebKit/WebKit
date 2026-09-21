@@ -29,13 +29,7 @@ layer at (0,0) size 800x600
               text run at (0,0) width 35: "button"
         RenderText {#text} at (0,0) size 0x0
         RenderMenuList {SELECT} at (1,165) size 63x18 [bgcolor=#FFFFFF]
-          RenderBlock {DIV} at (0,0) size 63x18
-            RenderText {#text} at (8,2) size 32x13
-              text run at (8,2) width 32: "select"
         RenderMenuList {SELECT} at (1,183) size 63x18 [bgcolor=#FFFFFF]
-          RenderBlock {DIV} at (0,0) size 63x18
-            RenderText {#text} at (8,2) size 32x13
-              text run at (8,2) width 32: "select"
         RenderText {#text} at (0,0) size 0x0
         RenderListBox {SELECT} at (1,201) size 49x43 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderListBox {SELECT} at (1,244) size 49x43 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
@@ -66,3 +60,11 @@ layer at (12,12) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
 layer at (12,31) size 142x13
   RenderBlock {DIV} at (3,3) size 142x13
+layer at (9,173) size 63x18
+  RenderBlock {DIV} at (0,0) size 63x18
+    RenderText {#text} at (8,2) size 32x13
+      text run at (8,2) width 32: "select"
+layer at (9,191) size 63x18
+  RenderBlock {DIV} at (0,0) size 63x18
+    RenderText {#text} at (8,2) size 32x13
+      text run at (8,2) width 32: "select"
