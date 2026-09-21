@@ -414,7 +414,7 @@ enum class HttpEquivPolicy : uint8_t {
     DisabledByContentDispositionAttachmentSandbox
 };
 
-enum class CustomElementNameValidationStatus {
+enum class CustomElementNameValidationStatus : uint8_t {
     Valid,
     FirstCharacterIsNotLowercaseASCIILetter,
     ContainsNoHyphen,
@@ -2238,7 +2238,7 @@ private:
 
     void setVisualUpdatesAllowed(ReadyState);
 
-    enum class VisualUpdatesPreventedReason {
+    enum class VisualUpdatesPreventedReason : uint8_t {
         ReadyState     = 1 << 0,
         Suspension     = 1 << 1,
         RenderBlocking = 1 << 2,
