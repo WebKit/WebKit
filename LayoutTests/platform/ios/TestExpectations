@@ -10293,6 +10293,15 @@ webkit.org/b/322305 fast/visual-viewport/ios/interactive-widget/resizes-content-
 
 imported/w3c/web-platform-tests/input-events/select-event-drag-remove.html [ Skip ] # timeout
 
+# The drop shadow offset is not scaled by the perspective transform of an ancestor.
+webkit.org/b/324624 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-perspective-scale.html [ ImageOnlyFailure ]
+
+# A filtered layer under a 3D transformed ancestor is rasterized below screen resolution and its drop shadow lands in the wrong place.
+webkit.org/b/324624 imported/w3c/web-platform-tests/css/filter-effects/filter-in-3d-transformed-ancestor-child-near-eye-plane.html [ ImageOnlyFailure ]
+
+# Nothing is painted when a child of a filtered layer crosses the eye plane under a 3D transformed ancestor.
+imported/w3c/web-platform-tests/css/filter-effects/filter-in-3d-transformed-ancestor-child-crossing-eye-plane.html [ ImageOnlyFailure ]
+
 # webkit.org/b/301546 [iOS26-iOS27] Two tests in imported/w3c/web-platform-tests/uievents/mouse are constant failures
 imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=16 [ Failure ]
 imported/w3c/web-platform-tests/uievents/mouse/mouseover-at-removing-mousedown-target.html?duration=42 [ Failure ]

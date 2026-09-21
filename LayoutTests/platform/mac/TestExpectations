@@ -2537,3 +2537,9 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 [ Tahoe+ ] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
 
 webkit.org/b/322313 accessibility/isolated-tree/aria-owns-id-change.html [ Timeout ]
+
+# The drop shadow offset is not scaled by the perspective transform of an ancestor.
+webkit.org/b/324624 imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-perspective-scale.html [ ImageOnlyFailure ]
+
+# A filtered layer under a 3D transformed ancestor is rasterized below screen resolution and its drop shadow lands in the wrong place.
+webkit.org/b/324624 imported/w3c/web-platform-tests/css/filter-effects/filter-in-3d-transformed-ancestor-child-near-eye-plane.html [ ImageOnlyFailure ]
