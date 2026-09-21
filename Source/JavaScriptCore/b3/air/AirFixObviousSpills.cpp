@@ -34,6 +34,7 @@
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
 #include "Options.h"
+#include "RegisterSet.h"
 #include <wtf/GraphOrdering.h>
 #include <wtf/IndexMap.h>
 #include <wtf/ListDump.h>
@@ -217,6 +218,8 @@ private:
             }
             return;
         }
+        if (m_state.hasNoRegAlias())
+            return;
         arg.forEachTmp(role, bank, width,
             [&](Tmp& tmp, Arg::Role refinedRole, Bank, Width) {
                 if (isWhichDef(refinedRole) && tmp.isReg()) {
@@ -318,21 +321,21 @@ private:
                 // since it's more deterministic.
                 uint64_t myValue = inst.args()[0].value();
                 Reg myDest = inst.args()[1].reg();
-                for (const RegConst& regConst : m_state.regConst) {
-                    uint64_t otherValue = regConst.constant;
-                    
+                for (Reg reg : m_state.constRegs) {
+                    uint64_t otherValue = m_state.constants[reg.index()];
+
                     // Let's try add. That's the only thing that works on all platforms, since it's
                     // the only cheap arithmetic op that x86 does in three operands. Long term, we
                     // should add fancier materializations here for ARM if the BigImm is yuge.
                     uint64_t delta = myValue - otherValue;
-                    
+
                     if (Arg::isValidImmForm(delta)) {
                         if (delta) {
                             inst.kind = Add64;
-                            inst.setArgs(Arg::imm(delta), Tmp(regConst.reg), Tmp(myDest));
+                            inst.setArgs(Arg::imm(delta), Tmp(reg), Tmp(myDest));
                         } else {
                             inst.kind = Move;
-                            inst.setArgs(Tmp(regConst.reg), Tmp(myDest));
+                            inst.setArgs(Tmp(reg), Tmp(myDest));
                         }
                         return;
                     }
@@ -438,35 +441,14 @@ private:
     {
         return arg.isStack() && arg.stackSlot()->isSpill();
     }
-    
+
     struct RegConst {
-        RegConst()
-        {
-        }
-        
         RegConst(Reg reg, int64_t constant)
             : reg(reg)
             , constant(constant)
         {
         }
 
-        explicit operator bool() const
-        {
-            return !!reg;
-        }
-        
-        friend bool NODELETE operator==(const RegConst&, const RegConst&) = default;
-
-        bool NODELETE operator<(const RegConst& other) const
-        {
-            return reg < other.reg || (reg == other.reg && constant < other.constant);
-        }
-
-        void dump(PrintStream& out) const
-        {
-            out.print(reg, "->", constant);
-        }
-        
         Reg reg;
         int64_t constant { 0 };
     };
@@ -556,20 +538,21 @@ private:
     };
 
     struct State {
-        bool NODELETE isEmpty() const { return regConst.isEmpty() && slotConst.isEmpty() && regSlot.isEmpty(); }
+        bool NODELETE isEmpty() const { return constRegs.isEmpty() && slotConst.isEmpty() && regSlot.isEmpty(); }
 
         bool NODELETE hasNoSlotAlias() const { return slotConst.isEmpty() && regSlot.isEmpty(); }
 
+        bool NODELETE hasNoRegAlias() const { return constRegs.isEmpty() && regSlot.isEmpty(); }
+
         void addAlias(const RegConst& newAlias)
         {
-            regConst.append(newAlias);
-#if ASSERT_ENABLED
-            m_isSorted = false;
-#endif
+            constRegs.add(newAlias.reg);
+            constants[newAlias.reg.index()] = newAlias.constant;
         }
         void addAlias(const RegSlot& newAlias)
         {
             regSlot.append(newAlias);
+            regSlotRegs.add(newAlias.reg);
 #if ASSERT_ENABLED
             m_isSorted = false;
 #endif
@@ -581,13 +564,15 @@ private:
             m_isSorted = false;
 #endif
         }
-        
-        bool contains(const RegConst& alias)
+
+        bool contains(const RegConst& alias) const
         {
-            return regConst.contains(alias);
+            return constantForReg(alias.reg) == alias.constant;
         }
         bool contains(const RegSlot& alias)
         {
+            if (!regSlotRegs.contains(alias.reg))
+                return false;
             return regSlot.contains(alias);
         }
         bool contains(const SlotConst& alias)
@@ -595,37 +580,17 @@ private:
             return slotConst.contains(alias);
         }
 
-        const RegConst* NODELETE getRegConst(Reg reg) const
+        std::optional<int64_t> NODELETE constantForReg(Reg reg) const
         {
-            for (const RegConst& alias : regConst) {
-                if (alias.reg == reg)
-                    return &alias;
-            }
-            return nullptr;
-        }
-
-        const RegSlot* NODELETE getRegSlot(Reg reg) const
-        {
-            for (const RegSlot& alias : regSlot) {
-                if (alias.reg == reg)
-                    return &alias;
-            }
-            return nullptr;
+            if (!constRegs.contains(reg))
+                return std::nullopt;
+            return constants[reg.index()];
         }
 
         const RegSlot* NODELETE getRegSlot(StackSlot* slot) const
         {
             for (const RegSlot& alias : regSlot) {
                 if (alias.slot == slot)
-                    return &alias;
-            }
-            return nullptr;
-        }
-
-        const RegSlot* NODELETE getRegSlot(Reg reg, StackSlot* slot) const
-        {
-            for (const RegSlot& alias : regSlot) {
-                if (alias.reg == reg && alias.slot == slot)
                     return &alias;
             }
             return nullptr;
@@ -642,11 +607,8 @@ private:
 
         std::optional<int64_t> NODELETE constantFor(const Arg& arg)
         {
-            if (arg.isReg()) {
-                if (const RegConst* alias = getRegConst(arg.reg()))
-                    return alias->constant;
-                return std::nullopt;
-            }
+            if (arg.isReg())
+                return constantForReg(arg.reg());
             if (arg.isStack()) {
                 if (const SlotConst* alias = getSlotConst(arg.stackSlot()))
                     return alias->constant;
@@ -655,16 +617,17 @@ private:
             return std::nullopt;
         }
 
-        void clobber(const Reg& reg)
+        void clobber(Reg reg)
         {
-            regConst.removeAllMatching(
-                [&] (const RegConst& alias) -> bool {
-                    return alias.reg == reg;
-                });
-            regSlot.removeAllMatching(
+            constRegs.remove(reg);
+            if (!regSlotRegs.contains(reg))
+                return;
+            unsigned matchCount = regSlot.removeAllMatching(
                 [&] (const RegSlot& alias) -> bool {
                     return alias.reg == reg;
                 });
+            ASSERT_UNUSED(matchCount, matchCount);
+            regSlotRegs.remove(reg);
         }
 
         void clobber(StackSlot* slot)
@@ -673,17 +636,12 @@ private:
                 [&] (const SlotConst& alias) -> bool {
                     return alias.slot == slot;
                 });
-            regSlot.removeAllMatching(
-                [&] (const RegSlot& alias) -> bool {
-                    return alias.slot == slot;
-                });
+            if (regSlot.removeAllMatching([&] (const RegSlot& alias) -> bool { return alias.slot == slot; }))
+                rebuildRegSlotRegs();
         }
 
         void sort()
         {
-            std::ranges::sort(regConst, [](const auto& a, const auto& b) {
-                return a < b;
-            });
             std::ranges::sort(slotConst, [](const auto& a, const auto& b) {
                 return a < b;
             });
@@ -721,7 +679,16 @@ private:
             ASSERT(other.m_isSorted);
             bool changed = false;
 
-            changed |= filterVectorAgainst(regConst, other.regConst, [](RegConst& a, const RegConst& b) { return a == b; });
+            ScalarRegisterSet survivingConstRegs;
+            for (Reg reg : constRegs) {
+                if (other.constantForReg(reg) == constants[reg.index()])
+                    survivingConstRegs.add(reg);
+            }
+            if (survivingConstRegs != constRegs) {
+                constRegs = survivingConstRegs;
+                changed = true;
+            }
+
             changed |= filterVectorAgainst(slotConst, other.slotConst, [](SlotConst& a, const SlotConst& b) { return a == b; });
             changed |= filterVectorAgainst(regSlot, other.regSlot, [&](RegSlot& alias, const RegSlot& otherAlias) {
                 if (alias.reg != otherAlias.reg || alias.slot != otherAlias.slot)
@@ -733,19 +700,35 @@ private:
                 return true;
             });
 
+            if (changed)
+                rebuildRegSlotRegs();
+
             return changed;
+        }
+
+        void rebuildRegSlotRegs()
+        {
+            regSlotRegs = { };
+            for (const RegSlot& alias : regSlot)
+                regSlotRegs.add(alias.reg);
         }
 
         void dump(PrintStream& out) const
         {
+            out.print("{regConst = [");
+            CommaPrinter comma;
+            for (Reg reg : constRegs)
+                out.print(comma, reg, "->", constants[reg.index()]);
             out.print(
-                "{regConst = [", listDump(regConst), "], slotConst = [", listDump(slotConst),
+                "], slotConst = [", listDump(slotConst),
                 "], regSlot = [", listDump(regSlot), "]}");
         }
 
-        Vector<RegConst> regConst;
+        ScalarRegisterSet constRegs;
+        std::array<int64_t, Reg::maxIndex() + 1> constants { };
         Vector<SlotConst> slotConst;
         Vector<RegSlot> regSlot;
+        ScalarRegisterSet regSlotRegs;
 #if ASSERT_ENABLED
         bool m_isSorted { true };
 #endif
