@@ -545,17 +545,13 @@ Element::DispatchMouseEventResult Element::dispatchMouseEvent(const PlatformMous
     if (isForceEvent(platformEvent) && !document().hasListenerTypeForEventType(platformEvent.type()))
         return { Element::EventIsDispatched::No, eventIsDefaultPrevented };
 
-    Vector<Ref<MouseEvent>> childMouseEvents;
-    for (const auto& childPlatformEvent : platformEvent.coalescedEvents()) {
-        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
-        childMouseEvents.append(WTF::move(childMouseEvent));
-    }
+    auto childMouseEvents = WTF::map(platformEvent.coalescedEvents(), [&](auto&& childPlatformEvent) {
+        return MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
+    });
 
-    Vector<Ref<MouseEvent>> predictedEvents;
-    for (const auto& childPlatformEvent : platformEvent.predictedEvents()) {
-        Ref childMouseEvent = MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
-        predictedEvents.append(WTF::move(childMouseEvent));
-    }
+    auto predictedEvents = WTF::map(platformEvent.predictedEvents(), [&](auto&& childPlatformEvent) {
+        return MouseEvent::create(eventType, document().windowProxy(), childPlatformEvent, { }, { }, detail, relatedTarget);
+    });
 
     Ref mouseEvent = MouseEvent::create(eventType, document().windowProxy(), platformEvent, childMouseEvents, predictedEvents, detail, relatedTarget);
 
