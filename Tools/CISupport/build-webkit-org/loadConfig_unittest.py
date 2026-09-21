@@ -31,22 +31,17 @@ from . import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):
-    def get_config(self):
-        cwd = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(cwd, 'config.json')) as f:
-            return json.load(f)
-
     def test_configuration(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
         loadConfig.loadBuilderConfig({}, is_test_mode_enabled=True, master_prefix_path=cwd)
 
     def test_tab_character(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
-        with open(os.path.join(cwd, 'config.json'), 'r') as config:
+        with open(os.path.join(cwd, 'config-template.yaml'), 'r') as config:
             self.assertTrue('\t' not in config.read(), 'Tab character found in config.json, please use spaces instead of tabs.')
 
     def test_builder_keys(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         valid_builder_keys = ['additionalArguments', 'architectures', 'builddir', 'configuration', 'description',
                               'defaultProperties', 'deployment_target', 'device_model', 'env', 'factory', 'icon', 'locks',
                               'name', 'platform', 'properties', 'remotes', 'runTests', 'shortname', 'tags', 'triggers',
@@ -56,7 +51,7 @@ class ConfigDotJSONTest(unittest.TestCase):
                 self.assertTrue(key in valid_builder_keys, f"Unexpected key {key} for builder {builder.get('name')}")
 
     def test_multiple_scheduers_for_builder(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         builder_to_schduler_map = {}
 
         for scheduler in config.get('schedulers'):
@@ -65,20 +60,20 @@ class ConfigDotJSONTest(unittest.TestCase):
                 builder_to_schduler_map[buildername] = scheduler.get('name')
 
     def test_schduler_contains_valid_builder_name(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         builder_name_list = [builder['name'] for builder in config['builders']]
         for scheduler in config.get('schedulers'):
             for buildername in scheduler.get('builderNames'):
                 self.assertTrue(buildername in builder_name_list, f"builder {buildername} in scheduler {scheduler.get('name')} is invalid.")
 
     def test_single_builder_for_triggerable_scheduler(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         for scheduler in config['schedulers']:
             if scheduler.get('type') == 'Triggerable':
                 self.assertTrue(len(scheduler.get('builderNames')) == 1, f"scheduler {scheduler['name']} triggers multiple builders.")
 
     def test_deployment_target_on_intended_queues(self):
-        config = self.get_config()
+        config = loadConfig.render_config()
         for builder in config['builders']:
             if builder.get('deployment_target'):
                 self.assertTrue(builder.get('platform').startswith('mac-'),
