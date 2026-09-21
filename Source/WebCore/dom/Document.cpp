@@ -10194,6 +10194,12 @@ CompositeOperator Document::compositeOperatorForBackgroundColor(const Color& col
     return frameView->isTransparent() ? CompositeOperator::DestinationOut : CompositeOperator::DestinationIn;
 }
 
+bool Document::backgroundColorIsPunchedOut(const Color& color, const RenderElement& renderer) const
+{
+    auto compositeOperator = compositeOperatorForBackgroundColor(color, renderer);
+    return compositeOperator == CompositeOperator::DestinationIn || compositeOperator == CompositeOperator::DestinationOut;
+}
+
 void Document::didAssociateFormControl(Element& element)
 {
     RefPtr page = this->page();

@@ -773,6 +773,8 @@ public:
 
     CompositeOperator compositeOperatorForBackgroundColor(const Color&, const RenderElement&) const;
 
+    bool backgroundColorIsPunchedOut(const Color&, const RenderElement&) const;
+
     WEBCORE_EXPORT Ref<Range> createRange();
 
     // The last bool parameter is for ObjC bindings.
