@@ -168,6 +168,33 @@ TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
     EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
 }
 
+// The NativeImage drawPattern() overload's tile rect is in native (device) image pixels,
+// so drawPattern(ImageBuffer&) must scale the logical source rect by resolutionScale().
+// Latent at resolutionScale == 1.
+TEST(ImageBufferTests, DrawPatternScalesSourceRectByResolutionScale)
+{
+    constexpr float resolutionScale = 2;
+    FloatSize logicalSize { 60, 40 };
+
+    auto source = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, resolutionScale, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(source, nullptr);
+    drawTestPattern(*source, 0);
+    ASSERT_TRUE(hasTestPattern(*source, 0));
+
+    auto destination = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1.f, ColorSpace::SRGB(), PixelFormat::BGRA8);
+    ASSERT_NE(destination, nullptr);
+
+    // Tile the whole source into the whole destination: the pattern transform maps the native
+    // tile (logicalSize * resolutionScale) back down to logicalSize so a single tile fills it.
+    FloatRect logicalRect { { }, logicalSize };
+    AffineTransform patternTransform;
+    patternTransform.scale(1 / resolutionScale);
+
+    destination->context().drawPattern(*source, logicalRect, logicalRect, patternTransform, { }, { }, { CompositeOperator::Copy, InterpolationQuality::DoNotInterpolate });
+
+    EXPECT_TRUE(hasTestPattern(*destination, 0));
+}
+
 // Test that drawing an accelerated ImageBuffer to an unaccelerated does not store extra
 // memory to the accelerated ImageBuffer.
 // FIXME: The test is disabled as it appears that WTF::memoryFootprint() is not exact enough to
