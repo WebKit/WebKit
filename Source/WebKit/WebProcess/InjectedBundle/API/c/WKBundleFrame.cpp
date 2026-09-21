@@ -293,6 +293,14 @@ void WKBundleFrameFocus(WKBundleFrameRef frameRef)
     protect(coreFrame->page()->focusController())->setFocusedFrame(coreFrame.get());
 }
 
+void WKBundleFrameDisconnectInspectorTargetForTest(WKBundleFrameRef frameRef)
+{
+    if (!frameRef)
+        return;
+
+    protect(WebKit::toImpl(frameRef))->disconnectInspector();
+}
+
 void _WKBundleFrameGenerateTestReport(WKBundleFrameRef frameRef, WKStringRef message, WKStringRef group)
 {
     if (!frameRef)

@@ -27,6 +27,7 @@
 #include "PageWorkerAgent.h"
 
 #include "Page.h"
+#include "PageInspectorController.h"
 #include "Settings.h"
 #include "WorkerInspectorProxy.h"
 
@@ -46,10 +47,10 @@ PageWorkerAgent::~PageWorkerAgent() = default;
 
 void PageWorkerAgent::connectToAllWorkerInspectorProxies()
 {
-    // Under site isolation, every frame (including the main frame) has its own
-    // FrameInspectorController with a FrameWorkerAgent that handles workers for
-    // that frame. PageWorkerAgent does not need to connect to any workers.
-    if (m_page->settings().siteIsolationEnabled())
+    // When frame targets are surfaced, every frame (including the main frame) has its own
+    // FrameInspectorController with a FrameWorkerAgent that handles workers for that frame, so
+    // this page-level agent connects to none.
+    if (usesInspectorFrameTargets(m_page->settings()))
         return;
 
     for (Ref proxy : WorkerInspectorProxy::proxiesForPage(*m_page->identifier()))

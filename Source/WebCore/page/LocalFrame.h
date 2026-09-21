@@ -50,9 +50,13 @@ typedef struct HBITMAP__* HBITMAP;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
-namespace JSC { namespace Yarr {
+namespace JSC {
+class Debugger;
+
+namespace Yarr {
 class RegularExpression;
-} }
+}
+} // namespace JSC
 
 namespace WTF {
 class TextStream;
@@ -369,6 +373,10 @@ public:
     FrameConsoleClient& console() { return m_consoleClient.get(); }
     const FrameConsoleClient& console() const { return m_consoleClient.get(); }
 
+    // The debugger to attach to this frame's global objects.
+    WEBCORE_EXPORT JSC::Debugger* debugger() const LIFETIME_BOUND;
+    void setDebugger(JSC::Debugger* debugger) { m_debugger = debugger; }
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 
@@ -424,6 +432,8 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
+
+    JSC::Debugger* m_debugger { nullptr };
 
     std::unique_ptr<OverrideScreenSize> m_overrideScreenSize;
 

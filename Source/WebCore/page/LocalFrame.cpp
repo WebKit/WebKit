@@ -288,6 +288,16 @@ RefPtr<LocalFrame> LocalFrame::localMainFrame()
     return dynamicDowncast<LocalFrame>(mainFrame());
 }
 
+JSC::Debugger* LocalFrame::debugger() const
+{
+    if (m_debugger)
+        return m_debugger;
+
+    // Raw pointer: Page::debugger() is LIFETIME_BOUND, so a RefPtr here would be misleading.
+    auto* page = this->page();
+    return page ? page->debugger() : nullptr;
+}
+
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
 {
     m_destructionObservers.add(observer);

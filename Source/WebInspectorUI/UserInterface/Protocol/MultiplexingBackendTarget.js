@@ -42,9 +42,10 @@ WI.MultiplexingBackendTarget = class MultiplexingBackendTarget extends WI.Target
     initialize()
     {
         // Only initialize with the managers that are known to support a multiplexing target.
-        // Network is not initialized here because ProxyingNetworkAgent only exists under
-        // Site Isolation. NetworkManager initializes the multiplexing target's Network agent
-        // lazily when the first FrameTarget is created (signaling SI is active).
+        // Network is not initialized here because ProxyingNetworkAgent only serves the Network domain
+        // under Site Isolation. NetworkManager initializes this target's Network agent once a
+        // FrameTarget exists, and what the backend answers there decides whether this target or the
+        // page target owns Page and Network.
         WI.browserManager.initializeTarget(this);
         WI.storageManager.initializeTarget(this);
         WI.targetManager.initializeTarget(this);

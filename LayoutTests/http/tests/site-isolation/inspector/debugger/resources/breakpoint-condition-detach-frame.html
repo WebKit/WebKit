@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Cross-origin frame that disconnects its own inspector target from a breakpoint condition</title>
+<script src="breakpoint-detach-frame-script.js"></script>
+<script>
+function report(message)
+{
+    parent.postMessage(message, "*");
+}
+
+// A reported exception reaches this listener synchronously, before it is logged to the console, so
+// this is the frame's own view of whether the condition's exception was abandoned or reported.
+// Deliberately does not cancel the event, which would suppress the console logging as well.
+window.addEventListener("error", (event) => {
+    report("iframe: exception was reported: " + event.message);
+});
+
+function disconnectFrameInspectorTargetAndThrow()
+{
+    report("iframe: breakpoint condition ran, disconnecting this frame's inspector target");
+    testRunner.disconnectFrameInspectorTarget();
+
+    // The throw leaves the debugger finishing a condition whose inspector connection is already
+    // gone. It must abandon the exception rather than report it to a console nobody is listening to.
+    throw new Error("breakpoint condition threw");
+}
+
+window.addEventListener("message", (event) => {
+    if (event.data !== "run")
+        return;
+
+    functionWithBreakpoint();
+    report("iframe: execution continued after the breakpoint");
+});
+</script>
