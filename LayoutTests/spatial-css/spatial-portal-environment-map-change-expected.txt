@@ -1,0 +1,5 @@
+
+PASS Changing environment-map updates the lighting
+PASS Adding a model to a lit portal keeps the portal's environment map
+PASS The environment map survives a player teardown
+

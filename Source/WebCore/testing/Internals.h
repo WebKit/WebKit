@@ -1721,6 +1721,7 @@ public:
     unsigned NODELETE numberOfHostedModelsInSpatialPortal(Element&);
     bool NODELETE establishesSpatialPortal(Element&);
     std::optional<Vector<double>> NODELETE spatialPortalResolvedTransform(Element&);
+    String NODELETE effectiveEnvironmentMap(Element&);
 #endif
 
     ExceptionOr<void> copyImageAtLocation(int x, int y);

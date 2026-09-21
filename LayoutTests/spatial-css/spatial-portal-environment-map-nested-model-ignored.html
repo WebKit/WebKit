@@ -1,0 +1,62 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const blueMap = "blue.hdr";
+const redMap = "red.hdr";
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "portal-map", src: "../model-element/resources/blue.hdr" });
+    declareEnvironmentMap(t, { name: "child-map", src: "../model-element/resources/red.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"portal-map"';
+    const model = appendModel(portal, "cube.usdz");
+    model.style.environmentMap = '"child-map"';
+    await model.ready;
+
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the portal's map");
+
+    assert_true(effectiveEnvironmentMap(portal).endsWith(blueMap), "the portal's map takes precedence");
+}, "environment-map on a nested <model> is ignored");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "portal-map", src: "../model-element/resources/blue.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"portal-map"';
+    const model = appendModel(portal, "cube.usdz");
+    model.setAttribute("environmentmap", "../model-element/resources/red.hdr");
+    await model.ready;
+
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the portal's map");
+
+    assert_true(effectiveEnvironmentMap(portal).endsWith(blueMap), "the portal's map takes precedence");
+}, "The environmentmap attribute on a nested <model> is ignored");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "child-map", src: "../model-element/resources/red.hdr" });
+
+    const portal = createPortal(t);
+    const model = appendModel(portal, "cube.usdz");
+    model.style.environmentMap = '"child-map"';
+    await model.ready;
+
+    portal.style.spatial = "none";
+    await waitForEnvironmentMap(model, value => value.endsWith(redMap), "the model's own map once standalone");
+}, "Un-nesting a <model> applies its own environment map");
+
+</script>
+</body>
+</html>

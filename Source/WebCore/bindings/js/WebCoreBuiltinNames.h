@@ -133,6 +133,7 @@ namespace WebCore {
     macro(CSSCounterStyleRule) \
     macro(CSSColor) \
     macro(CSSColorValue) \
+    macro(CSSEnvironmentMapRule) \
     macro(CSSFunctionDeclarations) \
     macro(CSSFunctionDescriptors) \
     macro(CSSFunctionRule) \

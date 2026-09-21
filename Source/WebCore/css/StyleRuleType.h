@@ -58,6 +58,7 @@ enum class StyleRuleType : uint8_t {
     PositionTry,
     Function,
     FunctionDeclarations,
+    EnvironmentMap,
 };
 
 static constexpr auto firstUnexposedStyleRuleType = StyleRuleType::ViewTransition;

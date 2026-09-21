@@ -253,6 +253,13 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFuncti
     case CSSAtRuleFunction:
         return m_parser.context().propertySettings.cssFunctionAtRuleEnabled ? Supported : Unsupported;
 
+    case CSSAtRuleEnvironmentMap:
+#if ENABLE(SPATIAL_PORTAL)
+        return m_parser.context().propertySettings.spatialPortalEnabled ? Supported : Unsupported;
+#else
+        return Unsupported;
+#endif
+
     case CSSAtRuleInvalid:
     // Per spec, @charset is not an at-rule.
     case CSSAtRuleCharset:

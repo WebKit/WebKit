@@ -1010,6 +1010,7 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSConditionRule.idl
     css/CSSContainerRule.idl
     css/CSSCounterStyleRule.idl
+    css/CSSEnvironmentMapRule.idl
     css/CSSFontFaceDescriptors.idl
     css/CSSFontFaceRule.idl
     css/CSSFontFeatureValuesRule.idl

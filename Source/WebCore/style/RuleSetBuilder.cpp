@@ -31,6 +31,7 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSEnvironmentMapRule.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
 #include "CSSPositionTryRule.h"
@@ -225,6 +226,7 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
     case StyleRuleType::Property:
     case StyleRuleType::ViewTransition:
     case StyleRuleType::PositionTry:
+    case StyleRuleType::EnvironmentMap:
         disallowDynamicMediaQueryEvaluationIfNeeded();
         if (m_resolver)
             m_collectedResolverMutatingRules.append({ rule, m_currentCascadeLayerIdentifier });
@@ -565,6 +567,11 @@ void RuleSetBuilder::addMutatingRulesToResolver()
             // https://drafts.csswg.org/css-anchor-position-1/#fallback-rule
             m_ruleSet->m_positionTryRules.set(positionTryRule->name(), *positionTryRule);
         }
+
+#if ENABLE(SPATIAL_PORTAL)
+        if (RefPtr environmentMapRule = dynamicDowncast<StyleRuleEnvironmentMap>(rule.get()); environmentMapRule && environmentMapRule->isUsable())
+            m_ruleSet->m_environmentMapRules.set(environmentMapRule->name(), *environmentMapRule);
+#endif
 
         if (RefPtr functionRule = dynamicDowncast<StyleRuleFunction>(rule.get())) {
             auto declarationsList = m_functionDeclarationsMap.get(*functionRule);

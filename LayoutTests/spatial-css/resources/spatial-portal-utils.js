@@ -101,3 +101,37 @@ async function waitForEntityTransform(model, predicate, description, timeout = 5
 // The 3D matrix assertions reject a 2D argument outright, and DOMMatrix stays 2D until an operation touches z.
 const as3d = matrix => new DOMMatrixReadOnly(matrix.toFloat64Array());
 
+const effectiveEnvironmentMap = element => internals.effectiveEnvironmentMap(element);
+
+const declareEnvironmentMap = (test, { name, format = "equirectangular", src } = {}) => {
+    const descriptors = [];
+    if (name !== undefined)
+        descriptors.push(`name: "${name}"`);
+    if (format !== undefined)
+        descriptors.push(`format: ${format}`);
+    if (src !== undefined)
+        descriptors.push(`src: url("${src}")`);
+
+    const text = `@environment-map { ${descriptors.join("; ")} }`;
+
+    const style = document.createElement("style");
+    style.textContent = text;
+    document.head.appendChild(style);
+    test.add_cleanup(() => style.remove());
+    return style;
+};
+
+async function waitForEnvironmentMap(element, predicate, description, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (true) {
+        const value = effectiveEnvironmentMap(element);
+        if (predicate(value))
+            return value;
+
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for the effective environment map: ${description}`);
+
+        await sleepForSeconds(0.1);
+    }
+}

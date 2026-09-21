@@ -1,0 +1,77 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const blueMap = "blue.hdr";
+const redMap = "red.hdr";
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "studio", src: "../model-element/resources/blue.hdr" });
+    declareEnvironmentMap(t, { name: "sunset", src: "../model-element/resources/red.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"studio"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), '"studio"');
+
+    portal.style.environmentMap = '"sunset"';
+    await waitForEnvironmentMap(portal, value => value.endsWith(redMap), '"sunset"');
+
+    portal.style.environmentMap = "none";
+    await waitForEnvironmentMap(portal, value => value === "none", "none");
+
+    portal.style.environmentMap = "auto";
+    await waitForEnvironmentMap(portal, value => value === "auto", "auto");
+
+    portal.style.environmentMap = '"studio"';
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), '"studio" again');
+}, "Changing environment-map updates the lighting");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "studio", src: "../model-element/resources/blue.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"studio"';
+    const first = appendModel(portal, "cube.usdz");
+    await first.ready;
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the map to load");
+
+    const second = appendModel(portal, "2x2x2-center.usdz");
+    await second.ready;
+
+    assert_equals(internals.numberOfHostedModelsInSpatialPortal(portal), 2, "both models are hosted");
+    assert_true(effectiveEnvironmentMap(portal).endsWith(blueMap), "the portal keeps its map");
+}, "Adding a model to a lit portal keeps the portal's environment map");
+
+promise_test(async t => {
+    declareEnvironmentMap(t, { name: "studio", src: "../model-element/resources/blue.hdr" });
+
+    const portal = createPortal(t);
+    portal.style.environmentMap = '"studio"';
+    const model = appendModel(portal, "cube.usdz");
+    await model.ready;
+    await waitForEnvironmentMap(portal, value => value.endsWith(blueMap), "the map to load");
+
+    model.remove();
+    const replacement = appendModel(portal, "cube.usdz");
+    await replacement.ready;
+
+    assert_true(effectiveEnvironmentMap(portal).endsWith(blueMap), "the map is replayed onto the new player");
+}, "The environment map survives a player teardown");
+
+</script>
+</body>
+</html>

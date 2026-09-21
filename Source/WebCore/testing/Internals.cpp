@@ -9056,6 +9056,20 @@ std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element&
         transform->m41(), transform->m42(), transform->m43(), transform->m44()
     };
 }
+
+String Internals::effectiveEnvironmentMap(Element& element)
+{
+#if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)
+    if (CheckedPtr controller = element.spatialPortalController())
+        return controller->effectiveEnvironmentMapForTesting();
+
+    if (RefPtr model = dynamicDowncast<HTMLModelElement>(element))
+        return model->effectiveEnvironmentMapForTesting();
+#else
+    UNUSED_PARAM(element);
+#endif
+    return "auto"_s;
+}
 #endif
 
 // FIXME: Implement this method for iOS.

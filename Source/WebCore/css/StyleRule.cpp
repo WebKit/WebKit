@@ -24,6 +24,7 @@
 
 #include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSEnvironmentMapRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFeatureValuesRule.h"
 #include "CSSFontPaletteValuesRule.h"
@@ -145,6 +146,13 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFunction>(*this));
     case StyleRuleType::FunctionDeclarations:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleFunctionDeclarations>(*this));
+#if ENABLE(SPATIAL_PORTAL)
+    case StyleRuleType::EnvironmentMap:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleEnvironmentMap>(*this));
+#else
+    case StyleRuleType::EnvironmentMap:
+        break;
+#endif
     case StyleRuleType::Margin:
         break;
     }
@@ -256,6 +264,11 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         [&](StyleRuleFunctionDeclarations& rule) -> Ref<CSSRule> {
             return CSSFunctionDeclarations::create(rule, parentSheet);
         },
+#if ENABLE(SPATIAL_PORTAL)
+        [&](StyleRuleEnvironmentMap& rule) -> Ref<CSSRule> {
+            return CSSEnvironmentMapRule::create(rule, parentSheet);
+        },
+#endif
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();
         },

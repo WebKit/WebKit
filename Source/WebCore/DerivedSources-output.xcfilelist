@@ -400,6 +400,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSContainerRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSContainerRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSCounterStyleRule.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSEnvironmentMapRule.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSEnvironmentMapRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceDescriptors.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceDescriptors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSFontFaceRule.cpp
