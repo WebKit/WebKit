@@ -654,6 +654,72 @@ struct TextExtractionTests {
     }
 
     @Test
+    func interactionDescriptionSkipsSearchTextForFormControlsAndLinks() async throws {
+        try await webView.load(
+            html: """
+                <style>.collapsed { max-height: 0; overflow-y: hidden }</style>\
+                <label>New password</label><input type='password'>\
+                <div class='collapsed'><button class='change-password-button'><span>Change password</span></button></div>\
+                <a class='forgot-pw-link' href='#reset'>Forgot password?</a>
+                """
+        )
+
+        let debugText = try await webView.debugText()
+
+        func clickDescription(_ locator: String, _ searchText: String) async throws -> String {
+            let interaction = _WKTextExtractionInteraction(action: .click)
+            interaction.nodeIdentifier = try #require(extractNodeIdentifier(debugText, locator))
+            interaction.text = searchText
+            return try await interaction.debugDescription(in: webView)
+        }
+
+        let expected = "Click on button with class “change-password-button” after rendered text “New password”"
+        #expect(try await clickDescription("change-password-button", "Change password") == expected)
+        #expect(try await clickDescription("change-password-button", "Delete account") == expected)
+
+        await #expect(throws: Never.self) {
+            try await clickDescription("Forgot password?", "Something else entirely")
+        }
+    }
+
+    @Test
+    func interactionDescriptionUsesUnrenderedTextForCollapsedTarget() async throws {
+        try await webView.load(
+            html: """
+                <style>.collapsed { max-height: 0; overflow-y: hidden }</style>\
+                <div class='collapsed'><div class='submit-proxy' onclick='' style='width: 200px; height: 40px'>Change password</div></div>\
+                <div class='collapsed'><div class='card-region' onclick='' style='width: 600px; height: 400px'>Change password</div></div>\
+                <div class='collapsed'><div class='mini-card' onclick='' style='width: 200px; height: 40px'><button>Change password</button></div></div>
+                """
+        )
+
+        let debugText = try await webView.debugText()
+
+        func clickDescription(_ className: String, _ searchText: String) async throws -> String {
+            let interaction = _WKTextExtractionInteraction(action: .click)
+            interaction.nodeIdentifier = try #require(extractNodeIdentifier(debugText, className))
+            interaction.text = searchText
+            return try await interaction.debugDescription(in: webView)
+        }
+
+        let description = try await clickDescription("submit-proxy", "Change password")
+        #expect(description.hasPrefix("Click on div"))
+        #expect(description.contains("submit-proxy"))
+
+        await #expect(throws: (any Error).self) {
+            try await clickDescription("submit-proxy", "Delete account")
+        }
+
+        await #expect(throws: (any Error).self) {
+            try await clickDescription("card-region", "Change password")
+        }
+
+        await #expect(throws: (any Error).self) {
+            try await clickDescription("mini-card", "Change password")
+        }
+    }
+
+    @Test
     func interactionDescriptionIncludesAssociatedLabelText() async throws {
         try await webView.load(
             html: """

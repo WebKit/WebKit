@@ -136,7 +136,7 @@ static String normalizeText(const String& string, unsigned maxDescriptionLength 
 }
 
 static constexpr auto minimumClassOrIdLength = 6;
-static constexpr auto maximumClassOrIdLength = 20;
+static constexpr auto maximumClassOrIdLength = 24;
 
 static bool isCandidateClassOrId(StringView text)
 {
@@ -2963,6 +2963,30 @@ static String textDescription(std::optional<NodeIdentifier> identifier, Vector<S
     return textDescription(RefPtr { Node::fromIdentifier(*identifier) }.get(), stringsToValidate);
 }
 
+static bool searchTextMatchesUnrenderedElementText(const Element& element, const String& searchText)
+{
+    if (containsInteractiveDescendant(element))
+        return false;
+
+    CheckedPtr box = dynamicDowncast<RenderBox>(element.renderer());
+    if (!box)
+        return false;
+
+    static constexpr auto maximumTargetHeight = 100;
+    static constexpr auto maximumTargetWidth = 400;
+    if (box->borderBoxHeight().toFloat() > maximumTargetHeight || box->borderBoxWidth().toFloat() > maximumTargetWidth)
+        return false;
+
+    auto withoutWhitespace = [](const String& string) {
+        return normalizeText(string).removeCharacters([](char16_t character) {
+            return isUnicodeWhitespace(character);
+        });
+    };
+
+    auto strippedSearchText = withoutWhitespace(searchText);
+    return !strippedSearchText.isEmpty() && withoutWhitespace(element.textContent()).containsIgnoringASCIICase(strippedSearchText);
+}
+
 static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> identifier, const String& searchText, Action action, Vector<String>& stringsToValidate)
 {
     if (!identifier && searchText.isEmpty())
@@ -2985,8 +3009,13 @@ static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> i
             searchTextPrefix = makeString(wrapWithDoubleQuotes(escapedSearchText), " in "_s);
         } else {
             RefPtr element = dynamicDowncast<Element>(target.get());
-            if (!identifier || !element || !searchTextMatchesElementLabelOrRenderedText(*element, searchText))
+            if (!identifier || !element)
                 return { };
+
+            if (!element->isLink() && !is<HTMLFormControlElement>(element)) {
+                if (!searchTextMatchesElementLabelOrRenderedText(*element, searchText) && !searchTextMatchesUnrenderedElementText(*element, searchText))
+                    return { };
+            }
         }
     }
 
