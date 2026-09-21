@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "StyleResolvedColors.h"
 
-#include <WebCore/CSSResolvedColor.h>
-#include <WebCore/Color.h>
-#include <wtf/Forward.h>
+#include "StyleComputedStyle.h"
+#include "StyleComputedStyle+GettersInlines.h"
 
 namespace WebCore {
 namespace Style {
 
-class ResolvedColors;
-
-struct Color;
-struct ColorResolutionState;
-
-struct ResolvedColor {
-    WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(ResolvedColor);
-
-    WebCore::Color color;
-
-    bool operator==(const ResolvedColor&) const = default;
-};
-
-Color toStyleColor(const CSS::ResolvedColor&, ColorResolutionState&);
-
-inline WebCore::Color resolveColor(const ResolvedColor& absoluteColor, const ResolvedColors&)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor)
+    : m_currentColor(currentColor)
 {
-    return absoluteColor.color;
 }
 
-constexpr bool containsCurrentColor(const ResolvedColor&)
+ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
 {
-    return false;
+    return ResolvedColors(style.color());
 }
 
-void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ResolvedColor&);
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const ResolvedColor&);
-
-WTF::TextStream& operator<<(WTF::TextStream&, const ResolvedColor&);
+ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
+{
+    return ResolvedColors(style.visitedLinkColor());
+}
 
 } // namespace Style
 } // namespace WebCore

@@ -38,12 +38,14 @@ struct SerializationContext;
 
 namespace Style {
 
+class ResolvedColors;
+
 // This is not named `AccentColor`, as `Style::AccentColor` already exists.
 struct CurrentAccentColor {
     constexpr bool operator==(const CurrentAccentColor&) const = default;
 };
 
-inline WebCore::Color resolveColor(const CurrentAccentColor&, const WebCore::Color&)
+inline WebCore::Color resolveColor(const CurrentAccentColor&, const ResolvedColors&)
 {
     // Get the default accent color, which is a constant regardless of StyleColorOptions.
     // Hence the StyleColorOptions can be a default empty one.
