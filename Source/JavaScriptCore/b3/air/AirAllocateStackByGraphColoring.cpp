@@ -149,7 +149,7 @@ public:
                 // A dead store candidate has no effects beyond its arguments and defines only spill
                 // slots, late. That is the only kind of dead stack store this phase will see.
                 // Later, we will check whether this spill is alive or not. And if it is dead, we will remove this Inst.
-                bool isKillCandidate = !inst.hasNonArgEffects();
+                bool isKillCandidate = true;
                 lateActions.shrink(0);
                 inst.forEachArg(
                     [&](Arg& arg, Arg::Role role, Bank, Width) {
@@ -174,7 +174,7 @@ public:
                     });
                 m_actions.appendVector(lateActions);
 
-                if (isKillCandidate)
+                if (isKillCandidate && !inst.hasNonArgEffects())
                     m_killCandidates.append(instIndex);
 
                 if (isCoalescableMove(inst, coalesceSpillSlots)) {
