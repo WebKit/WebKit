@@ -76,8 +76,8 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(self.URL + '/api/commits/branches')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(dict(
-            webkit=['branch-a', 'branch-b', 'main'],
-            safari=['branch-a', 'branch-b', 'eng/squash-branch', 'main']), response.json())
+            webkit=['main', 'branch-a', 'branch-b'],
+            safari=['main', 'branch-a', 'branch-b', 'eng/squash-branch']), response.json())
 
         response = client.get(self.URL + '/api/commits/branches?branch=branch')
         self.assertEqual(response.status_code, 200)
@@ -85,7 +85,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
         response = client.get(self.URL + '/api/commits/branches?repository_id=safari')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(dict(safari=['branch-a', 'branch-b', 'eng/squash-branch', 'main']), response.json())
+        self.assertEqual(dict(safari=['main', 'branch-a', 'branch-b', 'eng/squash-branch']), response.json())
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()

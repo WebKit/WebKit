@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import time
+
 from redis import StrictRedis
 from fakeredis import FakeStrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
@@ -28,12 +30,13 @@ from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.model.repository import StashRepository, WebKitRepository
+from webkitcorepy import mocks
 
 
 class CommitContextTest(WaitForDockerTestCase):
     KEYSPACE = 'commit_mapping_test_keyspace'
 
-    def init_database(self, redis=StrictRedis, cassandra=CassandraContext):
+    def init_database(self, redis=StrictRedis, cassandra=CassandraContext, **kwargs):
         redis_instance = redis()
 
         self.stash_repository = StashRepository('https://bitbucket.example.com/projects/SAFARI/repos/safari')
@@ -43,6 +46,7 @@ class CommitContextTest(WaitForDockerTestCase):
         self.database = CommitContext(
             redis=redis_instance,
             cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True),
+            **kwargs
         )
         self.database.register_repository(self.stash_repository)
         self.database.register_repository(self.svn_repository)
@@ -256,13 +260,32 @@ class CommitContextTest(WaitForDockerTestCase):
         with MockModelFactory.safari(), MockModelFactory.webkit():
             self.init_database(redis=redis, cassandra=cassandra)
             self.add_all_commits_to_database()
-            self.assertEqual(['branch-a', 'branch-b', 'eng/squash-branch', 'main'], self.database.branches(repository_id='safari'))
+            self.assertEqual(['main', 'branch-a', 'branch-b', 'eng/squash-branch'], self.database.branches(repository_id='safari'))
             self.assertEqual(
-                ['branch-a', 'branch-b', 'main'],
+                ['main', 'branch-a', 'branch-b'],
                 self.database.branches(repository_id='webkit'),
             )
             self.assertEqual(['branch-a', 'branch-b'], self.database.branches(repository_id='safari', branch='branch'))
             self.assertEqual(['branch-a'], self.database.branches(repository_id='webkit', branch='branch-a'))
+
+    # A real Cassandra instance enforces TTLs with its own clock, only use the mocked version
+    def test_stale_branches(self):
+        with MockModelFactory.safari(), MockModelFactory.webkit(), mocks.Time:
+            self.init_database(redis=FakeStrictRedis, cassandra=MockCassandraContext, branch_ttl=1)
+            self.add_all_commits_to_database()
+
+            self.assertEqual(['main', 'branch-a', 'branch-b', 'eng/squash-branch'], self.database.branches(repository_id='safari'))
+
+            time.sleep(2)
+
+            self.assertEqual(['main'], self.database.branches(repository_id='safari'))
+            self.assertEqual(['main'], self.database.branches(repository_id='webkit'))
+
+            self.assertEqual(['branch-a', 'branch-b'], self.database.branches(repository_id='safari', branch='branch'))
+            self.assertEqual(['branch-a'], self.database.branches(repository_id='webkit', branch='branch-a'))
+
+            self.database.register_commit(self.stash_repository.commit(ref='branch-a'))
+            self.assertEqual(['main', 'branch-a'], self.database.branches(repository_id='safari'))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_next_commit(self, redis=StrictRedis, cassandra=CassandraContext):
