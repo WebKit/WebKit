@@ -31,11 +31,9 @@
 #import "BitmapImage.h"
 #import "ColorMac.h"
 #import "Element.h"
-#import "FloatRoundedRect.h"
 #import "FontCascade.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
-#import "GraphicsContextCG.h"
 #import "Image.h"
 #import "ImageAdapter.h"
 #import "LocalDefaultSystemAppearance.h"
@@ -297,14 +295,19 @@ DragImageData createDragImageForLink(Element& element, URL& url, const String& t
     RetainPtr<NSImage> dragImage = adoptNS([[NSImage alloc] initWithSize:imageSize]);
     [dragImage _web_lockFocusWithDeviceScaleFactor:deviceScaleFactor];
 
-    GraphicsContextCG context([NSGraphicsContext currentContext].CGContext);
+    RetainPtr<CGContextRef> cgContext = [NSGraphicsContext currentContext].CGContext;
 
-    context.fillRoundedRect(FloatRoundedRect(layout.boundingRect, CornerRadii(linkImageCornerRadius)), colorFromCocoaColor([NSColor controlBackgroundColor]));
+    RetainPtr backgroundPath = adoptCF(CGPathCreateWithRoundedRect(layout.boundingRect, linkImageCornerRadius, linkImageCornerRadius, nullptr));
+    CGContextSetFillColorWithColor(cgContext.get(), cachedCGColor(colorFromCocoaColor([NSColor controlBackgroundColor])).get());
+    CGContextAddPath(cgContext.get(), backgroundPath.get());
+    CGContextFillPath(cgContext.get());
+    CGContextSetTextMatrix(cgContext.get(), CGAffineTransformIdentity);
 
     for (const auto& label : layout.labels) {
-        GraphicsContextStateSaver saver(context);
-        context.translate(label.origin.x(), layout.boundingRect.height() - label.origin.y() - linkImagePadding);
-        CTFrameDraw(label.frame.get(), context.platformContext());
+        CGContextSaveGState(cgContext.get());
+        CGContextTranslateCTM(cgContext.get(), label.origin.x(), layout.boundingRect.height() - label.origin.y() - linkImagePadding);
+        CTFrameDraw(label.frame.get(), cgContext.get());
+        CGContextRestoreGState(cgContext.get());
     }
 
     [dragImage unlockFocus];

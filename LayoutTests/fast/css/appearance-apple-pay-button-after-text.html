@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- Draws text before the Apple Pay button, to check that drawing text does not leave
+     state behind that affects how the button's "Buy with" label is drawn.
+     The reference draws the same content, but paints the button before the text. -->
+<style>
+body {
+    margin: 0;
+}
+
+.text {
+    position: absolute;
+    top: 120px;
+    left: 20px;
+    font: 20px/24px Ahem;
+    color: black;
+}
+
+.apple-pay-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 400px;
+    height: 60px;
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: buy;
+    -apple-pay-button-style: black;
+}
+</style>
+
+<div class="text">text before button</div>
+<button class="apple-pay-button"></button>

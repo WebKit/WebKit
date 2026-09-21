@@ -507,33 +507,6 @@ bool isSystemFont(CTFontRef);
 WEBCORE_EXPORT RetainPtr<CTFontRef> createCTFont(CFDictionaryRef attributes, float size, CTFontDescriptorOptions, CFStringRef referenceURL, CFStringRef desiredPostScriptName);
 #endif
 
-#if USE(CG)
-
-class ScopedTextMatrix {
-public:
-    ScopedTextMatrix(CGAffineTransform newMatrix, CGContextRef context)
-        : m_context(context)
-        , m_textMatrix(CGContextGetTextMatrix(context))
-    {
-        CGContextSetTextMatrix(m_context.get(), newMatrix);
-    }
-
-    ~ScopedTextMatrix()
-    {
-        CGContextSetTextMatrix(m_context.get(), m_textMatrix);
-    }
-
-    CGAffineTransform savedMatrix() const
-    {
-        return m_textMatrix;
-    }
-
-private:
-    RetainPtr<CGContextRef> m_context;
-    CGAffineTransform m_textMatrix;
-};
-
-#endif
 
 #if PLATFORM(WIN)
 // This is a scaling factor for Windows GDI fonts. We do this for

@@ -77,6 +77,7 @@ fast/forms/ios/drag-range-thumb.html [ Pass Failure Timeout ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Pass Timeout ]
 
 fast/css/appearance-apple-pay-button.html [ Pass ]
+fast/css/appearance-apple-pay-button-after-text.html [ Pass ]
 fast/css/appearance-apple-pay-button-div.html [ Pass ]
 fast/css/appearance-apple-pay-button-input-type-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]

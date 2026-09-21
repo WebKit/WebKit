@@ -77,6 +77,10 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
         RetainPtr cgContext = [nsContext CGContext];
+        // FIXME: This should not be needed, but is added
+        // conservatively.
+        CGAffineTransform savedTextMatrix = CGContextGetTextMatrix(cgContext.get());
+
         WebCore::GraphicsContextCG graphicsContext { cgContext.get() };
 
         // WebCore requires a flipped graphics context.
@@ -89,6 +93,8 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
 
         if (!flipped)
             CGContextScaleCTM(cgContext.get(), 1, -1);
+
+        CGContextSetTextMatrix(cgContext.get(), savedTextMatrix);
     } else {
         // The given point is on the baseline.
         if ([[NSView focusView] isFlipped])
