@@ -21,6 +21,15 @@ Cursor Info: type=None hotSpot=0,0
 TEST CASE: Pointer
 Cursor Info: type=Hand hotSpot=0,0
 
+TEST CASE: grab
+Cursor Info: type=Grab hotSpot=0,0
+
+TEST CASE: grabbing
+Cursor Info: type=Grabbing hotSpot=0,0
+
+TEST CASE: -webkit-grab
+Cursor Info: type=Grab hotSpot=0,0
+
 TEST CASE: -webkit-grabbing
 Cursor Info: type=Grabbing hotSpot=0,0
 
