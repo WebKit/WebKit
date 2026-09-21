@@ -39,10 +39,16 @@
 namespace WebCore {
 
 class ImageBuffer;
+class IntRect;
 class NativeImage;
 class PixelBuffer;
 class ShareableBitmap;
 class SharedBuffer;
+struct PixelBufferFormat;
+
+// Reads the pixels of an image. The pixels are converted to the requested format.
+// Returns nullptr if the pixels cannot be read, for example because an allocation failed.
+WEBCORE_EXPORT RefPtr<PixelBuffer> getPixelBuffer(const NativeImage&, const PixelBufferFormat& outputFormat, const IntRect& sourceRect);
 
 Vector<uint8_t> encodeData(const PixelBuffer&, const String& mimeType, std::optional<double> quality = std::nullopt);
 Vector<uint8_t> encodeData(const NativeImage&, const String& mimeType, std::optional<double> quality = std::nullopt);

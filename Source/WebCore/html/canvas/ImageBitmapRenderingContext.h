@@ -58,16 +58,17 @@ public:
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
-    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return !m_buffer; }
+    bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return !m_bitmap; }
     void didUpdateCanvasSizeProperties(bool) final { }
 
 private:
     ImageBitmapRenderingContext(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 
-    RefPtr<ImageBuffer> transferToImageBuffer() final;
+    RefPtr<NativeImage> transferToNativeImage() final;
+    void updateMemoryCost() const;
 
-    RefPtr<ImageBuffer> m_buffer; // Temporary until content is provided as NativeImage.
-    RefPtr<NativeImage> m_bufferNativeImage;
+    RefPtr<NativeImage> m_bitmap; // Temporary until surfaceBufferToImageBuffer is removed.
+    RefPtr<ImageBuffer> m_buffer;
     ImageBitmapRenderingContextSettings m_settings;
 };
 

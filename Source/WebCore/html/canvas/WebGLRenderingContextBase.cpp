@@ -905,29 +905,24 @@ RefPtr<VideoFrame> WebGLRenderingContextBase::surfaceBufferToVideoFrame(SurfaceB
 }
 #endif
 
-RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
+RefPtr<NativeImage> WebGLRenderingContextBase::transferToNativeImage()
 {
     if (isContextLost())
-        return nullptr;
-    RefPtr scriptExecutionContext = this->scriptExecutionContext();
-    if (!scriptExecutionContext)
         return nullptr;
     auto size = clampedCanvasSize();
     if (size.isEmpty())
         return nullptr;
-    RefPtr buffer = createImageBufferForWebGLContextReads(size, *scriptExecutionContext);
-    if (!buffer)
-        return nullptr;
     if (compositingResultsNeedUpdating())
         prepareForDisplay();
     RefPtr image = protect(graphicsContextGL())->copyNativeImage(GraphicsContextGL::SurfaceBuffer::DisplayBuffer);
-    if (image)
-        GraphicsContextGL::paintToCanvas(*image, buffer->backendSize(), buffer->context());
     // Any draw or read sees cleared drawing buffer.
     m_defaultFramebuffer->markAllBuffersDirty();
     // Next transfer uses the cleared drawing buffer.
     m_compositingResultsNeedUpdating = true;
-    return buffer;
+    // A failed read is transparent black.
+    if (!image)
+        image = ImageBuffer::sinkIntoNativeImage(ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, ColorSpace::SRGB(), PixelFormat::BGRA8));
+    return image;
 }
 
 void WebGLRenderingContextBase::didUpdateCanvasSizeProperties(bool)
@@ -3301,16 +3296,12 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     if (!validateTexFunc(functionID, SourceImageBitmap, target, level, internalformat, width, height, depth, border, format, type, xoffset, yoffset, zoffset))
         return { };
 
-    RefPtr buffer = source.buffer();
-    if (!buffer)
-        return { };
-
     // Fallback pure SW path.
-    RefPtr image = buffer->createNativeImageReference();
+    RefPtr image = source.bitmap();
     if (!image)
         return { };
-    // Image buffers hold premultiplied alpha, except when the ImageBitmap was constructed such that
-    // the buffer contents are not premultiplied even though the buffer claims they are.
+    // The bitmap holds premultiplied alpha, except when the ImageBitmap was constructed such that
+    // the bitmap contents are not premultiplied even though the bitmap claims they are.
     auto sourceAlphaPremultiplication = source.forciblyPremultiplyAlpha() ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
     texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, sourceAlphaPremultiplication, false, source.premultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);

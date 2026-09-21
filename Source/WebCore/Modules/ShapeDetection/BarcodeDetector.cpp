@@ -33,12 +33,12 @@
 #include "DocumentPage.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapOptions.h"
-#include "ImageBuffer.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertEnumeration.h"
 #include "JSDOMConvertSequences.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedBarcode.h"
+#include "NativeImage.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
 
@@ -96,18 +96,13 @@ ExceptionOr<void> BarcodeDetector::getSupportedFormats(ScriptExecutionContext& s
 
 void BarcodeDetector::detect(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, DetectPromise&& promise)
 {
-    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmap) mutable {
-        if (imageBitmap.hasException()) {
+    ImageBitmap::createCompletionHandler(scriptExecutionContext, WTF::move(source), { }, [backing = m_backing.copyRef(), promise = WTF::move(promise)](ExceptionOr<Ref<ImageBitmap>>&& imageBitmapValue) mutable {
+        if (imageBitmapValue.hasException()) {
             promise.resolve({ });
             return;
         }
-
-        RefPtr imageBuffer = protect(imageBitmap.returnValue())->takeImageBuffer();
-        if (!imageBuffer) {
-            promise.resolve({ });
-            return;
-        }
-        RefPtr image = imageBuffer->copyNativeImage();
+        Ref imageBitmap = imageBitmapValue.releaseReturnValue();
+        RefPtr image = imageBitmap->takeBitmap();
         if (!image) {
             promise.resolve({ });
             return;

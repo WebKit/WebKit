@@ -108,8 +108,11 @@ public:
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate();
     virtual void setContentsToLayer(GraphicsLayer&);
 
-    // Returns the drawing buffer and runs the compositing steps of transferToImageBitmap.
-    virtual RefPtr<ImageBuffer> transferToImageBuffer();
+    // Returns the drawing buffer contents as an image and runs the compositing steps of
+    // transferToImageBitmap. The image is immutable, so it stays valid after the context is drawn
+    // to again. Returns nullptr only if no image can be produced, for example because an
+    // allocation failed.
+    virtual RefPtr<NativeImage> transferToNativeImage();
 
     bool hasActiveInspectorCanvasCallTracer() const { return m_hasActiveInspectorCanvasCallTracer; }
     void setHasActiveInspectorCanvasCallTracer(bool hasActiveInspectorCanvasCallTracer) { m_hasActiveInspectorCanvasCallTracer = hasActiveInspectorCanvasCallTracer; }
