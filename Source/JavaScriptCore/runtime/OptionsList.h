@@ -788,7 +788,7 @@ struct OptionsStorage {
     using Int32 = int32_t;
     using Size = size_t;
     using OptionRange = JSC::OptionRange;
-    using OptionString = const char*;
+    using OptionString = const char8_t*;
     using GCLogLevel = GCLogging::Level;
     using OSLogType = JSC::OSLogType;
 

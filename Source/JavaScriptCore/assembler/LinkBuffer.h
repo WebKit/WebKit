@@ -68,12 +68,12 @@ public:
         uint32_t irLineIndex;
     };
 
-    IRDumpDebugInfo(CString&& name)
+    IRDumpDebugInfo(UTF8CString&& name)
         : functionName(WTF::move(name))
     {
     }
 
-    CString functionName;
+    UTF8CString functionName;
     Vector<IRLine> irLines;
     Vector<CodeEntry> codeEntries;
 };
@@ -88,12 +88,12 @@ public:
         Ref<SourceProvider> sourceProvider;
     };
 
-    SourceCodeDumpDebugInfo(CString&& name)
+    SourceCodeDumpDebugInfo(UTF8CString&& name)
         : functionName(WTF::move(name))
     {
     }
 
-    CString functionName;
+    UTF8CString functionName;
     Vector<CodeEntry> codeEntries;
 };
 

@@ -80,7 +80,7 @@ ProfilerSupport::ProfilerSupport()
     : m_queue(WorkQueue::create("JSC PerfLog"_s))
 {
     if (Options::useTextMarkers()) {
-        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, String::fromUTF8(Options::textMarkersDirectory()));
+        m_file = FileSystem::createDumpFile(makeString("marker-"_s, getCurrentThreadID(), "-"_s, WTF::getCurrentProcessID()), ".txt"_s, String { Options::textMarkersDirectory() });
         RELEASE_ASSERT(m_file);
 
 #if OS(LINUX)
@@ -212,7 +212,7 @@ void ProfilerSupport::dumpIonGraphFunction(const String& functionName, ASCIILite
     auto string = json->toJSONString();
 
     auto tierSuffix = osr ? makeString("-"_s, tier, "-OSR"_s) : makeString("-"_s, tier);
-    auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, tierSuffix, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, String::fromUTF8(Options::ionGraphDirectory()));
+    auto handle = FileSystem::createDumpFile(makeString("iongraph-"_s, functionName, tierSuffix, "-"_s, WTF::getCurrentProcessID(), "-"_s, generateTimestamp()), ".json"_s, String { Options::ionGraphDirectory() });
     RELEASE_ASSERT(handle);
     handle.write(WTF::asByteSpan(string.utf8().span()));
     handle.flush();

@@ -69,7 +69,7 @@ FunctionAllowlist& OMGPlan::ensureGlobalOMGAllowlist()
     static LazyNeverDestroyed<FunctionAllowlist> omgAllowlist;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::omgAllowlist();
+        const char8_t* functionAllowlistFile = Options::omgAllowlist();
         omgAllowlist.construct(functionAllowlistFile);
     });
     return omgAllowlist;

@@ -362,7 +362,7 @@ static FunctionAllowlist& ensureGlobalJITAllowlist()
     static LazyNeverDestroyed<FunctionAllowlist> baselineAllowlist;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::jitAllowlist();
+        const char8_t* functionAllowlistFile = Options::jitAllowlist();
         baselineAllowlist.construct(functionAllowlistFile);
     });
     return baselineAllowlist;

@@ -30,10 +30,11 @@
 
 namespace JSC {
 
-static String readFileIntoString(const char* fileName)
+static String readFileIntoString(const char8_t* fileName)
 {
-    FILE* file = fopen(fileName, "r");
-    RELEASE_ASSERT_WITH_MESSAGE(file, "Failed to open file %s", fileName);
+    auto* path = byteCast<char>(fileName);
+    FILE* file = fopen(path, "r");
+    RELEASE_ASSERT_WITH_MESSAGE(file, "Failed to open file %s", path);
     RELEASE_ASSERT(fseek(file, 0, SEEK_END) != -1);
     long bufferCapacity = ftell(file);
     RELEASE_ASSERT(bufferCapacity != -1);
@@ -49,7 +50,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return string;
 }
 
-FuzzerPredictions::FuzzerPredictions(const char* filename)
+FuzzerPredictions::FuzzerPredictions(const char8_t* filename)
 {
     RELEASE_ASSERT_WITH_MESSAGE(filename, "prediction file must be specified using --fuzzerPredictionsFile=");
 
@@ -99,7 +100,7 @@ FuzzerPredictions& ensureGlobalFuzzerPredictions()
     static LazyNeverDestroyed<FuzzerPredictions> fuzzerPredictions;
     static std::once_flag initializeFuzzerPredictionsFlag;
     std::call_once(initializeFuzzerPredictionsFlag, [] {
-        const char* fuzzerPredictionsFilename = Options::fuzzerPredictionsFile();
+        const char8_t* fuzzerPredictionsFilename = Options::fuzzerPredictionsFile();
         fuzzerPredictions.construct(fuzzerPredictionsFilename);
     });
     return fuzzerPredictions;

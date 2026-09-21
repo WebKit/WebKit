@@ -69,7 +69,7 @@ FunctionAllowlist& BBQPlan::ensureGlobalBBQAllowlist()
     static LazyNeverDestroyed<FunctionAllowlist> bbqAllowlist;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::bbqAllowlist();
+        const char8_t* functionAllowlistFile = Options::bbqAllowlist();
         bbqAllowlist.construct(functionAllowlistFile);
     });
     return bbqAllowlist;

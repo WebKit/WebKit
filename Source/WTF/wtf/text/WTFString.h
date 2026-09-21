@@ -73,6 +73,7 @@ public:
 
     // Construct a string with UTF-8 data, null string if it contains invalid UTF-8 sequences.
     WTF_EXPORT_PRIVATE String(std::span<const char8_t>);
+    String(const char8_t* characters) : String(unsafeSpan(characters)) { }
 
     // Construct a string from a CString that knows its encoding, decoding it as that encoding.
     // Unlike CString, which would have to be decoded by the caller, and unlike fromUTF8(), which

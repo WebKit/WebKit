@@ -962,7 +962,7 @@ FunctionAllowlist& LoopUnrollingPhase::functionAllowlist()
     static LazyNeverDestroyed<FunctionAllowlist> allowList;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::loopUnrollingAllowlist();
+        const char8_t* functionAllowlistFile = Options::loopUnrollingAllowlist();
         allowList.construct(functionAllowlistFile);
     });
     return allowList;

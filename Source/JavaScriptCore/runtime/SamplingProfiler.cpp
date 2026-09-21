@@ -1195,7 +1195,7 @@ void SamplingProfiler::reportDataToOptionFile()
     if (m_needsReportAtExit) {
         m_needsReportAtExit = false;
         JSLockHolder holder(m_vm);
-        const char* path = Options::samplingProfilerPath();
+        const char8_t* path = Options::samplingProfilerPath();
         StringPrintStream pathOut;
         pathOut.print(path, "/");
         pathOut.print("JSCSampilingProfile-", reinterpret_cast<uintptr_t>(this), ".txt");

@@ -969,10 +969,10 @@ public:
 
     bool shouldDumpFunction() const
     {
-        const char* filter = Options::airGreedyRegAllocDumpFunction();
+        const char8_t* filter = Options::airGreedyRegAllocDumpFunction();
         if (!filter)
             return false;
-        return m_code.proc().name().find(String::fromLatin1(filter)) != notFound;
+        return m_code.proc().name().find(String { filter }) != notFound;
     }
 
     void dump(PrintStream& out) const

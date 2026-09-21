@@ -98,15 +98,15 @@ static void valueToGValue(size_t value, GValue* gValue)
     g_value_set_pointer(gValue, GSIZE_TO_POINTER(value));
 }
 
-static bool valueFromGValue(const GValue* gValue, const char*& value)
+static bool valueFromGValue(const GValue* gValue, const char8_t*& value)
 {
-    value = g_value_dup_string(gValue);
+    value = byteCast<char8_t>(g_value_dup_string(gValue));
     return true;
 }
 
-static void valueToGValue(const char* value, GValue* gValue)
+static void valueToGValue(const char8_t* value, GValue* gValue)
 {
-    g_value_set_string(gValue, value);
+    g_value_set_string(gValue, byteCast<char>(value));
 }
 
 static bool valueFromGValue(const GValue* gValue, double& value)
@@ -578,7 +578,7 @@ static JSCOptionType jscOptionsType(double)
     return JSC_OPTION_DOUBLE;
 }
 
-static JSCOptionType jscOptionsType(const char*)
+static JSCOptionType jscOptionsType(const char8_t*)
 {
     return JSC_OPTION_STRING;
 }

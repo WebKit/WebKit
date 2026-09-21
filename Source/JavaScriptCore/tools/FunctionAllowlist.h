@@ -34,7 +34,7 @@ class CodeBlock;
 
 class FunctionAllowlist {
 public:
-    explicit FunctionAllowlist(const char*);
+    explicit FunctionAllowlist(const char8_t*);
 
     bool contains(CodeBlock*) const;
     bool shouldDumpWasmFunction(uint32_t) const;

@@ -1553,7 +1553,7 @@ inline FunctionAllowlist& ensureGlobalDumpAllowlist()
     static LazyNeverDestroyed<FunctionAllowlist> dumpGraphAllowlist;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* allowlistFile = Options::dumpGraphAllowlist();
+        const char8_t* allowlistFile = Options::dumpGraphAllowlist();
         dumpGraphAllowlist.construct(allowlistFile);
     });
     return dumpGraphAllowlist;

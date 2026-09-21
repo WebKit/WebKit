@@ -7050,7 +7050,7 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
     static LazyNeverDestroyed<FunctionAllowlist> dumpAllowlist;
     static std::once_flag initializeAllowlistFlag;
     std::call_once(initializeAllowlistFlag, [] {
-        const char* functionAllowlistFile = Options::wasmOMGFunctionsToDump();
+        const char8_t* functionAllowlistFile = Options::wasmOMGFunctionsToDump();
         dumpAllowlist.construct(functionAllowlistFile);
     });
     return dumpAllowlist->shouldDumpWasmFunction(functionIndex);

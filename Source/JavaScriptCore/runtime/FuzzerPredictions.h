@@ -33,7 +33,7 @@ namespace JSC {
 
 class FuzzerPredictions {
 public:
-    JS_EXPORT_PRIVATE FuzzerPredictions(const char*);
+    JS_EXPORT_PRIVATE FuzzerPredictions(const char8_t*);
 
     std::optional<SpeculatedType> predictionFor(const String&);
 

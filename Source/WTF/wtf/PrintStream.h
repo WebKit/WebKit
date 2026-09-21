@@ -125,6 +125,7 @@ WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const String&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const AtomString&);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const StringImpl*);
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, std::span<const char8_t>);
+WTF_EXPORT_PRIVATE void printInternal(PrintStream&, const char8_t*);
 inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
 inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
 inline void printInternal(PrintStream& out, StringImpl* value) { printInternal(out, static_cast<const StringImpl*>(value)); }

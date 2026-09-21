@@ -103,13 +103,13 @@ FunctionOverrides& FunctionOverrides::overrides()
     static std::once_flag initializeListFlag;
     std::call_once(initializeListFlag, [] {
         FunctionOverridesAssertScope assertScope;
-        const char* overridesFileName = Options::functionOverrides();
+        const char8_t* overridesFileName = Options::functionOverrides();
         overrides.construct(overridesFileName);
     });
     return overrides;
 }
     
-FunctionOverrides::FunctionOverrides(const char* overridesFileName)
+FunctionOverrides::FunctionOverrides(const char8_t* overridesFileName)
 {
     FunctionOverridesAssertScope assertScope;
     Locker locker { m_lock };
@@ -121,7 +121,7 @@ void FunctionOverrides::reinstallOverrides()
     FunctionOverridesAssertScope assertScope;
     FunctionOverrides& overrides = FunctionOverrides::overrides();
     Locker locker { overrides.m_lock };
-    const char* overridesFileName = Options::functionOverrides();
+    const char8_t* overridesFileName = Options::functionOverrides();
     overrides.clear();
     overrides.parseOverridesInFile(overridesFileName);
 }
@@ -253,13 +253,13 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-void FunctionOverrides::parseOverridesInFile(const char* fileName)
+void FunctionOverrides::parseOverridesInFile(const char8_t* fileName)
 {
     FunctionOverridesAssertScope assertScope;
     if (!fileName)
         return;
     
-    FILE* file = fopen(fileName, "r");
+    FILE* file = fopen(byteCast<char>(fileName), "r");
     if (!file)
         FAIL_WITH_ERROR(IO_ERROR, ("Failed to open file ", fileName, ". Did you add the file-read-data entitlement to WebProcess.sb?\n"));
 

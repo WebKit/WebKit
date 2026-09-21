@@ -166,6 +166,11 @@ void printInternal(PrintStream& stream, std::span<const char8_t> codeUnits)
     printInternal(stream, byteCast<char>(codeUnits));
 }
 
+void printInternal(PrintStream& stream, const char8_t* codeUnits)
+{
+    printInternal(stream, unsafeSpan(codeUnits));
+}
+
 void printInternal(PrintStream& out, bool value)
 {
     out.print(boolForPrinting(value));

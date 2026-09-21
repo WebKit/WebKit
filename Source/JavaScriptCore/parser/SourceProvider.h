@@ -123,7 +123,7 @@ public:
 
     virtual bool isScriptBufferSourceProvider() const { return false; }
 
-    JS_EXPORT_PRIVATE CString sourceCodeDumpFilePath(const CString& dumpDirectory);
+    JS_EXPORT_PRIVATE UTF8CString sourceCodeDumpFilePath(const UTF8CString& dumpDirectory);
 
 private:
     JS_EXPORT_PRIVATE virtual void lockUnderlyingBufferImpl();
@@ -145,7 +145,7 @@ private:
 
     std::atomic<bool> m_sourceCodeDumped { false };
     Lock m_sourceCodeDumpLock;
-    CString m_sourceCodeDumpFilePath WTF_GUARDED_BY_LOCK(m_sourceCodeDumpLock);
+    UTF8CString m_sourceCodeDumpFilePath WTF_GUARDED_BY_LOCK(m_sourceCodeDumpLock);
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);

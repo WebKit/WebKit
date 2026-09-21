@@ -34,7 +34,7 @@ namespace JSC {
 
 class ConfigFile {
 public:
-    JS_EXPORT_PRIVATE ConfigFile(const char*);
+    JS_EXPORT_PRIVATE ConfigFile(const char8_t*);
 
     JS_EXPORT_PRIVATE static void setProcessName(const char*);
     JS_EXPORT_PRIVATE static void setParentProcessName(const char*);
@@ -58,6 +58,6 @@ private:
     char m_configDirectory[s_maxPathLength + 1];
 };
 
-JS_EXPORT_PRIVATE void processConfigFile(const char* configFile, const char* processName, const char* parentProcessName = nullptr);
+JS_EXPORT_PRIVATE void processConfigFile(const char8_t* configFile, const char* processName, const char* parentProcessName = nullptr);
 
 } // namespace JSC

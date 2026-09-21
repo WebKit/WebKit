@@ -83,7 +83,7 @@ template <typename ...Args>
 static void dumpWasmSource(const Vector<uint8_t>& source)
 {
     static int count = 0;
-    const char* file = Options::dumpWasmSourceFileName();
+    const char8_t* file = Options::dumpWasmSourceFileName();
     if (!file)
         return;
     auto fileHandle = FileSystem::openFile(WTF::makeString(unsafeSpan(file), (count++), ".wasm"_s),

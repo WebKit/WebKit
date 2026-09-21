@@ -88,7 +88,7 @@ const String& SourceProvider::sourceURLStripped()
     return m_sourceURLStripped;
 }
 
-CString SourceProvider::sourceCodeDumpFilePath(const CString& dumpDirectory)
+UTF8CString SourceProvider::sourceCodeDumpFilePath(const UTF8CString& dumpDirectory)
 {
     if (m_sourceCodeDumped.load(std::memory_order_acquire)) {
         Locker locker { m_sourceCodeDumpLock };
@@ -122,7 +122,7 @@ CString SourceProvider::sourceCodeDumpFilePath(const CString& dumpDirectory)
             filePath = result.first;
             handle = WTF::move(result.second);
         } else {
-            filePath = makeString(String::fromUTF8(dumpDirectory.span()), FileSystem::pathSeparator, baseName, ".js"_s);
+            filePath = makeString(dumpDirectory, FileSystem::pathSeparator, baseName, ".js"_s);
             handle = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
         }
         if (handle) {

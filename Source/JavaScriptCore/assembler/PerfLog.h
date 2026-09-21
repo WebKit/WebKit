@@ -52,12 +52,12 @@ private:
     static PerfLog& singleton();
 
     void write(const AbstractLocker&, std::span<const uint8_t>) WTF_REQUIRES_LOCK(m_lock);
-    void write(const AbstractLocker& locker, std::span<const char> span) WTF_REQUIRES_LOCK(m_lock) { write(locker, unsafeMakeSpan(std::bit_cast<const uint8_t*>(span.data()), span.size_bytes())); }
+    template<typename T> void write(const AbstractLocker& locker, std::span<T> data) WTF_REQUIRES_LOCK(m_lock) { write(locker, asByteSpan(data)); }
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
     WTF::FileSystemImpl::FileHandle m_file WTF_GUARDED_BY_LOCK(m_lock) { };
-    CString m_irDumpDirectory;
-    CString m_sourceCodeDumpDirectory;
+    UTF8CString m_irDumpDirectory;
+    UTF8CString m_sourceCodeDumpDirectory;
     uint64_t m_codeIndex WTF_GUARDED_BY_LOCK(m_lock) { 0 };
     Lock m_lock;
 };

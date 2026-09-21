@@ -240,13 +240,13 @@ private:
     char* m_bufferEnd;
 };
 
-ConfigFile::ConfigFile(const char* filename)
+ConfigFile::ConfigFile(const char8_t* filename)
 {
     if (!filename)
         m_filename[0] = '\0';
     else {
         IGNORE_WARNINGS_BEGIN("stringop-truncation")
-        strncpy(m_filename, filename, s_maxPathLength);
+        strncpy(m_filename, byteCast<char>(filename), s_maxPathLength);
         IGNORE_WARNINGS_END
         m_filename[s_maxPathLength] = '\0';
     }
@@ -512,11 +512,11 @@ void ConfigFile::canonicalizePaths()
     }
 }
 
-void processConfigFile(const char* configFilename, const char* processName, const char* parentProcessName)
+void processConfigFile(const char8_t* configFilename, const char* processName, const char* parentProcessName)
 {
     static std::once_flag processConfigFileOnceFlag;
-    
-    if (!configFilename || !strlen(configFilename))
+
+    if (!configFilename || !*configFilename)
         return;
 
     std::call_once(processConfigFileOnceFlag, [&]{
