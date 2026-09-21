@@ -6083,15 +6083,10 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptio
 template<typename CharacterType>
 static size_t nonWhitespaceLength(std::span<const CharacterType> characters)
 {
-    size_t result = characters.size();
-    for (auto character : characters) {
-        if (isASCIIWhitespace(character))
-            --result;
-    }
-    return result;
+    return characters.size() - WTF::countMatchedCharacters<CharacterType, ' ', '\t', '\n', '\f', '\r'>(characters);
 }
 
-void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(const String& inlineText)
+SUPPRESS_NODELETE void LocalFrameView::incrementVisuallyNonEmptyCharacterCountSlowCase(const String& inlineText)
 {
     if (inlineText.is8Bit())
         m_visuallyNonEmptyCharacterCount += nonWhitespaceLength(inlineText.span8());

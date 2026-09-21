@@ -1827,6 +1827,18 @@ inline size_t countMatchedCharacters(std::span<const CharacterType> span, Charac
     return SIMD::count(span, vectorMatch, scalarMatch);
 }
 
+template<typename CharacterType, CharacterType... characters>
+inline size_t countMatchedCharacters(std::span<const CharacterType> span)
+{
+    auto vectorMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
+        return SIMD::equal<characters...>(input);
+    };
+    auto scalarMatch = [](auto input) ALWAYS_INLINE_LAMBDA {
+        return compareEach<CharacterType, characters...>(input);
+    };
+    return SIMD::count(span, vectorMatch, scalarMatch);
+}
+
 struct NewlinePosition {
     size_t position { notFound };
     size_t length { 0 };
