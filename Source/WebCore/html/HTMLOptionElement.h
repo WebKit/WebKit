@@ -62,6 +62,8 @@ public:
 
     WEBCORE_EXPORT HTMLSelectElement* NODELETE ownerSelectElement() const;
     bool belongsToBaseAppearancePicker() const;
+    bool isRenderedWithBaseAppearance() const;
+    bool belongsToBaseAppearanceListBox() const;
 
     WEBCORE_EXPORT String label() const;
     WEBCORE_EXPORT String displayLabel() const;
@@ -91,6 +93,7 @@ private:
 
     bool supportsFocus() const final;
     bool isFocusable() const final;
+    bool isKeyboardFocusable(const FocusEventData&) const final;
     bool matchesDefaultPseudoClass() const final { return m_isDefault; }
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

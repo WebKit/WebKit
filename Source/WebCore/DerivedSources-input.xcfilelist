@@ -1378,6 +1378,7 @@ $(PROJECT_DIR)/css/mathmlFontSizeMath.css
 $(PROJECT_DIR)/css/mathmlLegacyFontSizeMath.css
 $(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/quirks.css
+$(PROJECT_DIR)/css/selectMultipleAndListBox.css
 $(PROJECT_DIR)/css/scripts/process-css-properties.py
 $(PROJECT_DIR)/css/scripts/process-css-pseudo-selectors.py
 $(PROJECT_DIR)/css/scripts/process-css-values.py

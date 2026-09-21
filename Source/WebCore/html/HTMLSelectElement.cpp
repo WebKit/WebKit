@@ -340,18 +340,87 @@ bool HTMLSelectElement::usesMenuList() const
 #endif
 }
 
+// FIXME: Rename this to isSingleSelectDropDownBox().
 bool HTMLSelectElement::usesMenuListDeprecated() const
 {
-#if !PLATFORM(IOS_FAMILY)
+    // m_size <= 1 is equivalent except for iOS, where every non-base select is a drop-down box.
+    return !m_multiple && isDropDownBox();
+}
+
+// https://html.spec.whatwg.org/#concept-select-size
+unsigned HTMLSelectElement::displaySize() const
+{
+    if (m_size >= 1)
+        return m_size;
+    return m_multiple ? 4 : 1;
+}
+
+// https://github.com/whatwg/html/pull/12069 added the box types beyond the first.
+auto HTMLSelectElement::baseAppearanceBoxTypes() const -> BaseAppearanceBoxTypes
+{
+    if (!document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled())
+        return BaseAppearanceBoxTypes::DropDownBoxWithoutMultiple;
+    ASSERT(document().settings().htmlEnhancedSelectEnabled());
+    return BaseAppearanceBoxTypes::All;
+}
+
+// https://drafts.csswg.org/css-ui/#base-appearance
+bool HTMLSelectElement::usesBaseAppearance(const Style::ComputedStyle* style) const
+{
+    if (!hasBaseAppearance(style ? style : existingComputedStyle()))
+        return false;
+    if (baseAppearanceBoxTypes() == BaseAppearanceBoxTypes::All)
+        return true;
+    // Not usesMenuList(), which is true for every select on iOS.
     return !m_multiple && m_size <= 1;
-#else
-    return !m_multiple;
-#endif
+}
+
+// https://html.spec.whatwg.org/#the-select-element-2
+auto HTMLSelectElement::boxType(const Style::ComputedStyle* style) const -> BoxType
+{
+    // With base appearance the display size decides, not what the platform renders natively.
+    if (usesBaseAppearance(style) && baseAppearanceBoxTypes() == BaseAppearanceBoxTypes::All)
+        return displaySize() == 1 ? BoxType::DropDownBox : BoxType::ListBox;
+    return usesMenuList() ? BoxType::DropDownBox : BoxType::ListBox;
+}
+
+// https://html.spec.whatwg.org/#drop-down-box
+bool HTMLSelectElement::isDropDownBox(const Style::ComputedStyle* style) const
+{
+    return boxType(style) == BoxType::DropDownBox;
+}
+
+bool HTMLSelectElement::isBaseDropDownBox(const Style::ComputedStyle* style) const
+{
+    if (!usesBaseAppearance(style))
+        return false;
+    if (baseAppearanceBoxTypes() == BaseAppearanceBoxTypes::All)
+        return displaySize() == 1;
+    return usesMenuList();
+}
+
+// https://html.spec.whatwg.org/#list-box
+bool HTMLSelectElement::isBaseListBox(const Style::ComputedStyle* style) const
+{
+    return baseAppearanceBoxTypes() == BaseAppearanceBoxTypes::All && displaySize() > 1 && usesBaseAppearance(style);
+}
+
+// A base drop-down box still uses a native picker unless the picker opted in separately.
+// https://html.spec.whatwg.org/#select's-options-are-being-rendered-with-base-appearance
+bool HTMLSelectElement::optionsAreRenderedWithBaseAppearance() const
+{
+    return isBaseListBox() || usesBaseAppearancePicker();
+}
+
+// ::picker does not apply to a list box. https://html.spec.whatwg.org/#the-select-element-2
+bool HTMLSelectElement::supportsPickerPseudoElement() const
+{
+    return displaySize() == 1;
 }
 
 bool HTMLSelectElement::usesBaseAppearancePicker() const
 {
-    if (m_multiple || m_size > 1)
+    if (!isBaseDropDownBox())
         return false;
 
     RefPtr popover = m_popover;
@@ -359,9 +428,6 @@ bool HTMLSelectElement::usesBaseAppearancePicker() const
         return false;
 
     ASSERT(document().settings().htmlEnhancedSelectEnabled());
-
-    if (CheckedPtr style = existingComputedStyle(); !style || style->usedAppearance() != StyleAppearance::Base)
-        return false;
 
     CheckedPtr pickerStyle = popover->computedStyle();
     return pickerStyle && pickerStyle->usedAppearance() == StyleAppearance::Base;
@@ -406,15 +472,22 @@ static inline auto navigationKeyIdentifiersForWritingMode(WritingMode writingMod
     return { next, previous, writingMode };
 }
 
-auto HTMLSelectElement::pickerNavigationKeyIdentifiers() const -> NavigationKeyIdentifiers
+Element* HTMLSelectElement::optionScrollingContainer()
 {
-    RefPtr popover = m_popover;
-    CheckedPtr renderer = popover ? popover->renderer() : nullptr;
+    if (isBaseListBox())
+        return this;
+    return m_popover.get();
+}
+
+auto HTMLSelectElement::pickerNavigationKeyIdentifiers() -> NavigationKeyIdentifiers
+{
+    RefPtr container = optionScrollingContainer();
+    CheckedPtr renderer = container ? container->renderer() : nullptr;
     auto writingMode = renderer ? renderer->writingMode() : WritingMode { };
     return navigationKeyIdentifiersForWritingMode(writingMode);
 }
 
-int HTMLSelectElement::computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers navigationKeys) const
+int HTMLSelectElement::computeNavigationIndex(const String& keyIdentifier, int currentListIndex, NavigationKeyIdentifiers navigationKeys)
 {
     // Primary axis (writing-mode aware block direction).
     if (keyIdentifier == navigationKeys.next)
@@ -443,12 +516,12 @@ int HTMLSelectElement::computeNavigationIndex(const String& keyIdentifier, int c
     if (keyIdentifier == "End"_s)
         return lastSelectableListIndex();
     if (keyIdentifier == "PageDown"_s) {
-        if (usesBaseAppearancePicker())
+        if (optionsAreRenderedWithBaseAppearance())
             return nextSelectableListIndexForPickerPageMove(currentListIndex, SkipDirection::Forwards, navigationKeys.writingMode);
         return nextValidIndex(currentListIndex, SkipDirection::Forwards, 3);
     }
     if (keyIdentifier == "PageUp"_s) {
-        if (usesBaseAppearancePicker())
+        if (optionsAreRenderedWithBaseAppearance())
             return nextSelectableListIndexForPickerPageMove(currentListIndex, SkipDirection::Backwards, navigationKeys.writingMode);
         return nextValidIndex(currentListIndex, SkipDirection::Backwards, 3);
     }
@@ -629,11 +702,10 @@ bool HTMLSelectElement::isMouseFocusable() const
 
 RenderPtr<RenderElement> HTMLSelectElement::createElementRenderer(Style::ComputedStyle&& style, const RenderTreePosition& position)
 {
-    if (usesMenuList()) {
-        if (hasBaseAppearance(&style))
-            return HTMLElement::createElementRenderer(WTF::move(style), position);
+    if (usesBaseAppearance(&style))
+        return HTMLElement::createElementRenderer(WTF::move(style), position);
+    if (boxType(&style) == BoxType::DropDownBox)
         return createRenderer<RenderMenuList>(*this, WTF::move(style));
-    }
     return createRenderer<RenderListBox>(*this, WTF::move(style));
 }
 
@@ -641,7 +713,11 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
 {
     if (!HTMLFormControlElement::childShouldCreateRenderer(child))
         return false;
-    if (!usesMenuList())
+    bool isBaseAppearance = usesBaseAppearance();
+    bool isListBox = boxType() == BoxType::ListBox;
+    if (isBaseAppearance && isListBox)
+        return &child != m_buttonSlot.get();
+    if (isListBox)
         return isAnyOf<HTMLOptionElement, HTMLOptGroupElement>(child) || validationMessageShadowTreeContains(child);
     if (child.isInShadowTree() && child.containingShadowRoot() == userAgentShadowRoot())
         return true;
@@ -654,7 +730,7 @@ bool HTMLSelectElement::childShouldCreateRenderer(const Node& child) const
     // appearance rather than usesBaseAppearancePicker(), because during render tree updates
     // the popover may not have its updated style yet (it comes after the button slot in the
     // composed tree).
-    if (hasBaseAppearance(existingComputedStyle())) {
+    if (isBaseAppearance) {
         for (auto* ancestor = child.parentElement(); ancestor && ancestor != this; ancestor = ancestor->parentElement()) {
             if (isFirstElementChildButton(*ancestor))
                 return true;
@@ -958,7 +1034,7 @@ int HTMLSelectElement::nextValidIndex(int listIndex, SkipDirection direction, in
     int lastGoodIndex = listIndex;
     int size = listItems.size();
     int step = direction == SkipDirection::Forwards ? 1 : -1;
-    bool isBaseSelectPicker = usesBaseAppearancePicker();
+    bool isBaseSelectPicker = optionsAreRenderedWithBaseAppearance();
     for (listIndex += step; listIndex >= 0 && listIndex < size; listIndex += step) {
         --skip;
         RefPtr listItem = listItems[listIndex].get();
@@ -1019,14 +1095,14 @@ int HTMLSelectElement::nextSelectableListIndexPageAway(int startIndex, SkipDirec
     return nextValidIndex(edgeIndex, direction, skipAmount);
 }
 
-int HTMLSelectElement::nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection direction, WritingMode writingMode) const
+int HTMLSelectElement::nextSelectableListIndexForPickerPageMove(int startIndex, SkipDirection direction, WritingMode writingMode)
 {
-    RefPtr popover = m_popover;
-    if (!popover)
+    RefPtr container = optionScrollingContainer();
+    if (!container)
         return startIndex;
 
     bool isHorizontal = writingMode.isHorizontal();
-    int pageSize = isHorizontal ? popover->clientHeight() : popover->clientWidth();
+    int pageSize = isHorizontal ? container->clientHeight() : container->clientWidth();
     if (pageSize <= 0)
         return startIndex;
 
@@ -1035,9 +1111,12 @@ int HTMLSelectElement::nextSelectableListIndexForPickerPageMove(int startIndex, 
     if (startIndex < 0 || startIndex >= size)
         return startIndex;
 
-    int scrollPos = isHorizontal ? popover->scrollTop() : popover->scrollLeft();
+    int scrollPos = isHorizontal ? container->scrollTop() : container->scrollLeft();
     bool physicallyForward = (direction == SkipDirection::Forwards) != writingMode.isBlockFlipped();
     int boundary = physicallyForward ? scrollPos + 2 * pageSize : scrollPos - pageSize;
+
+    // The popover is the options' offsetParent, a list box is not, so subtract to get there.
+    int containerOffset = isHorizontal ? container->offsetTop() : container->offsetLeft();
 
     int step = direction == SkipDirection::Forwards ? 1 : -1;
     int lastGoodIndex = startIndex;
@@ -1048,6 +1127,8 @@ int HTMLSelectElement::nextSelectableListIndexForPickerPageMove(int startIndex, 
             continue;
 
         int itemStart = isHorizontal ? listItem->offsetTop() : listItem->offsetLeft();
+        if (listItem->offsetParent() != container)
+            itemStart -= containerOffset;
         int itemEnd = itemStart + (isHorizontal ? listItem->offsetHeight() : listItem->offsetWidth());
 
         if (physicallyForward) {
@@ -1119,9 +1200,9 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     ASSERT(renderer());
 
 #if !PLATFORM(IOS_FAMILY)
-    ASSERT(renderer()->isRenderListBox() || m_multiple);
+    ASSERT(renderer()->isRenderListBox() || m_multiple || isBaseListBox());
 #else
-    ASSERT(renderer()->isRenderMenuList() || m_multiple);
+    ASSERT(renderer()->isRenderMenuList() || m_multiple || isBaseListBox());
 #endif
 
     ASSERT(!listItems().size() || m_activeSelectionAnchorIndex >= 0);
@@ -1564,7 +1645,7 @@ void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
     int oldSelectedIndex = selectedIndex();
     m_multiple = !value.isNull();
     updateValidity();
-    if (oldUsesMenuList != usesMenuList())
+    if (oldUsesMenuList != usesMenuList() || oldMultiple != m_multiple)
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {
         if (oldSelectedIndex >= 0)
@@ -1644,7 +1725,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // Calling focus() may cause us to lose our renderer. Return true so
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
-            if (!renderer() || !usesMenuList())
+            if (!renderer() || !isDropDownBox())
                 return true;
 
             openPickerForUserInteraction();
@@ -1679,7 +1760,7 @@ static bool isClickInsidePopover(SelectPopoverElement* popover, Event& event)
 void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 {
     ASSERT(renderer());
-    ASSERT(usesMenuList());
+    ASSERT(isDropDownBox());
 
     if (!event.isTrusted())
         return;
@@ -1759,7 +1840,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protect(document())->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                if (!renderer() || !usesMenuList())
+                if (!renderer() || !isDropDownBox())
                     return;
 
                 openPickerForUserInteraction();
@@ -1772,7 +1853,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 protect(document())->updateStyleIfNeeded();
 
                 // Calling focus() may remove the renderer or change the renderer type.
-                if (!renderer() || !usesMenuList())
+                if (!renderer() || !isDropDownBox())
                     return;
 
                 openPickerForUserInteraction();
@@ -1795,7 +1876,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
         focus();
         protect(document())->updateStyleIfNeeded();
 #if !PLATFORM(IOS_FAMILY)
-        if (!renderer() || !usesMenuList()) {
+        if (!renderer() || !isDropDownBox()) {
 #else
         if (!usesBaseAppearancePicker()) {
 #endif
@@ -2080,6 +2161,51 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event& event)
     }
 }
 
+void HTMLSelectElement::baseAppearanceListBoxDefaultEventHandler(Event& event)
+{
+    ASSERT(renderer());
+    ASSERT(isBaseListBox());
+
+    if (!event.isTrusted())
+        return;
+
+    auto& eventNames = WebCore::eventNames();
+
+    if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
+        focus();
+        event.setDefaultHandled();
+        return;
+    }
+
+    RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event);
+    if (!keyboardEvent)
+        return;
+
+    if (event.type() == eventNames.keydownEvent) {
+        handleNavigationKeydown(*keyboardEvent, optionToListIndex(selectedIndex()));
+        return;
+    }
+
+    if (event.type() != eventNames.keypressEvent)
+        return;
+
+    if (keyboardEvent->keyCode() == '\r') {
+        if (RefPtr form = this->form())
+            form->submitImplicitly(*keyboardEvent, false);
+        keyboardEvent->setDefaultHandled();
+        return;
+    }
+
+    // Type-ahead moves focus rather than selecting, as it does once an option has focus.
+    if (!keyboardEvent->ctrlKey() && !keyboardEvent->altKey() && !keyboardEvent->metaKey()
+        && u_isprint(keyboardEvent->charCode())) {
+        int listIndex = typeAheadMatchIndex(*keyboardEvent);
+        if (listIndex >= 0)
+            focusOptionAtIndex(listIndex);
+        keyboardEvent->setDefaultHandled();
+    }
+}
+
 void HTMLSelectElement::defaultEventHandler(Event& event)
 {
     CheckedPtr renderer = this->renderer();
@@ -2091,9 +2217,11 @@ void HTMLSelectElement::defaultEventHandler(Event& event)
         return;
     }
 
-    if (usesMenuList())
+    if (isBaseListBox())
+        baseAppearanceListBoxDefaultEventHandler(event);
+    else if (isDropDownBox())
         menuListDefaultEventHandler(event);
-    else 
+    else
         listBoxDefaultEventHandler(event);
 
     if (event.defaultHandled())
@@ -2295,9 +2423,60 @@ void HTMLSelectElement::openPickerForUserInteraction(std::optional<bool> focusVi
     focusOptionAtIndex(listIndex, focusVisible);
 }
 
+// https://html.spec.whatwg.org/#concept-select-pick
+void HTMLSelectElement::pickOrToggleOption(HTMLOptionElement& option)
+{
+    // Callers run script before getting here, which may have moved the option elsewhere.
+    if (option.ownerSelectElement() != this)
+        return;
+
+    if (isDisabledFormControl() || option.isDisabledFormControl())
+        return;
+
+    // Decided before picking, which dispatches input and change and may change the appearance.
+    bool shouldHidePicker = !m_multiple && usesBaseAppearancePicker();
+
+    if (m_multiple)
+        optionSelectedByUser(option.index(), true, true);
+    else if (isBaseListBox() && option.selected()) {
+        // A single-select list box can unselect. updateSelectedState() cannot do this: its
+        // deselect path needs multiple. Nothing to reveal afterwards, so no scrollToSelection().
+        saveLastSelection();
+        option.setSelectedState(false);
+        invalidateSelectedItems();
+        invalidateButtonText();
+        updateValidity();
+        listBoxOnChange();
+    } else
+        optionSelectedByUser(option.index(), true);
+
+    option.setDirty(true);
+
+    if (shouldHidePicker)
+        hidePickerPopoverElement();
+}
+
+bool HTMLSelectElement::handleNavigationKeydown(KeyboardEvent& event, int currentListIndex)
+{
+    const String& keyIdentifier = event.keyIdentifier();
+    int listIndex = computeNavigationIndex(keyIdentifier, currentListIndex, pickerNavigationKeyIdentifiers());
+    if (listIndex < 0)
+        return false;
+
+    auto scrollMode = PickerScrollMode::Nearest;
+    if (keyIdentifier == "PageDown"_s)
+        scrollMode = PickerScrollMode::AlignBottom;
+    else if (keyIdentifier == "PageUp"_s)
+        scrollMode = PickerScrollMode::AlignTop;
+
+    focusOptionAtIndex(listIndex, std::nullopt, scrollMode);
+    event.setDefaultHandled();
+    return true;
+}
+
 void HTMLSelectElement::focusOptionAtIndex(int listIndex, std::optional<bool> focusVisible, PickerScrollMode scrollMode)
 {
-    if (!usesBaseAppearancePicker())
+    if (!optionsAreRenderedWithBaseAppearance())
         return;
 
     auto& items = listItems();

@@ -2592,6 +2592,14 @@ HTMLEnhancedSelectEnabled:
   humanReadableDescription: "Enable enhanced HTML select element"
   defaultValue: true
 
+HTMLEnhancedSelectMultipleAndListBoxEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "Enhanced HTML select element for multiple and list box"
+  humanReadableDescription: "Enable enhanced HTML select element for the multiple attribute and for list box rendering"
+  defaultValue: false
+
 HTMLEnhancedSelectParsingEnabled:
   type: bool
   status: stable
