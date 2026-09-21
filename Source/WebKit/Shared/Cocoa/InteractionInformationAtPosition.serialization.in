@@ -45,6 +45,7 @@ struct WebKit::InteractionInformationAtPosition {
     bool isRangeInput;
     bool isARIASlider;
     bool hasDirectionalResizeCursor;
+    bool isInResizeControl;
     bool isNearMarkedText;
 #if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled;

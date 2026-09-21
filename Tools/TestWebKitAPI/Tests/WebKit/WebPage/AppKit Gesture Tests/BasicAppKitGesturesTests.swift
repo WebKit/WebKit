@@ -1950,6 +1950,35 @@ extension AppKitGesturesTests.Basic {
         let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
         #expect(actual.isEmpty)
     }
+
+    @Test(arguments: [false, true])
+    func draggingTextAreaRespectsResizeProperty(canResize: Bool) async throws {
+        try await loadTextArea(canResize: canResize)
+
+        let textAreaBoundsBefore = try await screenBoundsOfTextArea()
+        let dragStart = CGPoint(x: textAreaBoundsBefore.maxX - 2, y: textAreaBoundsBefore.maxY - 2)
+        let dragEnd = CGPoint(x: dragStart.x + 50, y: dragStart.y + 50)
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: dragStart,
+                end: dragEnd,
+                duration: .seconds(0.1),
+                pressAndWait: .seconds(0.1)
+            )
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let textAreaBoundsAfter = try await screenBoundsOfTextArea()
+
+        if !canResize {
+            #expect(textAreaBoundsBefore == textAreaBoundsAfter)
+        } else {
+            #expect(textAreaBoundsBefore.origin == textAreaBoundsAfter.origin)
+            #expect(textAreaBoundsBefore.size != textAreaBoundsAfter.size)
+        }
+    }
 }
 
 private let coalescedFlickEventFrequency = 20
@@ -2215,9 +2244,9 @@ extension AppKitGesturesTests.Basic {
         try await page.load(html: html).wait()
     }
 
-    private func loadTextArea() async throws {
+    private func loadTextArea(canResize: Bool = true) async throws {
         let style =
-            "appearance: none; display: block; font: 30px monospace; margin: 0; border: none; padding: 0; width: 700px; height: 300px;"
+            "appearance: none; display: block; font: 30px monospace; margin: 0; border: none; padding: 0; width: 700px; height: 300px;\(canResize ? "" : " resize: none;")"
 
         let html = """
             <body style="margin: 0">
@@ -2226,6 +2255,13 @@ extension AppKitGesturesTests.Basic {
             """
 
         try await page.load(html: html).wait()
+    }
+
+    private func screenBoundsOfTextArea() async throws -> CGRect {
+        let viewportBounds = try await page.callJavaScript(
+            JavaScriptMessages.BoundingClientRect(elementID: "textarea")
+        )
+        return screenBounds(ofRectInViewportCoordinates: viewportBounds)
     }
 
     private func screenBoundsOfTextFieldText(_ text: String) async throws -> CGRect {
