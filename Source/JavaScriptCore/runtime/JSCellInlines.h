@@ -274,7 +274,7 @@ ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(VM& vm, Structure& structure, P
     ASSERT(canUseFastGetOwnProperty(structure));
     PropertyOffset offset = structure.get(vm, name);
     if (offset != invalidOffset)
-        return asObject(this)->locationForOffset(offset)->get();
+        return asObject(this)->getDirect(structure, offset);
     return JSValue();
 }
 

@@ -365,7 +365,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
                         return true;
 
                     properties.append(entry.key());
-                    values.appendWithCrashOnOverflow(source->getDirect(entry.offset()));
+                    values.appendWithCrashOnOverflow(source->getDirect(*sourceStructure, entry.offset()));
 
                     return true;
                 });
@@ -439,7 +439,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorEntries, (JSGlobalObject* globalObject
                         return true;
 
                     properties.append(entry.key());
-                    values.appendWithCrashOnOverflow(target->getDirect(entry.offset()));
+                    values.appendWithCrashOnOverflow(target->getDirect(*targetStructure, entry.offset()));
 
                     return true;
                 });
@@ -704,17 +704,17 @@ inline bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, Prope
             descriptionStructure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                 PropertyName propertyName(entry.key());
                 if (propertyName == vm.propertyNames->enumerable)
-                    enumerable = description->getDirect(entry.offset());
+                    enumerable = description->getDirect(*descriptionStructure, entry.offset());
                 else if (propertyName == vm.propertyNames->configurable)
-                    configurable = description->getDirect(entry.offset());
+                    configurable = description->getDirect(*descriptionStructure, entry.offset());
                 else if (propertyName == vm.propertyNames->value)
-                    value = description->getDirect(entry.offset());
+                    value = description->getDirect(*descriptionStructure, entry.offset());
                 else if (propertyName == vm.propertyNames->writable)
-                    writable = description->getDirect(entry.offset());
+                    writable = description->getDirect(*descriptionStructure, entry.offset());
                 else if (propertyName == vm.propertyNames->get)
-                    get = description->getDirect(entry.offset());
+                    get = description->getDirect(*descriptionStructure, entry.offset());
                 else if (propertyName == vm.propertyNames->set)
-                    set = description->getDirect(entry.offset());
+                    set = description->getDirect(*descriptionStructure, entry.offset());
                 return true;
             });
 
@@ -916,7 +916,7 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
                 }
 
                 propertyNames.append(entry.key());
-                values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
+                values.appendWithCrashOnOverflow(properties->getDirect(*propertiesStructure, entry.offset()));
 
                 return true;
             });
@@ -933,7 +933,7 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
                         return true;
 
                     propertyNames.append(entry.key());
-                    values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
+                    values.appendWithCrashOnOverflow(properties->getDirect(*propertiesStructure, entry.offset()));
 
                     return true;
                 });

@@ -112,8 +112,16 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
         PropertyOffset offset = m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)];
         if (offset == invalidOffset)
             return nullptr;
-        if (offset != emptyHandlerTrapCache)
-            return ensureIsCallable(handler->getDirect(offset));
+        if (offset != emptyHandlerTrapCache) {
+            // RAW-DOUBLE AWARE. isHandlerTrapsCacheValid() above has already proved handler->structure() ==
+            // m_handlerStructureID, so this is the Structure that owns `offset`. It must be the aware reader:
+            // ensureIsCallable() feeds the value straight to getCallDataInline(), which dereferences it as a cell,
+            // so a raw slot here is a wild read at a script-chosen address rather than merely a wrong value.
+            // Reading correctly beats declining to cache: a raw slot can never hold a callable, so the aware read
+            // yields a Number and ensureIsCallable throws the same TypeError the uncached path below throws.
+            // repro/bugs/04-repro-proxy-handler-trap-fake-cell.js.
+            return ensureIsCallable(handler->getDirect(*handler->structure(), offset));
+        }
     } else if (m_handlerStructureID)
         clearHandlerTrapsOffsetsCache();
 

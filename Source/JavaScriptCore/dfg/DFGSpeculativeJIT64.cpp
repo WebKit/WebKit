@@ -8997,6 +8997,17 @@ void SpeculativeJIT::boxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR)
     add64(inputFPR, resultFPR, resultFPR);
 }
 
+// The exact inverse, for a slot that is CLAIMED to hold only doubles but stored NaN-boxed
+// (--useBoxedDoubleFieldSlots). Unconditional: no NaN test, no Int32 arm and no exit, because the claim -- not the
+// bit pattern -- is what rules out the other cases. add64/sub64 on FPRs are 64-bit INTEGER ops in the FP register
+// file (arm64 scalar ADD/SUB d), which is what boxing needs; an FP subtract would be wrong.
+void SpeculativeJIT::unboxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR)
+{
+    ASSERT(inputFPR != resultFPR);
+    move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(JSValue::DoubleEncodeOffset)), resultFPR);
+    sub64(inputFPR, resultFPR, resultFPR);
+}
+
 void SpeculativeJIT::compileMapStorage(Node* node)
 {
     SpeculateCellOperand map(this, node->child1());

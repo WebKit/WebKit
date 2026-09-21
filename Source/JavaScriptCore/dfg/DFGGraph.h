@@ -300,6 +300,16 @@ public:
     bool isWatched(Structure*);
 
     void assertIsRegistered(Structure* structure);
+
+    // Raw-double representation of `offset`, computed from the structures that can reach an access, and recorded on
+    // the node at creation time. See StorageAccessData::rawDoubleRep in DFGNode.h for why it must NOT be re-derived
+    // at lowering time from abstract state. `isMixed` is set when the structures DISAGREE at that offset -- such a
+    // site has no correct single representation and the caller must narrow the speculation rather than guess.
+    RawDoubleRep rawDoubleRepFor(const StructureSet&, PropertyOffset, bool& isMixed);
+    RawDoubleRep rawDoubleRepFor(const RegisteredStructureSet&, PropertyOffset, bool& isMixed);
+    RawDoubleRep rawDoubleRepFor(Structure*, PropertyOffset);
+    // PHASE B1: take the dependency on a claim. See the definition in DFGGraph.cpp.
+    void registerClaimWatchpointIfNeeded(Structure*);
     
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump() const

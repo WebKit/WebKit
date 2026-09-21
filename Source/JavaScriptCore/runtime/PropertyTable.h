@@ -118,7 +118,11 @@ public:
     std::tuple<PropertyOffset, unsigned> take(VM&, const KeyType&);
     PropertyOffset updateAttributeIfExists(const KeyType&, unsigned attributes);
 
-    PropertyOffset renumberPropertyOffsets(JSObject*, unsigned inlineCapacity, Vector<JSValue>&);
+    // Takes the owning Structure explicitly because flattenDictionaryStructure has already NUKED the object's
+    // StructureID by the time this runs, and fills in the RENUMBERED raw-double mask as it goes -- this is the only
+    // place where a property's old and new offsets are both in hand. See Structure::renumberRawDoubleMask.
+    PropertyOffset renumberPropertyOffsets(Structure&, JSObject*, unsigned inlineCapacity, Vector<JSValue>&,
+        std::array<uint64_t, Structure::s_rawDoubleMaskWords>& renumberedRawDoubleMask);
 
     struct FindResult {
         unsigned entryIndex;

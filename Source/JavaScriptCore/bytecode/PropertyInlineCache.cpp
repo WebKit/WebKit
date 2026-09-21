@@ -872,8 +872,50 @@ void PropertyInlineCache::prependHandler(CodeBlock* codeBlock, Ref<InlineCacheHa
 
     if (!handlerIC.m_inlinedHandler) {
         if (preconfiguredCacheType != CacheType::Unset && preconfiguredCacheType == handler->cacheType()) {
-            handlerIC.setInlinedHandler(codeBlock, WTF::move(handler));
-            return;
+            // A raw-double slot must NOT be promoted to the INLINE access. That fast path is emitted directly into
+            // baseline code (generateGetByIdInlineAccessBaselineDataIC / generatePutByIdInlineAccessBaselineDataIC in
+            // jit/JITInlineCacheGenerator.cpp) and reads the slot as a raw JSValue via
+            // PropertyInlineCache::byIdSelfOffset. That is a DIFFERENT surface from the shared handler thunks, and it
+            // has no handler pointer in hand to consult a flag on.
+            //
+            // Declining the promotion avoids the trap that killed the earlier attempts (section 5u): the HANDLER is
+            // still installed below, so GetByStatus/PutByStatus keep reporting and DFG/FTL still resolve the access to
+            // GetByOffset/PutByOffset. All that is given up is one inline fast path, and the handler thunk behind it is
+            // raw-aware. See 07-PLAN section 5x.
+            //
+            // Unconditional, for the same reason InlineAccess::generateSelfPropertyReplace is: promoting a raw slot
+            // here puts it on the unbiased generateGetByIdInlineAccessBaselineDataIC /
+            // generatePutByIdInlineAccessBaselineDataIC fast path.
+            //
+            // The test is the handler's own flag, which createPreCompiled derives from
+            // AccessCase::structureOwningAccessedSlot(). A coarser test -- decline whenever the armed structure
+            // carries ANY raw double field -- was tried and REVERTED: it did not fix the remaining Octane raytrace
+            // failure (so it bought no correctness) and it cost Box2D Score -1.82%, First-Score -4.69%, because it
+            // gives up the inline fast path for every property of every raw-carrying shape rather than for the raw
+            // slot itself.
+            // GUARANTEE-ONLY SPLITS THIS DECISION BY DIRECTION. Everything above was written for RAW storage, where an
+            // inline access reading the slot as a plain JSValue would hand back bits(d)+2^49. Under guarantee-only a
+            // claimed slot holds an ordinary NaN-boxed JSValue, so the LOAD surface
+            // (generateGetByIdInlineAccessBaselineDataIC, which just loads byIdSelfOffset) is exactly correct and the
+            // claim is no longer a reason to refuse it.
+            //
+            // The STORE surface still declines. generatePutByIdInlineAccessBaselineDataIC writes valueGPR straight
+            // into the slot with no type test, which would skip both things that keep a claim true: the Int32 ->
+            // double re-encode, and the give-up on a non-number. Letting a tagged integer land in a slot the FTL has
+            // been told is double-only is the 1.625 bug class in OptionsList.h.
+            //
+            // WHY THIS MATTERS MORE THAN THE COMMENT ABOVE SUPPOSED: declining the promotion does not cost "one inline
+            // fast path". It sends every access to that slot through a CALL into a shared handler thunk instead of the
+            // four instructions patched into baseline code. Measured at the Baseline tier on the ladder
+            // (--useDFGJIT=0, medians of 7): L1 (reads only) -7.14%, L2 -15.92%, L5 -19.34%, with the sampling
+            // profiler putting one put_by_id at 22 -> 390 samples across 3 runs per side. The same benchmark with
+            // Int32 fields, which creates no claims, measures +0.32% -- so the cost is the claim, not layout.
+            bool claimBlocksInlineAccess = handler->isRawDoubleField()
+                && (!Options::useBoxedDoubleFieldSlots() || handler->cacheType() == CacheType::PutByIdReplace);
+            if (!claimBlocksInlineAccess) {
+                handlerIC.setInlinedHandler(codeBlock, WTF::move(handler));
+                return;
+            }
         }
     }
 

@@ -200,9 +200,9 @@ Structure* createIteratorResultObjectStructure(VM& vm, JSGlobalObject& globalObj
     constexpr unsigned inlineCapacity = 2;
     Structure* iteratorResultStructure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->value, 0, offset);
+    iteratorResultStructure = Structure::addPropertyTransitionForBoxedSlot(vm, iteratorResultStructure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == iteratorResultObjectValuePropertyOffset);
-    iteratorResultStructure = Structure::addPropertyTransition(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
+    iteratorResultStructure = Structure::addPropertyTransitionForBoxedSlot(vm, iteratorResultStructure, vm.propertyNames->done, 0, offset);
     RELEASE_ASSERT(offset == iteratorResultObjectDonePropertyOffset);
     return iteratorResultStructure;
 }

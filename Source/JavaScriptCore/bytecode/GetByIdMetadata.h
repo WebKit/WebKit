@@ -36,6 +36,20 @@ enum class GetByIdMode : uint8_t {
     Default = 1,
     Unset = 2,
     ArrayLength = 3,
+    // A self property whose slot holds RAW IEEE-754 bits rather than a NaN-boxed JSValue. Same layout and same guard
+    // as Default; the only difference is that the fast path adds JSValue::DoubleEncodeOffset to the loaded word,
+    // which is exactly what boxing a raw double is.
+    //
+    // WHY A MODE AND NOT A FLAG INSIDE Default. Rawness is a property of the cached (structure, offset) pair, and the
+    // LLInt fast path has no spare register and nowhere cheap to branch. Testing a flag inside the Default arm would
+    // add a load, a test and a branch to EVERY get_by_id in the interpreter -- paid by all sites to benefit the ~3%
+    // of (structure, offset) keys that are actually raw. A separate mode reuses the mode dispatch that already
+    // exists, so Default/ProtoLoad/ArrayLength/Unset stay byte-for-byte unchanged and only raw sites pay anything.
+    //
+    // Before this existed LLIntSlowPaths simply DECLINED to cache a raw slot, so every such access took the C++ slow
+    // path forever. Measured on Box2D at --useJIT=0 against the clean tree: Score -3.83%, First-Score -3.89%,
+    // p<0.01% -- the whole of the patch's remaining warmup regression.
+    RawDouble = 4,
 };
 
 struct GetByIdModeMetadataDefault {
@@ -84,6 +98,7 @@ union GetByIdModeMetadata {
     void setUnsetMode(Structure*);
     void setArrayLengthMode();
     void setProtoLoadMode(Structure*, PropertyOffset, JSObject*);
+    void setRawDoubleMode(Structure*, PropertyOffset);
 
     struct {
         uint32_t padding1;
@@ -113,6 +128,17 @@ inline void GetByIdModeMetadata::setUnsetMode(Structure* structure)
     mode = GetByIdMode::Unset;
     unsetMode.structureID = structure->id();
     defaultMode.cachedOffset = 0;
+}
+
+// Deliberately reuses defaultMode's layout: same structureID guard, same cachedOffset. That keeps the union at 16
+// bytes (the static_assert above still holds) and lets CodeBlock's GC reconciliation treat the two identically --
+// which it MUST, or a dead StructureID cached in this mode would never be cleared. See
+// CodeBlock::reconcileLLIntInlineCachesAtGCEnd.
+inline void GetByIdModeMetadata::setRawDoubleMode(Structure* structure, PropertyOffset offset)
+{
+    mode = GetByIdMode::RawDouble;
+    defaultMode.structureID = structure->id();
+    defaultMode.cachedOffset = offset;
 }
 
 inline void GetByIdModeMetadata::setArrayLengthMode()

@@ -416,6 +416,13 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, JSGlobalObject* 
     VM& vm = getVM(globalObject);
 
     JSObject* thisObject = uncheckedDowncast<JSObject>(cell);
+    // RAW-DOUBLE DIAGNOSTIC. An EMPTY JSValue arriving here is the signature of a raw slot holding 0.0 being read as
+    // a JSValue: bits(0.0) == 0, which is exactly JSValue::encode(JSValue()). Name the property, the receiver's
+    // structure and what that structure claims about every offset, so the offending READER can be identified instead
+    // of inferred. Gated on dumpRawDoubleCorruption so it costs nothing otherwise.
+    // NOTE: a multi-line dataLogLn diagnostic for empty values used to sit here. Removed for CODE SIZE: this
+    // function is ALWAYS_INLINE on the generic store path, and an Options-gated branch still emits its whole body at
+    // every inlining site. See repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md.
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
@@ -500,6 +507,67 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!parseIndex(propertyName));
 
+    // PHASE 1: derive the storage REPRESENTATION from the value at the creating store.
+    //
+    // THE CREATING STORE IS THE ONLY CHANCE, and the rule must be `isDouble()` -- NOT `isNumber()`.
+    //
+    // JSC has no object migration, so a Structure's representation can never be revised later: the Structure is
+    // shared by live objects whose slots are ALREADY WRITTEN, and changing the answer reinterprets their existing
+    // bits. (V8 can go Smi->Double only because it deprecates the map and physically rewrites every object via
+    // JSObject::MigrateToMap/MigrateFastToFast -- Representation::MightCauseMapDeprecation says that change
+    // "require[s] deprecation, because doubles might require box allocation". We have no equivalent.)
+    //
+    // Marking on any NUMBER was tried and REMOVED. It raised specialisation enormously (GetByOffset 2.1% -> 71%,
+    // PutByOffset 0% -> 100%) but it is UNSOUND, because it marks fields that later receive a non-number and so
+    // creates a need for widening -- and widening cannot work here. JSObject::widenDoubleRepresentation clears the
+    // mark via attributeChangeTransition, which produces a SHARED structure, yet it can only re-box the ONE object
+    // it was called on. Measured on Box2D: 36 objects had written raw bits to b2Body.m_angularDamping (offset 72)
+    // and exactly ONE widen occurred, leaving 35 objects holding raw 0.0 -- whose bit pattern IS the empty JSValue,
+    // which reaches op_inc and null-derefs in JSCell::type (crash traced to #CSK4YU bc#208).
+    //
+    // isDouble() keeps the invariant self-enforcing: a field is only marked when the creating store proves it holds
+    // a non-integer double, and --validateDoubleFieldRepresentation reports ZERO stores needing widening on Box2D.
+    // No widening means no divergence. The cost is coverage -- Box2D builds `new b2Vec2(0, 0)` during init, so those
+    // x/y transitions are created from Int32 and stay boxed forever -- and buying that coverage back requires
+    // PROVING permanence before marking (a per-(structure, offset) watchpoint), not guessing at the first store.
+    // BOTH OPTIONS, NOT JUST THE MARKING ONE. useDoubleFieldRepresentation was documented as changing "no CODEGEN and
+    // no storage", but that is not true of the derived state: marking populates Structure::hasRawDoubleFields and the
+    // per-offset mask, and GC tracing consults that mask. With storage OFF nothing ever writes raw bits, so every mask
+    // bit is an OVER-CLAIM and the collector skips a slot that really does hold a JSValue. Measured with
+    // --useRawDoubleFieldStorage=0 before this gate: 20000/20000 reachable objects freed and their storage reused,
+    // rc=0, no assertion -- i.e. the kill switch for the feature was itself a use-after-free. Marking with storage off
+    // has no remaining consumer, so gating here removes a configuration that silently corrupts the heap.
+    // repro/bugs/05-repro-gc-option-gating-uaf.js.
+    // NON-INTEGRAL DOUBLE ONLY, and that is a MEASURED boundary, not a conservative default. Claiming on any NUMBER
+    // instead -- the sound, migration-free route to Gap 1, since claiming at CREATION cannot reinterpret an existing
+    // object's slot -- was implemented and measured: ML -77.91%, FlightPlanner -23.20%, delta-blue -12.39%,
+    // Box2D -11.93%, pdfjs -7.06%, splay -6.60%, Sunspider -3.69% (raytrace +7.21% was the lone gain), all p<0.01.
+    // Sweeping pure-Int32 fields into double representation destroys Int32 speculation downstream, and that loss is an
+    // order of magnitude larger than the coverage gain. Do not widen this predicate.
+    // See repro/bugs/open/25-ROOT-CAUSE-class-c-is-code-size.md.
+    if (Options::useDoubleFieldRepresentation() && Options::useRawDoubleFieldStorage() && value.isDouble()) [[unlikely]] {
+        newAttributes |= static_cast<unsigned>(PropertyAttribute::RepresentationDouble);
+        dataLogLnIf(Options::dumpRawDoubleCorruption(), "[rawdouble] MARK prop=",
+            propertyName.uid() ? String(propertyName.uid()) : String("<index>"_s),
+            " class=", this->structure()->classInfoForCells()->className);
+    }
+
+    // PHASE 3 WIDENING, and it must happen BEFORE `structure` is read below because it can replace the structure.
+    // A field marked Double may later be assigned something that is not a number. Int32 is fine -- it coerces
+    // losslessly and stays raw -- but a string or an object cannot live in a raw-double slot. Clearing the mark in
+    // place is NOT an option: other objects sharing this Structure already hold raw doubles in that slot, and
+    // clearing would make their slots be read as boxed. So the violating object gets its own structure via an
+    // attribute-change transition, and the existing raw value is re-boxed to match. See 07-PLAN section 5t.
+    //
+    // Caching MUST be disabled when this fires. We are transitioning the structure and then storing to a property
+    // that already exists, and the Replace IC cannot model a structure transition -- LLIntSlowPaths.cpp's
+    // `RELEASE_ASSERT(newStructure == oldStructure)` exists precisely to catch a caller that forgets this. Same
+    // treatment as the lazy-property reification in JSFunction.cpp. Found by that assertion on a --ra build.
+    if (Options::useRawDoubleFieldStorage() && !value.isDouble() && !value.isInt32()) [[unlikely]] {
+        if (widenDoubleRepresentation(vm, propertyName))
+            slot.disableCaching();
+    }
+
     StructureID structureID = this->structureID();
     Structure* structure = structureID.decode();
     if (structure->isDictionary()) {
@@ -532,18 +600,56 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
                     return ReadonlyPropertyChangeError;
             }
 
-            putDirectOffset(vm, offset, value);
             structure->didReplaceProperty(offset);
 
             // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
             // https://bugs.webkit.org/show_bug.cgi?id=214342
-            if ((mode == PutModeDefineOwnProperty) && (newAttributes != attributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+            if ((mode == PutModeDefineOwnProperty) && (userVisibleAttributes(newAttributes) != userVisibleAttributes(attributes) || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+                // COMPUTE THE DESTINATION BEFORE STORING. `structure` is not the authority for this slot's layout
+                // once an attribute-change transition is about to be installed, and for an UNCACHEABLE dictionary
+                // attributeChangeTransition mutates `structure` IN PLACE and returns it, so a store issued first
+                // lands NaN-boxed in a slot the very same structure then declares raw (measured: 2.5 read back as
+                // 2.75, exactly +2^49). repro/bugs/02.
+                // BOTH deferreds must outlive setStructure. An adaptive watchpoint's fireInternal re-checks
+                // m_key.isWatchable() and RE-INSTALLS itself if the condition still holds; isWatchableWhenValid
+                // reads m_key.object()->structure(), so firing before setStructure shows it the just-invalidated
+                // OLD structure, the re-install always fails, and the code block is jettisoned with
+                // CountReoptimization even when the watched property was not the one being redefined. Measured: one
+                // extra DFG and one extra FTL recompile per attribute change, in every option leg. Hence the scope
+                // extends past setStructure below, which is what the ADD path has always done.
+                Structure* newStructure;
                 DeferredStructureTransitionWatchpointFire deferred(vm, structure);
-                setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferred));
+                // A SEPARATE deferred bound to newStructure: DeferredStructureTransitionWatchpointFire holds one
+                // WatchpointSet and fireStructureTransitionWatchpoint asserts deferred->structure() == this, so
+                // reusing the one above would assert here and silently drop `structure`'s watchpoints otherwise.
+                std::optional<DeferredStructureTransitionWatchpointFire> boxedFire;
+                newStructure = Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferred);
+                if (!value.isNumber()) [[unlikely]] {
+                    boxedFire.emplace(vm, newStructure);
+                    newStructure = Structure::ensureBoxedRepresentation(vm, newStructure, propertyName, offset, &boxedFire.value());
+                }
+                // ORDERING vs THE CONCURRENT COLLECTOR. The marker may read this slot between the two statements and
+                // decides how to read it from whichever structure it sees. The one state it must never observe is
+                // "structure says boxed, slot holds raw bits" -- that is where it follows a double as a pointer. So
+                // keep the RAW-CLAIMING structure installed for the whole window; the marker then SKIPS the slot,
+                // and what it skips is either the old value (about to be overwritten) or `value`, which is live on
+                // this frame and so a conservative root.
+                // The claim bit is computed HERE for the ordering decision below, so hand it to the store rather
+                // than making putDirectOffset re-derive it from the Structure -- that re-derivation is the ~1.2%
+                // per-store tax bisected in JSObject.h.
+                bool slotIsClaimed = newStructure->isRawDoubleOffset(offset);
+                if (slotIsClaimed) [[unlikely]] {
+                    setStructure(vm, newStructure);
+                    putDirectOffset(vm, *newStructure, offset, value, slotIsClaimed);
+                } else {
+                    putDirectOffset(vm, *newStructure, offset, value, slotIsClaimed);
+                    setStructure(vm, newStructure);
+                }
                 if (mayBePrototype()) [[unlikely]]
                     vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
             } else {
                 ASSERT(!(attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
+                putDirectOffset(vm, *structure, offset, value);
                 slot.setExistingProperty(this, offset);
             }
             return { };
@@ -562,6 +668,43 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     {
         PropertyOffset offset;
         Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, newAttributes, offset);
+        // PHASE 3 WIDENING, *ADD* EDITION. The widenDoubleRepresentation() call above only fires for a property this
+        // object ALREADY has -- it returns false on invalidOffset -- so it cannot cover a property being added. But
+        // this lookup can still hand back a RAW transition for a non-number value, because the transition key
+        // deliberately excludes PropertyAttribute::RepresentationDouble: `o.a = 1.5` and `o.a = "s"` produce the same
+        // key, and whichever store created the transition decides. newAttributes has no representation bit here, yet
+        // the cached structure claims the slot is raw.
+        //
+        // Storing anyway puts a CELL POINTER in a slot every reader de-biases as a double. That is not merely a wrong
+        // number: `o.a = 1.5` x2000 then `o.a = "s"` returned 2.279749513e-314, i.e. the JSString* itself
+        // (0x115081600) handed to JavaScript -- an address disclosure and type confusion -- and because GC tracing
+        // consults the MASK, the live cell in that slot is never traced.
+        //
+        // So widen the TARGET instead: take the attribute-change sibling that does not claim the slot, which leaves
+        // every object already using `newStructure` untouched (their slots really do hold raw doubles). The
+        // attribute-change transition preserves offsets, so `offset` stays valid, and it is itself cached, so a shape
+        // that keeps mixing doubles and non-numbers pays this once.
+        if (newStructure && !value.isNumber() && newStructure->isRawDoubleOffset(offset)) [[unlikely]] {
+            // DISPLACE THE RAW CLAIM FOR FUTURE ADDS, rather than only rescuing this one object.
+            //
+            // ensureBoxedRepresentation was used here. It produces the attribute-change GRANDCHILD, which fixes this
+            // object but leaves the raw sibling as the transition table's answer -- so the next add is handed it again
+            // and widens again, and the table's answer permanently DISAGREES with the structure objects end up with.
+            // That disagreement is what makes Repatch.cpp:1164's `baseValue.asCell()->structure() != newStructure`
+            // check fail, which gives up the put-by-id IC for the whole site, forever. splay: -9.73% with the OSR-exit
+            // storm already fixed, C++ time doubled, operationPutByIdSloppyGaveUp hot.
+            //
+            // replaceRawPropertyAdditionWithBoxed instead builds a second DIRECT child with boxed attributes and lets
+            // StructureTransitionTable::add() overwrite the entry. Objects already on the raw structure keep it and
+            // keep reading raw, so no live slot is reinterpreted; only future adds change, and only toward boxed --
+            // the safe, under-claiming direction. It is self-limiting: afterwards this lookup no longer returns a
+            // raw-claiming structure, so this branch stops firing and caching is left enabled.
+            DeferredStructureTransitionWatchpointFire deferredWidenFire(vm, structure);
+            newStructure = Structure::replaceRawPropertyAdditionWithBoxed(vm, structure, propertyName,
+                newStructure->transitionPropertyAttributes(), offset, &deferredWidenFire);
+            // Still disable caching for THIS store: the IC would key on the pre-replacement state.
+            slot.disableCaching();
+        }
         if (newStructure) {
             Butterfly* newButterfly = butterfly();
             if (structure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
@@ -576,7 +719,9 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
             // is running at the same time we put without transitioning.
             ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
-            putDirectOffset(vm, offset, value);
+            // newStructure, NOT this->structure(): the store below happens BEFORE setStructure installs it, so the
+            // object still points at a structure that has neither this property nor its raw-double mask bit.
+            putDirectOffset(vm, *newStructure, offset, value);
             setStructure(vm, newStructure);
             slot.setNewProperty(this, offset);
             if (mayBePrototype()) [[unlikely]]
@@ -592,19 +737,48 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             return ReadonlyPropertyChangeError;
 
         structure->didReplaceProperty(offset);
-        putDirectOffset(vm, offset, value);
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
         // https://bugs.webkit.org/show_bug.cgi?id=214342
-        if ((mode == PutModeDefineOwnProperty) && (newAttributes != currentAttributes || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
-            // We want the structure transition watchpoint to fire after this object has switched structure.
-            // This allows adaptive watchpoints to observe if the new structure is the one we want.
+        if ((mode == PutModeDefineOwnProperty) && (userVisibleAttributes(newAttributes) != userVisibleAttributes(currentAttributes) || (newAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue))) {
+            // COMPUTE THE DESTINATION BEFORE STORING. `structure` is NOT the authority for this slot's layout once
+            // an attribute-change transition is about to be installed: newAttributes picked up RepresentationDouble
+            // above for a double value, and the target's claim is independent of what `structure` says. Storing
+            // first and transitioning after leaves NaN-boxed bits in a slot every reader de-biases -- for a cell
+            // that is an ADDROF, and GC tracing consults the same mask, so the cell is swept while still referenced.
+            // Same correction already applied to the ADD path above and to
+            // operationReallocateButterflyAndTransition. repro/bugs/02 and 02b.
+            //
+            // We want the structure transition watchpoint to fire after this object has switched structure, so that
+            // adaptive watchpoints can observe whether the new structure is the one we want.
+            // Both deferreds outlive setStructure below -- see the dictionary arm for why firing earlier makes
+            // every adaptive watchpoint fail to re-install and jettison its code block.
+            Structure* newStructure;
             DeferredStructureTransitionWatchpointFire deferredWatchpointFire(vm, structure);
-            setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferredWatchpointFire));
+            // A SEPARATE deferred bound to newStructure -- see the dictionary arm above for why reusing the
+            // outer one asserts and drops watchpoints.
+            std::optional<DeferredStructureTransitionWatchpointFire> boxedFire;
+            newStructure = Structure::attributeChangeTransition(vm, structure, propertyName, newAttributes, &deferredWatchpointFire);
+            if (!value.isNumber()) [[unlikely]] {
+                boxedFire.emplace(vm, newStructure);
+                newStructure = Structure::ensureBoxedRepresentation(vm, newStructure, propertyName, offset, &boxedFire.value());
+            }
+            // See the dictionary arm for the concurrent-marking ordering rule.
+            bool slotIsClaimed2 = newStructure->isRawDoubleOffset(offset);
+            if (slotIsClaimed2) [[unlikely]] {
+                setStructure(vm, newStructure);
+                putDirectOffset(vm, *newStructure, offset, value, slotIsClaimed2);
+            } else {
+                putDirectOffset(vm, *newStructure, offset, value, slotIsClaimed2);
+                setStructure(vm, newStructure);
+            }
             if (mayBePrototype()) [[unlikely]]
                 vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Change);
         } else {
             ASSERT(!(currentAttributes & PropertyAttribute::AccessorOrCustomAccessorOrValue));
+            // No transition: `structure` IS the destination. Pass it explicitly rather than making the bare
+            // overload re-decode this->structureID().
+            putDirectOffset(vm, *structure, offset, value);
             slot.setExistingProperty(this, offset);
         }
 
@@ -634,7 +808,15 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
     // is running at the same time we put without transitioning.
     ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
-    putDirectOffset(vm, offset, value);
+    // newStructure, NOT this->structure(): same reason as the transition-to-existing-structure case above -- the
+    // store precedes setStructure, so only newStructure knows this offset is Double-represented.
+    // newAttributes ALREADY encodes the claim, so use it instead of making the store re-derive it from the
+    // Structure. Safe direction: attributes can over-report (setRawDoubleOffset may have DECLINED an offset it
+    // cannot represent, leaving the attribute set but the mask clear), never under-report -- and the out-of-line
+    // writer re-checks claimAlive and falls through to a plain store, so an over-report costs a branch, not
+    // correctness.
+    putDirectOffset(vm, *newStructure, offset, value,
+        !!(newAttributes & static_cast<unsigned>(PropertyAttribute::RepresentationDouble)));
     setStructure(vm, newStructure);
     slot.setNewProperty(this, offset);
     if (newAttributes & PropertyAttribute::ReadOnly)
@@ -886,7 +1068,11 @@ ALWAYS_INLINE bool JSObject::getPrivateFieldSlot(JSObject* object, JSGlobalObjec
     if (offset == invalidOffset)
         return false;
 
-    JSValue value = object->getDirect(offset);
+    // RAW-DOUBLE AWARE. `structure` is the local established above and validated by the invalidOffset early return,
+    // so it is exactly the Structure that owns this offset. Private class fields were never converted to the aware
+    // reader, so `class C { #p = 1.5; }` handed bits(1.5) to JavaScript as a JSValue.
+    // repro/bugs/03-repro-private-field-unchecked-read.js.
+    JSValue value = object->getDirect(*structure, offset);
 #if ASSERT_ENABLED
     ASSERT(value);
     if (value.isCell()) {

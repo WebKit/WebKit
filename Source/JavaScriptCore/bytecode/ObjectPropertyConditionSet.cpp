@@ -435,7 +435,14 @@ ObjectPropertyConditionSet generateConditionsForPrototypePropertyHitCustom(
                     // no longer see it as a "custom" accessor/value. Hence, if our property access actually
                     // notices a custom, it must be a CustomGetterSetterType cell or something
                     // in the static property table. Custom values get reified into CustomGetterSetters.
-                    JSValue value = object->getDirect(offset);
+                    // RAW-DOUBLE AWARE. Today this slot provably holds a CustomGetterSetter cell -- Structure.cpp's
+                    // normalizeRepresentationAttributes strips RepresentationDouble from anything carrying
+                    // AccessorOrCustomAccessorOrValue at the top of both transition paths -- so it cannot be raw.
+                    // Use the aware reader regardless: the very next line does value.asCell()->type(), so if that
+                    // invariant ever develops a hole the failure is a wild read at a script-chosen address, and this
+                    // path is compile-time-only so correctness is free. The other by-offset read in this file already
+                    // uses the concurrency-dispatching overload, both of whose arms are aware.
+                    JSValue value = object->getDirect(*structure, offset);
 
                     if (!value.isCell() || value.asCell()->type() != CustomGetterSetterType) {
                         // The value could have just got changed to some other type, so check if it's still

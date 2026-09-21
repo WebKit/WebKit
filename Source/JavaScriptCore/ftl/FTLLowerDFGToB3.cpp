@@ -12710,6 +12710,99 @@ IGNORE_CLANG_WARNINGS_END
         }
     }
 
+    // Can EVERY structure the base could have here prove that `offset` holds RAW IEEE-754 bits rather than a
+    // NaN-boxed JSValue? If so the load needs no unboxing at all -- no bias subtract, no NaN dispatch, no phi -- just
+    // the ldur that loadDoubleProperty already emits. That bare `ldur d` is the codegen this whole project exists to
+    // reach, and it is what V8's equivalent load compiles to.
+    //
+    // This is the payoff of putting the representation into transition identity (07-PLAN section 8, measured at
+    // -11.3% and kept deliberately): the CheckStructure that dominates every property access ALREADY proves the
+    // representation, so proving it again costs nothing at runtime.
+    //
+    // Requires a FINITE, non-empty structure set. If the base could be a structure we have not enumerated we cannot
+    // know, and we keep the dispatch -- the safe direction of the one-directional invariant (Structure.h,
+    // StructureRareData::m_rawDoubleMask).
+    // Tri-state, for the same reason as the DFG counterpart: Unknown is NOT a licence to guess. Falling back to
+    // Boxed when unsure is UNSOUND, because the writer's proof and the reader's proof are made at different sites
+    // with different abstract states -- the writer can prove raw and store raw while the reader fails to prove and
+    // subtracts the bias. Measured on op_div-VarVar: 1104 failures assuming Boxed, 268 assuming Raw; both wrong,
+    // because those sites are genuinely MIXED. See 07-PLAN section 5ab.
+    enum class RawDoubleProof : uint8_t { Boxed, Raw };
+    // The representation recorded on the node at creation time -- the only sound source, because it came from a
+    // definite structure set rather than from an abstract value a clobber may have widened. 07-PLAN 5ab/5ad.
+    RawDoubleProof recordedRawDoubleProof(const StorageAccessData& data)
+    {
+        // DIAGNOSTIC: does the representation recorded at node-creation time still agree with the structures that
+        // can actually reach this access at lowering time? A disagreement means the node was created against one
+        // structure set and is now guarded by another -- which is exactly the failure being hunted, and it prints
+        // the offset and both answers so the mismatch is visible instead of inferred.
+        if (Options::dumpDoubleFieldSplitCensus() && Options::useRawDoubleFieldStorage()) [[unlikely]] {
+            AbstractValue& value = m_state.forNode(m_node->child2());
+            if (value.m_structure.isFinite() && !value.m_structure.isClear()) {
+                bool anyRaw = false;
+                bool allRaw = true;
+                value.m_structure.forEach([&](RegisteredStructure structure) {
+                    bool raw = structure->isRawDoubleOffset(data.offset);
+                    anyRaw |= raw;
+                    allRaw &= raw;
+                });
+                bool recordedRaw = data.rawDoubleRep == RawDoubleRep::Raw;
+                // EXEMPT TRANSITION PUTS. At a transition store the abstract state still holds the OLD structure,
+                // which legitimately does not have the property yet, so asking it about the offset answers false and
+                // every transition would report a spurious mismatch (5ak). Only compare where the live structures
+                // actually own the offset.
+                bool liveOwnsOffset = true;
+                value.m_structure.forEach([&](RegisteredStructure structure) {
+                    if (!structure->isValidOffset(data.offset))
+                        liveOwnsOffset = false;
+                });
+                if (liveOwnsOffset && (recordedRaw != allRaw || (anyRaw != allRaw))) {
+                    dataLogLn("[rawdouble] LOWERING MISMATCH op=", Graph::opName(m_node->op()),
+                        " offset=", data.offset,
+                        " recorded=", recordedRaw ? "Raw" : "Boxed",
+                        " liveAllRaw=", allRaw, " liveAnyRaw=", anyRaw,
+                        " setSize=", value.m_structure.size(), " node=", m_node->index());
+                }
+            }
+        }
+        return data.rawDoubleRep == RawDoubleRep::Raw ? RawDoubleProof::Raw : RawDoubleProof::Boxed;
+    }
+
+    // box(d) == bits(d) + 2^49, so a boxed double de-biases with one subtract; an Int32 has to be converted and then
+    // REINTERPRETED (m_out.bitCast, never m_out.doubleToInt64 -- that one truncates numerically). `known` is the
+    // abstract type of the value where the caller has one; pass SpecFullTop where it does not (object
+    // materialisation has no Edge, see the FIXMEs in compileMaterializeNewObject) and the dispatch becomes a runtime
+    // one. Shared by every FTL store into a raw slot so the two cannot drift apart.
+    LValue rawDoubleBitsForStore(LValue jsValue, SpeculatedType known, PropertyOffset offsetForDiagnostics)
+    {
+        // THE INPUT IS NOT ALWAYS Int64. compileMaterializeNewObject hands us `values[i]`, which for a sunken
+        // allocation can already be a Double LValue rather than a boxed JSValue. Subtracting an Int64 constant from
+        // a Double is not representable in B3 and fails validation with
+        // "value->type() == value->child(1)->type()" at the Sub -- observed as
+        // `Double b@3359 = Sub(b@3350, $562949953421312)`, where the constant is DoubleEncodeOffset.
+        //
+        // A Double input is ALREADY the raw bits by definition: the whole point of a raw slot is that it holds the
+        // IEEE-754 pattern, so a value the compiler is tracking as Double needs only a reinterpret, never a bias.
+        // A claimed slot holds a double-ENCODED JSValue, so: a Double LValue is boxed, a boxed double is already
+        // correct and needs nothing at all, and an Int32 is converted and then boxed. Note the common case -- a value
+        // the compiler already tracks as a boxed double -- is the IDENTITY here, where raw storage had to subtract.
+        if (jsValue->type() == Double)
+            return boxDouble(jsValue);
+        auto boxedFromInt32 = [&] (LValue v) { return boxDouble(m_out.intToDouble(unboxInt32(v))); };
+        if (!(known & ~SpecFullDouble))
+            return jsValue;
+        if (!(known & ~SpecInt32Only))
+            return boxedFromInt32(jsValue);
+        if (!(known & ~(SpecInt32Only | SpecFullDouble)))
+            return m_out.select(isInt32(jsValue, known), boxedFromInt32(jsValue), jsValue);
+        // Unproven: fail open. A non-number stored verbatim into a claimed boxed slot is a wrong VALUE for a reader
+        // that skips the dispatch, not a fake cell, which is why this is counted rather than asserted.
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(),
+            "[rawdouble] FTL store UNPROVEN-VALUE into claimed slot offset=", offsetForDiagnostics);
+        return jsValue;
+
+    }
+
     void compileGetByOffset()
     {
         StorageAccessData& data = m_node->storageAccessData();
@@ -12717,13 +12810,35 @@ IGNORE_CLANG_WARNINGS_END
         LValue storage = lowStorage(m_node->child1());
         if (m_node->hasDoubleResult()) {
             LValue boxed = loadDoubleProperty(storage, data.identifierNumber, data.offset);
-            LValue value = unboxRealNumberDouble(boxed, m_node);
+            // A slot proven raw already holds an IEEE-754 double, so unboxRealNumberDouble is skipped entirely --
+            // that drops the bias subtract as well as the fcmp/branch/phi, leaving just the load.
+            // No Unknown case: mixed sites decline static resolution upstream, so the recorded representation
+            // is always definite here.
+            auto proof = recordedRawDoubleProof(data);
+            // THE POINT OF THE WHOLE DESIGN. A claim removes the fcmp, the branch, the out-of-line Int32 arm and the
+            // exit; the bias subtract stays because the slot is a real JSValue.
+            LValue value = (proof == RawDoubleProof::Raw)
+                ? unboxDoubleAsDouble(boxed)
+                : unboxRealNumberDouble(boxed, m_node);
             ensureStillAliveHere(base);
             setDouble(value);
             return;
         }
 
+        // THE JSVALUE-RESULT PATH. A raw slot holds bits(d), which is not a JSValue: returning it untouched makes
+        // every consumer read bits(d)-2^49 as a double. Boxing is a single add, since box(d) == bits(d) + 2^49.
+        //
+        // This branch is reached whenever the node's result format is JSValue rather than Double, i.e. wherever the
+        // prediction was never narrowed. It was the LAST unhooked reader: with everything else converted, tier
+        // bisection on op_div-VarVar gave 1 wrong value by default and 0 with --useFTLJIT=0, while
+        // --useMegamorphicCache=0 changed nothing -- so FTL, and not the megamorphic path I had suspected.
+        //
+        // Uses the representation RECORDED on the node, so unlike the earlier attempt there is no proof to fail and
+        // no exit to emit (exiting here is illegal -- 07-PLAN 5ad). See 07-PLAN 5ag.
         LValue value = loadProperty(storage, data.identifierNumber, data.offset);
+        // NOTE: a re-box used to live here, because a raw slot held bits(d) rather than a JSValue. The slot IS a
+        // JSValue now, claimed or not, so a JSValue-result read of a claimed field is byte-identical to an
+        // unclaimed one and needs no reconciliation at all.
         // We have to keep base alive since that keeps content of storage alive.
         ensureStillAliveHere(base);
         setJSValue(value);
@@ -12745,33 +12860,105 @@ IGNORE_CLANG_WARNINGS_END
 
         MultiGetByOffsetData& data = m_node->multiGetByOffsetData();
 
-        Vector<LBasicBlock, 2> blocks(data.cases.size());
-        for (unsigned i = data.cases.size(); i--;)
-            blocks[i] = m_out.newBlock();
-        LBasicBlock exit = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        // Is the slot at `offset` in `structure` a raw IEEE-754 double? isRawDoubleOffset already folds in the
+        // option, but keep the explicit test so this reads as a complete question at the call sites below.
+        auto structureIsRawAt = [&](Structure* structure, PropertyOffset offset) -> bool {
+            return Options::useRawDoubleFieldStorage() && structure && structure->isRawDoubleOffset(offset);
+        };
+
+        // ONE JOB PER (case, representation), NOT PER CASE. Raw-ness belongs to the structure that OWNS the slot, and
+        // a Load case's structure set can DISAGREE about it. This used to be resolved by returning `allRaw`, i.e. a
+        // MIXED set was served as BOXED, so a raw member's bits(d) was handed out as a JSValue: 1.5 read back as
+        // 1.375, and Math.pow(2,-1030) -- bits 0x0000100000000000, which passes JSValue::isCell() -- read back as a
+        // JSCell* the script chose. Every other site in this patch declines on a mixed set (ByteCodeParser::load,
+        // ConstantFoldingPhase, proveRawDouble, compileMultiPutByOffset); this one guessed, in the unsafe direction.
+        // repro/bugs/09-repro-ftl-multigetbyoffset-mixed-case-set.js.
+        //
+        // SPLITTING IS EXACT AND NEEDS NO EXIT. The switch below already emits ONE ARM PER STRUCTURE, so a mixed case
+        // is split simply by routing its raw structures to a second block: one extra B3 block and one extra phi
+        // input, zero extra switch arms, zero deopts. An unconditional exit in a case block would be a permanent
+        // deopt, not a speculation.
+        //
+        // ONLY A Load CAN BE MIXED. A Constant reads no slot at all, and a LoadFromPrototype's slot belongs to the
+        // single PROTOTYPE structure, which cannot disagree with itself.
+        struct GetJob {
+            unsigned caseIndex;
+            LBasicBlock block;
+            bool isRawDouble;
+        };
+        Vector<GetJob, 2> jobs;
 
         Vector<SwitchCase, 2> cases;
         RegisteredStructureSet baseSet;
         for (unsigned i = data.cases.size(); i--;) {
-            MultiGetByOffsetCase getCase = data.cases[i];
+            const MultiGetByOffsetCase& getCase = data.cases[i];
+            GetByOffsetMethod method = getCase.method();
+
+            bool splittable = method.kind() == GetByOffsetMethod::Load;
+            bool uniformRaw = false;
+            if (method.kind() == GetByOffsetMethod::LoadFromPrototype) {
+                JSCell* prototype = method.prototype()->value().asCell();
+                uniformRaw = prototype && structureIsRawAt(prototype->structure(), method.offset());
+            }
+
+            LBasicBlock blockPerRepresentation[2] = { nullptr, nullptr };
+            auto blockFor = [&](bool raw) -> LBasicBlock {
+                LBasicBlock& slot = blockPerRepresentation[raw ? 1 : 0];
+                if (!slot) {
+                    slot = m_out.newBlock();
+                    jobs.append(GetJob { i, slot, raw });
+                }
+                return slot;
+            };
+
+            if (getCase.set().isEmpty()) {
+                // No structure routes here, but the case still gets its (dead) block and phi input, exactly as it
+                // did before this change.
+                blockFor(uniformRaw);
+                continue;
+            }
+
             for (unsigned j = getCase.set().size(); j--;) {
                 RegisteredStructure structure = getCase.set()[j];
                 baseSet.add(structure);
-                cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
+                bool raw = splittable ? structureIsRawAt(structure.get(), method.offset()) : uniformRaw;
+                cases.append(SwitchCase(weakStructureID(structure), blockFor(raw), Weight(1)));
             }
         }
+
+        LBasicBlock exit = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
 
         LBasicBlock lastNext = m_out.m_nextBlock;
 
-        Vector<ValueFromBlock, 2> results;
-        for (unsigned i = data.cases.size(); i--;) {
-            MultiGetByOffsetCase getCase = data.cases[i];
-            GetByOffsetMethod method = getCase.method();
+        // If EVERY job is raw the re-box/unbox pair below is pure overhead, so drop both halves. A split case makes
+        // this false, which is exactly right: the boxed half still needs the unbox.
+        bool allCasesRaw = m_node->hasDoubleResult() && Options::useRawDoubleFieldStorage() && jobs.size();
+        for (unsigned k = jobs.size(); allCasesRaw && k--;) {
+            if (!jobs[k].isRawDouble)
+                allCasesRaw = false;
+        }
 
-            m_out.appendTo(blocks[i], i + 1 < data.cases.size() ? blocks[i + 1] : exit);
+        Vector<ValueFromBlock, 2> results;
+        for (unsigned k = 0; k < jobs.size(); ++k) {
+            const MultiGetByOffsetCase& getCase = data.cases[jobs[k].caseIndex];
+            GetByOffsetMethod method = getCase.method();
+            // Always false now: no slot ever holds bare bits, so there is never anything to reconcile with the phi.
+            // Retained as a named constant because the two use sites below read better with it than without.
+            constexpr bool caseIsRawDouble = false;
+            dataLogLnIf(Options::dumpDoubleFieldSplitCensus() && Options::useRawDoubleFieldStorage(),
+                "[rawdouble] MULTIGET case kind=", static_cast<int>(method.kind()),
+                // offset() is only meaningful for Load/LoadFromPrototype; for Constant the union holds the constant,
+                // so printing it there yields garbage (observed: offset=458227713).
+                " offset=", method.kind() == GetByOffsetMethod::Constant ? -1 : method.offset(),
+                " raw=", caseIsRawDouble,
+                " allCasesRaw=", allCasesRaw, " doubleResult=", m_node->hasDoubleResult(),
+                " setSize=", getCase.set().size());
+
+            m_out.appendTo(jobs[k].block, k + 1 < jobs.size() ? jobs[k + 1].block : exit);
 
             LValue result;
 
@@ -12797,10 +12984,35 @@ IGNORE_CLANG_WARNINGS_END
                 if (!isInlineOffset(method.offset()))
                     propertyBase = m_out.loadPtr(propertyBase, m_heaps.JSObject_butterfly);
 
-                if (m_node->hasDoubleResult())
+                if (m_node->hasDoubleResult()) {
                     result = loadDoubleProperty(propertyBase, data.identifierNumber, method.offset());
-                else
+                    // RAW-DOUBLE, PER CASE. The trailing unboxRealNumberDouble below is applied once to the phi of
+                    // every case, but raw-ness belongs to the structure that OWNS the slot, which differs per case.
+                    // A raw slot already holds the final double, so re-box it here and let the shared unbox undo
+                    // that -- B3 folds the add/sub pair, and this keeps the phi uniformly boxed instead of carrying
+                    // two representations. `allCasesRaw` below turns the whole pair off when every case is raw.
+                    //
+                    // FOR LoadFromPrototype THE OWNING STRUCTURE IS THE PROTOTYPE'S, not the base's. Asking
+                    // getCase.set() there would be the same wrong-structure mistake as the transition handler, the
+                    // prototype handler and the LLInt gate -- fourth instance of it. See 07-PLAN section 5ab.
+                    if (caseIsRawDouble)
+                        result = boxDoubleAsDouble(result);
+                } else {
                     result = loadProperty(propertyBase, data.identifierNumber, method.offset());
+                    // THE JSVALUE-RESULT BRANCH, which the double branch above had covered and this had not. A raw
+                    // slot holds bits(d), not a JSValue, so handing it out untouched makes every consumer see
+                    // bits(d)-2^49. box(d) == bits(d) + DoubleEncodeOffset, so one add.
+                    //
+                    // Found by probing the actual failing case rather than reasoning: the harness reported
+                    // x:0x100000000 y:true producing 4026531840 where x/true == x == 4294967296. The probe showed
+                    // test.x READ correctly (bits 0x41f0000000000000, mask says raw) and a re-call returning the
+                    // right answer, so the corruption was in the CALLER passing a de-biased argument -- i.e. a
+                    // JSValue-result property read in a megamorphic function, which is exactly this branch.
+                    // Note caseIsRawDouble is never suppressed here, because allCasesRaw requires hasDoubleResult().
+                    // See 07-PLAN 5ag.
+                    if (caseIsRawDouble)
+                        result = m_out.add(result, m_out.constInt64(JSValue::DoubleEncodeOffset));
+                }
                 break;
             } }
 
@@ -12817,9 +13029,14 @@ IGNORE_CLANG_WARNINGS_END
         // We have to keep base alive since that keeps storage alive.
         ensureStillAliveHere(base);
 
-        if (m_node->hasDoubleResult())
-            setDouble(unboxRealNumberDouble(m_out.phi(Double, results), m_node));
-        else
+        if (m_node->hasDoubleResult()) {
+            // Polymorphic sibling of compileGetByOffset. Every case block has already normalised its result to the
+            // BOXED representation (raw cases re-box; see caseIsRawDouble above), so one unbox here is correct for
+            // all of them -- unless every case was raw, in which case the phi already carries final doubles and
+            // both halves of the pair are skipped.
+            LValue multiResult = m_out.phi(Double, results);
+            setDouble(allCasesRaw ? unboxDoubleAsDouble(multiResult) : unboxRealNumberDouble(multiResult, m_node));
+        } else
             setJSValue(m_out.phi(Int64, results));
     }
 
@@ -12829,13 +13046,56 @@ IGNORE_CLANG_WARNINGS_END
         LValue storage = lowStorage(m_node->child1());
         if (m_node->child3().useKind() == DoubleRepUse) {
             LValue value = lowDouble(m_node->child3());
+            // A RAW SLOT MUST NEVER HOLD AN IMPURE NaN -- the exact twin of DFGSpeculativeJIT::compilePutByOffset;
+            // see the long comment there. Raw storage does not delete the 2^49 bias, it MOVES it to the readers,
+            // and each of them applies it with a bare add and no NaN test (compileGetByOffset's JSValue arm,
+            // compileMultiGetByOffset, LowLevelInterpreter64.asm, InlineAccess.cpp, InlineCacheCompiler.cpp,
+            // JSObject.cpp). bits(impure NaN) + 2^49 leaves double space and reads back as a cell pointer taken
+            // from the NaN payload -- a fake cell at a script-chosen address. Nothing downstream purifies on the
+            // reader's behalf: GetByOffset's abstract type is capped at SpecBytecodeDouble, which excludes
+            // SpecDoubleImpureNaN. The comment previously here asserted the opposite and is what produced the bug.
+            // repro/bugs/01-repro-impure-nan-fake-cell.js.
+            //
+            // recordedRawDoubleProof returns only Raw or Boxed -- it reads the representation recorded on the node
+            // -- so there is no Unknown case to handle and no exit to emit.
+            //
+            // ONE GUARD FOR BOTH REPRESENTATIONS. B3 dead-codes the PurifyNaN if the store is eliminated, and folds
+            // it away for a constant.
             if (abstractValue(m_node->child3()).couldBeType(SpecDoubleImpureNaN))
                 value = m_out.purifyNaN(value);
+            // A claimed store is BYTE-IDENTICAL to an unclaimed one -- boxing already purifies -- so there is no
+            // special case here at all. That collapse is the store-side half of the design: raw storage needed a
+            // conversion on every store, guarantee-only needs none.
+
             storeDoubleProperty(boxDoubleAsDouble(value), storage, data.identifierNumber, data.offset);
             return;
         }
 
-        storeProperty(lowJSValue(m_node->child3()), storage, data.identifierNumber, data.offset);
+        // THE JSVALUE-VALUE PATH, the exact mirror of the JSValue-RESULT path in compileGetByOffset -- and it was
+        // MISSING, which is the whole of the FTL half of the v8-raytrace-strict failure. A raw slot must receive
+        // bits(d), not a JSValue; storing box(d) there makes every raw reader of the slot compute bits(d)+2^49 as a
+        // double, and where d == 0.0 it makes the slot read back as the EMPTY JSValue, because bits(0.0) == 0.
+        //
+        // How it was found: with the DFG side fixed, raytrace still failed 10/10 with FTL on and 0/10 with FTL off,
+        // and 0/10 with FTL on but an empty --ftlAllowlist -- so a real FTL compile was needed, and only three
+        // happened. --ftlAllowlist minimisation named Color.initialize (`if(!r) r = 0.0; this.red = r;`) on its own,
+        // 8/8. Its graph dump shows the three transition stores carrying Check:UNTYPED value edges, not DoubleRepUse,
+        // so they never entered the branch above and fell straight into the unadjusted storeProperty. DFG's
+        // compilePutByOffset has had the de-bias on its JSValue path since 5ac; FTL simply never got it. See 5aj.
+        LValue value = lowJSValue(m_node->child3());
+        if (recordedRawDoubleProof(data) == RawDoubleProof::Raw) {
+            // Only a boxed double can be de-biased with one subtract. An Int32 or a non-number in a raw slot needs a
+            // conversion or a representation widening that this store cannot perform, so it is counted rather than
+            // silently corrupted -- the same honesty the DFG site keeps. If this census line ever fires, the arm has
+            // to be built (Int32 -> raw bits of the converted double; non-number -> widen via the C++ writer).
+            //
+            // 5bj: it DOES fire, and the census line is where the two remaining attributable stress failures come
+            // from. Do NOT "fix" this by calling out to a widening operation from here: PutByOffset is not an exit
+            // site (DFG mayExit assertion) and does not declare that it writes Structure, so a transition performed
+            // under it is invisible to the abstract interpreter. See 07-PLAN 5bj for the design that works.
+            value = rawDoubleBitsForStore(value, abstractValue(m_node->child3()).m_type, data.offset);
+        }
+        storeProperty(value, storage, data.identifierNumber, data.offset);
     }
 
     void compileMultiPutByOffset()
@@ -12843,41 +13103,127 @@ IGNORE_CLANG_WARNINGS_END
         LValue base = lowCell(m_node->child1());
 
         LValue value = nullptr;
+        // The purified-but-unboxed double, kept for the raw variants below: a raw slot wants exactly this, so it must
+        // be captured BEFORE boxDoubleAsDouble rather than reconstructed from the boxed form afterwards.
+        LValue unbiasedDoubleValue = nullptr;
         if (m_node->child2().useKind() == DoubleRepUse) {
             value = lowDouble(m_node->child2());
             if (abstractValue(m_node->child2()).couldBeType(SpecDoubleImpureNaN))
                 value = m_out.purifyNaN(value);
+            unbiasedDoubleValue = value;
             value = boxDoubleAsDouble(value);
         } else
             value = lowJSValue(m_node->child2());
 
         MultiPutByOffsetData& data = m_node->multiPutByOffsetData();
 
-        Vector<LBasicBlock, 2> blocks(data.variants.size());
-        for (unsigned i = data.variants.size(); i--;)
-            blocks[i] = m_out.newBlock();
-        LBasicBlock exit = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        // ONE JOB PER (variant, representation), the same shape compileMultiGetByOffset uses. Raw-ness is a property
+        // of the DESTINATION structure at this variant's offset, and for a Replace variant the oldStructure SET can
+        // disagree with itself. There is no safe fallback direction -- storing boxed into a slot the mask calls raw,
+        // and storing raw into one it calls boxed, are BOTH wrong (the 1.625 and 1.375 signatures).
+        //
+        // THIS REPLACES AN UNCONDITIONAL EXIT. A mixed variant used to bail with
+        // speculate(BadCache, ..., m_out.booleanTrue), which is a permanent DEOPT rather than a speculation: Box2D's
+        // #C0ssyP FTL#4 ran 154 times, took 11 BadCache exits at an inlined b2TimeStep::Set `this.dt = a.dt`, was
+        // jettisoned and NEVER REACHED FTL AGAIN (FTL samples 95 -> 0, DFG 78 -> 235). The switch below already
+        // emits one arm per structure, so routing a variant's structures to two blocks by representation is exact
+        // and costs one extra block and zero exits. A Transition variant can never be mixed -- it has exactly one
+        // destination structure -- so only Replace ever splits.
+        auto structureIsRawAt = [&](Structure* structure, PropertyOffset offset) -> bool {
+            return Options::useRawDoubleFieldStorage() && structure && structure->isRawDoubleOffset(offset);
+        };
+
+        struct PutJob {
+            unsigned variantIndex;
+            LBasicBlock block;
+            bool isRawDouble;
+        };
+        Vector<PutJob, 2> jobs;
 
         Vector<SwitchCase, 2> cases;
         RegisteredStructureSet baseSet;
         for (unsigned i = data.variants.size(); i--;) {
-            PutByVariant variant = data.variants[i];
+            const PutByVariant& variant = data.variants[i];
+
+            // For a Transition the destination is the NEW structure, which is a single answer for the whole variant.
+            bool transitionRaw = variant.kind() == PutByVariant::Transition
+                && structureIsRawAt(variant.newStructure(), variant.offset());
+
+            LBasicBlock blockPerRepresentation[2] = { nullptr, nullptr };
+            auto blockFor = [&](bool raw) -> LBasicBlock {
+                LBasicBlock& slot = blockPerRepresentation[raw ? 1 : 0];
+                if (!slot) {
+                    slot = m_out.newBlock();
+                    jobs.append(PutJob { i, slot, raw });
+                }
+                return slot;
+            };
+
+            if (variant.oldStructure().isEmpty()) {
+                blockFor(transitionRaw);
+                continue;
+            }
+
             for (unsigned j = variant.oldStructure().size(); j--;) {
                 RegisteredStructure structure = m_graph.registerStructure(variant.oldStructure()[j]);
                 baseSet.add(structure);
-                cases.append(SwitchCase(weakStructureID(structure), blocks[i], Weight(1)));
+                bool raw = variant.kind() == PutByVariant::Transition
+                    ? transitionRaw
+                    : structureIsRawAt(structure.get(), variant.offset());
+                cases.append(SwitchCase(weakStructureID(structure), blockFor(raw), Weight(1)));
             }
         }
+
+        LBasicBlock exit = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
         bool structuresChecked = m_interpreter.forNode(m_node->child1()).m_structure.isSubsetOf(baseSet);
         emitSwitchForMultiByOffset(base, structuresChecked, cases, exit);
 
         LBasicBlock lastNext = m_out.m_nextBlock;
 
-        for (unsigned i = data.variants.size(); i--;) {
-            m_out.appendTo(blocks[i], i + 1 < data.variants.size() ? blocks[i + 1] : exit);
+        for (unsigned k = 0; k < jobs.size(); ++k) {
+            m_out.appendTo(jobs[k].block, k + 1 < jobs.size() ? jobs[k + 1].block : exit);
 
-            PutByVariant variant = data.variants[i];
+            const PutByVariant& variant = data.variants[jobs[k].variantIndex];
+            bool isRaw = jobs[k].isRawDouble;
+
+            dataLogLnIf(Options::dumpDoubleFieldSplitCensus() && Options::useRawDoubleFieldStorage(),
+                "[rawdouble] MULTIPUT variant kind=", static_cast<int>(variant.kind()),
+                " offset=", variant.offset(), " raw=", isRaw,
+                " doubleRepUse=", m_node->child2().useKind() == DoubleRepUse);
+
+            // A RAW SLOT CAN HOLD ONLY A NUMBER, and nothing upstream of MultiPutByOffset guarantees that. The
+            // monomorphic sibling gets its guarantee from a Check(NumberUse) inserted by FixupPhase and
+            // ConstantFoldingPhase; MultiPutByOffset has no such Check at any of its creation sites, so an
+            // unprovable value fell through rawDoubleBitsForStore's fail-OPEN last arm and was stored VERBATIM:
+            // box(int n) == NumberTag|n, and a raw reader's +2^49 wraps mod 2^64 to exactly n -- a script-chosen
+            // JSCell*. repro/bugs/08-repro-ftl-multiputbyoffset-fake-cell.js.
+            //
+            // PER VARIANT, NOT ON THE NODE. A node-level Check would exit on every execution of a polymorphic put
+            // whose non-number is destined for a perfectly legal BOXED variant, and nothing would ever widen --
+            // the permanent deopt again. Guarding inside the RAW block fires only when a non-number really is about
+            // to enter a raw slot, and that heals structurally: baseline re-executes the put, the C++ writer calls
+            // JSObject::widenDoubleRepresentation, the object moves to a structure whose mask bit is clear, and the
+            // recompile serves it from a boxed variant.
+            //
+            // Legal by construction: DFGMayExit has no case for MultiPutByOffset, so it returns Exits.
+            SpeculatedType valueType = SpecNone;
+            if (isRaw && m_node->child2().useKind() != DoubleRepUse) {
+                valueType = abstractValue(m_node->child2()).m_type;
+                if (valueType & ~(SpecInt32Only | SpecFullDouble)) {
+                    LValue notNumber = isNotNumber(value, valueType);
+                    // isProvenValue FOLDS a provably-non-numeric type to booleanTrue, which would silently turn the
+                    // speculation below into the same always-taken exit this rewrite exists to remove. Surface it.
+                    dataLogLnIf(notNumber == m_out.booleanTrue && Options::dumpDoubleFieldSplitCensus(),
+                        "[rawdouble] MULTIPUT provably NON-NUMERIC at raw slot offset=", variant.offset(),
+                        " valueType=", SpeculationDump(valueType), " -- unconditional exit, heals only by widening");
+                    speculate(BadType, jsValueValue(value), m_node->child2().node(), notNumber);
+                    // Proven by the speculation just emitted: Int32-tagged or double-encoded. Passing the
+                    // un-narrowed type would send it straight back to the fail-open arm.
+                    valueType = SpecInt32Only | SpecFullDouble;
+                }
+            }
 
             LValue storage;
             if (variant.kind() == PutByVariant::Replace) {
@@ -12896,10 +13242,31 @@ IGNORE_CLANG_WARNINGS_END
                     variant.oldStructureForTransition(), variant.newStructure());
             }
 
+            LValue valueForVariant = value;
+            if (isRaw) {
+                // Undo the bias applied before the switch: box(d) = bits(d) + DoubleEncodeOffset, so the raw bits
+                // are exactly value - DoubleEncodeOffset.
+                //
+                // THE TWO PATHS HAVE DIFFERENT B3 TYPES. On the DoubleRepUse path `value` came from
+                // boxDoubleAsDouble, which returns a **Double**; subtracting an Int64 constant from it is not
+                // representable and fails B3 validation with "value->type() == value->child(1)->type()" (observed as
+                // `Double b@3355 = Sub(b@3346, $562949953421312)` off a Double Patchpoint). storeDoubleProperty also
+                // takes a Double, so for that path the correct undo is to use the ORIGINAL unboxed double directly --
+                // no arithmetic and no cast.
+                //
+                // The untyped path carries a real JSValue, which the speculation above has proven is an Int32 or a
+                // boxed double, so the helper's Int32/double select arm is total here and the fail-open last arm
+                // (which returned the JSValue VERBATIM -- the whole of bug 08) is no longer reachable from here.
+                if (m_node->child2().useKind() == DoubleRepUse)
+                    valueForVariant = boxDoubleAsDouble(unbiasedDoubleValue);
+                else
+                    valueForVariant = rawDoubleBitsForStore(value, valueType, variant.offset());
+            }
+
             if (m_node->child2().useKind() == DoubleRepUse)
-                storeDoubleProperty(value, storage, data.identifierNumber, variant.offset());
+                storeDoubleProperty(valueForVariant, storage, data.identifierNumber, variant.offset());
             else
-                storeProperty(value, storage, data.identifierNumber, variant.offset());
+                storeProperty(valueForVariant, storage, data.identifierNumber, variant.offset());
 
             if (variant.kind() == PutByVariant::Transition) {
                 ASSERT(variant.oldStructureForTransition()->indexingType() == variant.newStructure()->indexingType());
@@ -19211,7 +19578,33 @@ IGNORE_CLANG_WARNINGS_END
                         base = object;
                     } else
                         base = butterfly;
-                    storeProperty(values[i], base, descriptor.info(), entry.offset());
+                    // RAW-DOUBLE. A sunken object's slots are written here for the first time, so if the structure
+                    // being materialised marks this offset raw the value must land as bits(d), not as a JSValue.
+                    // There is no Edge for `values[i]` (same FIXME as the indexed cases above), so the double-vs-Int32
+                    // conversion is a runtime dispatch.
+                    //
+                    // IT MUST NOT SPECULATE. The first version of this speculated BadType on a non-number, reasoning
+                    // that the ALL_INT32_INDEXING_TYPES arm a few lines above already speculates here. **That was
+                    // wrong**: that arm is the INDEXED-property branch and carries a different origin, so this
+                    // named-property branch is not exit-OK. The result was an OSR exit at a node the graph never
+                    // marked as exiting -- `DFG ASSERTION FAILED: isExceptionHandler` in appendOSRExitDescriptor on a
+                    // debug build, and in release a malformed exit whose garbage reached a property slot and
+                    // segfaulted Octane raytrace 12/12. Same mistake as 5ad, in a new place. See 07-PLAN 5ax.
+                    //
+                    // No speculation is NEEDED: a materialised structure only marks the offset raw if the sunk
+                    // object's stores to it were numbers -- a non-number store would have widened the representation
+                    // and the structure would not be raw. So the value is a number by construction here, and the
+                    // runtime Int32/double select below is total over the values that can actually occur.
+                    LValue toStore = values[i];
+                    // ASK THE CLAIM, NOT THE ENCODING. A claimed slot must receive a double-ENCODED JSValue even
+                    // when the value is an Int32, so this conversion is required whenever the claim is live. It used
+                    // to be gated on slotHoldsRawDouble(), which is constant-false under guarantee-only storage --
+                    // meaning a sunk object materialising an Int32 into a claimed slot stored it verbatim and a
+                    // claim-trusting reader de-biased a tagged integer. No reproduction was constructed (sinking did
+                    // not fire for the cases tried), but the gate was provably wrong, so it is corrected here.
+                    if (structure->isRawDoubleOffset(entry.offset())) [[unlikely]]
+                        toStore = rawDoubleBitsForStore(toStore, SpecInt32Only | SpecFullDouble, entry.offset());
+                    storeProperty(toStore, base, descriptor.info(), entry.offset());
                     break;
                 }
             }

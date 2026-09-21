@@ -42,6 +42,7 @@
 
 namespace JSC {
 
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCacheHandler);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InlineCacheHandlerWithJSCall);
 
@@ -118,6 +119,48 @@ Ref<InlineCacheHandler> InlineCacheHandler::createPreCompiled(Ref<InlineCacheHan
 
     result->m_structureID = accessCase.structureID();
     result->m_offset = accessCase.offset();
+    // THE STRUCTURE THAT OWNS THE SLOT is not always accessCase.structure(). Two corrections, and getting either
+    // wrong reintroduces the 1.625/1.375 bug class on the JIT side:
+    //
+    // (a) TRANSITIONS. AccessCase::structure() returns previousID() for every transition kind (AccessCase.h:233-240),
+    //     i.e. the structure the object had BEFORE the store, which does not have the new property at all. Asking it
+    //     about the new offset answers false, so the handler stored BOXED while every reader -- looking at the new
+    //     structure -- reconstructed RAW. Measured: 18 000 of 20 000 objects wrong, 1934.5 reading back as 2077.
+    //     Localised by bisecting tiers (broken with FTL and DFG both off, clean with Baseline off) and then proved
+    //     with the evidence hook below, which showed exactly two disagreeing handlers, both Transition.
+    //
+    // (b) PROTOTYPE LOADS. For a prototype hit the slot lives on the HOLDER, not the receiver: loadHandlerImpl<false>
+    //     loads from offsetOfHolder() + offsetOfOffset() (InlineCacheCompiler.cpp:5264-5265), and the compiler picks
+    //     that thunk exactly when tryGetAlternateBase() is non-null. Asking the receiver's structure is wrong in BOTH
+    //     directions, and the false-positive direction is worse than a wrong number: it would add 2^49 to a genuine
+    //     JSValue that may be a pointer. The same holder walk is already done for the custom-accessor cases further
+    //     down this function, so this just applies it consistently.
+    //
+    // Delete and SetPrivateBrand also carry a newStructure, but they remove or rebrand rather than store a value, so
+    // they are deliberately excluded.
+    Structure* owningStructure = accessCase.structureOwningAccessedSlot();
+    if (owningStructure)
+        // CLAIM, not encoding. The shared thunks use this flag for TWO things -- bailing a store that would
+        // violate the claim, and converting the bits -- and only the second is conditional on the encoding.
+        // Keeping it on the claim keeps the bail alive; the thunks skip their own arithmetic under boxed slots.
+        result->m_isRawDoubleField = owningStructure->isRawDoubleOffset(accessCase.offset());
+
+    // EVIDENCE HOOK. Prints, per handler, what the receiver's structure and the owning structure each say about the
+    // offset, so a disagreement is visible rather than inferred. Reuses the existing dumpDoubleFieldSplitCensus
+    // switch rather than adding another option.
+    if (Options::dumpDoubleFieldSplitCensus()) [[unlikely]] {
+        Structure* receiverStructure = accessCase.structure();
+        dataLogLn("[ic-handler] type=", accessCase.m_type,
+            // The property NAME is what makes this log usable for a specific field: on Octane raytrace the failing
+            // field is Plane.d, and without the name there is no way to pick its handler out of the hundreds here.
+            " prop=", accessCase.uid() ? String(accessCase.uid()) : String("<none>"_s),
+            " offset=", accessCase.offset(),
+            " receiver=", RawPointer(receiverStructure),
+            " receiverSaysRaw=", receiverStructure ? receiverStructure->isRawDoubleOffset(accessCase.offset()) : false,
+            " owner=", RawPointer(owningStructure),
+            " ownerSaysRaw=", owningStructure ? owningStructure->isRawDoubleOffset(accessCase.offset()) : false,
+            " flag=", result->m_isRawDoubleField);
+    }
     result->m_uid = propertyCache.identifier().uid();
     if (!result->m_uid)
         result->m_uid = accessCase.uid();

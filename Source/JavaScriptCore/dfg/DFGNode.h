@@ -89,9 +89,36 @@ class BasicBlock;
 class Graph;
 class PromotedLocationDescriptor;
 
+// How is the slot this access touches represented? Recorded WHEN THE NODE IS CREATED, because that is the only
+// point at which the structure set is definitely known.
+//
+// WHY NOT RE-DERIVE IT AT LOWERING TIME. That is what the code did originally, from
+// m_state.forNode(base).m_structure, and it is UNSOUND: an intervening clobber widens the abstract value, so a
+// reader can fail to prove what the writer proved, unbias a raw slot, and produce bits(d)-2^49. Measured on
+// op_div-VarVar: 1104 wrong values assuming Boxed, 268 assuming Raw -- both wrong, because such sites are genuinely
+// mixed. OSR-exiting instead is ILLEGAL (it breaks DFG mayExit validation: 139 attributable stress regressions).
+// Recording the decision at creation time removes the dependence on abstract state entirely.
+// See analysis/prompt/box2d/07-PLAN-double-field.md sections 5ab and 5ad.
+enum class RawDoubleRep : uint8_t {
+    Boxed,  // every possible structure stores this slot as a NaN-boxed JSValue
+    Raw,    // every possible structure stores it as a bare IEEE-754 double
+};
+
 struct StorageAccessData {
     PropertyOffset offset;
     unsigned identifierNumber;
+    // Defaults to Boxed, which is the pre-existing behaviour. That default is SAFE ONLY for a slot that really is
+    // boxed, so every creation site must set it deliberately; a site left on the default silently reintroduces the
+    // 1104-failure case.
+    //
+    // THERE IS NO "Mixed" VALUE, AND THAT IS CURRENTLY A KNOWN GAP, not a solved problem. Where the structures
+    // reaching an access disagree about the offset, the creation site records Boxed and emits a census line under
+    // --dumpDoubleFieldSplitCensus. Boxed is WRONG for the raw members of such a set. Measured: 8 mixed sites in
+    // op_div-VarVar alone, accounting for its residual wrong values. The fix is to narrow the speculation at those
+    // sites so each becomes uniform (legal at creation time; NOT legal at lowering, where adding an exit breaks
+    // mayExit validation). Only the two variant-set sites can be mixed at all, which bounds the exposure.
+    // Tracked as B34; see 07-PLAN section 5ae.
+    RawDoubleRep rawDoubleRep { RawDoubleRep::Boxed };
 };
 
 struct MultiPutByOffsetData {

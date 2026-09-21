@@ -1517,7 +1517,22 @@ public:
     void compileCheckPrivateBrand(Node*);
     void compileSetPrivateBrand(Node*);
     void compileGetByOffset(Node*);
+    void emitRawDoubleBitsForStore(GPRReg valueGPR, SpeculatedType known, GPRReg destGPR, PropertyOffset offsetForDiagnostics);
     void compilePutByOffset(Node*);
+
+    // How is the slot this access touches represented?
+    //
+    // There is deliberately no "prove it from the abstract state" entry point. That was the original design and it
+    // is UNSOUND: the writer's proof and the reader's proof are made at different sites with different abstract
+    // states, so the writer can prove raw and store raw while the reader fails to prove and subtracts the bias,
+    // yielding bits(d)-2^49. Measured on op_div-VarVar: 1104 failures assuming Boxed, 268 assuming Raw -- both
+    // wrong, because those sites are genuinely MIXED. See 07-PLAN section 5ab. The representation is therefore
+    // RECORDED on the node at creation time and only read back here; mixed sites decline static resolution
+    // upstream, so Unknown never reaches lowering.
+    enum class RawDoubleProof : uint8_t { Boxed, Raw };
+    // Reads the decision recorded at node-creation time. Prefer this everywhere; see the .cpp comment.
+    RawDoubleProof recordedRawDoubleProof(const StorageAccessData&);
+
     void compileMatchStructure(Node*);
     // If this returns false it means that we terminated speculative execution.
     bool getIntTypedArrayStoreOperand(
@@ -1907,6 +1922,7 @@ public:
 
     void unboxRealNumberDouble(Node*, FPRReg boxedFPR, FPRReg resultFPR, GPRReg scratchGPR);
     void boxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR);
+    void unboxDoubleAsDouble(FPRReg inputFPR, FPRReg resultFPR);
 
     template<bool strict>
     GPRReg fillSpeculateInt32Internal(Edge, DataFormat& returnFormat);

@@ -2237,6 +2237,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
 static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);;
 static JSC_DECLARE_HOST_FUNCTION(functionGetConcurrently);
 static JSC_DECLARE_HOST_FUNCTION(functionHasOwnLengthProperty);
+static JSC_DECLARE_HOST_FUNCTION(functionForceRawDoubleField);
+static JSC_DECLARE_HOST_FUNCTION(functionIsRawDoubleField);
 static JSC_DECLARE_HOST_FUNCTION(functionRejectPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionMarkPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
@@ -4156,6 +4158,85 @@ JSC_DEFINE_HOST_FUNCTION(functionHasOwnLengthProperty, (JSGlobalObject* globalOb
     return JSValue::encode(jsBoolean(function->canAssumeNameAndLengthAreOriginal(vm)));
 }
 
+// $vm.forceRawDoubleField(object, "propertyName") -> bool
+//
+// TEST-ONLY hook for the double-field representation project. Reports whether the named field is Double-represented
+// AND raw storage is enabled -- i.e. whether the slot is already stored as a RAW IEEE-754 double.
+//
+// HISTORY, because the name no longer describes the behaviour. This started as a FORCING hook: it rewrote one slot
+// from a NaN-boxed double to a raw one, because nothing in the VM stored raw yet, and the Debug assertion sweep (B15)
+// needed raw storage to exist before it could report anything. Once JSObject::putDirectOffsetRawDoubleAware landed
+// (07-PLAN section 5t), the C++ writer stores raw natively and the forcing became a SECOND bias subtraction: a slot
+// already holding raw 1.5 was read unchecked as 1.375 and written back, so every test using this hook started
+// reporting 1.375 where it expected 1.5. That is what caught the change taking effect.
+//
+// It is deliberately kept as a predicate rather than deleted: the tests need to assert that a slot IS raw before they
+// exercise the readers over it, and that assertion is exactly what still has value.
+//
+// CALLERS MUST STILL SUPPRESS THE JIT WRITERS (--useLLIntICs=0 --useJIT=0). The LLInt inline cache, the baseline IC
+// and the DFG all still store BOXED, so with them enabled a marked field's storage depends on which tier performed the
+// store, and no predicate can be honest about it. That is the remaining all-or-nothing work.
+//
+// Requires --useDoubleFieldRepresentation=1 so the field is marked, and --useRawDoubleFieldStorage=1 so storage is raw
+// and readers reconstruct. Returns false if either is off or the field is not a marked double.
+JSC_DEFINE_HOST_FUNCTION(functionForceRawDoubleField, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Refuse unless storage is actually raw. Reporting true while the slot is still NaN-boxed would send every caller
+    // down the raw path for a boxed slot, which is the 1.375 direction of the bug this hook exists to study.
+    if (!Options::useRawDoubleFieldStorage())
+        return JSValue::encode(jsBoolean(false));
+
+    JSObject* target = callFrame->argument(0).getObject();
+    if (!target)
+        return JSValue::encode(jsBoolean(false));
+    String name = callFrame->argument(1).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    Identifier ident = Identifier::fromString(vm, name);
+
+    Structure* structure = target->structure();
+    unsigned attributes = 0;
+    PropertyOffset offset = structure->get(vm, ident, attributes);
+    if (offset == invalidOffset)
+        return JSValue::encode(jsBoolean(false));
+    if (!attributesSayDoubleRepresentation(attributes))
+        return JSValue::encode(jsBoolean(false));
+
+    // The slot is raw already -- JSObject::putDirectOffsetRawDoubleAware wrote it that way. Touching it here would
+    // subtract the bias a second time. Report and leave it alone.
+    return JSValue::encode(jsBoolean(true));
+}
+
+// $vm.isRawDoubleField(object, "propertyName") -> bool
+//
+// Reports Structure::isRawDoubleOffset for the named property: what the per-offset mask says, as opposed to what the
+// attributes byte says (which is what forceRawDoubleField consults) or what the slot actually holds. Exists so a test
+// can assert the MASK tracks the attributes rather than inferring it from a value round-trip -- the mask has
+// consumers, notably GC tracing, that produce no value at all and simply crash when it is wrong.
+JSC_DEFINE_HOST_FUNCTION(functionIsRawDoubleField, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* target = callFrame->argument(0).getObject();
+    if (!target)
+        return JSValue::encode(jsBoolean(false));
+    String name = callFrame->argument(1).toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    Identifier ident = Identifier::fromString(vm, name);
+
+    Structure* structure = target->structure();
+    unsigned attributes = 0;
+    PropertyOffset offset = structure->get(vm, ident, attributes);
+    if (offset == invalidOffset)
+        return JSValue::encode(jsBoolean(false));
+    return JSValue::encode(jsBoolean(structure->isRawDoubleOffset(offset)));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionRejectPromiseAsHandled, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -4785,6 +4866,8 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "getConcurrently"_s, functionGetConcurrently, 2);
 
     addFunction(vm, allowIfNotFuzz, "hasOwnLengthProperty"_s, functionHasOwnLengthProperty, 1);
+    addFunction(vm, allowIfNotFuzz, "forceRawDoubleField"_s, functionForceRawDoubleField, 2);
+    addFunction(vm, allowIfNotFuzz, "isRawDoubleField"_s, functionIsRawDoubleField, 2);
     addFunction(vm, allowIfNotFuzz, "rejectPromiseAsHandled"_s, functionRejectPromiseAsHandled, 1);
     addFunction(vm, allowIfNotFuzz, "markPromiseAsHandled"_s, functionMarkPromiseAsHandled, 1);
 

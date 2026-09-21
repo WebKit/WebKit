@@ -29,6 +29,22 @@
 
 namespace JSC {
 
+// RAW-DOUBLE MARKER FOR THE LLInt PUT CACHE, encoded in the high bit of OpPutById::Metadata::m_offset.
+//
+// The put metadata has no `mode` field the way get_by_id does, and adding one would grow the metadata of every
+// put_by_id in the program. PropertyOffsets are far smaller than 2^31, so bit 31 is free, and the asm already loads
+// m_offset on the fast path -- so testing it costs one compare-and-branch, predicted not-taken, and no extra load.
+//
+// Safe because m_offset is written only by LLIntSlowPaths and read only by the LLInt fast path:
+// PutByStatus::computeFromLLInt reads m_oldStructureID and never the offset, so DFG/FTL are unaffected.
+//
+// The fast path handles only a BOXED DOUBLE inline (raw = boxed - 2^49). An Int32 or a non-number falls to the C++
+// slow path, which coerces losslessly or widens the representation -- neither can be done here without an FP
+// temporary and a structure transition respectively.
+static constexpr unsigned putByIdRawDoubleOffsetFlag = 1u << 31;
+
+static constexpr unsigned putByIdOffsetMask = ~putByIdRawDoubleOffsetFlag;
+
 class PutByIdFlags {
 public:
     constexpr static PutByIdFlags create(ECMAMode ecmaMode)

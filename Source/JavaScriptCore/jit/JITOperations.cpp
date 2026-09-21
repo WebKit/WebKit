@@ -348,6 +348,54 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdDirectOptimize, EncodedJSValue, (Encode
     OPERATION_RETURN(scope, JSValue::encode(found ? slot.getValue(globalObject, identifier) : jsUndefined()));
 }
 
+// Would caching this (structure, offset) in the MEGAMORPHIC cache expose a raw-double slot to an unchecked read?
+//
+// AssemblyHelpers::loadMegamorphicProperty / storeMegamorphicProperty read the slot with a bare
+// AssemblyHelpers::loadProperty / storeProperty using the holder and offset straight out of the cache entry, with no
+// structure available to consult the raw-double mask against. So if the slot is raw, do not create the entry: the
+// fast path then misses and the access falls to the C++ path, which is raw-aware.
+//
+// UNLIKE the earlier attempt to decline ordinary inline caches (07-PLAN 5u), declining HERE costs no static
+// resolution: a site that has gone megamorphic has no GetByStatus/PutByStatus monomorphism left for DFG/FTL to use.
+// That is why this is safe and that was not.
+//
+// THE CALLER MUST PASS THE STRUCTURE THAT OWNS THE OFFSET -- the holder's for a load hit, the OLD structure for a
+// replace, the NEW structure for a transition. Passing the receiver's or the pre-transition structure is the
+// wrong-structure mistake that has already produced four separate bugs in this project (07-PLAN 5y).
+// See 07-PLAN section 5ac.
+//
+// Unconditional: a raw slot cached here would then be read by the unbiased loadMegamorphicProperty. This used to be
+// gated on a pricing-ablation option, i.e. a command-line flag could switch the rule off.
+static ALWAYS_INLINE bool megamorphicCacheWouldExposeRawDouble(Structure* owningStructure, PropertyOffset offset)
+{
+    if (!Options::useRawDoubleFieldStorage()) [[likely]]
+        return false;
+    // CLAIM: this gate gates PUT paths as well as GET, and a put must still widen in Phase A.
+    return owningStructure && owningStructure->isRawDoubleOffset(offset);
+}
+
+// GET-SIDE VARIANT, AND THE ASYMMETRY IS THE POINT. Refusing to cache a claimed slot costs the BASELINE tier its
+// fast path, because the megamorphic cache is what baseline property access falls back on. Measured on the ladder
+// with --useDFGJIT=0, medians of 7, patched vs pre-patch: L1 (reads only) -4.84%, L2 (reads+writes) -18.17%,
+// L5 (the full box2d shape) -20.10%. The same benchmark with Int32 fields -- identical code, no claims -- reads
+// +1.27%, so the cost is claim-attributed, not layout or generic patch overhead.
+//
+// For a LOAD the refusal is obsolete under guarantee-only. The hazard it names is that the cache's unbiased
+// loadMegamorphicProperty would read the slot as a JSValue; that was fatal under RAW storage, where the slot held
+// bare IEEE-754 bits, and is exactly correct now, where every slot holds a NaN-boxed JSValue whether claimed or
+// not. Reading a claimed slot through the megamorphic cache yields the same JSValue as reading it any other way.
+//
+// For a STORE it is NOT obsolete, so putByIdMegamorphic's initAsReplace/initAsTransition keep the strict gate
+// above. A megamorphic put writes the slot directly, skipping both things that keep a claim true: the Int32 ->
+// double re-encoding, and the give-up on a non-number. Caching that would let a tagged integer or a string land
+// in a slot the FTL has been told is double-only, which is the 1.625 bug class documented in OptionsList.h.
+static ALWAYS_INLINE bool megamorphicGetCacheWouldExposeRawDouble(Structure* owningStructure, PropertyOffset offset)
+{
+    if (Options::useBoxedDoubleFieldSlots()) [[likely]]
+        return false;
+    return megamorphicCacheWouldExposeRawDouble(owningStructure, offset);
+}
+
 template<GetByKind kind>
 static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue thisValue, CacheableIdentifier identifier)
 {
@@ -391,9 +439,10 @@ static ALWAYS_INLINE JSValue getByIdMegamorphic(JSGlobalObject* globalObject, VM
         }
         if (hasProperty) {
             if (cacheable && slot.isCacheableValue() && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
-                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary())
-                    vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseValue);
-                else {
+                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary()) {
+                    if (!megamorphicGetCacheWouldExposeRawDouble(slot.slotBase()->structure(), slot.cachedOffset()))
+                        vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseValue);
+                } else {
                     if (baseObject->structure()->hasBeenFlattenedBefore()) [[unlikely]] {
                         if (propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                             repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
@@ -1162,7 +1211,8 @@ ALWAYS_INLINE static void putMegamorphic(JSGlobalObject* globalObject, VM& vm, C
     if (slot.type() == PutPropertySlot::ExistingProperty) {
         if (oldStructure == newStructure && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
             oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset()); // Ensure invalidating watchpoint set.
-            vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
+            if (!megamorphicCacheWouldExposeRawDouble(oldStructure, slot.cachedOffset()))
+                vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
         }
         return;
     }
@@ -1181,7 +1231,8 @@ ALWAYS_INLINE static void putMegamorphic(JSGlobalObject* globalObject, VM& vm, C
 
     bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
     if (slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]]
-        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
+        if (!megamorphicCacheWouldExposeRawDouble(newStructure, slot.cachedOffset()))
+            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
 }
 
 ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue value, CacheableIdentifier identifier, PutByKind kind)
@@ -1289,7 +1340,11 @@ JSC_DEFINE_JIT_OPERATION(operationPutByMegamorphicReallocating, void, (VM* vmPoi
     ASSERT(oldStructure == entry->m_oldStructureID.decode());
     Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldStructure->outOfLineCapacity(), newStructure->outOfLineCapacity());
     baseObject->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
-    baseObject->putDirectOffset(vm, offset, JSValue::decode(encodedValue));
+    // Same correction as operationReallocateButterflyAndTransition: this->structure() is still oldStructure here, so the
+    // bare overload asks a Structure that does not own the offset. megamorphicCacheWouldExposeRawDouble() already keeps
+    // raw slots out of the megamorphic cache, so this one cannot currently see a non-representable value, but it was
+    // consulting the wrong authority all the same.
+    baseObject->putDirectOffset(vm, *newStructure, offset, JSValue::decode(encodedValue));
     baseObject->setStructure(vm, newStructure);
     ASSERT(newStructure == baseObject->structure());
     dataLogLnIf(verbose, JSValue(baseObject), " ", offset);
@@ -2021,6 +2076,8 @@ ALWAYS_INLINE static void putByValMegamorphic(JSGlobalObject* globalObject, VM& 
         return;
     }
 
+    // NOTE: the raw-double guards this block used to carry inline now live inside putMegamorphic(), which upstream
+    // extracted -- megamorphicCacheWouldExposeRawDouble() gates both initAsReplace and initAsTransition there.
     scope.release();
     putMegamorphic(globalObject, vm, callFrame, propertyCache, asObject(baseValue), uid, value, slot, kind);
 }
@@ -3708,9 +3765,10 @@ static ALWAYS_INLINE JSValue getByValMegamorphic(JSGlobalObject* globalObject, V
         }
         if (hasProperty) {
             if (cacheable && slot.isCacheableValue() && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
-                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary())
-                    vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseObject);
-                else {
+                if (slot.slotBase() == baseObject || !baseObject->structure()->isDictionary()) {
+                    if (!megamorphicGetCacheWouldExposeRawDouble(slot.slotBase()->structure(), slot.cachedOffset()))
+                        vm.megamorphicCache()->initAsHit(baseObject->structureID(), uid, slot.slotBase(), slot.cachedOffset(), slot.slotBase() == baseObject);
+                } else {
                     if (baseObject->structure()->hasBeenFlattenedBefore()) [[unlikely]] {
                         if (shouldGiveUp && propertyCache && propertyCache->considerRepatchingCacheMegamorphic(vm))
                             repatchGetBySlowPathCall(callFrame->codeBlock(), *propertyCache, kind);
@@ -4712,7 +4770,16 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationReallocateButterflyAndTransition, voi
     ASSERT(oldStructure == baseObject->structure());
     Butterfly* newButterfly = baseObject->allocateMoreOutOfLineStorage(vm, oldSize, newSize);
     baseObject->nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
-    baseObject->putDirectOffset(vm, offset, JSValue::decode(encodedValue));
+    // THE DESTINATION STRUCTURE, not this->structure(). Between the nuke above and the setStructure below the object
+    // still points at oldStructure, which owns neither `offset` nor its raw-double mask bit, so the bare overload asked
+    // the wrong authority and stored a NaN-boxed double into a slot newStructure claims is raw. Every reader then added
+    // 2^49: Octane raytrace's Plane.d went in as 1.2 and read back as 1.325. It takes a property landing on the FIRST
+    // out-of-line offset (64) for this reallocating path to be the one chosen at all, which is why only that one field
+    // in the benchmark was affected.
+    //
+    // The calling thunks emit emitRawDoubleStoreBailOnly before reaching here, so a value that cannot live in a raw
+    // slot has already left via the handler chain.
+    baseObject->putDirectOffset(vm, *newStructure, offset, JSValue::decode(encodedValue));
     baseObject->setStructure(vm, newStructure);
 
     ensureStillAliveHere(oldStructure);

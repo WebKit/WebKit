@@ -35,9 +35,9 @@ Structure* createIntlPartObjectStructure(VM& vm, JSGlobalObject& globalObject)
     constexpr unsigned inlineCapacity = 2;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->type, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->type, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectTypePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectValuePropertyOffset);
     return structure;
 }
@@ -47,11 +47,11 @@ Structure* createIntlPartObjectWithSourceStructure(VM& vm, JSGlobalObject& globa
     constexpr unsigned inlineCapacity = 3;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->type, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->type, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectTypePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectValuePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->source, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->source, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectWithSourceSourcePropertyOffset);
     return structure;
 }
@@ -61,11 +61,11 @@ Structure* createIntlPartObjectWithUnitStructure(VM& vm, JSGlobalObject& globalO
     constexpr unsigned inlineCapacity = 3;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->type, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->type, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectTypePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectValuePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, Identifier::fromString(vm, "unit"_s), 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, Identifier::fromString(vm, "unit"_s), 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectWithUnitUnitPropertyOffset);
     return structure;
 }
@@ -75,13 +75,13 @@ Structure* createIntlPartObjectWithUnitAndSourceStructure(VM& vm, JSGlobalObject
     constexpr unsigned inlineCapacity = 4;
     Structure* structure = globalObject.structureCache().emptyObjectStructureForPrototype(&globalObject, globalObject.objectPrototype(), inlineCapacity);
     PropertyOffset offset;
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->type, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->type, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectTypePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->value, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->value, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectValuePropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, Identifier::fromString(vm, "unit"_s), 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, Identifier::fromString(vm, "unit"_s), 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectWithUnitAndSourceUnitPropertyOffset);
-    structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->source, 0, offset);
+    structure = Structure::addPropertyTransitionForBoxedSlot(vm, structure, vm.propertyNames->source, 0, offset);
     RELEASE_ASSERT(offset == intlPartObjectWithUnitAndSourceSourcePropertyOffset);
     return structure;
 }

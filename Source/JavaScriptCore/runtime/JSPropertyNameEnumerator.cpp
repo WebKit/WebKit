@@ -56,14 +56,36 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::tryCreate(VM& vm, Structure*
     return enumerator;
 }
 
+// The LLInt fast path for op_enumerator_get_by_val / op_enumerator_put_by_val reads the property slot with a bare
+// `loadq sizeof JSObjectWithButterfly[base, index, 8]` (LowLevelInterpreter64.asm ~3543) -- an unchecked JSValue load
+// at a computed offset, with no Structure pointer in hand to consult the raw-double mask against. Its only guard is
+// `enumerator->m_cachedStructureID == base->structureID()`.
+//
+// So do not cache the structure ID for a Structure carrying a Double-represented field. The asm's structure
+// comparison then always fails and the access takes the slow path, which goes through the raw-aware C++ readers.
+// computeNext()'s `base->structureID() == cachedStructureID()` also fails, so name enumeration falls back to the
+// generic by-name lookup: slower for these objects, but correct. A null cached structure is already an anticipated
+// state (see the m_cachedInlineCapacity initialiser below).
+//
+// THIS WAS THE READER THE ASSERT_ENABLED DETECTOR COULD NOT FIND, because it never calls getDirect() at all. It was
+// located instead by narrowing structure-has-raw-double-fields-summary-bit.js to the one failing section of eight --
+// `for (var k in o) o[k]` -- after the full stress suite attributed 16 failures to the change.
+// See analysis/prompt/box2d/07-PLAN-double-field.md section 5aa.
+static Structure* structureSafeForEnumeratorFastPath(Structure* structure)
+{
+    if (structure && !structure->inlineCachesCanAccessPropertySlotsDirectly())
+        return nullptr;
+    return structure;
+}
+
 JSPropertyNameEnumerator::JSPropertyNameEnumerator(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, WriteBarrier<JSString>* propertyNamesBuffer, unsigned propertyNamesSize)
     : JSCell(vm, vm.propertyNameEnumeratorStructure.get())
     , m_propertyNames(propertyNamesBuffer, WriteBarrierEarlyInit)
-    , m_cachedStructureID(structure, WriteBarrierEarlyInit)
+    , m_cachedStructureID(structureSafeForEnumeratorFastPath(structure), WriteBarrierEarlyInit)
     , m_indexedLength(indexedLength)
     , m_endStructurePropertyIndex(numberStructureProperties)
     , m_endGenericPropertyIndex(propertyNamesSize)
-    , m_cachedInlineCapacity(structure ? structure->inlineCapacity() : 0)
+    , m_cachedInlineCapacity(structureSafeForEnumeratorFastPath(structure) ? structure->inlineCapacity() : 0)
 {
     if (m_indexedLength)
         m_flags |= JSPropertyNameEnumerator::IndexedMode;

@@ -44,6 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+
 template<typename DetailsFunc>
 void Structure::checkOffsetConsistency(PropertyTable* propertyTable, const DetailsFunc& detailsFunc) const
 {
@@ -253,6 +254,7 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasNonEnumerableProperties(hasStaticNonEnumerableProperty || typeInfo.overridesGetOwnPropertySlot() || isArrayStorage);
     setHasSpecialProperties(false);
+    setHasRawDoubleFields(false);
     setHasNonConfigurableProperties(hasStaticNonConfigurableProperty || typeInfo.overridesGetOwnPropertySlot() || isArrayStorage);
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType) || isArrayStorage);
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
@@ -301,6 +303,7 @@ Structure::Structure(VM& vm, CreatingEarlyCellTag)
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(hasAnyKindOfGetterSetterProperties() || m_classInfo->hasStaticPropertyWithAnyOfAttributes(static_cast<uint8_t>(PropertyAttribute::ReadOnly)));
     setHasNonEnumerableProperties(hasStaticNonEnumerableProperty || typeInfo.overridesGetOwnPropertySlot());
     setHasSpecialProperties(false);
+    setHasRawDoubleFields(false);
     setHasNonConfigurableProperties(hasStaticNonConfigurableProperty || typeInfo.overridesGetOwnPropertySlot());
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(hasStaticNonConfigurableProperty || (typeInfo.overridesGetOwnPropertySlot() && typeInfo.type() != ArrayType));
     setHasUnderscoreProtoPropertyExcludingOriginalProto(false);
@@ -345,6 +348,10 @@ Structure::Structure(VM& vm, StructureVariant variant, Structure* previous)
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
     setHasNonEnumerableProperties(previous->hasNonEnumerableProperties());
     setHasSpecialProperties(previous->hasSpecialProperties());
+    setHasRawDoubleFields(previous->hasRawDoubleFields());
+    // NOTE: the per-offset mask is propagated in finishCreation, NOT here. It lives in StructureRareData, and
+    // allocating a cell inside this constructor trips ASSERT(!vm.isInitializingObject()). finishCreation is where
+    // JSC already does the equivalent copy for the shared poly-proto watchpoint.
     setHasNonConfigurableProperties(previous->hasNonConfigurableProperties());
     setHasNonConfigurableReadOnlyOrGetterSetterProperties(previous->hasNonConfigurableReadOnlyOrGetterSetterProperties());
     setHasUnderscoreProtoPropertyExcludingOriginalProto(previous->hasUnderscoreProtoPropertyExcludingOriginalProto());
@@ -559,6 +566,26 @@ bool Structure::holesMustForwardToPrototypeSlow(JSObject* base) const
     return false;
 }
 
+// AN ACCESSOR SLOT CANNOT BE RAW-DOUBLE, and letting it claim to be is a TYPE CONFUSION, not just a wrong number.
+// The slot holds a GetterSetter or CustomGetterSetter CELL. If the mask says raw, getDirectRawDoubleAware boxes that
+// POINTER as a double -- observed: 2.29698091e-314 for a GetterSetter at 0x115397b60 -- and
+// getOwnNonIndexPropertySlot then fails to recognise the accessor at all, falling through to
+// PropertySlot::setValue and tripping its `!(attributes & Accessor)` assertion (PropertySlot.h:248).
+//
+// How it is reached: redefining a DOUBLE-valued property as an accessor ORs Accessor onto the property's existing
+// attributes, which already carry RepresentationDouble from the creating store. Neither transition path re-derived
+// the bit, so it survived. Found by lldb on spread-set-own-symbol-iterator-side-effects: attributes == 17 ==
+// RepresentationDouble|Accessor. See analysis/prompt/box2d/07-PLAN-double-field.md section 5ao.
+//
+// Normalising here, at the top of both transition paths, covers the stored attributes, the transition KEY, the
+// summary bit and the per-offset mask in one place, because everything downstream reads this local.
+static ALWAYS_INLINE unsigned normalizeRepresentationAttributes(unsigned attributes)
+{
+    if (attributes & PropertyAttribute::AccessorOrCustomAccessorOrValue) [[unlikely]]
+        return attributes & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble);
+    return attributes;
+}
+
 Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset)
 {
     Structure* newStructure = addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset);
@@ -568,11 +595,17 @@ Structure* Structure::addPropertyTransition(VM& vm, Structure* structure, Proper
     return addNewPropertyTransition(vm, structure, propertyName, attributes, offset, PutPropertySlot::UnknownContext);
 }
 
-Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset, PutPropertySlot::Context context, DeferredStructureTransitionWatchpointFire* deferred)
+Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, PropertyOffset& offset, PutPropertySlot::Context context, DeferredStructureTransitionWatchpointFire* deferred, MayReplaceExistingTransition mayReplace)
 {
+    attributes = normalizeRepresentationAttributes(attributes);
     ASSERT(!structure->isDictionary());
     ASSERT(structure->isObject());
-    ASSERT(!Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset));
+    // Normally a caller must have checked that no transition exists -- addPropertyTransition does. The one exception is
+    // replaceRawPropertyAdditionWithBoxed, which deliberately builds a SECOND PropertyAddition child for a name that
+    // already has one, in order to displace a raw claim a script has disproved. See its comment.
+    ASSERT(mayReplace == MayReplaceExistingTransition::Yes
+        || !Structure::addPropertyTransitionToExistingStructure(structure, propertyName, attributes, offset));
+    UNUSED_PARAM(mayReplace);
     
     if (structure->shouldDoCacheableDictionaryTransitionForAdd(context)) {
         ASSERT(!isCopyOnWrite(structure->indexingMode()));
@@ -603,12 +636,25 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
     transition->setTransitionPropertyAttributes(attributes);
+    // The property table is materialized LAZILY from this transition chain, so the summary bit must be established
+    // HERE as well as in StructureInlines.h's table-insertion paths -- otherwise a Structure carries a
+    // Double-represented property while hasRawDoubleFields() still reads false, and readers skip their check.
+    if (attributes & static_cast<unsigned>(PropertyAttribute::RepresentationDouble))
+        transition->setHasRawDoubleFields(true);
     transition->setTransitionKind(TransitionKind::PropertyAddition);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
     transition->setMaxOffset(vm, structure->maxOffset());
 
     offset = transition->add(vm, propertyName, attributes);
     transition->setTransitionOffset(vm, offset);
+
+    // Record the OFFSET in the per-offset mask, not just the summary bit above. This must come after
+    // transition->add(), which is what assigns `offset`. Consumers that cannot walk the property table -- above all
+    // GC tracing, which runs where forEachPropertyConcurrently would allocate -- need the per-offset answer.
+    // setRawDoubleOffset declines offsets it cannot represent, and declining means "stays NaN-boxed", the safe
+    // direction of the one-directional invariant (Structure.h, m_rawDoubleMask).
+    if (attributes & static_cast<unsigned>(PropertyAttribute::RepresentationDouble))
+        transition->setRawDoubleOffset(vm, offset);
 
     // Now that everything is fine with the new structure's bookkeeping, the GC is free to blow the
     // table away if it wants. We can now rebuild it fine.
@@ -622,6 +668,7 @@ Structure* Structure::addNewPropertyTransition(VM& vm, Structure* structure, Pro
     }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
+    transition->validateRawDoubleMaskAgreement(vm, "addNewPropertyTransition");
     return transition;
 }
 
@@ -806,6 +853,7 @@ Structure* Structure::attributeChangeTransitionToExistingStructureConcurrently(S
 
 Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, PropertyName propertyName, unsigned attributes, DeferredStructureTransitionWatchpointFire* deferred)
 {
+    attributes = normalizeRepresentationAttributes(attributes);
     if (structure->isUncacheableDictionary()) {
         structure->attributeChangeWithoutTransition(vm, propertyName, attributes, [](const GCSafeConcurrentJSLocker&, PropertyOffset, PropertyOffset) { });
         structure->checkOffsetConsistency();
@@ -841,12 +889,24 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     transition->m_blob.setIndexingModeIncludingHistory(structure->indexingModeIncludingHistory() & ~CopyOnWrite);
     transition->m_transitionPropertyName = propertyName.uid();
     transition->setTransitionPropertyAttributes(attributes);
+    // The property table is materialized LAZILY from this transition chain, so the summary bit must be established
+    // HERE as well as in StructureInlines.h's table-insertion paths -- otherwise a Structure carries a
+    // Double-represented property while hasRawDoubleFields() still reads false, and readers skip their check.
+    if (attributes & static_cast<unsigned>(PropertyAttribute::RepresentationDouble))
+        transition->setHasRawDoubleFields(true);
     transition->setTransitionKind(TransitionKind::PropertyAttributeChange);
     transition->setPropertyTable(vm, structure->takePropertyTableOrCloneIfPinned(vm));
     transition->setMaxOffset(vm, structure->maxOffset());
 
     offset = transition->attributeChange(vm, propertyName, attributes);
     transition->setTransitionOffset(vm, offset);
+
+    // Per-offset mask, after attributeChange() has assigned `offset`. An attribute change can also REMOVE the Double
+    // representation, so clear as well as set -- a stale set bit would over-claim, which is the unsafe direction.
+    if (attributes & static_cast<unsigned>(PropertyAttribute::RepresentationDouble))
+        transition->setRawDoubleOffset(vm, offset);
+    else
+        transition->clearRawDoubleOffset(offset);
 
     // Now that everything is fine with the new structure's bookkeeping, the GC is free to blow the
     // table away if it wants. We can now rebuild it fine.
@@ -860,8 +920,97 @@ Structure* Structure::attributeChangeTransition(VM& vm, Structure* structure, Pr
     }
     transition->checkOffsetConsistency();
     structure->checkOffsetConsistency();
+    transition->validateRawDoubleMaskAgreement(vm, "attributeChangeTransition");
     return transition;
 }
+
+Structure* Structure::ensureBoxedRepresentation(VM& vm, Structure* structure, PropertyName propertyName,
+    PropertyOffset offset, DeferredStructureTransitionWatchpointFire* deferred)
+{
+    if (!structure->isRawDoubleOffset(offset)) [[likely]]
+        return structure;
+
+    unsigned attributes = 0;
+    PropertyOffset found = structure->get(vm, propertyName, attributes);
+    if (found != offset) [[unlikely]] {
+        // The caller's (structure, offset) pair does not describe this property. Nothing safe to do but leave the
+        // structure alone; the caller's own store then hits the RELEASE_ASSERT in putDirectOffsetRawDoubleAware
+        // rather than silently corrupting a slot.
+        return structure;
+    }
+
+    // attributeChangeTransition preserves offsets and inline capacity and re-derives BOTH the summary bit and the
+    // per-offset mask from the attributes it is handed, so clearing the bit yields a sibling that declines the slot.
+    // Objects already using `structure` are untouched: their slots really do hold raw doubles. Reachable only
+    // because the attribute-change key now carries the representation bit (StructureTransitionTable.h); while it was
+    // masked, this lookup was answered by the raw-claiming sibling and the widen silently no-opped.
+    Structure* boxed = attributeChangeTransition(vm, structure, propertyName,
+        attributes & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble), deferred);
+    RELEASE_ASSERT(!boxed->isRawDoubleOffset(offset));
+    return boxed;
+}
+
+// DISPLACE A DISPROVED RAW CLAIM, by building a second PropertyAddition child of `base` whose attributes do NOT
+// carry RepresentationDouble, and letting StructureTransitionTable::add() overwrite the entry with it.
+//
+// WHY A FRESH DIRECT CHILD AND NOT THE ATTRIBUTE-CHANGE SIBLING. ensureBoxedRepresentation produces
+// `base -> S_raw -> S_boxed`, a GRANDCHILD. Returning that from the transition lookup crashes: every consumer
+// requires a direct child, and asserts it -- Repatch.cpp:1176 and LLIntSlowPaths.cpp:1146 both check
+// `newStructure->previousID() == oldStructure`, and the outOfLineCapacity comparisons and
+// NukeStructureAndSetButterfly logic depend on the same thing. Measured: rc=137 on the first run.
+//
+// WHY THIS IS SAFE. It never touches a live slot. Objects already on S_raw keep S_raw, which keeps claiming their
+// slots raw -- so nothing is reinterpreted, and the collector's view of every existing object is unchanged. The only
+// effect is on FUTURE adds, and it moves the claim from raw to boxed, i.e. toward UNDER-claiming, which is the safe
+// direction of the one-directional invariant (Structure.h, m_rawDoubleMask). It is also monotonic: a field can lose
+// raw representation and never regain it, so it cannot oscillate.
+//
+// WHY IT IS NEEDED. The transition key masks RepresentationDouble out, so `(base, name)` has ONE entry pointing at
+// whichever structure the first store created. If that was a double, every later `o.f = <non-number>` gets the raw
+// sibling, widens away from it, and -- fatally -- the table's answer then DISAGREES with the structure the object
+// actually ends up with. Repatch.cpp:1164 derives the IC's new structure from that lookup and bails on the mismatch
+// (`if (baseValue.asCell()->structure() != newStructure) return GiveUpOnCache;`), so the put-by-id IC gives up
+// permanently; the LLInt loses caching the same way via slot.disableCaching(). Measured on JetStream3 splay:
+// operationPutByIdSloppyGaveUp plus the full C++ generic put path, 257 of 394 attributable samples, C++ time doubling
+// 869 -> 1,764, score -9.73% with the OSR-exit storm already fixed.
+//
+// After the replacement the lookup returns a structure that does not claim the slot raw, so the widening branch in
+// putDirectInternal stops firing and no revocation flag is needed -- the corrected table IS the state.
+Structure* Structure::replaceRawPropertyAdditionWithBoxed(VM& vm, Structure* structure, PropertyName propertyName,
+    unsigned attributes, PropertyOffset& offset, DeferredStructureTransitionWatchpointFire* deferred)
+{
+    Structure* boxed = addNewPropertyTransition(vm, structure, propertyName,
+        attributes & ~static_cast<unsigned>(PropertyAttribute::RepresentationDouble), offset,
+        PutPropertySlot::UnknownContext, deferred, MayReplaceExistingTransition::Yes);
+    RELEASE_ASSERT(!boxed->isRawDoubleOffset(offset));
+    RELEASE_ASSERT(boxed->previousID() == structure);
+    // DIAGNOSTIC: how often does a shape actually get its raw claim displaced? One line per (base, property), because
+    // the replacement is self-limiting -- afterwards the lookup no longer returns a raw-claiming structure. Measured
+    // on JetStream3 splay: exactly ONE, which is what converged the site.
+    dataLogLnIf(Options::dumpDoubleFieldSplitCensus(), "[rawdouble] REPLACED raw addition offset=", offset,
+        " base=", RawPointer(structure), " boxed=", RawPointer(boxed),
+        " name=", String(propertyName.uid()));
+    return boxed;
+}
+
+Structure* Structure::addPropertyTransitionForBoxedSlot(VM& vm, Structure* structure, PropertyName propertyName,
+    unsigned attributes, PropertyOffset& offset)
+{
+    // REVERTED to forcing a boxed sibling. The RELEASE_ASSERT this guarded against is gone (the writer gives the
+    // claim up and stores), so the guarantee is no longer REQUIRED -- but making it a plain transition measured
+    // neutral-to-negative (sum -5.78 -> -7.94 across 14 tests, about -0.48 excluding two non-significant swings), and
+    // js-tokens did NOT improve (-1.16 -> -1.25) even though its profile named this exact path with the tightest
+    // signal in the whole investigation: hasRawDoubleFields +112 samples (spread 9, base 0/0/0), gcSafeZeroMemory
+    // +115.7 (spread 6, base 0), Heap::barrierThreshold +42 (spread 7, base 0).
+    //
+    // THE LESSON, and it cost seven refuted hypotheses to learn: a reproducible sample delta on an INLINED function
+    // does not localise the cost. Those +112 samples are inline-frame attributions spread over many call sites, so
+    // removing one caller moves nothing. Only deltas on genuinely out-of-line functions -- decodeState was the one --
+    // have converted into wall-clock wins.
+    return ensureBoxedRepresentation(vm,
+        addPropertyTransition(vm, structure, propertyName, attributes, offset), propertyName, offset);
+}
+
 
 Structure* Structure::toDictionaryTransition(VM& vm, Structure* structure, DictionaryKind kind, DeferredStructureTransitionWatchpointFire* deferred)
 {
@@ -995,6 +1144,7 @@ Structure* Structure::nonPropertyTransitionSlow(VM& vm, Structure* structure, Tr
     }
 
     transition->checkOffsetConsistency();
+    transition->validateRawDoubleMaskAgreement(vm, "nonPropertyTransitionSlow");
     return transition;
 }
 
@@ -1063,11 +1213,23 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
         // Holds our values compacted by insertion order. This is OK since GC is deferred.
         Vector<JSValue> values(propertyCount);
 
+        // RENUMBER THE RAW-DOUBLE MASK ALONGSIDE THE OFFSETS. m_rawDoubleMask is keyed on PropertyOffset and the
+        // compaction below MOVES properties between offsets, so a mask left alone describes the WRONG slots. Both
+        // directions are unsafe and one is memory-unsafe: an over-claimed offset is SKIPPED by GC tracing
+        // (JSObject.cpp appendNonRawDoubleValues), so a live cell sitting there is swept while still referenced.
+        // renumberPropertyOffsets fills this in as it goes, because that is the only place where a property's old
+        // and new offsets are both in hand; a separate pre-walk could silently diverge from the real one.
+        std::array<uint64_t, s_rawDoubleMaskWords> renumberedRawDoubleMask { };
+
         // Copies out our values from their hashed locations, compacting property table offsets as we go.
-        PropertyOffset offset = table->renumberPropertyOffsets(object, m_inlineCapacity, values);
+        PropertyOffset offset = table->renumberPropertyOffsets(*this, object, m_inlineCapacity, values, renumberedRawDoubleMask);
         setMaxOffset(vm, offset);
         ASSERT(transitionOffset() == invalidOffset);
-        
+
+        // BEFORE the write-back below, which resolves the destination through object->structure() -- i.e. this very
+        // Structure -- and must therefore see the NEW mask to write raw slots as raw bits.
+        renumberRawDoubleMask(renumberedRawDoubleMask);
+
         // Copies in our values to their compacted locations.
         for (unsigned i = 0; i < propertyCount; i++)
             object->putDirectOffset(vm, offsetForPropertyNumber(i, m_inlineCapacity), values[i]);
@@ -1129,6 +1291,55 @@ void Structure::allocateRareData(VM& vm)
     WTF::storeStoreFence();
     m_previousOrRareData.set(vm, this, rareData);
     ASSERT(hasRareData());
+}
+
+// PHASE B2. THE REPLACEMENT FOR THE STRUCTURE FORK.
+//
+// Old behaviour on a claim violation (JSObject::widenDoubleRepresentation): attribute-change transition, move the
+// violating object to a new Structure, re-box the slot. The objects already on the old Structure stayed there, so
+// every read site saw two Structures for the rest of the program -- which is what [18] traced splay's residual to,
+// and it is unfixable by construction because JSC objects do not migrate.
+//
+// New behaviour: clear the claim and fire. NOTHING IS REWRITTEN and no Structure is created, because under
+// --useBoxedDoubleFieldSlots the slot always held an ordinary NaN-boxed JSValue whether claimed or not. So every
+// object of every Structure in the lineage stops being claimed simultaneously -- V8's map deprecation plus
+// MigrateFastToFast, for free, which is the one place this design beats V8 rather than merely matching it.
+//
+// The fire is the DependentCode::kFieldRepresentationGroup equivalent: compiled code that skipped the three-way
+// dispatch registered on this set via Graph::registerClaimWatchpointIfNeeded and is jettisoned here. Eager, once,
+// at the violating write -- not 1.8M lazy OSR exits.
+bool Structure::giveUpClaim(VM& vm, PropertyOffset offset, const char* reason)
+{
+    ASSERT(!isCompilationThread());
+    if (!hasRareData())
+        return false;
+    auto* mask = rareData()->m_rawDoubleMask.get();
+    if (!mask || !mask->claimRecord)
+        return false;
+
+    unsigned bit = static_cast<unsigned>(offset);
+    bool hadBit = bit < s_rawDoubleMaskBits && (mask->bits[bit / 64] & (1ULL << (bit % 64)));
+
+    // Clear BEFORE firing. Firing can reenter (jettison runs arbitrary teardown), and a reader that ran in between
+    // must not still see the claim -- the one direction of this invariant that is unsafe.
+    // ZERO THE WHOLE MASK, not just this offset's bit. Giving up is per-LINEAGE (one shared DoubleFieldClaimRecord),
+    // so claimGivenUp() already makes EVERY offset on this Structure answer false -- clearing the rest changes no
+    // answer. What it does change is mightHaveClaimAt(), which reads only the summary bit and the [first, last] range:
+    // leaving those set sends every later store to the out-of-line writer to be told "not claimed". On
+    // json-parse-inspector that is 13 violated keys carrying 1,720,146 stores.
+    mask->bits[0] = 0;
+    mask->bits[1] = 0;
+    renarrowRawDoubleRange();
+
+    // Set the cached bit BEFORE firing, for the same reason the mask bit is cleared first: fireAll can reenter, and
+    // a reader that runs in between must not still see the claim as live.
+    mask->claimRecord->givenUp = true;
+    if (mask->claimRecord->set.isStillValid()) {
+        dataLogLnIf(Options::dumpDoubleFieldSplitCensus(), "[rawdouble] CLAIM GIVEN UP offset=", offset,
+            " structure=", RawPointer(this), " reason=", reason);
+        mask->claimRecord->set.fireAll(vm, reason);
+    }
+    return hadBit;
 }
 
 WatchpointSet* Structure::ensurePropertyReplacementWatchpointSet(VM& vm, PropertyOffset offset)
@@ -1829,6 +2040,58 @@ void Structure::checkConsistency()
     checkOffsetConsistency();
 }
 #endif
+
+unsigned Structure::rawDoubleMaskDebugState(PropertyOffset offset) const
+{
+    if (!hasRawDoubleFields())
+        return 0;
+    if (!hasRareData())
+        return 1;
+    const auto* mask = rareData()->m_rawDoubleMask.get();
+    if (!mask)
+        return 2;
+    unsigned bit = static_cast<unsigned>(offset);
+    if (!isValidOffset(offset) || bit >= s_rawDoubleMaskBits)
+        return 3;
+    return (mask->bits[bit / 64] & (1ULL << (bit % 64))) ? 5 : 4;
+}
+
+void Structure::validateRawDoubleMaskAgreement(VM& vm, const char* site)
+{
+    if (!Options::useRawDoubleFieldStorage() || !Options::dumpRawDoubleCorruption()) [[likely]]
+        return;
+    // PROOF OF LIFE. A validator that reports "nothing wrong" is only evidence once it has been shown capable of
+    // reporting something. Count what it actually inspected, so a silent pass can be distinguished from a dead check.
+    unsigned inspected = 0;
+    unsigned rawSeen = 0;
+    bool bad = false;
+    forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
+        ++inspected;
+        if (attributesSayDoubleRepresentation(entry.attributes()) || isRawDoubleOffset(entry.offset()))
+            ++rawSeen;
+        bool attrsDouble = attributesSayDoubleRepresentation(entry.attributes());
+        bool maskRaw = isRawDoubleOffset(entry.offset());
+        if (attrsDouble != maskRaw) {
+            bad = true;
+            dataLogLn("[rawdouble] MASK/ATTR DISAGREEMENT at ", site,
+                " structure=", RawPointer(this),
+                " prop=", String(entry.key()),
+                " offset=", entry.offset(),
+                " attrsDouble=", attrsDouble,
+                " maskRaw=", maskRaw,
+                " summaryBit=", hasRawDoubleFields(),
+                " hasRareData=", hasRareData(),
+                " isDictionary=", isDictionary(),
+                " maxOffset=", maxOffset(),
+                " inlineCapacity=", inlineCapacity());
+        }
+        return true;
+    });
+    if (hasRawDoubleFields())
+        dataLogLn("[rawdouble] validator@", site, " structure=", RawPointer(this),
+            " inspected=", inspected, " rawOrDoubleProps=", rawSeen, " agreed=", !bad);
+    RELEASE_ASSERT(!bad);
+}
 
 } // namespace JSC
 
