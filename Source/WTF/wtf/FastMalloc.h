@@ -24,6 +24,7 @@
 #include <bmalloc/Gigacage.h>
 #include <new>
 #include <stdlib.h>
+#include <wtf/Compiler.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/MallocCommon.h>
 #include <wtf/StdLibExtras.h>
