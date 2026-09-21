@@ -30,6 +30,7 @@
 
 #include "ANGLEInstancedArrays.h"
 #include "BitmapImage.h"
+#include "BufferSource.h"
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "ContextDestructionObserverInlines.h"
@@ -1233,8 +1234,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, long long size, GCGL
 {
     if (isContextLost())
         return;
-    RefPtr<WebGLBuffer> buffer = validateBufferDataParameters("bufferData"_s, target, usage);
-    if (!buffer)
+    if (!validateBufferDataParameters("bufferData"_s, target, usage))
         return;
     if (size < 0) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData"_s, "size < 0"_s);
@@ -1249,7 +1249,7 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, long long size, GCGL
     protect(graphicsContextGL())->bufferData(target, static_cast<GCGLsizeiptr>(size), usage);
 }
 
-void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<BufferDataSource>&& data, GCGLenum usage)
+void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<BufferSource>&& data, GCGLenum usage)
 {
     if (isContextLost())
         return;
@@ -1257,30 +1257,24 @@ void WebGLRenderingContextBase::bufferData(GCGLenum target, std::optional<Buffer
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferData"_s, "null data"_s);
         return;
     }
-    RefPtr<WebGLBuffer> buffer = validateBufferDataParameters("bufferData"_s, target, usage);
-    if (!buffer)
+    if (!validateBufferDataParameters("bufferData"_s, target, usage))
         return;
 
-    WTF::visit([context = m_context, target, usage](auto& data) {
-        context->bufferData(target, data->span(), usage);
-    }, data.value());
+    protect(graphicsContextGL())->bufferData(target, data->span(), usage);
 }
 
-void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, BufferDataSource&& data)
+void WebGLRenderingContextBase::bufferSubData(GCGLenum target, long long offset, BufferSource&& data)
 {
     if (isContextLost())
         return;
-    RefPtr<WebGLBuffer> buffer = validateBufferDataParameters("bufferSubData"_s, target, GraphicsContextGL::STATIC_DRAW);
-    if (!buffer)
+    if (!validateBufferDataParameters("bufferSubData"_s, target, GraphicsContextGL::STATIC_DRAW))
         return;
     if (offset < 0) {
         synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "bufferSubData"_s, "offset < 0"_s);
         return;
     }
 
-    WTF::visit([context = m_context, target, offset](auto& data) {
-        context->bufferSubData(target, static_cast<GCGLintptr>(offset), data->span());
-    }, data);
+    protect(graphicsContextGL())->bufferSubData(target, static_cast<GCGLintptr>(offset), data.span());
 }
 
 GCGLenum WebGLRenderingContextBase::checkFramebufferStatus(GCGLenum target)

@@ -129,11 +129,16 @@ template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<I
 };
 
 template<typename IDLType> struct InspectorCanvasArgumentProcessor<IDLNullable<IDLAllowSharedAdaptor<IDLType>>> {
-    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, auto& value)
+    std::optional<InspectorCanvasProcessedArgument> operator()(InspectorCanvas& context, const auto& value)
     {
         if (!value)
             return std::nullopt;
-        return InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLType>>{}(context, value.releaseNonNull());
+        InspectorCanvasArgumentProcessor<IDLAllowSharedAdaptor<IDLType>> processor;
+        // BufferSource is std::optional, Typed Arrays are RefPtr.
+        if constexpr (requires { value.has_value(); })
+            return processor(context, *value);
+        else
+            return processor(context, Ref { *value });
     }
 };
 
