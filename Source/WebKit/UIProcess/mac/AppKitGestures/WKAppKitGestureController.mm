@@ -238,7 +238,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     bool _mouseTrackingHasSentMouseDown;
     WebCore::FloatPoint _mouseTrackingStartLocationInWindow;
 
-    RetainPtr<NSPressGestureRecognizer> _dragPressGestureRecognizer;
+    RetainPtr<WKPressGestureRecognizer> _dragPressGestureRecognizer;
     RetainPtr<NSDraggingSession> _gestureDraggingSession;
     BlockPtr<void(NSDraggingSession *)> _textSelectionDragCompletionHandler;
     bool _dragGestureHasSentMouseDown;
@@ -857,8 +857,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             _mouseTrackingHasSentMouseDown = true;
         }
 
+        NSPoint locationInWindow = [mouseTrackingGesture mouseLocationInWindow];
         RetainPtr mouseDragged = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged
-            location:[mouseTrackingGesture mouseLocationInWindow]
+            location:locationInWindow
             modifierFlags:modifierFlags
             timestamp:timestamp
             windowNumber:windowNumber
@@ -866,6 +867,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             eventNumber:0
             clickCount:1
             pressure:1.0];
+        mouseDragged = [mouseTrackingGesture eventReportingMovement:mouseDragged atWindowLocation:locationInWindow];
         impl->mouseDragged(mouseDragged.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         break;
     }
@@ -885,8 +887,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         }
 
         if (std::exchange(_mouseTrackingHasSentMouseDown, false)) {
+            NSPoint locationInWindow = [mouseTrackingGesture mouseLocationInWindow];
             RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp
-                location:[mouseTrackingGesture mouseLocationInWindow]
+                location:locationInWindow
                 modifierFlags:modifierFlags
                 timestamp:timestamp
                 windowNumber:windowNumber
@@ -894,6 +897,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 eventNumber:0
                 clickCount:1
                 pressure:0.0];
+            mouseUp = [mouseTrackingGesture eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
             impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::No);
         }
         break;
@@ -1338,6 +1342,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RetainPtr mouseDown = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
         impl->mouseDown(mouseDown.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         _dragGestureHasSentMouseDown = true;
+
+        [_dragPressGestureRecognizer beginReportingMovementFromWindowLocation:locationInWindow];
         break;
     }
     case NSGestureRecognizerStateChanged: {
@@ -1347,6 +1353,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         // gesture itself and WebCore is driven by the platform drag callbacks, so we stop feeding it.
         if (!_gestureDraggingSession) {
             RetainPtr mouseDragged = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDragged location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:1.0];
+            mouseDragged = [_dragPressGestureRecognizer eventReportingMovement:mouseDragged atWindowLocation:locationInWindow];
             impl->mouseDragged(mouseDragged, WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
         }
         break;
@@ -1358,6 +1365,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             break;
 
         RetainPtr mouseUp = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:locationInWindow modifierFlags:modifierFlags timestamp:timestamp windowNumber:windowNumber context:nil eventNumber:0 clickCount:1 pressure:0.0];
+        mouseUp = [_dragPressGestureRecognizer eventReportingMovement:mouseUp atWindowLocation:locationInWindow];
         impl->mouseUp(mouseUp.get(), WebKit::WebEventInputSource::Automation, WebCore::PlatformMouseEvent::CanInitiateDrag::Yes);
 
         // We do not clear gesture drag state here since startDrag() may still be in flight via IPC.

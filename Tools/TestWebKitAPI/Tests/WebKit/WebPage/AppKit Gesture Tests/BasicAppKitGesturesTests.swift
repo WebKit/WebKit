@@ -1232,6 +1232,31 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
+        .bug("https://webkit.org/b/324696", "Synthesized mouse events always report zero movementX|Y"),
+        arguments: [true, false]
+    )
+    func pressDragOverRangeInputReportsMovement(useNativeWidget: Bool) async throws {
+        try await dragAcrossSlider(useNativeWidget: useNativeWidget, verticalTravelFraction: 0.4)
+
+        let (travelX, travelY) = try await page.callJavaScript(
+            returning: (Double, Double).self
+        ) {
+            """
+            const moves = window.movementLog.filter(entry => entry.type === "pointermove");
+            const down = window.movementLog.find(entry => entry.type === "pointerdown");
+            const last = moves[moves.length - 1];
+            return [
+                last.clientX - down.clientX,
+                last.clientY - down.clientY,
+            ];
+            """
+        }
+
+        try #require(abs(travelX) > 10)
+        try #require(abs(travelY) > 10)
+    }
+
+    @Test(
         .bug("https://webkit.org/b/324040", "Cannot press and drag over some custom sliders"),
         arguments: SVGSliderVariant.dragCases
     )
@@ -1417,6 +1442,51 @@ extension AppKitGesturesTests.Basic {
                 )
             }
         }
+    }
+
+    @Test(
+        .bug("https://webkit.org/b/324696", "Synthesized mouse events always report zero movementX|Y")
+    )
+    func pressDragOnImageReportsMovement() async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <img id="img" src="400x400-green.png" style="display: block; margin: 50px;">
+            <script>
+            window.movementY = [];
+            window.clientY = [];
+            document.addEventListener("dragstart", event => event.preventDefault());
+            document.addEventListener("mousemove", event => {
+                window.movementY.push(event.movementY);
+                window.clientY.push(event.clientY);
+            });
+            </script>
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        let imgViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
+        let imgBounds = screenBounds(ofRectInViewportCoordinates: imgViewportBounds)
+
+        await recap.play { composer in
+            composer._wk_drag(
+                withStart: imgBounds.center,
+                end: CGPoint(x: imgBounds.center.x, y: imgBounds.midY + 200),
+                duration: .seconds(1.5),
+                pressAndWait: .seconds(1.0)
+            )
+        }
+
+        await page.waitForNextPresentationUpdate()
+
+        let (movementY, clientY) = try await page.callJavaScript(returning: ([Double], [Double]).self) {
+            """
+            return [window.movementY, window.clientY];
+            """
+        }
+
+        let reported = movementY.dropFirst().reduce(0, +)
+        let firstClientY = try #require(clientY.first)
+        let lastClientY = try #require(clientY.last)
+        #expect(abs(reported - (lastClientY - firstClientY)) <= 2)
     }
 
     @Test(
@@ -2170,7 +2240,7 @@ extension CGPoint {
 
 extension AppKitGesturesTests.Basic {
     @discardableResult
-    private func dragAcrossSlider(useNativeWidget: Bool) async throws -> String {
+    private func dragAcrossSlider(useNativeWidget: Bool, verticalTravelFraction: Double = 0) async throws -> String {
         let elementID = useNativeWidget ? "native-slider" : "custom-slider"
 
         let customHTML = try #require(Bundle.testResources.url(forResource: "custom-slider", withExtension: "html"))
@@ -2188,7 +2258,10 @@ extension AppKitGesturesTests.Basic {
         let convertedSliderBounds = screenBounds(ofRectInViewportCoordinates: sliderBounds)
 
         let start = convertedSliderBounds.center
-        let end = CGPoint(x: convertedSliderBounds.maxX, y: convertedSliderBounds.center.y)
+        let end = CGPoint(
+            x: convertedSliderBounds.maxX,
+            y: convertedSliderBounds.center.y + convertedSliderBounds.height * verticalTravelFraction
+        )
 
         await recap.play { composer in
             composer._wk_drag(withStart: start, end: end, duration: .seconds(1.5), pressAndWait: .seconds(0.5))
