@@ -37,8 +37,19 @@
     };
 
     window.buttonsLog = [];
-    for (const type of ["pointerdown", "pointermove", "pointerup"])
-        document.addEventListener(type, e => window.buttonsLog.push(`${e.type}:${e.buttons}`));
+    window.movementLog = [];
+    for (const type of ["pointerdown", "pointermove", "pointerup"]) {
+        document.addEventListener(type, e => {
+            window.buttonsLog.push(`${e.type}:${e.buttons}`);
+            window.movementLog.push({
+                type: e.type,
+                movementX: e.movementX,
+                movementY: e.movementY,
+                clientX: e.clientX,
+                clientY: e.clientY,
+            });
+        });
+    }
 
     function setValue(value) {
         value = Math.max(0, Math.min(maxValue, value));

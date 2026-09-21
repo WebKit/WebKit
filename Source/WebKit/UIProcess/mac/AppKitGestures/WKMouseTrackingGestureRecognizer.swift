@@ -40,6 +40,7 @@ extension WKMouseTrackingGestureRecognizer {
 
     func beginTrackingMouse() {
         mouseLocationOffsetInWindow = .zero
+        beginReportingMovement(fromWindowLocation: startLocationInWindow)
     }
 
     func beginTrackingMouseInherited(fromWindowLocation windowLocation: CGPoint) {
@@ -48,6 +49,7 @@ extension WKMouseTrackingGestureRecognizer {
             width: start.x - windowLocation.x,
             height: start.y - windowLocation.y
         )
+        beginReportingMovement(fromWindowLocation: windowLocation)
     }
 
     var startLocationInWindow: CGPoint {
