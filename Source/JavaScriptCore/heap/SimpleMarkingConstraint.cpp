@@ -32,7 +32,7 @@ namespace JSC {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SimpleMarkingConstraint);
 
 SimpleMarkingConstraint::SimpleMarkingConstraint(
-    CString abbreviatedName, CString name,
+    ASCIICString abbreviatedName, ASCIICString name,
     MarkingConstraintExecutorPair&& executors,
     ConstraintVolatility volatility, ConstraintConcurrency concurrency,
     ConstraintParallelism parallelism)

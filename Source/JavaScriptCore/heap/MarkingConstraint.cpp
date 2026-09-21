@@ -36,8 +36,8 @@ static constexpr bool verboseMarkingConstraint = false;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkingConstraint);
 
-MarkingConstraint::MarkingConstraint(CString abbreviatedName, CString name, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
-    : m_abbreviatedName(abbreviatedName)
+MarkingConstraint::MarkingConstraint(ASCIICString abbreviatedName, ASCIICString name, ConstraintVolatility volatility, ConstraintConcurrency concurrency, ConstraintParallelism parallelism)
+    : m_abbreviatedName(WTF::move(abbreviatedName))
     , m_name(WTF::move(name))
     , m_volatility(volatility)
     , m_concurrency(concurrency)

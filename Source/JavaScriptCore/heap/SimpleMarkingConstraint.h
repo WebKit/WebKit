@@ -38,18 +38,18 @@ class SimpleMarkingConstraint final : public MarkingConstraint {
     WTF_MAKE_TZONE_ALLOCATED(SimpleMarkingConstraint);
 public:
     JS_EXPORT_PRIVATE SimpleMarkingConstraint(
-        CString abbreviatedName, CString name,
+        ASCIICString abbreviatedName, ASCIICString name,
         MarkingConstraintExecutorPair&&,
         ConstraintVolatility,
         ConstraintConcurrency = ConstraintConcurrency::Concurrent,
         ConstraintParallelism = ConstraintParallelism::Sequential);
     
     SimpleMarkingConstraint(
-        CString abbreviatedName, CString name,
+        ASCIICString abbreviatedName, ASCIICString name,
         MarkingConstraintExecutorPair&& executors,
         ConstraintVolatility volatility,
         ConstraintParallelism parallelism)
-        : SimpleMarkingConstraint(abbreviatedName, name, WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism)
+        : SimpleMarkingConstraint(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism)
     {
     }
     

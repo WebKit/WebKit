@@ -106,9 +106,9 @@ inline AbstractSlotVisitor::ReferrerContext::~ReferrerContext()
     m_visitor.m_context = m_previous;
 }
 
-inline AbstractSlotVisitor::AbstractSlotVisitor(JSC::Heap& heap, CString codeName, ConcurrentPtrHashSet& opaqueRoots)
+inline AbstractSlotVisitor::AbstractSlotVisitor(JSC::Heap& heap, ASCIICString codeName, ConcurrentPtrHashSet& opaqueRoots)
     : m_heap(heap)
-    , m_codeName(codeName)
+    , m_codeName(WTF::move(codeName))
     , m_opaqueRoots(opaqueRoots)
 {
 }

@@ -36,8 +36,8 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsoSubspace);
 
-IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierPreciseCells, AlignedMemoryAllocator* allocator)
-    : Subspace(SubspaceKind::IsoSubspace, name, heap)
+IsoSubspace::IsoSubspace(ASCIICString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierPreciseCells, AlignedMemoryAllocator* allocator)
+    : Subspace(SubspaceKind::IsoSubspace, WTF::move(name), heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
 {
     m_remainingLowerTierPreciseCount = numberOfLowerTierPreciseCells;

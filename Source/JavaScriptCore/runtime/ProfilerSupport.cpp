@@ -113,7 +113,7 @@ uint32_t ProfilerSupport::getCurrentThreadID()
 #endif
 }
 
-void ProfilerSupport::write(const AbstractLocker&, uint64_t start, uint64_t end, const CString& message)
+void ProfilerSupport::write(const AbstractLocker&, uint64_t start, uint64_t end, const UTF8CString& message)
 {
     auto header = toUTF8CString(start, " ", end, " ");
     m_file.write(WTF::asByteSpan(header.span()));
@@ -122,7 +122,7 @@ void ProfilerSupport::write(const AbstractLocker&, uint64_t start, uint64_t end,
     m_file.flush();
 }
 
-void ProfilerSupport::markStart(const void* identifier, Category category, CString&&)
+void ProfilerSupport::markStart(const void* identifier, Category category, UTF8CString&&)
 {
     if (!Options::useTextMarkers())
         return;
@@ -136,7 +136,7 @@ void ProfilerSupport::markStart(const void* identifier, Category category, CStri
     table.add(identifier, generateTimestamp());
 }
 
-void ProfilerSupport::markEnd(const void* identifier, Category category, CString&& message)
+void ProfilerSupport::markEnd(const void* identifier, Category category, UTF8CString&& message)
 {
     if (!Options::useTextMarkers())
         return;
@@ -166,7 +166,7 @@ void ProfilerSupport::markEnd(const void* identifier, Category category, CString
     });
 }
 
-void ProfilerSupport::mark(const void* identifier, Category, CString&& message)
+void ProfilerSupport::mark(const void* identifier, Category, UTF8CString&& message)
 {
     if (!Options::useTextMarkers())
         return;
@@ -182,7 +182,7 @@ void ProfilerSupport::mark(const void* identifier, Category, CString&& message)
 }
 
 
-void ProfilerSupport::markInterval(const void* identifier, Category, MonotonicTime startTime, MonotonicTime endTime, CString&& message)
+void ProfilerSupport::markInterval(const void* identifier, Category, MonotonicTime startTime, MonotonicTime endTime, UTF8CString&& message)
 {
     if (!Options::useTextMarkers())
         return;

@@ -72,8 +72,8 @@ void JSContextGroupAddMarkingConstraint(JSContextGroupRef group, JSMarkingConstr
     ConstraintVolatility volatility = ConstraintVolatility::GreyedByMarking;
     
     auto constraint = makeUnique<SimpleMarkingConstraint>(
-        toUTF8CString("Amc", constraintIndex, "(", RawPointer(constraintCallback), ")"),
-        toUTF8CString("API Marking Constraint #", constraintIndex, " (", RawPointer(constraintCallback), ", ", RawPointer(userData), ")"),
+        toASCIICString("Amc", constraintIndex, "(", RawPointer(constraintCallback), ")"),
+        toASCIICString("API Marking Constraint #", constraintIndex, " (", RawPointer(constraintCallback), ", ", RawPointer(userData), ")"),
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([constraintCallback, userData] (AbstractSlotVisitor& visitor) {
             Marker marker;
             marker.IsMarked = isMarked;

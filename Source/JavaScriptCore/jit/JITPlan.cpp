@@ -227,7 +227,7 @@ void JITPlan::beginSignpostImpl()
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
-    ProfilerSupport::markStart(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.ascii().data());
+    ProfilerSupport::markStart(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.utf8());
 }
 
 void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
@@ -256,7 +256,7 @@ void JITPlan::endSignpostImpl(JITPlan::SignpostDetail detail)
     case JITPlanStage::Canceled:
         RELEASE_ASSERT_NOT_REACHED();
     };
-    ProfilerSupport::markEnd(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.ascii().data());
+    ProfilerSupport::markEnd(id, ProfilerSupport::Category::JSGlobalObjectSignpost, detalString.utf8());
 }
 
 void JITPlan::compileInThread(JITWorklistThread* thread)

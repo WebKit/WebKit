@@ -627,10 +627,9 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
 {
     unsigned count = 0;
     vm->heap.objectSpace().forEachSubspace([&] (const Subspace& subspace) -> IterationStatus {
-        const char* name = subspace.name();
-        unsigned hash = SuperFastHash::computeHash(name);
+        unsigned hash = subspace.nameHash();
         void* hashAsPtr = reinterpret_cast<void*>(static_cast<uintptr_t>(hash));
-        dataLogLn("    [", count++, "] ", name, " Hash:", RawPointer(hashAsPtr));
+        dataLogLn("    [", count++, "] ", subspace.name(), " Hash:", RawPointer(hashAsPtr));
         return IterationStatus::Continue;
     });
     dataLogLn();

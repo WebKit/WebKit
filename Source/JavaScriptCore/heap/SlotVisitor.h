@@ -85,7 +85,7 @@ public:
 #endif
     };
 
-    SlotVisitor(Heap&, CString codeName);
+    SlotVisitor(Heap&, ASCIICString codeName);
     ~SlotVisitor();
 
     void append(const ConservativeRoots&) final;

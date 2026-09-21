@@ -41,6 +41,11 @@ public:
     size_t length() const { return m_length; }
     
     WTF_EXPORT_PRIVATE UTF8CString toUTF8CString() const;
+
+    // For streams that only ever print ASCII, such as the names JSC gives to its heap subspaces and
+    // marking constraints. Like ASCIICString itself, this cannot enforce that; it asserts in debug builds.
+    WTF_EXPORT_PRIVATE ASCIICString toASCIICString() const;
+
     WTF_EXPORT_PRIVATE std::expected<String, UTF8ConversionError> tryToString() const;
     WTF_EXPORT_PRIVATE String toString() const;
     WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback() const;
@@ -65,6 +70,14 @@ UTF8CString toUTF8CString(const Types&... values)
 }
 
 template<typename... Types>
+ASCIICString toASCIICString(const Types&... values)
+{
+    StringPrintStream stream;
+    stream.print(values...);
+    return stream.toASCIICString();
+}
+
+template<typename... Types>
 String toString(const Types&... values)
 {
     StringPrintStream stream;
@@ -85,6 +98,7 @@ std::optional<String> toStringWithBoundsCheck(const Types&... values)
 } // namespace WTF
 
 using WTF::StringPrintStream;
+using WTF::toASCIICString;
 using WTF::toUTF8CString;
 using WTF::toString;
 using WTF::toStringWithBoundsCheck;

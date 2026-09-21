@@ -81,6 +81,12 @@ UTF8CString StringPrintStream::toUTF8CString() const
     return UTF8CString { byteCast<char8_t>(m_buffer.first(m_length)) };
 }
 
+ASCIICString StringPrintStream::toASCIICString() const
+{
+    ASSERT(m_length == strlenSpan(m_buffer));
+    return ASCIICString { m_buffer.first(m_length) };
+}
+
 void StringPrintStream::reset()
 {
     m_length = 0;

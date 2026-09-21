@@ -210,10 +210,10 @@ public:
 
     virtual void visitAsConstraint(const JSCell*) = 0;
 
-    const char* codeName() const LIFETIME_BOUND { return m_codeName.data(); }
+    const ASCIICString& codeName() const LIFETIME_BOUND { return m_codeName; }
 
 protected:
-    inline AbstractSlotVisitor(Heap&, CString codeName, ConcurrentPtrHashSet&);
+    inline AbstractSlotVisitor(Heap&, ASCIICString codeName, ConcurrentPtrHashSet&);
 
     virtual void didAddOpaqueRoot(void*) { }
     virtual void didFindOpaqueRoot(void*) { }
@@ -228,7 +228,7 @@ protected:
 
     JSC::Heap& m_heap;
     ReferrerContext* m_context { nullptr };
-    CString m_codeName;
+    ASCIICString m_codeName;
 
     MarkingConstraint* m_currentConstraint { nullptr };
     SUPPRESS_FORWARD_DECL_MEMBER MarkingConstraintSolver* m_currentSolver { nullptr }; // MarkingConstraintSolver is not refcounted

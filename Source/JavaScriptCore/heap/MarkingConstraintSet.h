@@ -46,20 +46,20 @@ public:
     void didStartMarking();
     
     void add(
-        CString abbreviatedName,
-        CString name,
+        ASCIICString abbreviatedName,
+        ASCIICString name,
         MarkingConstraintExecutorPair&&,
         ConstraintVolatility,
         ConstraintConcurrency = ConstraintConcurrency::Concurrent,
         ConstraintParallelism = ConstraintParallelism::Sequential);
     
     void add(
-        CString abbreviatedName, CString name,
+        ASCIICString abbreviatedName, ASCIICString name,
         MarkingConstraintExecutorPair&& executors,
         ConstraintVolatility volatility,
         ConstraintParallelism parallelism)
     {
-        add(abbreviatedName, name, WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism);
+        add(WTF::move(abbreviatedName), WTF::move(name), WTF::move(executors), volatility, ConstraintConcurrency::Concurrent, parallelism);
     }
     
     void add(std::unique_ptr<MarkingConstraint>);

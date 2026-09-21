@@ -51,7 +51,7 @@ class Subspace {
 public:
     JS_EXPORT_PRIVATE virtual ~Subspace();
 
-    const char* name() const LIFETIME_BOUND { return m_name.data(); }
+    const ASCIICString& name() const LIFETIME_BOUND { return m_name; }
     unsigned nameHash() const { return m_name.hash(); } // FIXME: rdar://139998916
     MarkedSpace& space() const { return m_space; }
 
@@ -100,7 +100,7 @@ public:
     bool isPreciseOnly() const { return kind() == SubspaceKind::PreciseSubspace; }
 
 protected:
-    Subspace(SubspaceKind, CString name, Heap&);
+    Subspace(SubspaceKind, ASCIICString name, Heap&);
 
     void initialize(const HeapCellType&, AlignedMemoryAllocator*);
     
@@ -115,7 +115,7 @@ protected:
     SubspaceKind m_kind;
     uint8_t m_remainingLowerTierPreciseCount { 0 }; // Lower tier is a precise allocation but we use the term lower to avoid confusion with precise-only.
 
-    CString m_name;
+    ASCIICString m_name;
 };
 
 } // namespace JSC

@@ -338,7 +338,7 @@ private:
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 
 #define INIT_SERVER_STRUCTURE_ISO_SUBSPACE(name, heapCellType, type) \
-    , name(#name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierPreciseCells, structureAllocator.get())
+    , name(#name ""_s, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierPreciseCells, structureAllocator.get())
 
 Heap::Heap(VM& vm, HeapType heapType)
     : m_heapType(heapType)
@@ -453,7 +453,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     m_worldState.store(0);
 
     for (unsigned i = 0, numberOfParallelThreads = heapHelperPool().numberOfThreads(); i < numberOfParallelThreads; ++i) {
-        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toUTF8CString("P", i + 1));
+        std::unique_ptr<SlotVisitor> visitor = makeUnique<SlotVisitor>(*this, toASCIICString("P", i + 1));
         if (Options::optimizeParallelSlotVisitorsForStoppedMutator())
             visitor->optimizeForStoppedMutator();
         m_availableParallelSlotVisitors.append(visitor.get());
@@ -1644,21 +1644,14 @@ NEVER_INLINE bool Heap::runFixpointPhase(GCConductor conn)
     SlotVisitor& visitor = *m_collectorSlotVisitor;
     
     if (Options::logGC()) [[unlikely]] {
-        UncheckedKeyHashMap<const char*, size_t> visitMap;
+        UncheckedKeyHashMap<ASCIICString, size_t> visitMap;
         forEachSlotVisitor(
             [&] (SlotVisitor& visitor) {
                 visitMap.add(visitor.codeName(), visitor.bytesVisited() / 1024);
             });
-        
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        auto perVisitorDump = sortedMapDump(
-            visitMap,
-            [] (const char* a, const char* b) -> bool {
-                return strcmp(a, b) < 0;
-            },
-            ":"_s, " "_s);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-        
+
+        auto perVisitorDump = sortedMapDump(visitMap, std::less<>(), ":"_s, " "_s);
+
         dataLog("v=", bytesVisited() / 1024, "kb (", perVisitorDump, ") o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
     }
         
@@ -3107,7 +3100,7 @@ static UNUSED_FUNCTION void visitSamplingProfiler(VM&, AbstractSlotVisitor&) { }
 void Heap::addCoreConstraints()
 {
     m_constraintSet->add(
-        "Cs", "Conservative Scan",
+        "Cs"_s, "Conservative Scan"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this, lastVersion = static_cast<uint64_t>(0)] (auto& visitor) mutable {
             bool shouldNotProduceWork = lastVersion == m_phaseVersion;
             SuperSamplerScope superSamplerScope(false);
@@ -3157,7 +3150,7 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
-        "Msr", "Misc Small Roots",
+        "Msr"_s, "Misc Small Roots"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             VM& vm = this->vm();
 #if JSC_OBJC_API_ENABLED
@@ -3199,7 +3192,7 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
-        "Sh", "Strong Handles",
+        "Sh"_s, "Strong Handles"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::StrongHandles);
             m_strongSet.visitAggregate(visitor);
@@ -3208,7 +3201,7 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
-        "D", "Debugger",
+        "D"_s, "Debugger"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::Debugger);
 
@@ -3225,7 +3218,7 @@ void Heap::addCoreConstraints()
         ConstraintVolatility::GreyedByExecution);
     
     m_constraintSet->add(
-        "Ws", "Weak Sets",
+        "Ws"_s, "Weak Sets"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::WeakSets);
             RefPtr<SharedTask<void(decltype(visitor)&)>> task = m_objectSpace.forEachWeakInParallel<decltype(visitor)>(visitor);
@@ -3235,7 +3228,7 @@ void Heap::addCoreConstraints()
         ConstraintParallelism::Parallel);
     
     m_constraintSet->add(
-        "O", "Output",
+        "O"_s, "Output"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
             JSC::Heap* heap = visitor.heap();
 
@@ -3269,7 +3262,7 @@ void Heap::addCoreConstraints()
 
 #if ENABLE(WEBASSEMBLY)
     m_constraintSet->add(
-        "Pbc", "Pinball Completions",
+        "Pbc"_s, "Pinball Completions"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             // FIXME: Unlike the "Cs" constraint which is skipped during verification
             // because conservative roots are not stable, this skip is only here because
@@ -3301,7 +3294,7 @@ void Heap::addCoreConstraints()
 #if ENABLE(JIT)
     if (Options::useJIT()) {
         m_constraintSet->add(
-            "Jw", "JIT Worklist",
+            "Jw"_s, "JIT Worklist"_s,
             MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
                 SetRootMarkReasonScope rootScope(visitor, RootMarkReason::JITWorkList);
 
@@ -3323,7 +3316,7 @@ void Heap::addCoreConstraints()
 #endif
     
     m_constraintSet->add(
-        "Cb", "CodeBlocks",
+        "Cb"_s, "CodeBlocks"_s,
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([this] (auto& visitor) {
             SetRootMarkReasonScope rootScope(visitor, RootMarkReason::CodeBlocks);
             iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(visitor,
