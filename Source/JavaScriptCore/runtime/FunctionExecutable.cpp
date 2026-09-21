@@ -156,8 +156,6 @@ FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()
 {
     ASSERT(!m_rareData);
     auto rareData = makeUnique<RareData>();
-    rareData->m_lineCount = lineCount();
-    rareData->m_endColumn = endColumn();
     rareData->m_parametersStartOffset = parametersStartOffset();
     rareData->m_functionStart = functionStart();
     rareData->m_functionEnd = functionEnd();
@@ -201,8 +199,6 @@ void FunctionExecutable::overrideInfo(const FunctionOverrideInfo& overrideInfo)
 {
     auto& rareData = ensureRareData();
     m_source = overrideInfo.sourceCode;
-    rareData.m_lineCount = overrideInfo.lineCount;
-    rareData.m_endColumn = overrideInfo.endColumn;
     rareData.m_parametersStartOffset = overrideInfo.parametersStartOffset;
     rareData.m_functionStart = overrideInfo.functionStart;
     rareData.m_functionEnd = overrideInfo.functionEnd;

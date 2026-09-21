@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include <JavaScriptCore/LexerUnicodeProperties.h>
 #include <JavaScriptCore/Lookup.h>
 #include <JavaScriptCore/ParserArena.h>
 #include <JavaScriptCore/ParserModes.h>
@@ -55,12 +54,6 @@ public:
     Lexer(VM&, JSParserBuiltinMode, JSParserScriptMode);
     ~Lexer();
 
-    // Character manipulation functions.
-    static bool isWhiteSpace(T character);
-    static bool isLineTerminator(T character);
-    static unsigned char convertHex(int c1, int c2);
-    static char16_t convertUnicode(int c1, int c2, int c3, int c4);
-
     // Functions to set up parsing.
     void setCode(const SourceCode&, ParserArena*);
     void setIsReparsingFunction() { m_isReparsingFunction = true; }
@@ -69,14 +62,11 @@ public:
     JSTokenType lex(JSToken*, OptionSet<LexerFlags>, bool strictMode);
     JSTokenType lexWithoutClearingLineTerminator(JSToken*, OptionSet<LexerFlags>, bool strictMode);
     bool nextTokenIsColon();
-    int lineNumber() const { return m_lineNumber; }
     ALWAYS_INLINE int currentOffset() const { return offsetFromSourcePtr(m_code); }
-    ALWAYS_INLINE int currentLineStartOffset() const { return offsetFromSourcePtr(m_lineStart); }
     ALWAYS_INLINE JSTextPosition currentPosition() const
     {
-        return JSTextPosition(m_lineNumber, currentOffset(), currentLineStartOffset());
+        return JSTextPosition(currentOffset());
     }
-    JSTextPosition positionBeforeLastNewline() const { return m_positionBeforeLastNewline; }
 
     bool hasLineTerminatorBeforeToken() const { return m_hasLineTerminatorBeforeToken; }
     JSTokenType scanRegExp(JSToken*, char16_t patternPrefix = 0);
@@ -99,14 +89,12 @@ public:
         m_buffer8.shrink(0);
         m_buffer16.shrink(0);
     }
-    void setOffset(int offset, int lineStartOffset)
+    void setOffset(int offset)
     {
         m_error = 0;
         m_lexErrorMessage = String();
 
         m_code = sourcePtrFromOffset(offset);
-        m_lineStart = sourcePtrFromOffset(lineStartOffset);
-        ASSERT(currentOffset() >= currentLineStartOffset());
 
         m_buffer8.shrink(0);
         m_buffer16.shrink(0);
@@ -114,11 +102,6 @@ public:
             m_current = *m_code;
         else
             m_current = 0;
-    }
-    void setLineNumber(int line)
-    {
-        ASSERT(line >= 0);
-        m_lineNumber = line;
     }
     void setHasLineTerminatorBeforeToken(bool terminator)
     {
@@ -210,12 +193,11 @@ private:
     // and affinity; do not rearrange without careful analysis.
     VM& m_vm;
     IdentifierArena* m_arena;
+    const SourceCode* m_source;
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
-    const T* m_lineStart;
     String m_lexErrorMessage;
-    int m_lineNumber;
     T m_current;
     bool m_hasLineTerminatorBeforeToken;
     bool m_atLineStart;
@@ -225,15 +207,12 @@ private:
     Vector<Latin1Character> m_buffer8;
     Vector<char16_t> m_buffer16;
     Vector<char16_t> m_bufferForRawTemplateString16;
-    JSTextPosition m_positionBeforeLastNewline;
     bool m_isReparsingFunction;
     bool m_error;
 
-    // offset 128 if T == Latin1Character
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
     JSParserScriptMode m_scriptMode;
-    const SourceCode* m_source;
     unsigned m_sourceOffset;
     const T* m_codeStartPlusOffset;
 
@@ -249,49 +228,6 @@ inline void Lexer<Latin1Character>::verifyLayout()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename T>, Lexer<T>);
-
-JS_EXPORT_PRIVATE extern const WTF::BitSet<256> whiteSpaceTable;
-
-template <>
-ALWAYS_INLINE bool Lexer<Latin1Character>::isWhiteSpace(Latin1Character ch)
-{
-    return whiteSpaceTable.get(ch);
-}
-
-template <>
-ALWAYS_INLINE bool Lexer<char16_t>::isWhiteSpace(char16_t ch)
-{
-    if (isLatin1(ch))
-        return Lexer<Latin1Character>::isWhiteSpace(static_cast<Latin1Character>(ch));
-
-    // Non-Latin1 Zs category (Space_Separator) + BOM
-    // Generated from UnicodeData.txt by generateLexerUnicodePropertyTables.py
-    return isNonLatin1WhiteSpace(ch);
-}
-
-template <>
-ALWAYS_INLINE bool Lexer<Latin1Character>::isLineTerminator(Latin1Character ch)
-{
-    return ch == '\r' || ch == '\n';
-}
-
-template <>
-ALWAYS_INLINE bool Lexer<char16_t>::isLineTerminator(char16_t ch)
-{
-    return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
-}
-
-template <typename T>
-inline unsigned char Lexer<T>::convertHex(int c1, int c2)
-{
-    return (toASCIIHexValue(c1) << 4) | toASCIIHexValue(c2);
-}
-
-template <typename T>
-inline char16_t Lexer<T>::convertUnicode(int c1, int c2, int c3, int c4)
-{
-    return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
-}
 
 template<typename T>
 template<typename CharacterType>

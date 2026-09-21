@@ -48,6 +48,12 @@ public:
     CodeBlockHash hashFor(CodeSpecializationKind) const;
 
     const SourceCode& source() const LIFETIME_BOUND { return m_source; }
+
+    // Must not build the provider's line-start table so it can be called by assertions.
+    bool hasSourceText() const
+    {
+        return !m_source.isNull() && m_source.provider() && !m_source.provider()->source().isNull();
+    }
     SourceID sourceID() const { return m_source.providerID(); }
     const SourceOrigin& sourceOrigin() const LIFETIME_BOUND { return m_source.provider()->sourceOrigin(); }
     // This is NOT the path that should be used for computing relative paths from a script. Use SourceOrigin's URL for that, the values may or may not be the same... This should only be used for `error.sourceURL` and stack traces.
@@ -55,9 +61,9 @@ public:
     const String& sourceURLStripped() const LIFETIME_BOUND { return m_source.provider()->sourceURLStripped(); }
     const String& preRedirectURL() const LIFETIME_BOUND { return m_source.provider()->preRedirectURL(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
-    JS_EXPORT_PRIVATE int NODELETE lastLine() const;
+    JS_EXPORT_PRIVATE int lastLine() const;
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
-    JS_EXPORT_PRIVATE unsigned NODELETE endColumn() const;
+    JS_EXPORT_PRIVATE unsigned endColumn() const;
 
     std::optional<int> NODELETE overrideLineNumber(VM&) const;
     unsigned NODELETE typeProfilingStartOffset() const;
@@ -92,7 +98,13 @@ public:
         
     DECLARE_EXPORT_INFO;
 
-    void NODELETE recordParse(CodeFeatures, LexicallyScopedFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn);
+    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables)
+    {
+        m_features = features;
+        m_lexicallyScopedFeatures = lexicallyScopedFeatures;
+        m_hasCapturedVariables = hasCapturedVariables;
+    }
+
     void installCode(CodeBlock*);
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind, Profiler::JettisonReason);
     CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*);
@@ -136,13 +148,6 @@ private:
 
 protected:
     ScriptExecutable(Structure*, VM&, const SourceCode&, LexicallyScopedFeatures, DerivedContextType, bool isInArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType, Intrinsic);
-
-    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables)
-    {
-        m_features = features;
-        m_lexicallyScopedFeatures = lexicallyScopedFeatures;
-        m_hasCapturedVariables = hasCapturedVariables;
-    }
 
     static TemplateObjectMap& ensureTemplateObjectMapImpl(std::unique_ptr<TemplateObjectMap>& dest);
 

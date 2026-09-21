@@ -153,8 +153,8 @@ public:
         // These are function-level data.
         String nameFromCallee(VM&);
         String displayName(VM&);
-        int NODELETE functionStartLine();
-        unsigned NODELETE functionStartColumn();
+        int functionStartLine();
+        unsigned functionStartColumn();
         std::tuple<SourceProvider*, SourceID> sourceProviderAndID();
         String url();
     };

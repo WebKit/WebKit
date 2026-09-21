@@ -1022,6 +1022,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     parser/ParserModes.h
     parser/ParserTokens.h
     parser/ResultType.h
+    parser/SourceCharacters.h
     parser/SourceCode.h
     parser/SourceProvider.h
     parser/SourceProviderCache.h

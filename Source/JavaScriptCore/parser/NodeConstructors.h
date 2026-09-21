@@ -42,9 +42,8 @@ namespace JSC {
     }
 
     inline Node::Node(const JSTokenLocation& location)
-        : m_position(location.line, location.startOffset, location.lineStartOffset)
+        : m_position(location.startOffset)
     {
-        ASSERT(location.startOffset >= location.lineStartOffset);
     }
 
     inline ExpressionNode::ExpressionNode(const JSTokenLocation& location, ResultType resultType)
@@ -208,7 +207,6 @@ namespace JSC {
         , m_ident(ident)
         , m_start(start)
     {
-        ASSERT(m_start.offset >= m_start.lineStartOffset);
     }
 
     inline PrivateIdentifierNode::PrivateIdentifierNode(const JSTokenLocation& location, const Identifier& ident)

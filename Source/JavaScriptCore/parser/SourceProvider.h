@@ -35,9 +35,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/CachedBytecode.h>
 #include <JavaScriptCore/CodeBlockHash.h>
 #include <JavaScriptCore/CodeSpecializationKind.h>
+#include <JavaScriptCore/LineColumn.h>
+#include <JavaScriptCore/SourceCharacters.h>
 #include <JavaScriptCore/SourceOrigin.h>
 #include <JavaScriptCore/SourceTaintedOrigin.h>
+#include <optional>
+#include <span>
 #include <wtf/Lock.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,6 +65,40 @@ enum class SourceProviderSourceType : uint8_t {
 };
 
 using BytecodeCacheGenerator = Function<RefPtr<CachedBytecode>()>;
+
+class LineStartTable {
+    WTF_MAKE_NONCOPYABLE(LineStartTable);
+public:
+    LineStartTable() = default;
+
+    // Positions within the provider's own text. An inline <script> starts partway into its
+    // document, and that offset is not applied here.
+    struct PositionInfo {
+        unsigned line0Based { 0 };
+        unsigned column0Based { 0 };
+        unsigned lineStart { 0 };
+        unsigned lineEnd { 0 }; // excludes the line terminator, so [lineStart, lineEnd) is the text
+    };
+
+    JS_EXPORT_PRIVATE PositionInfo positionInfoForOffset(StringView text, unsigned offset);
+    // Out-of-range input clamps rather than fails: a line past the end gives the end of the text,
+    // and a column past the end of its line gives that line's end.
+    JS_EXPORT_PRIVATE unsigned offsetForPosition(StringView text, unsigned line0Based, unsigned column0Based);
+
+    bool isBuilt() const
+    {
+        Locker locker { m_lock };
+        return !!m_lineStarts;
+    }
+
+private:
+    template<typename CharType> static Vector<unsigned> build(std::span<const CharType>);
+    const Vector<unsigned>& ensureBuilt(StringView) WTF_REQUIRES_LOCK(m_lock);
+
+    mutable Lock m_lock;
+    std::optional<Vector<unsigned>> m_lineStarts WTF_GUARDED_BY_LOCK(m_lock);
+    unsigned m_builtForLength WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+};
 
 class SourceProvider : public ThreadSafeRefCounted<SourceProvider> {
 public:
@@ -125,6 +165,38 @@ public:
 
     JS_EXPORT_PRIVATE UTF8CString sourceCodeDumpFilePath(const UTF8CString& dumpDirectory);
 
+    LineStartTable::PositionInfo positionInfoForOffset(unsigned offset)
+    {
+        return m_lineStartTable.positionInfoForOffset(source(), offset);
+    }
+
+    unsigned offsetForPosition(unsigned line0Based, unsigned column0Based)
+    {
+        return m_lineStartTable.offsetForPosition(source(), line0Based, column0Based);
+    }
+
+    // An inline <script> shifts every line of its document, but shifts the column only on its first
+    // line, since later lines begin where their own line begins.
+    LineColumn documentLineColumnForOffset(unsigned offset)
+    {
+        auto info = positionInfoForOffset(offset);
+        return {
+            m_startPosition.m_line.oneBasedInt() + info.line0Based,
+            info.line0Based ? info.column0Based + 1 : m_startPosition.m_column.oneBasedInt() + info.column0Based,
+        };
+    }
+
+    LineColumn documentZeroBasedLineColumnForOffset(unsigned offset)
+    {
+        auto info = positionInfoForOffset(offset);
+        return {
+            m_startPosition.m_line.zeroBasedInt() + info.line0Based,
+            info.line0Based ? info.column0Based : m_startPosition.m_column.zeroBasedInt() + info.column0Based,
+        };
+    }
+
+    bool lineStartTableIsBuilt() const { return m_lineStartTable.isBuilt(); }
+
 private:
     JS_EXPORT_PRIVATE virtual void lockUnderlyingBufferImpl();
     JS_EXPORT_PRIVATE virtual void unlockUnderlyingBufferImpl();
@@ -146,6 +218,8 @@ private:
     std::atomic<bool> m_sourceCodeDumped { false };
     Lock m_sourceCodeDumpLock;
     UTF8CString m_sourceCodeDumpFilePath WTF_GUARDED_BY_LOCK(m_sourceCodeDumpLock);
+
+    LineStartTable m_lineStartTable;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);

@@ -2237,6 +2237,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
 static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);;
 static JSC_DECLARE_HOST_FUNCTION(functionGetConcurrently);
 static JSC_DECLARE_HOST_FUNCTION(functionHasOwnLengthProperty);
+static JSC_DECLARE_HOST_FUNCTION(functionLineStartTableIsBuilt);
 static JSC_DECLARE_HOST_FUNCTION(functionRejectPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionMarkPromiseAsHandled);
 static JSC_DECLARE_HOST_FUNCTION(functionSetUserPreferredLanguages);
@@ -2629,6 +2630,29 @@ JSC_DEFINE_HOST_FUNCTION(functionNoInline, (JSGlobalObject*, CallFrame* callFram
         executable->setNeverInline(true);
     
     return JSValue::encode(jsUndefined());
+}
+
+// Whether anything has yet asked the function's source for a line or column, which is what builds
+// the line-start table.
+// Usage: $vm.lineStartTableIsBuilt(func)
+JSC_DEFINE_HOST_FUNCTION(functionLineStartTableIsBuilt, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (callFrame->argumentCount() < 1)
+        return throwVMError(globalObject, scope, "Not enough arguments"_s);
+
+    FunctionExecutable* executable = getExecutableForFunction(callFrame->uncheckedArgument(0));
+    if (!executable)
+        return throwVMError(globalObject, scope, "Argument must be a JS function"_s);
+
+    SourceProvider* provider = executable->source().provider();
+    if (!provider)
+        return throwVMError(globalObject, scope, "Function has no source provider"_s);
+
+    return JSValue::encode(jsBoolean(provider->lineStartTableIsBuilt()));
 }
 
 // Runs a full GC synchronously.
@@ -4671,6 +4695,7 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, allowIfNotFuzz, "codeBlockFor"_s, functionCodeBlockFor, 1);
     addFunction(vm, allowIfNotFuzz, "codeBlockForFrame"_s, functionCodeBlockForFrame, 1);
     addFunction(vm, allowIfNotFuzz, "dumpSourceFor"_s, functionDumpSourceFor, 1);
+    addFunction(vm, allowIfNotFuzz, "lineStartTableIsBuilt"_s, functionLineStartTableIsBuilt, 1);
     addFunction(vm, allowIfNotFuzz, "dumpBytecodeFor"_s, functionDumpBytecodeFor, 1);
 
     addFunction(vm, alwaysAllow, "dataLog"_s, functionDataLog, 1);

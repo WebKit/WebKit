@@ -30,6 +30,7 @@
 #include "BuiltinNames.h"
 #include "JSCJSValueInlines.h"
 #include "Parser.h"
+#include "SourceCharacters.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -120,7 +121,7 @@ static BuiltinSourceMetadata computeBuiltinSourceMetadata(std::span<const Latin1
                 continue;
             } else if (characters[i] == ',')
                 ++commas;
-            else if (!Lexer<Latin1Character>::isWhiteSpace(characters[i]))
+            else if (!isWhiteSpace<Latin1Character>(characters[i]))
                 sawOneParam = true;
 
             if (i + 2 < characters.size() && characters[i] == '.' && characters[i + 1] == '.' && characters[i + 2] == '.') {
@@ -144,20 +145,7 @@ static BuiltinSourceMetadata computeBuiltinSourceMetadata(std::span<const Latin1
         }
     }
 
-    unsigned lineCount = 0;
-    unsigned endColumn = 0;
-    unsigned offsetOfLastNewline = 0;
-    std::optional<unsigned> offsetOfSecondToLastNewline;
     for (unsigned i = 0; i < characters.size(); ++i) {
-        if (characters[i] == '\n') {
-            if (lineCount)
-                offsetOfSecondToLastNewline = offsetOfLastNewline;
-            ++lineCount;
-            endColumn = 0;
-            offsetOfLastNewline = i;
-        } else
-            ++endColumn;
-
         if (!isInStrictContext && (characters[i] == '"' || characters[i] == '\'')) {
             const auto useStrict = "use strict"_span;
             if (i + 1 + useStrict.size() < characters.size()) {
@@ -168,8 +156,6 @@ static BuiltinSourceMetadata computeBuiltinSourceMetadata(std::span<const Latin1
             }
         }
     }
-
-    unsigned positionBeforeLastNewlineLineStartOffset = offsetOfSecondToLastNewline ? *offsetOfSecondToLastNewline + 1 : 0;
 
     int closeBraceOffsetFromEnd = 1;
     while (true) {
@@ -182,10 +168,6 @@ static BuiltinSourceMetadata computeBuiltinSourceMetadata(std::span<const Latin1
     result.sourceLength = characters.size();
     result.parametersStart = parametersStart;
     result.parameterCount = parameterCount;
-    result.lineCount = lineCount;
-    result.endColumn = endColumn;
-    result.offsetOfLastNewline = offsetOfLastNewline;
-    result.positionBeforeLastNewlineLineStartOffset = positionBeforeLastNewlineLineStartOffset;
     result.closeBraceOffsetFromEnd = closeBraceOffsetFromEnd;
     result.isAsyncFunction = isAsyncFunction;
     result.isInStrictContext = isInStrictContext;
@@ -206,51 +188,39 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     RELEASE_ASSERT(scanned.sourceLength == view.length());
 
     unsigned parametersStart = scanned.parametersStart;
-    unsigned startColumn = parametersStart;
     int functionKeywordStart = strlen("(");
     int functionNameStart = parametersStart;
     bool isArrowFunctionBodyExpression = false;
 
-    JSTextPosition positionBeforeLastNewline;
-    positionBeforeLastNewline.line = scanned.lineCount;
-    positionBeforeLastNewline.offset = source.startOffset() + scanned.offsetOfLastNewline;
-    positionBeforeLastNewline.lineStartOffset = source.startOffset() + scanned.positionBeforeLastNewlineLineStartOffset;
-
-    SourceCode newSource = source.subExpression(source.startOffset() + parametersStart, source.startOffset() + (view.length() - scanned.closeBraceOffsetFromEnd), 0, parametersStart);
+    SourceCode newSource = source.subExpression(source.startOffset() + parametersStart, source.startOffset() + (view.length() - scanned.closeBraceOffsetFromEnd));
     bool isBuiltinDefaultClassConstructor = constructorKind != ConstructorKind::None && constructorKind != ConstructorKind::Naked;
     UnlinkedFunctionKind kind = isBuiltinDefaultClassConstructor ? UnlinkedNormalFunction : UnlinkedBuiltinFunction;
 
     SourceParseMode parseMode = scanned.isAsyncFunction ? SourceParseMode::AsyncFunctionMode : SourceParseMode::NormalFunctionMode;
 
     JSTokenLocation start;
-    start.line = -1;
-    start.lineStartOffset = std::numeric_limits<unsigned>::max();
     start.startOffset = source.startOffset() + parametersStart;
     start.endOffset = std::numeric_limits<unsigned>::max();
 
     JSTokenLocation end;
-    end.line = 1;
-    end.lineStartOffset = source.startOffset();
     end.startOffset = source.startOffset() + strlen("(");
     end.endOffset = std::numeric_limits<unsigned>::max();
 
     FunctionMetadataNode metadata(
-        start, end, startColumn, scanned.endColumn, source.startOffset() + functionKeywordStart, source.startOffset() + functionNameStart, source.startOffset() + parametersStart, implementationVisibility,
+        start, end, source.startOffset() + functionKeywordStart, source.startOffset() + functionNameStart, source.startOffset() + parametersStart, implementationVisibility,
         scanned.isInStrictContext ? StrictModeLexicallyScopedFeature : NoLexicallyScopedFeatures, constructorKind, constructorKind == ConstructorKind::Extends ? SuperBinding::Needed : SuperBinding::NotNeeded,
         scanned.parameterCount, parseMode, isArrowFunctionBodyExpression);
 
     metadata.finishParsing(newSource, Identifier(), FunctionMode::FunctionExpression);
     metadata.overrideName(name);
-    metadata.setEndPosition(positionBeforeLastNewline);
 
     if (ASSERT_ENABLED || Options::validateBytecode()) [[unlikely]] {
-        JSTextPosition positionBeforeLastNewlineFromParser;
         ParserError error;
         JSParserBuiltinMode builtinMode = isBuiltinDefaultClassConstructor ? JSParserBuiltinMode::NotBuiltin : JSParserBuiltinMode::Builtin;
         std::unique_ptr<ProgramNode> program = parseRootNode<ProgramNode>(
             vm, source, implementationVisibility, builtinMode,
             NoLexicallyScopedFeatures, JSParserScriptMode::Classic, SourceParseMode::ProgramMode, error,
-            constructorKind, &positionBeforeLastNewlineFromParser);
+            constructorKind);
 
         if (program) {
             StatementNode* exprStatement = program->singleStatement();
@@ -262,24 +232,15 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             FunctionMetadataNode* metadataFromParser = static_cast<FuncExprNode*>(funcExpr)->metadata();
             RELEASE_ASSERT(!program->hasCapturedVariables());
             
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             RELEASE_ASSERT(metadataFromParser);
             RELEASE_ASSERT(metadataFromParser->ident().isNull());
             
             // This function assumes an input string that would result in a single anonymous function expression.
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             RELEASE_ASSERT(metadataFromParser);
             metadataFromParser->overrideName(name);
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
-            if (metadata != *metadataFromParser || positionBeforeLastNewlineFromParser != positionBeforeLastNewline) {
+            if (metadata != *metadataFromParser) {
                 dataLogLn("Expected Metadata:\n", metadata);
                 dataLogLn("Metadata from parser:\n", *metadataFromParser);
-                dataLogLn("positionBeforeLastNewlineFromParser.line ", positionBeforeLastNewlineFromParser.line);
-                dataLogLn("positionBeforeLastNewlineFromParser.offset ", positionBeforeLastNewlineFromParser.offset);
-                dataLogLn("positionBeforeLastNewlineFromParser.lineStartOffset ", positionBeforeLastNewlineFromParser.lineStartOffset);
-                dataLogLn("positionBeforeLastNewline.line ", positionBeforeLastNewline.line);
-                dataLogLn("positionBeforeLastNewline.offset ", positionBeforeLastNewline.offset);
-                dataLogLn("positionBeforeLastNewline.lineStartOffset ", positionBeforeLastNewline.lineStartOffset);
                 WTFLogAlways("Metadata of parser and hand rolled parser don't match\n");
                 CRASH();
             }
@@ -312,7 +273,7 @@ void BuiltinExecutables::clear()
 #define DEFINE_BUILTIN_EXECUTABLES(name, functionName, overrideName, length) \
 SourceCode BuiltinExecutables::name##Source() \
 {\
-    return SourceCode { m_combinedSourceProvider.copyRef(), static_cast<int>(s_##name - s_JSCCombinedCode), static_cast<int>((s_##name - s_JSCCombinedCode) + length), 1, 1 };\
+    return SourceCode { m_combinedSourceProvider.copyRef(), static_cast<int>(s_##name - s_JSCCombinedCode), static_cast<int>((s_##name - s_JSCCombinedCode) + length) };\
 }\
 \
 UnlinkedFunctionExecutable* BuiltinExecutables::name##Executable() \

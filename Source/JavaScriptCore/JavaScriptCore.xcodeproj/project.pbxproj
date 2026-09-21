@@ -980,6 +980,7 @@
 		37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AAC091279F124200D64842 /* WasmBranchHints.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738D11EDB5672003F2B0B /* ParseInt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3910AB742F3087FD00BAA633 /* LexerUnicodeProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 3910AB732F3087FD00BAA633 /* LexerUnicodeProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3910AB762F3087FD00BAA634 /* SourceCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3910AB752F3087FD00BAA634 /* SourceCharacters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3910AB842F3203AD00BAA633 /* IntlSegmentDataObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3910AB832F3203AD00BAA633 /* IntlSegmentDataObject.h */; };
 		39E4D7252F32F0DB00F3045F /* IntlPartObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 39E4D7242F32F0DB00F3045F /* IntlPartObject.h */; };
 		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4455,6 +4456,8 @@
 		37C738D11EDB5672003F2B0B /* ParseInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseInt.h; sourceTree = "<group>"; };
 		3910AB722F3087E500BAA633 /* LexerUnicodeProperties.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexerUnicodeProperties.cpp; sourceTree = "<group>"; };
 		3910AB732F3087FD00BAA633 /* LexerUnicodeProperties.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LexerUnicodeProperties.h; sourceTree = "<group>"; };
+		3910AB772F3087FD00BAA634 /* SourceCharacters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SourceCharacters.cpp; sourceTree = "<group>"; };
+		3910AB752F3087FD00BAA634 /* SourceCharacters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceCharacters.h; sourceTree = "<group>"; };
 		3910AB822F3203A200BAA633 /* IntlSegmentDataObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlSegmentDataObject.cpp; sourceTree = "<group>"; };
 		3910AB832F3203AD00BAA633 /* IntlSegmentDataObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntlSegmentDataObject.h; sourceTree = "<group>"; };
 		39E4D7232F32F0D500F3045F /* IntlPartObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntlPartObject.cpp; sourceTree = "<group>"; };
@@ -8781,6 +8784,8 @@
 				A77F18241641925400640A47 /* ParserModes.h */,
 				65303D631447B9E100D3F904 /* ParserTokens.h */,
 				869EBCB60E8C6D4A008722CC /* ResultType.h */,
+				3910AB772F3087FD00BAA634 /* SourceCharacters.cpp */,
+				3910AB752F3087FD00BAA634 /* SourceCharacters.h */,
 				14201D581DECF26A00904BD3 /* SourceCode.h */,
 				70B7918E1C0244C9002481E2 /* SourceCodeKey.h */,
 				0F493AF816D0CAD10084508B /* SourceProvider.cpp */,
@@ -12890,6 +12895,7 @@
 				FE187A0F1C030D6C0038BBCA /* SnippetOperand.h in Headers */,
 				E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */,
 				E3F23A7F1ECF13EE00978D99 /* SnippetSlowPathCalls.h in Headers */,
+				3910AB762F3087FD00BAA634 /* SourceCharacters.h in Headers */,
 				14201D591DECF26A00904BD3 /* SourceCode.h in Headers */,
 				70B791911C024A13002481E2 /* SourceCodeKey.h in Headers */,
 				5350356527147E5A00EC1A7E /* SourceID.h in Headers */,

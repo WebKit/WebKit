@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Anthropic PBC.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "SourceCode.h"
-#include <wtf/HashMap.h>
-#include <wtf/Lock.h>
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "SourceCharacters.h"
 
 namespace JSC {
 
-class ScriptExecutable;
-
-struct FunctionOverrideInfo {
-    SourceCode sourceCode;
-    unsigned parametersStartOffset;
-    unsigned functionStart;
-    unsigned functionEnd;
-};
-
-class FunctionOverrides {
-public:
-    using OverrideInfo = FunctionOverrideInfo;
-
-    static FunctionOverrides& overrides();
-    FunctionOverrides(const char8_t* functionOverridesFileName);
-
-    static bool initializeOverrideFor(const SourceCode& origCode, OverrideInfo& result);
-
-    JS_EXPORT_PRIVATE static void reinstallOverrides();
-
-private:
-    void parseOverridesInFile(const char8_t* fileName) WTF_REQUIRES_LOCK(m_lock);
-    void clear() WTF_REQUIRES_LOCK(m_lock) { m_entries.clear(); }
-
-    UncheckedKeyHashMap<String, String> m_entries WTF_GUARDED_BY_LOCK(m_lock);
-    Lock m_lock;
-};
+constinit const WTF::BitSet<256> whiteSpaceTable = makeLatin1CharacterBitSet(
+    [](Latin1Character ch) {
+        return ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC || ch == 0xA0;
+    });
 
 } // namespace JSC

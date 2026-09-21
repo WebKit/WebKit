@@ -3892,12 +3892,13 @@ FunctionExecutable* JSGlobalObject::tryGetCachedFunctionExecutableForFunctionCon
     if (lexicallyScopedFeatures != unlinkedExecutable->lexicallyScopedFeatures())
         return nullptr;
 
+    // The synthesized program is "<prefix><name>(<params>\n) {\n<body>\n}", so a cached range must
+    // begin exactly at the '('. That offset also discriminates the construction mode, since the
+    // prefix length is what moves it: an "async function" candidate cannot answer a "function"
+    // request even when the text from '(' onward agrees.
     auto storedSource = executable->source();
-    if (OrdinalNumber { } != storedSource.firstLine())
-        return nullptr;
-
     int offset = functionConstructorPrefix(functionConstructionMode).length() + name.length();
-    if (offset != storedSource.startColumn().zeroBasedInt())
+    if (storedSource.startOffset() != offset)
         return nullptr;
 
     if (program.substring(offset) != storedSource.view())

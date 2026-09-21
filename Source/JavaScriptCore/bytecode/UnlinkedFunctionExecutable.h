@@ -109,14 +109,8 @@ public:
     ConstructorKind constructorKind() const { return static_cast<ConstructorKind>(m_constructorKind); }
     SuperBinding superBinding() const { return static_cast<SuperBinding>(m_superBinding); }
 
-    unsigned lineCount() const { return m_lineCount; }
-    unsigned linkedStartColumn(unsigned parentStartColumn) const { return m_unlinkedBodyStartColumn + (!m_firstLineOffset ? parentStartColumn : 1); }
-    unsigned linkedEndColumn(unsigned startColumn) const { return m_unlinkedBodyEndColumn + (!m_lineCount ? startColumn : 1); }
-
     unsigned unlinkedFunctionStart() const { return m_unlinkedFunctionStart; }
     unsigned unlinkedFunctionEnd() const { return m_unlinkedFunctionEnd; }
-    unsigned unlinkedBodyStartColumn() const { return m_unlinkedBodyStartColumn; }
-    unsigned unlinkedBodyEndColumn() const { return m_unlinkedBodyEndColumn; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
     unsigned parametersStartOffset() const { return m_parametersStartOffset; }
@@ -287,15 +281,8 @@ private:
         return VM::useUnlinkedCodeBlockJettisoning() && !m_isGeneratedFromCache;
     }
 
-    unsigned m_firstLineOffset : 31;
-    unsigned m_isGeneratedFromCache : 1;
-    unsigned m_lineCount : 31;
     unsigned m_hasCapturedVariables : 1;
     unsigned m_unlinkedFunctionStart: 31;
-    unsigned m_isBuiltinFunction : 1;
-    unsigned m_unlinkedBodyStartColumn : 31;
-    unsigned m_isBuiltinDefaultClassConstructor : 1;
-    unsigned m_unlinkedBodyEndColumn : 31;
     unsigned m_constructAbility: 1;
     unsigned m_startOffset : 31;
     unsigned m_scriptMode: 1; // JSParserScriptMode
@@ -307,6 +294,9 @@ private:
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_parameterCount : 30;
     unsigned m_singletonHasBeenInvalidated : 1;
+    unsigned m_isGeneratedFromCache : 1;
+    unsigned m_isBuiltinFunction : 1;
+    unsigned m_isBuiltinDefaultClassConstructor : 1;
     unsigned m_privateBrandRequirement : 1;
     CodeFeatures m_features : bitWidthOfCodeFeatures;
     uint16_t m_constructorKind : 2;

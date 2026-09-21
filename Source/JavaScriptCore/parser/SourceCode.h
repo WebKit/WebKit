@@ -39,8 +39,6 @@ class SourceCode : public UnlinkedSourceCode {
 public:
     SourceCode()
         : UnlinkedSourceCode()
-        , m_firstLine(OrdinalNumber::beforeFirst())
-        , m_startColumn(OrdinalNumber::beforeFirst())
     {
     }
 
@@ -49,22 +47,22 @@ public:
     {
     }
 
-    SourceCode(Ref<SourceProvider>&& provider, int firstLine, int startColumn)
-        : UnlinkedSourceCode(WTF::move(provider))
-        , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
-        , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
-    {
-    }
-
-    SourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset, int firstLine, int startColumn)
+    SourceCode(RefPtr<SourceProvider>&& provider, int startOffset, int endOffset)
         : UnlinkedSourceCode(WTF::move(provider), startOffset, endOffset)
-        , m_firstLine(OrdinalNumber::fromOneBasedInt(std::max(firstLine, 1)))
-        , m_startColumn(OrdinalNumber::fromOneBasedInt(std::max(startColumn, 1)))
     {
     }
 
-    OrdinalNumber firstLine() const { return m_firstLine; }
-    OrdinalNumber startColumn() const { return m_startColumn; }
+    // Prefer derivedStartPosition() when both are wanted: each of these derives the whole pair.
+    OrdinalNumber firstLine() const { return derivedStartPosition().first; }
+    OrdinalNumber startColumn() const { return derivedStartPosition().second; }
+
+    // Builds the provider's line-start table, so this belongs on a reporting path, not a parse path.
+    std::pair<OrdinalNumber, OrdinalNumber> derivedStartPosition() const
+    {
+        SUPPRESS_UNCOUNTED_ARG // m_provider is the owning ref
+        auto lineColumn = m_provider->documentLineColumnForOffset(startOffset());
+        return { OrdinalNumber::fromOneBasedInt(lineColumn.line), OrdinalNumber::fromOneBasedInt(lineColumn.column) };
+    }
 
     SourceID providerID() const
     {
@@ -75,24 +73,21 @@ public:
 
     SourceProvider* provider() const { return m_provider.get(); }
 
-    SourceCode subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const;
+    SourceCode subExpression(unsigned openBrace, unsigned closeBrace) const;
 
     friend bool operator==(const SourceCode&, const SourceCode&) = default;
-
-private:
-    OrdinalNumber m_firstLine;
-    OrdinalNumber m_startColumn;
 };
 
 inline SourceCode makeSource(const String& source, const SourceOrigin& sourceOrigin, SourceTaintedOrigin sourceTaintedOrigin, String filename = String(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)
 {
-    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTF::move(filename), sourceTaintedOrigin, startPosition, sourceType), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    // The provider is the only place an inline <script>'s start is recorded; SourceCode reads it
+    // back from there so the two cannot disagree.
+    return SourceCode(StringSourceProvider::create(source, sourceOrigin, WTF::move(filename), sourceTaintedOrigin, startPosition, sourceType));
 }
 
-inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace, int firstLine, int startColumn) const
+inline SourceCode SourceCode::subExpression(unsigned openBrace, unsigned closeBrace) const
 {
-    startColumn += 1; // Convert to base 1.
-    return SourceCode(RefPtr<SourceProvider> { provider() }, openBrace, closeBrace + 1, firstLine, startColumn);
+    return SourceCode(RefPtr<SourceProvider> { provider() }, openBrace, closeBrace + 1);
 }
 
 } // namespace JSC

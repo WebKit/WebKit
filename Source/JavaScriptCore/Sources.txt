@@ -712,6 +712,7 @@ parser/Nodes.cpp
 parser/NodesAnalyzeModule.cpp
 parser/Parser.cpp @no-unify-when(bundle<=8) @cost:4
 parser/ParserArena.cpp
+parser/SourceCharacters.cpp
 parser/SourceProvider.cpp
 parser/SourceProviderCache.cpp
 parser/SourceTaintedOrigin.cpp

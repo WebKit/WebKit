@@ -36,15 +36,25 @@ public:
 
     DECLARE_INFO;
 
-    unsigned lastLine() const { return m_lastLine; }
-    unsigned endColumn() const { return m_endColumn; }
-
-    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn)
+    // A source with no text has no position to derive, so the guard returns the unset value.
+    unsigned lastLine() const
     {
-        Base::recordParse(features, lexicallyScopedFeatures, hasCapturedVariables);
-        m_lastLine = lastLine;
-        m_endColumn = endColumn;
-        ASSERT(endColumn != UINT_MAX);
+        if (!hasSourceText()) [[unlikely]]
+            return static_cast<unsigned>(-1);
+        return derivedEndPosition().line;
+    }
+
+    unsigned endColumn() const
+    {
+        if (!hasSourceText()) [[unlikely]]
+            return UINT_MAX;
+        return derivedEndPosition().column;
+    }
+
+    LineColumn derivedEndPosition() const
+    {
+        SUPPRESS_UNCOUNTED_ARG // source() holds the owning ref for the whole call
+        return source().provider()->documentLineColumnForOffset(source().endOffset());
     }
 
     DECLARE_VISIT_CHILDREN;
@@ -71,10 +81,9 @@ protected:
 
     CodeBlock* replaceCodeBlockWith(VM&, CodeBlock*);
 
+
     WriteBarrier<CodeBlock> m_codeBlock;
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCodeBlock;
-    int m_lastLine { -1 };
-    unsigned m_endColumn { UINT_MAX };
 };
 
 } // namespace JSC

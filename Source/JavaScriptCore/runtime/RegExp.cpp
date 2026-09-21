@@ -26,6 +26,7 @@
 #include "Lexer.h"
 #include "RegExpCache.h"
 #include "RegExpInlines.h"
+#include "SourceCharacters.h"
 #include "YarrJIT.h"
 #include "YarrPattern.h"
 #include <wtf/Assertions.h>
@@ -723,7 +724,7 @@ static inline String escapePattern(const String& pattern, std::span<const Charac
             }
         }
 
-        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+        if (isLineTerminator<CharacterType>(ch)) {
             shouldEscape = true;
             break;
         }
@@ -754,7 +755,7 @@ static inline String escapePattern(const String& pattern, std::span<const Charac
         }
 
         // escape LineTerminator
-        if (Lexer<CharacterType>::isLineTerminator(ch)) {
+        if (isLineTerminator<CharacterType>(ch)) {
             if (!previousCharacterWasBackslash)
                 result.append('\\');
 

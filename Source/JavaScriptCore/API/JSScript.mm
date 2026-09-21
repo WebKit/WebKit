@@ -271,7 +271,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
     JSC::SourceOrigin origin(url);
     Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, origin, WTF::move(filename), String(), JSC::SourceTaintedOrigin::Untainted, startPosition, type);
-    JSC::SourceCode sourceCode(WTF::move(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    JSC::SourceCode sourceCode(WTF::move(sourceProvider));
     return sourceCode;
 }
 

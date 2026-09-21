@@ -30,6 +30,7 @@
 #include "KeywordLookup.h"
 #include "Lexer.lut.h"
 #include "ParseInt.h"
+#include "SourceCharacters.h"
 #include <limits.h>
 #include <string.h>
 #include <wtf/Assertions.h>
@@ -41,11 +42,6 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
-
-constinit const WTF::BitSet<256> whiteSpaceTable = makeLatin1CharacterBitSet(
-    [](Latin1Character ch) {
-        return ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC || ch == 0xA0;
-    });
 
 bool isLexerKeyword(const Identifier& identifier)
 {
@@ -504,7 +500,6 @@ template <typename T>
 Lexer<T>::Lexer(VM& vm, JSParserBuiltinMode builtinMode, JSParserScriptMode scriptMode)
     : m_vm(vm)
     , m_parsingBuiltinFunction(builtinMode == JSParserBuiltinMode::Builtin || Options::exposePrivateIdentifiers())
-    , m_positionBeforeLastNewline(0, 0, 0)
     , m_isReparsingFunction(false)
     , m_scriptMode(scriptMode)
 {
@@ -554,8 +549,6 @@ template <typename T>
 void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
 {
     m_arena = &arena->identifierArena();
-    
-    m_lineNumber = source.firstLine().oneBasedInt();
 
     StringView sourceString = source.provider()->source();
 
@@ -571,7 +564,6 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_lineStart = m_code;
     m_lexErrorMessage = String();
     m_sourceURLDirective = String();
     m_sourceMappingURLDirective = String();
@@ -591,7 +583,6 @@ template <typename T>
 template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 {
     m_code += shiftAmount;
-    ASSERT(currentOffset() >= currentLineStartOffset());
     m_current = *m_code;
 }
 
@@ -718,15 +709,11 @@ void Lexer<T>::shiftLineTerminator()
 {
     ASSERT(isLineTerminator(m_current));
 
-    m_positionBeforeLastNewline = currentPosition();
     T prev = m_current;
     shift();
 
-    if (prev == '\r' && m_current == '\n')
+    if (isCRLFPair(prev, m_current))
         shift();
-
-    ++m_lineNumber;
-    m_lineStart = m_code;
 }
 
 static ALWAYS_INLINE bool isRestrKeyword(JSTokenType token)
@@ -771,7 +758,7 @@ static ALWAYS_INLINE bool cannotBeIdentStart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return cannotBeIdentStart(static_cast<Latin1Character>(c));
-    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
+    return isWhiteSpace(c) || isLineTerminator(c);
 }
 
 static NEVER_INLINE bool isNonLatin1IdentPart(char32_t c)
@@ -810,7 +797,7 @@ static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(char16_t c)
 {
     if (isLatin1(c)) [[likely]]
         return cannotBeIdentPartOrEscapeStart(static_cast<Latin1Character>(c));
-    return Lexer<char16_t>::isWhiteSpace(c) || Lexer<char16_t>::isLineTerminator(c);
+    return isWhiteSpace(c) || isLineTerminator(c);
 }
 
 
@@ -1252,8 +1239,6 @@ template <typename T>
 template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseResult Lexer<T>::parseString(JSTokenData* tokenData, bool strictMode)
 {
     int startingOffset = currentOffset();
-    int startingLineStartOffset = currentLineStartOffset();
-    int startingLineNumber = lineNumber();
     T stringQuoteCharacter = m_current;
     shift();
 
@@ -1294,8 +1279,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
 
     const T* found = SIMD::find(std::span { stringStart, m_codeEnd }, vectorMatch, scalarMatch);
     if (found == m_codeEnd) [[unlikely]] {
-        setOffset(startingOffset, startingLineStartOffset);
-        setLineNumber(startingLineNumber);
+        setOffset(startingOffset);
         return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
     }
 
@@ -1338,8 +1322,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
                     record8(convertHex(prev, m_current));
                 shift();
             } else {
-                setOffset(startingOffset, startingLineStartOffset);
-                setLineNumber(startingLineNumber);
+                setOffset(startingOffset);
                 m_buffer8.shrink(0);
                 return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
             }
@@ -1348,8 +1331,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
             // Retry SIMD to skip the next plain segment to an interesting character
             found = SIMD::find(std::span { stringStart, m_codeEnd }, vectorMatch, scalarMatch);
             if (found == m_codeEnd) [[unlikely]] {
-                setOffset(startingOffset, startingLineStartOffset);
-                setLineNumber(startingLineNumber);
+                setOffset(startingOffset);
                 m_buffer8.shrink(0);
                 return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
             }
@@ -1357,8 +1339,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
             m_current = *found;
 
             if (characterRequiresParseStringSlowCase(m_current)) [[unlikely]] {
-                setOffset(startingOffset, startingLineStartOffset);
-                setLineNumber(startingLineNumber);
+                setOffset(startingOffset);
                 m_buffer8.shrink(0);
                 return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
             }
@@ -1366,8 +1347,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE typename Lexer<T>::StringParseR
         }
 
         if (characterRequiresParseStringSlowCase(m_current)) [[unlikely]] {
-            setOffset(startingOffset, startingLineStartOffset);
-            setLineNumber(startingLineNumber);
+            setOffset(startingOffset);
             m_buffer8.shrink(0);
             return parseStringSlowCase<shouldBuildStrings>(tokenData, strictMode);
         }
@@ -1519,13 +1499,18 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
             stringStart = currentSourcePtr();
             continue;
         }
-        // Fast check for characters that require special handling.
-        // Catches 0, \n, and \r as efficiently as possible, and lets through all common ASCII characters.
-        if (m_current < 0xE) [[unlikely]] {
+        if (characterNeedsLiteralSpecialHandling(m_current)) [[unlikely]] {
             // New-line or end of input is not allowed
             if (atEnd() || m_current == '\r' || m_current == '\n') {
                 m_lexErrorMessage = "Unexpected EOF"_s;
                 return atEnd() ? StringUnterminated : StringCannotBeParsed;
+            }
+            // An unescaped LS or PS may appear in a string literal, but it does not stop being a
+            // LineTerminator (ECMA-262 #11.3): it stays part of the string's value *and* ends the
+            // line.
+            if (isLineTerminator(m_current)) {
+                shiftLineTerminator();
+                continue;
             }
             // Anything else is just a normal character
         }
@@ -1594,10 +1579,7 @@ typename Lexer<T>::StringParseResult Lexer<T>::parseTemplateLiteral(JSTokenData*
         if (m_current == '$' && peek(1) == '{')
             break;
 
-        // Fast check for characters that require special handling.
-        // Catches 0, \n, \r, 0x2028, and 0x2029 as efficiently
-        // as possible, and lets through all common ASCII characters.
-        if (((static_cast<unsigned>(m_current) - 0xE) & 0x2000)) [[unlikely]] {
+        if (characterNeedsLiteralSpecialHandling(m_current)) [[unlikely]] {
             // End of input is not allowed.
             // Unlike String, line terminator is allowed.
             if (atEnd()) {
@@ -2001,8 +1983,8 @@ ALWAYS_INLINE const Latin1Character* parseCommentDirectiveValueSIMD(const Latin1
     };
 
     auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-        return Lexer<Latin1Character>::isWhiteSpace(character)
-            || Lexer<Latin1Character>::isLineTerminator(character)
+        return isWhiteSpace<Latin1Character>(character)
+            || isLineTerminator<Latin1Character>(character)
             || character == '"'
             || character == '\'';
     };
@@ -2086,30 +2068,7 @@ NEVER_INLINE std::optional<JSTokenType> Lexer<T>::scanSingleLineComment(JSToken*
 
     auto endPosition = currentPosition();
 
-    using UnsignedType = SameSizeUnsignedInteger<T>;
-    constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
-    constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
-    constexpr auto u2028Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
-    constexpr auto u2029Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
-    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-        auto lineFeed = SIMD::equal(input, lineFeedMask);
-        auto carriageReturn = SIMD::equal(input, carriageReturnMask);
-        if constexpr (std::is_same_v<T, Latin1Character>) {
-            auto mask = SIMD::bitOr(lineFeed, carriageReturn);
-            return SIMD::findFirstNonZeroIndex(mask);
-        } else {
-            auto u2028 = SIMD::equal(input, u2028Mask);
-            auto u2029 = SIMD::equal(input, u2029Mask);
-            auto mask = SIMD::bitOr(lineFeed, carriageReturn, u2028, u2029);
-            return SIMD::findFirstNonZeroIndex(mask);
-        }
-    };
-
-    auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-        return isLineTerminator(character);
-    };
-
-    m_code = SIMD::find(std::span { currentSourcePtr(), m_codeEnd }, vectorMatch, scalarMatch);
+    m_code = findLineTerminator(std::span { currentSourcePtr(), m_codeEnd });
     if (m_code == m_codeEnd) {
         m_current = 0;
         fillTokenInfo(tokenRecord, endPosition);
@@ -2142,7 +2101,6 @@ JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, Opt
 start:
     skipWhitespace();
 
-    ASSERT(currentOffset() >= currentLineStartOffset());
     tokenRecord->m_startPosition = currentPosition();
 
     Latin1Character type = m_current;
@@ -2196,10 +2154,6 @@ start:
     case  61 /* 61 = = CharacterEqual */: {
         if (peek(1) == '>') {
             token = ARROWFUNCTION;
-            tokenData->line = lineNumber();
-            tokenData->offset = currentOffset();
-            tokenData->lineStartOffset = currentLineStartOffset();
-            ASSERT(tokenData->offset >= tokenData->lineStartOffset);
             shift();
             shift();
             break;
@@ -2419,9 +2373,6 @@ start:
 
     case  40 /* 40 = ( CharacterOpenParen */: {
         token = OPENPAREN;
-        tokenData->line = lineNumber();
-        tokenData->offset = currentOffset();
-        tokenData->lineStartOffset = currentLineStartOffset();
         shift();
         break;
     }
@@ -2496,20 +2447,12 @@ start:
     }
 
     case 123 /* 123 = { CharacterOpenBrace */: {
-        tokenData->line = lineNumber();
-        tokenData->offset = currentOffset();
-        tokenData->lineStartOffset = currentLineStartOffset();
-        ASSERT(tokenData->offset >= tokenData->lineStartOffset);
         shift();
         token = OPENBRACE;
         break;
     }
 
     case 125 /* 125 = } CharacterCloseBrace */: {
-        tokenData->line = lineNumber();
-        tokenData->offset = currentOffset();
-        tokenData->lineStartOffset = currentLineStartOffset();
-        ASSERT(tokenData->offset >= tokenData->lineStartOffset);
         shift();
         token = CLOSEBRACE;
         break;

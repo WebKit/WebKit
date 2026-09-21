@@ -37,15 +37,6 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArenaRoot);
 
-// ------------------------------ StatementNode --------------------------------
-
-void StatementNode::setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset)
-{
-    m_lastLine = lastLine;
-    m_position = JSTextPosition(firstLine, startOffset, lineStartOffset);
-    ASSERT(m_position.offset >= m_position.lineStartOffset);
-}
-
 // ------------------------------ SourceElements --------------------------------
 
 void SourceElements::append(StatementNode* statement)
@@ -122,9 +113,7 @@ bool BlockNode::hasEarlyBreakOrContinue() const
 ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, LexicallyScopedFeatures lexicallyScopedFeatures)
     : StatementNode(endLocation)
     , ParserArenaRoot(parserArena)
-    , m_startLineNumber(startLocation.line)
     , m_startStartOffset(startLocation.startOffset)
-    , m_startLineStartOffset(startLocation.lineStartOffset)
     , m_features(NoFeatures)
     , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
     , m_innerArrowFunctionCodeFeatures(NoInnerArrowFunctionFeatures)
@@ -137,9 +126,7 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
     : StatementNode(endLocation)
     , ParserArenaRoot(parserArena)
     , VariableEnvironmentNode(WTF::move(lexicalVariables), WTF::move(funcStack))
-    , m_startLineNumber(startLocation.line)
     , m_startStartOffset(startLocation.startOffset)
-    , m_startLineStartOffset(startLocation.lineStartOffset)
     , m_features(features)
     , m_lexicallyScopedFeatures(lexicallyScopedFeatures)
     , m_innerArrowFunctionCodeFeatures(innerArrowFunctionCodeFeatures)
@@ -167,19 +154,15 @@ bool ScopeNode::hasEarlyBreakOrContinue() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
+ProgramNode::ProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, WTF::move(varEnvironment), WTF::move(funcStack), WTF::move(lexicalVariables), features, lexicallyScopedFeatures, innerArrowFunctionCodeFeatures, numConstants)
-    , m_startColumn(startColumn)
-    , m_endColumn(endColumn)
 {
 }
 
 // ------------------------------ ModuleProgramNode -----------------------------
 
-ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&& moduleScopeData)
+ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&& moduleScopeData)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, WTF::move(varEnvironment), WTF::move(funcStack), WTF::move(lexicalVariables), features, lexicallyScopedFeatures, innerArrowFunctionCodeFeatures, numConstants)
-    , m_startColumn(startColumn)
-    , m_endColumn(endColumn)
     , m_usesAwait(features & AwaitFeature)
     , m_moduleScopeData(*WTF::move(moduleScopeData))
 {
@@ -187,9 +170,8 @@ ModuleProgramNode::ModuleProgramNode(ParserArena& parserArena, const JSTokenLoca
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned, unsigned endColumn, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
+EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters*, const SourceCode& source, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, source, children, WTF::move(varEnvironment), WTF::move(funcStack), WTF::move(lexicalVariables), features, lexicallyScopedFeatures, innerArrowFunctionCodeFeatures, numConstants)
-    , m_endColumn(endColumn)
 {
 }
 
@@ -197,7 +179,7 @@ EvalNode::EvalNode(ParserArena& parserArena, const JSTokenLocation& startLocatio
 
 FunctionMetadataNode::FunctionMetadataNode(
     ParserArena&, const JSTokenLocation& startLocation, 
-    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, unsigned functionStart,
+    const JSTokenLocation& endLocation, unsigned functionStart,
     int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures,
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
@@ -209,8 +191,6 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
         , m_privateBrandRequirement(static_cast<unsigned>(PrivateBrandRequirement::None))
         , m_parseMode(mode)
-        , m_startColumn(startColumn)
-        , m_endColumn(endColumn)
         , m_functionStart(functionStart)
         , m_functionNameStart(functionNameStart)
         , m_parametersStart(parametersStart)
@@ -224,7 +204,7 @@ FunctionMetadataNode::FunctionMetadataNode(
 
 FunctionMetadataNode::FunctionMetadataNode(
     const JSTokenLocation& startLocation, 
-    const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, unsigned functionStart,
+    const JSTokenLocation& endLocation, unsigned functionStart,
     int functionNameStart, int parametersStart, ImplementationVisibility implementationVisibility, LexicallyScopedFeatures lexicallyScopedFeatures,
     ConstructorKind constructorKind, SuperBinding superBinding, unsigned parameterCount, SourceParseMode mode, bool isArrowFunctionBodyExpression)
         : Node(endLocation)
@@ -236,8 +216,6 @@ FunctionMetadataNode::FunctionMetadataNode(
         , m_isArrowFunctionBodyExpression(isArrowFunctionBodyExpression)
         , m_privateBrandRequirement(static_cast<unsigned>(PrivateBrandRequirement::None))
         , m_parseMode(mode)
-        , m_startColumn(startColumn)
-        , m_endColumn(endColumn)
         , m_functionStart(functionStart)
         , m_functionNameStart(functionNameStart)
         , m_parametersStart(parametersStart)
@@ -256,12 +234,6 @@ void FunctionMetadataNode::finishParsing(const SourceCode& source, const Identif
     m_functionMode = functionMode;
 }
 
-void FunctionMetadataNode::setEndPosition(JSTextPosition position)
-{
-    m_lastLine = position.line;
-    m_endColumn = position.offset - position.lineStartOffset;
-}
-
 bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
 {
     return m_parseMode == other.m_parseMode
@@ -274,8 +246,6 @@ bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
         && m_ident == other.m_ident
         && m_ecmaName == other.m_ecmaName
         && m_functionMode == other.m_functionMode
-        && m_startColumn == other.m_startColumn
-        && m_endColumn == other.m_endColumn
         && m_functionStart == other.m_functionStart
         && m_functionNameStart == other.m_functionNameStart
         && m_parametersStart == other.m_parametersStart
@@ -283,7 +253,6 @@ bool FunctionMetadataNode::operator==(const FunctionMetadataNode& other) const
         && m_classSource == other.m_classSource
         && m_startStartOffset == other.m_startStartOffset
         && m_parameterCount == other.m_parameterCount
-        && m_lastLine == other.m_lastLine
         && m_position == other.m_position;
 }
 
@@ -299,27 +268,20 @@ void FunctionMetadataNode::dump(PrintStream& stream) const
     stream.println("m_ident ", m_ident);
     stream.println("m_ecmaName ", m_ecmaName);
     stream.println("m_functionMode ", static_cast<uint32_t>(m_functionMode));
-    stream.println("m_startColumn ", m_startColumn);
-    stream.println("m_endColumn ", m_endColumn);
     stream.println("m_functionStart ", m_functionStart);
     stream.println("m_functionNameStart ", m_functionNameStart);
     stream.println("m_parametersStart ", m_parametersStart);
     stream.println("m_classSource.isNull() ", m_classSource.isNull());
     stream.println("m_startStartOffset ", m_startStartOffset);
     stream.println("m_parameterCount ", m_parameterCount);
-    stream.println("m_lastLine ", m_lastLine);
-    stream.println("position().line ", position().line);
     stream.println("position().offset ", position().offset);
-    stream.println("position().lineStartOffset ", position().lineStartOffset);
 }
 
 // ------------------------------ FunctionNode -----------------------------
 
-FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, unsigned startColumn, unsigned endColumn, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters* parameters, const SourceCode& sourceCode, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
+FunctionNode::FunctionNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VariableEnvironment&& varEnvironment, FunctionStack&& funcStack, VariableEnvironment&& lexicalVariables, FunctionParameters* parameters, const SourceCode& sourceCode, CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, InnerArrowFunctionCodeFeatures innerArrowFunctionCodeFeatures, int numConstants, RefPtr<ModuleScopeData>&&)
     : ScopeNode(parserArena, startLocation, endLocation, sourceCode, children, WTF::move(varEnvironment), WTF::move(funcStack), WTF::move(lexicalVariables), features, lexicallyScopedFeatures, innerArrowFunctionCodeFeatures, numConstants)
     , m_parameters(parameters)
-    , m_startColumn(startColumn)
-    , m_endColumn(endColumn)
 {
 }
 

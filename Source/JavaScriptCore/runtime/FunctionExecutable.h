@@ -181,18 +181,31 @@ public:
         return std::nullopt;
     }
 
+    LineStartTable::PositionInfo sourceStartInfo() const
+    {
+        SUPPRESS_UNCOUNTED_ARG // m_source holds the owning ref for the whole call
+        return m_source.provider()->positionInfoForOffset(m_source.startOffset());
+    }
+
+    // endOffset() is one past the closing brace, but a reported end column names the brace itself.
+    LineStartTable::PositionInfo sourceEndInfo() const
+    {
+        SUPPRESS_UNCOUNTED_ARG // m_source holds the owning ref for the whole call
+        return m_source.provider()->positionInfoForOffset(m_source.endOffset() - 1);
+    }
+
+    // Deliberately not cached in RareData: the only callers are the debugger and a debug assertion,
+    // whereas deriving whenever rare data appears would build the line-start table on the
+    // web-reachable Function.prototype.toString path.
     int lineCount() const
     {
-        if (m_rareData) [[unlikely]]
-            return m_rareData->m_lineCount;
-        return m_unlinkedExecutable->lineCount();
+        return static_cast<int>(sourceEndInfo().line0Based) - static_cast<int>(sourceStartInfo().line0Based);
     }
 
     int endColumn() const
     {
-        if (m_rareData) [[unlikely]]
-            return m_rareData->m_endColumn;
-        return m_unlinkedExecutable->linkedEndColumn(m_source.startColumn().oneBasedInt());
+        SUPPRESS_UNCOUNTED_ARG // m_source holds the owning ref for the whole call
+        return m_source.provider()->documentLineColumnForOffset(m_source.endOffset() - 1).column;
     }
 
     int firstLine() const
@@ -294,8 +307,6 @@ public:
         static constexpr ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(RareData, m_asString); }
 
         RefPtr<TypeSet> m_returnStatementTypeSet;
-        unsigned m_lineCount;
-        unsigned m_endColumn;
         Markable<int> m_overrideLineNumber;
         unsigned m_parametersStartOffset { 0 };
         WriteBarrierStructureID m_cachedPolyProtoStructureID;
