@@ -173,6 +173,16 @@ NS_SWIFT_UI_ACTOR
 
 @end
 
+// +matchPatternWith… is unavailable in Swift, which redirects it to -initWithString:error:, and that
+// initializer consults the pattern cache only when no error out-parameter is given — which Swift's
+// throwing bridge always supplies. The cache is unreachable from Swift without these.
+@interface WKWebExtensionMatchPattern (TestWebKitAPIExtras)
+
++ (nullable instancetype)testCachedPatternWithString:(NSString *)string NS_SWIFT_NAME(cachedPattern(string:));
++ (nullable instancetype)testCachedPatternWithScheme:(NSString *)scheme host:(NSString *)host path:(NSString *)path NS_SWIFT_NAME(cachedPattern(scheme:host:path:));
+
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)
 
 #else // not __OBJC__
