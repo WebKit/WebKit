@@ -2406,8 +2406,6 @@ tiled-drawing/mac/margin-tiles-with-banner-view-overlay-repeat-y.html [ Skip ]
 # Cocoa platforms use data URLs for pasted images; blob URL tests are for Glib ports
 editing/pasteboard/paste-image-as-blob-url.html [ Skip ]
 
-webkit.org/b/311570 [ Debug ] http/tests/site-isolation/nested-cross-origin-iframe.html [ Skip ]
-
 ipc/send-gpu-GetShareableBitmap-RemoteRenderingBackend.html [ Pass ImageOnlyFailure ]
 media/media-source/media-source-real-play-after-eos.html [ Pass ImageOnlyFailure ]
 
