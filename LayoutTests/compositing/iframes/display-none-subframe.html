@@ -9,11 +9,11 @@
             margin: 10px;
             background-color: blue;
         }
-        
+
         .composited {
             -webkit-transform: translateZ(0);
         }
-        
+
         iframe {
             display: none;
         }
@@ -24,36 +24,45 @@
             testRunner.waitUntilDone();
         }
 
-        function doTest()
+        function nextFrame()
+        {
+            return new Promise(requestAnimationFrame);
+        }
+
+        async function doTest()
         {
             document.body.offsetWidth;
-            
-            if (window.internals)
-                internals.startTrackingLayerFlushes();
+
+            if (!window.internals) {
+                document.getElementById('result').textContent = 'This test must be run in the test harness.';
+                return;
+            }
+
+            internals.startTrackingLayerFlushes();
+            internals.startTrackingRenderingUpdates();
 
             document.getElementById('box').classList.add('composited');
+            internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
 
-            if (window.internals)
-                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+            // The compositing change reaches the compositor in a rendering update, so step
+            // frames until it has been flushed. However many frames that takes, a rendering
+            // update flushes the compositor at most once, so the flushes must not outnumber
+            // them: a display:none subframe used to make the compositor flush again every
+            // time around the run loop.
+            while (!internals.layerFlushCount())
+                await nextFrame();
 
-            window.setTimeout(function() {
-                var flushCount = 0;
-                if (window.internals)
-                    flushCount = internals.layerFlushCount();
-                
-                var result;
-                if (flushCount == 1 || flushCount == 2)
-                    result = 'PASS: saw 1 or 2 layer flushes';
-                else
-                    result = 'FAIL: saw ' + flushCount + ' layer flushes, expected 1 or possibly 2.';
-                    
-                document.getElementById('result').textContent = result;
+            const flushCount = internals.layerFlushCount();
+            const renderingUpdateCount = internals.renderingUpdateCount();
 
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, 10);
+            document.getElementById('result').textContent = flushCount > renderingUpdateCount
+                ? 'FAIL: saw ' + flushCount + ' layer flushes for ' + renderingUpdateCount + ' rendering updates.'
+                : 'PASS: saw no more layer flushes than rendering updates';
+
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
-        
+
         window.addEventListener('load', doTest, false);
     </script>
 </head>
