@@ -95,6 +95,27 @@ static inline bool allTileEdgesExposed(const FloatRect& totalRect, const FloatRe
     return !tileRect.x() && !tileRect.y() && tileRect.width() + tileRect.x() >= totalRect.width() && tileRect.height() + tileRect.y() >= totalRect.height();
 }
 
+static bool clipTileToBounds(const SkRect& clipBounds, SkRect& tileRect, SkRect& sourceRect)
+{
+    // One pixel wider than the clip, so the new edge falls outside the visible part.
+    auto clip = clipBounds.makeOutset(1, 1);
+    auto cropped = tileRect;
+    if (!cropped.intersect(clip))
+        return false;
+
+    if (cropped == tileRect)
+        return true;
+
+    const float widthScale = sourceRect.width() / tileRect.width();
+    const float heightScale = sourceRect.height() / tileRect.height();
+    sourceRect = SkRect::MakeLTRB(sourceRect.fLeft + (cropped.fLeft - tileRect.fLeft) * widthScale,
+        sourceRect.fTop + (cropped.fTop - tileRect.fTop) * heightScale,
+        sourceRect.fLeft + (cropped.fRight - tileRect.fLeft) * widthScale,
+        sourceRect.fTop + (cropped.fBottom - tileRect.fTop) * heightScale);
+    tileRect = cropped;
+    return true;
+}
+
 SkSamplingOptions SkiaBackingStore::samplingOptionsForMatrix(const SkMatrix& deviceMatrix) const
 {
     if (!deviceMatrix.isScaleTranslate())
@@ -120,6 +141,7 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint, con
     const auto ctm = canvas.getLocalToDeviceAs3x3();
     const auto sampling = samplingOptionsForMatrix(ctm);
     const auto constraint = requiresStrictSourceConstraint(sampling) ? SkCanvas::kStrict_SrcRectConstraint : SkCanvas::kFast_SrcRectConstraint;
+    const auto localClipBounds = canvas.getLocalClipBounds();
     auto tilePaint = paint;
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
@@ -135,8 +157,13 @@ void SkiaBackingStore::paintToCanvas(SkCanvas& canvas, const SkPaint& paint, con
         if (!image)
             continue;
 
+        SkRect tileRect = tile.rect();
+        SkRect sourceRect = tile.imageSourceRect();
+        if (!clipTileToBounds(localClipBounds, tileRect, sourceRect))
+            continue;
+
         tilePaint.setAntiAlias(paint.isAntiAlias() && allTileEdgesExposed(layerRect, tile.rect()));
-        canvas.drawImageRect(image, tile.imageSourceRect(), tile.rect(), sampling, &tilePaint, constraint);
+        canvas.drawImageRect(image, sourceRect, tileRect, sampling, &tilePaint, constraint);
     }
 }
 
@@ -163,6 +190,7 @@ void SkiaBackingStore::appendImageSetEntries(SkCanvas& canvas, const SkMatrix& c
     SkAutoCanvasRestore autoRestore(&canvas, true);
     canvas.concat(ctm);
 
+    const auto localClipBounds = canvas.getLocalClipBounds();
     for (auto& tile : m_tiles.values()) {
         if (canvas.quickReject(tile.rect()))
             continue;
@@ -173,8 +201,10 @@ void SkiaBackingStore::appendImageSetEntries(SkCanvas& canvas, const SkMatrix& c
 
         // FIXME: implement per edge antialiasing.
         const unsigned aaFlags = enableAntialias && allTileEdgesExposed(layerRect, tile.rect()) ? SkCanvas::kAll_QuadAAFlags : SkCanvas::kNone_QuadAAFlags;
-        const SkRect srcRectFull = tile.imageSourceRect();
-        const SkRect dstRectFull = tile.rect();
+        SkRect srcRectFull = tile.imageSourceRect();
+        SkRect dstRectFull = tile.rect();
+        if (!clipTileToBounds(localClipBounds, dstRectFull, srcRectFull))
+            continue;
 
         if (!damageRegion) {
             images.append(SkCanvas::ImageSetEntry(image, srcRectFull, dstRectFull, matrixIndex, opacity, aaFlags, false));
