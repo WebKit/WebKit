@@ -208,7 +208,7 @@ void HistoryController::restoreScrollPositionAndViewState()
 
 void HistoryController::updateBackForwardListForFragmentScroll(WasCreatedByJSWithoutUserInteraction wasCreatedByJSWithoutUserInteraction)
 {
-    m_frame->navigationScheduler().adjustPendingHistoryNavigationForNewBackForwardEntry();
+    protect(protect(m_frame)->navigationScheduler())->adjustPendingHistoryNavigationForNewBackForwardEntry();
     updateBackForwardListClippedAtTarget(false, wasCreatedByJSWithoutUserInteraction);
 }
 
@@ -626,7 +626,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
         }
         // The client redirect replaces the current history item.
         if (RefPtr page = m_frame->page()) {
-            auto scope = protect(page->historyItemClient())->ignoreChangesForScopeDuringRedirect(m_frame);
+            auto scope = protect(page->historyItemClient())->ignoreChangesForScopeDuringRedirect(protect(m_frame));
             updateCurrentItem();
         }
     } else {
@@ -1100,7 +1100,7 @@ void HistoryController::pushState(RefPtr<SerializedScriptValue>&& stateObject, c
 
     LOG(History, "HistoryController %p pushState: Adding top item %p, setting url of current item %p to %s, scrollRestoration is %s", this, topItem.ptr(), m_currentItem.get(), urlString.ascii().data(), topItem->shouldRestoreScrollPosition() ? "auto" : "manual");
 
-    m_frame->navigationScheduler().adjustPendingHistoryNavigationForNewBackForwardEntry();
+    protect(protect(m_frame)->navigationScheduler())->adjustPendingHistoryNavigationForNewBackForwardEntry();
     protect(page->backForward())->addItem(WTF::move(topItem));
 
     if (document && document->settings().navigationAPIEnabled())

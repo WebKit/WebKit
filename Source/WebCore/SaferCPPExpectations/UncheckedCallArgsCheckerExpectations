@@ -194,7 +194,6 @@ layout/integration/inline/LineSelection.h
 layout/layouttree/FormattingContextBoxIterator.h
 layout/layouttree/LayoutContainingBlockChainIterator.h
 layout/layouttree/LayoutTreeBuilder.cpp
-loader/ApplicationManifestLoader.cpp
 loader/DocumentLoader.cpp
 loader/DocumentWriter.cpp
 loader/FrameLoader.cpp

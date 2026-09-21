@@ -91,7 +91,7 @@ bool ApplicationManifestLoader::startLoading()
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     CachedResourceRequest request(WTF::move(resourceRequest), options);
 
-    auto cachedResource = protect(frame->document()->cachedResourceLoader())->requestApplicationManifest(WTF::move(request));
+    auto cachedResource = protect(protect(frame->document())->cachedResourceLoader())->requestApplicationManifest(WTF::move(request));
     if (cachedResource)
         m_resource = WTF::move(cachedResource.value());
     else

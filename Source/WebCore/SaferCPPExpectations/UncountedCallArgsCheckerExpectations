@@ -138,16 +138,6 @@ html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 inspector/InspectorShaderProgram.cpp
-loader/ApplicationManifestLoader.cpp
-loader/DocumentLoader.cpp
-loader/FrameLoader.cpp
-loader/HistoryController.cpp
-loader/MediaResourceLoader.cpp
-loader/NavigationScheduler.cpp
-loader/cache/CachedImage.cpp
-loader/cache/CachedImage.h
-loader/cache/CachedResourceLoader.cpp
-loader/cache/CachedResourceRequest.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 [ macOS ] page/ContextMenuController.cpp
 [ iOS ] page/DOMTimer.cpp

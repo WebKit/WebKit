@@ -431,7 +431,7 @@ public:
             return historyItem;
 
         // FIXME: heuristic to fix disambigaute-* tests, we should find something more exact.
-        bool backwards = entry->index() < protect(localFrame.window()->navigation())->currentEntry()->index();
+        bool backwards = entry->index() < protect(protect(protect(localFrame.window())->navigation())->currentEntry())->index();
 
         RefPtr page { localFrame.page() };
         auto items = protect(page->backForward())->allItems();
@@ -474,7 +474,7 @@ public:
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
 
         Ref rootFrame = localFrame->rootFrame();
-        RefPtr upcomingTraverseMethodTracker = protect(localFrame->window()->navigation())->upcomingTraverseMethodTracker(m_key);
+        RefPtr upcomingTraverseMethodTracker = protect(protect(localFrame->window())->navigation())->upcomingTraverseMethodTracker(m_key);
         page->goToItemForNavigationAPI(rootFrame, *historyItem, FrameLoadType::IndexedBackForward, *localFrame, upcomingTraverseMethodTracker.get());
 
         completionHandler(ScheduleHistoryNavigationResult::Completed);
@@ -824,7 +824,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     if (!shouldScheduleNavigation())
         return;
 
-    scheduleHistoryNavigation(m_frame.get(), steps);
+    scheduleHistoryNavigation(protect(m_frame), steps);
 }
 
 void NavigationScheduler::scheduleHistoryNavigation(Frame& originatingFrame, int steps)

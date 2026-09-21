@@ -213,7 +213,7 @@ void CachedImage::switchClientsToRevalidatedResource()
         CachedResource::switchClientsToRevalidatedResource();
         RefPtr revalidatedCachedImage = downcast<CachedImage>(*resourceToRevalidate());
         for (auto& request : switchContainerContextRequests)
-            revalidatedCachedImage->setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
+            revalidatedCachedImage->setContainerContextForClient(protect(request.key), request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
         return;
     }
 
@@ -369,7 +369,7 @@ void CachedImage::computeIntrinsicDimensions(float& intrinsicWidth, float& intri
 
 bool CachedImage::hasHDRContent() const
 {
-    return m_image && m_image->hasHDRContent();
+    return m_image && protect(m_image)->hasHDRContent();
 }
 
 void CachedImage::notifyObservers(const IntRect* changeRect)
@@ -413,7 +413,7 @@ inline void CachedImage::createImage()
         // Send queued container size requests.
         if (image->usesContainerSize()) {
             for (auto& request : m_pendingContainerContextRequests)
-                setContainerContextForClient(request.key, request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
+                setContainerContextForClient(protect(request.key), request.value.containerSize, request.value.containerZoom, request.value.imageURL, request.value.linkParameters);
         }
         m_pendingContainerContextRequests.clear();
         m_clientsWaitingForAsyncDecoding.clear();
