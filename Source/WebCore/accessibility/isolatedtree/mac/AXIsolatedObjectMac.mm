@@ -349,18 +349,20 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRangeForNSRange(const NSRange& ran
     if (range.location == NSNotFound)
         return { };
 
-    if (auto text = textContent()) {
+    // This fast path treats `range` as offsets into textContent(), so it includes the newlines
+    // emitted at block boundaries. A marker's offset indexes its object's text runs instead,
+    // which don't. Thus only take the fast path when the object actually holds all of the text,
+    // leaving anything spanning a block boundary to the walk below.
+    const auto* runs = textRuns();
+    if (auto text = runs ? textContent() : std::nullopt; text && runs->totalLength() == text->length()) {
         unsigned start = range.location;
         unsigned end = range.location + range.length;
         if (start < text->length() && end <= text->length())
             return { tree().treeID(), objectID(), start, end };
     }
 
-    if (std::optional markerRange = Accessibility::markerRangeFrom(range, *this)) {
-        if (range.length > markerRange->length())
-            return { };
+    if (std::optional markerRange = Accessibility::markerRangeFrom(range, *this))
         return WTF::move(*markerRange);
-    }
     return { };
 }
 
