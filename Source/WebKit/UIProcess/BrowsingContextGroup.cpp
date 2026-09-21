@@ -75,7 +75,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     if (!m_sharedProcessSites.contains(site)) {
         if (isMainFrame == IsMainFrame::Yes)
             return completionHandler(nullptr);
-        if (websitePolicies && !websitePolicies->allowSharedProcess())
+        if (websitePolicies && websitePolicies->prefersIsolatedProcess())
             return completionHandler(nullptr);
 
         // Placement is not revisited, so deciding early would strand a site promoted in an earlier

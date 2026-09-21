@@ -7141,7 +7141,7 @@ TEST(SiteIsolation, UnresponsiveProcessMousedown)
     // from one that recovered, so keep w3.org out of the shared process.
     navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if ([navigationAction.request.URL.host isEqualToString:@"w3.org"])
-            preferences._allowSharedProcess = NO;
+            preferences._prefersIsolatedProcess = YES;
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
 
@@ -9183,7 +9183,7 @@ TEST(SiteIsolation, SharedProcessWithWebsitePolicies)
     auto [webView, navigationDelegate] = siteIsolatedViewWithSharedProcess(server);
     navigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *navigationAction, WKWebpagePreferences *preferences, void (^decisionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         if ([navigationAction.request.URL.host isEqual:@"apple.com"] || [navigationAction.request.URL.path isEqual:@"alert_when_loaded"])
-            preferences._allowSharedProcess = NO;
+            preferences._prefersIsolatedProcess = YES;
         decisionHandler(WKNavigationActionPolicyAllow, preferences);
     };
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];

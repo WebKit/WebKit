@@ -817,14 +817,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return selectors.autorelease();
 }
 
-- (BOOL)_allowSharedProcess
+- (BOOL)_prefersIsolatedProcess
 {
-    return _websitePolicies->allowSharedProcess();
+    return _websitePolicies->prefersIsolatedProcess();
 }
 
-- (void)_setAllowSharedProcess:(BOOL)allowSharedProcess
+- (void)_setPrefersIsolatedProcess:(BOOL)prefersIsolatedProcess
 {
-    _websitePolicies->setAllowSharedProcess(allowSharedProcess);
+    _websitePolicies->setPrefersIsolatedProcess(prefersIsolatedProcess);
 }
 
 - (BOOL)_pushAndNotificationAPIEnabled
