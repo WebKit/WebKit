@@ -235,6 +235,10 @@ table.queue-grid tr.platform.macos-tahoe img.logo {
     content: url(../Images/Tahoe.png);
 }
 
+table.queue-grid tr.platform.macos-golden-gate img.logo {
+    content: url(../Images/GoldenGate.png);
+}
+
 table.queue-grid tr.platform.windows img.logo {
     content: url(../Images/Windows10.png);
 }

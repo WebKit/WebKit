@@ -26,6 +26,10 @@
 WebKitBuildbot = function()
 {
     const queueInfo = {
+        "Apple-Golden-Gate-Release-Build": {platform: Dashboard.Platform.macOSGoldenGate, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Golden-Gate-Debug-Build": {platform: Dashboard.Platform.macOSGoldenGate, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
+        "Apple-Golden-Gate-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSGoldenGate, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
+        "Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSGoldenGate, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
         "Apple-Tahoe-Release-Build": {platform: Dashboard.Platform.macOSTahoe, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Tahoe-Debug-Build": {platform: Dashboard.Platform.macOSTahoe, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Tahoe-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},

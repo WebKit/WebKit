@@ -1,17 +1,18 @@
 {
   "workers":     [
-                  { "name": "bot243", "platform": "*" },
-                  { "name": "bot244", "platform": "*" },
-                  { "name": "bot247", "platform": "*" },
-                  { "name": "bot248", "platform": "*" },
+                  { "name": "bot243", "platform": "mac-golden-gate" },
+                  { "name": "bot244", "platform": "mac-golden-gate" },
+                  { "name": "bot247", "platform": "mac-golden-gate" },
+                  { "name": "bot248", "platform": "mac-golden-gate" },
+                  { "name": "bot613", "platform": "mac-golden-gate" },
+                  { "name": "bot674", "platform": "mac-golden-gate" },
+                  { "name": "bot687", "platform": "mac-golden-gate" },
+                  { "name": "bot688", "platform": "mac-golden-gate" },
+
                   { "name": "bot611", "platform": "*" },
                   { "name": "bot612", "platform": "*" },
-                  { "name": "bot613", "platform": "*" },
-                  { "name": "bot674", "platform": "*" },
                   { "name": "bot684", "platform": "*" },
                   { "name": "bot686", "platform": "*" },
-                  { "name": "bot687", "platform": "*" },
-                  { "name": "bot688", "platform": "*" },
 
                   { "name": "bot183", "platform": "*" },
                   { "name": "bot234", "platform": "*" },
@@ -277,6 +278,30 @@
                 ],
 
   "builders":   [
+                  { "name": "Apple-Golden-Gate-Release-Build", "factory": "BuildFactory",
+                  "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                  "triggers": [
+                      "golden-gate-release-applesilicon-tests-wk2"
+                  ],
+                  "workernames": ["bot688", "bot687"]
+                  },
+                  { "name": "Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                  "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                  "additionalArguments": ["--no-retry-failures", "-2", "-1"],
+                  "workernames": ["bot243", "bot244"]
+                  },
+                  { "name": "Apple-Golden-Gate-Debug-Build", "factory": "BuildFactory",
+                  "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
+                  "triggers": [
+                      "golden-gate-debug-applesilicon-tests-wk2"
+                  ],
+                  "workernames": ["bot613", "bot674"]
+                  },
+                  { "name": "Apple-Golden-Gate-Debug-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
+                  "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
+                  "additionalArguments": ["--no-retry-failures", "-2", "-1"],
+                  "workernames": ["bot247", "bot248"]
+                  },
                   { "name": "Apple-Tahoe-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "triggers": [
@@ -775,6 +800,15 @@
                   },
                   { "type": "AnyBranchScheduler", "name": "webkitglib-v254", "change_filter": "webkitglib_v254_filter", "treeStableTimer": 45.0,
                     "builderNames": ["WPE-Linux-ARM64-bit-Release-v254-BuildAndTest", "WPE-Linux-RPi4-64bits-Mesa-Release-v254-Perf-Build"]
+                  },
+                  { "type": "PlatformSpecificScheduler", "platform": "mac-golden-gate", "branch": "main", "treeStableTimer": 45.0,
+                  "builderNames": ["Apple-Golden-Gate-Release-Build", "Apple-Golden-Gate-Debug-Build"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-release-applesilicon-tests-wk2",
+                  "builderNames": ["Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-debug-applesilicon-tests-wk2",
+                  "builderNames": ["Apple-Golden-Gate-Debug-AppleSilicon-WK2-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-tahoe", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "Apple-Tahoe-Safer-CPP-Checks", "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest"]

@@ -25,8 +25,9 @@
 
 Dashboard = {
     Platform: {
-        macOSTahoe: { name: "macos-tahoe", readableName: "macOS Tahoe", order: 1 },
-        macOSSequoia: { name: "macos-sequoia", readableName: "macOS Sequoia", order: 2 },
+        macOSGoldenGate: { name: "macos-golden-gate", readableName: "macOS Golden Gate", order: 1 },
+        macOSTahoe: { name: "macos-tahoe", readableName: "macOS Tahoe", order: 2 },
+        macOSSequoia: { name: "macos-sequoia", readableName: "macOS Sequoia", order: 3 },
         iOS26Simulator: { name: "ios-simulator-26", readableName: "iOS 26 Simulator", order: 13 },
         iOS26Device: { name: "ios-26", readableName: "iOS 26", order: 14 },
         visionOS26Simulator: { name: "visionos-simulator-26", readableName: "visionOS 26 Simulator", order: 15 },
