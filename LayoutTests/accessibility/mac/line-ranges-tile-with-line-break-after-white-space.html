@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+div { width: 360px; }
+
+/* The property under test. It breaks a line *after* its trailing space instead of before it, so
+   the space stays on the line (overflowing it) and the line's end position sits at the very offset
+   where the next line starts, differing from it only in affinity. That is what used to make the
+   walk below hand back a line one character too long. */
+#afterWhiteSpace { line-break: after-white-space; }
+
+/* Controls. Mail sets these on a message body alongside line-break: after-white-space, so they have
+   to be ruled out; they wrap at the same places and must keep tiling. */
+#breakWord { overflow-wrap: break-word; word-break: break-word; }
+#nbspMode { -webkit-nbsp-mode: space; }
+</style>
+</head>
+<body>
+
+<div id="plain">Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.</div>
+<div id="afterWhiteSpace">Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.</div>
+<div id="breakWord">Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.</div>
+<div id="nbspMode">Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.</div>
+
+<script>
+var output = `This test walks the soft-wrapped lines of a block the way a screen reader pans a braille display: AXLineTextMarkerRangeForTextMarker, then AXNextLineEndTextMarkerForTextMarker on the range's end marker. Consecutive lines must tile the text, with no character in two lines and none in no line.
+
+The four blocks hold the same text and wrap at the same places; only their line-breaking properties differ, and every one of them must produce the same lines. line-break: after-white-space is the one that used to differ: because it keeps a line's overflowing trailing space, the end-of-line position it yields is the soft wrap boundary itself, where the line's end and the next line's start share an offset and differ only in affinity. In every other mode the end-of-line position stops before the trailing space, strictly inside the line, and the wrap boundary never reaches AXLineTextMarkerRangeForTextMarker at all.
+`;
+
+function index(webArea, marker) {
+    return marker ? webArea.indexForTextMarker(marker) : -1;
+}
+
+// Walks the lines of |id| and returns them as [start, end) index pairs relative to the start of the
+// block, along with the string of each line.
+function walkLines(webArea, id) {
+    let element = accessibilityController.accessibleElementById(id);
+    let elementRange = webArea.textMarkerRangeForElement(element);
+    let base = index(webArea, webArea.startTextMarkerForTextMarkerRange(elementRange));
+    let length = index(webArea, webArea.endTextMarkerForTextMarkerRange(elementRange)) - base;
+
+    let lines = [];
+    let marker = webArea.startTextMarkerForTextMarkerRange(elementRange);
+    while (marker && lines.length < 10) {
+        let lineRange = webArea.lineTextMarkerRangeForTextMarker(marker);
+        if (!lineRange)
+            break;
+        let endMarker = webArea.endTextMarkerForTextMarkerRange(lineRange);
+        let end = index(webArea, endMarker) - base;
+        let start = index(webArea, webArea.startTextMarkerForTextMarkerRange(lineRange)) - base;
+        // The last line of a block runs up to whatever follows the block, so clamp it to the block.
+        let clampedEnd = Math.min(end, length);
+        lines.push({
+            start,
+            end: clampedEnd,
+            string: webArea.stringForTextMarkerRange(lineRange).substring(0, clampedEnd - start),
+        });
+        if (end >= length)
+            break;
+        marker = webArea.nextLineEndTextMarkerForTextMarker(endMarker);
+    }
+    return { lines, length };
+}
+
+function dumpLines(webArea, id) {
+    let { lines, length } = walkLines(webArea, id);
+    let result = `\n#${id}, ${lines.length} lines:\n`;
+    let tiles = lines[0].start == 0 && lines.at(-1).end == length;
+    for (let i = 0; i < lines.length; i++) {
+        result += `  [${lines[i].start}, ${lines[i].end}) '${lines[i].string}'\n`;
+        if (i && lines[i - 1].end != lines[i].start)
+            tiles = false;
+    }
+    result += `  Lines tile the text: ${tiles ? "PASS" : "FAIL"}\n`;
+    return result;
+}
+
+if (window.accessibilityController) {
+    let webArea = accessibilityController.rootElement.childAtIndex(0);
+    for (let id of ["plain", "afterWhiteSpace", "breakWord", "nbspMode"])
+        output += dumpLines(webArea, id);
+
+    debug(output);
+}
+</script>
+</body>
+</html>
