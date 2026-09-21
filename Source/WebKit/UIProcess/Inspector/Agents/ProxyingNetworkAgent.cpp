@@ -483,6 +483,8 @@ CommandResult<Ref<Protocol::Runtime::RemoteObject>> ProxyingNetworkAgent::resolv
     return makeUnexpected("Not yet implemented"_s);
 }
 
+// FIXME: Forward interception to the WebContent processes. https://bugs.webkit.org/show_bug.cgi?id=324383
+
 CommandResult<void> ProxyingNetworkAgent::setInterceptionEnabled(bool)
 {
     return { };
@@ -498,29 +500,37 @@ CommandResult<void> ProxyingNetworkAgent::removeInterception(const String&, Prot
     return { };
 }
 
-CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage)
+CommandResult<void> ProxyingNetworkAgent::interceptContinue(const Protocol::Network::RequestId&, Protocol::Network::NetworkStage networkStage)
 {
+    switch (networkStage) {
+    case Protocol::Network::NetworkStage::Request:
+        return makeUnexpected("Missing pending intercept request for given requestId"_s);
+    case Protocol::Network::NetworkStage::Response:
+        return makeUnexpected("Missing pending intercept response for given requestId"_s);
+    }
+
+    ASSERT_NOT_REACHED();
     return { };
 }
 
 CommandResult<void> ProxyingNetworkAgent::interceptWithRequest(const Protocol::Network::RequestId&, const String&, const String&, RefPtr<JSON::Object>&&, const String&)
 {
-    return { };
+    return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
 
 CommandResult<void> ProxyingNetworkAgent::interceptWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, std::optional<int>&&, const String&, RefPtr<JSON::Object>&&)
 {
-    return { };
+    return makeUnexpected("Missing pending intercept response for given requestId"_s);
 }
 
 CommandResult<void> ProxyingNetworkAgent::interceptRequestWithResponse(const Protocol::Network::RequestId&, const String&, bool, const String&, int, const String&, Ref<JSON::Object>&&)
 {
-    return { };
+    return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
 
 CommandResult<void> ProxyingNetworkAgent::interceptRequestWithError(const Protocol::Network::RequestId&, Protocol::Network::ResourceErrorType)
 {
-    return { };
+    return makeUnexpected("Missing pending intercept request for given requestId"_s);
 }
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
