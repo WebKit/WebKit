@@ -5168,6 +5168,7 @@ JSScreenOrientation.cpp
 JSScriptProcessorNode.cpp
 JSScrollAxis.cpp
 JSScrollBehavior.cpp
+JSScrollIntoViewContainer.cpp
 JSScrollIntoViewOptions.cpp
 JSScrollLogicalPosition.cpp
 JSScrollOptions.cpp

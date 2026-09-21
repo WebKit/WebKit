@@ -3539,6 +3539,7 @@
 		83C45B8E1DC2B68A008871BA /* ValidationBubble.h in Headers */ = {isa = PBXBuildFile; fileRef = 83C45B8D1DC2B67C008871BA /* ValidationBubble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006F9C86 /* ScrollLogicalPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006F9C97 /* ScrollIntoViewOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AA01C0DE01C0DE01C0DE0003 /* ScrollIntoViewContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA01C0DE01C0DE01C0DE0001 /* ScrollIntoViewContainer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006FAC86 /* ScrollBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356424 /* ScrollBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006FAC97 /* ScrollOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356435 /* ScrollOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83C5795D1DA5C301006FACA8 /* ScrollToOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 8350C3E71DA59B6200356446 /* ScrollToOptions.h */; };
@@ -15723,6 +15724,8 @@
 		835051A324F573AF009911D7 /* IIRFilterOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = IIRFilterOptions.idl; sourceTree = "<group>"; };
 		8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollLogicalPosition.h; sourceTree = "<group>"; };
 		8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollIntoViewOptions.h; sourceTree = "<group>"; };
+		AA01C0DE01C0DE01C0DE0001 /* ScrollIntoViewContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollIntoViewContainer.h; sourceTree = "<group>"; };
+		AA01C0DE01C0DE01C0DE0002 /* ScrollIntoViewContainer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ScrollIntoViewContainer.idl; sourceTree = "<group>"; };
 		8350C3E71DA59B6200356424 /* ScrollBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.h; sourceTree = "<group>"; };
 		8350C3E71DA59B6200356434 /* ScrollBehavior.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollBehavior.cpp; sourceTree = "<group>"; };
 		8350C3E71DA59B6200356435 /* ScrollOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollOptions.h; sourceTree = "<group>"; };
@@ -31714,6 +31717,8 @@
 				8350C3E71DA59B6200356434 /* ScrollBehavior.cpp */,
 				8350C3E71DA59B6200356424 /* ScrollBehavior.h */,
 				8350C3E81DA59B6200356424 /* ScrollBehavior.idl */,
+				AA01C0DE01C0DE01C0DE0001 /* ScrollIntoViewContainer.h */,
+				AA01C0DE01C0DE01C0DE0002 /* ScrollIntoViewContainer.idl */,
 				8350C3E71DA59B6200355435 /* ScrollIntoViewOptions.h */,
 				8350C3E81DA59B6200355435 /* ScrollIntoViewOptions.idl */,
 				8350C3E71DA59B6200355424 /* ScrollLogicalPosition.h */,
@@ -49032,6 +49037,7 @@
 				5B92C42D2716E28A00A37CC0 /* ScrollingTreeStickyNode.h in Headers */,
 				0F94B6492208FE3B00157014 /* ScrollingTreeStickyNodeCocoa.h in Headers */,
 				F4F0E2772DBC6CE400E2F385 /* ScrollingTreeViewportConstrainedNode.h in Headers */,
+				AA01C0DE01C0DE01C0DE0003 /* ScrollIntoViewContainer.h in Headers */,
 				83C5795D1DA5C301006F9C97 /* ScrollIntoViewOptions.h in Headers */,
 				83C5795D1DA5C301006F9C86 /* ScrollLogicalPosition.h in Headers */,
 				83C5795D1DA5C301006FAC97 /* ScrollOptions.h in Headers */,

@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <WebCore/ScrollIntoViewContainer.h>
 #include <WebCore/ScrollLogicalPosition.h>
 #include <WebCore/ScrollOptions.h>
 
@@ -30,6 +31,7 @@ struct ScrollIntoViewOptions : ScrollOptions {
     // and is eligible to be adjusted to honor the target's scroll-snap-align.
     std::optional<ScrollLogicalPosition> blockPosition;
     std::optional<ScrollLogicalPosition> inlinePosition;
+    ScrollIntoViewContainer container { ScrollIntoViewContainer::All };
 };
 
 } // namespace WebCore
