@@ -442,7 +442,7 @@ protected:
     void compute()
     {
         uint64_t denseMatrixBits = static_cast<uint64_t>(m_cfg.numNodes()) * Adapter::numIndices();
-        constexpr uint64_t denseMatrixBitBudget = 32 * 1024 * 1024; // 4 MB per live-set matrix.
+        constexpr uint64_t denseMatrixBitBudget = 64 * 1024 * 1024; // 8 MB per live-set matrix.
         bool useSparse = denseMatrixBits > denseMatrixBitBudget;
 #if ASSERT_ENABLED
         // Force the sparse storage on roughly half of the otherwise-dense functions in debug builds so
