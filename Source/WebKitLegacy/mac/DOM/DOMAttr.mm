@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::Attr*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::Attr*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMAttr
 
@@ -93,7 +93,7 @@ WebCore::Attr* core(DOMAttr *wrapper)
     return wrapper ? reinterpret_cast<WebCore::Attr*>(wrapper->_internal) : 0;
 }
 
-DOMAttr *kit(WebCore::Attr* value)
+SUPPRESS_NODELETE DOMAttr *kit(WebCore::Attr* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMAttr*>(kit(static_cast<WebCore::Node*>(value)));

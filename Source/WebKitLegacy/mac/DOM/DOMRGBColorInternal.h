@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMRGBColor.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DeprecatedCSSOMRGBColor;
 }
 
-DOMRGBColor *kit(WebCore::DeprecatedCSSOMRGBColor*);
+DOMRGBColor * NODELETE kit(WebCore::DeprecatedCSSOMRGBColor*);

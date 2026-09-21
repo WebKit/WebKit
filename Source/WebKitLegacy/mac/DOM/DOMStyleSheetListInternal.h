@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMStyleSheetList.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class StyleSheetList;
 }
 
-DOMStyleSheetList *kit(WebCore::StyleSheetList*);
+DOMStyleSheetList * NODELETE kit(WebCore::StyleSheetList*);

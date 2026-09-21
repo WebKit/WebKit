@@ -59,7 +59,7 @@ WebCore::ProcessingInstruction* core(DOMProcessingInstruction *wrapper)
     return wrapper ? reinterpret_cast<WebCore::ProcessingInstruction*>(wrapper->_internal) : 0;
 }
 
-DOMProcessingInstruction *kit(WebCore::ProcessingInstruction* value)
+SUPPRESS_NODELETE DOMProcessingInstruction *kit(WebCore::ProcessingInstruction* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMProcessingInstruction*>(kit(static_cast<WebCore::Node*>(value)));

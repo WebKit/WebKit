@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMDocumentType.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DocumentType;
 }
 
 WebCore::DocumentType* core(DOMDocumentType *);
-DOMDocumentType *kit(WebCore::DocumentType*);
+DOMDocumentType * NODELETE kit(WebCore::DocumentType*);

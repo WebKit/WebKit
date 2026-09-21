@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLCollection.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLCollection;
 }
 
-DOMHTMLCollection *kit(WebCore::HTMLCollection*);
+DOMHTMLCollection * NODELETE kit(WebCore::HTMLCollection*);
 Class kitClass(WebCore::HTMLCollection*);

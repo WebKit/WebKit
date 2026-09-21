@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::Event*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::Event*>(_internal))
 
 @implementation DOMEvent
 
@@ -182,7 +182,7 @@ WebCore::Event* core(DOMEvent *wrapper)
     return wrapper ? reinterpret_cast<WebCore::Event*>(wrapper->_internal) : 0;
 }
 
-DOMEvent *kit(WebCore::Event* value)
+SUPPRESS_NODELETE DOMEvent *kit(WebCore::Event* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

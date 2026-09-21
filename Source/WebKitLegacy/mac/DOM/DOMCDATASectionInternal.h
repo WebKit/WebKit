@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMCDATASection.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class CDATASection;
 }
 
-DOMCDATASection *kit(WebCore::CDATASection*);
+DOMCDATASection * NODELETE kit(WebCore::CDATASection*);

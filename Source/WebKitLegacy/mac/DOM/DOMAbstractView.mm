@@ -78,7 +78,7 @@ WebCore::LocalDOMWindow* core(DOMAbstractView *wrapper)
     return reinterpret_cast<WebCore::LocalFrame*>(wrapper->_internal)->document()->window();
 }
 
-DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
+SUPPRESS_NODELETE DOMAbstractView *kit(WebCore::LocalDOMWindow* value)
 {
     WebCoreThreadViolationCheckRoundOne();
 
@@ -103,7 +103,7 @@ DOMAbstractView *kit(WebCore::DOMWindow* value)
     return kit(downcast<WebCore::LocalDOMWindow>(value));
 }
 
-DOMAbstractView *kit(WebCore::WindowProxy* windowProxy)
+SUPPRESS_NODELETE DOMAbstractView *kit(WebCore::WindowProxy* windowProxy)
 {
     if (!windowProxy)
         return nil;

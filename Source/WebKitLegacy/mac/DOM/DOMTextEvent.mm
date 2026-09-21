@@ -37,7 +37,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::TextEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL protect(static_cast<WebCore::TextEvent*>(reinterpret_cast<WebCore::Event*>(_internal)))
 
 @implementation DOMTextEvent
 

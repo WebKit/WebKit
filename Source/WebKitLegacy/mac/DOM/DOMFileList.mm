@@ -70,7 +70,7 @@ WebCore::FileList* core(DOMFileList *wrapper)
     return wrapper ? reinterpret_cast<WebCore::FileList*>(wrapper->_internal) : 0;
 }
 
-DOMFileList *kit(WebCore::FileList* value)
+SUPPRESS_NODELETE DOMFileList *kit(WebCore::FileList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

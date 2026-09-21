@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::Blob*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::Blob*>(_internal))
 
 @implementation DOMBlob
 
@@ -64,7 +64,7 @@
 
 @end
 
-DOMBlob *kit(WebCore::Blob* value)
+SUPPRESS_NODELETE DOMBlob *kit(WebCore::Blob* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

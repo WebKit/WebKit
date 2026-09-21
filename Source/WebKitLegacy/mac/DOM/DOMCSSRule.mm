@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::CSSRule*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::CSSRule*>(_internal))
 
 @implementation DOMCSSRule
 
@@ -85,7 +85,7 @@
 
 @end
 
-DOMCSSRule *kit(WebCore::CSSRule* value)
+SUPPRESS_NODELETE DOMCSSRule *kit(WebCore::CSSRule* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

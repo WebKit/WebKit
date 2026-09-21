@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLElement
 
@@ -228,7 +228,7 @@
 - (NSString *)titleDisplayString
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::displayString(IMPL->title(), core(self)).createNSString().autorelease();
+    return WebCore::displayString(IMPL->title(), protect(core(self))).createNSString().autorelease();
 }
 
 - (DOMElement *)insertAdjacentElement:(NSString *)where element:(DOMElement *)element
@@ -236,7 +236,7 @@
     WebCore::JSMainThreadNullState state;
     if (!element)
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->insertAdjacentElement(where, *core(element))));
+    return kit(raiseOnDOMError(IMPL->insertAdjacentElement(where, protect(*core(element)))));
 }
 
 - (void)insertAdjacentHTML:(NSString *)where html:(NSString *)html
@@ -300,7 +300,7 @@ WebCore::HTMLElement* core(DOMHTMLElement *wrapper)
     return wrapper ? reinterpret_cast<WebCore::HTMLElement*>(wrapper->_internal) : 0;
 }
 
-DOMHTMLElement *kit(WebCore::HTMLElement* value)
+SUPPRESS_NODELETE DOMHTMLElement *kit(WebCore::HTMLElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLElement*>(kit(static_cast<WebCore::Node*>(value)));

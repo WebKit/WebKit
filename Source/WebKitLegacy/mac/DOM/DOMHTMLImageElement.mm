@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLImageElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLImageElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLImageElement
 
@@ -273,7 +273,7 @@
 - (NSString *)altDisplayString
 {
     WebCore::JSMainThreadNullState state;
-    return WebCore::displayString(IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::altAttr), core(self)).createNSString().autorelease();
+    return WebCore::displayString(IMPL->attributeWithoutSynchronization(WebCore::HTMLNames::altAttr), protect(core(self))).createNSString().autorelease();
 }
 
 - (NSURL *)absoluteImageURL

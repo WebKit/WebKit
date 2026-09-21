@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMComment.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class Comment;
 }
 
-DOMComment *kit(WebCore::Comment*);
+DOMComment * NODELETE kit(WebCore::Comment*);

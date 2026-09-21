@@ -34,7 +34,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::Text*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::Text*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMText
 
@@ -53,13 +53,13 @@
 - (DOMText *)replaceWholeText:(NSString *)content
 {
     WebCore::JSMainThreadNullState state;
-    RefPtr { IMPL }->replaceWholeText(content);
+    IMPL->replaceWholeText(content);
     return self;
 }
 
 @end
 
-DOMText *kit(WebCore::Text* value)
+SUPPRESS_NODELETE DOMText *kit(WebCore::Text* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMText*>(kit(static_cast<WebCore::Node*>(value)));

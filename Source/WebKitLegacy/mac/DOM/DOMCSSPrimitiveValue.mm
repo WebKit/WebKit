@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::DeprecatedCSSOMPrimitiveValue*>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal))
+#define IMPL protect(static_cast<WebCore::DeprecatedCSSOMPrimitiveValue*>(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal)))
 
 @implementation DOMCSSPrimitiveValue
 
@@ -109,7 +109,7 @@
 
 @end
 
-DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue* value)
+SUPPRESS_NODELETE DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMCSSPrimitiveValue*>(kit(static_cast<WebCore::DeprecatedCSSOMValue*>(value)));

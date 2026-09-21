@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMFileList.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class FileList;
 }
 
 WebCore::FileList* core(DOMFileList *);
-DOMFileList *kit(WebCore::FileList*);
+DOMFileList * NODELETE kit(WebCore::FileList*);

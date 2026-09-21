@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMHTMLOptionsCollection.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLOptionsCollection;
 }
 
-DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection*);
+DOMHTMLOptionsCollection * NODELETE kit(WebCore::HTMLOptionsCollection*);

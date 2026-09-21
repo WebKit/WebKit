@@ -39,7 +39,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::StyleSheetList*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::StyleSheetList*>(_internal))
 
 @implementation DOMStyleSheetList
 
@@ -67,7 +67,7 @@
 
 @end
 
-DOMStyleSheetList *kit(WebCore::StyleSheetList* value)
+SUPPRESS_NODELETE DOMStyleSheetList *kit(WebCore::StyleSheetList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

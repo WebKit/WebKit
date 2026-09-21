@@ -16,7 +16,6 @@ mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMNamedNodeMap.mm
 mac/DOM/DOMObject.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
-mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/History/HistoryPropertyList.mm
 mac/History/WebBackForwardList.mm

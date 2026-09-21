@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMStyleSheet.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class StyleSheet;
 }
 
-DOMStyleSheet *kit(WebCore::StyleSheet*);
+DOMStyleSheet * NODELETE kit(WebCore::StyleSheet*);
 Class kitClass(WebCore::StyleSheet*);

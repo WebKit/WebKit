@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::CSSStyleDeclaration*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::CSSStyleDeclaration*>(_internal))
 
 @implementation DOMCSSStyleDeclaration
 
@@ -143,7 +143,7 @@ WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *wrapper)
     return wrapper ? reinterpret_cast<WebCore::CSSStyleDeclaration*>(wrapper->_internal) : 0;
 }
 
-DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* value)
+SUPPRESS_NODELETE DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

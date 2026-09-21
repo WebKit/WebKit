@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLTableCaptionElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLTableCaptionElement;
 }
 
 WebCore::HTMLTableCaptionElement* core(DOMHTMLTableCaptionElement *);
-DOMHTMLTableCaptionElement *kit(WebCore::HTMLTableCaptionElement*);
+DOMHTMLTableCaptionElement * NODELETE kit(WebCore::HTMLTableCaptionElement*);

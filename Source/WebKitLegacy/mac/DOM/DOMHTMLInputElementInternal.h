@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLInputElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLInputElement;
 }
 
 WebCore::HTMLInputElement* core(DOMHTMLInputElement *);
-DOMHTMLInputElement *kit(WebCore::HTMLInputElement*);
+DOMHTMLInputElement * NODELETE kit(WebCore::HTMLInputElement*);

@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMXPathExpression.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class XPathExpression;
 }
 
-DOMXPathExpression *kit(WebCore::XPathExpression*);
+DOMXPathExpression * NODELETE kit(WebCore::XPathExpression*);

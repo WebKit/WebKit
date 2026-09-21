@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMRect.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DeprecatedCSSOMRect;
 }
 
-DOMRect *kit(WebCore::DeprecatedCSSOMRect*);
+DOMRect * NODELETE kit(WebCore::DeprecatedCSSOMRect*);

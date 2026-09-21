@@ -39,7 +39,7 @@
 
 @end
 
-DOMComment *kit(WebCore::Comment* value)
+SUPPRESS_NODELETE DOMComment *kit(WebCore::Comment* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMComment*>(kit(static_cast<WebCore::Node*>(value)));

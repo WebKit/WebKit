@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::MutationEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL protect(static_cast<WebCore::MutationEvent*>(reinterpret_cast<WebCore::Event*>(_internal)))
 
 @implementation DOMMutationEvent
 
@@ -73,7 +73,7 @@
 - (void)initMutationEvent:(NSString *)type canBubble:(BOOL)canBubble cancelable:(BOOL)cancelable relatedNode:(DOMNode *)inRelatedNode prevValue:(NSString *)inPrevValue newValue:(NSString *)inNewValue attrName:(NSString *)inAttrName attrChange:(unsigned short)inAttrChange
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->initMutationEvent(type, canBubble, cancelable, core(inRelatedNode), inPrevValue, inNewValue, inAttrName, inAttrChange);
+    IMPL->initMutationEvent(type, canBubble, cancelable, protect(core(inRelatedNode)), inPrevValue, inNewValue, inAttrName, inAttrChange);
 }
 
 @end

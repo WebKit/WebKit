@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::HTMLCollection*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::HTMLCollection*>(_internal))
 
 @implementation DOMHTMLCollection
 
@@ -82,7 +82,7 @@
 
 @end
 
-DOMHTMLCollection *kit(WebCore::HTMLCollection* value)
+SUPPRESS_NODELETE DOMHTMLCollection *kit(WebCore::HTMLCollection* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

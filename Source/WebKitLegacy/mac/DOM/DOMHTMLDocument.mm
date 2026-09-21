@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLDocument*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLDocument*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLDocument
 
@@ -207,7 +207,7 @@ WebCore::HTMLDocument* core(DOMHTMLDocument *wrapper)
     return wrapper ? reinterpret_cast<WebCore::HTMLDocument*>(wrapper->_internal) : 0;
 }
 
-DOMHTMLDocument *kit(WebCore::HTMLDocument* value)
+SUPPRESS_NODELETE DOMHTMLDocument *kit(WebCore::HTMLDocument* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLDocument*>(kit(static_cast<WebCore::Node*>(value)));

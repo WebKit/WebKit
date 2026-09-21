@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLOptionElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLOptionElement;
 }
 
 WebCore::HTMLOptionElement* core(DOMHTMLOptionElement *);
-DOMHTMLOptionElement *kit(WebCore::HTMLOptionElement*);
+DOMHTMLOptionElement * NODELETE kit(WebCore::HTMLOptionElement*);

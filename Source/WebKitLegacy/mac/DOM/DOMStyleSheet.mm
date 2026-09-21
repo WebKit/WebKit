@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::StyleSheet*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::StyleSheet*>(_internal))
 
 @implementation DOMStyleSheet
 
@@ -105,7 +105,7 @@
 
 @end
 
-DOMStyleSheet *kit(WebCore::StyleSheet* value)
+SUPPRESS_NODELETE DOMStyleSheet *kit(WebCore::StyleSheet* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMProcessingInstruction.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class ProcessingInstruction;
 }
 
 WebCore::ProcessingInstruction* core(DOMProcessingInstruction *);
-DOMProcessingInstruction *kit(WebCore::ProcessingInstruction*);
+DOMProcessingInstruction * NODELETE kit(WebCore::ProcessingInstruction*);

@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMHTMLFormElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLFormElement;
 }
 
-DOMHTMLFormElement *kit(WebCore::HTMLFormElement*);
+DOMHTMLFormElement * NODELETE kit(WebCore::HTMLFormElement*);

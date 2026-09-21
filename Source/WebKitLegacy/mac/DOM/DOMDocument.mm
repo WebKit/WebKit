@@ -92,7 +92,7 @@
 #import <WebCore/XPathResult.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::Document*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::Document*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMDocument
 
@@ -511,7 +511,7 @@
     WebCore::JSMainThreadNullState state;
     if (!importedNode)
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->importNode(*core(importedNode), static_cast<bool>(deep))).ptr());
+    return kit(raiseOnDOMError(IMPL->importNode(protect(*core(importedNode)), static_cast<bool>(deep))).ptr());
 }
 
 - (DOMElement *)createElementNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName
@@ -539,7 +539,7 @@
     WebCore::JSMainThreadNullState state;
     if (!source)
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->adoptNode(*core(source))).ptr());
+    return kit(raiseOnDOMError(IMPL->adoptNode(protect(*core(source)))).ptr());
 }
 
 - (DOMEvent *)createEvent:(NSString *)eventType
@@ -562,7 +562,7 @@
     RefPtr<WebCore::NodeFilter> nativeNodeFilter;
     if (filter)
         nativeNodeFilter = WebCore::NativeNodeFilter::create(IMPL, WebCore::ObjCNodeFilterCondition::create(filter));
-    return kit(WTF::getPtr(IMPL->createNodeIterator(*core(root), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
+    return kit(WTF::getPtr(IMPL->createNodeIterator(protect(*core(root)), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
 }
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root whatToShow:(unsigned)whatToShow filter:(id <DOMNodeFilter>)filter expandEntityReferences:(BOOL)expandEntityReferences
@@ -573,7 +573,7 @@
     RefPtr<WebCore::NodeFilter> nativeNodeFilter;
     if (filter)
         nativeNodeFilter = WebCore::NativeNodeFilter::create(IMPL, WebCore::ObjCNodeFilterCondition::create(filter));
-    return kit(WTF::getPtr(IMPL->createTreeWalker(*core(root), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
+    return kit(WTF::getPtr(IMPL->createTreeWalker(protect(*core(root)), whatToShow, WTF::getPtr(nativeNodeFilter), expandEntityReferences)));
 }
 
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -602,7 +602,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     if (!nodeResolver)
         return nullptr;
 
-    return kit(WTF::getPtr(IMPL->createNSResolver(*core(nodeResolver))));
+    return kit(WTF::getPtr(IMPL->createNSResolver(protect(*core(nodeResolver)))));
 }
 
 - (DOMXPathResult *)evaluate:(NSString *)expression contextNode:(DOMNode *)contextNode resolver:(id <DOMXPathNSResolver>)resolver type:(unsigned short)type inResult:(DOMXPathResult *)inResult
@@ -611,7 +611,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->evaluate(expression, *core(contextNode), wrap(resolver), type, core(inResult))).ptr());
+    return kit(raiseOnDOMError(IMPL->evaluate(expression, protect(*core(contextNode)), wrap(resolver), type, protect(core(inResult)))).ptr());
 }
 
 - (BOOL)execCommand:(NSString *)command userInterface:(BOOL)userInterface value:(NSString *)value
@@ -698,7 +698,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     auto* dv = IMPL->window();
     if (!dv)
         return nil;
-    return kit(WTF::getPtr(dv->getComputedStyle(*core(element), pseudoElement)));
+    return kit(WTF::getPtr(dv->getComputedStyle(protect(*core(element)), pseudoElement)));
 }
 
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -712,7 +712,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     auto* dv = IMPL->window();
     if (!dv)
         return nil;
-    return kit(WTF::getPtr(dv->getMatchedCSSRules(core(element), pseudoElement, authorOnly)));
+    return kit(WTF::getPtr(dv->getMatchedCSSRules(protect(core(element)), pseudoElement, authorOnly)));
 }
 
 - (DOMNodeList *)getElementsByClassName:(NSString *)classNames
@@ -827,7 +827,7 @@ WebCore::Document* core(DOMDocument *wrapper)
     return wrapper ? reinterpret_cast<WebCore::Document*>(wrapper->_internal) : 0;
 }
 
-DOMDocument *kit(WebCore::Document* value)
+SUPPRESS_NODELETE DOMDocument *kit(WebCore::Document* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMDocument*>(kit(static_cast<WebCore::Node*>(value)));

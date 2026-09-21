@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMText.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class Text;
 }
 
-DOMText *kit(WebCore::Text*);
+DOMText * NODELETE kit(WebCore::Text*);

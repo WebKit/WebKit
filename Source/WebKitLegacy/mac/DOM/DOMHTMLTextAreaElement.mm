@@ -35,18 +35,23 @@
 #import <WebCore/NodeList.h>
 #import <WebCore/ThreadCheck.h>
 
-static inline WebCore::HTMLTextAreaElement& unwrap(DOMHTMLTextAreaElement& wrapper)
+static inline WebCore::HTMLTextAreaElement& rawUnwrap(DOMHTMLTextAreaElement& wrapper)
 {
     ASSERT(wrapper._internal);
     return downcast<WebCore::HTMLTextAreaElement>(reinterpret_cast<WebCore::Node&>(*wrapper._internal));
 }
 
-WebCore::HTMLTextAreaElement* core(DOMHTMLTextAreaElement *wrapper)
+static inline Ref<WebCore::HTMLTextAreaElement> unwrap(DOMHTMLTextAreaElement& wrapper)
 {
-    return wrapper ? &unwrap(*wrapper) : nullptr;
+    return protect(rawUnwrap(wrapper));
 }
 
-DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* value)
+WebCore::HTMLTextAreaElement* core(DOMHTMLTextAreaElement *wrapper)
+{
+    return wrapper ? &rawUnwrap(*wrapper) : nullptr;
+}
+
+SUPPRESS_NODELETE DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLTextAreaElement*>(kit(static_cast<WebCore::Node*>(value)));
@@ -57,283 +62,283 @@ DOMHTMLTextAreaElement *kit(WebCore::HTMLTextAreaElement* value)
 - (BOOL)autofocus
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasAttributeWithoutSynchronization(WebCore::HTMLNames::autofocusAttr);
+    return unwrap(*self)->hasAttributeWithoutSynchronization(WebCore::HTMLNames::autofocusAttr);
 }
 
 - (void)setAutofocus:(BOOL)newAutofocus
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setBooleanAttribute(WebCore::HTMLNames::autofocusAttr, newAutofocus);
+    unwrap(*self)->setBooleanAttribute(WebCore::HTMLNames::autofocusAttr, newAutofocus);
 }
 
 - (NSString *)dirName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).getAttribute(WebCore::HTMLNames::dirnameAttr).createNSString().autorelease();
+    return unwrap(*self)->getAttribute(WebCore::HTMLNames::dirnameAttr).createNSString().autorelease();
 }
 
 - (void)setDirName:(NSString *)newDirName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, newDirName);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::dirnameAttr, newDirName);
 }
 
 - (BOOL)disabled
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr);
+    return unwrap(*self)->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr);
 }
 
 - (void)setDisabled:(BOOL)newDisabled
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setBooleanAttribute(WebCore::HTMLNames::disabledAttr, newDisabled);
+    unwrap(*self)->setBooleanAttribute(WebCore::HTMLNames::disabledAttr, newDisabled);
 }
 
 - (DOMHTMLFormElement *)form
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).form());
+    return kit(unwrap(*self)->form());
 }
 
 - (int)maxLength
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).maxLength();
+    return unwrap(*self)->maxLength();
 }
 
 - (void)setMaxLength:(int)newMaxLength
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setMaxLength(newMaxLength));
+    raiseOnDOMError(unwrap(*self)->setMaxLength(newMaxLength));
 }
 
 - (NSString *)name
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).getNameAttribute().createNSString().autorelease();
+    return unwrap(*self)->getNameAttribute().createNSString().autorelease();
 }
 
 - (void)setName:(NSString *)newName
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::nameAttr, newName);
 }
 
 - (NSString *)placeholder
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).getAttribute(WebCore::HTMLNames::placeholderAttr).createNSString().autorelease();
+    return unwrap(*self)->getAttribute(WebCore::HTMLNames::placeholderAttr).createNSString().autorelease();
 }
 
 - (void)setPlaceholder:(NSString *)newPlaceholder
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, newPlaceholder);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::placeholderAttr, newPlaceholder);
 }
 
 - (BOOL)readOnly
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasAttributeWithoutSynchronization(WebCore::HTMLNames::readonlyAttr);
+    return unwrap(*self)->hasAttributeWithoutSynchronization(WebCore::HTMLNames::readonlyAttr);
 }
 
 - (void)setReadOnly:(BOOL)newReadOnly
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setBooleanAttribute(WebCore::HTMLNames::readonlyAttr, newReadOnly);
+    unwrap(*self)->setBooleanAttribute(WebCore::HTMLNames::readonlyAttr, newReadOnly);
 }
 
 - (BOOL)required
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
+    return unwrap(*self)->hasAttributeWithoutSynchronization(WebCore::HTMLNames::requiredAttr);
 }
 
 - (void)setRequired:(BOOL)newRequired
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setBooleanAttribute(WebCore::HTMLNames::requiredAttr, newRequired);
+    unwrap(*self)->setBooleanAttribute(WebCore::HTMLNames::requiredAttr, newRequired);
 }
 
 - (int)rows
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).rows();
+    return unwrap(*self)->rows();
 }
 
 - (void)setRows:(int)newRows
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setRows(newRows);
+    unwrap(*self)->setRows(newRows);
 }
 
 - (int)cols
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).cols();
+    return unwrap(*self)->cols();
 }
 
 - (void)setCols:(int)newCols
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setCols(newCols);
+    unwrap(*self)->setCols(newCols);
 }
 
 - (NSString *)wrap
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).getAttribute(WebCore::HTMLNames::wrapAttr).createNSString().autorelease();
+    return unwrap(*self)->getAttribute(WebCore::HTMLNames::wrapAttr).createNSString().autorelease();
 }
 
 - (void)setWrap:(NSString *)newWrap
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr, newWrap);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::wrapAttr, newWrap);
 }
 
 - (NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).type().createNSString().autorelease();
+    return unwrap(*self)->type().createNSString().autorelease();
 }
 
 - (NSString *)defaultValue
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).defaultValue().createNSString().autorelease();
+    return unwrap(*self)->defaultValue().createNSString().autorelease();
 }
 
 - (void)setDefaultValue:(NSString *)newDefaultValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setDefaultValue(newDefaultValue);
+    unwrap(*self)->setDefaultValue(newDefaultValue);
 }
 
 - (NSString *)value
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).value()->createNSString().autorelease();
+    return unwrap(*self)->value()->createNSString().autorelease();
 }
 
 - (void)setValue:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setValue(newValue);
+    unwrap(*self)->setValue(newValue);
 }
 
 - (unsigned)textLength
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).textLength();
+    return unwrap(*self)->textLength();
 }
 
 - (BOOL)willValidate
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).willValidate();
+    return unwrap(*self)->willValidate();
 }
 
 - (DOMNodeList *)labels
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).labels().get());
+    return kit(unwrap(*self)->labels().get());
 }
 
 - (int)selectionStart
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).selectionStart();
+    return unwrap(*self)->selectionStart();
 }
 
 - (void)setSelectionStart:(int)newSelectionStart
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setSelectionStart(newSelectionStart);
+    unwrap(*self)->setSelectionStart(newSelectionStart);
 }
 
 - (int)selectionEnd
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).selectionEnd();
+    return unwrap(*self)->selectionEnd();
 }
 
 - (void)setSelectionEnd:(int)newSelectionEnd
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setSelectionEnd(newSelectionEnd);
+    unwrap(*self)->setSelectionEnd(newSelectionEnd);
 }
 
 - (NSString *)selectionDirection
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).selectionDirection().createNSString().autorelease();
+    return unwrap(*self)->selectionDirection().createNSString().autorelease();
 }
 
 - (void)setSelectionDirection:(NSString *)newSelectionDirection
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setSelectionDirection(newSelectionDirection);
+    unwrap(*self)->setSelectionDirection(newSelectionDirection);
 }
 
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
+    return unwrap(*self)->getAttribute(WebCore::HTMLNames::accesskeyAttr).createNSString().autorelease();
 }
 
 - (void)setAccessKey:(NSString *)newAccessKey
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::accesskeyAttr, newAccessKey);
 }
 
 - (NSString *)autocomplete
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).autocomplete().createNSString().autorelease();
+    return unwrap(*self)->autocomplete().createNSString().autorelease();
 }
 
 - (void)setAutocomplete:(NSString *)newAutocomplete
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
+    unwrap(*self)->setAttributeWithoutSynchronization(WebCore::HTMLNames::autocompleteAttr, newAutocomplete);
 }
 
 - (void)select
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).select();
+    unwrap(*self)->select();
 }
 
 - (void)setRangeText:(NSString *)replacement
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setRangeText(String { replacement }));
+    raiseOnDOMError(unwrap(*self)->setRangeText(String { replacement }));
 }
 
 - (void)setRangeText:(NSString *)replacement start:(unsigned)start end:(unsigned)end selectionMode:(NSString *)selectionMode
 {
     WebCore::JSMainThreadNullState state;
-    raiseOnDOMError(unwrap(*self).setRangeText(String { replacement }, start, end, selectionMode));
+    raiseOnDOMError(unwrap(*self)->setRangeText(String { replacement }, start, end, selectionMode));
 }
 
 - (void)setSelectionRange:(int)start end:(int)end
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setSelectionRange(start, end);
+    unwrap(*self)->setSelectionRange(start, end);
 }
 
 - (BOOL)canShowPlaceholder
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).canShowPlaceholder();
+    return unwrap(*self)->canShowPlaceholder();
 }
 
 - (void)setCanShowPlaceholder:(BOOL)canShowPlaceholder
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setCanShowPlaceholder(canShowPlaceholder);
+    unwrap(*self)->setCanShowPlaceholder(canShowPlaceholder);
 }
 
 @end

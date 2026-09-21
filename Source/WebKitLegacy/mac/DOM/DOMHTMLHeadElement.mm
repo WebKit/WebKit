@@ -53,7 +53,7 @@
 
 @end
 
-DOMHTMLHeadElement *kit(WebCore::HTMLHeadElement* value)
+SUPPRESS_NODELETE DOMHTMLHeadElement *kit(WebCore::HTMLHeadElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLHeadElement*>(kit(static_cast<WebCore::Node*>(value)));

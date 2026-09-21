@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLOptionElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLOptionElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLOptionElement
 
@@ -127,7 +127,7 @@ WebCore::HTMLOptionElement* core(DOMHTMLOptionElement *wrapper)
     return wrapper ? reinterpret_cast<WebCore::HTMLOptionElement*>(wrapper->_internal) : 0;
 }
 
-DOMHTMLOptionElement *kit(WebCore::HTMLOptionElement* value)
+SUPPRESS_NODELETE DOMHTMLOptionElement *kit(WebCore::HTMLOptionElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLOptionElement*>(kit(static_cast<WebCore::Node*>(value)));

@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLElement;
 }
 
 WebCore::HTMLElement* core(DOMHTMLElement *);
-DOMHTMLElement *kit(WebCore::HTMLElement*);
+DOMHTMLElement * NODELETE kit(WebCore::HTMLElement*);

@@ -63,7 +63,7 @@
 
 @end
 
-DOMMediaError *kit(WebCore::MediaError* value)
+SUPPRESS_NODELETE DOMMediaError *kit(WebCore::MediaError* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

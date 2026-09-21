@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::HTMLOptionsCollection*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::HTMLOptionsCollection*>(_internal))
 
 @implementation DOMHTMLOptionsCollection
 
@@ -106,7 +106,7 @@
 
 @end
 
-DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection* value)
+SUPPRESS_NODELETE DOMHTMLOptionsCollection *kit(WebCore::HTMLOptionsCollection* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

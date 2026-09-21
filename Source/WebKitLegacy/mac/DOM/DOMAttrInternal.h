@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMAttr.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class Attr;
 }
 
 WebCore::Attr* core(DOMAttr *);
-DOMAttr *kit(WebCore::Attr*);
+DOMAttr * NODELETE kit(WebCore::Attr*);

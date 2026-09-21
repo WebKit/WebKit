@@ -35,7 +35,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL static_cast<WebCore::HTMLPreElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLPreElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLPreElement
 

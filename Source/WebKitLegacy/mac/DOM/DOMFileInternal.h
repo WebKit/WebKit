@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMFile.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class File;
 }
 
-DOMFile *kit(WebCore::File*);
+DOMFile * NODELETE kit(WebCore::File*);

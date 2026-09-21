@@ -25,9 +25,10 @@
 
 
 #import <WebKitLegacy/DOMTreeWalker.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class TreeWalker;
 }
 
-DOMTreeWalker *kit(WebCore::TreeWalker*);
+DOMTreeWalker * NODELETE kit(WebCore::TreeWalker*);

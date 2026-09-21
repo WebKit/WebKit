@@ -35,7 +35,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLTableCaptionElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLTableCaptionElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLTableCaptionElement
 
@@ -58,7 +58,7 @@ WebCore::HTMLTableCaptionElement* core(DOMHTMLTableCaptionElement *wrapper)
     return wrapper ? reinterpret_cast<WebCore::HTMLTableCaptionElement*>(wrapper->_internal) : 0;
 }
 
-DOMHTMLTableCaptionElement *kit(WebCore::HTMLTableCaptionElement* value)
+SUPPRESS_NODELETE DOMHTMLTableCaptionElement *kit(WebCore::HTMLTableCaptionElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLTableCaptionElement*>(kit(static_cast<WebCore::Node*>(value)));

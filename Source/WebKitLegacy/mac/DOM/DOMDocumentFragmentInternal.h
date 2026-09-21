@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMDocumentFragment.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DocumentFragment;
 }
 
 WebCore::DocumentFragment* core(DOMDocumentFragment *);
-DOMDocumentFragment *kit(WebCore::DocumentFragment*);
+DOMDocumentFragment * NODELETE kit(WebCore::DocumentFragment*);

@@ -68,7 +68,7 @@
 
 - (int)scrollXOffset
 {
-    auto* renderer = core(self)->renderer();
+    auto* renderer = protect(core(self))->renderer();
     if (!renderer)
         return 0;
 
@@ -90,7 +90,7 @@
 
 - (int)scrollYOffset
 {
-    auto* renderer = core(self)->renderer();
+    auto* renderer = protect(core(self))->renderer();
     if (!renderer)
         return 0;
 
@@ -116,7 +116,7 @@
 
 - (void)setScrollXOffset:(int)x scrollYOffset:(int)y adjustForIOSCaret:(BOOL)adjustForIOSCaret
 {
-    auto* renderer = core(self)->renderer();
+    auto* renderer = protect(core(self))->renderer();
     if (!renderer)
         return;
 
@@ -137,7 +137,7 @@
 
 - (void)absolutePosition:(int *)x :(int *)y :(int *)w :(int *)h
 {
-    auto* renderer = core(self)->renderBox();
+    auto* renderer = protect(core(self))->renderBox();
     if (renderer) {
         if (w)
             *w = renderer->borderBoxWidth();
@@ -164,13 +164,13 @@
 
 - (DOMDocumentFragment *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
 {
-    return kit(createFragmentFromMarkup(*core(self), markupString, [baseURL absoluteString]).ptr());
+    return kit(createFragmentFromMarkup(protect(*core(self)), markupString, [baseURL absoluteString]).ptr());
 }
 
 - (DOMDocumentFragment *)createDocumentFragmentWithText:(NSString *)text
 {
     // FIXME: Since this is not a contextual fragment, it won't handle whitespace properly.
-    return kit(createFragmentFromText(makeRangeSelectingNodeContents(*core(self)), text).ptr());
+    return kit(createFragmentFromText(makeRangeSelectingNodeContents(protect(*core(self))), text).ptr());
 }
 
 @end
@@ -179,7 +179,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    RetainPtr baseURL = core(self)->encodingParseURL(baseURLString).createNSURL();
+    RetainPtr baseURL = protect(core(self))->encodingParseURL(baseURLString).createNSURL();
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL.get()];
 }
 
@@ -194,7 +194,7 @@
 
 - (BOOL)_isTextField
 {
-    return core(self)->isTextField();
+    return protect(core(self))->isTextField();
 }
 
 @end
@@ -225,7 +225,7 @@
 
 - (BOOL)_isEdited
 {
-    return core(self)->lastChangeWasUserEdit();
+    return protect(core(self))->lastChangeWasUserEdit();
 }
 
 @end
@@ -234,7 +234,7 @@
 
 - (BOOL)_isEdited
 {
-    return core(self)->lastChangeWasUserEdit();
+    return protect(core(self))->lastChangeWasUserEdit();
 }
 
 @end
@@ -280,13 +280,13 @@ static WebAutocapitalizeType webAutocapitalizeType(WebCore::AutocapitalizeType t
 - (void)setValueWithChangeEvent:(NSString *)newValue
 {
     WebCore::JSMainThreadNullState state;
-    core(self)->setValue(newValue, WebCore::DispatchInputAndChangeEvent);
+    protect(core(self))->setValue(newValue, WebCore::DispatchInputAndChangeEvent);
 }
 
 - (void)setValueAsNumberWithChangeEvent:(double)newValueAsNumber
 {
     WebCore::JSMainThreadNullState state;
-    core(self)->setValueAsNumber(newValueAsNumber, WebCore::DispatchInputAndChangeEvent);
+    protect(core(self))->setValueAsNumber(newValueAsNumber, WebCore::DispatchInputAndChangeEvent);
 }
 
 @end

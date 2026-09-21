@@ -24,6 +24,7 @@
  */
 
 #import <WebKitLegacy/DOMNode.h>
+#import <wtf/Compiler.h>
 
 @protocol DOMEventTarget;
 
@@ -33,6 +34,6 @@ class EventTarget;
 }
 
 WebCore::Node* core(DOMNode *);
-DOMNode *kit(WebCore::Node*);
+DOMNode * NODELETE kit(WebCore::Node*);
 Class kitClass(WebCore::Node*);
-id <DOMEventTarget> kit(WebCore::EventTarget*);
+id <DOMEventTarget> NODELETE kit(WebCore::EventTarget*);

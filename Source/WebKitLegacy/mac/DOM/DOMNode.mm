@@ -43,18 +43,23 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 
 
-static inline WebCore::Node& unwrap(DOMNode& wrapper)
+static inline WebCore::Node& rawUnwrap(DOMNode& wrapper)
 {
     ASSERT(wrapper._internal);
     return reinterpret_cast<WebCore::Node&>(*wrapper._internal);
 }
 
-WebCore::Node* core(DOMNode *wrapper)
+static inline Ref<WebCore::Node> unwrap(DOMNode& wrapper)
 {
-    return wrapper ? &unwrap(*wrapper) : nullptr;
+    return protect(rawUnwrap(wrapper));
 }
 
-DOMNode *kit(WebCore::Node* value)
+WebCore::Node* core(DOMNode *wrapper)
+{
+    return wrapper ? &rawUnwrap(*wrapper) : nullptr;
+}
+
+SUPPRESS_NODELETE DOMNode *kit(WebCore::Node* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
@@ -77,86 +82,86 @@ DOMNode *kit(WebCore::Node* value)
     if (WebCoreObjCScheduleDeallocateOnMainThread([DOMNode class], self))
         return;
     if (_internal)
-        unwrap(*self).deref();
+        rawUnwrap(*self).deref();
     [super dealloc];
 }
 
 - (NSString *)nodeName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).nodeName().createNSString().autorelease();
+    return unwrap(*self)->nodeName().createNSString().autorelease();
 }
 
 - (NSString *)nodeValue
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).nodeValue().createNSString().autorelease();
+    return unwrap(*self)->nodeValue().createNSString().autorelease();
 }
 
 - (void)setNodeValue:(NSString *)newNodeValue
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setNodeValue(newNodeValue);
+    unwrap(*self)->setNodeValue(newNodeValue);
 }
 
 - (unsigned short)nodeType
 {
     WebCore::JSMainThreadNullState state;
-    return std::to_underlying(unwrap(*self).nodeType());
+    return std::to_underlying(unwrap(*self)->nodeType());
 }
 
 - (DOMNode *)parentNode
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).parentNode());
+    return kit(unwrap(*self)->parentNode());
 }
 
 - (DOMNodeList *)childNodes
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).childNodes().ptr());
+    return kit(unwrap(*self)->childNodes().ptr());
 }
 
 - (DOMNode *)firstChild
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).firstChild());
+    return kit(unwrap(*self)->firstChild());
 }
 
 - (DOMNode *)lastChild
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).lastChild());
+    return kit(unwrap(*self)->lastChild());
 }
 
 - (DOMNode *)previousSibling
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).previousSibling());
+    return kit(unwrap(*self)->previousSibling());
 }
 
 - (DOMNode *)nextSibling
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).nextSibling());
+    return kit(unwrap(*self)->nextSibling());
 }
 
 - (DOMDocument *)ownerDocument
 {
     WebCore::JSMainThreadNullState state;
-    return kit(&unwrap(*self).document());
+    return kit(&unwrap(*self)->document());
 }
 
 - (NSString *)namespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).namespaceURI().createNSString().autorelease();
+    return unwrap(*self)->namespaceURI().createNSString().autorelease();
 }
 
 - (NSString *)prefix
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).prefix().createNSString().autorelease();
+    return unwrap(*self)->prefix().createNSString().autorelease();
 }
 
 - (void)setPrefix:(NSString *)newPrefix
@@ -167,49 +172,49 @@ DOMNode *kit(WebCore::Node* value)
 - (NSString *)localName
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).localName().createNSString().autorelease();
+    return unwrap(*self)->localName().createNSString().autorelease();
 }
 
 - (DOMNamedNodeMap *)attributes
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).attributesMap());
+    return kit(unwrap(*self)->attributesMap());
 }
 
 - (NSString *)baseURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).baseURI().string().createNSString().autorelease();
+    return unwrap(*self)->baseURI().string().createNSString().autorelease();
 }
 
 - (NSString *)textContent
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).textContent().createNSString().autorelease();
+    return unwrap(*self)->textContent().createNSString().autorelease();
 }
 
 - (void)setTextContent:(NSString *)newTextContent
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).setTextContent(newTextContent);
+    unwrap(*self)->setTextContent(newTextContent);
 }
 
 - (BOOL)isConnected
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).isConnected();
+    return unwrap(*self)->isConnected();
 }
 
 - (DOMElement *)parentElement
 {
     WebCore::JSMainThreadNullState state;
-    return kit(unwrap(*self).parentElement());
+    return kit(unwrap(*self)->parentElement());
 }
 
 - (BOOL)isContentEditable
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).isContentEditable();
+    return unwrap(*self)->isContentEditable();
 }
 
 - (DOMNode *)insertBefore:(DOMNode *)newChild refChild:(DOMNode *)refChild
@@ -217,7 +222,7 @@ DOMNode *kit(WebCore::Node* value)
     WebCore::JSMainThreadNullState state;
     if (!newChild)
         raiseTypeErrorException();
-    raiseOnDOMError(unwrap(*self).insertBefore(*core(newChild), core(refChild)));
+    raiseOnDOMError(unwrap(*self)->insertBefore(protect(*core(newChild)), core(refChild)));
     return newChild;
 }
 
@@ -228,7 +233,7 @@ DOMNode *kit(WebCore::Node* value)
         raiseTypeErrorException();
     if (!oldChild)
         raiseTypeErrorException();
-    raiseOnDOMError(unwrap(*self).replaceChild(*core(newChild), *core(oldChild)));
+    raiseOnDOMError(unwrap(*self)->replaceChild(protect(*core(newChild)), protect(*core(oldChild))));
     return oldChild;
 }
 
@@ -237,7 +242,7 @@ DOMNode *kit(WebCore::Node* value)
     WebCore::JSMainThreadNullState state;
     if (!oldChild)
         raiseTypeErrorException();
-    raiseOnDOMError(unwrap(*self).removeChild(*core(oldChild)));
+    raiseOnDOMError(unwrap(*self)->removeChild(protect(*core(oldChild))));
     return oldChild;
 }
 
@@ -246,26 +251,26 @@ DOMNode *kit(WebCore::Node* value)
     WebCore::JSMainThreadNullState state;
     if (!newChild)
         raiseTypeErrorException();
-    raiseOnDOMError(unwrap(*self).appendChild(*core(newChild)));
+    raiseOnDOMError(unwrap(*self)->appendChild(protect(*core(newChild))));
     return newChild;
 }
 
 - (BOOL)hasChildNodes
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasChildNodes();
+    return unwrap(*self)->hasChildNodes();
 }
 
 - (DOMNode *)cloneNode:(BOOL)deep
 {
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(unwrap(*self).cloneNodeForBindings(deep)).ptr());
+    return kit(raiseOnDOMError(unwrap(*self)->cloneNodeForBindings(deep)).ptr());
 }
 
 - (void)normalize
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).normalize();
+    unwrap(*self)->normalize();
 }
 
 - (BOOL)isSupported:(NSString *)feature version:(NSString *)version
@@ -276,37 +281,37 @@ DOMNode *kit(WebCore::Node* value)
 - (BOOL)hasAttributes
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).hasAttributes();
+    return unwrap(*self)->hasAttributes();
 }
 
 - (BOOL)isSameNode:(DOMNode *)other
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).isSameNode(core(other));
+    return unwrap(*self)->isSameNode(core(other));
 }
 
 - (BOOL)isEqualNode:(DOMNode *)other
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).isEqualNode(core(other));
+    return unwrap(*self)->isEqualNode(protect(core(other)));
 }
 
 - (NSString *)lookupPrefix:(NSString *)inNamespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).lookupPrefix(inNamespaceURI).createNSString().autorelease();
+    return unwrap(*self)->lookupPrefix(inNamespaceURI).createNSString().autorelease();
 }
 
 - (NSString *)lookupNamespaceURI:(NSString *)inPrefix
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).lookupNamespaceURI(inPrefix).createNSString().autorelease();
+    return unwrap(*self)->lookupNamespaceURI(inPrefix).createNSString().autorelease();
 }
 
 - (BOOL)isDefaultNamespace:(NSString *)inNamespaceURI
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).isDefaultNamespace(inNamespaceURI);
+    return unwrap(*self)->isDefaultNamespace(inNamespaceURI);
 }
 
 - (unsigned short)compareDocumentPosition:(DOMNode *)other
@@ -314,43 +319,43 @@ DOMNode *kit(WebCore::Node* value)
     WebCore::JSMainThreadNullState state;
     if (!other)
         return WebCore::Node::DOCUMENT_POSITION_DISCONNECTED;
-    return unwrap(*self).compareDocumentPosition(*core(other));
+    return unwrap(*self)->compareDocumentPosition(protect(*core(other)));
 }
 
 - (BOOL)contains:(DOMNode *)other
 {
     WebCore::JSMainThreadNullState state;
-    return unwrap(*self).contains(core(other));
+    return unwrap(*self)->contains(core(other));
 }
 
 - (void)inspect
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).inspect();
+    unwrap(*self)->inspect();
 }
 
 - (void)addEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->addEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type listener:(id <DOMEventListener>)listener useCapture:(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
     WebCore::JSMainThreadNullState state;
-    unwrap(*self).removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
+    unwrap(*self)->removeEventListenerForBindings(type, WebCore::ObjCEventListener::wrap(listener), static_cast<bool>(useCapture));
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
@@ -358,7 +363,7 @@ DOMNode *kit(WebCore::Node* value)
     WebCore::JSMainThreadNullState state;
     if (!event)
         raiseTypeErrorException();
-    return raiseOnDOMError(unwrap(*self).dispatchEventForBindings(*core(event)));
+    return raiseOnDOMError(unwrap(*self)->dispatchEventForBindings(protect(*core(event))));
 }
 
 @end

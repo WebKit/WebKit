@@ -40,7 +40,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::TimeRanges*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::TimeRanges*>(_internal))
 
 @implementation DOMTimeRanges
 
@@ -74,7 +74,7 @@
 
 @end
 
-DOMTimeRanges *kit(WebCore::TimeRanges* value)
+SUPPRESS_NODELETE DOMTimeRanges *kit(WebCore::TimeRanges* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

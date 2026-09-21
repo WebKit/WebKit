@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::UIEvent*>(reinterpret_cast<WebCore::Event*>(_internal))
+#define IMPL protect(static_cast<WebCore::UIEvent*>(reinterpret_cast<WebCore::Event*>(_internal)))
 
 @implementation DOMUIEvent
 
@@ -57,16 +57,16 @@
 - (int)keyCode
 {
     WebCore::JSMainThreadNullState state;
-    if (is<WebCore::KeyboardEvent>(*IMPL))
-        return downcast<WebCore::KeyboardEvent>(*IMPL).keyCode();
+    if (RefPtr keyboardEvent = dynamicDowncast<WebCore::KeyboardEvent>(*IMPL))
+        return keyboardEvent->keyCode();
     return 0;
 }
 
 - (int)charCode
 {
     WebCore::JSMainThreadNullState state;
-    if (is<WebCore::KeyboardEvent>(*IMPL))
-        return downcast<WebCore::KeyboardEvent>(*IMPL).charCode();
+    if (RefPtr keyboardEvent = dynamicDowncast<WebCore::KeyboardEvent>(*IMPL))
+        return keyboardEvent->charCode();
     return 0;
 }
 

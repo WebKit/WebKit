@@ -41,7 +41,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::Range*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::Range*>(_internal))
 
 @implementation DOMRange
 
@@ -95,7 +95,7 @@
 {
     WebCore::JSMainThreadNullState state;
     auto range = makeSimpleRange(*IMPL);
-    range.start.document().updateLayout();
+    protect(range.start.document())->updateLayout();
     return plainText(range).createNSString().autorelease();
 }
 
@@ -120,7 +120,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->setStartBefore(*core(refNode)));
+    raiseOnDOMError(IMPL->setStartBefore(protect(*core(refNode))));
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
@@ -128,7 +128,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->setStartAfter(*core(refNode)));
+    raiseOnDOMError(IMPL->setStartAfter(protect(*core(refNode))));
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
@@ -136,7 +136,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->setEndBefore(*core(refNode)));
+    raiseOnDOMError(IMPL->setEndBefore(protect(*core(refNode))));
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
@@ -144,7 +144,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->setEndAfter(*core(refNode)));
+    raiseOnDOMError(IMPL->setEndAfter(protect(*core(refNode))));
 }
 
 - (void)collapse:(BOOL)toStart
@@ -158,7 +158,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->selectNode(*core(refNode)));
+    raiseOnDOMError(IMPL->selectNode(protect(*core(refNode))));
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
@@ -166,7 +166,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->selectNodeContents(*core(refNode)));
+    raiseOnDOMError(IMPL->selectNodeContents(protect(*core(refNode))));
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how sourceRange:(DOMRange *)sourceRange
@@ -174,7 +174,7 @@
     WebCore::JSMainThreadNullState state;
     if (!sourceRange)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->compareBoundaryPoints(how, *core(sourceRange)));
+    return raiseOnDOMError(IMPL->compareBoundaryPoints(how, protect(*core(sourceRange))));
 }
 
 - (void)deleteContents
@@ -208,7 +208,7 @@
     WebCore::JSMainThreadNullState state;
     if (!newParent)
         raiseTypeErrorException();
-    raiseOnDOMError(IMPL->surroundContents(*core(newParent)));
+    raiseOnDOMError(IMPL->surroundContents(protect(*core(newParent))));
 }
 
 - (DOMRange *)cloneRange
@@ -240,7 +240,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->compareNode(*core(refNode)));
+    return raiseOnDOMError(IMPL->compareNode(protect(*core(refNode))));
 }
 
 - (BOOL)intersectsNode:(DOMNode *)refNode
@@ -248,7 +248,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    return IMPL->intersectsNode(*core(refNode));
+    return IMPL->intersectsNode(protect(*core(refNode)));
 }
 
 - (short)comparePoint:(DOMNode *)refNode offset:(int)offset
@@ -256,7 +256,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->comparePoint(*core(refNode), offset));
+    return raiseOnDOMError(IMPL->comparePoint(protect(*core(refNode)), offset));
 }
 
 - (BOOL)isPointInRange:(DOMNode *)refNode offset:(int)offset
@@ -264,7 +264,7 @@
     WebCore::JSMainThreadNullState state;
     if (!refNode)
         raiseTypeErrorException();
-    return raiseOnDOMError(IMPL->isPointInRange(*core(refNode), offset));
+    return raiseOnDOMError(IMPL->isPointInRange(protect(*core(refNode)), offset));
 }
 
 - (void)expand:(NSString *)unit
@@ -299,7 +299,7 @@ WebCore::Range* core(DOMRange *wrapper)
     return wrapper ? reinterpret_cast<WebCore::Range*>(wrapper->_internal) : 0;
 }
 
-DOMRange *kit(WebCore::Range* value)
+SUPPRESS_NODELETE DOMRange *kit(WebCore::Range* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMCounter.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DeprecatedCSSOMCounter;
 }
 
-DOMCounter *kit(WebCore::DeprecatedCSSOMCounter*);
+DOMCounter * NODELETE kit(WebCore::DeprecatedCSSOMCounter*);

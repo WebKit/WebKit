@@ -28,6 +28,7 @@
 #import "DOMNodeFilter.h"
 #import "DOMObject.h"
 #import "DOMXPathNSResolver.h"
+#import <wtf/Compiler.h>
 #import <wtf/Forward.h>
 #import <wtf/WallTime.h>
 
@@ -72,10 +73,10 @@ inline void addDOMWrapper(NSObject* wrapper, Source impl)
     addDOMWrapper(wrapper, reinterpret_cast<DOMObjectInternal*>(impl));
 }
 
-DOMNodeFilter *kit(WebCore::NodeFilter*);
+DOMNodeFilter * NODELETE kit(WebCore::NodeFilter*);
 WebCore::NodeFilter* core(DOMNodeFilter *);
 
-DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver*);
+DOMNativeXPathNSResolver * NODELETE kit(WebCore::XPathNSResolver*);
 WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *);
 
 inline NSTimeInterval kit(WallTime time)

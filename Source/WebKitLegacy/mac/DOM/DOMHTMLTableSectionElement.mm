@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLTableSectionElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLTableSectionElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLTableSectionElement
 
@@ -117,7 +117,7 @@ WebCore::HTMLTableSectionElement* core(DOMHTMLTableSectionElement *wrapper)
     return wrapper ? reinterpret_cast<WebCore::HTMLTableSectionElement*>(wrapper->_internal) : 0;
 }
 
-DOMHTMLTableSectionElement *kit(WebCore::HTMLTableSectionElement* value)
+SUPPRESS_NODELETE DOMHTMLTableSectionElement *kit(WebCore::HTMLTableSectionElement* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMHTMLTableSectionElement*>(kit(static_cast<WebCore::Node*>(value)));

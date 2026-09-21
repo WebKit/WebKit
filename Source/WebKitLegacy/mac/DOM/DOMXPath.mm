@@ -36,7 +36,7 @@
 
 @implementation DOMNativeXPathNSResolver
 
-#define IMPL reinterpret_cast<WebCore::XPathNSResolver*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::XPathNSResolver*>(_internal))
 
 - (void)dealloc
 {
@@ -57,7 +57,7 @@ WebCore::XPathNSResolver* core(DOMNativeXPathNSResolver *wrapper)
     return wrapper ? reinterpret_cast<WebCore::XPathNSResolver*>(wrapper->_internal) : 0;
 }
 
-DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
+SUPPRESS_NODELETE DOMNativeXPathNSResolver *kit(WebCore::XPathNSResolver* impl)
 {
     if (!impl)
         return nil;

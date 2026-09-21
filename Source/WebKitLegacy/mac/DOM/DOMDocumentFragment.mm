@@ -36,7 +36,7 @@
 #import <WebCore/NodeList.h>
 #import <WebCore/ThreadCheck.h>
 
-#define IMPL static_cast<WebCore::DocumentFragment*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::DocumentFragment*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMDocumentFragment
 
@@ -89,7 +89,7 @@ WebCore::DocumentFragment* core(DOMDocumentFragment *wrapper)
     return wrapper ? reinterpret_cast<WebCore::DocumentFragment*>(wrapper->_internal) : 0;
 }
 
-DOMDocumentFragment *kit(WebCore::DocumentFragment* value)
+SUPPRESS_NODELETE DOMDocumentFragment *kit(WebCore::DocumentFragment* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMDocumentFragment*>(kit(static_cast<WebCore::Node*>(value)));

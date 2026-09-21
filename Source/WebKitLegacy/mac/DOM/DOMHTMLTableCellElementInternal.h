@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMHTMLTableCellElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLTableCellElement;
 }
 
 WebCore::HTMLTableCellElement* core(DOMHTMLTableCellElement *);
-DOMHTMLTableCellElement *kit(WebCore::HTMLTableCellElement*);
+DOMHTMLTableCellElement * NODELETE kit(WebCore::HTMLTableCellElement*);

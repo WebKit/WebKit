@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::DOMTokenList*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::DOMTokenList*>(_internal))
 
 @implementation DOMTokenList
 
@@ -89,7 +89,7 @@
 @end
 
 
-DOMTokenList *kit(WebCore::DOMTokenList* value)
+SUPPRESS_NODELETE DOMTokenList *kit(WebCore::DOMTokenList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMCSSStyleDeclaration.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class CSSStyleDeclaration;
 }
 
 WebCore::CSSStyleDeclaration* core(DOMCSSStyleDeclaration *);
-DOMCSSStyleDeclaration *kit(WebCore::CSSStyleDeclaration*);
+DOMCSSStyleDeclaration * NODELETE kit(WebCore::CSSStyleDeclaration*);

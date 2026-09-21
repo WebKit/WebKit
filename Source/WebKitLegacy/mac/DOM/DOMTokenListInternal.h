@@ -25,9 +25,10 @@
 
 
 #import <WebKitLegacy/DOMTokenList.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DOMTokenList;
 }
 
-DOMTokenList *kit(WebCore::DOMTokenList*);
+DOMTokenList * NODELETE kit(WebCore::DOMTokenList*);

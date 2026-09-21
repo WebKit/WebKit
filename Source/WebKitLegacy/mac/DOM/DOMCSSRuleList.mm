@@ -38,7 +38,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::CSSRuleList*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::CSSRuleList*>(_internal))
 
 @implementation DOMCSSRuleList
 
@@ -66,7 +66,7 @@
 
 @end
 
-DOMCSSRuleList *kit(WebCore::CSSRuleList* value)
+SUPPRESS_NODELETE DOMCSSRuleList *kit(WebCore::CSSRuleList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

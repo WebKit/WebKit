@@ -37,7 +37,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::XPathResult*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::XPathResult*>(_internal))
 
 @implementation DOMXPathResult
 
@@ -112,7 +112,7 @@ WebCore::XPathResult* core(DOMXPathResult *wrapper)
     return wrapper ? reinterpret_cast<WebCore::XPathResult*>(wrapper->_internal) : nullptr;
 }
 
-DOMXPathResult *kit(WebCore::XPathResult* value)
+SUPPRESS_NODELETE DOMXPathResult *kit(WebCore::XPathResult* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMBlob.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class Blob;
 }
 
-DOMBlob *kit(WebCore::Blob*);
+DOMBlob * NODELETE kit(WebCore::Blob*);

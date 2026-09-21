@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMHTMLScriptElement.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class HTMLScriptElement;
 }
 
-DOMHTMLScriptElement *kit(WebCore::HTMLScriptElement*);
+DOMHTMLScriptElement * NODELETE kit(WebCore::HTMLScriptElement*);

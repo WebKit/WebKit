@@ -38,7 +38,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::TreeWalker*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::TreeWalker*>(_internal))
 
 @implementation DOMTreeWalker
 
@@ -88,7 +88,7 @@
 
     if (!core(newCurrentNode))
         raiseTypeErrorException();
-    IMPL->setCurrentNode(*core(newCurrentNode));
+    IMPL->setCurrentNode(protect(*core(newCurrentNode)));
 }
 
 - (DOMNode *)parentNode
@@ -170,7 +170,7 @@
 
 @end
 
-DOMTreeWalker *kit(WebCore::TreeWalker* value)
+SUPPRESS_NODELETE DOMTreeWalker *kit(WebCore::TreeWalker* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

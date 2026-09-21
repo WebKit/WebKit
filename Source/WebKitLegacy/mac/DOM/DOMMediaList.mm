@@ -38,7 +38,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::MediaList*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::MediaList*>(_internal))
 
 @implementation DOMMediaList
 
@@ -90,7 +90,7 @@
 
 @end
 
-DOMMediaList *kit(WebCore::MediaList* value)
+SUPPRESS_NODELETE DOMMediaList *kit(WebCore::MediaList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

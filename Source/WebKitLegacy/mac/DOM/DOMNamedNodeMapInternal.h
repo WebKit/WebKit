@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMNamedNodeMap.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class NamedNodeMap;
 }
 
-DOMNamedNodeMap *kit(WebCore::NamedNodeMap*);
+DOMNamedNodeMap * NODELETE kit(WebCore::NamedNodeMap*);

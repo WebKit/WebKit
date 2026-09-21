@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMCSSPrimitiveValue.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class DeprecatedCSSOMPrimitiveValue;
 }
 
-DOMCSSPrimitiveValue *kit(WebCore::DeprecatedCSSOMPrimitiveValue*);
+DOMCSSPrimitiveValue * NODELETE kit(WebCore::DeprecatedCSSOMPrimitiveValue*);

@@ -40,7 +40,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::NodeIterator*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::NodeIterator*>(_internal))
 
 @implementation DOMNodeIterator
 
@@ -121,7 +121,7 @@
 
 @end
 
-DOMNodeIterator *kit(WebCore::NodeIterator* value)
+SUPPRESS_NODELETE DOMNodeIterator *kit(WebCore::NodeIterator* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

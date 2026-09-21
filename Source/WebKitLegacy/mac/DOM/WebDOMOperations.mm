@@ -89,13 +89,13 @@
 - (WebArchive *)webArchive
 {
     WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(*core(self), WTF::move(options))]).autorelease();
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(protect(*core(self)), WTF::move(options))]).autorelease();
 }
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
     WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
-    RetainPtr webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(*core(self), WTF::move(options), [webArchiveSubframeFilter](WebCore::LocalFrame& subframe) -> bool {
+    RetainPtr webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(protect(*core(self)), WTF::move(options), [webArchiveSubframeFilter](WebCore::LocalFrame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
     })]);
 
@@ -142,14 +142,14 @@
     String markupString = serializeFragment(node, WebCore::SerializedNodes::SubtreeIncludingNode);
     auto nodeType = node.nodeType();
     if (nodeType != WebCore::NodeType::Document && nodeType != WebCore::NodeType::DocumentType)
-        markupString = makeString(documentTypeString(node.document()), markupString);
+        markupString = makeString(documentTypeString(protect(node.document())), markupString);
 
     return markupString.createNSString().autorelease();
 }
 
 - (NSRect)_renderRect:(bool *)isReplaced
 {
-    return NSRect(core(self)->pixelSnappedAbsoluteBoundingRect(isReplaced));
+    return NSRect(protect(core(self))->pixelSnappedAbsoluteBoundingRect(isReplaced));
 }
 
 @end
@@ -158,7 +158,7 @@
 
 - (WebFrame *)webFrame
 {
-    auto* frame = core(self)->frame();
+    auto* frame = protect(core(self))->frame();
     if (!frame)
         return nil;
     return kit(frame);
@@ -166,7 +166,7 @@
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return core(self)->encodingParseURL(string).createNSURL().autorelease();
+    return protect(core(self))->encodingParseURL(string).createNSURL().autorelease();
 }
 
 @end
@@ -190,13 +190,13 @@
 - (WebArchive *)webArchive
 {
     WebCore::LegacyWebArchive::ArchiveOptions options { WebCore::LegacyWebArchive::ShouldSaveScriptsFromMemoryCache::No };
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(makeSimpleRange(*core(self)), WTF::move(options))]).autorelease();
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:WebCore::LegacyWebArchive::create(makeSimpleRange(protect(*core(self))), WTF::move(options))]).autorelease();
 }
 
 - (NSString *)markupString
 {
-    auto range = makeSimpleRange(*core(self));
-    return makeString(documentTypeString(range.start.document()), serializePreservingVisualAppearance(range, nullptr, WebCore::AnnotateForInterchange::Yes)).createNSString().autorelease();
+    auto range = makeSimpleRange(protect(*core(self)));
+    return makeString(documentTypeString(protect(range.start.document())), serializePreservingVisualAppearance(range, nullptr, WebCore::AnnotateForInterchange::Yes)).createNSString().autorelease();
 }
 
 @end
@@ -233,12 +233,12 @@
 
 - (void)_setAutofilled:(BOOL)autofilled
 {
-    downcast<WebCore::HTMLInputElement>(core((DOMElement *)self))->setAutofilled(autofilled);
+    protect(downcast<WebCore::HTMLInputElement>(core((DOMElement *)self)))->setAutofilled(autofilled);
 }
 
 - (void)_setAutoFilledAndViewable:(BOOL)autoFilledAndViewable
 {
-    downcast<WebCore::HTMLInputElement>(core((DOMElement *)self))->setAutofilledAndViewable(autoFilledAndViewable);
+    protect(downcast<WebCore::HTMLInputElement>(core((DOMElement *)self)))->setAutofilledAndViewable(autoFilledAndViewable);
 }
 
 @end
@@ -281,12 +281,12 @@ static NSEventPhase NODELETE toNSEventPhase(WebCore::PlatformWheelEventPhase pla
 
 - (NSEventPhase)_phase
 {
-    return toNSEventPhase(core(self)->phase());
+    return toNSEventPhase(protect(core(self))->phase());
 }
 
 - (NSEventPhase)_momentumPhase
 {
-    return toNSEventPhase(core(self)->momentumPhase());
+    return toNSEventPhase(protect(core(self))->momentumPhase());
 }
 
 @end

@@ -70,7 +70,7 @@
 
 @end
 
-DOMCounter *kit(WebCore::DeprecatedCSSOMCounter* value)
+SUPPRESS_NODELETE DOMCounter *kit(WebCore::DeprecatedCSSOMCounter* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

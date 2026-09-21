@@ -98,7 +98,7 @@
 
 @end
 
-DOMRGBColor *kit(WebCore::DeprecatedCSSOMRGBColor* value)
+SUPPRESS_NODELETE DOMRGBColor *kit(WebCore::DeprecatedCSSOMRGBColor* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

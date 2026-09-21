@@ -10,7 +10,6 @@ mac/DOM/DOMInternal.mm
 mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMNamedNodeMap.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
-mac/DOM/DOMUtility.mm
 mac/DOM/WebDOMOperations.mm
 mac/Misc/WebElementDictionary.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm

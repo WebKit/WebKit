@@ -39,7 +39,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::HTMLTableRowElement*>(reinterpret_cast<WebCore::Node*>(_internal))
+#define IMPL protect(static_cast<WebCore::HTMLTableRowElement*>(reinterpret_cast<WebCore::Node*>(_internal)))
 
 @implementation DOMHTMLTableRowElement
 

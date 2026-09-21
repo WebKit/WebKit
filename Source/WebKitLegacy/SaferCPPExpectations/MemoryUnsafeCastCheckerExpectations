@@ -3,7 +3,6 @@ WebCoreSupport/WebResourceLoadScheduler.cpp
 [ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
 [ iOS ] mac/DOM/DOM.mm
 mac/DOM/DOMAttr.mm
-mac/DOM/DOMCDATASection.mm
 mac/DOM/DOMCSSImportRule.mm
 mac/DOM/DOMCSSMediaRule.mm
 mac/DOM/DOMCSSPageRule.mm
@@ -11,9 +10,7 @@ mac/DOM/DOMCSSPrimitiveValue.mm
 mac/DOM/DOMCSSStyleSheet.mm
 mac/DOM/DOMCSSValueList.mm
 mac/DOM/DOMCharacterData.mm
-mac/DOM/DOMComment.mm
 mac/DOM/DOMDocument.mm
-mac/DOM/DOMDocumentFragment.mm
 mac/DOM/DOMDocumentType.mm
 mac/DOM/DOMElement.mm
 mac/DOM/DOMFile.mm
@@ -36,7 +33,6 @@ mac/DOM/DOMHTMLFormElement.mm
 mac/DOM/DOMHTMLFrameElement.mm
 mac/DOM/DOMHTMLFrameSetElement.mm
 mac/DOM/DOMHTMLHRElement.mm
-mac/DOM/DOMHTMLHeadElement.mm
 mac/DOM/DOMHTMLHtmlElement.mm
 mac/DOM/DOMHTMLIFrameElement.mm
 mac/DOM/DOMHTMLImageElement.mm
@@ -66,7 +62,6 @@ mac/DOM/DOMHTMLTableCellElement.mm
 mac/DOM/DOMHTMLTableColElement.mm
 mac/DOM/DOMHTMLTableElement.mm
 mac/DOM/DOMHTMLTableRowElement.mm
-mac/DOM/DOMHTMLTableSectionElement.mm
 mac/DOM/DOMHTMLTextAreaElement.mm
 mac/DOM/DOMHTMLTitleElement.mm
 mac/DOM/DOMHTMLUListElement.mm

@@ -77,7 +77,7 @@
 
 @end
 
-DOMRect *kit(WebCore::DeprecatedCSSOMRect* value)
+SUPPRESS_NODELETE DOMRect *kit(WebCore::DeprecatedCSSOMRect* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

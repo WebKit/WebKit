@@ -36,7 +36,7 @@
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::NodeList*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::NodeList*>(_internal))
 
 @implementation DOMNodeList
 
@@ -64,7 +64,7 @@
 
 @end
 
-DOMNodeList *kit(WebCore::NodeList* value)
+SUPPRESS_NODELETE DOMNodeList *kit(WebCore::NodeList* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

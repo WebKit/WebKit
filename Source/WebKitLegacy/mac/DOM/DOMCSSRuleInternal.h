@@ -24,10 +24,11 @@
  */
 
 #import <WebKitLegacy/DOMCSSRule.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class CSSRule;
 }
 
-DOMCSSRule *kit(WebCore::CSSRule*);
+DOMCSSRule * NODELETE kit(WebCore::CSSRule*);
 Class kitClass(WebCore::CSSRule*);

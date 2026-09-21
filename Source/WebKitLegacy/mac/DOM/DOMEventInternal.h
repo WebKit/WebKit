@@ -25,11 +25,12 @@
 
 
 #import <WebKitLegacy/DOMEvent.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class Event;
 }
 
 WebCore::Event* core(DOMEvent *);
-DOMEvent *kit(WebCore::Event*);
+DOMEvent * NODELETE kit(WebCore::Event*);
 Class kitClass(WebCore::Event*);

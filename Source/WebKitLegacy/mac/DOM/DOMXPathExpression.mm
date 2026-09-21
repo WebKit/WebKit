@@ -38,7 +38,7 @@
 #import <WebCore/XPathResult.h>
 #import <wtf/GetPtr.h>
 
-#define IMPL reinterpret_cast<WebCore::XPathExpression*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::XPathExpression*>(_internal))
 
 @implementation DOMXPathExpression
 
@@ -58,7 +58,7 @@
         return nullptr;
 
     WebCore::JSMainThreadNullState state;
-    return kit(raiseOnDOMError(IMPL->evaluate(*core(contextNode), type, core(inResult))).ptr());
+    return kit(raiseOnDOMError(IMPL->evaluate(protect(*core(contextNode)), type, protect(core(inResult)))).ptr());
 }
 
 @end
@@ -72,7 +72,7 @@
 
 @end
 
-DOMXPathExpression *kit(WebCore::XPathExpression* value)
+SUPPRESS_NODELETE DOMXPathExpression *kit(WebCore::XPathExpression* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

@@ -35,7 +35,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::File*>(reinterpret_cast<WebCore::Blob*>(_internal))
+#define IMPL protect(static_cast<WebCore::File*>(reinterpret_cast<WebCore::Blob*>(_internal)))
 
 @implementation DOMFile
 
@@ -53,7 +53,7 @@
 
 @end
 
-DOMFile *kit(WebCore::File* value)
+SUPPRESS_NODELETE DOMFile *kit(WebCore::File* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMFile*>(kit(static_cast<WebCore::Blob*>(value)));

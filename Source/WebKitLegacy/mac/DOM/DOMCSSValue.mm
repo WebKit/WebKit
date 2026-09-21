@@ -36,7 +36,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::DeprecatedCSSOMValue*>(_internal))
 
 @implementation DOMCSSValue
 
@@ -70,7 +70,7 @@
 
 @end
 
-DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue* value)
+SUPPRESS_NODELETE DOMCSSValue *kit(WebCore::DeprecatedCSSOMValue* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)

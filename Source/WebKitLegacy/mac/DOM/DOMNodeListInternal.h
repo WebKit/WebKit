@@ -24,9 +24,10 @@
  */
 
 #import <WebKitLegacy/DOMNodeList.h>
+#import <wtf/Compiler.h>
 
 namespace WebCore {
 class NodeList;
 }
 
-DOMNodeList *kit(WebCore::NodeList*);
+DOMNodeList * NODELETE kit(WebCore::NodeList*);

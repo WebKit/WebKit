@@ -40,7 +40,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL static_cast<WebCore::CSSStyleSheet*>(reinterpret_cast<WebCore::StyleSheet*>(_internal))
+#define IMPL protect(static_cast<WebCore::CSSStyleSheet*>(reinterpret_cast<WebCore::StyleSheet*>(_internal)))
 
 @implementation DOMCSSStyleSheet
 
@@ -99,7 +99,7 @@
 
 @end
 
-DOMCSSStyleSheet *kit(WebCore::CSSStyleSheet* value)
+SUPPRESS_NODELETE DOMCSSStyleSheet *kit(WebCore::CSSStyleSheet* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     return static_cast<DOMCSSStyleSheet*>(kit(static_cast<WebCore::StyleSheet*>(value)));

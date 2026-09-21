@@ -37,7 +37,7 @@
 #import <wtf/GetPtr.h>
 #import <wtf/URL.h>
 
-#define IMPL reinterpret_cast<WebCore::NamedNodeMap*>(_internal)
+#define IMPL protect(reinterpret_cast<WebCore::NamedNodeMap*>(_internal))
 
 @implementation DOMNamedNodeMap
 
@@ -119,7 +119,7 @@
 
 @end
 
-DOMNamedNodeMap *kit(WebCore::NamedNodeMap* value)
+SUPPRESS_NODELETE DOMNamedNodeMap *kit(WebCore::NamedNodeMap* value)
 {
     WebCoreThreadViolationCheckRoundOne();
     if (!value)
