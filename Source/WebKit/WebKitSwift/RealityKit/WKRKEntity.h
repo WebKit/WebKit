@@ -75,12 +75,13 @@ NS_SWIFT_UI_ACTOR
 + (void)loadFromData:(NSData *)data withAttributionTaskID:(nullable NSString *)attributionTaskId entityMemoryLimit:(NSInteger)entityMemoryLimit completionHandler:(NS_SWIFT_UI_ACTOR void (^)(WKRKEntity * _Nullable entity))completionHandler;
 - (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
 - (void)applyIBLData:(NSData *)data attributionHandler:(NS_SWIFT_UI_ACTOR void (^)(REAssetRef coreEnvironmentResourceAsset))attributionHandler withCompletion:(NS_SWIFT_UI_ACTOR void (^)(BOOL success))completion;
-- (void)interactionContainerDidRecenterFromTransform:(simd_float4x4)transform;
-- (void)recenterEntityAtTransform:(WKEntityTransform)transform;
 - (void)applyDefaultIBL;
+- (void)setIBLReceiverEnabled:(BOOL)enabled;
+- (void)setGroundingShadowsEnabled:(BOOL)enabled;
 - (void)removeFromParentEntity;
 
 #if HAVE(CORE_RE)
+@property (nonatomic, readonly) REEntityRef coreEntity;
 - (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;
 - (void)setParentCoreEntity:(REEntityRef)parentCoreEntity preservingWorldTransform:(BOOL)preservingWorldTransform;
 #endif

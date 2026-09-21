@@ -620,6 +620,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/model-element/ModelPlayerIdentifier.h
     Modules/model-element/ModelPlayerProvider.h
     Modules/model-element/ModelPlayerTransformState.h
+    Modules/model-element/ModelPresentationMode.h
     Modules/model-element/PortalAction.h
     Modules/model-element/PortalTransform.h
     Modules/model-element/SpatialPortalController.h
@@ -1343,6 +1344,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ElementIteratorAssertions.h
     dom/ElementIteratorInlines.h
     dom/ElementTraversal.h
+    dom/ElementVolumetricScene.h
     dom/EpochTimeStamp.h
     dom/Event.h
     dom/EventInit.h
