@@ -34,6 +34,7 @@
 #include <WebCore/LocalFrameInlines.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkStateNotifier.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>
