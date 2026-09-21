@@ -248,6 +248,17 @@ bool IntersectionObserver::isObserving(const Element& element) const
     return m_observationTargets.contains(element);
 }
 
+void IntersectionObserver::resetPreviousThresholdIndexForTarget(const Element& target)
+{
+    auto* data = target.intersectionObserverDataIfExists();
+    if (!data)
+        return;
+    for (auto& registration : data->registrations) {
+        if (registration.observer.get() == this)
+            registration.previousThresholdIndex = std::nullopt;
+    }
+}
+
 void IntersectionObserver::observe(Element& target)
 {
     if (!trackingDocument() || isObserving(target))
