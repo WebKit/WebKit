@@ -389,6 +389,9 @@ private:
     void themeColorChanged() const final;
     void pageExtendedBackgroundColorDidChange() const final;
     void sampledPageTopColorChanged() const final;
+#if __has_include(<WebKitAdditions/WebChromeClientAdditions.h>)
+#include <WebKitAdditions/WebChromeClientAdditions.h>
+#endif
 
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     void allowImmersiveElement(CompletionHandler<void(bool)>&&) const final;

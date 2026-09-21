@@ -8690,6 +8690,10 @@ void WebPage::flushPendingSampledPageTopColorChange()
     send(Messages::WebPageProxy::SampledPageTopColorChanged(protect(corePage())->sampledPageTopColor()));
 }
 
+#if __has_include(<WebKitAdditions/WebPageAdditionsImpl.cpp>)
+#include <WebKitAdditions/WebPageAdditionsImpl.cpp>
+#endif
+
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
 void WebPage::allowImmersiveElement(CompletionHandler<void(bool)>&& completion)
 {

@@ -79,6 +79,7 @@ namespace WebCore {
     M(AppHighlights) \
     M(ApplePay) \
     M(Archives) \
+    M(AXCustomColorMode) \
     M(BackForwardCache) \
     M(Bindings) \
     M(Calc) \

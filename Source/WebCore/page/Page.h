@@ -74,6 +74,13 @@
 #include <WebCore/AcceleratedTimelinesUpdater.h>
 #endif
 
+#if __has_include(<WebKitAdditions/PageAdditionsIncludes.h>)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#include <WebKitAdditions/PageAdditionsIncludes.h>
+#pragma clang diagnostic pop
+#endif
+
 namespace JSC {
 class Debugger;
 class JSGlobalObject;
@@ -1805,6 +1812,14 @@ private:
 
     Color m_underPageBackgroundColorOverride;
     std::optional<Color> m_sampledPageTopColor;
+
+#if __has_include(<WebKitAdditions/PageAdditions.h>)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
+#include <WebKitAdditions/PageAdditions.h>
+#pragma clang diagnostic pop
+#endif
+
     std::pair<UniqueRef<FixedContainerEdges>, WeakElementEdges> m_fixedContainerEdgesAndElements;
     bool m_userHasInteractedSinceLastPageLoad { false };
     bool m_userHasInteractedSinceLastPageLoadExcludingForcedUserGestures { false };

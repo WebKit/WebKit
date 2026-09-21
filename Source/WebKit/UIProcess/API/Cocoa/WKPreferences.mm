@@ -895,6 +895,7 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 {
     return protect(*_preferences)->axCustomColorModeEnabled();
 }
+
 #else
 - (void)_setAXCustomColorModeEnabled:(BOOL)enabled
 {
@@ -904,6 +905,7 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 {
     return NO;
 }
+
 #endif
 
 - (void)_setPunchOutWhiteBackgroundsInDarkMode:(BOOL)punches
@@ -1995,3 +1997,7 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
 }
 
 @end
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKPreferencesAdditionsAfter.mm>)
+#import <WebKitAdditions/WKPreferencesAdditionsAfter.mm>
+#endif
