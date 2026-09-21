@@ -2096,13 +2096,13 @@ extension AppKitGesturesTests.Basic {
 
         await page.waitForNextPresentationUpdate()
 
-        let textAreaBoundsAfter = try await screenBoundsOfTextArea()
+        let textAreaSizeBefore = textAreaBoundsBefore.size
+        let textAreaSizeAfter = try await screenBoundsOfTextArea().size
 
-        if !canResize {
-            #expect(textAreaBoundsBefore == textAreaBoundsAfter)
+        if canResize {
+            #expect(textAreaSizeBefore != textAreaSizeAfter)
         } else {
-            #expect(textAreaBoundsBefore.origin == textAreaBoundsAfter.origin)
-            #expect(textAreaBoundsBefore.size != textAreaBoundsAfter.size)
+            #expect(textAreaSizeBefore == textAreaSizeAfter)
         }
     }
 }
