@@ -777,7 +777,7 @@ const BindGroupLayout::ArgumentIndices& BindGroupLayout::argumentIndices(ShaderS
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuBindGroupLayoutReference(WGPUBindGroupLayout bindGroupLayout)
+void NODELETE wgpuBindGroupLayoutAddRef(WGPUBindGroupLayout bindGroupLayout)
 {
     WebGPU::fromAPI(bindGroupLayout).ref();
 }

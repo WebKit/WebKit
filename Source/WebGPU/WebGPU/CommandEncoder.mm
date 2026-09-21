@@ -2471,7 +2471,7 @@ void CommandEncoder::rebindSamplersPreCommit(const BindGroup& group)
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuCommandEncoderReference(WGPUCommandEncoder commandEncoder)
+void NODELETE wgpuCommandEncoderAddRef(WGPUCommandEncoder commandEncoder)
 {
     WebGPU::fromAPI(commandEncoder).ref();
 }

@@ -371,7 +371,7 @@ NSString* PipelineLayout::errorValidatingBindGroupCompatibility(const PipelineLa
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuPipelineLayoutReference(WGPUPipelineLayout pipelineLayout)
+void NODELETE wgpuPipelineLayoutAddRef(WGPUPipelineLayout pipelineLayout)
 {
     WebGPU::fromAPI(pipelineLayout).ref();
 }

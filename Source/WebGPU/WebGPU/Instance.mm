@@ -244,7 +244,7 @@ id<MTLDevice> Instance::device() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuInstanceReference(WGPUInstance instance)
+void NODELETE wgpuInstanceAddRef(WGPUInstance instance)
 {
     WebGPU::fromAPI(instance).ref();
 }

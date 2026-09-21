@@ -2045,7 +2045,7 @@ void RenderPassEncoder::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuRenderPassEncoderReference(WGPURenderPassEncoder renderPassEncoder)
+void NODELETE wgpuRenderPassEncoderAddRef(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).ref();
 }

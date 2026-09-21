@@ -124,7 +124,7 @@ size_t ExternalTexture::openCommandEncoderCount() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuExternalTextureReference(WGPUExternalTexture externalTexture)
+void NODELETE wgpuExternalTextureAddRef(WGPUExternalTexture externalTexture)
 {
     WebGPU::fromAPI(externalTexture).ref();
 }

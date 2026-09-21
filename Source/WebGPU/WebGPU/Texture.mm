@@ -4217,7 +4217,7 @@ void Texture::updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuTextureReference(WGPUTexture texture)
+void NODELETE wgpuTextureAddRef(WGPUTexture texture)
 {
     WebGPU::fromAPI(texture).ref();
 }

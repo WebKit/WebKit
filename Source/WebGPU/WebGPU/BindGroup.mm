@@ -1783,7 +1783,7 @@ bool BindGroup::previouslyValidatedBindGroup(uint32_t groupIndex, uint64_t pipel
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuBindGroupReference(WGPUBindGroup bindGroup)
+void NODELETE wgpuBindGroupAddRef(WGPUBindGroup bindGroup)
 {
     WebGPU::fromAPI(bindGroup).ref();
 }

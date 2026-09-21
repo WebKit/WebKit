@@ -343,7 +343,7 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuSamplerReference(WGPUSampler sampler)
+void NODELETE wgpuSamplerAddRef(WGPUSampler sampler)
 {
     WebGPU::fromAPI(sampler).ref();
 }

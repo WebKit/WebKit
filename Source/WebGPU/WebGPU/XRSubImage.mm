@@ -153,7 +153,7 @@ RefPtr<XRSubImage> XRBinding::getViewSubImage(XRProjectionLayer& projectionLayer
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuXRSubImageReference(WGPUXRSubImage subImage)
+void NODELETE wgpuXRSubImageAddRef(WGPUXRSubImage subImage)
 {
     WebGPU::fromAPI(subImage).ref();
 }

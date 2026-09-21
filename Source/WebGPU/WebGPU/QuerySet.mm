@@ -227,7 +227,7 @@ void QuerySet::createContainersIfNeeded()
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuQuerySetReference(WGPUQuerySet querySet)
+void NODELETE wgpuQuerySetAddRef(WGPUQuerySet querySet)
 {
     WebGPU::fromAPI(querySet).ref();
 }

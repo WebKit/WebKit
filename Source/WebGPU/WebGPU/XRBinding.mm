@@ -66,7 +66,7 @@ bool XRBinding::isValid() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuXRBindingReference(WGPUXRBinding binding)
+void NODELETE wgpuXRBindingAddRef(WGPUXRBinding binding)
 {
     WebGPU::fromAPI(binding).ref();
 }

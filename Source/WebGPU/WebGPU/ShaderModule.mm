@@ -1163,7 +1163,7 @@ const String& ShaderModule::defaultComputeEntryPoint() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuShaderModuleReference(WGPUShaderModule shaderModule)
+void NODELETE wgpuShaderModuleAddRef(WGPUShaderModule shaderModule)
 {
     WebGPU::fromAPI(shaderModule).ref();
 }

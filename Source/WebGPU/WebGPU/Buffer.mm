@@ -642,7 +642,7 @@ void Buffer::clearMustTakeSlowIndexValidationPath()
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuBufferReference(WGPUBuffer buffer)
+void NODELETE wgpuBufferAddRef(WGPUBuffer buffer)
 {
     WebGPU::fromAPI(buffer).ref();
 }

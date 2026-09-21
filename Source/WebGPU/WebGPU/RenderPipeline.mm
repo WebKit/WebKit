@@ -2145,7 +2145,7 @@ id<MTLRenderPipelineState> RenderPipeline::icbRenderPipelineState() const
 
 #pragma mark WGPU Stubs
 
-void NODELETE wgpuRenderPipelineReference(WGPURenderPipeline renderPipeline)
+void NODELETE wgpuRenderPipelineAddRef(WGPURenderPipeline renderPipeline)
 {
     WebGPU::fromAPI(renderPipeline).ref();
 }
