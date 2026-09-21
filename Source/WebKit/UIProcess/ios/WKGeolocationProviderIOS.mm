@@ -162,7 +162,8 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 - (void)decidePolicyForGeolocationRequestFromOrigin:(WebKit::FrameInfoData&&)frameInfo completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView *)contentView
 {
     WebCore::RegistrableDomain registrableDomain(frameInfo.securityOrigin);
-    GeolocationRequestData geolocationRequestData { [contentView URL], WTF::move(frameInfo), WTF::move(completionHandler), contentView };
+    URL requestingURL = frameInfo.request.url();
+    GeolocationRequestData geolocationRequestData { WTF::move(requestingURL), WTF::move(frameInfo), WTF::move(completionHandler), contentView };
     _requestsWaitingForCoreLocationAuthorization.append(WTF::move(geolocationRequestData));
     if (_coreLocationProvider) {
         // Step 1: ask the user if the app can use Geolocation.
@@ -209,7 +210,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     }
 
     auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTF::move(decisionHandler)]);
-    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url) requestingURL:request.url.createNSURL().get() view:request.view.get() listener:policyListener.get()];
+    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:request.frameInfo.topOrigin requestingURL:request.url.createNSURL().get() view:request.view.get() listener:policyListener.get()];
 }
 
 - (void)geolocationAuthorizationDenied
