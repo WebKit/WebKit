@@ -27,19 +27,19 @@
 
 // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232548 This shouldn't need to be duplicated here.
 typedef (HTMLImageElement
+    or SVGImageElement
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
 #endif
     or HTMLCanvasElement
-    or SVGImageElement
     or ImageBitmap
 #if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
     or OffscreenCanvas
 #endif
-    or CSSStyleImageValue
 #if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
     or WebCodecsVideoFrame
 #endif
+    or CSSStyleImageValue
 ) CanvasImageSource;
 
 typedef (CanvasImageSource or Blob or ImageData) ImageBitmapSource;

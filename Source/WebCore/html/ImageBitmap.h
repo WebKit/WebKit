@@ -93,19 +93,19 @@ class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap>
 public:
     using Source = Variant<
         Ref<HTMLImageElement>,
+        Ref<SVGImageElement>,
 #if ENABLE(VIDEO)
         Ref<HTMLVideoElement>,
 #endif
         Ref<HTMLCanvasElement>,
-        Ref<SVGImageElement>,
         Ref<ImageBitmap>,
 #if ENABLE(OFFSCREEN_CANVAS)
         Ref<OffscreenCanvas>,
 #endif
-        Ref<CSSStyleImageValue>,
 #if ENABLE(WEB_CODECS)
         Ref<WebCodecsVideoFrame>,
 #endif
+        Ref<CSSStyleImageValue>,
         Ref<Blob>,
         Ref<ImageData>
     >;

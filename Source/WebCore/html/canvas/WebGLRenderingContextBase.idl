@@ -37,8 +37,8 @@ typedef unsigned short GLushort;
 typedef unsigned long GLuint;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
-typedef ([AllowShared] Float32Array or sequence<GLfloat>) Float32List;
-typedef ([AllowShared] Int32Array or sequence<GLint>) Int32List;
+typedef ([AllowShared] Float32Array or sequence<GLfloat>) AllowSharedFloat32List;
+typedef ([AllowShared] Int32Array or sequence<GLint>) AllowSharedInt32List;
 
 #if defined(ENABLE_OFFSCREEN_CANVAS)
 typedef (HTMLCanvasElement or OffscreenCanvas) WebGLCanvas;
@@ -637,19 +637,19 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
     undefined uniform3i(WebGLUniformLocation? location, GLint x, GLint y, GLint z);
     undefined uniform4i(WebGLUniformLocation? location, GLint x, GLint y, GLint z, GLint w);
 
-    undefined uniform1fv(WebGLUniformLocation? location, Float32List v);
-    undefined uniform2fv(WebGLUniformLocation? location, Float32List v);
-    undefined uniform3fv(WebGLUniformLocation? location, Float32List v);
-    undefined uniform4fv(WebGLUniformLocation? location, Float32List v);
+    undefined uniform1fv(WebGLUniformLocation? location, AllowSharedFloat32List v);
+    undefined uniform2fv(WebGLUniformLocation? location, AllowSharedFloat32List v);
+    undefined uniform3fv(WebGLUniformLocation? location, AllowSharedFloat32List v);
+    undefined uniform4fv(WebGLUniformLocation? location, AllowSharedFloat32List v);
 
-    undefined uniform1iv(WebGLUniformLocation? location, Int32List v);
-    undefined uniform2iv(WebGLUniformLocation? location, Int32List v);
-    undefined uniform3iv(WebGLUniformLocation? location, Int32List v);
-    undefined uniform4iv(WebGLUniformLocation? location, Int32List v);
+    undefined uniform1iv(WebGLUniformLocation? location, AllowSharedInt32List v);
+    undefined uniform2iv(WebGLUniformLocation? location, AllowSharedInt32List v);
+    undefined uniform3iv(WebGLUniformLocation? location, AllowSharedInt32List v);
+    undefined uniform4iv(WebGLUniformLocation? location, AllowSharedInt32List v);
 
-    undefined uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List array);
-    undefined uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List array);
-    undefined uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List array);
+    undefined uniformMatrix2fv(WebGLUniformLocation? location, GLboolean transpose, AllowSharedFloat32List array);
+    undefined uniformMatrix3fv(WebGLUniformLocation? location, GLboolean transpose, AllowSharedFloat32List array);
+    undefined uniformMatrix4fv(WebGLUniformLocation? location, GLboolean transpose, AllowSharedFloat32List array);
 
     undefined useProgram(WebGLProgram? program);
     undefined validateProgram(WebGLProgram program);
@@ -659,10 +659,10 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
     undefined vertexAttrib3f(GLuint index, GLfloat x, GLfloat y, GLfloat z);
     undefined vertexAttrib4f(GLuint index, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
-    undefined vertexAttrib1fv(GLuint index, Float32List values);
-    undefined vertexAttrib2fv(GLuint index, Float32List values);
-    undefined vertexAttrib3fv(GLuint index, Float32List values);
-    undefined vertexAttrib4fv(GLuint index, Float32List values);
+    undefined vertexAttrib1fv(GLuint index, AllowSharedFloat32List values);
+    undefined vertexAttrib2fv(GLuint index, AllowSharedFloat32List values);
+    undefined vertexAttrib3fv(GLuint index, AllowSharedFloat32List values);
+    undefined vertexAttrib4fv(GLuint index, AllowSharedFloat32List values);
 
     undefined vertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, GLintptr offset);
 

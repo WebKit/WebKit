@@ -82,18 +82,18 @@ struct GlyphOverflow;
 using CanvasImageSource = Variant<
       Ref<HTMLImageElement>
     , Ref<SVGImageElement>
-    , Ref<HTMLCanvasElement>
-    , Ref<ImageBitmap>
-    , Ref<CSSStyleImageValue>
-#if ENABLE(OFFSCREEN_CANVAS)
-    , Ref<OffscreenCanvas>
-#endif
 #if ENABLE(VIDEO)
     , Ref<HTMLVideoElement>
+#endif
+    , Ref<HTMLCanvasElement>
+    , Ref<ImageBitmap>
+#if ENABLE(OFFSCREEN_CANVAS)
+    , Ref<OffscreenCanvas>
 #endif
 #if ENABLE(WEB_CODECS)
     , Ref<WebCodecsVideoFrame>
 #endif
+    , Ref<CSSStyleImageValue>
 >;
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {

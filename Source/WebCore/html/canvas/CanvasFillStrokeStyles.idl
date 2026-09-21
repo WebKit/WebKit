@@ -25,18 +25,18 @@
 
 typedef (HTMLImageElement
     or SVGImageElement
-    or HTMLCanvasElement
-    or ImageBitmap
-    or CSSStyleImageValue
-#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
-    or OffscreenCanvas
-#endif
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
     or HTMLVideoElement
+#endif
+    or HTMLCanvasElement
+    or ImageBitmap
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+    or OffscreenCanvas
 #endif
 #if defined(ENABLE_WEB_CODECS) && ENABLE_WEB_CODECS
     or WebCodecsVideoFrame
 #endif
+    or CSSStyleImageValue
 ) CanvasImageSource;
 
 // https://html.spec.whatwg.org/multipage/canvas.html#canvasfillstrokestyles

@@ -557,11 +557,14 @@ sub typeDescription
 {
     my $type = shift;
 
+    my @extendedAttributes = map { $_ . "=" . $type->extendedAttributes->{$_} } sort keys %{$type->extendedAttributes};
+    my $annotation = scalar @extendedAttributes ? "[" . join(", ", @extendedAttributes) . "] " : "";
+
     if (scalar @{$type->subtypes}) {
-        return $type->name . '<' . join(', ', map { typeDescription($_) } @{$type->subtypes}) . '>' . ($type->isNullable ? "?" : "");
+        return $annotation . $type->name . '<' . join(', ', map { typeDescription($_) } @{$type->subtypes}) . '>' . ($type->isNullable ? "?" : "");
     }
 
-    return $type->name . ($type->isNullable ? "?" : "");
+    return $annotation . $type->name . ($type->isNullable ? "?" : "");
 }
 
 sub cloneType
@@ -1631,7 +1634,7 @@ sub parseTypedef
         $self->assertTokenType($nameToken, IdentifierToken);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
         my $name = $nameToken->value();
-        die "typedef redefinition for " . $name . " at " . $self->{Line} if (exists $typedefs{$name} && $typedef->type->name ne $typedefs{$name}->type->name);
+        die "typedef redefinition for " . $name . " at " . $self->{Line} if exists $typedefs{$name} && typeDescription($typedef->type) ne typeDescription($typedefs{$name}->type);
         $typedefs{$name} = $typedef;
         return;
     }
