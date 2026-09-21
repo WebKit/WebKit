@@ -42,16 +42,19 @@ public:
 
     size_t usedJSHeapSize() const { return m_usedJSHeapSize; }
     size_t totalJSHeapSize() const { return m_totalJSHeapSize; }
+    size_t usedJSHeapSizeAfterLastFullCollection() const { return m_usedJSHeapSizeAfterLastFullCollection; }
 
 private:
     MemoryInfo()
         : m_usedJSHeapSize(commonVM().heap.size())
         , m_totalJSHeapSize(commonVM().heap.capacity())
+        , m_usedJSHeapSizeAfterLastFullCollection(commonVM().heap.sizeAfterLastFullCollection())
     {
     }
 
     size_t m_usedJSHeapSize;
     size_t m_totalJSHeapSize;
+    size_t m_usedJSHeapSizeAfterLastFullCollection;
 };
 
 } // namespace WebCore

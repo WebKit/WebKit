@@ -2,53 +2,62 @@
 <html>
 <body style="margin: 0px;">
 <canvas id="c" width="2017" height="3333" style="image-rendering: pixelated"></canvas>
+<pre id=log style="position: absolute; top: 0; left: 0"></pre>
 <script>
-// Creates a lot of ImageBitmaps in order to test that GC collects them
-// before memory runs out. Tests that ImageBitmaps report their sizes to
-// GC, so that GC is run when many of the images are alive.
-function heapSize()
+// Allocates ImageBitmaps until GC decides to run a full collection. Tests that
+// ImageBitmaps report their sizes to GC, so that GC is run when many of the
+// images are alive, and collects them before memory runs out.
+
+function heapSizeAtLastFullCollection()
 {
-    if (window.internals)
-        return internals.memoryInfo().usedJSHeapSize;
-    return 0;
+    return internals.memoryInfo().usedJSHeapSizeAfterLastFullCollection;
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
+window.testRunner?.waitUntilDone();
 
 async function runTest() {
+    if (!window.testRunner || !window.internals) {
+        log.textContent = "Test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    // Perform an initial full collection so we have a reliable heapSizeBefore
+    // to compare against.
     $vm?.gc();
-    const rounds = 200;
-    const heapSizeBefore = heapSize();
+    const heapSizeBefore = heapSizeAtLastFullCollection();
+    const maxRounds = 300;
     let ctx = c.getContext("2d");
     let imageBitmap;
-    for (let i = 0; i < rounds; ++i) {
-        ctx.fillStyle = (i % 2 == 1) ? "lime" : "red";
+    let rounds = 0;
+    // Keep allocating ImageBitmaps without holding a strong reference to them.
+    // Poll heapSizeAtLastFullCollection to detect when a full collection has
+    // taken place.
+    while (rounds < maxRounds && (rounds % 2 || heapSizeAtLastFullCollection() == heapSizeBefore)) {
+        ctx.fillStyle = (rounds % 2 == 1) ? "lime" : "red";
         ctx.fillRect(8, 9, 200, 200);
         imageBitmap = await createImageBitmap(c);
+        ++rounds;
     }
     ctx.clearRect(0, 0, c.width, c.height);
 
     let succeeded = true;
-    if (window.internals) {
-        let heapUsed = heapSize() - heapSizeBefore;
-        if (heapUsed > 0 && heapUsed < 400000000) {
-            // If heapSize() can be used to detect effect of ImageBitmap, and GC was able to free memory
-            // during the loop, the ImageBitmap memory cost reporting is likely to be ok.
-            // The backing store takes 26mb, so test tests that at GC leaves at most 14 uncollected at the
-            // time of the check. Note, we don't want to force GC, as we test that GC decides to run by 
-            // itself.
-            succeeded = true;
-        } else {
-            succeeded = false;
-            $vm?.print(`heap used: ${heapUsed}`);
-        }
+    // The full collection can leave behind more than the canvas backing
+    // store and the remaining strongly referenced ImageBitmap, due to
+    // conservative stack scanning. Use 8 as a comfortable limit for
+    // the multiple of backing store size in use after the full
+    // collection has taken place.
+    const backingStoreSize = c.width * c.height * 4;
+    let heapUsed = heapSizeAtLastFullCollection() - heapSizeBefore;
+    if (heapUsed > 0 && heapUsed < 8 * backingStoreSize) {
+        succeeded = true;
+    } else {
+        succeeded = false;
+        $vm?.print(`heap used: ${heapUsed} in ${rounds} rounds`);
     }
     if (succeeded)
         ctx.drawImage(imageBitmap, 0, 0); // Verify the bitmaps work.
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    testRunner.notifyDone();
 }
 
 window.onload = runTest;
