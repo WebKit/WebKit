@@ -29,6 +29,7 @@
 #include <limits>
 #include <numbers>
 #include <sstream>
+#include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -579,6 +580,52 @@ TEST(WTF, StringUTF8ConversionStrictReplacingMode)
 
     auto result = stringWithOrphan.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     EXPECT_STREQ("ab\xEF\xBF\xBD" "c", result.legacyCStringPointer());
+}
+
+TEST(WTF, StringSimplifyWhiteSpace)
+{
+    auto simplify = [](const String& string) {
+        return string.simplifyWhiteSpace(isASCIIWhitespace);
+    };
+
+    // Null and empty are returned unchanged.
+    EXPECT_TRUE(simplify(String()).isNull());
+    EXPECT_EQ(emptyString(), simplify(emptyString()));
+
+    // Already-simplified strings come back equal (fast path).
+    EXPECT_EQ("word"_s, simplify("word"_s));
+    EXPECT_EQ("two words"_s, simplify("two words"_s));
+    EXPECT_EQ("a b c d e"_s, simplify("a b c d e"_s));
+
+    // Leading and trailing whitespace is stripped.
+    EXPECT_EQ("word"_s, simplify(" word"_s));
+    EXPECT_EQ("word"_s, simplify("word "_s));
+    EXPECT_EQ("word"_s, simplify("   word   "_s));
+    EXPECT_EQ("two words"_s, simplify("  two words  "_s));
+
+    // Interior runs collapse to a single space.
+    EXPECT_EQ("two words"_s, simplify("two  words"_s));
+    EXPECT_EQ("a b c"_s, simplify("a    b     c"_s));
+
+    // Non-space whitespace is converted to a single space.
+    EXPECT_EQ("a b"_s, simplify("a\tb"_s));
+    EXPECT_EQ("a b"_s, simplify("a\nb"_s));
+    EXPECT_EQ("a b"_s, simplify("a\r\n\t b"_s));
+    EXPECT_EQ("a b"_s, simplify("\t a \f b \n"_s));
+
+    // All-whitespace and single whitespace collapse to empty.
+    EXPECT_EQ(emptyString(), simplify(" "_s));
+    EXPECT_EQ(emptyString(), simplify(" \t\n\r "_s));
+
+    // Vertical tab is not ASCII whitespace, so it is preserved unchanged.
+    EXPECT_EQ("a\vb"_s, simplify("a\vb"_s));
+
+    // 16-bit strings take the same path.
+    char16_t wide[] = { ' ', ' ', 0x4E2D, '\t', 0x6587, ' ', ' ', 0 };
+    char16_t expected[] = { 0x4E2D, ' ', 0x6587, 0 };
+    String wideString { std::span { wide, 7 } };
+    EXPECT_FALSE(wideString.is8Bit());
+    EXPECT_EQ(String(std::span { expected, 3 }), simplify(wideString));
 }
 
 } // namespace TestWebKitAPI

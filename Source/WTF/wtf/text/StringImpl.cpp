@@ -868,6 +868,26 @@ Ref<StringImpl> StringImpl::trim(CodeUnitMatchFunction predicate)
 
 template<typename CharacterType, class CodeUnitPredicate> inline Ref<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(CodeUnitPredicate predicate)
 {
+    // Return *this without allocating unless simplification is actually needed.
+    {
+        auto characters = span<CharacterType>();
+        bool previousWasMatch = true; // Seeded true so a leading matched character counts as a run.
+        bool needsSimplification = false;
+        for (auto character : characters) {
+            if (predicate(character)) {
+                if (character != ' ' || previousWasMatch) {
+                    needsSimplification = true;
+                    break;
+                }
+                previousWasMatch = true;
+            } else
+                previousWasMatch = false;
+        }
+        // A trailing matched character (previousWasMatch still set) also needs simplification.
+        if (!needsSimplification && (!previousWasMatch || characters.empty()))
+            return *this;
+    }
+
     StringBuffer<CharacterType> data(m_length);
 
     auto from = span<CharacterType>();
