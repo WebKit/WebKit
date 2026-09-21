@@ -212,8 +212,8 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
     bool isArrowFunctionBodyExpression = false;
 
     JSTextPosition positionBeforeLastNewline;
-    positionBeforeLastNewline.line = scanned.lineCount;
-    positionBeforeLastNewline.offset = source.startOffset() + scanned.offsetOfLastNewline;
+    positionBeforeLastNewline.line = scanned.lineCount ? scanned.lineCount : 1;
+    positionBeforeLastNewline.offset = source.startOffset() + (scanned.lineCount ? scanned.offsetOfLastNewline : scanned.sourceLength - scanned.closeBraceOffsetFromEnd);
     positionBeforeLastNewline.lineStartOffset = source.startOffset() + scanned.positionBeforeLastNewlineLineStartOffset;
 
     SourceCode newSource = source.subExpression(source.startOffset() + parametersStart, source.startOffset() + (view.length() - scanned.closeBraceOffsetFromEnd), 0, parametersStart);
@@ -262,16 +262,14 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
             FunctionMetadataNode* metadataFromParser = static_cast<FuncExprNode*>(funcExpr)->metadata();
             RELEASE_ASSERT(!program->hasCapturedVariables());
             
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
             RELEASE_ASSERT(metadataFromParser);
             RELEASE_ASSERT(metadataFromParser->ident().isNull());
-            
+
             // This function assumes an input string that would result in a single anonymous function expression.
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
-            RELEASE_ASSERT(metadataFromParser);
             metadataFromParser->overrideName(name);
-            metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
-            if (metadata != *metadataFromParser || positionBeforeLastNewlineFromParser != positionBeforeLastNewline) {
+            if (scanned.lineCount)
+                metadataFromParser->setEndPosition(positionBeforeLastNewlineFromParser);
+            if (metadata != *metadataFromParser || (scanned.lineCount && positionBeforeLastNewlineFromParser != positionBeforeLastNewline)) {
                 dataLogLn("Expected Metadata:\n", metadata);
                 dataLogLn("Metadata from parser:\n", *metadataFromParser);
                 dataLogLn("positionBeforeLastNewlineFromParser.line ", positionBeforeLastNewlineFromParser.line);
