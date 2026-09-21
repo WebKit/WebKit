@@ -2495,6 +2495,26 @@ bool AccessibilityObject::contentEditableAttributeIsEnabled(Element& element)
     return contentEditableValue.isEmpty() || equalLettersIgnoringASCIICase(contentEditableValue, "true"_s) || equalLettersIgnoringASCIICase(contentEditableValue, "plaintext-only"_s);
 }
 
+// How many lines |laterPosition| sits below |earlierPosition|. Answers nothing when they are on
+// lines of different blocks, whose line boxes can't be reached from one another.
+static std::optional<int> lineCountBetween(const VisiblePosition& earlierPosition, const VisiblePosition& laterPosition)
+{
+    auto earlierLineBox = RenderedPosition(earlierPosition).lineBox();
+    auto laterLineBox = RenderedPosition(laterPosition).lineBox();
+    if (!earlierLineBox || !laterLineBox)
+        return std::nullopt;
+    if (earlierLineBox == laterLineBox)
+        return 0;
+
+    int lineCount = 0;
+    for (auto lineBox = laterLineBox; lineBox; lineBox = lineBox->previous()) {
+        ++lineCount;
+        if (lineBox->previous() == earlierLineBox)
+            return lineCount;
+    }
+    return std::nullopt;
+}
+
 int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull() || !node())
@@ -2505,18 +2525,28 @@ int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) cons
     if (!containerNode->isShadowIncludingInclusiveAncestorOf(node()) && !node()->isShadowIncludingInclusiveAncestorOf(containerNode.get()))
         return -1;
 
-    int lineCount = -1;
+    int lineCount = 0;
     VisiblePosition currentVisiblePos = visiblePos;
     VisiblePosition savedVisiblePos;
 
     // move up until we get to the top
     // FIXME: This only takes us to the top of the rootEditableElement, not the top of the
     // top document.
-    do {
+    while (true) {
         savedVisiblePos = currentVisiblePos;
         currentVisiblePos = previousLinePosition(currentVisiblePos, 0, HasEditableAXRole);
-        ++lineCount;
-    } while (currentVisiblePos.isNotNull() && !(inSameLine(currentVisiblePos, savedVisiblePos)));
+        if (currentVisiblePos.isNull() || inSameLine(currentVisiblePos, savedVisiblePos))
+            break;
+        // Count lines rather than steps, because one step can cross more than one. The start of a
+        // line following an inline replaced element is the very same VisiblePosition as the one
+        // after that element, so it resolves onto the element's line:
+        //   ABCDE
+        //   [img]
+        //   |FGHIJ
+        // Stepping up from "FGHIJ" lands on the image's line, skipping the line "F" is on.
+        // A step into another block counts as the one line it moved.
+        lineCount += lineCountBetween(currentVisiblePos, savedVisiblePos).value_or(1);
+    }
 
     return lineCount;
 }
