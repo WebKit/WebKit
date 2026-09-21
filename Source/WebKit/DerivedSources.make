@@ -846,6 +846,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebCompiledContentRuleListData.serialization.in \
 	Shared/ViewWindowCoordinates.serialization.in \
 	Shared/VisibleContentRectUpdateInfo.serialization.in \
+	Shared/VolumetricSceneContentContext.serialization.in \
 	Shared/WTFArgumentCoders.serialization.in \
 	Shared/WebBackForwardListCounts.serialization.in \
 	Shared/WebContextMenuItemData.serialization.in \

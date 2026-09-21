@@ -486,6 +486,12 @@
 #include "ModelProcessConnection.h"
 #endif
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "VolumetricSceneContentContext.h"
+#include <WebCore/ElementVolumetricScene.h>
+#include <WebCore/ModelPlayer.h>
+#endif
+
 #if USE(SKIA)
 #include <WebCore/FontRenderOptions.h>
 #endif
@@ -1849,6 +1855,11 @@ IPC::Connection* WebPage::messageSenderConnection() const
 uint64_t WebPage::messageSenderDestinationID() const
 {
     return identifier().toUInt64();
+}
+
+std::optional<SharedPreferencesForWebProcess> WebPage::sharedPreferencesForWebProcess() const
+{
+    return WebProcess::singleton().sharedPreferencesForWebProcess();
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -6222,6 +6233,12 @@ void WebPage::requestInteractiveModelElementAtPoint(IntPoint clientPosition)
         send(Messages::WebPageProxy::DidReceiveInteractiveModelElement(std::nullopt));
 }
 
+void WebPage::stageModeSessionDidBegin(NodeIdentifier nodeID, const TransformationMatrix& transform)
+{
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().stageModeSessionDidBegin(nodeID, transform);
+}
+
 void WebPage::stageModeSessionDidUpdate(std::optional<NodeIdentifier> nodeID, const TransformationMatrix& transform)
 {
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
@@ -8346,6 +8363,10 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     resetFocusedElementForFrame(frame);
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    dismissVolumetricScenesForDetachedElements();
+#endif
+
     if (frame->isMainFrame())
         m_textManipulationIncludesSubframes = false;
     else if (m_textManipulationIncludesSubframes)
@@ -9770,6 +9791,141 @@ void WebPage::setHasModelElement(bool hasModelElement)
     send(Messages::WebPageProxy::SetHasModelElement(hasModelElement));
 }
 #endif
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void WebPage::enterVolumetricSceneForElement(WebCore::Element& element, CompletionHandler<void(bool)>&& completion)
+{
+    RefPtr modelPlayer = WebCore::ElementVolumetricScene::playerForElement(element);
+    if (!modelPlayer)
+        return completion(false);
+
+    auto nodeID = element.nodeIdentifier();
+    if (m_volumetricSceneElements.contains(nodeID))
+        return completion(false);
+
+    m_volumetricSceneElements.set(nodeID, VolumetricSceneRequest { WeakPtr { element }, true, false });
+
+    modelPlayer->enterVolumetricPresentation([weakThis = WeakPtr { *this }, nodeID, completion = WTF::move(completion)](std::optional<WebCore::LayerHostingContextIdentifier> contextID) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !contextID) {
+            if (protectedThis)
+                protectedThis->m_volumetricSceneElements.remove(nodeID);
+            return completion(false);
+        }
+
+        auto it = protectedThis->m_volumetricSceneElements.find(nodeID);
+        if (it == protectedThis->m_volumetricSceneElements.end())
+            return completion(false);
+
+        if (it->value.wasCancelledWhilePending) {
+            RefPtr element = it->value.element.get();
+            protectedThis->m_volumetricSceneElements.remove(it);
+            if (element)
+                WebCore::ElementVolumetricScene::volumetricSceneDidClose(*element);
+            return completion(false);
+        }
+
+        it->value.isPending = false;
+
+        protectedThis->sendWithAsyncReply(Messages::WebPageProxy::PresentVolumetricScene(nodeID, VolumetricSceneContentContext { *contextID }), [weakThis, nodeID, completion = WTF::move(completion)](bool success) mutable {
+            if (!success) {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->m_volumetricSceneElements.remove(nodeID);
+            }
+            completion(success);
+        });
+    });
+}
+
+void WebPage::exitVolumetricSceneForElement(WebCore::Element& element)
+{
+    auto nodeID = element.nodeIdentifier();
+    auto it = m_volumetricSceneElements.find(nodeID);
+    if (it == m_volumetricSceneElements.end())
+        return;
+
+    if (it->value.isPending) {
+        it->value.wasCancelledWhilePending = true;
+        return;
+    }
+
+    // Teardown happens in volumetricSceneDidClose(), the single exit path.
+    send(Messages::WebPageProxy::DismissVolumetricScene(nodeID));
+}
+
+void WebPage::updateVolumetricSceneForElement(WebCore::Element& element)
+{
+    RefPtr modelPlayer = WebCore::ElementVolumetricScene::playerForElement(element);
+    if (!modelPlayer)
+        return;
+
+    auto nodeID = element.nodeIdentifier();
+    auto it = m_volumetricSceneElements.find(nodeID);
+    // Rebinding a scene that has not been asked for yet would arrive before the request that creates it.
+    if (it == m_volumetricSceneElements.end() || it->value.isPending)
+        return;
+
+    modelPlayer->enterVolumetricPresentation([weakThis = WeakPtr { *this }, nodeID](std::optional<WebCore::LayerHostingContextIdentifier> contextID) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !contextID)
+            return;
+        protectedThis->send(Messages::WebPageProxy::UpdateVolumetricSceneContentContext(nodeID, VolumetricSceneContentContext { *contextID }));
+    });
+}
+
+void WebPage::dismissVolumetricScenesForDetachedElements()
+{
+    Vector<WebCore::NodeIdentifier> detached;
+    for (auto& [nodeID, request] : m_volumetricSceneElements) {
+        RefPtr element = request.element.get();
+        if (!element || !element->document().page())
+            detached.append(nodeID);
+    }
+
+    for (auto nodeID : detached) {
+        auto it = m_volumetricSceneElements.find(nodeID);
+        if (it == m_volumetricSceneElements.end())
+            continue;
+
+        if (it->value.isPending) {
+            it->value.wasCancelledWhilePending = true;
+            continue;
+        }
+
+        // The element cannot be told, so drop the entry here rather than waiting for a reply about it.
+        m_volumetricSceneElements.remove(it);
+        send(Messages::WebPageProxy::DismissVolumetricScene(nodeID));
+    }
+}
+
+void WebPage::volumetricSceneDidClose(WebCore::NodeIdentifier nodeID)
+{
+    RefPtr element = m_volumetricSceneElements.take(nodeID).element.get();
+    if (!element)
+        return;
+
+    WebCore::ElementVolumetricScene::volumetricSceneDidClose(*element);
+
+    if (RefPtr modelPlayer = WebCore::ElementVolumetricScene::playerForElement(*element))
+        modelPlayer->exitVolumetricPresentation([] { });
+}
+
+void WebPage::updateVolumetricSceneSize(WebCore::NodeIdentifier nodeID, WebCore::FloatSize volumeSizeInMeters)
+{
+    auto it = m_volumetricSceneElements.find(nodeID);
+    if (it == m_volumetricSceneElements.end())
+        return;
+
+    RefPtr element = it->value.element.get();
+    if (!element)
+        return;
+
+    if (RefPtr modelPlayer = WebCore::ElementVolumetricScene::playerForElement(*element))
+        modelPlayer->updateVolumetricPresentationSize(volumeSizeInMeters);
+}
+
+#endif // ENABLE(CONNECTED_VOLUMETRIC_SCENE)
 
 void WebPage::textAutoSizingAdjustmentTimerFired()
 {

@@ -32,8 +32,16 @@
 #import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/UniqueRef.h>
+#import <wtf/WeakPtr.h>
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#import "VolumetricSceneContentContext.h"
+#import <WebCore/NodeIdentifier.h>
+#import <wtf/CompletionHandler.h>
+#endif
 
 OBJC_CLASS WKPageHostedPortalView;
+OBJC_CLASS WKPortalVolumetricSceneController;
 OBJC_CLASS UIView;
 OBJC_CLASS _UIRemoteView;
 
@@ -41,7 +49,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class PortalPresentationManagerProxy : public RefCounted<PortalPresentationManagerProxy> {
+class PortalPresentationManagerProxy : public RefCounted<PortalPresentationManagerProxy>, public CanMakeWeakPtr<PortalPresentationManagerProxy> {
     WTF_MAKE_TZONE_ALLOCATED(PortalPresentationManagerProxy);
 public:
     static Ref<PortalPresentationManagerProxy> create(WebPageProxy& page)
@@ -57,6 +65,14 @@ public:
     void invalidateModel(const WebCore::PlatformLayerIdentifier&);
     void invalidateAllModels();
     void pageScaleDidChange(CGFloat);
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    void showVolumetricScene(WebCore::NodeIdentifier, const VolumetricSceneContentContext&, CompletionHandler<void(bool)>&&);
+    // Rebinds an existing scene to a reloaded element's new content handle.
+    void updateVolumetricSceneContentContext(WebCore::NodeIdentifier, const VolumetricSceneContentContext&);
+    void hideVolumetricScene(WebCore::NodeIdentifier);
+    void hideAllVolumetricScenes();
+#endif
 
 private:
     explicit PortalPresentationManagerProxy(WebPageProxy&);
@@ -75,6 +91,18 @@ private:
     HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<PortalPresentation>> m_portalPresentations;
     HashSet<WebCore::PlatformLayerIdentifier> m_activelyDraggedModelLayerIDs;
     WeakPtr<WebPageProxy> m_page;
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    struct VolumetricScenePresentation {
+        WTF_DEPRECATED_MAKE_FAST_ALLOCATED(VolumetricScenePresentation);
+
+    public:
+        WebCore::LayerHostingContextIdentifier contentContext;
+        RetainPtr<WKPortalVolumetricSceneController> sceneController;
+    };
+
+    HashMap<WebCore::NodeIdentifier, UniqueRef<VolumetricScenePresentation>> m_volumetricScenes;
+#endif
 };
 
 }

@@ -57,6 +57,8 @@ NS_SWIFT_UI_ACTOR
 - (void)interactionDidEnd;
 - (void)operationDidUpdate:(WKStageModeOperation)operation;
 - (void)removeInteractionContainerFromSceneOrParent;
+- (void)clearInteractionRotation;
+- (void)clearInteractionRotationAndOrbitState;
 @end
 
 #endif // HAVE(CORE_RE)

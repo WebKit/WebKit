@@ -61,6 +61,12 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "ElementVolumetricScene.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpatialPortalController);
@@ -245,6 +251,11 @@ SpatialPortalController::~SpatialPortalController()
 
 void SpatialPortalController::prepareForRemoval()
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (RefPtr element = m_portalElement.get())
+        ElementVolumetricScene::exitVolumetricScene(*element);
+#endif
+
     m_portalAction = PortalActionKind::None;
     updateGestureHandling();
 
@@ -272,6 +283,10 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
         player->unload(nodeID);
 
     if (m_hostedModels.isEmpty()) {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        if (RefPtr element = m_portalElement.get())
+            ElementVolumetricScene::exitVolumetricScene(*element);
+#endif
         deleteModelPlayer();
         stopObservingPortalVisibility();
         reconfigurePortalLayer();
@@ -416,6 +431,11 @@ void SpatialPortalController::viewportIntersectionChanged(bool isIntersecting)
 
 void SpatialPortalController::documentVisibilityChanged()
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (RefPtr element = m_portalElement.get())
+        ElementVolumetricScene::documentVisibilityDidChange(*element);
+#endif
+
     if (RefPtr player = m_modelPlayer)
         player->visibilityStateDidChange();
 }
@@ -425,6 +445,16 @@ void SpatialPortalController::childVisibilityStateChanged(HTMLModelElement& chil
     if (isPortalVisible())
         loadChildModelIfReady(child);
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+RefPtr<ModelPlayer> SpatialPortalController::liveModelPlayer() const
+{
+    RefPtr modelPlayer = m_modelPlayer;
+    if (!modelPlayer || modelPlayer->isPlaceholder())
+        return nullptr;
+    return modelPlayer;
+}
+#endif
 
 ModelPlayer* SpatialPortalController::ensureModelPlayer()
 {
@@ -551,11 +581,20 @@ CheckedPtr<SpatialPortalController> SpatialPortalController::interactiveControll
     if (!controller || !controller->supportsInteraction())
         return nullptr;
 
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (controller->presentationMode() == ModelPresentationMode::Volumetric)
+        return nullptr;
+#endif
+
     return controller;
 }
 
 bool SpatialPortalController::supportsInteraction() const
 {
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    if (m_presentationMode == ModelPresentationMode::Volumetric)
+        return true;
+#endif
     return m_portalAction != PortalActionKind::None;
 }
 
@@ -688,8 +727,8 @@ void SpatialPortalController::configureGraphicsLayer(GraphicsLayer& graphicsLaye
 #if ENABLE(MODEL_ELEMENT_PORTAL)
         .hasPortal = true, // N/A
 #endif
-#if ENABLE(MODEL_ELEMENT_IMMERSIVE)
-        .detachedForImmersive = false, // N/A
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+        .presentationMode = m_presentationMode,
 #endif
     });
 }
@@ -719,6 +758,15 @@ void SpatialPortalController::modelDidFinishLoading(ModelPlayer&, NodeIdentifier
     child->didFinishLoadingInsidePortal();
 
     reconfigurePortalLayer();
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // Mirrors HTMLModelElement::didFinishLoading(): a recreated player mints a new hosting context.
+    if (m_presentationMode == ModelPresentationMode::Volumetric) {
+        RefPtr element = m_portalElement.get();
+        if (RefPtr page = element ? element->document().page() : nullptr)
+            page->chrome().client().updateVolumetricSceneForElement(*element);
+    }
+#endif
 }
 
 void SpatialPortalController::modelDidFailLoading(ModelPlayer&, NodeIdentifier nodeID, const ResourceError& error)
@@ -819,8 +867,38 @@ RefPtr<GraphicsLayer> SpatialPortalController::portalGraphicsLayer() const
 bool SpatialPortalController::isPortalVisible() const
 {
     RefPtr element = m_portalElement.get();
-    return element && !element->document().hidden() && m_isIntersectingViewport;
+    if (!element)
+        return false;
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+    // The portal's inline box is blank while its content is presented elsewhere, so scrolling it away must not
+    // unload what that scene is showing.
+    if (m_presentationMode != ModelPresentationMode::Inline)
+        return true;
+#endif
+    return !element->document().hidden() && m_isIntersectingViewport;
 }
+
+#if ENABLE(CONNECTED_VOLUMETRIC_SCENE)
+
+void SpatialPortalController::setPresentationMode(ModelPresentationMode mode)
+{
+    if (m_presentationMode == mode)
+        return;
+
+    m_presentationMode = mode;
+    reconfigurePortalLayer();
+
+    // Mirrors viewportIntersectionChanged(): the mode change flips isPortalVisible().
+    if (RefPtr player = m_modelPlayer)
+        player->visibilityStateDidChange();
+
+    for (auto& hostedModel : copyToVector(m_hostedModels.values())) {
+        if (RefPtr element = hostedModel.element.get())
+            element->visibilityStateChanged();
+    }
+}
+
+#endif
 
 } // namespace WebCore
 
