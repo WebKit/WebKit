@@ -33,21 +33,28 @@
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PlatformRawAudioData.h"
+#include "ScriptExecutionContext.h"
 #include "WebCodecsAudioDataAlgorithms.h"
+#include "WebCodecsBufferTransfer.h"
 
 namespace WebCore {
 
 // https://www.w3.org/TR/webcodecs/#dom-audiodata-audiodata
 ExceptionOr<Ref<WebCodecsAudioData>> WebCodecsAudioData::create(ScriptExecutionContext& context, Init&& init)
 {
+    WebCodecsTransferList transferList { WTF::move(init.transfer) };
+    if (auto result = transferList.validate(); result.hasException())
+        return result.releaseException();
+
     if (!isValidAudioDataInit(init))
         return Exception { ExceptionCode::TypeError, "Invalid init data"_s };
 
-    auto rawData = init.data.span();
-    auto data = PlatformRawAudioData::create(WTF::move(rawData), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
+    auto data = PlatformRawAudioData::create(init.data.span(), init.format, init.sampleRate, init.timestamp, init.numberOfFrames, init.numberOfChannels);
 
     if (!data)
         return Exception { ExceptionCode::NotSupportedError, "AudioData creation failed"_s };
+
+    transferList.detachAll(context.vm());
 
     return adoptRef(*new WebCodecsAudioData(context, WebCodecsAudioInternalData { WTF::move(data) }));
 }

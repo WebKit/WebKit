@@ -24,14 +24,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Support Serializable and Transferable.
 [
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsAudioEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=EncodedAudioChunk,
 ] interface WebCodecsEncodedAudioChunk {
-  constructor(WebCodecsEncodedAudioChunkInit init);
+  [CallWith=CurrentGlobalObject] constructor(WebCodecsEncodedAudioChunkInit init);
   readonly attribute WebCodecsEncodedAudioChunkType type;
   readonly attribute long long timestamp;
   readonly attribute unsigned long long? duration;
@@ -50,4 +49,5 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedAudioChunkInitDuration
   WebCodecsEncodedAudioChunkInitTimestamp timestamp;
   WebCodecsEncodedAudioChunkInitDuration duration;
   required AllowSharedBufferSource data;
+  sequence<ArrayBuffer> transfer = [];
 };

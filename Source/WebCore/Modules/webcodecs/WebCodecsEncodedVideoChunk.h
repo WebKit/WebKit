@@ -31,17 +31,22 @@
 #include <WebCore/WebCodecsEncodedVideoChunkData.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+namespace JSC {
+class JSGlobalObject;
+}
+
 namespace WebCore {
 
 template<typename> class ExceptionOr;
 
 class WebCodecsEncodedVideoChunkStorage : public ThreadSafeRefCounted<WebCodecsEncodedVideoChunkStorage> {
 public:
-    static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Vector<uint8_t>&& buffer) { return create(WebCodecsEncodedVideoChunkData { type, timestamp, duration, WTF::move(buffer) }); }
+    static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Ref<SharedBuffer>&& buffer) { return create(WebCodecsEncodedVideoChunkData { type, timestamp, duration, WTF::move(buffer) }); }
     static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkData&& data) { return adoptRef(* new WebCodecsEncodedVideoChunkStorage(WTF::move(data))); }
 
     const WebCodecsEncodedVideoChunkData& data() const LIFETIME_BOUND { return m_data; }
-    uint64_t memoryCost() const { return m_data.buffer.size(); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return protect(m_data.buffer)->span(); }
+    uint64_t memoryCost() const { return m_data.buffer->size(); }
 
 private:
     explicit WebCodecsEncodedVideoChunkStorage(WebCodecsEncodedVideoChunkData&&);
@@ -56,23 +61,25 @@ public:
         std::optional<int64_t> timestamp { 0 };
         std::optional<uint64_t> duration;
         BufferSource data;
+        Vector<Ref<JSC::ArrayBuffer>> transfer { };
     };
 
-    static Ref<WebCodecsEncodedVideoChunk> create(Init&& init) { return adoptRef(*new WebCodecsEncodedVideoChunk(WTF::move(init))); }
+    static ExceptionOr<Ref<WebCodecsEncodedVideoChunk>> create(JSC::JSGlobalObject&, Init&&);
     static Ref<WebCodecsEncodedVideoChunk> create(Ref<WebCodecsEncodedVideoChunkStorage>&& storage) { return adoptRef(*new WebCodecsEncodedVideoChunk(WTF::move(storage))); }
+    static Ref<WebCodecsEncodedVideoChunk> create(WebCodecsEncodedVideoChunkType type, int64_t timestamp, std::optional<uint64_t> duration, Ref<SharedBuffer>&& buffer) { return create(WebCodecsEncodedVideoChunkStorage::create(type, timestamp, duration, WTF::move(buffer))); }
 
     WebCodecsEncodedVideoChunkType type() const { return m_storage->data().type; };
     int64_t timestamp() const { return m_storage->data().timestamp; }
     std::optional<uint64_t> duration() const { return m_storage->data().duration; }
-    size_t byteLength() const { return m_storage->data().buffer.size(); }
+    size_t byteLength() const { return m_storage->data().buffer->size(); }
 
     ExceptionOr<void> copyTo(BufferSource&&);
 
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_storage->data().buffer.span(); }
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return storage().span(); }
+    const WebCodecsEncodedVideoChunkStorage& storage() const LIFETIME_BOUND { return m_storage.get(); }
     WebCodecsEncodedVideoChunkStorage& storage() LIFETIME_BOUND { return m_storage.get(); }
 
 private:
-    explicit WebCodecsEncodedVideoChunk(Init&&);
     explicit WebCodecsEncodedVideoChunk(Ref<WebCodecsEncodedVideoChunkStorage>&&);
 
     const Ref<WebCodecsEncodedVideoChunkStorage> m_storage;

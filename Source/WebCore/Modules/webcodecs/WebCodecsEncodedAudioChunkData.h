@@ -28,8 +28,8 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/WebCodecsEncodedAudioChunkType.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -37,7 +37,7 @@ struct WebCodecsEncodedAudioChunkData {
     WebCodecsEncodedAudioChunkType type { WebCodecsEncodedAudioChunkType::Key };
     int64_t timestamp { 0 };
     std::optional<uint64_t> duration { 0 };
-    Vector<uint8_t> buffer;
+    Ref<SharedBuffer> buffer;
 };
 
 }

@@ -62,6 +62,7 @@ enum ColorSpaceConversion { "none", "default" };
     [EnforceRange] unsigned long desiredWidth;
     [EnforceRange] unsigned long desiredHeight;
     boolean preferAnimation;
+    sequence<ArrayBuffer> transfer = [];
 };
 
 [

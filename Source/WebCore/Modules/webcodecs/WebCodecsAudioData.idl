@@ -26,7 +26,6 @@
 
 // https://w3c.github.io/webcodecs/#audiodata
 
-// FIXME: Support Serializable and Transferable.
 [
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsAudioEnabled,
@@ -58,6 +57,7 @@
     required AllowSharedBufferSource data;
     required [EnforceRange] unsigned long numberOfFrames;
     required [EnforceRange] unsigned long numberOfChannels;
+    sequence<ArrayBuffer> transfer = [];
 };
 
 [

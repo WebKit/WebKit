@@ -23,14 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Support Serializable and Transferable.
 [
     Conditional=WEB_CODECS,
     EnabledBySetting=WebCodecsVideoEnabled,
     Exposed=(Window,DedicatedWorker),
     InterfaceName=EncodedVideoChunk,
 ] interface WebCodecsEncodedVideoChunk {
-  constructor(WebCodecsEncodedVideoChunkInit init);
+  [CallWith=CurrentGlobalObject] constructor(WebCodecsEncodedVideoChunkInit init);
   readonly attribute WebCodecsEncodedVideoChunkType type;
   readonly attribute long long timestamp;
   readonly attribute unsigned long long? duration;
@@ -49,4 +48,5 @@ typedef [EnforceRange] unsigned long long WebCodecsEncodedVideoChunkInitDuration
   WebCodecsEncodedVideoChunkInitTimestamp timestamp;
   WebCodecsEncodedVideoChunkInitDuration duration;
   required AllowSharedBufferSource data;
+  sequence<ArrayBuffer> transfer = [];
 };

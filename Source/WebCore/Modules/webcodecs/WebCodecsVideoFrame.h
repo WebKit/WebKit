@@ -100,6 +100,7 @@ public:
         std::optional<size_t> displayHeight { };
 
         std::optional<VideoColorSpaceInit> colorSpace { };
+        Vector<Ref<JSC::ArrayBuffer>> transfer { };
     };
 
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(ScriptExecutionContext&, CanvasImageSource&&, Init&&);

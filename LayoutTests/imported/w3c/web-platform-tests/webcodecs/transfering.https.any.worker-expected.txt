@@ -1,12 +1,12 @@
 
-FAIL Test transfering ArrayBuffer to VideoFrame assert_equals: data.length after detach expected 0 but got 16
-FAIL Test transfering buffers to VideoFrame with uneven samples assert_equals: data.length after detach expected 0 but got 3
+PASS Test transfering ArrayBuffer to VideoFrame
+PASS Test transfering buffers to VideoFrame with uneven samples
 PASS Test transfering detached buffer to VideoFrame
-FAIL Test transfering view of an ArrayBuffer to VideoFrame assert_equals: data.length after detach expected 0 but got 16
+PASS Test transfering view of an ArrayBuffer to VideoFrame
 PASS Test transfering same array buffer twice
-FAIL Test transfering ArrayBuffer to EncodedAudioChunk assert_equals: data.length after detach expected 0 but got 10
-FAIL Test transfering ArrayBuffer to EncodedVideoChunk assert_equals: data.length after detach expected 0 but got 10
-FAIL Test transfering ArrayBuffer to AudioData assert_equals: data.length after detach expected 0 but got 10
-FAIL Encoding from AudioData with transferred buffer assert_equals: buffer.length after detach expected 0 but got 9600
-FAIL Test transfering ArrayBuffer to ImageDecoder. assert_equals: buffer.byteLength after detach expected 0 but got 1442
+PASS Test transfering ArrayBuffer to EncodedAudioChunk
+PASS Test transfering ArrayBuffer to EncodedVideoChunk
+PASS Test transfering ArrayBuffer to AudioData
+PASS Encoding from AudioData with transferred buffer
+PASS Test transfering ArrayBuffer to ImageDecoder.
 

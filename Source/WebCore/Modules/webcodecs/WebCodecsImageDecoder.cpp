@@ -39,6 +39,7 @@
 #include "ReadableStreamToSharedBufferSink.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptExecutionContextInlines.h"
+#include "WebCodecsBufferTransfer.h"
 #include "WebCodecsControlMessage.h"
 #include "WebCodecsImageDecodeResult.h"
 #include "WebCodecsVideoFrame.h"
@@ -53,34 +54,39 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebCodecsImageDecoder);
 
-Ref<WebCodecsImageDecoder> WebCodecsImageDecoder::create(ScriptExecutionContext& context, Init&& init)
+ExceptionOr<Ref<WebCodecsImageDecoder>> WebCodecsImageDecoder::create(ScriptExecutionContext& context, Init&& init)
 {
-    Ref decoder = adoptRef(*new WebCodecsImageDecoder(context, WTF::move(init)));
+    // FIXME: Add step 1: If init is not valid ImageDecoderInit, throw a TypeError.
+    WebCodecsTransferList transferList { WTF::move(init.transfer) };
+    if (auto result = transferList.validate(); result.hasException())
+        return result.releaseException();
+
+    Ref decoder = adoptRef(*new WebCodecsImageDecoder(context, WTF::move(init), transferList));
     decoder->suspendIfNeeded();
     return decoder;
 }
 
-WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&& init)
+WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&& init, const WebCodecsTransferList& transferList)
     : WebCodecsControlMessageQueue(context)
     , m_type(init.type)
     , m_completedPromise(makeUniqueRef<CompletedPromise>())
     , m_tracks(WebCodecsImageTrackList::create())
 {
-    RefPtr<SharedBuffer> buffer;
-
     WTF::switchOn(init.data,
         [&](const Ref<JSC::ArrayBuffer>& data) {
-            if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, true);
+            Ref buffer = transferList.isEmpty() ? SharedBuffer::create(data->span()) : transferList.takeData(context.vm(), data.ptr(), data->span());
+            setInternalDecoderData(buffer, true);
         },
         [&](const Ref<JSC::ArrayBufferView>& data) {
-            if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, true);
+            Ref buffer = transferList.isEmpty() ? SharedBuffer::create(data->span()) : transferList.takeData(context.vm(), data->possiblySharedBuffer().get(), data->span());
+            setInternalDecoderData(buffer, true);
         },
         [&](const Ref<ReadableStream>& stream) {
             sinkStreamToInternalDecoder(stream);
         }
     );
+
+    transferList.detachAll(context.vm());
 }
 
 WebCodecsImageDecoder::~WebCodecsImageDecoder() = default;

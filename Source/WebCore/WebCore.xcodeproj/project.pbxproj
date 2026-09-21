@@ -1425,6 +1425,7 @@
 		41103AAD1E39791000769F03 /* RealtimeIncomingAudioSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41103AA91E39790A00769F03 /* RealtimeIncomingAudioSource.h */; };
 		41103AAD1E39791000769F14 /* RealtimeIncomingAudioSourceCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 41103AA91E39790A00769F14 /* RealtimeIncomingAudioSourceCocoa.h */; };
 		4110A1AA28DA7D0F00321D09 /* WebCodecsVideoFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110A1A728DA7D0F00321D09 /* WebCodecsVideoFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A1B2C0430A1000100AA0004 /* WebCodecsBufferTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A1B2C0230A1000100AA0002 /* WebCodecsBufferTransfer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4110A21728E3441600321D09 /* WebCodecsVideoDecoderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110A20B28E3440A00321D09 /* WebCodecsVideoDecoderSupport.h */; };
 		4110A21828E3441600321D09 /* WebCodecsVideoDecoderConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110A21328E3440D00321D09 /* WebCodecsVideoDecoderConfig.h */; };
 		4110A21928E3441600321D09 /* HardwareAcceleration.h in Headers */ = {isa = PBXBuildFile; fileRef = 4110A21628E3440E00321D09 /* HardwareAcceleration.h */; };
@@ -14623,6 +14624,8 @@
 		724DCF1D28485C330026ACF4 /* FilterResults.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FilterResults.cpp; sourceTree = "<group>"; };
 		724DD271302D21F200AC38E2 /* WebCodecsControlMessageQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsControlMessageQueue.h; sourceTree = "<group>"; };
 		724DD272302D21F200AC38E2 /* WebCodecsControlMessageQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsControlMessageQueue.cpp; sourceTree = "<group>"; };
+		7A1B2C0230A1000100AA0002 /* WebCodecsBufferTransfer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCodecsBufferTransfer.h; sourceTree = "<group>"; };
+		7A1B2C0330A1000100AA0003 /* WebCodecsBufferTransfer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCodecsBufferTransfer.cpp; sourceTree = "<group>"; };
 		724E09062901CD27000AF3EB /* GraphicsContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextSwitcher.cpp; sourceTree = "<group>"; };
 		724E09072901CD27000AF3EB /* GraphicsContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContextSwitcher.h; sourceTree = "<group>"; };
 		724ED3291A3A7E5400F5F13C /* EXTBlendMinMax.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EXTBlendMinMax.cpp; sourceTree = "<group>"; };
@@ -40347,6 +40350,8 @@
 				9A87D9EB2A8295F100EE7A8A /* WebCodecsAudioInternalData.h */,
 				51D444712D09B9EA00F26553 /* WebCodecsBase.cpp */,
 				51D4446F2D09B1F800F26553 /* WebCodecsBase.h */,
+				7A1B2C0330A1000100AA0003 /* WebCodecsBufferTransfer.cpp */,
+				7A1B2C0230A1000100AA0002 /* WebCodecsBufferTransfer.h */,
 				4110A21128E3440C00321D09 /* WebCodecsCodecState.h */,
 				4110A20F28E3440C00321D09 /* WebCodecsCodecState.idl */,
 				459CBAAA2C7647410003743B /* WebCodecsControlMessage.h */,
@@ -50337,6 +50342,7 @@
 				07257B5F2E50726400AD0DF1 /* WebCodecsAudioEncoder.h in Headers */,
 				9A87D9EC2A8295F100EE7A8A /* WebCodecsAudioInternalData.h in Headers */,
 				51D444702D09B20A00F26553 /* WebCodecsBase.h in Headers */,
+				7A1B2C0430A1000100AA0004 /* WebCodecsBufferTransfer.h in Headers */,
 				4110A21A28E3441600321D09 /* WebCodecsCodecState.h in Headers */,
 				9A87D9EE2A82967A00EE7A8A /* WebCodecsEncodedAudioChunk.h in Headers */,
 				9A87D9F82A829ED500EE7A8A /* WebCodecsEncodedAudioChunkData.h in Headers */,

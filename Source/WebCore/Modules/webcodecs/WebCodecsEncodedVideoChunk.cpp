@@ -29,13 +29,21 @@
 #if ENABLE(WEB_CODECS)
 
 #include "ExceptionOr.h"
+#include "WebCodecsBufferTransfer.h"
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-WebCodecsEncodedVideoChunk::WebCodecsEncodedVideoChunk(Init&& init)
-    : m_storage { WebCodecsEncodedVideoChunkStorage::create(init.type, init.timestamp.value_or(0), init.duration, init.data.span()) }
+ExceptionOr<Ref<WebCodecsEncodedVideoChunk>> WebCodecsEncodedVideoChunk::create(JSC::JSGlobalObject& globalObject, Init&& init)
 {
+    WebCodecsTransferList transferList { WTF::move(init.transfer) };
+    if (auto result = transferList.validate(); result.hasException())
+        return result.releaseException();
+
+    Ref buffer = transferList.isEmpty() ? SharedBuffer::create(init.data.span()) : transferList.takeData(globalObject.vm(), init.data);
+    // FIXME: timestamp is required by the spec; make it non-optional in the IDL.
+    return create(init.type, init.timestamp.value_or(0), init.duration, WTF::move(buffer));
 }
 
 ExceptionOr<void> WebCodecsEncodedVideoChunk::copyTo(BufferSource&& source)

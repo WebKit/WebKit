@@ -67,6 +67,10 @@ class Decoder;
 }
 }
 
+namespace JSC {
+class ArrayBufferContents;
+}
+
 namespace WebCore {
 
 class SharedBuffer;
@@ -77,6 +81,8 @@ class SharedMemoryHandle;
 // To modify or combine the data, allocate a new DataSegment.
 class DataSegment : public ThreadSafeRefCounted<DataSegment> {
 public:
+    WEBCORE_EXPORT ~DataSegment();
+
     size_t size() const { return span().size(); }
     WEBCORE_EXPORT std::span<const uint8_t> span() const LIFETIME_BOUND;
 
@@ -101,6 +107,8 @@ public:
     };
     WEBCORE_EXPORT static Ref<DataSegment> create(Provider&&);
 
+    WEBCORE_EXPORT static Ref<DataSegment> create(std::unique_ptr<JSC::ArrayBufferContents>&&);
+
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSData> createNSData() const;
 #endif
@@ -113,28 +121,22 @@ private:
     void iterate(CFDataRef, NOESCAPE const Function<void(std::span<const uint8_t>)>& apply) const;
 #endif
 
-    explicit DataSegment(Vector<uint8_t>&& data)
-        : m_immutableData(WTF::move(data)) { }
+    explicit DataSegment(Vector<uint8_t>&&);
 #if USE(CF)
-    explicit DataSegment(RetainPtr<CFDataRef>&& data)
-        : m_immutableData(WTF::move(data)) { }
+    explicit DataSegment(RetainPtr<CFDataRef>&&);
 #endif
 #if USE(GLIB)
-    explicit DataSegment(GRefPtr<GBytes>&& data)
-        : m_immutableData(WTF::move(data)) { }
+    explicit DataSegment(GRefPtr<GBytes>&&);
 #endif
 #if USE(GSTREAMER)
-    explicit DataSegment(RefPtr<GstMappedOwnedBuffer>&& data)
-        : m_immutableData(WTF::move(data)) { }
+    explicit DataSegment(RefPtr<GstMappedOwnedBuffer>&&);
 #endif
 #if USE(SKIA)
-    explicit DataSegment(sk_sp<SkData>&& data)
-        : m_immutableData(WTF::move(data)) { }
+    explicit DataSegment(sk_sp<SkData>&&);
 #endif
-    explicit DataSegment(FileSystem::MappedFileData&& data)
-        : m_immutableData(WTF::move(data)) { }
-    explicit DataSegment(Provider&& provider)
-        : m_immutableData(WTF::move(provider)) { }
+    explicit DataSegment(FileSystem::MappedFileData&&);
+    explicit DataSegment(Provider&&);
+    explicit DataSegment(std::unique_ptr<JSC::ArrayBufferContents>&&);
 
     Variant<Vector<uint8_t>,
 #if USE(CF)
@@ -150,7 +152,8 @@ private:
         sk_sp<SkData>,
 #endif
         FileSystem::MappedFileData,
-        Provider> m_immutableData;
+        Provider,
+        std::unique_ptr<JSC::ArrayBufferContents>> m_immutableData;
 
     friend class FragmentedSharedBuffer;
     friend class SharedBuffer; // For createCFData
