@@ -1801,8 +1801,10 @@ void Element::setScrollLeft(int newLeft)
     if (CheckedPtr renderer = renderBox()) {
         int clampedLeft = clampTo<int>(newLeft * renderer->style().usedZoom());
         renderer->setScrollLeft(clampedLeft, options);
-        if (auto* scrollableArea = renderer && renderer->layer() ? renderer->layer()->scrollableArea() : nullptr)
-            scrollableArea->setScrollShouldClearLatchedState(true);
+        if (CheckedPtr layer = renderer->layer()) {
+            if (auto* scrollableArea = layer->scrollableArea())
+                scrollableArea->setScrollShouldClearLatchedState(true);
+        }
     }
 }
 
@@ -1829,8 +1831,10 @@ void Element::setScrollTop(int newTop)
     if (CheckedPtr renderer = renderBox()) {
         int clampedTop = clampTo<int>(newTop * renderer->style().usedZoom());
         renderer->setScrollTop(clampedTop, options);
-        if (auto* scrollableArea = renderer && renderer->layer() ? renderer->layer()->scrollableArea() : nullptr)
-            scrollableArea->setScrollShouldClearLatchedState(true);
+        if (CheckedPtr layer = renderer->layer()) {
+            if (auto* scrollableArea = layer->scrollableArea())
+                scrollableArea->setScrollShouldClearLatchedState(true);
+        }
     }
 }
 
