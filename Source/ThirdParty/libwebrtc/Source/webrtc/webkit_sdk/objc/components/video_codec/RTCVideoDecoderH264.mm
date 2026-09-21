@@ -32,6 +32,8 @@
 #include "rtc_base/time_utils.h"
 #include "webkit_sdk/objc/components/video_codec/nalu_rewriter.h"
 
+namespace {  // anonymous namespace
+
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
@@ -39,6 +41,8 @@ struct RTCFrameDecodeParams {
   int64_t timestamp;
   uint64_t reorderSize { 0 };
 };
+
+}  // anonymous namespace
 
 @interface RTCVideoDecoderH264 ()
 - (void)setError:(OSStatus)error;

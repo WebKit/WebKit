@@ -115,6 +115,8 @@ static void overrideVP9ColorSpaceAttachments(CVImageBufferRef imageBuffer, CGCol
     CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderVTBVP9", kCVAttachmentMode_ShouldPropagate);
 }
 
+namespace {  // anonymous namespace
+
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
@@ -122,6 +124,8 @@ struct RTCFrameDecodeParams {
   RTCVideoDecoderCallback callback;
   int64_t timestamp;
 };
+
+}  // anonymous namespace
 
 @interface RTCVideoDecoderVTBVP9 ()
 - (void)setError:(OSStatus)error;
