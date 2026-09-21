@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+let webGLContext = null;
+
+function performActions() {
+    // These run while a recording is active, which is when the canvas call
+    // tracer processes each argument before the context receives it.
+    webGLContext.clearColor(0, 1, 0, 1);
+    webGLContext.clear(webGLContext.COLOR_BUFFER_BIT);
+
+    let pixels = new Uint8Array(4);
+    webGLContext.readPixels(0, 0, 1, 1, webGLContext.RGBA, webGLContext.UNSIGNED_BYTE, pixels);
+    TestPage.addResult("readPixels() filled its destination: " + pixels.some((component) => component));
+
+    setTimeout(() => TestPage.dispatchEventToFrontend("LastFrame"), 0);
+}
+
+function cancelActions() {
+    // This function is expected by "resources/recording-utilities.js".
+}
+
+function load() {
+    webGLContext = document.querySelector("canvas").getContext("webgl");
+    runTest();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGLPreservesArguments");
+
+    suite.addTestCase({
+        name: "Canvas.recordingWebGLPreservesArguments.readPixels",
+        description: "Check that recording an action leaves its typed array argument for the context to use.",
+        test(resolve, reject) {
+            function checkRecording(recording) {
+                let actions = recording.frames.flatMap((frame) => frame.actions);
+                InspectorTest.expectTrue(actions.some((action) => action.name === "readPixels"), "The recording should contain the readPixels() action.");
+            }
+
+            startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1, callback: checkRecording});
+        },
+        timeout: -1,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <canvas width="4" height="4"></canvas>
+    <p>Test that CanvasManager does not consume the typed array arguments it records.</p>
+</body>
+</html>

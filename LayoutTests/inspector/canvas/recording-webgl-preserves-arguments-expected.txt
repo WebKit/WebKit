@@ -1,0 +1,8 @@
+Test that CanvasManager does not consume the typed array arguments it records.
+
+
+== Running test suite: Canvas.recordingWebGLPreservesArguments
+-- Running test case: Canvas.recordingWebGLPreservesArguments.readPixels
+readPixels() filled its destination: true
+PASS: The recording should contain the readPixels() action.
+

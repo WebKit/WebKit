@@ -79,6 +79,7 @@ class AbstractLocker;
 namespace WebCore {
 
 class ANGLEInstancedArrays;
+class BufferSource;
 class EXTBlendMinMax;
 class EXTClipControl;
 class EXTColorBufferFloat;
@@ -196,10 +197,9 @@ public:
     void blendFunc(GCGLenum sfactor, GCGLenum dfactor);
     void blendFuncSeparate(GCGLenum srcRGB, GCGLenum dstRGB, GCGLenum srcAlpha, GCGLenum dstAlpha);
 
-    using BufferDataSource = Variant<Ref<ArrayBuffer>, Ref<ArrayBufferView>>;
     void bufferData(GCGLenum target, long long size, GCGLenum usage);
-    void bufferData(GCGLenum target, std::optional<BufferDataSource>&&, GCGLenum usage);
-    void bufferSubData(GCGLenum target, long long offset, BufferDataSource&&);
+    void bufferData(GCGLenum target, std::optional<BufferSource>&&, GCGLenum usage);
+    void bufferSubData(GCGLenum target, long long offset, BufferSource&&);
 
     GCGLenum checkFramebufferStatus(GCGLenum target);
     void clear(GCGLbitfield mask);

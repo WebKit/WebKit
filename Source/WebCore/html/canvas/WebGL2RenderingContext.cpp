@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "BufferSource.h"
 #include "CachedImage.h"
 #include "ContextDestructionObserverInlines.h"
 #include "EXTClipControl.h"
@@ -539,14 +540,14 @@ void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
 
 void WebGL2RenderingContext::bufferData(GCGLenum target, const ArrayBufferView& data, GCGLenum usage, uint64_t srcOffset, GCGLuint length)
 {
-    if (auto slice = sliceArrayBufferView("bufferData"_s, data, srcOffset, length))
-        WebGLRenderingContextBase::bufferData(target, BufferDataSource(slice.releaseNonNull()), usage);
+    if (RefPtr slice = sliceArrayBufferView("bufferData"_s, data, srcOffset, length))
+        WebGLRenderingContextBase::bufferData(target, BufferSource(slice.releaseNonNull()), usage);
 }
 
 void WebGL2RenderingContext::bufferSubData(GCGLenum target, long long offset, const ArrayBufferView& data, uint64_t srcOffset, GCGLuint length)
 {
-    if (auto slice = sliceArrayBufferView("bufferSubData"_s, data, srcOffset, length))
-        WebGLRenderingContextBase::bufferSubData(target, offset, BufferDataSource(slice.releaseNonNull()));
+    if (RefPtr slice = sliceArrayBufferView("bufferSubData"_s, data, srcOffset, length))
+        WebGLRenderingContextBase::bufferSubData(target, offset, BufferSource(slice.releaseNonNull()));
 }
 
 void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum writeTarget, GCGLint64 readOffset, GCGLint64 writeOffset, GCGLint64 size)
