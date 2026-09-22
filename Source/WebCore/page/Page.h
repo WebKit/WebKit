@@ -1444,6 +1444,20 @@ public:
     void syncLocalFrameInfoToRemote();
     RenderingUpdateScheduler& renderingUpdateScheduler() LIFETIME_BOUND;
 
+    // FIXME: Generalize this mechanism. (webkit.org/b/324780)
+    class DeferRemotePostMessageScope {
+        WTF_MAKE_NONCOPYABLE(DeferRemotePostMessageScope);
+    public:
+        explicit DeferRemotePostMessageScope(Page*);
+        ~DeferRemotePostMessageScope();
+
+    private:
+        const RefPtr<Page> m_page;
+    };
+
+    bool shouldDeferRemotePostMessage() const { return !!m_remotePostMessageDeferralCount; }
+    void deferRemotePostMessage(Function<void()>&&);
+
 private:
     explicit Page(PageConfiguration&&);
 
@@ -1940,6 +1954,9 @@ private:
 #if ENABLE(THREADED_ANIMATIONS)
     const std::unique_ptr<AcceleratedTimelinesUpdater> m_acceleratedTimelinesUpdater;
 #endif
+
+    unsigned m_remotePostMessageDeferralCount { 0 };
+    Vector<Function<void()>> m_deferredRemotePostMessages;
 
 }; // class Page
 
