@@ -329,6 +329,7 @@ public:
     void selfOnlyDeref();
 
     void documentURLOrOriginDidChange();
+    bool dispatchLoadEventToRemoteParent();
     void dispatchLoadEventToParent();
 
     void storageAccessExceptionReceivedForDomain(const RegistrableDomain&);

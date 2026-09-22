@@ -1,0 +1,10 @@
+Tests that a message an out-of-process subframe posts to its parent from its own load event handler is delivered after the load event of the subframe's owner element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS eventOrders is "load event of the owner element, then message"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

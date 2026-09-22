@@ -2449,6 +2449,12 @@ void LocalDOMWindow::dispatchLoadEvent()
         WTFEmitSignpost(document.get(), NavigationAndPaintTiming, "loadEventBegin");
     }
 
+    // When the owner element lives in another process its load event is dispatched asynchronously,
+    // so notify it before running this frame's own load event handlers. Otherwise a message posted
+    // to the parent frame by one of those handlers could be delivered before the owner element's
+    // load event, which is never the case when both frames are in the same process.
+    bool notifiedRemoteParent = frame && frame->dispatchLoadEventToRemoteParent();
+
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document.get());
 
     if (shouldMarkLoadEventTimes) {
@@ -2460,7 +2466,7 @@ void LocalDOMWindow::dispatchLoadEvent()
     }
 
     // Send a separate load event to the element that owns this frame.
-    if (RefPtr frame = this->frame())
+    if (RefPtr frame = this->frame(); frame && !notifiedRemoteParent)
         frame->dispatchLoadEventToParent();
 
     InspectorInstrumentation::loadEventFired(protect(this->frame()).get());

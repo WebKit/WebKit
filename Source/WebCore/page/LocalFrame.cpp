@@ -1336,11 +1336,19 @@ void LocalFrame::documentURLOrOriginDidChange()
         page->setMainFrameURLAndOrigin(document->url(), protect(document->securityOrigin()));
 }
 
+bool LocalFrame::dispatchLoadEventToRemoteParent()
+{
+    if (!is<RemoteFrame>(tree().parent()))
+        return false;
+    loader().client().dispatchLoadEventToOwnerElementInAnotherProcess();
+    return true;
+}
+
 void LocalFrame::dispatchLoadEventToParent()
 {
-    if (is<RemoteFrame>(tree().parent()))
-        loader().client().dispatchLoadEventToOwnerElementInAnotherProcess();
-    else if (RefPtr owner = ownerElement())
+    if (dispatchLoadEventToRemoteParent())
+        return;
+    if (RefPtr owner = ownerElement())
         owner->dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 

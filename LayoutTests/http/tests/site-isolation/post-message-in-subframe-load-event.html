@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a message an out-of-process subframe posts to its parent from its own load event handler is delivered after the load event of the subframe's owner element");
+
+var jsTestIsAsync = true;
+var eventOrders = "";
+
+// The ordering used to differ only some of the time, so load enough subframes to catch a regression.
+const iterationCount = 20;
+
+function loadFrameAndObserveEventOrder()
+{
+    var order = [];
+    var messageReceived = new Promise(function(resolve) {
+        window.addEventListener("message", function() {
+            order.push("message");
+            resolve();
+        }, {once: true});
+    });
+
+    var frame = document.createElement("iframe");
+    var frameLoaded = new Promise(function(resolve) {
+        frame.addEventListener("load", function() {
+            order.push("load event of the owner element");
+            resolve();
+        }, {once: true});
+    });
+
+    frame.src = "http://localhost:8000/site-isolation/resources/post-message-to-parent-in-load-event.html";
+    document.body.appendChild(frame);
+
+    return Promise.all([frameLoaded, messageReceived]).then(function() {
+        frame.remove();
+        return order.join(", then ");
+    });
+}
+
+async function runTest()
+{
+    var observedOrders = new Set();
+    for (var i = 0; i < iterationCount; ++i)
+        observedOrders.add(await loadFrameAndObserveEventOrder());
+
+    eventOrders = Array.from(observedOrders).join(" / ");
+    shouldBeEqualToString("eventOrders", "load event of the owner element, then message");
+    finishJSTest();
+}
+
+window.addEventListener("load", runTest);
+</script>
+</body>
+</html>
