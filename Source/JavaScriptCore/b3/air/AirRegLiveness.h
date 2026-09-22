@@ -30,7 +30,6 @@
 #include "AirBasicBlock.h"
 #include "AirCode.h"
 #include "AirInst.h"
-#include "AirLiveness.h"
 #include "RegisterSet.h"
 #include <wtf/IndexMap.h>
 
@@ -56,38 +55,25 @@ public:
     RegLiveness(Code& code);
     ~RegLiveness();
     
-    class LocalCalcBase {
+    // This calculator has to be run in reverse.
+    class LocalCalc {
     public:
-        LocalCalcBase(BasicBlock* block)
-            : m_block(block)
+        LocalCalc(RegLiveness& liveness, BasicBlock* block)
+            : m_actions(liveness.m_actions[block])
+            , m_workset(liveness.m_liveAtTail[block])
         {
         }
-        
+
         const RegisterSet& live() const
         {
             return m_workset;
         }
-        
+
         bool isLive(Reg reg) const
         {
             return m_workset.contains(reg, IgnoreVectors);
         }
-        
-    protected:
-        BasicBlock* m_block;
-        RegisterSet m_workset;
-    };
-    
-    // This calculator has to be run in reverse.
-    class LocalCalc : public LocalCalcBase {
-    public:
-        LocalCalc(RegLiveness& liveness, BasicBlock* block)
-            : LocalCalcBase(block)
-            , m_actions(liveness.m_actions[block])
-        {
-            m_workset = liveness.m_liveAtTail[block];
-        }
-        
+
         void execute(unsigned instIndex)
         {
             m_actions[instIndex + 1].def.forEach([&] (Reg r) {
@@ -95,24 +81,12 @@ public:
             });
             m_workset.merge(m_actions[instIndex].use);
         }
-        
+
     private:
-        friend class RegLiveness;
-        
         ActionsForBoundary& m_actions;
+        RegisterSet m_workset;
     };
-    
-    class LocalCalcForUnifiedTmpLiveness : public LocalCalcBase {
-    public:
-        LocalCalcForUnifiedTmpLiveness(UnifiedTmpLiveness& liveness, BasicBlock* block);
-        
-        void execute(unsigned instIndex);
-        
-    private:
-        Code& m_code;
-        UnifiedTmpLiveness::ActionsForBoundary& m_actions;
-    };
-    
+
     const RegisterSet& liveAtHead(BasicBlock* block) const
     {
         return m_liveAtHead[block];

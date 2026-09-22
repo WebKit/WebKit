@@ -75,6 +75,89 @@ public:
 
     void prepareToCompute()
     {
+        ensureActions();
+    }
+
+    // The fixpoint can read the use and def sets straight off the instructions, so the per-boundary
+    // table is only materialized for a client that walks a block itself through LocalCalc.
+    static constexpr bool streamsActions = true;
+
+    struct StreamedActions {
+        Vector<unsigned, 8> use;
+        Vector<unsigned, 8> def;
+    };
+
+    // A boundary sits between two instructions and takes the early roles of the one below it in the
+    // descending walk and the late roles of the one above.
+    struct StreamedGroup {
+        const StreamedActions* early;
+        const StreamedActions* late;
+    };
+
+    template<typename Func>
+    void forEachActionGroupDescendingStreaming(BasicBlock* block, const Func& func)
+    {
+        unsigned blockSize = block->size();
+        StreamedActions* early = &m_streamedEarly[0];
+        StreamedActions* nextEarly = &m_streamedEarly[1];
+        early->use.shrink(0);
+        early->def.shrink(0);
+
+        for (unsigned boundary = blockSize + 1; boundary--;) {
+            m_streamedLate.use.shrink(0);
+            m_streamedLate.def.shrink(0);
+            nextEarly->use.shrink(0);
+            nextEarly->def.shrink(0);
+
+            if (boundary) {
+                Inst& inst = block->at(boundary - 1);
+                inst.forEach<typename Adapter::Thing>(
+                    [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                        if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                            return;
+
+                        unsigned index = adapter().valueToIndex(thing);
+
+                        if (Arg::isEarlyUse(role))
+                            nextEarly->use.append(index);
+                        if (Arg::isEarlyDef(role))
+                            nextEarly->def.append(index);
+                        if (Arg::isLateUse(role))
+                            m_streamedLate.use.append(index);
+                        if (Arg::isLateDef(role))
+                            m_streamedLate.def.append(index);
+                    });
+            }
+
+            StreamedGroup group { early, &m_streamedLate };
+            func(boundary, &group);
+            std::swap(early, nextEarly);
+        }
+    }
+
+    template<typename Func>
+    static void forEachUseInGroup(const StreamedGroup* group, const Func& func)
+    {
+        for (unsigned index : group->early->use)
+            func(index);
+        for (unsigned index : group->late->use)
+            func(index);
+    }
+
+    template<typename Func>
+    static void forEachDefInGroup(const StreamedGroup* group, const Func& func)
+    {
+        for (unsigned index : group->early->def)
+            func(index);
+        for (unsigned index : group->late->def)
+            func(index);
+    }
+
+    void ensureActions()
+    {
+        if (m_actionsBuilt)
+            return;
+        m_actionsBuilt = true;
         dataLogLnIf(AirLivenessAdapterInternal::verbose, "Prepare to compute tmp or stack slot liveness for code: ", code);
         for (BasicBlock* block : code) {
             ActionsForBoundary& actionsForBoundary = actions[block];
@@ -123,6 +206,7 @@ public:
 
     Actions& actionsAt(BasicBlock* block, unsigned instBoundaryIndex)
     {
+        ensureActions();
         return actions[block][instBoundaryIndex];
     }
 
@@ -138,6 +222,7 @@ public:
     template<typename Func>
     void forEachActionGroupDescending(BasicBlock* block, const Func& func)
     {
+        ensureActions();
         ActionsForBoundary& actionsForBoundary = actions[block];
         for (unsigned boundary = block->size() + 1; boundary--;)
             func(boundary, &actionsForBoundary[boundary]);
@@ -157,10 +242,20 @@ public:
             func(index);
     }
 
+    // The tail boundary only ever holds the late roles of the last instruction, which is cheaper to
+    // read off that instruction than to materialize the whole per-boundary table for.
     template<typename Func>
     void forEachUseAtTail(BasicBlock* block, const Func& func)
     {
-        forEachUse(block, block->size(), func);
+        if (!block->size())
+            return;
+        block->last().template forEach<typename Adapter::Thing>(
+            [&] (typename Adapter::Thing& thing, Arg::Role role, Bank bank, Width) {
+                if (!Adapter::acceptsBank(bank) || !Adapter::acceptsRole(role))
+                    return;
+                if (Arg::isLateUse(role))
+                    func(adapter().valueToIndex(thing));
+            });
     }
 
     template<typename Func>
@@ -179,6 +274,11 @@ public:
 
     Code& code;
     IndexMap<BasicBlock*, ActionsForBoundary> actions;
+
+private:
+    std::array<StreamedActions, 2> m_streamedEarly;
+    StreamedActions m_streamedLate;
+    bool m_actionsBuilt { false };
 };
 
 template<Bank adapterBank, Arg::Temperature minimumTemperature = Arg::Cold>

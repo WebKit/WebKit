@@ -170,31 +170,6 @@ RegLiveness::RegLiveness(Code& code)
 
 RegLiveness::~RegLiveness() = default;
 
-RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(UnifiedTmpLiveness& liveness, BasicBlock* block)
-    : LocalCalcBase(block)
-    , m_code(liveness.code)
-    , m_actions(liveness.actions[block])
-{
-    for (Tmp tmp : liveness.liveAtTail(block)) {
-        if (tmp.isReg())
-            m_workset.add(tmp.reg(), m_code.usesSIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
-    }
-}
-
-void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
-{
-    for (unsigned index : m_actions[instIndex + 1].def) {
-        Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
-        if (tmp.isReg())
-            m_workset.remove(tmp.reg());
-    }
-    for (unsigned index : m_actions[instIndex].use) {
-        Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
-        if (tmp.isReg())
-            m_workset.add(tmp.reg(), m_code.usesSIMD() ? conservativeWidth(tmp.reg()) : conservativeWidthWithoutVectors(tmp.reg()));
-    }
-}
-
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

@@ -439,6 +439,16 @@ public:
     LiveAtHead liveAtHead() LIFETIME_BOUND { return LiveAtHead(*this); }
 
 protected:
+    // An adapter that can report a block's uses and defs straight off its instructions does not need
+    // the per-boundary table built up front, since the dense fixpoint reads each block exactly once.
+    static constexpr bool adapterStreamsActions()
+    {
+        if constexpr (requires { Adapter::streamsActions; })
+            return Adapter::streamsActions;
+        else
+            return false;
+    }
+
     void compute()
     {
         uint64_t denseMatrixBits = static_cast<uint64_t>(m_cfg.numNodes()) * Adapter::numIndices();
@@ -458,7 +468,8 @@ protected:
 
     void computeDense()
     {
-        Adapter::prepareToCompute();
+        if constexpr (!adapterStreamsActions())
+            Adapter::prepareToCompute();
 
         unsigned numNodes = m_cfg.numNodes();
         unsigned numIndices = Adapter::numIndices();
@@ -503,25 +514,33 @@ protected:
             // walks the block.
             m_workset.clear();
             unsigned blockSize = Adapter::blockSize(block);
-            Adapter::forEachActionGroupDescending(block,
-                [&] (unsigned boundary, typename Adapter::ActionGroup group) {
-                    // The uses at the tail boundary are live-out rather than gen, and are seeded
-                    // below.
-                    if (boundary != blockSize)
-                        Adapter::forEachUseInGroup(group, [&] (unsigned index) { m_workset.add(index); });
-                    Adapter::forEachDefInGroup(group, [&] (unsigned index) {
-                        m_workset.remove(index);
-                        setBit(killSet, index);
-                    });
+            auto visitBoundary = [&](unsigned boundary, auto group) {
+                // The uses at the tail boundary are live-out rather than gen. A streaming adapter has
+                // them in hand here; otherwise they are seeded from forEachUseAtTail below.
+                if (boundary == blockSize) {
+                    if constexpr (adapterStreamsActions())
+                        Adapter::forEachUseInGroup(group, [&](unsigned index) { setBit(liveOutSet, index); });
+                } else
+                    Adapter::forEachUseInGroup(group, [&](unsigned index) { m_workset.add(index); });
+
+                Adapter::forEachDefInGroup(group, [&](unsigned index) {
+                    m_workset.remove(index);
+                    setBit(killSet, index);
                 });
+            };
+
+            if constexpr (adapterStreamsActions())
+                Adapter::forEachActionGroupDescendingStreaming(block, visitBoundary);
+            else {
+                Adapter::forEachActionGroupDescending(block, visitBoundary);
+                // liveOut automatically contains the LateUse's of the terminal.
+                Adapter::forEachUseAtTail(block, [&](unsigned index) {
+                    setBit(liveOutSet, index);
+                });
+            }
             std::span<const uint64_t> worksetSpan = m_workset.denseSpan();
             for (size_t i = 0; i < m_wordsPerSet; ++i)
                 genSet[i] = worksetSpan[i];
-
-            // liveOut automatically contains the LateUse's of the terminal.
-            Adapter::forEachUseAtTail(block, [&] (unsigned index) {
-                setBit(liveOutSet, index);
-            });
 
             ++numActiveBlocks;
         }
