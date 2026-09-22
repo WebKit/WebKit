@@ -1198,7 +1198,6 @@ webkit.org/b/290371 [ Debug ] compositing/repaint/inline-repaint-container.html 
 animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
-http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 
 compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen-variant.html [ Skip ] # Timeout
 compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen.html [ Skip ] # Timeout

@@ -6486,7 +6486,7 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     Ref preferences = m_preferences;
     bool siteIsolationEnabled = preferences->siteIsolationEnabled();
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
-    bool canReuseMainFrame = siteIsolationEnabled && (openedByDOM() || hasPageOpenedByMainFrame());
+    bool canReuseMainFrame = shouldReuseMainFrameOnProcessSwap();
     bool shouldInitializeCertificate = isProcessSwappingOnNavigationResponse && !canReuseMainFrame;
 
     WebCore::CertificateInfo certificateInfo;
@@ -11198,6 +11198,7 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
     Ref navigationAction = API::NavigationAction::create(WTF::move(navigationActionData), originatingFrameInfo.ptr(), nullptr, String(), WTF::move(request), URL(), shouldOpenAppLinks, WTF::move(userInitiatedActivity));
 
     Ref configuration = this->configuration().copy();
+    configuration->setPreferredProcessFromOpener(nullptr);
     configuration->setInitialSandboxFlags(effectiveSandboxFlags);
     auto effectiveReferrerPolicy = navigationActionData.effectiveReferrerPolicy;
     configuration->setInitialReferrerPolicy(effectiveReferrerPolicy);
@@ -11220,8 +11221,10 @@ void WebPageProxy::createNewPage(IPC::Connection& connection, WindowFeatures&& w
         WebCore::Site openedSite { navigationAction->request().url() };
         configuration->setOpenedSite(openedSite);
         WebCore::Site originatingSite { originatingFrameInfo->request().url() };
-        if ((openedBlobURL && !protect(preferences())->siteIsolationEnabled()) || openedSite == originatingSite)
+        if (openedBlobURL && !protect(preferences())->siteIsolationEnabled())
             configuration->setRelatedPage(*this);
+        else if (openedSite == originatingSite)
+            configuration->setPreferredProcessFromOpener(originatingFrame->frameProcess().process());
     }
 
 #if PLATFORM(MAC)
@@ -11245,19 +11248,12 @@ bool WebPageProxy::hasOpenedPage() const
     return !internals().m_openedPages.isEmptyIgnoringNullReferences();
 }
 
-bool WebPageProxy::hasPageOpenedByMainFrame() const
+bool WebPageProxy::shouldReuseMainFrameOnProcessSwap() const
 {
-    ASSERT(mainFrame());
+    if (!protect(m_preferences)->siteIsolationEnabled())
+        return false;
 
-    for (Ref page : internals().m_openedPages) {
-        auto* openedFrame = page->mainFrame();
-        if (!openedFrame)
-            continue;
-        if (openedFrame->opener() == mainFrame())
-            return true;
-    }
-
-    return false;
+    return protect(m_browsingContextGroup)->hasMultiplePages();
 }
 
 void WebPageProxy::addOpenedPage(WebPageProxy& page)

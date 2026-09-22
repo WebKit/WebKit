@@ -1191,6 +1191,98 @@ TEST(SiteIsolation, OpenWithNoopener)
     EXPECT_NE([openerView _webProcessIdentifier], [openedView _webProcessIdentifier]);
 }
 
+TEST(SiteIsolation, OpenWithNoopenerFromWindowOpenedWithNoopener)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>window.open('https://example.com/example2', '_blank', 'noopener')</script>"_s } },
+        { "/example2"_s, { "<script>window.open('https://webkit.org/webkit', '_blank', 'noopener')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [opener, sameSiteOpened] = openerAndOpenedViews(server, @"https://example.com/example", false);
+    __block WebViewAndDelegates crossSiteOpened;
+    __block pid_t crossSiteOpenedCreationPID { 0 };
+    sameSiteOpened.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        enableSiteIsolation(configuration);
+        crossSiteOpened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        crossSiteOpened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [crossSiteOpened.navigationDelegate allowAnyTLSCertificate];
+        crossSiteOpened.webView.get().navigationDelegate = crossSiteOpened.navigationDelegate.get();
+        crossSiteOpenedCreationPID = [crossSiteOpened.webView _webProcessIdentifier];
+        return crossSiteOpened.webView.get();
+    };
+    while (!crossSiteOpened.webView)
+        Util::spinRunLoop();
+    [crossSiteOpened.navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_NE(crossSiteOpenedCreationPID, [opener.webView _webProcessIdentifier]);
+
+    checkFrameTreesInProcesses(opener.webView.get(), { { "https://example.com"_s } });
+    checkFrameTreesInProcesses(sameSiteOpened.webView.get(), { { "https://example.com"_s } });
+    checkFrameTreesInProcesses(crossSiteOpened.webView.get(), { { "https://webkit.org"_s } });
+    EXPECT_EQ([sameSiteOpened.webView _webProcessIdentifier], [opener.webView _webProcessIdentifier]);
+    EXPECT_NE([crossSiteOpened.webView _webProcessIdentifier], [opener.webView _webProcessIdentifier]);
+}
+
+static void testOpenWithOpenerFromNoopenerWindow(bool siteIsolationEnabled)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>window.open('https://example.com/example2', '_blank', 'noopener')</script>"_s } },
+        { "/example2"_s, { "<script>location = 'https://webkit.org/webkit'</script>"_s } },
+        { "/webkit"_s, { "<script>window.open('https://webkit.org/opened')</script>"_s } },
+        { "/opened"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block WebViewAndDelegates noopenerOpened;
+    __block WebViewAndDelegates withOpenerOpened;
+    __block pid_t withOpenerOpenedCreationPID { 0 };
+
+    auto rect = NSMakeRect(0, 0, 800, 600);
+    auto [opener, openerNavigationDelegate] = siteIsolationEnabled ? siteIsolatedViewAndDelegate(server, rect) : viewAndDelegate(server, rect);
+
+    noopenerOpened.uiDelegate = adoptNS([TestUIDelegate new]);
+    noopenerOpened.uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        if (siteIsolationEnabled)
+            enableSiteIsolation(configuration);
+        withOpenerOpened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        withOpenerOpened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [withOpenerOpened.navigationDelegate allowAnyTLSCertificate];
+        withOpenerOpened.webView.get().navigationDelegate = withOpenerOpened.navigationDelegate.get();
+        withOpenerOpenedCreationPID = [withOpenerOpened.webView _webProcessIdentifier];
+        return withOpenerOpened.webView.get();
+    };
+
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        if (siteIsolationEnabled)
+            enableSiteIsolation(configuration);
+        noopenerOpened.webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        noopenerOpened.navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [noopenerOpened.navigationDelegate allowAnyTLSCertificate];
+        noopenerOpened.webView.get().navigationDelegate = noopenerOpened.navigationDelegate.get();
+        noopenerOpened.webView.get().UIDelegate = noopenerOpened.uiDelegate.get();
+        return noopenerOpened.webView.get();
+    };
+    opener.get().UIDelegate = openerUIDelegate.get();
+    opener.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!withOpenerOpened.webView)
+        Util::spinRunLoop();
+
+    EXPECT_EQ(withOpenerOpenedCreationPID, [noopenerOpened.webView _webProcessIdentifier]);
+    EXPECT_NE(withOpenerOpenedCreationPID, [opener _webProcessIdentifier]);
+}
+
+TEST(SiteIsolation, OpenWithOpenerFromNoopenerWindow)
+{
+    testOpenWithOpenerFromNoopenerWindow(true);
+}
+
+TEST(SiteIsolation, OpenWithOpenerFromNoopenerWindowWithoutSiteIsolation)
+{
+    testOpenWithOpenerFromNoopenerWindow(false);
+}
+
 TEST(SiteIsolation, ConcurrentPopupNavigationsToSameSiteShareProcessWhenOneFails)
 {
     HTTPServer server({
@@ -10805,9 +10897,16 @@ TEST(SiteIsolation, CrossSiteIframeOpenWindowWithBlobURL)
     [opened.webView evaluateJavaScript:@"alertOpener()" completionHandler:nil];
     EXPECT_WK_STREQ([opened.uiDelegate waitForAlert], "false");
 
+    // LocalDOMWindow applies the noopener window feature itself for a blob URL opened from a
+    // document cross-origin with its top origin, so this window gets a browsing context group of
+    // its own. The iframe is in the group's shared process, which only hosts subframes, so the
+    // window loads in a process of its own too.
+    pid_t openerMainFramePID = [opener.webView mainFrame].info._processIdentifier;
+    pid_t openerIframePID = [opener.webView firstChildFrame]._processIdentifier;
     pid_t openedMainFramePID = [opened.webView mainFrame].info._processIdentifier;
-    EXPECT_NE([opener.webView mainFrame].info._processIdentifier, openedMainFramePID);
-    EXPECT_EQ([opener.webView firstChildFrame]._processIdentifier, openedMainFramePID);
+    EXPECT_NE(openerMainFramePID, openerIframePID);
+    EXPECT_NE(openerMainFramePID, openedMainFramePID);
+    EXPECT_NE(openerIframePID, openedMainFramePID);
 }
 
 #if PLATFORM(MAC)

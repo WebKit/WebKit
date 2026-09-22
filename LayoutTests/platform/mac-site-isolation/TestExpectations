@@ -56,7 +56,6 @@ http/tests/site-isolation/inspector/page/override-setting-cross-origin-iframe.ht
 webkit.org/b/311836 http/tests/site-isolation/inspector/page/set-emulated-media-cross-origin-iframe.html [ Pass Failure ]
 http/tests/site-isolation/inspector/worker/worker-in-cross-origin-iframe.html [ Pass ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
-http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/keepalive.any.html
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]

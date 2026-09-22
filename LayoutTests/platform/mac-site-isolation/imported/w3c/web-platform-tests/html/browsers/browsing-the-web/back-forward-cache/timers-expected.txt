@@ -1,3 +1,0 @@
-
-NOTRUN Timers should be paused when the page is in BFCache Could have been BFCached but actually wasn't
-

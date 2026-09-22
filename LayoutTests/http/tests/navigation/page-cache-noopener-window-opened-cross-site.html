@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a noopener window opened cross-site is restored from the back/forward cache after navigating cross-site and back.");
+jsTestIsAsync = true;
+
+const channelName = "page-cache-noopener-window-opened-cross-site";
+const channel = new BroadcastChannel(channelName);
+channel.onmessage = function(event) {
+    restoredFromBackForwardCache = event.data.persisted;
+    shouldBeTrue("restoredFromBackForwardCache");
+    channel.close();
+    finishJSTest();
+};
+
+// Opening the window cross-site as well as with noopener gives it a browsing
+// context group of its own, so nothing stops it from being suspended. See
+// page-cache-noopener-window-opened-same-site.html for the window that is given
+// its opener's group.
+window.open("http://localhost:8000/navigation/resources/page-cache-noopener-window.html"
+    + "?channel=" + encodeURIComponent(channelName)
+    + "&crossSiteURL=" + encodeURIComponent("http://127.0.0.1:8000/navigation/resources/page-cache-helper.html"),
+    "_blank", "noopener");
+</script>
+</body>
+</html>

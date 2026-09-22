@@ -1,0 +1,4 @@
+
+PASS openee: originAgentCluster must equal true
+PASS opener: originAgentCluster must equal false
+

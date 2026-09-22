@@ -226,7 +226,6 @@ http/tests/workers/service/client-removed-from-clients-while-in-page-cache.html 
 http/tests/workers/service/page-cache-service-worker-pending-promise.https.html [ Failure ]
 http/tests/workers/service/page-caching.html [ Failure ]
 http/wpt/css/css-view-transitions/navigation/cross-origin-bfcache.html [ Failure ]
-http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 http/wpt/fetch/inspect-preflight.html [ Failure ]
 http/wpt/service-workers/navigation-iframe-site.https.html [ Failure ]
 http/wpt/webcodecs/audioData-serialization.html [ Failure ]

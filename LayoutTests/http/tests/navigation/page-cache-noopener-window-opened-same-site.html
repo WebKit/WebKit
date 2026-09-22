@@ -1,0 +1,29 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that a noopener window opened same-site is restored from the back/forward cache after navigating cross-site and back.");
+jsTestIsAsync = true;
+
+const channelName = "page-cache-noopener-window-opened-same-site";
+const channel = new BroadcastChannel(channelName);
+channel.onmessage = function(event) {
+    restoredFromBackForwardCache = event.data.persisted;
+    shouldBeTrue("restoredFromBackForwardCache");
+    channel.close();
+    finishJSTest();
+};
+
+// A noopener window opened same-site is given its opener's browsing context
+// group so the two can share a process, even though nothing holds a reference to
+// it. Under site isolation that group membership is what stops the window from
+// being suspended, so this test fails there.
+window.open("resources/page-cache-noopener-window.html"
+    + "?channel=" + encodeURIComponent(channelName)
+    + "&crossSiteURL=" + encodeURIComponent("http://localhost:8000/navigation/resources/page-cache-helper.html"),
+    "_blank", "noopener");
+</script>
+</body>
+</html>

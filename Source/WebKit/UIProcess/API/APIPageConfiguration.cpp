@@ -257,6 +257,11 @@ WebPageProxy* PageConfiguration::relatedPage() const
     return m_data.relatedPage.get();
 }
 
+WebProcessProxy* PageConfiguration::preferredProcessFromOpener() const
+{
+    return m_data.preferredProcessFromOpener.get();
+}
+
 BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
 {
     if (auto opener = openerInfo())
