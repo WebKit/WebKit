@@ -3813,6 +3813,13 @@ private:
         case SuperSamplerEnd:
         case ForceOSRExit:
         case CheckBadValue:
+        // CheckFieldType needs no fixup: both sites that create it already build the edge as
+        // Edge(value, UntypedUse) -- DFGByteCodeParser.cpp:355 and DFGConstantFoldingPhase.cpp:2713 -- so
+        // there is nothing for fixEdge to change. It belongs in this no-op list and must NOT be given a
+        // body: every case in this list shares one break, so a body here would also run on Jump, Return,
+        // JSConstant and the rest above, which have no child1 at all.
+        case CheckFieldType:
+
         case CheckNotEmpty:
         case AssertNotEmpty:
         case CheckTraps:

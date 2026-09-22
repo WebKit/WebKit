@@ -587,6 +587,8 @@ ArgumentListNode* ArrayNode::toArgumentList(ParserArena& parserArena, int startP
 
 RegisterID* ObjectLiteralNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (Options::dumpParsePatternStats()) [[unlikely]]
+        generator.vm().parseObjectLiteralProp().fetch_add(1, std::memory_order_relaxed);
     if (!m_list) {
         if (dst == generator.ignoredResult())
             return nullptr;
@@ -1067,6 +1069,17 @@ RegisterID* BracketAccessorNode::emitBytecode(BytecodeGenerator& generator, Regi
 
 RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (Options::dumpParsePatternStats()) [[unlikely]] {
+        VM& statsVM = generator.vm();
+        statsVM.parseDotAccess().fetch_add(1, std::memory_order_relaxed);
+        // A chain is what field types actually pay off on: `a.b` yields an object whose shape the claim names, so
+        // the `.c` that follows needs no CheckStructure. Depth is read straight off the AST.
+        if (m_base->isDotAccessorNode()) {
+            statsVM.parseChainedDotAccess().fetch_add(1, std::memory_order_relaxed);
+            if (static_cast<DotAccessorNode*>(m_base)->base()->isDotAccessorNode())
+                statsVM.parseDeepChainAccess().fetch_add(1, std::memory_order_relaxed);
+        }
+    }
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
 
     if (generator.shouldGetArgumentsDotLengthFast(this))
@@ -1227,6 +1240,8 @@ RegisterID* ArgumentListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
 RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (Options::dumpParsePatternStats()) [[unlikely]]
+        generator.vm().parseNewExpr().fetch_add(1, std::memory_order_relaxed);
     ExpectedFunction expectedFunction;
     if (m_expr->isResolveNode())
         expectedFunction = generator.expectedFunctionForIdentifier(static_cast<ResolveNode*>(m_expr)->identifier());
@@ -3935,6 +3950,8 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
 
 RegisterID* AssignDotNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
+    if (Options::dumpParsePatternStats()) [[unlikely]]
+        generator.vm().parseDotAssign().fetch_add(1, std::memory_order_relaxed);
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_rightHasAssignments, m_right->isPure(generator));
     RefPtr<RegisterID> value = generator.destinationForAssignResult(dst);
     RefPtr<RegisterID> result = generator.emitNode(value.get(), m_right);

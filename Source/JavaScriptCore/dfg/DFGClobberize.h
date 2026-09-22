@@ -564,6 +564,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(CheckNotEmpty, AdjacencyList(AdjacencyList::Fixed, node->child1())));
         return;
 
+    case CheckFieldType:
+        // Reads a FieldTypeRecord slot, which is not in the JS heap, so nothing here is a heap read.
+        // Deliberately NOT a PureValue: the loaded claim can change under us, so two of these are not
+        // interchangeable and CSE must not fold them.
+        return;
+
     case AssertInBounds:
     case AssertNotEmpty:
         write(SideState);

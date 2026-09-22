@@ -196,6 +196,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     // always effectful, we return false for, to make auditing the "return true" cases easier.
 
     switch (node->op()) {
+    case CheckFieldType:
     case JSConstant:
     case DoubleConstant:
     case Int52Constant:

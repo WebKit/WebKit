@@ -130,6 +130,7 @@ class JSPromise;
 class JSPropertyNameEnumerator;
 class JITSizeStatistics;
 class JITThunks;
+class FieldTypeWatchpointTable;
 class MegamorphicCache;
 class MicrotaskCallCache;
 class MicrotaskQueue;
@@ -935,6 +936,62 @@ public:
     LazyUniqueRef<VM, MegamorphicCache> m_megamorphicCache;
     ALWAYS_INLINE MegamorphicCache* megamorphicCache() { return m_megamorphicCache.getIfExists(); }
     MegamorphicCache& ensureMegamorphicCache() { return m_megamorphicCache.get(*this); }
+
+    // Field-type assumptions registered by the DFG so it can drop CheckStructure on values loaded out of
+    // object fields. Created eagerly in the VM constructor; see the comment there.
+    std::unique_ptr<FieldTypeWatchpointTable> m_fieldTypeWatchpoints;
+    ALWAYS_INLINE FieldTypeWatchpointTable* fieldTypeWatchpoints() { return m_fieldTypeWatchpoints.get(); }
+    JS_EXPORT_PRIVATE FieldTypeWatchpointTable& ensureFieldTypeWatchpoints();
+
+    // Base of FieldTypeWatchpointTable::m_claimedStructureIDBits, republished by allocateClaimIndex after any
+    // growth. Cached here because the creation fast path otherwise reaches it through six loads, three
+    // dependent, per cell-valued property creation. The array is append-only with one writer
+    // (allocateClaimIndex) and one reader (fieldTypeCreationNeedsNoWork), both mutator-only, so a raw base
+    // pointer needs no synchronisation beyond that republish.
+    const uint32_t* m_fieldTypeClaimBits { nullptr };
+    ALWAYS_INLINE const uint32_t* fieldTypeClaimBits() const { return m_fieldTypeClaimBits; }
+
+    // Test infrastructure, not diagnostics: deleting either counter silently un-tests a fixed bug. The narrow
+    // count is the only thing pinning that the optimization does anything (the rest of the suite passes with
+    // it off), and the withdrawal count is the only coverage of the ancestor-withdrawal path. Per-VM because
+    // the table is, so a global would return a cross-VM sum. Incremented only under Options::useDollarVM(),
+    // the only condition under which they can be read; atomic because compiler threads write the narrow count.
+    std::atomic<uint64_t> m_fieldTypeNarrowCount { 0 };
+    std::atomic<uint64_t> m_fieldTypeAncestorWithdrawalCount { 0 };
+    // The population behind the per-creation previousID() chase (JSObjectInlines.h:612). That chase is a
+    // dependent load into a SECOND Structure on every property creation whose offset is the shape's maximum --
+    // the common fresh-offset case -- and its negative answer is re-derived every time. Skippable counts the
+    // creations whose claim word already proves the answer, so the ratio is the fraction a cache would remove.
+    // Counted before predicting a recovery, per todo/11 F12.
+    // PARSE-TIME PATTERN STATS. The question these exist to answer: can a decision taken at bytecode-generation
+    // time -- before any object is created, which is what the "no object may predate a claim" invariant requires --
+    // predict whether a program is the kind field types help? Counted from the AST, so they are free of the false
+    // positives a textual scan has (Math.max is not a field chain) and see the cases it misses (this.a.b).
+    std::atomic<uint64_t> m_parseDotAccess { 0 };          // a.b
+    std::atomic<uint64_t> m_parseChainedDotAccess { 0 };   // a.b.c   -- the benefit proxy
+    std::atomic<uint64_t> m_parseDeepChainAccess { 0 };    // a.b.c.d
+    std::atomic<uint64_t> m_parseDotAssign { 0 };          // a.b = c -- store traffic, statically
+    std::atomic<uint64_t> m_parseNewExpr { 0 };            // new X   -- shape-creation proxy
+    std::atomic<uint64_t> m_parseObjectLiteralProp { 0 };  // { k: v } -- distinct-offset proxy
+    std::atomic<uint64_t> m_fieldTypeCreationChaseCount { 0 };
+    std::atomic<uint64_t> m_fieldTypeCreationChaseSkippableCount { 0 };
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeNarrowCount() { return m_fieldTypeNarrowCount; }
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeAncestorWithdrawalCount() { return m_fieldTypeAncestorWithdrawalCount; }
+    // Direct nanosecond accounting for the recorder (fieldTypeTimeRecorder). Sampling failed its reproduction
+    // check on chai-wtb and every ablation of the recorder's individual operations reads ~0, so the remaining
+    // instrument is to time the function itself and compare against a measured empty-section floor.
+    std::atomic<uint64_t> m_fieldTypeRecorderNanos { 0 };
+    std::atomic<uint64_t> m_fieldTypeRecorderCalls { 0 };
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeRecorderNanos() { return m_fieldTypeRecorderNanos; }
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeRecorderCalls() { return m_fieldTypeRecorderCalls; }
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeCreationChaseCount() { return m_fieldTypeCreationChaseCount; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseDotAccess() { return m_parseDotAccess; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseChainedDotAccess() { return m_parseChainedDotAccess; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseDeepChainAccess() { return m_parseDeepChainAccess; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseDotAssign() { return m_parseDotAssign; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseNewExpr() { return m_parseNewExpr; }
+    ALWAYS_INLINE std::atomic<uint64_t>& parseObjectLiteralProp() { return m_parseObjectLiteralProp; }
+    ALWAYS_INLINE std::atomic<uint64_t>& fieldTypeCreationChaseSkippableCount() { return m_fieldTypeCreationChaseSkippableCount; }
 
     LazyUniqueRef<VM, StringSplitCache> m_stringSplitCache;
     ALWAYS_INLINE StringSplitCache* stringSplitCache() { return m_stringSplitCache.getIfExists(); }

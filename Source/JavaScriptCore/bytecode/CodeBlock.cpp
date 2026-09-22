@@ -1602,14 +1602,20 @@ void CodeBlock::reconcileLLIntInlineCachesAtGCEnd()
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;
             StructureChain* chain = metadata.m_structureChain.get();
+            // m_expectedFieldType is a weak reference in all but name: a dead claimed structure's ID can be
+            // recycled for a live Structure, and the interpreter's compare would then pass a violating value
+            // straight into the slot. Clearing it here is what makes baking it sound at all.
+            StructureID expectedFieldType = metadata.m_expectedFieldType;
             if ((!oldStructureID || vm.heap.isMarked(oldStructureID.decode()))
                 && (!newStructureID || vm.heap.isMarked(newStructureID.decode()))
+                && (!expectedFieldType || vm.heap.isMarked(expectedFieldType.decode()))
                 && (!chain || vm.heap.isMarked(chain)))
                 return;
             dataLogLnIf(Options::verboseOSR(), "Clearing LLInt put transition.");
             metadata.m_oldStructureID = StructureID();
             metadata.m_offset = 0;
             metadata.m_newStructureID = StructureID();
+            metadata.m_expectedFieldType = StructureID();
             metadata.m_structureChain.clear();
         });
 
@@ -2346,7 +2352,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     
 #if ENABLE(DFG_JIT)
-    if (DFG::shouldDumpDisassembly()) {
+    if (DFG::shouldDumpDisassembly() || Options::logFieldTypes()) [[unlikely]] {
         dataLog("Jettisoning ", *this);
         if (mode == CountReoptimization)
             dataLog(" and counting reoptimization");

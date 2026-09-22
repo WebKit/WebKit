@@ -157,6 +157,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
         // that this is O(n^2). It doesn't matter. We only get here
         // from OSR exit.
         for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+            bool filled = false;
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location().kind() != NamedPropertyPLoc)
@@ -164,8 +165,18 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalO
                 if (codeBlock->identifier(property.location().info()).impl() != entry.key())
                     continue;
 
+                // A replace store into a real, shared structure, with a value from OSR exit state that is
+                // under no obligation to match a claim. Maintain before the write, as putDirectInternal's
+                // replace path does; unlike the dummy fill in operationMaterializeObjectInOSR these values
+                // are observable, being still in the slots when JS resumes.
+                maintainFieldTypeRecord(vm, structure, entry.offset(), JSValue::decode(values[i]));
                 object->putDirectOffset(vm, entry.offset(), JSValue::decode(values[i]));
+                filled = true;
             }
+
+            // Every property must get a value here; one that gets none keeps operationMaterializeObjectInOSR's
+            // jsNumber(19723) dummy for the object's whole life, leaving a claim on it false with JS running.
+            ASSERT_UNUSED(filled, filled);
         }
         break;
     }
@@ -405,8 +416,13 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMaterializeObjectInOSR, HeapCell*, (J
         // field is, for any reason, not filled later.
         // We use a random-ish number instead of a sensible value like
         // undefined to make possible bugs easier to track.
+        //
+        // These dummies violate any live claim, deliberately, and nothing can observe them: no JS runs
+        // before operationPopulateObjectInOSR overwrites the slots, and the DeferGCForAWhile above cannot
+        // collect on scope exit. So neither maintain the record nor report -- reporting produced 574 false
+        // positives across JSTests. See putDirectOffsetDuringMaterialization.
         for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently())
-            result->putDirectOffset(vm, entry.offset(), jsNumber(19723));
+            result->putDirectOffsetDuringMaterialization(vm, entry.offset(), jsNumber(19723));
 
         return result;
     }

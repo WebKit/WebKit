@@ -2119,6 +2119,9 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                     unsigned attributes;
                     PropertyOffset offset = object->getDirectOffset(vm, prop, attributes);
                     if (offset != invalidOffset && attributes == static_cast<unsigned>(PropertyAttribute::None)) [[likely]] {
+                        // Field types: this replace store bypasses putDirectInternal, so it maintains the
+                        // record itself.
+                        maintainFieldTypeRecord(vm, object->structure(), offset, filteredValue);
                         object->putDirectOffset(vm, offset, filteredValue);
                         object->structure()->didReplaceProperty(offset);
                     } else {

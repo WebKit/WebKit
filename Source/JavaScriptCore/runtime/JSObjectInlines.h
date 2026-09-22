@@ -491,11 +491,411 @@ ALWAYS_INLINE bool JSObject::hasOwnProperty(JSGlobalObject* globalObject, unsign
     return const_cast<JSObject*>(this)->methodTable()->getOwnPropertySlotByIndex(const_cast<JSObject*>(this), globalObject, propertyName, slot);
 }
 
+// Field-type record maintenance for the C++ property-store paths. If a field's record says it always holds
+// structure T, a store of a differently-shaped value must generalise the record. The JIT tiers check inline
+// or decline the site and generalise the field; these hooks cover the paths that store with no emitted check
+// at all, so JIT writers are not excluded by construction. Deliberately not gated on a per-structure summary
+// bit: such a bit answers whether a structure's transition subtree has some record, but a store needs
+// whether THIS offset has one, and the two almost always diverge.
+// True when a property creation provably has nothing to maintain, decided entirely from the shape that
+// owns the field: two loads off `owner` and a compare, with no lock, hash or allocation. Callers hoist
+// this into their own fast path so the common case does not even make a call.
+static ALWAYS_INLINE bool fieldTypeCreationNeedsNoWork(VM& vm, Structure* owner, JSValue value)
+{
+    // One load off the owner's own cache line answers the whole question; see
+    // Structure::m_fieldTypeClaimIndex for the encoding.
+    uint16_t index = owner->fieldTypeClaimIndex();
+    if (index == FieldTypeClaimIndex::entryWithoutClaim)
+        return true;
+    if (index < FieldTypeClaimIndex::firstClaim)
+        return false;   // nothing recorded yet, or an ancestor may own this offset
+    // A live claim. Only now is the stored value's header touched -- a different cache line -- which is why
+    // the no-claim cases are ordered first. The bounds check is an ASSERT rather than a branch because
+    // indices are produced only by allocateClaimIndex, slots are append-only and never recycled, and
+    // exhaustion returns noEntryYet, which exits above; the base is non-null whenever index >= firstClaim,
+    // since that index can only exist if a slot was appended.
+    uint32_t observedBits = value.isCell() ? value.asCell()->structureID().bits() : 0;
+    ASSERT(vm.fieldTypeClaimBits());
+    ASSERT(vm.fieldTypeWatchpoints()
+        && index - FieldTypeClaimIndex::firstClaim < vm.fieldTypeWatchpoints()->claimIndexCount());
+    return vm.fieldTypeClaimBits()[index - FieldTypeClaimIndex::firstClaim] == observedBits;
+}
+
+// A structure whose properties the VM writes with putDirectOffset and no field-type maintenance must have
+// those fields permanently generalised when the structure is built -- not because the VM's own writes need
+// recording, but because user code can reach the same structure. Adding `index`, `input`, `groups` to a
+// `new Array` builds transition-for-transition what createRegExpMatchesArrayStructure builds, so both land on
+// one cached structure: the user's creation claims `groups`, the VM's unhooked write falsifies it, and a
+// narrowed load reads a double as a pointer (JSTests/stress/inferred-types-regex-matches-array.js).
+static ALWAYS_INLINE void poisonFieldTypesForVMWrittenProperty(VM& vm, Structure* owner, PropertyOffset offset)
+{
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return;
+    if (!owner || offset == invalidOffset)
+        return;
+    // recordForStoreSite inserts the permanently-generalised (null) entry when the field is untouched and
+    // otherwise returns the existing record, which must then be withdrawn in case user code got here first
+    // and already established a claim.
+    if (RefPtr record = vm.ensureFieldTypeWatchpoints().recordForStoreSite(owner->id(), offset))
+        record->generalize(vm);
+    owner->setFieldTypeClaimIndex(FieldTypeClaimIndex::entryWithoutClaim);
+}
+
+// Records the field type at property creation. `owner` is the structure the add transition created, which
+// is the offset owner by definition, so the record is keyed correctly with no walk and predates every
+// object that will ever have this shape. Only cell-valued fields get a record, matching V8, where a Class
+// field type exists only for kHeapObject-representation fields (map-updater.cc:1310).
+//
+// Must be called from EVERY creation path: both the add transition that creates a brand new structure and
+// the reuse of an existing transition, which is the path the second and every later object of a shape
+// takes. Hooking only the former is silently unsound -- the record then keeps the first object's field
+// structure forever and the "a later object disagrees" test can never fire.
+static ALWAYS_INLINE void recordFieldTypeAtCreationImpl(VM&, Structure*, PropertyOffset, JSValue);
+
+// Direct timing of the recorder, because neither sampling nor ablation could locate its cost on chai-wtb:
+// every individual operation inside it (its reads, the claim-word write, a table lookup, the locked hash
+// insert, the O(n^2) ancestor loop, arming the value's transition watchpoint) measures ~0 in a layout-matched
+// pair, while the recorder as a whole measures 2.16 points -- and the samply profiles failed their own
+// reproduction check (todo/24). Two MonotonicTime reads per call is ~40ns of overhead against a suspected
+// ~266ns per call, so the ratio is readable; the overhead is measured separately by fieldTypeTimeRecorder=2,
+// which times an empty section and reports the floor.
+static ALWAYS_INLINE void recordFieldTypeAtCreation(VM& vm, Structure* owner, PropertyOffset offset, JSValue value)
+{
+    if (Options::fieldTypeTimeRecorder()) [[unlikely]] {
+        MonotonicTime start = MonotonicTime::now();
+        // Mode 3 must run the real body too -- it times the LOCK ACQUISITION inside it. Only mode 2 is the
+        // empty-section floor. Getting this wrong made mode 3 silently measure the floor (10 ns, no LOCK-WAIT line).
+        if (Options::fieldTypeTimeRecorder() == 1 || Options::fieldTypeTimeRecorder() == 3)
+            recordFieldTypeAtCreationImpl(vm, owner, offset, value);
+        uint64_t elapsed = static_cast<uint64_t>((MonotonicTime::now() - start).nanoseconds());
+        vm.fieldTypeRecorderNanos().fetch_add(elapsed, std::memory_order_relaxed);
+        vm.fieldTypeRecorderCalls().fetch_add(1, std::memory_order_relaxed);
+        return;
+    }
+    recordFieldTypeAtCreationImpl(vm, owner, offset, value);
+}
+
+static ALWAYS_INLINE void recordFieldTypeAtCreationImpl(VM& vm, Structure* owner, PropertyOffset offset, JSValue value)
+{
+    if (!Options::useFieldTypeCreationRecording()) [[unlikely]] {
+        // MEASUREMENT ONLY. Creation recording carries json-parse-inspector's whole +1.7%, and that win
+        // survives NeverClaim and survives DFG+FTL off, so it is not narrowing, not speculation and not a
+        // claim. What is left is the recorder's own effect on the C++ property-creation path -- and "any
+        // added work here would do this" is a live alternative that has to be excluded rather than argued
+        // away. These levels substitute a strict subset of the recorder's work so the win can be attributed
+        // to reads, to the Structure write, or to the table:
+        //   1 = the reads only          2 = reads + the claim-word write     3 = reads + a table lookup
+        if (unsigned level = Options::fieldTypeCreationDummyWork()) [[unlikely]] {
+            uint64_t acc = owner->maxOffset() + static_cast<uint64_t>(owner->transitionOffset());
+            if (Structure* previous = owner->previousID())
+                acc += previous->maxOffset();
+            if (value.isCell())
+                acc += value.asCell()->structureID().bits();
+            if (level >= 2)
+                owner->setFieldTypeClaimIndex(FieldTypeClaimIndex::entryWithoutClaim);
+            if (level >= 3) {
+                if (auto* table = vm.fieldTypeWatchpoints())
+                    acc += table->expectedFor(owner->id(), offset).bits();
+            }
+            if (level >= 4)
+                vm.ensureFieldTypeWatchpoints().insertGeneralizedForMeasurement(owner->id(), offset);
+            asm volatile("" :: "r"(acc) : "memory");
+        }
+        return;
+    }
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return;
+
+    // Never record a dictionary owner. addNewPropertyTransition can return a cacheable dictionary that added
+    // the property in place, and the claim word is per-structure, so one word cannot describe the many
+    // properties a dictionary adds to one structure -- the fast path would answer for a different offset's
+    // claim. Nothing could consume such a record anyway: findOffsetOwner returns null for a dictionary, so
+    // the compiler and the store paths decline it and the heap verifier skips it.
+    if (owner->isDictionary())
+        return;
+    if (Options::fieldTypeTimeRecorderStopAfter() == 1) [[unlikely]]
+        return;
+
+    // With dictionaries excluded, the invariant the one-word-per-Structure design rests on holds: `owner`
+    // is the structure that added this offset, so its single claim word describes THIS field. Callers pass
+    // either the transition target or findOffsetOwner(offset), both of which are the adding structure.
+    ASSERT(owner->transitionOffset() == offset);
+
+    // Withdraw any claim in the ANCESTRY that this creation contradicts, not just the one keyed on `owner`.
+    // Two objects of the same final shape can reach it by different transition paths, so the structure that
+    // adds the property differs and a withdrawal aimed only at `owner` misses the claim the other path
+    // established. Withdrawing all claims naming the field is sound and precise: only claims this exact
+    // value contradicts are touched.
+    //
+    // The loop does a locked hash lookup per ancestor, hence O(n^2) for an n-property object (+60% on a
+    // JSON.parse microbenchmark), so it is skipped when no ancestor can own a record at this offset.
+    // Structure::add sets maxOffset = max(newOffset, oldMaxOffset), so owner->maxOffset() == offset for both
+    // a fresh offset and a reused offset that was already the shape's maximum; only the latter needs the
+    // loop, and the two are indistinguishable from `owner` alone, hence the previousID() chase. maxOffset()
+    // is invalidOffset for the root structure, so the comparison is false there.
+    //
+    // This cannot be hoisted behind fieldTypeCreationNeedsNoWork below: if the owner's own claim matches the
+    // value, the fast path returns and an ancestor's contradicted claim at the same offset would never be
+    // withdrawn. Caching the negative answer would need a fifth claim-word state and there is none spare.
+    bool ancestorCouldOwnThisOffset = false;
+    if (Options::useFieldTypeCreationAncestorCheck()) [[likely]] {
+        if (owner->maxOffset() != offset)
+            ancestorCouldOwnThisOffset = true;
+        else if (Structure* previousOwner = owner->previousID()) {
+            // Counted, not assumed: `skippable` is the share of these chases whose answer the claim word
+            // already determines, because any state other than noEntryYet can only have been reached by a
+            // completed chase. That share is what a cache would remove; see VM::m_fieldTypeCreationChaseCount.
+            if (Options::useDollarVM()) [[unlikely]] {
+                vm.fieldTypeCreationChaseCount().fetch_add(1, std::memory_order_relaxed);
+                if (owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::noEntryYet)
+                    vm.fieldTypeCreationChaseSkippableCount().fetch_add(1, std::memory_order_relaxed);
+            }
+            ancestorCouldOwnThisOffset = offset <= previousOwner->maxOffset();
+        }
+    }
+    // Recorded in the claim word so every later creation on this shape takes the slow path without
+    // re-deriving it, which also keeps the fast path below from skipping a shape with a reused offset.
+    if (ancestorCouldOwnThisOffset) [[unlikely]]
+        owner->setFieldTypeClaimIndex(FieldTypeClaimIndex::offsetWasReused);
+
+    if (Options::fieldTypeTimeRecorderStopAfter() == 2) [[unlikely]]
+        return;
+    // Fast path: the shape itself answers both questions the table would be asked, so the steady-state cost
+    // of recording is a load and a compare. The claim word is a CACHE of the table and the safety direction
+    // is asymmetric -- a stale-SET claim is conservative (we go to the table and find nothing to do), while
+    // a stale-CLEAR claim would skip maintenance of a live claim and be UNSOUND. FieldTypeRecord::generalize
+    // therefore clears the word as it clears the record.
+    // Before the fast path, deliberately: the creations this skips are exactly the ones the census exists to see.
+    if (Options::logFieldTypes()) [[unlikely]] {
+        // claimedIsLeaf is V8's admission gate: Object::OptimalType creates a Class field type ONLY when the
+        // value's map is_stable(), i.e. nothing has ever been derived from it. JSC claims regardless and then
+        // invalidates reactively when the shape moves.
+        bool claimedIsLeaf = value.isCell() && !value.asCell()->structure()->hasBeenTransitionedFrom();
+        vm.ensureFieldTypeWatchpoints().noteCreationForCensus(owner->id(), offset, value, owner->mayBePrototype(), claimedIsLeaf);
+    }
+    if (fieldTypeCreationNeedsNoWork(vm, owner, value))
+        return;
+    if (Options::fieldTypeTimeRecorderStopAfter() == 3) [[unlikely]]
+        return;
+
+    if (ancestorCouldOwnThisOffset) [[unlikely]] {
+        if (auto* table = vm.fieldTypeWatchpoints(); table && table->sizeRelaxed()) [[unlikely]] {
+            StructureID observed = value.isCell() ? value.asCell()->structureID() : StructureID();
+            for (Structure* candidate = owner->previousID(); candidate; candidate = candidate->previousID()) {
+                StructureID expected = table->expectedFor(candidate->id(), offset);
+                if (!expected || expected == observed)
+                    continue;
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] WITHDRAW-ANCESTOR-AT-CREATION owner=", candidate->id().bits(), " offset=", offset, " had=", expected.bits(), " got=", observed.bits());
+                if (Options::useDollarVM()) [[unlikely]]
+                    vm.fieldTypeAncestorWithdrawalCount().fetch_add(1, std::memory_order_relaxed);
+                table->generalize(vm, candidate->id(), offset);
+            }
+        }
+    }
+
+    if (value.isCell()) {
+        // A record claims "this field holds an object of structure S", but S describes a DIFFERENT object,
+        // which can transition away at any time with nothing stored to this field: `A.prototype` is
+        // recorded when constructPrototypeObject sets `constructor`, and a later `A.prototype.x = 1` moves
+        // it. JSC's transition watchpoint starts UNARMED and WatchpointSet::fireAll returns without
+        // invalidating a ClearWatchpoint set, so such a structure still looks pristine and Graph::tryWatch
+        // would adopt an already-false claim. Arming here makes every claimed structure behave like a V8
+        // map, which is stable until its first transition and never again (property-access-builder.cc:381).
+    if (Options::fieldTypeTimeRecorderStopAfter() == 4) [[unlikely]]
+        return;
+        Structure* observedStructure = value.asCell()->structure();
+        if (Options::useFieldTypeCreationArmsTransitionWatchpoint()) [[likely]] {
+            if (observedStructure->transitionWatchpointSetIsStillValid())
+                observedStructure->transitionWatchpointSet().startWatching();
+        }
+
+    if (Options::fieldTypeTimeRecorderStopAfter() == 5) [[unlikely]]
+        return;
+        StructureID bornClaim { };
+        const char* bornSite = nullptr;
+        uint32_t claimBits = 0;
+        uint16_t claimIndex = FieldTypeClaimIndex::noEntryYet;
+        vm.ensureFieldTypeWatchpoints().recordAtCreation(vm, owner->id(), offset, value, &claimBits, &claimIndex, &bornClaim, &bornSite);
+        // bornClaim/bornSite were plumbed all the way out of recordAtCreation and then DROPPED -- the claim's
+        // provenance was tracked and never reported, which is why the provenance axis could not be tested. There
+        // are exactly two birth sites, so this one line splits every live claim into creation-provenance
+        // ("creation-on-brand-new-entry") and store-site-provenance ("creation-establishing-on-store-site-record").
+        if (Options::logFieldTypes() && bornClaim) [[unlikely]] {
+            // The CLAIMED VALUE's type and class, not the owner's. Needed to test whether any kind or shape
+            // restriction could separate raytrace's three harmful claims from delta-blue's valuable ones --
+            // fieldTypeClaimableKinds filters exactly this JSType, and FinalObjectsOnly is its strictest
+            // setting before NeverClaim, so if both sides are FinalObject the axis is arithmetically dead.
+            Structure* claimedStructure = bornClaim.decode();
+            dataLogLn("[fieldtype] CLAIM-BORN site=", bornSite ? bornSite : "<null>",
+                " field=", fieldTypeFieldName(owner, offset).data(),
+                " owner=", owner->id().bits(), " ownerClass=", owner->classInfoForCells()->className,
+                " offset=", offset, " expected=", bornClaim.bits(),
+                " valueType=", claimedStructure ? static_cast<unsigned>(claimedStructure->typeInfo().type()) : 0u,
+                " valueClass=", claimedStructure ? claimedStructure->classInfoForCells()->className : "<dead>",
+                " valueProps=", claimedStructure ? static_cast<unsigned>(claimedStructure->maxOffset() + 1) : 0u);
+        }
+        // Publish the outcome on the shape, so later creations of it hit the fast path above without
+        // touching the table. A real claim is a live StructureID, hence even (bit 0 is
+        // StructureID::nukedStructureIDBit), so it can never be mistaken for one of the odd sentinels.
+        ASSERT(!claimBits || !(claimBits & 1));
+        if (owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::offsetWasReused) {
+            // The slot was allocated inside recordAtCreation, under the lock it already held, and the record
+            // remembers which one it got so pruneAfterMarking can hand it back.
+            owner->setFieldTypeClaimIndex(claimBits ? claimIndex : FieldTypeClaimIndex::entryWithoutClaim);
+        }
+        // Deliberately does NOT start watching the property for replacements: the consumer depends only on
+        // the record's own set, because every store path checks inline. Watching here forced a
+        // StructureRareData plus a WatchpointSet for every cell-valued field in the program.
+        return;
+    }
+
+    // A non-cell creation must INSERT the permanently-generalised entry, not merely generalise one that
+    // happens to already exist. FieldTypeWatchpointTable::generalize does nothing when there is no entry, so
+    // an object that created this field with a number would leave NO trace, and a later object of the same
+    // shape creating it with a cell would then take recordAtCreation's brand-new-entry branch and establish a
+    // claim the first object already contradicted. No store is involved, which is why the store-side
+    // diagnostic reports nothing here.
+    //
+    // recordAtCreation handles all four cases for a non-cell: it inserts Entry { owner, nullptr } on a
+    // brand-new entry (the permanently-generalised state), returns for an already-null entry, and generalises
+    // an unclaimed or claimed record. The cost is bounded by the number of distinct (owner, offset) shapes.
+    uint32_t claimBits = 0;
+    uint16_t claimIndex = FieldTypeClaimIndex::noEntryYet;
+    vm.ensureFieldTypeWatchpoints().recordAtCreation(vm, owner->id(), offset, value, &claimBits, &claimIndex, nullptr, nullptr);
+    if (owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::offsetWasReused) {
+        // Via the out-param, so the record remembers its slot and pruneAfterMarking can reclaim it.
+        owner->setFieldTypeClaimIndex(claimBits ? claimIndex : FieldTypeClaimIndex::entryWithoutClaim);
+    }
+}
+
+static ALWAYS_INLINE void maintainFieldTypeRecord(VM& vm, Structure* structure, PropertyOffset offset, JSValue value)
+{
+    auto* table = vm.fieldTypeWatchpoints();
+    if (!table || !table->sizeRelaxed()) [[likely]]
+        return;
+    if (!Options::useFieldTypeReplaceMaintenance()) [[unlikely]]
+        return;
+
+    // The population counter for verified/03's mechanism. CXX-REPLACE cannot serve: it is logged AFTER the
+    // claim-word short-circuit below, so it counts CLAIMED replace stores rather than calls, and reading it as a
+    // call count is the F6 error. This one counts every call that reaches the findOffsetOwner chain walk.
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] CXX-REPLACE-CALL offset=", offset);
+
+    StructureID observed = value.isCell() ? value.asCell()->structureID() : StructureID();
+
+    // Precise first: when the owner resolves, generalise exactly that one record. Walking the ancestry
+    // unconditionally instead withdraws claims on every ancestor with a record at this offset, which gave
+    // away a third of the delta-blue win for nothing.
+    //
+    // Memoised: the walk is this function's dominant cost (verified/03) and its answer is immutable for a live
+    // (structure, offset). useFieldTypeOwnerMemo exists to price the memo itself, not to change behaviour --
+    // both legs compute the same owner.
+    Structure* owner = Options::useFieldTypeOwnerMemo()
+        ? table->findOffsetOwnerMemoised(structure, offset)
+        : structure->findOffsetOwner(offset);
+    if (owner) {
+        // Lock-free short-circuit. entryWithoutClaim is written by clearOwnerShapeClaimCache, which
+        // generalize() calls only AFTER nulling the record's m_expected, so this state implies there is no
+        // claim left to withdraw. Every other state (noEntryYet, offsetWasReused, a live index) falls through
+        // to the table, which is the conservative direction. Without this, every C++ replace store paid a
+        // locked hash lookup: 30219 of them on babel-wtb, which regressed 5.32%.
+        if (owner->fieldTypeClaimIndex() == FieldTypeClaimIndex::entryWithoutClaim) [[likely]]
+            return;
+        StructureID expected = table->expectedFor(owner->id(), offset);
+        // The pattern hunt's store-traffic feature, counted against the SAME key the census records at creation.
+        // Placed after the owner resolves so the key matches; the entryWithoutClaim short-circuit above means a
+        // field whose claim is already withdrawn stops being counted, which is the intended semantics -- what
+        // matters is store traffic on a field while a claim on it is live.
+        if (Options::logFieldTypes()) [[unlikely]]
+            table->noteStoreForCensus(owner->id(), offset);
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] CXX-REPLACE owner=", owner->id().bits(), " offset=", offset, " expected=", expected.bits(), " observed=", observed.bits());
+        if (expected && expected != observed) {
+            // THE QUESTION THIS ANSWERS: is the contradicting value the SAME JS class as the claim? If it is, JSC is
+            // splitting into two Structures what V8 represents with one Map, and the "contradiction" is an artefact
+            // of structure identity rather than real polymorphism. Printed only for claims that have dependents,
+            // i.e. the ones whose withdrawal actually costs something.
+            if (Options::logFieldTypes()) [[unlikely]] {
+                Structure* had = expected.decode();
+                Structure* got = observed.decode();
+                if (had && got) {
+                    dataLogLn("[fieldtype] STORE-CONTRADICTION offset=", offset,
+                        " hadClass=", had->classInfoForCells()->className,
+                        " gotClass=", got->classInfoForCells()->className,
+                        " sameClass=", had->classInfoForCells() == got->classInfoForCells(),
+                        " sameProto=", had->storedPrototype() == got->storedPrototype(),
+                        " hadProps=", had->outOfLineSize(), " gotProps=", got->outOfLineSize(),
+                        " hadTransitionOffset=", had->transitionOffset(), " gotTransitionOffset=", got->transitionOffset());
+                }
+            }
+            // The STORE-side contradiction. raytrace's three harmful withdrawals (color 131, direction 117,
+            // position 70 dependents) come through here, not through creation -- the creation-side CONTRADICTION
+            // log names only harness fields. Naming both structures here is what distinguishes "the program really
+            // is polymorphic" from "JSC split into two Structures what V8 represents with one Map".
+            if (Options::logFieldTypes()) [[unlikely]]
+                FieldTypeWatchpointTable::reportContradiction(owner->id(), offset, expected, observed);
+            table->generalize(vm, owner->id(), offset);
+        }
+        return;
+    }
+
+    // The owner could not be resolved -- a dictionary, or offsets reused after a deletion -- so fall back to
+    // the ancestry. Treating that as "nothing to do" leaves a claim keyed on an ancestor silently violated,
+    // which is how Object.defineProperty violated 115572 claims across JetStream3. Generalising a record
+    // that turns out to belong to an unrelated property sharing this offset only costs a claim; the other
+    // direction corrupts the heap.
+    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+        StructureID expected = table->expectedFor(candidate->id(), offset);
+        if (!expected || expected == observed)
+            continue;
+        if (Options::logFieldTypes()) [[unlikely]]
+            FieldTypeWatchpointTable::reportContradiction(candidate->id(), offset, expected, observed);
+        table->generalize(vm, candidate->id(), offset);
+    }
+}
+
+// An object built by copying another object's property storage wholesale -- Object.assign's and object
+// spread's fast paths, which memcpy the butterfly and inline storage -- has had no per-property hook run on
+// it. Claims that already exist stay true, since the copy takes the source's structure and values, but a
+// copy holding a non-cell would leave no record and let a LATER object of the same shape establish a claim
+// the copy already contradicts, with no store afterwards for any check to catch. No object may predate a
+// record, so the copy must record too.
+static ALWAYS_INLINE void recordFieldTypesForCopiedObject(VM& vm, JSObject* object, Structure* structure)
+{
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return;
+    if (!structure || structure->isDictionary())
+        return;
+
+    for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+        PropertyOffset offset = entry.offset();
+        JSValue value = object->getDirect(offset);
+        if (!value)
+            continue;
+        if (Structure* owner = structure->findOffsetOwner(offset))
+            recordFieldTypeAtCreation(vm, owner, offset, value);
+        else
+            maintainFieldTypeRecord(vm, structure, offset, value);
+    }
+}
+
 template<JSObject::PutMode mode>
 ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned newAttributes, PutPropertySlot& slot)
 {
     ASSERT(value);
     ASSERT(value.isGetterSetter() == !!(newAttributes & PropertyAttribute::Accessor));
+    // A hook that generalises a record calls WatchpointSet::fireAll, which constructs DeferGCForAWhile, so
+    // its destructor can collect in the MIDDLE of this function. Deferring across the whole function moves
+    // any such collection to the exit, where JSC already tolerates one. Gated on the feature because
+    // ungated this cost two Heap::m_deferralDepth RMWs on every property creation even with the option off,
+    // i.e. the kill switch did not restore baseline.
+    std::optional<DeferGCForAWhile> fieldTypeDeferGC;
+    // useFieldTypeCreationDeferGC is a MEASUREMENT SWITCH: off leaves the nuked-transition window that caused
+    // the babylon-wtb heap corruption open, and exists only to price these two m_deferralDepth RMWs.
+    if (Options::useFieldTypeAssumptions() && Options::useFieldTypeCreationDeferGC()) [[likely]]
+        fieldTypeDeferGC.emplace(vm);
     ASSERT(value.isCustomGetterSetter() == !!(newAttributes & PropertyAttribute::CustomAccessorOrValue));
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!parseIndex(propertyName));
@@ -510,6 +910,10 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         }
 
         auto [offset, attributes, isAdded] = structure->addOrReplacePropertyWithoutTransition(vm, propertyName, newAttributes, [&](const GCSafeConcurrentJSLocker&, PropertyOffset offset, PropertyOffset newMaxOffset) {
+#if JSC_FIELD_TYPE_DIAGNOSTIC_STORE_PROBE
+            if (Options::logFieldTypes()) [[unlikely]]
+                dataLogLn("[fieldtype] PATH=dictionary-add structure=", structure->id().bits(), " offset=", offset, " valueIsCell=", value.isCell());
+#endif
             unsigned oldOutOfLineCapacity = structure->outOfLineCapacity();
             unsigned newOutOfLineCapacity = Structure::outOfLineCapacity(newMaxOffset);
             if (newOutOfLineCapacity != oldOutOfLineCapacity) {
@@ -563,6 +967,14 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
         PropertyOffset offset;
         Structure* newStructure = Structure::addPropertyTransitionToExistingStructure(structure, propertyName, newAttributes, offset);
         if (newStructure) {
+        #if JSC_FIELD_TYPE_DIAGNOSTIC_STORE_PROBE
+            if (Options::logFieldTypes()) [[unlikely]] {
+                dataLogLn("[fieldtype] PATH=existing-transition owner=", newStructure->id().bits(),
+                    " offset=", offset, " capChange=", structure->outOfLineCapacity() != newStructure->outOfLineCapacity(),
+                    " valueIsCell=", value.isCell());
+            }
+#endif
+
             Butterfly* newButterfly = butterfly();
             if (structure->outOfLineCapacity() != newStructure->outOfLineCapacity()) {
                 ASSERT(newStructure != this->structure());
@@ -578,6 +990,10 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
             putDirectOffset(vm, offset, value);
             setStructure(vm, newStructure);
+            // After setStructure for the same reason as the new-transition path below, and because
+            // newStructure comes from a WeakGCMap transition table: until setStructure runs, nothing but
+            // conservative stack scanning keeps it alive across a collection.
+            recordFieldTypeAtCreation(vm, newStructure, offset, value);
             slot.setNewProperty(this, offset);
             if (mayBePrototype()) [[unlikely]]
                 vm.invalidateStructureChainIntegrity(VM::StructureChainIntegrityEvent::Add);
@@ -592,6 +1008,7 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
             return ReadonlyPropertyChangeError;
 
         structure->didReplaceProperty(offset);
+        maintainFieldTypeRecord(vm, structure, offset, value);
         putDirectOffset(vm, offset, value);
 
         // FIXME: Check attributes against PropertyAttribute::CustomAccessorOrValue. Changing GetterSetter should work w/o transition.
@@ -634,8 +1051,18 @@ ALWAYS_INLINE ASCIILiteral JSObject::putDirectInternal(VM& vm, PropertyName prop
     // This assertion verifies that the concurrent GC won't read garbage if the concurrentGC
     // is running at the same time we put without transitioning.
     ASSERT(!getDirect(offset) || !JSValue::encode(getDirect(offset)));
+#if JSC_FIELD_TYPE_DIAGNOSTIC_STORE_PROBE
+    if (Options::logFieldTypes()) [[unlikely]] {
+        dataLogLn("[fieldtype] PATH=new-transition owner=", newStructure->id().bits(),
+            " offset=", offset, " valueIsCell=", value.isCell());
+    }
+#endif
     putDirectOffset(vm, offset, value);
     setStructure(vm, newStructure);
+    // AFTER setStructure, never before: the hook can allocate, and between nukeStructureAndSetButterfly and
+    // setStructure this object's structureID is nuked, meaning its (structure, butterfly, maxOffset) triple
+    // is deliberately inconsistent and nothing may exit or call out. setStructure closes that window.
+    recordFieldTypeAtCreation(vm, newStructure, offset, value);
     slot.setNewProperty(this, offset);
     if (newAttributes & PropertyAttribute::ReadOnly)
         newStructure->setContainsReadOnlyProperties();

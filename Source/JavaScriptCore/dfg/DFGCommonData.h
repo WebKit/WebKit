@@ -128,6 +128,9 @@ public:
     FixedVector<Identifier> m_dfgIdentifiers;
     FixedVector<WeakReferenceTransition> m_transitions;
     FixedVector<WriteBarrier<JSCell>> m_weakReferences;
+    // CheckFieldType nodes bake the address of a FieldTypeRecord's claim slot, so the records must
+    // outlive this code. Refcounted and not GC objects, so holding them here is all that is required.
+    Vector<RefPtr<FieldTypeRecord>> m_fieldTypeRecords;
     FixedVector<StructureID> m_weakStructureReferences;
     FixedVector<CatchEntrypointData> m_catchEntrypoints;
     FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;

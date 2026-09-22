@@ -1107,7 +1107,98 @@ public:
     // value for some property accessed with the given abstract value base.
     AbstractValue inferredValueForProperty(const AbstractValue& base, PropertyOffset, StructureClobberState);
     AbstractValue inferredValueForProperty(const AbstractValue& base, const RegisteredStructureSet&, PropertyOffset, StructureClobberState);
-    
+
+    // V8-style field type: the field at `offset` of an object whose structure is `base` holds a cell whose
+    // structure is `expected`. The record lives in the runtime (FieldTypeWatchpointTable, via VM), written at
+    // property creation and generalized by the store paths; never derive it from what this compilation
+    // observed. Consumed by inferredValueForProperty(), not at an elision site, so every CFA iteration rederives it.
+    //
+    // How the narrowing is JUSTIFIED depends on the call site, which is what this enum selects. Only the
+    // single-structure GetByOffset path gets a CheckFieldType inserted after the load by DFGConstantFoldingPhase,
+    // so only that path may drop the jettisoning watchpoint dependency. MultiGetByOffset merges over a structure
+    // set, gets no check (DFGConstantFoldingPhase leaves it to the watchpoint path on purpose), and must keep the
+    // dependency or its narrowing would outlive the claim.
+    enum class FieldTypeNarrowingGuard : uint8_t {
+        LoadedCheck,
+        WatchpointOnly,
+    };
+    AbstractValue fieldTypeAssumptionValue(RegisteredStructure baseStructure, PropertyOffset, StructureClobberState, FieldTypeNarrowingGuard);
+
+    // For a store site: the record this store must verify, or null if it needs no check (option off, no
+    // record, already generalized, unresolvable owner). Replace stores are not exempt. Compiler-thread safe.
+    RefPtr<FieldTypeRecord> fieldTypeRecordForStore(const StorageAccessData&);
+
+    // Same for a replace store, whose fieldTypeOwner is null: the base's structures give the owner, and this declines unless they all agree.
+    RefPtr<FieldTypeRecord> fieldTypeRecordForStore(const StorageAccessData&, const StructureAbstractValue&, StructureID provenValueStructure = StructureID());
+
+    // The record for an already-resolved owner, or null if there is none, it is generalized, or field types
+    // are off. Memoised per compilation for correctness, declines included: the mutator can generalize a
+    // record mid-compilation, and an answer that changes between CFA and codegen lets FixupPhase freeze a
+    // proof (mayExit() becomes DoesNotExit) that codegen then contradicts with a BadType exit.
+    RefPtr<FieldTypeRecord> fieldTypeRecordFor(Structure* owner, PropertyOffset);
+
+    // Fail-safe for any node that writes a property slot without an inline field-type check
+    // (MaterializeNewObject for a sunk allocation, MultiDeleteByOffset, anything added later): such a write
+    // cannot maintain a claim, so the field must lose it rather than be silently violated.
+    void poisonFieldTypeForUncheckedWrite(Structure*, PropertyOffset);
+    // For materialization of a sunk allocation. Called once per written field with the value's PROVEN structure
+    // (or a null StructureID when the compiler cannot prove one). Returns true if this field needs runtime
+    // maintenance. Three cases:
+    //
+    //   no claim            -> poison. todo/24's harmless case: permanently generalising a field nothing has
+    //                          claimed costs nothing and is what makes the deferred unchecked write sound,
+    //                          because no claim can form afterwards.
+    //   claim, and PROVEN   -> nothing at all. This is what V8 does: TurboFan proves the stored value fits the
+    //                          map's field type at compile time and emits no maintenance. Sound with no dependency
+    //                          registered, because claims are monotone -- a withdrawal only ever clears a claim,
+    //                          never re-points it, so a store proven consistent now stays consistent.
+    //   claim, unprovable   -> true, and the caller emits one recording call after the object is complete.
+    bool handleMaterializedField(Structure*, PropertyOffset, StructureID provenValueStructure);
+    // The single structure an edge is PROVEN to hold, or null. Requires the value to be definitely a cell with a
+    // finite, one-element structure set -- anything weaker is not a proof.
+    static StructureID provenSingleStructure(const AbstractValue&);
+
+    // Same fail-safe when the owner cannot be proven: walk the base's ancestry and give up every claim naming
+    // this offset. findOffsetOwner answers null for a dictionary and can disagree after deletions.
+    // provenValueStructure: the structure the stored value is PROVEN to hold, or null. An ancestor whose claim the
+    // value satisfies is not poisoned -- the store cannot violate it. Same argument as handleMaterializedField:
+    // claims are monotone, so no dependency is needed. Null falls back to poisoning everything, i.e. today.
+    void poisonFieldTypeAcrossAncestry(Structure* base, PropertyOffset, StructureID provenValueStructure = StructureID());
+    // The edge holding the value a store writes, by node op. PutByOffset is (storage, base, value);
+    // MultiPutByOffset is (base, value).
+    static Edge storedValueEdge(Node*);
+
+    // Last resort: the base's structures are unknown, so give up every claim at this offset.
+    void poisonAllFieldTypesAtOffset(PropertyOffset);
+    StructureID fieldTypeExpectedFor(Structure* owner, PropertyOffset);
+
+    // The offset owner shared by every structure in `set`, or null if they disagree or any cannot resolve one.
+    // Every site that creates a PutByOffset must set StorageAccessData::fieldTypeOwner from this, since a
+    // store site with no owner emits no check and silently violates records.
+    static Structure* commonFieldTypeOwner(const StructureSet&, PropertyOffset);
+
+    static uint64_t fieldTypeMemoKey(StructureID owner, PropertyOffset offset)
+    {
+        return (static_cast<uint64_t>(owner.bits()) << 32) | static_cast<uint32_t>(offset);
+    }
+
+    // The memo captures the decision, not just the record, so no caller can re-read expected() and get a
+    // different answer later in the compilation. A null `expected` means declined.
+    struct FieldTypeDecision {
+        RefPtr<FieldTypeRecord> record;
+        StructureID expected;
+    };
+    UncheckedKeyHashMap<uint64_t, FieldTypeDecision> m_fieldTypeRecordMemo;
+
+    // Memoises Structure::findOffsetOwner per (load or store site, offset) for the duration of ONE compilation.
+    // fieldTypeRecordFor is already memoised, but the chain walk that finds the owner in the first place was not,
+    // and it runs per load site per compilation: gbemu does 15,292 such lookups, and removing them recovered
+    // +1.53% of its First-Score (p=0.014). Thread-safe by construction -- a Graph belongs to one compilation on
+    // one thread -- so this needs no lock and no invalidation, unlike the table-side memo which must be cleared at
+    // end of marking. Storing Structure* is safe for the same reason the callers already do.
+    Structure* fieldTypeOwnerFor(Structure* site, PropertyOffset);
+    UncheckedKeyHashMap<uint64_t, Structure*> m_fieldTypeOwnerMemo;
+
     FullBytecodeLiveness& livenessFor(CodeBlock*);
     FullBytecodeLiveness& livenessFor(InlineCallFrame*);
     

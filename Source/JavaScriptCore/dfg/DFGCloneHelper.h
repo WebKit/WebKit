@@ -185,6 +185,7 @@ BasicBlock* CloneHelper::cloneBlock(BasicBlock* const block, const CustomizeSucc
     CLONE_STATUS(CheckIdent, Common) \
     CLONE_STATUS(CheckIsConstant, Common) \
     CLONE_STATUS(CheckNotEmpty, Common) \
+    CLONE_STATUS(CheckFieldType, Common) \
     CLONE_STATUS(CheckStructure, Common) \
     CLONE_STATUS(CheckStructureOrEmpty, Common) \
     CLONE_STATUS(CheckVarargs, Common) \

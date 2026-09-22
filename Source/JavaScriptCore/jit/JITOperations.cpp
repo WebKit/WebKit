@@ -1101,6 +1101,94 @@ JSC_DEFINE_JIT_OPERATION(operationHasPrivateBrandGaveUp, EncodedJSValue, (Encode
     OPERATION_RETURN(scope, JSValue::encode(jsBoolean(asObject(baseValue)->hasPrivateBrand(globalObject, JSValue::decode(encodedBrand)))));
 }
 
+// A megamorphic put cache entry lets generated code write the slot directly, with nowhere to bake a field-type
+// check and no C++ hook on the path. So either decline the cache, keeping the slow path that maintains the
+// record, or, if the field has no claim yet, poison it so a later claim cannot be silently violated.
+static ALWAYS_INLINE bool declineMegamorphicPutCachingForFieldType(VM& vm, Structure* structure, PropertyOffset offset)
+{
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return false;
+    auto* table = vm.fieldTypeWatchpoints();
+    if (!table || !table->sizeRelaxed())
+        return false;
+
+    // The denominator for both halves of this function: how often a megamorphic put slow path reaches it at all.
+    // Needed because a call is cheap only if it returns early -- the ancestry walk below runs per call.
+    if (Options::logFieldTypes()) [[unlikely]]
+        dataLogLn("[fieldtype] MEGA-PUT-CALL offset=", offset);
+
+    // The ancestry, not Structure::findOffsetOwner: that answers null for a dictionary and can disagree
+    // once offsets have been reused, and being wrong here means a silently violated claim.
+    //
+    // Withdrawing the claim here instead of declining the cache was tried on 2026-08-20 and did NOT recover
+    // babel-wtb's 5.32% (measured -6.2% after the change), so it was reverted: it destroys claims for no
+    // measured gain. The megamorphic decline is not that regression's cause.
+    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+        // Lock-free skip for an ancestor whose own word says it holds no claim (see
+        // FieldTypeRecord::clearOwnerShapeClaimCache for why that implication is safe).
+        if (candidate->fieldTypeClaimIndex() == FieldTypeClaimIndex::entryWithoutClaim) [[likely]]
+            continue;
+        if (table->expectedFor(candidate->id(), offset)) {
+            // THE FIX (2026-08-22): surrender the claim rather than decline the cache. A declined site never
+            // installs a cache, so every store there pays a full C++ put for the rest of the run -- measured at
+            // 1,403,740 such stores on esprima-next-wtb, 160,521 on FlightPlanner, and exactly 0 on delta-blue,
+            // which is why this costs the mechanism's beneficiary nothing. Isolating the decline recovered
+            // esprima +7.98%, FlightPlanner +13.04%, babylon-wtb +3.67%, babel-wtb +1.30%, with raytrace at
+            // +0.01% (p=0.99) as a zero-population control. See analysis/.../field-types/todo/14.
+            //
+            // Sound: generalising only ever removes information, and it happens HERE, before the unchecked cache
+            // is installed, so no store can violate a claim that is still live. Same shape as the LLInt
+            // replace-site surrender. The predicate is "this path structurally cannot check" -- a property of the
+            // code path, not of any workload -- so it needs no tuning.
+            if (Options::useFieldTypeMegamorphicPutSurrender()) [[likely]] {
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] MEGA-PUT-SURRENDER owner=", candidate->id().bits(), " offset=", offset);
+                table->generalize(vm, candidate->id(), offset);
+                continue;
+            }
+            // Measurement leg: allow the cache without surrendering. UNSOUND alone -- generated code then writes
+            // the slot with no check and nothing withdraws the claim -- and sound combined with
+            // useFieldTypeNarrowing=0. Kept because it is what priced this mechanism, and fix #3 (2026-08-20) is
+            // NOT a prior measurement of it: that withdrew claims globally, an F2-class confound.
+            if (!Options::useFieldTypeMegamorphicPutDecline()) [[unlikely]]
+                break;
+            if (Options::logFieldTypes()) [[unlikely]]
+                dataLogLn("[fieldtype] MEGA-PUT-DECLINE owner=", candidate->id().bits(), " offset=", offset);
+            return true;
+        }
+    }
+
+    // The poisoning walk below is what actually cost babel-wtb: recordForStoreSite takes the table lock and
+    // does a hash add PER ANCESTOR, and this ran on every megamorphic put slow-path call even once every
+    // ancestor was already recorded. Measured: the put slow paths went from 2.86% to 6.53% of mutator samples
+    // with the feature on, and only a third of that was FieldType frames -- the rest was generic put
+    // machinery reached because the put cache was never installed.
+    //
+    // entryWithoutClaim means an entry already exists and carries no claim, i.e. this ancestor is already
+    // poisoned and re-inserting it is pure waste. Skipping it cannot lose a poison: the state is only ever
+    // written after a record exists and its claim was withdrawn.
+    // Memoised: the poisoning walk runs on every megamorphic put slow-path call.
+    if (Structure* owner = Options::useFieldTypeOwnerMemo()
+            ? table->findOffsetOwnerMemoised(structure, offset)
+            : structure->findOffsetOwner(offset)) {
+        // Population counter for the BOOKKEEPING half of this function, which is paid with no claim live anywhere
+        // and so is invisible to every liveness gate. gbemu and raytrace have 0 declines yet regress 3.8-3.9%,
+        // which is what makes this the next candidate rather than another liveness mechanism.
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] MEGA-PUT-POISON-WALK owner=", owner->id().bits(), " offset=", offset,
+                " willInsert=", owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::entryWithoutClaim);
+        if (owner->fieldTypeClaimIndex() != FieldTypeClaimIndex::entryWithoutClaim) [[unlikely]]
+            table->recordForStoreSite(owner->id(), offset, "megaput-poison-walk-owner");
+    } else {
+        for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+            if (candidate->fieldTypeClaimIndex() == FieldTypeClaimIndex::entryWithoutClaim) [[likely]]
+                continue;
+            table->recordForStoreSite(candidate->id(), offset, "megaput-poison-walk-ancestor");
+        }
+    }
+    return false;
+}
+
 JSC_DEFINE_JIT_OPERATION(operationPutByIdStrictGaveUp, void, (EncodedJSValue encodedValue, EncodedJSValue encodedBase, PropertyInlineCache* propertyCache))
 {
     SuperSamplerScope superSamplerScope(false);
@@ -1162,7 +1250,8 @@ ALWAYS_INLINE static void putMegamorphic(JSGlobalObject* globalObject, VM& vm, C
     if (slot.type() == PutPropertySlot::ExistingProperty) {
         if (oldStructure == newStructure && slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
             oldStructure->didCachePropertyReplacement(vm, slot.cachedOffset()); // Ensure invalidating watchpoint set.
-            vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
+            if (!declineMegamorphicPutCachingForFieldType(vm, oldStructure, slot.cachedOffset())) [[likely]]
+                vm.megamorphicCache()->initAsReplace(StructureID::encode(oldStructure), uid, slot.cachedOffset());
         }
         return;
     }
@@ -1180,8 +1269,11 @@ ALWAYS_INLINE static void putMegamorphic(JSGlobalObject* globalObject, VM& vm, C
     }
 
     bool reallocating = newStructure->outOfLineCapacity() != oldStructure->outOfLineCapacity();
-    if (slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]]
-        vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
+    if (slot.cachedOffset() <= MegamorphicCache::maxOffset) [[likely]] {
+        // The transition's new structure owns the offset, so that is where a claim would be keyed.
+        if (!declineMegamorphicPutCachingForFieldType(vm, newStructure, slot.cachedOffset())) [[likely]]
+            vm.megamorphicCache()->initAsTransition(StructureID::encode(oldStructure), StructureID::encode(newStructure), uid, slot.cachedOffset(), reallocating);
+    }
 }
 
 ALWAYS_INLINE static void putByIdMegamorphic(JSGlobalObject* globalObject, VM& vm, CallFrame* callFrame, PropertyInlineCache* propertyCache, JSValue baseValue, JSValue value, CacheableIdentifier identifier, PutByKind kind)

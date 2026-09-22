@@ -82,6 +82,156 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace LLInt {
 
+// Whether a refused cache is worth keeping the claim for. A refused TRANSITION site costs one C++ slow path per
+// object created, and it is where the claims that pay for this mechanism are born. A refused REPLACE site costs
+// one C++ slow path per store for the rest of the run on a site that already exists -- so past a threshold the
+// claim is worth less than the cache, and surrendering is sound because generalising only removes information.
+enum class FieldTypeCacheRefusal : bool { KeepClaim, SurrenderClaimWhenNotWorthIt };
+
+// True when (owner-of-offset, offset) carries a live field-type record, so this store site must not be cached
+// in bytecode metadata: the LLInt would then write the property from asm with nothing maintaining the record.
+static ALWAYS_INLINE bool declineCachingForFieldType(VM& vm, Structure* structure, PropertyOffset offset, FieldTypeCacheRefusal refusal)
+{
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return false;
+    auto* table = vm.fieldTypeWatchpoints();
+    if (!table)
+        return false;
+
+    // Spend the refusal, or give up the claim so the site may cache. generalize() marks the record permanently
+    // generalised before firing, so no later creation can re-establish a claim behind the cached store, and it
+    // clears the owner's claim word so creations stop consulting the table too.
+    auto refuseOrSurrender = [&](FieldTypeRecord& record) ALWAYS_INLINE_LAMBDA -> bool {
+        if (refusal == FieldTypeCacheRefusal::KeepClaim)
+            return true;
+        if (!Options::useFieldTypeClaimSurrenderOnReplace())
+            return true;
+        if (record.noteCacheRefusal() <= Options::fieldTypeClaimSurrenderThreshold())
+            return true;
+        if (Options::logFieldTypes()) [[unlikely]] {
+            dataLogLn("[fieldtype] LLINT-REPLACE-SURRENDER owner=", record.owner().bits(),
+                " offset=", record.offset(), " expected=", record.expected().bits());
+        }
+        record.generalize(vm);
+        return false;
+    };
+
+    // Memoised for the same reason as the sibling below.
+    if (Structure* owner = Options::useFieldTypeOwnerMemo()
+            ? table->findOffsetOwnerMemoised(structure, offset)
+            : structure->findOffsetOwner(offset)) {
+        // recordForStoreSite: bytecode metadata has nowhere to bake a check, so a site cached without one
+        // poisons the field rather than leaving it claimable by a later creation.
+        // entryWithoutClaim means the entry already exists and carries no claim, so the locked
+        // recordForStoreSite below would insert nothing and return a record with no expected(), i.e. exactly
+        // false. Skipping it is result-identical and saves a table lock on every slow-path put.
+        if (owner->fieldTypeClaimIndex() == FieldTypeClaimIndex::entryWithoutClaim) [[likely]]
+            return false;
+        RefPtr record = table->recordForStoreSite(owner->id(), offset, "llint-bake-check");
+        if (!record || !record->expected())
+            return false;
+        return refuseOrSurrender(*record);
+    }
+
+    // Owner unresolved: findOffsetOwner returns null for a dictionary, and can disagree with where a record is
+    // keyed once offsets have been reused. Allowing caching here is the unsound direction, since a claim keyed
+    // on an ancestor stays live while the site stores from asm, so search the ancestry instead.
+    bool declined = false;
+    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+        if (RefPtr record = table->recordFor(candidate->id(), offset)) {
+            // No early exit: EVERY ancestor claim has to be surrendered before the site may cache, or one of
+            // them stays live while the LLInt stores to the field from asm.
+            if (record->expected() && refuseOrSurrender(*record))
+                declined = true;
+        }
+    }
+    return declined;
+}
+
+// The structure the LLInt must compare a stored value against before writing this field from asm, or a null
+// StructureID when no check is needed. This is what lets a claimed field's store site be CACHED rather than
+// declined: bytecode metadata now has somewhere to put the expected ID (OpPutById::Metadata::m_expectedFieldType),
+// so the interpreter enforces the claim itself.
+//
+// Why this matters more than it looks: declineCachingForFieldType leaves a site uncached for the REST OF THE RUN,
+// so every store there re-enters this slow path. Measured on JetStream3 FlightPlanner: 254,050 of its 256,263
+// store-site consultations, against only 2,422 property creations -- and -12.91%. Those consultations come from
+// 84,010 DISTINCT one-shot op_put_by_id sites, not from a hot site re-entered 84,010 times (waypoints.js contains
+// "name":, "type": and "description": exactly 84,010 times each). So the cost scales with how many source
+// locations name a claimed field, which is independent of how hot any one of them is.
+//
+// Sound because at the moment a site is cached the field is in exactly one of two states: a live claim exists, so
+// we bake it and the check enforces it; or no claim exists, in which case recordForStoreSite has already poisoned
+// the field so none can ever form afterwards. A claim generalised LATER leaves the baked ID stale-SET, which is
+// merely conservative -- a matching value stores from asm with no claim left to maintain, a mismatching one
+// diverts to this slow path and is stored in C++. The claimed structure can also DIE and have its StructureID
+// recycled, which would let the compare pass for a violating value; CodeBlock::finalizeUnconditionally clears
+// this metadata for exactly that reason, alongside m_oldStructureID and m_newStructureID.
+//
+// `cannotCache` is set only when the owner cannot be resolved -- a dictionary, or offsets reused after a deletion
+// -- because then a claim keyed on an ancestor stays live and the metadata has room for one expected ID only.
+static ALWAYS_INLINE StructureID fieldTypeCheckForCachedPut(VM& vm, Structure* structure, PropertyOffset offset, bool& cannotCache)
+{
+    cannotCache = false;
+    if (!Options::useFieldTypeAssumptions()) [[unlikely]]
+        return StructureID();
+    auto* table = vm.fieldTypeWatchpoints();
+    if (!table)
+        return StructureID();
+
+    // Memoised: this walk runs per LLInt put-cache install and precedes the claim-word short-circuit, so it is
+    // paid even when no claim exists anywhere -- the ordering defect verified/03 documented, in a second place.
+    if (Structure* owner = Options::useFieldTypeOwnerMemo()
+            ? table->findOffsetOwnerMemoised(structure, offset)
+            : structure->findOffsetOwner(offset)) {
+        // entryWithoutClaim: an entry exists and carries no claim, so there is nothing to check and nothing the
+        // locked lookup below could add.
+        if (owner->fieldTypeClaimIndex() == FieldTypeClaimIndex::entryWithoutClaim) [[likely]]
+            return StructureID();
+        // recordForStoreSite, not recordFor: a field with no record yet must be poisoned now, because a claim
+        // established after this site is cached would never be seen by the check we are about to bake.
+        RefPtr record = table->recordForStoreSite(owner->id(), offset, "llint-replace");
+        if (!record)
+            return StructureID();
+        StructureID expected = record->expected();
+        if (!expected)
+            return StructureID();
+
+        // A claim that store sites keep re-consulting costs more than it earns, so give it up. Measured per
+        // (owner, offset): delta-blue's hottest claim is consulted 105 times, so any limit above that is
+        // arithmetically inert there, while FlightPlanner has three fields at 84,010 each. Sound -- generalising
+        // only removes information, and it is safe here because this is the mutator thread on a slow path that
+        // already fires field-type watchpoints via maintainFieldTypeRecord.
+        if (unsigned limit = Options::fieldTypeStoreSiteClaimHitLimit()) {
+            if (record->cacheRefusals() > limit) [[unlikely]] {
+                if (Options::logFieldTypes()) [[unlikely]]
+                    dataLogLn("[fieldtype] SURRENDER-HOT-CLAIM owner=", owner->id().bits(), " offset=", offset, " consults=", record->cacheRefusals());
+                table->generalize(vm, owner->id(), offset);
+                return StructureID();
+            }
+        }
+        // Measurement leg: keep every bookkeeping side effect above -- the poisoning, the consultation count, the
+        // hot-claim surrender -- and bake NOTHING, so the site caches and stores unchecked. UNSOUND alone; sound
+        // combined with useFieldTypeNarrowing=0, where no consumer trusts a claim. Prices the asm compare and,
+        // more importantly, the stores a baked ID diverts to this slow path for the rest of the run.
+        if (!Options::useFieldTypeLLIntCheckEmission()) [[unlikely]]
+            return StructureID();
+        if (Options::logFieldTypes()) [[unlikely]]
+            dataLogLn("[fieldtype] LLINT-BAKE owner=", owner->id().bits(), " offset=", offset, " expected=", expected.bits());
+        return expected;
+    }
+
+    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+        if (RefPtr record = table->recordFor(candidate->id(), offset)) {
+            if (record->expected()) {
+                cannotCache = true;
+                return StructureID();
+            }
+        }
+    }
+    return StructureID();
+}
+
 #define LLINT_BEGIN_NO_SET_PC() \
     CodeBlock* codeBlock = callFrame->codeBlock(); \
     JSGlobalObject* globalObject = codeBlock->globalObject(); \
@@ -1080,6 +1230,21 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
     PutPropertySlot slot(baseValue, bytecode.m_flags.ecmaMode().isStrict(), codeBlock->putByIdContext());
 
     Structure* oldStructure = baseValue.isCell() ? baseValue.asCell()->structure() : nullptr;
+    // Instrument for the one field-type cost nothing else can see: a baked m_expectedFieldType that the stored
+    // value violates diverts the store here on EVERY execution, for the rest of the run. STORE-SITE-CLAIM-HIT
+    // structurally cannot count it -- once the claim has been generalized the owner's word is entryWithoutClaim,
+    // so fieldTypeCheckForCachedPut returns before recordForStoreSite and never logs. A stale-SET baked ID is
+    // conservative for correctness and permanent for cost, so this counter is the only way to price it. Upper
+    // bound, not exact: a base-structure mismatch also lands here with the check still set.
+    if (Options::logFieldTypes()) [[unlikely]] {
+        if (StructureID baked = metadata.m_expectedFieldType) {
+            JSValue storedValue = getOperand(callFrame, bytecode.m_value);
+            if (!storedValue.isCell() || storedValue.asCell()->structureID() != baked)
+                dataLogLn("[fieldtype] LLINT-CHECK-MISS baked=", baked.bits(),
+                    " stored=", storedValue.isCell() ? storedValue.asCell()->structureID().bits() : 0,
+                    " baseMatches=", oldStructure && oldStructure->id() == metadata.m_oldStructureID);
+        }
+    }
     if (bytecode.m_flags.isDirect())
         CommonSlowPaths::putDirectWithReify(vm, globalObject, asObject(baseValue), ident, getOperand(callFrame, bytecode.m_value), slot, &oldStructure);
     else
@@ -1110,12 +1275,23 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         metadata.m_oldStructureID = StructureID();
         metadata.m_offset = 0;
         metadata.m_newStructureID = StructureID();
+        metadata.m_expectedFieldType = StructureID();
         metadata.m_structureChain.clear();
         
         JSCell* baseCell = baseValue.asCell();
         Structure* newStructure = baseCell->structure();
         
-        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
+        // Field types: a cached LLInt transition store writes the new property from asm, so nothing observes
+        // the value and the record freezes on whatever the first object stored, which lets the compiler prove
+        // a reachable block unreachable. The JIT tiers bake an inline compare instead (as V8 does in
+        // ic/accessor-assembler.cc:2419); LLInt metadata has nowhere for one, so decline and let these stores
+        // take this slow path, which maintains the record.
+        // Field types: compute the check before taking codeBlock->m_lock, since this takes the field-type table
+        // lock and the other order is used everywhere.
+        bool fieldTypeCannotCache = false;
+        StructureID fieldTypeCheck = fieldTypeCheckForCachedPut(vm, newStructure, slot.cachedOffset(), fieldTypeCannotCache);
+
+        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base() && !fieldTypeCannotCache) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 DeferGC deferGC(vm);
                 if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && newStructure->previousID() == oldStructure) {
@@ -1135,6 +1311,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                         metadata.m_oldStructureID = oldStructure->id();
                         metadata.m_offset = slot.cachedOffset();
                         metadata.m_newStructureID = newStructure->id();
+                        metadata.m_expectedFieldType = fieldTypeCheck;
                         if (chain)
                             metadata.m_structureChain.set(vm, codeBlock, chain);
                         vm.writeBarrier(codeBlock);
@@ -1149,10 +1326,13 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                 // transition for that matter).
                 RELEASE_ASSERT(newStructure == oldStructure);
                 newStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                {
+                // Field types: the metadata now carries the expected structure, so a claimed field's replace
+                // store is cached WITH a check rather than declined or surrendered.
+                if (!fieldTypeCannotCache) {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
                     metadata.m_oldStructureID = newStructure->id();
                     metadata.m_offset = slot.cachedOffset();
+                    metadata.m_expectedFieldType = fieldTypeCheck;
                 }
                 vm.writeBarrier(codeBlock);
             }
@@ -1426,8 +1606,14 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         
         JSCell* baseCell = baseValue.asCell();
         Structure* newStructure = baseCell->structure();
-        
-        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
+
+        // Field types: as in slow_path_put_by_id above. Private-field define reaches here, and a cell-valued
+        // define is a claim-creating store. Computed before taking codeBlock->m_lock, since
+        // declineCachingForFieldType takes the field-type table lock and the other order is used everywhere.
+        bool declineTransitionCaching = slot.type() == PutPropertySlot::NewProperty
+            && declineCachingForFieldType(vm, newStructure, slot.cachedOffset(), FieldTypeCacheRefusal::KeepClaim);
+
+        if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base() && !declineTransitionCaching) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 DeferGC deferGC(vm);
                 if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && oldStructure == newStructure->previousID()) {
@@ -1455,7 +1641,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
                 // transition for that matter).
                 RELEASE_ASSERT(newStructure == oldStructure);
                 newStructure->didCachePropertyReplacement(vm, slot.cachedOffset());
-                {
+                // See the put_by_id replace site above.
+                if (!declineCachingForFieldType(vm, newStructure, slot.cachedOffset(), FieldTypeCacheRefusal::SurrenderClaimWhenNotWorthIt)) {
                     ConcurrentJSLocker locker(codeBlock->m_lock);
                     metadata.m_oldStructureID = newStructure->id();
                     metadata.m_offset = slot.cachedOffset();

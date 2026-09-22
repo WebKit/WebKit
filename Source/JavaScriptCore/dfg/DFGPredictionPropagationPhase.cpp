@@ -1813,6 +1813,7 @@ private:
         case CheckStructure:
         case CheckIsConstant:
         case CheckNotEmpty:
+        case CheckFieldType:
         case AssertNotEmpty:
         case CheckIdent:
         case CheckBadValue:

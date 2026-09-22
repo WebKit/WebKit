@@ -28,6 +28,7 @@
 
 #include "CodeBlockInlines.h"
 #include "DFGCommon.h"
+#include "Options.h"
 
 namespace JSC {
 
@@ -43,7 +44,14 @@ void CodeBlockJettisoningWatchpoint::fireInternal(VM&, const FireDetail& detail)
     if (DFG::shouldDumpDisassembly())
         dataLog("Firing watchpoint ", RawPointer(this), " on ", *m_owner, "\n");
 
-    m_owner->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &detail);
+    // MEASUREMENT SWITCH (2026-08-22): counting the reoptimization raises this function's compile threshold, so
+    // repeated watchpoint jettisons push it to colder tiers. For a field-type withdrawal that penalty is arguably
+    // wrong on the merits -- the withdrawal is an external event (a store elsewhere contradicted the claim), and
+    // claims are MONOTONE, so the recompile provably cannot reuse the claim and has nothing to learn. This flag
+    // relaxes it for EVERY watchpoint kind, which makes it an upper bound rather than a targeted fix: if the global
+    // relaxation does not help, a field-type-specific one cannot either.
+    m_owner->jettison(Profiler::JettisonDueToUnprofiledWatchpoint,
+        Options::countReoptimizationOnWatchpointJettison() ? CountReoptimization : DontCountReoptimization, &detail);
 }
 
 } // namespace JSC

@@ -5036,6 +5036,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // at the point where GetByOffset runs. Currently, when that happens, we'll have to rely entirely
         // on the type that ByteCodeParser was able to prove.
         AbstractValue value = m_graph.inferredValueForProperty(forNode(node->child2()), data.offset, m_state.structureClobberState());
+        // Diagnostic: the AI must give ONE answer per node per compilation. If the same node is seen
+        // claiming a field type at one point and declining at another, the value has widened mid-compile,
+        // which contradicts any proof FixupPhase already froze from the earlier answer.
+        if (Options::logFieldTypes()) [[unlikely]] {
+            RegisteredStructure onlyBase = forNode(node->child2()).m_structure.onlyStructure();
+            dataLogLn("[fieldtype] AI node=D@", node->index(),
+                " offset=", data.offset,
+                // isType(mask) is !(m_type & ~mask), so isType(SpecFullTop) is ALWAYS true and the old
+                // expression printed claimed=false unconditionally -- in runs that logged 1578 narrowings.
+                " claimed=", !!value.m_structure.onlyStructure(),
+                " baseOnlyStructure=", onlyBase ? onlyBase->id().bits() : 0,
+                " clobber=", static_cast<unsigned>(m_state.structureClobberState()));
+        }
 
         // If we decide that there does not exist any value that this can return, then it's probably
         // because the compilation was already invalidated.
@@ -5231,6 +5244,14 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case AssertNotEmpty:
+    case CheckFieldType: {
+        // Deliberately learns NOTHING about child1. The expected structure is loaded at runtime, so the
+        // abstract interpreter must not narrow on it -- doing so would let the CFA prove a block
+        // unreachable on the strength of a claim that can change, which is how an earlier version reached
+        // DFGBailedAtTopOfBlock.
+        break;
+    }
+
     case CheckNotEmpty: {
         AbstractValue& value = forNode(node->child1());
         if (!(value.m_type & SpecEmpty))

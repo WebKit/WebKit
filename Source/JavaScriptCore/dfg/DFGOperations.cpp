@@ -194,6 +194,20 @@ ALWAYS_INLINE static JSValue getByValObject(JSGlobalObject* globalObject, VM& vm
     return base->get(globalObject, propertyName);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationRecordFieldTypesForMaterializedObject, void, (VM* vmPointer, JSObject* object))
+{
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    // Called AFTER the object is fully materialized, so every field holds its final value and this is GC-safe --
+    // which is why it cannot be done inline with the per-property stores, where the object is half-initialized.
+    // recordFieldTypesForCopiedObject is the same primitive Object.assign's and object spread's fast paths use for
+    // the identical problem: storage written wholesale with no per-property creation hook.
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    recordFieldTypesForCopiedObject(vm, object, object->structure());
+    OPERATION_RETURN(scope);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationToThis, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedOp))
 {
     VM& vm = globalObject->vm();

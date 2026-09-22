@@ -51,6 +51,21 @@ JSPropertyNameEnumerator* JSPropertyNameEnumerator::tryCreate(VM& vm, Structure*
             propertyNamesBuffer[i].clear();
     }
 
+    // Field types: OwnStructureMode licenses writes to any of this structure's own slots at a cached index with
+    // no field-type check, from four tiers, three of them straight from generated code with nowhere cheap to
+    // check. So withdraw the claim once here, when the enumerator caches the structure: generalize() is
+    // permanent and establish() never claims a generalised record again, so no later creation can re-arm a
+    // claim those stores would violate. Costs claim yield on any for-in'd shape, once per structure.
+    if (numberStructureProperties && structure && Options::useFieldTypeAssumptions()) [[unlikely]] {
+        unsigned inlineCapacity = structure->inlineCapacity();
+        for (unsigned index = 0; index < numberStructureProperties; ++index) {
+            PropertyOffset offset = index < inlineCapacity
+                ? index : index - inlineCapacity + firstOutOfLineOffset;
+            if (Structure* owner = structure->findOffsetOwner(offset))
+                poisonFieldTypesForVMWrittenProperty(vm, owner, offset);
+        }
+    }
+
     JSPropertyNameEnumerator* enumerator = new (NotNull, allocateCell<JSPropertyNameEnumerator>(vm)) JSPropertyNameEnumerator(vm, structure, indexedLength, numberStructureProperties, propertyNamesBuffer, propertyNamesSize);
     enumerator->finishCreation(vm, propertyNames.releaseData());
     return enumerator;

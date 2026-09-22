@@ -503,6 +503,103 @@ void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSFinalObject);
 
+// Diagnostic only; see the call in JSObject::putDirectOffset. Deliberately does not skip creations
+// (!isValidOffset(offset) is one here, since putDirectOffset runs before setStructure): guarding on that made
+// this instrument blind to the mid-transition writes it exists to find.
+void JSObject::reportFieldTypeViolatingStoreForDiagnostics(VM& vm, PropertyOffset offset, JSValue value)
+{
+    auto* table = vm.fieldTypeWatchpoints();
+    if (!table || !table->sizeRelaxed())
+        return;
+    if (!value)
+        return;
+
+    Structure* structure = this->structure();
+    if (!structure)
+        return;
+
+    // Only the claim that binds this object: the one owned by the nearest ancestor that added this offset, the
+    // same resolution the compiler uses. A farther ancestor's record names a property that lived at this offset
+    // before a delete freed it, unreachable by any consumer, so reporting it is a false positive.
+    Structure* bindingOwner = nullptr;
+    for (Structure* candidate = structure; candidate; candidate = candidate->previousID()) {
+        if (candidate->transitionKind() == TransitionKind::PropertyAddition
+            && candidate->transitionOffset() == offset) {
+            bindingOwner = candidate;
+            break;
+        }
+    }
+    // ...and only when the owner's recorded property still lives at this offset: a delete does not unlink f's
+    // adder from the chain, so after `delete o.f` the walk still finds it.
+    if (bindingOwner) {
+        UniquedStringImpl* recorded = bindingOwner->transitionPropertyName();
+        bool presentAndSame = false;
+        for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+            if (entry.offset() == offset) {
+                presentAndSame = recorded && entry.key() == recorded;
+                break;
+            }
+        }
+        if (!presentAndSame)
+            bindingOwner = nullptr;
+    }
+
+    for (Structure* candidate = bindingOwner; candidate; candidate = nullptr) {
+        RefPtr record = table->recordFor(candidate->id(), offset);
+        if (!record)
+            continue;
+        StructureID expected = record->expected();
+        if (!expected)
+            continue;
+        StructureID observed = value.isCell() ? value.asCell()->structureID() : StructureID();
+        bool violating = observed != expected;
+        record->noteFunnelWrite(violating);
+        if (!violating)
+            continue;
+
+        Structure* expectedStructure = expected.decode();
+        // Report only stores that could be unsound, i.e. against a claim whose structure is still stable: once
+        // it has transitioned away its watchpoint has fired and every compilation that adopted the claim is
+        // jettisoned, so the record is stale rather than dangerous. Count those instead of reporting them.
+        bool claimStillStable = expectedStructure && !expectedStructure->transitionWatchpointSet().hasBeenInvalidated();
+        if (!claimStillStable) {
+            static unsigned staleSeen = 0;
+            if (!(++staleSeen % 1000))
+                dataLogLn("FIELD TYPE: ", staleSeen, " violating stores against ALREADY-STALE claims (dependent code already jettisoned; not unsound).");
+            continue;
+        }
+
+        static unsigned reported = 0;
+        if (reported++ >= 2000) {
+            if (reported == 2001)
+                dataLogLn("FIELD TYPE VIOLATING STORE: further reports suppressed after 2000.");
+            continue;
+        }
+        // Names, for cross-checking: offsets are reused, so a record found by offset may name another property.
+        Structure* resolved = structure->findOffsetOwner(offset);
+        UniquedStringImpl* ownerName = candidate->transitionPropertyName();
+        String nameAtOffsetNow = "<none>"_str;
+        for (const PropertyTableEntry& entry : structure->getPropertiesConcurrently()) {
+            if (entry.offset() == offset) {
+                nameAtOffsetNow = String(entry.key());
+                break;
+            }
+        }
+        dataLogLn("\n" "FIELD TYPE VIOLATING STORE: owner=", candidate->id().bits(), " offset=", offset,
+            " expected=", expected.bits(), " observed=", observed.bits(), " valueIsCell=", value.isCell(),
+            " isCreation=", !structure->isValidOffset(offset),
+            " claimedStructureStillStable=", claimStillStable,
+            " objectStructure=", structure->id().bits(),
+            " findOffsetOwner=", resolved ? resolved->id().bits() : 0,
+            " ownerAgrees=", resolved == candidate,
+            " ownerRecordedProperty=", ownerName ? String(ownerName) : "<none>"_str,
+            " propertyAtOffsetNow=", nameAtOffsetNow,
+            " namesMatch=", ownerName && nameAtOffsetNow == String(ownerName),
+            " claimSite=", record->claimSite());
+        WTFReportBacktrace();
+    }
+}
+
 String JSObject::calculatedClassName(JSObject* object)
 {
     String constructorFunctionName;
@@ -4310,9 +4407,35 @@ void JSObject::putOwnDataPropertyBatching(VM& vm, UniquedStringImpl** properties
             nukeStructureAndSetButterfly(vm, StructureID::encode(oldStructure), newButterfly);
         }
 
+        // Field types, replace half, before the writes: maintenance allocates, so if it ran after the stores
+        // a collection could land while a replaced field still contradicts a live claim. A replace is an
+        // offset oldStructure already had; creations must be recorded after setStructure, below.
+        if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+            for (unsigned index = 0; index < offsets.size(); ++index) {
+                if (oldStructure->isValidOffset(offsets[index]))
+                    maintainFieldTypeRecord(vm, oldStructure, offsets[index], JSValue::decode(values[index]));
+            }
+        }
+
         for (unsigned index = 0; index < offsets.size(); ++index)
             putDirectOffset(vm, offsets[index], JSValue::decode(values[index]));
         setStructure(vm, structure);
+
+        // Field types, creation half. This path creates properties without going through putDirectInternal,
+        // so it needs its own hook or an object built here can contradict a claim of the same shape. After
+        // setStructure: the hook can allocate, and the nuked window opened above is only closed here.
+        if (Options::useFieldTypeAssumptions()) [[unlikely]] {
+            for (unsigned index = 0; index < offsets.size(); ++index) {
+                JSValue value = JSValue::decode(values[index]);
+                // recordFieldTypeAtCreation, not maintainFieldTypeRecord: no object may predate a record.
+                // Generalising on mismatch is not enough, since a non-cell value here would leave no entry at
+                // all and a later object of the same shape could then claim a field this one contradicts.
+                if (Structure* owner = structure->findOffsetOwner(offsets[index]))
+                    recordFieldTypeAtCreation(vm, owner, offsets[index], value);
+                else
+                    maintainFieldTypeRecord(vm, structure, offsets[index], value);
+            }
+        }
 
         // We fall through to the generic case and consume the rest of put operations if batching stopped in the middle.
         i = offsets.size();

@@ -92,6 +92,22 @@ class PromotedLocationDescriptor;
 struct StorageAccessData {
     PropertyOffset offset;
     unsigned identifierNumber;
+    // Field types, JSC's equivalent of V8's DescriptorArray field type. 2019's InferredType carried
+    // its per-site type in this same struct, as InferredType::Descriptor inferredType.
+    //
+    // Non-null ONLY when this PutByOffset CREATES the property. It has to be captured here, at node
+    // creation, because the transition shape is PutByOffset-then-PutStructure: at the PutByOffset the
+    // base still carries the OLD structure, which does not own `offset`, so resolving the owner from
+    // the base during lowering returns null and codegen would silently emit no check at all.
+    RegisteredStructure fieldTypeOwner;
+    // True when the field-type check has been HOISTED out of this store, as a CheckStructure on the
+    // stored value emitted before the transition sequence begins. A transitioning store sits inside the
+    // nuked window (ReallocatePropertyStorage -> PutByOffset -> PutStructure) where no exit is legal and
+    // no call is safe, so the check cannot live at the store itself. Hoisting is what V8 does: it emits
+    // CheckMaps on the value (compiler/js-native-context-specialization.cc:3504-3512). When this is set
+    // the backend must emit nothing and must NOT generalise -- the hoisted check already guarantees the
+    // value's structure.
+    bool fieldTypeCheckHoisted { false };
 };
 
 struct MultiPutByOffsetData {
@@ -2532,6 +2548,14 @@ public:
         }
     }
     
+    // For CheckFieldType. The record is kept alive by the plan (see Plan::keepFieldTypeRecordAlive), so
+    // the slot this node bakes the address of outlives the generated code.
+    FieldTypeRecord* fieldTypeRecord()
+    {
+        ASSERT(op() == CheckFieldType);
+        return m_opInfo.as<FieldTypeRecord*>();
+    }
+
     StorageAccessData& storageAccessData()
     {
         ASSERT(hasStorageAccessData());

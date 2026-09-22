@@ -168,6 +168,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case CheckIsConstant:
     case CheckBadValue:
     case CheckNotEmpty:
+    case CheckFieldType:
     case AssertNotEmpty:
     case CheckIdent:
     case CheckTraps:
