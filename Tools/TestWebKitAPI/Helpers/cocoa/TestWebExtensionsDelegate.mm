@@ -192,6 +192,15 @@
         completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"sidebarAction.close() not implemented" }]);
 }
 
+- (void)_webExtensionController:(WKWebExtensionController *)controller presentNotification:(_WKWebExtensionNotification *)notification forExtensionContext:(WKWebExtensionContext *)context completionHandler:(void (^)(NSError *))completionHandler
+{
+    if (_presentNotification) {
+        _presentNotification(notification);
+        completionHandler(nil);
+    } else
+        completionHandler([NSError errorWithDomain:NSCocoaErrorDomain code:0 userInfo:@{ NSDebugDescriptionErrorKey: @"notifications.create() not implemented" }]);
+}
+
 - (void)_webExtensionController:(WKWebExtensionController *)controller didUpdateSidebar:(_WKWebExtensionSidebar *)sidebar forExtensionContext:(WKWebExtensionContext *)context
 {
     if (_didUpdateSidebar)

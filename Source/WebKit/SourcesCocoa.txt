@@ -518,6 +518,7 @@ UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIDevToolsPanels.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIEventCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIExtensionCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIMenusCocoa.mm
+UIProcess/Extensions/Cocoa/API/WebExtensionContextAPINotificationsCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIOffscreenCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPermissionsCocoa.mm
 UIProcess/Extensions/Cocoa/API/WebExtensionContextAPIPortCocoa.mm

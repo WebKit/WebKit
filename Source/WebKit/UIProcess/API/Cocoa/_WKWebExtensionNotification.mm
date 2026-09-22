@@ -28,10 +28,37 @@
 #endif
 
 #import "config.h"
-#import "_WKWebExtensionNotification.h"
+#import "_WKWebExtensionNotificationInternal.h"
 
 @implementation _WKWebExtensionNotificationButton
+
+- (instancetype)initWithTitle:(NSString *)title
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _title = [title copy];
+
+    return self;
+}
+
 @end
 
 @implementation _WKWebExtensionNotification
+
+- (instancetype)initWithIdentifier:(NSString *)identifier webExtensionContext:(WKWebExtensionContext *)webExtensionContext title:(NSString *)title subtitle:(NSString *)subtitle body:(NSString *)body buttons:(NSArray<_WKWebExtensionNotificationButton *> *)buttons
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _identifier = [identifier copy];
+    _webExtensionContext = webExtensionContext;
+    _title = [title copy];
+    _subtitle = [subtitle copy];
+    _body = [body copy];
+    _buttons = [buttons copy];
+
+    return self;
+}
+
 @end

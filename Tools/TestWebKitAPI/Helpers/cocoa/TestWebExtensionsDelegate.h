@@ -77,6 +77,8 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, copy, nullable) void (^didInvalidateSidebar)(_WKWebExtensionSidebar *);
 @property (nonatomic, copy, nullable) _WKWebExtensionSidebarSide (^sidebarSide)(void);
 
+@property (nonatomic, copy, nullable) void (^presentNotification)(_WKWebExtensionNotification *);
+
 @property (nonatomic, copy, nullable) void (^createBookmarkWithParentIdentifier)(NSString * _Nullable parentId, NSNumber * _Nullable index, NSString * _Nullable url, NSString *title, void (^)(NSObject<_WKWebExtensionBookmark> * _Nullable, NSError * _Nullable));
 @property (nonatomic, copy, nullable) void (^bookmarksForExtensionContext)(void (^)(NSArray<NSObject<_WKWebExtensionBookmark> *> * _Nullable, NSError * _Nullable));
 @property (nonatomic, copy, nullable) void (^removeBookmarkWithIdentifier)(NSString *bookmarkId, BOOL removeFolderWithChildren, void (^completionHandler)(NSError * _Nullable));

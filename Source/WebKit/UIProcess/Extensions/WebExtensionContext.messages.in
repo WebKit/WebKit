@@ -112,6 +112,11 @@ messages -> WebExtensionContext {
     [Validator=isMenusMessageAllowed] MenusRemove(String identifier) -> (std::expected<void, WebKit::WebExtensionError> result)
     [Validator=isMenusMessageAllowed] MenusRemoveAll() -> (std::expected<void, WebKit::WebExtensionError> result)
 
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+    // Notifications APIs
+    [Validator=isNotificationsMessageAllowed] NotificationsCreate(struct WebKit::WebExtensionNotificationParameters parameters) -> ()
+#endif
+
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
     // Offscreen APIs
     [Validator=isOffscreenMessageAllowed] OffscreenCreateDocument(struct WebKit::WebExtensionOffscreenDocumentParameters parameters) -> (std::expected<void, WebKit::WebExtensionError> result)

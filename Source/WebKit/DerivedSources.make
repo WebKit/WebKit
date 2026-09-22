@@ -784,6 +784,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Extensions/WebExtensionMenuItem.serialization.in \
 	Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in \
 	Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in \
+	Shared/Extensions/WebExtensionNotification.serialization.in \
 	Shared/Extensions/WebExtensionOffscreenDocumentParameters.serialization.in \
 	Shared/Extensions/WebExtensionSidebarParameters.serialization.in \
 	Shared/Extensions/WebExtensionStorage.serialization.in \

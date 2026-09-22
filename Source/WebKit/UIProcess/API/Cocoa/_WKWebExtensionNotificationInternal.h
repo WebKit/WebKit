@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    MainWorldOnly,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINotifications {
+#import "_WKWebExtensionNotification.h"
 
-    [ProcessArgumentsLeftToRight, RaisesException, ImplementedAs=createNotification, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] void create([Optional] DOMString notificationId, [NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-    readonly attribute WebExtensionAPIEvent onClicked;
-    readonly attribute WebExtensionAPIEvent onButtonClicked;
+@interface _WKWebExtensionNotificationButton ()
 
-};
+- (instancetype)initWithTitle:(NSString *)title;
+
+@end
+
+@interface _WKWebExtensionNotification ()
+
+- (instancetype)initWithIdentifier:(NSString *)identifier webExtensionContext:(nullable WKWebExtensionContext *)webExtensionContext title:(NSString *)title subtitle:(nullable NSString *)subtitle body:(NSString *)body buttons:(NSArray<_WKWebExtensionNotificationButton *> *)buttons;
+
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

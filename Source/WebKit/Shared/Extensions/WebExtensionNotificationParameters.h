@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=WK_WEB_EXTENSIONS,
-    MainWorldOnly,
-    ReturnsPromiseWhenCallbackIsOmitted,
-] interface WebExtensionAPINotifications {
+#pragma once
 
-    [ProcessArgumentsLeftToRight, RaisesException, ImplementedAs=createNotification, Conditional=WK_WEB_EXTENSIONS_NOTIFICATIONS] void create([Optional] DOMString notificationId, [NSDictionary=NullAllowed] any options, [Optional, CallbackHandler] function callback);
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
 
-    readonly attribute WebExtensionAPIEvent onClicked;
-    readonly attribute WebExtensionAPIEvent onButtonClicked;
+namespace WebKit {
 
+struct WebExtensionNotificationButton {
+    String title;
 };
+
+struct WebExtensionNotificationParameters {
+    String identifier;
+
+    String title;
+    String message;
+    String contextMessage;
+
+    std::optional<Vector<WebExtensionNotificationButton>> buttons;
+};
+
+}
+
+#endif

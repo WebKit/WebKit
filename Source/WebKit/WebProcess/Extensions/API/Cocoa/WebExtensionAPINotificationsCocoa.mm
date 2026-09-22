@@ -32,7 +32,91 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "CocoaHelpers.h"
+#import "JSWebExtensionWrapper.h"
+#import "MessageSenderInlines.h"
+#import "WebExtensionAPIKeys.h"
+#import "WebExtensionContextMessages.h"
+#import "WebExtensionNotificationParameters.h"
+#import "WebExtensionUtilities.h"
+#import "WebProcess.h"
+#import <wtf/UUID.h>
+
 namespace WebKit {
+
+#if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
+
+static bool parseNotificationOptions(NSDictionary *options, WebExtensionNotificationParameters& parameters, NSString **outExceptionString)
+{
+    static NSArray<NSString *> *requiredKeys = @[
+        messageKey,
+        titleKey,
+        typeKey,
+    ];
+
+    static NSDictionary<NSString *, id> *types = @{
+        typeKey: NSString.class,
+        titleKey: NSString.class,
+        messageKey: NSString.class,
+        contextMessageKey: NSString.class,
+        iconURLKey: NSString.class,
+        buttonsKey: @[ NSDictionary.class ],
+    };
+
+    if (!validateDictionary(options, @"options", requiredKeys, types, outExceptionString))
+        return false;
+
+    if (NSString *title = objectForKey<NSString>(options, titleKey))
+        parameters.title = title;
+
+    if (NSString *message = objectForKey<NSString>(options, messageKey))
+        parameters.message = message;
+
+    if (NSString *contextMessage = objectForKey<NSString>(options, contextMessageKey))
+        parameters.contextMessage = contextMessage;
+
+    if (NSArray *buttons = objectForKey<NSArray>(options, buttonsKey)) {
+        static NSArray<NSString *> *buttonRequiredKeys = @[ titleKey ];
+        static NSDictionary<NSString *, id> *buttonTypes = @{
+            titleKey: NSString.class,
+        };
+
+        Vector<WebExtensionNotificationButton> parsedButtons;
+
+        for (NSDictionary *button in buttons) {
+            if (!validateDictionary(button, @"button", buttonRequiredKeys, buttonTypes, outExceptionString))
+                return false;
+
+            WebExtensionNotificationButton parsedButton;
+
+            if (NSString *buttonTitle = objectForKey<NSString>(button, titleKey))
+                parsedButton.title = buttonTitle;
+
+            parsedButtons.append(WTF::move(parsedButton));
+        }
+
+        parameters.buttons = WTF::move(parsedButtons);
+    }
+
+    return true;
+}
+
+void WebExtensionAPINotifications::createNotification(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/create
+
+    WebExtensionNotificationParameters parameters;
+    if (!parseNotificationOptions(options, parameters, outExceptionString))
+        return;
+
+    parameters.identifier = !identifier.isEmpty() ? identifier : createVersion4UUIDString();
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsCreate(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = parameters.identifier]() {
+        callback->call(toJSValueRef(callback->globalContext(), identifier));
+    }, extensionContext().identifier());
+}
+
+#endif
 
 WebExtensionAPIEvent& WebExtensionAPINotifications::onClicked()
 {

@@ -333,6 +333,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionMatchedRuleParameters.serialization
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageTargetParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionNotification.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionSidebarParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionStorage.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
