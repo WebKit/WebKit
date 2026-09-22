@@ -64,6 +64,13 @@ final class WKPanGestureRecognizer: NSPanGestureRecognizer {
         super.reset()
     }
 
+    // This selector is internal-only in AppKit.
+    // swift-format-ignore: AlwaysUseLowerCamelCase
+    @objc(_allowedDuringDnDRestrictions)
+    func wk_allowedDuringDnDRestrictions() -> Bool {
+        false
+    }
+
     // swift-format-ignore: AlwaysUseLowerCamelCase
     func wk_velocity(in view: NSView?) -> NSPoint {
         let appKitVelocity = velocity(in: view)

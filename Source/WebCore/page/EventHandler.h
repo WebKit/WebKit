@@ -743,6 +743,32 @@ private:
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
+    // Click bookkeeping (`m_clickNode`, `m_clickCount`) is deliberately absent: a context menu should
+    // invalidate the pending click rather than preserve it, so the synthesized pair is left free to clear it.
+    struct PendingDragState {
+        bool mousePressed { false };
+        CapturesDragging capturesDragging;
+        bool mouseDownMayStartDrag { false };
+        bool mouseDownMayStartSelect { false };
+        bool mouseDownMayStartAutoscroll { false };
+        bool mouseDownWasInSubframe { false };
+        MonotonicTime mouseDownTimestamp;
+        IntPoint mouseDownContentsPosition;
+        PlatformMouseEvent mouseDownEvent;
+        LayoutPoint dragStartPosition;
+        RefPtr<Element> dragStateSource;
+        RefPtr<Node> mousePressNode;
+        RefPtr<Element> capturingMouseEventsElement;
+        bool eventHandlerWillResetCapturingMouseEventsElement { false };
+        bool isCapturingRootElementForMouseEvents { false };
+        SelectionInitiationState selectionInitiationState { HaveNotStartedSelection };
+        ImmediateActionStage immediateActionStage { ImmediateActionStage::None };
+    };
+
+    bool isSynthesizedContextMenuPressDuringPendingDrag(const PlatformMouseEvent&) const;
+    std::optional<PendingDragState> pendingDragStateToPreserveAcross(const PlatformMouseEvent&) const;
+    void restorePendingDragState(const PendingDragState&);
+
     LayoutPoint m_dragStartPosition;
     std::optional<WeakSimpleRange> m_dragStartSelection;
     RefPtr<Element> m_dragTarget;
