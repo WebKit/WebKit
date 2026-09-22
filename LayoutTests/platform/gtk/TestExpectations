@@ -1306,3 +1306,8 @@ webkit.org/b/323049 [ Debug ] fast/webcodecs/resetting-video-encoder-with-unsupp
 webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/static-router-subresource.https.html [ Crash Pass ]
 webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register.https.html [ Crash Pass ]
 webkit.org/b/324338 [ Debug ] webaudio/silent-audio-interrupted-in-background.html [ Failure Pass ]
+
+# Gardening 2026-09-22
+webkit.org/b/324822 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
+webkit.org/b/324823 [ Debug ] webrtc/video-disabled-black.html [ Failure Pass ]
+webkit.org/b/324824 [ Debug ] imported/w3c/web-platform-tests/mimesniff/mime-types/parsing.any.worker.html [ Pass Timeout ]

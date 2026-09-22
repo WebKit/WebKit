@@ -1299,3 +1299,6 @@ webkit.org/b/324152 platform/glib/damage/animations-drop-shadow-color.html [ Pas
 # Gardening 2026-09-16
 webkit.org/b/324334 [ Debug ] fast/canvas/webgl/largeBuffer.html [ Crash Pass ]
 webkit.org/b/324337 [ arm64 ] http/tests/navigation/javascriptlink-frames.html [ Failure Pass ]
+
+# Gardening 2026-09-22
+webkit.org/b/324821 [ Release ] ipc/invalid-message-to-web-process-crash.html [ Failure Pass ]
