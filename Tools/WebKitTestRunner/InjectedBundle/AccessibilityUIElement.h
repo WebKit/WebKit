@@ -412,6 +412,8 @@ public:
     virtual bool hasTextEntryTrait();
     virtual bool hasTabBarTrait();
     virtual bool hasMenuItemTrait();
+    virtual bool hasPopupButtonTrait();
+    virtual bool hasButtonTrait();
     virtual RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 
     virtual bool isInsertion() const;
