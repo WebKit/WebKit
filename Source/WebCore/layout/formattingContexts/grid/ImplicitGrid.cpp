@@ -42,7 +42,8 @@ namespace Layout {
 // tracks and grow the grid.
 
 ImplicitGrid::ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount)
-    : m_gridMatrix(Vector<Vector<GridCell>>(FillWith { }, totalRowsCount, Vector<GridCell>(totalColumnsCount)))
+    : m_gridMatrix(GridMatrix(FillWith { }, totalRowsCount, GridRow(totalColumnsCount)))
+    , m_columnsCount(totalColumnsCount)
 {
 }
 
@@ -78,8 +79,7 @@ static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridI
 
     // The implicit grid always starts with at least one row. Grid coverage guarantees at least one
     // in-flow grid item, and every item occupies at least one row, so placement would end up
-    // creating this row regardless. Starting with it means the grid matrix is never empty, which
-    // lets the column count always be read from the matrix itself.
+    // creating this row regardless.
     maximumRowIndex = std::max<size_t>(maximumRowIndex, 1);
 
     return {
@@ -100,41 +100,17 @@ ImplicitGrid ImplicitGrid::createInitialGrid(const UnplacedGridItems& unplacedGr
     return implicitGrid;
 }
 
-void ImplicitGrid::insertUnplacedGridItem(const UnplacedGridItem& unplacedGridItem)
+GridAreaLines ImplicitGrid::insertUnplacedGridItem(const UnplacedGridItem& unplacedGridItem)
 {
     // https://drafts.csswg.org/css-grid/#common-uses-numeric
     auto [columnStart, columnEnd] = unplacedGridItem.definiteColumnStartEnd();
     auto [rowStart, rowEnd] = unplacedGridItem.definiteRowStartEnd();
 
     // The initial grid bounds already cover every definitely placed item, spans included.
-    insertItemInArea(unplacedGridItem, columnStart, columnEnd, rowStart, rowEnd);
+    return markAreaAsOccupied(columnStart, columnEnd, rowStart, rowEnd);
 }
 
-GridAreas ImplicitGrid::gridAreas() const
-{
-    GridAreas gridAreas;
-    gridAreas.reserveInitialCapacity(rowsCount() * columnsCount());
-
-    for (size_t rowIndex = 0; rowIndex < m_gridMatrix.size(); ++rowIndex) {
-        for (size_t columnIndex = 0; columnIndex < m_gridMatrix[rowIndex].size(); ++columnIndex) {
-
-            const auto& gridCell = m_gridMatrix[rowIndex][columnIndex];
-            for (const auto& unplacedGridItem : gridCell) {
-                // A grid area is always rectangular, so this row-major sweep reaches an item's
-                // start lines first and every later cell it occupies extends its end lines.
-                auto addResult = gridAreas.ensure(unplacedGridItem, [&]() {
-                    return GridAreaLines { columnIndex, columnIndex + 1, rowIndex, rowIndex + 1 };
-                });
-                auto& gridAreaLines = addResult.iterator->value;
-                gridAreaLines.columnEndLine = std::max(gridAreaLines.columnEndLine, columnIndex + 1);
-                gridAreaLines.rowEndLine = std::max(gridAreaLines.rowEndLine, rowIndex + 1);
-            }
-        }
-    }
-    return gridAreas;
-}
-
-void ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplacedGridItem, GridAutoFlowOptions autoFlowOptions)
+GridAreaLines ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplacedGridItem, GridAutoFlowOptions autoFlowOptions)
 {
     // Step 2 of CSS Grid auto-placement algorithm:
     // Process items locked to a given row (definite row position, auto column position)
@@ -155,12 +131,14 @@ void ImplicitGrid::insertDefiniteRowItem(const UnplacedGridItem& unplacedGridIte
         ASSERT(isCellRangeEmpty(*columnPosition, *columnPosition + columnSpan, rowStart, rowEnd));
     }
 
-    insertItemInArea(unplacedGridItem, *columnPosition, *columnPosition + columnSpan, rowStart, rowEnd);
+    auto gridAreaLines = markAreaAsOccupied(*columnPosition, *columnPosition + columnSpan, rowStart, rowEnd);
 
     if (autoFlowOptions.strategy != PackingStrategy::Dense) {
         for (size_t row = rowStart; row < rowEnd; ++row)
             m_rowCursors.set(row, *columnPosition + columnSpan);
     }
+
+    return gridAreaLines;
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
@@ -194,20 +172,19 @@ void ImplicitGrid::determineImplicitGridColumns(const Vector<UnplacedGridItem>& 
 
 // https://drafts.csswg.org/css-grid-1/#auto-placement-algo
 // Step 4 of CSS Grid auto-placement algorithm: Position the remaining grid items
-void ImplicitGrid::insertAutoPositionedItems(const Vector<UnplacedGridItem>& autoPositionedItems, GridAutoFlowOptions autoFlowOptions)
+GridAreaLines ImplicitGrid::insertAutoPositionedItem(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
 {
     if (autoFlowOptions.direction != GridAutoFlowDirection::Row) {
         ASSERT_NOT_IMPLEMENTED_YET();
-        return;
+        // Not a real placement: column flow is rejected by grid coverage before placement runs.
+        // Return a single cell rather than an empty area, since a zero span underflows the interior
+        // gutter count in GridLayoutUtils::gridAreaDimensionSize().
+        return { 0, 1, 0, 1 };
     }
 
-    // Process each auto-positioned item with the appropriate search strategy
-    for (const auto& item : autoPositionedItems) {
-        if (item.hasDefiniteColumnPosition())
-            placeAutoPositionedItemWithDefiniteColumn(item, autoFlowOptions);
-        else
-            placeAutoPositionedItemWithAutoColumnAndRow(item, autoFlowOptions);
-    }
+    if (item.hasDefiniteColumnPosition())
+        return placeAutoPositionedItemWithDefiniteColumn(item, autoFlowOptions);
+    return placeAutoPositionedItemWithAutoColumnAndRow(item, autoFlowOptions);
 }
 
 std::optional<size_t> ImplicitGrid::findFirstAvailableColumnPosition(size_t rowStart, size_t rowEnd, size_t columnSpan, size_t startSearchColumn) const
@@ -251,7 +228,7 @@ void ImplicitGrid::growColumnsForDefiniteRowItem(size_t columnSpan, size_t rowSt
     std::optional<size_t> lastOccupiedColumn;
     for (size_t row = rowStart; row < rowEnd; ++row) {
         for (size_t column = columnsCount(); column > 0; --column) {
-            if (!m_gridMatrix[row][column - 1].isEmpty()) {
+            if (m_gridMatrix[row].quickGet(column - 1)) {
                 lastOccupiedColumn = std::max(lastOccupiedColumn.value_or(0), column - 1);
                 break;
             }
@@ -268,40 +245,45 @@ bool ImplicitGrid::isCellRangeEmpty(size_t columnStart, size_t columnEnd, size_t
 {
     for (size_t row = rowStart; row < rowEnd; ++row) {
         for (size_t column = columnStart; column < columnEnd; ++column) {
-            if (!m_gridMatrix[row][column].isEmpty())
+            if (m_gridMatrix[row].quickGet(column))
                 return false;
         }
     }
     return true;
 }
 
-void ImplicitGrid::insertItemInArea(const UnplacedGridItem& unplacedGridItem, size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd)
+GridAreaLines ImplicitGrid::markAreaAsOccupied(size_t columnStart, size_t columnEnd, size_t rowStart, size_t rowEnd)
 {
     // Every caller is responsible for growing the implicit grid to cover the area first.
     ASSERT(columnEnd <= columnsCount() && rowEnd <= rowsCount());
 
     for (size_t row = rowStart; row < rowEnd; ++row) {
         for (size_t column = columnStart; column < columnEnd; ++column)
-            m_gridMatrix[row][column].append(unplacedGridItem);
+            m_gridMatrix[row].quickSet(column);
     }
+
+    return { columnStart, columnEnd, rowStart, rowEnd };
 }
 
 void ImplicitGrid::growColumnsToFit(size_t requiredCount)
 {
-    if (requiredCount > columnsCount()) {
+    if (requiredCount > m_columnsCount) {
+        // ensureSize() zeroes the bits it adds, and bits past the current width are never set, so
+        // the widened part of each row always reads as unoccupied.
         for (auto& row : m_gridMatrix)
-            row.resize(requiredCount);
+            row.ensureSize(requiredCount);
+        m_columnsCount = requiredCount;
     }
 }
 
 void ImplicitGrid::growRowsToFit(size_t requiredRowIndex)
 {
     while (requiredRowIndex >= rowsCount())
-        m_gridMatrix.append(Vector<GridCell>(columnsCount()));
+        m_gridMatrix.append(GridRow(m_columnsCount));
 }
 
 // FIXME: optimize cursor setting by setting to an empty slot instead of to the start for dense placement.
-void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
+GridAreaLines ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
 {
     ASSERT(item.hasDefiniteColumnPosition());
     ASSERT(!item.hasDefiniteRowPosition());
@@ -334,11 +316,10 @@ void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridI
         growRowsToFit(m_autoPlacementCursorRow + rowSpan - 1);
 
         if (isCellRangeEmpty(columnStart, columnEnd, m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan)) {
-            // Set the item's row-start line to the cursor's row position.
-            insertItemInArea(item, columnStart, columnEnd,
+            // Set the item's row-start line to the cursor's row position. The cursor stays where the
+            // item landed (row at the placed row, column was already set).
+            return markAreaAsOccupied(columnStart, columnEnd,
                 m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan);
-            // Cursor remains at the placed position (row at placed row, column was already set).
-            break;
         }
 
         // Try next row down this column.
@@ -347,7 +328,7 @@ void ImplicitGrid::placeAutoPositionedItemWithDefiniteColumn(const UnplacedGridI
 }
 
 // FIXME: optimize cursor setting by setting to an empty slot instead of to the start for dense placement.
-void ImplicitGrid::placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
+GridAreaLines ImplicitGrid::placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGridItem& item, GridAutoFlowOptions autoFlowOptions)
 {
     ASSERT(!item.hasDefiniteColumnPosition() && !item.hasDefiniteRowPosition());
 
@@ -383,14 +364,14 @@ void ImplicitGrid::placeAutoPositionedItemWithAutoColumnAndRow(const UnplacedGri
 
         // Try to place at current cursor position.
         if (isCellRangeEmpty(m_autoPlacementCursorColumn, m_autoPlacementCursorColumn + columnSpan, m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan)) {
-            insertItemInArea(item, m_autoPlacementCursorColumn, m_autoPlacementCursorColumn + columnSpan,
+            auto gridAreaLines = markAreaAsOccupied(m_autoPlacementCursorColumn, m_autoPlacementCursorColumn + columnSpan,
                 m_autoPlacementCursorRow, m_autoPlacementCursorRow + rowSpan);
             // Sparse packing: Advance cursor past this item to maintain document order.
             // Spec: "Set the auto-placement cursor to the end of the item's grid area."
             // Dense packing: Cursor will be reset to (0, 0) before the next fully-auto item.
             if (autoFlowOptions.strategy == PackingStrategy::Sparse)
                 m_autoPlacementCursorColumn += columnSpan;
-            return;
+            return gridAreaLines;
         }
         // Spec: "Increment the column position of the auto-placement cursor."
         ++m_autoPlacementCursorColumn;

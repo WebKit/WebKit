@@ -46,20 +46,24 @@ GridItemPlacementResult GridItemPlacer::placeItems(const UnplacedGridItems& unpl
 {
     auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
 
+    GridAreas gridAreas;
+    gridAreas.reserveInitialCapacity(unplacedGridItems.nonAutoPositionedItems.size()
+        + unplacedGridItems.definiteRowPositionedItems.size()
+        + unplacedGridItems.autoPositionedItems.size());
+
     // 1. Position anything that's not auto-positioned.
     for (auto& nonAutoPositionedItem : unplacedGridItems.nonAutoPositionedItems)
-        implicitGrid.insertUnplacedGridItem(nonAutoPositionedItem);
+        gridAreas.constructAndAppend(nonAutoPositionedItem, implicitGrid.insertUnplacedGridItem(nonAutoPositionedItem));
 
     // 2. Process the items locked to a given row.
     for (auto& definiteRowPositionedItem : unplacedGridItems.definiteRowPositionedItems)
-        implicitGrid.insertDefiniteRowItem(definiteRowPositionedItem, m_autoFlowOptions);
+        gridAreas.constructAndAppend(definiteRowPositionedItem, implicitGrid.insertDefiniteRowItem(definiteRowPositionedItem, m_autoFlowOptions));
 
-    if (!unplacedGridItems.autoPositionedItems.isEmpty()) {
-        // 4. Process auto-positioned items
-        implicitGrid.insertAutoPositionedItems(unplacedGridItems.autoPositionedItems, m_autoFlowOptions);
-    }
+    // 4. Position the remaining grid items.
+    for (auto& autoPositionedItem : unplacedGridItems.autoPositionedItems)
+        gridAreas.constructAndAppend(autoPositionedItem, implicitGrid.insertAutoPositionedItem(autoPositionedItem, m_autoFlowOptions));
 
-    return { implicitGrid.gridAreas(), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
+    return { WTF::move(gridAreas), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
 }
 
 } // namespace Layout
