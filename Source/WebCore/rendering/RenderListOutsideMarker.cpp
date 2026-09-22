@@ -83,7 +83,7 @@ void RenderListOutsideMarker::willBeDestroyed()
     RenderBox::willBeDestroyed();
 }
 
-static Style::Difference NODELETE adjustedStyleDifference(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+static Style::Difference adjustedStyleDifference(Style::Difference diff, const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
 {
     if (diff >= Style::DifferenceResult::Layout)
         return diff;

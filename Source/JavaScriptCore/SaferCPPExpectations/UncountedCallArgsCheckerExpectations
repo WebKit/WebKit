@@ -94,7 +94,6 @@ parser/UnlinkedSourceCode.h
 profiler/ProfilerDatabase.cpp
 profiler/ProfilerEvent.cpp
 runtime/ArrayBufferView.cpp
-runtime/ArrayBufferView.h
 runtime/AtomicsObject.cpp
 runtime/CacheableIdentifierInlines.h
 runtime/CodeCache.cpp
