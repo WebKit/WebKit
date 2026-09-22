@@ -640,6 +640,14 @@ Ref<CSSRegisteredCounterStyle> CSSRegisteredCounterStyle::create(const CSSCounte
     return adoptRef(*new CSSRegisteredCounterStyle(descriptors, isPredefinedCounterStyle));
 }
 
+Ref<CSSRegisteredCounterStyle> CSSRegisteredCounterStyle::create(const Style::SymbolsFunction& symbolsFunction)
+{
+    auto symbols = symbolsFunction->symbols.value.map([](auto& symbol) {
+        return CSSCounterStyleDescriptors::Symbol { false, symbol.value };
+    });
+    return create(CSSCounterStyleDescriptors::createForSymbolsFunction(Style::symbolsSystemFromKeyword(symbolsFunction->system), WTF::move(symbols)), false);
+}
+
 void CSSRegisteredCounterStyle::setFallbackReference(Ref<CSSRegisteredCounterStyle>&& fallback)
 {
     m_fallbackReference = WeakPtr { fallback };

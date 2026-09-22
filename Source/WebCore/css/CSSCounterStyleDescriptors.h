@@ -34,6 +34,8 @@ namespace WebCore {
 class CSSValue;
 class StyleProperties;
 
+enum CSSValueID : uint16_t;
+
 struct CSSCounterStyleDescriptors {
     using Name = AtomString;
     using Ranges = Vector<std::pair<int, int>>;
@@ -102,6 +104,8 @@ struct CSSCounterStyleDescriptors {
 
     // create() is prefered here rather than a custom constructor, so that the Struct still classifies as an aggregate.
     static CSSCounterStyleDescriptors create(AtomString name, const StyleProperties&);
+    static CSSCounterStyleDescriptors createForSymbolsFunction(System, Vector<Symbol>&&);
+
     bool operator==(const CSSCounterStyleDescriptors& other) const
     {
         // Intentionally doesn't check m_isExtendedResolved.
@@ -122,7 +126,7 @@ struct CSSCounterStyleDescriptors {
     }
     void setExplicitlySetDescriptors(const StyleProperties&);
     bool NODELETE isValid() const;
-    static bool NODELETE areSymbolsValidForSystem(System, size_t symbolsCount, size_t additiveSymbolsCount);
+    WEBCORE_EXPORT static bool NODELETE areSymbolsValidForSystem(System, size_t symbolsCount, size_t additiveSymbolsCount);
 
     void setName(Name);
     void setSystem(System);

@@ -97,6 +97,11 @@ static RetainPtr<NSString> cocoaTextListMarkerName(const Style::ListStyleType& s
             // The marker for the marker format `<identifier>` is `<identifier>`, and the list is considered unordered.
             auto format = ordered ? makeString("{"_s, identifier.value, "}"_s) : identifier.value;
             return format.createNSString();
+        },
+        [&](const Style::ListStyleType::SymbolsFunction&) {
+            // The anonymous counter style defined by `symbols()` has no Cocoa equivalent.
+            // Fall back to default styles for ordered and unordered lists.
+            return retainPtr(ordered ? NSTextListMarkerDecimal : NSTextListMarkerDisc);
         }
     );
 }

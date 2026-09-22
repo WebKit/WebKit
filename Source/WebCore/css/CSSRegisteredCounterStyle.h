@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CSSCounterStyleDescriptors.h>
+#include <WebCore/StyleCounterStyle.h>
 #include <WebCore/WritingMode.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -39,6 +40,7 @@ class StyleRuleCounterStyle;
 class CSSRegisteredCounterStyle : public RefCountedAndCanMakeWeakPtr<CSSRegisteredCounterStyle> {
 public:
     static Ref<CSSRegisteredCounterStyle> create(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
+    static Ref<CSSRegisteredCounterStyle> create(const Style::SymbolsFunction&);
 
     bool operator==(const CSSRegisteredCounterStyle& other) const
     {

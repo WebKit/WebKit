@@ -477,6 +477,9 @@ ListMarkerTextContent listMarkerTextContent(const Style::ComputedStyle& markerSt
         },
         [&](const Style::CounterStyle& counterStyle) {
             return makeTextContentForCounter(protect(listItem.document())->counterStyleRegistry().resolvedCounterStyle(counterStyle));
+        },
+        [&](const Style::ListStyleType::SymbolsFunction& symbolsFunction) {
+            return makeTextContentForCounter(CSSRegisteredCounterStyle::create(symbolsFunction));
         }
     );
 }

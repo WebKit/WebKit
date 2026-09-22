@@ -2084,6 +2084,7 @@
 		4C15D8D0294786F000A220AD /* TrustedFonts.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C15D8CF294786F000A220AD /* TrustedFonts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4C96385829BF4A51003E5741 /* StyleListStyleType.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C96385729BF4A51003E5741 /* StyleListStyleType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4CB808852964AF9A00BC59FE /* CSSCounterStyleDescriptors.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CB808832964AF4600BC59FE /* CSSCounterStyleDescriptors.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC2C01232F7C421000F65FC9 /* CSSCounterStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C01222F7C420D00F65FC9 /* CSSCounterStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4CBE86982955BAA500832AAA /* CSSCounterStyleRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 4CBE86962955BA7F00832AAA /* CSSCounterStyleRegistry.h */; };
 		4D3B00AB215D69A70076B983 /* MediaRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00A9215D69A70076B983 /* MediaRecorder.h */; };
 		4D3B00AF215D6A690076B983 /* BlobEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D3B00AD215D6A690076B983 /* BlobEvent.h */; };
@@ -45280,6 +45281,7 @@
 				BCEA4790097CAAC80094C9E4 /* CSSComputedStyleDeclaration.h in Headers */,
 				930AAC9A250EB8490013DA9F /* CSSConditionRule.h in Headers */,
 				E476EF4A27E07A410056AC6E /* CSSContainerRule.h in Headers */,
+				BC2C01232F7C421000F65FC9 /* CSSCounterStyle.h in Headers */,
 				4CB808852964AF9A00BC59FE /* CSSCounterStyleDescriptors.h in Headers */,
 				4CBE86982955BAA500832AAA /* CSSCounterStyleRegistry.h in Headers */,
 				98F9D66925FDE02200BD842D /* CSSCounterStyleRule.h in Headers */,

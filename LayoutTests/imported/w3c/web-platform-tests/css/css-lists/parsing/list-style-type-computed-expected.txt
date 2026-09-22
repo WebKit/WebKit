@@ -20,10 +20,10 @@ PASS Property list-style-type value '"marker string"'
 PASS Property list-style-type value '"Note: "'
 PASS Property list-style-type value 'counter-Style-Name'
 PASS Property list-style-type value 'CounterStyleName'
-FAIL Property list-style-type value 'symbols(cyclic "string")' assert_equals: expected "symbols(cyclic \"string\")" but got "disc"
-FAIL Property list-style-type value 'symbols(cyclic "○" "●")' assert_equals: expected "symbols(cyclic \"○\" \"●\")" but got "disc"
-FAIL Property list-style-type value 'symbols(fixed "1")' assert_equals: expected "symbols(fixed \"1\")" but got "disc"
-FAIL Property list-style-type value 'symbols("string")' assert_equals: expected "symbols(\"string\")" but got "disc"
-FAIL Property list-style-type value 'symbols(alphabetic "first" "second")' assert_equals: expected "symbols(alphabetic \"first\" \"second\")" but got "disc"
-FAIL Property list-style-type value 'symbols(numeric "first" "second")' assert_equals: expected "symbols(numeric \"first\" \"second\")" but got "disc"
+PASS Property list-style-type value 'symbols(cyclic "string")'
+PASS Property list-style-type value 'symbols(cyclic "○" "●")'
+PASS Property list-style-type value 'symbols(fixed "1")'
+PASS Property list-style-type value 'symbols("string")'
+PASS Property list-style-type value 'symbols(alphabetic "first" "second")'
+PASS Property list-style-type value 'symbols(numeric "first" "second")'
 

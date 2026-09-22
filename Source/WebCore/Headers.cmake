@@ -1205,6 +1205,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/color/CSSKeywordColor.h
     css/values/color/CSSResolvedColor.h
 
+    css/values/counter-styles/CSSCounterStyle.h
+
     css/values/flexbox/CSSFlexWrap.h
 
     css/values/grid/CSSGridAutoFlow.h

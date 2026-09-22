@@ -32,6 +32,7 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSStringValue.h"
+#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "StylePrimitiveNumericTypes+DeprecatedCSSValueConversion.h"
@@ -285,6 +286,30 @@ CSSCounterStyleDescriptors CSSCounterStyleDescriptors::create(AtomString name, c
     };
     descriptors.setExplicitlySetDescriptors(properties);
     return descriptors;
+}
+
+CSSCounterStyleDescriptors CSSCounterStyleDescriptors::createForSymbolsFunction(System system, Vector<Symbol>&& symbols)
+{
+    // https://drafts.csswg.org/css-counter-styles-3/#funcdef-symbols
+    // Defines an anonymous counter style with no name, a prefix of "" (empty string) and suffix of " "
+    // (U+0020 SPACE), a range of auto, a fallback of decimal, a negative of "\2D" ("-" hyphen-minus),
+    // a pad of 0 "", and a speak-as of auto.
+    return {
+        .m_name = { },
+        .m_system = system,
+        .m_negativeSymbols = { },
+        .m_prefix = { },
+        .m_suffix = { false, " "_s },
+        .m_ranges = { },
+        .m_pad = { },
+        .m_fallbackName = "decimal"_s,
+        .m_symbols = WTF::move(symbols),
+        .m_additiveSymbols = { },
+        .m_speakAs = SpeakAs::Auto,
+        .m_extendsName = { },
+        .m_fixedSystemFirstSymbolValue = 1,
+        .m_explicitlySetDescriptors = { },
+    };
 }
 
 bool CSSCounterStyleDescriptors::areSymbolsValidForSystem(CSSCounterStyleDescriptors::System system, size_t symbolsCount, size_t additiveSymbolsCount)
@@ -560,4 +585,5 @@ String CSSCounterStyleDescriptors::additiveSymbolsCSSText() const
     }
     return builder.toString();
 }
+
 } // namespace WebCore
