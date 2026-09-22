@@ -111,6 +111,8 @@ public:
     // Page scale factor.
     virtual float pageScaleFactor() const { return 1; }
     virtual float zoomedOutPageScaleFactor() const { return 0; }
+    // Extra scale applied to this layer tree by frames in ancestor processes under site isolation.
+    virtual float rasterizationScaleFromAncestorProcesses() const { return 1; }
 
     virtual FloatSize enclosingFrameViewVisibleSize() const { return { }; }
 

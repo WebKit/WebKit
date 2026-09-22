@@ -472,6 +472,7 @@ public:
 
     float pageScaleFactor() const { return client().pageScaleFactor(); }
     float deviceScaleFactor() const { return appliesDeviceScale() ? client().deviceScaleFactor() : 1.f; }
+    float rasterizationScaleFromAncestorProcesses() const { return client().rasterizationScaleFromAncestorProcesses(); }
     
     // Whether this layer can throw away backing store to save memory. False for layers that can be revealed by async scrolling.
     virtual void setAllowsBackingStoreDetaching(bool) { }

@@ -1146,6 +1146,44 @@ float LocalFrame::frameScaleFactorForChild(const Frame& child) const
     return 1.0;
 }
 
+static float scaleFromTransform(const TransformationMatrix& transform)
+{
+    if (transform.isIdentityOrTranslation())
+        return 1;
+
+    TransformationMatrix::Decomposed2Type decomposedTransform;
+    if (!transform.decompose2(decomposedTransform))
+        return 1;
+
+    return std::max(std::abs(decomposedTransform.scaleX), std::abs(decomposedTransform.scaleY));
+}
+
+float LocalFrame::rasterizationScaleFromAncestorProcesses() const
+{
+    // The parent frame process tells the root frame of this process what scale it is displayed at;
+    // everything below the root frame is part of the same layer tree, so it inherits that scale.
+    RefPtr rootFrameView = rootFrame().view();
+    return rootFrameView ? rootFrameView->rasterizationScaleFromParentFrameProcess() : 1;
+}
+
+float LocalFrame::accumulatedRasterizationScale() const
+{
+    RefPtr parent = dynamicDowncast<LocalFrame>(tree().parent());
+    if (!parent)
+        return rasterizationScaleFromAncestorProcesses();
+
+    RefPtr parentView = parent->view();
+    if (!parentView)
+        return parent->accumulatedRasterizationScale();
+
+    return parent->rasterizationScaleForChild(parentView->childFrameOwnerToRootContentTransform(*this));
+}
+
+float LocalFrame::rasterizationScaleForChild(const TransformationMatrix& childFrameOwnerToRootContentTransform) const
+{
+    return accumulatedRasterizationScale() * scaleFromTransform(childFrameOwnerToRootContentTransform);
+}
+
 void LocalFrame::suspendActiveDOMObjectsAndAnimations()
 {
     bool wasSuspended = activeDOMObjectsAndAnimationsSuspended();

@@ -269,6 +269,7 @@ public:
 
     float pageScaleFactor() const override;
     float zoomedOutPageScaleFactor() const override;
+    float rasterizationScaleFromAncestorProcesses() const override;
 
     FloatSize enclosingFrameViewVisibleSize() const override;
 

@@ -223,6 +223,14 @@ public:
 
     float frameScaleFactorForChild(const Frame&) const final;
 
+    // Under site isolation this frame's content is hosted inside a layer belonging to another
+    // process, which may scale it up or down. rasterizationScaleFromAncestorProcesses() is the
+    // accumulated scale contributed by those other processes, which this process has to rasterize
+    // at to stay sharp. rasterizationScaleForChild() is the equivalent value to hand to a child
+    // frame, given the transform from its owner element to this frame's RenderView.
+    WEBCORE_EXPORT float rasterizationScaleFromAncestorProcesses() const;
+    float rasterizationScaleForChild(const TransformationMatrix& childFrameOwnerToRootContentTransform) const;
+
     void deviceOrPageScaleFactorChanged();
 
 #if ENABLE(DATA_DETECTION)
@@ -378,6 +386,8 @@ private:
     LocalFrame(Page&, ClientCreator&&, FrameIdentifier, SandboxFlags, ReferrerPolicy, std::optional<ScrollbarMode>, HTMLFrameOwnerElement*, Frame* parent, Frame* opener, Ref<FrameTreeSyncData>&&, AddToFrameTree = AddToFrameTree::Yes);
 
     void dropChildren();
+
+    float accumulatedRasterizationScale() const;
 
     void frameDetached() final;
     bool preventsParentFromBeingComplete() const final;

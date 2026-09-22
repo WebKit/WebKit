@@ -211,7 +211,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/rotated-cat-off-top-edg
 imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom-nested.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-viewport/zoom/iframe-zoom.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/bidi-unset-009.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/unclosed-canvas-2.htm [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/path/closepath/segment-completing.svg [ ImageOnlyFailure ]

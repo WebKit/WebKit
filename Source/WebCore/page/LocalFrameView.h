@@ -703,6 +703,9 @@ public:
     void setOwnerHasRendererInParentFrameProcess(bool hasRenderer) { m_ownerHasRendererInParentFrameProcess = hasRenderer; }
     bool ownerHasRendererInParentFrameProcess() const { return m_ownerHasRendererInParentFrameProcess; }
 
+    WEBCORE_EXPORT void setRasterizationScaleFromParentFrameProcess(float);
+    float rasterizationScaleFromParentFrameProcess() const { return m_rasterizationScaleFromParentFrameProcess; }
+
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
 
@@ -1057,6 +1060,7 @@ private:
 
     std::optional<FloatRect> m_viewExposedRect;
     std::optional<IntRect> m_visibleRectFromParentFrameProcess;
+    float m_rasterizationScaleFromParentFrameProcess { 1 };
 
     bool m_hasSetExposedContentRectFromEmbedder { false };
     bool m_ownerHasRendererInParentFrameProcess { true };

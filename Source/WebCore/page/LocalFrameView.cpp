@@ -6978,6 +6978,16 @@ void LocalFrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect
     }
 }
 
+void LocalFrameView::setRasterizationScaleFromParentFrameProcess(float scale)
+{
+    if (m_rasterizationScaleFromParentFrameProcess == scale)
+        return;
+
+    m_rasterizationScaleFromParentFrameProcess = scale;
+
+    m_frame->deviceOrPageScaleFactorChanged();
+}
+
 void LocalFrameView::clearSizeOverrideForCSSDefaultViewportUnits()
 {
     if (!m_defaultViewportSizeOverride)

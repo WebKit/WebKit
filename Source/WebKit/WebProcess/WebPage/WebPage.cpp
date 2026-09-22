@@ -1524,6 +1524,8 @@ void WebPage::updateChildFrameVisibleRectsFromParent(WebCore::Frame& parentCoreF
             needsViewportContentsChanged = true;
         }
 
+        childView->setRasterizationScaleFromParentFrameProcess(layoutInfo->rasterizationScale());
+
         auto visibleRectFromParentFrameProcess = layoutInfo->onScreenRectInChildView();
         visibleRectFromParentFrameProcess.intersect(IntRect { { }, childView->size() });
 

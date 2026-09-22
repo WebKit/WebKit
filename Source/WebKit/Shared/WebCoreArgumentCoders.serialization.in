@@ -1350,6 +1350,7 @@ using WebCore::ScrollPosition = WebCore::IntPoint;
     WebCore::TransformationMatrix childFrameOwnerToRootContentTransform();
     WebCore::TransformationMatrix absoluteToChildFrameOwnerLocalTransform();
     float frameScaleFactor();
+    float rasterizationScale();
     WebCore::LayoutPoint contentBoxLocation();
     OptionSet<WebCore::FrameOwnerElementAppearance> ownerElementAppearance();
 };

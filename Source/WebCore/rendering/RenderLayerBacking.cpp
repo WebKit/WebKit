@@ -4829,6 +4829,11 @@ float RenderLayerBacking::zoomedOutPageScaleFactor() const
     return compositor().zoomedOutPageScaleFactor();
 }
 
+float RenderLayerBacking::rasterizationScaleFromAncestorProcesses() const
+{
+    return compositor().rasterizationScaleFromAncestorProcesses();
+}
+
 FloatSize RenderLayerBacking::enclosingFrameViewVisibleSize() const
 {
     return compositor().enclosingFrameViewVisibleSize();

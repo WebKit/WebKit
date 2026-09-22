@@ -61,6 +61,7 @@ public:
     const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
     const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
     float frameScaleFactor() const { return m_frameScaleFactor; }
+    float rasterizationScale() const { return m_rasterizationScale; }
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
@@ -77,6 +78,7 @@ private:
         TransformationMatrix childFrameOwnerToRootContentTransform,
         TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
         float frameScaleFactor,
+        float rasterizationScale,
         LayoutPoint contentBoxLocation,
         OptionSet<FrameOwnerElementAppearance>
     );
@@ -113,6 +115,12 @@ private:
     // Frame::frameScaleFactor, this is the accumulated CSS zoom applied
     // to the frame element.
     float m_frameScaleFactor;
+
+    // The scale at which this frame's content ends up being displayed, accumulated from the
+    // transforms applied by every ancestor frame in every ancestor process. The frame's own
+    // process rasterizes at this scale on top of the device and page scale factors, so that
+    // content hosted inside a scaled-up ancestor doesn't look blurry.
+    float m_rasterizationScale;
 
     // The offset of the content box of the frame's owner element
     // from its border box.

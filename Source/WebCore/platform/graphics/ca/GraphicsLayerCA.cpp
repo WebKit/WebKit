@@ -1784,7 +1784,7 @@ void GraphicsLayerCA::adjustContentsScaleLimitingFactor()
     auto tileCoverageRect = intersection(m_coverageRect, bounds);
     if (!tileCoverageRect.isEmpty()) {
         const unsigned bytesPerPixel = 4; // FIXME: Use backingStoreBytesPerPixel(), which needs to be plumbed out through TiledBacking.
-        double scaleFactor = deviceScaleFactor() * pageScaleFactor();
+        double scaleFactor = deviceScaleFactor() * pageScaleFactor() * rasterizationScaleFromAncestorProcesses();
         double memoryEstimate = tileCoverageRect.area() * scaleFactor * scaleFactor * bytesPerPixel;
         if (memoryEstimate > cMaxScaledTiledLayerMemorySize) {
             // sqrt because the memory computation is based on area, while contents scale is per-axis.
@@ -4440,7 +4440,7 @@ void GraphicsLayerCA::updateRootRelativeScale()
 
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
-    float contentsScale = pageScaleFactor * deviceScaleFactor() * m_contentsScaleLimitingFactor;
+    float contentsScale = pageScaleFactor * deviceScaleFactor() * rasterizationScaleFromAncestorProcesses() * m_contentsScaleLimitingFactor;
 
     if (isPageTiledBackingLayer() && tiledBacking()) {
         float zoomedOutScale = client().zoomedOutPageScaleFactor() * deviceScaleFactor();
@@ -4886,11 +4886,12 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?
+    float scale = pageScaleFactor * rasterizationScaleFromAncestorProcesses();
 #if PLATFORM(IOS_FAMILY)
     int maxPixelDimension = systemMemoryLevel() < cMemoryLevelToUseSmallerPixelDimension ? cMaxPixelDimensionLowMemory : cMaxPixelDimension;
-    return m_size.width() * pageScaleFactor > maxPixelDimension || m_size.height() * pageScaleFactor > maxPixelDimension;
+    return m_size.width() * scale > maxPixelDimension || m_size.height() * scale > maxPixelDimension;
 #else
-    return m_size.width() * pageScaleFactor > cMaxPixelDimension || m_size.height() * pageScaleFactor > cMaxPixelDimension;
+    return m_size.width() * scale > cMaxPixelDimension || m_size.height() * scale > cMaxPixelDimension;
 #endif
 }
 

@@ -44,6 +44,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     TransformationMatrix childFrameOwnerToRootContentTransform,
     TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
     float frameScaleFactor,
+    float rasterizationScale,
     LayoutPoint contentBoxLocation,
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance
 )
@@ -56,6 +57,7 @@ RemoteFrameLayoutInfo::RemoteFrameLayoutInfo(
     , m_childFrameOwnerToRootContentTransform(WTF::move(childFrameOwnerToRootContentTransform))
     , m_absoluteToChildFrameOwnerLocalTransform(WTF::move(absoluteToChildFrameOwnerLocalTransform))
     , m_frameScaleFactor(frameScaleFactor)
+    , m_rasterizationScale(rasterizationScale)
     , m_contentBoxLocation(contentBoxLocation)
     , m_ownerElementAppearance(ownerElementAppearance)
 {
@@ -72,6 +74,7 @@ bool operator==(const RemoteFrameLayoutInfo& a, const RemoteFrameLayoutInfo& b)
         && a.m_childFrameOwnerToRootContentTransform == b.m_childFrameOwnerToRootContentTransform
         && a.m_absoluteToChildFrameOwnerLocalTransform == b.m_absoluteToChildFrameOwnerLocalTransform
         && a.m_frameScaleFactor == b.m_frameScaleFactor
+        && a.m_rasterizationScale == b.m_rasterizationScale
         && a.m_contentBoxLocation == b.m_contentBoxLocation
         && a.m_ownerElementAppearance == b.m_ownerElementAppearance;
 }
@@ -102,6 +105,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const RemoteFrameLayoutInfo& in
     ts.dumpProperty("childFrameOwnerToRootContentTransform"_s, info.childFrameOwnerToRootContentTransform());
     ts.dumpProperty("absoluteToChildFrameOwnerLocalTransform"_s, info.absoluteToChildFrameOwnerLocalTransform());
     ts.dumpProperty("frameScaleFactor"_s, info.frameScaleFactor());
+    ts.dumpProperty("rasterizationScale"_s, info.rasterizationScale());
     ts.dumpProperty("contentBoxLocation"_s, info.contentBoxLocation());
     ts.dumpProperty("ownerElementAppearance"_s, info.ownerElementAppearance());
     return ts;

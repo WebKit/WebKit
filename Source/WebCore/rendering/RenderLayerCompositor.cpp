@@ -4666,6 +4666,12 @@ float RenderLayerCompositor::zoomedOutPageScaleFactor() const
     return page().zoomedOutPageScaleFactor();
 }
 
+float RenderLayerCompositor::rasterizationScaleFromAncestorProcesses() const
+{
+    constexpr float maximumRasterizationScale = 5;
+    return clampTo<float>(m_renderView.frameView().frame().rasterizationScaleFromAncestorProcesses(), 1, maximumRasterizationScale);
+}
+
 FloatSize RenderLayerCompositor::enclosingFrameViewVisibleSize() const
 {
     const Ref frameView = m_renderView.frameView();

@@ -2331,6 +2331,9 @@ void Page::syncLocalFrameInfoToRemote()
             }();
 #endif
 
+            auto childFrameOwnerToRootContentTransform = frameView->childFrameOwnerToRootContentTransform(*child);
+            auto rasterizationScale = frame.rasterizationScaleForChild(childFrameOwnerToRootContentTransform);
+
             childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
                 visibleRectInParent,
                 onScreenRectInChildView,
@@ -2338,9 +2341,10 @@ void Page::syncLocalFrameInfoToRemote()
                 exposedContentRectInChildView,
 #endif
                 !!child->ownerRenderer(),
-                frameView->childFrameOwnerToRootContentTransform(*child),
+                WTF::move(childFrameOwnerToRootContentTransform),
                 WTF::move(absoluteToChildFrameOwnerLocalTransform),
                 frame.frameScaleFactorForChild(*child),
+                rasterizationScale,
                 contentBoxLocation,
                 frameView->appearanceOfOwnerElementOfChildFrame(*child)
             ));
