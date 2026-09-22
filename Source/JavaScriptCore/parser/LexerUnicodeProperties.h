@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <JavaScriptCore/JSExportMacros.h>
+
 namespace JSC {
 
-bool isNonLatin1WhiteSpace(char16_t);
+JS_EXPORT_PRIVATE bool isNonLatin1WhiteSpace(char16_t);
 
 } // namespace JSC
