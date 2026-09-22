@@ -41,7 +41,15 @@
     }
     </script>
     <style>
-    video { 
+    /* The row holding the button has a fixed height so that the video starts at
+       an integer offset. At a fractional offset the video's content layer
+       paints on a different pixel boundary than the element's box, leaving a
+       sliver along the top edge that the video frame does not cover. */
+    .controls {
+        height: 40px;
+    }
+
+    video {
         width: 200px;
         height: 200px;
         object-fit: cover;
@@ -49,6 +57,6 @@
     </style>
 </head>
 <body onload="runTest()">
-    <button onclick="runTest()">run test</button><br>
+    <div class="controls"><button onclick="runTest()">run test</button></div>
     <video></video>
 </body>

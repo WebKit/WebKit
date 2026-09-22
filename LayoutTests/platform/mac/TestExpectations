@@ -1497,7 +1497,7 @@ webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-red
 
 webkit.org/b/207978 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Pass Failure ]
 
-webkit.org/b/208219 compositing/video/video-clip-change-src.html [ Pass ImageOnlyFailure ]
+webkit.org/b/208219 [ x86_64 ] compositing/video/video-clip-change-src.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/208220 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Pass Failure ]
 
