@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,24 @@
 
 #pragma once
 
-#include <WebCore/FrameIdentifier.h>
-#include <WebCore/TextManipulationItemIdentifier.h>
-#include <WebCore/TextManipulationToken.h>
-#include <WebCore/ViewportProximityInfo.h>
-#include <wtf/Markable.h>
+#include <optional>
 
 namespace WebCore {
 
-struct TextManipulationItem {
-    Markable<FrameIdentifier> frameID;
-    bool isSubframe { false };
-    bool isCrossSiteSubframe { false };
-    Markable<TextManipulationItemIdentifier> identifier;
-    Vector<TextManipulationToken> tokens;
-    std::optional<ViewportProximityInfo> viewportProximityInfo;
+struct SimpleRange;
+
+enum class ViewportRelation : uint8_t {
+    Intersecting,
+    Offscreen,
+    ClippedByAncestor,
 };
+
+struct ViewportProximityInfo {
+    ViewportRelation relation { ViewportRelation::Intersecting };
+    float viewportSizedDistance { 0 };
+    float viewportCoverage { 0 };
+};
+
+std::optional<ViewportProximityInfo> viewportProximityInfoForRange(const SimpleRange&);
 
 } // namespace WebCore

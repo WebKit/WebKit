@@ -1777,12 +1777,27 @@ struct WebCore::EventTrackingRegions {
 
 enum class WebCore::HasInsecureContent : bool
 
+header: <WebCore/ViewportProximityInfo.h>
+enum class WebCore::ViewportRelation : uint8_t {
+    Intersecting,
+    Offscreen,
+    ClippedByAncestor,
+};
+
+header: <WebCore/ViewportProximityInfo.h>
+struct WebCore::ViewportProximityInfo {
+    WebCore::ViewportRelation relation;
+    float viewportSizedDistance;
+    float viewportCoverage;
+}
+
 struct WebCore::TextManipulationItem {
     Markable<WebCore::FrameIdentifier> frameID;
     bool isSubframe;
     bool isCrossSiteSubframe;
     Markable<WebCore::TextManipulationItemIdentifier> identifier;
     Vector<WebCore::TextManipulationToken> tokens;
+    std::optional<WebCore::ViewportProximityInfo> viewportProximityInfo;
 }
 
 header: <WebCore/TextManipulationToken.h>

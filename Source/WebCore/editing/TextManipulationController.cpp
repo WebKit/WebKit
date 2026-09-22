@@ -484,7 +484,11 @@ void TextManipulationController::addItemIfPossible(Vector<ManipulationUnit>&& un
     for (; index < end; ++index)
         tokens.appendVector(WTF::move(units[index].tokens));
 
-    addItem(ManipulationItemData { startPosition, endPosition, nullptr, nullQName(), WTF::move(tokens) });
+    std::optional<ViewportProximityInfo> proximityInfo;
+    if (auto range = makeSimpleRange(startPosition, endPosition))
+        proximityInfo = viewportProximityInfoForRange(*range);
+
+    addItem(ManipulationItemData { startPosition, endPosition, nullptr, nullQName(), WTF::move(tokens), proximityInfo });
 }
 
 void TextManipulationController::observeParagraphs(const Position& start, const Position& end)
@@ -521,18 +525,18 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
         if (RefPtr currentElement = dynamicDowncast<Element>(*contentNode)) {
             if (!content.isTextContent && canPerformTextManipulationByReplacingEntireTextContent(*currentElement))
-                addItem(ManipulationItemData { Position(), Position(), *currentElement, nullQName(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), currentElement->textContent(), tokenInfo(currentElement.get()) } } });
+                addItem(ManipulationItemData { Position(), Position(), *currentElement, nullQName(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), currentElement->textContent(), tokenInfo(currentElement.get()) } }, std::nullopt });
 
             if (currentElement->hasAttributes()) {
                 for (auto& attribute : currentElement->attributes()) {
                     if (isAttributeForTextManipulation(attribute.name()))
-                        addItem(ManipulationItemData { Position(), Position(), *currentElement, attribute.name(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), attribute.value(), tokenInfo(currentElement.get()) } } });
+                        addItem(ManipulationItemData { Position(), Position(), *currentElement, attribute.name(), { TextManipulationToken { TextManipulationTokenIdentifier::generate(), attribute.value(), tokenInfo(currentElement.get()) } }, std::nullopt });
                 }
             }
 
             if (RefPtr input = dynamicDowncast<HTMLInputElement>(*currentElement)) {
                 if (shouldExtractValueForTextManipulation(*input))
-                    addItem(ManipulationItemData { { }, { }, *currentElement, HTMLNames::valueAttr, { TextManipulationToken { TextManipulationTokenIdentifier::generate(), input->value(), tokenInfo(currentElement.get()) } } });
+                    addItem(ManipulationItemData { { }, { }, *currentElement, HTMLNames::valueAttr, { TextManipulationToken { TextManipulationTokenIdentifier::generate(), input->value(), tokenInfo(currentElement.get()) } }, std::nullopt });
             }
 
             if (isEnclosingItemBoundaryElement(*currentElement)) {
@@ -676,7 +680,8 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
         !m_document->frame()->isMainFrame(),
         !protect(protect(m_document)->topOrigin())->isSameSiteAs(protect(protect(m_document)->securityOrigin())),
         newID,
-        itemData.tokens.map([](auto& token) { return token; })
+        itemData.tokens.map([](auto& token) { return token; }),
+        itemData.viewportProximityInfo
     });
     m_items.add(newID, WTF::move(itemData));
 

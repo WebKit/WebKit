@@ -77,6 +77,7 @@ private:
         QualifiedName attributeName { nullQName() };
 
         Vector<TextManipulationToken> tokens;
+        std::optional<ViewportProximityInfo> viewportProximityInfo;
     };
 
     struct ManipulationUnit {

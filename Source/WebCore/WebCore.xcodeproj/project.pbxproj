@@ -2833,6 +2833,7 @@
 		6C4C96DF1AD4483500365A50 /* JSReadableStreamDefaultController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C4C96DB1AD4483500365A50 /* JSReadableStreamDefaultController.h */; };
 		6C638895A96CCEE50C8C946C /* CachedResourceRequestInitiatorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C638893A96CCEE50C8C946C /* CachedResourceRequestInitiatorTypes.h */; };
 		6CC4ACF49865BFF9672CDCDA /* UnifiedSource62-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C26E8CE9CFBE3ECA1C04907 /* UnifiedSource62-header-RenderStyleGetters.cpp */; };
+		6D66568D305A799300B4BA0F /* ViewportProximityInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D66568B305A75FA00B4BA0F /* ViewportProximityInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6DC9C7142F0C5BF300A93E65 /* DragEventTargetData.h in Headers */ = {isa = PBXBuildFile; fileRef = 6DC9C7132F0C5BC600A93E65 /* DragEventTargetData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6DD53F3D2C49D37F0049F1C5 /* IsLoggedIn.h in Headers */ = {isa = PBXBuildFile; fileRef = 6D46FE012C49C9DA00743D07 /* IsLoggedIn.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6DFAE524A5AFD075D7CBBD03 /* UnifiedSource60-header-RenderStyleGetters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2462F05A319D5DE971FCFBC /* UnifiedSource60-header-RenderStyleGetters.cpp */; };
@@ -14069,6 +14070,8 @@
 		6D46FE012C49C9DA00743D07 /* IsLoggedIn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsLoggedIn.h; sourceTree = "<group>"; };
 		6D61E3752C2E016F00F1C6AA /* NavigatorLoginStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigatorLoginStatus.h; sourceTree = "<group>"; };
 		6D61E3762C2E016F00F1C6AA /* NavigatorLoginStatus.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigatorLoginStatus.cpp; sourceTree = "<group>"; };
+		6D66568B305A75FA00B4BA0F /* ViewportProximityInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewportProximityInfo.h; sourceTree = "<group>"; };
+		6D66568C305A760500B4BA0F /* ViewportProximityInfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportProximityInfo.cpp; sourceTree = "<group>"; };
 		6D8062ACD45DA8C2C6931790 /* SkipBack15.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = SkipBack15.svg; sourceTree = "<group>"; };
 		6D90699809046B96AE290168 /* UnifiedSource51-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource51-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		6DC9C7132F0C5BC600A93E65 /* DragEventTargetData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragEventTargetData.h; sourceTree = "<group>"; };
@@ -31820,6 +31823,8 @@
 				F513A3E915FF4841001526DB /* ValidationMessageClient.h */,
 				26F9A83618A046AC00AEB88A /* ViewportConfiguration.cpp */,
 				26F9A83718A046AC00AEB88A /* ViewportConfiguration.h */,
+				6D66568C305A760500B4BA0F /* ViewportProximityInfo.cpp */,
+				6D66568B305A75FA00B4BA0F /* ViewportProximityInfo.h */,
 				1AF4CEEB18BC3C1B00BC2D34 /* VisitedLinkStore.cpp */,
 				1ABA7FFF1897341200DCE9D6 /* VisitedLinkStore.h */,
 				7779BD941F3117B700C21417 /* VisualViewport.cpp */,
@@ -50299,6 +50304,7 @@
 				070E81D11BF27656001FDA48 /* VideoTrackPrivateMediaStream.h in Headers */,
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				26F9A83918A046AC00AEB88A /* ViewportConfiguration.h in Headers */,
+				6D66568D305A799300B4BA0F /* ViewportProximityInfo.h in Headers */,
 				713516A22AE6EF3500718EBE /* ViewTimeline.h in Headers */,
 				7A10958A28C7CEB20056F3BE /* ViolationReportType.h in Headers */,
 				F4FC07D62BB3A6220090B808 /* VisibilityAdjustment.h in Headers */,

@@ -2159,6 +2159,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/UserStyleSheetTypes.h
     page/ValidationMessageClient.h
     page/ViewportConfiguration.h
+    page/ViewportProximityInfo.h
     page/VisitedLinkStore.h
     page/WebCoreKeyboardUIMode.h
     page/WebKitBuffer.h

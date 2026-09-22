@@ -2409,6 +2409,7 @@ page/UserContentURLPattern.cpp
 page/UserAgentStringParser.cpp
 page/UserScript.cpp
 page/UserStyleSheet.cpp
+page/ViewportProximityInfo.cpp
 page/VisitedLinkStore.cpp
 page/VisualViewport.cpp
 page/WebKitJSHandle.cpp
