@@ -1051,8 +1051,6 @@ webkit.org/b/316718 [ Release ] imported/w3c/web-platform-tests/encrypted-media/
 
 webkit.org/b/306758 media/event-attributes.html [ Pass Failure ]
 
-webkit.org/b/307989 imported/w3c/web-platform-tests/cookies/path/default.html [ Pass Failure ]
-
 webkit.org/b/308292 [ Release ] http/tests/media/text-served-as-text.html [ Pass Crash ]
 
 webkit.org/b/308144 imported/w3c/web-platform-tests/css/selectors/user-invalid-form-submission-invalidation.html [ Pass ImageOnlyFailure ]
