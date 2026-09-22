@@ -378,9 +378,6 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 # Tests crashing due to failing assertions
 
-webkit.org/b/286132 [ Debug ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Crash ]
-webkit.org/b/286132 [ Release ] inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Pass Crash ]
-
 webkit.org/b/304644 [ Debug ] inspector/unit-tests/editing-support.html [ Crash Timeout ]
 webkit.org/b/304644 [ Release ] inspector/unit-tests/editing-support.html [ Pass Crash Timeout ]
 
@@ -1311,3 +1308,4 @@ webkit.org/b/324338 [ Debug ] webaudio/silent-audio-interrupted-in-background.ht
 webkit.org/b/324822 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 webkit.org/b/324823 [ Debug ] webrtc/video-disabled-black.html [ Failure Pass ]
 webkit.org/b/324824 [ Debug ] imported/w3c/web-platform-tests/mimesniff/mime-types/parsing.any.worker.html [ Pass Timeout ]
+webkit.org/b/324826 inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Failure ]
