@@ -40,7 +40,8 @@ struct CounterStyle;
 class StyleRuleCounterStyle;
 enum CSSValueID : uint16_t;
 
-using CounterStyleMap = HashMap<AtomString, Ref<CSSRegisteredCounterStyle>>;
+using NamedCounterStyleMap = HashMap<AtomString, Ref<CSSRegisteredCounterStyle>>;
+using SymbolsFunctionCounterStyleMap = Vector<std::pair<Style::SymbolsFunction, Ref<CSSRegisteredCounterStyle>>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSCounterStyleRegistry);
 class CSSCounterStyleRegistry {
@@ -51,6 +52,7 @@ public:
     static Ref<CSSRegisteredCounterStyle> decimalCounter();
 
     Ref<CSSRegisteredCounterStyle> resolvedCounterStyle(const Style::CounterStyle&);
+    Ref<CSSRegisteredCounterStyle> resolvedCounterStyle(const Style::SymbolsFunction&);
     void resolveReferencesIfNeeded();
 
     void addCounterStyle(const CSSCounterStyleDescriptors&);
@@ -64,18 +66,19 @@ public:
     bool NODELETE operator==(const CSSCounterStyleRegistry&) const;
 
 private:
-    static CounterStyleMap& NODELETE userAgentCounterStyles();
+    static NamedCounterStyleMap& NODELETE userAgentCounterStyles();
 
     // If no map is passed on, user-agent counter styles map will be used
-    static void resolveFallbackReference(CSSRegisteredCounterStyle&, CounterStyleMap* = nullptr);
-    static void resolveExtendsReference(CSSRegisteredCounterStyle&, CounterStyleMap* = nullptr);
-    static void resolveExtendsReference(CSSRegisteredCounterStyle&, OrderedHashSet<CSSRegisteredCounterStyle*>&, CounterStyleMap* = nullptr);
+    static void resolveFallbackReference(CSSRegisteredCounterStyle&, NamedCounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSRegisteredCounterStyle&, NamedCounterStyleMap* = nullptr);
+    static void resolveExtendsReference(CSSRegisteredCounterStyle&, OrderedHashSet<CSSRegisteredCounterStyle*>&, NamedCounterStyleMap* = nullptr);
 
-    static Ref<CSSRegisteredCounterStyle> counterStyle(const AtomString&, CounterStyleMap* = nullptr);
+    static Ref<CSSRegisteredCounterStyle> counterStyle(const AtomString&, NamedCounterStyleMap* = nullptr);
 
     void NODELETE invalidate();
 
-    CounterStyleMap m_authorCounterStyles;
+    NamedCounterStyleMap m_authorCounterStyles;
+    SymbolsFunctionCounterStyleMap m_symbolsFunctionCounterStyles;
     bool m_hasUnresolvedReferences { true };
 };
 

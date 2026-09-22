@@ -61,13 +61,13 @@ void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
     m_hasUnresolvedReferences = false;
 }
 
-void CSSCounterStyleRegistry::resolveExtendsReference(CSSRegisteredCounterStyle& counterStyle, CounterStyleMap* map)
+void CSSCounterStyleRegistry::resolveExtendsReference(CSSRegisteredCounterStyle& counterStyle, NamedCounterStyleMap* map)
 {
     OrderedHashSet<CSSRegisteredCounterStyle*> countersInChain;
     resolveExtendsReference(counterStyle, countersInChain, map);
 }
 
-void CSSCounterStyleRegistry::resolveExtendsReference(CSSRegisteredCounterStyle& counter, OrderedHashSet<CSSRegisteredCounterStyle*>& countersInChain, CounterStyleMap* map)
+void CSSCounterStyleRegistry::resolveExtendsReference(CSSRegisteredCounterStyle& counter, OrderedHashSet<CSSRegisteredCounterStyle*>& countersInChain, NamedCounterStyleMap* map)
 {
     ASSERT(counter.isExtendsSystem() && counter.isExtendsUnresolved());
     if (!(counter.isExtendsSystem() && counter.isExtendsUnresolved()))
@@ -99,7 +99,7 @@ void CSSCounterStyleRegistry::resolveExtendsReference(CSSRegisteredCounterStyle&
         counter.extendAndResolve(extendedCounter);
 }
 
-void CSSCounterStyleRegistry::resolveFallbackReference(CSSRegisteredCounterStyle& counter, CounterStyleMap* map)
+void CSSCounterStyleRegistry::resolveFallbackReference(CSSRegisteredCounterStyle& counter, NamedCounterStyleMap* map)
 {
     counter.setFallbackReference(counterStyle(counter.fallbackName(), map));
 }
@@ -126,7 +126,7 @@ Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::decimalCounter()
 }
 
 // A valid map means that the search begins at the author counter style map, otherwise we skip the search to the UA counter styles.
-Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& name, CounterStyleMap* map)
+Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::counterStyle(const AtomString& name, NamedCounterStyleMap* map)
 {
     if (name.isEmpty())
         return decimalCounter();
@@ -152,14 +152,26 @@ Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(con
             return counterStyle(name.value, &m_authorCounterStyles);
         },
         [&](const Style::SymbolsFunction& symbolsFunction) -> Ref<CSSRegisteredCounterStyle> {
-            return CSSRegisteredCounterStyle::create(symbolsFunction);
+            return resolvedCounterStyle(symbolsFunction);
         }
     );
 }
 
-CounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()
+Ref<CSSRegisteredCounterStyle> CSSCounterStyleRegistry::resolvedCounterStyle(const Style::SymbolsFunction& symbolsFunction)
 {
-    static NeverDestroyed<CounterStyleMap> counters;
+    for (auto& [cachedSymbolsFunction, cachedCounterStyle] : m_symbolsFunctionCounterStyles) {
+        if (cachedSymbolsFunction == symbolsFunction)
+            return cachedCounterStyle.copyRef();
+    }
+
+    Ref registeredCounterStyle = CSSRegisteredCounterStyle::create(symbolsFunction);
+    m_symbolsFunctionCounterStyles.append({ symbolsFunction, registeredCounterStyle.copyRef() });
+    return registeredCounterStyle;
+}
+
+NamedCounterStyleMap& CSSCounterStyleRegistry::userAgentCounterStyles()
+{
+    static NeverDestroyed<NamedCounterStyleMap> counters;
     return counters;
 }
 
@@ -171,9 +183,10 @@ bool CSSCounterStyleRegistry::operator==(const CSSCounterStyleRegistry& other) c
 
 void CSSCounterStyleRegistry::clearAuthorCounterStyles()
 {
-    if (m_authorCounterStyles.isEmpty())
+    if (m_authorCounterStyles.isEmpty() && m_symbolsFunctionCounterStyles.isEmpty())
         return;
     m_authorCounterStyles.clear();
+    m_symbolsFunctionCounterStyles.clear();
     invalidate();
 }
 
