@@ -2167,13 +2167,20 @@ SimpleRange resolveCharacterRange(const SimpleRange& scope, CharacterRange range
     uint64_t location = 0;
     for (TextIterator it(scope, behaviors); !it.atEnd(); it.advance()) {
         unsigned length = it.text().length();
-        auto textRunRange = it.range();
 
         auto found = [&] (uint64_t targetLocation) -> bool {
             return targetLocation >= location && targetLocation - location <= length;
         };
         bool foundStart = found(range.location);
         bool foundEnd = found(rangeEnd);
+
+        if (!foundStart && !foundEnd) {
+            location += length;
+            continue;
+        }
+
+        // TextIterator::range() costs a previous-sibling walk, so only resolve it for the runs that bound the result.
+        auto textRunRange = it.range();
 
         if (foundEnd) {
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong position for emitted '\n's or if the renderer of the current node is a replaced element.

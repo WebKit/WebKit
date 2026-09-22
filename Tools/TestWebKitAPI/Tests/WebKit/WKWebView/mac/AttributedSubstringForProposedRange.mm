@@ -30,6 +30,9 @@
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <algorithm>
+#import <limits>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
 
 TEST(AttributedSubstringForProposedRange, TextAlignmentParagraphStyles)
@@ -81,6 +84,71 @@ TEST(AttributedSubstringForProposedRange, TextAlignmentParagraphStyles)
         finished = true;
     }];
     TestWebKitAPI::Util::run(&finished);
+}
+
+// Resolving a character range walks a TextIterator from the scope start, and every <br> emits a
+// newline whose position is resolved through Node::computeNodeIndex(), a previous-sibling scan.
+// Doubling the content doubles the walk, so the cost should roughly double; it quadrupled while
+// resolveCharacterRange() asked TextIterator::range() for every run rather than the bounding ones.
+static constexpr unsigned lineBreakCount = 60000;
+static constexpr unsigned measurementCount = 3;
+static constexpr NSTimeInterval minimumMeaningfulSeconds = 0.003;
+
+static RetainPtr<NSString> markupWithSiblingLineBreaks(unsigned count)
+{
+    RetainPtr markup = adoptNS([[NSMutableString alloc] initWithString:@"<!DOCTYPE html><meta charset='utf8'><body>"]);
+    for (unsigned i = 0; i < count; ++i)
+        [markup appendString:@"x<br>"];
+
+    // Deliberately not contenteditable: a non-editable selection is scoped to the document element.
+    [markup appendString:@"</body><script>getSelection().selectAllChildren(document.body)</script>"];
+    return markup;
+}
+
+static NSTimeInterval fastestFarRangeResolution(unsigned count, NSUInteger& resolvedLength)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView<NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:markupWithSiblingLineBreaks(count)];
+
+    auto fastest = std::numeric_limits<NSTimeInterval>::max();
+    for (unsigned i = 0; i < measurementCount; ++i) {
+        __block bool finished = false;
+        __block NSTimeInterval elapsed = 0;
+        __block NSUInteger length = 0;
+
+        auto start = MonotonicTime::now();
+        [webView attributedSubstringForProposedRange:NSMakeRange(count, 8) completionHandler:^(NSAttributedString *string, NSRange actualRange) {
+            elapsed = (MonotonicTime::now() - start).seconds();
+            length = actualRange.length;
+            EXPECT_GT(actualRange.length, 0U);
+            EXPECT_LE(actualRange.length, 16U);
+            EXPECT_EQ(actualRange.length, string.string.length);
+            finished = true;
+        }];
+        TestWebKitAPI::Util::run(&finished);
+        fastest = std::min(fastest, elapsed);
+        resolvedLength = length;
+    }
+    return fastest;
+}
+
+TEST(AttributedSubstringForProposedRange, FarRangeResolutionScalesWithLineBreakCount)
+{
+    NSUInteger baselineLength = 0;
+    NSUInteger doubledLength = 0;
+    auto baseline = fastestFarRangeResolution(lineBreakCount, baselineLength);
+    auto doubled = fastestFarRangeResolution(2 * lineBreakCount, doubledLength);
+
+    NSLog(@"AttributedSubstringForProposedRange: %u breaks took %.1f ms (resolved %lu chars), %u breaks took %.1f ms (resolved %lu chars), %.2fx",
+        lineBreakCount, baseline * 1000, (unsigned long)baselineLength,
+        2 * lineBreakCount, doubled * 1000, (unsigned long)doubledLength, doubled / baseline);
+
+    if (baseline < minimumMeaningfulSeconds) {
+        NSLog(@"AttributedSubstringForProposedRange: baseline under %.0f ms, too small to compare; raise lineBreakCount to restore coverage.", minimumMeaningfulSeconds * 1000);
+        return;
+    }
+
+    EXPECT_LT(doubled / baseline, 3.0);
 }
 
 #endif // PLATFORM(MAC)
