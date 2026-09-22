@@ -285,6 +285,16 @@ void DrawingAreaCoordinatedGraphics::dispatchPendingCallbacksAfterEnsuringDrawin
 }
 
 #if PLATFORM(GTK)
+void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
+{
+    if (!m_renderer)
+        return;
+
+    protect(m_webPage)->corePage()->forceRepaintAllFrames();
+    m_renderer->setNeedsDisplay();
+    m_renderer->scheduleRenderingUpdate();
+}
+
 void DrawingAreaCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
     if (!m_transientZoom) {
