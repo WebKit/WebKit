@@ -392,7 +392,6 @@
 
 [UnsafeWrapper] std::span<const char> {
     [Legacy] StructureParam WebKit::RTCPacketOptions::SerializableData.srtpAuthKey
-    [Legacy] StructureParam WTF::CString.span()
 }
 
 # Shared Memory

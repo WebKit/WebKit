@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-RefPtr<GBMDevice> GBMDevice::create(const CString& filename)
+RefPtr<GBMDevice> GBMDevice::create(const UTF8CString& filename)
 {
     RELEASE_ASSERT(isMainThread());
-    auto fd = UnixFileDescriptor { open(filename.data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+    auto fd = UnixFileDescriptor { open(filename.legacyCStringPointer(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
     if (!fd) {
         SAFE_WTFLOGALWAYS("Failed to open DRM node %s: %s", filename, safeStrerror(errno));
         return nullptr;

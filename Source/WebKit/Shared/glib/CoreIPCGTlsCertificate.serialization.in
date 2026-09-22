@@ -32,7 +32,7 @@ additional_forward_declaration: typedef struct _GTlsCertificate GTlsCertificate
 [GRefPtrWrapped=GTlsCertificate] class WebKit::CoreIPCGTlsCertificate {
     Vector<GRefPtr<GByteArray>> certificates();
     GRefPtr<GByteArray> privateKey();
-    CString privateKeyPKCS11Uri();
+    UTF8CString privateKeyPKCS11Uri();
 }
 
 #endif

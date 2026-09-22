@@ -99,7 +99,7 @@ private:
     void cancelReceiveStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
     void cancelSendStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
     void destroyStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
-    void terminate(WebCore::WebTransportSessionErrorCode, CString&&) final;
+    void terminate(WebCore::WebTransportSessionErrorCode, UTF8CString&&) final;
     void datagramIncomingMaxAgeUpdated(std::optional<double>) final;
     void datagramOutgoingMaxAgeUpdated(std::optional<double>) final;
     void incomingMaxBufferedDatagramsUpdated(uint32_t) final;

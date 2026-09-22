@@ -239,7 +239,7 @@ Ref<WebCore::WebTransportSendPromise> WebTransportSession::streamSendBytes(WebCo
     });
 }
 
-void WebTransportSession::terminate(WebCore::WebTransportSessionErrorCode code, CString&& reason)
+void WebTransportSession::terminate(WebCore::WebTransportSessionErrorCode code, UTF8CString&& reason)
 {
     send(Messages::NetworkTransportSession::Terminate(code, WTF::move(reason)));
 }

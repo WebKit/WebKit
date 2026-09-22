@@ -257,7 +257,7 @@ void NetworkTransportSession::createStream(NetworkTransportStreamType, Completio
     completionHandler(std::nullopt);
 }
 
-void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, CString&&)
+void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, UTF8CString&&)
 {
 }
 

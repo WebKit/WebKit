@@ -163,7 +163,7 @@ Vector<RendererBufferFormat> WebPageProxy::preferredBufferFormats() const
         if (!targetDevice)
             targetDevice = mainDevice;
         if (targetDevice)
-            bufferFormat.drmDevice = { CString(wpe_drm_device_get_primary_node(targetDevice)), CString(wpe_drm_device_get_render_node(targetDevice)) };
+            bufferFormat.drmDevice = { UTF8CString { byteCast<char8_t>(wpe_drm_device_get_primary_node(targetDevice)) }, UTF8CString { byteCast<char8_t>(wpe_drm_device_get_render_node(targetDevice)) } };
 #endif
 
         auto formatsCount = wpe_buffer_formats_get_group_n_formats(formats, i);

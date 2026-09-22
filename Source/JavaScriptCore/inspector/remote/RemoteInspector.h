@@ -128,8 +128,8 @@ public:
     JS_EXPORT_PRIVATE static void NODELETE setNeedMachSandboxExtension(bool needExtension);
 #endif
 #if USE(GLIB)
-    JS_EXPORT_PRIVATE static void setInspectorServerAddress(CString&&);
-    JS_EXPORT_PRIVATE static const CString& inspectorServerAddress();
+    JS_EXPORT_PRIVATE static void setInspectorServerAddress(UTF8CString&&);
+    JS_EXPORT_PRIVATE static const UTF8CString& inspectorServerAddress();
 #endif
     JS_EXPORT_PRIVATE static void NODELETE startDisabled();
     JS_EXPORT_PRIVATE static RemoteInspector& singleton();
@@ -269,7 +269,7 @@ private:
     static std::atomic<bool> needMachSandboxExtension;
 #endif
 #if USE(GLIB)
-    static CString s_inspectorServerAddress;
+    static UTF8CString s_inspectorServerAddress;
 #endif
 
     // Targets can be registered from any thread at any time.

@@ -36,6 +36,7 @@
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ASCIILiteral.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -69,6 +70,11 @@ public:
     { }
     CStringView(ASCIILiteral literal LIFETIME_BOUND)
         : m_spanWithNullTerminator(byteCast<char8_t>(literal.spanIncludingNullTerminator()))
+    { }
+
+    // A UTF8CString owns null terminated bytes in this encoding, so a view of them needs no conversion.
+    CStringView(const UTF8CString& string LIFETIME_BOUND)
+        : m_spanWithNullTerminator(string.spanIncludingNullTerminator())
     { }
 
     bool isNull() const { return m_spanWithNullTerminator.empty(); }

@@ -52,14 +52,14 @@ struct UserMessage {
     {
     }
 
-    UserMessage(const CString& name, uint32_t errorCode)
+    UserMessage(const UTF8CString& name, uint32_t errorCode)
         : type(Type::Error)
         , name(name)
         , errorCode(errorCode)
     {
     }
 
-    UserMessage(const CString& name, GRefPtr<GVariant>& parameters, GRefPtr<GUnixFDList>& fileDescriptors)
+    UserMessage(const UTF8CString& name, GRefPtr<GVariant>& parameters, GRefPtr<GUnixFDList>& fileDescriptors)
         : type(Type::Message)
         , name(name)
         , parameters(parameters)
@@ -68,7 +68,7 @@ struct UserMessage {
     }
 
     Type type { Type::Null };
-    CString name;
+    UTF8CString name;
     GRefPtr<GVariant> parameters;
     GRefPtr<GUnixFDList> fileDescriptors;
     uint32_t errorCode { 0 };
@@ -77,12 +77,12 @@ struct UserMessage {
     };
 
     struct ErrorMessage {
-        CString name;
+        UTF8CString name;
         uint32_t errorCode;
     };
 
     struct DataMessage {
-        CString name;
+        UTF8CString name;
         GRefPtr<GVariant> parameters;
         GRefPtr<GUnixFDList> fileDescriptors;
     };

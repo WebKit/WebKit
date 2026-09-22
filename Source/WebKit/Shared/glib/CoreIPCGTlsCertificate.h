@@ -39,18 +39,18 @@ namespace WebKit {
 class CoreIPCGTlsCertificate {
 public:
     explicit CoreIPCGTlsCertificate(const GRefPtr<GTlsCertificate>&);
-    CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&&, GRefPtr<GByteArray>&&, CString&&);
+    CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&&, GRefPtr<GByteArray>&&, UTF8CString&&);
 
     const Vector<GRefPtr<GByteArray>>& certificates() const { return m_certificates; }
     const GRefPtr<GByteArray>& privateKey() const { return m_privateKey; }
-    CString privateKeyPKCS11Uri() const { return m_privateKeyPKCS11Uri; }
+    UTF8CString privateKeyPKCS11Uri() const { return m_privateKeyPKCS11Uri; }
 
     operator GRefPtr<GTlsCertificate>() const;
 
 private:
     Vector<GRefPtr<GByteArray>> m_certificates;
     GRefPtr<GByteArray> m_privateKey;
-    CString m_privateKeyPKCS11Uri;
+    UTF8CString m_privateKeyPKCS11Uri;
 };
 
 } // namespace WebKit

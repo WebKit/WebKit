@@ -51,10 +51,10 @@ CoreIPCGTlsCertificate::CoreIPCGTlsCertificate(const GRefPtr<GTlsCertificate>& c
 
     GUniqueOutPtr<char> privateKeyPKCS11Uri;
     g_object_get(certificate.get(), "private-key", &m_privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
-    m_privateKeyPKCS11Uri = CString(privateKeyPKCS11Uri.get());
+    m_privateKeyPKCS11Uri = UTF8CString { byteCast<char8_t>(privateKeyPKCS11Uri.get()) };
 }
 
-CoreIPCGTlsCertificate::CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&& certificates, GRefPtr<GByteArray>&& privateKey, CString&& privateKeyPKCS11Uri)
+CoreIPCGTlsCertificate::CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&& certificates, GRefPtr<GByteArray>&& privateKey, UTF8CString&& privateKeyPKCS11Uri)
     : m_certificates(WTF::move(certificates))
     , m_privateKey(WTF::move(privateKey))
     , m_privateKeyPKCS11Uri(WTF::move(privateKeyPKCS11Uri))
@@ -76,7 +76,7 @@ CoreIPCGTlsCertificate::operator GRefPtr<GTlsCertificate>() const
             "certificate", m_certificates[i].get(),
             "issuer", issuer,
             "private-key", isLeaf ? m_privateKey.get() : nullptr,
-            "private-key-pkcs11-uri", isLeaf ? m_privateKeyPKCS11Uri.data() : nullptr,
+            "private-key-pkcs11-uri", isLeaf ? m_privateKeyPKCS11Uri.legacyCStringPointer() : nullptr,
             nullptr)));
         issuer = certificate.get();
     }

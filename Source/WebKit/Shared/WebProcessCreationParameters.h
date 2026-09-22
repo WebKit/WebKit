@@ -201,7 +201,7 @@ struct WebProcessCreationParameters {
 #if USE(WPE_RENDERER)
     bool isServiceWorkerProcess { false };
     UnixFileDescriptor hostClientFileDescriptor;
-    CString implementationLibraryName;
+    UTF8CString implementationLibraryName;
 #endif
 
     std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
@@ -271,7 +271,7 @@ struct WebProcessCreationParameters {
     String applicationID;
     String applicationName;
 #if ENABLE(REMOTE_INSPECTOR)
-    CString inspectorServerAddress;
+    UTF8CString inspectorServerAddress;
 #endif
 #endif
 

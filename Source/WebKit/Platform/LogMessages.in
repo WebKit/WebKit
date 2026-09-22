@@ -24,7 +24,7 @@
 #
 # Identifier, format string, parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc)
 
-CoreIpcNsurlRequestPropertyKeyNotAllowed, "NSURLRequest property key '%" PUBLIC_LOG_STRING "' not allowed. Skipping this property.", (CString), INFO, API
+CoreIpcNsurlRequestPropertyKeyNotAllowed, "NSURLRequest property key '%" PUBLIC_LOG_STRING "' not allowed. Skipping this property.", (CStringView), INFO, API
 GpuProcessConnectionCreate, "GPUProcessConnection::create(%" PRIu64 ")", (uint64_t), DEFAULT, Process
 GpuProcessConnectionDidInitialize, "GPUProcessConnection::didInitialize(%" PRIu64 ")", (uint64_t), DEFAULT, Process
 MediaPlayerPrivateRemoteLayerHostingContextChanged, "MediaPlayerPrivateRemote::layerHostingContextChanged", (), DEFAULT, Media
@@ -34,8 +34,8 @@ RemoteRenderingBackendProxyCreatedRenderingBackend, "[renderingBackend=%" PRIu64
 TimedOutWaitingForLaunchServicesDatabaseUpdate, "Timed out waiting for Launch Services database update", (), FAULT, Loading
 VideoPresentationManagerSetVideoLayerFrameFenced, "VideoPresentationManager::setVideoLayerFrameFenced(%" PRIu64 "): send right %d, fence data size %" PRIu64, (uint64_t, int, uint64_t), INFO, Media
 WaitingForLaunchServicesDatabaseUpdateTookFSeconds, "Waiting for Launch Services database update took %f seconds", (double), ERROR, Loading
-WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromAsyncIpc, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %" PUBLIC_LOG_STRING " from async IPC", (uint64_t, uint64_t, CString), DEFAULT, Network
-WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromSyncIpc, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %" PUBLIC_LOG_STRING " from sync IPC", (uint64_t, uint64_t, CString), DEFAULT, Network
+WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromAsyncIpc, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %" PUBLIC_LOG_STRING " from async IPC", (uint64_t, uint64_t, CStringView), DEFAULT, Network
+WebFrameLoaderClientDispatchDecidePolicyForNavigationActionGotPolicyActionFromSyncIpc, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: Got policyAction %" PUBLIC_LOG_STRING " from sync IPC", (uint64_t, uint64_t, CStringView), DEFAULT, Network
 WebFrameLoaderClientDispatchDecidePolicyForNavigationActionSyncIpcFailed, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC, error = %hhu", (uint64_t, uint64_t, uint8_t), DEFAULT, Network
 WebFrameLoaderClientNavigationActionDataEmptyRequest, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: returning std::nullopt because request is empty", (uint64_t, uint64_t), DEFAULT, Network
 WebFrameLoaderClientNavigationActionDataNoFrame, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction: returning std::nullopt because frame does not exist", (uint64_t, uint64_t), DEFAULT, Network
@@ -46,7 +46,7 @@ WebLoaderStrategyScheduleLoadUrlLoadedAsData, "[webPageID=%" PRIu64 ", frameID=%
 WebLocalFrameLoaderClientCompletePageTransitionIfNeeded, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::completePageTransitionIfNeeded: dispatching didCompletePageTransition", (uint64_t, uint64_t), DEFAULT, Layout
 WebLocalFrameLoaderClientDispatchDidFirstLayoutForFrame, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame", (uint64_t, uint64_t), DEFAULT, Layout
 WebLocalFrameLoaderClientDispatchDidFirstVisuallyNonEmptyLayout, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame", (uint64_t, uint64_t), DEFAULT, Layout
-WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%" PUBLIC_LOG_STRING ")", (uint64_t, uint64_t, CString), DEFAULT, Layout
+WebLocalFrameLoaderClientDispatchDidReachLayoutMilestone, "[webFrameID=%" PRIu64 ", webPageID=%" PRIu64 "] WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone (milestones=%" PUBLIC_LOG_STRING ")", (uint64_t, uint64_t, CStringView), DEFAULT, Layout
 WebPageClose, "[webPageID=%" PRIu64 "] WebPage::close", (uint64_t), DEFAULT, Loading
 WebPageDestructor, "[webPageID=%" PRIu64 "] WebPage::destructor", (uint64_t), DEFAULT, Loading
 WebPageFailedToMarkAllLayersVolatile, "[webPageID=%" PRIu64 "] WebPage::markLayersVolatile: Failed to mark all layers as volatile, will retry in %g ms", (uint64_t, double), DEFAULT, ProcessSuspension

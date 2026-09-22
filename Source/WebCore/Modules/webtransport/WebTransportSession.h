@@ -82,7 +82,7 @@ public:
     virtual void cancelReceiveStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) = 0;
     virtual void cancelSendStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) = 0;
     virtual void destroyStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) = 0;
-    virtual void terminate(WebTransportSessionErrorCode, CString&&) = 0;
+    virtual void terminate(WebTransportSessionErrorCode, UTF8CString&&) = 0;
     virtual void datagramIncomingMaxAgeUpdated(std::optional<double>) = 0;
     virtual void datagramOutgoingMaxAgeUpdated(std::optional<double>) = 0;
     virtual void incomingMaxBufferedDatagramsUpdated(uint32_t) = 0;

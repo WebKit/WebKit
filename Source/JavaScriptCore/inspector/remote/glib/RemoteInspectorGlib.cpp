@@ -38,7 +38,7 @@
 
 namespace Inspector {
 
-CString RemoteInspector::s_inspectorServerAddress;
+UTF8CString RemoteInspector::s_inspectorServerAddress;
 
 RemoteInspector& RemoteInspector::singleton()
 {
@@ -67,14 +67,14 @@ void RemoteInspector::start()
     m_cancellable = adoptGRef(g_cancellable_new());
 
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
-    g_socket_client_connect_to_host_async(socketClient.get(), s_inspectorServerAddress.data(), 0, m_cancellable.get(),
+    g_socket_client_connect_to_host_async(socketClient.get(), s_inspectorServerAddress.legacyCStringPointer(), 0, m_cancellable.get(),
         [](GObject* client, GAsyncResult* result, gpointer userData) {
             RemoteInspector* inspector = static_cast<RemoteInspector*>(userData);
             GUniqueOutPtr<GError> error;
             if (GRefPtr<GSocketConnection> connection = adoptGRef(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(client), result, &error.outPtr())))
                 inspector->setupConnection(SocketConnection::create(WTF::move(connection), messageHandlers(), inspector));
             else if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
-                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", s_inspectorServerAddress.data(), error->message);
+                g_warning("RemoteInspector failed to connect to inspector server at: %s: %s", s_inspectorServerAddress.legacyCStringPointer(), error->message);
         }, this);
 }
 
@@ -329,12 +329,12 @@ void RemoteInspector::automationConnectionDidClose()
     m_client->closeAutomationSession();
 }
 
-void RemoteInspector::setInspectorServerAddress(CString&& address)
+void RemoteInspector::setInspectorServerAddress(UTF8CString&& address)
 {
     s_inspectorServerAddress = WTF::move(address);
 }
 
-const CString& RemoteInspector::inspectorServerAddress()
+const UTF8CString& RemoteInspector::inspectorServerAddress()
 {
     return s_inspectorServerAddress;
 }

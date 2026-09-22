@@ -474,10 +474,10 @@ DOMPromise& WebTransport::draining()
     return m_draining.first.get();
 }
 
-static CString trimToValidUTF8Length1024(CString&& string)
+static UTF8CString trimToValidUTF8Length1024(UTF8CString&& string)
 {
     if (string.length() > 1024)
-        string = string.span().first(1024);
+        string = UTF8CString { string.span().first(1024) };
     else
         return WTF::move(string);
 
@@ -486,7 +486,7 @@ static CString trimToValidUTF8Length1024(CString&& string)
             return WTF::move(string);
         auto decoded = String::fromUTF8(string.span());
         if (!decoded)
-            string = string.span().first(string.length() - 1);
+            string = UTF8CString { string.span().first(string.length() - 1) };
         else
             return WTF::move(string);
     }

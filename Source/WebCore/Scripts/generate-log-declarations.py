@@ -5,27 +5,44 @@ import sys
 
 PARAMETER_LIST_INCLUDE_TYPE = 1
 PARAMETER_LIST_INCLUDE_NAME = 2
-PARAMETER_LIST_MODIFY_CSTRING = 4
+
+# How a CStringView parameter is rendered. The sender can pass a non-owning view, but the receiver must
+# not: over streaming IPC the decoded bytes live in shared memory that the sending process can still
+# modify, so the message and the receiver take an owning UTF8CString instead. See 315201@main.
+STRING_AS_VIEW = 0      # CStringView arg0
+STRING_AS_OWNED = 1     # UTF8CString arg0
+STRING_AS_RECEIVED = 2  # UTF8CString&& arg0, arg0.legacyCStringPointer()
+STRING_AS_SENT = 3      # UTF8CString { arg0.span() }
+
+STRING_PARAMETER_TYPE = "CStringView"
 
 
 def get_argument_list(parameter_string):
     return re.findall(r'(\w+)\s*,?', parameter_string)
 
 
-def get_arguments_string(parameter_string, flags):
+def get_arguments_string(parameter_string, flags, string_mode=STRING_AS_VIEW):
     arguments = get_argument_list(parameter_string)
     arguments_string = ""
     for index, argument in enumerate(arguments):
+        name = "arg" + str(index)
+        decorated_name = name
+        if argument == STRING_PARAMETER_TYPE:
+            if string_mode == STRING_AS_OWNED:
+                argument = "UTF8CString"
+            elif string_mode == STRING_AS_RECEIVED:
+                argument = "UTF8CString&&"
+                # os_log() is variadic, so the string has to be passed as a C string pointer.
+                decorated_name = name + ".legacyCStringPointer()"
+            elif string_mode == STRING_AS_SENT:
+                decorated_name = "UTF8CString { " + name + ".span() }"
         if flags & PARAMETER_LIST_INCLUDE_TYPE:
-            if flags & PARAMETER_LIST_MODIFY_CSTRING and argument == "CString":
-                argument = "CString&&"
             arguments_string += argument
         if flags & PARAMETER_LIST_INCLUDE_NAME:
             if flags & PARAMETER_LIST_INCLUDE_TYPE:
-                arguments_string += " "
-            arguments_string += "arg" + str(index)
-            if (flags & PARAMETER_LIST_MODIFY_CSTRING) and (argument == "CString") and (not flags & PARAMETER_LIST_INCLUDE_TYPE):
-                arguments_string += ".data()"
+                arguments_string += " " + name
+            else:
+                arguments_string += decorated_name
         if index < len(arguments) - 1:
             arguments_string += ", "
     return arguments_string
@@ -77,6 +94,7 @@ def generate_log_client_virtual_functions(log_messages, log_client_virtual_funct
 
 #include <os/log.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/CStringView.h>
 
 namespace WebCore {
 
@@ -94,7 +112,7 @@ public:
         for log_message in log_messages:
             function_name = log_message[0]
             parameters = log_message[2]
-            arguments_string = get_arguments_string(parameters, PARAMETER_LIST_INCLUDE_TYPE | PARAMETER_LIST_MODIFY_CSTRING)
+            arguments_string = get_arguments_string(parameters, PARAMETER_LIST_INCLUDE_TYPE)
             file.write("    virtual void " + function_name + "(" + arguments_string + ") { }\n")
 
         file.write("""

@@ -38,8 +38,8 @@ struct DRMDevice {
 
     bool operator==(const DRMDevice&) const = default;
 
-    CString primaryNode;
-    CString renderNode;
+    UTF8CString primaryNode;
+    UTF8CString renderNode;
 };
 
 } // namespace WebCore

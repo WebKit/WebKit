@@ -39,15 +39,15 @@ namespace WebKit {
 class CoreIPCGVariant {
 public:
     explicit CoreIPCGVariant(const GRefPtr<GVariant>&);
-    CoreIPCGVariant(CString&&, std::span<const uint8_t>);
+    CoreIPCGVariant(UTF8CString&&, std::span<const uint8_t>);
 
-    CString typeString() const { return m_typeString; }
+    UTF8CString typeString() const { return m_typeString; }
     std::span<const uint8_t> data() const;
 
     operator GRefPtr<GVariant>() const;
 
 private:
-    CString m_typeString;
+    UTF8CString m_typeString;
     GRefPtr<GBytes> m_data;
 };
 

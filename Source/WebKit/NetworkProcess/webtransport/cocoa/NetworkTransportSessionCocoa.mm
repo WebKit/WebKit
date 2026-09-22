@@ -563,11 +563,11 @@ void NetworkTransportSession::receiveDatagramLoop()
     }).get());
 }
 
-void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode code, CString&& message)
+void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode code, UTF8CString&& message)
 {
     if (m_sessionMetadata) {
         MAYBE_SOFT_LINK(nw_webtransport_metadata_set_session_error_code)(m_sessionMetadata.get(), code);
-        MAYBE_SOFT_LINK(nw_webtransport_metadata_set_session_error_message)(m_sessionMetadata.get(), message.data());
+        MAYBE_SOFT_LINK(nw_webtransport_metadata_set_session_error_message)(m_sessionMetadata.get(), message.legacyCStringPointer());
     }
 
     if (m_datagramConnection)

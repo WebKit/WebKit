@@ -89,7 +89,7 @@ public:
     void destroyOutgoingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void destroyBidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
-    void terminate(WebCore::WebTransportSessionErrorCode, CString&&);
+    void terminate(WebCore::WebTransportSessionErrorCode, UTF8CString&&);
     void NODELETE datagramIncomingMaxAgeUpdated(std::optional<double>);
     void NODELETE datagramOutgoingMaxAgeUpdated(std::optional<double>);
     void NODELETE incomingMaxBufferedDatagramsUpdated(uint32_t);

@@ -34,12 +34,12 @@
 namespace WebKit {
 
 CoreIPCGVariant::CoreIPCGVariant(const GRefPtr<GVariant>& variant)
-    : m_typeString(g_variant_get_type_string(variant.get()))
+    : m_typeString(byteCast<char8_t>(g_variant_get_type_string(variant.get())))
     , m_data(adoptGRef(g_variant_get_data_as_bytes(variant.get())))
 {
 }
 
-CoreIPCGVariant::CoreIPCGVariant(CString&& typeString, std::span<const uint8_t> data)
+CoreIPCGVariant::CoreIPCGVariant(UTF8CString&& typeString, std::span<const uint8_t> data)
     : m_typeString(WTF::move(typeString))
     , m_data(adoptGRef(g_bytes_new(data.data(), data.size())))
 {
@@ -54,7 +54,7 @@ std::span<const uint8_t> CoreIPCGVariant::data() const
 
 CoreIPCGVariant::operator GRefPtr<GVariant>() const
 {
-    GUniquePtr<GVariantType> type(g_variant_type_new(m_typeString.data()));
+    GUniquePtr<GVariantType> type(g_variant_type_new(m_typeString.legacyCStringPointer()));
     return g_variant_new_from_bytes(type.get(), m_data.get(), FALSE);
 }
 

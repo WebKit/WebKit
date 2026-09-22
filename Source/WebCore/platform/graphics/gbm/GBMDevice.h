@@ -36,7 +36,7 @@ namespace WebCore {
 
 class GBMDevice final : public ThreadSafeRefCounted<GBMDevice, WTF::DestructionThread::Main> {
 public:
-    static RefPtr<GBMDevice> create(const CString&);
+    static RefPtr<GBMDevice> create(const UTF8CString&);
     ~GBMDevice();
 
     struct gbm_device* device() const { return m_device; }

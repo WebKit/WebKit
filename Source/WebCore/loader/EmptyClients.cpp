@@ -1255,7 +1255,7 @@ public:
     void cancelReceiveStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
     void cancelSendStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
     void destroyStream(WebTransportStreamIdentifier, std::optional<WebTransportStreamErrorCode>) final { }
-    void terminate(WebTransportSessionErrorCode, CString&&) final { }
+    void terminate(WebTransportSessionErrorCode, UTF8CString&&) final { }
     void datagramIncomingMaxAgeUpdated(std::optional<double>) final { }
     void datagramOutgoingMaxAgeUpdated(std::optional<double>) final { }
     void incomingMaxBufferedDatagramsUpdated(uint32_t) final { }

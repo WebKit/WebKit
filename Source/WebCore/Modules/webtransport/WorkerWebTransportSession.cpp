@@ -234,7 +234,7 @@ Ref<WebTransportExportKeyingMaterialPromise> WorkerWebTransportSession::exportKe
     return WebTransportExportKeyingMaterialPromise::createAndReject();
 }
 
-void WorkerWebTransportSession::terminate(WebTransportSessionErrorCode code, CString&& reason)
+void WorkerWebTransportSession::terminate(WebTransportSessionErrorCode code, UTF8CString&& reason)
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)

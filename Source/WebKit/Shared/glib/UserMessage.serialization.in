@@ -30,12 +30,12 @@
 };
 
 [Nested] struct WebKit::UserMessage::ErrorMessage {
-    CString name;
+    UTF8CString name;
     uint32_t errorCode;
 };
 
 [Nested] struct WebKit::UserMessage::DataMessage {
-    CString name;
+    UTF8CString name;
     GRefPtr<GVariant> parameters;
     GRefPtr<GUnixFDList> fileDescriptors;
 };

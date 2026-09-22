@@ -326,8 +326,8 @@ static UnixFileDescriptor drmFileDescriptorForGBMDisplay()
         return { gbm_device_get_fd(device->device()), UnixFileDescriptor::Borrow };
 
     const auto& device = deviceManager.mainDevice();
-    const CString& deviceNode = device.renderNode.isNull() ? device.primaryNode : device.renderNode;
-    return { open(deviceNode.data(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
+    auto& deviceNode = device.renderNode.isNull() ? device.primaryNode : device.renderNode;
+    return { open(deviceNode.legacyCStringPointer(), O_RDWR | O_CLOEXEC), UnixFileDescriptor::Adopt };
 }
 #endif // USE(GBM)
 
