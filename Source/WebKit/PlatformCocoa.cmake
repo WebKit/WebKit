@@ -2551,24 +2551,54 @@ add_custom_command(
     VERBATIM
 )
 
-foreach (_header IN LISTS WebKit_PUBLIC_FRAMEWORK_HEADERS)
-    file(READ ${WEBKIT_DIR}/${_header} _contents)
-    # Only run headers through the replacement script if they actually contain
-    # a WKA import.
-    if (_contents MATCHES "#import <WebKitAdditions/.*\.h>")
-        get_filename_component(_name ${_header} NAME)
+# Headers which import WebKitAdditions fragments have to be run through the
+# replacement script rather than being copied verbatim. The processed copy takes
+# the source header's place in the list, so that the header maps resolve
+# <WebKit/Foo.h> to the copy with the additions spliced in rather than to the
+# source tree.
+set(_header_lists WebKit_PUBLIC_FRAMEWORK_HEADERS WebKit_PRIVATE_FRAMEWORK_HEADERS)
+set(_header_dirs WebKit_HEADERS_DIR WebKit_PRIVATE_HEADERS_DIR)
+foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
+    set(_updated_headers)
+    foreach (_header IN LISTS ${_header_list})
+        # Entries are relative to WEBKIT_DIR unless they are already absolute.
+        set(_src ${WEBKIT_DIR})
+        cmake_path(APPEND _src ${_header})
+        file(READ ${_src} _contents)
+        # Only run headers through the replacement script if they actually contain
+        # a WKA import.
+        if (NOT _contents MATCHES "#import <WebKitAdditions/.*\.h>")
+            list(APPEND _updated_headers ${_header})
+            continue ()
+        endif ()
+
+        cmake_path(GET _src FILENAME _name)
+        set(_dst ${${_header_dir}}/${_name})
         add_custom_command(
-            OUTPUT ${WebKit_HEADERS_DIR}/${_name}
+            OUTPUT ${_dst}
             COMMAND
                 env ${WEBKITADDITIONS_DEFINITIONS_FOR_HEADER_REPLACEMENT}
                     ${WEBKIT_DIR}/mac/replace-webkit-additions-includes.py
                     ${WebKitAdditions_FRAMEWORK_HEADERS_DIR} ${CMAKE_OSX_SYSROOT}
-                    ${WEBKIT_DIR}/${_header} ${WebKit_HEADERS_DIR}/${_name}
-            MAIN_DEPENDENCY ${WEBKIT_DIR}/${_header}
+                    ${_src} ${_dst}
+            MAIN_DEPENDENCY ${_src}
+            DEPENDS ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
             VERBATIM
         )
-    endif ()
+        list(APPEND _updated_headers ${_dst})
+        list(APPEND WebKit_WEBKITADDITIONS_HEADERS ${_dst})
+    endforeach ()
+    set(${_header_list} ${_updated_headers})
 endforeach ()
+
+if (WebKit_WEBKITADDITIONS_HEADERS)
+    # Everything reading these headers through a header map has to wait for the
+    # replacement to run, including targets that only link against WebKit.
+    add_custom_target(WebKit_ReplaceWebKitAdditionsIncludes ALL
+        DEPENDS ${WebKit_WEBKITADDITIONS_HEADERS})
+    list(APPEND WebKit_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
+    list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
+endif ()
 
 # LINKER:-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.
 target_link_options(WebKit PRIVATE

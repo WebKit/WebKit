@@ -299,8 +299,8 @@ add_custom_target(Bytecodes DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytec
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCWebPreferenceOptions.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb
-    DEPENDS ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml WTF_CopyPreferences
-    COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend JavaScriptCore --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}" --template ${JAVASCRIPTCORE_DIR}/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml
+    DEPENDS ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml WTF_CopyPreferences ${WEB_PREFERENCES_ADDITIONS} ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
+    COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend JavaScriptCore --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}" --template ${JAVASCRIPTCORE_DIR}/Scripts/PreferencesTemplates/JSCWebPreferenceOptions.h.erb ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml ${WEB_PREFERENCES_ADDITIONS}
     VERBATIM)
 add_custom_target(JSCWebPreferenceOptions DEPENDS "${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCWebPreferenceOptions.h")
 

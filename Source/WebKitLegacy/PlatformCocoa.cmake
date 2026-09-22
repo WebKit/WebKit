@@ -80,12 +80,12 @@ set(WebKitLegacy_WEB_PREFERENCES_TEMPLATES
     ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb
     ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 )
-set(WebKitLegacy_WEB_PREFERENCES ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml)
+set(WebKitLegacy_WEB_PREFERENCES ${WTF_SCRIPTS_DIR}/Preferences/UnifiedWebPreferences.yaml ${WEB_PREFERENCES_ADDITIONS})
 set_source_files_properties(${WebKitLegacy_WEB_PREFERENCES} PROPERTIES GENERATED TRUE)
 
 add_custom_command(
     OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesInternalFeatures.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h
-    DEPENDS ${WebKitLegacy_WEB_PREFERENCES_TEMPLATES} ${WebKitLegacy_WEB_PREFERENCES} WTF_CopyPreferences
+    DEPENDS ${WebKitLegacy_WEB_PREFERENCES_TEMPLATES} ${WebKitLegacy_WEB_PREFERENCES} WTF_CopyPreferences ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
     COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --outputDir "${WebKitLegacy_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKitLegacy_WEB_PREFERENCES_TEMPLATES},;--template;>" ${WebKitLegacy_WEB_PREFERENCES}
     COMMAND_EXPAND_LISTS
     VERBATIM
