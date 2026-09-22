@@ -189,6 +189,13 @@ inline bool ComputedStyleBase::isInSubtreeWithBlendMode() const
     return m_inheritedRareData->isInSubtreeWithBlendMode;
 }
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+inline bool ComputedStyleBase::isAffectedBySmartImageResizer() const
+{
+    return m_inheritedRareData->isAffectedBySmartImageResizer;
+}
+#endif
+
 inline bool ComputedStyleBase::isForceHidden() const
 {
     return m_inheritedRareData->isForceHidden;

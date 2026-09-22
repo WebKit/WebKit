@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <WebCore/DocumentEnums.h>
 #include <WebCore/Region.h>
 #include <WebCore/RenderBlockFlow.h>
 #include <WebCore/RenderSelection.h>
@@ -33,6 +34,7 @@ namespace WebCore {
 
 class LocalFrameView;
 class ImageQualityController;
+class RenderImage;
 class RenderLayerCompositor;
 class RenderLayoutState;
 class RenderCounter;
@@ -101,6 +103,15 @@ public:
 
 #if ENABLE(AX_CUSTOM_COLOR_MODE)
     void adjustAXCustomColorModeAfterLayout();
+#endif
+
+#if ENABLE(SMART_IMAGE_RESIZER)
+    DidInvalidateStyle updateForSmartImageResizer();
+    void setSmartImageResizerNeedsUpdate();
+
+    void registerImageForSmartImageResizer(RenderImage&);
+    void unregisterImageForSmartImageResizer(RenderImage&);
+    void rebuildImagesForSmartImageResizer();
 #endif
 
     void paint(PaintInfo&, const LayoutPoint&) override;

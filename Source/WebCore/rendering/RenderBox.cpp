@@ -124,6 +124,10 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #endif
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+#include <WebKitAdditions/RenderBoxAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBox);
@@ -467,6 +471,11 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
             && parent() && !parent()->normalChildNeedsLayout())
             parent()->setChildNeedsLayout();
     }
+
+#if ENABLE(SMART_IMAGE_RESIZER)
+    if (imageResizerNeedsUpdateDueToStyleChange(oldStyle, newStyle))
+        view().setSmartImageResizerNeedsUpdate();
+#endif
 
     if (RenderBlock::hasPercentHeightContainerMap() && firstChild()
         && oldHorizontalWritingMode != isHorizontalWritingMode())

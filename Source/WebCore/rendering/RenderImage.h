@@ -93,6 +93,10 @@ protected:
     RenderImage(Type, Element&, Style::ComputedStyle&&, OptionSet<ReplacedFlag>, Style::Image* = nullptr, const float imageDevicePixelRatio = 1.0f);
     void willBeDestroyed() override;
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+    void insertedIntoTree() override;
+#endif
+
     bool shouldInvalidateContentWidths() const final;
     RenderReplaced* embeddedSVGRoot() const final;
     bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const override;

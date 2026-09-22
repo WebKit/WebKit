@@ -553,6 +553,11 @@ public:
     bool NODELETE effectiveInertOutOfLine() const;
     inline void setEffectiveInert(bool);
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+    inline bool isAffectedBySmartImageResizer() const;
+    inline void setIsAffectedBySmartImageResizer(bool);
+#endif
+
     inline bool isEffectivelyTransparent() const; // This or any ancestor has opacity 0.
     inline void setIsEffectivelyTransparent(bool);
 

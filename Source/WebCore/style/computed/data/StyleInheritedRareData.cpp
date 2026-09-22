@@ -136,6 +136,9 @@ InheritedRareData::InheritedRareData()
     , autoRevealsWhenFound(false)
     , insideDefaultButton(false)
     , insideSubmitButton(false)
+#if ENABLE(SMART_IMAGE_RESIZER)
+    , isAffectedBySmartImageResizer(false)
+#endif
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(static_cast<unsigned>(AppleVisualEffect::None))
 #endif
@@ -246,6 +249,9 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , autoRevealsWhenFound(o.autoRevealsWhenFound)
     , insideDefaultButton(o.insideDefaultButton)
     , insideSubmitButton(o.insideSubmitButton)
+#if ENABLE(SMART_IMAGE_RESIZER)
+    , isAffectedBySmartImageResizer(o.isAffectedBySmartImageResizer)
+#endif
 #if HAVE(CORE_MATERIAL)
     , usedAppleVisualEffectForSubtree(o.usedAppleVisualEffectForSubtree)
 #endif
@@ -354,6 +360,9 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && usedContentVisibility == o.usedContentVisibility
         && insideDefaultButton == o.insideDefaultButton
         && insideSubmitButton == o.insideSubmitButton
+#if ENABLE(SMART_IMAGE_RESIZER)
+        && isAffectedBySmartImageResizer == o.isAffectedBySmartImageResizer
+#endif
 #if HAVE(CORE_MATERIAL)
         && usedAppleVisualEffectForSubtree == o.usedAppleVisualEffectForSubtree
 #endif
@@ -481,6 +490,9 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
     LOG_IF_DIFFERENT_WITH_CAST(bool, insideSubmitButton);
+#if ENABLE(SMART_IMAGE_RESIZER)
+    LOG_IF_DIFFERENT_WITH_CAST(bool, isAffectedBySmartImageResizer);
+#endif
 
 #if HAVE(CORE_MATERIAL)
     LOG_IF_DIFFERENT_WITH_CAST(AppleVisualEffect, usedAppleVisualEffectForSubtree);

@@ -88,6 +88,10 @@
 #include "SpatialImageControls.h"
 #endif
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+#include <WebKitAdditions/RenderImageAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderImage);
@@ -188,6 +192,9 @@ RenderImage::~RenderImage() = default;
 
 void RenderImage::willBeDestroyed()
 {
+#if ENABLE(SMART_IMAGE_RESIZER)
+    view().unregisterImageForSmartImageResizer(*this);
+#endif
     imageResource().willBeDestroyed();
     RenderReplaced::willBeDestroyed();
 }
@@ -930,6 +937,10 @@ bool RenderImage::canHaveChildren() const
 
 void RenderImage::layout()
 {
+#if ENABLE(SMART_IMAGE_RESIZER)
+    view().setSmartImageResizerNeedsUpdate();
+#endif
+
     // Recomputing overflow is required only when child content is present.
     if (needsSimplifiedNormalFlowLayoutOnly() && !hasShadowContent()) {
         clearNeedsLayout();

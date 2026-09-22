@@ -124,6 +124,13 @@ inline void ComputedStyleBase::setEffectiveInert(bool effectiveInert)
     SET(m_inheritedRareData, effectiveInert, effectiveInert);
 }
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+inline void ComputedStyleBase::setIsAffectedBySmartImageResizer(bool isAffectedBySmartImageResizer)
+{
+    SET(m_inheritedRareData, isAffectedBySmartImageResizer, isAffectedBySmartImageResizer);
+}
+#endif
+
 inline void ComputedStyleBase::setIsEffectivelyTransparent(bool effectivelyTransparent)
 {
     SET(m_inheritedRareData, effectivelyTransparent, effectivelyTransparent);

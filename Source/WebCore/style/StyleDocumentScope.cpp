@@ -60,6 +60,10 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if ENABLE(SMART_IMAGE_RESIZER)
+#include <WebKitAdditions/StyleDocumentScopeAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 namespace Style {
@@ -248,6 +252,9 @@ bool DocumentScope::invalidateForLayoutDependencies(LayoutDependencyUpdateContex
     didInvalidate |= invalidateForContainerDependencies(context);
     didInvalidate |= invalidateForAnchorDependencies(context);
     didInvalidate |= invalidateForPositionTryFallbacks(context);
+#if ENABLE(SMART_IMAGE_RESIZER)
+    invalidateForSmartImageResizer(context, didInvalidate);
+#endif
     return didInvalidate;
 }
 

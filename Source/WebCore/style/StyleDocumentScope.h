@@ -66,9 +66,15 @@ public:
     struct LayoutDependencyUpdateContext {
         HashSet<CheckedRef<const Element>> invalidatedContainers;
         HashSet<CheckedRef<const Element>> invalidatedAnchorPositioned;
+#if ENABLE(SMART_IMAGE_RESIZER)
+        bool didUpdateForSmartImageResizer { false };
+#endif
     };
     bool invalidateForLayoutDependencies(LayoutDependencyUpdateContext&);
     bool invalidateForAnchorDependencies(LayoutDependencyUpdateContext&);
+#if ENABLE(SMART_IMAGE_RESIZER)
+    void invalidateForSmartImageResizer(LayoutDependencyUpdateContext&, bool& didInvalidate);
+#endif
 
     // The scroll state of a scroll-state query container, snapshotted after layout and used as the
     // input to container query evaluation until the next snapshot.
