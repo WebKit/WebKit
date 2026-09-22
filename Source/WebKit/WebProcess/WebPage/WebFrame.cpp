@@ -670,6 +670,15 @@ void WebFrame::invalidatePolicyListeners()
         policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
+bool WebFrame::dispatchPendingNavigateEventAfterNavigationPolicy(WebCore::PendingNavigateEventIdentifier identifier)
+{
+    RefPtr coreFrame = coreLocalFrame();
+    if (!coreFrame)
+        return true;
+
+    return coreFrame->loader().dispatchPendingNavigateEventAfterNavigationPolicy(identifier);
+}
+
 void WebFrame::didReceivePolicyDecision(PolicyListenerIdentifier listenerID, PolicyDecision&& policyDecision)
 {
     if (RefPtr page = m_page.get()) {

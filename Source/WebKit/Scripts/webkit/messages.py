@@ -468,6 +468,7 @@ def serialized_identifiers():
         'WebCore::MediaUniqueIdentifier',
         'WebCore::NavigationIdentifier',
         'WebCore::OpaqueOriginIdentifier',
+        'WebCore::PendingNavigateEventIdentifier',
         'WebCore::PageIdentifier',
         'WebCore::PlatformLayerIdentifierID',
         'WebCore::PlaybackTargetClientContextID',
