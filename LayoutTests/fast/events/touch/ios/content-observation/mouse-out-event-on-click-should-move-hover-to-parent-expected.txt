@@ -1,0 +1,12 @@
+Verifies that the synthetic mouseout after a click moves the hover to the tapped element's parent instead of clearing it. Clearing it tells every enclosing element that the pointer left the page, which is enough for a site to dismiss its own controls.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Clicked target
+PASS receivedMouseOutOnTarget became true
+PASS mouseOutRelatedTargetId is "target-wrapper"
+PASS receivedMouseOverOnWrapper is true
+PASS mouseOverRelatedTargetId is "target"
+PASS successfullyParsed is true
+
+TEST COMPLETE

@@ -289,7 +289,7 @@ public:
 #endif
 
 #if ENABLE(TWO_PHASE_CLICKS)
-    WEBCORE_EXPORT void dispatchSyntheticMouseOut(const PlatformMouseEvent&);
+    WEBCORE_EXPORT void dispatchSyntheticMouseOut(const PlatformMouseEvent&, Node* newHoveredNode = nullptr);
     WEBCORE_EXPORT void dispatchSyntheticMouseMove(const PlatformMouseEvent&);
 #endif
 
