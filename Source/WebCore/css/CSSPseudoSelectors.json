@@ -51,6 +51,9 @@
         },
         "-internal-media-document": {},
         "-internal-select-popover": {},
+        "-internal-select-preferred-size-one": {
+            "comment": "Preferred size because box type (list box, dropdown) depends on appearance."
+        },
         "-internal-uses-menulist": {},
         "-webkit-any": {
             "argument": "required",

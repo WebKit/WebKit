@@ -345,6 +345,14 @@ bool HTMLSelectElement::isSingleSelectDropdownBox() const
     return !m_multiple && usesMenuList();
 }
 
+// https://html.spec.whatwg.org/multipage/form-elements.html#concept-select-size
+unsigned HTMLSelectElement::preferredSize() const
+{
+    if (m_size >= 1)
+        return m_size;
+    return m_multiple ? 4 : 1;
+}
+
 bool HTMLSelectElement::usesBaseAppearancePicker() const
 {
     if (m_multiple || m_size > 1)

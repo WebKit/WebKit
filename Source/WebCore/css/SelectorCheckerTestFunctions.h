@@ -668,4 +668,10 @@ ALWAYS_INLINE bool matchesSelectPopoverPseudoClass(const Element& element)
     return is<SelectPopoverElement>(element);
 }
 
+ALWAYS_INLINE bool matchesSelectPreferredSizeOnePseudoClass(const Element& element)
+{
+    auto* select = dynamicDowncast<HTMLSelectElement>(element);
+    return select && select->preferredSize() == 1;
+}
+
 } // namespace WebCore

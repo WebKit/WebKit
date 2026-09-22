@@ -1339,6 +1339,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         case CSSSelector::PseudoClass::InternalSelectPopover:
             return matchesSelectPopoverPseudoClass(element);
 
+        case CSSSelector::PseudoClass::InternalSelectPreferredSizeOne:
+            return matchesSelectPreferredSizeOnePseudoClass(element);
+
         case CSSSelector::PseudoClass::InternalUsesMenulist:
             return matchesUsesMenulistPseudoClass(element);
 

@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT unsigned length() const;
 
     unsigned size() const { return m_size; }
+    unsigned NODELETE preferredSize() const;
     bool multiple() const { return m_multiple; }
 
     bool NODELETE usesMenuList() const;
