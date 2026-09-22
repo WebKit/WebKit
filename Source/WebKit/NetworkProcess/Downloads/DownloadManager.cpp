@@ -48,7 +48,7 @@ DownloadManager::DownloadManager(Client& client)
 
 DownloadManager::~DownloadManager() = default;
 
-void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebCore::ProcessIdentifier> webProcessID)
+void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, const String& suggestedName, FromDownloadAttribute fromDownloadAttribute, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebCore::ProcessIdentifier> webProcessID)
 {
     CheckedPtr networkSession = m_client->networkSession(sessionID);
     if (!networkSession)
@@ -62,6 +62,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
     parameters.request = request;
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
+    parameters.advancedPrivacyProtections = advancedPrivacyProtections;
     if (request.url().protocolIsBlob()) {
         parameters.topOrigin = topOrigin ? topOrigin->securityOrigin().ptr() : nullptr;
         parameters.blobFileReferences = m_client->networkSession(sessionID)->blobRegistry().filesInBlob(request.url(), topOrigin);
