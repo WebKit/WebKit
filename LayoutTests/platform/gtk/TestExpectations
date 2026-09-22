@@ -391,7 +391,6 @@ imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Selection-getComp
 imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Selection-getComposedRanges.html [ Skip ]
 imported/w3c/web-platform-tests/selection/shadow-dom/tentative/Selection-isCollapsed.html [ Skip ]
 
-webkit.org/b/304101 [ Debug ] imported/w3c/web-platform-tests/selection/crashtests/selection-modify-per-word-in-table-header-group.html [ Crash ]
 webkit.org/b/304101 [ Release ] imported/w3c/web-platform-tests/selection/crashtests/selection-modify-per-word-in-table-header-group.html [ Pass Crash ]
 
 webkit.org/b/309201 [ Release ] fast/css/getComputedStyle-font-variant-shorthand-crash.html [ Pass Crash ]
@@ -1207,9 +1206,9 @@ webkit.org/b/319057 [ Debug ] media/media-h264-webm-source.html [ Failure Pass ]
 webkit.org/b/319058 [ Debug ] media/media-h264-webm-error.html [ Failure Pass ]
 webkit.org/b/319059 [ Debug ] media/vp9.html [ Failure ]
 webkit.org/b/319060 [ Debug ] media/auto-play-video-in-about-blank-iframe.html [ Failure ]
-webkit.org/b/319061 [ Debug ] media/muted-video-is-playing-audio.html [ Timeout ]
+webkit.org/b/319061 [ Debug ] media/muted-video-is-playing-audio.html [ Timeout Pass ]
 webkit.org/b/319062 [ Debug ] inspector/dom/getMediaStats.html [ Failure Pass ]
-webkit.org/b/319063 [ Debug ] fullscreen/full-screen-enter-while-exiting.html [ Timeout ]
+webkit.org/b/319063 [ Debug ] fullscreen/full-screen-enter-while-exiting.html [ Timeout Pass ]
 webkit.org/b/319064 [ Debug ] fullscreen/video-inside-flex-item.html [ Failure Pass ]
 webkit.org/b/319066 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html [ Failure Pass ]
 
