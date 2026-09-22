@@ -65,15 +65,29 @@ private func createElementContent(for item: WKTextExtractionItem) -> Intelligenc
     }
 }
 
-private func createIntelligenceElement(item: WKTextExtractionItem, contextMenuTargetNodeIdentifier: String?) -> IntelligenceElement {
+private struct ContextMenuSource {
+    let nodeIdentifier: String
+    let remoteContextWrapper: UIIntelligenceCollectionRemoteContextWrapper
+
+    func applyExportableData(to element: inout IntelligenceElement) {
+        #if canImport(UIIntelligenceSupport, _version: "9127.1.2")
+        if #available(macOS 27.0, iOS 27.0, visionOS 27.0, *) {
+            element.exportableData = remoteContextWrapper.remoteContext.contextMenuInvocation?.exportableData
+        }
+        #endif
+    }
+}
+
+private func createIntelligenceElement(item: WKTextExtractionItem, contextMenuSource: ContextMenuSource?) -> IntelligenceElement {
     var element = IntelligenceElement(boundingBox: item.rectInWebView, content: createElementContent(for: item))
-    if let contextMenuTargetNodeIdentifier, item.nodeIdentifier == contextMenuTargetNodeIdentifier {
+    if let contextMenuSource, item.nodeIdentifier == contextMenuSource.nodeIdentifier {
         #if canImport(UIIntelligenceSupport.Radar165004762)
         element.isContextMenuSource = true
         #endif
+        contextMenuSource.applyExportableData(to: &element)
     }
     element.subelements = item.children.map { child in
-        createIntelligenceElement(item: child, contextMenuTargetNodeIdentifier: contextMenuTargetNodeIdentifier)
+        createIntelligenceElement(item: child, contextMenuSource: contextMenuSource)
     }
     return element
 }
@@ -112,11 +126,13 @@ extension WKWebView {
             configuration.eventListenerCategories = []
             configuration.includeAccessibilityAttributes = false
             configuration.filterOptions = []
-            let contextMenuTargetNodeIdentifier = _activeContextMenuTargetNodeIdentifier
+            let contextMenuSource = _activeContextMenuTargetNodeIdentifier.map {
+                ContextMenuSource(nodeIdentifier: $0, remoteContextWrapper: remoteContextWrapper)
+            }
             if let rootItem = await _requestTextExtraction(configuration) {
                 let rootElement = createIntelligenceElement(
                     item: rootItem,
-                    contextMenuTargetNodeIdentifier: contextMenuTargetNodeIdentifier
+                    contextMenuSource: contextMenuSource
                 )
                 collector.collect(rootElement)
             }
