@@ -345,9 +345,25 @@ bool HTMLSelectElement::isSingleSelectDropdownBox() const
     return !m_multiple && usesMenuList();
 }
 
+bool HTMLSelectElement::supportsBaseAppearance() const
+{
+    return !m_multiple && m_size <= 1;
+}
+
+bool HTMLSelectElement::appearanceBaseSelectApplies(const Element& element)
+{
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
+        return select->supportsBaseAppearance();
+    if (auto* popover = dynamicDowncast<SelectPopoverElement>(element)) {
+        auto* select = popover->selectElement();
+        return select && select->supportsBaseAppearance();
+    }
+    return false;
+}
+
 bool HTMLSelectElement::usesBaseAppearancePicker() const
 {
-    if (m_multiple || m_size > 1)
+    if (!supportsBaseAppearance())
         return false;
 
     RefPtr popover = m_popover;
@@ -1555,12 +1571,12 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
 
 void HTMLSelectElement::parseMultipleAttribute(const AtomString& value)
 {
-    bool oldUsesMenuList = usesMenuList();
+    bool oldSupportsBaseAppearance = supportsBaseAppearance();
     bool oldMultiple = m_multiple;
     int oldSelectedIndex = selectedIndex();
     m_multiple = !value.isNull();
     updateValidity();
-    if (oldUsesMenuList != usesMenuList())
+    if (oldSupportsBaseAppearance != supportsBaseAppearance())
         invalidateStyleAndRenderersForSubtree();
     if (oldMultiple != m_multiple) {
         if (oldSelectedIndex >= 0)

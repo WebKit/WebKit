@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<title>appearance: base-select has no effect on a select that is not a dropdown box</title>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select multiple>
+    <option>one</option>
+    <option>two</option>
+</select>
+<select size="4">
+    <option>one</option>
+    <option>two</option>
+</select>

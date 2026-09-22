@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<title>Adding multiple to a base appearance dropdown box falls back to the native list box</title>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select id="select">
+    <option>one</option>
+    <option>two</option>
+</select>
+<script>
+// Render as a base appearance dropdown box first, so this covers the invalidation and not just
+// the initial style.
+document.body.offsetHeight;
+document.getElementById("select").multiple = true;
+</script>

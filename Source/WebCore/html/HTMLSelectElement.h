@@ -83,6 +83,9 @@ public:
     bool NODELETE usesMenuList() const;
     bool NODELETE isSingleSelectDropdownBox() const;
 
+    bool NODELETE supportsBaseAppearance() const;
+    static bool NODELETE appearanceBaseSelectApplies(const Element&);
+
     using OptionOrOptGroupElement = Variant<Ref<HTMLOptionElement>, Ref<HTMLOptGroupElement>>;
     using HTMLElementOrInt = Variant<Ref<HTMLElement>, int>;
     WEBCORE_EXPORT ExceptionOr<void> add(const OptionOrOptGroupElement&, const std::optional<HTMLElementOrInt>& before);

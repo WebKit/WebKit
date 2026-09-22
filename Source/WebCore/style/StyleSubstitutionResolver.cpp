@@ -58,7 +58,6 @@
 #include "IfConditionEvaluator.h"
 #include "MatchResult.h"
 #include "MutableStyleProperties.h"
-#include "SelectPopoverElement.h"
 #include "StyleBuilder.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle+SettersInlines.h"
@@ -1327,7 +1326,7 @@ bool SubstitutionResolver::isBaseAppearance()
         return true;
     if (state.style().appearance() == StyleAppearance::BaseSelect) {
         CheckedPtr element = state.element();
-        return element && isAnyOf<HTMLSelectElement, SelectPopoverElement>(*element);
+        return element && HTMLSelectElement::appearanceBaseSelectApplies(*element);
     }
     return false;
 }
