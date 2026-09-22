@@ -111,11 +111,6 @@ BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType box, const RenderBox& ren
     return { BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), BoxShapeGeometry::Edge::Outer };
 }
 
-LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
-{
-    return computeGeometryForBoxShape(box, renderer).roundedRect();
-}
-
 LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
 {
     FloatRect marginBounds(m_bounds.rect());

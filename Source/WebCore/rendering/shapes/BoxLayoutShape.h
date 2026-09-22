@@ -50,7 +50,6 @@ struct BoxShapeGeometry {
 };
 
 BoxShapeGeometry computeGeometryForBoxShape(CSSBoxType, const RenderBox&);
-LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 
 class BoxLayoutShape final : public LayoutShape {
 public:

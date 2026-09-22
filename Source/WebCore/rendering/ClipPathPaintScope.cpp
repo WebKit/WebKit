@@ -80,12 +80,23 @@ std::pair<Path, WindRule> ClipPathPaintScope::computeClipPath(const RenderLayerM
         },
         [&](const Style::BoxPath& clipPath) -> std::pair<Path, WindRule> {
             CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
-            if (box) {
-                auto shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), *box).pixelSnappedRoundedRectForPainting(renderer.document().deviceScaleFactor());
-                shapeRect.move(offsetFromRoot);
-                return { shapeRect.path(), WindRule::NonZero };
+            if (!box)
+                return { Path(), WindRule::NonZero };
+
+            auto deviceScaleFactor = renderer.document().deviceScaleFactor();
+            auto geometry = computeGeometryForBoxShape(clipPath.referenceBox(), *box);
+
+            if (style->border().hasNonRoundCornerShape()) {
+                auto shapePath = geometry.edge == BoxShapeGeometry::Edge::Inner
+                    ? geometry.borderShape.pathForInnerShape(deviceScaleFactor)
+                    : geometry.borderShape.pathForOuterShape(deviceScaleFactor);
+                shapePath.translate(FloatSize { offsetFromRoot });
+                return { shapePath, WindRule::NonZero };
             }
-            return { Path(), WindRule::NonZero };
+
+            auto shapeRect = geometry.roundedRect().pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+            shapeRect.move(offsetFromRoot);
+            return { shapeRect.path(), WindRule::NonZero };
         },
         [&](const auto&) -> std::pair<Path, WindRule> {
             return { Path(), WindRule::NonZero };
