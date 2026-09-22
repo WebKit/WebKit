@@ -35,19 +35,20 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 
-inline std::span<const uint8_t> span(SkData* data)
+inline std::span<const uint8_t> span(SkData& data)
 {
-    return unsafeMakeSpan<const uint8_t>(data->bytes(), data->size());
+    return unsafeMakeSpan<const uint8_t>(data.bytes(), data.size());
 }
 
 inline std::span<const uint8_t> span(const sk_sp<SkData>& data)
 {
-    return span(data.get());
+    ASSERT(data);
+    return span(*data);
 }
 
-inline std::span<uint8_t> mutableSpan(SkData* data)
+inline std::span<uint8_t> mutableSpan(SkData& data)
 {
-    return unsafeMakeSpan(static_cast<uint8_t*>(data->writable_data()), data->size());
+    return unsafeMakeSpan(static_cast<uint8_t*>(data.writable_data()), data.size());
 }
 
 inline std::span<const uint8_t> span(const SkPixmap& pixmap)

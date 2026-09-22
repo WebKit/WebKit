@@ -105,7 +105,7 @@ bool GraphicsContextGLImageExtractor::extractImage(std::optional<AlphaPremultipl
             return false;
 
         m_pixelData = WTF::move(data);
-        m_imagePixelData = span(m_pixelData.get());
+        m_imagePixelData = span(*m_pixelData);
         m_imageSourceFormat = sourceFormat.value_or(DataFormat::RGBA8);
     } else {
         SkPixmap pixmap;
