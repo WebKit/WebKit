@@ -9,4 +9,6 @@ PASS e.style['color'] = "rgb(1,2,3,4,5)" should not set the property value
 PASS e.style['color'] = "hsla(1,2,3,4,5)" should not set the property value
 PASS e.style['color'] = "rgb(10%, 20, 30%)" should not set the property value
 PASS e.style['color'] = "rgba(-2, 300, 400%, -0.5)" should not set the property value
+PASS e.style['color'] = "rgb(sign(0% - 0px), 0, 0)" should not set the property value
+PASS e.style['color'] = "hsl(calc(0.56turn * -0.43turn), 47%, 4884.6%)" should not set the property value
 

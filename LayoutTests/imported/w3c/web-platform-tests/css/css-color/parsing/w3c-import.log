@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/WEB_FEATURES.yml
@@ -26,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-hwb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-lab.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-named-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-none.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-powerless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-computed.html
@@ -49,6 +49,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-hsl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-hwb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-lab.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color-opaque-alpha.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-system-color.html

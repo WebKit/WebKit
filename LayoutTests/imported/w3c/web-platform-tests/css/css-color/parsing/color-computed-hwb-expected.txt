@@ -1,5 +1,9 @@
 
 PASS Property color value 'hwb(120 30% 50%)'
+PASS Property color value 'hwb(120 60% 60%)'
+PASS Property color value 'hwb(0 60% 60%)'
+PASS Property color value 'hwb(0 100% 0%)'
+PASS Property color value 'hwb(0 0% 100%)'
 PASS Property color value 'hwb(120 30% 50% / 0.5)'
 PASS Property color value 'hwb(120 30% 50% / 50%)'
 PASS Property color value 'hwb(none none none)'
@@ -8,15 +12,25 @@ PASS Property color value 'hwb(none none none / none)'
 PASS Property color value 'hwb(0 0% 0% / 0)'
 PASS Property color value 'hwb(120 none none)'
 PASS Property color value 'hwb(120 0% 0%)'
-PASS Property color value 'hwb(120 80% none)'
+FAIL Property color value 'hwb(120 80% none)' assert_equals: expected "hwb(120 80% none)" but got "hwb(120 80 none)"
 PASS Property color value 'hwb(120 80% 0%)'
-PASS Property color value 'hwb(120 none 50%)'
+FAIL Property color value 'hwb(120 none 50%)' assert_equals: expected "hwb(120 none 50%)" but got "hwb(120 none 50)"
 PASS Property color value 'hwb(120 0% 50%)'
-PASS Property color value 'hwb(120 30% 50% / none)'
+PASS Property color value 'hwb(150 20% 10%)'
+PASS Property color value 'hwb(45 40% 80%)'
+FAIL Property color value 'hwb(120 30% 50% / none)' assert_equals: expected "hwb(120 30% 50% / none)" but got "hwb(120 30 50 / none)"
 PASS Property color value 'hwb(120 30% 50% / 0)'
 PASS Property color value 'hwb(120 30% 50% / 0%)'
-PASS Property color value 'hwb(none 100% 50% / none)'
+FAIL Property color value 'hwb(none 100% 50% / none)' assert_equals: expected "hwb(none 100% 50% / none)" but got "hwb(none 100 50 / none)"
 PASS Property color value 'hwb(0 100% 50% / 0)'
+PASS Property color value 'hwb(0 100% 100%)'
+PASS Property color value 'hwb(0 70% 60%)'
+PASS Property color value 'hwb(0 260% 260%)'
+PASS Property color value 'hwb(0 200% 100%)'
+PASS Property color value 'hwb(0 100% 200%)'
+PASS Property color value 'hwb(0 150% 50%)'
+PASS Property color value 'hwb(0 50% 150%)'
+PASS Property color value 'hwb(0 180% 120%)'
 PASS Property color value 'hwb(0 50% 50%)' [HWB value should parse and round correctly]
 PASS Property color value 'hwb(30 50% 50%)' [HWB value should parse and round correctly]
 PASS Property color value 'hwb(60 50% 50%)' [HWB value should parse and round correctly]

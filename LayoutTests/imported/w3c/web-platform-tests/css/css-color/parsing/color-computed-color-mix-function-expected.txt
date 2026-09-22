@@ -77,7 +77,10 @@ PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% 
 PASS Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))'
 PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))'
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))' Colors do not match.
+Actual:   hsl(60 40 40 / none)
+Expected: hsl(60 40% 40% / none).
+Error: assert_equals: Color format is correct. expected "hsl( % % / none)" but got "hsl(   / none)"
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(90deg none none / none))'
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(none 50% none / none))'
 PASS Property color value 'color-mix(in hsl, hsl(30deg 40% 80% / 25%) 0%, hsl(none none 50% / none))'
@@ -160,7 +163,10 @@ PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 
 PASS Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))'
 PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))'
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))' Colors do not match.
+Actual:   hwb(75 20 30 / none)
+Expected: hwb(75 20% 30% / none).
+Error: assert_equals: Color format is correct. expected "hwb( % % / none)" but got "hwb(   / none)"
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(90deg none none / none))'
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(none 50% none / none))'
 PASS Property color value 'color-mix(in hwb, hwb(30deg 30% 40% / 25%) 0%, hwb(none none 50% / none))'
@@ -254,7 +260,6 @@ PASS Property color value 'color-mix(in lch, lab(50 0 0), black)'
 PASS Property color value 'color-mix(in lch, lch(10% 20 30deg) 0%, lch(50% 60 70deg) 0%)'
 PASS Property color value 'color-mix(in lch, lch(10% 20 30deg / .4) 0%, lch(50% 60 70deg / .8) 0%)'
 PASS Property color value 'color-mix(in lch, lch(none 20 30deg) 0%, lch(none 60 70deg) 0%)'
-PASS Property color value 'color-mix(in lch, color-mix(in lch, lch(10 20 30), lch(50 60 70)), lch(100 40 50))'
 PASS Property color value 'color-mix(in oklch, oklch(0.1 0.2 30deg), oklch(0.5 0.6 70deg))'
 PASS Property color value 'color-mix(in oklch, oklch(0.1 0.2 30deg) 25%, oklch(0.5 0.6 70deg))'
 PASS Property color value 'color-mix(in oklch, 25% oklch(0.1 0.2 30deg), oklch(0.5 0.6 70deg))'
@@ -340,6 +345,7 @@ PASS Property color value 'color-mix(in oklch, oklab(0.5 0 0), black)'
 PASS Property color value 'color-mix(in oklch, oklch(10% 20 30deg) 0%, oklch(50% 60 70deg) 0%)'
 PASS Property color value 'color-mix(in oklch, oklch(10% 20 30deg / .4) 0%, oklch(50% 60 70deg / .8) 0%)'
 PASS Property color value 'color-mix(in oklch, oklch(none 20 30deg) 0%, oklch(none 60 70deg) 0%)'
+PASS Property color value 'color-mix(in oklch, teal 0%, olive 0%)'
 PASS Property color value 'color-mix(in lab, lab(10 20 30), lab(50 60 70))'
 PASS Property color value 'color-mix(in lab, lab(10 20 30) 25%, lab(50 60 70))'
 PASS Property color value 'color-mix(in lab, 25% lab(10 20 30), lab(50 60 70))'
@@ -923,6 +929,7 @@ PASS Property color value 'color-mix(in srgb, red 40%,       blue 50%)'
 PASS Property color value 'color-mix(in srgb, red 30%,       blue 40%)'
 PASS Property color value 'color-mix(in srgb, red 75%,       blue 75%)'
 PASS Property color value 'color-mix(in srgb, red 0%,        blue 0%)'
+PASS Property color value 'color-mix(in srgb, red calc(0%),  blue calc(0%))'
 PASS Property color value 'color-mix(in srgb, red calc(10%), blue 50%)'
 PASS Property color value 'color-mix(in srgb, red 50%,       blue calc(10%))'
 PASS Property color value 'color-mix(in srgb, red calc(10%), blue calc(90%))'
@@ -940,12 +947,27 @@ PASS Property color value 'color-mix(in srgb, red calc(50% + (sign(100em - 1px) 
 PASS Property color value 'color-mix(in oklch, hsl(0 100% 100%), blue)'
 PASS Property color value 'color-mix(in oklch, oklab(0.1 none none), oklch(0.3 0.2 90deg))'
 PASS Property color value 'color-mix(in oklab, oklch(0.1 none none), oklab(0.3 0.2 0.4))'
-PASS Property color value 'color-mix(in hsl, hwb(none none none), hsl(none 0.2 0.4))'
-PASS Property color value 'color-mix(in hwb, hsl(none none none), hwb(none 0.2 0.4))'
+FAIL Property color value 'color-mix(in hsl, hwb(none none none), hsl(none 0.2 0.4))' Colors do not match.
+Actual:   hsl(none 0.2 0.4)
+Expected: hsl(none 0.2% 0.4%).
+Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
+FAIL Property color value 'color-mix(in hwb, hsl(none none none), hwb(none 0.2 0.4))' Colors do not match.
+Actual:   hwb(none 0.2 0.4)
+Expected: hwb(none 0.2% 0.4%).
+Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
 PASS Property color value 'color-mix(in oklch, oklab(0.1 none 0.3), oklch(0.3 0.2 0deg))'
-PASS Property color value 'color-mix(in oklab, oklch(0.1 0.3 none), oklab(0.3 0.2 0.4))'
-PASS Property color value 'color-mix(in hsl, hwb(none 40% none), hsl(none 0.2 0.4))'
-PASS Property color value 'color-mix(in hwb, hsl(none none 20%), hwb(none 0.2 0.4))'
+FAIL Property color value 'color-mix(in oklab, oklch(0.1 0.3 none), oklab(0.3 0.2 0.4))' Colors do not match.
+Actual:   oklab(0.2 0.1 0.2)
+Expected: oklab(0.2 0.25 0.2).
+Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 1, expected 0.25 +/- 0.01, expected 0.25 but got 0.1
+FAIL Property color value 'color-mix(in hsl, hwb(none 40% none), hsl(none 0.2 0.4))' Colors do not match.
+Actual:   hsl(none 50.099998 35.200001)
+Expected: hsl(none 50.1% 35.2%).
+Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
+FAIL Property color value 'color-mix(in hwb, hsl(none none 20%), hwb(none 0.2 0.4))' Colors do not match.
+Actual:   hwb(none 10.099999 40.200001)
+Expected: hwb(none 10.1% 40.2%).
+Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
 PASS Property color value 'color-mix(in srgb, red)'
 PASS Property color value 'color-mix(in srgb, red 50%)'
 PASS Property color value 'color-mix(in srgb, red, green, blue)'
