@@ -1004,21 +1004,35 @@ if (SWIFT_REQUIRED)
 endif ()
 
 if (WebKit_PUBLIC_FRAMEWORK_HEADERS)
+    # The replacement script already writes the processed copy to the destination.
+    set(_public_headers_to_copy ${WebKit_PUBLIC_FRAMEWORK_HEADERS})
+    if (WebKit_WEBKITADDITIONS_SOURCE_HEADERS)
+        list(REMOVE_ITEM _public_headers_to_copy ${WebKit_WEBKITADDITIONS_SOURCE_HEADERS})
+    endif ()
     WEBKIT_COPY_FILES(WebKit_CopyHeaders
         DESTINATION ${WebKit_HEADERS_DIR}
-        FILES ${WebKit_PUBLIC_FRAMEWORK_HEADERS}
+        FILES ${_public_headers_to_copy}
         FLATTENED
     )
     list(APPEND WebKit_DEPENDENCIES WebKit_CopyHeaders)
+    # Consumers only need the staged copies when they cannot reach the headers
+    # through WebKit's header map.
+    if (NOT USE_HEADER_MAPS OR WebKit_FRAMEWORK_HEADER_MAP_IS_PRIVATE)
+        list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_CopyHeaders)
+    endif ()
 endif ()
 
 if (WebKit_PRIVATE_FRAMEWORK_HEADERS)
+    set(_private_headers_to_copy ${WebKit_PRIVATE_FRAMEWORK_HEADERS})
+    if (WebKit_WEBKITADDITIONS_SOURCE_HEADERS)
+        list(REMOVE_ITEM _private_headers_to_copy ${WebKit_WEBKITADDITIONS_SOURCE_HEADERS})
+    endif ()
     WEBKIT_COPY_FILES(WebKit_CopyPrivateHeaders
         DESTINATION ${WebKit_PRIVATE_HEADERS_DIR}
-        FILES ${WebKit_PRIVATE_FRAMEWORK_HEADERS}
+        FILES ${_private_headers_to_copy}
         FLATTENED
     )
-    if (NOT USE_HEADER_MAPS)
+    if (NOT USE_HEADER_MAPS OR WebKit_FRAMEWORK_HEADER_MAP_IS_PRIVATE)
         list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_CopyPrivateHeaders)
     endif ()
 endif ()

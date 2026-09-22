@@ -2552,14 +2552,12 @@ add_custom_command(
 )
 
 # Headers which import WebKitAdditions fragments have to be run through the
-# replacement script rather than being copied verbatim. The processed copy takes
-# the source header's place in the list, so that the header maps resolve
-# <WebKit/Foo.h> to the copy with the additions spliced in rather than to the
-# source tree.
+# replacement script rather than being copied verbatim. The header lists keep the
+# source path: the additions fragments import their own declarations, so WebKit
+# compiles against the source header, as it does under Xcode.
 set(_header_lists WebKit_PUBLIC_FRAMEWORK_HEADERS WebKit_PRIVATE_FRAMEWORK_HEADERS)
 set(_header_dirs WebKit_HEADERS_DIR WebKit_PRIVATE_HEADERS_DIR)
 foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
-    set(_updated_headers)
     foreach (_header IN LISTS ${_header_list})
         # Entries are relative to WEBKIT_DIR unless they are already absolute.
         set(_src ${WEBKIT_DIR})
@@ -2568,7 +2566,6 @@ foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
         # Only run headers through the replacement script if they actually contain
         # a WKA import.
         if (NOT _contents MATCHES "#import <WebKitAdditions/.*\.h>")
-            list(APPEND _updated_headers ${_header})
             continue ()
         endif ()
 
@@ -2585,10 +2582,9 @@ foreach (_header_list _header_dir IN ZIP_LISTS _header_lists _header_dirs)
             DEPENDS ${WEBKITADDITIONS_HEADERS_DEPENDENCIES}
             VERBATIM
         )
-        list(APPEND _updated_headers ${_dst})
         list(APPEND WebKit_WEBKITADDITIONS_HEADERS ${_dst})
+        list(APPEND WebKit_WEBKITADDITIONS_SOURCE_HEADERS ${_header})
     endforeach ()
-    set(${_header_list} ${_updated_headers})
 endforeach ()
 
 if (WebKit_WEBKITADDITIONS_HEADERS)
@@ -2598,6 +2594,11 @@ if (WebKit_WEBKITADDITIONS_HEADERS)
         DEPENDS ${WebKit_WEBKITADDITIONS_HEADERS})
     list(APPEND WebKit_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
     list(APPEND WebKit_INTERFACE_DEPENDENCIES WebKit_ReplaceWebKitAdditionsIncludes)
+
+    # The header map resolves to the source tree, where these headers still have
+    # their WebKitAdditions imports inside `#if 0`. Consumers have to read the
+    # spliced copies out of the framework instead, so they do not get the map.
+    set(WebKit_FRAMEWORK_HEADER_MAP_IS_PRIVATE ON)
 endif ()
 
 # LINKER:-u forces a symbol reference so -dead_strip_dylibs won't prune the weak framework.

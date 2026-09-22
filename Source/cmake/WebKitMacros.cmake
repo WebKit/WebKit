@@ -473,7 +473,11 @@ macro(_WEBKIT_TARGET_SETUP _target _logical_name)
             ${CMAKE_CURRENT_BINARY_DIR}/${_target}-project-headers.hmap
             ${CMAKE_CURRENT_BINARY_DIR}/${_target}-framework-headers.hmap
         )
-        target_include_directories(${_target} BEFORE PUBLIC
+        set(_framework_hmap_visibility PUBLIC)
+        if (${_logical_name}_FRAMEWORK_HEADER_MAP_IS_PRIVATE)
+            set(_framework_hmap_visibility PRIVATE)
+        endif ()
+        target_include_directories(${_target} BEFORE ${_framework_hmap_visibility}
             ${CMAKE_CURRENT_BINARY_DIR}/${_target}-framework-headers.hmap
         )
     endif ()
