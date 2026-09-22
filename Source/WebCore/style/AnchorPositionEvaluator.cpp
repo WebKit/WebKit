@@ -284,7 +284,8 @@ static inline void clearAnchorScrollSnapshots(RenderBox& anchored, bool clearAnc
 
 static inline bool isFixed(const RenderBoxModelObject& box)
 {
-    return box.layer() && box.layer()->behavesAsFixed();
+    CheckedPtr layer = box.layer() ? : box.enclosingLayer();
+    return layer && layer->behavesAsFixed();
 }
 
 void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool invalidateStyleForScrollPositionChanges)
@@ -310,8 +311,6 @@ void AnchorPositionEvaluator::captureScrollSnapshots(RenderBox& anchored, bool i
         if (auto* box = dynamicDowncast<RenderBox>(ancestor.get())) {
             if (box->hasPotentiallyScrollableOverflow())
                 adjuster.addScrollSnapshot(*box);
-            if (isFixed(*box))
-                isFixedAnchor = true;
             if (box->isStickilyPositioned())
                 adjuster.addStickySnapshot(*box);
         }
