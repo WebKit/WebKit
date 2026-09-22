@@ -594,18 +594,20 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     elseif (NOT _recorded_settings)
         message(STATUS "Not recording the build settings: set-webkit-configuration has no setting for the ${_configuration_directory} configuration")
     else ()
-        # Recorded now, so that a tree that is only configured is already the one
-        # later commands resolve, and again on every build, so that the settings
-        # are those of the build made last.
+        # Write the settings when this tree is configured and when it is built, so
+        # that later commands find the tree built last.
         #
         # Best-effort: set-webkit-configuration dies in some legitimate
         # environments (an OpenSource-only checkout using an internal SDK).
         # Do not fail the configure, and only add the target when recording
         # worked, so that the same failure does not just move to the first
         # build.
+        set(_record_settings_command
+            ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
+            --cmake ${_recorded_settings}
+        )
         execute_process(
-            COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
-                    --cmake ${_recorded_settings}
+            COMMAND ${_record_settings_command}
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             RESULT_VARIABLE _record_settings_result
             ERROR_VARIABLE _record_settings_error
@@ -613,12 +615,19 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         if (NOT _record_settings_result EQUAL 0)
             message(STATUS "Not recording the build settings: set-webkit-configuration failed: ${_record_settings_error}")
         else ()
-            add_custom_target(RecordBuildSettings ALL
-                COMMAND ${PERL_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Tools/Scripts/set-webkit-configuration
-                        --cmake ${_recorded_settings}
+            # Recording a setting, in any tree, makes the directory newer than this stamp.
+            set(_record_settings_stamp ${CMAKE_BINARY_DIR}/CMakeFiles/RecordBuildSettings.stamp)
+            add_custom_command(
+                OUTPUT ${_record_settings_stamp}
+                DEPENDS ${_base_product_dir}
+                COMMAND ${_record_settings_command}
+                COMMAND ${CMAKE_COMMAND} -E touch ${_record_settings_stamp}
                 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
                 COMMENT "Recording the build settings for later commands"
                 VERBATIM
+            )
+            add_custom_target(RecordBuildSettings ALL
+                DEPENDS ${_record_settings_stamp}
             )
         endif ()
     endif ()

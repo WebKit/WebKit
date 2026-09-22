@@ -33,7 +33,7 @@ use File::Temp qw(tempdir);
 use Test::More;
 use webkitdirs;
 
-plan(tests => 9);
+plan(tests => 11);
 
 no warnings qw(redefine prototype);
 *webkitdirs::isAppleCocoaWebKit = sub () { 1 };
@@ -83,3 +83,13 @@ is((stat($configurationPath))[9], $past, "recording a setting that has not chang
 writeBuildSetting("Configuration", "Release");
 
 isnt((stat($configurationPath))[9], $past, "recording a setting that changed rewrites the file");
+
+$past = time() - 3600;
+utime $past, $past, $base;
+writeBuildSetting("Configuration", "Release");
+
+is((stat($base))[9], $past, "recording a setting that has not changed leaves the directory alone");
+
+writeBuildSetting("Configuration", "Debug");
+
+isnt((stat($base))[9], $past, "recording a setting that changed dates the directory");

@@ -3359,11 +3359,18 @@ sub writeFileIfChanged($$)
         local $/;
         my $existingContents = <$existingFile>;
         close $existingFile;
-        return if defined $existingContents && $existingContents eq $contents;
+        return 0 if defined $existingContents && $existingContents eq $contents;
     }
     open my $file, ">", $filePath or die;
     print $file $contents;
     close $file;
+    return 1;
+}
+
+# A cmake build records the settings again when the directory is newer than its stamp.
+sub touchBaseProductDir()
+{
+    utime undef, undef, $baseProductDir;
 }
 
 # Record a setting in the base product directory the way set-webkit-configuration
@@ -3374,7 +3381,7 @@ sub writeBuildSetting($$)
     my ($fileName, $value) = @_;
     determineBaseProductDir();
     make_path($baseProductDir);
-    writeFileIfChanged(File::Spec->catfile($baseProductDir, $fileName), $value);
+    touchBaseProductDir() if writeFileIfChanged(File::Spec->catfile($baseProductDir, $fileName), $value);
 }
 
 # Record every setting given on this command line, so that the settings of the
@@ -3434,7 +3441,7 @@ WK_CMAKE_CONFIGURATION_BUILD_DIR = $(WK_CMAKE_BASE_PRODUCT_DIR)/$(WK_CMAKE_TREE_
 EOF
 
     make_path($baseProductDir);
-    writeFileIfChanged($filePath, $contents);
+    touchBaseProductDir() if writeFileIfChanged($filePath, $contents);
 }
 
 sub determineIsGenerateProjectOnly()
