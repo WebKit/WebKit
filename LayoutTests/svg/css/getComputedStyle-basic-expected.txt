@@ -34,6 +34,7 @@ rect: style.getPropertyValue(border-top-right-radius) : 0px
 rect: style.getPropertyValue(border-top-style) : none
 rect: style.getPropertyValue(border-top-width) : 0px
 rect: style.getPropertyValue(bottom) : auto
+rect: style.getPropertyValue(box-decoration-break) : slice
 rect: style.getPropertyValue(box-shadow) : none
 rect: style.getPropertyValue(box-sizing) : content-box
 rect: style.getPropertyValue(break-after) : auto
@@ -210,7 +211,6 @@ rect: style.getPropertyValue(zoom) : 1
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 rect: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 rect: style.getPropertyValue(-webkit-box-align) : stretch
-rect: style.getPropertyValue(-webkit-box-decoration-break) : slice
 rect: style.getPropertyValue(-webkit-box-direction) : normal
 rect: style.getPropertyValue(-webkit-box-flex) : 0
 rect: style.getPropertyValue(-webkit-box-flex-group) : 1
@@ -274,6 +274,7 @@ g: style.getPropertyValue(border-top-right-radius) : 0px
 g: style.getPropertyValue(border-top-style) : none
 g: style.getPropertyValue(border-top-width) : 0px
 g: style.getPropertyValue(bottom) : auto
+g: style.getPropertyValue(box-decoration-break) : slice
 g: style.getPropertyValue(box-shadow) : none
 g: style.getPropertyValue(box-sizing) : content-box
 g: style.getPropertyValue(break-after) : auto
@@ -450,7 +451,6 @@ g: style.getPropertyValue(zoom) : 1
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
 g: style.getPropertyValue(-webkit-border-vertical-spacing) : 0px
 g: style.getPropertyValue(-webkit-box-align) : stretch
-g: style.getPropertyValue(-webkit-box-decoration-break) : slice
 g: style.getPropertyValue(-webkit-box-direction) : normal
 g: style.getPropertyValue(-webkit-box-flex) : 0
 g: style.getPropertyValue(-webkit-box-flex-group) : 1

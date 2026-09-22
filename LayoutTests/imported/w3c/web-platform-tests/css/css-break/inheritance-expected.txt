@@ -1,6 +1,6 @@
 
-FAIL Property box-decoration-break has initial value slice assert_true: box-decoration-break doesn't seem to be supported in the computed style expected true got false
-FAIL Property box-decoration-break does not inherit assert_true: expected true got false
+PASS Property box-decoration-break has initial value slice
+PASS Property box-decoration-break does not inherit
 PASS Property break-after has initial value auto
 PASS Property break-after does not inherit
 PASS Property break-before has initial value auto

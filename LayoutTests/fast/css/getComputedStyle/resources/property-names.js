@@ -19,7 +19,7 @@ var propertiesToTest = {
     "-webkit-border-horizontal-spacing": true,
     "-webkit-border-vertical-spacing": true,
     "-webkit-box-align": true,
-    "-webkit-box-decoration-break": true,
+    "box-decoration-break": true,
     "-webkit-box-direction": true,
     "-webkit-box-flex": true,
     "-webkit-box-flex-group": true,
