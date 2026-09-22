@@ -142,6 +142,26 @@ void GPUVideoEncoderVTB::notifyDescription(std::span<const uint8_t> data)
     m_descriptionCallback(data);
 }
 
+void GPUVideoEncoderVTB::notifyDescriptionIfNeeded(CMSampleBufferRef sampleBuffer, CFStringRef boxName)
+{
+    if (!needsToSendDescription())
+        return;
+
+    if (useAnnexB()) {
+        setNeedsToSendDescription(false);
+        notifyDescription({ });
+        return;
+    }
+
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
+    if (RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms))) {
+        if (RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, boxName))) {
+            setNeedsToSendDescription(false);
+            notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions), static_cast<size_t>(CFDataGetLength(sampleExtensions))));
+        }
+    }
+}
+
 void GPUVideoEncoderVTB::notifyError()
 {
     m_errorCallback(false);
@@ -214,7 +234,22 @@ void GPUVideoEncoderVTB::configureCompressionSession()
     double maxKeyFrameIntervalDuration = 240;
     encoder->setProperty(PAL::kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration, adoptCF(CFNumberCreate(nullptr, kCFNumberDoubleType, &maxKeyFrameIntervalDuration)));
 
+    if (m_creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T2) {
+        double baseLayerFrameRateFraction = 0.5;
+        encoder->setProperty(PAL::kVTCompressionPropertyKey_BaseLayerFrameRateFraction, adoptCF(CFNumberCreate(nullptr, kCFNumberDoubleType, &baseLayerFrameRateFraction)).get());
+    }
+
+    configureAdditionalProperties();
+
     encoder->prepareToEncodeFrames();
+}
+
+void GPUVideoEncoderVTB::setProperty(CFStringRef key, CFTypeRef value)
+{
+    assertIsCurrent(queue());
+
+    if (RefPtr encoder = m_encoder)
+        encoder->setProperty(key, value);
 }
 
 void GPUVideoEncoderVTB::setEncoderBitrateBps(uint32_t bitrateBps)
@@ -276,17 +311,27 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
         }
 
         bool isKeyframe = true;
+        bool isBaseLayer = true;
         if (RetainPtr attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false)) {
             if (CFArrayGetCount(attachments)) {
                 if (RetainPtr attachment = dynamic_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, 0))) {
                     CFBooleanRef notSync = nullptr;
                     if (CFDictionaryGetValueIfPresent(attachment, PAL::kCMSampleAttachmentKey_NotSync, reinterpret_cast<const void**>(&notSync)))
                         isKeyframe = !CFBooleanGetValue(notSync);
+                    if (protectedThis->m_creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T2) {
+                        CFBooleanRef isDependedOnByOthers = nullptr;
+                        if (CFDictionaryGetValueIfPresent(attachment, PAL::kCMSampleAttachmentKey_IsDependedOnByOthers, reinterpret_cast<const void**>(&isDependedOnByOthers)))
+                            isBaseLayer = CFBooleanGetValue(isDependedOnByOthers);
+                    }
                 }
             }
         }
 
-        GPUVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1 };
+        std::optional<uint8_t> temporalIndex;
+        if (protectedThis->m_creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T2)
+            temporalIndex = isBaseLayer ? 0 : 1;
+
+        GPUVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1, temporalIndex };
         if (!protectedThis->convertAndNotify(sampleBuffer, WTF::move(info))) {
             protectedThis->notifyError();
             return;
@@ -304,6 +349,26 @@ void GPUVideoEncoderVTB::flush()
 
     if (RefPtr encoder = m_encoder)
         encoder->completeFrames(PAL::kCMTimeInvalid);
+}
+
+std::optional<Vector<uint8_t>> GPUVideoEncoderVTB::toVector(CMSampleBufferRef sampleBuffer)
+{
+    RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
+    if (!blockBuffer)
+        return { };
+
+    Vector<uint8_t> buffer;
+    size_t size = PAL::CMBlockBufferGetDataLength(blockBuffer);
+    buffer.reserveInitialCapacity(size);
+    for (size_t currentStart = 0; currentStart < size;) {
+        char* data = nullptr;
+        size_t length = 0;
+        if (PAL::CMBlockBufferGetDataPointer(blockBuffer, currentStart, &length, nullptr, &data) != noErr)
+            return { };
+        buffer.append(unsafeMakeSpan(reinterpret_cast<const uint8_t*>(data), length));
+        currentStart += length;
+    }
+    return buffer;
 }
 
 }

@@ -52,7 +52,7 @@ int32_t GPUVideoDecoderVTBH265::decodeFrame(int64_t timeStamp, std::span<const u
     if (!m_isAnnexB)
         return decodeFrameInternal(timeStamp, data);
 
-    auto naluIndices = findHEVCNaluIndices(data);
+    auto naluIndices = findNaluIndices(data);
 
     // FIXME: Skip rebuilding the VideoInfo when the VPS/SPS/PPS triplet is unchanged from the previous one.
     if (RefPtr videoInfo = createVideoInfoFromHEVCAnnexBStream(data, naluIndices))

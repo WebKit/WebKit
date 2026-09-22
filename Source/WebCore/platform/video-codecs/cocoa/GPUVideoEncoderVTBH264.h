@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,35 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#if USE(AVFOUNDATION)
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+#include "GPUVideoEncoderVTB.h"
+#include "H264Utilities.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class VideoInfo;
+class GPUVideoEncoderVTBH264 final : public GPUVideoEncoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(GPUVideoEncoderVTBH264);
+public:
+    static Ref<GPUVideoEncoderVTBH264> create(CreationInfo&& info, const Vector<std::pair<String, String>>& parameters, GPUVideoEncoderCallback&& encoderCallback, GPUVideoEncoderDescriptionCallback&& descriptionCallback, GPUVideoEncoderErrorCallback&& errorCallback)
+    {
+        return adoptRef(*new GPUVideoEncoderVTBH264(WTF::move(info), parameters, WTF::move(encoderCallback), WTF::move(descriptionCallback), WTF::move(errorCallback)));
+    }
 
-WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t>);
-WEBCORE_EXPORT Vector<uint8_t> convertAVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
+    ~GPUVideoEncoderVTBH264() = default;
 
-} // namespace WebCore
+private:
+    GPUVideoEncoderVTBH264(CreationInfo&&, const Vector<std::pair<String, String>>&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
+
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&) final;
+    void configureAdditionalProperties() final;
+
+    const RetainPtr<CFStringRef> m_profileLevel;
+
+    H264BitstreamParser m_bitstreamParser;
+};
+
+}
+
+#endif // USE(AVFOUNDATION)

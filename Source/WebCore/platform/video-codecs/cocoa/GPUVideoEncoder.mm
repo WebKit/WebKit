@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUVideoEncoder.h"
 
+#import "GPUVideoEncoderVTBH264.h"
 #import "GPUVideoEncoderVTBH265.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/StdLibExtras.h>
@@ -118,8 +119,18 @@ RefPtr<GPUVideoEncoder> GPUVideoEncoder::create(CreationInfo&& creationInfo, con
 {
     if (creationInfo.useWebCoreEncoder) {
 #if USE(AVFOUNDATION)
-        if (creationInfo.codecType == VideoCodecType::H265)
+        if (creationInfo.codecType == VideoCodecType::H265) {
+            // We only support L1T1 for H265.
+            creationInfo.scalabilityMode = VideoEncoderScalabilityMode::L1T1;
             return GPUVideoEncoderVTBH265::create(WTF::move(creationInfo), WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+        }
+
+        if (creationInfo.codecType == VideoCodecType::H264) {
+            if (creationInfo.scalabilityMode == VideoEncoderScalabilityMode::L1T3)
+                return nullptr;
+            return GPUVideoEncoderVTBH264::create(WTF::move(creationInfo), parameters, WTF::move(callback), WTF::move(descriptionCallback), WTF::move(errorCallback));
+        }
+        return nullptr;
 #endif
     }
 

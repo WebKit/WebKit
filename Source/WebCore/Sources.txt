@@ -2741,6 +2741,7 @@ platform/graphics/GraphicsLayerTransform.cpp
 platform/graphics/GraphicsStyle.cpp
 platform/graphics/GraphicsTZoneImpls.cpp
 platform/graphics/GraphicsTypes.cpp
+platform/graphics/H264Utilities.cpp
 platform/graphics/HEVCUtilities.cpp
 platform/graphics/Icon.cpp
 platform/graphics/Image.cpp

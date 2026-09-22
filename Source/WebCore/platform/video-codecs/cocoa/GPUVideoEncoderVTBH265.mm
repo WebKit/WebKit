@@ -62,21 +62,9 @@ bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
         return true;
     }
 
-    RetainPtr blockBuffer = PAL::CMSampleBufferGetDataBuffer(sampleBuffer);
-    if (!blockBuffer)
+    auto buffer = toVector(sampleBuffer);
+    if (!buffer)
         return false;
-
-    Vector<uint8_t> buffer;
-    size_t size = PAL::CMBlockBufferGetDataLength(blockBuffer);
-    buffer.reserveInitialCapacity(size);
-    for (size_t currentStart = 0; currentStart < size;) {
-        char* data = nullptr;
-        size_t length = 0;
-        if (PAL::CMBlockBufferGetDataPointer(blockBuffer, currentStart, &length, nullptr, &data) != noErr)
-            return false;
-        buffer.append(unsafeMakeSpan(reinterpret_cast<const uint8_t*>(data), length));
-        currentStart += length;
-    }
 
     if (needsToSendDescription()) {
         RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
@@ -88,7 +76,7 @@ bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
         }
     }
 
-    notifyEncodedFrame(buffer.span(), info);
+    notifyEncodedFrame(buffer->span(), info);
     return true;
 }
 

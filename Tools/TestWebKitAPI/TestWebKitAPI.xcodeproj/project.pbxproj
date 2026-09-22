@@ -186,6 +186,7 @@
 			script = (
 				"\"${SCRIPT_INPUT_FILE_0}\"",
 				"",
+				"",
 			);
 		};
 /* End PBXBuildRule section */
@@ -820,6 +821,7 @@
 				WebCore/FontCascade.cpp,
 				WebCore/FontShadowTests.cpp,
 				WebCore/GridPosition.cpp,
+				WebCore/H264UtilitiesTests.cpp,
 				WebCore/HEVCUtilitiesTests.cpp,
 				WebCore/HTMLParserIdioms.cpp,
 				WebCore/HTTPHeaderField.cpp,

@@ -465,13 +465,13 @@ String createDoViCodecParametersString(const DoViParameters& parameters)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HEVCBitstreamParser);
 
-HEVCAnnexBNaluIndices findHEVCNaluIndices(std::span<const uint8_t> buffer)
+AnnexBNaluIndices findNaluIndices(std::span<const uint8_t> buffer)
 {
     // This is sorta like Boyer-Moore, but with only the first optimization step: given a 3-byte
     // sequence we're looking at, if the 3rd byte isn't 1 or 0, skip ahead to the next 3-byte
     // sequence. 0s and 1s are relatively rare, so this will skip the majority of reads/checks.
     constexpr size_t naluShortStartSequenceSize = 3;
-    HEVCAnnexBNaluIndices result;
+    AnnexBNaluIndices result;
     auto& sequences = result.indices;
     if (buffer.size() < naluShortStartSequenceSize)
         return result;
@@ -484,7 +484,7 @@ HEVCAnnexBNaluIndices findHEVCNaluIndices(std::span<const uint8_t> buffer)
         }
         if (buffer[i + 2] == 1) {
             if (!buffer[i + 1] && !buffer[i]) {
-                HEVCNaluIndex index { i, i + 3, 0 };
+                NaluIndex index { i, i + 3, 0 };
                 if (index.startOffset > 0 && !buffer[index.startOffset - 1])
                     --index.startOffset;
 
@@ -529,7 +529,7 @@ Vector<uint8_t> parseRbsp(std::span<const uint8_t> data)
     return out;
 }
 
-std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t> data, const HEVCAnnexBNaluIndices& naluIndices)
+std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t> data, const AnnexBNaluIndices& naluIndices)
 {
     if (!naluIndices.vpsIndex)
         return std::nullopt;
@@ -1704,7 +1704,7 @@ const HEVCBitstreamParser::SpsState* HEVCBitstreamParser::sps(uint16_t id) const
 
 void HEVCBitstreamParser::parseBitstream(std::span<const uint8_t> bitstream)
 {
-    for (auto& index : findHEVCNaluIndices(bitstream).indices)
+    for (auto& index : findNaluIndices(bitstream).indices)
         parseSlice(bitstream.subspan(index.payloadStartOffset, index.payloadSize));
 }
 

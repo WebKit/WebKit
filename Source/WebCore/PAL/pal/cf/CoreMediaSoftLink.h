@@ -60,6 +60,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMFormatDescriptionEqual, Boolean,
 #define CMFormatDescriptionEqual softLink_CoreMedia_CMFormatDescriptionEqual
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionGetHEVCParameterSetAtIndex, OSStatus, (CMFormatDescriptionRef videoDesc, size_t parameterSetIndex, const uint8_t** parameterSetPointerOut, size_t* parameterSetSizeOut, size_t* parameterSetCountOut, int* nalUnitHeaderLengthOut), (videoDesc, parameterSetIndex, parameterSetPointerOut, parameterSetSizeOut, parameterSetCountOut, nalUnitHeaderLengthOut))
 #define CMVideoFormatDescriptionGetHEVCParameterSetAtIndex softLink_CoreMedia_CMVideoFormatDescriptionGetHEVCParameterSetAtIndex
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionGetH264ParameterSetAtIndex, OSStatus, (CMFormatDescriptionRef videoDesc, size_t parameterSetIndex, const uint8_t** parameterSetPointerOut, size_t* parameterSetSizeOut, size_t* parameterSetCountOut, int* nalUnitHeaderLengthOut), (videoDesc, parameterSetIndex, parameterSetPointerOut, parameterSetSizeOut, parameterSetCountOut, nalUnitHeaderLengthOut))
+#define CMVideoFormatDescriptionGetH264ParameterSetAtIndex softLink_CoreMedia_CMVideoFormatDescriptionGetH264ParameterSetAtIndex
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMSampleBufferGetTypeID, CFTypeID, (void), ())
 #define CMSampleBufferGetTypeID softLink_CoreMedia_CMSampleBufferGetTypeID
 // Manual equivalent of WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer) because

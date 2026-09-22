@@ -46,10 +46,10 @@ std::optional<PlatformMediaCapabilitiesInfo> validateDoViParameters(const DoViPa
 WEBCORE_EXPORT Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef, bool isKeyframe);
 
 // Look for a leading VPS+SPS+PPS triplet in an HEVC Annex B chunk. If found, returns a VideoInfo describing it.
-WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t>, const HEVCAnnexBNaluIndices&);
+WEBCORE_EXPORT RefPtr<VideoInfo> createVideoInfoFromHEVCAnnexBStream(std::span<const uint8_t>, const AnnexBNaluIndices&);
 
 // Converts an HEVC Annex B chunk into hvcC-style length-prefixed NAL units suitable for a CMSampleBuffer.
-WEBCORE_EXPORT Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t>, const HEVCAnnexBNaluIndices&);
+WEBCORE_EXPORT Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t>, const AnnexBNaluIndices&);
 
 // Parses an HEVC decoder configuration record ("hvcC" box) directly into a VideoInfo, deriving
 // width/height from the embedded parameter sets. Returns nullptr on failure.

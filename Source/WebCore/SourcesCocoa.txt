@@ -732,6 +732,7 @@ platform/text/mac/TextCheckingMac.mm @nonARC
 platform/video-codecs/cocoa/GPUVideoDecoderVTBH265.mm @nonARC
 platform/video-codecs/cocoa/GPUVideoEncoder.mm @nonARC
 platform/video-codecs/cocoa/GPUVideoEncoderVTB.mm @nonARC
+platform/video-codecs/cocoa/GPUVideoEncoderVTBH264.mm @nonARC
 platform/video-codecs/cocoa/GPUVideoEncoderVTBH265.mm @nonARC
 platform/video-codecs/cocoa/VideoDecoderVTB.mm @nonARC
 platform/video-codecs/cocoa/VideoEncoderVTBSession.mm @nonARC
