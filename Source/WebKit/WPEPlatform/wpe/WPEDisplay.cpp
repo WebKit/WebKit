@@ -292,7 +292,7 @@ WPEDisplay* wpe_display_get_default(void)
         if (!extensionName) {
             static constexpr auto displayNamePrefix = "wpe-display-"_s;
             extensionName = CStringView::unsafeFromUTF8(g_getenv("WPE_DISPLAY"));
-            if (extensionName.lengthInBytes() > displayNamePrefix.length() && CStringView::fromUTF8(extensionName.span().first(displayNamePrefix.length())) == displayNamePrefix) {
+            if (extensionName.lengthInBytes() > displayNamePrefix.length() && equalSpans(extensionName.span().first(displayNamePrefix.length()), displayNamePrefix.span())) {
                 auto nullTerminatedSpan = extensionName.spanIncludingNullTerminator();
                 extensionName = CStringView::fromUTF8(nullTerminatedSpan.last(nullTerminatedSpan.size() - displayNamePrefix.length()));
             }
