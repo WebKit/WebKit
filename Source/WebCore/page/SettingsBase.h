@@ -149,11 +149,9 @@ protected:
     void setNeedsRelayoutAllFrames();
     void mediaTypeOverrideChanged();
     void imagesEnabledChanged();
-#if __has_include(<WebKitAdditions/SettingsBaseAdditions.h>)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#include <WebKitAdditions/SettingsBaseAdditions.h>
-#pragma clang diagnostic pop
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void axCustomColorModeStateChanged();
+    void axCustomColorModeAppearanceDetectionChanged();
 #endif
     void userStyleSheetLocationChanged();
     void usesBackForwardCacheChanged();
