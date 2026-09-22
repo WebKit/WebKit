@@ -27,13 +27,18 @@
 #pragma once
 
 #include <WebCore/HTTPHeaderNames.h>
+#include <optional>
+#include <ranges>
+#include <span>
 #include <utility>
+#include <wtf/ArgumentCoder.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-// FIXME: Not every header fits into a map. Notably, multiple Set-Cookie header fields are needed to set multiple cookies.
 
 class HTTPHeaderMap {
 public:
@@ -59,6 +64,9 @@ public:
 
     typedef Vector<CommonHeader, 0, CrashOnOverflow, 6> CommonHeadersVector;
     typedef Vector<UncommonHeader, 0, CrashOnOverflow, 0> UncommonHeadersVector;
+
+    using RepeatedValueOffsets = Vector<unsigned, 0, CrashOnOverflow, 1>;
+    using RepeatedValueOffsetsMap = HashMap<String, RepeatedValueOffsets, ASCIICaseInsensitiveHash>;
 
     class HTTPHeaderMapConstIterator {
     public:
@@ -137,7 +145,8 @@ public:
     typedef HTTPHeaderMapConstIterator const_iterator;
 
     WEBCORE_EXPORT HTTPHeaderMap();
-    WEBCORE_EXPORT HTTPHeaderMap(CommonHeadersVector&&, UncommonHeadersVector&&);
+    WEBCORE_EXPORT HTTPHeaderMap(CommonHeadersVector&&, UncommonHeadersVector&&, RepeatedValueOffsetsMap&&);
+    WEBCORE_EXPORT static std::optional<HTTPHeaderMap> fromIPCData(CommonHeadersVector&&, UncommonHeadersVector&&, RepeatedValueOffsetsMap&&);
 
     // Gets a copy of the data suitable for passing to another thread.
     WEBCORE_EXPORT HTTPHeaderMap isolatedCopy() const &;
@@ -150,15 +159,24 @@ public:
     {
         m_commonHeaders.clear();
         m_uncommonHeaders.clear();
+        m_repeatedValueOffsets.clear();
     }
 
     void shrinkToFit()
     {
         m_commonHeaders.shrinkToFit();
         m_uncommonHeaders.shrinkToFit();
+        for (auto& offsets : m_repeatedValueOffsets.values())
+            offsets.shrinkToFit();
     }
 
     WEBCORE_EXPORT String get(StringView name) const;
+    auto getAll(StringView name) const LIFETIME_BOUND
+    {
+        auto values = separateRepeatedValues(name);
+        auto count = values ? values->size() : 0;
+        return std::views::iota(size_t { 0 }, count) | std::views::transform(values.value_or(RepeatedValueSeparator()));
+    }
     WEBCORE_EXPORT void set(const String& name, const String& value);
     WEBCORE_EXPORT void add(const String& name, const String& value);
     void setUncommonHeader(const String& name, const String& value);
@@ -175,6 +193,12 @@ public:
 #endif
 
     WEBCORE_EXPORT String get(HTTPHeaderName) const;
+    auto getAll(HTTPHeaderName name) const LIFETIME_BOUND
+    {
+        auto values = separateRepeatedValues(name);
+        auto count = values ? values->size() : 0;
+        return std::views::iota(size_t { 0 }, count) | std::views::transform(values.value_or(RepeatedValueSeparator()));
+    }
     void set(HTTPHeaderName, const String& value);
     void add(HTTPHeaderName, const String& value);
     bool addIfNotPresent(HTTPHeaderName, const String&);
@@ -195,14 +219,20 @@ public:
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String get(ASCIILiteral) const = delete;
+    template<size_t length> auto getAll(ASCIILiteral) const = delete;
     template<size_t length> void set(ASCIILiteral, const String&) = delete;
     template<size_t length> bool contains(ASCIILiteral) = delete;
     template<size_t length> bool remove(ASCIILiteral) = delete;
 
-    const CommonHeadersVector& commonHeaders() const LIFETIME_BOUND { return m_commonHeaders; }
-    const UncommonHeadersVector& uncommonHeaders() const LIFETIME_BOUND { return m_uncommonHeaders; }
-    CommonHeadersVector& commonHeaders() LIFETIME_BOUND { return m_commonHeaders; }
-    UncommonHeadersVector& uncommonHeaders() LIFETIME_BOUND { return m_uncommonHeaders; }
+    auto commonHeaderKeys() const LIFETIME_BOUND
+    {
+        return m_commonHeaders.span() | std::views::transform(&CommonHeader::key);
+    }
+
+    auto uncommonHeaderKeys() const LIFETIME_BOUND
+    {
+        return m_uncommonHeaders.span() | std::views::transform(&UncommonHeader::key);
+    }
 
     const_iterator begin() const LIFETIME_BOUND { return const_iterator(*this, 0, 0); }
     const_iterator end() const LIFETIME_BOUND { return const_iterator(*this, m_commonHeaders.size(), m_uncommonHeaders.size()); }
@@ -223,10 +253,42 @@ public:
     }
 
 private:
+    friend struct IPC::ArgumentCoder<HTTPHeaderMap>;
+
+    const CommonHeadersVector& commonHeaders() const LIFETIME_BOUND { return m_commonHeaders; }
+    const UncommonHeadersVector& uncommonHeaders() const LIFETIME_BOUND { return m_uncommonHeaders; }
+    const RepeatedValueOffsetsMap& repeatedValueOffsets() const LIFETIME_BOUND { return m_repeatedValueOffsets; }
+
     WEBCORE_EXPORT String getUncommonHeader(StringView name) const;
+
+    class RepeatedValueSeparator {
+    public:
+        RepeatedValueSeparator()
+            : RepeatedValueSeparator(emptyString(), { })
+        {
+        }
+
+        RepeatedValueSeparator(const String& combined, std::span<const unsigned> offsets)
+            : m_combined(combined)
+            , m_offsets(offsets)
+        {
+        }
+
+        size_t size() const { return m_offsets.size() + 1; }
+        WEBCORE_EXPORT String operator()(size_t index) const;
+
+    private:
+        const String& m_combined;
+        const std::span<const unsigned> m_offsets;
+    };
+    void addRepeatedHeader(StringView name, String& combined, String value);
+    WEBCORE_EXPORT std::optional<RepeatedValueSeparator> separateRepeatedValues(StringView) const LIFETIME_BOUND;
+    WEBCORE_EXPORT std::optional<RepeatedValueSeparator> separateRepeatedValues(HTTPHeaderName) const LIFETIME_BOUND;
+    RepeatedValueSeparator separateRepeatedValues(StringView name, const String& combined) const LIFETIME_BOUND;
 
     CommonHeadersVector m_commonHeaders;
     UncommonHeadersVector m_uncommonHeaders;
+    RepeatedValueOffsetsMap m_repeatedValueOffsets;
 };
 
 } // namespace WebCore

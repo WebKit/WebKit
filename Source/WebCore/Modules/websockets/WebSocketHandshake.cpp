@@ -186,14 +186,10 @@ static bool isStandardWebSocketHandshakeRequestHeader(HTTPHeaderName name)
 
 void WebSocketHandshake::setClientHandshakeRequestHeaders(const HTTPHeaderMap& headers)
 {
-    HTTPHeaderMap filtered;
-    for (const auto& header : headers) {
-        if (auto httpHeaderName = header.keyAsHTTPHeaderName) {
-            if (isStandardWebSocketHandshakeRequestHeader(*httpHeaderName))
-                continue;
-            filtered.set(*httpHeaderName, header.value);
-        } else
-            filtered.setUncommonHeader(header.key, header.value);
+    HTTPHeaderMap filtered = headers;
+    for (auto key : headers.commonHeaderKeys()) {
+        if (isStandardWebSocketHandshakeRequestHeader(key))
+            filtered.remove(key);
     }
     m_clientHandshakeRequestHeaders = WTF::move(filtered);
 }
@@ -254,11 +250,13 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest(NOESCAPE const Functi
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensions);
     request.setHTTPUserAgent(m_userAgent);
     request.setIsAppInitiated(m_isAppInitiated);
-    for (const auto& header : m_clientHandshakeRequestHeaders) {
-        if (auto httpHeaderName = header.keyAsHTTPHeaderName)
-            request.setHTTPHeaderField(*httpHeaderName, header.value);
-        else
-            request.setHTTPHeaderField(header.key, header.value);
+    for (auto key : m_clientHandshakeRequestHeaders.commonHeaderKeys()) {
+        for (auto value : m_clientHandshakeRequestHeaders.getAll(key))
+            request.addHTTPHeaderField(key, value);
+    }
+    for (auto& key : m_clientHandshakeRequestHeaders.uncommonHeaderKeys()) {
+        for (auto value : m_clientHandshakeRequestHeaders.getAll(key))
+            request.addHTTPHeaderField(key, value);
     }
     return request;
 }
@@ -563,9 +561,9 @@ std::span<const uint8_t> WebSocketHandshake::readHTTPHeaders(std::span<const uin
                 }
                 sawSecWebSocketProtocolHeaderField = true;
             }
-
-            m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
         }
+
+        m_serverHandshakeResponse.addHTTPHeaderField(headerName, value);
     }
     return data;
 }
