@@ -1,0 +1,6 @@
+A grid with size or inline-size containment takes its intrinsic width from contain-intrinsic-width rather than from its items.
+
+PASS
+PASS
+PASS
+PASS

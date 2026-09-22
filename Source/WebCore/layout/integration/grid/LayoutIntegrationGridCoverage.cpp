@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "RenderChildIterator.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementStyleInlines.h"
 #include "RenderGrid.h"
 #include "RenderText.h"
 #include "RenderView.h"
@@ -59,7 +60,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasColumnAutoFlow,
     GridHasNonFixedGaps,
     GridIsOutOfFlow,
-    GridHasContainsSize,
+    GridHasSizeOrInlineSizeContainment,
     GridHasUnsupportedGridTemplateColumns,
     GridHasUnsupportedGridTemplateRows,
     GridHasUnsupportedJustifyContent,
@@ -412,8 +413,10 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         }
     }
 
-    if (renderGridStyle->usedContain().contains(Style::ContainValue::Size))
-        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasContainsSize, reasons, reasonCollectionMode);
+    // These are the forms of containment GFC cannot honour: it would size these grids' tracks from
+    // their grid items rather than from contain-intrinsic-size.
+    if (renderGrid.shouldApplySizeOrInlineSizeContainment())
+        ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasSizeOrInlineSizeContainment, reasons, reasonCollectionMode);
 
     if (!renderGridStyle->justifyContent().isNormal())
         ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridHasUnsupportedJustifyContent, reasons, reasonCollectionMode);
@@ -720,8 +723,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridIsOutOfFlow:
         stream << "grid is out-of-flow";
         break;
-    case GridAvoidanceReason::GridHasContainsSize:
-        stream << "grid has contains: size";
+    case GridAvoidanceReason::GridHasSizeOrInlineSizeContainment:
+        stream << "grid has size or inline-size containment";
         break;
     case GridAvoidanceReason::GridHasUnsupportedGridTemplateColumns:
         stream << "grid has unsupported grid-template-columns";
