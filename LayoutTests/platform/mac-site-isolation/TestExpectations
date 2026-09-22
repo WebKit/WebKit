@@ -97,7 +97,6 @@ imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getStats.https.html?rest [
 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-getStats.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/srcdoc/srcdoc-history-entries.html [ Failure ]
-imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-history-traversal-during-onnavigate.html [ Failure ]
 inspector/dom/inspect-template-node.html [ Failure ]
 inspector/dom/inspect.html [ Failure ]
 inspector/dom/willDestroyDOMNode.html [ Failure ]
