@@ -1508,7 +1508,8 @@ class VM
     $script.puts "export JSC_useDollarVM=true" if @vmType == :jsc
     $script.puts "export DYLD_LIBRARY_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
     $script.puts "export DYLD_FRAMEWORK_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
-    $script.puts "export LD_LIBRARY_PATH=#{Shellwords.shellescape(myLibPath.join(':').to_s)}"
+    ldLibraryPath = ([ENV['LD_LIBRARY_PATH']] + myLibPath).reject { | path | path.to_s.empty? }
+    $script.puts "export LD_LIBRARY_PATH=#{Shellwords.shellescape(ldLibraryPath.join(':').to_s)}"
 
     unless myLibPath.empty?
         primaryLibPath = myLibPath.first
