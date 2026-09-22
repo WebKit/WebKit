@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          perspective: 300px;
+          overflow: hidden;
+      }
+      /* Sits below the camera, so the plane inside it lies flat. */
+      .scene {
+          position: absolute;
+          left: 400px;
+          top: 450px;
+          transform-style: preserve-3d;
+      }
+      /* 1200px deep once it lies flat, so it reaches 600px towards the viewer, well past
+         the camera that sits 300px away. */
+      #ground {
+          position: absolute;
+          width: 1200px;
+          height: 1200px;
+          background-color: green;
+          will-change: transform;
+          transform: translate(-50%, -50%) rotateX(90deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene" id="scene"><div id="ground"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var scene = document.getElementById("scene");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { scene.style.transform = "rotateY(10deg)"; },
+          () => { scene.style.transform = "rotateY(20deg)"; },
+          // Only the half of the plane in front of the camera is painted, and it fills the frame from
+          // the far edge of the plane down past the bottom. Mapping the four corners instead puts the
+          // two behind the camera back onto the far half, which damages a band at the top only and
+          // leaves everything below it unrepainted.
+          () => {
+              const damage = latestFrameDamage();
+              if (!assert(damage, "no damage was recorded for the frame"))
+                  return;
+              assertRectsEq(damage.rects, [[0, 126, 800, 474]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

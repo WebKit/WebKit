@@ -887,9 +887,8 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
         return;
 
     const auto transform = combinedTransform(context);
-    auto layerRectInFrame = transform.mapRect(paintedLayerRect());
-    auto clipBounds = FloatRect(canvas.getDeviceClipBounds());
-    layerRectInFrame.intersect(clipBounds);
+    const IntRect clipBounds = canvas.getDeviceClipBounds();
+    auto layerRectInFrame = FloatRect(projectedBoundingBox(transform, paintedLayerRect(), clipBounds));
 
     trackLayerRect(context, layerRectInFrame);
 
@@ -903,11 +902,8 @@ void SkiaCompositingLayer::collectFrameDamage(SkCanvas& canvas, PaintContext& co
         return;
     }
 
-    for (const auto& rect : *m_layerDamage) {
-        auto damageRect = transform.mapRect(FloatRect(rect));
-        damageRect.intersect(clipBounds);
-        context.collectState->frameDamage.add(damageRect);
-    }
+    for (const auto& rect : *m_layerDamage)
+        context.collectState->frameDamage.add(projectedBoundingBox(transform, FloatRect(rect), clipBounds));
 }
 
 void SkiaCompositingLayer::collectBackdropDamage(SkCanvas& canvas, PaintContext& context)
@@ -918,10 +914,8 @@ void SkiaCompositingLayer::collectBackdropDamage(SkCanvas& canvas, PaintContext&
     // The filter samples the whole backdrop, so anything changing underneath changes every pixel of it. Only
     // the rect is collected here, because what changed underneath is only known once the walk has finished.
     // The backdrop root's subtree is walked by the walk itself, so it is not walked again.
-    auto backdropRectInFrame = combinedTransform(context).mapRect(m_backdrop.clipRect.rect());
-    backdropRectInFrame.intersect(FloatRect(canvas.getDeviceClipBounds()));
-
-    context.collectState->backdropRectsInFrame.append(backdropRectInFrame);
+    const auto transform = combinedTransform(context);
+    context.collectState->backdropRectsInFrame.append(FloatRect(projectedBoundingBox(transform, m_backdrop.clipRect.rect(), canvas.getDeviceClipBounds())));
 }
 
 bool SkiaCompositingLayer::hasGroupPropertyDamage() const
@@ -951,15 +945,14 @@ void SkiaCompositingLayer::addGroupDamage(SkCanvas& canvas, PaintContext& contex
     if (!damagePropagationEnabled())
         return;
 
-    const auto clipBounds = FloatRect(canvas.getDeviceClipBounds());
+    const IntRect clipBounds = canvas.getDeviceClipBounds();
 
-    auto layerRectInFrame = combinedTransform(context).mapRect(paintedLayerRect());
-    layerRectInFrame.intersect(clipBounds);
+    auto layerRectInFrame = projectedBoundingBox(combinedTransform(context), paintedLayerRect(), clipBounds);
     if (!layerRectInFrame.isEmpty())
         context.collectState->frameDamage.add(layerRectInFrame);
 
     for (const auto& rect : overlapRects) {
-        auto damageRect = FloatRect(rect);
+        auto damageRect = rect;
         damageRect.intersect(clipBounds);
         if (!damageRect.isEmpty())
             context.collectState->frameDamage.add(damageRect);

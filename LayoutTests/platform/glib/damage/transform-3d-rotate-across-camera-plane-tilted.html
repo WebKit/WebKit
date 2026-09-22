@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          perspective: 400px;
+          overflow: hidden;
+      }
+      /* The rotateZ makes the plane inside it cross the camera at an angle. */
+      .scene {
+          position: absolute;
+          left: 400px;
+          top: 500px;
+          transform-style: preserve-3d;
+          transform: rotateZ(-30deg) rotateY(-15deg);
+      }
+      /* 900px deep once it lies flat, so it reaches 450px towards the viewer, past the
+         camera that sits 400px away. */
+      #ground {
+          position: absolute;
+          width: 900px;
+          height: 900px;
+          background-color: green;
+          will-change: transform;
+          transform: translate(-50%, -50%) rotateX(90deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="scene" id="scene"><div id="ground"></div></div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      var scene = document.getElementById("scene");
+
+      processAnimationFrameSequence({skipFirstFrameToEnsureInitialPaintingDone: true}, [
+          () => { scene.style.transform = "rotateZ(-30deg) rotateY(-15deg)"; },
+          () => { scene.style.transform = "rotateZ(-30deg) rotateY(-10deg)"; },
+          // Two of the four corners are behind the camera. The part in front of it spreads towards
+          // two different sides of the frame, one for each edge of the plane that crosses the camera,
+          // and the damage has to cover both.
+          () => {
+              const damage = latestFrameDamage();
+              if (!assert(damage, "no damage was recorded for the frame"))
+                  return;
+              assertRectsEq(damage.rects, [[0, 124, 800, 476]]);
+          },
+      ], 0);
+    </script>
+  </body>
+</html>

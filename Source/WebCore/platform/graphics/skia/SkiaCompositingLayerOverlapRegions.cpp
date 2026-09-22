@@ -103,10 +103,10 @@ IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatR
         mapPoint(rect.minXMaxYCorner())
     };
     std::array<bool, 4> isPositive = {
-        vertex[0].w >= 0,
-        vertex[1].w >= 0,
-        vertex[2].w >= 0,
-        vertex[3].w >= 0
+        vertex[0].w > 0,
+        vertex[1].w > 0,
+        vertex[2].w > 0,
+        vertex[3].w > 0
     };
 
     auto findFirstPositiveVertex = [&]() {
@@ -178,7 +178,9 @@ IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatR
         return clipped(xMinMax, yMinMax);
     };
     auto boundingBoxPPN = [&](const Point& p1, const Point& p2, const Point& n3) -> IntRect {
-        return boundingBoxPPP(p1, p2, toPositive(p1, n3));
+        // Both edges that reach n3 cross the eye plane, so the triangle is unbounded in the direction of
+        // each of them, and taking only one of the two leaves part of what is painted uncovered.
+        return unionRect(boundingBoxPPP(p1, p2, toPositive(p1, n3)), boundingBoxPPP(p1, p2, toPositive(p2, n3)));
     };
     auto boundingBoxPNN = [&](const Point& p1, const Point& n2, const Point& n3) -> IntRect {
         return boundingBoxPPP(p1, toPositive(p1, n2), toPositive(p1, n3));
@@ -194,8 +196,8 @@ IntRect projectedBoundingBox(const TransformationMatrix& transform, const FloatR
         return boundingBoxPNN(vertex[i1], vertex[i2], vertex[i3]);
     };
 
-    // A rect that crosses the eye plane projects to a half plane, which only the clip bounds. One
-    // entirely behind the eye plane projects to nothing.
+    // A rect that crosses the eye plane projects to an unbounded region, which only the clip bounds
+    // limit. One entirely behind the eye plane projects to nothing.
     const int positiveVertexCount = isPositive[0] + isPositive[1] + isPositive[2] + isPositive[3];
 
     switch (positiveVertexCount) {
