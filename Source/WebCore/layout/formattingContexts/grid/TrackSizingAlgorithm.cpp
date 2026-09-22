@@ -102,6 +102,7 @@ struct UnsizedTrack {
         return infinitelyGrowable ? LayoutUnit::max() : growthLimit;
     }
 
+    // https://drafts.csswg.org/css-grid-1/#algo-init
     // https://drafts.csswg.org/css-grid-1/#algo-single-span-items
     // "In all cases, if a track's growth limit is now less than its base size,
     // increase the growth limit to match the base size."
@@ -1115,7 +1116,12 @@ static UnsizedTracks initializeTrackSizes(const TrackSizingFunctionsList& trackS
             return { };
         };
 
-        return { baseSize(), growthLimit(), trackSizingFunctions };
+        auto unsizedTrack = UnsizedTrack { baseSize(), growthLimit(), trackSizingFunctions };
+
+        // In all cases, if the growth limit is less than the base size, increase the growth limit to
+        // match the base size.
+        unsizedTrack.ensureGrowthLimitIsBiggerThanBaseSize();
+        return unsizedTrack;
     });
 }
 
