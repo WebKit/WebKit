@@ -131,7 +131,10 @@ public:
 
     void didRenderFrame(TargetContents = TargetContents::Valid);
     void sendFrame();
+
+#if USE(TEXTURE_MAPPER)
     void clear(const OptionSet<WebCore::CompositionReason>&);
+#endif
 
     std::optional<SkColor> skiaClearColor(const OptionSet<WebCore::CompositionReason>&);
 

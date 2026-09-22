@@ -1119,16 +1119,9 @@ std::optional<SkColor> AcceleratedSurface::skiaClearColor(const OptionSet<WebCor
     return std::nullopt;
 }
 
+#if USE(TEXTURE_MAPPER)
 void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reasons)
 {
-    if (m_useSkia) {
-        if (auto clearColor = skiaClearColor(reasons)) {
-            if (auto* canvas = this->canvas())
-                canvas->clear(*clearColor);
-        }
-        return;
-    }
-
     const auto backgroundColor = this->backgroundColor();
     if (backgroundColor && !backgroundColor->isOpaque()) {
         glClearColor(0, 0, 0, 0);
@@ -1145,6 +1138,7 @@ void AcceleratedSurface::clear(const OptionSet<WebCore::CompositionReason>& reas
         glClear(GL_COLOR_BUFFER_BIT);
     }
 }
+#endif
 
 void AcceleratedSurface::didRenderFrame(TargetContents targetContents)
 {

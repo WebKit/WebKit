@@ -216,9 +216,10 @@ void NonCompositedFrameRenderer::updateRendering()
         if (m_context)
             PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent();
 
-        m_surface->clear({ });
-
         canvas->save();
+        if (auto clearColor = m_surface->skiaClearColor({ }))
+            canvas->clear(*clearColor);
+
         GraphicsContextSkia graphicsContext(*canvas, m_context ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, RenderingPurpose::DOM);
         graphicsContext.applyDeviceScaleFactor(webPage->deviceScaleFactor());
 
