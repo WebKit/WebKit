@@ -298,7 +298,10 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return parsedRectOrExtension.releaseException();
 
     auto parsedRect = parsedRectOrExtension.releaseReturnValue();
-    auto layoutOrException = computeLayoutAndAllocationSize(defaultRect, init.layout, pixelFormat);
+    // Anchor the coded-extent layout at the visible origin so each plane's sourceTop/sourceLeftBytes
+    // carry the crop while sourceHeight, stride and allocationSize stay coded.
+    DOMRectInit sourceRect { parsedRect.x, parsedRect.y, static_cast<double>(init.codedWidth), static_cast<double>(init.codedHeight) };
+    auto layoutOrException = computeLayoutAndAllocationSize(sourceRect, init.layout, pixelFormat);
     if (layoutOrException.hasException())
         return layoutOrException.releaseException();
 
