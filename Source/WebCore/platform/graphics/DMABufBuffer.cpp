@@ -457,34 +457,6 @@ sk_sp<SkColorSpace> DMABufBuffer::skiaColorSpace() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-sk_sp<SkImage> DMABufBuffer::createImage(SkColorType colorType, SkAlphaType alphaType, GrSurfaceOrigin origin)
-{
-    if (!importIfNeeded())
-        return nullptr;
-
-    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
-    ASSERT(grContext);
-
-    if (isQualcommVideoFrameBuffer() || !formatIsYUV(m_attributes.fourcc.value)) {
-        ref();
-        return SkImages::BorrowTextureFrom(grContext, backendTexture(0), origin, colorType, alphaType, SkColorSpace::MakeSRGB(), +[](void* userData) {
-            static_cast<DMABufBuffer*>(userData)->deref();
-        }, this);
-    }
-
-    SkYUVAInfo info = yuvaInfo();
-    GrYUVABackendTextures yuvaBackendTextures(info, m_importedBackendTextures.span().data(), origin);
-    if (!yuvaBackendTextures.isValid()) {
-        LOG_ERROR("Failed to create Skia image for DMA-BUF YUV video buffer: invalid backend texture information");
-        return nullptr;
-    }
-
-    ref();
-    return SkImages::TextureFromYUVATextures(grContext, yuvaBackendTextures, skiaColorSpace(), +[](void* userData) {
-        static_cast<DMABufBuffer*>(userData)->deref();
-    }, this);
-}
-
 class PromiseDMABufImageContext final : public ThreadSafeRefCounted<PromiseDMABufImageContext> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(PromiseDMABufImageContext);
 public:

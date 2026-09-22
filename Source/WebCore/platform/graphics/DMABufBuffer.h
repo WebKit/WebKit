@@ -93,7 +93,6 @@ public:
     SkYUVAInfo yuvaInfo() const;
     const GrBackendTexture& backendTexture(size_t) const;
 
-    sk_sp<SkImage> createImage(SkColorType, SkAlphaType, GrSurfaceOrigin);
     sk_sp<SkImage> createPromiseImage(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin, std::unique_ptr<GLFence>&&, WTF::UnixFileDescriptor&&);
 #if USE(GSTREAMER)
     sk_sp<SkImage> createPromiseImageForQualcommVideoFrame(const sk_sp<GrContextThreadSafeProxy>&, SkColorType, SkAlphaType, GrSurfaceOrigin);

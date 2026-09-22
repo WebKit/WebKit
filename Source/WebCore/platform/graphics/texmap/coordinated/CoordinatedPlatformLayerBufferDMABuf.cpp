@@ -75,27 +75,30 @@ CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<D
 
 std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
+    if (!threadSafeGrContext)
+        return nullptr;
     return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), flags, WTF::move(fence), threadSafeGrContext);
 }
 
 std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
+    if (!threadSafeGrContext)
+        return nullptr;
     return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), flags, WTF::move(fenceFD), threadSafeGrContext);
 }
 
 CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
-    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, WTF::move(fence))
+    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, nullptr)
     , m_dmabuf(WTF::move(dmabuf))
 {
-    createSkiaImageIfNeeded(threadSafeGrContext);
+    initializeSkiaImage(threadSafeGrContext, WTF::move(fence), { });
 }
 
 CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
     : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, nullptr)
     , m_dmabuf(WTF::move(dmabuf))
-    , m_fenceFD(WTF::move(fenceFD))
 {
-    createSkiaImageIfNeeded(threadSafeGrContext);
+    initializeSkiaImage(threadSafeGrContext, nullptr, WTF::move(fenceFD));
 }
 #endif
 
@@ -327,32 +330,13 @@ void CoordinatedPlatformLayerBufferDMABuf::paintToTextureMapper(TextureMapper& t
 
 #else
 
-void CoordinatedPlatformLayerBufferDMABuf::createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+void CoordinatedPlatformLayerBufferDMABuf::initializeSkiaImage(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, std::unique_ptr<GLFence>&& fence, UnixFileDescriptor&& fenceFD)
 {
-    if (!threadSafeGrContext)
-        return;
-
     auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
     auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
-    m_image = m_dmabuf->createPromiseImage(threadSafeGrContext, kRGBA_8888_SkColorType, alphaType, origin, WTF::move(m_fence), WTF::move(m_fenceFD));
+    m_image = m_dmabuf->createPromiseImage(threadSafeGrContext, kRGBA_8888_SkColorType, alphaType, origin, WTF::move(fence), WTF::move(fenceFD));
 }
 
-sk_sp<SkImage> CoordinatedPlatformLayerBufferDMABuf::skiaImage()
-{
-    if (m_image)
-        return m_image;
-
-    waitForContentsIfNeeded();
-
-    if (m_fenceFD) {
-        if (auto fence = GLFence::importFD(PlatformDisplay::sharedDisplay().glDisplay(), WTF::move(m_fenceFD)))
-            fence->serverWait();
-    }
-
-    auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
-    auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
-    return m_dmabuf->createImage(kRGBA_8888_SkColorType, alphaType, origin);
-}
 #endif
 
 } // namespace WebCore
