@@ -49,6 +49,8 @@ http/tests/site-isolation/ios/exposed-content-rect.html [ Pass ]
 http/tests/site-isolation/ios/exposed-content-rect-nested.html [ Pass ]
 http/tests/site-isolation/ios/exposed-content-rect-3d-transformed.html [ Pass ]
 http/tests/site-isolation/ios/select-and-drag-in-transformed-cross-origin-iframe.html [ Pass ]
+http/tests/site-isolation/ios/long-press-in-cross-origin-iframe-in-scrolled-main-frame.html [ Pass ]
+http/tests/site-isolation/ios/long-press-in-cross-site-grandchild-of-scrolled-middle-frame.html [ Pass ]
 http/tests/site-isolation/touch-events/tap-nested-cross-origin-frame-in-offset-subframe.html [ Pass ]
 
 fast/forms/switch [ Pass ]

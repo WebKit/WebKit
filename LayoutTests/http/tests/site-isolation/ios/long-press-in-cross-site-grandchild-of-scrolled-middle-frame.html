@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script>
+description("Long-pressing text in a cross-site frame whose parent is itself a cross-site frame that is SCROLLED should select the word under the finger. The middle frame is the local root of its process, and unlike a main frame its view does not delegate scrolling to a native scroll view, so its scroll offset can be applied to the point twice.");
+jsTestIsAsync = true;
+
+const middleFrameTopInDocument = 100;
+const middleFrameScroll = 120;
+const grandchildTopInMiddleDocument = 200;
+const grandchildTopInMiddleView = grandchildTopInMiddleDocument - middleFrameScroll;
+const lineHeightInGrandchild = 40;
+const targetLineInGrandchild = 4;
+const pressXInDocument = 30;
+const pressYInDocument = middleFrameTopInDocument + grandchildTopInMiddleView + (targetLineInGrandchild + 0.5) * lineHeightInGrandchild;
+
+let middleScrollMessage = "";
+let grandchildReady = false;
+let started = false;
+let firstSelection = "";
+let anchorWord = "";
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        grandchildReady = true;
+    else if (typeof event.data === "string" && event.data.startsWith("middle scrolled to "))
+        middleScrollMessage = event.data;
+    else if (typeof event.data === "string" && event.data.startsWith("selection:")) {
+        const selection = event.data.substring("selection:".length);
+        if (selection.length && !firstSelection.length)
+            firstSelection = selection;
+    }
+
+    if (grandchildReady && middleScrollMessage && !started) {
+        started = true;
+        runTest();
+    }
+});
+
+async function runTest() {
+    await UIHelper.ensurePresentationUpdate();
+
+    // Without this the test would pass however the point is converted.
+    shouldBeEqualToString("middleScrollMessage", "middle scrolled to " + middleFrameScroll);
+
+    // The long press is occasionally delivered before the grandchild is ready to process it,
+    // producing no selection; retry until a word is selected inside it.
+    for (let attempt = 0; attempt < 20 && !firstSelection.length; ++attempt) {
+        await UIHelper.longPressAtPoint(pressXInDocument, pressYInDocument);
+        for (let frame = 0; frame < 10 && !firstSelection.length; ++frame)
+            await UIHelper.animationFrame();
+    }
+    anchorWord = firstSelection.split(/\s+/)[0];
+    shouldBeEqualToString("anchorWord", "token" + targetLineInGrandchild);
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 0; top: 100px; width: 400px; height: 400px; border: none;" src="http://localhost:8000/site-isolation/resources/scrolled-middle-frame-with-cross-site-grandchild.html"></iframe>

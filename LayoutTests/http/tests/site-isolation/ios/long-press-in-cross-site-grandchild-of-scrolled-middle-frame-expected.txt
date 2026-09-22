@@ -1,0 +1,11 @@
+Long-pressing text in a cross-site frame whose parent is itself a cross-site frame that is SCROLLED should select the word under the finger. The middle frame is the local root of its process, and unlike a main frame its view does not delegate scrolling to a native scroll view, so its scroll offset can be applied to the point twice.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS middleScrollMessage is "middle scrolled to 120"
+PASS anchorWord is "token4"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

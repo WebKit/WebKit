@@ -29,13 +29,15 @@
 
 #import "ClassMethodSwizzler.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
+#import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/ModelLoadingMessageHandler.h"
 #import "Helpers/cocoa/NSItemProviderAdditions.h"
 #import "Helpers/PlatformUtilities.h"
-#import "TestURLSchemeHandler.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
-#import "UIKitSPIForTesting.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import "TestURLSchemeHandler.h"
+#import "UIKitSPIForTesting.h"
 #import <Contacts/Contacts.h>
 #import <MapKit/MapKit.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -50,6 +52,7 @@
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Seconds.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/text/MakeString.h>
 
 #if USE(BROWSERENGINEKIT)
 #import <BrowserEngineKit/BrowserEngineKit.h>
@@ -2420,6 +2423,85 @@ TEST(DragAndDropTests, DragEnterAndLeaveRelatedTarget)
     EXPECT_WK_STREQ("null", [webView stringByEvaluatingJavaScript:@"enterARelatedTarget"]);
     EXPECT_WK_STREQ("zoneB", [webView stringByEvaluatingJavaScript:@"leaveARelatedTarget"]);
     EXPECT_WK_STREQ("zoneA", [webView stringByEvaluatingJavaScript:@"enterBRelatedTarget"]);
+}
+
+struct NestedFrameDragResult {
+    NSUInteger itemProviderCount { 0 };
+    RetainPtr<NSString> draggedURL;
+};
+
+static void enableSiteIsolation(WKWebViewConfiguration *configuration)
+{
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"SiteIsolationEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+}
+
+static NestedFrameDragResult dragLinkInIframeNestedInOffsetSubframe(ASCIILiteral innerFrameSource)
+{
+    HTTPServer server({
+        { "/main"_s, { "<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 400px; border: none;' src='https://example.com/samesite-subframe'></iframe></body>"_s } },
+        { "/samesite-subframe"_s, { makeString("<body style='margin: 0'><iframe style='position: absolute; left: 0; top: 0; width: 400px; height: 400px; border: none;' src='"_s, innerFrameSource, "'></iframe></body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<a href='https://first.example/' style='display: block; position: absolute; left: 0; top: 0; width: 300px; height: 50px; background: silver;'>First</a>"
+            "<a href='https://second.example/' style='display: block; position: absolute; left: 0; top: 150px; width: 300px; height: 50px; background: gray;'>Second</a>"
+            "<script>window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded')</script>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    // The handler has to be registered before the load, otherwise the inner frame runs its script
+    // before window.webkit.messageHandlers.testHandler exists.
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    TestWebKitAPI::Util::run(&innerFrameLoaded);
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    // (150, 175) in the window is (50, 25) in the innermost frame, inside "first". Applying the
+    // subframe's (100, 150) offset a second time lands on (150, 175) there, inside "second".
+    [simulator runFrom:CGPointMake(150, 175) to:CGPointMake(150, 500)];
+
+    NestedFrameDragResult result;
+    result.itemProviderCount = [simulator sourceItemProviders].count;
+    if (!result.itemProviderCount)
+        return result;
+
+    __block bool doneLoadingURL = false;
+    __block RetainPtr<NSURL> draggedURL;
+    [[simulator sourceItemProviders].firstObject loadObjectOfClass:[NSURL class] completionHandler:^(id object, NSError *error) {
+        draggedURL = (NSURL *)object;
+        doneLoadingURL = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoadingURL);
+    result.draggedURL = [draggedURL absoluteString];
+    return result;
+}
+
+TEST(DragAndDropTests, DragLinkInSameSiteIframeInsideOffsetSameSiteSubframe)
+{
+    // Same geometry without a remote frame: if this fails too, the harness is at fault rather than
+    // the cross-process point conversion.
+    auto result = dragLinkInIframeNestedInOffsetSubframe("https://example.com/inner"_s);
+    EXPECT_EQ(1UL, result.itemProviderCount);
+    EXPECT_WK_STREQ("https://first.example/", [result.draggedURL UTF8String] ?: "");
+}
+
+TEST(DragAndDropTests, DragLinkInCrossOriginIframeInsideOffsetSameSiteSubframe)
+{
+    auto result = dragLinkInIframeNestedInOffsetSubframe("https://webkit.org/inner"_s);
+    EXPECT_EQ(1UL, result.itemProviderCount);
+    EXPECT_WK_STREQ("https://first.example/", [result.draggedURL UTF8String] ?: "");
 }
 
 } // namespace TestWebKitAPI
