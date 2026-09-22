@@ -1,0 +1,39 @@
+This test walks the soft-wrapped lines of a block the way a screen reader pans a braille display: AXLineTextMarkerRangeForTextMarker, then AXNextLineEndTextMarkerForTextMarker on the range's end marker. Consecutive lines must tile the text, with no character in two lines and none in no line.
+
+The four blocks hold the same text and wrap at the same places; only their line-breaking properties differ, and every one of them must produce the same lines. line-break: after-white-space is the one that used to differ: because it keeps a line's overflowing trailing space, the end-of-line position it yields is the soft wrap boundary itself, where the line's end and the next line's start share an offset and differ only in affinity. In every other mode the end-of-line position stops before the trailing space, strictly inside the line, and the wrap boundary never reaches AXLineTextMarkerRangeForTextMarker at all.
+
+#plain, 4 lines:
+  [0, 52) 'Panning through this message should show every word '
+  [52, 106) 'exactly once. The display moves from one soft wrapped '
+  [106, 164) 'line to the next, and no letter belongs to two of them at '
+  [164, 178) 'the same time.'
+  Lines tile the text: PASS
+
+#afterWhiteSpace, 4 lines:
+  [0, 52) 'Panning through this message should show every word '
+  [52, 106) 'exactly once. The display moves from one soft wrapped '
+  [106, 164) 'line to the next, and no letter belongs to two of them at '
+  [164, 178) 'the same time.'
+  Lines tile the text: PASS
+
+#breakWord, 4 lines:
+  [0, 52) 'Panning through this message should show every word '
+  [52, 106) 'exactly once. The display moves from one soft wrapped '
+  [106, 164) 'line to the next, and no letter belongs to two of them at '
+  [164, 178) 'the same time.'
+  Lines tile the text: PASS
+
+#nbspMode, 4 lines:
+  [0, 52) 'Panning through this message should show every word '
+  [52, 106) 'exactly once. The display moves from one soft wrapped '
+  [106, 164) 'line to the next, and no letter belongs to two of them at '
+  [164, 178) 'the same time.'
+  Lines tile the text: PASS
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.
+Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.
+Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.
+Panning through this message should show every word exactly once. The display moves from one soft wrapped line to the next, and no letter belongs to two of them at the same time.
