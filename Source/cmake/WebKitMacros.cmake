@@ -702,21 +702,27 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         set(_identity "-")
     endif ()
     cmake_parse_arguments(_arg "" "" "DEPENDS" ${ARGN})
+    # Targets that build a bundle need to sign the entire bundle. For
+    # frameworks, this is automatic, but auxiliary bundles like XPC services
+    # may set an explicit bundle path with the CODE_SIGN_BUNDLE property.
     get_target_property(_is_framework ${_target} FRAMEWORK)
-    if (_is_framework)
+    get_target_property(_sign_bundle ${_target} CODE_SIGN_BUNDLE)
+    if (_sign_bundle)
+        set(_sign_path "${_sign_bundle}")
+    elseif (_is_framework)
         set(_sign_path "$<TARGET_BUNDLE_DIR:${_target}>")
-        if (WEBKIT_SDK_IS_MACOS)
-            set(_cstemp_path "${_sign_path}/Versions/A/$<TARGET_FILE_BASE_NAME:${_target}>.cstemp")
-        else ()
-            set(_cstemp_path "${_sign_path}/$<TARGET_FILE_BASE_NAME:${_target}>.cstemp")
-        endif ()
     else ()
         set(_sign_path "$<TARGET_FILE:${_target}>")
-        set(_cstemp_path "${_sign_path}.cstemp")
     endif ()
-    if (${_target}_CODE_SIGN_ENTITLEMENTS)
-        set(_entitlements --entitlements ${${_target}_CODE_SIGN_ENTITLEMENTS})
-        list(APPEND _arg_DEPENDS ${${_target}_CODE_SIGN_ENTITLEMENTS})
+    set(_cstemp_path "$<TARGET_FILE:${_target}>.cstemp")
+    get_target_property(_extra_flags ${_target} CODE_SIGN_FLAGS)
+    if (NOT _extra_flags)
+        set(_extra_flags "")
+    endif ()
+    get_target_property(_entitlements_path ${_target} CODE_SIGN_ENTITLEMENTS)
+    if (_entitlements_path)
+        set(_entitlements --entitlements ${_entitlements_path})
+        list(APPEND _arg_DEPENDS ${_entitlements_path})
     endif ()
 
     get_target_property(_target_type ${_target} TYPE)
@@ -733,16 +739,16 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
             COMMAND rm -f ${_cstemp_path}
             COMMAND set -o pipefail &&
                 ${WEBKITADDITIONS_CODESIGN_PRELUDE}
-                /usr/bin/codesign --force --sign ${_identity} ${_entitlements} ${_sign_path} 2>&1 |
+                /usr/bin/codesign --force --sign ${_identity} ${_extra_flags} ${_entitlements} ${_sign_path} 2>&1 |
                 sed "/replacing existing signature/d"
             VERBATIM
             COMMENT "Code signing ${_target}")
         # A POST_BUILD command only re-runs when the target relinks, so make a
         # change to the entitlements force a relink; otherwise editing the
         # entitlements would leave the binary signed with the stale set.
-        if (${_target}_CODE_SIGN_ENTITLEMENTS)
+        if (_entitlements_path)
             set_property(TARGET ${_target} APPEND PROPERTY
-                LINK_DEPENDS ${${_target}_CODE_SIGN_ENTITLEMENTS})
+                LINK_DEPENDS ${_entitlements_path})
         endif ()
         # Preserve a named ${_target}_CodeSign target so ordering edges elsewhere
         # (e.g. WebKit.framework signing after its XPC services) keep resolving.
@@ -762,7 +768,7 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         COMMAND rm -f ${_cstemp_path}
         COMMAND set -o pipefail &&
             ${WEBKITADDITIONS_CODESIGN_PRELUDE}
-            /usr/bin/codesign --force --sign ${_identity} ${_entitlements} ${_sign_path} 2>&1 |
+            /usr/bin/codesign --force --sign ${_identity} ${_extra_flags} ${_entitlements} ${_sign_path} 2>&1 |
             sed "/replacing existing signature/d"
         COMMAND ${CMAKE_COMMAND} -E touch ${_stamp}
         VERBATIM
