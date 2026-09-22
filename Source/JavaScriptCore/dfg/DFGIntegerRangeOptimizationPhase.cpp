@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +45,7 @@ namespace DFGIntegerRangeOptimizationPhaseInternal {
 static constexpr bool verbose = false;
 }
 const unsigned giveUpThreshold = 50;
+constexpr size_t relationshipListInlineCapacity = 8;
 
 int64_t NODELETE clampedSumImpl() { return 0; }
 
@@ -1200,7 +1202,8 @@ public:
         bool changed = true;
         while (changed) {
             ++m_iterations;
-            if (m_iterations >= giveUpThreshold) {
+
+            if (outOfWorkBudget() || m_iterations >= giveUpThreshold) {
                 // This case is not necessarily wrong but it can be a sign that this phase
                 // does not converge. The value giveUpThreshold was chosen emperically based on
                 // current tests and real world JS.
@@ -1213,6 +1216,9 @@ public:
 
             changed = false;
             for (unsigned postOrderIndex = postOrder.size(); postOrderIndex--;) {
+                if (outOfWorkBudget()) [[unlikely]]
+                    return false;
+
                 BasicBlock* block = postOrder[postOrderIndex];
                 DFG_ASSERT(
                     m_graph, nullptr,
@@ -1319,19 +1325,16 @@ public:
 
                     if (relationshipForTrue.size() || relationshipForFalse.size()) {
                         RelationshipMap forTrue = m_relationships;
-                        RelationshipMap forFalse = m_relationships;
-
                         for (auto relationship : relationshipForTrue) {
                             dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with true: ", relationship);
                             setRelationship(forTrue, relationship);
                         }
+                        changed |= mergeTo(forTrue, branchData->taken.block);
                         for (auto relationship : relationshipForFalse) {
                             dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "Dealing with false: ", relationship);
-                            setRelationship(forFalse, relationship);
+                            setRelationship(m_relationships, relationship);
                         }
-
-                        changed |= mergeTo(forTrue, branchData->taken.block);
-                        changed |= mergeTo(forFalse, branchData->notTaken.block);
+                        changed |= mergeTo(m_relationships, branchData->notTaken.block);
                         alreadyMerged = true;
                     }
                 }
@@ -1606,6 +1609,12 @@ public:
     }
 
 private:
+    bool outOfWorkBudget() const
+    {
+        unsigned budget = Options::maxIntegerRangeOptimizationWork();
+        return budget && m_work >= budget;
+    }
+
     void executeNode(Node* node)
     {
         switch (node->op()) {
@@ -1667,7 +1676,7 @@ private:
             
             auto iter = m_relationships.find(node->child1().node());
             if (iter != m_relationships.end()) {
-                Vector<Relationship> toAdd;
+                Vector<Relationship, relationshipListInlineCapacity> toAdd;
                 for (Relationship relationship : iter->value) {
                     // We have:
                     //     add: ArithAdd(@x, C)
@@ -1878,7 +1887,7 @@ private:
         
         auto iter = m_relationships.find(oldNode);
         if (iter != m_relationships.end()) {
-            Vector<Relationship> toAdd;
+            Vector<Relationship, relationshipListInlineCapacity> toAdd;
             for (Relationship relationship : iter->value) {
                 Relationship newRelationship = relationship;
                 // Avoid creating any kind of self-relationship.
@@ -1916,6 +1925,8 @@ private:
         auto result = relationshipMap.add(
             relationship.left(), Vector<Relationship>());
         Vector<Relationship>& relationships = result.iterator->value;
+
+        m_work += relationships.size();
 
         if (relationship.right()->isInt32Constant()) {
             // We want to do some work to refine relationships over constants. This is necessary because
@@ -1986,7 +1997,7 @@ private:
             }
         }
 
-        Vector<Relationship> toAdd;
+        Vector<Relationship, relationshipListInlineCapacity> toAdd;
         bool found = false;
         for (Relationship& otherRelationship : relationships) {
             if (otherRelationship.sameNodesAs(relationship)) {
@@ -2027,8 +2038,11 @@ private:
             }
         }
 
-        if (timeToLive && relationship.kind() != Relationship::Equal) {
-            for (Relationship& possibleEquality : relationshipMap.get(relationship.right())) {
+        auto possibleEqualities = timeToLive && relationship.kind() != Relationship::Equal
+            ? relationshipMap.find(relationship.right())
+            : relationshipMap.end();
+        if (possibleEqualities != relationshipMap.end()) {
+            for (Relationship& possibleEquality : possibleEqualities->value) {
                 if (possibleEquality.kind() != Relationship::Equal
                     || possibleEquality.offset() == std::numeric_limits<int>::min()
                     || possibleEquality.right() == relationship.left())
@@ -2051,7 +2065,8 @@ private:
             }
         }
 
-        if (!found)
+        unsigned maxRelationships = Options::maxIntegerRangeOptimizationRelationshipsPerNode();
+        if (!found && (!maxRelationships || relationships.size() < maxRelationships))
             relationships.append(relationship);
         
         for (Relationship anotherRelationship : toAdd) {
@@ -2092,7 +2107,7 @@ private:
                 }
                 
                 std::sort(values.begin(), values.end());
-                m_relationshipsAtHead[target].add(entry.key, values);
+                m_relationshipsAtHead[target].add(entry.key, WTF::move(values));
             }
             return true;
         }
@@ -2103,7 +2118,7 @@ private:
         // assigned would only happen if we have not processed the node's predecessor. We
         // shouldn't process blocks until we have processed the block's predecessor because we
         // are using reverse postorder.
-        Vector<NodeFlowProjection> toRemove;
+        Vector<NodeFlowProjection, relationshipListInlineCapacity> toRemove;
         bool changed = false;
         for (auto& entry : m_relationshipsAtHead[target]) {
             auto iter = relationshipMap.find(entry.key);
@@ -2113,13 +2128,14 @@ private:
                 continue;
             }
 
-            Vector<Relationship> constantRelationshipsAtHead;
+            Vector<Relationship, relationshipListInlineCapacity> constantRelationshipsAtHead;
             for (Relationship& relationshipAtHead : entry.value) {
                 if (relationshipAtHead.right()->isInt32Constant())
                     constantRelationshipsAtHead.append(relationshipAtHead);
             }
 
-            Vector<Relationship> mergedRelationships;
+            Vector<Relationship, relationshipListInlineCapacity> mergedRelationships;
+            m_work += static_cast<uint64_t>(entry.value.size()) * iter->value.size();
             for (Relationship targetRelationship : entry.value) {
                 for (Relationship sourceRelationship : iter->value) {
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "  Merging ", targetRelationship, " and ", sourceRelationship, ":");
@@ -2218,6 +2234,8 @@ private:
     InsertionSet m_insertionSet;
 
     unsigned m_iterations { 0 };
+
+    uint64_t m_work { 0 };
 };
     
 } // anonymous namespace
