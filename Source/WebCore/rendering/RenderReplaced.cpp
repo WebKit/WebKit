@@ -948,9 +948,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeAspectRatioAdjustedIntr
 
     // A percentage height only transfers if it really resolves against a definite block size.
     // hasReplacedLogicalHeight() does not establish that on its own: in quirks mode it reports true for any
-    // percentage without consulting the containing block, and inside a table cell the percentage resolves
-    // against the height row layout hands the cell, which does not exist yet while the table computes the
-    // preferred widths this contribution feeds into.
+    // percentage without consulting the containing block.
     auto hasTransferableLogicalHeight = [&] {
         if (!hasReplacedLogicalHeight())
             return false;
@@ -959,9 +957,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeAspectRatioAdjustedIntr
         CheckedPtr container = containingBlock();
         while (container && container->shouldSkipForPercentageResolution())
             container = container->containingBlock();
-        if (!container || container->isRenderTableCell())
-            return false;
-        return container->hasDefiniteLogicalHeight();
+        return container && container->hasDefiniteLogicalHeight();
     };
 
     if (hasTransferableLogicalHeight())
