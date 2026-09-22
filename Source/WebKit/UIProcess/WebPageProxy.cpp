@@ -149,6 +149,7 @@
 #include "ViewGestureController.h"
 #include "ViewWindowCoordinates.h"
 #include "WKContextPrivate.h"
+#include "WKPageFindMatchesClient.h"
 #include "WebAutomationSession.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebBackForwardCache.h"
@@ -7628,24 +7629,41 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
     if (!hasRunningProcess())
         return;
 
+    static constexpr auto moreThanMaximumMatchCount = static_cast<uint32_t>(kWKMoreThanMaximumMatchCount);
     class CountStringMatchesCallbackAggregator : public RefCounted<CountStringMatchesCallbackAggregator> {
     public:
-        static Ref<CountStringMatchesCallbackAggregator> create(CompletionHandler<void(uint32_t)>&& completionHandler) { return adoptRef(*new CountStringMatchesCallbackAggregator(WTF::move(completionHandler))); }
-        void NODELETE didCountStringMatches(uint32_t matchCount) { m_matchCount += matchCount; }
+        static Ref<CountStringMatchesCallbackAggregator> create(unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler) { return adoptRef(*new CountStringMatchesCallbackAggregator(maxMatchCount, WTF::move(completionHandler))); }
+        void NODELETE didCountStringMatches(uint32_t matchCount)
+        {
+            if (m_matchCount == moreThanMaximumMatchCount)
+                return;
+
+            if (matchCount == moreThanMaximumMatchCount) {
+                m_matchCount = moreThanMaximumMatchCount;
+                return;
+            }
+
+            auto total = CheckedUint32(m_matchCount) + matchCount;
+            m_matchCount = total.hasOverflowed() || total.value() > m_maxMatchCount ? moreThanMaximumMatchCount : total.value();
+
+        }
         ~CountStringMatchesCallbackAggregator()
         {
             m_completionHandler(m_matchCount);
         }
     private:
-        explicit CountStringMatchesCallbackAggregator(CompletionHandler<void(uint32_t)>&& completionHandler)
-            : m_completionHandler(WTF::move(completionHandler))
+        explicit CountStringMatchesCallbackAggregator(unsigned maxMatchCount, CompletionHandler<void(uint32_t)>&& completionHandler)
+            : m_maxMatchCount(maxMatchCount)
+            , m_completionHandler(WTF::move(completionHandler))
         {
         }
-        CompletionHandler<void(uint32_t)> m_completionHandler;
+
+        unsigned m_maxMatchCount { moreThanMaximumMatchCount };
         uint32_t m_matchCount { 0 };
+        CompletionHandler<void(uint32_t)> m_completionHandler;
     };
 
-    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create([protectedThis = Ref { *this }, string](uint32_t matchCount) {
+    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, string](uint32_t matchCount) {
         protectedThis->m_findClient->didCountStringMatches(protectedThis.ptr(), string, matchCount);
     });
 
