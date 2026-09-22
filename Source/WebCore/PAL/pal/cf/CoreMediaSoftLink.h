@@ -497,6 +497,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionCameraCalibrat
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionCreateFromH264ParameterSets, OSStatus, (CFAllocatorRef allocator, size_t parameterSetCount, const uint8_t* const* parameterSetPointers, const size_t* parameterSetSizes, int NALUnitHeaderLength, CF_RETURNS_RETAINED CMFormatDescriptionRef* formatDescriptionOut), (allocator, parameterSetCount, parameterSetPointers, parameterSetSizes, NALUnitHeaderLength, formatDescriptionOut))
 #define CMVideoFormatDescriptionCreateFromH264ParameterSets softLink_CoreMedia_CMVideoFormatDescriptionCreateFromH264ParameterSets
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionCreateFromHEVCParameterSets, OSStatus, (CFAllocatorRef allocator, size_t parameterSetCount, const uint8_t* const* parameterSetPointers, const size_t* parameterSetSizes, int NALUnitHeaderLength, CFDictionaryRef extensions, CF_RETURNS_RETAINED CMFormatDescriptionRef* formatDescriptionOut), (allocator, parameterSetCount, parameterSetPointers, parameterSetSizes, NALUnitHeaderLength, extensions, formatDescriptionOut))
+#define CMVideoFormatDescriptionCreateFromHEVCParameterSets softLink_CoreMedia_CMVideoFormatDescriptionCreateFromHEVCParameterSets
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTagInvalid, CMTag)
 #define kCMTagInvalid get_CoreMedia_kCMTagInvalidSingleton()

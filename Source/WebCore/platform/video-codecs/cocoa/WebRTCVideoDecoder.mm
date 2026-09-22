@@ -29,6 +29,7 @@
 
 #if USE(LIBWEBRTC)
 
+#import "GPUVideoDecoderVTBH265.h"
 #import "WebRTCVideoDecoderVTBAV1.h"
 #import "WebRTCVideoDecoderVTBVP9.h"
 #import <WebCore/CMUtilities.h>
@@ -65,13 +66,26 @@ private:
     webrtc::LocalDecoder m_decoder;
 };
 
-std::unique_ptr<WebRTCVideoDecoder> WebRTCVideoDecoder::create(VideoCodecType decoderType, WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+std::unique_ptr<WebRTCVideoDecoder> WebRTCVideoDecoder::create(VideoCodecType decoderType, bool useWebCoreDecoder, WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
 {
+    if (!useWebCoreDecoder) {
+        // FIXME: Deprecate this code path.
+        switch (decoderType) {
+        case VideoCodecType::H264:
+            return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), WTF::move(colorSpaceOverride));
+        case VideoCodecType::H265:
+            return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH265Decoder(callback), WTF::move(colorSpaceOverride));
+        default:
+            break;
+        }
+    }
+
     switch (decoderType) {
     case VideoCodecType::H264:
+        // FIXME: Support H264 decoding in WebCore.
         return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH264Decoder(callback), WTF::move(colorSpaceOverride));
     case VideoCodecType::H265:
-        return makeUnique<WebRTCLocalVideoDecoder>(webrtc::createLocalH265Decoder(callback), WTF::move(colorSpaceOverride));
+        return makeUnique<GPUVideoDecoderVTBH265>(callback, WTF::move(colorSpaceOverride));
     case VideoCodecType::VP9:
         return makeUnique<WebRTCVideoDecoderVTBVP9>(callback, WTF::move(colorSpaceOverride));
     case VideoCodecType::AV1:

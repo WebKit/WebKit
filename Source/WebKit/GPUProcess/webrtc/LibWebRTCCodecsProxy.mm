@@ -166,7 +166,7 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
 
 std::unique_ptr<WebCore::WebRTCVideoDecoder> LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, WebCore::VideoCodecType codecType, bool useRemoteFrames, bool enableAdditionalLogging, std::optional<WebCore::PlatformVideoColorSpace>&& colorSpaceOverride)
 {
-    return WebRTCVideoDecoder::create(codecType, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), WTF::move(colorSpaceOverride));
+    return WebRTCVideoDecoder::create(codecType, m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled, makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames, enableAdditionalLogging)).get(), WTF::move(colorSpaceOverride));
 }
 
 static bool validateCodecString(WebCore::VideoCodecType codecType, const String& codecString)
@@ -367,7 +367,7 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, WebC
         connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, buffer, colorSpace }, 0);
     };
 
-    bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoEncodersEnabled;
+    bool useWebCoreEncoder = m_sharedPreferencesForWebProcess.webRTCWebCoreVideoCodecsEnabled;
     auto encoder = WebCore::GPUVideoEncoder::create({
         .codecType = codecType,
         .useWebCoreEncoder = useWebCoreEncoder,

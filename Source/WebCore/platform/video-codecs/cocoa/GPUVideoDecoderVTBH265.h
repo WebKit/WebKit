@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,44 +27,24 @@
 
 #if USE(LIBWEBRTC)
 
+#include "VideoDecoderVTB.h"
+#include "WebRTCVideoDecoderVTB.h"
 #include <WebCore/PlatformVideoColorSpace.h>
-#include <WebCore/VideoCodecType.h>
-#include <wtf/UniqueRef.h>
-
-typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
-using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
-
-namespace webrtc {
-using LocalDecoder = void*;
-}
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class WebRTCVideoDecoder {
+class GPUVideoDecoderVTBH265 final : public WebRTCVideoDecoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBH265);
 public:
-    virtual ~WebRTCVideoDecoder() = default;
-
-    WEBCORE_EXPORT static std::unique_ptr<WebRTCVideoDecoder> create(VideoCodecType, bool useWebCoreDecoder, WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
-
-    virtual void flush() = 0;
-    virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) = 0;
-    virtual int32_t decodeFrame(int64_t timeStamp, std::span<const uint8_t>) = 0;
-    virtual void setFrameSize(uint16_t width, uint16_t height) = 0;
-
-    WEBCORE_EXPORT void setColorSpaceOverride(std::optional<PlatformVideoColorSpace>&&);
-
-protected:
-    explicit WebRTCVideoDecoder(std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-        : m_colorSpaceOverride(WTF::move(colorSpaceOverride))
-    {
-    }
-
-    const std::optional<PlatformVideoColorSpace>& colorSpaceOverride() const { return m_colorSpaceOverride; }
+    GPUVideoDecoderVTBH265(WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&&);
+    ~GPUVideoDecoderVTBH265() = default;
 
 private:
-    virtual void colorSpaceOverrideChanged() { };
+    int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;
+    void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) final;
 
-    std::optional<PlatformVideoColorSpace> m_colorSpaceOverride;
+    bool m_isAnnexB { true };
 };
 
 }

@@ -114,11 +114,36 @@ struct HEVCNaluIndex {
     size_t payloadSize { 0 };
 };
 
-WEBCORE_EXPORT Vector<HEVCNaluIndex> findHEVCNaluIndices(std::span<const uint8_t>);
+struct HEVCAnnexBNaluIndices {
+    Vector<HEVCNaluIndex> indices;
+    std::optional<size_t> vpsIndex;
+};
+
+WEBCORE_EXPORT HEVCAnnexBNaluIndices findHEVCNaluIndices(std::span<const uint8_t>);
 WEBCORE_EXPORT HEVCNaluType hevcNaluType(uint8_t);
 
 // Removes emulation prevention bytes (the trailing byte of any 0x00 0x00 0x03 sequence).
 WEBCORE_EXPORT Vector<uint8_t> parseRbsp(std::span<const uint8_t>);
+
+// Scans an Annex B chunk for a VPS NAL unit to return its vps_max_num_reorder_pics or std::nullopt if no VPS or error.
+WEBCORE_EXPORT std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t>, const HEVCAnnexBNaluIndices&);
+
+struct HVCCParameterSet {
+    HEVCNaluType type;
+    std::span<const uint8_t> data;
+};
+
+struct HVCCParameterSets {
+    Vector<HVCCParameterSet> paramSets;
+    size_t lengthFieldSize { 0 };
+};
+
+// Parses an "hvcC" box (ISO/IEC 14496-15) into its length field size and flattened list of
+// parameter set NAL units, in the order they appear in the box.
+WEBCORE_EXPORT std::optional<HVCCParameterSets> parseHVCCParameterSets(std::span<const uint8_t>);
+
+// Scans a parsed "hvcC" box for a VPS NAL unit to return its vps_max_num_reorder_pics or std::nullopt if no VPS or error.
+WEBCORE_EXPORT std::optional<uint8_t> findHVCCMaxNumReorderPics(const HVCCParameterSets&);
 
 // Stateful H.265 Annex B bitstream parser used to recover the QP of the most recently parsed slice.
 class WEBCORE_EXPORT HEVCBitstreamParser {
@@ -128,6 +153,8 @@ public:
 
     void parseBitstream(std::span<const uint8_t>);
     std::optional<int> lastSliceQP() const;
+
+    static std::optional<uint8_t> parseVpsMaxNumReorderPics(std::span<const uint8_t>);
 
 private:
     struct ProfileTierLevel {
