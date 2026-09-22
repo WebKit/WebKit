@@ -137,7 +137,7 @@ auto SVGURIReference::targetElementFromIRIString(const String& iri, const TreeSc
 
     RefPtr shadowHost = treeScope.rootNode().shadowHost();
     if (is<SVGUseElement>(shadowHost))
-        return { shadowHost->treeScope().getElementById(id), WTF::move(id) };
+        return { protect(shadowHost->treeScope())->getElementById(id), WTF::move(id) };
 
     return { treeScope.getElementById(id), WTF::move(id) };
 }

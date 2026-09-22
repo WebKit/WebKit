@@ -276,7 +276,7 @@ inline SVGElement::InstanceInvalidationGuard::InstanceInvalidationGuard(SVGEleme
 
 inline SVGElement::InstanceInvalidationGuard::~InstanceInvalidationGuard()
 {
-    m_element->invalidateInstances();
+    protect(m_element)->invalidateInstances();
 }
 
 inline SVGElement::InstanceUpdateBlocker::InstanceUpdateBlocker(SVGElement& element)

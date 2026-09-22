@@ -68,7 +68,7 @@ public:
     {
         m_baseVal->setValueInternal(static_cast<DecorationType>(baseVal));
         if (m_animVal)
-            m_animVal->setValueInternal(static_cast<DecorationType>(baseVal));
+            protect(m_animVal)->setValueInternal(static_cast<DecorationType>(baseVal));
     }
 
     // Parses an enumerated attribute value, restoring the attribute's initial value when the value
@@ -109,14 +109,14 @@ public:
     void setAnimVal(const PropertyType& animVal)
     {
         ASSERT(this->isAnimating() && m_animVal);
-        m_animVal->setValueInternal(static_cast<DecorationType>(animVal));
+        protect(m_animVal)->setValueInternal(static_cast<DecorationType>(animVal));
     }
 
     template<typename PropertyType = DecorationType>
     PropertyType animVal() const
     {
         ASSERT_IMPLIES(this->isAnimating(), m_animVal);
-        return static_cast<PropertyType>((this->isAnimating() ? *m_animVal : m_baseVal.get()).value());
+        return static_cast<PropertyType>(protect(this->isAnimating() ? *m_animVal : m_baseVal.get())->value());
     }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
@@ -126,7 +126,7 @@ public:
     String animValAsString() const override
     {
         ASSERT(this->isAnimating() && !!m_animVal);
-        return m_animVal->valueAsString();
+        return protect(m_animVal)->valueAsString();
     }
 
     // Managing the relationship with the owner.
@@ -145,14 +145,14 @@ public:
     PropertyType currentValue() const
     {
         ASSERT_IMPLIES(this->isAnimating(), m_animVal);
-        return static_cast<PropertyType>((this->isAnimating() ? *m_animVal : m_baseVal.get()).valueInternal());
+        return static_cast<PropertyType>(protect(this->isAnimating() ? *m_animVal : m_baseVal.get())->valueInternal());
     }
 
     // Controlling the animation.
     void startAnimation(SVGAttributeAnimator& animator) override
     {
         if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
         else
             m_animVal = m_baseVal->clone();
         Base::startAnimation(animator);
@@ -163,7 +163,7 @@ public:
         if (!this->isAnimating())
             m_animVal = nullptr;
         else if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
     }
 
     // Controlling the instance animation.

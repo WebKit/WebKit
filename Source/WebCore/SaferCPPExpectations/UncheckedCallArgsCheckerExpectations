@@ -460,13 +460,11 @@ style/values/images/kinds/StyleGradientImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
 svg/SVGClipPathElement.cpp
 svg/SVGElement.cpp
-svg/SVGElement.h
 svg/SVGFEImageElement.cpp
 svg/SVGMaskElement.cpp
 svg/SVGSVGElement.cpp
 svg/animation/SVGSMILElement.cpp
 svg/graphics/SVGImage.cpp
-svg/properties/SVGAnimatedString.cpp
 testing/Internals.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp

@@ -87,7 +87,7 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
         protect(m_patternContentUnits)->parseBaseVal<SVGUnitTypes::SVGUnitType>(*this, newValue);
         break;
     case AttributeNames::patternTransformAttr: {
-        protect(m_patternTransform)->baseVal()->parse(newValue);
+        protect(protect(m_patternTransform)->baseVal())->parse(newValue);
         break;
     }
     case AttributeNames::xAttr:

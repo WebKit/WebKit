@@ -291,7 +291,7 @@ void SVGUseElement::updateUserAgentShadowTree()
     AtomString targetID;
     RefPtr target = findTarget(&targetID);
     if (!target) {
-        treeScopeForSVGReferences().addPendingSVGResource(targetID, *this);
+        protect(treeScopeForSVGReferences())->addPendingSVGResource(targetID, *this);
         return;
     }
 
@@ -493,7 +493,7 @@ RefPtr<SVGElement> SVGUseElement::findTarget(AtomString* targetID) const
     RefPtr correspondingElement = this->correspondingElement();
     Ref original = correspondingElement ? downcast<SVGUseElement>(*correspondingElement) : *this;
 
-    auto targetResult = targetElementFromIRIString(original->href(), original->treeScope(), protect(original->externalDocument()).get());
+    auto targetResult = targetElementFromIRIString(original->href(), protect(original->treeScope()), protect(original->externalDocument()).get());
     if (targetID) {
         *targetID = WTF::move(targetResult.identifier);
         // If the reference is external, don't return the target ID to the caller.

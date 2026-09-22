@@ -41,9 +41,9 @@ public:
 
     ~SVGAnimatedPropertyList()
     {
-        m_baseVal->detach();
+        protect(m_baseVal)->detach();
         if (m_animVal)
-            m_animVal->detach();
+            protect(m_animVal)->detach();
     }
 
     // Used by the DOM.
@@ -59,19 +59,19 @@ public:
     ListType& animVal() { return ensureAnimVal(); }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
-    String baseValAsString() const override { return m_baseVal->valueAsString(); }
+    String baseValAsString() const override { return protect(m_baseVal)->valueAsString(); }
 
     // Used to apply the SVGAnimator change to the target element.
     String animValAsString() const override
     {
         ASSERT(this->isAnimating());
-        return m_animVal->valueAsString();
+        return protect(m_animVal)->valueAsString();
     }
 
     // Managing the relationship with the owner.
     void setDirty() override { m_baseVal->setDirty(); }
     bool isDirty() const override { return m_baseVal->isDirty(); }
-    std::optional<String> synchronize() override { return m_baseVal->synchronize(); }
+    std::optional<String> synchronize() override { return protect(m_baseVal)->synchronize(); }
 
     // Used by RenderSVGElements and DumpRenderTree.
     const ListType& currentValue() const LIFETIME_BOUND

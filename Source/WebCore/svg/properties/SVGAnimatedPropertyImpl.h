@@ -87,7 +87,7 @@ public:
 
     Path currentPath()
     {
-        return isAnimating() ? animVal().path() : baseVal()->path();
+        return isAnimating() ? protect(animVal())->path() : protect(baseVal())->path();
     }
 
     size_t approximateMemoryCost() const

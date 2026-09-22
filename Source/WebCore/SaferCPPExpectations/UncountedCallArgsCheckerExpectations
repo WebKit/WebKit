@@ -273,37 +273,6 @@ style/values/transforms/StyleScale.h
 style/values/transforms/StyleTransformList.cpp
 style/values/transforms/StyleTranslate.h
 style/values/will-change/StyleWillChange.h
-svg/SVGComponentTransferFunctionElement.cpp
-svg/SVGElement.h
-svg/SVGFEColorMatrixElement.cpp
 svg/SVGFEComponentTransferElement.cpp
-svg/SVGFEConvolveMatrixElement.cpp
-svg/SVGFEImageElement.cpp
-svg/SVGFontFaceElement.cpp
-svg/SVGGradientElement.cpp
-svg/SVGGraphicsElement.cpp
-svg/SVGMarkerElement.cpp
-svg/SVGPathByteStream.h
-svg/SVGPathElement.cpp
-svg/SVGPatternElement.cpp
-svg/SVGPolyElement.cpp
-svg/SVGSVGElement.cpp
-svg/SVGTRefElement.cpp
-svg/SVGTextPositioningElement.cpp
-svg/SVGURIReference.cpp
-svg/SVGUseElement.cpp
-svg/SVGViewSpec.h
-svg/animation/SVGSMILElement.cpp
-svg/graphics/SVGImage.cpp
-svg/graphics/SVGImageForContainer.h
-svg/properties/SVGAnimatedDecoratedProperty.h
-svg/properties/SVGAnimatedPrimitiveProperty.h
-svg/properties/SVGAnimatedPropertyAnimatorImpl.h
-svg/properties/SVGAnimatedPropertyImpl.h
-svg/properties/SVGAnimatedPropertyList.h
-svg/properties/SVGAnimatedString.cpp
-svg/properties/SVGAnimatedValueProperty.h
-svg/properties/SVGPointerMemberAccessor.h
-svg/properties/SVGPropertyAccessorImpl.h
 [ iOS ] testing/InternalSettings.cpp
 [ iOS ] testing/Internals.cpp

@@ -64,7 +64,7 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
         protect(m_gradientUnits)->parseBaseVal<SVGUnitTypes::SVGUnitType>(*this, newValue);
         break;
     case AttributeNames::gradientTransformAttr:
-        protect(m_gradientTransform)->baseVal()->parse(newValue);
+        protect(protect(m_gradientTransform)->baseVal())->parse(newValue);
         break;
     case AttributeNames::spreadMethodAttr:
         protect(m_spreadMethod)->parseBaseVal<SVGSpreadMethodType>(*this, newValue);

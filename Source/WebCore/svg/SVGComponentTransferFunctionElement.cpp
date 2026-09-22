@@ -58,7 +58,7 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
         protect(m_type)->parseBaseVal<ComponentTransferType>(*this, newValue);
         break;
     case AttributeNames::tableValuesAttr:
-        protect(m_tableValues)->baseVal()->parse(newValue);
+        protect(protect(m_tableValues)->baseVal())->parse(newValue);
         break;
     case AttributeNames::slopeAttr:
         m_slope->setBaseValInternal(parseNumber(newValue));

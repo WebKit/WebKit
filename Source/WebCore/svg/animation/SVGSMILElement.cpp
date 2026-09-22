@@ -168,13 +168,14 @@ void SVGSMILElement::buildPendingResource()
         return;
     }
 
+    Ref treeScopeForReferences = treeScopeForSVGReferences();
     AtomString id;
     RefPtr<Element> target;
     auto& href = getAttribute(SVGNames::hrefAttr, XLinkNames::hrefAttr);
     if (href.isEmpty())
         target = parentElement();
     else {
-        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForSVGReferences());
+        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForReferences);
         target = WTF::move(result.element);
         id = WTF::move(result.identifier);
     }
@@ -185,11 +186,11 @@ void SVGSMILElement::buildPendingResource()
 
     if (!svgTarget) {
         // Do not register as pending if we are already pending this resource.
-        if (treeScopeForSVGReferences().isPendingSVGResource(*this, id))
+        if (treeScopeForReferences->isPendingSVGResource(*this, id))
             return;
 
         if (!id.isEmpty()) {
-            treeScopeForSVGReferences().addPendingSVGResource(id, *this);
+            treeScopeForReferences->addPendingSVGResource(id, *this);
             ASSERT(hasPendingResources());
         }
     } else
@@ -588,7 +589,7 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
 
 inline RefPtr<Element> SVGSMILElement::eventBaseFor(const Condition& condition)
 {
-    return condition.m_baseID.isEmpty() ? RefPtr<Element> { targetElement() } : treeScope().getElementById(condition.m_baseID);
+    return condition.m_baseID.isEmpty() ? RefPtr<Element> { targetElement() } : protect(treeScope())->getElementById(condition.m_baseID);
 }
 
 void SVGSMILElement::connectConditions()
@@ -607,7 +608,7 @@ void SVGSMILElement::connectConditions()
             eventBase->addEventListener(condition.m_name, *condition.m_eventListener);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
-            condition.m_syncbase = treeScope().getElementById(condition.m_baseID);
+            condition.m_syncbase = protect(treeScope())->getElementById(condition.m_baseID);
             if (!condition.m_syncbase)
                 continue;
             RefPtr svgSMILElement = dynamicDowncast<SVGSMILElement>(*condition.m_syncbase);

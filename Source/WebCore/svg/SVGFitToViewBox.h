@@ -47,8 +47,8 @@ public:
     SVGAnimatedRect& viewBoxAnimated() { return m_viewBox; }
     SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
 
-    void NODELETE setViewBox(const FloatRect&);
-    void NODELETE resetViewBox();
+    void setViewBox(const FloatRect&);
+    void resetViewBox();
 
     void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio->setBaseValInternal(preserveAspectRatio); }
     void resetPreserveAspectRatio() { m_preserveAspectRatio->setBaseValInternal({ }); }
@@ -64,7 +64,7 @@ protected:
 
     static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
-    void NODELETE reset();
+    void reset();
     bool parseAttribute(const QualifiedName&, const AtomString&);
     std::optional<FloatRect> parseViewBox(StringView);
     std::optional<FloatRect> parseViewBox(StringParsingBuffer<Latin1Character>&, bool validate = true);

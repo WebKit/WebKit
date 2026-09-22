@@ -1010,11 +1010,12 @@ RefPtr<Element> SVGSVGElement::getElementById(const AtomString& id)
         return nullptr;
     }
 
-    RefPtr element = protect(treeScope())->getElementById(id);
+    Ref scope = treeScope();
+    RefPtr element = scope->getElementById(id);
     if (element && element->isDescendantOf(*this))
         return element;
-    if (protect(treeScope())->containsMultipleElementsWithId(id)) {
-        for (auto& element : *treeScope().getAllElementsById(id)) {
+    if (scope->containsMultipleElementsWithId(id)) {
+        for (auto& element : *scope->getAllElementsById(id)) {
             if (element->isDescendantOf(*this))
                 return element.ptr();
         }

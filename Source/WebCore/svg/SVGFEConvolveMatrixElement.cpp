@@ -96,7 +96,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
     case AttributeNames::kernelMatrixAttr:
-        protect(m_kernelMatrix)->baseVal()->parse(newValue);
+        protect(protect(m_kernelMatrix)->baseVal())->parse(newValue);
         break;
     case AttributeNames::divisorAttr: {
         auto result = parseNumber(newValue);

@@ -46,12 +46,12 @@ public:
 
     void detach(const OwnerType& owner) const override
     {
-        property(owner)->detach();
+        protect(property(owner))->detach();
     }
 
     std::optional<String> synchronize(const OwnerType& owner) const override
     {
-        return property(owner)->synchronize();
+        return protect(property(owner))->synchronize();
     }
 
     bool matches(const OwnerType& owner, const SVGProperty& property) const override

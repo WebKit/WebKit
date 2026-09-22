@@ -97,7 +97,7 @@ public:
     String animValAsString() const override
     {
         ASSERT(this->isAnimating() && m_animVal);
-        return m_animVal->valueAsString();
+        return protect(m_animVal)->valueAsString();
     }
 
     // Managing the relationship with the owner.
@@ -116,7 +116,7 @@ public:
     void startAnimation(SVGAttributeAnimator& animator) override
     {
         if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
         else
             ensureAnimVal();
         Base::startAnimation(animator);
@@ -128,7 +128,7 @@ public:
         if (!this->isAnimating())
             m_animVal = nullptr;
         else if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
     }
 
     // Controlling the instance animation.

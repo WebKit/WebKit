@@ -120,8 +120,10 @@ bool SVGFEComponentTransferElement::setFilterEffectAttributeFromChild(FilterEffe
         return effect.setExponent(child->channel(), child->exponent());
     case AttributeNames::offsetAttr:
         return effect.setOffset(child->channel(), child->offset());
-    case AttributeNames::tableValuesAttr:
-        return effect.setTableValues(protect(child)->channel(), child->tableValues());
+    case AttributeNames::tableValuesAttr: {
+        Ref transferFunction = *child;
+        return effect.setTableValues(transferFunction->channel(), transferFunction->tableValues());
+    }
     default:
         break;
     }

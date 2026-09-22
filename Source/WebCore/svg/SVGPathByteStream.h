@@ -194,9 +194,9 @@ public:
     DataIterator begin() const LIFETIME_BOUND { return m_data->bytes().begin(); }
     DataIterator end() const LIFETIME_BOUND { return m_data->bytes().end(); }
 
-    void append(uint8_t byte) { m_data.access().append(byte); }
-    void append(std::span<const uint8_t> bytes) { m_data.access().append(bytes); }
-    void append(const SVGPathByteStream& other) { m_data.access().append(other.m_data->bytes()); }
+    void append(uint8_t byte) { protect(m_data.access())->append(byte); }
+    void append(std::span<const uint8_t> bytes) { protect(m_data.access())->append(bytes); }
+    void append(const SVGPathByteStream& other) { protect(m_data.access())->append(other.m_data->bytes()); }
     void clear() { m_data = Data::empty(); }
     bool isEmpty() const { return m_data->isEmpty(); }
     unsigned size() const { return m_data->size(); }
@@ -212,7 +212,7 @@ public:
 
     void cachePath(const Path& path) const
     {
-        m_data->updatePath(path);
+        protect(*m_data)->updatePath(path);
     }
 
     const Data::Bytes& bytes() const LIFETIME_BOUND { return m_data->bytes(); }

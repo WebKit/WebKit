@@ -43,17 +43,17 @@ public:
 
     ~SVGAnimatedValueProperty()
     {
-        m_baseVal->detach();
+        protect(m_baseVal)->detach();
         if (m_animVal)
-            m_animVal->detach();
+            protect(m_animVal)->detach();
     }
 
     // Used by SVGElement::parseAttribute().
     void setBaseValInternal(const ValueType& baseVal)
     {
-        m_baseVal->setValue(baseVal);
+        protect(m_baseVal)->setValue(baseVal);
         if (m_animVal)
-            m_animVal->setValue(baseVal);
+            protect(m_animVal)->setValue(baseVal);
     }
 
     // Used by the DOM.
@@ -75,19 +75,19 @@ public:
     PropertyType& animVal() { return ensureAnimVal(); }
 
     // Used when committing a change from the SVGAnimatedProperty to the attribute.
-    String baseValAsString() const override { return m_baseVal->valueAsString(); }
+    String baseValAsString() const override { return protect(m_baseVal)->valueAsString(); }
 
     // Used to apply the SVGAnimator change to the target element.
     String animValAsString() const override
     {
         ASSERT(this->isAnimating() && m_animVal);
-        return m_animVal->valueAsString();
+        return protect(m_animVal)->valueAsString();
     }
 
     // Managing the relationship with the owner.
     void setDirty() override { m_baseVal->setDirty(); }
     bool isDirty() const override { return m_baseVal->isDirty(); }
-    std::optional<String> synchronize() override { return m_baseVal->synchronize(); }
+    std::optional<String> synchronize() override { return protect(m_baseVal)->synchronize(); }
 
     // Used by RenderSVGElements and DumpRenderTree.
     const ValueType& currentValue() const LIFETIME_BOUND
@@ -100,7 +100,7 @@ public:
     void startAnimation(SVGAttributeAnimator& animator) override
     {
         if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
         else
             ensureAnimVal();
         Base::startAnimation(animator);
@@ -112,7 +112,7 @@ public:
         if (!this->isAnimating())
             detachAnimVal();
         else if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
     }
 
     // Controlling the instance animation.
@@ -168,7 +168,7 @@ protected:
     void commitPropertyChange(SVGProperty* property) override
     {
         if (m_animVal)
-            m_animVal->setValue(m_baseVal->value());
+            protect(m_animVal)->setValue(m_baseVal->value());
         Base::commitPropertyChange(property);
     }
 

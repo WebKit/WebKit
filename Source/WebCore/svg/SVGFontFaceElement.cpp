@@ -243,7 +243,7 @@ int SVGFontFaceElement::descent() const
 
 String SVGFontFaceElement::fontFamily() const
 {
-    return protect(fontFaceRule())->properties().getPropertyValue(CSSPropertyFontFamily);
+    return protect(protect(fontFaceRule())->properties())->getPropertyValue(CSSPropertyFontFamily);
 }
 
 SVGFontElement* SVGFontFaceElement::associatedFontElement() const
@@ -276,11 +276,12 @@ void SVGFontFaceElement::rebuildFontFace()
         return;
 
     // Parse in-memory CSS rules
-    protect(fontFaceRule())->mutableProperties().addParsedProperty(CSSProperty(CSSPropertySrc, list.releaseNonNull()));
+    Ref fontFaceRule = this->fontFaceRule();
+    protect(fontFaceRule->mutableProperties())->addParsedProperty(CSSProperty(CSSPropertySrc, list.releaseNonNull()));
 
     if (describesParentFont) {
         // Traverse parsed CSS values and associate CSSFontFaceSrcLocalValue elements with ourselves.
-        if (RefPtr srcList = downcast<CSSValueList>(m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc).get())) {
+        if (RefPtr srcList = downcast<CSSValueList>(protect(fontFaceRule->properties())->getPropertyCSSValue(CSSPropertySrc).get())) {
             for (Ref item : *srcList)
                 downcast<CSSFontFaceSrcLocalValue>(const_cast<CSSValue&>(item.get())).setSVGFontFaceElement(*this);
         }
@@ -314,7 +315,7 @@ void SVGFontFaceElement::removingSteps(RemovalType removalType, ContainerNode& o
         Ref fontFaceRule = m_fontFaceRule;
         if (RefPtr fontFace = fontFaceSet->lookUpByCSSConnection(fontFaceRule))
             fontFaceSet->remove(*fontFace);
-        fontFaceRule->mutableProperties().clear();
+        protect(fontFaceRule->mutableProperties())->clear();
 
         document->styleScope().didChangeStyleSheetEnvironment();
     } else
