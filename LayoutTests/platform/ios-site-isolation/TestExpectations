@@ -446,7 +446,6 @@ http/tests/security/block-top-level-navigation-to-different-scheme-by-third-part
 http/tests/security/block-top-level-navigations-by-sandboxed-iframe-with-propagated-user-gesture.html [ Failure ]
 http/tests/security/block-top-level-navigations-by-third-party-iframes.html [ Failure ]
 http/tests/security/block-top-level-navigations-by-third-party-sandboxed-iframe.html [ Failure ]
-http/tests/security/frameNavigation/not-opener.html [ Failure ]
 
 # rdar://178066625
 imported/w3c/web-platform-tests/html/user-activation/propagation-crossorigin.sub.html [ Failure ]
