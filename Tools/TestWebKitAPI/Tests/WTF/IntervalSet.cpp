@@ -634,4 +634,87 @@ TEST(WTF_IntervalSet, MoveConstructorSourceDestructed)
     EXPECT_TRUE(moved.hasOverlap({ 50, 60 }));
 }
 
+TEST(WTF_IntervalSet, ConstructFromSortedIntervals)
+{
+    using TestIntervalSet = IntervalSet<Point, Value, 1>;
+
+    for (size_t count : std::initializer_list<size_t> { 1, 2, TestIntervalSet::leafOrder, TestIntervalSet::leafOrder + 1, 100, 5000 }) {
+        Vector<Interval> intervals;
+        for (size_t i = 0; i < count; ++i)
+            intervals.append(Interval(10 * i, 10 * i + 5));
+
+        TestIntervalSet intervalSet(intervals.span(), 7);
+
+        size_t expectedCapacity = TestIntervalSet::leafOrder;
+        unsigned expectedHeight = 0;
+        while (expectedCapacity < count) {
+            expectedCapacity *= TestIntervalSet::innerOrder;
+            expectedHeight++;
+        }
+        EXPECT_EQ(intervalSet.height(), expectedHeight);
+
+        size_t seen = 0;
+        Point lastEnd = 0;
+        for (auto entry : intervalSet) {
+            EXPECT_GE(entry.first.begin(), lastEnd);
+            lastEnd = entry.first.end();
+            EXPECT_EQ(entry.second, 7);
+            seen++;
+        }
+        EXPECT_EQ(seen, count);
+
+        for (size_t i = 0; i < count; ++i) {
+            auto found = intervalSet.find(intervals[i]);
+            EXPECT_TRUE(found);
+            EXPECT_EQ(found->first, intervals[i]);
+            // The gap between two loaded intervals must stay a gap.
+            EXPECT_FALSE(intervalSet.hasOverlap(Interval(10 * i + 5, 10 * i + 10)));
+        }
+
+        // The tree has to keep working as an ordinary tree afterwards.
+        for (size_t i = 0; i < count; ++i)
+            intervalSet.insert(Interval(10 * i + 6, 10 * i + 9), 8);
+        for (size_t i = 0; i < count; ++i) {
+            auto found = intervalSet.find(Interval(10 * i + 6, 10 * i + 9));
+            EXPECT_TRUE(found);
+            EXPECT_EQ(found->second, 8);
+        }
+        for (size_t i = 0; i < count; ++i)
+            intervalSet.erase(intervals[i]);
+        for (size_t i = 0; i < count; ++i)
+            EXPECT_FALSE(intervalSet.hasOverlap(intervals[i]));
+    }
+}
+
+TEST(WTF_IntervalSet, ConstructFromNoIntervals)
+{
+    IntervalSet<Point, Value> intervalSet({ }, 1);
+    EXPECT_TRUE(intervalSet.isEmpty());
+    EXPECT_FALSE(intervalSet.hasOverlap({ 0, 100 }));
+    intervalSet.insert({ 10, 20 }, 2);
+    EXPECT_TRUE(intervalSet.hasOverlap({ 10, 20 }));
+}
+
+TEST(WTF_IntervalSet, ConstructOverPopulatedSet)
+{
+    IntervalSet<Point, Value> intervalSet;
+    for (size_t i = 0; i < 500; ++i)
+        intervalSet.insert(Interval(10 * i, 10 * i + 5), 1);
+
+    Vector<Interval> intervals;
+    for (size_t i = 0; i < 500; ++i)
+        intervals.append(Interval(10000 + 10 * i, 10000 + 10 * i + 5));
+
+    // Assigning over a populated set has to release its nodes, which the destructor's node count
+    // catches. The overwritten intervals must be gone, not merged.
+    intervalSet = IntervalSet<Point, Value>(intervals.span(), 2);
+
+    EXPECT_FALSE(intervalSet.hasOverlap({ 0, 5000 }));
+    for (auto& interval : intervals) {
+        auto found = intervalSet.find(interval);
+        EXPECT_TRUE(found);
+        EXPECT_EQ(found->second, 2);
+    }
+}
+
 } // namespace TestWebKitAPI

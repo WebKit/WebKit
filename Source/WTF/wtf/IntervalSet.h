@@ -77,6 +77,67 @@ public:
 
     IntervalSet() = default;
 
+    // Build a set from a run of non-overlapping intervals in ascending order that all map to the
+    // same value. Laying the nodes out level by level costs one pass, where the equivalent run of
+    // insert() calls pays a root-to-leaf descent per interval plus a split or a redistribution with
+    // a cousin every time a node fills up.
+    IntervalSet(std::span<const Interval> intervals, const Value& value)
+    {
+        if (intervals.empty())
+            return;
+
+        // Cut numEntries into as few groups of at most maxPerNode as possible, sized as evenly as
+        // that allows, and collect the node makeNode() builds for each group.
+        auto buildLevel = [](size_t numEntries, size_t maxPerNode, const Invocable<NodeRef(size_t, size_t)> auto& makeNode) {
+            size_t numNodes = (numEntries + maxPerNode - 1) / maxPerNode;
+            size_t base = numEntries / numNodes;
+            size_t remainder = numEntries % numNodes;
+            Vector<NodeRef, 16> level;
+            level.reserveInitialCapacity(numNodes);
+            for (size_t i = 0, first = 0; i < numNodes; ++i) {
+                size_t count = base + (i < remainder);
+                level.append(makeNode(first, count));
+                first += count;
+            }
+            return level;
+        };
+
+        auto coverageOf = [&](NodeRef nodeRef) {
+            if (!m_height)
+                return nodeRef.asLeaf()->coverage(nodeRef.size());
+            return nodeRef.asInner()->coverage(nodeRef.size());
+        };
+
+        auto level = buildLevel(intervals.size(), leafOrder,
+            [&](size_t first, size_t count) {
+                LeafNode* leaf = allocNode<LeafNode>();
+                for (size_t i = 0; i < count; ++i) {
+                    ASSERT(intervals[first + i]);
+                    ASSERT_IMPLIES(first + i, intervals[first + i - 1].end() <= intervals[first + i].begin());
+                    leaf->interval(i) = intervals[first + i];
+                    leaf->value(i) = value;
+                }
+                return NodeRef(leaf, count);
+            });
+
+        while (level.size() > 1) {
+            auto parents = buildLevel(level.size(), innerOrder,
+                [&](size_t first, size_t count) {
+                    InnerNode* inner = allocNode<InnerNode>();
+                    for (size_t i = 0; i < count; ++i) {
+                        inner->interval(i) = coverageOf(level[first + i]);
+                        inner->child(i) = level[first + i];
+                    }
+                    return NodeRef(inner, count);
+                });
+            level = WTF::move(parents);
+            ++m_height;
+        }
+
+        m_root = level[0];
+        m_rootInterval = coverageOf(m_root);
+    }
+
     IntervalSet(IntervalSet&& other)
         : m_root(other.m_root)
         , m_rootInterval(other.m_rootInterval)
