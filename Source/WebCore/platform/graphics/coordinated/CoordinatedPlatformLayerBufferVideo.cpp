@@ -29,7 +29,6 @@
 
 #if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
 #include "BitmapTexturePool.h"
-#include "CoordinatedPlatformLayerBufferRGB.h"
 #include "GLFence.h"
 #include "GraphicsTypesGL.h"
 #include "ImageOrientation.h"
@@ -37,6 +36,7 @@
 
 #if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferExternalOES.h"
+#include "CoordinatedPlatformLayerBufferRGB.h"
 #include "CoordinatedPlatformLayerBufferYUV.h"
 #include "TextureMapper.h"
 #else

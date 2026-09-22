@@ -27,9 +27,13 @@
 #include "CoordinatedImageBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedPlatformLayerBufferNativeImage.h"
-#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "NativeImage.h"
+
+#if USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferNativeImage.h"
+#else
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
+#endif
 
 namespace WebCore {
 

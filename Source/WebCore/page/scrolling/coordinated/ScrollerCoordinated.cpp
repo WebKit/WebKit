@@ -31,8 +31,6 @@
 #if USE(COORDINATED_GRAPHICS_ASYNC_SCROLLBAR)
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayer.h"
-#include "CoordinatedPlatformLayerBufferRGB.h"
-#include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
 #include "FontRenderOptions.h"
 #include "GLContext.h"
 #include "GLFence.h"
@@ -42,11 +40,19 @@
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkSurface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#include <wtf/TZoneMallocInlines.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferRGB.h"
+#else
+#include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/private/chromium/GrDeferredDisplayList.h>
 #include <skia/private/chromium/GrDeferredDisplayListRecorder.h>
 #include <skia/private/chromium/GrSurfaceCharacterization.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#include <wtf/TZoneMallocInlines.h>
+#endif
 
 namespace WebCore {
 

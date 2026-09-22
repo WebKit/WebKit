@@ -28,7 +28,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedAnimatedBackingStoreClient.h"
-#include "CoordinatedBackingStore.h"
 #include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "CoordinatedPlatformLayerBuffer.h"
@@ -41,6 +40,7 @@
 #include <wtf/MainThread.h>
 
 #if USE(TEXTURE_MAPPER)
+#include "CoordinatedBackingStore.h"
 #include "TextureMapperLayer.h"
 #endif
 
