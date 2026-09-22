@@ -91,6 +91,17 @@ bool RenderSVGInline::isChildAllowed(const RenderObject& child, const Style::Com
 
 FloatRect RenderSVGInline::objectBoundingBox() const
 {
+    FloatRect boundingBox;
+    for (CheckedPtr current = firstChild(); current; current = current->nextInPreOrder(this)) {
+        if (CheckedPtr text = dynamicDowncast<RenderSVGInlineText>(current.get()))
+            boundingBox.unite(text->floatLinesBoundingBox());
+    }
+
+    return boundingBox;
+}
+
+FloatRect RenderSVGInline::objectBoundingBoxForResources() const
+{
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         return textAncestor->objectBoundingBox();
 
