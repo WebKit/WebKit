@@ -3254,15 +3254,19 @@ Value* OMGIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valueT
 [[nodiscard]] bool OMGIRGenerator::emitStructSet(bool canTrap, Value* structValue, uint32_t fieldIndex, const RTT& rtt, Value* argument)
 {
     structValue = pointerOfWasmRef(structValue);
-    auto fieldType = rtt.field(fieldIndex).type;
+    auto field = rtt.field(fieldIndex);
+    auto fieldType = field.type;
 
     const RTT& definingRTT = rtt.definingRTTForField(fieldIndex);
     uint64_t fieldHeapKey = definingRTT.fieldHeapKey(fieldIndex);
 
+    B3::Mutability mutability = field.mutability == Wasm::Mutability::Mutable ? B3::Mutability::Mutable : B3::Mutability::Immutable;
+
     B3::Kind kind = canTrap ? trapping(WasmStructSet) : WasmStructSet;
-    Value* storeValue = m_currentBlock->appendNew<WasmStructSetValue>(m_proc, kind, origin(), structValue, argument, Ref { rtt }, fieldIndex, fieldHeapKey);
+    Value* storeValue = m_currentBlock->appendNew<WasmStructSetValue>(m_proc, kind, origin(), structValue, argument, Ref { rtt }, fieldIndex, fieldHeapKey, mutability);
 
     m_heaps.decorateWasmStructSet(structFieldHeap(definingRTT, fieldIndex), storeValue);
+    m_proc.setUsesWasmGCAccesses();
 
     if (!fieldType.is<Type>() || !isRefType(fieldType.unpacked()))
         return false;
@@ -3923,6 +3927,7 @@ auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, TypeSignatureIndex ty
     Value* loadValue = m_currentBlock->appendNew<WasmArrayGetValue>(m_proc, WasmArrayGet, origin(),
         toB3Type(resultType), arrayValue, indexValue, arrayType.copyRef(), b3Mutability);
     m_heaps.decorateWasmArrayGet(arrayElementHeap(elementType, indexValue), loadValue);
+    m_proc.setUsesWasmGCAccesses();
 
     Value* postProcess = loadValue;
     if (elementType.is<PackedType>()) {
@@ -3978,9 +3983,13 @@ bool OMGIRGenerator::emitArraySetUncheckedWithoutWriteBarrier(TypeSignatureIndex
     StorageType elementType;
     getArrayElementType(typeIndex, elementType);
 
+    Ref<const RTT> arrayType = m_info.rtt(typeIndex);
+    B3::Mutability mutability = arrayType->elementType().mutability == Wasm::Mutability::Mutable ? B3::Mutability::Mutable : B3::Mutability::Immutable;
+
     auto* storeNode = m_currentBlock->appendNew<WasmArraySetValue>(m_proc, WasmArraySet, origin(),
-        arrayref, indexValue, setValue, Ref { m_info.rtt(typeIndex) });
+        arrayref, indexValue, setValue, WTF::move(arrayType), mutability);
     m_heaps.decorateWasmArraySet(arrayElementHeap(elementType, indexValue), storeNode);
+    m_proc.setUsesWasmGCAccesses();
 
     if (!isRefType(elementType.unpacked()))
         return false;
@@ -4317,6 +4326,7 @@ auto OMGIRGenerator::addStructGet(ExtGCOpType structGetKind, TypedExpression str
     Value* loadValue = m_currentBlock->appendNew<WasmStructGetValue>(m_proc, kind, origin(), toB3Type(resultType), structValue, Ref { rtt }, fieldIndex, fieldHeapKey, mutability);
 
     m_heaps.decorateWasmStructGet(structFieldHeap(definingRTT, fieldIndex), loadValue);
+    m_proc.setUsesWasmGCAccesses();
 
     // For StructGetS (signed extension of packed types), apply sign extension as post-process.
     Value* postProcess = loadValue;

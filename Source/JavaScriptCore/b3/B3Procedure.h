@@ -322,6 +322,8 @@ public:
     bool usesWasmGCStructAllocations() const { return m_usesWasmGCStructAllocations; }
     void setUsesWasmGCArrayAllocations(bool flag = true) { m_usesWasmGCArrayAllocations = flag; }
     bool usesWasmGCArrayAllocations() const { return m_usesWasmGCArrayAllocations; }
+    void setUsesWasmGCAccesses(bool flag = true) { m_usesWasmGCAccesses = flag; }
+    bool usesWasmGCAccesses() const { return m_usesWasmGCAccesses; }
 
     void setUsesColdCCall(bool flag) { m_usesColdCCall = flag; }
     bool usesColdCCall() const { return m_usesColdCCall; }
@@ -365,6 +367,7 @@ private:
     bool m_isWasm : 1 { false };
     bool m_usesWasmGCStructAllocations : 1 { false };
     bool m_usesWasmGCArrayAllocations : 1 { false };
+    bool m_usesWasmGCAccesses : 1 { false };
     bool m_usesColdCCall : 1 { false };
     bool m_usesShuffle : 1 { false };
     bool m_usesEntrySwitch : 1 { false };

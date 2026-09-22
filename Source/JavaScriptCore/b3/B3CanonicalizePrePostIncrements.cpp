@@ -52,6 +52,7 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     InsertionSet insertionSet { proc };
     BlockInsertionSet blockInsertionSet { proc };
 
+    proc.resetValueOwners(); // Every candidate below is found and checked through Value::owner.
     Dominators& dominators = proc.dominators();
     BackwardsDominators& backwardsDominators = proc.backwardsDominators();
 

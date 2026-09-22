@@ -1301,6 +1301,7 @@
 				WTF/IntervalSet.cpp,
 				WTF/IteratorRange.cpp,
 				WTF/JSONValue.cpp,
+				WTF/LayeredHashMap.cpp,
 				WTF/LazyRef.cpp,
 				WTF/LazyUniqueRef.cpp,
 				WTF/LEBDecoder.cpp,

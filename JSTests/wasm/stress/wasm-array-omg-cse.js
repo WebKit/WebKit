@@ -2,7 +2,7 @@
 // B3 nodes under OMG compilation.  Exercises:
 //   1. Duplicate get at constant index (redundant load)
 //   2. Duplicate get at dynamic index
-//   3. Dead store elimination (second set supersedes first)
+//   3. Overlapping stores (the second set to a slot is the one a later get sees)
 //   4. Store-to-load forwarding (set then get at same slot)
 //   5. Immutable array CSE (load survives all clobbering)
 //   6. Packed i8 store-to-load forwarding with zero/sign masking
