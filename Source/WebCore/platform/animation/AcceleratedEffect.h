@@ -107,7 +107,6 @@ public:
     const OptionSet<AcceleratedEffectProperty> composedProperties() const;
 
     bool NODELETE animatesTransformRelatedProperty() const;
-    WEBCORE_EXPORT bool NODELETE hasHighImpact() const;
 
 private:
     AcceleratedEffect(const KeyframeEffect&, const IntRect&, const OptionSet<AcceleratedEffectProperty>&);

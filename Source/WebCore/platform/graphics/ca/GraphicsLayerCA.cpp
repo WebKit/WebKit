@@ -5343,8 +5343,7 @@ Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCA::accelerat
             animations.append({
                 .property = acceleratedEffectPropertyIDAsString(property),
                 .speed = effect.playbackRate(),
-                .isThreaded = true,
-                .hasHighImpact = effect.hasHighImpact()
+                .isThreaded = true
             });
         }
     };
@@ -5364,15 +5363,13 @@ Vector<GraphicsLayer::AcceleratedAnimationForTesting> GraphicsLayerCA::accelerat
             animations.append({
                 .property = animatedPropertyIDAsString(animation.m_property),
                 .speed = caAnimation->speed(),
-                .isThreaded = false,
-                .hasHighImpact = false
+                .isThreaded = false
             });
         } else {
             animations.append({
                 .property = animatedPropertyIDAsString(animation.m_property),
                 .speed = (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::PlayPending) ? 1.0 : 0.0,
-                .isThreaded = false,
-                .hasHighImpact = false
+                .isThreaded = false
             });
         }
     }
