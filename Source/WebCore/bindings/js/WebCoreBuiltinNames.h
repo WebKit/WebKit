@@ -196,6 +196,7 @@ namespace WebCore {
     macro(DeviceOrientationEvent) \
     macro(DigitalCredential) \
     macro(DocumentTimeline) \
+    macro(DOMException) \
     macro(DynamicsCompressorNode) \
     macro(ElementImage) \
     macro(ElementInternals) \
