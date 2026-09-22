@@ -966,15 +966,15 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
     if (activeWindowURL.isNull())
         return String();
 
-    RefPtr remoteFrame = (m_type == DOMWindowType::Remote) ? dynamicDowncast<RemoteDOMWindow>(*this)->frame() : nullptr;
+    RefPtr remoteThis = dynamicDowncast<RemoteDOMWindow>(*this);
     RefPtr localDocument = documentIfLocal();
-    // We can't figure anything out if we are operating on a RemoteDOMWindow and don't have a remote frame
-    if (!localDocument && !remoteFrame)
+    // We can't figure anything out if we are a LocalDOMWindow that no longer has a document.
+    if (!localDocument && !remoteThis)
         return String();
     Ref activeOrigin = protect(activeWindow.document())->securityOrigin();
-    const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteFrame->frameDocumentSecurityOriginOrOpaque();
+    const Ref targetOrigin = localDocument ? localDocument->securityOrigin() : remoteThis->frameDocumentSecurityOriginOrOpaque();
     // A remote frame with an empty site may legitimately appear as same-origin.
-    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin) || (remoteFrame && Site { activeOrigin->data() }.isEmpty()));
+    ASSERT(!activeOrigin->isSameOriginDomain(targetOrigin) || (remoteThis && Site { activeOrigin->data() }.isEmpty()));
 
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
     String message;
@@ -985,9 +985,8 @@ String DOMWindow::crossDomainAccessErrorMessage(const LocalDOMWindow& activeWind
 
     // Sandbox errors: Use the origin of the frames' location, rather than their actual origin (since we know that at least one will be "null").
     URL activeURL = protect(activeWindow.document())->url();
-    RefPtr<const SecurityOrigin> remoteFrameSecurityOrigin = (m_type == DOMWindowType::Remote) ? remoteFrame->frameDocumentSecurityOriginOrOpaque() : RefPtr<const SecurityOrigin>();
-    URL targetURL = localDocument ? localDocument->url() : remoteFrameSecurityOrigin->toURL();
-    bool targetSandboxed = localDocument ? localDocument->isSandboxed(SandboxFlag::Origin) : (remoteFrame && remoteFrame->frameDocumentIsSandboxedOrigin());
+    URL targetURL = localDocument ? localDocument->url() : targetOrigin->toURL();
+    bool targetSandboxed = localDocument ? localDocument->isSandboxed(SandboxFlag::Origin) : remoteThis->frameDocumentIsSandboxedOrigin();
 
     if (targetSandboxed || activeWindow.document()->isSandboxed(SandboxFlag::Origin)) {
         if (includeTargetOrigin == IncludeTargetOrigin::Yes)

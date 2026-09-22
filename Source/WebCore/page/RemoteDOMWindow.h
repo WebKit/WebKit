@@ -62,8 +62,13 @@ public:
     void focus(LocalDOMWindow& incumbentWindow);
     void blur();
     unsigned NODELETE length() const;
-    void NODELETE frameDetached();
+    void frameDetached();
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, LocalDOMWindow& incumbentWindow, JSC::JSValue message, WindowPostMessageOptions&&);
+
+    // These keep reporting the frame's last known state after the frame is detached, the way a
+    // detached LocalDOMWindow keeps reporting the state of the document it is still holding on to.
+    const SecurityOrigin& frameDocumentSecurityOriginOrOpaque() const;
+    bool frameDocumentIsSandboxedOrigin() const;
 
 private:
     WEBCORE_EXPORT RemoteDOMWindow(RemoteFrame&, GlobalWindowIdentifier&&);
@@ -72,6 +77,8 @@ private:
     void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking, CanNavigateState) final;
 
     WeakPtr<RemoteFrame> m_frame;
+    RefPtr<const SecurityOrigin> m_detachedFrameDocumentSecurityOrigin;
+    bool m_isDetachedFrameDocumentSandboxedOrigin { false };
 };
 
 } // namespace WebCore

@@ -71,7 +71,27 @@ void RemoteDOMWindow::closePage()
 
 void RemoteDOMWindow::frameDetached()
 {
+    if (RefPtr frame = m_frame) {
+        m_detachedFrameDocumentSecurityOrigin = frame->frameDocumentSecurityOriginOrOpaque();
+        m_isDetachedFrameDocumentSandboxedOrigin = frame->frameDocumentIsSandboxedOrigin();
+    }
     m_frame = nullptr;
+}
+
+const SecurityOrigin& RemoteDOMWindow::frameDocumentSecurityOriginOrOpaque() const
+{
+    if (RefPtr frame = m_frame)
+        return frame->frameDocumentSecurityOriginOrOpaque();
+    if (m_detachedFrameDocumentSecurityOrigin)
+        return *m_detachedFrameDocumentSecurityOrigin;
+    return SecurityOrigin::opaqueOrigin();
+}
+
+bool RemoteDOMWindow::frameDocumentIsSandboxedOrigin() const
+{
+    if (RefPtr frame = m_frame)
+        return frame->frameDocumentIsSandboxedOrigin();
+    return m_isDetachedFrameDocumentSandboxedOrigin;
 }
 
 void RemoteDOMWindow::focus(LocalDOMWindow&)
