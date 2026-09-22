@@ -21,7 +21,7 @@
 #include "GLContextWrapper.h"
 
 #include "GLContext.h"
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLEGL.h"
 
 namespace WebCore {
 

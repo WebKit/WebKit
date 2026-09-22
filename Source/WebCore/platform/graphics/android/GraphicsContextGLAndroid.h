@@ -20,14 +20,14 @@
 #pragma once
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && OS(ANDROID)
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLEGL.h"
 #include <wtf/android/RefPtrAndroid.h>
 
 namespace WebCore {
 
-class GraphicsContextGLTextureMapperAndroid final : public GraphicsContextGLTextureMapperANGLE {
+class GraphicsContextGLAndroid final : public GraphicsContextGLEGL {
 public:
-    static RefPtr<GraphicsContextGLTextureMapperAndroid> create(GraphicsContextGLAttributes&&);
+    static RefPtr<GraphicsContextGLAndroid> create(GraphicsContextGLAttributes&&);
 
 #if ENABLE(WEBXR)
     GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
@@ -36,8 +36,8 @@ public:
 #endif // ENABLE(WEBXR)
 
 private:
-    explicit GraphicsContextGLTextureMapperAndroid(GraphicsContextGLAttributes&& attributes)
-        : GraphicsContextGLTextureMapperANGLE(WTF::move(attributes))
+    explicit GraphicsContextGLAndroid(GraphicsContextGLAttributes&& attributes)
+        : GraphicsContextGLEGL(WTF::move(attributes))
     {
     }
 #if ENABLE(WEBXR)

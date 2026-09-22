@@ -2803,6 +2803,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/egl/GLContextWrapper.h
     platform/graphics/egl/GLDisplay.h
     platform/graphics/egl/GLFence.h
+    platform/graphics/egl/GraphicsContextGLEGL.h
 
     platform/graphics/filters/DistantLightSource.h
     platform/graphics/filters/FEBlend.h

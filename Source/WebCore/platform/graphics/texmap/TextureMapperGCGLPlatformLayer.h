@@ -21,7 +21,7 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
 
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLEGL.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/TZoneMalloc.h>
@@ -33,13 +33,13 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
     WTF_MAKE_TZONE_ALLOCATED(TextureMapperGCGLPlatformLayer);
 public:
-    TextureMapperGCGLPlatformLayer(GraphicsContextGLTextureMapperANGLE&);
+    TextureMapperGCGLPlatformLayer(GraphicsContextGLEGL&);
     virtual ~TextureMapperGCGLPlatformLayer();
 
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
 
 private:
-    GraphicsContextGLTextureMapperANGLE& m_context;
+    GraphicsContextGLEGL& m_context;
 };
 
 } // namespace WebCore

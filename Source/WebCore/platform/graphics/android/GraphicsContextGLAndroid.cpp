@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLTextureMapperAndroid.h"
+#include "GraphicsContextGLAndroid.h"
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && OS(ANDROID)
 #include "ANGLEHeaders.h"
@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-RefPtr<GraphicsContextGLTextureMapperAndroid> GraphicsContextGLTextureMapperAndroid::create(GraphicsContextGLAttributes&& attributes)
+RefPtr<GraphicsContextGLAndroid> GraphicsContextGLAndroid::create(GraphicsContextGLAttributes&& attributes)
 {
-    auto context = adoptRef(new GraphicsContextGLTextureMapperAndroid(WTF::move(attributes)));
+    Ref context = adoptRef(*new GraphicsContextGLAndroid(WTF::move(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
-bool GraphicsContextGLTextureMapperAndroid::platformInitializeExtensions()
+bool GraphicsContextGLAndroid::platformInitializeExtensions()
 {
     if (!enableExtensionsImpl({ "GL_OES_EGL_image"_s }))
         return false;
@@ -53,7 +53,7 @@ bool GraphicsContextGLTextureMapperAndroid::platformInitializeExtensions()
 }
 
 #if ENABLE(WEBXR)
-GCGLExternalImage GraphicsContextGLTextureMapperAndroid::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
+GCGLExternalImage GraphicsContextGLAndroid::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
 {
     if (m_displayObj == EGL_NO_DISPLAY) {
         addError(GCGLErrorCode::InvalidOperation);
@@ -84,7 +84,7 @@ GCGLExternalImage GraphicsContextGLTextureMapperAndroid::createExternalImage(Ext
     return newName;
 }
 
-void GraphicsContextGLTextureMapperAndroid::bindExternalImage(GCGLenum target, GCGLExternalImage image)
+void GraphicsContextGLAndroid::bindExternalImage(GCGLenum target, GCGLExternalImage image)
 {
     if (!makeContextCurrent())
         return;
@@ -104,7 +104,7 @@ void GraphicsContextGLTextureMapperAndroid::bindExternalImage(GCGLenum target, G
         GL_EGLImageTargetTexture2DOES(target, eglImage);
 }
 
-bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensions()
+bool GraphicsContextGLAndroid::enableRequiredWebXRExtensions()
 {
     if (!makeContextCurrent())
         return false;
@@ -112,7 +112,7 @@ bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensions()
     return enableRequiredWebXRExtensionsImpl();
 }
 
-bool GraphicsContextGLTextureMapperAndroid::enableRequiredWebXRExtensionsImpl()
+bool GraphicsContextGLAndroid::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,

@@ -38,11 +38,11 @@ namespace WebCore {
 
 class TextureMapperGCGLPlatformLayer;
 
-class GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
-    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLTextureMapperANGLE);
+class GraphicsContextGLEGL : public GLContextWrapper, public GraphicsContextGLANGLE {
+    WTF_MAKE_TZONE_ALLOCATED(GraphicsContextGLEGL);
 public:
-    WEBCORE_EXPORT static RefPtr<GraphicsContextGLTextureMapperANGLE> create(WebCore::GraphicsContextGLAttributes&&);
-    virtual ~GraphicsContextGLTextureMapperANGLE();
+    WEBCORE_EXPORT static RefPtr<GraphicsContextGLEGL> create(WebCore::GraphicsContextGLAttributes&&);
+    virtual ~GraphicsContextGLEGL();
 
     // GraphicsContextGLANGLE overrides.
     WEBCORE_EXPORT RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final;
@@ -71,7 +71,7 @@ public:
 #endif
 
 protected:
-    explicit GraphicsContextGLTextureMapperANGLE(WebCore::GraphicsContextGLAttributes&&);
+    explicit GraphicsContextGLEGL(WebCore::GraphicsContextGLAttributes&&);
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 

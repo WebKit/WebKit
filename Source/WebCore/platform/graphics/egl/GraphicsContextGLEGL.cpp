@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLTextureMapperANGLE.h"
+#include "GraphicsContextGLEGL.h"
 
 #if ENABLE(WEBGL) && (USE(GRAPHICS_LAYER_WC) || USE(COORDINATED_GRAPHICS))
 
@@ -60,11 +60,11 @@
 #endif
 
 #if OS(ANDROID)
-#include "GraphicsContextGLTextureMapperAndroid.h"
+#include "GraphicsContextGLAndroid.h"
 #endif
 
 #if USE(GBM)
-#include "GraphicsContextGLTextureMapperGBM.h"
+#include "GraphicsContextGLGBM.h"
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
@@ -73,7 +73,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLTextureMapperANGLE);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLEGL);
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
@@ -135,7 +135,7 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-    auto* texmapContext = static_cast<GraphicsContextGLTextureMapperANGLE*>(this);
+    auto* texmapContext = static_cast<GraphicsContextGLEGL*>(this);
     if (texmapContext->isCurrent())
         return true;
 
@@ -159,7 +159,7 @@ void GraphicsContextGLANGLE::platformReleaseThreadResources()
 {
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
+RefPtr<PixelBuffer> GraphicsContextGLEGL::readCompositedResults()
 {
     return readRenderingResultsForPainting();
 }
@@ -169,7 +169,7 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
 #if OS(ANDROID) && ENABLE(WEBXR)
     const auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
     if (eglExtensions.ANDROID_get_native_client_buffer && eglExtensions.ANDROID_image_native_buffer) {
-        if (auto context = GraphicsContextGLTextureMapperAndroid::create(GraphicsContextGLAttributes { attributes }))
+        if (auto context = GraphicsContextGLAndroid::create(GraphicsContextGLAttributes { attributes }))
             return context;
         LOG_ERROR("Failed to create an Android graphics context, the fallback is not expected to work for WebXR content");
     } else {
@@ -177,30 +177,30 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
             eglExtensions.ANDROID_get_native_client_buffer ? "found" : "missing", eglExtensions.ANDROID_image_native_buffer ? "found" : "missing");
     }
 #elif USE(GBM)
-    if (GraphicsContextGLTextureMapperGBM::checkRequirements()) {
+    if (GraphicsContextGLGBM::checkRequirements()) {
         RefPtr delegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
-        if (auto context = GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes { attributes }, WTF::move(delegate)))
+        if (auto context = GraphicsContextGLGBM::create(GraphicsContextGLAttributes { attributes }, WTF::move(delegate)))
             return context;
-        WTFLogAlways("Failed to create a graphics context for WebGL using GBM, falling back to textures");
+        LOG_ERROR("Failed to create a graphics context for WebGL using GBM, falling back to textures");
     }
 #endif
-    return GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes { attributes });
+    return GraphicsContextGLEGL::create(GraphicsContextGLAttributes { attributes });
 }
 
-RefPtr<GraphicsContextGLTextureMapperANGLE> GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes&& attributes)
+RefPtr<GraphicsContextGLEGL> GraphicsContextGLEGL::create(GraphicsContextGLAttributes&& attributes)
 {
-    auto context = adoptRef(*new GraphicsContextGLTextureMapperANGLE(WTF::move(attributes)));
+    Ref context = adoptRef(*new GraphicsContextGLEGL(WTF::move(attributes)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
-GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE(GraphicsContextGLAttributes&& attributes)
+GraphicsContextGLEGL::GraphicsContextGLEGL(GraphicsContextGLAttributes&& attributes)
     : GraphicsContextGLANGLE(WTF::move(attributes))
 {
 }
 
-GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
+GraphicsContextGLEGL::~GraphicsContextGLEGL()
 {
     if (m_compositorTexture) {
         if (!makeContextCurrent())
@@ -209,13 +209,13 @@ GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
     }
 }
 
-RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE::layerContentsDisplayDelegate()
+RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLEGL::layerContentsDisplayDelegate()
 {
     return m_layerContentsDisplayDelegate;
 }
 
 #if ENABLE(VIDEO)
-bool GraphicsContextGLTextureMapperANGLE::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
+bool GraphicsContextGLEGL::copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
     // FIXME: Implement copy-free (or at least, software copy-free) texture transfer.
     return false;
@@ -223,7 +223,7 @@ bool GraphicsContextGLTextureMapperANGLE::copyTextureFromVideoFrame(VideoFrame&,
 #endif
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
-RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFrame(SurfaceBuffer)
+RefPtr<VideoFrame> GraphicsContextGLEGL::surfaceBufferToVideoFrame(SurfaceBuffer)
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults()) {
@@ -237,7 +237,7 @@ RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFram
 }
 #endif
 
-bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
+bool GraphicsContextGLEGL::platformInitializeContext()
 {
     m_isForWebGL2 = contextAttributes().isWebGL2;
 
@@ -345,7 +345,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     return true;
 }
 
-bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
+bool GraphicsContextGLEGL::platformInitialize()
 {
 #if USE(COORDINATED_GRAPHICS)
     m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
@@ -374,7 +374,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     return true;
 }
 
-void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
+void GraphicsContextGLEGL::swapCompositorTexture()
 {
     std::swap(m_texture, m_compositorTexture);
 #if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
@@ -401,7 +401,7 @@ void GraphicsContextGLTextureMapperANGLE::swapCompositorTexture()
         GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
 }
 
-bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
+bool GraphicsContextGLEGL::reshapeDrawingBuffer()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();
@@ -422,7 +422,7 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     return true;
 }
 
-void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
+void GraphicsContextGLEGL::prepareForDisplay()
 {
     if (!makeContextCurrent())
         return;
@@ -445,22 +445,22 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 #endif
 }
 
-GLContextWrapper::Type GraphicsContextGLTextureMapperANGLE::type() const
+GLContextWrapper::Type GraphicsContextGLEGL::type() const
 {
     return GLContextWrapper::Type::Angle;
 }
 
-bool GraphicsContextGLTextureMapperANGLE::makeCurrentImpl()
+bool GraphicsContextGLEGL::makeCurrentImpl()
 {
     return !!EGL_MakeCurrent(m_displayObj, m_surfaceObj, m_surfaceObj, m_contextObj);
 }
 
-bool GraphicsContextGLTextureMapperANGLE::unmakeCurrentImpl()
+bool GraphicsContextGLEGL::unmakeCurrentImpl()
 {
     return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 }
 
-unsigned GraphicsContextGLTextureMapperANGLE::glVersion() const
+unsigned GraphicsContextGLEGL::glVersion() const
 {
     if (!m_version) {
         auto* versionString = byteCast<char>(GL_GetString(GL_VERSION));
@@ -470,7 +470,7 @@ unsigned GraphicsContextGLTextureMapperANGLE::glVersion() const
 }
 
 #if ENABLE(WEBXR)
-GCGLExternalSync GraphicsContextGLTextureMapperANGLE::createExternalSync(ExternalSyncSource&&)
+GCGLExternalSync GraphicsContextGLEGL::createExternalSync(ExternalSyncSource&&)
 {
     const auto& display = PlatformDisplay::sharedDisplay();
     if (!display.eglCheckVersion(1, 5) || !display.eglExtensions().ANDROID_native_fence_sync)
@@ -489,7 +489,7 @@ GCGLExternalSync GraphicsContextGLTextureMapperANGLE::createExternalSync(Externa
 }
 
 #if USE(OPENXR)
-UnixFileDescriptor GraphicsContextGLTextureMapperANGLE::exportExternalSync(GCGLExternalSync sync)
+UnixFileDescriptor GraphicsContextGLEGL::exportExternalSync(GCGLExternalSync sync)
 {
     if (!sync)
         return { };
@@ -504,20 +504,20 @@ UnixFileDescriptor GraphicsContextGLTextureMapperANGLE::exportExternalSync(GCGLE
 }
 #endif
 
-bool GraphicsContextGLTextureMapperANGLE::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
+bool GraphicsContextGLEGL::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
 {
     return false;
 }
 
-void GraphicsContextGLTextureMapperANGLE::enableFoveation(GCGLuint)
+void GraphicsContextGLEGL::enableFoveation(GCGLuint)
 {
 }
 
-void GraphicsContextGLTextureMapperANGLE::disableFoveation()
+void GraphicsContextGLEGL::disableFoveation()
 {
 }
 
-bool GraphicsContextGLTextureMapperANGLE::enableRequiredWebXRExtensions()
+bool GraphicsContextGLEGL::enableRequiredWebXRExtensions()
 {
     if (!makeContextCurrent())
         return false;

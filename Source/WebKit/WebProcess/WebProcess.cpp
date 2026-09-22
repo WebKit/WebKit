@@ -266,7 +266,7 @@
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
-#include <WebCore/GraphicsContextGLTextureMapperGBM.h>
+#include <WebCore/GraphicsContextGLGBM.h>
 #endif
 
 #undef WEBPROCESS_RELEASE_LOG
@@ -2605,7 +2605,7 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
 {
 #if USE(COORDINATED_GRAPHICS)
 #if USE(GBM)
-    return m_useGPUProcessForWebGL && WebCore::GraphicsContextGLTextureMapperGBM::checkRequirements();
+    return m_useGPUProcessForWebGL && WebCore::GraphicsContextGLGBM::checkRequirements();
 #else
     return false;
 #endif

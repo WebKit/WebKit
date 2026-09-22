@@ -51,9 +51,9 @@
 #include <WebCore/GraphicsContextGLCocoa.h>
 #elif USE(GBM)
 #include <WebCore/DMABufBuffer.h>
-#include <WebCore/GraphicsContextGLTextureMapperGBM.h>
+#include <WebCore/GraphicsContextGLGBM.h>
 #else
-#include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
+#include <WebCore/GraphicsContextGLEGL.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -162,9 +162,9 @@ protected:
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #elif USE(GBM)
-    using GCGLContext = WebCore::GraphicsContextGLTextureMapperGBM;
+    using GCGLContext = WebCore::GraphicsContextGLGBM;
 #else
-    using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
+    using GCGLContext = WebCore::GraphicsContextGLEGL;
 #endif
 
 #include "RemoteGraphicsContextGLFunctionsGenerated.h" // NOLINT

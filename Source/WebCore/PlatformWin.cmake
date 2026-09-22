@@ -65,6 +65,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/egl/GLFence.cpp
     platform/graphics/egl/GLFenceEGL.cpp
     platform/graphics/egl/GLFenceGL.cpp
+    platform/graphics/egl/GraphicsContextGLEGL.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 

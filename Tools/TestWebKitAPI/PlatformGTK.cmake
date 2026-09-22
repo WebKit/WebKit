@@ -45,7 +45,7 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/ImageDecoderTests.cpp
 
     Tests/WebCore/glib/Damage.cpp
-    Tests/WebCore/glib/GraphicsContextGLTextureMapper.cpp
+    Tests/WebCore/glib/GraphicsContextGLEGL.cpp
     Tests/WebCore/glib/RunLoopObserver.cpp
     Tests/WebCore/glib/SkiaCompositingLayerDamage.cpp
     Tests/WebCore/glib/UserAgentQuirks.cpp

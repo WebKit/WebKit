@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLTextureMapperGBM.h"
+#include "GraphicsContextGLGBM.h"
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "ANGLEHeaders.h"
@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-bool GraphicsContextGLTextureMapperGBM::checkRequirements()
+bool GraphicsContextGLGBM::checkRequirements()
 {
     auto& display = PlatformDisplay::sharedDisplay();
     if (display.type() != PlatformDisplay::Type::GBM)
@@ -56,26 +56,26 @@ bool GraphicsContextGLTextureMapperGBM::checkRequirements()
     return !disableGBM || *disableGBM == '0';
 }
 
-RefPtr<GraphicsContextGLTextureMapperGBM> GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
+RefPtr<GraphicsContextGLGBM> GraphicsContextGLGBM::create(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
 {
-    auto context = adoptRef(new GraphicsContextGLTextureMapperGBM(WTF::move(attributes), WTF::move(delegate)));
+    Ref context = adoptRef(*new GraphicsContextGLGBM(WTF::move(attributes), WTF::move(delegate)));
     if (!context->initialize())
         return nullptr;
     return context;
 }
 
-GraphicsContextGLTextureMapperGBM::GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
-    : GraphicsContextGLTextureMapperANGLE(WTF::move(attributes))
+GraphicsContextGLGBM::GraphicsContextGLGBM(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
+    : GraphicsContextGLEGL(WTF::move(attributes))
 {
     m_layerContentsDisplayDelegate = WTF::move(delegate);
 }
 
-GraphicsContextGLTextureMapperGBM::~GraphicsContextGLTextureMapperGBM()
+GraphicsContextGLGBM::~GraphicsContextGLGBM()
 {
     freeDrawingBuffers();
 }
 
-bool GraphicsContextGLTextureMapperGBM::platformInitialize()
+bool GraphicsContextGLGBM::platformInitialize()
 {
     auto isOpaqueFormat = [](FourCC fourcc) -> bool {
         return fourcc != DRM_FORMAT_ARGB8888
@@ -107,7 +107,7 @@ bool GraphicsContextGLTextureMapperGBM::platformInitialize()
     return true;
 }
 
-bool GraphicsContextGLTextureMapperGBM::platformInitializeExtensions()
+bool GraphicsContextGLGBM::platformInitializeExtensions()
 {
     if (!enableExtensionsImpl({ "GL_OES_EGL_image"_s }))
         return false;
@@ -121,7 +121,7 @@ bool GraphicsContextGLTextureMapperGBM::platformInitializeExtensions()
     return eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import;
 }
 
-GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperGBM::createDrawingBuffer() const
+GraphicsContextGLGBM::DrawingBuffer GraphicsContextGLGBM::createDrawingBuffer() const
 {
     auto gbmDevice = DRMDeviceManager::singleton().mainGBMDevice(DRMDeviceManager::NodeType::Render);
     if (!gbmDevice)
@@ -158,7 +158,7 @@ GraphicsContextGLTextureMapperGBM::DrawingBuffer GraphicsContextGLTextureMapperG
     return { WTF::move(dmaBuf), image };
 }
 
-void GraphicsContextGLTextureMapperGBM::freeDrawingBuffers()
+void GraphicsContextGLGBM::freeDrawingBuffers()
 {
     auto destroyBuffer = [this](DrawingBuffer& buffer) {
         if (!buffer.image)
@@ -172,7 +172,7 @@ void GraphicsContextGLTextureMapperGBM::freeDrawingBuffers()
     destroyBuffer(m_displayBuffer);
 }
 
-bool GraphicsContextGLTextureMapperGBM::bindNextDrawingBuffer()
+bool GraphicsContextGLGBM::bindNextDrawingBuffer()
 {
     std::swap(m_drawingBuffer, m_displayBuffer);
 
@@ -190,13 +190,13 @@ bool GraphicsContextGLTextureMapperGBM::bindNextDrawingBuffer()
     return true;
 }
 
-bool GraphicsContextGLTextureMapperGBM::reshapeDrawingBuffer()
+bool GraphicsContextGLGBM::reshapeDrawingBuffer()
 {
     freeDrawingBuffers();
     return bindNextDrawingBuffer();
 }
 
-UnixFileDescriptor GraphicsContextGLTextureMapperGBM::createExportedFence() const
+UnixFileDescriptor GraphicsContextGLGBM::createExportedFence() const
 {
     const auto& eglExtensions = PlatformDisplay::sharedDisplay().eglExtensions();
     if (!eglExtensions.KHR_fence_sync || !eglExtensions.ANDROID_native_fence_sync)
@@ -212,7 +212,7 @@ UnixFileDescriptor GraphicsContextGLTextureMapperGBM::createExportedFence() cons
     return fd;
 }
 
-void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
+void GraphicsContextGLGBM::prepareForDisplay()
 {
     UnixFileDescriptor fenceFD;
     std::unique_ptr<GLFence> fence;
@@ -246,7 +246,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
 
-void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)
+void GraphicsContextGLGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)
 {
     if (!makeContextCurrent())
         return;
@@ -264,7 +264,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Func
 }
 
 #if ENABLE(WEBXR)
-GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
+GCGLExternalImage GraphicsContextGLGBM::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
 {
     GraphicsContextGLExternalImageSource imageSource = WTF::move(source);
 
@@ -293,7 +293,7 @@ GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(Externa
     return newName;
 }
 
-void GraphicsContextGLTextureMapperGBM::bindExternalImage(GCGLenum target, GCGLExternalImage image)
+void GraphicsContextGLGBM::bindExternalImage(GCGLenum target, GCGLExternalImage image)
 {
     if (!makeContextCurrent())
         return;
@@ -311,7 +311,7 @@ void GraphicsContextGLTextureMapperGBM::bindExternalImage(GCGLenum target, GCGLE
         GL_EGLImageTargetTexture2DOES(target, eglImage);
 }
 
-bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensions()
+bool GraphicsContextGLGBM::enableRequiredWebXRExtensions()
 {
     if (!makeContextCurrent())
         return false;
@@ -319,7 +319,7 @@ bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensions()
     return enableRequiredWebXRExtensionsImpl();
 }
 
-bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensionsImpl()
+bool GraphicsContextGLGBM::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,

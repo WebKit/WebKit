@@ -30,7 +30,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferSkiaDeferredImage.cpp
     platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferSkiaImage.cpp
     platform/graphics/texmap/coordinated/CoordinatedTileBuffer.cpp
-    platform/graphics/texmap/coordinated/GraphicsContextGLTextureMapperANGLECoordinated.cpp
+    platform/graphics/texmap/coordinated/GraphicsContextGLEGLCoordinated.cpp
     platform/graphics/texmap/coordinated/GraphicsLayerAsyncContentsDisplayDelegateCoordinated.cpp
     platform/graphics/texmap/coordinated/GraphicsLayerContentsDisplayDelegateCoordinated.cpp
     platform/graphics/texmap/coordinated/GraphicsLayerCoordinated.cpp
@@ -50,12 +50,7 @@ if (USE_TEXTURE_MAPPER)
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.h
     )
 else ()
-    list(APPEND WebCore_SOURCES
-        platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
-    )
-
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
         platform/graphics/texmap/TextureMapperFlags.h
     )
 endif ()
@@ -91,7 +86,7 @@ if (USE_GBM)
         platform/graphics/gbm/DRMDevice.h
         platform/graphics/gbm/DRMDeviceManager.h
         platform/graphics/gbm/GBMDevice.h
-        platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.h
+        platform/graphics/gbm/GraphicsContextGLGBM.h
         platform/graphics/gbm/MemoryMappedGPUBuffer.h
 
         platform/graphics/texmap/coordinated/CoordinatedPlatformLayerBufferDMABuf.h
