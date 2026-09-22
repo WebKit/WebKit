@@ -30,20 +30,22 @@ WebKitBuildbot = function()
         "Apple-Golden-Gate-Debug-Build": {platform: Dashboard.Platform.macOSGoldenGate, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Golden-Gate-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSGoldenGate, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSGoldenGate, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
+        "Apple-Golden-Gate-Release-WK2-Perf": {platform: Dashboard.Platform.macOSGoldenGate, debug: false, performance: true, heading: "Performance"},
+        "Apple-Golden-Gate JSC": {platform: Dashboard.Platform.macOSGoldenGate, heading: "JavaScript", combinedQueues: {
+            "Apple-Golden-Gate-Release-AppleSilicon-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
+            "Apple-Golden-Gate-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
+        }},
+        "Apple-Golden-Gate-World-Leaks": {platform: Dashboard.Platform.macOSGoldenGate, heading: "World Leaks", combinedQueues: {
+            "Apple-Golden-Gate-Release-World-Leaks-Tests": {heading: "World Leaks (Tests)"},
+        }},
         "Apple-Tahoe-Release-Build": {platform: Dashboard.Platform.macOSTahoe, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Tahoe-Debug-Build": {platform: Dashboard.Platform.macOSTahoe, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Tahoe-Debug-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-Tahoe-Release-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2},
         "Apple-Tahoe-Debug-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: true, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Debug AppleSilicon"},
         "Apple-Tahoe-Release-AppleSilicon-WK2-Tests": {platform: Dashboard.Platform.macOSTahoe, debug: false, tester: true, testCategory: Buildbot.TestCategory.WebKit2, heading: "Release AppleSilicon"},
-        "Apple-Tahoe-Release-WK2-Perf": {platform: Dashboard.Platform.macOSTahoe, debug: false, performance: true, heading: "Performance"},
         "Apple-Tahoe JSC": {platform: Dashboard.Platform.macOSTahoe, heading: "JavaScript", combinedQueues: {
-            "Apple-Tahoe-AppleSilicon-Release-Test262-Tests": {heading: "Release arm64 Test262 (Tests)"},
             "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest": {heading: "O3 Debug arm64 JSC (BuildAndTest)"},
-            "Apple-Tahoe-LLINT-CLoop-BuildAndTest": {heading: "LLINT CLoop (BuildAndTest)"},
-        }},
-        "Apple-Tahoe-World-Leaks": {platform: Dashboard.Platform.macOSTahoe, heading: "World Leaks", combinedQueues: {
-            "Apple-Tahoe-Release-World-Leaks-Tests": {heading: "World Leaks (Tests)"},
         }},
         "Apple-Sequoia-Release-Build": {platform: Dashboard.Platform.macOSSequoia, debug: false, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},
         "Apple-Sequoia-Debug-Build": {platform: Dashboard.Platform.macOSSequoia, debug: true, builder: true, architecture: Buildbot.BuildArchitecture.SixtyFourBit},

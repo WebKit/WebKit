@@ -1,9 +1,14 @@
 {
   "workers":     [
+                  { "name": "bot165", "platform": "mac-golden-gate" },
+                  { "name": "bot179", "platform": "mac-golden-gate" },
                   { "name": "bot243", "platform": "mac-golden-gate" },
                   { "name": "bot244", "platform": "mac-golden-gate" },
                   { "name": "bot247", "platform": "mac-golden-gate" },
                   { "name": "bot248", "platform": "mac-golden-gate" },
+                  { "name": "bot254", "platform": "mac-golden-gate" },
+                  { "name": "bot258", "platform": "mac-golden-gate" },
+                  { "name": "bot303", "platform": "mac-golden-gate" },
                   { "name": "bot613", "platform": "mac-golden-gate" },
                   { "name": "bot674", "platform": "mac-golden-gate" },
                   { "name": "bot687", "platform": "mac-golden-gate" },
@@ -24,22 +29,17 @@
                   { "name": "bot245", "platform": "mac-tahoe" },
                   { "name": "bot246", "platform": "mac-tahoe" },
                   { "name": "bot249", "platform": "mac-tahoe" },
-                  { "name": "bot254", "platform": "mac-tahoe" },
                   { "name": "bot256", "platform": "mac-tahoe" },
                   { "name": "bot257", "platform": "mac-tahoe" },
-                  { "name": "bot258", "platform": "mac-tahoe" },
                   { "name": "bot260", "platform": "*" },
 
                   { "name": "bot2000", "platform": "mac-tahoe" },
                   { "name": "bot2001", "platform": "mac-tahoe" },
                   { "name": "bot105", "platform": "mac-tahoe" },
                   { "name": "bot132", "platform": "mac-tahoe" },
-                  { "name": "bot165", "platform": "mac-tahoe" },
                   { "name": "bot178", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
-                  { "name": "bot179", "platform": "mac-tahoe" },
                   { "name": "bot184", "platform": "mac-tahoe", "notes": "Macmini8,1 on Sequoia building for Tahoe" },
                   { "name": "bot187", "platform": "mac-tahoe" },
-                  { "name": "bot303", "platform": "mac-tahoe" },
                   { "name": "bot605", "platform": "mac-tahoe" },
                   { "name": "bot616", "platform": "mac-tahoe" },
                   { "name": "bot621", "platform": "mac-tahoe" },
@@ -177,31 +177,31 @@
                   },
                   {
                     "name": "bot10011",
-                    "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.5-25F71",
+                    "platform": "mac-golden-gate",
+                    "os": "macOS Golden Gate 27.0-26A428",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.5-17F42"
+                    "xcode": "Xcode 27.0-27A266a"
                   },
                   {
                     "name": "bot10012",
-                    "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.5-25F71",
+                    "platform": "mac-golden-gate",
+                    "os": "macOS Golden Gate 27.0-26A428",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.5-17F42"
+                    "xcode": "Xcode 27.0-27A266a"
                   },
                   {
                     "name": "bot10013",
-                    "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.5-25F71",
+                    "platform": "mac-golden-gate",
+                    "os": "macOS Golden Gate 27.0-26A428",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.5-17F42"
+                    "xcode": "Xcode 27.0-27A266a"
                   },
                   {
                     "name": "bot10014",
-                    "platform": "mac-tahoe",
-                    "os": "macOS Tahoe 26.5-25F71",
+                    "platform": "mac-golden-gate",
+                    "os": "macOS Golden Gate 27.0-26A428",
                     "device": "Mac16,11",
-                    "xcode": "Xcode 26.5-17F42"
+                    "xcode": "Xcode 27.0-27A266a"
                   },
 
                   { "name": "wincairo-debug-build-01", "platform": "win" },
@@ -281,19 +281,39 @@
                   { "name": "Apple-Golden-Gate-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
                   "triggers": [
-                      "golden-gate-release-applesilicon-tests-wk2"
+                      "golden-gate-release-applesilicon-tests-wk2", "golden-gate-release-perf-tests",
+                      "golden-gate-applesilicon-release-tests-test262", "golden-gate-release-tests-wk2-accessibility-isolated-tree",
+                      "golden-gate-release-world-leaks-tests"
                   ],
                   "workernames": ["bot688", "bot687"]
+                  },
+                  { "name": "Apple-Golden-Gate-Release-World-Leaks-Tests", "factory": "TestWorldLeaksFactory",
+                  "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                  "additionalArguments": ["--no-retry-failures"],
+                  "workernames": ["bot303"]
                   },
                   { "name": "Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
                   "workernames": ["bot243", "bot244"]
                   },
+                  { "name": "Apple-Golden-Gate-Release-AppleSilicon-Test262-Tests", "factory": "Test262Factory",
+                  "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                  "workernames": ["bot165"]
+                  },
+                  { "name": "Apple-Golden-Gate-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory",
+                    "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["bot254"]
+                  },
+                  { "name": "Apple-Golden-Gate-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
+                    "platform": "mac-golden-gate", "configuration": "release", "architectures": ["arm64"],
+                    "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
+                    "workernames": ["bot179"]
+                  },
                   { "name": "Apple-Golden-Gate-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
                   "triggers": [
-                      "golden-gate-debug-applesilicon-tests-wk2"
+                      "golden-gate-debug-applesilicon-tests-wk2", "golden-gate-debug-tests-wk2-site-isolation-tree"
                   ],
                   "workernames": ["bot613", "bot674"]
                   },
@@ -302,20 +322,22 @@
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
                   "workernames": ["bot247", "bot248"]
                   },
+                  { "name": "Apple-Golden-Gate-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
+                  "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
+                  "workernames": ["bot258"]
+                  },
+                  { "name": "Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests", "factory": "TestAllButJSCFactory",
+                  "platform": "mac-golden-gate", "configuration": "debug", "architectures": ["arm64"],
+                  "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default"],
+                  "workernames": ["bot10011", "bot10012", "bot10013", "bot10014"]
+                  },
                   { "name": "Apple-Tahoe-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
                   "triggers": [
-                      "tahoe-release-tests-wk2", "tahoe-release-perf-tests",
-                      "tahoe-release-applesilicon-tests-wk2",
-                      "tahoe-applesilicon-release-tests-test262", "tahoe-release-tests-wk2-accessibility-isolated-tree", 
-                      "tahoe-release-world-leaks-tests"
+                      "tahoe-release-tests-wk2",
+                      "tahoe-release-applesilicon-tests-wk2"
                   ],
                   "workernames": ["bot678", "bot10004"]
-                  },
-                  { "name": "Apple-Tahoe-Release-World-Leaks-Tests", "factory": "TestWorldLeaksFactory",
-                  "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures"],
-                  "workernames": ["bot303"]
                   },
                   { "name": "Apple-Tahoe-Release-AppleSilicon-WK2-Tests", "factory": "TestAllButJSCFactory",
                   "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -327,24 +349,11 @@
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
                   "workernames": ["bot616", "bot669"]
                   },
-                  { "name": "Apple-Tahoe-Release-AppleSilicon-Test262-Tests", "factory": "Test262Factory",
-                  "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                  "workernames": ["bot165"]
-                  },
-                  { "name": "Apple-Tahoe-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory",
-                    "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "workernames": ["bot254"]
-                  },
-                  { "name": "Apple-Tahoe-Release-WK2-Accessibility-Isolated-Tree-Tests", "factory": "TestLayoutFactory",
-                    "platform": "mac-tahoe", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                    "additionalArguments": ["--no-retry-failures", "--accessibility-isolated-tree", "accessibility/"],
-                    "workernames": ["bot179"]
-                  },
                   { "name": "Apple-Tahoe-Debug-Build", "factory": "BuildFactory",
                   "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                   "triggers": [
                       "tahoe-debug-tests-wk2",
-                      "tahoe-debug-applesilicon-tests-wk2", "tahoe-debug-tests-wk2-site-isolation-tree"
+                      "tahoe-debug-applesilicon-tests-wk2"
                   ],
                   "workernames": ["bot621", "bot10002"]
                   },
@@ -358,19 +367,10 @@
                   "additionalArguments": ["--no-retry-failures", "-2", "-1"],
                   "workernames": ["bot257", "bot10001", "bot132", "bot10000"]
                   },
-                  { "name": "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory",
-                  "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "workernames": ["bot258"]
-                  },
                   {
                     "name": "Apple-Tahoe-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
                     "platform": "mac-tahoe", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot600", "bot10009", "bot10010"]
-                  },
-                  { "name": "Apple-Tahoe-Debug-WK2-Site-Isolation-Tree-Tests", "factory": "TestAllButJSCFactory",
-                  "platform": "mac-tahoe", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                  "additionalArguments": ["--no-retry-failures", "--site-isolation-enabled-by-default"],
-                  "workernames": ["bot10011", "bot10012", "bot10013", "bot10014"]
                   },
                   { "name": "Apple-Sequoia-Release-Build", "factory": "BuildFactory",
                   "platform": "mac-sequoia", "configuration": "release", "architectures": ["x86_64", "arm64"],
@@ -802,7 +802,7 @@
                     "builderNames": ["WPE-Linux-ARM64-bit-Release-v254-BuildAndTest", "WPE-Linux-RPi4-64bits-Mesa-Release-v254-Perf-Build"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-golden-gate", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Golden-Gate-Release-Build", "Apple-Golden-Gate-Debug-Build"]
+                  "builderNames": ["Apple-Golden-Gate-Release-Build", "Apple-Golden-Gate-Debug-Build", "Apple-Golden-Gate-LLINT-CLoop-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "golden-gate-release-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Golden-Gate-Release-AppleSilicon-WK2-Tests"]
@@ -810,8 +810,23 @@
                   { "type": "Triggerable", "name": "golden-gate-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Golden-Gate-Debug-AppleSilicon-WK2-Tests"]
                   },
+                  { "type": "Triggerable", "name": "golden-gate-release-perf-tests",
+                  "builderNames": ["Apple-Golden-Gate-Release-WK2-Perf"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-release-tests-wk2-accessibility-isolated-tree",
+                  "builderNames": ["Apple-Golden-Gate-Release-WK2-Accessibility-Isolated-Tree-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-applesilicon-release-tests-test262",
+                  "builderNames": ["Apple-Golden-Gate-Release-AppleSilicon-Test262-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-release-world-leaks-tests",
+                    "builderNames": ["Apple-Golden-Gate-Release-World-Leaks-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "golden-gate-debug-tests-wk2-site-isolation-tree",
+                  "builderNames": ["Apple-Golden-Gate-Debug-WK2-Site-Isolation-Tree-Tests"]
+                  },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-tahoe", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-LLINT-CLoop-BuildAndTest", "Apple-Tahoe-Safer-CPP-Checks", "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
+                  "builderNames": ["Apple-Tahoe-Release-Build", "Apple-Tahoe-Debug-Build", "Apple-Tahoe-Safer-CPP-Checks", "Apple-Tahoe-AppleSilicon-O3-Debug-JSC-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "tahoe-release-tests-wk2",
                   "builderNames": ["Apple-Tahoe-Release-WK2-Tests"]
@@ -824,21 +839,6 @@
                   },
                   { "type": "Triggerable", "name": "tahoe-debug-applesilicon-tests-wk2",
                   "builderNames": ["Apple-Tahoe-Debug-AppleSilicon-WK2-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "tahoe-release-perf-tests",
-                  "builderNames": ["Apple-Tahoe-Release-WK2-Perf"]
-                  },
-                  { "type": "Triggerable", "name": "tahoe-release-tests-wk2-accessibility-isolated-tree",
-                  "builderNames": ["Apple-Tahoe-Release-WK2-Accessibility-Isolated-Tree-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "tahoe-applesilicon-release-tests-test262",
-                  "builderNames": ["Apple-Tahoe-Release-AppleSilicon-Test262-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "tahoe-release-world-leaks-tests",
-                    "builderNames": ["Apple-Tahoe-Release-World-Leaks-Tests"]
-                  },
-                  { "type": "Triggerable", "name": "tahoe-debug-tests-wk2-site-isolation-tree",
-                  "builderNames": ["Apple-Tahoe-Debug-WK2-Site-Isolation-Tree-Tests"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build"]
