@@ -154,8 +154,6 @@ rdar://164264557 [ mac Tahoe+ ] TestWebKitAPI.GraphicsContextGLCocoaTest/AnyCont
 rdar://164264557 [ mac Tahoe+ ] TestWebKitAPI.GraphicsContextGLCocoaTest/AnyContextAttributeTest.UnrecycledDisplayBuffersNoLeaks/truetruetrue [ Skip ]
 rdar://108167361 [ mac release ] TestWebKitAPI.HSTS.Preconnect [ Skip ]
 webkit.org/b/316420 [ ios ] TestWebKitAPI.HSTS.Preconnect [ Pass Timeout ]
-rdar://143715095 TestWebKitAPI.HSTS.ThirdParty [ Skip ]
-rdar://143715095 TestWebKitAPI.HSTS.ThirdPartyFetch [ Skip ]
 webkit.org/b/231471 TestWebKitAPI.ImageBufferTests.DrawImageBufferDoesNotReferenceExtraMemory [ Skip ]
 webkit.org/b/323702 [ ios ] TestWebKitAPI.IndexedDB.TransactionOfSuspendedProcessIsNotAbortedByItsOwnQueuedTransaction [ Pass Failure ]
 rdar://136551692 [ mac ] TestWebKitAPI.InWindowFullscreen.CanToggleAfterPlaybackStarts [ Skip ]
