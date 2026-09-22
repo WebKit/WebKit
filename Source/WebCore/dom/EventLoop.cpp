@@ -200,7 +200,11 @@ void EventLoop::queueTask(std::unique_ptr<EventLoopTask>&& task)
     ASSERT(task->taskSource() != TaskSource::Microtask);
     ASSERT(task->group());
     ASSERT(isContextThread());
-    scheduleToRunIfNeeded();
+    // Always restart the run timer so that tasks queued via queueTask fire after any
+    // EventLoopTimers (e.g. setTimeout) whose startOneShot was called before this point.
+    // This preserves FIFO ordering across task sources as required by the HTML spec.
+    microtaskQueue().setIsScheduledToRun(true);
+    scheduleToRun();
     m_tasks.append(WTF::move(task));
 }
 
