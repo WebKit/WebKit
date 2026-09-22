@@ -32,6 +32,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/LayoutRect.h>
 #include <WebCore/TransformationMatrix.h>
 
 #if USE(CG)
@@ -1421,6 +1422,29 @@ TEST(TransformationMatrix, IPCDataFull)
     ASSERT_TRUE(withPerspective.hasPerspective());
     ASSERT_FALSE(withPerspective.isAffine());
     testIPCDataRoundTrip(withPerspective, ExpectedIPCDataAlternative::Full);
+}
+
+TEST(TransformationMatrix, ClampedBoundsOfProjectedQuadAcrossEyePlane)
+{
+    // A plane turned away under a perspective, seen through a viewport that reaches past the horizon of the plane
+    // at x = 600 / tan(50deg). The visible part of the plane starts at the left edge of the viewport and reaches
+    // infinitely far to the right.
+    WebCore::TransformationMatrix planeToViewport;
+    planeToViewport.applyPerspective(600);
+    planeToViewport.rotate3d(0, 50, 0);
+    auto viewportToPlane = planeToViewport.inverse();
+    ASSERT_TRUE(viewportToPlane);
+
+    auto bounds = viewportToPlane->clampedBoundsOfProjectedQuad(WebCore::FloatQuad(WebCore::FloatRect(-400, -300, 1200, 600)));
+    EXPECT_EQ(-347, bounds.x().toInt());
+    EXPECT_GT(bounds.maxX().toInt(), 100000);
+    EXPECT_LT(bounds.y().toInt(), -300);
+    EXPECT_GT(bounds.maxY().toInt(), 300);
+    EXPECT_TRUE(bounds.contains(WebCore::LayoutPoint()));
+
+    // A quad entirely behind the eye is not visible.
+    auto hidden = viewportToPlane->clampedBoundsOfProjectedQuad(WebCore::FloatQuad(WebCore::FloatRect(600, -10, 100, 20)));
+    EXPECT_TRUE(hidden.isEmpty());
 }
 
 }

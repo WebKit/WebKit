@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>CSS Transforms: hit testing a plane seen past its horizon</title>
+<link rel="help" href="https://drafts.csswg.org/css-transforms-2/#perspective">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+html, body { margin: 0; padding: 0; }
+#camera {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 800px;
+    height: 600px;
+    perspective: 300px;
+    background: silver;
+}
+#plane {
+    width: 800px;
+    height: 600px;
+    background: green;
+    transform: rotateY(80deg);
+}
+</style>
+<div id="camera"><div id="plane"></div></div>
+<script>
+// #plane is turned so far away from the camera that its left half crosses the
+// plane of the eye. What remains visible fills the left part of the viewport,
+// and the vanishing line of the plane sits inside the viewport as well.
+[[50, 300], [200, 300], [350, 300], [400, 150], [400, 450]].forEach(function(point) {
+    test(function() {
+        var element = document.elementFromPoint(point[0], point[1]);
+        assert_not_equals(element, null, "a point over the plane hits an element");
+        assert_equals(element.id, "plane");
+    }, "The visible part of the plane is hit at (" + point[0] + ", " + point[1] + ")");
+});
+
+// Past the vanishing line the plane is not visible, so the camera is hit instead.
+[[600, 300], [780, 100]].forEach(function(point) {
+    test(function() {
+        var element = document.elementFromPoint(point[0], point[1]);
+        assert_not_equals(element, null, "a point past the vanishing line hits an element");
+        assert_equals(element.id, "camera");
+    }, "The part of the plane behind the eye is not hit at (" + point[0] + ", " + point[1] + ")");
+});
+</script>

@@ -1363,9 +1363,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 
 webkit.org/b/314312 media/media-sources-selection.html [ ImageOnlyFailure ]
 
-# Passes with the clampedBoundsOfProjectedQuad() fix from webkit.org/b/324623.
-webkit.org/b/324623 imported/w3c/web-platform-tests/css/filter-effects/filter-in-3d-transformed-ancestor-child-near-eye-plane.html [ ImageOnlyFailure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
 #////////////////////////////////////////////////////////////////////////////////////////

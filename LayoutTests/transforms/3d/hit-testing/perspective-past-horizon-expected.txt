@@ -1,0 +1,9 @@
+
+PASS The visible part of the plane is hit at (50, 300)
+PASS The visible part of the plane is hit at (200, 300)
+PASS The visible part of the plane is hit at (350, 300)
+PASS The visible part of the plane is hit at (400, 150)
+PASS The visible part of the plane is hit at (400, 450)
+PASS The part of the plane behind the eye is not hit at (600, 300)
+PASS The part of the plane behind the eye is not hit at (780, 100)
+
