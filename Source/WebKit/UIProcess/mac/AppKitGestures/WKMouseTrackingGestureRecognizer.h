@@ -29,12 +29,13 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
+#import "WKPressGestureRecognizer.h"
 #import <AppKit/AppKit.h>
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_SWIFT_UI_ACTOR
-@interface WKMouseTrackingGestureRecognizer : NSPressGestureRecognizer
+@interface WKMouseTrackingGestureRecognizer : WKPressGestureRecognizer
 
 // Where the press began, as opposed to -locationInView:, which is the current location.
 @property (nonatomic, readonly) NSPoint startLocationInWindow;
