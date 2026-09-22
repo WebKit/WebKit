@@ -407,7 +407,7 @@
 - (DOMHTMLScriptElement *)currentScript
 {
     WebCore::JSMainThreadNullState state;
-    WebCore::Element* element = IMPL->currentScript();
+    RefPtr element = IMPL->currentScript();
     if (!is<WebCore::HTMLScriptElement>(element))
         return nil;
     return kit(WTF::getPtr(downcast<WebCore::HTMLScriptElement>(element)));
@@ -695,7 +695,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
     WebCore::JSMainThreadNullState state;
     if (!element)
         raiseTypeErrorException();
-    auto* dv = IMPL->window();
+    RefPtr dv = IMPL->window();
     if (!dv)
         return nil;
     return kit(WTF::getPtr(dv->getComputedStyle(protect(*core(element)), pseudoElement)));
@@ -709,7 +709,7 @@ static RefPtr<WebCore::XPathNSResolver> wrap(id <DOMXPathNSResolver> resolver)
 - (DOMCSSRuleList *)getMatchedCSSRules:(DOMElement *)element pseudoElement:(NSString *)pseudoElement authorOnly:(BOOL)authorOnly
 {
     WebCore::JSMainThreadNullState state;
-    auto* dv = IMPL->window();
+    RefPtr dv = IMPL->window();
     if (!dv)
         return nil;
     return kit(WTF::getPtr(dv->getMatchedCSSRules(protect(core(element)), pseudoElement, authorOnly)));

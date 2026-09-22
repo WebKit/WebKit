@@ -298,7 +298,7 @@ enum {
     ASSERT(_private->webFrame);
     ASSERT(_private->frameScrollView);
 
-    auto* frame = core(_private->webFrame);
+    RefPtr frame = core(_private->webFrame);
 
     ASSERT(frame);
     ASSERT(frame->page());
@@ -307,12 +307,12 @@ enum {
     // won't ever get installed in the view hierarchy.
     ASSERT(frame->isMainFrame() || frame->ownerElement());
 
-    auto* view = frame->view();
+    RefPtr view = frame->view();
 
     view->setPlatformWidget(_private->frameScrollView.get());
 
     // FIXME: Frame tries to do this too. Is this code needed?
-    if (WebCore::RenderWidget* owner = frame->ownerRenderer()) {
+    if (RefPtr owner = frame->ownerRenderer()) {
         owner->setWidget(view);
         // Now the RenderWidget owns the view, so we don't any more.
     }
@@ -326,7 +326,7 @@ enum {
     if ([[[self webFrame] webView] drawsBackground])
         [[self _scrollView] setDrawsBackground:YES];
     if (auto coreFrame = [self _web_frame]) {
-        if (auto* coreFrameView = coreFrame->view())
+        if (RefPtr coreFrameView = coreFrame->view())
             coreFrameView->availableContentSizeChanged(WebCore::ScrollableArea::AvailableSizeChangeReason::AreaSizeChanged);
     }
 }
@@ -410,15 +410,15 @@ enum {
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    WebCore::LocalFrame *frame = core([self webFrame]);
-    if (auto* view = frame? frame->view() : 0)
+    RefPtr frame = core([self webFrame]);
+    if (RefPtr view = frame ? frame->view() : nullptr)
         view->setCanHaveScrollbars(flag);
 }
 
 - (BOOL)allowsScrolling
 {
-    auto* frame = core([self webFrame]);
-    if (auto* view = frame? frame->view() : 0)
+    RefPtr frame = core([self webFrame]);
+    if (RefPtr view = frame ? frame->view() : nullptr)
         return view->canHaveScrollbars();
     return YES;
 }
@@ -594,7 +594,7 @@ enum {
     // scrolling overflows is only applicable if we're dealing with an WebHTMLView
     if (![[self documentView] isKindOfClass:[WebHTMLView class]])
         return NO;
-    auto* frame = core([self webFrame]);
+    RefPtr frame = core([self webFrame]);
     if (!frame)
         return NO;
     return frame->eventHandler().scrollOverflow(direction, granularity);
@@ -606,7 +606,7 @@ enum {
     auto coreFrame = [self _web_frame];
     if (!coreFrame)
         return YES;
-    auto* document = coreFrame->document();
+    RefPtr document = coreFrame->document();
     if (!document)
         return YES;
     auto* renderView = document->renderView();
@@ -620,7 +620,7 @@ enum {
     auto coreFrame = [self _web_frame];
     if (!coreFrame)
         return NO;
-    auto* document = coreFrame->document();
+    RefPtr document = coreFrame->document();
     if (!document)
         return NO;
     auto* renderView = document->renderView();

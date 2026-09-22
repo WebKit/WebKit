@@ -26,12 +26,13 @@
 #include "WebDatabaseProvider.h"
 
 #include <pal/SessionID.h>
+#include <wtf/NeverDestroyed.h>
 
 WebDatabaseProvider& WebDatabaseProvider::singleton()
 {
-    static WebDatabaseProvider& databaseProvider = adoptRef(*new WebDatabaseProvider).leakRef();
+    static NeverDestroyed<Ref<WebDatabaseProvider>> databaseProvider = adoptRef(*new WebDatabaseProvider);
 
-    return databaseProvider;
+    return databaseProvider.get();
 }
 
 WebDatabaseProvider::WebDatabaseProvider() = default;

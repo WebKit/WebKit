@@ -113,10 +113,10 @@ void WebResourceLoadScheduler::loadResource(LocalFrame& frame, CachedResource& r
 
 void WebResourceLoadScheduler::loadResourceSynchronously(FrameLoader& frameLoader, ResourceLoaderIdentifier, const ResourceRequest& request, ClientCredentialPolicy, const FetchOptions& options, const HTTPHeaderMap&, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
-    auto* document = frameLoader.frame().document();
-    auto* sourceOrigin = document ? &document->securityOrigin() : nullptr;
+    RefPtr document = frameLoader.frame().document();
+    RefPtr sourceOrigin = document ? &document->securityOrigin() : nullptr;
     RefPtr networkingContext = frameLoader.networkingContext();
-    ResourceHandle::loadResourceSynchronously(networkingContext, request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, sourceOrigin, error, response, data);
+    ResourceHandle::loadResourceSynchronously(networkingContext, request, options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use, sourceOrigin.get(), error, response, data);
 }
 
 void WebResourceLoadScheduler::pageLoadCompleted(Page&)
@@ -278,7 +278,7 @@ void WebResourceLoadScheduler::servePendingRequests(CheckedRef<HostInformation>&
             // For named hosts - which are only http(s) hosts - we should always enforce the connection limit.
             // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
             // and we don't know all stylesheets yet.
-            Document* document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame().document() : 0;
+            RefPtr document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame().document() : nullptr;
             bool shouldLimitRequests = !host->name().isNull() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
             if (shouldLimitRequests && host->limitRequests(priority))
                 return;

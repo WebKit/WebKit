@@ -79,8 +79,8 @@ SUPPRESS_NODELETE DOMElement *kit(WebCore::Element* value)
 - (DOMCSSStyleDeclaration *)style
 {
     WebCore::JSMainThreadNullState state;
-    auto& element = rawUnwrap(*self);
-    return is<WebCore::StyledElement>(element) ? kit(&downcast<WebCore::StyledElement>(element).cssomStyle()) : nullptr;
+    Ref element = rawUnwrap(*self);
+    return is<WebCore::StyledElement>(element) ? kit(&downcast<WebCore::StyledElement>(element.get()).cssomStyle()) : nullptr;
 }
 
 - (int)offsetLeft

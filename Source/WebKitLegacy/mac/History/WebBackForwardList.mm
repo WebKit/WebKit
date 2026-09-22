@@ -112,12 +112,11 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebBackForwardList class], self))
         return;
 
-    BackForwardList* backForwardList = core(self);
+    RefPtr backForwardList = adoptRef(core(self));
     ASSERT(backForwardList);
     if (backForwardList) {
         ASSERT(backForwardList->closed());
         backForwardLists().remove(*backForwardList);
-        backForwardList->deref();
     }
 
     [super dealloc];
@@ -283,7 +282,7 @@ static bool bumperCarBackForwardHackNeeded()
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    BackForwardList* backForwardList = core(self);
+    RefPtr backForwardList = core(self);
     auto& entries = backForwardList->entries();
 
     for (unsigned i = 0; i < entries.size(); ++i) {
@@ -330,7 +329,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
-    if (auto* mainFrame = core([core(self)->webView() mainFrame]))
+    if (RefPtr mainFrame = core([core(self)->webView() mainFrame]))
         return retainPtr(kit(core(self)->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
     ASSERT_NOT_REACHED();
     return nullptr;

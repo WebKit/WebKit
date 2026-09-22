@@ -68,10 +68,10 @@
     WebCore::JSMainThreadNullState state;
     if (!node)
         raiseTypeErrorException();
-    auto& coreNode = *core(node);
+    Ref coreNode = *core(node);
     if (!is<WebCore::Attr>(coreNode))
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->setNamedItem(downcast<WebCore::Attr>(coreNode))).get());
+    return kit(raiseOnDOMError(IMPL->setNamedItem(downcast<WebCore::Attr>(coreNode.get()))).get());
 }
 
 - (DOMNode *)removeNamedItem:(NSString *)name

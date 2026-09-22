@@ -113,7 +113,7 @@ SUPPRESS_NODELETE DOMAbstractView *kit(WebCore::WindowProxy* windowProxy)
 
 WebCore::WindowProxy* toWindowProxy(DOMAbstractView *view)
 {
-    auto* window = core(view);
+    RefPtr window = core(view);
     if (!window || !window->frame())
         return nil;
     return &window->frame()->windowProxy();

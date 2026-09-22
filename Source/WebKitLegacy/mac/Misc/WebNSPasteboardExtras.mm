@@ -213,15 +213,15 @@ static NSArray *writableTypesForImageWithArchive()
     
 }
 
-static WebCore::CachedImage* imageFromElement(DOMElement *domElement)
+static RefPtr<WebCore::CachedImage> imageFromElement(DOMElement *domElement)
 {
-    auto* element = core(domElement);
+    RefPtr element = core(domElement);
     if (!element)
         return nullptr;
     auto* renderer = element->renderer();
     if (!is<WebCore::RenderImage>(renderer))
         return nullptr;
-    auto* image = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    RefPtr image = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!image || image->errorOccurred())
         return nullptr;
     return image;
@@ -244,7 +244,7 @@ static WebCore::CachedImage* imageFromElement(DOMElement *domElement)
         if (image)
             [self setData:[image TIFFRepresentation] forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
         else if (source && element)
-            [source setPromisedDragTIFFDataSource:imageFromElement(element)];
+            [source setPromisedDragTIFFDataSource:imageFromElement(element).get()];
         else if (element)
             [self setData:[element _imageTIFFRepresentation] forType:WebCore::legacyTIFFPasteboardTypeSingleton()];
     }
@@ -281,7 +281,7 @@ static WebCore::CachedImage* imageFromElement(DOMElement *domElement)
 
     if (auto* renderer = core(element)->renderer()) {
         if (is<WebCore::RenderImage>(*renderer)) {
-            if (auto* image = downcast<WebCore::RenderImage>(*renderer).cachedImage()) {
+            if (RefPtr image = downcast<WebCore::RenderImage>(*renderer).cachedImage()) {
                 // FIXME: This doesn't check errorOccured the way imageFromElement does.
                 extension = image->image()->filenameExtension().createNSString();
                 if (![extension length])

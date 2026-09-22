@@ -161,7 +161,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    auto* resource = _private->coreResource.get();
+    RefPtr resource = _private->coreResource;
 
     RetainPtr<NSData> data;
     RetainPtr<NSURL> url;

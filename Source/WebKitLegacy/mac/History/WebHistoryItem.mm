@@ -223,7 +223,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSString *)description
 {
-    WebCore::HistoryItem* coreItem = core(_private);
+    RefPtr coreItem = core(_private);
     RetainPtr result = [NSMutableString stringWithFormat:@"%@ %@", [super description], coreItem->urlString().createNSString().get()];
     if (!coreItem->target().isEmpty())
         [result appendFormat:@" in \"%@\"", coreItem->target().createNSString().get()];
@@ -391,7 +391,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:8];
 
-    WebCore::HistoryItem* coreItem = core(_private);
+    RefPtr coreItem = core(_private);
     
     if (!coreItem->urlString().isEmpty())
         [dict setObject:coreItem->urlString().createNSString().get() forKey:@""];

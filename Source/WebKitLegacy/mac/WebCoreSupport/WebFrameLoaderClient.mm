@@ -289,7 +289,7 @@ void WebFrameLoaderClient::detachedFromParent3()
 void WebFrameLoaderClient::convertMainResourceLoadToDownload(WebCore::DocumentLoader* documentLoader, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response)
 {
     RetainPtr webView = getWebView(m_webFrame.get());
-    auto* mainResourceLoader = documentLoader->mainResourceLoader();
+    RefPtr mainResourceLoader = documentLoader->mainResourceLoader();
 
     if (!mainResourceLoader) {
         // The resource has already been cached, or the conversion is being attmpted when not calling SubresourceLoader::didReceiveResponse().
@@ -300,7 +300,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    auto* handle = mainResourceLoader->handle();
+    RefPtr handle = mainResourceLoader->handle();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [WebDownload _downloadWithLoadingConnection:handle->connection() request:protect(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody)).get() response:protect(response.nsURLResponse()).get() delegate:[webView.get() downloadDelegate] proxy:nil];
@@ -1042,7 +1042,7 @@ static inline NSString *nilOrNSString(const String& string)
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     RetainPtr view = getWebView(m_webFrame.get());
-    auto* loader = core(m_webFrame.get())->loader().documentLoader();
+    RefPtr loader = core(m_webFrame.get())->loader().documentLoader();
 #if PLATFORM(IOS_FAMILY)
     if (loader->urlForHistory() == aboutBlankURL())
         return;
@@ -1083,7 +1083,7 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     RetainPtr view = getWebView(m_webFrame.get());
     WebHistoryDelegateImplementationCache* implementations = [view.get() historyDelegate] ? WebViewGetHistoryDelegateImplementations(view.get()) : 0;
 
-    auto* loader = core(m_webFrame.get())->loader().documentLoader();
+    RefPtr loader = core(m_webFrame.get())->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());
 
     if (!loader->clientRedirectSourceForHistory().isNull()) {
@@ -1195,7 +1195,7 @@ void WebFrameLoaderClient::saveViewStateToItem(WebCore::HistoryItem& item)
 
 void WebFrameLoaderClient::restoreViewState()
 {
-    WebCore::HistoryItem* currentItem = core(m_webFrame.get())->loader().history().currentItem();
+    RefPtr currentItem = core(m_webFrame.get())->loader().history().currentItem();
     ASSERT(currentItem);
 
     // FIXME: As the ASSERT attests, it seems we should always have a currentItem here.
@@ -1211,7 +1211,7 @@ void WebFrameLoaderClient::restoreViewState()
     WebFrame *webFrame = m_webFrame.get();
     RetainPtr webView = getWebView(webFrame);   
     if (webFrame == [webView.get() mainFrame]) {
-        [[webView.get() _UIKitDelegateForwarder] webView:webView.get() restoreStateFromHistoryItem:kit(currentItem) forFrame:webFrame force:NO];
+        [[webView.get() _UIKitDelegateForwarder] webView:webView.get() restoreStateFromHistoryItem:kit(currentItem.get()) forFrame:webFrame force:NO];
         return;
     }
 #endif                    
@@ -1406,8 +1406,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
     // FIXME: Could we skip some of this work for a top-level view that is not a WebHTMLView?
 
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
-    auto* coreFrame = core(m_webFrame.get());
-    auto* page = coreFrame->page();
+    RefPtr coreFrame = core(m_webFrame.get());
+    RefPtr page = coreFrame->page();
     bool isMainFrame = coreFrame->isMainFrame();
     if (isMainFrame && coreFrame->view())
         coreFrame->view()->setParentVisible(false);
@@ -1439,12 +1439,12 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage(InitializingIframe)
     if (auto documentLoader = [dataSource _documentLoader])
         documentLoader->setTitle({ [dataSource pageTitle], WebCore::TextDirection::LTR });
 
-    if (auto* ownerElement = coreFrame->ownerElement())
+    if (RefPtr ownerElement = coreFrame->ownerElement())
         coreFrame->view()->setCanHaveScrollbars(ownerElement->scrollingMode() != WebCore::ScrollbarMode::AlwaysOff);
 
     // If the document view implicitly became first responder, make sure to set the focused frame properly.
     if ([[documentView window] firstResponder] == documentView) {
-        page->focusController().setFocusedFrame(coreFrame);
+        page->focusController().setFocusedFrame(coreFrame.get());
         page->focusController().setFocused(true);
     }
 }
@@ -1543,7 +1543,7 @@ bool WebFrameLoaderClient::canCachePage() const
         return false;
     
     // We only cache pages if the back forward list is enabled and has a non-zero capacity.
-    auto* page = core(m_webFrame.get())->page();
+    RefPtr page = core(m_webFrame.get())->page();
     if (!page)
         return false;
     
@@ -1563,12 +1563,12 @@ RefPtr<WebCore::LocalFrame> WebFrameLoaderClient::createFrame(const AtomString& 
     
     ASSERT(m_webFrame);
 
-    auto* ownerFrame = ownerElement.document().frame();
+    RefPtr ownerFrame = ownerElement.document().frame();
     if (!ownerFrame) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
-    auto* page = ownerFrame->page();
+    RefPtr page = ownerFrame->page();
     if (!page) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -1720,7 +1720,7 @@ RefPtr<WebCore::Widget> WebFrameLoaderClient::createPlugin(WebCore::HTMLPlugInEl
     int errorCode = 0;
 
     RetainPtr webView = getWebView(m_webFrame.get());
-    auto* document = core(m_webFrame.get())->document();
+    RefPtr document = core(m_webFrame.get())->document();
     RetainPtr baseURL = document->baseURL().createNSURL();
     RetainPtr pluginURL = url.createNSURL();
     auto attributeKeys = createNSArray(paramNames);
@@ -1856,7 +1856,7 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapp
     if (&world != &WebCore::mainThreadNormalWorldSingleton())
         return;
 
-    auto* frame = core(m_webFrame.get());
+    RefPtr frame = core(m_webFrame.get());
     auto& script = frame->script();
 
 #if JSC_OBJC_API_ENABLED
@@ -1971,8 +1971,8 @@ void WebFrameLoaderClient::prefetchDNS(const String& hostname)
 
 void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>& icons)
 {
-    auto* frame = core(m_webFrame.get());
-    auto* documentLoader = frame->loader().documentLoader();
+    RefPtr frame = core(m_webFrame.get());
+    RefPtr documentLoader = frame->loader().documentLoader();
     ASSERT(documentLoader);
 
 #if PLATFORM(MAC)

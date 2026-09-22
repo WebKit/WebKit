@@ -31,13 +31,14 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/Page.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/NeverDestroyed.h>
 
 
 WebPluginInfoProvider& WebPluginInfoProvider::singleton()
 {
-    static WebPluginInfoProvider& pluginInfoProvider = adoptRef(*new WebPluginInfoProvider).leakRef();
+    static NeverDestroyed<Ref<WebPluginInfoProvider>> pluginInfoProvider = adoptRef(*new WebPluginInfoProvider);
 
-    return pluginInfoProvider;
+    return pluginInfoProvider.get();
 }
 
 WebPluginInfoProvider::WebPluginInfoProvider() = default;
@@ -57,7 +58,7 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
 
 
     // WebKit1 has no application plug-ins, so we don't need to add them here.
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page.mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page.mainFrame());
     if (!localMainFrame)
         return plugins;
 

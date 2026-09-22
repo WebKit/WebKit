@@ -117,7 +117,7 @@ void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
     }
 
 #if !PLATFORM(IOS_FAMILY)
-    auto* frame = geolocation.frame();
+    RefPtr frame = geolocation.frame();
 
     if (!frame) {
         geolocation.setIsAllowed(false, { });
@@ -127,7 +127,7 @@ void WebGeolocationClient::requestPermission(WebCore::Geolocation& geolocation)
     auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame->document()->securityOrigin()]);
     auto listener = adoptNS([[WebGeolocationPolicyListener alloc] initWithGeolocation:geolocation]);
 
-    CallUIDelegate(m_webView, selector, webOrigin.get(), kit(frame), listener.get());
+    CallUIDelegate(m_webView, selector, webOrigin.get(), kit(frame.get()), listener.get());
 #else
     RetainPtr<WebGeolocationProviderInitializationListener> listener = adoptNS([[WebGeolocationProviderInitializationListener alloc] initWithGeolocation:geolocation]);
     [[m_webView _geolocationProvider] initializeGeolocationForWebView:m_webView listener:listener.get()];

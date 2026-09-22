@@ -259,7 +259,7 @@ IGNORE_WARNINGS_END
 
 - (JSC::Bindings::RootObject*)_rootObject
 {
-    auto* frame = protect(core(self))->document().frame();
+    RefPtr frame = protect(core(self))->document().frame();
     if (!frame)
         return nullptr;
     return frame->script().bindingRootObject();
@@ -311,9 +311,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 - (NSRect)boundingBox
 #endif
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    auto* renderer = node.renderer();
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    auto* renderer = node->renderer();
     if (!renderer)
 #if PLATFORM(IOS_FAMILY)
         return CGRectZero;
@@ -338,9 +338,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (WKQuad)absoluteQuadAndInsideFixedPosition:(BOOL *)insideFixed
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    auto* renderer = node.renderer();
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    auto* renderer = node->renderer();
     if (!renderer) {
         if (insideFixed)
             *insideFixed = false;
@@ -363,9 +363,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 // this method is like - (CGRect)boundingBox, but it accounts for for transforms
 - (CGRect)boundingBoxUsingTransforms
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    auto* renderer = node.renderer();
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    auto* renderer = node->renderer();
     if (!renderer)
         return CGRectZero;
     return renderer->absoluteBoundingBoxRect(true);
@@ -374,9 +374,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 // returns array of WKQuadObject
 - (NSArray *)lineBoxQuads
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    WebCore::RenderObject *renderer = node.renderer();
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    WebCore::RenderObject *renderer = node->renderer();
     if (!renderer)
         return nil;
     Vector<WebCore::FloatQuad> quads;
@@ -443,9 +443,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (WKQuad)innerFrameQuad // takes transforms into account
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    auto* renderer = node.renderer();
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    auto* renderer = node->renderer();
     if (!renderer)
         return zeroQuad();
 
@@ -502,8 +502,8 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (NSImage *)renderedImage
 {
-    auto& node = *core(self);
-    auto* frame = node.document().frame();
+    Ref node = *core(self);
+    RefPtr frame = node->document().frame();
     if (!frame)
         return nil;
     return createDragImageForNode(*frame, node).autorelease();
@@ -513,9 +513,9 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (NSArray *)textRects
 {
-    auto& node = *core(self);
-    protect(node.document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
-    if (!node.renderer())
+    Ref node = *core(self);
+    protect(node->document())->updateLayout(WebCore::LayoutOptions::IgnorePendingStylesheets);
+    if (!node->renderer())
         return nil;
     return createNSArray(WebCore::RenderObject::absoluteTextRects(makeRangeSelectingNodeContents(node))).autorelease();
 }
@@ -540,7 +540,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     *cgImage = nullptr;
     *rects = nullptr;
 
-    auto& node = *core(self);
+    Ref node = *core(self);
 
     constexpr OptionSet<WebCore::TextIndicatorOption> options {
         WebCore::TextIndicatorOption::TightlyFitContent,
@@ -549,25 +549,25 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
         WebCore::TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges,
         WebCore::TextIndicatorOption::IncludeMarginIfRangeMatchesSelection
     };
-    const float margin = 4 / node.document().page()->pageScaleFactor();
+    const float margin = 4 / node->document().page()->pageScaleFactor();
     auto textIndicator = WebCore::TextIndicator::createWithRange(makeRangeSelectingNodeContents(node), options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(margin, margin));
 
     if (textIndicator) {
-        if (WebCore::Image* image = textIndicator->contentImage()) {
+        if (RefPtr image = textIndicator->contentImage()) {
             auto contentImage = image->nativeImage()->platformImage();
             *cgImage = contentImage.autorelease();
         }
     }
 
     if (!*cgImage) {
-        if (auto* renderer = node.renderer()) {
+        if (auto* renderer = node->renderer()) {
             WebCore::FloatRect boundingBox;
             if (renderer->isRenderImage())
                 boundingBox = downcast<WebCore::RenderImage>(*renderer).absoluteContentQuad().enclosingBoundingBox();
             else
                 boundingBox = renderer->absoluteBoundingBoxRect();
             boundingBox.inflate(margin);
-            *rects = @[makeNSArrayElement(protect(node.document().frame()->view())->contentsToWindow(WebCore::enclosingIntRect(boundingBox)))];
+            *rects = @[makeNSArrayElement(protect(node->document().frame()->view())->contentsToWindow(WebCore::enclosingIntRect(boundingBox)))];
         }
         return;
     }
@@ -576,7 +576,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     *rects = createNSArray(textIndicator->textRectsInBoundingRectCoordinates(), [&] (CGRect rect) {
         rect.origin.x += origin.x();
         rect.origin.y += origin.y();
-        return makeNSArrayElement(protect(node.document().frame()->view())->contentsToWindow(WebCore::enclosingIntRect(rect)));
+        return makeNSArrayElement(protect(node->document().frame()->view())->contentsToWindow(WebCore::enclosingIntRect(rect)));
     }).autorelease();
 }
 
@@ -645,10 +645,10 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = protect(core(self))->renderer();
     if (!is<WebCore::RenderImage>(renderer))
         return nil;
-    auto* cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return protect(cachedImage)->imageForRenderer(renderer)->adapter().nsImage();
+    return cachedImage->imageForRenderer(renderer)->adapter().nsImage();
 }
 
 #endif
@@ -673,24 +673,24 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = protect(core(self))->renderer();
     if (!is<WebCore::RenderImage>(renderer))
         return nil;
-    auto* cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
+    RefPtr cachedImage = downcast<WebCore::RenderImage>(*renderer).cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
         return nil;
-    return (__bridge NSData *)protect(cachedImage)->imageForRenderer(renderer)->adapter().tiffRepresentation();
+    return (__bridge NSData *)cachedImage->imageForRenderer(renderer)->adapter().tiffRepresentation();
 }
 
 #endif
 
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
-    auto& element = *core(self);
-    return protect(element.document())->encodingParseURL(element.getAttribute(name)).createNSURL().autorelease();
+    Ref element = *core(self);
+    return protect(element->document())->encodingParseURL(element->getAttribute(name)).createNSURL().autorelease();
 }
 
 - (BOOL)isFocused
 {
-    auto& element = *core(self);
-    return element.document().focusedElement() == &element;
+    Ref element = *core(self);
+    return element->document().focusedElement() == element.ptr();
 }
 
 @end

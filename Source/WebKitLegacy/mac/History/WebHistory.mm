@@ -851,7 +851,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WebHistoryItem *entry = [_historyPrivate visitedURL:url withTitle:title];
 
-    WebCore::HistoryItem* item = core(entry);
+    RefPtr item = core(entry);
     item->setLastVisitWasFailure(wasFailure);
 
     entry->_private->_redirectURLs = nullptr;

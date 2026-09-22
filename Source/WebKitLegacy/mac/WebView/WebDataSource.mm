@@ -469,8 +469,8 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (WebFrame *)webFrame
 {
-    if (auto* frame = toPrivate(_private)->loader->frame())
-        return kit(frame);
+    if (RefPtr frame = toPrivate(_private)->loader->frame())
+        return kit(frame.get());
 
     return nil;
 }
@@ -482,7 +482,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 - (NSMutableURLRequest *)request
 {
-    auto* frameLoader = toPrivate(_private)->loader->frameLoader();
+    RefPtr frameLoader = toPrivate(_private)->loader->frameLoader();
     if (!frameLoader || !frameLoader->frameHasLoaded())
         return nil;
 

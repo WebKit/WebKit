@@ -204,7 +204,7 @@
 - (void)_activateItemAtIndex:(int)index
 {
     // Use the setSelectedIndexByUser function so a change event will be fired. <rdar://problem/6760590>
-    if (WebCore::HTMLSelectElement* select = core(self))
+    if (RefPtr select = core(self))
         select->optionSelectedByUser(index, true);
 }
 
@@ -213,7 +213,7 @@
     // Use the setSelectedIndexByUser function so a change event will be fired. <rdar://problem/6760590>
     // If this is a <select multiple> the allowMultipleSelection flag will allow setting multiple
     // selections without clearing the other selections.
-    if (WebCore::HTMLSelectElement* select = core(self))
+    if (RefPtr select = core(self))
         select->optionSelectedByUser(index, true, allowMultipleSelection);
 }
 

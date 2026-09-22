@@ -112,8 +112,8 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& requestedUR
     m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     LegacyWebSocketInspectorInstrumentation::didCreateWebSocket(protect(m_document), m_progressIdentifier, validatedURL->url);
 
-    auto* frame = document->frame();
-    auto* page = m_document->page();
+    RefPtr frame = document->frame();
+    RefPtr page = m_document->page();
     if (!frame || !page)
         return ConnectStatus::KO;
 

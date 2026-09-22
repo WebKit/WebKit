@@ -271,7 +271,7 @@ void StorageAreaImpl::closeDatabaseIfIdle()
 
 void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, LocalFrame& sourceFrame)
 {
-    auto* page = sourceFrame.page();
+    RefPtr page = sourceFrame.page();
     if (!page)
         return;
 

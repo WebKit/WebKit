@@ -84,7 +84,7 @@ void HistoryPropertyListWriter::writeObjects(BinaryPropertyListObjectStream& str
 
 void HistoryPropertyListWriter::writeHistoryItem(BinaryPropertyListObjectStream& stream, WebHistoryItem* webHistoryItem)
 {
-    WebCore::HistoryItem* item = core(webHistoryItem);
+    RefPtr item = core(webHistoryItem);
 
     size_t itemDictionaryStart = stream.writeDictionaryStart();
 

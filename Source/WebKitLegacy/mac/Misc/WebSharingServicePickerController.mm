@@ -125,7 +125,7 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
 
 - (void)didShareImageData:(NSData *)data confirmDataIsValidTIFFData:(BOOL)confirmData
 {
-    auto* page = _pickerClient->pageForSharingServicePicker(*self);
+    RefPtr page = _pickerClient->pageForSharingServicePicker(*self);
     if (!page)
         return;
 

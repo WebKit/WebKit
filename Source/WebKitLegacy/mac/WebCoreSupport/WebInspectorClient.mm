@@ -374,7 +374,7 @@ bool WebInspectorFrontendClient::supportsDiagnosticLogging()
 
 void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary& dictionary)
 {
-    if (auto* page = frontendPage())
+    if (RefPtr page = frontendPage())
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(eventName, "Legacy Web Inspector Frontend Diagnostics"_s, dictionary, WebCore::ShouldSample::No);
 }
 #endif

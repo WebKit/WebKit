@@ -129,18 +129,18 @@ void WebScriptDebugger::handlePause(JSC::JSGlobalObject* globalObject)
     JSC::VM& vm = globalObject->vm();
     RetainPtr webFrame = toWebFrame(globalObject);
     WebView *webView = [webFrame.get() webView];
-    JSC::DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
+    Ref debuggerCallFrame = currentDebuggerCallFrame();
     JSC::JSValue exceptionValue = currentException();
-    String functionName = debuggerCallFrame.functionName(vm);
+    String functionName = debuggerCallFrame->functionName(vm);
     RetainPtr<WebScriptCallFrame> webCallFrame = adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame.get())->script().windowScriptObject() functionName:functionName exceptionValue:exceptionValue]);
 
     WebScriptDebugDelegateImplementationCache* cache = WebViewGetScriptDebugDelegateImplementations(webView);
     if (cache->exceptionWasRaisedFunc) {
         if (cache->exceptionWasRaisedExpectsHasHandlerFlag) {
             bool hasHandler = hasHandlerForExceptionCallback();
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), webCallFrame.get(), hasHandler, debuggerCallFrame.sourceID(), debuggerCallFrame.line(), webFrame.get());
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:hasHandler:sourceId:line:forWebFrame:), webCallFrame.get(), hasHandler, debuggerCallFrame->sourceID(), debuggerCallFrame->line(), webFrame.get());
         } else
-            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), webCallFrame.get(), debuggerCallFrame.sourceID(), debuggerCallFrame.line(), webFrame.get());
+            CallScriptDebugDelegate(cache->exceptionWasRaisedFunc, webView, @selector(webView:exceptionWasRaised:sourceId:line:forWebFrame:), webCallFrame.get(), debuggerCallFrame->sourceID(), debuggerCallFrame->line(), webFrame.get());
     }
 
     m_callingDelegate = false;

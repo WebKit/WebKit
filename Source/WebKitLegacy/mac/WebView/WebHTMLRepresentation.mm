@@ -178,7 +178,7 @@ using JSC::Yarr::RegularExpression;
         [webFrame _commitData:data];
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
-    auto* coreFrame = core(webFrame);
+    RefPtr coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
         coreFrame->loader().documentLoader()->cancelMainResourceLoad(WebResourceLoadScheduler::pluginWillHandleLoadErrorFromResponse(coreFrame->loader().documentLoader()->response()));
 
@@ -228,17 +228,17 @@ using JSC::Yarr::RegularExpression;
 - (NSString *)documentSource
 {
     if ([self _isDisplayingWebArchive]) {            
-        auto *parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
+        RefPtr parsedArchiveData = [_private->dataSource _documentLoader]->parsedArchiveData();
         return adoptNS([[NSString alloc] initWithData:parsedArchiveData ? parsedArchiveData->createNSData().get() : nil encoding:NSUTF8StringEncoding]).autorelease();
     }
 
-    auto* coreFrame = core([_private->dataSource webFrame]);
+    RefPtr coreFrame = core([_private->dataSource webFrame]);
     if (!coreFrame)
         return nil;
-    WebCore::Document* document = coreFrame->document();
+    RefPtr document = coreFrame->document();
     if (!document)
         return nil;
-    WebCore::TextResourceDecoder* decoder = document->decoder();
+    RefPtr decoder = document->decoder();
     if (!decoder)
         return nil;
     NSData *data = [_private->dataSource data];
@@ -274,15 +274,15 @@ using JSC::Yarr::RegularExpression;
 
 #endif
 
-static WebCore::HTMLFormElement* formElementFromDOMElement(DOMElement *element)
+static RefPtr<WebCore::HTMLFormElement> formElementFromDOMElement(DOMElement *element)
 {
-    WebCore::Element* node = core(element);
-    return node && node->hasTagName(formTag) ? static_cast<WebCore::HTMLFormElement*>(node) : nullptr;
+    RefPtr node = core(element);
+    return node && node->hasTagName(formTag) ? static_cast<WebCore::HTMLFormElement*>(node.get()) : nullptr;
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
-    WebCore::HTMLFormElement* formElement = formElementFromDOMElement(form);
+    RefPtr formElement = formElementFromDOMElement(form);
     if (!formElement)
         return nil;
 
@@ -296,15 +296,15 @@ static WebCore::HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     return nil;
 }
 
-static WebCore::HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
+static RefPtr<WebCore::HTMLInputElement> inputElementFromDOMElement(DOMElement* element)
 {
-    WebCore::Element* node = core(element);
+    RefPtr node = core(element);
     return dynamicDowncast<WebCore::HTMLInputElement>(node);
 }
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
-    WebCore::HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    RefPtr inputElement = inputElementFromDOMElement(element);
     return inputElement
         && inputElement->isTextField()
         && !inputElement->isPasswordField()
@@ -313,7 +313,7 @@ static WebCore::HTMLInputElement* inputElementFromDOMElement(DOMElement* element
 
 - (BOOL)elementIsPassword:(DOMElement *)element
 {
-    WebCore::HTMLInputElement* inputElement = inputElementFromDOMElement(element);
+    RefPtr inputElement = inputElementFromDOMElement(element);
     return inputElement && inputElement->isPasswordField();
 }
 
@@ -428,14 +428,14 @@ static RetainPtr<NSString> searchForLabelsBeforeElement(WebCore::LocalFrame* fra
 
     // walk backwards in the node tree, until another element, or form, or end of tree
     unsigned lengthSearched = 0;
-    WebCore::Node* n;
+    RefPtr<WebCore::Node> n;
     for (n = WebCore::NodeTraversal::previous(*element); n && lengthSearched < charsSearchedThreshold; n = WebCore::NodeTraversal::previous(*n)) {
         if (is<WebCore::HTMLFormElement>(*n) || is<WebCore::HTMLFormControlElement>(*n)) {
             // We hit another form element or the start of the form - bail out
             break;
         }
         if (n->hasTagName(tdTag) && !startingTableCell) {
-            startingTableCell = downcast<WebCore::HTMLTableCellElement>(n);
+            startingTableCell = downcast<WebCore::HTMLTableCellElement>(n.get());
         } else if (n->hasTagName(trTag) && startingTableCell) {
             RetainPtr result = frame->searchForLabelsAboveCell(*regExp, startingTableCell, resultDistance).createNSString();
             if ([result length]) {

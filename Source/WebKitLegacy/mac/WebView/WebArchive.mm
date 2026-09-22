@@ -256,8 +256,8 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this. 
     if (!_private->cachedMainResource) {
-        if (auto* coreArchive = [_private coreArchive]) {
-            if (auto* mainResource = coreArchive->mainResource())
+        if (RefPtr coreArchive = [_private coreArchive]) {
+            if (RefPtr mainResource = coreArchive->mainResource())
                 _private->cachedMainResource = adoptNS([[WebResource alloc] _initWithCoreResource:*mainResource]);
         }
     }
@@ -273,7 +273,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this.     
     if (!_private->cachedSubresources) {
-        auto coreArchive = [_private coreArchive];
+        RefPtr coreArchive = [_private coreArchive];
         if (!coreArchive)
             _private->cachedSubresources = adoptNS([[NSArray alloc] init]);
         else {
@@ -298,7 +298,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     // Currently from WebKit API perspective, WebArchives are entirely immutable once created
     // If they ever become mutable, we'll need to rethink this.  
     if (!_private->cachedSubframeArchives) {
-        auto* coreArchive = [_private coreArchive];
+        RefPtr coreArchive = [_private coreArchive];
         if (!coreArchive)
             _private->cachedSubframeArchives = adoptNS([[NSArray alloc] init]);
         else {

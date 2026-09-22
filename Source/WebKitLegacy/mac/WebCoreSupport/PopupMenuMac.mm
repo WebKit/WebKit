@@ -193,8 +193,8 @@ void PopupMenuMac::show(const WebCore::IntRect& r, WebCore::LocalFrameView& fram
     [view.get() addSubview:dummyView.get()];
     location = [dummyView convertPoint:location fromView:view.get()];
     
-    if (WebCore::Page* page = frame->page()) {
-        RetainPtr webView = kit(page);
+    if (RefPtr page = frame->page()) {
+        RetainPtr webView = kit(page.get());
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         CallUIDelegate(webView.get(), @selector(webView:willPopupMenu:), menu);
         END_BLOCK_OBJC_EXCEPTIONS

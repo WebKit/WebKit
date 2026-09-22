@@ -46,7 +46,7 @@ WebSelectionServiceController::WebSelectionServiceController(WebView *webView)
 
 void WebSelectionServiceController::handleSelectionServiceClick(WebCore::FrameSelection& selection, const Vector<String>& /*telephoneNumbers*/, const WebCore::IntPoint& point)
 {
-    WebCore::Page* page = [m_webView page];
+    RefPtr page = [m_webView page].get();
     if (!page)
         return;
 

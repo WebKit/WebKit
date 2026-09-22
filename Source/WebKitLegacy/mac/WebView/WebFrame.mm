@@ -310,7 +310,7 @@ WebView *kit(WebCore::Page* page)
 
 WebView *getWebView(WebFrame *webFrame)
 {
-    auto coreFrame = core(webFrame);
+    RefPtr coreFrame = core(webFrame);
     if (!coreFrame)
         return nil;
     return kit(coreFrame->page());
@@ -353,10 +353,10 @@ WebView *getWebView(WebFrame *webFrame)
     RetainPtr webView = kit(page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView.get()]);
-    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return;
-    frame->_private->coreFrame = localMainFrame;
+    frame->_private->coreFrame = localMainFrame.get();
     static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
     localMainFrame->tree().setSpecifiedName(name);
@@ -398,15 +398,15 @@ static NSURL *createUniqueWebDataURL();
 
 - (void)_attachScriptDebugger
 {
-    auto& windowProxy = _private->coreFrame->windowProxy();
+    Ref windowProxy = _private->coreFrame->windowProxy();
 
     // Calling ScriptController::globalObject() would create a window proxy, and dispatch corresponding callbacks, which may be premature
     // if the script debugger is attached before a document is created. These calls use the debuggerWorldSingleton(), we will need to pass a world
     // to be able to debug isolated worlds.
-    if (!windowProxy.existingJSWindowProxy(WebCore::debuggerWorldSingleton()))
+    if (!windowProxy->existingJSWindowProxy(WebCore::debuggerWorldSingleton()))
         return;
 
-    auto* globalObject = windowProxy.globalObject(WebCore::debuggerWorldSingleton());
+    auto* globalObject = windowProxy->globalObject(WebCore::debuggerWorldSingleton());
     if (!globalObject)
         return;
 
@@ -472,20 +472,20 @@ static NSURL *createUniqueWebDataURL();
 #endif
 
     auto coreFrame = _private->coreFrame;
-    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
-        auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
+    for (RefPtr<WebCore::Frame> abstractFrame = coreFrame.get(); abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+        RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
         // Don't call setDrawsBackground:YES here because it may be NO because of a load
         // in progress; WebFrameLoaderClient keeps it set to NO during the load process.
-        RetainPtr webFrame = kit(frame);
+        RetainPtr webFrame = kit(frame.get());
         if (!drawsBackground)
             [[[webFrame.get() frameView] _scrollView] setDrawsBackground:NO];
 #if !PLATFORM(IOS_FAMILY)
         [[[webFrame.get() frameView] _scrollView] setBackgroundColor:backgroundColor];
 #endif
 
-        if (auto* view = frame->view()) {
+        if (RefPtr view = frame->view()) {
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS_FAMILY)
             auto color = WebCore::colorFromCocoaColor([backgroundColor colorUsingColorSpace:NSColorSpace.deviceRGBColorSpace]);
@@ -511,11 +511,11 @@ static NSURL *createUniqueWebDataURL();
 - (void)_unmarkAllBadGrammar
 {
     auto coreFrame = _private->coreFrame;
-    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
-        auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
+    for (RefPtr<WebCore::Frame> abstractFrame = coreFrame.get(); abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+        RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
-        if (auto* document = frame->document())
+        if (RefPtr document = frame->document())
             document->markers().removeMarkers(WebCore::DocumentMarkerType::Grammar);
     }
 }
@@ -524,11 +524,11 @@ static NSURL *createUniqueWebDataURL();
 {
 #if !PLATFORM(IOS_FAMILY)
     auto coreFrame = _private->coreFrame;
-    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
-        auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
+    for (RefPtr<WebCore::Frame> abstractFrame = coreFrame.get(); abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+        RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
-        if (auto* document = frame->document())
+        if (RefPtr document = frame->document())
             document->markers().removeMarkers(WebCore::DocumentMarkerType::Spelling);
     }
 #endif
@@ -579,11 +579,11 @@ static NSURL *createUniqueWebDataURL();
 - (WebFrame *)_findFrameWithSelection
 {
     auto coreFrame = _private->coreFrame;
-    for (WebCore::Frame* abstractFrame = coreFrame; abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
-        auto* frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
+    for (RefPtr<WebCore::Frame> abstractFrame = coreFrame.get(); abstractFrame; abstractFrame = abstractFrame->tree().traverseNext(coreFrame)) {
+        RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(abstractFrame);
         if (!frame)
             continue;
-        RetainPtr webFrame = kit(frame);
+        RetainPtr webFrame = kit(frame.get());
         if ([webFrame.get() _hasSelection])
             return webFrame.autorelease();
     }
@@ -673,14 +673,14 @@ static NSURL *createUniqueWebDataURL();
     RetainPtr<CGContextRef> ctx = WKGetCurrentGraphicsContext();
 #endif
     WebCore::GraphicsContextCG context(ctx.get());
-    auto* view = _private->coreFrame->view();
+    RefPtr view = _private->coreFrame->view();
     
     OptionSet<WebCore::PaintBehavior> oldBehavior = view->paintBehavior();
     OptionSet<WebCore::PaintBehavior> paintBehavior = oldBehavior;
     
-    if (auto* parentFrame = dynamicDowncast<WebCore::LocalFrame>(_private->coreFrame->tree().parent())) {
+    if (RefPtr parentFrame = dynamicDowncast<WebCore::LocalFrame>(_private->coreFrame->tree().parent())) {
         // For subframes, we need to inherit the paint behavior from our parent
-        if (auto* parentView = parentFrame ? parentFrame->view() : nullptr) {
+        if (RefPtr parentView = parentFrame ? parentFrame->view() : nullptr) {
             constexpr OptionSet<WebCore::PaintBehavior> flagsToCopy { WebCore::PaintBehavior::FlattenCompositingLayers, WebCore::PaintBehavior::Snapshotting, WebCore::PaintBehavior::DefaultAsynchronousImageDecode, WebCore::PaintBehavior::ForceSynchronousImageDecode };
             paintBehavior.add(parentView->paintBehavior() & flagsToCopy);
         }
@@ -700,7 +700,7 @@ static NSURL *createUniqueWebDataURL();
 - (BOOL)_getVisibleRect:(NSRect*)rect
 {
     ASSERT_ARG(rect, rect);
-    if (auto* ownerRenderer = _private->coreFrame->ownerRenderer()) {
+    if (RefPtr ownerRenderer = _private->coreFrame->ownerRenderer()) {
         if (ownerRenderer->needsLayout())
             return NO;
         *rect = ownerRenderer->pixelSnappedAbsoluteClippedOverflowRect();
@@ -766,7 +766,7 @@ static NSURL *createUniqueWebDataURL();
 {
     bool insideFixed = false; // FIXME: get via firstRectForRange().
     NSRect rangeRect = [self _firstRectForDOMRange:range];
-    auto* startNode = core([range startContainer]);
+    RefPtr startNode = core([range startContainer]);
         
     if (startNode && startNode->renderer()) {
 #if !PLATFORM(IOS_FAMILY)
@@ -834,7 +834,7 @@ static NSURL *createUniqueWebDataURL();
     if (!frame)
         return NSMakeRange(NSNotFound, 0);
 
-    auto* element = frame->selection().rootEditableElementOrDocumentElement();
+    RefPtr element = frame->selection().rootEditableElementOrDocumentElement();
     if (!element)
         return NSMakeRange(NSNotFound, 0);
 
@@ -858,7 +858,7 @@ static NSURL *createUniqueWebDataURL();
         // directly in the document DOM, so serialization is problematic. Our solution is
         // to use the root editable element of the selection start as the positional base.
         // That fits with AppKit's idea of an input context.
-        auto* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
+        RefPtr element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
         if (!element)
             return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
@@ -897,7 +897,7 @@ static NSURL *createUniqueWebDataURL();
     if (!frame)
         return nil;
 
-    auto* document = frame->document();
+    RefPtr document = frame->document();
     if (!document)
         return nil;
 
@@ -910,19 +910,19 @@ static NSURL *createUniqueWebDataURL();
     if (!frame)
         return nil;
 
-    auto* document = frame->document();
+    RefPtr document = frame->document();
     if (!document)
         return nil;
 
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
-    Vector<WebCore::Node*> nodesVector;
+    Vector<RefPtr<WebCore::Node>> nodesVector;
     DOMNode *node;
     while ((node = [nodeEnum nextObject]))
         nodesVector.append(core(node));
 
     auto fragment = document->createDocumentFragment();
 
-    for (auto* node : nodesVector) {
+    for (auto& node : nodesVector) {
         auto element = createDefaultParagraphElement(*document);
         element->appendChild(*node);
         fragment->appendChild(element);
@@ -986,7 +986,7 @@ static NSURL *createUniqueWebDataURL();
 {
     if (!_private->coreFrame)
         return;
-    auto* view = _private->coreFrame->view();
+    RefPtr view = _private->coreFrame->view();
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
@@ -1000,7 +1000,7 @@ static NSURL *createUniqueWebDataURL();
 {
     auto frame = _private->coreFrame;
     String mimeType = frame->document()->loader()->writer().mimeType();
-    auto* pluginData = frame->page() ? &frame->page()->pluginData() : 0;
+    RefPtr pluginData = frame->page() ? &frame->page()->pluginData() : nullptr;
 
     if (WebCore::MIMETypeRegistry::isTextMIMEType(mimeType)
         || WebCore::Image::supportsType(mimeType)
@@ -1021,7 +1021,7 @@ static NSURL *createUniqueWebDataURL();
 - (void)_commitData:(NSData *)data
 {
     // FIXME: This really should be a setting.
-    auto* document = _private->coreFrame->document();
+    RefPtr document = _private->coreFrame->document();
     document->setShouldCreateRenderers(_private->shouldCreateRenderers);
 
     _private->coreFrame->loader().documentLoader()->commitData(WebCore::SharedBuffer::create(data));
@@ -1049,10 +1049,10 @@ static NSURL *createUniqueWebDataURL();
 - (CGColorRef)_bodyBackgroundColor
 #endif
 {
-    auto* document = _private->coreFrame->document();
+    RefPtr document = _private->coreFrame->document();
     if (!document)
         return nil;
-    auto* body = document->bodyOrFrameset();
+    RefPtr body = document->bodyOrFrameset();
     if (!body)
         return nil;
     auto* bodyRenderer = body->renderer();
@@ -1070,7 +1070,7 @@ static NSURL *createUniqueWebDataURL();
 
 - (BOOL)_isFrameSet
 {
-    auto* document = _private->coreFrame->document();
+    RefPtr document = _private->coreFrame->document();
     return document && document->isFrameSet();
 }
 
@@ -1176,7 +1176,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
 - (BOOL)_isDisplayingStandaloneImage
 {
-    auto* document = _private->coreFrame->document();
+    RefPtr document = _private->coreFrame->document();
     return document && document->isImageDocument();
 }
 
@@ -1915,12 +1915,12 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     if (![self _webHTMLDocumentView])
         return;
     
-    auto coreFrame = core(self);
-    for (WebCore::Frame* frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame)) {
-        auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
+    RefPtr coreFrame = core(self);
+    for (RefPtr<WebCore::Frame> frame = coreFrame; frame; frame = frame->tree().traverseNext(coreFrame.get())) {
+        RefPtr localFrame = dynamicDowncast<WebCore::LocalFrame>(frame);
         if (!localFrame)
             continue;
-        WebCore::Document* doc = localFrame->document();
+        RefPtr doc = localFrame->document();
         if (!doc || !doc->renderView())
             continue;
         doc->renderView()->resetTextAutosizing();
@@ -1934,8 +1934,8 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
 - (void)_setTextAutosizingWidth:(CGFloat)width
 {
-    auto* frame = core(self);
-    auto* page = frame->page();
+    RefPtr frame = core(self);
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1944,7 +1944,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
 - (void)_createCaptionPreferencesTestingModeToken
 {
-    auto* page = core(self)->page();
+    RefPtr page = core(self)->page();
     if (!page)
         return;
     _private->captionPreferencesTestingModeToken = page->group().ensureCaptionPreferences().createTestingModeToken().moveToUniquePtr();
@@ -1952,13 +1952,13 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
 
 - (void)_setCaptionDisplayMode:(NSString *)mode
 {
-    auto* page = core(self)->page();
+    RefPtr page = core(self)->page();
     if (!page)
         return;
-    auto& captionPreferences = page->group().ensureCaptionPreferences();
+    Ref captionPreferences = page->group().ensureCaptionPreferences();
     auto displayMode = WTF::EnumTraits<WebCore::CaptionUserPreferences::CaptionDisplayMode>::fromString(mode);
     if (displayMode.has_value())
-        captionPreferences.setCaptionDisplayMode(displayMode.value());
+        captionPreferences->setCaptionDisplayMode(displayMode.value());
 }
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -2055,19 +2055,19 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
     
     auto& frameLoader = _private->coreFrame->loader();
-    auto* documentLoader = frameLoader.documentLoader();
+    RefPtr documentLoader = frameLoader.documentLoader();
     if (documentLoader && !documentLoader->mainDocumentError().isNull())
         [result setObject:(NSError *)documentLoader->mainDocumentError() forKey:WebFrameMainDocumentError];
         
     if (frameLoader.subframeLoader().containsPlugins())
         [result setObject:@YES forKey:WebFrameHasPlugins];
     
-    if (auto* window = _private->coreFrame->document()->window()) {
+    if (RefPtr window = _private->coreFrame->document()->window()) {
         if (window->hasEventListeners(WebCore::eventNames().unloadEvent))
             [result setObject:@YES forKey:WebFrameHasUnloadListener];
     }
     
-    if (auto* document = _private->coreFrame->document()) {
+    if (RefPtr document = _private->coreFrame->document()) {
         if (WebCore::DatabaseManager::singleton().hasOpenDatabases(*document))
             [result setObject:@YES forKey:WebFrameUsesDatabases];
     }
@@ -2102,9 +2102,9 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
         return @"";
 
     // Get the frame frome the global object we've settled on.
-    auto* frame = dynamicDowncast<WebCore::LocalFrame>(uncheckedDowncast<WebCore::JSDOMWindow>(anyWorldGlobalObject)->wrapped().frame());
+    RefPtr frame = dynamicDowncast<WebCore::LocalFrame>(uncheckedDowncast<WebCore::JSDOMWindow>(anyWorldGlobalObject)->wrapped().frame());
     ASSERT(frame->document());
-    RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
+    RetainPtr<WebFrame> webFrame(kit(frame.get())); // Running arbitrary JavaScript can destroy the frame.
 
     JSC::JSValue result = frame->script().executeUserAgentScriptInWorldIgnoringException(*core(world), string, true);
 
@@ -2127,7 +2127,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    auto* coreWorld = core(world);
+    RefPtr coreWorld = core(world);
     if (!coreWorld)
         return 0;
     return toGlobalRef(coreFrame->script().globalObject(*coreWorld));
@@ -2170,7 +2170,7 @@ static WebFrameLoadType NODELETE toWebFrameLoadType(WebCore::FrameLoadType frame
     if (!_private->coreFrame || !_private->coreFrame->document())
         return;
     
-    auto* rootObject = _private->coreFrame->document()->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
+    RefPtr rootObject = _private->coreFrame->document()->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
     if (rootObject)
         rootObject->setAccessibleName(AtomString { name });
 }
@@ -2208,17 +2208,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_private->coreFrame)
         return nil;
     
-    auto* document = _private->coreFrame->document();
+    RefPtr document = _private->coreFrame->document();
     if (!document || !document->axObjectCache())
         return nil;
     
-    auto* rootObject = document->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
+    RefPtr rootObject = document->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
     if (!rootObject)
         return nil;
     
     // The root object will be a WebCore scroll view object. In WK1, scroll views are handled
     // by the system and the root object should be the web area (instead of the scroll view).
-    auto* rootAccessibilityObject = dynamicDowncast<WebCore::AccessibilityObject>(rootObject);
+    RefPtr rootAccessibilityObject = dynamicDowncast<WebCore::AccessibilityObject>(rootObject);
     if (rootAccessibilityObject && rootAccessibilityObject->isAttachment() && rootAccessibilityObject->firstChild())
         return rootAccessibilityObject->firstChild()->wrapper();
     
@@ -2233,7 +2233,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)hasRichlyEditableDragCaret
 {
-    if (auto* page = core(self)->page())
+    if (RefPtr page = core(self)->page())
         return page->dragCaretController().isContentRichlyEditable();
     return NO;
 }
@@ -2436,7 +2436,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![[self _dataSource] _isDocumentHTML]) 
         return nil; 
 
-    auto* document = coreFrame->document();
+    RefPtr document = coreFrame->document();
     
     // According to the documentation, we should return nil if the frame doesn't have a document.
     // While full-frame images and plugins do have an underlying HTML document, we return nil here to be
@@ -2558,7 +2558,7 @@ static NSURL *createUniqueWebDataURL()
 
 - (void)loadArchive:(WebArchive *)archive
 {
-    if (auto* coreArchive = [archive _coreLegacyWebArchive])
+    if (RefPtr coreArchive = [archive _coreLegacyWebArchive])
         _private->coreFrame->loader().loadArchive(*coreArchive);
 }
 
@@ -2601,8 +2601,8 @@ static NSURL *createUniqueWebDataURL()
     if (!coreFrame)
         return @[];
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:coreFrame->tree().childCount()];
-    for (auto* child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
-        [children addObject:kit(dynamicDowncast<WebCore::LocalFrame>(child))];
+    for (RefPtr child = coreFrame->tree().firstChild(); child; child = child->tree().nextSibling())
+        [children addObject:kit(dynamicDowncast<WebCore::LocalFrame>(child.get()))];
     return children;
 }
 

@@ -67,7 +67,7 @@
 
 - (DOMStyleSheet *)sheet
 {
-    WebCore::StyleSheet* styleSheet;
+    RefPtr<WebCore::StyleSheet> styleSheet;
 
     if ([self isKindOfClass:[DOMProcessingInstruction class]])
         styleSheet = core(static_cast<DOMProcessingInstruction *>(self))->sheet();
@@ -78,7 +78,7 @@
     else
         return nil;
 
-    return kit(styleSheet);
+    return kit(styleSheet.get());
 }
 
 @end

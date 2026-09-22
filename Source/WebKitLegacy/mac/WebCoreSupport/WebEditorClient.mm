@@ -239,7 +239,7 @@ bool WebEditorClient::shouldDeleteRange(const std::optional<WebCore::SimpleRange
 
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
-    WebCore::Page* page = [m_webView page];
+    RefPtr page = [m_webView page].get();
     if (!page)
         return false;
     return page->settings().smartInsertDeleteEnabled();
@@ -247,7 +247,7 @@ bool WebEditorClient::smartInsertDeleteEnabled()
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled() const
 {
-    WebCore::Page* page = [m_webView page];
+    RefPtr page = [m_webView page].get();
     if (!page)
         return false;
     return page->settings().selectTrailingWhitespaceEnabled();
@@ -377,7 +377,7 @@ void WebEditorClient::respondToChangedSelection(WebCore::LocalFrame* frame)
         bool selectionIsPainted = selection.isRange() || (selection.isCaret() && selection.hasEditableStyle());
 
         if (m_lastSelectionWasPainted || selectionIsPainted) {
-            if (auto* page = frame->page())
+            if (RefPtr page = frame->page())
                 page->scheduleRenderingUpdate({ WebCore::RenderingUpdateStep::LayerFlush });
         }
 
@@ -639,11 +639,11 @@ void WebEditorClient::updateEditorStateAfterLayoutIfEditabilityChanged()
     if (m_lastEditorStateWasContentEditable == EditorStateIsContentEditable::Unset)
         return;
 
-    auto* frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
-    NSView<WebDocumentView> *documentView = [[kit(frame) frameView] documentView];
+    NSView<WebDocumentView> *documentView = [[kit(frame.get()) frameView] documentView];
     if (![documentView isKindOfClass:[WebHTMLView class]])
         return;
 
@@ -716,13 +716,13 @@ void WebEditorClient::redo()
 
 void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent& event)
 {
-    auto* frame = downcast<WebCore::Node>(event.target())->document().frame();
+    RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
 #if !PLATFORM(IOS_FAMILY)
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
+    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:NO])
         event.setDefaultHandled();
 #else
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
+    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
     if ([webHTMLView _handleEditingKeyEvent:&event])
         event.setDefaultHandled();
 #endif
@@ -732,8 +732,8 @@ void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent& event)
 {
 #if !PLATFORM(IOS_FAMILY)
     // FIXME: Switch to WebKit2 model, interpreting the event before it's sent down to WebCore.
-    auto* frame = downcast<WebCore::Node>(event.target())->document().frame();
-    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame) frameView] documentView];
+    RefPtr frame = downcast<WebCore::Node>(event.target())->document().frame();
+    WebHTMLView *webHTMLView = (WebHTMLView *)[[kit(frame.get()) frameView] documentView];
     if ([webHTMLView _interpretKeyEvent:&event savingCommands:YES])
         event.setDefaultHandled();
 #else
@@ -1139,7 +1139,7 @@ void WebEditorClient::requestCandidatesForSelection(const WebCore::VisibleSelect
     if (!selection.toNormalizedRange())
         return;
 
-    auto* frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1173,7 +1173,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    auto* frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 
@@ -1200,7 +1200,7 @@ void WebEditorClient::handleRequestedCandidates(NSInteger sequenceNumber, NSArra
 
 void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(const WebCore::TextCheckingResult& acceptedCandidate)
 {
-    auto* frame = core([m_webView _selectedOrMainFrame]);
+    RefPtr frame = core([m_webView _selectedOrMainFrame]);
     if (!frame)
         return;
 

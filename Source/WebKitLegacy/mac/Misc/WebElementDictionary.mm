@@ -204,7 +204,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSImage *)_image
 {
-    WebCore::Image* image = _result->image();
+    RefPtr image = _result->image();
     return image ? image->adapter().nsImage() : nil;
 }
 
@@ -259,7 +259,7 @@ static NSString* NSStringOrNil(String coreString)
 
 - (NSNumber *)_isLiveLink
 {
-    WebCore::Element* urlElement = _result->URLElement();
+    RefPtr urlElement = _result->URLElement();
     return [NSNumber numberWithBool:(urlElement && isDraggableLink(*urlElement))];
 }
 

@@ -64,7 +64,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)showWindow
 {
-    if (auto* inspectedPage = core(_inspectedWebView))
+    if (RefPtr inspectedPage = core(_inspectedWebView))
         inspectedPage->inspectorController().show();
 }
 
@@ -171,7 +171,7 @@ NSString *WebInspectorDidStopSearchingForNode = @"WebInspectorDidStopSearchingFo
 
 - (void)evaluateInFrontend:(id)sender script:(NSString *)script
 {
-    if (auto* inspectedPage = core(_inspectedWebView))
+    if (RefPtr inspectedPage = core(_inspectedWebView))
         inspectedPage->inspectorController().evaluateForTestInFrontend(script);
 }
 

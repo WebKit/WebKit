@@ -988,7 +988,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     }
 
     // Call to the frame loader because this is where our security checks are made.
-    auto* frame = core([dataSource webFrame]);
+    RefPtr frame = core([dataSource webFrame]);
     WebCore::FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), { URL }, { }, WebCore::InitiatedByMainFrame::Unknown };
     frameLoadRequest.setReferrerPolicy(WebCore::ReferrerPolicy::NoReferrer);
     frame->loader().loadFrameRequest(WTF::move(frameLoadRequest), event.get(), nullptr);

@@ -137,12 +137,12 @@
 
 - (NSString *)markupString
 {
-    auto& node = *core(self);
+    Ref node = *core(self);
 
     String markupString = serializeFragment(node, WebCore::SerializedNodes::SubtreeIncludingNode);
-    auto nodeType = node.nodeType();
+    auto nodeType = node->nodeType();
     if (nodeType != WebCore::NodeType::Document && nodeType != WebCore::NodeType::DocumentType)
-        markupString = makeString(documentTypeString(protect(node.document())), markupString);
+        markupString = makeString(documentTypeString(protect(node->document())), markupString);
 
     return markupString.createNSString().autorelease();
 }
@@ -158,10 +158,10 @@
 
 - (WebFrame *)webFrame
 {
-    auto* frame = protect(core(self))->frame();
+    RefPtr frame = protect(core(self))->frame();
     if (!frame)
         return nil;
-    return kit(frame);
+    return kit(frame.get());
 }
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
