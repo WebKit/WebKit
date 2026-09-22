@@ -1767,14 +1767,9 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
     }
 
-    if (isSameOrigin && newLoadType != FrameLoadType::Reload && !frameLoadRequest.isInitialFrameSrcLoad()) {
-        // FIXME: Ideally, we'd call dispatchNavigateEvent() directly from continueLoadAfterNavigationPolicy()
-        // instead of storing a lambda on the NavigationAction.
-        action.setPendingDispatchNavigateEvent([weakThis = WeakPtr { *this }, newLoadType, frameLoadRequest, formState, event = RefPtr { event }] {
-            RefPtr protectedThis = weakThis.get();
-            return protectedThis && protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get());
-        });
-    }
+    std::optional<PendingNavigateEvent> pendingNavigateEvent;
+    if (isSameOrigin && newLoadType != FrameLoadType::Reload && !frameLoadRequest.isInitialFrameSrcLoad())
+        pendingNavigateEvent = PendingNavigateEvent { PendingNavigateEventIdentifier::generate(), newLoadType, frameLoadRequest, formState, RefPtr { event } };
 
     // Must grab this now, since this load may stop the previous load and clear this flag.
     bool isRedirect = m_quickRedirectComing;
@@ -1792,7 +1787,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             m_loadType = FrameLoadType::Same;
         }
         completionHandler();
-    });
+    }, WTF::move(pendingNavigateEvent));
 }
 
 SubstituteData FrameLoader::defaultSubstituteDataForURL(const URL& url)
@@ -1879,7 +1874,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     load(loader.get(), initiatorOrigin.get());
 }
 
-void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, NavigationAction&& action, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, NavigationAction&& action, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler, std::optional<PendingNavigateEvent>&& pendingNavigateEvent)
 {
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderLoadWithNavigationAction);
 
@@ -1910,7 +1905,7 @@ void FrameLoader::loadWithNavigationAction(ResourceRequest&& request, Navigation
     if (m_documentLoader)
         loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
 
-    loadWithDocumentLoader(loader.ptr(), type, WTF::move(formSubmission), allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, WTF::move(completionHandler));
+    loadWithDocumentLoader(loader.ptr(), type, WTF::move(formSubmission), allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, WTF::move(completionHandler), WTF::move(pendingNavigateEvent));
 }
 
 void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* requesterOrigin)
@@ -1958,7 +1953,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
     loadWithDocumentLoader(&newDocumentLoader, type, nullptr, AllowNavigationToInvalidURL::Yes);
 }
 
-void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler)
+void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<const FormSubmission>&& formSubmission, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache, CompletionHandler<void()>&& completionHandler, std::optional<PendingNavigateEvent>&& pendingNavigateEvent)
 {
     FRAMELOADER_RELEASE_LOG_FORWARDABLE(FrameLoaderLoadWithDocumentLoaderFrameLoadStarted);
 
@@ -2036,6 +2031,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     policyChecker().stopCheck();
     setPolicyDocumentLoader(loader);
+    m_pendingNavigateEvent = WTF::move(pendingNavigateEvent);
     if (loader->triggeringAction().isEmpty()) {
         NavigationAction action = loader->crossSiteRequester() ? NavigationAction { *loader->crossSiteRequester(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission } : NavigationAction { protect(frame->document()).releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
         action.setIsContentRuleListRedirect(loader->isContentRuleListRedirect());
@@ -2409,6 +2405,7 @@ void FrameLoader::setPolicyDocumentLoader(RefPtr<DocumentLoader>&& loader, LoadW
         policyDocumentLoader->detachFromFrame(loadWillContinueInAnotherProcess);
     }
 
+    m_pendingNavigateEvent = std::nullopt;
     m_policyDocumentLoader = WTF::move(loader);
 }
 
@@ -4225,17 +4222,28 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_quickRedirectComing = false;
 }
 
+Markable<PendingNavigateEventIdentifier> FrameLoader::pendingNavigateEventIdentifier() const
+{
+    return m_pendingNavigateEvent ? Markable { m_pendingNavigateEvent->identifier } : std::nullopt;
+}
+
 bool FrameLoader::dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavigateEventIdentifier identifier)
 {
-    RefPtr policyDocumentLoader = m_policyDocumentLoader;
-    if (!policyDocumentLoader)
+    if (!m_pendingNavigateEvent || m_pendingNavigateEvent->identifier != identifier)
         return true;
 
-    auto pendingDispatchNavigateEvent = policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent(identifier);
-    if (!pendingDispatchNavigateEvent)
-        return true;
+    return dispatchPendingNavigateEvent();
+}
 
-    return pendingDispatchNavigateEvent();
+bool FrameLoader::PendingNavigateEvent::dispatch(FrameLoader& frameLoader) const
+{
+    return frameLoader.dispatchNavigateEvent(loadType, request, false, formState.get(), triggeringEvent.get());
+}
+
+bool FrameLoader::dispatchPendingNavigateEvent()
+{
+    auto pendingNavigateEvent = std::exchange(m_pendingNavigateEvent, std::nullopt);
+    return !pendingNavigateEvent || pendingNavigateEvent->dispatch(*this);
 }
 
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, const FormSubmission* formSubmission, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldRestoreFromBackForwardCache shouldRestoreFromBackForwardCache)
@@ -4323,10 +4331,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         return;
     }
 
-    if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : std::function<bool()> { }) {
-        if (!pendingDispatchNavigateEvent())
-            return;
-    }
+    if (!dispatchPendingNavigateEvent())
+        return;
 
     FrameLoadType type = policyChecker().loadType();
 
