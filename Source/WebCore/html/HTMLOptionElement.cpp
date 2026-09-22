@@ -300,15 +300,15 @@ void HTMLOptionElement::setText(String&& text)
     Ref protectedThis { *this };
 
     // Changing the text causes a recalc of a select's items, which will reset the selected
-    // index to the first item if the select is single selection with a menu list. We attempt to
+    // index to the first item if the select is a single select dropdown box. We attempt to
     // preserve the selected item.
     RefPtr select = ownerSelectElement();
-    bool selectIsMenuList = select && select->usesMenuListDeprecated();
-    int oldSelectedIndex = selectIsMenuList ? select->selectedIndex() : -1;
+    bool isSingleSelectDropdownBox = select && select->isSingleSelectDropdownBox();
+    int oldSelectedIndex = isSingleSelectDropdownBox ? select->selectedIndex() : -1;
 
     setTextContent(WTF::move(text));
-    
-    if (selectIsMenuList && select->selectedIndex() != oldSelectedIndex)
+
+    if (isSingleSelectDropdownBox && select->selectedIndex() != oldSelectedIndex)
         select->setSelectedIndex(oldSelectedIndex);
 }
 
