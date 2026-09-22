@@ -30,6 +30,7 @@
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/EventTarget.h>
 #include <WebCore/EventTargetInterfaces.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -71,7 +72,7 @@ public:
 private:
     BroadcastChannel(ScriptExecutionContext&, const String& name);
 
-    void dispatchMessage(Ref<SerializedScriptValue>&&);
+    void dispatchMessage(Ref<SerializedScriptValue>&&, CompletionHandlerCallingScope&&);
 
     bool isEligibleForMessaging() const;
 

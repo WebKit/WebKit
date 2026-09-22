@@ -37,7 +37,7 @@ messages -> WebSWServerConnection {
     [EnabledBy=ServiceWorkersEnabled] RegisterServiceWorkerInServer(WebCore::ServiceWorkerIdentifier identifier)
     [EnabledBy=ServiceWorkersEnabled] UnregisterServiceWorkerInServer(WebCore::ServiceWorkerIdentifier identifier)
 
-    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source)
+    [EnabledBy=ServiceWorkersEnabled] PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, Vector<URL> blobURLs)
 
     [EnabledBy=ServiceWorkersEnabled] DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 

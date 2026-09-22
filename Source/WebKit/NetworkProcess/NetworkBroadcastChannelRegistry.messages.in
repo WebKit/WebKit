@@ -29,5 +29,5 @@
 messages -> NetworkBroadcastChannelRegistry {
     RegisterChannel(struct WebCore::ClientOrigin origin, String name)
     UnregisterChannel(struct WebCore::ClientOrigin origin, String name)
-    PostMessage(struct WebCore::ClientOrigin origin, String name, struct WebCore::MessageWithMessagePorts message) -> ()
+    PostMessage(struct WebCore::ClientOrigin origin, String name, struct WebCore::MessageWithMessagePorts message, Vector<URL> blobURLs) -> ()
 }

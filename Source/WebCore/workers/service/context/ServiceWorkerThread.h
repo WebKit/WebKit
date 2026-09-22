@@ -37,6 +37,7 @@
 #include <WebCore/Timer.h>
 #include <WebCore/WorkerThread.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -68,7 +69,7 @@ public:
     void willPostTaskToFirePushSubscriptionChangeEvent();
 
     void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, String&& referrer, FetchOptions&&, SWServerConnectionIdentifier, FetchIdentifier, bool isServiceWorkerNavigationPreloadEnabled, String&& clientIdentifier, String&& resultingClientIdentifier);
-    void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
+    void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData, CompletionHandlerCallingScope&& messageDispatched);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();
     void queueTaskToFirePushEvent(std::optional<Vector<uint8_t>>&&, std::optional<NotificationPayload>&&, Function<void(bool, std::optional<NotificationPayload>&&)>&&);

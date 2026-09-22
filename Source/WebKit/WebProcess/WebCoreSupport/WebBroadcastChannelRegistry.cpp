@@ -32,6 +32,7 @@
 #include <WebCore/BroadcastChannel.h>
 #include <WebCore/ContextDestructionObserverInlines.h>
 #include <WebCore/MessageWithMessagePorts.h>
+#include <WebCore/SerializedScriptValue.h>
 #include <wtf/CallbackAggregator.h>
 
 namespace WebKit {
@@ -94,14 +95,17 @@ void WebBroadcastChannelRegistry::unregisterChannel(const WebCore::PartitionedSe
 void WebBroadcastChannelRegistry::postMessage(const WebCore::PartitionedSecurityOrigin& origin, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    auto blobURLs = message->blobURLs().map([](auto& blobURL) {
+        return URL { blobURL };
+    });
 #ifdef RC_REMOVE_SEC_ACCEL_3
     postMessageLocally(origin, name, source, message.copyRef(), callbackAggregator.copyRef());
     if (auto clientOrigin = toClientOrigin(origin))
-        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { WTF::move(message), { } } }, [callbackAggregator] { }, 0);
+        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { WTF::move(message), { } }, WTF::move(blobURLs) }, [callbackAggregator] { }, 0);
 #else
     // Send IPC first. postMessageLocally() consumes the SerializedScriptValue in the message, possibly on a different thread, so sending IPC afterward would be unsafe.
     if (auto clientOrigin = toClientOrigin(origin))
-        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { message.copyRef(), { } } }, [callbackAggregator] { }, 0);
+        protect(broadcastChannelNetworkProcessConnection())->sendWithAsyncReply(Messages::NetworkBroadcastChannelRegistry::PostMessage { *clientOrigin, name, WebCore::MessageWithMessagePorts { message.copyRef(), { } }, WTF::move(blobURLs) }, [callbackAggregator] { }, 0);
 
     postMessageLocally(origin, name, source, WTF::move(message), WTF::move(callbackAggregator));
 #endif

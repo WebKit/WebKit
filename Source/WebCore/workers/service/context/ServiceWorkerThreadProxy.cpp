@@ -304,7 +304,7 @@ void ServiceWorkerThreadProxy::removeFetch(SWServerConnectionIdentifier connecti
     }, WorkerRunLoop::defaultMode());
 }
 
-void ServiceWorkerThreadProxy::fireMessageEvent(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
+void ServiceWorkerThreadProxy::fireMessageEvent(MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData, CompletionHandlerCallingScope&& messageDispatched)
 {
     ASSERT(!isMainThread());
 
@@ -312,8 +312,8 @@ void ServiceWorkerThreadProxy::fireMessageEvent(MessageWithMessagePorts&& messag
         protectedThis->thread().willPostTaskToFireMessageEvent();
     });
 
-    thread().runLoop().postTask([this, protectedThis = Ref { *this }, message = WTF::move(message), sourceData = crossThreadCopy(WTF::move(sourceData))](auto&) mutable {
-        thread().queueTaskToPostMessage(WTF::move(message), WTF::move(sourceData));
+    thread().runLoop().postTask([this, protectedThis = Ref { *this }, message = WTF::move(message), sourceData = crossThreadCopy(WTF::move(sourceData)), messageDispatched = WTF::move(messageDispatched)](auto&) mutable {
+        thread().queueTaskToPostMessage(WTF::move(message), WTF::move(sourceData), WTF::move(messageDispatched));
     });
 }
 

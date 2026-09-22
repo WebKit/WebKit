@@ -12,6 +12,7 @@ const log = s => { out.textContent += s + '\n'; };
 
 if (!window.IPC) {
     log('Unauthorized file-backed blob registration rejected: PASS');
+    log('Unauthorized file-backed blob registration with a registered srcURL resolves the srcURL: PASS');
     testRunner?.notifyDone();
 } else {
 
@@ -46,12 +47,30 @@ function generalStoragePath() {
     let blobURL = URL.createObjectURL(new Blob([new Uint8Array([0])]));
     CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterInternalBlobURLOptionallyFileBacked(0, {
         url: { string: blobURL },
-        srcURL: { string: `blob:webkit-internal://${crypto.randomUUID()}` },
+        srcURL: { string: `blob:blobinternal:///${crypto.randomUUID()}` },
         fileBackedPath: targetPath,
         contentType: 'application/octet-stream',
     });
     let size = await blobSize(blobURL);
     log('Unauthorized file-backed blob registration rejected: ' + (size === 1 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
+
+    // In the real flow the srcURL of a file-backed blob is the internal blob URL the sending process
+    // serialized, so register one the same way Blob's copy constructor does.
+    let srcURL = `blob:blobinternal:///${crypto.randomUUID()}`;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterInternalBlobURL(0, {
+        url: { string: srcURL },
+        blobParts: [{ m_dataOrURL: { variantType: 'URL', variant: { string: URL.createObjectURL(new Blob([new Uint8Array([1, 2, 3])])) } } }],
+        contentType: 'application/octet-stream',
+    });
+    let aliasURL = `blob:blobinternal:///${crypto.randomUUID()}`;
+    CoreIPC.Networking.NetworkConnectionToWebProcess.RegisterInternalBlobURLOptionallyFileBacked(0, {
+        url: { string: aliasURL },
+        srcURL: { string: srcURL },
+        fileBackedPath: targetPath,
+        contentType: 'application/octet-stream',
+    });
+    size = await blobSize(aliasURL);
+    log('Unauthorized file-backed blob registration with a registered srcURL resolves the srcURL: ' + (size === 3 ? 'PASS' : 'FAIL (BlobSize=' + size + ')'));
 
     testRunner?.notifyDone();
 })().catch(e => { log('FAIL: ' + e); testRunner?.notifyDone(); });

@@ -103,7 +103,7 @@ public:
 
     WEBCORE_EXPORT bool hasBlobURLs() const;
 
-    Vector<String> blobURLs() const;
+    WEBCORE_EXPORT Vector<String> blobURLs() const;
     WEBCORE_EXPORT Vector<URLKeepingBlobAlive> blobHandles() const;
     Vector<FileSystemHandleGlobalIdentifier> fileSystemHandleGlobalIdentifiers() const;
     void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);

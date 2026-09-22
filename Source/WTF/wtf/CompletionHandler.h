@@ -183,6 +183,8 @@ public:
 
     CompletionHandler<void()> release() { return WTF::move(m_completionHandler); }
 
+    explicit operator bool() const { return !!m_completionHandler; }
+
 private:
     CompletionHandler<void()> m_completionHandler;
 };

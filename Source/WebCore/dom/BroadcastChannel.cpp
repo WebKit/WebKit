@@ -218,9 +218,9 @@ void BroadcastChannel::close()
 void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdentifier, Ref<SerializedScriptValue>&& message, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(isMainThread());
-    auto completionHandlerCallingScope = makeScopeExit([completionHandler = WTF::move(completionHandler)]() mutable {
+    CompletionHandlerCallingScope completionHandlerCallingScope { CompletionHandler<void()> { [completionHandler = WTF::move(completionHandler)]() mutable {
         callOnMainThread(WTF::move(completionHandler));
-    });
+    }, CompletionHandlerCallThread::AnyThread } };
 
     auto contextIdentifier = channelToContextIdentifier().get(channelIdentifier);
     if (!contextIdentifier)
@@ -233,11 +233,11 @@ void BroadcastChannel::dispatchMessageTo(BroadcastChannelIdentifier channelIdent
             channel = allBroadcastChannels().get(channelIdentifier).get();
         }
         if (channel)
-            channel->dispatchMessage(WTF::move(message));
+            channel->dispatchMessage(WTF::move(message), WTF::move(completionHandlerCallingScope));
     });
 }
 
-void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
+void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message, CompletionHandlerCallingScope&& messageDispatched)
 {
     if (!isEligibleForMessaging())
         return;
@@ -245,7 +245,7 @@ void BroadcastChannel::dispatchMessage(Ref<SerializedScriptValue>&& message)
     if (m_isClosed)
         return;
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [message = WTF::move(message)](auto& channel) mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::PostedMessageQueue, [message = WTF::move(message), messageDispatched = WTF::move(messageDispatched)](auto& channel) mutable {
         if (channel.m_isClosed || !channel.scriptExecutionContext())
             return;
 
