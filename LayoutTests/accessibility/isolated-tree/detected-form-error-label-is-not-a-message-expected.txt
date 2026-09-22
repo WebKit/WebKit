@@ -1,0 +1,20 @@
+This tests that the words naming a field are never taken as a message about one, including when they sit in a span inside the label rather than in the label itself. Otherwise a control with nothing wrong with it reports the name of the field next to it as its error, and the real messages lose their place to the noise.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: errorMessageText(axElement('destination')) === 'Please enter a valid destination.'
+PASS: errorMessageText(axElement('roundtrip')) === 'no error messages'
+PASS: errorMessageText(axElement('oneway')) === 'no error messages'
+PASS: errorMessageText(axElement('flexible')) === 'no error messages'
+PASS: axElement('roundtrip').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('flexible').stringAttributeValue('AXInvalid') === 'false'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Roundtrip  One-way  Flexible dates
+From
+Please enter a valid origin.
+To
+Please enter a valid destination.
+Search

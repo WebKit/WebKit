@@ -1,0 +1,58 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form>
+  <label for="email">Email</label>
+  <input id="email" type="text">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<div id="error"></div>
+
+<script>
+var output = "This tests the plainest markup there is, an unnamed form directly inside the body with the message in a div after it. Nothing about which element contains which may be required for a message to be found, so long as it appears next to the field on screen.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var formValidationErrors = 0;
+    var payload = "";
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification != "AXPossibleFormValidationError")
+            return;
+        formValidationErrors++;
+        payload = formatFormValidationUserInfo(userInfo);
+    });
+
+    document.querySelector("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("error").textContent = "Enter a valid email address.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('email').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageCount(axElement('email'))", "1");
+        output += await expectAsync("formValidationErrors", "1");
+        output += expect("payload", "'AXFormValidationUnannouncedText: Enter a valid email address.\\n'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

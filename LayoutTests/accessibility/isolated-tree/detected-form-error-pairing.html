@@ -1,0 +1,74 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <div id="origin-error"></div>
+  <label for="destination">To</label><input id="destination" type="text">
+  <div id="destination-error"></div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message the page never associated with a field is paired with the nearest field above it, giving that field the aria-errormessage relation and the invalid state the author omitted. Repairing the form this way is what lets an assistive technology find the fields that are actually wrong.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    // No aria-invalid, no aria-errormessage and no live region. The page reports both problems in plain
+    // divs, each rendered under the field it is about. The first wraps its icon and text in spans the
+    // way real sites do, which map to Generic rather than Group and so must still count as a message.
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").innerHTML = '<span><span><svg width="12" height="12" role="img" aria-label="warning"></svg></span><span>Please enter a valid origin.</span></span>';
+        document.getElementById("destination-error").textContent = "Please enter a valid destination.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    // The wording an assistive technology reads out of a paired message. Sites keep it in static text
+    // inside a container, so the container's own title and value are empty and only the text of the
+    // whole subtree carries the message. An icon beside the wording contributes an object replacement
+    // character in the live tree and nothing at all in the isolated tree, so drop those the way anything
+    // speaking this text has to.
+    output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+    output += expect("errorMessageText(axElement('origin'))", "'no error messages'");
+
+    setTimeout(async function() {
+        document.getElementById("submit").click();
+
+        // Each field takes on the error rendered beneath it, and reports invalid because of it.
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("axElement('destination').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+        output += expect("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        // The submit button sits after both messages, so nothing pairs with it.
+        output += expect("axElement('submit').stringAttributeValue('AXInvalid')", "'false'");
+
+        // Which is exactly what makes the search find the two fields that are wrong, and not the button.
+        output += expect("formFieldWithErrorCount(axElement('form'))", "2");
+
+        // The pairing stands only while the message is on screen, so taking the message away retires it.
+        // A value change alone does not, because the words are still there for everyone else to read.
+        output += evalAndReturn("document.getElementById('origin').value = 'SFO'; document.getElementById('origin-error').remove();");
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+        output += await expectAsync("formFieldWithErrorCount(axElement('form'))", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

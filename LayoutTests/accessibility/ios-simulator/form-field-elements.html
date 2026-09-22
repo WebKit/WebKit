@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label><input id="email" type="email" value="a@b.c">
+  <label for="password">Password</label><input id="password" type="password" value="hunter2">
+  <input id="hidden" type="hidden" value="token">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<input id="outside" type="text" form="form" value="outside the form element">
+
+<script>
+var output = "This tests that a control reaches its form through AXFormOwner and that the form lists the fields it owns through AXFormFieldElements. That round trip is how an assistive technology gets from a submit button to the rest of the form. The button itself is not a field, because it takes no input.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // The form element is not in the accessible element tree, so it is only reachable from one of its
+    // controls. Re-resolve on every call because a mutation can replace these objects.
+    function form() {
+        return accessibilityController.accessibleElementById("submit").formOwnerElement();
+    }
+
+    function formFields() {
+        return form().formFieldElements();
+    }
+
+    function formFieldIdentifiers() {
+        return formFields().map(function(field) { return field.domIdentifier; }).join(", ");
+    }
+
+    output += expect("form().domIdentifier", "'form'");
+
+    // A hidden input is a listed element of the form but has nothing for the user to review, so it
+    // must not appear. The form-attribute-associated input is not a descendant, so containment alone
+    // would miss it.
+    output += expect("formFieldIdentifiers()", "'email, password, outside'");
+
+    // Reading label and value off the elements is the point of exposing elements rather than a
+    // snapshot, because a secure field's value stays masked already by AXValue.
+    output += expect("stripAXPrefix(formFields()[0].description)", "'Email'");
+    output += expect("stripAXPrefix(formFields()[0].stringValue)", "'a@b.c'");
+    output += expect("stripAXPrefix(formFields()[1].stringValue).indexOf('hunter2')", "-1");
+
+    setTimeout(async function() {
+        output += evalAndReturn("document.getElementById('email').remove();");
+        output += await expectAsync("formFieldIdentifiers()", "'password, outside'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

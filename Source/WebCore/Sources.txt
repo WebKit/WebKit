@@ -659,6 +659,7 @@ accessibility/AXAttributeCacheScope.cpp
 accessibility/AXComputedObjectAttributeCache.cpp
 accessibility/AXCoreObject.cpp @header:RenderStyleGetters
 accessibility/AXCrossProcessSearch.cpp
+accessibility/AXFormActivityMonitor.cpp
 accessibility/AXGeometryManager.cpp
 accessibility/AXLiveRegionManager.cpp
 accessibility/AXLocalFrame.cpp

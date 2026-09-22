@@ -2172,6 +2172,23 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
     return accessibleElementsForObjects(object->errorMessageObjects());
 }
 
+- (NSArray *)accessibilityFormFieldElements
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    return accessibleElementsForObjects(protect(self.axBackingObject)->formFieldObjects());
+}
+
+- (id)accessibilityFormOwnerElement
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    RefPtr owner = protect(self.axBackingObject)->formOwnerObject();
+    return owner ? owner->wrapper() : nil;
+}
+
 - (id)accessibilityLinkedElement
 {
     if (![self _prepareAccessibilityCall])

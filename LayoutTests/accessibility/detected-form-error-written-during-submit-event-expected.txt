@@ -1,0 +1,12 @@
+This tests that a message written by the page's own submit listener is found even when accessibility has already looked at the page before the listener returns. Watching has to begin before the submit event is dispatched, because by the time it returns the message has been written and, with an assistive technology attached, already processed.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

@@ -1664,6 +1664,7 @@
 		41FFD2C327563E0D00501BBF /* AudioSampleDataConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FFD2C027563DFF00501BBF /* AudioSampleDataConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41FFD2C42756570F00501BBF /* VideoLayerManagerObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52D5A18D1C54590300DE34A3 /* VideoLayerManagerObjC.mm */; };
 		41FFD2C62756573E00501BBF /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */; };
+		421129B22EC39C0A00778FE7 /* AXFormActivityMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 421129B02EC39C0A00778FE7 /* AXFormActivityMonitor.h */; };
 		421129A62EC39C0A00778FE6 /* AXLiveRegionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 421129A32EC39C0A00778FE6 /* AXLiveRegionManager.h */; };
 		422EBF162E6EA20F00D4C0E9 /* AXImageMapHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 422EBF142E6EA20F00D4C0E9 /* AXImageMapHelpers.h */; };
 		427BEAA8627D34396339098A /* Pause.svg in Copy Modern Media Controls Images */ = {isa = PBXBuildFile; fileRef = 8FD72914D37DB42A29060A28 /* Pause.svg */; platformFilters = (macos, ); };
@@ -11768,6 +11769,8 @@
 		41FF206D0243146B78FDD0FB /* UnifiedSource74-header-RenderStyleGetters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UnifiedSource74-header-RenderStyleGetters.cpp"; sourceTree = "<group>"; };
 		41FFD2C027563DFF00501BBF /* AudioSampleDataConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSampleDataConverter.h; sourceTree = "<group>"; };
 		41FFD2C227563E0000501BBF /* AudioSampleDataConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSampleDataConverter.mm; sourceTree = "<group>"; };
+		421129B02EC39C0A00778FE7 /* AXFormActivityMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AXFormActivityMonitor.h; sourceTree = "<group>"; };
+		421129B12EC39C0A00778FE7 /* AXFormActivityMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXFormActivityMonitor.cpp; sourceTree = "<group>"; };
 		421129A32EC39C0A00778FE6 /* AXLiveRegionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AXLiveRegionManager.h; sourceTree = "<group>"; };
 		421129A42EC39C0A00778FE6 /* AXLiveRegionManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXLiveRegionManager.cpp; sourceTree = "<group>"; };
 		422EBF142E6EA20F00D4C0E9 /* AXImageMapHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXImageMapHelpers.h; sourceTree = "<group>"; };
@@ -27077,6 +27080,8 @@
 				2936BF5A21D6999E004A8FC9 /* AXCoreObject.h */,
 				489DE3252F3B9C1C008530FF /* AXCrossProcessSearch.cpp */,
 				489DE3242F3B9C1C008530FF /* AXCrossProcessSearch.h */,
+				421129B12EC39C0A00778FE7 /* AXFormActivityMonitor.cpp */,
+				421129B02EC39C0A00778FE7 /* AXFormActivityMonitor.h */,
 				486B8DC82A04500F00E00E73 /* AXGeometryManager.cpp */,
 				486B8DC62A043C0600E00E73 /* AXGeometryManager.h */,
 				48CBBAB42EC3B70000EC5429 /* AXID.h */,
@@ -44771,6 +44776,7 @@
 				07E9C65F2E5068EE001DFE83 /* AXComputedObjectAttributeCache.h in Headers */,
 				2936BF5C21D69E4B004A8FC9 /* AXCoreObject.h in Headers */,
 				489DE3272F3B9C30008530FF /* AXCrossProcessSearch.h in Headers */,
+				421129B22EC39C0A00778FE7 /* AXFormActivityMonitor.h in Headers */,
 				486B8DC72A043C0600E00E73 /* AXGeometryManager.h in Headers */,
 				48CBBAB52EC3B70000EC5429 /* AXID.h in Headers */,
 				422EBF162E6EA20F00D4C0E9 /* AXImageMapHelpers.h in Headers */,

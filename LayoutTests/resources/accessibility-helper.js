@@ -714,6 +714,37 @@ function formatAnnouncementUserInfo(userInfo) {
     return result;
 }
 
+// The text of each message a field vends as its error, which is what the user actually receives. Empty
+// entries are dropped because iOS flattens a message container into the elements inside it, and some of
+// those carry no text of their own. Asserting text rather than DOM ids keeps one baseline for both
+// platforms, since iOS does not report DOM ids.
+function errorMessageText(axElement) {
+    var messages = axElement.errorMessageElements();
+    if (!messages || !messages.length)
+        return "no error messages";
+    return messages.map(function(message) {
+        var text = message.stringForTextMarkerRange(message.textMarkerRangeForElement(message));
+        return text.replace(/[\uFFFC\uFFFD]/g, "").trim();
+    }).filter(function(text) { return text.length; }).join(" | ");
+}
+
+function errorMessageCount(axElement) {
+    var messages = axElement.errorMessageElements();
+    return messages ? messages.length : 0;
+}
+
+function formFieldWithErrorCount(axContainer) {
+    var count = 0;
+    var field = null;
+    while ((field = axContainer.uiElementForSearchPredicate(field, true, "AXFormFieldWithErrorSearchKey", "", false)))
+        ++count;
+    return count;
+}
+
+function formatFormValidationUserInfo(userInfo) {
+    return `AXFormValidationUnannouncedText: ${userInfo["AXFormValidationUnannouncedText"].join(" | ")}\n`;
+}
+
 // Checks that text alternatives include all expected values and exclude all unexpected values.
 // Returns a string with PASS/FAIL results for each check.
 function checkTextAlternatives(axElement, { expected = [], unexpected = [] }) {

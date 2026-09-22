@@ -1,0 +1,18 @@
+This tests that a field reports its message again after the page blanks the wording and writes it back, with no submission in progress. Nothing pairs a message with a field outside the window after a submission attempt, so the pairing has to outlast the wording.
+
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+document.getElementById('email-error').textContent = '';
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageText(axElement('email')) === 'no error messages'
+document.getElementById('email-error').textContent = 'Enter a valid email address.';
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('email')) === 'Enter a valid email address.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email
+Enter a valid email address.
+Sign in

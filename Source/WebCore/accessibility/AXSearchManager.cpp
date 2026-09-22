@@ -116,6 +116,8 @@ bool AXSearchManager::matchForSearchKeyAtIndex(Ref<AXCoreObject> axObject, const
         return axObject->isHeading();
     case AccessibilitySearchKey::Highlighted:
         return axObject->hasHighlighting();
+    case AccessibilitySearchKey::FormFieldWithError:
+        return axObject->isControl() && axObject->invalidStatus() != "false"_s;
     case AccessibilitySearchKey::KeyboardFocusable:
         return axObject->isKeyboardFocusable();
     case AccessibilitySearchKey::ItalicFont:

@@ -1,0 +1,13 @@
+This tests that text appearing outside a live region is only reported as a possible form validation error while a submission attempt is being watched, not at any other time.
+
+document.getElementById('errors').textContent = 'Unrelated page text.';
+PASS: deliveries === 0
+document.getElementById('submit').click();
+document.getElementById('errors').textContent = 'Enter a valid email address.';
+PASS: deliveries === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email  Sign in
+Enter a valid email address.

@@ -1,0 +1,13 @@
+This tests that a long run of text next to a field is not taken as a validation error message. Real messages are short, and page furniture such as a promotional banner that happens to sit beside a field is not describing it. Without this the whole banner is spoken as though the page had said it about the field.
+
+PASS: banner.length > 150 === true
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('email').stringAttributeValue('AXInvalid') === 'false'
+PASS: errorMessageCount(axElement('email')) === 0
+PASS: formValidationErrors === 0
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Email    Sign in
+Up to 60,000 bonus miles plus save 10 percent or more on selected fares when you book today, with no change fees on most itineraries and complimentary upgrades for eligible members travelling in premium cabins on qualifying routes this season.

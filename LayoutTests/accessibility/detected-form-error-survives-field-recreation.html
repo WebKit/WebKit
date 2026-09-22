@@ -1,0 +1,54 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <div id="origin-error"></div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message paired with a field survives the field being taken out of the accessibility tree and put back. The pairing is remembered per element, while the relation carrying it is keyed to one accessibility object, so a field that is hidden and shown again gets a new object that has to be given the relation too.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+
+        // Out of the accessibility tree and back, which destroys the field's object and makes a new one.
+        output += evalAndReturn("document.getElementById('origin').style.display = 'none';");
+        output += await expectAsync("!axElement('origin')", "true");
+        output += evalAndReturn("document.getElementById('origin').style.display = 'inline-block';");
+        output += await expectAsync("!!axElement('origin')", "true");
+
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

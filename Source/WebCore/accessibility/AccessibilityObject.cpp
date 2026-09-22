@@ -2819,6 +2819,27 @@ String AccessibilityObject::actionVerb() const
     return { };
 }
 
+AXCoreObject::AccessibilityChildrenVector AccessibilityObject::formFieldObjects() const
+{
+    if (RefPtr form = dynamicDowncast<HTMLFormElement>(element())) {
+        if (CheckedPtr cache = axObjectCache())
+            return cache->formFieldObjects(*form);
+    }
+
+    return { };
+}
+
+AXCoreObject* AccessibilityObject::formOwnerObject() const
+{
+    if (CheckedPtr cache = axObjectCache()) {
+        RefPtr element = this->element();
+        return cache->formOwnerObject(element.get());
+    }
+
+    return nullptr;
+}
+
+// What an author explicitly noted is the invalid status of the element (e.g. via aria-invalid).
 String AccessibilityObject::explicitInvalidStatus() const
 {
     static NeverDestroyed<String> grammarValue = "grammar"_s;
@@ -2829,18 +2850,10 @@ String AccessibilityObject::explicitInvalidStatus() const
 
     // aria-invalid can return false (default), grammar, spelling, or true.
     auto ariaInvalid = getAttributeTrimmed(aria_invalidAttr);
-
-    if (ariaInvalid.isEmpty()) {
-        auto* htmlElement = dynamicDowncast<HTMLElement>(this->node());
-        if (RefPtr validatedFormListedElement = htmlElement ? htmlElement->asValidatedFormListedElement() : nullptr) {
-            // "willValidate" is true if the element is able to be validated.
-            if (validatedFormListedElement->willValidate() && !validatedFormListedElement->isValidFormControlElement())
-                return trueValue;
-        }
+    if (ariaInvalid.isEmpty())
         return { };
-    }
 
-    // If "false", "undefined" [sic, string value], empty, or missing, return "false".
+    // If "false" or "undefined" [sic, string value], return "false".
     if (ariaInvalid == falseValue || ariaInvalid == undefinedValue)
         return falseValue;
     // Besides true/false/undefined, the only tokens defined by WAI-ARIA 1.0...
@@ -2851,6 +2864,48 @@ String AccessibilityObject::explicitInvalidStatus() const
         return spellingValue;
     // Any other non empty string should be treated as "true".
     return trueValue;
+}
+
+String AccessibilityObject::invalidStatus() const
+{
+    static NeverDestroyed<String> falseValue = "false"_s;
+    static NeverDestroyed<String> trueValue = "true"_s;
+
+    // An author who wrote "true", "spelling" or "grammar" is describing the error, so they win outright.
+    auto explicitStatus = explicitInvalidStatus();
+    if (!explicitStatus.isEmpty() && explicitStatus != falseValue)
+        return explicitStatus;
+
+    // HTML constraint validation, which the author opted into with required, type or pattern.
+    if (explicitStatus.isEmpty()) {
+        auto* htmlElement = dynamicDowncast<HTMLElement>(this->node());
+        if (RefPtr validatedFormListedElement = htmlElement ? htmlElement->asValidatedFormListedElement() : nullptr) {
+            // "willValidate" is true if the element is able to be validated.
+            if (validatedFormListedElement->willValidate() && !validatedFormListedElement->isValidFormControlElement()) {
+                // Being empty is the one kind of invalid that is not yet a statement about this page, since it
+                // is true of every required field from first paint. A value that is present but wrong, or one
+                // the page rejected itself through setCustomValidity, is the author saying something really is
+                // wrong, so those count straight away. Waiting for the user to work on the form or try to
+                // submit it is what :user-invalid does, and this is the same bit it is built on.
+                bool invalidOnlyBecauseEmpty = validatedFormListedElement->valueMissing() && !validatedFormListedElement->customError();
+                RefPtr document = this->document();
+                if (!invalidOnlyBecauseEmpty || !document || !document->settings().accessibilityFormErrorDetectionEnabled()
+                    || validatedFormListedElement->wasInteractedWithSinceLastFormSubmitEvent())
+                    return trueValue;
+            }
+        }
+    }
+
+    if (RefPtr element = this->element()) {
+        // A message the site put beside this field but never associated with it, worked out
+        // heuristically rather than stated anywhere. Outweighs aria-invalid=false, since
+        // we trust our heuristic more than the author keeping aria-invalid up-to-date (this
+        // staleness was observed on a popular flight booking webpage).
+        if (CheckedPtr cache = axObjectCache(); cache && cache->fieldHasDetectedError(*element))
+            return trueValue;
+    }
+
+    return falseValue;
 }
 
 AccessibilityCurrentState AccessibilityObject::currentState() const

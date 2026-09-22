@@ -1,0 +1,82 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="origin">From</label><input id="origin" type="text">
+  <!-- Already in the document but hidden, the way a framework renders an error slot up front. -->
+  <div id="origin-error" style="display: none;"><span>Please enter a valid origin.</span></div>
+
+  <label for="destination">To</label><input id="destination" type="text">
+  <!-- Nothing here yet: this message arrives by being inserted after the submit. -->
+  <div id="destination-slot"></div>
+
+  <div id="heading-slot"></div>
+
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<!-- Outside the form: a rotating carousel and a spinner, the kind of thing that changes on its own on a
+     real page. None of it is about the submission, and it sits after every field in tree order, so
+     without scoping it would all be attributed to the last field. -->
+<div id="carousel"></div>
+
+<script>
+var output = "This tests that a message is found when it appears by being unhidden or inserted, not only when text changes inside an element that was already visible, and that it is found even when it arrives inside a container holding unrelated interactive content.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        // Unhidden rather than newly written.
+        document.getElementById("origin-error").style.display = "block";
+
+        // Inserted inside a wrapper that also holds a button, so the wrapper itself is an aggregate and
+        // the message can only be found by looking inside it.
+        var slot = document.getElementById("destination-slot");
+        slot.innerHTML = '<div><button type="button">Dismiss</button><div id="destination-error"><span>Please enter a valid destination.</span></div></div>';
+
+        // A heading inside the form is page structure, not a message about a field.
+        document.getElementById("heading-slot").innerHTML = '<h3>How to plan a group trip</h3>';
+
+        // Unrelated content outside the form, changing on its own.
+        document.getElementById("carousel").innerHTML = '<div>Slide 6 of 8</div><div>Explore San Francisco on a budget</div><div>Loading</div>';
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        // Touch accessibility before submitting so the cache exists, because the detector only runs when
+        // something is already using accessibility, which is the case whenever VoiceOver is on.
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        output += await expectAsync("axElement('origin').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+
+        output += await expectAsync("axElement('destination').stringAttributeValue('AXInvalid')", "'true'");
+        output += expect("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        // Neither the heading nor the carousel is a message, so no field picks either of them up. The
+        // last field in the form is what an unscoped detector would have attached them to.
+        output += expect("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+        output += expect("axElement('submit').stringAttributeValue('AXInvalid')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

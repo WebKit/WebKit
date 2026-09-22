@@ -1,0 +1,18 @@
+This tests that a message paired with a field survives the field being taken out of the accessibility tree and put back. The pairing is remembered per element, while the relation carrying it is keyed to one accessibility object, so a field that is hidden and shown again gets a new object that has to be given the relation too.
+
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'false'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+document.getElementById('origin').style.display = 'none';
+PASS: !axElement('origin') === true
+document.getElementById('origin').style.display = 'inline-block';
+PASS: !!axElement('origin') === true
+PASS: errorMessageText(axElement('origin')) === 'Please enter a valid origin.'
+PASS: axElement('origin').stringAttributeValue('AXInvalid') === 'true'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+From
+Please enter a valid origin.
+Search

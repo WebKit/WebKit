@@ -1,0 +1,64 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<style>
+/* Narrow enough to lay out the same on a phone viewport as on a desktop one, so the two
+   columns are genuinely side by side on both. */
+#row { display: flex; gap: 20px; }
+#row > div { width: 120px; flex: none; }
+/* The second column is drawn first, so document order and what the user sees disagree. */
+#left { order: 2; }
+#right { order: 1; }
+</style>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <div id="row">
+    <div id="left">
+      <label for="origin">From</label><input id="origin" type="text">
+      <div id="origin-error"></div>
+    </div>
+    <div id="right">
+      <label for="destination">To</label><input id="destination" type="text">
+      <div id="destination-error"></div>
+    </div>
+  </div>
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that a message is paired with the field it lines up with on screen rather than the field before it in the document. The two columns are reordered by CSS, so document order pairs both messages with the wrong field, and a message in one column must not claim the field beside it.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").textContent = "Please enter a valid origin.";
+        document.getElementById("destination-error").textContent = "Please enter a valid destination.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        // Each field gets the message directly beneath it, in its own column.
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += expect("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

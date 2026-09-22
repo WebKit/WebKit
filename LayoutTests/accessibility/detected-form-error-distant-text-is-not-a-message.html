@@ -1,0 +1,60 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true ] -->
+<html>
+<head>
+<style>
+/* Beyond the reach allowed outside the form, but close enough that a looser cap would pair it. */
+#distant { margin-top: 100px; }
+</style>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <label for="email">Email</label>
+  <input id="email" type="text">
+  <button id="submit" type="submit">Sign in</button>
+</form>
+
+<div id="distant"></div>
+
+<script>
+var output = "This tests that text appearing outside the form is only taken as a message about a field when it is next to that field. A message in a div straight after the form is how plain markup reports an error and must still be found, but content further down the page is page furniture even when it lines up with a field above it.\n\n";
+
+if (window.accessibilityController && window.internals) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    var formValidationErrors = 0;
+    accessibilityController.addNotificationListener(function(element, notification, userInfo) {
+        if (notification == "AXPossibleFormValidationError")
+            formValidationErrors++;
+    });
+
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("distant").textContent = "Save 10 percent when you book today.";
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+        await sleep(500);
+
+        // Short enough to be a message and lined up with the field, but too far away to be about it.
+        output += expect("axElement('email').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("errorMessageCount(axElement('email'))", "0");
+        output += expect("formValidationErrors", "0");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

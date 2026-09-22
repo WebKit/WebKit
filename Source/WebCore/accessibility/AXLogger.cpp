@@ -405,6 +405,9 @@ TextStream& operator<<(TextStream& stream, AccessibilitySearchKey searchKey)
     case AccessibilitySearchKey::VisitedLink:
         stream << "VisitedLink";
         break;
+    case AccessibilitySearchKey::FormFieldWithError:
+        stream << "FormFieldWithError";
+        break;
     };
 
     return stream;
@@ -807,9 +810,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::ExplicitAutoCompleteValue:
         stream << "ExplicitAutoCompleteValue";
         break;
-    case AXProperty::ExplicitInvalidStatus:
-        stream << "ExplicitInvalidStatus";
-        break;
     case AXProperty::ExplicitLiveRegionRelevant:
         stream << "ExplicitLiveRegionRelevant";
         break;
@@ -865,6 +865,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
         break;
     case AXProperty::HasExplicitGroupRole:
         stream << "HasExplicitGroupRole";
+        break;
+    case AXProperty::InvalidStatus:
+        stream << "InvalidStatus";
         break;
     case AXProperty::IsARIAHidden:
         stream << "IsARIAHidden";

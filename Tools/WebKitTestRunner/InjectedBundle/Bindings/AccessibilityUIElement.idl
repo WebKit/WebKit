@@ -213,6 +213,8 @@ interface AccessibilityUIElement {
     AccessibilityUIElement errorMessageForElementAtIndex(unsigned long index);
     AccessibilityUIElement flowFromElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaFlowToElementAtIndex(unsigned long index);
+    object formFieldElements();
+    AccessibilityUIElement formOwnerElement();
     AccessibilityUIElement ariaLabelledByElementAtIndex(unsigned long index);
     AccessibilityUIElement labelForElementAtIndex(unsigned long index);
     AccessibilityUIElement ownerElementAtIndex(unsigned long index);

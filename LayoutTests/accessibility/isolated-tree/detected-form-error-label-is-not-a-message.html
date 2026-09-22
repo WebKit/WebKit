@@ -1,0 +1,76 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ AccessibilityFormErrorDetectionEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<form id="form">
+  <!-- Controls that are fine, sitting above the ones that are not. -->
+  <input type="radio" id="roundtrip" name="trip" checked><label for="roundtrip"><span>Roundtrip</span></label>
+  <input type="radio" id="oneway" name="trip"><label for="oneway"><span>One-way</span></label>
+  <input type="checkbox" id="flexible"><label for="flexible"><span>Flexible dates</span></label>
+
+  <!-- The label's text is wrapped the way real sites wrap it, so the element holding the words is a span
+       inside the label rather than the label itself. -->
+  <div class="field">
+    <label for="origin"><span>From</span></label>
+    <input id="origin" type="text">
+    <div id="origin-error"><span>Please enter a valid origin.</span></div>
+  </div>
+
+  <div class="field">
+    <label for="destination"><span>To</span></label>
+    <input id="destination" type="text">
+    <div id="destination-error"><span>Please enter a valid destination.</span></div>
+  </div>
+
+  <button id="submit" type="submit">Search</button>
+</form>
+
+<script>
+var output = "This tests that the words naming a field are never taken as a message about one, including when they sit in a span inside the label rather than in the label itself. Otherwise a control with nothing wrong with it reports the name of the field next to it as its error, and the real messages lose their place to the noise.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    internals.setAccessibilityFormErrorSettleDelay(0.1);
+
+    // The whole section is rewritten, the way a site re-renders a form after a failed submit, so every
+    // label and every message is reported as having changed.
+    document.getElementById("form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.getElementById("origin-error").innerHTML = '<span>Please enter a valid origin.</span>';
+        document.getElementById("destination-error").innerHTML = '<span>Please enter a valid destination.</span>';
+        document.querySelector('label[for="origin"]').innerHTML = '<span>From</span>';
+        document.querySelector('label[for="destination"]').innerHTML = '<span>To</span>';
+        document.querySelector('label[for="roundtrip"]').innerHTML = '<span>Roundtrip</span>';
+    });
+
+    function axElement(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    setTimeout(async function() {
+        output += expect("axElement('origin').stringAttributeValue('AXInvalid')", "'false'");
+
+        document.getElementById("submit").click();
+
+        // The fields the messages are about get them.
+        output += await expectAsync("errorMessageText(axElement('origin'))", "'Please enter a valid origin.'");
+        output += await expectAsync("errorMessageText(axElement('destination'))", "'Please enter a valid destination.'");
+
+        // The controls above them have nothing wrong, and a label is not an error.
+        output += expect("errorMessageText(axElement('roundtrip'))", "'no error messages'");
+        output += expect("errorMessageText(axElement('oneway'))", "'no error messages'");
+        output += expect("errorMessageText(axElement('flexible'))", "'no error messages'");
+        output += expect("axElement('roundtrip').stringAttributeValue('AXInvalid')", "'false'");
+        output += expect("axElement('flexible').stringAttributeValue('AXInvalid')", "'false'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
