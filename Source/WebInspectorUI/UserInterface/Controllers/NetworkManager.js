@@ -605,7 +605,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         }
 
         if (typeof json.log !== "object" || typeof json.log.version !== "string") {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("not an object", "not an object @ HAR import error")));
             return null;
         }
 
@@ -614,14 +614,26 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             return null;
         }
 
-        if (!Array.isArray(json.log.entries) || !Array.isArray(json.log.pages) || !json.log.pages[0] || !json.log.pages[0].startedDateTime) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+        if (!Array.isArray(json.log.entries)) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("%s not an array", "%s not an array @ HAR import error").format(WI.unlocalizedString("entries"))));
+            return null;
+        }
+        if (!Array.isArray(json.log.pages)) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("%s not an array", "%s not an array @ HAR import error").format(WI.unlocalizedString("pages"))));
+            return null;
+        }
+        if (!json.log.pages[0]) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("missing first page", "missing first page @ HAR import error")));
+            return null;
+        }
+        if (!json.log.pages[0].startedDateTime) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("invalid %s", "invalid %s @ HAR import error").format(WI.unlocalizedString("startedDateTime"))));
             return null;
         }
 
         let mainResourceSentWalltime = WI.HARBuilder.dateFromHARDate(json.log.pages[0].startedDateTime) / 1000;
         if (isNaN(mainResourceSentWalltime)) {
-            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR - %s").format(WI.UIString("invalid %s", "invalid %s @ HAR import errormain").format(WI.unlocalizedString("mainResourceSentWalltime"))));
             return null;
         }
 

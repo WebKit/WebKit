@@ -43,6 +43,7 @@
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ReportingClient.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SWServerRegistration.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
@@ -176,7 +177,6 @@ public:
 
     // CrossOriginAccessControlCheckDisabler
     bool crossOriginAccessControlCheckEnabled() const override;
-        
     void convertToDownload(DownloadID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequestRequester::Main; }
@@ -276,7 +276,7 @@ private:
         Cancel
     };
     void cleanup(LoadResult);
-    
+
     void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
     void startBufferingTimerIfNeeded();
@@ -345,6 +345,9 @@ private:
 #if ENABLE(BLOCKING_OF_LOCAL_FILE_LOADS_WITHOUT_SANDBOX_EXTENSION)
     bool isLocalFileLoadAllowed(const URL&);
 #endif
+
+    static WebCore::NetworkLoadPriority NODELETE toNetworkLoadPriority(WebCore::ResourceLoadPriority);
+    friend bool operator==(WebCore::NetworkLoadPriority, WebCore::ResourceLoadPriority);
 
     NetworkResourceLoadParameters m_parameters;
     Vector<Ref<SandboxExtension>> m_extensionsToRevoke;
