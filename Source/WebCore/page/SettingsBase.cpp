@@ -50,6 +50,10 @@
 #include "MockRealtimeMediaSourceCenter.h"
 #endif
 
+#if __has_include(<WebKitAdditions/SettingsBaseAdditions.cpp>)
+#include <WebKitAdditions/SettingsBaseAdditions.cpp>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SettingsBase);
@@ -358,20 +362,6 @@ void SettingsBase::mediaTypeOverrideChanged()
 
     page->setNeedsRecalcStyleInAllFrames();
 }
-
-#if ENABLE(AX_CUSTOM_COLOR_MODE)
-void SettingsBase::axCustomColorModeStateChanged()
-{
-    if (m_page)
-        m_page->resetAXCustomColorModeActive();
-}
-
-void SettingsBase::axCustomColorModeAppearanceDetectionChanged()
-{
-    if (m_page)
-        m_page->resetAXCustomColorModeState();
-}
-#endif
 
 void SettingsBase::imagesEnabledChanged()
 {
