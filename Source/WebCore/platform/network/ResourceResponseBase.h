@@ -180,9 +180,9 @@ public:
         m_source = source;
     }
 
-    // FIXME: This should be eliminated from ResourceResponse.
-    // Network loading metrics should be delivered via didFinishLoad
-    // and should not be part of the ResourceResponse.
+    // FIXME <webkit.org/b/324751>: This should be eliminated from
+    // ResourceResponse. Network loading metrics should be delivered via
+    // didFinishLoading and should not be part of the ResourceResponse.
     const NetworkLoadMetrics* deprecatedNetworkLoadMetricsOrNull() const LIFETIME_BOUND
     {
         if (m_networkLoadMetrics)

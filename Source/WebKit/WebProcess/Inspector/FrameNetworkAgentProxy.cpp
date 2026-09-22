@@ -47,11 +47,19 @@
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/InspectorResourceUtilities.h>
 #include <WebCore/InstrumentingAgents.h>
+#include <WebCore/LoaderStrategy.h>
 #include <WebCore/LocalFrameInlines.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageInspectorController.h>
+#include <WebCore/PlatformStrategies.h>
 #include <WebCore/ProcessQualified.h>
+#include <WebCore/ResourceLoadTiming.h>
+#include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceRequest.h>
+#include <optional>
+#include <wtf/MainThread.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WallTime.h>
 
@@ -237,7 +245,7 @@ void FrameNetworkAgentProxy::willSendRequestOfType(ResourceLoaderIdentifier reso
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader*)
+void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
@@ -259,9 +267,15 @@ void FrameNetworkAgentProxy::didReceiveResponse(ResourceLoaderIdentifier resourc
     auto resourceType = resourceData ? resourceData->type() : ResourceType::Other;
     m_resourcesData->responseReceived(resourceID, response, resourceType);
 
+    // The rest of the phase breakdown travels inside the response's own NetworkLoadMetrics; only the
+    // start time has to be sent explicitly, since it lives on the ResourceLoader.
+    std::optional<MonotonicTime> resourceLoadStartTime;
+    if (resourceLoader)
+        resourceLoadStartTime = resourceLoader->loadTiming().startTime();
+
     protect(WebProcess::singleton().parentProcessConnection())->send(
         Messages::ProxyingNetworkAgent::ResponseReceived(
-            qualifyResourceID(resourceID), *frameID, loaderId, response, resourceType, timestamp),
+            qualifyResourceID(resourceID), *frameID, loaderId, response, resourceType, timestamp, resourceLoadStartTime),
         page->identifier());
 }
 
@@ -281,7 +295,7 @@ void FrameNetworkAgentProxy::didReceiveData(ResourceLoaderIdentifier resourceID,
         page->identifier());
 }
 
-void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics&, ResourceLoader*)
+void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceID, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
 {
     if (!loader || !loader->frame() || !loader->frame()->document())
         return;
@@ -314,10 +328,29 @@ void FrameNetworkAgentProxy::didFinishLoading(ResourceLoaderIdentifier resourceI
             sourceMapURL = ContentSearchUtilities::findStylesheetSourceMapURL(resourceData->content());
     }
 
-    auto timestamp = MonotonicTime::now().secondsSinceEpoch().value();
+    // The metrics handed to this hook are usually incomplete in WebKit2: the load's real timing and
+    // byte counts are only known in the NetworkProcess. The inspector-only fields (priority, remote
+    // address, TLS, byte counts) are populated because enabling network instrumentation in this
+    // process turned on setCaptureExtraNetworkLoadMetricsEnabled.
+    //
+    // Frame network instrumentation always runs on the main run loop, so the synchronous fetch below
+    // can be issued from here directly.
+    //
+    // The fetch is destructive -- takeNetworkLoadInformationMetrics removes the entry -- so it is
+    // safe only while nothing else wants the same resource's metrics. The agent that would collide
+    // is PageNetworkAgent: it makes the same call, and this frame's InstrumentingAgents falls back
+    // to the page's, so both would receive this hook. It does not enable itself under Site
+    // Isolation, which is what keeps it out of the way.
+    ASSERT(isMainRunLoop());
+    auto completeMetrics = networkLoadMetrics.isComplete() ? networkLoadMetrics : platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(resourceID);
+
+    // responseEnd is when the load actually completed; now() would charge the bookkeeping above to
+    // the resource's load time.
+    auto responseEnd = completeMetrics.responseEnd ? completeMetrics.responseEnd : networkLoadMetrics.responseEnd;
+    auto timestamp = (responseEnd ? responseEnd : MonotonicTime::now()).secondsSinceEpoch().value();
 
     protect(WebProcess::singleton().parentProcessConnection())->send(
-        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, sourceMapURL),
+        Messages::ProxyingNetworkAgent::LoadingFinished(qualifyResourceID(resourceID), timestamp, sourceMapURL, WTF::move(completeMetrics)),
         page->identifier());
 }
 
