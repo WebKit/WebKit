@@ -50,10 +50,17 @@ inline const Font& FontCascade::primaryFont() const
     return font;
 }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
 inline const FontRanges& FontCascade::fallbackRangesAt(unsigned index) const
 {
     return protect(m_fonts)->realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
 }
+#else
+inline const FontRanges& FontCascade::fallbackRangesAt(FontCascadeFonts& fonts, unsigned index) const
+{
+    return fonts.realizeFallbackRangesAt(m_fontDescription, protect(fontSelector()).get(), index);
+}
+#endif // RC_REMOVE_SEC_ACCEL_3
 
 inline bool FontCascade::isFixedPitch() const
 {
