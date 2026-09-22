@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/index.mjs",
   "dependencies": {
-    "@slack/rtm-api": "^5.0.5",
+    "@slack/rtm-api": "^6.2.1",
     "@slack/web-api": "^5.10.0",
     "axios": "^1.15.1",
     "dotenv": "^8.2.0",
