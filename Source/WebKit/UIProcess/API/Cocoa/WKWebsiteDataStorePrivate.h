@@ -156,8 +156,6 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 // Asks the platform's list service for the disabled security flags again, as its change notification would, and
 // gives the list back the ownership _setDisabledSecurityFlagsForTesting: took.
 + (void)_requestDisabledSecurityFlagsForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
-// Processes launched from now on fall back to a frozen page of their own; those already running are unaffected.
-+ (void)_setWithholdSecurityFlagsPageFromChildProcessesForTesting:(BOOL)withhold WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 // Answers nil if this build has no flag by that name.
 - (void)_isSecurityFlagEnabledInNetworkProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 + (NSNumber *)_isSecurityFlagEnabledInUIProcessForTesting:(NSString *)flagName WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));

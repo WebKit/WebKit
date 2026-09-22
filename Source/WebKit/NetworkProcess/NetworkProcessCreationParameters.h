@@ -28,6 +28,7 @@
 #include "AuxiliaryProcessCreationParameters.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "SecurityFlags.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -48,6 +49,7 @@ struct WebsiteDataStoreParameters;
 struct NetworkProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
 
+    SecurityFlags::Storage securityFlags;
 
     CacheModel cacheModel { CacheModel::DocumentViewer };
 

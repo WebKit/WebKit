@@ -33,20 +33,18 @@
 
 namespace WebKit::SecurityFlags {
 
-// Its own section so nothing else lands on the page, and no extern "C" here: that would make this a declaration.
-alignas(WTF::CeilingOnPageSize) __attribute__((used, section("__DATA,__wk_secflags")))
-uint64_t g_securityFlagsPageStorage[pageStorageSize / sizeof(uint64_t)];
+Storage Storage::s_forProcess;
 
 bool Storage::update(Storage&& flags)
 {
-    RELEASE_ASSERT(!isInAuxiliaryProcess());
+    // Release-assert on the write side: a write there would disable flags, where a read answers the secure default.
+    RELEASE_ASSERT(!isInWebProcess());
     ASSERT(RunLoop::isMain());
 
-    auto& current = page().flags;
-    if (flags == current)
+    if (flags == s_forProcess)
         return false;
 
-    current.replaceWith(flags);
+    s_forProcess.replaceWith(flags);
     return true;
 }
 

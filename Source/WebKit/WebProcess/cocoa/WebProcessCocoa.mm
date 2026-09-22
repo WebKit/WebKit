@@ -39,7 +39,6 @@
 #import "ProcessAssertion.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
-#import "SecurityFlagsSharedPage.h"
 #import "SharedBufferReference.h"
 #import "StreamClientConnection.h"
 #import "WKAPICast.h"
@@ -386,14 +385,6 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
     PAL::softLinkVideoToolboxVTRestrictVideoDecoders(flags, allowedCodecTypeList.span().data(), allowedCodecTypeList.size());
 }
-
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
-void WebProcess::attackSecurityFlagsPageForTesting(CompletionHandler<void(int32_t, int32_t, int32_t, int32_t, int32_t)>&& completionHandler)
-{
-    auto results = SecurityFlagsSharedPage::runAttacks();
-    completionHandler(results.raiseCurrentProtection, results.raiseMaximumProtection, results.raiseProtectionByCopying, results.overwriteWithWritableMemory, results.substituteReadOnlyPage);
-}
-#endif
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {

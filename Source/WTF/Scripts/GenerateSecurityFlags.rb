@@ -144,18 +144,7 @@ class SecurityFlags
     @securityFlags.sort_by! { |flag| radarNumber(flag.name) }
     @securityFlags.each_with_index { |flag, index| flag.index = index }
 
-    @layoutHash = fnv1a(@securityFlags.map(&:name).join(","))
-
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
-  end
-
-  # Identifies the bit assignment, which is the sorted key order and so changes whenever the list does.
-  def fnv1a(string)
-    hash = 0xcbf29ce484222325
-    string.each_byte do |byte|
-      hash = ((hash ^ byte) * 0x100000001b3) & 0xffffffffffffffff
-    end
-    hash
   end
 
   def initializeParsedSecurityFlags(parsedSecurityFlags, path)

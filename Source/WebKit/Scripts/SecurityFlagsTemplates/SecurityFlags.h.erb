@@ -27,18 +27,18 @@
 
 #pragma once
 
+#include <array>
 #include <optional>
 #include <wtf/BitSet.h>
-#include <wtf/PageBlock.h>
 #include <wtf/RuntimeApplicationChecks.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
 
 namespace WebKit::SecurityFlags {
 
 // Generated from Source/WTF/Scripts/Preferences/SecurityFlags.yaml. Stores the *disabled* flags, so zero means every fix is enforced.
-// Reads are atomic per flag, so a check may run on any thread.
+// Reads are atomic per flag, so a check may run on any thread. Never send this to the WebContent process.
 struct Storage {
+    // A flag's bit is its sorted position and is not stable across versions; the wire form carries names, not bits.
     static constexpr size_t flagCount = <%= @securityFlags.size %>;
 
     Storage() = default;
@@ -47,7 +47,13 @@ struct Storage {
     // Overwriting the words in place is not safe against a reader on another thread, so replaceWith() is the only way.
     Storage& operator=(const Storage&) = delete;
 
-    static const Storage& forProcess();
+    // The value for this process. Inline so that a Swift caller resolves the read here, rather than through a symbol
+    // this framework does not export.
+    static const Storage& forProcess()
+    {
+        ASSERT(!isInWebProcess());
+        return s_forProcess;
+    }
 
 <% @securityFlags.each do |flag| -%>
 <%- if flag.condition -%>
@@ -74,36 +80,42 @@ struct Storage {
     // Nullopt if this build has no flag by that name.
     std::optional<bool> isFlagEnabledNamedForTesting(StringView) const;
 
+    // Plain words rather than the BitSet, so the wire form does not depend on which word type BitSet picked.
+    static constexpr size_t ipcWordCount = (flagCount + 63) / 64;
+
+    std::array<uint64_t, ipcWordCount> disabledFlagsForIPC() const
+    {
+        std::array<uint64_t, ipcWordCount> words { };
+        for (size_t index = 0; index < flagCount; ++index) {
+            if (m_disabledFlags.get(index))
+                words[index / 64] |= 1ULL << (index % 64);
+        }
+        return words;
+    }
+
+    static std::optional<Storage> fromDisabledFlagsForIPC(std::array<uint64_t, ipcWordCount> words)
+    {
+        // A bit belonging to no flag can only be a sender bug, so reject rather than quietly dropping it.
+        for (size_t index = flagCount; index < ipcWordCount * 64; ++index) {
+            if (words[index / 64] & (1ULL << (index % 64)))
+                return std::nullopt;
+        }
+
+        Storage flags;
+        for (size_t index = 0; index < flagCount; ++index) {
+            if (words[index / 64] & (1ULL << (index % 64)))
+                flags.m_disabledFlags.set(index);
+        }
+        return flags;
+    }
+
 private:
+    static Storage s_forProcess;
+
     WTF::BitSet<flagCount> m_disabledFlags;
 };
 
-struct Page {
-    // A flag's bit is its sorted position, so two builds with different lists would read each other's bits as
-    // other fixes. Nothing else catches that, because what is shared is the bits and not the names.
-    static constexpr uint64_t expectedMagic = 0x5ECF1A6553484450ULL;
-    static constexpr uint64_t expectedLayoutHash = <%= @layoutHash %>ULL;
-
-    bool isValid() const { return magic == expectedMagic && layoutHash == expectedLayoutHash; }
-
-    uint64_t magic;
-    uint64_t layoutHash;
-    Storage flags;
-};
-
-// Raw storage, not a Page object: a constructor would run after the mapping is in place and fault. Not exported,
-// or a flag read would go through a writable GOT slot.
-constexpr size_t pageStorageSize = WTF::CeilingOnPageSize;
-extern "C" uint64_t g_securityFlagsPageStorage[pageStorageSize / sizeof(uint64_t)];
-
-inline Page& page() { return *std::bit_cast<Page*>(&g_securityFlagsPageStorage[0]); }
-
-static_assert(sizeof(Page) <= pageStorageSize);
-
-inline const Storage& Storage::forProcess() { return page().flags; }
-
-// Cocoa-only: anywhere else a flag reads as disabled, because no other port builds a branch that has these flags.
-#if PLATFORM(COCOA)
+// A flag check, in C++ and in Swift alike: SecurityFlags::radarNNNNNN().
 <% @securityFlags.each do |flag| -%>
 <%- if flag.condition -%>
 #if <%= flag.condition %>
@@ -113,22 +125,12 @@ inline bool <%= flag.name %>() { return Storage::forProcess().<%= flag.name %>()
 #endif
 <%- end -%>
 <% end -%>
-#else
-<% @securityFlags.each do |flag| -%>
-<%- if flag.condition -%>
-#if <%= flag.condition %>
-<%- end -%>
-inline bool <%= flag.name %>() { return false; }
-<%- if flag.condition -%>
-#endif
-<%- end -%>
-<% end -%>
-#endif
 
 } // namespace WebKit::SecurityFlags
 
 namespace WebKit {
 
+// For the code that hands the whole value on, such as process creation parameters.
 inline const SecurityFlags::Storage& securityFlags() { return SecurityFlags::Storage::forProcess(); }
 
 } // namespace WebKit

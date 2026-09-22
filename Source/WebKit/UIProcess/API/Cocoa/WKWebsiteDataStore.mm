@@ -36,7 +36,6 @@
 #import "RestrictedOpenerType.h"
 #import "SecurityFlags.h"
 #import "SecurityFlagsController.h"
-#import "SecurityFlagsSharedPage.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "UserNotificationsSPI.h"
 #import "WKAPICast.h"
@@ -1515,15 +1514,6 @@ struct WKWebsiteData {
 {
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
     WebKit::SecurityFlagsController::singleton().requestRemoteListForTesting();
-#endif // ENGINEERING_BUILD
-}
-
-+ (void)_setWithholdSecurityFlagsPageFromChildProcessesForTesting:(BOOL)withhold
-{
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
-    WebKit::SecurityFlagsSharedPage::setWithholdEntryFromChildProcessesForTesting(withhold);
-#else
-    UNUSED_PARAM(withhold);
 #endif // ENGINEERING_BUILD
 }
 

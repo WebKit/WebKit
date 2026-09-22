@@ -61,7 +61,6 @@
 #include "RTCDataChannelRemoteManagerProxy.h"
 #include "RemoteWorkerType.h"
 #include "ResourceLoadStatisticsStore.h"
-#include "SecurityFlags.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "WebCookieManager.h"
@@ -322,6 +321,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
     applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
+    SecurityFlags::Storage::update(WTF::move(parameters.securityFlags));
 #if HAVE(SEC_KEY_PROXY)
     WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies });
 #else
@@ -470,6 +470,11 @@ void NetworkProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIde
     if (RefPtr connection = m_webProcessConnections.get(identifier))
         connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferences));
     completionHandler();
+}
+
+void NetworkProcess::securityFlagsDidChange(SecurityFlags::Storage&& securityFlags)
+{
+    SecurityFlags::Storage::update(WTF::move(securityFlags));
 }
 
 void NetworkProcess::isSecurityFlagEnabledForTesting(const String& flagName, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
