@@ -2094,7 +2094,7 @@
 		A1EA02401DAC31DB0096021F /* WebContextMenuListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EA023E1DAC31DB0096021F /* WebContextMenuListenerProxy.h */; };
 		A1EB6C2E2D5441740096D4F8 /* WebsiteInlineMediaPlaybackPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A1EB6C2D2D5441740096D4F8 /* WebsiteInlineMediaPlaybackPolicy.h */; };
 		A1F7E3D2C4B8D9E1F0A23456 /* WKImmersiveEnvironmentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = D3E8A4F1B7C2E5D9A0163478 /* WKImmersiveEnvironmentPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1FB68221F6E518200C43F9F /* WKCrashReporter.h */; };
 		A31F60A425CC7DB900AF14F4 /* IPCSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */; };
 		A513F5402154A5D700662841 /* WebPageInspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = A513F53E2154A5CC00662841 /* WebPageInspectorController.h */; };
 		A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */ = {isa = PBXBuildFile; fileRef = A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */; };

@@ -1131,11 +1131,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKCrashReporter {
-    header "WKCrashReporter.h"
-    export *
-  }
-
   explicit module WKCredential {
     header "WKCredential.h"
     export *
