@@ -329,6 +329,13 @@ void IDBDatabase::stop()
     }
 
     close();
+
+    // No transaction can complete after the context is stopped, so close the connection in the
+    // server unconditionally rather than waiting for maybeCloseInServer().
+    if (!m_closedInServer) {
+        m_closedInServer = true;
+        m_connectionProxy->databaseConnectionClosed(*this);
+    }
 }
 
 Ref<IDBTransaction> IDBDatabase::startVersionChangeTransaction(const IDBTransactionInfo& info, IDBOpenDBRequest& request)
