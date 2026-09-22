@@ -2974,7 +2974,6 @@ imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/css-linked-par
 imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-fragment-identifiers-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/img-with-url-fragment-identifiers-2.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/svg/styling/css-linked-parameters/link-parameters-currentcolor-typed.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/animations/scripted/syncbase-after-removal.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/media-fragment-override-animation.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/interact/use-instance-hover.html [ ImageOnlyFailure ]
