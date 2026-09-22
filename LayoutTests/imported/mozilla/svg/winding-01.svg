@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
 
   <title>Testcase for path with evenodd winding</title>
+  <meta name="fuzzy" content="maxDifference=0-14; totalPixels=0-500" />
   
   <!-- From https://bugzilla.mozilla.org/show_bug.cgi?id=786216 -->
 
