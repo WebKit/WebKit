@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>manipulation surface</title>
+<style>
+html, body { margin: 0; }
+
+.spacer { height: 1000px; }
+
+#surface { height: 400px; background: linear-gradient(#fed, #dfe); }
+</style>
+</head>
+<body>
+<div class="spacer"></div>
+<div id="surface"></div>
+<div class="spacer"></div>
+<script>
+const surface = document.getElementById("surface");
+
+window.surfaceEvents = { down: 0, move: 0, up: 0, wheel: 0, dx: 0, dy: 0 };
+
+let previous = null;
+
+surface.addEventListener("mousedown", event => {
+    window.surfaceEvents.down++;
+    previous = event;
+});
+
+surface.addEventListener("mousemove", event => {
+    // Only movement between a down and an up belongs to a drag; a bare mousemove is a hover update.
+    if (!previous)
+        return;
+
+    window.surfaceEvents.move++;
+    window.surfaceEvents.dx += event.clientX - previous.clientX;
+    window.surfaceEvents.dy += event.clientY - previous.clientY;
+    previous = event;
+});
+
+surface.addEventListener("mouseup", () => {
+    window.surfaceEvents.up++;
+    previous = null;
+});
+
+surface.addEventListener("wheel", () => window.surfaceEvents.wheel++, { passive: true });
+</script>
+</body>
+</html>

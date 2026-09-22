@@ -8807,6 +8807,20 @@ UseAppKitGesturesForGestureEvents:
     WebCore:
       default: false
 
+UseAppKitGesturesForManipulationSurfaces:
+  type: bool
+  status: internal
+  humanReadableName: "AppKit gestures for manipulation surfaces"
+  humanReadableDescription: "Use AppKit gestures to drive manipulation surfaces"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultUseAppKitGestures()
+    WebCore:
+      default: false
+
 UseAsyncUIKitInteractions:
   type: bool
   status: internal
