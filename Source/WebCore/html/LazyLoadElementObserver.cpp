@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2020 Igalia S.L.
+ * Copyright (C) 2026 Squarespace, Inc. www.squarespace.com
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +25,37 @@
  */
 
 #include "config.h"
-#include "LazyLoadVideoObserver.h"
+#include "LazyLoadElementObserver.h"
 
-#if ENABLE(VIDEO)
-
-#include "HTMLVideoElement.h"
-#include "IntersectionObserver.h"
+#include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "IntersectionObserverCallback.h"
 #include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include "NodeDocument.h"
-#include <limits>
 #include <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(VIDEO)
+#include "HTMLVideoElement.h"
+#endif
+
+#if ENABLE(MODEL_ELEMENT)
+#include "HTMLModelElement.h"
+#endif
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadVideoObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LazyLoadElementObserver);
 
-class LazyVideoLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
+class LazyLoadIntersectionObserverCallback final : public IntersectionObserverCallback {
 public:
-    static Ref<LazyVideoLoadIntersectionObserverCallback> create(Document& document)
+    static Ref<LazyLoadIntersectionObserverCallback> create(Document& document)
     {
-        return adoptRef(*new LazyVideoLoadIntersectionObserverCallback(document));
+        return adoptRef(*new LazyLoadIntersectionObserverCallback(document));
     }
 
 private:
-    LazyVideoLoadIntersectionObserverCallback(Document& document)
+    LazyLoadIntersectionObserverCallback(Document& document)
         : IntersectionObserverCallback(&document)
     {
     }
@@ -61,8 +67,18 @@ private:
         ASSERT(!entries.isEmpty());
 
         for (auto& entry : entries) {
-            if (RefPtr element = dynamicDowncast<HTMLVideoElement>(entry->target()))
-                element->viewportIntersectionChanged(entry->isIntersecting());
+            if (RefPtr element = dynamicDowncast<HTMLImageElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+            else if (RefPtr element = dynamicDowncast<HTMLIFrameElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+#if ENABLE(VIDEO)
+            else if (RefPtr element = dynamicDowncast<HTMLVideoElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+#endif
+#if ENABLE(MODEL_ELEMENT)
+            else if (RefPtr element = dynamicDowncast<HTMLModelElement>(entry->target()))
+                element->lazyLoadIntersectionCallbackInvoked(entry->isIntersecting());
+#endif
         }
         return { };
     }
@@ -73,26 +89,29 @@ private:
     }
 };
 
-LazyLoadVideoObserver::LazyLoadVideoObserver() = default;
-LazyLoadVideoObserver::~LazyLoadVideoObserver() = default;
+LazyLoadElementObserver::LazyLoadElementObserver() = default;
+LazyLoadElementObserver::~LazyLoadElementObserver() = default;
 
-void LazyLoadVideoObserver::observe(HTMLVideoElement& element)
+void LazyLoadElementObserver::observe(Element& element)
 {
     Ref document = element.document();
-    if (RefPtr intersectionObserver = protect(document->lazyLoadVideoObserver())->intersectionObserver(document))
-        intersectionObserver->observe(element);
+    CheckedRef<LazyLoadElementObserver> observer = document->lazyLoadElementObserver();
+    RefPtr intersectionObserver = observer->intersectionObserver(document);
+    if (!intersectionObserver)
+        return;
+    intersectionObserver->observe(element);
 }
 
-void LazyLoadVideoObserver::unobserve(HTMLVideoElement& element, Document& document)
+void LazyLoadElementObserver::unobserve(Element& element, Document& document)
 {
-    if (auto& observer = document.lazyLoadVideoObserver().m_observer)
+    if (auto& observer = document.lazyLoadElementObserver().m_observer)
         observer->unobserve(element);
 }
 
-IntersectionObserver* LazyLoadVideoObserver::intersectionObserver(Document& document)
+IntersectionObserver* LazyLoadElementObserver::intersectionObserver(Document& document)
 {
     if (!m_observer) {
-        auto callback = LazyVideoLoadIntersectionObserverCallback::create(document);
+        auto callback = LazyLoadIntersectionObserverCallback::create(document);
         static NeverDestroyed<const String> lazyLoadingScrollMarginFallback(MAKE_STATIC_STRING_IMPL("100%"));
         IntersectionObserver::Init options { std::nullopt, { }, lazyLoadingScrollMarginFallback, { } };
         auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
@@ -103,11 +122,9 @@ IntersectionObserver* LazyLoadVideoObserver::intersectionObserver(Document& docu
     return m_observer.get();
 }
 
-bool LazyLoadVideoObserver::isObserved(HTMLVideoElement& element) const
+bool LazyLoadElementObserver::isObserved(Element& element) const
 {
-    return m_observer && m_observer->isObserving(element);
+    return m_observer && m_observer->isObserving(protect(element));
 }
 
 }
-
-#endif

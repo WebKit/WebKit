@@ -220,7 +220,7 @@ public:
 #endif
 
     bool isIntersectingViewport() const { return m_isIntersectingViewport; }
-    void viewportIntersectionChanged(bool isIntersecting);
+    void lazyLoadIntersectionCallbackInvoked(bool isIntersecting);
 
 #if HAVE(SUPPORT_HDR_DISPLAY) && ENABLE(PIXEL_FORMAT_RGBA16F)
     void dynamicRangeLimitDidChange(PlatformDynamicRangeLimit);
