@@ -96,6 +96,10 @@ void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BleedAvoida
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, m_renderer);
 
     paintFillLayers(backgroundColor, m_renderer.style().backgroundLayers(), m_renderer.style().usedZoomForLength(), paintRect, bleedAvoidance, compositeOp);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorModeController::paintSurfaceHairlineIfNecessary(m_paintInfo.context(), document(), m_renderer, paintRect);
+#endif
 }
 
 void BackgroundPainter::paintRootBoxFillLayers() const
