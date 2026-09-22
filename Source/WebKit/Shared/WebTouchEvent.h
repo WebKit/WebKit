@@ -268,6 +268,10 @@ public:
 
     bool allTouchPointsAreReleased() const;
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    void mergeMovedTouchPointsFrom(const WebTouchEvent&);
+#endif
+
 #if USE(LIBWPE) || ENABLE(WPE_PLATFORM)
     virtual bool isNativeWebTouchEvent() const { return false; }
 #endif

@@ -5633,13 +5633,18 @@ void WebPageProxy::processNextQueuedTouchEvent()
         if (!pageClient)
             return;
 
+        auto doneWithTouchEvents = [&](const QueuedTouchEvents& queuedEvents, bool handled) {
+            // Unlike the ENABLE(TOUCH_EVENTS) implementation, which defers the events received after the
+            // forwarded one, handleTouchEvent() replaces the forwarded touch move with the newer one and
+            // defers the replaced ones. So the deferred events are older and must be reported first.
+            for (auto& event : queuedEvents.deferredTouchEvents)
+                pageClient->doneWithTouchEvent(event, handled);
+            pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+        };
+
         if (!connection) {
-            while (!internals().touchEventQueue.isEmpty()) {
-                auto queuedEvents = internals().touchEventQueue.takeFirst();
-                pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, false);
-                for (auto& event : queuedEvents.deferredTouchEvents)
-                    pageClient->doneWithTouchEvent(event, false);
-            }
+            while (!internals().touchEventQueue.isEmpty())
+                doneWithTouchEvents(internals().touchEventQueue.takeFirst(), false);
             didFinishProcessingAllPendingTouchEvents();
             return;
         }
@@ -5650,9 +5655,7 @@ void WebPageProxy::processNextQueuedTouchEvent()
         MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent->type(), connection);
         protect(legacyMainFrameProcess())->stopResponsivenessTimer();
 
-        pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
-        for (auto& event : queuedEvents.deferredTouchEvents)
-            pageClient->doneWithTouchEvent(event, handled);
+        doneWithTouchEvents(queuedEvents, handled);
 
         if (!internals().touchEventQueue.isEmpty())
             processNextQueuedTouchEvent();
@@ -5669,10 +5672,18 @@ void WebPageProxy::handleTouchEvent(IPC::Connection*, Ref<NativeWebTouchEvent>&&
     if (!m_mainFrame)
         return;
 
-    if (event->type() == WebEventType::TouchMove && !internals().touchEventQueue.isEmpty()) {
+    // Coalesce the touch moves waiting to be sent to the web process. The newer event replaces the
+    // queued one so that the page gets the latest touch point positions. The first queued event has
+    // already been sent, so it can't be replaced; otherwise the newer event would never be sent.
+    if (event->type() == WebEventType::TouchMove && internals().touchEventQueue.size() > 1) {
         QueuedTouchEvents& lastEvent = internals().touchEventQueue.last();
         if (lastEvent.forwardedEvent->type() == WebEventType::TouchMove) {
-            lastEvent.deferredTouchEvents.append(WTF::move(event));
+            // GTK and WPE send a touch move per moved touch point, marking the others as stationary.
+            // Keep the touch points that moved in the replaced event as moved so that their movement
+            // isn't lost from TouchEvent.changedTouches.
+            event->mergeMovedTouchPointsFrom(lastEvent.forwardedEvent.get());
+            auto replacedEvent = std::exchange(lastEvent.forwardedEvent, WTF::move(event));
+            lastEvent.deferredTouchEvents.append(WTF::move(replacedEvent));
             return;
         }
     }
