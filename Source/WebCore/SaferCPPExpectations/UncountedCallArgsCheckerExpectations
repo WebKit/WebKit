@@ -1,14 +1,8 @@
-Modules/webaudio/AudioBuffer.cpp
-Modules/webaudio/BaseAudioContext.h
 StyleChangedAnimatablePropertiesGenerated.cpp
 [ iOS ] accessibility/AXObjectCache.cpp
 [ iOS ] accessibility/ios/AXObjectCacheIOS.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-animation/BlendingKeyframes.cpp
-animation/KeyframeEffect.cpp
-animation/StyleOriginatedAnimation.cpp
-animation/WebAnimation.cpp
 bindings/js/DOMPromiseProxy.h
 bindings/js/JSAudioBufferSourceNodeCustom.cpp
 bindings/js/JSCSSRuleCustom.h
@@ -47,7 +41,6 @@ bindings/js/ScriptModuleLoader.cpp
 bindings/js/SerializedScriptValue.cpp
 bindings/js/WebAssemblyScriptBufferSourceProvider.h
 bindings/js/WebCoreTypedArrayController.cpp
-crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h
 css/CSSCounterStyleRule.h
 css/CSSFontFace.cpp
 css/CSSFontFaceRule.cpp
@@ -98,22 +91,7 @@ dom/ShadowRoot.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-editing/AlternativeTextController.cpp
-editing/ApplyStyleCommand.cpp
-editing/BreakBlockquoteCommand.cpp
-editing/CompositeEditCommand.cpp
-editing/DeleteSelectionCommand.cpp
-editing/Editor.cpp
-editing/FrameSelection.cpp
-editing/ReplaceSelectionCommand.cpp
-editing/SpellChecker.cpp
-editing/TextManipulationController.cpp
-editing/TypingCommand.cpp
-editing/VisiblePosition.h
-editing/cocoa/NodeHTMLConverter.mm
-editing/cocoa/WebContentReaderCocoa.mm
-[ Mac ] editing/mac/EditorMac.mm
-editing/markup.cpp
+[ iOS ] editing/FrameSelection.cpp
 html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h
@@ -137,7 +115,6 @@ html/canvas/CanvasRenderingContext2DBase.cpp
 html/canvas/CanvasStyle.cpp
 html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
-inspector/InspectorShaderProgram.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 [ macOS ] page/ContextMenuController.cpp
 [ iOS ] page/DOMTimer.cpp
@@ -330,9 +307,3 @@ svg/properties/SVGPointerMemberAccessor.h
 svg/properties/SVGPropertyAccessorImpl.h
 [ iOS ] testing/InternalSettings.cpp
 [ iOS ] testing/Internals.cpp
-testing/LegacyMockCDM.cpp
-testing/js/WebCoreTestSupport.cpp
-workers/service/context/ServiceWorkerThread.cpp
-worklets/PaintWorkletGlobalScope.cpp
-xml/XSLImportRule.cpp
-xml/XSLTProcessorLibxslt.cpp

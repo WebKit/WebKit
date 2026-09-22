@@ -253,27 +253,28 @@ void EditCommandComposition::unapply(AddToUndoStack addToUndoStack)
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
     Ref document = m_document.get();
+    Ref editor = document->editor();
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Where should iPhone code deal with the composition?
     // Since editing commands don't save/restore the composition, undoing without fixing
     // up the composition will leave a stale, invalid composition, as in <rdar://problem/6831637>.
     // Desktop handles this in -[WebHTMLView _updateSelectionForInputManager], but the phone
     // goes another route.
-    document->editor().cancelComposition();
+    editor->cancelComposition();
 #endif
 
-    auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
-    if (addToUndoStack == AddToUndoStack::Yes && !document->editor().willUnapplyEditing(*this))
+    auto prohibitScrollingForScope = document->view() ? protect(document->view())->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
+    if (addToUndoStack == AddToUndoStack::Yes && !editor->willUnapplyEditing(*this))
         return;
 
     size_t size = m_commands.size();
     for (size_t i = size; i; --i)
-        m_commands[i - 1]->doUnapply();
+        protect(m_commands[i - 1])->doUnapply();
 
     if (addToUndoStack == AddToUndoStack::No)
         return;
 
-    document->editor().unappliedEditing(*this);
+    editor->unappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
@@ -303,14 +304,15 @@ void EditCommandComposition::reapply()
     m_document->updateLayoutIgnorePendingStylesheets();
 
     Ref document = m_document.get();
-    auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
-    if (!document->editor().willReapplyEditing(*this))
+    Ref editor = document->editor();
+    auto prohibitScrollingForScope = document->view() ? protect(document->view())->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
+    if (!editor->willReapplyEditing(*this))
         return;
 
     for (Ref command : m_commands)
         command->doReapply();
 
-    document->editor().reappliedEditing(*this);
+    editor->reappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
@@ -367,7 +369,7 @@ CompositeEditCommand::~CompositeEditCommand()
 
 bool CompositeEditCommand::willApplyCommand()
 {
-    return protect(document())->editor().willApplyEditing(*this, targetRangesForBindings());
+    return protect(protect(document())->editor())->willApplyEditing(*this, targetRangesForBindings());
 }
 
 void CompositeEditCommand::apply()
@@ -428,7 +430,7 @@ void CompositeEditCommand::apply()
 
 void CompositeEditCommand::didApplyCommand()
 {
-    protect(document())->editor().appliedEditing(*this);
+    protect(protect(document())->editor())->appliedEditing(*this);
 }
 
 Vector<Ref<StaticRange>> CompositeEditCommand::targetRanges() const
@@ -1514,6 +1516,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         return;
 
     Ref document = this->document();
+    Ref editor = document->editor();
     // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;
     if (startOfParagraphToMove != endOfParagraphToMove)
@@ -1537,7 +1540,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // FIXME (5098931): We should add a new insert action "WebViewInsertActionMoved" and call shouldInsertFragment here.
 
     setEndingSelection(VisibleSelection(start, end));
-    document->editor().clearMisspellingsAndBadGrammar(endingSelection());
+    editor->clearMisspellingsAndBadGrammar(endingSelection());
 
     auto downstreamDestination = destination.deepEquivalent().downstream();
 
@@ -1582,7 +1585,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         options.add(ReplaceSelectionCommand::MatchStyle);
     applyCommandToComposite(ReplaceSelectionCommand::create(document.copyRef(), WTF::move(fragment), options));
 
-    document->editor().markMisspellingsAndBadGrammar(endingSelection());
+    editor->markMisspellingsAndBadGrammar(endingSelection());
 
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
     bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());

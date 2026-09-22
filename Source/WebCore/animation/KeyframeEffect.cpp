@@ -1001,7 +1001,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
 
     auto styleProperties = MutableStyleProperties::create();
     if (m_animationType == WebAnimationType::CSSAnimation && m_target->isConnected()) {
-        auto matchingRules = protect(m_target->styleResolver())->pseudoStyleRulesForElement(target.get(), m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
+        auto matchingRules = protect(target->styleResolver())->pseudoStyleRulesForElement(target.get(), m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(protect(matchedRule->properties()));
         if (RefPtr target = dynamicDowncast<StyledElement>(*m_target); target && !m_pseudoElementIdentifier) {
@@ -1967,7 +1967,8 @@ bool KeyframeEffect::canBeAccelerated() const
 
 bool KeyframeEffect::canBeAccelerated(AccountForTimelineAccelerationAbility accountForTimelineAccelerationAbility) const
 {
-    if (!animation() || !animation()->timeline() || animation()->isSkippedContentAnimation())
+    RefPtr animation = this->animation();
+    if (!animation || !animation->timeline() || animation->isSkippedContentAnimation())
         return false;
 
     if (m_acceleratedPropertiesState == AcceleratedProperties::None)
@@ -1998,7 +1999,7 @@ bool KeyframeEffect::canBeAccelerated(AccountForTimelineAccelerationAbility acco
 
 #if ENABLE(THREADED_ANIMATIONS)
     if (canHaveAcceleratedRepresentation())
-        return !animation()->pending() && (accountForTimelineAccelerationAbility == AccountForTimelineAccelerationAbility::No || animation()->timeline()->canBeAccelerated());
+        return !animation->pending() && (accountForTimelineAccelerationAbility == AccountForTimelineAccelerationAbility::No || protect(animation->timeline())->canBeAccelerated());
 #else
     UNUSED_PARAM(accountForTimelineAccelerationAbility);
 #endif

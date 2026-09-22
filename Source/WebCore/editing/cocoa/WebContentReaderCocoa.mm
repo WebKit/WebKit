@@ -304,6 +304,8 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         Ref<Element> originalElement;
     };
 
+    Ref editor = protect(frame)->editor();
+
     ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
     if (subresources.isEmpty())
         return;
@@ -328,7 +330,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
     }
 
     if (!serializedAttachmentData.isEmpty())
-        protect(frame)->editor().registerAttachments(WTF::move(serializedAttachmentData));
+        editor->registerAttachments(WTF::move(serializedAttachmentData));
 
     Vector<Ref<Element>> elementsToRemove;
     Vector<AttachmentInsertionInfo> attachmentInsertionInfo;
@@ -347,7 +349,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (name.isEmpty())
             name = "media"_s;
 
-        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(resource->value->data())->makeContiguous(), image.get() });
+        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(protect(resource->value)->data())->makeContiguous(), image.get() });
     }
 
     for (Ref object : descendantsOfType<HTMLObjectElement>(fragment)) {
@@ -365,7 +367,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (name.isEmpty())
             name = "file"_s;
 
-        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(resource->value->data())->makeContiguous(), object });
+        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(protect(resource->value)->data())->makeContiguous(), object });
     }
 
     for (Ref source : descendantsOfType<HTMLSourceElement>(fragment)) {
@@ -383,7 +385,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (name.isEmpty())
             name = "media"_s;
 
-        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(resource->value->data())->makeContiguous(), source });
+        attachmentInsertionInfo.append({ WTF::move(name), resource->value->mimeType(), protect(protect(resource->value)->data())->makeContiguous(), source });
     }
 
     for (auto& info : attachmentInsertionInfo) {
@@ -396,7 +398,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         // See `HTMLConverter.mm` for more details.
         if (info.fileName.startsWith(WebContentReader::placeholderAttachmentFilenamePrefix)) {
             RefPtr document = frame.document();
-            if (RefPtr existingAttachment = document->attachmentForIdentifier({ byteCast<Latin1Character>(info.data->span()) })) {
+            if (RefPtr existingAttachment = document->attachmentForIdentifier({ byteCast<Latin1Character>(protect(info.data)->span()) })) {
                 parent->replaceChild(*existingAttachment.get(), WTF::move(originalElement));
                 continue;
             }
@@ -418,7 +420,7 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
                 attachment->updateAttributes(info.data->size(), AtomString { info.contentType }, AtomString { info.fileName });
                 parent->replaceChild(attachment, WTF::move(originalElement));
             }
-            protect(frame)->editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), WTF::move(info.contentType), WTF::move(info.fileName), WTF::move(info.data));
+            editor->registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), WTF::move(info.contentType), WTF::move(info.fileName), WTF::move(info.data));
         } else {
             RefPtr document = frame.document();
             Ref data = info.data;
@@ -538,7 +540,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     if (!canShowMIMETypeAsHTML(type))
         return std::nullopt;
 
-    return MarkupAndArchive { String::fromUTF8(protect(mainResource)->data().makeContiguous()->span()), mainResource.releaseNonNull(), archive.releaseNonNull() };
+    return MarkupAndArchive { String::fromUTF8(protect(protect(mainResource)->data())->makeContiguous()->span()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
 static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
@@ -586,7 +588,7 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subframeURL))
             continue;
 
-        MarkupAndArchive subframeContent = { String::fromUTF8(protect(subframeMainResource)->data().makeContiguous()->span()),
+        MarkupAndArchive subframeContent = { String::fromUTF8(protect(protect(subframeMainResource)->data())->makeContiguous()->span()),
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
         auto subframeMarkup = sanitizeMarkupWithArchive(frame, destinationDocument, subframeContent, MSOListQuirks::Disabled, canShowMIMETypeAsHTML);
 
@@ -844,7 +846,7 @@ static Ref<HTMLElement> attachmentForFilePath(LocalFrame& frame, const String& p
     if (fileType && !isDirectory)
         fileSizeForDisplay = FileSystem::fileSize(path).value_or(0);
 
-    protect(frame)->editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
+    protect(protect(frame)->editor())->registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
 
     if (!fileType)
         attachment->setAttributeWithoutSynchronization(HTMLNames::progressAttr, AtomString::number(0));
@@ -883,7 +885,7 @@ static Ref<HTMLElement> attachmentForData(LocalFrame& frame, FragmentedSharedBuf
         return attachment;
     }
 
-    protect(frame)->editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), attachmentType, fileName, buffer);
+    protect(protect(frame)->editor())->registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), attachmentType, fileName, buffer);
 
     if (contentTypeIsSuitableForInlineImageRepresentation(attachmentType)) {
         auto image = HTMLImageElement::create(document);

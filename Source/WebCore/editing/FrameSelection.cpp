@@ -399,7 +399,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     VisibleSelection oldSelection = m_selection;
     bool willMutateSelection = oldSelection != newSelection;
     if (willMutateSelection && document && !options.contains(SetSelectionOption::DoNotNotifyEditorClients))
-        document->editor().selectionWillChange();
+        protect(document->editor())->selectionWillChange();
 
     {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -466,7 +466,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     m_xPosForVerticalArrowNavigation = std::nullopt;
     selectFrameElementInParentIfFullySelected();
     if (!options.contains(SetSelectionOption::DoNotNotifyEditorClients))
-        document->editor().respondToChangedSelection(oldSelection, options);
+        protect(document->editor())->respondToChangedSelection(oldSelection, options);
 
     if (shouldScheduleSelectionChangeEvent) {
         if (textControl)
@@ -583,7 +583,7 @@ void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& int
 void FrameSelection::updateDataDetectorsForSelection()
 {
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && !PLATFORM(IOS_FAMILY)
-    m_document->editor().scanSelectionForTelephoneNumbers();
+    protect(protect(m_document)->editor())->scanSelectionForTelephoneNumbers();
 #endif
 }
 
@@ -1941,7 +1941,7 @@ bool FrameSelection::recomputeCaretRect()
 
 #if ENABLE(TEXT_CARET)
     if (CheckedPtr view = document->renderView()) {
-        bool previousOrNewCaretNodeIsContentEditable = m_selection.isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
+        bool previousOrNewCaretNodeIsContentEditable = m_selection.isContentEditable() || (m_previousCaretNode && protect(m_previousCaretNode)->isContentEditable());
         if (shouldRepaintCaret(view.get(), previousOrNewCaretNodeIsContentEditable)) {
             if (m_previousCaretNode)
                 repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect, m_caretAnimator.ptr());
@@ -1995,7 +1995,7 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnim
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
+        CaretBase::paintCaret(protect(*m_selection.start().deprecatedNode()), context, paintOffset, m_caretAnimator.ptr());
 }
 
 #if !(PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)) && HAVE(REDESIGNED_TEXT_CURSOR)
@@ -2498,7 +2498,9 @@ bool FrameSelection::isFocusedAndActive() const
 #if ENABLE(TEXT_CARET)
 inline static bool shouldStopBlinkingDueToTypingCommand(Document* document)
 {
-    return document->editor().lastEditCommand() && document->editor().lastEditCommand()->shouldStopCaretBlinking();
+    Ref editor = protect(document)->editor();
+    RefPtr lastEditCommand = editor->lastEditCommand();
+    return lastEditCommand && lastEditCommand->shouldStopCaretBlinking();
 }
 #endif
 
@@ -2660,7 +2662,7 @@ void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, 
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, nullptr);
+        paintCaret(protect(*m_position.deepEquivalent().deprecatedNode()), p, paintOffset, nullptr);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
@@ -2672,7 +2674,7 @@ RefPtr<MutableStyleProperties> FrameSelection::copyTypingStyle() const
 {
     if (!m_typingStyle || !m_typingStyle->style())
         return nullptr;
-    return protect(m_typingStyle)->style()->mutableCopy();
+    return protect(protect(m_typingStyle)->style())->mutableCopy();
 }
 
 void FrameSelection::setTypingStyle(RefPtr<EditingStyle>&& style)
@@ -2832,7 +2834,7 @@ void FrameSelection::revealSelection(const RevealSelectionOptions& revealSelecti
     // FIXME: This code only handles scrolling the startContainer's layer, but
     // the selection rect could intersect more than just that.
     // See <rdar://problem/4799899>.
-    protect(document())->frame()->view()->setLastUserScrollType(LocalFrameView::UserScrollType::Implicit);
+    protect(protect(protect(document())->frame())->view())->setLastUserScrollType(LocalFrameView::UserScrollType::Implicit);
     LocalFrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealSelectionOptions.selectionRevealMode, revealSelectionOptions.scrollAlignment, revealSelectionOptions.scrollAlignment, ShouldAllowCrossOriginScrolling::Yes, revealSelectionOptions.scrollBehavior, revealSelectionOptions.onlyAllowForwardScrolling });
     updateAppearance();
 

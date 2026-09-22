@@ -98,7 +98,7 @@ void Editor::platformCopyFont()
     auto fontData = RetainPtr([fontSampleString RTFFromRange:NSMakeRange(0, [fontSampleString length]) documentAttributes:@{ }]);
 
     PasteboardBuffer pasteboardBuffer;
-    pasteboardBuffer.contentOrigin = document().originIdentifierForPasteboard();
+    pasteboardBuffer.contentOrigin = protect(document())->originIdentifierForPasteboard();
     pasteboardBuffer.type = legacyFontPasteboardTypeSingleton();
     pasteboardBuffer.data = SharedBuffer::create(fontData.get());
     pasteboard.write(pasteboardBuffer);

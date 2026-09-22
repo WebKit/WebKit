@@ -998,12 +998,13 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isNonOrphanedRange() || !m_selectionToDelete.isContentEditable())
         return;
 
+    Ref editor = protect(document())->editor();
     String originalString = originalStringForAutocorrectionAtBeginningOfSelection();
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
         if (RefPtr textControl = enclosingTextFormControl(m_selectionToDelete.start()); textControl && textControl->focused())
-            protect(document())->editor().textWillBeDeletedInTextField(*textControl);
+            editor->textWillBeDeletedInTextField(*textControl);
     }
 
     // save this to later make the selection with
@@ -1078,7 +1079,7 @@ void DeleteSelectionCommand::doApply()
     calculateTypingStyleAfterDelete();
 
     if (!originalString.isEmpty())
-        protect(document())->editor().deletedAutocorrectionAtPosition(m_endingPosition, originalString);
+        editor->deletedAutocorrectionAtPosition(m_endingPosition, originalString);
 
     setEndingSelection(VisibleSelection(VisiblePosition(m_endingPosition, affinity), endingSelection().directionality()));
     clearTransientState();

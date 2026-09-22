@@ -279,7 +279,7 @@ void ReplacementFragment::removeContentsWithSideEffects()
         removeNode(WTF::move(element));
 
     for (auto& item : attributesToRemove)
-        item.first->removeAttribute(item.second);
+        protect(item.first)->removeAttribute(item.second);
 }
 
 bool ReplacementFragment::isEmpty() const

@@ -46,7 +46,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView>, public NoVirtualDest
 public:
     TypedArrayType getType() const { return m_type; }
 
-    bool isDetached() const
+    SUPPRESS_NODELETE bool NODELETE isDetached() const
     {
         return !m_buffer || m_buffer->isDetached();
     }
@@ -72,7 +72,7 @@ public:
         return m_buffer->isShared();
     }
 
-    void* baseAddress() const LIFETIME_BOUND
+    SUPPRESS_NODELETE void* NODELETE baseAddress() const LIFETIME_BOUND
     {
         if (isDetached())
             return nullptr;
@@ -108,7 +108,7 @@ public:
 
     size_t byteLengthRaw() const { return m_byteLength; }
 
-    size_t byteLength() const
+    size_t NODELETE byteLength() const
     {
         if (isDetached()) [[unlikely]]
             return 0;

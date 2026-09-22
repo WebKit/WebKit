@@ -2,7 +2,6 @@ Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/push-api/PushDatabase.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/PushSubscription.cpp
-Modules/webaudio/BaseAudioContext.h
 Modules/webaudio/IIRFilterNode.cpp
 Modules/webaudio/WaveShaperNode.cpp
 StyleBuilderGenerated.cpp
@@ -23,7 +22,6 @@ animation/BlendingKeyframes.cpp
 animation/ElementAnimationRareData.cpp
 animation/KeyframeEffect.cpp
 animation/ScrollTimeline.cpp
-animation/StyleOriginatedAnimation.cpp
 animation/ViewTimeline.cpp
 animation/WebAnimation.cpp
 bindings/js/DOMPromiseProxy.h
@@ -81,9 +79,6 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-editing/AlternativeTextController.cpp
-editing/ApplyStyleCommand.cpp
-editing/BreakBlockquoteCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/DeleteSelectionCommand.cpp
 editing/Editor.cpp
@@ -98,7 +93,6 @@ editing/TextInsertionBaseCommand.cpp
 editing/TextManipulationController.cpp
 editing/TypingCommand.cpp
 editing/VisiblePosition.cpp
-editing/VisiblePosition.h
 editing/VisibleUnits.cpp
 editing/cocoa/EditorCocoa.mm
 editing/cocoa/NodeHTMLConverter.mm

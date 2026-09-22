@@ -108,9 +108,10 @@ void StyleOriginatedAnimation::initialize(const Style::ComputedStyle* oldStyle, 
 
     ASSERT(m_owningElement);
 
-    Ref effect = KeyframeEffect::create(Ref { *m_owningElement }, m_owningPseudoElementIdentifier);
+    Ref owningElement = *m_owningElement;
+    Ref effect = KeyframeEffect::create(owningElement, m_owningPseudoElementIdentifier);
     setEffect(effect.copyRef());
-    setTimeline(&protect(m_owningElement)->document().timeline());
+    setTimeline(&protect(owningElement->document())->timeline());
     effect->computeStyleOriginatedAnimationBlendingKeyframes(oldStyle, newStyle, resolutionContext);
     syncPropertiesWithBackingAnimation();
     if (backingAnimationPlayState() == AnimationPlayState::Running)

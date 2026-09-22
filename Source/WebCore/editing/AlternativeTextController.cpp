@@ -272,7 +272,7 @@ void AlternativeTextController::timerFired()
         VisiblePosition p = startOfWord(start, WordSide::LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
         auto adjacentWordRange = adjacentWords.toNormalizedRange();
-        document->editor().markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, std::nullopt);
+        protect(document->editor())->markAllMisspellingsAndBadGrammarInRanges({ TextCheckingType::Spelling, TextCheckingType::Replacement, TextCheckingType::ShowCorrectionPanel }, adjacentWordRange, adjacentWordRange, std::nullopt);
     }
         break;
     case AlternativeTextType::Reversion: {
@@ -808,7 +808,7 @@ void AlternativeTextController::applyDictationAlternative(const String& alternat
     auto selection = editor->selectedRange();
     if (!selection || !editor->shouldInsertText(alternativeString, *selection, EditorInsertAction::Pasted))
         return;
-    for (auto& marker : protect(selection->startContainer().document().markers())->markersInRange(*selection, DocumentMarkerType::DictationAlternatives))
+    for (auto& marker : protect(protect(protect(selection->startContainer())->document())->markers())->markersInRange(*selection, DocumentMarkerType::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);
     applyAlternativeTextToRange(*selection, alternativeString, AlternativeTextType::DictationAlternatives, markerTypesForAppliedDictationAlternative());
 #else

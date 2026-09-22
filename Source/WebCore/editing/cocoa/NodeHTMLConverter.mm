@@ -334,7 +334,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForURL(DocumentLoader* dataSource, NS
 
     if (dataSource) {
         if (RefPtr<ArchiveResource> resource = dataSource->subresource(URL)) {
-            auto wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().makeContiguous()->createNSData().get()]);
+            RetainPtr wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:protect(resource->data())->makeContiguous()->createNSData().get()]);
             RetainPtr filename = resource->response().suggestedFilename().createNSString();
             if (!filename || ![filename length])
                 filename = suggestedFilenameWithMIMEType(resource->url().createNSURL().get(), resource->mimeType());
@@ -1256,7 +1256,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         if (auto resource = dataSource->subresource(url)) {
             auto& mimeType = resource->mimeType();
             if (!usePlaceholder || mimeType != textHTMLContentTypeAtom()) {
-                fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:resource->data().makeContiguous()->createNSData().get()]);
+                fileWrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:protect(resource->data())->makeContiguous()->createNSData().get()]);
                 [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, mimeType)];
             } else
                 notFound = YES;
@@ -1271,7 +1271,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
             fileWrapper = nil;
     }
     if (!fileWrapper && !notFound) {
-        fileWrapper = fileWrapperForURL(m_dataSource.get(), url);
+        fileWrapper = fileWrapperForURL(protect(m_dataSource.get()), url);
         if (usePlaceholder && fileWrapper && [[[[fileWrapper preferredFilename] pathExtension] lowercaseString] hasPrefix:@"htm"])
             notFound = YES;
         if (notFound)

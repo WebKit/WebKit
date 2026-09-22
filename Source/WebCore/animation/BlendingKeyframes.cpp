@@ -139,7 +139,7 @@ static const StyleRuleKeyframe& zeroPercentKeyframe()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        rule.get()->setKey({ CSSValueNormal, 0_css_percentage });
+        protect(rule.get())->setKey({ CSSValueNormal, 0_css_percentage });
     });
     return rule.get().get();
 }
@@ -152,7 +152,7 @@ static const StyleRuleKeyframe& hundredPercentKeyframe()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         rule.construct(StyleRuleKeyframe::create(MutableStyleProperties::create()));
-        rule.get()->setKey({ CSSValueNormal, 100_css_percentage });
+        protect(rule.get())->setKey({ CSSValueNormal, 100_css_percentage });
     });
     return rule.get().get();
 }

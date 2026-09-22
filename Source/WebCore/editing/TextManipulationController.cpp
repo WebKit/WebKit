@@ -674,7 +674,7 @@ void TextManipulationController::addItem(ManipulationItemData&& itemData)
     m_pendingItemsForCallback.append(TextManipulationItem {
         m_document->frame()->frameID(),
         !m_document->frame()->isMainFrame(),
-        !protect(m_document)->topOrigin().isSameSiteAs(protect(protect(m_document)->securityOrigin())),
+        !protect(protect(m_document)->topOrigin())->isSameSiteAs(protect(protect(m_document)->securityOrigin())),
         newID,
         itemData.tokens.map([](auto& token) { return token; })
     });
@@ -998,7 +998,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
 
     RefPtr<Node> insertionPointNode = lastChildOfCommonAncestorInRange->nextSibling();
 
-    if (CheckedPtr cache = commonAncestor->document().existingAXObjectCache())
+    if (CheckedPtr cache = protect(commonAncestor->document())->existingAXObjectCache())
         cache->deferReRenderedContent(*commonAncestor);
 
     for (auto& node : nodesToRemove)

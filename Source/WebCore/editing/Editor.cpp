@@ -296,7 +296,7 @@ TemporarySelectionChange::~TemporarySelectionChange()
 
     if (m_options & TemporarySelectionOption::IgnoreSelectionChanges) {
         auto revealSelection = m_options & TemporarySelectionOption::RevealSelection ? Editor::RevealSelection::Yes : Editor::RevealSelection::No;
-        protect(m_document->editor())->setIgnoreSelectionChanges(m_wasIgnoringSelectionChanges, revealSelection);
+        protect(protect(m_document)->editor())->setIgnoreSelectionChanges(m_wasIgnoringSelectionChanges, revealSelection);
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2435,13 +2435,14 @@ public:
         : m_document(WTF::move(document))
         , m_typingGestureIndicator(*m_document->frame())
     {
-        protect(m_document->editor())->setIgnoreSelectionChanges(true);
+        protect(protect(m_document)->editor())->setIgnoreSelectionChanges(true);
     }
 
     ~SetCompositionScope()
     {
-        protect(m_document->editor())->setIgnoreSelectionChanges(false);
-        if (CheckedPtr editorClient = protect(m_document->editor())->client())
+        Ref editor = protect(m_document)->editor();
+        editor->setIgnoreSelectionChanges(false);
+        if (CheckedPtr editorClient = editor->client())
             editorClient->didUpdateComposition();
     }
 
@@ -2786,7 +2787,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // when spell checking the whole document before sending the message.
         // In that case the document might not be editable, but there are editable pockets that need to be spell checked.
 
-        position = VisiblePosition(firstEditablePositionAfterPositionInRoot(position, document->documentElement())).deepEquivalent();
+        position = VisiblePosition(firstEditablePositionAfterPositionInRoot(position, protect(document->documentElement()))).deepEquivalent();
         if (position.isNull())
             return;
         
@@ -4190,15 +4191,16 @@ static bool isFrameInRange(LocalFrame& frame, const SimpleRange& range)
 
 Vector<SimpleRange> Editor::findAllMatches(const String& searchText, const std::optional<SimpleRange>& searchRange, FindOptions searchOptions, std::optional<unsigned> optionalLimit)
 {
+    Ref document = this->document();
     if (!m_matchFinder)
-        m_matchFinder = WTF::makeUnique<CachedMatchFinder>(this->document());
+        m_matchFinder = WTF::makeUnique<CachedMatchFinder>(document);
 
     auto cachedMatches = m_matchFinder->findMatches(searchRange, searchText, searchOptions, optionalLimit);
     if (cachedMatches.has_value())
         return *cachedMatches;
 
     ASSERT(cachedMatches.error() == CachedMatchFinder::CacheUnusable::Oversized);
-    auto fallbackRange = searchRange.has_value() ? *searchRange : makeRangeSelectingNodeContents(this->document());
+    auto fallbackRange = searchRange.has_value() ? *searchRange : makeRangeSelectingNodeContents(document);
     return findAllPlainText(fallbackRange, searchText, searchOptions, optionalLimit.has_value() ? *optionalLimit : 0);
 }
 

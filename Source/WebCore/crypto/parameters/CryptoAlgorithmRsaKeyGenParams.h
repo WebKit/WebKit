@@ -49,10 +49,11 @@ public:
 
     const Vector<uint8_t>& publicExponentVector() const LIFETIME_BOUND
     {
-        if (!m_publicExponentVector.isEmpty() || !publicExponent->byteLength())
+        RefPtr exponent = publicExponent;
+        if (!m_publicExponentVector.isEmpty() || !exponent->byteLength())
             return m_publicExponentVector;
 
-        m_publicExponentVector.append(publicExponent->span());
+        m_publicExponentVector.append(exponent->span());
         return m_publicExponentVector;
     }
 private:

@@ -176,7 +176,8 @@ void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
                 return;
             }
 
-            RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas->canvasContext());
+            Ref canvas = m_canvas.get();
+            RefPtr context = dynamicDowncast<WebGLRenderingContextBase>(canvas->canvasContext());
             if (!context) {
                 completionHandler(false);
                 return;
@@ -194,7 +195,7 @@ void InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderTyp
                 context->linkProgramWithoutInvalidatingAttribLocations(program.get());
             else {
                 auto errors = context->getShaderInfoLog(*shader);
-                RefPtr scriptContext = m_canvas->scriptExecutionContext();
+                RefPtr scriptContext = canvas->scriptExecutionContext();
                 for (auto error : StringView(errors).split('\n')) {
                     auto message = makeString("WebGL: "_s, error);
                     scriptContext->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, message));

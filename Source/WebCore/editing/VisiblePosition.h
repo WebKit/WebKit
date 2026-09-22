@@ -68,7 +68,7 @@ public:
     char32_t characterBefore() const { return previous().characterAfter(); }
 
     // FIXME: This does not handle [table, 0] correctly.
-    Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.deprecatedNode()->rootEditableElement() : 0; }
+    Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? protect(m_deepPosition.deprecatedNode())->rootEditableElement() : 0; }
 
     InlineBoxAndOffset inlineBoxAndOffset() const;
     InlineBoxAndOffset inlineBoxAndOffset(TextDirection primaryDirection) const;

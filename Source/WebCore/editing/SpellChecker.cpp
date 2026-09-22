@@ -258,17 +258,19 @@ static bool containsAdditionalGrammarResults(const Vector<TextCheckingResult>& r
 
 void SpellChecker::didCheck(TextCheckingRequestIdentifier identifier, const Vector<TextCheckingResult>& results, const Vector<TextCheckingResult>& existingResults, const std::optional<SimpleRange>& range)
 {
-    if (!m_processingRequest || protect(m_processingRequest)->data().identifier() != identifier) {
+    RefPtr processingRequest = m_processingRequest;
+    Ref editor = protect(document())->editor();
+    if (!processingRequest || processingRequest->data().identifier() != identifier) {
         // This is the extended checking case
         if (!range || !containsAdditionalGrammarResults(results, existingResults))
             return;
         VisibleSelection selection = VisibleSelection(*range);
         SetForScope isRecheckingForScope(m_inRecheck, true);
-        protect(document())->editor().markMisspellingsAndBadGrammar(selection);
+        editor->markMisspellingsAndBadGrammar(selection);
         return;
     }
 
-    protect(document())->editor().markAndReplaceFor(protect(*m_processingRequest), results);
+    editor->markAndReplaceFor(*processingRequest, results);
 
     if (!m_lastProcessedIdentifier || *m_lastProcessedIdentifier < identifier)
         m_lastProcessedIdentifier = identifier;

@@ -451,7 +451,7 @@ void ServiceWorkerThread::queueTaskToFireNotificationEvent(NotificationData&& da
 
 void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInformation&& info, Function<void(bool)>&& callback)
 {
-    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+    queueTaskToFireEvent([weakThis = ThreadSafeWeakPtr { *this }, info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](ServiceWorkerGlobalScope& serviceWorkerGlobalScope) mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
         Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(protect(serviceWorkerGlobalScope.registration()));
@@ -489,7 +489,7 @@ void ServiceWorkerThread::queueTaskToFireBackgroundFetchEvent(BackgroundFetchInf
 
 void ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent(BackgroundFetchInformation&& info, Function<void(bool)>&& callback)
 {
-    queueTaskToFireEvent([info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](auto& serviceWorkerGlobalScope) mutable {
+    queueTaskToFireEvent([info = crossThreadCopy(WTF::move(info)), callback = WTF::move(callback)](ServiceWorkerGlobalScope& serviceWorkerGlobalScope) mutable {
         RELEASE_LOG(ServiceWorker, "ServiceWorkerThread::queueTaskToFireBackgroundFetchClickEvent firing event for worker %" PRIu64, serviceWorkerGlobalScope.thread()->identifier().toUInt64());
 
         Ref manager = ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetch(protect(serviceWorkerGlobalScope.registration()));

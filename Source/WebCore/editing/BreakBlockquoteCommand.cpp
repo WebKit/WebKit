@@ -163,7 +163,7 @@ void BreakBlockquoteCommand::doApply()
     // or clonedBlockquote if ancestors is empty).
     RefPtr<Element> clonedAncestor = clonedBlockquote.copyRef();
     for (size_t i = ancestors.size(); i != 0; --i) {
-        auto clonedChild = ancestors[i - 1]->cloneElementWithoutChildren(document(), nullptr);
+        auto clonedChild = protect(ancestors[i - 1])->cloneElementWithoutChildren(document(), nullptr);
         // Preserve list item numbering in cloned lists.
         if (clonedChild->isElementNode() && clonedChild->hasTagName(olTag)) {
             RefPtr<Node> listChildNode = i > 1 ? ancestors[i - 2].ptr() : startNode.get();

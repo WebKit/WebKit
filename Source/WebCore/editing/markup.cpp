@@ -150,7 +150,7 @@ public:
 
     void apply()
     {
-        m_element->setAttribute(m_name, m_value);
+        protect(m_element)->setAttribute(m_name, m_value);
     }
 
 private:
@@ -217,7 +217,7 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
         }
     }
     for (auto& [element, attribute] : attributesToRemove)
-        element->removeAttribute(attribute);
+        protect(element)->removeAttribute(attribute);
 }
 
 Ref<Page> createPageForSanitizingWebContent(Document* destinationDocument, std::optional<PageConfiguration>&& overrideConfiguration)
@@ -344,7 +344,7 @@ String sanitizeSVG(const String& svg, Document* destinationDocument)
             }
         }
         for (auto& item : attributesToRemove)
-            item.first->removeAttribute(item.second);
+            protect(item.first)->removeAttribute(item.second);
     };
 
     auto sanitizeElements = [&](Element& stagingBody) {
@@ -646,7 +646,7 @@ inline StyledMarkupAccumulator::StyledMarkupAccumulator(const Position& start, c
     , m_annotate(annotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
     , m_useComposedTree(serializeComposedTree == SerializeComposedTree::Yes)
-    , m_ignoresUserSelectNone(ignoreUserSelectNone == IgnoreUserSelectNone::Yes && !start.document()->quirks().needsToCopyUserSelectNoneQuirk())
+    , m_ignoresUserSelectNone(ignoreUserSelectNone == IgnoreUserSelectNone::Yes && !protect(start.document())->quirks().needsToCopyUserSelectNoneQuirk())
     , m_needsPositionStyleConversion(needsPositionStyleConversion)
     , m_standardFontFamilySerializationMode(standardFontFamilySerializationMode)
     , m_shouldPreserveMSOList(msoListMode == MSOListMode::Preserve)
@@ -723,7 +723,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
     const bool parentIsTextarea = is<HTMLTextAreaElement>(text.parentElement());
     const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
     if (wrappingSpan) {
-        auto wrappingStyle = m_wrappingStyle->copy();
+        auto wrappingStyle = protect(m_wrappingStyle)->copy();
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
         // Make sure spans are inline style in paste side e.g. span { display: block }.
         wrappingStyle->forceDisplayInline();
@@ -883,7 +883,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
         RefPtr<EditingStyle> newInlineStyle;
 
         if (shouldApplyWrappingStyle(element)) {
-            newInlineStyle = m_wrappingStyle->copy();
+            newInlineStyle = protect(m_wrappingStyle)->copy();
             newInlineStyle->removePropertiesInElementDefaultStyle(*const_cast<Element*>(&element));
             newInlineStyle->removeStyleConflictingWithStyleOfNode(*const_cast<Element*>(&element));
         } else
@@ -893,7 +893,7 @@ void StyledMarkupAccumulator::appendStartTag(StringBuilder& out, const Element& 
             newInlineStyle->addDisplayContents();
 
         if (RefPtr styledElement = dynamicDowncast<StyledElement>(element); styledElement && styledElement->inlineStyle())
-            newInlineStyle->overrideWithStyle(*styledElement->inlineStyle());
+            newInlineStyle->overrideWithStyle(protect(*styledElement->inlineStyle()));
 
 #if ENABLE(DATA_DETECTION)
         if (replacementType == SpanReplacementType::DataDetector && newInlineStyle->style())
@@ -1161,7 +1161,7 @@ static RefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(Node& node)
     if (!element)
         return nullptr;
 
-    Ref style = EditingStyle::create(element->inlineStyle());
+    Ref style = EditingStyle::create(protect(element->inlineStyle()));
     style->mergeStyleFromRules(*element);
     return style;
 }
@@ -1273,7 +1273,7 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
-                if ((!fullySelectedRootStyle || !fullySelectedRootStyle->style() || !fullySelectedRootStyle->style()->getPropertyCSSValue(CSSPropertyBackgroundImage))
+                if ((!fullySelectedRootStyle || !fullySelectedRootStyle->style() || !protect(fullySelectedRootStyle->style())->getPropertyCSSValue(CSSPropertyBackgroundImage))
                     && fullySelectedRoot->hasAttributeWithoutSynchronization(backgroundAttr))
                     protect(fullySelectedRootStyle->style())->setProperty(CSSPropertyBackgroundImage, makeString("url('"_s, fullySelectedRoot->getAttribute(backgroundAttr), "')"_s));
 

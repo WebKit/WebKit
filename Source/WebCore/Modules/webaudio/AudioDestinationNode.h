@@ -43,10 +43,10 @@ public:
     // AudioNode   
     void process(size_t) final { } // we're pulled by hardware so this is never called
 
-    float sampleRate() const final { return m_sampleRate; }
+    float NODELETE sampleRate() const final { return m_sampleRate; }
 
     size_t currentSampleFrame() const { return m_currentSampleFrame; }
-    double currentTime() const { return currentSampleFrame() / static_cast<double>(sampleRate()); }
+    double currentTime() const { return currentSampleFrame() / static_cast<double>(m_sampleRate); }
 
     virtual unsigned maxChannelCount() const = 0;
 

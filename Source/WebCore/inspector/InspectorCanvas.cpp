@@ -104,6 +104,8 @@ Ref<InspectorCanvas> InspectorCanvas::create(GPUDevice& device)
     return adoptRef(*new InspectorCanvas(device));
 }
 
+InspectorCanvas::~InspectorCanvas() = default;
+
 InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
     : m_identifier(makeString("canvas:"_s, IdentifiersFactory::createIdentifier()))
     , m_context(context)

@@ -96,7 +96,7 @@ void resetInternalsObject(JSContextRef context)
     RefPtr page = document->page();
     RELEASE_ASSERT_WITH_MESSAGE(page, "Frame or Page is nullptr when Document is in a bad state");
     Internals::resetToConsistentState(*page);
-    InternalSettings::from(page.get())->resetToConsistentState();
+    protect(InternalSettings::from(page.get()))->resetToConsistentState();
 }
 
 void monitorWheelEvents(WebCore::LocalFrame& frame, bool clearLatchingState)

@@ -833,7 +833,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
     for (auto& run : runs) {
         removeConflictingInlineStyleFromRun(style, run.start, run.end, run.pastEndNode.get());
         if (run.startAndEndAreStillInDocument())
-            run.positionForStyleComputation = positionToComputeInlineStyleChange(*run.start, run.dummyElement);
+            run.positionForStyleComputation = positionToComputeInlineStyleChange(protect(*run.start), run.dummyElement);
     }
 
     protect(document())->updateLayoutIgnorePendingStylesheets();
