@@ -372,6 +372,46 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     return leftSide;
 }
 
+unsigned TextUtil::moveToNextBreakablePosition(unsigned startPosition, CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const Style::ComputedStyle& style)
+{
+    auto textLength = lineBreakIteratorFactory.stringView().length();
+    auto startPositionForNextBreakablePosition = startPosition;
+    while (startPositionForNextBreakablePosition < textLength) {
+        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, startPositionForNextBreakablePosition, style);
+        // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
+        if (nextBreakablePosition != startPosition)
+            return nextBreakablePosition - startPosition;
+        ++startPositionForNextBreakablePosition;
+    }
+    return textLength - startPosition;
+}
+
+TextUtil::WordBreakLeft TextUtil::breakOnLastPossibleSoftWrapOpportunity(const InlineTextBox& inlineTextBox, size_t startPosition, size_t contentLength, InlineLayoutUnit availableWidth, InlineLayoutUnit contentLogicalLeft)
+{
+    // FIXME: handle non simple font code path.
+    if (!inlineTextBox.canUseSimpleFontCodePath())
+        return { };
+    auto text = StringView { inlineTextBox.content() }.substring(startPosition, contentLength);
+    CheckedRef style = inlineTextBox.style();
+    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { text, Style::toPlatform(style->usedLocale()), TextUtil::lineBreakIteratorMode(style->lineBreak()), TextUtil::contentAnalysis(style->wordBreak()) };
+    size_t endPosition = 0;
+    InlineLayoutUnit endWidth = 0.0;
+
+    do {
+        size_t currentPosition = endPosition + moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
+        // Return if there was no soft break found.
+        if (!endPosition && currentPosition == contentLength)
+            return { };
+        auto width = TextUtil::width(inlineTextBox, style->fontCascade(), startPosition, startPosition + currentPosition, contentLogicalLeft);
+        if (width > availableWidth)
+            break;
+        endPosition = currentPosition;
+        endWidth = width;
+    } while (endPosition < contentLength);
+
+    return { endPosition, endWidth };
+}
+
 bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const InlineTextItem& nextInlineItem)
 {
     // Check if these 2 adjacent non-whitespace inline items are connected at a breakable position.
