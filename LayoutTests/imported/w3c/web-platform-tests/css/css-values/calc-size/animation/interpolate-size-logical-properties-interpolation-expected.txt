@@ -1,28 +1,28 @@
 
-FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "75px "
+FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "89.98px "
 PASS CSS Transitions: property <block-size> from [max-content] to [25px] at (0) should be [75px]
-FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (0.3) should be [60px] assert_equals: expected "60px " but got "75px "
-FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (0.6) should be [45px] assert_equals: expected "45px " but got "75px "
-FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (1) should be [25px] assert_equals: expected "25px " but got "75px "
-FAIL CSS Transitions: property <block-size> from [max-content] to [25px] at (1.5) should be [0px] assert_equals: expected "0px " but got "75px "
-FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "75px "
+PASS CSS Transitions: property <block-size> from [max-content] to [25px] at (0.3) should be [60px]
+PASS CSS Transitions: property <block-size> from [max-content] to [25px] at (0.6) should be [45px]
+PASS CSS Transitions: property <block-size> from [max-content] to [25px] at (1) should be [25px]
+PASS CSS Transitions: property <block-size> from [max-content] to [25px] at (1.5) should be [0px]
+FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "89.98px "
 PASS CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (0) should be [75px]
-FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (0.3) should be [60px] assert_equals: expected "60px " but got "75px "
-FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (0.6) should be [45px] assert_equals: expected "45px " but got "75px "
-FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (1) should be [25px] assert_equals: expected "25px " but got "75px "
-FAIL CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (1.5) should be [0px] assert_equals: expected "0px " but got "75px "
-FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "75px "
+PASS CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (0.3) should be [60px]
+PASS CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (0.6) should be [45px]
+PASS CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (1) should be [25px]
+PASS CSS Transitions with transition: all: property <block-size> from [max-content] to [25px] at (1.5) should be [0px]
+FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "89.98px "
 PASS CSS Animations: property <block-size> from [max-content] to [25px] at (0) should be [75px]
-FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (0.3) should be [60px] assert_equals: expected "60px " but got "75px "
-FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (0.6) should be [45px] assert_equals: expected "45px " but got "75px "
-FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (1) should be [25px] assert_equals: expected "25px " but got "75px "
-FAIL CSS Animations: property <block-size> from [max-content] to [25px] at (1.5) should be [0px] assert_equals: expected "0px " but got "75px "
-FAIL Web Animations: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "75px "
+PASS CSS Animations: property <block-size> from [max-content] to [25px] at (0.3) should be [60px]
+PASS CSS Animations: property <block-size> from [max-content] to [25px] at (0.6) should be [45px]
+PASS CSS Animations: property <block-size> from [max-content] to [25px] at (1) should be [25px]
+PASS CSS Animations: property <block-size> from [max-content] to [25px] at (1.5) should be [0px]
+FAIL Web Animations: property <block-size> from [max-content] to [25px] at (-0.3) should be [90px] assert_equals: expected "90px " but got "89.98px "
 PASS Web Animations: property <block-size> from [max-content] to [25px] at (0) should be [75px]
-FAIL Web Animations: property <block-size> from [max-content] to [25px] at (0.3) should be [60px] assert_equals: expected "60px " but got "75px "
-FAIL Web Animations: property <block-size> from [max-content] to [25px] at (0.6) should be [45px] assert_equals: expected "45px " but got "75px "
-FAIL Web Animations: property <block-size> from [max-content] to [25px] at (1) should be [25px] assert_equals: expected "25px " but got "75px "
-FAIL Web Animations: property <block-size> from [max-content] to [25px] at (1.5) should be [0px] assert_equals: expected "0px " but got "75px "
+PASS Web Animations: property <block-size> from [max-content] to [25px] at (0.3) should be [60px]
+PASS Web Animations: property <block-size> from [max-content] to [25px] at (0.6) should be [45px]
+PASS Web Animations: property <block-size> from [max-content] to [25px] at (1) should be [25px]
+PASS Web Animations: property <block-size> from [max-content] to [25px] at (1.5) should be [0px]
 FAIL CSS Transitions: property <inline-size> from [max-content] to neutral at (-0.3) should be [132.5px] assert_equals: expected "132.5px " but got "132.48px "
 PASS CSS Transitions: property <inline-size> from [max-content] to neutral at (0) should be [125px]
 PASS CSS Transitions: property <inline-size> from [max-content] to neutral at (0.3) should be [117.5px]

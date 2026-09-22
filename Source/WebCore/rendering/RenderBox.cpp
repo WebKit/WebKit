@@ -939,8 +939,12 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
         logicalMinHeight = Style::MinimumSize::Fixed { heightFromAspectRatio / styleToUse.usedZoomForLength().value };
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
-    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent())
+    // Both keywords behave as the initial value in the block axis.
+    // https://drafts.csswg.org/css-sizing-3/#valdef-width-min-content
+    auto keywordMinimumBehavesAsAuto = (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent()) && !logicalMinHeight.isCalcSize();
+    if (keywordMinimumBehavesAsAuto)
         logicalMinHeight = CSS::Keyword::Auto { };
+
     auto computedLogicalMinHeight = [&]() -> std::optional<LayoutUnit> {
         if (isComputingIntrinsicSize == IsComputingIntrinsicSize::Yes && logicalMinHeight.isPercentOrCalculated()) {
             // Per CSS Sizing 3, cyclic percentage min-size values resolve with the
@@ -2965,13 +2969,23 @@ template<typename SizeType> LayoutUnit RenderBox::computeSizingKeywordLogicalWid
     return resolveCalcSizeLogicalWidth(logicalWidth.template get<typename SizeType::CalcSize>(), keywordContentLogicalWidth, availableLogicalWidth) + borderAndPadding;
 }
 
-LayoutUnit RenderBox::resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const
+LayoutUnit RenderBox::resolveCalcSizeContentSize(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentSize, LayoutUnit percentResolutionSize, LayoutUnit borderAndPadding) const
 {
     auto isContentBox = style().boxSizing() == BoxSizing::ContentBox;
-    auto borderAndPadding = borderAndPaddingLogicalWidth();
-    auto basis = isContentBox ? keywordContentLogicalWidth : keywordContentLogicalWidth + borderAndPadding;
-    auto resolved = LayoutUnit { calcSize.evaluate(percentResolutionLogicalWidth, style().usedZoomForLength(), basis) };
+    auto basis = isContentBox ? keywordContentSize : keywordContentSize + borderAndPadding;
+    auto resolved = LayoutUnit { calcSize.evaluate(percentResolutionSize, style().usedZoomForLength(), basis) };
     return isContentBox ? resolved : std::max(0_lu, resolved - borderAndPadding);
+}
+
+LayoutUnit RenderBox::resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const
+{
+    return resolveCalcSizeContentSize(calcSize, keywordContentLogicalWidth, percentResolutionLogicalWidth, borderAndPaddingLogicalWidth());
+}
+
+LayoutUnit RenderBox::resolveCalcSizeLogicalHeight(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalHeight) const
+{
+    // Percentages have no containing block height to resolve against here, so they resolve against zero.
+    return resolveCalcSizeContentSize(calcSize, keywordContentLogicalHeight, 0_lu, borderAndPaddingLogicalHeight());
 }
 
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
@@ -3631,7 +3645,7 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
         return intrinsic();
     };
 
-    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE return WTF::switchOn(logicalHeight,
+    SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE_IN_FUNCTION_TEMPLATE auto keywordLogicalHeight = WTF::switchOn(logicalHeight,
         [&](const CSS::Keyword::MinContent&) -> std::optional<LayoutUnit> {
             return minMaxContent();
         },
@@ -3684,11 +3698,26 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeSizingKe
             // stretch keyword's "indefinite containing block falls back to initial value" rule.
             return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) - borderAndPadding;
         },
+        [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
+            if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+                // An automatic minimum is zero, unless it is the flex item's content based minimum.
+                if (!intrinsicContentHeight || !isFlexItem() || !FlexFormattingUtils::useContentBasedMinimumBlockSize(*this))
+                    return 0_lu;
+            }
+            return intrinsic();
+        },
         [&](const auto&) -> std::optional<LayoutUnit>  {
             ASSERT_NOT_REACHED();
             return 0_lu;
         }
     );
+
+    if (!keywordLogicalHeight || !logicalHeight.isCalcSize())
+        return keywordLogicalHeight;
+
+    auto calcSize = logicalHeight.template get<Style::UnevaluatedCalcSize>();
+    auto keywordContentLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(*keywordLogicalHeight);
+    return adjustIntrinsicLogicalHeightForBoxSizing(resolveCalcSizeLogicalHeight(calcSize, keywordContentLogicalHeight));
 }
 
 std::optional<LayoutUnit> RenderBox::computeSizingKeywordLogicalContentHeightUsing(const Style::PreferredSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
@@ -3767,12 +3796,11 @@ template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentA
             return keywordSize();
         },
         [&](const CSS::Keyword::Auto&) -> std::optional<LayoutUnit> {
-            if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
-                if (intrinsicContentHeight && isFlexItem() && FlexFormattingUtils::useContentBasedMinimumBlockSize(*this))
-                    return adjustIntrinsicLogicalHeightForBoxSizing(*intrinsicContentHeight);
-                return LayoutUnit { 0 };
-            } else
-                return { };
+            if constexpr (!std::same_as<SizeType, Style::MinimumSize>) {
+                if (!logicalHeight.isCalcSize())
+                    return { };
+            }
+            return keywordSize();
         },
         [&](const auto&) -> std::optional<LayoutUnit>  {
             return { };
