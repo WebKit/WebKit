@@ -1154,11 +1154,11 @@ CSSSizeShorthandEnabled:
 
 CSSSymbolsFunctionEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS symbols() function"
   humanReadableDescription: "Enable the CSS Counter Styles symbols() function"
-  defaultValue: false
+  defaultValue: true
 
 CSSTextDecorationInsetEnabled:
   type: bool
