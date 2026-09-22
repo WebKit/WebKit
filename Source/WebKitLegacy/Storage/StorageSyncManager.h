@@ -30,7 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -38,7 +38,7 @@ namespace WebCore {
 class StorageThread;
 class StorageAreaSync;
 
-class StorageSyncManager : public RefCounted<StorageSyncManager> {
+class StorageSyncManager : public ThreadSafeRefCounted<StorageSyncManager, WTF::DestructionThread::Main> {
 public:
     static Ref<StorageSyncManager> create(const String& path);
     ~StorageSyncManager();
