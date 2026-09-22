@@ -47,6 +47,11 @@ struct FocusOptions {
     FocusRemovalEventsMode removalEventsMode { FocusRemovalEventsMode::Dispatch };
     FocusTrigger trigger { FocusTrigger::Other };
     FocusVisibility visibility { FocusVisibility::Invisible };
+    // Set when focus is moving because an assistive technology moved its cursor, rather than
+    // because the user activated the element. iOS must not present the focused element's input
+    // view in that case, as it would open a picker, or raise the keyboard, for a control the user
+    // only moved their cursor to.
+    bool preventInputViewPresentation { false };
 };
 
 } // namespace WebCore
