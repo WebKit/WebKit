@@ -1258,13 +1258,13 @@ void WebProcessProxy::didBecomeRemoteWorkerHostForSite(const WebCore::Site& site
 void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, WebPageProxyIdentifier pageID)
 {
     auto& users = m_visitedLinkStoresWithUsers.ensure(visitedLinkStore, [] {
-        return HashSet<WebPageProxyIdentifier> { };
+        return HashCountedSet<WebPageProxyIdentifier> { };
     }).iterator->value;
 
-    ASSERT(!users.contains(pageID));
+    bool hadUsers = !users.isEmpty();
     users.add(pageID);
 
-    if (users.size() == 1)
+    if (!hadUsers)
         visitedLinkStore.addProcess(*this);
 }
 
