@@ -10108,6 +10108,21 @@ float Document::deviceScaleFactor() const
     return deviceScaleFactor;
 }
 
+float Document::pixelSnappingScaleFactor() const
+{
+    auto* documentPage = page();
+    if (!documentPage)
+        return 1;
+    float scaleFactor = documentPage->deviceScaleFactor();
+#if PLATFORM(MAC)
+    // With scaling delegated to the UI process the page scale lives on the layer, so the backing store
+    // grid is deviceScaleFactor * pageScaleFactor rather than deviceScaleFactor alone.
+    if (documentPage->delegatesScaling())
+        scaleFactor *= documentPage->pageScaleFactor();
+#endif
+    return scaleFactor;
+}
+
 #if ENABLE(DARK_MODE_CSS)
 OptionSet<ColorScheme> Document::resolvedColorScheme(const Style::ComputedStyle* style) const
 {

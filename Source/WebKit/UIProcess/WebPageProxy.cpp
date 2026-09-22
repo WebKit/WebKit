@@ -6970,6 +6970,15 @@ double WebPageProxy::pageScaleFactor() const
     return m_pageScaleFactor;
 }
 
+bool WebPageProxy::delegatesScalingToUIProcess() const
+{
+#if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)
+    return true;
+#else
+    return false;
+#endif
+}
+
 void WebPageProxy::scalePage(double scale, const IntPoint& origin, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(scale > 0);

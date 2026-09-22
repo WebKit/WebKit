@@ -976,14 +976,14 @@ FloatRect snapRectToDevicePixelsIfNeeded(const LayoutRect& rect, const RenderLay
 {
     if (!rendererNeedsPixelSnapping(renderer))
         return rect;
-    return snapRectToDevicePixels(rect, renderer.document().deviceScaleFactor());
+    return snapRectToDevicePixels(rect, renderer.document().pixelSnappingScaleFactor());
 }
 
 FloatRect snapRectToDevicePixelsIfNeeded(const FloatRect& rect, const RenderLayerModelObject& renderer)
 {
     if (!rendererNeedsPixelSnapping(renderer))
         return rect;
-    return snapRectToDevicePixels(LayoutRect { rect }, renderer.document().deviceScaleFactor());
+    return snapRectToDevicePixels(LayoutRect { rect }, renderer.document().pixelSnappingScaleFactor());
 }
 
 } // namespace WebCore

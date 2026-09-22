@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A commit during a delegated zoom out doesn't take back the layout viewport</title>
+    <style>
+        body {
+            margin: 0;
+            width: 100%;
+            height: 3000px;
+            background: linear-gradient(silver, gray);
+        }
+        #fixed {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: 40px;
+            background-color: black;
+        }
+    </style>
+    <script src="../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        // Below the minimum magnification a zoom out is rubber banding, so the anchoring scroll position walks off the
+        // top left of the document to keep the pinched content under the cursor, and the layout viewport the UI process
+        // computes goes with it. A layer tree commit carries the web process's layout viewport, which is constrained to
+        // the document, and the scrolling tree then recomputes that origin from the scroll position and clamps it to
+        // the document too. Whichever authority wrote last wins, so without putting the UI process's rect back after
+        // each commit the tree alternates between the two and every fixed or sticky layer jitters by the difference.
+        async function treeLayoutViewportOrigin()
+        {
+            const tree = await UIHelper.getScrollingTree();
+            const match = tree.match(/\(layout viewport \((-?[\d.]+),(-?[\d.]+)\)/);
+            return match ? { x: parseFloat(match[1]), y: parseFloat(match[2]) } : null;
+        }
+
+        async function doTest()
+        {
+            const output = [];
+
+            // Held, so the zoomed-out layout viewport is the one the tree has while the commits below land.
+            await UIHelper.beginMagnifyGestureAt(400, 300, -0.9);
+
+            const origins = [await treeLayoutViewportOrigin()];
+
+            // Each of these is a non-empty commit: the style change makes the web process paint and send a layer tree,
+            // which is what used to put the document-constrained layout viewport back into the tree.
+            for (let i = 1; i <= 5; ++i) {
+                document.getElementById('fixed').style.backgroundColor = i % 2 ? 'darkgreen' : 'black';
+                await UIHelper.ensurePresentationUpdate();
+                origins.push(await treeLayoutViewportOrigin());
+            }
+
+            const offTheDocument = origins.filter(origin => origin && origin.x < 0 && origin.y < 0).length;
+            output.push(`Layout viewport off the document on ${offTheDocument} of ${origins.length} samples: `
+                + (offTheDocument === origins.length ? 'PASS' : `FAIL (${origins.map(origin => origin ? `(${origin.x.toFixed(2)}, ${origin.y.toFixed(2)})` : 'none').join(' ')})`));
+
+            await UIHelper.endMagnifyGesture();
+
+            // And back on the document once the rubber band is gone, so this isn't just leaving the override behind.
+            await UIHelper.ensurePresentationUpdate();
+            const fixed = document.getElementById('fixed').getBoundingClientRect();
+            output.push(`After release: fixed layer 10px from the top left: ` + (Math.abs(fixed.x - 10) <= 1 && Math.abs(fixed.y - 10) <= 1 ? 'PASS' : `FAIL (${fixed.x.toFixed(2)}, ${fixed.y.toFixed(2)})`));
+
+            document.getElementById('output').textContent = output.join('\n');
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="fixed"></div>
+    <pre id="output"></pre>
+</body>
+</html>

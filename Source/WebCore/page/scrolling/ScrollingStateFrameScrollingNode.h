@@ -81,6 +81,10 @@ public:
     FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     WEBCORE_EXPORT void setObscuredContentInsets(const FloatBoxExtent&);
 
+    // The horizontal space taken up by a vertical scrollbar placed on the left, which the contents are shifted right by.
+    int insetForLeftScrollbarSpace() const { return m_insetForLeftScrollbarSpace; }
+    WEBCORE_EXPORT void setInsetForLeftScrollbarSpace(int);
+
     // The target offset for rubber band animations when refresh controller is present.
     // When non-zero, rubber banding will snap to this offset instead of the edge.
 #if HAVE(NSREFRESHCONTROLLER)
@@ -189,7 +193,8 @@ private:
         FloatPoint minLayoutViewportOrigin,
         FloatPoint maxLayoutViewportOrigin,
         std::optional<FloatSize> overrideVisualViewportSize,
-        bool overlayScrollbarsEnabled
+        bool overlayScrollbarsEnabled,
+        int insetForLeftScrollbarSpace
     );
 
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);
@@ -219,6 +224,7 @@ private:
 #endif
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
+    int m_insetForLeftScrollbarSpace { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };
     bool m_visualViewportIsSmallerThanLayoutViewport { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };

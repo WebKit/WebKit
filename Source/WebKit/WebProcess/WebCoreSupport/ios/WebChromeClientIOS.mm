@@ -109,12 +109,6 @@ void WebChromeClient::didEndOverflowScroll()
         page->send(Messages::WebPageProxy::ScrollingNodeScrollDidEndScroll(std::nullopt));
 }
 
-bool WebChromeClient::hasStablePageScaleFactor() const
-{
-    RefPtr page = m_page.get();
-    return page && page->hasStablePageScaleFactor();
-}
-
 void WebChromeClient::suppressFormNotifications()
 {
     notImplemented();

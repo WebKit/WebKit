@@ -194,7 +194,6 @@ private:
     void didLayout(LayoutType = NormalLayout) final;
     void didStartOverflowScroll() final;
     void didEndOverflowScroll() final;
-    bool hasStablePageScaleFactor() const final;
 
     // FIXME: See <rdar://problem/5975559>
     void suppressFormNotifications() final;
@@ -362,6 +361,8 @@ private:
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode) final;
     void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
+
+    bool hasStablePageScaleFactor() const final;
 
     void makeFirstResponder() final;
     void assistiveTechnologyMakeFirstResponder() final;
