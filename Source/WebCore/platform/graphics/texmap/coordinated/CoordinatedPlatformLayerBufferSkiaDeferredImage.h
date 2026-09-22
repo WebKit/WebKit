@@ -38,7 +38,7 @@ namespace WebCore {
 class CoordinatedPlatformLayerBufferSkiaDeferredImage final : public CoordinatedPlatformLayerBuffer {
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferSkiaDeferredImage> create(sk_sp<GrDeferredDisplayList>&&);
-    CoordinatedPlatformLayerBufferSkiaDeferredImage(sk_sp<GrDeferredDisplayList>&&, OptionSet<TextureMapperFlags>);
+    CoordinatedPlatformLayerBufferSkiaDeferredImage(sk_sp<GrDeferredDisplayList>&&, AlphaMode);
     virtual ~CoordinatedPlatformLayerBufferSkiaDeferredImage() = default;
 
 private:

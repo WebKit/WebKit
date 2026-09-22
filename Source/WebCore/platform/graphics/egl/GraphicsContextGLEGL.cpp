@@ -49,11 +49,11 @@
 #if USE(COORDINATED_GRAPHICS)
 #if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferRGB.h"
+#include "TextureMapperFlags.h"
 #else
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #endif
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
-#include "TextureMapperFlags.h"
 #else
 #include "PlatformLayerDisplayDelegate.h"
 #include "TextureMapperGCGLPlatformLayer.h"
@@ -431,15 +431,16 @@ void GraphicsContextGLEGL::prepareForDisplay()
     swapCompositorTexture();
 
 #if USE(COORDINATED_GRAPHICS)
-    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-    if (contextAttributes().alpha)
-        flags.add(TextureMapperFlags::ShouldBlend);
     auto fboSize = getInternalFramebufferSize();
     auto fence = GLFence::create(PlatformDisplay::sharedDisplay().glDisplay());
 #if USE(TEXTURE_MAPPER)
+    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
+    if (contextAttributes().alpha)
+        flags.add(TextureMapperFlags::ShouldBlend);
     auto buffer = CoordinatedPlatformLayerBufferRGB::create(m_compositorTextureID, fboSize, flags, WTF::move(fence));
 #else
-    auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(m_compositorTextureID, fboSize, flags, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
+    auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
+    auto buffer = CoordinatedPlatformLayerBufferSkiaImage::create(m_compositorTextureID, fboSize, alphaMode, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
 #endif
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 #endif

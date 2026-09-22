@@ -24,7 +24,6 @@
 
 #include "GLContext.h"
 #include "PlatformDisplay.h"
-#include "TextureMapperFlags.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -35,6 +34,7 @@
 #include "GraphicsLayer.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
+#include "TextureMapperFlags.h"
 #endif
 
 #if USE(CAIRO)

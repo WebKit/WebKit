@@ -26,18 +26,17 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-#include "GLFence.h"
 #include "IntSize.h"
-#include "TextureMapperFlags.h"
 #include <wtf/OptionSet.h>
 
 #if USE(TEXTURE_MAPPER)
+#include "GLFence.h"
+#include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayer.h"
-#endif
-
-#if USE(SKIA)
+#else
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkImage.h>
+#include <skia/gpu/ganesh/GrTypes.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
@@ -70,6 +69,8 @@ public:
 
     Type type() const { return m_type; }
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
+
+#if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> flags() const { return m_flags; }
 
     void waitForContentsIfNeeded()
@@ -77,12 +78,33 @@ public:
         if (auto fence = WTF::move(m_fence))
             fence->serverWait();
     }
+#else
+    enum class AlphaMode : uint8_t {
+        Opaque,
+        Premultiplied,
+        Unpremultiplied
+    };
 
-#if !USE(TEXTURE_MAPPER)
+    enum class Rotation : uint8_t {
+        None,
+        Right,
+        UpsideDown,
+        Left
+    };
+
+    enum class Origin : bool {
+        TopLeft,
+        BottomLeft
+    };
+
+    bool isOpaque() const { return m_alphaMode == AlphaMode::Opaque; }
+    Rotation rotation() const { return m_rotation; }
+
     virtual sk_sp<SkImage> skiaImage() { return nullptr; }
 #endif
 
 protected:
+#if USE(TEXTURE_MAPPER)
     CoordinatedPlatformLayerBuffer(Type type, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence)
         : m_type(type)
         , m_size(size)
@@ -90,11 +112,49 @@ protected:
         , m_fence(WTF::move(fence))
     {
     }
+#else
+    CoordinatedPlatformLayerBuffer(Type type, const IntSize& size, AlphaMode alphaMode = AlphaMode::Opaque, Rotation rotation = Rotation::None)
+        : m_type(type)
+        , m_size(size)
+        , m_alphaMode(alphaMode)
+        , m_rotation(rotation)
+    {
+    }
+
+    static SkAlphaType toSkiaAlphaType(AlphaMode alphaMode)
+    {
+        switch (alphaMode) {
+        case AlphaMode::Opaque:
+            return kOpaque_SkAlphaType;
+        case AlphaMode::Premultiplied:
+            return kPremul_SkAlphaType;
+        case AlphaMode::Unpremultiplied:
+            return kUnpremul_SkAlphaType;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    static GrSurfaceOrigin toSkiaOrigin(Origin origin)
+    {
+        switch (origin) {
+        case Origin::TopLeft:
+            return kTopLeft_GrSurfaceOrigin;
+        case Origin::BottomLeft:
+            return kBottomLeft_GrSurfaceOrigin;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#endif
 
     Type m_type;
     IntSize m_size;
+#if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> m_flags;
     std::unique_ptr<GLFence> m_fence;
+#else
+    AlphaMode m_alphaMode { AlphaMode::Opaque };
+    Rotation m_rotation { Rotation::None };
+#endif
 };
 
 } // namespace WebCore

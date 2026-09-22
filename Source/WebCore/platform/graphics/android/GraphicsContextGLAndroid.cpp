@@ -25,7 +25,6 @@
 #include "GLFence.h"
 #include "Logging.h"
 #include "PlatformDisplay.h"
-#include "TextureMapperFlags.h"
 #include <android/hardware_buffer.h>
 
 namespace WebCore {

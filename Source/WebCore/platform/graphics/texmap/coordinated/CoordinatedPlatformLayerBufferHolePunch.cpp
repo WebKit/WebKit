@@ -45,7 +45,11 @@ std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLaye
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size)
+#if USE(TEXTURE_MAPPER)
     : CoordinatedPlatformLayerBuffer(Type::HolePunch, size, { TextureMapperFlags::ShouldNotBlend }, nullptr)
+#else
+    : CoordinatedPlatformLayerBuffer(Type::HolePunch, size)
+#endif
 {
 }
 
@@ -57,7 +61,11 @@ std::unique_ptr<CoordinatedPlatformLayerBufferHolePunch> CoordinatedPlatformLaye
 }
 
 CoordinatedPlatformLayerBufferHolePunch::CoordinatedPlatformLayerBufferHolePunch(const IntSize& size, GstElement* videoSink, RefPtr<GStreamerQuirksManager>&& quirksManager)
+#if USE(TEXTURE_MAPPER)
     : CoordinatedPlatformLayerBuffer(Type::HolePunch, size, { TextureMapperFlags::ShouldNotBlend }, nullptr)
+#else
+    : CoordinatedPlatformLayerBuffer(Type::HolePunch, size)
+#endif
     , m_videoSink(videoSink)
     , m_quirksManager(quirksManager)
 {

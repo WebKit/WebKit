@@ -31,6 +31,7 @@
 
 #if ENABLE(WEBGL)
 #include "GLContext.h"
+#include "GLFence.h"
 #include "PlatformDisplay.h"
 #include <epoxy/egl.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -48,11 +49,8 @@ namespace WebCore {
 
 std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLayerBufferSkiaImage::create(const sk_sp<SkImage>& image, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
-    OptionSet<TextureMapperFlags> flags;
-    if (!image->isOpaque())
-        flags.add(TextureMapperFlags::ShouldBlend);
     sk_sp<SkImage> skiaImage = image->isTextureBacked() ? SkiaUtilities::createPromiseImageIfNeeded(image, threadSafeGrContext) : image;
-    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), flags);
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), image->isOpaque() ? AlphaMode::Opaque : AlphaMode::Premultiplied, Rotation::None);
 }
 
 #if ENABLE(WEBGL)
@@ -91,7 +89,7 @@ struct PromiseWebGLImageContext {
 
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(PromiseWebGLImageContext);
 
-std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLayerBufferSkiaImage::create(unsigned textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLayerBufferSkiaImage::create(unsigned textureID, const IntSize& size, AlphaMode alphaMode, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     if (!threadSafeGrContext)
         return nullptr;
@@ -100,10 +98,8 @@ std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLaye
     ASSERT(backendFormat.isValid());
 
     auto context = makeUnique<PromiseWebGLImageContext>(textureID, size, WTF::move(fence));
-    auto origin = flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
-    auto alphaType = flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
     auto skiaImage = SkImages::PromiseTextureFrom(threadSafeGrContext, backendFormat, SkISize::Make(size.width(), size.height()), skgpu::Mipmapped::kNo,
-        origin, kRGBA_8888_SkColorType, alphaType, SkColorSpace::MakeSRGB(),
+        kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, toSkiaAlphaType(alphaMode), SkColorSpace::MakeSRGB(),
         +[](void* userData) -> sk_sp<GrPromiseImageTexture> {
             auto& context = *static_cast<PromiseWebGLImageContext*>(userData);
             return context.promiseImageTexture();
@@ -112,12 +108,12 @@ std::unique_ptr<CoordinatedPlatformLayerBufferSkiaImage> CoordinatedPlatformLaye
             std::unique_ptr<PromiseWebGLImageContext> context(static_cast<PromiseWebGLImageContext*>(userData));
         }, context.release());
 
-    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), flags);
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaImage>(WTF::move(skiaImage), alphaMode, Rotation::None);
 }
 #endif
 
-CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&& image, OptionSet<TextureMapperFlags> flags)
-    : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { image->width(), image->height() }, flags, nullptr)
+CoordinatedPlatformLayerBufferSkiaImage::CoordinatedPlatformLayerBufferSkiaImage(sk_sp<SkImage>&& image, AlphaMode alphaMode, Rotation rotation)
+    : CoordinatedPlatformLayerBuffer(Type::SkiaImage, { image->width(), image->height() }, alphaMode, rotation)
     , m_image(WTF::move(image))
 {
 }

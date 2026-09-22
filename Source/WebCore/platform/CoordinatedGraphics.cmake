@@ -1,6 +1,5 @@
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/scrolling/coordinated"
-    "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/texmap/coordinated"
 )
 
@@ -37,6 +36,10 @@ list(APPEND WebCore_SOURCES
 )
 
 if (USE_TEXTURE_MAPPER)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        "${WEBCORE_DIR}/platform/graphics/texmap"
+    )
+
     list(APPEND WebCore_SOURCES
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.cpp
@@ -48,10 +51,6 @@ if (USE_TEXTURE_MAPPER)
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.h
-    )
-else ()
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-        platform/graphics/texmap/TextureMapperFlags.h
     )
 endif ()
 

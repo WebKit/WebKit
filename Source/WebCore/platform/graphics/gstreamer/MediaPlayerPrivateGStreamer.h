@@ -105,8 +105,6 @@ class InbandMetadataTextTrackPrivateGStreamer;
 class InbandTextTrackPrivateGStreamer;
 class VideoTrackPrivateGStreamer;
 
-enum class TextureMapperFlags : uint16_t;
-
 void registerWebKitGStreamerElements();
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
@@ -359,8 +357,6 @@ protected:
     void loadingFailed(MediaPlayer::NetworkState, MediaPlayer::ReadyState = MediaPlayer::ReadyState::HaveNothing, bool forceNotifications = false);
     void loadStateChanged();
 
-    void updateTextureMapperFlags();
-
     void setCachedPosition(const MediaTime&) const;
 
     bool isPipelineWaitingPreroll(GstState current, GstState pending, GstStateChangeReturn) const;
@@ -416,8 +412,6 @@ protected:
 
     // Reflects whether the pipeline was suspended due to the HTMLMediaElement being both muted and invisible in the viewport.
     bool isSuspended() const { return m_isSuspended; };
-
-    OptionSet<TextureMapperFlags> m_textureMapperFlags;
 
     GRefPtr<GstElement> m_audioSink;
     GRefPtr<GstElement> m_videoSink;

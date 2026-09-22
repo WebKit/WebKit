@@ -27,13 +27,16 @@
 #include "GraphicsLayerAsyncContentsDisplayDelegateCoordinated.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedPlatformLayerBufferNativeImage.h"
-#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #include "ImageBuffer.h"
 #include "NativeImage.h"
-#include "TextureMapperFlags.h"
+
+#if USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferNativeImage.h"
+#else
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
+#endif
 
 namespace WebCore {
 

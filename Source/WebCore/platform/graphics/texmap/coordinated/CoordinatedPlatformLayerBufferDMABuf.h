@@ -39,6 +39,7 @@ namespace WebCore {
 
 class DMABufBuffer;
 class DMABufBufferAttributes;
+class GLFence;
 
 class CoordinatedPlatformLayerBufferDMABuf final : public CoordinatedPlatformLayerBuffer {
 public:
@@ -48,10 +49,10 @@ public:
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
 #else
-    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
-    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
-    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
-    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, AlphaMode, Origin, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, AlphaMode, Origin, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
+    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, AlphaMode, Origin, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
+    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, AlphaMode, Origin, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
 #endif
     virtual ~CoordinatedPlatformLayerBufferDMABuf();
 
@@ -59,7 +60,7 @@ private:
 #if USE(TEXTURE_MAPPER)
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 #else
-    void initializeSkiaImage(const sk_sp<GrContextThreadSafeProxy>&, std::unique_ptr<GLFence>&&, WTF::UnixFileDescriptor&&);
+    void initializeSkiaImage(const sk_sp<GrContextThreadSafeProxy>&, Origin, std::unique_ptr<GLFence>&&, WTF::UnixFileDescriptor&&);
     sk_sp<SkImage> skiaImage() override { return m_image; }
 #endif
 

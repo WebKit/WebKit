@@ -30,7 +30,10 @@
 #include <WebCore/CoordinatedPlatformLayerBufferDMABuf.h>
 #include <WebCore/DMABufBuffer.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegateCoordinated.h>
+
+#if USE(TEXTURE_MAPPER)
 #include <WebCore/TextureMapperFlags.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -80,13 +83,15 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     if (!m_displayBuffer)
         return;
 
+#if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     if (contextAttributes().alpha)
         flags.add(TextureMapperFlags::ShouldBlend);
-#if USE(TEXTURE_MAPPER)
     m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer), flags, WTF::move(fenceFD)));
 #else
-    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer), flags, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext()));
+    auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
+    auto origin = CoordinatedPlatformLayerBuffer::Origin::BottomLeft;
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer), alphaMode, origin, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext()));
 #endif
     m_hasPreparedForDisplay = true;
 }

@@ -30,6 +30,7 @@
 #include "BitmapTexturePool.h"
 #include "DMABufBuffer.h"
 #include "GLContext.h"
+#include "GLFence.h"
 #include "PlatformDisplay.h"
 #include <drm_fourcc.h>
 #include <epoxy/egl.h>
@@ -73,32 +74,32 @@ CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<D
 
 #else
 
-std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, AlphaMode alphaMode, Origin origin, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     if (!threadSafeGrContext)
         return nullptr;
-    return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), flags, WTF::move(fence), threadSafeGrContext);
+    return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), alphaMode, origin, WTF::move(fence), threadSafeGrContext);
 }
 
-std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> CoordinatedPlatformLayerBufferDMABuf::create(Ref<DMABufBuffer>&& dmabuf, AlphaMode alphaMode, Origin origin, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     if (!threadSafeGrContext)
         return nullptr;
-    return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), flags, WTF::move(fenceFD), threadSafeGrContext);
+    return makeUnique<CoordinatedPlatformLayerBufferDMABuf>(WTF::move(dmabuf), alphaMode, origin, WTF::move(fenceFD), threadSafeGrContext);
 }
 
-CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
-    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, nullptr)
+CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, AlphaMode alphaMode, Origin origin, std::unique_ptr<GLFence>&& fence, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, alphaMode)
     , m_dmabuf(WTF::move(dmabuf))
 {
-    initializeSkiaImage(threadSafeGrContext, WTF::move(fence), { });
+    initializeSkiaImage(threadSafeGrContext, origin, WTF::move(fence), { });
 }
 
-CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, OptionSet<TextureMapperFlags> flags, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
-    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, flags, nullptr)
+CoordinatedPlatformLayerBufferDMABuf::CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&& dmabuf, AlphaMode alphaMode, Origin origin, UnixFileDescriptor&& fenceFD, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+    : CoordinatedPlatformLayerBuffer(Type::DMABuf, dmabuf->attributes().size, alphaMode)
     , m_dmabuf(WTF::move(dmabuf))
 {
-    initializeSkiaImage(threadSafeGrContext, nullptr, WTF::move(fenceFD));
+    initializeSkiaImage(threadSafeGrContext, origin, nullptr, WTF::move(fenceFD));
 }
 #endif
 
@@ -330,11 +331,9 @@ void CoordinatedPlatformLayerBufferDMABuf::paintToTextureMapper(TextureMapper& t
 
 #else
 
-void CoordinatedPlatformLayerBufferDMABuf::initializeSkiaImage(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, std::unique_ptr<GLFence>&& fence, UnixFileDescriptor&& fenceFD)
+void CoordinatedPlatformLayerBufferDMABuf::initializeSkiaImage(const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext, Origin origin, std::unique_ptr<GLFence>&& fence, UnixFileDescriptor&& fenceFD)
 {
-    auto alphaType = m_flags.contains(TextureMapperFlags::ShouldBlend) ? kPremul_SkAlphaType : kOpaque_SkAlphaType;
-    auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
-    m_image = m_dmabuf->createPromiseImage(threadSafeGrContext, kRGBA_8888_SkColorType, alphaType, origin, WTF::move(fence), WTF::move(fenceFD));
+    m_image = m_dmabuf->createPromiseImage(threadSafeGrContext, kRGBA_8888_SkColorType, toSkiaAlphaType(m_alphaMode), toSkiaOrigin(origin), WTF::move(fence), WTF::move(fenceFD));
 }
 
 #endif

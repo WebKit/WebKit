@@ -48,12 +48,12 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(COORDINATED_GRAPHICS)
-#include "BitmapTexture.h"
+#if USE(TEXTURE_MAPPER)
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
-#include "CoordinatedPlatformLayerBufferRGB.h"
+#else
 #include "CoordinatedPlatformLayerBufferSkiaImage.h"
+#endif
 #include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
-#include "TextureMapperFlags.h"
 #endif
 
 namespace WebCore {

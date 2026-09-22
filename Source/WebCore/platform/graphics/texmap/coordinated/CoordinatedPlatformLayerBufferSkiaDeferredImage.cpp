@@ -39,14 +39,22 @@ namespace WebCore {
 
 std::unique_ptr<CoordinatedPlatformLayerBufferSkiaDeferredImage> CoordinatedPlatformLayerBufferSkiaDeferredImage::create(sk_sp<GrDeferredDisplayList>&& displayList)
 {
-    OptionSet<TextureMapperFlags> flags;
-    if (displayList->characterization().imageInfo().alphaType() != kOpaque_SkAlphaType)
-        flags.add(TextureMapperFlags::ShouldBlend);
-    return makeUnique<CoordinatedPlatformLayerBufferSkiaDeferredImage>(WTF::move(displayList), flags);
+    auto alphaMode = [&] {
+        switch (displayList->characterization().imageInfo().alphaType()) {
+        case kOpaque_SkAlphaType:
+        case kUnknown_SkAlphaType:
+            return AlphaMode::Opaque;
+        case kPremul_SkAlphaType:
+            return AlphaMode::Premultiplied;
+        case kUnpremul_SkAlphaType:
+            return AlphaMode::Unpremultiplied;
+        }
+    }();
+    return makeUnique<CoordinatedPlatformLayerBufferSkiaDeferredImage>(WTF::move(displayList), alphaMode);
 }
 
-CoordinatedPlatformLayerBufferSkiaDeferredImage::CoordinatedPlatformLayerBufferSkiaDeferredImage(sk_sp<GrDeferredDisplayList>&& displayList, OptionSet<TextureMapperFlags> flags)
-    : CoordinatedPlatformLayerBuffer(Type::SkiaDeferredImage, { displayList->characterization().width(), displayList->characterization().height() }, flags, nullptr)
+CoordinatedPlatformLayerBufferSkiaDeferredImage::CoordinatedPlatformLayerBufferSkiaDeferredImage(sk_sp<GrDeferredDisplayList>&& displayList, AlphaMode alphaMode)
+    : CoordinatedPlatformLayerBuffer(Type::SkiaDeferredImage, { displayList->characterization().width(), displayList->characterization().height() }, alphaMode)
     , m_displayList(WTF::move(displayList))
 {
 }

@@ -686,7 +686,7 @@ TransformationMatrix SkiaCompositingLayer::combinedTransform(const PaintContext&
     return transform;
 }
 
-static std::optional<SkMatrix> rotateContentsIfNeeded(OptionSet<TextureMapperFlags> flags, const FloatRect& contentsRect)
+static std::optional<SkMatrix> rotateContentsIfNeeded(CoordinatedPlatformLayerBuffer::Rotation rotation, const FloatRect& contentsRect)
 {
     auto rotate = [](float degrees, float x, float y) {
         auto matrix = SkMatrix::Translate(x, y);
@@ -694,15 +694,16 @@ static std::optional<SkMatrix> rotateContentsIfNeeded(OptionSet<TextureMapperFla
         return matrix;
     };
 
-    if (flags.contains(TextureMapperFlags::ShouldRotateTexture90))
+    switch (rotation) {
+    case CoordinatedPlatformLayerBuffer::Rotation::None:
+        return std::nullopt;
+    case CoordinatedPlatformLayerBuffer::Rotation::Right:
         return rotate(90, contentsRect.maxX(), contentsRect.y());
-
-    if (flags.contains(TextureMapperFlags::ShouldRotateTexture180))
+    case CoordinatedPlatformLayerBuffer::Rotation::UpsideDown:
         return rotate(180, contentsRect.maxX(), contentsRect.maxY());
-
-    if (flags.contains(TextureMapperFlags::ShouldRotateTexture270))
+    case CoordinatedPlatformLayerBuffer::Rotation::Left:
         return rotate(270, contentsRect.x(), contentsRect.maxY());
-
+    }
     return std::nullopt;
 }
 
@@ -728,11 +729,11 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
             return true;
 
         if (m_contentsBuffer)
-            return m_contentsBuffer->flags().contains(TextureMapperFlags::ShouldBlend);
+            return !m_contentsBuffer->isOpaque();
 
         if (m_imageBackingStore) {
             if (const auto* buffer = m_imageBackingStore->buffer())
-                return buffer->flags().contains(TextureMapperFlags::ShouldBlend);
+                return !buffer->isOpaque();
         }
 
         return true;
@@ -835,11 +836,11 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 #endif // ENABLE(VIDEO)
                 image = m_contentsBuffer->skiaImage();
 
-            auto flags = m_contentsBuffer->flags();
-            rotationMatrix = rotateContentsIfNeeded(flags, m_contentsRect);
+            auto rotation = m_contentsBuffer->rotation();
+            rotationMatrix = rotateContentsIfNeeded(rotation, m_contentsRect);
             if (rotationMatrix) {
                 imageRect.setLocation({ });
-                if (flags.containsAny({ TextureMapperFlags::ShouldRotateTexture90, TextureMapperFlags::ShouldRotateTexture270 }))
+                if (rotation == CoordinatedPlatformLayerBuffer::Rotation::Right || rotation == CoordinatedPlatformLayerBuffer::Rotation::Left)
                     imageRect.setSize(m_contentsRect.size().transposedSize());
             }
         } else if (auto* buffer = m_imageBackingStore->buffer()) {

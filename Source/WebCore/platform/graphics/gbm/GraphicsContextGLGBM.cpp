@@ -36,9 +36,12 @@
 #include "GLFence.h"
 #include "Logging.h"
 #include "PlatformDisplay.h"
-#include "TextureMapperFlags.h"
 #include <drm_fourcc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
+
+#if USE(TEXTURE_MAPPER)
+#include "TextureMapperFlags.h"
+#endif
 
 namespace WebCore {
 
@@ -228,20 +231,22 @@ void GraphicsContextGLGBM::prepareForDisplay()
         return;
 
     RELEASE_ASSERT(m_layerContentsDisplayDelegate);
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
+#if USE(TEXTURE_MAPPER)
     OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
     if (contextAttributes().alpha)
         flags.add(TextureMapperFlags::ShouldBlend);
-    std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
-#if USE(TEXTURE_MAPPER)
     if (fenceFD)
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD));
     else
         buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence));
 #else
+    auto alphaMode = contextAttributes().alpha ? CoordinatedPlatformLayerBuffer::AlphaMode::Premultiplied : CoordinatedPlatformLayerBuffer::AlphaMode::Opaque;
+    auto origin = CoordinatedPlatformLayerBuffer::Origin::BottomLeft;
     if (fenceFD)
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext());
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), alphaMode, origin, WTF::move(fenceFD), m_layerContentsDisplayDelegate->threadSafeGrContext());
     else
-        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), flags, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
+        buffer = CoordinatedPlatformLayerBufferDMABuf::create(protect(*m_displayBuffer.dmabuf), alphaMode, origin, WTF::move(fence), m_layerContentsDisplayDelegate->threadSafeGrContext());
 #endif
     m_layerContentsDisplayDelegate->setDisplayBuffer(WTF::move(buffer));
 }
