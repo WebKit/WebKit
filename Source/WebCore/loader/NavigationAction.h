@@ -125,6 +125,10 @@ public:
     std::optional<NavigationNavigationType> navigationAPIType() const { return m_navigationAPIType; }
     void setNavigationAPIType(NavigationNavigationType navigationAPIType) { m_navigationAPIType = navigationAPIType; }
 
+    // The NavigationHistoryBehavior which m_navigationAPIType was resolved from, so that a process taking
+    // over this navigation can resolve the navigation API type the same way.
+    WEBCORE_EXPORT NavigationHistoryBehavior navigationHistoryBehavior() const;
+
     void setPendingDispatchNavigateEvent(std::function<bool()>&& function) { m_pendingDispatchNavigateEvent = WTF::move(function); }
     std::function<bool()> takePendingDispatchNavigateEvent() { return std::exchange(m_pendingDispatchNavigateEvent, nullptr); }
 

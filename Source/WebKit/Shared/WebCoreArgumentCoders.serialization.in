@@ -4041,6 +4041,14 @@ enum class WebCore::NavigationUpgradeToHTTPSBehavior : uint8_t {
     BasedOnPolicy
 };
 
+header: <WebCore/NavigationHistoryBehavior.h>
+enum class WebCore::NavigationHistoryBehavior : uint8_t {
+    Auto,
+    Push,
+    Replace,
+    Reload
+};
+
 header: <WebCore/NavigationScheduler.h>
 enum class WebCore::ScheduleLocationChangeResult : uint8_t {
     Stopped,

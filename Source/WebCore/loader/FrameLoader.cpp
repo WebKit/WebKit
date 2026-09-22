@@ -1855,6 +1855,7 @@ void FrameLoader::load(FrameLoadRequest&& request, std::optional<NavigationReque
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setHasCrossOriginRedirect(request.hasCrossOriginRedirect());
     loader->setIsContinuingLoad(request.shouldTreatAsContinuingLoad());
+    loader->setNavigationHistoryBehavior(request.navigationHistoryBehavior());
     RefPtr<const SecurityOrigin> initiatorOrigin;
     if (crossSiteRequester) {
         initiatorOrigin = crossSiteRequester->securityOrigin.copyRef();
@@ -2007,13 +2008,18 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     RELEASE_ASSERT(!isBackForwardLoadType(type) || history().provisionalItem());
     bool isFormSubmission = !!formSubmission;
 
+    // The history handling was resolved by whoever started this navigation, which may be another
+    // process handing the load over to us mid-flight (e.g. after a cross-site redirect under site
+    // isolation). Resolving it again here would lose a location.replace() and turn it into a push.
+    auto historyHandling = loader->navigationHistoryBehavior();
+
     const String& httpMethod = loader->request().httpMethod();
 
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, policyChecker().loadType(), newURL) && !loader->substituteData().isValid()) {
 
         RefPtr oldDocumentLoader = m_documentLoader;
         NavigationAction action { protect(frame->document()).releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
-        action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
+        action.setNavigationAPIType(determineNavigationType(type, historyHandling));
         oldDocumentLoader->setTriggeringAction(WTF::move(action));
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
@@ -2023,8 +2029,8 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
             requesterOrigin = loader->crossSiteRequester()->securityOrigin.copyRef();
         else if (auto& requester = loader->triggeringAction().requester())
             requesterOrigin = requester->securityOrigin.copyRef();
-        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { }  /* redirectResponse */, oldDocumentLoader.get(), WTF::move(formSubmission), [this, protectedThis = Ref { *this }, requesterOrigin = WTF::move(requesterOrigin)] (const ResourceRequest& request, WeakPtr<const FormSubmission>&&, NavigationPolicyDecision navigationPolicyDecision) {
-            continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.get(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad, NavigationHistoryBehavior::Auto);
+        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { }  /* redirectResponse */, oldDocumentLoader.get(), WTF::move(formSubmission), [this, protectedThis = Ref { *this }, requesterOrigin = WTF::move(requesterOrigin), historyHandling] (const ResourceRequest& request, WeakPtr<const FormSubmission>&&, NavigationPolicyDecision navigationPolicyDecision) {
+            continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.get(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad, historyHandling);
         }, IsSameDocumentNavigation::Yes, PolicyDecisionMode::Synchronous);
         return;
     }
@@ -2037,7 +2043,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     if (loader->triggeringAction().isEmpty()) {
         NavigationAction action = loader->crossSiteRequester() ? NavigationAction { *loader->crossSiteRequester(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission } : NavigationAction { protect(frame->document()).releaseNonNull(), loader->request(), InitiatedByMainFrame::Unknown, loader->isRequestFromClientOrUserInput(), policyChecker().loadType(), isFormSubmission };
         action.setIsContentRuleListRedirect(loader->isContentRuleListRedirect());
-        action.setNavigationAPIType(determineNavigationType(type, NavigationHistoryBehavior::Auto));
+        action.setNavigationAPIType(determineNavigationType(type, historyHandling));
         loader->setTriggeringAction(WTF::move(action));
     }
 
@@ -2068,7 +2074,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         }
         continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         completionHandler();
-    }, IsSameDocumentNavigation::No, policyDecisionMode, determineNavigationType(type, NavigationHistoryBehavior::Auto));
+    }, IsSameDocumentNavigation::No, policyDecisionMode, determineNavigationType(type, historyHandling));
 }
 
 void FrameLoader::clearProvisionalLoadForPolicyCheck()

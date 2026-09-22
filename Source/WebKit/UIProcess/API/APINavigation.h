@@ -151,6 +151,7 @@ public:
 
     WebCore::LockHistory lockHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->lockHistory : WebCore::LockHistory::No; }
     WebCore::LockBackForwardList lockBackForwardList() const { return m_lastNavigationAction ? m_lastNavigationAction->lockBackForwardList : WebCore::LockBackForwardList::No; }
+    WebCore::NavigationHistoryBehavior navigationHistoryBehavior() const { return m_lastNavigationAction ? m_lastNavigationAction->navigationHistoryBehavior : WebCore::NavigationHistoryBehavior::Auto; }
 
     WTF::String clientRedirectSourceForHistory() const { return m_lastNavigationAction ? m_lastNavigationAction->clientRedirectSourceForHistory : WTF::String(); }
     std::optional<WebCore::OwnerPermissionsPolicyData> ownerPermissionsPolicy() const { return m_lastNavigationAction ? m_lastNavigationAction->ownerPermissionsPolicy : std::nullopt; }

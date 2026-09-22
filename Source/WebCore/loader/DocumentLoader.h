@@ -278,6 +278,11 @@ public:
     void setTriggeringAction(NavigationAction&&);
     void setTriggeringNavigationAPIType(NavigationNavigationType type) { m_triggeringAction.setNavigationAPIType(type); };
 
+    // The history handling of the navigation this loader was created for. Only meaningful before the
+    // triggering action has been given a navigation API type, which is what it is used to compute.
+    NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
+    void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
+
     void setOverrideEncoding(const String& encoding) { m_overrideEncoding = encoding; }
     void setLastCheckedRequest(ResourceRequest&& request) { m_lastCheckedRequest = WTF::move(request); }
     const ResourceRequest& lastCheckedRequest() LIFETIME_BOUND { return m_lastCheckedRequest; }
@@ -785,6 +790,7 @@ private:
     bool m_gotFirstByte { false };
     bool m_isContentRuleListRedirect { false };
     bool m_isClientRedirect { false };
+    NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
     bool m_isLoadingMultipartContent { false };
     bool m_isInFinishedLoadingOfEmptyDocument { false };
     IsInitialAboutBlank m_isInitialAboutBlank { IsInitialAboutBlank::No };

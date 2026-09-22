@@ -35,6 +35,7 @@
 #include "HistoryItem.h"
 #include "LocalFrame.h"
 #include "MouseEvent.h"
+#include "NavigationNavigationType.h"
 
 namespace WebCore {
 
@@ -147,6 +148,24 @@ NavigationAction NavigationAction::copyWithShouldOpenExternalURLsPolicy(ShouldOp
 void NavigationAction::setSourceBackForwardItem(HistoryItem* item)
 {
     m_sourceBackForwardItemIdentifier = item ? std::make_optional(item->itemID()) : std::nullopt;
+}
+
+NavigationHistoryBehavior NavigationAction::navigationHistoryBehavior() const
+{
+    if (!m_navigationAPIType)
+        return NavigationHistoryBehavior::Auto;
+
+    switch (*m_navigationAPIType) {
+    case NavigationNavigationType::Push:
+        return NavigationHistoryBehavior::Push;
+    case NavigationNavigationType::Replace:
+        return NavigationHistoryBehavior::Replace;
+    case NavigationNavigationType::Reload:
+        return NavigationHistoryBehavior::Reload;
+    case NavigationNavigationType::Traverse:
+        break;
+    }
+    return NavigationHistoryBehavior::Auto;
 }
 
 }
