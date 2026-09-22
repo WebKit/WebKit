@@ -379,10 +379,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
         if (!protectedThis)
             return;
         if (result) {
-            protectedThis->m_waitingForKey = false;
-            protectedThis->callOnMainThreadWithPlayer([](auto& player) {
-                player.waitingForKeyChanged();
-            });
+            protectedThis->setWaitingForKey(false);
             return;
         }
         switch (result.error()) {
@@ -397,11 +394,10 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
             if (!keyIDs)
                 return;
-            protectedThis->m_waitingForKey = true;
             protectedThis->callOnMainThreadWithPlayer([initDataType = initDataType.isolatedCopy(), initData](auto& player) {
                 player.initializationDataEncountered(initDataType, initData->tryCreateArrayBuffer());
-                player.waitingForKeyChanged();
             });
+            protectedThis->setWaitingForKey(true);
             return;
         }
         default:
@@ -412,6 +408,18 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 #endif
     UNUSED_PARAM(trackID);
 }
+
+#if (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
+void SourceBufferPrivateAVFObjC::setWaitingForKey(bool waitingForKey)
+{
+    if (m_waitingForKey.exchange(waitingForKey) == waitingForKey)
+        return;
+
+    callOnMainThreadWithPlayer([](auto& player) {
+        player.waitingForKeyChanged();
+    });
+}
+#endif
 
 bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
 {
