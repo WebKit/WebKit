@@ -167,6 +167,7 @@
 #include "WebEventType.h"
 #include "WebFoundTextRange.h"
 #include "WebFrame.h"
+#include "WebFrameMessages.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebFullScreenManagerProxy.h"
@@ -8396,6 +8397,12 @@ void WebPageProxy::updateSandboxFlags(IPC::Connection& connection, WebCore::Fram
         RefPtr parentFrame = frame->parentFrame();
         MESSAGE_CHECK(process, parentFrame && &parentFrame->process() == process.ptr());
         frame->updateSandboxFlags(sandboxFlags);
+
+        // The sender only updated the frame if it hosts it, and never a provisional frame.
+        if (&frame->process() != process.ptr())
+            protect(frame->process())->send(Messages::WebFrame::UpdateSandboxFlags(sandboxFlags), frameID);
+        if (RefPtr provisionalFrame = frame->provisionalFrame())
+            protect(provisionalFrame->process())->send(Messages::WebFrame::UpdateSandboxFlags(sandboxFlags), frameID);
     }
 }
 

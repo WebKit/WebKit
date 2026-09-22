@@ -554,6 +554,14 @@ void WebFrame::destroyProvisionalFrame()
     }
 }
 
+void WebFrame::updateSandboxFlags(SandboxFlags sandboxFlags)
+{
+    if (RefPtr localFrame = coreLocalFrame())
+        localFrame->updateSandboxFlags(sandboxFlags, Frame::NotifyUIProcess::No);
+    if (RefPtr provisionalFrame = m_provisionalFrame)
+        provisionalFrame->updateSandboxFlags(sandboxFlags, Frame::NotifyUIProcess::No);
+}
+
 void WebFrame::commitProvisionalFrame()
 {
     RefPtr localFrame = std::exchange(m_provisionalFrame, nullptr);
