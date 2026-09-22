@@ -1785,9 +1785,10 @@ FloatRect AXIsolatedObject::convertFrameToSpace(const FloatRect& rect, Accessibi
         // screenPosition tracks the document origin, which moves with scroll.
         // The viewport is fixed on screen, so subtract the scroll and content
         // inset offsets that contentsToView baked into screenPosition.
+        // The y coordinate is negated due to the bottom-left origin on macOS.
         if (isScrollArea() && !parent()) {
             auto viewOriginScrollPosition = screenTransform.mapPoint(FloatPoint(tree().frameViewOriginScrollPosition()));
-            screenPosition.move(-roundToInt(viewOriginScrollPosition.x()), -roundToInt(viewOriginScrollPosition.y()));
+            screenPosition.move(roundToInt(viewOriginScrollPosition.x()), -roundToInt(viewOriginScrollPosition.y()));
         }
 
         // Screen coordinates use bottom-left origin (on macOS).
