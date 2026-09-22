@@ -26,11 +26,17 @@
 #include "config.h"
 #include "NativeImage.h"
 
+#include "Color.h"
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "IntRect.h"
+#include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
 #include "RenderingMode.h"
 #include <wtf/Locker.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -95,6 +101,88 @@ void NativeImage::replacePlatformImage(PlatformImagePtr&& platformImage) const
     Locker locker { m_lock };
     m_platformImage = WTF::move(platformImage);
     // Intention is that the contents do not change, so properties are not recomputed.
+}
+
+bool NativeImage::withPixels(const IntRect& sourceRect, const PixelBufferFormat& fallbackFormat, NOESCAPE const PixelSourceFunctor& functor) const
+{
+    if (sourceRect.isEmpty())
+        return true;
+    if (!IntRect { { }, size() }.contains(sourceRect))
+        return false;
+    return withBorrowedPixels(sourceRect, functor) || withTemporaryPixels(fallbackFormat, sourceRect, functor);
+}
+
+bool NativeImage::copyPixels(const IntRect& sourceRect, const PixelBufferConversionView& destination) const
+{
+    if (sourceRect.isEmpty())
+        return true;
+    if (!IntRect { { }, size() }.contains(sourceRect))
+        return false;
+    auto minimumBytes = PixelBuffer::computeStridedNoPaddingBufferSize(destination.format.pixelFormat, sourceRect.size(), destination.bytesPerRow);
+    if (minimumBytes.hasOverflowed() || destination.rows.size() < minimumBytes.value())
+        return false;
+
+    auto convertToDestination = [&](const ConstPixelBufferConversionView& view) {
+        convertImagePixels(view, destination, sourceRect.size());
+    };
+    PixelSourceFunctor functor { convertToDestination };
+
+    if (withBorrowedPixels(sourceRect, functor))
+        return true;
+
+    // The pixels have to be drawn. When the platform can draw the destination's own format, draw straight into destination.
+    if (canReadPixelsTo(destination.format)) {
+        auto requiredBytes = PixelBuffer::computeStridedBufferSize(destination.format.pixelFormat, sourceRect.size(), destination.bytesPerRow);
+        if (requiredBytes.hasOverflowed())
+            return false;
+        if (destination.rows.size() >= requiredBytes.value())
+            return readPixels(sourceRect, destination);
+        // Edge-case: destination last row has less padding than full stride. Must use temporary buffer.
+        return withTemporaryPixels(destination.format, sourceRect, functor);
+    }
+
+    PixelBufferFormat fallbackFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, destination.format.colorSpace };
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    PixelBufferFormat floatFallbackFormat { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16F, destination.format.colorSpace };
+    if (destination.format.pixelFormat == PixelFormat::RGBA16F && canReadPixelsTo(floatFallbackFormat))
+        fallbackFormat = floatFallbackFormat;
+#endif
+    return withTemporaryPixels(fallbackFormat, sourceRect, functor);
+}
+
+std::optional<Color> NativeImage::singlePixelSolidColor() const
+{
+    if (size() != IntSize(1, 1))
+        return std::nullopt;
+
+    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, ColorSpace::SRGB() };
+    std::array<uint8_t, 4> pixel;
+    PixelBufferConversionView destination { format, pixel.size(), pixel };
+    if (!copyPixels(destination))
+        return std::nullopt;
+
+    if (!pixel[3])
+        return Color::transparentBlack;
+    return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0], pixel[1], pixel[2], pixel[3]);
+}
+
+bool NativeImage::withTemporaryPixels(const PixelBufferFormat& format, const IntRect& sourceRect, NOESCAPE const PixelSourceFunctor& functor) const
+{
+    ASSERT(IntRect(IntPoint(), size()).contains(sourceRect));
+    auto bytesPerRow = PixelBuffer::computeBytesPerRow(format.pixelFormat, sourceRect.width());
+    auto bufferSize = bytesPerRow * sourceRect.height();
+    if (bufferSize.hasOverflowed() || !bufferSize.value())
+        return false;
+    auto buffer = MallocSpan<uint8_t>::tryMalloc(bufferSize.value());
+    if (!buffer)
+        return false;
+    auto view = conversionView(format, sourceRect.size(), bytesPerRow.value(), buffer.span());
+    if (!view)
+        return false;
+    if (!readPixels(sourceRect, { format, bytesPerRow.value(), buffer.mutableSpan() }))
+        return false;
+    functor(*view);
+    return true;
 }
 
 #if !USE(CG)

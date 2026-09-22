@@ -30,8 +30,11 @@
 
 #include "CairoOperations.h"
 #include "CairoUtilities.h"
+#include "IntRect.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"
+#include "PixelBufferConversion.h"
+#include "RefPtrCairo.h"
 #include "RefPtrCairo.h"
 #include <algorithm>
 #include <cairo.h>
@@ -126,16 +129,74 @@ ColorSpace NativeImage::colorSpace() const
     return ColorSpace::SRGB();
 }
 
-std::optional<Color> NativeImage::singlePixelSolidColor() const
+std::optional<PixelBufferFormat> NativeImage::pixelSourceFormat() const
 {
-    if (size() != IntSize(1, 1))
-        return std::nullopt;
-    Locker locker { m_lock };
-    if (cairo_surface_get_type(m_platformImage.get()) != CAIRO_SURFACE_TYPE_IMAGE)
+    auto image = platformImage();
+    if (!image)
         return std::nullopt;
 
-    unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(m_platformImage.get()));
-    return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
+    if (cairo_surface_get_type(image.get()) != CAIRO_SURFACE_TYPE_IMAGE)
+        return std::nullopt;
+
+    if (cairo_image_surface_get_format(image.get()) != CAIRO_FORMAT_ARGB32)
+        return std::nullopt;
+
+    if (cairo_image_surface_get_stride(image.get()) < 0)
+        return std::nullopt;
+
+    return PixelBufferFormat { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, ColorSpace::SRGB() };
+}
+
+bool NativeImage::withBorrowedPixels(const IntRect& sourceRect, NOESCAPE const PixelSourceFunctor& functor) const
+{
+    auto format = pixelSourceFormat();
+    if (!format)
+        return false;
+
+    auto image = platformImage();
+    if (!image)
+        return false;
+
+    auto size = cairoSurfaceSize(image.get());
+    if (sourceRect.isEmpty() || !IntRect { { }, size }.contains(sourceRect))
+        return false;
+
+    cairo_surface_flush(image.get());
+    auto surfaceView = conversionView(*format, size, static_cast<unsigned>(cairo_image_surface_get_stride(image.get())), span(image.get()));
+    if (!surfaceView)
+        return false;
+    auto view = conversionSubview(*surfaceView, size, sourceRect);
+    if (!view)
+        return false;
+
+    functor(*view);
+    return true;
+}
+
+bool NativeImage::canReadPixelsTo(const PixelBufferFormat& format)
+{
+    // The destination is a CAIRO_FORMAT_ARGB32 image surface, which is premultiplied BGRA8 on
+    // little-endian architectures and nothing else.
+    return format.pixelFormat == PixelFormat::BGRA8 && format.alphaFormat == AlphaPremultiplication::Premultiplied;
+}
+
+bool NativeImage::readPixels(const IntRect& sourceRect, const PixelBufferConversionView& destination) const
+{
+    auto image = platformImage();
+    if (!image)
+        return false;
+
+    if (!canReadPixelsTo(destination.format))
+        return false;
+
+    RefPtr surface = adoptRef(cairo_image_surface_create_for_data(destination.rows.data(), CAIRO_FORMAT_ARGB32, sourceRect.width(), sourceRect.height(), static_cast<int>(destination.bytesPerRow)));
+    if (!surface || cairo_surface_status(surface.get()) != CAIRO_STATUS_SUCCESS)
+        return false;
+
+    // The source is placed so that sourceRect's top left lands on the destination's origin.
+    copyRectFromOneSurfaceToAnother(image.get(), surface.get(), IntSize(-sourceRect.x(), -sourceRect.y()), IntRect(IntPoint(), sourceRect.size()), IntSize());
+    cairo_surface_flush(surface.get());
+    return true;
 }
 
 void NativeImage::clearSubimages()

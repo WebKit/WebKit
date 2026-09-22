@@ -461,7 +461,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/IntPointCG.cpp
     platform/graphics/cg/IntRectCG.cpp
     platform/graphics/cg/IntSizeCG.cpp
-    platform/graphics/cg/NativeImageCG.cpp
+    platform/graphics/cg/NativeImageCG.mm
     platform/graphics/cg/PDFDocumentImage.cpp
     platform/graphics/cg/PathCG.cpp
     platform/graphics/cg/PatternCG.cpp

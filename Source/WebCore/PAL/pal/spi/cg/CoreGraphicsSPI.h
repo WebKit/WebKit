@@ -49,6 +49,7 @@ DECLARE_SYSTEM_HEADER
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
+#include <CoreGraphics/CGImagePrivate.h>
 #if HAVE(IOSURFACE)
 #include <CoreGraphics/CGImageProvider.h>
 #endif
@@ -426,6 +427,7 @@ void CGFontSetShouldUseMulticache(bool);
 void CGImageSetCachingFlags(CGImageRef, CGImageCachingFlags);
 CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
 void CGImageSetProperty(CGImageRef, CFStringRef, CFTypeRef);
+bool CGImageIsSubimage(CGImageRef cg_nullable, CGImageRef cg_nullable * cg_nullable source, CGPoint* __nullable origin);
 
 CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
 #if ENABLE(UNIFIED_PDF)
