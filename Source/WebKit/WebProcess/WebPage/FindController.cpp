@@ -567,6 +567,7 @@ void FindController::findString(const String& string, OptionSet<FindOptions> opt
                 idOfFrameContainingString = frameID;
                 found = true;
                 didWrap = m_lastFoundRangeDidWrap ? WebCore::DidWrap::Yes : WebCore::DidWrap::No;
+                options.add(FindOptions::NoIndexChange);
             }
         }
 
