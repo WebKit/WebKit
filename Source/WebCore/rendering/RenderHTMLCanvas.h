@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RenderBlock.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
@@ -42,13 +43,24 @@ public:
 
     void canvasSizeChanged();
 
+    RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
+    void setInnerRenderer(RenderBlock*);
+
 private:
     void element() const = delete;
+
     bool requiresLayer() const override;
     ASCIILiteral renderName() const override { return "RenderHTMLCanvas"_s; }
+    bool canHaveChildren() const override;
+
+    void layout() override;
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
+
     void intrinsicSizeChanged() override { canvasSizeChanged(); }
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
+
+    SingleThreadWeakPtr<RenderBlock> m_innerRenderer;
 };
 
 } // namespace WebCore

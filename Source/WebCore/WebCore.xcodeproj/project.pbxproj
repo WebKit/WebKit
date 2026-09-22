@@ -14596,6 +14596,8 @@
 		722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformGraphicsContext.h; sourceTree = "<group>"; };
 		722AF2E327E1CF110078D997 /* TextRunIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRunIterator.h; sourceTree = "<group>"; };
 		722AF2E527E1D09E0078D997 /* CGContextStateSaver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGContextStateSaver.h; sourceTree = "<group>"; };
+		7233A884305A0BF100EBAD2C /* RenderTreeBuilderCanvas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RenderTreeBuilderCanvas.h; sourceTree = "<group>"; };
+		7233A885305A0BF100EBAD2C /* RenderTreeBuilderCanvas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderCanvas.cpp; sourceTree = "<group>"; };
 		7236E0012B804C880051BE69 /* CanvasLayerContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasLayerContextSwitcher.h; sourceTree = "<group>"; };
 		7236E0022B804C890051BE69 /* CanvasLayerContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasLayerContextSwitcher.cpp; sourceTree = "<group>"; };
 		7241361A28985069007B3FCD /* FEBlendNeonApplier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FEBlendNeonApplier.cpp; sourceTree = "<group>"; };
@@ -41860,6 +41862,8 @@
 				119340A11FEE024000935F1E /* RenderTreeBuilderBlock.h */,
 				11C5F11F2003F69F0001AE60 /* RenderTreeBuilderBlockFlow.cpp */,
 				11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */,
+				7233A885305A0BF100EBAD2C /* RenderTreeBuilderCanvas.cpp */,
+				7233A884305A0BF100EBAD2C /* RenderTreeBuilderCanvas.h */,
 				113409D7203E038000C66915 /* RenderTreeBuilderContinuation.cpp */,
 				113409D8203E038000C66915 /* RenderTreeBuilderContinuation.h */,
 				E47C39211FE6E0DA00BBBC6B /* RenderTreeBuilderFirstLetter.cpp */,

@@ -67,6 +67,7 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
+#include "RenderTreeBuilderCanvas.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderInline.h"
@@ -182,6 +183,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_blockFlowBuilder(makeUniqueRef<BlockFlow>(*this))
     , m_inlineBuilder(makeUniqueRef<Inline>(*this))
     , m_svgBuilder(makeUniqueRef<SVG>(*this))
+    , m_canvasBuilder(makeUniqueRef<Canvas>(*this))
 #if ENABLE(MATHML)
     , m_mathMLBuilder(makeUniqueRef<MathML>(*this))
 #endif
@@ -397,6 +399,11 @@ void RenderTreeBuilder::attachInternal(RenderElement& parent, RenderPtr<RenderOb
         return;
     }
 
+    if (auto* canvasRoot = dynamicDowncast<RenderHTMLCanvas>(parent)) {
+        canvasBuilder().attach(*canvasRoot, WTF::move(child), beforeChild);
+        return;
+    }
+
 #if ENABLE(MATHML)
     if (auto* mathMLFenced = dynamicDowncast<RenderMathMLFenced>(parent)) {
         mathMLBuilder().attach(*mathMLFenced, WTF::move(child), beforeChild);
@@ -447,6 +454,9 @@ RenderPtr<RenderObject> RenderTreeBuilder::detach(RenderElement& parent, RenderO
 
     if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(parent))
         return svgBuilder().detach(*svgRoot, child, willBeDestroyed);
+
+    if (auto* canvasRoot = dynamicDowncast<RenderHTMLCanvas>(parent))
+        return canvasBuilder().detach(*canvasRoot, child, willBeDestroyed);
 
     if (auto* block = dynamicDowncast<RenderBlock>(parent))
         return blockBuilder().detach(*block, child, willBeDestroyed, canCollapseAnonymousBlock);

@@ -3286,6 +3286,7 @@ rendering/svg/legacy/SVGResourcesCycleSolver.cpp
 rendering/updating/RenderTreeBuilder.cpp @header:RenderStyleGetters
 rendering/updating/RenderTreeBuilderBlock.cpp @header:RenderStyleGetters
 rendering/updating/RenderTreeBuilderBlockFlow.cpp
+rendering/updating/RenderTreeBuilderCanvas.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp @header:RenderStyleGetters
 rendering/updating/RenderTreeBuilderFormControls.cpp @header:RenderStyleGetters
 rendering/updating/RenderTreeBuilderInline.cpp @header:RenderStyleGetters

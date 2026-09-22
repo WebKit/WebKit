@@ -170,6 +170,10 @@ void HTMLCanvasElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (!isControlledByOffscreen())
             didUpdateSizeProperties();
     }
+
+    if (name == layoutsubtreeAttr)
+        invalidateStyleAndRenderersForSubtree();
+
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
@@ -194,7 +198,7 @@ bool HTMLCanvasElement::canContainRangeEndPoint() const
 
 bool HTMLCanvasElement::canStartSelection() const
 {
-    return false;
+    return layoutSubtree() && HTMLElement::canStartSelection();
 }
 
 ExceptionOr<void> HTMLCanvasElement::setHeight(unsigned value)
