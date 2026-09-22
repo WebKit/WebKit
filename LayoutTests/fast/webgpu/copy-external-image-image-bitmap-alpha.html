@@ -1,0 +1,206 @@
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+
+// A 6x1 16-bit RGBA PNG, sRGB, no ICC profile. Its first three texels carry data in RGB under alpha 0.
+const alphaPngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAYAAAABEAYAAACtWQOzAAAAAXNSR0IArs4c6QAAAClJREFUeNpj+P9fTIwBDKysQOSJEykpRkYMDP//NzQ4ODQ0/IcCBigAAI3gEdFqsXjzAAAAAElFTkSuQmCC';
+// The 16-bit values above, narrowed to 8 bits.
+const sourceTexels = [
+    [255, 22, 0, 0],
+    [0, 58, 0, 0],
+    [200, 100, 50, 0],
+    [255, 128, 64, 128],
+    [255, 255, 255, 255],
+    [0, 0, 0, 0],
+];
+const width = sourceTexels.length;
+
+// A 4x4 16-bit RGBA PNG whose texels encode their own column in R and row in G, so a copy which
+// crops, flips, resizes or reorients wrongly yields a texel naming the position it came from. Alpha
+// is 0 throughout, so these cases also fail if anything premultiplies on the way through.
+const geometryPngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEEAYAAAD5YUI9AAAAAXNSR0IArs4c6QAAADdJREFUeNolykENADAMw8BAKLRCGoRAM6RVsj/3ceZ6L9nVVkEzs+ugrYLe0Dpoq6A3gIO2CvoB5wssAULpxwYAAAAASUVORK5CYII=';
+// The same image carrying an eXIf chunk with Orientation = 6, which is a 90 degree clockwise turn.
+const geometryExifPngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEEAYAAAD5YUI9AAAAAXNSR0IArs4c6QAAABplWElmTU0AKgAAAAgAAQESAAMAAAABAAYAAAAAAADWZ0tpAAAAN0lEQVR42iXKQQ0AMAzDwEAotEIahEAzpFWyP/dx5nov2dVWQTOz66Ctgt7QOmiroDeAg7YK+gHnCywBQunHBgAAAABJRU5ErkJggg==';
+const geometrySize = 4;
+
+function geometryTexel(x, y)
+{
+    return [x * 64 + 16, y * 64 + 16, 128, 0];
+}
+
+function premultiplied(texel)
+{
+    const alpha = texel[3];
+    return [Math.round(texel[0] * alpha / 255), Math.round(texel[1] * alpha / 255), Math.round(texel[2] * alpha / 255), alpha];
+}
+
+function log(message)
+{
+    document.getElementById('result').textContent += message + '\n';
+}
+
+// How a WebGPU engine reaches copyExternalImageToTexture: encoded bytes in a Blob.
+function pngBlob(base64)
+{
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; ++i)
+        bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: 'image/png' });
+}
+
+async function copiedTexels(device, source, dstPremultiplied, copyWidth = width, copyHeight = 1)
+{
+    const texture = device.createTexture({
+        size: [copyWidth, copyHeight],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+    device.queue.copyExternalImageToTexture({ source }, { texture, premultipliedAlpha: dstPremultiplied }, [copyWidth, copyHeight]);
+
+    // copyTextureToBuffer wants a 256-byte aligned row, which is more than any row used here.
+    const bytesPerRow = 256;
+    const buffer = device.createBuffer({ size: bytesPerRow * copyHeight, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+    const encoder = device.createCommandEncoder();
+    encoder.copyTextureToBuffer({ texture }, { buffer, bytesPerRow }, [copyWidth, copyHeight]);
+    device.queue.submit([encoder.finish()]);
+
+    await buffer.mapAsync(GPUMapMode.READ);
+    const texels = new Uint8Array(buffer.getMappedRange()).slice();
+    buffer.unmap();
+    // Released here so that running this test repeatedly in one process does not accumulate them.
+    buffer.destroy();
+    texture.destroy();
+    return { texels, bytesPerRow };
+}
+
+// ImageBitmaps hold an image buffer each, so they are closed once the checks have read them.
+const openBitmaps = [];
+function tracked(bitmap)
+{
+    openBitmaps.push(bitmap);
+    return bitmap;
+}
+
+function check(label, texels, dstPremultiplied)
+{
+    // Only wide enough for the level that narrowing 16 bits to 8 costs.
+    const tolerance = 2;
+    for (let x = 0; x < width; ++x) {
+        const expected = dstPremultiplied ? premultiplied(sourceTexels[x]) : sourceTexels[x];
+        const actual = Array.from(texels.subarray(x * 4, x * 4 + 4));
+        const withinTolerance = expected.every((value, i) => Math.abs(actual[i] - value) <= tolerance);
+        // Only a failure prints the texel, so the expected output does not depend on GPU rounding.
+        log(withinTolerance ? `PASS ${label} texel ${x}` : `FAIL ${label} texel ${x}: got ${actual.join(',')}, expected ${expected.join(',')}`);
+    }
+}
+
+// The copy converts between the two modes, so only destination.premultipliedAlpha decides the texels.
+async function checkBothDestinations(device, label, source)
+{
+    check(`${label} into unpremultiplied`, (await copiedTexels(device, source, false)).texels, false);
+    check(`${label} into premultiplied`, (await copiedTexels(device, source, true)).texels, true);
+}
+
+// sourceOfDestination(x, y) names the source texel that must land at destination (x, y).
+async function checkGeometry(device, label, source, copyWidth, copyHeight, sourceOfDestination)
+{
+    const { texels, bytesPerRow } = await copiedTexels(device, source, false, copyWidth, copyHeight);
+    const tolerance = 2;
+    for (let y = 0; y < copyHeight; ++y) {
+        for (let x = 0; x < copyWidth; ++x) {
+            const [sourceX, sourceY] = sourceOfDestination(x, y);
+            const expected = geometryTexel(sourceX, sourceY);
+            const offset = y * bytesPerRow + x * 4;
+            const actual = Array.from(texels.subarray(offset, offset + 4));
+            const withinTolerance = expected.every((value, i) => Math.abs(actual[i] - value) <= tolerance);
+            log(withinTolerance ? `PASS ${label} at ${x},${y}`
+                : `FAIL ${label} at ${x},${y}: got ${actual.join(',')}, expected ${expected.join(',')} (source ${sourceX},${sourceY})`);
+        }
+    }
+}
+
+onload = async () => {
+    let device;
+    try {
+        const adapter = await navigator.gpu.requestAdapter();
+        device = await adapter.requestDevice();
+        // Silent on a passing run, so a copy that fails instead of returning wrong texels says why.
+        device.addEventListener('uncapturederror', event => log(`FAIL GPU error ${event.error.message}`));
+        const blob = pngBlob(alphaPngBase64);
+
+        // The case this was written for: compositing the decode loses the RGB of the alpha 0 texels.
+        await checkBothDestinations(device, 'blob, premultiplyAlpha none', tracked(await createImageBitmap(blob, { premultiplyAlpha: 'none' })));
+
+        // Asking to premultiply permits the lossy path, and texels 0 to 2 are then legitimately black.
+        check('blob, premultiplyAlpha premultiply into premultiplied',
+            (await copiedTexels(device, tracked(await createImageBitmap(blob, { premultiplyAlpha: 'premultiply' })), true)).texels, true);
+
+        // An ImageBitmap of an ImageBitmap copies bytes rather than compositing them.
+        const nested = tracked(await createImageBitmap(tracked(await createImageBitmap(blob, { premultiplyAlpha: 'none' })), { premultiplyAlpha: 'none' }));
+        await checkBothDestinations(device, 'bitmap of bitmap', nested);
+
+        // An ImageData is stored in the mode that was asked for, so it was always right.
+        const imageData = new ImageData(width, 1);
+        for (let x = 0; x < width; ++x)
+            imageData.data.set(sourceTexels[x], x * 4);
+        await checkBothDestinations(device, 'ImageData, premultiplyAlpha none', tracked(await createImageBitmap(imageData, { premultiplyAlpha: 'none' })));
+
+        // Cropping, flipping, resizing and reorienting all have to preserve the unpremultiplied
+        // channels too, and they take a different path from the copy which resamples nothing.
+        const geometry = pngBlob(geometryPngBase64);
+        const size = geometrySize;
+
+        // Nothing resampled: the pixels go in directly.
+        await checkGeometry(device, 'whole image', tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none' })),
+            size, size, (x, y) => [x, y]);
+
+        // A crop is a 1:1 copy of a sub-rectangle, so it is exact.
+        await checkGeometry(device, 'crop 1,1 2x2', tracked(await createImageBitmap(geometry, 1, 1, 2, 2, { premultiplyAlpha: 'none' })),
+            2, 2, (x, y) => [1 + x, 1 + y]);
+
+        // flipY reverses the rows.
+        await checkGeometry(device, 'flipY', tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none', imageOrientation: 'flipY' })),
+            size, size, (x, y) => [x, size - 1 - y]);
+
+        // resizeQuality pixelated is nearest neighbour, so an integer upscale is exact: each source
+        // texel becomes a 2x2 block.
+        await checkGeometry(device, 'resize 2x pixelated',
+            tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none', resizeWidth: size * 2, resizeHeight: size * 2, resizeQuality: 'pixelated' })),
+            size * 2, size * 2, (x, y) => [x >> 1, y >> 1]);
+
+        // EXIF orientation 6 turns the image 90 degrees clockwise, so the top row becomes the right
+        // column. The image is square, so the oriented extent is unchanged.
+        await checkGeometry(device, 'EXIF orientation 6', tracked(await createImageBitmap(pngBlob(geometryExifPngBase64), { premultiplyAlpha: 'none' })),
+            size, size, (x, y) => [y, size - 1 - x]);
+
+        // Combinations, which compose in the order the source rectangle is interpreted in: the crop
+        // names a rectangle of the oriented image, and flipY is part of the orientation, so a cropped
+        // and flipped copy takes rows from the flipped image. Flipped row j is stored row size-1-j,
+        // so destination (x, y) is stored (1 + x, size - 1 - (1 + y)).
+        await checkGeometry(device, 'crop 1,1 2x2 and flipY',
+            tracked(await createImageBitmap(geometry, 1, 1, 2, 2, { premultiplyAlpha: 'none', imageOrientation: 'flipY' })),
+            2, 2, (x, y) => [1 + x, size - 2 - y]);
+
+        // Resizing scales the cropped rectangle, so each cropped texel becomes a 2x2 block.
+        await checkGeometry(device, 'crop 1,1 2x2 and resize 2x pixelated',
+            tracked(await createImageBitmap(geometry, 1, 1, 2, 2, { premultiplyAlpha: 'none', resizeWidth: 4, resizeHeight: 4, resizeQuality: 'pixelated' })),
+            4, 4, (x, y) => [1 + (x >> 1), 1 + (y >> 1)]);
+
+        // Flipping and scaling together: the block a destination texel falls in is flipped.
+        await checkGeometry(device, 'flipY and resize 2x pixelated',
+            tracked(await createImageBitmap(geometry, { premultiplyAlpha: 'none', imageOrientation: 'flipY', resizeWidth: size * 2, resizeHeight: size * 2, resizeQuality: 'pixelated' })),
+            size * 2, size * 2, (x, y) => [x >> 1, size - 1 - (y >> 1)]);
+    } catch (error) {
+        log(`FAIL threw ${error}`);
+    } finally {
+        // Ten iterations of this test share one process, so nothing may outlive a single run.
+        for (const bitmap of openBitmaps)
+            bitmap.close();
+        device?.destroy();
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
+</script>
+<p>Tests that createImageBitmap(premultiplyAlpha: "none") preserves an alpha channel that carries data rather than opacity, including when the copy crops, flips, resizes or reorients, so that GPUQueue.copyExternalImageToTexture can upload it.</p>
+<pre id="result"></pre>

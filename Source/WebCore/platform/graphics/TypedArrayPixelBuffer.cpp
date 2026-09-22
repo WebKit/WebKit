@@ -124,4 +124,8 @@ template class TypedArrayPixelBuffer<PixelBuffer::Type::ByteArray, JSC::Uint8Cla
 template class TypedArrayPixelBuffer<PixelBuffer::Type::Float16Array, JSC::Float16Adaptor, PixelFormat::RGBA16F>;
 #endif
 
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+template class TypedArrayPixelBuffer<PixelBuffer::Type::Uint16Array, JSC::Uint16Adaptor, PixelFormat::RGBA16>;
+#endif
+
 } // namespace WebCore

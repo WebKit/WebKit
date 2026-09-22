@@ -60,6 +60,11 @@ TextStream& operator<<(TextStream& ts, PixelFormat pixelFormat)
         ts << "RGBA16F"_s;
         break;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        ts << "RGBA16"_s;
+        break;
+#endif
     }
     return ts;
 }

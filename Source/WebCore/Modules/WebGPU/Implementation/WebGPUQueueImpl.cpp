@@ -174,6 +174,10 @@ static std::optional<SourceTextureFormat> NODELETE sourceTextureFormat(PixelForm
     case PixelFormat::RGBA16F:
         return SourceTextureFormat { WGPUTextureFormat_RGBA16Float, true };
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        return SourceTextureFormat { WGPUTextureFormat_RGBA16Unorm, true };
+#endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
 #endif

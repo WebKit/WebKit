@@ -86,6 +86,9 @@ public:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         RGBA16F,
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        RGBA16, // NOLINT
+#endif
     };
 
     struct UsedFormat {
@@ -176,8 +179,8 @@ public:
     WEBCORE_EXPORT WTF::MachSendRight createSendRight() const;
 
     // Controls how the alpha channel is interpreted when creating a native image.
-    // Only meaningful for RGBA16F surfaces, whose format (unlike RGBA/RGBX or
-    // BGRA/BGRX) cannot itself encode whether the contents are opaque.
+    // Only meaningful for RGBA16F and RGBA16 surfaces, whose formats (unlike RGBA/RGBX
+    // or BGRA/BGRX) cannot themselves encode whether the contents are opaque.
     enum class ShouldForceOpaque : bool { No, Yes };
 
     // Any images created from a surface need to be released before releasing
@@ -329,6 +332,10 @@ constexpr IOSurface::Format convertToIOSurfaceFormat(PixelFormat format)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
         return IOSurface::Format::RGBA16F;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        return IOSurface::Format::RGBA16;
 #endif
     default:
         RELEASE_ASSERT_NOT_REACHED();

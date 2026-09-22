@@ -64,6 +64,9 @@ public:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
         Float16Array,
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        Uint16Array,
+#endif
         Other
     };
     virtual Type type() const = 0;
@@ -125,11 +128,17 @@ private:
 constexpr uint32_t PixelBuffer::bytesPerPixelComponent(PixelFormat pixelFormat)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    return (pixelFormat == PixelFormat::RGBA16F) ? 2 : 1;
-#else
-    UNUSED_PARAM(pixelFormat);
-    return 1;
+    if (pixelFormat == PixelFormat::RGBA16F)
+        return 2;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (pixelFormat == PixelFormat::RGBA16)
+        return 2;
+#endif
+#if !ENABLE(PIXEL_FORMAT_RGBA16F) && !ENABLE(PIXEL_FORMAT_RGBA16)
+    UNUSED_PARAM(pixelFormat);
+#endif
+    return 1;
 }
 
 constexpr uint32_t PixelBuffer::componentsPerPixel(PixelFormat)

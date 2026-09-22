@@ -35,9 +35,14 @@
 #include "ImageRotationSessionVT.h"
 #include "ImageUtilities.h"
 #include "PixelBuffer.h"
+#include <Accelerate/Accelerate.h>
+#include <array>
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/cf/VectorCF.h>
 
 #include "CoreVideoSoftLink.h"
 
@@ -200,6 +205,8 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
     bool isPremultiplied = format.alphaFormat == AlphaPremultiplication::Premultiplied;
     // RGBA == kCGBitmapByteOrder32Big | kCGImageAlpha*Last
     // BGRA == kCGBitmapByteOrder32Little | kCGImageAlpha*First
+    // At 16 bits per component the byte order names the order within each component rather than the
+    // channel order, which the alpha info alone gives; little matches the native uint16 stored here.
     CGBitmapInfo bitmapInfo;
     switch (format.pixelFormat) {
     case PixelFormat::RGBX8:
@@ -217,6 +224,11 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
         bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(isPremultiplied));
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little) | static_cast<CGBitmapInfo>(alphaInfoForAlphaLast(isPremultiplied));
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
@@ -277,6 +289,139 @@ ColorSpace NativeImage::colorSpace() const
 {
     Locker locker { m_lock };
     return ColorSpace(CGImageGetColorSpace(m_platformImage.get()));
+}
+
+NativeImage::UnpremultipliedPixels NativeImage::unpremultipliedPixels() const
+{
+    Locker locker { m_lock };
+    RetainPtr image = m_platformImage;
+    if (!image)
+        return { };
+
+    bool alphaIsFirst = false;
+    switch (CGImageGetAlphaInfo(image.get())) {
+    case kCGImageAlphaLast:
+        break;
+    case kCGImageAlphaFirst:
+        alphaIsFirst = true;
+        break;
+    default:
+        return { };
+    }
+
+    // An indexed image holds color table indices rather than colors.
+    if (CGColorSpaceGetModel(RetainPtr { CGImageGetColorSpace(image.get()) }.get()) != kCGColorSpaceModelRGB)
+        return { };
+
+    size_t width = CGImageGetWidth(image.get());
+    size_t height = CGImageGetHeight(image.get());
+    if (!width || !height)
+        return { };
+
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(image.get());
+    if (bitsPerComponent != 8 && bitsPerComponent != 16)
+        return { };
+    // Half float components share the 16 bit depth but not the unorm encoding.
+    if (CGImageGetBitmapInfo(image.get()) & kCGBitmapFloatComponents)
+        return { };
+    // Four channels, per the alpha infos accepted above.
+    if (CGImageGetBitsPerPixel(image.get()) != bitsPerComponent * 4)
+        return { };
+
+    // Only orders which leave the channels where the alpha info names them are handled.
+    auto byteOrder = CGImageGetBitmapInfo(image.get()) & kCGBitmapByteOrderMask;
+    bool littleEndianComponents = false;
+    if (bitsPerComponent == 16) {
+        switch (byteOrder) {
+        case kCGBitmapByteOrder16Little:
+            littleEndianComponents = true;
+            break;
+        case kCGBitmapByteOrder16Big:
+        case kCGBitmapByteOrderDefault: // CoreGraphics reports this for big endian 16-bit decodes.
+            break;
+        default:
+            return { };
+        }
+    } else if (byteOrder != kCGBitmapByteOrder32Big && byteOrder != kCGBitmapByteOrderDefault)
+        return { };
+
+    size_t sourceBytesPerPixel = bitsPerComponent / 2; // Four channels of bitsPerComponent bits each.
+    auto sourceBytesPerRow = CGImageGetBytesPerRow(image.get());
+    auto checkedSourceRowBytes = CheckedSize { sourceBytesPerPixel } * width;
+    if (checkedSourceRowBytes.hasOverflowed() || checkedSourceRowBytes.value() > sourceBytesPerRow)
+        return { };
+
+    auto checkedSourceLength = CheckedSize { sourceBytesPerRow } * height;
+    if (checkedSourceLength.hasOverflowed())
+        return { };
+
+    // 16-bit decodes keep their depth where there is a pixel format that can hold it, since narrowing
+    // is exactly the precision loss a data texture packed at 16 bits cannot afford.
+    bool keepSixteenBits = false;
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    keepSixteenBits = bitsPerComponent == 16;
+#endif
+    size_t destinationBytesPerPixel = keepSixteenBits ? 8 : 4;
+    auto checkedSize = CheckedSize { width } * height * destinationBytesPerPixel;
+    if (checkedSize.hasOverflowed())
+        return { };
+
+    RetainPtr sourceData = adoptCF(CGDataProviderCopyData(RetainPtr { CGImageGetDataProvider(image.get()) }.get()));
+    if (!sourceData)
+        return { };
+    auto sourceBytes = span(sourceData.get());
+    if (sourceBytes.size() < checkedSourceLength.value())
+        return { };
+
+    Vector<uint8_t> pixels;
+    if (!pixels.tryGrow(checkedSize.value()))
+        return { };
+    // permuteMap[i] is the source channel landing at destination position i; the result is always RGBA.
+    static constexpr std::array<uint8_t, 4> alphaLastMap { 0, 1, 2, 3 };
+    static constexpr std::array<uint8_t, 4> alphaFirstMap { 1, 2, 3, 0 };
+    const auto& permuteMap = alphaIsFirst ? alphaFirstMap : alphaLastMap;
+
+    vImage_Buffer source { const_cast<uint8_t*>(sourceBytes.data()), height, width, sourceBytesPerRow };
+    vImage_Buffer destination { pixels.mutableSpan().data(), height, width, width * destinationBytesPerPixel };
+
+    if (bitsPerComponent == 8) {
+        if (vImagePermuteChannels_ARGB8888(&source, &destination, permuteMap.data(), kvImageNoFlags) != kvImageNoError)
+            return { };
+        return { WTF::move(pixels), PixelFormat::RGBA8 };
+    }
+
+    // vImage reads 16-bit components in host order, so a big endian decode is swapped first. The swap
+    // reads straight from the decode, so it also does the copy and drops any row padding.
+    Vector<uint8_t> hostOrderSource;
+    if (!littleEndianComponents) {
+        auto checkedHostOrderSize = CheckedSize { width } * height * sourceBytesPerPixel;
+        if (checkedHostOrderSize.hasOverflowed())
+            return { };
+        if (!hostOrderSource.tryGrow(checkedHostOrderSize.value()))
+            return { };
+        auto swapped = hostOrderSource.mutableSpan();
+        size_t swappedBytesPerRow = width * sourceBytesPerPixel;
+        // Planar16U counts 16-bit components, so a row is all four channels of every pixel in it.
+        vImage_Buffer bigEndianPlanar { const_cast<uint8_t*>(sourceBytes.data()), height, width * 4, sourceBytesPerRow };
+        vImage_Buffer hostOrderPlanar { swapped.data(), height, width * 4, swappedBytesPerRow };
+        vImageByteSwap_Planar16U(&bigEndianPlanar, &hostOrderPlanar, kvImageNoFlags);
+        source = { swapped.data(), height, width, swappedBytesPerRow };
+    }
+
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (keepSixteenBits) {
+        if (vImagePermuteChannels_ARGB16U(&source, &destination, permuteMap.data(), kvImageNoFlags) != kvImageNoError)
+            return { };
+        return { WTF::move(pixels), PixelFormat::RGBA16 };
+    }
+#endif
+
+    // Narrows with (value * 255 + 32767) / 65535, and permutes, in one pass.
+    Pixel_8888 unusedBackgroundColor { };
+    if (vImageConvert_ARGB16UToARGB8888(&source, &destination, permuteMap.data(), 0, unusedBackgroundColor, kvImageNoFlags) != kvImageNoError)
+        return { };
+
+    return { WTF::move(pixels), PixelFormat::RGBA8 };
 }
 
 void NativeImage::computeHeadroom() const

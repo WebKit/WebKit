@@ -3311,7 +3311,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
         return { };
     // Image buffers hold premultiplied alpha, except when the ImageBitmap was constructed such that
     // the buffer contents are not premultiplied even though the buffer claims they are.
-    auto sourceAlphaPremultiplication = source.forciblyPremultiplyAlpha() ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
+    auto sourceAlphaPremultiplication = source.bufferAlphaFormat();
     // The premultiplyAlpha and flipY pixel unpack parameters are ignored for ImageBitmaps.
     texImageImpl(functionID, target, level, internalformat, xoffset, yoffset, zoffset, format, type, *image, sourceAlphaPremultiplication, false, source.premultiplyAlpha(), sourceImageRect, depth, unpackImageHeight);
     return { };

@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <WebCore/AlphaPremultiplication.h>
 #include <WebCore/IDLTypes.h>
 #include <WebCore/ImageTypes.h>
+#include <WebCore/PixelFormat.h>
 #include <WebCore/ScriptWrappable.h>
 #include <atomic>
 #include <wtf/RefCounted.h>
@@ -80,11 +82,12 @@ public:
     DetachedImageBitmap& operator=(DetachedImageBitmap&&);
     size_t memoryCost() const;
 private:
-    DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
+    DetachedImageBitmap(UniqueRef<SerializedImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat);
     UniqueRef<SerializedImageBuffer> m_bitmap;
     bool m_originClean : 1 { false };
     bool m_premultiplyAlpha : 1 { false };
     bool m_forciblyPremultiplyAlpha : 1 { false };
+    AlphaPremultiplication m_bufferAlphaFormat : 1 { AlphaPremultiplication::Premultiplied };
     friend class ImageBitmap;
 };
 
@@ -118,12 +121,14 @@ public:
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, Promise&&);
     static void createPromise(ScriptExecutionContext&, Source&&, ImageBitmapOptions&&, int sx, int sy, int sw, int sh, Promise&&);
 
-    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1, DrawsHDRContent = DrawsHDRContent::No);
+    // A pixel format of std::nullopt is derived from the color space; pass one to hold a depth the
+    // color space does not imply, such as a 16 bit unorm decode.
+    static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, RenderingMode, ColorSpace, float resolutionScale = 1, DrawsHDRContent = DrawsHDRContent::No, std::optional<PixelFormat> = std::nullopt);
     static RefPtr<ImageBuffer> createImageBuffer(ScriptExecutionContext&, const FloatSize&, ColorSpace, float resolutionScale = 1);
 
     static RefPtr<ImageBitmap> create(ScriptExecutionContext&, const IntSize&, ColorSpace);
     static Ref<ImageBitmap> create(ScriptExecutionContext&, DetachedImageBitmap);
-    static Ref<ImageBitmap> create(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false);
+    static Ref<ImageBitmap> create(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha = false, bool forciblyPremultiplyAlpha = false, AlphaPremultiplication bufferAlphaFormat = AlphaPremultiplication::Premultiplied);
 
     ~ImageBitmap();
 
@@ -138,6 +143,9 @@ public:
     bool premultiplyAlpha() const { return m_premultiplyAlpha; }
     bool forciblyPremultiplyAlpha() const { return m_forciblyPremultiplyAlpha; }
 
+    // The alpha format buffer()'s pixels are stored in, which premultiplyAlpha() does not describe.
+    AlphaPremultiplication bufferAlphaFormat() const { return m_bufferAlphaFormat; }
+
     std::optional<DetachedImageBitmap> detach();
     bool isDetached() const { return !m_bitmap; }
     void close();
@@ -146,7 +154,7 @@ public:
 private:
     friend class ImageBitmapImageObserver;
     friend class PendingImageBitmap;
-    ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha);
+    ImageBitmap(Ref<ImageBuffer>, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat);
     static Ref<ImageBitmap> createBlankImageBuffer(ScriptExecutionContext&, bool originClean);
 
     static void createCompletionHandler(ScriptExecutionContext&, Ref<HTMLImageElement>&&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmapCompletionHandler&&);
@@ -174,6 +182,7 @@ private:
     const bool m_originClean : 1 { false };
     const bool m_premultiplyAlpha : 1 { false };
     const bool m_forciblyPremultiplyAlpha : 1 { false };
+    const AlphaPremultiplication m_bufferAlphaFormat : 1 { AlphaPremultiplication::Premultiplied };
 };
 
 }

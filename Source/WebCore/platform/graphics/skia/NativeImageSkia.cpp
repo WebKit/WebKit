@@ -82,6 +82,11 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
         colorType = kRGBA_F16_SkColorType;
         break;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        colorType = kR16G16B16A16_unorm_SkColorType;
+        break;
+#endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
         ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
@@ -151,6 +156,34 @@ ColorSpace NativeImage::colorSpace() const
         return ColorSpace(colorSpace);
     // No color space means the default - SRGB.
     return ColorSpace::SRGB();
+}
+
+NativeImage::UnpremultipliedPixels NativeImage::unpremultipliedPixels() const
+{
+    auto platformImage = this->platformImage();
+    if (!platformImage)
+        return { };
+
+    // Reading a premultiplied image back unpremultiplied would undo it, which is what this avoids.
+    // FIXME: The decoders only produce kUnpremul_SkAlphaType when constructed with
+    // AlphaOption::NotPremultiplied, which ImageBitmap does not ask for, so this returns empty today.
+    if (platformImage->imageInfo().alphaType() != kUnpremul_SkAlphaType)
+        return { };
+
+    auto imageInfo = SkImageInfo::Make(platformImage->width(), platformImage->height(), kRGBA_8888_SkColorType, kUnpremul_SkAlphaType, platformImage->refColorSpace());
+    auto sizeInBytes = imageInfo.computeMinByteSize();
+    if (!sizeInBytes || SkImageInfo::ByteSizeOverflowed(sizeInBytes))
+        return { };
+
+    if (platformImage->isTextureBacked() && !PlatformDisplay::sharedDisplay().skiaGLContext()->makeContextCurrent())
+        return { };
+
+    Vector<uint8_t> pixels(sizeInBytes);
+    SkPixmap pixmap(imageInfo, pixels.mutableSpan().data(), imageInfo.minRowBytes());
+    if (!platformImage->readPixels(m_grContext, pixmap, 0, 0))
+        return { };
+
+    return { WTF::move(pixels), PixelFormat::RGBA8 };
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const

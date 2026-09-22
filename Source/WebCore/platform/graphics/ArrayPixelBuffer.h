@@ -51,11 +51,17 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ArrayPixelBuffer)
     static bool isType(const WebCore::PixelBuffer& pixelBuffer)
     {
+        if (pixelBuffer.type() == WebCore::PixelBuffer::Type::ByteArray)
+            return true;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-        return pixelBuffer.type() == WebCore::PixelBuffer::Type::ByteArray || pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array;
-#else
-        return pixelBuffer.type() == WebCore::PixelBuffer::Type::ByteArray;
+        if (pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array)
+            return true;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        if (pixelBuffer.type() == WebCore::PixelBuffer::Type::Uint16Array)
+            return true;
+#endif
+        return false;
     }
 SPECIALIZE_TYPE_TRAITS_END()
 
@@ -66,3 +72,8 @@ SPECIALIZE_TYPE_TRAITS_END()
 SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Float16Array)
     static bool isType(const JSC::ArrayBufferView& arrayBufferView) { return arrayBufferView.getType() == JSC::TypeFloat16; }
 SPECIALIZE_TYPE_TRAITS_END()
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Uint16Array)
+    static bool isType(const JSC::ArrayBufferView& arrayBufferView) { return arrayBufferView.getType() == JSC::TypeUint16; }
+SPECIALIZE_TYPE_TRAITS_END()
+#endif

@@ -703,6 +703,9 @@ static bool isSupportedGPUSourcePixelFormat(PixelFormat pixelFormat)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+#endif
         return true;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
@@ -819,7 +822,8 @@ static GPUResidentSource imageBufferForSource([[maybe_unused]] ScriptExecutionCo
     using ResultType = GPUResidentSource;
     auto result = WTF::switchOn(source,
         [&](const Ref<ImageBitmap>& imageBitmap) -> ResultType {
-            return { imageBitmap->buffer(), imageBitmap->premultiplyAlpha() };
+            // bufferAlphaFormat(), because premultiplyAlpha() is what was asked for, not what is stored.
+            return { imageBitmap->buffer(), imageBitmap->bufferAlphaFormat() == AlphaPremultiplication::Premultiplied };
         },
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
         [&](const Ref<ImageData>& imageData) -> ResultType {

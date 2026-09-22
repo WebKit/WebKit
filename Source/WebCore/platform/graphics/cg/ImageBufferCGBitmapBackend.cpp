@@ -47,7 +47,12 @@ static CGBitmapInfo bitmapInfoForPixelFormat(PixelFormat pixelFormat)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (pixelFormat == PixelFormat::RGBA16F)
         return static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
-#else
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (pixelFormat == PixelFormat::RGBA16)
+        return static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little);
+#endif
+#if !ENABLE(PIXEL_FORMAT_RGBA16F) && !ENABLE(PIXEL_FORMAT_RGBA16)
     UNUSED_PARAM(pixelFormat);
 #endif
     return static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
@@ -56,11 +61,14 @@ static CGBitmapInfo bitmapInfoForPixelFormat(PixelFormat pixelFormat)
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const ImageBufferParameters& parameters, const ImageBufferCreationContext&)
 {
     auto pixelFormat = parameters.bufferFormat.pixelFormat;
+    ASSERT(pixelFormat == PixelFormat::BGRA8
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    ASSERT(pixelFormat == PixelFormat::BGRA8 || pixelFormat == PixelFormat::RGBA16F);
-#else
-    ASSERT(pixelFormat == PixelFormat::BGRA8);
+        || pixelFormat == PixelFormat::RGBA16F
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        || pixelFormat == PixelFormat::RGBA16
+#endif
+        );
 
     IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())

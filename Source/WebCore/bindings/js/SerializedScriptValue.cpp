@@ -300,7 +300,8 @@ namespace {
 enum class ImageBitmapSerializationFlags : uint8_t {
     OriginClean              = 1 << 0, // ImageBitmap is always clean if serialized. However, at some point non-clean bitmaps were serialized. Can be removed once version is increased.
     PremultiplyAlpha         = 1 << 1,
-    ForciblyPremultiplyAlpha = 1 << 2
+    ForciblyPremultiplyAlpha = 1 << 2,
+    BufferAlphaUnpremultiplied = 1 << 3
 };
 
 }
@@ -824,6 +825,8 @@ private:
             flags.add(ImageBitmapSerializationFlags::PremultiplyAlpha);
         if (imageBitmap->forciblyPremultiplyAlpha())
             flags.add(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha);
+        if (imageBitmap->bufferAlphaFormat() == AlphaPremultiplication::Unpremultiplied)
+            flags.add(ImageBitmapSerializationFlags::BufferAlphaUnpremultiplied);
         write(ImageBitmapTag);
         write(static_cast<uint8_t>(flags.toRaw()));
         write(static_cast<int32_t>(logicalSize.width()));
@@ -3124,7 +3127,8 @@ private:
 
         buffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), logicalSize });
         const bool originClean = true;
-        Ref bitmap = ImageBitmap::create(buffer.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha));
+        auto bufferAlphaFormat = flags.contains(ImageBitmapSerializationFlags::BufferAlphaUnpremultiplied) ? AlphaPremultiplication::Unpremultiplied : AlphaPremultiplication::Premultiplied;
+        Ref bitmap = ImageBitmap::create(buffer.releaseNonNull(), originClean, flags.contains(ImageBitmapSerializationFlags::PremultiplyAlpha), flags.contains(ImageBitmapSerializationFlags::ForciblyPremultiplyAlpha), bufferAlphaFormat);
         return getJSValue(WTF::move(bitmap));
     }
 

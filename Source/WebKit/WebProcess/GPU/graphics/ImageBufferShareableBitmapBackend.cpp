@@ -64,9 +64,17 @@ unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const IntSize& 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const WebCore::ImageBufferParameters& parameters, const ImageBufferCreationContext& creationContext)
 {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
-    ASSERT(parameters.bufferFormat.pixelFormat == PixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == PixelFormat::BGRX8 || parameters.bufferFormat.pixelFormat == PixelFormat::RGBA16F);
+    ASSERT(parameters.bufferFormat.pixelFormat == PixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == PixelFormat::BGRX8 || parameters.bufferFormat.pixelFormat == PixelFormat::RGBA16F
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        || parameters.bufferFormat.pixelFormat == PixelFormat::RGBA16
+#endif
+        );
 #else
-    ASSERT(parameters.bufferFormat.pixelFormat == PixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == PixelFormat::BGRX8);
+    ASSERT(parameters.bufferFormat.pixelFormat == PixelFormat::BGRA8 || parameters.bufferFormat.pixelFormat == PixelFormat::BGRX8
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        || parameters.bufferFormat.pixelFormat == PixelFormat::RGBA16
+#endif
+        );
 #endif
 
     IntSize backendSize = calculateSafeBackendSize(parameters);

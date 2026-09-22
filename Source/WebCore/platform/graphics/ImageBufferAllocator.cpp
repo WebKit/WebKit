@@ -48,6 +48,10 @@ RefPtr<PixelBuffer> ImageBufferAllocator::createPixelBuffer(const PixelBufferFor
     if (format.pixelFormat == PixelFormat::RGBA16F)
         return Float16ArrayPixelBuffer::tryCreate(format, size);
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (format.pixelFormat == PixelFormat::RGBA16)
+        return Uint16ArrayPixelBuffer::tryCreate(format, size);
+#endif
     return ByteArrayPixelBuffer::tryCreate(format, size);
 }
 

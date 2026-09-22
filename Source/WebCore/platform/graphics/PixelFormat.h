@@ -39,6 +39,9 @@ enum class PixelFormat : uint8_t {
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     RGBA16F,
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    RGBA16, // NOLINT
+#endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     RGB10,
 #endif
@@ -69,6 +72,11 @@ constexpr ContentsFormat convertToContentsFormat(PixelFormat format)
     case PixelFormat::RGBA16F:
         return ContentsFormat::RGBA16F;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        // No layer contents format holds 16 bit unorm, so this one is never layer backing store.
+        break;
+#endif
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -91,6 +99,9 @@ constexpr bool pixelFormatIsOpaque(PixelFormat format)
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
 #endif
         return false;
     }
@@ -122,6 +133,9 @@ constexpr AllowExtendedColorSpace allowExtendedColorSpace(PixelFormat format)
     case PixelFormat::RGBA8:
     case PixelFormat::BGRX8:
     case PixelFormat::BGRA8:
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+#endif
         return AllowExtendedColorSpace::No;
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:

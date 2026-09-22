@@ -62,6 +62,11 @@ RefPtr<NativeImage> NativeImage::create(Ref<PixelBuffer>&& pixelBuffer)
         // cairo has no image surface format for the 16 bit float components.
         return nullptr;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        // cairo has no image surface format for 16 bit components.
+        return nullptr;
+#endif
 #if ENABLE(PIXEL_FORMAT_RGB10)
     case PixelFormat::RGB10:
         ASSERT(!PixelBuffer::supportedPixelFormat(format.pixelFormat));
@@ -124,6 +129,12 @@ ColorSpace NativeImage::colorSpace() const
 {
     notImplemented();
     return ColorSpace::SRGB();
+}
+
+NativeImage::UnpremultipliedPixels NativeImage::unpremultipliedPixels() const
+{
+    // CAIRO_FORMAT_ARGB32 is premultiplied by definition, so there is nothing here to preserve.
+    return { };
 }
 
 std::optional<Color> NativeImage::singlePixelSolidColor() const

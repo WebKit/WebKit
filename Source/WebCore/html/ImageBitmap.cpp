@@ -57,9 +57,11 @@
 #include "ScriptExecutionContextInlines.h"
 #include "ScriptWrappableInlines.h"
 #include "SharedBuffer.h"
+#include "TypedArrayPixelBuffer.h"
 #include "WebCodecsVideoFrame.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -71,11 +73,12 @@
 namespace WebCore {
 
 
-DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat)
     : m_bitmap(WTF::move(bitmap))
     , m_originClean(originClean)
     , m_premultiplyAlpha(premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
+    , m_bufferAlphaFormat(bufferAlphaFormat)
 {
 }
 
@@ -84,6 +87,7 @@ DetachedImageBitmap::DetachedImageBitmap(const DetachedImageBitmap& other)
     , m_originClean(other.m_originClean)
     , m_premultiplyAlpha(other.m_premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(other.m_forciblyPremultiplyAlpha)
+    , m_bufferAlphaFormat(other.m_bufferAlphaFormat)
 {
 }
 
@@ -130,12 +134,12 @@ Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionCont
 {
     auto buffer = SerializedImageBuffer::sinkIntoImageBuffer(detached.m_bitmap.moveToUniquePtr(), scriptExecutionContext.graphicsClient());
     RELEASE_ASSERT(buffer);
-    return create(buffer.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha);
+    return create(buffer.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha, detached.m_bufferAlphaFormat);
 }
 
-Ref<ImageBitmap> ImageBitmap::create(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+Ref<ImageBitmap> ImageBitmap::create(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat)
 {
-    return adoptRef(*new ImageBitmap(WTF::move(bitmap), originClean, premultiplyAlpha, forciblyPremultiplyAlpha));
+    return adoptRef(*new ImageBitmap(WTF::move(bitmap), originClean, premultiplyAlpha, forciblyPremultiplyAlpha, bufferAlphaFormat));
 }
 
 static ColorSpace closestRGBModelColorSpace(const ColorSpace& colorSpace, DrawsHDRContent drawsHDRContent)
@@ -196,11 +200,13 @@ static Ref<PixelBuffer> pixelBufferForImageData(const ImageData& imageData)
 #endif
 }
 
-RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, ColorSpace colorSpace, float resolutionScale, DrawsHDRContent drawsHDRContent)
+RefPtr<ImageBuffer> ImageBitmap::createImageBuffer(ScriptExecutionContext& scriptExecutionContext, const FloatSize& size, RenderingMode renderingMode, ColorSpace colorSpace, float resolutionScale, DrawsHDRContent drawsHDRContent, std::optional<PixelFormat> pixelFormat)
 {
     // FIXME: Should avoid converting color space and pixel format of image sources.
     auto imageBufferColorSpace = closestRGBModelColorSpace(colorSpace, drawsHDRContent);
-    return ImageBuffer::create(size, renderingMode, RenderingPurpose::Canvas, resolutionScale, imageBufferColorSpace, imageBufferPixelFormat(imageBufferColorSpace), scriptExecutionContext.graphicsClient());
+    // Deriving the format inspects the color space, so only do it when the caller gave no format.
+    auto bufferPixelFormat = pixelFormat ? *pixelFormat : imageBufferPixelFormat(imageBufferColorSpace);
+    return ImageBuffer::create(size, renderingMode, RenderingPurpose::Canvas, resolutionScale, imageBufferColorSpace, bufferPixelFormat, scriptExecutionContext.graphicsClient());
 }
 
 void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmapCompletionHandler&& completionHandler)
@@ -244,7 +250,7 @@ std::optional<DetachedImageBitmap> ImageBitmap::detach()
     std::unique_ptr serializedBitmap = ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(bitmap));
     if (!serializedBitmap)
         return std::nullopt;
-    return DetachedImageBitmap { makeUniqueRefFromNonNullUniquePtr(WTF::move(serializedBitmap)), originClean(), premultiplyAlpha(), forciblyPremultiplyAlpha() };
+    return DetachedImageBitmap { makeUniqueRefFromNonNullUniquePtr(WTF::move(serializedBitmap)), originClean(), premultiplyAlpha(), forciblyPremultiplyAlpha(), bufferAlphaFormat() };
 }
 
 void ImageBitmap::close()
@@ -370,6 +376,144 @@ static AlphaPremultiplication NODELETE alphaPremultiplicationForPremultiplyAlpha
     if (premultiplyAlpha == ImageBitmapOptions::PremultiplyAlpha::None)
         return AlphaPremultiplication::Unpremultiplied;
     return AlphaPremultiplication::Premultiplied;
+}
+
+static RefPtr<NativeImage> opaqueChannelImage(ScriptExecutionContext& scriptExecutionContext, std::span<const uint8_t> rgba, const IntSize& size, ColorSpace colorSpace, PixelFormat format, std::optional<PixelFormat> bufferFormat, DrawsHDRContent drawsHDRContent, std::optional<size_t> broadcastChannel)
+{
+    auto componentBytes = PixelBuffer::bytesPerPixelComponent(format);
+    Vector<uint8_t> channels(rgba.size());
+    auto destination = channels.mutableSpan();
+    for (size_t i = 0; i < rgba.size(); i += 4 * componentBytes) {
+        for (size_t component = 0; component < 3; ++component) {
+            auto sourceComponent = broadcastChannel.value_or(component);
+            for (size_t byte = 0; byte < componentBytes; ++byte)
+                destination[i + component * componentBytes + byte] = rgba[i + sourceComponent * componentBytes + byte];
+        }
+        // The largest value the component can hold, which is opaque in every unorm format.
+        for (size_t byte = 0; byte < componentBytes; ++byte)
+            destination[i + 3 * componentBytes + byte] = 0xFF;
+    }
+
+    // Created like the destination buffer so that reading it back converts the same way.
+    auto pixelBuffer = PixelBufferSourceView::create({ AlphaPremultiplication::Unpremultiplied, format, colorSpace }, size, channels.span());
+    if (!pixelBuffer)
+        return nullptr;
+    RefPtr buffer = ImageBitmap::createImageBuffer(scriptExecutionContext, size, RenderingMode::Unaccelerated, colorSpace, 1, drawsHDRContent, bufferFormat);
+    if (!buffer)
+        return nullptr;
+    buffer->putPixelBuffer(*pixelBuffer, { { }, size }, { }, AlphaPremultiplication::Unpremultiplied);
+    return buffer->copyNativeImage();
+}
+
+// The buffer format that holds decoded pixels of this format without narrowing them.
+// std::nullopt leaves createImageBuffer() to derive the format from the color space.
+static std::optional<PixelFormat> bufferFormatForDecodedPixels(PixelFormat decodedFormat, const ColorSpace& colorSpace)
+{
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    // An extended range color space derives a float format, which holds 16 bits too; unorm cannot
+    // hold the values outside [0, 1] that such a space exists to carry.
+    if (decodedFormat == PixelFormat::RGBA16 && !colorSpace.usesExtendedRange())
+        return PixelFormat::RGBA16;
+#endif
+    UNUSED_PARAM(decodedFormat);
+    UNUSED_PARAM(colorSpace);
+    return std::nullopt;
+}
+
+static RefPtr<ImageBuffer> unpremultipliedImageBuffer(ScriptExecutionContext& scriptExecutionContext, Image& image, const IntRect& sourceRectangle, const FloatSize& outputSize, ImageOrientation orientation, const ImageBitmapOptions& options, DrawsHDRContent drawsHDRContent)
+{
+    RefPtr nativeImage = image.nativeImage();
+    if (!nativeImage)
+        return nullptr;
+
+    auto decoded = nativeImage->unpremultipliedPixels();
+    if (decoded.pixels.isEmpty())
+        return nullptr;
+
+    auto storedSize = nativeImage->size();
+    if (storedSize.isEmpty())
+        return nullptr;
+    constexpr size_t channelsPerPixel = 4;
+    auto componentBytes = PixelBuffer::bytesPerPixelComponent(decoded.format);
+    auto checkedLength = CheckedSize { static_cast<size_t>(storedSize.width()) } * static_cast<size_t>(storedSize.height()) * channelsPerPixel * componentBytes;
+    if (checkedLength.hasOverflowed() || decoded.pixels.size() != checkedLength.value())
+        return nullptr;
+
+    auto outputIntSize = expandedIntSize(outputSize);
+    if (outputIntSize.isEmpty())
+        return nullptr;
+
+    auto colorSpace = nativeImage->colorSpace();
+    auto bufferFormat = bufferFormatForDecodedPixels(decoded.format, colorSpace);
+    auto createBuffer = [&]() -> RefPtr<ImageBuffer> {
+        auto renderingMode = bufferRenderingMode(scriptExecutionContext);
+        if (auto buffer = ImageBitmap::createImageBuffer(scriptExecutionContext, outputSize, renderingMode, colorSpace, 1, drawsHDRContent, bufferFormat))
+            return buffer;
+        // Retrying is only worth it when the mode that failed was the accelerated one.
+        if (renderingMode == RenderingMode::Unaccelerated)
+            return nullptr;
+        return ImageBitmap::createImageBuffer(scriptExecutionContext, outputSize, RenderingMode::Unaccelerated, colorSpace, 1, drawsHDRContent, bufferFormat);
+    };
+
+    // Nothing to resample means nothing to draw, copy pixels directly
+    bool resamples = orientation != ImageOrientation::Orientation::None
+        || options.orientation == ImageBitmapOptions::Orientation::FlipY
+        || !sourceRectangle.location().isZero()
+        || sourceRectangle.size() != storedSize
+        || sourceRectangle.size() != outputIntSize;
+    if (!resamples) {
+        auto sourceView = PixelBufferSourceView::create({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, storedSize, decoded.pixels.span());
+        if (!sourceView)
+            return nullptr;
+        auto bitmapData = createBuffer();
+        if (!bitmapData)
+            return nullptr;
+        bitmapData->putPixelBuffer(*sourceView, { { }, storedSize }, { }, AlphaPremultiplication::Unpremultiplied);
+        return bitmapData;
+    }
+
+    // The decoded pixels are already unpremultiplied, but resampling them has to go through a
+    // graphics context, and a context always holds premultiplied alpha. Drawing them directly would
+    // premultiply, which loses the color of any texel whose alpha is 0. So each draw is made opaque
+    // first, where premultiplied and unpremultiplied are the same bytes: one draw carries the color
+    // channels, the other broadcasts alpha into them as if it were a gray level. Both resample under
+    // the same transform, so recombining RGB from the first with A from the second reproduces the
+    // resampled image with its unpremultiplied channels intact.
+    auto drawOpaque = [&](std::optional<size_t> broadcastChannel) -> RefPtr<PixelBuffer> {
+        RefPtr channelImage = opaqueChannelImage(scriptExecutionContext, decoded.pixels.span(), storedSize, colorSpace, decoded.format, bufferFormat, drawsHDRContent, broadcastChannel);
+        if (!channelImage)
+            return nullptr;
+        auto buffer = createBuffer();
+        if (!buffer)
+            return nullptr;
+        Ref channelBitmap = BitmapImage::create(channelImage.releaseNonNull());
+        buffer->context().drawImage(channelBitmap.get(), FloatRect { FloatPoint(), outputSize }, sourceRectangle, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation) });
+
+        // Buffer is opaque so unpremultiplied is free
+        return buffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, { { }, outputIntSize });
+    };
+
+    RefPtr color = drawOpaque(std::nullopt);
+    RefPtr alpha = drawOpaque(3);
+    if (!color || !alpha || color->bytes().size() != alpha->bytes().size())
+        return nullptr;
+
+    auto combined = color->bytes();
+    auto alphaBytes = alpha->bytes();
+    for (size_t i = 0; i < combined.size(); i += 4 * componentBytes) {
+        for (size_t byte = 0; byte < componentBytes; ++byte)
+            combined[i + 3 * componentBytes + byte] = alphaBytes[i + byte];
+    }
+
+    auto sourceView = PixelBufferSourceView::create({ AlphaPremultiplication::Unpremultiplied, decoded.format, colorSpace }, outputIntSize, combined);
+    if (!sourceView)
+        return nullptr;
+
+    auto bitmapData = createBuffer();
+    if (!bitmapData)
+        return nullptr;
+    bitmapData->putPixelBuffer(*sourceView, { { }, outputIntSize }, { }, AlphaPremultiplication::Unpremultiplied);
+    return bitmapData;
 }
 
 Ref<ImageBitmap> ImageBitmap::createBlankImageBuffer(ScriptExecutionContext& scriptExecutionContext, bool originClean)
@@ -514,26 +658,32 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto drawsHDRContent = imageForRenderer->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace(), 1, drawsHDRContent);
     const bool originClean = !taintsOrigin(*cachedImage);
-    if (!bitmapData) {
-        completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
-        return;
-    }
 
     auto orientation = imageForRenderer->orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = ImageOrientation::Orientation::None;
-
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
 
     // 7. Create a new ImageBitmap object.
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
     //    bitmap to false.
     bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto sourceRect = sourceRectangle.releaseReturnValue();
+    auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, *imageForRenderer, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    if (!bitmapData) {
+        bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
+        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), imageForRenderer->colorSpace(), 1, drawsHDRContent);
+        if (!bitmapData) {
+            completionHandler(createBlankImageBuffer(scriptExecutionContext, originClean));
+            return;
+        }
+        FloatRect destRect(FloatPoint(), outputSize);
+        bitmapData->context().drawImage(*imageForRenderer, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+    }
+
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
 
     // 10. Return a new promise, but continue running these steps in parallel.
     // 11. Resolve the promise with the new ImageBitmap object as the value.
@@ -780,7 +930,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     // 3. Create a new ImageBitmap object.
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
     //    value as the origin-clean flag of the bitmap of the image argument.
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, forciblyPremultiplyAlpha, forciblyPremultiplyAlpha);
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, forciblyPremultiplyAlpha, forciblyPremultiplyAlpha, existingImageBitmap->bufferAlphaFormat());
 
     // 6. Return a new promise, but continue running these steps in parallel.
     // 7. Resolve the promise with the new ImageBitmap object as the value.
@@ -931,22 +1081,28 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
 
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto drawsHDRContent = image->hasHDRContent() ? DrawsHDRContent::Yes : DrawsHDRContent::No;
-    auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace(), 1, drawsHDRContent);
-    if (!bitmapData) {
-        completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
-        return;
-    }
 
     auto orientation = image->orientation();
     if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = ImageOrientation::Orientation::None;
 
-    FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
-
     const bool originClean = true;
     const bool premultiplyAlpha = alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied;
-    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+    auto sourceRect = sourceRectangle.releaseReturnValue();
+    auto bufferAlphaFormat = AlphaPremultiplication::Unpremultiplied;
+    RefPtr bitmapData = premultiplyAlpha ? nullptr : unpremultipliedImageBuffer(scriptExecutionContext, image, sourceRect, outputSize, orientation, options, drawsHDRContent);
+    if (!bitmapData) {
+        bufferAlphaFormat = AlphaPremultiplication::Premultiplied;
+        bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode(scriptExecutionContext), image->colorSpace(), 1, drawsHDRContent);
+        if (!bitmapData) {
+            completionHandler(Exception { ExceptionCode::InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s });
+            return;
+        }
+        FloatRect destRect(FloatPoint(), outputSize);
+        bitmapData->context().drawImage(image, destRect, sourceRect, { interpolationQualityForResizeQuality(options.resizeQuality), options.resolvedImageOrientation(orientation), drawsHDRContent, scriptExecutionContext.settingsValues().hdrAcceleratedApplyGainMapEnabled ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No });
+    }
+
+    auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, bufferAlphaFormat);
 
     completionHandler(WTF::move(imageBitmap));
 }
@@ -993,7 +1149,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     if (sourceRectangle.returnValue().location().isZero() && sourceRectangle.returnValue().size() == imageData->size() && sourceRectangle.returnValue().size() == outputSize && options.orientation != ImageBitmapOptions::Orientation::FlipY) {
         bitmapData->putPixelBuffer(pixelBufferForImageData(imageData.get()).get(), sourceRectangle.releaseReturnValue(), { }, alphaPremultiplication);
 
-        auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha);
+        auto imageBitmap = create(bitmapData.releaseNonNull(), originClean, premultiplyAlpha, false, alphaPremultiplication);
         completionHandler(WTF::move(imageBitmap));
         return;
     }
@@ -1016,12 +1172,13 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     completionHandler(WTF::move(imageBitmap));
 }
 
-ImageBitmap::ImageBitmap(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha)
+ImageBitmap::ImageBitmap(Ref<ImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat)
     : m_bitmap(WTF::move(bitmap))
     , m_memoryCost(m_bitmap->memoryCost())
     , m_originClean(originClean)
     , m_premultiplyAlpha(premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
+    , m_bufferAlphaFormat(bufferAlphaFormat)
 {
 }
 

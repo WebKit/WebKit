@@ -71,7 +71,12 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(PixelFormat p
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (pixelFormat == PixelFormat::RGBA16F)
         return sizeof(Float16) * 4;
-#else
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (pixelFormat == PixelFormat::RGBA16)
+        return sizeof(uint16_t) * 4;
+#endif
+#if !ENABLE(PIXEL_FORMAT_RGBA16F) && !ENABLE(PIXEL_FORMAT_RGBA16)
     UNUSED_PARAM(pixelFormat);
 #endif
     return 4;
@@ -103,7 +108,19 @@ CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(PixelFormat pixel
             info |= kCGImageAlphaPremultipliedLast;
         return info;
     }
-#else
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (pixelFormat == PixelFormat::RGBA16) {
+        info |= static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little);
+
+        if (isOpaque)
+            info |= kCGImageAlphaNoneSkipLast;
+        else
+            info |= kCGImageAlphaPremultipliedLast;
+        return info;
+    }
+#endif
+#if !ENABLE(PIXEL_FORMAT_RGBA16F) && !ENABLE(PIXEL_FORMAT_RGBA16)
     UNUSED_PARAM(pixelFormat);
 #endif
 

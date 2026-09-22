@@ -169,6 +169,10 @@ std::unique_ptr<IOSurface> IOSurface::createFromUntrustedUncompressedWebKitSendR
     case kCVPixelFormatType_64RGBAHalf:
         return validateAndCreateFromUntrustedSurface<8>(surface.get());
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case kCVPixelFormatType_64RGBALE:
+        return validateAndCreateFromUntrustedSurface<8>(surface.get());
+#endif
 
     default:
         break;
@@ -233,6 +237,11 @@ static OSType NODELETE coreVideoFormatFromIOSurfaceFormat(IOSurface::Format form
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case IOSurface::Format::RGBA16F:
         return useLosslessCompression == UseLosslessCompression::Yes ? static_cast<OSType>(kCVPixelFormatType_Lossless_64RGBAHalf) : static_cast<OSType>(kCVPixelFormatType_64RGBAHalf);
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case IOSurface::Format::RGBA16:
+        // CoreVideo has no lossless counterpart to kCVPixelFormatType_64RGBALE.
+        return static_cast<OSType>(kCVPixelFormatType_64RGBALE);
 #endif
     }
 
@@ -359,7 +368,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, 
     return optionsForSurface(size, 32, pixelFormat, name);
 }
 
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
+#if ENABLE(PIXEL_FORMAT_RGBA16F) || ENABLE(PIXEL_FORMAT_RGBA16)
 static NSDictionary *optionsFor64BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
 {
     return optionsForSurface(size, 64, pixelFormat, name);
@@ -397,6 +406,11 @@ static RetainPtr<IOSurfaceRef> createSurface(IntSize size, IOSurface::Name name,
         options = optionsFor64BitSurface(size, kCVPixelFormatType_64RGBAHalf, name);
         break;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case IOSurface::Format::RGBA16:
+        options = optionsFor64BitSurface(size, kCVPixelFormatType_64RGBALE, name);
+        break;
+#endif
     }
 
     return adoptCF(IOSurfaceCreate((CFDictionaryRef)options.get()));
@@ -424,6 +438,12 @@ IOSurface::IOSurface(IntSize size, const ColorSpace& colorSpace, IOSurface::Name
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     // FIXME: Remove when rdar://156761787 is resolved.
     if (format == IOSurface::Format::RGBA16F)
+        useLosslessCompression = UseLosslessCompression::No;
+#endif
+
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    // CoreVideo has no lossless counterpart to kCVPixelFormatType_64RGBALE.
+    if (format == IOSurface::Format::RGBA16)
         useLosslessCompression = UseLosslessCompression::No;
 #endif
 
@@ -485,6 +505,11 @@ static std::optional<IOSurface::UsedFormat> formatFromSurface(IOSurfaceRef surfa
 
     if (pixelFormat == kCVPixelFormatType_Lossless_64RGBAHalf)
         return IOSurface::UsedFormat { IOSurface::Format::RGBA16F, UseLosslessCompression::Yes };
+#endif
+
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    if (pixelFormat == kCVPixelFormatType_64RGBALE)
+        return IOSurface::UsedFormat { IOSurface::Format::RGBA16, UseLosslessCompression::No };
 #endif
 
     return { };
@@ -617,13 +642,20 @@ RetainPtr<CGImageRef> IOSurface::createImage(CGContextRef context)
 RefPtr<NativeImage> IOSurface::createNativeImage(ShouldForceOpaque shouldForceOpaque)
 {
     std::optional<CGImageAlphaInfo> alphaInfo;
-#if ENABLE(PIXEL_FORMAT_RGBA16F)
-    // An RGBA16F surface always uses IOSurface::Format::RGBA16F regardless of whether
+#if ENABLE(PIXEL_FORMAT_RGBA16F) || ENABLE(PIXEL_FORMAT_RGBA16)
+    // A 64-bit surface always uses IOSurface::Format::RGBA16F or RGBA16 regardless of whether
     // its contents are opaque, so bitmapConfiguration() assumes premultiplied alpha.
     // Callers presenting opaque contents must force the alpha channel to be ignored;
     // otherwise (e.g. a premultiplied WebGPU canvas) the alpha must be preserved so
     // the contents composite transparently.
-    if (shouldForceOpaque == ShouldForceOpaque::Yes && pixelFormat() == Format::RGBA16F)
+    bool formatCannotEncodeOpacity = false;
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    formatCannotEncodeOpacity = formatCannotEncodeOpacity || pixelFormat() == Format::RGBA16F;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    formatCannotEncodeOpacity = formatCannotEncodeOpacity || pixelFormat() == Format::RGBA16;
+#endif
+    if (shouldForceOpaque == ShouldForceOpaque::Yes && formatCannotEncodeOpacity)
         alphaInfo = kCGImageAlphaNoneSkipLast;
 #else
     UNUSED_PARAM(shouldForceOpaque);
@@ -680,6 +712,12 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
         bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case Format::RGBA16:
+        bitsPerComponent = 16;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little);
         break;
 #endif
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
@@ -1043,6 +1081,11 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case IOSurface::Format::RGBA16F:
         ts << "RGBA16F"_s;
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case IOSurface::Format::RGBA16:
+        ts << "RGBA16"_s;
         break;
 #endif
     }

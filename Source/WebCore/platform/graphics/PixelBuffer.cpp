@@ -42,6 +42,9 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+#endif
         return true;
 
 #if ENABLE(PIXEL_FORMAT_RGB10)

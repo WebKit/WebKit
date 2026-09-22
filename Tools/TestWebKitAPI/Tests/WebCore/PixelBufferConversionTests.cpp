@@ -328,4 +328,136 @@ TEST(PixelBufferConversionTests, convertImagePixelsFloat16PaddedRows)
 
 #endif // ENABLE(PIXEL_FORMAT_RGBA16F)
 
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+
+static std::vector<uint8_t> byteVectorFromUint16s(const std::vector<uint16_t>& components)
+{
+    std::vector<uint8_t> bytes(components.size() * sizeof(uint16_t));
+    memcpySpan(std::span { bytes }, asByteSpan(std::span { components }));
+    return bytes;
+}
+
+static std::vector<uint16_t> uint16sFromByteVector(const std::vector<uint8_t>& bytes)
+{
+    std::vector<uint16_t> components(bytes.size() / sizeof(uint16_t));
+    memcpySpan(asMutableByteSpan(std::span { components }), std::span { bytes });
+    return components;
+}
+
+static std::vector<uint16_t> convertUint16s(AlphaPremultiplication sourceAlphaFormat, ColorSpace sourceColorSpace, AlphaPremultiplication destinationAlphaFormat, ColorSpace destinationColorSpace, const std::vector<uint16_t>& components)
+{
+    RELEASE_ASSERT(!(components.size() % 4));
+    IntSize size(components.size() / 4, 1);
+    auto sourceBytes = byteVectorFromUint16s(components);
+    unsigned bytesPerRow = sourceBytes.size();
+    std::vector<uint8_t> destinationBytes(bytesPerRow);
+    ConstPixelBufferConversionView source { PixelBufferFormat { .alphaFormat = sourceAlphaFormat, .pixelFormat = PixelFormat::RGBA16, .colorSpace = sourceColorSpace }, bytesPerRow, sourceBytes };
+    PixelBufferConversionView destination { PixelBufferFormat { .alphaFormat = destinationAlphaFormat, .pixelFormat = PixelFormat::RGBA16, .colorSpace = destinationColorSpace }, bytesPerRow, destinationBytes };
+
+    convertImagePixels(source, destination, size);
+
+    return uint16sFromByteVector(destinationBytes);
+}
+
+// 16-bit unorm comparison with a tolerance, since premultiplication rounds.
+static void expectUint16sNear(const std::vector<uint16_t>& actual, const std::vector<uint16_t>& expected, unsigned tolerance = 2)
+{
+    ASSERT_EQ(actual.size(), expected.size());
+    for (size_t i = 0; i < expected.size(); ++i)
+        EXPECT_NEAR(actual[i], expected[i], tolerance) << "component " << i;
+}
+
+TEST(PixelBufferConversionTests, convertImagePixelsRGBA16Identical)
+{
+    std::vector<uint16_t> source { 65535, 32768, 16384, 65535, 0, 1000, 65535, 65535 };
+    EXPECT_EQ(convertUint16s(AlphaPremultiplication::Premultiplied, ColorSpace::SRGB(), AlphaPremultiplication::Premultiplied, ColorSpace::SRGB(), source), source);
+}
+
+TEST(PixelBufferConversionTests, convertImagePixelsRGBA16DataUnderZeroAlpha)
+{
+    // The color channels of a fully transparent texel can hold data rather than color, which is what
+    // this format exists to carry, so an unpremultiplied to unpremultiplied copy must not touch them.
+    std::vector<uint16_t> source { 65535, 5632, 0, 0, 51200, 25600, 12800, 0 };
+    EXPECT_EQ(convertUint16s(AlphaPremultiplication::Unpremultiplied, ColorSpace::SRGB(), AlphaPremultiplication::Unpremultiplied, ColorSpace::SRGB(), source), source);
+}
+
+TEST(PixelBufferConversionTests, convertImagePixelsRGBA16AlphaOnly)
+{
+    // Alpha-only changes within RGBA16 use the vImage 16-bit unorm premultiply entry points.
+    auto convert = [](AlphaPremultiplication sourceAlphaFormat, AlphaPremultiplication destinationAlphaFormat, const std::vector<uint16_t>& components) {
+        return convertUint16s(sourceAlphaFormat, ColorSpace::SRGB(), destinationAlphaFormat, ColorSpace::SRGB(), components);
+    };
+
+    expectUint16sNear(convert(AlphaPremultiplication::Unpremultiplied, AlphaPremultiplication::Premultiplied, { 65535, 32768, 16384, 32768 }), { 32768, 16384, 8192, 32768 });
+    expectUint16sNear(convert(AlphaPremultiplication::Premultiplied, AlphaPremultiplication::Unpremultiplied, { 32768, 16384, 8192, 32768 }), { 65535, 32768, 16384, 32768 });
+
+    // Opaque needs no scaling, so it is exact in both directions.
+    std::vector<uint16_t> opaque { 65535, 32768, 16384, 65535 };
+    EXPECT_EQ(convert(AlphaPremultiplication::Unpremultiplied, AlphaPremultiplication::Premultiplied, opaque), opaque);
+    EXPECT_EQ(convert(AlphaPremultiplication::Premultiplied, AlphaPremultiplication::Unpremultiplied, opaque), opaque);
+
+    // A zero alpha must not divide by zero.
+    expectUint16sNear(convert(AlphaPremultiplication::Premultiplied, AlphaPremultiplication::Unpremultiplied, { 0, 0, 0, 0 }), { 0, 0, 0, 0 });
+}
+
+TEST(PixelBufferConversionTests, convertImagePixelsRGBA16ToAndFromByte)
+{
+    const auto colorSpace = ColorSpace::SRGB();
+    constexpr int uint16BytesPerRow = 4 * sizeof(uint16_t);
+    constexpr int u8BytesPerRow = 4;
+
+    // RGBA16 to BGRA8: components narrow to [0, 255] and the channel order is swapped.
+    {
+        const auto sourceBytes = byteVectorFromUint16s({ 65535, 32768, 0, 65535 });
+        std::vector<uint8_t> destinationBytes(u8BytesPerRow);
+        const ConstPixelBufferConversionView source { { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16, colorSpace }, uint16BytesPerRow, sourceBytes };
+        const PixelBufferConversionView destination { { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, colorSpace }, u8BytesPerRow, destinationBytes };
+
+        convertImagePixels(source, destination, { 1, 1 });
+
+        EXPECT_EQ(destinationBytes[0], 0);
+        EXPECT_NEAR(destinationBytes[1], 128, 1);
+        EXPECT_EQ(destinationBytes[2], 255);
+        EXPECT_EQ(destinationBytes[3], 255);
+    }
+
+    // BGRA8 to RGBA16: components widen and the channel order is swapped back.
+    {
+        const std::vector<uint8_t> sourceBytes { 0, 128, 255, 255 };
+        std::vector<uint8_t> destinationBytes(uint16BytesPerRow);
+        const ConstPixelBufferConversionView source { { AlphaPremultiplication::Premultiplied, PixelFormat::BGRA8, colorSpace }, u8BytesPerRow, sourceBytes };
+        const PixelBufferConversionView destination { { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16, colorSpace }, uint16BytesPerRow, destinationBytes };
+
+        convertImagePixels(source, destination, { 1, 1 });
+
+        expectUint16sNear(uint16sFromByteVector(destinationBytes), { 65535, 32896, 0, 65535 }, 257);
+    }
+}
+
+TEST(PixelBufferConversionTests, convertImagePixelsRGBA16PaddedRows)
+{
+    const auto colorSpace = ColorSpace::SRGB();
+    const auto sourceBytes = byteVectorFromUint16s({
+        65535, 0, 0, 65535, /* padding: */ 0, 0,
+        0, 65535, 0, 65535, /* padding: */ 0, 0,
+    });
+    std::vector<uint8_t> destinationBytes(2 * 6);
+    const ConstPixelBufferConversionView source { { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA16, colorSpace }, 6 * sizeof(uint16_t), sourceBytes };
+    const PixelBufferConversionView destination { { AlphaPremultiplication::Premultiplied, PixelFormat::RGBA8, colorSpace }, 6, destinationBytes };
+
+    convertImagePixels(source, destination, { 1, 2 });
+
+    // Row 0 is red, row 1 is green, each at the start of its (padded) row.
+    EXPECT_EQ(destinationBytes[0], 255);
+    EXPECT_EQ(destinationBytes[1], 0);
+    EXPECT_EQ(destinationBytes[2], 0);
+    EXPECT_EQ(destinationBytes[3], 255);
+    EXPECT_EQ(destinationBytes[6], 0);
+    EXPECT_EQ(destinationBytes[7], 255);
+    EXPECT_EQ(destinationBytes[8], 0);
+    EXPECT_EQ(destinationBytes[9], 255);
+}
+
+#endif // ENABLE(PIXEL_FORMAT_RGBA16)
+
 } // namespace TestWebKitAPI

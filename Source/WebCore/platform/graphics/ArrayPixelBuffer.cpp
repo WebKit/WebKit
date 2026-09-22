@@ -49,6 +49,11 @@ RefPtr<ArrayPixelBuffer> ArrayPixelBuffer::tryCreate(const PixelBufferFormat& fo
         return Float16ArrayPixelBuffer::tryCreate(format, size);
 #endif
 
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+        return Uint16ArrayPixelBuffer::tryCreate(format, size);
+#endif
+
     default:
         return nullptr;
     }

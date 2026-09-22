@@ -82,6 +82,9 @@ static bool NODELETE isSupportedConversionFormat(PixelFormat pixelFormat)
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     case PixelFormat::RGBA16F:
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+    case PixelFormat::RGBA16:
+#endif
         return true;
     default:
         return false;
@@ -123,6 +126,12 @@ static inline vImage_CGImageFormat makeVImageCGImageFormat(const PixelBufferForm
             if (format.alphaFormat == AlphaPremultiplication::Premultiplied)
                 return std::make_tuple(16u, 64u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast));
             return std::make_tuple(16u, 64u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents) | static_cast<CGBitmapInfo>(kCGImageAlphaLast));
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+        case PixelFormat::RGBA16:
+            if (format.alphaFormat == AlphaPremultiplication::Premultiplied)
+                return std::make_tuple(16u, 64u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast));
+            return std::make_tuple(16u, 64u, static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Little) | static_cast<CGBitmapInfo>(kCGImageAlphaLast));
 #endif
         }
 
@@ -280,6 +289,14 @@ static bool convertImagePixelsAcceleratedMatchingSize(const ConstPixelBufferConv
                     vImagePremultiplyData_RGBA16F(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
                 break;
 #endif
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+            case PixelFormat::RGBA16:
+                if (shouldUnpremultiply)
+                    vImageUnpremultiplyData_RGBA16U(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                else
+                    vImagePremultiplyData_RGBA16U(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
+                break;
+#endif
             case PixelFormat::RGBA8:
                 if (shouldUnpremultiply)
                     vImageUnpremultiplyData_RGBA8888(&sourceVImageBuffer, &destinationVImageBuffer, kvImageNoFlags);
@@ -374,6 +391,10 @@ static bool convertImagePixelsSkia(const ConstPixelBufferConversionView& source,
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 #error "PixelFormat::RGBA16F unimplemented."
+#endif
+
+#if ENABLE(PIXEL_FORMAT_RGBA16)
+#error "PixelFormat::RGBA16 unimplemented."
 #endif
 
 static constexpr uint8_t NODELETE premultiply(uint8_t unpremultiplied, uint8_t alpha)
