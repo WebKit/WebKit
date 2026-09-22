@@ -775,7 +775,7 @@ private:
 
     void verifyCoverageConsistency(const Path& path, int depth, Interval coverage)
     {
-#ifdef ASSERT_ENABLED
+#if ASSERT_ENABLED
         ASSERT(depth >= 0);
         depth--;
         while (depth >= 0) {
@@ -788,6 +788,10 @@ private:
         if (m_rootInterval != coverage)
             dataLogLn("FAIL: m_rootInterval=", m_rootInterval, " coverage=", coverage, " Tree=", *this);
         ASSERT(m_rootInterval == coverage);
+#else
+        UNUSED_PARAM(path);
+        UNUSED_PARAM(depth);
+        UNUSED_PARAM(coverage);
 #endif
     }
 
