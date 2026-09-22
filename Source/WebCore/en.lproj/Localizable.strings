@@ -103,16 +103,16 @@
 /* Label for an inspectable Web Extension service worker */
 "%s — Extension Service Worker" = "%s — Extension Service Worker";
 
-/* Present the number of selected <option> items in a <select multiple> element (iOS only) */
+/* Present the number of selected <option> items in a <select multiple> element */
 "%zu Items" = "%zu Items";
 
-/* Present the element <select multiple> when no <option> items are selected (iOS only) */
+/* Present the element <select multiple> when no <option> items are selected */
 "0 Items" = "0 Items";
 
 /* 0.5× media controls context menu playback speed label */
 "0.5× (Media Controls Menu Playback Speed)" = "0.5×";
 
-/* Present the element <select multiple> when a single <option> is selected (iOS only) */
+/* Present the element <select multiple> when a single <option> is selected */
 "1 Item" = "1 Item";
 
 /* Option in segmented control for choosing list type in text editing */

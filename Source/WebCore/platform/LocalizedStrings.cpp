@@ -1065,6 +1065,18 @@ String unknownFileSizeText()
     return WEB_UI_STRING_KEY("Unknown", "Unknown (filesize)", "Unknown filesize FTP directory listing item");
 }
 
+String htmlSelectMultipleItems(size_t count)
+{
+    switch (count) {
+    case 0:
+        return WEB_UI_STRING("0 Items", "Present the element <select multiple> when no <option> items are selected");
+    case 1:
+        return WEB_UI_STRING("1 Item", "Present the element <select multiple> when a single <option> is selected");
+    default:
+        return WEB_UI_FORMAT_STRING("%zu Items", "Present the number of selected <option> items in a <select multiple> element", count);
+    }
+}
+
 String imageTitle(const String& filename, const IntSize& size)
 {
 #if PLATFORM(COCOA)
