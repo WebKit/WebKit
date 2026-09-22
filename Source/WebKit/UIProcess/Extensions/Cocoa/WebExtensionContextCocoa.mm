@@ -3705,6 +3705,15 @@ void WebExtensionContext::reloadBackgroundContentForTesting()
     loadBackgroundWebViewIfNeeded();
 }
 
+void WebExtensionContext::unloadBackgroundContentForTesting()
+{
+    ASSERT(isLoaded() && inTestingMode());
+    if (!isLoaded() || !inTestingMode())
+        return;
+
+    unloadBackgroundWebView();
+}
+
 void WebExtensionContext::sendTestMessage(const String& message, id argument)
 {
     ASSERT(isLoaded() && inTestingMode());

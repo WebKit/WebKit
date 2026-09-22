@@ -87,6 +87,8 @@ public:
     std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier() const { return m_jobDataIdentifier; }
     bool doesHandleFetch() const { return m_doesHandleFetch; }
 
+    bool hasFinishedFiringActivateEvent() const { return m_hasFinishedFiringActivateEvent; }
+
     void startFetchEventMonitoring();
     void stopFetchEventMonitoring() { m_isHandlingFetchEvent = false; }
     void startFunctionalEventMonitoring();
@@ -132,6 +134,7 @@ private:
     enum class State { Idle, Starting, Installing, Activating };
     State m_state { State::Idle };
     bool m_ongoingHeartBeatCheck { false };
+    bool m_hasFinishedFiringActivateEvent { false };
 
     static constexpr Seconds heartBeatTimeout { 60_s };
     static constexpr Seconds heartBeatTimeoutForTest { 1_s };

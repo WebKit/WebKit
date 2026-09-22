@@ -72,6 +72,13 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)_reloadBackgroundContentForTesting;
 
 /*!
+ @abstract Terminates the extension's background content without reloading it, simulating an idle timeout.
+ @discussion Allows tests to exercise background content termination without waiting for the real idle timer, leaving
+ the background content unloaded until something (e.g. a message from another extension page) wakes it back up.
+ */
+- (void)_unloadBackgroundContentForTesting;
+
+/*!
  @abstract Retrieves the extension sidebar which applies to a given tab.
  @param tab The tab for which to retrieve the extension sidebar.
  @result The sidebar for that tab, or `nil` if the extension has no sidebar to show there.

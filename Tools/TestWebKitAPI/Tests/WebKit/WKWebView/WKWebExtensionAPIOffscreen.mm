@@ -457,6 +457,51 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentVisibleToClientsMatchAllAfte
     [manager run];
 }
 
+TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage)
+{
+    auto *script = @[
+        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
+        @"const isOffscreenAClient = async () => (await self.clients.matchAll()).some((client) => client.url === offscreenURL)",
+
+        @"browser.runtime.onMessage.addListener(async (message) => {",
+        @"  if (message !== 'Wake Up')",
+        @"    return",
+        @"  browser.test.assertTrue(await isOffscreenAClient(), 'The offscreen document should immediately be a controlled client when a tab message wakes the service worker, with no polling required')",
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"if (!(await browser.offscreen.hasDocument())) {",
+        @"  await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"  await browser.tabs.create({ url: 'tab.html' })",
+        @"}",
+    ];
+
+    auto *tabScript = @[
+        @"browser.test.onMessage.addListener((message) => {",
+        @"  if (message !== 'Trigger')",
+        @"    return",
+        @"  browser.runtime.sendMessage('Wake Up')",
+        @"})",
+
+        @"browser.test.sendMessage('Tab Ready')",
+    ];
+
+    auto manager = Util::loadExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+        @"tab.html": @"<script type='module' src='tab.js'></script>",
+        @"tab.js": Util::constructScript(tabScript),
+    }, offscreenConfig);
+
+    [manager runUntilTestMessage:@"Tab Ready"];
+
+    [manager.get().context _unloadBackgroundContentForTesting];
+
+    [manager sendTestMessage:@"Trigger"];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)

@@ -642,6 +642,7 @@ void ServiceWorkerThread::willPostTaskToFireActivateEvent()
 void ServiceWorkerThread::finishedFiringActivateEvent()
 {
     m_state = State::Idle;
+    m_hasFinishedFiringActivateEvent = true;
 
     if (RefPtr connection = SWContextManager::singleton().connection())
         connection->didFinishActivation(identifier());

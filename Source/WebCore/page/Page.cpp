@@ -182,6 +182,7 @@
 #include "ScrollLatchingController.h"
 #include "ScrollingCoordinator.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerThread.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "SocketProvider.h"
@@ -5363,6 +5364,14 @@ void Page::setServiceWorkerGlobalScope(ServiceWorkerGlobalScope& serviceWorkerGl
     ASSERT(isMainThread());
     ASSERT(m_isServiceWorkerPage);
     m_serviceWorkerGlobalScope = serviceWorkerGlobalScope;
+}
+
+RefPtr<ServiceWorkerThread> Page::serviceWorkerThread() const
+{
+    RefPtr serviceWorkerGlobalScope = m_serviceWorkerGlobalScope.get();
+    if (!serviceWorkerGlobalScope)
+        return nullptr;
+    return serviceWorkerGlobalScope->thread();
 }
 
 StorageConnection& Page::storageConnection()

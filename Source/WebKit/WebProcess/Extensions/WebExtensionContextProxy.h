@@ -156,6 +156,9 @@ private:
 
     static RefPtr<WebExtensionLocalization> parseLocalization(RefPtr<API::Data>, const URL& baseURL);
 
+    bool isBackgroundServiceWorkerStillActivating();
+    void dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType, String messageJSON, std::optional<WebExtensionMessageTargetParameters>, WebExtensionMessageSenderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&&, unsigned remainingActivationPollAttempts);
+
     // Action
     void dispatchActionClickedEvent(const std::optional<WebExtensionTabParameters>&);
 

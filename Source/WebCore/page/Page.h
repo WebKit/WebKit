@@ -187,6 +187,7 @@ class ScrollLatchingController;
 class ScrollingCoordinator;
 class ServicesOverlayController;
 class ServiceWorkerGlobalScope;
+class ServiceWorkerThread;
 class Settings;
 class SocketProvider;
 class SpeechRecognitionProvider;
@@ -827,6 +828,7 @@ public:
     // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
     void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
     WEBCORE_EXPORT JSC::JSGlobalObject* serviceWorkerGlobalObject(DOMWrapperWorld&);
+    WEBCORE_EXPORT RefPtr<ServiceWorkerThread> serviceWorkerThread() const;
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState>);

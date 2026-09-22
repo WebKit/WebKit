@@ -884,6 +884,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toI
     protect(*_webExtensionContext)->reloadBackgroundContentForTesting();
 }
 
+- (void)_unloadBackgroundContentForTesting
+{
+    protect(*_webExtensionContext)->unloadBackgroundContentForTesting();
+}
+
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 - (_WKWebExtensionSidebar *)sidebarForTab:(id<WKWebExtensionTab>)tab
 {
@@ -1318,6 +1323,10 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> NODELETE toI
 }
 
 - (void)_reloadBackgroundContentForTesting
+{
+}
+
+- (void)_unloadBackgroundContentForTesting
 {
 }
 

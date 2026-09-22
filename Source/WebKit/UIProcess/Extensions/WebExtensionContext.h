@@ -630,6 +630,7 @@ public:
     void sendTestStarted(id argument);
     void sendTestFinished(id argument);
     void reloadBackgroundContentForTesting();
+    void unloadBackgroundContentForTesting();
 #endif
 
     URL backgroundContentURL();

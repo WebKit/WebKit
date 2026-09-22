@@ -49,10 +49,13 @@
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/Page.h>
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/ServiceWorkerThread.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/RunLoop.h>
 #import <wtf/text/MakeString.h>
 
 
@@ -119,11 +122,44 @@ JSValueRef toWebAPI(JSContextRef context, const WebExtensionMessageSenderParamet
     return result;
 }
 
+bool WebExtensionContextProxy::isBackgroundServiceWorkerStillActivating()
+{
+    bool isStillActivating = false;
+    m_extensionContentFrames.forEach([&](auto& frame) {
+        if (isStillActivating)
+            return;
+
+        RefPtr page = frame.page() ? frame.page()->corePage() : nullptr;
+        if (!page || !page->isServiceWorkerPage())
+            return;
+
+        RefPtr serviceWorkerThread = page->serviceWorkerThread();
+        if (serviceWorkerThread && !serviceWorkerThread->hasFinishedFiringActivateEvent())
+            isStillActivating = true;
+    });
+
+    return isStillActivating;
+}
+
 void WebExtensionContextProxy::internalDispatchRuntimeMessageEvent(WebExtensionContentWorldType contentWorldType, const String& messageJSON, const std::optional<WebExtensionMessageTargetParameters>& targetParameters, const WebExtensionMessageSenderParameters& senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler)
+{
+    static constexpr unsigned backgroundServiceWorkerActivationMaxPollAttempts = 400;
+    dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, WTF::move(completionHandler), backgroundServiceWorkerActivationMaxPollAttempts);
+}
+
+void WebExtensionContextProxy::dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(WebExtensionContentWorldType contentWorldType, String messageJSON, std::optional<WebExtensionMessageTargetParameters> targetParameters, WebExtensionMessageSenderParameters senderParameters, bool userGesture, CompletionHandler<void(String&& replyJSON)>&& completionHandler, unsigned remainingActivationPollAttempts)
 {
     if (!hasDOMWrapperWorld(contentWorldType)) {
         // A null reply to the completionHandler means no listeners replied.
         completionHandler({ });
+        return;
+    }
+
+    if (remainingActivationPollAttempts && isBackgroundServiceWorkerStillActivating()) {
+        static constexpr auto backgroundServiceWorkerActivationPollInterval = 5_ms;
+        RunLoop::mainSingleton().dispatchAfter(backgroundServiceWorkerActivationPollInterval, [this, protectedThis = Ref { *this }, contentWorldType, messageJSON, targetParameters, senderParameters, userGesture, completionHandler = WTF::move(completionHandler), remainingActivationPollAttempts]() mutable {
+            dispatchRuntimeMessageEventOnceBackgroundServiceWorkerIsActive(contentWorldType, WTF::move(messageJSON), WTF::move(targetParameters), WTF::move(senderParameters), userGesture, WTF::move(completionHandler), remainingActivationPollAttempts - 1);
+        });
         return;
     }
 
