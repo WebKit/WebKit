@@ -310,7 +310,7 @@ extension WebGPU.CommandEncoder {
         // A transient texture is memoryless, so it cannot be the destination of a blit. Its contents
         // never exist outside of the render pass which produces them, and every render pass using it
         // has to clear it, so there is nothing to lazily initialize here.
-        if (texture.usage() & WGPUTextureUsage_Transient.rawValue) != 0 {
+        if (texture.usage() & WGPUTextureUsage_Transient) != 0 {
             return
         }
 
@@ -610,11 +610,11 @@ extension WebGPU.CommandEncoder {
             return errorString("destination buffer is not valid")
         }
 
-        if source.usage() & WGPUBufferUsage_CopySrc.rawValue == 0 {
+        if source.usage() & WGPUBufferUsage_CopySrc == 0 {
             return errorString("source usage does not have COPY_SRC")
         }
 
-        if destination.usage() & WGPUBufferUsage_CopyDst.rawValue == 0 {
+        if destination.usage() & WGPUBufferUsage_CopyDst == 0 {
             return errorString("destination usage does not have COPY_DST")
         }
 
@@ -703,7 +703,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if sourceTexture.usage() & WGPUTextureUsage_CopySrc.rawValue == 0 {
+        if sourceTexture.usage() & WGPUTextureUsage_CopySrc == 0 {
             return errorString("source texture usage does not contain CopySrc")
         }
 
@@ -711,7 +711,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if destinationTexture.usage() & WGPUTextureUsage_CopyDst.rawValue == 0 {
+        if destinationTexture.usage() & WGPUTextureUsage_CopyDst == 0 {
             return errorString("destination texture usage does not contain CopyDst")
         }
 
@@ -797,7 +797,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if sourceTexture.usage() & WGPUTextureUsage_CopySrc.rawValue == 0 {
+        if sourceTexture.usage() & WGPUTextureUsage_CopySrc == 0 {
             return errorString("sourceTexture usage does not contain CopySrc")
         }
 
@@ -823,7 +823,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if WebGPU.fromAPI(destination.buffer).usage() & WGPUBufferUsage_CopyDst.rawValue == 0 {
+        if WebGPU.fromAPI(destination.buffer).usage() & WGPUBufferUsage_CopyDst == 0 {
             return errorString("destination buffer usage does not contain CopyDst")
         }
 
@@ -884,7 +884,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if sourceBuffer.usage() & WGPUBufferUsage_CopySrc.rawValue == 0 {
+        if sourceBuffer.usage() & WGPUBufferUsage_CopySrc == 0 {
             return errorString("source usage does not contain CopySrc")
         }
 
@@ -896,7 +896,7 @@ extension WebGPU.CommandEncoder {
             return errorString(error)
         }
 
-        if destinationTexture.usage() & WGPUTextureUsage_CopyDst.rawValue == 0 {
+        if destinationTexture.usage() & WGPUTextureUsage_CopyDst == 0 {
             return errorString("destination usage does not contain CopyDst")
         }
 
@@ -1167,7 +1167,7 @@ extension WebGPU.CommandEncoder {
 
                 let textureIsDestroyed = texture.isDestroyed()
                 if !textureIsDestroyed {
-                    if (texture.usage() & WGPUTextureUsage_RenderAttachment.rawValue) == 0
+                    if (texture.usage() & WGPUTextureUsage_RenderAttachment) == 0
                         || !WebGPU.Texture.isColorRenderableFormat(textureFormat, m_device.ptr())
                     {
                         return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "color attachment is not renderable")
@@ -2359,7 +2359,7 @@ extension WebGPU.CommandEncoder {
         if !destination.isDestroyed() && !destination.isValid() {
             return false
         }
-        if (destination.usage() & WGPUBufferUsage_QueryResolve.rawValue) == 0 {
+        if (destination.usage() & WGPUBufferUsage_QueryResolve) == 0 {
             return false
         }
 

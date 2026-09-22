@@ -43,7 +43,7 @@ class Device;
 class XRProjectionLayer : public RefCountedAndCanMakeWeakPtr<XRProjectionLayer>, public WGPUXRProjectionLayerImpl {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(XRProjectionLayer);
 public:
-    static Ref<XRProjectionLayer> create(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale, Device& device)
+    static Ref<XRProjectionLayer> create(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale, Device& device)
     {
         return adoptRef(*new XRProjectionLayer(colorFormat, optionalDepthStencilFormat, flags, scale, device));
     }
@@ -65,12 +65,12 @@ public:
     size_t NODELETE reusableTextureIndex() const;
     WGPUTextureFormat colorFormat() const { return m_colorFormat; }
     std::optional<WGPUTextureFormat> optionalDepthStencilFormat() const { return m_optionalDepthStencilFormat; }
-    WGPUTextureUsageFlags flags() const { return m_flags; }
+    WGPUTextureUsage flags() const { return m_flags; }
     double scale() const { return m_scale; }
 
     std::pair<id<MTLRasterizationRateMap>, id<MTLRasterizationRateMap>> rasterizationRateMaps() const { return std::make_pair(m_rasterizationMapLeft, m_rasterizationMapRight); }
 private:
-    XRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsageFlags, double scale, Device&);
+    XRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsage, double scale, Device&);
     XRProjectionLayer(Device&);
 
     NSMutableDictionary<NSNumber*, id<MTLTexture>>* m_colorTextures { nil };
@@ -81,7 +81,7 @@ private:
     size_t m_reusableTextureIndex { 0 };
     WGPUTextureFormat m_colorFormat { WGPUTextureFormat_Undefined };
     std::optional<WGPUTextureFormat> m_optionalDepthStencilFormat;
-    WGPUTextureUsageFlags m_flags { WGPUTextureUsage_None };
+    WGPUTextureUsage m_flags { WGPUTextureUsage_None };
     id<MTLRasterizationRateMap> m_rasterizationMapLeft { nil };
     id<MTLRasterizationRateMap> m_rasterizationMapRight { nil };
     double m_scale { 1.f };

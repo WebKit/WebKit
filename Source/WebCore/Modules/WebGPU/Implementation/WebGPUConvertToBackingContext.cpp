@@ -777,7 +777,7 @@ static constexpr bool NODELETE compare(BufferUsage a, unsigned b)
     return static_cast<unsigned>(a) == b;
 }
 
-WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(BufferUsageFlags bufferUsageFlags)
+WGPUBufferUsage ConvertToBackingContext::convertBufferUsageFlagsToBacking(BufferUsageFlags bufferUsageFlags)
 {
     static_assert(compare(BufferUsage::MapRead, WGPUBufferUsage_MapRead), "BufferUsageFlags mismatch");
     static_assert(compare(BufferUsage::MapWrite, WGPUBufferUsage_MapWrite), "BufferUsageFlags mismatch");
@@ -790,25 +790,25 @@ WGPUBufferUsageFlags ConvertToBackingContext::convertBufferUsageFlagsToBacking(B
     static_assert(compare(BufferUsage::Indirect, WGPUBufferUsage_Indirect), "BufferUsageFlags mismatch");
     static_assert(compare(BufferUsage::QueryResolve, WGPUBufferUsage_QueryResolve), "BufferUsageFlags mismatch");
 
-    return static_cast<WGPUBufferUsageFlags>(bufferUsageFlags);
+    return static_cast<WGPUBufferUsage>(bufferUsageFlags);
 }
 
 static constexpr bool NODELETE compare(auto a, auto b)
 {
     return static_cast<unsigned>(a) == static_cast<unsigned>(b);
 }
-WGPUColorWriteMaskFlags ConvertToBackingContext::convertColorWriteFlagsToBacking(ColorWriteFlags colorWriteFlags)
+WGPUColorWriteMask ConvertToBackingContext::convertColorWriteFlagsToBacking(ColorWriteFlags colorWriteFlags)
 {
     static_assert(compare(ColorWrite::Red, WGPUColorWriteMask_Red), "color masks have different values");
     static_assert(compare(ColorWrite::Green, WGPUColorWriteMask_Green), "color masks have different values");
     static_assert(compare(ColorWrite::Blue, WGPUColorWriteMask_Blue), "color masks have different values");
     static_assert(compare(ColorWrite::Alpha, WGPUColorWriteMask_Alpha), "color masks have different values");
-    return static_cast<WGPUColorWriteMaskFlags>(colorWriteFlags);
+    return static_cast<WGPUColorWriteMask>(colorWriteFlags);
 }
 
-WGPUMapModeFlags ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFlags mapModeFlags)
+WGPUMapMode ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFlags mapModeFlags)
 {
-    WGPUMapModeFlags result = 0;
+    WGPUMapMode result = 0;
     if (mapModeFlags.contains(MapMode::Read))
         result |= WGPUMapMode_Read;
     if (mapModeFlags.contains(MapMode::Write))
@@ -816,9 +816,9 @@ WGPUMapModeFlags ConvertToBackingContext::convertMapModeFlagsToBacking(MapModeFl
     return result;
 }
 
-WGPUShaderStageFlags ConvertToBackingContext::convertShaderStageFlagsToBacking(ShaderStageFlags shaderStageFlags)
+WGPUShaderStage ConvertToBackingContext::convertShaderStageFlagsToBacking(ShaderStageFlags shaderStageFlags)
 {
-    WGPUShaderStageFlags result = 0;
+    WGPUShaderStage result = 0;
     if (shaderStageFlags.contains(ShaderStage::Vertex))
         result |= WGPUShaderStage_Vertex;
     if (shaderStageFlags.contains(ShaderStage::Fragment))
@@ -828,9 +828,9 @@ WGPUShaderStageFlags ConvertToBackingContext::convertShaderStageFlagsToBacking(S
     return result;
 }
 
-WGPUTextureUsageFlags ConvertToBackingContext::convertTextureUsageFlagsToBacking(TextureUsageFlags textureUsageFlags)
+WGPUTextureUsage ConvertToBackingContext::convertTextureUsageFlagsToBacking(TextureUsageFlags textureUsageFlags)
 {
-    WGPUTextureUsageFlags result = 0;
+    WGPUTextureUsage result = 0;
     if (textureUsageFlags.contains(TextureUsage::CopySource))
         result |= WGPUTextureUsage_CopySrc;
     if (textureUsageFlags.contains(TextureUsage::CopyDestination))

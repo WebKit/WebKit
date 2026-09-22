@@ -78,7 +78,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CompositorServices, cp_rasterization_rate
 
 namespace WebGPU {
 
-XRProjectionLayer::XRProjectionLayer(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale, Device& device)
+XRProjectionLayer::XRProjectionLayer(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale, Device& device)
     : m_sharedEvent(std::make_pair(nil, 0))
     , m_colorFormat(colorFormat)
     , m_optionalDepthStencilFormat(optionalDepthStencilFormat ? *optionalDepthStencilFormat : std::optional<WGPUTextureFormat> { std::nullopt })
@@ -191,7 +191,7 @@ void XRProjectionLayer::startFrame(size_t frameIndex, WTF::MachSendRight&& color
 #endif
 }
 
-Ref<XRProjectionLayer> XRBinding::createXRProjectionLayer(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale)
+Ref<XRProjectionLayer> XRBinding::createXRProjectionLayer(WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale)
 {
     return XRProjectionLayer::create(colorFormat, optionalDepthStencilFormat, flags, scale, m_device);
 }

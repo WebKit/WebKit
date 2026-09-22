@@ -737,7 +737,7 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #endif
 }
 
-static bool NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, WGPUBufferUsageFlags usage)
+static bool NODELETE hasProperUsageFlags(WGPUBufferBindingType bufferType, WGPUBufferUsage usage)
 {
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
@@ -1159,7 +1159,7 @@ static std::optional<Ref<BindGroup>> validateTextureOrBindGroup(WebGPU::Device &
         }
         auto textureUsage = apiTextureView->usage();
         if ((textureEntry && !(textureUsage & WGPUTextureUsage_TextureBinding)) || (storageTextureEntry && !(textureUsage & WGPUTextureUsage_StorageBinding))) {
-            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%u) did not have storage usage or storage texture entry did not have storage binding", textureUsage]);
+            VALIDATION_ERROR([NSString stringWithFormat:@"Storage texture usage(%llu) did not have storage usage or storage texture entry did not have storage binding", textureUsage]);
             return BindGroup::createInvalid(object);
         }
         if (textureEntry && (3 * (textureEntry->multisampled ? 1 : 0) + 1 != apiTextureView->sampleCount())) {
@@ -1374,7 +1374,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     }
 
                     if (!hasProperUsageFlags(layoutBinding->type, apiBuffer->usage())) {
-                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected type(%u), buffer.usage(%u)", layoutBinding->type, apiBuffer->usage()]);
+                        VALIDATION_ERROR([NSString stringWithFormat:@"Unexpected type(%u), buffer.usage(%llu)", layoutBinding->type, apiBuffer->usage()]);
                         return BindGroup::createInvalid(*this);
                     }
 

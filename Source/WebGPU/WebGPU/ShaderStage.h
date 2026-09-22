@@ -37,17 +37,13 @@ enum class ShaderStage {
 
 static inline constexpr ShaderStage shaderStage(WGPUShaderStage stage)
 {
-    switch (stage) {
-    case WGPUShaderStage_Vertex:
+    if (stage == WGPUShaderStage_Vertex)
         return ShaderStage::Vertex;
-    case WGPUShaderStage_Fragment:
+    if (stage == WGPUShaderStage_Fragment)
         return ShaderStage::Fragment;
-    case WGPUShaderStage_Compute:
+    if (stage == WGPUShaderStage_Compute)
         return ShaderStage::Compute;
-    case WGPUShaderStage_None:
-    case WGPUShaderStage_Force32:
-        return ShaderStage::Undefined;
-    }
+    return ShaderStage::Undefined;
 }
 
 } // namespace WebGPU

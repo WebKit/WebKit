@@ -52,7 +52,7 @@ RefPtr<XRProjectionLayer> XRBindingImpl::createProjectionLayer(const XRProjectio
     WGPUTextureFormat optionalDepthStencilFormat;
     if (init.depthStencilFormat)
         optionalDepthStencilFormat = convertToBackingContext->convertToBacking(*init.depthStencilFormat);
-    WGPUTextureUsageFlags flags = convertToBackingContext->convertTextureUsageFlagsToBacking(init.textureUsage);
+    WGPUTextureUsage flags = convertToBackingContext->convertTextureUsageFlagsToBacking(init.textureUsage);
     return XRProjectionLayerImpl::create(adoptWebGPU(wgpuBindingCreateXRProjectionLayer(m_backing.get(), colorFormat, init.depthStencilFormat ? &optionalDepthStencilFormat : nullptr, flags, init.scaleFactor)), convertToBackingContext);
 }
 

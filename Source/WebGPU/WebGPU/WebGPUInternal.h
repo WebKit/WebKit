@@ -43,7 +43,7 @@ typedef void (^WGPURequestInvalidDeviceBlockCallback)(WGPUDevice);
 #if !defined(WGPU_SKIP_PROCS)
 
 typedef void (*WGPUProcAdapterRequestDeviceWithBlock)(WGPUAdapter, const WGPUDeviceDescriptor*, WGPURequestDeviceBlockCallback);
-typedef void (*WGPUProcBufferMapAsyncWithBlock)(WGPUBuffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback);
+typedef void (*WGPUProcBufferMapAsyncWithBlock)(WGPUBuffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapBlockCallback);
 typedef void (*WGPUProcDeviceCreateComputePipelineAsyncWithBlock)(WGPUDevice, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncBlockCallback);
 typedef void (*WGPUProcDeviceCreateRenderPipelineAsyncWithBlock)(WGPUDevice, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncBlockCallback);
 typedef bool (*WGPUProcDevicePopErrorScopeWithBlock)(WGPUDevice, WGPUErrorBlockCallback);
@@ -57,7 +57,7 @@ typedef void (*WGPUProcShaderModuleGetCompilationInfoWithBlock)(WGPUShaderModule
 #if !defined(WGPU_SKIP_DECLARATIONS)
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter, const WGPUDeviceDescriptor*, WGPURequestDeviceBlockCallback);
-void wgpuBufferMapAsyncWithBlock(WGPUBuffer, WGPUMapModeFlags, size_t offset, size_t, WGPUBufferMapBlockCallback);
+void wgpuBufferMapAsyncWithBlock(WGPUBuffer, WGPUMapMode, size_t offset, size_t, WGPUBufferMapBlockCallback);
 void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice, const WGPUComputePipelineDescriptor*, WGPUCreateComputePipelineAsyncBlockCallback);
 void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice, const WGPURenderPipelineDescriptor*, WGPUCreateRenderPipelineAsyncBlockCallback);
 void wgpuDevicePopErrorScopeWithBlock(WGPUDevice, WGPUErrorBlockCallback);

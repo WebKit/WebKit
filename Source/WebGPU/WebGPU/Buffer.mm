@@ -106,7 +106,7 @@ static bool NODELETE validateCreateBuffer(const Device& device, const WGPUBuffer
     return true;
 }
 
-static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFlags usage, bool mappedAtCreation)
+static MTLStorageMode NODELETE storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsage usage, bool mappedAtCreation)
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
@@ -183,7 +183,7 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
 
-Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
+Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsage usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)
     , m_initialSize(initialSize)
     , m_usage(usage)
@@ -330,7 +330,7 @@ void Buffer::bufferCopy(std::span<const uint8_t> data, size_t offset)
 #endif
 }
 
-NSString *Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
+NSString *Buffer::errorValidatingMapAsync(WGPUMapMode mode, size_t offset, size_t rangeSize) const
 {
 #define ERROR_STRING(x) (@"GPUBuffer.mapAsync: " x)
     if (!isValid())
@@ -363,7 +363,7 @@ NSString *Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, 
     return nil;
 }
 
-void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback)
+void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
@@ -693,14 +693,14 @@ uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
     return protect(WebGPU::fromAPI(buffer))->currentSize();
 }
 
-void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
+void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
     protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
-void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
+void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
     protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback = WebGPU::fromAPI(WTF::move(callback))](WGPUBufferMapAsyncStatus status) {
         callback(status);
@@ -722,7 +722,7 @@ void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
     protect(WebGPU::fromAPI(buffer))->setLabel(WebGPU::fromAPI(label));
 }
 
-WGPUBufferUsageFlags wgpuBufferGetUsage(WGPUBuffer buffer)
+WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
 {
     return WebGPU::fromAPI(buffer).usage();
 }

@@ -60,7 +60,7 @@ public:
     void NODELETE setLabel(String&&);
 
     bool NODELETE isValid() const;
-    Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsageFlags, double);
+    Ref<XRProjectionLayer> createXRProjectionLayer(WGPUTextureFormat, WGPUTextureFormat*, WGPUTextureUsage, double);
     RefPtr<XRSubImage> getViewSubImage(XRProjectionLayer&);
     Device& device() { return m_device; }
 

@@ -55,7 +55,7 @@ public:
     using ArgumentBufferIndices = ShaderStageArray<std::optional<uint32_t>>;
     struct Entry {
         uint32_t binding;
-        WGPUShaderStageFlags visibility;
+        WGPUShaderStage visibility;
         using BindingLayout = Variant<WGPUBufferBindingLayout, WGPUSamplerBindingLayout, WGPUTextureBindingLayout, WGPUStorageTextureBindingLayout, WGPUExternalTextureBindingLayout>;
         BindingLayout bindingLayout;
         ArgumentBufferIndices argumentBufferIndices;

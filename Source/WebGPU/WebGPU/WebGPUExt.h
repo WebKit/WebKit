@@ -182,7 +182,7 @@ WGPU_EXPORT void wgpuDevicePauseErrorReporting(WGPUDevice device, WGPUBool pause
 WGPU_EXPORT void wgpuDeviceCreateComputePipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice, const WGPUComputePipelineDescriptor*, WGPUComputePipeline, WGPUCreateComputePipelineAsyncCallback, void*) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT void wgpuDeviceCreateRenderPipelineWithPipelineLayoutFromPipelineAsync(WGPUDevice, const WGPURenderPipelineDescriptor*, WGPURenderPipeline, WGPUCreateRenderPipelineAsyncCallback, void*) WGPU_FUNCTION_ATTRIBUTE;
 
-WGPU_EXPORT WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsageFlags flags, double scale) WGPU_FUNCTION_ATTRIBUTE;
+WGPU_EXPORT WGPUXRProjectionLayer wgpuBindingCreateXRProjectionLayer(WGPUXRBinding binding, WGPUTextureFormat colorFormat, WGPUTextureFormat* optionalDepthStencilFormat, WGPUTextureUsage flags, double scale) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT WGPUXRSubImage wgpuBindingGetViewSubImage(WGPUXRBinding binding, WGPUXRProjectionLayer layer) WGPU_FUNCTION_ATTRIBUTE;
 
 WGPU_EXPORT WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage) WGPU_FUNCTION_ATTRIBUTE;
