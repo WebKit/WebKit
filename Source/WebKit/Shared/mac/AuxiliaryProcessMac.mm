@@ -131,7 +131,7 @@ struct CachedSandboxHeader {
 // byte N
 
 struct SandboxInfo {
-    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const CString& header, const WTF::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
+    SandboxInfo(const String& parentDirectoryPath, const String& directoryPath, const String& filePath, const SandboxParametersPtr& sandboxParameters, const ASCIICString& header, const WTF::AuxiliaryProcessType& processType, const SandboxInitializationParameters& initializationParameters, const String& profileOrProfilePath, bool isProfilePath)
         : parentDirectoryPath { parentDirectoryPath }
         , directoryPath { directoryPath }
         , filePath { filePath }
@@ -148,7 +148,7 @@ struct SandboxInfo {
     const String& directoryPath;
     const String& filePath;
     const SandboxParametersPtr& sandboxParameters;
-    const CString& header;
+    const ASCIICString& header;
     const WTF::AuxiliaryProcessType& processType;
     const SandboxInitializationParameters& initializationParameters;
     const String& profileOrProfilePath;
@@ -229,7 +229,7 @@ constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
     }
 }
 
-static std::optional<CString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
+static std::optional<ASCIICString> setAndSerializeSandboxParameters(const SandboxInitializationParameters& initializationParameters, const SandboxParametersPtr& sandboxParameters, const String& profileOrProfilePath, bool isProfilePath)
 {
     StringBuilder builder;
     for (size_t i = 0; i < initializationParameters.count(); ++i) {
@@ -482,12 +482,12 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
         return false;
 
     SandboxProfile profile { };
-    CString builtin;
+    ASCIICString builtin;
     profile.builtin = nullptr;
     profile.size = cachedSandboxHeader.dataSize;
     if (haveBuiltin) {
         std::span<char> cstringBuffer;
-        builtin = CString::newUninitialized(cachedSandboxHeader.builtinSize, cstringBuffer);
+        builtin = ASCIICString::newUninitialized(cachedSandboxHeader.builtinSize, cstringBuffer);
         profile.builtin = cstringBuffer.data();
         if (builtin.isNull())
             return false;

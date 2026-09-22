@@ -26,9 +26,10 @@
 #pragma once
 
 #include <wtf/ExportMacros.h>
+#include <wtf/Forward.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE void setCrashLogMessage(const char*);
+WTF_EXPORT_PRIVATE void setCrashLogMessage(UTF8CString&&);
 
 } // namespace WTF

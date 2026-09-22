@@ -26,15 +26,16 @@
 #import "config.h"
 #import "WKCrashReporter.h"
 #import <wtf/cocoa/CrashReporter.h>
+#import <wtf/text/CString.h>
 
 #import <cstdlib>
 
 namespace WebKit {
 
-void logAndSetCrashLogMessage(const char* infoString)
+void logAndSetCrashLogMessage(UTF8CString&& infoString)
 {
-    WTFLogAlways("%s", infoString);
-    WTF::setCrashLogMessage(infoString);
+    SAFE_WTFLOGALWAYS("%s", infoString);
+    WTF::setCrashLogMessage(WTF::move(infoString));
 }
 
 }

@@ -168,7 +168,7 @@ private:
     typedef UncheckedKeyHashMap<ptrdiff_t, std::unique_ptr<AbstractHeap>, WTF::IntHash<ptrdiff_t>, WithoutZeroOrOneHashTraits> MapType;
 
     MapType m_largeIndices;
-    Vector<CString, 16> m_largeIndexNames;
+    Vector<ASCIICString, 16> m_largeIndexNames;
 };
 
 // A numbered abstract heap is like an indexed abstract heap, except that you

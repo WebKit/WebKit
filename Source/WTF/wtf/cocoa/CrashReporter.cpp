@@ -41,15 +41,13 @@ struct crashreporter_annotations_t gCRAnnotations
 #endif // CRASHREPORTER_ANNOTATIONS_INITIALIZER
 
 namespace WTF {
-void setCrashLogMessage(const char* message)
+void setCrashLogMessage(UTF8CString&& message)
 {
-    // We have to copy the string because CRSetCrashLogMessage doesn't.
-    CString copiedMessage = message;
+    // CRSetCrashLogMessage doesn't copy, so the bytes have to outlive the call.
+    CRSetCrashLogMessage(message.legacyCStringPointer());
 
-    CRSetCrashLogMessage(copiedMessage.data());
-
-    // Delete the message from last time, so we don't keep leaking messages.
-    static NeverDestroyed<CString> previousCopiedCrashLogMessage;
-    previousCopiedCrashLogMessage.get() = WTF::move(copiedMessage);
+    // Assigning here releases the message from last time, so we don't keep leaking messages.
+    static NeverDestroyed<UTF8CString> currentCrashLogMessage;
+    currentCrashLogMessage.get() = WTF::move(message);
 }
 }

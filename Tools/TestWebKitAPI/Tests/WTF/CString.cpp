@@ -112,16 +112,16 @@ TEST(WTF, CStringOneByte)
     ASSERT_STREQ(referenceString, stringWithLength.data());
 }
 
-TEST(WTF, CStringUninitializedConstructor)
+TEST(WTF, ASCIICStringUninitializedConstructor)
 {
     std::span<char> buffer;
-    CString emptyString = CString::newUninitialized(0, buffer);
+    ASCIICString emptyString = ASCIICString::newUninitialized(0, buffer);
     ASSERT_FALSE(emptyString.isNull());
     ASSERT_EQ(buffer.data(), emptyString.data());
     ASSERT_TRUE(buffer.empty());
 
     const size_t length = 25;
-    CString uninitializedString = CString::newUninitialized(length, buffer);
+    ASCIICString uninitializedString = ASCIICString::newUninitialized(length, buffer);
     ASSERT_FALSE(uninitializedString.isNull());
     ASSERT_EQ(buffer.data(), uninitializedString.data());
     ASSERT_EQ(uninitializedString.data()[length], 0);

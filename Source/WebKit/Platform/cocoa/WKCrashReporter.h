@@ -28,10 +28,11 @@
 #ifdef __cplusplus
 
 #include <WebKit/WKBase.h>
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
-WK_EXPORT void logAndSetCrashLogMessage(const char*);
+WK_EXPORT void logAndSetCrashLogMessage(UTF8CString&&);
 
 }
 

@@ -276,7 +276,7 @@ Connection::SendMessageResult Connection::sendMessage(std::unique_ptr<MachMessag
         auto messageName = message->messageName();
         bool isRetry = isRetryDueToLargeSize == IsRetryDueToLargeSize::Yes;
         auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), ", message '"_s, description(messageName), "' ("_s, messageName, "), messageSize="_s, message->size(), ", isRetryDueToLargeSize="_s, isRetry ? "1"_s : "0"_s);
-        WebKit::logAndSetCrashLogMessage(errorMessage.utf8().legacyCStringPointer());
+        WebKit::logAndSetCrashLogMessage(errorMessage.utf8());
         CRASH_WITH_INFO(kr, std::to_underlying(messageName));
     }
 }
@@ -631,7 +631,7 @@ static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& 
     if (kr != MACH_MSG_SUCCESS) {
 #if ASSERT_ENABLED
         auto errorMessage = makeString("Unhandled error code 0x"_s, hex(kr), " from mach_msg, receive port is 0x"_s, hex(machPort));
-        WebKit::logAndSetCrashLogMessage(errorMessage.utf8().legacyCStringPointer());
+        WebKit::logAndSetCrashLogMessage(errorMessage.utf8());
 #endif
         ASSERT_NOT_REACHED();
         return nullptr;

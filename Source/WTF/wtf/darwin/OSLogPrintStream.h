@@ -53,7 +53,7 @@ private:
     os_log_type_t m_logType;
     Lock m_stringLock;
     // We need a buffer because os_log doesn't wait for a new line to print the characters.
-    CString m_string WTF_GUARDED_BY_LOCK(m_stringLock);
+    UTF8CString m_string WTF_GUARDED_BY_LOCK(m_stringLock);
     size_t m_offset WTF_GUARDED_BY_LOCK(m_stringLock) { 0 };
 };
 

@@ -198,7 +198,7 @@ void IndexedAbstractHeap::initialize(AbstractHeap& field, ptrdiff_t signedIndex)
 
         size_t stringLength = m_heapNameLength + (negative ? strlen(negSplit) : strlen(posSplit)) + numHexlets;
         std::span<char> characters;
-        m_largeIndexNames.append(CString::newUninitialized(stringLength, characters));
+        m_largeIndexNames.append(ASCIICString::newUninitialized(stringLength, characters));
 
         memcpy(characters.data(), m_heapForAnyIndex.heapName(), m_heapNameLength);
         if (negative)

@@ -264,7 +264,7 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding)
 {
     auto errorMessage = makeString("Received invalid message: '"_s, description(messageName), "' ("_s, messageName, ')');
-    logAndSetCrashLogMessage(errorMessage.utf8().legacyCStringPointer());
+    logAndSetCrashLogMessage(errorMessage.utf8());
 
     ASSERT(indicesOfObjectsFailingDecoding.size() <= 6);
     auto index = [&](size_t i) -> int32_t {

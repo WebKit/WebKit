@@ -594,8 +594,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE static void crashDueToGarbageCollectorClient
         "or unrooted GC objects.",
         heapCell);
     auto message = out.toUTF8CString();
-    WTF::setCrashLogMessage(message.legacyCStringPointer());
     dataLogLn(message);
+    WTF::setCrashLogMessage(WTF::move(message));
 #endif
     CRASH_WITH_INFO(heapCell, cellFirst8Bytes, zeroCounts, bitfield, subspaceHash, blockVM, actualVM);
 }
@@ -630,8 +630,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::analyzeInvalidHandleAndCra
         out.printf("Suspected memory corruption: invalid handle [line=%d]: markedBlock=%p; heapCell=%p; cellFirst8Bytes=%#llx; subspaceHash=%#x; contiguousZeros=%lu; totalZeros=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
             line, this, heapCell, cellFirst8Bytes, subspaceHash, contiguousZeroBytesHeadOfBlock, totalZeroBytesInBlock, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
         auto message = out.toUTF8CString();
-        WTF::setCrashLogMessage(message.legacyCStringPointer());
         dataLogLn(message);
+        WTF::setCrashLogMessage(WTF::move(message));
 #else
         UNUSED_PARAM(line);
 #endif

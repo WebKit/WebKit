@@ -120,7 +120,7 @@ static void checkFrameworkVersion(xpc_object_t message)
     auto webkitBundleVersion = ASCIILiteral::fromLiteralUnsafe(WEBKIT_BUNDLE_VERSION);
     if (!uiProcessWebKitBundleVersion.isNull() && uiProcessWebKitBundleVersion != webkitBundleVersion) {
         auto errorMessage = makeString("WebKit framework version mismatch: "_s, uiProcessWebKitBundleVersion, " != "_s, webkitBundleVersion);
-        logAndSetCrashLogMessage(errorMessage.utf8().legacyCStringPointer());
+        logAndSetCrashLogMessage(errorMessage.utf8());
         crashDueWebKitFrameworkVersionMismatch();
     }
 }

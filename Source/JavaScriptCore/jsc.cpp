@@ -3814,7 +3814,7 @@ int main(int argc, char** argv)
         CommaPrinter space(" "_s);
         for (int i = 0; i < argc; ++i)
             out.print(space, argv[i]);
-        WTF::setCrashLogMessage(out.toUTF8CString().legacyCStringPointer());
+        WTF::setCrashLogMessage(out.toUTF8CString());
     }
 #endif
 

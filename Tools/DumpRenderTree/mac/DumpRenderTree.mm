@@ -1938,7 +1938,7 @@ static void runTest(const std::string& inputLine)
         testPath = [url.get() absoluteString];
 
     auto message = makeString("CRASHING TEST: "_s, testPath);
-    WTF::setCrashLogMessage(message.utf8().legacyCStringPointer());
+    WTF::setCrashLogMessage(message.utf8());
 
     auto options = testOptionsForTest(command);
 

@@ -48,7 +48,7 @@ UTF8CString FileSystem::fileSystemRepresentation(const String& path)
     Vector<char> buffer(size);
 
     if (!CFStringGetFileSystemRepresentation(cfString.get(), buffer.mutableSpan().data(), buffer.size())) {
-        LOG_ERROR("Failed to get filesystem representation to create CString from cfString");
+        LOG_ERROR("Failed to get filesystem representation to create UTF8CString from cfString");
         return { };
     }
 

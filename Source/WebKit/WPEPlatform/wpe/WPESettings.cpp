@@ -145,13 +145,13 @@ static void wpe_settings_class_init(WPESettingsClass* settingsClass)
         G_TYPE_VARIANT);
 }
 
-static CString makeKeyPath(const char* group, const char* key)
+static UTF8CString makeKeyPath(const char* group, const char* key)
 {
-    std::span<char> buffer;
+    std::span<char8_t> buffer;
     size_t length = strlen(group) + strlen(key) + 3;
 
-    CString path = CString::newUninitialized(length - 1, buffer);
-    g_snprintf(buffer.data(), length, "/%s/%s", group, key);
+    auto path = UTF8CString::newUninitialized(length - 1, buffer);
+    g_snprintf(byteCast<char>(buffer).data(), length, "/%s/%s", group, key);
 
     return path;
 }
@@ -233,14 +233,14 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
             auto path = makeKeyPath(group, key);
             auto iter = settingsObject->priv->settings.find(path);
             if (iter == settingsObject->priv->settings.end()) {
-                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", path.data());
+                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", path.legacyCStringPointer());
                 return FALSE;
             }
 
             GUniqueOutPtr<GError> innerError;
             GRefPtr<GVariant> parsedValue = adoptGRef(g_variant_parse(iter->value.type.get(), value.get(), nullptr, nullptr, &innerError.outPtr()));
             if (!parsedValue) {
-                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INVALID_VALUE, "Failed to parse value for key %s: %s", path.data(), innerError->message);
+                g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INVALID_VALUE, "Failed to parse value for key %s: %s", path.legacyCStringPointer(), innerError->message);
                 return FALSE;
             }
 
@@ -248,7 +248,7 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
                 continue;
 
             iter->value.setValue = WTF::move(parsedValue);
-            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.data()), path.data(), iter->value.setValue.get());
+            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.legacyCStringPointer()), path.legacyCStringPointer(), iter->value.setValue.get());
         }
     }
 

@@ -62,12 +62,12 @@ void OSLogPrintStream::vprintf(const char* format, va_list argList)
     va_list backup;
     va_copy(backup, argList);
 ALLOW_NONLITERAL_FORMAT_BEGIN
-    size_t bytesWritten = vsnprintf(m_string.mutableSpanIncludingNullTerminator().subspan(offset).data(), freeBytes, format, argList);
+    size_t bytesWritten = vsnprintf(byteCast<char>(m_string.mutableSpanIncludingNullTerminator().subspan(offset)).data(), freeBytes, format, argList);
     if (bytesWritten >= freeBytes) [[unlikely]] {
         size_t newLength = std::max(bytesWritten + m_string.length(), m_string.length() * 2);
         m_string.grow(newLength);
         freeBytes = newLength - offset;
-        bytesWritten = vsnprintf(m_string.mutableSpanIncludingNullTerminator().subspan(offset).data(), freeBytes, format, backup);
+        bytesWritten = vsnprintf(byteCast<char>(m_string.mutableSpanIncludingNullTerminator().subspan(offset)).data(), freeBytes, format, backup);
         ASSERT(bytesWritten < freeBytes);
     }
 ALLOW_NONLITERAL_FORMAT_END
@@ -76,10 +76,10 @@ ALLOW_NONLITERAL_FORMAT_END
     auto buffer = m_string.mutableSpan();
     bool loggedText = false;
     do {
-        if (buffer[offset] == '\n') {
+        if (buffer[offset] == u8'\n') {
             // Set the new line to a null character so os_log stops copying there.
-            buffer[offset] = '\0';
-            os_log_with_type(m_log, m_logType, "%{public}s", buffer.data());
+            buffer[offset] = u8'\0';
+            os_log_with_type(m_log, m_logType, "%{public}s", byteCast<char>(buffer).data());
             skip(buffer, offset + 1);
             newOffset -= offset + 1;
             offset = 0;
