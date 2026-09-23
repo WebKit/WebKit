@@ -157,6 +157,10 @@
 #include "LegacyTileCache.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorBackdropContext.h>
+#endif
+
 #include "LayoutContext.h"
 
 #define PAGE_ID (m_frame->pageID() ? m_frame->pageID()->toUInt64() : 0)
@@ -5845,6 +5849,11 @@ void LocalFrameView::willPaintContents(GraphicsContext& context, const IntRect&,
 
     if (is<AccessibilityRegionContext>(regionContext))
         m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (is<AXCustomColorBackdropContext>(regionContext))
+        m_paintBehavior.add(PaintBehavior::FlattenCompositingLayers);
+#endif
 
     paintingState.isFlatteningPaintOfRootFrame = (m_paintBehavior & PaintBehavior::FlattenCompositingLayers) && !m_frame->ownerElement() && !context.detectingContentfulPaint();
     if (paintingState.isFlatteningPaintOfRootFrame)

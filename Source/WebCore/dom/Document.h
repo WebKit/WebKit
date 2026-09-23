@@ -1429,6 +1429,9 @@ public:
 
     void updateAccessibilityObjectRegions();
     void updateEventRegions();
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void updateAXCustomColorModeTextBackdrops();
+#endif
 
     void NODELETE invalidateRenderingDependentRegions();
     void invalidateEventRegionsForFrame(HTMLFrameOwnerElement&);

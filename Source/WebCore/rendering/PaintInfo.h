@@ -45,6 +45,10 @@ class RenderLayer;
 class RenderLayerModelObject;
 class RenderObject;
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+class AXCustomColorBackdropContext;
+#endif
+
 typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
 
 /*
@@ -124,6 +128,9 @@ struct PaintInfo {
 
     EventRegionContext* eventRegionContext() { return dynamicDowncast<EventRegionContext>(regionContext); }
     inline AccessibilityRegionContext* accessibilityRegionContext();
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    inline AXCustomColorBackdropContext* axCustomColorBackdropContext();
+#endif
 
     LayoutRect rect;
     PaintPhase phase;

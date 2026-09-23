@@ -203,7 +203,12 @@ TextBoxPainter::TextBoxPainter(const LayoutIntegration::InlineContent& inlineCon
     , m_isPrinting(m_document->printing())
     , m_haveSelection(computeHaveSelection())
 {
-    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility);
+    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection || paintInfo.phase == PaintPhase::TextClip || paintInfo.phase == PaintPhase::EventRegion || paintInfo.phase == PaintPhase::Accessibility
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        || paintInfo.phase == PaintPhase::AXCustomColorComputeBackdrops
+        || paintInfo.phase == PaintPhase::AXCustomColorCollectBackgrounds
+#endif
+    );
 
     SUPPRESS_UNCOUNTED_LOCAL auto& editor = m_renderer->frame().editor();
     m_containsComposition = m_renderer->textNode() && editor.compositionNode() == m_renderer->textNode();
@@ -232,6 +237,16 @@ void TextBoxPainter::paint()
             m_paintInfo.eventRegionContext()->unite(FloatRoundedRect(m_paintRect), m_renderer, m_style);
         return;
     }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (m_paintInfo.phase == PaintPhase::AXCustomColorCollectBackgrounds)
+        return;
+
+    if (m_paintInfo.phase == PaintPhase::AXCustomColorComputeBackdrops) {
+        m_paintInfo.axCustomColorBackdropContext()->updateTextBackdrop(m_renderer, m_paintRect);
+        return;
+    }
+#endif
 
     std::optional<RotationDirection> glyphRotation;
     if (!textBox().isHorizontal() && !m_isCombinedText) {

@@ -1262,6 +1262,11 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (paintPhase == PaintPhase::Accessibility)
         paintInfo.accessibilityRegionContext()->takeBounds(*this, paintOffset);
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (paintPhase == PaintPhase::AXCustomColorCollectBackgrounds)
+        paintInfo.axCustomColorBackdropContext()->recordBackdrop(*this, FloatRect { LayoutRect(paintOffset, borderBoxSize()) }, paintInfo.paintBehavior);
+#endif
+
     if (paintPhase == PaintPhase::EventRegion) {
         auto borderRect = LayoutRect(paintOffset, borderBoxSize());
 
@@ -1340,8 +1345,17 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     if (shouldPaintContent) {
         // 4. paint floats.
-        if (paintPhase == PaintPhase::Float || paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip || paintPhase == PaintPhase::EventRegion || paintPhase == PaintPhase::Accessibility)
-            paintFloats(paintInfo, scrolledOffset, paintPhase == PaintPhase::Selection || paintPhase == PaintPhase::TextClip || paintPhase == PaintPhase::EventRegion || paintPhase == PaintPhase::Accessibility);
+        auto isNonPaintingTraversalPhase = paintPhase == PaintPhase::Selection
+            || paintPhase == PaintPhase::TextClip
+            || paintPhase == PaintPhase::EventRegion
+            || paintPhase == PaintPhase::Accessibility
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+            || paintPhase == PaintPhase::AXCustomColorComputeBackdrops
+            || paintPhase == PaintPhase::AXCustomColorCollectBackgrounds
+#endif
+            ;
+        if (paintPhase == PaintPhase::Float || isNonPaintingTraversalPhase)
+            paintFloats(paintInfo, scrolledOffset, isNonPaintingTraversalPhase);
     }
 
     // 5. paint outline.

@@ -88,6 +88,20 @@ void InlineBoxPainter::paint()
         return;
     }
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (m_paintInfo.phase == PaintPhase::AXCustomColorCollectBackgrounds) {
+        if (!m_isRootInlineBox && renderer().hasVisibleBoxDecorations()) {
+            auto localRect = LayoutRect { m_inlineBox.visualRect() };
+            auto paintRect = LayoutRect { m_paintOffset + localRect.location(), localRect.size() };
+            m_paintInfo.axCustomColorBackdropContext()->recordBackdrop(renderer(), FloatRect { paintRect }, m_paintInfo.paintBehavior);
+        }
+        return;
+    }
+
+    if (m_paintInfo.phase == PaintPhase::AXCustomColorComputeBackdrops)
+        return;
+#endif
+
     if (m_paintInfo.phase == PaintPhase::Accessibility) {
         if (auto* renderInline = dynamicDowncast<RenderInline>(m_renderer)) {
             auto linesBoundingBox = enclosingIntRect(renderInline->visualOverflowRect());

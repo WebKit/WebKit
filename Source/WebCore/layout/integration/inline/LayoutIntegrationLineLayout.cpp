@@ -1398,7 +1398,11 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
         case PaintPhase::Accessibility:
         case PaintPhase::Foreground:
         case PaintPhase::EventRegion:
-        case PaintPhase::TextClip:
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    case PaintPhase::AXCustomColorComputeBackdrops:
+    case PaintPhase::AXCustomColorCollectBackgrounds:
+#endif
+    case PaintPhase::TextClip:
         case PaintPhase::Mask:
         case PaintPhase::Selection:
         case PaintPhase::Outline:

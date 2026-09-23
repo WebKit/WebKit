@@ -177,6 +177,10 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorBackdropContext.h>
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -3635,6 +3639,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool isPaintingOverflowContents = localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
     bool isCollectingEventRegion = localPaintFlags.contains(PaintLayerFlag::CollectingEventRegion);
     bool isCollectingAccessibilityRegion = is<AccessibilityRegionContext>(paintingInfo.regionContext);
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    bool isCollectingAXCustomColorBackdrops = is<AXCustomColorBackdropContext>(paintingInfo.regionContext);
+#endif
 
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
     bool isInsideSkippedSubtree = renderer().isSkippedContent();
@@ -3892,7 +3899,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
-        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion || isCollectingAccessibilityRegion) {
+        bool needsFragments = shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion || isCollectingAccessibilityRegion;
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        needsFragments = needsFragments || isCollectingAXCustomColorBackdrops;
+#endif
+        if (needsFragments) {
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
             // fragment should paint.
             auto clipRectOptions = isPaintingOverflowContents ? clipRectOptionsForPaintingOverflowContents : clipRectDefaultOptions;
@@ -3930,6 +3941,13 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         if (isCollectingAccessibilityRegion)
             collectAccessibilityRegionsForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        if (isCollectingAXCustomColorBackdrops && !isInsideSkippedSubtree) {
+            collectAXCustomColorBackdropsForFragments(PaintPhase::AXCustomColorCollectBackgrounds, layerFragments, currentContext, localPaintingInfo, paintBehavior);
+            collectAXCustomColorBackdropsForFragments(PaintPhase::AXCustomColorComputeBackdrops, layerFragments, currentContext, localPaintingInfo, paintBehavior);
+        }
+#endif
 
         if (shouldPaintOutline)
             paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
@@ -4466,6 +4484,28 @@ void RenderLayer::collectAccessibilityRegionsForFragments(const LayerFragments& 
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
     }
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+void RenderLayer::collectAXCustomColorBackdropsForFragments(PaintPhase phase, const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintBehavior> paintBehavior)
+{
+    ASSERT(is<AXCustomColorBackdropContext>(localPaintingInfo.regionContext));
+    ASSERT(phase == PaintPhase::AXCustomColorCollectBackgrounds || phase == PaintPhase::AXCustomColorComputeBackdrops);
+
+    for (const auto& fragment : layerFragments) {
+        if (!fragment.shouldPaintContent || fragment.dirtyForegroundRect().isEmpty())
+            continue;
+
+        PaintInfo paintInfo(context, fragment.dirtyForegroundRect().rect(), phase, paintBehavior);
+        paintInfo.regionContext = localPaintingInfo.regionContext;
+        paintInfo.regionContext->pushClip(enclosingIntRect(fragment.dirtyBackgroundRect().rect()));
+
+        renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
+        paintInfo.regionContext->popClip();
+    }
+}
+
+#endif // ENABLE(AX_CUSTOM_COLOR_MODE)
 
 bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {

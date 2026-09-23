@@ -37,21 +37,25 @@ namespace WebCore {
  */
 
 enum class PaintPhase : uint16_t {
-    BlockBackground          = 0,
-    ChildBlockBackground     = 1 << 0,
-    ChildBlockBackgrounds    = 1 << 1,
-    Float                    = 1 << 2,
-    Foreground               = 1 << 3,
-    Outline                  = 1 << 4,
-    ChildOutlines            = 1 << 5,
-    SelfOutline              = 1 << 6,
-    Selection                = 1 << 7,
-    CollapsedTableBorders    = 1 << 8,
-    TextClip                 = 1 << 9,
-    Mask                     = 1 << 10,
-    ClippingMask             = 1 << 11,
-    EventRegion              = 1 << 12,
-    Accessibility            = 1 << 13,
+    BlockBackground                 = 0,
+    ChildBlockBackground            = 1 << 0,
+    ChildBlockBackgrounds           = 1 << 1,
+    Float                           = 1 << 2,
+    Foreground                      = 1 << 3,
+    Outline                         = 1 << 4,
+    ChildOutlines                   = 1 << 5,
+    SelfOutline                     = 1 << 6,
+    Selection                       = 1 << 7,
+    CollapsedTableBorders           = 1 << 8,
+    TextClip                        = 1 << 9,
+    Mask                            = 1 << 10,
+    ClippingMask                    = 1 << 11,
+    EventRegion                     = 1 << 12,
+    Accessibility                   = 1 << 13,
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    AXCustomColorCollectBackgrounds = 1 << 14,
+    AXCustomColorComputeBackdrops   = 1 << 15,
+#endif
 };
 
 enum class PaintBehavior : uint32_t {

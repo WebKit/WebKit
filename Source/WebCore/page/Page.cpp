@@ -2618,6 +2618,14 @@ void Page::doAfterUpdateRendering()
         document.updateEventRegions();
     });
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (settings().axCustomColorModeEnabled()) {
+        forEachRenderableDocument([] (Document& document) {
+            document.updateAXCustomColorModeTextBackdrops();
+        });
+    }
+#endif
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::AccessibilityRegionUpdate);
     if (shouldUpdateAccessibilityRegions()) {

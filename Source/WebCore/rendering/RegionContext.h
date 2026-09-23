@@ -50,6 +50,9 @@ public:
 
     virtual bool isEventRegionContext() const { return false; }
     virtual bool isAccessibilityRegionContext() const { return false; }
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    virtual bool isAXCustomColorBackdropContext() const { return false; }
+#endif
 
 protected:
     Vector<AffineTransform> m_transformStack;

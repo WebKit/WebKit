@@ -28,11 +28,24 @@
 #include "AccessibilityRegionContext.h"
 #include "PaintInfo.h"
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#include <WebKitAdditions/AXCustomColorBackdropContext.h>
+#endif
+
 namespace WebCore {
 
 inline AccessibilityRegionContext* PaintInfo::accessibilityRegionContext()
 {
     return dynamicDowncast<AccessibilityRegionContext>(regionContext);
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+
+inline AXCustomColorBackdropContext* PaintInfo::axCustomColorBackdropContext()
+{
+    return dynamicDowncast<AXCustomColorBackdropContext>(regionContext);
+}
+
+#endif
 
 } // namespace WebCore
