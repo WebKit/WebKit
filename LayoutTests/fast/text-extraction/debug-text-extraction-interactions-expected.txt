@@ -27,6 +27,8 @@ PASS clickSubmitButtonError is ""
 PASS clickImageButtonError is ""
 PASS clickImageWithAltTextError is ""
 PASS clickSubmitButtonWithWrongTextError is "'Register' not found inside the target node"
+PASS clickLinkWithWrongTextError is ""
+PASS clickImageWithWrongTextError is "'Account settings' not found inside the target node"
 PASS clickedTargetNames.join() is "commit,find,logo"
 PASS clickPasswordFieldWithLabelError is ""
 PASS passwordFieldFocusedAfterClick is true

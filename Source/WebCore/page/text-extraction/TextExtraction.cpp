@@ -2403,7 +2403,7 @@ static std::expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targe
         if (!foundRange) {
             bool targetIsWholePage = element == document->body() || element.get() == document->documentElement();
             bool matched = targetIsWholePage ? normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)) : searchTextMatchesElementLabelOrRenderedText(*element, searchText);
-            if (!matched)
+            if (!matched && !element->isLink())
                 return makeUnexpected(searchTextNotFoundDescription(searchText));
         }
     }

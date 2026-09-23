@@ -128,6 +128,16 @@
             text: "Register"
         });
 
+        clickLinkWithWrongTextError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Hello World: more options"),
+            text: "Account settings"
+        });
+
+        clickImageWithWrongTextError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Sign out"),
+            text: "Account settings"
+        });
+
         clickPasswordFieldWithLabelError = await UIHelper.performTextExtractionInteraction("click", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "login"),
             text: "Account password"
@@ -245,6 +255,8 @@
         shouldBeEqualToString("clickImageButtonError", "");
         shouldBeEqualToString("clickImageWithAltTextError", "");
         shouldBeEqualToString("clickSubmitButtonWithWrongTextError", "'Register' not found inside the target node");
+        shouldBeEqualToString("clickLinkWithWrongTextError", "");
+        shouldBeEqualToString("clickImageWithWrongTextError", "'Account settings' not found inside the target node");
         shouldBeEqualToString("clickedTargetNames.join()", "commit,find,logo");
         shouldBeEqualToString("clickPasswordFieldWithLabelError", "");
         shouldBeTrue("passwordFieldFocusedAfterClick");
