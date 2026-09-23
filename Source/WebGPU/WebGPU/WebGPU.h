@@ -182,10 +182,10 @@ struct WGPUBindGroupLayoutEntry;
 struct WGPUBlendState;
 struct WGPUCompilationInfo;
 struct WGPUComputePassDescriptor;
+struct WGPUComputeState;
 struct WGPUDepthStencilState;
 struct WGPUImageCopyBuffer;
 struct WGPUImageCopyTexture;
-struct WGPUProgrammableStageDescriptor;
 struct WGPURenderPassColorAttachment;
 struct WGPURequiredLimits;
 struct WGPUShaderModuleDescriptor;
@@ -1204,6 +1204,15 @@ static inline WGPU_NULLABLE WGPUComputePassTimestampWrites const * _Nullable __c
     return descriptor->timestampWrites;
 }
 
+typedef struct WGPUComputeState {
+    WGPUShaderModule module;
+    char const * entryPoint;
+    size_t constantCount;
+    WGPUConstantEntry const * constants;
+
+    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
+} WGPUComputeState WGPU_STRUCTURE_ATTRIBUTE;
+
 typedef struct WGPUDepthStencilState {
     WGPUTextureFormat format;
     std::optional<WGPUBool> depthWriteEnabled;
@@ -1228,15 +1237,6 @@ typedef struct WGPUImageCopyTexture {
     WGPUOrigin3D origin;
     WGPUTextureAspect aspect;
 } WGPUImageCopyTexture WGPU_STRUCTURE_ATTRIBUTE;
-
-typedef struct WGPUProgrammableStageDescriptor {
-    WGPUShaderModule module;
-    char const * entryPoint;
-    size_t constantCount;
-    WGPUConstantEntry const * constants;
-
-    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
-} WGPUProgrammableStageDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassColorAttachment {
     WGPU_NULLABLE WGPUTexture texture;
@@ -1306,7 +1306,7 @@ typedef struct WGPUColorTargetState {
 typedef struct WGPUComputePipelineDescriptor {
     WGPU_NULLABLE char const * label;
     WGPU_NULLABLE WGPUPipelineLayout layout;
-    WGPUProgrammableStageDescriptor compute;
+    WGPUComputeState compute;
 } WGPUComputePipelineDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUDeviceDescriptor {

@@ -351,7 +351,7 @@ static auto convertToBacking(const ComputePipelineDescriptor& descriptor, Conver
     WGPUComputePipelineDescriptor backingDescriptor {
         .label = label.legacyCStringPointer(),
         .layout = descriptor.layout ? convertToBackingContext.convertToBacking(*protect(descriptor.layout)) : nullptr,
-        .compute = WGPUProgrammableStageDescriptor {
+        .compute = WGPUComputeState {
             .module = convertToBackingContext.convertToBacking(protect(descriptor.compute.module)),
             .entryPoint = entryPoint ? entryPoint->legacyCStringPointer() : nullptr,
             .constantCount = backingConstantEntries.size(),
