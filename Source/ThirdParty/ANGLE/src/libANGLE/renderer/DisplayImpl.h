@@ -61,7 +61,6 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
 
     virtual egl::Error initialize(egl::Display *display) = 0;
     virtual void terminate()                             = 0;
-    virtual egl::Error prepareForCall();
     virtual egl::Error releaseThread();
 
     virtual egl::Error makeCurrent(egl::Display *display,

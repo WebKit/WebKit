@@ -78,20 +78,20 @@ class UtilsVk : angle::NonCopyable
 
     struct OffsetAndVertexCount
     {
-        uint32_t srcOffset;
-        uint32_t dstOffset;
-        uint32_t vertexCount;
+        uint32_t srcOffset   = 0;
+        uint32_t dstOffset   = 0;
+        uint32_t vertexCount = 0;
     };
     using OffsetAndVertexCounts = std::vector<OffsetAndVertexCount>;
 
     struct ConvertVertexParameters
     {
-        size_t vertexCount;
-        const angle::Format *srcFormat;
-        const angle::Format *dstFormat;
-        size_t srcStride;
-        size_t srcOffset;
-        size_t dstOffset;
+        size_t vertexCount             = 0;
+        const angle::Format *srcFormat = nullptr;
+        const angle::Format *dstFormat = nullptr;
+        size_t srcStride               = 0;
+        size_t srcOffset               = 0;
+        size_t dstOffset               = 0;
     };
 
     struct ClearFramebufferParameters
@@ -117,116 +117,116 @@ class UtilsVk : angle::NonCopyable
 
     struct ClearTextureParameters
     {
-        VkImageAspectFlags aspectFlags;
-        vk::LevelIndex level;
-        vk::LayerIndex layer;
-        gl::Box clearArea;
-        VkClearValue clearValue;
+        VkImageAspectFlags aspectFlags = 0;
+        vk::LevelIndex level           = vk::LevelIndex(0);
+        vk::LayerIndex layer           = vk::LayerIndex(0);
+        gl::Box clearArea              = {};
+        VkClearValue clearValue        = {};
     };
 
     struct BlitResolveParameters
     {
         // |srcOffset| and |dstIndexBufferOffset| define the original blit/resolve offsets, possibly
         // flipped.
-        int srcOffset[2];
-        int dstOffset[2];
+        int srcOffset[2] = {};
+        int dstOffset[2] = {};
         // Amount to add to x and y axis for certain rotations
-        int rotatedOffsetFactor[2];
+        int rotatedOffsetFactor[2] = {};
         // |stretch| is SourceDimension / DestDimension used to transfer dst coordinates to source.
-        float stretch[2];
+        float stretch[2] = {};
         // |srcExtents| is used to normalize source coordinates for sampling.
-        int srcExtents[2];
+        int srcExtents[2] = {};
         // render area, which maps to VkViewport
-        gl::Rectangle renderArea;
+        gl::Rectangle renderArea = {};
         // |blitArea| is the area in destination where blit happens.  It's expected that scissor
         // and source clipping effects have already been applied to it.
-        gl::Rectangle blitArea;
-        vk::LevelIndex srcMip;
-        vk::LayerIndex srcLayer;
+        gl::Rectangle blitArea  = {};
+        vk::LevelIndex srcMip   = vk::LevelIndex(0);
+        vk::LayerIndex srcLayer = vk::LayerIndex(0);
         // Whether linear or point sampling should be used.
-        bool linear;
-        bool flipX;
-        bool flipY;
-        SurfaceRotation rotation;
+        bool linear              = false;
+        bool flipX               = false;
+        bool flipY               = false;
+        SurfaceRotation rotation = SurfaceRotation::Identity;
     };
 
     struct ClearImageParameters
     {
-        gl::Rectangle clearArea;
+        gl::Rectangle clearArea = {};
 
-        vk::LevelIndex dstMip;
-        vk::LayerIndex dstLayer;
+        vk::LevelIndex dstMip   = vk::LevelIndex(0);
+        vk::LayerIndex dstLayer = vk::LayerIndex(0);
 
-        VkColorComponentFlags colorMaskFlags;
-        VkClearColorValue colorClearValue;
+        VkColorComponentFlags colorMaskFlags = 0;
+        VkClearColorValue colorClearValue    = {};
     };
 
     struct CopyImageParameters
     {
-        int srcOffset[2];
-        int srcExtents[2];
-        int dstOffset[2];
-        vk::LevelIndex srcMip;
-        vk::LayerIndex srcLayer;
-        int srcSampleCount;
-        int srcHeight;
-        gl::OwnerLevel dstMip;
-        gl::OwnerLayer dstLayer;
-        bool srcPremultiplyAlpha;
-        bool srcUnmultiplyAlpha;
-        bool srcFlipY;
-        bool dstFlipY;
-        SurfaceRotation srcRotation;
-        GLenum srcColorEncoding;
-        GLenum dstColorEncoding;
-        bool copyYuvWithoutColorConversion;
+        int srcOffset[2]                   = {};
+        int srcExtents[2]                  = {};
+        int dstOffset[2]                   = {};
+        vk::LevelIndex srcMip              = vk::LevelIndex(0);
+        vk::LayerIndex srcLayer            = vk::LayerIndex(0);
+        int srcSampleCount                 = 0;
+        int srcHeight                      = 0;
+        gl::OwnerLevel dstMip              = gl::OwnerLevel(0);
+        gl::OwnerLayer dstLayer            = gl::OwnerLayer(0);
+        bool srcPremultiplyAlpha           = false;
+        bool srcUnmultiplyAlpha            = false;
+        bool srcFlipY                      = false;
+        bool dstFlipY                      = false;
+        SurfaceRotation srcRotation        = SurfaceRotation::Identity;
+        GLenum srcColorEncoding            = GL_NONE;
+        GLenum dstColorEncoding            = GL_NONE;
+        bool copyYuvWithoutColorConversion = false;
     };
 
     struct CopyImageBitsParameters
     {
-        int srcOffset[3];
-        gl::OwnerLevel srcLevel;
-        int dstOffset[3];
-        gl::OwnerLevel dstLevel;
-        uint32_t copyExtents[3];
+        int srcOffset[3]        = {};
+        gl::OwnerLevel srcLevel = gl::OwnerLevel(0);
+        int dstOffset[3]        = {};
+        gl::OwnerLevel dstLevel = gl::OwnerLevel(0);
+        uint32_t copyExtents[3] = {};
     };
 
     struct CopyImageToBufferParameters
     {
-        int srcOffset[2];
-        vk::LevelIndex srcMip;
-        vk::LayerIndex srcLayer;
-        uint32_t size[2];
-        ptrdiff_t outputOffset;
-        uint32_t outputPitch;
-        bool reverseRowOrder;
-        const angle::Format *outputFormat;
+        int srcOffset[2]                  = {};
+        vk::LevelIndex srcMip             = vk::LevelIndex(0);
+        vk::LayerIndex srcLayer           = vk::LayerIndex(0);
+        uint32_t size[2]                  = {};
+        ptrdiff_t outputOffset            = 0;
+        uint32_t outputPitch              = 0;
+        bool reverseRowOrder              = false;
+        const angle::Format *outputFormat = nullptr;
     };
 
     struct GenerateMipmapParameters
     {
-        uint32_t srcLevel;
-        uint32_t dstLevelCount;
+        uint32_t srcLevel      = 0;
+        uint32_t dstLevelCount = 0;
     };
 
     struct UnresolveParameters
     {
-        gl::DrawBufferMask unresolveColorMask;
-        bool unresolveDepth;
-        bool unresolveStencil;
-        bool useDynamicRendering;
+        gl::DrawBufferMask unresolveColorMask = {};
+        bool unresolveDepth                   = false;
+        bool unresolveStencil                 = false;
+        bool useDynamicRendering              = false;
     };
 
     struct GenerateFragmentShadingRateParameters
     {
-        uint32_t textureWidth;
-        uint32_t textureHeight;
-        uint32_t attachmentWidth;
-        uint32_t attachmentHeight;
-        uint32_t attachmentBlockWidth;
-        uint32_t attachmentBlockHeight;
-        uint32_t numFocalPoints;
-        std::array<gl::FocalPoint, gl::IMPLEMENTATION_MAX_FOCAL_POINTS> focalPoints;
+        uint32_t textureWidth                                                       = 0;
+        uint32_t textureHeight                                                      = 0;
+        uint32_t attachmentWidth                                                    = 0;
+        uint32_t attachmentHeight                                                   = 0;
+        uint32_t attachmentBlockWidth                                               = 0;
+        uint32_t attachmentBlockHeight                                              = 0;
+        uint32_t numFocalPoints                                                     = 0;
+        std::array<gl::FocalPoint, gl::IMPLEMENTATION_MAX_FOCAL_POINTS> focalPoints = {};
     };
 
     // Based on the maximum number of levels in GenerateMipmap.comp.
@@ -470,8 +470,8 @@ class UtilsVk : angle::NonCopyable
 
     union BlitResolveOffset
     {
-        int32_t resolve[2];
-        float blit[2];
+        std::array<int32_t, 2> resolve;
+        std::array<float, 2> blit;
     };
 
     struct BlitResolveShaderParams
@@ -521,14 +521,14 @@ class UtilsVk : angle::NonCopyable
 
     struct EtcToBcShaderParams
     {
-        uint32_t offsetX;
-        uint32_t offsetY;
-        int32_t texelOffset;
-        uint32_t width;
-        uint32_t height;
-        uint32_t alphaBits;
-        uint32_t isSigned;
-        uint32_t isEacRg;
+        uint32_t offsetX    = 0;
+        uint32_t offsetY    = 0;
+        int32_t texelOffset = 0;
+        uint32_t width      = 0;
+        uint32_t height     = 0;
+        uint32_t alphaBits  = 0;
+        uint32_t isSigned   = 0;
+        uint32_t isEacRg    = 0;
     };
 
     ANGLE_DISABLE_STRUCT_PADDING_WARNINGS

@@ -142,6 +142,15 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBuffers;
     }
 
+    void assertEmptyBufferConsistency(const vk::BufferHelper &emptyBuffer) const
+    {
+        for (size_t attribIndex = 0; attribIndex < mCurrentArrayBuffers.size(); ++attribIndex)
+        {
+            ASSERT(mCurrentEmptyBufferMask.test(attribIndex) ==
+                   (mCurrentArrayBuffers[attribIndex] == &emptyBuffer));
+        }
+    }
+
     angle::Result convertIndexBufferGPU(ContextVk *contextVk,
                                         BufferVk *bufferVk,
                                         const void *indices);
@@ -218,6 +227,8 @@ class VertexArrayVk : public VertexArrayImpl
     gl::AttribArray<vk::BufferSerial> mCurrentArrayBufferSerial;
     // Tracks the default attribute format ID
     gl::AttribArray<angle::FormatID> mDefaultAttribFormatIDs;
+    // The bit is set when mCurrentArrayBuffers is pointing to empty buffer.
+    gl::AttributesMask mCurrentEmptyBufferMask;
 
     // These struct are defined by VK_EXT_vertex_input_dynamic_state, for convenience, we these to
     // store offset/divisor even when vertexInputDynamicState not supported.

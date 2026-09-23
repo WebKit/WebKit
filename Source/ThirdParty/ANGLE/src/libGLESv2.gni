@@ -29,6 +29,7 @@ libangle_common_headers = [
   "src/common/angleutils.h",
   "src/common/apple_platform_utils.h",
   "src/common/backtrace_utils.h",
+  "src/common/com_utils.h",
   "src/common/base/anglebase/base_export.h",
   "src/common/base/anglebase/containers/mru_cache.h",
   "src/common/base/anglebase/logging.h",

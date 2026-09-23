@@ -1704,6 +1704,7 @@
 		7BFAF82A2DE6EB4E00327F7F /* random_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4BE2DE49B0C00327F7F /* random_utils.cpp */; };
 		7BFAF82B2DE6EB6100327F7F /* shader_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4BB2DE49AE900327F7F /* shader_utils.cpp */; };
 		7BFAF82C2DE6EB6100327F7F /* EGLWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971EF2DE4692600455D13 /* EGLWindow.cpp */; };
+		7BFAF9502DE6FC0100327F7F /* frame_capture_shared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF9512DE6FC0100327F7F /* frame_capture_shared.cpp */; };
 		7BFAF82D2DE6EB6100327F7F /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971F52DE4692600455D13 /* Timer.cpp */; };
 		7BFAF82E2DE6EB6100327F7F /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB971F22DE4692600455D13 /* Matrix.cpp */; };
 		7BFAF82F2DE6EB6100327F7F /* test_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF4C22DE49B3E00327F7F /* test_utils.cpp */; };
@@ -3818,6 +3819,7 @@
 		7BB971ED2DE4692600455D13 /* EGLPlatformParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EGLPlatformParameters.h; sourceTree = "<group>"; };
 		7BB971EE2DE4692600455D13 /* EGLWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EGLWindow.h; sourceTree = "<group>"; };
 		7BB971EF2DE4692600455D13 /* EGLWindow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EGLWindow.cpp; sourceTree = "<group>"; };
+		7BFAF9512DE6FC0100327F7F /* frame_capture_shared.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = frame_capture_shared.cpp; sourceTree = "<group>"; };
 		7BB971F02DE4692600455D13 /* Event.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
 		7BB971F12DE4692600455D13 /* Matrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
 		7BB971F22DE4692600455D13 /* Matrix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
@@ -5895,6 +5897,7 @@
 				5C55D7172282747600B5BA2C /* FixedVector.h */,
 				7BFAF8D12DE6EDE400327F7F /* FixedVector_unittest.cpp */,
 				5CCD81891DBFEA10006066B8 /* Float16ToFloat32.cpp */,
+				7BFAF9512DE6FC0100327F7F /* frame_capture_shared.cpp */,
 				7BFAF66D2DE5AA3500327F7F /* gl_enum_utils.cpp */,
 				7BFAF66C2DE5AA3500327F7F /* gl_enum_utils.h */,
 				7BFAF66F2DE5AA3500327F7F /* gl_enum_utils_autogen.cpp */,
@@ -10875,6 +10878,7 @@
 				7BED4E0B2F98E35C00A240A7 /* CompilerTest.cpp in Sources */,
 				7BFAF8282DE6EB3B00327F7F /* crash_handler_posix.cpp in Sources */,
 				7BFAF82C2DE6EB6100327F7F /* EGLWindow.cpp in Sources */,
+				7BFAF9502DE6FC0100327F7F /* frame_capture_shared.cpp in Sources */,
 				7BFAF82E2DE6EB6100327F7F /* Matrix.cpp in Sources */,
 				C9CB43BAA7D6CC688F866887 /* OSWindow.cpp in Sources */,
 				7BFAF82A2DE6EB4E00327F7F /* random_utils.cpp in Sources */,

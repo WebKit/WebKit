@@ -19,7 +19,6 @@
 #include <wrl/client.h>
 
 #include "util/EGLWindow.h"
-#include "util/com_utils.h"
 
 namespace angle
 {

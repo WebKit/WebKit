@@ -57,9 +57,6 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
                         const gl::ShaderMap<std::string> &shaderSources,
                         const gl::ShaderMap<SharedCompiledShaderStateMtl> &shadersState,
                         gl::ShaderMap<TranslatedShaderInfo> *mslShaderInfoOut);
-
-// Get equivalent shadow compare mode that is used in translated msl shader.
-uint MslGetShaderShadowCompareMode(GLenum mode, GLenum func);
 }  // namespace mtl
 }  // namespace rx
 

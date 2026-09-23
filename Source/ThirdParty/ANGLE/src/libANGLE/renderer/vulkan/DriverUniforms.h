@@ -86,7 +86,9 @@ class GraphicsDriverUniforms
     GraphicsDriverUniforms(vk::Renderer *renderer)
         : mAllDirtyBits({DIRTY_BIT_ATOMIC_COUNTER_BUFFER, DIRTY_BIT_DEPTH_RANGE,
                          DIRTY_BIT_RENDER_AREA, DIRTY_BIT_FLIP_XY, DIRTY_BIT_MISC,
-                         DIRTY_BIT_BASE_INSTANCE})
+                         DIRTY_BIT_BASE_INSTANCE}),
+          mPreferPrecomputedVertexTransform(
+              renderer->getFeatures().preferPrecomputedVertexTransform.enabled)
     {
         std::fill(mUniformData.depthRange.begin(), mUniformData.depthRange.end(), 0.0f);
         mUniformData.renderArea = 0;
@@ -94,6 +96,12 @@ class GraphicsDriverUniforms
         mUniformData.uint32Misc = 0;
         mUniformData.baseInstance = 0;
         std::fill(mUniformData.acbBufferOffsets.begin(), mUniformData.acbBufferOffsets.end(), 0);
+        std::fill(mUniformData.transformXY.begin(), mUniformData.transformXY.end(), 0.0f);
+
+        if (mPreferPrecomputedVertexTransform)
+        {
+            mAllDirtyBits.set(DIRTY_BIT_TRANSFORM_XY);
+        }
 
         if (renderer->getFeatures().emulateTransformFeedback.enabled)
         {
@@ -185,8 +193,8 @@ class GraphicsDriverUniforms
         }
 
         const uint32_t prevUint32Misc = mUniformData.uint32Misc;
-        const uint32_t swapXY = IsRotatedAspectRatio(rotation);
-        SetBitField(mUniformData.misc.swapXY, swapXY);
+        const bool swapXY             = IsRotatedAspectRatio(rotation);
+        SetBitField(mUniformData.misc.swapXY, swapXY ? 1u : 0u);
         SetBitField(mUniformData.misc.numSamples, numSamples);
         SetBitField(mUniformData.misc.layeredFramebuffer, layeredFramebuffer);
 
@@ -194,6 +202,30 @@ class GraphicsDriverUniforms
         {
             mDirtyBits.set(DIRTY_BIT_MISC);
             dirty = true;
+        }
+
+        // Pre-compute the 2x2 XY transformation matrix for the vertex stage.  Only done when the
+        // feature is enabled; otherwise the shader uses the flipXY/swapXY path directly.
+        if (mPreferPrecomputedVertexTransform)
+        {
+            const float fx = ((flipXY >> 16) & 0x80) ? -1.0f : 1.0f;
+            const float fy = ((flipXY >> 24) & 0x80) ? -1.0f : 1.0f;
+
+            // Row vectors for dot-product use in the shader:
+            //   result.x = dot(position.xy, transformXY.xy)
+            //   result.y = dot(position.xy, transformXY.zw)
+            // Not swapped: (fx, 0, 0, fy) -> (fx*x,  fy*y)
+            // Swapped:     (0, fx, fy, 0) -> (fx*y,  fy*x)
+            const std::array<float, 4> newTransformXY =
+                swapXY ? std::array<float, 4>{0.0f, fx, fy, 0.0f}
+                       : std::array<float, 4>{fx, 0.0f, 0.0f, fy};
+
+            if (newTransformXY != mUniformData.transformXY)
+            {
+                mUniformData.transformXY = newTransformXY;
+                mDirtyBits.set(DIRTY_BIT_TRANSFORM_XY);
+                dirty = true;
+            }
         }
 
         return dirty;
@@ -289,6 +321,7 @@ class GraphicsDriverUniforms
         DIRTY_BIT_MISC,
         DIRTY_BIT_BASE_INSTANCE,
         DIRTY_BIT_ATOMIC_COUNTER_BUFFER,
+        DIRTY_BIT_TRANSFORM_XY,
         DIRTY_BIT_EMULATED_TRANSFORM_FEEDBACK,
 
         EnumCount
@@ -361,6 +394,9 @@ class GraphicsDriverUniforms
         // allowed in GL.
         std::array<uint32_t, 2> acbBufferOffsets;
 
+        // Pre-computed 2x2 XY transformation matrix (swap + flip combined).
+        std::array<float, 4> transformXY;
+
         // Only used when transform feedback is emulated.
         std::array<int32_t, 4> xfbBufferOffsets;
         int32_t xfbVerticesPerInstance;
@@ -387,6 +423,7 @@ class GraphicsDriverUniforms
         offsetof(struct UniformData, misc),
         offsetof(struct UniformData, baseInstance),
         offsetof(struct UniformData, acbBufferOffsets),
+        offsetof(struct UniformData, transformXY),
         offsetof(struct UniformData, xfbBufferOffsets),
         sizeof(struct UniformData)};
 
@@ -399,6 +436,9 @@ class GraphicsDriverUniforms
     DirtyBits mAllDirtyBits;
 
     uint32_t mMaxUniformDataSize;
+
+    // Whether the pre-computed XY transform matrix is used.
+    bool mPreferPrecomputedVertexTransform;
 };
 
 struct ComputeDriverUniforms

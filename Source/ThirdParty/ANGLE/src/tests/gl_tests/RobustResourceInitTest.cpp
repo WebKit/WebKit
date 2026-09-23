@@ -802,7 +802,7 @@ void RobustResourceInitTest::checkNonZeroPixels(GLTexture *texture,
     GLFramebuffer fb;
     glBindFramebuffer(GL_FRAMEBUFFER, fb);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->get(), 0);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     checkFramebufferNonZeroPixels(skipX, skipY, skipWidth, skipHeight, skip);
 }
@@ -1774,7 +1774,7 @@ TEST_P(RobustResourceInitTest, UninitializedPartsOfCopied2DTexturesAreBlack)
     constexpr int fboHeight = 16;
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, fboWidth, fboHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     glClearColor(1.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -1806,7 +1806,7 @@ TEST_P(RobustResourceInitTestES3, ReadingOutOfBoundsCopiedTextureWithUnpackBuffe
     constexpr int fboHeight = 16;
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, fboWidth, fboHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     glClearColor(1.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -1859,7 +1859,7 @@ TEST_P(RobustResourceInitTest, ReadingOutOfBoundsCopiedTexture)
     constexpr int fboHeight = 16;
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA4, fboWidth, fboHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     glClearColor(1.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     EXPECT_GL_NO_ERROR();
@@ -3416,20 +3416,18 @@ TEST_P(RobustResourceInitTestES3, CompressedSubImage)
     constexpr int subHeight = 4;
     constexpr GLenum format = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
 
-    static constexpr uint8_t img_8x8_rgb_dxt1[] = {
+    static constexpr std::array<uint8_t, 32> img_8x8_rgb_dxt1 = {
         0xe0, 0x07, 0x00, 0xf8, 0x11, 0x10, 0x15, 0x00, 0x1f, 0x00, 0xe0,
         0xff, 0x11, 0x10, 0x15, 0x00, 0xe0, 0x07, 0x1f, 0xf8, 0x44, 0x45,
         0x40, 0x55, 0x1f, 0x00, 0xff, 0x07, 0x44, 0x45, 0x40, 0x55,
     };
 
-    static constexpr uint8_t img_4x4_rgb_dxt1[] = {
+    static constexpr std::array<uint8_t, 8> img_4x4_rgb_dxt1 = {
         0xe0, 0x07, 0x00, 0xf8, 0x11, 0x10, 0x15, 0x00,
     };
 
-    std::vector<uint8_t> data(img_8x8_rgb_dxt1,
-                              ANGLE_UNSAFE_TODO(img_8x8_rgb_dxt1 + ArraySize(img_8x8_rgb_dxt1)));
-    std::vector<uint8_t> subData(img_4x4_rgb_dxt1,
-                                 ANGLE_UNSAFE_TODO(img_4x4_rgb_dxt1 + ArraySize(img_4x4_rgb_dxt1)));
+    std::vector<uint8_t> data(img_8x8_rgb_dxt1.begin(), img_8x8_rgb_dxt1.end());
+    std::vector<uint8_t> subData(img_4x4_rgb_dxt1.begin(), img_4x4_rgb_dxt1.end());
 
     GLTexture colorbuffer;
     glBindTexture(GL_TEXTURE_2D, colorbuffer);
@@ -4220,7 +4218,7 @@ TEST_P(RobustResourceInitTest, BindReadFramebufferBypass)
     GLFramebuffer fbo;
     glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_READ_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
 
     // Bind default framebuffer to GL_READ_FRAMEBUFFER to clear any dirty bits
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
@@ -4255,7 +4253,7 @@ TEST_P(RobustResourceInitTest, AttachToBoundReadFramebufferBypass)
 
     // Attach texture to the bound GL_READ_FRAMEBUFFER
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
-    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_READ_FRAMEBUFFER));
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
 
     // Read pixels. If robust resource init is bypassed, this will return the "bad data".
     // If robust resource init is working, it will return transparent black (0).
@@ -4443,6 +4441,158 @@ void main()
     // Read the color buffer to verify that depth was successfully initialized to 1.0f.
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     EXPECT_GL_NO_ERROR();
+}
+
+// Tests that glCopyTexSubImage2D into a cubemap face of mismatched size, followed by
+// redefining the face to match the cubemap size, and copying into it with full coverage,
+// correctly updates the face and does not leave uninitialized data when sampled.
+TEST_P(RobustResourceInitTestES3, CubeMapCopySubImageMismatchedFaceRedefine)
+{
+    ANGLE_SKIP_TEST_IF(!hasGLExtension());
+
+    constexpr GLint kFaceSize = 16;
+    constexpr GLint kHalfSize = 8;
+
+    // Copy sources: green HxH and white SxS read framebuffers.
+    std::vector<GLColor> greenColors(kHalfSize * kHalfSize, GLColor::green);
+    GLTexture srcGreenTex;
+    glBindTexture(GL_TEXTURE_2D, srcGreenTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kHalfSize, kHalfSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 greenColors.data());
+    GLFramebuffer srcGreenFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcGreenFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcGreenTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    std::vector<GLColor> whiteColors(kFaceSize * kFaceSize, GLColor::white);
+    GLTexture srcWhiteTex;
+    glBindTexture(GL_TEXTURE_2D, srcWhiteTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 whiteColors.data());
+    GLFramebuffer srcWhiteFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, srcWhiteFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, srcWhiteTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Destination framebuffer to sample cubemap into.
+    GLTexture dstTex;
+    glBindTexture(GL_TEXTURE_2D, dstTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 nullptr);
+    GLFramebuffer dstFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTex, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Program to sample cubemap face.
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 aPosition;
+void main()
+{
+    gl_Position = aPosition;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+precision highp int;
+uniform highp samplerCube uCube;
+uniform int uFace;
+uniform vec2 uSize;
+out vec4 fragColor;
+void main()
+{
+    vec2 st = gl_FragCoord.xy / uSize;
+    float sc = st.x * 2.0 - 1.0;
+    float tc = st.y * 2.0 - 1.0;
+    vec3 d;
+    if (uFace == 0)      d = vec3( 1.0, -tc, -sc);
+    else if (uFace == 1) d = vec3(-1.0, -tc,  sc);
+    else if (uFace == 2) d = vec3(  sc,  1.0,  tc);
+    else if (uFace == 3) d = vec3(  sc, -1.0, -tc);
+    else if (uFace == 4) d = vec3(  sc, -tc,  1.0);
+    else                 d = vec3( -sc, -tc, -1.0);
+    fragColor = texture(uCube, d);
+})";
+
+    ANGLE_GL_PROGRAM(sampleProg, kVS, kFS);
+    glUseProgram(sampleProg);
+    GLint cubeLoc = glGetUniformLocation(sampleProg, "uCube");
+    ASSERT_NE(cubeLoc, -1);
+    glUniform1i(cubeLoc, 0);
+    GLint faceLoc = glGetUniformLocation(sampleProg, "uFace");
+    ASSERT_NE(faceLoc, -1);
+    GLint sizeLoc = glGetUniformLocation(sampleProg, "uSize");
+    ASSERT_NE(sizeLoc, -1);
+    glUniform2f(sizeLoc, static_cast<float>(kFaceSize), static_cast<float>(kFaceSize));
+
+    // (a) Define cubemap with mismatched face sizes: +X is S x S, -X is H x H.
+    GLTexture cubeTex;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA8, kHalfSize, kHalfSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // (b) Full-coverage glCopyTexSubImage2D into -X (H x H).
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcGreenFbo);
+    glCopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, 0, 0, kHalfSize, kHalfSize);
+    ASSERT_GL_NO_ERROR();
+
+    // (c) Redefine -X to S x S with null data.
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // (d) Full-coverage glCopyTexSubImage2D (WHITE) into -X (S x S).
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, srcWhiteFbo);
+    glCopyTexSubImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, 0, 0, 0, 0, kFaceSize, kFaceSize);
+    ASSERT_GL_NO_ERROR();
+
+    // (e) Complete the cubemap with null data.
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA8, kFaceSize, kFaceSize, 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Sample each cube face and verify contents.
+    glBindFramebuffer(GL_FRAMEBUFFER, dstFbo);
+    glViewport(0, 0, kFaceSize, kFaceSize);
+    glUseProgram(sampleProg);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTex);
+
+    // Face 1 (-X) was fully overwritten with white, so it must be white.
+    glUniform1i(faceLoc, 1);
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(sampleProg, "aPosition", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kFaceSize, kFaceSize, GLColor::white);
+
+    // Remaining faces (+X, +Y, -Y, +Z, -Z) were initialized with null data and never written,
+    // so robust resource init must ensure they are transparent black.
+    for (int face : {0, 2, 3, 4, 5})
+    {
+        glUniform1i(faceLoc, face);
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawQuad(sampleProg, "aPosition", 0.5f);
+        EXPECT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, kFaceSize, kFaceSize, GLColor::transparentBlack);
+    }
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(

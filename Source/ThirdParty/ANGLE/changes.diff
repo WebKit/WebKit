@@ -102,7 +102,7 @@ index 8235662ed0a725064cced4d71065f424a69c36dd..2f4ea31fe7ad1bc6976538ae6f894cb6
  #define GL_ANGLE_explicit_context
  typedef void *GLeglDisplayANGLE;
 diff --git a/include/GLSLANG/ShaderLang.h b/include/GLSLANG/ShaderLang.h
-index e0357e0a87400e8923f2b4df2c5252c46880b7ff..c153044aa3f9381ccff25914da07f1d679045e30 100644
+index e59c7e773209f35d4422b9d7051b1df595a2750b..a39be1af458f11e6378a1856fefc61bd77bc7767 100644
 --- a/include/GLSLANG/ShaderLang.h
 +++ b/include/GLSLANG/ShaderLang.h
 @@ -160,8 +160,8 @@ struct ShPixelLocalStorageOptions
@@ -116,7 +116,7 @@ index e0357e0a87400e8923f2b4df2c5252c46880b7ff..c153044aa3f9381ccff25914da07f1d6
  
      // Translates intermediate tree to glsl, hlsl, msl, or SPIR-V binary.  Can be queried by
      // calling sh::GetObjectCode().
-@@ -489,8 +489,8 @@ using ShHashFunction64 = khronos_uint64_t (*)(const char *, size_t);
+@@ -492,8 +492,8 @@ using ShHashFunction64 = khronos_uint64_t (*)(const char *, size_t);
  struct ShBuiltInResources
  {
      ShBuiltInResources();
@@ -246,7 +246,7 @@ index 4dc0eb35ca8695b4366da003eba303a43cd84468..f8a490ca498cce1aaa989e878fbd67bb
      "dfc9209e0c76eddd9bed0601c6c189e5",
    "tools/flex-bison/linux/flex.sha1":
 diff --git a/scripts/code_generation_hashes/Extension_files.json b/scripts/code_generation_hashes/Extension_files.json
-index aa6d0ffbf1d2abc0e5afa3aeb78725dba1456f57..453114ebcfe3e1be71d258996ab1c55e294b1b0d 100644
+index a86e34daa302c23433a73d0e26b6793b410c7c9d..949d9a0e234509a264c5a12fae4a628ce645dd6c 100644
 --- a/scripts/code_generation_hashes/Extension_files.json
 +++ b/scripts/code_generation_hashes/Extension_files.json
 @@ -1,6 +1,6 @@
@@ -255,7 +255,7 @@ index aa6d0ffbf1d2abc0e5afa3aeb78725dba1456f57..453114ebcfe3e1be71d258996ab1c55e
 -    "fc24f433c996c72cfdd0224def0feef5",
 +    "cb26af3fc74c49314a362fea3bcbfe1a",
    "scripts/egl_angle_ext.xml":
-     "b9a7eb420072ec27819ebf2d41c07748",
+     "3ce0751714fdbb6e959b3d1f8bb79a49",
    "scripts/extension_data/intel_630_linux.json":
 @@ -20,15 +20,15 @@
    "scripts/extension_data/swiftshader_win10_gles1.json":
@@ -278,7 +278,7 @@ index aa6d0ffbf1d2abc0e5afa3aeb78725dba1456f57..453114ebcfe3e1be71d258996ab1c55e
      "2056d54ea07156f1988ca1366bdee21a",
    "third_party/OpenCL-Docs/src/xml/cl.xml":
 diff --git a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
-index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
+index 09a6ba89e4708dcd9f644d2f5c03cb87d2b32144..93f857e7653a2cdd0a861a4de94a5aa6d47fdac2 100644
 --- a/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 +++ b/scripts/code_generation_hashes/GL_CTS_(dEQP)_build_files.json
 @@ -11,166 +11,8 @@
@@ -334,7 +334,7 @@ index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/api/CMakeLists.txt":
 -    "02e15370f47081f609361962fbadeda2",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/binding_model/CMakeLists.txt":
--    "1d296a4235616526b4a34c502be6c8d4",
+-    "2496de088ab6a631e5da0faada7cb631",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/clipping/CMakeLists.txt":
 -    "2341f788b087bc78e89f66446fdad59b",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/compute/CMakeLists.txt":
@@ -352,7 +352,7 @@ index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/device_group/CMakeLists.txt":
 -    "451a6c35fd38aec3212d02f14f201cf9",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/draw/CMakeLists.txt":
--    "818867011729459b85e7d20dfa47c6e5",
+-    "c7f535038753b27707cbb2ac422bb1d5",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/dynamic_state/CMakeLists.txt":
 -    "3db8818671533ace06b9b7710aeda461",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/fragment_ops/CMakeLists.txt":
@@ -366,7 +366,7 @@ index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/geometry/CMakeLists.txt":
 -    "335903779295e9652fdfccde1f9a2078",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/image/CMakeLists.txt":
--    "a81aea82a145ab03d30574f8acca8387",
+-    "bce9b3544c48040fad57950bf62bb55f",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/image_processing/CMakeLists.txt":
 -    "f34f59c3139f23ccd97a05f0a6f5d6b2",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/imageless_framebuffer/CMakeLists.txt":
@@ -420,7 +420,7 @@ index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/synchronization/CMakeLists.txt":
 -    "4166a007b65a7ab34b7a90c6b734401a",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/tensor/CMakeLists.txt":
--    "e9b17dee83247c5dd83a3aebe8ac8b31",
+-    "c8c4b65c5aee453616ee148189d8b9c8",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/tessellation/CMakeLists.txt":
 -    "ce33d79ab4c6522f0d25db75c7959089",
 -  "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/texture/CMakeLists.txt":
@@ -474,7 +474,7 @@ index 0394044dd4b03ece3b5346413bbe997c09cd35c4..93f857e7653a2cdd0a861a4de94a5aa6
 +    "97bd9c51fa33d2231ff158a913e1e486"
  }
 diff --git a/scripts/code_generation_hashes/GL_EGL_WGL_loader.json b/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
-index c5e98abae2b24bc235de0c7d75c21bb79149e655..dfd23caf75c92f70ca3304eb5a5e6b28d3f55ed0 100644
+index fc94c425adad292cbd96b5b019865c531330fe51..b1c58df41b79ffe9a0581105c617229dade897b8 100644
 --- a/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
 +++ b/scripts/code_generation_hashes/GL_EGL_WGL_loader.json
 @@ -4,9 +4,9 @@
@@ -512,7 +512,7 @@ index c5e98abae2b24bc235de0c7d75c21bb79149e655..dfd23caf75c92f70ca3304eb5a5e6b28
      "373b062587eab8a163121255f54597dc",
    "util/windows/wgl_loader_autogen.h":
 diff --git a/scripts/code_generation_hashes/GL_EGL_entry_points.json b/scripts/code_generation_hashes/GL_EGL_entry_points.json
-index 74e7d95c991e3e4fb11ad2a9f8ee073dd010294e..1f5423aeb0d1ad1970f660d3e7b96af0d45c3ccb 100644
+index 95ca31c4b2079ec1db7c72fd3adfd5ac3a966669..ab88710090db38f1b130c3799935274d314e58dd 100644
 --- a/scripts/code_generation_hashes/GL_EGL_entry_points.json
 +++ b/scripts/code_generation_hashes/GL_EGL_entry_points.json
 @@ -4,21 +4,21 @@
@@ -522,8 +522,8 @@ index 74e7d95c991e3e4fb11ad2a9f8ee073dd010294e..1f5423aeb0d1ad1970f660d3e7b96af0
 -    "98232396b4f8d4d0bd0ffea09770ccdb",
 +    "5897f8249501ed541254a95cbaed2f67",
    "scripts/generate_entry_points.py":
--    "c38f9f2788917e03aa7da7856edfc004",
-+    "783d6cdf6e2bf5e253e584f806df41db",
+-    "27a12a751f40c834cc7213bd8f5bd860",
++    "b5b281d61dfb64457ee76a708e527bae",
    "scripts/gl_angle_ext.xml":
 -    "7c8a9d563c1229cb360245781460e360",
 +    "0b41a31dc16307fe117a0ec8b0a4540b",
@@ -585,8 +585,8 @@ index 74e7d95c991e3e4fb11ad2a9f8ee073dd010294e..1f5423aeb0d1ad1970f660d3e7b96af0
 -    "4e05535667599fec4abe94a65c65809f",
 +    "16f1f091125f00828aa9722b05f335e5",
    "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp":
--    "950ce5629eb82ef062f8c93490cd6bef",
-+    "46919286fd51828e605a157f6975abb5",
+-    "e76497f9f988d353a5051d992b8efdc2",
++    "2302f12a5bd075ac2441939f2c3280f1",
    "src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.h":
 -    "64fe5dc719bcdf87fb6415fb84b2088a",
 +    "c68195a31cf66cae8a3dd1f402c6c13d",
@@ -670,7 +670,7 @@ index 42cc71d0c437458caad7e9a9155d48d7a58da3ec..01c20c70aaf71dbd88b3a8ec77cf02f8
 +    "7663a717e56d22922e54aa88e4962f23"
  }
 diff --git a/scripts/code_generation_hashes/interpreter_utils.json b/scripts/code_generation_hashes/interpreter_utils.json
-index ca66c302116f9b27fc6c0d1bf642c15ae07d4086..0b7a9ab45da387826ea6664a40e19a6c86b1135e 100644
+index 95dff7cab124fd0b33ce01659808cbd27feca385..364adabfc0acd293299b4d127e75bcb7665e7c48 100644
 --- a/scripts/code_generation_hashes/interpreter_utils.json
 +++ b/scripts/code_generation_hashes/interpreter_utils.json
 @@ -4,9 +4,9 @@
@@ -693,7 +693,7 @@ index ca66c302116f9b27fc6c0d1bf642c15ae07d4086..0b7a9ab45da387826ea6664a40e19a6c
 +    "04a3c770d56ca6ded0fd70c7dd471c3c"
  }
 diff --git a/scripts/code_generation_hashes/proc_table.json b/scripts/code_generation_hashes/proc_table.json
-index 367615a5d7547eff4e6fd16e1532046065daa041..6893537aaea94ecbce8423946c33e29fc07ff2a2 100644
+index bda6f7cfadaed6bd9536c35e987cf63212baaf70..cd888318e874ca6b69c54cc219a790e37ddb8ebd 100644
 --- a/scripts/code_generation_hashes/proc_table.json
 +++ b/scripts/code_generation_hashes/proc_table.json
 @@ -4,11 +4,11 @@
@@ -726,7 +726,7 @@ index 3ea251bcf454898aa4071a371a09e14cce196b2b..ca08842b501bf0df10f64071a0174aff
          "renderbuffer": "RenderbufferID"
      },
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 8d543333f4767d8acc2f88572509d9b19700160f..b70c0cd5cefe371a5b45368bf58dc54b86cb752d 100755
+index e742b3ae9e88d33e276d255ec95199e313e89ea7..3ab589c95a896f146ba8021277d9e78b9bdf023e 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1114,6 +1114,7 @@ FORMAT_DICT = {
@@ -1872,10 +1872,10 @@ index 84ffa1a1da568de14247f8a10476634301089984..486a3ae506b3813a46138b8a52852556
  
    private:
 diff --git a/src/common/angleutils.h b/src/common/angleutils.h
-index 653ae950f764635794f9f6f7680674b749319fb0..f1834a8fa3298820554d92fa145f6d2eb1973366 100644
+index 6ade5b9ba0ed16803292bcb44fd7e998d933d066..093de42a2bfa0cd97aaea3e0fd671275485042ca 100644
 --- a/src/common/angleutils.h
 +++ b/src/common/angleutils.h
-@@ -469,6 +469,13 @@ inline bool IsLittleEndian()
+@@ -449,6 +449,13 @@ inline bool IsLittleEndian()
      UNREACHABLE();                    \
      ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
  
@@ -1889,7 +1889,7 @@ index 653ae950f764635794f9f6f7680674b749319fb0..f1834a8fa3298820554d92fa145f6d2e
  #if defined(ANGLE_WITH_LSAN)
  #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler
  #else
-@@ -511,6 +518,25 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
+@@ -491,6 +498,25 @@ class MsanScopedDisableInterceptorChecks final : angle::NonCopyable
  #    define ANGLE_NO_SANITIZE_CFI_ICALL
  #endif
  
@@ -2314,7 +2314,7 @@ index 36bf8f238478196ac8c2895863650770896b4bc4..160491c7a4f9e42f3a8b1376c00c53ea
  
  }  // anonymous namespace
 diff --git a/src/compiler/fuzz/translator_fuzzer.cpp b/src/compiler/fuzz/translator_fuzzer.cpp
-index adfcff5fe871b4f804e2b27365f2298efad31f15..54bf58605a5a7b643e568c2f99b84b6d255c02aa 100644
+index 81c8964603582fc570625e7f1ed1eaecef7989ab..2475d6316a83de9ade980899cca738b9366833f4 100644
 --- a/src/compiler/fuzz/translator_fuzzer.cpp
 +++ b/src/compiler/fuzz/translator_fuzzer.cpp
 @@ -154,6 +154,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
@@ -2927,46 +2927,6 @@ index 4ba2532a76353880c779503e039e37fe97e7df6c..d6d023cdcaa08b8901a0388bfd62c6c9
  
      return true;
  }
-diff --git a/src/compiler/translator/msl/ProgramPrelude.cpp b/src/compiler/translator/msl/ProgramPrelude.cpp
-index 8afcfc2516369e126a26dd123570d3ea857f591b..164c1766e2f349a02f3235c73ea58e7c2afb0f3f 100644
---- a/src/compiler/translator/msl/ProgramPrelude.cpp
-+++ b/src/compiler/translator/msl/ProgramPrelude.cpp
-@@ -1093,7 +1093,7 @@ struct ANGLE_VectorElemRef
-     ANGLE_VectorElemRef(thread metal::vec<T, N> &vec, int index)
-         : mVec(vec), mRef(vec[index]), mIndex(index)
-     {}
--    operator thread T &() { return mRef; }
-+    operator thread T &() thread { return mRef; }
- };
- template <typename T, int N>
- ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_elem_ref(thread metal::vec<T, N> &vec, int index)
-@@ -1128,7 +1128,7 @@ struct ANGLE_SwizzleRef
-             mRef[i] = mVec[j];
-         }
-     }
--    operator thread metal::vec<T, SN> &() { return mRef; }
-+    operator thread metal::vec<T, SN> &() thread { return mRef; }
- };
- template <typename T, int N>
- ANGLE_ALWAYS_INLINE ANGLE_VectorElemRef<T, N> ANGLE_swizzle_ref(thread metal::vec<T, N> &vec, int i0)
-@@ -1166,7 +1166,7 @@ struct ANGLE_Out
-     ANGLE_Out(thread T &dest)
-         : mTemp(dest), mDest(dest)
-     {}
--    operator thread T &() { return mTemp; }
-+    operator thread T &() thread { return mTemp; }
- };
- template <typename T>
- ANGLE_ALWAYS_INLINE ANGLE_Out<T> ANGLE_out(thread T &dest)
-@@ -1185,7 +1185,7 @@ struct ANGLE_InOut
-     ANGLE_InOut(thread T &dest)
-         : mTemp(dest), mDest(dest)
-     {}
--    operator thread T &() { return mTemp; }
-+    operator thread T &() thread { return mTemp; }
- };
- template <typename T>
- ANGLE_ALWAYS_INLINE ANGLE_InOut<T> ANGLE_inout(thread T &dest)
 diff --git a/src/compiler/translator/msl/SymbolEnv.h b/src/compiler/translator/msl/SymbolEnv.h
 index 804dac4eb01aa2ce13561e930211c71343420a38..0a40cb1ec092fc07f3795a8ca1dfb063772c024f 100644
 --- a/src/compiler/translator/msl/SymbolEnv.h
@@ -2980,8 +2940,38 @@ index 804dac4eb01aa2ce13561e930211c71343420a38..0a40cb1ec092fc07f3795a8ca1dfb063
          return thisVarId == otherVarId && mField == other.mField;
      }
  
+diff --git a/src/compiler/translator/tree_ops/RewriteDfdy.cpp b/src/compiler/translator/tree_ops/RewriteDfdy.cpp
+index 512668941204463ffcb167887c645365285b40d5..244bc7c4ff7378cade5f06eea5d087f18383a3a5 100644
+--- a/src/compiler/translator/tree_ops/RewriteDfdy.cpp
++++ b/src/compiler/translator/tree_ops/RewriteDfdy.cpp
+@@ -99,13 +99,21 @@ bool Traverser::visitAggregate(Visit visit, TIntermAggregate *node)
+ 
+     // Replace the old dFdx() or dFdy() node with the new node that contains the corrected value
+     //
+-    // Note the following bugs (anglebug.com/42265816):
++    // Note the following limitations (anglebug.com/42265816):
+     //
+-    // - Side effects of operand are duplicated with the above
+-    // - If the direct child of this node is itself dFdx/y, its queueReplacement will not be
+-    //   effective as the parent is also replaced.
++    // - Side effects of operand are duplicated with the above.
++    // - If the operand is itself dFdx/dFdy, the derivatives under it are left unrotated and
++    //   unflipped (see below).
+     queueReplacement(rotatedFlippedResult, OriginalNode::IS_DROPPED);
+ 
++    // Do not recurse into a dFdx/dFdy operand. A queued replacement of the operand records this
++    // node as its parent, which updateTree() redirects to the new expression. The operand is not
++    // a direct child of that expression, so the replacement would fail.
++    TIntermAggregate *operandAgg = operand->getAsAggregate();
++    if (operandAgg && (operandAgg->getOp() == EOpDFdx || operandAgg->getOp() == EOpDFdy))
++    {
++        return false;
++    }
+     return true;
+ }
+ }  // anonymous namespace
 diff --git a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
-index 234d65fd5be3bd5e887054a706d1d27792c96288..cb6c60132f1bf444587d4e165f7a3f78c008ba82 100644
+index af4448ccad95b0c8e609436d2cfe5f43a1af240b..ba517bc95ed18c74124a5da1b4c3b57a4fc7b24e 100644
 --- a/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
 +++ b/src/compiler/translator/tree_ops/RewriteStructSamplers.cpp
 @@ -40,18 +40,19 @@ using StructureMap        = angle::HashMap<const TStructure *, StructureData>;
@@ -3208,12 +3198,12 @@ index 234d65fd5be3bd5e887054a706d1d27792c96288..cb6c60132f1bf444587d4e165f7a3f78
 +    bool hasUnsupportedError() const { return mUnsupportedError; }
 +
    private:
-     bool isActiveUniform(const ImmutableString &rootStructureName)
-     {
-@@ -628,6 +672,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
- 
-     // Caches the names of all inactive uniforms.
-     TSet<ImmutableString> *mActiveUniforms = nullptr;
+     // Removes all samplers from a struct specifier.
+     void stripStructSpecifierSamplers(const TStructure *structure, TIntermSequence *newSequence)
+@@ -603,6 +647,11 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
+     // A stack of array sizes.  Used to figure out the array dimensions of the extracted sampler,
+     // for example when it's nested in an array of structs in an array of structs.
+     TVector<unsigned int> mArraySizeStack;
 +
 +    // FIXME: Used to communicate that an error occurred during the rewrite process that is
 +    // currently not
@@ -3222,7 +3212,7 @@ index 234d65fd5be3bd5e887054a706d1d27792c96288..cb6c60132f1bf444587d4e165f7a3f78
  };
  }  // anonymous namespace
  
-@@ -635,6 +684,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
+@@ -610,6 +659,10 @@ bool RewriteStructSamplers(TCompiler *compiler, TIntermBlock *root, TSymbolTable
  {
      RewriteStructSamplersTraverser traverser(compiler, symbolTable);
      root->traverse(&traverser);
@@ -3402,7 +3392,7 @@ index 4da60c18bbe8b611953095537d611d0a588abece..07d79956a9f97b3bf84440114d92a11d
  
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index acd6b60acd12ce48fa0928bee25ebd8e68339b8f..b94f2163451e2d10498e9ed068984fff0c31f65d 100644
+index 554cd5b0ea299e6b6b288394eb5cbac165095140..904604a387ce8da55909e906a609adcdcc8f90d4 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
 @@ -10124,6 +10124,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
@@ -3456,7 +3446,7 @@ index acd6b60acd12ce48fa0928bee25ebd8e68339b8f..b94f2163451e2d10498e9ed068984fff
  void Context::texStorageAttribs2D(TextureType targetPacked,
                                    GLsizei levels,
                                    GLenum internalFormat,
-@@ -10468,7 +10505,7 @@ void ErrorSet::validationErrorF(angle::EntryPoint entryPoint,
+@@ -10471,7 +10508,7 @@ void ErrorSet::validationErrorF(angle::EntryPoint entryPoint,
      }
  }
  
@@ -3549,10 +3539,10 @@ index 9f11356319284d751407db9f4ac408d49cdcd99f..77035bed002688585040efdf3b0b24ca
  
  #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Display.cpp b/src/libANGLE/Display.cpp
-index 6a43dbbfa6ce5d9c695a82473aa44e1e4a247206..ae46ee10d0941e1f361244e595a7495c325902dc 100644
+index f272e0e36776cf514c79f1f8908c49f0e9fc45b7..ad2fcd004607660091251b7b5521b7f962dc55d6 100644
 --- a/src/libANGLE/Display.cpp
 +++ b/src/libANGLE/Display.cpp
-@@ -2367,7 +2367,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
+@@ -2501,7 +2501,7 @@ Error Display::validateImageClientBuffer(const gl::Context *context,
      return mImplementation->validateImageClientBuffer(context, target, clientBuffer, attribs);
  }
  
@@ -3562,10 +3552,10 @@ index 6a43dbbfa6ce5d9c695a82473aa44e1e4a247206..ae46ee10d0941e1f361244e595a7495c
                                const AttributeMap &attributes) const
  {
 diff --git a/src/libANGLE/Display.h b/src/libANGLE/Display.h
-index f9c0bc1f0fb7454d4ac128a4e6bbe8c39876e6e5..d0ac8996e65aea969bf58a2105f5f30739c6b88a 100644
+index 66beebeb1905b4d53eb61ca385fcb0a4c707bd71..39195a8053684027bb6f906a37dd006d7b8fc620 100644
 --- a/src/libANGLE/Display.h
 +++ b/src/libANGLE/Display.h
-@@ -218,7 +218,7 @@ class Display final : public LabeledObject,
+@@ -275,7 +275,7 @@ class Display final : public LabeledObject,
                                      EGLenum target,
                                      EGLClientBuffer clientBuffer,
                                      const egl::AttributeMap &attribs) const;
@@ -3575,10 +3565,10 @@ index f9c0bc1f0fb7454d4ac128a4e6bbe8c39876e6e5..d0ac8996e65aea969bf58a2105f5f307
                           const AttributeMap &attributes) const;
  
 diff --git a/src/libANGLE/ErrorStrings.h b/src/libANGLE/ErrorStrings.h
-index e0b79343893ae048ed3b37f7945b2e9b11d41587..9c99d4a1675bd7405f7907eeed4c57c267e20bbe 100644
+index edf3c09db38be6fbc69223d78f4c39b415fcc5a2..1925ed2cdebf11fe92a6885221f1a3c6cbe7d9cb 100644
 --- a/src/libANGLE/ErrorStrings.h
 +++ b/src/libANGLE/ErrorStrings.h
-@@ -477,6 +477,8 @@ inline constexpr const char *kNegativeBufSize = "Negative bufSize.";
+@@ -479,6 +479,8 @@ inline constexpr const char *kNegativeBufSize = "Negative bufSize.";
  inline constexpr const char *kNegativeCount = "Negative count.";
  inline constexpr const char *kNegativeDimensions = "One or more image dimensions are negative.";
  inline constexpr const char *kNegativeDrawcount = "Negative drawcount.";
@@ -4008,7 +3998,7 @@ index 74c566497c8203ca5331e49817cf17dcf5ec0db4..561b1565fa008ac6163b622bb1a144d3
      void markAttachmentsUninitialized(const Context *context,
                                        size_t count,
 diff --git a/src/libANGLE/GlobalMutex.cpp b/src/libANGLE/GlobalMutex.cpp
-index 8c3fdb2e77e1b4e4df338cc93d3d7c28b45e4862..9d006840117dd5e462b882f4c659f09069554540 100644
+index 330d0cae7f1b02fc15660fa78ec7f41b21475746..75f5119b466eb03a4c664ecbf7c3d6f647d465bc 100644
 --- a/src/libANGLE/GlobalMutex.cpp
 +++ b/src/libANGLE/GlobalMutex.cpp
 @@ -25,8 +25,8 @@ using GlobalMutexType = std::mutex;
@@ -4426,10 +4416,10 @@ index 0ebad533292ff09cd7bc8a1f915ab58b00b78bf5..39a4046fd3755b62ac3809a41e342e23
      const gl::State &mState;
      gl::MemoryProgramCache *mMemoryProgramCache;
 diff --git a/src/libANGLE/renderer/DisplayImpl.cpp b/src/libANGLE/renderer/DisplayImpl.cpp
-index 8b4573f4d9dccfbeaccedfb8f6f07fb1ad1dc3f3..bf46443c7ed5449ffb31348a433e9c89ff99511c 100644
+index de2779437908e0eb5fba91ab742d486cfaf35918..c4eb26fd8e52fa3286655928a6aa002893d127bc 100644
 --- a/src/libANGLE/renderer/DisplayImpl.cpp
 +++ b/src/libANGLE/renderer/DisplayImpl.cpp
-@@ -102,7 +102,7 @@ egl::Error DisplayImpl::validatePixmap(const egl::Config *config,
+@@ -97,7 +97,7 @@ egl::Error DisplayImpl::validatePixmap(const egl::Config *config,
                                         const egl::AttributeMap &attributes) const
  {
      UNREACHABLE();
@@ -5731,10 +5721,10 @@ index 71017e47adb8bc8392fb15bbe063430a58d3ca84..a5d041804e92662fccaafe13c535ebc6
      {
          size_t resourceSize = EstimateTextureSizeInBytes(
 diff --git a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-index 7f293e08c0631020035c1d91a6e11f314a53b9f7..6f58a8d1d5e0bc84b7e635016ee5b6ed194a7385 100644
+index 1495633157948a0c0b762d003027dd3e1d1a5223..9d3be4dac6db2d58653c57a1379209b5dadbee0f 100644
 --- a/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramExecutableMtl.mm
-@@ -899,7 +899,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
+@@ -900,7 +900,7 @@ void ReadFromDefaultUniformBlockWithElementSize(int componentCount,
  {
      ContextMtl *context = mtl::GetImpl(glContext);
  
@@ -5989,7 +5979,7 @@ index 446f81d5c90d84c8ab732561e3da4ede46a1b9cd..fec387e8e52a7d833ec48229fdae85ae
                                                  int slice,
                                                  const MTLRegion &mtlArea,
 diff --git a/src/libANGLE/renderer/metal/TextureMtl.mm b/src/libANGLE/renderer/metal/TextureMtl.mm
-index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea8380688651d 100644
+index ab2813837e37098e06ca02be6e91d27692cc4f95..b366c7c967a351b145a696f2adbf7962bd0159a3 100644
 --- a/src/libANGLE/renderer/metal/TextureMtl.mm
 +++ b/src/libANGLE/renderer/metal/TextureMtl.mm
 @@ -151,27 +151,6 @@ GLuint GetImageCubeFaceIndexOrZeroFrom(const gl::ImageIndex &index)
@@ -6114,7 +6104,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
  angle::Result TextureMtl::ensureLevelViewsWithinBaseMaxCreated()
  {
      ASSERT(mViewFromBaseToMaxLevel);
-@@ -1414,38 +1370,27 @@ uint32_t height(GLuint glLevel) const
+@@ -1414,32 +1370,24 @@ uint32_t height(GLuint glLevel) const
              ? gl::RenderToTextureImageIndex::Default
              : static_cast<gl::RenderToTextureImageIndex>(PackSampleCount(implicitSamples));
  
@@ -6123,28 +6113,22 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
 -
 -    GLuint layer         = GetImageLayerIndexFrom(imageIndex);
      RenderTargetMtl &rtt = mRenderTargets[imageIndex][renderToTextureIndex];
-     if (!rtt.getTexture())
-     {
--        // Lazy initialization of render target:
--        if (imageDef.image)
--        {
--            if (imageIndex.getType() == gl::TextureType::CubeMap)
--            {
--                // Cube map is special, the image is already the view of its layer
--                rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, 0, format);
--            }
--            else
--            {
--                rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, format);
--            }
--        }
-+        auto &imageDef = getImageDefinition(imageIndex);
-+        ANGLE_CHECK_ASSERT(context, imageDef.image && imageDef.image->valid());
-+        // Cube map is special, the image is already the view of its layer.
-+        GLuint layer = imageIndex.getType() == gl::TextureType::CubeMap ? 0 : GetImageLayerIndexFrom(imageIndex);
-+        const mtl::Format &mtlFormat = context->getPixelFormat(imageDef.formatID);
-+        rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, mtlFormat);
-     }
+-    CHECK(imageDef.image);
+-    if (imageIndex.getType() == gl::TextureType::CubeMap)
+-    {
+-        // Cube map is special, the image is already the view of its layer
+-        rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, 0, format);
+-    }
+-    else
+-    {
+-        rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, format);
+-    }
++    auto &imageDef = getImageDefinition(imageIndex);
++    ANGLE_CHECK_ASSERT(context, imageDef.image && imageDef.image->valid());
++    // Cube map is special, the image is already the view of its layer.
++    GLuint layer = imageIndex.getType() == gl::TextureType::CubeMap ? 0 : GetImageLayerIndexFrom(imageIndex);
++    const mtl::Format &mtlFormat = context->getPixelFormat(imageDef.formatID);
++    rtt.set(imageDef.image, mtl::kZeroNativeMipLevel, layer, mtlFormat);
  
      if (implicitSamples > 1 && !rtt.getImplicitMSTexture())
      {
@@ -6161,7 +6145,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
          }
          rtt.setImplicitMSTexture(msTexture);
      }
-@@ -1722,7 +1667,20 @@ uint32_t height(GLuint glLevel) const
+@@ -1716,7 +1664,20 @@ uint32_t height(GLuint glLevel) const
      ANGLE_TRY(ensureNativeStorageCreated(context, /*keepImages=*/false,
                                           ImageMipLevels::FullMipChainForGenerateMipmap));
  
@@ -6182,7 +6166,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      if (!mViewFromBaseToMaxLevel)
      {
          return angle::Result::Continue;
-@@ -1765,8 +1723,7 @@ uint32_t height(GLuint glLevel) const
+@@ -1759,8 +1720,7 @@ uint32_t height(GLuint glLevel) const
      ContextMtl *contextMtl           = mtl::GetImpl(context);
      const angle::Format &angleFormat = mViewFromBaseToMaxLevel->getFormat().actualAngleFormat();
      // This format must have mip generation function.
@@ -6192,7 +6176,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
  
      for (uint32_t slice = 0; slice < mSlices; ++slice)
      {
-@@ -2090,54 +2047,40 @@ uint32_t height(GLuint glLevel) const
+@@ -2084,54 +2044,40 @@ uint32_t height(GLuint glLevel) const
                                          const mtl::Format &mtlFormat,
                                          const gl::Extents &size)
  {
@@ -6269,7 +6253,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      bool allowFormatView =
          mtlFormat.hasDepthAndStencilBits() ||
          needsFormatViewForPixelLocalStorage(
-@@ -2149,29 +2092,26 @@ uint32_t height(GLuint glLevel) const
+@@ -2143,29 +2089,26 @@ uint32_t height(GLuint glLevel) const
          case gl::TextureType::CubeMap:
              ANGLE_TRY(mtl::Texture::Make2DTexture(
                  contextMtl, mtlFormat, size.width, size.height, 1,
@@ -6304,7 +6288,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      return angle::Result::Continue;
  }
  
-@@ -2189,7 +2129,6 @@ uint32_t height(GLuint glLevel) const
+@@ -2183,7 +2126,6 @@ uint32_t height(GLuint glLevel) const
  
      // Tell context to rebind textures
      contextMtl->invalidateCurrentTextures();
@@ -6312,7 +6296,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      ANGLE_TRY(createNativeStorage(context, type, mips, samples, size, mtlFormat));
      ANGLE_TRY(createViewFromBaseToMaxLevel());
  
-@@ -2249,15 +2188,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2243,15 +2185,15 @@ uint32_t height(GLuint glLevel) const
  
      ContextMtl *contextMtl = mtl::GetImpl(context);
  
@@ -6333,7 +6317,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
  
      // Get corresponding source data's ANGLE format
      angle::FormatID srcAngleFormatId;
-@@ -2445,9 +2384,8 @@ uint32_t height(GLuint glLevel) const
+@@ -2439,9 +2381,8 @@ uint32_t height(GLuint glLevel) const
                                                          const uint8_t *pixels,
                                                          const ImageDefinitionMtl &imageDef)
  {
@@ -6344,7 +6328,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      mtl::Format imageFormat = contextMtl->getPixelFormat(imageDef.formatID);
  
      if (unpackBuffer)
-@@ -2693,9 +2631,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2687,9 +2628,9 @@ uint32_t height(GLuint glLevel) const
      }
  
      ASSERT(index.getLayerCount() == 1 && !index.isLayered());
@@ -6355,7 +6339,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      const mtl::TextureRef &image = imageDef.image;
      const mtl::Format &format    = contextMtl->getPixelFormat(imageDef.formatID);
      // For Texture's image definition, we always use zero mip level.
-@@ -2737,13 +2675,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2731,13 +2672,11 @@ uint32_t height(GLuint glLevel) const
      const gl::Offset modifiedDestOffset(destOffset.x + clippedSourceArea.x - sourceArea.x,
                                          destOffset.y + clippedSourceArea.y - sourceArea.y, 0);
  
@@ -6373,7 +6357,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      {
          return copySubImageCPU(context, index, modifiedDestOffset, clippedSourceArea,
                                 internalFormat, source, colorReadRT);
-@@ -2799,14 +2735,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2793,14 +2732,11 @@ uint32_t height(GLuint glLevel) const
                                            const FramebufferMtl *source,
                                            const RenderTargetMtl *colorReadRT)
  {
@@ -6391,7 +6375,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      const int dstRowPitch          = dstFormat.pixelBytes * clippedSourceArea.width;
      angle::MemoryBuffer conversionRow;
      ANGLE_CHECK_GL_ALLOC(contextMtl, conversionRow.resize(dstRowPitch));
-@@ -2853,7 +2786,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2847,7 +2783,7 @@ uint32_t height(GLuint glLevel) const
          // Upload to texture
          ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlDstRowArea, mtl::kZeroNativeMipLevel,
                                          dstSlice, conversionRow.data(), dstRowPitch, 0,
@@ -6400,7 +6384,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      }
  
      return angle::Result::Continue;
-@@ -2878,18 +2811,15 @@ uint32_t height(GLuint glLevel) const
+@@ -2872,18 +2808,15 @@ uint32_t height(GLuint glLevel) const
      ContextMtl *contextMtl = mtl::GetImpl(context);
      TextureMtl *sourceMtl  = mtl::GetImpl(source);
  
@@ -6427,7 +6411,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      {
          return copySubTextureCPU(context, index, destOffset, internalFormat,
                                   mtl::kZeroNativeMipLevel, sourceBox, sourceAngleFormat,
-@@ -2914,10 +2844,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2908,10 +2841,9 @@ uint32_t height(GLuint glLevel) const
                                                   const mtl::TextureRef &sourceTexture)
  {
      ContextMtl *contextMtl = mtl::GetImpl(context);
@@ -6441,7 +6425,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
  
      if (internalFormat.colorEncoding == GL_SRGB)
      {
-@@ -2932,7 +2861,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2926,7 +2858,7 @@ uint32_t height(GLuint glLevel) const
      blitParams.dstRect =
          gl::Rectangle(destOffset.x, destOffset.y, sourceBox.width, sourceBox.height);
      blitParams.dstScissorRect = blitParams.dstRect;
@@ -6450,7 +6434,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      blitParams.enabledBuffers.set(0);
  
      blitParams.src      = sourceTexture;
-@@ -2947,10 +2876,9 @@ uint32_t height(GLuint glLevel) const
+@@ -2941,10 +2873,9 @@ uint32_t height(GLuint glLevel) const
      blitParams.unpackUnmultiplyAlpha  = unpackUnmultiplyAlpha;
      blitParams.transformLinearToSrgb  = sourceAngleFormat.isSRGB;
  
@@ -6463,7 +6447,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
  }
  
  angle::Result TextureMtl::copySubTextureCPU(const gl::Context *context,
-@@ -2965,14 +2893,11 @@ uint32_t height(GLuint glLevel) const
+@@ -2959,14 +2890,11 @@ uint32_t height(GLuint glLevel) const
                                              bool unpackUnmultiplyAlpha,
                                              const mtl::TextureRef &sourceTexture)
  {
@@ -6481,7 +6465,7 @@ index 78947429dacbecf9ab2fd673322849ac004c1d96..f86feb825293c3708ab3f50b7aaea838
      const int srcRowPitch               = sourceAngleFormat.pixelBytes * sourceBox.width;
      const int srcImageSize              = srcRowPitch * sourceBox.height;
      const int convRowPitch              = dstAngleFormat.pixelBytes * sourceBox.width;
-@@ -3000,7 +2925,7 @@ uint32_t height(GLuint glLevel) const
+@@ -2994,7 +2922,7 @@ uint32_t height(GLuint glLevel) const
  
      // Upload to texture
      ANGLE_TRY(UploadTextureContents(context, dstAngleFormat, mtlDstArea, mtl::kZeroNativeMipLevel,
@@ -7078,7 +7062,7 @@ index 1dd725df17eec71b8cf5c0aa61900653fee1bdf4..e8a09851233c0e1a32d4f546d597b32a
  {
      mLabel = std::move(label);
 diff --git a/src/libANGLE/renderer/metal/mtl_common.h b/src/libANGLE/renderer/metal/mtl_common.h
-index 85cc743533100d7b9c7b33c343047f4e4576aa48..d9a22279750932bce8298cc5ffa0d909bd53c7f9 100644
+index 6045eb57080c4bbe9d8046c313fddd0b7adf8c48..8891b06bac9b8e06d4ce494987a939a15043aef9 100644
 --- a/src/libANGLE/renderer/metal/mtl_common.h
 +++ b/src/libANGLE/renderer/metal/mtl_common.h
 @@ -95,10 +95,6 @@ constexpr uint32_t kMaxRenderTargets = 8;
@@ -11364,10 +11348,10 @@ index d9858daec5a233120d73b943349fc488fdda508e..bba60bf9a4f0d82b3986336c042d2adc
      // Make sure block size is 8-byte aligned to avoid ASAN errors.
      static_assert((kBlockSize % 8) == 0, "Check kBlockSize alignment");
 diff --git a/src/libANGLE/renderer/vulkan/CLProgramVk.cpp b/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
-index fc169ed5f20035aa6db277ef7d3aa305a9a806d3..1c68dc70ef52eaeada8eff00c975a94132395704 100644
+index 6b7f524e2236df25b5ea5ae14327b2e803c3b6ea..01aa53dfd6dc42d809b016ff985557fc9472ac4c 100644
 --- a/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
-@@ -591,6 +591,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
+@@ -590,6 +590,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
              // add clspv compiler options based on device features
              processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
  
@@ -11380,10 +11364,10 @@ index fc169ed5f20035aa6db277ef7d3aa305a9a806d3..1c68dc70ef52eaeada8eff00c975a941
              {
                  case BuildType::BUILD:
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 1579aaa8a93aad993e3a1797c4151e804cac3507..93abe9e3de2f1cf4f791165e7f7e7deb58726c23 100644
+index 9f71cdfdc961b713cc203a6d969aaee44879facd..d7ef1ece73a90da1ad2b34c2c7e041c22de02894 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-@@ -6000,6 +6000,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
+@@ -6005,6 +6005,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                              break;
                          case gl::state::EXTENDED_DIRTY_BIT_BLEND_ADVANCED_COHERENT:
                              break;
@@ -11395,10 +11379,10 @@ index 1579aaa8a93aad993e3a1797c4151e804cac3507..93abe9e3de2f1cf4f791165e7f7e7deb
                              UNREACHABLE();
                      }
 diff --git a/src/libANGLE/renderer/vulkan/vk_format_utils.cpp b/src/libANGLE/renderer/vulkan/vk_format_utils.cpp
-index 09c4896096e2458bc181d869a303afee169dcc1d..4354bb747ad51e570e865525503f32eb4386ffba 100644
+index 0aa0b64324fcb33c94f56dc6c54b13f16190a0bc..2a2499f9bfbae9ffeefaa468b6e2a686ae456ebf 100644
 --- a/src/libANGLE/renderer/vulkan/vk_format_utils.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_format_utils.cpp
-@@ -348,7 +348,7 @@ angle::FormatID ExternalFormatTable::getOrAllocExternalFormatID(uint64_t externa
+@@ -350,7 +350,7 @@ angle::FormatID ExternalFormatTable::getOrAllocExternalFormatID(uint64_t externa
  
      if (mExternalYuvFormats.size() >= kMaxExternalFormatCountSupported)
      {
@@ -11408,10 +11392,10 @@ index 09c4896096e2458bc181d869a303afee169dcc1d..4354bb747ad51e570e865525503f32eb
          ASSERT(false);
          return angle::FormatID::NONE;
 diff --git a/src/libANGLE/renderer/vulkan/vk_helpers.cpp b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-index 415b3751e751d91795e7597ae510d73a289e40ad..df880a7598814c954996e06baf4f9d12463ea164 100644
+index f08b6dea1556d4259381ea006e3cb077da263c99..21123f54b72fb4a705106e5513b62488ca553fda 100644
 --- a/src/libANGLE/renderer/vulkan/vk_helpers.cpp
 +++ b/src/libANGLE/renderer/vulkan/vk_helpers.cpp
-@@ -9364,10 +9364,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
+@@ -9365,10 +9365,9 @@ angle::Result ImageHelper::calculateBufferInfo(ContextVk *contextVk,
          return angle::Result::Continue;
      }
  
@@ -11426,10 +11410,10 @@ index 415b3751e751d91795e7597ae510d73a289e40ad..df880a7598814c954996e06baf4f9d12
  }
  
 diff --git a/src/libANGLE/validationEGL.cpp b/src/libANGLE/validationEGL.cpp
-index 7605a660ac3a028c2ca2c41fd2a4432595830ab7..6051caaf000d1ba1ad9164a2f1ef6c32bb68bcb0 100644
+index 1871acf5f7b744a559c68ce2b9b6b3e01fb2d25f..3c121e6ce541c5f6d6c38a5e1cd735636521e5ae 100644
 --- a/src/libANGLE/validationEGL.cpp
 +++ b/src/libANGLE/validationEGL.cpp
-@@ -3618,11 +3618,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
+@@ -3621,11 +3621,11 @@ bool ValidateCreatePixmapSurface(const ValidationContext *val,
  
      if (!(config->surfaceType & EGL_PIXMAP_BIT))
      {
@@ -11443,7 +11427,7 @@ index 7605a660ac3a028c2ca2c41fd2a4432595830ab7..6051caaf000d1ba1ad9164a2f1ef6c32
                           val->entryPoint, val->labeledObject, false);
  
      return true;
-@@ -7210,7 +7210,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
+@@ -7211,7 +7211,7 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
              break;
          default:
          {
@@ -11453,7 +11437,7 @@ index 7605a660ac3a028c2ca2c41fd2a4432595830ab7..6051caaf000d1ba1ad9164a2f1ef6c32
                  ValidateQuerySurface(val, dpy, surfaceID, attribute, &querySurfaceValue));
          }
 diff --git a/src/libANGLE/validationES.cpp b/src/libANGLE/validationES.cpp
-index 93e4fdf7990bca11deec58a80fe9a1e2bbacc57e..cca97f8350fffd7895afa875b5813eaffd3698b2 100644
+index 763d0282e5409ca32eb7c482d1b75312c6b00a8d..c31c052e069d38284ea54e07bc687ce16d19a7f8 100644
 --- a/src/libANGLE/validationES.cpp
 +++ b/src/libANGLE/validationES.cpp
 @@ -903,6 +903,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
@@ -11478,7 +11462,7 @@ index 93e4fdf7990bca11deec58a80fe9a1e2bbacc57e..cca97f8350fffd7895afa875b5813eaf
      {
          return false;
      }
-@@ -4444,7 +4446,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
+@@ -4440,7 +4442,7 @@ bool ValidateDrawElementsInstancedANGLE(const Context *context,
                                          GLsizei primcount)
  {
      if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11487,7 +11471,7 @@ index 93e4fdf7990bca11deec58a80fe9a1e2bbacc57e..cca97f8350fffd7895afa875b5813eaf
      {
          return false;
      }
-@@ -4461,7 +4463,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
+@@ -4457,7 +4459,7 @@ bool ValidateDrawElementsInstancedEXT(const Context *context,
                                        GLsizei primcount)
  {
      if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11497,7 +11481,7 @@ index 93e4fdf7990bca11deec58a80fe9a1e2bbacc57e..cca97f8350fffd7895afa875b5813eaf
          return false;
      }
 diff --git a/src/libANGLE/validationES.h b/src/libANGLE/validationES.h
-index db3a5aebe8b3b856473c371a68c058525e9fee11..94d8856749dc2ede7549f0af5426488fdc95614c 100644
+index 1edceddbb3f6a2f0e8c820d3de58d3cee0c0ec6c..8505d50d59a8d5d1b3049c1de361331aac447cbe 100644
 --- a/src/libANGLE/validationES.h
 +++ b/src/libANGLE/validationES.h
 @@ -420,6 +420,7 @@ bool ValidateDrawElementsInstancedBase(const Context *context,
@@ -11567,7 +11551,7 @@ index db3a5aebe8b3b856473c371a68c058525e9fee11..94d8856749dc2ede7549f0af5426488f
                  return false;
              }
 diff --git a/src/libANGLE/validationES2.cpp b/src/libANGLE/validationES2.cpp
-index b44bfc8164d83fa1cb18280381503dd7958628ef..10545e7bed058359930fad207ebca8bbd54e0b5c 100644
+index a69209cefbfaa436a9a923bd773a340993bf3a68..43ecd8436739ba99e86fa7f048421df5e3ce3ce1 100644
 --- a/src/libANGLE/validationES2.cpp
 +++ b/src/libANGLE/validationES2.cpp
 @@ -708,6 +708,9 @@ bool ValidCapUncommon(const PrivateState &state, ErrorSet *errors, GLenum cap, b
@@ -11580,7 +11564,7 @@ index b44bfc8164d83fa1cb18280381503dd7958628ef..10545e7bed058359930fad207ebca8bb
          default:
              break;
      }
-@@ -5999,6 +6002,19 @@ bool ValidateTexImage3DOES(const Context *context,
+@@ -6001,6 +6004,19 @@ bool ValidateTexImage3DOES(const Context *context,
                                depth, border, format, type, pixels);
  }
  
@@ -11614,10 +11598,10 @@ index 3ebd466b455df15e3db80fb7bdc0e8ae0fcb85f3..b6291d769ed5a8131779ed6b51f552aa
  
  ANGLE_INLINE bool ValidateVertexAttribPointer(const Context *context,
 diff --git a/src/libANGLE/validationES3.cpp b/src/libANGLE/validationES3.cpp
-index 2dc82fe171a202a06e503876f4151f647add1b43..a329d1372b26d80c218a85d064bda1bc5714c011 100644
+index 8c1d7dcae20464aa2f9a75f65b21e4249305f537..67d8781ffbab5b10419a9a3587dfdeec520e6843 100644
 --- a/src/libANGLE/validationES3.cpp
 +++ b/src/libANGLE/validationES3.cpp
-@@ -1673,7 +1673,7 @@ bool ValidateDrawRangeElements(const Context *context,
+@@ -1675,7 +1675,7 @@ bool ValidateDrawRangeElements(const Context *context,
          return false;
      }
  
@@ -11626,7 +11610,7 @@ index 2dc82fe171a202a06e503876f4151f647add1b43..a329d1372b26d80c218a85d064bda1bc
      {
          return false;
      }
-@@ -3201,7 +3201,7 @@ bool ValidateDrawElementsInstanced(const Context *context,
+@@ -3203,7 +3203,7 @@ bool ValidateDrawElementsInstanced(const Context *context,
                                     GLsizei instanceCount)
  {
      return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11635,7 +11619,7 @@ index 2dc82fe171a202a06e503876f4151f647add1b43..a329d1372b26d80c218a85d064bda1bc
  }
  
  bool ValidateMultiDrawArraysInstancedANGLE(const Context *context,
-@@ -3278,7 +3278,7 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
+@@ -3280,7 +3280,7 @@ bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
      {
          if (ANGLE_UNSAFE_TODO(
                  !ValidateDrawElementsInstancedBase(context, entryPoint, mode, counts[drawID], type,
@@ -11644,7 +11628,7 @@ index 2dc82fe171a202a06e503876f4151f647add1b43..a329d1372b26d80c218a85d064bda1bc
          {
              return false;
          }
-@@ -3320,7 +3320,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
+@@ -3322,7 +3322,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                                GLuint baseInstance)
  {
      return ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
@@ -11653,7 +11637,7 @@ index 2dc82fe171a202a06e503876f4151f647add1b43..a329d1372b26d80c218a85d064bda1bc
  }
  
  bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,
-@@ -3386,7 +3386,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
+@@ -3388,7 +3388,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
      {
          if (!ANGLE_UNSAFE_TODO(ValidateDrawElementsInstancedBase(
                  context, entryPoint, modePacked, counts[drawID], typePacked, indices[drawID],
@@ -11711,7 +11695,7 @@ index b54c1be22c192e616ea982a914b7851d75f647bf..22a648142e1e69d14268ef2193d06fe1
  }
  
 diff --git a/src/libANGLE/validationESEXT.cpp b/src/libANGLE/validationESEXT.cpp
-index 4a053e029453f88826932e3641b854014031c693..6fe6a343308763f6f3aedae241c8dd9a0ed5c1b9 100644
+index 9a70cf73d58d87621affc9e549b6c48ffe302957..8a19250067da51702b0285ce50f4195a38a88fe2 100644
 --- a/src/libANGLE/validationESEXT.cpp
 +++ b/src/libANGLE/validationESEXT.cpp
 @@ -503,7 +503,8 @@ bool ValidateDrawElementsBaseVertexEXT(const Context *context,
@@ -11788,7 +11772,7 @@ index 4a053e029453f88826932e3641b854014031c693..6fe6a343308763f6f3aedae241c8dd9a
      {
          return false;
      }
-@@ -3895,6 +3897,29 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
+@@ -3907,6 +3909,29 @@ bool ValidateLogicOpANGLE(const PrivateState &state,
      return ValidateLogicOpCommon(state, errors, entryPoint, opcodePacked);
  }
  
@@ -11851,7 +11835,7 @@ index 05ba4c1f3bd262e5cafa214bddccbfd21d063705..60e33e98e6ea807a9e2ec63816dfbd59
  
  #endif  // LIBANGLE_VALIDATION_ESEXT_AUTOGEN_H_
 diff --git a/src/libGLESv2.gni b/src/libGLESv2.gni
-index afbb99c0719f9ddcf949cd3161aa20d3cc5a00cd..b1fb772170f22dd3825e7d15bf2ef21cb19cd5d7 100644
+index 08a936e492f189891992d5b1ae8a7af5f5f12507..51a5f39c513b354d97b990e4dfac4bde744f9246 100644
 --- a/src/libGLESv2.gni
 +++ b/src/libGLESv2.gni
 @@ -14,6 +14,7 @@ libangle_common_headers = [
@@ -12037,10 +12021,10 @@ index 0551441208ba5848d2a893d44411893047b2f299..811ab5a2cdab76ca9b36768385ed4be6
  
  #endif  // LIBGLESV2_ENTRY_POINTS_GLES_EXT_AUTOGEN_H_
 diff --git a/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp b/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
-index 08d2de8b77cc424bad7d3f93540df58dbc7057f2..50ae1ece660050f98b5594da3f37db0392963277 100644
+index 1e0811dad9b140c093306c49d428413e57c2fb9a..d9c92d6459b8d39532c9651a2b80cc373dbc6860 100644
 --- a/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
 +++ b/src/libGLESv2/entry_points_gles_ext_explicit_context_autogen.cpp
-@@ -27924,6 +27924,57 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLEContextANGLE(GLeglDisplayANGLE
+@@ -27932,6 +27932,57 @@ void GL_APIENTRY GL_GetTranslatedShaderSourceANGLEContextANGLE(GLeglDisplayANGLE
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -12098,7 +12082,7 @@ index 08d2de8b77cc424bad7d3f93540df58dbc7057f2..50ae1ece660050f98b5594da3f37db03
  void GL_APIENTRY GL_AcquireTexturesANGLEContextANGLE(GLeglDisplayANGLE dpy,
                                                       GLeglContextANGLE ctx,
                                                       GLuint numTextures,
-@@ -42210,4 +42261,60 @@ void GL_APIENTRY GL_StartTilingQCOMContextANGLE(GLeglDisplayANGLE dpy,
+@@ -42218,4 +42269,60 @@ void GL_APIENTRY GL_StartTilingQCOMContextANGLE(GLeglDisplayANGLE dpy,
      ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
  }
  
@@ -12344,10 +12328,10 @@ index 44ad8549bad5363a433c4bab846c21489b97507c..d0d17d85af90cf5bba590a3294e34919
    "gl_tests/LineLoopTest.cpp",
    "gl_tests/LinkAndRelinkTest.cpp",
 diff --git a/src/tests/angle_end2end_tests_expectations.txt b/src/tests/angle_end2end_tests_expectations.txt
-index aed57003b1391f24eafa872f5755d46aff95672a..8b0d4d531cc7ff726ae77570d6a2715fb7f83d89 100644
+index 7d375be5623d19159b5c8721a47cce4087da923d..c51a01ebbf2f1c853af33df6c96a1cede04f8c6b 100644
 --- a/src/tests/angle_end2end_tests_expectations.txt
 +++ b/src/tests/angle_end2end_tests_expectations.txt
-@@ -526,6 +526,8 @@
+@@ -554,6 +554,8 @@
  42266214 MAC APPLE METAL : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
  494392011 MAC METAL : MipmapTestES3.MismatchingLevelFormats/* = SKIP
  496604559 MAC METAL : RobustResourceInitTestES3.DrawThenInvalidateThenVerifyDepthStencil/* = SKIP
@@ -12356,7 +12340,7 @@ index aed57003b1391f24eafa872f5755d46aff95672a..8b0d4d531cc7ff726ae77570d6a2715f
  515709506 MAC METAL : DrawBaseVertexBaseInstanceTest_ES3.BaseInstanceSmallDivisorClientMemory/* = SKIP
  524008572 MAC METAL : VertexAttributeTestES3.LargeAttribPointerOffsetNoCrash/* = SKIP
  534815900 MAC METAL : TextureCubeTestES3.RedefinedCubemapLevelsOnlyFaceZeroCompatible/* = SKIP
-@@ -578,6 +580,10 @@
+@@ -606,6 +608,10 @@
  351275980 MAC METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  351275980 IOS METAL : GLSLTest_ES3.DynamicIndexingOfSwizzledLValuesShouldWork2/* = SKIP
  
@@ -12367,7 +12351,7 @@ index aed57003b1391f24eafa872f5755d46aff95672a..8b0d4d531cc7ff726ae77570d6a2715f
  // D3D
  42264653 WIN D3D11 : GLSLTestLoops.*ContinueInSwitch/* = SKIP
  // D3D does not support compressed textures where the base mip level is not a multiple of 4
-@@ -1425,8 +1431,6 @@
+@@ -1451,8 +1457,6 @@
  40096874 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/* = SKIP
  40096874 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/* = SKIP
  40096874 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/* = SKIP
@@ -12376,17 +12360,16 @@ index aed57003b1391f24eafa872f5755d46aff95672a..8b0d4d531cc7ff726ae77570d6a2715f
  40096874 IOS METAL : MaxTextureSizeTest.Render1xTexture/* = SKIP
  40096874 IOS METAL : MultisampleTest.AlphaToSampleCoverage/* = SKIP
  40096838 IOS METAL : PixelLocalStorageTest.BlendColorMaskAndClear/ES3_Metal_EmulatePixelLocalStorage* = SKIP
-@@ -1519,6 +1523,9 @@
- 365066518 IOS METAL : ShadowSamplerFunctionTexture2DArrayTest.Test/* = SKIP
- 365066518 IOS METAL : ShadowSamplerFunctionTextureCubeTest.Test/* = SKIP
- 
+@@ -1564,6 +1568,8 @@
+ 558819222 IOS METAL : Texture2DTestES3.TextureCOMPRESSEDSRGB8ETC2ImplicitAlpha1/* = SKIP
+ 558819222 IOS METAL : WebGLGLSLTest.FragDataInCommaIndexClampWithoutDrawBuffers/* = SKIP
+ 558819222 IOS METAL : WebGLGLSLTest.FragDataIndexClampWithoutDrawBuffers/* = SKIP
 +// webkit.org/b/316306
 +0 IOSSIMULATOR METAL : WebGL2CompatibilityTest.CompressedTextureASTCEmptyStorageError/* = SKIP
-+
+ 
  // D3D11 backend does not support LOD options with shadow samplers
  365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureBias_Mipmapped = SKIP
- 365066518 D3D11 : ShadowSamplerFunctionTexture2DTest.Test/*__TextureOffsetBias_Mipmapped = SKIP
-@@ -2900,6 +2907,61 @@
+@@ -2947,6 +2953,61 @@
  // Unimplemented parts.
  515493666 D3D11 : Restart/DrawElementsVariantsTest.Draw/* = SKIP
  
@@ -12842,7 +12825,7 @@ index 4e59342a7785e7557f727e3bbeead1922b2c5dd5..91cf4b3c39f7cb7703ba931eae57b243
          const auto &platform = GetParam().eglParameters;
  
 diff --git a/src/tests/egl_tests/EGLSurfaceTest.cpp b/src/tests/egl_tests/EGLSurfaceTest.cpp
-index 10af001fad6e8f027cd158f91bcad5cdafc2835f..e3d1bb39321099cacdaf47a073b4d884095395c1 100644
+index 0cab86a070c44d8e682b87a19315d60c9c6dc4c7..bc5557fb795362c5cb50b523954957fc131b9c4b 100644
 --- a/src/tests/egl_tests/EGLSurfaceTest.cpp
 +++ b/src/tests/egl_tests/EGLSurfaceTest.cpp
 @@ -758,7 +758,7 @@ TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
@@ -13056,7 +13039,7 @@ index 9b0d0facc1bb6b4b2570d3b4dccabe6ce4d5ef7d..e82974f351797df675951a6a54636e9e
      }
  
 diff --git a/src/tests/gl_tests/CopyTexImageTest.cpp b/src/tests/gl_tests/CopyTexImageTest.cpp
-index 2375a4887497b162477a428a273b34ff8d2381bb..be67fc747bcb3ae20461f714ae0af4eb3bd166d7 100644
+index 8a89b3e6345cb5f0728439ca73d2dee8e6ff9da1..bc011578c14fc455853e8e11a2ca87bce631f050 100644
 --- a/src/tests/gl_tests/CopyTexImageTest.cpp
 +++ b/src/tests/gl_tests/CopyTexImageTest.cpp
 @@ -1464,6 +1464,41 @@ TEST_P(CopyTexImageTestES3, CopyTexSubImageToNonZeroBase)
@@ -13114,10 +13097,10 @@ index 6bc586d7d257cddf5d0b02be9c1c3fc87f5d4ee4..1f4c66119b1153b03c9d808087bb4960
  using namespace angle;
  
 diff --git a/src/tests/gl_tests/DepthStencilFormatsTest.cpp b/src/tests/gl_tests/DepthStencilFormatsTest.cpp
-index b8106385a638436f9daf97fea4d16b508ed256e3..812ee635d6b650e96881cd06261c546563d4bbf7 100644
+index 493c81d54be8176005a921c6e5960ad385952383..582e3776b4c08d3145b0f1a617e85f675f6db4e7 100644
 --- a/src/tests/gl_tests/DepthStencilFormatsTest.cpp
 +++ b/src/tests/gl_tests/DepthStencilFormatsTest.cpp
-@@ -1094,6 +1094,66 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
+@@ -1091,6 +1091,66 @@ TEST_P(DepthStencilFormatsTest, VerifyDepthStencilUploadData)
      EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::black);
  }
  
@@ -13185,7 +13168,7 @@ index b8106385a638436f9daf97fea4d16b508ed256e3..812ee635d6b650e96881cd06261c5465
  TEST_P(DepthStencilFormatsTest, VerifyDepth32UploadData)
  {
 diff --git a/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp b/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
-index 78127dd8beb1e8917b88b9d23bd843f6012cab39..e706c61d0261e6c6b30cc3f1e8d7c04bf743685d 100644
+index 163d80f88e7b1159c0bf8c8c1d74e97663828099..231068ecf0cc5c27eeec4a70a2665421765176b8 100644
 --- a/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
 +++ b/src/tests/gl_tests/DrawBaseVertexBaseInstanceTest.cpp
 @@ -7,6 +7,10 @@
@@ -14415,18 +14398,6 @@ index 1a9ca7ce3a89ea195df026b174c013acbc4496af..ed04375d79de477bc9a581081d5ef9c2
  GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawElementsTest);
  ANGLE_INSTANTIATE_TEST_ES3(DrawElementsTest);
  
-diff --git a/src/tests/gl_tests/FramebufferTest.cpp b/src/tests/gl_tests/FramebufferTest.cpp
-index f3a10d115ccceaa1035ceedb2b671211362449db..00e2e400293bf9b1b1b4ff05972ad10f72df1e8d 100644
---- a/src/tests/gl_tests/FramebufferTest.cpp
-+++ b/src/tests/gl_tests/FramebufferTest.cpp
-@@ -10801,6 +10801,7 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(
-     ES3_OPENGLES().enable(Feature::ReattachFboDepthStencilOnReallocation),
-     ES3_OPENGLES().disable(Feature::ReattachFboDepthStencilOnReallocation));
- 
-+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferTest_ES31_MSAA);
- ANGLE_INSTANTIATE_TEST_ES31_AND(FramebufferTest_ES31_MSAA,
-                                 ES31_VULKAN().enable(Feature::EmulatedPrerotation90),
-                                 ES31_VULKAN().enable(Feature::EmulatedPrerotation180),
 diff --git a/src/tests/gl_tests/GLSLOutputTest.cpp b/src/tests/gl_tests/GLSLOutputTest.cpp
 index 08f170575c583d3aea4c151322496106e2954633..a1b88a5a0c695db7f6c78066e2ea04b6270747a1 100644
 --- a/src/tests/gl_tests/GLSLOutputTest.cpp
@@ -14473,7 +14444,7 @@ index 08f170575c583d3aea4c151322496106e2954633..a1b88a5a0c695db7f6c78066e2ea04b6
          compileShader(GL_FRAGMENT_SHADER, shader.c_str());
          verifyIsInTranslation(GL_FRAGMENT_SHADER, "loopForwardProgress");
 diff --git a/src/tests/gl_tests/GLSLTest.cpp b/src/tests/gl_tests/GLSLTest.cpp
-index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163c4db29b9 100644
+index 29c33f47b6b58aa034895cda199dc1ed93b1d618..ed24a3834fb5372be81fb175f54317dc89ccde1f 100644
 --- a/src/tests/gl_tests/GLSLTest.cpp
 +++ b/src/tests/gl_tests/GLSLTest.cpp
 @@ -810,6 +810,29 @@ TEST_P(GLSLTest, SwizzledChainedAssignIncrement)
@@ -14506,7 +14477,7 @@ index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163
  // Same test as above without unary increments.
  TEST_P(GLSLTest, SwizzledChainedAssign)
  {
-@@ -7468,6 +7491,94 @@ void main()
+@@ -7456,6 +7479,64 @@ void main()
      ASSERT_GL_NO_ERROR();
  }
  
@@ -14568,40 +14539,64 @@ index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163
 +    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 +}
 +
-+// Tests that rewriting samplers in structs works when passed as function argument.  In this test,
-+// the function references another struct, which is not being modified.  Regression test for AST
-+// validation applied to a multipass transformation, where references to declarations were attempted
-+// to be validated without having the entire shader.  In this case, the reference to S2 was flagged
-+// as invalid because S2's declaration was not visible.
-+TEST_P(GLSLTest, SamplerInStructAsFunctionArg)
-+{
-+    const char kFS[] = R"(precision mediump float;
-+struct S { sampler2D samp; bool b; };
-+struct S2 { float f; };
-+
-+uniform S us;
-+
-+float f(S s)
-+{
-+    S2 s2;
-+    s2.f = float(s.b);
-+    return s2.f;
-+}
-+
-+void main()
-+{
-+    gl_FragColor = vec4(f(us), 0, 0, 1);
-+})";
-+
-+    GLuint fs = CompileShader(GL_FRAGMENT_SHADER, kFS);
-+    EXPECT_NE(fs, 0u);
-+    ASSERT_GL_NO_ERROR();
-+}
-+
  // Test that nested structs with samplers work when the nested struct is not the last element.
  TEST_P(GLSLTest_ES3, NestedStructWithSamplers)
  {
-@@ -11518,6 +11629,43 @@ void main()
+@@ -7721,6 +7802,53 @@ void main()
+     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+ }
+ 
++// Test that a derivative applied to another derivative compiles. A derivative that is the direct
++// operand of another one used to queue a replacement whose parent was already dropped by the
++// RewriteDfdy pass, tripping ASSERT(replaced) in TIntermTraverser::updateTree().
++TEST_P(GLSLTest_ES3, NestedDerivatives)
++{
++    // The operand has to be non-constant, otherwise the derivatives are folded to zero before the
++    // rewrite runs.
++    constexpr char kFSPrefix[] = R"(#version 300 es
++precision mediump float;
++uniform float u;
++out vec4 color;
++void main()
++{
++    color = vec4()";
++    constexpr char kFSSuffix[] = R"();
++})";
++
++    for (const char *expression : {"dFdy(dFdy(u))", "dFdx(dFdx(u))", "dFdx(dFdy(u))",
++                                   "dFdy(dFdx(u))", "dFdy(dFdy(dFdy(u)))", "dFdy(u + dFdy(u))"})
++    {
++        const std::string fs = std::string(kFSPrefix) + expression + kFSSuffix;
++
++        GLuint shader = CompileShader(GL_FRAGMENT_SHADER, fs.c_str());
++        EXPECT_NE(0u, shader) << expression;
++        glDeleteShader(shader);
++    }
++    ASSERT_GL_NO_ERROR();
++}
++
++// Test that a nested derivative survives the RewriteDfdy rewrite and can be linked and drawn. The
++// value of a derivative of a derivative is implementation defined, so it is not checked.
++TEST_P(GLSLTest_ES3, NestedDerivativesDraw)
++{
++    constexpr char kFS[] = R"(#version 300 es
++precision mediump float;
++uniform float u;
++out vec4 color;
++void main()
++{
++    color = vec4(dFdy(dFdy(u)), 0, 0, 1);
++})";
++
++    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
++    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
++    ASSERT_GL_NO_ERROR();
++}
++
+ // Test that a varying struct that's not statically used in the fragment shader works.
+ // GLSL ES 3.00.6 section 4.3.10.
+ TEST_P(GLSLTest_ES3, VaryingStructNotStaticallyUsedInFragmentShader)
+@@ -11565,6 +11693,43 @@ void main()
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::white);
  }
  
@@ -14645,7 +14640,7 @@ index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163
  // Test a fragment shader that returns inside if (that being the only branch that actually gets
  // executed). Regression test for http://anglebug.com/42261034
  TEST_P(GLSLTest, IfElseIfAndReturn)
-@@ -23216,6 +23364,830 @@ void main()
+@@ -23263,6 +23428,830 @@ void main()
      ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
      drawQuad(program, essl1_shaders::PositionAttrib(), 0.0);
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
@@ -15476,6 +15471,1095 @@ index 426dd9979f2b5b3287ba262406e7c26da5f8cbf3..89a2d6387f5ba0e20fe2c8ebb9881163
      ASSERT_GL_NO_ERROR();
  }
  
+diff --git a/src/tests/gl_tests/ImageTest.cpp b/src/tests/gl_tests/ImageTest.cpp
+index 89498729da28b13c386ca4a00fced36828062877..804d6b29a8cb27d3167e1b591dd2e4f6b1046572 100644
+--- a/src/tests/gl_tests/ImageTest.cpp
++++ b/src/tests/gl_tests/ImageTest.cpp
+@@ -2974,8 +2974,8 @@ TEST_P(ImageTestES3, SourceAHBTargetTexture2DGenerateMipmap)
+ 
+     GLubyte red_data[16] = {255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255};
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{red_data, 16}}, &source, &image));
+@@ -3036,8 +3036,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DDraw)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -3073,8 +3073,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDraw)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -3112,8 +3112,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadPacked565Data)
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
+     constexpr size_t kWidth  = 8;
+     constexpr size_t kHeight = 8;
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source  = nullptr;
++    EGLImageKHR image        = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {}, &source, &image));
+@@ -3164,8 +3164,8 @@ TEST_P(ImageTestRGB565ES3, SourceAHBTarget2DDrawAndUploadByteData)
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT.
+     constexpr size_t kWidth  = 8;
+     constexpr size_t kHeight = 8;
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source  = nullptr;
++    EGLImageKHR image        = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R5G6B5_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {}, &source, &image));
+@@ -3213,8 +3213,8 @@ TEST_P(ImageTestSampleOnlyES3, SourceAHBTarget2DSampleOnly)
+     ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kAHBUsageGPUSampledImage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &source, &image));
+@@ -3245,8 +3245,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DUseAfterDetach)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -3506,8 +3506,8 @@ TEST_P(ImageTestES3, SourceAHBTarget2DTextureThenMSRTSS)
+     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -3963,8 +3963,8 @@ TEST_P(ImageTest, SourceAHBTarget2DEarlyDelete)
+     GLubyte data[4] = {7, 51, 197, 231};
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{data, 4}}, &source, &image));
+@@ -4007,8 +4007,8 @@ void ImageTest::SourceAHBTarget2D_helper(const EGLint *attribs)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
+         {{kSrgbColor, 4}}, &source, &image));
+@@ -4038,8 +4038,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create YCbCr source and image but without initial data
+-    AHardwareBuffer *ycbcrSource;
+-    EGLImageKHR ycbcrImage;
++    AHardwareBuffer *ycbcrSource = nullptr;
++    EGLImageKHR ycbcrImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &ycbcrSource, &ycbcrImage));
+@@ -4047,8 +4047,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+     EXPECT_NE(ycbcrImage, EGL_NO_IMAGE_KHR);
+ 
+     // Create YCrCb source and image but without initial data
+-    AHardwareBuffer *ycrcbSource;
+-    EGLImageKHR ycrcbImage;
++    AHardwareBuffer *ycrcbSource = nullptr;
++    EGLImageKHR ycrcbImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cr8Cb8_420_SP, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &ycrcbSource, &ycrcbImage));
+@@ -4056,8 +4056,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvSourcesNoData)
+     EXPECT_NE(ycrcbImage, EGL_NO_IMAGE_KHR);
+ 
+     // Create YV12 source and image but without initial data
+-    AHardwareBuffer *yv12Source;
+-    EGLImageKHR yv12Image;
++    AHardwareBuffer *yv12Source = nullptr;
++    EGLImageKHR yv12Image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs, {}, &yv12Source,
+         &yv12Image));
+@@ -4114,8 +4114,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create YCbCr BT601 source and image but without initial data
+-    AHardwareBuffer *ycbcrBT601Source;
+-    EGLImageKHR ycbcrBT601Image;
++    AHardwareBuffer *ycbcrBT601Source = nullptr;
++    EGLImageKHR ycbcrBT601Image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &ycbcrBT601Source, &ycbcrBT601Image));
+@@ -4130,8 +4130,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvDataspacesNoData)
+     // implementation will pick the correct dataspace.
+     //
+     // [1] hardware/interfaces/graphics/common/aidl/android/hardware/graphics/common/Dataspace.aidl
+-    AHardwareBuffer *ycbcrBT709Source;
+-    EGLImageKHR ycbcrBT709Image;
++    AHardwareBuffer *ycbcrBT709Source = nullptr;
++    EGLImageKHR ycbcrBT709Image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1280, 720, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &ycbcrBT709Source, &ycbcrBT709Image));
+@@ -4187,15 +4187,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvSources)
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage));
+ 
+     // Create RGB Image
+-    AHardwareBuffer *rgbSource;
+-    EGLImageKHR rgbImage;
++    AHardwareBuffer *rgbSource = nullptr;
++    EGLImageKHR rgbImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{GLColor::blue.data(), 4}}, &rgbSource, &rgbImage));
+ 
+     // Create YUV Image
+-    AHardwareBuffer *yuvSource;
+-    EGLImageKHR yuvImage;
++    AHardwareBuffer *yuvSource = nullptr;
++    EGLImageKHR yuvImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorPurpleY, 1}, {kYUVColorPurpleCb, 1}, {kYUVColorPurpleCr, 1}}, &yuvSource,
+@@ -4247,15 +4247,15 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughRgbAndYuvTargets)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create RGBA Image
+-    AHardwareBuffer *rgbaSource;
+-    EGLImageKHR rgbaImage;
++    AHardwareBuffer *rgbaSource = nullptr;
++    EGLImageKHR rgbaImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{GLColor::blue.data(), 4}}, &rgbaSource, &rgbaImage));
+ 
+     // Create YUV Image
+-    AHardwareBuffer *yuvSource;
+-    EGLImageKHR yuvImage;
++    AHardwareBuffer *yuvSource = nullptr;
++    EGLImageKHR yuvImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorPurpleY, 1}, {kYUVColorPurpleCb, 1}, {kYUVColorPurpleCr, 1}}, &yuvSource,
+@@ -4320,8 +4320,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create YCbCr source and image but without initial data
+-    AHardwareBuffer *ycbcrSource;
+-    EGLImageKHR ycbcrImage;
++    AHardwareBuffer *ycbcrSource = nullptr;
++    EGLImageKHR ycbcrImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &ycbcrSource, &ycbcrImage));
+@@ -4329,8 +4329,8 @@ TEST_P(ImageTest, SourceAHBTarget2DExternalCycleThroughYuvTargetsNoData)
+     EXPECT_NE(ycbcrImage, EGL_NO_IMAGE_KHR);
+ 
+     // Create YV12 source and image but without initial data
+-    AHardwareBuffer *yv12Source;
+-    EGLImageKHR yv12Image;
++    AHardwareBuffer *yv12Source = nullptr;
++    EGLImageKHR yv12Image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs, {}, &yv12Source,
+         &yv12Image));
+@@ -4394,8 +4394,8 @@ TEST_P(ImageTest, SourceAHBTarget2DRetainInitialData)
+     GLubyte data[4] = {0, 255, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{data, 4}}, &source, &image));
+@@ -4439,8 +4439,8 @@ TEST_P(ImageTest, SourceAHBTarget2DMSRTTInteraction)
+     ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_multisampled_render_to_texture"));
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -4494,8 +4494,8 @@ void ImageTest::SourceAHBTarget2DArray_helper(const EGLint *attribs)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
+         {{kSrgbColor, 4}}, &source, &image));
+@@ -4538,8 +4538,8 @@ void ImageTest::SourceAHBTargetExternal_helper(const EGLint *attribs)
+     ANGLE_SKIP_TEST_IF(IsOzone());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
+         {{kSrgbColor, 4}}, &source, &image));
+@@ -5088,8 +5088,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleInitData)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
+@@ -5115,8 +5115,8 @@ TEST_P(ImageTest, SourceYUVAHBTargetExternalRGBSampleNoData)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -5222,8 +5222,8 @@ TEST_P(ImageTest, SourceYUVAHBMipTargetExternalRGBSampleNoData)
+         kDefaultAHBYUVUsage | kAHBUsageGPUMipMapComplete));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         4, 4, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420,
+         kDefaultAHBYUVUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
+@@ -5257,8 +5257,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSample)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
+@@ -5285,8 +5285,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleVS)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
+@@ -5314,8 +5314,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchSamplerExternalOES)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
+@@ -5342,8 +5342,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVFetchVSSamplerExternalOES)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{kYUVColorRedY, 1}, {kYUVColorRedCb, 1}, {kYUVColorRedCr, 1}}, &source, &image));
+@@ -5379,8 +5379,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalCopySrc)
+     };
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -5441,8 +5441,8 @@ TEST_P(ImageTestES3, SourceR10X6G10X6B10X6A10X6AHBTargetExternalCopySrc)
+     }
+ 
+     // Create the image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R10G10B10A10_UNORM, kAHBUsageGPUFramebuffer,
+         kDefaultAttribs, {{reinterpret_cast<const GLubyte *>(srcData.data()), 8}}, &source,
+@@ -5509,8 +5509,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleLinearFiltering)
+     // clang-format on
+ 
+     // Create the Image
+-    AHardwareBuffer *ahbSource;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahbSource = nullptr;
++    EGLImageKHR ahbImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 4, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &ahbSource, &ahbImage));
+@@ -5561,8 +5561,8 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternal2DY2YSample)
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_YCbCr_P210, kDefaultAHBYUVUsage));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_YCbCr_P210, kDefaultAHBYUVUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -5606,8 +5606,8 @@ TEST_P(ImageTestES3, RenderToYUVAHB)
+     };
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -5667,8 +5667,8 @@ TEST_P(ImageTestES31, RenderToYUVAHBFramebufferTexture)
+     };
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -5727,8 +5727,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBIndexedBlendValidationBypass)
+     GLubyte dataCb[1] = {0};
+     GLubyte dataCr[1] = {0};
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -5796,8 +5796,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBWithDepth)
+     };
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -5851,8 +5851,8 @@ TEST_P(ImageTestES3, ClearYUVAHB)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -5893,8 +5893,8 @@ TEST_P(ImageTestES3, ClearYUVAHBWithDepth)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -5951,8 +5951,8 @@ TEST_P(ImageTestES3, PartialClearYUVAHB)
+         0,
+     };
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         8, 8, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 64}, {dataCb, 64}, {dataCr, 64}}, &source, &image));
+@@ -6018,8 +6018,8 @@ TEST_P(ImageTestES3, PartialRenderToYUVAHB)
+     };
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         4, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -6096,8 +6096,8 @@ TEST_P(ImageTestES3, RenderToYUVAHBThenReadPixels)
+     constexpr uint32_t kHeight = 2;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs,
+         {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &source, &image));
+@@ -6162,8 +6162,8 @@ TEST_P(ImageTestES3, AHBClearAppliedBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6202,8 +6202,8 @@ TEST_P(ImageTestES3, AHBClearAppliedViaClearTexImageBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6233,8 +6233,8 @@ TEST_P(ImageTestES3, AHBTwiceClearAppliedBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6275,8 +6275,8 @@ TEST_P(ImageTestES3, AHBTwiceClearViaClearTexImageAppliedBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6308,8 +6308,8 @@ TEST_P(ImageTestES3, AHBClearAndDetachBeforeReadback)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6352,8 +6352,8 @@ TEST_P(ImageTestES3, AHBClearAndAttachAnotherTextureBeforeReadback)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6400,8 +6400,8 @@ TEST_P(ImageTestES3, AHBClearAndSwitchToDefaultFBOBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6443,8 +6443,8 @@ TEST_P(ImageTestES3, AHBClearWithGLClientWaitSyncBeforeReadBack)
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+ 
+     // Create one image backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -6482,8 +6482,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAppliedBeforeReadBack)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
+ 
+     // Create a GLTexture backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb   = nullptr;
++    EGLImageKHR ahbImage   = EGL_NO_IMAGE_KHR;
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+     const GLubyte kRed[]   = {255, 0, 0, 255};
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+@@ -6530,8 +6530,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndDetachBeforeReadBack)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
+ 
+     // Create a GLTexture backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb   = nullptr;
++    EGLImageKHR ahbImage   = EGL_NO_IMAGE_KHR;
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+     const GLubyte kRed[]   = {255, 0, 0, 255};
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+@@ -6582,8 +6582,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndAttachAnotherTextureBeforeReadBack)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
+ 
+     // Create a GLTexture backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb   = nullptr;
++    EGLImageKHR ahbImage   = EGL_NO_IMAGE_KHR;
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+     const GLubyte kRed[]   = {255, 0, 0, 255};
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+@@ -6638,8 +6638,8 @@ TEST_P(ImageTestES3, AHBDrawFlushAndSwitchToDefaultFBOBeforeReadBack)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport() || !kHasAHBFrontBufferUsageSupport);
+ 
+     // Create a GLTexture backed by the AHB.
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb   = nullptr;
++    EGLImageKHR ahbImage   = EGL_NO_IMAGE_KHR;
+     const GLubyte kBlack[] = {0, 0, 0, 0};
+     const GLubyte kRed[]   = {255, 0, 0, 255};
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+@@ -6689,8 +6689,8 @@ TEST_P(ImageTestES3, AHBTextureSwizzleParameters)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -6721,8 +6721,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -6751,8 +6751,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
+         {{kRed50SRGB, 4}}, &ahb, &ahbImage));
+@@ -6783,8 +6783,8 @@ TEST_P(ImageTestES3, RGBXAHBImportPreservesData_Colorspace_TexStorage)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
+         {{kRed50SRGB, 4}}, &ahb, &ahbImage));
+@@ -6839,8 +6839,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDownload)
+     }
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {{pixelsRGBABlack.data(), 4}}, &ahb, &ahbImage));
+@@ -6897,8 +6897,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadData)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 127};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kGarbage, 4}}, &ahb, &ahbImage));
+@@ -6933,8 +6933,8 @@ TEST_P(ImageTestES3, RGBAAHBUploadDataColorspace)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 127};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
+         {{kGarbage, 4}}, &ahb, &ahbImage));
+@@ -6969,8 +6969,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadData)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kGarbage, 4}}, &ahb, &ahbImage));
+@@ -7006,8 +7006,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataColorspace)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
+         {{kGarbage, sizeof(kGarbage)}}, &ahb, &ahbImage));
+@@ -7043,8 +7043,8 @@ TEST_P(ImageTestES3, RGBXAHBUploadDataRGBA)
+     const GLubyte kRed50Linear[]        = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kGarbage, 4}}, &ahb, &ahbImage));
+@@ -7082,8 +7082,8 @@ TEST_P(ImageTestES3, RGBAHBUploadDataColorspace)
+     const GLubyte kRed50Linear[] = {128, 0, 0, 255};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8_UNORM, kDefaultAHBUsage, kColorspaceAttribs,
+         {{kGarbage, sizeof(kGarbage)}}, &ahb, &ahbImage));
+@@ -7114,8 +7114,8 @@ TEST_P(ImageTestES3, RGBXAHBImportNoFramebufferUsage)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kAHBUsageGPUSampledImage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -7153,8 +7153,8 @@ TEST_P(ImageTestES3, RGBXAHBImportMultipleLayers)
+     const GLubyte kInitColor[] = {132, 55, 219, 12, 77, 23, 190, 101, 231, 44, 143, 99};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, kLayerCount, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kInitColor, 4}}, &ahb, &ahbImage));
+@@ -7189,8 +7189,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenReadPixels)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -7227,8 +7227,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClear)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -7270,8 +7270,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenClearThenDraw)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -7332,8 +7332,8 @@ TEST_P(ImageTestES3, RGBXAHBImportThenUpload)
+     const GLubyte kInitColor[] = {132, 55, 219, 12, 132, 55, 219, 12};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kInitColor, 4}}, &ahb, &ahbImage));
+@@ -7372,8 +7372,8 @@ TEST_P(ImageTestES3, IncompleteRGBXAHBImportThenUploadThenEnd)
+     const GLubyte kInitColor[] = {132, 55, 219, 12, 132, 55, 219, 12};
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kInitColor, 4}}, &ahb, &ahbImage));
+@@ -7406,8 +7406,8 @@ TEST_P(ImageTestES3, RGBXAHBImportOcclusionQueryNotCounted)
+     glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+ 
+     // Create the Image
+-    AHardwareBuffer *ahb;
+-    EGLImageKHR ahbImage;
++    AHardwareBuffer *ahb = nullptr;
++    EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kLinearColor, 4}}, &ahb, &ahbImage));
+@@ -7474,8 +7474,8 @@ TEST_P(ImageTestES3, AHBImportReleaseStress)
+ 
+     for (int i = 0; i < 20; i++)
+     {
+-        AHardwareBuffer *ahb;
+-        EGLImageKHR ahbImage;
++        AHardwareBuffer *ahb = nullptr;
++        EGLImageKHR ahbImage = EGL_NO_IMAGE_KHR;
+         ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+             1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+             {{kBlack, 4}}, &ahb, &ahbImage));
+@@ -7510,8 +7510,8 @@ TEST_P(ImageTestES3, YUVValidation)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *yuvSource;
+-    EGLImageKHR yuvImage;
++    AHardwareBuffer *yuvSource = nullptr;
++    EGLImageKHR yuvImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
+         &yuvSource, &yuvImage));
+@@ -7537,8 +7537,8 @@ TEST_P(ImageTestES3, YUVValidation)
+     EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+ 
+     // Create an rgba image
+-    AHardwareBuffer *rgbaSource;
+-    EGLImageKHR rgbaImage;
++    AHardwareBuffer *rgbaSource = nullptr;
++    EGLImageKHR rgbaImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &rgbaSource, &rgbaImage));
+@@ -7655,8 +7655,8 @@ TEST_P(ImageTestES31, YUVValidation)
+     ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *yuvSource;
+-    EGLImageKHR yuvImage;
++    AHardwareBuffer *yuvSource = nullptr;
++    EGLImageKHR yuvImage       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, kDefaultAHBUsage, kDefaultAttribs, {},
+         &yuvSource, &yuvImage));
+@@ -7708,8 +7708,8 @@ void ImageTest::SourceAHBTargetExternalESSL3_helper(const EGLint *attribs)
+     ANGLE_SKIP_TEST_IF(!hasAhbLockPlanesSupport());
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, attribs,
+         {{kSrgbColor, 4}}, &source, &image));
+@@ -7742,8 +7742,8 @@ TEST_P(ImageTestES3, SourceAHBArrayTarget2DArray)
+         1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs, {},
+         &source, &image));
+@@ -7781,8 +7781,8 @@ TEST_P(ImageTestES3, SourceAHBCubeTargetCube)
+         kDefaultAHBUsage | kAHBUsageGPUCubeMap));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, kCubeFaceCount, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+         kDefaultAHBUsage | kAHBUsageGPUCubeMap, kDefaultAttribs, {}, &source, &image));
+@@ -7827,8 +7827,8 @@ TEST_P(ImageTestES31, SourceAHBCubeArrayTargetCubeArray)
+         kDefaultAHBUsage | kAHBUsageGPUCubeMap));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage | kAHBUsageGPUCubeMap,
+         kDefaultAttribs, {}, &source, &image));
+@@ -7873,8 +7873,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMip)
+         kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+         kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
+@@ -7921,8 +7921,8 @@ TEST_P(ImageTestES3, SourceAHBMipTarget2DMipGenerateMipmap)
+         kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
+ 
+     // Create the Image without data so we don't need ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+         kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, kDefaultAttribs, {}, &source, &image));
+@@ -7974,8 +7974,8 @@ TEST_P(ImageTest, SourceAHBTarget2DDepth)
+     GLint depthStencilValue = 0;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         width, height, depth, AHARDWAREBUFFER_FORMAT_D24_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{reinterpret_cast<GLubyte *>(&depthStencilValue), 3}}, &source, &image));
+@@ -9345,8 +9345,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTexture)
+     const uint32_t bytesPerPixel = 4;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kOriginalData, bytesPerPixel}}, &source, &image));
+@@ -9430,8 +9430,8 @@ TEST_P(ImageTest, AHBUpdatedExternalTextureWithSharedContext)
+     ASSERT_GL_NO_ERROR();
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kOriginalData, bytesPerPixel}}, &source, &image));
+@@ -9515,8 +9515,8 @@ TEST_P(ImageTest, AHBUpdatedUnpackBuffer)
+     const uint32_t bytesPerPixel = 4;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         2, 2, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{kOriginalData, bytesPerPixel}}, &source, &image));
+@@ -9716,8 +9716,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
+     GLubyte data[4] = {7, 51, 197, 231};
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{data, 4}}, &source, &image));
+@@ -9733,8 +9733,8 @@ TEST_P(ImageTest, AppTraceExternalTextureWithAHBUseCase)
+ 
+     // Create another eglImage with another associated texture
+     // Draw using the eglImage target texture created in frame 1
+-    AHardwareBuffer *source2;
+-    EGLImageKHR image2;
++    AHardwareBuffer *source2 = nullptr;
++    EGLImageKHR image2       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage, kDefaultAttribs,
+         {{data, 4}}, &source2, &image2));
+@@ -10386,8 +10386,8 @@ void ImageTest::useAHBByGLThenForeignThenGLHelper(
+     constexpr uint32_t kHeight = 37;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {}, &source, &image));
+@@ -10732,8 +10732,8 @@ TEST_P(ImageTest, UploadForeignUntilSubmitDoesNotBreakRenderPass)
+     glViewport(0, 0, kWidth, kHeight);
+ 
+     // Create the EGL image and a texture target to bind it.
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {}, &source, &image));
+@@ -10815,8 +10815,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
+     glViewport(0, 0, kWidth, kHeight);
+ 
+     // Create the EGL images and the texture targets to bind them.
+-    AHardwareBuffer *source1;
+-    EGLImageKHR image1;
++    AHardwareBuffer *source1 = nullptr;
++    EGLImageKHR image1       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {}, &source1, &image1));
+@@ -10824,8 +10824,8 @@ TEST_P(ImageTest, CopyToForeignUntilSubmitDoesNotBreakRenderPass)
+     GLTexture target1;
+     createEGLImageTargetTexture2D(image1, target1);
+ 
+-    AHardwareBuffer *source2;
+-    EGLImageKHR image2;
++    AHardwareBuffer *source2 = nullptr;
++    EGLImageKHR image2       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {}, &source2, &image2));
+@@ -11055,8 +11055,8 @@ TEST_P(ImageTestES3, MultithreadedDrawForeignReadbackForeignSample)
+     constexpr uint32_t kHeight = 37;
+ 
+     // Create the Image
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         kWidth, kHeight, 1, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM, kDefaultAHBUsage,
+         kDefaultAttribs, {}, &source, &image));
+@@ -11774,8 +11774,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16_UINT)
+     ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT, kDefaultAHBUsage));
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R16_UINT, kDefaultAHBUsage, kDefaultAttribs, {}, &source,
+         &image));
+@@ -11804,8 +11804,8 @@ TEST_P(ImageTest, BindExternalTextureAsImage_R16G16_UINT)
+     ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R16G16_UINT, kDefaultAHBUsage));
+ 
+-    AHardwareBuffer *source;
+-    EGLImageKHR image;
++    AHardwareBuffer *source = nullptr;
++    EGLImageKHR image       = EGL_NO_IMAGE_KHR;
+     ASSERT_NO_FATAL_FAILURE(createEGLImageAndroidHardwareBufferSource(
+         1, 1, 1, AHARDWAREBUFFER_FORMAT_R16G16_UINT, kDefaultAHBUsage, kDefaultAttribs, {}, &source,
+         &image));
 diff --git a/src/tests/gl_tests/ImageTestMetal.mm b/src/tests/gl_tests/ImageTestMetal.mm
 index 4345af3a936bd0bead825e2a8ea5fa82fe5dd562..69048754a60ee3344d25f2f67ffe18a911f00df4 100644
 --- a/src/tests/gl_tests/ImageTestMetal.mm
@@ -15698,7 +16782,7 @@ index 0000000000000000000000000000000000000000..70d8f1b9dabc7ceddc43ec5d0133ecbc
 +
 +}  // namespace
 diff --git a/src/tests/gl_tests/MipmapTest.cpp b/src/tests/gl_tests/MipmapTest.cpp
-index 08ad0817f7e1579c93908f5bee34487f7fb1942b..dc9d208340813c60a64a72732877d6e7b9aaa4ca 100644
+index d0ec2f4006bd5ba460e034188ba216549af438d0..699c20d759f48cac16b281c6419565405122438e 100644
 --- a/src/tests/gl_tests/MipmapTest.cpp
 +++ b/src/tests/gl_tests/MipmapTest.cpp
 @@ -2198,6 +2198,31 @@ TEST_P(MipmapTestES3, GenerateMipmapWithRedefineLevelAndTexture)
@@ -16007,7 +17091,7 @@ index fcae00f2b1167dda52f8c857c8d94cc6c2eb7d98..a03f894e251fa90bcad100a9401b845b
          Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(getDriverType());
  
 diff --git a/src/tests/gl_tests/RobustResourceInitTest.cpp b/src/tests/gl_tests/RobustResourceInitTest.cpp
-index 1818097855682c8f596292846067149ebe4ce3d5..a7548ecaf1a1ef8b492b7ea279cb550cc924a19f 100644
+index 60efec6d2aac2fba8f919b9e3dbc8e8465c21c50..35807285bfb66ef1687a661ecc0839c00fb689ff 100644
 --- a/src/tests/gl_tests/RobustResourceInitTest.cpp
 +++ b/src/tests/gl_tests/RobustResourceInitTest.cpp
 @@ -12,7 +12,6 @@
@@ -16019,7 +17103,7 @@ index 1818097855682c8f596292846067149ebe4ce3d5..a7548ecaf1a1ef8b492b7ea279cb550c
  namespace angle
  {
 diff --git a/src/tests/gl_tests/SamplersTest.cpp b/src/tests/gl_tests/SamplersTest.cpp
-index af43900d2b0fbab94fb3f6f07c71af242eb368e8..675b7f580142be0e05edf8e925e332ec0641a2f1 100644
+index 012908e1186e54d7ae684036aee86cc28c8e6139..8d1b360b004f83c31059bf9d00a127747574ac2d 100644
 --- a/src/tests/gl_tests/SamplersTest.cpp
 +++ b/src/tests/gl_tests/SamplersTest.cpp
 @@ -12,7 +12,6 @@
@@ -16176,7 +17260,7 @@ index d87dd3dc5299e44482cdda4fde6d51623bd67093..882be7ceac6c71a30e21357d6d49358f
  {};
  
 diff --git a/src/tests/gl_tests/TextureTest.cpp b/src/tests/gl_tests/TextureTest.cpp
-index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a4312c6c6b5 100644
+index 80a00f40a785a37e698c1ab79bfe80ab036f8aac..bf309b5faeac0e48759f3c0121a60c1fc4dd78f8 100644
 --- a/src/tests/gl_tests/TextureTest.cpp
 +++ b/src/tests/gl_tests/TextureTest.cpp
 @@ -2026,6 +2026,7 @@ void Texture2DDepthStencilTestES3::TestSampleWithDepthStencilMode(GLenum format,
@@ -16226,7 +17310,7 @@ index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a43
  TEST_P(TextureCubeTest, CubeMapBug)
  {
      glActiveTexture(GL_TEXTURE0);
-@@ -14238,7 +14269,7 @@ class TextureLimitsTest : public ANGLETest<>
+@@ -14355,7 +14386,7 @@ class TextureLimitsTest : public ANGLETest<>
          initTextures(vertexTextureCount + fragmentTextureCount, 0);
  
          glUseProgram(mProgram);
@@ -16235,7 +17319,7 @@ index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a43
          for (GLint texIndex = 0; texIndex < vertexTextureCount; ++texIndex)
          {
              std::stringstream uniformNameStr;
-@@ -15394,6 +15425,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
+@@ -15511,6 +15542,81 @@ TEST_P(Texture2DTestES3, UnpackSkipImages2D)
      EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
  }
  
@@ -16317,7 +17401,7 @@ index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a43
  // Test that skip defined in unpack parameters is taken into account when determining whether
  // unpacking source extends outside unpack buffer bounds.
  TEST_P(Texture2DTestES3, UnpackSkipPixelsOutOfBounds)
-@@ -20445,7 +20551,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
+@@ -20562,7 +20668,7 @@ TEST_P(Texture2DTestES3, LargeTextureOverflow)
  }
  
  // Create an integer format texture but specify a FLOAT sampler. OpenGL
@@ -16326,7 +17410,7 @@ index 5966835b6f8b442d6ac491002f5c934e51785bcf..d2f0de25caad493d6aace03f3d2c4a43
  TEST_P(Texture2DTestES3, TexImageFormatMismatch)
  {
      GLint textureUnit = 2;
-@@ -20546,6 +20652,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
+@@ -20663,6 +20769,172 @@ TEST_P(Texture2DTestES3, PackPixels3DAnd2DArrayTypeConfusion)
      glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
  }
  
@@ -16598,7 +17682,7 @@ index 3db493dbdcf7d972d9e6d1f72956881e69674dfe..2199b24a2c08b3e300d62f1a459ba418
          uniformMatrixCxRfv = {{
              {nullptr, nullptr, nullptr, nullptr, nullptr},
 diff --git a/src/tests/gl_tests/VertexAttributeTest.cpp b/src/tests/gl_tests/VertexAttributeTest.cpp
-index d2317b2ec910cc322221a5904ea37aabb165db8d..822e91066c63f3fed99f89f406afbfb5280ebe40 100644
+index 35e57eadc16faaf5f50f5ceef95a9973c0a7d2b1..474a93c4042ca742044b1b9fb2f5f2731f6a414b 100644
 --- a/src/tests/gl_tests/VertexAttributeTest.cpp
 +++ b/src/tests/gl_tests/VertexAttributeTest.cpp
 @@ -1428,6 +1428,72 @@ TEST_P(VertexAttributeOORTest, ANGLEDrawArraysOutOfBoundsCases)
@@ -16898,7 +17982,7 @@ index d2317b2ec910cc322221a5904ea37aabb165db8d..822e91066c63f3fed99f89f406afbfb5
          // Vertices 3, 4, 5: cover the left half of the framebuffer
          switch (i % 6)
 diff --git a/src/tests/gl_tests/WebGLCompatibilityTest.cpp b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
-index 6fdc3cafbd459e3e6b1faeecf57eff4b0d5a6305..da76aaee4a0616c529f4c4a59a9134a751c7d1bf 100644
+index 9351714427f9a84ae853c08d84b79047cc256f2f..da3bc9aa9806cac66e111b2d9e00b83c87439d53 100644
 --- a/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 +++ b/src/tests/gl_tests/WebGLCompatibilityTest.cpp
 @@ -1764,13 +1764,16 @@ void main()
@@ -17003,7 +18087,7 @@ index 6fdc3cafbd459e3e6b1faeecf57eff4b0d5a6305..da76aaee4a0616c529f4c4a59a9134a7
  TEST_P(WebGLCompatibilityTest, L32FTextures)
  {
      constexpr float textureData[]   = {15.1f, 0.0f, 0.0f, 0.0f};
-@@ -8278,6 +8351,147 @@ void main()
+@@ -8279,6 +8352,147 @@ void main()
      }
  }
  
@@ -17151,15 +18235,8 @@ index 6fdc3cafbd459e3e6b1faeecf57eff4b0d5a6305..da76aaee4a0616c529f4c4a59a9134a7
  ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);
  
  ANGLE_INSTANTIATE_TEST_ES2(WebGL1CompatibilityTest);
-@@ -8340,5 +8554,6 @@ TEST_P(HardenedContextTest, UniformBufferRangeExceedsSize)
- GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTest);
- ANGLE_INSTANTIATE_TEST_ES3(HardenedContextTest);
- 
-+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HardenedContextTestES31);
- ANGLE_INSTANTIATE_TEST_ES31(HardenedContextTestES31);
- }  // namespace angle
 diff --git a/src/tests/perf_tests/ANGLEPerfTest.cpp b/src/tests/perf_tests/ANGLEPerfTest.cpp
-index c6294a8f48ffa75cb5ba2c1592c90b63603ef85f..87ae3f218f0001971e6fb6912b307dfaaf9152a7 100644
+index c15259faebce0e3f419298911666fc8d9fdb30aa..b5d6887f25735a2395481800fd2b9e91c7fb7834 100644
 --- a/src/tests/perf_tests/ANGLEPerfTest.cpp
 +++ b/src/tests/perf_tests/ANGLEPerfTest.cpp
 @@ -772,9 +772,9 @@ void ANGLEPerfTest::atraceCounter(const char *counterName, int64_t counterValue)
@@ -17227,10 +18304,10 @@ index fe13e667f945eae5bcf53b57cf5a64958aafd344..27f01016a0d0bed51eb852022c325cb8
          kConditionGLDesktop,
          kConditionGLES,
 diff --git a/src/tests/test_expectations/GPUTestExpectationsParser.cpp b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
-index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496b375fb38 100644
+index 46508cf6be22f943b40e36b80d781c66c54c9a70..b6008c75fdc879845522cdd52e86d10f2350cad5 100644
 --- a/src/tests/test_expectations/GPUTestExpectationsParser.cpp
 +++ b/src/tests/test_expectations/GPUTestExpectationsParser.cpp
-@@ -53,6 +53,7 @@ enum Token
+@@ -56,6 +56,7 @@ enum Token
      kConfigMacMojave,
      kConfigMac,
      kConfigIOS,
@@ -17238,7 +18315,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
      kConfigLinux,
      kConfigChromeOS,
      kConfigAndroid,
-@@ -68,6 +69,7 @@ enum Token
+@@ -71,6 +72,7 @@ enum Token
      // build type
      kConfigRelease,
      kConfigDebug,
@@ -17246,7 +18323,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
      // ANGLE renderer
      kConfigD3D11,
      kConfigGLDesktop,
-@@ -183,6 +185,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
+@@ -186,6 +188,7 @@ constexpr std::array<TokenInfo, kNumberOfTokens> kTokenData = {{
      {"mojave", GPUTestConfig::kConditionMacMojave},
      {"mac", GPUTestConfig::kConditionMac},
      {"ios", GPUTestConfig::kConditionIOS},
@@ -17254,7 +18331,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
      {"linux", GPUTestConfig::kConditionLinux},
      {"chromeos",
       GPUTestConfig::kConditionNone},  // https://anglebug.com/42262032 CrOS not supported
-@@ -197,6 +200,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
+@@ -200,6 +203,7 @@ constexpr std::array<TokenInfo, kNumberOfTokens> kTokenData = {{
      {"samsung", GPUTestConfig::kConditionSamsung},
      {"release", GPUTestConfig::kConditionRelease},
      {"debug", GPUTestConfig::kConditionDebug},
@@ -17262,7 +18339,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
      {"d3d11", GPUTestConfig::kConditionD3D11},
      {"opengl", GPUTestConfig::kConditionGLDesktop},
      {"gles", GPUTestConfig::kConditionGLES},
-@@ -521,6 +525,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -531,6 +535,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigMacMojave:
              case kConfigMac:
              case kConfigIOS:
@@ -17270,7 +18347,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
              case kConfigLinux:
              case kConfigChromeOS:
              case kConfigAndroid:
-@@ -534,6 +539,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
+@@ -544,6 +549,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
              case kConfigSamsung:
              case kConfigRelease:
              case kConfigDebug:
@@ -17279,7 +18356,7 @@ index 8ed18f504be5a7075a0af3fbf9de34b0456e7652..72dd59d14e2d52a00411f8b77b8b8496
              case kConfigGLDesktop:
              case kConfigGLES:
 diff --git a/src/tests/test_utils/ANGLETest.cpp b/src/tests/test_utils/ANGLETest.cpp
-index 5ca230a38773c3a3e84f4016ce278b69e7af7e86..00582ba0af989af13c85c23ef1e366267b045535 100644
+index d52d1ac71400a1598907aa5398d5c34308fa583f..193773717dc8c6a9ff8fadc9ce8650543bf66b93 100644
 --- a/src/tests/test_utils/ANGLETest.cpp
 +++ b/src/tests/test_utils/ANGLETest.cpp
 @@ -26,9 +26,7 @@
@@ -17361,7 +18438,7 @@ index 5ca230a38773c3a3e84f4016ce278b69e7af7e86..00582ba0af989af13c85c23ef1e36626
  
      if (IsWindows())
      {
-@@ -1743,6 +1748,13 @@ int ANGLETestBase::getClientMajorVersion() const
+@@ -1740,6 +1745,13 @@ int ANGLETestBase::getClientMajorVersion() const
      return getGLWindow()->getClientMajorVersion();
  }
  
@@ -17375,7 +18452,7 @@ index 5ca230a38773c3a3e84f4016ce278b69e7af7e86..00582ba0af989af13c85c23ef1e36626
  int ANGLETestBase::getClientMinorVersion() const
  {
      return getGLWindow()->getClientMinorVersion();
-@@ -1946,5 +1958,13 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
+@@ -1943,5 +1955,13 @@ void ANGLEProcessTestArgs(int *argc, char *argv[])
          {
              gEnableRenderDocCapture = false;
          }
@@ -17986,7 +19063,7 @@ index 63710e7589b0479ede4630fde35b5c5d511c59f0..54d225db62abc0a15ee469a4a44df6c2
  
      for (const std::string &path : searchPaths)
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 4c8d47c2336aa415ef3879c9644bc463a20d5706..9ed40c6ddc4665e3f491ed24b8f9d74a3fb5a09d 100644
+index 15187b8fd5d622c16b6b494da07c9c96d30d0ee6..3f5c06b5767c5606f125ffbb462cfac3b9de5c83 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
 @@ -75,6 +75,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
@@ -17997,7 +19074,7 @@ index 4c8d47c2336aa415ef3879c9644bc463a20d5706..9ed40c6ddc4665e3f491ed24b8f9d74a
      {Feature::ClearsWithGapsNeedFlush, "clearsWithGapsNeedFlush"},
      {Feature::ClipCullDistanceBrokenWithPassthroughShaders, "clipCullDistanceBrokenWithPassthroughShaders"},
      {Feature::ClipSrcRegionForBlitFramebuffer, "clipSrcRegionForBlitFramebuffer"},
-@@ -238,6 +239,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -239,6 +240,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -18006,7 +19083,7 @@ index 4c8d47c2336aa415ef3879c9644bc463a20d5706..9ed40c6ddc4665e3f491ed24b8f9d74a
      {Feature::InitializeColorAttachmentWithWhite, "initializeColorAttachmentWithWhite"},
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 5dfce3eaa5420af3318aaa45bf5d0447c2776582..54cf18b06da0d5fe7ab01cbf110720ba7ffc0110 100644
+index 7cd51664272931211af4ca1a90df9ee60fd70cc9..07a53f7f6adfc8e1b0f1e8f0f63efc71b8773908 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
 @@ -75,6 +75,7 @@ enum class Feature
@@ -18017,7 +19094,7 @@ index 5dfce3eaa5420af3318aaa45bf5d0447c2776582..54cf18b06da0d5fe7ab01cbf110720ba
      ClearsWithGapsNeedFlush,
      ClipCullDistanceBrokenWithPassthroughShaders,
      ClipSrcRegionForBlitFramebuffer,
-@@ -238,6 +239,7 @@ enum class Feature
+@@ -239,6 +240,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,

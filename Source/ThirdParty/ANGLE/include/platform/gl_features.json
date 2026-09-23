@@ -1047,10 +1047,10 @@
             "issue": "http://crbug.com/546252753"
         },
         {
-            "name": "use_tex_sub_image_for_host_twiddled_npot_uploads",
+            "name": "use_tex_sub_image_for_client_data_npot_uploads",
             "category": "Workarounds",
             "description": [
-                "For texture formats which would be twiddled on the host CPU, upload via TexSubImage2D instead of TexImage2D."
+                "For non-power-of-two textures, upload via TexSubImage2D instead of TexImage2D when uploading client-side data."
             ],
             "issue": "http://crbug.com/553172761"
         }

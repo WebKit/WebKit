@@ -20,7 +20,7 @@ _util_sources = [
   "OSWindow.h",
   "autogen/angle_features_autogen.cpp",
   "autogen/angle_features_autogen.h",
-  "com_utils.h",
+  "capture/scoped_capture_exclude.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
   "keyboard.h",
@@ -225,6 +225,7 @@ angle_source_set("angle_trace_fixture") {
   suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
   sources = [
     "capture/angle_trace_gl.h",
+    "capture/scoped_capture_exclude.h",
     "capture/trace_fixture.cpp",
     "capture/trace_fixture.h",
     "capture/trace_interface.h",
@@ -342,9 +343,11 @@ foreach(is_shared_library,
   target(library_type, library_name) {
     testonly = true
     sources = _util_sources
+
     public_deps = [
       ":angle_test_utils",
       ":angle_util_loader_headers",
+      "$angle_root:angle_frame_capture_shared",
     ]
     libs = []
 

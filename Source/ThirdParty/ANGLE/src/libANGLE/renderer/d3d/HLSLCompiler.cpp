@@ -7,6 +7,7 @@
 #include "libANGLE/renderer/d3d/HLSLCompiler.h"
 #include "common/unsafe_buffers.h"
 
+#include <array>
 #include <sstream>
 
 #include "common/system_utils.h"
@@ -36,7 +37,7 @@ struct CompilerFlagInfo
     const char *mName;
 };
 
-CompilerFlagInfo CompilerFlagInfos[] = {
+constexpr std::array<CompilerFlagInfo, 21> CompilerFlagInfos = {{
     // NOTE: The data below is copied from d3dcompiler.h
     // If something changes there it should be changed here as well
     CREATE_COMPILER_FLAG_INFO(D3DCOMPILE_DEBUG),                           // (1 << 0)
@@ -60,7 +61,7 @@ CompilerFlagInfo CompilerFlagInfos[] = {
     CREATE_COMPILER_FLAG_INFO(D3DCOMPILE_RESERVED16),           // (1 << 16)
     CREATE_COMPILER_FLAG_INFO(D3DCOMPILE_RESERVED17),           // (1 << 17)
     CREATE_COMPILER_FLAG_INFO(D3DCOMPILE_WARNINGS_ARE_ERRORS)   // (1 << 18)
-};
+}};
 
 #    undef CREATE_COMPILER_FLAG_INFO
 
@@ -198,7 +199,7 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
                                             const std::string &profile,
                                             const std::vector<CompileConfig> &configs,
                                             const D3D_SHADER_MACRO *overrideMacros,
-                                            ID3DBlob **outCompiledBlob,
+                                            angle::ComPtr<ID3DBlob> *outCompiledBlob,
                                             std::string *outDebugInfo)
 {
     ASSERT(mInitialized);
@@ -222,9 +223,9 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
 
     for (size_t i = 0; i < configs.size(); ++i)
     {
-        ID3DBlob *errorMessage = nullptr;
-        ID3DBlob *binary       = nullptr;
-        HRESULT result         = S_OK;
+        angle::ComPtr<ID3DBlob> errorMessage;
+        angle::ComPtr<ID3DBlob> binary;
+        HRESULT result = S_OK;
 
         double startTime = platform->currentTime(platform);
 
@@ -240,7 +241,6 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
         if (errorMessage)
         {
             std::string message = static_cast<const char *>(errorMessage->GetBufferPointer());
-            SafeRelease(errorMessage);
             ANGLE_TRACE_EVENT1("gpu.angle", "D3DCompile::Error", "error", message);
 
             infoLog.appendSanitized(message);
@@ -298,21 +298,17 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
             ANGLE_HISTOGRAM_MEMORY_KB("GPU.ANGLE.D3DShaderBlobSizeKB",
                                       static_cast<int>(binary->GetBufferSize() / 1024));
 
-            *outCompiledBlob = binary;
-
             (*outDebugInfo) +=
                 "// COMPILER INPUT HLSL BEGIN\n\n" + hlsl + "\n// COMPILER INPUT HLSL END\n";
 
 #if ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO
             (*outDebugInfo) += "\n\n// ASSEMBLY BEGIN\n\n";
             (*outDebugInfo) += "// Compiler configuration: " + configs[i].name + "\n// Flags:\n";
-            for (size_t fIx = 0; fIx < ArraySize(CompilerFlagInfos); ++fIx)
+            for (const auto &[flag, name] : CompilerFlagInfos)
             {
-                if (IsCompilerFlagSet(configs[i].flags,
-                                      ANGLE_UNSAFE_TODO(CompilerFlagInfos[fIx]).mFlag))
+                if (IsCompilerFlagSet(configs[i].flags, flag))
                 {
-                    (*outDebugInfo) +=
-                        std::string("// ") + ANGLE_UNSAFE_TODO(CompilerFlagInfos[fIx]).mName + "\n";
+                    (*outDebugInfo) += std::string("// ") + name + "\n";
                 }
             }
 
@@ -332,9 +328,10 @@ angle::Result HLSLCompiler::compileToBinary(d3d::Context *context,
             }
 
             std::string disassembly;
-            ANGLE_TRY(disassembleBinary(context, binary, &disassembly));
+            ANGLE_TRY(disassembleBinary(context, binary.Get(), &disassembly));
             (*outDebugInfo) += "\n" + disassembly + "\n// ASSEMBLY END\n";
 #endif  // ANGLE_APPEND_ASSEMBLY_TO_SHADER_DEBUG_INFO
+            *outCompiledBlob = std::move(binary);
             return angle::Result::Continue;
         }
 
@@ -367,7 +364,7 @@ angle::Result HLSLCompiler::disassembleBinary(d3d::Context *context,
 
     // Retrieve disassembly
     UINT flags = D3D_DISASM_ENABLE_DEFAULT_VALUE_PRINTS | D3D_DISASM_ENABLE_INSTRUCTION_NUMBERING;
-    ID3DBlob *disassembly           = nullptr;
+    angle::ComPtr<ID3DBlob> disassembly;
     pD3DDisassemble disassembleFunc = reinterpret_cast<pD3DDisassemble>(mD3DDisassembleFunc);
     LPCVOID buffer                  = shaderBinary->GetBufferPointer();
     SIZE_T bufSize                  = shaderBinary->GetBufferSize();
@@ -381,8 +378,6 @@ angle::Result HLSLCompiler::disassembleBinary(d3d::Context *context,
     {
         *disassemblyOut = "";
     }
-
-    SafeRelease(disassembly);
 
     return angle::Result::Continue;
 }

@@ -9,6 +9,8 @@
 #include "libANGLE/renderer/d3d/d3d11/StateManager11.h"
 #include "common/unsafe_buffers.h"
 
+#include <algorithm>
+
 #include "common/angleutils.h"
 #include "common/bitset_utils.h"
 #include "common/mathutil.h"
@@ -213,8 +215,7 @@ void StateManager11::ViewCache<ViewType, DescType>::clear()
         return;
     }
 
-    ANGLE_UNSAFE_TODO(
-        memset(&mCurrentViews[0], 0, sizeof(ViewRecord<DescType>) * mCurrentViews.size()));
+    std::ranges::fill(mCurrentViews, ViewRecord<DescType>{});
     mHighestUsedView = 0;
 }
 

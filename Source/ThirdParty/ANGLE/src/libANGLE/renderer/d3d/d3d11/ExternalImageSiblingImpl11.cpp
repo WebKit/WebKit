@@ -32,8 +32,8 @@ egl::Error ExternalImageSiblingImpl11::initialize(const egl::Display *display)
     ANGLE_TRY(mRenderer->getD3DTextureInfo(nullptr, static_cast<IUnknown *>(mBuffer), mAttribs,
                                            &mWidth, &mHeight, &mSamples, &mFormat, &angleFormat,
                                            &mArraySlice));
-    ID3D11Texture2D *texture =
-        d3d11::DynamicCastComObject<ID3D11Texture2D>(static_cast<IUnknown *>(mBuffer));
+    angle::ComPtr<ID3D11Texture2D> texture =
+        angle::DynamicCastComObject<ID3D11Texture2D>(static_cast<IUnknown *>(mBuffer));
     ASSERT(texture != nullptr);
 
     D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -55,20 +55,19 @@ egl::Error ExternalImageSiblingImpl11::initialize(const egl::Display *display)
             return egl::Error(EGL_BAD_PARAMETER, err.str());
         }
 
-        mTexture.set(texture, d3d11::GetYUVPlaneFormat(textureDesc.Format, plane));
+        mTexture.set(std::move(texture), d3d11::GetYUVPlaneFormat(textureDesc.Format, plane));
     }
     else
     {
-        // TextureHelper11 will release texture on destruction.
-        mTexture.set(texture, d3d11::Format::Get(angleFormat->glInternalFormat,
-                                                 mRenderer->getRenderer11DeviceCaps()));
+        mTexture.set(std::move(texture), d3d11::Format::Get(angleFormat->glInternalFormat,
+                                                            mRenderer->getRenderer11DeviceCaps()));
     }
 
-    IDXGIResource *resource = d3d11::DynamicCastComObject<IDXGIResource>(mTexture.get());
+    angle::ComPtr<IDXGIResource> resource =
+        angle::DynamicCastComObject<IDXGIResource>(mTexture.get());
     ASSERT(resource != nullptr);
     DXGI_USAGE resourceUsage = 0;
     resource->GetUsage(&resourceUsage);
-    SafeRelease(resource);
 
     mIsRenderable = (textureDesc.BindFlags & D3D11_BIND_RENDER_TARGET) &&
                     (resourceUsage & DXGI_USAGE_RENDER_TARGET_OUTPUT) &&

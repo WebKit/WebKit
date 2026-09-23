@@ -172,6 +172,7 @@ class TextureD3D : public TextureImpl, public angle::ObserverInterface
     GLint getLevelZeroWidth() const;
     GLint getLevelZeroHeight() const;
     virtual GLint getLevelZeroDepth() const;
+    virtual GLint getBaseLevelStorageDepth() const;
 
     GLint creationLevels(GLsizei width, GLsizei height, GLsizei depth) const;
     bool isLevelComplete(int level) const;
@@ -753,6 +754,7 @@ class TextureD3D_2DArray : public TextureD3D
     bool isImageComplete(const gl::ImageIndex &index) const override;
     bool isSRGB(GLint level) const;
     angle::Result updateStorageLevel(const gl::Context *context, int level);
+    GLint getBaseLevelStorageDepth() const override;
 
     void deleteImages();
     angle::Result redefineImage(const gl::Context *context,

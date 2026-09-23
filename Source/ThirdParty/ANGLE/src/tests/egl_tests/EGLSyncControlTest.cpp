@@ -12,7 +12,6 @@
 
 #include "test_utils/ANGLETest.h"
 #include "util/OSWindow.h"
-#include "util/com_utils.h"
 
 using namespace angle;
 
@@ -53,8 +52,8 @@ class EGLSyncControlTest : public testing::Test
 
     void TearDown() override
     {
-        SafeRelease(mDevice);
-        SafeRelease(mDeviceContext);
+        mDevice.Reset();
+        mDeviceContext.Reset();
 
         OSWindow::Delete(&mOSWindow);
 
@@ -158,8 +157,8 @@ class EGLSyncControlTest : public testing::Test
     HMODULE mD3D11Module                       = nullptr;
     PFN_D3D11_CREATE_DEVICE mD3D11CreateDevice = nullptr;
 
-    ID3D11Device *mDevice               = nullptr;
-    ID3D11DeviceContext *mDeviceContext = nullptr;
+    angle::ComPtr<ID3D11Device> mDevice;
+    angle::ComPtr<ID3D11DeviceContext> mDeviceContext;
     D3D_FEATURE_LEVEL mFeatureLevel;
 
     bool mDeviceCreationD3D11ExtAvailable = false;

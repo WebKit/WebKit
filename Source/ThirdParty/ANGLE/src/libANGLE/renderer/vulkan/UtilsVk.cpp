@@ -378,24 +378,24 @@ uint32_t GetFormatDefaultChannelMask(const angle::Format &intendedImageFormat,
 
 // Calculate the transformation offset for blit/resolve.  See BlitResolve.frag for details on how
 // these values are derived.
-void CalculateBlitOffset(const UtilsVk::BlitResolveParameters &params, float offset[2])
+void CalculateBlitOffset(const UtilsVk::BlitResolveParameters &params, std::array<float, 2> &offset)
 {
     int srcOffsetFactorX = params.flipX ? -1 : 1;
     int srcOffsetFactorY = params.flipY ? -1 : 1;
 
     offset[0] = params.dstOffset[0] * params.stretch[0] - params.srcOffset[0] * srcOffsetFactorX;
-    ANGLE_UNSAFE_TODO(offset[1]) =
-        params.dstOffset[1] * params.stretch[1] - params.srcOffset[1] * srcOffsetFactorY;
+    offset[1] = params.dstOffset[1] * params.stretch[1] - params.srcOffset[1] * srcOffsetFactorY;
 }
 
-void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params, int32_t offset[2])
+void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params,
+                            std::array<int32_t, 2> &offset)
 {
     int srcOffsetFactorX = params.flipX ? -1 : 1;
     int srcOffsetFactorY = params.flipY ? -1 : 1;
 
     // There's no stretching in resolve.
     offset[0] = params.dstOffset[0] - params.srcOffset[0] * srcOffsetFactorX;
-    ANGLE_UNSAFE_TODO(offset[1]) = params.dstOffset[1] - params.srcOffset[1] * srcOffsetFactorY;
+    offset[1] = params.dstOffset[1] - params.srcOffset[1] * srcOffsetFactorY;
 }
 
 void SetDepthStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *desc)
@@ -4591,11 +4591,11 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     ANGLE_TRY(allocateDescriptorSet(contextVk, commandBufferHelper, Function::GenerateMipmap,
                                     &descriptorSet));
 
-    VkDescriptorImageInfo destImageInfos[kGenerateMipmapMaxLevels] = {};
+    std::array<VkDescriptorImageInfo, kGenerateMipmapMaxLevels> destImageInfos = {};
     for (uint32_t level = 0; level < kGenerateMipmapMaxLevels; ++level)
     {
-        ANGLE_UNSAFE_TODO(destImageInfos[level]).imageView   = destLevelViews[level]->getHandle();
-        ANGLE_UNSAFE_TODO(destImageInfos[level]).imageLayout = dst->getCurrentLayout(renderer);
+        destImageInfos[level].imageView   = destLevelViews[level]->getHandle();
+        destImageInfos[level].imageLayout = dst->getCurrentLayout(renderer);
     }
 
     VkDescriptorImageInfo srcImageInfo = {};
@@ -4603,13 +4603,13 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     srcImageInfo.imageLayout           = src->getCurrentLayout(renderer);
     srcImageInfo.sampler               = sampler.getHandle();
 
-    VkWriteDescriptorSet writeInfos[2] = {};
+    std::array<VkWriteDescriptorSet, 2> writeInfos = {};
     writeInfos[0].sType                = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeInfos[0].dstSet               = descriptorSet;
     writeInfos[0].dstBinding           = kGenerateMipmapDestinationBinding;
     writeInfos[0].descriptorCount      = GetGenerateMipmapMaxLevels(contextVk);
     writeInfos[0].descriptorType       = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-    writeInfos[0].pImageInfo           = destImageInfos;
+    writeInfos[0].pImageInfo                       = destImageInfos.data();
 
     writeInfos[1].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeInfos[1].dstSet          = descriptorSet;
@@ -4618,7 +4618,7 @@ angle::Result UtilsVk::generateMipmap(ContextVk *contextVk,
     writeInfos[1].descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     writeInfos[1].pImageInfo      = &srcImageInfo;
 
-    VK_CALL(vkUpdateDescriptorSets, contextVk->getDevice(), 2, writeInfos, 0, nullptr);
+    VK_CALL(vkUpdateDescriptorSets, contextVk->getDevice(), 2, writeInfos.data(), 0, nullptr);
 
     vk::ShaderModulePtr shader;
     ANGLE_TRY(contextVk->getShaderLibrary().getGenerateMipmap_comp(contextVk, flags, &shader));

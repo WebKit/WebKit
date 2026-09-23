@@ -10,8 +10,8 @@
 #include <d3d11.h>
 #include <cstdint>
 
+#include "common/com_utils.h"
 #include "util/OSWindow.h"
-#include "util/com_utils.h"
 
 using namespace angle;
 
@@ -22,7 +22,6 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         : mDisplay(EGL_NO_DISPLAY),
           mContext(EGL_NO_CONTEXT),
           mSurface(EGL_NO_SURFACE),
-          mOffscreenSurfaceD3D11Texture(nullptr),
           mConfig(0),
           mOSWindow(nullptr),
           mWindowWidth(0)
@@ -114,14 +113,12 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         ASSERT_TRUE(SUCCEEDED(
             d3d11Device->CreateTexture2D(&textureDesc, nullptr, &mOffscreenSurfaceD3D11Texture)));
 
-        IDXGIResource *dxgiResource =
-            DynamicCastComObject<IDXGIResource>(mOffscreenSurfaceD3D11Texture);
+        auto dxgiResource =
+            angle::DynamicCastComObject<IDXGIResource>(mOffscreenSurfaceD3D11Texture.Get());
         ASSERT_NE(nullptr, dxgiResource);
 
         HANDLE sharedHandle = 0;
         ASSERT_TRUE(SUCCEEDED(dxgiResource->GetSharedHandle(&sharedHandle)));
-        SafeRelease(dxgiResource);
-
         EGLint pBufferAttributes[] = {EGL_WIDTH,          mWindowWidth,       EGL_HEIGHT,
                                       mWindowWidth,       EGL_TEXTURE_TARGET, EGL_TEXTURE_2D,
                                       EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,   EGL_NONE};
@@ -135,7 +132,7 @@ class EGLPresentPathD3D11 : public ANGLETest<>
 
     void testTearDown() override
     {
-        SafeRelease(mOffscreenSurfaceD3D11Texture);
+        mOffscreenSurfaceD3D11Texture.Reset();
 
         if (mDisplay != EGL_NO_DISPLAY)
         {
@@ -244,8 +241,8 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         ASSERT_NE(nullptr, mOffscreenSurfaceD3D11Texture);
 
         D3D11_TEXTURE2D_DESC textureDesc = {0};
-        ID3D11Device *device;
-        ID3D11DeviceContext *context;
+        angle::ComPtr<ID3D11Device> device;
+        angle::ComPtr<ID3D11DeviceContext> context;
         mOffscreenSurfaceD3D11Texture->GetDesc(&textureDesc);
         mOffscreenSurfaceD3D11Texture->GetDevice(&device);
         device->GetImmediateContext(&context);
@@ -256,13 +253,13 @@ class EGLPresentPathD3D11 : public ANGLETest<>
         textureDesc.Usage           = D3D11_USAGE_STAGING;
         textureDesc.BindFlags       = 0;
         textureDesc.MiscFlags       = 0;
-        ID3D11Texture2D *cpuTexture = nullptr;
+        angle::ComPtr<ID3D11Texture2D> cpuTexture;
         ASSERT_TRUE(SUCCEEDED(device->CreateTexture2D(&textureDesc, nullptr, &cpuTexture)));
 
-        context->CopyResource(cpuTexture, mOffscreenSurfaceD3D11Texture);
+        context->CopyResource(cpuTexture.Get(), mOffscreenSurfaceD3D11Texture.Get());
 
         D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-        context->Map(cpuTexture, 0, D3D11_MAP_READ, 0, &mappedSubresource);
+        context->Map(cpuTexture.Get(), 0, D3D11_MAP_READ, 0, &mappedSubresource);
         ASSERT_EQ(static_cast<UINT>(mWindowWidth * 4), mappedSubresource.RowPitch);
         ASSERT_EQ(static_cast<UINT>(mWindowWidth * mWindowWidth * 4), mappedSubresource.DepthPitch);
 
@@ -293,16 +290,13 @@ class EGLPresentPathD3D11 : public ANGLETest<>
             expectedBottomRightPixel,
             ANGLE_UNSAFE_TODO(byteData[(mWindowWidth - 1) * mWindowWidth + (mWindowWidth - 1)]));
 
-        context->Unmap(cpuTexture, 0);
-        SafeRelease(cpuTexture);
-        SafeRelease(device);
-        SafeRelease(context);
+        context->Unmap(cpuTexture.Get(), 0);
     }
 
     EGLDisplay mDisplay;
     EGLContext mContext;
     EGLSurface mSurface;
-    ID3D11Texture2D *mOffscreenSurfaceD3D11Texture;
+    angle::ComPtr<ID3D11Texture2D> mOffscreenSurfaceD3D11Texture;
     EGLConfig mConfig;
     OSWindow *mOSWindow;
     GLint mWindowWidth;

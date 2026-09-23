@@ -419,9 +419,8 @@ TEST_P(CoreWindowScaleTest, ValidateScale)
                                         reinterpret_cast<IInspectable *>(&mockCoreWindow)));
 
         // Add a valid scale factor to the property set
-        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(propertyValueStatics.GetAddressOf()));
-        propertyValueStatics->CreateSingle(
-            scale, reinterpret_cast<IInspectable **>(singleValue.GetAddressOf()));
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(&propertyValueStatics));
+        propertyValueStatics->CreateSingle(scale, &singleValue);
         EXPECT_HRESULT_SUCCEEDED(
             SetInspectablePropertyValue(propertySet, EGLRenderResolutionScaleProperty,
                                         reinterpret_cast<IInspectable *>(singleValue.Get())));
@@ -469,9 +468,8 @@ TEST_P(CoreWindowSizeTest, ValidateSize)
                                         reinterpret_cast<IInspectable *>(&mockCoreWindow)));
 
         // Add a valid size to the property set
-        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(propertyValueStatics.GetAddressOf()));
-        propertyValueStatics->CreateSize(
-            renderSize, reinterpret_cast<IInspectable **>(sizeValue.GetAddressOf()));
+        EXPECT_HRESULT_SUCCEEDED(CreatePropertyValueStatics(&propertyValueStatics));
+        propertyValueStatics->CreateSize(renderSize, &sizeValue);
         EXPECT_HRESULT_SUCCEEDED(
             SetInspectablePropertyValue(propertySet, EGLRenderSurfaceSizeProperty,
                                         reinterpret_cast<IInspectable *>(sizeValue.Get())));

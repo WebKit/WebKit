@@ -819,9 +819,6 @@ struct ClientExtensions
     // EGL_ANGLE_platform_angle_metal
     bool platformANGLEMetal = false;
 
-    // EGL_ANGLE_platform_angle_device_context_volatile_cgl
-    bool platformANGLEDeviceContextVolatileCgl = false;
-
     // EGL_ANGLE_platform_angle_device_id
     bool platformANGLEDeviceId = false;
 

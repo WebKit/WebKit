@@ -89,7 +89,7 @@ HRESULT NativeWindow11WinRT::createSwapChain(ID3D11Device *device,
                                              UINT width,
                                              UINT height,
                                              UINT samples,
-                                             IDXGISwapChain **swapChain)
+                                             angle::ComPtr<IDXGISwapChain> *swapChain)
 {
     if (samples > 1)
     {
@@ -99,12 +99,14 @@ HRESULT NativeWindow11WinRT::createSwapChain(ID3D11Device *device,
 
     if (mImpl)
     {
-        IDXGIFactory2 *factory2     = d3d11::DynamicCastComObject<IDXGIFactory2>(factory);
-        IDXGISwapChain1 *swapChain1 = nullptr;
-        HRESULT result =
-            mImpl->createSwapChain(device, factory2, format, width, height, mHasAlpha, &swapChain1);
-        SafeRelease(factory2);
-        *swapChain = static_cast<IDXGISwapChain *>(swapChain1);
+        ComPtr<IDXGIFactory2> factory2 = angle::DynamicCastComObject<IDXGIFactory2>(factory);
+        ComPtr<IDXGISwapChain1> swapChain1;
+        HRESULT result = mImpl->createSwapChain(device, factory2.Get(), format, width, height,
+                                                mHasAlpha, &swapChain1);
+        if (SUCCEEDED(result))
+        {
+            *swapChain = std::move(swapChain1);
+        }
         return result;
     }
 

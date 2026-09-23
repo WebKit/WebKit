@@ -289,8 +289,6 @@ class ProgramExecutableMtl : public ProgramExecutableImpl
     // into an argument buffer.
     std::vector<uint32_t> mArgumentBufferRenderStageUsages;
 
-    uint32_t mShadowCompareModes[mtl::kMaxShaderSamplers];
-
     gl::ShaderMap<std::unique_ptr<mtl::BufferPool>> mDefaultUniformBufferPools;
 
     // A unique ID to identify this program executable across its lifetime. It's guaranteed that

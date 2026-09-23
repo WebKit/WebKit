@@ -474,7 +474,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
     externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
 
     vk::ImageFormatReinterpretability formatReinterpretability =
-        ((usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) == 0)
+        (usageFlags & VK_IMAGE_USAGE_STORAGE_BIT) == 0
             ? vk::ImageFormatReinterpretability::ColorspaceOverrides
             : vk::ImageFormatReinterpretability::Full;
     if (mutableFormat == MutableFormat::NotAllowed)
@@ -486,8 +486,8 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
     VkImageFormatListCreateInfoKHR imageFormatListCreateInfo;
     vk::ImageHelper::ImageFormats imageFormats;
     const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
-        displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListCreateInfo,
-        &imageFormats, formatReinterpretability, &createFlags);
+        displayVk, intendedFormatID, actualImageFormatID, &externalMemoryImageCreateInfo,
+        &imageFormatListCreateInfo, &imageFormats, formatReinterpretability, &createFlags);
 
     if (!FindSupportedFlagsForFormat(renderer, vulkanFormat, plane0Modifier,
                                      imageFormatListCreateInfo, &usageFlags, createFlags,

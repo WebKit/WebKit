@@ -105,7 +105,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                                   mUserDepthStencilBuffer);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         glGenFramebuffers(1, &mSmallFBO);
@@ -125,7 +125,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
                                   mSmallDepthStencilBuffer);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         glGenFramebuffers(1, &mColorOnlyFBO);
@@ -137,7 +137,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                mColorOnlyColorBuffer, 0);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         glGenFramebuffers(1, &mDiffFormatFBO);
@@ -149,7 +149,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                mDiffFormatColorBuffer, 0);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         glGenFramebuffers(1, &mDiffSizeFBO);
@@ -161,7 +161,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                mDiffSizeColorBuffer, 0);
 
-        ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         ASSERT_GL_NO_ERROR();
 
         if (IsGLExtensionEnabled("GL_EXT_draw_buffers"))
@@ -181,7 +181,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1_EXT, GL_TEXTURE_2D,
                                    mMRTColorBuffer1, 0);
 
-            ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
             ASSERT_GL_NO_ERROR();
         }
 
@@ -200,7 +200,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
                                    mRGBAColorbuffer, 0);
 
             ASSERT_GL_NO_ERROR();
-            ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             // RGBA multisampled framebuffer
             glGenRenderbuffers(1, &mRGBAMultisampledRenderbuffer);
@@ -214,7 +214,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
                                       mRGBAMultisampledRenderbuffer);
 
             ASSERT_GL_NO_ERROR();
-            ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+            ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
             if (IsGLExtensionEnabled("GL_EXT_texture_format_BGRA8888"))
             {
@@ -230,7 +230,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
                                        mBGRAColorbuffer, 0);
 
                 ASSERT_GL_NO_ERROR();
-                ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
                 // BGRA multisampled framebuffer
                 glGenRenderbuffers(1, &mBGRAMultisampledRenderbuffer);
@@ -244,7 +244,7 @@ class BlitFramebufferANGLETest : public ANGLETest<>
                                           mBGRAMultisampledRenderbuffer);
 
                 ASSERT_GL_NO_ERROR();
-                ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+                ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
             }
         }
 
@@ -1885,7 +1885,7 @@ TEST_P(BlitFramebufferTest, MultisampleDepth)
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
 
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     glClearDepthf(0.5f);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -2149,7 +2149,7 @@ TEST_P(BlitFramebufferTest, MultisampleStencil)
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
 
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // fill the stencil buffer with 0x1
     glStencilFunc(GL_ALWAYS, 0x1, 0xFF);
@@ -2239,7 +2239,7 @@ TEST_P(BlitFramebufferTest, ScissoredMultisampleStencil)
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
 
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Fill the stencil buffer with 0x1.
     glClearStencil(0x1);
@@ -2671,7 +2671,7 @@ TEST_P(BlitFramebufferTest, BlitStencilScissoredScaled)
     glBindFramebuffer(GL_FRAMEBUFFER, sourceFBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuf);
 
-    ASSERT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
 
     // Fill the stencil buffer with 0x1.
     glClearStencil(0x1);

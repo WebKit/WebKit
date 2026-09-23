@@ -27,7 +27,7 @@
 
 #include "compiler/translator/Compiler.h"
 
-#if ANGLE_SH_VERSION != 423
+#if ANGLE_SH_VERSION != 424
 #    error Check if there are added options and update this check.
 #endif
 
@@ -91,7 +91,7 @@
     MACRO(addVulkanXfbExtensionSupportCode, 55, spirvVk, none)                \
     MACRO(rejectWebglShadersWithLargeVariables, 56, any, none)                \
     MACRO(explicitFragmentLocations, 57, glsl, none)                          \
-    MACRO(unused, 58, any, none)                                              \
+    MACRO(preferPrecomputedVertexTransform, 58, spirvVk, none)                \
     MACRO(avoidComplexExpressionsInStructConstructor, 59, glsl, none)         \
     MACRO(allowExtensionDisableAfterNonPPTokensInWebGL, 60, any, none)        \
     MACRO(passHighpToPackUnormSnormBuiltins, 61, glsl, none)                  \

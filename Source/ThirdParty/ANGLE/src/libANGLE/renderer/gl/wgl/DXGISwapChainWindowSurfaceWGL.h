@@ -85,8 +85,8 @@ class DXGISwapChainWindowSurfaceWGL : public SurfaceWGL
     GLenum mDepthBufferFormat;
 
     bool mFirstSwap;
-    IDXGISwapChain *mSwapChain;
-    IDXGISwapChain1 *mSwapChain1;
+    angle::ComPtr<IDXGISwapChain> mSwapChain;
+    angle::ComPtr<IDXGISwapChain1> mSwapChain1;
 
     GLuint mFramebufferID;
     GLuint mColorRenderbufferID;

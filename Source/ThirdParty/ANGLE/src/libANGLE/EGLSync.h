@@ -11,6 +11,7 @@
 #define LIBANGLE_EGLSYNC_H_
 
 #include "libANGLE/Debug.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/Error.h"
 #include "libANGLE/RefCountObject.h"
 
@@ -18,7 +19,6 @@
 
 namespace rx
 {
-class EGLImplFactory;
 class EGLSyncImpl;
 }  // namespace rx
 
@@ -63,6 +63,10 @@ class Sync final : public LabeledObject
     EGLint getCondition() const { return mCondition; }
     EGLint getNativeFenceFD() const { return mNativeFenceFD; }
 
+    void addRef() const { mRefCount.fetch_add(1, std::memory_order_relaxed); }
+    bool releaseRef() const { return mRefCount.fetch_sub(1, std::memory_order_acq_rel) == 1; }
+    uint32_t getRefCount() const { return mRefCount.load(std::memory_order_acquire); }
+
   private:
     std::unique_ptr<rx::EGLSyncImpl> mFence;
 
@@ -73,6 +77,54 @@ class Sync final : public LabeledObject
     AttributeMap mAttributeMap;
     EGLint mCondition;
     EGLint mNativeFenceFD;
+
+    mutable std::atomic<uint32_t> mRefCount{0};
+};
+
+class [[nodiscard]] ScopedSyncRef final
+{
+  public:
+    ScopedSyncRef() = default;
+    ScopedSyncRef(Display &display, Sync *sync) : mDisplay(display), mSync(sync)
+    {
+        // Callers only invoke this with valid Sync* objects; if lookup fails, ScopedSyncRef() is
+        // used instead.
+        ASSERT(mSync != nullptr);
+        mSync->addRef();
+    }
+    ScopedSyncRef(Display *display, Sync *sync)
+        : mDisplay(display ? ScopedDisplayRef(*display) : ScopedDisplayRef()), mSync(sync)
+    {
+        if (mSync)
+        {
+            mSync->addRef();
+        }
+    }
+    ~ScopedSyncRef()
+    {
+        if (mSync)
+        {
+            mDisplay.get()->releaseSync(mSync);
+        }
+    }
+    ScopedSyncRef(const ScopedSyncRef &other) : mDisplay(other.mDisplay), mSync(other.mSync)
+    {
+        if (mSync)
+        {
+            mSync->addRef();
+        }
+    }
+    ScopedSyncRef(ScopedSyncRef &&other) noexcept
+        : mDisplay(std::move(other.mDisplay)), mSync(other.mSync)
+    {
+        other.mSync = nullptr;
+    }
+
+    Sync *get() const { return mSync; }
+
+  private:
+    ScopedDisplayRef mDisplay;
+    Sync *mSync = nullptr;
 };
 
 }  // namespace egl

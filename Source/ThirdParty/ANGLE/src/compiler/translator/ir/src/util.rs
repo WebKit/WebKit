@@ -131,6 +131,7 @@ pub fn duplicate_variable(ir_meta: &mut IRMeta, variable_id: VariableId) -> Vari
         variable.name,
         variable.type_id,
         variable.precision,
+        variable.precise,
         variable.decorations.clone(),
         variable.built_in,
         variable.initializer,

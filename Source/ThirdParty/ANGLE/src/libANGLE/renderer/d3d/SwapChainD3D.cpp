@@ -20,15 +20,7 @@ SwapChainD3D::SwapChainD3D(HANDLE shareHandle,
       mDepthBufferFormat(depthBufferFormat),
       mShareHandle(shareHandle),
       mD3DTexture(d3dTexture)
-{
-    if (mD3DTexture)
-    {
-        mD3DTexture->AddRef();
-    }
-}
+{}
 
-SwapChainD3D::~SwapChainD3D()
-{
-    SafeRelease(mD3DTexture);
-}
+SwapChainD3D::~SwapChainD3D() = default;
 }  // namespace rx

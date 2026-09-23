@@ -1856,8 +1856,8 @@ class SpirvTransformFeedbackCodeGenerator final : angle::NonCopyable
                                GLenum componentType,
                                spirv::Blob *blobOut);
 
-    static constexpr size_t kXfbDecorationCount                           = 3;
-    static constexpr spv::Decoration kXfbDecorations[kXfbDecorationCount] = {
+    static constexpr size_t kXfbDecorationCount                                       = 3;
+    static constexpr std::array<spv::Decoration, kXfbDecorationCount> kXfbDecorations = {
         spv::DecorationXfbBuffer,
         spv::DecorationXfbStride,
         spv::DecorationOffset,
@@ -1909,8 +1909,8 @@ class SpirvTransformFeedbackCodeGenerator final : angle::NonCopyable
     gl::TransformFeedbackBuffersArray<std::vector<XfbVarying>> mXfbVaryings;
 };
 
-constexpr size_t SpirvTransformFeedbackCodeGenerator::kXfbDecorationCount;
-constexpr spv::Decoration SpirvTransformFeedbackCodeGenerator::kXfbDecorations[kXfbDecorationCount];
+constexpr std::array<spv::Decoration, SpirvTransformFeedbackCodeGenerator::kXfbDecorationCount>
+    SpirvTransformFeedbackCodeGenerator::kXfbDecorations;
 
 void SpirvTransformFeedbackCodeGenerator::visitVariable(const ShaderInterfaceVariableInfo &info,
                                                         const XFBInterfaceVariableInfo &xfbInfo,
@@ -2655,7 +2655,7 @@ void SpirvTransformFeedbackCodeGenerator::addMemberDecorate(const XFBInterfaceVa
         for (size_t i = 0; i < kXfbDecorationCount; ++i)
         {
             spirv::WriteMemberDecorate(blobOut, id, spirv::LiteralInteger(fieldIndex),
-                                       ANGLE_UNSAFE_TODO(kXfbDecorations[i]),
+                                       kXfbDecorations[i],
                                        {spirv::LiteralInteger(xfbDecorationValues[i])});
         }
     }
@@ -2686,7 +2686,7 @@ void SpirvTransformFeedbackCodeGenerator::addDecorate(const XFBInterfaceVariable
     //     OpDecorate %id Offset xfb.offset
     for (size_t i = 0; i < kXfbDecorationCount; ++i)
     {
-        spirv::WriteDecorate(blobOut, id, ANGLE_UNSAFE_TODO(kXfbDecorations[i]),
+        spirv::WriteDecorate(blobOut, id, kXfbDecorations[i],
                              {spirv::LiteralInteger(xfbDecorationValues[i])});
     }
 }

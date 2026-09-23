@@ -1816,15 +1816,15 @@ ANGLED3D11DeviceType GetDeviceType(ID3D11Device *device)
     // Note that this function returns an ANGLED3D11DeviceType rather than a D3D_DRIVER_TYPE value,
     // since it is difficult to tell Software and Reference devices apart
 
-    IDXGIDevice *dxgiDevice   = nullptr;
-    IDXGIAdapter *dxgiAdapter = nullptr;
+    angle::ComPtr<IDXGIDevice> dxgiDevice;
+    angle::ComPtr<IDXGIAdapter> dxgiAdapter;
 
     ANGLED3D11DeviceType retDeviceType = ANGLE_D3D11_DEVICE_TYPE_UNKNOWN;
 
-    HRESULT hr = device->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+    HRESULT hr = device->QueryInterface(IID_PPV_ARGS(&dxgiDevice));
     if (SUCCEEDED(hr))
     {
-        hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&dxgiAdapter);
+        hr = dxgiDevice->GetParent(IID_PPV_ARGS(&dxgiAdapter));
         if (SUCCEEDED(hr))
         {
             DXGI_ADAPTER_DESC adapterDesc;
@@ -1853,9 +1853,6 @@ ANGLED3D11DeviceType GetDeviceType(ID3D11Device *device)
             }
         }
     }
-
-    SafeRelease(dxgiDevice);
-    SafeRelease(dxgiAdapter);
 
     return retDeviceType;
 }

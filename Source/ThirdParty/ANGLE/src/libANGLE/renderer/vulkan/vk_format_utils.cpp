@@ -7,8 +7,10 @@
 //   Helper for Vulkan format code.
 
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
-#include "common/unsafe_buffers.h"
 
+#include <array>
+
+#include "common/unsafe_buffers.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Texture.h"
 #include "libANGLE/formatutils.h"
@@ -644,7 +646,7 @@ LoadImageFunctionInfo GetEtcToBcTransCodingFunc(angle::FormatID formatID)
         true);
 }
 
-static constexpr angle::FormatID kEtcToBcFormatMapping[] = {
+static constexpr std::array kEtcToBcFormatMapping = {
     angle::FormatID::BC5_RG_SNORM_BLOCK,         // EAC_R11G11_SNORM
     angle::FormatID::BC5_RG_UNORM_BLOCK,         // EAC_R11G11_UNORM
     angle::FormatID::BC4_RED_SNORM_BLOCK,        // EAC_R11_SNORM
@@ -662,9 +664,8 @@ static constexpr angle::FormatID kEtcToBcFormatMapping[] = {
 angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID)
 {
     ASSERT(IsETCFormat(formatID));
-    return ANGLE_UNSAFE_TODO(
-        kEtcToBcFormatMapping)[static_cast<uint32_t>(formatID) -
-                               static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
+    return kEtcToBcFormatMapping[static_cast<uint32_t>(formatID) -
+                                 static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
 }
 
 VkFormat AdjustASTCFormatForHDR(const vk::Renderer *renderer, VkFormat vkFormat)

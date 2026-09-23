@@ -685,6 +685,37 @@ TEST_P(SRGBTextureTestES3, ImmutableTextureSRGBOverrideSample)
     EXPECT_PIXEL_COLOR_NEAR(0, 0, kLinearColor, 1.0);
 }
 
+// Test that sRGB override is ignored for formats that should ignore sRGB, but that might fall back
+// to ones that support it.  sRGB override should still be ignored.
+TEST_P(SRGBTextureTestES3, SRGBOverrideIgnored)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_texture_format_sRGB_override"));
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    const uint16_t kLinear = 0x730F;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 1, 1, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, &kLinear);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(mProgram);
+    glUniform1i(mTextureLocation, 0);
+    glDisable(GL_DEPTH_TEST);
+
+    const GLColor kExpect(119, 51, 0, 255);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 1.0);
+
+    // Override must be ignored because the format is RGBA4.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_SRGB);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 1.0);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_FORMAT_SRGB_OVERRIDE_EXT, GL_NONE);
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, kExpect, 1.0);
+}
+
 // Test that all supported formats can be overridden
 TEST_P(SRGBTextureTestES3, SRGBOverrideFormats)
 {

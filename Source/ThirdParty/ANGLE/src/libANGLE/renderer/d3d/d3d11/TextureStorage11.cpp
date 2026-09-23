@@ -1393,9 +1393,8 @@ TextureStorage11_External::TextureStorage11_External(
 {
     ASSERT(stream->getProducerType() == egl::Stream::ProducerType::D3D11Texture);
     auto *producer = static_cast<StreamProducerD3DTexture *>(stream->getImplementation());
-    mTexture.set(producer->getD3DTexture(), mFormatInfo);
+    mTexture.set(angle::ComPtr<ID3D11Texture2D>(producer->getD3DTexture()), mFormatInfo);
     mSubresourceIndex = producer->getArraySlice();
-    mTexture.get()->AddRef();
     mMipLevels = 1;
 
     D3D11_TEXTURE2D_DESC desc;
@@ -3757,8 +3756,7 @@ angle::Result TextureStorage11_Buffer::initTexture(const gl::Context *context)
         ANGLE_TRY(buffer11->getBuffer(context, rx::BufferUsage::BUFFER_USAGE_TYPED_UAV, &buffer,
                                       &feedback));
         mBuffer.get()->applyImplFeedback(context, feedback);
-        mTexture.set(buffer, mFormatInfo);
-        mTexture.get()->AddRef();
+        mTexture.set(angle::ComPtr<ID3D11Buffer>(buffer), mFormatInfo);
     }
     return angle::Result::Continue;
 }

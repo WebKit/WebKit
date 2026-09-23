@@ -467,11 +467,12 @@ std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource
     std::string result;
     if (hasBindingsMarker && hasOutMarker)
     {
-        result.append(&originalSource[0], &originalSource[xfbBindingsMarkerStart]);
+        result.append(originalSource, 0, xfbBindingsMarkerStart);
         result.append(xfbBindings);
-        result.append(&originalSource[xfbBindingsMarkerEnd], &originalSource[xfbOutMarkerStart]);
+        result.append(originalSource, xfbBindingsMarkerEnd,
+                      xfbOutMarkerStart - xfbBindingsMarkerEnd);
         result.append(xfbOut);
-        result.append(&originalSource[xfbOutMarkerEnd], &originalSource[originalSource.size()]);
+        result.append(originalSource, xfbOutMarkerEnd);
         return result;
     }
     return originalSource;
@@ -697,40 +698,6 @@ angle::Result MTLGetMSL(const angle::FeaturesMtl &features,
         (*mslShaderInfoOut)[type].hasInvariant    = reflection->hasInvariance;
     }
     return angle::Result::Continue;
-}
-
-uint MslGetShaderShadowCompareMode(GLenum mode, GLenum func)
-{
-    // See SpirvToMslCompiler::emit_header()
-    if (mode == GL_NONE)
-    {
-        return 0;
-    }
-    else
-    {
-        switch (func)
-        {
-            case GL_LESS:
-                return 1;
-            case GL_LEQUAL:
-                return 2;
-            case GL_GREATER:
-                return 3;
-            case GL_GEQUAL:
-                return 4;
-            case GL_NEVER:
-                return 5;
-            case GL_ALWAYS:
-                return 6;
-            case GL_EQUAL:
-                return 7;
-            case GL_NOTEQUAL:
-                return 8;
-            default:
-                UNREACHABLE();
-                return 1;
-        }
-    }
 }
 
 }  // namespace mtl

@@ -18,8 +18,10 @@ namespace sh
 class DriverUniformMetal : public DriverUniformExtended
 {
   public:
-    DriverUniformMetal(DriverUniformMode mode) : DriverUniformExtended(mode) {}
-    DriverUniformMetal() : DriverUniformExtended(DriverUniformMode::InterfaceBlock) {}
+    DriverUniformMetal(DriverUniformMode mode) : DriverUniformExtended(mode, SH_MSL_METAL_OUTPUT) {}
+    DriverUniformMetal()
+        : DriverUniformExtended(DriverUniformMode::InterfaceBlock, SH_MSL_METAL_OUTPUT)
+    {}
     ~DriverUniformMetal() override {}
 
     TIntermTyped *getCoverageMaskField() const;

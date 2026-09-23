@@ -43,6 +43,7 @@
 #    endif
 
 #    include <intrin.h>
+#    include <wrl/client.h>
 
 #    if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
 #        define ANGLE_ENABLE_WINDOWS_UWP 1
@@ -59,10 +60,6 @@
 #        include <dxgi.h>
 #        include <dxgi1_2.h>
 #        include <dxgi1_4.h>
-#    endif
-
-#    if defined(ANGLE_ENABLE_D3D11)
-#        include <wrl.h>
 #    endif
 
 #    if defined(ANGLE_ENABLE_WINDOWS_UWP)

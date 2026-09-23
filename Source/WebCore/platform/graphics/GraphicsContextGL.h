@@ -431,6 +431,8 @@ public:
     static constexpr GCGLenum RENDERBUFFER_BINDING = 0x8CA7;
     static constexpr GCGLenum MAX_RENDERBUFFER_SIZE = 0x84E8;
     static constexpr GCGLenum INVALID_FRAMEBUFFER_OPERATION = 0x0506;
+    // ANGLE reports context loss with this KHR_robustness value rather than CONTEXT_LOST_WEBGL.
+    static constexpr GCGLenum CONTEXT_LOST = 0x0507;
 
     // WebGL-specific enums
     static constexpr GCGLenum UNPACK_FLIP_Y_WEBGL = 0x9240;
@@ -1212,6 +1214,7 @@ public:
         case INVALID_FRAMEBUFFER_OPERATION:
             return GCGLErrorCode::InvalidFramebufferOperation;
         case CONTEXT_LOST_WEBGL:
+        case CONTEXT_LOST:
             return GCGLErrorCode::ContextLost;
         }
         ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();

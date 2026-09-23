@@ -147,6 +147,30 @@ TEST_P(DebugMarkerTest, Rendering)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that passing an oversized marker to EXT_debug_marker entry points does not crash.
+TEST_P(DebugMarkerTest, OversizedMarkerNoCrash)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_debug_marker"));
+
+    // Create a string larger than 16KB (default page size for PoolAllocator in CBH)
+    std::string largeMarker(32 * 1024, 'a');
+
+    glPushGroupMarkerEXT(static_cast<GLsizei>(largeMarker.length()), largeMarker.c_str());
+
+    GLenum error = glGetError();
+    if (error == GL_NO_ERROR)
+    {
+        glPopGroupMarkerEXT();
+    }
+    else
+    {
+        EXPECT_EQ(static_cast<GLenum>(GL_INVALID_VALUE), error);
+    }
+
+    glInsertEventMarkerEXT(static_cast<GLsizei>(largeMarker.length()), largeMarker.c_str());
+    ASSERT_GL_NO_ERROR();
+}
+
 // Use this to select which configurations (e.g. which renderer, which GLES major version) these
 // tests should be run against.
 ANGLE_INSTANTIATE_TEST_ES2(DebugMarkerTest);

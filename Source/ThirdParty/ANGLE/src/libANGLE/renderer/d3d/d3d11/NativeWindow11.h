@@ -10,6 +10,7 @@
 #ifndef LIBANGLE_RENDERER_D3D_D3D11_NATIVEWINDOW11_H_
 #define LIBANGLE_RENDERER_D3D_D3D11_NATIVEWINDOW11_H_
 
+#include "common/angleutils.h"
 #include "common/debug.h"
 #include "common/platform.h"
 
@@ -30,8 +31,8 @@ class NativeWindow11 : public NativeWindowD3D
                                     UINT width,
                                     UINT height,
                                     UINT samples,
-                                    IDXGISwapChain **swapChain) = 0;
-    virtual void commitChange()                                 = 0;
+                                    angle::ComPtr<IDXGISwapChain> *swapChain) = 0;
+    virtual void commitChange()                                               = 0;
 };
 }  // namespace rx
 

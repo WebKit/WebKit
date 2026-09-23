@@ -97,9 +97,9 @@ class SwapChain11 final : public SwapChainD3D
     NativeWindow11 *mNativeWindow;  // Handler for the Window that the surface is created for.
 
     bool mFirstSwap;
-    IDXGISwapChain *mSwapChain;
-    IDXGISwapChain1 *mSwapChain1;
-    IDXGIKeyedMutex *mKeyedMutex;
+    angle::ComPtr<IDXGISwapChain> mSwapChain;
+    angle::ComPtr<IDXGISwapChain1> mSwapChain1;
+    angle::ComPtr<IDXGIKeyedMutex> mKeyedMutex;
 
     TextureHelper11 mBackBufferTexture;
     d3d11::RenderTargetView mBackBufferRTView;

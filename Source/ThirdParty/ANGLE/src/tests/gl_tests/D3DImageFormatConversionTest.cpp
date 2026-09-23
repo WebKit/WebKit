@@ -6,6 +6,8 @@
 // D3DImageFormatConversionTest:
 //   Basic tests to validate code relating to D3D Image format conversions.
 
+#include <array>
+
 #include "common/unsafe_buffers.h"
 #include "test_utils/ANGLETest.h"
 
@@ -62,8 +64,7 @@ void main()
     template <typename ColorStructType>
     void runTest(GLenum tex2DFormat, GLenum tex2DType)
     {
-        gl::ColorF srcColorF[4];
-        ColorStructType pixels[4];
+        std::array<ColorStructType, 4> pixels;
 
         GLuint tex = 0;
         GLuint fbo = 0;
@@ -71,33 +72,22 @@ void main()
         glGenFramebuffers(1, &fbo);
         EXPECT_GL_NO_ERROR();
 
-        srcColorF[0].red   = 1.0f;
-        srcColorF[0].green = 0.0f;
-        srcColorF[0].blue  = 0.0f;
-        srcColorF[0].alpha = 1.0f;  // Red
-        srcColorF[1].red   = 0.0f;
-        srcColorF[1].green = 1.0f;
-        srcColorF[1].blue  = 0.0f;
-        srcColorF[1].alpha = 1.0f;  // Green
-        srcColorF[2].red   = 0.0f;
-        srcColorF[2].green = 0.0f;
-        srcColorF[2].blue  = 1.0f;
-        srcColorF[2].alpha = 1.0f;  // Blue
-        srcColorF[3].red   = 1.0f;
-        srcColorF[3].green = 1.0f;
-        srcColorF[3].blue  = 0.0f;
-        srcColorF[3].alpha = 1.0f;  // Red + Green (Yellow)
+        constexpr std::array srcColorF = {
+            gl::ColorF(1.0f, 0.0f, 0.0f, 1.0f),  // Red
+            gl::ColorF(0.0f, 1.0f, 0.0f, 1.0f),  // Green
+            gl::ColorF(0.0f, 0.0f, 1.0f, 1.0f),  // Blue
+            gl::ColorF(1.0f, 1.0f, 0.0f, 1.0f),  // Yellow
+        };
 
         // Convert the ColorF into the pixels that will be fed to glTexImage2D
-        for (unsigned int i = 0; i < 4; i++)
+        for (size_t i = 0; i < srcColorF.size(); i++)
         {
-            ColorStructType::writeColor(&(ANGLE_UNSAFE_TODO(pixels[i])),
-                                        &(ANGLE_UNSAFE_TODO(srcColorF[i])));
+            ColorStructType::writeColor(&(pixels[i]), &(srcColorF[i]));
         }
 
         // Generate the texture
         glBindTexture(GL_TEXTURE_2D, tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, tex2DFormat, 2, 2, 0, tex2DFormat, tex2DType, pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, tex2DFormat, 2, 2, 0, tex2DFormat, tex2DType, pixels.data());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         EXPECT_GL_NO_ERROR();
