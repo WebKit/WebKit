@@ -25,7 +25,9 @@
 import enum
 import re
 from dataclasses import dataclass, field
-from typing import FrozenSet, Optional, Set, List
+from typing import Dict, FrozenSet, Optional, Set, List, Tuple
+
+from webkitexpectationspy.version_specifier import _VERSION_NUMBER_RE
 
 
 class ConfigurationCategory(enum.Enum):
@@ -86,6 +88,7 @@ _HARDWARE_BY_VALUE = {h.value: h for h in Hardware}
 
 PLATFORM_TOKENS = frozenset(p.value for p in Platform)
 STYLE_TOKENS = frozenset(b.value for b in BuildType)
+STYLE_ALIASES = {'guard-malloc': BuildType.GUARDMALLOC.value}
 HARDWARE_TOKENS = frozenset(h.value for h in Hardware)
 ARCHITECTURE_TOKENS = frozenset(a.value for a in Architecture)
 
@@ -151,9 +154,15 @@ class ConfigurationSpecifier:
             version_specifier=vs,
         )
 
+    @property
+    def specificity(self) -> int:
+        constrained = [self.platforms, self.build_types, self.architectures, self.hardware, self.version_specifier]
+        return sum(1 for category in constrained if category) + len(self.flavors)
+
     def matches(self, current_tokens: Set[str],
                 current_version: Optional[str] = None,
-                version_order: Optional[List[str]] = None) -> bool:
+                version_order: Optional[List[str]] = None,
+                version_name_map: Optional[Dict[str, Tuple[int, ...]]] = None) -> bool:
         if self.platforms:
             if not any(p.value in current_tokens for p in self.platforms):
                 return False
@@ -170,12 +179,11 @@ class ConfigurationSpecifier:
             if not self.flavors.issubset(current_tokens):
                 return False
         if self.version_specifier:
-            if not current_version or not version_order:
+            if not current_version or not (version_order or version_name_map):
                 return False
             specs = self.version_specifier if isinstance(self.version_specifier, tuple) else (self.version_specifier,)
-            for spec in specs:
-                if not spec.matches(current_version, version_order):
-                    return False
+            if not any(spec.matches(current_version, version_order or [], version_name_map) for spec in specs):
+                return False
         return True
 
     def to_tokens(self) -> Set[str]:
@@ -201,8 +209,27 @@ def matches_platform(token):
     return False
 
 
-def get_token_category(token, version_tokens=None):
+def canonical_token(token):
     token_lower = token.lower()
+    return STYLE_ALIASES.get(token_lower, token_lower)
+
+
+def _is_version_shaped(token):
+    return token.endswith('+') or token.endswith('-') or '-' in token
+
+
+def _version_parts_are_known(token_lower, version_tokens):
+    parts = [part for part in token_lower.rstrip('+').split('-') if part]
+    return bool(parts) and all(part in version_tokens or _VERSION_NUMBER_RE.match(part) for part in parts)
+
+
+def get_token_category(token, version_tokens=None, flavor_tokens=None):
+    """Classify a configuration token, or return None if it is unrecognized.
+
+    When version_tokens is non-empty, version-shaped tokens must name known versions.
+    When flavor_tokens is not None, only those flavors are accepted.
+    """
+    token_lower = canonical_token(token)
 
     if token_lower in PLATFORM_TOKENS:
         return ConfigurationCategory.PLATFORM
@@ -215,11 +242,15 @@ def get_token_category(token, version_tokens=None):
     if token_lower in ARCHITECTURE_TOKENS:
         return ConfigurationCategory.ARCHITECTURE
 
-    if token.endswith('+') or token.endswith('-') or ('-' in token and not token.endswith('-')):
-        return ConfigurationCategory.VERSION
+    if _is_version_shaped(token_lower):
+        if not version_tokens or _version_parts_are_known(token_lower, version_tokens):
+            return ConfigurationCategory.VERSION
 
     if version_tokens and token_lower in version_tokens:
         return ConfigurationCategory.VERSION
+
+    if flavor_tokens is not None:
+        return ConfigurationCategory.FLAVOR if token_lower in flavor_tokens else None
 
     if token_lower.isidentifier() or re.match(r'^[a-z][a-z0-9_-]*$', token_lower):
         return ConfigurationCategory.FLAVOR

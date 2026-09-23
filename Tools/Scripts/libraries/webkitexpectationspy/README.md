@@ -97,6 +97,12 @@ rdar://98765 [ ios simulator ] TestWebKitAPI.iOS.Test [ Skip ]
 5. **Architecture**: arm64, x86_64, x86, arm64_32, armv7k
 6. **Flavor**: wk1, wk2, siteisolation, etc. (freeform)
 
+Tokens in the same category match any of them; every category must match. `[ mac gtk Debug Release ]` applies to Debug and Release on both mac and gtk.
+
+### Precedence
+
+When several lines match a test, a later file wins over an earlier one. Within a file, the longest test pattern wins, then the line constraining the most categories, then the later line.
+
 ### Version Specifiers
 
 | Syntax | Meaning |

@@ -40,3 +40,4 @@ class ModifiersBase:
 class LayoutTestModifiers(ModifiersBase):
     wontfix: bool = False
     rebaseline: bool = False
+    dump_js_console_log_in_stderr: bool = False
