@@ -54,6 +54,7 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
         PropertyRegistry::registerProperty<SVGNames::methodAttr, SVGTextPathMethodType, &SVGTextPathElement::m_method>();
         PropertyRegistry::registerProperty<SVGNames::spacingAttr, SVGTextPathSpacingType, &SVGTextPathElement::m_spacing>();
         PropertyRegistry::registerProperty<SVGNames::pathAttr, &SVGTextPathElement::m_pathAttribute>();
+        PropertyRegistry::registerProperty<SVGNames::sideAttr, SVGTextPathSideType, &SVGTextPathElement::m_side>();
     }
 }
 
@@ -96,6 +97,9 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
             pathAttribute->parse(newValue);
         break;
     }
+    case AttributeNames::sideAttr:
+        protect(m_side)->parseBaseVal<SVGTextPathSideType>(*this, newValue);
+        break;
     default:
         break;
     }
