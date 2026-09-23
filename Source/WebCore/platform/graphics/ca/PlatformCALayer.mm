@@ -244,7 +244,7 @@ void PlatformCALayer::setDelegatedContents(const PlatformCALayerDelegatedContent
 
 void PlatformCALayer::setDelegatedContents(const PlatformCALayerInProcessDelegatedContents& contents)
 {
-    setDelegatedContents({ contents.surface.createSendRight(), contents.finishedFence, std::nullopt });
+    setDelegatedContents({ contents.surface.createSendRight(), contents.finishedFence });
 }
 
 bool PlatformCALayer::needsPlatformContext() const

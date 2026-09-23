@@ -28,6 +28,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CanvasRenderingContext.h"
+#include "PlaceholderFrameIdentifier.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
@@ -56,9 +57,9 @@ private:
     WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
     Lock m_lock;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
-    unsigned m_bufferVersion { 0 }; // For OffscreenCanvas holder thread use (main or worker).
-    unsigned m_delegateBufferVersion WTF_GUARDED_BY_LOCK(m_lock) { 0 };
-    unsigned m_placeholderBufferVersion WTF_GUARDED_BY_CAPABILITY(mainThread) { 0 };
+    PlaceholderFrameIdentifier m_lastFrame; // For OffscreenCanvas holder thread use (main or worker).
+    PlaceholderFrameIdentifier m_delegateFrame WTF_GUARDED_BY_LOCK(m_lock);
+    PlaceholderFrameIdentifier m_placeholderFrame WTF_GUARDED_BY_CAPABILITY(mainThread);
 };
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {

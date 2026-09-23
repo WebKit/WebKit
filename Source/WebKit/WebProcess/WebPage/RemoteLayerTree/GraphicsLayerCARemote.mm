@@ -145,7 +145,7 @@ public:
         , m_drawingArea(identifier)
     { }
 
-    bool tryCopyToLayer(ImageBuffer& buffer, bool opaque) final
+    bool tryCopyToLayer(ImageBuffer& buffer, bool opaque, PlaceholderFrameIdentifier frame) final
     {
         auto clone = buffer.clone();
         if (!clone)
@@ -164,12 +164,12 @@ public:
         {
             Locker locker { m_surfaceLock };
             m_surfaceBackendHandle = ImageBufferBackendHandle { *backendHandle };
-            m_surfaceIdentifier = clone->renderingResourceIdentifier();
+            m_frame = frame;
             m_contentsFormat = convertToContentsFormat(clone->pixelFormat());
             m_opaque = opaque;
         }
 
-        RemoteLayerBackingStoreProperties properties(WTF::move(*backendHandle), clone->renderingResourceIdentifier(), opaque);
+        RemoteLayerBackingStoreProperties properties(WTF::move(*backendHandle), frame, opaque);
         m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTF::move(properties)), m_drawingArea.toUInt64());
         return true;
     }
@@ -180,7 +180,7 @@ public:
         if (m_surfaceBackendHandle) {
             downcast<PlatformCALayerRemote>(layer).setOpaque(m_opaque);
             downcast<PlatformCALayerRemote>(layer).setContentsFormat(m_contentsFormat);
-            downcast<PlatformCALayerRemote>(layer).setRemoteDelegatedContents({ ImageBufferBackendHandle { *m_surfaceBackendHandle }, { }, std::optional<RenderingResourceIdentifier>(m_surfaceIdentifier) });
+            downcast<PlatformCALayerRemote>(layer).setRemoteDelegatedContents({ ImageBufferBackendHandle { *m_surfaceBackendHandle }, { }, m_frame });
         }
     }
 
@@ -197,7 +197,7 @@ private:
     Markable<WebCore::PlatformLayerIdentifier> m_layerID;
     Lock m_surfaceLock;
     std::optional<ImageBufferBackendHandle> m_surfaceBackendHandle WTF_GUARDED_BY_LOCK(m_surfaceLock);
-    Markable<WebCore::RenderingResourceIdentifier> m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);
+    std::optional<PlaceholderFrameIdentifier> m_frame WTF_GUARDED_BY_LOCK(m_surfaceLock);
     ContentsFormat m_contentsFormat WTF_GUARDED_BY_LOCK(m_surfaceLock) { ContentsFormat::RGBA8 };
     bool m_opaque WTF_GUARDED_BY_LOCK(m_surfaceLock) { false };
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,11 @@
 
 #include <wtf/MonotonicObjectIdentifier.h>
 
-namespace WebKit {
+namespace WebCore {
 
-struct RenderingUpdateIDType;
-using RenderingUpdateID = MonotonicObjectIdentifier<RenderingUpdateIDType>;
+// Orders the frames an OffscreenCanvas commits to its placeholder, so that whichever route a frame
+// takes to the compositor, an older one never replaces a newer one.
+struct PlaceholderFrameIdentifierType;
+using PlaceholderFrameIdentifier = MonotonicObjectIdentifier<PlaceholderFrameIdentifierType>;
 
-} // namespace WebKit
+} // namespace WebCore

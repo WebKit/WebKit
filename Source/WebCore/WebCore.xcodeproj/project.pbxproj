@@ -3057,6 +3057,7 @@
 		72963B6D29510A38004FF6FB /* TextAreaPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 72963B6C29510287004FF6FB /* TextAreaPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7299BC6723D6A53200CC6883 /* AlphaPremultiplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7299BC6823D6A53E00CC6883 /* RenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7299BC6623D686C600CC6883 /* RenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		729D05302531424300422098 /* RenderingResourceIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 729D052E25313E2600422098 /* RenderingResourceIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A5D192275E8FFE0065833E /* SVGFilterExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 726CDE25275B489700A445B2 /* SVGFilterExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72A64520294903CE00C14BA3 /* ControlPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 722623C229486B4A006DCCF1 /* ControlPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14702,6 +14703,7 @@
 		729661A2275960A500E7DF9B /* FilterEffectGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectGeometry.h; sourceTree = "<group>"; };
 		7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlphaPremultiplication.h; sourceTree = "<group>"; };
 		7299BC6623D686C600CC6883 /* RenderingMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingMode.h; sourceTree = "<group>"; };
+		A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaceholderFrameIdentifier.h; sourceTree = "<group>"; };
 		729D052E25313E2600422098 /* RenderingResourceIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingResourceIdentifier.h; sourceTree = "<group>"; };
 		72A13A9F274C5CC700E2A88E /* FilterEffectApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterEffectApplier.h; sourceTree = "<group>"; };
 		72A13AB6274DCEDC00E2A88E /* FEColorMatrixSoftwareApplier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FEColorMatrixSoftwareApplier.cpp; sourceTree = "<group>"; };
@@ -37342,6 +37344,7 @@
 				BC635E8B264C2CAE000EF33A /* PixelBufferFormat.h */,
 				BC635E90264C469F000EF33A /* PixelFormat.cpp */,
 				BCA55912263DBD79007F19B3 /* PixelFormat.h */,
+				A9B89CA5BE67878133E151A8 /* PlaceholderFrameIdentifier.h */,
 				CDD08ABF277E54F000EA3755 /* PlatformAudioTrackConfiguration.h */,
 				BC3E62422659791700548ACD /* PlatformColorSpace.h */,
 				726516E52C9CB59900647896 /* PlatformDynamicRangeLimit.cpp */,
@@ -48369,6 +48372,7 @@
 				BCA55914263DBD79007F19B3 /* PixelFormat.h in Headers */,
 				115CFA82208B8EDA001E6991 /* PlacedFloats.h in Headers */,
 				A5B342862E77F75A009BFF3F /* PlacedGridItem.h in Headers */,
+				B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */,
 				4158707D28EC799E00C163C5 /* PlaneLayout.h in Headers */,
 				CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */,
 				CDD08AC0277E54F000EA3755 /* PlatformAudioTrackConfiguration.h in Headers */,

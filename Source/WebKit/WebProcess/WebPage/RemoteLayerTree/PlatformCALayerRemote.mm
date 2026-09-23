@@ -831,7 +831,7 @@ void PlatformCALayerRemote::setContents(CFTypeRef value)
 
 void PlatformCALayerRemote::setDelegatedContents(const PlatformCALayerDelegatedContents& contents)
 {
-    setRemoteDelegatedContents({ ImageBufferBackendHandle { MachSendRight { contents.surface } }, contents.finishedFence, contents.surfaceIdentifier });
+    setRemoteDelegatedContents({ ImageBufferBackendHandle { MachSendRight { contents.surface } }, contents.finishedFence, std::nullopt });
 }
 
 void PlatformCALayerRemote::setRemoteDelegatedContents(const PlatformCALayerRemoteDelegatedContents& contents)

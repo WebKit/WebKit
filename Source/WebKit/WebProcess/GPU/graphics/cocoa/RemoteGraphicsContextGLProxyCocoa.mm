@@ -96,7 +96,7 @@ public:
     void display(WebCore::PlatformCALayer& layer) final
     {
         if (m_displayBuffer)
-            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, m_finishedFence, std::nullopt });
+            layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, m_finishedFence });
         else
             layer.clearContents();
     }

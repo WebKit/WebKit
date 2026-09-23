@@ -744,8 +744,6 @@ enum class WebEventInputSource : uint8_t;
 enum class WebMouseEventSyntheticClickType : uint8_t;
 enum class WindowKind : uint8_t;
 
-template<typename> class MonotonicObjectIdentifier;
-
 using ActivityStateChangeID = uint64_t;
 using GeolocationIdentifier = ObjectIdentifier<GeolocationIdentifierType>;
 using ImageBufferBackendHandle = Variant<

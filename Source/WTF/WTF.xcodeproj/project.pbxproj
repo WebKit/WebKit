@@ -564,6 +564,7 @@
 		DD3DC96627A4BF8E007E5B61 /* IndexSparseSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684D4351C000D400081D663 /* IndexSparseSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08982C1A106045F4A68DF4F1 /* SparseBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 02F0B57890A842688F808D7C /* SparseBitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96727A4BF8E007E5B61 /* ListDump.h in Headers */ = {isa = PBXBuildFile; fileRef = A70DA0831799F04D00529A9B /* ListDump.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7203449B26A6C44C000A5F54 /* MonotonicObjectIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96927A4BF8E007E5B61 /* ThreadSafeRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4733E151A825B004123FF /* ThreadSafeRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC96A27A4BF8E007E5B61 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1196,6 +1197,7 @@
 		0F66B2801DC97BAB004A1D3F /* ClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockType.cpp; sourceTree = "<group>"; };
 		0F66B2811DC97BAB004A1D3F /* ClockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockType.h; sourceTree = "<group>"; };
 		0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonotonicTime.cpp; sourceTree = "<group>"; };
+		7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonotonicObjectIdentifier.h; sourceTree = "<group>"; };
 		0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonotonicTime.h; sourceTree = "<group>"; };
 		0F66B2841DC97BAB004A1D3F /* Seconds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Seconds.cpp; sourceTree = "<group>"; };
 		0F66B2851DC97BAB004A1D3F /* Seconds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Seconds.h; sourceTree = "<group>"; };
@@ -2639,6 +2641,7 @@
 				A8A472CF151A825B004123FF /* MetaAllocatorHandle.h */,
 				46F071BA2CDEA45300074E61 /* MmapSpan.h */,
 				07AC4F0D2EF5A62500468BCB /* module.modulemap */,
+				7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */,
 				0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */,
 				0F66B2831DC97BAB004A1D3F /* MonotonicTime.h */,
 				FE8225301B2A1E5B00BA68FD /* NakedPtr.h */,
@@ -3818,6 +3821,7 @@
 				07AC4F0E2EF5A68600468BCB /* module.modulemap in Headers */,
 				07F5EA722EE8A76D0085B185 /* ModuleVerifierLanguage.py in Headers */,
 				07F5EA732EE8A76F0085B185 /* ModuleVerifierTypes.py in Headers */,
+				7203449B26A6C44C000A5F54 /* MonotonicObjectIdentifier.h in Headers */,
 				DD3DC96827A4BF8E007E5B61 /* MonotonicTime.h in Headers */,
 				DD3DC96227A4BF8E007E5B61 /* NakedPtr.h in Headers */,
 				5164042D2AB1D46B0042B1C3 /* NativePromise.h in Headers */,

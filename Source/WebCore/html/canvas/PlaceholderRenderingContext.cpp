@@ -52,12 +52,12 @@ PlaceholderRenderingContextSource::PlaceholderRenderingContextSource(Placeholder
 
 void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer, bool originClean, bool opaque)
 {
-    auto bufferVersion = ++m_bufferVersion;
+    auto frame = m_lastFrame.increment();
     {
         Locker locker { m_lock };
         if (m_delegate) {
-            m_delegate->tryCopyToLayer(imageBuffer, opaque);
-            m_delegateBufferVersion = bufferVersion;
+            m_delegate->tryCopyToLayer(imageBuffer, opaque, frame);
+            m_delegateFrame = frame;
         }
     }
 
@@ -67,7 +67,7 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
     std::unique_ptr serializedClone = ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(clone));
     if (!serializedClone)
         return;
-    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTF::move(serializedClone), bufferVersion, originClean, opaque] () mutable {
+    callOnMainThread([weakPlaceholder = m_placeholder, buffer = WTF::move(serializedClone), frame, originClean, opaque] () mutable {
         assertIsMainThread();
         RefPtr placeholder = weakPlaceholder.get();
         if (!placeholder)
@@ -78,17 +78,17 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
         Ref source = placeholder->source();
         {
             Locker locker { source->m_lock };
-            if (source->m_delegate && source->m_delegateBufferVersion < bufferVersion) {
-                // Compare the versions, so that possibly already historical buffer in this
+            if (source->m_delegate && source->m_delegateFrame < frame) {
+                // Compare the frames, so that possibly already historical buffer in this
                 // main thread task does not override the newest buffer that the worker thread
                 // already set.
-                source->m_delegate->tryCopyToLayer(*imageBuffer, opaque);
-                source->m_delegateBufferVersion = bufferVersion;
+                source->m_delegate->tryCopyToLayer(*imageBuffer, opaque, frame);
+                source->m_delegateFrame = frame;
             }
         }
 
         placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), originClean, opaque);
-        source->m_placeholderBufferVersion = bufferVersion;
+        source->m_placeholderFrame = frame;
     });
 }
 
@@ -98,8 +98,8 @@ void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer,
     Locker locker { m_lock };
     if ((m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get()))) {
         if (buffer) {
-            m_delegate->tryCopyToLayer(*buffer, opaque);
-            m_delegateBufferVersion = m_placeholderBufferVersion;
+            m_delegate->tryCopyToLayer(*buffer, opaque, m_placeholderFrame);
+            m_delegateFrame = m_placeholderFrame;
         }
     }
 }

@@ -39,7 +39,7 @@ class NativeImage;
 class GraphicsLayerAsyncContentsDisplayDelegateCocoa : public GraphicsLayerAsyncContentsDisplayDelegate {
 public:
     GraphicsLayerAsyncContentsDisplayDelegateCocoa(GraphicsLayerCA&);
-    bool tryCopyToLayer(ImageBuffer&, bool opaque) final;
+    bool tryCopyToLayer(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier) final;
     void display(PlatformCALayer&) final { }
 
     void updateGraphicsLayerCA(GraphicsLayerCA&);
