@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "BoxSides.h"
 #include "ColorSerialization.h"
 #include "ContainerNodeInlines.h"
 #include "CSSFontValue.h"
@@ -377,6 +378,31 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
             // See https://drafts.csswg.org/css-anchor-position-1/#position-area.
             if (AnchorPositionEvaluator::isLayoutTimeAnchorPositioned(box.style()) && AnchorPositionEvaluator::defaultAnchorForBox(box)) [[unlikely]]
                 return LayoutUnit { };
+
+            if (CheckedPtr grid = dynamicDowncast<RenderGrid>(container)) {
+                auto writingMode = grid->writingMode();
+                auto physicalRange = [&](BoxAxis physicalAxis) {
+                    bool usesColumns = (physicalAxis == BoxAxis::Horizontal) == writingMode.isHorizontal();
+                    auto range = grid->gridAreaRangeForOutOfFlow(box, usesColumns ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows);
+                    if (usesColumns ? writingMode.isInlineFlipped() : writingMode.isBlockFlipped()) {
+                        auto containerSize = physicalAxis == BoxAxis::Horizontal ? grid->borderBoxWidth() : grid->borderBoxHeight();
+                        range.moveTo(containerSize - range.max());
+                    }
+                    return range;
+                };
+                auto horizontalRange = physicalRange(BoxAxis::Horizontal);
+                auto verticalRange = physicalRange(BoxAxis::Vertical);
+                auto gridArea = LayoutRect(horizontalRange.min(), verticalRange.min(), horizontalRange.size(), verticalRange.size());
+
+                if constexpr (propertyID == CSSPropertyTop)
+                    return box.offsetTop() - box.marginTop() - (gridArea.y() - grid->borderTop());
+                else if constexpr (propertyID == CSSPropertyRight)
+                    return (gridArea.maxX() - grid->borderLeft()) - (box.offsetLeft() + box.offsetWidth() + box.marginRight());
+                else if constexpr (propertyID == CSSPropertyBottom)
+                    return (gridArea.maxY() - grid->borderTop()) - (box.offsetTop() + box.offsetHeight() + box.marginBottom());
+                else if constexpr (propertyID == CSSPropertyLeft)
+                    return box.offsetLeft() - box.marginLeft() - (gridArea.x() - grid->borderLeft());
+            }
 
             auto paddingBoxWidth = [&]() -> LayoutUnit {
                 return container.writingMode().isHorizontal() ? container.paddingBoxLogicalWidth() : container.paddingBoxLogicalHeight();
