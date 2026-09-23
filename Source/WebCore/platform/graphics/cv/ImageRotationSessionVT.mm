@@ -168,7 +168,7 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(NativeImage& image, c
 RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame, IsCGImageCompatible cgImageCompatible)
 {
     RotationProperties rotation {
-        .flipY = videoFrame.isMirrored(),
+        .flipX = videoFrame.isMirrored(),
         .angle = static_cast<uint16_t>(videoFrame.rotation())
     };
 
