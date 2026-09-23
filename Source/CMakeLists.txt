@@ -20,6 +20,10 @@ endif ()
 
 add_subdirectory(JavaScriptCore)
 
+if (ENABLE_WEBGPU)
+    add_subdirectory(WebGPU)
+endif ()
+
 if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)
     foreach (_angle_target IN ITEMS ANGLE ANGLEFramework GLESv2Framework EGLFramework)
@@ -82,10 +86,6 @@ endif ()
 
 if (ENABLE_WEBDRIVER)
     add_subdirectory(WebDriver)
-endif ()
-
-if (ENABLE_WEBGPU)
-    add_subdirectory(WebGPU)
 endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()

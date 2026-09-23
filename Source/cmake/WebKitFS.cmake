@@ -61,6 +61,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebCore/PrivateHe
 set(WebKitLegacy_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitLegacy/Headers")
 set(WebKit_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/Headers")
 set(WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKit/PrivateHeaders")
+set(WebGPU_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebGPU/Headers")
+set(WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebGPU/PrivateHeaders")
 set(WebKitAdditions_FRAMEWORK_HEADERS_DIR "${CMAKE_BINARY_DIR}/WebKitAdditions/Headers")
 
 # HEADER_DIR variables are the directory that a framework's headers are
@@ -76,6 +78,8 @@ set(WebCore_PRIVATE_HEADERS_DIR "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCor
 set(WebKitLeagcy_HEADERS_DIR "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy")
 set(WebKit_HEADERS_DIR "${WebKit_FRAMEWORK_HEADERS_DIR}/WebKit")
 set(WebKit_PRIVATE_HEADERS_DIR "${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebKit")
+set(WebGPU_HEADERS_DIR "${WebGPU_FRAMEWORK_HEADERS_DIR}/WebGPU")
+set(WebGPU_PRIVATE_HEADERS_DIR "${WebGPU_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebGPU")
 set(WebKitAdditions_HEADERS_DIR "${WebKitAdditions_FRAMEWORK_HEADERS_DIR}/WebKitAdditions")
 
 set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/WTF/Scripts")
@@ -106,6 +110,8 @@ if (APPLE)
     set(WebKitLegacy_HEADERS_DIR           "${CMAKE_BINARY_DIR}/WebKitLegacy.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}PrivateHeaders")
     set(WebKit_HEADERS_DIR                 "${CMAKE_BINARY_DIR}/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Headers")
     set(WebKit_PRIVATE_HEADERS_DIR         "${CMAKE_BINARY_DIR}/WebKit.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}PrivateHeaders")
+    set(WebGPU_HEADERS_DIR                 "${CMAKE_BINARY_DIR}/WebGPU.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}Headers")
+    set(WebGPU_PRIVATE_HEADERS_DIR         "${CMAKE_BINARY_DIR}/WebGPU.framework/${WEBKIT_FRAMEWORK_VERSION_PATH}PrivateHeaders")
 
     # The code generators sit alongside the private headers, which is where
     # clients above WebKit look for them.

@@ -195,21 +195,6 @@ set(TestRunnerShared_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/Tes
 
 SET_AND_EXPOSE_TO_BUILD(USE_LIBWEBRTC TRUE)
 
-if (NOT ENABLE_WEBGPU)
-    set(_webgpu_fwd "${CMAKE_BINARY_DIR}/WebGPU-stub/WebGPU")
-    file(MAKE_DIRECTORY "${_webgpu_fwd}")
-    foreach (_h WebGPU.h WebGPUExt.h)
-        if (NOT EXISTS "${_webgpu_fwd}/${_h}")
-            file(CREATE_LINK "${CMAKE_SOURCE_DIR}/Source/WebGPU/WebGPU/${_h}" "${_webgpu_fwd}/${_h}" SYMBOLIC)
-        endif ()
-    endforeach ()
-    include_directories(SYSTEM "${CMAKE_BINARY_DIR}/WebGPU-stub")
-    unset(_webgpu_fwd)
-    unset(_h)
-else ()
-    include_directories(SYSTEM "${CMAKE_BINARY_DIR}/WebGPU/Headers")
-endif ()
-
 set(ENABLE_WEBKIT_LEGACY ON)
 set(ENABLE_WEBKIT ON)
 
@@ -457,6 +442,7 @@ set(WTF_LIBRARY_TYPE OBJECT)
 set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(WebCore_LIBRARY_TYPE SHARED)
 set(WebKit_LIBRARY_TYPE SHARED)
+set(WebGPU_LIBRARY_TYPE SHARED)
 
 # Large unified-source bundles speed up the macOS build. The iOS family keeps
 # the script default (8) so @no-unify-when(bundle<=8) sources (e.g. those that
