@@ -102,6 +102,11 @@ struct TestWebKitAPI {
 
         let configuration = TestRunner.Configuration(parsing: CommandLine.arguments)
 
+        if configuration.help {
+            print(configuration.usage)
+            exit(EXIT_SUCCESS)
+        }
+
         let passedGTests = try await GoogleTestsController.shared.run(with: configuration)
         let passedSwiftTests = try await SwiftTestsController.shared.run(with: configuration)
 

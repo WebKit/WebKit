@@ -32,6 +32,7 @@ protocol TestRunner {
 
 struct TestRunnerConfiguration {
     let programName: String?
+    let help: Bool
     let pretty: Bool
     let listTests: Bool
     let filter: [String]
@@ -68,9 +69,65 @@ extension TestRunner.Configuration {
         self.skip = Self.option(arguments, for: "--skip")
         self.repetitions = Self.option(arguments, for: "--repetitions").first.flatMap { Int($0) }
 
+        self.help = Self.flag(arguments, for: "--help") || Self.flag(arguments, for: "-h")
         self.force = Self.flag(arguments, for: "--force")
         self.listTests = Self.flag(arguments, for: "--list-tests")
         self.pretty = Self.flag(arguments, for: "--pretty")
         self.parallel = Self.flag(arguments, for: "--parallel")
+    }
+}
+
+extension TestRunner.Configuration {
+    /// Human-readable usage describing every argument the runner understands when
+    /// launched directly.
+
+    /// Keep this in sync with `init(parsing:)` above and with the argument handling
+    /// in the runner.
+    var usage: String {
+        let invocation = programName.map { URL(fileURLWithPath: $0).lastPathComponent } ?? "TestWebKitAPI"
+
+        let base = """
+            OVERVIEW: Runs the TestWebKitAPI test suites (GoogleTest and Swift Testing).
+
+            USAGE: \(invocation) [options]
+
+            With no options, every test is run. Select a subset with --filter/--skip; both
+            may be given more than once. Tests are chosen by pattern only: bare test names
+            passed as positional arguments are ignored.
+
+            TEST SELECTION:
+              --filter <pattern>     Run only tests matching <pattern>; may be repeated.
+                                     GoogleTest patterns look like '<suite>.<test>' and accept
+                                     '*' wildcards; Swift Testing patterns are regular expressions.
+              --skip <pattern>       Skip tests matching <pattern>; may be repeated.
+              --force                Also run tests that are otherwise disabled.
+
+            EXECUTION:
+              --repetitions <count>  Run the selected tests <count> times.
+              --parallel             Allow tests to run in parallel where supported.
+              --list-tests           Print the selected test names without running them.
+              --pretty               Produce verbose, human-readable output.
+
+            GENERAL:
+              --help, -h             Print this help and exit.
+            """
+
+        #if WTF_PLATFORM_MAC
+        // These are consulted only in the UI process and are not parsed into this
+        // configuration; they are handled separately while setting up defaults.
+        let sectionSeparator = "\n\n"
+        let macOptions = """
+            macOS OPTIONS:
+              --remote-layer-tree    Use the remote layer tree drawing model.
+              --no-remote-layer-tree Disable the remote layer tree drawing model.
+              --use-gpu-process      Enable GPU process DOM rendering.
+              --no-use-gpu-process   Disable GPU process DOM rendering.
+              --site-isolation-enabled-by-default
+                                     Force site isolation on for every test.
+            """
+        return base + sectionSeparator + macOptions
+        #else
+        return base
+        #endif
     }
 }
