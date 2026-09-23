@@ -32,6 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataRecordPrivate.h>

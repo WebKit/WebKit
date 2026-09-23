@@ -33,6 +33,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/Utilities.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>

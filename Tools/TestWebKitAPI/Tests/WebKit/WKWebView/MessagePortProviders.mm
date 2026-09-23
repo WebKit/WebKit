@@ -30,6 +30,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <wtf/RetainPtr.h>

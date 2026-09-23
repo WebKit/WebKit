@@ -43,6 +43,7 @@
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>

@@ -41,6 +41,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/darwin/DispatchExtras.h>

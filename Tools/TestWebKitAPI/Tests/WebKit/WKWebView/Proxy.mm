@@ -217,74 +217,80 @@ TEST(WebKit, HTTPSProxyAPI)
 
 TEST(WebKit, CanPrefetchDNSWithProxyConfigured)
 {
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
-    WKWebsiteDataStore *dataStore = webView.get().configuration.websiteDataStore;
+    if (@available(macOS 27.0, iOS 27.0, *)) {
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+        WKWebsiteDataStore *dataStore = webView.get().configuration.websiteDataStore;
 
-    __block bool canPrefetch = false;
-    __block bool done = false;
-    [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
-        canPrefetch = result;
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    EXPECT_TRUE(canPrefetch);
+        __block bool canPrefetch = false;
+        __block bool done = false;
+        [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
+            canPrefetch = result;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        EXPECT_TRUE(canPrefetch);
 
-    RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
-    RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
-    dataStore.proxyConfigurations = @[ proxyConfig.get() ];
+        RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
+        RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+        dataStore.proxyConfigurations = @[ proxyConfig.get() ];
 
-    done = false;
-    [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
-        canPrefetch = result;
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    EXPECT_FALSE(canPrefetch);
+        done = false;
+        [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
+            canPrefetch = result;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        EXPECT_FALSE(canPrefetch);
 
-    dataStore.proxyConfigurations = nil;
+        dataStore.proxyConfigurations = nil;
 
-    done = false;
-    [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
-        canPrefetch = result;
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    EXPECT_TRUE(canPrefetch);
+        done = false;
+        [dataStore _canPrefetchDNSForTesting:^(BOOL result) {
+            canPrefetch = result;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        EXPECT_TRUE(canPrefetch);
+    } else
+        GTEST_SKIP() << "_canPrefetchDNSForTesting: and _prefetchedDNSHostnameCountForTesting: require macOS 27.0 / iOS 27.0.";
 }
 
 TEST(WebKit, PrefetchDNSSkippedWhenProxyConfigured)
 {
-    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
-    WKWebsiteDataStore *dataStore = webView.get().configuration.websiteDataStore;
+    if (@available(macOS 27.0, iOS 27.0, *)) {
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+        WKWebsiteDataStore *dataStore = webView.get().configuration.websiteDataStore;
 
-    auto prefetchedHostnameCount = [&] {
-        __block uint64_t count = 0;
-        __block bool done = false;
-        [dataStore _prefetchedDNSHostnameCountForTesting:^(NSUInteger result) {
-            count = result;
-            done = true;
-        }];
-        TestWebKitAPI::Util::run(&done);
-        return count;
-    };
+        auto prefetchedHostnameCount = [&] {
+            __block uint64_t count = 0;
+            __block bool done = false;
+            [dataStore _prefetchedDNSHostnameCountForTesting:^(NSUInteger result) {
+                count = result;
+                done = true;
+            }];
+            TestWebKitAPI::Util::run(&done);
+            return count;
+        };
 
-    RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
-    RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
-    dataStore.proxyConfigurations = @[ proxyConfig.get() ];
+        RetainPtr endpoint = adoptNS(nw_endpoint_create_host("127.0.0.1", "1"));
+        RetainPtr proxyConfig = adoptNS(nw_proxy_config_create_http_connect(endpoint.get(), nil));
+        dataStore.proxyConfigurations = @[ proxyConfig.get() ];
 
-    uint64_t countBeforeProxiedLoad = prefetchedHostnameCount();
-    [webView loadHTMLString:@"<link rel='dns-prefetch' href='https://prefetch-dns-with-proxy.example/'>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_FALSE(TestWebKitAPI::Util::waitFor([&] {
-        return prefetchedHostnameCount() > countBeforeProxiedLoad;
-    }, 200));
+        uint64_t countBeforeProxiedLoad = prefetchedHostnameCount();
+        [webView loadHTMLString:@"<link rel='dns-prefetch' href='https://prefetch-dns-with-proxy.example/'>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_FALSE(TestWebKitAPI::Util::waitFor([&] {
+            return prefetchedHostnameCount() > countBeforeProxiedLoad;
+        }, 200));
 
-    dataStore.proxyConfigurations = nil;
+        dataStore.proxyConfigurations = nil;
 
-    uint64_t countBeforeUnproxiedLoad = prefetchedHostnameCount();
-    [webView loadHTMLString:@"<link rel='dns-prefetch' href='https://prefetch-dns-without-proxy.example/'>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
-    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
-        return prefetchedHostnameCount() > countBeforeUnproxiedLoad;
-    }, 200));
+        uint64_t countBeforeUnproxiedLoad = prefetchedHostnameCount();
+        [webView loadHTMLString:@"<link rel='dns-prefetch' href='https://prefetch-dns-without-proxy.example/'>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+            return prefetchedHostnameCount() > countBeforeUnproxiedLoad;
+        }, 200));
+    } else
+        GTEST_SKIP() << "_canPrefetchDNSForTesting: and _prefetchedDNSHostnameCountForTesting: require macOS 27.0 / iOS 27.0.";
 }
 
 TEST(WebKit, ProxyAfterNetworkProcessCrash)
