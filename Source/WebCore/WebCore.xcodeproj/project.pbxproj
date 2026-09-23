@@ -6118,6 +6118,7 @@
 		CDA29A321CC01A9500901CCF /* PlaybackSessionInterfaceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A2E1CBF73FC00901CCF /* PlaybackSessionInterfaceIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595932146DEC300A84185 /* HEVCUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595912146DEC300A84185 /* HEVCUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7D2E9A4C1B3F60D8E5A2C0F4 /* H264Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 9C6B4A2E8F5D1037C4B0A9E1 /* H264Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A4C123B1612DD272D1371C17 /* AnnexBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 149D439536B3216FDAEEB975 /* AnnexBUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA595982146DF7800A84185 /* HEVCUtilitiesCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
 		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -21590,6 +21591,8 @@
 		CDA595912146DEC300A84185 /* HEVCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilities.h; sourceTree = "<group>"; };
 		9C6B4A2E8F5D1037C4B0A9E1 /* H264Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H264Utilities.h; sourceTree = "<group>"; };
 		4A1E9F3D5A4C8D227E1F60B2 /* H264Utilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = H264Utilities.cpp; sourceTree = "<group>"; };
+		8F219E9CB0EB53F16947CCF2 /* AnnexBUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnnexBUtilities.cpp; sourceTree = "<group>"; };
+		149D439536B3216FDAEEB975 /* AnnexBUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnnexBUtilities.h; sourceTree = "<group>"; };
 		CDA595922146DEC300A84185 /* HEVCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HEVCUtilities.cpp; sourceTree = "<group>"; };
 		CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilitiesCocoa.h; sourceTree = "<group>"; };
 		CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HEVCUtilitiesCocoa.mm; sourceTree = "<group>"; };
@@ -36986,6 +36989,8 @@
 				7299BC6423D686A600CC6883 /* AlphaPremultiplication.h */,
 				0F7E475125EEB79A0013F909 /* AnimationFrameRate.cpp */,
 				722A815C238FD50500C00583 /* AnimationFrameRate.h */,
+				8F219E9CB0EB53F16947CCF2 /* AnnexBUtilities.cpp */,
+				149D439536B3216FDAEEB975 /* AnnexBUtilities.h */,
 				74A860E73006046D00A943A1 /* ArrayPixelBuffer.cpp */,
 				74A860E63006046D00A943A1 /* ArrayPixelBuffer.h */,
 				72E0375D2FC9573200088DDE /* AsyncImageDecoder.cpp */,
@@ -44543,6 +44548,7 @@
 				71025ECD1F99F0CE004A250C /* AnimationTimeline.h in Headers */,
 				7181A16C244F0F40007D8A24 /* AnimationTimelinesController.h in Headers */,
 				0F580FAF149800D400FB5BD8 /* AnimationUtilities.h in Headers */,
+				A4C123B1612DD272D1371C17 /* AnnexBUtilities.h in Headers */,
 				57152B5A21CB3E88000C37CA /* ApduCommand.h in Headers */,
 				57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,

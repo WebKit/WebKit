@@ -26,8 +26,8 @@
 #include "config.h"
 #include "H264Utilities.h"
 
+#include "AnnexBUtilities.h"
 #include "BitReader.h"
-#include "HEVCUtilities.h"
 #include "Logging.h"
 #include <bit>
 #include <cstdlib>
@@ -498,7 +498,7 @@ void H264BitstreamParser::parseSlice(std::span<const uint8_t> slice)
 
 void H264BitstreamParser::parseBitstream(std::span<const uint8_t> bitstream)
 {
-    for (auto& index : findNaluIndices(bitstream).indices)
+    for (auto& index : findNaluIndices(bitstream))
         parseSlice(bitstream.subspan(index.payloadStartOffset, index.payloadSize));
 }
 

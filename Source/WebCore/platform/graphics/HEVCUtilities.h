@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/AnnexBUtilities.h>
 #include <array>
 #include <optional>
 #include <span>
@@ -108,25 +109,10 @@ enum class HEVCSliceType : uint8_t { B = 0, P = 1, I = 2 };
 
 constexpr size_t hevcNaluHeaderSize = 2;
 
-struct NaluIndex {
-    size_t startOffset { 0 };
-    size_t payloadStartOffset { 0 };
-    size_t payloadSize { 0 };
-};
-
-struct AnnexBNaluIndices {
-    Vector<NaluIndex> indices;
-    std::optional<size_t> vpsIndex;
-};
-
-WEBCORE_EXPORT AnnexBNaluIndices findNaluIndices(std::span<const uint8_t>);
 WEBCORE_EXPORT HEVCNaluType hevcNaluType(uint8_t);
 
-// Removes emulation prevention bytes (the trailing byte of any 0x00 0x00 0x03 sequence).
-WEBCORE_EXPORT Vector<uint8_t> parseRbsp(std::span<const uint8_t>);
-
-// Scans an Annex B chunk for a VPS NAL unit to return its vps_max_num_reorder_pics or std::nullopt if no VPS or error.
-WEBCORE_EXPORT std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t>, const AnnexBNaluIndices&);
+WEBCORE_EXPORT size_t findHEVCAnnexBVpsIndex(std::span<const uint8_t>, const Vector<NaluIndex>&);
+WEBCORE_EXPORT std::optional<uint8_t> findHEVCAnnexBMaxNumReorderPics(std::span<const uint8_t>, const Vector<NaluIndex>&);
 
 struct HVCCParameterSet {
     HEVCNaluType type;

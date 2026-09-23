@@ -2660,6 +2660,7 @@ platform/gamepad/GamepadProvider.cpp
 platform/graphics/AV1Utilities.cpp
 platform/graphics/AlphaPremultiplication.cpp
 platform/graphics/AnimationFrameRate.cpp
+platform/graphics/AnnexBUtilities.cpp
 platform/graphics/ArrayPixelBuffer.cpp
 platform/graphics/AsyncImageDecoder.cpp
 platform/graphics/BezierUtilities.cpp
