@@ -44,6 +44,18 @@ void IPCTesterReceiver::asyncMessage(uint32_t arg0, CompletionHandler<void(uint3
     completionHandler(arg0 + 1u);
 }
 
+void IPCTesterReceiver::deferredReplyMessage(uint32_t arg0, CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    m_deferredReplyArgument = arg0;
+    m_deferredReply = WTF::move(completionHandler);
+}
+
+void IPCTesterReceiver::completeDeferredReply(uint32_t arg0)
+{
+    if (auto completionHandler = std::exchange(m_deferredReply, nullptr))
+        completionHandler(static_cast<uint64_t>(m_deferredReplyArgument) + arg0 + 1u);
+}
+
 }
 
 #endif

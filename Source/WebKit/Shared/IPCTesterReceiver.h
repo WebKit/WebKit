@@ -28,6 +28,7 @@
 #if ENABLE(IPC_TESTING_API) && !ENABLE(IPC_TESTING_SWIFT)
 
 #include "MessageReceiver.h"
+#include <wtf/CompletionHandler.h>
 
 namespace IPC {
 class Connection;
@@ -50,6 +51,11 @@ private:
 
     // Messages
     void asyncMessage(uint32_t, CompletionHandler<void(uint32_t)>&&);
+    void deferredReplyMessage(uint32_t, CompletionHandler<void(uint64_t)>&&);
+    void completeDeferredReply(uint32_t);
+
+    CompletionHandler<void(uint64_t)> m_deferredReply;
+    uint32_t m_deferredReplyArgument { 0 };
 };
 
 }

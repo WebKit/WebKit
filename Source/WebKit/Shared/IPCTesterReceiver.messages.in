@@ -30,6 +30,8 @@
 ]
 messages -> IPCTesterReceiver {
     void AsyncMessage(uint32_t arg1) -> (uint32_t reply) Asynchronous
+    void DeferredReplyMessage(uint32_t arg1) -> (uint64_t reply) Asynchronous
+    void CompleteDeferredReply(uint32_t arg1)
 }
 
 #endif

@@ -78,6 +78,8 @@ private:
     void sendSemaphoreBackAndSignalProtocol(IPC::Connection&, IPC::Semaphore&&);
     void sendAsyncMessageToReceiver(IPC::Connection&, uint32_t);
     void sendAsyncMessageToReceiverRequestingReply(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t, bool)>&&);
+    void sendDeferredReplyMessageToReceiver(IPC::Connection&, uint32_t value, CompletionHandler<void(uint64_t, bool)>&&);
+    void completeDeferredReplyOnReceiver(IPC::Connection&, uint32_t value);
     void asyncPing(uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPing(IPC::Connection&, uint32_t value, CompletionHandler<void(uint32_t)>&&);
     void syncPingEmptyReply(IPC::Connection&, uint32_t value, CompletionHandler<void()>&&);

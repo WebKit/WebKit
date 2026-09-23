@@ -46,6 +46,8 @@ messages -> IPCTester {
 
     SendAsyncMessageToReceiver(uint32_t arg0)
     SendAsyncMessageToReceiverRequestingReply(uint32_t value) -> (uint32_t nextValue, bool swiftUsed)
+    SendDeferredReplyMessageToReceiver(uint32_t value) -> (uint64_t nextValue, bool swiftUsed)
+    CompleteDeferredReplyOnReceiver(uint32_t value)
     AsyncOptionalExceptionData(bool sendEngaged) -> (struct std::optional<WebCore::ExceptionData> exceptionData, String other)
 
     EmptyMessage()
