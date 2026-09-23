@@ -365,6 +365,11 @@ unsigned HTMLSelectElement::preferredSize() const
     return m_multiple ? 4 : 1;
 }
 
+bool HTMLSelectElement::supportsPickerPseudoElement() const
+{
+    return preferredSize() == 1;
+}
+
 bool HTMLSelectElement::usesBaseAppearancePicker() const
 {
     if (m_multiple || m_size > 1)

@@ -80,6 +80,7 @@ public:
 
     unsigned size() const { return m_size; }
     unsigned NODELETE preferredSize() const;
+    bool NODELETE supportsPickerPseudoElement() const;
     bool multiple() const { return m_multiple; }
 
     bool NODELETE usesMenuList() const;

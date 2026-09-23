@@ -1,0 +1,6 @@
+
+
+PASS A select rendering as a dropdown box has a ::picker(select).
+PASS A select rendering as a list box because of size has no ::picker(select).
+PASS A select rendering as a list box because of multiple has no ::picker(select).
+
