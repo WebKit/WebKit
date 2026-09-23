@@ -63,6 +63,12 @@ public:
     WEBCORE_EXPORT bool hasPercentage() const;
     WEBCORE_EXPORT bool basisHasPercentage() const;
 
+    // Resolves the calculation with `size` standing for keywordBasisSize, the used size of the basis
+    // keyword, which only layout knows.
+    WEBCORE_EXPORT double evaluate(double percentResolutionLength, const ZoomFactor&, double keywordBasisSize) const;
+
+    // The same for a value that does not behave as a keyword, where the calculation cannot mention
+    // `size` and so has nothing to stand in for.
     WEBCORE_EXPORT double evaluate(double percentResolutionLength, const ZoomFactor&) const;
 
     WEBCORE_EXPORT bool operator==(const UnevaluatedCalcSize&) const;
