@@ -1296,6 +1296,4 @@ webkit.org/b/324152 platform/glib/damage/animations-drop-shadow-color.html [ Pas
 webkit.org/b/324334 [ Debug ] fast/canvas/webgl/largeBuffer.html [ Crash Pass ]
 webkit.org/b/324337 [ arm64 ] http/tests/navigation/javascriptlink-frames.html [ Failure Pass ]
 
-webkit.org/b/324821 [ Release ] ipc/invalid-message-to-web-process-crash.html [ Failure Pass ]
-
 webkit.org/b/322642 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Failure Pass ]
