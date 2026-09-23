@@ -70,6 +70,17 @@ public:
         return tryBreadth()->flex();
     }
 
+    bool isFitContent() const
+    {
+        return std::holds_alternative<Style::GridTrackSize::FitContent>(m_value);
+    }
+
+    Style::GridTrackSize::FitContent fitContent() const
+    {
+        ASSERT(isFitContent());
+        return std::get<Style::GridTrackSize::FitContent>(m_value);
+    }
+
     bool isContentSized() const
     {
         auto breadth = tryBreadth();
@@ -81,6 +92,18 @@ private:
 };
 
 struct TrackSizingFunctions {
+    // https://drafts.csswg.org/css-grid-1/#extra-space
+    // The resolved fit-content() argument, which a fit-content() track may not grow past.
+    std::optional<LayoutUnit> fitContentLimit(LayoutUnit availableSpace) const
+    {
+        if (!max.isFitContent())
+            return { };
+        auto fitContent = max.fitContent();
+        if (auto fixedArgument = fitContent->value.tryFixed())
+            return Style::evaluate<LayoutUnit>(*fixedArgument, zoom);
+        return Style::evaluate<LayoutUnit>(fitContent->value, availableSpace, zoom);
+    }
+
     Style::GridTrackBreadth min { CSS::Keyword::Auto { } };
     MaxTrackSizingFunction max { Style::GridTrackBreadth { CSS::Keyword::Auto { } } };
     Style::ZoomFactor zoom;
