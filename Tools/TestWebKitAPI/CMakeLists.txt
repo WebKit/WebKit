@@ -340,6 +340,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/STUNMessageParsingTest.cpp
         Tests/WebCore/SVGImageCasts.cpp
         Tests/WebCore/SampleMap.cpp
+        Tests/WebCore/ScrollingMomentumCalculatorTests.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/SerializedScriptValue.cpp
         Tests/WebCore/ServiceWorkerRoutines.cpp

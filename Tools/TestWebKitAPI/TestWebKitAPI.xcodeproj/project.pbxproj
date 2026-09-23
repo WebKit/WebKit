@@ -870,6 +870,7 @@
 				WebCore/RegistrableDomain.cpp,
 				WebCore/RenderStyleChange.cpp,
 				WebCore/SampleMap.cpp,
+				WebCore/ScrollingMomentumCalculatorTests.cpp,
 				WebCore/SecurityOrigin.cpp,
 				WebCore/SerializedScriptValue.cpp,
 				WebCore/ServiceWorkerRoutines.cpp,
