@@ -51,8 +51,6 @@
 #include "LCMSUniquePtr.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
-
 namespace WebCore {
 
 // Gamma constants.
@@ -527,7 +525,9 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
     if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
         unsigned colorChannels = hasAlpha ? 4 : 3;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
     }
 
@@ -539,6 +539,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     unsigned char nonTrivialAlphaMask = 0;
 
     png_bytep pixel = row;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (hasAlpha) {
         for (int x = 0; x < width; ++x, pixel += 4, address = address.subspan(1)) {
             unsigned alpha = pixel[3];
@@ -549,6 +550,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         for (int x = 0; x < width; ++x, pixel += 3, address = address.subspan(1))
             address[0] = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if USE(LCMS)
     if (m_iccTransform)
@@ -573,7 +575,9 @@ void PNGImageDecoder::frameRowAvailable(unsigned char* rowBuffer, unsigned rowIn
         return;
 
     unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     png_progressive_combine_row(m_png, interlaceBuffer + (rowIndex * colorChannels * size().width()), rowBuffer);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void PNGImageDecoder::pngComplete()
@@ -609,6 +613,43 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
         clear();
 }
 
+// Helper functions to extract values from PNG chunk payloads, modifying the
+// input span in-place by advancing it by the amount of bytes for the extracted
+// values (the same convention followed by WTF). The naming follows the wording
+// of the PNG/APNG specifications, i.e. an "unsigned int" is a 32-bit value,
+// "short" is a 16-bit value and so on.
+
+static inline uint32_t consumePNGUnsignedInt(std::span<const png_byte>& data)
+{
+    auto value = consumeSpan(data, sizeof(uint32_t));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return png_get_uint_32(value.data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+static inline uint16_t consumePNGUnsignedShort(std::span<const png_byte>& data)
+{
+    auto value = consumeSpan(data, sizeof(uint16_t));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return png_get_uint_16(value.data());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
+static inline uint8_t consumePNGUnsignedByte(std::span<const png_byte>& data)
+{
+    return consume(data);
+}
+
+static inline std::span<const png_byte> chunkDataSpan(const png_unknown_chunk& chunk)
+{
+    return unsafeMakeSpan(chunk.data, chunk.size);
+}
+
+static inline std::span<png_byte> mutableChunkDataSpan(const png_unknown_chunk& chunk)
+{
+    return unsafeMakeSpan(chunk.data, chunk.size);
+}
+
 void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 {
     assertIsHeld(m_lock);
@@ -618,8 +659,9 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 
         // frameCount() reports m_frameCount and callers size per-frame containers from it, so a
         // rejected count must not be stored.
-        size_t frameCount = png_get_uint_32(chunk->data);
-        unsigned playCount = png_get_uint_32(chunk->data + 4);
+        auto chunkData = chunkDataSpan(*chunk);
+        size_t frameCount = consumePNGUnsignedInt(chunkData);
+        unsigned playCount = consumePNGUnsignedInt(chunkData);
 
         if (!frameCount || frameCount > cMaxFrameCount || playCount > PNG_UINT_31_MAX) {
             fallbackNotAnimated();
@@ -649,20 +691,21 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         }
 
         // At this point the old frame is done. Let's start a new one.
-        unsigned sequenceNumber = png_get_uint_32(chunk->data);
+        auto chunkData = chunkDataSpan(*chunk);
+        unsigned sequenceNumber = consumePNGUnsignedInt(chunkData);
         if (sequenceNumber != m_sequenceNumber++) {
             fallbackNotAnimated();
             return;
         }
 
-        m_width = png_get_uint_32(chunk->data + 4);
-        m_height = png_get_uint_32(chunk->data + 8);
-        m_xOffset = png_get_uint_32(chunk->data + 12);
-        m_yOffset = png_get_uint_32(chunk->data + 16);
-        m_delayNumerator = png_get_uint_16(chunk->data + 20);
-        m_delayDenominator = png_get_uint_16(chunk->data + 22);
-        m_dispose = chunk->data[24];
-        m_blend = chunk->data[25];
+        m_width = consumePNGUnsignedInt(chunkData);
+        m_height = consumePNGUnsignedInt(chunkData);
+        m_xOffset = consumePNGUnsignedInt(chunkData);
+        m_yOffset = consumePNGUnsignedInt(chunkData);
+        m_delayNumerator = consumePNGUnsignedShort(chunkData);
+        m_delayDenominator = consumePNGUnsignedShort(chunkData);
+        m_dispose = consumePNGUnsignedByte(chunkData);
+        m_blend = consumePNGUnsignedByte(chunkData);
 
         png_structp png = m_reader->pngPtr();
         png_infop info = m_reader->infoPtr();
@@ -711,7 +754,8 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         if (!m_frameInfo || !m_isAnimated)
             return;
 
-        unsigned sequenceNumber = png_get_uint_32(chunk->data);
+        auto chunkData = chunkDataSpan(*chunk);
+        unsigned sequenceNumber = consumePNGUnsignedInt(chunkData);
         if (sequenceNumber != m_sequenceNumber++) {
             fallbackNotAnimated();
             return;
@@ -724,7 +768,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 
         png_save_uint_32(chunk->data, chunk->size - 4);
         png_process_data(m_png, m_info, chunk->data, 4);
-        memcpySpan(unsafeMakeSpan(chunk->data, chunk->size), "IDAT"_span);
+        memcpySpan(mutableChunkDataSpan(*chunk), "IDAT"_span);
         png_process_data(m_png, m_info, chunk->data, chunk->size);
         png_process_data(m_png, m_info, chunk->data, 4);
     }
@@ -781,7 +825,9 @@ void PNGImageDecoder::beginFrame()
     unsigned stride = colorChannels * size().width();
     unsigned rowBytes = colorChannels * std::min<unsigned>(m_width, size().width());
     png_bytep row = m_reader->interlaceBuffer();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (unsigned y = std::min<unsigned>(m_height, size().height()); y; --y, row += stride)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         zeroSpan(unsafeMakeSpan(row, rowBytes));
 
     // initFrameBuffer() starts a frame from the one before it, which frame 0 does not have: a
@@ -802,6 +848,8 @@ void PNGImageDecoder::init()
     m_totalFrames = 0;
     m_sequenceNumber = 0;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 void PNGImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 {
@@ -826,6 +874,8 @@ void PNGImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
             j->clear();
     }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
 {
@@ -894,6 +944,8 @@ void PNGImageDecoder::updateFrameRect(ScalableImageDecoderFrame& buffer)
     buffer.backingStore()->setFrameRect(frameRect);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Paints what a frame's stream delivered, at the frame's own offset. It is registered only on a
 // frame's stream, so the canvas, which is painted a row at a time, never reaches it.
 void PNGImageDecoder::paintFrame()
@@ -957,6 +1009,8 @@ void PNGImageDecoder::paintFrame()
         buffer.setHasAlpha(nonTrivialAlpha);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 void PNGImageDecoder::frameComplete()
 {
     assertIsHeld(m_lock);
@@ -970,8 +1024,8 @@ void PNGImageDecoder::frameComplete()
 
 int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
 {
-    static png_byte dataPNG[8] = {137, 80, 78, 71, 13, 10, 26, 10};
-    static png_byte datagAMA[16] = {0, 0, 0, 4, 103, 65, 77, 65};
+    static constexpr std::array<png_byte, 8> dataPNG = { 137, 80, 78, 71, 13, 10, 26, 10 };
+    std::array<png_byte, 16> datagAMA = { 0, 0, 0, 4, 103, 65, 77, 65 };
 
     if (!m_hasInfo)
         return 0;
@@ -987,12 +1041,14 @@ int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
     png_set_progressive_read_fn(m_png, static_cast<png_voidp>(this),
         WebCore::frameHeader, WebCore::frameRowAvailable, WebCore::frameEnd);
 
-    memcpySpan(std::span { m_dataIHDR }.subspan(8), unsafeMakeSpan(chunk->data + 4, 8));
-    png_save_uint_32(datagAMA + 8, m_gamma);
+    // Copy the frame width/height from the fcTL chunk into IHDR chunk data.
+    memcpySpan(std::span { m_dataIHDR }.subspan(8), chunkDataSpan(*chunk).subspan(4, 8));
 
-    png_process_data(m_png, m_info, dataPNG, 8);
-    png_process_data(m_png, m_info, m_dataIHDR.data(), 25);
-    png_process_data(m_png, m_info, datagAMA, 16);
+    png_save_uint_32(std::span(datagAMA).subspan(8, sizeof(uint32_t)).data(), m_gamma);
+
+    png_process_data(m_png, m_info, const_cast<png_byte*>(dataPNG.data()), dataPNG.size());
+    png_process_data(m_png, m_info, m_dataIHDR.data(), m_dataIHDR.size());
+    png_process_data(m_png, m_info, datagAMA.data(), datagAMA.size());
     if (m_sizePLTE > 0)
         png_process_data(m_png, m_info, m_dataPLTE.data(), m_sizePLTE);
     if (m_sizetRNS > 0)
@@ -1003,7 +1059,7 @@ int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
 
 int PNGImageDecoder::processingFinish()
 {
-    static png_byte dataIEND[12] = {0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130};
+    static constexpr std::array<png_byte, 12> dataIEND = { 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130 };
 
     if (!m_hasInfo)
         return 0;
@@ -1012,7 +1068,7 @@ int PNGImageDecoder::processingFinish()
         if (setjmp(png_jmpbuf(m_png)))
             return 1;
 
-        png_process_data(m_png, m_info, dataIEND, 12);
+        png_process_data(m_png, m_info, const_cast<png_byte*>(dataIEND.data()), dataIEND.size());
         png_destroy_read_struct(&m_png, &m_info, 0);
     }
 
@@ -1028,5 +1084,3 @@ void PNGImageDecoder::fallbackNotAnimated()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
