@@ -1,0 +1,11 @@
+Tests that an option in a disabled base-select element cannot be picked by its access key.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS select.value is "a"
+PASS select.value is "a"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

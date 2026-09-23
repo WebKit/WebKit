@@ -318,10 +318,9 @@ bool HTMLOptionElement::accessKeyAction(bool)
     if (!select)
         return false;
 
-    if (select->usesBaseAppearancePicker()) {
-        select->optionSelectedByUser(index(), true);
-        select->hidePickerPopoverElement();
-    } else
+    if (select->usesBaseAppearancePicker())
+        select->pickOption(*this);
+    else
         select->accessKeySetSelectedIndex(index());
     return true;
 }
@@ -371,8 +370,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
         int keyCode = keyboardEvent->keyCode();
         if (keyCode == '\r' || keyCode == ' ') {
-            select->optionSelectedByUser(index(), true);
-            select->hidePickerPopoverElement();
+            select->pickOption(*this);
             keyboardEvent->setDefaultHandled();
             return;
         }
@@ -387,8 +385,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
     }
 
     if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
-        select->optionSelectedByUser(index(), true);
-        select->hidePickerPopoverElement();
+        select->pickOption(*this);
         event.setDefaultHandled();
         return;
     }

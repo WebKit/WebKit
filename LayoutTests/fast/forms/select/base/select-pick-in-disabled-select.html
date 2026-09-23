@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+select, ::picker(select) {
+  appearance: base-select;
+}
+</style>
+</head>
+<body>
+<select id="select" disabled>
+    <option>a</option>
+    <option accesskey="b">b</option>
+</select>
+<script>
+description("Tests that an option in a disabled base-select element cannot be picked by its access key.");
+
+jsTestIsAsync = true;
+
+(async () => {
+    shouldBeEqualToString("select.value", "a");
+
+    await UIHelper.keyDown("b", ["altKey", "ctrlKey"]);
+    await UIHelper.animationFrame();
+    shouldBeEqualToString("select.value", "a");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

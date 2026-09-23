@@ -285,6 +285,18 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
     selectOption(optionIndex, flags);
 }
 
+// https://html.spec.whatwg.org/multipage/form-elements.html#concept-select-pick
+void HTMLSelectElement::pickOption(HTMLOptionElement& option)
+{
+    if (m_multiple || isDisabledFormControl())
+        return;
+
+    option.setDirty(true);
+
+    optionSelectedByUser(option.index(), true);
+    hidePickerPopoverElement();
+}
+
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
 {
     // The select element has no placeholder label option if it has an attribute "multiple" specified or a display size of non-1.

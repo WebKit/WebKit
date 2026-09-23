@@ -1,0 +1,5 @@
+
+
+PASS Picking an option that is already selected sets its dirtiness.
+PASS Picking an option that is not selected sets its dirtiness.
+
