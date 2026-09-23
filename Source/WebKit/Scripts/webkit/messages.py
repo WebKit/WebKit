@@ -873,6 +873,20 @@ def message_to_completion_handler_using_declaration(receiver, message):
     return 'using %s = WTF::RefCountable<Messages::%s::%s::Reply>;' % (completion_handler_name, receiver.name, message.name)
 
 
+def messages_with_distinct_reply_types(receiver):
+    seen = set()
+    result = []
+    for message in receiver.messages:
+        if message.reply_parameters is None:
+            continue
+        key = tuple(parameter.type for parameter in message.reply_parameters)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(message)
+    return result
+
+
 def message_to_complete_with_default_reply_declaration(receiver, message):
     return 'void completeWithDefaultReply(%sCompletionHandler&);' % message.name
 
@@ -987,7 +1001,7 @@ def generate_messages_header(receiver):
         result.append('\n')
         if reply_messages:
             result.append('\n')
-            result.append('\n\n'.join([message_to_complete_with_default_reply_declaration(receiver, x) for x in reply_messages]))
+            result.append('\n\n'.join([message_to_complete_with_default_reply_declaration(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
             result.append('\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
         result.append('\n')
@@ -2245,7 +2259,7 @@ def generate_message_handler(receiver):
             return
         result.append('\n')
         result.append('namespace CompletionHandlers {\nnamespace %s {\n\n' % receiver.name)
-        result.append('\n\n'.join([message_to_complete_with_default_reply_definition(receiver, x) for x in reply_messages]))
+        result.append('\n\n'.join([message_to_complete_with_default_reply_definition(receiver, x) for x in messages_with_distinct_reply_types(receiver)]))
         result.append('\n\n')
         result.append('} // namespace %s\n} // namespace CompletionHandlers\n' % receiver.name)
     if_swift_enabled(receiver, result, append_complete_with_default_reply_definitions, None)

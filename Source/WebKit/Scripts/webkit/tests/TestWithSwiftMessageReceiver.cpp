@@ -119,16 +119,6 @@ void completeWithDefaultReply(TestAsyncMessageCompletionHandler& completionHandl
     IPC::Connection::cancelReply<Messages::TestWithSwift::TestAsyncMessage>(*completionHandler);
 }
 
-void completeWithDefaultReply(TestSyncMessageCompletionHandler& completionHandler)
-{
-    IPC::Connection::cancelReply<Messages::TestWithSwift::TestSyncMessage>(*completionHandler);
-}
-
-void completeWithDefaultReply(TestThrowingMessageWithReplyCompletionHandler& completionHandler)
-{
-    IPC::Connection::cancelReply<Messages::TestWithSwift::TestThrowingMessageWithReply>(*completionHandler);
-}
-
 } // namespace TestWithSwift
 } // namespace CompletionHandlers
 
