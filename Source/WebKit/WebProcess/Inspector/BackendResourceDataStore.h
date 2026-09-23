@@ -118,6 +118,10 @@ public:
 
         bool hasBufferedData() const { return hasData(); }
 
+        // True if no body ever reached this entry in any form. Content that was stored and later
+        // evicted does not count.
+        bool receivedNoContent() const { return !hasContent() && !hasData() && !m_isContentEvicted && !m_buffer; }
+
     private:
         bool hasData() const;
         size_t dataLength() const;
