@@ -25,9 +25,9 @@
 
 #include "config.h"
 #include "TextPaintStyle.h"
-#include "DocumentView.h"
 
 #include "ColorLuminance.h"
+#include "DocumentView.h"
 #include "FocusController.h"
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
@@ -43,6 +43,10 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
+
+#if __has_include(<WebKitAdditions/AXCustomColorModeController.h>)
+#include <WebKitAdditions/AXCustomColorModeController.h>
+#endif
 
 namespace WebCore {
 
@@ -192,6 +196,15 @@ TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const Style::Co
     // Make the text stroke color legible against a white background
     if (forceBackgroundToWhite)
         paintStyle.emphasisMarkColor = adjustColorForVisibilityOnBackground(paintStyle.emphasisMarkColor, Color::white);
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    if (!forceBackgroundToWhite && frame->settings().axCustomColorModeEnabled()) {
+        AXCustomColorModeController::adjustTextPaintStyle(renderer, paintStyle,
+            lineStyle.visitedDependentTextFillColor(paintInfo.paintBehavior),
+            lineStyle.usedStrokeColor(),
+            lineStyle.visitedDependentTextEmphasisColor());
+    }
+#endif
 
     return paintStyle;
 }
