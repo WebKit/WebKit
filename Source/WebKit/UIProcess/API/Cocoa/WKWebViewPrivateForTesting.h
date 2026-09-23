@@ -199,6 +199,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_textFragmentRangesWithCompletionHandlerForTesting:(void(^)(NSArray<NSValue *> *fragmentRanges))completionHandler WK_API_AVAILABLE(macos(26.0), ios(26.0), visionos(26.0));
 
+@property (nonatomic, readonly) CGRect _textIndicatorBoundingRectForTesting;
+
 @property (nonatomic, readonly) _WKRectEdge _fixedContainerEdges;
 #if TARGET_OS_IPHONE
 @property (nonatomic, readonly) UIColor *_sampledLeftFixedPositionContentColor;

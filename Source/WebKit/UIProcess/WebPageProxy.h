@@ -1759,6 +1759,9 @@ public:
     void clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation);
     void teardownTextIndicatorLayer();
     void startTextIndicatorFadeOut();
+#if PLATFORM(COCOA)
+    WebCore::TextIndicator* textIndicator() const { return m_textIndicator.get(); }
+#endif
 
     void findTextRangesForStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(Vector<WebFoundTextRange>&&)>&&);
     void replaceFoundTextRangeWithString(const WebFoundTextRange&, const String&);

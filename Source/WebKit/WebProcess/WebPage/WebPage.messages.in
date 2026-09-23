@@ -42,9 +42,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 #if PLATFORM(COCOA)
     SetObscuredContentInsetsFenced(WebCore::FloatBoxExtent obscuredContentInsets, MachSendRight machSendRight)
 #endif
-#if !PLATFORM(COCOA)
     SetObscuredContentInsets(WebCore::FloatBoxExtent obscuredContentInsets)
-#endif
 
     [DeferSendingIfSuspended] SetShouldSuppressHDR(bool shouldSuppressHDR)
 

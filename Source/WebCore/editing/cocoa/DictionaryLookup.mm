@@ -445,7 +445,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
 
         FloatRect firstTextRectInViewCoordinates = textIndicator->textRectsInBoundingRectCoordinates()[0];
         FloatRect textBoundingRectInViewCoordinates = textIndicator->textBoundingRectInRootViewCoordinates();
-        FloatRect selectionBoundingRectInViewCoordinates = textIndicator->selectionRectInRootViewCoordinates();
+        FloatRect selectionBoundingRectInViewCoordinates = textIndicator->selectionRectInMainFrameViewCoordinates();
 
         if (rootViewToViewConversionCallback) {
             textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
@@ -457,7 +457,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
         pointerLocation = firstTextRectInViewCoordinates.location();
     } else {
         NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
-        highlightRect = textIndicator->selectionRectInRootViewCoordinates();
+        highlightRect = textIndicator->selectionRectInMainFrameViewCoordinates();
         pointerLocation = [view convertPoint:textBaselineOrigin toView:nil];
     }
 
@@ -487,7 +487,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     if (!textIndicator)
         return nil;
 
-    auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
+    RetainPtr webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInMainFrameViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
     auto attributedString = dictionaryPopupInfo.platformData.attributedString.nsAttributedString();
     auto item = adoptNS([PAL::allocRVItemInstance() initWithText:attributedString.get().string selectedRange:NSMakeRange(0, attributedString.get().string.length)]);

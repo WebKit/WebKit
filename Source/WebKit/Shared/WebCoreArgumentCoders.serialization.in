@@ -1723,7 +1723,7 @@ header: <WebCore/SharedMemory.h>
 
 header: <WebCore/TextIndicator.h>
 [CustomHeader] struct WebCore::TextIndicatorData {
-    WebCore::FloatRect selectionRectInRootViewCoordinates;
+    WebCore::FloatRect selectionRectInMainFrameViewCoordinates;
     WebCore::FloatRect textBoundingRectInRootViewCoordinates;
     WebCore::FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<WebCore::FloatRect> textRectsInBoundingRectCoordinates;

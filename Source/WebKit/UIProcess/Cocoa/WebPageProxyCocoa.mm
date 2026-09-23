@@ -1794,14 +1794,7 @@ void WebPageProxy::setTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<Web
     if (!textIndicator)
         return;
 
-    auto rect = textIndicator->textBoundingRectInRootViewCoordinates();
-    convertRectToMainFrameCoordinates(rect, frame->rootFrame()->frameID(), [weakThis = WeakPtr { *this }, textIndicator = WTF::move(textIndicator), lifetime] (std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-        textIndicator->setTextBoundingRectInRootViewCoordinates(*convertedRect);
-        protectedThis->setTextIndicator(WTF::move(textIndicator), lifetime);
-    });
+    setTextIndicator(WTF::move(textIndicator), lifetime);
 }
 
 void WebPageProxy::setTextIndicator(RefPtr<WebCore::TextIndicator>&& textIndicator, WebCore::TextIndicatorLifetime lifetime)
@@ -1839,14 +1832,7 @@ void WebPageProxy::updateTextIndicatorFromFrame(FrameIdentifier frameID, RefPtr<
     if (!textIndicator)
         return;
 
-    auto rect = textIndicator->textBoundingRectInRootViewCoordinates();
-    convertRectToMainFrameCoordinates(rect, frame->rootFrame()->frameID(), [weakThis = WeakPtr { *this }, textIndicator = WTF::move(textIndicator)] (std::optional<FloatRect> convertedRect) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !convertedRect)
-            return;
-        textIndicator->setTextBoundingRectInRootViewCoordinates(*convertedRect);
-        protectedThis->updateTextIndicator(WTF::move(textIndicator));
-    });
+    updateTextIndicator(WTF::move(textIndicator));
 }
 
 void WebPageProxy::updateTextIndicator(RefPtr<WebCore::TextIndicator>&& textIndicator)

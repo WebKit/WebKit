@@ -862,7 +862,7 @@ static bool isLockdownModeEnabled()
         return nil;
 
     _dataInteractionImage = [PAL::allocUIImageInstance() initWithCGImage:image scale:scale orientation:UIImageOrientationDownMirrored];
-    _selectionRectInRootViewCoordinates = indicator->selectionRectInRootViewCoordinates();
+    _selectionRectInRootViewCoordinates = indicator->selectionRectInMainFrameViewCoordinates();
     _textBoundingRectInRootViewCoordinates = indicator->textBoundingRectInRootViewCoordinates();
     _textRectsInBoundingRectCoordinates = createNSArray(indicator->textRectsInBoundingRectCoordinates()).leakRef();
     _contentImageScaleFactor = indicator->contentImageScaleFactor();

@@ -3809,7 +3809,7 @@ RefPtr<TextIndicator> UnifiedPDFPlugin::textIndicatorForPageRect(FloatRect pageR
     textIndicator->setContentImageScaleFactor(deviceScaleFactor);
     textIndicator->setContentImageWithoutSelection(protect(textIndicator->contentImage()).get());
     textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(rectInRootViewCoordinates);
-    textIndicator->setSelectionRectInRootViewCoordinates(rectInRootViewCoordinates);
+    textIndicator->setSelectionRectInMainFrameViewCoordinates(rectInRootViewCoordinates);
     textIndicator->setTextBoundingRectInRootViewCoordinates(rectInRootViewCoordinates);
     textIndicator->setTextRectsInBoundingRectCoordinates({ { { 0, 0, }, rectInRootViewCoordinates.size() } });
 

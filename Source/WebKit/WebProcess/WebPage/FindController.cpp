@@ -871,7 +871,7 @@ void FindController::drawRect(PageOverlay&, GraphicsContext& graphicsContext, co
         return;
 
     if (RefPtr selectedFrame = frameWithSelection(protect(protect(m_webPage)->corePage()))) {
-        auto findIndicatorRect = protect(selectedFrame->view())->contentsToRootView(enclosingIntRect(protect(selectedFrame->selection())->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
+        auto findIndicatorRect = protect(selectedFrame->view())->contentsToMainFrameView(enclosingIntRect(protect(selectedFrame->selection())->selectionBounds(FrameSelection::ClipToVisibleContent::No)));
 
         if (findIndicatorRect != m_findIndicator->rect()) {
             // We are underneath painting, so it's not safe to mutate the layer tree synchronously.

@@ -133,7 +133,7 @@ enum class TextIndicatorOption : uint16_t {
 };
 
 struct TextIndicatorData {
-    FloatRect selectionRectInRootViewCoordinates;
+    FloatRect selectionRectInMainFrameViewCoordinates;
     FloatRect textBoundingRectInRootViewCoordinates;
     FloatRect contentImageWithoutSelectionRectInRootViewCoordinates;
     Vector<FloatRect> textRectsInBoundingRectCoordinates;
@@ -162,8 +162,8 @@ public:
 
     WEBCORE_EXPORT ~TextIndicator();
 
-    FloatRect selectionRectInRootViewCoordinates() const { return m_data.selectionRectInRootViewCoordinates; }
-    void setSelectionRectInRootViewCoordinates(FloatRect selectionRectInRootViewCoordinates) { m_data.selectionRectInRootViewCoordinates = selectionRectInRootViewCoordinates; }
+    FloatRect selectionRectInMainFrameViewCoordinates() const { return m_data.selectionRectInMainFrameViewCoordinates; }
+    void setSelectionRectInMainFrameViewCoordinates(FloatRect selectionRectInMainFrameViewCoordinates) { m_data.selectionRectInMainFrameViewCoordinates = selectionRectInMainFrameViewCoordinates; }
 
     FloatRect textBoundingRectInRootViewCoordinates() const { return m_data.textBoundingRectInRootViewCoordinates; }
     void setTextRectsInBoundingRectCoordinates(Vector<FloatRect>&& textRectsInBoundingRectCoordinates) { m_data.textRectsInBoundingRectCoordinates = WTF::move(textRectsInBoundingRectCoordinates); }

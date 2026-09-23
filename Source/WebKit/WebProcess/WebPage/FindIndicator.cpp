@@ -72,7 +72,7 @@ bool FindIndicator::update(WebCore::LocalFrame* selectedFrame, bool isShowingOve
     if (!indicator)
         return false;
 
-    m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInRootViewCoordinates());
+    m_findIndicatorRect = enclosingIntRect(indicator->selectionRectInMainFrameViewCoordinates());
 #if PLATFORM(COCOA)
     m_webPage->send(Messages::WebPageProxy::SetTextIndicatorFromFrame(frame->frameID(), WTF::move(indicator), isShowingOverlay ? WebCore::TextIndicatorLifetime::Permanent : WebCore::TextIndicatorLifetime::Temporary));
 #endif

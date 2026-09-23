@@ -1285,7 +1285,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     rangeRect.origin.y -= rangeRect.size.height;
 
     TextIndicatorData dataForSelection;
-    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.selectionRectInMainFrameViewCoordinates = rangeRect;
     dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
     dataForSelection.contentImageScaleFactor = scaleFactor;
     dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
@@ -1412,7 +1412,7 @@ WebCore::DictionaryPopupInfo PDFPlugin::dictionaryPopupInfoForSelection(PDFSelec
     rangeRect.size.width = nsAttributedString.size.width * scaleFactor;
 
     TextIndicatorData dataForSelection;
-    dataForSelection.selectionRectInRootViewCoordinates = rangeRect;
+    dataForSelection.selectionRectInMainFrameViewCoordinates = rangeRect;
     dataForSelection.textBoundingRectInRootViewCoordinates = rangeRect;
     dataForSelection.contentImageScaleFactor = scaleFactor;
     dataForSelection.presentationTransition = presentationTransition;
