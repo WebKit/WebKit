@@ -145,6 +145,8 @@ public:
 
     virtual void setCopiesOnScroll() = 0;
 
+    // Called before the frame's subframes are detached, while the frame tree is still intact.
+    virtual void willDetachFromParent();
     virtual void detachedFromParent2() = 0;
     virtual void detachedFromParent3() = 0;
 

@@ -140,6 +140,7 @@ messages -> WebPageProxy {
     # Frame lifetime messages
     DidCreateSubframe(WebCore::FrameIdentifier parent, WebCore::FrameIdentifier newFrameID, String frameName, WebCore::SandboxFlags sandboxFlags, WebCore::ReferrerPolicy referrerPolicy, enum:uint8_t WebCore::ScrollbarMode scrollingMode) CanDispatchOutOfOrder
     DidDestroyFrame(WebCore::FrameIdentifier frameID)
+    FrameWillBeDetached(WebCore::FrameIdentifier frameID)
 
     # Frame load messages
     DidStartProvisionalLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, URL url, URL unreachableURL, WebKit::UserData userData, WallTime timestamp)

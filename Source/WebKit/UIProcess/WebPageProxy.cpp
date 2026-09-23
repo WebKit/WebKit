@@ -6404,6 +6404,12 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
     WEBPAGEPROXY_RELEASE_LOG(Loading, "commitProvisionalPage: newPID=%i", provisionalPage->process().processID());
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
+#if ENABLE(WEBDRIVER_BIDI)
+    if (mainFrameInPreviousProcess) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForChildFramesOfPreviousDocument(*mainFrameInPreviousProcess);
+    }
+#endif
     Ref preferences = m_preferences;
     std::optional<WebCore::FrameIdentifier> oldMainFrameID;
     if (mainFrameInPreviousProcess && preferences->siteIsolationEnabled()) {
@@ -8098,14 +8104,41 @@ void WebPageProxy::didCreateSubframe(FrameIdentifier parentID, FrameIdentifier n
     parent->didCreateSubframe(newFrameID, WTF::move(frameName), sandboxFlags, referrerPolicy, scrollingMode);
 }
 
+void WebPageProxy::frameWillBeDetached(IPC::Connection& connection, FrameIdentifier frameID)
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame || frame->page() != this)
+        return;
+
+    // Only the process hosting a frame detaches it locally.
+    if (&frame->process() != WebProcessProxy::fromConnection(connection).ptr())
+        return;
+
+    if (RefPtr automationSession = activeAutomationSession())
+        automationSession->contextDestroyedForFrame(*frame);
+#else
+    UNUSED_PARAM(connection);
+    UNUSED_PARAM(frameID);
+#endif
+}
+
 void WebPageProxy::didDestroyFrame(IPC::Connection& connection, FrameIdentifier frameID)
 {
 #if ENABLE(WEB_AUTHN)
     protect(protect(websiteDataStore())->authenticatorManager())->cancelRequest(webPageIDInMainFrameProcess(), frameID);
 #endif
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+#if ENABLE(WEBDRIVER_BIDI)
+    // A frame hosted in another process is removed without FrameWillBeDetached.
+    if (frame && frame->page() == this && !frame->isMainFrame() && frame->isConnected()) {
+        if (RefPtr automationSession = activeAutomationSession())
+            automationSession->contextDestroyedForFrame(*frame);
+    }
+#endif
     if (RefPtr automationSession = m_configuration->processPool().automationSession())
         automationSession->didDestroyFrame(frameID);
-    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+    if (frame)
         frame->disconnect();
 
     bool didRemove = m_framesWithSubresourceLoadingForPageLoadTiming.remove(frameID);
@@ -9109,8 +9142,11 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
 
     protectedPageLoadState->commitChanges();
 #if ENABLE(WEBDRIVER_BIDI)
-    if (RefPtr automationSession = activeAutomationSession())
+    if (RefPtr automationSession = activeAutomationSession()) {
+        if (frame->isMainFrame())
+            automationSession->updateChildFrameContextsForMainFrameCommit(*this, *frame, isBackForwardLoadType(frameLoadType));
         automationSession->navigationCommittedForFrame(*frame, navigationID);
+    }
 #endif
     if (m_loaderClient)
         m_loaderClient->didCommitLoadForFrame(*this, *frame, navigation, process->transformHandlesToObjects(protect(userData.object()).get()).get());

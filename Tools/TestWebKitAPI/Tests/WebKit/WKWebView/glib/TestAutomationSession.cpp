@@ -20,10 +20,16 @@
 #include "config.h"
 
 #include "TestMain.h"
+#include "WebKitTestServer.h"
 #include <gio/gio.h>
+#include <wtf/Function.h>
+#include <wtf/JSONValues.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/SocketConnection.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+
+static WebKitTestServer* kServer;
 
 class AutomationTest: public Test {
 public:
@@ -77,10 +83,97 @@ public:
         g_assert_cmpuint(connectionID, ==, m_connectionID);
         g_assert_cmpuint(targetID, ==, m_target.id);
         m_message = message;
+        m_messages.append(String::fromUTF8(message));
         g_main_loop_quit(m_mainLoop.get());
     }
 
-    void sendCommandToBackend(const String& command, const String& parameters = String())
+    // Runs the main loop until the condition holds, collecting every message received meanwhile in m_messages.
+    // Fails the test if that takes longer than the overall timeout.
+    void waitUntil(NOESCAPE const Function<bool()>& condition)
+    {
+        static constexpr gint64 timeoutInMicroseconds = 30 * G_USEC_PER_SEC;
+        gint64 deadline = g_get_monotonic_time() + timeoutInMicroseconds;
+        // Wake the loop up regularly: not everything the conditions observe arrives as a message.
+        auto tickID = g_timeout_add(20, [](gpointer userData) -> gboolean {
+            g_main_loop_quit(static_cast<GMainLoop*>(userData));
+            return G_SOURCE_CONTINUE;
+        }, m_mainLoop.get());
+        while (!condition()) {
+            g_assert_cmpint(g_get_monotonic_time(), <, deadline);
+            g_main_loop_run(m_mainLoop.get());
+        }
+        g_source_remove(tickID);
+    }
+
+    bool hasResponse(long commandID) const
+    {
+        for (auto& message : m_messages) {
+            auto value = JSON::Value::parseJSON(message);
+            auto object = value ? value->asObject() : nullptr;
+            if (object && object->getInteger("id"_s) == commandID)
+                return true;
+        }
+        return false;
+    }
+
+    void runAndWaitUntilLoadFinished(WebKitWebView* webView, NOESCAPE const Function<void()>& operation)
+    {
+        m_loadFinished = false;
+        auto signalID = g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView*, WebKitLoadEvent loadEvent, AutomationTest* test) {
+            if (loadEvent != WEBKIT_LOAD_FINISHED)
+                return;
+            test->m_loadFinished = true;
+            g_main_loop_quit(test->m_mainLoop.get());
+        }), this);
+        operation();
+        while (!m_loadFinished)
+            g_main_loop_run(m_mainLoop.get());
+        g_signal_handler_disconnect(webView, signalID);
+    }
+
+    void loadHTMLAndWaitUntilFinished(WebKitWebView* webView, const char* html)
+    {
+        runAndWaitUntilLoadFinished(webView, [&] {
+            webkit_web_view_load_html(webView, html, nullptr);
+        });
+    }
+
+    void loadURIAndWaitUntilFinished(WebKitWebView* webView, const char* uri)
+    {
+        runAndWaitUntilLoadFinished(webView, [&] {
+            webkit_web_view_load_uri(webView, uri);
+        });
+    }
+
+    void goBackAndWaitUntilFinished(WebKitWebView* webView)
+    {
+        runAndWaitUntilLoadFinished(webView, [&] {
+            webkit_web_view_go_back(webView);
+        });
+    }
+
+#if ENABLE(WEBDRIVER_BIDI)
+    Vector<Ref<JSON::Object>> bidiEvents(ASCIILiteral method) const
+    {
+        Vector<Ref<JSON::Object>> events;
+        for (auto& message : m_messages) {
+            auto value = JSON::Value::parseJSON(message);
+            auto object = value ? value->asObject() : nullptr;
+            if (!object || object->getString("method"_s) != "Automation.bidiMessageSent"_s)
+                continue;
+            auto params = object->getObject("params"_s);
+            auto bidiValue = params ? JSON::Value::parseJSON(params->getString("message"_s)) : nullptr;
+            auto bidiObject = bidiValue ? bidiValue->asObject() : nullptr;
+            if (!bidiObject || bidiObject->getString("method"_s) != method)
+                continue;
+            if (auto bidiParams = bidiObject->getObject("params"_s))
+                events.append(bidiParams.releaseNonNull());
+        }
+        return events;
+    }
+#endif
+
+    long sendCommandToBackend(const String& command, const String& parameters = String())
     {
         static long sequenceID = 0;
         StringBuilder messageBuilder;
@@ -89,6 +182,7 @@ public:
             messageBuilder.append(",\"params\":"_s, parameters);
         messageBuilder.append('}');
         m_connection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, messageBuilder.toString().utf8().legacyCStringPointer()));
+        return sequenceID;
     }
 
     static WebKitWebView* createWebViewCallback(WebKitAutomationSession* session, AutomationTest* test)
@@ -248,7 +342,9 @@ public:
     bool m_createWebViewWasCalled { false };
     bool m_createWebViewInWindowWasCalled { false };
     bool m_createWebViewInTabWasCalled { false };
+    bool m_loadFinished { false };
     CString m_message;
+    Vector<String> m_messages;
 };
 
 const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
@@ -293,6 +389,10 @@ const SocketConnection::MessageHandlers AutomationTest::s_messageHandlers = {
         }}
     }
 };
+
+#if ENABLE(WEBDRIVER_BIDI)
+static void checkBidiContextDestroyedReportsSubtree(AutomationTest*, GRefPtr<WebKitWebView>&&, const String& pageHandle);
+#endif
 
 static void testAutomationSessionRequestSession(AutomationTest* test, gconstpointer)
 {
@@ -348,6 +448,14 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
+#if ENABLE(WEBDRIVER_BIDI)
+    auto createResponse = JSON::Value::parseJSON(String::fromUTF8(test->m_message.data()));
+    g_assert_nonnull(createResponse.get());
+    auto createResult = createResponse->asObject()->getObject("result"_s);
+    g_assert_nonnull(createResult.get());
+    String pageHandle = createResult->getString("handle"_s);
+    g_assert_false(pageHandle.isEmpty());
+#endif
 
     auto newWebViewInWindow = test->createWebView(
         "is-controlled-by-automation", TRUE,
@@ -371,8 +479,173 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(newWebViewInTab.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_TAB);
     g_assert_true(test->createNewTab(newWebViewInTab.get()));
 
+#if ENABLE(WEBDRIVER_BIDI)
+    checkBidiContextDestroyedReportsSubtree(test, WTF::move(webView), pageHandle);
+#endif
+
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), FALSE);
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+static size_t childCount(JSON::Object& navigableInfo)
+{
+    auto children = navigableInfo.getArray("children"_s);
+    g_assert_nonnull(children.get());
+    return children->length();
+}
+
+struct CreatedFrames {
+    String outer;
+    String inner;
+};
+
+static std::optional<CreatedFrames> findCreatedNestedFramesByParentage(AutomationTest* test, const String& pageHandle)
+{
+    auto events = test->bidiEvents("browsingContext.contextCreated"_s);
+    CreatedFrames frames;
+    for (auto& event : events) {
+        if (event->getString("parent"_s) == pageHandle)
+            frames.outer = event->getString("context"_s);
+    }
+    if (frames.outer.isEmpty())
+        return std::nullopt;
+    for (auto& event : events) {
+        if (event->getString("parent"_s) == frames.outer)
+            frames.inner = event->getString("context"_s);
+    }
+    if (frames.inner.isEmpty())
+        return std::nullopt;
+    return frames;
+}
+
+static const char* nestedFramesHTML = "<iframe id='outer' srcdoc=\"<iframe srcdoc='<p>inner</p>'></iframe>\"></iframe>";
+
+static CreatedFrames loadNestedFrames(AutomationTest* test, WebKitWebView* webView, const String& pageHandle, const char* uri = nullptr)
+{
+    test->m_messages.clear();
+    if (uri)
+        test->loadURIAndWaitUntilFinished(webView, uri);
+    else
+        test->loadHTMLAndWaitUntilFinished(webView, nestedFramesHTML);
+    std::optional<CreatedFrames> frames;
+    test->waitUntil([&] {
+        frames = findCreatedNestedFramesByParentage(test, pageHandle);
+        return !!frames;
+    });
+    return *frames;
+}
+
+// Only one automation session can be established per test process, so this runs inside the session of
+// testAutomationSessionRequestSession() instead of being a test of its own.
+static void checkBidiContextDestroyedReportsSubtree(AutomationTest* test, GRefPtr<WebKitWebView>&& webView, const String& pageHandle)
+{
+    // Subscribing is only needed where the browser gates events itself; elsewhere the command is rejected and ignored.
+    auto subscribeID = test->sendCommandToBackend("processBidiMessage"_s, "{\"message\":\"{\\\"id\\\":1,\\\"method\\\":\\\"session.subscribe\\\",\\\"params\\\":{\\\"events\\\":[\\\"browsingContext.contextCreated\\\",\\\"browsingContext.contextDestroyed\\\"]}}\"}"_s);
+    test->waitUntil([&] {
+        return test->hasResponse(subscribeID);
+    });
+
+    // The frames are announced while the page loads; they must be destroyed under the same identifiers.
+    auto frames = loadNestedFrames(test, webView.get(), pageHandle);
+    test->m_messages.clear();
+
+    // Removing the outer frame destroys the inner one first inside WebCore. Every notification this causes is
+    // sent before the command's response, which therefore bounds the wait.
+    auto removeID = test->sendCommandToBackend("evaluateJavaScriptFunction"_s, makeString("{\"browsingContextHandle\":\""_s, pageHandle, "\",\"frameHandle\":\"\",\"function\":\"function() { document.getElementById('outer').remove(); }\",\"arguments\":[]}"_s));
+    test->waitUntil([&] {
+        return test->hasResponse(removeID) && !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+
+    auto events = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_true(events[0]->getString("context"_s) == frames.outer);
+    g_assert_true(events[0]->getString("parent"_s) == pageHandle);
+    auto originalOpener = events[0]->getValue("originalOpener"_s);
+    g_assert_nonnull(originalOpener.get());
+    g_assert_true(originalOpener->isNull());
+    g_assert_cmpuint(childCount(events[0].get()), ==, 1);
+    auto innerFrame = events[0]->getArray("children"_s)->get(0)->asObject();
+    g_assert_nonnull(innerFrame.get());
+    g_assert_true(innerFrame->getString("context"_s) == frames.inner);
+    g_assert_cmpuint(childCount(*innerFrame), ==, 0);
+
+    // The frames of a document that enters the back/forward cache are not detached, so they are reported when
+    // the document replacing it commits.
+    auto replacedFrames = loadNestedFrames(test, webView.get(), pageHandle, kServer->getURIForPath("/replaced").data());
+    frames = loadNestedFrames(test, webView.get(), pageHandle, kServer->getURIForPath("/current").data());
+    events = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_true(events[0]->getString("context"_s) == replacedFrames.outer);
+    g_assert_cmpuint(childCount(events[0].get()), ==, 1);
+    auto replacedInnerFrame = events[0]->getArray("children"_s)->get(0)->asObject();
+    g_assert_nonnull(replacedInnerFrame.get());
+    g_assert_true(replacedInnerFrame->getString("context"_s) == replacedFrames.inner);
+    g_assert_false(frames.outer == replacedFrames.outer);
+
+    // Going back restores the cached document. Its frames were reported as destroyed, so they are new contexts.
+    auto framesLeftByGoingBack = frames;
+    test->m_messages.clear();
+    test->goBackAndWaitUntilFinished(webView.get());
+    std::optional<CreatedFrames> restoredFrames;
+    test->waitUntil([&] {
+        restoredFrames = findCreatedNestedFramesByParentage(test, pageHandle);
+        return !!restoredFrames;
+    });
+    frames = *restoredFrames;
+    events = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_true(events[0]->getString("context"_s) == framesLeftByGoingBack.outer);
+    g_assert_false(frames.outer == replacedFrames.outer);
+    g_assert_false(frames.inner == replacedFrames.inner);
+    auto createdEvents = test->bidiEvents("browsingContext.contextCreated"_s);
+    g_assert_cmpuint(createdEvents.size(), ==, 2);
+    g_assert_true(createdEvents[0]->getString("context"_s) == frames.outer);
+    g_assert_true(createdEvents[0]->getString("parent"_s) == pageHandle);
+    g_assert_true(createdEvents[1]->getString("context"_s) == frames.inner);
+    g_assert_true(createdEvents[1]->getString("parent"_s) == frames.outer);
+
+    // A page in the same context that automation does not control is not reported.
+    auto otherWebView = test->createWebView();
+    test->loadHTMLAndWaitUntilFinished(otherWebView.get(), "<iframe id='outer' srcdoc='<p>frame</p>'></iframe>");
+    test->m_messages.clear();
+    bool didRemoveFrame = false;
+    webkit_web_view_evaluate_javascript(otherWebView.get(), "document.getElementById('outer').remove()", -1, nullptr, nullptr, nullptr, [](GObject*, GAsyncResult*, gpointer userData) {
+        *static_cast<bool*>(userData) = true;
+    }, &didRemoveFrame);
+    test->waitUntil([&] {
+        return didRemoveFrame;
+    });
+    g_assert_true(test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty());
+
+    // Closing a page reports the page once, with the frames of its current document inside that single event,
+    // under the identifiers they were announced with.
+    test->m_messages.clear();
+    webView = nullptr;
+    test->waitUntil([&] {
+        return !test->bidiEvents("browsingContext.contextDestroyed"_s).isEmpty();
+    });
+    // Anything else the close produced precedes the response to a command sent after it.
+    auto barrierID = test->sendCommandToBackend("getBrowsingContexts"_s);
+    test->waitUntil([&] {
+        return test->hasResponse(barrierID);
+    });
+
+    events = test->bidiEvents("browsingContext.contextDestroyed"_s);
+    g_assert_cmpuint(events.size(), ==, 1);
+    g_assert_true(events[0]->getString("context"_s) == pageHandle);
+    auto parent = events[0]->getValue("parent"_s);
+    g_assert_nonnull(parent.get());
+    g_assert_true(parent->isNull());
+    g_assert_cmpuint(childCount(events[0].get()), ==, 1);
+    auto outerFrame = events[0]->getArray("children"_s)->get(0)->asObject();
+    g_assert_nonnull(outerFrame.get());
+    g_assert_true(outerFrame->getString("context"_s) == frames.outer);
+    g_assert_cmpuint(childCount(*outerFrame), ==, 1);
+    auto closedInnerFrame = outerFrame->getArray("children"_s)->get(0)->asObject();
+    g_assert_nonnull(closedInnerFrame.get());
+    g_assert_true(closedInnerFrame->getString("context"_s) == frames.inner);
+}
+#endif // ENABLE(WEBDRIVER_BIDI)
 
 static void testAutomationSessionApplicationInfo(Test* test, gconstpointer)
 {
@@ -396,9 +669,31 @@ static void testAutomationSessionApplicationInfo(Test* test, gconstpointer)
 }
 
 
+static void serverCallback(SoupServer*, SoupServerMessage* message, const char* path, GHashTable*, gpointer)
+{
+    if (soup_server_message_get_method(message) != SOUP_METHOD_GET) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED, nullptr);
+        return;
+    }
+
+    if (g_str_has_suffix(path, "favicon.ico")) {
+        soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
+        return;
+    }
+
+    soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+    soup_message_headers_set_content_type(soup_server_message_get_response_headers(message), "text/html", nullptr);
+    auto* responseBody = soup_server_message_get_response_body(message);
+    soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, nestedFramesHTML, strlen(nestedFramesHTML));
+    soup_message_body_complete(responseBody);
+}
+
 void beforeAll()
 {
     g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2229", TRUE);
+
+    kServer = new WebKitTestServer();
+    kServer->run(serverCallback);
 
     AutomationTest::add("WebKitAutomationSession", "request-session", testAutomationSessionRequestSession);
     Test::add("WebKitAutomationSession", "application-info", testAutomationSessionApplicationInfo);
@@ -406,5 +701,6 @@ void beforeAll()
 
 void afterAll()
 {
+    delete kServer;
     g_unsetenv("WEBKIT_INSPECTOR_SERVER");
 }
