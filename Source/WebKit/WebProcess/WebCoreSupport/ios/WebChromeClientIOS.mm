@@ -39,9 +39,11 @@
 #import "WebPageProxyMessages.h"
 #import <WebCore/AudioSession.h>
 #import <WebCore/ContentChangeObserver.h>
+#import <WebCore/FrameDestructionObserverInlines.h>
 #import <WebCore/Icon.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/NodeDocument.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <wtf/RefPtr.h>
@@ -181,11 +183,17 @@ bool WebChromeClient::showDataDetectorsUIForElement(const Element& element, cons
     if (!page)
         return false;
 
+    RefPtr frame = element.document().frame();
+    if (!frame)
+        return false;
+
     // FIXME: Ideally, we would be able to generate InteractionInformationAtPosition without re-hit-testing the element.
     auto request = InteractionInformationRequest { roundedIntPoint(mouseEvent->locationInRootViewCoordinates()) };
     request.includeLinkIndicator = true;
-    auto positionInformation = page->positionInformation(request);
-    page->send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(positionInformation));
+    auto positionInformation = page->positionInformation(protect(frame->rootFrame()), request);
+    if (!positionInformation)
+        return false;
+    page->send(Messages::WebPageProxy::ShowDataDetectorsUIForPositionInformation(*positionInformation));
     return true;
 }
 

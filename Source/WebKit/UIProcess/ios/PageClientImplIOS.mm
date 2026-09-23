@@ -476,9 +476,9 @@ bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, KeyE
     return [contentView() _interpretKeyEvent:protect(event.nativeEvent()).get() withContext:WTF::move(context)];
 }
 
-void PageClientImpl::positionInformationDidChange(const InteractionInformationAtPosition& info)
+void PageClientImpl::positionInformationDidChange(const InteractionInformationAtPosition& info, std::optional<WebCore::FrameIdentifier> frameID)
 {
-    [contentView() _positionInformationDidChange:info];
+    [contentView() _positionInformationDidChange:info fromFrame:frameID];
 }
 
 void PageClientImpl::saveImageToLibrary(const Ref<SharedBuffer>& imageBuffer)

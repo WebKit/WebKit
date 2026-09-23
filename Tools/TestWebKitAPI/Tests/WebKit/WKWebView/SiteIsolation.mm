@@ -82,6 +82,11 @@
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/FrameIdentifier.h>
 #import <WebCore/IntRect.h>
+#import <WebKit/_WKActivatedElementInfo.h>
+
+@interface WKContentView ()
+- (BOOL)hasSelectablePositionAtPoint:(CGPoint)point;
+@end
 #endif
 
 #if PLATFORM(MAC)
@@ -12187,6 +12192,52 @@ TEST(SiteIsolation, FileUploadPanelAnchorRectForHiddenInputInCrossOriginIframe)
 }
 
 #endif // HAVE(UICONTEXTMENU_LOCATION)
+
+TEST(SiteIsolation, PositionInformationForImageInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 300px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0'><img style='display: block; margin: 50px; width: 100px; height: 100px;' src='https://webkit.org/image.png'></body>"_s } },
+        { "/image.png"_s, { [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"large-red-square" withExtension:@"png"]] } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    __block RetainPtr<_WKActivatedElementInfo> elementInfo;
+    __block bool done = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(200, 200) completionBlock:^(_WKActivatedElementInfo *info) {
+        elementInfo = info;
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_EQ(_WKActivatedElementTypeImage, [elementInfo type]);
+    EXPECT_WK_STREQ(@"https://webkit.org/image.png", [elementInfo imageURL].absoluteString);
+
+    CGRect bounds = [elementInfo boundingRect];
+    EXPECT_NEAR(150, bounds.origin.x, 1);
+    EXPECT_NEAR(150, bounds.origin.y, 1);
+    EXPECT_NEAR(100, bounds.size.width, 1);
+    EXPECT_NEAR(100, bounds.size.height, 1);
+}
+
+TEST(SiteIsolation, SynchronousPositionInformationForTextInCrossOriginIframe)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe style='display: block; margin: 100px; width: 400px; height: 200px; border: none;' src='https://webkit.org/iframe'></iframe></body>"_s } },
+        { "/iframe"_s, { "<!DOCTYPE html><body style='margin: 0; font: 50px/60px monospace'>Hello world</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE([[webView wkContentView] hasSelectablePositionAtPoint:CGPointMake(140, 130)]);
+}
 
 #endif // PLATFORM(IOS_FAMILY)
 

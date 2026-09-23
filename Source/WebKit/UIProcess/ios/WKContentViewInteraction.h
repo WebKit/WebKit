@@ -96,12 +96,6 @@ namespace WTF {
 class TextStream;
 }
 
-namespace IPC {
-class Connection;
-struct AsyncReplyIDType;
-using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
-}
-
 namespace WebCore {
 class Color;
 class FloatQuad;
@@ -540,6 +534,7 @@ struct ImageAnalysisContextMenuActionData {
     WebKit::WebAutocorrectionContext _lastAutocorrectionContext;
     WebKit::WKAutoCorrectionData _autocorrectionData;
     WebKit::InteractionInformationAtPosition _positionInformation;
+    std::optional<WebCore::FrameIdentifier> _positionInformationFrameID;
     RefPtr<WebCore::TextIndicator> _positionInformationLinkIndicator;
     WebKit::FocusedElementInformation _focusedElementInformation;
     std::optional<WebKit::FocusedElementInformationIdentifier> _pendingFocusedElementIdentifier;
@@ -554,13 +549,6 @@ struct ImageAnalysisContextMenuActionData {
     __weak UIView *_lastSiblingBeforeSelectionHighlight;
     WebKit::WKSelectionDrawingInfo _lastSelectionDrawingInfo;
     RetainPtr<WKTextRange> _cachedSelectedTextRange;
-
-    struct OutstandingInteractionInformationRequest {
-        WebKit::InteractionInformationRequest request;
-        IPC::AsyncReplyID replyID;
-        Ref<IPC::Connection> connection;
-    };
-    std::optional<OutstandingInteractionInformationRequest> _lastOutstandingPositionInformationRequest;
 
     uint64_t _positionInformationCallbackDepth;
     Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
@@ -858,7 +846,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_selectionChanged;
 - (void)_updateChangedSelection;
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event withContext:(WebKit::KeyEventInterpretationContext&&)context;
-- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info;
+- (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info fromFrame:(std::optional<WebCore::FrameIdentifier>)frameID;
 - (BOOL)_currentPositionInformationIsValidForRequest:(const WebKit::InteractionInformationRequest&)request;
 - (void)_attemptSyntheticClickAtLocation:(CGPoint)location modifierFlags:(UIKeyModifierFlags)modifierFlags;
 - (void)_willStartScrollingOrZooming;

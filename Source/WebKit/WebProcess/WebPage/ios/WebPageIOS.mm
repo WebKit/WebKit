@@ -2509,7 +2509,7 @@ static inline bool isObscuredElement(Element& element)
     return true;
 }
 
-void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext>&& elementContext, WebCore::IntPoint&& point)
+void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::ElementContext>&& elementContext, WebCore::IntPoint&& point)
 {
     if (elementContext) {
         m_interactionNode = elementForContext(*elementContext);
@@ -2517,9 +2517,15 @@ void WebPage::startInteractionWithElementContextOrPosition(std::optional<WebCore
             return;
     }
 
+    m_interactionNode = nullptr;
+
+    RefPtr localRoot = localRootFrame(frameID);
+    RefPtr localRootView = localRoot ? localRoot->view() : nullptr;
+    if (!localRootView)
+        return;
+
     FloatPoint adjustedPoint;
-    if (RefPtr localMainFrame = protect(m_page)->localMainFrame())
-        m_interactionNode = localMainFrame->nodeRespondingToInteraction(point, adjustedPoint);
+    m_interactionNode = localRoot->nodeRespondingToInteraction(localRootView->convertFromRootViewAcrossIsolatedFrames(FloatPoint { point }), adjustedPoint);
 }
 
 void WebPage::stopInteraction()
