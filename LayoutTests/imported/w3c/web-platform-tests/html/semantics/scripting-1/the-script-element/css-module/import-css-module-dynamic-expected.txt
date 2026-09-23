@@ -1,4 +1,4 @@
 
-FAIL Load a CSS module with dynamic import() promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+PASS Load a CSS module with dynamic import()
 PASS Ensure that loading a CSS module with dymnamic import() fails without a type attribute
 
