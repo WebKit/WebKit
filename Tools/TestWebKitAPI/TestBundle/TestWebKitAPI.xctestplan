@@ -9,12 +9,14 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
+      "parallelizable" : false,
       "target" : {
-        "containerPath" : "container:TestWebKitAPI.xcodeproj",
+        "containerPath" : "container:Tools\/TestWebKitAPI\/TestWebKitAPI.xcodeproj",
         "identifier" : "A17C582D2C9B3EAD009DD0B5",
         "name" : "TestWebKitAPIBundle"
       }

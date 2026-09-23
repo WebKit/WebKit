@@ -339,6 +339,7 @@
 		5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */; };
 		5CABDBC12735C9BD00B88BCB /* UnifiedSource49-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */; };
 		5CABDBC22735C9BD00B88BCB /* UnifiedSource40-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */; };
+		5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */; };
 		5CABDBC32735C9BD00B88BCB /* UnifiedSource7-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */; };
 		5CABDBC42735C9BD00B88BCB /* UnifiedSource12-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB972735C9BA00B88BCB /* UnifiedSource12-nonARC.mm */; };
 		5CABDBC52735C9BD00B88BCB /* UnifiedSource28-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CABDB982735C9BA00B88BCB /* UnifiedSource28-nonARC.mm */; };
@@ -1295,7 +1296,6 @@
 		A17C57EF2C9A53B7009DD0B5 /* WKWebViewSpatialTrackingLabels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD780E752BBE176D002A3DEC /* WKWebViewSpatialTrackingLabels.mm */; };
 		A17C58172C9AA132009DD0B5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C58162C9AA132009DD0B5 /* main.mm */; };
 		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
-		A17C58472C9BF524009DD0B5 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C583E2C9B3EFE009DD0B5 /* GoogleTests.mm */; };
 		A17C58482C9C0387009DD0B5 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF3A83528930475005920CF /* gtest.framework */; };
 		A18898FB2CA9F1ED00FEB09A /* AppCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18898FA2CA9F1ED00FEB09A /* AppCommon.mm */; };
 		A18898FF2CA9F88600FEB09A /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A121EEA72CA733F400DB8BB8 /* main.mm */; };
@@ -3298,6 +3298,7 @@
 		5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource50-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB942735C9BA00B88BCB /* UnifiedSource49-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource49-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB952735C9BA00B88BCB /* UnifiedSource40-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource40-nonARC.mm"; sourceTree = "<group>"; };
+		5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource51-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB962735C9BA00B88BCB /* UnifiedSource7-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource7-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB972735C9BA00B88BCB /* UnifiedSource12-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource12-nonARC.mm"; sourceTree = "<group>"; };
 		5CABDB982735C9BA00B88BCB /* UnifiedSource28-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource28-nonARC.mm"; sourceTree = "<group>"; };
@@ -3854,7 +3855,6 @@
 		A17C58232C9AA491009DD0B5 /* TestWebKitAPI.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPI.xcconfig; sourceTree = "<group>"; };
 		A17C58242C9AAA25009DD0B5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A17C582E2C9B3EAD009DD0B5 /* TestWebKitAPIBundle.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestWebKitAPIBundle.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A17C583E2C9B3EFE009DD0B5 /* GoogleTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GoogleTests.mm; sourceTree = "<group>"; };
 		A17C58412C9B46F4009DD0B5 /* TestWebKitAPIBundle.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestWebKitAPIBundle.xcconfig; sourceTree = "<group>"; };
 		A17C58432C9BE200009DD0B5 /* TestBundleLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestBundleLoader.h; sourceTree = "<group>"; };
 		A17C58452C9BF45A009DD0B5 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/MacOSX.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -6257,7 +6257,6 @@
 		A17C582F2C9B3EAE009DD0B5 /* TestBundle */ = {
 			isa = PBXGroup;
 			children = (
-				A17C583E2C9B3EFE009DD0B5 /* GoogleTests.mm */,
 				A1C1F5E72C9C96C00042E924 /* TestWebKitAPI.xctestplan */,
 			);
 			path = TestBundle;
@@ -8453,7 +8452,6 @@
 			files = (
 				074E87E52CF920A20059E469 /* Bundle+Extras.swift in Sources */,
 				078B044A2CF139BF00B453A6 /* Foundation+Extras.swift in Sources */,
-				A17C58472C9BF524009DD0B5 /* GoogleTests.mm in Sources */,
 				DD5698002DC1320500050321 /* rdar150228472.swift in Sources */,
 				07DC68862EA33D6A00976E84 /* SwiftCxxInteropTestbed.cpp in Sources */,
 				07DC68852EA33D5D00976E84 /* SwiftCxxInteropTests.swift in Sources */,
