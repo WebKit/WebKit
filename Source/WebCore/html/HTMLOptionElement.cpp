@@ -322,7 +322,7 @@ bool HTMLOptionElement::accessKeyAction(bool)
         return false;
 
     if (select->usesBaseAppearancePicker())
-        select->pickOption(*this);
+        select->pickOrToggleOption(*this);
     else
         select->accessKeySetSelectedIndex(index());
     return true;
@@ -373,7 +373,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
 
         int keyCode = keyboardEvent->keyCode();
         if (keyCode == '\r' || keyCode == ' ') {
-            select->pickOption(*this);
+            select->pickOrToggleOption(*this);
             keyboardEvent->setDefaultHandled();
             return;
         }
@@ -388,7 +388,7 @@ void HTMLOptionElement::defaultEventHandler(Event& event)
     }
 
     if (RefPtr mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && event.type() == eventNames.mousedownEvent && mouseEvent->button() == MouseButton::Left) {
-        select->pickOption(*this);
+        select->pickOrToggleOption(*this);
         event.setDefaultHandled();
         return;
     }

@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select id="dropdown" multiple size="1">
+    <option id="one">one</option>
+    <option id="two">two</option>
+</select>
+<select id="listbox" multiple size="4"><option>one</option><option>two</option></select>
+<script>
+description("Tests that a select with multiple and a preferred size of 1 opens a base appearance picker whose options toggle, and that a list box has no picker.");
+
+jsTestIsAsync = true;
+
+function selectedOptions()
+{
+    return [...dropdown.selectedOptions].map(option => option.id).join(",");
+}
+
+(async () => {
+    shouldBeFalse("dropdown.matches(':open')");
+    await UIHelper.activateElement(dropdown);
+    await UIHelper.animationFrame();
+    shouldBeTrue("dropdown.matches(':open')");
+    // Opening a base appearance picker focuses one of the options.
+    shouldBeEqualToString("document.activeElement.tagName", "OPTION");
+
+    await UIHelper.activateElement(one);
+    await UIHelper.animationFrame();
+    shouldBeEqualToString("selectedOptions()", "one");
+    // Unlike a single-select picker, this one stays open so more than one option can be chosen.
+    shouldBeTrue("dropdown.matches(':open')");
+
+    await UIHelper.activateElement(two);
+    await UIHelper.animationFrame();
+    shouldBeEqualToString("selectedOptions()", "one,two");
+
+    // Choosing an option that is already selected deselects it.
+    await UIHelper.activateElement(one);
+    await UIHelper.animationFrame();
+    shouldBeEqualToString("selectedOptions()", "two");
+
+    await UIHelper.activateElement(listbox);
+    await UIHelper.animationFrame();
+    shouldBeFalse("listbox.matches(':open')");
+
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT void setSelectedIndex(int);
 
     WEBCORE_EXPORT void optionSelectedByUser(int index, bool dispatchChangeEvent, bool allowMultipleSelection = false);
-    void pickOption(HTMLOptionElement&);
+    void pickOrToggleOption(HTMLOptionElement&);
 
     String validationMessage() const final;
     bool valueMissing() const final;

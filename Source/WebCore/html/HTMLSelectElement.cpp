@@ -286,15 +286,20 @@ void HTMLSelectElement::optionSelectedByUser(int optionIndex, bool fireOnChangeN
 }
 
 // https://html.spec.whatwg.org/multipage/form-elements.html#concept-select-pick
-void HTMLSelectElement::pickOption(HTMLOptionElement& option)
+void HTMLSelectElement::pickOrToggleOption(HTMLOptionElement& option)
 {
-    if (m_multiple || isDisabledFormControl())
+    ASSERT(!m_multiple || document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled());
+
+    if (isDisabledFormControl())
         return;
 
     option.setDirty(true);
 
-    optionSelectedByUser(option.index(), true);
-    hidePickerPopoverElement();
+    // Toggling rather than picking is not yet in the specification.
+    optionSelectedByUser(option.index(), true, m_multiple);
+
+    if (!m_multiple)
+        hidePickerPopoverElement();
 }
 
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
@@ -384,7 +389,10 @@ bool HTMLSelectElement::supportsPickerPseudoElement() const
 
 bool HTMLSelectElement::usesBaseAppearancePicker() const
 {
-    if (m_multiple || m_size > 1)
+    if (preferredSize() != 1)
+        return false;
+
+    if (m_multiple && !document().settings().htmlEnhancedSelectMultipleAndListBoxEnabled())
         return false;
 
     RefPtr popover = m_popover;
