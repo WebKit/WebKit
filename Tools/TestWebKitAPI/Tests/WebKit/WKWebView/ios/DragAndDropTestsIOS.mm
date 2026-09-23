@@ -2504,6 +2504,69 @@ TEST(DragAndDropTests, DragLinkInCrossOriginIframeInsideOffsetSameSiteSubframe)
     EXPECT_WK_STREQ("https://first.example/", [result.draggedURL UTF8String] ?: "");
 }
 
+// Drags out of an iframe offset by (100, 150) and reports the dragstart event's
+// "screenX,screenY screenX-clientX,screenY-clientY". On iOS screenX/screenY are a point in the
+// top-level page's root view, so the difference against clientX/clientY must be the iframe's offset
+// no matter which process the frame runs in. Comparing two values from the same event keeps this
+// independent of the position adjustment nodeRespondingToClickEvents() applies.
+static RetainPtr<NSString> dragStartScreenCoordinatesInOffsetIframe(ASCIILiteral innerFrameSource)
+{
+    HTTPServer server({
+        { "/main"_s, { makeString("<meta name='viewport' content='width=device-width, initial-scale=1'><body style='margin: 0'><iframe style='position: absolute; left: 100px; top: 150px; width: 400px; height: 400px; border: none;' src='"_s, innerFrameSource, "'></iframe></body>"_s) } },
+        { "/inner"_s, { "<body style='margin: 0'>"
+            "<a href='https://first.example/' style='display: block; position: absolute; left: 0; top: 0; width: 300px; height: 200px; background: silver;'>First</a>"
+            "<script>"
+            "addEventListener('dragstart', (event) => {"
+            "    window.webkit.messageHandlers.testHandler.postMessage("
+            "        `${event.screenX},${event.screenY} ${event.screenX - event.clientX},${event.screenY - event.clientY}`);"
+            "});"
+            "window.webkit.messageHandlers.testHandler.postMessage('inner frame loaded');"
+            "</script>"
+            "</body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration.get());
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    __block bool innerFrameLoaded = false;
+    [webView performAfterReceivingMessage:@"inner frame loaded" action:^{
+        innerFrameLoaded = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    TestWebKitAPI::Util::run(&innerFrameLoaded);
+
+    // Registered only now so that it cannot catch the load notification above.
+    __block bool receivedCoordinates = false;
+    __block RetainPtr<NSString> coordinates;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        coordinates = message;
+        receivedCoordinates = true;
+    }];
+
+    RetainPtr simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    // (150, 200) in the window is (50, 50) in the iframe, inside the link.
+    [simulator runFrom:CGPointMake(150, 200) to:CGPointMake(150, 500)];
+    TestWebKitAPI::Util::run(&receivedCoordinates);
+    return coordinates;
+}
+
+TEST(DragAndDropTests, DragStartScreenCoordinatesInSameSiteOffsetIframe)
+{
+    // Same geometry without a remote frame: screenX/screenY were this frame's contents coordinates
+    // here too, so the difference collapsed to 0,0 rather than the iframe's offset.
+    EXPECT_WK_STREQ("150,200 100,150", [dragStartScreenCoordinatesInOffsetIframe("https://example.com/inner"_s) UTF8String] ?: "");
+}
+
+TEST(DragAndDropTests, DragStartScreenCoordinatesInCrossOriginOffsetIframe)
+{
+    EXPECT_WK_STREQ("150,200 100,150", [dragStartScreenCoordinatesInOffsetIframe("https://webkit.org/inner"_s) UTF8String] ?: "");
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)

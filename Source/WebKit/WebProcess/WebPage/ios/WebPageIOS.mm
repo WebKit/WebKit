@@ -978,7 +978,8 @@ Awaitable<DragInitiationResult> WebPage::requestDragStart(std::optional<WebCore:
     co_return { DragInitiationResult::RemoteFrameData {
         transformer.remoteFrameID(),
         transformer.transformToRemoteFrameCoordinates(clientPosition),
-        transformer.transformToRemoteFrameCoordinates(globalPosition)
+        // globalPosition is not frame-relative, so it survives the hop unchanged.
+        globalPosition
     } };
 }
 
@@ -1005,7 +1006,8 @@ Awaitable<DragInitiationResult> WebPage::requestAdditionalItemsForDragSession(st
     co_return { DragInitiationResult::RemoteFrameData {
         transformer.remoteFrameID(),
         transformer.transformToRemoteFrameCoordinates(clientPosition),
-        transformer.transformToRemoteFrameCoordinates(globalPosition)
+        // globalPosition is not frame-relative, so it survives the hop unchanged.
+        globalPosition
     } };
 }
 
