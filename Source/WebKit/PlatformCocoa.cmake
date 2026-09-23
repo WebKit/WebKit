@@ -2012,7 +2012,7 @@ with open(sys.argv[2], 'wb') as f:
     string(REGEX MATCH "^([0-9]+)" _host_major "${_host_os_ver}")
     math(EXPR _target_macos_major "${_host_major} * 10000")
 
-    function(WEBKIT_IOS_XPC_SERVICE _target _bundle_identifier _info_plist _executable_name _xpc_entitlements)
+    function(WEBKIT_IOS_XPC_SERVICE _target _bundle_identifier _info_plist _executable_name)
         set(_service_dir ${WebKit_XPC_SERVICE_DIR}/${_bundle_identifier}.xpc)
         file(MAKE_DIRECTORY ${_service_dir})
 
@@ -2072,6 +2072,7 @@ with open(sys.argv[2], 'wb') as f:
                     "${_service_dir}"
                 COMMENT "Codesigning ${_bundle_identifier}.xpc (simulator)")
         else ()
+            get_property(_xpc_entitlements TARGET ${_target} PROPERTY CODE_SIGN_ENTITLEMENTS)
             add_custom_command(TARGET ${_target} POST_BUILD
                 COMMAND codesign --force --sign -
                     --timestamp=none --generate-entitlement-der
@@ -2087,21 +2088,18 @@ with open(sys.argv[2], 'wb') as f:
     WEBKIT_IOS_XPC_SERVICE(WebProcess
         "com.apple.WebKit.WebContent"
         ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
-        ${WebProcess_OUTPUT_NAME}
-        ${WebProcess_CODE_SIGN_ENTITLEMENTS})
+        ${WebProcess_OUTPUT_NAME})
 
     WEBKIT_IOS_XPC_SERVICE(NetworkProcess
         "com.apple.WebKit.Networking"
         ${WEBKIT_DIR}/NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkService/Info-iOS.plist
-        ${NetworkProcess_OUTPUT_NAME}
-        ${NetworkProcess_CODE_SIGN_ENTITLEMENTS})
+        ${NetworkProcess_OUTPUT_NAME})
 
     if (ENABLE_GPU_PROCESS)
         WEBKIT_IOS_XPC_SERVICE(GPUProcess
             "com.apple.WebKit.GPU"
             ${WEBKIT_DIR}/GPUProcess/EntryPoint/Cocoa/XPCService/GPUService/Info-iOS.plist
-            ${GPUProcess_OUTPUT_NAME}
-            ${GPUProcess_CODE_SIGN_ENTITLEMENTS})
+            ${GPUProcess_OUTPUT_NAME})
     endif ()
 
     function(WEBKIT_IOS_WEBCONTENT_VARIANT _variant)
@@ -2120,8 +2118,7 @@ with open(sys.argv[2], 'wb') as f:
         WEBKIT_IOS_XPC_SERVICE(${_target}
             "com.apple.WebKit.WebContent.${_variant}"
             ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
-            ${_exec_name}
-            ${${_target}_CODE_SIGN_ENTITLEMENTS})
+            ${_exec_name})
     endfunction()
     WEBKIT_IOS_WEBCONTENT_VARIANT(EnhancedSecurity)
     WEBKIT_IOS_WEBCONTENT_VARIANT(CaptivePortal)
