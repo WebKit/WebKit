@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if !PLATFORM(COCOA) || !__has_feature(modules)
+
 #include "Helpers/Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatPoint.h>
@@ -43,3 +47,5 @@ namespace TestWebKitAPI {
 ::testing::AssertionResult imagePixelIs(WebCore::Color expected, WebCore::NativeImage&, WebCore::FloatPoint);
 
 }
+
+#endif // !PLATFORM(COCOA) || !__has_feature(modules)

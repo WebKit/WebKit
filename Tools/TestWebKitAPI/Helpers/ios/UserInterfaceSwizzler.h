@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(IOS_FAMILY)
 
 #import "InstanceMethodSwizzler.h"
@@ -56,3 +58,5 @@ using IPhoneUserInterfaceSwizzler = UserInterfaceSwizzler<UIUserInterfaceIdiomPh
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#endif // __cplusplus

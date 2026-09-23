@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 
@@ -63,3 +65,5 @@
 - (BOOL)latestEditorStateContains:(NSDictionary<NSString *, id> *)entries;
 
 @end
+
+#endif // __cplusplus

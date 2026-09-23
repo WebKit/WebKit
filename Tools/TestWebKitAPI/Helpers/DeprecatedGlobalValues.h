@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(COCOA)
 #include <wtf/Deque.h>
 #include <wtf/RetainPtr.h>
@@ -65,3 +67,5 @@ extern RetainPtr<NSMutableArray> receivedMessages;
 extern Deque<RetainPtr<WKScriptMessage>> scriptMessages;
 WKScriptMessage *getNextMessage();
 #endif
+
+#endif // __cplusplus

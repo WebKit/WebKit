@@ -38,6 +38,7 @@
 @class _WKProcessPoolConfiguration;
 
 #if PLATFORM(IOS_FAMILY)
+#import "UIKitSPIForTesting.h"
 #import "WKBrowserEngineDefinitions.h"
 @class _WKActivatedElementInfo;
 @class _WKTextInputContext;

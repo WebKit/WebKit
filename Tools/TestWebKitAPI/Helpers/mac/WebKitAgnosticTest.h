@@ -26,6 +26,8 @@
 #ifndef WebKitAgnosticTest_h
 #define WebKitAgnosticTest_h
 
+#ifdef __cplusplus
+
 #include "Helpers/PlatformUtilities.h"
 
 namespace TestWebKitAPI {
@@ -68,5 +70,7 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus
 
 #endif // WebKitAgnosticTest_h

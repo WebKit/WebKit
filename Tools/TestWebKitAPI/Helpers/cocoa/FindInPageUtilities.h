@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <WebKit/_WKFindDelegate.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
@@ -56,3 +58,5 @@ void testPerformTextSearchWithQueryStringInWebView(WKWebView *, NSString *query,
 RetainPtr<NSOrderedSet<UITextRange *>> textRangesForQueryString(WKWebView *, NSString *query);
 
 #endif
+
+#endif // __cplusplus

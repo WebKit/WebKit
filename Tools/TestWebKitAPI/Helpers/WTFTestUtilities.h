@@ -30,6 +30,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -47,3 +49,5 @@ String utf16String(const char16_t (&url)[length])
 }
 
 }
+
+#endif // __cplusplus

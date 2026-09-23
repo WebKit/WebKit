@@ -25,20 +25,28 @@
 
 #pragma once
 
+#ifdef __cplusplus
 #import <wtf/RetainPtr.h>
+#endif
 
-OBJC_CLASS NSData;
-OBJC_CLASS WKWebViewConfiguration;
-OBJC_CLASS _WKFrameHandle;
+@class NSData;
+@class WKWebViewConfiguration;
+@class _WKFrameHandle;
 
-OBJC_PROTOCOL(WKUIDelegate);
+@protocol WKUIDelegate;
 
 @interface PDFPrintUIDelegate : NSObject <WKUIDelegate>
 
+#if PLATFORM(MAC)
 - (NSSize)waitForPageSize;
+#else
+- (CGSize)waitForPageSize;
+#endif
 - (_WKFrameHandle *)lastPrintedFrame;
 
 @end
+
+#ifdef __cplusplus
 
 namespace TestWebKitAPI {
 
@@ -55,3 +63,5 @@ RetainPtr<WKWebViewConfiguration> configurationForWebViewTestingUnifiedPDF(bool 
 RetainPtr<NSData> testPDFData();
 
 }
+
+#endif // __cplusplus

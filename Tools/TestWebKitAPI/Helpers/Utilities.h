@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include "Helpers/WTFTestUtilities.h"
 
 #include <wtf/Seconds.h>
@@ -58,3 +60,5 @@ bool waitFor(Callable&& c, size_t maxTries = 100)
 }
 
 } // namespace TestWebKitAPI::Util
+
+#endif // __cplusplus

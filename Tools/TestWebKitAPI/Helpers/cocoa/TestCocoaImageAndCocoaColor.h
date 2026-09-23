@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if USE(APPKIT)
 OBJC_CLASS NSImage;
 using CocoaImage = NSImage;
@@ -42,3 +44,5 @@ CocoaColor *toSRGBColor(CocoaColor *);
 bool compareColors(CocoaColor *, CocoaColor *, float tolerance = 0.01);
 
 } // namespace TestWebKitAPI::Util
+
+#endif // __cplusplus

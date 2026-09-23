@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <WebKit/WKNotificationManager.h>
 #include <WebKit/WKNotificationProvider.h>
 #include <WebKit/WKRetainPtr.h>
@@ -66,3 +68,5 @@ private:
 };
 
 }
+
+#endif // __cplusplus

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <wtf/RetainPtr.h>
@@ -47,3 +49,4 @@ void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDi
 
 #endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
+#endif // __cplusplus

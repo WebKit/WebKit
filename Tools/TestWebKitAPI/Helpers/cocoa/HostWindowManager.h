@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
 #import "Helpers/PlatformUtilities.h"
 #import <gtest/gtest.h>
 #import <wtf/RetainPtr.h>
@@ -46,3 +48,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus

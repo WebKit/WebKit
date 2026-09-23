@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(MAC)
 
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -50,3 +52,5 @@ using ImmediateActionHitTestResult = std::pair<RetainPtr<_WKHitTestResult>, _WKI
 @end
 
 #endif
+
+#endif // __cplusplus

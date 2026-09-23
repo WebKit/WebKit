@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if !PLATFORM(COCOA) || !__has_feature(modules)
+
 #if PLATFORM(COCOA)
 OBJC_CLASS WebView;
 OBJC_CLASS WKWebView;
@@ -48,3 +52,5 @@ namespace TestWebKitAPI {
 #endif
 
 } // namespace TestWebKitAPI
+
+#endif // !PLATFORM(COCOA) || !__has_feature(modules)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <objc/runtime.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
@@ -56,3 +58,5 @@ private:
     SEL m_originalSelector;
     IMP m_originalImplementation;
 };
+
+#endif // __cplusplus

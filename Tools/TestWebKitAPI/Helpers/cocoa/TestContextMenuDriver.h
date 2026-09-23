@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
 #if USE(UICONTEXTMENU)
 
 #import <wtf/WeakObjCPtr.h>
@@ -49,3 +51,5 @@
 @end
 
 #endif // USE(UICONTEXTMENU)
+
+#endif // __cplusplus

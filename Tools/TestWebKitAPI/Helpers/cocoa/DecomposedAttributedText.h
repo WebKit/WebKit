@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/Variant.h>
 #import <wtf/Vector.h>
@@ -171,4 +173,4 @@ bool operator==(const DecomposedAttributedText::UnorderedList&, const Decomposed
 
 bool operator==(const DecomposedAttributedText&, const DecomposedAttributedText&);
 
-
+#endif // __cplusplus

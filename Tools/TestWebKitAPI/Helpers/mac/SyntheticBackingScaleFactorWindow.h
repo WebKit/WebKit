@@ -23,8 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(MAC)
+
 @interface SyntheticBackingScaleFactorWindow : NSWindow {
     CGFloat _backingScaleFactor;
 }
 - (void)setBackingScaleFactor:(CGFloat)scaleFactor;
 @end
+
+#endif // PLATFORM(MAC)

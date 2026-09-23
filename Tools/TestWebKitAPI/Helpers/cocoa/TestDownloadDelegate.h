@@ -26,6 +26,8 @@
 #import <WebKit/WKDownloadDelegate.h>
 #import <WebKit/WebKit.h>
 
+#ifdef __cplusplus
+
 enum class DownloadCallback : uint8_t {
     WillRedirect,
     AuthenticationChallenge,
@@ -42,6 +44,8 @@ enum class DownloadCallback : uint8_t {
     NavigationAction,
     NavigationResponse,
 };
+
+#endif // __cplusplus
 
 @interface TestDownloadDelegate : NSObject<WKDownloadDelegate, WKNavigationDelegate>
 
@@ -61,6 +65,8 @@ enum class DownloadCallback : uint8_t {
 #endif
 
 - (void)waitForDownloadDidFinish;
+#ifdef __cplusplus
 - (Vector<DownloadCallback>)takeCallbackRecord;
+#endif
 
 @end

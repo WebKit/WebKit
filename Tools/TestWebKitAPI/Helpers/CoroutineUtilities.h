@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #import <wtf/CoroutineUtilities.h>
 
 namespace TestWebKitAPI {
@@ -41,3 +43,5 @@ struct ConnectionTask {
 };
 
 }
+
+#endif // __cplusplus

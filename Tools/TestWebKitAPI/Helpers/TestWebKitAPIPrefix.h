@@ -25,6 +25,8 @@
 
 #include <wtf/Platform.h>
 
+#ifdef __cplusplus
+
 #if defined(__APPLE__) && __APPLE__
 #ifdef __OBJC__
 #if PLATFORM(IOS_FAMILY)
@@ -60,3 +62,5 @@
 #if USE(OS_LOG)
 #include <os/log.h>
 #endif
+
+#endif // __cplusplus

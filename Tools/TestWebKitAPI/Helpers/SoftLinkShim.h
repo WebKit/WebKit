@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 namespace TestWebKitAPI {
 
 template<typename R, typename... Args>
@@ -59,6 +61,6 @@ private:
     Pointer m_originalFunctorValue;
 };
 
-
-
 }
+
+#endif // __cplusplus

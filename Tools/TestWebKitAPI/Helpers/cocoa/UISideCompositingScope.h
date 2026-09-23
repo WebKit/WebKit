@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <Foundation/Foundation.h>
 #include <objc/runtime.h>
 #include <wtf/Forward.h>
@@ -51,3 +53,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus

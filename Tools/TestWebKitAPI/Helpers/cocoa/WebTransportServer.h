@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if HAVE(WEB_TRANSPORT)
 
 #import "Helpers/CoroutineUtilities.h"
@@ -49,3 +51,5 @@ private:
 } // namespace TestWebKitAPI
 
 #endif // HAVE(WEB_TRANSPORT)
+
+#endif // __cplusplus

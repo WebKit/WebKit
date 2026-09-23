@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if !PLATFORM(COCOA) || !__has_feature(modules)
+
 #include <type_traits>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
@@ -94,3 +98,5 @@ inline std::ostream& operator<<(std::ostream& os, const ASCIILiteral& string)
 }
 
 }
+
+#endif // !PLATFORM(COCOA) || !__has_feature(modules)

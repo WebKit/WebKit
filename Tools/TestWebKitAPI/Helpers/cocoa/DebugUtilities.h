@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(COCOA)
 
 #include "Helpers/Utilities.h"
@@ -54,3 +56,5 @@ do { \
 } while (0)
 
 #endif // PLATFORM(COCOA)
+
+#endif // __cplusplus

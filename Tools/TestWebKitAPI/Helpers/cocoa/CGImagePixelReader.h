@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <CoreGraphics/CoreGraphics.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
@@ -58,3 +60,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus

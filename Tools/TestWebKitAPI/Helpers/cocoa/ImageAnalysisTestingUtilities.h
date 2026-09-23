@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if HAVE(VK_IMAGE_ANALYSIS)
 
 #import "InstanceMethodSwizzler.h"
@@ -61,3 +63,5 @@ private:
 } // namespace TestWebKitAPI
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)
+
+#endif // __cplusplus

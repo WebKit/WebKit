@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifdef __cplusplus
+
 #if ENABLE(DRAG_SUPPORT)
 
 #import "Helpers/cocoa/TestWKWebView.h"
@@ -176,3 +178,5 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 #endif
 
 #endif // ENABLE(DRAG_SUPPORT)
+
+#endif // __cplusplus

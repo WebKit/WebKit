@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <wtf/FastMalloc.h>
@@ -123,3 +125,5 @@ private:
 } // namespace TestWebKitAPI
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // __cplusplus

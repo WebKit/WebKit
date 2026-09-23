@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #import "Helpers/CoroutineUtilities.h"
 #import <Network/Network.h>
 #import <wtf/CompletionHandler.h>
@@ -154,3 +156,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus

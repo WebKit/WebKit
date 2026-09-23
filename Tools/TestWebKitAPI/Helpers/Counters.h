@@ -27,6 +27,8 @@
 #ifndef Counters_h
 #define Counters_h
 
+#ifdef __cplusplus
+
 #include <wtf/FastMalloc.h>
 
 struct CopyMoveCounter {
@@ -99,4 +101,6 @@ struct DeleterCounter {
 #endif
 #endif
 
-#endif // Counters_h
+#endif // __cplusplus
+
+#endif

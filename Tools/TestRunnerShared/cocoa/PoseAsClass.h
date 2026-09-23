@@ -25,4 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 void poseAsClass(const char* imposter, const char* original);
+
+#endif

@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#ifdef __cplusplus
+
 #import "Helpers/cocoa/TestWKWebView.h"
 
 #if PLATFORM(IOS_FAMILY)
@@ -43,3 +47,5 @@
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#endif // __cplusplus

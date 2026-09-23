@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 
 #import "InstanceMethodSwizzler.h"
@@ -83,3 +85,4 @@ private:
 
 #endif
 
+#endif // __cplusplus

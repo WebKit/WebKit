@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <wtf/RetainPtr.h>
 OBJC_CLASS TestWKWebView;
 
@@ -35,3 +37,5 @@ NSString *readURLFromPasteboard();
 NSString *readTitleFromPasteboard();
 
 void clearPasteboard();
+
+#endif // __cplusplus

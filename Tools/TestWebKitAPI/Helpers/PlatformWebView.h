@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 
@@ -60,6 +62,7 @@ typedef WKViewRef PlatformWKView;
 typedef void* PlatformWindow;
 #endif
 typedef uint32_t WKEventModifiers;
+typedef int32_t WKEventMouseButton;
 
 namespace TestWebKitAPI {
 
@@ -97,3 +100,5 @@ private:
 };
 
 } // namespace TestWebKitAPI
+
+#endif // __cplusplus
