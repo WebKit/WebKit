@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Unhandled rejection: Import attribute type "css" is not valid
-
+FAIL Already-fetched module populates adoptedStyleSheets synchronously and applies styles. assert_equals: adoptedStyleSheets should have one entry. expected 1 but got 0
 

@@ -564,6 +564,9 @@ ExceptionOr<void> CSSStyleSheet::replaceSync(String&& text)
     if (!m_wasConstructedByJS)
         return Exception { ExceptionCode::NotAllowedError, "This CSSStyleSheet object was not constructed by JavaScript"_s };
 
+    if (text.isNull())
+        return { };
+
     // Try to use the cache in the case where contents is replaced before the stylesheet is attached to the document.
     if (isDetached() && m_childRuleCSSOMWrappers.isEmpty()) {
         auto key = Style::StyleSheetContentsCache::Key { text, m_contents->parserContext() };
