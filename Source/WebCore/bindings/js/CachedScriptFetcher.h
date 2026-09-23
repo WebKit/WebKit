@@ -40,9 +40,11 @@ class Document;
 
 enum class FetchOptionsDestination : uint8_t;
 
+// FIXME(webkit.org/b/324910): rename CachedScriptFetch to reflect that
+// it can fetch more than just scripts.
 class CachedScriptFetcher : public JSC::ScriptFetcher {
 public:
-    virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL, FetchOptionsDestination, String&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
+    virtual CachedResourceHandle<CachedResource> requestModuleResource(Document&, const URL& sourceURL, FetchOptionsDestination, String&& integrity, std::optional<ServiceWorkersMode>, const URL& referrer) const;
 
     static Ref<CachedScriptFetcher> create(const AtomString& charset);
 
@@ -62,7 +64,7 @@ protected:
     {
     }
 
-    RefPtr<CachedScript> requestScriptWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>, const URL& referrer = { }) const;
+    RefPtr<CachedResource> requestResourceWithCache(Document&, const URL& sourceURL, FetchOptionsDestination, const String& crossOriginMode, String&& integrity, std::optional<ResourceLoadPriority>, std::optional<ServiceWorkersMode>, const URL& referrer = { }) const;
 
 private:
     bool isCachedScriptFetcher() const final { return true; }
