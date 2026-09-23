@@ -4508,11 +4508,10 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource& resource, Resour
 
 void FrameLoader::applyUserAgentIfNeeded(ResourceRequest& request)
 {
-    if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent)) {
-        String userAgent = this->userAgent(request.url());
-        ASSERT(!userAgent.isNull());
-        request.setHTTPUserAgent(userAgent);
-    }
+    // Checked here too so the user agent, which the client may compute, is only asked for when needed.
+    if (request.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
+        return;
+    updateRequestUserAgent(request, userAgent(request.url()));
 }
 
 bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const URL& url, ResourceLoaderIdentifier requestIdentifier)
