@@ -423,11 +423,15 @@ inline FlowMode ComputedStyle::flexFlowMode() const
 
 inline bool ComputedStyle::isFixedTableLayout() const
 {
-    return tableLayout() == TableLayoutType::Fixed
-        && (logicalWidth().isSpecified()
-            || logicalWidth().isFitContent()
-            || logicalWidth().isStretch()
-            || logicalWidth().isMinContent());
+    if (tableLayout() != TableLayoutType::Fixed)
+        return false;
+
+    // A table is in fixed mode unless its inline size is auto or max-content (https://drafts.csswg.org/css-tables-3/#in-fixed-mode).
+    // A calc-size() over either keyword is not the keyword itself, so it is in fixed mode too.
+    auto& logicalWidth = this->logicalWidth();
+    if (logicalWidth.isCalcSize())
+        return true;
+    return !logicalWidth.isAuto() && !logicalWidth.isMaxContent();
 }
 
 inline bool ComputedStyle::isOverflowVisible() const
