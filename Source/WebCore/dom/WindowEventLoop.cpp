@@ -213,6 +213,12 @@ std::optional<MonotonicTime> WindowEventLoop::nextScheduledWorkTime() const
 
 std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
 {
+    // Page::nextRenderingUpdateTimestamp() always returns the next update tick strictly
+    // after "now", so a previously computed tick remains correct for as long as "now"
+    // hasn't reached it yet, and self-invalidates the moment it does.
+    if (m_nextRenderingTimeCache && MonotonicTime::now() < *m_nextRenderingTimeCache)
+        return *m_nextRenderingTimeCache;
+
     std::optional<MonotonicTime> nextRenderingTime;
     const_cast<WindowEventLoop*>(this)->forEachAssociatedContext([&](ScriptExecutionContext& context) {
         RefPtr document = dynamicDowncast<Document>(context);
@@ -227,6 +233,7 @@ std::optional<MonotonicTime> WindowEventLoop::nextRenderingTime() const
         if (!nextRenderingTime || *renderingUpdateTimeForPage < *nextRenderingTime)
             nextRenderingTime = *renderingUpdateTimeForPage;
     });
+    m_nextRenderingTimeCache = nextRenderingTime;
     return nextRenderingTime;
 }
 

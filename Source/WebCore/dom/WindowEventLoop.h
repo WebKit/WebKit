@@ -104,6 +104,7 @@ private:
 
     MonotonicTime m_lastIdlePeriodStartTime;
     Seconds m_expectedIdleCallbackDuration { 4_ms };
+    mutable Markable<MonotonicTime> m_nextRenderingTimeCache;
 };
 
 } // namespace WebCore
