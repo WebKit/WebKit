@@ -26,6 +26,7 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
+#include <WebCore/NativeImage.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if !USE(TEXTURE_MAPPER)
@@ -48,7 +49,7 @@ public:
 #endif
     ~CoordinatedImageBackingStore();
 
-    bool isSameNativeImage(const NativeImage&);
+    bool isSameNativeImage(const NativeImage& nativeImage) { return nativeImage.uniqueID() == m_uniqueID; }
     CoordinatedPlatformLayerBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
 
 private:

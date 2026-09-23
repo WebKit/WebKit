@@ -26,19 +26,19 @@
 #include "config.h"
 #include "CoordinatedImageBackingStore.h"
 
-#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
-#include "CoordinatedPlatformLayerBufferSkiaImage.h"
+#if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)
+#include "CoordinatedPlatformLayerBufferNativeImage.h"
 
 namespace WebCore {
 
-Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
+Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
 {
-    return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage), threadSafeGrContext));
+    return adoptRef(*new CoordinatedImageBackingStore(WTF::move(nativeImage)));
 }
 
-CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
-    : m_buffer(CoordinatedPlatformLayerBufferSkiaImage::create(nativeImage->platformImage(), threadSafeGrContext))
-    , m_uniqueID(nativeImage->uniqueID())
+CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& nativeImage)
+    : m_buffer(CoordinatedPlatformLayerBufferNativeImage::create(WTF::move(nativeImage), nullptr))
+    , m_uniqueID(downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image()->uniqueID())
 {
 }
 
@@ -46,4 +46,4 @@ CoordinatedImageBackingStore::~CoordinatedImageBackingStore() = default;
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER)
+#endif // USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER)

@@ -27,20 +27,11 @@
 #include "config.h"
 #include "CoordinatedPlatformLayerBufferVideo.h"
 
-#if USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
-#include "BitmapTexturePool.h"
+#if USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER) && ENABLE(VIDEO) && USE(GSTREAMER)
+#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 #include "GLFence.h"
-#include "GraphicsTypesGL.h"
 #include "ImageOrientation.h"
 #include "PlatformDisplay.h"
-
-#if USE(TEXTURE_MAPPER)
-#include "CoordinatedPlatformLayerBufferExternalOES.h"
-#include "CoordinatedPlatformLayerBufferRGB.h"
-#include "CoordinatedPlatformLayerBufferYUV.h"
-#include "TextureMapper.h"
-#else
-#include "CoordinatedPlatformLayerBufferSkiaImage.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
@@ -54,7 +45,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/private/chromium/GrPromiseImageTexture.h>
 #include <skia/private/chromium/SkImageChromium.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
-#endif
 
 #if USE(GSTREAMER_GL)
 // Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
@@ -63,50 +53,12 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 #if USE(GBM)
-#include "CoordinatedPlatformLayerBufferDMABuf.h"
 #include "DMABufBuffer.h"
-#include <drm_fourcc.h>
 #include <gst/allocators/gstdmabuf.h>
-#include <wtf/unix/UnixFileDescriptor.h>
 #endif
 
 namespace WebCore {
 
-#if USE(TEXTURE_MAPPER)
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, const ImageOrientation& orientation)
-{
-    OptionSet<TextureMapperFlags> flags;
-    switch (orientation.orientation()) {
-    case ImageOrientation::Orientation::OriginTopLeft:
-        break;
-    case ImageOrientation::Orientation::OriginRightTop:
-        flags.add(TextureMapperFlags::ShouldRotateTexture90);
-        break;
-    case ImageOrientation::Orientation::OriginBottomRight:
-        flags.add(TextureMapperFlags::ShouldRotateTexture180);
-        break;
-    case ImageOrientation::Orientation::OriginLeftBottom:
-        flags.add(TextureMapperFlags::ShouldRotateTexture270);
-        break;
-    case ImageOrientation::Orientation::OriginBottomLeft:
-        flags.add(TextureMapperFlags::ShouldFlipTexture);
-        break;
-    default:
-        // FIXME: Handle OriginTopRight, OriginLeftTop and OriginRightBottom.
-        break;
-    }
-    auto size = frame->presentationSize();
-    return makeUnique<CoordinatedPlatformLayerBufferVideo>(WTF::move(frame), WTF::move(size), videoDecoderPlatform, gstGLEnabled, flags);
-}
-
-CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<VideoFrameGStreamer>&& frame, IntSize&& size, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
-    : CoordinatedPlatformLayerBuffer(Type::Video, WTF::move(size), flags, nullptr)
-    , m_videoFrame(WTF::move(frame))
-    , m_videoDecoderPlatform(videoDecoderPlatform)
-    , m_buffer(createBufferIfNeeded(gstGLEnabled))
-{
-}
-#else
 std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(Ref<VideoFrameGStreamer>&& frame, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, const ImageOrientation& orientation, const sk_sp<GrContextThreadSafeProxy>& threadSafeGrContext)
 {
     auto size = frame->presentationSize();
@@ -141,233 +93,8 @@ CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(Ref<Vid
 {
     createSkiaImageIfNeeded(threadSafeGrContext, gstGLEnabled, origin);
 }
-#endif
 
 CoordinatedPlatformLayerBufferVideo::~CoordinatedPlatformLayerBufferVideo() = default;
-
-#if USE(TEXTURE_MAPPER)
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
-{
-    const auto& sample = m_videoFrame->sample();
-    auto buffer = gst_sample_get_buffer(sample.get());
-    auto memory = gst_buffer_peek_memory(buffer, 0);
-
-#if USE(GBM)
-    if (gst_is_fd_memory(memory) && m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::Qualcomm)
-        return CoordinatedPlatformLayerBufferDMABuf::create(m_videoFrame->dmabufForQualcommDecoder(m_size), m_flags, nullptr);
-
-#if GST_CHECK_VERSION(1, 24, 0)
-    if (gst_is_dmabuf_memory(memory))
-        return createBufferFromDMABufMemory();
-#endif // GST_CHECK_VERSION(1, 24, 0)
-#endif // USE(GBM)
-
-#if USE(GSTREAMER_GL)
-    if (gstGLEnabled && gst_is_gl_memory(memory))
-        return createBufferFromGLMemory();
-#else
-    UNUSED_PARAM(gstGLEnabled);
-#endif
-
-    // When not having a texture, we map the frame here and upload the pixels to a texture in the
-    // compositor thread, in paintToTextureMapper(), which also allows us to use the texture mapper
-    // bitmap texture pool.
-    m_mappedVideoFrame.emplace(GstMappedFrame(sample, GST_MAP_READ));
-    if (!*m_mappedVideoFrame) {
-        // If mapping failed, clear the GstMappedFrame holder.
-        m_mappedVideoFrame = std::nullopt;
-        return nullptr;
-    }
-
-    if (GST_VIDEO_INFO_HAS_ALPHA(m_mappedVideoFrame->info()))
-        m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
-
-    return nullptr;
-}
-
-#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromDMABufMemory()
-{
-    auto videoInfo = m_videoFrame->info();
-    if (GST_VIDEO_INFO_HAS_ALPHA(&videoInfo))
-        m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
-
-    auto dmabuf = m_videoFrame->getDMABuf();
-    RELEASE_ASSERT(dmabuf);
-    return CoordinatedPlatformLayerBufferDMABuf::create(dmabuf.releaseNonNull(), m_flags, nullptr);
-}
-#endif // USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-
-#if USE(GSTREAMER_GL)
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
-{
-    if (!m_buffer || !is<CoordinatedPlatformLayerBufferRGB>(*m_buffer))
-        return nullptr;
-
-    auto& buffer = downcast<CoordinatedPlatformLayerBufferRGB>(*m_buffer);
-    auto textureID = buffer.textureID();
-    if (!textureID)
-        return nullptr;
-
-    auto size = buffer.size();
-    auto texture = BitmapTexture::create(size);
-    texture->copyFromExternalTexture(textureID, { IntPoint::zero(), size }, { });
-    return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
-}
-
-static std::optional<CoordinatedPlatformLayerBufferYUV::Format> yuvFormatFromGstVideoFormat(GstVideoFormat format)
-{
-    switch (format) {
-    case GST_VIDEO_FORMAT_BGRx:
-    case GST_VIDEO_FORMAT_RGBx:
-    case GST_VIDEO_FORMAT_BGRA:
-    case GST_VIDEO_FORMAT_RGBA:
-        return CoordinatedPlatformLayerBufferYUV::Format::AYUV;
-    case GST_VIDEO_FORMAT_I420:
-        return CoordinatedPlatformLayerBufferYUV::Format::YUV420;
-    case GST_VIDEO_FORMAT_YV12:
-        return CoordinatedPlatformLayerBufferYUV::Format::YVU420;
-    case GST_VIDEO_FORMAT_NV12:
-        return CoordinatedPlatformLayerBufferYUV::Format::NV12;
-    case GST_VIDEO_FORMAT_NV21:
-        return CoordinatedPlatformLayerBufferYUV::Format::NV21;
-    case GST_VIDEO_FORMAT_Y444:
-        return CoordinatedPlatformLayerBufferYUV::Format::YUV444;
-    case GST_VIDEO_FORMAT_Y41B:
-        return CoordinatedPlatformLayerBufferYUV::Format::YUV411;
-    case GST_VIDEO_FORMAT_Y42B:
-        return CoordinatedPlatformLayerBufferYUV::Format::YUV422;
-    case GST_VIDEO_FORMAT_P010_10LE:
-        return CoordinatedPlatformLayerBufferYUV::Format::P010;
-    case GST_VIDEO_FORMAT_A420:
-        return CoordinatedPlatformLayerBufferYUV::Format::A420;
-    default:
-        break;
-    }
-
-    return std::nullopt;
-}
-
-static std::pair<CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, CoordinatedPlatformLayerBufferYUV::TransferFunction> yuvColorSpaceFromVideoInfo(const GstVideoInfo& info)
-{
-    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
-    auto yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601;
-    auto transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Bt709;
-    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&info);
-    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt709;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-        transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Pq;
-    } else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
-        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Smpte240M;
-    return { yuvToRgbColorSpace, transferFunction };
-}
-
-std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferFromGLMemory()
-{
-    const auto& sample = m_videoFrame->sample();
-    m_mappedVideoFrame.emplace(GstMappedFrame(sample, static_cast<GstMapFlags>(GST_MAP_READ | GST_MAP_GL)));
-    if (!*m_mappedVideoFrame) {
-        // If mapping failed, clear the GstMappedFrame holder.
-        m_mappedVideoFrame = std::nullopt;
-        return nullptr;
-    }
-
-    m_mappedVideoFrame->setNeedsCPUSync(m_videoDecoderPlatform != GstVideoDecoderPlatform::OpenMAX);
-
-    if (GST_VIDEO_INFO_HAS_ALPHA(m_mappedVideoFrame->info()))
-        m_flags.add({ TextureMapperFlags::ShouldBlend, TextureMapperFlags::ShouldPremultiply });
-
-    auto buffer = gst_sample_get_buffer(sample.get());
-    auto textureTarget = gst_gl_memory_get_texture_target(GST_GL_MEMORY_CAST(gst_buffer_peek_memory(buffer, 0)));
-    if (textureTarget == GST_GL_TEXTURE_TARGET_EXTERNAL_OES)
-        return CoordinatedPlatformLayerBufferExternalOES::create(m_mappedVideoFrame->textureID(0), m_size, m_flags, nullptr);
-
-    if ((GST_VIDEO_INFO_IS_RGB(m_mappedVideoFrame->info()) && GST_VIDEO_INFO_N_PLANES(m_mappedVideoFrame->info()) == 1))
-        return CoordinatedPlatformLayerBufferRGB::create(m_mappedVideoFrame->textureID(0), m_size, m_flags, nullptr);
-
-    if (GST_VIDEO_INFO_IS_YUV(m_mappedVideoFrame->info()) && GST_VIDEO_INFO_N_COMPONENTS(m_mappedVideoFrame->info()) >= 3 && GST_VIDEO_INFO_N_PLANES(m_mappedVideoFrame->info()) <= 4) {
-        if (m_videoDecoderPlatform && *m_videoDecoderPlatform == GstVideoDecoderPlatform::ImxVPU) {
-            // IMX VPU decoder decodes YUV data only into the Y texture from which the sampler
-            // then directly produces RGBA data. Textures for other planes aren't used, but
-            // that's decoder's problem. We have to treat that Y texture as having RGBA data.
-            return CoordinatedPlatformLayerBufferRGB::create(m_mappedVideoFrame->textureID(0), m_size, m_flags, nullptr);
-        }
-
-        auto format = yuvFormatFromGstVideoFormat(GST_VIDEO_INFO_FORMAT(m_mappedVideoFrame->info()));
-        if (!format) {
-            // If format is not supported clear the GstMappedFrame holder, otherwise it will be considered
-            // as main memory mapped buffer and we will try to upload it later.
-            m_mappedVideoFrame = std::nullopt;
-            return nullptr;
-        }
-
-        unsigned numberOfPlanes = GST_VIDEO_INFO_N_PLANES(m_mappedVideoFrame->info());
-        std::array<GLuint, 4> planes;
-        std::array<unsigned, 4> yuvPlane;
-        std::array<unsigned, 4> yuvPlaneOffset;
-        for (unsigned i = 0; i < numberOfPlanes; ++i)
-            planes[i] = m_mappedVideoFrame->textureID(i);
-        for (unsigned i = 0; i < numberOfPlanes; ++i) {
-            yuvPlane[i] = m_mappedVideoFrame->componentPlane(i);
-            yuvPlaneOffset[i] = m_mappedVideoFrame->componentPlaneOffset(i);
-        }
-
-        auto [yuvToRgbColorSpace, transferFunction] = yuvColorSpaceFromVideoInfo(*m_mappedVideoFrame->info());
-        return CoordinatedPlatformLayerBufferYUV::create(*format, numberOfPlanes, WTF::move(planes), WTF::move(yuvPlane), WTF::move(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, m_size, m_flags, nullptr);
-    }
-
-    return nullptr;
-}
-#endif
-
-void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
-{
-    if (!m_mappedVideoFrame)
-        return;
-
-    RELEASE_ASSERT(*m_mappedVideoFrame);
-#if USE(GSTREAMER_GL)
-    m_mappedVideoFrame->waitForCPUSyncIfNeeded();
-#endif
-
-    if (m_buffer)
-        return;
-
-    OptionSet<BitmapTexture::Flags> textureFlags = { BitmapTexture::Flags::UseBGRALayout };
-    if (GST_VIDEO_INFO_HAS_ALPHA(m_mappedVideoFrame->info()))
-        textureFlags.add(BitmapTexture::Flags::SupportsAlpha);
-    auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
-
-    auto* meta = gst_buffer_get_video_gl_texture_upload_meta(m_mappedVideoFrame->get()->buffer);
-    if (meta && meta->n_textures == 1) {
-        guint ids[4] = { texture->id(), 0, 0, 0 };
-        if (gst_video_gl_texture_upload_meta_upload(meta, ids)) {
-            m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
-            return;
-        }
-    }
-
-    int stride = m_mappedVideoFrame->planeStride(0);
-    auto srcData = m_mappedVideoFrame->planeData(0);
-    IntPoint origin;
-    texture->updateContents(srcData.data(), IntRect(origin, m_size), origin, stride, PixelFormat::BGRA8);
-    m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
-    m_mappedVideoFrame = std::nullopt;
-}
-
-void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
-{
-    createBufferFromMappedFrameIfNeeded();
-
-    if (m_buffer)
-        m_buffer->paintToTextureMapper(textureMapper, targetRect, modelViewMatrix, opacity);
-}
-
-#else
 
 #if USE(GSTREAMER_GL)
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::copyBuffer() const
@@ -691,8 +418,7 @@ void CoordinatedPlatformLayerBufferVideo::createSkiaImageForYUVGLMemory(std::uni
         }, reinterpret_cast<void**>(planeContexts.data()));
 }
 #endif // USE(GSTREAMER_GL)
-#endif
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS) && ENABLE(VIDEO) && USE(GSTREAMER)
+#endif // USE(COORDINATED_GRAPHICS) && !USE(TEXTURE_MAPPER) && ENABLE(VIDEO) && USE(GSTREAMER)
