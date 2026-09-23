@@ -193,6 +193,14 @@ void NonCompositedFrameRenderer::updateRendering()
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
 
+#if ENABLE(DAMAGE_TRACKING)
+    if (m_frameDamage && m_frameDamage->isEmpty() && !m_forcedRepaintAsyncCallback) {
+        webPage->didUpdateRendering({ });
+        WTFEndSignpost(this, NonCompositedRenderingUpdate);
+        return;
+    }
+#endif
+
     IntSize scaledSize = webPage->size();
     scaledSize.scale(webPage->deviceScaleFactor());
 

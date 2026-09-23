@@ -102,6 +102,7 @@ private:
 #endif
 
 #if PLATFORM(GTK)
+    void didDiscardBackingStore() override;
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) override;
     void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) override;
 #endif
