@@ -179,7 +179,7 @@ bool HTMLOptGroupElement::isActuallyDisabled() const
 bool HTMLOptGroupElement::isFocusable() const
 {
     RefPtr select = ownerSelectElement();
-    if (select && select->usesMenuList())
+    if (select && select->isDropdownBox())
         return false;
     return HTMLElement::isFocusable();
 }

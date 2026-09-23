@@ -83,6 +83,11 @@ public:
     bool NODELETE supportsPickerPseudoElement() const;
     bool multiple() const { return m_multiple; }
 
+    // Without a style these read the one already committed, which is stale during style resolution.
+    enum class BoxType : bool { DropdownBox, ListBox };
+    BoxType NODELETE boxType(const Style::ComputedStyle* = nullptr) const;
+    bool NODELETE isDropdownBox(const Style::ComputedStyle* = nullptr) const;
+
     bool NODELETE usesMenuList() const;
     bool NODELETE isSingleSelectDropdownBox() const;
 

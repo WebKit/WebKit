@@ -102,7 +102,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
         return;
     }
 
-    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(renderer.element()); select && select->usesMenuList()) {
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(renderer.element()); select && select->isDropdownBox(&renderer.style())) {
         updatePseudoElement(PseudoElementType::PickerIcon, renderer, renderer.style().usedAppearance());
         return;
     }

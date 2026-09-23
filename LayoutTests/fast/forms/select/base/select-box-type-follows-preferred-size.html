@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ HTMLEnhancedSelectMultipleAndListBoxEnabled=true ] -->
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+</head>
+<body>
+<style>
+select, select::picker(select) {
+    appearance: base-select;
+}
+</style>
+<select id="baseDropdown" multiple size="1"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+<select id="baseListbox" multiple size="4"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+<select id="nativeListbox" multiple size="1" style="appearance: auto"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+<script>
+description("Tests that with base appearance the preferred size picks the box type rather than the multiple attribute. A list box scrolls its options and a dropdown box keeps them in its picker, so only a list box has overflowing content.");
+
+function scrollsItsOptions(select)
+{
+    return select.scrollHeight > select.clientHeight;
+}
+
+shouldBeFalse("scrollsItsOptions(baseDropdown)");
+shouldBeTrue("scrollsItsOptions(baseListbox)");
+// The same markup without base appearance stays a list box, because multiple decides there.
+shouldBeTrue("scrollsItsOptions(nativeListbox)");
+</script>
+</body>
+</html>

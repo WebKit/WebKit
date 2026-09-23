@@ -492,7 +492,7 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (pseudoElementIdentifier.type == PseudoElementType::PickerIcon) {
         if (elementUpdate.style->usedAppearance() != StyleAppearance::Base)
             return { };
-        if (auto* select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->usesMenuList())
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(element); !select || !select->isDropdownBox(elementUpdate.style.get()))
             return { };
     }
 

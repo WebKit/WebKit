@@ -283,7 +283,7 @@ bool HTMLOptionElement::supportsFocus() const
 bool HTMLOptionElement::isFocusable() const
 {
     RefPtr select = ownerSelectElement();
-    if (select && select->usesMenuList() && !select->usesBaseAppearancePicker())
+    if (select && select->isDropdownBox() && !select->usesBaseAppearancePicker())
         return false;
     return HTMLElement::isFocusable();
 }
