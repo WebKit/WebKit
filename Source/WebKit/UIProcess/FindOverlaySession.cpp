@@ -64,6 +64,27 @@ void FindOverlaySession::deliverResult(WebPageProxy& page, std::optional<WebCore
         page.findClient().didFindString(&page, m_string, matchRects, matchCount, matchIndex, didWrap);
 }
 
+void FindOverlaySession::setRootGeometry(WebCore::FrameIdentifier rootFrameID, RootGeometry&& geometry)
+{
+    // The payload comes from the web process; drop anything a compromised
+    // sender could use to wedge path building.
+    static constexpr size_t maximumRectCount = 8192;
+    auto sanitize = [](Vector<WebCore::FloatRect>& rects) {
+        if (rects.size() > maximumRectCount)
+            rects.shrink(maximumRectCount);
+        rects.removeAllMatching([](auto& rect) {
+            return !std::isfinite(rect.x()) || !std::isfinite(rect.y()) || !std::isfinite(rect.width()) || !std::isfinite(rect.height());
+        });
+    };
+    sanitize(geometry.matchRectsInRootContentsCoordinates);
+    if (geometry.childRemoteFrameRects.size() > maximumRectCount)
+        geometry.childRemoteFrameRects.shrink(maximumRectCount);
+    geometry.childRemoteFrameRects.removeAllMatching([](auto& childFrameRect) {
+        return !std::isfinite(childFrameRect.rect.x()) || !std::isfinite(childFrameRect.rect.y()) || !std::isfinite(childFrameRect.rect.width()) || !std::isfinite(childFrameRect.rect.height());
+    });
+    m_rootGeometries.set(rootFrameID, WTF::move(geometry));
+}
+
 bool FindOverlaySession::overlayShouldBeVisible() const
 {
     return m_settled && m_totalMatchCount && m_options.contains(FindOptions::ShowOverlay);

@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT bool hasRemoteFrameAncestor() const;
     
     WEBCORE_EXPORT Frame* NODELETE traverseNext(const Frame* stayWithin = nullptr) const;
-    Frame* NODELETE traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;
+    WEBCORE_EXPORT Frame* NODELETE traverseNextSkippingChildren(const Frame* stayWithin = nullptr) const;
     // Rendered means being the main frame or having an ownerRenderer. It may not have been parented in the Widget tree yet (see WidgetHierarchyUpdatesSuspensionScope).
     WEBCORE_EXPORT RefPtr<Frame> traverseNextRendered(const Frame* stayWithin = nullptr) const;
     WEBCORE_EXPORT Frame* NODELETE traverseNext(CanWrap, DidWrap* = nullptr) const;

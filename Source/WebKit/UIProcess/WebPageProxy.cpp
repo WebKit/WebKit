@@ -4262,7 +4262,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
 }
 
 #if !PLATFORM(COCOA)
-void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&)
+void WebPageProxy::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&)
 {
 }
 
@@ -7701,6 +7701,45 @@ bool WebPageProxy::findOverlayShouldBeVisibleForTesting() const
 {
     RefPtr findOverlaySession = internals().findOverlaySession;
     return findOverlaySession && findOverlaySession->overlayShouldBeVisible();
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> WebPageProxy::findMatchRectsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries())
+        result.set(rootFrameID, geometry.matchRectsInRootContentsCoordinates);
+    return result;
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> WebPageProxy::findCutoutRectsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries()) {
+        result.set(rootFrameID, WTF::map(geometry.childRemoteFrameRects, [](auto& childFrameRect) {
+            return childFrameRect.rect;
+        }));
+    }
+    return result;
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> WebPageProxy::findCutoutChildFrameIDsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries()) {
+        result.set(rootFrameID, WTF::map(geometry.childRemoteFrameRects, [](auto& childFrameRect) {
+            return childFrameRect.frameID;
+        }));
+    }
+    return result;
 }
 
 void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)

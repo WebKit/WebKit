@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
@@ -58,12 +59,28 @@ public:
 
     bool overlayShouldBeVisible() const;
 
+    // Per-local-root find geometry published by each web process on its layer
+    // tree commit; rects are in that root's contents coordinates.
+    struct ChildFrameRect {
+        WebCore::FrameIdentifier frameID;
+        WebCore::FloatRect rect;
+    };
+    struct RootGeometry {
+        Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
+        Vector<ChildFrameRect> childRemoteFrameRects;
+    };
+
+    void setRootGeometry(WebCore::FrameIdentifier rootFrameID, RootGeometry&&);
+    void clearRootGeometry(WebCore::FrameIdentifier rootFrameID) { m_rootGeometries.remove(rootFrameID); }
+    const HashMap<WebCore::FrameIdentifier, RootGeometry>& rootGeometries() const { return m_rootGeometries; }
+
 private:
     FindOverlaySession(const String&, OptionSet<FindOptions>);
 
     String m_string;
     OptionSet<FindOptions> m_options;
     HashMap<WebCore::FrameIdentifier, FindOverlayFrameResult> m_frameResults;
+    HashMap<WebCore::FrameIdentifier, RootGeometry> m_rootGeometries;
     uint32_t m_totalMatchCount { 0 };
     bool m_settled { false };
 };

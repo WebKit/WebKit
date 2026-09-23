@@ -42,6 +42,10 @@
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#include "RemoteLayerTreeTransaction.h"
+#endif
+
 namespace WebCore {
 class LocalFrame;
 class Range;
@@ -93,6 +97,10 @@ public:
     void didInvalidateFindRects();
 
     void redraw();
+
+#if PLATFORM(COCOA)
+    std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> overlayDataForRoot(WebCore::LocalFrame&);
+#endif
 
 private:
     // PageOverlayClient.

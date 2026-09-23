@@ -30,7 +30,9 @@
 #include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/FloatPoint3D.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformCALayer.h>
@@ -128,6 +130,23 @@ public:
 #endif
     };
 
+    // Per-root geometry for the UI-process-drawn find overlay, keyed by this
+    // transaction's rootFrameID. Rects are in the root's committed contents
+    // coordinate space (a main root bakes page scale into it; a child remote
+    // root does not and inherits scale from the parent's hosting layer) and
+    // are not clipped to the root's visible rect. Absent means the root does
+    // not participate in the find overlay; present with empty rects means
+    // "dim this root, no holes". Each child cutout carries the child root's
+    // identity so a consumer can correlate it with that child's own payload.
+    struct FindOverlayRootData {
+        struct ChildFrameRect {
+            WebCore::FrameIdentifier frameID;
+            WebCore::FloatRect rect;
+        };
+        Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
+        Vector<ChildFrameRect> childRemoteFrameRects;
+    };
+
     RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
     RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&);
@@ -159,6 +178,9 @@ public:
     void setRemoteContextHostedIdentifier(Markable<WebCore::LayerHostingContextIdentifier> identifier) { m_remoteContextHostedIdentifier = identifier; }
     Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
 
+    Markable<WebCore::FrameIdentifier> rootFrameID() const { return m_rootFrameID; }
+    void setRootFrameID(WebCore::FrameIdentifier rootFrameID) { m_rootFrameID = rootFrameID; }
+
     WebCore::IntSize contentsSize() const { return m_contentsSize; }
     void setContentsSize(const WebCore::IntSize& size) { m_contentsSize = size; };
 
@@ -170,6 +192,9 @@ public:
 
     WebCore::IntPoint scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(WebCore::IntPoint p) { m_scrollPosition = p; }
+
+    const std::optional<FindOverlayRootData>& findOverlayData() const LIFETIME_BOUND { return m_findOverlayData; }
+    void setFindOverlayData(std::optional<FindOverlayRootData>&& findOverlayData) { m_findOverlayData = WTF::move(findOverlayData); }
 
 #if ENABLE(THREADED_ANIMATIONS)
     const WebCore::AcceleratedTimelinesUpdate& timelinesUpdate() const LIFETIME_BOUND { return m_timelinesUpdate; }
@@ -183,6 +208,7 @@ private:
     ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
+    Markable<WebCore::FrameIdentifier> m_rootFrameID;
 
     Vector<LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
@@ -192,6 +218,7 @@ private:
     WebCore::IntSize m_scrollGeometryContentSize;
     WebCore::IntPoint m_scrollOrigin;
     WebCore::IntPoint m_scrollPosition;
+    std::optional<FindOverlayRootData> m_findOverlayData;
 
 #if ENABLE(THREADED_ANIMATIONS)
     WebCore::AcceleratedTimelinesUpdate m_timelinesUpdate;

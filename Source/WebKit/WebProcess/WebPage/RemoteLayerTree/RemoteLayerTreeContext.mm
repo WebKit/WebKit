@@ -208,6 +208,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
+    transaction.setRootFrameID(rootFrameID);
     if (RefPtr rootFrame = WebProcess::singleton().webFrame(rootFrameID))
         transaction.setRemoteContextHostedIdentifier(rootFrame->layerHostingContextIdentifier());
 
