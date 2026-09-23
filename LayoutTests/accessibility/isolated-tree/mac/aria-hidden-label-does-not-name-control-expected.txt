@@ -1,0 +1,15 @@
+This tests that an aria-hidden label or legend does not name what it labels, while aria-labelledby still pulls in a directly referenced hidden target.
+
+#hiddenLabelControl AXTitle: (empty)
+#visibleLabelControl AXTitle: Visible label
+#labelledbyControl AXTitle: Hidden target
+#hiddenLegendFieldset AXTitle: (empty)
+#visibleLegendFieldset AXTitle: Visible legend
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hidden label  Visible label  Hidden target  Hidden legend
+
+Visible legend
+

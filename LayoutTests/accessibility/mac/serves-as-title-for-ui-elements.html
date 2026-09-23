@@ -14,6 +14,11 @@
 
 <div id="not-a-label">Not a label</div>
 
+<fieldset id="fieldset">
+<legend id="legend">Legend</legend>
+Name: <input type="text">
+</fieldset>
+
 <script>
 var output = "This test verifies that label elements expose AXServesAsTitleForUIElements.\n\n";
 
@@ -30,6 +35,12 @@ if (window.accessibilityController) {
 
     var notALabel = accessibilityController.accessibleElementById("not-a-label");
     output += expect("notALabel.allAttributes().includes('AXServesAsTitleForUIElements')", "false");
+
+    // A fieldset is labeled by its legend, so the relation works in both directions.
+    var legend = accessibilityController.accessibleElementById("fieldset").titleUIElement();
+    output += expect("legend.domIdentifier", "'legend'");
+    output += expect("legend.allAttributes().includes('AXServesAsTitleForUIElements')", "true");
+    output += expect("legend.labelForElementAtIndex(0).domIdentifier", "'fieldset'");
 
     debug(output);
 }
