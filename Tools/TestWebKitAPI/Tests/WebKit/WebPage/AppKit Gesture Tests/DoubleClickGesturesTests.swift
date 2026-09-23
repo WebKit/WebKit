@@ -66,6 +66,56 @@ extension AppKitGesturesTests {
 extension AppKitGesturesTests.DoubleClick {
     // MARK: - DOM dblclick / detail==2 coverage
 
+    @Test(
+        .bug("https://webkit.org/b/324987")
+    )
+    func doubleClickReportsHeldButtonAndPressure() async throws {
+        try await loadHTML(dblclickHandler: true)
+
+        try await page.callJavaScript {
+            """
+            window.fieldLog = [];
+            for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "dblclick"]) {
+                document.addEventListener(type, event => {
+                    // Record only the second press -- what this test is about.
+                    if (event.detail !== 2)
+                        return;
+                    window.fieldLog.push(
+                        `${event.type}:${event.buttons}:${event.pressure ?? "-"}:${event.webkitForce}`
+                    );
+                });
+            }
+            """
+        }
+
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        await recap.play { composer in
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let fieldLog = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.fieldLog;
+            """
+        }
+
+        #expect(
+            fieldLog == [
+                "pointerdown:1:0.5:0",
+                "mousedown:1:-:1",
+                "pointerup:0:0:0",
+                "mouseup:0:-:0",
+                "dblclick:0:-:0",
+            ]
+        )
+    }
+
     @Test
     func doubleClickWithListenerFiresDblclickAndSelectsWord() async throws {
         // A dblclick listener and a word selection coexist (only smart magnification

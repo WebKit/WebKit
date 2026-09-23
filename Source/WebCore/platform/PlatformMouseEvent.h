@@ -80,6 +80,8 @@ public:
     Vector<PlatformMouseEvent> coalescedEvents() const { return m_coalescedEvents; }
     Vector<PlatformMouseEvent> predictedEvents() const { return m_predictedEvents; }
 
+    void setButtons(unsigned short buttons) { m_buttons = buttons; }
+
 #if PLATFORM(MAC)
     int eventNumber() const { return m_eventNumber; }
     int menuTypeForEvent() const { return m_menuTypeForEvent; }
