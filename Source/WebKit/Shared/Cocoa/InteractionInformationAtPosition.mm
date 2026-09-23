@@ -48,6 +48,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     bool isARIASlider,
     bool hasDirectionalResizeCursor,
     bool isInResizeControl,
+    bool isOverVideo,
     bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
     bool touchCalloutEnabled,
@@ -122,6 +123,7 @@ InteractionInformationAtPosition::InteractionInformationAtPosition(
     , isARIASlider(isARIASlider)
     , hasDirectionalResizeCursor(hasDirectionalResizeCursor)
     , isInResizeControl(isInResizeControl)
+    , isOverVideo(isOverVideo)
     , isNearMarkedText(isNearMarkedText)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(touchCalloutEnabled)

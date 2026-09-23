@@ -133,6 +133,31 @@ static bool isAnalyzableImageForLiveText(const WebKit::InteractionInformationAtP
     return info.isImage && info.image && info.hostImageOrVideoElementContext && !info.isAnimatedImage && !info.isContentEditable;
 }
 
+static bool representsSelectableContent(const WebKit::InteractionInformationAtPosition& info)
+{
+    return info.isSelectable() || info.isFocusableWithSelectableText();
+}
+
+static bool prefersDirectManipulation(const WebKit::InteractionInformationAtPosition& info)
+{
+    bool prefersInteraction = info.isRangeInput || info.isARIASlider || info.hasDirectionalResizeCursor || info.isInResizeControl;
+#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
+    prefersInteraction = prefersInteraction || info.isInteractiveModel;
+#endif
+    return prefersInteraction;
+}
+
+static bool representsSecondaryClickableElement(const WebKit::InteractionInformationAtPosition& info)
+{
+    if (prefersDirectManipulation(info))
+        return false;
+
+    if (representsSelectableContent(info))
+        return true;
+
+    return info.isOverVideo && info.selectability != WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement;
+}
+
 namespace WebKit {
 
 // The outcome of the image-analysis preflight, used to resolve the two image-analysis deferring
@@ -1158,11 +1183,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             }
 
             if (strongDeferring == strongSelf->_secondaryClickDeferringGestureRecognizer) {
-                const auto isSelectable = info.isSelectable() || info.isFocusableWithSelectableText();
+                const auto isSelectable = representsSelectableContent(info);
+                const auto prefersManipulation = prefersDirectManipulation(info);
 
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d (selectability=%hhu overEditableContent=%d)", isSelectable, static_cast<uint8_t>(info.selectability), info.isOverEditableContent);
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d prefersDirectManipulation=%d (selectability=%hhu overEditableContent=%d)", isSelectable, prefersManipulation, static_cast<uint8_t>(info.selectability), info.isOverEditableContent);
 
-                return !isSelectable && !overLiveTextImage;
+                return (!isSelectable || prefersManipulation) && !overLiveTextImage;
             }
 
             RELEASE_ASSERT_NOT_REACHED();
@@ -1221,18 +1247,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)_secondaryClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
-    auto request = [self _positionInformationRequestAtLocation:locationInViewCoordinates];
+    int radius = static_cast<int>(std::ceil([_secondaryClickGestureRecognizer allowableMovement]));
 
     const auto& information = _positionInformationManager->currentInformation();
 
-    bool requestIsValid = _positionInformationManager->currentIsValid(request);
-    bool isSelectable = information.isSelectable() || information.isFocusableWithSelectableText();
+    bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:radius];
+    bool isSecondaryClickable = representsSecondaryClickableElement(information);
     bool isOverSelectableText = information.isOverSelectableText;
 
-    // The secondary click owns selectable points that are not over actual text (e.g. the page
-    // background). Over a run of selectable text, the text selection manager should win so that a
-    // long press selects a word instead of synthesizing a context menu.
-    bool shouldBegin = requestIsValid && isSelectable && !isOverSelectableText;
+    // The secondary click owns points that are not over selectable text (e.g. the page background
+    // or a video player). Over a run of selectable text, the text selection manager should win so
+    // that a long press selects a word instead of synthesizing a context menu.
+    bool shouldBegin = requestIsValid && isSecondaryClickable && !isOverSelectableText;
 
     if (!requestIsValid)
         _positionInformationManager->invalidate();
@@ -1327,10 +1353,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     const auto& information = _positionInformationManager->currentInformation();
 
     // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
-    bool prefersInteraction = information.isRangeInput || information.isARIASlider || information.hasDirectionalResizeCursor || information.isInResizeControl;
-#if ENABLE(MODEL_ELEMENT_STAGE_MODE)
-    prefersInteraction = prefersInteraction || information.isInteractiveModel;
-#endif
+    bool prefersInteraction = prefersDirectManipulation(information);
     bool yieldToContent = requestIsValid && prefersInteraction;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(

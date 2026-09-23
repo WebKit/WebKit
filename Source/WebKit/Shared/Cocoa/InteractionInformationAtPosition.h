@@ -76,6 +76,7 @@ struct InteractionInformationAtPosition {
         bool isARIASlider,
         bool hasDirectionalResizeCursor,
         bool isInResizeControl,
+        bool isOverVideo,
         bool isNearMarkedText,
 #if PLATFORM(IOS_FAMILY)
         bool touchCalloutEnabled,
@@ -158,6 +159,8 @@ struct InteractionInformationAtPosition {
     bool hasDirectionalResizeCursor { false };
 
     bool isInResizeControl { false };
+
+    bool isOverVideo { false };
 
     bool isNearMarkedText { false };
 #if PLATFORM(IOS_FAMILY)

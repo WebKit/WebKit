@@ -51,6 +51,13 @@
         });
     }
 
+    // Suppress context menus so that a test which unexpectedly opens one fails instead of blocking on the menu.
+    window.contextMenuEventCount = 0;
+    document.addEventListener("contextmenu", e => {
+        window.contextMenuEventCount++;
+        e.preventDefault();
+    });
+
     function setValue(value) {
         value = Math.max(0, Math.min(maxValue, value));
         customSlider.setAttribute("aria-valuenow", value);

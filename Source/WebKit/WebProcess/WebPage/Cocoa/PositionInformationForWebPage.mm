@@ -469,23 +469,24 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
     if (CheckedPtr layerRenderer = dynamicDowncast<WebCore::RenderLayerModelObject>(renderer); layerRenderer && layerRenderer->hasLayer())
         info.isInResizeControl = layerRenderer->layer()->isPointInResizeControl(WebCore::roundedIntPoint(result.localPoint()));
 
-    if (!info.isRangeInput) {
-        constexpr auto sliderHitType = hitType | OptionSet {
-            WebCore::HitTestRequest::Type::CollectMultipleElements,
-            WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
-        };
-        const auto sliderResult = localMainFrame->eventHandler().hitTestResultAtPoint(contentsPoint, sliderHitType);
-        for (Ref node : sliderResult.listBasedTestResult()) {
-            const RefPtr element = dynamicDowncast<WebCore::Element>(node);
-            if (!element)
-                continue;
+    constexpr auto allElementsHitType = hitType | OptionSet {
+        WebCore::HitTestRequest::Type::CollectMultipleElements,
+        WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
+    };
+    const auto allElementsResult = localMainFrame->eventHandler().hitTestResultAtPoint(contentsPoint, allElementsHitType);
+    for (Ref node : allElementsResult.listBasedTestResult()) {
+        if (!info.isOverVideo)
+            info.isOverVideo = !!hostVideoElementIgnoringImageOverlay(node.get());
 
-            const auto ariaRole = element->attributeWithoutSynchronization(WebCore::HTMLNames::roleAttr);
-            if (WebCore::AccessibilityObject::ariaRoleToWebCoreRole(ariaRole) == WebCore::AccessibilityRole::Slider) {
-                info.isARIASlider = true;
-                break;
+        if (!info.isRangeInput && !info.isARIASlider) {
+            if (const RefPtr element = dynamicDowncast<WebCore::Element>(node)) {
+                const auto ariaRole = element->attributeWithoutSynchronization(WebCore::HTMLNames::roleAttr);
+                info.isARIASlider = WebCore::AccessibilityObject::ariaRoleToWebCoreRole(ariaRole) == WebCore::AccessibilityRole::Slider;
             }
         }
+
+        if (info.isOverVideo && (info.isRangeInput || info.isARIASlider))
+            break;
     }
 
     if (request.inputSource == WebEventInputSource::Automation)
