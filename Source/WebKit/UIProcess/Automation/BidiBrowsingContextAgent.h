@@ -70,6 +70,7 @@ private:
     enum class IncludeParentID: bool { No, Yes };
 
     void getNextTree(Vector<Ref<WebPageProxy>>&&, Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>, std::optional<uint64_t> maxDepth, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>>>&&);
+    Ref<Inspector::Protocol::BidiBrowsingContext::Info> createNavigableInfoWithoutChildren(const WebCore::FrameIdentifier&, const String& url);
     Ref<Inspector::Protocol::BidiBrowsingContext::Info> getNavigableInfo(const WebKit::FrameTreeNodeData&, std::optional<uint64_t> maxDepth, IncludeParentID);
     Inspector::Protocol::BidiBrowsingContext::BrowsingContext getBrowsingContextID(const WebCore::FrameIdentifier&) const;
 

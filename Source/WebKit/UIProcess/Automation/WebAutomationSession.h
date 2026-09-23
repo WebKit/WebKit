@@ -199,6 +199,7 @@ public:
     void contextCreatedForFrame(const WebFrameProxy&);
     void contextDestroyedForPage(const WebPageProxy&);
     void contextDestroyedForFrame(const WebFrameProxy&);
+    std::pair<String, String> clientWindowAndUserContextForPage(const WebPageProxy&) const;
     void setViewportForPage(WebPageProxy&, std::optional<int> width, std::optional<int> height, std::optional<double> devicePixelRatio, Inspector::CommandCallback<void>&&);
 #endif
     void willClosePage(const WebPageProxy&);

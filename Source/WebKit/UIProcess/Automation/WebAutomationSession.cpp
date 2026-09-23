@@ -1246,12 +1246,10 @@ void WebAutomationSession::emitContextCreatedEvent(const WebPageProxy& page)
     }
 }
 
-static std::pair<String, String> getClientWindowAndUserContext(const WebPageProxy& page)
+std::pair<String, String> WebAutomationSession::clientWindowAndUserContextForPage(const WebPageProxy& page) const
 {
     String clientWindow = makeString(page.identifier().toUInt64());
-    String userContext = "default"_s;
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281941 - Add support for reporting user context
-    return { clientWindow, userContext };
+    return { clientWindow, m_bidiProcessor->browserAgent().userContextIDForPage(page) };
 }
 
 WebPageProxy* WebAutomationSession::getOpenerPage(const WebPageProxy& page)
@@ -1291,7 +1289,7 @@ void WebAutomationSession::contextCreatedForFrame(const WebFrameProxy& frame)
     String userContext = "default"_s;
 
     if (RefPtr page = frame.page()) {
-        auto [windowId, contextId] = getClientWindowAndUserContext(*page);
+        auto [windowId, contextId] = clientWindowAndUserContextForPage(*page);
         clientWindow = windowId;
         userContext = contextId;
     }
@@ -1322,7 +1320,7 @@ void WebAutomationSession::recursivelyEmitContextCreatedEvent(const FrameTreeNod
         contextHandle = handleForWebFrameID(tree.info.frameID);
 
     String url = tree.info.request.url().string();
-    auto [clientWindow, userContext] = getClientWindowAndUserContext(*page);
+    auto [clientWindow, userContext] = clientWindowAndUserContextForPage(*page);
     auto children = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
     // FIXME: Use JSON null instead of string "null" when Inspector::Protocol supports RefPtr<String> or std::optional<String>
     String parentContextHandle = parentContext.value_or("null"_s);
@@ -1350,7 +1348,7 @@ void WebAutomationSession::contextDestroyedForPage(const WebPageProxy& page)
     if (RefPtr openerPage = this->getOpenerPage(page))
         originalOpenerHandle = handleForWebPageProxy(*openerPage);
 
-    auto [clientWindow, userContext] = getClientWindowAndUserContext(page);
+    auto [clientWindow, userContext] = clientWindowAndUserContextForPage(page);
 
     // Ensure the active realm is destroyed even if the WebProcess terminates first.
     if (auto realmID = m_bidiProcessor->scriptAgent().realmIdentifierForBrowsingContext(contextHandle))
@@ -1376,7 +1374,7 @@ void WebAutomationSession::contextDestroyedForFrame(const WebFrameProxy& frame)
     String userContext = "default"_s;
 
     if (RefPtr page = frame.page()) {
-        auto [windowId, contextId] = getClientWindowAndUserContext(*page);
+        auto [windowId, contextId] = clientWindowAndUserContextForPage(*page);
         clientWindow = windowId;
         userContext = contextId;
     }
