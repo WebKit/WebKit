@@ -1,0 +1,3 @@
+
+PASS setSinkId() requires a user gesture when SpeakerSelectionRequiresUserGesture is set.
+
