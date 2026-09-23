@@ -2,22 +2,22 @@ ninechars twenty_characters___
 
 PASS resolved width for width: calc-size(any, 357px)
 PASS resolved width for width: calc-size(any, 31%)
-FAIL resolved width for width: calc-size(max-content, 31%) assert_equals: expected "155px" but got "600px"
-FAIL resolved width for width: calc-size(fit-content, 72px) assert_equals: expected "72px" but got "500px"
+PASS resolved width for width: calc-size(max-content, 31%)
+PASS resolved width for width: calc-size(fit-content, 72px)
 PASS resolved width for width: calc-size(37px, 93px)
 PASS resolved width for width: calc-size(83px, size * 3)
-FAIL resolved width for width: calc-size(min-content, size / 2) assert_equals: expected "200px" but got "400px"
-FAIL resolved width for width: calc-size(max-content, size * 1.2) assert_equals: expected "720px" but got "600px"
-FAIL resolved width for width: calc-size(fit-content, size / 4 + 30px) assert_equals: expected "155px" but got "500px"
-FAIL resolved width for width: calc-size(stretch, size / 2 - 10%) assert_equals: expected "200px" but got "500px"
+PASS resolved width for width: calc-size(min-content, size / 2)
+PASS resolved width for width: calc-size(max-content, size * 1.2)
+PASS resolved width for width: calc-size(fit-content, size / 4 + 30px)
+PASS resolved width for width: calc-size(stretch, size / 2 - 10%)
 PASS resolved width for width: calc-size(30px, 15em)
 PASS resolved width for width: calc-size(calc-size(any, 30px), 15em)
 PASS resolved width for width: calc-size(calc-size(2in, 30px), 15em)
-FAIL resolved width for width: calc-size(calc-size(min-content, 30px), 15em) assert_equals: expected "300px" but got "400px"
+PASS resolved width for width: calc-size(calc-size(min-content, 30px), 15em)
 PASS resolved width for width: calc-size(calc-size(min-content, size), size)
 PASS resolved width for width: calc-size(auto, size)
-FAIL resolved width for width: calc-size(auto, size * 0.6 + 23px) assert_equals: expected "323px" but got "500px"
-FAIL resolved width for width: calc-size(fit-content, 0.5 * size) with container width 300px assert_equals: expected "200px" but got "400px"
-FAIL resolved width for width: calc-size(fit-content, 0.5 * size) with container width 500px assert_equals: expected "250px" but got "500px"
-FAIL resolved width for width: calc-size(fit-content, 0.5 * size) with container width 700px assert_equals: expected "300px" but got "600px"
+PASS resolved width for width: calc-size(auto, size * 0.6 + 23px)
+PASS resolved width for width: calc-size(fit-content, 0.5 * size) with container width 300px
+PASS resolved width for width: calc-size(fit-content, 0.5 * size) with container width 500px
+PASS resolved width for width: calc-size(fit-content, 0.5 * size) with container width 700px
 
