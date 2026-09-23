@@ -1298,7 +1298,6 @@ webkit.org/b/324338 [ Debug ] webaudio/silent-audio-interrupted-in-background.ht
 webkit.org/b/324822 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 webkit.org/b/324823 [ Debug ] webrtc/video-disabled-black.html [ Failure Pass ]
 webkit.org/b/324824 [ Debug ] imported/w3c/web-platform-tests/mimesniff/mime-types/parsing.any.worker.html [ Pass Timeout ]
-webkit.org/b/324826 inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Failure ]
 
 webkit.org/b/324838 inspector/timeline/setInstruments-programmatic-capture.html [ Crash Pass ]
 webkit.org/b/324838 inspector/timeline/timeline-event-TimerFire.html [ Crash Pass ]

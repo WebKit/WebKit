@@ -8,21 +8,11 @@ Checking all resolved breakpoint locations in a script.
 -- Running test case: Debugger.resolvedBreakpoint.dumpAllLocations.InlineScript
 
 INSERTING AT: 3:0
-PAUSES AT: 3:0
-      0    <body>
-      1        <button id="one">One</button>
-      2        <button id="two">Two</button>
--=>   3    |    <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
-      4        <script>
-      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
-      6        </script>
-
-INSERTING AT: 3:1
 PAUSES AT: 3:12
       0    <body>
       1        <button id="one">One</button>
       2        <button id="two">Two</button>
--=>   3     #   <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+-=>   3    #    <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
       4        <script>
       5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
@@ -120,21 +110,11 @@ PAUSES AT: 5:136
 
 
 INSERTING AT: 3:0
-PAUSES AT: 3:0
-      0    <body>
-      1        <button id="one">One</button>
-      2        <button id="two">Two</button>
--=>   3    |    <script>console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
-      4        <script>
-      5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
-      6        </script>
-
-INSERTING AT: 3:1
 PAUSES AT: 3:12
       0    <body>
       1        <button id="one">One</button>
       2        <button id="two">Two</button>
--=>   3     #   <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
+-=>   3    #    <script>|console.log("here 1");document.getElementById("one").addEventListener("click", (event) => { console.log("one"); console.log(event); });</script>
       4        <script>
       5        console.log("here 2");document.getElementById("two").addEventListener("click", (event) => { console.log("two"); console.log(event); });
       6        </script>
