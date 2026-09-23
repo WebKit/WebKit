@@ -853,7 +853,14 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
                 SkPaint paint = setupPaint();
                 // The shader matrix maps the tile image into layer space, so it needs to be taken into account here.
                 const auto sampling = SkiaUtilities::samplingOptionsForMatrix(SkMatrix::Concat(canvas.getLocalToDeviceAs3x3(), matrix));
-                paint.setShader(tileImage->makeShader(SkTileMode::kRepeat, SkTileMode::kRepeat, sampling, matrix));
+                // Clamp tiles that do not repeat, so bilinear sampling at an edge cannot pick up the opposite one.
+                auto tileMode = [](float tileExtent, float contentsExtent, float phase) {
+                    return (phase || tileExtent < contentsExtent) ? SkTileMode::kRepeat : SkTileMode::kClamp;
+                };
+                paint.setShader(tileImage->makeShader(
+                    tileMode(m_contentsTiling.size.width(), m_contentsRect.width(), m_contentsTiling.phase.width()),
+                    tileMode(m_contentsTiling.size.height(), m_contentsRect.height(), m_contentsTiling.phase.height()),
+                    sampling, matrix));
                 drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
             }
         }
