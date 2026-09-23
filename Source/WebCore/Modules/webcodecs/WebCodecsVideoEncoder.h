@@ -71,7 +71,7 @@ public:
 
 private:
     WebCodecsVideoEncoder(ScriptExecutionContext&, Init&&);
-    size_t maximumCodecOperationsEnqueued() const final { return 4; }
+    size_t maximumCodecOperationsEnqueued() const final { return 16; }
 
     // ActiveDOMObject.
     void stop() final;
