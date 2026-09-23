@@ -28,6 +28,7 @@ import Observation
 import Testing
 @_spi(Private) @_spi(Testing) import WebKit
 @_spi(Private) import _WebKit_SwiftUI
+private import TestWebKitAPILibrary
 
 // MARK: Supporting test types
 

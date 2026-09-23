@@ -22,6 +22,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import struct Swift.String
 
 protocol TestRunner {
     typealias Configuration = TestRunnerConfiguration

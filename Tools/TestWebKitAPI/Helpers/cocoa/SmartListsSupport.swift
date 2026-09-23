@@ -25,6 +25,7 @@
 import Foundation
 @_spi(Testing) import WebKit
 import struct Swift.String
+private import TestWebKitAPILibrary.Helpers.cocoa.SmartListsSupport
 
 @objc
 @implementation

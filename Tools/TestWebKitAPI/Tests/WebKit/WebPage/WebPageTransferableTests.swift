@@ -29,6 +29,7 @@ import _WebKit_SwiftUI
 import UniformTypeIdentifiers
 import SwiftUI
 import struct Swift.String
+private import TestWebKitAPILibrary
 
 @MainActor
 struct WebPageTransferableTests {

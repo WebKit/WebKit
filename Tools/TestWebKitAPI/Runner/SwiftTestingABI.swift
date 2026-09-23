@@ -23,6 +23,7 @@
 
 import Foundation
 import Testing
+import struct Swift.String
 
 enum SwiftTestingABI {
     typealias EntryPoint =

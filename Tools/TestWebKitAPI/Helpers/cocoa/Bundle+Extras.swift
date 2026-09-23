@@ -23,7 +23,8 @@
 import Foundation
 
 extension Bundle {
-    static var testResources: Bundle {
+    /// The bundle that contains the resources for testing in `TestWebKitAPIResources`.
+    public static var testResources: Bundle {
         guard let url = Bundle.main.url(forResource: "TestWebKitAPIResources", withExtension: "bundle") else {
             fatalError()
         }

@@ -31,6 +31,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PDFKit/PDFKit.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
 @class UIColor;

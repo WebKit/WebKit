@@ -25,6 +25,7 @@
 
 import Testing
 @_spi(Testing) import WebKit
+private import TestWebKitAPILibrary
 
 private struct NeverLoadingSchemeHandler: URLSchemeHandler {
     // This force unwrap is safe because the scheme is a static String.

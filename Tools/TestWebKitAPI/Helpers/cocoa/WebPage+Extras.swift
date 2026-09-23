@@ -24,13 +24,15 @@
 #if ENABLE_SWIFTUI
 
 import Foundation
-@_spi(Testing) @_spi(CrossImportOverlay) import WebKit
+@_spi(Testing) @_spi(CrossImportOverlay) public import WebKit
 import WebKit_Private.WKPreferencesPrivate
 import WebKit_Private.WKWebViewPrivateForTesting
-import struct Swift.String
+public import struct Swift.String
+private import TestWebKitAPILibrary.Helpers.cocoa.TestWKWebView
 
 extension WebPage {
-    func waitForNextPresentationUpdate() async {
+    /// Suspends execution of the current context until the next presentation update has occurred for this page.
+    public func waitForNextPresentationUpdate() async {
         await withCheckedContinuation { continuation in
             backingWebView._do(afterNextPresentationUpdate: {
                 continuation.resume()
@@ -38,7 +40,12 @@ extension WebPage {
         }
     }
 
-    func setWebFeature(_ key: String, enabled: Bool) {
+    /// Configures a specific preference for the engine to use.
+    ///
+    /// - Parameters:
+    ///   - key: The preference key value.
+    ///   - enabled: If the preference should be enabled or disabled.
+    public func setWebFeature(_ key: String, enabled: Bool) {
         guard let feature = WKPreferences._features().first(where: { $0.key == key }) else {
             fatalError()
         }
@@ -46,11 +53,17 @@ extension WebPage {
         backingWebView.configuration.preferences._setEnabled(enabled, for: feature)
     }
 
-    func renderTree() async throws -> String {
+    /// Produces a String representing the  current visual state of the web content as a tree of rendering elements.
+    ///
+    /// - Returns: The representative render tree for the current web content.
+    public func renderTree() async throws -> String {
         try await backingWebView._getRenderTreeAsString()
     }
 
-    func insertText(_ text: String) async {
+    /// Inserts text into the web page.
+    ///
+    /// - Parameter text: The text to insert.
+    public func insertText(_ text: String) async {
         #if os(macOS)
         backingWebView.insertText(text)
         #else
@@ -58,6 +71,7 @@ extension WebPage {
         #endif
         await waitForNextPresentationUpdate()
     }
+
 }
 
 #endif // ENABLE_SWIFTUI

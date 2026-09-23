@@ -25,6 +25,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
 
@@ -67,3 +69,5 @@ constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
 
 #endif
+
+#endif // __cplusplus

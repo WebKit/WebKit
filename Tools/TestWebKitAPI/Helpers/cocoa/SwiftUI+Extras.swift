@@ -21,16 +21,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import SwiftUI
+public import SwiftUI
 
 extension Font {
     #if canImport(UIKit)
-    typealias CocoaAttributes = AttributeScopes.UIKitAttributes
+    /// The attributes corresponding to the Cocoa-equivalent type.
+    public typealias CocoaAttributes = AttributeScopes.UIKitAttributes
     #else
-    typealias CocoaAttributes = AttributeScopes.AppKitAttributes
+    /// The attributes corresponding to the Cocoa-equivalent type.
+    public typealias CocoaAttributes = AttributeScopes.AppKitAttributes
     #endif
 
-    init?(_ font: CocoaAttributes.FontAttribute.Value?) {
+    /// Converts a UIKit or AppKit font to a SwiftUI Font.
+    ///
+    /// - Parameter font: The font to convert.
+    public init?(_ font: CocoaAttributes.FontAttribute.Value?) {
         guard let font else {
             return nil
         }

@@ -569,9 +569,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		07A40C282F8CB37A0003E8D7 /* Exceptions for "TestWebKitAPILibrary" folder in "TestWebKitAPILibrary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TestWebKitAPILibrary.swift,
+			);
+			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
+		};
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
@@ -583,10 +591,11 @@
 			};
 			membershipExceptions = (
 				"cocoa/AppKit+Extras.swift",
-				cocoa/AppKitGesturesSupport.swift,
+				"cocoa/Bundle+Extras.swift",
 				"cocoa/Foundation+Extras.swift",
 				cocoa/HTTPServer.mm,
 				cocoa/SmartListsSupport.swift,
+				"cocoa/SwiftUI+Extras.swift",
 				cocoa/TestCocoaImageAndCocoaColor.mm,
 				cocoa/TestContextMenuDriver.mm,
 				cocoa/TestElementFullscreenDelegate.mm,
@@ -626,7 +635,6 @@
 				mac/TestInspectorBar.mm,
 				mac/VirtualGamepad.mm,
 				mac/WebKitAgnosticTest.mm,
-				Testing.swift,
 			);
 			target = 7CCE7E8B1A41144E00447C4C /* TestWebKitAPILibrary */;
 		};
@@ -644,16 +652,6 @@
 				cocoa/UtilitiesCocoa.mm,
 			);
 			target = 7B9FC39428A26137007570E7 /* TestIPC */;
-		};
-		07C907B62F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPIBundle" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"cocoa/Bundle+Extras.swift",
-				"cocoa/Foundation+Extras.swift",
-				"cocoa/SwiftUI+Extras.swift",
-				cocoa/TestPDFDocument.swift,
-			);
-			target = A17C582D2C9B3EAD009DD0B5 /* TestWebKitAPIBundle */;
 		};
 		07C907B72F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWGSL" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -930,7 +928,6 @@
 				WebKit/WKWebView/AdvancedPrivacyProtections.mm,
 				WebKit/WKWebView/AllowInlinePlaybackInDesktopClassBrowsing.mm,
 				WebKit/WKWebView/AnimationControl.mm,
-				WebKit/WKWebView/AppKitGestures.mm,
 				WebKit/WKWebView/DictationStreamingOpacity.mm,
 				WebKit/WKWebView/FullscreenLifecycle.mm,
 				WebKit/WKWebView/GetUserMedia.mm,
@@ -1309,6 +1306,7 @@
 		07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WebPage/URLSchemeHandlerTests.swift,
 				WebKit/WebPage/WebPageNavigationTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
@@ -1532,7 +1530,6 @@
 				07C907B32F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPILibrary" target */,
 				07C907B42F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWTFLibrary" target */,
 				07C907B52F820907003A09D8 /* Exceptions for "Helpers" folder in "TestIPC" target */,
-				07C907B62F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPIBundle" target */,
 				07C907B72F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWGSL" target */,
 				07C907B82F820907003A09D8 /* Exceptions for "Helpers" folder in "InjectedBundleTestWebKitAPI" target */,
 				07C907B92F820907003A09D8 /* Exceptions for "Helpers" folder in "WebProcessPlugIn" target */,
@@ -1553,6 +1550,9 @@
 		};
 		07C907D82F820949003A09D8 /* TestWebKitAPILibrary */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				07A40C282F8CB37A0003E8D7 /* Exceptions for "TestWebKitAPILibrary" folder in "TestWebKitAPILibrary" target */,
+			);
 			path = TestWebKitAPILibrary;
 			sourceTree = "<group>";
 		};

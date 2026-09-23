@@ -22,14 +22,19 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import struct Swift.String
 import struct Foundation.URL
+import struct Swift.String
 
 #if compiler(>=6.2)
 
-@available(macOS 15.0, iOS 18.0, *)
 extension RangeReplaceableCollection {
-    init<Failure>(
+    /// Asynchronously converts an AsyncSequence to a non-async Sequence.
+    ///
+    /// - Parameters:
+    ///   - sequence: The async sequence to convert.
+    ///   - isolation: The current isolation context.
+    /// - Throws: An error of type `Failure` if the async sequence throws.
+    public init<Failure>(
         _ sequence: some AsyncSequence<Element, Failure>,
         isolation: isolated (any Actor)? = #isolation
     ) async throws(Failure) where Failure: Error {
@@ -42,13 +47,41 @@ extension RangeReplaceableCollection {
     }
 }
 
-@available(macOS 15.0, iOS 18.0, *)
 extension AsyncSequence {
-    func wait(isolation: isolated (any Actor)? = #isolation) async throws(Failure) {
+    /// Waits for the current sequence to terminate or throw a failure.
+    ///
+    /// If the sequence is indefinite, this function will never return.
+    public func wait(isolation: isolated (any Actor)? = #isolation) async throws(Failure) {
         // Safety: this is actually safe; false positive is rdar://154775389
         for try await unsafe _ in self {
         }
     }
+}
+
+/// Repeatedly invokes a condition until it evaluates to true or until a timeout has been reached.
+///
+/// - Parameters:
+///   - timeout: The timeout to wait until before exiting this function and throwing an Error.
+///   - interval: The duration to wait between consecutive evaluations of the condition
+///   - function: The function of the source location where this is called.
+///   - line: The line number of the source location where this is called.
+///   - condition: The predicate condition to evaluate.
+/// - Throws: An Error if the condition throws an Error, or if the timeout duration is reached.
+public nonisolated(nonsending) func waitUntil(
+    timeout: Duration = .seconds(10),
+    interval: Duration = .milliseconds(100),
+    function: StaticString = #function,
+    line: Int = #line,
+    condition: () async throws -> Bool,
+) async throws {
+    let deadline = ContinuousClock.now + timeout
+    while ContinuousClock.now < deadline {
+        if try await condition() {
+            return
+        }
+        try await Task.sleep(for: interval)
+    }
+    throw CancellationError()
 }
 
 #endif // compiler(>=6.2)

@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "../Helpers/cocoa/TestPDFDocument.h"
 #import "../Tests/WTF/cocoa/SwiftCxxInteropTestbed.h"
-#import "../Helpers/cocoa/SmartListsSupport.h"
-#import "../Helpers/cocoa/TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
