@@ -52,52 +52,68 @@ class Manager(object):
         self._stream = stream
 
     @staticmethod
-    def _test_list_from_output(output, prefix=''):
+    def _test_list_from_output(output: str, prefix='') -> list[str]:
         result = []
         current_test_suite = None
         for line in output.split('\n'):
-            line = line.split("#")[0]  # Value-parametrized tests contain #.
-            striped_line = line.lstrip().rstrip()
-            if not striped_line:
-                continue
-
-            if striped_line[-1] == '.':
-                current_test_suite = striped_line[:-1]
+            if prefix and line.startswith(prefix) and '/' in line:
+                # this implies it's a Swift Test
+                result.append(line)
             else:
-                striped_line = striped_line.lstrip()
-                if ' ' in striped_line:
+                line = line.split("#")[0]  # Value-parametrized tests contain #.
+                striped_line = line.lstrip().rstrip()
+                if not striped_line:
                     continue
-                val = f'{prefix}{current_test_suite}.{striped_line}'
-                if val not in result:
-                    result.append(val)
+
+                if striped_line[-1] == '.':
+                    current_test_suite = striped_line[:-1]
+                else:
+                    striped_line = striped_line.lstrip()
+                    if ' ' in striped_line:
+                        continue
+                    val = f'{prefix}{current_test_suite}.{striped_line}'
+                    if val not in result:
+                        result.append(val)
         return result
 
     @staticmethod
     def _find_test_subset(superset, arg_filter):
         result = []
         for arg in arg_filter:
-            # Might match <binary>.<suite>.<test> or just <suite>.<test>
-            arg_re = re.compile(f'^{arg.replace("*", ".*")}$')
+            escaped = re.escape(arg).replace(r'\*', '.*')
+            arg_re = re.compile(f'^{escaped}$')
             for test in superset:
                 if arg_re.match(test):
                     result.append(test)
                     continue
 
-                split_test = test.split('.')
-                if len(split_test) == 1:
+                first_dot = test.find('.')
+                if first_dot == -1:
                     continue
-                if arg_re.match('.'.join(split_test[1:])):
-                    result.append(test)
-                    continue
-                if arg_re.match('.'.join(split_test[:-1])):
+
+                # Find the last separator (either '.' or '/')
+                last_dot = test.rfind('.')
+                last_slash = test.rfind('/')
+                last_sep = max(last_dot, last_slash)
+
+                # Without binary prefix
+                without_binary = test[first_dot + 1:]
+                if arg_re.match(without_binary):
                     result.append(test)
                     continue
 
-                if len(split_test) == 2:
-                    continue
-                if arg_re.match('.'.join(split_test[1:-1])):
-                    result.append(test)
-                    continue
+                # Without test function suffix
+                if last_sep > first_dot:
+                    without_test = test[:last_sep]
+                    if arg_re.match(without_test):
+                        result.append(test)
+                        continue
+
+                    # Just the suite (middle part)
+                    suite_only = test[first_dot + 1:last_sep]
+                    if arg_re.match(suite_only):
+                        result.append(test)
+                        continue
         return result
 
     def _collect_tests(self, args):

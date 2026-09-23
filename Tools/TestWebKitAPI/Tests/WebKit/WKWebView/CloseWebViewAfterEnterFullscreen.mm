@@ -74,6 +74,8 @@ TEST(CloseWebViewAfterEnterFullscreen, VideoFullscreen)
 
     // Should not crash:
     [webView _close];
+
+    TestWebKitAPI::Util::runFor(0.5_s);
 }
 
 
@@ -94,6 +96,8 @@ TEST(CloseWebViewAfterEnterFullscreen, ElementFullscreen)
 
     // Should not crash:
     [webView _close];
+
+    TestWebKitAPI::Util::runFor(0.5_s);
 }
 
 } // namespace TestWebKitAPI

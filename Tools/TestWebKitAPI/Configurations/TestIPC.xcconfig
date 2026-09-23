@@ -44,9 +44,11 @@ WK_BROWSERENGINEKIT_LDFLAGS[sdk=appletv*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=watch*] =
 WK_BROWSERENGINEKIT_LDFLAGS[sdk=xr*] =
 
-OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers $(WK_PGO_GEN_FLAGS);
+OTHER_LDFLAGS = $(inherited) $(WK_UIKITMACHELPER_LDFLAGS) $(WK_BROWSERENGINEKIT_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH)) -framework UniformTypeIdentifiers -framework Testing $(WK_PGO_GEN_FLAGS);
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon -framework CoreServices -framework IOSurface -framework CoreVideo;
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics -framework MobileCoreServices -framework UIKit -framework CoreText -framework IOSurface -framework CoreVideo;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 
 STRIP_STYLE = debugging;
 

@@ -32,11 +32,13 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) BUILDING_TEST_WTF GTEST_API_=
 WK_UIKITMACHELPER_LDFLAGS = $(WK_UIKITMACHELPER_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_UIKITMACHELPER_LDFLAGS_maccatalyst = -framework UIKitMacHelper;
 
-OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWTF.a $(WK_UIKITMACHELPER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) -framework Testing -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWTF.a $(WK_UIKITMACHELPER_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWTF application.
 OTHER_LDFLAGS_PLATFORM_cocoatouch = -framework CoreGraphics;
+
+LD_RUNPATH_SEARCH_PATHS = "@loader_path";
 
 STRIP_STYLE = debugging;
 

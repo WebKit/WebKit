@@ -32,3 +32,4 @@ GTEST_LDFLAGS = -lgtest;
 
 SWIFT_OBJC_BRIDGING_HEADER = Runner/TestWebKitAPI-Bridging-Header.h;
 
+OTHER_LDFLAGS = $(inherited) -framework Testing;

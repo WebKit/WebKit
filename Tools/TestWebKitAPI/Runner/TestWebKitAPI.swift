@@ -102,8 +102,9 @@ struct TestWebKitAPI {
         let configuration = TestRunner.Configuration(parsing: CommandLine.arguments)
 
         let passedGTests = try await GoogleTestsController.shared.run(with: configuration)
+        let passedSwiftTests = try await SwiftTestsController.shared.run(with: configuration)
 
-        exit(passedGTests ? EXIT_SUCCESS : EXIT_FAILURE)
+        exit(passedGTests && passedSwiftTests ? EXIT_SUCCESS : EXIT_FAILURE)
     }
 
     static func main() async throws {

@@ -569,6 +569,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
+			);
+			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
+		};
 		07C907B32F820907003A09D8 /* Exceptions for "Helpers" folder in "TestWebKitAPILibrary" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			additionalCompilerFlagsByRelativePath = {
@@ -1560,6 +1567,7 @@
 				07C913DA2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPILibrary" target */,
 				07C913DB2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWTFLibrary" target */,
 				07C913DC2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestIPC" target */,
+				07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */,
 				07C913DD2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIApp" target */,
 				07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */,
 				07C913DF2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWGSL" target */,
@@ -2005,6 +2013,7 @@
 			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "TestWebKitAPI" */;
 			buildPhases = (
 				A1508C552DAF1F8000C3E213 /* Process Entitlements */,
+				0777713A2F887DCE00A1C903 /* Embed Testing.framework */,
 				8DD76F990486AA7600D96B5E /* Sources */,
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
 			);
@@ -2250,6 +2259,27 @@
 				"if [ \"${ACTION}\" = installhdrs ]",
 				"then touch \"${DERIVED_FILES_DIR}/generate-platform-args.d\"",
 				"else \"${SCRIPT_INPUT_FILE_0}\"",
+				"fi",
+				"",
+			);
+		};
+		0777713A2F887DCE00A1C903 /* Embed Testing.framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			inputPaths = (
+				"$(PLATFORM_DIR)/Developer/Library/Frameworks/Testing.framework",
+				"$(PLATFORM_DIR)/Developer/usr/lib/lib_TestingInterop.dylib",
+			);
+			name = "Embed Testing.framework";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/Testing.framework",
+				"$(BUILT_PRODUCTS_DIR)/lib_TestingInterop.dylib",
+			);
+			shellPath = /bin/sh;
+			shellScript = (
+				"ditto \"${PLATFORM_DIR}/Developer/Library/Frameworks/Testing.framework\" \"${BUILT_PRODUCTS_DIR}/Testing.framework\"",
+				"",
+				"if [ \"${USE_INTERNAL_SDK}\" = \"YES\" ] && [ -e \"${PLATFORM_DIR}/Developer/usr/lib/lib_TestingInterop.dylib\" ]; then",
+				"    ditto \"${PLATFORM_DIR}/Developer/usr/lib/lib_TestingInterop.dylib\" \"${BUILT_PRODUCTS_DIR}/lib_TestingInterop.dylib\"",
 				"fi",
 				"",
 			);

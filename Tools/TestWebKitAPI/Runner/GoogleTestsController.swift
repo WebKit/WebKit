@@ -73,7 +73,7 @@ extension GoogleTestsController {
     }
 }
 
-func withUnsafeMutableCStyleArguments<R>(
+private func withUnsafeMutableCStyleArguments<R>(
     _ arguments: some Sequence<String>,
     _ body: (_ argc: Int32, _ argv: UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>) throws -> R
 ) rethrows -> R {
