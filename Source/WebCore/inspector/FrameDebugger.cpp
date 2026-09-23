@@ -78,6 +78,14 @@ void FrameDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
+    // Undo attachDebugger(), skipping global objects it left to another debugger (detach() asserts membership).
+    Ref windowProxy = m_frame->windowProxy();
+    for (auto& jsWindowProxy : windowProxy->jsWindowProxiesAsVector()) {
+        auto* globalObject = jsWindowProxy->window();
+        if (globalObject && isAttached(globalObject))
+            detach(globalObject, JSC::Debugger::TerminatingDebuggingSession);
+    }
+
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }

@@ -95,6 +95,8 @@ WK_EXPORT void WKPageSetAllowsRemoteInspection(WKPageRef page, bool allow);
 
 WK_EXPORT void WKPageShowWebInspectorForTesting(WKPageRef page);
 
+WK_EXPORT void WKPageDisconnectInspectorFrameTargetForTesting(WKPageRef page, WKFrameHandleRef frame);
+
 WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
 WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartMedia);
 

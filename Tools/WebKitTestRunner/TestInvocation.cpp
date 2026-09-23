@@ -33,6 +33,7 @@
 #include "TestController.h"
 #include "UIScriptController.h"
 #include "WebCoreTestSupport.h"
+#include <WebKit/WKCast.h>
 #include <WebKit/WKContextPrivate.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKDictionary.h>
@@ -669,6 +670,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetWindowIsKey")) {
         TestController::singleton().mainWebView()->setWindowIsKey(booleanValue(messageBody));
+        return nullptr;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DisconnectFrameInspectorTarget")) {
+        WKPageDisconnectInspectorFrameTargetForTesting(TestController::singleton().mainWebView()->page(), dynamic_wk_cast<WKFrameHandleRef>(messageBody));
         return nullptr;
     }
 

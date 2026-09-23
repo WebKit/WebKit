@@ -46,6 +46,7 @@ TYPE_CHECKER(WKContextMenuItemRef, WKContextMenuItemGetTypeID);
 TYPE_CHECKER(WKDataRef, WKDataGetTypeID);
 TYPE_CHECKER(WKDictionaryRef, WKDictionaryGetTypeID);
 TYPE_CHECKER(WKDoubleRef, WKDoubleGetTypeID);
+TYPE_CHECKER(WKFrameHandleRef, WKFrameHandleGetTypeID);
 TYPE_CHECKER(WKJSHandleRef, WKJSHandleGetTypeID);
 TYPE_CHECKER(WKStringRef, WKStringGetTypeID);
 TYPE_CHECKER(WKUInt64Ref, WKUInt64GetTypeID);

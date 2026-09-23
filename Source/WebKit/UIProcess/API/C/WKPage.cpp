@@ -91,6 +91,7 @@
 #include "WebOpenPanelResultListenerProxy.h"
 #include "WebPageDiagnosticLoggingClient.h"
 #include "WebPageGroup.h"
+#include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyTesting.h"
@@ -3022,6 +3023,18 @@ void WKPageShowWebInspectorForTesting(WKPageRef pageRef)
     RefPtr<WebInspectorUIProxy> inspector = toImpl(pageRef)->inspector();
     inspector->markAsUnderTest();
     inspector->show();
+}
+
+void WKPageDisconnectInspectorFrameTargetForTesting(WKPageRef pageRef, WKFrameHandleRef frameHandleRef)
+{
+    if (!frameHandleRef)
+        return;
+
+    auto frameID = toImpl(frameHandleRef)->frameID();
+    if (!frameID)
+        return;
+
+    protect(toImpl(pageRef))->inspectorController().disconnectFrameTargetForTesting(*frameID);
 }
 
 void WKPageSetMediaVolume(WKPageRef pageRef, float volume)

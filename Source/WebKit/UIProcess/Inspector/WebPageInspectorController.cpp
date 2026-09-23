@@ -593,4 +593,15 @@ void WebPageInspectorController::browserExtensionsDisabled(HashSet<String>&& ext
         enabledBrowserAgent->extensionsDisabled(WTF::move(extensionIDs));
 }
 
+// Unlike closing the inspector, this leaves the page target and other frame targets connected.
+void WebPageInspectorController::disconnectFrameTargetForTesting(WebCore::FrameIdentifier frameID)
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    if (!frame)
+        return;
+
+    if (CheckedPtr target = m_targets.get(getTargetID(*frame)))
+        target->disconnect();
+}
+
 } // namespace WebKit

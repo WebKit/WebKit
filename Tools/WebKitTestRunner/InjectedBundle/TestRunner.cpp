@@ -482,6 +482,12 @@ void TestRunner::closeWebInspector()
     WKBundlePageCloseInspectorForTest(page());
 }
 
+void TestRunner::disconnectFrameInspectorTarget(JSContextRef context)
+{
+    // Synchronous so that the disconnect lands before this returns, while breakpoint evaluation is still running.
+    postSynchronousPageMessage("DisconnectFrameInspectorTarget", adoptWK(WKBundleFrameCreateFrameHandle(WKBundleFrameForJavaScriptContext(context))));
+}
+
 void TestRunner::evaluateInWebInspector(JSStringRef script)
 {
     WKBundlePageEvaluateScriptInInspectorForTest(page(), toWK(script).get());

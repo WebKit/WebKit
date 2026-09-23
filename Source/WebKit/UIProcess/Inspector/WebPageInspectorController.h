@@ -102,6 +102,8 @@ public:
 
     void setShowPaintRects(bool);
 
+    void disconnectFrameTargetForTesting(WebCore::FrameIdentifier);
+
 private:
     WebPageAgentContext NODELETE webPageAgentContext();
     void createLazyAgents();
