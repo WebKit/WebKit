@@ -44,6 +44,8 @@
 #include "DownloadProxyMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "GPUProcessMessages.h"
+#include "GPUProcessProxy.h"
 #include "ITPThirdPartyData.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadedWebArchive.h"
@@ -2170,6 +2172,20 @@ void NetworkProcessProxy::installMockParentalControlsURLFilterForTesting(Vector<
 void NetworkProcessProxy::flushNetworkProcessIPC(CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::FlushNetworkProcessIPC(), WTF::move(completionHandler));
+}
+
+void NetworkProcessProxy::authorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier>&& transferIdentifiers, WebCore::ProcessIdentifier destinationProcess, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(GPU_PROCESS)
+    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
+    if (!gpuProcess)
+        return completionHandler();
+    gpuProcess->sendWithAsyncReply(Messages::GPUProcess::AuthorizeImageBufferTransfers(WTF::move(transferIdentifiers), destinationProcess), WTF::move(completionHandler));
+#else
+    UNUSED_PARAM(transferIdentifiers);
+    UNUSED_PARAM(destinationProcess);
+    completionHandler();
+#endif
 }
 
 void NetworkProcessProxy::receivedQualifiedServerTrust(WebKit::WebPageProxyIdentifier webPageID, WebCore::CertificateInfo&& serverTrust, WebCore::CertificateInfo&& qualifiedServerTrust)

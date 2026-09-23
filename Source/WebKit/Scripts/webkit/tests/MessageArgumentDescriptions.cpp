@@ -538,6 +538,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::OpaqueOriginIdentifier"_s,
         "WebCore::PendingNavigateEventIdentifier"_s,
         "WebCore::PageIdentifier"_s,
+        "WebCore::ImageBufferTransferIdentifierID"_s,
         "WebCore::PlatformLayerIdentifierID"_s,
         "WebCore::PlaybackTargetClientContextID"_s,
         "WebCore::NonSerializedDataIdentifier"_s,

@@ -24,6 +24,7 @@
 additional_forward_declaration: namespace WebCore { using BackForwardFrameItemIdentifierID = ObjectIdentifier<BackForwardFrameItemIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using BackForwardItemIdentifierID = ObjectIdentifier<BackForwardItemIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using DOMCacheIdentifierID = AtomicObjectIdentifier<DOMCacheIdentifierType>; }
+additional_forward_declaration: namespace WebCore { using ImageBufferTransferIdentifierID = AtomicObjectIdentifier<ImageBufferTransferIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using MediaSessionIdentifier = ObjectIdentifier<MediaSessionIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using OpaqueOriginIdentifier = AtomicObjectIdentifier<OpaqueOriginIdentifierType>; }
 additional_forward_declaration: namespace WebCore { using PageIdentifier = ObjectIdentifier<PageIdentifierType>; }
@@ -59,6 +60,11 @@ header: <WebCore/ProcessQualified.h>
 
 [Alias=class ProcessQualified<PlatformLayerIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::PlatformLayerIdentifier {
     WebCore::PlatformLayerIdentifierID object();
+    WebCore::ProcessIdentifier processIdentifier();
+};
+
+[Alias=class ProcessQualified<ImageBufferTransferIdentifierID>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebCore::ImageBufferTransferIdentifier {
+    WebCore::ImageBufferTransferIdentifierID object();
     WebCore::ProcessIdentifier processIdentifier();
 };
 

@@ -79,6 +79,10 @@
 #include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"
 #include "WebProcessCreationParameters.h"
+#if ENABLE(GPU_PROCESS)
+#include "RemoteImageBufferProxy.h"
+#endif
+#include <WebCore/ImageBuffer.h>
 #include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
@@ -436,7 +440,7 @@ void WebProcess::initializeProcess(const AuxiliaryProcessInitializationParameter
     }
 
     MessagePortChannelProvider::setSharedProvider(WebMessagePortChannelProvider::singleton());
-    
+
     platformInitializeProcess(parameters);
     updateCPULimit();
 }

@@ -3314,6 +3314,14 @@ header: <WebCore/ImageBufferParameters.h>
     WebCore::RenderingPurpose purpose;
 };
 
+header: <WebCore/ImageBuffer.h>
+[CustomHeader] struct WebCore::ImageBufferTransferHandle {
+    WebCore::ImageBufferTransferIdentifier identifier;
+    WebCore::ImageBufferParameters parameters;
+    WebCore::RenderingMode renderingMode;
+    size_t memoryCost;
+};
+
 [RValue] class WebCore::ProcessIdentity {
 #if HAVE(TASK_IDENTITY_TOKEN)
     MachSendRight m_taskIdToken;
@@ -6037,6 +6045,7 @@ struct WebCore::SerializedScriptValueInternals {
 #endif
     uint64_t exposedMessagePortCount;
     std::optional<WebCore::NonSerializedDataToken> nonSerializedDataToken;
+    Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
     [NotSerialized] Vector<WebCore::FileSystemHandleKeepAlive> fileSystemHandleKeepAlives;
 #if ENABLE(WEB_CODECS)
     [NotSerialized] Vector<WebCore::WebCodecsVideoFrameData> serializedVideoFrames;
@@ -6054,7 +6063,6 @@ struct WebCore::SerializedScriptValueInternals {
     [NotSerialized] Vector<std::unique_ptr<WebCore::MediaStreamTrackHandle::DataHolder>> detachedMediaStreamTrackHandles;
 #endif
     [NotSerialized] std::unique_ptr<Vector<JSC::ArrayBufferContents>> sharedBufferContentsArray;
-    [NotSerialized] Vector<std::optional<WebCore::DetachedImageBitmap>> detachedImageBitmaps;
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
     [NotSerialized] Vector<std::unique_ptr<WebCore::DetachedOffscreenCanvas>> detachedOffscreenCanvases;
     [NotSerialized] Vector<Ref<WebCore::OffscreenCanvas>> inMemoryOffscreenCanvases;
@@ -6066,6 +6074,15 @@ struct WebCore::SerializedScriptValueInternals {
 #endif
     [NotSerialized] Vector<WebCore::URLKeepingBlobAlive> blobHandles;
     [NotSerialized] uint64_t memoryCost;
+};
+
+header: <WebCore/ImageBitmap.h>
+[CustomHeader] class WebCore::DetachedImageBitmap {
+    std::optional<WebCore::ImageBufferTransferHandle> transferHandle();
+    bool originClean();
+    bool premultiplyAlpha();
+    bool forciblyPremultiplyAlpha();
+    WebCore::AlphaPremultiplication bufferAlphaFormat();
 };
 
 [RefCounted] class WebCore::SerializedScriptValue {

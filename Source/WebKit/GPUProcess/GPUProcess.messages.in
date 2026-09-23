@@ -117,6 +117,8 @@ messages -> GPUProcess : AuxiliaryProcess {
 
     SetNowPlayingFallbackSession(std::optional<WebCore::QualifiedMediaSessionIdentifier> session)
     WithdrawNowPlayingCandidate(WebCore::QualifiedPageIdentifier page)
+
+    AuthorizeImageBufferTransfers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers, WebCore::ProcessIdentifier destinationProcess) -> ()
 }
 
 #endif // ENABLE(GPU_PROCESS)

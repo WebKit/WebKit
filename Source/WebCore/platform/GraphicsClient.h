@@ -35,6 +35,8 @@ class GraphicsContextGL;
 class ImageBuffer;
 class SerializedImageBuffer;
 
+struct ImageBufferTransferHandle;
+
 struct GraphicsContextGLAttributes;
 
 struct ImageBufferFormat;
@@ -67,6 +69,13 @@ private:
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;
+
+    // Called by passing GraphicsClient into ImageBuffer::createFromTransferHandle().
+    // Pure virtual rather than defaulted to nullptr here: a body would instantiate
+    // ~RefPtr<ImageBuffer> where ImageBuffer is still incomplete, and defining it out of line
+    // would make it the key function, putting the vtable in WebCore where subclasses in WebKit
+    // can't link against it.
+    virtual RefPtr<WebCore::ImageBuffer> createImageBufferFromTransferHandle(const ImageBufferTransferHandle&) = 0;
 
     friend class ImageBuffer;
     friend class SerializedImageBuffer;

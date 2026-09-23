@@ -32,6 +32,7 @@
 #include "Filter.h"
 #include "FilterImage.h"
 #include "FilterResults.h"
+#include "GraphicsClient.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "ImageBufferDisplayListBackend.h"
@@ -41,6 +42,7 @@
 #include "NullImageBufferBackend.h"
 #include "ProcessCapabilities.h"
 #include "TransparencyLayerContextSwitcher.h"
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/MakeString.h>
@@ -613,6 +615,20 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 unsigned ImageBuffer::backendGeneration() const
 {
     return m_backendGeneration;
+}
+
+std::optional<ImageBufferTransferHandle> SerializedImageBuffer::sinkIntoTransferHandle(std::unique_ptr<SerializedImageBuffer> buffer)
+{
+    if (!buffer)
+        return std::nullopt;
+    return buffer->sinkIntoTransferHandle();
+}
+
+RefPtr<ImageBuffer> ImageBuffer::createFromTransferHandle(const ImageBufferTransferHandle& handle, GraphicsClient* graphicsClient)
+{
+    if (!graphicsClient)
+        return nullptr;
+    return graphicsClient->createImageBufferFromTransferHandle(handle);
 }
 
 ImageBufferBackendSharing* ImageBuffer::toBackendSharing()

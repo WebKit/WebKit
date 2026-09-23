@@ -1,0 +1,38 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<iframe src="http://localhost:8000/site-isolation/resources/image-bitmap-over-message-port-and-ack.html" id="frame"></iframe>
+<script>
+description("An ImageBitmap sent to a cross-site iframe over a MessagePort should arrive with its pixels intact. That path is brokered by the network process rather than the UI process.");
+jsTestIsAsync = true;
+
+addEventListener("message", (event) => {
+    if (!event.data || event.data.type != "child-ack")
+        return;
+    result = event.data.result;
+    shouldBeEqualToString("result", "40x20 pixel 0,255,0,255");
+    finishJSTest();
+});
+
+frame.addEventListener("load", async () => {
+    const source = document.createElement("canvas");
+    source.width = 40;
+    source.height = 20;
+    const context = source.getContext("2d");
+    context.fillStyle = "lime";
+    context.fillRect(0, 0, source.width, source.height);
+    const bitmap = await createImageBitmap(source);
+
+    // Hand the iframe a port first, then send the bitmap over it, so that delivery goes through the
+    // network process's MessagePort machinery rather than the UI process's frame postMessage relay.
+    const channel = new MessageChannel();
+    frame.contentWindow.postMessage("port", "*", [channel.port2]);
+    channel.port1.postMessage({ bitmap }, [bitmap]);
+
+    setTimeout(() => {
+        testFailed("the cross-site iframe never acknowledged the ImageBitmap");
+        finishJSTest();
+    }, 5000);
+});
+</script>
+</body>

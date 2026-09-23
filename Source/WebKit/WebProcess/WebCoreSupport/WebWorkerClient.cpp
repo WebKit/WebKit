@@ -57,6 +57,7 @@ public:
     using WebWorkerClient::WebWorkerClient;
     UniqueRef<WorkerClient> createNestedWorkerClient(SerialFunctionDispatcher&) final;
     RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) final;
+    RefPtr<WebCore::ImageBuffer> createImageBufferFromTransferHandle(const WebCore::ImageBufferTransferHandle&) final;
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::ColorSpace&, WebCore::ImageBufferFormat) const final;
 #if ENABLE(WEBGL)
     RefPtr<WebCore::GraphicsContextGL> createGraphicsContextGL(const WebCore::GraphicsContextGLAttributes&) const final;
@@ -97,6 +98,15 @@ RefPtr<ImageBuffer> GPUProcessWebWorkerClient::sinkIntoImageBuffer(std::unique_p
         return RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(WTF::move(remote), protect(ensureRenderingBackend()));
     }
     return WebWorkerClient::sinkIntoImageBuffer(WTF::move(imageBuffer));
+}
+
+RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBufferFromTransferHandle(const WebCore::ImageBufferTransferHandle& handle)
+{
+    RefPtr dispatcher = this->dispatcher();
+    if (!dispatcher)
+        return nullptr;
+    assertIsCurrent(*dispatcher);
+    return protect(ensureRenderingBackend())->takeTransferredBuffer(handle);
 }
 
 RefPtr<ImageBuffer> GPUProcessWebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat pixelFormat) const
@@ -177,6 +187,12 @@ RefPtr<ImageBuffer> WebWorkerClient::sinkIntoImageBuffer(std::unique_ptr<Seriali
 {
     assertIsCurrent(*dispatcher().get());
     return SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(imageBuffer));
+}
+
+RefPtr<ImageBuffer> WebWorkerClient::createImageBufferFromTransferHandle(const WebCore::ImageBufferTransferHandle&)
+{
+    assertIsCurrent(*dispatcher().get());
+    return nullptr;
 }
 
 RefPtr<ImageBuffer> WebWorkerClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const ColorSpace& colorSpace, ImageBufferFormat pixelFormat) const

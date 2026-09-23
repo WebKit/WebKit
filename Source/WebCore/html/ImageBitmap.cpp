@@ -74,7 +74,7 @@ namespace WebCore {
 
 
 DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat)
-    : m_bitmap(WTF::move(bitmap))
+    : m_bitmap(bitmap.moveToUniquePtr())
     , m_originClean(originClean)
     , m_premultiplyAlpha(premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
@@ -82,8 +82,26 @@ DetachedImageBitmap::DetachedImageBitmap(UniqueRef<SerializedImageBuffer> bitmap
 {
 }
 
+DetachedImageBitmap::DetachedImageBitmap(std::optional<ImageBufferTransferHandle>&& transferHandle, bool originClean, bool premultiplyAlpha, bool forciblyPremultiplyAlpha, AlphaPremultiplication bufferAlphaFormat)
+    : m_transferHandle(WTF::move(transferHandle))
+    , m_originClean(originClean)
+    , m_premultiplyAlpha(premultiplyAlpha)
+    , m_forciblyPremultiplyAlpha(forciblyPremultiplyAlpha)
+    , m_bufferAlphaFormat(bufferAlphaFormat)
+{
+}
+
+std::optional<ImageBufferTransferHandle> DetachedImageBitmap::sinkBufferIntoTransferHandle()
+{
+    if (m_transferHandle)
+        return m_transferHandle;
+    m_transferHandle = SerializedImageBuffer::sinkIntoTransferHandle(WTF::move(m_bitmap));
+    return m_transferHandle;
+}
+
 DetachedImageBitmap::DetachedImageBitmap(const DetachedImageBitmap& other)
-    : m_bitmap(makeUniqueRefFromNonNullUniquePtr(other.m_bitmap->clone()))
+    : m_bitmap(other.m_bitmap ? other.m_bitmap->clone() : nullptr)
+    , m_transferHandle(other.m_transferHandle)
     , m_originClean(other.m_originClean)
     , m_premultiplyAlpha(other.m_premultiplyAlpha)
     , m_forciblyPremultiplyAlpha(other.m_forciblyPremultiplyAlpha)
@@ -99,7 +117,9 @@ DetachedImageBitmap& DetachedImageBitmap::operator=(DetachedImageBitmap&&) = def
 
 size_t DetachedImageBitmap::memoryCost() const
 {
-    return m_bitmap->memoryCost();
+    if (m_bitmap)
+        return m_bitmap->memoryCost();
+    return m_transferHandle ? m_transferHandle->memoryCost : 0;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageBitmap);
@@ -130,10 +150,15 @@ RefPtr<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionC
     return create(buffer.releaseNonNull(), false);
 }
 
-Ref<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, DetachedImageBitmap detached)
+RefPtr<ImageBitmap> ImageBitmap::create(ScriptExecutionContext& scriptExecutionContext, DetachedImageBitmap detached)
 {
-    auto buffer = SerializedImageBuffer::sinkIntoImageBuffer(detached.m_bitmap.moveToUniquePtr(), scriptExecutionContext.graphicsClient());
-    RELEASE_ASSERT(buffer);
+    RefPtr<ImageBuffer> buffer;
+    if (detached.m_bitmap)
+        buffer = SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(detached.m_bitmap), scriptExecutionContext.graphicsClient());
+    else if (detached.m_transferHandle)
+        buffer = ImageBuffer::createFromTransferHandle(*detached.m_transferHandle, scriptExecutionContext.graphicsClient());
+    if (!buffer)
+        return nullptr;
     return create(buffer.releaseNonNull(), detached.m_originClean, detached.m_premultiplyAlpha, detached.m_forciblyPremultiplyAlpha, detached.m_bufferAlphaFormat);
 }
 
