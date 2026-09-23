@@ -65,6 +65,10 @@ extension WKWebViewConfiguration {
             let handlerAdapter = WKURLSchemeHandlerAdapter(handler)
             self.setURLSchemeHandler(handlerAdapter, forURLScheme: scheme.rawValue)
         }
+
+        if let processPool = wrapped.processPool {
+            self.processPool = processPool
+        }
     }
 }
 

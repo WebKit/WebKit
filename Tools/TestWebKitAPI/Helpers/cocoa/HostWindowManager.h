@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if !__has_feature(modules)
+
 #ifdef __cplusplus
 
 #import "Helpers/PlatformUtilities.h"
@@ -50,3 +52,5 @@ private:
 } // namespace TestWebKitAPI
 
 #endif // __cplusplus
+
+#endif // !__has_feature(modules)

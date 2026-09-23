@@ -6,4 +6,12 @@ module TestWebKitAPILibrary {
             export *
         }
     }
+
+    explicit module InjectedBundle {
+        umbrella "../InjectedBundle"
+        
+        explicit module * {
+            export *
+        }
+    }
 }
