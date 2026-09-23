@@ -249,7 +249,13 @@ function readableStreamTee(stream, shouldClone)
 
     const reader = @acquireReadableStreamDefaultReader(stream);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     const teeState = {
+#else
+    // We set __proto__ to null so property assignments can never hit an Object.prototype setter installed by page script.
+    const teeState = {
+        __proto__: null,
+#endif
         stream: stream,
         canceled1: false,
         canceled2: false,
