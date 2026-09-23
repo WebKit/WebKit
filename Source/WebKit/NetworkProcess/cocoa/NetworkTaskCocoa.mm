@@ -85,8 +85,6 @@ NSHTTPCookieStorage *NetworkTaskCocoa::statelessCookieStorage()
 
 NSString *NetworkTaskCocoa::lastRemoteIPAddress(NSURLSessionTask *task)
 {
-    // FIXME (246428): In a future patch, this should adopt CFNetwork API that retrieves the original
-    // IP address of the proxied response, rather than the proxy itself.
     return task._incompleteTaskMetrics.transactionMetrics.lastObject.remoteAddress;
 }
 
