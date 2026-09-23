@@ -494,8 +494,17 @@ RefPtr<NativeImage> VideoFrame::copyNativeImage() const
     RetainPtr bgraSource = ImageTransferSessionVT::convertPixelBuffer(source.get(), kCVPixelFormatType_32BGRA);
     if (!bgraSource)
         return nullptr;
-    RetainPtr colorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
-    return NativeImage::create(WTF::move(bgraSource), kCGImageAlphaFirst, colorSpace.get());
+
+    // Prefer the frame's own color space (if fully described), to avoid falling back to SDR sRGB.
+    RetainPtr<CGColorSpaceRef> cgColorSpace;
+    const auto& frameColorSpace = colorSpace();
+    if (frameColorSpace.primaries && frameColorSpace.transfer) {
+        attachColorSpaceToPixelBuffer(frameColorSpace, bgraSource.get());
+        cgColorSpace = createCGColorSpaceForCVPixelBuffer(bgraSource.get());
+    } else
+        cgColorSpace = createCGColorSpaceForCVPixelBuffer(source.get());
+
+    return NativeImage::create(WTF::move(bgraSource), kCGImageAlphaFirst, cgColorSpace.get());
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)

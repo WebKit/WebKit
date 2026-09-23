@@ -74,6 +74,7 @@
 #include "Path2D.h"
 #include "PixelBufferConversion.h"
 #include "PixelFormat.h"
+#include "PlatformVideoColorSpace.h"
 #include "RenderElement.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
@@ -1741,8 +1742,14 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(WebCodecsVideoFrame& f
     else
         willUpdateContents(normalizedDstRect);
 
+    ImagePaintingOptions options = {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        (isHDR() && usesITUR2100TF(internalFrame->colorSpace())) ? DrawsHDRContent::Yes : DrawsHDRContent::No
+#endif
+    };
+
     // FIXME: Add support for srcRect
-    context->drawVideoFrame(*internalFrame, dstRect, frame.shoudlDiscardAlpha() ? ShouldDiscardAlpha::Yes : ShouldDiscardAlpha::No);
+    context->drawVideoFrame(*internalFrame, dstRect, frame.shoudlDiscardAlpha() ? ShouldDiscardAlpha::Yes : ShouldDiscardAlpha::No, options);
 
     return { };
 }

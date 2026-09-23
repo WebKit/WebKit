@@ -228,4 +228,10 @@ void overrideVideoColorSpaceAsNeeded(PlatformVideoColorSpace& colorSpace, const 
         colorSpace.chromaLocation = colorSpaceOverride->chromaLocation;
 }
 
+bool usesITUR2100TF(const PlatformVideoColorSpace& colorSpace)
+{
+    return colorSpace.transfer == PlatformVideoTransferCharacteristics::PQ
+        || colorSpace.transfer == PlatformVideoTransferCharacteristics::HLG;
+}
+
 }
