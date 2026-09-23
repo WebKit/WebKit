@@ -484,7 +484,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         CGFloat minimumHeight = _popupWebView.contentSizeHasStabilized ? std::min(desiredSize.height, minimumPopoverHeight) : minimumPopoverHeight;
         CGSize minimumLayoutSize = CGSizeMake(minimumWidth, minimumHeight);
 
-        [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:minimumLayoutSize maximumUnobscuredSizeOverride:CGSizeZero];
+        [_popupWebView _overrideLayoutParametersWithMinimumLayoutSize:minimumLayoutSize minimumUnobscuredSizeOverride:desiredSize maximumUnobscuredSizeOverride:desiredSize];
 
         self.preferredContentSize = desiredSize;
     }
