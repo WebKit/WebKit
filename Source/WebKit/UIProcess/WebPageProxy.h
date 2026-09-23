@@ -524,6 +524,7 @@ class CallbackID;
 class ContextMenuContextData;
 class DownloadProxy;
 class DrawingAreaProxy;
+class FindOverlaySession;
 class FrameState;
 class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
@@ -1753,6 +1754,9 @@ public:
     bool findOverlayShouldBeVisibleForTesting() const;
     HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> findMatchRectsByFrameForTesting() const;
     HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> findCutoutRectsByFrameForTesting() const;
+    size_t findOverlayVeilLayerCountForTesting() const;
+    FindOverlaySession* findOverlaySession() const;
+    void findOverlayStateDidChange();
     HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> findCutoutChildFrameIDsByFrameForTesting() const;
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);

@@ -126,6 +126,12 @@ FindStringCallbackAggregator::~FindStringCallbackAggregator()
     protect(targetFrame->process())->sendWithAsyncReply(WTF::move(message), WTF::move(completionHandler), protectedPage->webPageIDInProcess(protect(targetFrame->process())));
     if (frameContainingMatch && focusedFrame && focusedFrame->process() != frameContainingMatch->process())
         protectedPage->clearSelection(focusedFrame->frameID());
+
+    // After the SelectLastFoundRange send: if the settled verdict retires the
+    // web find state, the HideFindUI broadcast must queue behind that message
+    // on the target's connection, or its internal find would reinstall the
+    // reserved slots right after they were torn down.
+    protectedPage->findOverlayStateDidChange();
 }
 
 FindStringCallbackAggregator::FindStringCallbackAggregator(WebPageProxy& page, FindOverlaySession& session, const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& completionHandler)

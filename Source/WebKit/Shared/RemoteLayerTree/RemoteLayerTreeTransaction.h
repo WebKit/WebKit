@@ -145,6 +145,7 @@ public:
         };
         Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
         Vector<ChildFrameRect> childRemoteFrameRects;
+        Markable<WebCore::PlatformLayerIdentifier> veilSlotLayerID;
     };
 
     RemoteLayerTreeTransaction();

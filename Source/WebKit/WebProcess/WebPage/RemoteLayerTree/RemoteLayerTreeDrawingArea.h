@@ -103,6 +103,14 @@ private:
 
     bool supportsAsyncScrolling() const final { return true; }
     bool usesDelegatedPageScaling() const override { return true; }
+    bool usesUISideFindOverlay() const final
+    {
+#if PLATFORM(MAC)
+        return true;
+#else
+        return false;
+#endif
+    }
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
 
     void setLayerTreeStateIsFrozen(bool) final;

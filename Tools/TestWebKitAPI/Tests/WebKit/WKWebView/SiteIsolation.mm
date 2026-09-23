@@ -28,6 +28,7 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/CGImagePixelReader.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/cocoa/FindInPageUtilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
@@ -44,7 +45,9 @@
 #import "TestInputDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "WKWebViewFindStringFindDelegate.h"
+#import <CoreText/CoreText.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <WebCore/Color.h>
 #import <WebCore/SQLiteDatabase.h>
 #import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKFrameInfoPrivate.h>
@@ -5012,6 +5015,503 @@ TEST(SiteIsolation, FindOverlayRectsNoPayloadForPDF)
 }
 
 #endif // ENABLE(UNIFIED_PDF)
+
+// The UI-process-drawn find veil. Pixel expectations pin the in-process
+// painter's output: dim over white is 198 (255 - 229 * 64 / 255), hole
+// interiors are unfiltered content, and the hole edge has a one-point
+// shadow dip below the dim level before the white ring.
+constexpr int findVeilDimOverWhite = 198;
+
+static std::optional<WebCore::SRGBA<uint8_t>> windowSnapshotColorAtPoint(TestWKWebView *webView, CGPoint pointInView)
+{
+    RetainPtr snapshotImage = adoptNS([webView _windowSnapshotInRect:CGRectNull withOptions:0]);
+    if (!snapshotImage)
+        return std::nullopt;
+    RetainPtr cgImage = [snapshotImage CGImageForProposedRect:NULL context:nil hints:nil];
+    if (!cgImage)
+        return std::nullopt;
+    CGImagePixelReader reader { cgImage.get() };
+    NSRect windowFrame = [webView window].frame;
+    NSPoint pointInWindow = [webView convertPoint:NSPointFromCGPoint(pointInView) toView:nil];
+    double scale = reader.width() / NSWidth(windowFrame);
+    long x = std::lround(pointInWindow.x * scale);
+    long y = std::lround((NSHeight(windowFrame) - pointInWindow.y) * scale);
+    if (x < 0 || y < 0 || x >= static_cast<long>(reader.width()) || y >= static_cast<long>(reader.height()))
+        return std::nullopt;
+    return reader.at(x, y).tryGetAsSRGBABytes();
+}
+
+static int windowSnapshotRedAtPoint(TestWKWebView *webView, CGPoint pointInView)
+{
+    auto color = windowSnapshotColorAtPoint(webView, pointInView);
+    return color ? color->resolved().red : -1;
+}
+
+static bool waitForWindowSnapshotRedAtPoint(TestWKWebView *webView, CGPoint pointInView, int expected, int tolerance)
+{
+    return Util::waitFor([&] {
+        int red = windowSnapshotRedAtPoint(webView, pointInView);
+        return red >= 0 && std::abs(red - expected) <= tolerance;
+    });
+}
+
+struct WindowSnapshotExtrema {
+    int minimumRed { 256 };
+    int maximumRed { -1 };
+    unsigned yellowishPixelCount { 0 };
+};
+
+static WindowSnapshotExtrema windowSnapshotExtremaInRect(TestWKWebView *webView, CGRect rectInView)
+{
+    WindowSnapshotExtrema result;
+    RetainPtr snapshotImage = adoptNS([webView _windowSnapshotInRect:CGRectNull withOptions:0]);
+    if (!snapshotImage)
+        return result;
+    RetainPtr cgImage = [snapshotImage CGImageForProposedRect:NULL context:nil hints:nil];
+    if (!cgImage)
+        return result;
+    CGImagePixelReader reader { cgImage.get() };
+    NSRect windowFrame = [webView window].frame;
+    double scale = reader.width() / NSWidth(windowFrame);
+    NSPoint topLeftInWindow = [webView convertPoint:rectInView.origin toView:nil];
+    long x0 = std::lround(topLeftInWindow.x * scale);
+    long y0 = std::lround((NSHeight(windowFrame) - topLeftInWindow.y) * scale);
+    long x1 = x0 + std::lround(CGRectGetWidth(rectInView) * scale);
+    long y1 = y0 + std::lround(CGRectGetHeight(rectInView) * scale);
+    for (long y = y0; y < y1; ++y) {
+        for (long x = x0; x < x1; ++x) {
+            if (x < 0 || y < 0 || x >= static_cast<long>(reader.width()) || y >= static_cast<long>(reader.height()))
+                continue;
+            auto color = reader.at(x, y).tryGetAsSRGBABytes();
+            if (!color)
+                continue;
+            auto resolvedColor = color->resolved();
+            result.minimumRed = std::min<int>(result.minimumRed, resolvedColor.red);
+            result.maximumRed = std::max<int>(result.maximumRed, resolvedColor.red);
+            // Yellow keeps a large red-minus-blue separation even under the
+            // veil's dim, unlike white, gray, or black content.
+            if (resolvedColor.red >= 150 && int(resolvedColor.red) - int(resolvedColor.blue) >= 60)
+                result.yellowishPixelCount++;
+        }
+    }
+    return result;
+}
+
+// A hole in the veil exposes full-brightness page background between glyphs;
+// under the dim, no pixel in a white area exceeds the 198 dim level by much.
+static bool waitForHolePresenceInRect(TestWKWebView *webView, CGRect rectInView, bool expectHole)
+{
+    return Util::waitFor([&] {
+        auto extrema = windowSnapshotExtremaInRect(webView, rectInView);
+        if (extrema.maximumRed < 0)
+            return false;
+        return expectHole ? extrema.maximumRed >= 250 : extrema.maximumRed <= findVeilDimOverWhite + 7;
+    });
+}
+
+static HTTPServer findVeilServer()
+{
+    return HTTPServer({
+        { "/veil-main"_s, { "<body style='margin:0;background:white'><p style='position:absolute;left:20px;top:140px;margin:0;font:16px monospace'>quokka</p><p style='position:absolute;left:20px;top:170px;margin:0;font:16px monospace'>quokka</p><iframe style='position:absolute;left:100px;top:200px;width:400px;height:300px;border:none' src='https://webkit.org/veil-frame'></iframe><div style='position:absolute;top:3000px'>tail</div></body>"_s } },
+        { "/veil-main-iframe-only"_s, { "<body style='margin:0;background:white'><p style='position:absolute;left:20px;top:140px;margin:0;font:16px monospace'>wallaby</p><iframe style='position:absolute;left:100px;top:200px;width:400px;height:300px;border:none' src='https://webkit.org/veil-frame'></iframe></body>"_s } },
+        { "/veil-frame"_s, { "<body style='margin:0;background:white'><p style='position:absolute;left:10px;top:30px;margin:0;font:16px monospace'>quokka</p><p style='position:absolute;left:10px;top:60px;margin:0;font:16px monospace'>quokka</p><div style='position:absolute;top:2000px'>tail</div></body>"_s } },
+        { "/veil-belowfold-main"_s, { "<body style='margin:0;background:white'><p style='margin:0;font:16px monospace'>wombat text</p><iframe style='position:absolute;left:100px;top:1200px;width:400px;height:300px;border:none' src='https://webkit.org/veil-frame'></iframe><div style='position:absolute;top:3000px'>tail</div></body>"_s } },
+        { "/veil-v5-main"_s, { "<body style='margin:0;background:white'><p style='margin:0'>Main frame text. No occurrences of the search term here.</p><p>filler one</p><p>filler two</p><p>filler three</p><iframe style='display:block;margin-top:900px;width:400px;height:300px;border:none' src='https://webkit.org/veil-v5-frame'></iframe><div style='height:600px'></div></body>"_s } },
+        { "/veil-v5-frame"_s, { "<body style='margin:0;background:white'><p style='margin:0;font:16px monospace'>top: a quokka smiled near the shore</p><p style='margin-top:400px;font:16px monospace'>quokka two</p><p style='margin-top:400px;font:16px monospace'>quokka three</p><p style='margin-top:400px;font:16px monospace'>quokka four</p></body>"_s } },
+        { "/veil-handoff-main"_s, { "<body style='margin:0;background:white'><p style='position:absolute;left:20px;top:140px;margin:0;font:16px monospace'>quokka</p><p style='position:absolute;left:20px;top:170px;margin:0;font:16px monospace'>quokka</p><div style='position:absolute;top:3000px'>tail</div></body>"_s } },
+        { "/second"_s, { "<body style='margin:0;background:white'><p>second page</p></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+// View-coordinate geometry for the fixtures above: 16px monospace "quokka"
+// matches sit at (20, 140) and (20, 170) in the main frame; the cross-site
+// iframe covers (100, 200, 400, 300) with its own matches at (10, 30) and
+// (10, 60) inside it. Scans target the SECOND match in each frame: the
+// current match is covered by the yellow find indicator, so only non-current
+// matches are pure white holes (the trunk reference profiles hole 2 for the
+// same reason).
+constexpr CGRect veilMainMatchScanRect { { 22, 171 }, { 54, 14 } };
+constexpr CGRect veilIframeMatchScanRect { { 112, 261 }, { 54, 14 } };
+constexpr CGRect veilIframeFirstMatchScanRect { { 112, 231 }, { 54, 14 } };
+constexpr CGPoint veilMainDimPoint { 700, 100 };
+constexpr CGPoint veilIframeDimPoint { 450, 450 };
+
+TEST(SiteIsolation, FindOverlayVeilDrawnByUIProcessAcrossProcesses)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    EXPECT_EQ(0u, [webView _findOverlayVeilLayerCountForTesting]);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    // The cross-site iframe area is dimmed exactly once: the parent clears its
+    // cutout and the iframe's own tile dims it, so the value matches the
+    // single-dim level rather than a double-dim (~154).
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, findVeilDimOverWhite, 4));
+
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilMainMatchScanRect, true));
+    // The hole over the cross-site iframe's match is the rdar://168595102 fix.
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilIframeMatchScanRect, true));
+
+    EXPECT_GE([webView _findOverlayVeilLayerCountForTesting], 2u);
+}
+
+TEST(SiteIsolation, FindOverlayVeilDimsMainFrameWhenOnlyIframeMatches)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main-iframe-only", findDelegate);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    // The whole page dims even though the main frame's own process found
+    // nothing; before the UI-side veil this configuration showed no veil at all.
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, findVeilDimOverWhite, 4));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilIframeMatchScanRect, true));
+}
+
+TEST(SiteIsolation, FindOverlayVeilWhiteRingSignature)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilMainMatchScanRect, true));
+
+    // Crossing the hole's left edge along the match's midline: settled dim,
+    // then the single-point shadow dip below the dim level, then the white
+    // ring / hole interior at full brightness.
+    double midlineY = CGRectGetMidY(veilMainMatchScanRect);
+    bool sawDim = false;
+    bool sawDipAfterDim = false;
+    bool sawHoleAfterDip = false;
+    for (double x = CGRectGetMinX(veilMainMatchScanRect) - 12; x <= CGRectGetMinX(veilMainMatchScanRect) + 4; x += 0.5) {
+        int red = windowSnapshotRedAtPoint(webView.get(), CGPointMake(x, midlineY));
+        if (red < 0)
+            continue;
+        if (!sawDim && std::abs(red - findVeilDimOverWhite) <= 2)
+            sawDim = true;
+        else if (sawDim && !sawDipAfterDim && red <= findVeilDimOverWhite - 7)
+            sawDipAfterDim = true;
+        else if (sawDipAfterDim && red >= 250) {
+            sawHoleAfterDip = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(sawDim);
+    EXPECT_TRUE(sawDipAfterDim);
+    EXPECT_TRUE(sawHoleAfterDip);
+}
+
+TEST(SiteIsolation, FindOverlayVeilScrollFidelity)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilIframeMatchScanRect, true));
+
+    // Scrolling the cross-site iframe internally moves its committed contents
+    // and the veil tile as one; the hole lands on the match's new position.
+    EXPECT_EQ(50, [[webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 50); window.scrollY" inFrame:childFrameInfo.get()] intValue]);
+    [webView waitForNextPresentationUpdate];
+    CGRect scrolledIframeMatchScanRect = CGRectOffset(veilIframeMatchScanRect, 0, -50);
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), scrolledIframeMatchScanRect, true));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilIframeMatchScanRect, false));
+
+    // Scrolling the main frame moves both roots' veils with the page.
+    EXPECT_EQ(60, [[webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 60); window.scrollY"] intValue]);
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), CGRectOffset(veilMainMatchScanRect, 0, -60), true));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), CGRectOffset(scrolledIframeMatchScanRect, 0, -60), true));
+
+    // A root's own match rects are published unclipped, so holes exist for
+    // content the scrolling thread reveals between commits: matches scrolled
+    // fully out of the iframe's viewport stay in the payload.
+    uint64_t childFrameID = [childFrameInfo _handle].frameID;
+    EXPECT_EQ(400, [[webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 400); window.scrollY" inFrame:childFrameInfo.get()] intValue]);
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ(2u, findMatchRectsForFrame(webView.get(), childFrameID).count);
+}
+
+TEST(SiteIsolation, FindOverlayVeilRemovedOnHideFindUI)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+
+    [webView _hideFindUI];
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, 255, 0));
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return ![webView _findOverlayVeilLayerCountForTesting];
+    }));
+}
+
+TEST(SiteIsolation, FindOverlayVeilRemovedOnClick)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+
+    NSPoint clickPointInWindow = [webView convertPoint:NSMakePoint(veilMainDimPoint.x, veilMainDimPoint.y) toView:nil];
+    [webView mouseDownAtPoint:clickPointInWindow simulatePressure:NO];
+    [webView mouseUpAtPoint:clickPointInWindow];
+
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    // The click broadcast retires every process's slots, so the tiles die too.
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return ![webView _findOverlayVeilLayerCountForTesting];
+    }));
+}
+
+// A session that settles not-visible retires the web-side find state
+// everywhere: a failed ShowOverlay find must not leave reserved slots
+// installed, payloads publishing, or hidden tiles retaining backing stores.
+TEST(SiteIsolation, FindOverlayVeilRetiredWhenSessionSettlesNotVisible)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    EXPECT_GE([webView _findOverlayVeilLayerCountForTesting], 2u);
+
+    isDone = false;
+    [webView _findString:@"absentstring" options:findOverlaySessionFindOptions maxCount:100];
+    Util::run(&isDone);
+    EXPECT_TRUE([findDelegate didFail]);
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, 255, 0));
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return ![webView _findOverlayVeilLayerCountForTesting];
+    }));
+}
+
+// Cross-root cutout handoff: the parent's cutout clear depends on the CHILD's
+// payload, which arrives on the child's commits. When a child root joins a
+// find after the parent's payload commit already settled, the parent's clear
+// and the child's own dim must land in the same commit turn: a static page
+// has no later parent commit to fix a double-dim, and a child fading in under
+// an already-cleared cutout would under-dim.
+TEST(SiteIsolation, FindOverlayVeilCutoutHandoffKeepsSingleDim)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-handoff-main", findDelegate);
+    uint64_t mainFrameID = [webView mainFrame].info._handle.frameID;
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+
+    // Add the cross-site iframe mid-session. Its process has no live find, so
+    // its payload is absent and the parent's cutout dim patch is the steady
+    // state covering it.
+    [webView objectByEvaluatingJavaScript:@"const f = document.createElement('iframe'); f.style = 'position:absolute;left:100px;top:200px;width:400px;height:300px;border:none'; f.src = 'https://webkit.org/veil-frame'; document.body.appendChild(f); true"];
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return [[webView _findCutoutRectsByFrameForTesting] objectForKey:@(mainFrameID)].count == 1;
+    }));
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, findVeilDimOverWhite, 4));
+
+    // The next find brings the child into the session; its first payload lands
+    // after the parent's commit for this find already published.
+    findStringAndWait(webView.get(), @"quokka");
+    uint64_t childFrameID = [webView firstChildFrame]._handle.frameID;
+    EXPECT_TRUE(waitForFindMatchRectCount(webView.get(), childFrameID, 2));
+
+    // Without same-turn cutout refresh the double-dim (~154) persists on this
+    // static page; a child fade-in under a cleared cutout would read >210.
+    bool sawOutOfRangeSample = false;
+    int lastSample = -1;
+    for (int sample = 0; sample < 20; ++sample) {
+        lastSample = windowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint);
+        if (lastSample >= 0 && (lastSample < 170 || lastSample > 210))
+            sawOutOfRangeSample = true;
+        Util::runFor(0.03_s);
+    }
+    EXPECT_FALSE(sawOutOfRangeSample);
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilIframeDimPoint, findVeilDimOverWhite, 4));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilIframeMatchScanRect, true));
+}
+
+TEST(SiteIsolation, FindOverlayVeilRemovedOnNavigation)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/second"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_FALSE([webView _findOverlayShouldBeVisibleForTesting]);
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return ![webView _findOverlayVeilLayerCountForTesting];
+    }));
+}
+
+// Escape (hideFindUI) must reach every web content process: iframe-process
+// TextMatch markers feed visible find UI, and before the broadcast they
+// survived dismissal because HideFindUI went only to the main frame's process.
+TEST(SiteIsolation, FindOverlayEscapeBroadcastClearsIframeMarkers)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-main", findDelegate);
+
+    isDone = false;
+    [webView _findString:@"quokka" options:findOverlaySessionFindOptions | _WKFindOptionsShowHighlight maxCount:100];
+    Util::run(&isDone);
+
+    // The highlighted matches render yellow inside the iframe.
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return windowSnapshotExtremaInRect(webView.get(), veilIframeFirstMatchScanRect).yellowishPixelCount > 0;
+    }));
+
+    [webView _hideFindUI];
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        return !windowSnapshotExtremaInRect(webView.get(), veilIframeFirstMatchScanRect).yellowishPixelCount;
+    }));
+}
+
+// The veil pipeline is per-view, not per-site-isolation: a plain web view on
+// the remote layer tree drawing area uses the UI-side veil too.
+// A below-fold cross-site iframe holding the page's only matches must still
+// veil the page: the session verdict is visible and the main root dims
+// uniformly regardless of where the iframe sits.
+TEST(SiteIsolation, FindOverlayVeilDimsWhenSoleMatchIframeIsBelowFold)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-belowfold-main", findDelegate);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    bool dimmed = waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2);
+    if (!dimmed)
+        NSLog(@"VEILCB4 probes: matchRectKeys=%@ cutoutKeys=%@ veilCount=%lu mainDim=%d", [[webView _findMatchRectsByFrameForTesting] allKeys], [[webView _findCutoutRectsByFrameForTesting] allKeys], (unsigned long)[webView _findOverlayVeilLayerCountForTesting], windowSnapshotRedAtPoint(webView.get(), veilMainDimPoint));
+    EXPECT_TRUE(dimmed);
+}
+
+// Reproduces the visual battery's V5 shape: incremental keystroke finds with
+// the MiniBrowser find bar's option set, a scrollable parent, and a
+// below-fold scrollable cross-site iframe holding all the matches.
+TEST(SiteIsolation, FindOverlayVeilDimsWithIncrementalFindsBelowFoldIframe)
+{
+    auto server = findVeilServer();
+    RetainPtr<WKWebViewFindStringFindDelegate> findDelegate;
+    auto [webView, navigationDelegate] = findOverlayRectsWebView(server, @"https://example.com/veil-v5-main", findDelegate);
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+
+    constexpr auto miniBrowserFindOptions = _WKFindOptionsCaseInsensitive | _WKFindOptionsWrapAround | _WKFindOptionsShowFindIndicator | _WKFindOptionsShowOverlay | _WKFindOptionsDetermineMatchIndex;
+    for (NSString *prefix in @[ @"q", @"qu", @"quo", @"quok", @"quokk", @"quokka" ]) {
+        isDone = false;
+        [webView _findString:prefix options:miniBrowserFindOptions maxCount:100];
+        Util::run(&isDone);
+    }
+    EXPECT_FALSE([findDelegate didFail]);
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+
+    bool dimmed = waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2);
+    if (!dimmed)
+        NSLog(@"VEILCB4 probes: matchRectKeys=%@ cutoutKeys=%@ veilCount=%lu mainDim=%d", [[webView _findMatchRectsByFrameForTesting] allKeys], [[webView _findCutoutRectsByFrameForTesting] allKeys], (unsigned long)[webView _findOverlayVeilLayerCountForTesting], windowSnapshotRedAtPoint(webView.get(), veilMainDimPoint));
+    EXPECT_TRUE(dimmed);
+}
+
+TEST(SiteIsolation, FindOverlayVeilNonSIParity)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<body style='margin:0;background:white'><p style='position:absolute;left:20px;top:140px;margin:0;font:16px monospace'>quokka</p><p style='position:absolute;left:20px;top:170px;margin:0;font:16px monospace'>quokka</p></body>"];
+
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_TRUE([webView _findOverlayShouldBeVisibleForTesting]);
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, findVeilDimOverWhite, 2));
+    EXPECT_TRUE(waitForHolePresenceInRect(webView.get(), veilMainMatchScanRect, true));
+    EXPECT_EQ(1u, [webView _findOverlayVeilLayerCountForTesting]);
+
+    [webView _hideFindUI];
+    EXPECT_TRUE(waitForWindowSnapshotRedAtPoint(webView.get(), veilMainDimPoint, 255, 0));
+}
+
+static RetainPtr<NSData> pdfDataWithText(NSString *text)
+{
+    RetainPtr data = adoptNS([[NSMutableData alloc] init]);
+    RetainPtr consumer = adoptCF(CGDataConsumerCreateWithCFData((__bridge CFMutableDataRef)data.get()));
+    CGRect mediaBox = CGRectMake(0, 0, 612, 792);
+    RetainPtr context = adoptCF(CGPDFContextCreate(consumer.get(), &mediaBox, nullptr));
+    CGPDFContextBeginPage(context.get(), nullptr);
+    RetainPtr font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), 24, nullptr));
+    RetainPtr attributedString = adoptNS([[NSAttributedString alloc] initWithString:text attributes:@{ (__bridge NSString *)kCTFontAttributeName : (__bridge id)font.get() }]);
+    RetainPtr line = adoptCF(CTLineCreateWithAttributedString((__bridge CFAttributedStringRef)attributedString.get()));
+    CGContextSetTextPosition(context.get(), 72, 700);
+    CTLineDraw(line.get(), context.get());
+    CGPDFContextEndPage(context.get());
+    CGPDFContextClose(context.get());
+    return data;
+}
+
+// A main-frame PDF keeps the in-process painted overlay: the plugin owns its
+// find presentation, so the UI-side veil must not double-dim it.
+TEST(SiteIsolation, FindOverlayVeilNotUsedForMainFramePDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr findDelegate = adoptNS([[WKWebViewFindStringFindDelegate alloc] init]);
+    [webView _setFindDelegate:findDelegate.get()];
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [webView loadData:pdfDataWithText(@"quokka quokka").get() MIMEType:@"application/pdf" characterEncodingName:@"" baseURL:[NSURL URLWithString:@"https://example.com/find.pdf"]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    findStringAndWait(webView.get(), @"quokka");
+    EXPECT_FALSE([findDelegate didFail]);
+
+    // The dim comes from the in-process painter; no UI-side tiles exist.
+    EXPECT_TRUE(Util::waitFor([&, webView = webView] {
+        auto extrema = windowSnapshotExtremaInRect(webView.get(), CGRectMake(300, 300, 100, 100));
+        return extrema.maximumRed >= 0 && extrema.maximumRed <= 230;
+    }));
+    EXPECT_EQ(0u, [webView _findOverlayVeilLayerCountForTesting]);
+}
 
 #endif // PLATFORM(MAC)
 

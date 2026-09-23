@@ -7032,6 +7032,8 @@
 		6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifierCocoa.h; sourceTree = "<group>"; };
 		6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifier.h; sourceTree = "<group>"; };
 		6C34CFE92ECBCF1C00DB2185 /* RemoteLayerTreeCommitBundle.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeCommitBundle.mm; sourceTree = "<group>"; };
+		6C52453C306447BF0096CC08 /* FindOverlayPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FindOverlayPresenter.h; sourceTree = "<group>"; };
+		6C52453D306448020096CC08 /* FindOverlayPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FindOverlayPresenter.mm; sourceTree = "<group>"; };
 		6D77DBC22D80D3D6008ED0DD /* ScreenTimeWebsiteDataSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenTimeWebsiteDataSupport.h; sourceTree = "<group>"; };
 		6D77DBC32D80D3EC008ED0DD /* ScreenTimeWebsiteDataSupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenTimeWebsiteDataSupport.mm; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb.in; path = WebProcess/com.apple.WebProcess.sb.in; sourceTree = "<group>"; };
@@ -12035,6 +12037,8 @@
 				2D6482482644B1AB00030335 /* cocoa */,
 				2D1551AA1F5A9BA70006E3FE /* ios */,
 				E404906F21DE65D70037F0DB /* mac */,
+				6C52453C306447BF0096CC08 /* FindOverlayPresenter.h */,
+				6C52453D306448020096CC08 /* FindOverlayPresenter.mm */,
 				71F62F732D076DEE00B591D2 /* RemoteAnimation.cpp */,
 				71F62F722D076DEE00B591D2 /* RemoteAnimation.h */,
 				71371D1E2B1F89C00092C32D /* RemoteAnimationStack.h */,

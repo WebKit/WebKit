@@ -124,6 +124,7 @@ public:
 
     virtual bool supportsAsyncScrolling() const { return false; }
     virtual bool usesDelegatedPageScaling() const { return false; }
+    virtual bool usesUISideFindOverlay() const { return false; }
     virtual WebCore::DelegatedScrollingMode delegatedScrollingMode() const;
 
     virtual void registerScrollingTree() { }

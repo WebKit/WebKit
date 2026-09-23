@@ -173,6 +173,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 [Nested] struct WebKit::RemoteLayerTreeTransaction::FindOverlayRootData {
     Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
     Vector<WebKit::RemoteLayerTreeTransaction::FindOverlayRootData::ChildFrameRect> childRemoteFrameRects;
+    Markable<WebCore::PlatformLayerIdentifier> veilSlotLayerID;
 };
 
 [Nested] struct WebKit::LayerProperties::AnimationChanges {

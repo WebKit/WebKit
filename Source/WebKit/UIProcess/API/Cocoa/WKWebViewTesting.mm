@@ -399,6 +399,11 @@ static NSDictionary<NSNumber *, NSArray<NSValue *> *> *dictionaryFromFindRectsBy
     return dictionaryFromFindRectsByFrame(_page->findCutoutRectsByFrameForTesting());
 }
 
+- (NSUInteger)_findOverlayVeilLayerCountForTesting
+{
+    return _page ? _page->findOverlayVeilLayerCountForTesting() : 0;
+}
+
 - (NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)_findCutoutChildFrameIDsByFrameForTesting
 {
     if (!_page)

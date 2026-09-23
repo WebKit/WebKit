@@ -235,7 +235,7 @@ void FindController::countStringMatches(const String& string, OptionSet<FindOpti
         matchCount += protect(webPage->corePage())->findCueMatches(string, core(options)).size();
 #endif
 
-        updateFindPageOverlay(shouldShowOverlay);
+        updateFindPageOverlay(shouldShowOverlay, options);
     }
 
     if (matchCount > maxMatchCount)
@@ -335,7 +335,9 @@ void FindController::updateFindUIAfterIncrementalFind(bool found, const String& 
         if (selectedFrame && !options.contains(FindOptions::DoNotSetSelection))
             protect(selectedFrame->selection())->clear();
 
-        hideFindUI();
+        clearLocalFindState();
+        if (usesUISideFindOverlay())
+            updateFindPageOverlay(false, options);
 
         completionHandler(idOfFrameContainingString, WTF::move(matchRects), matchCount, m_foundStringMatchIndex.value_or(-1), didWrap == WebCore::DidWrap::Yes);
         return;
@@ -359,7 +361,7 @@ void FindController::updateFindUIAfterIncrementalFind(bool found, const String& 
     if (auto range = protect(webPage->corePage())->selection().firstRange())
         matchRects = RenderObject::absoluteTextRects(*range);
 
-    updateFindPageOverlay(shouldShowOverlay);
+    updateFindPageOverlay(shouldShowOverlay, options);
     updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);
     completionHandler(idOfFrameContainingString, WTF::move(matchRects), matchCount, m_foundStringMatchIndex.value_or(0), didWrap == WebCore::DidWrap::Yes);
 }
@@ -433,7 +435,9 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
     if (!found) {
         if (selectedFrame && !options.contains(FindOptions::DoNotSetSelection))
             protect(selectedFrame->selection())->clear();
-        hideFindUI();
+        clearLocalFindState();
+        if (usesUISideFindOverlay())
+            updateFindPageOverlay(false, options);
         return;
     }
 
@@ -442,12 +446,25 @@ void FindController::updateFindUIAfterFindingAllMatches(bool found, const String
     if (shouldShowOverlay || shouldShowHighlight)
         protect(webPage->corePage())->markAllMatchesForText(string, core(options), shouldShowHighlight, maxMatchCount + 1);
 
-    updateFindPageOverlay(shouldShowOverlay);
+    updateFindPageOverlay(shouldShowOverlay, options);
     updateFindIndicatorIfNeeded(found, options, shouldShowOverlay);
 }
 
-void FindController::updateFindPageOverlay(bool shouldShowOverlay)
+void FindController::updateFindPageOverlay(bool shouldShowOverlay, OptionSet<FindOptions> options)
 {
+    if (usesUISideFindOverlay()) {
+        // The UI process owns the veil's visibility verdict, so slots track
+        // "a ShowOverlay find is live in this process", not local found-ness:
+        // a root whose process found nothing still publishes an empty payload
+        // and is dimmed, which is what a whole-page veil looks like from a
+        // matchless root.
+        if (options.contains(FindOptions::ShowOverlay))
+            installUISideOverlaySlotsIfNeeded();
+        else
+            uninstallUISideOverlaySlots();
+        return;
+    }
+
     if (!shouldShowOverlay) {
         if (RefPtr findPageOverlay = m_findPageOverlay.get())
             m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
@@ -465,6 +482,59 @@ void FindController::updateFindPageOverlay(bool shouldShowOverlay)
         m_webPage->corePage()->pageOverlayController().installPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
     }
     findPageOverlay->setNeedsDisplay();
+}
+
+bool FindController::usesUISideFindOverlay()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (mainFramePlugIn())
+        return false;
+#endif
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return false;
+    RefPtr drawingArea = webPage->drawingArea();
+    return drawingArea && drawingArea->usesUISideFindOverlay();
+}
+
+void FindController::installUISideOverlaySlotsIfNeeded()
+{
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return;
+    RefPtr page = webPage->corePage();
+    if (!page)
+        return;
+
+    for (auto& rootFrame : page->rootFrames()) {
+        m_findOverlayRootSlots.ensure(rootFrame->frameID(), [&] {
+            // The slot is a paintless container for the UI-process-drawn veil tile;
+            // it is never marked as needing display, so it draws no content.
+            Ref slotOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
+            slotOverlay->setAssociatedFrame(Ref { rootFrame.get() }.ptr());
+            page->pageOverlayController().installPageOverlay(slotOverlay, PageOverlay::FadeMode::DoNotFade);
+            return WeakPtr<PageOverlay> { slotOverlay.get() };
+        });
+    }
+}
+
+void FindController::uninstallUISideOverlaySlots()
+{
+    RefPtr webPage = m_webPage.get();
+    if (!webPage)
+        return;
+    RefPtr page = webPage->corePage();
+    if (!page)
+        return;
+
+    // FadeMode::Fade ramps the slot layer's opacity down over the shared
+    // 200ms fade before the real uninstall, so the UI-process veil tile
+    // inside it fades out instead of vanishing on the next commit.
+    for (auto& slot : copyToVector(m_findOverlayRootSlots.values())) {
+        if (RefPtr slotOverlay = slot.get())
+            page->pageOverlayController().uninstallPageOverlay(*slotOverlay, PageOverlay::FadeMode::Fade);
+    }
+    m_findOverlayRootSlots.clear();
 }
 
 void FindController::updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions> options, bool shouldShowOverlay)
@@ -728,10 +798,21 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
     if (std::optional<SimpleRange> range = selectedFrame->selection().selection().range())
         addMarker(*range, DocumentMarkerType::ActiveTextMatch);
 
-    m_findIndicator->update(selectedFrame, !!m_findPageOverlay);
+    m_findIndicator->update(selectedFrame, isShowingOverlayVeil());
 }
 
 void FindController::hideFindUI()
+{
+    uninstallUISideOverlaySlots();
+    clearLocalFindState();
+}
+
+// A find that fails in this process must keep the reserved slots alive: with a
+// UI-process-drawn veil, another process's frames may still have matches and
+// this process's roots then dim with empty payloads. Only an authoritative
+// dismissal (hideFindUI, or a new find without ShowOverlay) retires the slots;
+// this clears everything else a failed local find must reset.
+void FindController::clearLocalFindState()
 {
     m_findMatches.clear();
     m_lastFoundRange = std::nullopt;
@@ -824,7 +905,8 @@ Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 
 std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> FindController::overlayDataForRoot(LocalFrame& rootFrame)
 {
-    if (!m_findPageOverlay)
+    bool usesUISideOverlay = !m_findOverlayRootSlots.isEmpty();
+    if (!m_findPageOverlay && !usesUISideOverlay)
         return std::nullopt;
 
 #if ENABLE(PDF_PLUGIN)
@@ -839,6 +921,16 @@ std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> FindController::o
     static constexpr size_t maximumFindOverlayRectCount = 8192;
 
     RemoteLayerTreeTransaction::FindOverlayRootData data;
+
+    if (usesUISideOverlay) {
+        // A root without a reserved slot publishes no payload, so the parent's
+        // cutout dim patch covers it instead of an unbacked child veil.
+        RefPtr slotOverlay = m_findOverlayRootSlots.get(rootFrame.frameID());
+        if (!slotOverlay)
+            return std::nullopt;
+        data.veilSlotLayerID = protect(slotOverlay->layer())->primaryLayerID();
+    }
+
     for (RefPtr<Frame> frame = &rootFrame; frame; ) {
         // A RemoteFrame subtree belongs to another local root's payload, so
         // record the cutout and skip past it rather than descending into it.
@@ -884,13 +976,16 @@ std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> FindController::o
 
 #endif // PLATFORM(COCOA)
 
-void FindController::willMoveToPage(PageOverlay&, Page* page)
+void FindController::willMoveToPage(PageOverlay& overlay, Page* page)
 {
     if (page)
         return;
 
-    ASSERT(m_findPageOverlay);
-    m_findPageOverlay = nullptr;
+    m_findOverlayRootSlots.removeIf([&](auto& entry) {
+        return entry.value.get() == &overlay;
+    });
+    if (m_findPageOverlay.get() == &overlay)
+        m_findPageOverlay = nullptr;
 }
 
 void FindController::didMoveToPage(PageOverlay&, Page*)

@@ -90,4 +90,9 @@ bool FindOverlaySession::overlayShouldBeVisible() const
     return m_settled && m_totalMatchCount && m_options.contains(FindOptions::ShowOverlay);
 }
 
+bool FindOverlaySession::wantsOverlay() const
+{
+    return m_options.contains(FindOptions::ShowOverlay);
+}
+
 } // namespace WebKit

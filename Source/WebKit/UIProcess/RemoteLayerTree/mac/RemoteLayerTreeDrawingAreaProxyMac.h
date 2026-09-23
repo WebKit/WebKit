@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class DisplayLink;
+class FindOverlayPresenter;
 class RemoteLayerTreeDisplayLinkClient;
 class RemoteLayerTreeTransaction;
 class RemoteScrollingCoordinatorProxy;
@@ -61,6 +62,8 @@ public:
     std::optional<WebCore::PlatformLayerIdentifier> scrolledContentsLayerID() const { return m_scrolledContentsLayerID.asOptional(); }
     std::optional<WebCore::PlatformLayerIdentifier> mainFrameClipLayerID() const { return m_mainFrameClipLayerID.asOptional(); }
 
+    size_t findOverlayVeilLayerCountForTesting() const;
+
 private:
     RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
 
@@ -70,6 +73,10 @@ private:
     bool isRemoteLayerTreeDrawingAreaProxyMac() const override { return true; }
 
     void layoutBannerLayers(const RemoteLayerTreeTransaction&);
+
+    void findOverlaySessionDidChange() override;
+    bool usesUISideFindOverlay() const override { return true; }
+    FindOverlayPresenter& ensureFindOverlayPresenter();
 
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>&, const TransactionID&) override;
 
@@ -119,6 +126,8 @@ private:
     bool m_shouldLogNextDisplayRefresh { false };
 
     std::optional<WebCore::ScrollbarStyle> m_scrollbarStyle;
+
+    std::unique_ptr<FindOverlayPresenter> m_findOverlayPresenter;
 
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
     std::optional<double> m_transientZoomScale;

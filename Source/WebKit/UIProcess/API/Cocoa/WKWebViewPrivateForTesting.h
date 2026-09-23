@@ -126,6 +126,7 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @property (nonatomic, readonly) BOOL _findOverlayShouldBeVisibleForTesting;
 @property (nonatomic, readonly) NSDictionary<NSNumber *, NSArray<NSValue *> *> *_findMatchRectsByFrameForTesting;
 @property (nonatomic, readonly) NSDictionary<NSNumber *, NSArray<NSValue *> *> *_findCutoutRectsByFrameForTesting;
+@property (nonatomic, readonly) NSUInteger _findOverlayVeilLayerCountForTesting;
 @property (nonatomic, readonly) NSDictionary<NSNumber *, NSArray<NSNumber *> *> *_findCutoutChildFrameIDsByFrameForTesting;
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 @property (nonatomic, readonly) NSString *_scrollingTreeIncludingNodeIDsAsText;

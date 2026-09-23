@@ -137,6 +137,10 @@ public:
     virtual void viewWillStartLiveResize() { };
     virtual void viewWillEndLiveResize() { };
 
+    // Called when the page's FindOverlaySession is created, settles, or is invalidated.
+    virtual void findOverlaySessionDidChange() { }
+    virtual bool usesUISideFindOverlay() const { return false; }
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 

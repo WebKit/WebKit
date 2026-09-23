@@ -4682,8 +4682,19 @@ void WebPageProxy::handleMouseEvent(Ref<NativeWebMouseEvent>&& event)
     if (!m_mainFrame)
         return;
 
-    if (event->type() == WebEventType::MouseDown)
-        internals().findOverlaySession = nullptr;
+    if (event->type() == WebEventType::MouseDown) {
+        if (RefPtr dismissedSession = std::exchange(internals().findOverlaySession, nullptr)) {
+            findOverlayStateDidChange();
+            // With a UI-side veil, the clicked process is the only one whose
+            // FindController sees this event; the others must retire their
+            // reserved slots and TextMatch markers too.
+            if (RefPtr drawingArea = m_drawingArea; drawingArea && drawingArea->usesUISideFindOverlay()) {
+                forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                    webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+                });
+            }
+        }
+    }
 
     recordUIProcessUserActivation(event);
 
@@ -7538,11 +7549,14 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
     if (options.contains(FindOptions::ShowOverlay)) {
         findOverlaySession = FindOverlaySession::create(string, options);
         internals().findOverlaySession = findOverlaySession;
+        findOverlayStateDidChange();
     }
 
     sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, findOverlaySession, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
-        if (findOverlaySession)
+        if (findOverlaySession) {
             findOverlaySession->didSettle({ }, matches.size());
+            findOverlayStateDidChange();
+        }
         if (matches.isEmpty())
             m_findClient->didFailToFindString(this, string);
         else
@@ -7554,6 +7568,7 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
 {
     Ref findOverlaySession = FindOverlaySession::create(string, options);
     internals().findOverlaySession = findOverlaySession.ptr();
+    findOverlayStateDidChange();
 
     auto sendAndAggregateFindStringMessage = [&]<typename M>(M&& message, CompletionHandler<void(bool)>&& completionHandler)
     {
@@ -7576,6 +7591,7 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
             if (frameID)
                 frameResults.set(*frameID, FindOverlayFrameResult { matchCount, didWrap });
             findOverlaySession->didSettle(WTF::move(frameResults), frameID ? matchCount : 0);
+            protectedThis->findOverlayStateDidChange();
             findOverlaySession->deliverResult(protectedThis, frameID, matchRects, matchCount, matchIndex, didWrap);
             callbackFunction(frameID.has_value());
         };
@@ -7694,7 +7710,42 @@ void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 void WebPageProxy::hideFindUI()
 {
     internals().findOverlaySession = nullptr;
-    send(Messages::WebPage::HideFindUI());
+    findOverlayStateDidChange();
+    // Broadcast so iframe processes clear their TextMatch markers too; with a
+    // cross-site iframe those markers feed visible find UI.
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+    });
+}
+
+FindOverlaySession* WebPageProxy::findOverlaySession() const
+{
+    return internals().findOverlaySession.get();
+}
+
+void WebPageProxy::findOverlayStateDidChange()
+{
+    RefPtr drawingArea = m_drawingArea;
+    if (!drawingArea)
+        return;
+
+    // No reserved slot or veil tile survives a ShowOverlay session that
+    // settled not-visible: the web processes keep their find state alive
+    // through local failures (another process may have matched), so the
+    // page-wide negative verdict is the one place that can retire it. A find
+    // without ShowOverlay never retires anything here: its web-side state
+    // (match index, markers) must survive, and any stale slots are already
+    // uninstalled by the options-driven overlay update each process ran.
+    if (drawingArea->usesUISideFindOverlay()) {
+        if (RefPtr session = internals().findOverlaySession; session && session->settled() && session->wantsOverlay() && !session->overlayShouldBeVisible() && !session->webFindStateRetired()) {
+            session->setWebFindStateRetired();
+            forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+            });
+        }
+    }
+
+    drawingArea->findOverlaySessionDidChange();
 }
 
 bool WebPageProxy::findOverlayShouldBeVisibleForTesting() const
@@ -7785,11 +7836,14 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
     if (options.contains(FindOptions::ShowOverlay)) {
         findOverlaySession = FindOverlaySession::create(string, options);
         internals().findOverlaySession = findOverlaySession;
+        findOverlayStateDidChange();
     }
 
     Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, findOverlaySession, string](uint32_t matchCount) {
-        if (findOverlaySession)
+        if (findOverlaySession) {
             findOverlaySession->didSettle({ }, matchCount);
+            protectedThis->findOverlayStateDidChange();
+        }
         protectedThis->m_findClient->didCountStringMatches(protectedThis.ptr(), string, matchCount);
     });
 
@@ -8552,6 +8606,7 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_pageLoadTimingPendingCommit = makeUnique<WebPageLoadTiming>(timestamp);
         m_generatePageLoadTimingTimer.stop();
         internals().findOverlaySession = nullptr;
+        findOverlayStateDidChange();
 
         purgeQueuedModalDialogs();
     }
@@ -14461,6 +14516,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
     internals().findOverlaySession = nullptr;
+    findOverlayStateDidChange();
     m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 

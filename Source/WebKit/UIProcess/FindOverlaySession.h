@@ -28,7 +28,9 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <wtf/HashMap.h>
+#include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -58,6 +60,13 @@ public:
     void deliverResult(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap);
 
     bool overlayShouldBeVisible() const;
+    bool wantsOverlay() const;
+    bool settled() const { return m_settled; }
+
+    // Set once per session when the UI process broadcasts HideFindUI because
+    // the verdict settled not-visible, so retirement happens exactly once.
+    bool webFindStateRetired() const { return m_webFindStateRetired; }
+    void setWebFindStateRetired() { m_webFindStateRetired = true; }
 
     // Per-local-root find geometry published by each web process on its layer
     // tree commit; rects are in that root's contents coordinates.
@@ -68,11 +77,22 @@ public:
     struct RootGeometry {
         Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
         Vector<ChildFrameRect> childRemoteFrameRects;
+        Markable<WebCore::PlatformLayerIdentifier> veilSlotLayerID;
     };
 
     void setRootGeometry(WebCore::FrameIdentifier rootFrameID, RootGeometry&&);
     void clearRootGeometry(WebCore::FrameIdentifier rootFrameID) { m_rootGeometries.remove(rootFrameID); }
     const HashMap<WebCore::FrameIdentifier, RootGeometry>& rootGeometries() const { return m_rootGeometries; }
+
+    // The single choke points for payload presence and lookup: a present entry
+    // means "this root dims itself"; an absent one means "cover it with the
+    // parent's cutout dim patch". Entries may disappear between commits.
+    const RootGeometry* geometryForRoot(WebCore::FrameIdentifier rootFrameID) const
+    {
+        auto iterator = m_rootGeometries.find(rootFrameID);
+        return iterator == m_rootGeometries.end() ? nullptr : &iterator->value;
+    }
+    bool hasGeometryForRoot(WebCore::FrameIdentifier rootFrameID) const { return m_rootGeometries.contains(rootFrameID); }
 
 private:
     FindOverlaySession(const String&, OptionSet<FindOptions>);
@@ -83,6 +103,7 @@ private:
     HashMap<WebCore::FrameIdentifier, RootGeometry> m_rootGeometries;
     uint32_t m_totalMatchCount { 0 };
     bool m_settled { false };
+    bool m_webFindStateRetired { false };
 };
 
 } // namespace WebKit
