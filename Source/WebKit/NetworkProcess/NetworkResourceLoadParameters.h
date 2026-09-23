@@ -143,6 +143,8 @@ struct NetworkResourceLoadParameters {
     // inheritance, tracked in https://bugs.webkit.org/show_bug.cgi?id=319908
     WebCore::IPAddressSpace clientAddressSpace { WebCore::IPAddressSpace::Public };
     bool clientIsSecureContext { false };
+    bool localNetworkAllowedByPermissionsPolicy { false };
+    bool loopbackNetworkAllowedByPermissionsPolicy { false };
 };
 
 } // namespace WebKit

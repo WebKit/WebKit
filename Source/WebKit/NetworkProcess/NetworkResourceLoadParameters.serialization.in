@@ -115,6 +115,8 @@ enum class WebKit::NavigatingToAppBoundDomain : bool;
 
     WebCore::IPAddressSpace clientAddressSpace;
     bool clientIsSecureContext;
+    bool localNetworkAllowedByPermissionsPolicy;
+    bool loopbackNetworkAllowedByPermissionsPolicy;
 };
 
 using WebCore::FetchingWorkerIdentifier = Variant<std::monostate, WebCore::SharedWorkerIdentifier, WebCore::ServiceWorkerIdentifier>;

@@ -34,6 +34,7 @@
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
+#include <WebCore/IPAddressSpace.h>
 #include <WebCore/Page.h>
 #include <WebCore/PermissionObserver.h>
 #include <WebCore/PermissionQuerySource.h>
@@ -92,6 +93,15 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
     if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
         ASSERT(page);
         proxyIdentifier = WebPage::fromCorePage(*page)->webPageProxyIdentifier();
+    }
+
+    // Answered where the decision is enforced: the UI client could say granted and then have the
+    // request refused.
+    if (descriptor.name == WebCore::PermissionName::LocalNetwork || descriptor.name == WebCore::PermissionName::LoopbackNetwork) {
+        auto addressSpace = descriptor.name == WebCore::PermissionName::LocalNetwork ? WebCore::IPAddressSpace::Local : WebCore::IPAddressSpace::Loopback;
+        Ref networkProcess = WebProcess::singleton().ensureNetworkProcessConnection().connection();
+        networkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::QueryLocalNetworkAccessPermission(origin, addressSpace), WTF::move(completionHandler));
+        return;
     }
 
     if (descriptor.name == WebCore::PermissionName::StorageAccess) {

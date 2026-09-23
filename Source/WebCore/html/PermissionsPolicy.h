@@ -71,10 +71,12 @@ public:
 #endif
         PrivateToken,
         StorageAccess,
+        LocalNetwork,
+        LoopbackNetwork,
         Invalid
     };
     enum class ShouldReportViolation : bool { No, Yes };
-    static bool isFeatureEnabled(Feature, const Document&, ShouldReportViolation = ShouldReportViolation::Yes);
+    WEBCORE_EXPORT static bool isFeatureEnabled(Feature, const Document&, ShouldReportViolation = ShouldReportViolation::Yes);
     bool NODELETE inheritedPolicyValueForFeature(Feature) const;
 
     // InheritedPolicy contains enabled features.

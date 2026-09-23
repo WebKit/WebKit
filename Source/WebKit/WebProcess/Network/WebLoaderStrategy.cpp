@@ -67,6 +67,7 @@
 #include <WebCore/NetworkLoadInformation.h>
 #include <WebCore/NodeDocument.h>
 #include <WebCore/PendingStreamState.h>
+#include <WebCore/PermissionsPolicy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoader.h>
@@ -401,6 +402,10 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         parameters.globalPrivacyControlEnabled = document->settings().globalPrivacyControlEnabled().value_or(false);
         parameters.clientAddressSpace = document->ipAddressSpace();
         parameters.clientIsSecureContext = document->isSecureContext();
+        if (document->settings().localNetworkAccessEnabled()) {
+            parameters.localNetworkAllowedByPermissionsPolicy = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LocalNetwork, *document, PermissionsPolicy::ShouldReportViolation::No);
+            parameters.loopbackNetworkAllowedByPermissionsPolicy = PermissionsPolicy::isFeatureEnabled(PermissionsPolicy::Feature::LoopbackNetwork, *document, PermissionsPolicy::ShouldReportViolation::No);
+        }
     }
 
     if (RefPtr page = frame->page()) {

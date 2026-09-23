@@ -277,6 +277,31 @@ WebCore::PermissionState NetworkSession::requestLocalNetworkAccessPermission(con
     return WebCore::PermissionState::Denied;
 }
 
+void NetworkSession::setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision)
+{
+    m_localNetworkAccessPermissions.set({ WTF::move(origin), addressSpace }, decision);
+}
+
+WebCore::PermissionState NetworkSession::localNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace) const
+{
+    auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace });
+    if (iterator == m_localNetworkAccessPermissions.end())
+        return WebCore::PermissionState::Prompt;
+    return iterator->value;
+}
+
+void NetworkSession::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin)
+{
+    m_localNetworkAccessPermissions.removeIf([&topOrigin](auto& entry) {
+        return entry.key.first.topOrigin == topOrigin;
+    });
+}
+
+void NetworkSession::clearLocalNetworkAccessPermissionsForTesting()
+{
+    m_localNetworkAccessPermissions.clear();
+}
+
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     RefPtr resourceLoadStatistics = m_resourceLoadStatistics;

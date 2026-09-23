@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+navigator.permissions.query({ name: 'loopback-network' }).then((status) => {
+    parent.postMessage(status.state, '*');
+}, () => {
+    parent.postMessage('query rejected', '*');
+});
+</script>
+</body>
+</html>
