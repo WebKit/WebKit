@@ -2967,19 +2967,36 @@ LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitCon
 
 template<typename SizeType> LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
-    if (logicalWidth.isStretch())
-        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch { }, availableLogicalWidth, borderAndPadding);
-    if (logicalWidth.isMinIntrinsic())
-        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
-    if (logicalWidth.isMaxContent())
-        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, availableLogicalWidth, borderAndPadding);
-    if (logicalWidth.isMinContent())
-        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
-    if (logicalWidth.isFitContent())
-        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitContent { }, availableLogicalWidth, borderAndPadding);
+    auto keywordLogicalWidth = [&]() -> LayoutUnit {
+        if (logicalWidth.isStretch())
+            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::Stretch { }, availableLogicalWidth, borderAndPadding);
+        if (logicalWidth.isMinIntrinsic())
+            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
+        if (logicalWidth.isMaxContent())
+            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, availableLogicalWidth, borderAndPadding);
+        if (logicalWidth.isMinContent())
+            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, availableLogicalWidth, borderAndPadding);
+        if (logicalWidth.isFitContent())
+            return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::FitContent { }, availableLogicalWidth, borderAndPadding);
 
-    ASSERT_NOT_REACHED();
-    return 0;
+        ASSERT_NOT_REACHED();
+        return 0;
+    }();
+
+    if (!logicalWidth.isCalcSize())
+        return keywordLogicalWidth;
+
+    auto keywordContentLogicalWidth = std::max(0_lu, keywordLogicalWidth - borderAndPadding);
+    return resolveCalcSizeLogicalWidth(logicalWidth.template get<typename SizeType::CalcSize>(), keywordContentLogicalWidth, availableLogicalWidth) + borderAndPadding;
+}
+
+LayoutUnit RenderBox::resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize& calcSize, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const
+{
+    auto isContentBox = style().boxSizing() == BoxSizing::ContentBox;
+    auto borderAndPadding = borderAndPaddingLogicalWidth();
+    auto basis = isContentBox ? keywordContentLogicalWidth : keywordContentLogicalWidth + borderAndPadding;
+    auto resolved = LayoutUnit { calcSize.evaluate(percentResolutionLogicalWidth, style().usedZoomForLength(), basis) };
+    return isContentBox ? resolved : std::max(0_lu, resolved - borderAndPadding);
 }
 
 LayoutUnit RenderBox::computeSizingKeywordLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
@@ -3025,10 +3042,28 @@ template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingGeneri
         logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
 
     if constexpr (std::same_as<SizeType, Style::PreferredSize> || std::same_as<SizeType, Style::FlexBasis>) {
+        // In calc-size(auto, size * 2), `auto` stands for the width the box would have taken.
+        // max-width has no auto, and min-width: auto returned above.
+        if (logicalWidth.isCalcSize() && logicalWidth.isAuto())
+            return computeCalcSizeOnAutoLogicalWidth(logicalWidth, logicalWidthResult, availableLogicalWidth);
+
         if (sizesLogicalWidthToFitContent())
             return std::max(minContentLogicalWidthContribution(), std::min(maxContentLogicalWidthContribution(), logicalWidthResult));
     }
+
     return logicalWidthResult;
+}
+
+template<typename SizeType> LayoutUnit RenderBox::computeCalcSizeOnAutoLogicalWidth(const SizeType& logicalWidth, LayoutUnit autoLogicalWidth, LayoutUnit availableLogicalWidth) const
+{
+    if (sizesLogicalWidthToFitContent()) {
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+        auto borderAndPadding = borderAndPaddingLogicalWidth();
+        autoLogicalWidth = std::max(minContentLogicalWidth + borderAndPadding, std::min(maxContentLogicalWidth + borderAndPadding, autoLogicalWidth));
+    }
+
+    auto borderAndPadding = borderAndPaddingLogicalWidth();
+    return resolveCalcSizeLogicalWidth(logicalWidth.template get<Style::UnevaluatedCalcSize>(), std::max(0_lu, autoLogicalWidth - borderAndPadding), availableLogicalWidth) + borderAndPadding;
 }
 
 LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
@@ -3994,11 +4029,19 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         if (auto fixedMaxLogicalWidth = maxLogicalWidth.tryFixed())
             return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
 
-        if (maxLogicalWidth.isMinContent()) {
-            if (!hasFixedLogicalWidth())
-                return minIntrinsicLogicalWidth;
+        if (maxLogicalWidth.isMinContent() || maxLogicalWidth.isMaxContent()) {
+            auto keywordLogicalWidth = [&] {
+                if (hasFixedLogicalWidth()) {
+                    if (maxLogicalWidth.isMaxContent())
+                        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, contentBoxLogicalWidth(), { });
+                    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
+                }
+                return maxLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            }();
 
-            return computeSizingKeywordLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
+            if (maxLogicalWidth.isCalcSize())
+                keywordLogicalWidth = resolveCalcSizeLogicalWidth(maxLogicalWidth.get<Style::UnevaluatedCalcSize>(), keywordLogicalWidth, 0_lu);
+            return keywordLogicalWidth;
         }
 
         return LayoutUnit::max();
@@ -4012,10 +4055,18 @@ void RenderBox::constrainIntrinsicLogicalWidthsByMinMax(LayoutUnit& minIntrinsic
         // A min-content minimum floors the contribution at the box's own min-content size,
         // so a smaller max-width cannot clamp it below that (min wins over max).
         if (minLogicalWidth.isMinContent() || minLogicalWidth.isMaxContent()) {
-            if (hasFixedLogicalWidth())
-                return computeSizingKeywordLogicalWidthUsing(minLogicalWidth, contentBoxLogicalWidth(), { });
+            auto keywordLogicalWidth = [&] {
+                if (hasFixedLogicalWidth()) {
+                    if (minLogicalWidth.isMaxContent())
+                        return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, contentBoxLogicalWidth(), { });
+                    return computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
+                }
+                return minLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            }();
 
-            return minLogicalWidth.isMaxContent() ? maxIntrinsicLogicalWidth : minIntrinsicLogicalWidth;
+            if (minLogicalWidth.isCalcSize())
+                keywordLogicalWidth = resolveCalcSizeLogicalWidth(minLogicalWidth.get<Style::UnevaluatedCalcSize>(), keywordLogicalWidth, 0_lu);
+            return keywordLogicalWidth;
         }
 
         return { };

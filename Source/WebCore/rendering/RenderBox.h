@@ -367,6 +367,8 @@ public:
     LayoutUnit computeLogicalWidthUsing(const Style::MaximumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
     LayoutUnit computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
 
+    LayoutUnit resolveCalcSizeLogicalWidth(const Style::UnevaluatedCalcSize&, LayoutUnit keywordContentLogicalWidth, LayoutUnit percentResolutionLogicalWidth) const;
+
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::PreferredSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::MinimumSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
     std::optional<LayoutUnit> computeLogicalHeightUsing(const Style::MaximumSize& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
@@ -695,6 +697,7 @@ private:
     template<typename Keyword> std::pair<LayoutUnit, LayoutUnit> computeIntrinsicKeywordLogicalWidths(Keyword, LayoutUnit borderAndPadding) const;
 
     template<typename SizeType> LayoutUnit computeLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const;
+    template<typename SizeType> LayoutUnit computeCalcSizeOnAutoLogicalWidth(const SizeType& logicalWidth, LayoutUnit autoLogicalWidth, LayoutUnit availableLogicalWidth) const;
     template<typename SizeType> LayoutUnit computeSizingKeywordLogicalWidthUsingGeneric(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
 
     template<typename SizeType> std::optional<LayoutUnit> computeLogicalHeightUsingGeneric(const SizeType& logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const;
