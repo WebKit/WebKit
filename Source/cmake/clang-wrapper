@@ -88,11 +88,12 @@ while (my $line = <$bundle>) {
 close($bundle);
 
 my $ccPrefix = join(' ', map { shellQuote($_) } @driverArgs);
+# The Darwin driver turns -fPIE into ld -pie, which ld rejects for -r output.
+my $mergePrefix = join(' ', map { shellQuote($_) } grep { $_ ne '-fPIE' && $_ ne '-fpie' } @driverArgs);
 my $quotedDepFile = shellQuote($depFile);
 my $memberObjectList = join(' ', @memberObjects);
 my $memberDepList = join(' ', map { "$_.d" } @memberObjects);
 
-# Rule bodies are literal: $cc_prefix, $in, $out, etc. are all ninja variables.
 my $rules = <<'END_OF_RULES';
 rule cc
   command = $cc_prefix -MD -MT $out -MF $out.d -o $out -c $in
@@ -100,7 +101,7 @@ rule cc
   description = member $in
 
 rule merge
-  command = $cc_prefix -Qunused-arguments -r -nostdlib -Wl,-keep_private_externs -o $out $in && cat $member_deps > $bundle_dep
+  command = $merge_prefix -Qunused-arguments -r -nostdlib -Wl,-keep_private_externs -o $out $in && cat $member_deps > $bundle_dep
   description = merge $out
 END_OF_RULES
 
@@ -108,6 +109,7 @@ my $buildNinja = <<"END_OF_NINJA";
 ninja_required_version = 1.3
 builddir = $membersFolder
 cc_prefix = $ccPrefix
+merge_prefix = $mergePrefix
 bundle_dep = $quotedDepFile
 member_deps = $memberDepList
 $rules
