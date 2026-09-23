@@ -1296,6 +1296,7 @@
 		A17C58172C9AA132009DD0B5 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C58162C9AA132009DD0B5 /* main.mm */; };
 		A17C58252C9AAA25009DD0B5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A17C58242C9AAA25009DD0B5 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
 		A17C58472C9BF524009DD0B5 /* GoogleTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A17C583E2C9B3EFE009DD0B5 /* GoogleTests.mm */; };
+		A17C58482C9C0387009DD0B5 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDF3A83528930475005920CF /* gtest.framework */; };
 		A18898FB2CA9F1ED00FEB09A /* AppCommon.mm in Sources */ = {isa = PBXBuildFile; fileRef = A18898FA2CA9F1ED00FEB09A /* AppCommon.mm */; };
 		A18898FF2CA9F88600FEB09A /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = A121EEA72CA733F400DB8BB8 /* main.mm */; };
 		A18899012CA9FA6700FEB09A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; platformFilters = (macos, ); };
@@ -1557,12 +1558,26 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		3A15785B28D1506E00142DB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
 		3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 3A15783C28D1505B00142DB1;
 			remoteInfo = TestWGSL;
+		};
+		44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
 		};
 		5C9D922122D7DC84008E9266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1696,6 +1711,27 @@
 			proxyType = 2;
 			remoteGlobalIDString = 40C84997101A36A60083642A;
 			remoteInfo = "sample1_unittest-static";
+		};
+		DDF3A850289305E3005920CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
+		DDF3A852289305E8005920CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
+		};
+		DDF3A854289305F8005920CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DDF3A82928930475005920CF /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D07F2BC0486CC7A007CD1D0;
+			remoteInfo = "gtest-framework";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -4582,6 +4618,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				07275CBC2D01398C002315A5 /* _WebKit_SwiftUI.framework in Frameworks */,
+				A17C58482C9C0387009DD0B5 /* gtest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7132,6 +7169,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3A15785C28D1506E00142DB1 /* PBXTargetDependency */,
 			);
 			name = TestWGSL;
 			productInstallPath = "$(HOME)/bin";
@@ -7168,6 +7206,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				44134E632AC128AA00D2BFCB /* PBXTargetDependency */,
 			);
 			name = TestWTFLibrary;
 			productName = TestWebKitAPILibrary;
@@ -7203,6 +7242,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDF3A855289305F8005920CF /* PBXTargetDependency */,
 				5C9D922222D7DC84008E9266 /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPILibrary;
@@ -7242,6 +7282,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDF3A851289305E3005920CF /* PBXTargetDependency */,
 			);
 			name = WebProcessPlugIn;
 			productName = WebProcessPlugIn;
@@ -7314,6 +7355,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				DDF3A853289305E8005920CF /* PBXTargetDependency */,
 			);
 			name = InjectedBundleTestWebKitAPI;
 			productName = InjectedBundle;
@@ -8479,10 +8521,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3A15785C28D1506E00142DB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 3A15785B28D1506E00142DB1 /* PBXContainerItemProxy */;
+		};
 		3A5DDAFC28D3F2A7004DA950 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3A15783C28D1505B00142DB1 /* TestWGSL */;
 			targetProxy = 3A5DDAFB28D3F2A7004DA950 /* PBXContainerItemProxy */;
+		};
+		44134E632AC128AA00D2BFCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = 44134E622AC128AA00D2BFCB /* PBXContainerItemProxy */;
 		};
 		5C9D922222D7DC84008E9266 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8543,6 +8595,21 @@
 			isa = PBXTargetDependency;
 			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
 			targetProxy = BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */;
+		};
+		DDF3A851289305E3005920CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = DDF3A850289305E3005920CF /* PBXContainerItemProxy */;
+		};
+		DDF3A853289305E8005920CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = DDF3A852289305E8005920CF /* PBXContainerItemProxy */;
+		};
+		DDF3A855289305F8005920CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-framework";
+			targetProxy = DDF3A854289305F8005920CF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
