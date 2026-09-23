@@ -1293,10 +1293,6 @@ webkit.org/b/324255 imported/w3c/web-platform-tests/webrtc/RTCDataChannel-buffer
 webkit.org/b/324256 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-videoDetectorTest.html [ Failure Pass ]
 webkit.org/b/324257 inspector/runtime/getCollectionEntries.html [ Failure Pass ]
 
-webkit.org/b/323049 [ Debug ] fast/webcodecs/resetting-audio-decoder-with-unsupported-codec-crash.html [ Crash Pass ]
-webkit.org/b/323049 [ Debug ] fast/webcodecs/resetting-video-encoder-with-unsupported-codec-crash.html [ Crash Pass ]
-webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/static-router-subresource.https.html [ Crash Pass ]
-webkit.org/b/323049 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/unregister-then-register.https.html [ Crash Pass ]
 webkit.org/b/324338 [ Debug ] webaudio/silent-audio-interrupted-in-background.html [ Failure Pass ]
 
 webkit.org/b/324822 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]

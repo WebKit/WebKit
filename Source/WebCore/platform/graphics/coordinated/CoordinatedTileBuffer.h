@@ -156,7 +156,7 @@ public:
     Ref<BitmapTexture> texture() const { return m_texture; }
     void serverWait();
 #else
-    sk_sp<GrDeferredDisplayList> displayList() const { return m_displayList; }
+    sk_sp<GrDeferredDisplayList> takeDisplayList() { return std::exchange(m_displayList, nullptr); }
 #endif
 
 private:
