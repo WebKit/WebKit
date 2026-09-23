@@ -325,7 +325,7 @@ private:
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
     enum class CookieAccess : uint8_t { Disallow, Allow, Terminate };
-    CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*);
+    CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*, std::optional<WebPageProxyIdentifier>);
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::IncludeSecureCookies, WebPageProxyIdentifier, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);

@@ -488,6 +488,12 @@ public:
     // Per launch, so a reconnecting web process keeps its Vary entries.
     uint64_t cookieHeaderDigestSalt() const { return m_cookieHeaderDigestSalt; }
 
+    // Per-process allow-list of WebPageProxyIdentifiers the WebContent process is permitted to reference. Fed by the
+    // (trusted) UIProcess as it associates a process with a page, and used to reject a process that supplies a
+    // WebPageProxyIdentifier it does not own over IPC.
+    bool allowsWebPageProxyIdentifier(WebCore::ProcessIdentifier, std::optional<WebPageProxyIdentifier>) const;
+    void addAllowedWebPageProxyIdentifier(WebCore::ProcessIdentifier, WebPageProxyIdentifier);
+
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
     void setStorageSiteValidationEnabled(PAL::SessionID, bool);
@@ -663,6 +669,7 @@ private:
     HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
+    HashMap<WebCore::ProcessIdentifier, HashSet<WebPageProxyIdentifier>> m_allowedWebPageProxyIdentifiers;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

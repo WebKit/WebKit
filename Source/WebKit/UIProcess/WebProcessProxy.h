@@ -318,6 +318,7 @@ public:
     bool isRunningSharedWorkers() const { return !!m_sharedWorkerInformation; }
     bool isStandaloneSharedWorkerProcess() const { return isRunningSharedWorkers() && !pageCount(); }
     bool isRunningWorkers() const { return m_sharedWorkerInformation || m_serviceWorkerInformation; }
+    std::optional<WebPageProxyIdentifier> remoteWorkerPageProxyID(RemoteWorkerType) const;
 
     bool NODELETE isDummyProcessProxy() const;
 
