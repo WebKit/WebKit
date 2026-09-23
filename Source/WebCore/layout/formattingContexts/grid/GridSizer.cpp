@@ -86,22 +86,6 @@ static Vector<LayoutUnit> rowSizesForFirstIterationColumnSizing(const TrackSizin
     });
 }
 
-// During track sizing we may need to get different types of size contributions for a grid item.
-// Getting a contribution in a specific dimension may require knowing the available space in
-// the opposite dimension. For each of these cases, the spec defines how to compute the available space.
-static LayoutUnit NODELETE oppositeAxisConstraintForTrackSizing(const Vector<LayoutUnit>& oppositeAxisTrackSizes, const WTF::Range<size_t> oppositeAxisSpan)
-{
-    auto totalAvailableSpaceFromSpannedTracks = 0_lu;
-    for (auto oppositeAxisLineIndex : std::views::iota(oppositeAxisSpan.begin(), oppositeAxisSpan.end())) {
-        auto& oppositeAxisTrackSize = oppositeAxisTrackSizes[oppositeAxisLineIndex];
-        if (oppositeAxisTrackSize == LayoutUnit::max())
-            return oppositeAxisTrackSize;
-
-        totalAvailableSpaceFromSpannedTracks += oppositeAxisTrackSize;
-    }
-    return totalAvailableSpaceFromSpannedTracks;
-}
-
 // Runs the track sizing algorithm over the grid columns. Grid items whose inline-axis contribution
 // depends on the available space in the block axis are given an estimate derived from the row track
 // sizing functions, since the row sizes are not resolved yet.
@@ -118,11 +102,11 @@ TrackSizes GridSizer::sizeColumnTracks(const PlacedGridItems& placedGridItems, c
     auto rowSizesForFirstColumnSizing = rowSizesForFirstIterationColumnSizing(rowTrackSizingFunctionsList, inlineAxisAvailableSpace);
 
     auto columnTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
-        auto rowSpan = WTF::Range<size_t> { gridItem.rowStartLine(), gridItem.rowEndLine() };
         // The inline grid area is indefinite while sizing columns, so the item's cyclic percentage padding resolves against zero.
         auto usedInlineBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), 0_lu).first;
+        auto gridAreaBlockSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.rowStartLine(), gridItem.rowEndLine(), rowSizesForFirstColumnSizing, layoutState.usedRowGap);
         return { gridItem, gridItem.inlineAxisSizes(), usedInlineBorderAndPadding,
-            { gridItem.columnStartLine(), gridItem.columnEndLine() }, oppositeAxisConstraintForTrackSizing(rowSizesForFirstColumnSizing, rowSpan) };
+            { gridItem.columnStartLine(), gridItem.columnEndLine() }, gridAreaBlockSize };
     });
 
     return TrackSizingAlgorithm::sizeTracks(columnTrackSizingItems, columnTrackSizingFunctionsList,
@@ -138,12 +122,10 @@ TrackSizes GridSizer::sizeRowTracks(const PlacedGridItems& placedGridItems, cons
     auto& layoutState = this->layoutState();
 
     auto rowTrackSizingItems = placedGridItems.map([&](const PlacedGridItem& gridItem) -> TrackSizingItem {
-        auto columnSpan = WTF::Range<size_t> { gridItem.columnStartLine(), gridItem.columnEndLine() };
-        auto columnConstraint = oppositeAxisConstraintForTrackSizing(columnSizes, columnSpan);
         auto gridAreaInlineSize = GridLayoutUtils::gridAreaDimensionSize(gridItem.columnStartLine(), gridItem.columnEndLine(), columnSizes, layoutState.usedColumnGap);
         auto usedBlockBorderAndPadding = formattingContext().integrationUtils().borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize).second;
         return { gridItem, gridItem.blockAxisSizes(), usedBlockBorderAndPadding,
-            { gridItem.rowStartLine(), gridItem.rowEndLine() }, columnConstraint };
+            { gridItem.rowStartLine(), gridItem.rowEndLine() }, gridAreaInlineSize };
     });
 
     return TrackSizingAlgorithm::sizeTracks(rowTrackSizingItems, rowTrackSizingFunctionsList,
