@@ -16,7 +16,6 @@ rendering/BorderPainter.cpp
 rendering/RenderElement.cpp
 rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
-rendering/RenderLayerCompositor.cpp
 rendering/RenderListBox.cpp
 rendering/RenderText.cpp
 rendering/svg/RenderSVGText.cpp

@@ -2512,3 +2512,8 @@ webkit.org/b/323246 [ Debug x86_64 ] accessibility/isolated-tree/canvas-fallback
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Pass Crash Timeout ]
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_matrix_matrix_multiplication.html [ Pass Crash Timeout ]
 webkit.org/b/323902 [ x86_64 ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/textureDimensions.html [ Pass Crash DumpJSConsoleLogInStdErr Slow ]
+
+# webkit.org/b/324109 The drop-shadow of a filtered ancestor does not sample the backing store of a composited
+# descendant here, so the shadow is missing entirely. Passes on macOS Sequoia Release and iOS 26.
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child.html [ ImageOnlyFailure ]
+webkit.org/b/324109 [ Tahoe+ Debug ] imported/w3c/web-platform-tests/css/filter-effects/drop-shadow-outsets-sample-composited-child-preserve-3d.html [ ImageOnlyFailure ]

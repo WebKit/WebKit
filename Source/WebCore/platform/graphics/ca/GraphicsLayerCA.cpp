@@ -948,6 +948,15 @@ bool GraphicsLayerCA::setFilters(const FilterOperations& filterOperations)
     return canCompositeFilters;
 }
 
+void GraphicsLayerCA::setFilterSamplingOutsets(const IntOutsets& outsets)
+{
+    if (outsets == filterSamplingOutsets())
+        return;
+
+    GraphicsLayer::setFilterSamplingOutsets(outsets);
+    noteLayerPropertyChanged(CoverageRectChanged);
+}
+
 bool GraphicsLayerCA::setBackdropFilters(const FilterOperations& filterOperations)
 {
     bool canCompositeFilters = filtersCanBeComposited(filterOperations);
@@ -1848,6 +1857,31 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
             state.reset(clipRectForSelf, clipRectForSelf);
         else
             state.reset(clipRectForSelf);
+    }
+
+    // A pixel-moving filter reads pixels beyond the visible rects of this layer, so descendents need backing store there too.
+    // Filters flatten, so this applies even if the parent preserves 3D and the visible rect state is still acumulating.
+    if (auto& samplingOutsets = filterSamplingOutsets(); !samplingOutsets.isZero() && !this->preserves3D()) {
+        bool quadWasClamped = false;
+        bool secondaryQuadWasClamped = false;
+        auto quad = state.mappedQuad(&quadWasClamped);
+        auto secondaryQuad = state.mappedSecondaryQuad(&secondaryQuadWasClamped);
+        if (!quadWasClamped && !secondaryQuadWasClamped) {
+            auto samplingExtent = toFloatBoxExtent(samplingOutsets);
+            auto expandBySamplingExtent = [&](const FloatQuad& mappedQuad) {
+                auto rect = mappedQuad.boundingBox();
+                if (rect.isEmpty())
+                    return FloatQuad { rect };
+                rect.expand(samplingExtent);
+                if (masksToBounds())
+                    rect.intersect({ { }, m_size });
+                return FloatQuad { rect };
+            };
+            if (secondaryQuad)
+                state.reset(expandBySamplingExtent(quad), expandBySamplingExtent(*secondaryQuad));
+            else
+                state.reset(expandBySamplingExtent(quad));
+        }
     }
 
     auto boundsOrigin = m_boundsOrigin;

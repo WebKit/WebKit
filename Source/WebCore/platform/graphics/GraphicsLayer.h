@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/BoxExtents.h>
 #include <WebCore/Color.h>
 #include <WebCore/EventRegion.h>
 #include <WebCore/FilterOperations.h>
@@ -543,6 +544,9 @@ public:
     const std::optional<FloatRect>& animationExtent() const LIFETIME_BOUND { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
+    const IntOutsets& filterSamplingOutsets() const LIFETIME_BOUND { return m_filterSamplingOutsets; }
+    virtual void setFilterSamplingOutsets(const IntOutsets& outsets) { m_filterSamplingOutsets = outsets; }
+
     static void traverse(GraphicsLayer&, NOESCAPE const Function<void(GraphicsLayer&)>&);
 
     virtual void markFrontBufferVolatileForTesting() { }
@@ -702,6 +706,7 @@ protected:
     FloatRoundedRect m_backdropFiltersRect;
     Path m_backdropFiltersShapePath;
     std::optional<FloatRect> m_animationExtent;
+    IntOutsets m_filterSamplingOutsets;
 
     EventRegion m_eventRegion;
 #if USE(CA)

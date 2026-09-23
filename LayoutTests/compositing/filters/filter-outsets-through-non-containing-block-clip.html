@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>An ancestor filter must be found across a clip that does not apply to the composited layer</title>
+<style>
+.clip {
+    position: relative;
+    overflow: hidden;
+    width: 100px;
+    height: 100px;
+}
+.filtered { filter: blur(10px); }
+.clipThatDoesNotApply { overflow: hidden; }
+.box {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background: green;
+    will-change: transform;
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.onload = () => {
+    requestAnimationFrame(() => {
+        document.getElementById("layers").textContent = internals.layerTreeAsText(document);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+};
+</script>
+</head>
+<body>
+<div class="clip">
+    <div class="filtered">
+        <div class="clipThatDoesNotApply">
+            <div class="box"></div>
+        </div>
+    </div>
+</div>
+<pre id="layers"></pre>
+</body>
+</html>
