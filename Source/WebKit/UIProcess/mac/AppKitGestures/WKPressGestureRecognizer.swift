@@ -29,6 +29,47 @@ import WebKit_Internal
 @objc
 @implementation
 extension WKPressGestureRecognizer {
+    @nonobjc
+    private var lastDeliveredLocationInWindow: CGPoint = .zero
+
+    @_implementationOnly
+    open override func reset() {
+        lastDeliveredLocationInWindow = .zero
+        super.reset()
+    }
+
+    func beginReportingMovement(fromWindowLocation location: CGPoint) {
+        lastDeliveredLocationInWindow = location
+    }
+
+    func eventReportingMovement(_ event: NSEvent, atWindowLocation location: CGPoint) -> NSEvent {
+        guard let cgEvent = event.cgEvent else {
+            return event
+        }
+
+        let travel = CGSize(
+            width: location.x - lastDeliveredLocationInWindow.x,
+            height: location.y - lastDeliveredLocationInWindow.y
+        )
+
+        let delta = CGSize(width: travel.width.rounded(), height: travel.height.rounded())
+
+        cgEvent.setIntegerValueField(.mouseEventDeltaX, value: Int64(delta.width))
+        cgEvent.setIntegerValueField(.mouseEventDeltaY, value: Int64(-delta.height))
+
+        cgEvent.setDoubleValueField(.eventUnacceleratedPointerMovementX, value: delta.width)
+        cgEvent.setDoubleValueField(.eventUnacceleratedPointerMovementY, value: -delta.height)
+
+        guard let eventWithMovement = NSEvent(cgEvent: cgEvent) else {
+            return event
+        }
+
+        lastDeliveredLocationInWindow.x += delta.width
+        lastDeliveredLocationInWindow.y += delta.height
+
+        return eventWithMovement
+    }
+
     @_implementationOnly
     open override func shouldRequireFailure(of gestureRecognizer: NSGestureRecognizer) -> Bool {
         // The inherited implementation makes a press wait on any press with a longer `minimumPressDuration`.
