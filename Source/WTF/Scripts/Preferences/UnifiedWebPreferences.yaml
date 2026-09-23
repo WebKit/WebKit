@@ -6186,14 +6186,12 @@ ThreadedTimeBasedAnimationsAtHighFrameRateEnabled:
 
 ThreadedTimeBasedAnimationsEnabled:
   type: bool
-  status: stable
+  status: preview
   category: animation
   humanReadableName: "Threaded Time-based Animations"
   humanReadableDescription: "Run qualifying time-based animations on a separate thread"
   condition: ENABLE(THREADED_ANIMATIONS)
-  defaultValue:
-    default: true
-    WebKitLegacy: false
+  defaultValue: false
 
 # FIXME: This is not relevant for WebKitLegacy, so it should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:
