@@ -1,0 +1,61 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ LocalNetworkAccessEnabled=true ] -->
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// A local network request with no recorded decision asks the UI client, and the answer is recorded so
+// the same key is not asked again. No user interaction is needed to reach the prompt.
+//
+// WebKitTestRunner's UI client always refuses when the test did not pre-seed a decision, so the answer
+// is observed through navigator.permissions rather than the fetch outcome: a refusal from the prompt and
+// never having asked both come out as a blocked fetch, and only the recorded state tells them apart.
+// That state is also the only coverage of the prompt's round trip out to the UI process and back.
+//
+// The requesting document is a frame on port 9446, which the address-space overrides map to public, so
+// its fetch to a loopback address is a local network request. loopback-network is delegated to the frame
+// explicitly because the feature's default allowlist is 'self', and without it the request is refused by
+// permissions policy before any prompt.
+// It has to be https: an http frame on a non-loopback host is not a secure context, and is refused before
+// the permission is ever consulted.
+
+// The path prefix this directory is served under is not worth hardcoding; swap only the origin.
+const PUBLIC_ORIGIN = 'https://web-platform.test:9446';
+
+function runPublicFrame()
+{
+    const frame = document.createElement('iframe');
+    frame.allow = 'loopback-network';
+    frame.src = new URL('resources/lna-prompt-frame.html', location.href).href.replace(location.origin, PUBLIC_ORIGIN);
+    document.body.appendChild(frame);
+
+    return new Promise((resolve) => {
+        window.addEventListener('message', (event) => resolve(event.data), { once: true });
+    });
+}
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+
+    const result = await runPublicFrame();
+    assert_equals(result.before, 'prompt', 'nothing recorded before the request');
+    assert_equals(result.outcome, 'blocked', 'the test runner answers the prompt with a refusal');
+    assert_equals(result.after, 'denied', 'the answer is recorded, so this was a prompt and not a silent block');
+}, 'a local network request asks the UI client without any interaction, and the answer is recorded');
+
+promise_test(async (t) => {
+    t.add_cleanup(() => testRunner.revokeLocalNetworkAccessPermissions());
+
+    // Seeding a grant for the frame's own origin pair means the request is answered from the record.
+    await testRunner.setLocalNetworkAccessPermission(true, true, PUBLIC_ORIGIN);
+
+    const result = await runPublicFrame();
+    assert_equals(result.before, 'granted', 'the seeded decision is visible to the frame');
+    assert_equals(result.outcome, 'loaded', 'a recorded grant is used instead of asking');
+    assert_equals(result.after, 'granted', 'still the recorded answer, not one the prompt just produced');
+}, 'a recorded decision is used rather than asking again');
+
+</script>
+</body>
+</html>

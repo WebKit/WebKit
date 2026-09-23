@@ -602,6 +602,15 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(PAL::SessionID sessi
     });
 }
 
+void NetworkProcessProxy::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(LocalNetworkAccessPromptResult)>&& completionHandler)
+{
+    // Found by identifier, not by top-level origin, which could put the prompt on an unrelated tab.
+    RefPtr page = WebProcessProxy::webPage(pageID);
+    if (!page)
+        return completionHandler(LocalNetworkAccessPromptResult::NotHosted);
+    page->requestLocalNetworkAccessPermission(origin, addressSpace, WTF::move(completionHandler));
+}
+
 void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
 {
     if (RefPtr page = WebProcessProxy::webPage(pageID))

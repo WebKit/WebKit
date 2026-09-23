@@ -31,6 +31,7 @@
 #include "BackgroundFetchState.h"
 #include "DataTaskIdentifier.h"
 #include "IdentifierTypes.h"
+#include "LocalNetworkAccessPromptResult.h"
 #include "NetworkResourceLoadIdentifier.h"
 #include "ProcessLauncher.h"
 #include "ProcessThrottler.h"
@@ -417,6 +418,7 @@ private:
 
     // Message handlers
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const std::optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, AuthenticationChallengeIdentifier);
+    void requestLocalNetworkAccessPermission(WebPageProxyIdentifier, const WebCore::ClientOrigin&, WebCore::IPAddressSpace, CompletionHandler<void(LocalNetworkAccessPromptResult)>&&);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
     void didNegotiateModernTLS(WebPageProxyIdentifier, const URL&);
     void didBlockLoadToKnownTracker(WebPageProxyIdentifier, const URL&);

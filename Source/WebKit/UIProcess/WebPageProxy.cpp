@@ -15263,6 +15263,17 @@ void WebPageProxy::didReceiveAuthenticationChallengeProxy(Ref<AuthenticationChal
     m_navigationClient->didReceiveAuthenticationChallenge(*this, authenticationChallenge.get());
 }
 
+void WebPageProxy::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(LocalNetworkAccessPromptResult)>&& completionHandler)
+{
+    // A page that navigated away would otherwise show the prompt under whatever origin it shows now.
+    if (!protocolHostAndPortAreEqual(pageLoadState().activeURL(), origin.topOrigin.toURL()))
+        return completionHandler(LocalNetworkAccessPromptResult::NotHosted);
+
+    Ref requestingOrigin = API::SecurityOrigin::create(origin.clientOrigin.securityOrigin());
+    Ref topOrigin = API::SecurityOrigin::create(origin.topOrigin.securityOrigin());
+    m_uiClient->decidePolicyForLocalNetworkAccessPermissionRequest(*this, requestingOrigin.get(), topOrigin.get(), addressSpace, WTF::move(completionHandler));
+}
+
 void WebPageProxy::negotiatedLegacyTLS()
 {
     Ref protectedPageLoadState = pageLoadState();

@@ -252,12 +252,13 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 NetworkSession::~NetworkSession()
 {
+    cancelLocalNetworkAccessPrompts(std::nullopt);
     destroyResourceLoadStatistics([] { });
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
 }
 
-WebCore::PermissionState NetworkSession::requestLocalNetworkAccessPermission(const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, bool canPrompt)
+void NetworkSession::requestLocalNetworkAccessPermission(WebPageProxyIdentifier pageID, const WebCore::ClientOrigin& origin, WebCore::IPAddressSpace addressSpace, bool canPrompt, CompletionHandler<void(WebCore::PermissionState)>&& completionHandler)
 {
     auto iterator = m_localNetworkAccessPermissions.find({ origin, addressSpace });
     auto hasRecordedDecision = iterator != m_localNetworkAccessPermissions.end();
@@ -267,19 +268,76 @@ WebCore::PermissionState NetworkSession::requestLocalNetworkAccessPermission(con
     // should become unreachable once CFNetwork reports the connection's address space directly
     // (rdar://183944437).
     case WebCore::LocalNetworkAccessPermissionRequestOutcome::RefuseAsUndetermined:
-        return WebCore::PermissionState::Denied;
+        return completionHandler(WebCore::PermissionState::Denied);
     case WebCore::LocalNetworkAccessPermissionRequestOutcome::UseRecordedDecision:
-        return iterator->value;
+        return completionHandler(iterator->value);
     // Prompt, not Denied: nothing is recorded, so the origin can still be asked about from a page.
     case WebCore::LocalNetworkAccessPermissionRequestOutcome::RefuseAsUnpromptable:
-        return WebCore::PermissionState::Prompt;
+        return completionHandler(WebCore::PermissionState::Prompt);
     case WebCore::LocalNetworkAccessPermissionRequestOutcome::Prompt:
         break;
     }
 
-    // FIXME: There is nothing to ask yet, so an origin that could be prompted is refused instead. The
-    // prompt and the grant store land in https://bugs.webkit.org/show_bug.cgi?id=319907
-    return WebCore::PermissionState::Denied;
+    auto key = std::pair { origin.isolatedCopy(), addressSpace };
+    auto addResult = m_pendingLocalNetworkAccessPrompts.add(key, PendingLocalNetworkAccessPrompt { });
+    if (addResult.isNewEntry)
+        addResult.iterator->value.generation = ++m_nextLocalNetworkAccessPromptGeneration;
+    addResult.iterator->value.waiters.append({ pageID, WTF::move(completionHandler) });
+    if (addResult.isNewEntry)
+        sendLocalNetworkAccessPromptToNextPage(key);
+}
+
+void NetworkSession::sendLocalNetworkAccessPromptToNextPage(LocalNetworkAccessPermissionKey key)
+{
+    auto iterator = m_pendingLocalNetworkAccessPrompts.find(key);
+    if (iterator == m_pendingLocalNetworkAccessPrompts.end())
+        return;
+
+    std::optional<WebPageProxyIdentifier> target;
+    for (auto& waiter : iterator->value.waiters) {
+        if (iterator->value.pagesTried.add(waiter.pageID).isNewEntry) {
+            target = waiter.pageID;
+            break;
+        }
+    }
+
+    if (!target)
+        return finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordDecision::No);
+
+    protect(m_networkProcess->parentProcessConnection())->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestLocalNetworkAccessPermission(*target, key.first, key.second), [weakThis = WeakPtr { *this }, key, generation = iterator->value.generation](LocalNetworkAccessPromptResult result) mutable {
+        CheckedPtr checkedThis = weakThis.get();
+        if (!checkedThis)
+            return;
+
+        // Without the generation check, a reply from a superseded round could record a decision after a revocation cleared it.
+        auto pendingIterator = checkedThis->m_pendingLocalNetworkAccessPrompts.find(key);
+        if (pendingIterator == checkedThis->m_pendingLocalNetworkAccessPrompts.end() || pendingIterator->value.generation != generation)
+            return;
+
+        switch (result) {
+        case LocalNetworkAccessPromptResult::Granted:
+            return checkedThis->finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Granted, RecordDecision::Yes);
+        case LocalNetworkAccessPromptResult::Denied:
+            return checkedThis->finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Denied, RecordDecision::Yes);
+        case LocalNetworkAccessPromptResult::ClientDeferred:
+            return checkedThis->finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordDecision::No);
+        case LocalNetworkAccessPromptResult::NotHosted:
+            return checkedThis->sendLocalNetworkAccessPromptToNextPage(key);
+        }
+    });
+}
+
+void NetworkSession::finishLocalNetworkAccessPrompt(LocalNetworkAccessPermissionKey key, WebCore::PermissionState state, RecordDecision record)
+{
+    auto iterator = m_pendingLocalNetworkAccessPrompts.find(key);
+    if (iterator == m_pendingLocalNetworkAccessPrompts.end())
+        return;
+
+    auto pending = m_pendingLocalNetworkAccessPrompts.take(iterator);
+    if (record == RecordDecision::Yes)
+        m_localNetworkAccessPermissions.set(key, state);
+    for (auto& waiter : pending.waiters)
+        waiter.handler(state);
 }
 
 void NetworkSession::setLocalNetworkAccessPermissionForTesting(WebCore::ClientOrigin&& origin, WebCore::IPAddressSpace addressSpace, WebCore::PermissionState decision)
@@ -295,16 +353,29 @@ WebCore::PermissionState NetworkSession::localNetworkAccessPermission(const WebC
     return iterator->value;
 }
 
+void NetworkSession::cancelLocalNetworkAccessPrompts(const std::optional<WebCore::SecurityOriginData>& topOrigin)
+{
+    Vector<LocalNetworkAccessPermissionKey> keys;
+    for (auto& key : m_pendingLocalNetworkAccessPrompts.keys()) {
+        if (!topOrigin || key.first.topOrigin == *topOrigin)
+            keys.append(key);
+    }
+    for (auto& key : keys)
+        finishLocalNetworkAccessPrompt(key, WebCore::PermissionState::Prompt, RecordDecision::No);
+}
+
 void NetworkSession::removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin)
 {
     m_localNetworkAccessPermissions.removeIf([&topOrigin](auto& entry) {
         return entry.key.first.topOrigin == topOrigin;
     });
+    cancelLocalNetworkAccessPrompts(topOrigin);
 }
 
 void NetworkSession::clearLocalNetworkAccessPermissionsForTesting()
 {
     m_localNetworkAccessPermissions.clear();
+    cancelLocalNetworkAccessPrompts(std::nullopt);
 }
 
 static std::optional<WebCore::IPAddressSpace> addressSpaceFromName(StringView name)

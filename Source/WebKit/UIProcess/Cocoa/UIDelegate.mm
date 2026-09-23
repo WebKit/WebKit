@@ -70,6 +70,7 @@
 #import <WebCore/AutoplayEvent.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FontAttributes.h>
+#import <WebCore/IPAddressSpace.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/StorageAccessQuirks.h>
 #import <WebCore/XRGPUProjectionLayerInit.h>
@@ -252,6 +253,7 @@ void UIDelegate::setDelegate(id<WKUIDelegate> delegate)
 #endif // ENABLE(WEBXR)
 
     m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
+    m_delegateMethods.webViewRequestLocalNetworkAccessPermissionForSecurityOriginTopLevelOriginIsLoopbackDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestLocalNetworkAccessPermissionForSecurityOrigin:topLevelOrigin:isLoopback:decisionHandler:)];
 
     m_delegateMethods.webViewUpdatedAppBadge = [delegate respondsToSelector:@selector(_webView:updatedAppBadge:fromSecurityOrigin:)];
 
@@ -862,6 +864,38 @@ void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::
         checker->didCallCompletionHandler();
 
         completionHandler(result);
+    }).get()];
+}
+
+void UIDelegate::UIClient::decidePolicyForLocalNetworkAccessPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin& requestingOrigin, API::SecurityOrigin& topOrigin, WebCore::IPAddressSpace addressSpace, CompletionHandler<void(WebKit::LocalNetworkAccessPromptResult)>&& completionHandler)
+{
+    RefPtr uiDelegate = m_uiDelegate.get();
+    if (!uiDelegate)
+        return completionHandler(WebKit::LocalNetworkAccessPromptResult::ClientDeferred);
+
+    if (!uiDelegate->m_delegateMethods.webViewRequestLocalNetworkAccessPermissionForSecurityOriginTopLevelOriginIsLoopbackDecisionHandler)
+        return completionHandler(WebKit::LocalNetworkAccessPromptResult::ClientDeferred);
+
+    RetainPtr delegate = uiDelegatePrivate();
+    if (!delegate)
+        return completionHandler(WebKit::LocalNetworkAccessPromptResult::ClientDeferred);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestLocalNetworkAccessPermissionForSecurityOrigin:topLevelOrigin:isLoopback:decisionHandler:));
+    [delegate _webView:uiDelegate->m_webView.get().get() requestLocalNetworkAccessPermissionForSecurityOrigin:protect(wrapper(requestingOrigin)).get() topLevelOrigin:protect(wrapper(topOrigin)).get() isLoopback:addressSpace == WebCore::IPAddressSpace::Loopback decisionHandler:makeBlockPtr([completionHandler = WTF::move(completionHandler), checker = WTF::move(checker)] (_WKLocalNetworkAccessDecision decision) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+
+        switch (decision) {
+        case _WKLocalNetworkAccessDecisionGrant:
+            return completionHandler(WebKit::LocalNetworkAccessPromptResult::Granted);
+        case _WKLocalNetworkAccessDecisionDeny:
+            return completionHandler(WebKit::LocalNetworkAccessPromptResult::Denied);
+        case _WKLocalNetworkAccessDecisionNotNow:
+            return completionHandler(WebKit::LocalNetworkAccessPromptResult::ClientDeferred);
+        }
+        ASSERT_NOT_REACHED();
+        return completionHandler(WebKit::LocalNetworkAccessPromptResult::ClientDeferred);
     }).get()];
 }
 

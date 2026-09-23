@@ -360,6 +360,23 @@ static NSRect frameForWindowFeatures(WKWindowFeatures *features, NSWindow *windo
     }];
 }
 
+- (void)_webView:(WKWebView *)webView requestLocalNetworkAccessPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin topLevelOrigin:(WKSecurityOrigin *)topLevelOrigin isLoopback:(BOOL)isLoopback decisionHandler:(void (^)(_WKLocalNetworkAccessDecision))decisionHandler
+{
+    NSString *originString = [NSString stringWithFormat:@"%@://%@", topLevelOrigin.protocol, topLevelOrigin.host];
+    NSString *frameString = [securityOrigin.host isEqualToString:topLevelOrigin.host] ? @"" : [NSString stringWithFormat:@" (requested by %@://%@)", securityOrigin.protocol, securityOrigin.host];
+    NSString *target = isLoopback ? @"this device (loopback)" : @"devices on your local network";
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText:[NSString stringWithFormat:@"Allow %@ to connect to %@?%@", originString, target, frameString]];
+    [alert setInformativeText:@"Allowing this grants access to every address in that space, not just one device or port."];
+    [alert addButtonWithTitle:@"Deny"];
+    [alert addButtonWithTitle:@"Allow"];
+
+    [alert beginSheetModalForWindow:self.window completionHandler:^void (NSModalResponse response) {
+        decisionHandler(response == NSAlertSecondButtonReturn ? _WKLocalNetworkAccessDecisionGrant : _WKLocalNetworkAccessDecisionDeny);
+    }];
+}
+
 - (IBAction)setViewScale:(id)sender
 {
     CGFloat scale = [self viewScaleForMenuItemTag:[sender tag]];

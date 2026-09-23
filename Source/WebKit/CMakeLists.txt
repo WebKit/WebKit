@@ -509,6 +509,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/JavaScriptEvaluationResult.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/LoadParameters.serialization.in
+    Shared/LocalNetworkAccessPromptResult.serialization.in
     Shared/MediaPlaybackState.serialization.in
     Shared/Model.serialization.in
     Shared/ModelProcessConnectionParameters.serialization.in
