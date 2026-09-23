@@ -871,8 +871,11 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
     Vector<Ref<Element>> namedItems = elements()->namedItems(name);
 
     auto elementFromPast = elementFromPastNamesMap(name);
-    if (namedItems.size() == 1 && namedItems.first().ptr() != elementFromPast)
-        addToPastNamesMap(*downcast<HTMLElement>(namedItems.first().get()).asFormAssociatedElement(), name);
+    if (namedItems.size() == 1 && namedItems.first().ptr() != elementFromPast) {
+        Ref<HTMLElement> element = downcast<HTMLElement>(namedItems.first().get());
+        if (RefPtr formAssociated = element->asFormAssociatedElement())
+            addToPastNamesMap(*formAssociated, name);
+    }
     else if (elementFromPast && namedItems.isEmpty())
         namedItems.append(*elementFromPast);
 
