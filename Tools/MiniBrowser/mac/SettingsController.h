@@ -61,6 +61,8 @@ typedef NS_ENUM(NSInteger, AttachmentElementEnabledState) {
 @property (nonatomic, readonly) BOOL animatedImageAsyncDecodingEnabled;
 @property (nonatomic, readonly) BOOL appleColorFilterEnabled;
 @property (nonatomic, readonly) BOOL punchOutWhiteBackgroundsInDarkMode;
+@property (nonatomic, readonly) BOOL axCustomColorModeEnabled;
+@property (nonatomic, readonly) BOOL showAXCustomColorModeControls;
 @property (nonatomic, readonly) BOOL useSystemAppearance;
 @property (nonatomic, readonly) BOOL dataDetectorsEnabled;
 @property (nonatomic, readonly) BOOL useMockCaptureDevices;

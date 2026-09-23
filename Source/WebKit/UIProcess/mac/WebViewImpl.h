@@ -86,6 +86,7 @@ OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WebTextIndicatorLayer;
 OBJC_CLASS WKAccessibilitySettingsObserver;
+OBJC_CLASS WKAXCustomColorModePreferencesController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
@@ -534,6 +535,10 @@ public:
     void requestCandidatesForSelectionIfNeeded();
 
     void preferencesDidChange();
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    void updateAXCustomColorModeControlsVisibility();
+#endif
 
     void updateNeedsViewFrameInWindowCoordinatesIfNeeded();
 
@@ -1280,6 +1285,10 @@ private:
 #if HAVE(APPKIT_GESTURES_SUPPORT)
     RetainPtr<WKAppKitGestureController> m_appKitGestureController;
     RetainPtr<WKTextSelectionController> m_textSelectionController;
+#endif
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    RetainPtr<WKAXCustomColorModePreferencesController> m_axCustomColorModeControlsController;
 #endif
 } SWIFT_SHARED_REFERENCE(incrementCheckedPtrCountOnWebViewImpl, decrementCheckedPtrCountOnWebViewImpl) SWIFT_RETURNED_AS_UNRETAINED_BY_DEFAULT;
 

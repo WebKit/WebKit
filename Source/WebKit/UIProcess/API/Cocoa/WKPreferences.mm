@@ -896,12 +896,31 @@ static WebCore::EditableLinkBehavior NODELETE toEditableLinkBehavior(_WKEditable
     return protect(*_preferences)->axCustomColorModeEnabled();
 }
 
+- (void)_setShowAXCustomColorModeControls:(BOOL)show
+{
+    protect(*_preferences)->setShowAXCustomColorModeControls(show);
+}
+
+- (BOOL)_showAXCustomColorModeControls
+{
+    return protect(*_preferences)->showAXCustomColorModeControls();
+}
+
 #else
 - (void)_setAXCustomColorModeEnabled:(BOOL)enabled
 {
 }
 
 - (BOOL)_axCustomColorModeEnabled
+{
+    return NO;
+}
+
+- (void)_setShowAXCustomColorModeControls:(BOOL)show
+{
+}
+
+- (BOOL)_showAXCustomColorModeControls
 {
     return NO;
 }

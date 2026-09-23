@@ -77,6 +77,8 @@ static NSString * const AllowsContentJavascriptPreferenceKey = @"AllowsContentJa
 static NSString * const AllowUniversalAccessFromFileURLsPreferenceKey = @"AllowUniversalAccessFromFileURLs";
 static NSString * const TabFocusesLinksEnabledPreferenceKey = @"TabFocusesLinksEnabled";
 static NSString * const AcceptAllTLSCertificatesPreferenceKey = @"AcceptAllTLSCertificates";
+static NSString * const AXCustomColorModeEnabledPreferenceKey = @"AXCustomColorModeEnabled";
+static NSString * const ShowAXCustomColorModeControlsPreferenceKey = @"ShowAXCustomColorModeControls";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -227,6 +229,11 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
     addItem(@"Allow JavaScript from web content to run", @selector(toggleAllowsContentJavascript:));
     addItem(@"Use Find Delegate", @selector(toggleUseFindDelegate:));
+
+    // Only operational when ENABLE(AX_CUSTOM_COLOR_MODE)
+    addItem(@"Enable AX Custom Color Mode", @selector(toggleAXCustomColorModeEnabled:));
+    addItem(@"Show AX Custom Color Mode Controls", @selector(toggleShowAXCustomColorModeControls:));
+
     indent = NO;
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -416,6 +423,10 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self acceptAllTLSCertificates] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePunchOutWhiteBackgroundsInDarkMode:))
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleAXCustomColorModeEnabled:))
+        [menuItem setState:[self axCustomColorModeEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleShowAXCustomColorModeControls:))
+        [menuItem setState:[self showAXCustomColorModeControls] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDataDetectorsEnabled:))
@@ -788,6 +799,26 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)punchOutWhiteBackgroundsInDarkMode
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:PunchOutWhiteBackgroundsInDarkModePreferenceKey];
+}
+
+- (void)toggleAXCustomColorModeEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:AXCustomColorModeEnabledPreferenceKey];
+}
+
+- (BOOL)axCustomColorModeEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:AXCustomColorModeEnabledPreferenceKey];
+}
+
+- (void)toggleShowAXCustomColorModeControls:(id)sender
+{
+    [self _toggleBooleanDefault:ShowAXCustomColorModeControlsPreferenceKey];
+}
+
+- (BOOL)showAXCustomColorModeControls
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:ShowAXCustomColorModeControlsPreferenceKey];
 }
 
 - (void)toggleUseSystemAppearance:(id)sender

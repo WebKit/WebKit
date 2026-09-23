@@ -200,6 +200,10 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+#import <WebKitAdditions/AXCustomColorModePreferencesController.h>
+#endif
+
 #import "AppKitSoftLink.h"
 #import <pal/cocoa/RevealSoftLink.h>
 #import <pal/cocoa/ScreenTimeSoftLink.h>
@@ -2622,6 +2626,12 @@ void WebViewImpl::viewDidMoveToWindow()
 
         accessibilityRegisterUIProcessTokens();
 
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+        // The preference may already be set at launch (before the web process is running, so
+        // preferencesDidChange won't have fired), so evaluate visibility now that we're in a window.
+        updateAXCustomColorModeControlsVisibility();
+#endif
+
         if (m_immediateActionGestureRecognizer && ![retainPtr([m_view.get() gestureRecognizers]) containsObject:m_immediateActionGestureRecognizer.get()] && !m_ignoresNonWheelEvents && m_allowsLinkPreview)
             [m_view.get() addGestureRecognizer:m_immediateActionGestureRecognizer.get()];
     } else {
@@ -3966,7 +3976,27 @@ void WebViewImpl::preferencesDidChange()
     if (RetainPtr appKitGestureController = m_appKitGestureController)
         [appKitGestureController preferencesDidChange];
 #endif
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+    updateAXCustomColorModeControlsVisibility();
+#endif
 }
+
+#if ENABLE(AX_CUSTOM_COLOR_MODE)
+void WebViewImpl::updateAXCustomColorModeControlsVisibility()
+{
+    if (!m_page->preferences().showAXCustomColorModeControls()) {
+        if (RetainPtr controlsController = m_axCustomColorModeControlsController)
+            [controlsController remove];
+        return;
+    }
+
+    if (!m_axCustomColorModeControlsController)
+        m_axCustomColorModeControlsController = adoptNS([[WKAXCustomColorModePreferencesController alloc] initWithPreferences:m_page->preferences()]);
+
+    [m_axCustomColorModeControlsController attachToView:m_view.getAutoreleased() topInset:obscuredContentInsets().top()];
+}
+#endif
 
 CALayer* WebViewImpl::textIndicatorInstallationLayer()
 {

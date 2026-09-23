@@ -673,6 +673,10 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._colorFilterEnabled = settings.appleColorFilterEnabled;
     preferences.siteSpecificQuirksModeEnabled = settings.siteSpecificQuirksModeEnabled;
     preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
+    if ([preferences respondsToSelector:@selector(_setAXCustomColorModeEnabled:)])
+        preferences._axCustomColorModeEnabled = settings.axCustomColorModeEnabled;
+    if ([preferences respondsToSelector:@selector(_setShowAXCustomColorModeControls:)])
+        preferences._showAXCustomColorModeControls = settings.showAXCustomColorModeControls;
     preferences._mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
     preferences.tabFocusesLinks = settings.tabFocusesLinksEnabled;
 
