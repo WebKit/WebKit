@@ -34,7 +34,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this._errorCount = 0;
         this._issues = [];
 
-        this._lastMessageLevel = null;
+        this._lastMessageLevelForTarget = new WeakMap;
         this._clearMessagesRequested = false;
         this._legacyPendingMainFrameNavigationClear = false;
         this._remoteObjectsToRelease = null;
@@ -186,7 +186,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         const request = null;
         let message = new WI.ConsoleMessage(target, source, level, text, type, url, line, column, repeatCount, parameters, stackTrace, request, timestamp);
 
-        this._incrementMessageLevelCount(message.level, message.repeatCount);
+        this._incrementMessageLevelCount(target, message.level, message.repeatCount);
 
         this.dispatchEventToListeners(WI.ConsoleManager.Event.MessageAdded, {message});
 
@@ -200,7 +200,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         }
     }
 
-    messagesCleared(reason)
+    messagesCleared(target, reason)
     {
         if (this._remoteObjectsToRelease) {
             for (let remoteObject of this._remoteObjectsToRelease)
@@ -240,6 +240,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         case WI.ConsoleManager.ClearReason.ConsoleAPI:
             console.assert(WI.settings.consoleClearAPIEnabled.value);
             this._clearMessages();
+            this._clearMessagesForOtherTargets(target);
             return;
 
         case WI.ConsoleManager.ClearReason.MainFrameNavigation:
@@ -254,7 +255,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     messageRepeatCountUpdated(target, count, timestamp)
     {
-        this._incrementMessageLevelCount(this._lastMessageLevel, 1);
+        this._incrementMessageLevelCount(target, this._lastMessageLevelForTarget.get(target), 1);
 
         this.dispatchEventToListeners(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, {target, count, timestamp});
     }
@@ -289,7 +290,19 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     // Private
 
-    _incrementMessageLevelCount(level, count)
+    _clearMessagesForOtherTargets(target)
+    {
+        // The replies carry ClearReason.Frontend, so this does not recurse.
+        for (let otherTarget of WI.targets) {
+            if (otherTarget === target)
+                continue;
+
+            if (otherTarget.hasDomain("Console"))
+                otherTarget.ConsoleAgent.clearMessages();
+        }
+    }
+
+    _incrementMessageLevelCount(target, level, count)
     {
         switch (level) {
         case WI.ConsoleMessage.MessageLevel.Warning:
@@ -300,7 +313,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
             break;
         }
 
-        this._lastMessageLevel = level;
+        this._lastMessageLevelForTarget.set(target, level);
     }
 
     _clearMessages()
@@ -309,7 +322,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this._errorCount = 0;
         this._issues = [];
 
-        this._lastMessageLevel = null;
+        this._lastMessageLevelForTarget = new WeakMap;
 
         this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
     }
