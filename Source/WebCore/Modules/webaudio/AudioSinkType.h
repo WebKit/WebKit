@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,10 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "AudioContextLatencyCategory.h"
-#include "AudioSinkOptions.h"
-#include <optional>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-struct AudioContextOptions {
-    Variant<AudioContextLatencyCategory, double> latencyHint { AudioContextLatencyCategory::Interactive };
-    std::optional<float> sampleRate;
-    std::optional<Variant<String, AudioSinkOptions>> sinkId;
+enum class AudioSinkType : bool {
+    None,
 };
 
 } // namespace WebCore
