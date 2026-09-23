@@ -1,0 +1,13 @@
+Tests that an option cannot be chosen by its access key when the option, its optgroup, or its select is disabled. To test this manually, press <alt>+b, <alt>+d, <alt>+f and <alt>+h in this order (on macOS, press <ctrl>+<opt> instead of <alt>).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS enabled.value is "b"
+PASS disabledSelect.value is "c"
+PASS disabledOption.value is "e"
+PASS disabledOptGroup.value is "g"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

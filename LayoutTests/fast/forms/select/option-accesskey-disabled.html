@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<select id="enabled">
+    <option>a</option>
+    <option accesskey="b">b</option>
+</select>
+<select id="disabledSelect" disabled>
+    <option>c</option>
+    <option accesskey="d">d</option>
+</select>
+<select id="disabledOption">
+    <option>e</option>
+    <option accesskey="f" disabled>f</option>
+</select>
+<select id="disabledOptGroup">
+    <option>g</option>
+    <optgroup disabled><option accesskey="h">h</option></optgroup>
+</select>
+<script>
+description("Tests that an option cannot be chosen by its access key when the option, its optgroup, or its select is disabled. To test this manually, press &lt;alt&gt;+b, &lt;alt&gt;+d, &lt;alt&gt;+f and &lt;alt&gt;+h in this order (on macOS, press &lt;ctrl&gt;+&lt;opt&gt; instead of &lt;alt&gt;).");
+
+function pressAccessKey(key)
+{
+    const modifiers = navigator.userAgent.search(/\bMac OS X\b/) !== -1 ? ["ctrlKey", "altKey"] : ["altKey"];
+    if (window.eventSender)
+        eventSender.keyDown(key, modifiers);
+}
+
+// A control, so that the test cannot pass by access keys not working at all.
+pressAccessKey("b");
+shouldBeEqualToString("enabled.value", "b");
+
+pressAccessKey("d");
+shouldBeEqualToString("disabledSelect.value", "c");
+
+pressAccessKey("f");
+shouldBeEqualToString("disabledOption.value", "e");
+
+pressAccessKey("h");
+shouldBeEqualToString("disabledOptGroup.value", "g");
+</script>
+</body>
+</html>

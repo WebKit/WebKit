@@ -318,6 +318,9 @@ bool HTMLOptionElement::accessKeyAction(bool)
     if (!select)
         return false;
 
+    if (isActuallyDisabled())
+        return false;
+
     if (select->usesBaseAppearancePicker())
         select->pickOption(*this);
     else
