@@ -176,8 +176,8 @@
     </dependencies>
     <branch module="GNOME/libsoup.git"
             repo="github.com"
-            tag="3.6.5"
-            version="3.6.5"
+            tag="3.6.6"
+            version="3.6.6"
             checkoutdir="libsoup-${version}"/>
   </meson>
 
