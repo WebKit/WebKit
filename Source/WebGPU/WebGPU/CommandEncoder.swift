@@ -959,18 +959,12 @@ extension WebGPU.CommandEncoder {
         let collection = CollectionOfOne(descriptor)
         let descriptorSpan = collection.span
         if let timestampWrites = wgpuGetRenderPassDescriptorTimestampWrites(descriptorSpan)?[0] {
-            return errorValidatingTimestampWrites(
-                timestampWrites: WGPUComputePassTimestampWrites(
-                    querySet: timestampWrites.querySet,
-                    beginningOfPassWriteIndex: timestampWrites.beginningOfPassWriteIndex,
-                    endOfPassWriteIndex: timestampWrites.endOfPassWriteIndex
-                )
-            )
+            return errorValidatingTimestampWrites(timestampWrites: timestampWrites)
         }
         return nil
     }
 
-    private func errorValidatingTimestampWrites(timestampWrites: WGPUComputePassTimestampWrites) -> String? {
+    private func errorValidatingTimestampWrites(timestampWrites: WGPUPassTimestampWrites) -> String? {
         if !m_device.ptr().hasFeature(WGPUFeatureName_TimestampQuery) {
             return "device does not have timestamp query feature"
         }

@@ -105,7 +105,7 @@ RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDe
         };
     }
 
-    WGPURenderPassTimestampWrites timestampWrites {
+    WGPUPassTimestampWrites timestampWrites {
         .querySet = descriptor.timestampWrites ? convertToBackingContext->convertToBacking(*protect(descriptor.timestampWrites->querySet)) : nullptr,
         .beginningOfPassWriteIndex = descriptor.timestampWrites ? descriptor.timestampWrites->beginningOfPassWriteIndex : 0,
         .endOfPassWriteIndex = descriptor.timestampWrites ? descriptor.timestampWrites->endOfPassWriteIndex : 0
@@ -128,7 +128,7 @@ RefPtr<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optio
 {
     String label = descriptor ? descriptor->label : emptyString();
 
-    WGPUComputePassTimestampWrites timestampWrites {
+    WGPUPassTimestampWrites timestampWrites {
         .querySet = (descriptor && descriptor->timestampWrites && descriptor->timestampWrites->querySet) ? m_convertToBackingContext->convertToBacking(*protect(descriptor->timestampWrites->querySet)) : nullptr,
         .beginningOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->beginningOfPassWriteIndex : 0,
         .endOfPassWriteIndex = (descriptor && descriptor->timestampWrites) ? descriptor->timestampWrites->endOfPassWriteIndex : 0

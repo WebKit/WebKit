@@ -142,13 +142,13 @@ struct WGPUColor;
 struct WGPUCommandBufferDescriptor;
 struct WGPUCommandEncoderDescriptor;
 struct WGPUCompilationMessage;
-struct WGPUComputePassTimestampWrites;
 struct WGPUConstantEntry;
 struct WGPUExtent3D;
 struct WGPUInstanceDescriptor;
 struct WGPULimits;
 struct WGPUMultisampleState;
 struct WGPUOrigin3D;
+struct WGPUPassTimestampWrites;
 struct WGPUPipelineLayoutDescriptor;
 struct WGPUPrimitiveState;
 struct WGPUQuerySetDescriptor;
@@ -156,7 +156,6 @@ struct WGPUQueueDescriptor;
 struct WGPURenderBundleDescriptor;
 struct WGPURenderBundleEncoderDescriptor;
 struct WGPURenderPassDepthStencilAttachment;
-struct WGPURenderPassTimestampWrites;
 struct WGPURequestAdapterOptions;
 struct WGPUSamplerBindingLayout;
 struct WGPUSamplerDescriptor;
@@ -866,12 +865,6 @@ typedef struct WGPUCompilationMessage {
     uint64_t utf16Length;
 } WGPUCompilationMessage WGPU_STRUCTURE_ATTRIBUTE;
 
-typedef struct WGPUComputePassTimestampWrites {
-    WGPUQuerySet querySet;
-    uint32_t beginningOfPassWriteIndex;
-    uint32_t endOfPassWriteIndex;
-} WGPUComputePassTimestampWrites WGPU_STRUCTURE_ATTRIBUTE;
-
 typedef struct WGPUConstantEntry {
     char const * key;
     double value;
@@ -957,6 +950,12 @@ typedef struct WGPUOrigin3D {
     uint32_t z;
 } WGPUOrigin3D WGPU_STRUCTURE_ATTRIBUTE;
 
+typedef struct WGPUPassTimestampWrites {
+    WGPUQuerySet querySet;
+    uint32_t beginningOfPassWriteIndex;
+    uint32_t endOfPassWriteIndex;
+} WGPUPassTimestampWrites WGPU_STRUCTURE_ATTRIBUTE;
+
 typedef struct WGPUPipelineLayoutDescriptor {
     WGPU_NULLABLE char const * label;
     size_t bindGroupLayoutCount;
@@ -1011,12 +1010,6 @@ typedef struct WGPURenderPassDepthStencilAttachment {
     uint32_t stencilClearValue;
     WGPUBool stencilReadOnly;
 } WGPURenderPassDepthStencilAttachment WGPU_STRUCTURE_ATTRIBUTE;
-
-typedef struct WGPURenderPassTimestampWrites {
-    WGPUQuerySet querySet;
-    uint32_t beginningOfPassWriteIndex;
-    uint32_t endOfPassWriteIndex;
-} WGPURenderPassTimestampWrites WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURequestAdapterOptions {
     WGPU_NULLABLE WGPUSurface compatibleSurface;
@@ -1197,10 +1190,10 @@ inline std::span<const WGPUCompilationMessage> messagesSpan(const WGPUCompilatio
 
 typedef struct WGPUComputePassDescriptor {
     WGPU_NULLABLE WTF::String label;
-    WGPU_NULLABLE WGPUComputePassTimestampWrites const * timestampWrites;
+    WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
 } SWIFT_ESCAPABLE WGPUComputePassDescriptor WGPU_STRUCTURE_ATTRIBUTE; // FIXME: This is unsafe!
 
-static inline WGPU_NULLABLE WGPUComputePassTimestampWrites const * _Nullable __counted_by(1) wgpuGetComputePassDescriptorTimestampWrites(const WGPUComputePassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
+static inline WGPU_NULLABLE WGPUPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetComputePassDescriptorTimestampWrites(const WGPUComputePassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
     return descriptor->timestampWrites;
 }
 
@@ -1328,12 +1321,12 @@ typedef struct WGPURenderPassDescriptor {
     WGPURenderPassColorAttachment const * colorAttachments;
     WGPU_NULLABLE WGPURenderPassDepthStencilAttachment const * depthStencilAttachment;
     WGPU_NULLABLE WGPUQuerySet occlusionQuerySet;
-    WGPU_NULLABLE WGPURenderPassTimestampWrites const * timestampWrites;
+    WGPU_NULLABLE WGPUPassTimestampWrites const * timestampWrites;
 
     auto colorAttachmentsSpan() const { return unsafeMakeSpan(colorAttachments, colorAttachmentCount); }
 } SWIFT_ESCAPABLE WGPURenderPassDescriptor WGPU_STRUCTURE_ATTRIBUTE; // FIXME: This is unsafe!
 
-inline WGPURenderPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetRenderPassDescriptorTimestampWrites(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
+inline WGPUPassTimestampWrites const * _Nullable __counted_by(1) wgpuGetRenderPassDescriptorTimestampWrites(const WGPURenderPassDescriptor * __counted_by(1) descriptor LIFETIME_BOUND) {
     return descriptor->timestampWrites;
 }
 
