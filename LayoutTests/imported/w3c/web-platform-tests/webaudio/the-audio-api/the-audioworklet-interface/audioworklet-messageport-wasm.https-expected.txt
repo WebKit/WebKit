@@ -1,0 +1,6 @@
+
+Harness Error (FAIL), message = Unhandled rejection: undefined is not an object (evaluating 'port.addEventListener')
+
+FAIL AudioWorkletGlobalScope: global port can exchange a WebAssembly.Module promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'port.postMessage')"
+PASS AudioWorkletProcessor: processor port can exchange a WebAssembly.Module
+

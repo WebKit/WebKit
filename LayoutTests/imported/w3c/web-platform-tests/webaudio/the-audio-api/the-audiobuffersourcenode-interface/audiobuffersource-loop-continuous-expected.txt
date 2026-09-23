@@ -1,0 +1,7 @@
+
+PASS Indefinite looping on unaligned buffer (65,201 frames) renders continuously without stopping or firing onended
+PASS Looping source with explicit grain duration plays exact buffer duration and terminates
+PASS Continuous looping on sub-quantum prime (67 frames) at 48000 Hz renders seamlessly
+PASS Continuous looping on quantum + 1 boundary (129 frames) at 48000 Hz renders seamlessly
+PASS Continuous looping on LAME padding size from crbug.com/553218226 (1,486 frames) at 48000 Hz renders seamlessly
+

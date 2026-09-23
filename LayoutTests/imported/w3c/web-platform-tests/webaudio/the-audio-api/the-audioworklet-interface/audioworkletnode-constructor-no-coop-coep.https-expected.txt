@@ -1,0 +1,7 @@
+
+FAIL non cross-origin isolated shared memory clone error in AudioWorkletNodeOptions processorOptions assert_throws_dom: SharedArrayBuffer function "() => {
+    new AudioWorkletNode(context, 'dummy', {
+      processorOptions: {buffer: memory.buffer}
+    });
+  }" did not throw
+
