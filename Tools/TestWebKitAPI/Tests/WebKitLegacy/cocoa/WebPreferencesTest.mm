@@ -28,59 +28,59 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WebPreferences.h>
 
-WTF_EXTERN_C_BEGIN
-WebCacheModel TestWebPreferencesCacheModelForMainBundle(NSString *bundleIdentifier);
-WTF_EXTERN_C_END
+@interface WebPreferences (TestingInternal)
++ (WebCacheModel)_cacheModelForBundleIdentifier:(NSString *)bundleIdentifier;
+@end
 
 namespace TestWebKitAPI {
 
 TEST(WebKitLegacy, CacheModelForMainBundle)
 {
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"Microsoft/com.microsoft.Messenger"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.adiumX.adiumX"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.alientechnology.Proteus"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.apple.Dashcode"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.apple.iChat"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.barebones.bbedit"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.barebones.textwrangler"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.barebones.yojimbo"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.equinux.iSale4"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.growl.growlframework"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.intrarts.PandoraMan"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.karelia.Sandvox"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.macromates.textmate"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.realmacsoftware.rapidweaverpro"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.red-sweater.marsedit"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.yahoo.messenger3"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"de.codingmonkeys.SubEthaEdit"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"fi.karppinen.Pyro"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"info.colloquy"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"kungfoo.tv.ecto"));
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"Microsoft/com.microsoft.Messenger"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.adiumX.adiumX"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.alientechnology.Proteus"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.Dashcode"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.iChat"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.barebones.bbedit"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.barebones.textwrangler"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.barebones.yojimbo"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.equinux.iSale4"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.growl.growlframework"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.intrarts.PandoraMan"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.karelia.Sandvox"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.macromates.textmate"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.realmacsoftware.rapidweaverpro"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.red-sweater.marsedit"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.yahoo.messenger3"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"de.codingmonkeys.SubEthaEdit"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"fi.karppinen.Pyro"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"info.colloquy"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"kungfoo.tv.ecto"]);
 
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.apple.Dictionary"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.apple.Xcode"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.apple.helpviewer"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.culturedcode.xyle"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.macrabbit.CSSEdit"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.panic.Coda"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.ranchero.NetNewsWire"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.thinkmac.NewsLife"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"org.xlife.NewsFire"));
-    EXPECT_EQ(WebCacheModelDocumentBrowser, TestWebPreferencesCacheModelForMainBundle(@"uk.co.opencommunity.vienna2"));
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.Dictionary"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.Xcode"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.helpviewer"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.culturedcode.xyle"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.macrabbit.CSSEdit"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.panic.Coda"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.ranchero.NetNewsWire"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.thinkmac.NewsLife"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"org.xlife.NewsFire"]);
+    EXPECT_EQ(WebCacheModelDocumentBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"uk.co.opencommunity.vienna2"]);
 
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.app4mac.KidsBrowser"));
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.app4mac.wKiosk"));
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.freeverse.bumpercar"));
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.omnigroup.OmniWeb5"));
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"com.sunrisebrowser.Sunrise"));
-    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, TestWebPreferencesCacheModelForMainBundle(@"net.hmdt-web.Shiira"));
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.app4mac.KidsBrowser"]);
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.app4mac.wKiosk"]);
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.freeverse.bumpercar"]);
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.omnigroup.OmniWeb5"]);
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"com.sunrisebrowser.Sunrise"]);
+    EXPECT_EQ(WebCacheModelPrimaryWebBrowser, [WebPreferences _cacheModelForBundleIdentifier:@"net.hmdt-web.Shiira"]);
 
     // Test bundle identifiers that are not hard-coded.
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(nil));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@""));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.apple.Safari"));
-    EXPECT_EQ(WebCacheModelDocumentViewer, TestWebPreferencesCacheModelForMainBundle(@"com.apple.SafariTechnologyPreview"));
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:nil]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@""]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.Safari"]);
+    EXPECT_EQ(WebCacheModelDocumentViewer, [WebPreferences _cacheModelForBundleIdentifier:@"com.apple.SafariTechnologyPreview"]);
 }
 
 }
