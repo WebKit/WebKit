@@ -698,32 +698,32 @@ LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSi
     return sumOfTrackSizes + (numberOfInteriorGaps * gap);
 }
 
-LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
+MarginBoxSize inlineAxisMinContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
 {
     auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentLogicalWidthContribution(gridItem.layoutBox()));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
-    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
-LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
+MarginBoxSize inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
 {
     auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentLogicalWidthContribution(gridItem.layoutBox()));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
-    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
-LayoutUnit blockAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
+MarginBoxSize blockAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
     auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
-    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
-LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
+MarginBoxSize blockAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
     auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().maxContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
     auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
-    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
 }
 
 // https://www.w3.org/TR/css-sizing-3/#behave-as-auto

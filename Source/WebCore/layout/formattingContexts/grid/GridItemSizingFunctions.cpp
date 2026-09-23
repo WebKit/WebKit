@@ -108,7 +108,7 @@ GridItemSizingFunctions GridItemSizingFunctions::inlineAxis(const IntegrationUti
             // "its minimum contribution is the outer size that would result from assuming the item's
             // used minimum size as its preferred size"
             auto usedMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, inlineAxisSizes);
-            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
         }
     };
 }
@@ -149,7 +149,7 @@ GridItemSizingFunctions GridItemSizingFunctions::blockAxis(const GridFormattingC
             // "its minimum contribution is the outer size that would result from assuming the item's
             // used minimum size as its preferred size"
             auto usedMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, blockAxisSizes);
-            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
+            return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd };
         }
     };
 }
