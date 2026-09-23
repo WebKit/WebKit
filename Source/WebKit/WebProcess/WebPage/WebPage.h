@@ -1575,6 +1575,7 @@ public:
     std::pair<WebCore::HandleUserInputEventResult, OptionSet<WebCore::EventHandling>> wheelEvent(const WebCore::FrameIdentifier&, const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
 
     void wheelEventHandlersChanged(bool);
+    void touchEventHandlersChanged(bool);
     void recomputeShortCircuitHorizontalWheelEventsState();
     bool pageContainsAnyHorizontalScrollbars() const;
 
@@ -3111,6 +3112,7 @@ private:
     WebCore::RectEdges<bool> m_cachedMainFramePinnedState { true, true, true, true };
     bool m_canShortCircuitHorizontalWheelEvents { true };
     bool m_hasWheelEventHandlers { false };
+    bool m_hasTouchEventHandlers { false };
 
     unsigned m_cachedPageCount { 0 };
 

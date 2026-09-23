@@ -7584,6 +7584,15 @@ void WebPage::wheelEventHandlersChanged(bool hasHandlers)
     recomputeShortCircuitHorizontalWheelEventsState();
 }
 
+void WebPage::touchEventHandlersChanged(bool hasHandlers)
+{
+    if (m_hasTouchEventHandlers == hasHandlers)
+        return;
+
+    m_hasTouchEventHandlers = hasHandlers;
+    send(Messages::WebPageProxy::SetHasActiveTouchEventHandlers(hasHandlers));
+}
+
 static bool hasEnabledHorizontalScrollbar(ScrollableArea* scrollableArea)
 {
     RefPtr scrollbar = scrollableArea->horizontalScrollbar();
