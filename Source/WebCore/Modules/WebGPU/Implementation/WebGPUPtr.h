@@ -96,7 +96,8 @@ template <> struct WebGPURefDerefTraits<WGPUXRView> : public BaseWebGPURefDerefT
 
 template <typename T> using WebGPUPtr = RefPtr<std::remove_pointer_t<T>, WebGPUPtrTraits<T>, WebGPURefDerefTraits<T>>;
 
-template <typename T> inline WebGPUPtr<T> adoptWebGPU(T t)
+// T is always an opaque WGPU* handle, so it can never be a complete type here.
+template <typename T> SUPPRESS_FORWARD_DECL_ARG inline WebGPUPtr<T> adoptWebGPU(T t)
 {
     return adoptRef<std::remove_pointer_t<T>, WebGPUPtrTraits<T>, WebGPURefDerefTraits<T>>(t);
 }

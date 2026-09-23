@@ -33,6 +33,11 @@
 #include <wtf/Compiler.h>
 #include <wtf/SwiftBridging.h>
 
+// The WGPU* handles below are opaque by design: the structs they point to are
+// defined inside the WebGPU framework and are deliberately not exported, so
+// clients cannot complete the types.
+DECLARE_SYSTEM_HEADER
+
 #if __has_include(<swift/bridging>)
 #include <swift/bridging>
 #endif
