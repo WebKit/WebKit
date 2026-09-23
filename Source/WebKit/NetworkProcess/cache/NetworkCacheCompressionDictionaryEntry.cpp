@@ -59,21 +59,26 @@ CompressionDictionaryEntry::CompressionDictionaryEntry(const Key& key, Info&& in
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_info(WTF::move(info))
-    , m_buffer(WTF::move(buffer))
+    , m_buffer(buffer ? RefPtr { buffer->makeContiguous() } : nullptr)
 {
     auto digest = PAL::Crypto::CryptoDigest::create(PAL::Crypto::CryptoDigest::Algorithm::SHA_256);
-    if (RefPtr buffer = m_buffer) {
-        buffer->forEachSegment([&](auto segment) {
-            digest->addBytes(segment);
-        });
-    }
+    if (RefPtr buffer = m_buffer)
+        digest->addBytes(buffer->span());
     memcpySpan(std::span { m_hash }, digest->computeHash().span());
 }
 
 CompressionDictionaryEntry::CompressionDictionaryEntry(const Storage::Record& storageEntry)
     : m_key(storageEntry.key)
     , m_timeStamp(storageEntry.timeStamp)
+    , m_sourceStorageRecord(storageEntry)
 {
+}
+
+RefPtr<WebCore::SharedBuffer> CompressionDictionaryEntry::buffer() const
+{
+    if (!m_buffer)
+        m_buffer = WebCore::SharedBuffer::create(m_sourceStorageRecord.body.span());
+    return m_buffer;
 }
 
 Storage::Record CompressionDictionaryEntry::encodeAsStorageRecord() const
@@ -90,11 +95,8 @@ Storage::Record CompressionDictionaryEntry::encodeAsStorageRecord() const
 
     Data header(encoder.span());
     Data body;
-    if (RefPtr buffer = m_buffer) {
-        Ref contiguousBuffer = buffer->makeContiguous();
-        m_buffer = contiguousBuffer.copyRef();
-        body = { contiguousBuffer->span() };
-    }
+    if (RefPtr buffer = m_buffer)
+        body = { buffer->span() };
 
     return { m_key, m_timeStamp, header, body, { } };
 }

@@ -29,8 +29,10 @@
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationManager.h"
 #include "Download.h"
+#include "NetworkCache.h"
 #include "NetworkLoad.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "NetworkSessionSoup.h"
 #include "NetworkStorageSession.h"
 #include "PrivateRelayed.h"
@@ -42,6 +44,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/PublicSuffixStore.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SoupNetworkSession.h>
@@ -63,6 +66,9 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
     , m_shouldContentSniff(parameters.contentSniffingPolicy)
     , m_shouldPreconnectOnly(parameters.shouldPreconnectOnly)
     , m_sourceOrigin(parameters.sourceOrigin)
+#if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
+    , m_compressionDictionary(parameters.compressionDictionary)
+#endif
     , m_timeoutSource(RunLoop::mainSingleton(), "NetworkDataTaskSoup::TimeoutSource"_s, this, &NetworkDataTaskSoup::timeoutFired)
 {
     auto request = parameters.request;
@@ -133,6 +139,17 @@ void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, San
     m_allowOverwriteDownload = allowOverwrite;
 }
 
+bool NetworkDataTaskSoup::shouldBlockCookies(const ResourceRequest& request, WasBlockingCookies wasBlockingCookies) const
+{
+    if (wasBlockingCookies == WasBlockingCookies::Yes || m_storedCredentialsPolicy == StoredCredentialsPolicy::EphemeralStateless)
+        return true;
+
+    if (auto* networkStorageSession = m_session->networkStorageSession())
+        return networkStorageSession->shouldBlockCookies(request, m_frameID, m_webPageProxyID, WebCore::ShouldRelaxThirdPartyCookieBlocking::No, WebCore::IsKnownCrossSiteTracker::No);
+
+    return false;
+}
+
 void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCookies wasBlockingCookies)
 {
     m_currentRequest = WTF::move(request);
@@ -162,6 +179,19 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         return;
     }
 
+#if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
+    // libsoup writes Available-Dictionary and Dictionary-ID, extends Accept-Encoding, and asks for
+    // the dictionary itself only if the server answers with dcb or dcz.
+    if (m_compressionDictionary && m_compressionDictionary->match) {
+        auto& match = *m_compressionDictionary->match;
+        GRefPtr<GBytes> hash = adoptGRef(g_bytes_new(match.hash.data(), match.hash.size()));
+        soup_message_set_compression_dictionary_hash(m_soupMessage.get(), hash.get());
+        auto dictionaryID = match.id.utf8();
+        soup_message_set_compression_dictionary_id(m_soupMessage.get(), match.id.isEmpty() ? nullptr : dictionaryID.legacyCStringPointer());
+        g_signal_connect(m_soupMessage.get(), "request-compression-dictionary", G_CALLBACK(requestCompressionDictionaryCallback), this);
+    }
+#endif
+
     if (m_shouldPreconnectOnly == PreconnectOnly::Yes) {
         g_signal_connect(m_soupMessage.get(), "accept-certificate", G_CALLBACK(acceptCertificateCallback), this);
         return;
@@ -179,14 +209,10 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     }
     soup_message_set_flags(m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(m_soupMessage.get()) | messageFlags));
 
-    bool shouldBlockCookies = wasBlockingCookies == WasBlockingCookies::Yes || m_storedCredentialsPolicy == StoredCredentialsPolicy::EphemeralStateless;
-    if (!shouldBlockCookies) {
-        if (auto* networkStorageSession = m_session->networkStorageSession())
-            shouldBlockCookies = networkStorageSession->shouldBlockCookies(m_currentRequest, m_frameID, m_webPageProxyID, WebCore::ShouldRelaxThirdPartyCookieBlocking::No, WebCore::IsKnownCrossSiteTracker::No);
-    }
-    if (shouldBlockCookies)
+    bool blockCookies = shouldBlockCookies(m_currentRequest, wasBlockingCookies);
+    if (blockCookies)
         soup_message_disable_feature(m_soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
-    m_isBlockingCookies = shouldBlockCookies;
+    m_isBlockingCookies = blockCookies;
 
     if ((m_currentRequest.url().protocolIs("https"_s) && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http"_s) && !shouldAllowHSTSProtocolUpgrade()))
         soup_message_disable_feature(m_soupMessage.get(), SOUP_TYPE_HSTS_ENFORCER);
@@ -874,12 +900,40 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
             if (!request.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
                 request.setHTTPUserAgent(userAgent);
         }
-        createRequest(WTF::move(request), wasBlockingCookies);
-        if (m_soupMessage && m_state != State::Suspended) {
-            m_state = State::Suspended;
-            resume();
+
+#if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
+        // A redirect is followed here rather than in NetworkResourceLoader, so the best match has to
+        // be recomputed for the new URL. https://fetch.spec.whatwg.org/#http-network-compression-dictionary-fetch
+        if (m_compressionDictionary) {
+            m_compressionDictionary->match = std::nullopt;
+            if (m_session && request.url().protocolIsInHTTPFamily() && shouldTreatAsPotentiallyTrustworthy(request.url())
+                && !shouldBlockCookies(request, wasBlockingCookies)) {
+                if (RefPtr cache = m_session->cache()) {
+                    cache->retrieveCompressionDictionaryBestMatch(WTF::move(request), m_compressionDictionary->destination, [this, protectedThis = protect(*this), wasBlockingCookies](ResourceRequest&& request, std::optional<NetworkCache::Cache::CompressionDictionaryMatch>&& match) mutable {
+                        // clearRequest() above left the state Completed; only a cancel means we must stop.
+                        if (m_state == State::Canceling)
+                            return;
+                        if (match)
+                            m_compressionDictionary->match = CompressionDictionaryParameters::Match { match->key, match->hash, match->id };
+                        continueCreateRequestForRedirection(WTF::move(request), wasBlockingCookies);
+                    });
+                    return;
+                }
+            }
         }
+#endif
+
+        continueCreateRequestForRedirection(WTF::move(request), wasBlockingCookies);
     });
+}
+
+void NetworkDataTaskSoup::continueCreateRequestForRedirection(ResourceRequest&& request, WasBlockingCookies wasBlockingCookies)
+{
+    createRequest(WTF::move(request), wasBlockingCookies);
+    if (m_soupMessage && m_state != State::Suspended) {
+        m_state = State::Suspended;
+        resume();
+    }
 }
 
 void NetworkDataTaskSoup::readCallback(GInputStream* inputStream, GAsyncResult* result, NetworkDataTaskSoup* task)
@@ -1353,6 +1407,41 @@ void NetworkDataTaskSoup::didFail(const ResourceError& error)
     ASSERT(m_client);
     dispatchDidCompleteWithError(error);
 }
+
+#if HAVE(SOUP_COMPRESSION_DICTIONARY_SUPPORT)
+gboolean NetworkDataTaskSoup::requestCompressionDictionaryCallback(SoupMessage* soupMessage, SoupCompressionDictionaryRequest* request, NetworkDataTaskSoup* task)
+{
+    ASSERT_UNUSED(soupMessage, task->m_soupMessage.get() == soupMessage);
+    task->requestCompressionDictionary(request);
+    return TRUE;
+}
+
+void NetworkDataTaskSoup::requestCompressionDictionary(SoupCompressionDictionaryRequest* request)
+{
+    RefPtr<NetworkCache::Cache> cache;
+    if (m_state != State::Canceling && m_state != State::Completed && m_session)
+        cache = m_session->cache();
+    if (!cache) {
+        soup_compression_dictionary_request_cancel(request);
+        return;
+    }
+
+    ASSERT(m_compressionDictionary && m_compressionDictionary->match);
+    auto& match = *m_compressionDictionary->match;
+    cache->retrieveCompressionDictionary(match.key, match.hash, [this, protectedThis = protect(*this), request = GRefPtr<SoupCompressionDictionaryRequest> { request }](RefPtr<WebCore::SharedBuffer>&& buffer) {
+        if (!buffer || m_state == State::Canceling || m_state == State::Completed) {
+            soup_compression_dictionary_request_cancel(request.get());
+            return;
+        }
+
+        auto span = buffer->span();
+        GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(span.data(), span.size(), [](gpointer buffer) {
+            static_cast<WebCore::SharedBuffer*>(buffer)->deref();
+        }, buffer.leakRef()));
+        soup_compression_dictionary_request_set_dictionary(request.get(), bytes.get());
+    });
+}
+#endif
 
 void NetworkDataTaskSoup::startingCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {

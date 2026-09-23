@@ -1,0 +1,8 @@
+HelloWorld!
+
+HelloWorld!
+
+
+PASS <link rel="compression-dictionary"> is allowed in a paragraph.
+PASS A <link rel="compression-dictionary"> in body is loaded.
+

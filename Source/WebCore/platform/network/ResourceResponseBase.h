@@ -129,6 +129,8 @@ public:
     WEBCORE_EXPORT void addHTTPHeaderField(const String& name, const String& value);
     WEBCORE_EXPORT void addUncommonHTTPHeaderField(const String& name, const String& value);
 
+    WEBCORE_EXPORT void removeHTTPHeaderField(HTTPHeaderName);
+
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.
     template<size_t length> String httpHeaderField(ASCIILiteral) const = delete;
     template<size_t length> void setHTTPHeaderField(ASCIILiteral, const String&) = delete;

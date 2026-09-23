@@ -27,6 +27,7 @@
 
 #include "NavigationActionData.h"
 #include "NetworkActivityTracker.h"
+#include "NetworkCacheKey.h"
 #include "PolicyDecision.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/BlobDataFileReference.h>
@@ -40,6 +41,20 @@
 namespace WebKit {
 
 enum class PreconnectOnly : bool { No, Yes };
+
+// Present when the load may use a compression dictionary. NetworkDataTask follows redirects itself
+// and has to rematch for the new URL, so destination outlives any one match; match is unset when
+// nothing matched.
+struct CompressionDictionaryParameters {
+    struct Match {
+        NetworkCache::Key key;
+        std::array<uint8_t, 32> hash;
+        String id;
+    };
+
+    WebCore::FetchOptions::Destination destination { WebCore::FetchOptions::Destination::EmptyString };
+    std::optional<Match> match { };
+};
 
 struct NetworkLoadParameters {
     Markable<WebPageProxyIdentifier> webPageProxyID;
@@ -72,6 +87,8 @@ struct NetworkLoadParameters {
     // the WebProcess). We should block storage access cookies on this load's network requests without
     // revoking the frame's storage from JS until the navigation load commits.
     bool navigationLosesFrameSpecificStorageAccess { false };
+
+    std::optional<CompressionDictionaryParameters> compressionDictionary { };
 };
 
 } // namespace WebKit

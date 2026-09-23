@@ -51,6 +51,7 @@ namespace WebCore {
 class FragmentedSharedBuffer;
 class LowPowerModeNotifier;
 class ResourceRequest;
+class SharedBuffer;
 class ThermalMitigationNotifier;
 enum class AdvancedPrivacyProtections : uint16_t;
 }
@@ -210,6 +211,16 @@ public:
     std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, Function<void(MappedBody&&)>&& = nullptr);
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap);
     void storeCompressionDictionary(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, RefPtr<WebCore::FragmentedSharedBuffer>&&, CompressionDictionaryEntry::Info&&);
+
+    using CompressionDictionaryHash = std::array<uint8_t, CompressionDictionaryEntry::hashSize>;
+    struct CompressionDictionaryMatch {
+        Key key;
+        CompressionDictionaryHash hash;
+        String id;
+    };
+    void retrieveCompressionDictionaryBestMatch(WebCore::ResourceRequest&&, WebCore::FetchOptions::Destination, Function<void(WebCore::ResourceRequest&&, std::optional<CompressionDictionaryMatch>&&)>&&);
+    void retrieveCompressionDictionary(const Key&, const CompressionDictionaryHash&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed);
 
     struct TraversalRecord {
