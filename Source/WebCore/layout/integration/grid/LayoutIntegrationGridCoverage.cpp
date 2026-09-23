@@ -72,7 +72,7 @@ enum class GridAvoidanceReason : uint8_t {
     GridHasPercentageRowsWithIndefiniteHeight,
     GridItemHasUnsupportedMaxWidth,
     GridItemHasUnsupportedMaxHeight,
-    GridItemHasMargin,
+    GridItemHasUnsupportedMargin,
     GridItemHasBorderBoxSizing,
     GridItemHasUnsupportedWritingMode,
     GridItemHasRTLDirection,
@@ -511,13 +511,14 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
         if (!maxHeight.isFixed() && !maxHeight.isNone())
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMaxHeight, reasons, reasonCollectionMode);
 
-        auto gridItemHasMargins = [&] {
+        // These are the margin edges GridLayoutUtils::usedMarginsForAxis() can resolve.
+        auto gridItemHasUnsupportedMargins = [&] {
             return gridItemStyle->marginBox().anyOf([](const Style::MarginEdge& marginEdge) {
-                return marginEdge.isAuto() || marginEdge.isCalculated() || !marginEdge.isPossiblyZero();
+                return !marginEdge.isFixed() && !marginEdge.isKnownZero();
             });
         };
-        if (gridItemHasMargins())
-            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasMargin, reasons, reasonCollectionMode);
+        if (gridItemHasUnsupportedMargins())
+            ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasUnsupportedMargin, reasons, reasonCollectionMode);
 
         if (gridItemStyle->boxSizing() == BoxSizing::BorderBox)
             ADD_REASON_AND_RETURN_IF_NEEDED(GridAvoidanceReason::GridItemHasBorderBoxSizing, reasons, reasonCollectionMode);
@@ -744,8 +745,8 @@ static void printReason(GridAvoidanceReason reason, TextStream& stream)
     case GridAvoidanceReason::GridItemHasUnsupportedMaxHeight:
         stream << "grid item has unsupported max-height";
         break;
-    case GridAvoidanceReason::GridItemHasMargin:
-        stream << "grid item has margin";
+    case GridAvoidanceReason::GridItemHasUnsupportedMargin:
+        stream << "grid item has unsupported margin";
         break;
     case GridAvoidanceReason::GridItemHasBorderBoxSizing:
         stream << "grid item has border-box box-sizing";
