@@ -204,6 +204,18 @@ void WebLocalFrameLoaderClient::setCopiesOnScroll()
     notImplemented();
 }
 
+void WebLocalFrameLoaderClient::willDetachFromParent()
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    RefPtr webPage = m_frame->page();
+    if (!webPage || webPage->isClosed() || !webPage->isControlledByAutomation() || m_frame->isMainFrame())
+        return;
+
+    // Notify before detachChildren() removes the subtree that browsingContext.contextDestroyed reports.
+    webPage->send(Messages::WebPageProxy::FrameWillBeDetached(m_frame->frameID()));
+#endif
+}
+
 void WebLocalFrameLoaderClient::detachedFromParent2()
 {
     RefPtr webPage = m_frame->page();

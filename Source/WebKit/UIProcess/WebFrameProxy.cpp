@@ -594,7 +594,7 @@ void WebFrameProxy::disconnect()
 #if ENABLE(WEBDRIVER_BIDI)
         if (RefPtr page = m_page.get()) {
             if (RefPtr session = page->activeAutomationSession())
-                session->willDestroyFrame(*this);
+                session->clearContextDestroyedStateForFrame(*this);
         }
 #endif
         parentFrame->m_childFrames.remove(*this);

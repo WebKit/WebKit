@@ -367,6 +367,19 @@ Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::cr
         .release();
 }
 
+Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::createNavigableInfoSubtree(const WebFrameProxy& frame, HashSet<WebCore::FrameIdentifier>& reportedFrameIDs)
+{
+    reportedFrameIDs.add(frame.frameID());
+
+    auto info = createNavigableInfoWithoutChildren(frame.frameID(), frame.url().string());
+    auto childrenInfo = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
+    for (auto& childFrame : frame.childFrames())
+        childrenInfo->addItem(createNavigableInfoSubtree(childFrame.get(), reportedFrameIDs));
+
+    info->setChildren(WTF::move(childrenInfo));
+    return info;
+}
+
 Ref<Inspector::Protocol::BidiBrowsingContext::Info> BidiBrowsingContextAgent::getNavigableInfo(const WebKit::FrameTreeNodeData& tree, std::optional<uint64_t> maxDepth, IncludeParentID includeParentID)
 {
     // FIXME: Properly support different user contexts, which will likely map to different WebAutomationSessions.
