@@ -25,6 +25,12 @@
 
 #import <Foundation/Foundation.h>
 
+// FIXME: Everything in this file can be moved to Swift once OS 26.2 is no longer supported.
+
+#if __has_include(<UIKitMacHelper/UINSApplication_Private.h>)
+#import <UIKitMacHelper/UINSApplication_Private.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,6 +40,10 @@ void TestWebKitAPIEnableAllSDKAlignedBehaviors(void);
 BOOL TestWebKitAPIRunTests(int argc, char * _Nullable * _Nonnull argv);
 
 const void * _Nonnull swt_abiv0_getEntryPoint(void); // Defined in Swift Testing
+
+#if !__has_include(<UIKitMacHelper/UINSApplication_Private.h>)
+void UINSApplicationInstantiate(void);
+#endif
 
 #ifdef __cplusplus
 }
