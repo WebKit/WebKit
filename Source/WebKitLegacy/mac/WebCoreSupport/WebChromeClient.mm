@@ -258,7 +258,7 @@ void WebChromeClient::focusedElementChanged(WebCore::Element* element, WebCore::
     if (!inputElement.isText())
         return;
 
-    CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(inputElement.document().frame()));
+    CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(protect(inputElement.document().frame())));
 }
 
 void WebChromeClient::focusedFrameChanged(WebCore::Frame*)
@@ -318,20 +318,21 @@ RefPtr<WebCore::Page> WebChromeClient::createWindow(WebCore::LocalFrame& frame, 
 
     RefPtr newPage = core(newWebView.get());
     if (newPage) {
+        Ref mainFrame = newPage->mainFrame();
         if (!features.wantsNoOpener()) {
-            protect(m_webView.page->storageNamespaceProvider())->cloneSessionStorageNamespaceForPage(*m_webView.page, *newPage);
-            newPage->mainFrame().setOpenerForWebKitLegacy(&frame);
+            protect(m_webView.page->storageNamespaceProvider())->cloneSessionStorageNamespaceForPage(protect(*m_webView.page), *newPage);
+            mainFrame->setOpenerForWebKitLegacy(&frame);
             newPage->applyWindowFeatures(features);
         }
 
         auto effectiveSandboxFlags = frame.effectiveSandboxFlags();
         if (!effectiveSandboxFlags.contains(WebCore::SandboxFlag::PropagatesToAuxiliaryBrowsingContexts))
             effectiveSandboxFlags = { };
-        newPage->mainFrame().updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
+        mainFrame->updateSandboxFlags(effectiveSandboxFlags, WebCore::Frame::NotifyUIProcess::No);
         auto effectiveReferrerPolicy = frame.document()->referrerPolicy();
-        newPage->mainFrame().updateReferrerPolicy(effectiveReferrerPolicy);
+        mainFrame->updateReferrerPolicy(effectiveReferrerPolicy);
         newPage->chrome().show();
-        newPage->mainFrame().tree().setSpecifiedName(AtomString(openedMainFrameName));
+        mainFrame->tree().setSpecifiedName(AtomString(openedMainFrameName));
     }
 
     return newPage;
@@ -672,7 +673,7 @@ void WebChromeClient::exceededDatabaseQuota(WebCore::LocalFrame& frame, const St
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&frame.document()->securityOrigin()]);
+    RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(protect(frame.document())->securityOrigin()).ptr()]);
     CallUIDelegate(m_webView, @selector(webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:), kit(&frame), webOrigin.get(), databaseName.createNSString().get());
 
     END_BLOCK_OBJC_EXCEPTIONS

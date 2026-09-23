@@ -124,13 +124,13 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (void)_close
 {
-    core(self)->close();
+    protect(core(self))->close();
 }
 
 - (void)addItem:(WebHistoryItem *)entry
 {
     ASSERT(entry);
-    core(self)->addItem(*core(entry));
+    protect(core(self))->addItem(*core(entry));
     
     // Since the assumed contract with WebBackForwardList is that it retains its WebHistoryItems,
     // the following line prevents a whole class of problems where a history item will be created in
@@ -143,7 +143,7 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
     if (!item)
         return;
 
-    core(self)->removeItem(*core(item));
+    protect(core(self))->removeItem(protect(*core(item)));
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -158,7 +158,7 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
 {
     auto& list = *core(self);
     auto entries = createNSArray(list.entries(), [] (auto& item) {
-        return [kit(const_cast<WebCore::HistoryItem*>(item.ptr())) dictionaryRepresentationIncludingChildren:NO];
+        return [kit(protect(const_cast<WebCore::HistoryItem*>(item.ptr()))) dictionaryRepresentationIncludingChildren:NO];
     });
     return @{
         WebBackForwardListDictionaryEntriesKey: entries.get(),
@@ -189,7 +189,7 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
     if (!item)
         return NO;
 
-    return core(self)->containsItem(*core(item));
+    return protect(core(self))->containsItem(protect(*core(item)));
 }
 
 - (void)goBack
@@ -205,22 +205,22 @@ constexpr auto WebBackForwardListDictionaryCurrentKey = @"current";
 - (void)goToItem:(WebHistoryItem *)item
 {
     if (item)
-        core(self)->goToItem(*core(item));
+        protect(core(self))->goToItem(protect(*core(item)));
 }
 
 - (WebHistoryItem *)backItem
 {
-    return retainPtr(kit(core(self)->backItem().get())).autorelease();
+    return retainPtr(kit(protect(core(self))->backItem().get())).autorelease();
 }
 
 - (WebHistoryItem *)currentItem
 {
-    return retainPtr(kit(core(self)->currentItem().get())).autorelease();
+    return retainPtr(kit(protect(core(self))->currentItem().get())).autorelease();
 }
 
 - (WebHistoryItem *)forwardItem
 {
-    return retainPtr(kit(core(self)->forwardItem().get())).autorelease();
+    return retainPtr(kit(protect(core(self))->forwardItem().get())).autorelease();
 }
 
 static bool bumperCarBackForwardHackNeeded()
@@ -237,7 +237,7 @@ static bool bumperCarBackForwardHackNeeded()
 - (NSArray *)backListWithLimit:(int)limit
 {
     Vector<Ref<WebCore::HistoryItem>> list;
-    core(self)->backListWithLimit(limit, list);
+    protect(core(self))->backListWithLimit(limit, list);
     auto result = createNSArray(list, [] (auto& item) {
         return kit(item.ptr());
     });
@@ -251,7 +251,7 @@ static bool bumperCarBackForwardHackNeeded()
 - (NSArray *)forwardListWithLimit:(int)limit
 {
     Vector<Ref<WebCore::HistoryItem>> list;
-    core(self)->forwardListWithLimit(limit, list);
+    protect(core(self))->forwardListWithLimit(limit, list);
     auto result = createNSArray(list, [] (auto& item) {
         return kit(item.ptr());
     });
@@ -269,7 +269,7 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (void)setCapacity:(int)size
 {
-    core(self)->setCapacity(size);
+    protect(core(self))->setCapacity(size);
 }
 
 
@@ -319,18 +319,18 @@ static bool bumperCarBackForwardHackNeeded()
 
 - (int)backListCount
 {
-    return core(self)->backListCount();
+    return protect(core(self))->backListCount();
 }
 
 - (int)forwardListCount
 {
-    return core(self)->forwardListCount();
+    return protect(core(self))->forwardListCount();
 }
 
 - (WebHistoryItem *)itemAtIndex:(int)index
 {
     if (RefPtr mainFrame = core([core(self)->webView() mainFrame]))
-        return retainPtr(kit(core(self)->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
+        return retainPtr(kit(protect(core(self))->itemAtIndex(index, mainFrame->frameID()).get())).autorelease();
     ASSERT_NOT_REACHED();
     return nullptr;
 }

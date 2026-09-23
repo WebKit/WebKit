@@ -80,7 +80,7 @@ NSString * const WebStorageDidModifyOriginNotification = @"WebStorageDidModifyOr
 
 - (unsigned long long)diskUsageForOrigin:(WebSecurityOrigin *)origin
 {
-    return WebKit::StorageTracker::tracker().diskUsageForOrigin([origin _core]);
+    return WebKit::StorageTracker::tracker().diskUsageForOrigin(protect([origin _core]));
 }
 
 - (void)syncLocalStorage

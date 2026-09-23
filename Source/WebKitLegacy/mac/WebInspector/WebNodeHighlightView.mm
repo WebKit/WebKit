@@ -325,7 +325,7 @@ static void layerPath(CAShapeLayer *layer, const FloatQuad& outerQuad)
         return;
 
     InspectorOverlay::Highlight h;
-    [_webNodeHighlight inspectorController]->getHighlight(h, InspectorOverlay::CoordinateSystem::View);
+    protect([_webNodeHighlight inspectorController].get())->getHighlight(h, InspectorOverlay::CoordinateSystem::View);
 
     if (h.type == InspectorOverlay::Highlight::Type::Node)
         [self _layoutForNodeHighlight:&h parent:parentLayer];

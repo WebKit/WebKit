@@ -106,7 +106,7 @@ static NSString *databasesDirectoryPath();
     if (!origin)
         return nil;
 
-    auto details = WebCore::DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, *[origin _core]);
+    auto details = WebCore::DatabaseManager::singleton().detailsForNameAndOrigin(databaseIdentifier, protect(*[origin _core]));
     if (details.name().isNull())
         return nil;
 

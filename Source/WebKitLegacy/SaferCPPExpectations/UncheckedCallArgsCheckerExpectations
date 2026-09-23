@@ -3,7 +3,6 @@ Storage/StorageSyncManager.cpp
 WebCoreSupport/SocketStreamHandleImpl.cpp
 [ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
 [ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
 mac/DOM/DOM.mm
 mac/DOM/DOMHTMLInputElement.mm
 mac/DOM/DOMHTMLObjectElement.mm
@@ -11,17 +10,10 @@ mac/DOM/DOMInternal.mm
 [ iOS ] mac/DOM/DOMUIKitExtensions.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebStringTruncator.mm
-mac/Plugins/WebPluginContainerCheck.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
-mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 [ Mac ] mac/WebCoreSupport/WebEditorClient.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
-mac/WebCoreSupport/WebGeolocationClient.mm
 [ Mac ] mac/WebCoreSupport/WebInspectorClient.mm
-mac/WebCoreSupport/WebKitFullScreenListener.mm
-mac/WebCoreSupport/WebValidationMessageClient.mm
-[ iOS ] mac/WebInspector/WebNodeHighlightView.mm
 mac/WebView/WebDeviceOrientationProviderMock.mm
 mac/WebView/WebFrame.mm
 [ Mac ] mac/WebView/WebFullScreenController.mm

@@ -2111,13 +2111,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (BOOL)_canEdit
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor().canEdit();
+    return coreFrame && protect(coreFrame->editor())->canEdit();
 }
 
 - (BOOL)_canEditRichly
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor().canEditRichly();
+    return coreFrame && protect(coreFrame->editor())->canEditRichly();
 }
 
 - (BOOL)_canAlterCurrentSelection
@@ -2187,50 +2187,50 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (DOMNode *)_insertOrderedList
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->editor().insertOrderedList().get()) : nil;
+    return coreFrame ? kit(protect(coreFrame->editor())->insertOrderedList().get()) : nil;
 }
 
 - (DOMNode *)_insertUnorderedList
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->editor().insertUnorderedList().get()) : nil;
+    return coreFrame ? kit(protect(coreFrame->editor())->insertUnorderedList().get()) : nil;
 }
 
 - (BOOL)_canIncreaseSelectionListLevel
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor().canIncreaseSelectionListLevel();
+    return coreFrame && protect(coreFrame->editor())->canIncreaseSelectionListLevel();
 }
 
 - (BOOL)_canDecreaseSelectionListLevel
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor().canDecreaseSelectionListLevel();
+    return coreFrame && protect(coreFrame->editor())->canDecreaseSelectionListLevel();
 }
 
 - (DOMNode *)_increaseSelectionListLevel
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->editor().increaseSelectionListLevel().get()) : nil;
+    return coreFrame ? kit(protect(coreFrame->editor())->increaseSelectionListLevel().get()) : nil;
 }
 
 - (DOMNode *)_increaseSelectionListLevelOrdered
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->editor().increaseSelectionListLevelOrdered().get()) : nil;
+    return coreFrame ? kit(protect(coreFrame->editor())->increaseSelectionListLevelOrdered().get()) : nil;
 }
 
 - (DOMNode *)_increaseSelectionListLevelUnordered
 {
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->editor().increaseSelectionListLevelUnordered().get()) : nil;
+    return coreFrame ? kit(protect(coreFrame->editor())->increaseSelectionListLevelUnordered().get()) : nil;
 }
 
 - (void)_decreaseSelectionListLevel
 {
     RefPtr coreFrame = core([self _frame]);
     if (coreFrame)
-        coreFrame->editor().decreaseSelectionListLevel();
+        protect(coreFrame->editor())->decreaseSelectionListLevel();
 }
 
 #if PLATFORM(MAC)
@@ -2418,7 +2418,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!frame)
         return NO;
 
-    if (frame->document() && frame->document()->isFrameSet()) {
+    if (frame->document() && protect(frame->document())->isFrameSet()) {
         minimumPageWidth = 0;
         minimumPageHeight = 0;
     }
@@ -2447,7 +2447,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
-    if (shrinkToFit && (!frame->document() || !frame->document()->isFrameSet())) {
+    if (shrinkToFit && (!frame->document() || !protect(frame->document())->isFrameSet())) {
         minLayoutSize = frame->resizePageRectsKeepingRatio(WebCore::FloatSize(pageLogicalWidth, pageLogicalHeight), WebCore::FloatSize(pageLogicalWidth * _WebHTMLViewPrintingMinimumShrinkFactor, pageLogicalHeight * _WebHTMLViewPrintingMinimumShrinkFactor));
         maximumShrinkRatio = _WebHTMLViewPrintingMaximumShrinkFactor / _WebHTMLViewPrintingMinimumShrinkFactor;
     }
@@ -2483,7 +2483,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the page width.
-    if (shrinkToFit && (!frame->document() || !frame->document()->isFrameSet())) {
+    if (shrinkToFit && (!frame->document() || !protect(frame->document())->isFrameSet())) {
         minLayoutSize = frame->resizePageRectsKeepingRatio(WebCore::FloatSize(pageLogicalWidth, pageLogicalHeight), WebCore::FloatSize(pageLogicalWidth * _WebHTMLViewPrintingMinimumShrinkFactor, pageLogicalHeight * _WebHTMLViewPrintingMinimumShrinkFactor));
         maximumShrinkRatio = _WebHTMLViewPrintingMaximumShrinkFactor / _WebHTMLViewPrintingMinimumShrinkFactor;
     }
@@ -2674,7 +2674,7 @@ static String commandNameForSelector(SEL selector)
     RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return WebCore::Editor::Command();
-    return coreFrame->editor().command(commandNameForSelector(selector));
+    return protect(coreFrame->editor())->command(commandNameForSelector(selector));
 }
 
 - (WebCore::Editor::Command)coreCommandByName:(const char*)name
@@ -2682,7 +2682,7 @@ static String commandNameForSelector(SEL selector)
     RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return WebCore::Editor::Command();
-    return coreFrame->editor().command(String::fromLatin1(name));
+    return protect(coreFrame->editor())->command(String::fromLatin1(name));
 }
 
 - (void)executeCoreCommandBySelector:(SEL)selector
@@ -3301,7 +3301,7 @@ IGNORE_WARNINGS_END
 
     if (RefPtr coreFrame = core([self _frame])) {
         coreFrame->document()->styleScope().didChangeStyleSheetEnvironment();
-        coreFrame->document()->updateStyleIfNeeded();
+        protect(coreFrame->document())->updateStyleIfNeeded();
     }
 
 #ifdef LOG_TIMES
@@ -3318,7 +3318,7 @@ IGNORE_WARNINGS_END
     if (coreFrame->document()) {
         if (coreFrame->document()->backForwardCacheState() != WebCore::Document::NotInBackForwardCache)
             return;
-        coreFrame->document()->updateStyleIfNeeded();
+        protect(coreFrame->document())->updateStyleIfNeeded();
     }
 
     if (![self _needsLayout])
@@ -3838,7 +3838,7 @@ static BOOL currentScrollIsBlit(NSView *clipView)
     if (RefPtr frame = core([self _frame])) {
         if (frame->document() && frame->document()->backForwardCacheState() != WebCore::Document::NotInBackForwardCache)
             return;
-        frame->document()->scheduleFullStyleRebuild();
+        protect(frame->document())->scheduleFullStyleRebuild();
     }
 }
 
@@ -5188,7 +5188,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 - (void)_applyEditingStyleToSelection:(Ref<WebCore::EditingStyle>&&)editingStyle withUndoAction:(WebCore::EditAction)undoAction
 {
     if (RefPtr coreFrame = core([self _frame]))
-        coreFrame->editor().applyStyleToSelection(WTF::move(editingStyle), undoAction, WebCore::Editor::ColorFilterMode::InvertColor);
+        protect(coreFrame->editor())->applyStyleToSelection(WTF::move(editingStyle), undoAction, WebCore::Editor::ColorFilterMode::InvertColor);
 }
 
 #if PLATFORM(MAC)
@@ -6113,7 +6113,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WebFrame *webFrame = [self _frame];
     RefPtr coreFrame = core(webFrame);
     if (coreFrame && coreFrame->view())
-        coreFrame->view()->updateLayoutAndStyleIfNeededRecursive(WebCore::LayoutOptions::UpdateCompositingLayers);
+        protect(coreFrame->view())->updateLayoutAndStyleIfNeededRecursive(WebCore::LayoutOptions::UpdateCompositingLayers);
 }
 
 - (void) _destroyAllWebPlugins
@@ -6363,7 +6363,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     [self _executeSavedKeypressCommands];
 
-    if (!isTextInput(core([self _frame]))) {
+    if (!isTextInput(protect(core([self _frame])))) {
         LOG(TextInput, "selectedRange -> (NSNotFound, 0)");
         return NSMakeRange(NSNotFound, 0);
     }
@@ -6384,7 +6384,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (!coreFrame)
         return NSMakeRange(0, 0); // FIXME: Why not NSNotFound, 0?
 
-    auto range = coreFrame->editor().compositionRange();
+    auto range = protect(coreFrame->editor())->compositionRange();
     if (!range)
         return NSMakeRange(NSNotFound, 0);
 
@@ -6468,7 +6468,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
     
     if (RefPtr coreFrame = core([self _frame]))
-        coreFrame->editor().confirmComposition();
+        protect(coreFrame->editor())->confirmComposition();
 }
 
 #if PLATFORM(MAC)
@@ -6553,7 +6553,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (replacementRange.location != NSNotFound)
         [[self _frame] _selectNSRange:replacementRange];
 
-    coreFrame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
+    protect(coreFrame->editor())->setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -6695,7 +6695,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
     }
 
-    if (!coreFrame || !coreFrame->editor().canEdit())
+    if (!coreFrame)
+        return;
+
+    Ref editor = coreFrame->editor();
+    if (!editor->canEdit())
         return;
 
     BOOL needToRemoveSoftSpace = NO;
@@ -6719,14 +6723,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     bool eventHandled = false;
     String eventText = makeStringByReplacingAll(text, NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-    if (!coreFrame->editor().hasComposition()) {
+    if (!editor->hasComposition()) {
         // An insertText: might be handled by other responders in the chain if we don't handle it.
         // One example is space bar that results in scrolling down the page.
 
         if (!dictationAlternativeLocations.isEmpty())
-            eventHandled = coreFrame->editor().insertDictatedText(eventText, dictationAlternativeLocations, event.get());
+            eventHandled = editor->insertDictatedText(eventText, dictationAlternativeLocations, event.get());
         else
-            eventHandled = coreFrame->editor().insertText(eventText, event.get(), replacesText ? WebCore::TextEventInputAutocompletion : WebCore::TextEventInputKeyboard);
+            eventHandled = editor->insertText(eventText, event.get(), replacesText ? WebCore::TextEventInputAutocompletion : WebCore::TextEventInputKeyboard);
         
 #if USE(INSERTION_UNDO_GROUPING)
         if (registerUndoGroup)
@@ -6734,7 +6738,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 #endif
     } else {
         eventHandled = true;
-        coreFrame->editor().confirmComposition(eventText);
+        editor->confirmComposition(eventText);
     }
     
     if (parameters)
@@ -6852,7 +6856,7 @@ static CGImageRef imageFromRect(WebCore::LocalFrame* frame, CGRect rect)
     auto* page = frame->page();
     if (!page)
         return nil;
-    WAKView* documentView = frame->view()->documentView();
+    WAKView* documentView = protect(frame->view())->documentView();
     if (!documentView)
         return nil;
     if (![documentView isKindOfClass:[WebHTMLView class]])
@@ -7071,7 +7075,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!coreFrame)
         return 0;
 
-    return coreFrame->editor().countMatchesForText(string, makeSimpleRange(core(range)), coreOptions(options), limit, markMatches, 0);
+    return protect(coreFrame->editor())->countMatchesForText(string, makeSimpleRange(protect(core(range))), coreOptions(options), limit, markMatches, 0);
 }
 
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue
@@ -7079,7 +7083,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     RefPtr coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
-    coreFrame->editor().setMarkedTextMatchesAreHighlighted(newValue);
+    protect(coreFrame->editor())->setMarkedTextMatchesAreHighlighted(newValue);
 }
 
 - (BOOL)markedTextMatchesAreHighlighted
@@ -7116,7 +7120,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (![string length])
         return NO;
     RefPtr coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->editor().findString(string, coreOptions(options));
+    return coreFrame && protect(coreFrame->editor())->findString(string, coreOptions(options));
 }
 
 #if ENABLE(WRITING_TOOLS)

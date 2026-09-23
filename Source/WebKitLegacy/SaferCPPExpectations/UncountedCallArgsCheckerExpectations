@@ -1,47 +1,14 @@
-[ iOS ] WebCoreSupport/WebResourceLoadScheduler.cpp
-[ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
-[ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
-[ iOS ] ios/WebCoreSupport/WebGeolocation.mm
-[ iOS ] ios/WebCoreSupport/WebVisiblePosition.mm
-[ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
-mac/DOM/DOM.mm
-mac/DOM/DOMDocument.mm
-[ iOS ] mac/DOM/DOMUIKitExtensions.mm
-mac/History/WebBackForwardList.mm
-mac/History/WebHistoryItem.mm
-[ iOS ] mac/Misc/WebCache.mm
-mac/Misc/WebCoreStatistics.mm
+[ macOS ] mac/DOM/DOM.mm
 [ Mac ] mac/Misc/WebNSPasteboardExtras.mm
 [ Mac ] mac/Misc/WebSharingServicePickerController.mm
-mac/Plugins/WebPluginContainerCheck.mm
-mac/Plugins/WebPluginController.mm
-mac/Storage/WebDatabaseManager.mm
-mac/Storage/WebStorageManager.mm
-mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
-mac/WebCoreSupport/WebDragClient.mm
-mac/WebCoreSupport/WebEditorClient.mm
-mac/WebCoreSupport/WebFrameLoaderClient.mm
-mac/WebCoreSupport/WebFrameNetworkingContext.mm
-mac/WebCoreSupport/WebGeolocationClient.mm
-mac/WebCoreSupport/WebKitFullScreenListener.mm
-mac/WebCoreSupport/WebNotificationClient.mm
-mac/WebCoreSupport/WebOpenPanelResultListener.mm
-mac/WebCoreSupport/WebSecurityOrigin.mm
-mac/WebCoreSupport/WebValidationMessageClient.mm
-[ iOS ] mac/WebInspector/WebNodeHighlightView.mm
-mac/WebView/WebArchive.mm
-mac/WebView/WebDataSource.mm
-mac/WebView/WebFrame.mm
+[ macOS ] mac/WebCoreSupport/WebDragClient.mm
+[ macOS ] mac/WebCoreSupport/WebEditorClient.mm
+[ macOS ] mac/WebView/WebFrame.mm
 [ Mac ] mac/WebView/WebFullScreenController.mm
-mac/WebView/WebHTMLRepresentation.mm
-mac/WebView/WebHTMLView.mm
+[ macOS ] mac/WebView/WebHTMLView.mm
 [ Mac ] mac/WebView/WebImmediateActionController.mm
 [ Mac ] mac/WebView/WebMediaPlaybackTargetPicker.mm
 [ Mac ] mac/WebView/WebPDFView.mm
-mac/WebView/WebResource.mm
-mac/WebView/WebScriptDebugger.mm
-mac/WebView/WebScriptWorld.mm
-mac/WebView/WebTextIterator.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
-mac/WebView/WebView.mm
+[ macOS ] mac/WebView/WebView.mm

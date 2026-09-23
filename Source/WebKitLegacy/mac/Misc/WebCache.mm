@@ -157,7 +157,7 @@
     if (!cachedImage || !cachedImage->hasImage())
         return nullptr;
     
-    auto nativeImage = cachedImage->image()->nativeImage();
+    auto nativeImage = protect(cachedImage->image())->nativeImage();
     if (!nativeImage)
         return nullptr;
 

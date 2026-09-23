@@ -416,7 +416,7 @@
 - (NSString *)origin
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->securityOrigin().toString().createNSString().autorelease();
+    return protect(IMPL->securityOrigin())->toString().createNSString().autorelease();
 }
 
 - (DOMElement *)scrollingElement

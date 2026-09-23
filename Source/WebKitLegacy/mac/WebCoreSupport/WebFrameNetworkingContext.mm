@@ -76,7 +76,7 @@ RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() con
     if (!frame() || !frame()->page())
         return nullptr;
     
-    RetainPtr webview = kit(frame()->page());
+    RetainPtr webview = kit(protect(frame()->page()));
     if (!webview)
         return nullptr;
 

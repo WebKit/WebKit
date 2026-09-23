@@ -141,7 +141,7 @@ using namespace WebCore;
 
     document->updateLayout();
 
-    auto markedTextRange = frame->editor().compositionRange();
+    auto markedTextRange = protect(frame->editor())->compositionRange();
     auto markedTextRangeSelection = markedTextRange ? VisibleSelection(*markedTextRange) : VisibleSelection();
 
     if (!markedTextRangeSelection.isRange())
@@ -224,7 +224,7 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForRange:(DOMRange *)domRange
 {
-    auto range = makeSimpleRange(core(domRange));
+    auto range = makeSimpleRange(protect(core(domRange)));
     return range ? [self selectionRectsForCoreRange:*range] : nil;
 }
 
@@ -515,7 +515,7 @@ using namespace WebCore;
 - (WKWritingDirection)selectionBaseWritingDirection
 {
     auto* frame = [self coreFrame];
-    switch (frame->editor().baseWritingDirectionForSelectionStart()) {
+    switch (protect(frame->editor())->baseWritingDirectionForSelectionStart()) {
     case WritingDirection::LeftToRight:
         return WKWritingDirectionLeftToRight;
 
@@ -571,22 +571,23 @@ using namespace WebCore;
             ASSERT_NOT_REACHED();
             break;
     }
-    frame->editor().setBaseWritingDirection(wcDirection);
+    Ref editor = frame->editor();
+    editor->setBaseWritingDirection(wcDirection);
     
     if (originalDirection != [self selectionBaseWritingDirection])
-        frame->editor().setTextAlignmentForChangedBaseWritingDirection(wcDirection);
+        editor->setTextAlignmentForChangedBaseWritingDirection(wcDirection);
 }
 
 - (void)moveSelectionToStart
 {
     auto& frame = *self.coreFrame;
-    frame.selection().moveTo(startOfDocument(frame.document()));
+    frame.selection().moveTo(startOfDocument(protect(frame.document())));
 }
 
 - (void)moveSelectionToEnd
 {
     auto& frame = *self.coreFrame;
-    frame.selection().moveTo(endOfDocument(frame.document()));
+    frame.selection().moveTo(endOfDocument(protect(frame.document())));
 }
 
 - (void)moveSelectionToPoint:(CGPoint)point
@@ -785,30 +786,30 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
 
 - (WebVisiblePosition *)startPosition
 {
-    return [WebVisiblePosition _wrapVisiblePosition:startOfDocument(self.coreFrame->document())];
+    return [WebVisiblePosition _wrapVisiblePosition:startOfDocument(protect(self.coreFrame->document()))];
 }
 
 - (WebVisiblePosition *)endPosition
 {
-    return [WebVisiblePosition _wrapVisiblePosition:endOfDocument(self.coreFrame->document())];
+    return [WebVisiblePosition _wrapVisiblePosition:endOfDocument(protect(self.coreFrame->document()))];
 }
 
 - (BOOL)renderedCharactersExceed:(NSUInteger)threshold
 {
     auto* frame = [self coreFrame];
-    return frame->view()->renderedCharactersExceed(threshold);
+    return protect(frame->view())->renderedCharactersExceed(threshold);
 }
 
 - (CGRect)elementRectAtPoint:(CGPoint)point
 {
     auto* frame = [self coreFrame];
-    IntPoint adjustedPoint = frame->view()->windowToContents(roundedIntPoint(point));
+    IntPoint adjustedPoint = protect(frame->view())->windowToContents(roundedIntPoint(point));
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
     HitTestResult result = frame->eventHandler().hitTestResultAtPoint(adjustedPoint, hitType);
     Node* hitNode = result.innerNode();
     if (!hitNode || !hitNode->renderer())
         return IntRect();
-    return result.innerNodeFrame()->view()->contentsToWindow(hitNode->renderer()->absoluteBoundingBoxRect(true));
+    return protect(protect(result.innerNodeFrame())->view())->contentsToWindow(hitNode->renderer()->absoluteBoundingBoxRect(true));
 }
 
 @end

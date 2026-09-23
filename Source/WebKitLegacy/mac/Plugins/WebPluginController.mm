@@ -524,7 +524,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
                                                      pluginPageURL:nil
                                                         pluginName:nil // FIXME: Get this from somewhere
                                                           MIMEType:[response MIMEType]]);
-        [_dataSource _documentLoader]->cancelMainResourceLoad(error.get());
+        protect([_dataSource _documentLoader].get())->cancelMainResourceLoad(error.get());
     }        
 }
 

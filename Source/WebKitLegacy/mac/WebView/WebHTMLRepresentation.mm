@@ -180,7 +180,7 @@ using JSC::Yarr::RegularExpression;
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
     RefPtr coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
-        coreFrame->loader().documentLoader()->cancelMainResourceLoad(WebResourceLoadScheduler::pluginWillHandleLoadErrorFromResponse(coreFrame->loader().documentLoader()->response()));
+        protect(coreFrame->loader().documentLoader())->cancelMainResourceLoad(WebResourceLoadScheduler::pluginWillHandleLoadErrorFromResponse(coreFrame->loader().documentLoader()->response()));
 
     if (_private->pluginView) {
         if (!_private->hasSentResponseToPlugin) {
@@ -212,7 +212,7 @@ using JSC::Yarr::RegularExpression;
         return;
     WebView *webView = [webFrame webView];
     if ([webView mainFrame] == webFrame && [webView isEditable])
-        core(webFrame)->editor().applyEditingStyleToBodyElement();
+        protect(protect(core(webFrame))->editor())->applyEditingStyleToBodyElement();
 }
 
 - (BOOL)canProvideDocumentSource
@@ -290,7 +290,7 @@ static RefPtr<WebCore::HTMLFormElement> formElementFromDOMElement(DOMElement *el
     AtomString targetName = name;
     for (auto& weakElement : formElement->unsafeListedElements()) {
         RefPtr element { weakElement.get() };
-        if (element && element->asFormListedElement()->name() == targetName)
+        if (element && protect(element->asFormListedElement())->name() == targetName)
             return kit(element.get());
     }
     return nil;
@@ -534,7 +534,7 @@ static RetainPtr<NSString> matchLabelsAgainstElement(NSArray *labels, WebCore::E
     size_t distance;
     bool isInCellAbove;
     
-    RetainPtr result = searchForLabelsBeforeElement(core([_private->dataSource webFrame]), labels, core(element), &distance, &isInCellAbove);
+    RetainPtr result = searchForLabelsBeforeElement(protect(core([_private->dataSource webFrame])), labels, protect(core(element)), &distance, &isInCellAbove);
     
     if (outDistance) {
         if (distance == notFound)
@@ -551,7 +551,7 @@ static RetainPtr<NSString> matchLabelsAgainstElement(NSArray *labels, WebCore::E
 
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
-    return matchLabelsAgainstElement(labels, core(element)).autorelease();
+    return matchLabelsAgainstElement(labels, protect(core(element))).autorelease();
 }
 
 @end

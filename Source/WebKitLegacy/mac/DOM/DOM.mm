@@ -398,7 +398,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* link = [self _linkElement];
     if (!link)
         return nil;
-    return link->document().encodingParseURL(link->getAttribute(WebCore::HTMLNames::hrefAttr)).createNSURL().autorelease();
+    return protect(link->document())->encodingParseURL(link->getAttribute(WebCore::HTMLNames::hrefAttr)).createNSURL().autorelease();
 }
 
 - (NSString *)hrefTarget
@@ -433,7 +433,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* link = [self _linkElement];
     if (!is<WebCore::HTMLElement>(link))
         return nil;
-    return link->document().displayStringModifiedByEncoding(downcast<WebCore::HTMLElement>(*link).title()).createNSString().autorelease();
+    return protect(link->document())->displayStringModifiedByEncoding(downcast<WebCore::HTMLElement>(*link).title()).createNSString().autorelease();
 }
 
 - (CGRect)boundingFrame
@@ -478,18 +478,20 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (DOMNode *)nextFocusNode
 {
-    WebCore::Page* page = protect(core(self))->document().page();
+    Ref node = *core(self);
+    WebCore::Page* page = node->document().page();
     if (!page)
         return nil;
-    return kit(page->focusController().nextFocusableElement(*core(self)).element.get());
+    return kit(page->focusController().nextFocusableElement(node).element.get());
 }
 
 - (DOMNode *)previousFocusNode
 {
-    WebCore::Page* page = protect(core(self))->document().page();
+    Ref node = *core(self);
+    WebCore::Page* page = node->document().page();
     if (!page)
         return nil;
-    return kit(page->focusController().previousFocusableElement(*core(self)).element.get());
+    return kit(page->focusController().previousFocusableElement(node).element.get());
 }
 
 #endif // PLATFORM(IOS_FAMILY)
@@ -726,7 +728,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
 
 - (BOOL)_mediaQueryMatches
 {
-    return downcast<WebCore::HTMLLinkElement>(core(self))->mediaAttributeMatches();
+    return protect(downcast<WebCore::HTMLLinkElement>(core(self)))->mediaAttributeMatches();
 }
 
 @end

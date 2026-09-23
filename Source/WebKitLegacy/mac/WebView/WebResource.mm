@@ -171,7 +171,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     RetainPtr<NSURLResponse> response;
 
     if (resource) {
-        data = resource->data().makeContiguous()->createNSData();
+        data = protect(resource->data())->makeContiguous()->createNSData();
         url = resource->url().createNSURL();
         mimeType = resource->mimeType().createNSString();
         textEncoding = resource->textEncoding().createNSString();
@@ -203,7 +203,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
     if (!_private->coreResource)
         return nil;
-    return _private->coreResource->data().makeContiguous()->createNSData().autorelease();
+    return protect(protect(_private->coreResource)->data())->makeContiguous()->createNSData().autorelease();
 }
 
 - (NSURL *)URL
@@ -364,7 +364,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!encoding.isValid())
         encoding = PAL::WindowsLatin1Encoding();
     
-    RefPtr coreData = _private->coreResource ? &_private->coreResource->data() : nullptr;
+    RefPtr coreData = _private->coreResource ? &protect(_private->coreResource)->data() : nullptr;
     if (!coreData)
         return @"";
     return encoding.decode(coreData->makeContiguous()->span()).createNSString().autorelease();

@@ -70,7 +70,7 @@
     if (!range)
         return self;
 
-    _private->_textIterator = makeUnique<WebCore::TextIterator>(makeSimpleRange(*core(range)));
+    _private->_textIterator = makeUnique<WebCore::TextIterator>(makeSimpleRange(protect(*core(range))));
     return self;
 }
 

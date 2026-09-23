@@ -358,7 +358,7 @@ void WebChromeClientIOS::focusedElementChanged(Element* element, LocalFrame*, Fo
     if (!inputElement.isText())
         return;
 
-    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(inputElement.document().frame()));
+    CallFormDelegate(webView(), @selector(didFocusTextField:inFrame:), kit(&inputElement), kit(protect(inputElement.document().frame())));
 }
 
 void WebChromeClientIOS::showPlaybackTargetPicker(bool hasVideo, WebCore::RouteSharingPolicy, const String&)

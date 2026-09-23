@@ -138,7 +138,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (DOMNode *)firstNode
 {
-    return kit(firstNodeAfter(makeSimpleRange(*core(self)).start));
+    return kit(firstNodeAfter(makeSimpleRange(protect(*core(self))).start));
 }
 
 @end
@@ -328,13 +328,13 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 - (CGRect)boundingBoxWithOwner:(DOMNode *)owner
 {
     // ignores transforms
-    return owner ? snappedIntRect(core(self)->computeRect(core(owner)->renderer())) : CGRectZero;
+    return owner ? snappedIntRect(protect(core(self))->computeRect(core(owner)->renderer())) : CGRectZero;
 }
 
 - (WKQuad)absoluteQuadWithOwner:(DOMNode *)owner
 {
     if (owner) {
-        WebCore::IntRect rect = snappedIntRect(core(self)->computeRect(core(owner)->renderer()));
+        WebCore::IntRect rect = snappedIntRect(protect(core(self))->computeRect(core(owner)->renderer()));
         WKQuad quad;
         quad.p1 = CGPointMake(rect.x(), rect.y());
         quad.p2 = CGPointMake(rect.maxX(), rect.y());
@@ -363,12 +363,12 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (unsigned)completeLength
 {
-    return core(self)->listItems().size();
+    return protect(core(self))->listItems().size();
 }
 
 - (DOMNode *)listItemAtIndex:(int)anIndex
 {
-    return kit(core(self)->listItems()[anIndex].get());
+    return kit(protect(core(self))->listItems()[anIndex].get());
 }
 
 @end

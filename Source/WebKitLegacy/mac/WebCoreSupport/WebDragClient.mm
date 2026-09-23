@@ -286,7 +286,7 @@ void WebDragClient::beginDrag(WebCore::DragItem, WebCore::LocalFrame&, const Web
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, WebCore::Element& element, const URL& url, const String& label, WebCore::LocalFrame*)
 {
     if (RefPtr frame = element.document().frame())
-        frame->editor().writeImageToPasteboard(*WebCore::Pasteboard::createForDragAndDrop(WebCore::PagePasteboardContext::create(frame->pageID())), element, url, label);
+        protect(frame->editor())->writeImageToPasteboard(*WebCore::Pasteboard::createForDragAndDrop(WebCore::PagePasteboardContext::create(frame->pageID())), element, url, label);
 }
 
 void WebDragClient::didConcludeEditDrag()

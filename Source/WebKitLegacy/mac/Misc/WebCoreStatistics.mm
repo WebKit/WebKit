@@ -245,7 +245,7 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILite
 
 - (NSString *)renderTreeAsExternalRepresentationForPrinting
 {
-    return externalRepresentation(_private->coreFrame, { WebCore::RenderAsTextFlag::PrintingMode }).createNSString().autorelease();
+    return externalRepresentation(protect(_private->coreFrame.get()), { WebCore::RenderAsTextFlag::PrintingMode }).createNSString().autorelease();
 }
 
 static OptionSet<WebCore::RenderAsTextFlag> NODELETE toRenderAsTextFlags(WebRenderTreeAsTextOptions options)
@@ -270,12 +270,12 @@ static OptionSet<WebCore::RenderAsTextFlag> NODELETE toRenderAsTextFlags(WebRend
 
 - (NSString *)renderTreeAsExternalRepresentationWithOptions:(WebRenderTreeAsTextOptions)options
 {
-    return externalRepresentation(_private->coreFrame, toRenderAsTextFlags(options)).createNSString().autorelease();
+    return externalRepresentation(protect(_private->coreFrame.get()), toRenderAsTextFlags(options)).createNSString().autorelease();
 }
 
 - (int)numberOfPagesWithPageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    auto coreFrame = _private->coreFrame;
+    RefPtr coreFrame = _private->coreFrame.get();
     if (!coreFrame)
         return -1;
 
@@ -284,7 +284,7 @@ static OptionSet<WebCore::RenderAsTextFlag> NODELETE toRenderAsTextFlags(WebRend
 
 - (void)printToCGContext:(CGContextRef)cgContext pageWidth:(float)pageWidthInPixels pageHeight:(float)pageHeightInPixels
 {
-    auto coreFrame = _private->coreFrame;
+    RefPtr coreFrame = _private->coreFrame.get();
     if (!coreFrame)
         return;
 

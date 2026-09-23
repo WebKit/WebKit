@@ -167,11 +167,11 @@ static BOOL isArrayOfClass(id object, Class elementClass)
 
     Vector<Ref<WebCore::ArchiveResource>> coreResources;
     for (WebResource *subresource in subresources)
-        coreResources.append([subresource _coreResource].get());
+        coreResources.append(protect([subresource _coreResource].get()));
 
     Vector<Ref<WebCore::LegacyWebArchive>> coreArchives;
     for (WebArchive *subframeArchive in subframeArchives)
-        coreArchives.append(*[subframeArchive->_private coreArchive]);
+        coreArchives.append(protect(*[subframeArchive->_private coreArchive]));
 
     [_private setCoreArchive:WebCore::LegacyWebArchive::create([mainResource _coreResource].get(), WTF::move(coreResources), WTF::move(coreArchives), std::nullopt)];
     return self;
@@ -320,7 +320,7 @@ static BOOL isArrayOfClass(id object, Class elementClass)
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
 
-    RetainPtr<CFDataRef> data = [_private coreArchive]->rawDataRepresentation();
+    RetainPtr<CFDataRef> data = protect([_private coreArchive])->rawDataRepresentation();
     
 #if !LOG_DISABLED
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();

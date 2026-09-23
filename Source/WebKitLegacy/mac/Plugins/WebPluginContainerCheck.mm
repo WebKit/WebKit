@@ -98,7 +98,7 @@
 {
     RefPtr coreFrame = core([_controller webFrame]);
     ASSERT(coreFrame);
-    if (!coreFrame->document()->securityOrigin().canDisplay([_request URL], WebCore::OriginAccessPatternsForWebProcess::singleton())) {
+    if (!protect(protect(coreFrame->document())->securityOrigin())->canDisplay([_request URL], WebCore::OriginAccessPatternsForWebProcess::singleton())) {
         [self _continueWithPolicy:WebCore::PolicyAction::Ignore];
         return YES;
     }

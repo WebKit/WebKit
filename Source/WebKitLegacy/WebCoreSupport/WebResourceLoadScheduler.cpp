@@ -142,7 +142,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader)
 
 #if PLATFORM(IOS_FAMILY)
     // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
-    if (!isSuspendingPendingRequests() && resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->iOSOriginalRequest().url())) {
+    if (!isSuspendingPendingRequests() && protect(resourceLoader->documentLoader())->archiveResourceForURL(resourceLoader->iOSOriginalRequest().url())) {
         resourceLoader->startLoading();
         return;
     }

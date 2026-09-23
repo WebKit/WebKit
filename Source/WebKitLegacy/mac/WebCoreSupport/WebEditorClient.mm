@@ -182,13 +182,13 @@ static WebViewInsertAction NODELETE kit(WebCore::EditorInsertAction action)
 - (void)undoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[WebUndoStep class]]);
-    [arg step].unapply();
+    protect([arg step])->unapply();
 }
 
 - (void)redoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[WebUndoStep class]]);
-    [arg step].reapply();
+    protect([arg step])->reapply();
 }
 
 @end
@@ -760,7 +760,7 @@ void WebEditorClient::textFieldDidBeginEditing(WebCore::Element& element)
         return;
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement.get(), kit(element.document().frame()));
+    CallFormDelegate(m_webView, @selector(textFieldDidBeginEditing:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
 }
 
 void WebEditorClient::textFieldDidEndEditing(WebCore::Element& element)
@@ -770,7 +770,7 @@ void WebEditorClient::textFieldDidEndEditing(WebCore::Element& element)
         return;
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement.get(), kit(element.document().frame()));
+    CallFormDelegate(m_webView, @selector(textFieldDidEndEditing:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
 }
 
 void WebEditorClient::textDidChangeInTextField(WebCore::Element& element)
@@ -785,7 +785,7 @@ void WebEditorClient::textDidChangeInTextField(WebCore::Element& element)
 #endif
 
     FormDelegateLog(inputElement.get());
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement.get(), kit(element.document().frame()));
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextField:inFrame:), inputElement.get(), kit(protect(element.document().frame())));
 }
 
 static SEL selectorForKeyEvent(WebCore::KeyboardEvent* event)
@@ -821,7 +821,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(WebCore::Element& element, Web
 
     FormDelegateLog(inputElement.get());
     if (SEL commandSelector = selectorForKeyEvent(event))
-        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), commandSelector, kit(element.document().frame()));
+        return CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), commandSelector, kit(protect(element.document().frame())));
     return NO;
 }
 
@@ -833,7 +833,7 @@ void WebEditorClient::textWillBeDeletedInTextField(WebCore::Element& element)
 
     FormDelegateLog(inputElement.get());
     // We're using the deleteBackward selector for all deletion operations since the autofill code treats all deletions the same way.
-    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), @selector(deleteBackward:), kit(element.document().frame()));
+    CallFormDelegateReturningBoolean(NO, m_webView, @selector(textField:doCommandBySelector:inFrame:), inputElement.get(), @selector(deleteBackward:), kit(protect(element.document().frame())));
 }
 
 void WebEditorClient::textDidChangeInTextArea(WebCore::Element& element)
@@ -843,7 +843,7 @@ void WebEditorClient::textDidChangeInTextArea(WebCore::Element& element)
         return;
 
     FormDelegateLog(textAreaElement.get());
-    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement.get(), kit(element.document().frame()));
+    CallFormDelegate(m_webView, @selector(textDidChangeInTextArea:inFrame:), textAreaElement.get(), kit(protect(element.document().frame())));
 }
 
 #if PLATFORM(IOS_FAMILY)

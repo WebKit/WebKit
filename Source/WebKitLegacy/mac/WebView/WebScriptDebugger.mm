@@ -58,7 +58,7 @@ static RetainPtr<NSString> toNSString(JSC::SourceProvider* sourceProvider)
 static WebFrame *toWebFrame(JSC::JSGlobalObject* globalObject)
 {
     auto* window = static_cast<WebCore::JSDOMWindow*>(globalObject);
-    return kit(dynamicDowncast<WebCore::LocalFrame>(window->wrapped().frame()));
+    return kit(protect(dynamicDowncast<WebCore::LocalFrame>(window->wrapped().frame())));
 }
 
 WebScriptDebugger::WebScriptDebugger(JSC::JSGlobalObject* globalObject)

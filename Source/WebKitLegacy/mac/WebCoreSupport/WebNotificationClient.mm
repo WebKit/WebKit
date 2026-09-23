@@ -107,7 +107,7 @@ void WebNotificationClient::requestPermission(WebCore::ScriptExecutionContext& c
 
     m_everRequestedPermission = true;
 
-    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context.securityOrigin()]);
+    RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(context.securityOrigin())]);
 
     // Add origin to list of origins that have requested permission to use the Notifications API.
     m_notificationPermissionRequesters.add(context.securityOrigin()->data());
@@ -129,7 +129,7 @@ WebCore::NotificationClient::Permission WebNotificationClient::checkPermission(W
         return NotificationClient::Permission::Denied;
     if (![[m_webView preferences] notificationsEnabled])
         return NotificationClient::Permission::Denied;
-    auto webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:context->securityOrigin()]);
+    RetainPtr webOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:protect(context->securityOrigin())]);
     WebNotificationPermission permission = [[m_webView _notificationProvider] policyForOrigin:webOrigin.get()];
 
     // To reduce fingerprinting, if the origin has not requested permission to use the

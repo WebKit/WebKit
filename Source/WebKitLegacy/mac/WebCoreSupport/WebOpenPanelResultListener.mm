@@ -55,7 +55,7 @@
     ASSERT(_chooser);
     if (!_chooser)
         return;
-    _chooser->chooseFile(filename);
+    protect(_chooser)->chooseFile(filename);
     _chooser = nullptr;
 }
 
@@ -64,7 +64,7 @@
     ASSERT(_chooser);
     if (!_chooser)
         return;
-    _chooser->chooseFiles(makeVector<String>(filenames));
+    protect(_chooser)->chooseFiles(makeVector<String>(filenames));
     _chooser = nullptr;
 }
 
@@ -81,7 +81,7 @@
     if (!_chooser)
         return;
 
-    _chooser->chooseMediaFiles(makeVector<String>(filenames), displayString, WebCore::Icon::create(imageRef).get());
+    protect(_chooser)->chooseMediaFiles(makeVector<String>(filenames), displayString, WebCore::Icon::create(imageRef).get());
     _chooser = nullptr;
 }
 

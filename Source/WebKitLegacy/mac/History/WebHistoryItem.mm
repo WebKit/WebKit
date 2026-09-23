@@ -148,7 +148,7 @@ void WKNotifyHistoryItemChanged()
     if (WebCoreObjCScheduleDeallocateOnMainThread([WebHistoryItem class], self))
         return;
 
-    historyItemWrappers().remove(*_private->_historyItem);
+    historyItemWrappers().remove(protect(*_private->_historyItem));
     [_private release];
 
     [super dealloc];
@@ -157,7 +157,7 @@ void WKNotifyHistoryItemChanged()
 - (id)copyWithZone:(NSZone *)zone
 {
     WebCoreThreadViolationCheckRoundOne();
-    RetainPtr<WebHistoryItem> copy = adoptNS([[[self class] alloc] initWithWebCoreHistoryItem:core(_private)->copy()]);
+    RetainPtr<WebHistoryItem> copy = adoptNS([[[self class] alloc] initWithWebCoreHistoryItem:protect(core(_private))->copy()]);
 
     copy->_private->_lastVisitedTime = _private->_lastVisitedTime;
 
@@ -186,7 +186,7 @@ void WKNotifyHistoryItemChanged()
 
 - (void)setAlternateTitle:(NSString *)alternateTitle
 {
-    core(_private)->setAlternateTitle(alternateTitle);
+    protect(core(_private))->setAlternateTitle(alternateTitle);
 }
 
 - (NSString *)alternateTitle
@@ -298,12 +298,12 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)setTitle:(NSString *)title
 {
-    core(_private)->setTitle(title);
+    protect(core(_private))->setTitle(title);
 }
 
 - (void)setViewState:(id)statePList
 {
-    core(_private)->setViewState(statePList);
+    protect(core(_private))->setViewState(statePList);
 }
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
@@ -324,8 +324,9 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
         NSURL *tempURL = [NSURL _webkit_URLWithUserTypedString:URLString];
         ASSERT(tempURL);
         NSString *newURLString = [tempURL _web_originalDataAsString];
-        core(_private)->setURLString(newURLString);
-        core(_private)->setOriginalURLString(newURLString);
+        Ref historyItem = *core(_private);
+        historyItem->setURLString(newURLString);
+        historyItem->setOriginalURLString(newURLString);
     } 
 
     if ([dict _webkit_boolForKey:lastVisitWasFailureKey])
@@ -336,7 +337,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
     for (id childDict in [[dict objectForKey:childrenKey] reverseObjectEnumerator]) {
         auto child = adoptNS([[WebHistoryItem alloc] initFromDictionaryRepresentation:childDict]);
-        core(_private)->addChildItem(*core(child->_private));
+        protect(core(_private))->addChildItem(*core(child->_private));
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -364,7 +365,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)_visitedWithTitle:(NSString *)title
 {
-    core(_private)->setTitle(title);
+    protect(core(_private))->setTitle(title);
     _private->_lastVisitedTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
@@ -455,7 +456,7 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (void)setRSSFeedReferrer:(NSString *)referrer
 {
-    core(_private)->setReferrer(referrer);
+    protect(core(_private))->setReferrer(referrer);
 }
 
 - (NSArray *)children
@@ -465,13 +466,13 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
         return nil;
 
     return createNSArray(children, [] (auto& item) {
-        return kit(const_cast<WebCore::HistoryItem*>(item.ptr()));
+        return kit(protect(const_cast<WebCore::HistoryItem*>(item.ptr())));
     }).autorelease();
 }
 
 - (NSURL *)URL
 {
-    const URL& url = core(_private)->url();
+    const URL& url = protect(core(_private))->url();
     if (url.isEmpty())
         return nil;
     return url.createNSURL().autorelease();
@@ -554,12 +555,12 @@ WebHistoryItem *kit(WebCore::HistoryItem* item)
 
 - (BOOL)_isInBackForwardCache
 {
-    return core(_private)->isInBackForwardCache();
+    return protect(core(_private))->isInBackForwardCache();
 }
 
 - (BOOL)_hasCachedPageExpired
 {
-    return core(_private)->hasCachedPageExpired();
+    return protect(core(_private))->hasCachedPageExpired();
 }
 
 @end
