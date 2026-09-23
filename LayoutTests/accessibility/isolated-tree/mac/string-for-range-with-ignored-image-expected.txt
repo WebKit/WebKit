@@ -1,0 +1,10 @@
+This tests that an ignored replaced element contributes no character to the string for a range, while an unignored one contributes an object replacement character, including when an element's ignored state changes.
+
+PASS: contentString === 'ab\uFFFCc'
+PASS: contentString === 'a\uFFFCb\uFFFCc'
+PASS: contentString === 'ab\uFFFCc'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+abc

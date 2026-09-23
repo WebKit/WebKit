@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content" role="group">a<img id="image" alt="" src="" style="width: 20px; height: 20px">b<img alt="Cake" src="" style="width: 20px; height: 20px">c</div>
+
+<script>
+var output = "This tests that an ignored replaced element contributes no character to the string for a range, while an unignored one contributes an object replacement character, including when an element's ignored state changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var contentString;
+    function updateContentString() {
+        let content = accessibilityController.accessibleElementById("content");
+        contentString = content.stringForTextMarkerRange(content.textMarkerRangeForElement(content));
+    }
+
+    async function setAltAndWaitForAccessibility(alt) {
+        let previousString = contentString;
+        document.getElementById("image").setAttribute("alt", alt);
+        await waitFor(() => {
+            updateContentString();
+            return contentString != previousString;
+        });
+    }
+
+    setTimeout(async () => {
+        updateContentString();
+        output += expect("contentString", "'ab\\uFFFCc'");
+
+        await setAltAndWaitForAccessibility("Apple");
+        output += expect("contentString", "'a\\uFFFCb\\uFFFCc'");
+
+        await setAltAndWaitForAccessibility("");
+        output += expect("contentString", "'ab\\uFFFCc'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

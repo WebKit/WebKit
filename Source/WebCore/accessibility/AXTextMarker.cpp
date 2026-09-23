@@ -584,10 +584,18 @@ void AXTextMarkerRange::forEachTextPiece(IncludeListMarkerText includeListMarker
         emit(listMarkerText);
     }
 
+    // An ignored replaced element (an <img alt=""> say) contributes no character, as TextIterator and
+    // auxiliaryTextForObject both have it.
+    auto emitRunText = [&] (AXIsolatedObject& object, StringView text) {
+        if (object.isReplacedElementForTextEmission() && object.isIgnored())
+            return;
+        emit(text);
+    };
+
     if (start.isolatedObject() == end.isolatedObject()) {
         size_t minOffset = std::min(start.offset(), end.offset());
         size_t maxOffset = std::max(start.offset(), end.offset());
-        emit(start.runs()->substring(minOffset, maxOffset - minOffset));
+        emitRunText(*start.isolatedObject(), start.runs()->substring(minOffset, maxOffset - minOffset));
         return;
     }
 
@@ -602,13 +610,13 @@ void AXTextMarkerRange::forEachTextPiece(IncludeListMarkerText includeListMarker
         emit(auxiliaryTextForObject(object, traversalPoint, lastEmittedCharacter).text);
     };
 
-    emit(start.runs()->substring(start.offset()));
+    emitRunText(*start.isolatedObject(), start.runs()->substring(start.offset()));
 
     // FIXME: If we've been given reversed markers, i.e. the end marker actually comes before the start marker,
     // we may want to detect this and try searching AXDirection::Previous?
     RefPtr current = findObjectWithRuns(*start.isolatedObject(), AXDirection::Next, std::nullopt, emitAuxiliaryText, EnterUserAgentShadowContent::No);
     while (current && current->objectID() != end.objectID()) {
-        emit(current->textRuns()->toStringView());
+        emitRunText(*current, current->textRuns()->toStringView());
         RefPtr next = findObjectWithRuns(*current, AXDirection::Next, std::nullopt, emitAuxiliaryText, EnterUserAgentShadowContent::No);
         if (next == current) [[unlikely]] {
             // findObjectWithRuns returned its input. Would loop forever.
@@ -617,7 +625,7 @@ void AXTextMarkerRange::forEachTextPiece(IncludeListMarkerText includeListMarker
         }
         current = WTF::move(next);
     }
-    emit(end.runs()->substring(0, end.offset()));
+    emitRunText(*end.isolatedObject(), end.runs()->substring(0, end.offset()));
 }
 
 // The length of what toString would return, without building the string. Text markers are queried
