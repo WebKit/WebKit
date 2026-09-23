@@ -1756,6 +1756,31 @@ void Connection::setShouldCrashOnMessageCheckFailure(bool shouldCrash)
     s_shouldCrashOnMessageCheckFailure = shouldCrash;
 }
 
+void Connection::markMessageAsInvalid(MessageName messageName, const String& error)
+{
+    // A message still being dispatched is reported by whoever created its MessageDispatchScope,
+    // once the handler has returned.
+    bool didMarkMessage = markCurrentMessageDispatchScopeAsInvalid();
+
+#if ENABLE(IPC_TESTING_API)
+    if (!error.isNull())
+        setErrorString(error);
+    if (m_ignoreInvalidMessageForTesting)
+        return;
+#else
+    UNUSED_PARAM(error);
+#endif
+    if (didMarkMessage)
+        return;
+
+    // Work which outlived the dispatch of the message that caused it - a Swift handler which
+    // suspended, for instance - has no scope left to report through, so report here. The caller
+    // supplies the message name because the connection no longer knows it.
+    if (!isValid())
+        return;
+    protect(client())->didReceiveInvalidMessage(*this, messageName, { });
+}
+
 void Connection::logFailedMessageCheck(const String& reason, const String& function, const String& file, unsigned line)
 {
     RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, "%s %u: Invalid message dispatched %s: %s", file.utf8(), line, function.utf8(), reason.utf8());

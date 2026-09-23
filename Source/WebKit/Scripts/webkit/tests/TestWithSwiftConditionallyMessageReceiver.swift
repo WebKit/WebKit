@@ -27,7 +27,7 @@ import WebKit_Internal
 #endif
 
 #if ENABLE_SWIFT_TEST_CONDITION
-final class TestWithSwiftConditionallyWeakRef {
+final class TestWithSwiftConditionallyWeakRef: @unchecked Sendable {
     private weak var target: TestWithSwiftConditionally?
     init(target: TestWithSwiftConditionally) {
         self.target = target
@@ -40,46 +40,84 @@ final class TestWithSwiftConditionallyWeakRef {
 
     @used
     func dispatchTestAsyncMessage(
-        connection: IPC.Connection,
-        param: UInt32,
-        completionHandler: CompletionHandlers.TestWithSwiftConditionally.TestAsyncMessageCompletionHandler
+        connection: sending IPC.Connection,
+        param: sending UInt32,
+        completionHandler: sending CompletionHandlers.TestWithSwiftConditionally.TestAsyncMessageCompletionHandler
     ) {
-        guard let target else {
-            return
-        }
-        do {
-            try mayThrowInvalidMessage(
-                target.testAsyncMessage(
+        MainActor.assumeIsolated {
+            guard let target else {
+                return
+            }
+            Task.immediate {
+                await Self.runTestAsyncMessage(
+                    target: target,
                     connection: connection,
                     param: param,
                     completionHandler: completionHandler
                 )
+            }
+        }
+    }
+
+    @MainActor
+    private static func runTestAsyncMessage(
+        target: TestWithSwiftConditionally,
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwiftConditionally.TestAsyncMessageCompletionHandler
+    ) async {
+        do {
+            let reply = try await mayThrowInvalidMessage(
+                target.testAsyncMessage(
+                    connection: connection,
+                    param: param
+                )
             )
+            completionHandler.pointee(reply)
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .TestWithSwiftConditionally_TestAsyncMessage)
             CompletionHandlers.TestWithSwiftConditionally.completeWithDefaultReply(completionHandler)
         }
     }
 
     @used
     func dispatchTestSyncMessage(
-        connection: IPC.Connection,
-        param: UInt32,
-        completionHandler: CompletionHandlers.TestWithSwiftConditionally.TestSyncMessageCompletionHandler
+        connection: sending IPC.Connection,
+        param: sending UInt32,
+        completionHandler: sending CompletionHandlers.TestWithSwiftConditionally.TestSyncMessageCompletionHandler
     ) {
-        guard let target else {
-            return
-        }
-        do {
-            try mayThrowInvalidMessage(
-                target.testSyncMessage(
+        MainActor.assumeIsolated {
+            guard let target else {
+                return
+            }
+            Task.immediate {
+                await Self.runTestSyncMessage(
+                    target: target,
                     connection: connection,
                     param: param,
                     completionHandler: completionHandler
                 )
+            }
+        }
+    }
+
+    @MainActor
+    private static func runTestSyncMessage(
+        target: TestWithSwiftConditionally,
+        connection: IPC.Connection,
+        param: UInt32,
+        completionHandler: CompletionHandlers.TestWithSwiftConditionally.TestSyncMessageCompletionHandler
+    ) async {
+        do {
+            let reply = try await mayThrowInvalidMessage(
+                target.testSyncMessage(
+                    connection: connection,
+                    param: param
+                )
             )
+            completionHandler.pointee(reply)
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .TestWithSwiftConditionally_TestSyncMessage)
             CompletionHandlers.TestWithSwiftConditionally.completeWithDefaultReply(completionHandler)
         }
     }

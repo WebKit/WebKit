@@ -24,7 +24,7 @@
 
 import WebKit_Internal
 
-final class TestWithStreamSwiftEnabledByWeakRef {
+final class TestWithStreamSwiftEnabledByWeakRef: @unchecked Sendable {
     private weak var target: TestWithStreamSwiftEnabledBy?
     init(target: TestWithStreamSwiftEnabledBy) {
         self.target = target
@@ -37,12 +37,27 @@ final class TestWithStreamSwiftEnabledByWeakRef {
 
     @used
     func dispatchSendString(
+        connection: sending IPC.StreamServerConnection,
+        url: sending WTF.String
+    ) {
+        MainActor.assumeIsolated {
+            guard let target else {
+                return
+            }
+            Self.runSendString(
+                target: target,
+                connection: connection,
+                url: url
+            )
+        }
+    }
+
+    @MainActor
+    private static func runSendString(
+        target: TestWithStreamSwiftEnabledBy,
         connection: IPC.StreamServerConnection,
         url: WTF.String
     ) {
-        guard let target else {
-            return
-        }
         do {
             try mayThrowInvalidMessage(
                 target.sendString(
@@ -51,7 +66,7 @@ final class TestWithStreamSwiftEnabledByWeakRef {
                 )
             )
         } catch {
-            markMessageInvalid(error, on: connection)
+            markMessageInvalid(error, on: connection, message: .TestWithStreamSwiftEnabledBy_SendString)
         }
     }
 }
