@@ -162,7 +162,7 @@ extension SwiftTestingABI.__CommandLineArguments_v0 {
                 Int.min // None Swift Testing logging level
             }
 
-        self.filter = runnerConfiguration.filter
+        self.filter = runnerConfiguration.filter.map(NSRegularExpression.escapedPattern(for:))
         self.repetitions = runnerConfiguration.repetitions
         self.skip = runnerConfiguration.skip
         self.listTests = runnerConfiguration.listTests
