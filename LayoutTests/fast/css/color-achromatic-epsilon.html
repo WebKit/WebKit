@@ -14,24 +14,24 @@
 <script>
 
 // Test achromatic colors do not have a hue.
-fuzzy_test_computed_color("oklch(from white l c h)", "oklch(1 0 0)");
-fuzzy_test_computed_color("oklch(from black l c h)", "oklch(0 0 0)");
-fuzzy_test_computed_color("oklch(from grey l c h)", "oklch(0.599 0 0)");
-fuzzy_test_computed_color("lch(from white l c h)", "lch(100 0 0)");
-fuzzy_test_computed_color("lch(from black l c h)", "lch(0 0 0)");
-fuzzy_test_computed_color("lch(from grey l c h)", "lch(53.585 0 0)");
+fuzzy_test_computed_color("oklch(from white l c h)", "oklch(1 0 none)");
+fuzzy_test_computed_color("oklch(from black l c h)", "oklch(0 0 none)");
+fuzzy_test_computed_color("oklch(from grey l c h)", "oklch(0.599 0 none)");
+fuzzy_test_computed_color("lch(from white l c h)", "lch(100 0 none)");
+fuzzy_test_computed_color("lch(from black l c h)", "lch(0 0 none)");
+fuzzy_test_computed_color("lch(from grey l c h)", "lch(53.585 0 none)");
 
 // Test mostly achromatic (less than epsilon chroma) colors do not have a hue.
 // epsilon for oklab/oklch is `0.8 / 100000.0` or `0.000008`
-fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 0.0000079) l c h)", "oklch(0.5 0 0)");
-fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 -0.0000079) l c h)", "oklch(0.5 0 0)");
-fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 -0.0000079) l c h)", "oklch(0.5 0 0)");
-fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 0.0000079) l c h)", "oklch(0.5 0 0)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 0.0000079) l c h)", "oklch(0.5 0 none)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 -0.0000079) l c h)", "oklch(0.5 0 none)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 0.0000079 -0.0000079) l c h)", "oklch(0.5 0 none)");
+fuzzy_test_computed_color("oklch(from oklab(0.5 -0.0000079 0.0000079) l c h)", "oklch(0.5 0 none)");
 // epsilon for lab/lch is `250.0 / 100000.0` or `0.0025`
-fuzzy_test_computed_color("lch(from lab(50 0.00249 0.00249) l c h)", "lch(50 0 0)");
-fuzzy_test_computed_color("lch(from lab(50 -0.00249 -0.00249) l c h)", "lch(50 0 0)");
-fuzzy_test_computed_color("lch(from lab(50 0.00249 -0.00249) l c h)", "lch(50 0 0)");
-fuzzy_test_computed_color("lch(from lab(50 -0.00249 0.00249) l c h)", "lch(50 0 0)");
+fuzzy_test_computed_color("lch(from lab(50 0.00249 0.00249) l c h)", "lch(50 0 none)");
+fuzzy_test_computed_color("lch(from lab(50 -0.00249 -0.00249) l c h)", "lch(50 0 none)");
+fuzzy_test_computed_color("lch(from lab(50 0.00249 -0.00249) l c h)", "lch(50 0 none)");
+fuzzy_test_computed_color("lch(from lab(50 -0.00249 0.00249) l c h)", "lch(50 0 none)");
 
 // Test colors that have small chroma (greater than epsilon) do have a hue.
 fuzzy_test_computed_color("oklch(from #e5f6ff l c h)", "oklch(0.963 0.022 230.537)");

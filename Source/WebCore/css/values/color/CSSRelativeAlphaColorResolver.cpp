@@ -43,17 +43,23 @@ WebCore::Color resolve(const RelativeAlphaColorResolver& resolver, const CSSToLe
     if (!resolver.alpha)
         return resolver.origin;
 
-    auto originAlpha = resolver.origin.alphaAsFloat();
+    auto originAlphaUnresolved = resolver.origin.unresolvedAlphaAsFloat();
 
-    const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
+    const CSSCalcSymbolTable constantSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlphaUnresolved * std::get<0>(Descriptor::components).symbolMultiplier },
     };
 
     // Replace symbol value (e.g. CSSValueAlpha) to its corresponding value.
-    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, symbolTable);
+    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, constantSymbolTable);
+
+    auto originAlphaResolved = resolver.origin.alphaAsFloat();
+
+    const CSSCalcSymbolTable calcSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlphaResolved * std::get<0>(Descriptor::components).symbolMultiplier },
+    };
 
     // Evaluated any calc value to their corresponding channel value.
-    auto component = Style::toStyle(componentWithUnevaluatedCalc, conversionData, symbolTable);
+    auto component = Style::toStyle(componentWithUnevaluatedCalc, conversionData, calcSymbolTable);
 
     // Normalize value into its numeric form.
     auto alpha = convertToTypeColorComponent<Descriptor, 0>(component);
@@ -71,17 +77,23 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeAlphaColorResolver&
     if (!resolver.alpha)
         return resolver.origin;
 
-    auto originAlpha = resolver.origin.alphaAsFloat();
+    auto originAlphaUnresolved = resolver.origin.unresolvedAlphaAsFloat();
 
-    const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlpha * std::get<0>(Descriptor::components).symbolMultiplier },
+    const CSSCalcSymbolTable constantSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlphaUnresolved * std::get<0>(Descriptor::components).symbolMultiplier },
     };
 
     // Replace any symbol value (e.g. CSSValueAlpha) with its corresponding value.
-    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, symbolTable);
+    auto componentWithUnevaluatedCalc = replaceSymbol(*resolver.alpha, constantSymbolTable);
+
+    auto originAlphaResolved = resolver.origin.alphaAsFloat();
+
+    const CSSCalcSymbolTable calcSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originAlphaResolved * std::get<0>(Descriptor::components).symbolMultiplier },
+    };
 
     // Evaluate any calc value to its corresponding channel value.
-    auto component = Style::toStyleNoConversionDataRequired(componentWithUnevaluatedCalc, symbolTable);
+    auto component = Style::toStyleNoConversionDataRequired(componentWithUnevaluatedCalc, calcSymbolTable);
 
     // Normalize value into its numeric form.
     auto alpha = convertToTypeColorComponent<Descriptor, 0>(component);

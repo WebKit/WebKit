@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,29 +51,39 @@ WebCore::Color resolve(const RelativeColorResolver<Descriptor>& relative, const 
 {
     auto originColor = relative.origin;
     auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
-    auto originComponents = asColorComponents(originColorAsColorType.resolved());
 
-    const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
-        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
-        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
-        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
+    auto originComponentsUnresolved = asColorComponents(originColorAsColorType.unresolved());
+
+    const CSSCalcSymbolTable constantSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Replace any symbol value (e.g. CSSValueR) with their corresponding channel value.
     auto componentsWithUnevaluatedCalc = CSSColorParseTypeWithCalc<Descriptor> {
-        replaceSymbol(std::get<0>(relative.components), symbolTable),
-        replaceSymbol(std::get<1>(relative.components), symbolTable),
-        replaceSymbol(std::get<2>(relative.components), symbolTable),
-        replaceSymbol(std::get<3>(relative.components), symbolTable)
+        replaceSymbol(std::get<0>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<1>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<2>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<3>(relative.components), constantSymbolTable)
+    };
+
+    auto originComponentsResolved = asColorComponents(originColorAsColorType.resolved());
+
+    const CSSCalcSymbolTable calcSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        Style::toStyle(std::get<0>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        Style::toStyle(std::get<1>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        Style::toStyle(std::get<2>(componentsWithUnevaluatedCalc), conversionData, symbolTable),
-        Style::toStyle(std::get<3>(componentsWithUnevaluatedCalc), conversionData, symbolTable)
+        Style::toStyle(std::get<0>(componentsWithUnevaluatedCalc), conversionData, calcSymbolTable),
+        Style::toStyle(std::get<1>(componentsWithUnevaluatedCalc), conversionData, calcSymbolTable),
+        Style::toStyle(std::get<2>(componentsWithUnevaluatedCalc), conversionData, calcSymbolTable),
+        Style::toStyle(std::get<3>(componentsWithUnevaluatedCalc), conversionData, calcSymbolTable)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.
@@ -90,29 +101,39 @@ WebCore::Color resolveNoConversionDataRequired(const RelativeColorResolver<Descr
 
     auto originColor = relative.origin;
     auto originColorAsColorType = originColor.template toColorTypeLossy<GetColorType<Descriptor>>();
-    auto originComponents = asColorComponents(originColorAsColorType.resolved());
 
-    const CSSCalcSymbolTable symbolTable {
-        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[0] * std::get<0>(Descriptor::components).symbolMultiplier },
-        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[1] * std::get<1>(Descriptor::components).symbolMultiplier },
-        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[2] * std::get<2>(Descriptor::components).symbolMultiplier },
-        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponents[3] * std::get<3>(Descriptor::components).symbolMultiplier }
+    auto originComponentsUnresolved = asColorComponents(originColorAsColorType.unresolved());
+
+    const CSSCalcSymbolTable constantSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsUnresolved[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Replace any symbol value (e.g. CSSValueR) with their corresponding channel value.
     auto componentsWithUnevaluatedCalc = CSSColorParseTypeWithCalc<Descriptor> {
-        replaceSymbol(std::get<0>(relative.components), symbolTable),
-        replaceSymbol(std::get<1>(relative.components), symbolTable),
-        replaceSymbol(std::get<2>(relative.components), symbolTable),
-        replaceSymbol(std::get<3>(relative.components), symbolTable)
+        replaceSymbol(std::get<0>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<1>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<2>(relative.components), constantSymbolTable),
+        replaceSymbol(std::get<3>(relative.components), constantSymbolTable)
+    };
+
+    auto originComponentsResolved = asColorComponents(originColorAsColorType.resolved());
+
+    const CSSCalcSymbolTable calcSymbolTable {
+        { std::get<0>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[0] * std::get<0>(Descriptor::components).symbolMultiplier },
+        { std::get<1>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[1] * std::get<1>(Descriptor::components).symbolMultiplier },
+        { std::get<2>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[2] * std::get<2>(Descriptor::components).symbolMultiplier },
+        { std::get<3>(Descriptor::components).symbol, CSSUnitType::Number, originComponentsResolved[3] * std::get<3>(Descriptor::components).symbolMultiplier }
     };
 
     // Evaluate any calc values to their corresponding channel value.
     auto components = StyleColorParseType<Descriptor> {
-        Style::toStyleNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), symbolTable),
-        Style::toStyleNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), symbolTable),
-        Style::toStyleNoConversionDataRequired(std::get<2>(componentsWithUnevaluatedCalc), symbolTable),
-        Style::toStyleNoConversionDataRequired(std::get<3>(componentsWithUnevaluatedCalc), symbolTable)
+        Style::toStyleNoConversionDataRequired(std::get<0>(componentsWithUnevaluatedCalc), calcSymbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<1>(componentsWithUnevaluatedCalc), calcSymbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<2>(componentsWithUnevaluatedCalc), calcSymbolTable),
+        Style::toStyleNoConversionDataRequired(std::get<3>(componentsWithUnevaluatedCalc), calcSymbolTable)
     };
 
     // Normalize values into their numeric form, forming a validated typed color.
