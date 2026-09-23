@@ -757,6 +757,15 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->info(), request, navigationID, m_localFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 }
 
+void WebLocalFrameLoaderClient::dispatchDidBlockNavigationByContentPolicy(const URL& blockedURL)
+{
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidBlockNavigationByContentPolicyForFrame(m_frame->frameID(), blockedURL));
+}
+
 void WebLocalFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
 {
     RefPtr webPage = m_frame->page();
