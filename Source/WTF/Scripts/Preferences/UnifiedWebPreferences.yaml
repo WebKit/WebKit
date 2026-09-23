@@ -1156,8 +1156,8 @@ CSSSizeShorthandEnabled:
   type: bool
   status: preview
   category: css
-  humanReadableName: "CSS size shorthand"
-  humanReadableDescription: "Enable the size shorthand for the width and height properties"
+  humanReadableName: "CSS size shorthands"
+  humanReadableDescription: "Enable the size, min-size and max-size shorthands for the width, height, min-width, min-height, max-width and max-height properties"
   defaultValue: false
 
 CSSSymbolsFunctionEnabled:
