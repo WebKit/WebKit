@@ -29,7 +29,9 @@
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
 
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <wtf/SetForScope.h>
 
 namespace TestWebKitAPI {
 
@@ -455,6 +457,45 @@ TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentVisibleToClientsMatchAllAfte
     [manager.get().context _reloadBackgroundContentForTesting];
 
     [manager run];
+}
+
+TEST_F(WKWebExtensionAPIOffscreen, BackgroundServiceWorkerKeepsExtensionAPIsWhenReloadedInNewProcess)
+{
+    // Without site isolation the background web view is created with _relatedWebView pointing at the offscreen
+    // document, which puts the relaunched worker right back in the process it just left and covers nothing.
+    SetForScope siteIsolation { Util::shouldEnableSiteIsolationForWebExtensionsTest, true };
+
+    auto *script = @[
+        @"const offscreenURL = browser.runtime.getURL('offscreen.html')",
+
+        @"if (await browser.offscreen.hasDocument()) {",
+        @"  browser.test.assertEq(typeof browser.runtime.getURL, 'function', 'The extension APIs should still be available after the worker relaunches in a new process')",
+        @"  browser.test.notifyPass()",
+        @"} else {",
+        @"  await browser.offscreen.createDocument({ url: 'offscreen.html', reasons: ['TESTING'], justification: 'test' })",
+        @"  const clients = await self.clients.matchAll()",
+        @"  browser.test.assertTrue(clients.some((client) => client.url === offscreenURL), 'The offscreen document should be a client, so it holds the registration open across the reload')",
+        @"  browser.test.sendMessage('Offscreen Document Created')",
+        @"}",
+    ];
+
+    auto manager = Util::loadExtension(offscreenManifest, @{
+        @"background.js": Util::constructScript(script),
+        @"offscreen.html": @"<!DOCTYPE html><html></html>",
+    }, offscreenConfig);
+
+    [manager runUntilTestMessage:@"Offscreen Document Created"];
+
+    auto originalBackgroundProcess = [manager.get().context._backgroundWebView _webProcessIdentifier];
+    EXPECT_NE(originalBackgroundProcess, 0);
+
+    [manager.get().context _reloadBackgroundContentForTesting];
+
+    [manager run];
+
+    // The worker can only land in the wrong process if the reload moved the background page out of the old one,
+    // so without this the test would quietly stop covering anything if that ever stopped being true.
+    EXPECT_NE(originalBackgroundProcess, [manager.get().context._backgroundWebView _webProcessIdentifier]);
 }
 
 TEST_F(WKWebExtensionAPIOffscreen, OffscreenDocumentImmediatelyVisibleToClientsMatchAllWhenWokenByTabMessage)

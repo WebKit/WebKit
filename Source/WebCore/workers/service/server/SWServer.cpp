@@ -388,6 +388,32 @@ void SWServer::didReconnectServiceWorkerPage(SWServerRegistration& registration,
 
     registration.setServiceWorkerPageIdentifier(newServiceWorkerPageIdentifier);
     m_serviceWorkerPageIdentifierToRegistrationMap.add(newServiceWorkerPageIdentifier, registration);
+
+    replaceContextConnectionIfNotInServiceWorkerPageProcess(registration, newServiceWorkerPageIdentifier);
+}
+
+void SWServer::replaceContextConnectionIfNotInServiceWorkerPageProcess(SWServerRegistration& registration, ScriptExecutionContextIdentifier serviceWorkerPageIdentifier)
+{
+    // A worker backed by a service worker page only gets that page's bindings (e.g. the Web Extension APIs a
+    // background service worker needs) if it runs in the same process as the page, since the page is found through
+    // a per-process map. The context connection for a domain outlives its service worker page whenever the domain
+    // still has other clients, and the page can come back in a different process than the one that connection is
+    // in, so replace a connection that can no longer reach the page.
+    Site site { registration.key().topOrigin() };
+    auto serviceWorkerPageProcessIdentifier = serviceWorkerPageIdentifier.processIdentifier();
+
+    Vector<Ref<SWServerToContextConnection>> connectionsToReplace;
+    forEachContextConnectionForRegistrableDomain(site.domain(), [&](auto& connection) {
+        if (connection.webProcessIdentifier() != serviceWorkerPageProcessIdentifier)
+            connectionsToReplace.append(Ref { connection });
+    });
+
+    for (Ref connection : connectionsToReplace) {
+        RELEASE_LOG(ServiceWorker, "SWServer::replaceContextConnectionIfNotInServiceWorkerPageProcess: replacing context connection %" PRIu64 " for registration %" PRIu64 " because its process no longer hosts the service worker page", connection->identifier().toUInt64(), registration.identifier().toUInt64());
+
+        removeContextConnection(connection, serviceWorkerPageIdentifier);
+        connection->connectionIsNoLongerNeeded();
+    }
 }
 
 void SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(Vector<ServiceWorkerRegistrationData>&&)>&& callback)
@@ -1806,13 +1832,14 @@ void SWServer::addContextConnection(SWServerToContextConnection& connection)
     contextConnectionCreated(connection);
 }
 
-void SWServer::removeContextConnection(SWServerToContextConnection& connection)
+void SWServer::removeContextConnection(SWServerToContextConnection& connection, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifierForReplacementConnection)
 {
     RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection %" PRIu64, connection.identifier().toUInt64());
 
     auto site = connection.site();
     auto coep = connection.crossOriginEmbedderPolicyValue();
-    auto serviceWorkerPageIdentifier = connection.serviceWorkerPageIdentifier();
+
+    auto serviceWorkerPageIdentifier = serviceWorkerPageIdentifierForReplacementConnection ? serviceWorkerPageIdentifierForReplacementConnection : connection.serviceWorkerPageIdentifier();
 
     ASSERT(m_contextConnections.get({ site.domain(), coep }) == &connection);
 

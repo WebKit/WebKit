@@ -246,7 +246,7 @@ public:
     void removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey&);
 
     WEBCORE_EXPORT void addContextConnection(SWServerToContextConnection&);
-    WEBCORE_EXPORT void removeContextConnection(SWServerToContextConnection&);
+    WEBCORE_EXPORT void removeContextConnection(SWServerToContextConnection&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifierForReplacementConnection = std::nullopt);
     WEBCORE_EXPORT void terminateIdleServiceWorkers(SWServerToContextConnection&);
 
     using ContextConnectionKey = std::pair<RegistrableDomain, CrossOriginEmbedderPolicyValue>;
@@ -338,6 +338,8 @@ private:
     void unregisterServiceWorkerConnection(Connection&, ServiceWorkerIdentifier);
 
     void terminatePreinstallationWorker(SWServerWorker&);
+
+    void replaceContextConnectionIfNotInServiceWorkerPageProcess(SWServerRegistration&, ScriptExecutionContextIdentifier serviceWorkerPageIdentifier);
 
     void clearInternal(const SecurityOriginData& topOrigin, Function<bool(const ServiceWorkerRegistrationKey&)>&& matches, CompletionHandler<void()>&&);
 
