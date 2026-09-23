@@ -84,6 +84,8 @@ WK_WORKAROUND_RDAR_145268301_ASAN_STACK_USE_AFTER_SCOPE_YES = -DWK_WORKAROUND_RD
 
 // Disable compact unwind to work around "Too many personality routines" linker error with TSan builds.
 WK_THREAD_SANITIZER_OTHER_LDFLAGS_YES = $(WK_THREAD_SANITIZER_OTHER_LDFLAGS_$(PRODUCT_NAME));
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_TestWebKitAPI = -Wl,-no_compact_unwind;
+WK_THREAD_SANITIZER_OTHER_LDFLAGS_TestWebKitAPIBundle = -Wl,-no_compact_unwind;
 WK_THREAD_SANITIZER_OTHER_LDFLAGS_WebCore = -Wl,-no_compact_unwind;
 WK_THREAD_SANITIZER_OTHER_LDFLAGS_WebKit = -Wl,-no_compact_unwind;
 
