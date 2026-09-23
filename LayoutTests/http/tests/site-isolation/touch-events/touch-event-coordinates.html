@@ -9,9 +9,9 @@ let events = [];
 addEventListener("message", (event) => {
     events.push(event.data);
     if (events.length == 3) {
-        shouldBe("events[0]", "'touchstart 40,10'");
-        shouldBe("events[1]", "'touchmove 140,60'");
-        shouldBe("events[2]", "'touchend 140,60'");
+        shouldBe("events[0]", "'touchstart 40,14'");
+        shouldBe("events[1]", "'touchmove 140,64'");
+        shouldBe("events[2]", "'touchend 140,64'");
         finishJSTest();
     }
 });

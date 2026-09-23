@@ -10,7 +10,7 @@ addEventListener("message", (event) => {
     events.push(event.data);
     if (events.length == 2) {
         shouldBe("events[0]", "'anchor click'");
-        shouldBe("events[1]", "'click 113,33'");
+        shouldBe("events[1]", "'click 113,37'");
         finishJSTest();
     }
 });

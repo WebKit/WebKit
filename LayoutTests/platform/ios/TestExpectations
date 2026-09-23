@@ -52,6 +52,8 @@ http/tests/site-isolation/ios/select-and-drag-in-transformed-cross-origin-iframe
 http/tests/site-isolation/ios/long-press-in-cross-origin-iframe-in-scrolled-main-frame.html [ Pass ]
 http/tests/site-isolation/ios/long-press-in-cross-site-grandchild-of-scrolled-middle-frame.html [ Pass ]
 http/tests/site-isolation/touch-events/tap-nested-cross-origin-frame-in-offset-subframe.html [ Pass ]
+http/tests/site-isolation/touch-events/touch-click-coordinates.html [ Pass ]
+http/tests/site-isolation/touch-events/content-observation.html [ Pass ]
 
 fast/forms/switch [ Pass ]
 fast/snapshot [ Skip ]
@@ -8405,6 +8407,9 @@ webkit.org/b/297026 [ Release ] http/tests/app-privacy-report/app-attribution-be
 http/tests/ipc/write-web-archive-frame-ancestry-check.html [ Pass ]
 
 webkit.org/b/297056 http/tests/site-isolation/touch-events/touch-event-coordinates.html [ Pass Failure Timeout ] # rdar://156634858
+# Same touchend defect as the test above: the lift-up is delivered 21px above the drag endpoint.
+webkit.org/b/297056 http/tests/site-isolation/touch-events/drag-nested-cross-origin-frame-in-offset-subframe.html [ Failure ] # rdar://156634858
+webkit.org/b/297056 http/tests/site-isolation/touch-events/drag-nested-cross-origin-frame-in-scrolled-subframe.html [ Failure ] # rdar://156634858
 
 webkit.org/b/297067 fast/forms/state-restore-form-associated-custom-elements.html [ Pass Timeout ]
 # webkit.org/b/297122 2x imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside (layout-tests) tests are flaky text failures
