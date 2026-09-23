@@ -29,37 +29,50 @@
 
 #include "CanvasRenderingContext.h"
 #include "PlaceholderFrameIdentifier.h"
+#include "PlaceholderRenderingContextSource.h"
 #include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class GraphicsLayerAsyncContentsDisplayDelegate;
 class PlaceholderRenderingContext;
 
-// Thread-safe interface to submit frames from worker to the placeholder rendering context.
-class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
-    WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContextSource);
-    WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
+// What a placeholder's compositor layer shows. Shared with a source in the same process, so that it
+// can update the layer straight from the OffscreenCanvas's thread.
+class PlaceholderLayerContents final : public ThreadSafeRefCounted<PlaceholderLayerContents> {
+    WTF_MAKE_TZONE_ALLOCATED(PlaceholderLayerContents);
 public:
-    static Ref<PlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
-    virtual ~PlaceholderRenderingContextSource() = default;
+    static Ref<PlaceholderLayerContents> create() { return adoptRef(*new PlaceholderLayerContents); }
 
-    // Called by the offscreen context to submit the frame.
-    void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque);
-
-    // Called by the placeholder context to attach to compositor layer.
-    void setContentsToLayer(GraphicsLayer&, ImageBuffer*, bool opaque);
+    // Shows the frame unless a newer one is already shown. On any thread.
+    void copyFrame(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
+    // On the main thread.
+    void attach(GraphicsLayer&, ImageBuffer*, bool opaque, PlaceholderFrameIdentifier);
 
 private:
-    explicit PlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+    PlaceholderLayerContents() = default;
 
-    WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
     Lock m_lock;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> m_delegate WTF_GUARDED_BY_LOCK(m_lock);
+    PlaceholderFrameIdentifier m_frame WTF_GUARDED_BY_LOCK(m_lock);
+};
+
+// The source for an OffscreenCanvas in the same process as its placeholder, on any thread. Only the
+// OffscreenCanvas holds it.
+class LocalPlaceholderRenderingContextSource final : public PlaceholderRenderingContextSource {
+    WTF_MAKE_TZONE_ALLOCATED(LocalPlaceholderRenderingContextSource);
+public:
+    static Ref<LocalPlaceholderRenderingContextSource> create(PlaceholderRenderingContext&);
+
+    void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) final;
+
+private:
+    explicit LocalPlaceholderRenderingContextSource(PlaceholderRenderingContext&);
+
+    WeakPtr<PlaceholderRenderingContext> m_placeholder; // For main thread use.
+    const Ref<PlaceholderLayerContents> m_layerContents;
     PlaceholderFrameIdentifier m_lastFrame; // For OffscreenCanvas holder thread use (main or worker).
-    PlaceholderFrameIdentifier m_delegateFrame WTF_GUARDED_BY_LOCK(m_lock);
-    PlaceholderFrameIdentifier m_placeholderFrame WTF_GUARDED_BY_CAPABILITY(mainThread);
 };
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
@@ -71,9 +84,10 @@ public:
 
     HTMLCanvasElement& NODELETE canvas() const;
     IntSize NODELETE size() const;
-    void setPlaceholderBuffer(Ref<ImageBuffer>&&, bool originClean, bool opaque);
+    void setPlaceholderBuffer(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
 
-    PlaceholderRenderingContextSource& source() const { return m_source; }
+    PlaceholderRenderingContextIdentifier identifier() const { return m_identifier; }
+    PlaceholderLayerContents& layerContents() const { return m_layerContents; }
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
     RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
@@ -86,7 +100,9 @@ private:
     PixelFormat pixelFormat() const final;
     bool isOpaque() const final { return m_opaque; }
 
-    const Ref<PlaceholderRenderingContextSource> m_source;
+    const PlaceholderRenderingContextIdentifier m_identifier;
+    const Ref<PlaceholderLayerContents> m_layerContents;
+    PlaceholderFrameIdentifier m_frame;
     RefPtr<ImageBuffer> m_buffer; // Temporary until content is provided as NativeImage.
     RefPtr<NativeImage> m_bufferNativeImage;
     bool m_opaque { false };

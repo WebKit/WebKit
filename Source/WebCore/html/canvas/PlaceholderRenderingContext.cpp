@@ -38,28 +38,47 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContextSource);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderLayerContents);
 
-Ref<PlaceholderRenderingContextSource> PlaceholderRenderingContextSource::create(PlaceholderRenderingContext& context)
+void PlaceholderLayerContents::copyFrame(ImageBuffer& imageBuffer, bool opaque, PlaceholderFrameIdentifier frame)
 {
-    return adoptRef(*new PlaceholderRenderingContextSource(context));
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return;
+    m_delegate->tryCopyToLayer(imageBuffer, opaque, frame);
+    m_frame = frame;
 }
 
-PlaceholderRenderingContextSource::PlaceholderRenderingContextSource(PlaceholderRenderingContext& placeholder)
-    : m_placeholder(placeholder)
+void PlaceholderLayerContents::attach(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (!(m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get())))
+        return;
+    if (buffer) {
+        m_delegate->tryCopyToLayer(*buffer, opaque, frame);
+        m_frame = frame;
+    }
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalPlaceholderRenderingContextSource);
+
+Ref<LocalPlaceholderRenderingContextSource> LocalPlaceholderRenderingContextSource::create(PlaceholderRenderingContext& context)
+{
+    return adoptRef(*new LocalPlaceholderRenderingContextSource(context));
+}
+
+LocalPlaceholderRenderingContextSource::LocalPlaceholderRenderingContextSource(PlaceholderRenderingContext& placeholder)
+    : PlaceholderRenderingContextSource(placeholder.identifier())
+    , m_placeholder(placeholder)
+    , m_layerContents(placeholder.layerContents())
 {
 }
 
-void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer, bool originClean, bool opaque)
+void LocalPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageBuffer, bool originClean, bool opaque)
 {
     auto frame = m_lastFrame.increment();
-    {
-        Locker locker { m_lock };
-        if (m_delegate) {
-            m_delegate->tryCopyToLayer(imageBuffer, opaque, frame);
-            m_delegateFrame = frame;
-        }
-    }
+    m_layerContents->copyFrame(imageBuffer, opaque, frame);
 
     RefPtr clone = imageBuffer.clone();
     if (!clone)
@@ -75,33 +94,11 @@ void PlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& imageB
         RefPtr imageBuffer = SerializedImageBuffer::sinkIntoImageBuffer(WTF::move(buffer), protect(protect(placeholder->canvas())->scriptExecutionContext())->graphicsClient());
         if (!imageBuffer)
             return;
-        Ref source = placeholder->source();
-        {
-            Locker locker { source->m_lock };
-            if (source->m_delegate && source->m_delegateFrame < frame) {
-                // Compare the frames, so that possibly already historical buffer in this
-                // main thread task does not override the newest buffer that the worker thread
-                // already set.
-                source->m_delegate->tryCopyToLayer(*imageBuffer, opaque, frame);
-                source->m_delegateFrame = frame;
-            }
-        }
-
-        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), originClean, opaque);
-        source->m_placeholderFrame = frame;
+        // Compares the frames, so that a possibly already historical buffer in this main thread
+        // task does not override the newest buffer that the worker thread already set.
+        protect(placeholder->layerContents())->copyFrame(*imageBuffer, opaque, frame);
+        placeholder->setPlaceholderBuffer(imageBuffer.releaseNonNull(), frame, originClean, opaque);
     });
-}
-
-void PlaceholderRenderingContextSource::setContentsToLayer(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque)
-{
-    assertIsMainThread();
-    Locker locker { m_lock };
-    if ((m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get()))) {
-        if (buffer) {
-            m_delegate->tryCopyToLayer(*buffer, opaque, m_placeholderFrame);
-            m_delegateFrame = m_placeholderFrame;
-        }
-    }
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContext);
@@ -113,7 +110,8 @@ std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create
 
 PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canvas)
     : CanvasRenderingContext(canvas, Type::Placeholder)
-    , m_source(PlaceholderRenderingContextSource::create(*this))
+    , m_identifier(PlaceholderRenderingContextIdentifier::generate())
+    , m_layerContents(PlaceholderLayerContents::create())
 {
 }
 
@@ -131,11 +129,12 @@ IntSize PlaceholderRenderingContext::size() const
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    m_source->setContentsToLayer(layer, m_buffer.get(), m_opaque);
+    m_layerContents->attach(layer, m_buffer.get(), m_opaque, m_frame);
 }
 
-void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, bool originClean, bool opaque)
+void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
 {
+    m_frame = frame;
     IntSize newSize = newBuffer->truncatedLogicalSize();
     Ref canvas = this->canvas();
     canvas->willUpdateContents(FloatRect { { }, newSize }, ShouldApplyPostProcessingToDirtyRect::No);

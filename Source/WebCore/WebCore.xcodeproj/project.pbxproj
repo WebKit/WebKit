@@ -2151,6 +2151,8 @@
 		51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 51327D5E11A33A2B004F9D65 /* SinkDocument.h */; };
 		513C7B6D2E7C2C2400079881 /* MediaSamplesBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6C2E7C2BC700079881 /* MediaSamplesBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513C7B6E2E7C2E7A00079881 /* TrackInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 513C7B6B2E7C2A0E00079881 /* TrackInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3DADD7E8080911858F0AC9DF /* PlaceholderRenderingContextIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D91AE1EB616954D5B5091 /* PlaceholderRenderingContextIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		42E88F7F164135AB4EC29FD7 /* PlaceholderRenderingContextSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D9D73727E3C1073890A32F2 /* PlaceholderRenderingContextSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513CEA592B34ACE5000FC060 /* PredefinedColorSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA5591A263F10B9007F19B3 /* PredefinedColorSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513EB5F22BF2D9B800BC98B1 /* NavigatorGamepad.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A4BB0E1954D62700FA5C2E /* NavigatorGamepad.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		513F14540AB634C400094DDF /* IconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 513F14520AB634C400094DDF /* IconLoader.h */; };
@@ -20384,6 +20386,8 @@
 		BCA407F02C9F2140006B037F /* StyleValueTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleValueTypes.h; sourceTree = "<group>"; };
 		BCA407F12C9F26C6006B037F /* CSSValueTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSValueTypes.h; sourceTree = "<group>"; };
 		BCA55912263DBD79007F19B3 /* PixelFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelFormat.h; sourceTree = "<group>"; };
+		326D91AE1EB616954D5B5091 /* PlaceholderRenderingContextIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContextIdentifier.h; sourceTree = "<group>"; };
+		4D9D73727E3C1073890A32F2 /* PlaceholderRenderingContextSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaceholderRenderingContextSource.h; sourceTree = "<group>"; };
 		BCA5591A263F10B9007F19B3 /* PredefinedColorSpace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PredefinedColorSpace.h; sourceTree = "<group>"; };
 		BCA5591C263F10B9007F19B3 /* PredefinedColorSpace.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PredefinedColorSpace.idl; sourceTree = "<group>"; };
 		BCA5591D263F10B9007F19B3 /* PredefinedColorSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PredefinedColorSpace.cpp; sourceTree = "<group>"; };
@@ -28770,6 +28774,8 @@
 				7C193BB41F5E0EB70088F3E6 /* Path2D.idl */,
 				7C7903BA1F86FF3300463A70 /* PlaceholderRenderingContext.cpp */,
 				7C7903BC1F86FF3400463A70 /* PlaceholderRenderingContext.h */,
+				326D91AE1EB616954D5B5091 /* PlaceholderRenderingContextIdentifier.h */,
+				4D9D73727E3C1073890A32F2 /* PlaceholderRenderingContextSource.h */,
 				BCA5591D263F10B9007F19B3 /* PredefinedColorSpace.cpp */,
 				BCA5591A263F10B9007F19B3 /* PredefinedColorSpace.h */,
 				BCA5591C263F10B9007F19B3 /* PredefinedColorSpace.idl */,
@@ -48373,6 +48379,8 @@
 				115CFA82208B8EDA001E6991 /* PlacedFloats.h in Headers */,
 				A5B342862E77F75A009BFF3F /* PlacedGridItem.h in Headers */,
 				B649E7A027AE425E7A6AA9C9 /* PlaceholderFrameIdentifier.h in Headers */,
+				3DADD7E8080911858F0AC9DF /* PlaceholderRenderingContextIdentifier.h in Headers */,
+				42E88F7F164135AB4EC29FD7 /* PlaceholderRenderingContextSource.h in Headers */,
 				4158707D28EC799E00C163C5 /* PlaneLayout.h in Headers */,
 				CDEFA2281E7669E8000AE99C /* PlatformAudioData.h in Headers */,
 				CDD08AC0277E54F000EA3755 /* PlatformAudioTrackConfiguration.h in Headers */,

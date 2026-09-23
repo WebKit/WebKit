@@ -1700,6 +1700,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/VoidCallback.h
 
     html/canvas/CanvasElementImage.h
+    html/canvas/PlaceholderRenderingContextIdentifier.h
+    html/canvas/PlaceholderRenderingContextSource.h
     html/canvas/PredefinedColorSpace.h
     html/canvas/WebGLAny.h
     html/canvas/WebGLBuffer.h

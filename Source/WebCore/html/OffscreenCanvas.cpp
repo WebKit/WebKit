@@ -120,7 +120,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), &placeholder.source()));
+    Ref offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), LocalPlaceholderRenderingContextSource::create(placeholder)));
     offscreen->suspendIfNeeded();
     return offscreen;
 }
