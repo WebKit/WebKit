@@ -6425,7 +6425,7 @@ header: <WebCore/TextAttachmentForSerialization.h>
 
 [CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentSingleImage {
     RefPtr<WebCore::NativeImage> image;
-    WebCore::FloatSize size;
+    [Validator='WebCore::isValidMultiRepresentationHEICImageSize(*size)'] WebCore::FloatSize size;
 }
 
 [CustomHeader] struct WebCore::MultiRepresentationHEICAttachmentData {

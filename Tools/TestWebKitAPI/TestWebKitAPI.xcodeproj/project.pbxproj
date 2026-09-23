@@ -813,6 +813,7 @@
 				WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm,
 				WebCore/cocoa/MediaRecorderPrivateWriterTests.cpp,
 				WebCore/cocoa/MediaSamplesDecoderTests.mm,
+				WebCore/cocoa/MultiRepresentationHEICAttachment.mm,
 				WebCore/cocoa/PaymentSummaryItemsCocoa.mm,
 				WebCore/cocoa/PlatformScreenTests.mm,
 				WebCore/cocoa/PrivateClickMeasurementCocoa.mm,
