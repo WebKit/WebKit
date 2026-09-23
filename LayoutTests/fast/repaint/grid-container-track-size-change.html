@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById('grid').style.gridTemplateColumns = '150px';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body {
+  margin: 0;
+}
+p {
+  margin: 0;
+  height: 50px;
+}
+#grid {
+  display: grid;
+  grid-template-columns: 100px;
+  grid-template-rows: 100px;
+  width: 200px;
+}
+#item {
+  height: 50px;
+  background-color: green;
+}
+</style>
+<p>Tests invalidation of the grid container on a track size change.</p>
+<div id="grid">
+    <div id="item"></div>
+</div>

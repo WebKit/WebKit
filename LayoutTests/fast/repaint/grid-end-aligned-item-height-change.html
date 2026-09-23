@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+function repaintTest() {
+  document.getElementById('item').style.height = '70px';
+}
+onload = runRepaintTest;
+</script>
+<style>
+body {
+  margin: 0;
+}
+p {
+  margin: 0;
+  height: 50px;
+}
+#grid {
+  display: grid;
+  grid: 100px / 100px;
+  width: 100px;
+}
+#item {
+  align-self: end;
+  height: 50px;
+  background-color: green;
+}
+</style>
+<p>Tests invalidation of an end aligned grid item which moves when its height changes.</p>
+<div id="grid">
+    <div id="item"></div>
+</div>

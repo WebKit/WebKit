@@ -150,12 +150,22 @@ static inline Layout::GridLayoutConstraints constraintsForGridContent(const Layo
     return { inlineAxisConstraint, blockAxisConstraint };
 }
 
-void GridLayout::updateGridItemRenderers()
+GridLayout::GridItemBorderBoxRects GridLayout::gridItemBorderBoxRects() const
 {
+    GridItemBorderBoxRects gridItemBorderBoxRects;
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+        gridItemBorderBoxRects.append(CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->borderBoxRectInContainer());
+    return gridItemBorderBoxRects;
+}
+
+void GridLayout::updateGridItemRenderers(const GridItemBorderBoxRects& previousGridItemRects)
+{
+    CheckedRef renderGrid = gridBoxRenderer();
     CheckedRef layoutState = this->layoutState();
     auto& gridBoxGeometry = layoutState->geometryForBox(gridBox());
     auto contentBoxOffset = LayoutPoint(gridBoxGeometry.contentBoxLeft(), gridBoxGeometry.contentBoxTop());
 
+    size_t gridItemIndex = 0;
     for (CheckedRef layoutBox : formattingContextBoxes(gridBox())) {
         CheckedRef renderer = downcast<RenderBox>(*layoutBox->rendererForIntegration());
         auto& gridItemGeometry = layoutState->geometryForBox(layoutBox);
@@ -169,7 +179,12 @@ void GridLayout::updateGridItemRenderers()
         renderer->setMarginAfter(gridItemGeometry.marginAfter());
         renderer->setMarginStart(gridItemGeometry.marginStart());
         renderer->setMarginEnd(gridItemGeometry.marginEnd());
+
+        if (!renderGrid->selfNeedsLayout() && renderer->checkForRepaintDuringLayout())
+            renderer->repaintDuringLayoutIfMoved(previousGridItemRects[gridItemIndex]);
+        ++gridItemIndex;
     }
+    ASSERT(gridItemIndex == previousGridItemRects.size());
 }
 
 void GridLayout::updateFormattingContextRootRenderer(const Layout::GridLayoutConstraints& layoutConstraints, const Layout::UsedTrackSizes& usedTrackSizes, const Layout::GridItemRects& gridItemRects)
@@ -222,8 +237,11 @@ std::pair<LayoutUnit, LayoutUnit> GridLayout::computeIntrinsicWidths()
 void GridLayout::layout()
 {
     auto gridLayoutConstraints = constraintsForGridContent(gridBox());
+
+    auto previousGridItemRects = gridItemBorderBoxRects();
+
     auto [ usedTrackSizes, gridItemRects ] = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);
-    updateGridItemRenderers();
+    updateGridItemRenderers(previousGridItemRects);
     updateFormattingContextRootRenderer(gridLayoutConstraints, usedTrackSizes, gridItemRects);
     layoutOutOfFlowBoxes(usedTrackSizes);
 
