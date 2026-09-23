@@ -30,7 +30,7 @@
 
 extern "C" {
 
-typedef void (^WGPUBufferMapBlockCallback)(WGPUBufferMapAsyncStatus);
+typedef void (^WGPUBufferMapBlockCallback)(WGPUMapAsyncStatus);
 typedef void (^WGPUCompilationInfoBlockCallback)(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo* compilationInfo);
 typedef void (^WGPUCreateComputePipelineAsyncBlockCallback)(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline pipeline, WTF::String&& message);
 typedef void (^WGPUCreateRenderPipelineAsyncBlockCallback)(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline pipeline, WTF::String&& message);

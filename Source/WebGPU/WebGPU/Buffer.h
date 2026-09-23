@@ -79,7 +79,7 @@ public:
     void destroy();
     std::span<uint8_t> getMappedRange(size_t offset, size_t) HAS_SWIFTCXX_THUNK;
     void bufferCopy(std::span<const uint8_t>, size_t offset);
-    void mapAsync(WGPUMapMode, size_t offset, size_t, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback);
+    void mapAsync(WGPUMapMode, size_t offset, size_t, CompletionHandler<void(WGPUMapAsyncStatus)>&& callback);
     void unmap();
     void setLabel(String&&);
     void generateAValidationError(String&&);

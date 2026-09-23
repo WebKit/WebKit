@@ -279,19 +279,6 @@ typedef enum WGPUBufferBindingType {
     WGPUBufferBindingType_Force32 = 0x7FFFFFFF
 } WGPUBufferBindingType WGPU_ENUM_ATTRIBUTE;
 
-typedef enum WGPUBufferMapAsyncStatus {
-    WGPUBufferMapAsyncStatus_Success = 0x00000000,
-    WGPUBufferMapAsyncStatus_ValidationError = 0x00000001,
-    WGPUBufferMapAsyncStatus_Unknown = 0x00000002,
-    WGPUBufferMapAsyncStatus_DeviceLost = 0x00000003,
-    WGPUBufferMapAsyncStatus_DestroyedBeforeCallback = 0x00000004,
-    WGPUBufferMapAsyncStatus_UnmappedBeforeCallback = 0x00000005,
-    WGPUBufferMapAsyncStatus_MappingAlreadyPending = 0x00000006,
-    WGPUBufferMapAsyncStatus_OffsetOutOfRange = 0x00000007,
-    WGPUBufferMapAsyncStatus_SizeOutOfRange = 0x00000008,
-    WGPUBufferMapAsyncStatus_Force32 = 0x7FFFFFFF
-} WGPUBufferMapAsyncStatus WGPU_ENUM_ATTRIBUTE;
-
 typedef enum WGPUBufferMapState {
     WGPUBufferMapState_Unmapped = 0x00000000,
     WGPUBufferMapState_Pending = 0x00000001,
@@ -434,6 +421,19 @@ typedef enum WGPULoadOp {
     WGPULoadOp_Load = 0x00000002,
     WGPULoadOp_Force32 = 0x7FFFFFFF
 } WGPULoadOp WGPU_ENUM_ATTRIBUTE;
+
+typedef enum WGPUMapAsyncStatus {
+    WGPUMapAsyncStatus_Success = 0x00000000,
+    WGPUMapAsyncStatus_ValidationError = 0x00000001,
+    WGPUMapAsyncStatus_Unknown = 0x00000002,
+    WGPUMapAsyncStatus_DeviceLost = 0x00000003,
+    WGPUMapAsyncStatus_DestroyedBeforeCallback = 0x00000004,
+    WGPUMapAsyncStatus_UnmappedBeforeCallback = 0x00000005,
+    WGPUMapAsyncStatus_MappingAlreadyPending = 0x00000006,
+    WGPUMapAsyncStatus_OffsetOutOfRange = 0x00000007,
+    WGPUMapAsyncStatus_SizeOutOfRange = 0x00000008,
+    WGPUMapAsyncStatus_Force32 = 0x7FFFFFFF
+} WGPUMapAsyncStatus WGPU_ENUM_ATTRIBUTE;
 
 typedef enum WGPUMipmapFilterMode {
     WGPUMipmapFilterMode_Nearest = 0x00000000,
@@ -783,7 +783,7 @@ static const WGPUTextureUsage WGPUTextureUsage_Transient = 0x0000000000000020;
 // creation can reject it rather than acting on the bits it happened to recognize.
 static const WGPUTextureUsage WGPUTextureUsage_Invalid = 0x0000000000000040;
 
-typedef void (*WGPUBufferMapCallback)(WGPUBufferMapAsyncStatus status, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
+typedef void (*WGPUBufferMapCallback)(WGPUMapAsyncStatus status, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCompilationInfoCallback)(WGPUCompilationInfoRequestStatus status, struct WGPUCompilationInfo const * compilationInfo, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCreateComputePipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, WTF::String&& message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;
 typedef void (*WGPUCreateRenderPipelineAsyncCallback)(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, WTF::String&& message, void * userdata) WGPU_FUNCTION_ATTRIBUTE;

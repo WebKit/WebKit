@@ -363,7 +363,7 @@ NSString *Buffer::errorValidatingMapAsync(WGPUMapMode mode, size_t offset, size_
     return nil;
 }
 
-void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback)
+void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHandler<void(WGPUMapAsyncStatus)>&& callback)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-mapasync
 
@@ -376,7 +376,7 @@ void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHa
     if (NSString* error = errorValidatingMapAsync(mode, offset, rangeSize)) {
         device->generateAValidationError(error);
 
-        callback(WGPUBufferMapAsyncStatus_ValidationError);
+        callback(WGPUMapAsyncStatus_ValidationError);
         return;
     }
 
@@ -396,20 +396,20 @@ void Buffer::mapAsync(WGPUMapMode mode, size_t offset, size_t size, CompletionHa
 
         switch (status) {
         case WGPUQueueWorkDoneStatus_Success:
-            callback(WGPUBufferMapAsyncStatus_Success);
+            callback(WGPUMapAsyncStatus_Success);
             return;
         case WGPUQueueWorkDoneStatus_Error:
-            callback(WGPUBufferMapAsyncStatus_ValidationError);
+            callback(WGPUMapAsyncStatus_ValidationError);
             return;
         case WGPUQueueWorkDoneStatus_Unknown:
-            callback(WGPUBufferMapAsyncStatus_Unknown);
+            callback(WGPUMapAsyncStatus_Unknown);
             return;
         case WGPUQueueWorkDoneStatus_DeviceLost:
-            callback(WGPUBufferMapAsyncStatus_DeviceLost);
+            callback(WGPUMapAsyncStatus_DeviceLost);
             return;
         case WGPUQueueWorkDoneStatus_Force32:
             ASSERT_NOT_REACHED();
-            callback(WGPUBufferMapAsyncStatus_ValidationError);
+            callback(WGPUMapAsyncStatus_ValidationError);
             return;
         }
     });
@@ -695,14 +695,14 @@ uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {
+    protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback, userdata](WGPUMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapMode mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
-    protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback = WebGPU::fromAPI(WTF::move(callback))](WGPUBufferMapAsyncStatus status) {
+    protect(WebGPU::fromAPI(buffer))->mapAsync(mode, offset, size, [callback = WebGPU::fromAPI(WTF::move(callback))](WGPUMapAsyncStatus status) {
         callback(status);
     });
 }
