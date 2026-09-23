@@ -146,7 +146,7 @@ void PingLoader::sendPing(LocalFrame& frame, URL&& sendPingURL, const URL& desti
 
     request.setHTTPMethod("POST"_s);
     request.setHTTPContentType("text/ping"_s);
-    request.setHTTPBody(FormData::create("PING"_s));
+    request.setHTTPBody(FormData::create("PING"_span8));
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 
     Ref sourceOrigin = document->securityOrigin();

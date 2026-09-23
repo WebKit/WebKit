@@ -81,11 +81,10 @@ class CString {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CString);
 public:
     CString() { }
-    WTF_EXPORT_PRIVATE CString(ASCIILiteral);
+    // FIXME: These two should join the constructors below, which would leave CStringWithEncoding
+    // as the only way to get bytes into a CString.
     WTF_EXPORT_PRIVATE CString(const char*); // Any encoding
     WTF_EXPORT_PRIVATE CString(std::span<const char>); // Any encoding
-    CString(CStringBuffer* buffer) : m_buffer(buffer) { }
-    CString(const std::string&); // Any encoding.
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
 
     const char* data() const LIFETIME_BOUND; // Any encoding
@@ -101,11 +100,6 @@ public:
     std::span<const char> span() const LIFETIME_BOUND; // Any encoding
     std::span<const char> spanIncludingNullTerminator() const LIFETIME_BOUND; // Any encoding
 
-    // Copy-on-write
-    WTF_EXPORT_PRIVATE std::span<char> mutableSpan() LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE std::span<char> mutableSpanIncludingNullTerminator() LIFETIME_BOUND;
-    WTF_EXPORT_PRIVATE void grow(size_t newLength);
-
     size_t length() const;
 
     bool isNull() const { return !m_buffer; }
@@ -119,9 +113,19 @@ public:
     WTF_EXPORT_PRIVATE unsigned NODELETE hash() const;
 
 protected:
-    // Only reachable through CStringWithEncoding below: this hands out a mutable buffer, so there is no
-    // point at which the encoding of the bytes written into it could be established.
+    // Only reachable through CStringWithEncoding below. Each of these either puts bytes into a
+    // CString or hands out a buffer to put them into, and the encoding-erased base has no way to
+    // say what encoding those bytes are in. An ASCII literal is valid in every supported encoding,
+    // but a CString built from one still has to name the encoding it is going to be read as.
+    WTF_EXPORT_PRIVATE CString(ASCIILiteral);
+    CString(CStringBuffer* buffer) : m_buffer(buffer) { }
+
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, std::span<char>& characterBuffer);
+
+    // Copy-on-write
+    WTF_EXPORT_PRIVATE std::span<char> mutableSpan() LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE std::span<char> mutableSpanIncludingNullTerminator() LIFETIME_BOUND;
+    WTF_EXPORT_PRIVATE void grow(size_t newLength);
 
 private:
     void copyBufferIfNeeded();
@@ -147,11 +151,6 @@ template<> struct DefaultHash<CString> : CStringHash { };
 
 template<typename> struct HashTraits;
 template<> struct HashTraits<CString> : SimpleClassHashTraits<CString> { };
-
-inline CString::CString(const std::string& value)
-    : CString(unsafeMakeSpan(value.data(), value.size()))
-{
-}
 
 inline const char* CString::data() const LIFETIME_BOUND
 {
@@ -249,6 +248,7 @@ public:
     std::span<const CharacterType> spanIncludingNullTerminator() const LIFETIME_BOUND { return byteCast<CharacterType>(CString::spanIncludingNullTerminator()); }
     std::span<CharacterType> mutableSpan() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpan()); }
     std::span<CharacterType> mutableSpanIncludingNullTerminator() LIFETIME_BOUND { return byteCast<CharacterType>(CString::mutableSpanIncludingNullTerminator()); }
+    using CString::grow;
     CStringWithEncoding isolatedCopy() const { return CStringWithEncoding { span() }; }
 
     // This is the escape hatch for external C functions and printf-style formatting. It is named for the
@@ -290,6 +290,13 @@ private:
     {
     }
 };
+
+// Latin-1 is refused for the same reason legacyCStringPointer() withholds a pointer from it: a printf
+// destination reads the bytes back as UTF-8 or ASCII, so a non-ASCII Latin-1 byte would be garbled. Use
+// String::utf8(), or String::ascii() where losing a non-ASCII character to '?' is as acceptable as it is
+// for the other unprintables. This is an exact match, so it wins over the CString overload above, which
+// would require a derived-to-base conversion.
+const char* safePrintfType(const Latin1CString&) = delete;
 
 // These are exact matches, so they win over the CString overloads above, which would require a derived-to-base conversion.
 template<typename CharacterType>

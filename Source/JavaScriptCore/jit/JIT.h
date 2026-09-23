@@ -189,7 +189,7 @@ namespace JSC {
         static int NODELETE stackPointerOffsetFor(UnlinkedCodeBlock*);
         static int stackPointerOffsetFor(CodeBlock*);
 
-        JS_EXPORT_PRIVATE static UncheckedKeyHashMap<CString, Seconds> compileTimeStats();
+        JS_EXPORT_PRIVATE static UncheckedKeyHashMap<ASCIICString, Seconds> compileTimeStats();
         JS_EXPORT_PRIVATE static Seconds NODELETE totalCompileTime();
 
     private:

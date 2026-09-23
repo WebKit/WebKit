@@ -31,6 +31,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -106,20 +107,23 @@ template<typename T>
 decltype(auto) convertAXLogArg(T&& arg)
 {
     if constexpr (std::is_pointer_v<std::remove_cvref_t<T>> && std::derived_from<std::remove_pointer_t<std::remove_cvref_t<T>>, AXCoreObject>)
-        return arg ? arg->debugDescription().utf8() : CString("(null)"_s);
+        return arg ? arg->debugDescription().utf8() : UTF8CString { "(null)"_s };
     else if constexpr (std::derived_from<std::remove_cvref_t<T>, AXCoreObject>)
         return arg.debugDescription().utf8();
     else if constexpr (requires { { *arg } -> std::convertible_to<const AXCoreObject&>; })
-        return arg ? arg->debugDescription().utf8() : CString("(null)"_s);
+        return arg ? arg->debugDescription().utf8() : UTF8CString { "(null)"_s };
     else if constexpr (std::same_as<std::remove_cvref_t<T>, String>)
         return arg.utf8();
     else
         return std::forward<T>(arg);
 }
 
-inline const char* extractAXLogArg(const CString& string) { return string.data(); }
+// WTFLogAlways is raw varargs, so a converted string has to arrive as a pointer. Only UTF-8 is offered:
+// the conversions above all produce one, and the generic overload below excludes every CString so that a
+// Latin-1 or encoding-erased one is rejected rather than logged as bytes.
+inline const char* extractAXLogArg(const UTF8CString& string) { return string.legacyCStringPointer(); }
 
-template<typename T> requires (!std::same_as<std::remove_cvref_t<T>, CString>)
+template<typename T> requires (!std::derived_from<std::remove_cvref_t<T>, CString>)
 decltype(auto) extractAXLogArg(T&& arg) { return std::forward<T>(arg); }
 
 // Used like WTFLogAlways, but auto-converts String and AXCoreObject arguments for use with the %s format specifier.

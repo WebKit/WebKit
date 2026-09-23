@@ -216,7 +216,7 @@ public:
     {
         State* state = &m_ftlState;
 
-        CString name;
+        UTF8CString name;
         if (verboseCompilationEnabled()) {
             name = toUTF8CString(
                 "jsBody_", ++compileCounter, "_", codeBlock()->inferredName(),

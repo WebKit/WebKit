@@ -129,7 +129,7 @@ public:
 
     WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(std::span<const uint8_t>);
-    WEBCORE_EXPORT static Ref<FormData> create(const CString&);
+    WEBCORE_EXPORT static Ref<FormData> create(std::span<const char8_t>);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<uint8_t>&&);
     WEBCORE_EXPORT static Ref<FormData> create(Vector<WebCore::FormDataElement>&&, uint64_t identifier, bool alwaysStream, Vector<uint8_t>&& boundary);
     static Ref<FormData> create(const Vector<uint8_t>&);

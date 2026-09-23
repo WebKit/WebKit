@@ -146,14 +146,13 @@ TEST(WTF, CStringLegacyCStringPointer)
 
 TEST(WTF, CStringCopyOnWrite)
 {
-    const char* initialString = "Webkit";
-    CString string(initialString);
-    CString copy = string;
+    ASCIICString string { "Webkit"_s };
+    ASCIICString copy = string;
 
     string.mutableSpan()[3] = 'K';
     ASSERT_TRUE(string != copy);
     ASSERT_STREQ(string.data(), "WebKit");
-    ASSERT_STREQ(copy.data(), initialString);
+    ASSERT_STREQ(copy.data(), "Webkit");
 }
 
 TEST(WTF, CStringComparison)
@@ -245,13 +244,13 @@ TEST(WTF, CStringComparison)
 
 TEST(WTF, CStringStdStringInterop)
 {
-    // Null CString round-trip is lossy: null CStrings convert to empty std::strings that convert to empty CStrings.
+    // Null round-trip is lossy: null strings convert to empty std::strings that convert to empty strings.
     {
-        CString a;
+        ASCIICString a;
         EXPECT_TRUE(a.isNull());
         std::string stda;
         EXPECT_EQ(a.toStdString(), stda);
-        CString b = stda;
+        ASCIICString b { stda };
         EXPECT_NE(a, b);
         EXPECT_EQ(b.length(), 0u);
         EXPECT_FALSE(b.isNull());
@@ -267,19 +266,19 @@ TEST(WTF, CStringStdStringInterop)
         SCOPED_TRACE(::testing::Message() << "input: " << (input.characters() ? input.characters() : "nullptr"));
         // As const char*.
         {
-            CString a { input.characters() };
+            ASCIICString a { input.characters() };
             std::string stda { input.characters() };
             EXPECT_EQ(a.toStdString(), stda);
-            CString b = stda;
+            ASCIICString b { stda };
             EXPECT_EQ(a, b);
         }
         // As ASCIILiteral / span.
         {
-            CString a { input };
+            ASCIICString a { input };
             auto inputSpan = input.span();
             std::string stda { inputSpan.begin(), inputSpan.end() };
             EXPECT_EQ(a.toStdString(), stda);
-            CString b = stda;
+            ASCIICString b { stda };
             EXPECT_EQ(a, b);
         }
     }
@@ -287,7 +286,7 @@ TEST(WTF, CStringStdStringInterop)
     // Explict length strings, i.e. strings with nul chars inside, are exact.
     {
         auto inputSpan = unsafeMakeSpan("some\0thing", 10);
-        CString a { inputSpan };
+        ASCIICString a { inputSpan };
         EXPECT_EQ(a.length(), 10u);
         std::string stda { inputSpan.begin(), inputSpan.end() };
         EXPECT_EQ(stda.length(), 10u);
@@ -297,14 +296,14 @@ TEST(WTF, CStringStdStringInterop)
 
 TEST(WTF, CStringViewASCIICaseConversions)
 {
-    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Test"_span), CString("test"));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Test"_span), CString("TEST"));
-    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Water🍉Melon"_span), CString("water🍉melon"));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Water🍉Melon"_span), CString("WATER🍉MELON"));
-    EXPECT_EQ(WTF::convertToASCIILowercase(std::span<const char8_t>()), CString(""_s));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(std::span<const char8_t>()), CString(""_s));
-    EXPECT_EQ(WTF::convertToASCIILowercase(u8""_span), CString(""_s));
-    EXPECT_EQ(WTF::convertToASCIIUppercase(u8""_span), CString(""_s));
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Test"_span), UTF8CString { u8"test"_span });
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Test"_span), UTF8CString { u8"TEST"_span });
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8"Water🍉Melon"_span), UTF8CString { u8"water🍉melon"_span });
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8"Water🍉Melon"_span), UTF8CString { u8"WATER🍉MELON"_span });
+    EXPECT_EQ(WTF::convertToASCIILowercase(std::span<const char8_t>()), UTF8CString { u8""_span });
+    EXPECT_EQ(WTF::convertToASCIIUppercase(std::span<const char8_t>()), UTF8CString { u8""_span });
+    EXPECT_EQ(WTF::convertToASCIILowercase(u8""_span), UTF8CString { u8""_span });
+    EXPECT_EQ(WTF::convertToASCIIUppercase(u8""_span), UTF8CString { u8""_span });
 }
 
 // The encoding survives into the span's element type, which is what makes the rest of WTF do the right thing.
@@ -331,10 +330,38 @@ static_assert(HasLegacyCStringPointer<CString>);
 static_assert(HasLegacyCStringPointer<UTF8CString>);
 static_assert(!HasLegacyCStringPointer<ASCIICString>);
 static_assert(!HasLegacyCStringPointer<Latin1CString>);
+// printf-style formatting reads the bytes back as UTF-8 or ASCII, so Latin-1 is kept away from it for
+// the same reason. The encoding-erased CString stays accepted while its producers are migrated.
+template<typename StringType> concept HasSafePrintfType = requires(const StringType& string)
+{
+    safePrintfType(string);
+};
+static_assert(HasSafePrintfType<CString>);
+static_assert(HasSafePrintfType<UTF8CString>);
+static_assert(HasSafePrintfType<ASCIICString>);
+static_assert(!HasSafePrintfType<Latin1CString>);
 // Slicing to CString is allowed, but nothing implicitly converts the other way or between encodings.
 static_assert(std::is_convertible_v<UTF8CString, CString>);
 static_assert(!std::is_convertible_v<CString, UTF8CString>);
 static_assert(!std::is_convertible_v<Latin1CString, UTF8CString>);
+// Bytes get into a CString only through CStringWithEncoding: the encoding-erased base cannot be
+// built from a literal, a std::string or a buffer, and cannot hand out one to write into.
+// ASCIILiteral converts to const char*, but that is a worse match than CString(ASCIILiteral), so
+// a literal is rejected outright rather than quietly losing its length, and any embedded null, to
+// a strlen. A std::string has no constructor left but still converts to a span, so for it only the
+// implicit conversion goes away.
+static_assert(!std::constructible_from<CString, ASCIILiteral>);
+static_assert(std::constructible_from<UTF8CString, ASCIILiteral>);
+static_assert(!std::is_convertible_v<std::string, CString>);
+static_assert(std::constructible_from<UTF8CString, std::string>);
+template<typename StringType> concept HasMutableSpan = requires(StringType& string)
+{
+    string.mutableSpan();
+    string.mutableSpanIncludingNullTerminator();
+    string.grow(1);
+};
+static_assert(!HasMutableSpan<CString>);
+static_assert(HasMutableSpan<UTF8CString>);
 // Ordering across encodings must not compile. This has to go through a concept: with concrete
 // types, selecting a deleted overload is a hard error rather than an unsatisfied requirement.
 template<typename A, typename B> concept IsEqualityComparable = requires(const A& a, const B& b)

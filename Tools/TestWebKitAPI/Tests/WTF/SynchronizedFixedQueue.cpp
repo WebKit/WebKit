@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <array>
 #include <chrono>
 #include <thread>
 
@@ -36,15 +37,15 @@
 
 namespace TestWebKitAPI {
 
-static char const* textItem(size_t index)
+static ASCIILiteral textItem(size_t index)
 {
-    static char const* items[] = { "first", "second", "third", "fourth", "fifth", "sixth" };
-    return index < sizeof(items) / sizeof(items[0]) ? items[index] : nullptr;
+    static constexpr std::array items { "first"_s, "second"_s, "third"_s, "fourth"_s, "fifth"_s, "sixth"_s };
+    return index < items.size() ? items[index] : nullptr;
 }
 
-static CString toUpper(const CString& lower)
+static ASCIICString toUpper(const ASCIICString& lower)
 {
-    CString upper = lower;
+    ASCIICString upper = lower;
     for (auto& character : upper.mutableSpan())
         character = toASCIIUpper(character);
     return upper;
@@ -54,8 +55,8 @@ template <size_t BufferSize>
 class ToUpperConverter {
 public:
     ToUpperConverter()
-        : m_lowerQueue(SynchronizedFixedQueue<CString, BufferSize>::create())
-        , m_upperQueue(SynchronizedFixedQueue<CString, BufferSize>::create())
+        : m_lowerQueue(SynchronizedFixedQueue<ASCIICString, BufferSize>::create())
+        , m_upperQueue(SynchronizedFixedQueue<ASCIICString, BufferSize>::create())
     {
     }
 
@@ -79,7 +80,7 @@ public:
             return;
 
         produceQueue()->dispatch([this] {
-            CString lower;
+            ASCIICString lower;
             while (m_lowerQueue->dequeue(lower)) {
                 m_upperQueue->enqueue(toUpper(lower));
                 EXPECT_TRUE(lower == textItem(m_produceCount++));
@@ -95,7 +96,7 @@ public:
             return;
 
         consumeQueue()->dispatch([this] {
-            CString upper;
+            ASCIICString upper;
             while (m_upperQueue->dequeue(upper)) {
                 EXPECT_TRUE(upper == toUpper(textItem(m_consumeCount++)));
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -136,7 +137,7 @@ public:
         stopConsuming();
     }
 
-    void enqueueLower(const CString& lower)
+    void enqueueLower(const ASCIICString& lower)
     {
         m_lowerQueue->enqueue(lower);
     }
@@ -148,8 +149,8 @@ public:
     const std::atomic<size_t>& consumeCount() const { return m_consumeCount; }
 
 private:
-    Ref<SynchronizedFixedQueue<CString, BufferSize>> m_lowerQueue;
-    Ref<SynchronizedFixedQueue<CString, BufferSize>> m_upperQueue;
+    Ref<SynchronizedFixedQueue<ASCIICString, BufferSize>> m_lowerQueue;
+    Ref<SynchronizedFixedQueue<ASCIICString, BufferSize>> m_upperQueue;
     RefPtr<WorkQueue> m_produceQueue;
     RefPtr<WorkQueue> m_consumeQueue;
     BinarySemaphore m_produceCloseSemaphore;
@@ -180,10 +181,8 @@ TEST(WTF_SynchronizedFixedQueue, ProduceOnly)
     EXPECT_TRUE(converter.isProducing() && !converter.isConsuming());
 
     size_t count = 0;
-    while (char const* item = textItem(count)) {
+    for (auto item = textItem(0); !item.isNull(); item = textItem(++count)) {
         converter.enqueueLower(item);
-        ++count;
-        
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     while (converter.produceCount() < count)
@@ -215,10 +214,8 @@ TEST(WTF_SynchronizedFixedQueue, Limits)
     EXPECT_TRUE(converter.isProducing() && converter.isConsuming());
 
     size_t count = 0;
-    while (char const* item = textItem(count)) {
+    for (auto item = textItem(0); !item.isNull(); item = textItem(++count)) {
         converter.enqueueLower(item);
-        ++count;
-
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     while (converter.consumeCount() < count)

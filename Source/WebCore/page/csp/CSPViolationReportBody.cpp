@@ -137,7 +137,7 @@ Ref<FormData> CSPViolationReportBody::createReportFormDataForViolation(bool uses
     reportObject->setString("url"_s, documentURL());
     reportObject->setObject(usesReportTo ? "body"_s : "csp-report"_s, WTF::move(cspReport));
 
-    return FormData::create(reportObject->toJSONString().utf8());
+    return FormData::create(reportObject->toJSONString().utf8().span());
 }
 
 } // namespace WebCore

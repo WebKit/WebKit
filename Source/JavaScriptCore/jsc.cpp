@@ -4667,11 +4667,11 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
             }
 
             auto compileTimeStats = JIT::compileTimeStats();
-            Vector<CString> compileTimeKeys;
+            Vector<ASCIICString> compileTimeKeys;
             for (auto& entry : compileTimeStats)
                 compileTimeKeys.append(entry.key);
             std::sort(compileTimeKeys.begin(), compileTimeKeys.end());
-            for (const CString& key : compileTimeKeys) {
+            for (const ASCIICString& key : compileTimeKeys) {
                 if (key.data())
                     printf("%40s: %.3lf ms\n", key.data(), compileTimeStats.get(key).milliseconds());
             }

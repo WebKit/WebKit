@@ -63,9 +63,9 @@ Ref<FormData> FormData::create(std::span<const uint8_t> data)
     return result;
 }
 
-Ref<FormData> FormData::create(const CString& string)
+Ref<FormData> FormData::create(std::span<const char8_t> data)
 {
-    return create(byteCast<uint8_t>(string.span()));
+    return create(byteCast<uint8_t>(data));
 }
 
 Ref<FormData> FormData::create(Vector<uint8_t>&& vector)

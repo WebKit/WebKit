@@ -617,7 +617,7 @@ void Cache::storeCompressionDictionary(const WebCore::ResourceRequest& request, 
 
     auto key = makeCacheKey(RecordType::CompressionDictionary, request);
 
-    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().latin1().data(), key.partition().latin1().data());
+    LOG(NetworkCache, "(NetworkProcess) storing compression dictionary %s, partition %s", request.url().stringWithoutFragmentIdentifier().utf8(), key.partition().utf8());
 
     StoreDecision storeDecision = makeStoreDecision(request, response, responseData ? responseData->size() : 0);
     if (storeDecision != StoreDecision::Yes) {
