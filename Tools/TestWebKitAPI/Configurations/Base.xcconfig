@@ -135,3 +135,5 @@ SWIFT_VERSION[sdk=macosx14*] = 5.0;
 
 SWIFT_OPTIMIZATION_LEVEL = -O;
 SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
+
+OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.$(arch).resp;

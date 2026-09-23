@@ -38,7 +38,7 @@ SWIFT_OBJC_INTEROP_MODE_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = $(inherited);
 
 // FIXME: (rdar://149474443) Swift/Cxx interop does not respect CLANG_CXX_LANGUAGE_STANDARD = "c++2b";
 // FIXME: (rdar://103177280) "-no-verify-emitted-module-interface;" is needed to workaround a SwiftVerifyEmittedModuleInterface bug
-OTHER_SWIFT_FLAGS = $(inherited) @$(BUILT_PRODUCTS_DIR)/DerivedSources/TestWebKitAPI/platform-enabled-swift-args.$(arch).resp $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP));
+OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) $(OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_$(WK_SUPPORTS_SWIFT_OBJCXX_INTEROP));
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_YES = -Xcc -std=c++2b -no-verify-emitted-module-interface;
 OTHER_SWIFT_FLAGS_SUPPORTS_SWIFT_OBJCXX_INTEROP_NO = ;
 OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -enable-experimental-concurrency -Xfrontend -enable-upcoming-feature -Xfrontend IsolatedDefaultValues;

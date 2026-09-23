@@ -23,7 +23,7 @@
 
 import Foundation
 
-#if os(macOS) && !targetEnvironment(macCatalyst)
+#if WTF_PLATFORM_MAC
 private import AppKit
 #endif
 
@@ -67,7 +67,7 @@ struct TestWebKitAPI {
 
     @MainActor
     private func run() async {
-        #if targetEnvironment(macCatalyst)
+        #if WTF_PLATFORM_MACCATALYST
         UINSApplicationInstantiate()
         #endif
 
@@ -75,7 +75,7 @@ struct TestWebKitAPI {
 
         var argumentDomain = UserDefaults.standard.volatileDomain(forName: UserDefaults.argumentDomain)
 
-        #if os(macOS) && !targetEnvironment(macCatalyst)
+        #if WTF_PLATFORM_MAC
         // CAUTION: Defaults set here are not automatically propagated to the
         // Web Content process. Those listed below are propagated manually.
         handleArguments(&argumentDomain)
@@ -83,7 +83,7 @@ struct TestWebKitAPI {
 
         UserDefaults.standard.setVolatileDomain(argumentDomain, forName: UserDefaults.argumentDomain)
 
-        #if !os(macOS) || targetEnvironment(macCatalyst)
+        #if !WTF_PLATFORM_MAC
         let uiKitDefaults = UserDefaults(suiteName: "com.apple.UIKit")
         uiKitDefaults?
             .register(
@@ -91,11 +91,11 @@ struct TestWebKitAPI {
                     "ForceLegacyHostingRemoteViewControllerForService": "com.apple.ScreenTime.ScreenTimeWebExtension"
                 ]
             )
-        #endif // !os(macOS) || targetEnvironment(macCatalyst)
+        #endif // !WTF_PLATFORM_MAC
 
         TestWebKitAPIEnableAllSDKAlignedBehaviors()
 
-        #if os(macOS) && !targetEnvironment(macCatalyst)
+        #if WTF_PLATFORM_MAC
         _ = NSApplication.shared
         #endif
 
