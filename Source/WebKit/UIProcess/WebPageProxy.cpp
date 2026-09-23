@@ -4810,7 +4810,7 @@ void WebPageProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)
 
 #if PLATFORM(MAC)
     if (CheckedPtr scrollingCoordinatorProxy = m_scrollingCoordinatorProxy.get()) {
-        auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
+        auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe(wheelEvent);
         auto rubberBandingBehavior = resolvedRubberBandingBehaviorEdges(rubberBandableEdges, alwaysBounceVertical(), alwaysBounceHorizontal());
 
         scrollingCoordinatorProxy->handleWheelEvent(wheelEvent, rubberBandingBehavior);
@@ -4840,7 +4840,7 @@ void WebPageProxy::continueWheelEventHandling(const WebWheelEvent& wheelEvent, c
     if (!m_mainFrame)
         return;
 
-    auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
+    auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe(wheelEvent);
     auto rubberBandingBehavior = resolvedRubberBandingBehaviorEdges(rubberBandableEdges, alwaysBounceVertical(), alwaysBounceHorizontal());
 
     sendWheelEvent(m_mainFrame->frameID(), wheelEvent, result.steps, rubberBandingBehavior, willStartSwipe, result.wasHandled);
@@ -6940,13 +6940,25 @@ void WebPageProxy::setAlwaysBounceHorizontal(bool value)
     internals().alwaysBounceHorizontal = value;
 }
 
-RectEdges<bool> WebPageProxy::rubberBandableEdgesRespectingHistorySwipe() const
+RectEdges<bool> WebPageProxy::rubberBandableEdgesRespectingHistorySwipe(const WebWheelEvent& wheelEvent) const
 {
     auto rubberBandableEdges = this->rubberBandableEdges();
-    if (shouldUseImplicitRubberBandControl()) {
-        rubberBandableEdges.setLeft(!backForwardList().backItem());
-        rubberBandableEdges.setRight(!backForwardList().forwardItem());
+    if (!shouldUseImplicitRubberBandControl())
+        return rubberBandableEdges;
+
+#if PLATFORM(MAC)
+    // The left and right edges are reserved for history swipes, but only until the swipe gesture fails.
+    if (wheelEvent.phase() != WebWheelEvent::Phase::None || wheelEvent.momentumPhase() != WebWheelEvent::Phase::None) {
+        RefPtr gestureController = ViewGestureController::controllerForPage(identifier());
+        if (!gestureController || !gestureController->canBeginOrContinueSwipe())
+            return rubberBandableEdges;
     }
+#else
+    UNUSED_PARAM(wheelEvent);
+#endif
+
+    rubberBandableEdges.setLeft(!backForwardList().backItem());
+    rubberBandableEdges.setRight(!backForwardList().forwardItem());
 
     return rubberBandableEdges;
 }

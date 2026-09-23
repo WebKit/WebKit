@@ -155,6 +155,8 @@ public:
     bool shouldIgnorePinnedState() { return m_pendingSwipeTracker.shouldIgnorePinnedState(); }
     void setShouldIgnorePinnedState(bool ignore) { m_pendingSwipeTracker.setShouldIgnorePinnedState(ignore); }
 
+    bool canBeginOrContinueSwipe() const { return hasActiveSwipeGesture() || m_pendingSwipeTracker.isPending(); }
+
     bool isPhysicallySwipingLeft(SwipeDirection) const;
 
     double NODELETE magnification() const;
@@ -356,6 +358,8 @@ private:
 
         bool shouldIgnorePinnedState() { return m_shouldIgnorePinnedState; }
         void setShouldIgnorePinnedState(bool ignore) { m_shouldIgnorePinnedState = ignore; }
+
+        bool isPending() const { return m_state != State::None; }
 
     private:
 
