@@ -26,11 +26,11 @@
 
 #include "config.h"
 
-#include "Counters.h"
+#include "Helpers/Counters.h"
 #include "DeletedAddressOfOperator.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <string>
 #include <wtf/HashMap.h>
 #include <wtf/InlineWeakPtr.h>

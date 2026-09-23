@@ -25,7 +25,7 @@
 #import "config.h"
 #import <wtf/darwin/TypeCastsOSObject.h>
 
-#import "WTFTestUtilities.h"
+#import "Helpers/WTFTestUtilities.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/darwin/DispatchOSObject.h>

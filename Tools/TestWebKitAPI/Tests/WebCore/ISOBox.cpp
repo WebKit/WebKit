@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <JavaScriptCore/DataView.h>
 #include <WebCore/ISOFairPlayStreamingPsshBox.h>
 #include <WebCore/ISOProtectionSchemeInfoBox.h>

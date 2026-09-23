@@ -27,7 +27,7 @@
 
 #if USE(WEB_THREAD)
 
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/WebCoreThread.h>
 #import <wtf/RetainPtr.h>

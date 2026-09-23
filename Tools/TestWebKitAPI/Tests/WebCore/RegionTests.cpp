@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "WebCoreTestUtilities.h"
+#include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/Region.h>
 #include <random>
 #include <wtf/text/StringBuilder.h>

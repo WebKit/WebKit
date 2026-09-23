@@ -28,7 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
-#include "PlatformUtilities.h"
+#include "Helpers/PlatformUtilities.h"
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
 #include <WebCore/CryptoAlgorithmAESCBC.h>

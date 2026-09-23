@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <WebCore/ResourceMonitorThrottlerHolder.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>

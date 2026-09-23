@@ -30,8 +30,8 @@
 #include "StreamClientConnection.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
-#include "Test.h"
-#include "Utilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/Utilities.h"
 #include <optional>
 #include <wtf/Lock.h>
 #include <wtf/Scope.h>

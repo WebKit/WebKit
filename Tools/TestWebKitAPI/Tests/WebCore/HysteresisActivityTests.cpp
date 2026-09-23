@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "PlatformUtilities.h"
-#include "Test.h"
+#include "Helpers/PlatformUtilities.h"
+#include "Helpers/Test.h"
 #include <pal/HysteresisActivity.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>

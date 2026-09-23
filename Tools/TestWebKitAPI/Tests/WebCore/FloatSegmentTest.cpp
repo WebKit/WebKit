@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "Test.h"
-#include "WebCoreTestUtilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/FloatSegment.h>
 
 namespace TestWebKitAPI {

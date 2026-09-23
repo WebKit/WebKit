@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
 

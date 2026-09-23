@@ -28,7 +28,7 @@
 #include "config.h"
 
 #include "SharedBufferTest.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <WebCore/SharedBuffer.h>
 #if ENABLE(MHTML)

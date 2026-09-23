@@ -25,9 +25,9 @@
 
 #include "config.h"
 
-#include "GraphicsTestUtilities.h"
-#include "Test.h"
-#include "WebCoreTestUtilities.h"
+#include "Helpers/GraphicsTestUtilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/WebCoreTestUtilities.h"
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>

@@ -25,8 +25,8 @@
 
 #import "config.h"
 
-#import "PlatformUtilities.h"
-#import "SoftLinkShim.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/SoftLinkShim.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #import <WebCore/Color.h>

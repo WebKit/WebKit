@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>

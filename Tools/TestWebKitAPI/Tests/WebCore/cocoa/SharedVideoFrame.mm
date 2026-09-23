@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "Utilities.h"
+#import "Helpers/Utilities.h"
 #import <WebCore/SharedVideoFrameInfo.h>
 #include <wtf/Vector.h>
 

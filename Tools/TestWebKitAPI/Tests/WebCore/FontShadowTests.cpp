@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/CommonAtomStrings.h>
 #include <WebCore/FontShadow.h>
 #include <wtf/text/AtomString.h>

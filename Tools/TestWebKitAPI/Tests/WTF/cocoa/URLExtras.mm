@@ -25,9 +25,9 @@
 
 #import "config.h"
 
-#import "PlatformUtilities.h"
-#import "Test.h"
-#import "WTFTestUtilities.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
+#import "Helpers/WTFTestUtilities.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKNSStringExtras.h>
 #import <WebKit/_WKNSURLExtras.h>

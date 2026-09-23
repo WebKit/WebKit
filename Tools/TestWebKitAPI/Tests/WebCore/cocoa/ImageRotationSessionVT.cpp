@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "Utilities.h"
+#import "Helpers/Utilities.h"
 #import <WebCore/CVUtilities.h>
 #import <WebCore/ImageRotationSessionVT.h>
 #import <WebCore/VideoFrameCV.h>

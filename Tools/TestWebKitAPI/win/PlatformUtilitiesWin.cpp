@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformUtilities.h"
+#include "Helpers/PlatformUtilities.h"
 
 #include <Shlwapi.h>
 #include <wtf/FileSystem.h>

@@ -26,7 +26,7 @@
 #import "config.h"
 
 #if PLATFORM(COCOA)
-#import "Test.h"
+#import "Helpers/Test.h"
 #import <WebCore/CAAudioStreamDescription.h>
 
 namespace {

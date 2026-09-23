@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "RefLogger.h"
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>

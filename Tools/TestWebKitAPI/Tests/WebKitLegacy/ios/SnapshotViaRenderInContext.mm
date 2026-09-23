@@ -27,7 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 #import <UIKit/UIKit.h>
 #import <stdlib.h>
 #import <wtf/RetainPtr.h>

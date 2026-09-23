@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Counters.h"
+#include "Helpers/Counters.h"
 #include "MoveOnly.h"
 #include <wtf/InlineWeakPtr.h>
 #include <wtf/ListHashSet.h>

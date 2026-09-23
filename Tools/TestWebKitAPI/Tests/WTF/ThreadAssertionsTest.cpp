@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/ThreadAssertions.h>
 
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 

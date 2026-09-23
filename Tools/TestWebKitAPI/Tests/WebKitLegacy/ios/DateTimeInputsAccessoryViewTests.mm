@@ -29,11 +29,11 @@
 
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 
-#import "DeprecatedGlobalValues.h"
+#import "Helpers/DeprecatedGlobalValues.h"
 #import "InstanceMethodSwizzler.h"
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 #import "UIKitSPIForTesting.h"
-#import "UserInterfaceSwizzler.h"
+#import "Helpers/ios/UserInterfaceSwizzler.h"
 #import <wtf/RetainPtr.h>
 
 @interface DateTimeInputsTestsLoadingDelegate : NSObject <UIWebViewDelegate>

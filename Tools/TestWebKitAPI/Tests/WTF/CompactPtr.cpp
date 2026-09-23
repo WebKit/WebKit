@@ -27,7 +27,7 @@
 #include <wtf/CompactPtr.h>
 
 #include "AlignedRefLogger.h"
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

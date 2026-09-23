@@ -26,7 +26,7 @@
 #include "config.h"
 #include <wtf/GenerationalSet.h>
 
-#include "Test.h"
+#include "Helpers/Test.h"
 
 namespace TestWebKitAPI {
 

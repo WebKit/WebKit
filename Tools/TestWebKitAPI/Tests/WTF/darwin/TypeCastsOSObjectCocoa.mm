@@ -28,7 +28,7 @@
 
 #import "config.h"
 
-#import "WTFTestUtilities.h"
+#import "Helpers/WTFTestUtilities.h"
 #import <wtf/darwin/DispatchOSObject.h>
 
 #if __has_feature(objc_arc)

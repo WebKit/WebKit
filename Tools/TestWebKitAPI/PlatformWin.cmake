@@ -70,7 +70,7 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
-        Tests/WebKit/CookieStorageFile.cpp
+        Tests/WebKit/WKPage/CookieStorageFile.cpp
 
         win/PlatformUtilitiesWin.cpp
         win/PlatformWebViewWin.cpp

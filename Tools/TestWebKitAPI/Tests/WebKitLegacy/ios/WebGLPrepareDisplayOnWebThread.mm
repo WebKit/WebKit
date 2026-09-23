@@ -27,8 +27,8 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "DeprecatedGlobalValues.h"
-#import "PlatformUtilities.h"
+#import "Helpers/DeprecatedGlobalValues.h"
+#import "Helpers/PlatformUtilities.h"
 #import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JSVirtualMachineInternal.h>
 #import <UIKit/UIKit.h>

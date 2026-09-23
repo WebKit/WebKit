@@ -26,7 +26,7 @@
 #import "config.h"
 #import <wtf/UUID.h>
 
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 
 TEST(WTF, NSUUIDConversionForDeletedValue)
 {

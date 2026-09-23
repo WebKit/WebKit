@@ -57,8 +57,8 @@ if (ENABLE_WEBKIT)
 
     # Exclude tests which don't finish.
     list(REMOVE_ITEM TestWebKit_SOURCES
-        Tests/WebKit/ForceRepaint.cpp
-        Tests/WebKit/Geolocation.cpp
+        Tests/WebKit/WKPage/ForceRepaint.cpp
+        Tests/WebKit/WKPage/Geolocation.cpp
     )
 
     list(APPEND TestWebKit_PRIVATE_LIBRARIES

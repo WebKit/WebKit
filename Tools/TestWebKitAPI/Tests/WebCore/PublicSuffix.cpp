@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "Test.h"
-#include "WTFTestUtilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/WTFTestUtilities.h"
 #include <WebCore/PublicSuffixStore.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>

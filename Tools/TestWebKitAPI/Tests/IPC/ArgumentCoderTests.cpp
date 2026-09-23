@@ -30,7 +30,7 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include "StreamConnectionEncoder.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {

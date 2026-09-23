@@ -25,8 +25,8 @@
 
 #import "config.h"
 
-#import "DeprecatedGlobalValues.h"
-#import "PlatformUtilities.h"
+#import "Helpers/DeprecatedGlobalValues.h"
+#import "Helpers/PlatformUtilities.h"
 #import <WebKit/WebView.h>
 #import <wtf/RetainPtr.h>
 

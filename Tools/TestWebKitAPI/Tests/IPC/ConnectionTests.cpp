@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "IPCTestUtilities.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/threads/BinarySemaphore.h>
 
 

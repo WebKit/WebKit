@@ -27,7 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 

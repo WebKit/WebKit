@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/Scope.h>
 #include <wtf/SequenceLocked.h>
 #include <wtf/Threading.h>

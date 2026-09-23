@@ -23,7 +23,7 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 //
 
-INFOPLIST_FILE = cocoa/WebProcessPlugIn/Info.plist;
+INFOPLIST_FILE = InjectedBundle/cocoa/WebProcessPlugIn/Info.plist;
 PRODUCT_NAME = TestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.$(PRODUCT_NAME:rfc1034identifier);
 EXECUTABLE_SUFFIX = .bundle;

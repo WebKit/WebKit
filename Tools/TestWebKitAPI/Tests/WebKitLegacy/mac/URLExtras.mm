@@ -25,8 +25,8 @@
 
 #import "config.h"
 
-#import "PlatformUtilities.h"
-#import "Test.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import <WebKit/WebNSURLExtras.h>
 
 namespace TestWebKitAPI {

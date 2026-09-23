@@ -32,8 +32,8 @@
 #include "config.h"
 
 #include "MoveOnly.h"
-#include "Test.h"
-#include "WTFTestUtilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/WTFTestUtilities.h"
 #include <sstream>
 #include <wtf/text/MakeString.h>
 #include <wtf/unicode/CharacterNames.h>

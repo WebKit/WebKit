@@ -27,7 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/CSSParserContext.h>
 #include <WebCore/CombinedURLFilters.h>

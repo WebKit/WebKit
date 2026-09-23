@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Utilities.h"
-#include "WTFTestUtilities.h"
+#include "Helpers/Utilities.h"
+#include "Helpers/WTFTestUtilities.h"
 
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>

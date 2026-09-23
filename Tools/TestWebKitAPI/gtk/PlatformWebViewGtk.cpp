@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformWebView.h"
+#include "Helpers/PlatformWebView.h"
 
 #include <WebKit/GtkVersioning.h>
 #include <WebKit/WKRetainPtr.h>

@@ -10,7 +10,7 @@ include_directories(
 )
 
 set(test_main_SOURCES
-    ${TESTWEBKITAPI_DIR}/cocoa/UtilitiesCocoa.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/UtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/mac/mainMac.mm
 )
 
@@ -24,7 +24,7 @@ list(APPEND test_wtf_LIBRARIES
     ${COREFOUNDATION_LIBRARY}
 )
 list(APPEND TestWTF_SOURCES
-    cocoa/UtilitiesCocoa.mm
+    Helpers/cocoa/UtilitiesCocoa.mm
 )
 
 list(APPEND TestWebKitAPI_LIBRARIES
@@ -44,13 +44,13 @@ list(APPEND TestWebCore_LIBRARIES
 )
 
 set(bundle_harness_SOURCES
-    ${TESTWEBKITAPI_DIR}/cocoa/PlatformUtilitiesCocoa.mm
-    ${TESTWEBKITAPI_DIR}/cocoa/UtilitiesCocoa.mm
-    ${TESTWEBKITAPI_DIR}/mac/InjectedBundleControllerMac.mm
-    ${TESTWEBKITAPI_DIR}/mac/PlatformUtilitiesMac.mm
-    ${TESTWEBKITAPI_DIR}/mac/PlatformWebViewMac.mm
-    ${TESTWEBKITAPI_DIR}/mac/SyntheticBackingScaleFactorWindow.m
-    ${TESTWEBKITAPI_DIR}/mac/TestBrowsingContextLoadDelegate.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/PlatformUtilitiesCocoa.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/UtilitiesCocoa.mm
+    ${TESTWEBKITAPI_DIR}/InjectedBundle/mac/InjectedBundleControllerMac.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/mac/PlatformUtilitiesMac.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/mac/PlatformWebViewMac.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/mac/SyntheticBackingScaleFactorWindow.m
+    ${TESTWEBKITAPI_DIR}/Helpers/mac/TestBrowsingContextLoadDelegate.mm
 )
 
 list(APPEND TestWebKitLegacy_SOURCES
@@ -70,13 +70,13 @@ list(APPEND TestWebCore_LIBRARIES
 )
 
 list(APPEND TestWebCore_SOURCES
-    cocoa/UtilitiesCocoa.mm
+    Helpers/cocoa/UtilitiesCocoa.mm
 )
 
 list(APPEND TestWebKit_SOURCES
-    cocoa/UtilitiesCocoa.mm
+    Helpers/cocoa/UtilitiesCocoa.mm
 
-    mac/OffscreenWindow.mm
-    mac/PlatformUtilitiesMac.mm
-    mac/PlatformWebViewMac.mm
+    Helpers/mac/OffscreenWindow.mm
+    Helpers/mac/PlatformUtilitiesMac.mm
+    Helpers/mac/PlatformWebViewMac.mm
 )

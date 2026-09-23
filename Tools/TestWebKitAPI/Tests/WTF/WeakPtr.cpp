@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <algorithm>
 #include <thread>
 #include <wtf/HashCountedSet.h>

@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "IPCTestUtilities.h"
-#import "Test.h"
+#import "Helpers/Test.h"
 #import "TransferString.h"
 #import <Foundation/Foundation.h>
 

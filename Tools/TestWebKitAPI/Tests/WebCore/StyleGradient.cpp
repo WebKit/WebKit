@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/StyleGradient.h>
 
 namespace TestWebKitAPI {

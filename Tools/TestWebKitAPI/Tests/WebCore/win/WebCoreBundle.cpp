@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/WebCoreBundleWin.h>
 #include <wtf/FileSystem.h>
 

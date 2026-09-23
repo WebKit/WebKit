@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/GWeakPtr.h>
 

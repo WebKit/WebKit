@@ -26,7 +26,7 @@
 #import "config.h"
 
 #import "SharedBufferTest.h"
-#import "Utilities.h"
+#import "Helpers/Utilities.h"
 #import <WebCore/SharedBuffer.h>
 #import <wtf/cocoa/SpanCocoa.h>
 

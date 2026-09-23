@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "Test.h"
-#include "Utilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/Utilities.h"
 #include <WebCore/FileMonitor.h>
 #include <wtf/FileHandle.h>
 #include <wtf/FileSystem.h>

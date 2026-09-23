@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformWebView.h"
+#include "Helpers/PlatformWebView.h"
 
 #include <WebKit/WKPagePrivateWPE.h>
 #include <WebKit/WKRetainPtr.h>

@@ -28,7 +28,7 @@
 
 #include "IPCTestUtilities.h"
 #include "MessageSenderInlines.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 
 namespace TestWebKitAPI {
 

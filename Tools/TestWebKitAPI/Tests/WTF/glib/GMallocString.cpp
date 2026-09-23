@@ -27,7 +27,7 @@
 #include "config.h"
 #include <wtf/glib/GMallocString.h>
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/glib/GSpanExtras.h>
 
 namespace TestWebKitAPI {

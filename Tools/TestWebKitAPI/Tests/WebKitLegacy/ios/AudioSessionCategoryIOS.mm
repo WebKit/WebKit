@@ -27,7 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/DeprecatedGlobalSettings.h>

@@ -1,0 +1,159 @@
+/*
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRI
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+
+#if WK_HAVE_C_SPI
+
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
+
+static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* expected)
+{
+    NSString* observed;
+    int tries = 0;
+    do {
+        observed = [webView stringByEvaluatingJavaScript:@"window.internals.elementBufferingPolicy(document.querySelector('video'))"];
+        if ([observed isEqualToString:@(expected)])
+            break;
+
+        TestWebKitAPI::Util::runFor(0.1_s);
+    } while (++tries <= 100);
+
+    EXPECT_WK_STREQ(expected, observed);
+}
+
+static void setWebViewVisible(TestWKWebView* webView, BOOL isVisible)
+{
+    bool stateChanged = false;
+    [webView performAfterReceivingMessage:@"stateChanged" action:[&] { stateChanged = true; }];
+    NSString *script = [NSString stringWithFormat:
+        @"document.addEventListener('visibilitychange', \
+            event => { \
+                if (document.hidden == %@) \
+                    window.webkit.messageHandlers.testHandler.postMessage('stateChanged'); \
+                })", isVisible ? @"false" : @"true"];
+    [webView objectByEvaluatingJavaScript:script];
+
+#if PLATFORM(MAC)
+    [webView.window setIsVisible:isVisible];
+#else
+    webView.window.hidden = !isVisible;
+#endif
+
+    TestWebKitAPI::Util::run(&stateChanged);
+}
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
+TEST(WebKit, DISABLED_MediaBufferingPolicy)
+#else
+TEST(WebKit, MediaBufferingPolicy)
+#endif
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    configuration.get()._mediaDataLoadsAutomatically = YES;
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    __block bool isPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:^() { isPlaying = true; }];
+
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+    TestWebKitAPI::Util::run(&isPlaying);
+
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('video').pause()"];
+
+    // All resources should be marked as purgeable when the document is hidden.
+    setWebViewVisible(webView.get(), NO);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "MakeResourcesPurgeable");
+
+    // Suspending the process also forces a memory warning, which should purge whatever possible ASAP.
+    [webView _processWillSuspendImminentlyForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Playing when the process is suspended should change the policy to LimitReadAhead
+    isPlaying = false;
+    [webView stringByEvaluatingJavaScript:@"go()"];
+    TestWebKitAPI::Util::run(&isPlaying);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "LimitReadAhead");
+
+    // Resuming the process when element is playing should set the policy to default
+    [webView _processDidResumeForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+}
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 150000
+TEST(WebKit, DISABLED_MediaBufferingPolicyWhenSuspendedOrHidden)
+#else
+TEST(WebKit, MediaBufferingPolicyWhenSuspendedOrHidden)
+#endif
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    configuration.get()._mediaDataLoadsAutomatically = YES;
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    bool isPlaying = false;
+    [webView performAfterReceivingMessage:@"playing" action:[&] { isPlaying = true; }];
+
+    [webView synchronouslyLoadTestPageNamed:@"video-with-audio"];
+    TestWebKitAPI::Util::run(&isPlaying);
+
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('video').pause()"];
+
+    // Suspending the process forces a memory warning, which sets buffering policy to PurgeResources
+    [webView _processWillSuspendImminentlyForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Resume the process and buffering policy should still not change because the video is paused
+    [webView _processDidResumeForTesting];
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Hiding and showing the document should also not change buffering policy because the video is paused
+    setWebViewVisible(webView.get(), NO);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    setWebViewVisible(webView.get(), YES);
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "PurgeResources");
+
+    // Policy should go back to default when playback starts
+    isPlaying = false;
+    [webView stringByEvaluatingJavaScript:@"go()"];
+    TestWebKitAPI::Util::run(&isPlaying);
+
+    waitUntilBufferingPolicyIsEqualTo(webView.get(), "Default");
+}
+
+#endif // WK_HAVE_C_SPI

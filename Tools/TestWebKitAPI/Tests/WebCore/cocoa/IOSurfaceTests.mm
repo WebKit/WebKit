@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "Test.h"
+#import "Helpers/Test.h"
 #import <WebCore/IOSurface.h>
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/RenderingMode.h>

@@ -24,9 +24,9 @@
  */
 
 #import "config.h"
-#import "DeprecatedGlobalValues.h"
-#import "PlatformUtilities.h"
-#import "Test.h"
+#import "Helpers/DeprecatedGlobalValues.h"
+#import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebKit/DOM.h>
 #import <WebKit/WebViewPrivate.h>

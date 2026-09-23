@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "MoveOnly.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <cstddef>
 #include <cstdint>
 #include <unicode/uvernum.h>

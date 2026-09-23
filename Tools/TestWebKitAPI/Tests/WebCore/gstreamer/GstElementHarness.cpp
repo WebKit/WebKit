@@ -28,7 +28,7 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerTest.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/GStreamerCommon.h>
 #include <WebCore/GStreamerElementHarness.h>
 #include <wtf/FileHandle.h>
@@ -258,7 +258,7 @@ TEST_F(GStreamerTest, harnessParseMP4)
     });
 
     // Feed the contents of a MP4 file to the harnessed parsebin.
-    auto filePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit", "test.mp4", nullptr));
+    auto filePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", "test.mp4", nullptr));
     auto handle = FileSystem::openFile(filePath.span(), FileSystem::FileOpenMode::Read);
 
     size_t totalRead = 0;
@@ -346,7 +346,7 @@ TEST_F(GStreamerTest, harnessDecodeMP4Video)
 
     // Feed the contents of a MP4 file to the harnessed decodebin3, until it is able to figure out
     // the stream topology.
-    auto filePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit", "test.mp4", nullptr));
+    auto filePath = GMallocString::unsafeAdoptFromUTF8(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Resources", "test.mp4", nullptr));
     auto handle = FileSystem::openFile(filePath.span(), FileSystem::FileOpenMode::Read);
 
     size_t totalRead = 0;

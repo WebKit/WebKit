@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <WebCore/PrivateClickMeasurement.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>

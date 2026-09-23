@@ -19,8 +19,8 @@
 
 #include "config.h"
 
-#include "Test.h"
-#include "Utilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/Utilities.h"
 
 #include <WebCore/PlatformExportMacros.h>
 #include <WebCore/RunLoopObserver.h>

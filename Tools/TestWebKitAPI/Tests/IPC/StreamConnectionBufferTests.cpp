@@ -27,7 +27,7 @@
 
 #include "StreamClientConnectionBuffer.h"
 #include "StreamServerConnectionBuffer.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 
 namespace TestWebKitAPI {
 

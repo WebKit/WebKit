@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/JSONValues.h>
 #include <wtf/text/MakeString.h>
 

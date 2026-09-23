@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "PlatformUtilities.h"
+#include "Helpers/PlatformUtilities.h"
 #include "WebCoreTestSupport.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ParserContentPolicy.h>

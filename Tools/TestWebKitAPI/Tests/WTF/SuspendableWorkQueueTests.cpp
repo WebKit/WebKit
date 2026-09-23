@@ -25,8 +25,8 @@
 
 #include "config.h"
 
-#include "Test.h"
-#include "Utilities.h"
+#include "Helpers/Test.h"
+#include "Helpers/Utilities.h"
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SuspendableWorkQueue.h>

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/Assertions.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MainThread.h>

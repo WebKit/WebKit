@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PlatformUtilities.h"
+#include "Helpers/PlatformUtilities.h"
 
 #include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>

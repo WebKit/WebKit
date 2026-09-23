@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Utilities.h"
+#include "Helpers/Utilities.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>

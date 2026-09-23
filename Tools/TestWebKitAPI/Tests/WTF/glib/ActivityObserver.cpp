@@ -20,7 +20,7 @@
 #include "config.h"
 #include <wtf/glib/ActivityObserver.h>
 
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <wtf/RunLoop.h>
 
 namespace TestWebKitAPI {

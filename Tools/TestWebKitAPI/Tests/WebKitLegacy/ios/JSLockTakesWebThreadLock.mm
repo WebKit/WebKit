@@ -27,7 +27,7 @@
 
 #if HAVE(UIWEBVIEW)
 
-#import "PlatformUtilities.h"
+#import "Helpers/PlatformUtilities.h"
 #import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JSVirtualMachineInternal.h>
 #import <UIKit/UIKit.h>

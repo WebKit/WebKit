@@ -32,7 +32,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
-#include "PlatformUtilities.h"
+#include "Helpers/PlatformUtilities.h"
 #include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorSelectionCriteria.h>
 #include <WebCore/DeviceRequestConverter.h>

@@ -26,7 +26,7 @@
 #include "config.h"
 
 #include "StreamConnectionEncoder.h"
-#include "Test.h"
+#include "Helpers/Test.h"
 #include <memory>
 
 namespace TestWebKitAPI {
