@@ -34,7 +34,7 @@ public:
     HitTestLocation(const LayoutPoint&);
     HitTestLocation(const FloatPoint&, const FloatQuad&, RectBased = RectBased::Yes);
 
-    HitTestLocation(const LayoutRect&);
+    WEBCORE_EXPORT HitTestLocation(const LayoutRect&);
 
     // Make a copy the HitTestLocation in a new region by applying given offset to internal point and area.
     HitTestLocation(const HitTestLocation&, const LayoutSize& offset);

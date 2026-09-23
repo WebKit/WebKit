@@ -29,6 +29,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "WebEvent.h"
 #include <WebCore/IntPoint.h>
 #include <WebCore/SelectionGeometry.h>
 #include <WebCore/ShareableBitmap.h>
@@ -49,13 +50,15 @@ struct InteractionInformationRequest {
     bool gatherAnimations { false };
     bool linkIndicatorShouldHaveLegacyMargins { false };
 
+    WebEventInputSource inputSource { WebEventInputSource::UserDriven };
+
     InteractionInformationRequest() { }
     explicit InteractionInformationRequest(WebCore::IntPoint point)
         : point(point)
     {
     }
 
-    explicit InteractionInformationRequest(WebCore::IntPoint point, bool includeSnapshot, bool includeLinkIndicator, bool includeCursorContext, bool includeHasDoubleClickHandler, bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins)
+    explicit InteractionInformationRequest(WebCore::IntPoint point, bool includeSnapshot, bool includeLinkIndicator, bool includeCursorContext, bool includeHasDoubleClickHandler, bool includeImageData, bool gatherAnimations, bool linkIndicatorShouldHaveLegacyMargins, WebEventInputSource inputSource)
         : point(point)
         , includeSnapshot(includeSnapshot)
         , includeLinkIndicator(includeLinkIndicator)
@@ -64,6 +67,7 @@ struct InteractionInformationRequest {
         , includeImageData(includeImageData)
         , gatherAnimations(gatherAnimations)
         , linkIndicatorShouldHaveLegacyMargins(linkIndicatorShouldHaveLegacyMargins)
+        , inputSource(inputSource)
     {
     }
 

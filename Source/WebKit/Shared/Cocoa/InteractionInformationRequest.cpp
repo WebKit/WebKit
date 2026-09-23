@@ -53,6 +53,9 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)
         return false;
 
+    if (other.inputSource != inputSource)
+        return false;
+
     return (other.point - point).diagonalLengthSquared() <= radius * radius;
 }
 

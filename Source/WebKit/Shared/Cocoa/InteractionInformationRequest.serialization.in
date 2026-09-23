@@ -33,6 +33,8 @@ struct WebKit::InteractionInformationRequest {
 
     bool gatherAnimations;
     bool linkIndicatorShouldHaveLegacyMargins;
+
+    WebKit::WebEventInputSource inputSource;
 };
 
 #endif
