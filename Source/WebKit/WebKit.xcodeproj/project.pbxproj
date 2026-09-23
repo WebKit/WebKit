@@ -7022,6 +7022,8 @@
 		67AD7CB22CBB361C00B9B22B /* WebExtensionPermission.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionPermission.h; sourceTree = "<group>"; };
 		67AD7CB32CBB361D00B9B22B /* WebExtensionPermission.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionPermission.cpp; sourceTree = "<group>"; };
 		6A5080BE1F0EDAAA00E617C5 /* WKWindowFeaturesPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesPrivate.h; sourceTree = "<group>"; };
+		6C9AD7623063956800A4CBDA /* FindOverlaySession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FindOverlaySession.h; sourceTree = "<group>"; };
+		6C9AD7633063958000A4CBDA /* FindOverlaySession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FindOverlaySession.cpp; sourceTree = "<group>"; };
 		6BD05863220CE8C2000BED5C /* PrivateClickMeasurementManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementManager.h; sourceTree = "<group>"; };
 		6BD05864220CE8C2000BED5C /* PrivateClickMeasurementManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementManager.cpp; sourceTree = "<group>"; };
 		6BE969C01E54D452008B7483 /* corePrediction_model */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = corePrediction_model; sourceTree = "<group>"; };
@@ -16309,6 +16311,8 @@
 				CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */,
 				56487A8C2EAFAC48009CB259 /* EnhancedSecurityTracking.cpp */,
 				56487A8B2EAFAC48009CB259 /* EnhancedSecurityTracking.h */,
+				6C9AD7633063958000A4CBDA /* FindOverlaySession.cpp */,
+				6C9AD7623063956800A4CBDA /* FindOverlaySession.h */,
 				0250C24E2B5DCAFB00D05C0B /* FindStringCallbackAggregator.cpp */,
 				0250C24F2B5DCB0100D05C0B /* FindStringCallbackAggregator.h */,
 				D6C27CBB2EC2759A00AA941F /* FindTextMatchesCallbackAggregator.cpp */,

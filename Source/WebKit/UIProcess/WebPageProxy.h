@@ -1750,6 +1750,7 @@ public:
     void indicateFindMatch(int32_t matchIndex);
     void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, WebCore::ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
+    bool findOverlayShouldBeVisibleForTesting() const;
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void setTextIndicator(RefPtr<WebCore::TextIndicator>&&, WebCore::TextIndicatorLifetime);

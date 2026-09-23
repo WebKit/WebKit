@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,39 +25,47 @@
 
 #pragma once
 
-#include "FindOverlaySession.h"
 #include <WebCore/FrameIdentifier.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/WeakPtr.h>
+#include <WebCore/IntRect.h>
+#include <wtf/HashMap.h>
+#include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class WebFrameProxy;
 class WebPageProxy;
 
 enum class FindOptions : uint16_t;
 
-class FindStringCallbackAggregator : public RefCounted<FindStringCallbackAggregator> {
+struct FindOverlayFrameResult {
+    uint32_t matchCount { 0 };
+    bool didWrap { false };
+};
+
+// One session per find action in the UI process. The session is the single
+// authority for whether the find overlay should be visible for the page, fed
+// by the aggregated per-process results. Staleness is expressed by identity:
+// a newer find action replaces the page's session, so results settling into a
+// superseded session have no effect.
+class FindOverlaySession : public RefCounted<FindOverlaySession> {
 public:
-    static Ref<FindStringCallbackAggregator> create(WebPageProxy&, FindOverlaySession&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
-    void foundString(std::optional<WebCore::FrameIdentifier>, uint32_t matchCount, bool didWrap);
-    ~FindStringCallbackAggregator();
+    static Ref<FindOverlaySession> create(const String&, OptionSet<FindOptions>);
+
+    void didSettle(HashMap<WebCore::FrameIdentifier, FindOverlayFrameResult>&&, uint32_t totalMatchCount);
+    void deliverResult(WebPageProxy&, std::optional<WebCore::FrameIdentifier>, const Vector<WebCore::IntRect>& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap);
+
+    bool overlayShouldBeVisible() const;
 
 private:
-    FindStringCallbackAggregator(WebPageProxy&, FindOverlaySession&, const String&, OptionSet<FindOptions>, unsigned maxMatchCount, CompletionHandler<void(bool)>&&);
+    FindOverlaySession(const String&, OptionSet<FindOptions>);
 
-    RefPtr<WebFrameProxy> incrementFrame(WebFrameProxy&);
-    bool shouldTargetFrame(WebFrameProxy&, WebFrameProxy& focusedFrame, bool didWrap);
-    uint32_t globalIndexOffsetForFrame(const WebFrameProxy&);
-
-    WeakPtr<WebPageProxy> m_page;
-    const Ref<FindOverlaySession> m_session;
     String m_string;
     OptionSet<FindOptions> m_options;
-    unsigned m_maxMatchCount;
-    uint32_t m_matchCount { 0 };
-    CompletionHandler<void(bool)> m_completionHandler;
-    HashMap<WebCore::FrameIdentifier, FindOverlayFrameResult> m_matches;
+    HashMap<WebCore::FrameIdentifier, FindOverlayFrameResult> m_frameResults;
+    uint32_t m_totalMatchCount { 0 };
+    bool m_settled { false };
 };
 
 } // namespace WebKit
