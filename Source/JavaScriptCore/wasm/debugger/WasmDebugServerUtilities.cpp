@@ -157,27 +157,84 @@ static const uint8_t* savedWasmToJSPC(CallFrame* wasmToJSFrame)
     return WTF::unalignedLoad<const uint8_t*>(reinterpret_cast<const uint8_t*>(wasmToJSFrame) + Wasm::WasmToJSIPIntReturnPCSlot);
 }
 
+// Null for a JS frame including a host function, which is an ordinary cell callee -- or an IC.
+static RefPtr<Wasm::Callee> wasmCalleeOf(CallFrame* frame)
+{
+    if (!frame->callee().isNativeCallee())
+        return nullptr;
+    RefPtr callee = frame->callee().asNativeCallee();
+    if (callee->category() != NativeCallee::Category::Wasm)
+        return nullptr;
+    return uncheckedDowncast<const Wasm::Callee>(callee.get());
+}
+
+// Null if not IPInt: a tail call replaces the frame that made a call, so handle it, do not assert.
+static RefPtr<IPIntCallee> ipintCalleeOf(CallFrame* frame)
+{
+    RefPtr callee = wasmCalleeOf(frame);
+    if (!callee || callee->compilationMode() != Wasm::CompilationMode::IPIntMode)
+        return nullptr;
+    return uncheckedDowncast<const Wasm::IPIntCallee>(callee.get());
+}
+
+// Synthetic frame a cross-instance tail call splices in (.ipint_tail_call_common). Every step of the
+// walk skips it, including above a WasmToJS stub: call_indirect/call_ref can target another instance.
+static bool isRestoreFrame(CallFrame* frame)
+{
+    RefPtr callee = wasmCalleeOf(frame);
+    return callee && callee->compilationMode() == Wasm::CompilationMode::RestoreFrameMode;
+}
+
+static CallFrame* skipRestoreFrames(CallFrame* frame)
+{
+    while (frame && isRestoreFrame(frame))
+        frame = frame->callerFrame();
+    return frame;
+}
+
+static CallFrame* skipRestoreFrames(CallFrame* frame, EntryFrame*& entryFrame)
+{
+    while (frame && isRestoreFrame(frame))
+        frame = frame->callerFrame(entryFrame);
+    return frame;
+}
+
 WasmReturnSite getWasmReturnPC(CallFrame* currentFrame)
 {
-    // Safe to use the non-EntryFrame overload: IPInt WASM frames are always entered via a
-    // JSToWasm trampoline (a normal CallFrame), never directly from C++, so no EntryFrame
-    // boundary can appear immediately above an IPInt frame.
-    CallFrame* callerFrame = currentFrame->callerFrame();
+    // Safe to use the non-EntryFrame overload: IPInt WASM frames are always entered via a JSToWasm
+    // trampoline (a normal CallFrame), never directly from C++, so no EntryFrame boundary can appear
+    // immediately above an IPInt frame -- nor above a restore frame, which is also a normal CallFrame.
+    CallFrame* callerFrame = skipRestoreFrames(currentFrame->callerFrame());
 
-    if (!callerFrame->callee().isNativeCallee())
-        return { };
-
-    RefPtr caller = callerFrame->callee().asNativeCallee();
-    if (caller->category() != NativeCallee::Category::Wasm)
-        return { };
-
-    RefPtr wasmCaller = uncheckedDowncast<const Wasm::Callee>(caller.get());
-    if (wasmCaller->compilationMode() != Wasm::CompilationMode::IPIntMode)
+    if (!callerFrame || !ipintCalleeOf(callerFrame))
         return { };
 
     return { const_cast<uint8_t*>(savedWasmToWasmPC(currentFrame)), callerFrame->wasmInstance() };
 }
 
+// wasm -> wasm: MC spilled at -2 * SlotSize[cfr] by saveIPIntRegisters(); an IPInt caller's callee is always WASM.
+static size_t inFlightCallFrameSize(CallFrame* calleeFrame)
+{
+    RELEASE_ASSERT(calleeFrame->callee().isNativeCallee());
+    RefPtr nativeCallee = calleeFrame->callee().asNativeCallee();
+    RELEASE_ASSERT(nativeCallee->category() == NativeCallee::Category::Wasm);
+    RefPtr wasmCallee = uncheckedDowncast<const Wasm::Callee>(nativeCallee.get());
+    RELEASE_ASSERT(wasmCallee->compilationMode() == Wasm::CompilationMode::IPIntMode);
+
+    auto* savedMC = WTF::unalignedLoad<const IPInt::CallReturnMetadata*>(reinterpret_cast<const uint8_t*>(calleeFrame) - 2 * sizeof(Register));
+    RELEASE_ASSERT(savedMC);
+
+    return savedMC->stackFrameSize;
+}
+
+// wasm -> JS: the stub spills MC into a scratch slot instead.
+static size_t importedCallFrameSize(CallFrame* stubFrame)
+{
+    auto* savedMC = WTF::unalignedLoad<const IPInt::CallReturnMetadata*>(reinterpret_cast<const uint8_t*>(stubFrame) + Wasm::WasmToJSIPIntMCSlot);
+    RELEASE_ASSERT(savedMC);
+
+    return savedMC->stackFrameSize;
+}
 
 // Walk the full CallFrame chain from a WASM breakpoint, collecting virtual addresses for
 // every WASM and JS frame. The result is consumed by qWasmCallStack to give LLDB a
@@ -194,7 +251,7 @@ WasmReturnSite getWasmReturnPC(CallFrame* currentFrame)
 //
 //   Step A: emit `frame` if it is a JS frame (one per inline depth for DFG/FTL; one otherwise).
 //           WASM frames are naturally skipped since their callee().isNativeCallee() is true.
-//   Step B: advance to caller = frame->callerFrame(). Stop if null.
+//   Step B: advance to caller = frame->callerFrame(), stepping over any restore frame. Stop if null.
 //   Step C: dispatch on the caller's type — JS, IPIntMode (WASM->WASM), JSToWasm* (skip
 //           trampoline), WasmToJS (recover outer WASM call-site PC from WasmToJSIPIntReturnPCSlot).
 //           Both the JIT and no-JIT WasmToJS stubs save the IPInt PC into
@@ -211,7 +268,7 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
         RefPtr startWasmCallee = uncheckedDowncast<const Wasm::Callee>(startNativeCallee.get());
         RELEASE_ASSERT(startWasmCallee->compilationMode() == Wasm::CompilationMode::IPIntMode);
         RefPtr startIPIntCallee = uncheckedDowncast<const Wasm::IPIntCallee>(startWasmCallee.get());
-        frames.append({ stopAddress, startFrame, WTF::move(startIPIntCallee) });
+        frames.append({ stopAddress, startFrame, WTF::move(startIPIntCallee), 0 });
     }
 
     if (Options::verboseWasmDebugger()) {
@@ -245,21 +302,22 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
                             else
                                 dataLogLn("  [", frames.size(), "] [JS] ", frame->codeBlock()->inferredNameWithHash());
                         }
-                        frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { } });
+                        frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { }, 0 });
                     }
                 });
             } else {
 #endif
                 dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [JS] ", frame->codeBlock()->inferredNameWithHash());
-                frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { } });
+                frames.append({ VirtualAddress(VirtualAddress::JS_FRAME_BASE), nullptr, { }, 0 });
 #if ENABLE(DFG_JIT)
             }
 #endif
         }
 
-        // Step B — advance to the caller.
+        // Step B — advance to the caller. callerFrame() updates callerEntryFrame when it crosses a VM
+        // entry, so every arm below commits entryFrame only once `frame` is final.
         EntryFrame* callerEntryFrame = entryFrame;
-        CallFrame* caller = frame->callerFrame(callerEntryFrame);
+        CallFrame* caller = skipRestoreFrames(frame->callerFrame(callerEntryFrame), callerEntryFrame);
         if (!caller)
             break;
 
@@ -271,11 +329,9 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
             continue;
         }
 
-        RefPtr callerCallee = caller->callee().asNativeCallee();
-        if (callerCallee->category() != NativeCallee::Category::Wasm)
+        RefPtr wasmCallerCallee = wasmCalleeOf(caller);
+        if (!wasmCallerCallee)
             break; // C++ entry or InlineCache — stop.
-
-        RefPtr wasmCallerCallee = uncheckedDowncast<const Wasm::Callee>(callerCallee.get());
         switch (wasmCallerCallee->compilationMode()) {
 
         case Wasm::CompilationMode::IPIntMode: {
@@ -283,7 +339,7 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
             RefPtr ipintCaller = uncheckedDowncast<const Wasm::IPIntCallee>(wasmCallerCallee.get());
             VirtualAddress virtualReturnPC = VirtualAddress::toVirtual(caller->wasmInstance(), ipintCaller->functionIndex(), savedWasmToWasmPC(frame));
             dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [WASM][IPInt] ", virtualReturnPC);
-            frames.append({ virtualReturnPC, caller, ipintCaller });
+            frames.append({ virtualReturnPC, caller, ipintCaller, inFlightCallFrameSize(frame) });
             entryFrame = callerEntryFrame;
             frame = caller;
             break;
@@ -295,9 +351,10 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
             // JSToWasm trampoline or WasmBuiltin — skip; advance to the frame beyond it.
             // Step A will emit it in the next iteration if it is a JS frame.
             dataLogLnIf(Options::verboseWasmDebugger(), "    [WASM][", wasmCallerCallee->compilationMode(), "][SKIPPED]");
+            frame = skipRestoreFrames(caller->callerFrame(callerEntryFrame), callerEntryFrame);
+            if (!frame)
+                return frames;
             entryFrame = callerEntryFrame;
-            frame = caller->callerFrame(callerEntryFrame);
-            RELEASE_ASSERT(frame);
             break;
 
         case Wasm::CompilationMode::WasmToJSMode: {
@@ -306,17 +363,21 @@ Vector<FrameInfo> collectCallStack(VirtualAddress stopAddress, CallFrame* startF
             // saved by both the JIT and no-JIT WasmToJS stubs before the JS call: this value
             // is the IPInt PC advanced past the 'call' opcode, stored at
             // WasmToJSIPIntReturnPCSlot[cfr] of the WasmToJS frame.
-            CallFrame* outerFrame = caller->callerFrame(callerEntryFrame);
-            RELEASE_ASSERT(outerFrame && outerFrame->callee().isNativeCallee());
-            RefPtr outerCallee = outerFrame->callee().asNativeCallee();
-            RELEASE_ASSERT(outerCallee->category() == NativeCallee::Category::Wasm);
-            RefPtr outerWasmCallee = uncheckedDowncast<const Wasm::Callee>(outerCallee.get());
-            RELEASE_ASSERT(outerWasmCallee->compilationMode() == Wasm::CompilationMode::IPIntMode);
+            CallFrame* outerFrame = skipRestoreFrames(caller->callerFrame(callerEntryFrame), callerEntryFrame);
+            if (!outerFrame)
+                return frames;
 
-            RefPtr outerIPIntCallee = uncheckedDowncast<const Wasm::IPIntCallee>(outerWasmCallee.get());
-            VirtualAddress callSiteAddr = VirtualAddress::toVirtual(outerFrame->wasmInstance(), outerIPIntCallee->functionIndex(), savedWasmToJSPC(caller));
-            dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [WASM][WasmToJS]", callSiteAddr);
-            frames.append({ callSiteAddr, outerFrame, outerIPIntCallee });
+            // A tail call into the import replaces the caller, so the stub's caller need not be a WASM
+            // frame at all. Only IPInt has a bytecode PC to attribute the call site to; skip the rest.
+            if (RefPtr outerIPIntCallee = ipintCalleeOf(outerFrame)) {
+                VirtualAddress callSiteAddr = VirtualAddress::toVirtual(outerFrame->wasmInstance(), outerIPIntCallee->functionIndex(), savedWasmToJSPC(caller));
+                dataLogLnIf(Options::verboseWasmDebugger(), "  [", frames.size(), "] [WASM][WasmToJS]", callSiteAddr);
+                frames.append({ callSiteAddr, outerFrame, WTF::move(outerIPIntCallee), importedCallFrameSize(caller) });
+            } else if (RefPtr outerWasmCallee = wasmCalleeOf(outerFrame))
+                dataLogLnIf(Options::verboseWasmDebugger(), "    [WASM][WasmToJS][outer ", outerWasmCallee->compilationMode(), "][SKIPPED]");
+            else
+                dataLogLnIf(Options::verboseWasmDebugger(), "    [WASM][WasmToJS][outer JS][SKIPPED]");
+
             entryFrame = callerEntryFrame;
             frame = outerFrame;
             break;

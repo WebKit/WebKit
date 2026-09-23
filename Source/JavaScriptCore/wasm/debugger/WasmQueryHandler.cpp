@@ -531,6 +531,88 @@ void QueryHandler::handleWasmGlobal(StringView packet)
     m_debugServer.sendReply(response);
 }
 
+// IPInt frame layout, for suspendedFrameOperandStackDepth
+// =======================================================
+//
+// $test pushes three i32s and calls $middle, which takes one parameter; we are stopped inside $middle
+// and want $test's operand stack depth. Numbers are measured, from
+// JSTests/wasm/debugger/resources/wasm/depth-wasm-wasm-wasm.js. A frame straddles its own cfr: the
+// six-slot header sits at positive offsets, everything else below.
+//
+//   == CALLER FRAME: $test ==============================================================
+//   cfr +40   slot 5  thisArgument = -144    <-- saved sp delta
+//   cfr +32   slot 4  argumentCountIncludingThis
+//   cfr +24   slot 3  callee
+//   cfr +16   slot 2  codeBlock
+//   cfr + 8   slot 1  returnPC
+//   cfr + 0   slot 0  callerFrame
+//   -------------------------------------------------------------------------------------
+//   cfr -  8          PC
+//   cfr - 16          MC
+//   cfr - 24          UnboxedWasmCalleeStackSlot
+//   cfr - 32          (pad)                  <-- stackEnd
+//   =====================================================================================
+//   cfr - 48   0x11111111   index 0   pushed 1st
+//   cfr - 64   0x22222222   index 1   pushed 2nd  <-- firstNonArg
+//   cfr - 80   0x33333333   index 2   pushed 3rd  = $middle's arg
+//   -------------------------------------------------------------------------------------
+//             (extraSpaceForReturns -- 0 bytes here)   <-- sp on entry to .ipint_call_common
+//   -------------------------------------------------------------------------------------
+//   cfr - 88          PC                                        |
+//   cfr - 96          first_non_arg - cfr = -64                 | THE GROUP
+//   cfr -104          wasmInstance                              | (4 slots)
+//   cfr -112          MC -> caller metadata  <-- group base     |
+//   =====================================================================================
+//   == CALLEE FRAME: $middle ============================================================
+//   cfr -120 = calleeCfr +40   slot 5  thisArgument            |
+//   cfr -128 = calleeCfr +32   slot 4  argumentCount           | the 32 bytes the CALLER
+//   cfr -136 = calleeCfr +24   slot 3  callee                  | reserved = stackFrameSize
+//   cfr -144 = calleeCfr +16   slot 2  codeBlock <-- spAtCall  |
+//   -------------------------------------------------------------------------------------
+//   cfr -152 = calleeCfr + 8   slot 1  returnPC
+//   cfr -160 = calleeCfr + 0   slot 0  callerFrame -> cfr
+//   -------------------------------------------------------------------------------------
+//             $middle's callee-saves, locals, operand stack continue downward...
+//
+// A call into JS lays the caller half out identically; only the callee frame below spAtCall differs.
+//
+// "group" is local shorthand. stackIndex counts from the bottom, matching LLVM's
+// &Elem - &Stack[0] (WebAssemblyDebugFixup.cpp): for depth D and argumentCount A,
+// indices [0, D-A) are untouched and [D-A, D) were consumed by the call.
+//
+// The depth mirrors what the engine does on return, so it must stay aligned with:
+//   group address   mintAlign(_call) storing sp, _wasm_ipint_call_return_location adding stackFrameSize
+//   group slots     _wasm_ipint_call_return_location's loads of MC and (2 * SlotSize)[sc3]
+static size_t suspendedFrameOperandStackDepth(const FrameInfo& frame, IPInt::IPIntStackEntry* stackEnd)
+{
+    RELEASE_ASSERT(frame.inFlightCallFrameSize);
+
+    auto* cfr = reinterpret_cast<uint8_t*>(frame.wasmCallFrame);
+    auto* group = cfr + *reinterpret_cast<intptr_t*>(cfr + CallFrameSlot::thisArgument * sizeof(Register)) + frame.inFlightCallFrameSize;
+    auto* stackEndBytes = reinterpret_cast<uint8_t*>(stackEnd);
+
+    // Read first_non_arg back, then add the arguments again.
+#if CPU(ARM64)
+    constexpr size_t savedMCSlot = 0;
+    constexpr size_t firstNonArgSlot = 2;
+#elif CPU(X86_64)
+    constexpr size_t savedMCSlot = 1;
+    constexpr size_t firstNonArgSlot = 3;
+#else
+#error "No known operand stack save layout for this architecture"
+#endif
+    auto* firstNonArg = cfr + *reinterpret_cast<intptr_t*>(group + firstNonArgSlot * sizeof(Register));
+    RELEASE_ASSERT(firstNonArg <= stackEndBytes, reinterpret_cast<uintptr_t>(firstNonArg), reinterpret_cast<uintptr_t>(stackEndBytes));
+    size_t argumentDistance = static_cast<size_t>(stackEndBytes - firstNonArg);
+    RELEASE_ASSERT(!(argumentDistance % sizeof(IPInt::IPIntStackEntry)), argumentDistance);
+
+    auto* savedMC = *reinterpret_cast<const uint8_t**>(group + savedMCSlot * sizeof(Register));
+    RELEASE_ASSERT(savedMC);
+    auto* signature = reinterpret_cast<const IPInt::CallSignatureMetadata*>(savedMC - sizeof(IPInt::CallSignatureMetadata));
+
+    return argumentDistance / sizeof(IPInt::IPIntStackEntry) + signature->numArguments;
+}
+
 void QueryHandler::handleWasmStackValue(StringView packet)
 {
     // Format: qWasmStackValue:<frame-index>;<stack-index>
@@ -563,30 +645,31 @@ void QueryHandler::handleWasmStackValue(StringView packet)
         return;
     }
 
-    // FIXME: Answer caller frames too. StopData has no operand stack pointer for them, but IPInt does
-    // save one across a call (.ipint_call_common pushes first_non_arg - cfr), so this is implementable.
-    if (frameIndex) {
-        dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue: only frame 0 is supported");
-        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
-        return;
-    }
-
     auto& stopData = *state->stopData;
-    IPInt::IPIntStackEntry* stackPointer = stopData.stack;
-    if (!stackPointer) {
-        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
-        return;
+    Vector<FrameInfo> frames;
+    if (frameIndex) {
+        frames = collectCallStack(stopData.address, stopData.callFrame, stopData.instance->vm());
+        if (frameIndex >= frames.size() || !frames[frameIndex].isWasmFrame()) {
+            m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
+            return;
+        }
     }
+    FrameInfo stoppedFrame { stopData.address, stopData.callFrame, stopData.callee, 0 };
+    const FrameInfo& target = frameIndex ? frames[frameIndex] : stoppedFrame;
 
     // The operand stack grows downwards from stackEnd, so stackEnd is one past the deepest entry.
-    IPInt::FrameAccess frame(stopData.callFrame, stopData.callee.get());
+    IPInt::FrameAccess frame(target.wasmCallFrame, target.wasmCallee.get());
     IPInt::IPIntStackEntry* stackEnd = frame.stackEnd();
-    if (stackPointer > stackEnd) {
-        m_debugServer.sendErrorReply(ProtocolError::UnknownCommand);
-        return;
-    }
 
-    size_t depth = static_cast<size_t>(stackEnd - stackPointer);
+    size_t depth;
+    if (!frameIndex) {
+        IPInt::IPIntStackEntry* stackPointer = stopData.stack;
+        RELEASE_ASSERT(stackPointer);
+        RELEASE_ASSERT(stackPointer <= stackEnd, reinterpret_cast<uintptr_t>(stackPointer), reinterpret_cast<uintptr_t>(stackEnd));
+        depth = static_cast<size_t>(stackEnd - stackPointer);
+    } else
+        depth = suspendedFrameOperandStackDepth(target, stackEnd);
+
     if (stackIndex >= depth) {
         dataLogLnIf(Options::verboseWasmDebugger(), "[Debugger] qWasmStackValue: index ", stackIndex, " beyond depth ", depth);
         m_debugServer.sendErrorReply(ProtocolError::InvalidPacket);

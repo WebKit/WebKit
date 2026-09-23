@@ -534,6 +534,352 @@ class SwiftWasmOperandStackTestCase:
         self.session.cmd("br del -f", patterns=["All breakpoints removed."])
 
 
+class OperandStackDepthWasmWasmWasmTestCase:
+    test_file = "resources/wasm/depth-wasm-wasm-wasm.js"
+
+    def execute(self):
+        self.session.cmd("b 0x4000000000000060")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000060"])
+
+        # frame 0: two entries, exact depth from the live stack pointer.
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: 66666666"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;2", patterns=["response: E01"])
+
+        # frame 1 kept one entry across a call that takes no arguments.
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 44444444"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+
+        # frame 2 kept two and passed a third as the argument, which is still indexed.
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;3", patterns=["response: E01"])
+
+        # frame 3 is the JS main loop, not a wasm frame.
+        self.session.cmd("process plugin packet send qWasmStackValue:3;0", patterns=["response: E05"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthJsWasmJsWasmTestCase:
+    test_file = "resources/wasm/depth-js-wasm-js-wasm.js"
+
+    def execute(self):
+        self.session.cmd("b 0x400000000000005e")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000005e"])
+
+        # frame 0 holds an i32 and an i64; both occupy one 16-byte entry.
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: 8877665544332211"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;2", patterns=["response: E01"])
+
+        # frame 2 is wasm, reached across the JS callback in frame 1.
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: E05"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthJsJsWasmJsJsWasmTestCase:
+    test_file = "resources/wasm/depth-js-js-wasm-js-js-wasm.js"
+
+    def execute(self):
+        self.session.cmd("b 0x400000000000005b")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000005b"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+
+        # frames 1 and 2 are JS; frame 3 is the wasm frame that kept three entries.
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: E05"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: E05"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;2", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;3", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthWasmJsWasmJsWasmTestCase:
+    test_file = "resources/wasm/depth-wasm-js-wasm-js-wasm.js"
+
+    def execute(self):
+        self.session.cmd("b 0x4000000000000087")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000087"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: E01"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:4;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:4;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthWasmWasmJsWasmWasmTestCase:
+    test_file = "resources/wasm/depth-wasm-wasm-js-wasm-wasm.js"
+
+    def execute(self):
+        self.session.cmd("b 0x4000000000000087")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000087"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: 66666666"])
+
+        # frame 1 is reached by a wasm->wasm hop, frames 3 and 4 across the JS callback.
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 44444444"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;0", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:3;1", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:4;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:4;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthCallShapesTestCase:
+    test_file = "resources/wasm/depth-call-shapes.js"
+
+    def execute(self):
+        # A callee returning two values reserves extra result space; the caller still kept one entry.
+        self.session.cmd("b 0x4000000000000088")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000088"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 21212121"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # Ten arguments push some onto the stack, growing the frame the call reserved. All ten remain
+        # addressable above the entry the caller kept.
+        self.session.cmd("b 0x40000000000000b8")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x40000000000000b8"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: 01000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;10", patterns=["response: 0a000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;11", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # call_indirect: the table index is popped before the shared call path, so it is not indexed.
+        self.session.cmd("b 0x40000000000000d2")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x40000000000000d2"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # A caller that kept nothing has depth 0.
+        self.session.cmd("b 0x40000000000000e2")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x40000000000000e2"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 77777777"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class TailCallToImportTestCase:
+    test_file = "resources/wasm/tail-call-to-import.js"
+
+    def execute(self):
+        # outer tail-called into the JS import, so its WASM frame was replaced by the stub's and the
+        # stub's caller is the JS driver. Walking that used to abort the VM on a RELEASE_ASSERT.
+        self.session.cmd("b 0x400000000000003f", patterns=["address = 0x400000000000003f"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000003f"])
+
+        # frame #1 is js.imp and frame #2 is the JS driver; no WASM frame for outer, which is gone.
+        self.session.cmd("bt", patterns=["frame #0: 0x400000000000003f", "frame #2: 0xc000000000000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class CrossInstanceTailCallImportTestCase:
+    test_file = "resources/wasm/cross-instance-tail-call-import.js"
+
+    def execute(self):
+        # A cross-instance return_call_indirect onto a re-exported JS import tail-calls into the other
+        # instance's WasmToJS stub, so the restore frame sits above the STUB rather than above a WASM
+        # frame. Walking into it from the WasmToJS branch used to abort the VM.
+        self.session.cmd("b 0x4000000100000054", patterns=["address = 0x4000000100000054"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000100000054"])
+
+        # frame #1 is js.f; frame #2 is B.caller, whose call site is the `call 1` at [0x40].
+        self.session.cmd("bt", patterns=["frame #0: 0x4000000100000054", "frame #2: 0x4000000100000042"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthImportMultiResultTestCase:
+    test_file = "resources/wasm/depth-import-multires.js"
+
+    def execute(self):
+        # The import takes one argument and returns two, so .ipint_call_common reserved
+        # extraSpaceForReturns below the arguments. The depth comes from the saved first_non_arg, so
+        # that reservation must not shift it: outer's depth is 2, not 3.
+        self.session.cmd("b 0x4000000000000057")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000057"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class CrossInstanceTailCallTestCase:
+    test_file = "resources/wasm/cross-instance-tail-call.js"
+
+    def execute(self):
+        # A.mid tail-called into instance 0, so a synthetic restore frame sits between B.target and
+        # A.outer. Walking into it used to abort the VM, taking any backtrace with it.
+        self.session.cmd("b 0x4000000000000029", patterns=["Breakpoint 1"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000029"])
+
+        # The restore frame is stepped over, not reported: frame 1 is A.outer, whose call site is the
+        # `call 2` at [0x37] in instance 1, and the saved PC is the instruction after it.
+        self.session.cmd("bt", patterns=["frame #0: 0x4000000000000029", "frame #1: 0x4000000100000039"])
+
+        # A.outer's operand stack is still recoverable across the peeled frame: it kept one value and
+        # passed no arguments to A.mid.
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 77777777"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # Stepping off the tail callee's final `end` returns to A.outer, so getWasmReturnPC has to
+        # step over the restore frame as well -- otherwise no step-out breakpoint is set at all.
+        self.session.cmd("b 0x400000000000002b", patterns=["address = 0x400000000000002b"])
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000002b"])
+        self.session.cmd("si")
+        self.session.cmd("dis", patterns=["->  0x4000000100000039: drop"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthReturnCallTestCase:
+    test_file = "resources/wasm/depth-return-call.js"
+
+    def execute(self):
+        # A tail call substitutes the callee's signature, so the in-flight arity has to come from the
+        # call frame 1 actually made. Here mid_a took 2 arguments and tail-called a 0-argument leaf:
+        # reading the arity off the surviving callee would report depth 1 and reject indices 1 and 2.
+        self.session.cmd("b 0x4000000000000077")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x4000000000000077"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 44444444"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;2", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;3", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # The other direction: mid_b took 0 arguments and tail-called a 2-argument leaf, so reading
+        # the arity off the surviving callee would report depth 3 and hand back two slots from below
+        # the operand stack instead of an error.
+        self.session.cmd("b 0x400000000000009f")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000009f"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 08080808"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # Same substitution reached through call_indirect, whose in-flight call metadata is
+        # CallIndirectMetadata rather than CallMetadata. The table index is popped before the shared
+        # call path, so it is not indexed.
+        self.session.cmd("b 0x40000000000000ca")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x40000000000000ca"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: cccccccc"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 99999999"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: aaaaaaaa"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;2", patterns=["response: bbbbbbbb"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;3", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthCallRefTestCase:
+    test_file = "resources/wasm/depth-call-ref.js"
+
+    def execute(self):
+        # call_ref: the funcref operand is popped before the shared call path, so it is not indexed.
+        self.session.cmd("b 0x400000000000004d")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000004d"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;1", patterns=["response: E01"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # return_call_ref: the tail-caller's frame is gone, so frame 1 is its caller.
+        self.session.cmd("b 0x400000000000006b")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000006b"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 44444444"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 33333333"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthDuplicateImportTestCase:
+    test_file = "resources/wasm/depth-duplicate-import.js"
+
+    def execute(self):
+        # js.f is imported with no parameters and with one. The 0-parameter binding was called, so the
+        # depth is 1; resolving to the other would report 2 and hand back a neighbouring slot.
+        self.session.cmd("b 0x400000000000008a")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000008a"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+        # js.g is imported as (param i32) and as (param f32). Arity cannot separate them, but both
+        # reserve the same frame, so the depth is the same either way: the kept entry plus the argument.
+        self.session.cmd("b 0x40000000000000a3")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x40000000000000a3"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 66666666"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 07000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthCatchHandlerTestCase:
+    test_file = "resources/wasm/depth-catch-handler.js"
+
+    def execute(self):
+        self.session.cmd("b 0x400000000000004a")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000004a"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        # Catch entry recomputes the frame's stack pointer; the entry kept across the try and the one
+        # pushed inside the handler must both still be addressable.
+        self.session.cmd("process plugin packet send qWasmStackValue:1;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;1", patterns=["response: 22222222"])
+        self.session.cmd("process plugin packet send qWasmStackValue:1;2", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
+class OperandStackDepthImportArityTestCase:
+    """qWasmStackValue depth for a multi-parameter call into JS, disambiguated by arity."""
+
+    test_file = "resources/wasm/depth-import-arity.js"
+
+    def execute(self):
+        self.session.cmd("b 0x400000000000005d")
+        self.session.cmd("c", patterns=["stop reason = breakpoint", "0x400000000000005d"])
+        self.session.cmd("process plugin packet send qWasmStackValue:0;0", patterns=["response: 55555555"])
+        # js.f is imported with three parameters and with one. The three-parameter binding was called,
+        # so the depth is the kept entry plus its three arguments.
+        self.session.cmd("process plugin packet send qWasmStackValue:2;0", patterns=["response: 11111111"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;1", patterns=["response: 01000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;2", patterns=["response: 02000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;3", patterns=["response: 03000000"])
+        self.session.cmd("process plugin packet send qWasmStackValue:2;4", patterns=["response: E01"])
+        self.session.cmd("br del -f", patterns=["All breakpoints removed."])
+
+
 class NopDropSelectEndTestCase:
     test_file = "resources/wasm/nop-drop-select-end.js"
 
@@ -2409,6 +2755,21 @@ ALL_TESTS = [
     JsJsWasmJsJsWasmCallStackTestCase,
     WasmWasmJsWasmWasmCallStackTestCase,
     WasmJsWasmJsWasmCallStackTestCase,
+    OperandStackDepthWasmWasmWasmTestCase,
+    OperandStackDepthJsWasmJsWasmTestCase,
+    OperandStackDepthJsJsWasmJsJsWasmTestCase,
+    OperandStackDepthWasmJsWasmJsWasmTestCase,
+    OperandStackDepthWasmWasmJsWasmWasmTestCase,
+    OperandStackDepthCallShapesTestCase,
+    OperandStackDepthReturnCallTestCase,
+    CrossInstanceTailCallTestCase,
+    OperandStackDepthImportMultiResultTestCase,
+    CrossInstanceTailCallImportTestCase,
+    TailCallToImportTestCase,
+    OperandStackDepthCallRefTestCase,
+    OperandStackDepthDuplicateImportTestCase,
+    OperandStackDepthImportArityTestCase,
+    OperandStackDepthCatchHandlerTestCase,
     SwiftWasmCrashTestCase,
     WasmUnreachableFaultTestCase,
     BreakpointOnUnreachableTestCase,

@@ -120,6 +120,7 @@ public:
     static constexpr GPRReg notCellMaskRegister = X86Registers::r15;
     static constexpr GPRReg jitDataRegister = X86Registers::r13;
     static constexpr GPRReg wasmIPIntPCRegister = X86Registers::r13; // IPInt PC = csr2 = r13
+    static constexpr GPRReg wasmIPIntMCRegister = X86Registers::r12; // IPInt MC = csr1 = r12
     static constexpr GPRReg metadataTableRegister = X86Registers::r12;
 
     // Temporary registers.
@@ -248,7 +249,8 @@ public:
     static constexpr GPRReg numberTagRegister = ARM64Registers::x27;
     static constexpr GPRReg notCellMaskRegister = ARM64Registers::x28;
     static constexpr GPRReg jitDataRegister = ARM64Registers::x26;
-    static constexpr GPRReg wasmIPIntPCRegister = ARM64Registers::x26;
+    static constexpr GPRReg wasmIPIntPCRegister = ARM64Registers::x26; // IPInt PC = csr7 = x26
+    static constexpr GPRReg wasmIPIntMCRegister = ARM64Registers::x25; // IPInt MC = csr6 = x25
     static constexpr GPRReg metadataTableRegister = ARM64Registers::x25;
     static constexpr GPRReg dataTempRegister = MacroAssembler::dataTempRegister;
     static constexpr GPRReg memoryTempRegister = MacroAssembler::memoryTempRegister;
@@ -397,6 +399,7 @@ public:
     static constexpr GPRReg notCellMaskRegister = RISCV64Registers::x26;
     static constexpr GPRReg jitDataRegister = RISCV64Registers::x24;
     static constexpr GPRReg wasmIPIntPCRegister = RISCV64Registers::x24; // IPInt PC = csr7 = x24
+    static constexpr GPRReg wasmIPIntMCRegister = RISCV64Registers::x23; // IPInt MC = csr6 = x23
     static constexpr GPRReg metadataTableRegister = RISCV64Registers::x23;
 
     static constexpr GPRReg regT0 = RISCV64Registers::x10;

@@ -44,9 +44,11 @@ namespace JSC { namespace Wasm {
 
 constexpr unsigned numberOfIPIntCalleeSaveRegisters = 2;
 constexpr unsigned numberOfIPIntInternalRegisters = 1; // UnboxedWasmCalleeStackSlot
-constexpr ptrdiff_t WasmToJSScratchSpaceSize = 0x8 * 2; // Needs to be aligned to 0x10. 2 slots: callable function + IPInt return PC.
+constexpr ptrdiff_t WasmToJSScratchSpaceSize = 0x8 * 4; // Needs to be aligned to 0x10. 3 slots: callable function + IPInt return PC + IPInt MC.
 constexpr ptrdiff_t WasmToJSCallableFunctionSlot = -0x8;
-constexpr ptrdiff_t WasmToJSIPIntReturnPCSlot = -0x10; // IPInt PC saved here by both the JIT and no-JIT WasmToJS stubs for collectCallStack.
+// IPInt PC and MC, spilled by both WasmToJS stubs for collectCallStack.
+constexpr ptrdiff_t WasmToJSIPIntReturnPCSlot = -0x10;
+constexpr ptrdiff_t WasmToJSIPIntMCSlot = -0x18;
 
 struct ArgumentLocation {
     ArgumentLocation(ValueLocation loc, Width width)

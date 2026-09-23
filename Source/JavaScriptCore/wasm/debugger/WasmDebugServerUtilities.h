@@ -320,6 +320,7 @@ struct FrameInfo {
     VirtualAddress address;
     CallFrame* wasmCallFrame { nullptr };
     RefPtr<IPIntCallee> wasmCallee;
+    size_t inFlightCallFrameSize { 0 };
 
     bool isWasmFrame() const { return !!wasmCallee; }
 };

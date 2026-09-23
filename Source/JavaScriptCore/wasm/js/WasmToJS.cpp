@@ -119,6 +119,7 @@ std::expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(c
     const unsigned stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(numberOfBytesForCall, numberOfBytesForSavedResults) + static_cast<unsigned>(Wasm::WasmToJSScratchSpaceSize));
     jit.subPtr(MacroAssembler::TrustedImm32(stackOffset), MacroAssembler::stackPointerRegister);
     jit.storePtr(GPRInfo::wasmIPIntPCRegister, CCallHelpers::Address(GPRInfo::callFrameRegister, WasmToJSIPIntReturnPCSlot));
+    jit.storePtr(GPRInfo::wasmIPIntMCRegister, CCallHelpers::Address(GPRInfo::callFrameRegister, WasmToJSIPIntMCSlot));
     JIT::Address calleeFrame = CCallHelpers::Address(MacroAssembler::stackPointerRegister, -static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC)));
 
     // FIXME make these loops which switch on signature if there are many arguments on the stack. It'll otherwise be huge for huge type definitions. https://bugs.webkit.org/show_bug.cgi?id=165547
