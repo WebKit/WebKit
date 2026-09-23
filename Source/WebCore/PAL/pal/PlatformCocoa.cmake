@@ -42,6 +42,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
     cocoa/VisionSoftLink.h
+    cocoa/WebContentAnalysisSoftLink.h
     cocoa/WebContentRestrictionsSoftLink.h
     cocoa/WebPrivacySoftLink.h
     cocoa/WritingToolsUISoftLink.h
