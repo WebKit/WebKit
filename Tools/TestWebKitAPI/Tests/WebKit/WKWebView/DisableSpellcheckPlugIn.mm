@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "WebCoreTestSupport.h"
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKBundleNodeHandlePrivate.h>
 #import <WebKit/WKDOMDocument.h>
 #import <WebKit/WKDOMElement.h>

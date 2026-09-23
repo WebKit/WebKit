@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "InjectedBundleHitTestProtocol.h"
-#import "WebCoreTestSupport.h"
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageResourceLoadClient.h>
 #import <WebKit/WKWebProcessPlugIn.h>

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "WebCoreTestSupport.h"
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKBundlePage.h>
 #import <WebKit/WKBundlePageUIClient.h>
 #import <WebKit/WKDOMDocument.h>

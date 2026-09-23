@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebProcessPlugInWithInternals.h"
 
-#import "WebCoreTestSupport.h"
+#import <WebCoreTestSupport/WebCoreTestSupport.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextController.h>
 #import <WebKit/WKWebProcessPlugInFrame.h>
 #import <WebKit/WKWebProcessPlugInLoadDelegate.h>
