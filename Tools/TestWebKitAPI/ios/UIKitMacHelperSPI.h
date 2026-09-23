@@ -23,6 +23,9 @@
   * THE POSSIBILITY OF SUCH DAMAGE.
   */
 
+#import <wtf/Compiler.h>
+#import <wtf/Platform.h>
+
 #if PLATFORM(MACCATALYST)
 
 #if USE(APPLE_INTERNAL_SDK)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#import "TestWebKitAPISupport.h"
+
 #import "TestsController.h"
-#import "UIKitMacHelperSPI.h"
-#import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-int main(int argc, char** argv)
+void TestWebKitAPIEnableAllSDKAlignedBehaviors(void)
 {
-    bool passed = false;
-    @autoreleasepool {
-#if PLATFORM(MACCATALYST)
-        UINSApplicationInstantiate();
-#endif
+    WTF::enableAllSDKAlignedBehaviors();
+}
 
-        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
-
-        // Set up user defaults.
-        auto argumentDomain = adoptNS([[[NSUserDefaults standardUserDefaults] volatileDomainForName:NSArgumentDomain] mutableCopy]);
-        if (!argumentDomain)
-            argumentDomain = adoptNS([[NSMutableDictionary alloc] init]);
-
-        [[NSUserDefaults standardUserDefaults] setVolatileDomain:argumentDomain.get() forName:NSArgumentDomain];
-
-#if ENABLE(SCREEN_TIME)
-        RetainPtr uiKitDefaults = adoptNS([[NSUserDefaults alloc] initWithSuiteName:@"com.apple.UIKit"]);
-        [uiKitDefaults registerDefaults:@{ @"ForceLegacyHostingRemoteViewControllerForService": @"com.apple.ScreenTime.ScreenTimeWebExtension" }];
-#endif
-
-        enableAllSDKAlignedBehaviors();
-
-        passed = TestWebKitAPI::TestsController::singleton().run(argc, argv);
-    }
-
-    // FIXME: Work-around for <rdar://problem/77922262>
-    exit(passed ? EXIT_SUCCESS : EXIT_FAILURE);
+BOOL TestWebKitAPIRunTests(int argc, char** argv)
+{
+    return TestWebKitAPI::TestsController::singleton().run(argc, argv);
 }
