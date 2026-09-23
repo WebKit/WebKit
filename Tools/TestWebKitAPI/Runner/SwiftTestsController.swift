@@ -54,7 +54,7 @@ actor SwiftTestsController: TestRunner {
     }
 
     nonisolated private func writeOutputIfNeeded(_ record: SwiftTestingABI.Record) {
-        guard case .event(let eventRecord) = record.kind, eventRecord.kind == .testEnded else {
+        guard case .event(let eventRecord) = record.kind else {
             return
         }
 
@@ -70,10 +70,8 @@ actor SwiftTestsController: TestRunner {
             return
         }
 
-        let passed = events.allSatisfy { $0.kind != .issueRecorded }
-        if passed {
-            print("**PASS** \(testID.canonicalizedRepresentation)")
-        } else {
+        switch eventRecord.kind {
+        case .testEnded where events.contains { $0.kind == .issueRecorded }:
             let failureDescriptions = events
                 .lazy
                 .filter { $0.kind == .issueRecorded }
@@ -84,6 +82,15 @@ actor SwiftTestsController: TestRunner {
                 .joined(separator: "\n")
 
             print("**FAIL** \(testID.canonicalizedRepresentation)\n\(failureDescriptions)")
+
+        case .testEnded:
+            print("**PASS** \(testID.canonicalizedRepresentation)")
+
+        case .testSkipped:
+            print("**DISABLED** \(testID.canonicalizedRepresentation)")
+
+        default:
+            break
         }
     }
 

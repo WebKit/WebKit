@@ -358,6 +358,8 @@ class _Worker(object):
                         status = Runner.STATUS_PASSED
                     elif '**FAIL**' in stdout_line:
                         status = Runner.STATUS_FAILED
+                    elif '**DISABLED**' in stdout_line:
+                        status = Runner.STATUS_DISABLED
                     else:
                         stdout_buffer += stdout_line
                         _log.error(stdout_line[:-1])
