@@ -58,7 +58,7 @@ class Printer : public ::testing::EmptyTestEventListener {
 
         failures = std::string();
     }
-    
+
     std::string failures;
 };
 
@@ -80,11 +80,19 @@ TestsController::TestsController()
 
 bool TestsController::run(int argc, char** argv)
 {
+    bool useDefaultPrinter = false;
+    for (int i = 1; i < argc; ++i) {
+        if (String::fromUTF8(argv[i]) == "--gtest_brief=0"_s)
+            useDefaultPrinter = true;
+    }
+
     ::testing::InitGoogleTest(&argc, argv);
 
-    ::testing::TestEventListeners& listeners = ::testing::UnitTest::GetInstance()->listeners();
-    delete listeners.Release(listeners.default_result_printer());
-    listeners.Append(new Printer);
+    if (!useDefaultPrinter) {
+        ::testing::TestEventListeners& listeners = ::testing::UnitTest::GetInstance()->listeners();
+        delete listeners.Release(listeners.default_result_printer());
+        listeners.Append(new Printer);
+    }
 
     return !RUN_ALL_TESTS();
 }

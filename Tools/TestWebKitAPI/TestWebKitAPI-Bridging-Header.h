@@ -23,5 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "TestWebKitAPISupport.h"
+#import "Runner/TestWebKitAPISupport.h"
 #import "ios/UIKitMacHelperSPI.h"

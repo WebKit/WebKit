@@ -22,7 +22,7 @@ endmacro()
 # TestWTF definitions
 set(TestWTF_SOURCES
     Counters.cpp
-    TestsController.cpp
+    Runner/TestsController.cpp
     Utilities.cpp
 
     Tests/WTF/AtomString.cpp
@@ -162,7 +162,7 @@ WEBKIT_EXECUTABLE_DECLARE(TestWTF)
 # TestJavaScriptCore definitions
 if (ENABLE_JAVASCRIPTCORE)
     set(TestJavaScriptCore_SOURCES
-        TestsController.cpp
+        Runner/TestsController.cpp
 
         Tests/JavaScriptCore/DisallowVMEntry.cpp
         Tests/JavaScriptCore/InspectorConsoleMessage.cpp
@@ -193,7 +193,7 @@ endif ()
 if (ENABLE_WEBCORE)
     set(TestWebCore_SOURCES
         GraphicsTestUtilities.cpp
-        TestsController.cpp
+        Runner/TestsController.cpp
         Utilities.cpp
         WebCoreTestUtilities.cpp
 
@@ -274,7 +274,7 @@ endif ()
 # TestWebKitLegacy definitions
 if (ENABLE_WEBKIT_LEGACY)
     set(TestWebKitLegacy_SOURCES
-        TestsController.cpp
+        Runner/TestsController.cpp
     )
 
     set(TestWebKitLegacy_LIBRARIES
@@ -384,7 +384,7 @@ if (ENABLE_WEBKIT)
     add_library(TestWebKitAPIBase STATIC
         JavaScriptTest.cpp
         PlatformUtilities.cpp
-        TestsController.cpp
+        Runner/TestsController.cpp
     )
     target_compile_definitions(TestWebKitAPIBase PRIVATE BUILDING_TestWebKit)
     target_include_directories(TestWebKitAPIBase PRIVATE ${TestWebKit_PRIVATE_INCLUDE_DIRECTORIES})

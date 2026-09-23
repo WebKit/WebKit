@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TestsController.h"
+#include "Runner/TestsController.h"
 
 int main(int argc, char** argv)
 {

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TestsController.h"
+#include "Runner/TestsController.h"
 
 #if ENABLE(WPE_PLATFORM)
 #include <wpe/headless/wpe-headless.h>

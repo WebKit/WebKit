@@ -115,7 +115,7 @@ class Runner(object):
     @staticmethod
     def command_for_port(port, args):
         if (port.get_option('force')):
-            args.append('--gtest_also_run_disabled_tests=1')
+            args.append('--force')
         if (port.get_option('remote_layer_tree')):
             args.append('--remote-layer-tree')
         if (port.get_option('site_isolation')):
@@ -315,7 +315,7 @@ class _Worker(object):
     def _run_single_test(self, binary_name, test):
         server_process = ServerProcess(
             self._port, binary_name,
-            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), f'--gtest_filter={test}']),
+            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), '--filter', test]),
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
@@ -406,7 +406,7 @@ class _Worker(object):
             server_process = ServerProcess(
                 self._port, binary_name,
                 Runner.command_for_port(self._port, [
-                    self._port.path_to_api_test(binary_name), f'--gtest_filter={":".join(remaining_tests)}'
+                    self._port.path_to_api_test(binary_name), '--filter', ':'.join(remaining_tests)
                 ]), env=self._port.environment_for_api_tests())
 
             try:

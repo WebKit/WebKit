@@ -114,7 +114,7 @@ class Manager(object):
                 self.host.filesystem.copymode(path, to_be_listed)
             try:
                 output = self.host.executive.run_command(
-                    Runner.command_for_port(self._port, [to_be_listed, '--gtest_list_tests']),
+                    Runner.command_for_port(self._port, [to_be_listed, '--list-tests']),
                     env=self._port.environment_for_api_tests())
                 available_tests += Manager._test_list_from_output(output, f'{canonicalized_binary}.')
             except ScriptError:

@@ -71,6 +71,10 @@
 		075A9CF526177218006DFA3A /* MediaSessionCoordinatorTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 075A9CF426177217006DFA3A /* MediaSessionCoordinatorTest.mm */; };
 		076E507F1F4513D6006E9F5A /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076E507E1F45031E006E9F5A /* Logging.cpp */; };
 		077489CC2CE4061A00133938 /* WKWebViewSwiftOverlayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 070721142CE2F5F6004D9EC8 /* WKWebViewSwiftOverlayTests.swift */; };
+		0774B1C82F7B768800E86996 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		0774B1C92F7B768800E86996 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		0774B1CA2F7B768800E86996 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		0774B1CB2F7B768800E86996 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		077A5AF3230638A600A7105C /* AccessibilityTestPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */; };
 		078B04482CF118BD00B453A6 /* URLSchemeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04472CF118BD00B453A6 /* URLSchemeHandlerTests.swift */; };
 		078B044A2CF139BF00B453A6 /* Foundation+Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04492CF139BF00B453A6 /* Foundation+Extras.swift */; };
@@ -80,6 +84,10 @@
 		07C02FD22D6D6FBC0004ED97 /* rtl-sideways-scrolling.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07C02FD12D6D6FBC0004ED97 /* rtl-sideways-scrolling.html */; };
 		07C046CA1E4262A8007201E7 /* CARingBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBufferTest.cpp */; };
 		07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */; };
+		07D698472F7E283300E3B7FB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D698462F7E283300E3B7FB /* TestRunner.swift */; };
+		07D698482F7E283300E3B7FB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D698462F7E283300E3B7FB /* TestRunner.swift */; };
+		07D698492F7E283300E3B7FB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D698462F7E283300E3B7FB /* TestRunner.swift */; };
+		07D6984A2F7E283300E3B7FB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D698462F7E283300E3B7FB /* TestRunner.swift */; };
 		07DC68852EA33D5D00976E84 /* SwiftCxxInteropTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DC68742EA33A9A00976E84 /* SwiftCxxInteropTests.swift */; };
 		07DC68862EA33D6A00976E84 /* SwiftCxxInteropTestbed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07DC68722EA33A3300976E84 /* SwiftCxxInteropTestbed.cpp */; };
 		07DEB43E2E7900B100066C32 /* SmartListsSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DEB43D2E7900B100066C32 /* SmartListsSupport.swift */; };
@@ -95,6 +103,10 @@
 		07EE74BB2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */; };
 		07EE74BC2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */; };
 		07EE74BD2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */; };
+		07EE74F02F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */; };
+		07EE74F12F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */; };
+		07EE74F22F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */; };
+		07EE74F32F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */; };
 		07FAA74D2CE95E3200128360 /* WebPageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FAA74C2CE95E3200128360 /* WebPageTests.swift */; };
 		0DE559ED2A6B0AAF009AA320 /* WKWebViewResize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DE559E52A6B0AAF009AA320 /* WKWebViewResize.mm */; };
 		0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E404A8A2166DDF8008271BA /* InjectedBundleNodeHandleIsSelectElement.mm */; };
@@ -189,7 +201,6 @@
 		37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37E7DD661EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm */; };
 		37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */; };
 		3A1337B328F9177600F29B73 /* UniqueRefVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */; };
-		3A15784428D1505B00142DB1 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		3A15784528D1505B00142DB1 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
 		3A2917F22D8A1AB800B6CBFE /* empty-service-worker-registrations.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3A2917F12D8A1AB800B6CBFE /* empty-service-worker-registrations.sqlite3 */; };
 		3A31EA7D29C0D1AA0045E65B /* UUIDCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A31EA7529C0D1AA0045E65B /* UUIDCocoa.mm */; };
@@ -469,7 +480,6 @@
 		7B9FC3AD28A26137007570E7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 		7B9FC58428A26792007570E7 /* StreamConnectionBufferTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FC58328A26792007570E7 /* StreamConnectionBufferTests.cpp */; };
 		7B9FC58528A267A7007570E7 /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
-		7B9FC58C28A2717D007570E7 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		7B9FC5B128A5221B007570E7 /* CryptoTokenKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */; };
 		7B9FC5B528A5222D007570E7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */; };
 		7B9FC5CD28A52DC0007570E7 /* libWebKitPlatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B9FC5CC28A52DC0007570E7 /* libWebKitPlatform.a */; };
@@ -518,7 +528,6 @@
 		7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26F1B44315CA434F00D1E4BF /* StringImpl.cpp */; };
 		7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C74D42D188228F300E5ED57 /* StringView.cpp */; };
 		7C83DF3D1D0A590C00FEBCF3 /* SetForScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* SetForScope.cpp */; };
-		7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
 		7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC55F5F814AD78EE00484BE1 /* Vector.cpp */; };
 		7C83DF591D0A590C00FEBCF3 /* ParkingLot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE447971B76F1E3009498EB /* ParkingLot.cpp */; };
 		7C83DF631D0A590C00FEBCF3 /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 265AF54F15D1E48A00B0CB4A /* WTFString.cpp */; };
@@ -2584,6 +2593,7 @@
 		07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationPreference.mm; sourceTree = "<group>"; };
 		07CD32F72065B72A0064A4BE /* video.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = video.html; sourceTree = "<group>"; };
 		07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMediaNavigation.mm; sourceTree = "<group>"; };
+		07D698462F7E283300E3B7FB /* TestRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunner.swift; sourceTree = "<group>"; };
 		07DC68712EA33A3300976E84 /* SwiftCxxInteropTestbed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftCxxInteropTestbed.h; sourceTree = "<group>"; };
 		07DC68722EA33A3300976E84 /* SwiftCxxInteropTestbed.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SwiftCxxInteropTestbed.cpp; sourceTree = "<group>"; };
 		07DC68742EA33A9A00976E84 /* SwiftCxxInteropTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftCxxInteropTests.swift; sourceTree = "<group>"; };
@@ -2599,6 +2609,7 @@
 		07EE74B82F79ECC300FB9248 /* TestWebKitAPISupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestWebKitAPISupport.h; sourceTree = "<group>"; };
 		07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestWebKitAPISupport.mm; sourceTree = "<group>"; };
 		07EE74BE2F79ECE500FB9248 /* TestWebKitAPI-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestWebKitAPI-Bridging-Header.h"; sourceTree = "<group>"; };
+		07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleTestsController.swift; sourceTree = "<group>"; };
 		07EF76D42540FC060053ED53 /* MediaMutedState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaMutedState.mm; sourceTree = "<group>"; };
 		07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaSimulateFailedSandbox.mm; sourceTree = "<group>"; };
 		07F7696C2CA8BAC500FF004B /* IOSMouseEventTestHarness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSMouseEventTestHarness.h; sourceTree = "<group>"; };
@@ -4706,6 +4717,20 @@
 			path = "WebKit Swift";
 			sourceTree = "<group>";
 		};
+		07EE74E52F7B354700FB9248 /* Runner */ = {
+			isa = PBXGroup;
+			children = (
+				07EE74EF2F7B35ED00FB9248 /* GoogleTestsController.swift */,
+				07D698462F7E283300E3B7FB /* TestRunner.swift */,
+				BC131AA8117131FC00B69727 /* TestsController.cpp */,
+				BCB9E7C711234E3A00A137E0 /* TestsController.h */,
+				07EE74AB2F79EB9700FB9248 /* TestWebKitAPI.swift */,
+				07EE74B82F79ECC300FB9248 /* TestWebKitAPISupport.h */,
+				07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */,
+			);
+			path = Runner;
+			sourceTree = "<group>";
+		};
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -4735,6 +4760,7 @@
 				BC575944126E733C006F0F12 /* InjectedBundle */,
 				2E9660DC16C07D7B00371B42 /* ios */,
 				BCA61C3A11700B9400460D1E /* mac */,
+				07EE74E52F7B354700FB9248 /* Runner */,
 				A17A5A3122A887610065C5F0 /* TestRunnerShared */,
 				BC131A9E1171317C00B69727 /* config.h */,
 				FA65EFFC2C87F43C00A0A123 /* CoroutineUtilities.h */,
@@ -4754,12 +4780,7 @@
 				BCB9E7FA112359A300A137E0 /* Test.h */,
 				EB4D320727C045430081A8E4 /* TestNotificationProvider.cpp */,
 				EB4D320827C045440081A8E4 /* TestNotificationProvider.h */,
-				BC131AA8117131FC00B69727 /* TestsController.cpp */,
-				BCB9E7C711234E3A00A137E0 /* TestsController.h */,
 				07EE74BE2F79ECE500FB9248 /* TestWebKitAPI-Bridging-Header.h */,
-				07EE74AB2F79EB9700FB9248 /* TestWebKitAPI.swift */,
-				07EE74B82F79ECC300FB9248 /* TestWebKitAPISupport.h */,
-				07EE74B92F79ECC300FB9248 /* TestWebKitAPISupport.mm */,
 				7C83E0361D0A5F7000FEBCF3 /* Utilities.h */,
 				7BB754B0274E39A100D00EC1 /* WebCoreTestUtilities.cpp */,
 				7BB754AF274E39A100D00EC1 /* WebCoreTestUtilities.h */,
@@ -7719,11 +7740,13 @@
 			files = (
 				3A9C438828E3E057002F7294 /* ASTStringDumperTests.cpp in Sources */,
 				3A7AA56028E28E99009E09C2 /* ConstLiteralTests.cpp in Sources */,
+				07EE74F22F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */,
 				3A5DDADA28D15169004DA950 /* LexerTests.cpp in Sources */,
 				97DAA8CE2DF1F325004B3040 /* MetalCompilationTests.mm in Sources */,
 				3ADD8988299F192F005DCE4E /* MetalGenerationTests.cpp in Sources */,
 				3A5DDAEE28D156FC004DA950 /* ParserTests.cpp in Sources */,
-				3A15784428D1505B00142DB1 /* TestsController.cpp in Sources */,
+				07D698492F7E283300E3B7FB /* TestRunner.swift in Sources */,
+				0774B1CA2F7B768800E86996 /* TestsController.cpp in Sources */,
 				07EE74B62F79EBB700FB9248 /* TestWebKitAPI.swift in Sources */,
 				07EE74BC2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */,
 				3A9C438B28E3E240002F7294 /* TestWGSLAPI.cpp in Sources */,
@@ -7739,6 +7762,7 @@
 				2D83D08B29194B0100C5C051 /* ArgumentCoderTests.cpp in Sources */,
 				7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */,
 				A73E66C42AB29574005FC327 /* EventTests.cpp in Sources */,
+				07EE74F12F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */,
 				51FA14312AF5BAE00003ACD1 /* IPCSerialization.mm in Sources */,
 				7B7392EC28F84BD3007297FC /* IPCTestUtilities.cpp in Sources */,
 				7B7392E928F849EC007297FC /* MessageSenderTests.cpp in Sources */,
@@ -7746,7 +7770,8 @@
 				7B2950E22972AFDE008CC225 /* StreamConnectionEncoderTests.cpp in Sources */,
 				7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */,
 				7B636FC229700F0700F3670F /* StreamConnectionWorkQueueTests.cpp in Sources */,
-				7B9FC58C28A2717D007570E7 /* TestsController.cpp in Sources */,
+				07D6984A2F7E283300E3B7FB /* TestRunner.swift in Sources */,
+				0774B1C82F7B768800E86996 /* TestsController.cpp in Sources */,
 				07EE74B42F79EBB700FB9248 /* TestWebKitAPI.swift in Sources */,
 				07EE74BA2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */,
 				7B52E86C2A2A1A2200A3251F /* ThreadSafeObjectHeapTests.cpp in Sources */,
@@ -7881,7 +7906,6 @@
 				FF8CB40C2A88C152004AF498 /* SuperFastHash.cpp in Sources */,
 				936E4AE42821BB6D00208654 /* SuspendableWorkQueueTests.cpp in Sources */,
 				5597F8361D9596C80066BC21 /* SynchronizedFixedQueue.cpp in Sources */,
-				7C83DF401D0A590C00FEBCF3 /* TestsController.cpp in Sources */,
 				9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */,
 				1C4616A726BB172F00F8C9F6 /* TextStreamCocoa.cpp in Sources */,
 				1C4616A026BA5A2100F8C9F6 /* TextStreamCocoa.mm in Sources */,
@@ -7921,6 +7945,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07EE74F32F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */,
+				07D698482F7E283300E3B7FB /* TestRunner.swift in Sources */,
+				0774B1CB2F7B768800E86996 /* TestsController.cpp in Sources */,
 				07EE74B72F79EBB700FB9248 /* TestWebKitAPI.swift in Sources */,
 				07EE74BD2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */,
 			);
@@ -8459,6 +8486,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07EE74F02F7B35ED00FB9248 /* GoogleTestsController.swift in Sources */,
+				07D698472F7E283300E3B7FB /* TestRunner.swift in Sources */,
+				0774B1C92F7B768800E86996 /* TestsController.cpp in Sources */,
 				07EE74B52F79EBB700FB9248 /* TestWebKitAPI.swift in Sources */,
 				07EE74BB2F79ECCC00FB9248 /* TestWebKitAPISupport.mm in Sources */,
 			);

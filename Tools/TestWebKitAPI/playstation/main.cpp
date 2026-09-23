@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TestsController.h"
+#include "Runner/TestsController.h"
 #include <dlfcn.h>
 #include <process-initialization/nk-testwebkitapi.h>
 

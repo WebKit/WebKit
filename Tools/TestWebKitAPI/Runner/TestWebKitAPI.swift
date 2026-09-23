@@ -66,7 +66,7 @@ struct TestWebKitAPI {
     }
 
     @MainActor
-    private func run() async {
+    private func run() async throws {
         #if WTF_PLATFORM_MACCATALYST
         UINSApplicationInstantiate()
         #endif
@@ -99,13 +99,15 @@ struct TestWebKitAPI {
         _ = NSApplication.shared
         #endif
 
-        let passed = unsafe TestWebKitAPIRunTests(CommandLine.argc, CommandLine.unsafeArgv)
+        let configuration = TestRunner.Configuration(parsing: CommandLine.arguments)
 
-        exit(passed ? EXIT_SUCCESS : EXIT_FAILURE)
+        let passedGTests = try await GoogleTestsController.shared.run(with: configuration)
+
+        exit(passedGTests ? EXIT_SUCCESS : EXIT_FAILURE)
     }
 
-    static func main() async {
+    static func main() async throws {
         let instance = TestWebKitAPI()
-        await instance.run()
+        try await instance.run()
     }
 }
