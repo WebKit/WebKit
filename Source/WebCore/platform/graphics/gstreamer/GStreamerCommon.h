@@ -340,6 +340,7 @@ bool gstObjectHasProperty(GstPad*, ASCIILiteral name);
 bool gstElementMatchesFactoryAndHasProperty(GstElement*, ASCIILiteral factoryNamePattern, ASCIILiteral propertyName);
 
 GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>&);
+GRefPtr<GstBuffer> wrapSharedBuffer(Ref<SharedBuffer>&&);
 
 std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral);
 

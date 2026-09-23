@@ -27,6 +27,7 @@
 #include "GStreamerElementHarness.h"
 #include "GStreamerRegistryScanner.h"
 #include "PlatformDisplay.h"
+#include "SharedBuffer.h"
 #include "VideoFrameGStreamer.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
@@ -70,7 +71,7 @@ public:
         GST_DEBUG("Disposing un-configured video decoder");
     }
 
-    Ref<VideoDecoder::DecodePromise> decode(std::span<const uint8_t>, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
+    Ref<VideoDecoder::DecodePromise> decode(Ref<SharedBuffer>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration);
     void flush();
     void close() { m_isClosed = true; }
 
@@ -152,8 +153,8 @@ GStreamerVideoDecoder::~GStreamerVideoDecoder()
 
 Ref<VideoDecoder::DecodePromise> GStreamerVideoDecoder::decode(EncodedFrame&& frame)
 {
-    return invokeAsync(gstDecoderWorkQueue(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
-        return decoder->decode(value.span(), isKeyFrame, timestamp, duration);
+    return invokeAsync(gstDecoderWorkQueue(), [data = WTF::move(frame.data), isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder]() mutable {
+        return decoder->decode(WTF::move(data), isKeyFrame, timestamp, duration);
     });
 }
 
@@ -295,10 +296,10 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     }));
 }
 
-Ref<VideoDecoder::DecodePromise> GStreamerInternalVideoDecoder::decode(std::span<const uint8_t> frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
+Ref<VideoDecoder::DecodePromise> GStreamerInternalVideoDecoder::decode(Ref<SharedBuffer>&& frameData, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)
 {
     GST_DEBUG_OBJECT(m_harness->element(), "Decoding%s frame", isKeyFrame ? " key" : "");
-    auto buffer = wrapSpanData(frameData);
+    auto buffer = wrapSharedBuffer(WTF::move(frameData));
     if (!buffer)
         return VideoDecoder::DecodePromise::createAndReject("Empty frame"_s);
 

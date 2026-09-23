@@ -45,7 +45,7 @@ public:
     static Ref<WebCodecsEncodedVideoChunkStorage> create(WebCodecsEncodedVideoChunkData&& data) { return adoptRef(* new WebCodecsEncodedVideoChunkStorage(WTF::move(data))); }
 
     const WebCodecsEncodedVideoChunkData& data() const LIFETIME_BOUND { return m_data; }
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return protect(m_data.buffer)->span(); }
+    Ref<SharedBuffer> buffer() const { return m_data.buffer; }
     uint64_t memoryCost() const { return m_data.buffer->size(); }
 
 private:
@@ -75,7 +75,7 @@ public:
 
     ExceptionOr<void> copyTo(BufferSource&&);
 
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return storage().span(); }
+    Ref<SharedBuffer> buffer() const { return m_storage->buffer(); }
     const WebCodecsEncodedVideoChunkStorage& storage() const LIFETIME_BOUND { return m_storage.get(); }
     WebCodecsEncodedVideoChunkStorage& storage() LIFETIME_BOUND { return m_storage.get(); }
 

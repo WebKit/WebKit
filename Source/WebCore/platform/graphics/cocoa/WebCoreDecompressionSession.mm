@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
 #import "PixelBufferConformerCV.h"
+#import "SharedBuffer.h"
 #import "VideoDecoder.h"
 #import "VideoDecoderVTB.h"
 #import "VideoFrame.h"
@@ -475,18 +476,10 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
                 MediaTime presentationTimestamp = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(cmSample.get()));
                 RetainPtr rawBuffer = PAL::CMSampleBufferGetDataBuffer(cmSample.get());
                 ASSERT(rawBuffer);
-                RetainPtr buffer = rawBuffer;
-                // Make sure block buffer is contiguous.
-                if (!PAL::CMBlockBufferIsRangeContiguous(rawBuffer.get(), 0, 0)) {
-                    CMBlockBufferRef contiguousBuffer;
-                    if (auto status = PAL::CMBlockBufferCreateContiguous(nullptr, rawBuffer.get(), nullptr, nullptr, 0, 0, 0, &contiguousBuffer))
-                        return DecodingPromise::createAndReject(status);
-                    buffer = adoptCF(contiguousBuffer);
-                }
-                auto data = PAL::CMBlockBufferGetDataSpan(buffer.get());
-                if (!data.data())
-                    return DecodingPromise::createAndReject(-1);
-                promises.append(videoDecoder->decode({ data, true, presentationTimestamp.toMicroseconds(), 0 }));
+                Ref data = sharedBufferFromCMBlockBuffer(rawBuffer.get());
+                if (data->isEmpty())
+                    return DecodingPromise::createAndReject(kVTAllocationFailedErr);
+                promises.append(videoDecoder->decode({ WTF::move(data), true, presentationTimestamp.toMicroseconds(), 0 }));
             }
             DecodingPromise::Producer producer;
             auto promise = producer.promise();

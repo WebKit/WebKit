@@ -45,6 +45,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SharedBuffer.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #include <WebCore/VideoFrameCV.h>
 #include <wtf/MainThread.h>
@@ -449,13 +450,20 @@ int32_t LibWebRTCCodecs::decodeWebRTCFrame(Decoder& decoder, int64_t timeStamp, 
     return promise ? WEBRTC_VIDEO_CODEC_OK : WEBRTC_VIDEO_CODEC_ERROR;
 }
 
-Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data)
+Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, Ref<WebCore::SharedBuffer>&& data)
 {
-    auto promise = decodeFrameInternal(decoder, timeStamp, data, 0, 0);
+    auto promise = decodeFrameInternal(decoder, timeStamp, WTF::move(data), 0, 0);
     return promise ? promise.releaseNonNull() : FramePromise::createAndReject("Decoding task did not complete"_s);
 }
 
-RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
+static std::span<const uint8_t> frameDataSpan(std::span<const uint8_t> data) { return data; }
+static std::span<const uint8_t> frameDataSpan(const Ref<WebCore::SharedBuffer>& data) { return data->span(); }
+
+static Ref<WebCore::SharedBuffer> frameDataBuffer(std::span<const uint8_t> data) { return WebCore::SharedBuffer::create(data); }
+static Ref<WebCore::SharedBuffer> frameDataBuffer(Ref<WebCore::SharedBuffer>&& data) { return WTF::move(data); }
+
+template<typename Data>
+RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decoder& decoder, int64_t timeStamp, Data&& data, uint16_t width, uint16_t height)
 {
     Locker locker { m_connectionLock };
     if (decoder.hasError) {
@@ -467,11 +475,11 @@ RefPtr<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrameInternal(Decod
         FramePromise::AutoRejectProducer producer;
         auto promise = producer.promise();
 
-        decoder.pendingFrames.append({ timeStamp, data, width, height, WTF::move(producer) });
+        decoder.pendingFrames.append({ timeStamp, frameDataBuffer(std::forward<Data>(data)), width, height, WTF::move(producer) });
         return promise;
     }
 
-    return sendFrameToDecode(decoder, timeStamp, data, width, height);
+    return sendFrameToDecode(decoder, timeStamp, frameDataSpan(data), width, height);
 }
 
 void LibWebRTCCodecs::registerDecodeFrameCallback(Decoder& decoder, void* decodedImageCallback)
@@ -998,7 +1006,7 @@ void LibWebRTCCodecs::setDecoderConnection(Decoder& decoder, RefPtr<IPC::Connect
     decoder.connection = WTF::move(connection);
     auto frames = std::exchange(decoder.pendingFrames, { });
     for (auto& frame : frames)
-        sendFrameToDecode(decoder, frame.timeStamp, frame.data.span(), frame.width, frame.height)->chainTo(WTF::move(frame.producer));
+        sendFrameToDecode(decoder, frame.timeStamp, protect(frame.data)->span(), frame.width, frame.height)->chainTo(WTF::move(frame.producer));
 }
 
 }

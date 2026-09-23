@@ -46,7 +46,7 @@ public:
     static Ref<WebCodecsEncodedAudioChunkStorage> create(WebCodecsEncodedAudioChunkData&& data) { return adoptRef(* new WebCodecsEncodedAudioChunkStorage(WTF::move(data))); }
 
     const WebCodecsEncodedAudioChunkData& data() const LIFETIME_BOUND { return m_data; }
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return protect(m_data.buffer)->span(); }
+    Ref<SharedBuffer> buffer() const { return m_data.buffer; }
     uint64_t memoryCost() const { return m_data.buffer->size(); }
 
 private:
@@ -76,7 +76,7 @@ public:
 
     ExceptionOr<void> copyTo(BufferSource&&);
 
-    std::span<const uint8_t> span() const LIFETIME_BOUND { return storage().span(); }
+    Ref<SharedBuffer> buffer() const { return m_storage->buffer(); }
     const WebCodecsEncodedAudioChunkStorage& storage() const LIFETIME_BOUND { return m_storage.get(); }
     WebCodecsEncodedAudioChunkStorage& storage() LIFETIME_BOUND { return m_storage.get(); }
 

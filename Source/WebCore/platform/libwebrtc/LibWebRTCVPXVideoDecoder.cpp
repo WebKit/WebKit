@@ -119,8 +119,8 @@ LibWebRTCVPXVideoDecoder::~LibWebRTCVPXVideoDecoder() = default;
 
 Ref<VideoDecoder::DecodePromise> LibWebRTCVPXVideoDecoder::decode(EncodedFrame&& frame)
 {
-    return invokeAsync(vpxDecoderQueueSingleton(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
-        return decoder->decode(value.span(), isKeyFrame, timestamp, duration);
+    return invokeAsync(vpxDecoderQueueSingleton(), [data = WTF::move(frame.data), isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
+        return decoder->decode(data->span(), isKeyFrame, timestamp, duration);
     });
 }
 

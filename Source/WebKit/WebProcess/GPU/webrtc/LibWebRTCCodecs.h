@@ -60,6 +60,7 @@ class VideoFrame;
 }
 
 namespace WebCore {
+class SharedBuffer;
 enum class VideoFrameRotation : uint16_t;
 struct VideoEncoderActiveConfiguration;
 struct GPUVideoEncoderFrameInfo;
@@ -89,7 +90,7 @@ public:
     public:
         struct EncodedFrame {
             int64_t timeStamp { 0 };
-            Vector<uint8_t> data;
+            Ref<WebCore::SharedBuffer> data;
             uint16_t width { 0 };
             uint16_t height { 0 };
             FramePromise::AutoRejectProducer producer;
@@ -118,7 +119,7 @@ public:
     Ref<GenericPromise> flushDecoder(Decoder&);
     void setDecoderFormatDescription(Decoder&, std::span<const uint8_t>, uint16_t width, uint16_t height);
     int32_t decodeWebRTCFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height, std::optional<WebCore::PlatformVideoColorSpace>&& = std::nullopt);
-    Ref<FramePromise> decodeFrame(Decoder&, int64_t timeStamp, std::span<const uint8_t>);
+    Ref<FramePromise> decodeFrame(Decoder&, int64_t timeStamp, Ref<WebCore::SharedBuffer>&&);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
@@ -245,7 +246,7 @@ private:
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
     template<typename Frame> RefPtr<FramePromise> encodeFrameInternalWithLock(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration) WTF_REQUIRES_LOCK(m_encodersConnectionLock);
 
-    RefPtr<FramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
+    template<typename Data> RefPtr<FramePromise> decodeFrameInternal(Decoder&, int64_t timeStamp, Data&&, uint16_t width, uint16_t height);
     Ref<FramePromise> sendFrameToDecode(Decoder&, int64_t timeStamp, std::span<const uint8_t>, uint16_t width, uint16_t height);
 
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());

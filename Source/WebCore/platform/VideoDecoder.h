@@ -27,12 +27,12 @@
 
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <WebCore/ProcessIdentity.h>
-#include <span>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NativePromise.h>
 
 namespace WebCore {
 
+class SharedBuffer;
 class VideoFrame;
 
 class VideoDecoder : public ThreadSafeRefCounted<VideoDecoder> {
@@ -54,10 +54,12 @@ public:
     };
 
     struct EncodedFrame {
-        std::span<const uint8_t> data;
+        Ref<SharedBuffer> data;
         bool isKeyFrame { false };
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
+
+        WEBCORE_EXPORT ~EncodedFrame();
     };
     struct DecodedFrame {
         Ref<VideoFrame> frame;

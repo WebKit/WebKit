@@ -1972,6 +1972,18 @@ GRefPtr<GstBuffer> wrapSpanData(const std::span<const uint8_t>& span)
     return buffer;
 }
 
+GRefPtr<GstBuffer> wrapSharedBuffer(Ref<SharedBuffer>&& data)
+{
+    if (data->isEmpty())
+        return nullptr;
+
+    gpointer bufferData = const_cast<uint8_t*>(data->span().data());
+    auto bufferLength = data->size();
+    return adoptGRef(gst_buffer_new_wrapped_full(GST_MEMORY_FLAG_READONLY, bufferData, bufferLength, 0, bufferLength, &data.leakRef(), [](gpointer data) {
+        static_cast<SharedBuffer*>(data)->deref();
+    }));
+}
+
 std::optional<unsigned> gstGetAutoplugSelectResult(ASCIILiteral nick)
 {
     static auto enumClass = static_cast<GEnumClass*>(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));

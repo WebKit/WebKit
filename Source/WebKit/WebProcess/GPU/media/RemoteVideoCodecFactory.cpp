@@ -211,7 +211,7 @@ Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(EncodedFrame&&
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
 
     Ref codecs = WebProcess::singleton().libWebRTCCodecs();
-    return codecs->decodeFrame(m_internalDecoder, frame.timestamp, frame.data);
+    return codecs->decodeFrame(m_internalDecoder, frame.timestamp, WTF::move(frame.data));
 }
 
 Ref<GenericPromise> RemoteVideoDecoder::flush()
