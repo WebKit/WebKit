@@ -49,6 +49,7 @@ std::unique_ptr<CoordinatedPlatformLayerBufferSkiaDeferredImage> CoordinatedPlat
         case kUnpremul_SkAlphaType:
             return AlphaMode::Unpremultiplied;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     }();
     return makeUnique<CoordinatedPlatformLayerBufferSkiaDeferredImage>(WTF::move(displayList), alphaMode);
 }
