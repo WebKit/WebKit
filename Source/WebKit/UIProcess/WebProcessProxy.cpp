@@ -111,6 +111,7 @@
 #include <pal/system/Sound.h>
 #include <ranges>
 #include <stdio.h>
+#include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -1216,7 +1217,7 @@ bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
     auto startsWithURLPath = [&path, protectedThis = RefPtr { this }](const String& assumedAccessPath) {
         // There are no ".." components, because URL removes those.
         WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(Sandbox, protectedThis, "hasAssumedReadAccessToURL: checking if url is contained in url(%u) with assumed access", WTF::URLHash::hash(URL::fileURLWithFileSystemPath(assumedAccessPath)));
-        return path.startsWith(assumedAccessPath);
+        return FileSystem::pathIsSameOrDescendantOf(path, assumedAccessPath);
     };
 
     auto& platformPaths = platformPathsWithAssumedReadAccess();
