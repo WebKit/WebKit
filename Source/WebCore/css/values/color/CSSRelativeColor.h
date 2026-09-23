@@ -95,7 +95,7 @@ bool containsColorSchemeDependentColor(const RelativeColor<Descriptor>& unresolv
 template<typename Descriptor>
 bool containsCurrentColor(const RelativeColor<Descriptor>& unresolved)
 {
-    return containsColorSchemeDependentColor(unresolved.origin);
+    return containsCurrentColor(unresolved.origin);
 }
 
 template<typename D> struct Serialize<RelativeColor<D>> {
