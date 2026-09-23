@@ -1580,6 +1580,20 @@ static inline FloatSize size(ImageBitmap& imageBitmap)
     return FloatSize { static_cast<float>(imageBitmap.width()), static_cast<float>(imageBitmap.height()) };
 }
 
+static inline FloatSize size(CanvasElementImageSource& source)
+{
+    return WTF::switchOn(source,
+        [&](Ref<Element>& element) -> FloatSize {
+            if (CheckedPtr renderer = element->renderer())
+                return renderer->absoluteBoundingBoxRect().size();
+            return FloatSize();
+        },
+        [&](Ref<CanvasElementImage>& elementImage) {
+            return elementImage->size();
+        }
+    );
+}
+
 #if ENABLE(VIDEO)
 
 static inline FloatSize size(HTMLVideoElement& video)
@@ -2023,24 +2037,64 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
     return { };
 }
 
-ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&&, float, float)
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float dx, float dy)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    FloatSize sourceSize = size(source);
+    return drawElementImage(WTF::move(source), FloatRect { 0.0f, 0.0f, sourceSize.width(), sourceSize.height() }, FloatRect { dx, dy, sourceSize.width(), sourceSize.height() });
 }
 
-ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&&, float, float, float, float)
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float dx, float dy, float dwidth, float dheight)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    FloatSize sourceSize = size(source);
+    return drawElementImage(WTF::move(source), FloatRect { 0.0f, 0.0f, sourceSize.width(), sourceSize.height() }, FloatRect { dx, dy, dwidth, dheight });
 }
 
-ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&&, float, float, float, float, float, float)
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float sx, float sy, float dx, float dy, float dwidth, float dheight)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    FloatSize sourceSize = size(source);
+    return drawElementImage(WTF::move(source), FloatRect { sx, sy, sourceSize.width(), sourceSize.height() }, FloatRect { dx, dy, dwidth, dheight });
 }
 
-ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&&, float, float, float, float, float, float, float, float)
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, float sx, float sy, float swidth, float sheight, float dx, float dy, float dwidth, float dheight)
 {
-    return Exception { ExceptionCode::NotSupportedError };
+    return drawElementImage(WTF::move(source), FloatRect { sx, sy, swidth, sheight }, FloatRect { dx, dy, dwidth, dheight });
+}
+
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(CanvasElementImageSource&& source, const FloatRect& srcRect, const FloatRect& dstRect)
+{
+    return WTF::switchOn(source,
+        [&](Ref<Element>& element) -> ExceptionOr<Ref<DOMMatrix>> {
+            if (RefPtr canvasElement = dynamicDowncast<HTMLCanvasElement>(canvasBase())) {
+                if (auto snapshot = canvasElement->drawableElementSnapshot(element))
+                    return drawSnapshot(*snapshot, srcRect, dstRect);
+            }
+            return DOMMatrix::create(TransformationMatrix::identity, DOMMatrix::Is2D::Yes);
+        },
+        [&](Ref<CanvasElementImage>& elementImage) -> ExceptionOr<Ref<DOMMatrix>> {
+            return drawSnapshot(elementImage->snapshot(), srcRect, dstRect);
+        }
+    );
+}
+
+ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawSnapshot(const CanvasElementSnapshot& snapshot, const FloatRect& srcRect, const FloatRect& dstRect)
+{
+    auto* c = effectiveDrawingContext();
+    if (!c)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    auto snapshotRect = FloatRect { { }, snapshot.size };
+    auto normalizedSrcRect = normalizeRect(intersection(srcRect, snapshotRect));
+    auto normalizedDstRect = normalizeRect(dstRect);
+    auto scale = normalizedDstRect.size() / normalizedSrcRect.size();
+
+    c->save();
+    c->clip(normalizedDstRect);
+    c->translate(dstRect.location() - toFloatSize(normalizedSrcRect.location()) * scale);
+    c->scale(scale);
+    c->drawDisplayList(snapshot.displayList);
+    c->restore();
+
+    return DOMMatrix::create(TransformationMatrix::identity, DOMMatrix::Is2D::Yes);
 }
 
 void CanvasRenderingContext2DBase::clearCanvas()

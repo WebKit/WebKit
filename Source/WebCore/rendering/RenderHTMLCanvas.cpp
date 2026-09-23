@@ -27,6 +27,7 @@
 #include "RenderHTMLCanvas.h"
 
 #include "CanvasRenderingContext.h"
+#include "DisplayListRecorderImpl.h"
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
@@ -92,6 +93,8 @@ void RenderHTMLCanvas::layout()
 
     if (CheckedPtr innerRenderer = this->innerRenderer())
         innerRenderer->layoutIfNeeded();
+
+    m_drawableRendererSnapshotRecorderMap.clear();
 }
 
 void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -133,17 +136,34 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
     canvasEl->paint(context, paintRect);
     canvasEl->setIsSnapshotting(false);
 
-    if (CheckedPtr innerRenderer = this->innerRenderer()) {
+    CheckedPtr innerRenderer = this->innerRenderer();
+    if (!innerRenderer)
+        return;
+
+    for (CheckedRef child : childrenOfType<RenderElement>(*innerRenderer)) {
         PaintInfo childPaintInfo(paintInfo);
+        auto& context = paintInfo.context();
 
-        GraphicsContextStateSaver childStateSaver(childPaintInfo.context());
-        paintInfo.context().clip(paintRect);
+        auto addResult = m_drawableRendererSnapshotRecorderMap.ensure(child.get(), [&] {
+            auto initialState = context.state().clone(GraphicsContextState::Purpose::Initial);
+            auto boundingRect = child->absoluteBoundingBoxRect();
+            auto initialTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+            auto snapshotRecorder =  makeUniqueRef<DisplayList::RecorderImpl>(initialState, boundingRect, initialTransform, context.colorSpace());
+            snapshotRecorder->translate(-boundingRect.x(), -boundingRect.y());
+            return snapshotRecorder;
+        });
 
-        // FIXME: This painting should be replaced by recording the drawing of the child.
-        // The drawing will be cached till it's drawn via drawElementImage().
-        for (CheckedRef child : childrenOfType<RenderElement>(*innerRenderer))
-            child->paint(childPaintInfo, paintOffset);
+        auto& snapshotRecorder = addResult.iterator->value.get();
+        childPaintInfo.setContext(snapshotRecorder);
+        child->paint(childPaintInfo, paintOffset);
     }
+}
+
+std::optional<CanvasElementSnapshot> RenderHTMLCanvas::drawableRendererSnapshot(RenderElement& drawableRenderer) const
+{
+    if (auto* snapshotRecorder = m_drawableRendererSnapshotRecorderMap.get(drawableRenderer))
+        return { { snapshotRecorder->copyDisplayList(), snapshotRecorder->initialClip().size() } };
+    return std::nullopt;
 }
 
 bool RenderHTMLCanvas::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

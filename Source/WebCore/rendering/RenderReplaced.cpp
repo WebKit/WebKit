@@ -357,7 +357,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     if (!canHaveChildren() && paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
         return;
-    
+
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 

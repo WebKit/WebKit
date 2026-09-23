@@ -236,9 +236,25 @@ ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const CanvasE
     return Exception { ExceptionCode::InvalidStateError };
 }
 
-ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element&)
+ExceptionOr<Ref<CanvasElementImage>> HTMLCanvasElement::captureElementImage(Element& drawableElement)
 {
+    if (auto snapshot = drawableElementSnapshot(drawableElement))
+        return CanvasElementImage::create(WTF::move(*snapshot));
+
     return Exception { ExceptionCode::InvalidStateError };
+}
+
+std::optional<CanvasElementSnapshot> HTMLCanvasElement::drawableElementSnapshot(Element& drawableElement) const
+{
+    CheckedPtr drawableRenderer = drawableElement.renderer();
+    if (!drawableRenderer)
+        return std::nullopt;
+
+    CheckedPtr canvasRenderer = dynamicDowncast<RenderHTMLCanvas>(renderer());
+    if (!canvasRenderer)
+        return std::nullopt;
+
+    return canvasRenderer->drawableRendererSnapshot(*drawableRenderer);
 }
 
 void HTMLCanvasElement::setSizeForControllingContext(IntSize newSize)

@@ -477,6 +477,9 @@ private:
     ExceptionOr<void> drawImage(WebCodecsVideoFrame&, const FloatRect& srcRect, const FloatRect& dstRect);
 #endif
 
+    ExceptionOr<Ref<DOMMatrix>> drawElementImage(CanvasElementImageSource&&, const FloatRect& srcRect, const FloatRect& dstRect);
+    ExceptionOr<Ref<DOMMatrix>> drawSnapshot(const CanvasElementSnapshot&, const FloatRect& srcRect, const FloatRect& dstRect);
+
     void beginCompositeLayer();
     void endCompositeLayer();
 

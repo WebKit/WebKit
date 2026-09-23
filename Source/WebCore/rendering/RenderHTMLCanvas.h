@@ -27,10 +27,17 @@
 
 #include "RenderBlock.h"
 #include "RenderReplaced.h"
+#include <wtf/HashMap.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class HTMLCanvasElement;
+struct CanvasElementSnapshot;
+
+namespace DisplayList {
+class RecorderImpl;
+}
 
 class RenderHTMLCanvas final : public RenderReplaced {
     WTF_MAKE_TZONE_ALLOCATED(RenderHTMLCanvas);
@@ -45,6 +52,8 @@ public:
 
     RenderBlock* innerRenderer() const { return m_innerRenderer.get(); }
     void setInnerRenderer(RenderBlock*);
+
+    std::optional<CanvasElementSnapshot> drawableRendererSnapshot(RenderElement&) const;
 
 private:
     void element() const = delete;
@@ -61,6 +70,7 @@ private:
     void styleDidChange(Style::Difference, const Style::ComputedStyle* oldStyle) override;
 
     SingleThreadWeakPtr<RenderBlock> m_innerRenderer;
+    HashMap<SingleThreadWeakRef<RenderElement>, UniqueRef<DisplayList::RecorderImpl>> m_drawableRendererSnapshotRecorderMap;
 };
 
 } // namespace WebCore

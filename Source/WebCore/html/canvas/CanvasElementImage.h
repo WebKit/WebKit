@@ -31,18 +31,27 @@ namespace WebCore {
 
 class Element;
 
+struct CanvasElementSnapshot {
+    Ref<const DisplayList::DisplayList> displayList;
+    FloatSize size;
+};
+
 class CanvasElementImage : public RefCounted<CanvasElementImage> {
 public:
-    static Ref<CanvasElementImage> create(Ref<const DisplayList::DisplayList>&&);
+    static Ref<CanvasElementImage> create(CanvasElementSnapshot&&);
 
-    double width() const;
-    double height() const;
+    double width() const { return size().width(); }
+    double height() const { return size().height(); }
     void close();
 
-private:
-    CanvasElementImage(Ref<const DisplayList::DisplayList>&&);
+    const CanvasElementSnapshot& snapshot() const { return m_snapshot; }
+    const DisplayList::DisplayList& displayList() const { return m_snapshot.displayList; }
+    FloatSize size() const { return m_snapshot.size; }
 
-    Ref<const DisplayList::DisplayList> m_displayList;
+private:
+    CanvasElementImage(CanvasElementSnapshot&&);
+
+    CanvasElementSnapshot m_snapshot;
 };
 
 using CanvasElementImageSource = Variant<Ref<Element>, Ref<CanvasElementImage>>;

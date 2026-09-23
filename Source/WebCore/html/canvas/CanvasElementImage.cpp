@@ -28,24 +28,14 @@
 
 namespace WebCore {
 
-Ref<CanvasElementImage> CanvasElementImage::create(Ref<const DisplayList::DisplayList>&& displayList)
+Ref<CanvasElementImage> CanvasElementImage::create(CanvasElementSnapshot&& snapshot)
 {
-    return adoptRef(*new CanvasElementImage(WTF::move(displayList)));
+    return adoptRef(*new CanvasElementImage(WTF::move(snapshot)));
 }
 
-CanvasElementImage::CanvasElementImage(Ref<const DisplayList::DisplayList>&& displayList)
-    : m_displayList(WTF::move(displayList))
+CanvasElementImage::CanvasElementImage(CanvasElementSnapshot&& snapshot)
+    : m_snapshot(WTF::move(snapshot))
 {
-}
-
-double CanvasElementImage::width() const
-{
-    return 0;
-}
-
-double CanvasElementImage::height() const
-{
-    return 0;
 }
 
 void CanvasElementImage::close()

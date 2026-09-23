@@ -74,6 +74,8 @@ public:
 
     WEBCORE_EXPORT void appendDisplayList(const DisplayList&);
 
+    WEBCORE_EXPORT FloatRect initialClip() const;
+
 protected:
     WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const ColorSpace&, DrawGlyphsMode);
 
@@ -116,7 +118,6 @@ protected:
     WEBCORE_EXPORT void updateStateForClipToImageBuffer(const FloatRect&);
     WEBCORE_EXPORT void updateStateForApplyDeviceScaleFactor(float);
     WEBCORE_EXPORT bool decomposeDrawGlyphsIfNeeded(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode);
-    WEBCORE_EXPORT FloatRect initialClip() const;
     DrawGlyphsMode drawGlyphsMode() const { return m_drawGlyphsMode; }
 
     // The state difference between set GraphicsContext state and
