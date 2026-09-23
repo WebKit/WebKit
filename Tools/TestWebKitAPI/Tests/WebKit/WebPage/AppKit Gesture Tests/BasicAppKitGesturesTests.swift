@@ -115,8 +115,8 @@ extension AppKitGesturesTests.Basic {
         #expect(actual.map(\.type) == expectedEvents)
     }
 
-    @Test(arguments: [[], [KeyboardModifier.shift], [.option], [.command], [.shift, .option, .command]])
-    func singleClickReportsHeldModifierKeys(modifiers: [KeyboardModifier]) async throws {
+    @Test(arguments: [Recap.KeyboardModifiers(), .shift, .option, .command, .all])
+    func singleClickReportsHeldModifierKeys(modifiers: Recap.KeyboardModifiers) async throws {
         let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
 
         try await loadHTML()
@@ -159,7 +159,7 @@ extension AppKitGesturesTests.Basic {
             "return window.eventLog;"
         }
 
-        let active = modifiers.map(\.domName).sorted().joined(separator: ",")
+        let active = modifiers.domNames.sorted().joined(separator: ",")
         #expect(observed == expectedEvents.map { "\($0.rawValue)(\(active))" })
     }
 
@@ -446,6 +446,282 @@ extension AppKitGesturesTests.Basic {
         let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
 
         #expect(newSelection == crazySelection)
+    }
+
+    // MARK: - Shift-Click Selection Extension
+
+    @Test(arguments: [true, false])
+    func shiftClickAfterSelectionExtendsSelectionForward(contentEditable: Bool) async throws {
+        try await loadHTML(contentEditable: contentEditable)
+
+        let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
+        let onesRange = try #require(Self.text.utf16Range(of: "ones"))
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: heresRange))
+        await page.waitForNextPresentationUpdate()
+
+        let onesBounds = try await screenBoundsOfText("ones")
+
+        // Clicking just inside the right edge of the word resolves to the boundary at its end.
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: CGPoint(x: onesBounds.maxX - 1, y: onesBounds.midY), for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        let expected = JavaScriptSelection.range(
+            base: .init(in: "div", at: heresRange.lowerBound),
+            extent: .init(in: "div", at: onesRange.upperBound)
+        )
+
+        #expect(newSelection == expected)
+    }
+
+    @Test(arguments: [true, false])
+    func shiftClickBeforeSelectionExtendsSelectionBackward(contentEditable: Bool) async throws {
+        try await loadHTML(contentEditable: contentEditable)
+
+        let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: crazyRange))
+        await page.waitForNextPresentationUpdate()
+
+        let heresBounds = try await screenBoundsOfText("Here's")
+
+        // Clicking just inside the left edge of the word resolves to the boundary at its start.
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: CGPoint(x: heresBounds.minX + 1, y: heresBounds.midY), for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        let expected = JavaScriptSelection.range(
+            base: .init(in: "div", at: crazyRange.upperBound),
+            extent: .init(in: "div", at: heresRange.lowerBound)
+        )
+
+        #expect(newSelection == expected)
+    }
+
+    @Test(arguments: [true, false])
+    func shiftClickInsideSelectionShrinksSelection(contentEditable: Bool) async throws {
+        try await loadHTML(contentEditable: contentEditable)
+
+        let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
+        let theRange = try #require(Self.text.utf16Range(of: "the"))
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+
+        try await page.callJavaScript(
+            JavaScriptMessages.SetSelection(in: "div", range: heresRange.lowerBound..<crazyRange.upperBound)
+        )
+        await page.waitForNextPresentationUpdate()
+
+        let theBounds = try await screenBoundsOfText("the")
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: CGPoint(x: theBounds.maxX - 1, y: theBounds.midY), for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        let expected = JavaScriptSelection.range(
+            base: .init(in: "div", at: heresRange.lowerBound),
+            extent: .init(in: "div", at: theRange.upperBound)
+        )
+
+        #expect(newSelection == expected)
+    }
+
+    @Test
+    func shiftClickAfterCaretCreatesSelectionFromCaret() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let theRange = try #require(Self.text.utf16Range(of: "the"))
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", offset: 0))
+        await page.waitForNextPresentationUpdate()
+
+        let theBounds = try await screenBoundsOfText("the")
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: CGPoint(x: theBounds.maxX - 1, y: theBounds.midY), for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        let expected = JavaScriptSelection.range(
+            base: .init(in: "div", at: 0),
+            extent: .init(in: "div", at: theRange.upperBound)
+        )
+
+        #expect(newSelection == expected)
+    }
+
+    @Test
+    func clickWithoutShiftAfterSelectionReplacesSelection() async throws {
+        try await loadHTML(contentEditable: true)
+
+        let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
+        let onesRange = try #require(Self.text.utf16Range(of: "ones"))
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: heresRange))
+        await page.waitForNextPresentationUpdate()
+
+        let onesBounds = try await screenBoundsOfText("ones")
+
+        await recap.play { composer in
+            composer._wk_click(at: CGPoint(x: onesBounds.maxX - 1, y: onesBounds.midY), for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        #expect(newSelection == .collapsed(.init(in: "div", at: onesRange.upperBound)))
+    }
+
+    @Test
+    func shiftClickOnLinkDoesNotExtendSelection() async throws {
+        let html = """
+            <div id="div" style="font-size: 30px;">\(Self.text)</div>
+            <a id="link" href="#" style="font-size: 30px; display: block;">WebKit Link</a>
+            """
+        try await page.load(html: html).wait()
+
+        let heresRange = try #require(Self.text.utf16Range(of: "Here's"))
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: heresRange))
+        await page.waitForNextPresentationUpdate()
+
+        let linkBounds = try await screenBounds(ofElementWithID: "link")
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: linkBounds.center, for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let newSelection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+
+        let unchanged = JavaScriptSelection.range(
+            base: .init(in: "div", at: heresRange.lowerBound),
+            extent: .init(in: "div", at: heresRange.upperBound)
+        )
+
+        #expect(newSelection == unchanged)
+    }
+
+    private static let middleOfTHREEInPDF = NSPoint(x: 176, y: 444)
+    private static let middleOfOneInPDF = NSPoint(x: 134, y: 471)
+
+    private static let pdfDocumentText = "one\nTwo tWo\ntHree THREE threE"
+
+    private func loadPDFAndSelectAll() async throws {
+        let pdfURL = try #require(Bundle.testResources.url(forResource: "find", withExtension: "pdf"))
+        try await page.load(pdfURL).wait()
+        await page.waitForNextPresentationUpdate()
+
+        let focusPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfTHREEInPDF)
+
+        await recap.play { composer in
+            composer._wk_click(at: focusPoint, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        await page.selectAll()
+
+        #expect(try #require(await page.copySelection()) == Self.pdfDocumentText)
+    }
+
+    @Test
+    func shiftClickAfterMidpointOfPDFSelectionAnchorsOnItsStart() async throws {
+        try await loadPDFAndSelectAll()
+
+        let clickPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfTHREEInPDF)
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: clickPoint, for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let extended = try #require(await page.copySelection())
+
+        #expect(Self.pdfDocumentText.hasPrefix(extended))
+        #expect(extended.hasPrefix("one\nTwo tWo\ntHree "))
+        #expect(!extended.contains("threE"))
+    }
+
+    @Test
+    func shiftClickBeforeMidpointOfPDFSelectionAnchorsOnItsEnd() async throws {
+        try await loadPDFAndSelectAll()
+
+        let clickPoint = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_click(at: clickPoint, for: .seconds(0.1))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let extended = try #require(await page.copySelection())
+
+        #expect(Self.pdfDocumentText.hasSuffix(extended))
+        #expect(extended.hasSuffix("tHree THREE threE"))
+        #expect(!extended.hasPrefix("one"))
+    }
+
+    @Test
+    func shiftDragInPDFShrinksSelectionBackTowardAnchor() async throws {
+        try await loadPDFAndSelectAll()
+
+        let dragStart = screenBounds(ofPointInWindowCoordinates: Self.middleOfTHREEInPDF)
+        let dragEnd = screenBounds(ofPointInWindowCoordinates: Self.middleOfOneInPDF)
+
+        await recap.play { composer in
+            composer.holdingModifiers(.shift) {
+                composer._wk_drag(withStart: dragStart, end: dragEnd, duration: .seconds(0.5))
+            }
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let extended = try #require(await page.copySelection())
+
+        #expect(Self.pdfDocumentText.hasPrefix(extended))
+        #expect(extended.hasPrefix("one"))
+        #expect(!extended.contains("Two"))
     }
 
     @Test(arguments: [true, false])

@@ -4724,23 +4724,47 @@ void UnifiedPDFPlugin::resetInitialSelection()
     m_initialSelectionStart = { nil, { } };
 }
 
-SelectionEndpoint UnifiedPDFPlugin::extendInitialSelection(FloatPoint pointInRootView, TextGranularity granularity)
+SelectionEndpoint UnifiedPDFPlugin::extendInitialSelection(FloatPoint pointInRootView, TextGranularity granularity, SelectionExtentAnchor anchor)
 {
 #if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
+    // The previous gesture's initial selection must not outlive this one, even if this update bails out early.
+    if (anchor == SelectionExtentAnchor::CurrentSelection)
+        resetInitialSelection();
+
     auto [page, pointInPage] = rootViewToPage(pointInRootView);
     if (!page)
         return SelectionEndpoint::Start;
+
+    if (anchor == SelectionExtentAnchor::CurrentSelection) {
+        auto anchorEndpoint = currentSelectionEndpointToPreserveWhenExtendedTo(pointInPage, page.get());
+        m_initialSelectionStart = anchorEndpoint.first ? anchorEndpoint : PageAndPoint { page, pointInPage };
+    }
 
     auto [startPage, startPointInPage] = m_initialSelectionStart;
     if (!startPage)
         return SelectionEndpoint::Start;
 
-    RetainPtr newSelection = selectionAtPoint(pointInPage, page.get(), granularity);
-    if (isEmpty(newSelection.get()))
-        return SelectionEndpoint::Start;
+    RetainPtr extentSelection = selectionAtPoint(pointInPage, page.get(), granularity);
+    RetainPtr<PDFSelection> newSelection;
 
-    [newSelection addSelection:m_initialSelection.get()];
-    // The selection at this point only includes the initial selection, and the new hit-tested selection, and may be discontiguous.
+    if (m_initialSelection) {
+        if (isEmpty(extentSelection.get()))
+            return SelectionEndpoint::Start;
+
+        newSelection = WTF::move(extentSelection);
+        // The selection at this point only includes the initial selection, and the new hit-tested selection, and may be discontiguous.
+        [newSelection addSelection:m_initialSelection.get()];
+    } else {
+        newSelection = selectionBetweenPoints(startPointInPage, startPage.get(), pointInPage, page.get());
+
+        if (isEmpty(newSelection.get()))
+            newSelection = WTF::move(extentSelection);
+        else if (!isEmpty(extentSelection.get()))
+            [newSelection addSelection:extentSelection.get()];
+
+        if (isEmpty(newSelection.get()))
+            return SelectionEndpoint::Start;
+    }
 
     auto [newStartPage, newStartPointInPage] = selectionCaretPointInPage(newSelection.get(), SelectionEndpoint::Start);
     if (!newStartPage)
@@ -4761,6 +4785,7 @@ SelectionEndpoint UnifiedPDFPlugin::extendInitialSelection(FloatPoint pointInRoo
 #else
     UNUSED_PARAM(granularity);
     UNUSED_PARAM(pointInRootView);
+    UNUSED_PARAM(anchor);
 #endif
     return SelectionEndpoint::Start;
 }
@@ -4940,6 +4965,28 @@ PDFSelection *UnifiedPDFPlugin::selectionAtPoint(FloatPoint pointInPage, PDFPage
             return PDFSelectionGranularityCharacter;
         }
     }()];
+}
+
+auto UnifiedPDFPlugin::currentSelectionEndpointToPreserveWhenExtendedTo(FloatPoint pointInPage, PDFPage *page) const -> PageAndPoint
+{
+    auto start = selectionCaretPointInPage(SelectionEndpoint::Start);
+    auto end = selectionCaretPointInPage(SelectionEndpoint::End);
+    if (!start.first || !end.first)
+        return { nil, { } };
+
+    RetainPtr pdfDocument = this->pdfDocument();
+    auto extentPageIndex = [pdfDocument indexForPage:page];
+    if (extentPageIndex < [pdfDocument indexForPage:start.first.get()])
+        return end;
+    if (extentPageIndex > [pdfDocument indexForPage:end.first.get()])
+        return start;
+
+    auto distanceInCharacters = [this](const PageAndPoint& from, const PageAndPoint& to) -> NSUInteger {
+        return [[protect(selectionBetweenPoints(from.second, from.first.get(), to.second, to.first.get())) string] length];
+    };
+
+    PageAndPoint extent { page, pointInPage };
+    return distanceInCharacters(start, extent) <= distanceInCharacters(extent, end) ? end : start;
 }
 
 #endif // HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)

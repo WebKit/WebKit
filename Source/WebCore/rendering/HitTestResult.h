@@ -125,7 +125,7 @@ public:
     WEBCORE_EXPORT URL absoluteLinkURL() const;
     WEBCORE_EXPORT bool hasLocalDataForLinkURL() const;
     WEBCORE_EXPORT String textContent() const;
-    bool NODELETE isOverLink() const;
+    WEBCORE_EXPORT bool NODELETE isOverLink() const;
     WEBCORE_EXPORT bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
     void toggleMediaLoopPlayback() const;

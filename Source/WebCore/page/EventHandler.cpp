@@ -771,14 +771,6 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
     return expandAndUpdateSelectionForMouseDownIfNeeded(*targetNode, newSelection, TextGranularity::ParagraphGranularity);
 }
 
-static uint64_t textDistance(const Position& start, const Position& end)
-{
-    auto range = makeSimpleRange(start, end);
-    if (!range)
-        return 0;
-    return characterCount(*range, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
-}
-
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
     Ref frame = m_frame.get();
@@ -823,14 +815,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
         if (!frame->editor().behavior().shouldConsiderSelectionAsDirectional() && pos.isNotNull()) {
             // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
             // was created right-to-left
-            Position start = newSelection.start();
-            Position end = newSelection.end();
-            int distanceToStart = textDistance(start, pos);
-            int distanceToEnd = textDistance(pos, end);
-            if (distanceToStart <= distanceToEnd)
-                newSelection = VisibleSelection(end, pos);
-            else
-                newSelection = VisibleSelection(start, pos);
+            newSelection = VisibleSelection(newSelection.endpointToPreserveWhenExtendedTo(pos), pos);
         } else {
             if (newSelection.directionality() == Directionality::Strong) {
                 RefPtr baseNode = newSelection.isBaseFirst() ? newSelection.base().computeNodeAfterPosition() : newSelection.base().computeNodeBeforePosition();

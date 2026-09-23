@@ -655,7 +655,7 @@ private:
     CursorContext cursorContext(WebCore::FloatPoint pointInRootView) const final;
     void setSelectionRange(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity) final;
     SelectionWasFlipped moveSelectionEndpoint(WebCore::FloatPoint pointInRootView, SelectionEndpoint) final;
-    SelectionEndpoint extendInitialSelection(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity) final;
+    SelectionEndpoint extendInitialSelection(WebCore::FloatPoint pointInRootView, WebCore::TextGranularity, SelectionExtentAnchor) final;
 #if PLATFORM(IOS_FAMILY)
     DocumentEditingContext documentEditingContext(DocumentEditingContextRequest&&) const final;
 #endif
@@ -667,6 +667,8 @@ private:
 #if HAVE(PDFDOCUMENT_SELECTION_WITH_GRANULARITY)
     PDFSelection *selectionAtPoint(WebCore::FloatPoint pointInPage, PDFPage *, WebCore::TextGranularity) const;
     PDFSelection *selectionBetweenPoints(WebCore::FloatPoint fromPoint, PDFPage *fromPage, WebCore::FloatPoint toPoint, PDFPage *toPage) const;
+
+    PageAndPoint currentSelectionEndpointToPreserveWhenExtendedTo(WebCore::FloatPoint pointInPage, PDFPage *) const;
 #endif
 
     PageAndPoint selectionCaretPointInPage(PDFSelection *, SelectionEndpoint) const;

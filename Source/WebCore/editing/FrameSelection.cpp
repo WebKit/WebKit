@@ -2383,8 +2383,11 @@ bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, A
     if (&range->start.document() != &range->end.document())
         return false;
 
-    VisibleSelection newSelection(*range, affinity);
+    return setSelectedVisibleSelection(VisibleSelection { *range, affinity }, closeTyping, userTriggered);
+}
 
+bool FrameSelection::setSelectedVisibleSelection(const VisibleSelection& newSelection, ShouldCloseTyping closeTyping, UserTriggered userTriggered)
+{
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Why do we need this check only in iOS?
     if (newSelection.isNone())

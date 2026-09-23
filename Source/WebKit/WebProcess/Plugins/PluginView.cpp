@@ -1227,9 +1227,9 @@ SelectionWasFlipped PluginView::moveSelectionEndpoint(FloatPoint pointInRootView
     return m_plugin->moveSelectionEndpoint(pointInRootView, endpoint);
 }
 
-SelectionEndpoint PluginView::extendInitialSelection(FloatPoint pointInRootView, TextGranularity granularity)
+SelectionEndpoint PluginView::extendInitialSelection(FloatPoint pointInRootView, TextGranularity granularity, SelectionExtentAnchor anchor)
 {
-    return m_plugin->extendInitialSelection(pointInRootView, granularity);
+    return m_plugin->extendInitialSelection(pointInRootView, granularity, anchor);
 }
 
 #if PLATFORM(IOS_FAMILY)

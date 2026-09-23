@@ -61,6 +61,7 @@ NS_SWIFT_UI_ACTOR
 - (void)dragSelectionWithGesture:(NSGestureRecognizer *)gesture completionHandler:(void(^)(NSDraggingSession *))completionHandler;
 
 - (void)beginRangeSelectionAtPoint:(NSPoint)point withGranularity:(NSTextSelectionGranularity)granularity;
+- (void)beginRangeSelectionAtPoint:(NSPoint)point withGranularity:(NSTextSelectionGranularity)granularity modifiers:(NSEventModifierFlags)flags;
 - (void)continueRangeSelectionAtPoint:(NSPoint)point;
 - (void)endRangeSelectionAtPoint:(NSPoint)point;
 
