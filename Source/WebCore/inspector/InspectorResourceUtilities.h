@@ -31,6 +31,7 @@
 #include <WebCore/InspectorResourceType.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
+#include <cstdint>
 #include <tuple>
 #include <wtf/Compiler.h>
 #include <wtf/CompletionHandler.h>
@@ -44,6 +45,7 @@ namespace WebCore {
 class DocumentLoader;
 class FragmentedSharedBuffer;
 class HTTPHeaderMap;
+class InstrumentingAgents;
 class LocalFrame;
 class NetworkLoadMetrics;
 class Page;
@@ -106,6 +108,60 @@ struct SearchResult {
 // on failure.
 using LoadResourceCompletionHandler = CompletionHandler<void(std::expected<std::tuple<String /* content */, String /* mimeType */, int /* status */>, String /* error */>&&)>;
 
+enum class InitiatorType : uint8_t {
+    Parser,
+    Script,
+    Other,
+};
+
+// Plain, IPC-serializable mirror of Protocol::Console::CallFrame.
+struct InitiatorCallFrame {
+    String functionName;
+    String sourceURL;
+    uint32_t sourceID { 0 }; // A JSC::SourceID; the protocol reports it as a Debugger.ScriptId string.
+    unsigned lineNumber { 0 };
+    unsigned columnNumber { 0 };
+};
+
+// One level of a captured JS stack: the synchronous stack itself, or one async parent behind it.
+// Mirrors Protocol::Console::StackTrace without its parent link.
+struct InitiatorStackTraceLevel {
+    Vector<InitiatorCallFrame> callFrames;
+    bool truncated { false };
+
+    // Marks an async boundary frame. Set only on async parent levels, never on the synchronous top
+    // level, mirroring AsyncStackTrace::buildInspectorObject.
+    bool topCallFrameIsBoundary { false };
+};
+
+// Plain, IPC-serializable mirror of Protocol::Network::Initiator, describing what caused a load.
+struct InitiatorData {
+    // Cap on stackTrace, enforced while decoding the IPC message. A real capture never comes close:
+    // the debugger truncates the async parent chain to its configured depth (see
+    // AsyncStackTrace::willDispatchAsyncCall), so only a synthesized chain can exceed this.
+    static constexpr size_t maxStackTraceLevels = 1024;
+
+    InitiatorType type { InitiatorType::Other };
+
+    // Set only for InitiatorType::Script. Element 0 is the synchronous stack and each later element
+    // is the async parent of the one before it. Flat rather than a linked list so that decoding,
+    // destruction, and protocol-object construction all stay iterative; a linked list makes each of
+    // those recurse once per level, which a WebContent process could drive deep enough to exhaust
+    // the UIProcess stack.
+    Vector<InitiatorStackTraceLevel> stackTrace;
+
+    // Set only for InitiatorType::Parser.
+    String parserURL;
+    std::optional<int> parserLineNumber;
+
+    // May accompany any type.
+    std::optional<int> nodeId;
+
+    // False when the load could not be attributed to anything, which lets a caller substitute its
+    // own last-resort initiator before settling for a bare "other".
+    bool isAttributed() const { return type != InitiatorType::Other || nodeId.has_value(); }
+};
+
 namespace ResourceUtilities {
 
 WEBCORE_EXPORT bool sharedBufferContent(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& textEncodingName, bool withBase64Encode, String* result);
@@ -140,6 +196,20 @@ WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(
 // monotonicToProtocolSeconds to express them in whichever timebase its target reports on. The
 // remaining fields are milliseconds relative to fetchStart and need no conversion.
 WEBCORE_EXPORT Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const WebCore::NetworkLoadMetrics&, MonotonicTime loadStartTime, NOESCAPE const Function<double(MonotonicTime)>& monotonicToProtocolSeconds);
+
+// Captures what caused the load being started right now. Must be called synchronously from the
+// load-initiating instrumentation hook, since it reads the live JS stack to decide whether a script
+// is responsible.
+//
+// A node identifier is reported only when a page-target DOM agent is registered, because that agent
+// mints the identifiers the frontend resolves. A process hosting only cross-origin iframes has none
+// — those nodes belong to a per-target FrameDOMAgent — so reporting an id here could match it
+// against an unrelated node in another target.
+// FIXME: <https://webkit.org/b/324595> Report identifiers minted by the frame target's
+// FrameDOMAgent, so that a node in an out-of-process frame can be named here.
+WEBCORE_EXPORT InitiatorData copyInitiatorData(WebCore::Document*, const WebCore::ResourceRequest*, const WebCore::InstrumentingAgents&);
+
+WEBCORE_EXPORT Ref<Inspector::Protocol::Network::Initiator> buildInitiatorObject(const InitiatorData&);
 
 // Loads url in the given context on behalf of the inspector, bypassing cross-origin checks (Network.loadResource).
 WEBCORE_EXPORT void loadResource(WebCore::ScriptExecutionContext&, const String& url, LoadResourceCompletionHandler&&);

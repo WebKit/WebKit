@@ -1,0 +1,19 @@
+Test that Network initiator information (script stack traces and parser URLs) reaches the frontend for loads in a cross-origin iframe under Site Isolation.
+
+
+
+== Running test suite: SiteIsolation.Network.Initiator
+-- Running test case: SiteIsolation.Network.Initiator.CrossOriginIFrame.Script
+PASS: Resource should have an initiator stack trace.
+PASS: Initiator stack should name the function that called fetch.
+
+-- Running test case: SiteIsolation.Network.Initiator.CrossOriginIFrame.AsyncScript
+PASS: Resource should have an initiator stack trace.
+PASS: Initiator stack should carry its async parent stack trace across IPC.
+PASS: Async parent stack should name the function that scheduled the fetch.
+
+-- Running test case: SiteIsolation.Network.Initiator.CrossOriginIFrame.Parser
+PASS: Should have found the parser-initiated stylesheet.
+PASS: A parser-initiated load should have no script stack.
+PASS: A parser initiator should resolve to a source code location.
+

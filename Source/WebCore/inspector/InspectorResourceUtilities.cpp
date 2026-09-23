@@ -38,6 +38,8 @@
 #include "HTTPHeaderMap.h"
 #include "InspectorResourceType.h"
 #include "InspectorThreadableLoaderClient.h"
+#include "InstrumentingAgents.h"
+#include "JSExecState.h"
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "MIMETypeRegistry.h"
@@ -47,12 +49,19 @@
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
+#include "ScriptableDocumentParser.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoader.h"
+#include <JavaScriptCore/AsyncStackTrace.h>
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <limits>
+#include <ranges>
+#include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 
 namespace Inspector {
@@ -563,6 +572,150 @@ Ref<Inspector::Protocol::Network::ResourceTiming> buildObjectForTiming(const Net
         .setResponseStart(millisecondsSinceFetchStart(timing.responseStart))
         .setResponseEnd(millisecondsSinceFetchStart(timing.responseEnd))
         .release();
+}
+
+static Vector<InitiatorCallFrame> copyCallFrames(const ScriptCallStack& callStack)
+{
+    Vector<InitiatorCallFrame> callFrames;
+    callFrames.reserveInitialCapacity(callStack.size());
+    for (size_t i = 0; i < callStack.size(); ++i) {
+        auto& frame = callStack.at(i);
+        callFrames.append({ frame.functionName(), frame.sourceURL(), frame.sourceID(), frame.lineNumber(), frame.columnNumber() });
+    }
+    return callFrames;
+}
+
+// Mirror of AsyncStackTrace::buildInspectorObject, producing the plain, serializable form of the
+// async parent chain. Stops at InitiatorData::maxStackTraceLevels so the producer never builds a
+// chain the IPC decoder would reject.
+static void appendAsyncStackTraceLevels(const AsyncStackTrace* asyncStackTrace, Vector<InitiatorStackTraceLevel>& levels)
+{
+    for (RefPtr<const AsyncStackTrace> level = asyncStackTrace; level; level = level->parentStackTrace()) {
+        bool truncated = level->truncated();
+        bool topCallFrameIsBoundary = level->topCallFrameIsBoundary();
+
+        // Skip async stack traces that only contain the boundary frame.
+        if (topCallFrameIsBoundary && !truncated && level->size() == 1)
+            continue;
+
+        if (levels.size() >= InitiatorData::maxStackTraceLevels)
+            return;
+
+        Vector<InitiatorCallFrame> callFrames;
+        callFrames.reserveInitialCapacity(level->size());
+        for (size_t i = 0; i < level->size(); ++i) {
+            auto& frame = level->at(i);
+            callFrames.append({ frame.functionName(), frame.sourceURL(), frame.sourceID(), frame.lineNumber(), frame.columnNumber() });
+        }
+
+        levels.append({ WTF::move(callFrames), truncated, topCallFrameIsBoundary });
+    }
+}
+
+InitiatorData copyInitiatorData(Document* document, const ResourceRequest* resourceRequest, const InstrumentingAgents& instrumentingAgents)
+{
+    InitiatorData data;
+
+    // FIXME: <https://webkit.org/b/324596> Worker support. The JS stack below can only be read on
+    // the main thread, so a load started from a worker is reported as unattributed.
+    if (!isMainThread())
+        return data;
+
+    Ref<ScriptCallStack> stackTrace = createScriptCallStack(JSExecState::currentState());
+    if (stackTrace->size() > 0) {
+        data.type = InitiatorType::Script;
+        // topCallFrameIsBoundary stays false for the synchronous top level; only the async parent
+        // levels mark it, matching ScriptCallStack::buildInspectorObject.
+        data.stackTrace.append({ copyCallFrames(stackTrace), stackTrace->truncated(), false });
+        appendAsyncStackTraceLevels(stackTrace->parentStackTrace().get(), data.stackTrace);
+    } else if (document && document->scriptableDocumentParser()) {
+        data.type = InitiatorType::Parser;
+        data.parserURL = document->url().string();
+        data.parserLineNumber = protect(document->scriptableDocumentParser())->textPosition().m_line.oneBasedInt();
+    }
+
+    if (resourceRequest && instrumentingAgents.persistentDOMAgent())
+        data.nodeId = resourceRequest->inspectorInitiatorNodeIdentifier();
+
+    return data;
+}
+
+static Inspector::Protocol::Network::Initiator::Type NODELETE toProtocol(InitiatorType type)
+{
+    switch (type) {
+    case InitiatorType::Parser:
+        return Inspector::Protocol::Network::Initiator::Type::Parser;
+    case InitiatorType::Script:
+        return Inspector::Protocol::Network::Initiator::Type::Script;
+    case InitiatorType::Other:
+        return Inspector::Protocol::Network::Initiator::Type::Other;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Inspector::Protocol::Network::Initiator::Type::Other;
+}
+
+// Reconstructs Protocol::Console::StackTrace and its async parent chain, mirroring both
+// ScriptCallStack::buildInspectorObject (level 0) and AsyncStackTrace::buildInspectorObject (the
+// parent levels). Walks from the deepest level back to level 0, since a level's protocol object can
+// only be attached once its parent's has been built.
+static Ref<Inspector::Protocol::Console::StackTrace> buildStackTraceObject(const Vector<InitiatorStackTraceLevel>& levels)
+{
+    ASSERT(!levels.isEmpty());
+
+    RefPtr<Inspector::Protocol::Console::StackTrace> parentStackTraceObject;
+    for (auto& level : levels | std::views::reverse) {
+        auto callFrames = JSON::ArrayOf<Inspector::Protocol::Console::CallFrame>::create();
+        for (auto& frame : level.callFrames) {
+            callFrames->addItem(Inspector::Protocol::Console::CallFrame::create()
+                .setFunctionName(frame.functionName)
+                .setUrl(frame.sourceURL)
+                .setScriptId(String::number(frame.sourceID))
+                .setLineNumber(frame.lineNumber)
+                .setColumnNumber(frame.columnNumber)
+                .release());
+        }
+
+        auto stackTraceObject = Inspector::Protocol::Console::StackTrace::create()
+            .setCallFrames(WTF::move(callFrames))
+            .release();
+        if (level.truncated)
+            stackTraceObject->setTruncated(true);
+        if (level.topCallFrameIsBoundary)
+            stackTraceObject->setTopCallFrameIsBoundary(true);
+        if (parentStackTraceObject)
+            stackTraceObject->setParentStackTrace(parentStackTraceObject.releaseNonNull());
+
+        parentStackTraceObject = WTF::move(stackTraceObject);
+    }
+
+    return parentStackTraceObject.releaseNonNull();
+}
+
+Ref<Inspector::Protocol::Network::Initiator> buildInitiatorObject(const InitiatorData& data)
+{
+    auto initiatorObject = Inspector::Protocol::Network::Initiator::create()
+        .setType(toProtocol(data.type))
+        .release();
+
+    switch (data.type) {
+    case InitiatorType::Script:
+        if (!data.stackTrace.isEmpty())
+            initiatorObject->setStackTrace(buildStackTraceObject(data.stackTrace));
+        break;
+    case InitiatorType::Parser:
+        initiatorObject->setUrl(data.parserURL);
+        if (data.parserLineNumber)
+            initiatorObject->setLineNumber(*data.parserLineNumber);
+        break;
+    case InitiatorType::Other:
+        break;
+    }
+
+    if (data.nodeId)
+        initiatorObject->setNodeId(*data.nodeId);
+
+    return initiatorObject;
 }
 
 } // namespace ResourceUtilities
