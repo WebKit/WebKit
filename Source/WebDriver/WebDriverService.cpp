@@ -381,6 +381,8 @@ bool WebDriverService::findCommand(HTTPMethod method, const String& path, Comman
 void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler)
 {
     Function<void (HTTPRequestHandler::Response&&)> actualReplyHandler = WTF::move(replyHandler);
+
+#if !RELEASE_LOG_DISABLED
     if (LOG_CHANNEL(WebDriverClassic).state != WTFLogChannelState::Off) {
         RELEASE_LOG_INFO(WebDriverClassic, "HTTP request %s %s (body=%zu bytes)", request.method.utf8(), request.path.utf8(), request.dataLength);
         actualReplyHandler = [startTime = MonotonicTime::now(), replyHandler = WTF::move(actualReplyHandler)](HTTPRequestHandler::Response&& response) mutable {
@@ -388,6 +390,7 @@ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Func
             replyHandler(WTF::move(response));
         };
     }
+#endif
 
     auto method = toCommandHTTPMethod(request.method);
     if (!method) {
