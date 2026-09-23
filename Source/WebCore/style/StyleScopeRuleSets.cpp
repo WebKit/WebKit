@@ -339,6 +339,70 @@ static OptionSet<HasArgumentProperty> hasArgumentProperties(const CSSSelectorLis
     return info.properties();
 }
 
+static Vector<InvalidationRuleSet> buildInvalidationRuleSets(const RuleFeatureVector& features)
+{
+    struct RuleSetKey {
+        MatchElement matchElement;
+        IsNegation isNegation;
+        const CSSSelectorList* invalidationSelector { nullptr };
+        const CSSSelectorList* scopeSelector { nullptr };
+
+        unsigned hash() const
+        {
+            Hasher hasher;
+            add(hasher, matchElement.relation, matchElement.hasRelation, isNegation);
+            if (invalidationSelector)
+                add(hasher, *invalidationSelector);
+            if (scopeSelector)
+                add(hasher, *scopeSelector);
+            return hasher.hash();
+        }
+        bool operator==(const RuleSetKey& other) const
+        {
+            return matchElement == other.matchElement
+                && isNegation == other.isNegation
+                && arePointingToEqualData(invalidationSelector, other.invalidationSelector)
+                && arePointingToEqualData(scopeSelector, other.scopeSelector);
+        }
+    };
+
+    HashMap<GenericHashKey<RuleSetKey>, RefPtr<RuleSet>> ruleSetMap;
+
+    for (auto& feature : features) {
+        auto key = GenericHashKey<RuleSetKey> { { feature.matchElement, feature.isNegation, &feature.invalidationSelector, &feature.scopeSelector } };
+
+        auto& ruleSet = ruleSetMap.ensure(key, [] {
+            return RuleSet::create();
+        }).iterator->value;
+
+        ruleSet->addRule(protect(*feature.styleRule), feature.selectorIndex, feature.selectorListIndex);
+    }
+
+    return WTF::map(ruleSetMap, [](auto& entry) {
+        auto& key = entry.key.key();
+        entry.value->shrinkToFit();
+        auto invalidationSelector = [&] {
+            if (!key.invalidationSelector->isEmpty() && !key.scopeSelector->isEmpty())
+                return CSSSelectorParser::makeHasArgumentWithScope(key.invalidationSelector->first(), key.scopeSelector->first());
+            if (!key.invalidationSelector->isEmpty())
+                return CSSSelectorList { *key.invalidationSelector };
+            return CSSSelectorList { };
+        }();
+        // Null scopeSelector means scope-breaking; otherwise wrap a copy so it outlives this cache.
+        RefPtr<const RefCountedCSSSelectorList> scopeSelector;
+        if (!key.scopeSelector->isEmpty())
+            scopeSelector = RefCountedCSSSelectorList::create(CSSSelectorList { *key.scopeSelector });
+        return InvalidationRuleSet {
+            WTF::move(entry.value),
+            WTF::move(invalidationSelector),
+            key.matchElement,
+            key.isNegation,
+            hasArgumentProperties(*key.invalidationSelector),
+            WTF::move(scopeSelector)
+        };
+    });
+}
+
 template<typename KeyType, typename Hash, typename HashTraits>
 static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& key, HashMap<KeyType, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const HashMap<KeyType, std::unique_ptr<RuleFeatureVector>, Hash, HashTraits>& ruleFeatures)
 {
@@ -347,66 +411,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         if (!features)
             return nullptr;
 
-        struct RuleSetKey {
-            MatchElement matchElement;
-            IsNegation isNegation;
-            const CSSSelectorList* invalidationSelector { nullptr };
-            const CSSSelectorList* scopeSelector { nullptr };
-
-            unsigned hash() const
-            {
-                Hasher hasher;
-                add(hasher, matchElement.relation, matchElement.hasRelation, isNegation);
-                if (invalidationSelector)
-                    add(hasher, *invalidationSelector);
-                if (scopeSelector)
-                    add(hasher, *scopeSelector);
-                return hasher.hash();
-            }
-            bool operator==(const RuleSetKey& other) const
-            {
-                return matchElement == other.matchElement
-                    && isNegation == other.isNegation
-                    && arePointingToEqualData(invalidationSelector, other.invalidationSelector)
-                    && arePointingToEqualData(scopeSelector, other.scopeSelector);
-            }
-        };
-
-        HashMap<GenericHashKey<RuleSetKey>, RefPtr<RuleSet>> ruleSetMap;
-
-        for (auto& feature : *features) {
-            auto key = GenericHashKey<RuleSetKey> { { feature.matchElement, feature.isNegation, &feature.invalidationSelector, &feature.scopeSelector } };
-
-            auto& ruleSet = ruleSetMap.ensure(key, [] {
-                return RuleSet::create();
-            }).iterator->value;
-
-            ruleSet->addRule(protect(*feature.styleRule), feature.selectorIndex, feature.selectorListIndex);
-        }
-
-        return makeUnique<Vector<InvalidationRuleSet>>(WTF::map(ruleSetMap, [](auto& entry) {
-            auto& key = entry.key.key();
-            entry.value->shrinkToFit();
-            auto invalidationSelector = [&] {
-                if (!key.invalidationSelector->isEmpty() && !key.scopeSelector->isEmpty())
-                    return CSSSelectorParser::makeHasArgumentWithScope(key.invalidationSelector->first(), key.scopeSelector->first());
-                if (!key.invalidationSelector->isEmpty())
-                    return CSSSelectorList { *key.invalidationSelector };
-                return CSSSelectorList { };
-            }();
-            // Null scopeSelector means scope-breaking; otherwise wrap a copy so it outlives this cache.
-            RefPtr<const RefCountedCSSSelectorList> scopeSelector;
-            if (!key.scopeSelector->isEmpty())
-                scopeSelector = RefCountedCSSSelectorList::create(CSSSelectorList { *key.scopeSelector });
-            return InvalidationRuleSet {
-                WTF::move(entry.value),
-                WTF::move(invalidationSelector),
-                key.matchElement,
-                key.isNegation,
-                hasArgumentProperties(*key.invalidationSelector),
-                WTF::move(scopeSelector)
-            };
-        }));
+        return makeUnique<Vector<InvalidationRuleSet>>(buildInvalidationRuleSets(*features));
     }).iterator->value.get();
 }
 
