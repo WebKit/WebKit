@@ -43,8 +43,8 @@ class GridItemPlacer {
 public:
     GridItemPlacer(GridAutoFlowOptions);
 
-    // Places every item into the given implicit grid, growing it as needed.
-    GridItemPlacementResult placeItems(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const;
+    // Runs the grid item placement algorithm over the grid's in-flow children.
+    GridItemPlacementResult placeItems(const LogicalGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount) const;
 
 private:
     const GridAutoFlowOptions m_autoFlowOptions;

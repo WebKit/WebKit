@@ -45,7 +45,6 @@ class UnplacedGridItem;
 
 struct GridAreaLines;
 struct GridLayoutConstraints;
-struct UnplacedGridItems;
 
 enum class PackingStrategy : bool {
     Sparse,
@@ -138,8 +137,6 @@ public:
     }
 
 private:
-    UnplacedGridItems constructUnplacedGridItems(const LogicalGridItems&, LeadingImplicitTracks) const;
-
     IntrinsicWidthSizingPath classifyIntrinsicWidthSizingPath() const;
 
     const LayoutState& layoutState() const LIFETIME_BOUND { return m_globalLayoutState; }
