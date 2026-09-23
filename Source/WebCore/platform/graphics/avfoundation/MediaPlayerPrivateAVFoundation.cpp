@@ -546,6 +546,12 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                         // or we are supposed to prepare for playback immediately, so create the player item now.
                         newNetworkState = MediaPlayer::NetworkState::Loading;
                         prepareToPlay();
+                    } else if (shouldCreatePlayerAndPlayerItemForPreload()) {
+                        // Not prepareToPlay(): it raises m_preload to Auto, losing the Preload::MetaData value that
+                        // this arm and the read-ahead bound in MediaElementSession both key on.
+                        newNetworkState = MediaPlayer::NetworkState::Loading;
+                        createAVPlayerItem();
+                        createAVPlayer();
                     } else
                         newNetworkState = MediaPlayer::NetworkState::Idle;
                 }
@@ -758,6 +764,25 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
     return MediaPlayer::MovieLoadType::Download;
 }
 
+bool MediaPlayerPrivateAVFoundation::shouldCreatePlayerAndPlayerItemForPreload() const
+{
+    if (m_preload == MediaPlayer::Preload::Auto)
+        return true;
+
+    if (m_preload != MediaPlayer::Preload::MetaData)
+        return false;
+
+    // The first frames preload="metadata" allows can only come from a player item, and an audio element has no
+    // frame to show for them.
+    RefPtr player = m_player.get();
+    if (!player || !player->isVideoPlayer())
+        return false;
+
+    // AutoPreloadingNotPermitted lowers Preload::Auto to Preload::MetaData to withhold the load, so only fetch
+    // the first frame when the element itself asked for no more than metadata.
+    return player->effectivePreloadValue() == MediaPlayer::Preload::MetaData;
+}
+
 void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 {
     ALWAYS_LOG(LOGIDENTIFIER, " - ", static_cast<int>(preload));
@@ -770,7 +795,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 
     // Don't force creation of the player and player item unless we already know that the asset is playable. If we aren't
     // there yet, or if we already know it is not playable, creating them now won't help.
-    if (m_preload == MediaPlayer::Preload::Auto && m_assetIsPlayable) {
+    if (shouldCreatePlayerAndPlayerItemForPreload() && m_assetIsPlayable) {
         createAVPlayerItem();
         createAVPlayer();
     }

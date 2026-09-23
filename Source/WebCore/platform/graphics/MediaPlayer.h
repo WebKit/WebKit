@@ -281,6 +281,7 @@ public:
     virtual bool mediaPlayerIsFullscreen() const { return false; }
     virtual bool mediaPlayerIsFullscreenPermitted() const { return false; }
     virtual bool mediaPlayerIsVideo() const { return false; }
+    virtual MediaPlayerEnums::Preload mediaPlayerEffectivePreloadValue() const { return MediaPlayerEnums::Preload::Auto; }
     virtual LayoutRect mediaPlayerContentBoxRect() const { return LayoutRect(); }
     virtual float mediaPlayerContentsScale() const { return 1; }
     virtual bool mediaPlayerPlatformVolumeConfigurationRequired() const { return false; }
@@ -753,6 +754,7 @@ public:
     bool shouldUsePersistentCache() const { return protect(client())->mediaPlayerShouldUsePersistentCache(); }
     String mediaCacheDirectory() const { return protect(client())->mediaPlayerMediaCacheDirectory(); }
     bool isVideoPlayer() const { return protect(client())->mediaPlayerIsVideo(); }
+    Preload effectivePreloadValue() const { return protect(client())->mediaPlayerEffectivePreloadValue(); }
     void mediaEngineUpdated() { protect(client())->mediaPlayerEngineUpdated(); }
     void resourceNotSupported() { protect(client())->mediaPlayerResourceNotSupported(); }
     bool isLooping() const { return protect(client())->mediaPlayerIsLooping(); }

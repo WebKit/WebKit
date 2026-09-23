@@ -147,7 +147,7 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode, WebCore::PlatformDynamicRangeLimit);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, WebCore::MediaPlayerEnums::Preload effectivePreloadValue, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, bool isFullscreen, WebCore::DynamicRangeMode, WebCore::PlatformDynamicRangeLimit);
     void prepareForRendering();
 
     void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
@@ -164,7 +164,7 @@ public:
     void setVolume(double);
     void setMuted(bool);
 
-    void setPreload(WebCore::MediaPlayerEnums::Preload);
+    void setPreload(WebCore::MediaPlayerEnums::Preload preload, WebCore::MediaPlayerEnums::Preload effectivePreloadValue);
     void setPrivateBrowsingMode(bool);
     void setPreservesPitch(bool);
     void setPitchCorrectionAlgorithm(WebCore::MediaPlayer::PitchCorrectionAlgorithm);
@@ -292,6 +292,7 @@ private:
     bool mediaPlayerIsFullscreen() const final;
     bool mediaPlayerIsFullscreenPermitted() const final;
     bool mediaPlayerIsVideo() const final;
+    WebCore::MediaPlayerEnums::Preload mediaPlayerEffectivePreloadValue() const final { return m_effectivePreloadValue; }
     float mediaPlayerContentsScale() const final;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const final;
     WebCore::CachedResourceLoader* mediaPlayerCachedResourceLoader() const final;
@@ -415,6 +416,7 @@ private:
     RefPtr<WebCore::MediaPlayer> m_player;
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
+    WebCore::MediaPlayerEnums::Preload m_effectivePreloadValue { WebCore::MediaPlayerEnums::Preload::Auto };
     Vector<WebCore::ContentType> m_typesRequiringHardwareSupport;
     RunLoop::Timer m_updateCachedStateMessageTimer;
     RemoteMediaPlayerState m_cachedState;

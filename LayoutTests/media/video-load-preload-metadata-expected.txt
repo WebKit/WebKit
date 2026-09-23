@@ -1,10 +1,10 @@
 
-Test that preload="metadata" disables buffering before playback.
+Test that preload="metadata" buffers a first frame before playback.
 
 EXPECTED (video.preload == 'metadata') OK
 EVENT(loadedmetadata)
 EXPECTED (video.readyState < '4') OK
-EXPECTED (video.buffered.length == '0') OK
+EXPECTED (video.buffered.length > '0') OK
 RUN(video.play())
 EVENT(canplaythrough)
 TEST(playbackStarted) OK

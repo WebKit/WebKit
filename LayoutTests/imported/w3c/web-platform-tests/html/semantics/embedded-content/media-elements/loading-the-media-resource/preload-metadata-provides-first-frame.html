@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<meta charset="utf-8">
+<title>preload="metadata" makes a first frame available to paint</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/media.html#attr-media-preload">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/media.js"></script>
+<div id=log></div>
+<video id="metadata-video" preload="metadata"></video>
+<video id="auto-video" preload="auto"></video>
+<script>
+// A <video preload="metadata"> with no poster has nothing to paint unless the
+// element gets past HAVE_METADATA to HAVE_CURRENT_DATA. Settle for 3s (well
+// under the harness timeout) and then assert readyState, so an element that
+// plateaus at HAVE_METADATA gives a clean FAIL instead of a TIMEOUT. The test
+// finishes early as soon as 'loadeddata' fires.
+var SETTLE_MS = 3000;
+
+function assertFrameAvailable(t, v, label) {
+  v.addEventListener('error', t.unreached_func(label + ': media resource failed to load'));
+  v.addEventListener('loadeddata', t.step_func_done(function() {
+    assert_greater_than_equal(v.readyState, v.HAVE_CURRENT_DATA,
+                              label + ': readyState at loadeddata');
+  }));
+  t.step_timeout(function() {
+    assert_greater_than_equal(v.readyState, v.HAVE_CURRENT_DATA,
+                              label + ': readyState after ' + SETTLE_MS + 'ms');
+    t.done();
+  }, SETTLE_MS);
+  v.src = getVideoURI('/media/movie_5');
+}
+
+async_test(function(t) {
+  assertFrameAvailable(t, document.getElementById('metadata-video'), 'preload="metadata"');
+}, 'video with preload="metadata" reaches HAVE_CURRENT_DATA so a first frame can be painted');
+
+async_test(function(t) {
+  assertFrameAvailable(t, document.getElementById('auto-video'), 'preload="auto"');
+}, 'control: video with preload="auto" reaches HAVE_CURRENT_DATA');
+</script>

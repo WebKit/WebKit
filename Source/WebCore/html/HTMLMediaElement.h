@@ -918,6 +918,7 @@ private:
     bool mediaPlayerIsFullscreen() const override;
     bool mediaPlayerIsFullscreenPermitted() const override;
     bool mediaPlayerIsVideo() const override;
+    MediaPlayer::Preload mediaPlayerEffectivePreloadValue() const override { return effectivePreloadValue(); }
     LayoutRect mediaPlayerContentBoxRect() const override;
     float mediaPlayerContentsScale() const override;
     bool mediaPlayerPlatformVolumeConfigurationRequired() const override;

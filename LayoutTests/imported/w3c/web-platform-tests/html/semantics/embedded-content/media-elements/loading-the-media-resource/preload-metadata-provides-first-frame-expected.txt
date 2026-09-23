@@ -1,0 +1,4 @@
+
+PASS video with preload="metadata" reaches HAVE_CURRENT_DATA so a first frame can be painted
+PASS control: video with preload="auto" reaches HAVE_CURRENT_DATA
+

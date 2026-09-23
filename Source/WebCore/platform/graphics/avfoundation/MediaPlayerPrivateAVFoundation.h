@@ -295,6 +295,7 @@ protected:
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(FloatSize);
     bool isLiveStream() const { return duration().isPositiveInfinite(); }
+    bool shouldCreatePlayerAndPlayerItemForPreload() const;
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
 
