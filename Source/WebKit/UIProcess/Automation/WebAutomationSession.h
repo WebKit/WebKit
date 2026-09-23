@@ -45,6 +45,8 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WallTime.h>
@@ -337,6 +339,11 @@ public:
 
     void didDestroyFrame(WebCore::FrameIdentifier);
 
+    // A process swap replaces the main frame's proxy, and the replacement is given a
+    // freshly generated identifier, so references issued under the old one have to be
+    // re-keyed or they read as never having existed.
+    void transferKnownNodeReferences(WebCore::FrameIdentifier oldFrameID, WebCore::FrameIdentifier newFrameID);
+
     RefPtr<WebPageProxy> webPageProxyForHandle(const String&);
     String effectiveHandleForWebFrameProxy(const WebFrameProxy&);
     String handleForWebFrameID(std::optional<WebCore::FrameIdentifier>);
@@ -373,9 +380,12 @@ private:
 
     // IPC::MessageReceiver (Implemented by generated code in WebAutomationSessionMessageReceiver.cpp).
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Called by WebAutomationSession messages.
     void logEntryAdded(const JSC::MessageSource&, const JSC::MessageLevel&, const String& messageText, const JSC::MessageType&, const WallTime&);
+    void addKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle);
+    void isKnownNodeReference(WebCore::FrameIdentifier, const String& nodeHandle, CompletionHandler<void(bool)>&&);
 #if ENABLE(WEBDRIVER_BIDI)
     void scriptRealmCreated(WebCore::FrameIdentifier, RealmIdentifier, IPC::Untrusted<WebCore::SecurityOriginData>&&);
     void scriptRealmDestroyed(WebCore::FrameIdentifier, RealmIdentifier);
@@ -438,6 +448,16 @@ private:
 
     HashMap<WebCore::FrameIdentifier, String> m_webFrameHandleMap;
     HashMap<String, WebCore::FrameIdentifier> m_handleWebFrameMap;
+
+    // The authoritative record of every node reference this session has issued, per
+    // navigable. It lives here rather than in the web process because a
+    // browsing-context-group swap replaces the web process, and a reference minted
+    // before the swap must still be reported stale after it.
+    //
+    // Insertion-ordered so the oldest entries can be dropped once a frame passes
+    // maxKnownNodeReferencesPerFrame. Evicting one costs accuracy, not safety: that
+    // reference reports "no such element" again instead of "stale element reference".
+    HashMap<WebCore::FrameIdentifier, ListHashSet<String>> m_knownNodeReferences;
 
     HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingNormalNavigationInBrowsingContextCallbacksPerPage;
     HashMap<WebPageProxyIdentifier, Vector<Inspector::CommandCallback<void>>> m_pendingEagerNavigationInBrowsingContextCallbacksPerPage;

@@ -6425,6 +6425,16 @@ void WebPageProxy::commitProvisionalPage(IPC::Connection& connection, FrameIdent
 
     RefPtr mainFrameInPreviousProcess = m_mainFrame;
     Ref preferences = m_preferences;
+
+    // The committed main frame has a new FrameIdentifier, so node references issued under the old
+    // one have to be re-keyed or they read as never having existed. This happens at commit rather
+    // than when the provisional page is created because a load that never commits must leave the
+    // previous main frame's references where they are.
+    if (mainFrameInPreviousProcess && mainFrameInPreviousProcess->frameID() != frameID) {
+        if (RefPtr automationSession = m_configuration->processPool().automationSession())
+            automationSession->transferKnownNodeReferences(mainFrameInPreviousProcess->frameID(), frameID);
+    }
+
     std::optional<WebCore::FrameIdentifier> oldMainFrameID;
     if (mainFrameInPreviousProcess && preferences->siteIsolationEnabled()) {
         oldMainFrameID = mainFrameInPreviousProcess->frameID();

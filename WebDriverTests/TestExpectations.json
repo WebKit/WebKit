@@ -685,9 +685,6 @@
 
     "imported/w3c/webdriver/tests/classic/back/back.py": {
         "subtests": {
-            "test_seen_nodes[http]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
             "test_seen_nodes[https]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -717,12 +714,6 @@
 
     "imported/w3c/webdriver/tests/classic/forward/forward.py": {
         "subtests": {
-            "test_basic": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_seen_nodes[http]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
             "test_seen_nodes[https]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -2300,9 +2291,6 @@
 
     "imported/w3c/webdriver/tests/classic/navigate_to/navigate.py": {
         "subtests": {
-            "test_seen_nodes[http]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
             "test_seen_nodes[https coop]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -5603,78 +5591,6 @@
         "subtests": {
             "test_top_level_context_id_equals_window_handle": {
                 "expected": { "all": { "status": ["PASS"]}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/classic/refresh/refresh.py": {
-        "subtests": {
-            "test_history_pushstate": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_no_browsing_context": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_seen_nodes[http]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_seen_nodes[https]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_seen_nodes[https coop]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            }
-        }
-    },
-    "imported/w3c/webdriver/tests/classic/refresh/user_prompts.py": {
-        "subtests": {
-            "test_accept[alert]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_accept[beforeunload]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_accept[confirm]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_accept[prompt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_accept_and_notify[beforeunload-None]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_default[beforeunload-None]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_dismiss[alert]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_dismiss[beforeunload]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_dismiss[confirm]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_dismiss[prompt]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_dismiss_and_notify[beforeunload-None]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_ignore[beforeunload]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            }
-        }
-    },
-    "imported/selenium/py/test/selenium/webdriver/common/stale_reference_tests.py": {
-        "subtests": {
-            "test_old_page": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_should_not_crash_when_calling_get_size_on_an_obsolete_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
-            },
-            "test_should_not_crash_when_querying_the_attribute_of_astale_element": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323692"}}
             }
         }
     }
