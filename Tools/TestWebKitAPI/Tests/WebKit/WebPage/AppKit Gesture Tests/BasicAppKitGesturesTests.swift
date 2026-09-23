@@ -94,6 +94,49 @@ extension AppKitGesturesTests.Basic {
         #expect(actual.map(\.type) == expectedEvents)
     }
 
+    @Test(
+        .bug("https://webkit.org/b/324987")
+    )
+    func singleClickReportsHeldButtonAndPressure() async throws {
+        try await loadHTML()
+
+        try await page.callJavaScript {
+            """
+            window.fieldLog = [];
+            for (const type of ["pointerdown", "mousedown", "pointerup", "mouseup", "click"]) {
+                document.addEventListener(type, event => {
+                    window.fieldLog.push(`${event.type}:${event.buttons}:${event.pressure ?? "-"}:${event.webkitForce}`);
+                });
+            }
+            """
+        }
+
+        let toBounds = try await screenBoundsOfText("to")
+
+        await recap.play { composer in
+            composer._wk_click(at: toBounds.center, for: .seconds(0.05))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let fieldLog = try await page.callJavaScript(returning: [String].self) {
+            """
+            return window.fieldLog;
+            """
+        }
+
+        #expect(
+            fieldLog == [
+                "pointerdown:1:0.5:0",
+                "mousedown:1:-:1",
+                "pointerup:0:0:0",
+                "mouseup:0:-:0",
+                "click:0:0:0",
+            ]
+        )
+    }
+
     @Test
     func singleClickFiresEventsForListenersOnTheDocument() async throws {
         try await loadHTML()
