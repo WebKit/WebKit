@@ -2180,6 +2180,7 @@ ExposeSpeakersEnabled:
   excludeFrom: [ WebKitLegacy ]
   defaultValue:
     "PLATFORM(COCOA)": true
+    "USE(GSTREAMER)": true
     default: false
     WebCore: false
 
@@ -2193,6 +2194,7 @@ ExposeSpeakersWithoutMicrophoneEnabled:
   excludeFrom: [ WebKitLegacy ]
   defaultValue:
     "PLATFORM(COCOA)": true
+    "USE(GSTREAMER)": true
     default: false
     WebCore: false
 
