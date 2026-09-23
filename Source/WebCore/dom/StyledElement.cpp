@@ -43,11 +43,13 @@
 #include "ElementRareData.h"
 #include "HTMLElement.h"
 #include "HTMLParserIdioms.h"
+#include "ImmutableStyleProperties.h"
 #include "InlineStylePropertyMap.h"
 #include "InspectorInstrumentation.h"
 #include "MutableStyleProperties.h"
 #include "SVGElement.h"
 #include "ScriptableDocumentParser.h"
+#include "StylePropertiesInlines.h"
 #include "StylePropertyMap.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -113,7 +115,8 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomString
             styleAttributeChanged(newValue, reason);
         else if (hasPresentationalHintsForAttribute(name)) {
             elementData()->setPresentationalHintStyleIsDirty(true);
-            invalidateStyle();
+            if (presentationalHintChangeInvalidatesStyle(name))
+                invalidateStyle();
         }
     }
 }
@@ -328,6 +331,11 @@ const ImmutableStyleProperties* StyledElement::presentationalHintStyle() const
 
 void StyledElement::rebuildPresentationalHintStyle()
 {
+    if (updatePresentationalHintStyleForChangedProperties()) {
+        elementData()->setPresentationalHintStyleIsDirty(false);
+        return;
+    }
+
     bool isSVG = isSVGElement();
     auto style = MutableStyleProperties::create(isSVG ? SVGAttributeMode : HTMLQuirksMode);
     for (auto& attribute : attributes())
@@ -358,11 +366,40 @@ void StyledElement::rebuildPresentationalHintStyle()
                 return false;
             if (hasNonZeroProperty(CSSPropertyCy))
                 return false;
+            if (style->hasProperty(CSSPropertyD))
+                return false;
         }
         return true;
     }();
 
     elementData->m_presentationalHintStyle = shouldDeduplicate ? style->immutableDeduplicatedCopy() : style->immutableCopy();
+}
+
+bool StyledElement::replacePresentationalHintStyleProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value)
+{
+    if (!elementData())
+        return false;
+
+    RefPtr existingStyle = elementData()->presentationalHintStyle();
+    if (!existingStyle)
+        return false;
+
+    auto index = existingStyle->findPropertyIndex(propertyID);
+    if (index == -1)
+        return false;
+
+    auto propertyCount = existingStyle->propertyCount();
+    Vector<CSSProperty> properties;
+    properties.reserveInitialCapacity(propertyCount);
+    for (unsigned i = 0; i < propertyCount; ++i) {
+        if (i == static_cast<unsigned>(index))
+            properties.append(CSSProperty(propertyID, WTF::move(value)));
+        else
+            properties.append(existingStyle->propertyAt(i).toCSSProperty());
+    }
+
+    ensureUniqueElementData().m_presentationalHintStyle = ImmutableStyleProperties::create(properties.span(), existingStyle->cssParserMode());
+    return true;
 }
 
 void StyledElement::addPropertyToPresentationalHintStyle(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValueID identifier)

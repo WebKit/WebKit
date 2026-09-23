@@ -84,6 +84,12 @@ protected:
 
     virtual bool hasPresentationalHintsForAttribute(const QualifiedName&) const { return false; }
 
+    virtual bool presentationalHintChangeInvalidatesStyle(const QualifiedName&) const { return true; }
+
+    virtual bool updatePresentationalHintStyleForChangedProperties() { return false; }
+
+    bool replacePresentationalHintStyleProperty(CSSPropertyID, Ref<CSSValue>&&);
+
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, CSSValueID identifier);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSUnitType);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, const String& value);

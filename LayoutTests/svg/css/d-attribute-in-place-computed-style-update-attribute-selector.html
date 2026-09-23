@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<title>Attribute selectors on d keep working when d attribute changes update the computed d in place</title>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<style>
+    path[d="M 0 0 H 77"] { stroke-width: 7px; }
+</style>
+<svg width="200" height="200" id="svg">
+    <path id="target" d="M 10 10 H 20" stroke="blue"/>
+</svg>
+<script>
+// An attribute selector on `d` has to see d attribute changes, so those cannot skip style resolution.
+// This lives in its own document since such a selector affects every <path> in it.
+const path = document.getElementById("target");
+
+test(() => {
+    getComputedStyle(path).d;
+    path.setAttribute("d", "M 0 0 H 77");
+    assert_equals(getComputedStyle(path).strokeWidth, "7px", "the attribute selector matches the new value");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 77")');
+    path.setAttribute("d", "M 0 0 H 78");
+    assert_equals(getComputedStyle(path).strokeWidth, "1px", "the attribute selector no longer matches");
+    assert_equals(getComputedStyle(path).d, 'path("M 0 0 H 78")');
+}, "Attribute selectors on d are honored");
+</script>
