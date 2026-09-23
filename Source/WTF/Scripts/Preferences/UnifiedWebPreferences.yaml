@@ -1154,11 +1154,11 @@ CSSSelectorJITCompilerEnabled:
 
 CSSSizeShorthandEnabled:
   type: bool
-  status: preview
+  status: stable
   category: css
   humanReadableName: "CSS size shorthands"
   humanReadableDescription: "Enable the size, min-size and max-size shorthands for the width, height, min-width, min-height, max-width and max-height properties"
-  defaultValue: false
+  defaultValue: true
 
 CSSSymbolsFunctionEnabled:
   type: bool
