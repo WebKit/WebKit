@@ -1,0 +1,46 @@
+Tests CodeMirror CSS tokenization of custom property names and dashes.
+
+
+== Running test suite: CSSTokenizer
+-- Running test case: CSSTokenizer.VariableReference.ASCII
+"var"[variable callee m-css] "("[] "--x"[variable-2 m-css] ")"[]
+PASS: "var(--x)" should contain one variable token.
+PASS: Variable token should be "--x".
+PASS: "--x" should be a variable name.
+
+-- Running test case: CSSTokenizer.VariableReference.NonASCII
+"var"[variable callee m-css] "("[] "--色"[variable-2 m-css] ")"[]
+PASS: "var(--色)" should contain one variable token.
+PASS: Variable token should be "--色".
+PASS: "--色" should be a variable name.
+
+-- Running test case: CSSTokenizer.VariableReference.MixedASCIIAndNonASCII
+"var"[variable callee m-css] "("[] "--色-a_b"[variable-2 m-css] ")"[]
+PASS: "var(--色-a_b)" should contain one variable token.
+PASS: Variable token should be "--色-a_b".
+PASS: "--色-a_b" should be a variable name.
+
+-- Running test case: CSSTokenizer.VariableReference.Emoj
+"var"[variable callee m-css] "("[] "--😀"[variable-2 m-css] ")"[]
+PASS: "var(--😀)" should contain one variable token.
+PASS: Variable token should be "--😀".
+PASS: "--😀" should be a variable name.
+
+-- Running test case: CSSTokenizer.VariableReference.NonASCIIWithFallback
+"var"[variable callee m-css] "("[] "--色"[variable-2 m-css] ","[] " "[] "-4px"[number m-css] ")"[]
+PASS: "var(--色, -4px)" should contain one variable token.
+PASS: Variable token should be "--色".
+PASS: "--色" should be a variable name.
+
+-- Running test case: CSSTokenizer.VariableDefinition.NonASCII
+".a"[qualifier m-css] "{"[] "--色"[variable-2 m-css] ":"[] "red"[keyword m-css] ";"[] "}"[]
+PASS: Variable definition name should be "--色".
+PASS: Value "red" should be tokenized as a keyword.
+
+-- Running test case: CSSTokenizer.Dash
+-2px => "-2px"[number m-css]
+-.5em => "-.5em"[number m-css]
+calc(1px - -3px) => "calc"[variable callee m-css] "("[] "1px"[number m-css] " "[] "-"[] " "[] "-3px"[number m-css] ")"[]
+-webkit-foo => "-webkit-"[meta m-css] "foo"[variable m-css]
+translate(-50%, - 1px) => "translate"[variable callee m-css] "("[] "-50%"[number m-css] ","[] " "[] "-"[] " "[] "1px"[number m-css] ")"[]
+

@@ -361,6 +361,20 @@
         setTimeout(delayedWork, 0);
     }
 
+    // CodeMirror's CSS tokenizer only accepts ASCII word characters in custom property names, which splits a
+    // name like `--色` into `--` and `色`. Per CSS Syntax, code points at or above U+0080 are valid ident code points.
+    function tokenizeCSSDash(stream, state)
+    {
+        // Not a custom property name. Fall back to CodeMirror's default handling in tokenBase() (negative numbers, vendor prefixes, minus).
+        if (!stream.match(/^-[\w\\\-\u0080-\uFFFF]*/))
+            return false;
+
+        return ["variable-2", stream.match(/^\s*:/, false) ? "variable-definition" : "variable"];
+    }
+
+    let cssMIMESpec = CodeMirror.mimeModes["text/css"];
+    cssMIMESpec.tokenHooks = Object.assign({}, cssMIMESpec.tokenHooks, {"-": tokenizeCSSDash});
+
     CodeMirror.extendMode("css", {token: extendedCSSToken});
     CodeMirror.extendMode("xml", {token: extendedXMLToken});
     CodeMirror.extendMode("javascript", {token: extendedJavaScriptToken});
