@@ -585,6 +585,7 @@
     (iokit-property "TelemetryDisable")
     (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
     (iokit-property "IOAVDHEVCDecodeCapabilities") ;; <rdar://problem/71100188>
+    (iokit-property "AVCEncoderChromaFormat") ;; <rdar://188029698>
 )
 
 ;; <rdar://problem/60088861>

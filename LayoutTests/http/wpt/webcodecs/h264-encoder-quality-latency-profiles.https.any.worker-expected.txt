@@ -1,0 +1,6 @@
+
+PASS H.264 Constrained Baseline 4.0 with latencyMode=quality emits output
+PASS H.264 Baseline 4.0 with latencyMode=quality emits output
+PASS H.264 Main 4.0 with latencyMode=quality emits output
+PASS H.264 High 4.0 with latencyMode=quality emits output
+
