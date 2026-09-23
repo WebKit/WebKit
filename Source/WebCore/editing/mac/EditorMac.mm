@@ -75,7 +75,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, OptionSet<PasteOption> 
         return;
 
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
-    client()->setInsertionPasteboard(NSPasteboardNameGeneral);
+    protect(client())->setInsertionPasteboard(NSPasteboardNameGeneral);
 
     bool chosePlainText;
     RefPtr<DocumentFragment> fragment = webContentFromPasteboard(*pasteboard, *range, options.contains(PasteOption::AllowPlainText), chosePlainText);
@@ -108,7 +108,7 @@ void Editor::platformPasteFont()
 {
     Pasteboard pasteboard(PagePasteboardContext::create(document().pageID()), NSPasteboardNameFont);
 
-    client()->setInsertionPasteboard(pasteboard.name());
+    protect(client())->setInsertionPasteboard(pasteboard.name());
 
     RetainPtr<NSData> fontData;
     if (auto buffer = pasteboard.readBuffer(std::nullopt, legacyFontPasteboardTypeSingleton()))
@@ -164,7 +164,7 @@ void Editor::platformPasteFont()
 
     applyStyleToSelection(style.ptr(), EditAction::PasteFont);
 
-    client()->setInsertionPasteboard(String());
+    protect(client())->setInsertionPasteboard(String());
 }
 
 RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
@@ -223,7 +223,7 @@ void Editor::selectionWillChange()
         return;
 
     cancelComposition();
-    client()->canceledComposition();
+    protect(client())->canceledComposition();
 }
 
 String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)

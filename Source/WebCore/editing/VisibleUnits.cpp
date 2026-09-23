@@ -856,7 +856,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         int endOffset = endTextBox.start();
         if (!endTextBox.isLineBreak())
             endOffset += endTextBox.length();
-        pos = Position(endTextNode.releaseNonNull(), convertOffsetInTextFragmentToNodeOffset(endTextBox.renderer(), endOffset));
+        pos = Position(endTextNode.releaseNonNull(), convertOffsetInTextFragmentToNodeOffset(protect(endTextBox.renderer()), endOffset));
     } else
         pos = positionAfterNode(*endNode);
 

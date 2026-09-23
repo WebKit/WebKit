@@ -5,7 +5,6 @@ accessibility/AccessibilityRenderObject.cpp
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 dom/Document.cpp
 dom/Position.cpp
-editing/Editing.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm
 [ macOS ] html/HTMLMediaElement.cpp
 inspector/InspectorOverlay.cpp

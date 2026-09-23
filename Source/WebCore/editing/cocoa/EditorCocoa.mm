@@ -98,7 +98,7 @@ String Editor::selectionInHTMLFormat()
 void Editor::getPasteboardTypesAndDataForAttachment(Element& element, Vector<std::pair<String, RefPtr<SharedBuffer>>>& outTypesAndData)
 {
     auto elementRange = makeRangeSelectingNode(element);
-    client()->getClientPasteboardData(elementRange, outTypesAndData);
+    protect(client())->getClientPasteboardData(elementRange, outTypesAndData);
 
     outTypesAndData.append(std::make_pair(PasteboardCustomData::cocoaType(), PasteboardCustomData { protect(element.document())->originIdentifierForPasteboard(), { } }.createSharedBuffer()));
 
@@ -233,12 +233,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
                 if (content.webArchive && localFrame) {
                     auto selectedSubframeIdentifiers = protect(content.webArchive)->subframeIdentifiers();
                     if (!selectedSubframeIdentifiers.isEmpty() && localFrame->tree().containsRemoteFrame())
-                        remoteFrameContent = client()->collectAttributedStringsForRemoteFrames(localFrame->frameID(), selectedSubframeIdentifiers);
+                        remoteFrameContent = protect(client())->collectAttributedStringsForRemoteFrames(localFrame->frameID(), selectedSubframeIdentifiers);
                 }
             }
             populateRichTextDataIfNeeded(content, document, remoteFrameContent);
         }
-        client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
+        protect(client())->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
     }
 
     if (!document->isTextDocument())
@@ -261,7 +261,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
         populateRichTextDataIfNeeded(webContent, document);
         webContent.dataInHTMLFormat = selectionInHTMLFormat();
     }
-    client()->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
+    protect(client())->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
     pasteboardWriterData.setWebContent(WTF::move(webContent));
@@ -453,7 +453,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
     // FIXME: We can also remove `setInsertionPasteboard` altogether once Mail compose on macOS no longer uses WebKitLegacy,
     // since it's only implemented for WebKitLegacy on macOS, and the only known client is Mail compose.
-    client()->setInsertionPasteboard(NSPasteboardNameGeneral);
+    protect(client())->setInsertionPasteboard(NSPasteboardNameGeneral);
 #endif
 
     bool chosePlainText;
@@ -464,7 +464,7 @@ void Editor::replaceNodeFromPasteboard(Node& node, const String& pasteboardName,
     }
 
 #if PLATFORM(MAC)
-    client()->setInsertionPasteboard({ });
+    protect(client())->setInsertionPasteboard({ });
 #endif
 }
 

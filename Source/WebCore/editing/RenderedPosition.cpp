@@ -224,7 +224,7 @@ Position RenderedPosition::positionAtRightBoundaryOfBiDiRun() const
     ASSERT(atRightBoundaryOfBidiRun());
 
     if (atRightmostOffsetInBox()) {
-        auto offset = convertOffsetInTextFragmentToNodeOffset(*m_renderer, m_offset);
+        auto offset = convertOffsetInTextFragmentToNodeOffset(protect(*m_renderer), m_offset);
         return makeDeprecatedLegacyPosition(protect(m_node.get()).get(), offset);
     }
 
@@ -236,8 +236,8 @@ IntRect RenderedPosition::absoluteRect(CaretRectMode caretRectMode) const
     if (isNull())
         return IntRect();
 
-    IntRect localRect = snappedIntRect(computeLocalCaretRect(*m_renderer, { m_box, m_offset }, caretRectMode));
-    return localRect == IntRect() ? IntRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
+    IntRect localRect = snappedIntRect(computeLocalCaretRect(protect(*m_renderer), { m_box, m_offset }, caretRectMode));
+    return localRect == IntRect() ? IntRect() : protect(m_renderer)->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 std::optional<BoundaryPoint> RenderedPosition::boundaryPoint() const

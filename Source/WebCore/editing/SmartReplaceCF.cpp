@@ -44,7 +44,7 @@ static CFMutableCharacterSetRef getSmartSet(bool isPreviousCharacter)
     if (!smartSet) {
         smartSet = adoptCF(CFCharacterSetCreateMutable(kCFAllocatorDefault));
         CFCharacterSetAddCharactersInString(smartSet.get(), isPreviousCharacter ? CFSTR("([\"\'#$/-`{") : CFSTR(")].,;:?\'!\"%*-/}"));
-        CFCharacterSetUnion(smartSet.get(), CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline));
+        CFCharacterSetUnion(smartSet.get(), protect(CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline)));
 
         // Adding CJK ranges
         CFCharacterSetAddCharactersInRange(smartSet.get(), CFRangeMake(0x1100, 256)); // Hangul Jamo (0x1100 - 0x11FF)
@@ -59,14 +59,14 @@ static CFMutableCharacterSetRef getSmartSet(bool isPreviousCharacter)
         CFCharacterSetAddCharactersInRange(smartSet.get(), CFRangeMake(0x2F800, 0x021E)); // CJK Compatibility Ideographs (0x2F800 - 0x2FA1D)
 
         if (!isPreviousCharacter)
-            CFCharacterSetUnion(smartSet.get(), CFCharacterSetGetPredefined(kCFCharacterSetPunctuation));
+            CFCharacterSetUnion(smartSet.get(), protect(CFCharacterSetGetPredefined(kCFCharacterSetPunctuation)));
     }
     return smartSet.get();
 }
 
 bool isCharacterSmartReplaceExempt(char32_t c, bool isPreviousCharacter)
 {
-    return CFCharacterSetIsLongCharacterMember(getSmartSet(isPreviousCharacter), c);
+    return CFCharacterSetIsLongCharacterMember(protect(getSmartSet(isPreviousCharacter)), c);
 }
 
 }

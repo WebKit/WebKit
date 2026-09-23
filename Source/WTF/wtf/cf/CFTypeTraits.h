@@ -64,6 +64,7 @@ struct WTF::CFTypeTrait<MutableClassName##Ref> { \
 // Standard CF type specializations.
 WTF_DECLARE_CF_TYPE_TRAIT(CFArray);
 WTF_DECLARE_CF_TYPE_TRAIT(CFBoolean);
+WTF_DECLARE_CF_TYPE_TRAIT(CFCharacterSet);
 WTF_DECLARE_CF_TYPE_TRAIT(CFData);
 WTF_DECLARE_CF_TYPE_TRAIT(CFDictionary);
 WTF_DECLARE_CF_TYPE_TRAIT(CFError);
@@ -76,6 +77,7 @@ WTF_DECLARE_CF_TYPE_TRAIT(CFURL);
 
 // Mutable CF type specializations.
 WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFArray, CFMutableArray);
+WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFCharacterSet, CFMutableCharacterSet);
 WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFData, CFMutableData);
 WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFDictionary, CFMutableDictionary);
 WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT(CFString, CFMutableString);

@@ -277,7 +277,7 @@ void EditCommandComposition::unapply(AddToUndoStack addToUndoStack)
     editor->unappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
-        m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
+        m_replacedText.postTextStateChangeNotificationForUnapply(protect(m_document->existingAXObjectCache()));
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document->selection().isNone() || m_document->selection().isConnectedToDocument());
 }
@@ -315,7 +315,7 @@ void EditCommandComposition::reapply()
     editor->reappliedEditing(*this);
 
     if (AXObjectCache::accessibilityEnabled())
-        m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
+        m_replacedText.postTextStateChangeNotificationForReapply(protect(m_document->existingAXObjectCache()));
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document->selection().isNone() || m_document->selection().isConnectedToDocument());
 }
@@ -832,7 +832,7 @@ static Vector<RenderedDocumentMarker> copyMarkers(const Vector<WeakPtr<RenderedD
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsigned offset, unsigned count, const String& replacementText)
 {
     auto range = SimpleRange { { node, offset }, { node, offset + count } };
-    auto markers = copyMarkers(document().markers().markersInRange(range, DocumentMarker::allMarkers()));
+    auto markers = copyMarkers(protect(document().markers())->markersInRange(range, DocumentMarker::allMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
     range.end.offset = range.start.offset + replacementText.length();
     for (auto& marker : markers)
@@ -1260,7 +1260,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
         if (upstreamStart.deprecatedNode() == editableRootForPosition(upstreamStart)) {
             // If the block is the root editable element and it contains no visible content, create a new
             // block but don't try and move content into it, since there's nothing for moveParagraphs to move.
-            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(downcast<RenderElement>(*upstreamStart.deprecatedNode()->renderer())))
+            if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(protect(downcast<RenderElement>(*upstreamStart.deprecatedNode()->renderer()))))
                 return insertNewDefaultParagraphElementAt(upstreamStart);
         } else if (upstreamEnd.deprecatedNode() && isBlock(*upstreamEnd.deprecatedNode())) {
             if (!upstreamEnd.deprecatedNode()->isDescendantOf(upstreamStart.deprecatedNode())) {

@@ -320,8 +320,8 @@ static std::optional<TextManipulationTokenInfo> tokenInfo(Node* node)
             result.roleAttribute = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
         if (RefPtr frame = node->document().frame(); frame && frame->view() && element->renderer()) {
             // FIXME: This doesn't account for overflow clip.
-            auto elementRect = element->renderer()->absoluteAnchorRect();
-            auto visibleContentRect = frame->view()->visibleContentRect();
+            auto elementRect = protect(element->renderer())->absoluteAnchorRect();
+            auto visibleContentRect = protect(frame->view())->visibleContentRect();
             result.isVisible = visibleContentRect.intersects(enclosingIntRect(elementRect));
         }
     }
@@ -403,7 +403,7 @@ bool TextManipulationController::shouldExcludeNodeBasedOnStyle(const Node& node)
     if (!style)
         return false;
 
-    Ref font = style->fontCascade().primaryFont();
+    Ref font = protect(style->fontCascade())->primaryFont();
     auto familyName = font->platformData().familyName();
     if (familyName.isEmpty())
         return false;
@@ -605,7 +605,7 @@ void TextManipulationController::scheduleObservationUpdate()
 
     m_didScheduleObservationUpdate = true;
 
-    protect(m_document)->eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
+    protect(protect(m_document)->eventLoop())->queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }] {
         CheckedPtr controller = weakThis.get();
         if (!controller)
             return;

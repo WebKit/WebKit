@@ -50,7 +50,7 @@ void TextInsertionBaseCommand::applyTextInsertionCommand(LocalFrame* frame, Text
     command.apply();
     if (changeSelection) {
         command.setEndingSelection(endingSelection);
-        frame->selection().setSelection(endingSelection);
+        protect(frame->selection())->setSelection(endingSelection);
     }
 }
 

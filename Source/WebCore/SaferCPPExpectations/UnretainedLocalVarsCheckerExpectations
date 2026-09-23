@@ -14,8 +14,7 @@ bridge/objc/objc_runtime.mm
 bridge/objc/objc_utility.mm
 crypto/cocoa/SerializedCryptoKeyWrapCocoa.mm
 [ iOS ] editing/cocoa/DataDetection.mm
-editing/cocoa/EditingHTMLConverter.mm
-editing/cocoa/NodeHTMLConverter.mm
+[ macOS ] editing/cocoa/EditingHTMLConverter.mm
 loader/archive/cf/LegacyWebArchive.cpp
 [ iOS ] page/ios/EventHandlerIOS.mm
 [ Mac ] page/mac/EventHandlerMac.mm
@@ -51,8 +50,8 @@ platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 [ Mac ] platform/graphics/mac/controls/ImageControlsButtonMac.mm
 [ Mac ] platform/graphics/mac/controls/ProgressBarMac.mm
 [ Mac ] platform/graphics/mac/controls/SliderTrackMac.mm
-[ Mac ] platform/graphics/mac/controls/SwitchMacUtilities.mm
 [ Mac ] platform/graphics/mac/controls/SwitchMac.mm
+[ Mac ] platform/graphics/mac/controls/SwitchMacUtilities.mm
 [ iOS ] platform/ios/DragImageIOS.mm
 [ iOS ] platform/ios/LegacyTileCache.mm
 [ iOS ] platform/ios/LegacyTileGrid.mm
@@ -81,10 +80,10 @@ platform/libwebrtc/LibWebRTCVPXVideoDecoder.cpp
 platform/mediastream/cocoa/AVVideoCaptureSource.mm
 platform/mediastream/cocoa/CoreAudioCaptureUnit.mm
 platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
-[ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/network/cocoa/ResourceErrorCocoa.mm
 platform/network/cocoa/ResourceHandleCocoa.mm
 platform/network/cocoa/WebCoreResourceHandleAsOperationQueueDelegate.mm
+[ iOS ] platform/network/ios/WebCoreURLResponseIOS.mm
 [ iOS ] platform/text/cocoa/TextBoundaries.mm
 rendering/AttachmentLayout.mm
 [ iOS ] rendering/ios/RenderThemeIOS.mm

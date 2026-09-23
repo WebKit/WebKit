@@ -79,27 +79,10 @@ dom/TreeScope.cpp
 dom/TreeScopeOrderedMap.cpp
 dom/TypedElementDescendantIteratorInlines.h
 dom/ViewTransition.cpp
-editing/CompositeEditCommand.cpp
-editing/DeleteSelectionCommand.cpp
-editing/Editor.cpp
-editing/EditorCommand.cpp
-editing/FrameSelection.cpp
-editing/InsertIntoTextNodeCommand.cpp
-editing/MarkupAccumulator.cpp
-editing/RenderedPosition.cpp
-editing/ReplaceSelectionCommand.cpp
-editing/SimplifyMarkupCommand.cpp
-editing/TextInsertionBaseCommand.cpp
-editing/TextManipulationController.cpp
-editing/TypingCommand.cpp
-editing/VisiblePosition.cpp
-editing/VisibleUnits.cpp
-editing/cocoa/EditorCocoa.mm
-editing/cocoa/NodeHTMLConverter.mm
+[ iOS ] editing/Editor.cpp
+[ iOS ] editing/FrameSelection.cpp
 [ iOS ] editing/cocoa/WebContentReaderCocoa.mm
 [ iOS ] editing/ios/EditorIOS.mm
-[ Mac ] editing/mac/EditorMac.mm
-editing/markup.cpp
 html/CachedHTMLCollection.h
 html/CachedHTMLCollectionInlines.h
 html/CollectionTraversalInlines.h

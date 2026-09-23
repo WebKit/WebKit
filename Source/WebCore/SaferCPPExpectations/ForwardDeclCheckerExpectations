@@ -37,7 +37,6 @@ css/StyleSheetContents.h
 css/values/primitives/CSSPrimitiveData.h
 dom/CustomElementReactionQueue.h
 dom/ElementInlinesLight.h
-editing/Editor.h
 html/HTMLMediaElement.cpp
 html/canvas/PlaceholderRenderingContext.cpp
 layout/formattingContexts/inline/InlineFormattingContext.h

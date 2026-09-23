@@ -563,7 +563,7 @@ void TypingCommand::insertTextAndNotifyAccessibility(const String& text, bool se
 
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertText(text, selectInsertedText);
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, text, document().selection().selection());
+    replacedText.postTextStateChangeNotification(protect(document().existingAXObjectCache()), AXTextEditType::Typing, text, document().selection().selection());
     protect(composition())->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -602,7 +602,7 @@ void TypingCommand::insertLineBreakAndNotifyAccessibility()
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertLineBreak();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(protect(document().existingAXObjectCache()), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protect(composition())->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -622,7 +622,7 @@ void TypingCommand::insertParagraphSeparatorAndNotifyAccessibility()
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertParagraphSeparator();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(protect(document().existingAXObjectCache()), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protect(composition())->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 
@@ -646,7 +646,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContentAndNotifyAccessibilit
 {
     AccessibilityReplacedText replacedText(document().selection().selection());
     insertParagraphSeparatorInQuotedContent();
-    replacedText.postTextStateChangeNotification(document().existingAXObjectCache(), AXTextEditType::Typing, "\n"_s, document().selection().selection());
+    replacedText.postTextStateChangeNotification(protect(document().existingAXObjectCache()), AXTextEditType::Typing, "\n"_s, document().selection().selection());
     protect(composition())->setRangeDeletedByUnapply(replacedText.replacedRange());
 }
 

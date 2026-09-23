@@ -30,6 +30,7 @@
 #include <WebCore/EditingBehavior.h>
 #include <WebCore/EditingStyle.h>
 #include <WebCore/EditorInsertAction.h>
+#include <WebCore/EditorInternalCommand.h>
 #include <WebCore/FindOptions.h>
 #include <WebCore/FrameSelection.h>
 #include <WebCore/LocalFrame.h>
@@ -71,7 +72,6 @@ class DocumentMarker;
 class EditCommand;
 class EditCommandComposition;
 class EditorClient;
-class EditorInternalCommand;
 class File;
 class HTMLElement;
 class HTMLImageElement;
