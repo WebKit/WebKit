@@ -128,7 +128,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [externalDelegate respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && !externalDelegateWillRespond)
-        return _internalDelegate.getAutoreleased();
+        return internalDelegate.getAutoreleased();
     if (externalDelegateWillRespond && !internalDelegateWillRespond)
         return externalDelegate.getAutoreleased();
     return nil;
