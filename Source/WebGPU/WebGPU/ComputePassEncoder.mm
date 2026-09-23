@@ -594,7 +594,7 @@ void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
     protect(WebGPU::fromAPI(computePassEncoder))->endPass();
 }
 
-void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)
+void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, WGPUStringView markerLabel)
 {
     protect(WebGPU::fromAPI(computePassEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
@@ -604,7 +604,7 @@ void wgpuComputePassEncoderPopDebugGroup(WGPUComputePassEncoder computePassEncod
     protect(WebGPU::fromAPI(computePassEncoder))->popDebugGroup();
 }
 
-void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, const char* groupLabel)
+void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, WGPUStringView groupLabel)
 {
     protect(WebGPU::fromAPI(computePassEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
@@ -619,7 +619,7 @@ void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder
     protect(WebGPU::fromAPI(computePassEncoder))->setPipeline(protect(WebGPU::fromAPI(pipeline)));
 }
 
-void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, const char* label)
+void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(computePassEncoder))->setLabel(WebGPU::fromAPI(label));
 }

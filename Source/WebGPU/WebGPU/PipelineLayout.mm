@@ -381,7 +381,7 @@ void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
     WebGPU::fromAPI(pipelineLayout).deref();
 }
 
-void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, const char* label)
+void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, WGPUStringView label)
 {
     WebGPU::fromAPI(pipelineLayout).setLabel(WebGPU::fromAPI(label));
 }

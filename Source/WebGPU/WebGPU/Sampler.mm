@@ -192,7 +192,7 @@ static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSampl
     // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
     // "Values must be between 1 and 16, inclusive."
     samplerDescriptor.maxAnisotropy = std::min<uint16_t>(descriptor.maxAnisotropy, 16);
-    samplerDescriptor.label = descriptor.label.createNSString().get();
+    samplerDescriptor.label = fromAPI(descriptor.label).createNSString().get();
 
     return samplerDescriptor;
 }
@@ -295,7 +295,17 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
 
 Sampler::Sampler(UniqueSamplerIdentifier&& samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     : m_samplerIdentifier(samplerIdentifier)
-    , m_descriptor(descriptor)
+    , m_label(fromAPI(descriptor.label).utf8())
+    , m_addressModeU(descriptor.addressModeU)
+    , m_addressModeV(descriptor.addressModeV)
+    , m_addressModeW(descriptor.addressModeW)
+    , m_magFilter(descriptor.magFilter)
+    , m_minFilter(descriptor.minFilter)
+    , m_mipmapFilter(descriptor.mipmapFilter)
+    , m_lodMinClamp(descriptor.lodMinClamp)
+    , m_lodMaxClamp(descriptor.lodMaxClamp)
+    , m_compare(descriptor.compare)
+    , m_maxAnisotropy(descriptor.maxAnisotropy)
     , m_device(device)
 {
     tryCacheSamplerState();
@@ -314,7 +324,7 @@ Sampler::~Sampler()
 
 void Sampler::setLabel(String&& label)
 {
-    m_descriptor.label = label;
+    m_label = label.utf8();
 }
 
 bool Sampler::isValid() const
@@ -334,7 +344,21 @@ id<MTLSamplerState> Sampler::tryCacheSamplerState() const
     if (!device)
         return nil;
 
-    auto cachedSamplerState = WebGPU::tryCacheSamplerState(*m_samplerIdentifier, device, m_descriptor);
+    WGPUSamplerDescriptor descriptor {
+        .label = toAPI(m_label),
+        .addressModeU = m_addressModeU,
+        .addressModeV = m_addressModeV,
+        .addressModeW = m_addressModeW,
+        .magFilter = m_magFilter,
+        .minFilter = m_minFilter,
+        .mipmapFilter = m_mipmapFilter,
+        .lodMinClamp = m_lodMinClamp,
+        .lodMaxClamp = m_lodMaxClamp,
+        .compare = m_compare,
+        .maxAnisotropy = m_maxAnisotropy,
+    };
+
+    auto cachedSamplerState = WebGPU::tryCacheSamplerState(*m_samplerIdentifier, device, descriptor);
     m_cachedSamplerState = cachedSamplerState;
     return m_cachedSamplerState;
 }
@@ -353,7 +377,7 @@ void wgpuSamplerRelease(WGPUSampler sampler)
     WebGPU::fromAPI(sampler).deref();
 }
 
-void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)
+void wgpuSamplerSetLabel(WGPUSampler sampler, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(sampler))->setLabel(WebGPU::fromAPI(label));
 }

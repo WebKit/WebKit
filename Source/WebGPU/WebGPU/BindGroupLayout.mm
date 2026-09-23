@@ -787,7 +787,7 @@ void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
     WebGPU::fromAPI(bindGroupLayout).deref();
 }
 
-void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, const char* label)
+void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(bindGroupLayout))->setLabel(WebGPU::fromAPI(label));
 }

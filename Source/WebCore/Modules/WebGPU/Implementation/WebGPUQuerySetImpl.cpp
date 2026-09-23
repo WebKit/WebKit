@@ -51,7 +51,7 @@ void QuerySetImpl::destroy()
 
 void QuerySetImpl::setLabelInternal(const String& label)
 {
-    wgpuQuerySetSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuQuerySetSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

@@ -1793,7 +1793,7 @@ void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
     WebGPU::fromAPI(bindGroup).deref();
 }
 
-void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)
+void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(bindGroup))->setLabel(WebGPU::fromAPI(label));
 }

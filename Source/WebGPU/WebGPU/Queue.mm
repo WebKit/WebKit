@@ -2194,7 +2194,7 @@ void wgpuQueueCopyExternalImageToTexture(WGPUQueue queue, const WGPUImageCopyExt
     protect(WebGPU::fromAPI(queue))->copyExternalImageToTexture(*source, *destination, *copySize);
 }
 
-void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
+void wgpuQueueSetLabel(WGPUQueue queue, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(queue))->setLabel(WebGPU::fromAPI(label));
 }

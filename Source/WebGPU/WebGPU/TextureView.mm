@@ -206,7 +206,7 @@ void wgpuTextureViewRelease(WGPUTextureView textureView)
     WebGPU::fromAPI(textureView).deref();
 }
 
-void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
+void wgpuTextureViewSetLabel(WGPUTextureView textureView, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(textureView))->setLabel(WebGPU::fromAPI(label));
 }

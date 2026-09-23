@@ -1443,7 +1443,7 @@ void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorB
     });
 }
 
-void wgpuDeviceSetLabel(WGPUDevice device, const char* label)
+void wgpuDeviceSetLabel(WGPUDevice device, WGPUStringView label)
 {
     WebGPU::fromAPI(device).setLabel(WebGPU::fromAPI(label));
 }

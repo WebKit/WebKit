@@ -281,7 +281,7 @@ WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline co
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(computePipeline))->getBindGroupLayout(groupIndex));
 }
 
-void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char* label)
+void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, WGPUStringView label)
 {
     WebGPU::fromAPI(computePipeline).setLabel(WebGPU::fromAPI(label));
 }

@@ -84,7 +84,7 @@ typedef struct WGPUExternalTextureBindingLayout {
 } WGPUExternalTextureBindingLayout;
 
 typedef struct WGPUExternalTextureDescriptor {
-    char const * label; // nullable
+    WGPUStringView label;
     CVPixelBufferRef pixelBuffer;
     WGPUColorSpace colorSpace;
     // The size the source presents the frame at, which the pixel buffer does not carry. Zero when the
@@ -145,7 +145,7 @@ typedef struct WGPUImageCopyTextureTagged {
 
 #if !defined(WGPU_SKIP_PROCS)
 
-typedef void (*WGPUProcRenderBundleSetLabel)(WGPURenderBundle renderBundle, char const * label);
+typedef void (*WGPUProcRenderBundleSetLabel)(WGPURenderBundle renderBundle, WGPUStringView label);
 
 typedef WGPUExternalTexture (*WGPUProcDeviceImportExternalTexture)(WGPUSwapChain swapChain);
 
@@ -156,7 +156,7 @@ typedef WGPUTexture (*WGPUProcSwapChainGetCurrentTexture)(WGPUSwapChain swapChai
 
 #if !defined(WGPU_SKIP_DECLARATIONS)
 
-WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, char const * label);
+WGPU_EXPORT void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label);
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
 WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t frameIndex);

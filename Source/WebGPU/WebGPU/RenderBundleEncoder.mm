@@ -1077,7 +1077,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
     };
 
     auto renderBundle = createRenderBundle();
-    renderBundle->setLabel(String::fromUTF8(descriptor.label));
+    renderBundle->setLabel(fromAPI(descriptor.label));
     m_finished = true;
 
     return renderBundle;
@@ -1534,7 +1534,7 @@ WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBun
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(renderBundleEncoder))->finish(*descriptor));
 }
 
-void wgpuRenderBundleEncoderInsertDebugMarker(WGPURenderBundleEncoder renderBundleEncoder, const char* markerLabel)
+void wgpuRenderBundleEncoderInsertDebugMarker(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView markerLabel)
 {
     protect(WebGPU::fromAPI(renderBundleEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
@@ -1544,7 +1544,7 @@ void wgpuRenderBundleEncoderPopDebugGroup(WGPURenderBundleEncoder renderBundleEn
     protect(WebGPU::fromAPI(renderBundleEncoder))->popDebugGroup();
 }
 
-void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleEncoder, const char* groupLabel)
+void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView groupLabel)
 {
     protect(WebGPU::fromAPI(renderBundleEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
@@ -1576,7 +1576,7 @@ void wgpuRenderBundleEncoderSetVertexBuffer(WGPURenderBundleEncoder renderBundle
     protect(WebGPU::fromAPI(renderBundleEncoder))->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
 }
 
-void wgpuRenderBundleEncoderSetLabel(WGPURenderBundleEncoder renderBundleEncoder, const char* label)
+void wgpuRenderBundleEncoderSetLabel(WGPURenderBundleEncoder renderBundleEncoder, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(renderBundleEncoder))->setLabel(WebGPU::fromAPI(label));
 }

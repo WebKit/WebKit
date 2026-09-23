@@ -99,7 +99,7 @@ RefPtr<PresentationContext> GPUImpl::createPresentationContext(const Presentatio
     });
 
     WGPUSurfaceDescriptor surfaceDescriptor {
-        .label = nullptr,
+        .label = { },
         .cocoaDescriptor = WGPUSurfaceDescriptorCocoaCustomSurface {
             .compositorIntegrationRegister = registerCallbacksBlock.get(),
         }

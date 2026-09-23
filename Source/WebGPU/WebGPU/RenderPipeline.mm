@@ -1060,7 +1060,7 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
     bindGroupLayouts.reserveInitialCapacity(bindGroupEntries.size());
     for (auto& entries : bindGroupEntries) {
         WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };
-        bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
+        bindGroupLayoutDescriptor.label = toAPI("getBindGroup() generated layout"_s);
         bindGroupLayoutDescriptor.entryCount = entries.size();
         bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
         auto bindGroupLayout = createBindGroupLayout(bindGroupLayoutDescriptor, true);
@@ -1071,7 +1071,7 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
     }
 
     auto generatedPipelineLayout = createPipelineLayout(WGPUPipelineLayoutDescriptor {
-        .label = "generated pipeline layout",
+        .label = toAPI("generated pipeline layout"_s),
         .bindGroupLayoutCount = static_cast<uint32_t>(bindGroupLayouts.size()),
         .bindGroupLayouts = bindGroupLayouts.size() ? &bindGroupLayouts[0] : nullptr
     }, true);
@@ -2160,7 +2160,7 @@ WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline rend
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(renderPipeline))->getBindGroupLayout(groupIndex));
 }
 
-void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)
+void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, WGPUStringView label)
 {
     WebGPU::fromAPI(renderPipeline).setLabel(WebGPU::fromAPI(label));
 }

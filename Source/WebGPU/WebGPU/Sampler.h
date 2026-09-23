@@ -71,9 +71,8 @@ public:
 
     id<MTLSamplerState> cachedSamplerState() const { return m_cachedSamplerState; }
     id<MTLSamplerState> tryCacheSamplerState() const;
-    const WGPUSamplerDescriptor& descriptor() const LIFETIME_BOUND { return m_descriptor; }
-    bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
-    bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUMipmapFilterMode_Linear; }
+    bool isComparison() const { return m_compare != WGPUCompareFunction_Undefined; }
+    bool isFiltering() const { return m_minFilter == WGPUFilterMode_Linear || m_magFilter == WGPUFilterMode_Linear || m_mipmapFilter == WGPUMipmapFilterMode_Linear; }
 
     Device& device() const { return m_device; }
 
@@ -82,7 +81,19 @@ private:
     Sampler(Device&);
 
     std::optional<UniqueSamplerIdentifier> m_samplerIdentifier;
-    WGPUSamplerDescriptor m_descriptor { };
+    // Stored already encoded: its only consumer is the Metal label, and it has to outlive
+    // the WGPUStringView that borrows it.
+    UTF8CString m_label;
+    WGPUAddressMode m_addressModeU { };
+    WGPUAddressMode m_addressModeV { };
+    WGPUAddressMode m_addressModeW { };
+    WGPUFilterMode m_magFilter { };
+    WGPUFilterMode m_minFilter { };
+    WGPUMipmapFilterMode m_mipmapFilter { };
+    float m_lodMinClamp { 0 };
+    float m_lodMaxClamp { 0 };
+    WGPUCompareFunction m_compare { };
+    uint16_t m_maxAnisotropy { 0 };
 
     const Ref<Device> m_device;
 

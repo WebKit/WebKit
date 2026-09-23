@@ -87,7 +87,7 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
             colorTexture = [colorTexture newTextureViewWithPixelFormat:Texture::pixelFormat(colorFormat)];
 
         WGPUTextureDescriptor colorTextureDescriptor = {
-            .label = "color texture",
+            .label = toAPI("color texture"_s),
             .usage = WGPUTextureUsage_RenderAttachment,
             .dimension = WGPUTextureDimension_2D,
             .size = {
@@ -116,7 +116,7 @@ void XRSubImage::update(const XRProjectionLayer& projectionLayer)
         }
 
         WGPUTextureDescriptor depthTextureDescriptor = {
-            .label = "depth texture",
+            .label = toAPI("depth texture"_s),
             .usage = WGPUTextureUsage_RenderAttachment,
             .dimension = WGPUTextureDimension_2D,
             .size = {

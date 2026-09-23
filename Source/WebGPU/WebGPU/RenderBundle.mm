@@ -202,7 +202,7 @@ void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
     WebGPU::fromAPI(renderBundle).deref();
 }
 
-void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)
+void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(renderBundle))->setLabel(WebGPU::fromAPI(label));
 }

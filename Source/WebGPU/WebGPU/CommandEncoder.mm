@@ -2521,7 +2521,7 @@ WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, co
     return WebGPU::releaseToAPI(protect(WebGPU::fromAPI(commandEncoder))->finish(*descriptor));
 }
 
-void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, const char* markerLabel)
+void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, WGPUStringView markerLabel)
 {
     protect(WebGPU::fromAPI(commandEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
@@ -2531,7 +2531,7 @@ void wgpuCommandEncoderPopDebugGroup(WGPUCommandEncoder commandEncoder)
     protect(WebGPU::fromAPI(commandEncoder))->popDebugGroup();
 }
 
-void wgpuCommandEncoderPushDebugGroup(WGPUCommandEncoder commandEncoder, const char* groupLabel)
+void wgpuCommandEncoderPushDebugGroup(WGPUCommandEncoder commandEncoder, WGPUStringView groupLabel)
 {
     protect(WebGPU::fromAPI(commandEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
@@ -2546,7 +2546,7 @@ void wgpuCommandEncoderWriteTimestamp(WGPUCommandEncoder commandEncoder, WGPUQue
     protect(WebGPU::fromAPI(commandEncoder))->writeTimestamp(protect(WebGPU::fromAPI(querySet)), queryIndex);
 }
 
-void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, const char* label)
+void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(commandEncoder))->setLabel(WebGPU::fromAPI(label));
 }

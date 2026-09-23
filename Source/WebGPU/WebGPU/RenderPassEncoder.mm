@@ -2098,7 +2098,7 @@ void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder
     protect(WebGPU::fromAPI(renderPassEncoder))->executeBundles(WTF::move(bundlesToForward));
 }
 
-void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, const char* markerLabel)
+void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, WGPUStringView markerLabel)
 {
     protect(WebGPU::fromAPI(renderPassEncoder))->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
@@ -2108,7 +2108,7 @@ void wgpuRenderPassEncoderPopDebugGroup(WGPURenderPassEncoder renderPassEncoder)
     protect(WebGPU::fromAPI(renderPassEncoder))->popDebugGroup();
 }
 
-void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, const char* groupLabel)
+void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, WGPUStringView groupLabel)
 {
     protect(WebGPU::fromAPI(renderPassEncoder))->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
@@ -2156,7 +2156,7 @@ void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, f
     protect(WebGPU::fromAPI(renderPassEncoder))->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
-void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, const char* label)
+void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(renderPassEncoder))->setLabel(WebGPU::fromAPI(label));
 }

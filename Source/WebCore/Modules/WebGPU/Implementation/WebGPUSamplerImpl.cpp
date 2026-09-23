@@ -46,7 +46,7 @@ SamplerImpl::~SamplerImpl() = default;
 
 void SamplerImpl::setLabelInternal(const String& label)
 {
-    wgpuSamplerSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuSamplerSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

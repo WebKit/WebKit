@@ -717,7 +717,7 @@ void wgpuBufferGenerateAValidationError(WGPUBuffer buffer)
     protect(WebGPU::fromAPI(buffer))->generateAValidationError("Buffer state was not unmapped"_s);
 }
 
-void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
+void wgpuBufferSetLabel(WGPUBuffer buffer, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(buffer))->setLabel(WebGPU::fromAPI(label));
 }

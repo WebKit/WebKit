@@ -101,7 +101,7 @@ void RenderPassEncoderImpl::setBindGroup(Index32, const BindGroup*, std::span<co
 
 void RenderPassEncoderImpl::pushDebugGroup(String&& groupLabel)
 {
-    wgpuRenderPassEncoderPushDebugGroup(m_backing.get(), groupLabel.utf8().legacyCStringPointer());
+    wgpuRenderPassEncoderPushDebugGroup(m_backing.get(), toBackingStringView(groupLabel));
 }
 
 void RenderPassEncoderImpl::popDebugGroup()
@@ -111,7 +111,7 @@ void RenderPassEncoderImpl::popDebugGroup()
 
 void RenderPassEncoderImpl::insertDebugMarker(String&& markerLabel)
 {
-    wgpuRenderPassEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().legacyCStringPointer());
+    wgpuRenderPassEncoderInsertDebugMarker(m_backing.get(), toBackingStringView(markerLabel));
 }
 
 void RenderPassEncoderImpl::setViewport(float x, float y,
@@ -165,7 +165,7 @@ void RenderPassEncoderImpl::end()
 
 void RenderPassEncoderImpl::setLabelInternal(const String& label)
 {
-    wgpuRenderPassEncoderSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuRenderPassEncoderSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

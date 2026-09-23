@@ -171,7 +171,7 @@ void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
     WebGPU::fromAPI(commandBuffer).deref();
 }
 
-void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, const char* label)
+void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(commandBuffer))->setLabel(WebGPU::fromAPI(label));
 }

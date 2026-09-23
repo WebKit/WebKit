@@ -205,6 +205,28 @@ inline String fromAPI(const char* string)
     return String::fromUTF8(string);
 }
 
+inline String fromAPI(WGPUStringView string)
+{
+    if (!string.data)
+        return { };
+    if (string.length == WGPU_STRLEN)
+        return String::fromUTF8(string.data);
+    return String::fromUTF8(unsafeMakeSpan(string.data, string.length));
+}
+
+// Literals have static storage, so the view can borrow them freely.
+inline WGPUStringView toAPI(ASCIILiteral literal)
+{
+    return { literal.characters(), literal.length() };
+}
+
+// Borrows already-encoded UTF-8 bytes, so the result only lives as long as the argument.
+inline WGPUStringView toAPI(const UTF8CString& string LIFETIME_BOUND)
+{
+    auto bytes = byteCast<char>(string.span());
+    return { bytes.data(), bytes.size() };
+}
+
 template<typename R, typename... Args>
 inline BlockPtr<R (Args...)> fromAPI(R (^ __strong &&block)(Args...))
 {

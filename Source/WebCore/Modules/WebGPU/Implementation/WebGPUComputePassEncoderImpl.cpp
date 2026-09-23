@@ -81,7 +81,7 @@ void ComputePassEncoderImpl::setBindGroup(Index32, const BindGroup*, std::span<c
 
 void ComputePassEncoderImpl::pushDebugGroup(String&& groupLabel)
 {
-    wgpuComputePassEncoderPushDebugGroup(m_backing.get(), groupLabel.utf8().legacyCStringPointer());
+    wgpuComputePassEncoderPushDebugGroup(m_backing.get(), toBackingStringView(groupLabel));
 }
 
 void ComputePassEncoderImpl::popDebugGroup()
@@ -91,12 +91,12 @@ void ComputePassEncoderImpl::popDebugGroup()
 
 void ComputePassEncoderImpl::insertDebugMarker(String&& markerLabel)
 {
-    wgpuComputePassEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().legacyCStringPointer());
+    wgpuComputePassEncoderInsertDebugMarker(m_backing.get(), toBackingStringView(markerLabel));
 }
 
 void ComputePassEncoderImpl::setLabelInternal(const String& label)
 {
-    wgpuComputePassEncoderSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuComputePassEncoderSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

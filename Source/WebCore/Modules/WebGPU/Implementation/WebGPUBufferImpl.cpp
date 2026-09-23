@@ -118,7 +118,7 @@ void BufferImpl::generateAValidationError()
 
 void BufferImpl::setLabelInternal(const String& label)
 {
-    wgpuBufferSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuBufferSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

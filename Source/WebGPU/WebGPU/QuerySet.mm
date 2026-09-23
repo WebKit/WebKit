@@ -50,7 +50,7 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::createInvalid(*this);
     }
 
-    const char* label = descriptor.label;
+    auto label = descriptor.label;
     auto type = descriptor.type;
 
     switch (type) {
@@ -242,7 +242,7 @@ void wgpuQuerySetDestroy(WGPUQuerySet querySet)
     protect(WebGPU::fromAPI(querySet))->destroy();
 }
 
-void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
+void wgpuQuerySetSetLabel(WGPUQuerySet querySet, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(querySet))->setLabel(WebGPU::fromAPI(label));
 }

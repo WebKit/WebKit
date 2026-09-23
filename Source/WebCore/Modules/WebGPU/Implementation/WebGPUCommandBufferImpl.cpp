@@ -46,7 +46,7 @@ CommandBufferImpl::~CommandBufferImpl() = default;
 
 void CommandBufferImpl::setLabelInternal(const String& label)
 {
-    wgpuCommandBufferSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuCommandBufferSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

@@ -47,7 +47,7 @@ BindGroupImpl::~BindGroupImpl() = default;
 
 void BindGroupImpl::setLabelInternal(const String& label)
 {
-    wgpuBindGroupSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuBindGroupSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 bool BindGroupImpl::updateExternalTextures(ExternalTexture& externalTexture)

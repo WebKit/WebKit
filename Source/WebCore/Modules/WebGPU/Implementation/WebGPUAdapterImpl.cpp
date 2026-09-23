@@ -194,7 +194,7 @@ static void requestDeviceCallback(WGPURequestDeviceStatus status, WGPUDevice dev
 
 void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<Device>&&)>&& callback)
 {
-    auto label = descriptor.label.utf8();
+    auto label = toBackingStringView(descriptor.label);
 
     auto features = descriptor.requiredFeatures.map([&convertToBackingContext = m_convertToBackingContext.get()](auto featureName) {
         return convertToBackingContext.convertToBacking(featureName);
@@ -303,12 +303,12 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
     WGPURequiredLimits requiredLimits { .limits = WTF::move(limits) };
 
     WGPUDeviceDescriptor backingDescriptor {
-        .label = label.legacyCStringPointer(),
+        .label = label,
         .requiredFeatureCount = features.size(),
         .requiredFeatures = features.size() ? features.span().data() : nullptr,
         .requiredLimits = &requiredLimits,
         .defaultQueue = {
-            .label = "queue"
+            .label = toBackingStringView("queue"_s)
         },
         .deviceLostCallback = nullptr,
         .deviceLostUserdata = nullptr,

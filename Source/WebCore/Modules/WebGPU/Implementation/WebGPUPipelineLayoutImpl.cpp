@@ -46,7 +46,7 @@ PipelineLayoutImpl::~PipelineLayoutImpl() = default;
 
 void PipelineLayoutImpl::setLabelInternal(const String& label)
 {
-    wgpuPipelineLayoutSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuPipelineLayoutSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

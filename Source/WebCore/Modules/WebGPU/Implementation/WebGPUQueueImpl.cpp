@@ -281,7 +281,7 @@ void QueueImpl::copyExternalImageToTexture(
 
 void QueueImpl::setLabelInternal(const String& label)
 {
-    wgpuQueueSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuQueueSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 RefPtr<WebCore::NativeImage> QueueImpl::getNativeImage(WebCore::VideoFrame&)

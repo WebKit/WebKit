@@ -1187,7 +1187,7 @@ void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, 
     });
 }
 
-void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
+void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(shaderModule))->setLabel(WebGPU::fromAPI(label));
 }

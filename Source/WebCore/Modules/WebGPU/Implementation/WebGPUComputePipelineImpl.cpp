@@ -53,7 +53,7 @@ Ref<BindGroupLayout> ComputePipelineImpl::getBindGroupLayout(uint32_t index)
 
 void ComputePipelineImpl::setLabelInternal(const String& label)
 {
-    wgpuComputePipelineSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuComputePipelineSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

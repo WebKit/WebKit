@@ -46,7 +46,7 @@ BindGroupLayoutImpl::~BindGroupLayoutImpl() = default;
 
 void BindGroupLayoutImpl::setLabelInternal(const String& label)
 {
-    wgpuBindGroupLayoutSetLabel(m_backing.get(), label.utf8().legacyCStringPointer());
+    wgpuBindGroupLayoutSetLabel(m_backing.get(), toBackingStringView(label));
 }
 
 } // namespace WebCore::WebGPU

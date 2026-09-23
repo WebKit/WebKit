@@ -4242,7 +4242,7 @@ void wgpuTextureUndestroy(WGPUTexture texture)
     protect(WebGPU::fromAPI(texture))->recreateIfNeeded();
 }
 
-void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
+void wgpuTextureSetLabel(WGPUTexture texture, WGPUStringView label)
 {
     protect(WebGPU::fromAPI(texture))->setLabel(WebGPU::fromAPI(label));
 }
