@@ -125,4 +125,13 @@ TEST(H264BitstreamParser, ReportsQpForWeightedPredSlices)
     EXPECT_EQ(*qp, 11);
 }
 
+TEST(H264BitstreamParser, ComputesZeroMaxNumReorderFramesWhenPicOrderCntTypeIsTwo)
+{
+    // kH264SpsPps's SPS (bytes [4, 17)) has pic_order_cnt_type == 2, which per the H.264 spec means frames are never reordered.
+    auto sps = std::span { kH264SpsPps }.subspan(4, 13);
+    auto maxNumReorderFrames = H264BitstreamParser::parseSpsMaxNumReorderFrames(sps);
+    ASSERT_TRUE(maxNumReorderFrames.has_value());
+    EXPECT_EQ(*maxNumReorderFrames, 0u);
+}
+
 }

@@ -35,8 +35,6 @@
 #import "PlatformMediaCapabilitiesInfo.h"
 #import "TrackInfo.h"
 #import <algorithm>
-#import <wtf/FlipBytes.h>
-#import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -266,24 +264,7 @@ Vector<uint8_t> convertHEVCAnnexBToLengthPrefixed(std::span<const uint8_t> data,
             RELEASE_LOG_ERROR(WebRTC, "convertHEVCAnnexBToLengthPrefixed NAL units following VPS are not SPS/PPS");
     }
 
-    size_t totalSize = 0;
-    for (size_t i = startIndex; i < naluIndices.size(); ++i) {
-        if (naluIndices[i].payloadSize)
-            totalSize += sizeof(uint32_t) + naluIndices[i].payloadSize;
-    }
-
-    Vector<uint8_t> result;
-    result.reserveInitialCapacity(totalSize);
-    for (size_t i = startIndex; i < naluIndices.size(); ++i) {
-        auto& index = naluIndices[i];
-        if (!index.payloadSize)
-            continue;
-        uint32_t length = flipBytes(static_cast<uint32_t>(index.payloadSize));
-        result.append(asByteSpan(length));
-        result.append(data.subspan(index.payloadStartOffset, index.payloadSize));
-    }
-
-    return result;
+    return annexBToLengthPrefixed(data, naluIndices.subspan(startIndex));
 }
 
 RefPtr<VideoInfo> createVideoInfoFromHVCC(const HVCCParameterSets& parameterSets)

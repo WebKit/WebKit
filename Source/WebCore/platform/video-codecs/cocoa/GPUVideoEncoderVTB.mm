@@ -299,10 +299,6 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
     assertIsCurrent(queue());
 
     PlatformVideoColorSpace colorSpace = computeVideoFrameColorSpace(pixelBuffer);
-    // FIXME: Remove this override when enabling color space handling for H264.
-    if (codecType() == kCMVideoCodecType_H264)
-        colorSpace.fullRange = true;
-
     if (!m_encoder || colorSpace != m_colorSpace) {
         m_colorSpace = colorSpace;
         if (!resetCompressionSession()) {
