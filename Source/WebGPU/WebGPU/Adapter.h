@@ -64,7 +64,7 @@ public:
 
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool NODELETE getLimits(WGPUSupportedLimits&);
-    void getProperties(WGPUAdapterProperties&);
+    void getInfo(WGPUAdapterInfo&);
     bool hasFeature(WGPUFeatureName);
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, Ref<Device>&&, String&&)>&& callback);
 

@@ -38,9 +38,9 @@ namespace WebCore::WebGPU {
 
 static String adapterName(WGPUAdapter adapter)
 {
-    WGPUAdapterProperties properties;
-    wgpuAdapterGetProperties(adapter, &properties);
-    return String::fromLatin1(properties.name);
+    WGPUAdapterInfo info;
+    wgpuAdapterGetInfo(adapter, &info);
+    return String::fromLatin1(info.name);
 }
 
 static Ref<SupportedFeatures> supportedFeatures(const Vector<WGPUFeatureName>& features)
@@ -119,23 +119,23 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
 
 static bool isFallbackAdapter(WGPUAdapter adapter)
 {
-    WGPUAdapterProperties properties;
-    wgpuAdapterGetProperties(adapter, &properties);
-    return properties.adapterType == WGPUAdapterType_CPU;
+    WGPUAdapterInfo info;
+    wgpuAdapterGetInfo(adapter, &info);
+    return info.adapterType == WGPUAdapterType_CPU;
 }
 
 static uint32_t subgroupMinSize(WGPUAdapter adapter)
 {
-    WGPUAdapterProperties properties;
-    wgpuAdapterGetProperties(adapter, &properties);
-    return properties.subgroupMinSize;
+    WGPUAdapterInfo info;
+    wgpuAdapterGetInfo(adapter, &info);
+    return info.subgroupMinSize;
 }
 
 static uint32_t subgroupMaxSize(WGPUAdapter adapter)
 {
-    WGPUAdapterProperties properties;
-    wgpuAdapterGetProperties(adapter, &properties);
-    return properties.subgroupMaxSize;
+    WGPUAdapterInfo info;
+    wgpuAdapterGetInfo(adapter, &info);
+    return info.subgroupMaxSize;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AdapterImpl);
