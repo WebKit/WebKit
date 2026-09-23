@@ -1297,3 +1297,11 @@ webkit.org/b/324334 [ Debug ] fast/canvas/webgl/largeBuffer.html [ Crash Pass ]
 webkit.org/b/324337 [ arm64 ] http/tests/navigation/javascriptlink-frames.html [ Failure Pass ]
 
 webkit.org/b/322642 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-unconnected-outputs.https.window.html [ Failure Pass ]
+
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/held.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/idlharness.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/ifAvailable.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/lock-attributes.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-exclusive.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-mixed.https.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/324979 imported/w3c/web-platform-tests/web-locks/mode-shared.https.any.sharedworker.html [ Failure Pass ]
