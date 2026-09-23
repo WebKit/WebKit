@@ -3989,6 +3989,9 @@ JSAudioProcessingEvent.cpp
 JSAudioProcessingEventInit.cpp
 JSAudioSampleFormat.cpp
 JSAudioScheduledSourceNode.cpp
+JSAudioSinkInfo.cpp
+JSAudioSinkOptions.cpp
+JSAudioSinkType.cpp
 JSAudioTimestamp.cpp
 JSAudioTrack.cpp
 JSAudioTrackConfiguration.cpp

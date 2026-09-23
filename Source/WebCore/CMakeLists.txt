@@ -764,6 +764,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webaudio/AudioProcessingEvent.idl
     Modules/webaudio/AudioProcessingEventInit.idl
     Modules/webaudio/AudioScheduledSourceNode.idl
+    Modules/webaudio/AudioSinkInfo.idl
+    Modules/webaudio/AudioSinkOptions.idl
+    Modules/webaudio/AudioSinkType.idl
     Modules/webaudio/AudioTimestamp.idl
     Modules/webaudio/AudioWorklet.idl
     Modules/webaudio/AudioWorkletGlobalScope.idl

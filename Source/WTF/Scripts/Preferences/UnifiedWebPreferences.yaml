@@ -592,6 +592,15 @@ AttachmentWideLayoutEnabled:
   condition: ENABLE(ATTACHMENT_ELEMENT)
   defaultValue: false
 
+AudioContextSetSinkIdEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "AudioContext setSinkId"
+  humanReadableDescription: "Enable AudioContext.setSinkId() for audio output device selection"
+  condition: ENABLE(WEB_AUDIO)
+  defaultValue: false
+
 AudioControlsScaleWithPageZoom:
   type: bool
   status: embedder

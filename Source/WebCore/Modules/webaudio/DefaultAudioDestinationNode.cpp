@@ -124,7 +124,32 @@ void DefaultAudioDestinationNode::createDestination()
 #if PLATFORM(IOS_FAMILY)
         , protect(context())->sceneIdentifier()
 #endif
+        , m_outputDevicePersistentId, m_outputSinkIsSilent
         });
+}
+
+void DefaultAudioDestinationNode::setSinkId(const String& persistentDeviceId, bool isSilentSink, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(isMainThread());
+
+    if (!m_destination) {
+        m_outputDevicePersistentId = persistentDeviceId;
+        m_outputSinkIsSilent = isSilentSink;
+        completionHandler(true);
+        return;
+    }
+
+    // Only commit the stored values on success so a later recreateDestination() keeps the routing
+    // that is actually in effect.
+    m_destination->setSinkId(persistentDeviceId, isSilentSink, [weakThis = WeakPtr { *this }, persistentDeviceId, isSilentSink, completionHandler = WTF::move(completionHandler)](bool success) mutable {
+        if (success) {
+            if (RefPtr protectedThis = weakThis.get()) {
+                protectedThis->m_outputDevicePersistentId = persistentDeviceId;
+                protectedThis->m_outputSinkIsSilent = isSilentSink;
+            }
+        }
+        completionHandler(success);
+    });
 }
 
 void DefaultAudioDestinationNode::recreateDestination()

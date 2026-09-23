@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AudioContext.setSinkId() basic behaviors</title>
+    <script src="../../imported/w3c/web-platform-tests/resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+  </head>
+  <body>
+    <script>
+      promise_test(async t => {
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+        await context.setSinkId({ type: 'none' });
+        assert_equals(typeof context.sinkId, 'object');
+        assert_equals(context.sinkId.type, 'none');
+        assert_equals(context.sinkId, context.sinkId, 'repeated gets return the same AudioSinkInfo');
+      }, 'sinkId returns the same AudioSinkInfo object on repeated gets.');
+
+      promise_test(async t => {
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+        await context.setSinkId({ type: 'none' });
+        assert_equals(context.sinkId.type, 'none');
+
+        const sawSinkChange = new Promise(resolve => context.onsinkchange = resolve);
+        await context.setSinkId('');
+        assert_equals(context.sinkId, '', 'back to the default output device');
+        await sawSinkChange;
+      }, 'setSinkId("") switches back to the default device from a silent sink.');
+
+      promise_test(async t => {
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+
+        const first = context.setSinkId({ type: 'none' });
+        // While the first change is still in flight, [[sink ID]] is unchanged (the empty
+        // string), so this request matches it when its control message runs and resolves
+        // without a change.
+        const second = context.setSinkId('');
+
+        await first;
+        assert_equals(context.sinkId.type, 'none', 'the first change is applied');
+        await second;
+        assert_equals(context.sinkId.type, 'none', 'the second request was an idempotent no-op');
+      }, 'Overlapping setSinkId() calls settle without clobbering each other.');
+
+      promise_test(async t => {
+        const context = new AudioContext();
+        t.add_cleanup(() => context.close());
+
+        const first = context.setSinkId({ type: 'none' });
+        const second = context.setSinkId({ type: 'none' });
+        await Promise.all([first, second]);
+        assert_equals(context.sinkId.type, 'none');
+      }, 'Identical overlapping setSinkId() calls both resolve.');
+    </script>
+  </body>
+</html>

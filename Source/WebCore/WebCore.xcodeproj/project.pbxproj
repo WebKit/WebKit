@@ -7151,6 +7151,9 @@
 		E785D91524B4D1CA0014DB21 /* ChannelCountMode.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D91124B4D1B10014DB21 /* ChannelCountMode.h */; };
 		E785D93424B636FF0014DB21 /* ChannelInterpretation.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D93124B636FF0014DB21 /* ChannelInterpretation.h */; };
 		E785D96124B7F7350014DB21 /* AudioContextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D95F24B7F7340014DB21 /* AudioContextOptions.h */; };
+		A50A93C6C1F747F9A89658A0 /* AudioSinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F65092520CC474EB773EA03 /* AudioSinkInfo.h */; };
+		EAA911FF238C4EDEBDBACEAC /* AudioSinkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C19DF3E82F043E9BD6ECC95 /* AudioSinkOptions.h */; };
+		82280D78D8D64AA9B8A3696B /* AudioSinkType.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A8E5510E9C4F9394DB8F70 /* AudioSinkType.h */; };
 		E785D96224B7F7350014DB21 /* AudioContextLatencyCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */; };
 		E7AA0A0C2E4519DF00ABEF7F /* ContentRuleListMatchedRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E7AA0A0B2E45139300ABEF7F /* ContentRuleListMatchedRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E7C8E11B24DCABF30027A27F /* AudioProcessingEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */; };
@@ -23365,6 +23368,12 @@
 		E785D95C24B7F7260014DB21 /* AudioContextOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextOptions.idl; sourceTree = "<group>"; };
 		E785D95E24B7F7270014DB21 /* AudioContextLatencyCategory.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioContextLatencyCategory.idl; sourceTree = "<group>"; };
 		E785D95F24B7F7340014DB21 /* AudioContextOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextOptions.h; sourceTree = "<group>"; };
+		8F65092520CC474EB773EA03 /* AudioSinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSinkInfo.h; sourceTree = "<group>"; };
+		E52D22B6705641D89CBA77E5 /* AudioSinkInfo.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioSinkInfo.idl; sourceTree = "<group>"; };
+		0C19DF3E82F043E9BD6ECC95 /* AudioSinkOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSinkOptions.h; sourceTree = "<group>"; };
+		4CF7125B2D544055B6D1799D /* AudioSinkOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioSinkOptions.idl; sourceTree = "<group>"; };
+		41A8E5510E9C4F9394DB8F70 /* AudioSinkType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSinkType.h; sourceTree = "<group>"; };
+		65713C7B33D24ACBB67FE2CC /* AudioSinkType.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AudioSinkType.idl; sourceTree = "<group>"; };
 		E785D96024B7F7340014DB21 /* AudioContextLatencyCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioContextLatencyCategory.h; sourceTree = "<group>"; };
 		E7AA0A0B2E45139300ABEF7F /* ContentRuleListMatchedRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentRuleListMatchedRule.h; sourceTree = "<group>"; };
 		E7C8E11824DCABF30027A27F /* AudioProcessingEventInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioProcessingEventInit.h; sourceTree = "<group>"; };
@@ -43986,6 +43995,12 @@
 				FD8C46E9154608E700A5910C /* AudioScheduledSourceNode.cpp */,
 				FD8C46EA154608E700A5910C /* AudioScheduledSourceNode.h */,
 				E7CF848924C0E05700B06B90 /* AudioScheduledSourceNode.idl */,
+				8F65092520CC474EB773EA03 /* AudioSinkInfo.h */,
+				E52D22B6705641D89CBA77E5 /* AudioSinkInfo.idl */,
+				0C19DF3E82F043E9BD6ECC95 /* AudioSinkOptions.h */,
+				4CF7125B2D544055B6D1799D /* AudioSinkOptions.idl */,
+				41A8E5510E9C4F9394DB8F70 /* AudioSinkType.h */,
+				65713C7B33D24ACBB67FE2CC /* AudioSinkType.idl */,
 				FDB052DD1561A42C00B500D6 /* AudioSummingJunction.cpp */,
 				FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */,
 				83005F9A24EB1D2800480F9B /* AudioTimestamp.h */,
@@ -44692,6 +44707,9 @@
 				CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */,
 				CDE104F429E6221500CBAE11 /* AudioSessionCocoa.h in Headers */,
 				CD36C1622607E78600C8C529 /* AudioSessionIOS.h in Headers */,
+				A50A93C6C1F747F9A89658A0 /* AudioSinkInfo.h in Headers */,
+				EAA911FF238C4EDEBDBACEAC /* AudioSinkOptions.h in Headers */,
+				82280D78D8D64AA9B8A3696B /* AudioSinkType.h in Headers */,
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				CD8A7BBC197735FE00CBD643 /* AudioSourceProviderAVFObjC.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,

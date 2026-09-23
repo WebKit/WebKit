@@ -25,12 +25,16 @@
 
 #pragma once
 
+#include "AudioSinkInfo.h"
+#include "AudioSinkOptions.h"
 #include "BaseAudioContext.h"
 #include "DefaultAudioDestinationNode.h"
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
+#include <wtf/HashMap.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -84,6 +88,10 @@ public:
     void suspendRendering(DOMPromiseDeferred<void>&&);
     void resumeRendering(DOMPromiseDeferred<void>&&);
 
+    // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sinkid
+    Variant<String, Ref<AudioSinkInfo>> sinkId() const { return m_sinkId; }
+    void setSinkId(Variant<String, AudioSinkOptions>&&, DOMPromiseDeferred<void>&&);
+
     void sourceNodeWillBeginPlayback(AudioNode&) final;
     void lazyInitialize() final;
 
@@ -118,6 +126,24 @@ private:
 #endif
 
     void constructCommon();
+
+    // https://webaudio.github.io/web-audio-api/#dom-audiocontext-setsinkid
+    struct ResolvedSinkId {
+        Variant<String, Ref<AudioSinkInfo>> sinkId;
+        String persistentDeviceId;
+        bool isSilent { false };
+    };
+    enum SinkChangeIdentifierType { };
+    using SinkChangeIdentifier = ObjectIdentifier<SinkChangeIdentifierType>;
+    ExceptionOr<ResolvedSinkId> validateSinkId(const Variant<String, AudioSinkOptions>&);
+    enum class ResumeAfterSinkChange : bool { No, Yes };
+    void performSinkChange(SinkChangeIdentifier, ResolvedSinkId&&);
+    void applySinkChange(SinkChangeIdentifier, ResolvedSinkId&&, ResumeAfterSinkChange);
+    void finishSinkChange(SinkChangeIdentifier, ResolvedSinkId&&, ResumeAfterSinkChange, bool success);
+    void rejectSinkChangePromise(SinkChangeIdentifier, Exception&&);
+    void rejectPendingSinkChangePromises();
+    void applyConstructorSinkId(const AudioContextOptions&);
+    void commitConstructionSinkId();
 
     bool userGestureRequiredForAudioStart() const { return m_restrictions.contains(BehaviorRestrictionFlags::RequireUserGestureForAudioStartRestriction); }
     bool pageConsentRequiredForAudioStart() const { return m_restrictions.contains(BehaviorRestrictionFlags::RequirePageConsentForAudioStartRestriction); }
@@ -179,6 +205,13 @@ private:
     Ref<GenericPromise> m_currentRenderingOperation { GenericPromise::createAndResolve() };
 
     bool m_canOverrideBackgroundPlaybackRestriction { true };
+
+    // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sink-id-slot
+    Variant<String, Ref<AudioSinkInfo>> m_sinkId { emptyString() };
+    // https://webaudio.github.io/web-audio-api/#dom-audiocontext-sink-id-at-construction-slot
+    std::optional<ResolvedSinkId> m_sinkIdAtConstruction;
+    HashMap<SinkChangeIdentifier, std::unique_ptr<DOMPromiseDeferred<void>>> m_pendingSinkChangePromises;
+    bool m_constructionSinkIdWasInvalid { false };
 };
 
 } // WebCore
