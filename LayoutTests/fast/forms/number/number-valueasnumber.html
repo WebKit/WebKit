@@ -62,18 +62,20 @@ shouldBeEqualToString('setValueAsNumberAndGetValue(1.2e10)', '12000000000');
 shouldBeEqualToString('setValueAsNumberAndGetValue(1.2e-10)', '1.2e-10');
 shouldBeEqualToString('setValueAsNumberAndGetValue(1.2345678901234567e+308)', '1.2345678901234567e+308');
 shouldBeEqualToString('setValueAsNumberAndGetValue("-1.797693134862315e+308")', '-1.797693134862315e+308');
-shouldThrowErrorName('setValueAsNumberAndGetValue("-1.797693134862316e+308")', "NotSupportedError");
+shouldThrowErrorName('setValueAsNumberAndGetValue("-1.797693134862316e+308")', "TypeError");
 shouldBe('setValueAsNumberAndGetValue("1.797693134862315e+308")', '"1.797693134862315e+308"');
-shouldThrowErrorName('setValueAsNumberAndGetValue("1.797693134862316e+308")', "NotSupportedError");
+shouldThrowErrorName('setValueAsNumberAndGetValue("1.797693134862316e+308")', "TypeError");
 
-debug('Tests to set invalid values to valueAsNumber:');
+debug('Tests to set NaN to valueAsNumber. It should set the value to the empty string:');
 shouldBeEqualToString('setValueAsNumberAndGetValue(null)', '0');
-shouldThrowErrorName('setValueAsNumberAndGetValue("foo")', "NotSupportedError");
-shouldThrowErrorName('setValueAsNumberAndGetValue(NaN)', "NotSupportedError");
-shouldThrowErrorName('setValueAsNumberAndGetValue(Number.NaN)', "NotSupportedError");
-shouldThrowErrorName('setValueAsNumberAndGetValue(Infinity)', "NotSupportedError");
-shouldThrowErrorName('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', "NotSupportedError");
-shouldThrowErrorName('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', "NotSupportedError");
+shouldBeEqualToString('setValueAsNumberAndGetValue("foo")', '');
+shouldBeEqualToString('setValueAsNumberAndGetValue(NaN)', '');
+shouldBeEqualToString('setValueAsNumberAndGetValue(Number.NaN)', '');
+
+debug('Tests to set infinite values to valueAsNumber. It should throw a TypeError:');
+shouldThrowErrorName('setValueAsNumberAndGetValue(Infinity)', "TypeError");
+shouldThrowErrorName('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', "TypeError");
+shouldThrowErrorName('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', "TypeError");
 </script>
 </body>
 </html>

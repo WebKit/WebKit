@@ -19,6 +19,8 @@ function checkValueAsNumber(type) {
     input.type = type;
     shouldBe('input.valueAsNumber', 'Number.NaN');
     shouldThrowErrorName('input.valueAsNumber = 0', 'InvalidStateError');
+    // NaN sets the value to the empty string only for types valueAsNumber applies to.
+    shouldThrowErrorName('input.valueAsNumber = NaN', 'InvalidStateError');
 }
 
 checkValueAsNumber('button');

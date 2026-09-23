@@ -65,15 +65,18 @@ shouldBe('setValueAsNumberAndGetValue(1, 0, 1)', '"0001-W01"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 8)', '"275760-W37"');
 shouldBe('setValueAsNumberAndGetValue(275760, 8, 13)', '"275760-W37"');
 
-debug('Tests to set invalid values to valueAsNumber:');
+debug('Tests to set NaN to valueAsNumber. It should set the value to the empty string:');
 shouldBe('input.value = ""; input.valueAsNumber = null; input.value', '"1970-W01"');
-shouldThrowErrorName('input.valueAsNumber = "foo"', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = NaN', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = Number.NaN', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = Infinity', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = Number.POSITIVE_INFINITY', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = Number.NEGATIVE_INFINITY', 'NotSupportedError');
-shouldThrowErrorName('input.valueAsNumber = Date.UTC(275760, 8, 14)', 'NotSupportedError');
+shouldBeEqualToString('input.valueAsNumber = "foo"; input.value', '');
+shouldBeEqualToString('input.valueAsNumber = NaN; input.value', '');
+shouldBeEqualToString('input.valueAsNumber = Number.NaN; input.value', '');
+// Date.UTC() returns NaN for a time value outside of the supported range.
+shouldBeEqualToString('input.valueAsNumber = Date.UTC(275760, 8, 14); input.value', '');
+
+debug('Tests to set infinite values to valueAsNumber. It should throw a TypeError:');
+shouldThrowErrorName('input.valueAsNumber = Infinity', 'TypeError');
+shouldThrowErrorName('input.valueAsNumber = Number.POSITIVE_INFINITY', 'TypeError');
+shouldThrowErrorName('input.valueAsNumber = Number.NEGATIVE_INFINITY', 'TypeError');
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

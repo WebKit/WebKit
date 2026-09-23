@@ -1231,8 +1231,8 @@ double HTMLInputElement::valueAsNumber() const
 
 ExceptionOr<void> HTMLInputElement::setValueAsNumber(double newValue, TextFieldEventBehavior eventBehavior)
 {
-    if (!std::isfinite(newValue))
-        return Exception { ExceptionCode::NotSupportedError };
+    if (std::isinf(newValue))
+        return Exception { ExceptionCode::TypeError, "The value provided is infinite."_s };
     return m_inputType->setValueAsDouble(newValue, eventBehavior);
 }
 
