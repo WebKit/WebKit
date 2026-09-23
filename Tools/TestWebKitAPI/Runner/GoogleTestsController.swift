@@ -78,8 +78,10 @@ private func withUnsafeMutableCStyleArguments<R>(
     _ arguments: some Sequence<String>,
     _ body: (_ argc: Int32, _ argv: UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>) throws -> R
 ) rethrows -> R {
-    let pointers = unsafe arguments.map { unsafe strdup($0) }
+    var pointers = unsafe arguments.map { unsafe strdup($0) }
     unsafe precondition(!pointers.isEmpty)
+    // GTest's InitGoogleTest reads argv[argc] when removing recognized flags.
+    unsafe pointers.append(nil)
 
     defer {
         for unsafe pointer in unsafe pointers {
@@ -91,6 +93,6 @@ private func withUnsafeMutableCStyleArguments<R>(
     return try unsafe mutablePointers.withUnsafeMutableBufferPointer { buffer in
         // Guaranteed to be non-nil because of the precondition at the beginning.
         // swift-format-ignore: NeverForceUnwrap
-        unsafe try body(Int32(buffer.count), buffer.baseAddress!)
+        unsafe try body(Int32(buffer.count - 1), buffer.baseAddress!)
     }
 }
