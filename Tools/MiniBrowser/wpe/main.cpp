@@ -539,9 +539,9 @@ static void activate(GApplication* application, gpointer)
     else if (profileDirectory) {
         g_autofree char* dataDirectory = g_build_filename(profileDirectory, "data", nullptr);
         g_autofree char* cacheDirectory = g_build_filename(profileDirectory, "cache", nullptr);
-        webkit_website_data_manager_new("base-data-directory", dataDirectory, "base-cache-directory", cacheDirectory, nullptr);
+        manager = webkit_website_data_manager_new("base-data-directory", dataDirectory, "base-cache-directory", cacheDirectory, nullptr);
     } else
-        webkit_website_data_manager_new(nullptr);
+        manager = webkit_website_data_manager_new(nullptr);
 
     webkit_website_data_manager_set_itp_enabled(manager, enableITP);
 
