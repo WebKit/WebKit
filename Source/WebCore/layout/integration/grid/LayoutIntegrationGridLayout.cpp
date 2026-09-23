@@ -238,6 +238,13 @@ void GridLayout::layout()
 {
     auto gridLayoutConstraints = constraintsForGridContent(gridBox());
 
+    // Clear the grid area left over from a previous layout here rather than after each grid item's layout.
+    // Keeping the one from the final layout set on the renderer matches legacy grid, which uses it to decide
+    // whether a grid item's grid area changed. If we fall back to legacy grid on a later layout, a missing
+    // grid area would count as changed and relayout every grid item.
+    for (CheckedRef layoutBox : formattingContextBoxes(gridBox()))
+        CheckedRef { downcast<RenderBox>(*layoutBox->rendererForIntegration()) }->clearGridAreaContentSize();
+
     auto previousGridItemRects = gridItemBorderBoxRects();
 
     auto [ usedTrackSizes, gridItemRects ] = Layout::GridFormattingContext { gridBox(), layoutState() }.layout(gridLayoutConstraints);

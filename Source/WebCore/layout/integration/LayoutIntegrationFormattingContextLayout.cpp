@@ -101,7 +101,6 @@ void layoutGridItemWithFormattingContext(const Layout::ElementBox& box, std::opt
     // against it below rather than against the grid container's content box.
     renderer->setGridAreaContentLogicalWidth(gridAreaInlineSize);
     layoutRendererAndUpdateBoxGeometry(box, renderer.get(), overridingBorderBoxLogicalWidth, overridingBorderBoxLogicalHeight, gridAreaInlineSize, layoutState);
-    renderer->clearGridAreaContentSize();
 }
 
 static inline void populateRootRendererWithFloatsFromIFC(auto& rootBlockContainer, auto& placedFloats)

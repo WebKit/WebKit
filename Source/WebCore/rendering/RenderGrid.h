@@ -95,6 +95,7 @@ public:
     const std::optional<LayoutUnit> availableLogicalHeightForContentBox() const;
 
     void setNeedsItemPlacement(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
+    void disableGridFormattingContextLayoutForPartialLayout();
     const Vector<LayoutUnit>& trackSizesForComputedStyle(Style::GridTrackSizingDirection) const LIFETIME_BOUND;
 
     const Vector<LayoutUnit>& columnPositions() const LIFETIME_BOUND { return m_columnPositions; }

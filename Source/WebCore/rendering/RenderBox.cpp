@@ -451,6 +451,18 @@ static void spatialPortalStyleDidChange(Element& element)
 }
 #endif
 
+static bool selfAlignmentOverflowOnlyDidChange(const Style::ComputedStyle& oldStyle, const Style::ComputedStyle& newStyle)
+{
+    auto overflowOnlyDidChange = [](const auto& oldAlignment, const auto& newAlignment) {
+        if (oldAlignment.isAuto() || newAlignment.isAuto())
+            return false;
+        auto oldResolvedAlignment = oldAlignment.resolve();
+        auto newResolvedAlignment = newAlignment.resolve();
+        return oldResolvedAlignment.position() == newResolvedAlignment.position() && oldResolvedAlignment.overflow() != newResolvedAlignment.overflow();
+    };
+    return overflowOnlyDidChange(oldStyle.alignSelf(), newStyle.alignSelf()) || overflowOnlyDidChange(oldStyle.justifySelf(), newStyle.justifySelf());
+}
+
 void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyle* oldStyle)
 {
     // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
@@ -545,6 +557,8 @@ void RenderBox::styleDidChange(Style::Difference diff, const Style::ComputedStyl
 
     if ((oldStyle && !oldStyle->shapeOutside().isNone()) || !style().shapeOutside().isNone())
         updateShapeOutsideInfoAfterStyleChange(style(), oldStyle, diff);
+    if (CheckedPtr parentGrid = dynamicDowncast<RenderGrid>(parent()); parentGrid && oldStyle && selfAlignmentOverflowOnlyDidChange(*oldStyle, newStyle))
+        parentGrid->disableGridFormattingContextLayoutForPartialLayout();
     updateGridPositionAfterStyleChange(style(), oldStyle);
 
     // Changing the position from/to absolute can potentially create/remove flex/grid items, as absolutely positioned

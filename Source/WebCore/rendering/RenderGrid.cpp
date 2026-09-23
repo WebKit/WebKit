@@ -169,6 +169,12 @@ void RenderGrid::styleDidChange(Style::Difference diff, const Style::ComputedSty
             gridItem.setChildNeedsLayout();
     }
 
+    auto overflowOnlyDidChange = [](StyleSelfAlignmentData oldAlignment, StyleSelfAlignmentData newAlignment) {
+        return oldAlignment.position() == newAlignment.position() && oldAlignment.overflow() != newAlignment.overflow();
+    };
+    if (overflowOnlyDidChange(oldStyle->alignItems().resolve(), newStyle.alignItems().resolve()) || overflowOnlyDidChange(oldStyle->justifyItems().resolve(), newStyle.justifyItems().resolve()))
+        disableGridFormattingContextLayoutForPartialLayout();
+
     bool alignItemsStretchChanged = [&]() {
         auto oldAlignItems = oldStyle->alignItems().resolve().position();
         auto newAlignItems = style().alignItems().resolve().position();
@@ -572,6 +578,17 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
     m_trackSizingAlgorithm.clearBaselineItemsCache();
 }
 
+void RenderGrid::disableGridFormattingContextLayoutForPartialLayout()
+{
+    if (m_hasGridFormattingContextLayout && !*m_hasGridFormattingContextLayout)
+        return;
+
+    m_hasGridFormattingContextLayout = false;
+    // A previous layout may have run as a grid formatting context, which leaves the legacy grid
+    // state unpopulated. Reset it so that the legacy path rebuilds it on the next layout.
+    setNeedsItemPlacement();
+}
+
 bool RenderGrid::layoutUsingGridFormattingContext()
 {
     if (m_hasGridFormattingContextLayout && !*m_hasGridFormattingContextLayout) {
@@ -854,7 +871,7 @@ LayoutUnit RenderGrid::guttersSize(Style::GridTrackSizingDirection direction, un
 
 std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() const
 {
-    if (LayoutIntegration::canUseForGridLayout(*this)) {
+    if ((!m_hasGridFormattingContextLayout || *m_hasGridFormattingContextLayout) && LayoutIntegration::canUseForGridLayout(*this)) {
         // const_cast is safe here: computeIntrinsicWidths() only reads grid properties
         // and does not mutate RenderGrid state, matching the legacy path pattern below.
         auto gridLayout = LayoutIntegration::GridLayout { const_cast<RenderGrid&>(*this) };
