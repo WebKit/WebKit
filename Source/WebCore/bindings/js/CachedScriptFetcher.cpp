@@ -27,6 +27,7 @@
 #include "config.h"
 #include "CachedScriptFetcher.h"
 
+#include "CachedCSSStyleSheet.h"
 #include "CachedScript.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
@@ -80,6 +81,11 @@ RefPtr<CachedResource> CachedScriptFetcher::requestResourceWithCache(Document& d
     case FetchOptionsDestination::Json:
     case FetchOptionsDestination::Text: {
         auto result = protect(document.cachedResourceLoader())->requestScript(WTF::move(request));
+        return result ? RefPtr { WTF::move(result.value()) } : nullptr;
+    }
+
+    case FetchOptionsDestination::Style: {
+        auto result = protect(document.cachedResourceLoader())->requestCSSStyleSheet(WTF::move(request));
         return result ? RefPtr { WTF::move(result.value()) } : nullptr;
     }
 

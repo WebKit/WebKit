@@ -26,14 +26,18 @@
 #include "config.h"
 #include "ScriptModuleLoader.h"
 
+#include "CSSStyleSheet.h"
+#include "CachedCSSStyleSheet.h"
 #include "CachedModuleScriptLoader.h"
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSCSSStyleSheet.h"
 #include "JSDOMBinding.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSDOMWindowBase.h"
 #include "LoadableModuleScript.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
@@ -387,6 +391,11 @@ JSC::JSPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalOb
     case JSC::ScriptFetchParameters::Type::Text:
         destination = FetchOptions::Destination::Text;
         break;
+    case JSC::ScriptFetchParameters::Type::CSS:
+        // FIXME: is this the best place to implement this?
+        ASSERT(m_ownerType == OwnerType::Document);
+        destination = FetchOptions::Destination::Style;
+        break;
     default:
         break;
     }
@@ -486,6 +495,67 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
     return metaProperties;
 }
 
+static JSC::JSValue createCSSModule(JSC::JSGlobalObject& object, String&& source, URL&& baseURL)
+{
+    auto& vm = object.vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    auto& thisObject = uncheckedDowncast<JSDOMWindowBase>(object);
+
+    RefPtr localWindow = thisObject.wrapped();
+    if (!localWindow) {
+        ASSERT_NOT_REACHED();
+        return JSC::jsUndefined();
+    }
+
+    RefPtr document = localWindow->documentIfLocal();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return JSC::jsUndefined();
+    }
+
+    if (!document->settings().cssModuleScriptsEnabled())
+        return JSC::jsUndefined();
+
+    // > Let `sheet` be the result of running the steps to create a constructed
+    // > CSSStyleSheet with an empty dictionary as the argument.
+    CSSStyleSheet::Init sheetInit {
+        .baseURL = baseURL.string(),
+        .media = emptyString(),
+        .disabled = false
+    };
+
+    auto sheetOrException = CSSStyleSheet::create(*document, WTF::move(sheetInit));
+    if (sheetOrException.hasException()) [[unlikely]] {
+        propagateException(object, throwScope, sheetOrException.releaseException());
+        return { };
+    }
+
+    auto sheet = sheetOrException.releaseReturnValue();
+
+    // From spec:
+    // * Run the steps to synchronously replace the rules of a CSSStyleSheet on sheet given source.
+    // * If this throws an exception, catch it, and set script's parse error to that exception, and return script.
+    // FIXME: set the script's parse error (how?)
+
+    if (auto maybeException = sheet->replaceSync(WTF::move(source)); maybeException.hasException()) [[unlikely]] {
+        propagateException(object, throwScope, WTF::move(maybeException));
+        return { };
+    }
+
+    auto jsValue = toJSNewlyCreated<IDLInterface<CSSStyleSheet>>(object, thisObject, WTF::move(sheet));
+    RETURN_IF_EXCEPTION(throwScope, JSC::jsUndefined());
+
+    RELEASE_AND_RETURN(throwScope, jsValue);
+}
+
+// Stores enough information to turn a CSS source code into a CSSStyleSheet
+// (and subsequently JSCSSStyleSheet)
+struct CSSSourceCode {
+    String sourceCode;
+    URL baseURL;
+};
+
 void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, URL&& sourceURL, Ref<DeferredPromise> promise)
 {
     // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
@@ -510,7 +580,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         return responseURL;
     };
 
-    JSC::SourceCode sourceCode;
+    Variant<JSC::SourceCode, CSSSourceCode> sourceCode;
     if (m_ownerType == OwnerType::Document) {
         auto& loader = downcast<CachedModuleScriptLoader>(moduleScriptLoader);
         Ref cachedResource = *loader.cachedResource();
@@ -537,7 +607,14 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         // so it has to be decided before the JavaScript MIME type is considered.
         if (requestedType == JSC::ScriptFetchParameters::Type::Text)
             type = ModuleType::Text;
-        else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+        else if (requestedType == JSC::ScriptFetchParameters::Type::CSS) {
+            if (MIMETypeRegistry::isSupportedStyleSheetMIMEType(mimeType))
+                type = ModuleType::CSS;
+            else {
+                rejectWithFetchError(*context, WTF::move(promise), ExceptionCode::TypeError, makeString('\'', cachedResource->response().mimeType(), "' is not a valid CSS MIME type for module script '"_s, sourceURL.string(), "'."_s));
+                return;
+            }
+        } else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
         else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
@@ -594,6 +671,15 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             sourceCode = JSC::SourceCode { ScriptSourceCode { cachedScript.ptr(), JSC::SourceProviderSourceType::Text, loader.scriptFetcher() }.jsSourceCode() };
             break;
         }
+        case ModuleType::CSS: {
+            Ref cachedStyleSheet = downcast<CachedCSSStyleSheet>(cachedResource);
+
+            auto cssSourceCode = cachedStyleSheet->sheetText(CachedCSSStyleSheet::MIMETypeCheckHint::Strict, CachedCSSStyleSheet::ForceUTF8Encoding::Yes);
+            // We already checked MIME above, so it must not be an error.
+
+            sourceCode = CSSSourceCode { WTF::move(*cssSourceCode), sourceURL };
+            break;
+        }
         case ModuleType::Invalid:
             RELEASE_ASSERT_NOT_REACHED();
         }
@@ -625,7 +711,10 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         // so it has to be decided before the JavaScript MIME type is considered.
         if (requestedType == JSC::ScriptFetchParameters::Type::Text)
             type = ModuleType::Text;
-        else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
+        else if (requestedType == JSC::ScriptFetchParameters::Type::CSS) {
+            // Workers aren't allowed to fetch CSS Module Scripts, so we shouldn't reach this point
+            RELEASE_ASSERT_NOT_REACHED();
+        } else if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType))
             type = ModuleType::JavaScript;
 #if ENABLE(WEBASSEMBLY)
         else if (context->settingsValues().webAssemblyESMIntegrationEnabled && MIMETypeRegistry::isSupportedWebAssemblyMIMEType(mimeType))
@@ -659,10 +748,12 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         case ModuleType::JavaScript:
             sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
             break;
-#if ENABLE(WEBASSEMBLY)
         case ModuleType::WebAssembly:
+#if ENABLE(WEBASSEMBLY)
             sourceCode = JSC::SourceCode { WebAssemblyScriptSourceCode { loader.script(), WTF::move(responseURL), loader.scriptFetcher() }.jsSourceCode() };
             break;
+#else
+            RELEASE_ASSERT_NOT_REACHED();
 #endif
         case ModuleType::JSON:
             sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
@@ -670,14 +761,24 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
         case ModuleType::Text:
             sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTF::move(responseURL), WTF::move(sourceURL), { }, JSC::SourceProviderSourceType::Text, loader.scriptFetcher() }.jsSourceCode() };
             break;
-        default:
+        // Workers aren't allowed to fetch CSS Module Scripts, so we shouldn't reach this point.
+        case ModuleType::CSS:
+        case ModuleType::Invalid:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
     protect(context->eventLoop())->queueTask(TaskSource::Networking, [promise = WTF::move(promise), sourceCode = WTF::move(sourceCode)] mutable {
         promise->fulfillWithCallback([&, sourceCode = WTF::move(sourceCode)](JSDOMGlobalObject& jsGlobalObject) mutable {
-            return JSC::JSSourceCode::create(jsGlobalObject.vm(), WTF::move(sourceCode));
+            return WTF::switchOn(sourceCode,
+                [&] (JSC::SourceCode& jsSourceCode) -> JSC::JSValue {
+                    return JSC::JSSourceCode::create(jsGlobalObject.vm(), WTF::move(jsSourceCode));
+                },
+                [&] (CSSSourceCode& cssSourceCode) -> JSC::JSValue {
+                    // Can only be done here, not in notifyFinished before the callback is fired,
+                    // because we have the JS global object.
+                    return createCSSModule(jsGlobalObject, WTF::move(cssSourceCode.sourceCode), WTF::move(cssSourceCode.baseURL));
+                });
         });
     });
 }

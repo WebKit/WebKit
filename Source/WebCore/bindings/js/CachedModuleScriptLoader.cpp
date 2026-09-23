@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CachedModuleScriptLoader.h"
 
+#include "CachedCSSStyleSheet.h"
 #include "CachedScript.h"
 #include "CachedScriptFetcher.h"
 #include "DOMWrapperWorld.h"
@@ -72,6 +73,9 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
         case JSC::ScriptFetchParameters::Type::Text:
             destination = FetchOptionsDestination::Text;
             break;
+        case JSC::ScriptFetchParameters::Type::CSS:
+            destination = FetchOptionsDestination::Style;
+            break;
         default:
             break;
         }
@@ -89,7 +93,17 @@ bool CachedModuleScriptLoader::load(Document& document, URL&& sourceURL, std::op
 
 void CachedModuleScriptLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess)
 {
-    ASSERT_UNUSED(resource, &resource == m_cachedResource);
+    notifyFinishedInternal(resource);
+}
+
+void CachedModuleScriptLoader::setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet& resource)
+{
+    notifyFinishedInternal(resource);
+}
+
+void CachedModuleScriptLoader::notifyFinishedInternal(const CachedResource& resource)
+{
+    ASSERT_UNUSED(resource, &resource == m_cachedResource.get());
     ASSERT(m_cachedResource);
     ASSERT(m_promise);
 

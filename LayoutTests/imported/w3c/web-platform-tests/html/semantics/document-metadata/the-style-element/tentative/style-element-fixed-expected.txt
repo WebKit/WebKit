@@ -1,5 +1,5 @@
 Test content
 
-Harness Error (FAIL), message = TypeError: Import attribute type "css" is not valid
+Harness Error (FAIL), message = TypeError: Module name, 'foo' does not resolve to a valid URL.
 
 

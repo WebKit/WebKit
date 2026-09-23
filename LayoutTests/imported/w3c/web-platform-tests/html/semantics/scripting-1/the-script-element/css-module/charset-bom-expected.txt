@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = TypeError: Import attribute type "css" is not valid
-
+PASS UTF-8 BOM should be stripped when decoding CSS module script
+PASS UTF-16BE BOM should be ignored, so CSS module should be UTF-8 decoded
+PASS UTF-16LE BOM should be ignored, so CSS module should be UTF-8 decoded
 

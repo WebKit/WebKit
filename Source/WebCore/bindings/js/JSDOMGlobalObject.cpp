@@ -779,6 +779,17 @@ JSC::JSObject* JSDOMGlobalObject::moduleLoaderCreateImportMetaProperties(JSC::JS
     return JSC::constructEmptyObject(globalObject->vm(), globalObject->nullPrototypeObjectStructure());
 }
 
+bool JSDOMGlobalObject::moduleTypeCanBeLoaded(JSC::ScriptFetchParameters::Type type)
+{
+    switch (type) {
+    case JSC::ScriptFetchParameters::CSS:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlobalObject* globalObject)
 {
     auto& vm = globalObject->vm();
