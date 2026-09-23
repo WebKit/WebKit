@@ -46,7 +46,7 @@ namespace WebKit {
 
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
 
-static bool parseNotificationOptions(NSDictionary *options, WebExtensionNotificationParameters& parameters, NSString **outExceptionString)
+static bool parseNotificationOptions(NSDictionary *options, bool forUpdate, WebExtensionNotificationParameters& parameters, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[
         messageKey,
@@ -63,7 +63,7 @@ static bool parseNotificationOptions(NSDictionary *options, WebExtensionNotifica
         buttonsKey: @[ NSDictionary.class ],
     };
 
-    if (!validateDictionary(options, @"options", requiredKeys, types, outExceptionString))
+    if (!validateDictionary(options, @"options", forUpdate ? nil : requiredKeys, types, outExceptionString))
         return false;
 
     if (NSString *title = objectForKey<NSString>(options, titleKey))
@@ -106,13 +106,38 @@ void WebExtensionAPINotifications::createNotification(const String& identifier, 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/create
 
     WebExtensionNotificationParameters parameters;
-    if (!parseNotificationOptions(options, parameters, outExceptionString))
+    if (!parseNotificationOptions(options, false, parameters, outExceptionString))
         return;
 
     parameters.identifier = !identifier.isEmpty() ? identifier : createVersion4UUIDString();
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsCreate(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = parameters.identifier]() {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsCreate(parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback), identifier = parameters.identifier](std::expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
         callback->call(toJSValueRef(callback->globalContext(), identifier));
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPINotifications::update(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications/update
+
+    WebExtensionNotificationParameters parameters;
+    if (!parseNotificationOptions(options, true, parameters, outExceptionString))
+        return;
+
+    parameters.identifier = identifier;
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::NotificationsUpdate(identifier, parameters), [protectedThis = Ref { *this }, callback = WTF::move(callback)](std::expected<bool, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(JSValueMakeBoolean(callback->globalContext(), result.value()));
     }, extensionContext().identifier());
 }
 

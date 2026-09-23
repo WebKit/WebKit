@@ -43,6 +43,7 @@ public:
 #if PLATFORM(COCOA)
 #if ENABLE(WK_WEB_EXTENSIONS_NOTIFICATIONS)
     void createNotification(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void update(const String& identifier, NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 #endif
 
     WebExtensionAPIEvent& onClicked();
