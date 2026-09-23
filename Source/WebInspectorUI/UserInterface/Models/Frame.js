@@ -97,6 +97,38 @@ WI.Frame = class Frame extends WI.Object
             this.dispatchEventToListeners(WI.Frame.Event.NameDidChange, {oldName});
     }
 
+    // Correct a placeholder description of the frame's current document. Unlike `initialize`, nothing is torn
+    // down: the frame has not navigated, so its subresources, child frames and execution contexts all still
+    // describe this same load.
+    //
+    // FIXME: <https://webkit.org/b/324918> Once Page and Network fully move to the WebPage target, there is
+    // no longer a placeholder to correct, and this method can be deleted.
+    updateInitialPlaceholderMainResource(url, {mimeType, loaderIdentifier, name, securityOrigin} = {})
+    {
+        console.assert(this._mainResource, "Tried to correct a placeholder main resource on a frame that has none.", this);
+        if (!this._mainResource)
+            return;
+
+        console.assert(!this._loaderIdentifier || this._loaderIdentifier === loaderIdentifier, this._loaderIdentifier, loaderIdentifier);
+
+        if (loaderIdentifier)
+            this._loaderIdentifier = loaderIdentifier;
+
+        this._mainResource.updateInitialPlaceholderURL(url, {mimeType, loaderIdentifier});
+
+        if (name && name !== this._name) {
+            let oldName = this._name;
+            this._name = name;
+            this.dispatchEventToListeners(WI.Frame.Event.NameDidChange, {oldName});
+        }
+
+        if (securityOrigin && securityOrigin !== this._securityOrigin) {
+            let oldSecurityOrigin = this._securityOrigin;
+            this._securityOrigin = securityOrigin;
+            this.dispatchEventToListeners(WI.Frame.Event.SecurityOriginDidChange, {oldSecurityOrigin});
+        }
+    }
+
     startProvisionalLoad(provisionalMainResource)
     {
         console.assert(provisionalMainResource);

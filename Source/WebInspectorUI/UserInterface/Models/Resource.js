@@ -41,7 +41,7 @@ WI.Resource = class Resource extends WI.SourceCode
         }
 
         this._mimeType = mimeType;
-        this._mimeTypeComponents = null;
+        this._cachedMimeTypeComponents = null;
         this._type = Resource.resolvedType(type, mimeType);
         this._loaderIdentifier = loaderIdentifier || null;
         this._requestIdentifier = requestIdentifier || null;
@@ -411,9 +411,9 @@ WI.Resource = class Resource extends WI.SourceCode
 
     get mimeTypeComponents()
     {
-        if (!this._mimeTypeComponents)
-            this._mimeTypeComponents = parseMIMEType(this._mimeType);
-        return this._mimeTypeComponents;
+        if (!this._cachedMimeTypeComponents)
+            this._cachedMimeTypeComponents = parseMIMEType(this._mimeType);
+        return this._cachedMimeTypeComponents;
     }
 
     get syntheticMIMEType()
@@ -740,6 +740,51 @@ WI.Resource = class Resource extends WI.SourceCode
         return requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i);
     }
 
+    // Correct a placeholder URL, and the resource type inferred from it, once the real ones are known. Under
+    // Site Isolation the page target can only describe an out-of-process frame's main resource by the
+    // frame's security origin, so the URL starts out with no path. This is the same load, so replacing the
+    // resource would double-count it everywhere.
+    //
+    // FIXME: <https://webkit.org/b/324918> Once Page and Network fully move to the WebPage target, there is
+    // no longer a placeholder to correct, and this method can be deleted.
+    updateInitialPlaceholderURL(url, {mimeType, loaderIdentifier} = {})
+    {
+        console.assert(url, "Tried to correct a placeholder URL without a real one.", this);
+        if (!url)
+            return;
+
+        let oldURL = this._url;
+        let oldMIMEType = this._mimeType;
+        let oldType = this._type;
+
+        this._url = url;
+
+        if (mimeType)
+            this._mimeType = mimeType;
+
+        this._type = Resource.resolvedType(undefined, this._mimeType);
+
+        if (loaderIdentifier)
+            this._loaderIdentifier = loaderIdentifier;
+
+        if (oldURL !== this._url) {
+            // Delete the URL components so the URL is re-parsed the next time it is requested.
+            this._urlComponents = null;
+
+            this.dispatchEventToListeners(WI.Resource.Event.URLDidChange, {oldURL});
+        }
+
+        if (oldMIMEType !== this._mimeType) {
+            // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
+            this._cachedMimeTypeComponents = null;
+
+            this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
+        }
+
+        if (oldType !== this._type)
+            this.dispatchEventToListeners(WI.Resource.Event.TypeDidChange, {oldType});
+    }
+
     updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, elapsedTime, timingData, source, security)
     {
         console.assert(!this._finished);
@@ -795,7 +840,7 @@ WI.Resource = class Resource extends WI.SourceCode
 
         if (oldMIMEType !== mimeType) {
             // Delete the MIME-type components so the MIME-type is re-parsed the next time it is requested.
-            this._mimeTypeComponents = null;
+            this._cachedMimeTypeComponents = null;
 
             this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
         }
