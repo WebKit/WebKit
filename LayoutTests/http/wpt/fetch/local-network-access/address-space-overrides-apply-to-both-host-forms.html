@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src=/resources/testharness.js></script>
+<script src=/resources/testharnessreport.js></script>
+<script>
+
+// Web Platform Tests can only bind loopback, so the local and public spaces are synthesised by mapping
+// extra ports, keyed on 127.0.0.1 and matched against the resolved peer address of each load.
+
+function spaceOf(label, origin)
+{
+    assert_true(!!window.internals, 'test requires internals');
+    const frame = document.createElement('iframe');
+    frame.src = new URL(`resources/lna-reporting-frame.html?label=${label}`, location.href).href.replace(location.origin, origin);
+    document.body.appendChild(frame);
+
+    return new Promise((resolve) => {
+        window.addEventListener('message', (event) => {
+            if (event.data.from === label)
+                resolve(event.data.space);
+        });
+    });
+}
+
+promise_test(async () => {
+    assert_equals(await spaceOf('local-by-address', 'http://127.0.0.1:8802'), 'local');
+}, 'the local override applies to the literal address it is keyed on');
+
+promise_test(async () => {
+    assert_equals(await spaceOf('local-by-name', 'http://web-platform.test:8802'), 'local');
+}, 'the local override applies to a hostname that resolves to that address');
+
+promise_test(async () => {
+    assert_equals(await spaceOf('public-by-name', 'http://web-platform.test:8803'), 'public');
+}, 'the public override applies to a hostname that resolves to that address');
+
+promise_test(async () => {
+    assert_equals(await spaceOf('unmapped', 'http://web-platform.test:8800'), 'loopback');
+}, 'a port with no override keeps the space its resolved address gives it');
+
+</script>
+</body>
+</html>

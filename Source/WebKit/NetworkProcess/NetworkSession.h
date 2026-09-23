@@ -175,7 +175,9 @@ public:
     WebCore::PermissionState localNetworkAccessPermission(const WebCore::ClientOrigin&, WebCore::IPAddressSpace) const;
     void removeLocalNetworkAccessPermissions(const WebCore::SecurityOriginData& topOrigin);
     void clearLocalNetworkAccessPermissionsForTesting();
-    
+
+    WebCore::IPAddressSpace classifyConnectionAddressSpace(const std::optional<WebCore::IPAddress>&, const URL&) const;
+
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool hasAppBoundSession() const { return false; }
     virtual void clearAppBoundSession() { }
@@ -427,6 +429,15 @@ protected:
     // in an unrelated site. Nothing writes it yet; the grant and revocation paths land with the
     // permission store. See https://bugs.webkit.org/show_bug.cgi?id=319907
     HashMap<std::pair<WebCore::ClientOrigin, WebCore::IPAddressSpace>, WebCore::PermissionState> m_localNetworkAccessPermissions;
+
+    void setIPAddressSpaceOverridesForTesting(const String&);
+
+    struct IPAddressSpaceOverrideForTesting {
+        WebCore::IPAddress address;
+        uint16_t port;
+        WebCore::IPAddressSpace space;
+    };
+    Vector<IPAddressSpaceOverrideForTesting> m_ipAddressSpaceOverridesForTesting;
 
     Vector<WebCore::SecurityOriginData> m_mockPushSubscriptionOriginsForTesting;
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)

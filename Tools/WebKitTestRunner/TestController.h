@@ -817,6 +817,7 @@ private:
 
     bool m_useWaitToDumpWatchdogTimer { true };
     bool m_forceNoTimeout { false };
+    std::string m_ipAddressSpaceOverrides;
 
     bool m_didPrintWebProcessCrashedMessage { false };
     bool m_shouldExitWhenAuxiliaryProcessCrashes { true };
