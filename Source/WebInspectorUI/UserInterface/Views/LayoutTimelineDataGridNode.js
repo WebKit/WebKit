@@ -42,7 +42,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         this._cachedData = super.data;
         this._cachedData.type = this.record.eventType;
         this._cachedData.name = this.displayName();
-        this._cachedData.node = this.record.domNode;
+        this._cachedData.node = this.record.domNodeOrInfo;
         this._cachedData.width = this.record.width;
         this._cachedData.height = this.record.height;
         this._cachedData.area = this.record.area;
@@ -82,8 +82,14 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         case "node":
             if (!value)
                 return emDash;
-            cell.classList.add(WI.DOMTreeElementPathComponent.iconClassNameForNode(value));
-            return WI.linkifyNodeReference(value);
+
+            if (value instanceof WI.DOMNode) {
+                cell.classList.add(WI.DOMTreeElementPathComponent.iconClassNameForNode(value));
+                return WI.linkifyNodeReference(value);
+            }
+
+            cell.classList.add(WI.DOMTreeElementPathComponent.DOMNodeIconStyleClassName);
+            return value.displayName;
         }
 
         return super.createCellContent(columnIdentifier, cell);

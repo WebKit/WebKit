@@ -25,12 +25,13 @@
 
 WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNode} = {})
+    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, area, domNodeOrInfo} = {})
     {
         super(WI.TimelineRecord.Type.Layout, startTime, endTime, stackTrace, sourceCodeLocation);
 
         console.assert(eventType);
         console.assert(!quad || quad instanceof WI.Quad);
+        console.assert(!domNodeOrInfo || domNodeOrInfo instanceof WI.DOMNode || domNodeOrInfo.displayName, domNodeOrInfo);
 
         if (eventType in WI.LayoutTimelineRecord.EventType)
             eventType = WI.LayoutTimelineRecord.EventType[eventType];
@@ -38,7 +39,9 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         this._eventType = eventType;
         this._quad = quad || null;
         this._area = area || null;
-        this._domNode = domNode || null;
+        this._domNodeOrInfo = domNodeOrInfo;
+        this._domNodeDisplayName = domNodeOrInfo?.displayName;
+        this._domNodeCSSPath = domNodeOrInfo instanceof WI.DOMNode ? WI.cssPath(domNodeOrInfo, {full: true}) : domNodeOrInfo?.cssPath;
     }
 
     // Static
@@ -73,9 +76,26 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad} = json;
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, quad, domNodeDisplayName, domNodeCSSPath} = json;
         quad = quad ? WI.Quad.fromJSON(quad) : null;
-        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad});
+
+        let domNodeOrInfo = null;
+        if (domNodeCSSPath) {
+            let documentNode = await WI.domManager.requestDocument();
+            try {
+                let nodeId = await documentNode.querySelector(domNodeCSSPath);
+                if (nodeId)
+                    domNodeOrInfo = WI.domManager.nodeForId(nodeId);
+            } catch { }
+        }
+        if (!domNodeOrInfo && domNodeDisplayName) {
+            domNodeOrInfo = {
+                displayName: domNodeDisplayName,
+                cssPath: domNodeCSSPath ?? null,
+            };
+        }
+
+        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, {quad, domNodeOrInfo});
     }
 
     toJSON()
@@ -89,6 +109,8 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
             startTime: this.startTime,
             endTime: this.endTime,
             quad: this._quad || undefined,
+            domNodeDisplayName: this._domNodeDisplayName || undefined,
+            domNodeCSSPath: this._domNodeCSSPath || undefined,
         };
     }
 
@@ -119,9 +141,9 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         return this._quad;
     }
 
-    get domNode()
+    get domNodeOrInfo()
     {
-        return this._domNode;
+        return this._domNodeOrInfo;
     }
 
     saveIdentityToCookie(cookie)

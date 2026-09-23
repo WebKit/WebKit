@@ -844,12 +844,12 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateStyles, startTime, startTime, stackTrace, sourceCodeLocation, {
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.RecalculateStyles:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.RecalculateStyles, startTime, endTime, stackTrace, sourceCodeLocation, {
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.InvalidateLayout:
@@ -857,7 +857,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.InvalidateLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.ScheduleLayout:
@@ -865,25 +865,25 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
             // Pass the startTime as the endTime since this record type has no duration.
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.ScheduleLayout, startTime, startTime, stackTrace, sourceCodeLocation, {
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Layout:
             var layoutRecordType = sourceCodeLocation ? WI.LayoutTimelineRecord.EventType.ForcedLayout : WI.LayoutTimelineRecord.EventType.Layout;
             return new WI.LayoutTimelineRecord(layoutRecordType, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.root),
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Paint:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Paint, startTime, endTime, stackTrace, sourceCodeLocation, {
                 quad: new WI.Quad(recordPayload.data.clip),
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.Composite:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.Composite, startTime, endTime, stackTrace, sourceCodeLocation, {
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.FirstContentfulPaint:
@@ -892,7 +892,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         case InspectorBackend.Enum.Timeline.EventType.LargestContentfulPaint:
             return new WI.LayoutTimelineRecord(WI.LayoutTimelineRecord.EventType.LargestContentfulPaint, startTime, startTime, stackTrace, sourceCodeLocation, {
                 area: recordPayload.data.area,
-                domNode: WI.domManager.nodeForId(recordPayload.data.nodeId),
+                domNodeOrInfo: WI.domManager.nodeForId(recordPayload.data.nodeId),
             });
 
         case InspectorBackend.Enum.Timeline.EventType.RenderingFrame:

@@ -281,8 +281,8 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         this._showingHighlightForRecord = record;
 
-        if (record.domNode) {
-            record.domNode.highlight();
+        if (record.domNodeOrInfo instanceof WI.DOMNode) {
+            record.domNodeOrInfo.highlight();
             this._showingHighlight = true;
             return;
         }
