@@ -32,11 +32,13 @@
 #import "LoaderNSURLExtras.h"
 #import "Logging.h"
 #import "PlatformNSAdaptiveImageGlyph.h"
+#import "ShareableBitmap.h"
 #import "UTIRegistry.h"
 #import "WebCoreTextAttachment.h"
 #import <Foundation/Foundation.h>
 #import <ImageIO/ImageIO.h>
 #import <pal/spi/cocoa/UIFoundationSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -315,6 +317,19 @@ static MultiRepresentationHEICAttachmentData toMultiRepresentationHEICAttachment
     return attachmentData;
 }
 
+static RetainPtr<CGImageRef> createStrikeImageSnapshot(Image& image)
+{
+    RefPtr nativeImage = image.nativeImage();
+    if (!nativeImage)
+        return nullptr;
+
+    RefPtr snapshot = ShareableBitmap::createFromImagePixels(*nativeImage);
+    if (!snapshot)
+        return nullptr;
+
+    return snapshot->createPlatformImage(DontCopyBackingStore);
+}
+
 static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(const MultiRepresentationHEICAttachmentData& attachmentData)
 {
     if (RetainPtr<NSData> data = attachmentData.data ? bridge_cast((attachmentData.data).get()) : nil) {
@@ -322,6 +337,11 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
         if (attachment)
             return attachment;
     }
+
+    if (!attachmentData.isValid())
+        return nil;
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr identifier = attachmentData.identifier.createNSString();
     RetainPtr description = attachmentData.description.createNSString();
@@ -333,7 +353,7 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
 
     RetainPtr credit = attachmentData.credit.createNSString();
     RetainPtr digitalSourceType = attachmentData.digitalSourceType.createNSString();
-    if (identifier.get().length && digitalSourceType.get().length) {
+    if (credit.get().length && digitalSourceType.get().length) {
         [provenanceInfo setObject:credit.get() forKey:bridge_cast(kCGImagePropertyIPTCCredit)];
         [provenanceInfo setObject:digitalSourceType.get() forKey:bridge_cast(kCGImagePropertyIPTCExtDigitalSourceType)];
     }
@@ -341,12 +361,20 @@ static RetainPtr<NSAdaptiveImageGlyph> toWebMultiRepresentationHEICAttachment(co
 
     NSMutableArray *images = [NSMutableArray arrayWithCapacity:attachmentData.images.size()];
     for (auto& singleImage : attachmentData.images) {
+        RefPtr image = singleImage.image;
+        if (!image)
+            return nil;
+
+        RetainPtr strikeImage = createStrikeImageSnapshot(*image);
+        if (!strikeImage)
+            return nil;
+
 #if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:strikeImage.get() alignmentInset:singleImage.size provenanceInfo:provenanceInfo.get()]);
 #else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:singleImage.image->nativeImage()->platformImage().get() alignmentInset:singleImage.size]);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        RetainPtr strike = adoptNS([[CTEmojiImageStrike alloc] initWithImage:strikeImage.get() alignmentInset:singleImage.size]);
+        ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
         [images addObject:strike.get()];
@@ -356,10 +384,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return nil;
 
     RetainPtr asset = adoptNS([[CTEmojiImageAsset alloc] initWithContentIdentifier:identifier.get() shortDescription:description.get() strikeImages:images]);
-    if (![asset imageData])
+    RetainPtr imageContent = [asset imageData];
+    if (!imageContent)
         return nil;
 
-    return adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:[asset imageData]]);
+    return adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:imageContent.get()]);
+
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    return nil;
 }
 
 #endif
