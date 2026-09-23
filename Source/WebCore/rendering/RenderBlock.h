@@ -290,6 +290,8 @@ protected:
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
     void computeIntrinsicLogicalWidthContributions() override;
+    std::optional<LayoutUnit> fixedLogicalWidthContribution(const Style::PreferredSize&) const;
+    std::pair<LayoutUnit, LayoutUnit> logicalWidthContributionsForSize(const Style::PreferredSize&, LayoutUnit minContentLogicalWidth, LayoutUnit maxContentLogicalWidth) const;
     
     std::optional<LayoutUnit> firstLineBaseline() const override;
     std::optional<LayoutUnit> lastLineBaseline() const override;
