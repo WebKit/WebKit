@@ -3089,7 +3089,6 @@
 		72C9B6522F99950B0070F060 /* GainMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C9B6512F9994AD0070F060 /* GainMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72C9B6532F99998D0070F060 /* ShareableGainMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 72C9B64F2F9992DE0070F060 /* ShareableGainMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72CC6D36304E3B91006895A1 /* FontBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 72CC6D34304E369F006895A1 /* FontBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		72CD9C542FCB794100CFC9BF /* AsyncImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 72E0375C2FC9323300088DDE /* AsyncImageDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72D3F66D2A37FE9700F3A82B /* RotationDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D3F66C2A37F48E00F3A82B /* RotationDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72D73644278461A000398663 /* FilterResults.h in Headers */ = {isa = PBXBuildFile; fileRef = 7211B5D6276536820076FEF8 /* FilterResults.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72E5023129B669EE00E5B8E7 /* RenderingResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 72E5023029B669ED00E5B8E7 /* RenderingResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -14822,9 +14821,8 @@
 		72D5376E2BE718F9004577FD /* CanvasLayers.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CanvasLayers.idl; sourceTree = "<group>"; };
 		72D537722BE9EB6B004577FD /* CanvasFilterContextSwitcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasFilterContextSwitcher.cpp; sourceTree = "<group>"; };
 		72D537732BE9EB6B004577FD /* CanvasFilterContextSwitcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CanvasFilterContextSwitcher.h; sourceTree = "<group>"; };
-		72E0375C2FC9323300088DDE /* AsyncImageDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncImageDecoder.h; sourceTree = "<group>"; };
-		72E0375D2FC9573200088DDE /* AsyncImageDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncImageDecoder.cpp; sourceTree = "<group>"; };
-		72E0375E2FC9DDE900088DDE /* ImageDecoderClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ImageDecoderClient.h; sourceTree = "<group>"; };
+		72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageFrameWorkQueue.h; sourceTree = "<group>"; };
+		72E0375D2FC9573200088DDE /* ImageFrameWorkQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFrameWorkQueue.cpp; sourceTree = "<group>"; };
 		72E193942EE0CB23004C7722 /* CachedImageClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CachedImageClient.cpp; sourceTree = "<group>"; };
 		72E417611A2E8D2F004C562A /* JSEXTsRGB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTsRGB.cpp; sourceTree = "<group>"; };
 		72E417621A2E8D2F004C562A /* JSEXTsRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTsRGB.h; sourceTree = "<group>"; };
@@ -36993,8 +36991,6 @@
 				149D439536B3216FDAEEB975 /* AnnexBUtilities.h */,
 				74A860E73006046D00A943A1 /* ArrayPixelBuffer.cpp */,
 				74A860E63006046D00A943A1 /* ArrayPixelBuffer.h */,
-				72E0375D2FC9573200088DDE /* AsyncImageDecoder.cpp */,
-				72E0375C2FC9323300088DDE /* AsyncImageDecoder.h */,
 				BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */,
 				CD1F9B152702360E00617EB6 /* AudioTrackPrivateClient.h */,
 				5128B71E2E4B221B00975E0A /* AudioVideoRenderer.h */,
@@ -37229,12 +37225,13 @@
 				6E9F71D5662ECF3A4D7B92ED /* ImageBufferTransferIdentifier.h */,
 				CD19FEA71F573972000C42FB /* ImageDecoder.cpp */,
 				CD19FEA61F573972000C42FB /* ImageDecoder.h */,
-				72E0375E2FC9DDE900088DDE /* ImageDecoderClient.h */,
 				1D47658D25CCA778007AF312 /* ImageDecoderIdentifier.h */,
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
 				72854E5C2B6987B300E0181A /* ImageFrameAnimator.cpp */,
 				72854E5E2B6987B300E0181A /* ImageFrameAnimator.h */,
+				72E0375D2FC9573200088DDE /* ImageFrameWorkQueue.cpp */,
+				72E0375C2FC9323300088DDE /* ImageFrameWorkQueue.h */,
 				BC7F44A70B9E324E00A9D081 /* ImageObserver.h */,
 				A8748D6612CC3763001FBA41 /* ImageOrientation.h */,
 				7B0C389D2ACED2F000F1FDDC /* ImagePaintingOptions.cpp */,
@@ -44629,7 +44626,6 @@
 				74A860E93006046D00A943A1 /* ArrayPixelBuffer.h in Headers */,
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
-				72CD9C542FCB794100CFC9BF /* AsyncImageDecoder.h in Headers */,
 				01D22A1F2CFD826C002DC857 /* AsyncNodeDeletionQueue.h in Headers */,
 				9BD90BC92DDC515800937E3D /* AsyncNodeDeletionQueueInlines.h in Headers */,
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,

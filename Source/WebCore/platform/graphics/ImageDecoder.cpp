@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
-#include "AsyncImageDecoder.h"
 #include "ImageFrame.h"
 #include "ScalableImageDecoder.h"
 #include <wtf/TZoneMallocInlines.h>

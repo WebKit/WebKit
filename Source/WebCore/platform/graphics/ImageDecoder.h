@@ -44,9 +44,7 @@
 
 namespace WebCore {
 
-class AsyncImageDecoder;
 class FragmentedSharedBuffer;
-class ImageDecoderClient;
 class ImageFrame;
 class NativeImage;
 

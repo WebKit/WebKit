@@ -184,7 +184,7 @@ void CachedImage::removeAllClientsWaitingForAsyncDecoding()
     RefPtr bitmapImage = dynamicDowncast<BitmapImage>(image());
     if (!bitmapImage)
         return;
-    bitmapImage->stopDecoderWorkQueue();
+    bitmapImage->stopDecodingWorkQueue();
 
     for (Ref client : m_clientsWaitingForAsyncDecoding)
         client->imageChanged(this);

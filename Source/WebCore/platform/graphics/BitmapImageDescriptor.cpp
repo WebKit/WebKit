@@ -26,9 +26,9 @@
 #include "config.h"
 #include "BitmapImageDescriptor.h"
 
-#include "AsyncImageDecoder.h"
 #include "BitmapImageSource.h"
 #include "GraphicsContext.h"
+#include "ImageDecoder.h"
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ BitmapImageDescriptor::BitmapImageDescriptor(BitmapImageSource& source)
 }
 
 template<typename MetadataType>
-MetadataType BitmapImageDescriptor::imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag cachedFlag, MetadataType (AsyncImageDecoder::*functor)() const) const
+MetadataType BitmapImageDescriptor::imageMetadata(MetadataType& cachedValue, const MetadataType& defaultValue, CachedFlag cachedFlag, MetadataType (ImageDecoder::*functor)() const) const
 {
     if (m_cachedFlags.contains(cachedFlag))
         return cachedValue;
@@ -155,17 +155,17 @@ ImageOrientation BitmapImageDescriptor::orientation() const
 
 unsigned BitmapImageDescriptor::primaryFrameIndex() const
 {
-    return imageMetadata(m_primaryFrameIndex, std::size_t(0), CachedFlag::PrimaryFrameIndex, &AsyncImageDecoder::primaryFrameIndex);
+    return imageMetadata(m_primaryFrameIndex, std::size_t(0), CachedFlag::PrimaryFrameIndex, &ImageDecoder::primaryFrameIndex);
 }
 
 unsigned BitmapImageDescriptor::frameCount() const
 {
-    return imageMetadata(m_frameCount, std::size_t(0), CachedFlag::FrameCount, &AsyncImageDecoder::frameCount);
+    return imageMetadata(m_frameCount, std::size_t(0), CachedFlag::FrameCount, &ImageDecoder::frameCount);
 }
 
 RepetitionCount BitmapImageDescriptor::repetitionCount() const
 {
-    return imageMetadata(m_repetitionCount, static_cast<RepetitionCount>(RepetitionCountNone), CachedFlag::RepetitionCount, &AsyncImageDecoder::repetitionCount);
+    return imageMetadata(m_repetitionCount, static_cast<RepetitionCount>(RepetitionCountNone), CachedFlag::RepetitionCount, &ImageDecoder::repetitionCount);
 }
 
 ColorSpace BitmapImageDescriptor::colorSpace() const
@@ -183,7 +183,7 @@ std::optional<Color> BitmapImageDescriptor::singlePixelSolidColor() const
 
 bool BitmapImageDescriptor::hasHDRGainMap() const
 {
-    return imageMetadata(m_hasHDRGainMap, false, CachedFlag::HasHDRGainMap, &AsyncImageDecoder::hasHDRGainMap);
+    return imageMetadata(m_hasHDRGainMap, false, CachedFlag::HasHDRGainMap, &ImageDecoder::hasHDRGainMap);
 }
 
 bool BitmapImageDescriptor::hasHDRColorSpace() const
@@ -205,7 +205,7 @@ bool BitmapImageDescriptor::hasHDRColorSpace() const
 String BitmapImageDescriptor::uti() const
 {
 #if USE(CG)
-    return imageMetadata(m_uti, String(), CachedFlag::UTI, &AsyncImageDecoder::uti);
+    return imageMetadata(m_uti, String(), CachedFlag::UTI, &ImageDecoder::uti);
 #else
     return String();
 #endif
@@ -213,17 +213,17 @@ String BitmapImageDescriptor::uti() const
 
 String BitmapImageDescriptor::filenameExtension() const
 {
-    return imageMetadata(m_filenameExtension, String(), CachedFlag::FilenameExtension, &AsyncImageDecoder::filenameExtension);
+    return imageMetadata(m_filenameExtension, String(), CachedFlag::FilenameExtension, &ImageDecoder::filenameExtension);
 }
 
 String BitmapImageDescriptor::accessibilityDescription() const
 {
-    return imageMetadata(m_accessibilityDescription, String(), CachedFlag::AccessibilityDescription, &AsyncImageDecoder::accessibilityDescription);
+    return imageMetadata(m_accessibilityDescription, String(), CachedFlag::AccessibilityDescription, &ImageDecoder::accessibilityDescription);
 }
 
 std::optional<IntPoint> BitmapImageDescriptor::hotSpot() const
 {
-    return imageMetadata(m_hotSpot, std::optional<IntPoint>(), CachedFlag::HotSpot, &AsyncImageDecoder::hotSpot);
+    return imageMetadata(m_hotSpot, std::optional<IntPoint>(), CachedFlag::HotSpot, &ImageDecoder::hotSpot);
 }
 
 SubsamplingLevel BitmapImageDescriptor::maximumSubsamplingLevel() const

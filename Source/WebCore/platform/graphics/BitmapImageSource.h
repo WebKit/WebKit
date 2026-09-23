@@ -26,19 +26,19 @@
 #pragma once
 
 #include "BitmapImageDescriptor.h"
-#include "ImageDecoderClient.h"
+#include "ImageFrameWorkQueue.h"
 #include "ImageSource.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class AsyncImageDecoder;
 class BitmapImage;
 class ImageFrameAnimator;
+class ImageDecoder;
 class ImageObserver;
 
-class BitmapImageSource final : public ImageSource, public ImageDecoderClient, public CanMakeCheckedPtr<BitmapImageSource> {
+class BitmapImageSource final : public ImageSource, public CanMakeCheckedPtr<BitmapImageSource> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(BitmapImageSource);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(BitmapImageSource);
 public:
@@ -47,8 +47,8 @@ public:
     virtual ~BitmapImageSource();
 
     // State
-    AsyncImageDecoder* decoder(FragmentedSharedBuffer* = nullptr) const;
-    AsyncImageDecoder* decoderIfExists() const { return m_decoder.get(); }
+    ImageDecoder* decoder(FragmentedSharedBuffer* = nullptr) const;
+    ImageDecoder* decoderIfExists() const { return m_decoder.get(); }
 
     // Encoded and decoded data
     void destroyDecodedData(bool destroyAll) final;
@@ -63,9 +63,9 @@ public:
 
     // Decoding & animation
     bool isPendingDecodingAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
-    void destroyNativeImageAtIndex(unsigned index, std::optional<DecodingDestination> = std::nullopt) final;
+    void destroyNativeImageAtIndex(unsigned index, std::optional<DecodingDestination> = std::nullopt);
     void imageFrameAtIndexAvailable(unsigned index, ImageAnimatingState, DecodingStatus);
-    void imageFrameDecodeAtIndexHasFinished(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&, RefPtr<NativeImage>&&) final;
+    void imageFrameDecodeAtIndexHasFinished(unsigned index, SubsamplingLevel, ImageAnimatingState, const DecodingOptions&, RefPtr<NativeImage>&&);
 
     // ImageFrame
     unsigned primaryFrameIndex() const final { return m_descriptor.primaryFrameIndex(); }
@@ -93,14 +93,12 @@ public:
     // Testing support
     UTF8CString sourceUTF8() const;
 
-    // ImageDecoderClient.
-    WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
-
 private:
     BitmapImageSource(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
 
     // State
     ImageFrameAnimator* frameAnimator() const;
+    ImageFrameWorkQueue& workQueue() const;
 
     // Encoded and decoded data
     void encodedDataStatusChanged(EncodedDataStatus);
@@ -129,8 +127,8 @@ private:
     DecodingDestination preferredDecodingDestination(GraphicsContext&, ImagePaintingOptions) const final;
     std::optional<DecodingDestination> compatibleDecodingDestinationWithOptionsAtIndex(unsigned index, SubsamplingLevel, const DecodingOptions&) const;
     bool isLargeForDecoding() const final;
-    bool NODELETE isDecoderWorkQueueIdle() const;
-    void stopDecoderWorkQueue() final;
+    bool NODELETE isDecodingWorkQueueIdle() const;
+    void stopDecodingWorkQueue() final;
     void decode(Function<void(DecodingStatus)>&& decodeCallback) final;
     void callDecodeCallbacks(DecodingStatus);
     void imageFrameDecodeAtIndexHasFinished(unsigned index, ImageAnimatingState, DecodingStatus);
@@ -221,8 +219,9 @@ private:
     bool m_allDataReceived { false };
 
     BitmapImageDescriptor m_descriptor;
-    mutable RefPtr<AsyncImageDecoder> m_decoder;
+    mutable RefPtr<ImageDecoder> m_decoder;
     const std::unique_ptr<ImageFrameAnimator> m_frameAnimator;
+    mutable RefPtr<ImageFrameWorkQueue> m_workQueue;
     Vector<Function<void(DecodingStatus)>> m_decodeCallbacks;
 
     // ImageFrame
