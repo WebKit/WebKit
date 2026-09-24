@@ -1,0 +1,20 @@
+<button id="skippedRoot" style="content-visibility: hidden">
+  <marquee id="marquee" style="position: fixed">
+    <span>
+      <span id="inlineBox">
+        <div id="blockInInline"></div>
+      </span>
+    </span>
+  </marquee>
+</button>
+<script>
+window.testRunner?.dumpAsText();
+internals.setImmediateRendererDestructionEnabled(true);
+document.body.offsetHeight;
+inlineBox.after(blockInInline);
+internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+skippedRoot.appendChild(blockInInline);
+internals.setImmediateRendererDestructionEnabled(false);
+internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+document.body.innerHTML = "PASS if no crash";
+</script>

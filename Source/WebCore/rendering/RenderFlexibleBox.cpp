@@ -130,6 +130,11 @@ void RenderFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren, LayoutUni
 
         m_flexLayout.layout(relayoutChildren);
 
+        if (CheckedRef { layoutContext() }->isSkippedContentRootForLayout(*this)) {
+            for (CheckedRef child : childrenOfType<RenderElement>(*this))
+                child->clearNeedsLayoutForSkippedContent();
+        }
+
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
         // After the scrollbar reconciliation above, which may have moved the items again.
