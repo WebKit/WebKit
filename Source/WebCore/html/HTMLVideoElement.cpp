@@ -43,7 +43,7 @@
 #include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSVideoFrameRequestCallback.h"
-#include "LazyLoadVideoObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Logging.h"
@@ -106,7 +106,7 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
 
 HTMLVideoElement::~HTMLVideoElement()
 {
-    LazyLoadVideoObserver::unobserve(*this, protect(document()));
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 }
 
 Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document& document, bool createdByParser)
@@ -117,7 +117,7 @@ Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Doc
     HTMLVideoElementPictureInPicture::providePictureInPictureTo(videoElement);
 #endif
 
-    LazyLoadVideoObserver::observe(videoElement);
+    LazyLoadElementObserver::observe(videoElement);
 
     videoElement->suspendIfNeeded();
     return videoElement;
@@ -515,8 +515,8 @@ void HTMLVideoElement::didMoveToNewDocument(Document& oldDocument, Document& new
     if (m_imageLoader)
         m_imageLoader->elementDidMoveToNewDocument(oldDocument);
 
-    LazyLoadVideoObserver::unobserve(*this, oldDocument);
-    LazyLoadVideoObserver::observe(*this);
+    LazyLoadElementObserver::unobserve(*this, oldDocument);
+    LazyLoadElementObserver::observe(*this);
 
     HTMLMediaElement::didMoveToNewDocument(oldDocument, newDocument);
 }
@@ -848,7 +848,7 @@ void HTMLVideoElement::stop()
     HTMLMediaElement::stop();
 }
 
-void HTMLVideoElement::viewportIntersectionChanged(bool isIntersecting)
+void HTMLVideoElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
 {
     if (m_isIntersectingViewport == isIntersecting)
         return;

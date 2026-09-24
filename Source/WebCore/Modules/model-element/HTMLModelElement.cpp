@@ -65,7 +65,7 @@
 #include "JSHTMLModelElementCamera.h"
 #include "LayoutRect.h"
 #include "LayoutSize.h"
-#include "LazyLoadModelObserver.h"
+#include "LazyLoadElementObserver.h"
 #include "LegacySchemeRegistry.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -181,7 +181,7 @@ HTMLModelElement::~HTMLModelElement()
     if (RefPtr resource = std::exchange(m_resource, nullptr))
         resource->removeClient(*this);
 
-    LazyLoadModelObserver::unobserve(*this, protect(document()));
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -231,7 +231,7 @@ RefPtr<Model> HTMLModelElement::model() const
 {
     if (!m_dataComplete)
         return nullptr;
-    
+
     return m_model;
 }
 
@@ -2169,7 +2169,7 @@ void HTMLModelElement::stop()
 {
     RELEASE_LOG(ModelElement, "%p - HTMLModelElement::stop()", this);
 
-    LazyLoadModelObserver::unobserve(*this, protect(document()));
+    LazyLoadElementObserver::unobserve(*this, protect(document()));
 
     m_loadModelTimer = nullptr;
 
@@ -2251,7 +2251,7 @@ Node::NeedsPostConnectionSteps HTMLModelElement::insertionSteps(InsertionType in
         document->registerForVisibilityStateChangedCallbacks(*this);
         if (RefPtr page = document->page()) {
             m_modelPlayerProvider = page->modelPlayerProvider();
-            LazyLoadModelObserver::observe(*this);
+            LazyLoadElementObserver::observe(*this);
         }
 #if ENABLE(SPATIAL_PORTAL)
         updateSpatialPortalController();
@@ -2274,7 +2274,7 @@ void HTMLModelElement::removingSteps(RemovalType removalType, ContainerNode& old
     if (removalType.disconnectedFromDocument) {
         Ref document = this->document();
         document->unregisterForVisibilityStateChangedCallbacks(*this);
-        LazyLoadModelObserver::unobserve(*this, document);
+        LazyLoadElementObserver::unobserve(*this, document);
 
         m_loadModelTimer = nullptr;
 
@@ -2348,7 +2348,7 @@ void HTMLModelElement::sourceRequestResource()
     protect(m_resource)->addClient(*this);
 }
 
-void HTMLModelElement::viewportIntersectionChanged(bool isIntersecting)
+void HTMLModelElement::lazyLoadIntersectionCallbackInvoked(bool isIntersecting)
 {
     if (isIntersecting == m_isIntersectingViewport)
         return;
