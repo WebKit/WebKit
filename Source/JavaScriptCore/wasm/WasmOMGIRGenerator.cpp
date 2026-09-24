@@ -1706,9 +1706,7 @@ auto OMGIRGenerator::addArguments(const RTT& signature) -> PartialResult
                 argument = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Trunc, Origin(), argument);
         } else {
             ASSERT(rep.location.isStack());
-            B3::Value* address = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(),
-                m_currentBlock->appendNew<B3::ConstPtrValue>(m_proc, Origin(), rep.location.offsetFromFP()));
-            argument = m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Load, type, Origin(), address);
+            argument = m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Load, type, Origin(), framePointer(), safeCast<int32_t>(rep.location.offsetFromFP()));
         }
 
         Variable* argumentVariable = m_proc.addVariable(argument->type());
@@ -5515,8 +5513,7 @@ auto OMGIRGenerator::addReturn(const ControlData&, std::span<const TypedExpressi
     for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i) {
         B3::ValueRep rep = wasmCallInfo.results[i].location;
         if (rep.isStack()) {
-            B3::Value* address = m_currentBlock->appendNew<B3::Value>(m_proc, B3::Add, Origin(), framePointer(), constant(pointerType(), rep.offsetFromFP()));
-            m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), get(returnValues[offset + i]), address);
+            m_currentBlock->appendNew<B3::MemoryValue>(m_proc, B3::Store, Origin(), get(returnValues[offset + i]), framePointer(), safeCast<int32_t>(rep.offsetFromFP()));
         } else {
             ASSERT(rep.isReg());
             patch->append(get(returnValues[offset + i]), rep);
