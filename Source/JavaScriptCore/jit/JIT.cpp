@@ -418,6 +418,7 @@ void JIT::privateCompileMainPass()
 
         DEFINE_OP(op_iterator_open)
         DEFINE_OP(op_iterator_next)
+        DEFINE_OP(op_iterator_close_check)
         DEFINE_OP(op_async_iterator_next)
 
         DEFINE_OP(op_ret)

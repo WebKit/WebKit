@@ -5875,7 +5875,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
         return;
     }
 
-    RefPtr<RegisterID> iterable = rhs;
+    RefPtr<RegisterID> iterable = generator.move(generator.tempDestination(rhs), rhs);
     RefPtr<RegisterID> iterator = generator.newTemporary();
     RefPtr<RegisterID> nextOrIndex = generator.newTemporary();
     {
@@ -5887,7 +5887,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
     }
 
     if (m_targetPatterns.isEmpty()) {
-        generator.emitIteratorGenericClose(iterator.get(), this);
+        generator.emitIteratorClose(iterator.get(), nextOrIndex.get(), iterable.get(), this);
         return;
     }
 
@@ -5999,7 +5999,7 @@ void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) 
     auto emitIteratorClose = [&](BytecodeGenerator& generator) {
         Ref<Label> iteratorClosed = generator.newLabel();
         generator.emitJumpIfTrue(done.get(), iteratorClosed.get());
-        generator.emitIteratorGenericClose(iterator.get(), this);
+        generator.emitIteratorClose(iterator.get(), nextOrIndex.get(), iterable.get(), this);
         generator.emitLabel(iteratorClosed.get());
     };
 

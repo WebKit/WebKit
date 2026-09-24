@@ -31,21 +31,27 @@
 
 namespace JSC {
 
+ALWAYS_INLINE std::optional<uint32_t> JSArrayIterator::nextWithAdvance(JSArray* array, int64_t& index)
+{
+    ASSERT(index == doneIndex || (0 <= index && index <= maxSafeInteger()));
+    if (index == doneIndex || index >= array->length()) {
+        index = doneIndex;
+        return std::nullopt;
+    }
+
+    ASSERT(index == static_cast<uint32_t>(index));
+    return static_cast<uint32_t>(index++);
+}
+
 ALWAYS_INLINE std::optional<uint32_t> JSArrayIterator::nextWithAdvance()
 {
     auto* array = downcast<JSArray>(iteratedObject());
     ASSERT(isJSArray(array));
 
     int64_t index = this->index();
-    ASSERT(index == doneIndex || (0 <= index && index <= maxSafeInteger()));
-    if (index == doneIndex || index >= array->length()) {
-        setIndex(doneIndex);
-        return std::nullopt;
-    }
-
-    setIndex(index + 1);
-    ASSERT(index == static_cast<uint32_t>(index));
-    return static_cast<uint32_t>(index);
+    auto indexToLoad = nextWithAdvance(array, index);
+    setIndex(index);
+    return indexToLoad;
 }
 
 ALWAYS_INLINE bool JSArrayIterator::next(JSGlobalObject* globalObject, JSValue& value)
