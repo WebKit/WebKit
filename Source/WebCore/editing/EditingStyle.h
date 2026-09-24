@@ -146,7 +146,8 @@ public:
     void mergeTypingStyle(Document&);
     enum class CSSPropertyOverrideMode : bool { DoNotOverrideValues, OverrideValues };
     void mergeInlineStyleOfElement(StyledElement&, CSSPropertyOverrideMode, PropertiesToInclude = PropertiesToInclude::AllProperties);
-    static Ref<EditingStyle> wrappingStyleForSerialization(Node& context, bool shouldAnnotate, StandardFontFamilySerializationMode);
+    static Ref<EditingStyle> wrappingStyleForSerialization(Node& context, bool shouldAnnotate, StandardFontFamilySerializationMode, bool shouldPreserveWhiteSpace = false);
+    static bool hasAuthorSpecifiedWhiteSpace(Node&);
     void mergeStyleFromRules(StyledElement&);
     void mergeStyleFromRulesForSerialization(StyledElement&, StandardFontFamilySerializationMode);
     void removeStyleFromRulesAndContext(StyledElement&, Node* context);
