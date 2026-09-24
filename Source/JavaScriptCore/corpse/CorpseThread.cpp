@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseThread.h"
 
-#if (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(MYA)
 
 #include "CorpseError.h"
 #include "CorpseProcess.h"
@@ -186,4 +186,4 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-#endif // (OS(MACOS) || USE(APPLE_INTERNAL_SDK)) && !PLATFORM(MACCATALYST) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#endif // ENABLE(MYA)
