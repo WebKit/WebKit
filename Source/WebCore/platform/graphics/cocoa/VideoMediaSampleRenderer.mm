@@ -426,7 +426,11 @@ void VideoMediaSampleRenderer::enqueueSample(const MediaSample& sample, std::opt
     if (sample.type() != MediaSample::Type::CMSampleBuffer)
         return;
 
-    ASSERT(!m_needsFlushing);
+    if (m_needsFlushing) {
+        // The client resubmits samples once it has flushed.
+        DEBUG_LOG(LOGIDENTIFIER, "Dropping sample, waiting for flush: ", sample);
+        return;
+    }
     RetainPtr cmSampleBuffer = sample.platformSample().cmSampleBuffer();
 
     bool needsDecompressionSession = false;
@@ -911,6 +915,9 @@ void VideoMediaSampleRenderer::maybeReschedulePurge(FlushId flushId)
 void VideoMediaSampleRenderer::flush()
 {
     assertIsMainThread();
+
+    m_needsFlushing = false;
+
     [renderer() flush];
 
     if (!isUsingDecompressionSession()) {
@@ -918,7 +925,6 @@ void VideoMediaSampleRenderer::flush()
         return;
     }
 
-    m_needsFlushing = false;
     cancelTimer();
     flushCompressedSampleQueue();
 
@@ -1161,6 +1167,9 @@ void VideoMediaSampleRenderer::invalidateDecompressionSession()
 
     if (decompressionSession)
         decompressionSession->invalidate();
+
+    // Drops samples already queued for the invalidated session.
+    ++m_flushId;
 
     ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
