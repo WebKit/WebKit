@@ -66,7 +66,7 @@ RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDe
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .texture = texture ? convertToBackingContext->convertToBacking(*texture) : nullptr,
                 .view = textureView ? convertToBackingContext->convertToBacking(*textureView) : nullptr,
-                .depthSlice = colorAttachment->depthSlice,
+                .depthSlice = convertToBackingContext->convertDepthSliceToBacking(colorAttachment->depthSlice),
                 .resolveTexture = resolveTexture ? convertToBackingContext->convertToBacking(*resolveTexture) : nullptr,
                 .resolveTarget = resolveTarget ? convertToBackingContext->convertToBacking(*resolveTarget) : nullptr,
                 .loadOp = convertToBackingContext->convertToBacking(colorAttachment->loadOp),
@@ -77,7 +77,7 @@ RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDe
             colorAttachments.append(WGPURenderPassColorAttachment {
                 .texture = nullptr,
                 .view = nullptr,
-                .depthSlice = std::nullopt,
+                .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
                 .resolveTexture = nullptr,
                 .resolveTarget = nullptr,
                 .loadOp = WGPULoadOp_Clear,

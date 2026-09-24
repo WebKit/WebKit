@@ -419,7 +419,7 @@ static auto convertToBacking(const RenderPipelineDescriptor& descriptor, Convert
 
     WGPUDepthStencilState depthStencilState {
         .format = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->format) : WGPUTextureFormat_Undefined,
-        .depthWriteEnabled = descriptor.depthStencil ? descriptor.depthStencil->depthWriteEnabled : false,
+        .depthWriteEnabled = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->depthWriteEnabled) : WGPUOptionalBool_False,
         .depthCompare = (descriptor.depthStencil && descriptor.depthStencil->depthCompare) ? convertToBackingContext.convertToBacking(*descriptor.depthStencil->depthCompare) : WGPUCompareFunction_Undefined,
         .stencilFront = {
             .compare = descriptor.depthStencil ? convertToBackingContext.convertToBacking(descriptor.depthStencil->stencilFront.compare) : WGPUCompareFunction_Undefined,

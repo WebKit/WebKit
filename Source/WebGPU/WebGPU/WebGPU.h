@@ -87,6 +87,13 @@ DECLARE_SYSTEM_HEADER
 #if !defined(WGPU_NULLABLE)
 #define WGPU_NULLABLE
 #endif
+#if !defined(WGPU_SWIFT_PRIVATE)
+#if defined(__has_attribute) && __has_attribute(swift_private)
+#define WGPU_SWIFT_PRIVATE __attribute__((swift_private))
+#else
+#define WGPU_SWIFT_PRIVATE
+#endif
+#endif
 
 #include <stdint.h>
 #include <stddef.h>
@@ -98,6 +105,7 @@ DECLARE_SYSTEM_HEADER
 
 #define WGPU_ARRAY_LAYER_COUNT_UNDEFINED (0xffffffffUL)
 #define WGPU_COPY_STRIDE_UNDEFINED (0xffffffffUL)
+#define WGPU_DEPTH_SLICE_UNDEFINED (UINT32_MAX)
 #define WGPU_LIMIT_U32_UNDEFINED (0xffffffffUL)
 #define WGPU_LIMIT_U64_UNDEFINED (0xffffffffffffffffULL)
 #define WGPU_MIP_LEVEL_COUNT_UNDEFINED (0xffffffffUL)
@@ -445,6 +453,13 @@ typedef enum WGPUMipmapFilterMode {
     WGPUMipmapFilterMode_Linear = 0x00000001,
     WGPUMipmapFilterMode_Force32 = 0x7FFFFFFF
 } WGPUMipmapFilterMode WGPU_ENUM_ATTRIBUTE;
+
+typedef enum WGPUOptionalBool {
+    WGPUOptionalBool_False = 0x00000000,
+    WGPUOptionalBool_True = 0x00000001,
+    WGPUOptionalBool_Undefined = 0x00000002,
+    WGPUOptionalBool_Force32 = 0x7FFFFFFF
+} WGPUOptionalBool WGPU_ENUM_ATTRIBUTE;
 
 typedef enum WGPUPowerPreference {
     WGPUPowerPreference_Undefined = 0x00000000,
@@ -1210,7 +1225,7 @@ typedef struct WGPUComputeState {
 
 typedef struct WGPUDepthStencilState {
     WGPUTextureFormat format;
-    std::optional<WGPUBool> depthWriteEnabled;
+    WGPUOptionalBool depthWriteEnabled;
     WGPUCompareFunction depthCompare;
     WGPUStencilFaceState stencilFront;
     WGPUStencilFaceState stencilBack;
@@ -1224,7 +1239,7 @@ typedef struct WGPUDepthStencilState {
 typedef struct WGPURenderPassColorAttachment {
     WGPU_NULLABLE WGPUTexture texture;
     WGPU_NULLABLE WGPUTextureView view;
-    std::optional<uint32_t> depthSlice;
+    uint32_t depthSlice WGPU_SWIFT_PRIVATE;
     WGPU_NULLABLE WGPUTexture resolveTexture;
     WGPU_NULLABLE WGPUTextureView resolveTarget;
     WGPULoadOp loadOp;

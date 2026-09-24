@@ -40,6 +40,7 @@
 #include <WebGPU/WebGPU.h>
 #include <WebGPU/WebGPUExt.h>
 #include <cstdint>
+#include <optional>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -176,6 +177,8 @@ public:
     WGPUShaderStage NODELETE convertShaderStageFlagsToBacking(ShaderStageFlags);
     WGPUTextureUsage NODELETE convertTextureUsageFlagsToBacking(TextureUsageFlags);
 
+    WGPUOptionalBool NODELETE convertToBacking(std::optional<bool>);
+    uint32_t NODELETE convertDepthSliceToBacking(std::optional<IntegerCoordinate>);
     WGPUColor convertToBacking(const Color&);
     WGPUExtent3D convertToBacking(const Extent3D&);
     WGPUOrigin3D convertToBacking(const Origin2D&);

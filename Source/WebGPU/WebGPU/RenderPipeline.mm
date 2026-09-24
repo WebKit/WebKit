@@ -1128,7 +1128,7 @@ static NSString* errorValidatingDepthStencilState(const WGPUDepthStencilState& d
         return ERROR_STRING(@"Color format passed to depth / stencil format");
 
     auto depthFormat = Texture::depthOnlyAspectMetalFormat(depthStencil.format);
-    if ((depthStencil.depthWriteEnabled && *depthStencil.depthWriteEnabled) || (depthStencil.depthCompare != WGPUCompareFunction_Undefined && depthStencil.depthCompare != WGPUCompareFunction_Always)) {
+    if (depthStencil.depthWriteEnabled == WGPUOptionalBool_True || (depthStencil.depthCompare != WGPUCompareFunction_Undefined && depthStencil.depthCompare != WGPUCompareFunction_Always)) {
         if (!depthFormat)
             return ERROR_STRING(@"depth-stencil state missing format");
     }
@@ -1144,10 +1144,10 @@ static NSString* errorValidatingDepthStencilState(const WGPUDepthStencilState& d
     }
 
     if (depthFormat) {
-        if (!depthStencil.depthWriteEnabled)
+        if (depthStencil.depthWriteEnabled == WGPUOptionalBool_Undefined)
             return ERROR_STRING(@"depthWrite must be provided");
 
-        bool depthWriteEnabled = *depthStencil.depthWriteEnabled;
+        bool depthWriteEnabled = depthStencil.depthWriteEnabled == WGPUOptionalBool_True;
         if (depthWriteEnabled || depthStencil.stencilFront.depthFailOp != WGPUStencilOperation_Keep || depthStencil.stencilBack.depthFailOp != WGPUStencilOperation_Keep) {
             if (depthStencil.depthCompare == WGPUCompareFunction_Undefined)
                 return ERROR_STRING(@"Depth compare must be provided");
@@ -1702,7 +1702,7 @@ void Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor
 
         depthStencilDescriptor = [MTLDepthStencilDescriptor new];
         depthStencilDescriptor.depthCompareFunction = convertToMTLCompare(depthStencil->depthCompare);
-        depthStencilDescriptor.depthWriteEnabled = depthStencil->depthWriteEnabled.value_or(false);
+        depthStencilDescriptor.depthWriteEnabled = depthStencil->depthWriteEnabled == WGPUOptionalBool_True;
         populateStencilOperation(depthStencilDescriptor.frontFaceStencil, depthStencil->stencilFront, depthStencil->stencilReadMask, depthStencil->stencilWriteMask);
         populateStencilOperation(depthStencilDescriptor.backFaceStencil, depthStencil->stencilBack, depthStencil->stencilReadMask, depthStencil->stencilWriteMask);
         depthBias = depthStencil->depthBias;

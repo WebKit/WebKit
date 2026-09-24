@@ -176,7 +176,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
 
-        textureWithClearColor.depthPlane = texture.isDestroyed() ? 0 : attachment.depthSlice.value_or(0);
+        textureWithClearColor.depthPlane = texture.isDestroyed() || attachment.depthSlice == WGPU_DEPTH_SLICE_UNDEFINED ? 0 : attachment.depthSlice;
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {

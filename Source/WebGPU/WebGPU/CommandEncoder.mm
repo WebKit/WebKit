@@ -641,10 +641,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
         uint64_t depthSliceOrArrayLayer = 0;
-        if (attachment.depthSlice) {
+        if (attachment.depthSlice != WGPU_DEPTH_SLICE_UNDEFINED) {
             if (!texture.is3DTexture())
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice specified on 2D texture");
-            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : *attachment.depthSlice;
+            depthSliceOrArrayLayer = textureIsDestroyed ? 0 : attachment.depthSlice;
             if (depthSliceOrArrayLayer >= texture.depthOrArrayLayers())
                 return RenderPassEncoder::createInvalid(*this, m_device, @"depthSlice is greater than texture's depth or array layers");
 

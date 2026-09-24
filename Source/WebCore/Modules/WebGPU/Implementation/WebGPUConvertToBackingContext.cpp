@@ -848,6 +848,24 @@ WGPUTextureUsage ConvertToBackingContext::convertTextureUsageFlagsToBacking(Text
     return result;
 }
 
+WGPUOptionalBool ConvertToBackingContext::convertToBacking(std::optional<bool> value)
+{
+    if (!value)
+        return WGPUOptionalBool_Undefined;
+    return *value ? WGPUOptionalBool_True : WGPUOptionalBool_False;
+}
+
+uint32_t ConvertToBackingContext::convertDepthSliceToBacking(std::optional<IntegerCoordinate> depthSlice)
+{
+    if (!depthSlice)
+        return WGPU_DEPTH_SLICE_UNDEFINED;
+    // An explicit depthSlice equal to WGPU_DEPTH_SLICE_UNDEFINED must not be treated as undefined.
+    // Such depthSlice is invalid for all attachments, so pass another value that is invalid for all attachments.
+    if (*depthSlice == WGPU_DEPTH_SLICE_UNDEFINED)
+        return WGPU_DEPTH_SLICE_UNDEFINED - 1;
+    return *depthSlice;
+}
+
 WGPUColor ConvertToBackingContext::convertToBacking(const Color& color)
 {
     return WTF::switchOn(color, [](const Vector<double>& vector) {

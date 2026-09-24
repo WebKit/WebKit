@@ -163,6 +163,12 @@ func commandEncoderFinish(
     commandEncoder.finish(descriptor: descriptor)
 }
 
+extension WGPURenderPassColorAttachment {
+    var depthSlice: UInt32? {
+        __depthSlice == WGPU_DEPTH_SLICE_UNDEFINED ? nil : __depthSlice
+    }
+}
+
 extension WebGPU.TextureOrTextureView {
     init(_ attachment: WGPURenderPassColorAttachment?) {
         if let view = attachment?.view {
@@ -1185,7 +1191,7 @@ extension WebGPU.CommandEncoder {
                 mtlAttachment.slice = 0
                 var depthSliceOrArrayLayer: UInt64 = 0
                 // FIXME: (rdar://170907318) This should be changed to `if let` when possible.
-                if var depthSlice = Optional(fromCxx: attachment.depthSlice) {
+                if var depthSlice = attachment.depthSlice {
                     if !texture.is3DTexture() {
                         return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "depthSlice specified on 2D texture")
                     }
