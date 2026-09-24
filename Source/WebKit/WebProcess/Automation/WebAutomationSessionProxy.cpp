@@ -434,7 +434,7 @@ std::expected<Ref<WebCore::Element>, String> WebAutomationSessionProxy::elementF
             JSValueRef nameValue = JSObjectGetProperty(context, exceptionObject, OpaqueJSString::tryCreate("name"_s).get(), nullptr);
             String exceptionName;
             if (JSRetainPtr nameString = JSValueToStringCopy(context, nameValue, nullptr))
-                exceptionName = nameString->string();
+                SUPPRESS_UNCOUNTED_ARG exceptionName = nameString->string();
             errorType = errorTypeFromJavaScriptExceptionName(exceptionName);
         }
         return makeUnexpected(errorType);
