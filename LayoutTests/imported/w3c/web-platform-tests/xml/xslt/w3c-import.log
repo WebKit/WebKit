@@ -33,3 +33,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/xml/xslt/strip-space-crash.xml
 /LayoutTests/imported/w3c/web-platform-tests/xml/xslt/transformToFragment-on-node-from-inactive-document-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/xml/xslt/transformToFragment.tentative.window.js
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-attribute-double-free-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-mutation-crash-import.xsl
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-mutation-crash-slow.xsl
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-mutation-crash.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-type-confusion-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-type-confusion.xml
+/LayoutTests/imported/w3c/web-platform-tests/xml/xslt/xslt-type-confusion.xsl
