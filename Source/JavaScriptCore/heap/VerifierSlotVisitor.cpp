@@ -27,6 +27,7 @@
 #include "VerifierSlotVisitor.h"
 
 #include "BlockDirectoryInlines.h"
+#include "Collector.h"
 #include "ConservativeRoots.h"
 #include "GCSegmentedArrayInlines.h"
 #include "HeapCell.h"
@@ -104,8 +105,8 @@ void VerifierSlotVisitor::OpaqueRootData::addMarkerData(MarkerData&& marker)
     m_marker = WTF::move(marker);
 }
 
-VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap)
-    : Base(heap, "Verifier"_s, m_opaqueRootStorage)
+VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap, Collector& collector)
+    : Base(heap, collector, "Verifier"_s, m_opaqueRootStorage)
 {
     m_needsExtraOpaqueRootHandling = true;
 }
@@ -278,7 +279,7 @@ void VerifierSlotVisitor::dumpMarkerData(HeapCell* cell)
         } else {
             RELEASE_ASSERT(opaqueRoot);
 
-            bool containsOpaqueRoot = heap()->m_opaqueRoots.contains(opaqueRoot);
+            bool containsOpaqueRoot = m_collector.m_opaqueRoots.contains(opaqueRoot);
             const char* wasOrWasNot = containsOpaqueRoot ? "was" : "was NOT";
             dataLogLn("In the real GC, opaque root ", RawPointer(opaqueRoot), " ", wasOrWasNot, " added to the heap's opaque roots.");
 

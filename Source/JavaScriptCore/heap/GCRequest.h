@@ -33,6 +33,10 @@
 namespace JSC {
 
 struct GCRequest {
+    // Identifies a request to the thread that asked for it, so it can wait for that request in
+    // particular rather than for whatever collection happens to be running.
+    using Ticket = uint64_t;
+
     GCRequest() { }
     
     GCRequest(CollectionScope scope)

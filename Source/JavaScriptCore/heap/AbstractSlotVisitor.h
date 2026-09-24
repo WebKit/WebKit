@@ -36,6 +36,7 @@
 
 namespace JSC {
 
+class Collector;
 class ConservativeRoots;
 class Heap;
 class HeapCell;
@@ -140,7 +141,8 @@ public:
 
     VM& vm();
     const VM& vm() const;
-    JSC::Heap* heap() const;
+    Heap* heap() const;
+    Collector& collector() const LIFETIME_BOUND;
 
     virtual void append(const ConservativeRoots&) = 0;
 
@@ -213,7 +215,7 @@ public:
     const ASCIICString& codeName() const LIFETIME_BOUND { return m_codeName; }
 
 protected:
-    inline AbstractSlotVisitor(Heap&, ASCIICString codeName, ConcurrentPtrHashSet&);
+    inline AbstractSlotVisitor(Heap&, Collector&, ASCIICString codeName, ConcurrentPtrHashSet&);
 
     virtual void didAddOpaqueRoot(void*) { }
     virtual void didFindOpaqueRoot(void*) { }
@@ -226,7 +228,8 @@ protected:
 
     size_t m_visitCount { 0 };
 
-    JSC::Heap& m_heap;
+    Heap& m_heap;
+    Collector& m_collector;
     ReferrerContext* m_context { nullptr };
     ASCIICString m_codeName;
 

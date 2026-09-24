@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MarkingConstraintSolver.h"
 
+#include "Collector.h"
 #include "JSCInlines.h"
 #include "MarkingConstraintSet.h"
 
@@ -36,7 +37,7 @@ MarkingConstraintSolver::MarkingConstraintSolver(MarkingConstraintSet& set)
     , m_mainVisitor(m_heap.collectorSlotVisitor())
     , m_set(set)
 {
-    m_heap.forEachSlotVisitor(
+    m_heap.collector().forEachSlotVisitor(
         [&] (SlotVisitor& visitor) {
             m_visitCounters.append(VisitCounter(visitor));
         });
@@ -61,7 +62,7 @@ void MarkingConstraintSolver::execute(SchedulerPreference preference, const Scop
     if (Options::useParallelMarkingConstraintSolver()) {
         dataLogIf(Options::logGC(), preference == ParallelWorkFirst ? "P" : "N", "<");
         
-        m_heap.runFunctionInParallel(
+        m_heap.collector().runFunctionInParallel(
             [&] (SlotVisitor& visitor) { runExecutionThread(visitor, preference, pickNext); });
         
         dataLogIf(Options::logGC(), ">");

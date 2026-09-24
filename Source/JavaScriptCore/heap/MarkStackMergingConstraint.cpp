@@ -44,14 +44,14 @@ MarkStackMergingConstraint::~MarkStackMergingConstraint() = default;
 
 double MarkStackMergingConstraint::quickWorkEstimate(SlotVisitor&)
 {
-    return m_heap.m_mutatorMarkStack->size() + m_heap.m_raceMarkStack->size();
+    return m_heap.m_mutatorMarkStack->size() + m_heap.collector().m_raceMarkStack->size();
 }
 
 void MarkStackMergingConstraint::prepareToExecuteImpl(const AbstractLocker&, AbstractSlotVisitor& visitor)
 {
     // Logging the work here ensures that the constraint solver knows that it doesn't need to produce
     // anymore work.
-    size_t size = m_heap.m_mutatorMarkStack->size() + m_heap.m_raceMarkStack->size();
+    size_t size = m_heap.m_mutatorMarkStack->size() + m_heap.collector().m_raceMarkStack->size();
     visitor.addToVisitCount(size);
     
     dataLogIf(Options::logGC(), "(", size, ")");
@@ -70,7 +70,7 @@ void MarkStackMergingConstraint::executeImplImpl(Visitor& visitor)
         return;
 
     m_heap.m_mutatorMarkStack->transferTo(visitor.mutatorMarkStack());
-    m_heap.m_raceMarkStack->transferTo(visitor.mutatorMarkStack());
+    m_heap.collector().m_raceMarkStack->transferTo(visitor.mutatorMarkStack());
 }
 
 void MarkStackMergingConstraint::executeImpl(AbstractSlotVisitor& visitor) { executeImplImpl(visitor); }

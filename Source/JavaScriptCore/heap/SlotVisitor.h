@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+class Collector;
 class GCThreadSharedData;
 class HeapCell;
 class HeapAnalyzer;
@@ -41,7 +42,11 @@ class MarkingConstraintSolver;
 
 typedef uint32_t HeapVersion;
 
-class SlotVisitor final : public AbstractSlotVisitor {
+// Visitors should not share cachelines: each marking thread writes its own visitor for every
+// cell it visits. 128 satisfies 64-byte lines too.
+static constexpr size_t slotVisitorAlignment = 128;
+
+class alignas(slotVisitorAlignment) SlotVisitor final : public AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(SlotVisitor);
     WTF_MAKE_TZONE_ALLOCATED(SlotVisitor);
 
@@ -85,7 +90,7 @@ public:
 #endif
     };
 
-    SlotVisitor(Heap&, ASCIICString codeName);
+    SlotVisitor(Heap&, Collector&, ASCIICString codeName);
     ~SlotVisitor();
 
     void append(const ConservativeRoots&) final;
@@ -234,9 +239,7 @@ private:
     bool m_canOptimizeForStoppedMutator { false };
     bool m_isInParallelMode { false };
     Lock m_rightToRun;
-    
-    // Put padding here to mitigate false sharing between multiple SlotVisitors.
-    char padding[64];
+
 #if ASSERT_ENABLED
     bool m_isCheckingForDefaultMarkViolation { false };
 #endif

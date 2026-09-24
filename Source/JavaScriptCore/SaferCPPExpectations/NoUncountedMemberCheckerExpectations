@@ -15,7 +15,6 @@ dfg/DFGNode.h
 dfg/DFGSpeculativeJIT.h
 ftl/FTLLowerDFGToB3.cpp
 ftl/FTLOSRExitHandle.h
-heap/Heap.h
 heap/HeapSnapshotBuilder.h
 heap/JITStubRoutineSet.h
 inspector/InspectorAgentBase.h

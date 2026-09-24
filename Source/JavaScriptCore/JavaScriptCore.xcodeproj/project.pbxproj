@@ -525,6 +525,7 @@
 		0FCCAE4516D0CF7400D0C65B /* ParserError.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCCAE4316D0CF6E00D0C65B /* ParserError.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFAAA1804C13E00472CE4 /* FTLSaveRestore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FCEFAE0180738C000472CE4 /* FTLLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCEFADE180738C000472CE4 /* FTLLocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		260026FB4074E42D4D3C9A2A /* Collector.h in Headers */ = {isa = PBXBuildFile; fileRef = 023241D517C313FFB5311255 /* Collector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD0E5E91E43D3490006AB08 /* CollectorPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD0E5EA1E43D34D0006AB08 /* GCConductor.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD0E5E81E43D3470006AB08 /* GCConductor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FD0E5EE1E468A570006AB08 /* SweepingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD0E5ED1E468A540006AB08 /* SweepingScope.h */; };
@@ -3685,6 +3686,7 @@
 		0FCEFADD180738C000472CE4 /* FTLLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FTLLocation.cpp; path = ftl/FTLLocation.cpp; sourceTree = "<group>"; };
 		0FCEFADE180738C000472CE4 /* FTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLLocation.h; path = ftl/FTLLocation.h; sourceTree = "<group>"; };
 		0FD0E5E51E43D3470006AB08 /* CollectorPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectorPhase.cpp; sourceTree = "<group>"; };
+		023241D517C313FFB5311255 /* Collector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Collector.h; sourceTree = "<group>"; };
 		0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectorPhase.h; sourceTree = "<group>"; };
 		0FD0E5E71E43D3470006AB08 /* GCConductor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCConductor.cpp; sourceTree = "<group>"; };
 		0FD0E5E81E43D3470006AB08 /* GCConductor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCConductor.h; sourceTree = "<group>"; };
@@ -7859,6 +7861,7 @@
 				0FD0E5F11E46C8AD0006AB08 /* CollectingScope.h */,
 				0FA762001DB9242300B7A2FD /* CollectionScope.cpp */,
 				0FA762011DB9242300B7A2FD /* CollectionScope.h */,
+				023241D517C313FFB5311255 /* Collector.h */,
 				0FD0E5E51E43D3470006AB08 /* CollectorPhase.cpp */,
 				0FD0E5E61E43D3470006AB08 /* CollectorPhase.h */,
 				0FDCE1271FAFA859006F3901 /* CompleteSubspace.cpp */,
@@ -11659,6 +11662,7 @@
 				0F0B83A714BCF50700885B4F /* CodeType.h in Headers */,
 				0FD0E5F21E46C8AF0006AB08 /* CollectingScope.h in Headers */,
 				0FA762051DB9242900B7A2FD /* CollectionScope.h in Headers */,
+				260026FB4074E42D4D3C9A2A /* Collector.h in Headers */,
 				0FD0E5E91E43D3490006AB08 /* CollectorPhase.h in Headers */,
 				A53243981856A489002ED692 /* CombinedDomains.json in Headers */,
 				BC18C3F30E16F5CD00B34460 /* CommonIdentifiers.h in Headers */,

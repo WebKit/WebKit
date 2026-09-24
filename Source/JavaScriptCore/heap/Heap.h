@@ -67,6 +67,7 @@ namespace JSC {
 class CodeBlock;
 class CodeBlockSet;
 class CollectingScope;
+class Collector;
 class ConservativeRoots;
 class GCDeferralContext;
 class EdenGCActivityCallback;
@@ -356,7 +357,9 @@ public:
     MarkedSpace& objectSpace() LIFETIME_BOUND { return m_objectSpace; }
     MachineThreads& machineThreads() { return *m_machineThreads; }
 
-    SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
+    Collector& collector() LIFETIME_BOUND { return *m_collector; }
+    const Collector& collector() const LIFETIME_BOUND { return *m_collector; }
+    inline SlotVisitor& collectorSlotVisitor();
 
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
@@ -483,7 +486,6 @@ public:
 
     Seconds lastFullGCLength() const { return m_lastFullGCLength; }
     Seconds lastEdenGCLength() const { return m_lastEdenGCLength; }
-    void increaseLastFullGCLength(Seconds amount) { m_lastFullGCLength += amount; }
 
     size_t sizeBeforeLastEdenCollection() const { return m_sizeBeforeLastEdenCollect; }
     size_t sizeAfterLastEdenCollection() const { return m_sizeAfterLastEdenCollect; }
@@ -595,7 +597,7 @@ public:
     void allowCollection();
     
     uint64_t mutatorExecutionVersion() const { return m_mutatorExecutionVersion; }
-    uint64_t phaseVersion() const { return m_phaseVersion; }
+
     
     JS_EXPORT_PRIVATE void addMarkingConstraint(std::unique_ptr<MarkingConstraint>);
     
@@ -603,17 +605,6 @@ public:
     
     void addGCCompletionCallback(const GCCompletionCallback&);
     void removeGCCompletionCallback(const GCCompletionCallback&);
-    
-    void runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>>);
-    
-    template<typename Func>
-    void runFunctionInParallel(const Func& func)
-    {
-        runTaskInParallel(createSharedTask<void(SlotVisitor&)>(func));
-    }
-
-    template<typename Func>
-    inline void forEachSlotVisitor(const Func&);
     
     Seconds totalGCTime() const { return m_totalGCTime; }
 
@@ -631,7 +622,7 @@ public:
 
     void clearConcurrentRetainedDataIfPossible();
 
-    bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
+    inline bool isInPhase(CollectorPhase) const;
 
 #if ENABLE(WEBASSEMBLY)
     // FIXME: We should have a way to clear Wasm::Callees pending destruction when the Module dies.
@@ -649,6 +640,7 @@ private:
     friend class AllocatingScope;
     friend class CodeBlock;
     friend class CollectingScope;
+    friend class Collector;
     friend class ConservativeRoots;
     friend class DeferGC;
     friend class DeferGCForAWhile;
@@ -674,8 +666,6 @@ private:
     friend class WeakBlock;
     friend class WeakSet;
 
-    class HeapThread;
-    friend class HeapThread;
 
     friend class GCClient::Heap;
 
@@ -697,31 +687,11 @@ private:
     
     size_t totalBytesAllocatedThisCycle() { return m_nonOversizedBytesAllocatedThisCycle + m_oversizedBytesAllocatedThisCycle; }
 
-    bool shouldCollectInCollectorThread(const AbstractLocker&);
-    void collectInCollectorThread();
-    
     void checkConn(GCConductor);
 
-    enum class RunCurrentPhaseResult {
-        Finished,
-        Continue,
-        NeedCurrentThreadState
-    };
-    RunCurrentPhaseResult runCurrentPhase(GCConductor, CurrentThreadState*);
-    
-    // Returns true if we should keep doing things.
-    bool runNotRunningPhase(GCConductor);
-    bool runBeginPhase(GCConductor);
-    bool runFixpointPhase(GCConductor);
-    bool runConcurrentPhase(GCConductor);
-    bool runReloopPhase(GCConductor);
-    bool runEndPhase(GCConductor);
-    bool changePhase(GCConductor, CollectorPhase);
-    bool finishChangingPhase(GCConductor);
-    
     void collectInMutatorThread();
     
-    void stopThePeriphery(GCConductor);
+    void stopThePeriphery();
     void resumeThePeriphery();
     
     // Returns true if the mutator is stopped, false if the mutator has the conn now.
@@ -750,11 +720,9 @@ private:
     void clearMutatorWaiting();
     void notifyThreadStopping(const AbstractLocker&);
     
-    typedef uint64_t Ticket;
-    Ticket requestCollection(GCRequest);
-    void waitForCollection(Ticket);
+    GCRequest::Ticket requestCollection(GCRequest);
+    void waitForCollection(GCRequest::Ticket);
     
-    bool suspendCompilerThreads();
     void willStartCollection();
     void prepareForMarking();
     
@@ -787,8 +755,7 @@ private:
     JS_EXPORT_PRIVATE void addToRememberedSet(const JSCell*);
     double projectedGCRateLimitingValue(MonotonicTime);
     void updateAllocationLimits();
-    void didFinishCollection();
-    void resumeCompilerThreads();
+    void didFinishCollection(Seconds duration);
     void gatherExtraHeapData(HeapProfiler&);
     void removeDeadHeapSnapshotNodes(HeapProfiler&);
     void runCollectionEpilogue();
@@ -808,8 +775,6 @@ private:
     inline void decrementDeferralDepthAndGCIfNeeded();
     JS_EXPORT_PRIVATE void decrementDeferralDepthAndGCIfNeededSlow();
 
-    size_t visitCount();
-    size_t bytesVisited();
     
     void forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>&);
     void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, const ScopedLambda<void(CodeBlock*)>&);
@@ -831,8 +796,6 @@ private:
     template<typename Func, typename Visitor>
     void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
     
-    void assertMarkStacksEmpty();
-
     void dumpHeapStatisticsAtVMDestruction();
 
     static bool useGenerationalGC();
@@ -874,7 +837,6 @@ private:
     bool m_shouldDoFullCollection { false };
     Markable<CollectionScope> m_collectionScope;
     Markable<CollectionScope> m_lastCollectionScope;
-    Lock m_raceMarkStackLock;
 
     MarkedSpace m_objectSpace;
     GCIncomingRefCountedSet<ArrayBuffer> m_arrayBuffers;
@@ -886,19 +848,11 @@ private:
 
     std::unique_ptr<MachineThreads> m_machineThreads;
     
-    std::unique_ptr<SlotVisitor> m_collectorSlotVisitor;
+    const std::unique_ptr<Collector> m_collector;
     std::unique_ptr<SlotVisitor> m_mutatorSlotVisitor;
     std::unique_ptr<MarkStackArray> m_mutatorMarkStack;
-    std::unique_ptr<MarkStackArray> m_raceMarkStack;
     std::unique_ptr<MarkingConstraintSet> m_constraintSet;
     std::unique_ptr<VerifierSlotVisitor> m_verifierSlotVisitor;
-
-    // We pool the slot visitors used by parallel marking threads. It's useful to be able to
-    // enumerate over them, and it's useful to have them cache some small amount of memory from
-    // one GC to the next. GC marking threads claim these at the start of marking, and return
-    // them at the end.
-    Vector<std::unique_ptr<SlotVisitor>> m_parallelSlotVisitors;
-    Vector<SlotVisitor*> m_availableParallelSlotVisitors WTF_GUARDED_BY_LOCK(m_parallelSlotVisitorLock);
     
     StrongSet m_strongSet;
     std::unique_ptr<CodeBlockSet> m_codeBlocks;
@@ -906,7 +860,6 @@ private:
     CFinalizerOwner m_cFinalizerOwner;
     LambdaFinalizerOwner m_lambdaFinalizerOwner;
     
-    Lock m_parallelSlotVisitorLock;
     bool m_isSafeToCollect { false };
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { false };
@@ -978,23 +931,10 @@ private:
     TinyBloomFilter<uintptr_t> m_boxedWasmCalleeFilter;
 #endif
 
-    std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
-    std::unique_ptr<MarkStackArray> m_sharedMutatorMarkStack;
-    unsigned m_numberOfActiveParallelMarkers { 0 };
-    unsigned m_numberOfWaitingParallelMarkers WTF_GUARDED_BY_LOCK(m_markingMutex) { 0 };
-
-    ConcurrentPtrHashSet m_opaqueRoots;
-    static constexpr size_t s_blockFragmentLength = 32;
-
-    ParallelHelperClient m_helperClient;
-    RefPtr<SharedTask<void(SlotVisitor&)>> m_bonusVisitorTask WTF_GUARDED_BY_LOCK(m_markingMutex);
-
 #if ENABLE(RESOURCE_USAGE)
     size_t m_blockBytesAllocated { 0 };
     size_t m_externalMemorySize { 0 };
 #endif
-    
-    std::unique_ptr<MutatorScheduler> m_scheduler;
     
     static constexpr unsigned mutatorHasConnBit = 1u << 0u; // Must also be protected by threadLock.
     static constexpr unsigned stoppedBit = 1u << 1u; // Only set when !hasAccessBit
@@ -1003,39 +943,13 @@ private:
     static constexpr unsigned mutatorWaitingBit = 1u << 4u; // Allows the mutator to use this as a condition variable.
     Atomic<unsigned> m_worldState;
     bool m_worldIsStopped { false };
-    Lock m_markingMutex;
-    Condition m_markingConditionVariable;
-    Condition m_bonusVisitorTaskConditionVariable;
 
-    MonotonicTime m_beforeGC;
-    MonotonicTime m_afterGC;
-    MonotonicTime m_stopTime;
-    
-    Deque<GCRequest> m_requests;
-    GCRequest m_currentRequest;
-    Ticket m_lastServedTicket { 0 };
-    Ticket m_lastGrantedTicket { 0 };
-
-    CollectorPhase m_lastPhase { CollectorPhase::NotRunning };
-    CollectorPhase m_currentPhase { CollectorPhase::NotRunning };
-    CollectorPhase m_nextPhase { CollectorPhase::NotRunning };
-    bool m_collectorThreadIsRunning { false };
-    bool m_threadShouldStop { false };
     bool m_mutatorDidRun { true };
     bool m_didDeferGCWork { false };
-    bool m_shouldStopCollectingContinuously WTF_GUARDED_BY_LOCK(m_collectContinuouslyLock) { false };
-    bool m_isCompilerThreadsSuspended { false };
 
     uint64_t m_mutatorExecutionVersion { 0 };
-    uint64_t m_phaseVersion { 0 };
     uint64_t m_gcVersion { 0 };
-    Box<Lock> m_threadLock;
-    const Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
-    const RefPtr<AutomaticThread> m_thread;
 
-    RefPtr<Thread> m_collectContinuouslyThread { nullptr };
-    
-    MonotonicTime m_lastGCStartTime;
     MonotonicTime m_lastGCEndTime;
     MonotonicTime m_currentGCStartTime;
     MonotonicTime m_lastFullGCEndTime;
@@ -1043,17 +957,11 @@ private:
     
     uintptr_t m_barriersExecuted { 0 };
     
-    CurrentThreadState* m_currentThreadState { nullptr };
-    Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
 
 #if USE(MEMORY_FOOTPRINT_API)
     unsigned m_percentAvailableMemoryCachedCallCount { 0 };
     bool m_overCriticalMemoryThreshold { false };
 #endif
-
-    bool m_parallelMarkersShouldExit { false };
-    Lock m_collectContinuouslyLock;
-    Condition m_collectContinuouslyCondition;
 
 public:
     // HeapCellTypes
@@ -1276,7 +1184,6 @@ public:
     FOR_EACH_JSC_WEBASSEMBLY_DYNAMIC_NON_ISO_SUBSPACE(DEFINE_NON_ISO_SUBSPACE_MEMBER)
 #undef DEFINE_NON_ISO_SUBSPACE_MEMBER
 
-    UTF8CString m_signpostMessage;
 };
 
 namespace GCClient {

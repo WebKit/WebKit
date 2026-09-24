@@ -106,16 +106,22 @@ inline AbstractSlotVisitor::ReferrerContext::~ReferrerContext()
     m_visitor.m_context = m_previous;
 }
 
-inline AbstractSlotVisitor::AbstractSlotVisitor(JSC::Heap& heap, ASCIICString codeName, ConcurrentPtrHashSet& opaqueRoots)
+inline AbstractSlotVisitor::AbstractSlotVisitor(JSC::Heap& heap, Collector& collector, ASCIICString codeName, ConcurrentPtrHashSet& opaqueRoots)
     : m_heap(heap)
+    , m_collector(collector)
     , m_codeName(WTF::move(codeName))
     , m_opaqueRoots(opaqueRoots)
 {
 }
 
-inline JSC::Heap* AbstractSlotVisitor::heap() const
+inline Heap* AbstractSlotVisitor::heap() const
 {
     return &m_heap;
+}
+
+inline Collector& AbstractSlotVisitor::collector() const
+{
+    return m_collector;
 }
 
 inline VM& AbstractSlotVisitor::vm()
