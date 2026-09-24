@@ -43,21 +43,26 @@ WI.ExecutionContextList = class ExecutionContextList
         return this._contexts;
     }
 
+    // Returns whether the context was accepted. Callers must not announce an added context when
+    // this returns false, or they announce one that is not in the list.
     add(context)
     {
         // COMPATIBILITY (iOS 13.0): Older iOS releases will send duplicates.
         // Newer releases will not and this check should be removed eventually.
         if (context.type === WI.ExecutionContext.Type.Normal && this._pageExecutionContext) {
-            console.assert(context.id === this._pageExecutionContext.id);
-            return;
+            console.assert(context.target === this._pageExecutionContext.target && context.id === this._pageExecutionContext.id, "Dropping a distinct main-world context as if it were a duplicate.", context, this._pageExecutionContext);
+            return false;
         }
 
         this._contexts.push(context);
 
-        if (context.type === WI.ExecutionContext.Type.Normal && context.target.type === WI.TargetType.Page) {
+        // Under Site Isolation a frame's main-world context comes from its frame target.
+        if (context.type === WI.ExecutionContext.Type.Normal && (context.target.type === WI.TargetType.Page || context.target.type === WI.TargetType.Frame)) {
             console.assert(!this._pageExecutionContext);
             this._pageExecutionContext = context;
         }
+
+        return true;
     }
 
     clear()

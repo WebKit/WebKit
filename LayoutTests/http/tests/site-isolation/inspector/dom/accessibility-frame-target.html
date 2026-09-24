@@ -22,7 +22,7 @@ function test() {
 
     async function findById(id) {
         let nodeId = await frameBody.querySelector("#" + id);
-        return WI.domManager.nodeForIdInFrameTarget(nodeId, frameTarget);
+        return WI.domManager.nodeForId(nodeId);
     }
 
     async function evaluateInFrame(expression) {

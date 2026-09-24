@@ -61,6 +61,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
 
+        WI.targetManager.addEventListener(WI.TargetManager.Event.TargetRemoved, this._handleTargetRemoved, this);
+
         if (NetworkManager.supportsOverridingResponses()) {
             WI.Resource.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleResourceContentChangedForLocalResourceOverride, this);
             WI.Resource.addEventListener(WI.Resource.Event.RequestDataDidChange, this._handleResourceContentChangedForLocalResourceOverride, this);
@@ -692,6 +694,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             frame.initialize(framePayload.name, framePayload.securityOrigin, framePayload.loaderId, mainResource);
         }
 
+        // Both commitProvisionalLoad() and initialize() clear the frame's execution contexts, which
+        // would discard anything adopted while the frame was created above. Re-adopt now that the
+        // navigation has settled.
+        this._associateTargetExecutionContextsWithFrame(frame);
+
         var oldMainFrame = this._mainFrame;
 
         if (framePayload.parentId) {
@@ -1198,21 +1205,55 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
     // RuntimeObserver
 
-    executionContextCreated(payload)
+    executionContextCreated(target, payload)
     {
-        let frame = this.frameForIdentifier(payload.frameId);
-        // Under site isolation, FrameTargets report their own contexts.
-        // PageTarget should only handle contexts for frames in its own frame tree.
-        if (!frame)
-            return;
-
         let type = WI.ExecutionContext.typeFromPayload(payload);
-        let target = frame.mainResource.target;
+
+        // A context identifier is only meaningful to the agent that minted it.
         let executionContext = new WI.ExecutionContext(target, payload.id, type, payload.name, payload.frameId);
-        frame.addExecutionContext(executionContext);
+
+        if (target instanceof WI.FrameTarget)
+            target.addExecutionContext(executionContext);
+
+        // If the frame is not known yet, _associateTargetExecutionContextsWithFrame files the context
+        // once it is. FIXME: <webkit.org/b/325086> A frame nested inside an out-of-process frame is
+        // never added to the frame map, so its frame target is the only record of this context.
+        let frame = this.frameForIdentifier(payload.frameId);
+        if (frame)
+            frame.addExecutionContext(executionContext);
     }
 
     // Private
+
+    _associateTargetExecutionContextsWithFrame(frame)
+    {
+        // A frame target reports its realm as soon as the document's window object is set up, which
+        // can precede the Page.getResourceTree or Page.frameNavigated that tells the frontend the
+        // frame exists, and the report is never repeated. So the frame has to go and collect it. Safe to call repeatedly:
+        // a frame target's list holds only its current realms, and Frame.addExecutionContext
+        // ignores a context the frame already has.
+        for (let target of WI.targetManager.targets) {
+            if (!(target instanceof WI.FrameTarget))
+                continue;
+
+            for (let executionContext of target.executionContextList.contexts) {
+                if (executionContext.frameId === frame.id)
+                    frame.addExecutionContext(executionContext);
+            }
+        }
+    }
+
+    _disassociateTargetExecutionContextsFromFrame(target, frame)
+    {
+        let contexts = frame.executionContextList.contexts;
+        if (!contexts.some((context) => context.target === target))
+            return;
+
+        let survivors = contexts.filter((context) => context.target !== target);
+        frame.clearExecutionContexts();
+        for (let context of survivors)
+            frame.addExecutionContext(context);
+    }
 
     _addNewResourceToFrameOrTarget(url, frameIdentifier, resourceOptions = {}, frameOptions = {})
     {
@@ -1242,6 +1283,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             let mainResource = new WI.Resource("about:blank");
             frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, null, mainResource);
             this._frameIdentifierMap.set(frame.id, frame);
+            this._associateTargetExecutionContextsWithFrame(frame);
             mainResource.markAsFinished();
             if (this._mainFrame)
                 this._mainFrame.addChildFrame(frame);
@@ -1267,6 +1309,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             resource = new WI.Resource(url, resourceOptions);
             frame = new WI.Frame(frameIdentifier, frameOptions.name, frameOptions.securityOrigin, resourceOptions.loaderIdentifier, resource);
             this._frameIdentifierMap.set(frame.id, frame);
+            this._associateTargetExecutionContextsWithFrame(frame);
 
             // If we don't have a main frame, assume this is it. This can change later in
             // frameDidNavigate when the parent frame is known.
@@ -1472,6 +1515,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         var frame = new WI.Frame(payload.id, payload.name, payload.securityOrigin, payload.loaderId, mainResource);
 
         this._frameIdentifierMap.set(frame.id, frame);
+
+        this._associateTargetExecutionContextsWithFrame(frame);
 
         mainResource.markAsFinished();
 
@@ -1903,6 +1948,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._sourceMapURLMap.clear();
         this._downloadingSourceMaps.clear();
         this._failedSourceMapURLs.clear();
+    }
+
+    _handleTargetRemoved(event)
+    {
+        let {target} = event.data;
+        if (!(target instanceof WI.FrameTarget))
+            return;
+
+        // A frame target is replaced whenever its frame moves to another process. Its contexts are
+        // unusable from here on, so drop them and let the surviving targets' reports take over.
+        for (let frame of this._frameIdentifierMap.values())
+            this._disassociateTargetExecutionContextsFromFrame(target, frame);
     }
 };
 

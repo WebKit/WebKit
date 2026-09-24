@@ -506,7 +506,9 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _frameTargetsWithExecutionContext()
     {
-        return WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget && target.executionContext);
+        // A frame target's context is already listed under its frame, so only surface the ones whose
+        // frame is unknown to the frontend.
+        return WI.targetManager.targets.filter((target) => target instanceof WI.FrameTarget && target.executionContext && !target.executionContext.frame);
     }
 
     _toggleOrFocus(event)

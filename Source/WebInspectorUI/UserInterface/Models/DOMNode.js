@@ -611,10 +611,17 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         let target = this.owningTarget || WI.assumingMainTarget();
 
+        // `DOM.querySelector` answers an id in the responding agent's own id space, but callers look
+        // the node up in the manager-wide map, so hand back the scoped key instead.
+        function toScopedNodeId(nodeId)
+        {
+            return nodeId ? WI.DOMManager.keyForNodeId(nodeId, target) : nodeId;
+        }
+
         if (typeof callback !== "function") {
             if (this._destroyed)
                 return Promise.reject("ERROR: node is destroyed");
-            return target.DOMAgent.querySelector(this.backendNodeId, selector).then(({nodeId}) => nodeId);
+            return target.DOMAgent.querySelector(this.backendNodeId, selector).then(({nodeId}) => toScopedNodeId(nodeId));
         }
 
         if (this._destroyed) {
@@ -622,7 +629,9 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        target.DOMAgent.querySelector(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(callback));
+        target.DOMAgent.querySelector(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(function(nodeId) {
+            callback(toScopedNodeId(nodeId));
+        }));
     }
 
     querySelectorAll(selector, callback)
@@ -631,10 +640,17 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         let target = this.owningTarget || WI.assumingMainTarget();
 
+        // `DOM.querySelectorAll` answers ids in the responding agent's own id space, but callers look
+        // the nodes up in the manager-wide map, so hand back the scoped keys instead.
+        function toScopedNodeIds(nodeIds)
+        {
+            return nodeIds ? nodeIds.map((nodeId) => WI.DOMManager.keyForNodeId(nodeId, target)) : nodeIds;
+        }
+
         if (typeof callback !== "function") {
             if (this._destroyed)
                 return Promise.reject("ERROR: node is destroyed");
-            return target.DOMAgent.querySelectorAll(this.backendNodeId, selector).then(({nodeIds}) => nodeIds);
+            return target.DOMAgent.querySelectorAll(this.backendNodeId, selector).then(({nodeIds}) => toScopedNodeIds(nodeIds));
         }
 
         if (this._destroyed) {
@@ -642,7 +658,9 @@ WI.DOMNode = class DOMNode extends WI.Object
             return;
         }
 
-        target.DOMAgent.querySelectorAll(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(callback));
+        target.DOMAgent.querySelectorAll(this.backendNodeId, selector, WI.DOMManager.wrapClientCallback(function(nodeIds) {
+            callback(toScopedNodeIds(nodeIds));
+        }));
     }
 
     highlight(mode)
