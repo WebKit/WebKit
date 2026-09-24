@@ -29,11 +29,13 @@
 // here so that what libJavaScriptCoreTools adds stays separate and distinct from
 // wtf/spi/cocoa/MachVMSPI.h.
 
+#include <wtf/Platform.h>
+
+#if ENABLE(MYA) && OS(DARWIN)
+
 DECLARE_SYSTEM_HEADER
 
 #include <wtf/spi/cocoa/MachVMSPI.h>
-
-#if ENABLE(MYA)
 
 WTF_EXTERN_C_BEGIN
 
@@ -42,4 +44,4 @@ kern_return_t mach_vm_remap_new(vm_map_t targetTask, mach_vm_address_t*, mach_vm
 
 WTF_EXTERN_C_END
 
-#endif // ENABLE(MYA)
+#endif // ENABLE(MYA) && OS(DARWIN)

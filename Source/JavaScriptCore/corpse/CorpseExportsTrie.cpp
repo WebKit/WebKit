@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CorpseExportsTrie.h"
 
-#if ENABLE(MYA)
+#if ENABLE(MYA) && OS(DARWIN)
 
 #include <mach-o/loader.h>
 #include <optional>
@@ -140,4 +140,4 @@ std::expected<ExportsTrie::Export, ExportsTrie::Failure> ExportsTrie::lookUp(std
 } // namespace Corpse
 } // namespace JSC
 
-#endif // ENABLE(MYA)
+#endif // ENABLE(MYA) && OS(DARWIN)

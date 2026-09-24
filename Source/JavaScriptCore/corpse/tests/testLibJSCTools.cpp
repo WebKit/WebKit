@@ -25,19 +25,11 @@
 
 #include "config.h"
 
+#include <JavaScriptCore/CorpsePlatform.h>
 #include <wtf/DataLog.h>
 
 #if ENABLE(MYA)
 
-#include "CorpseAddressTest.h"
-#include "CorpseByteParserTest.h"
-#include "CorpseExportsTrieTest.h"
-#include "CorpseMemoryTest.h"
-#include "CorpseProcessTest.h"
-#include "CorpseRegionTest.h"
-#include "CorpseSnapshotTest.h"
-#include "CorpseSymbolTest.h"
-#include "CorpseThreadTest.h"
 #include "LibJSCToolsTestUtilities.h"
 
 #include <stdlib.h>
@@ -59,6 +51,7 @@ void printUsage()
 {
     dataLogLn("Usage: testLibJSCTools [--verbose] [<suite filter>]");
     dataLogLn("       testLibJSCTools --fuzz-trie [<seed> [<iterations>]]");
+    dataLogLn("       testLibJSCTools --target <offset>");
     dataLogLn("");
     dataLogLn("  Runs the tests for libJavaScriptCoreTools. With a filter, only the");
     dataLogLn("  suites whose name contains it run.");
@@ -74,6 +67,19 @@ bool parseUint64(std::string_view text, uint64_t& out)
         return false;
     out = *parsed;
     return true;
+}
+
+void runCorpseSuite()
+{
+    JSCToolsTest::testByteParser();
+    JSCToolsTest::testExportsTrie();
+    JSCToolsTest::testAddress();
+    JSCToolsTest::testProcess();
+    JSCToolsTest::testSnapshot();
+    JSCToolsTest::testRegion();
+    JSCToolsTest::testMemory();
+    JSCToolsTest::testThreads();
+    JSCToolsTest::testSymbol();
 }
 
 } // anonymous namespace
@@ -95,6 +101,14 @@ int main(int argc, char** argv)
         if (argument == "--verbose") {
             JSCToolsTest::verbose = true;
             continue;
+        }
+        if (argument == "--target") {
+            if (index + 1 >= arguments.size()) {
+                dataLogLn("--target needs the offset of a create function into this executable, in hex");
+                printUsage();
+                return 1;
+            }
+            return JSCToolsTest::runCorpseTarget(arguments[index + 1]);
         }
         if (argument == "--fuzz-trie") {
             fuzzOnly = true;
@@ -118,16 +132,9 @@ int main(int argc, char** argv)
     if (fuzzOnly)
         JSCToolsTest::fuzzExportsTrie(fuzzSeed, static_cast<unsigned>(fuzzIterations));
     else {
-        JSCToolsTest::testByteParser();
-        JSCToolsTest::testExportsTrie();
         JSCToolsTest::fuzzExportsTrie(fuzzSeed, static_cast<unsigned>(fuzzIterations));
-        JSCToolsTest::testAddress();
-        JSCToolsTest::testProcess();
-        JSCToolsTest::testSnapshot();
-        JSCToolsTest::testRegion();
-        JSCToolsTest::testMemory();
-        JSCToolsTest::testThreads();
-        JSCToolsTest::testSymbol();
+        runCorpseSuite();
+        JSCToolsTest::testVM();
     }
 
     dataLogLn("Ran ", JSCToolsTest::assertionsRun, " assertions, ",
@@ -152,8 +159,6 @@ int main(int argc, char** argv)
 
 int main(int, char**)
 {
-    // The corpse support is built on Mach task APIs, so there is nothing to test
-    // on other platforms. Simulators and MacCatalyst are also not supported.
     // Report success so that a run here is not a failure.
     printf("Not supported platform for testLibJSCTools\n");
     return 0;

@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "CorpseByteParserTest.h"
 
 #if ENABLE(MYA)
 

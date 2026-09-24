@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2026 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,18 +34,22 @@
 #include "CorpseRegion.h"
 #include "CorpseSnapshot.h"
 
+#if OS(DARWIN)
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 #include <mach/mach_vm.h>
 #include <mach/thread_act.h>
 #include <mach/thread_info.h>
 #include <mach/thread_status.h>
+#endif
 #include <optional>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 namespace Corpse {
+
+#if OS(DARWIN)
 
 static std::optional<Address> readStackPointer(thread_act_t thread)
 {
@@ -181,6 +186,14 @@ Vector<Thread> Thread::collect(const Snapshot& snapshot)
 
     return result;
 }
+#else
+
+const char* Thread::runStateDescription() const { return "unknown"; }
+
+Vector<Thread> Thread::collect(const Snapshot&) { return { }; }
+
+#endif // OS(DARWIN)
+
 } // namespace Corpse
 } // namespace JSC
 

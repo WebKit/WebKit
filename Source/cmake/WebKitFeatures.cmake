@@ -177,7 +177,7 @@ macro(WEBKIT_OPTION_BEGIN)
     endif ()
 
     if (NOT DEFINED ENABLE_MYA_DEFAULT)
-        if (APPLE)
+        if (APPLE OR (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND DEVELOPER_MODE AND CMAKE_SIZEOF_VOID_P EQUAL 8))
             set(ENABLE_MYA_DEFAULT ON)
         else ()
             set(ENABLE_MYA_DEFAULT OFF)
