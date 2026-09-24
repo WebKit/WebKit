@@ -108,6 +108,11 @@ void NetworkBroadcastChannelRegistry::postMessage(IPC::Connection& connection, c
     MESSAGE_CHECK_COMPLETION(isValidClientOrigin(origin), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(!name.isNull(), connection, completionHandler());
     MESSAGE_CHECK_COMPLETION(isOriginAllowedForConnection(connection, origin), connection, completionHandler());
+#if ENABLE(OFFSCREEN_CANVAS)
+    // Cannot broadcast OffscreenCanvas
+    if (RefPtr serializedValue = message.message)
+        serializedValue->dropTransferredPlaceholdersExcept({ });
+#endif
 
     auto channelsForOriginIterator = m_broadcastChannels.find(origin);
     ASSERT(channelsForOriginIterator != m_broadcastChannels.end());

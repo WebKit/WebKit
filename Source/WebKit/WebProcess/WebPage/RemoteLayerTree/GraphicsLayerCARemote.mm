@@ -151,27 +151,18 @@ public:
         if (!clone)
             return false;
 
-        clone->flushDrawingContext();
-
-        auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(clone->toBackendSharing());
-        if (!sharing)
-            return false;
-
-        auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
+        auto backendHandle = storeContents(*clone, opaque, frame);
         if (!backendHandle)
             return false;
-
-        {
-            Locker locker { m_surfaceLock };
-            m_surfaceBackendHandle = ImageBufferBackendHandle { *backendHandle };
-            m_frame = frame;
-            m_contentsFormat = convertToContentsFormat(clone->pixelFormat());
-            m_opaque = opaque;
-        }
 
         RemoteLayerBackingStoreProperties properties(WTF::move(*backendHandle), frame, opaque);
         m_connection->send(Messages::RemoteLayerTreeDrawingAreaProxy::AsyncSetLayerContents(*m_layerID, WTF::move(properties)), m_drawingArea.toUInt64());
         return true;
+    }
+
+    bool setContentsForNextDisplay(ImageBuffer& buffer, bool opaque, PlaceholderFrameIdentifier frame) final
+    {
+        return !!storeContents(buffer, opaque, frame);
     }
 
     void display(PlatformCALayer& layer) final
@@ -192,6 +183,27 @@ public:
     bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
 
 private:
+    // Keeps the contents for display() to hand to the next rendering update.
+    std::optional<ImageBufferBackendHandle> storeContents(ImageBuffer& buffer, bool opaque, PlaceholderFrameIdentifier frame)
+    {
+        buffer.flushDrawingContext();
+
+        auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(buffer.toBackendSharing());
+        if (!sharing)
+            return std::nullopt;
+
+        auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
+        if (!backendHandle)
+            return std::nullopt;
+
+        Locker locker { m_surfaceLock };
+        m_surfaceBackendHandle = ImageBufferBackendHandle { *backendHandle };
+        m_frame = frame;
+        m_contentsFormat = convertToContentsFormat(buffer.pixelFormat());
+        m_opaque = opaque;
+        return backendHandle;
+    }
+
     const Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
     Markable<WebCore::PlatformLayerIdentifier> m_layerID;

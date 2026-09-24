@@ -135,6 +135,12 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 
 void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const SecurityOriginData& sourceOrigin, Vector<URL>&& blobURLs)
 {
+#if ENABLE(OFFSCREEN_CANVAS)
+    // Cannot send OffscreenCanvas to a web server.
+    if (RefPtr serializedValue = message.message)
+        serializedValue->dropTransferredPlaceholdersExcept({ });
+#endif
+
     RefPtr server = this->server();
     RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr;
     if (!connection)

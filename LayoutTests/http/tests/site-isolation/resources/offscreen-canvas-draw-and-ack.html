@@ -1,0 +1,45 @@
+<script>
+let offscreen = null;
+let context = null;
+
+function drawFrame(color)
+{
+    if (!context)
+        return;
+    context.fillStyle = color;
+    context.fillRect(0, 0, offscreen.width, offscreen.height);
+}
+
+addEventListener("message", (event) => {
+    if (!event.data)
+        return;
+
+    if (event.data.type == "offscreen-canvas") {
+        try {
+            offscreen = event.data.canvas;
+            context = offscreen.getContext("2d");
+            drawFrame(event.data.color || "red");
+            window.parent.postMessage({ type: "child-ack", result: "drew " + offscreen.width + "x" + offscreen.height }, "*");
+        } catch (e) {
+            window.parent.postMessage({ type: "child-ack", result: "exception: " + e }, "*");
+        }
+        return;
+    }
+
+    // Keep committing after the parent has dropped the canvas element. The frames should simply be
+    // discarded, not terminate this process.
+    if (event.data.type == "keep-drawing") {
+        try {
+            for (let i = 0; i < 10; ++i)
+                drawFrame(i % 2 ? "blue" : "green");
+            window.parent.postMessage({ type: "still-alive" }, "*");
+        } catch (e) {
+            window.parent.postMessage({ type: "still-alive", error: String(e) }, "*");
+        }
+    }
+});
+
+addEventListener("messageerror", () => {
+    window.parent.postMessage({ type: "child-ack", result: "messageerror" }, "*");
+});
+</script>

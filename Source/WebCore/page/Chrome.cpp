@@ -543,6 +543,13 @@ RefPtr<ImageBuffer> Chrome::createImageBufferFromTransferHandle(const ImageBuffe
     return m_client->createImageBufferFromTransferHandle(handle);
 }
 
+#if ENABLE(OFFSCREEN_CANVAS)
+RefPtr<PlaceholderRenderingContextSource> Chrome::createPlaceholderRenderingContextSource(PlaceholderRenderingContextIdentifier identifier)
+{
+    return m_client->createPlaceholderRenderingContextSource(identifier);
+}
+#endif
+
 std::unique_ptr<WorkerClient> Chrome::createWorkerClient(SerialFunctionDispatcher& dispatcher)
 {
     return m_client->createWorkerClient(dispatcher);

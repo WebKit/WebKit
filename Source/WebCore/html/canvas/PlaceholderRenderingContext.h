@@ -47,6 +47,9 @@ public:
 
     // Shows the frame unless a newer one is already shown. On any thread.
     void copyFrame(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
+    // Like copyFrame(), for a buffer that nothing will draw into again. It reaches the compositor
+    // with the next rendering update. On the main thread.
+    void setFrameForNextDisplay(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
     // On the main thread.
     void attach(GraphicsLayer&, ImageBuffer*, bool opaque, PlaceholderFrameIdentifier);
 
@@ -59,7 +62,8 @@ private:
 };
 
 // The source for an OffscreenCanvas in the same process as its placeholder, on any thread. Only the
-// OffscreenCanvas holds it.
+// OffscreenCanvas holds it, so it goes away once the canvas leaves the process, and a source there
+// takes over.
 class LocalPlaceholderRenderingContextSource final : public PlaceholderRenderingContextSource {
     WTF_MAKE_TZONE_ALLOCATED(LocalPlaceholderRenderingContextSource);
 public:
@@ -79,12 +83,15 @@ class PlaceholderRenderingContext final : public CanvasRenderingContext {
     WTF_MAKE_TZONE_ALLOCATED(PlaceholderRenderingContext);
 public:
     static std::unique_ptr<PlaceholderRenderingContext> create(HTMLCanvasElement&);
+    static PlaceholderRenderingContext* fromIdentifier(PlaceholderRenderingContextIdentifier);
 
     ~PlaceholderRenderingContext();
 
     HTMLCanvasElement& NODELETE canvas() const;
     IntSize NODELETE size() const;
     void setPlaceholderBuffer(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
+    // A frame from a source in another process, whose buffer nothing will draw into again.
+    void setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
 
     PlaceholderRenderingContextIdentifier identifier() const { return m_identifier; }
     PlaceholderLayerContents& layerContents() const { return m_layerContents; }

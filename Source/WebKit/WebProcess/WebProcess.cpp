@@ -79,6 +79,9 @@
 #include "WebPermissionController.h"
 #include "WebPlatformStrategies.h"
 #include "WebProcessCreationParameters.h"
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+#include <WebCore/PlaceholderRenderingContextSource.h>
+#endif
 #if ENABLE(GPU_PROCESS)
 #include "RemoteImageBufferProxy.h"
 #endif
@@ -193,7 +196,9 @@
 #endif
 
 #if ENABLE(GPU_PROCESS)
+#include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
+#include "RemoteRenderingBackendProxy.h"
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -499,6 +504,12 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
         setWebsiteDataStoreParameters(WTF::move(*parameters.websiteDataStoreParameters));
 
     setLegacyPresentingApplicationPID(parameters.presentingApplicationPID);
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+    WebCore::PlaceholderRenderingContextSource::setPlaceholderDestroyedHandler([](WebCore::PlaceholderRenderingContextIdentifier identifier) {
+        WebProcess::singleton().send(Messages::WebProcessProxy::OffscreenCanvasPlaceholderDestroyed(identifier), 0);
+    });
+#endif
 
 #if OS(LINUX)
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
@@ -2761,6 +2772,31 @@ void WebProcess::contentWorldDestroyed(ContentWorldIdentifier identifier)
 {
     WebUserContentController::removeContentWorld(identifier);
 }
+
+#if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+void WebProcess::commitOffscreenCanvasPlaceholderFrame(WebCore::PlaceholderRenderingContextIdentifier identifier, WebCore::ImageBufferTransferHandle&& transferHandle, WebCore::PlaceholderFrameIdentifier frame, bool originClean, bool opaque, CompletionHandler<void(bool)>&& completionHandler)
+{
+    // Always true, only false if this processed crashed.
+    completionHandler(true);
+
+    if (WebCore::PlaceholderRenderingContextSource::commitFrameFromAnotherProcess(identifier, transferHandle, frame, originClean, opaque))
+        return;
+
+    if (!m_pageMap.isEmpty()) {
+        Ref page = m_pageMap.begin()->value;
+        if (protect(page->ensureRemoteRenderingBackendProxy())->takeTransferredBuffer(transferHandle))
+            return;
+    }
+    releaseTransferredImageBuffer(transferHandle.identifier);
+}
+
+void WebProcess::releaseTransferredImageBuffer(WebCore::ImageBufferTransferIdentifier identifier)
+{
+    // The buffer went with the GPU process if there is no connection to it.
+    if (RefPtr gpuProcessConnection = existingGPUProcessConnection())
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseTransferredImageBuffer(identifier), 0);
+}
+#endif
 
 } // namespace WebKit
 

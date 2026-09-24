@@ -27,6 +27,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include <WebCore/PlaceholderFrameIdentifier.h>
 #include <WebCore/PlaceholderRenderingContextIdentifier.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -34,9 +35,11 @@
 namespace WebCore {
 
 class ImageBuffer;
+struct ImageBufferTransferHandle;
 
 // Thread-safe interface to submit frames from an OffscreenCanvas to the placeholder rendering context
-// of the canvas element it was transferred from.
+// of the canvas element it was transferred from. When the OffscreenCanvas is transferred to another
+// process, it gets a source there that forwards each frame back to the process owning the placeholder.
 class PlaceholderRenderingContextSource : public ThreadSafeRefCounted<PlaceholderRenderingContextSource> {
     WTF_MAKE_NONCOPYABLE(PlaceholderRenderingContextSource);
 public:
@@ -46,6 +49,17 @@ public:
 
     // Called by the offscreen context to submit the frame.
     virtual void setPlaceholderBuffer(ImageBuffer&, bool originClean, bool opaque) = 0;
+
+    // Where a source in another process delivers its frames: straight to the placeholder, on the main
+    // thread of the process that owns it. Returns false, leaving the frame's buffer unclaimed, if the
+    // placeholder no longer exists or cannot take it.
+    WEBCORE_EXPORT static bool commitFrameFromAnotherProcess(PlaceholderRenderingContextIdentifier, const ImageBufferTransferHandle&, PlaceholderFrameIdentifier, bool originClean, bool opaque);
+
+    // Tells the embedder, on the main thread, that a placeholder is gone, so that no other process goes
+    // on committing to it. Process wide rather than through the page, which the placeholder's document
+    // has often lost by the time its canvas element is collected.
+    using PlaceholderDestroyedHandler = void (*)(PlaceholderRenderingContextIdentifier);
+    WEBCORE_EXPORT static void setPlaceholderDestroyedHandler(PlaceholderDestroyedHandler);
 
 protected:
     explicit PlaceholderRenderingContextSource(PlaceholderRenderingContextIdentifier identifier)

@@ -37,6 +37,7 @@
 #include <WebCore/IDLTypes.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/PlaceholderRenderingContextIdentifier.h>
 #include <WebCore/ScriptWrappable.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
@@ -88,14 +89,26 @@ class DetachedOffscreenCanvas {
 
 public:
     DetachedOffscreenCanvas(const IntSize&, bool originClean, RefPtr<PlaceholderRenderingContextSource>&&);
+    // Decoded after crossing a process boundary, where only the placeholder's identity can travel.
+    WEBCORE_EXPORT DetachedOffscreenCanvas(const IntSize&, bool originClean, std::optional<PlaceholderRenderingContextIdentifier>);
+    WEBCORE_EXPORT DetachedOffscreenCanvas(DetachedOffscreenCanvas&&);
+    WEBCORE_EXPORT DetachedOffscreenCanvas& operator=(DetachedOffscreenCanvas&&);
     WEBCORE_EXPORT ~DetachedOffscreenCanvas();
+
+    std::unique_ptr<DetachedOffscreenCanvas> clone() const;
+
     const IntSize& size() const LIFETIME_BOUND { return m_size; }
     bool originClean() const { return m_originClean; }
-    const RefPtr<PlaceholderRenderingContextSource>& placeholderSource() const LIFETIME_BOUND { return m_placeholderSource; }
-    RefPtr<PlaceholderRenderingContextSource> NODELETE takePlaceholderSource();
+    WEBCORE_EXPORT std::optional<PlaceholderRenderingContextIdentifier> placeholderIdentifier() const;
+    // For the process brokering delivery, when the recipient may not commit frames to the placeholder.
+    // The recipient still gets the canvas, but what it draws is not shown anywhere.
+    WEBCORE_EXPORT void dropPlaceholder();
 
 private:
-    RefPtr<PlaceholderRenderingContextSource> m_placeholderSource;
+    RefPtr<PlaceholderRenderingContextSource> takePlaceholderSource(ScriptExecutionContext&);
+
+    // Null when the canvas has no placeholder.
+    Variant<RefPtr<PlaceholderRenderingContextSource>, PlaceholderRenderingContextIdentifier> m_placeholder;
     IntSize m_size;
     bool m_originClean;
 };

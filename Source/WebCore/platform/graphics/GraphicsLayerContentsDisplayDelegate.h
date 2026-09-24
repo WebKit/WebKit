@@ -86,6 +86,10 @@ public:
 
     virtual bool WEBCORE_EXPORT tryCopyToLayer(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier) = 0;
 
+    // Like tryCopyToLayer(), but for a buffer that nothing will draw into again, and leaving it to the
+    // next rendering update to deliver where that is how the layer's contents reach the compositor.
+    virtual bool setContentsForNextDisplay(ImageBuffer& buffer, bool opaque, PlaceholderFrameIdentifier frame) { return tryCopyToLayer(buffer, opaque, frame); }
+
     virtual bool isGraphicsLayerAsyncContentsDisplayDelegateCocoa() const { return false; }
     virtual bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const { return false; }
 };

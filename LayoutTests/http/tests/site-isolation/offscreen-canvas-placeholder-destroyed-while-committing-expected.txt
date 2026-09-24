@@ -1,0 +1,10 @@
+Destroying the placeholder canvas while a cross-site iframe is still committing frames should discard those frames, not terminate the iframe's process.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS iframe survived committing frames to a destroyed placeholder
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

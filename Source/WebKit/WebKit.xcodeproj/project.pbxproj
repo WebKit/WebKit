@@ -5951,6 +5951,8 @@
 		46851A9B2E83D222000A59E2 /* NetworkRTCSharedMonitorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCSharedMonitorCocoa.mm; sourceTree = "<group>"; };
 		46851A9C2E83D636000A59E2 /* NetworkRTCSharedMonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCSharedMonitor.h; sourceTree = "<group>"; };
 		46851A9D2E83D636000A59E2 /* NetworkRTCSharedMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCSharedMonitor.cpp; sourceTree = "<group>"; };
+		33406A32D7A2B82A8465732F /* RemotePlaceholderRenderingContextSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemotePlaceholderRenderingContextSource.cpp; sourceTree = "<group>"; };
+		C7B3F06E178BBE8B83E67A24 /* RemotePlaceholderRenderingContextSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemotePlaceholderRenderingContextSource.h; sourceTree = "<group>"; };
 		4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWebLockRegistry.h; sourceTree = "<group>"; };
 		4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWebLockRegistry.cpp; sourceTree = "<group>"; };
 		4691CB9A27B2DD1800B29AAF /* RemoteWorkerType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerType.h; sourceTree = "<group>"; };
@@ -16086,6 +16088,8 @@
 				46CBA2B02EAB07AA00D771E2 /* cocoa */,
 				2D28F3DF1885CCB4004B9EAE /* ios */,
 				BC111ADE112F5B9A00337BAB /* mac */,
+				33406A32D7A2B82A8465732F /* RemotePlaceholderRenderingContextSource.cpp */,
+				C7B3F06E178BBE8B83E67A24 /* RemotePlaceholderRenderingContextSource.h */,
 				4689B9102756D1430007C651 /* RemoteWebLockRegistry.cpp */,
 				4689B90F2756D1430007C651 /* RemoteWebLockRegistry.h */,
 				46E9760B2757F6C900ACDD37 /* RemoteWebLockRegistry.messages.in */,

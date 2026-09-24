@@ -119,6 +119,7 @@ messages -> GPUProcess : AuxiliaryProcess {
     WithdrawNowPlayingCandidate(WebCore::QualifiedPageIdentifier page)
 
     HandOverTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers, WebCore::ProcessIdentifier destinationProcess)
+    ReleaseTransferredImageBuffers(Vector<WebCore::ImageBufferTransferIdentifier> transferIdentifiers)
 }
 
 #endif // ENABLE(GPU_PROCESS)

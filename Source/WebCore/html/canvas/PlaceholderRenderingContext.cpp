@@ -28,12 +28,18 @@
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContextDestructionObserverInlines.h"
+#include "Document.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
 #include "NativeImage.h"
 #include "OffscreenCanvas.h"
+#include "Page.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -46,6 +52,16 @@ void PlaceholderLayerContents::copyFrame(ImageBuffer& imageBuffer, bool opaque, 
     if (!m_delegate || frame <= m_frame)
         return;
     m_delegate->tryCopyToLayer(imageBuffer, opaque, frame);
+    m_frame = frame;
+}
+
+void PlaceholderLayerContents::setFrameForNextDisplay(ImageBuffer& imageBuffer, bool opaque, PlaceholderFrameIdentifier frame)
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    if (!m_delegate || frame <= m_frame)
+        return;
+    m_delegate->setContentsForNextDisplay(imageBuffer, opaque, frame);
     m_frame = frame;
 }
 
@@ -103,6 +119,26 @@ void LocalPlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& i
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
+static HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>& placeholderRenderingContexts()
+{
+    assertIsMainThread();
+    static NeverDestroyed<HashMap<PlaceholderRenderingContextIdentifier, WeakPtr<PlaceholderRenderingContext>>> contexts;
+    return contexts;
+}
+
+static PlaceholderRenderingContextSource::PlaceholderDestroyedHandler placeholderDestroyedHandler;
+
+void PlaceholderRenderingContextSource::setPlaceholderDestroyedHandler(PlaceholderDestroyedHandler handler)
+{
+    assertIsMainThread();
+    placeholderDestroyedHandler = handler;
+}
+
+PlaceholderRenderingContext* PlaceholderRenderingContext::fromIdentifier(PlaceholderRenderingContextIdentifier identifier)
+{
+    return placeholderRenderingContexts().get(identifier);
+}
+
 std::unique_ptr<PlaceholderRenderingContext> PlaceholderRenderingContext::create(HTMLCanvasElement& element)
 {
     return std::unique_ptr<PlaceholderRenderingContext> { new PlaceholderRenderingContext(element) };
@@ -113,9 +149,16 @@ PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canv
     , m_identifier(PlaceholderRenderingContextIdentifier::generate())
     , m_layerContents(PlaceholderLayerContents::create())
 {
+    placeholderRenderingContexts().add(m_identifier, *this);
 }
 
-PlaceholderRenderingContext::~PlaceholderRenderingContext() = default;
+PlaceholderRenderingContext::~PlaceholderRenderingContext()
+{
+    placeholderRenderingContexts().remove(m_identifier);
+    // Retires another process's permission to commit frames here.
+    if (placeholderDestroyedHandler)
+        placeholderDestroyedHandler(m_identifier);
+}
 
 HTMLCanvasElement& PlaceholderRenderingContext::canvas() const
 {
@@ -132,8 +175,29 @@ void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
     m_layerContents->attach(layer, m_buffer.get(), m_opaque, m_frame);
 }
 
+bool PlaceholderRenderingContextSource::commitFrameFromAnotherProcess(PlaceholderRenderingContextIdentifier identifier, const ImageBufferTransferHandle& transferHandle, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    assertIsMainThread();
+    RefPtr placeholder = PlaceholderRenderingContext::fromIdentifier(identifier);
+    if (!placeholder)
+        return false;
+    RefPtr imageBuffer = ImageBuffer::createFromTransferHandle(transferHandle, protect(placeholder->canvas().document())->graphicsClient());
+    if (!imageBuffer)
+        return false;
+    placeholder->setPlaceholderBufferFromAnotherProcess(imageBuffer.releaseNonNull(), frame, originClean, opaque);
+    return true;
+}
+
+void PlaceholderRenderingContext::setPlaceholderBufferFromAnotherProcess(Ref<ImageBuffer>&& imageBuffer, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
+{
+    m_layerContents->setFrameForNextDisplay(imageBuffer, opaque, frame);
+    setPlaceholderBuffer(WTF::move(imageBuffer), frame, originClean, opaque);
+}
+
 void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuffer, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)
 {
+    if (frame <= m_frame)
+        return;
     m_frame = frame;
     IntSize newSize = newBuffer->truncatedLogicalSize();
     Ref canvas = this->canvas();
