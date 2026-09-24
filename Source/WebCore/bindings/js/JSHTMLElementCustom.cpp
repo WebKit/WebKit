@@ -63,11 +63,7 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
     ASSERT(context->isDocument());
 
     auto* newTarget = callFrame.newTarget().getObject();
-    auto* functionGlobalObject = getFunctionRealm(lexicalGlobalObject, newTarget);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto* newTargetGlobalObject = downcast<JSDOMGlobalObject>(functionGlobalObject);
-    JSValue htmlElementConstructorValue = JSHTMLElement::getConstructor(vm, newTargetGlobalObject);
-    if (newTarget == htmlElementConstructorValue)
+    if (newTarget == jsConstructor)
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
 
     Ref document = downcast<Document>(*context);
@@ -88,8 +84,13 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         return throwVMTypeError(lexicalGlobalObject, scope, "new.target does not define a custom element"_s);
 
     if (!elementInterface->isUpgradingElement()) {
+        JSValue prototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto* functionGlobalObject = getFunctionRealm(lexicalGlobalObject, newTarget);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto* newTargetGlobalObject = downcast<JSDOMGlobalObject>(functionGlobalObject);
         Structure* baseStructure = getDOMStructure<JSHTMLElement>(vm, *newTargetGlobalObject);
-        auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure);
+        auto* newElementStructure = InternalFunction::createSubclassStructure(lexicalGlobalObject, newTarget, baseStructure, prototype);
         RETURN_IF_EXCEPTION(scope, { });
 
         Ref element = elementInterface->createElement(document);
@@ -107,11 +108,11 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         return JSValue::encode(jsUndefined());
     }
 
-    JSValue elementWrapperValue = toJS(lexicalGlobalObject, jsConstructor->realm(), *elementToUpgrade);
-    ASSERT(elementWrapperValue.isObject());
-
     JSValue newPrototype = newTarget->get(lexicalGlobalObject, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    JSValue elementWrapperValue = toJS(lexicalGlobalObject, jsConstructor->realm(), *elementToUpgrade);
+    ASSERT(elementWrapperValue.isObject());
 
     JSObject* elementWrapperObject = asObject(elementWrapperValue);
     JSObject::setPrototype(elementWrapperObject, lexicalGlobalObject, newPrototype, true /* shouldThrowIfCantSet */);
