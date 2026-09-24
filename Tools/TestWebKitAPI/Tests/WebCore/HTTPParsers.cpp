@@ -453,6 +453,31 @@ TEST(RFC8941, ParseItemStructuredFieldValue)
     intValue = std::get_if<int64_t>(&result->first);
     EXPECT_TRUE(!!intValue);
     EXPECT_EQ(*intValue, 1);
+
+    // Valid String BareItem (printable ASCII only, %x20-7E).
+    result = RFC8941::parseItemStructuredFieldValue("\"hello world\""_s);
+    EXPECT_TRUE(!!result);
+    stringValue = std::get_if<String>(&result->first);
+    EXPECT_TRUE(!!stringValue);
+    EXPECT_EQ("hello world"_s, *stringValue);
+
+    // Invalid String BareItem: control character (%x00-1f) must fail parsing (RFC 9651 section 4.2.5).
+    result = RFC8941::parseItemStructuredFieldValue("\"a\tb\""_s);
+    EXPECT_FALSE(!!result);
+
+    // Invalid String BareItem: DEL and %x7f-ff must fail parsing.
+    result = RFC8941::parseItemStructuredFieldValue(StringView::fromLatin1("\"a\x7F""b\""));
+    EXPECT_FALSE(!!result);
+    result = RFC8941::parseItemStructuredFieldValue(StringView::fromLatin1("\"a\xE9""b\""));
+    EXPECT_FALSE(!!result);
+
+    // Invalid String BareItem: non-ASCII code point >= 0x100 on the 16-bit code path must fail parsing.
+    result = RFC8941::parseItemStructuredFieldValue(String::fromUTF8("\"a\xC4\x80""b\"")); // U+0100
+    EXPECT_FALSE(!!result);
+    result = RFC8941::parseItemStructuredFieldValue(String::fromUTF8("\"\xE3\x81\x82\"")); // U+3042
+    EXPECT_FALSE(!!result);
+    result = RFC8941::parseItemStructuredFieldValue(String::fromUTF8("\"\xE2\x80\xA8\"")); // U+2028
+    EXPECT_FALSE(!!result);
 }
 
 TEST(RFC8941, ParseDictionaryStructuredFieldValue)
