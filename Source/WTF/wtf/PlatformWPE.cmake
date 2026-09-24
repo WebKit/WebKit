@@ -54,7 +54,6 @@ list(APPEND WTF_PUBLIC_HEADERS
 
     android/RefPtrAndroid.h
 
-    glib/ActivityObserver.h
     glib/Application.h
     glib/FilePathWatcher.h
     glib/GMallocString.h

@@ -34,7 +34,6 @@ list(APPEND WTF_SOURCES
 list(APPEND WTF_PUBLIC_HEADERS
     PlatformEnableGlib.h
 
-    glib/ActivityObserver.h
     glib/Application.h
     glib/FilePathWatcher.h
     glib/GMallocString.h
