@@ -62,8 +62,12 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
     if (!itemCount)
         return { };
 
-    // flex-line-count can request more lines than there are items; a line always holds at least one item.
-    auto minimumLineCount = std::min(flexLineCount, itemCount);
+    // If the minimum line count is more than the number of items, each item gets its own line.
+    if (flexLineCount >= itemCount) {
+        return Vector<size_t>(itemCount, [](size_t index) {
+            return index + 1;
+        });
+    }
 
     // Precomputing turns an O(n) addition to an O(1) subtraction inside the main loop.
     auto gap = static_cast<uint64_t>(gapBetweenItems.rawValue());
@@ -84,7 +88,7 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
         return freeSpace * freeSpace;
     };
 
-    if (minimumLineCount <= 1 && lineLength(0, itemCount) <= capacity)
+    if (flexLineCount <= 1 && lineLength(0, itemCount) <= capacity)
         return Vector<size_t>::from(itemCount);
 
     // lastFittingEnd[start] is the largest end whose line still fits, or start + 1 when the item at
@@ -98,10 +102,10 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
     }
 
     // minScores[index(start, lines)] is the minimum total squared free space to cover items
-    // [start, itemCount) in at least lines lines, for lines in [1, minimumLineCount].
+    // [start, itemCount) in at least lines lines, for lines in [1, flexLineCount].
     auto index = [&](size_t start, size_t lines) -> size_t {
-        ASSERT(lines >= 1 && lines <= minimumLineCount);
-        return start * minimumLineCount + (lines - 1);
+        ASSERT(lines >= 1 && lines <= flexLineCount);
+        return start * flexLineCount + (lines - 1);
     };
 
     // Five lines of an auto-height column flow, whose available space is LayoutUnit::max(), overflow
@@ -109,11 +113,11 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
     // Not std::numeric_limits, which libstdc++ leaves unspecialized for __uint128_t under -std=c++23
     // and whose primary template would silently yield zero.
     static constexpr auto infiniteScore = ~UInt128 { 0 };
-    auto minScores = Vector<UInt128>(FillWith { }, itemCount * minimumLineCount, infiniteScore);
-    Vector<size_t> bestEndForStart(FillWith { }, itemCount * minimumLineCount, 0);
+    auto minScores = Vector<UInt128>(FillWith { }, itemCount * flexLineCount, infiniteScore);
+    Vector<size_t> bestEndForStart(FillWith { }, itemCount * flexLineCount, 0);
 
     for (size_t start = itemCount; start--;) {
-        for (size_t lines = 1; lines <= minimumLineCount; ++lines) {
+        for (size_t lines = 1; lines <= flexLineCount; ++lines) {
             for (auto end = start + 1; end <= lastFittingEnd[start]; ++end) {
                 // This line covers [start, end); the rest is [end, itemCount). When the rest is
                 // empty this is the final line, which alone cannot satisfy a lines > 1 requirement.
@@ -138,11 +142,11 @@ Vector<size_t> balancedLineBreaks(std::span<const LayoutUnit> itemMainAxisSizes,
         }
     }
 
-    // minimumLineCount is clamped to itemCount, so the start state is coverable.
-    ASSERT(minScores[index(0, minimumLineCount)] != infiniteScore);
+    // flexLineCount is clamped to itemCount, so the start state is coverable.
+    ASSERT(minScores[index(0, flexLineCount)] != infiniteScore);
 
     Vector<size_t> lineBreaks;
-    for (size_t start = 0, lines = minimumLineCount; start < itemCount;) {
+    for (size_t start = 0, lines = flexLineCount; start < itemCount;) {
         auto end = bestEndForStart[index(start, lines)];
         lineBreaks.append(end);
         lines = std::max<size_t>(lines - 1, 1);
