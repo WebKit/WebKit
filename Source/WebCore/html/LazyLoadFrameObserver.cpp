@@ -109,7 +109,8 @@ IntersectionObserver* LazyLoadFrameObserver::intersectionObserver(Document& docu
 {
     if (!m_observer) {
         auto callback = LazyFrameLoadIntersectionObserverCallback::create(document);
-        IntersectionObserver::Init options { std::nullopt, emptyString(), emptyString(), { } };
+        static NeverDestroyed<const String> lazyLoadingScrollMarginFallback(MAKE_STATIC_STRING_IMPL("100%"));
+        IntersectionObserver::Init options { std::nullopt, { }, lazyLoadingScrollMarginFallback, { } };
         auto observer = IntersectionObserver::create(document, WTF::move(callback), WTF::move(options));
         if (observer.hasException())
             return nullptr;
