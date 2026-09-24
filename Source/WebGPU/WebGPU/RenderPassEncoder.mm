@@ -787,7 +787,7 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
 
     auto primitiveOffset = primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u;
     auto effectiveMinVertexCount = minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount : (minVertexCount - baseVertex);
-    if (auto it = apiIndexBuffer->canSkipDrawIndexedValidation(firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset)) {
+    if (auto it = apiIndexBuffer->canSkipDrawIndexedValidation(firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset)) {
         if (apiIndexBuffer->didReadOOB())
             return DrawIndexResult { IndexCall::Skip, nil, 0 };
 
@@ -830,12 +830,12 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
 
     auto encoderHandle = device.protectedQueue()->retainCounterSampleBuffer(encoder.parentEncoder());
     auto invalidationCount = apiIndexBuffer->drawIndexedCacheInvalidationCount();
-    [encoder.parentEncoder().commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = Ref { device }, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, invalidationCount, refIndexBuffer = Ref { *apiIndexBuffer }, indexedIndirectBuffer, indexedIndirectBufferOffset](id<MTLCommandBuffer> completedCommandBuffer) mutable {
+    [encoder.parentEncoder().commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = Ref { device }, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, invalidationCount, refIndexBuffer = Ref { *apiIndexBuffer }, indexedIndirectBuffer, indexedIndirectBufferOffset](id<MTLCommandBuffer> completedCommandBuffer) mutable {
         if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
             protectedDevice->protectedQueue()->releaseCounterSampleBuffer(encoderHandle);
             return;
         }
-        protectedDevice->protectedQueue()->scheduleWork([encoderHandle, protectedDevice, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, invalidationCount, refIndexBuffer = WTF::move(refIndexBuffer), indexedIndirectBuffer, indexedIndirectBufferOffset]() mutable {
+        protectedDevice->protectedQueue()->scheduleWork([encoderHandle, protectedDevice, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, invalidationCount, refIndexBuffer = WTF::move(refIndexBuffer), indexedIndirectBuffer, indexedIndirectBufferOffset]() mutable {
             protectedDevice->protectedQueue()->releaseCounterSampleBuffer(encoderHandle);
             if (!indexedIndirectBuffer.contents || indexedIndirectBuffer.length < sizeof(WebKitMTLDrawIndexedPrimitivesIndirectArguments) + indexedIndirectBufferOffset)
                 return;
@@ -843,7 +843,7 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
             auto* offsetContents = static_cast<uint8_t*>(indexedIndirectBuffer.contents) + indexedIndirectBufferOffset;
             auto& args = *static_cast<WebKitMTLDrawIndexedPrimitivesIndirectArguments*>(static_cast<void*>(offsetContents));
             refIndexBuffer->didReadOOB(args.lostOrOOBRead);
-            refIndexBuffer->drawIndexedValidated(invalidationCount, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset);
+            refIndexBuffer->drawIndexedValidated(invalidationCount, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset);
         });
     }];
 
@@ -1280,7 +1280,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
                     if (!indexBuffer)
                         continue;
                     auto effectiveMinVertexCount = minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount : (minVertexCount - baseVertex);
-                    if (auto it = indexBuffer->canSkipDrawIndexedValidation(firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, icb.indirectCommandBuffer); it && !indexBuffer->didReadOOB(icb.indirectCommandBuffer)) {
+                    if (auto it = indexBuffer->canSkipDrawIndexedValidation(firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, icb.indirectCommandBuffer); it && !indexBuffer->didReadOOB(icb.indirectCommandBuffer)) {
                         indexBuffer->skippedDrawIndexedValidation(m_parentEncoder, *it);
                         continue;
                     }
@@ -1301,17 +1301,17 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
 
                     auto encoderHandle = m_device->protectedQueue()->retainCounterSampleBuffer(m_parentEncoder);
                     auto invalidationCount = indexBuffer->drawIndexedCacheInvalidationCount();
-                    [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = Ref { m_device }, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, invalidationCount, refIndexBuffer = Ref { *indexBuffer }, icb](id<MTLCommandBuffer> completedCommandBuffer) mutable {
+                    [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = Ref { m_device }, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, invalidationCount, refIndexBuffer = Ref { *indexBuffer }, icb](id<MTLCommandBuffer> completedCommandBuffer) mutable {
                         if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
                             protectedDevice->protectedQueue()->releaseCounterSampleBuffer(encoderHandle);
                             return;
                         }
 
-                        protectedDevice->protectedQueue()->scheduleWork([encoderHandle, protectedDevice, icb, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, invalidationCount, refIndexBuffer = WTF::move(refIndexBuffer)]() mutable {
+                        protectedDevice->protectedQueue()->scheduleWork([encoderHandle, protectedDevice, icb, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, invalidationCount, refIndexBuffer = WTF::move(refIndexBuffer)]() mutable {
                             protectedDevice->protectedQueue()->releaseCounterSampleBuffer(encoderHandle);
                             id<MTLBuffer> outOfBoundsReadFlag = icb.outOfBoundsReadFlag;
                             refIndexBuffer->didReadOOB(*static_cast<uint32_t*>(outOfBoundsReadFlag.contents), icb.indirectCommandBuffer);
-                            refIndexBuffer->drawIndexedValidated(invalidationCount, firstIndex, indexCount, effectiveMinVertexCount, indexType, primitiveOffset, icb.indirectCommandBuffer);
+                            refIndexBuffer->drawIndexedValidated(invalidationCount, firstIndex, indexCount, effectiveMinVertexCount, baseVertex, indexType, primitiveOffset, icb.indirectCommandBuffer);
                         });
                     }];
                     splitPass = true;
