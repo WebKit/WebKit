@@ -733,7 +733,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
                 if (auto computedTimingProgress = effect->getComputedTiming().progress)
                     transformedProgress = *computedTimingProgress;
             }
-            auto reversingShorteningFactor = std::max(std::min(((transformedProgress * previouslyRunningTransition->reversingShorteningFactor()) + (1 - previouslyRunningTransition->reversingShorteningFactor())), 1.0), 0.0);
+            auto reversingShorteningFactor = std::clamp((transformedProgress * previouslyRunningTransition->reversingShorteningFactor()) + (1 - previouslyRunningTransition->reversingShorteningFactor()), 0.0, 1.0);
             auto delay = matchingTransition->delay().value < 0 ? Seconds(matchingTransition->delay().value) * reversingShorteningFactor : Seconds(matchingTransition->delay().value);
             auto duration = Seconds(matchingTransition->duration().value) * reversingShorteningFactor;
 
