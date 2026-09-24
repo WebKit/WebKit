@@ -557,7 +557,6 @@
 		07AA27602F83C3A900FE10FC /* Exceptions for "Tests" folder in "TestWebKitAPI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WKWebView/WKWebViewSwiftOverlayTests.swift,
 			);
 			target = 8DD76F960486AA7600D96B5E /* TestWebKitAPI */;
@@ -568,7 +567,6 @@
 				cocoa/WebExtensionUtilities.mm = "-fobjc-arc";
 			};
 			membershipExceptions = (
-				"cocoa/AppKit+Extras.swift",
 				"cocoa/Bundle+Extras.swift",
 				"cocoa/Foundation+Extras.swift",
 				cocoa/HTTPServer.mm,
@@ -666,10 +664,8 @@
 				JavaScriptCore/DisallowVMEntry.cpp,
 				JavaScriptCore/InspectorConsoleMessage.cpp,
 				JavaScriptCore/JSRunLoopTimer.mm,
-				JavaScriptCore/MarkedVector.cpp,
 				JavaScriptCore/PropertySlot.cpp,
 				Misc/TestRunnerTests.cpp,
-				TestWebKitAPIAdditionsHook.mm,
 				WebCore/AffineTransform.cpp,
 				WebCore/AnimationFrameRate.cpp,
 				WebCore/ApduTest.cpp,
@@ -689,7 +685,6 @@
 				WebCore/cocoa/GraphicsContextCGTests.mm,
 				WebCore/cocoa/ImageRotationSessionVT.cpp,
 				WebCore/cocoa/IOSurfaceTests.mm,
-				WebCore/cocoa/MediaPlayerPrivateAVFoundationObjCTests.mm,
 				WebCore/cocoa/PrivateClickMeasurementCocoa.mm,
 				WebCore/cocoa/ResourceMonitor.mm,
 				WebCore/cocoa/ScrollbarWidthCrash.mm,
@@ -706,7 +701,6 @@
 				WebCore/ComplexTextController.cpp,
 				WebCore/ContentExtensions.cpp,
 				WebCore/ContextMenuAction.cpp,
-				WebCore/CookieJar.cpp,
 				WebCore/CryptoDigest.cpp,
 				WebCore/CSSParser.cpp,
 				WebCore/CSSParserFastPaths.cpp,
@@ -734,7 +728,6 @@
 				WebCore/HTTPHeaderMap.cpp,
 				WebCore/HTTPParsers.cpp,
 				WebCore/HysteresisActivityTests.cpp,
-				WebCore/IDBSerializationTest.cpp,
 				WebCore/ImageBufferTests.cpp,
 				WebCore/IntPointTests.cpp,
 				WebCore/IntRectTests.cpp,
@@ -773,11 +766,9 @@
 				WebCore/SecurityOrigin.cpp,
 				WebCore/SerializedScriptValue.cpp,
 				WebCore/ServiceWorkerRoutines.cpp,
-				WebCore/ShareableBitmap.cpp,
 				WebCore/SharedBuffer.cpp,
 				WebCore/SharedBufferTest.cpp,
 				WebCore/SharedMemoryTests.cpp,
-				WebCore/StaticRangeValidity.cpp,
 				WebCore/StringUtilities.mm,
 				WebCore/StringWithDirection.cpp,
 				WebCore/STUNMessageParsingTest.cpp,
@@ -907,7 +898,6 @@
 				WebKit/WKWebView/AdvancedPrivacyProtections.mm,
 				WebKit/WKWebView/AllowInlinePlaybackInDesktopClassBrowsing.mm,
 				WebKit/WKWebView/AnimationControl.mm,
-				WebKit/WKWebView/DictationStreamingOpacity.mm,
 				WebKit/WKWebView/FullscreenLifecycle.mm,
 				WebKit/WKWebView/GetUserMedia.mm,
 				WebKit/WKWebView/GetUserMediaNavigation.mm,
@@ -1048,7 +1038,6 @@
 				WebKit/WKWebView/mac/WKWebViewMacEditingTests.mm,
 				WebKit/WKWebView/mac/WKWebViewTitlebarSeparatorTests.mm,
 				WebKit/WKWebView/MediaStreamTrackDetached.mm,
-				WebKit/WKWebView/MSEIsTypeSupportedCaching.mm,
 				WebKit/WKWebView/NoHistoryItemScrollToFragment.mm,
 				WebKit/WKWebView/NowPlayingMetadataObserver.mm,
 				WebKit/WKWebView/NowPlayingSession.mm,
@@ -1099,13 +1088,11 @@
 				WTF/AtomString.cpp,
 				WTF/Base64.cpp,
 				WTF/BitSet.cpp,
-				WTF/BitVector.cpp,
 				WTF/BloomFilter.cpp,
 				WTF/BoxPtr.cpp,
 				WTF/BumpPointerAllocator.cpp,
 				WTF/cf/RetainPtr.cpp,
 				WTF/cf/RetainPtrHashing.cpp,
-				WTF/cf/StringCF.cpp,
 				WTF/cf/VectorCF.cpp,
 				WTF/CharacterProperties.cpp,
 				WTF/CheckedArithmeticOperations.cpp,
@@ -1163,7 +1150,6 @@
 				WTF/HashSet.cpp,
 				WTF/HexNumber.cpp,
 				WTF/IndexSparseSet.cpp,
-				WTF/InlineMap.cpp,
 				WTF/Int128.cpp,
 				WTF/IntegerToStringConversion.cpp,
 				WTF/IntervalSet.cpp,
@@ -1208,7 +1194,6 @@
 				WTF/SaturatedArithmeticOperations.cpp,
 				WTF/Scope.cpp,
 				WTF/ScopedLambda.cpp,
-				WTF/SegmentedVector.cpp,
 				WTF/SentinelLinkedList.cpp,
 				WTF/SequenceLockedTest.cpp,
 				WTF/SetForScope.cpp,
@@ -1236,7 +1221,6 @@
 				WTF/Threading.cpp,
 				WTF/ThreadMessages.cpp,
 				WTF/Time.cpp,
-				WTF/TruncateFloat.cpp,
 				WTF/UniqueArray.cpp,
 				WTF/UniqueRef.cpp,
 				WTF/UniqueRefVector.cpp,
@@ -1262,8 +1246,6 @@
 				IPC/EventTests.cpp,
 				IPC/IPCSerialization.mm,
 				IPC/IPCTestUtilities.cpp,
-				IPC/MessageLogEndToEndTests.cpp,
-				IPC/MessageLogTests.cpp,
 				IPC/MessageSenderTests.cpp,
 				IPC/StreamConnectionBufferTests.cpp,
 				IPC/StreamConnectionEncoderTests.cpp,
@@ -1285,7 +1267,6 @@
 		07C913DE2F820CCA003A09D8 /* Exceptions for "Tests" folder in "TestWebKitAPIBundle" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				WebKit/WebPage/AppKitGesturesTests.swift,
 				WebKit/WebPage/URLSchemeHandlerTests.swift,
 				WebKit/WebPage/WebPageNavigationTests.swift,
 				WebKit/WebPage/WebPageTests.swift,
@@ -1376,7 +1357,6 @@
 				WebKit/WKWebView/InjectedBundleHitTestPlugIn.mm,
 				WebKit/WKWebView/InjectedBundleNodeHandleIsSelectElement.mm,
 				WebKit/WKWebView/InjectedBundleNodeHandleIsTextField.mm,
-				WebKit/WKWebView/JSHandlePlugIn.mm,
 				WebKit/WKWebView/PageOverlayPlugin.mm,
 				WebKit/WKWebView/ParserYieldTokenPlugIn.mm,
 				WebKit/WKWebView/RemoteObjectRegistryPlugIn.mm,
@@ -1405,12 +1385,10 @@
 			};
 			membershipExceptions = (
 				glib/blank.ico,
-				"glib/blue-48x48.png",
 				glib/boring.html,
 				"glib/form-in-frame.html",
 				"glib/generate-test-cert.sh",
 				"glib/link-title.js",
-				"glib/red-32x32.png",
 				glib/silence.webm,
 				glib/simple.json,
 				"glib/test-cert.conf",
@@ -1476,7 +1454,6 @@
 				"WGSL/shaders/minus-minus-ambiguity.wgsl",
 				"WGSL/shaders/name-mangling.wgsl",
 				WGSL/shaders/overload.wgsl,
-				"WGSL/shaders/override-complex-expression.wgsl",
 				WGSL/shaders/override.wgsl,
 				"WGSL/shaders/pack-unpack.wgsl",
 				"WGSL/shaders/packing-nested-array.wgsl",
@@ -2288,7 +2265,7 @@
 				"$(SRCROOT)/Scripts/generate-unified-sources.sh",
 				"$(SRCROOT)/Sources.txt",
 				"$(SRCROOT)/SourcesCocoa.txt",
-				"$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/generate-unified-source-bundles.py",
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/generate-unified-source-bundles.rb",
 			);
 			outputFileListPaths = (
 				"$(SRCROOT)/UnifiedSources-output.xcfilelist",
