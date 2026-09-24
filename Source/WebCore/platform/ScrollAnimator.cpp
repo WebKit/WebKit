@@ -382,7 +382,8 @@ ScrollExtents ScrollAnimator::scrollExtents() const
     CheckedRef scrollableArea = m_scrollableArea;
     return {
         scrollableArea->totalContentsSize(),
-        scrollableArea->visibleSize()
+        scrollableArea->visibleSize(),
+        scrollableArea->snapportSize()
     };
 }
 

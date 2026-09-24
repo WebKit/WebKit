@@ -378,7 +378,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         if (!completelyClippedOut) {
             // Push a clip if we have a border radius, since we want to round the foreground content that gets painted.
             paintInfo.context().save();
-            clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, protect(document())->deviceScaleFactor());
+            clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, protect(document())->pixelSnappingScaleFactor());
         }
     }
 

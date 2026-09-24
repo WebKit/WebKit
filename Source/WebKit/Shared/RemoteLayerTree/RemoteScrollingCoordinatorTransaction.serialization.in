@@ -120,6 +120,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::MaxLayoutViewportOrigin] WebCore::FloatPoint maxLayoutViewportOrigin();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::OverrideVisualViewportSize] std::optional<WebCore::FloatSize> overrideVisualViewportSize();
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::OverlayScrollbarsEnabled] bool overlayScrollbarsEnabled();
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::InsetForLeftScrollbarSpace] int insetForLeftScrollbarSpace();
 }
 
 [RefCounted] class WebCore::ScrollingStateOverflowScrollingNode {

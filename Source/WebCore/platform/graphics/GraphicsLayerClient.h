@@ -111,6 +111,7 @@ public:
     // Page scale factor.
     virtual float pageScaleFactor() const { return 1; }
     virtual float zoomedOutPageScaleFactor() const { return 0; }
+    virtual bool delegatesScaling() const { return false; }
 
     virtual FloatSize enclosingFrameViewVisibleSize() const { return { }; }
 

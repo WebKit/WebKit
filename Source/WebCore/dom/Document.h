@@ -753,6 +753,7 @@ public:
     inline const Quirks& quirks() const; // Defined in DocumentQuirks.h
 
     WEBCORE_EXPORT float NODELETE deviceScaleFactor() const;
+    float NODELETE pixelSnappingScaleFactor() const;
 
     WEBCORE_EXPORT bool NODELETE useElevatedUserInterfaceLevel() const;
     WEBCORE_EXPORT bool useDarkAppearance(const Style::ComputedStyle*) const;

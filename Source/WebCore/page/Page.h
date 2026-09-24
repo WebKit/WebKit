@@ -655,7 +655,7 @@ public:
     void willChangeLocationInCompletelyLoadedSubframe();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
-    WEBCORE_EXPORT void NODELETE setDelegatesScaling(bool);
+    WEBCORE_EXPORT void setDelegatesScaling(bool);
 
     // The view scale factor is multiplied into the page scale factor by all
     // callers of setPageScaleFactor.
@@ -1587,6 +1587,7 @@ private:
     bool m_shouldSuppressHDR { false };
 
     float m_pageScaleFactor { 1 };
+    float m_pageScaleFactorViewsWereSizedFor { 1 };
     float m_zoomedOutPageScaleFactor { 0 };
     float m_deviceScaleFactor { 1 };
     float m_viewScaleFactor { 1 };

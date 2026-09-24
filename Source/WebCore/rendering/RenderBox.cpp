@@ -1916,7 +1916,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         // beginning the layer).
         stateSaver.save();
         auto borderShape = BorderShape::shapeForBorderRect(style(), paintRect);
-        borderShape.clipToOuterShape(paintInfo.context(), protect(document())->deviceScaleFactor());
+        borderShape.clipToOuterShape(paintInfo.context(), protect(document())->pixelSnappingScaleFactor());
         paintInfo.context().beginTransparencyLayer(1);
     }
 
@@ -2388,11 +2388,11 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
         paintObject(paintInfo, accumulatedOffset);
         paintInfo.phase = PaintPhase::ChildBlockBackgrounds;
     }
-    float deviceScaleFactor = protect(document())->deviceScaleFactor();
-    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
+    float snappingScaleFactor = protect(document())->pixelSnappingScaleFactor();
+    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, paintInfo.phase)), snappingScaleFactor);
     paintInfo.context().save();
     if (style().border().hasBorderRadius())
-        clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
+        clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, snappingScaleFactor);
 
     paintInfo.context().clip(clipRect);
 

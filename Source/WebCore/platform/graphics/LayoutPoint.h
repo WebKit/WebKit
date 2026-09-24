@@ -223,8 +223,8 @@ inline FloatPoint ceilPointToDevicePixels(const LayoutPoint& point, float pixelS
 inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint& location, float pixelSnappingFactor)
 {
     auto snap = [&] (LayoutUnit a, LayoutUnit b) {
-        LayoutUnit fraction = b.fraction();
-        return roundToDevicePixel(fraction + a, pixelSnappingFactor) - roundToDevicePixel(fraction, pixelSnappingFactor);
+        LayoutUnit offset = WTF::isIntegral(pixelSnappingFactor) ? b.fraction() : b;
+        return roundToDevicePixel(offset + a, pixelSnappingFactor) - roundToDevicePixel(offset, pixelSnappingFactor);
     };
     return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }

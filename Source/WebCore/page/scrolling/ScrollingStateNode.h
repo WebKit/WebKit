@@ -210,7 +210,8 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MaxLayoutViewportOrigin                     = MinLayoutViewportOrigin << 1,
     OverrideVisualViewportSize                  = MaxLayoutViewportOrigin << 1,
     OverlayScrollbarsEnabled                    = OverrideVisualViewportSize << 1,
-    ChildNodes                                  = OverlayScrollbarsEnabled << 1,
+    InsetForLeftScrollbarSpace                  = OverlayScrollbarsEnabled << 1,
+    ChildNodes                                  = InsetForLeftScrollbarSpace << 1,
     // ScrollingStatePositionedNode
     RelatedOverflowScrollingNodes               = ScrollableAreaSize,
     LayoutConstraintData                        = TotalContentsSize,

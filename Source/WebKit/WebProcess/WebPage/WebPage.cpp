@@ -3137,7 +3137,7 @@ void WebPage::didScalePageRelativeToScrollPosition(double scale, const IntPoint&
     didScalePage(scale, -unscrolledOrigin);
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if !ENABLE(UI_SIDE_COMPOSITING)
 
 void WebPage::platformDidScalePage()
 {
@@ -3394,7 +3394,13 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 
 FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame& frame, FloatSize defaultSize) const
 {
-    return frame.view() ? FloatSize { protect(frame.view())->unobscuredContentRectIncludingScrollbars().size() } : defaultSize;
+    RefPtr view = frame.view();
+    if (!view)
+        return defaultSize;
+
+    // The view size including scrollbars, not the zoomed unobscuredContentRectIncludingScrollbars(), since
+    // letting the zoom through would leak the value we're hiding here.
+    return FloatSize { view->frameRectShrunkByInset().size() };
 }
 
 #endif // !PLATFORM(IOS_FAMILY)
@@ -8339,9 +8345,14 @@ static void setUseDynamicViewportUnitsAsDefaultIfNeeded(LocalFrame* frame)
 
 void WebPage::didCommitLoad(WebFrame* frame)
 {
+#if ENABLE(UI_SIDE_COMPOSITING)
+    // Lets updateVisibleContentRects() throw away visible rect updates the UI process queued before this
+    // navigation. With UI-side compositing off at runtime there are no transactions, but there are no visible
+    // rect updates to throw away either.
+    if (RefPtr remoteLayerTreeDrawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(protect(drawingArea())))
+        frame->setFirstLayerTreeTransactionIDAfterDidCommitLoad(remoteLayerTreeDrawingArea->nextTransactionID());
+#endif
 #if ENABLE(TWO_PHASE_CLICKS)
-    auto firstTransactionIDAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingArea>(*protect(drawingArea())).nextTransactionID();
-    frame->setFirstLayerTreeTransactionIDAfterDidCommitLoad(firstTransactionIDAfterDidCommitLoad);
     cancelPotentialTapInFrame(*frame);
 #endif
 
@@ -8405,19 +8416,22 @@ void WebPage::didCommitLoad(WebFrame* frame)
 
     m_didUpdateRenderingAfterCommittingLoad = false;
 
+#if ENABLE(UI_SIDE_COMPOSITING)
+    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
+    m_scaleWasSetByUIProcess = false;
+    m_internals->lastTransactionIDWithScaleChange = frame->firstLayerTreeTransactionIDAfterDidCommitLoad();
+    m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = std::nullopt;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (auto scope = std::exchange(m_ignoreSelectionChangeScopeForDictation, nullptr))
         scope->invalidate();
     m_sendAutocorrectionContextAfterFocusingElement = false;
-    m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
-    m_internals->lastTransactionIDWithScaleChange = firstTransactionIDAfterDidCommitLoad;
-    m_scaleWasSetByUIProcess = false;
     m_userHasChangedPageScaleFactor = false;
     m_previousViewportConfigurationMinimumScale = { };
     m_estimatedLatency = Seconds(1.0 / 60);
     m_shouldRevealCurrentSelectionAfterInsertion = true;
-    m_internals->lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = std::nullopt;
     m_lastSelectedReplacementRange = { };
     m_bidiSelectionFlippingState = BidiSelectionFlippingState::NotFlipping;
 

@@ -3291,7 +3291,7 @@ void RenderLayer::clipToRect(GraphicsContext& context, GraphicsContextStateSaver
 
 void RenderLayer::applyAncestorClippingForBorderRadius(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, OptionSet<PaintBehavior> paintBehavior, BorderRadiusClippingRule rule)
 {
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    float snappingScaleFactor = renderer().document().pixelSnappingScaleFactor();
 
     // If the clip rect has been tainted by a border radius, then we have to walk up our layer chain applying the clips from
     // any layers with overflow. The condition for being able to apply these clips is that the overflow object be in our
@@ -3305,9 +3305,9 @@ void RenderLayer::applyAncestorClippingForBorderRadius(GraphicsContext& context,
             adjustedClipRect.move(paintingInfo.subpixelOffset);
             auto borderShape = BorderShape::shapeForBorderRect(layer->renderer().style(), adjustedClipRect);
             if (borderShape.innerShapeContains(paintingInfo.paintDirtyRect))
-                context.clip(snapRectToDevicePixels(intersection(paintingInfo.paintDirtyRect, adjustedClipRect), deviceScaleFactor));
+                context.clip(snapRectToDevicePixels(intersection(paintingInfo.paintDirtyRect, adjustedClipRect), snappingScaleFactor));
             else
-                borderShape.clipToInnerShape(context, deviceScaleFactor);
+                borderShape.clipToInnerShape(context, snappingScaleFactor);
         }
 
         if (layer == paintingInfo.rootLayer)
@@ -4029,13 +4029,13 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     // This involves subtracting out the position of the layer in our current coordinate space, but preserving
     // the accumulated error for sub-pixel layout.
     // Note: The pixel-snapping logic is disabled for the whole SVG render tree, except the outermost <svg>.
-    float deviceScaleFactor = renderer().document().deviceScaleFactor();
+    float snappingScaleFactor = renderer().document().pixelSnappingScaleFactor();
     LayoutSize offsetFromParent = offsetFromAncestor(paintingInfo.rootLayer);
     offsetFromParent += translationOffset;
     TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
     // Add the subpixel accumulation to the current layer's offset so that we can always snap the translateRight value to where the renderer() is supposed to be painting.
     LayoutSize offsetForThisLayer = offsetFromParent + paintingInfo.subpixelOffset;
-    FloatSize alignedOffsetForThisLayer = rendererNeedsPixelSnapping(renderer()) ? toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), deviceScaleFactor)) : offsetForThisLayer;
+    FloatSize alignedOffsetForThisLayer = rendererNeedsPixelSnapping(renderer()) ? toFloatSize(roundPointToDevicePixels(toLayoutPoint(offsetForThisLayer), snappingScaleFactor)) : offsetForThisLayer;
     // We handle accumulated subpixels through nested layers here. Since the context gets translated to device pixels,
     // all we need to do is add the delta to the accumulated pixels coming from ancestor layers.
     // Translate the graphics context to the snapping position to avoid off-device-pixel positing.
@@ -4047,7 +4047,7 @@ void RenderLayer::paintLayerByApplyingTransform(GraphicsContext& context, const 
     if (rendererNeedsPixelSnapping(renderer()) && !renderer().isRenderSVGRoot())
         adjustedSubpixelOffset = offsetForThisLayer - LayoutSize(alignedOffsetForThisLayer);
 
-    TransformPaintScope scope(context, paintingInfo, transform, deviceScaleFactor, adjustedSubpixelOffset, this);
+    TransformPaintScope scope(context, paintingInfo, transform, snappingScaleFactor, adjustedSubpixelOffset, this);
 
     paintFlags.remove(PaintLayerFlag::PaintingOverflowContents);
     paintLayerContentsAndReflection(context, scope.transformedPaintingInfo(), paintFlags);

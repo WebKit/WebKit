@@ -45,6 +45,8 @@ struct WebPage::Internals {
 #if PLATFORM(IOS_FAMILY)
     WebCore::VisibleSelection storedSelectionForAccessibility { WebCore::VisibleSelection() };
     FocusedElementInformationIdentifier lastFocusedElementInformationIdentifier;
+#endif
+#if ENABLE(UI_SIDE_COMPOSITING)
     std::optional<TransactionID> lastTransactionIDWithScaleChange;
     std::optional<std::pair<TransactionID, double>> lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
 #endif

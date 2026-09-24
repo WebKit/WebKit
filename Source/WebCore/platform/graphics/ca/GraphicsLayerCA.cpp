@@ -1844,9 +1844,18 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);
         // Flatten, and replace the quad in the TransformState with one that is clipped to this layer's bounds.
-        if (state.isMappingSecondaryQuad())
+        if (state.isMappingSecondaryQuad()) {
+#if PLATFORM(MAC)
+            bool secondaryMapWasClamped = false;
+            auto secondaryQuad = state.mappedSecondaryQuad(&secondaryMapWasClamped);
+            auto coverageRectForSelf = clipRectForSelf;
+            if (secondaryQuad && !secondaryMapWasClamped && !applyWasClamped)
+                coverageRectForSelf = intersection(secondaryQuad->boundingBox(), FloatRect { { }, m_size });
+            state.reset(clipRectForSelf, coverageRectForSelf);
+#else
             state.reset(clipRectForSelf, clipRectForSelf);
-        else
+#endif
+        } else
             state.reset(clipRectForSelf);
     }
 
@@ -2344,6 +2353,8 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     if (m_uncommittedChanges & ContentsRectsChanged) // Needs to happen before ChildrenChanged
         updateContentsRects();
 
+    updateAntialiasesEdges(commitState, pageScaleFactor);
+
     if (m_uncommittedChanges & EventRegionChanged)
         updateEventRegion();
 
@@ -2535,7 +2546,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
 
     // FIXME: figure out if we really need to pixel align the graphics layer here.
     if (client().needsPixelAligment() && !WTF::isIntegral(pageScaleFactor) && m_drawsContent && !m_masksToBounds)
-        computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledAnchorPoint, pixelAlignmentOffset);
+        computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
     // Update position.
     // Position is offset on the layer by the layer anchor point.
@@ -2576,7 +2587,7 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     // Push the layer to device pixel boundary (setPosition()), but move the content back to its original position (setBounds())
     RefPtr layer = m_layer;
     layer->setPosition(adjustedPosition);
-    FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), m_size);
+    FloatRect adjustedBounds = FloatRect(FloatPoint(m_boundsOrigin - pixelAlignmentOffset), scaledSize);
     layer->setBounds(adjustedBounds);
     layer->setAnchorPoint(scaledAnchorPoint);
 
@@ -4471,6 +4482,26 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
         layer->setNeedsDisplay();
 }
 
+void GraphicsLayerCA::updateAntialiasesEdges(CommitState& commitState, float pageScaleFactor)
+{
+    bool isAxisAligned = !commitState.ancestorIsNonAxisAligned && !isRunningTransformAnimation()
+        && (!hasNonIdentityTransform() || (transform().isAffine() && transform().toAffineTransform().preservesAxisAlignment()));
+    if (!isAxisAligned || hasNonIdentityChildrenTransform())
+        commitState.ancestorIsNonAxisAligned = true;
+
+    bool antialiasesEdges = !isAxisAligned || pageScaleFactor == 1 || !client().delegatesScaling();
+
+    auto updateLayer = [&](PlatformCALayer& layer) {
+        layer.setAntialiasesEdges(antialiasesEdges || layer.cornerRadius() || layer.layerType() == PlatformCALayer::LayerType::LayerTypeShapeLayer);
+    };
+
+    updateLayer(*protect(m_layer));
+    if (RefPtr contentsLayer = m_contentsLayer)
+        updateLayer(*contentsLayer);
+    if (RefPtr contentsClippingLayer = m_contentsClippingLayer)
+        updateLayer(*contentsClippingLayer);
+}
+
 void GraphicsLayerCA::updateCustomAppearance()
 {
     protect(m_layer)->updateCustomAppearance(m_customAppearance);
@@ -5242,22 +5273,34 @@ void GraphicsLayerCA::noteChangesForScaleSensitiveProperties()
     noteLayerPropertyChanged(GeometryChanged | ContentsScaleChanged | ContentsOpaqueChanged);
 }
 
+static float boundsLengthForStorePixels(float pixels, float contentsScale)
+{
+    float length = pixels / contentsScale;
+    while (length > 0 && std::ceil(contentsScale * length) > pixels)
+        length = std::nextafterf(length, 0);
+    return length;
+}
+
 void GraphicsLayerCA::computePixelAlignment(float pageScale, const FloatPoint& positionRelativeToBase,
-    FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
+    FloatPoint& position, FloatSize& size, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const
 {
     FloatRect baseRelativeBounds(positionRelativeToBase, m_size);
     FloatRect scaledBounds = baseRelativeBounds;
     float contentsScale = pageScale * deviceScaleFactor();
     // Scale by the page scale factor to compute the screen-relative bounds.
     scaledBounds.scale(contentsScale);
-    // Round to integer boundaries.
-    FloatRect alignedBounds = encloseRectToDevicePixels(LayoutRect(scaledBounds), deviceScaleFactor());
-    
+
+    FloatPoint alignedLocationInPixels { std::round(scaledBounds.x()), std::round(scaledBounds.y()) };
+
+    FloatSize alignedSizeInPixels { std::ceil(scaledBounds.maxX()) - std::floor(scaledBounds.x()), std::ceil(scaledBounds.maxY()) - std::floor(scaledBounds.y()) };
+
     // Convert back to layer coordinates.
-    alignedBounds.scale(1 / contentsScale);
+    FloatRect alignedBounds { alignedLocationInPixels.scaled(1 / contentsScale),
+        FloatSize { boundsLengthForStorePixels(alignedSizeInPixels.width(), contentsScale), boundsLengthForStorePixels(alignedSizeInPixels.height(), contentsScale) } };
 
     alignmentOffset = baseRelativeBounds.location() - alignedBounds.location();
     position = m_position - alignmentOffset;
+    size = alignedBounds.size();
 
     // Now we have to compute a new anchor point which compensates for rounding.
     float anchorPointX = m_anchorPoint.x();

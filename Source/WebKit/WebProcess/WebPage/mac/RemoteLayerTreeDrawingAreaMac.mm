@@ -91,7 +91,9 @@ void RemoteLayerTreeDrawingAreaMac::willCommitMainFrameData(MainFrameData& data)
     if (!frameView)
         return;
 
-    if (RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForPageScale())
+    // The RenderView backing layer carries the page scale transform, and rootContentsLayer carries the tile
+    // resolution. They can't be the same layer, since rootContentsLayer has a non-zero position.
+    if (RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForRenderViewBacking())
         data.pageScalingLayerID = renderViewGraphicsLayer->primaryLayerID();
 
     if (RefPtr scrolledContentsLayer = frameView->graphicsLayerForScrolledContents())

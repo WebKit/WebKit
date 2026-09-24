@@ -342,6 +342,10 @@ public:
     int visibleHeight() const { return visibleSize().height(); }
     virtual IntSize visibleSize() const = 0;
 
+    // The snapport, in the coordinates the snap offsets and areas were computed in. Same as visibleSize()
+    // unless a subclass scales the two differently.
+    virtual IntSize snapportSize() const { return visibleSize(); }
+
     virtual IntSize contentsSize() const = 0;
     virtual IntSize overhangAmount() const { return IntSize(); }
     virtual IntPoint lastKnownMousePositionInView() const { return IntPoint(); }

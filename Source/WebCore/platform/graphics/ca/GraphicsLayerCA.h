@@ -218,6 +218,7 @@ public:
         bool ancestorHasTransformAnimation { false };
         bool ancestorStartedOrEndedTransformAnimation { false };
         bool ancestorWithTransformAnimationIntersectsCoverageRect { false };
+        bool ancestorIsNonAxisAligned { false };
         bool backdropRootIsOpaque { false };
     };
     bool needsCommit(const CommitState&);
@@ -398,7 +399,7 @@ private:
     ASCIILiteral purposeNameForInnerLayer(PlatformCALayer&) const;
 
     void computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
-        FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
+        FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
 
     TransformationMatrix layerTransform(const FloatPoint& position, const TransformationMatrix* customTransform = nullptr) const;
     TransformationMatrix transformByApplyingAnchorPoint(const TransformationMatrix&) const;
@@ -531,6 +532,7 @@ private:
     void updateTiles();
     void updateRootRelativeScale();
     void updateContentsScale(float pageScaleFactor);
+    void updateAntialiasesEdges(CommitState&, float pageScaleFactor);
     void updateCustomAppearance();
 
     void updateOpacityOnLayer();

@@ -271,6 +271,10 @@ void AsyncScrollingCoordinator::frameViewVisualViewportChanged(LocalFrameView& f
         return visualViewport.width() < layoutViewport.width() || visualViewport.height() < layoutViewport.height();
     };
     frameScrollingNode->setVisualViewportIsSmallerThanLayoutViewport(visualViewportIsSmallerThanLayoutViewport(frameView));
+
+    // visibleSize() shrinks as the page zooms in, but a stale scale size leaves the zoomed-in page
+    // nowhere to scroll, so the tree clamps away the position the zoom anchored to
+    frameScrollingNode->setScrollableAreaSize(frameView.visibleSize());
 }
 
 void AsyncScrollingCoordinator::frameViewWillBeDetached(LocalFrameView& frameView)
@@ -1133,6 +1137,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode->setHeaderHeight(frameView.headerHeight());
     frameScrollingNode->setFooterHeight(frameView.footerHeight());
     frameScrollingNode->setObscuredContentInsets(frameView.obscuredContentInsets());
+    frameScrollingNode->setInsetForLeftScrollbarSpace(frameView.insetForLeftScrollbarSpace());
     frameScrollingNode->setLayoutViewport(frameView.layoutViewportRect());
     frameScrollingNode->setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
     frameScrollingNode->setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());
