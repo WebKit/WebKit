@@ -73,27 +73,27 @@ Actual:   color-mix(in hsl, rgb(82, 122, 82), hsl(none none none))
 Expected: color-mix(in hsl, rgb(82, 122, 82), rgb(0, 0, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 3
 FAIL e.style['color'] = "color-mix(in hsl, hsl(120deg 20% none), hsl(30deg 40% 60%))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, hsl(120 20 none), rgb(194, 153, 112))
+Actual:   color-mix(in hsl, hsl(120 20% none), rgb(194, 153, 112))
 Expected: color-mix(in hsl, rgb(0, 0, 0), rgb(194, 153, 112)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 5
 FAIL e.style['color'] = "color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% none))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, rgb(82, 122, 82), hsl(30 20 none))
+Actual:   color-mix(in hsl, rgb(82, 122, 82), hsl(30 20% none))
 Expected: color-mix(in hsl, rgb(82, 122, 82), rgb(0, 0, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 5
 FAIL e.style['color'] = "color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, hsl(none 20 40), hsl(30 none 80))
+Actual:   color-mix(in hsl, hsl(none 20% 40%), hsl(30 none 80%))
 Expected: color-mix(in hsl, rgb(122, 82, 82), rgb(204, 204, 204)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 4
 FAIL e.style['color'] = "color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, hsl(120 40 40 / none), rgb(143, 61, 61))
+Actual:   color-mix(in hsl, hsl(120 40% 40% / none), rgb(143, 61, 61))
 Expected: color-mix(in hsl, rgba(61, 143, 61, 0), rgb(143, 61, 61)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 7 got 6
 FAIL e.style['color'] = "color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, hsl(120 40 40 / none), rgba(143, 61, 61, 0.5))
+Actual:   color-mix(in hsl, hsl(120 40% 40% / none), rgba(143, 61, 61, 0.5))
 Expected: color-mix(in hsl, rgba(61, 143, 61, 0), rgba(143, 61, 61, 0.5)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 8 got 7
 FAIL e.style['color'] = "color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))" should set the property value Colors do not match.
-Actual:   color-mix(in hsl, hsl(120 40 40 / none), hsl(0 40 40 / none))
+Actual:   color-mix(in hsl, hsl(120 40% 40% / none), hsl(0 40% 40% / none))
 Expected: color-mix(in hsl, rgba(61, 143, 61, 0), rgba(143, 61, 61, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 8 got 6
 PASS e.style['color'] = "color-mix(in hsl, color(display-p3 0 1 0) 100%, rgb(0, 0, 0) 0%)" should set the property value
@@ -173,27 +173,27 @@ Actual:   color-mix(in hwb, rgb(26, 204, 26), hwb(none none none))
 Expected: color-mix(in hwb, rgb(26, 204, 26), rgb(255, 0, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 3
 FAIL e.style['color'] = "color-mix(in hwb, hwb(120deg 10% none), hwb(30deg 30% 40%))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, hwb(120 10 none), rgb(153, 115, 77))
+Actual:   color-mix(in hwb, hwb(120 10% none), rgb(153, 115, 77))
 Expected: color-mix(in hwb, rgb(26, 255, 26), rgb(153, 115, 77)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 5
 FAIL e.style['color'] = "color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% none))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, rgb(26, 204, 26), hwb(30 30 none))
+Actual:   color-mix(in hwb, rgb(26, 204, 26), hwb(30 30% none))
 Expected: color-mix(in hwb, rgb(26, 204, 26), rgb(255, 166, 77)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 5
 FAIL e.style['color'] = "color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, hwb(none 10 20), hwb(30 none 40))
+Actual:   color-mix(in hwb, hwb(none 10% 20%), hwb(30 none 40%))
 Expected: color-mix(in hwb, rgb(204, 26, 26), rgb(153, 77, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 6 got 4
 FAIL e.style['color'] = "color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, hwb(120 10 20 / none), rgb(153, 115, 77))
+Actual:   color-mix(in hwb, hwb(120 10% 20% / none), rgb(153, 115, 77))
 Expected: color-mix(in hwb, rgba(26, 204, 26, 0), rgb(153, 115, 77)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 7 got 6
 FAIL e.style['color'] = "color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, hwb(120 10 20 / none), rgba(153, 115, 77, 0.5))
+Actual:   color-mix(in hwb, hwb(120 10% 20% / none), rgba(153, 115, 77, 0.5))
 Expected: color-mix(in hwb, rgba(26, 204, 26, 0), rgba(153, 115, 77, 0.5)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 8 got 7
 FAIL e.style['color'] = "color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))" should set the property value Colors do not match.
-Actual:   color-mix(in hwb, hwb(120 10 20 / none), hwb(30 30 40 / none))
+Actual:   color-mix(in hwb, hwb(120 10% 20% / none), hwb(30 30% 40% / none))
 Expected: color-mix(in hwb, rgba(26, 204, 26, 0), rgba(153, 115, 77, 0)).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 8 got 6
 PASS e.style['color'] = "color-mix(in hwb, color(display-p3 0 1 0) 100%, rgb(0, 0, 0) 0%)" should set the property value

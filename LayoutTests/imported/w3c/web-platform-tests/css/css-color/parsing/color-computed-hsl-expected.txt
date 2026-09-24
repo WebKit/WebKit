@@ -12,14 +12,14 @@ PASS Property color value 'hsla(none none none / none)'
 PASS Property color value 'hsla(0 0% 0% / 0)'
 PASS Property color value 'hsl(120 none none)'
 PASS Property color value 'hsl(120 0% 0%)'
-FAIL Property color value 'hsl(120 80% none)' assert_equals: expected "hsl(120 80% none)" but got "hsl(120 80 none)"
+PASS Property color value 'hsl(120 80% none)'
 PASS Property color value 'hsl(120 80% 0%)'
-FAIL Property color value 'hsl(120 none 50%)' assert_equals: expected "hsl(120 none 50%)" but got "hsl(120 none 50)"
+PASS Property color value 'hsl(120 none 50%)'
 PASS Property color value 'hsl(120 0% 50%)'
-FAIL Property color value 'hsl(120 100% 50% / none)' assert_equals: expected "hsl(120 100% 50% / none)" but got "hsl(120 100 50 / none)"
+PASS Property color value 'hsl(120 100% 50% / none)'
 PASS Property color value 'hsl(120 100% 50% / 0)'
 PASS Property color value 'hsl(120 100% 50% / 0%)'
-FAIL Property color value 'hsl(none 100% 50%)' assert_equals: expected "hsl(none 100% 50%)" but got "hsl(none 100 50)"
+PASS Property color value 'hsl(none 100% 50%)'
 PASS Property color value 'hsl(0 100% 50%)'
 PASS Property color value 'HSL(0, 0%, 0%)' [Capitalization should not affect parsing]
 PASS Property color value 'hsL(0, 100%, 50%)' [Capitalization should not affect parsing]

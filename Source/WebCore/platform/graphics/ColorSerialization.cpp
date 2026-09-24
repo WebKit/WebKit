@@ -49,10 +49,25 @@ static String numericComponent(float value)
     );
 }
 
+static String percentageComponent(float value)
+{
+    if (std::isnan(value))
+        return "none"_s;
+    if (std::isfinite(value))
+        return makeString(FormattedCSSNumber::create(value), '%');
+    return makeString(
+        "calc("_s,
+        FormattedCSSNumber::create(value),
+        ")"_s
+    );
+}
+
 template<auto index, typename ColorType> static String normalizedNumericComponent(const ColorType& color)
 {
     if constexpr (ColorType::Model::componentInfo[index].type == ColorComponentType::Angle)
         return numericComponent(normalizeHue(get<index>(color.unresolved())));
+    else if constexpr (ColorType::Model::componentInfo[index].type == ColorComponentType::Percentage)
+        return percentageComponent(get<index>(color.unresolved()));
     else
         return numericComponent(get<index>(color.unresolved()));
 }
@@ -579,7 +594,7 @@ String serializationForRenderTreeAsText(const Rec2020<float>& color, bool)
 
 String serializationForCSS(const SRGBA<float>& color, bool useColorFunctionSerialization)
 {
-    if (useColorFunctionSerialization)
+    if (useColorFunctionSerialization || color.unresolved().anyComponentIsNone())
         return serializationUsingColorFunction(color);
 
     return serializationForCSS(convertColor<SRGBA<uint8_t>>(color), false);

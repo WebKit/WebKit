@@ -1,25 +1,10 @@
 
-FAIL Property color value 'hsl(from hsl(none 50% 50%) h s l)' Colors do not match.
-Actual:   hsl(none 50 50)
-Expected: hsl(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
-FAIL Property color value 'hsl(from hsl(180 none 50%) h s l)' Colors do not match.
-Actual:   hsl(180 none 50)
-Expected: hsl(180 none 50%).
-Error: assert_equals: Color format is correct. expected "hsl( none %)" but got "hsl( none )"
-FAIL Property color value 'hsl(from hsl(180 50% none) h s l)' Colors do not match.
-Actual:   hsl(180 50 none)
-Expected: hsl(180 50% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
-FAIL Property color value 'hsl(from hsl(none none 50%) h s l)' Colors do not match.
-Actual:   hsl(none none 50)
-Expected: hsl(none none 50%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
+PASS Property color value 'hsl(from hsl(none 50% 50%) h s l)'
+PASS Property color value 'hsl(from hsl(180 none 50%) h s l)'
+PASS Property color value 'hsl(from hsl(180 50% none) h s l)'
+PASS Property color value 'hsl(from hsl(none none 50%) h s l)'
 PASS Property color value 'hsl(from hsl(180 none none) h s l)'
-FAIL Property color value 'hsl(from hsl(none 50% none) h s l)' Colors do not match.
-Actual:   hsl(none 50 none)
-Expected: hsl(none 50% none).
-Error: assert_equals: Color format is correct. expected "hsl(none % none)" but got "hsl(none  none)"
+PASS Property color value 'hsl(from hsl(none 50% none) h s l)'
 PASS Property color value 'hsl(from hsl(none none none) h s l)'
 FAIL Property color value 'hsl(from hwb(none 25% 25%) h s l)' Colors do not match.
 Actual:   color(srgb 0.75 0.25 0.25)
@@ -76,27 +61,27 @@ Actual:   color(srgb -0.026619 0.008454 0.000068)
 Expected: hsl(345.65323987 193.08743918% none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
 FAIL Property color value 'hsl(from oklch(0.2 none 180) h s l)' Colors do not match.
-Actual:   hsl(none 0 8.61042)
+Actual:   hsl(none 0% 8.61042%)
 Expected: hsl(none none 8.61042044%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 1 got 2
 FAIL Property color value 'hsl(from oklch(0.2 0.2 none) h s l)' Colors do not match.
-Actual:   hsl(none 0 8.61042)
+Actual:   hsl(none 0% 8.61042%)
 Expected: hsl(none 250.47260791% 8.44443686%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 250.47260791 +/- 0.01, expected 250.47260791 but got 0
 FAIL Property color value 'hsl(from oklch(none none 180) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hsl(from oklch(0.2 none none) h s l)' Colors do not match.
-Actual:   hsl(none 0 8.61042)
+Actual:   hsl(none 0% 8.61042%)
 Expected: hsl(none none 8.61042044%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 1 got 2
 FAIL Property color value 'hsl(from oklch(none 0.2 none) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none 193.08743918% none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 1 got 2
 FAIL Property color value 'hsl(from oklch(none none none) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hsl(from lab(none 10 10) h s l)' Colors do not match.
@@ -140,15 +125,15 @@ Actual:   color(srgb 0.003327 -0.001057 -0.000008)
 Expected: hsl(345.65323987 193.08743918% none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
 FAIL Property color value 'hsl(from oklab(none none none) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hsl(from rgb(none none none) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hsl(from color(display-p3 none none none) h s l)' Colors do not match.
-Actual:   hsl(none 0 0)
+Actual:   hsl(none 0% 0%)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 PASS Property color value 'color-mix(in hsl, hsl(none 50% 50%), hsl(11 33 44))'
@@ -213,128 +198,65 @@ PASS Property color value 'color-mix(in hsl, oklab(none 0.1 none), hsl(11 33 44)
 PASS Property color value 'color-mix(in hsl, oklab(none none none), hsl(11 33 44))'
 PASS Property color value 'color-mix(in hsl, rgb(none none none), hsl(11 33 44))'
 PASS Property color value 'color-mix(in hsl, color(display-p3 none none none), hsl(11 33 44))'
-FAIL Property color value 'color-mix(in hsl, hsl(none 50% 50%))' Colors do not match.
-Actual:   hsl(none 50 50)
-Expected: hsl(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
-FAIL Property color value 'color-mix(in hsl, hsl(180 none 50%))' Colors do not match.
-Actual:   hsl(180 none 50)
-Expected: hsl(180 none 50%).
-Error: assert_equals: Color format is correct. expected "hsl( none %)" but got "hsl( none )"
-FAIL Property color value 'color-mix(in hsl, hsl(180 50% none))' Colors do not match.
-Actual:   hsl(180 50 none)
-Expected: hsl(180 50% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
-FAIL Property color value 'color-mix(in hsl, hsl(none none 50%))' Colors do not match.
-Actual:   hsl(none none 50)
-Expected: hsl(none none 50%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
+PASS Property color value 'color-mix(in hsl, hsl(none 50% 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(180 none 50%))'
+PASS Property color value 'color-mix(in hsl, hsl(180 50% none))'
+PASS Property color value 'color-mix(in hsl, hsl(none none 50%))'
 PASS Property color value 'color-mix(in hsl, hsl(180 none none))'
-FAIL Property color value 'color-mix(in hsl, hsl(none 50% none))' Colors do not match.
-Actual:   hsl(none 50 none)
-Expected: hsl(none 50% none).
-Error: assert_equals: Color format is correct. expected "hsl(none % none)" but got "hsl(none  none)"
+PASS Property color value 'color-mix(in hsl, hsl(none 50% none))'
 PASS Property color value 'color-mix(in hsl, hsl(none none none))'
-FAIL Property color value 'color-mix(in hsl, hwb(none 25% 25%))' Colors do not match.
-Actual:   hsl(none 50 50)
-Expected: hsl(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
+PASS Property color value 'color-mix(in hsl, hwb(none 25% 25%))'
 PASS Property color value 'color-mix(in hsl, hwb(180 none 25%))'
 PASS Property color value 'color-mix(in hsl, hwb(180 25% none))'
-FAIL Property color value 'color-mix(in hsl, hwb(none none 25%))' Colors do not match.
-Actual:   hsl(none 100 37.5)
-Expected: hsl(none 100% 37.5%).
-Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
+PASS Property color value 'color-mix(in hsl, hwb(none none 25%))'
 PASS Property color value 'color-mix(in hsl, hwb(180 none none))'
-FAIL Property color value 'color-mix(in hsl, hwb(none 25% none))' Colors do not match.
-Actual:   hsl(none 100 62.5)
-Expected: hsl(none 100% 62.5%).
-Error: assert_equals: Color format is correct. expected "hsl(none % %)" but got "hsl(none  )"
+PASS Property color value 'color-mix(in hsl, hwb(none 25% none))'
 PASS Property color value 'color-mix(in hsl, hwb(none none none))'
-FAIL Property color value 'color-mix(in hsl, lch(none 20 180))' Colors do not match.
-Actual:   hsl(339.803284 266.585449 none)
-Expected: hsl(339.80326134 266.58541811% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
+PASS Property color value 'color-mix(in hsl, lch(none 20 180))'
 FAIL Property color value 'color-mix(in hsl, lch(20 none 180))' Colors do not match.
-Actual:   hsl(210 none 18.937571)
+Actual:   hsl(210 none 18.937571%)
 Expected: hsl(none none 18.93757452%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 1 got 2
 FAIL Property color value 'color-mix(in hsl, lch(20 20 none))' Colors do not match.
-Actual:   hsl(none 0.000008 18.937571)
+Actual:   hsl(none 0.000008% 18.937571%)
 Expected: hsl(none 35.05613281% 21.64776943%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 35.05613281 +/- 0.01, expected 35.05613281 but got 0.000008
 FAIL Property color value 'color-mix(in hsl, lch(none none 180))' Colors do not match.
 Actual:   hsl(323.574707 none none)
 Expected: hsl(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 1
-FAIL Property color value 'color-mix(in hsl, lch(20 none none))' Colors do not match.
-Actual:   hsl(none none 18.937571)
-Expected: hsl(none none 18.93757452%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
+PASS Property color value 'color-mix(in hsl, lch(20 none none))'
 FAIL Property color value 'color-mix(in hsl, lch(none 20 none))' Colors do not match.
-Actual:   hsl(none 207.722977 none)
+Actual:   hsl(none 207.722977% none)
 Expected: hsl(none 266.58541811% none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 266.58541811 +/- 0.01, expected 266.58541811 but got 207.722977
 PASS Property color value 'color-mix(in hsl, lch(none none none))'
-FAIL Property color value 'color-mix(in hsl, oklch(none 0.2 180))' Colors do not match.
-Actual:   hsl(345.653259 193.087433 none)
-Expected: hsl(345.65323987 193.08743918% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
-FAIL Property color value 'color-mix(in hsl, oklch(0.2 none 180))' Colors do not match.
-Actual:   hsl(none none 8.61042)
-Expected: hsl(none none 8.61042044%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
+PASS Property color value 'color-mix(in hsl, oklch(none 0.2 180))'
+PASS Property color value 'color-mix(in hsl, oklch(0.2 none 180))'
 FAIL Property color value 'color-mix(in hsl, oklch(0.2 0.2 none))' Colors do not match.
-Actual:   hsl(none 0 8.61042)
+Actual:   hsl(none 0% 8.61042%)
 Expected: hsl(none 250.47260791% 8.44443686%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 250.47260791 +/- 0.01, expected 250.47260791 but got 0
 PASS Property color value 'color-mix(in hsl, oklch(none none 180))'
-FAIL Property color value 'color-mix(in hsl, oklch(0.2 none none))' Colors do not match.
-Actual:   hsl(none none 8.61042)
-Expected: hsl(none none 8.61042044%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
+PASS Property color value 'color-mix(in hsl, oklch(0.2 none none))'
 FAIL Property color value 'color-mix(in hsl, oklch(none 0.2 none))' Colors do not match.
-Actual:   hsl(none 0 none)
+Actual:   hsl(none 0% none)
 Expected: hsl(none 193.08743918% none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 193.08743918 +/- 0.01, expected 193.08743918 but got 0
 PASS Property color value 'color-mix(in hsl, oklch(none none none))'
-FAIL Property color value 'color-mix(in hsl, lab(none 10 10))' Colors do not match.
-Actual:   hsl(15.419354 846.246033 none)
-Expected: hsl(15.41935071 846.24593338% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
+PASS Property color value 'color-mix(in hsl, lab(none 10 10))'
 PASS Property color value 'color-mix(in hsl, lab(50 none 10))'
 PASS Property color value 'color-mix(in hsl, lab(50 10 none))'
-FAIL Property color value 'color-mix(in hsl, lab(none none 10))' Colors do not match.
-Actual:   hsl(221.368683 238.900284 none)
-Expected: hsl(221.36868606 238.90028442% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
-FAIL Property color value 'color-mix(in hsl, lab(50 none none))' Colors do not match.
-Actual:   hsl(none none 46.632652)
-Expected: hsl(none none 46.63266093%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
-FAIL Property color value 'color-mix(in hsl, lab(none 10 none))' Colors do not match.
-Actual:   hsl(342.558105 218.141464 none)
-Expected: hsl(342.55812287 218.14148709% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
+PASS Property color value 'color-mix(in hsl, lab(none none 10))'
+PASS Property color value 'color-mix(in hsl, lab(50 none none))'
+PASS Property color value 'color-mix(in hsl, lab(none 10 none))'
 PASS Property color value 'color-mix(in hsl, lab(none none none))'
-FAIL Property color value 'color-mix(in hsl, oklab(none 0.1 0.1))' Colors do not match.
-Actual:   hsl(243.072662 131.858246 none)
-Expected: hsl(243.07265774 131.85826046% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
+PASS Property color value 'color-mix(in hsl, oklab(none 0.1 0.1))'
 PASS Property color value 'color-mix(in hsl, oklab(0.5 none 0.1))'
 PASS Property color value 'color-mix(in hsl, oklab(0.5 0.1 none))'
-FAIL Property color value 'color-mix(in hsl, oklab(none none 0.1))' Colors do not match.
-Actual:   hsl(256.183167 149.404129 none)
-Expected: hsl(256.18317397 149.40414617% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
-FAIL Property color value 'color-mix(in hsl, oklab(0.5 none none))' Colors do not match.
-Actual:   hsl(none none 38.857285)
-Expected: hsl(none none 38.8572859%).
-Error: assert_equals: Color format is correct. expected "hsl(none none %)" but got "hsl(none none )"
-FAIL Property color value 'color-mix(in hsl, oklab(none 0.1 none))' Colors do not match.
-Actual:   hsl(345.653229 193.087433 none)
-Expected: hsl(345.65323987 193.08743918% none).
-Error: assert_equals: Color format is correct. expected "hsl( % none)" but got "hsl(  none)"
+PASS Property color value 'color-mix(in hsl, oklab(none none 0.1))'
+PASS Property color value 'color-mix(in hsl, oklab(0.5 none none))'
+PASS Property color value 'color-mix(in hsl, oklab(none 0.1 none))'
 PASS Property color value 'color-mix(in hsl, oklab(none none none))'
 PASS Property color value 'color-mix(in hsl, rgb(none none none))'
 PASS Property color value 'color-mix(in hsl, color(display-p3 none none none))'
@@ -342,51 +264,24 @@ FAIL Property color value 'hwb(from hsl(none 50% 50%) h w b)' Colors do not matc
 Actual:   color(srgb 0.75 0.25 0.25)
 Expected: hwb(none 25% 25%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
-FAIL Property color value 'hwb(from hsl(180 none 50%) h w b)' Colors do not match.
-Actual:   hwb(none 50 50)
-Expected: hwb(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'hwb(from hsl(180 50% none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
-Expected: hwb(none 0% 100%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'hwb(from hsl(none none 50%) h w b)' Colors do not match.
-Actual:   hwb(none 50 50)
-Expected: hwb(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'hwb(from hsl(180 none 50%) h w b)'
+PASS Property color value 'hwb(from hsl(180 50% none) h w b)'
+PASS Property color value 'hwb(from hsl(none none 50%) h w b)'
 FAIL Property color value 'hwb(from hsl(180 none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
-FAIL Property color value 'hwb(from hsl(none 50% none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
-Expected: hwb(none 0% 100%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'hwb(from hsl(none 50% none) h w b)'
 FAIL Property color value 'hwb(from hsl(none none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
-FAIL Property color value 'hwb(from hwb(none 25% 25%) h w b)' Colors do not match.
-Actual:   hwb(none 25 25)
-Expected: hwb(none 25% 25%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'hwb(from hwb(180 none 25%) h w b)' Colors do not match.
-Actual:   hwb(180 none 25)
-Expected: hwb(180 none 25%).
-Error: assert_equals: Color format is correct. expected "hwb( none %)" but got "hwb( none )"
-FAIL Property color value 'hwb(from hwb(180 25% none) h w b)' Colors do not match.
-Actual:   hwb(180 25 none)
-Expected: hwb(180 25% none).
-Error: assert_equals: Color format is correct. expected "hwb( % none)" but got "hwb(  none)"
-FAIL Property color value 'hwb(from hwb(none none 25%) h w b)' Colors do not match.
-Actual:   hwb(none none 25)
-Expected: hwb(none none 25%).
-Error: assert_equals: Color format is correct. expected "hwb(none none %)" but got "hwb(none none )"
+PASS Property color value 'hwb(from hwb(none 25% 25%) h w b)'
+PASS Property color value 'hwb(from hwb(180 none 25%) h w b)'
+PASS Property color value 'hwb(from hwb(180 25% none) h w b)'
+PASS Property color value 'hwb(from hwb(none none 25%) h w b)'
 PASS Property color value 'hwb(from hwb(180 none none) h w b)'
-FAIL Property color value 'hwb(from hwb(none 25% none) h w b)' Colors do not match.
-Actual:   hwb(none 25 none)
-Expected: hwb(none 25% none).
-Error: assert_equals: Color format is correct. expected "hwb(none % none)" but got "hwb(none  none)"
+PASS Property color value 'hwb(from hwb(none 25% none) h w b)'
 PASS Property color value 'hwb(from hwb(none none none) h w b)'
 PASS Property color value 'hwb(from lch(none 20 180) h w b)'
 FAIL Property color value 'hwb(from lch(20 none 180) h w b)' Colors do not match.
@@ -414,28 +309,22 @@ Actual:   color(srgb 0 0 0)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 3
 PASS Property color value 'hwb(from oklch(none 0.2 180) h w b)'
-FAIL Property color value 'hwb(from oklch(0.2 none 180) h w b)' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
-Expected: hwb(none 8.61042044% 91.38957956%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'hwb(from oklch(0.2 none 180) h w b)'
 FAIL Property color value 'hwb(from oklch(0.2 0.2 none) h w b)' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
+Actual:   hwb(none 8.61042% 91.38958%)
 Expected: hwb(none -12.70656437% 70.40456191%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -12.70656437 +/- 0.01, expected -12.70656437 but got 8.61042
 FAIL Property color value 'hwb(from oklch(none none 180) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
-FAIL Property color value 'hwb(from oklch(0.2 none none) h w b)' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
-Expected: hwb(none 8.61042044% 91.38957956%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'hwb(from oklch(0.2 none none) h w b)'
 FAIL Property color value 'hwb(from oklch(none 0.2 none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none -0.84544246% 97.33810956%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.84544246 +/- 0.01, expected -0.84544246 but got 0
 FAIL Property color value 'hwb(from oklch(none none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 PASS Property color value 'hwb(from lab(none 10 10) h w b)'
@@ -461,15 +350,15 @@ Expected: hwb(none 38.8572859% 61.1427141%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
 PASS Property color value 'hwb(from oklab(none 0.1 none) h w b)'
 FAIL Property color value 'hwb(from oklab(none none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hwb(from rgb(none none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 FAIL Property color value 'hwb(from color(display-p3 none none none) h w b)' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 2
 PASS Property color value 'color-mix(in hwb, hsl(none 50% 50%), hwb(11 33 44))'
@@ -540,49 +429,19 @@ PASS Property color value 'color-mix(in hwb, oklab(none 0.1 none), hwb(11 33 44)
 PASS Property color value 'color-mix(in hwb, oklab(none none none), hwb(11 33 44))'
 PASS Property color value 'color-mix(in hwb, rgb(none none none), hwb(11 33 44))'
 PASS Property color value 'color-mix(in hwb, color(display-p3 none none none), hwb(11 33 44))'
-FAIL Property color value 'color-mix(in hwb, hsl(none 50% 50%))' Colors do not match.
-Actual:   hwb(none 25 25)
-Expected: hwb(none 25% 25%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'color-mix(in hwb, hsl(180 none 50%))' Colors do not match.
-Actual:   hwb(none 50 50)
-Expected: hwb(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'color-mix(in hwb, hsl(180 50% none))' Colors do not match.
-Actual:   hwb(none 0 100)
-Expected: hwb(none 0% 100%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'color-mix(in hwb, hsl(none none 50%))' Colors do not match.
-Actual:   hwb(none 50 50)
-Expected: hwb(none 50% 50%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'color-mix(in hwb, hsl(none 50% 50%))'
+PASS Property color value 'color-mix(in hwb, hsl(180 none 50%))'
+PASS Property color value 'color-mix(in hwb, hsl(180 50% none))'
+PASS Property color value 'color-mix(in hwb, hsl(none none 50%))'
 PASS Property color value 'color-mix(in hwb, hsl(180 none none))'
-FAIL Property color value 'color-mix(in hwb, hsl(none 50% none))' Colors do not match.
-Actual:   hwb(none 0 100)
-Expected: hwb(none 0% 100%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'color-mix(in hwb, hsl(none 50% none))'
 PASS Property color value 'color-mix(in hwb, hsl(none none none))'
-FAIL Property color value 'color-mix(in hwb, hwb(none 25% 25%))' Colors do not match.
-Actual:   hwb(none 25 25)
-Expected: hwb(none 25% 25%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
-FAIL Property color value 'color-mix(in hwb, hwb(180 none 25%))' Colors do not match.
-Actual:   hwb(180 none 25)
-Expected: hwb(180 none 25%).
-Error: assert_equals: Color format is correct. expected "hwb( none %)" but got "hwb( none )"
-FAIL Property color value 'color-mix(in hwb, hwb(180 25% none))' Colors do not match.
-Actual:   hwb(180 25 none)
-Expected: hwb(180 25% none).
-Error: assert_equals: Color format is correct. expected "hwb( % none)" but got "hwb(  none)"
-FAIL Property color value 'color-mix(in hwb, hwb(none none 25%))' Colors do not match.
-Actual:   hwb(none none 25)
-Expected: hwb(none none 25%).
-Error: assert_equals: Color format is correct. expected "hwb(none none %)" but got "hwb(none none )"
+PASS Property color value 'color-mix(in hwb, hwb(none 25% 25%))'
+PASS Property color value 'color-mix(in hwb, hwb(180 none 25%))'
+PASS Property color value 'color-mix(in hwb, hwb(180 25% none))'
+PASS Property color value 'color-mix(in hwb, hwb(none none 25%))'
 PASS Property color value 'color-mix(in hwb, hwb(180 none none))'
-FAIL Property color value 'color-mix(in hwb, hwb(none 25% none))' Colors do not match.
-Actual:   hwb(none 25 none)
-Expected: hwb(none 25% none).
-Error: assert_equals: Color format is correct. expected "hwb(none % none)" but got "hwb(none  none)"
+PASS Property color value 'color-mix(in hwb, hwb(none 25% none))'
 PASS Property color value 'color-mix(in hwb, hwb(none none none))'
 PASS Property color value 'color-mix(in hwb, lch(none 20 180))'
 FAIL Property color value 'color-mix(in hwb, lch(20 none 180))' Colors do not match.
@@ -590,38 +449,29 @@ Actual:   color(srgb 0.189376 0.189376 0.189376)
 Expected: hwb(none 18.93757452% 81.06242548%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 2 got 3
 FAIL Property color value 'color-mix(in hwb, lch(20 20 none))' Colors do not match.
-Actual:   hwb(none 18.937571 81.062424)
+Actual:   hwb(none 18.937571% 81.062424%)
 Expected: hwb(none 14.05889863% 70.76335977%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected 14.05889863 +/- 0.01, expected 14.05889863 but got 18.937571
 FAIL Property color value 'color-mix(in hwb, lch(none none 180))' Colors do not match.
 Actual:   hwb(143.574707 none none)
 Expected: hwb(none none none).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. lengths differ, expected 0 got 1
-FAIL Property color value 'color-mix(in hwb, lch(20 none none))' Colors do not match.
-Actual:   hwb(none 18.937571 81.062424)
-Expected: hwb(none 18.93757452% 81.06242548%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'color-mix(in hwb, lch(20 none none))'
 FAIL Property color value 'color-mix(in hwb, lch(none 20 none))' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none -5.95288574% 86.90016729%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -5.95288574 +/- 0.01, expected -5.95288574 but got 0
 PASS Property color value 'color-mix(in hwb, lch(none none none))'
 PASS Property color value 'color-mix(in hwb, oklch(none 0.2 180))'
-FAIL Property color value 'color-mix(in hwb, oklch(0.2 none 180))' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
-Expected: hwb(none 8.61042044% 91.38957956%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'color-mix(in hwb, oklch(0.2 none 180))'
 FAIL Property color value 'color-mix(in hwb, oklch(0.2 0.2 none))' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
+Actual:   hwb(none 8.61042% 91.38958%)
 Expected: hwb(none -12.70656437% 70.40456191%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -12.70656437 +/- 0.01, expected -12.70656437 but got 8.61042
 PASS Property color value 'color-mix(in hwb, oklch(none none 180))'
-FAIL Property color value 'color-mix(in hwb, oklch(0.2 none none))' Colors do not match.
-Actual:   hwb(none 8.61042 91.38958)
-Expected: hwb(none 8.61042044% 91.38957956%).
-Error: assert_equals: Color format is correct. expected "hwb(none % %)" but got "hwb(none  )"
+PASS Property color value 'color-mix(in hwb, oklch(0.2 none none))'
 FAIL Property color value 'color-mix(in hwb, oklch(none 0.2 none))' Colors do not match.
-Actual:   hwb(none 0 100)
+Actual:   hwb(none 0% 100%)
 Expected: hwb(none -0.84544246% 97.33810956%).
 Error: assert_array_approx_equals: Numeric parameters are approximately equal. property 0, expected -0.84544246 +/- 0.01, expected -0.84544246 but got 0
 PASS Property color value 'color-mix(in hwb, oklch(none none none))'

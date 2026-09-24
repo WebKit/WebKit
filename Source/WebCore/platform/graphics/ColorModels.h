@@ -152,7 +152,8 @@ enum class ColorComponentCategory {
 
 enum class ColorComponentType {
     Angle,
-    Number
+    Number,
+    Percentage
 };
 
 enum class ColorSpaceCoordinateSystem {
@@ -174,8 +175,8 @@ template<typename T> struct ColorComponentInfo {
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, 360, ColorComponentType::Angle, ColorComponentCategory::Hue },
-        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number, ColorComponentCategory::Colorfulness },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number, ColorComponentCategory::Lightness }
+        { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Percentage, ColorComponentCategory::Colorfulness },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage, ColorComponentCategory::Lightness }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
@@ -200,8 +201,8 @@ template<typename ColorType> inline constexpr bool UsesHSLModel = std::is_same_v
 template<> struct HWBModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, 360, ColorComponentType::Angle, ColorComponentCategory::Hue },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number, std::nullopt },
-        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Number, std::nullopt }
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage, std::nullopt },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Percentage, std::nullopt }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;
