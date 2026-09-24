@@ -1,0 +1,47 @@
+Visit 127.0.0.1:8000 with interaction and an embedded localhost:8000, set storage on both, then visit localhost:8000 without interaction embedding 127.0.0.1:8000, clean storage, and confirm only the latter's storage is deleted while the former's remains.
+
+
+Phase A: writing on 127.0.0.1 top and expecting partitioned storage in localhost iframe.
+Before deletion: Client-side cookie exists.
+Before deletion: HttpOnly cookie exists.
+Before deletion: Regular server-side cookie exists.
+Before deletion: LocalStorage entry does exist.
+Before deletion: SessionStorage entry does exist.
+Before deletion: (onsuccess) IDB entry does exist.
+Before deletion: iframe LocalStorage entry does exist.
+Before deletion: iframe SessionStorage entry does exist.
+Before deletion: iframe indexedDB entry does exist.
+
+Phase B: opening popup on localhost:8000 (no interaction) with an embedded 127.0.0.1 iframe.
+Opening popup on localhost.
+Before deletion popup: Client-side cookie exists.
+Before deletion popup: HttpOnly cookie exists.
+Before deletion popup: Regular server-side cookie exists.
+Before deletion: popup LocalStorage entry does exist.
+Before deletion: popup SessionStorage entry does exist.
+Before deletion: popup indexedDB entry does exist.
+Before deletion: popup-iframe LocalStorage entry does exist.
+Before deletion: popup-iframe SessionStorage entry does exist.
+Before deletion: popup-iframe indexedDB entry does exist.
+
+After deletion popup: Client-side cookie does not exist.
+After deletion popup: HttpOnly cookie exists.
+After deletion popup: Regular server-side cookie exists.
+After deletion: popup LocalStorage entry does not exist.
+After deletion: popup SessionStorage entry does not exist.
+After deletion: popup indexedDB entry does not exist.
+After deletion: popup-iframe LocalStorage entry does not exist.
+After deletion: popup-iframe SessionStorage entry does not exist.
+After deletion: popup-iframe indexedDB entry does not exist.
+
+Phase C: Getting back to 127.0.0.1 (with interaction) with an embedded localhost iframe.
+After deletion: HttpOnly cookie exists.
+After deletion: Client-side cookie exists.
+After deletion: Regular server-side cookie exists.
+After deletion: LocalStorage entry does exist.
+After deletion: (onsuccess) IDB entry does exist.
+After deletion: http://localhost:8000 has local storage
+After deletion: iframe LocalStorage entry does exist.
+After deletion: iframe SessionStorage entry does exist.
+After deletion: iframe indexedDB entry does exist.
+
