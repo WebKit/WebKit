@@ -1541,7 +1541,6 @@ class CheckChangeRelevance(AnalyzeChange):
         re.compile(rb'Tools/Scripts/compare-static-analysis-results', re.IGNORECASE),
         re.compile(rb'Tools/Scripts/generate-dirty-files', re.IGNORECASE),
         re.compile(rb'Tools/CISupport/Shared/download-and-install-build-tools', re.IGNORECASE),
-        re.compile(rb'Tools/CISupport/safer-cpp-llvm-version', re.IGNORECASE),
         re.compile(rb'Tools/CISupport/safer-cpp-swift-version', re.IGNORECASE)
     ]
 

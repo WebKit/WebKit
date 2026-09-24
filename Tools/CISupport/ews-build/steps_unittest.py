@@ -6471,9 +6471,8 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.run_step()
         return rc
 
-    @expectedFailure
     def test_relevant_safer_cpp_pull_request(self):
-        file_names = ['Tools/CISupport/safer-cpp-llvm-version', 'Tools/CISupport/safer-cpp-swift-version']
+        file_names = ['Tools/CISupport/safer-cpp-swift-version']
         self.setup_step(CheckChangeRelevance())
         self.setProperty('buildername', 'Safer-CPP-Checks-EWS')
         self.setProperty('github.number', 1234)
