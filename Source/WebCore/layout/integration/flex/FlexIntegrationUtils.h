@@ -120,7 +120,6 @@ public:
 private:
     const CheckedRef<RenderBox> m_flexItem;
     bool m_mainAxisIsInlineAxis { false };
-    bool m_didOverride { false };
 };
 
 // RAII for measuring a flex item before it is stretched. When the item is going to be stretched to a definite cross

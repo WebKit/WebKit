@@ -789,7 +789,16 @@ void FlexFormattingContext::setFlexItemCountsForFirstAndLastLine(const FlexLines
 LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     auto flexBasis = flexFormattingUtils().flexBasisForFlexItem(flexLayoutItem);
-    auto scoped = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
+    // auto flex basis is the main size property itself (see flexBasisForFlexItem()), so the item is measured as is.
+    if (flexBasis.isAuto())
+        return computeFlexBaseSize(flexLayoutItem, flexBasis);
+
+    auto flexBasisAsMainSize = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
+    return computeFlexBaseSize(flexLayoutItem, flexBasis);
+}
+
+LayoutUnit FlexFormattingContext::computeFlexBaseSize(const FlexLayoutItem& flexLayoutItem, const Style::FlexBasis& flexBasis)
+{
     // FIXME: While we are supposed to ignore min/max here, the cached
     // The cached block-axis size entry may hold a min/max-constrained size.
     auto blockAxisContentSize = ensureBlockAxisContentSizeForFlexItemIfNeeded(flexLayoutItem);
