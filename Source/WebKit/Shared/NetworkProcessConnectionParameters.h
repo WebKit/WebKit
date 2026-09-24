@@ -43,6 +43,7 @@ struct NetworkProcessConnectionParameters {
     LoadedWebArchive loadedWebArchive { LoadedWebArchive::No };
     HashSet<WebCore::RegistrableDomain> allowedFirstPartiesForCookies;
     Vector<WebPageProxyIdentifier> allowedWebPageProxyIdentifiers;
+    std::optional<HashSet<WebCore::RegistrableDomain>> hostedDomains;
     HashMap<WebCore::PageIdentifier, Vector<String>> corsDisablingPatternsPerPage;
 };
 

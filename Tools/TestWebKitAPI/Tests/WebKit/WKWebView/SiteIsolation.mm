@@ -16283,4 +16283,100 @@ TEST(SiteIsolation, ThirdPartyCookieBlockingSpoofedWebPageProxyID)
     EXPECT_EQ([cookieCount unsignedIntegerValue], 0u);
 }
 
+
+
+// MARK: - Cookie IPC authorization
+//
+// The network process rejects a cookie IPC whose url names a registrable domain the sending web process does
+// not host a document for. These tests cover the other direction: that a cross-site iframe's own cookie access
+// is not over-blocked. A denial is silent (an empty cookie string, not a process kill), so each case seeds a
+// known value and compares against it; a non-null check would be satisfied by the empty string a denial gives.
+// Third-party cookie access is otherwise blocked for a reason unrelated to this check, so these opt into the
+// relaxation and seed the cookie, matching runRelaxThirdPartyCookieBlockingSubframeTest above.
+
+static void seedSecureCookie(WKWebsiteDataStore *dataStore, NSString *domain, NSString *name, NSString *value)
+{
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookieName: name,
+        NSHTTPCookieValue: value,
+        NSHTTPCookieDomain: domain,
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieSecure: @YES,
+    }];
+    __block bool done = false;
+    [dataStore.httpCookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+// The subframe reads document.cookie (a CookiesForDOM IPC naming its own url) and posts it to the main frame,
+// which alerts it. subframeHost's cookie is seeded first.
+static HTTPServer::ResponseMap cookieReadResponses(ASCIILiteral subframeURL)
+{
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse(makeString(
+        "<!DOCTYPE html><script>window.addEventListener('message', (event) => alert(String(event.data)));</script>"
+        "<iframe src='"_s, subframeURL, "'></iframe>"_s)));
+    responses.add("/subframe"_s, HTTPResponse("<!DOCTYPE html><script>parent.postMessage(String(document.cookie), '*');</script>"_s));
+    return responses;
+}
+
+// A cross-site iframe runs in its own process, whose hosted set is a definite {b.com}, so the check evaluates
+// and must allow the iframe to read its own b.com cookie.
+TEST(SiteIsolation, CrossSiteIframeReadsOwnCookiesWithSiteIsolation)
+{
+    HTTPServer server(cookieReadResponses("https://b.com/subframe"_s), HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration _setShouldRelaxThirdPartyCookieBlocking:YES];
+    seedSecureCookie([configuration websiteDataStore], @"b.com", @"k", @"v");
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+    // If isolation silently stopped applying, this would collapse into the without-isolation case and keep
+    // passing while covering nothing, so confirm the subframe really is in its own process.
+    EXPECT_NE([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+// Site isolation off is the shipping default: one process hosts every frame, so the hosted set is "any site".
+// Were it {a.com} instead, every cross-site iframe on the web would silently read nothing.
+TEST(SiteIsolation, CrossSiteIframeReadsOwnCookiesWithoutSiteIsolation)
+{
+    HTTPServer server(cookieReadResponses("https://b.com/subframe"_s), HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    [configuration _setShouldRelaxThirdPartyCookieBlocking:YES];
+    seedSecureCookie([configuration websiteDataStore], @"b.com", @"k", @"v");
+
+    auto [webView, navigationDelegate] = viewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+    EXPECT_EQ([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+// A same-site subdomain iframe shares its embedder's process, whose hosted set is exactly {a.com}, so the
+// check has to match on registrable domain rather than exact origin.
+TEST(SiteIsolation, SameSiteSubdomainIframeReadsOwnCookies)
+{
+    HTTPServer server(cookieReadResponses("https://sub.a.com/subframe"_s), HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    seedSecureCookie([configuration websiteDataStore], @"sub.a.com", @"k", @"v");
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+    // Same site, so the subframe shares the a.com process; its cookie url is sub.a.com, whose registrable
+    // domain is the a.com already in that process's hosted set.
+    EXPECT_EQ([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
 }
