@@ -1,0 +1,84 @@
+<html><!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/accessibility-helper.js"></script>
+<style>
+body { margin: 0; padding: 0; height: 2000px; }
+#frame {
+    position: absolute;
+    left: 100px;
+    top: 500px;
+    width: 400px;
+    height: 300px;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="frame" src="http://localhost:8000/site-isolation/accessibility/resources/nested-scrolled-middle.html"></iframe>
+
+<script>
+var output = "Validates the absolute (screen) position of text two frames below a scrolled cross-origin iframe in a scrolled page with site isolation.\n\n";
+
+function findText(element, depth) {
+    if (!element || depth > 12)
+        return null;
+    if (element.stringValue && element.stringValue.includes("Hello from iframe"))
+        return element;
+    for (var i = 0; i < element.childrenCount; i++) {
+        var found = findText(element.childAtIndex(i), depth + 1);
+        if (found)
+            return found;
+    }
+    return null;
+}
+
+var webArea, scrollY, textX, textY;
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+    accessibilityController.setForceInitialFrameCaching(true);
+    accessibilityController.setClientAccessibilityMode(true);
+
+    setTimeout(async function() {
+        window.scrollTo(0, 400);
+        scrollY = window.scrollY;
+
+        await waitFor(() => {
+            webArea = accessibilityController.rootElement.childAtIndex(0);
+            return webArea;
+        })
+
+        // Wait for the text element to exist AND have the correct position. The async frame screen
+        // position update may not have arrived yet, so we poll until the values are correct.
+        await waitFor(() => {
+            var textNode = findText(webArea, 0);
+            if (!textNode)
+                return false;
+
+            var pageOrigin = { x: webArea.x, y: webArea.y };
+            textX = textNode.x - pageOrigin.x;
+            textY = textNode.y - pageOrigin.y;
+
+            // The text is at (20, 230) in the innermost frame, which is scrolled down by 200, so it
+            // renders at (20, 30) in that frame's viewport. That frame is at (30, 260) in the middle
+            // frame, which is scrolled down by 60, so the text is at (50, 230) in the middle frame's
+            // viewport. The middle frame is at (100, 500) in the page.
+            //
+            // Converting the innermost frame's position one isolation boundary at a time subtracts
+            // the middle frame's scroll twice, which lands the text 60px too high at (150, 670).
+            return textX === 150 && textY === 730;
+        });
+
+        output += expect("scrollY", "400");
+        output += expect("textX", "150");
+        output += expect("textY", "730");
+
+        debug(output);
+        document.getElementById("frame").hidden = true;
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

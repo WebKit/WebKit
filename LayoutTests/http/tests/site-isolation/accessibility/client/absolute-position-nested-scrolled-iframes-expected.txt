@@ -1,0 +1,10 @@
+Validates the absolute (screen) position of text two frames below a scrolled cross-origin iframe in a scrolled page with site isolation.
+
+PASS: scrollY === 400
+PASS: textX === 150
+PASS: textY === 730
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
