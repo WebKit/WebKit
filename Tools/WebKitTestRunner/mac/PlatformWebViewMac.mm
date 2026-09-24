@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/text/WTFString.h>
@@ -55,6 +56,7 @@ enum {
 - (void)_setWindowResolution:(CGFloat)resolution;
 // FIXME: Remove once the variant above exists on all platforms we need (cf. rdar://problem/47614795).
 - (void)_setWindowResolution:(CGFloat)resolution displayIfChanged:(BOOL)displayIfChanged;
+@property (readonly, nullable) CAContext *_windowLayerContext;
 @end
 
 @interface WTRCursorOverlayView : NSImageView
@@ -271,6 +273,13 @@ void PlatformWebView::setEditable(bool editable)
     m_view._editable = editable;
 }
 
+void PlatformWebView::waitForWindowRendering()
+{
+    constexpr Seconds renderingTimeout = 250_ms;
+    if (![[m_window _windowLayerContext] waitForRenderingWithTimeout:renderingTimeout.seconds()])
+        WTFLogAlways("Timed out waiting for rendering of window."); // NOLINT
+}
+
 RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 {
     RetainPtr panel = [m_cursorOverlay overlayPanel];
@@ -296,6 +305,8 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
     // synchronization API to wait for this, so validate the captured dimensions and retry if needed.
     constexpr unsigned maxRetries = 10;
     for (unsigned attempt = 0; ; ++attempt) {
+        waitForWindowRendering();
+
         RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
         if (!image)
             return nil;

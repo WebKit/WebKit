@@ -132,6 +132,9 @@ public:
 
 private:
     void forceWindowFramesChanged();
+#if PLATFORM(MAC)
+    void waitForWindowRendering();
+#endif
 
     PlatformWKView m_view;
     PlatformWindow m_window;
