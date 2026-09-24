@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <JavaScriptCore/CorpsePlatform.h>
+
 #if ENABLE(MYA)
 
 #include <wtf/Assertions.h>

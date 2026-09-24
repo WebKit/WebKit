@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "CorpseMemoryTest.h"
 
 #if ENABLE(MYA)
 
@@ -36,12 +35,15 @@
 #include <JavaScriptCore/CorpseSnapshot.h>
 #include <array>
 #include <limits>
-#include <mach/mach.h>
-#include <mach/mach_vm.h>
 #include <span>
 #include <unistd.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakRandom.h>
+
+#if OS(DARWIN)
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -51,6 +53,8 @@ using JSC::Corpse::Address;
 using JSC::Corpse::Memory;
 using JSC::Corpse::Process;
 using JSC::Corpse::Snapshot;
+
+#if OS(DARWIN)
 
 namespace {
 
@@ -432,6 +436,18 @@ void testMemory()
             TEST_ASSERT(!isMappedLocally(localBase), "all mapped pages should be unmapped, not leaked");
     }
 }
+
+#else
+
+void testMemory()
+{
+    SuiteTracer tracer("Memory");
+    if (!tracer.shouldRun())
+        return;
+    skipSuite("Memory", "the test arena is laid out with Mach VM calls");
+}
+
+#endif // OS(DARWIN)
 
 } // namespace JSCToolsTest
 

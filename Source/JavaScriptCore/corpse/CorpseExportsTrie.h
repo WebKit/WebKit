@@ -25,7 +25,9 @@
 
 #pragma once
 
-#if ENABLE(MYA)
+#include <JavaScriptCore/CorpsePlatform.h>
+
+#if ENABLE(MYA) && OS(DARWIN)
 
 #include <JavaScriptCore/CorpseByteParser.h>
 #include <expected>
@@ -66,4 +68,4 @@ public:
 } // namespace Corpse
 } // namespace JSC
 
-#endif // ENABLE(MYA)
+#endif // ENABLE(MYA) && OS(DARWIN)
