@@ -256,6 +256,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/StyleGradient.cpp
         Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TimeRanges.cpp
+        Tests/WebCore/TrackPrivateChangedCallbacks.cpp
         Tests/WebCore/TransformationMatrix.cpp
         Tests/WebCore/URLParserTextEncoding.cpp
         Tests/WebCore/WellKnownOriginList.cpp
