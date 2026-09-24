@@ -385,7 +385,9 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     updateShadow(CGGStateGetStyle(gstate));
 
     auto fontSize = CGGStateGetFontSize(gstate);
-    Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? *m_originalFont : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont.get(), fontSize, nullptr, nullptr)), fontSize));
+    // FontCascade::drawGlyphs() has already drawn the synthetic bold as a separate, offset set of glyphs.
+    // Replaying these glyphs with a synthetic bold font would draw the synthetic bold again.
+    Ref font = m_deriveFontFromContext == DeriveFontFromContext::No ? Ref { *m_originalFont }->nonSyntheticBoldFont() : Font::create(FontPlatformData(adoptCF(CTFontCreateWithGraphicsFont(usedFont.get(), fontSize, nullptr, nullptr)), fontSize));
 
     // The above does the work of ensuring the right CTM (which is the combination of CG's CTM and
     // CG's text matrix) is set for the replayer, but in order to provide the right values to
