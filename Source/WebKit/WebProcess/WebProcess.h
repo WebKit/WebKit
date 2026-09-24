@@ -311,7 +311,13 @@ public:
 
 #if ENABLE(GPU_PROCESS)
     GPUProcessConnection& ensureGPUProcessConnection();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     GPUProcessConnection* existingGPUProcessConnection() { return m_gpuProcessConnection.get(); }
+#else
+    GPUProcessConnection* existingGPUProcessConnection() WTF_REQUIRES_CAPABILITY(mainRunLoop) { return m_gpuProcessConnection.get(); }
+    // Thread-safe.
+    RefPtr<GPUProcessConnection> existingGPUProcessConnectionOffMainThread();
+#endif
     // Returns timeout duration for GPU process connections. Thread-safe.
     Seconds NODELETE gpuProcessTimeoutDuration() const;
     void gpuProcessConnectionClosed();
@@ -826,7 +832,13 @@ private:
     RefPtr<WebFileSystemStorageConnection> m_fileSystemStorageConnection;
 
 #if ENABLE(GPU_PROCESS)
+#ifdef RC_REMOVE_SEC_ACCEL_3
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
+#else
+    // Held for writes to m_gpuProcessConnection and for reads off the main run loop.
+    Lock m_gpuProcessConnectionLock;
+    RefPtr<GPUProcessConnection> m_gpuProcessConnection WTF_GUARDED_BY_CAPABILITY(mainRunLoop);
+#endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #if ENABLE(WEB_CODECS)
