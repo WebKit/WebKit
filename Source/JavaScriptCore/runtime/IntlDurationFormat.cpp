@@ -122,6 +122,8 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
     }
     }
 
+    bool prevStyleIsNumeric = prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit);
+
     IntlDurationFormat::Display displayDefault = IntlDurationFormat::Display::Always;
     IntlDurationFormat::UnitStyle style = IntlDurationFormat::UnitStyle::Short;
     if (styleValue)
@@ -131,19 +133,20 @@ static IntlDurationFormat::UnitData intlDurationUnitOptions(JSGlobalObject* glob
             if (unit != TemporalUnit::Hour && unit != TemporalUnit::Minute && unit != TemporalUnit::Second)
                 displayDefault = IntlDurationFormat::Display::Auto;
             style = digitalBase;
+        } else if (prevStyleIsNumeric) {
+            if (unit != TemporalUnit::Minute && unit != TemporalUnit::Second)
+                displayDefault = IntlDurationFormat::Display::Auto;
+            style = IntlDurationFormat::UnitStyle::Numeric;
         } else {
             displayDefault = IntlDurationFormat::Display::Auto;
-            if (prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit))
-                style = IntlDurationFormat::UnitStyle::Numeric;
-            else
-                style = static_cast<IntlDurationFormat::UnitStyle>(baseStyle);
+            style = static_cast<IntlDurationFormat::UnitStyle>(baseStyle);
         }
     }
 
     IntlDurationFormat::Display display = intlOption<IntlDurationFormat::Display>(globalObject, options, displayName, { { "auto"_s, IntlDurationFormat::Display::Auto }, { "always"_s, IntlDurationFormat::Display::Always } }, "display name must be either \"auto\" or \"always\""_s, displayDefault);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (prevStyle && (prevStyle.value() == IntlDurationFormat::UnitStyle::Numeric || prevStyle.value() == IntlDurationFormat::UnitStyle::TwoDigit)) {
+    if (prevStyleIsNumeric) {
         if (style != IntlDurationFormat::UnitStyle::Numeric && style != IntlDurationFormat::UnitStyle::TwoDigit) {
             throwRangeError(globalObject, scope, "style option is inconsistent"_s);
             return { };
