@@ -168,12 +168,24 @@ void DocumentPrefetcher::prefetch(const URL& url, const Vector<String>& tags, st
     prefetchedResource->addClient(*this);
 }
 
-void DocumentPrefetcher::redirectReceived(CachedResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+void DocumentPrefetcher::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     RefPtr document = m_frame ? m_frame->document() : nullptr;
-    if (!document || !isPassingSecurityChecks(request.url(), *document))
-        return completionHandler({ });
-    completionHandler(WTF::move(request));
+    if (document && isPassingSecurityChecks(request.url(), *document))
+        return completionHandler(WTF::move(request));
+
+    // If a navigation has joined this in-flight prefetch, abandon the prefetch but let the navigation decide whether to follow the redirect.
+    if (resource.numberOfClients() > 1) {
+        m_prefetchedData.removeIf([&](auto& entry) {
+            return entry.value.resource.get() == &resource;
+        });
+        if (resource.hasClient(*this))
+            resource.removeClient(*this);
+        MemoryCache::singleton().remove(resource);
+        return completionHandler(WTF::move(request));
+    }
+
+    completionHandler({ });
 }
 
 void DocumentPrefetcher::responseReceived(const CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
@@ -210,6 +222,9 @@ void DocumentPrefetcher::notifyFinished(CachedResource& resource, const NetworkL
 
 void DocumentPrefetcher::removePrefetch(const URL& url)
 {
+    if (url.isNull())
+        return;
+
     auto it = m_prefetchedData.find(url);
     if (it == m_prefetchedData.end())
         return;
@@ -225,11 +240,16 @@ void DocumentPrefetcher::removePrefetch(const URL& url)
 
 bool DocumentPrefetcher::wasPrefetched(const URL& url) const
 {
+    if (url.isNull())
+        return false;
     return m_prefetchedData.contains(url);
 }
 
 Box<NetworkLoadMetrics> DocumentPrefetcher::takePrefetchedResourceMetrics(const URL& url)
 {
+    if (url.isNull())
+        return { };
+
     auto it = m_prefetchedData.find(url);
     if (it != m_prefetchedData.end() && it->value.metrics) {
         auto metrics = WTF::move(it->value.metrics);
