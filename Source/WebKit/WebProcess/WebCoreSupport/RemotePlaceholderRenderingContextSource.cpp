@@ -28,6 +28,7 @@
 
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
 
+#include "ImageBufferBackendHandleSharing.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/ImageBuffer.h>
@@ -56,6 +57,14 @@ void RemotePlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& 
     RefPtr clone = buffer.clone();
     if (!clone)
         return;
+    clone->flushDrawingContext();
+
+    // Lets the UI process apply the frame to the placeholder's layer on the way through. No web
+    // process maps it, which matters because the WebContent sandbox blocks IOKit whenever the GPU
+    // process is doing the rendering.
+    std::optional<ImageBufferBackendHandle> layerContentsHandle;
+    if (auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(clone->toBackendSharing()))
+        layerContentsHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
 
     auto transferHandle = SerializedImageBuffer::sinkIntoTransferHandle(ImageBuffer::sinkIntoSerializedImageBuffer(WTF::move(clone)));
     if (!transferHandle)
@@ -65,7 +74,7 @@ void RemotePlaceholderRenderingContextSource::setPlaceholderBuffer(ImageBuffer& 
     if (!connection)
         return;
     auto transferIdentifier = transferHandle->identifier;
-    connection->sendWithAsyncReply(Messages::WebProcessProxy::CommitOffscreenCanvasPlaceholderFrame(identifier(), WTF::move(*transferHandle), originClean, opaque), [protectedThis = Ref { *this }, transferIdentifier](bool accepted) {
+    connection->sendWithAsyncReply(Messages::WebProcessProxy::CommitOffscreenCanvasPlaceholderFrame(identifier(), WTF::move(*transferHandle), WTF::move(layerContentsHandle), originClean, opaque), [protectedThis = Ref { *this }, transferIdentifier](bool accepted) {
         if (accepted)
             return;
         protectedThis->m_placeholderUnreachable = true;

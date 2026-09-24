@@ -30,6 +30,8 @@
 #include "CanvasRenderingContext.h"
 #include "PlaceholderFrameIdentifier.h"
 #include "PlaceholderRenderingContextSource.h"
+#include "PlatformLayerIdentifier.h"
+#include <wtf/Markable.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -50,8 +52,9 @@ public:
     // Like copyFrame(), for a buffer that nothing will draw into again. It reaches the compositor
     // with the next rendering update. On the main thread.
     void setFrameForNextDisplay(ImageBuffer&, bool opaque, PlaceholderFrameIdentifier);
+    // Returns the layer that frames from another process can be applied to directly, if there is one.
     // On the main thread.
-    void attach(GraphicsLayer&, ImageBuffer*, bool opaque, PlaceholderFrameIdentifier);
+    std::optional<PlatformLayerIdentifier> attach(GraphicsLayer&, ImageBuffer*, bool opaque, PlaceholderFrameIdentifier);
 
 private:
     PlaceholderLayerContents() = default;
@@ -110,6 +113,7 @@ private:
     const PlaceholderRenderingContextIdentifier m_identifier;
     const Ref<PlaceholderLayerContents> m_layerContents;
     PlaceholderFrameIdentifier m_frame;
+    Markable<PlatformLayerIdentifier> m_reportedLayerID;
     RefPtr<ImageBuffer> m_buffer; // Temporary until content is provided as NativeImage.
     RefPtr<NativeImage> m_bufferNativeImage;
     bool m_opaque { false };

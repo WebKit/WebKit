@@ -180,6 +180,11 @@ public:
         m_layerID = layerID;
     }
 
+    std::optional<WebCore::PlatformLayerIdentifier> destinationLayerID() const final
+    {
+        return m_layerID.asOptional();
+    }
+
     bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
 
 private:

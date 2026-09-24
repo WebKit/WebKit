@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "ContextDestructionObserverInlines.h"
 #include "Document.h"
+#include "DocumentPage.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
@@ -65,16 +66,17 @@ void PlaceholderLayerContents::setFrameForNextDisplay(ImageBuffer& imageBuffer, 
     m_frame = frame;
 }
 
-void PlaceholderLayerContents::attach(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque, PlaceholderFrameIdentifier frame)
+std::optional<PlatformLayerIdentifier> PlaceholderLayerContents::attach(GraphicsLayer& layer, ImageBuffer* buffer, bool opaque, PlaceholderFrameIdentifier frame)
 {
     assertIsMainThread();
     Locker locker { m_lock };
     if (!(m_delegate = layer.createAsyncContentsDisplayDelegate(m_delegate.get())))
-        return;
+        return std::nullopt;
     if (buffer) {
         m_delegate->tryCopyToLayer(*buffer, opaque, frame);
         m_frame = frame;
     }
+    return m_delegate->destinationLayerID();
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalPlaceholderRenderingContextSource);
@@ -172,7 +174,13 @@ IntSize PlaceholderRenderingContext::size() const
 
 void PlaceholderRenderingContext::setContentsToLayer(GraphicsLayer& layer)
 {
-    m_layerContents->attach(layer, m_buffer.get(), m_opaque, m_frame);
+    auto layerID = m_layerContents->attach(layer, m_buffer.get(), m_opaque, m_frame);
+    if (m_reportedLayerID.asOptional() == layerID)
+        return;
+    m_reportedLayerID = layerID;
+    // Lets a frame committed from another process be applied to the layer on the way here.
+    if (RefPtr page = canvas().document().page())
+        page->chrome().client().offscreenCanvasPlaceholderLayerChanged(m_identifier, layerID);
 }
 
 bool PlaceholderRenderingContextSource::commitFrameFromAnotherProcess(PlaceholderRenderingContextIdentifier identifier, const ImageBufferTransferHandle& transferHandle, PlaceholderFrameIdentifier frame, bool originClean, bool opaque)

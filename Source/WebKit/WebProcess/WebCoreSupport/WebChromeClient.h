@@ -283,6 +283,7 @@ private:
     RefPtr<WebCore::ImageBuffer> createImageBufferFromTransferHandle(const WebCore::ImageBufferTransferHandle&) final;
 #if ENABLE(OFFSCREEN_CANVAS)
     RefPtr<WebCore::PlaceholderRenderingContextSource> createPlaceholderRenderingContextSource(WebCore::PlaceholderRenderingContextIdentifier) final;
+    void offscreenCanvasPlaceholderLayerChanged(WebCore::PlaceholderRenderingContextIdentifier, std::optional<WebCore::PlatformLayerIdentifier>) final;
 #endif
 #endif
     std::unique_ptr<WebCore::WorkerClient> createWorkerClient(SerialFunctionDispatcher&) final;

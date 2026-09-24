@@ -42,6 +42,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 #include <WebCore/PlaceholderRenderingContextSource.h>
 #endif
+#include <WebCore/PlatformLayerIdentifier.h>
 #include <WebCore/PlaybackTargetClientContextIdentifier.h>
 #include <WebCore/PointerCharacteristics.h>
 #include <WebCore/SyntheticClickResult.h>
@@ -477,6 +478,8 @@ public:
 
 #if ENABLE(OFFSCREEN_CANVAS)
     virtual RefPtr<PlaceholderRenderingContextSource> createPlaceholderRenderingContextSource(PlaceholderRenderingContextIdentifier) { return nullptr; }
+    // nullopt means frames from another process can no longer be applied to a layer directly.
+    virtual void offscreenCanvasPlaceholderLayerChanged(PlaceholderRenderingContextIdentifier, std::optional<PlatformLayerIdentifier>) { }
 #endif
 
 #if ENABLE(WEBGL)

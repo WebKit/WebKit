@@ -98,9 +98,11 @@
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
+#include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/PlaceholderFrameIdentifier.h>
 #include <WebCore/PlaceholderRenderingContextIdentifier.h>
+#include <WebCore/PlatformLayerIdentifier.h>
 #endif
 
 namespace API {
@@ -391,6 +393,8 @@ public:
     // placeholders granted, leaving out any the sender does not control.
     HashSet<WebCore::PlaceholderRenderingContextIdentifier> grantOffscreenCanvasPlaceholderAccess(WebCore::ProcessIdentifier sender, const Vector<WebCore::PlaceholderRenderingContextIdentifier>&);
     static void removeOffscreenCanvasPlaceholderGrantsForProcess(WebCore::ProcessIdentifier);
+    // Called by WebPageProxy, which is the authority on the page the layer belongs to.
+    static void setOffscreenCanvasPlaceholderLayer(WebCore::PlaceholderRenderingContextIdentifier, WebPageProxyIdentifier, std::optional<WebCore::PlatformLayerIdentifier>);
 #endif
 
     void enableSuddenTermination();
@@ -673,7 +677,7 @@ public:
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS) && ENABLE(GPU_PROCESS)
-    void commitOffscreenCanvasPlaceholderFrame(WebCore::PlaceholderRenderingContextIdentifier, WebCore::ImageBufferTransferHandle&&, bool originClean, bool opaque, CompletionHandler<void(bool)>&&);
+    void commitOffscreenCanvasPlaceholderFrame(WebCore::PlaceholderRenderingContextIdentifier, WebCore::ImageBufferTransferHandle&&, std::optional<ImageBufferBackendHandle>&& layerContentsHandle, bool originClean, bool opaque, CompletionHandler<void(bool)>&&);
     void offscreenCanvasPlaceholderDestroyed(WebCore::PlaceholderRenderingContextIdentifier);
 #endif
 

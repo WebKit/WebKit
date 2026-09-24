@@ -26,6 +26,20 @@ addEventListener("message", (event) => {
         return;
     }
 
+    // Commit each color as its own frame, one task apart.
+    if (event.data.type == "draw-sequence") {
+        const colors = event.data.colors;
+        let index = 0;
+        (function next() {
+            drawFrame(colors[index++]);
+            if (index < colors.length)
+                setTimeout(next, 0);
+            else
+                window.parent.postMessage({ type: "sequence-done" }, "*");
+        })();
+        return;
+    }
+
     // Keep committing after the parent has dropped the canvas element. The frames should simply be
     // discarded, not terminate this process.
     if (event.data.type == "keep-drawing") {
