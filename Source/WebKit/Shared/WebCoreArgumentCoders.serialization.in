@@ -3308,7 +3308,7 @@ class WebCore::SpeechRecognitionUpdate {
 };
 
 header: <WebCore/ImageBufferParameters.h>
-[CustomHeader] struct WebCore::ImageBufferParameters {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageBufferParameters {
     WebCore::FloatSize logicalSize;
     float resolutionScale;
     WebCore::ColorSpace colorSpace
@@ -3319,7 +3319,7 @@ header: <WebCore/ImageBufferParameters.h>
 using WebCore::ImageBufferTransferIdentifier = WTF::UUID;
 
 header: <WebCore/ImageBuffer.h>
-[CustomHeader] struct WebCore::ImageBufferTransferHandle {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageBufferTransferHandle {
     WebCore::ImageBufferTransferIdentifier identifier;
     WebCore::ImageBufferParameters parameters;
     WebCore::RenderingMode renderingMode;
