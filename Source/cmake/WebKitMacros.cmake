@@ -725,6 +725,18 @@ function(_WEBKIT_ADD_CODE_SIGN _target)
         list(APPEND _arg_DEPENDS ${_entitlements_path})
     endif ()
 
+    # Info.plist changes break the signature.
+    get_target_property(_info_plist ${_target} MACOSX_FRAMEWORK_INFO_PLIST)
+    if (_info_plist)
+        if (WEBKIT_SDK_IS_MACOS)
+            list(APPEND _arg_DEPENDS
+                "$<TARGET_BUNDLE_CONTENT_DIR:${_target}>/Resources/Info.plist")
+        else ()
+            list(APPEND _arg_DEPENDS
+                "$<TARGET_BUNDLE_CONTENT_DIR:${_target}>/Info.plist")
+        endif ()
+    endif ()
+
     get_target_property(_target_type ${_target} TYPE)
     if (NOT _is_framework)
         # Executables and dylibs have no "sign last" ordering constraint (unlike a

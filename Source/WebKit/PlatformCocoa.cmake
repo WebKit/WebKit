@@ -56,6 +56,19 @@ list(APPEND WebKit_COMPILE_OPTIONS
 
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
+# Used to substitute placeholders in Info.plist, which CMake writes into the
+# bundle. Xcode's $(PLATFORM_NAME) is the lowercase SDK name, and its
+# $(IOS_DEPLOYMENT_TARGET) is only set for the embedded SDKs.
+set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
+set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
+set(PRODUCT_NAME "WebKit")
+set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKit")
+set(PLATFORM_NAME "${WEBKIT_SDK_NAME}")
+# Xcode only fills this in for iOS (hence the platform-specific variable).
+set(IOS_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+set_target_properties(WebKit PROPERTIES
+    MACOSX_FRAMEWORK_INFO_PLIST ${WEBKIT_DIR}/Info.plist)
+
 include(Headers.cmake)
 
 # Read by process-entitlements.sh.
@@ -1217,13 +1230,6 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX,OBJC,OBJCXX>:-DHAVE_CORE_PREDICTION=1>")
 
-set(BUNDLE_VERSION "${MACOSX_FRAMEWORK_BUNDLE_VERSION}")
-set(SHORT_VERSION_STRING "${WEBKIT_MAC_VERSION}")
-set(PRODUCT_NAME "WebKit")
-set(PRODUCT_BUNDLE_IDENTIFIER "com.apple.WebKit")
-configure_file(${WEBKIT_DIR}/Info.plist ${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist)
-execute_process(COMMAND plutil -convert binary1 ${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist)
-
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/WebKitLegacy.h
     "#if defined(__has_include) && __has_include(<WebKitLegacy/WebKit.h>)\n"
     "#import <WebKitLegacy/WebKit.h>\n"
@@ -2105,7 +2111,6 @@ target_link_options(WebKit PRIVATE
     "LINKER:-weak_framework,CoreML"
     "LINKER:-weak_framework,CorePrediction"
     "LINKER:-weak_framework,NaturalLanguage"
-    "LINKER:-sectcreate,__TEXT,__info_plist,${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist"
 )
 
 if (WEBKIT_SDK_IS_XROS)
@@ -2191,15 +2196,6 @@ function(WEBKIT_EMBED_EXTENSION _host_target _ext_name _host_bundle_id)
 endfunction()
 
 function(WEBKIT_DEFINE_IOS_RESOURCES)
-    add_custom_command(TARGET WebKit POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E rm -f
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/WebKit.emit-module.d
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/WebKit.swiftdeps
-        COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/WebKit-Info.plist
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Info.plist
-        COMMENT "Cleaning WebKit.framework build artifacts")
-
     # The XPC service symlinks must be created in the SAME POST_BUILD chain as
     # the codesign below; a separate add_custom_command(POST_BUILD ...)
     # registered afterward modifies the framework after the seal and breaks
@@ -2258,8 +2254,6 @@ function(WEBKIT_DEFINE_IOS_RESOURCES)
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks
         COMMAND ${CMAKE_COMMAND} -E create_symlink ../../libWebKitSwift.dylib
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Frameworks/libWebKitSwift.dylib
-        COMMAND ${CMAKE_COMMAND} -E rm -rf
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/XPCServices
         ${_xpc_service_symlinks}
         COMMAND codesign --force --sign - ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework
         COMMENT "Installing WebKit.framework resources and codesigning")
