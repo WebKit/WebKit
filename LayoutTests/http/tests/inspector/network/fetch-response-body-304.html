@@ -63,7 +63,7 @@ function test()
         description: "Get body for 200 response from network.",
         expression: `createFetchForPHP200()`,
         contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
+            InspectorTest.expectEqual(sourceCode.responseHeaders.get("Cache-Control"), "public, max-age=31556926", "Should see caching header.");
             InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
             InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
             InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");
@@ -115,7 +115,7 @@ function test()
         description: "Get body for 200 response from network.",
         expression: `createFetchForFile200()`,
         contentHandler({error, sourceCode, content, rawBase64Encoded}) {
-            InspectorTest.expectEqual(sourceCode.responseHeaders["Cache-Control"], "public, max-age=31556926", "Should see caching header.");
+            InspectorTest.expectEqual(sourceCode.responseHeaders.get("Cache-Control"), "public, max-age=31556926", "Should see caching header.");
             InspectorTest.expectEqual(sourceCode.mimeType, "text/plain", "MIME type should be 'text/plain'.");
             InspectorTest.expectEqual(sourceCode.statusCode, 200, "Status code should be 200.");
             InspectorTest.expectEqual(sourceCode.responseSource, WI.Resource.ResponseSource.Network, "responseSource should be WI.Resource.ResponseSource.Network");

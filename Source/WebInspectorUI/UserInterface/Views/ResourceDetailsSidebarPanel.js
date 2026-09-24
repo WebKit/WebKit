@@ -264,7 +264,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
             // Ensure the "Query Parameters" section is displayed, right after the "Request & Response" section.
             this.contentView.element.insertBefore(this._queryParametersSection.element, this._requestAndResponseSection.element.nextSibling);
 
-            this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString, true));
+            this._queryParametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(urlComponents.queryString));
         } else {
             // Hide the "Query Parameters" section if we don't have a query string.
             var queryParametersSectionElement = this._queryParametersSection.element;
@@ -444,7 +444,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
 
     _createNameValueDataGrid(data)
     {
-        if (!data || data instanceof Array ? !data.length : isEmptyObject(data))
+        if (!data?.length)
             return null;
 
         var dataGrid = new WI.DataGrid({
@@ -453,21 +453,11 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         });
         dataGrid.copyTextDelimiter = ": ";
 
-        function addDataGridNode(nodeValue)
-        {
-            console.assert(typeof nodeValue.name === "string");
-            console.assert(!nodeValue.value || typeof nodeValue.value === "string");
-
-            var node = new WI.DataGridNode({name: nodeValue.name, value: nodeValue.value || ""});
-            dataGrid.appendChild(node);
-        }
-
-        if (data instanceof Array) {
-            for (var i = 0; i < data.length; ++i)
-                addDataGridNode(data[i]);
-        } else {
-            for (var name in data)
-                addDataGridNode({name, value: data[name] || ""});
+        for (let item of data) {
+            dataGrid.appendChild(new WI.DataGridNode({
+                name: item.name ?? item[0],
+                value: (item.value ?? item[1]) || "",
+            }));
         }
 
         dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, sortDataGrid, this);
@@ -563,7 +553,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
         if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i)) {
             // Simple form data that should be parsable like a query string.
             var parametersRow = new WI.DetailsSectionDataGridRow(null, WI.UIString("No Parameters"));
-            parametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(requestData, true));
+            parametersRow.dataGrid = this._createNameValueDataGrid(parseQueryString(requestData));
 
             this._requestDataSection.groups = [new WI.DetailsSectionGroup([parametersRow])];
             return;

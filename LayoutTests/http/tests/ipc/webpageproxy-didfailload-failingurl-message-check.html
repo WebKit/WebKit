@@ -10,6 +10,7 @@ function log(s) { document.getElementById('log').textContent += s + '\n'; }
 
 function S(v)    { return {type: 'String', value: v}; }
 function U8(v)   { return {type: 'uint8_t', value: v}; }
+function U32(v)  { return {type: 'uint32_t', value: v}; }
 function I64(v)  { return {type: 'int64_t', value: v}; }
 function U64(v)  { return {type: 'uint64_t', value: v}; }
 function B(v)    { return {type: 'bool', value: v}; }
@@ -24,6 +25,7 @@ function resourceRequest(url) {
         DBL(60.0),                  // m_timeoutInterval
         S('GET'),                   // m_httpMethod
         U64(0n), U64(0n),           // HTTPHeaderMap: commonHeaders, uncommonHeaders sizes
+        U32(0),                     // HTTPHeaderMap: repeated value offsets map size.
         U64(0n),                    // m_responseContentDispositionEncodingFallbackArray size
         U8(0),                      // m_cachePolicy
         U8(0),                      // m_sameSiteDisposition

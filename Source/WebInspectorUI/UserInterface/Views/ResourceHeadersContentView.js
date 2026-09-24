@@ -245,7 +245,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
     _createSortedArrayForHeaders(headers)
     {
-        return Object.entries(headers).sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
+        return Array.from(headers).sort((a, b) => a[0].toLowerCase().extendedLocaleCompare(b[0].toLowerCase()));
     }
 
     _refreshSummarySection()
@@ -426,8 +426,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         }
 
         for (let [key, value] of this._createSortedArrayForHeaders(this._resource.responseHeaders)) {
-            // Split multiple Set-Cookie response headers out into their multiple headers instead of as a combined value.
-            if (key.toLowerCase() === "set-cookie") {
+            if (WI.networkManager.usesLegacyHeaderCookieParsing && key.toLowerCase() === "set-cookie") {
                 let responseCookies = this._resource.responseCookies;
                 console.assert(responseCookies.length > 0);
                 for (let cookie of responseCookies)
@@ -451,7 +450,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         detailsElement.removeChildren();
 
         let queryString = this._resource.urlComponents.queryString;
-        let queryStringPairs = parseQueryString(queryString, true);
+        let queryStringPairs = parseQueryString(queryString);
         for (let {name, value} of queryStringPairs)
             this._queryStringSection.appendKeyValuePair(name, value);
     }
@@ -470,7 +469,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         if (requestDataContentType && requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i)) {
             // Simple form data that should be parsable like a query string.
             this._requestDataSection.appendKeyValuePair(WI.UIString("MIME Type"), requestDataContentType);
-            let queryStringPairs = parseQueryString(requestData, true);
+            let queryStringPairs = parseQueryString(requestData);
             for (let {name, value} of queryStringPairs)
                 this._requestDataSection.appendKeyValuePair(name, value);
             return;

@@ -6,10 +6,10 @@ Tests that "Copy as fetch" returns valid JS.
 fetch("http://127.0.0.1:8000/inspector/network/resources/url?query=true", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -21,10 +21,10 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url?query=true", {
 fetch("http://127.0.0.1:8000/inspector/network/resources/url'with$special%7B1..20%7Dchars[]%20.html", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -36,13 +36,13 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url'with$special%7B1..2
 fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>,
-        "X-Custom1": "test1",
-        "X-Custom2'%": "'Test''1\\'2",
-        "X-Custom3": "'${PWD}"
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>],
+        ["X-Custom1", "test1"],
+        ["X-Custom2'%", "'Test''1\\'2"],
+        ["X-Custom3", "'${PWD}"]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -54,10 +54,10 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
 fetch("http://127.0.0.1:8000/inspector/network/resources/url?utf8=%F0%9F%91%8D", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -70,11 +70,11 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "body": "lorem=ipsum&$dolor='sit'&amet={1..20}",
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["Content-Type", "application/x-www-form-urlencoded"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "POST",
     "mode": "cors",
     "redirect": "follow",
@@ -87,11 +87,11 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url?utf8=%F0%9F%91%8D",
     "body": "🌨=⛄️",
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["Content-Type", "application/x-www-form-urlencoded"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "POST",
     "mode": "cors",
     "redirect": "follow",
@@ -104,11 +104,11 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "body": "{\"update\":\"now\"}",
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "Content-Type": "application/json",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["Content-Type", "application/json"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "PUT",
     "mode": "cors",
     "redirect": "follow",
@@ -120,10 +120,10 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
 fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -135,10 +135,10 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
 fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
@@ -149,10 +149,10 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/url", {
 fetch("http://127.0.0.1:8000/inspector/network/resources/data.txt?integrity=invalid", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "integrity": "INVALID",
     "method": "GET",
     "mode": "cors",
@@ -165,15 +165,29 @@ fetch("http://127.0.0.1:8000/inspector/network/resources/data.txt?integrity=inva
 fetch("http://127.0.0.1:8000/inspector/network/resources/data.txt?integrity=valid", {
     "cache": "default",
     "credentials": "omit",
-    "headers": {
-        "Accept": "*/*",
-        "User-Agent": <filtered>
-    },
+    "headers": [
+        ["Accept", "*/*"],
+        ["User-Agent", <filtered>]
+    ],
     "integrity": "sha256-qQCuhmp5o0z/of299BZBz6a+CBJGM2TPN53xY1PHXS8=",
     "method": "GET",
     "mode": "cors",
     "redirect": "follow",
     "referrer": "http://127.0.0.1:8000/inspector/network/copy-as-fetch.html",
     "referrerPolicy": "strict-origin-when-cross-origin"
+})
+
+-- Running test case: WI.Resource.prototype.generateFetchCode.RepeatedHeaders
+fetch("https://example.com/", {
+    "cache": "default",
+    "credentials": "omit",
+    "headers": [
+        ["X-Example", "first, \"quoted\""],
+        ["x-example", "second"],
+        ["X-Example", "third, \"quoted\""]
+    ],
+    "method": "GET",
+    "mode": "cors",
+    "redirect": "follow"
 })
 

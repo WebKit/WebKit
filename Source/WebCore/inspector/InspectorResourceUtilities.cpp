@@ -48,6 +48,7 @@
 #include "Page.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptableDocumentParser.h"
 #include "SharedBuffer.h"
@@ -69,6 +70,60 @@ namespace Inspector {
 namespace ResourceUtilities {
 
 using namespace WebCore;
+
+Ref<JSON::ArrayOf<Protocol::Network::Header>> buildArrayForHeaders(const HTTPHeaderMap& headers)
+{
+    auto result = JSON::ArrayOf<Protocol::Network::Header>::create();
+    auto addHeader = [&](const String& name, const String& value) {
+        result->addItem(Protocol::Network::Header::create()
+            .setName(name)
+            .setValue(value)
+            .release());
+    };
+    for (auto key : headers.commonHeaderKeys()) {
+        String name = httpHeaderNameString(key);
+        for (auto value : headers.getAll(key))
+            addHeader(name, value);
+    }
+    for (auto& key : headers.uncommonHeaderKeys()) {
+        for (auto value : headers.getAll(key))
+            addHeader(key, value);
+    }
+    return result;
+}
+
+Protocol::ErrorStringOr<HTTPHeaderMap> httpHeaderMapFromPayload(const JSON::Array& headers)
+{
+    HTTPHeaderMap result;
+    for (auto& value : headers) {
+        auto header = value->asObject();
+        if (!header)
+            return makeUnexpected("Header must be an object"_s);
+        auto name = header->getString("name"_s);
+        auto headerValue = header->getString("value"_s);
+        if (name.isNull() || headerValue.isNull())
+            return makeUnexpected("Header name and value must be strings"_s);
+        result.add(name, headerValue);
+    }
+    return result;
+}
+
+void addExtraHTTPHeaderFields(ResourceRequest& request, const HTTPHeaderMap& extraHeaders)
+{
+    // Remove and then add so that duplicate headers are added separately.
+    for (auto key : extraHeaders.commonHeaderKeys())
+        request.removeHTTPHeaderField(key);
+    for (auto& key : extraHeaders.uncommonHeaderKeys())
+        request.removeHTTPHeaderField(key);
+    for (auto key : extraHeaders.commonHeaderKeys()) {
+        for (auto value : extraHeaders.getAll(key))
+            request.addHTTPHeaderField(key, value);
+    }
+    for (auto& key : extraHeaders.uncommonHeaderKeys()) {
+        for (auto value : extraHeaders.getAll(key))
+            request.addHTTPHeaderField(key, value);
+    }
+}
 
 Inspector::Protocol::Page::ResourceType resourceTypeToProtocol(Inspector::ResourceType resourceType)
 {
@@ -478,15 +533,6 @@ void loadResource(ScriptExecutionContext& context, const String& urlString, Load
         client->setLoader(WTF::move(loader));
 }
 
-Ref<Inspector::Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap& headers)
-{
-    auto headersValue = Inspector::Protocol::Network::Headers::create().release();
-    auto headersObject = headersValue->asObject();
-    for (const auto& header : headers)
-        headersObject->setString(header.key, header.value);
-    return headersValue;
-}
-
 static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
 {
     switch (priority) {
@@ -521,7 +567,7 @@ Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLo
         if (!additionalMetrics->connectionIdentifier.isNull())
             metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
         if (!additionalMetrics->requestHeaders.isEmpty())
-            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+            metrics->setRequestHeaders(buildArrayForHeaders(additionalMetrics->requestHeaders));
         if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
             metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
         if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())

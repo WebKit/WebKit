@@ -35,6 +35,13 @@ async function triggerServiceWorkerLoad(url) {
     TestPage.dispatchEventToFrontend("LoadComplete");
 }
 
+async function triggerHeaderCloneLoad()
+{
+    let response = await fetch("nph-response-header-entries.py?worker-copy=1");
+    await response.text();
+    TestPage.dispatchEventToFrontend("HeaderCloneComplete", {cookie: response.headers.get("Set-Cookie")});
+}
+
 function test()
 {
     WI.reportInternalError = (e) => { };
@@ -72,6 +79,25 @@ function test()
         name: "Resource.ResponseSource.ServiceWorker.500",
         expression: `triggerServiceWorkerLoad("test-500")`,
         responseSource: WI.Resource.ResponseSource.ServiceWorker,
+    });
+
+    suite.addTestCase({
+        name: "Resource.ResponseSource.ServiceWorker.ClonedHeaders",
+        async test() {
+            let [resourceWasAddedEvent, completionEvent] = await Promise.all([
+                WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded),
+                InspectorTest.awaitEvent("HeaderCloneComplete"),
+                InspectorTest.evaluateInPage("triggerHeaderCloneLoad()"),
+            ]);
+            let {resource} = resourceWasAddedEvent.data;
+            if (!resource.hasResponse())
+                await resource.awaitEvent(WI.Resource.Event.ResponseReceived);
+            InspectorTest.expectTrue(resource.url.includes("nph-response-header-entries.py"), "The cloned header fixture should be reported.");
+            InspectorTest.expectEqual(resource.responseSource, WI.Resource.ResponseSource.ServiceWorker, "The cloned response should pass through the service worker.");
+            InspectorTest.expectEqual(resource.responseHeaders.get("X-Example"), "one,two, three", "Cloned header values should remain intact.");
+            InspectorTest.log("Cloned fields: " + JSON.stringify(resource.responseHeaders.getAll("x-example")));
+            InspectorTest.expectNull(completionEvent.data.cookie, "Cloned public responses should not expose Set-Cookie.");
+        },
     });
 
     suite.addTestCase({

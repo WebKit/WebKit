@@ -5,17 +5,6 @@
 function test() {
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Network.SetExtraHTTPHeaders");
 
-    // HTTP header names are case-insensitive; the request headers reported by the Network domain may
-    // not preserve the exact casing the inspector supplied.
-    function headerValueIgnoringCase(headers, name) {
-        let lowered = name.toLowerCase();
-        for (let key in headers) {
-            if (key.toLowerCase() === lowered)
-                return headers[key];
-        }
-        return undefined;
-    }
-
     suite.addTestCase({
         name: "SiteIsolation.Network.SetExtraHTTPHeaders.AppliedToCrossOriginIFrameRequest",
         description: "Network.setExtraHTTPHeaders should be forwarded to the WebContent process and applied to requests made from a cross-origin iframe.",
@@ -25,28 +14,44 @@ function test() {
             await waitForExpressionInTarget(frameTarget, "typeof triggerFetch === 'function'");
 
             const headerName = "X-WebKit-Inspector-Test";
+            const commonHeaderName = "Content-Language";
             const headerValue = "site-isolation-header-value";
+            const combinedHeaderValue = `${headerValue}, ${headerValue}`;
 
             // setExtraHTTPHeaders is a Network-domain command hosted by ProxyingNetworkAgent on the
             // web-page (backend) target under Site Isolation, not on the per-frame target.
             InspectorTest.assert(WI.backendTarget.hasCommand("Network.setExtraHTTPHeaders"), "Backend target should expose Network.setExtraHTTPHeaders.");
-            await WI.backendTarget.NetworkAgent.setExtraHTTPHeaders({[headerName]: headerValue});
+            await WI.backendTarget.NetworkAgent.setExtraHTTPHeaders([
+                {name: headerName, value: headerValue},
+                {name: headerName.toLowerCase(), value: headerValue},
+                {name: commonHeaderName, value: headerValue},
+                {name: commonHeaderName.toLowerCase(), value: headerValue},
+            ]);
 
             // The command completes in the UIProcess after dispatching the header map to each
             // WebContent process; that dispatch is asynchronous relative to the frame target's own
             // command channel, so poll by triggering fetches from the iframe until a request carries
             // the header. Each request's headers are reported (post-application) via requestWillBeSent.
             let observedValue;
-            for (let attempt = 0; attempt < 20 && observedValue !== headerValue; ++attempt) {
+            let observedHeaderCount;
+            let observedCommonValue;
+            let observedCommonHeaderCount;
+            for (let attempt = 0; attempt < 20 && observedValue !== combinedHeaderValue; ++attempt) {
                 let resourceAddedPromise = WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
                 await frameTarget.RuntimeAgent.evaluate.invoke({expression: "triggerFetch()", objectGroup: "test"});
                 let resource = (await resourceAddedPromise).data.resource;
-                observedValue = headerValueIgnoringCase(resource.requestHeaders, headerName);
-                if (observedValue !== headerValue)
+                observedValue = resource.requestHeaders.get(headerName);
+                observedHeaderCount = resource.requestHeaders.getAll(headerName).length;
+                observedCommonValue = resource.requestHeaders.get(commonHeaderName);
+                observedCommonHeaderCount = resource.requestHeaders.getAll(commonHeaderName).length;
+                if (observedValue !== combinedHeaderValue)
                     await new Promise((resolve) => setTimeout(resolve, 100));
             }
 
-            InspectorTest.expectEqual(observedValue, headerValue, "The cross-origin iframe's request should carry the inspector's extra HTTP header.");
+            InspectorTest.expectEqual(observedValue, combinedHeaderValue, "The cross-origin iframe's request should carry the inspector's extra HTTP header.");
+            InspectorTest.expectEqual(observedHeaderCount, 2, "Repeated extra headers should remain separate fields across processes.");
+            InspectorTest.expectEqual(observedCommonValue, combinedHeaderValue, "The cross-origin iframe's request should carry both common header values.");
+            InspectorTest.expectEqual(observedCommonHeaderCount, 2, "Repeated common headers should remain separate fields across processes.");
         }
     });
 

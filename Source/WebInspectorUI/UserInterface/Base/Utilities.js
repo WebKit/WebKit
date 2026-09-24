@@ -92,23 +92,6 @@ Object.defineProperty(Object, "filter",
     }
 });
 
-Object.defineProperty(Object.prototype, "valueForCaseInsensitiveKey",
-{
-    value(key)
-    {
-        if (this.hasOwnProperty(key))
-            return this[key];
-
-        var lowerCaseKey = key.toLowerCase();
-        for (var currentKey in this) {
-            if (currentKey.toLowerCase() === lowerCaseKey)
-                return this[currentKey];
-        }
-
-        return undefined;
-    }
-});
-
 Object.defineProperty(Map, "fromObject",
 {
     value(object)

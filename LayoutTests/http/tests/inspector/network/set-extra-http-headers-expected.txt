@@ -3,7 +3,29 @@ Tests that Network.setExtraHTTPHeaders replaces previously set headers instead o
 
 == Running test suite: Network.setExtraHTTPHeaders
 -- Running test case: Network.setExtraHTTPHeaders.Replace
-PASS: First request should include "X-WebKit-Test-Header-A".
+PASS: First request should replace its original value and retain both extra values for "X-WebKit-Test-Header-A".
+PASS: Repeated extra headers should remain separate fields.
 PASS: Second request should include "X-WebKit-Test-Header-B".
 PASS: Second request should not include "X-WebKit-Test-Header-A" from the previous call.
+PASS: An empty header list should clear the previous extra headers.
+
+-- Running test case: Network.setExtraHTTPHeaders.InvalidObject
+PASS: Should produce an exception.
+Error: Header must be an object
+
+-- Running test case: Network.setExtraHTTPHeaders.MissingName
+PASS: Should produce an exception.
+Error: Header name and value must be strings
+
+-- Running test case: Network.setExtraHTTPHeaders.InvalidName
+PASS: Should produce an exception.
+Error: Header name and value must be strings
+
+-- Running test case: Network.setExtraHTTPHeaders.MissingValue
+PASS: Should produce an exception.
+Error: Header name and value must be strings
+
+-- Running test case: Network.setExtraHTTPHeaders.InvalidValue
+PASS: Should produce an exception.
+Error: Header name and value must be strings
 

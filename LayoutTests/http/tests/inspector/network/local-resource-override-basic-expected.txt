@@ -10,15 +10,15 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: <not-InspectorOverride>
 Response Headers:
-  Accept-Ranges: <filtered>
-  Connection: <filtered>
-  Content-Length: 29
-  Content-Type: text/plain
-  Date: <filtered>
-  ETag: <filtered>
-  Keep-Alive: <filtered>
-  Last-Modified: <filtered>
-  Server: <filtered>
+  accept-ranges: <filtered>
+  connection: <filtered>
+  content-length: 29
+  content-type: text/plain
+  date: <filtered>
+  etag: <filtered>
+  keep-alive: <filtered>
+  last-modified: <filtered>
+  server: <filtered>
 Content: default override.txt content
 
 
@@ -31,9 +31,9 @@ MIME Type: text/plain
 Status: 987 Override Status Text
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Override-Header-1: Override-Header-Value-1
-  X-Override-Header-2: Override-Header-Value-2
+  content-type: text/plain
+  x-override-header-1: Override-Header-Value-1
+  x-override-header-2: Override-Header-Value-2
 Content: PASS - OVERRIDDEN TEXT
 
 -- Running test case: LocalResourceOverride.JavaScript
@@ -45,8 +45,8 @@ MIME Type: application/javascript
 Status: 200 Super OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: application/javascript
-  X-Custom-Header: Header value
+  content-type: application/javascript
+  x-custom-header: Header value
 Content: /* PASS */ (function() { /* OVERRIDDEN */ })();
 
 -- Running test case: LocalResourceOverride.Image
@@ -58,7 +58,7 @@ MIME Type: image/png
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: image/png
+  content-type: image/png
 Content: [base64] PGRhdGE+
 
 -- Running test case: LocalResourceOverride.URL.QueryString
@@ -71,8 +71,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.URL.Fragment
@@ -84,8 +84,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.URL.CaseSensitive
@@ -97,8 +97,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.URL.IsRegex
@@ -110,8 +110,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.URL.IsCaseSensitiveRegex
@@ -123,8 +123,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.Headers.Empty
@@ -136,7 +136,7 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
+  content-type: text/plain
 Content: PASS
 
 -- Running test case: LocalResourceOverride.Headers.Passthrough.Add
@@ -148,16 +148,16 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Accept-Ranges: <filtered>
-  Connection: <filtered>
-  Content-Length: 29
-  Content-Type: text/plain
-  Date: <filtered>
-  ETag: <filtered>
-  Keep-Alive: <filtered>
-  Last-Modified: <filtered>
-  Server: <filtered>
-  X-Expected: PASS
+  accept-ranges: <filtered>
+  connection: <filtered>
+  content-length: 29
+  content-type: text/plain
+  date: <filtered>
+  etag: <filtered>
+  keep-alive: <filtered>
+  last-modified: <filtered>
+  server: <filtered>
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.Headers.Passthrough.Replace
@@ -169,16 +169,16 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Accept-Ranges: <filtered>
-  Connection: <filtered>
-  Content-Length: 29
-  Content-Type: text/plain
-  Date: <filtered>
-  ETag: <filtered>
-  Keep-Alive: <filtered>
-  Last-Modified: <filtered>
-  Server: <filtered>
-  X-Expected: PASS
+  accept-ranges: <filtered>
+  connection: <filtered>
+  content-length: 29
+  content-type: text/plain
+  date: <filtered>
+  etag: <filtered>
+  keep-alive: <filtered>
+  last-modified: <filtered>
+  server: <filtered>
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.404
@@ -190,8 +190,8 @@ MIME Type: text/plain
 Status: 404 Not Found
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.Enabled
@@ -203,8 +203,8 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: Symbol(inspector-override)
 Response Headers:
-  Content-Type: text/plain
-  X-Expected: PASS
+  content-type: text/plain
+  x-expected: PASS
 Content: PASS
 
 -- Running test case: LocalResourceOverride.Disabled
@@ -216,15 +216,15 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: <not-InspectorOverride>
 Response Headers:
-  Accept-Ranges: <filtered>
-  Connection: <filtered>
-  Content-Length: 29
-  Content-Type: text/plain
-  Date: <filtered>
-  ETag: <filtered>
-  Keep-Alive: <filtered>
-  Last-Modified: <filtered>
-  Server: <filtered>
+  accept-ranges: <filtered>
+  connection: <filtered>
+  content-length: 29
+  content-type: text/plain
+  date: <filtered>
+  etag: <filtered>
+  keep-alive: <filtered>
+  last-modified: <filtered>
+  server: <filtered>
 Content: default override.txt content
 
 
@@ -238,15 +238,15 @@ MIME Type: text/plain
 Status: 200 OK
 Response Source: <not-InspectorOverride>
 Response Headers:
-  Accept-Ranges: <filtered>
-  Connection: <filtered>
-  Content-Length: 29
-  Content-Type: text/plain
-  Date: <filtered>
-  ETag: <filtered>
-  Keep-Alive: <filtered>
-  Last-Modified: <filtered>
-  Server: <filtered>
+  accept-ranges: <filtered>
+  connection: <filtered>
+  content-length: 29
+  content-type: text/plain
+  date: <filtered>
+  etag: <filtered>
+  keep-alive: <filtered>
+  last-modified: <filtered>
+  server: <filtered>
 Content: default override.txt content
 
 -- Running test teardown.

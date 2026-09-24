@@ -89,7 +89,7 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
         return { };
-    headers.set(name, combinedValue);
+    headers.add(name, normalizedValue);
 
     if (guard == FetchHeaders::Guard::RequestNoCors)
         removePrivilegedNoCORSRequestHeaders(headers);
@@ -97,19 +97,35 @@ static ExceptionOr<void> appendToHeaderMap(const String& name, const String& val
     return { };
 }
 
-static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap::HTTPHeaderMapConstIterator::KeyValue& header, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
+static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap& source, HTTPHeaderName key, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
 {
-    ASSERT(!equalIgnoringASCIICase(header.key, "set-cookie"_s));
-    String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-    auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
+    String combinedValue = source.get(key);
+    String normalizedValue = combinedValue.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    auto canWriteResult = canWriteHeader(httpHeaderNameString(key), normalizedValue, combinedValue, guard);
     if (canWriteResult.hasException())
         return canWriteResult.releaseException();
     if (!canWriteResult.releaseReturnValue())
         return { };
-    if (header.keyAsHTTPHeaderName)
-        headers.add(header.keyAsHTTPHeaderName.value(), header.value);
-    else
-        headers.addUncommonHeader(header.key, header.value);
+    for (auto value : source.getAll(key))
+        headers.add(key, value);
+
+    if (guard == FetchHeaders::Guard::RequestNoCors)
+        removePrivilegedNoCORSRequestHeaders(headers);
+
+    return { };
+}
+
+static ExceptionOr<void> appendToHeaderMap(const HTTPHeaderMap& source, const String& key, HTTPHeaderMap& headers, FetchHeaders::Guard guard)
+{
+    String combinedValue = source.get(key);
+    String normalizedValue = combinedValue.trim(isASCIIWhitespaceWithoutFF<char16_t>);
+    auto canWriteResult = canWriteHeader(key, normalizedValue, combinedValue, guard);
+    if (canWriteResult.hasException())
+        return canWriteResult.releaseException();
+    if (!canWriteResult.releaseReturnValue())
+        return { };
+    for (auto value : source.getAll(key))
+        headers.addUncommonHeader(key, value);
 
     if (guard == FetchHeaders::Guard::RequestNoCors)
         removePrivilegedNoCORSRequestHeaders(headers);
@@ -162,8 +178,13 @@ ExceptionOr<void> FetchHeaders::fill(const Init& headerInit)
 
 ExceptionOr<void> FetchHeaders::fill(const FetchHeaders& otherHeaders)
 {
-    for (auto& header : otherHeaders.m_headers) {
-        auto result = appendToHeaderMap(header, m_headers, m_guard);
+    for (auto key : otherHeaders.m_headers.commonHeaderKeys()) {
+        auto result = appendToHeaderMap(otherHeaders.m_headers, key, m_headers, m_guard);
+        if (result.hasException())
+            return result.releaseException();
+    }
+    for (auto& key : otherHeaders.m_headers.uncommonHeaderKeys()) {
+        auto result = appendToHeaderMap(otherHeaders.m_headers, key, m_headers, m_guard);
         if (result.hasException())
             return result.releaseException();
     }
@@ -260,17 +281,15 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
 
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
-    for (auto& header : headers) {
-        String normalizedValue = header.value.trim(isASCIIWhitespaceWithoutFF<char16_t>);
-        auto canWriteResult = canWriteHeader(header.key, normalizedValue, header.value, guard);
-        if (canWriteResult.hasException())
+    for (auto key : headers.commonHeaderKeys()) {
+        auto result = appendToHeaderMap(headers, key, m_headers, guard);
+        if (result.hasException())
             continue;
-        if (!canWriteResult.releaseReturnValue())
+    }
+    for (auto& key : headers.uncommonHeaderKeys()) {
+        auto result = appendToHeaderMap(headers, key, m_headers, guard);
+        if (result.hasException())
             continue;
-        if (header.keyAsHTTPHeaderName)
-            m_headers.add(header.keyAsHTTPHeaderName.value(), header.value);
-        else
-            m_headers.addUncommonHeader(header.key, header.value);
     }
 }
 
