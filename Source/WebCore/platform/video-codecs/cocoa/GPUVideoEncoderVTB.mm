@@ -28,6 +28,7 @@
 
 #if USE(AVFOUNDATION)
 
+#import "CMUtilities.h"
 #include "VideoEncoderVTBSession.h"
 #import <algorithm>
 #import <cmath>
@@ -137,28 +138,27 @@ void GPUVideoEncoderVTB::notifyEncodedFrame(std::span<const uint8_t> data, const
     m_callback(data, info);
 }
 
-void GPUVideoEncoderVTB::notifyDescription(std::span<const uint8_t> data)
+void GPUVideoEncoderVTB::notifyDescription(std::span<const uint8_t> data, const PlatformVideoColorSpace& colorSpace)
 {
-    m_descriptionCallback(data);
+    ASSERT(needsToSendDescription());
+    setNeedsToSendDescription(false);
+    m_descriptionCallback(data, colorSpace);
 }
 
-void GPUVideoEncoderVTB::notifyDescriptionIfNeeded(CMSampleBufferRef sampleBuffer, CFStringRef boxName)
+void GPUVideoEncoderVTB::notifyDescriptionIfNeeded(CMSampleBufferRef sampleBuffer, CFStringRef boxName, const PlatformVideoColorSpace& colorSpace)
 {
     if (!needsToSendDescription())
         return;
 
     if (useAnnexB()) {
-        setNeedsToSendDescription(false);
-        notifyDescription({ });
+        notifyDescription({ }, colorSpace);
         return;
     }
 
     RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
     if (RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms))) {
-        if (RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, boxName))) {
-            setNeedsToSendDescription(false);
-            notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions), static_cast<size_t>(CFDataGetLength(sampleExtensions))));
-        }
+        if (RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, boxName)))
+            notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions), static_cast<size_t>(CFDataGetLength(sampleExtensions))), colorSpace);
     }
 }
 
@@ -214,6 +214,8 @@ bool GPUVideoEncoderVTB::resetCompressionSession()
     if (!m_encoder)
         return false;
 
+    setNeedsToSendDescription(true);
+
     configureCompressionSession();
     return true;
 }
@@ -226,6 +228,23 @@ void GPUVideoEncoderVTB::configureCompressionSession()
     Ref encoder = *m_encoder;
     encoder->setProperty(PAL::kVTCompressionPropertyKey_RealTime, m_creationInfo.isLowLatencyEnabled ? kCFBooleanTrue : kCFBooleanFalse);
     encoder->setProperty(PAL::kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanFalse);
+
+    // FIXME: Enable color space handling for H264 once the H.264 decoder is able to handle it.
+    if (codecType() != kCMVideoCodecType_H264) {
+        if (m_colorSpace.primaries) {
+            if (RetainPtr primaries = convertToCMColorPrimaries(*m_colorSpace.primaries))
+                encoder->setProperty(PAL::kVTCompressionPropertyKey_ColorPrimaries, primaries);
+        }
+        if (m_colorSpace.transfer) {
+            if (RetainPtr transferFunction = convertToCMTransferFunction(*m_colorSpace.transfer))
+                encoder->setProperty(PAL::kVTCompressionPropertyKey_TransferFunction, transferFunction);
+        }
+        if (m_colorSpace.matrix) {
+            if (RetainPtr matrix = convertToCMYCbCRMatrix(*m_colorSpace.matrix))
+                encoder->setProperty(PAL::kVTCompressionPropertyKey_YCbCrMatrix, matrix);
+        }
+    }
+
     setEncoderBitrateBps(m_targetBitrateBps);
 
     // A relatively large value for keyframe emission (7200 frames or 4 minutes).
@@ -279,9 +298,17 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
 {
     assertIsCurrent(queue());
 
-    if (!m_encoder && !resetCompressionSession()) {
-        notifyError();
-        return;
+    PlatformVideoColorSpace colorSpace = computeVideoFrameColorSpace(pixelBuffer);
+    // FIXME: Remove this override when enabling color space handling for H264.
+    if (codecType() == kCMVideoCodecType_H264)
+        colorSpace.fullRange = true;
+
+    if (!m_encoder || colorSpace != m_colorSpace) {
+        m_colorSpace = colorSpace;
+        if (!resetCompressionSession()) {
+            notifyError();
+            return;
+        }
     }
 
     RetainPtr<CFDictionaryRef> frameProperties;
@@ -296,7 +323,7 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
     uint16_t width = m_width;
     uint16_t height = m_height;
 
-    auto status = protect(m_encoder)->encodeFrame(pixelBuffer, presentationTimeStamp, PAL::kCMTimeInvalid, frameProperties, makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, width, height, captureTimeMS, timeStamp, duration, rotation](OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) mutable {
+    auto status = protect(m_encoder)->encodeFrame(pixelBuffer, presentationTimeStamp, PAL::kCMTimeInvalid, frameProperties, makeBlockPtr([weakThis = ThreadSafeWeakPtr { *this }, width, height, captureTimeMS, timeStamp, duration, rotation, colorSpace = m_colorSpace](OSStatus status, VTEncodeInfoFlags infoFlags, CMSampleBufferRef sampleBuffer) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -332,7 +359,7 @@ void GPUVideoEncoderVTB::encodeFrame(CVPixelBufferRef pixelBuffer, int64_t timeS
             temporalIndex = isBaseLayer ? 0 : 1;
 
         GPUVideoEncoderFrameInfo info { width, height, timeStamp, duration, captureTimeMS, isKeyframe, rotation, false, -1, temporalIndex };
-        if (!protectedThis->convertAndNotify(sampleBuffer, WTF::move(info))) {
+        if (!protectedThis->convertAndNotify(sampleBuffer, WTF::move(info), colorSpace)) {
             protectedThis->notifyError();
             return;
         }

@@ -44,14 +44,14 @@ GPUVideoEncoderVTBH265::GPUVideoEncoderVTBH265(CreationInfo&& info, GPUVideoEnco
 {
 }
 
-bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sampleBuffer, GPUVideoEncoderFrameInfo&& info)
+bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sampleBuffer, GPUVideoEncoderFrameInfo&& info, const PlatformVideoColorSpace& colorSpace)
 {
     if (useAnnexB()) {
-        // FIXME: We need to call notifyDescription to provide the right color space.
         auto annexBBuffer = convertHEVCCMSampleBufferToAnnexB(sampleBuffer, info.isKeyFrame);
         if (annexBBuffer.isEmpty())
             return false;
 
+        notifyDescriptionIfNeeded(sampleBuffer, CFSTR("hvcC"), colorSpace);
         notifyEncodedFrame(annexBBuffer.span(), info);
         return true;
     }
@@ -60,16 +60,7 @@ bool GPUVideoEncoderVTBH265::convertAndNotify(RetainPtr<CMSampleBufferRef>&& sam
     if (!buffer)
         return false;
 
-    if (needsToSendDescription()) {
-        RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(sampleBuffer);
-        if (RetainPtr sampleExtensionsDict = dynamic_cf_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms))) {
-            if (RetainPtr sampleExtensions = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("hvcC")))) {
-                setNeedsToSendDescription(false);
-                notifyDescription(unsafeMakeSpan(CFDataGetBytePtr(sampleExtensions), static_cast<size_t>(CFDataGetLength(sampleExtensions))));
-            }
-        }
-    }
-
+    notifyDescriptionIfNeeded(sampleBuffer, CFSTR("hvcC"), colorSpace);
     notifyEncodedFrame(buffer->span(), info);
     return true;
 }

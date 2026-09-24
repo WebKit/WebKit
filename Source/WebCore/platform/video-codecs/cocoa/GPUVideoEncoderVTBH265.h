@@ -45,7 +45,7 @@ public:
 private:
     GPUVideoEncoderVTBH265(CreationInfo&&, GPUVideoEncoderCallback&&, GPUVideoEncoderDescriptionCallback&&, GPUVideoEncoderErrorCallback&&);
 
-    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&) final;
+    bool convertAndNotify(RetainPtr<CMSampleBufferRef>&&, GPUVideoEncoderFrameInfo&&, const PlatformVideoColorSpace&) final;
 };
 
 }

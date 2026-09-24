@@ -213,17 +213,6 @@ Vector<uint8_t> convertHEVCCMSampleBufferToAnnexB(CMSampleBufferRef hvccSampleBu
     return convertParameterSetsCMSampleBufferToAnnexB(hvccSampleBuffer, isKeyframe, PAL::CMVideoFormatDescriptionGetHEVCParameterSetAtIndex);
 }
 
-// FIXME: Remove this default. https://bugs.webkit.org/show_bug.cgi?id=324554
-static PlatformVideoColorSpace defaultHEVCPlatformVideoColorSpace()
-{
-    return {
-        PlatformVideoColorPrimaries::Bt709,
-        PlatformVideoTransferCharacteristics::Iec6196621,
-        PlatformVideoMatrixCoefficients::Bt709,
-        true
-    };
-}
-
 static RetainPtr<CMFormatDescriptionRef> createHEVCFormatDescriptionFromParameterSets(std::span<const uint8_t* const> paramSetPointers, std::span<const size_t> paramSetSizes, size_t nalUnitHeaderLength)
 {
     CMFormatDescriptionRef rawDescription = nullptr;
@@ -243,7 +232,7 @@ static RefPtr<VideoInfo> createVideoInfoFromHEVCFormatDescription(CMFormatDescri
         }, {
             .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
             .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
-            .colorSpace = defaultHEVCPlatformVideoColorSpace(),
+            .colorSpace = colorSpaceFromFormatDescription(description).value_or(PlatformVideoColorSpace { }),
             .extensionAtoms = { FillWith { }, 1, { computeBoxType(kCMVideoCodecType_HEVC), WTF::move(hvcCData) } },
         }
     });

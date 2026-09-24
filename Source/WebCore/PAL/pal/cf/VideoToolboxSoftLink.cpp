@@ -41,6 +41,9 @@ SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_Avera
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_ProfileLevel, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_AllowFrameReordering, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_BaseLayerFrameRateFraction, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_ColorPrimaries, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_TransferFunction, CFStringRef)
+SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_YCbCrMatrix, CFStringRef)
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, CFStringRef)
 
 SOFT_LINK_CONSTANT_FOR_SOURCE(PAL, VideoToolbox, kVTEncodeFrameOptionKey_ForceKeyFrame, CFStringRef)
