@@ -6,8 +6,7 @@ root
         button uid=… 'Save'
     label='No preceding text'
     label='Mixed case and fallback roles'
-        uid=… role=BUTTON
-            'Edit'
+        uid=… role=BUTTON 'Edit'
         role=menuitem
             'Open'
             image uid=…

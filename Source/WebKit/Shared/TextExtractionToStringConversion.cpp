@@ -1508,6 +1508,13 @@ static bool shouldEmitClickableToken(const TextExtraction::Item& item)
     return item.isVisuallyClickable && item.accessibilityRole != "button"_s && item.accessibilityRole != "link"_s;
 }
 
+static bool shouldInlineSingleTextLabel(const TextExtraction::Item& item)
+{
+    return item.hasData<TextExtraction::LinkItemData>()
+        || item.dataAs<TextExtraction::ContainerType>() == TextExtraction::ContainerType::Button
+        || equalLettersIgnoringASCIICase(item.accessibilityRole, "button"_s);
+}
+
 enum class IncludeRectForParentItem : bool { No, Yes };
 
 static String lineWithoutNodeIdentifier(const String& line, const std::optional<String>& identifier)
@@ -2161,6 +2168,24 @@ static bool childTextNodeIsRedundant(const TextExtractionAggregator& aggregator,
     return false;
 }
 
+static bool isTransparentLabelContainer(const TextExtraction::Item& item)
+{
+    if (item.dataAs<TextExtraction::ContainerType>() != TextExtraction::ContainerType::Generic)
+        return false;
+
+    if (!item.accessibilityRole.isEmpty() || !item.title.isEmpty())
+        return false;
+
+    bool hasEmittedAriaAttribute = std::ranges::any_of(item.ariaAttributes, [](auto& entry) {
+        return entry.value != "false"_s;
+    });
+    if (hasEmittedAriaAttribute || !item.clientAttributes.isEmpty())
+        return false;
+
+    auto [classes, idValue] = recognizedClassesAndIdForItem(item);
+    return classes.isEmpty() && idValue.isEmpty();
+}
+
 static bool isUninformativeImage(const TextExtraction::Item& item, const TextExtraction::Item& parent, const TextExtraction::Item* previousSibling, const TextExtractionAggregator& aggregator)
 {
     if (!aggregator.useTextTreeOutput())
@@ -2379,11 +2404,26 @@ static void addTextRepresentationRecursive(const TextExtraction::Item& item, std
             addPartsForItem(item.children[0], WTF::move(identifier), line, aggregator, includeRectForParentItem);
             return;
         }
+
+        if (aggregator.useTextTreeOutput() && shouldInlineSingleTextLabel(item)) {
+            const TextExtraction::Item* descendant = &item.children[0];
+            while (!descendant->hasData<TextExtraction::TextItemData>()) {
+                if (descendant->children.size() != 1 || !isTransparentLabelContainer(*descendant))
+                    break;
+                descendant = &descendant->children[0];
+            }
+
+            if (auto text = descendant->dataAs<TextExtraction::TextItemData>(); text && !StringView { text->content }.trim(isASCIIWhitespace).isEmpty()) {
+                aggregator.collectTextMapping(text->content.trim(isASCIIWhitespace), item.frameIdentifier, identifier, item.nodeIdentifier ? ExtractedNodeInfo::IsInteractive::Yes : ExtractedNodeInfo::IsInteractive::No);
+                addPartsForItem(*descendant, WTF::move(identifier), line, aggregator, includeRectForParentItem);
+                return;
+            }
+        }
     }
 
     std::optional<size_t> inlinedTextChildIndex;
     std::optional<size_t> elidedTextChildIndex;
-    if (aggregator.useTextTreeOutput() && item.children.size() > 1 && (containerType == TextExtraction::ContainerType::Button || item.hasData<TextExtraction::LinkItemData>())) {
+    if (aggregator.useTextTreeOutput() && item.children.size() > 1 && shouldInlineSingleTextLabel(item)) {
         size_t textChildCount = 0;
         size_t firstTextChildIndex = 0;
         for (size_t i = 0; i < item.children.size(); ++i) {

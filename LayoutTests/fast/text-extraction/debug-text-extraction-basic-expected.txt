@@ -11,6 +11,7 @@ root
             input uid=… […] placeholder='Enter text here'
             uid=… role=button 'Clickable Div' […]
             uid=… clickable 'Clickable Div 2' […]
+            uid=… role=button disabled=true 'Wrapped Button Label' […]
             image uid=… […] clickable
         section label='ARIA Labeling Examples'
             'Name Field' […]
