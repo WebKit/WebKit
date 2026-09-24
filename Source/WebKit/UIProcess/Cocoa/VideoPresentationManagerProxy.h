@@ -331,6 +331,7 @@ private:
     const Ref<PlaybackSessionManagerProxy> m_playbackSessionManagerProxy;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfacePair> m_contextMap;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
+    HashSet<PlaybackSessionContextIdentifier> m_contextsHoldingFullscreenClient;
     Vector<CompletionHandler<void()>> m_closeCompletionHandlers;
     WeakHashSet<VideoInPictureInPictureDidChangeObserver> m_pipChangeObservers;
     Markable<PlaybackSessionContextIdentifier> m_lastInteractedWithVideo;
