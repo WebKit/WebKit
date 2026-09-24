@@ -34,6 +34,7 @@
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSubstitutionParser.h"
+#include "CSSTokenizer.h"
 #include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
 
@@ -101,6 +102,37 @@ RefPtr<CSSValue> consumeParamFunction(CSSParserTokenRange& range, CSS::PropertyP
     if (auto parameter = consumeParamFunctionRaw(range, state))
         return CSSParamValue::create(WTF::move(*parameter));
     return nullptr;
+}
+
+Vector<CSS::ParamFunction> parseLinkParametersFromFragment(StringView fragment, const CSSParserContext& context)
+{
+    if (!context.cssLinkParametersEnabled)
+        return { };
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=325164
+    // WTF::URL::consumeFragmentDirective does this, but mutates the URL.
+    // https://wicg.github.io/scroll-to-text-fragment/#fragmentdirective
+    static constexpr auto fragmentDirectiveDelimiter = ":~:"_s;
+
+    auto delimiter = fragment.find(fragmentDirectiveDelimiter);
+    if (delimiter == notFound)
+        return { };
+
+    CSS::PropertyParserState state { .context = context };
+
+    Vector<CSS::ParamFunction> parameters;
+    for (auto directive : fragment.substring(delimiter + fragmentDirectiveDelimiter.length()).split('&')) {
+        CSSTokenizer tokenizer { directive };
+        auto range = tokenizer.tokenRange();
+
+        auto parameter = consumeParamFunctionRaw(range, state);
+        if (!parameter || !range.atEnd())
+            continue;
+
+        parameters.append(WTF::move(*parameter));
+    }
+
+    return parameters;
 }
 
 } // namespace CSSPropertyParserHelpers

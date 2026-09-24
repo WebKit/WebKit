@@ -41,6 +41,8 @@
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include "CSSParserContext.h"
+#include "CSSPropertyParserConsumer+LinkParameters.h"
 #include "StyleLinkParameters.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -80,6 +82,14 @@ CachedImage::CachedImage(URL&& url, Ref<CSSImageValue>&& cssValue, float scaleFa
     m_cachedImage = m_cssValue->cachedImage();
     if (m_cachedImage)
         m_isPending = false;
+}
+
+Vector<CSS::ParamFunction> CachedImage::urlLinkParameters(const CSSParserContext& context, StringView fragment) const
+{
+    auto parameters = CSSPropertyParserHelpers::parseLinkParametersFromFragment(fragment, context);
+    for (auto& parameter : m_url.modifiers.linkParameters)
+        parameters.append(parameter);
+    return parameters;
 }
 
 CachedImage::~CachedImage() = default;
@@ -303,7 +313,12 @@ void CachedImage::setContainerContextForRenderer(const RenderElement& renderer, 
     m_containerSize = containerSize;
     if (!m_cachedImage)
         return;
-    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, !url.isNull() ? url : m_url.resolved, linkParametersForResource(renderer.style().linkParameters(), m_url.modifiers));
+
+    // MemoryCache::removeFragmentIdentifierIfNeeded strips the fragment from m_url for HTTP.
+    // We read from the element's URL.
+    auto& imageURL = !url.isNull() ? url : m_url.resolved;
+
+    protect(m_cachedImage)->setContainerContextForClient(protect(renderer.cachedImageClient()), LayoutSize(containerSize), containerZoom, imageURL, linkParametersForResource(renderer.style().linkParameters(), urlLinkParameters(protect(renderer.document())->cssParserContext(), imageURL.fragmentIdentifier())));
 }
 
 void CachedImage::addClient(RenderElement& renderer)

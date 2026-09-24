@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSLinkParameter.h"
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
@@ -87,6 +88,8 @@ public:
 
 private:
     CachedImage(URL&&, Ref<CSSImageValue>&&, float);
+
+    Vector<CSS::ParamFunction> urlLinkParameters(const CSSParserContext&, StringView fragment) const;
 
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(TreeScope&, const AtomString& fragment) const;
     LegacyRenderSVGResourceContainer* uncheckedRenderSVGResource(const RenderElement*) const;
