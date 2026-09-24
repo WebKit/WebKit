@@ -306,6 +306,11 @@ void Procedure::deleteVariable(Variable* variable)
     m_variables.remove(variable);
 }
 
+void Procedure::deleteAllVariables()
+{
+    m_variables.clearAll();
+}
+
 void Procedure::deleteValue(Value* value)
 {
     m_values.remove(value);

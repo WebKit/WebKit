@@ -98,10 +98,15 @@ bool eliminateDeadCodeImpl(Procedure& proc)
         block->values().shrink(targetIndex);
     }
 
-    for (Variable* variable : proc.variables()) {
-        if (!liveVariables.contains(variable))
-            proc.deleteVariable(variable);
+    if (liveVariables.isEmpty())
+        proc.deleteAllVariables();
+    else {
+        for (Variable* variable : proc.variables()) {
+            if (!liveVariables.contains(variable))
+                proc.deleteVariable(variable);
+        }
     }
+
     return changed;
 }
 

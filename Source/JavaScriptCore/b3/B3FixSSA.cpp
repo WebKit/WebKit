@@ -51,7 +51,7 @@ namespace B3FixSSAInternal {
 static constexpr bool verbose = false;
 }
 
-void killDeadVariables(Procedure& proc)
+bool killDeadVariables(Procedure& proc)
 {
     IndexSet<Variable*> liveVariables;
     for (Value* value : proc.values()) {
@@ -64,10 +64,16 @@ void killDeadVariables(Procedure& proc)
             value->replaceWithNop();
     }
 
+    if (liveVariables.isEmpty()) {
+        proc.deleteAllVariables();
+        return true;
+    }
+
     for (Variable* variable : proc.variables()) {
         if (!liveVariables.contains(variable))
             proc.deleteVariable(variable);
     }
+    return false;
 }
 
 void fixSSALocally(Procedure& proc)
@@ -361,15 +367,15 @@ bool fixSSA(Procedure& proc)
     // Just for sanity, remove any unused variables first. It's unlikely that this code has any
     // bugs having to do with dead variables, but it would be silly to have to fix such a bug if
     // it did arise.
-    killDeadVariables(proc);
-    
-    if (proc.variables().isEmpty())
+    if (killDeadVariables(proc))
         return false;
-    
+
     breakCriticalEdges(proc);
 
     fixSSAGlobally(proc);
-    
+
+    proc.deleteAllVariables();
+
     return true;
 }
 

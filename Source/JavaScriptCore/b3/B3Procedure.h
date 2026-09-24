@@ -183,6 +183,7 @@ public:
 
     // Short for variables().remove(). It's better to call this method since it's out of line.
     void deleteVariable(Variable*);
+    void deleteAllVariables();
 
     SparseCollection<Value>& values() LIFETIME_BOUND { return m_values; }
     const SparseCollection<Value>& values() const LIFETIME_BOUND { return m_values; }
