@@ -49,7 +49,7 @@ template<typename CharacterType> constexpr bool NODELETE isEndOfKey(CharacterTyp
 // Parsing a key (https://datatracker.ietf.org/doc/html/rfc8941#section-4.2.3.3).
 template<typename CharType> static StringView NODELETE parseKey(StringParsingBuffer<CharType>& buffer LIFETIME_BOUND)
 {
-    if (buffer.atEnd() || !isASCIILower(*buffer))
+    if (buffer.atEnd() || (!isASCIILower(*buffer) && *buffer != '*'))
         return { };
     auto keyStart = buffer.span();
     ++buffer;

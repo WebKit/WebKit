@@ -552,6 +552,28 @@ TEST(RFC8941, ParseDictionaryStructuredFieldValue)
     intValue = std::get_if<int64_t>(bareItem);
     EXPECT_TRUE(!!intValue);
     EXPECT_EQ(*intValue, -10);
+
+    // A key may begin with "*" per RFC 9651 section 4.2.3.3 (key = ( lcalpha / "*" ) *(...)).
+    result = RFC8941::parseDictionaryStructuredFieldValue("*foo=1"_s);
+    EXPECT_TRUE(!!result);
+    EXPECT_EQ(result->size(), 1U);
+    EXPECT_TRUE(result->contains("*foo"_s));
+    valueAndParameters = result->get("*foo"_s);
+    bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+    EXPECT_TRUE(!!bareItem);
+    intValue = std::get_if<int64_t>(bareItem);
+    EXPECT_TRUE(!!intValue);
+    EXPECT_EQ(*intValue, 1);
+
+    // A "*"-initial parameter key must also be accepted.
+    result = RFC8941::parseDictionaryStructuredFieldValue("count=42; *note=?1"_s);
+    EXPECT_TRUE(!!result);
+    EXPECT_TRUE(result->contains("count"_s));
+    valueAndParameters = result->get("count"_s);
+    EXPECT_EQ(valueAndParameters.second.map().size(), 1U);
+    auto* paramBoolean = valueAndParameters.second.getIf<bool>("*note"_s);
+    EXPECT_TRUE(!!paramBoolean);
+    EXPECT_TRUE(*paramBoolean);
 }
 
 } // namespace TestWebKitAPI
