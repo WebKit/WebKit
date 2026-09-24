@@ -108,18 +108,7 @@ RefPtr<VideoInfo> createVideoInfoFromAVCC(std::span<const uint8_t> avcc)
     if (PAL::CMVideoFormatDescriptionCreateFromH264ParameterSets(kCFAllocatorDefault, paramSetPtrs.size(), paramSetPtrs.span().data(), paramSetSizes.span().data(), lengthSize, &rawDescription))
         return nullptr;
     RetainPtr description = adoptCF(rawDescription);
-    auto dimensions = PAL::CMVideoFormatDescriptionGetDimensions(rawDescription);
-    auto presentationDimensions = PAL::CMVideoFormatDescriptionGetPresentationDimensions(rawDescription, true, true);
-
-    return VideoInfo::create({
-        {
-            .codecName = kCMVideoCodecType_H264
-        }, {
-            .size = { static_cast<float>(dimensions.width), static_cast<float>(dimensions.height) },
-            .displaySize = { static_cast<float>(presentationDimensions.width), static_cast<float>(presentationDimensions.height) },
-            .extensionAtoms = { FillWith { }, 1 , { computeBoxType(kCMVideoCodecType_H264), SharedBuffer::create(avcc) } },
-        }
-    });
+    return createVideoInfoFromFormatDescription(description);
 }
 
 Vector<uint8_t> convertAVCCMSampleBufferToAnnexB(CMSampleBufferRef avccSampleBuffer, bool isKeyframe)

@@ -1,0 +1,4 @@
+
+PASS HEVC Main 10 isConfigSupported
+PASS HEVC Main 10 (BT.2020/PQ) decoding surfaces bitstream colorSpace and null format
+

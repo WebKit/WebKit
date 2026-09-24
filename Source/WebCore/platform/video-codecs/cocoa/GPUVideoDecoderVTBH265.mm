@@ -78,7 +78,7 @@ void GPUVideoDecoderVTBH265::setFormat(std::span<const uint8_t> data, uint16_t w
 
     RefPtr<VideoInfo> videoInfo;
     if (parameterSets)
-        videoInfo = createVideoInfoFromHVCC(data, *parameterSets);
+        videoInfo = createVideoInfoFromHVCC(*parameterSets);
     if (!videoInfo) {
         RELEASE_LOG_ERROR_IF(parameterSets, WebRTC, "Unable to create video info from hvcC data");
         videoInfo = VideoInfo::create({

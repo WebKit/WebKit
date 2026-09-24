@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebCodecs HEVC HDR (10-bit) decoding</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+const HDR_CODEC = "hev1.2.4.L30.90";
+
+// HEVC Main 10 profile, 32x32, 4:2:0 10-bit, single Annex B keyframe (VPS/SPS/PPS/IDR).
+// The SPS VUI signals BT.2020 primaries, SMPTE ST 2084 (PQ) transfer, BT.2020 non-constant luminance matrix, and limited (video) range.
+const hevcHdrData = new Uint8Array([
+    0, 0, 0, 1, 64, 1, 12, 1, 255, 255, 2, 32, 0, 0, 3, 0, 144, 0, 0, 3, 0, 0, 3, 0, 30, 149, 148, 9,
+    0, 0, 0, 1, 66, 1, 1, 2, 32, 0, 0, 3, 0, 144, 0, 0, 3, 0, 0, 3, 0, 30, 160, 66, 8, 77, 150, 86, 84,
+    164, 194, 240, 22, 161, 34, 1, 32, 128, 0, 0, 3, 0, 128, 0, 0, 3, 0, 132,
+    0, 0, 0, 1, 68, 1, 192, 113, 129, 18,
+    0, 0, 1, 40, 1, 172, 22, 96, 190, 167, 216, 86, 226, 79, 21, 87
+]);
+
+promise_test(async () => {
+    assert_implements(window.VideoDecoder, "VideoDecoder is supported");
+    const support = await VideoDecoder.isConfigSupported({ codec: HDR_CODEC, codedWidth: 32, codedHeight: 32 });
+    assert_true(support.supported, "HEVC Main 10 profile is supported");
+}, "HEVC Main 10 isConfigSupported");
+
+promise_test(async (t) => {
+    const frames = [];
+    const decoder = new VideoDecoder({
+        output: frame => frames.push(frame),
+        error: e => assert_unreached(`decode error: ${e.message}`),
+    });
+    decoder.configure({ codec: HDR_CODEC, codedWidth: 32, codedHeight: 32 });
+    decoder.decode(new EncodedVideoChunk({ type: "key", timestamp: 0, data: hevcHdrData }));
+    await decoder.flush();
+
+    assert_equals(frames.length, 1, "one frame decoded");
+    const frame = frames[0];
+    t.add_cleanup(() => frame.close());
+
+    assert_equals(frame.codedWidth, 32, "width");
+    assert_equals(frame.codedHeight, 32, "height");
+
+    assert_equals(frame.colorSpace.primaries, "bt2020", "primaries from bitstream");
+    assert_equals(frame.colorSpace.transfer, "pq", "transfer from bitstream (SMPTE ST 2084)");
+    assert_equals(frame.colorSpace.matrix, "bt2020-ncl", "matrix from bitstream");
+    assert_false(frame.colorSpace.fullRange, "limited range from bitstream");
+
+    // 10-bit 4:2:0 cannot currently be represented by a VideoPixelFormat value.
+    assert_equals(frame.format, null, "format is null for unrepresentable 10-bit content");
+    assert_true(!window.internals?.is10bitsVideoFrame || internals.is10bitsVideoFrame(frame), "frame is actually 10 bits");
+}, "HEVC Main 10 (BT.2020/PQ) decoding surfaces bitstream colorSpace and null format");
+</script>
+</body>
+</html>
