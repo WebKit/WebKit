@@ -473,6 +473,11 @@ namespace JSC {
     {
     }
 
+    inline ReflectConstructFunctionCallDotNode::ReflectConstructFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, DotType type, ArgumentsNode* args, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall)
+        : FunctionCallDotNode(location, base, ident, type, args, divot, divotStart, divotEnd, isOptionalCall)
+    {
+    }
+
     inline PostfixNode::PostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator oper, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
         : PrefixNode(location, expr, oper, divot, divotStart, divotEnd)
     {

@@ -1862,6 +1862,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::hasOwnPropertyFunction)].set(vm, this, uncheckedDowncast<JSFunction>(hasOwnPropertyFunction));
     }
 
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::reflectConstructFunction)].initLater([](const Initializer<JSCell>& init) {
+        init.set(JSFunction::create(init.vm, init.owner, 2, init.vm.propertyNames->construct.string(), reflectObjectConstruct, ImplementationVisibility::Public));
+    });
+
 #define INIT_PRIVATE_GLOBAL(funcName, code) \
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::funcName)].initLater([] (const Initializer<JSCell>& init) { \
             JSGlobalObject* globalObject = init.owner; \

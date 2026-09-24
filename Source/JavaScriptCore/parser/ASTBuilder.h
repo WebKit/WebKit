@@ -1524,6 +1524,12 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
         // i.e:
         // o.hasOwnProperty(p)
         node = new (m_parserArena) HasOwnPropertyFunctionCallDotNode(location, dot->base(), dot->identifier(), dot->type(), args, divot, divotStart, divotEnd, isOptionalCall);
+    } else if (dot->identifier() == m_vm.propertyNames->construct
+        && dot->base()->isResolveNode()
+        && static_cast<ResolveNode*>(dot->base())->identifier() == m_vm.propertyNames->Reflect
+        && args->m_listNode
+        && args->m_listNode->m_next) {
+        node = new (m_parserArena) ReflectConstructFunctionCallDotNode(location, dot->base(), dot->identifier(), dot->type(), args, divot, divotStart, divotEnd, isOptionalCall);
     }
     if (!node)
         node = new (m_parserArena) FunctionCallDotNode(location, dot->base(), dot->identifier(), dot->type(), args, divot, divotStart, divotEnd, isOptionalCall);

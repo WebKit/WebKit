@@ -1091,6 +1091,14 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
     };
 
+    class ReflectConstructFunctionCallDotNode final : public FunctionCallDotNode {
+    public:
+        ReflectConstructFunctionCallDotNode(const JSTokenLocation&, ExpressionNode* base, const Identifier&, DotType, ArgumentsNode*, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, bool isOptionalCall);
+
+    private:
+        RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
+    };
+
     class DeleteResolveNode final : public ExpressionNode, public ThrowableExpressionData {
     public:
         DeleteResolveNode(const JSTokenLocation&, const Identifier&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);

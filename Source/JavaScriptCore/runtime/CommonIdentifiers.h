@@ -99,6 +99,7 @@
     macro(compilations) \
     macro(compile) \
     macro(configurable) \
+    macro(construct) \
     macro(constructor) \
     macro(count) \
     macro(counters) \
