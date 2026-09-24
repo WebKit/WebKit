@@ -9509,8 +9509,21 @@ void SpeculativeJIT::compileSpread(Node* node)
     else if (node->child1().useKind() == SetObjectUse)
         speculateSetObject(node->child1(), argument);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     bool fastSpreadProven = m_graph.canDoFastSpread(node, m_state.forNode(node->child1()));
     bool fastSpreadWithStructureCheck = !fastSpreadProven && m_graph.canDoFastSpreadWithStructureCheck(node);
+#else
+    // Same two decisions the pre-fix code made, so everything downstream is shared verbatim.
+    constexpr bool canSpeculate = true;
+    Graph::ProtocolWatchResult arrayWatch = Graph::ProtocolWatchResult::Unwatchable;
+    // The structures a RequiresSemanticStructureCheck operand must be narrowed to, which is every
+    // realm the operand's proven structures belong to rather than just the semantic origin's.
+    RegisteredStructureSet arrayStructuresToCheck;
+    if (node->child1().useKind() == ArrayUse)
+        std::tie(arrayWatch, arrayStructuresToCheck) = m_graph.tryWatchArrayIteratorProtocol(node->child1().node(), m_state.forNode(node->child1()), canSpeculate);
+    bool fastSpreadProven = arrayWatch == Graph::ProtocolWatchResult::Proven;
+    bool fastSpreadWithStructureCheck = arrayWatch == Graph::ProtocolWatchResult::RequiresSemanticStructureCheck;
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     if (fastSpreadProven || fastSpreadWithStructureCheck) {
 #if USE(JSVALUE64)
@@ -9530,13 +9543,19 @@ void SpeculativeJIT::compileSpread(Node* node)
         JumpList done;
 
         if (fastSpreadWithStructureCheck) {
-            JSGlobalObject* childGlobalObject = m_graph.globalObjectFor(node->child1()->origin.semantic);
             load32(Address(argument, JSCell::structureIDOffset()), scratch1GPR);
             JumpList structureMatched;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+            JSGlobalObject* childGlobalObject = m_graph.globalObjectFor(node->child1()->origin.semantic);
             for (IndexingType indexingType : Graph::originalArrayShapesForSpread) {
                 RegisteredStructure registered = m_graph.registerStructure(childGlobalObject->originalArrayStructureForIndexingType(indexingType));
                 structureMatched.append(branchWeakStructure(Equal, scratch1GPR, registered));
             }
+#else
+            arrayStructuresToCheck.forEach([&](RegisteredStructure registered) {
+                structureMatched.append(branchWeakStructure(Equal, scratch1GPR, registered));
+            });
+#endif // RC_REMOVE_SEC_ACCEL_3
             slowPath.append(jump());
             structureMatched.link(this);
         }
@@ -9637,6 +9656,7 @@ void SpeculativeJIT::compileSpread(Node* node)
 
         using Helper = JSSet::Helper;
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         // Guard: any non-default structure (changed prototype, or own properties
         // including Symbol.iterator) means we cannot assume the standard iterator
         // protocol applies to this instance. Route such sets to the slow path,
@@ -9656,6 +9676,27 @@ void SpeculativeJIT::compileSpread(Node* node)
                 slowPath.append(branch32(NotEqual, scratch2GPR, TrustedImm32(registeredSetStructure->id().bits())));
             }
         }
+#else
+        // The inline path below walks the Set's storage directly, bypassing Symbol.iterator, so it
+        // is only valid where the iteration protocol has been proven non-observable. Anything less
+        // goes to the slow path, which performs the authoritative
+        // isIteratorProtocolFastAndNonObservable check.
+        auto [setWatch, setStructureToCheck] = m_graph.tryWatchSetIteratorProtocol(node->child1().node(), m_state.forNode(node->child1()), canSpeculate);
+        switch (setWatch) {
+        case Graph::ProtocolWatchResult::Unwatchable:
+            slowPath.append(jump());
+            break;
+
+        case Graph::ProtocolWatchResult::RequiresSemanticStructureCheck: {
+            load32(Address(argument, JSCell::structureIDOffset()), scratch2GPR);
+            slowPath.append(branch32(NotEqual, scratch2GPR, TrustedImm32(setStructureToCheck->id().bits())));
+            break;
+        }
+
+        case Graph::ProtocolWatchResult::Proven:
+            break;
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
         // Load Set storage pointer.
         loadPtr(Address(argument, JSSet::offsetOfStorage()), scratch1GPR);

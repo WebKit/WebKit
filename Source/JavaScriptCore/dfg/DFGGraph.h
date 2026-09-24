@@ -1114,6 +1114,43 @@ public:
         return isWatchingGlobalObjectWatchpoint(globalObject, set, LinkerIR::Type::PromiseSpeciesWatchpointSet);
     }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+
+    enum class ProtocolWatchResult : uint8_t {
+        // Nothing can be proven about the relevant protocol for this value. We have to assume the
+        // worst and check at runtime.
+        Unwatchable,
+
+        // The relevant protocol has been proven to be the primordial one.
+        //
+        // For nodes that perform the protocol on some operand, the AbstractValue's proven
+        // StructureSet has been watched to prove the protocol is still intact. We have to use the
+        // AbstractValue for this because the runtime value could be from a different realm or have
+        // a structure where the protocol has been mutated.
+        //
+        // For nodes that operate on primitive operands or use the protocol for an allocation strategy
+        // they may not need the AbstractValue.
+        Proven,
+
+        // This only occurs for iteration protocols and only when canSpeculate is true.
+        //
+        // There is not enough AbstractValue information to prove statically that all structures
+        // have the original protocol. The realm of the iterable's semantic origin was watched so
+        // the caller can speculate on that realm's original structures at runtime. This is a true
+        // speculation because the iterable's semantic CodeOrigin might still be different from
+        // the runtime value. The most obvious case is that iterable could be a Phi or GetLocal.
+        RequiresSemanticStructureCheck,
+    };
+
+    std::pair<ProtocolWatchResult, RegisteredStructureSet> tryWatchArrayIteratorProtocol(Node* iterable, const AbstractValue&, bool canSpeculate = false);
+    std::pair<ProtocolWatchResult, RegisteredStructure> tryWatchSetIteratorProtocol(Node* iterable, const AbstractValue&, bool canSpeculate = false);
+
+    // NOTE: It's only safe to use this if:
+    // 1) The node is an allocation so we intrinsically know something about it's structure
+    // 2) It's used in a pass that has some sort of escape analysis to detect mutations (e.g. ArgumentsElimination or ObjectAllocationSinking)
+    bool isWatchingAllArrayIteratorProtocolWatchpointsForAllocation(Node* allocation);
+#endif // RC_REMOVE_SEC_ACCEL_3
+
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
     DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_plan.identifiers(); }
@@ -1290,8 +1327,10 @@ public:
 
     ObjectPropertyConditionSet tryEnsureAbsence(JSGlobalObject*, const StructureSet&, CacheableIdentifier);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     bool canDoFastSpread(Node*, const AbstractValue&);
     bool canDoFastSpreadWithStructureCheck(Node*);
+#endif // RC_REMOVE_SEC_ACCEL_3
     static constexpr IndexingType originalArrayShapesForSpread[] = {
         CopyOnWriteArrayWithContiguous, ArrayWithContiguous,
         ArrayWithInt32, CopyOnWriteArrayWithInt32,

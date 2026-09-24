@@ -215,8 +215,7 @@ public:
         return m_set.onlyStructure();
     }
 
-    template<typename Functor>
-    void forEach(const Functor& functor) const
+    void forEach(const Invocable<void(const RegisteredStructure&)> auto& functor) const
     {
         ASSERT(!isTop());
         m_set.forEach(functor);

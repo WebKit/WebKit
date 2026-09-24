@@ -3835,6 +3835,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case PhantomNewArrayBuffer:
         case PhantomCreateRest:
             break;
+#ifdef RC_REMOVE_SEC_ACCEL_3
         default:
             if (!m_graph.canDoFastSpread(node, forNode(node->child1()))) {
                 if (node->child1().useKind() == SetObjectUse) {
@@ -3864,10 +3865,35 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 didFoldClobberWorld();
             break;
         }
+#else
+        default: {
+            Graph::ProtocolWatchResult watch = Graph::ProtocolWatchResult::Unwatchable;
+            if (node->child1().useKind() == ArrayUse)
+                watch = m_graph.tryWatchArrayIteratorProtocol(node->child1().node(), forNode(node->child1())).first;
+            else if (node->child1().useKind() == SetObjectUse)
+                watch = m_graph.tryWatchSetIteratorProtocol(node->child1().node(), forNode(node->child1())).first;
+
+            switch (watch) {
+            case Graph::ProtocolWatchResult::Proven:
+                didFoldClobberWorld();
+                break;
+            case Graph::ProtocolWatchResult::Unwatchable:
+                clobberWorld();
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        }
+        }
+#endif // RC_REMOVE_SEC_ACCEL_3
+
 
         {
             RegisteredStructureSet structureSet;
             structureSet.add(m_graph.registerStructure(m_vm.cellButterflyStructure(CopyOnWriteArrayWithContiguous)));
+            // FIXME: SetObjectUse and PhantomCreateRest always allocate a fresh CopyOnWriteArrayWithContiguous so they can't have an
+            // cellButterflyOnlyAtomStringsStructure.
             structureSet.add(m_graph.registerStructure(m_vm.cellButterflyOnlyAtomStringsStructure.get()));
             setForNode(node, structureSet);
         }
