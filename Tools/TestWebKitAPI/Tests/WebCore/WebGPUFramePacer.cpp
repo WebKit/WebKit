@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include <WebCore/WebGPUFramePacer.h>
+#include <algorithm>
+#include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 
 using WebCore::FramesPerSecond;
@@ -32,175 +34,227 @@ using WebCore::WebGPUFramePacer;
 
 namespace TestWebKitAPI {
 
-static MonotonicTime feedFrames(WebGPUFramePacer& pacer, MonotonicTime start, double frameCostMs, unsigned count)
-{
-    auto t = start;
-    for (unsigned i = 0; i < count; ++i) {
-        t = t + Seconds::fromMilliseconds(frameCostMs);
-        pacer.recordFrame(Seconds::fromMilliseconds(frameCostMs), t);
-    }
-    return t;
-}
-
 static constexpr FramesPerSecond k60Hz = 60;
 
-TEST(WebGPUFramePacer, NoRateBeforeWarmUp)
-{
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
+// Drives a pacer the way the presentation context drives the real one: the canvas presents at whatever
+// rate the pacer asks for, the GPU executes submitted frames one at a time, and a present blocks until
+// the frame from two presents ago has finished.
+class GPUTimeline {
+public:
+    explicit GPUTimeline(FramesPerSecond displayRate)
+        : m_displayRate(displayRate)
+    {
+        m_pacer.setDisplayNominalFramesPerSecond(displayRate);
+    }
 
-    auto start = MonotonicTime() + Seconds(1);
-    auto now = feedFrames(pacer, start, 45.0, 4);
-    EXPECT_FALSE(pacer.preferredFramesPerSecond(now).has_value());
+    // minimumPresentIntervalMs models a page that cannot present as fast as the pacer would allow.
+    void present(double gpuCostMs, unsigned count, double minimumPresentIntervalMs = 0)
+    {
+        for (unsigned i = 0; i < count; ++i)
+            presentOnce(Seconds::fromMilliseconds(gpuCostMs), Seconds::fromMilliseconds(minimumPresentIntervalMs));
+    }
+
+    std::optional<FramesPerSecond> rate() const { return m_pacer.preferredFramesPerSecond(m_now); }
+    std::optional<FramesPerSecond> rateAfter(Seconds idle) const { return m_pacer.preferredFramesPerSecond(m_now + idle); }
+
+private:
+    static constexpr size_t maximumInFlightFrames = 2;
+
+    struct InFlightFrame {
+        MonotonicTime completion;
+        Seconds cost;
+    };
+
+    void presentOnce(Seconds gpuCost, Seconds minimumPresentInterval)
+    {
+        auto paced = m_pacer.preferredFramesPerSecond(m_now);
+        m_now = m_now + std::max(Seconds { 1.0 / (paced ? *paced : m_displayRate) }, minimumPresentInterval);
+
+        std::optional<InFlightFrame> drained;
+        Seconds stall;
+        if (m_inFlight.size() >= maximumInFlightFrames) {
+            drained = m_inFlight.takeFirst();
+            if (drained->completion > m_now) {
+                stall = drained->completion - m_now;
+                m_now = drained->completion;
+            }
+        }
+
+        m_gpuIdleAt = std::max(m_now, m_gpuIdleAt) + gpuCost;
+        m_inFlight.append({ m_gpuIdleAt, gpuCost });
+
+        m_pacer.recordFrame(drained ? drained->cost : 0_s, stall, m_now);
+    }
+
+    WebGPUFramePacer m_pacer;
+    FramesPerSecond m_displayRate;
+    MonotonicTime m_now { MonotonicTime() + Seconds(1) };
+    MonotonicTime m_gpuIdleAt { MonotonicTime() + Seconds(1) };
+    Deque<InFlightFrame> m_inFlight;
+};
+
+TEST(WebGPUFramePacer, CheapContentIsNotPaced)
+{
+    GPUTimeline timeline(k60Hz);
+    timeline.present(2.0, 120);
+    EXPECT_FALSE(timeline.rate().has_value());
 }
 
 TEST(WebGPUFramePacer, FullRefreshContentIsNotPaced)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 1000.0 / 60.0, 40);
-    EXPECT_FALSE(pacer.preferredFramesPerSecond(now).has_value());
+    GPUTimeline timeline(k60Hz);
+    timeline.present(1000.0 / 60.0, 120);
+    EXPECT_FALSE(timeline.rate().has_value());
 }
 
 TEST(WebGPUFramePacer, ConvergesTo20For45msFrames)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
-    auto rate = pacer.preferredFramesPerSecond(now);
-    ASSERT_TRUE(rate.has_value());
-    EXPECT_EQ(*rate, FramesPerSecond(20));
-}
-
-TEST(WebGPUFramePacer, LocksInFirstRateImmediatelyAfterWarmUp)
-{
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    // The first sustainable rate should engage as soon as the sample window is
-    // warmed up (8 samples), rather than ramping down one rung per confirmation
-    // window, so the startup jitter window is as short as possible.
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 8);
-    auto rate = pacer.preferredFramesPerSecond(now);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    auto rate = timeline.rate();
     ASSERT_TRUE(rate.has_value());
     EXPECT_EQ(*rate, FramesPerSecond(20));
 }
 
 TEST(WebGPUFramePacer, ConvergesTo12For83msFrames)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 83.0, 60);
-    auto rate = pacer.preferredFramesPerSecond(now);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(83.0, 60);
+    auto rate = timeline.rate();
     ASSERT_TRUE(rate.has_value());
     EXPECT_EQ(*rate, FramesPerSecond(12));
 }
 
 TEST(WebGPUFramePacer, ConvergedRateIsStable)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    auto start = MonotonicTime() + Seconds(1);
-    auto now = feedFrames(pacer, start, 45.0, 60);
-    auto first = pacer.preferredFramesPerSecond(now);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    auto first = timeline.rate();
     ASSERT_TRUE(first.has_value());
 
-    for (unsigned i = 0; i < 60; ++i) {
-        now = feedFrames(pacer, now, 45.0, 1);
-        auto rate = pacer.preferredFramesPerSecond(now);
+    for (unsigned i = 0; i < 120; ++i) {
+        timeline.present(45.0, 1);
+        auto rate = timeline.rate();
         ASSERT_TRUE(rate.has_value());
         EXPECT_EQ(*rate, *first);
     }
 }
 
+TEST(WebGPUFramePacer, ClosedLoopDoesNotRatchet)
+{
+    GPUTimeline timeline(k60Hz);
+    timeline.present(25.0, 400);
+    auto rate = timeline.rate();
+    ASSERT_TRUE(rate.has_value());
+    EXPECT_EQ(*rate, FramesPerSecond(30));
+}
+
+TEST(WebGPUFramePacer, SingleSpikeDoesNotPaceFullRateContent)
+{
+    GPUTimeline timeline(k60Hz);
+    timeline.present(4.0, 60);
+    ASSERT_FALSE(timeline.rate().has_value());
+
+    // One slow frame backs presents up for many frames afterwards, but the frames themselves are cheap.
+    timeline.present(200.0, 1);
+    timeline.present(4.0, 60);
+    EXPECT_FALSE(timeline.rate().has_value());
+}
+
 TEST(WebGPUFramePacer, SingleSpikeDoesNotStepDown)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
-    auto before = pacer.preferredFramesPerSecond(now);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    auto before = timeline.rate();
     ASSERT_TRUE(before.has_value());
     EXPECT_EQ(*before, FramesPerSecond(20));
 
-    now = feedFrames(pacer, now, 200.0, 1);
-    auto after = pacer.preferredFramesPerSecond(now);
+    timeline.present(200.0, 1);
+    timeline.present(45.0, 8);
+    auto after = timeline.rate();
     ASSERT_TRUE(after.has_value());
     EXPECT_EQ(*after, FramesPerSecond(20));
 }
 
 TEST(WebGPUFramePacer, SustainedOverloadStepsDown)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    ASSERT_EQ(*timeline.rate(), FramesPerSecond(20));
 
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
-    ASSERT_EQ(*pacer.preferredFramesPerSecond(now), FramesPerSecond(20));
-
-    now = feedFrames(pacer, now, 83.0, 60);
-    auto after = pacer.preferredFramesPerSecond(now);
+    timeline.present(83.0, 60);
+    auto after = timeline.rate();
     ASSERT_TRUE(after.has_value());
     EXPECT_EQ(*after, FramesPerSecond(12));
 }
 
-TEST(WebGPUFramePacer, IdleCanvasStopsPacing)
+TEST(WebGPUFramePacer, BurstOfSlowFramesRecovers)
 {
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
+    GPUTimeline timeline(k60Hz);
+    timeline.present(2.0, 60);
+    ASSERT_FALSE(timeline.rate().has_value());
 
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
-    ASSERT_TRUE(pacer.preferredFramesPerSecond(now).has_value());
+    // The regression: eight frames of about 80 ms of GPU work lowered the rate to a divisor of the
+    // refresh rate and it never came back.
+    timeline.present(80.0, 8);
+    auto during = timeline.rate();
+    ASSERT_TRUE(during.has_value());
+    EXPECT_EQ(*during, FramesPerSecond(12));
 
-    auto later = now + Seconds(1);
-    EXPECT_FALSE(pacer.preferredFramesPerSecond(later).has_value());
-}
-
-TEST(WebGPUFramePacer, DivisorLadderFollows120HzDisplay)
-{
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(120);
-
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
-    auto rate = pacer.preferredFramesPerSecond(now);
-    ASSERT_TRUE(rate.has_value());
-    EXPECT_EQ(*rate, FramesPerSecond(20));
-}
-
-TEST(WebGPUFramePacer, ClosedLoopDoesNotRatchet)
-{
-    WebGPUFramePacer pacer;
-    pacer.setDisplayNominalFramesPerSecond(k60Hz);
-
-    const auto trueCost = Seconds::fromMilliseconds(25.0);
-    auto now = MonotonicTime() + Seconds(1);
-
-    std::optional<FramesPerSecond> rate;
-    for (unsigned i = 0; i < 400; ++i) {
-        auto paced = pacer.preferredFramesPerSecond(now);
-        double periodMs = paced ? 1000.0 / *paced : 1000.0 / 60.0;
-        now = now + Seconds::fromMilliseconds(periodMs);
-        pacer.recordFrame(trueCost, now);
-        rate = pacer.preferredFramesPerSecond(now);
-    }
-
-    ASSERT_TRUE(rate.has_value());
-    EXPECT_EQ(*rate, FramesPerSecond(30));
+    timeline.present(2.0, 40);
+    EXPECT_FALSE(timeline.rate().has_value());
 }
 
 TEST(WebGPUFramePacer, RecoversWhenWorkloadEases)
 {
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    ASSERT_TRUE(timeline.rate().has_value());
+    EXPECT_EQ(*timeline.rate(), FramesPerSecond(20));
+
+    timeline.present(12.0, 60);
+    EXPECT_FALSE(timeline.rate().has_value());
+}
+
+TEST(WebGPUFramePacer, ExpensiveFramesThatKeepUpAreNotPaced)
+{
+    GPUTimeline timeline(k60Hz);
+    // A page whose script holds it to 10 fps leaves the GPU 100 ms for a 45 ms frame, so presents never wait.
+    timeline.present(45.0, 120, 100.0);
+    EXPECT_FALSE(timeline.rate().has_value());
+}
+
+TEST(WebGPUFramePacer, IdleCanvasStopsPacing)
+{
+    GPUTimeline timeline(k60Hz);
+    timeline.present(45.0, 60);
+    ASSERT_TRUE(timeline.rate().has_value());
+
+    EXPECT_FALSE(timeline.rateAfter(Seconds(1)).has_value());
+}
+
+TEST(WebGPUFramePacer, DivisorLadderFollows120HzDisplay)
+{
+    GPUTimeline timeline(120);
+    timeline.present(45.0, 60);
+    auto rate = timeline.rate();
+    ASSERT_TRUE(rate.has_value());
+    EXPECT_EQ(*rate, FramesPerSecond(20));
+}
+
+TEST(WebGPUFramePacer, ResetReturnsToUnpaced)
+{
     WebGPUFramePacer pacer;
     pacer.setDisplayNominalFramesPerSecond(k60Hz);
 
-    auto now = feedFrames(pacer, MonotonicTime() + Seconds(1), 45.0, 60);
+    auto now = MonotonicTime() + Seconds(1);
+    for (unsigned i = 0; i < 8; ++i) {
+        now = now + Seconds::fromMilliseconds(16.0);
+        pacer.recordFrame(83_ms, 60_ms, now);
+    }
     ASSERT_TRUE(pacer.preferredFramesPerSecond(now).has_value());
-    EXPECT_EQ(*pacer.preferredFramesPerSecond(now), FramesPerSecond(20));
 
-    now = feedFrames(pacer, now, 12.0, 200);
+    pacer.reset();
     EXPECT_FALSE(pacer.preferredFramesPerSecond(now).has_value());
 }
 

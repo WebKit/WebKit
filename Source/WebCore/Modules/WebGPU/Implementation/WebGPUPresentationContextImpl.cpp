@@ -153,6 +153,13 @@ Seconds PresentationContextImpl::lastFrameGPUCost() const
     return 0_s;
 }
 
+Seconds PresentationContextImpl::lastFramePresentStall() const
+{
+    if (auto* surface = m_backing.get())
+        return Seconds { wgpuSurfaceGetLastFramePresentStallSeconds(surface) };
+    return 0_s;
+}
+
 RefPtr<WebCore::NativeImage> PresentationContextImpl::getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
     if (auto* surface = m_swapChain.get())

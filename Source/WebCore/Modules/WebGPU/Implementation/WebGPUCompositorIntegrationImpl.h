@@ -95,6 +95,7 @@ private:
     void updateContentsHeadroom(float) override;
 
     Seconds lastFrameGPUCost() const override;
+    Seconds lastFramePresentStall() const override;
 
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::ColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, unsigned bufferCount, Device&) override;
