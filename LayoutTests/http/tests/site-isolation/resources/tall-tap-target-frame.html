@@ -1,0 +1,15 @@
+<body style="margin: 0; font: 20px monospace;">
+<div style="height: 1000px;"></div>
+<button id="target" style="width: 200px; height: 60px;">Tap me</button>
+<div style="height: 1000px;"></div>
+<script>
+document.getElementById("target").addEventListener("click", () => {
+    window.top.postMessage("clicked", "*");
+});
+window.scrollTo(0, 900);
+requestAnimationFrame(() => {
+    const rect = document.getElementById("target").getBoundingClientRect();
+    window.top.postMessage({ type: "ready", buttonLeft: rect.left, buttonTop: rect.top, buttonWidth: rect.width, buttonHeight: rect.height, scrollY: window.scrollY }, "*");
+});
+</script>
+</body>

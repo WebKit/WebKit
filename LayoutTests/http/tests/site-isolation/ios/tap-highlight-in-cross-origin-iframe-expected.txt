@@ -1,0 +1,13 @@
+Tapping a button inside a cross-origin iframe should show a tap highlight over the button.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS buttonWasClicked is true
+PASS highlightWidth is buttonWidth + 2 * tapHighlightInflationPerSide
+PASS highlightHeight is buttonHeight + 2 * tapHighlightInflationPerSide
+PASS highlightTop is iframeTop - tapHighlightInflationPerSide
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

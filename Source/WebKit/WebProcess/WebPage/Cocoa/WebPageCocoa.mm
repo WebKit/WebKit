@@ -3523,16 +3523,12 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
     if (!node)
         return;
 
-    RefPtr localMainFrame = m_page->localMainFrame();
-    if (!localMainFrame)
-        return;
+    if (RefPtr localMainFrame = m_page->localMainFrame()) {
+        if (m_page->isEditable() && node == protect(localMainFrame->document())->body())
+            return;
 
-    if (m_page->isEditable() && node == protect(localMainFrame->document())->body())
-        return;
-
-    if (RefPtr element = dynamicDowncast<Element>(*node)) {
-        ASSERT(m_page);
-        localMainFrame->loader().prefetchDNSIfNeeded(element->absoluteLinkURL());
+        if (RefPtr element = dynamicDowncast<Element>(*node))
+            localMainFrame->loader().prefetchDNSIfNeeded(element->absoluteLinkURL());
     }
 
     RefPtr updatedNode = node;
@@ -3568,7 +3564,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         if (!updatedNode->document().frame()->isMainFrame()) {
             RefPtr view = updatedNode->document().frame()->view();
             for (auto& quad : quads)
-                quad = view->contentsToRootView(quad);
+                quad = view->contentsToMainFrameView(quad);
         }
 
         LayoutRoundedRect::Radii borderRadii;

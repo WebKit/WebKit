@@ -1,0 +1,18 @@
+With two same-site cross-origin iframes at different positions on the page, tapping a button in either one should show a tap highlight over that button, not at the other iframe's position.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Tapped the button in frame A:
+PASS highlightWidth is buttonWidth + 2 * tapHighlightInflationPerSide
+PASS highlightHeight is buttonHeight + 2 * tapHighlightInflationPerSide
+PASS highlightTop is frameATop - tapHighlightInflationPerSide
+Tapped the button in frame B:
+PASS highlightWidth is buttonWidth + 2 * tapHighlightInflationPerSide
+PASS highlightHeight is buttonHeight + 2 * tapHighlightInflationPerSide
+PASS highlightTop is frameBTop - tapHighlightInflationPerSide
+PASS clickCount is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
