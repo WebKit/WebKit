@@ -40,7 +40,7 @@ public:
     bool initialize();
     void invalidate();
     bool importEGLImage(EGLImage);
-    bool draw(int viewportX, int viewportY, int viewportWidth, int viewportHeight);
+    bool draw(int viewportX, int viewportY, int viewportWidth, int viewportHeight, float opacity);
     bool isInitialized() const { return m_program; }
 
 private:
@@ -52,5 +52,6 @@ private:
     GLint m_positionLocation { -1 };
     GLint m_texCoordLocation { -1 };
     GLint m_textureLocation { -1 };
+    GLint m_opacityLocation { -1 };
     PFNGLEGLIMAGETARGETTEXTURE2DOESPROC m_imageTargetTexture2DOES { nullptr };
 };
