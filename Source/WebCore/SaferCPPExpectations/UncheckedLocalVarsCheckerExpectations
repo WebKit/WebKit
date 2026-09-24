@@ -1,8 +1,3 @@
-accessibility/AXObjectCache.cpp
-accessibility/AccessibilityRenderObject.cpp
-[ iOS ] accessibility/cocoa/AXTextMarkerCocoa.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 dom/Document.cpp
 dom/Position.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm

@@ -30,6 +30,7 @@
 #if PLATFORM(COCOA)
 
 #import "AXObjectCacheInlines.h"
+#import "ChromeClient.h"
 #import "FontCascadeInlines.h"
 #import "StyleComputedStyle.h"
 #import "StyleShadow.h"
@@ -44,10 +45,16 @@
 #import <AppKit/NSAccessibilityConstants.h>
 #else
 #import "StyleSpeakAs.h"
+#import "WAKResponder.h"
 #import "WebAccessibilityObjectWrapperIOS.h"
 #endif
 
 namespace WebCore {
+
+void AccessibilityObject::makeFirstResponderForPlatformWidget(ChromeClient& client, PlatformWidget widget)
+{
+    client.makeFirstResponder((NSResponder *)widget);
+}
 
 Style::SpeakAs AccessibilityObject::speakAs() const
 {
@@ -99,7 +106,7 @@ static constexpr UniChar attachmentCharacterValue = 0xfffc;
 
 static void addObjectWrapperToArray(const AccessibilityObject& object, NSMutableArray *array)
 {
-    auto* wrapper = object.wrapper();
+    RetainPtr wrapper = object.wrapper();
     if (!wrapper)
         return;
 

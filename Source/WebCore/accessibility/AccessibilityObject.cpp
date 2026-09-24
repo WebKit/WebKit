@@ -452,7 +452,7 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
     auto originalSelection = frame->selection().selection();
     if (auto range = simpleRange()) {
         // Passing UserTriggered::No, which is the default value, guaranties that accessibility is not notified of text selection changes.
-        frame->selection().setSelectedRange(SimpleRange { range->start, range->start }, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+        protect(frame->selection())->setSelectedRange(SimpleRange { range->start, range->start }, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
     }
 
     Vector<AXTextMarkerRange> ranges;
@@ -471,7 +471,7 @@ Vector<AXTextMarkerRange> AccessibilityObject::misspellingRanges() const
             ranges = { { treeID(), objectID(), static_cast<unsigned>(location), static_cast<unsigned>(length) } };
     }
 
-    frame->selection().setSelectedRange(originalSelection.range(), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
+    protect(frame->selection())->setSelectedRange(originalSelection.range(), Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes, UserTriggered::No);
     return ranges;
 }
 
@@ -1339,7 +1339,7 @@ Vector<String> AccessibilityObject::performTextOperation(const AccessibilityText
         else if (i < replacementStringsCount)
             replacementString = operation.replacementStrings[i];
 
-        if (!frame->selection().setSelectedRange(textRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
+        if (!protect(frame->selection())->setSelectedRange(textRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             continue;
 
         String text = plainText(textRange);
@@ -1870,7 +1870,7 @@ VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& poi
 #endif
     }
 
-    return innerNode->renderer()->visiblePositionForPoint(pointResult, HitTestSource::User);
+    return protect(innerNode->renderer())->visiblePositionForPoint(pointResult, HitTestSource::User);
 }
 
 VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositions(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
@@ -2150,7 +2150,7 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node& replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
-    if (!isRendererReplacedElement(replacedNode.renderer()) || replacedNode.isTextNode())
+    if (!isRendererReplacedElement(protect(replacedNode.renderer())) || replacedNode.isTextNode())
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
@@ -2303,7 +2303,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.text().length()) {
             // Add a textual representation for list marker text.
-            builder.append(lineStartListMarkerText(renderListItemContainer(it.node()), visiblePositionRange.start));
+            builder.append(lineStartListMarkerText(protect(renderListItemContainer(it.node())), visiblePositionRange.start));
             it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
@@ -2725,7 +2725,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     if (!renderObject)
         return nullptr;
 
-    RefPtr axObject = protect(renderObject->document())->axObjectCache()->getOrCreate(*node);
+    RefPtr axObject = protect(protect(renderObject->document())->axObjectCache())->getOrCreate(*node);
 
     return Accessibility::findAncestor<AccessibilityObject>(*axObject, true, [] (const AccessibilityObject& object) {
         return object.role() == AccessibilityRole::Heading;
@@ -3001,7 +3001,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
 {
     // If this is being called on the web area, redirect it to be on the body, which will have a renderer associated with it.
     if (RefPtr document = dynamicDowncast<Document>(node())) {
-        if (RefPtr bodyObject = axObjectCache()->getOrCreate(protect(document->body())))
+        if (RefPtr bodyObject = protect(axObjectCache())->getOrCreate(protect(document->body())))
             return bodyObject->replaceTextInRange(replacementString, range);
         return false;
     }
@@ -3031,7 +3031,7 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
             return false;
 
         // Fail if the selection can't be set, otherwise the wrong text would be replaced.
-        if (!frame->selection().setSelectedRange(*insertionRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
+        if (!protect(frame->selection())->setSelectedRange(*insertionRange, Affinity::Downstream, FrameSelection::ShouldCloseTyping::Yes))
             return false;
 
         protect(frame->editor())->replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
@@ -3687,7 +3687,7 @@ void AccessibilityObject::setFocused(bool focus)
 
         // Legacy WebKit1 case.
         if (frameView->platformWidget())
-            page->chrome().client().makeFirstResponder((NSResponder *)frameView->platformWidget());
+            makeFirstResponderForPlatformWidget(page->chrome().client(), frameView->platformWidget());
 #endif
 #if PLATFORM(MAC)
         else
@@ -4070,7 +4070,7 @@ bool AccessibilityObject::isOnScreen() const
         Ref outer = objects[i];
         Ref inner = objects[i - 1];
         // FIXME: unclear if we need LegacyIOSDocumentVisibleRect.
-        const IntRect outerRect = i < levels ? snappedIntRect(outer->boundingBoxRect()) : outer->getScrollableAreaIfScrollable()->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
+        const IntRect outerRect = i < levels ? snappedIntRect(outer->boundingBoxRect()) : protect(outer->getScrollableAreaIfScrollable())->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect);
 
         IntRect innerRect = snappedIntRect(inner->boundingBoxRect());
         if (RefPtr scrollView = !outer->isRoot() ? outer->scrollView() : nullptr)

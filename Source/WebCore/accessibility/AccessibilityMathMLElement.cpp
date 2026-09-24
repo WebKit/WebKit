@@ -97,7 +97,7 @@ void AccessibilityMathMLElement::addChildren()
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator && !mode.isHidden()) {
-        char16_t operatorChar = downcast<RenderMathMLOperator>(*m_renderer).singleCharCodePoint();
+        char16_t operatorChar = protect(downcast<RenderMathMLOperator>(*m_renderer))->singleCharCodePoint();
         return operatorChar ? String(span(operatorChar)) : String();
     }
 
@@ -140,7 +140,7 @@ bool AccessibilityMathMLElement::isMathFenced() const
 
 bool AccessibilityMathMLElement::isMathSubscriptSuperscript() const
 {
-    return m_renderer && m_renderer->isRenderMathMLScripts() && !isMathMultiscript();
+    return m_renderer && protect(m_renderer)->isRenderMathMLScripts() && !isMathMultiscript();
 }
 
 bool AccessibilityMathMLElement::isMathRow() const
@@ -155,12 +155,12 @@ bool AccessibilityMathMLElement::isMathUnderOver() const
 
 bool AccessibilityMathMLElement::isMathSquareRoot() const
 {
-    return m_renderer && m_renderer->isRenderMathMLSquareRoot();
+    return m_renderer && protect(m_renderer)->isRenderMathMLSquareRoot();
 }
 
 bool AccessibilityMathMLElement::isMathToken() const
 {
-    return m_renderer && m_renderer->isRenderMathMLToken();
+    return m_renderer && protect(m_renderer)->isRenderMathMLToken();
 }
 
 bool AccessibilityMathMLElement::isMathRoot() const
@@ -170,7 +170,7 @@ bool AccessibilityMathMLElement::isMathRoot() const
 
 bool AccessibilityMathMLElement::isMathOperator() const
 {
-    return m_renderer && m_renderer->isRenderMathMLOperator();
+    return m_renderer && protect(m_renderer)->isRenderMathMLOperator();
 }
 
 bool AccessibilityMathMLElement::isMathFenceOperator() const
@@ -412,7 +412,7 @@ void AccessibilityMathMLElement::mathPrescripts(AccessibilityMathMultiscriptPair
     std::pair<AccessibilityObject*, AccessibilityObject*> prescriptPair;
     for (RefPtr child = node()->firstChild(); child; child = child->nextSibling()) {
         if (foundPrescript) {
-            RefPtr axChild = axObjectCache()->getOrCreate(*child);
+            RefPtr axChild = protect(axObjectCache())->getOrCreate(*child);
             if (axChild && axChild->isMathElement()) {
                 if (!prescriptPair.first)
                     prescriptPair.first = axChild.get();
@@ -445,7 +445,7 @@ void AccessibilityMathMLElement::mathPostscripts(AccessibilityMathMultiscriptPai
         if (WebCore::elementName(*child) == ElementName::MathML_mprescripts)
             break;
 
-        RefPtr axChild = axObjectCache()->getOrCreate(*child);
+        RefPtr axChild = protect(axObjectCache())->getOrCreate(*child);
         if (axChild && axChild->isMathElement()) {
             if (!foundBaseElement)
                 foundBaseElement = true;

@@ -64,6 +64,7 @@ WTF_ALLOW_COMPACT_POINTERS_TO_INCOMPLETE_TYPE(WebCore::AXObjectRareData);
 
 namespace WebCore {
 
+class ChromeClient;
 class HTMLTextFormControlElement;
 class IntPoint;
 class IntSize;
@@ -423,6 +424,9 @@ public:
     bool hasTextContent() const;
 #if PLATFORM(COCOA)
     bool hasAttributedText() const;
+    // Defined in AccessibilityObjectCocoa.mm: NSResponder is WAKResponder on iOS, which can
+    // only be completed in an Objective-C++ translation unit.
+    static void makeFirstResponderForPlatformWidget(ChromeClient&, PlatformWidget);
 #endif
     String textContentPrefixFromListMarker() const override;
 

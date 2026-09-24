@@ -152,7 +152,7 @@ void AXObjectCache::postPlatformARIANotifyNotification(AccessibilityObject&, con
                 @"UIAccessibilityARIAInterruptBehavior": interruptBehaviorToAXValueString(notificationData.interrupt).get(),
                 @"UIAccessibilitySpeechAttributeLanguage": notificationData.language.createNSString().get()
             }]);
-            [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : announcementString.get() }];
+            [protect(root->wrapper()) accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : announcementString.get() }];
         }
     }
 }
@@ -178,7 +178,7 @@ void AXObjectCache::postPlatformLiveRegionNotification(AccessibilityObject&, con
             [mutableAttributedString addAttribute:UIAccessibilitySpeechAttributeAnnouncementPriority value:priority.get() range:NSMakeRange(0, [mutableAttributedString length])];
             [mutableAttributedString addAttribute:UIAccessibilityTokenLiveRegionAnnouncement value:@(YES) range:NSMakeRange(0, [mutableAttributedString length])];
 
-            [root->wrapper() accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : mutableAttributedString.get() }];
+            [protect(root->wrapper()) accessibilityPostedNotification:notificationName.get() userInfo:@{ notificationName.get() : mutableAttributedString.get() }];
         }
     }
 }
@@ -215,7 +215,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(RenderView* renderView
         return;
     }
 
-    if (renderView->document().isTopDocument()) {
+    if (protect(renderView->document())->isTopDocument()) {
         if (RefPtr axWebArea = getOrCreate(*renderView))
             postPlatformNotification(*axWebArea, AXNotification::LoadComplete);
     }

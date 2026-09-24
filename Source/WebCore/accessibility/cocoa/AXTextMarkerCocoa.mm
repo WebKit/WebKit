@@ -198,7 +198,7 @@ RetainPtr<NSArray> AXTextMarkerRange::platformData() const
         return nil;
 
     RefPtr object = downcast<AccessibilityObject>(m_start.object());
-    auto* cache = object->axObjectCache();
+    CheckedPtr cache = object->axObjectCache();
     if (!cache)
         return nil;
 

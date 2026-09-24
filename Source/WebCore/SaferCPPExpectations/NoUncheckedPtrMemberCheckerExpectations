@@ -1,4 +1,3 @@
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.h
 bindings/js/JSLazyEventListener.cpp
 css/CSSToLengthConversionData.h
 css/SelectorChecker.h

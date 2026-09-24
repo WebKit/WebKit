@@ -2,10 +2,6 @@ Modules/WebGPU/GPUQueue.cpp
 [ iOS ] Modules/system-preview/ARKitBadgeSystemImage.mm
 [ Mac ] accessibility/cocoa/AXCoreObjectCocoa.mm
 [ Mac ] accessibility/cocoa/AXTextMarkerCocoa.mm
-accessibility/cocoa/WebAccessibilityObjectWrapperBase.mm
-[ iOS ] accessibility/ios/AXObjectCacheIOS.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 [ Mac ] accessibility/mac/AXObjectCacheMac.mm
 [ Mac ] accessibility/mac/AccessibilityObjectMac.mm
 [ Mac ] accessibility/mac/WebAccessibilityObjectWrapperMac.mm

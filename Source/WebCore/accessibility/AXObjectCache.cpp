@@ -786,7 +786,7 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement& ar
     if (!imageElement)
         return nullptr;
 
-    RefPtr axRenderImage = protect(areaElement.document())->axObjectCache()->getOrCreate(*imageElement);
+    RefPtr axRenderImage = protect(protect(areaElement.document())->axObjectCache())->getOrCreate(*imageElement);
     if (!axRenderImage)
         return nullptr;
 
@@ -1082,7 +1082,7 @@ Document* AXObjectCache::document() const
 AccessibilityObject* AXObjectCache::get(Node& node) const
 {
     if (CheckedPtr document = dynamicDowncast<Document>(node)) [[unlikely]]
-        return get(document->renderView());
+        return get(protect(document->renderView()));
     return m_nodeObjectMapping.get(node);
 }
 
@@ -1136,7 +1136,7 @@ AccessibilityObject* AXObjectCache::getOrCreateSlow(Node& node, IsPartOfRelation
     }
 
     if (CheckedPtr document = dynamicDowncast<Document>(node)) [[unlikely]]
-        return getOrCreate(document->renderView());
+        return getOrCreate(protect(document->renderView()));
 
     RefPtr composedParent = node.parentElementInComposedTree();
     if (!composedParent)
@@ -1445,7 +1445,7 @@ void AXObjectCache::remove(AXID axID)
     SetForScope removingNode(m_isRemovingNode, true);
 #if PLATFORM(COCOA)
     if (m_liveRegionManager)
-        m_liveRegionManager->unregisterLiveRegion(axID);
+        protect(m_liveRegionManager)->unregisterLiveRegion(axID);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1958,7 +1958,7 @@ void AXObjectCache::handleLiveRegionCreated(Element& element)
 
 #if PLATFORM(COCOA)
         if (m_liveRegionManager) {
-            m_liveRegionManager->registerLiveRegion(*axObject, true);
+            protect(m_liveRegionManager)->registerLiveRegion(*axObject, true);
         }
 #endif
 
@@ -1984,7 +1984,7 @@ void AXObjectCache::initializeLiveRegionManager()
     RefPtr current = rootWebArea();
     while ((current = current ? downcast<AccessibilityObject>(current->nextInPreOrder()) : nullptr)) {
         if (current->supportsLiveRegion())
-            m_liveRegionManager->registerLiveRegion(*current);
+            protect(m_liveRegionManager)->registerLiveRegion(*current);
     }
 }
 #endif
@@ -2389,13 +2389,14 @@ void AXObjectCache::postNotification(RenderObject* renderer, AXNotification noti
 
     // Get an accessibility object that already exists. One should not be created here
     // because a render update may be in progress and creating an AX object can re-trigger a layout
-    RefPtr<AccessibilityObject> object = get(*renderer);
-    while (!object && renderer) {
-        renderer = renderer->parent();
-        object = get(renderer);
+    CheckedPtr currentRenderer = renderer;
+    RefPtr<AccessibilityObject> object = get(*currentRenderer);
+    while (!object && currentRenderer) {
+        currentRenderer = currentRenderer->parent();
+        object = get(currentRenderer);
     }
 
-    if (!renderer)
+    if (!currentRenderer)
         return;
 
     postNotification(object.get(), protect(renderer->document()).ptr(), notification, postTarget);
@@ -2436,7 +2437,7 @@ void AXObjectCache::postNotification(AccessibilityObject* object, Document* docu
         axObject = axObject->observableObject();
 
     if (!axObject && document)
-        axObject = get(document->renderView());
+        axObject = get(protect(document->renderView()));
 
     if (!axObject)
         return;
@@ -3070,7 +3071,7 @@ HashMap<AXID, LineRange> AXObjectCache::mostRecentlyPaintedText()
 {
     HashMap<AXID, LineRange> recentlyPaintedText;
     for (auto renderTextToLineRange : m_mostRecentlyPaintedText) {
-        if (RefPtr axObject = getOrCreate(renderTextToLineRange.key))
+        if (RefPtr axObject = getOrCreate(protect(renderTextToLineRange.key)))
             recentlyPaintedText.add(axObject->objectID(), renderTextToLineRange.value);
     }
     return recentlyPaintedText;
@@ -3583,7 +3584,7 @@ void AXObjectCache::frameLoadingEventNotification(LocalFrame* frame, AXLoadingEv
         // We pass the RenderView* (via contentRenderer()) rather than calling getOrCreate and passing
         // that because some platforms don't handle all loading event types, and we don't want to call
         // getOrCreate unnecessarily (because doing so is not always safe, and can do a fair amount of work).
-        frameLoadingEventPlatformNotification(frame->contentRenderer(), loadingEvent);
+        frameLoadingEventPlatformNotification(protect(frame->contentRenderer()), loadingEvent);
     }
 }
 
@@ -3637,7 +3638,7 @@ void AXObjectCache::processChangedLiveRegions()
 #if PLATFORM(COCOA)
     if (m_liveRegionManager) {
         for (auto& object : changedLiveRegions)
-            m_liveRegionManager->handleLiveRegionChange(object.get());
+            protect(m_liveRegionManager)->handleLiveRegionChange(object.get());
         return;
     }
 #endif
@@ -3710,7 +3711,7 @@ void AXObjectCache::handleAriaHiddenChange(Element& element)
     }
 
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    if (RefPtr parent = get(element.parentNode()))
+    if (RefPtr parent = get(protect(element.parentNode())))
         childrenChanged(parent.get());
 #endif
 }
@@ -3990,7 +3991,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
                 object->recomputeIsIgnored();
 #else
             RefPtr parent = element->parentNode();
-            if (auto* renderer = parent ? parent->renderer() : nullptr)
+            if (CheckedPtr renderer = parent ? parent->renderer() : nullptr)
                 childrenChanged(*renderer);
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
@@ -4920,7 +4921,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
 
     // Sometimes when the node is a replaced node and is ignored in accessibility, we get a wrong CharacterOffset from it.
     CharacterOffset result = traverseToOffsetInRange(rangeForNodeContents(targetNode.get()), characterOffset);
-    if (result.remainingOffset > 0 && !result.isNull() && isRendererReplacedElement(result.node->renderer()))
+    if (result.remainingOffset > 0 && !result.isNull() && isRendererReplacedElement(protect(result.node->renderer())))
         result.offset += result.remainingOffset;
     return result;
 }
@@ -6489,7 +6490,7 @@ void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
         m_deferredRecomputeIsIgnoredList.add(*element);
         return;
     }
-    recomputeIsIgnored(renderer.get());
+    recomputeIsIgnored(renderer);
 }
 
 void AXObjectCache::deferRecomputeIsIgnored(Element* element)
@@ -7007,7 +7008,7 @@ bool AXObjectCache::removeRelation(Element& origin, AXRelation relation)
         if (RefPtr parentNode = node ? composedParentIgnoringDocumentFragments(*node) : nullptr)
             childrenChanged(protect(get(*parentNode)));
         else if (CheckedPtr renderer = object->renderer())
-            childrenChanged(protect(get(renderer->parent())));
+            childrenChanged(protect(get(protect(renderer->parent()))));
     }
 
     return removedRelation;

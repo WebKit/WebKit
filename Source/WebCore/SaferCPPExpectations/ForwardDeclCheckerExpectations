@@ -4,7 +4,7 @@ ReadableStreamInternalsBuiltins.h
 StreamInternalsBuiltins.h
 TransformStreamInternalsBuiltins.h
 WritableStreamInternalsBuiltins.h
-accessibility/AccessibilityObject.cpp
+[ iOS ] accessibility/AccessibilityObject.cpp
 bindings/js/GarbageCollectionController.cpp
 bindings/js/JSLocationCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp

@@ -3222,7 +3222,7 @@ bool AccessibilityNodeObject::isTable() const
 AccessibilityObject* AccessibilityNodeObject::controlForLabelElement() const
 {
     RefPtr labelElement = labelElementContainer();
-    return labelElement ? axObjectCache()->getOrCreate(Accessibility::controlForLabelElement(*labelElement).get()) : nullptr;
+    return labelElement ? protect(axObjectCache())->getOrCreate(Accessibility::controlForLabelElement(*labelElement).get()) : nullptr;
 }
 
 String AccessibilityNodeObject::ariaAccessibilityDescription() const
@@ -4208,7 +4208,7 @@ Vector<AXStitchGroup> AccessibilityNodeObject::stitchGroups() const
                 context.lastRenderer = box->renderer();
             });
 
-            if (listMarkerIsDisclosure(dynamicDowncast<RenderElement>(box->renderer())) || listMarkerIsDisclosure(box->renderer().parent())) {
+            if (listMarkerIsDisclosure(protect(dynamicDowncast<RenderElement>(box->renderer()))) || listMarkerIsDisclosure(protect(box->renderer().parent()))) {
                 finalizeCurrentGroup();
                 continue;
             }

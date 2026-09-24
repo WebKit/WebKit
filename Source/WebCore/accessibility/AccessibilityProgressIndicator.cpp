@@ -79,7 +79,7 @@ String AccessibilityProgressIndicator::valueDescription() const
 
     // The HTML spec encourages authors to include a textual representation of the meter's state in
     // the element's contents. We'll fall back on that if there is not a more accessible alternative.
-    if (RefPtr nodeObject = dynamicDowncast<AccessibilityNodeObject>(axObjectCache()->getOrCreate(*meter)))
+    if (RefPtr nodeObject = dynamicDowncast<AccessibilityNodeObject>(protect(axObjectCache())->getOrCreate(*meter)))
         description = nodeObject->accessibilityDescriptionForChildren();
 
     if (description.isEmpty())

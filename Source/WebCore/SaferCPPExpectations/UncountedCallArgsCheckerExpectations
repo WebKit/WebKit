@@ -1,8 +1,4 @@
 StyleChangedAnimatablePropertiesGenerated.cpp
-[ iOS ] accessibility/AXObjectCache.cpp
-[ iOS ] accessibility/ios/AXObjectCacheIOS.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 bindings/js/DOMPromiseProxy.h
 bindings/js/JSAudioBufferSourceNodeCustom.cpp
 bindings/js/JSCSSRuleCustom.h

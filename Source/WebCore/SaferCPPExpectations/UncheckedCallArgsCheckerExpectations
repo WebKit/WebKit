@@ -7,16 +7,8 @@ Modules/webaudio/WaveShaperNode.cpp
 StyleBuilderGenerated.cpp
 StyleExtractorGenerated.cpp
 accessibility/AXObjectCache.cpp
-accessibility/AccessibilityMathMLElement.cpp
-accessibility/AccessibilityMenuListOption.cpp
-accessibility/AccessibilityNodeObject.cpp
-accessibility/AccessibilityObject.cpp
-accessibility/AccessibilityObjectInlines.h
-accessibility/AccessibilityProgressIndicator.cpp
+[ macOS ] accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityRenderObject.cpp
-[ iOS ] accessibility/ios/AXObjectCacheIOS.mm
-[ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
-[ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
 [ Mac ] accessibility/mac/AXObjectCacheMac.mm
 animation/BlendingKeyframes.cpp
 animation/ElementAnimationRareData.cpp
