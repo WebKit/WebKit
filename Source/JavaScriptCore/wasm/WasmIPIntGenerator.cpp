@@ -30,9 +30,15 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
+#include "InPlaceInterpreter.h"
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
+#include "LLIntData.h"
+#include "LLIntThunks.h"
+#include "Label.h"
+#include "Options.h"
 #include "StackAlignment.h"
+#include "WasmCallee.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
 #include "WasmFunctionIPIntMetadataGenerator.h"
@@ -93,13 +99,12 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
-#define RECORD_NEXT_INSTRUCTION(fromPC, toPC)                                                        \
-    do {                                                                                             \
-        if (m_debugInfo) [[unlikely]] {                                                              \
-            uint32_t fromOffset = fromPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset; \
-            uint32_t toOffset = toPC + m_metadata->m_bytecodeOffset + m_functionStartByteOffset;     \
-            m_debugInfo->addNextInstruction(fromOffset, toOffset);                                   \
-        }                                                                                            \
+#define RECORD_NEXT_INSTRUCTION(fromPC, toPC) do { \
+        if (m_debugInfo) [[unlikely]] { \
+            uint32_t fromOffset = fromPC + m_functionStartByteOffset; \
+            uint32_t toOffset = toPC + m_functionStartByteOffset; \
+            m_debugInfo->addNextInstruction(fromOffset, toOffset); \
+        } \
     } while (0)
 #else
 #define RECORD_NEXT_INSTRUCTION(fromPC, toPC) do { (void)(fromPC); (void)(toPC); } while (0)
@@ -539,7 +544,7 @@ public:
     {
         return m_parser->offset() - m_parser->currentOpcodeStartingOffset();
     }
-    void addTailCallCommonData(const RTT&);
+    void addTailCallCommonData(const RTT&, RTT::CallFrameSizes);
     NODELETE void didFinishParsingLocals()
     {
         m_metadata->m_bytecodeOffset = m_parser->offset();
@@ -549,26 +554,22 @@ public:
     NODELETE void willParseExtendedOpcode() { }
     void didParseOpcode()
     {
+        ASSERT(m_parser->unreachableBlocks() || m_parser->getStackHeightInValues() == m_stackSize.value());
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
         if (m_debugInfo) [[unlikely]] {
             uint32_t instructionStart = m_parser->currentOpcodeStartingOffset() + m_functionStartByteOffset;
             m_debugInfo->addInstructionStart(instructionStart);
-        }
-#endif
 
-        if (!m_parser->unreachableBlocks()) {
-            ASSERT(m_parser->getStackHeightInValues() == m_stackSize.value());
-#if ENABLE(WEBASSEMBLY_DEBUGGER)
-            if (m_debugInfo) [[unlikely]] {
-                OpType currentOpcode = m_parser->currentOpcode();
-                bool isControlFlowInstruction = Wasm::isControlFlowInstructionWithExtGC(currentOpcode, [this]() {
-                    return m_parser->currentExtendedOpcode();
-                });
-                if (!isControlFlowInstruction || currentOpcode == AnnotatedSelect)
-                    RECORD_NEXT_INSTRUCTION(curPC(), nextPC());
-            }
-#endif
+            if (m_parser->unreachableBlocks())
+                return;
+            OpType currentOpcode = m_parser->currentOpcode();
+            bool isControlFlowInstruction = Wasm::isControlFlowInstructionWithExtGC(currentOpcode, [this] {
+                return m_parser->currentExtendedOpcode();
+            });
+            if (!isControlFlowInstruction || currentOpcode == AnnotatedSelect)
+                RECORD_NEXT_INSTRUCTION(curPC(), nextPC());
         }
+#endif
     }
 
     void dump(const ControlStack&, const Stack*);
@@ -586,14 +587,32 @@ public:
     void resolveEntryTarget(unsigned, IPIntLocation);
     void resolveExitTarget(unsigned, IPIntLocation);
 
+    void appendPendingTarget(uint32_t& head, IPIntLocation loc)
+    {
+        m_pendingTargets.append(PendingTarget { loc, head });
+        head = m_pendingTargets.size() - 1;
+    }
+
+    // Runs the functor over every location in the list and empties it.
+    template<typename Functor>
+    void drainPendingTargets(uint32_t& head, NOESCAPE const Functor& functor)
+    {
+        for (uint32_t index = head; index != noPendingTarget;) {
+            const PendingTarget& target = m_pendingTargets[index];
+            index = target.previous;
+            functor(target.location);
+        }
+        head = noPendingTarget;
+    }
+
     void tryToResolveEntryTarget(uint32_t index, IPIntLocation loc, uint8_t*)
     {
-        m_controlStructuresAwaitingCoalescing[index].m_awaitingEntryTarget.append(loc);
+        appendPendingTarget(m_controlStructuresAwaitingCoalescing[index].m_awaitingEntryTarget, loc);
     }
 
     void tryToResolveExitTarget(uint32_t index, IPIntLocation loc, uint8_t*)
     {
-        m_controlStructuresAwaitingCoalescing[index].m_awaitingExitTarget.append(loc);
+        appendPendingTarget(m_controlStructuresAwaitingCoalescing[index].m_awaitingExitTarget, loc);
     }
 
     void tryToResolveBranchTarget(ControlType& targetBlock, IPIntLocation loc, uint8_t* metadata)
@@ -611,7 +630,7 @@ public:
             RECORD_NEXT_INSTRUCTION(loc.pc, target.m_entryTarget.pc);
         } else {
             ASSERT(!target.m_exitResolved);
-            target.m_awaitingBranchTarget.append(loc);
+            appendPendingTarget(target.m_awaitingBranchTarget, loc);
         }
     }
 
@@ -628,10 +647,24 @@ private:
     const FunctionCodeIndex m_functionIndex;
     std::unique_ptr<FunctionIPIntMetadataGenerator> m_metadata;
 
+    // Every control structure awaiting coalescing has three lists of locations whose metadata is
+    // waiting on a target, and all of them live in one flat arena: a structure holds the index of
+    // its most recently added location, and each location holds the index of the previous one in
+    // the same list. That keeps ControlStructureAwaitingCoalescing small and trivially copyable,
+    // so growing the vector of them moves a few bytes per structure rather than relocating three
+    // inline vector buffers each. Lists are only appended to and drained, never indexed, so
+    // draining them in reverse order is not observable.
+    static constexpr uint32_t noPendingTarget = std::numeric_limits<uint32_t>::max();
+    struct PendingTarget {
+        IPIntLocation location;
+        uint32_t previous;
+    };
+
     struct ControlStructureAwaitingCoalescing {
-        Vector<IPIntLocation, 16> m_awaitingEntryTarget { };
-        Vector<IPIntLocation, 16> m_awaitingBranchTarget { };
-        Vector<IPIntLocation, 16> m_awaitingExitTarget { };
+        // Heads of this structure's pending target lists, which live in m_pendingTargets.
+        uint32_t m_awaitingEntryTarget { noPendingTarget };
+        uint32_t m_awaitingBranchTarget { noPendingTarget };
+        uint32_t m_awaitingExitTarget { noPendingTarget };
 
         IPIntLocation m_entryTarget { 0, 0 }; // where do we go when entering normally?
         IPIntLocation m_exitTarget { 0, 0 }; // where do we go when leaving?
@@ -641,13 +674,14 @@ private:
         bool m_entryResolved { false };
         bool m_exitResolved { false };
     };
-    Vector<ControlStructureAwaitingCoalescing, 16> m_controlStructuresAwaitingCoalescing;
+    Vector<ControlStructureAwaitingCoalescing, 64> m_controlStructuresAwaitingCoalescing;
+    Vector<PendingTarget, 128> m_pendingTargets;
 
     struct QueuedCoalesceRequest {
         size_t index;
         bool isEntry;
     };
-    Vector<QueuedCoalesceRequest, 16> m_coalesceQueue;
+    Vector<QueuedCoalesceRequest, 64> m_coalesceQueue;
 
     // if this is 0, all our control structures have been coalesced and we can clean up the vector
     unsigned m_coalesceDebt { 0 };
@@ -657,8 +691,8 @@ private:
     // all jumps that go to the top level and return
     Vector<IPIntLocation> m_jumpLocationsAwaitingEnd;
 
-    NODELETE inline uint32_t curPC() { return Checked<uint32_t>(m_parser->currentOpcodeStartingOffset()) - m_metadata->m_bytecodeOffset; }
-    NODELETE inline uint32_t nextPC() { return Checked<uint32_t>(m_parser->offset()) - m_metadata->m_bytecodeOffset; }
+    NODELETE inline uint32_t curPC() { return m_parser->currentOpcodeStartingOffset(); }
+    NODELETE inline uint32_t nextPC() { return m_parser->offset(); }
     // FIXME: Should return size_t, but BlockMetadata::deltaMC is int32_t and the interpreter loads it with loadpairi.
     NODELETE inline uint32_t curMC()
     {
@@ -926,9 +960,7 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
 
 [[nodiscard]] PartialResult IPIntGenerator::addArguments(const RTT& signature)
 {
-    const CallInformation callCC = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
-
-    ASSERT(callCC.headerAndArgumentStackSizeInBytes >= callCC.headerIncludingThisSizeInBytes);
+    RTT::CallFrameSizes callCC = signature.calleeCallFrameSizes();
     m_argumentAndResultsStackSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callCC.headerAndArgumentStackSizeInBytes) - callCC.headerIncludingThisSizeInBytes;
     ASSERT(!Options::useWasmIPInt() || !(m_argumentAndResultsStackSize % 16)); // mINT requires this
 
@@ -944,8 +976,8 @@ IPIntGenerator::ExpressionType IPIntGenerator::addSIMDConstant(v128_t)
     }
 #endif
 
-    signature.ensureArgumINTBytecode(callCC);
-    signature.ensureUINTBytecode(callCC);
+    signature.ensureArgumINTBytecode();
+    signature.ensureUINTBytecode();
     return { };
 }
 
@@ -2102,9 +2134,11 @@ void IPIntGenerator::coalesceControlFlow(bool force)
 
     IPIntLocation here = { nextPC(), curMC() };
     if (!force) {
-        if (m_parser->offset() >= m_parser->source().size())
+        auto source = m_parser->source();
+        size_t offset = m_parser->offset();
+        if (offset >= source.size())
             return;
-        uint8_t nextOpcode = m_parser->source()[m_parser->offset()];
+        uint8_t nextOpcode = source[offset];
         if (nextOpcode == Block || nextOpcode == End)
             return;
     } else
@@ -2119,8 +2153,10 @@ void IPIntGenerator::coalesceControlFlow(bool force)
     }
     m_coalesceQueue.shrink(0);
 
-    if (!m_coalesceDebt)
+    if (!m_coalesceDebt) {
         m_controlStructuresAwaitingCoalescing.shrink(0);
+        m_pendingTargets.shrink(0);
+    }
 
     for (auto& src : m_exitHandlersAwaitingCoalescing) {
         IPInt::BlockMetadata md = checkedDelta(here, src);
@@ -2134,21 +2170,15 @@ void IPIntGenerator::resolveEntryTarget(unsigned index, IPIntLocation loc)
 {
     auto& control = m_controlStructuresAwaitingCoalescing[index];
     ASSERT(!control.m_entryResolved);
-    for (auto& src : control.m_awaitingEntryTarget) {
+    auto resolve = [&](IPIntLocation src) {
         // write delta PC and delta MC
         IPInt::BlockMetadata md = checkedDelta(loc, src);
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
         RECORD_NEXT_INSTRUCTION(src.pc, loc.pc); // FIXME: coalescing sequential blocks - should update instead of adding
-    }
-    if (control.isLoop) {
-        for (auto& src : control.m_awaitingBranchTarget) {
-            IPInt::BlockMetadata md = checkedDelta(loc, src);
-            WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
-            RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
-        }
-        control.m_awaitingBranchTarget.clear();
-    }
-    control.m_awaitingEntryTarget.clear();
+    };
+    drainPendingTargets(control.m_awaitingEntryTarget, resolve);
+    if (control.isLoop)
+        drainPendingTargets(control.m_awaitingBranchTarget, resolve);
     control.m_entryResolved = true;
     control.m_entryTarget = loc;
 }
@@ -2157,21 +2187,15 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
 {
     auto& control = m_controlStructuresAwaitingCoalescing[index];
     ASSERT(!control.m_exitResolved);
-    for (auto& src : control.m_awaitingExitTarget) {
+    auto resolve = [&](IPIntLocation src) {
         // write delta PC and delta MC
         IPInt::BlockMetadata md = checkedDelta(loc, src);
         WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
         RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
-    }
-    if (!control.isLoop) {
-        for (auto& src : control.m_awaitingBranchTarget) {
-            IPInt::BlockMetadata md = checkedDelta(loc, src);
-            WRITE_TO_METADATA(m_metadata->m_metadata.mutableSpan().data() + src.mc, md, IPInt::BlockMetadata);
-            RECORD_NEXT_INSTRUCTION(src.pc, loc.pc);
-        }
-        control.m_awaitingBranchTarget.clear();
-    }
-    control.m_awaitingExitTarget.clear();
+    };
+    drainPendingTargets(control.m_awaitingExitTarget, resolve);
+    if (!control.isLoop)
+        drainPendingTargets(control.m_awaitingBranchTarget, resolve);
     control.m_exitResolved = true;
     control.m_exitTarget = loc;
 }
@@ -2241,7 +2265,7 @@ void IPIntGenerator::resolveExitTarget(unsigned index, IPIntLocation loc)
     unsigned numOSREntryDataValues = m_stackSize.value();
 
     // Note the +1: we do this to avoid having 0 as a key in the map, since the current map can't handle 0 as a key
-    m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset + 1, IPIntTierUpCounter::OSREntryData { loopIndex, numOSREntryDataValues, m_tryDepth });
+    m_metadata->tierUpCounter().add(m_parser->currentOpcodeStartingOffset() + 1, IPIntTierUpCounter::OSREntryData { loopIndex, numOSREntryDataValues, m_tryDepth });
 
     return { };
 }
@@ -2402,7 +2426,7 @@ void IPIntGenerator::convertTryToCatch(ControlType& tryBlock, CatchKind catchKin
     ASSERT(ControlType::isTry(tryBlock));
     ControlType catchBlock = ControlType(BlockSignature { tryBlock.signature() }, tryBlock.stackSize(), BlockType::Catch, catchKind);
     catchBlock.m_pc = tryBlock.m_pc;
-    catchBlock.m_pcEnd = m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset;
+    catchBlock.m_pcEnd = m_parser->currentOpcodeStartingOffset();
     catchBlock.m_tryDepth = tryBlock.m_tryDepth;
 
     catchBlock.m_index = tryBlock.m_index;
@@ -2784,23 +2808,20 @@ void IPIntGenerator::endTryTable(const ControlType& data)
 
 auto IPIntGenerator::endTopLevel(std::span<const TypedExpression>) -> PartialResult
 {
-    bool isNotDebugMode = !m_debugInfo;
-    if (m_usesSIMD && isNotDebugMode)
-        m_info.markUsesSIMD(m_metadata->functionIndex());
-    if (isNotDebugMode)
-        m_info.doneSeeingFunction(m_metadata->m_functionIndex);
+    m_metadata->m_usesSIMD = Options::useWasmSIMD() && (Options::forceAllFunctionsToUseSIMD() || m_usesSIMD);
+    m_metadata->m_usesLegacyExceptions = m_parser->usesLegacyExceptions();
+    m_metadata->m_usesModernExceptions = m_parser->usesModernExceptions();
     return { };
 }
 
 // Calls
 
-void IPIntGenerator::addTailCallCommonData(const RTT& signature)
+void IPIntGenerator::addTailCallCommonData(const RTT&, RTT::CallFrameSizes callConvention)
 {
-    size_t headerAndArgumentStackSizeInBytes = wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller);
-    Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
+    Checked<uint32_t> tailCallFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes + sizeof(CallerFrameAndPC));
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(tailCallFrameSize), m_metadata->m_maxCalleeStackSize);
 
-    size_t stackArgumentsAndResultsInBytes = headerAndArgumentStackSizeInBytes - WasmCallingConvention::headerIncludingThisSizeInBytes(CallRole::Caller);
+    size_t stackArgumentsAndResultsInBytes = callConvention.headerAndArgumentStackSizeInBytes - callConvention.headerIncludingThisSizeInBytes;
     // The WASM stack slots are always 16-bytes.
     size_t extraWasmStackInBytes = roundUpToMultipleOf<16>(stackArgumentsAndResultsInBytes);
     if (m_stackSize + extraWasmStackInBytes / 16 > m_maxStackSize)
@@ -2811,6 +2832,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
 
 [[nodiscard]] PartialResult IPIntGenerator::addCall(unsigned callProfileIndex, FunctionSpaceIndex index, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
+    RTT::CallFrameSizes callConvention = signature.callerCallFrameSizes();
     m_metadata->addCallTarget(callProfileIndex, index);
 
     if (callType == CallType::TailCall) {
@@ -2828,7 +2850,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(functionIndexMetadata);
-        addTailCallCommonData(signature);
+        addTailCallCommonData(signature, callConvention);
         return { };
     }
 
@@ -2837,7 +2859,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
     });
     changeStackSize(signature.returnCount() - signature.argumentCount());
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2856,6 +2878,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
 
 [[nodiscard]] PartialResult IPIntGenerator::addCallIndirect(unsigned callProfileIndex, unsigned tableIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
+    RTT::CallFrameSizes callConvention = signature.callerCallFrameSizes();
     m_metadata->addCallTarget(callProfileIndex, { });
 
     if (callType == CallType::TailCall) {
@@ -2874,7 +2897,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(functionIndexMetadata);
-        addTailCallCommonData(signature);
+        addTailCallCommonData(signature, callConvention);
         return { };
     }
 
@@ -2884,7 +2907,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
     const unsigned callIndex = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callIndex);
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallIndirectMetadata functionIndexMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2904,6 +2927,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
 
 [[nodiscard]] PartialResult IPIntGenerator::addCallRef(unsigned callProfileIndex, const RTT& signature, ArgumentList&, ResultList& results, CallType callType)
 {
+    RTT::CallFrameSizes callConvention = signature.callerCallFrameSizes();
     m_metadata->addCallTarget(callProfileIndex, { });
 
     if (callType == CallType::TailCall) {
@@ -2921,7 +2945,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
             .callerStackArgSize = static_cast<int32_t>(m_argumentAndResultsStackSize),
         };
         m_metadata->appendMetadata(callMetadata);
-        addTailCallCommonData(signature);
+        addTailCallCommonData(signature, callConvention);
         return { };
     }
 
@@ -2931,7 +2955,7 @@ void IPIntGenerator::addTailCallCommonData(const RTT& signature)
     const unsigned callRef = 1;
     changeStackSize(signature.returnCount() - signature.argumentCount() - callRef);
 
-    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(wasmCallingConvention().headerAndArgumentStackSizeInBytes(signature, CallRole::Caller));
+    Checked<uint32_t> frameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(callConvention.headerAndArgumentStackSizeInBytes);
     m_metadata->m_maxCalleeStackSize = std::max(static_cast<unsigned>(frameSize), m_metadata->m_maxCalleeStackSize);
     IPInt::CallRefMetadata callMetadata {
         .length = safeCast<uint8_t>(getCurrentInstructionLength()),
@@ -2982,12 +3006,66 @@ std::unique_ptr<FunctionIPIntMetadataGenerator> IPIntGenerator::finalize()
     return WTF::move(m_metadata);
 }
 
-std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex)
+std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex, bool& isAllocatorFailure)
 {
     IPIntGenerator generator(info, functionIndex, signature, function);
     FunctionParser<IPIntGenerator> parser(generator, function, signature, info);
-    WASM_FAIL_IF_HELPER_FAILS(parser.parse());
+    auto result = parser.parse();
+    if (!result) [[unlikely]] {
+        isAllocatorFailure = parser.hasAllocatorFailure();
+        return makeUnexpected(WTF::move(result.error()));
+    }
     return generator.finalize();
+}
+
+std::expected<void, String> parseAndInitializeIPIntCallee(IPIntCallee& callee, ModuleInformation& info, ExceptionProposalMode proposalMode)
+{
+    if (!callee.isLazy())
+        return { };
+    if (String failure = callee.parseFailure(); !failure.isNull())
+        return makeUnexpected(WTF::move(failure));
+
+    auto functionIndex = callee.functionIndex();
+    const auto& function = info.functions[functionIndex];
+    Ref signature = callee.signatureRTT();
+
+    bool isAllocatorFailure = false;
+    auto parseResult = parseAndCompileMetadata(function.data, signature.get(), info, functionIndex, isAllocatorFailure);
+    if (!parseResult) [[unlikely]] {
+        String message = makeString(parseResult.error(), ", in function at index "_s, functionIndex.rawIndex());
+        if (isAllocatorFailure)
+            return makeUnexpected(WTF::move(message));
+        return makeUnexpected(callee.recordParseFailure(WTF::move(message)));
+    }
+
+    // Must precede initializeMetadata: publishing makes the callee runnable, and running SIMD
+    // metadata in a configuration that cannot execute SIMD is worse than not publishing at all.
+    if ((*parseResult)->usesSIMD() && !Options::useBBQJIT() && !Options::useWasmIPIntSIMD())
+        return makeUnexpected(callee.recordParseFailure(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s)));
+
+    // Checked after body validation so a body rejected for another reason claims nothing.
+    bool usesLegacy = (*parseResult)->usesLegacyExceptions();
+    bool usesModern = (*parseResult)->usesModernExceptions();
+    switch (proposalMode) {
+    case ExceptionProposalMode::EagerModule:
+        info.recordExceptionProposals(usesLegacy, usesModern);
+        break;
+    case ExceptionProposalMode::LazyCall:
+        if (!info.claimExceptionProposal(usesLegacy, usesModern)) [[unlikely]]
+            return makeUnexpected(callee.recordParseFailure(makeString("Module uses both legacy exceptions and try_table, in function at index "_s, functionIndex.rawIndex())));
+        break;
+    case ExceptionProposalMode::SpeculativeInlining:
+        if (!info.allowsSpeculativeExceptionProposal(usesLegacy, usesModern))
+            return makeUnexpected(String());
+        break;
+    }
+
+    if ((*parseResult)->usesSIMD())
+        info.markUsesSIMD(functionIndex);
+    info.doneSeeingFunction(functionIndex);
+
+    callee.initializeMetadata(**parseResult);
+    return { };
 }
 
 void parseForDebugInfo(std::span<const uint8_t> function, const RTT& signature, ModuleInformation& info, FunctionCodeIndex functionIndex, FunctionDebugInfo& debugInfo)
@@ -3003,7 +3081,7 @@ void parseForDebugInfo(std::span<const uint8_t> function, const RTT& signature, 
 
 void IPIntGenerator::dump(const ControlStack&, const Stack*)
 {
-    dataLogLn("PC: ", m_parser->currentOpcodeStartingOffset() - m_metadata->m_bytecodeOffset, " MC: ", m_metadata->m_metadata.size());
+    dataLogLn("PC: ", m_parser->currentOpcodeStartingOffset(), " MC: ", m_metadata->m_metadata.size());
 }
 
 } } // namespace JSC::Wasm

@@ -87,68 +87,47 @@ public:
         ASSERT(signature.kind() == RTTKind::Function);
     }
 
+    // These are asked for on every control-flow opcode a function body contains. Both
+    // alternatives are trivially copyable, so the variant can never be valueless and a visit
+    // buys nothing over testing which one is held.
     unsigned argumentCount() const
     {
-        return WTF::switchOn(m_storage,
-            [](const RTT* signature) -> unsigned {
-                return signature->argumentCount();
-            },
-            [](Type) -> unsigned {
-                return 0;
-            }
-        );
+        if (const RTT* const* signature = std::get_if<const RTT*>(&m_storage))
+            return (*signature)->argumentCount();
+        return 0;
     }
 
     unsigned returnCount() const
     {
-        return WTF::switchOn(m_storage,
-            [](const RTT* signature) -> unsigned {
-                return signature->returnCount();
-            },
-            [](Type type) -> unsigned {
-                return type.isVoid() ? 0 : 1;
-            }
-        );
+        if (const RTT* const* signature = std::get_if<const RTT*>(&m_storage))
+            return (*signature)->returnCount();
+        return std::get<Type>(m_storage).isVoid() ? 0 : 1;
     }
 
     Type argumentType(unsigned index) const
     {
-        return WTF::switchOn(m_storage,
-            [&](const RTT* signature) -> Type {
-                ASSERT(index < signature->argumentCount());
-                return signature->argumentType(index);
-            },
-            [](Type) -> Type {
-                RELEASE_ASSERT_NOT_REACHED();
-                return Types::Void;
-            }
-        );
+        const RTT* const* signature = std::get_if<const RTT*>(&m_storage);
+        RELEASE_ASSERT(signature);
+        ASSERT(index < (*signature)->argumentCount());
+        return (*signature)->argumentType(index);
     }
 
     Type returnType(unsigned index) const
     {
-        return WTF::switchOn(m_storage,
-            [&](const RTT* signature) -> Type {
-                ASSERT(index < signature->returnCount());
-                return signature->returnType(index);
-            },
-            [](Type type) -> Type {
-                ASSERT(!type.isVoid());
-                return type;
-            }
-        );
+        if (const RTT* const* signature = std::get_if<const RTT*>(&m_storage)) {
+            ASSERT(index < (*signature)->returnCount());
+            return (*signature)->returnType(index);
+        }
+        Type type = std::get<Type>(m_storage);
+        ASSERT(!type.isVoid());
+        return type;
     }
 
     bool hasReturnedV128() const
     {
-        return WTF::switchOn(m_storage,
-            [](const RTT* signature) -> bool {
-                return signature->hasReturnedV128();
-            },
-            [](Type type) -> bool {
-                return type.isV128();
-            }
-        );
+        if (const RTT* const* signature = std::get_if<const RTT*>(&m_storage))
+            return (*signature)->hasReturnedV128();
+        return std::get<Type>(m_storage).isV128();
     }
 
     bool holdsRTT() const { return std::holds_alternative<const RTT*>(m_storage); }
@@ -282,7 +261,7 @@ inline bool isInternalref(Type type)
             return false;
         }
     }
-    return TypeInformation::getCanonicalRTT(type.index())->kind() != RTTKind::Function;
+    return TypeInformation::canonicalRTT(type.index()).kind() != RTTKind::Function;
 }
 
 inline bool isI31ref(Type type)
@@ -413,9 +392,7 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     if (sub == parent)
         return true;
 
-    auto subRTT = TypeInformation::getCanonicalRTT(sub);
-    auto parentRTT = TypeInformation::getCanonicalRTT(parent);
-    return subRTT->isStrictSubRTT(parentRTT.get());
+    return TypeInformation::canonicalRTT(sub).isStrictSubRTT(TypeInformation::canonicalRTT(parent));
 }
 
 bool isSubtype(Type, Type);
@@ -430,19 +407,19 @@ inline bool isSubtypeSlow(Type sub, Type parent)
         if (isRefWithTypeIndex(parent))
             return isSubtypeIndex(sub.index(), parent.index());
 
-        Ref<const RTT> subRTT = TypeInformation::getCanonicalRTT(sub.index());
+        const RTT& subRTT = TypeInformation::canonicalRTT(sub.index());
 
         if ((isAnyref(parent) || isEqref(parent)))
-            return subRTT->kind() != RTTKind::Function;
+            return subRTT.kind() != RTTKind::Function;
 
         if (isArrayref(parent))
-            return subRTT->kind() == RTTKind::Array;
+            return subRTT.kind() == RTTKind::Array;
 
         if (isStructref(parent))
-            return subRTT->kind() == RTTKind::Struct;
+            return subRTT.kind() == RTTKind::Struct;
 
         if (isFuncref(parent))
-            return subRTT->kind() == RTTKind::Function;
+            return subRTT.kind() == RTTKind::Function;
     }
 
     if ((isI31ref(sub) || isStructref(sub) || isArrayref(sub)) && (isAnyref(parent) || isEqref(parent)))
@@ -674,13 +651,23 @@ struct GlobalInformation {
 
 struct FunctionData {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(FunctionData);
+
+    static constexpr uint8_t usesSIMDBit = 1 << 0;
+    static constexpr uint8_t usesExceptionsBit = 1 << 1;
+    static constexpr uint8_t usesAtomicsBit = 1 << 2;
+    static constexpr uint8_t finishedValidatingBit = 1 << 3;
+
     size_t start;
     size_t end;
-    Vector<uint8_t> data;
-    bool usesSIMD : 1 { false };
-    bool usesExceptions : 1 { false };
-    bool usesAtomics : 1 { false };
-    bool finishedValidating : 1 { false };
+    // Points into ModuleInformation's retained binary when the whole module was handed over at
+    // once, and into `ownedData` when it was streamed.
+    std::span<const uint8_t> data;
+    Vector<uint8_t> ownedData;
+
+    // Lazy validation lets two threads validate the same function concurrently, so these flags
+    // must be set with an atomic read-modify-write. ModuleInformation's accessors are the only
+    // things that touch them.
+    uint8_t flags { 0 };
 };
 
 class I32InitExpr {
@@ -729,33 +716,35 @@ private:
 
 using I64InitExpr = I32InitExpr;
 
-class Segment final : public TrailingArray<Segment, uint8_t> {
+class Segment final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(Segment);
     WTF_MAKE_NONCOPYABLE(Segment);
     WTF_MAKE_NONMOVABLE(Segment);
-    using Base = TrailingArray<Segment, uint8_t>;
-    friend Base;
 public:
     enum class Kind : uint8_t {
         Active,
         Passive,
     };
 
-    uint8_t& byte(uint32_t pos)
-    {
-        return Base::at(pos);
-    }
-    uint32_t sizeInBytes() const { return Base::size(); }
+    // Points into the retained module binary, or into `m_ownedBytes` when the module was
+    // streamed and there is no binary to point at.
+    std::span<const uint8_t> span() const LIFETIME_BOUND { return m_data; }
+    const uint8_t& byte(uint32_t pos) const LIFETIME_BOUND { return m_data[pos]; }
+    uint32_t sizeInBytes() const { return m_data.size(); }
 
-    Segment(size_t sizeInBytes, Kind passedKind, std::optional<I32InitExpr>&& passedOffsetIfActive, uint32_t memoryIndex = 0)
-        : Base(sizeInBytes)
+    Segment(std::span<const uint8_t> data, Vector<uint8_t>&& ownedBytes, bool sourceIsRetained, Kind passedKind, std::optional<I32InitExpr>&& passedOffsetIfActive, uint32_t memoryIndex)
+        : m_ownedBytes(WTF::move(ownedBytes))
         , m_kind(passedKind)
         , m_offsetIfActive(WTF::move(passedOffsetIfActive))
         , m_memoryIndex(memoryIndex)
     {
+        // Keyed on whether the source outlives this segment, not on whether the copy came out
+        // non-empty: a zero-length segment copies to nothing, and pointing it back at a source
+        // that is about to be freed leaves it dangling for the module's lifetime.
+        m_data = sourceIsRetained ? data : m_ownedBytes.span();
     }
 
-    static std::unique_ptr<Segment> tryCreate(std::optional<I32InitExpr>, uint32_t, Kind, uint32_t memoryIndex = 0);
+    static std::unique_ptr<Segment> tryCreate(std::optional<I32InitExpr>, std::span<const uint8_t> data, bool sourceIsRetained, Kind, uint32_t memoryIndex = 0);
 
     bool isActive() const { return m_kind == Kind::Active; }
     bool isPassive() const { return m_kind == Kind::Passive; }
@@ -764,6 +753,8 @@ public:
     uint32_t memoryIndex() const { return m_memoryIndex; }
 
 private:
+    std::span<const uint8_t> m_data;
+    Vector<uint8_t> m_ownedBytes;
     const Kind m_kind;
     const std::optional<I32InitExpr> m_offsetIfActive;
     const uint32_t m_memoryIndex;
@@ -867,7 +858,10 @@ private:
 struct CustomSection {
     WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(CustomSection);
     Name name;
-    Vector<uint8_t> payload;
+    // Points into the retained module binary, or into `ownedPayload` when the module was
+    // streamed and there is no binary to point at.
+    std::span<const uint8_t> payload;
+    Vector<uint8_t> ownedPayload;
 };
 
 enum class NameType : uint8_t {
@@ -875,7 +869,7 @@ enum class NameType : uint8_t {
     Function = 1,
     Local = 2,
 };
-    
+
 template<typename Int>
 inline bool isValidNameType(Int val)
 {

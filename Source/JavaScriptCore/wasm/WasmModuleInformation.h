@@ -144,10 +144,28 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 
     size_t functionWasmSizeImportSpace(FunctionSpaceIndex index) const { return functionWasmSize(toCodeIndex(index)); }
 
+    // A function's flags are set by its validator, and lazy validation lets two threads
+    // validate the same function at once: one may still be writing its (identical) flags
+    // while another has already published and a third reads them. So every access goes
+    // through the atomic byte, and the setters OR their bit in rather than storing. The cast
+    // is because Atomic cannot wrap a const type.
+    uint8_t functionFlags(FunctionCodeIndex index) const
+    {
+        return WTF::atomicLoad(const_cast<uint8_t*>(&functions[index].flags));
+    }
+
+    void markFunctionFlag(FunctionCodeIndex index, uint8_t bit)
+    {
+        ASSERT(index < internalFunctionCount());
+        WTF::atomicExchangeOr(&functions[index].flags, bit);
+    }
+
     size_t functionWasmSize(FunctionCodeIndex index) const
     {
         ASSERT(index < internalFunctionCount());
-        ASSERT(functions[index].finishedValidating);
+        // The code section records every function's byte range, so this is the one piece of
+        // per-function information available before the body has been validated. Inlining
+        // relies on that to size a candidate it has not parsed yet.
         return functions[index].end - functions[index].start;
     }
 
@@ -155,7 +173,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     bool usesSIMD(FunctionCodeIndex index) const
     {
         ASSERT(index < internalFunctionCount());
-        ASSERT(functions[index].finishedValidating);
+        ASSERT(functionFlags(index) & FunctionData::finishedValidatingBit);
 
         // See also: B3Procedure::usesSIMD().
         if (!Options::useWasmSIMD())
@@ -164,16 +182,27 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
             return true;
         ASSERT(Options::useWasmIPInt());
 
-        return functions[index].usesSIMD;
+        return functionFlags(index) & FunctionData::usesSIMDBit;
     }
-    void markUsesSIMD(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesSIMD = true; }
+    void markUsesSIMD(FunctionCodeIndex index) { markFunctionFlag(index, FunctionData::usesSIMDBit); }
 
-    bool usesExceptions(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesExceptions; }
-    void markUsesExceptions(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesExceptions = true; }
-    bool usesAtomics(FunctionCodeIndex index) const { ASSERT(index < internalFunctionCount()); ASSERT(functions[index].finishedValidating); return functions[index].usesAtomics; }
-    void markUsesAtomics(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].usesAtomics = true; }
+    bool usesExceptions(FunctionCodeIndex index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        ASSERT(functionFlags(index) & FunctionData::finishedValidatingBit);
+        return functionFlags(index) & FunctionData::usesExceptionsBit;
+    }
+    void markUsesExceptions(FunctionCodeIndex index) { markFunctionFlag(index, FunctionData::usesExceptionsBit); }
 
-    void doneSeeingFunction(FunctionCodeIndex index) { ASSERT(index < internalFunctionCount()); ASSERT(!functions[index].finishedValidating); functions[index].finishedValidating = true; }
+    bool usesAtomics(FunctionCodeIndex index) const
+    {
+        ASSERT(index < internalFunctionCount());
+        ASSERT(functionFlags(index) & FunctionData::finishedValidatingBit);
+        return functionFlags(index) & FunctionData::usesAtomicsBit;
+    }
+    void markUsesAtomics(FunctionCodeIndex index) { markFunctionFlag(index, FunctionData::usesAtomicsBit); }
+
+    void doneSeeingFunction(FunctionCodeIndex index) { markFunctionFlag(index, FunctionData::finishedValidatingBit); }
 
     bool hasGCObjectTypes() const { return m_hasGCObjectTypes; }
 
@@ -219,8 +248,54 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 
     Vector<MemoryInformation> memories;
     bool m_hasGCObjectTypes { false };
-    mutable Atomic<bool> m_usesLegacyExceptions { false };
-    mutable Atomic<bool> m_usesModernExceptions { false };
+    static constexpr uint8_t legacyExceptionsBit = 1 << 0;
+    static constexpr uint8_t modernExceptionsBit = 1 << 1;
+
+    void recordExceptionProposals(bool usesLegacy, bool usesModern) const
+    {
+        uint8_t bits = (usesLegacy ? legacyExceptionsBit : 0) | (usesModern ? modernExceptionsBit : 0);
+        if (bits)
+            m_exceptionProposals.exchangeOr<MemoryOrder::Relaxed>(bits);
+    }
+
+    bool hasMixedExceptionProposals() const
+    {
+        constexpr uint8_t bothBits = legacyExceptionsBit | modernExceptionsBit;
+        return (m_exceptionProposals.loadRelaxed() & bothBits) == bothBits;
+    }
+
+    bool claimExceptionProposal(bool usesLegacy, bool usesModern) const
+    {
+        if (usesLegacy == usesModern)
+            return !usesLegacy;
+        uint8_t desired = usesLegacy ? legacyExceptionsBit : modernExceptionsBit;
+        uint8_t current = m_exceptionProposals.loadRelaxed();
+        if (current == desired)
+            return true;
+        if (current)
+            return false;
+        uint8_t previous = m_exceptionProposals.compareExchangeStrong<MemoryOrder::Relaxed>(0, desired);
+        return !previous || previous == desired;
+    }
+
+    bool allowsSpeculativeExceptionProposal(bool usesLegacy, bool usesModern) const
+    {
+        if (usesLegacy == usesModern)
+            return !usesLegacy;
+        uint8_t desired = usesLegacy ? legacyExceptionsBit : modernExceptionsBit;
+        return m_exceptionProposals.loadRelaxed() == desired;
+    }
+
+    mutable Atomic<uint8_t> m_exceptionProposals { 0 };
+
+    // The module binary, held for as long as the module is alive so that function bodies,
+    // constant expressions and data segments can point into it instead of each owning a copy.
+    // Only set when the whole binary was handed over at once; a streamed module leaves it empty
+    // and its function bodies own their bytes, because a compiler thread captures those
+    // pointers while later bytes are still arriving.
+    std::span<const uint8_t> source() const LIFETIME_BOUND { return m_source.span(); }
+    bool ownsSource() const { return !m_source.isEmpty(); }
+    void setSource(Vector<uint8_t>&& source) { m_source = WTF::move(source); }
 
     Vector<FunctionData> functions;
 
@@ -236,7 +311,10 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     BranchHints branchHints;
     std::optional<uint32_t> numberOfDataSegments;
     struct ConstantExpression {
-        Vector<uint8_t> bytes;
+        // Points into the retained binary, or into `ownedBytes` when the module was streamed
+        // and there is no binary to point at.
+        std::span<const uint8_t> bytes;
+        Vector<uint8_t> ownedBytes;
         size_t sourceOffset { 0 };
         uint32_t maxStackHeight { 0 };
     };
@@ -247,6 +325,8 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
 #if ENABLE(WEBASSEMBLY_DEBUGGER)
     std::unique_ptr<Wasm::ModuleDebugInfo> debugInfo;
 #endif
+
+    Vector<uint8_t> m_source;
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;

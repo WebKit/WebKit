@@ -1,58 +1,43 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testValidation() {
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (result i32)
           (ref.eq (ref.null any) (ref.null array))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: ref.eq ref1 to type RefNull expected Eqref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: ref.eq ref1 to type RefNull expected Eqref, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (param anyref) (result))
         (func (call 0 (ref.null extern))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null extern), expected (ref null any), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null extern), expected (ref null any), in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct))
         (func (param (ref null 0)) (result))
         (func (call 0 (ref.null any))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null <struct:0>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null <struct:0>), in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (param (ref null none)) (result))
         (func (call 0 (ref.null any))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null none), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null none), in function at index 1");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (type (struct))
         (func (param (ref none)) (result))
         (func (call 0 (struct.new 0))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref <struct:0>), expected (ref none), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref <struct:0>), expected (ref none), in function at index 1");
 }
 
 function testAnyref() {
@@ -98,23 +83,17 @@ function testNullfuncref() {
         (func (export "f") (result funcref) (ref.null nofunc)))
   `).exports.f();
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result nullfuncref) (ref.null func)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref null nofunc)"
-  )
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref null nofunc)")
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result nullref) (ref.null nofunc)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null nofunc) is not a (ref null none)"
-  )
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null nofunc) is not a (ref null none)")
 
   instantiate(`
     (module
@@ -137,23 +116,17 @@ function testNullexternref() {
         (func (export "f") (result externref) (ref.null noextern)))
   `).exports.f();
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result nullexternref) (ref.null extern)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null noextern)"
-  )
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null noextern)")
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result nullref) (ref.null noextern)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null noextern) is not a (ref null none)"
-  )
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null noextern) is not a (ref null none)")
 
   instantiate(`
     (module

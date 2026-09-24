@@ -29,6 +29,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include <JavaScriptCore/WasmCallee.h>
 #include <JavaScriptCore/WasmCallingConvention.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,8 +39,19 @@ class FunctionIPIntMetadataGenerator;
 struct ModuleInformation;
 struct FunctionDebugInfo;
 
-std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex functionIndex);
+enum class ExceptionProposalMode : uint8_t {
+    EagerModule,
+    LazyCall,
+    SpeculativeInlining,
+};
+
+std::expected<std::unique_ptr<FunctionIPIntMetadataGenerator>, String> parseAndCompileMetadata(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex functionIndex, bool& isAllocatorFailure);
 JS_EXPORT_PRIVATE void parseForDebugInfo(std::span<const uint8_t>, const RTT&, ModuleInformation&, FunctionCodeIndex, FunctionDebugInfo&);
+
+// Parses the callee's function body and publishes its metadata, unless that has already
+// happened. Deterministic validation failures are cached on the callee so subsequent attempts
+// report the same diagnostic without re-parsing.
+std::expected<void, String> parseAndInitializeIPIntCallee(IPIntCallee&, ModuleInformation&, ExceptionProposalMode = ExceptionProposalMode::LazyCall);
 
 } // namespace JSC::Wasm
 

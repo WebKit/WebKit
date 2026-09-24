@@ -41,9 +41,9 @@ class IPIntPlan final : public EntryPlan {
     using Base = EntryPlan;
 
 public:
-    JS_EXPORT_PRIVATE IPIntPlan(VM&, Vector<uint8_t>&&, CompilerMode, CompletionTask&&);
+    JS_EXPORT_PRIVATE IPIntPlan(VM&, Vector<uint8_t>&&, CompilerMode, ValidationMode, CompletionTask&&);
     IPIntPlan(VM&, Ref<ModuleInformation>, Ref<IPIntCallees>, CompletionTask&&);
-    IPIntPlan(VM&, Ref<ModuleInformation>, CompilerMode, CompletionTask&&); // For StreamingCompiler.
+    IPIntPlan(VM&, Ref<ModuleInformation>, CompilerMode, ValidationMode, CompletionTask&&); // For StreamingCompiler.
 
     Ref<IPIntCallees> takeCallees()
     {
@@ -68,13 +68,15 @@ public:
     void didCompileFunctionInStreaming();
     void didFailInStreaming(String&&);
 
+    bool prefersSynchronousExecution() const final { return m_lazyParsing; }
+
 private:
     bool prepareImpl() final;
     void didCompleteCompilation() WTF_REQUIRES_LOCK(m_lock) final;
 
-    Vector<std::unique_ptr<FunctionIPIntMetadataGenerator>> m_wasmInternalFunctions;
     RefPtr<IPIntCallees> m_ipintCallees;
     bool m_calleesAlreadyRegistered { false };
+    const bool m_lazyParsing { false };
 };
 
 } } // namespace JSC::Wasm

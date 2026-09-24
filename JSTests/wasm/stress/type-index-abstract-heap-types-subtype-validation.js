@@ -9,17 +9,9 @@ const structrefToEqref = read("type-index-abstract-heap-types-subtype-validation
 function testSubtypeValidation() {
     new WebAssembly.Module(concreteCast);
 
-    assert.throws(
-        () => new WebAssembly.Module(funcrefToExternref),
-        WebAssembly.CompileError,
-        "ref.cast"
-    );
+    assert.compileError(funcrefToExternref, "ref.cast");
 
-    assert.throws(
-        () => new WebAssembly.Module(externrefToAnyref),
-        WebAssembly.CompileError,
-        "ref.cast"
-    );
+    assert.compileError(externrefToAnyref, "ref.cast");
 
     new WebAssembly.Module(i31refToAnyref);
 

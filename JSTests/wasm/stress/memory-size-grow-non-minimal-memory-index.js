@@ -46,5 +46,5 @@ for (const byteCount of [1, 2, 3, 5]) {
 }
 
 // Six bytes is past what a u32 can encode.
-assert.throws(() => new WebAssembly.Module(build(leb(0, 6)).buffer), WebAssembly.CompileError,
+assert.throws(() => new WebAssembly.Module(build(leb(0, 6)).buffer, { eagerValidate: true }), WebAssembly.CompileError,
     "WebAssembly.Module doesn't parse at byte 7: can't get memory index, in function at index 0");

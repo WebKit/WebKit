@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testI31Type() {
   compile(`
@@ -16,27 +16,21 @@ function testI31Type() {
 }
 
 function testI31New() {
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result i32)
           (ref.i31 (f32.const 42.42)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: ref.i31 value to type F32 expected I32, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't validate: ref.i31 value to type F32 expected I32, in function at index 0")
 
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result i32)
           (ref.i31 (i64.const 42)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: ref.i31 value to type I64 expected I32, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't validate: ref.i31 value to type I64 expected I32, in function at index 0")
 
   // Use i31 in global and also export to JS via global.
   {
@@ -198,16 +192,13 @@ function testI31Get() {
     }
   }
 
-  assert.throws(
-    () => instantiate(`
+  assert.compileError(watToWasm(`
       (module
         (func (export "f") (result i32)
           (i31.get_s (ref.null extern)))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: i31.get_s ref to type (ref null extern) expected I31ref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't validate: i31.get_s ref to type (ref null extern) expected I31ref, in function at index 0")
 
   assert.throws(
     () => {
@@ -340,14 +331,11 @@ function testI31Table() {
   }
 
   // Invalid non-defaultable table type.
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (table 0 (ref i31)))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 17: Table's type must be defaultable (evaluating 'new WebAssembly.Module(binary)')"
-  )
+    "WebAssembly.Module doesn't parse at byte 17: Table's type must be defaultable")
 
   // Test JS API.
   {

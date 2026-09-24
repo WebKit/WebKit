@@ -7,11 +7,7 @@
 import * as assert from '../assert.js';
 
 function assertThrowsCompileError(code, compileOptions) {
-  function doCompile() {
-    new WebAssembly.Module(code, compileOptions);
-  }
-
-  assert.throws(doCompile, WebAssembly.CompileError, "builtin import wasm:js-string:concat has an unexpected signature");
+  assert.compileError(code, "builtin import wasm:js-string:concat has an unexpected signature", compileOptions);
 }
 
 /*

@@ -643,42 +643,26 @@ function makeInvalidModule(typeParams, typeResults, bodyGetCount, opcodeBytes) {
 const i64 = 0x7e;
 
 // i64.add128: too few results (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64, i64, i64], [i64], 4, [0xfc, 0x13])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64, i64, i64], [i64], 4, [0xfc, 0x13]), "");
 
 // i64.add128: too few params (3 instead of 4)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64, i64], [i64, i64], 3, [0xfc, 0x13])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64, i64], [i64, i64], 3, [0xfc, 0x13]), "");
 
 // i64.sub128: too few results (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64, i64, i64], [i64], 4, [0xfc, 0x14])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64, i64, i64], [i64], 4, [0xfc, 0x14]), "");
 
 // i64.sub128: too few params (3 instead of 4)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64, i64], [i64, i64], 3, [0xfc, 0x14])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64, i64], [i64, i64], 3, [0xfc, 0x14]), "");
 
 // i64.mul_wide_s: too few results (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64], [i64], 2, [0xfc, 0x15])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64], [i64], 2, [0xfc, 0x15]), "");
 
 // i64.mul_wide_s: too few params (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64], [i64, i64], 1, [0xfc, 0x15])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64], [i64, i64], 1, [0xfc, 0x15]), "");
 
 // i64.mul_wide_u: too few results (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64, i64], [i64], 2, [0xfc, 0x16])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64, i64], [i64], 2, [0xfc, 0x16]), "");
 
 // i64.mul_wide_u: too few params (1 instead of 2)
-assert.throws(() => new WebAssembly.Module(
-    makeInvalidModule([i64], [i64, i64], 1, [0xfc, 0x16])
-), WebAssembly.CompileError, "");
+assert.compileError(makeInvalidModule([i64], [i64, i64], 1, [0xfc, 0x16]), "");
 

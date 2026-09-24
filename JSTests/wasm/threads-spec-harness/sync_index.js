@@ -110,6 +110,10 @@ function binary(bytes) {
     return buffer;
 }
 
+// A spec test asserts on the module as a whole, so it needs every function body looked at,
+// which by default does not happen until a body is first called.
+const eagerValidation = { eagerValidate: true };
+
 /**
  * Returns a compiled module, or throws if there was an error at compilation.
  */
@@ -126,7 +130,7 @@ function module(bytes, valid = true) {
     if (validated !== valid) {
         // Try to get a more precise error message from the WebAssembly.CompileError.
         try {
-            new WebAssembly.Module(buffer);
+            new WebAssembly.Module(buffer, eagerValidation);
         } catch (e) {
             if (e instanceof WebAssembly.CompileError)
                 throw new WebAssembly.CompileError(`WebAssembly.validate error: ${e.toString()}${e.stack}\n`);
@@ -138,7 +142,7 @@ function module(bytes, valid = true) {
 
     let module;
     try {
-        module = new WebAssembly.Module(buffer);
+        module = new WebAssembly.Module(buffer, eagerValidation);
     } catch(e) {
         if (valid)
             throw new Error('WebAssembly.Module ctor unexpectedly throws ${typeof e}: ${e}${e.stack}');

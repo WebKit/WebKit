@@ -114,12 +114,14 @@ public:
         optimizeSoon();
     }
 
+    void setOSREntryData(HashMap<IPIntPC, OSREntryData>&& data) { m_osrEntryData = WTF::move(data); }
+
     Lock m_lock;
 private:
     std::array<CompilationStatus, numberOfMemoryModes> m_compilationStatus WTF_GUARDED_BY_LOCK(m_lock);
     std::array<CompilationStatus, numberOfMemoryModes> m_loopCompilationStatus WTF_GUARDED_BY_LOCK(m_lock);
     std::array<CompilationError, numberOfMemoryModes> m_compilationErrors WTF_GUARDED_BY_LOCK(m_lock);
-    const HashMap<IPIntPC, OSREntryData> m_osrEntryData;
+    HashMap<IPIntPC, OSREntryData> m_osrEntryData;
 };
 
 } } // namespace JSC::Wasm

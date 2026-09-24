@@ -71,52 +71,45 @@ async function test() {
             )
         )
     */
-    await assert.throwsAsync(WebAssembly.instantiate(
-        Uint8Array.fromBase64(
+    assert.compileError(Uint8Array.fromBase64(
             "AGFzbQEAAAABKQdgAW8Bb2ABbwF/YAF/AW9gAm9/AX9gAm9vAW9gA29/fwFvYAJvbwF/Ap8CCw53YXNtOmpzLXN0cmluZwRjYXN0AAAOd2FzbTpqcy1zdHJpbmcEdGVzdAABDndhc206anMtc3RyaW5nDGZyb21DaGFyQ29kZQACDndhc206anMtc3RyaW5nDWZyb21Db2RlUG9pbnQAAg53YXNtOmpzLXN0cmluZwpjaGFyQ29kZUF0AAMOd2FzbTpqcy1zdHJpbmcLY29kZVBvaW50QXQAAw53YXNtOmpzLXN0cmluZwZsZW5ndGgAAQ53YXNtOmpzLXN0cmluZwZjb25jYXQABA53YXNtOmpzLXN0cmluZwlzdWJzdHJpbmcABQ53YXNtOmpzLXN0cmluZwZlcXVhbHMABg53YXNtOmpzLXN0cmluZwdjb21wYXJlAAYDAgEABw4BCmRvdWJsZWhhbGYACwoZARcAIABBACAAEAZBAm4QCCEAIAAgABAHCwCAAQRuYW1lAW8LAARjYXN0AQR0ZXN0Agxmcm9tQ2hhckNvZGUDDWZyb21Db2RlUG9pbnQECmNoYXJDb2RlQXQFC2NvZGVQb2ludEF0BgZsZW5ndGgHBmNvbmNhdAgJc3Vic3RyaW5nCQZlcXVhbHMKB2NvbXBhcmUCCAELAQADc3Ry"
-        ), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError,
-        "builtin import wasm:js-string:cast has an unexpected signature");
+        ),
+        "builtin import wasm:js-string:cast has an unexpected signature", {builtins: ["js-string"]});
 
     /*
         (module
             (import "wasm:js-string" "cast" (func $cast (param externref) (result externref)))
         )
     */
-    await assert.throwsAsync(WebAssembly.instantiate(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAW8BbwIXAQ53YXNtOmpzLXN0cmluZwRjYXN0AAAADgRuYW1lAQcBAARjYXN0"), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError, "builtin import wasm:js-string:cast has an unexpected signature");
+    assert.compileError(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAW8BbwIXAQ53YXNtOmpzLXN0cmluZwRjYXN0AAAADgRuYW1lAQcBAARjYXN0"), "builtin import wasm:js-string:cast has an unexpected signature", {builtins: ["js-string"]});
 
     /*
         (module
             (import "wasm:js-string" "fromCharCode" (func $fromCharCode (param i32) (result externref)))
         )
     */
-   await assert.throwsAsync(WebAssembly.instantiate(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAX8BbwIfAQ53YXNtOmpzLXN0cmluZwxmcm9tQ2hhckNvZGUAAAAWBG5hbWUBDwEADGZyb21DaGFyQ29kZQ=="), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError, "builtin import wasm:js-string:fromCharCode has an unexpected signature");
+   assert.compileError(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAX8BbwIfAQ53YXNtOmpzLXN0cmluZwxmcm9tQ2hhckNvZGUAAAAWBG5hbWUBDwEADGZyb21DaGFyQ29kZQ=="), "builtin import wasm:js-string:fromCharCode has an unexpected signature", {builtins: ["js-string"]});
 
     /*
         (module
             (import "wasm:js-string" "fromCodePoint" (func $fromCodePoint (param i32) (result externref)))
         )
     */
-    await assert.throwsAsync(WebAssembly.instantiate(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAX8BbwIgAQ53YXNtOmpzLXN0cmluZw1mcm9tQ29kZVBvaW50AAAAFwRuYW1lARABAA1mcm9tQ29kZVBvaW50"), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError, "builtin import wasm:js-string:fromCodePoint has an unexpected signature");
+    assert.compileError(Uint8Array.fromBase64("AGFzbQEAAAABBgFgAX8BbwIgAQ53YXNtOmpzLXN0cmluZw1mcm9tQ29kZVBvaW50AAAAFwRuYW1lARABAA1mcm9tQ29kZVBvaW50"), "builtin import wasm:js-string:fromCodePoint has an unexpected signature", {builtins: ["js-string"]});
 
     /*
         (module
             (import "wasm:js-string" "concat" (func $concat (param externref externref) (result externref)))
         )
     */
-    await assert.throwsAsync(WebAssembly.instantiate(Uint8Array.fromBase64("AGFzbQEAAAABBwFgAm9vAW8CGQEOd2FzbTpqcy1zdHJpbmcGY29uY2F0AAAAEARuYW1lAQkBAAZjb25jYXQ="), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError, "builtin import wasm:js-string:concat has an unexpected signature");
+    assert.compileError(Uint8Array.fromBase64("AGFzbQEAAAABBwFgAm9vAW8CGQEOd2FzbTpqcy1zdHJpbmcGY29uY2F0AAAAEARuYW1lAQkBAAZjb25jYXQ="), "builtin import wasm:js-string:concat has an unexpected signature", {builtins: ["js-string"]});
 
     /*
         (module
             (import "wasm:js-string" "substring" (func $substring (param externref i32 i32) (result externref)))
         )
     */
-    await assert.throwsAsync(WebAssembly.instantiate(Uint8Array.fromBase64("AGFzbQEAAAABCAFgA29/fwFvAhwBDndhc206anMtc3RyaW5nCXN1YnN0cmluZwAAABMEbmFtZQEMAQAJc3Vic3RyaW5n"), {}, {builtins: ["js-string"]}),
-        WebAssembly.CompileError, "builtin import wasm:js-string:substring has an unexpected signature");
+    assert.compileError(Uint8Array.fromBase64("AGFzbQEAAAABCAFgA29/fwFvAhwBDndhc206anMtc3RyaW5nCXN1YnN0cmluZwAAABMEbmFtZQEMAQAJc3Vic3RyaW5n"), "builtin import wasm:js-string:substring has an unexpected signature", {builtins: ["js-string"]});
 }
 
 await assert.asyncTest(test());

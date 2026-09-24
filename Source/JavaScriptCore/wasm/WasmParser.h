@@ -52,7 +52,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC { namespace Wasm {
 
 namespace FailureHelper {
-// FIXME We should move this to makeString. It's in its own namespace to enable C++ Argument Dependent Lookup à la std::swap: user code can deblare its own "boxFailure" and the fail() helper will find it.
+// FIXME: Move this to makeString. It is in its own namespace to enable C++ Argument Dependent Lookup like std::swap: user code can declare its own "boxFailure" and the fail() helper will find it.
 template<typename T>
 inline String makeString(const T& failure) { return WTF::toString(failure); }
 }
@@ -65,6 +65,7 @@ public:
 
     std::span<const uint8_t> source() const { return m_source; }
     size_t offset() const { return m_offset; }
+    bool hasAllocatorFailure() const { return m_hasAllocatorFailure; }
 
 protected:
     explicit ParserBase(std::span<const uint8_t>);
@@ -95,6 +96,7 @@ protected:
     [[nodiscard]] bool parseHeapType(const ModuleInformation&, int32_t&);
 
     size_t m_offset = 0;
+    mutable bool m_hasAllocatorFailure { false };
 
     template <typename ...Args>
     [[nodiscard]] NEVER_INLINE UnexpectedResult fail(Args... args) const
@@ -108,8 +110,10 @@ protected:
     } while (0)
 
 #define WASM_ALLOCATOR_FAIL_IF(condition, ...) do { \
-    if (condition) [[unlikely]]                     \
-        return fail(__VA_ARGS__);                \
+    if (condition) [[unlikely]] {                   \
+        m_hasAllocatorFailure = true;               \
+        return fail(__VA_ARGS__);                   \
+    }                                               \
     } while (0)
 
 #define WASM_FAIL_IF_HELPER_FAILS(helper) do {                      \

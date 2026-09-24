@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -177,7 +177,7 @@ function testTypeMismatch() {
     (array.new_fixed $vec 3 (f32.const 0) (f32.const 1) (f32.const 2))
   ))`;
 
-    assert.throws(() => compile(moduleString), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: argument type mismatch in array.new_fixed, got F32, expected a subtype of I32, in function at index 0");
+    assert.compileError(watToWasm(moduleString), "WebAssembly.Module doesn't validate: argument type mismatch in array.new_fixed, got F32, expected a subtype of I32, in function at index 0");
 }
 
 function testArgLengthMismatch() {
@@ -188,7 +188,7 @@ function testArgLengthMismatch() {
     (array.new_fixed $vec 1)
   ))`;
 
-    assert.throws(() => compile(noArgs), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed: found 0 operands on stack; expected 1 operands, in function at index 0");
+    assert.compileError(watToWasm(noArgs), "WebAssembly.Module doesn't validate: array_new_fixed: found 0 operands on stack; expected 1 operands, in function at index 0");
 
     let tooFewArgs = `(module
   (type $vec (array i32))
@@ -197,7 +197,7 @@ function testArgLengthMismatch() {
     (array.new_fixed $vec 3 (f32.const 1) (f32.const 2))
   ))`;
 
-    assert.throws(() => compile(tooFewArgs), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed: found 2 operands on stack; expected 3 operands, in function at index 0");
+    assert.compileError(watToWasm(tooFewArgs), "WebAssembly.Module doesn't validate: array_new_fixed: found 2 operands on stack; expected 3 operands, in function at index 0");
 
     let tooManyArgs = `(module
   (type $vec (array i32))
@@ -207,7 +207,7 @@ function testArgLengthMismatch() {
   ))`;
 
     // The `array.fixed` operation itself isn't erroneous, but the additional arguments shouldn't be consumed when parsing it
-  assert.throws(() => compile(tooManyArgs), WebAssembly.CompileError, "WebAssembly.Module doesn't validate:  block with type: () -> [Ref] returns: 1 but stack has: 3 values, in function at index 0");
+  assert.compileError(watToWasm(tooManyArgs), "WebAssembly.Module doesn't validate:  block with type: () -> [Ref] returns: 1 but stack has: 3 values, in function at index 0");
 
     let nonEmptyStack = instantiate(`(module
   (type $vec (array f32))
@@ -238,14 +238,14 @@ function testInvalidArrayType() {
 
     let errorMessage = "WebAssembly.Module doesn't validate: array.new_fixed index 0 does not reference an array definition, in function at index 0";
 
-    assert.throws(() => compile(nonExistentType), WebAssembly.CompileError, errorMessage);
+    assert.compileError(watToWasm(nonExistentType), errorMessage);
     let nonArrayType = `(module
        (type $s (struct (field i32) (field i32)))
   (func $new (export "new") (result (ref $s))
     (array.new_fixed $s 2 (f32.const 1) (f32.const 2))
   ))`;
 
-    assert.throws(() => compile(nonArrayType), WebAssembly.CompileError, errorMessage);
+    assert.compileError(watToWasm(nonArrayType), errorMessage);
 }
 
 function testSubtyping() {
@@ -597,7 +597,7 @@ function testMissingArgumentCount() {
   ))
      */
 
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x64\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8A\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x08\x00\x0B")), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 56: parsing ended before the end of Code section");
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x64\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8A\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x08\x00\x0B"), "WebAssembly.Module doesn't parse at byte 56: parsing ended before the end of Code section");
 
     /*
 (module
@@ -607,7 +607,7 @@ function testMissingArgumentCount() {
     (array.new_fixed $vec <invalid i32>)
   ))
 */
-    assert.throws(() => new WebAssembly.Instance(module("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x64\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8B\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x08\x00\x99\x99")), WebAssembly.CompileError, "WebAssembly.Module doesn't parse at byte 11: can't get argument count for array.new_fixed, in function at index 0");
+    assert.compileError(assert.stringToBytes("\x00\x61\x73\x6D\x01\x00\x00\x00\x01\x89\x80\x80\x80\x00\x02\x5E\x7D\x00\x60\x00\x01\x64\x00\x03\x82\x80\x80\x80\x00\x01\x01\x07\x87\x80\x80\x80\x00\x01\x03\x6E\x65\x77\x00\x00\x0A\x91\x80\x80\x80\x00\x01\x8B\x80\x80\x80\x00\x00\x43\x00\x00\x80\x3F\xFB\x08\x00\x99\x99"), "WebAssembly.Module doesn't parse at byte 11: can't get argument count for array.new_fixed, in function at index 0");
 }
 
 function testTooManyOperands() {
@@ -618,7 +618,7 @@ function testTooManyOperands() {
     (array.new_fixed $vec 10001)
   ))`;
 
-    assert.throws(() => compile(moduleString), WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array_new_fixed can take at most 10000 operands. Got 10001, in function at index 0");
+    assert.compileError(watToWasm(moduleString), "WebAssembly.Module doesn't validate: array_new_fixed can take at most 10000 operands. Got 10001, in function at index 0");
 }
 
 testArrayNewFixed();

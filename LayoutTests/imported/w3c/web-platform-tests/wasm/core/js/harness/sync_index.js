@@ -14,6 +14,13 @@
  * limitations under the License.
 */
 
+// THIS FILE DIVERGES FROM UPSTREAM WPT. assert_invalid() below no longer requires the
+// WebAssembly.Module constructor to reject a module that is invalid only inside a function
+// body, because WebKit may defer body validation to the first call into the function. A
+// re-import from web-platform-tests will drop that change and turn roughly 130 subtests across
+// wasm/core into unexpected failures; reapply it, or record the failures, when that happens.
+// The same divergence is in async_index.js.
+
 'use strict';
 
 let testNum = (function() {
@@ -195,10 +202,16 @@ function assert_invalid(bytes, source) {
     uniqueTest(() => {
         try {
             module(bytes, source, /* valid */ false);
-            throw new Error('did not fail');
         } catch(e) {
             assert_true(e instanceof WebAssembly.CompileError, "expected invalid failure:");
+            return;
         }
+        // WebKit modification: getting here means the WebAssembly.Module constructor accepted
+        // the bytes, which is allowed when what is invalid about them is inside a function
+        // body, because body validation may be deferred to the first call into the function
+        // and these modules are never instantiated. WebAssembly.validate looks at the whole
+        // module either way, so that is what is asserted on instead.
+        assert_false(WebAssembly.validate(binary(bytes)), "expected WebAssembly.validate to reject:");
     }, `A wast module that should be invalid or malformed. (${source})`);
 }
 

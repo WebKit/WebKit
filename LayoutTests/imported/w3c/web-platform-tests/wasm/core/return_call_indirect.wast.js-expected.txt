@@ -122,8 +122,8 @@ PASS #120 Test that WebAssembly compilation fails (return_call_indirect.wast:398
 PASS #121 Test that WebAssembly compilation fails (return_call_indirect.wast:408)
 PASS #122 Test that WebAssembly compilation fails (return_call_indirect.wast:420)
 PASS #123 Test that WebAssembly compilation fails (return_call_indirect.wast:435)
-FAIL #124 Test that WebAssembly compilation fails (return_call_indirect.wast:443) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
-assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
+FAIL #124 Test that WebAssembly compilation fails (return_call_indirect.wast:443) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:169:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:203:9
 return_call_indirect_wast_js@http://web-platform.test:8800/wasm/core/js/return_call_indirect.wast.js:196:15
 global code@http://web-platform.test:8800/wasm/core/js/return_call_indirect.wast.js:261:3 expected true got false
 PASS #125 Test that WebAssembly compilation fails (return_call_indirect.wast:451)

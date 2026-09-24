@@ -56,7 +56,8 @@ const iterations = 80;
 for (let i = 0; i < iterations; ++i) {
     let message;
     try {
-        new WebAssembly.Module(bytes);
+        // The failing bodies are never called, so validation has to be asked for eagerly.
+        new WebAssembly.Module(bytes, { eagerValidate: true });
         throw new Error("expected CompileError");
     } catch (error) {
         assert.truthy(error instanceof WebAssembly.CompileError, `expected CompileError, got ${error}`);

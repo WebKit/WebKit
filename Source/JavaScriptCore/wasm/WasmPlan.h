@@ -76,6 +76,16 @@ public:
     virtual bool multiThreaded() const = 0;
 
     JS_EXPORT_PRIVATE void waitForCompletion();
+
+    // Runs the plan to completion on the calling thread, completion tasks included, for callers
+    // that would block on it anyway. Spreading trivial per-function work over the worklist's
+    // threads costs more than it saves, so ask prefersSynchronousExecution() first.
+    // work() must leave the plan either advanced or failed on every path, or this spins.
+    JS_EXPORT_PRIVATE void runSynchronously();
+
+    // Whether runSynchronously() beats waiting on the worklist.
+    virtual bool prefersSynchronousExecution() const { return false; }
+
     // Returns true if it cancelled the plan.
     bool tryRemoveContextAndCancelIfLast(VM&);
 

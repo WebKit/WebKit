@@ -1,26 +1,20 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function testValidation() {
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (result i32)
           (ref.eq (ref.null extern) (ref.null array))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: ref.eq ref1 to type RefNull expected Eqref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: ref.eq ref1 to type RefNull expected Eqref, in function at index 0");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (func (result i32)
           (ref.eq (i32.const 42) (ref.null array))))
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: ref.eq ref1 to type I32 expected Eqref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: ref.eq ref1 to type I32 expected Eqref, in function at index 0");
 }
 
 function testRefEq() {

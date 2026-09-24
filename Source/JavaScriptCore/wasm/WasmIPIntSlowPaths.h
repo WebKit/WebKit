@@ -123,6 +123,7 @@ WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(call_indirect, CallFrame* callFrame, Wasm::Fun
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(trace, CallFrame*, uint8_t*, uint8_t*);
 
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_function_body, CallFrame*);
+WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(lazy_initialize, CallFrame*);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call, CallFrame*, CallMetadata*, Register* callee);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call);
 WASM_IPINT_EXTERN_CPP_HIDDEN_DECL(prepare_call_ref, CallFrame*, CallRefMetadata*, IPIntStackEntry*);

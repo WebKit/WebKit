@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmIPIntLazyParsing=false")
 // Streaming compilation of a module whose function body fails validation used to
 // move the already-failed (Completed) plan's state machine backwards to Compiled,
 // hitting "ASSERTION FAILED: state >= m_state" in EntryPlan::moveToState.

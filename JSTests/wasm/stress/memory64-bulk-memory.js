@@ -141,30 +141,30 @@ async function testInitOperandTypes() {
     await compile(`
     (module (memory i64 1) (data "hello")
         (func (memory.init 0 (i64.const 0) (i32.const 0) (i32.const 5))))
-    `, { memory64: true });
+    `, { memory64: true, eagerValidate: true });
 
     await assert.throwsAsync(compile(`
     (module (memory i64 1) (data "hello")
         (func (memory.init 0 (i64.const 0) (i64.const 0) (i32.const 5))))
-    `, { memory64: true }), WebAssembly.CompileError,
+    `, { memory64: true, eagerValidate: true }), WebAssembly.CompileError,
         validationError("src address to type I64 expected I32"));
 
     await assert.throwsAsync(compile(`
     (module (memory i64 1) (data "hello")
         (func (memory.init 0 (i64.const 0) (i32.const 0) (i64.const 5))))
-    `, { memory64: true }), WebAssembly.CompileError,
+    `, { memory64: true, eagerValidate: true }), WebAssembly.CompileError,
         validationError("length to type I64 expected I32"));
 
     await assert.throwsAsync(compile(`
     (module (memory i64 1) (data "hello")
         (func (memory.init 0 (i32.const 0) (i32.const 0) (i32.const 5))))
-    `, { memory64: true }), WebAssembly.CompileError,
+    `, { memory64: true, eagerValidate: true }), WebAssembly.CompileError,
         validationError("dst address to type I32 expected I64"));
 
     await assert.throwsAsync(compile(`
     (module (memory 1) (data "hello")
         (func (memory.init 0 (i64.const 0) (i32.const 0) (i32.const 5))))
-    `, { memory64: true }), WebAssembly.CompileError,
+    `, { memory64: true, eagerValidate: true }), WebAssembly.CompileError,
         validationError("dst address to type I64 expected I32"));
 }
 

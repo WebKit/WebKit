@@ -336,7 +336,7 @@ static bool parseAndVerifyDebugInfoImpl(JSC::VM* vm, const SourceModule& sourceM
 
     JSC::JSLockHolder lock(*vm);
 
-    Ref<JSC::Wasm::IPIntPlan> plan = adoptRef(*new JSC::Wasm::IPIntPlan(*vm, Vector<uint8_t>(sourceModule.bytes), JSC::Wasm::CompilerMode::FullCompile, JSC::Wasm::Plan::dontFinalize()));
+    Ref<JSC::Wasm::IPIntPlan> plan = adoptRef(*new JSC::Wasm::IPIntPlan(*vm, Vector<uint8_t>(sourceModule.bytes), JSC::Wasm::CompilerMode::FullCompile, JSC::Wasm::ValidationMode::Lazy, JSC::Wasm::Plan::dontFinalize()));
     if (plan->failed()) {
         dataLogLn("ERROR: Failed to parse WASM module: ", plan->errorMessage());
         return false;

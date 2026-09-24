@@ -18,11 +18,8 @@ function testElemSegmentLimit() {
     bytes.push(0);
   }
   bytes.push(...[10,9,2,2,0,11,4,0,65,42,11]);
-  assert.throws(
-      () => new WebAssembly.Module(new Uint8Array(bytes)),
-      WebAssembly.CompileError,
-      "WebAssembly.Module doesn't parse at byte 50: Element section's 0th index count of 10000001 is too big, maximum 10000000"
-  );
+  assert.compileError(new Uint8Array(bytes),
+      "WebAssembly.Module doesn't parse at byte 50: Element section's 0th index count of 10000001 is too big, maximum 10000000");
 }
 
 testElemSegmentLimit();

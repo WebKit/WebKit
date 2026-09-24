@@ -1,5 +1,5 @@
 import * as assert from "../assert.js";
-import { compile, instantiate } from "./wast-wrapper.js";
+import { compile, instantiate, watToWasm } from "./wast-wrapper.js";
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
@@ -25,35 +25,23 @@ function testRecDeclaration() {
   new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8c\x80\x80\x80\x00\x02\x4e\x01\x5e\x64\x00\x00\x60\x00\x01\x63\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"))
 
   // Test invalid reference type index in a recursion group.
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x5e\x64\x01\x00\x60\x00\x01\x63\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 18: can't get array's element Type"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x02\x5e\x64\x01\x00\x60\x00\x01\x63\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
+    "WebAssembly.Module doesn't parse at byte 18: can't get array's element Type");
 
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8c\x80\x80\x80\x00\x02\x4e\x01\x5e\x64\x01\x00\x60\x00\x01\x63\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8c\x80\x80\x80\x00\x02\x4e\x01\x5e\x64\x01\x00\x60\x00\x01\x63\x00\x03\x82\x80\x80\x80\x00\x01\x01\x0a\x8a\x80\x80\x80\x00\x01\x84\x80\x80\x80\x00\x00\xd0\x00\x0b"),
+    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type");
 
   // Test a zero-length recursion group.
-  assert.throws(
-    () => new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x01\x4e\x80\x80\x80\x80\0xC0")),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 14: parsing ended before the end of Type section (evaluating 'new WebAssembly.Module(buffer)"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8a\x80\x80\x80\x00\x01\x4e\x80\x80\x80\x80\0xC0"),
+    "WebAssembly.Module doesn't parse at byte 14: parsing ended before the end of Type section");
 
   /*
    *  Test invalid index in a recursion group with more than one type.
    *
    *  (module (rec (type (array (ref 2))) (type (array (ref 1)))))
    */
-  assert.throws(
-    () => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8b\x80\x80\x80\x00\x01\x4e\x02\x5e\x64\x02\x00\x5e\x6b\x01\x00"),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type"
-  );
+  assert.compileError(assert.stringToBytes("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8b\x80\x80\x80\x00\x01\x4e\x02\x5e\x64\x02\x00\x5e\x6b\x01\x00"),
+    "WebAssembly.Module doesn't parse at byte 20: can't get array's element Type");
 
   instantiate(`
      (module
@@ -99,27 +87,21 @@ function testRecDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (rec (type (struct)) (type (func)))
         (func (type 0))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 30: 0th Function type 0 doesn't have a function signature"
-  );
+    "WebAssembly.Module doesn't parse at byte 30: 0th Function type 0 doesn't have a function signature");
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (rec (type (array i64)) (type (func)))
         (func (type 0))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't parse at byte 31: 0th Function type 0 doesn't have a function signature"
-  );
+    "WebAssembly.Module doesn't parse at byte 31: 0th Function type 0 doesn't have a function signature");
 
   instantiate(`
     (module
@@ -204,8 +186,7 @@ function testRecDeclaration() {
     );
   }
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (rec (type (func)) (type (struct)))
         (rec (type (struct)) (type (func)))
@@ -213,9 +194,7 @@ function testRecDeclaration() {
         (func (type 3))
       )
     `),
-    WebAssembly.CompileError,
-    "Global init_expr opcode of type Ref doesn't match global's type Ref"
-  );
+    "Global init_expr opcode of type Ref doesn't match global's type Ref");
 
   instantiate(`
     (module
@@ -228,8 +207,7 @@ function testRecDeclaration() {
     )
   `);
 
-  assert.throws(
-    () => compile(`
+  assert.compileError(watToWasm(`
       (module
         (rec (type (func (result (ref 1))))
              (type (func (result (ref 0)))))
@@ -239,9 +217,7 @@ function testRecDeclaration() {
         (func (type 1) (ref.func 1))
       )
     `),
-    WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <func:1>) is not a (ref <func:0>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
-  );
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <func:1>) is not a (ref <func:0>), in function at index 1");
 
   instantiate(`
     (module
