@@ -109,6 +109,7 @@ header: "RemoteLayerBackingStore.h"
     WebKit::ChangedLayers m_changedLayers;
 
     Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
+    Markable<WebCore::FrameIdentifier> m_rootFrameID;
 
     Vector<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
     Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
@@ -118,6 +119,7 @@ header: "RemoteLayerBackingStore.h"
     WebCore::IntSize m_scrollGeometryContentSize;
     WebCore::IntPoint m_scrollOrigin;
     WebCore::IntPoint m_scrollPosition;
+    std::optional<WebKit::RemoteLayerTreeTransaction::FindOverlayRootData> m_findOverlayData;
 
 #if ENABLE(THREADED_ANIMATIONS)
     WebCore::AcceleratedTimelinesUpdate m_timelinesUpdate;
@@ -161,6 +163,17 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
 #if !ENABLE(MODEL_PROCESS) && !ENABLE(MODEL_ELEMENT)
     Variant<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::NoAdditionalData, WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::CustomData, WebCore::LayerHostingContextIdentifier> additionalData;
 #endif
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::FindOverlayRootData::ChildFrameRect {
+    WebCore::FrameIdentifier frameID;
+    WebCore::FloatRect rect;
+};
+
+[Nested] struct WebKit::RemoteLayerTreeTransaction::FindOverlayRootData {
+    Vector<WebCore::FloatRect> matchRectsInRootContentsCoordinates;
+    Vector<WebKit::RemoteLayerTreeTransaction::FindOverlayRootData::ChildFrameRect> childRemoteFrameRects;
+    Markable<WebCore::PlatformLayerIdentifier> veilSlotLayerID;
 };
 
 [Nested] struct WebKit::LayerProperties::AnimationChanges {

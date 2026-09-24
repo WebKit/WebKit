@@ -37,6 +37,7 @@
 #import "CoreTelephonyUtilities.h"
 #import "DataDetectionResult.h"
 #import "ExtensionCapabilityGranter.h"
+#import "FindOverlaySession.h"
 #import "InsertTextOptions.h"
 #import "InteractionInformationAtPosition.h"
 #import "LegacyWebArchiveCallbackAggregator.h"
@@ -51,6 +52,9 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeTransaction.h"
+#if PLATFORM(MAC)
+#import "RemoteLayerTreeDrawingAreaProxyMac.h"
+#endif
 #import "SafeBrowsingSPI.h"
 #import "SafeBrowsingUtilities.h"
 #import "SharedBufferReference.h"
@@ -188,10 +192,64 @@ static bool NODELETE exceedsRenderTreeSizeSizeThreshold(uint64_t thresholdSize, 
     return committedSize > thresholdSize * thesholdSizeFraction;
 }
 
-void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData, const PageData& pageData, const TransactionID& transactionID)
+size_t WebPageProxy::findOverlayVeilLayerCountForTesting() const
+{
+#if PLATFORM(MAC)
+    if (RefPtr drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxyMac>(m_drawingArea))
+        return drawingArea->findOverlayVeilLayerCountForTesting();
+#endif
+    return 0;
+}
+
+void WebPageProxy::didCommitLayerTree(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const std::optional<MainFrameData>& mainFrameData, const PageData& pageData, const TransactionID& transactionID)
 {
     if (RefPtr pageClient = this->pageClient())
         pageClient->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
+
+    // A stale commit that raced a find dismissal finds no session and its
+    // geometry is dropped; a superseded session is unreachable, so identity
+    // handles staleness with no generation tracking. The rootFrameID is
+    // asserted by the web process, so only accept geometry for a root this
+    // page actually has, hosted by the committing process; a commit with no
+    // payload from a known root erases that root's stale geometry.
+    if (RefPtr findOverlaySession = internals().findOverlaySession) {
+        if (auto rootFrameID = layerTreeTransaction.rootFrameID()) {
+            RefPtr rootFrame = WebFrameProxy::webFrame(*rootFrameID);
+            if (rootFrame && rootFrame->page() == this && protect(rootFrame->process())->hasConnection(connection)) {
+                if (auto& findOverlayData = layerTreeTransaction.findOverlayData()) {
+                    // Child cutout identities are web-asserted too, and a veil
+                    // consumer paints clears at these rects; accept only children
+                    // this page hosts whose ancestor chain reaches this root
+                    // without leaving the committing process.
+                    auto childBelongsToRoot = [rootFrameID = *rootFrameID, protectedThis = Ref { *this }, protectedConnection = Ref { connection }](WebCore::FrameIdentifier childFrameID) {
+                        RefPtr childFrame = WebFrameProxy::webFrame(childFrameID);
+                        if (!childFrame || childFrame->page() != protectedThis.ptr())
+                            return false;
+                        for (RefPtr ancestor = childFrame->parentFrame(); ancestor; ancestor = ancestor->parentFrame()) {
+                            if (ancestor->frameID() == rootFrameID)
+                                return true;
+                            if (!protect(ancestor->process())->hasConnection(protectedConnection.get()))
+                                return false;
+                        }
+                        return false;
+                    };
+                    auto childRemoteFrameRects = WTF::compactMap(findOverlayData->childRemoteFrameRects, [&](auto& childFrameRect) -> std::optional<FindOverlaySession::ChildFrameRect> {
+                        if (!childBelongsToRoot(childFrameRect.frameID))
+                            return std::nullopt;
+                        return FindOverlaySession::ChildFrameRect { childFrameRect.frameID, childFrameRect.rect };
+                    });
+                    // The reserved-slot layer identity is web-asserted too; the
+                    // UI process parents its veil tile into it, so accept only
+                    // a layer belonging to the committing root's own process.
+                    Markable<WebCore::PlatformLayerIdentifier> veilSlotLayerID;
+                    if (auto slotLayerID = findOverlayData->veilSlotLayerID; slotLayerID && slotLayerID->processIdentifier() == protect(rootFrame->process())->coreProcessIdentifier())
+                        veilSlotLayerID = *slotLayerID;
+                    findOverlaySession->setRootGeometry(*rootFrameID, FindOverlaySession::RootGeometry { findOverlayData->matchRectsInRootContentsCoordinates, WTF::move(childRemoteFrameRects), veilSlotLayerID });
+                } else
+                    findOverlaySession->clearRootGeometry(*rootFrameID);
+            }
+        }
+    }
 
     // FIXME: Remove this special mechanism and fold it into the transaction's layout milestones.
     if (internals().observedLayoutMilestones.contains(WebCore::LayoutMilestone::ReachedSessionRestorationRenderTreeSizeThreshold) && !m_hitRenderTreeSizeThreshold

@@ -82,6 +82,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "EnhancedSecurity.h"
 #include "EventDispatcherMessages.h"
+#include "FindOverlaySession.h"
 #include "FindStringCallbackAggregator.h"
 #include "FindTextMatchesCallbackAggregator.h"
 #include "FocusedElementInformation.h"
@@ -4281,7 +4282,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
 }
 
 #if !PLATFORM(COCOA)
-void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&)
+void WebPageProxy::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&)
 {
 }
 
@@ -4700,6 +4701,20 @@ void WebPageProxy::handleMouseEvent(Ref<NativeWebMouseEvent>&& event)
 
     if (!m_mainFrame)
         return;
+
+    if (event->type() == WebEventType::MouseDown) {
+        if (RefPtr dismissedSession = std::exchange(internals().findOverlaySession, nullptr)) {
+            findOverlayStateDidChange();
+            // With a UI-side veil, the clicked process is the only one whose
+            // FindController sees this event; the others must retire their
+            // reserved slots and TextMatch markers too.
+            if (RefPtr drawingArea = m_drawingArea; drawingArea && drawingArea->usesUISideFindOverlay()) {
+                forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                    webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+                });
+            }
+        }
+    }
 
     recordUIProcessUserActivation(event);
 
@@ -7560,7 +7575,18 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
+    RefPtr<FindOverlaySession> findOverlaySession;
+    if (options.contains(FindOptions::ShowOverlay)) {
+        findOverlaySession = FindOverlaySession::create(string, options);
+        internals().findOverlaySession = findOverlaySession;
+        findOverlayStateDidChange();
+    }
+
+    sendWithAsyncReply(Messages::WebPage::FindStringMatches(string, options, maxMatchCount), [this, protectedThis = Ref { *this }, findOverlaySession, string](Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection) {
+        if (findOverlaySession) {
+            findOverlaySession->didSettle({ }, matches.size());
+            findOverlayStateDidChange();
+        }
         if (matches.isEmpty())
             m_findClient->didFailToFindString(this, string);
         else
@@ -7570,9 +7596,13 @@ void WebPageProxy::findStringMatches(const String& string, OptionSet<FindOptions
 
 void WebPageProxy::findString(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount, CompletionHandler<void(bool)>&& callbackFunction)
 {
+    Ref findOverlaySession = FindOverlaySession::create(string, options);
+    internals().findOverlaySession = findOverlaySession.ptr();
+    findOverlayStateDidChange();
+
     auto sendAndAggregateFindStringMessage = [&]<typename M>(M&& message, CompletionHandler<void(bool)>&& completionHandler)
     {
-        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, string, options, maxMatchCount, WTF::move(completionHandler));
+        Ref callbackAggregator = FindStringCallbackAggregator::create(*this, findOverlaySession, string, options, maxMatchCount, WTF::move(completionHandler));
         forEachWebContentProcess([&](auto& webProcess, auto pageID) {
             webProcess.sendWithAsyncReply(std::forward<M>(message), [callbackAggregator](std::optional<FrameIdentifier> frameID, Vector<IntRect>&&, uint32_t matchCount, int32_t, bool didWrap) {
                 callbackAggregator->foundString(frameID, matchCount, didWrap);
@@ -7586,11 +7616,13 @@ void WebPageProxy::findString(const String& string, OptionSet<FindOptions> optio
 #endif
 
     if (!protect(browsingContextGroup())->hasRemotePages(*this)) {
-        auto completionHandler = [protectedThis = Ref { *this }, string, callbackFunction = WTF::move(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
-            if (!frameID)
-                protectedThis->findClient().didFailToFindString(protectedThis.ptr(), string);
-            else
-                protectedThis->findClient().didFindString(protectedThis.ptr(), string, matchRects, matchCount, matchIndex, didWrap);
+        auto completionHandler = [protectedThis = Ref { *this }, findOverlaySession, callbackFunction = WTF::move(callbackFunction)](std::optional<FrameIdentifier> frameID, Vector<IntRect>&& matchRects, uint32_t matchCount, int32_t matchIndex, bool didWrap) mutable {
+            HashMap<FrameIdentifier, FindOverlayFrameResult> frameResults;
+            if (frameID)
+                frameResults.set(*frameID, FindOverlayFrameResult { matchCount, didWrap });
+            findOverlaySession->didSettle(WTF::move(frameResults), frameID ? matchCount : 0);
+            protectedThis->findOverlayStateDidChange();
+            findOverlaySession->deliverResult(protectedThis, frameID, matchRects, matchCount, matchIndex, didWrap);
             callbackFunction(frameID.has_value());
         };
         sendWithAsyncReply(Messages::WebPage::FindString(string, options, maxMatchCount), WTF::move(completionHandler));
@@ -7707,7 +7739,88 @@ void WebPageProxy::indicateFindMatch(int32_t matchIndex)
 
 void WebPageProxy::hideFindUI()
 {
-    send(Messages::WebPage::HideFindUI());
+    internals().findOverlaySession = nullptr;
+    findOverlayStateDidChange();
+    // Broadcast so iframe processes clear their TextMatch markers too; with a
+    // cross-site iframe those markers feed visible find UI.
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+    });
+}
+
+FindOverlaySession* WebPageProxy::findOverlaySession() const
+{
+    return internals().findOverlaySession.get();
+}
+
+void WebPageProxy::findOverlayStateDidChange()
+{
+    RefPtr drawingArea = m_drawingArea;
+    if (!drawingArea)
+        return;
+
+    // No reserved slot or veil tile survives a ShowOverlay session that
+    // settled not-visible: the web processes keep their find state alive
+    // through local failures (another process may have matched), so the
+    // page-wide negative verdict is the one place that can retire it. A find
+    // without ShowOverlay never retires anything here: its web-side state
+    // (match index, markers) must survive, and any stale slots are already
+    // uninstalled by the options-driven overlay update each process ran.
+    if (drawingArea->usesUISideFindOverlay()) {
+        if (RefPtr session = internals().findOverlaySession; session && session->settled() && session->wantsOverlay() && !session->overlayShouldBeVisible() && !session->webFindStateRetired()) {
+            session->setWebFindStateRetired();
+            forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                webProcess.send(Messages::WebPage::HideFindUI(), pageID);
+            });
+        }
+    }
+
+    drawingArea->findOverlaySessionDidChange();
+}
+
+bool WebPageProxy::findOverlayShouldBeVisibleForTesting() const
+{
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    return findOverlaySession && findOverlaySession->overlayShouldBeVisible();
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> WebPageProxy::findMatchRectsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries())
+        result.set(rootFrameID, geometry.matchRectsInRootContentsCoordinates);
+    return result;
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> WebPageProxy::findCutoutRectsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries()) {
+        result.set(rootFrameID, WTF::map(geometry.childRemoteFrameRects, [](auto& childFrameRect) {
+            return childFrameRect.rect;
+        }));
+    }
+    return result;
+}
+
+HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> WebPageProxy::findCutoutChildFrameIDsByFrameForTesting() const
+{
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> result;
+    RefPtr findOverlaySession = internals().findOverlaySession;
+    if (!findOverlaySession)
+        return result;
+    for (auto& [rootFrameID, geometry] : findOverlaySession->rootGeometries()) {
+        result.set(rootFrameID, WTF::map(geometry.childRemoteFrameRects, [](auto& childFrameRect) {
+            return childFrameRect.frameID;
+        }));
+    }
+    return result;
 }
 
 void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOptions> options, unsigned maxMatchCount)
@@ -7749,7 +7862,18 @@ void WebPageProxy::countStringMatches(const String& string, OptionSet<FindOption
         CompletionHandler<void(uint32_t)> m_completionHandler;
     };
 
-    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, string](uint32_t matchCount) {
+    RefPtr<FindOverlaySession> findOverlaySession;
+    if (options.contains(FindOptions::ShowOverlay)) {
+        findOverlaySession = FindOverlaySession::create(string, options);
+        internals().findOverlaySession = findOverlaySession;
+        findOverlayStateDidChange();
+    }
+
+    Ref callbackAggregator = CountStringMatchesCallbackAggregator::create(maxMatchCount, [protectedThis = Ref { *this }, findOverlaySession, string](uint32_t matchCount) {
+        if (findOverlaySession) {
+            findOverlaySession->didSettle({ }, matchCount);
+            protectedThis->findOverlayStateDidChange();
+        }
         protectedThis->m_findClient->didCountStringMatches(protectedThis.ptr(), string, matchCount);
     });
 
@@ -8511,6 +8635,8 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_pageLoadTiming = nullptr;
         m_pageLoadTimingPendingCommit = makeUnique<WebPageLoadTiming>(timestamp);
         m_generatePageLoadTimingTimer.stop();
+        internals().findOverlaySession = nullptr;
+        findOverlayStateDidChange();
 
         purgeQueuedModalDialogs();
     }
@@ -14419,6 +14545,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
+    internals().findOverlaySession = nullptr;
+    findOverlayStateDidChange();
     m_suspendedPageKeptToPreventFlashing = nullptr;
     m_lastSuspendedPage = nullptr;
 

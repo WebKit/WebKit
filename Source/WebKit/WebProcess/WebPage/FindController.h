@@ -42,6 +42,10 @@
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#include "RemoteLayerTreeTransaction.h"
+#endif
+
 namespace WebCore {
 class LocalFrame;
 class Range;
@@ -87,12 +91,16 @@ public:
     void NODELETE resetMatchIndex();
     void showFindIndicatorInSelection();
 
-    bool isShowingOverlay() const { return m_findIndicator && m_findIndicator->isShowing() && m_findPageOverlay; }
+    bool isShowingOverlay() const { return m_findIndicator && m_findIndicator->isShowing() && isShowingOverlayVeil(); }
 
     void deviceScaleFactorDidChange();
     void didInvalidateFindRects();
 
     void redraw();
+
+#if PLATFORM(COCOA)
+    std::optional<RemoteLayerTreeTransaction::FindOverlayRootData> overlayDataForRoot(WebCore::LocalFrame&);
+#endif
 
 private:
     // PageOverlayClient.
@@ -109,7 +117,12 @@ private:
     enum class ShouldReuseLastFoundRange : bool { No, Yes };
     void findString(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, ShouldReuseLastFoundRange, CompletionHandler<void(std::optional<WebCore::FrameIdentifier>, Vector<WebCore::IntRect>&&, uint32_t, int32_t, bool)>&&);
 
-    void updateFindPageOverlay(bool shouldShowOverlay);
+    void updateFindPageOverlay(bool shouldShowOverlay, OptionSet<FindOptions>);
+    bool usesUISideFindOverlay();
+    bool isShowingOverlayVeil() const { return m_findPageOverlay || !m_findOverlayRootSlots.isEmpty(); }
+    void installUISideOverlaySlotsIfNeeded();
+    void uninstallUISideOverlaySlots();
+    void clearLocalFindState();
     void updateFindIndicatorIfNeeded(bool found, OptionSet<FindOptions>, bool shouldShowOverlay);
     unsigned markMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
     unsigned getMatchCount(const String&, OptionSet<FindOptions>, unsigned maxMatchCount, unsigned cueMatchCount);
@@ -126,6 +139,9 @@ private:
 
     const WeakPtr<WebPage> m_webPage;
     WeakPtr<WebCore::PageOverlay> m_findPageOverlay;
+    // On configurations where the UI process draws the find veil, each local
+    // root gets a paintless reserved-slot overlay instead of a painted one.
+    HashMap<WebCore::FrameIdentifier, WeakPtr<WebCore::PageOverlay>> m_findOverlayRootSlots;
     std::optional<uint32_t> m_foundStringMatchIndex;
     Vector<WebCore::SimpleRange> m_findMatches;
     std::optional<FindMatch> m_lastFoundRange;

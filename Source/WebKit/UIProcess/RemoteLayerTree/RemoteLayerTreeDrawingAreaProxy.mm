@@ -509,7 +509,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         commitLayerAndScrollingTrees();
         scrollingCoordinatorProxy->didCommitLayerAndScrollingTrees();
 
-        page->didCommitLayerTree(layerTreeTransaction, mainFrameData, pageData, transactionID);
+        page->didCommitLayerTree(connection, layerTreeTransaction, mainFrameData, pageData, transactionID);
         didCommitLayerTree(connection, layerTreeTransaction, scrollingTreeTransaction, mainFrameData, transactionID);
 
         scrollingCoordinatorProxy->applyScrollingTreeLayerPositionsAfterCommit();

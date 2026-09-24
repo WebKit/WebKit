@@ -364,6 +364,61 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return NO;
 }
 
+- (BOOL)_findOverlayShouldBeVisibleForTesting
+{
+    return _page && _page->findOverlayShouldBeVisibleForTesting();
+}
+
+static NSDictionary<NSNumber *, NSArray<NSValue *> *> *dictionaryFromFindRectsByFrame(HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>>&& rectsByFrame)
+{
+    RetainPtr result = adoptNS([[NSMutableDictionary alloc] initWithCapacity:rectsByFrame.size()]);
+    for (auto& [rootFrameID, rects] : rectsByFrame) {
+        RetainPtr rectValues = adoptNS([[NSMutableArray alloc] initWithCapacity:rects.size()]);
+        for (auto& rect : rects) {
+#if USE(APPKIT)
+            [rectValues addObject:[NSValue valueWithRect:rect]];
+#else
+            [rectValues addObject:[NSValue valueWithCGRect:rect]];
+#endif
+        }
+        [result setObject:rectValues.get() forKey:@(rootFrameID.toUInt64())];
+    }
+    return result.autorelease();
+}
+
+- (NSDictionary<NSNumber *, NSArray<NSValue *> *> *)_findMatchRectsByFrameForTesting
+{
+    if (!_page)
+        return @{ };
+    return dictionaryFromFindRectsByFrame(_page->findMatchRectsByFrameForTesting());
+}
+
+- (NSDictionary<NSNumber *, NSArray<NSValue *> *> *)_findCutoutRectsByFrameForTesting
+{
+    if (!_page)
+        return @{ };
+    return dictionaryFromFindRectsByFrame(_page->findCutoutRectsByFrameForTesting());
+}
+
+- (NSUInteger)_findOverlayVeilLayerCountForTesting
+{
+    return _page ? _page->findOverlayVeilLayerCountForTesting() : 0;
+}
+
+- (NSDictionary<NSNumber *, NSArray<NSNumber *> *> *)_findCutoutChildFrameIDsByFrameForTesting
+{
+    if (!_page)
+        return @{ };
+    RetainPtr result = adoptNS([[NSMutableDictionary alloc] init]);
+    for (auto& [rootFrameID, childFrameIDs] : _page->findCutoutChildFrameIDsByFrameForTesting()) {
+        RetainPtr identifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:childFrameIDs.size()]);
+        for (auto& childFrameID : childFrameIDs)
+            [identifiers addObject:@(childFrameID.toUInt64())];
+        [result setObject:identifiers.get() forKey:@(rootFrameID.toUInt64())];
+    }
+    return result.autorelease();
+}
+
 - (NSString *)_scrollingTreeAsText
 {
     CheckedPtr coordinator = _page->scrollingCoordinatorProxy();

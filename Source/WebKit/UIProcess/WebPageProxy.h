@@ -524,6 +524,7 @@ class CallbackID;
 class ContextMenuContextData;
 class DownloadProxy;
 class DrawingAreaProxy;
+class FindOverlaySession;
 class FrameState;
 class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
@@ -1373,7 +1374,7 @@ public:
     void setDataDetectionResult(DataDetectionResult&&);
     void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
+    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const std::optional<MainFrameData>&, const PageData&, const TransactionID&);
     void didCommitMainFrameData(const MainFrameData&, const TransactionID&);
     void layerTreeCommitComplete();
 
@@ -1753,6 +1754,13 @@ public:
     void indicateFindMatch(int32_t matchIndex);
     void didGetImageForFindMatch(WebCore::ImageBufferParameters&&, WebCore::ShareableBitmapHandle&& contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
+    bool findOverlayShouldBeVisibleForTesting() const;
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> findMatchRectsByFrameForTesting() const;
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FloatRect>> findCutoutRectsByFrameForTesting() const;
+    size_t findOverlayVeilLayerCountForTesting() const;
+    FindOverlaySession* findOverlaySession() const;
+    void findOverlayStateDidChange();
+    HashMap<WebCore::FrameIdentifier, Vector<WebCore::FrameIdentifier>> findCutoutChildFrameIDsByFrameForTesting() const;
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
     void replaceMatches(Vector<uint32_t>&& matchIndices, const String& replacementText, bool selectionOnly, CompletionHandler<void(uint64_t)>&&);
     void setTextIndicator(RefPtr<WebCore::TextIndicator>&&, WebCore::TextIndicatorLifetime);

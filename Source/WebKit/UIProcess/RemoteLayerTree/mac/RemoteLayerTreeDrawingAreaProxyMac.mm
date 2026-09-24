@@ -31,6 +31,8 @@
 #import "APIPageConfiguration.h"
 #import "DrawingArea.h"
 #import "DrawingAreaMessages.h"
+#import "FindOverlayPresenter.h"
+#import "FindOverlaySession.h"
 #import "MessageSenderInlines.h"
 #import "RemoteLayerTreeCommitBundle.h"
 #import "RemoteLayerTreeScrollingPerformanceData.h"
@@ -179,6 +181,28 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
     observerID = { };
 }
 
+FindOverlayPresenter& RemoteLayerTreeDrawingAreaProxyMac::ensureFindOverlayPresenter()
+{
+    if (!m_findOverlayPresenter)
+        m_findOverlayPresenter = makeUnique<FindOverlayPresenter>(*this);
+    return *m_findOverlayPresenter;
+}
+
+size_t RemoteLayerTreeDrawingAreaProxyMac::findOverlayVeilLayerCountForTesting() const
+{
+    return m_findOverlayPresenter ? m_findOverlayPresenter->tileCountForTesting() : 0;
+}
+
+void RemoteLayerTreeDrawingAreaProxyMac::findOverlaySessionDidChange()
+{
+    if (!m_findOverlayPresenter) {
+        RefPtr page = this->page();
+        if (!page || !page->findOverlaySession())
+            return;
+    }
+    ensureFindOverlayPresenter().findOverlaySessionDidChange();
+}
+
 void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTreeTransaction& transaction)
 {
     RefPtr webPageProxy = page();
@@ -223,6 +247,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
 
 void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&, const std::optional<MainFrameData>& mainFrameData, const TransactionID& transactionID)
 {
+    if (m_findOverlayPresenter || transaction.findOverlayData())
+        ensureFindOverlayPresenter().didCommitTransaction(transaction);
+
     if (!mainFrameData)
         return;
 
