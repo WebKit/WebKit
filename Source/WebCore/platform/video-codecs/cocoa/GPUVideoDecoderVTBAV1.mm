@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,29 +21,37 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#pragma once
+#import "config.h"
+#import "GPUVideoDecoderVTBAV1.h"
 
 #if USE(LIBWEBRTC)
 
-#include "VideoDecoderVTB.h"
-#include "WebRTCVideoDecoderVTB.h"
-#include <WebCore/PlatformVideoColorSpace.h>
-#include <wtf/TZoneMalloc.h>
+#import "AV1Utilities.h"
+#import "CMUtilities.h"
+#import "TrackInfo.h"
+#import <wtf/BlockPtr.h>
 
 namespace WebCore {
 
-class WebRTCVideoDecoderVTBAV1 final : public WebRTCVideoDecoderVTB {
-    WTF_MAKE_TZONE_ALLOCATED(WebRTCVideoDecoderVTBAV1);
-public:
-    explicit WebRTCVideoDecoderVTBAV1(WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
-    ~WebRTCVideoDecoderVTBAV1();
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBAV1);
 
-private:
-    int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;
-};
-
+GPUVideoDecoderVTBAV1::GPUVideoDecoderVTBAV1(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : GPUVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
+{
 }
 
+GPUVideoDecoderVTBAV1::~GPUVideoDecoderVTBAV1() = default;
+
+int32_t GPUVideoDecoderVTBAV1::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
+{
+    if (RefPtr videoInfo = createVideoInfoFromAV1Stream(data, std::nullopt))
+        setVideoInfo(videoInfo.releaseNonNull());
+
+    return decodeFrameInternal(timeStamp, data);
+}
+
+}
 #endif // USE(LIBWEBRTC)

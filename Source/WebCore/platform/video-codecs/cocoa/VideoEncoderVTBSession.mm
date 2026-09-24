@@ -28,6 +28,7 @@
 
 #if USE(AVFOUNDATION)
 
+#import "VideoToolboxSoftLink.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <pal/cf/CoreMediaSoftLink.h>

@@ -34,7 +34,7 @@
 #import "PixelBufferConformerCV.h"
 #import "SharedBuffer.h"
 #import "VideoDecoder.h"
-#import "VideoDecoderVTB.h"
+#import "VideoDecoderVTBSession.h"
 #import "VideoFrame.h"
 #import <CoreFoundation/CoreFoundation.h>
 #import <CoreMedia/CMBufferQueue.h>
@@ -248,11 +248,11 @@ static RetainPtr<CMTaggedBufferGroupRef> createTaggedBufferGroupWithRequiredVide
     return adoptCF(refinedTaggedBufferGroup);
 }
 
-std::expected<RefPtr<VideoDecoderVTB>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample)
+std::expected<RefPtr<VideoDecoderVTBSession>, OSStatus> WebCoreDecompressionSession::ensureDecoderForSample(CMSampleBufferRef cmSample)
 {
     if (m_waitingForKeyframe) {
         if (!isCMSampleBufferRandomAccess(cmSample))
-            return RefPtr<VideoDecoderVTB> { };
+            return RefPtr<VideoDecoderVTBSession> { };
         RELEASE_LOG_INFO(Media, "VTDecompressionSession received keyframe after format change, creating new VTDecompressionSession");
         m_waitingForKeyframe = false;
     }
@@ -269,7 +269,7 @@ std::expected<RefPtr<VideoDecoderVTB>, OSStatus> WebCoreDecompressionSession::en
         std::exchange(m_videoDecoder, nullptr)->close();
 
     if (m_videoDecoder)
-        return RefPtr<VideoDecoderVTB> { };
+        return RefPtr<VideoDecoderVTBSession> { };
 
     RefPtr videoDecoderVTB = m_videoDecoderVTB;
     if (videoFormatDescriptionChanged && videoDecoderVTB && !videoDecoderVTB->canAccept(videoFormatDescription.get())) {
@@ -279,7 +279,7 @@ std::expected<RefPtr<VideoDecoderVTB>, OSStatus> WebCoreDecompressionSession::en
         if (!isCMSampleBufferRandomAccess(cmSample)) {
             RELEASE_LOG_ERROR(Media, "VTDecompressionSession can't accept format description change on non-keyframe, waiting for keyframe status:%d", int(status));
             m_waitingForKeyframe = true;
-            return RefPtr<VideoDecoderVTB> { };
+            return RefPtr<VideoDecoderVTBSession> { };
         }
         RELEASE_LOG_INFO(Media, "VTDecompressionSession can't accept format description change on keyframe, creating new VTDecompressionSession status:%d", int(status));
     }
@@ -287,7 +287,7 @@ std::expected<RefPtr<VideoDecoderVTB>, OSStatus> WebCoreDecompressionSession::en
     m_lastFormatDescription = videoFormatDescription;
 
     if (!m_videoDecoderVTB) {
-        m_videoDecoderVTB = VideoDecoderVTB::create(videoFormatDescription.get(), (__bridge CFDictionaryRef)m_pixelBufferAttributes.get());
+        m_videoDecoderVTB = VideoDecoderVTBSession::create(videoFormatDescription.get(), (__bridge CFDictionaryRef)m_pixelBufferAttributes.get());
         if (m_dispatcher->isCurrent()) {
             assertIsCurrent(m_dispatcher.get());
 

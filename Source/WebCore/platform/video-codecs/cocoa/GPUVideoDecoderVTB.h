@@ -27,21 +27,21 @@
 
 #if USE(LIBWEBRTC)
 
-#include "VideoDecoderVTB.h"
-#include <WebCore/WebRTCVideoDecoder.h>
+#include "VideoDecoderVTBSession.h"
+#include <WebCore/GPUVideoDecoder.h>
 #include <wtf/BlockPtr.h>
 
 namespace WebCore {
 
 class VideoInfo;
-class WebRTCVideoDecoderVTBQueue;
+class GPUVideoDecoderVTBQueue;
 
-class WebRTCVideoDecoderVTB : public WebRTCVideoDecoder {
+class GPUVideoDecoderVTB : public GPUVideoDecoder {
 public:
-    ~WebRTCVideoDecoderVTB();
+    ~GPUVideoDecoderVTB();
 
 protected:
-    WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
+    GPUVideoDecoderVTB(GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride);
 
     int32_t decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data);
     void setVideoInfo(Ref<VideoInfo>&&, uint8_t reorderSize = 0);
@@ -60,8 +60,8 @@ private:
     BlockPtr<void(CVPixelBufferRef, int64_t, int64_t, bool)> m_callback;
     RefPtr<VideoInfo> m_videoInfo;
     RetainPtr<CMVideoFormatDescriptionRef> m_format;
-    RefPtr<VideoDecoderVTB> m_decoder;
-    RefPtr<WebRTCVideoDecoderVTBQueue> m_queue;
+    RefPtr<VideoDecoderVTBSession> m_decoder;
+    RefPtr<GPUVideoDecoderVTBQueue> m_queue;
     uint16_t m_width { 0 };
     uint16_t m_height { 0 };
     uint8_t m_reorderSize { 0 };

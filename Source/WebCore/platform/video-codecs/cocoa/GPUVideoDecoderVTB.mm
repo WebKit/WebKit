@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebRTCVideoDecoderVTB.h"
+#include "GPUVideoDecoderVTB.h"
 
 #if USE(LIBWEBRTC)
 
@@ -66,7 +66,7 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
         WebCore::kCVPixelBufferPixelFormatTypeKey
     };
 
-    auto ioSurfaceValue = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    RetainPtr ioSurfaceValue = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     bool isFullRange = shouldUseFullRange(format);
     int bitDepth = bitDepthFromFormat(format);
     ASSERT(bitDepth == 8 || bitDepth == 10);
@@ -81,9 +81,9 @@ static RetainPtr<CFDictionaryRef> createPixelBufferAttributes(CMVideoFormatDescr
     return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, attributesSize, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
-class WebRTCVideoDecoderVTBQueue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebRTCVideoDecoderVTBQueue> {
+class GPUVideoDecoderVTBQueue : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GPUVideoDecoderVTBQueue> {
 public:
-    static Ref<WebRTCVideoDecoderVTBQueue> create(uint8_t reorderSize) { return adoptRef(*new WebRTCVideoDecoderVTBQueue(reorderSize)); }
+    static Ref<GPUVideoDecoderVTBQueue> create(uint8_t reorderSize) { return adoptRef(*new GPUVideoDecoderVTBQueue(reorderSize)); }
     void setReorderSize(uint8_t);
     uint8_t reorderSize() const;
 
@@ -91,11 +91,11 @@ public:
         RetainPtr<CVPixelBufferRef> frame;
         int64_t timeStamp { 0 };
     };
-    void add(Buffer&&, WebRTCVideoDecoderCallback);
-    void flush(WebRTCVideoDecoderCallback);
+    void add(Buffer&&, GPUVideoDecoderCallback);
+    void flush(GPUVideoDecoderCallback);
 
 private:
-    explicit WebRTCVideoDecoderVTBQueue(uint8_t reorderSize)
+    explicit GPUVideoDecoderVTBQueue(uint8_t reorderSize)
         : m_queue(reorderSize)
     {
     }
@@ -108,15 +108,15 @@ private:
     MediaReorderQueue<Buffer, BufferComparator> m_queue WTF_GUARDED_BY_LOCK(m_lock);
 };
 
-WebRTCVideoDecoderVTB::WebRTCVideoDecoderVTB(WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-    : WebRTCVideoDecoder(WTF::move(colorSpaceOverride))
+GPUVideoDecoderVTB::GPUVideoDecoderVTB(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : GPUVideoDecoder(WTF::move(colorSpaceOverride))
     , m_callback(makeBlockPtr(callback))
 {
 }
 
-WebRTCVideoDecoderVTB::~WebRTCVideoDecoderVTB() = default;
+GPUVideoDecoderVTB::~GPUVideoDecoderVTB() = default;
 
-static VideoDecoderVTB::CallbackMultiImage createMultiImageCallback(WebRTCVideoDecoderCallback callback, RefPtr<WebRTCVideoDecoderVTBQueue>&& queue, uint8_t reorderSize)
+static VideoDecoderVTBSession::CallbackMultiImage createMultiImageCallback(GPUVideoDecoderCallback callback, RefPtr<GPUVideoDecoderVTBQueue>&& queue, uint8_t reorderSize)
 {
     return makeBlockPtr([callback = makeBlockPtr(callback), queue = WTF::move(queue), reorderSize](OSStatus, VTDecodeInfoFlags, CVImageBufferRef pixelBuffer, CMTaggedBufferGroupRef, CMTime presentationTime, CMTime) mutable {
         UNUSED_PARAM(reorderSize);
@@ -143,7 +143,7 @@ static VideoDecoderVTB::CallbackMultiImage createMultiImageCallback(WebRTCVideoD
     });
 }
 
-int32_t WebRTCVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data)
+int32_t GPUVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<const uint8_t> data)
 {
     if (!m_format)
         return 0;
@@ -153,7 +153,7 @@ int32_t WebRTCVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<
         return -1;
 
     if (!m_decoder || !protect(m_decoder)->canAccept(m_format.get())) {
-        m_decoder = VideoDecoderVTB::create(m_format.get(), createPixelBufferAttributes(m_format.get()).get());
+        m_decoder = VideoDecoderVTBSession::create(m_format.get(), createPixelBufferAttributes(m_format.get()).get());
         if (!m_decoder)
             return -1;
     }
@@ -164,22 +164,22 @@ int32_t WebRTCVideoDecoderVTB::decodeFrameInternal(int64_t timeStamp, std::span<
     return 0;
 }
 
-void WebRTCVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo, uint8_t reorderSize)
+void GPUVideoDecoderVTB::setVideoInfo(Ref<VideoInfo>&& videoInfo, uint8_t reorderSize)
 {
     updateFormat(videoInfo);
     m_videoInfo = WTF::move(videoInfo);
     m_reorderSize = reorderSize;
     if (reorderSize && !m_queue)
-        m_queue = WebRTCVideoDecoderVTBQueue::create(reorderSize);
+        m_queue = GPUVideoDecoderVTBQueue::create(reorderSize);
 }
 
-void WebRTCVideoDecoderVTB::colorSpaceOverrideChanged()
+void GPUVideoDecoderVTB::colorSpaceOverrideChanged()
 {
     if (RefPtr videoInfo = m_videoInfo)
         updateFormat(*videoInfo);
 }
 
-void WebRTCVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
+void GPUVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
 {
     auto colorSpaceOverride = this->colorSpaceOverride();
     if (!colorSpaceOverride) {
@@ -193,7 +193,7 @@ void WebRTCVideoDecoderVTB::updateFormat(const VideoInfo& videoInfo)
     m_format = createFormatDescriptionFromTrackInfo(updatedVideoInfo);
 }
 
-void WebRTCVideoDecoderVTB::flush()
+void GPUVideoDecoderVTB::flush()
 {
     if (RefPtr decoder = m_decoder)
         decoder->flush();
@@ -201,30 +201,30 @@ void WebRTCVideoDecoderVTB::flush()
         queue->flush(m_callback.get());
 }
 
-void WebRTCVideoDecoderVTB::setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height)
+void GPUVideoDecoderVTB::setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height)
 {
     setFrameSize(width, height);
 }
 
-void WebRTCVideoDecoderVTB::setFrameSize(uint16_t width, uint16_t height)
+void GPUVideoDecoderVTB::setFrameSize(uint16_t width, uint16_t height)
 {
     m_width = width;
     m_height = height;
 }
 
-uint8_t WebRTCVideoDecoderVTBQueue::reorderSize() const
+uint8_t GPUVideoDecoderVTBQueue::reorderSize() const
 {
     Locker lock(m_lock);
     return m_queue.reorderSize();
 }
 
-void WebRTCVideoDecoderVTBQueue::setReorderSize(uint8_t size)
+void GPUVideoDecoderVTBQueue::setReorderSize(uint8_t size)
 {
     Locker lock(m_lock);
     m_queue.setReorderSize(size);
 }
 
-void WebRTCVideoDecoderVTBQueue::add(Buffer&& buffer, WebRTCVideoDecoderCallback callback)
+void GPUVideoDecoderVTBQueue::add(Buffer&& buffer, GPUVideoDecoderCallback callback)
 {
     Locker lock(m_lock);
 
@@ -241,7 +241,7 @@ void WebRTCVideoDecoderVTBQueue::add(Buffer&& buffer, WebRTCVideoDecoderCallback
         callback(nil, 0, 0, true);
 }
 
-void WebRTCVideoDecoderVTBQueue::flush(WebRTCVideoDecoderCallback callback)
+void GPUVideoDecoderVTBQueue::flush(GPUVideoDecoderCallback callback)
 {
     Locker lock(m_lock);
 

@@ -27,17 +27,17 @@
 
 #if USE(LIBWEBRTC)
 
-#include "WebRTCVideoDecoderVTB.h"
+#include "GPUVideoDecoderVTB.h"
 #include <WebCore/PlatformVideoColorSpace.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class WebRTCVideoDecoderVTBVP9 final : public WebRTCVideoDecoderVTB {
-    WTF_MAKE_TZONE_ALLOCATED(WebRTCVideoDecoderVTBVP9);
+class GPUVideoDecoderVTBVP9 final : public GPUVideoDecoderVTB {
+    WTF_MAKE_TZONE_ALLOCATED(GPUVideoDecoderVTBVP9);
 public:
-    explicit WebRTCVideoDecoderVTBVP9(WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
-    ~WebRTCVideoDecoderVTBVP9() = default;
+    explicit GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
+    ~GPUVideoDecoderVTBVP9() = default;
 
 private:
     int32_t decodeFrame(int64_t, std::span<const uint8_t>) final;

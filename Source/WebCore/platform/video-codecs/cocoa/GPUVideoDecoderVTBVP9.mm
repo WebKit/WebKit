@@ -25,7 +25,7 @@
  */
 
 #import "config.h"
-#import "WebRTCVideoDecoderVTBVP9.h"
+#import "GPUVideoDecoderVTBVP9.h"
 
 #if USE(LIBWEBRTC)
 
@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(WebRTCVideoDecoderVTBVP9);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPUVideoDecoderVTBVP9);
 
 static RefPtr<VideoInfo> createVP9VideoInfoFromData(std::span<const uint8_t> data, int32_t width, int32_t height)
 {
@@ -59,12 +59,12 @@ static RefPtr<VideoInfo> createVP9VideoInfoFromData(std::span<const uint8_t> dat
     return createVideoInfoFromVPCodecConfigurationRecord(*parsedRecord);
 }
 
-WebRTCVideoDecoderVTBVP9::WebRTCVideoDecoderVTBVP9(WebRTCVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
-    : WebRTCVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
+GPUVideoDecoderVTBVP9::GPUVideoDecoderVTBVP9(GPUVideoDecoderCallback callback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    : GPUVideoDecoderVTB(callback, WTF::move(colorSpaceOverride))
 {
 }
 
-int32_t WebRTCVideoDecoderVTBVP9::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
+int32_t GPUVideoDecoderVTBVP9::decodeFrame(int64_t timeStamp, std::span<const uint8_t> data)
 {
     if (RefPtr videoInfo = createVP9VideoInfoFromData(data, width(), height()))
         setVideoInfo(videoInfo.releaseNonNull());

@@ -32,7 +32,7 @@
 #include <wtf/UniqueRef.h>
 
 typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
-using WebRTCVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
+using GPUVideoDecoderCallback = void (^)(CVPixelBufferRef, int64_t timeStamp, int64_t timeStampNs, bool isReordered);
 
 namespace webrtc {
 using LocalDecoder = void*;
@@ -40,11 +40,11 @@ using LocalDecoder = void*;
 
 namespace WebCore {
 
-class WebRTCVideoDecoder {
+class GPUVideoDecoder {
 public:
-    virtual ~WebRTCVideoDecoder() = default;
+    virtual ~GPUVideoDecoder() = default;
 
-    WEBCORE_EXPORT static std::unique_ptr<WebRTCVideoDecoder> create(VideoCodecType, bool useWebCoreDecoder, WebRTCVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
+    WEBCORE_EXPORT static std::unique_ptr<GPUVideoDecoder> create(VideoCodecType, bool useWebCoreDecoder, GPUVideoDecoderCallback, std::optional<PlatformVideoColorSpace>&& colorSpaceOverride = std::nullopt);
 
     virtual void flush() = 0;
     virtual void setFormat(std::span<const uint8_t>, uint16_t width, uint16_t height) = 0;
@@ -54,7 +54,7 @@ public:
     WEBCORE_EXPORT void setColorSpaceOverride(std::optional<PlatformVideoColorSpace>&&);
 
 protected:
-    explicit WebRTCVideoDecoder(std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
+    explicit GPUVideoDecoder(std::optional<PlatformVideoColorSpace>&& colorSpaceOverride)
         : m_colorSpaceOverride(WTF::move(colorSpaceOverride))
     {
     }

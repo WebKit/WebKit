@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "VideoDecoderVTB.h"
+#import "VideoDecoderVTBSession.h"
 
 #if USE(AVFOUNDATION)
 
@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-RefPtr<VideoDecoderVTB> VideoDecoderVTB::create(CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef pixelBufferAttributes)
+RefPtr<VideoDecoderVTBSession> VideoDecoderVTBSession::create(CMVideoFormatDescriptionRef videoFormatDescription, CFDictionaryRef pixelBufferAttributes)
 {
     auto videoDecoderSpecification = @{ (__bridge NSString *)kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder: @YES };
 
@@ -45,34 +45,34 @@ RefPtr<VideoDecoderVTB> VideoDecoderVTB::create(CMVideoFormatDescriptionRef vide
     auto result = VTDecompressionSessionCreate(kCFAllocatorDefault, videoFormatDescription, (__bridge CFDictionaryRef)videoDecoderSpecification, pixelBufferAttributes, nullptr, &decompressionSession);
     if (result != noErr)
         return nullptr;
-    return adoptRef(*new VideoDecoderVTB(adoptCF(decompressionSession)));
+    return adoptRef(*new VideoDecoderVTBSession(adoptCF(decompressionSession)));
 }
 
-VideoDecoderVTB::~VideoDecoderVTB() = default;
+VideoDecoderVTBSession::~VideoDecoderVTBSession() = default;
 
-OSStatus VideoDecoderVTB::flush()
+OSStatus VideoDecoderVTBSession::flush()
 {
     return VTDecompressionSessionWaitForAsynchronousFrames(m_decompressionSession.get());
 }
 
-bool VideoDecoderVTB::isHardwareAccelerated() const
+bool VideoDecoderVTBSession::isHardwareAccelerated() const
 {
     CFBooleanRef isHardwareAccelerated = NULL;
     VTSessionCopyProperty(m_decompressionSession.get(), kVTDecompressionPropertyKey_UsingHardwareAcceleratedVideoDecoder, kCFAllocatorDefault, &isHardwareAccelerated);
     return isHardwareAccelerated && isHardwareAccelerated == kCFBooleanTrue;
 }
 
-bool VideoDecoderVTB::canAccept(CMVideoFormatDescriptionRef videoFormatDescription) const
+bool VideoDecoderVTBSession::canAccept(CMVideoFormatDescriptionRef videoFormatDescription) const
 {
     return VTDecompressionSessionCanAcceptFormatDescription(m_decompressionSession.get(), videoFormatDescription);
 }
 
-void VideoDecoderVTB::setProperty(CFStringRef key, CFTypeRef value)
+void VideoDecoderVTBSession::setProperty(CFStringRef key, CFTypeRef value)
 {
     VTSessionSetProperty(m_decompressionSession.get(), key, value);
 }
 
-void VideoDecoderVTB::decodeFrame(CMSampleBufferRef sample, VTDecodeInfoFlags flags, Callback&& callback)
+void VideoDecoderVTBSession::decodeFrame(CMSampleBufferRef sample, VTDecodeInfoFlags flags, Callback&& callback)
 {
     auto result = VTDecompressionSessionDecodeFrameWithOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, makeBlockPtr([callback](OSStatus status, VTDecodeInfoFlags, CVImageBufferRef imageBuffer, CMTime presentationTime, CMTime) mutable {
         callback(status, (CVPixelBufferRef)imageBuffer, presentationTime);
@@ -83,7 +83,7 @@ void VideoDecoderVTB::decodeFrame(CMSampleBufferRef sample, VTDecodeInfoFlags fl
     }
 }
 
-void VideoDecoderVTB::decodeMultiImageFrame(CMSampleBufferRef sample, VTDecodeInfoFlags flags, CallbackMultiImage&& callback)
+void VideoDecoderVTBSession::decodeMultiImageFrame(CMSampleBufferRef sample, VTDecodeInfoFlags flags, CallbackMultiImage&& callback)
 {
     auto result = VTDecompressionSessionDecodeFrameWithMultiImageCapableOutputHandler(m_decompressionSession.get(), sample, flags, nullptr, callback.get());
     if (result != noErr) {

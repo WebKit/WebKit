@@ -42,10 +42,10 @@ typedef const struct opaqueCMFormatDescription* CMVideoFormatDescriptionRef;
 
 namespace WebCore {
 
-class VideoDecoderVTB : public ThreadSafeRefCounted<VideoDecoderVTB> {
+class VideoDecoderVTBSession : public ThreadSafeRefCounted<VideoDecoderVTBSession> {
 public:
-    static RefPtr<VideoDecoderVTB> create(CMVideoFormatDescriptionRef, CFDictionaryRef);
-    ~VideoDecoderVTB();
+    static RefPtr<VideoDecoderVTBSession> create(CMVideoFormatDescriptionRef, CFDictionaryRef);
+    ~VideoDecoderVTBSession();
 
     OSStatus flush();
 
@@ -62,7 +62,7 @@ public:
     void decodeMultiImageFrame(CMSampleBufferRef, VTDecodeInfoFlags, CallbackMultiImage&&);
 
 private:
-    explicit VideoDecoderVTB(RetainPtr<VTDecompressionSessionRef>&& session)
+    explicit VideoDecoderVTBSession(RetainPtr<VTDecompressionSessionRef>&& session)
         : m_decompressionSession(WTF::move(session))
     {
     }
