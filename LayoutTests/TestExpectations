@@ -1819,7 +1819,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intri
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-line-count-intrinsic-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/balance/balance-percentage-size-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-percentage-height-stale-width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-dynamic.html [ ImageOnlyFailure ]
 
@@ -4822,7 +4821,6 @@ imported/w3c/web-platform-tests/css/css-values/urls/referrer-policy/no-referrer/
 imported/w3c/web-platform-tests/css/css-values/urls/referrer-policy/unsafe-url/url-image-referrer-policy-external-stylesheet.html [ ImageOnlyFailure ]
 
 # wpt css-sizing failures
-webkit.org/b/203509 imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ ImageOnlyFailure ]
 webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-affects-container-width-when-height-changes.html [ Pass Failure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/image-fractional-height-with-wide-aspect-ratio.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/fit-content-length-percentage-001.html [ ImageOnlyFailure ]
@@ -4846,7 +4844,6 @@ imported/w3c/web-platform-tests/css/css-sizing/max-content-input-001.html [ Imag
 imported/w3c/web-platform-tests/css/css-sizing/vert-block-size-small-or-larger-than-container-with-min-or-max-content-1.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-057.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-045.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-046.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/block-size-with-min-or-max-content-2.html [ ImageOnlyFailure ]
@@ -4860,7 +4857,6 @@ imported/w3c/web-platform-tests/css/css-sizing/replaced-min-height-min-content.h
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-047.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-048.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-non-replaced-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-019.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/stretch/cache-miss-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/replaced-max-width-with-height-fit-content.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-sizing/replaced-max-width-with-height-max-content.html [ ImageOnlyFailure ]

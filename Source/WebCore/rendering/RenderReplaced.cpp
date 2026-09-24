@@ -957,14 +957,20 @@ std::pair<LayoutUnit, LayoutUnit> RenderReplaced::computeAspectRatioAdjustedIntr
     auto computedAspectRatio = preferredAspectRatioAsSize().aspectRatioDouble();
     auto computedIntrinsicLogicalWidth = minLogicalWidth;
 
-    if (auto fixedLogicalHeight = style.logicalHeight().tryFixed())
-        computedIntrinsicLogicalWidth = LayoutUnit { fixedLogicalHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio };
+    if (hasReplacedLogicalHeight())
+        computedIntrinsicLogicalWidth = LayoutUnit { computeReplacedLogicalHeightUsing(style.logicalHeight()) * computedAspectRatio };
 
-    if (auto fixedLogicalMaxHeight = style.logicalMaxHeight().tryFixed())
-        computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMaxHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio });
+    // computeReplacedLogicalHeightUsing() returns a content-box height, so the min/max clamps have to be
+    // content-box too - computeIntrinsicLogicalWidthContributions() adds the border and padding at the end.
+    if (auto fixedLogicalMaxHeight = style.logicalMaxHeight().tryFixed()) {
+        auto maxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalMaxHeight->resolveZoom(style.usedZoomForLength()) });
+        computedIntrinsicLogicalWidth = std::min(computedIntrinsicLogicalWidth, LayoutUnit { maxHeight * computedAspectRatio });
+    }
 
-    if (auto fixedLogicalMinHeight = style.logicalMinHeight().tryFixed())
-        computedIntrinsicLogicalWidth = std::max(computedIntrinsicLogicalWidth, LayoutUnit { fixedLogicalMinHeight->resolveZoom(style.usedZoomForLength()) * computedAspectRatio });
+    if (auto fixedLogicalMinHeight = style.logicalMinHeight().tryFixed()) {
+        auto minHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalMinHeight->resolveZoom(style.usedZoomForLength()) });
+        computedIntrinsicLogicalWidth = std::max(computedIntrinsicLogicalWidth, LayoutUnit { minHeight * computedAspectRatio });
+    }
 
     return { computedIntrinsicLogicalWidth, computedIntrinsicLogicalWidth };
 }

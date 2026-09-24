@@ -1,0 +1,11 @@
+
+
+
+
+
+PASS Percentage width and height on an intrinsically-sized image in a definite-height table cell transfer the cell height
+PASS Percentage width and height on a ratio-only image in a definite-height table cell transfer the cell height
+PASS A 50% height in a definite-height table cell transfers half the cell height
+PASS An auto-width ratio-only image with a percentage height in a table cell transfers the cell height
+PASS The same image in a definite-height inline-block transfers the height (control)
+

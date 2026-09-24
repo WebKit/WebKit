@@ -907,12 +907,6 @@ imported/w3c/web-platform-tests/css/css-tables/calc-percent-plus-0px-fixed.html 
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-028.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-break/out-of-flow-in-multicolumn-081.html [ Pass ]
 
-# Passing since 313074@main.
-imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-057.tentative.html [ Pass ]
-
-# Passing since somewhere in 313581@main..313587@main.
-imported/w3c/web-platform-tests/css/css-sizing/auto-scrollbar-inside-stf-abspos.html [ Pass ]
-
 # Passing since 313297@main.
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ Pass ]
 

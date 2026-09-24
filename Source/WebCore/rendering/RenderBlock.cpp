@@ -3121,8 +3121,10 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
         }
 
         if (shouldComputeLogicalHeightFromAspectRatio()) {
-            // Only grid is expected to be in a state where it is calculating pref width and having unknown logical width.
-            if (isRenderGrid() && hasInvalidContentLogicalWidths() && !style.logicalWidth().isSpecified())
+            // blockSizeFromAspectRatio() derives the block size from logicalWidth(). A shrink-to-fit box has
+            // no inline size until it is laid out, so during a preferred-width pass logicalWidth() still
+            // carries the previous layout's value and feeding it back here grows the box on every relayout.
+            if (hasInvalidContentLogicalWidths() && !style.logicalWidth().isSpecified() && (isRenderGrid() || sizesLogicalWidthToFitContent()))
                 return { };
             return blockSizeFromAspectRatio(
                 horizontalBorderAndPaddingExtent(),

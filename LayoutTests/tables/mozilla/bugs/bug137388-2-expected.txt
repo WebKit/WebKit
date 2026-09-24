@@ -14,11 +14,11 @@ layer at (0,0) size 785x852
                   RenderBlock {HTML} at (0,0) size 304x300
                     RenderBody {BODY} at (8,8) size 288x284
               RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,310) size 606x306
-        RenderTableSection {TBODY} at (0,0) size 606x306
-          RenderTableRow {TR} at (0,2) size 606x302
-            RenderTableCell {TD} at (2,2) size 602x302 [r=0 c=0 rs=1 cs=1]
-              RenderImage {IMG} at (1,1) size 600x300
+      RenderTable {TABLE} at (0,310) size 769x306
+        RenderTableSection {TBODY} at (0,0) size 769x306
+          RenderTableRow {TR} at (0,2) size 769x302
+            RenderTableCell {TD} at (2,2) size 765x302 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 763x300
               RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,616) size 310x156
         RenderTableSection {TBODY} at (0,0) size 310x156
