@@ -170,6 +170,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     virtual void setPortalTransform(const UsedPortalTransform&);
     virtual void setPortalAction(PortalActionKind);
+    virtual void setAnchor(NodeIdentifier, std::optional<NodeIdentifier> anchorNode, const String& placement);
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)

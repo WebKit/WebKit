@@ -1,0 +1,7 @@
+
+PASS position-anchor with position-context: anchor resolves to the named model
+PASS an anchor name with a placement resolves to the same model
+PASS clearing position-anchor removes the anchor
+PASS an anchor declared after the anchored model still resolves
+PASS a chain of anchors resolves at every step
+

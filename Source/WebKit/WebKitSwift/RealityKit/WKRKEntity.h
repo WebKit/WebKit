@@ -82,6 +82,7 @@ NS_SWIFT_UI_ACTOR
 - (void)removeFromParentEntity;
 
 #if HAVE(CORE_RE)
+@property (nonatomic, readonly) REEntityRef coreEntity;
 - (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;
 - (void)setParentCoreEntity:(REEntityRef)parentCoreEntity preservingWorldTransform:(BOOL)preservingWorldTransform;
 #endif

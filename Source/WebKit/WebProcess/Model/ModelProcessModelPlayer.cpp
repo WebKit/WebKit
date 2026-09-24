@@ -556,6 +556,11 @@ void ModelProcessModelPlayer::setPortalAction(WebCore::PortalActionKind kind)
     send(Messages::ModelProcessModelPlayerProxy::SetPortalAction(m_portalAction));
 }
 
+void ModelProcessModelPlayer::setAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement)
+{
+    send(Messages::ModelProcessModelPlayerProxy::SetAnchor(nodeID, anchorNode, placement));
+}
+
 #endif
 
 void ModelProcessModelPlayer::setStageMode(WebCore::StageModeOperation stagemodeOp)

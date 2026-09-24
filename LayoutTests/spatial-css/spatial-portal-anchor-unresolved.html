@@ -1,0 +1,107 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+const assertNotAnchored = async (model, description) => {
+    document.body.offsetHeight; // Force the style update, then let the anchor pass it schedules run.
+    await sleepForSeconds(0.05);
+    assert_equals(internals.spatialPortalAnchorForModel(model), null, description);
+};
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const host = appendModel(portal, asset);
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.style.positionAnchor = "--host";
+
+    await Promise.all([host.ready, child.ready]);
+    await assertNotAnchored(child, "position-anchor alone does not anchor");
+
+    child.style.positionContext = "anchor";
+    await waitFor(() => internals.spatialPortalAnchorForModel(child) === host, "anchored");
+
+    child.style.positionContext = "container";
+    await waitFor(() => internals.spatialPortalAnchorForModel(child) === null, "un-anchored again");
+}, `position-context: anchor gates whether position-anchor takes effect`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const host = appendModel(portal, asset);
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.style.positionAnchor = "--nonexistent";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+    await assertNotAnchored(child, "an unknown anchor name resolves to nothing");
+}, `an anchor name that matches no other <model> in the portal does not resolve`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const model = appendModel(portal, asset);
+    model.style.anchorName = "--self";
+    model.style.positionAnchor = "--self";
+    model.style.positionContext = "anchor";
+
+    await model.ready;
+    await assertNotAnchored(model, "a model does not anchor to itself");
+}, `a <model> cannot anchor to itself`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const first = appendModel(portal, asset);
+    first.style.anchorName = "--first";
+    first.style.positionAnchor = "--second";
+    first.style.positionContext = "anchor";
+
+    const second = appendModel(portal, asset);
+    second.style.anchorName = "--second";
+    second.style.positionAnchor = "--first";
+    second.style.positionContext = "anchor";
+
+    await Promise.all([first.ready, second.ready]);
+
+    await assertNotAnchored(first, "first");
+    await assertNotAnchored(second, "second");
+}, `two <model>s anchored to each other are both rejected`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const host = appendModel(portal, asset);
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.style.positionAnchor = "--host";
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+    await waitFor(() => internals.spatialPortalAnchorForModel(child) === host, "anchored");
+
+    host.style.anchorName = "";
+    await waitFor(() => internals.spatialPortalAnchorForModel(child) === null, "un-anchored");
+}, `removing anchor-name from the host removes the anchor`);
+
+</script>
+</body>
+</html>

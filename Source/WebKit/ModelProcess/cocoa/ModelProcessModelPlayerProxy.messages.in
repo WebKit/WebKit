@@ -53,6 +53,7 @@ messages -> ModelProcessModelPlayerProxy {
 #if ENABLE(SPATIAL_PORTAL)
     [EnabledBy=SpatialPortalEnabled] SetPortalTransform(struct WebCore::UsedPortalTransform portalTransform)
     [EnabledBy=SpatialPortalEnabled] SetPortalAction(enum:bool WebCore::PortalActionKind kind)
+    [EnabledBy=SpatialPortalEnabled] SetAnchor(WebCore::NodeIdentifier nodeID, std::optional<WebCore::NodeIdentifier> anchorNode, String placement)
 #endif
     SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)
     BeginStageModeTransform(WebCore::TransformationMatrix transform)

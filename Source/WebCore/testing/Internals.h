@@ -1720,6 +1720,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     unsigned NODELETE numberOfHostedModelsInSpatialPortal(Element&);
     bool NODELETE establishesSpatialPortal(Element&);
+    RefPtr<Element> NODELETE spatialPortalAnchorForModel(HTMLModelElement&);
     std::optional<Vector<double>> NODELETE spatialPortalResolvedTransform(Element&);
     String NODELETE effectiveEnvironmentMap(Element&);
 #endif

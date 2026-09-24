@@ -482,6 +482,12 @@ void HTMLModelElement::updateEntityTransformFromCSS()
     controller->childTransformDidChange(*this, transform);
 }
 
+void HTMLModelElement::updateAnchorFromCSS()
+{
+    if (CheckedPtr controller = findPortalController())
+        controller->scheduleAnchorUpdate();
+}
+
 void HTMLModelElement::updateSpatialPortalController()
 {
     CheckedPtr controller = findPortalController();

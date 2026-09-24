@@ -92,6 +92,15 @@ struct PositionAnchor {
         return { };
     }
 
+#if ENABLE(SPATIAL_PORTAL)
+    std::optional<CustomIdent> tryAttachment() const
+    {
+        if (auto* pinned = std::get_if<PinnedAnchorName>(&m_value))
+            return pinned->attachment;
+        return { };
+    }
+#endif
+
     template<typename... F> decltype(auto) switchOn(F&&... f) const
     {
         return WTF::switchOn(m_value, std::forward<F>(f)...);

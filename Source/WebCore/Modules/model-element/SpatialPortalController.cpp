@@ -51,6 +51,7 @@
 #include "ModelPlayerGraphicsLayerConfiguration.h"
 #include "ModelPlayerProvider.h"
 #include "ModelPlayerTransformState.h"
+#include "NodeInlines.h"
 #include "Page.h"
 #include "PlaceholderModelPlayer.h"
 #include "RenderBox.h"
@@ -60,12 +61,16 @@
 #include "RenderLayerModelObject.h"
 #include "ResourceError.h"
 #include "SharedBuffer.h"
+#include "StyleAnchorName.h"
 #include "StyleEnvironmentMap.h"
 #include "StylePortalTransform.h"
+#include "StylePositionAnchor.h"
 #include "VisibilityChangeClient.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <ranges>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
@@ -282,6 +287,8 @@ void SpatialPortalController::unregisterChildModel(HTMLModelElement& model)
     if (RefPtr player = m_modelPlayer)
         player->unload(nodeID);
 
+    scheduleAnchorUpdate();
+
     if (m_hostedModels.isEmpty()) {
         deleteModelPlayer();
         stopObservingPortalVisibility();
@@ -296,6 +303,7 @@ void SpatialPortalController::registerChildModel(HTMLModelElement& model)
     });
 
     observePortalVisibility();
+    scheduleAnchorUpdate();
 
     model.visibilityStateChanged();
 }
@@ -338,6 +346,7 @@ void SpatialPortalController::loadChildModelIfReady(HTMLModelElement& model)
 
     it->value.loadedModel = modelData;
 
+    scheduleAnchorUpdate();
     model.updateEntityTransformFromCSS();
 
     if (RefPtr<ModelPlayer> placeholder = std::exchange(it->value.placeholder, nullptr)) {
@@ -719,8 +728,13 @@ void SpatialPortalController::deleteModelPlayer()
             provider->deleteModelPlayer(*m_modelPlayer);
         m_modelPlayer = nullptr;
     }
-    for (auto& hostedModel : m_hostedModels.values())
+    for (auto& hostedModel : m_hostedModels.values()) {
         hostedModel.loadedModel = nullptr;
+
+        hostedModel.anchorNode = std::nullopt;
+        hostedModel.anchorPlacement = { };
+        hostedModel.anchorWarningIssued = false;
+    }
 
     m_lastPushedContentSize = std::nullopt;
     m_resolvedPortalTransform = std::nullopt;
@@ -738,6 +752,8 @@ void SpatialPortalController::unloadChildModel(NodeIdentifier nodeID)
         return;
 
     it->value.loadedModel = nullptr;
+    it->value.anchorNode = std::nullopt;
+    it->value.anchorPlacement = { };
 
     if (RefPtr player = m_modelPlayer)
         player->unload(nodeID);
@@ -886,6 +902,169 @@ void SpatialPortalController::childTransformDidChange(HTMLModelElement& model, c
     model.didUpdateEntityTransformInsidePortal(transform);
 }
 
+HTMLModelElement* SpatialPortalController::anchorModelForChild(NodeIdentifier nodeID) const
+{
+    auto it = m_hostedModels.find(nodeID);
+    if (it == m_hostedModels.end() || !it->value.anchorNode)
+        return nullptr;
+
+    return hostedModelElement(*it->value.anchorNode);
+}
+
+auto SpatialPortalController::collectAnchorNames() const -> AnchorsByName
+{
+    AnchorsByName anchorsByName;
+
+    for (auto& [candidateID, hostedModel] : m_hostedModels) {
+        RefPtr candidate = hostedModel.element.get();
+        if (!candidate)
+            continue;
+
+        CheckedPtr candidateStyle = candidate->computedStyle();
+        if (!candidateStyle)
+            continue;
+
+        for (auto& scopedName : candidateStyle->anchorNamesOutOfLine())
+            anchorsByName.add(Style::ResolvedScopedName::createFromScopedName(*candidate, scopedName), candidateID);
+    }
+
+    return anchorsByName;
+}
+
+std::optional<NodeIdentifier> SpatialPortalController::anchorNodeForName(const HTMLModelElement& model, const Style::ScopedName& anchorName, const AnchorsByName& anchorsByName)
+{
+    auto it = anchorsByName.find(Style::ResolvedScopedName::createFromScopedName(model, anchorName));
+    if (it == anchorsByName.end() || it->value == model.nodeIdentifier())
+        return std::nullopt;
+
+    return it->value;
+}
+
+bool SpatialPortalController::anchorChainReaches(NodeIdentifier startNode, NodeIdentifier targetNode, const AnchorsByName& anchorsByName) const
+{
+    auto currentNode = startNode;
+
+    for (unsigned step = 0; step <= m_hostedModels.size(); ++step) {
+        if (currentNode == targetNode)
+            return true;
+
+        RefPtr current = hostedModelElement(currentNode);
+        if (!current)
+            return false;
+
+        CheckedPtr currentStyle = current->computedStyle();
+        if (!currentStyle || currentStyle->positionContextOutOfLine() != PositionContextType::Anchor)
+            return false;
+
+        auto anchorName = currentStyle->positionAnchorOutOfLine().tryName();
+        if (!anchorName)
+            return false;
+
+        auto nextNode = anchorNodeForName(*current, *anchorName, anchorsByName);
+        if (!nextNode)
+            return false;
+
+        currentNode = *nextNode;
+    }
+
+    return false;
+}
+
+SpatialPortalController::AnchorResolution SpatialPortalController::resolvedAnchorNode(const HTMLModelElement& model, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName) const
+{
+    auto anchorName = style.positionAnchorOutOfLine().tryName();
+    if (!anchorName)
+        return { };
+
+    if (style.positionContextOutOfLine() != PositionContextType::Anchor)
+        return { { }, "position-anchor on a <model> inside a spatial portal has no effect without position-context: anchor."_s };
+
+    auto anchorNode = anchorNodeForName(model, *anchorName, anchorsByName);
+    if (!anchorNode)
+        return { { }, makeString("No other <model> in this spatial portal has anchor-name: "_s, anchorName->name, '.') };
+
+    if (anchorChainReaches(*anchorNode, model.nodeIdentifier(), anchorsByName))
+        return { { }, makeString("Ignoring position-anchor: "_s, anchorName->name, " because it would create a cycle between anchored models."_s) };
+
+    return { anchorNode, { } };
+}
+
+void SpatialPortalController::updateAnchorForChild(const HTMLModelElement& model, HostedModel& hostedModel, const Style::ComputedStyle& style, const AnchorsByName& anchorsByName)
+{
+    auto resolution = resolvedAnchorNode(model, style, anchorsByName);
+
+    if (resolution.node)
+        hostedModel.anchorWarningIssued = false;
+    else if (!resolution.warning.isNull() && !hostedModel.anchorWarningIssued) {
+        hostedModel.anchorWarningIssued = true;
+        addConsoleWarning(resolution.warning);
+    }
+
+    String placement;
+    if (resolution.node) {
+        if (auto attachment = style.positionAnchorOutOfLine().tryAttachment())
+            placement = attachment->value;
+    }
+
+    if (hostedModel.anchorNode == resolution.node && hostedModel.anchorPlacement == placement)
+        return;
+
+    RefPtr player = m_modelPlayer;
+    if (!player)
+        return;
+
+    hostedModel.anchorNode = resolution.node;
+    hostedModel.anchorPlacement = placement;
+
+    player->setAnchor(model.nodeIdentifier(), resolution.node, placement);
+}
+
+void SpatialPortalController::updateAnchors()
+{
+    if (!m_modelPlayer || m_hostedModels.isEmpty())
+        return;
+
+    auto anchorsByName = collectAnchorNames();
+
+    // Sorted so that any console warning the pass emits is ordered by registration, not by hash order.
+    auto nodeIDs = copyToVector(m_hostedModels.keys());
+    std::ranges::sort(nodeIDs);
+
+    for (auto nodeID : nodeIDs) {
+        auto it = m_hostedModels.find(nodeID);
+        if (it == m_hostedModels.end())
+            continue;
+
+        RefPtr element = it->value.element.get();
+        if (!element)
+            continue;
+
+        CheckedPtr style = element->computedStyle();
+        if (!style)
+            continue;
+
+        updateAnchorForChild(*element, it->value, *style, anchorsByName);
+    }
+}
+
+void SpatialPortalController::scheduleAnchorUpdate()
+{
+    if (m_anchorUpdateScheduled)
+        return;
+
+    RefPtr portalElement = m_portalElement.get();
+    if (!portalElement)
+        return;
+
+    m_anchorUpdateScheduled = true;
+    Node::queueTaskKeepingNodeAlive(*portalElement, TaskSource::ModelElement, [](Element& element) {
+        if (CheckedPtr controller = element.spatialPortalController()) {
+            controller->m_anchorUpdateScheduled = false;
+            controller->updateAnchors();
+        }
+    });
+}
+
 void SpatialPortalController::modelDidUnload(ModelPlayer& player)
 {
     //  Mirrors HTMLModelElement::didUnload().
@@ -911,16 +1090,21 @@ void SpatialPortalController::modelDidUpdatePortalTransform(ModelPlayer& player,
 }
 
 // Mirrors HTMLModelElement::logWarning().
-void SpatialPortalController::logWarning(ModelPlayer& player, const String& warningMessage)
+void SpatialPortalController::addConsoleWarning(const String& warningMessage) const
 {
-    ASSERT_UNUSED(player, &player == m_modelPlayer);
-
     RefPtr element = m_portalElement.get();
     if (!element)
         return;
 
     Ref document = element->document();
     document->addConsoleMessage(MessageSource::Other, MessageLevel::Warning, warningMessage);
+}
+
+void SpatialPortalController::logWarning(ModelPlayer& player, const String& warningMessage)
+{
+    ASSERT_UNUSED(player, &player == m_modelPlayer);
+
+    addConsoleWarning(warningMessage);
 }
 
 void SpatialPortalController::reconfigurePortalLayer()

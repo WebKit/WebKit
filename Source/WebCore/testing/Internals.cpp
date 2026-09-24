@@ -9038,6 +9038,15 @@ bool Internals::establishesSpatialPortal(Element& element)
     return element.establishesSpatialPortal();
 }
 
+RefPtr<Element> Internals::spatialPortalAnchorForModel(HTMLModelElement& model)
+{
+    CheckedPtr controller = model.lastRegisteredPortalController();
+    if (!controller)
+        return nullptr;
+
+    return controller->anchorModelForChild(model.nodeIdentifier());
+}
+
 // Returned as column-major values.
 std::optional<Vector<double>> Internals::spatialPortalResolvedTransform(Element& element)
 {

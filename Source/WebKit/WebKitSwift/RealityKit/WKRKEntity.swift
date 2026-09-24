@@ -602,6 +602,11 @@ extension WKRKEntity {
     }
 
     #if canImport(CoreRE)
+    var coreEntity: REEntityRef {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180
+        unsafe entity.coreEntity
+    }
+
     @objc(setParentCoreEntity:preservingWorldTransform:)
     func setParentCore(_ coreEntity: REEntityRef, preservingWorldTransform: Bool) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=313180

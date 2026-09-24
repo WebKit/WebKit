@@ -1,0 +1,93 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+const settledAnchor = (model, expected, description) =>
+    waitFor(() => internals.spatialPortalAnchorForModel(model) === expected, description);
+
+async function anchoredPair(test, { positionAnchor = "--host" } = {}) {
+    const portal = createPortal(test);
+
+    const host = appendModel(portal, asset);
+    host.style.anchorName = "--host";
+
+    const child = appendModel(portal, asset);
+    child.style.positionAnchor = positionAnchor;
+    child.style.positionContext = "anchor";
+
+    await Promise.all([host.ready, child.ready]);
+    return { host, child };
+}
+
+promise_test(async t => {
+    const { host, child } = await anchoredPair(t);
+    await settledAnchor(child, host, "the child resolves to the host");
+
+    assert_equals(internals.spatialPortalAnchorForModel(host), null, "the host is not itself anchored");
+}, `position-anchor with position-context: anchor resolves to the named model`);
+
+promise_test(async t => {
+    const { host, child } = await anchoredPair(t, { positionAnchor: "--host#lid-attachment" });
+
+    await settledAnchor(child, host, "the child resolves to the host");
+}, `an anchor name with a placement resolves to the same model`);
+
+promise_test(async t => {
+    const { host, child } = await anchoredPair(t);
+    await settledAnchor(child, host, "anchored");
+
+    child.style.positionAnchor = "";
+    await settledAnchor(child, null, "un-anchored");
+}, `clearing position-anchor removes the anchor`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const child = appendModel(portal, asset);
+    child.style.positionAnchor = "--later";
+    child.style.positionContext = "anchor";
+
+    const host = appendModel(portal, asset);
+    host.style.anchorName = "--later";
+
+    await Promise.all([host.ready, child.ready]);
+    await settledAnchor(child, host, "the child resolves to a host declared after it");
+}, `an anchor declared after the anchored model still resolves`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const first = appendModel(portal, asset);
+    first.style.anchorName = "--first";
+
+    const middle = appendModel(portal, asset);
+    middle.style.anchorName = "--middle";
+    middle.style.positionAnchor = "--first";
+    middle.style.positionContext = "anchor";
+
+    const last = appendModel(portal, asset);
+    last.style.positionAnchor = "--middle";
+    last.style.positionContext = "anchor";
+
+    await Promise.all([first.ready, middle.ready, last.ready]);
+
+    await settledAnchor(middle, first, "middle resolves to first");
+    await settledAnchor(last, middle, "last resolves to middle");
+}, `a chain of anchors resolves at every step`);
+
+</script>
+</body>
+</html>

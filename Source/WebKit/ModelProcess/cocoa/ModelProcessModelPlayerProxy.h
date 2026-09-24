@@ -175,6 +175,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
+    void setAnchor(WebCore::NodeIdentifier, std::optional<WebCore::NodeIdentifier> anchorNode, const String& placement) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
@@ -214,6 +215,11 @@ private:
         // Set from CSS or the entityTransform attribute. Stored rather than applied directly because it can arrive
         // before the entity exists, and has to be recomposed whenever the container's scale changes.
         simd_float4x4 childTransform { matrix_identity_float4x4 };
+
+        std::optional<WebCore::NodeIdentifier> anchorNode;
+        String anchorPlacement;
+        RetainPtr<WKRKEntity> anchorPlacementEntity;
+        simd_quatf anchorCorrection = simd_quaternion(0.0f, simd_make_float3(1, 0, 0));
 #endif
     };
     using TrackedModelMap = HashMap<WebCore::NodeIdentifier, UniqueRef<TrackedModel>>;
@@ -235,6 +241,8 @@ private:
     void notifyModelPlayerOfTransformChange();
 #if ENABLE(SPATIAL_PORTAL)
     RESRT childEntityTransformSRT(const TrackedModel&) const;
+    float anchorPlacementScale(const TrackedModel&) const;
+    void updateAnchorParenting();
 #endif
     void applyDefaultIBL();
     void removeIBL();

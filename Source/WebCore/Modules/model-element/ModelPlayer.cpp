@@ -212,6 +212,10 @@ void ModelPlayer::setPortalAction(PortalActionKind)
 {
 }
 
+void ModelPlayer::setAnchor(NodeIdentifier, std::optional<NodeIdentifier>, const String&)
+{
+}
+
 #endif
 
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
