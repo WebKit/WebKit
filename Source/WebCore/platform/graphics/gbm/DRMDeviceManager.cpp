@@ -28,17 +28,14 @@
 
 #if USE(GBM)
 #include "GBMDevice.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 DRMDeviceManager& DRMDeviceManager::singleton()
 {
-    static std::unique_ptr<DRMDeviceManager> s_manager;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        s_manager = makeUnique<DRMDeviceManager>();
-    });
-    return *s_manager;
+    static NeverDestroyed<DRMDeviceManager> manager;
+    return manager;
 }
 
 DRMDeviceManager::~DRMDeviceManager() = default;
