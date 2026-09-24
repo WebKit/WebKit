@@ -3270,8 +3270,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Pa
 # This test times out only in mac-wk1, WPE and GTK.
 imported/w3c/web-platform-tests/html/interaction/focus/sequential-focus-navigation-and-the-tabindex-attribute/focus-tabindex-order.html [ Skip ]
 
-webkit.org/b/324671 imported/w3c/web-platform-tests/resource-timing/decoded-body-size-compressed.https.html [ Pass Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3296,8 +3294,6 @@ http/tests/xmlhttprequest/gzip-content-type.html [ Failure Pass ]
 webkit.org/b/264596 imported/w3c/web-platform-tests/xhr/ [ Skip ]
 
 webkit.org/b/189994 fast/files/xhr-response-blob.html [ Failure ]
-
-webkit.org/b/324671 http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of XHR-related bugs
@@ -5223,7 +5219,7 @@ webkit.org/b/321706 imported/w3c/web-platform-tests/web-locks/acquire.https.any.
 webkit.org/b/319044 imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Failure ]
 webkit.org/b/319045 [ Debug ] accessibility/button-in-deep-dom.html [ Timeout ]
 webkit.org/b/319047 [ Debug ] imported/w3c/web-platform-tests/css/css-overflow/line-clamp/line-clamp-033.html [ Crash ]
-webkit.org/b/319049 http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Failure ]
+webkit.org/b/319049 [ Debug ] http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Failure ]
 webkit.org/b/319050 [ Debug ] imported/w3c/web-platform-tests/fetch/local-network-access/iframe.tentative.https.window.html [ Failure ]
 webkit.org/b/319051 [ Debug ] imported/w3c/web-platform-tests/uievents/mouse/mouse_boundary_events_after_removing_last_over_element.html [ Failure Pass ]
 webkit.org/b/319052 [ Debug ] http/tests/websocket/tests/hybi/inspector/handshake-error.html [ Pass Failure ]
