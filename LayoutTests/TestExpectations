@@ -7664,6 +7664,11 @@ http/tests/ipc/write-web-archive-frame-ancestry-check.html [ Skip ]
 http/tests/site-isolation/touch-events [ Skip ]
 http/tests/site-isolation/ios [ Skip ]
 
+# The UIScriptController method used by these tests is only implemented on macOS (for now)
+# webkit.org/b/324206
+http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-001.html [ Skip ]
+http/tests/site-isolation/date-time-picker-in-cross-origin-iframe-002.html [ Skip ]
+
 # CSS syntax
 imported/w3c/web-platform-tests/css/css-shadow/scoped-reference-animation-002.html [ ImageOnlyFailure ]
 

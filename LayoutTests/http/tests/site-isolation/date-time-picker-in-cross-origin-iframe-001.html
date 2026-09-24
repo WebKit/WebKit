@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<style>
+  body {
+    padding: 0;
+    margin: 0;
+  }
+
+  iframe {
+    border: 1px black solid;
+    width: 300px;
+    height: 300px;
+  }
+</style>
+
+<iframe id="iframe"></iframe>
+
+<script>
+  async function loadSubframe(padding) {
+    let loadedPromise = new Promise(resolve => iframe.addEventListener("load", resolve));
+    iframe.src = `http://localhost:8000/site-isolation/resources/date-time-picker-subframe.html?padding=${padding}`;
+    await loadedPromise;
+
+    // Wait a bit for the scrolling inside the frame to take effect.
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
+  }
+
+  promise_test(async (t) => {
+    await loadSubframe(0);
+    await UIHelper.activateAt(5, 5);
+
+    let rect = await UIHelper.dateTimePickerRect();
+    assert_equals(rect.top, 53);
+    assert_equals(rect.left, 1);
+  }, "Date time picker is at correct location when date time input is in a cross-origin frame");
+
+  promise_test(async (t) => {
+    await loadSubframe(1000);
+    await UIHelper.activateAt(5, 5);
+
+    let rect = await UIHelper.dateTimePickerRect();
+    assert_equals(rect.top, 53);
+    assert_equals(rect.left, 1);
+  }, "Date time picker is at correct location when date time input is in middle of a cross-origin frame, that scrolling is required");
+</script>
