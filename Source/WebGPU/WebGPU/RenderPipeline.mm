@@ -2022,10 +2022,10 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
     return true;
 }
 
-NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURenderPassDescriptor& descriptor, const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
+NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const Vector<TextureOrTextureView>& colorAttachmentViews, const std::optional<TextureOrTextureView>& depthStencilView) const
 {
     if (!m_hasFragment) {
-        if (descriptor.colorAttachmentCount)
+        if (colorAttachmentViews.size())
             return @"No fragment shader but render pass has color attachments";
     } else {
         for (size_t i = 0, maxCount = std::max<size_t>(m_colorTargetFormats.size(), colorAttachmentViews.size()); i < maxCount; ++i) {
@@ -2044,14 +2044,14 @@ NSString* RenderPipeline::errorValidatingColorDepthStencilTargets(const WGPURend
     }
 
     if (!m_depthStencilFormat) {
-        if (!descriptor.depthStencilAttachment)
+        if (!depthStencilView)
             return nil;
 
         return @"depthStencil is missing but render pass has a depth stencil attachment";
     }
 
-    if (descriptor.depthStencilAttachment) {
-        if (!depthStencilView || !*depthStencilView)
+    if (depthStencilView) {
+        if (!*depthStencilView)
             return @"depthStencilAttachment exists but no depthStencilView";
         auto& texture = *depthStencilView;
         if (texture.format() != *m_depthStencilFormat)
