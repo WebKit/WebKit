@@ -33,19 +33,17 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CanvasPaintEvent);
 
-Ref<CanvasPaintEvent> CanvasPaintEvent::create(const AtomString& type, Init&& initializer)
+Ref<CanvasPaintEvent> CanvasPaintEvent::create(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
 {
-    return adoptRef(*new CanvasPaintEvent(type, WTF::move(initializer)));
+    return adoptRef(*new CanvasPaintEvent(type, WTF::move(initializer), isTrusted));
 }
 
-CanvasPaintEvent::CanvasPaintEvent(const AtomString& type, Init&& initializer)
-    : Event(EventInterfaceType::CanvasPaintEvent, type, WTF::move(initializer), IsTrusted::No)
+CanvasPaintEvent::CanvasPaintEvent(const AtomString& type, Init&& initializer, IsTrusted isTrusted)
+    : Event(EventInterfaceType::CanvasPaintEvent, type, initializer, isTrusted)
+    , m_changedElements(WTF::move(initializer.changedElements))
 {
 }
 
-Vector<Ref<Element>> CanvasPaintEvent::changedElements() const
-{
-    return { };
-}
+CanvasPaintEvent::~CanvasPaintEvent() = default;
 
 } // namespace WebCore

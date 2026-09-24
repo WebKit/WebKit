@@ -336,6 +336,7 @@ enum class RenderingUpdateStep : uint32_t {
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     Immersive                           = 1 << 30,
 #endif
+    CanvasPaintEvent                    = 1u << 31,
 
 };
 
@@ -375,6 +376,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::PerformPendingViewTransitions,
     RenderingUpdateStep::AdjustVisibility,
     RenderingUpdateStep::SyncLocalFrameInfoToRemote,
+    RenderingUpdateStep::CanvasPaintEvent,
 };
 
 constexpr auto perRootFrameRenderingUpdateSteps = OptionSet<RenderingUpdateStep> {

@@ -32,6 +32,7 @@
 #include "Blob.h"
 #include "BlobCallback.h"
 #include "CanvasGradient.h"
+#include "CanvasPaintEvent.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasRenderingContext2DSettings.h"
@@ -145,6 +146,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     // avoided in destructors, but works as long as it's done before HTMLCanvasElement destructs completely.
     notifyObserversCanvasDestroyed();
     removeCanvasNeedingPreparationForDisplayOrFlush();
+    protect(document())->cancelCanvasPaintEvent(*this);
 }
 
 bool HTMLCanvasElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -229,6 +231,13 @@ bool HTMLCanvasElement::layoutSubtree() const
 
 void HTMLCanvasElement::requestPaint()
 {
+    protect(document())->requestCanvasPaintEvent(*this);
+}
+
+void HTMLCanvasElement::dispatchPaintEvent()
+{
+    // FIXME: Populate changedElements.
+    dispatchEvent(CanvasPaintEvent::create(eventNames().paintEvent, { }, Event::IsTrusted::Yes));
 }
 
 ExceptionOr<Ref<DOMMatrix>> HTMLCanvasElement::getElementTransform(const CanvasElementImageSource&, DOMMatrix&)
@@ -917,6 +926,7 @@ void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& ne
         oldDocument.removeCanvasNeedingPreparationForDisplayOrFlush(*context);
         newDocument.addCanvasNeedingPreparationForDisplayOrFlush(*context);
     }
+    oldDocument.cancelCanvasPaintEvent(*this);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 

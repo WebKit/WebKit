@@ -2067,6 +2067,10 @@ public:
     void addCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
     void removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingContext&);
 
+    void serviceCanvasPaintEvents();
+    void requestCanvasPaintEvent(HTMLCanvasElement&);
+    void cancelCanvasPaintEvent(HTMLCanvasElement&);
+
     bool contains(const Node& node) const { return this == &node.treeScope() && node.isConnected(); }
     bool contains(const Node* node) const { return node && contains(*node); }
 
@@ -2466,6 +2470,8 @@ private:
     // render update. Hold canvases via rendering context, since there is no common base class that
     // would be managed.
     WeakHashSet<CanvasRenderingContext> m_canvasContextsToPrepare;
+
+    WeakHashSet<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvasesNeedingPaintEvent;
 
     HashMap<String, Ref<HTMLCanvasElement>> m_cssCanvasElements;
 

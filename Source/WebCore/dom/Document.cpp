@@ -12028,6 +12028,29 @@ void Document::removeCanvasNeedingPreparationForDisplayOrFlush(CanvasRenderingCo
     context.setIsInPreparationForDisplayOrFlush(false);
 }
 
+void Document::serviceCanvasPaintEvents()
+{
+    auto canvases = std::exchange(m_canvasesNeedingPaintEvent, { });
+    for (RefPtr canvas : canvases) {
+        if (!canvas->isConnected())
+            continue;
+        canvas->dispatchPaintEvent();
+    }
+}
+
+void Document::requestCanvasPaintEvent(HTMLCanvasElement& canvas)
+{
+    bool shouldSchedule = m_canvasesNeedingPaintEvent.isEmptyIgnoringNullReferences();
+    m_canvasesNeedingPaintEvent.add(canvas);
+    if (shouldSchedule)
+        scheduleRenderingUpdate(RenderingUpdateStep::CanvasPaintEvent);
+}
+
+void Document::cancelCanvasPaintEvent(HTMLCanvasElement& canvas)
+{
+    m_canvasesNeedingPaintEvent.remove(canvas);
+}
+
 void Document::updateSleepDisablerIfNeeded()
 {
     MediaProducerMediaStateFlags activeVideoCaptureMask { MediaProducerMediaState::HasActiveVideoCaptureDevice, MediaProducerMediaState::HasActiveScreenCaptureDevice, MediaProducerMediaState::HasActiveWindowCaptureDevice };

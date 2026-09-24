@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include <wtf/Ref.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -38,12 +39,15 @@ public:
     struct Init : EventInit {
         Vector<Ref<Element>> changedElements;
     };
-    static Ref<CanvasPaintEvent> create(const AtomString& type, Init&&);
+    static Ref<CanvasPaintEvent> create(const AtomString& type, Init&&, IsTrusted = IsTrusted::No);
+    ~CanvasPaintEvent();
 
-    Vector<Ref<Element>> changedElements() const;
+    const Vector<Ref<Element>>& changedElements() const LIFETIME_BOUND { return m_changedElements; }
 
 private:
-    CanvasPaintEvent(const AtomString& type, Init&&);
+    CanvasPaintEvent(const AtomString& type, Init&&, IsTrusted);
+
+    Vector<Ref<Element>> m_changedElements;
 };
 
 } // namespace WebCore

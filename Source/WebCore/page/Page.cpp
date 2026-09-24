@@ -2505,6 +2505,10 @@ void Page::updateRendering()
         document.updateIntersectionObservers();
     });
 
+    runProcessingStep(RenderingUpdateStep::CanvasPaintEvent, [] (Document& document) {
+        document.serviceCanvasPaintEvents();
+    });
+
     runProcessingStep(RenderingUpdateStep::Images, [] (Document& document) {
         for (auto& image : protect(document.cachedResourceLoader())->allCachedSVGImages()) {
             if (RefPtr page = image->internalPage())
@@ -5255,6 +5259,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
 #if ENABLE(MODEL_ELEMENT_IMMERSIVE)
     case RenderingUpdateStep::Immersive: ts << "Immersive"_s; break;
 #endif
+    case RenderingUpdateStep::CanvasPaintEvent: ts << "CanvasPaintEvent"_s; break;
     }
     return ts;
 }

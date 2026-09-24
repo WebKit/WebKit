@@ -87,6 +87,7 @@ public:
     bool layoutSubtree() const;
 
     void requestPaint();
+    void dispatchPaintEvent();
 
     ExceptionOr<Ref<DOMMatrix>> getElementTransform(const CanvasElementImageSource&, DOMMatrix& drawTransform);
     ExceptionOr<Ref<CanvasElementImage>> captureElementImage(Element&);
