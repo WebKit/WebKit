@@ -29,10 +29,10 @@ namespace WebCore {
 namespace Layout {
 // https://drafts.csswg.org/css-grid-1/#grid-area
 struct GridAreaLines {
-    size_t columnStartLine;
-    size_t columnEndLine;
-    size_t rowStartLine;
-    size_t rowEndLine;
+    size_t columnStartLine { 0 };
+    size_t columnEndLine { 0 };
+    size_t rowStartLine { 0 };
+    size_t rowEndLine { 0 };
 };
 }
 }

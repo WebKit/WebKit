@@ -26,6 +26,7 @@
 #pragma once
 
 #include "StyleGridPosition.h"
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -89,8 +90,8 @@ public:
     size_t columnSpanSize() const;
     size_t rowSpanSize() const;
 
-    std::pair<size_t, size_t> definiteRowStartEnd() const;
-    std::pair<size_t, size_t> definiteColumnStartEnd() const;
+    WTF::Range<size_t> definiteRowRange() const;
+    WTF::Range<size_t> definiteColumnRange() const;
 
     // Resolves the 0-based explicit line range [start, end) for an axis, or std::nullopt when the
     // axis is auto-positioned. explicitTrackCount is used to resolve negative lines against the end

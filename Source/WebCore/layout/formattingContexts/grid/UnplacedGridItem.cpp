@@ -164,13 +164,13 @@ size_t UnplacedGridItem::rowSpanSize() const
     return m_rowPosition.span();
 }
 
-std::pair<size_t, size_t> UnplacedGridItem::definiteRowStartEnd() const
+WTF::Range<size_t> UnplacedGridItem::definiteRowRange() const
 {
     auto& definitePosition = m_rowPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
 }
 
-std::pair<size_t, size_t> UnplacedGridItem::definiteColumnStartEnd() const
+WTF::Range<size_t> UnplacedGridItem::definiteColumnRange() const
 {
     auto& definitePosition = m_columnPosition.definitePosition();
     return { definitePosition.startLine, definitePosition.endLine };
