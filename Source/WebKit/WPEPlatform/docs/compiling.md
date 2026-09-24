@@ -28,13 +28,12 @@ below) and simply depends on the core module.
 
 ## Build-time availability
 
-WPEPlatform is gated behind WPE WebKit's `ENABLE_WPE_PLATFORM` CMake
-option. This option defaults to `ON`, but it can be turned off (and it
-cannot be combined with `ENABLE_WPE_1_1_API`), so **distribution
-packages may still ship without it**. Before assuming any of the modules
-above exist on a target, confirm that WPE WebKit was built with
-`-DENABLE_WPE_PLATFORM=ON`, or probe for the module from your build
-system:
+Since 2.56, WPEPlatform is always part of WPE WebKit: every build of
+the 2.0 API includes it, and there is no build-time option to leave it
+out. The WPE 1.1 API (`ENABLE_WPE_1_1_API`) is the only build without
+it. In 2.54 it could still be disabled at build time, so if your
+application must also work against that release, probe for the module
+from your build system:
 
 ```sh
 pkg-config --exists wpe-platform-2.0 && echo present
@@ -42,11 +41,11 @@ pkg-config --exists wpe-platform-2.0 && echo present
 
 The per-backend implementations are independently optional via
 `ENABLE_WPE_PLATFORM_WAYLAND`, `ENABLE_WPE_PLATFORM_DRM`, and
-`ENABLE_WPE_PLATFORM_HEADLESS` (all default `ON` when WPEPlatform
-itself is enabled). The DRM built-in additionally requires GBM
-(`USE_GBM`), so `wpe-platform-drm-2.0` is absent when GBM is
-unavailable even with the option left on. If your application pins to
-a specific built-in implementation, probe for that module too:
+`ENABLE_WPE_PLATFORM_HEADLESS` (all default `ON`). The DRM built-in
+additionally requires GBM (`USE_GBM`), so `wpe-platform-drm-2.0` is
+absent when GBM is unavailable even with the option left on. If your
+application pins to a specific built-in implementation, probe for that
+module too:
 
 ```sh
 pkg-config --exists wpe-platform-wayland-2.0 || \
