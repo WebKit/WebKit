@@ -59,6 +59,9 @@ private:
 
     void updateFromStyle() final;
 
+    // The containing RenderSVGText paints the content. This is only reached when a resource references the SVG inline box directly, which renders nothing.
+    void paint(PaintInfo&, const LayoutPoint&) final { }
+
     // Chapter 10.4 of the SVG Specification say that we should use the
     // object bounding box of the parent text element.
     // We search for the root text element and take its bounding box.

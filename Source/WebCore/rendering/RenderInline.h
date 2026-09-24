@@ -39,10 +39,6 @@ public:
     RenderInline(Type, Document&, Style::ComputedStyle&&);
     virtual ~RenderInline();
 
-
-
-
-
     bool requiresLayer() const override;
 
 protected:
@@ -53,9 +49,9 @@ private:
 
     bool canHaveChildren() const final { return true; }
 
-    void layout() final { ASSERT_NOT_REACHED(); } // Do nothing for layout()
+    void layout() final { ASSERT_NOT_REACHED(); }
 
-    void paint(PaintInfo&, const LayoutPoint&) final;
+    void paint(PaintInfo&, const LayoutPoint&) override { ASSERT_NOT_REACHED(); }
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
