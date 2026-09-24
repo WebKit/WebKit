@@ -79,7 +79,7 @@ void ScrollingTreeNode::removeAllChildren()
 {
     RELEASE_ASSERT(scrollingTree()->inCommitTreeState());
 
-    m_children.clear();
+    m_children.shrink(0);
 }
 
 bool ScrollingTreeNode::isRootNode() const

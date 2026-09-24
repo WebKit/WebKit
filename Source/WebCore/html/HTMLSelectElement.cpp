@@ -1320,7 +1320,7 @@ void HTMLSelectElement::setRecalcListItems()
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInvalidation allowStyleInvalidation) const
 {
-    m_listItems.clear();
+    m_listItems.shrink(0);
 
     m_shouldRecalcListItems = false;
 

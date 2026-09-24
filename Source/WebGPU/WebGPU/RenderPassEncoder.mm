@@ -1225,8 +1225,8 @@ bool RenderPassEncoder::splitRenderPass()
         m_metalDescriptor.depthAttachment.loadAction = MTLLoadActionLoad;
         m_metalDescriptor.stencilAttachment.loadAction = MTLLoadActionLoad;
     }
-    m_priorVertexDynamicOffsets.clear();
-    m_priorFragmentDynamicOffsets.clear();
+    m_priorVertexDynamicOffsets.shrink(0);
+    m_priorFragmentDynamicOffsets.shrink(0);
 
     m_renderCommandEncoder = [m_parentEncoder->commandBuffer() renderCommandEncoderWithDescriptor:m_metalDescriptor];
     m_parentEncoder->setExistingEncoder(m_renderCommandEncoder);
@@ -1695,10 +1695,10 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
     m_bindGroupDynamicOffsets.clear();
     m_bindGroupDynamicOffsetsChanged.fill(true);
     m_pipeline = nullptr;
-    m_vertexDynamicOffsets.clear();
-    m_priorVertexDynamicOffsets.clear();
-    m_fragmentDynamicOffsets.clear();
-    m_priorFragmentDynamicOffsets.clear();
+    m_vertexDynamicOffsets.shrink(0);
+    m_priorVertexDynamicOffsets.shrink(0);
+    m_fragmentDynamicOffsets.shrink(0);
+    m_priorFragmentDynamicOffsets.shrink(0);
     m_indexBuffer = nullptr;
     m_maxVertexBufferSlot = 0;
     m_maxBindGroupSlot = 0;

@@ -46,7 +46,7 @@ public:
 
     void clear()
     {
-        m_elements.clear();
+        m_elements.shrink(0);
         m_hint = 0;
     }
 

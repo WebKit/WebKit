@@ -175,7 +175,7 @@ void ResizeObserver::deliverObservations()
             return nullptr;
         return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
     });
-    m_activeObservations.clear();
+    m_activeObservations.shrink(0);
 
     // Use GCReachableRef here to make sure the targets and their JS wrappers are kept alive while we deliver.
     // It is important since m_activeObservationTargets / m_targetsWaitingForFirstObservation will get cleared and

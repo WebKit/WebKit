@@ -215,7 +215,7 @@ void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inli
         for (auto candidate : discardBeforeCandidates)
             itemsToDiscard.quickSet(candidate);
         hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
-        discardBeforeCandidates.clear();
+        discardBeforeCandidates.shrink(0);
     };
 
     for (size_t index = 0; index < inlineItemList.size(); ++index) {
@@ -260,13 +260,13 @@ void InlineItemsBuilder::adjustInlineItemsForWhiteSpaceTrim(InlineItemList& inli
                     itemsToDiscard.quickSet(candidate);
                 hasItemsToDiscard |= !discardBeforeCandidates.isEmpty();
             }
-            discardBeforeCandidates.clear();
+            discardBeforeCandidates.shrink(0);
             discardAfterActive = whiteSpaceTrim.contains(Style::WhiteSpaceTrimValue::DiscardAfter);
             continue;
         }
         // Any other item is real content and ends both adjacencies.
         discardAfterActive = false;
-        discardBeforeCandidates.clear();
+        discardBeforeCandidates.shrink(0);
     }
     if (!hasItemsToDiscard)
         return;

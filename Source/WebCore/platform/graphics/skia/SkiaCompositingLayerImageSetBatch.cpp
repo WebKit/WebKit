@@ -173,8 +173,8 @@ void SkiaCompositingLayerImageSetBatch::flushIfNeeded(SkCanvas& canvas)
     canvas.experimental_DrawEdgeAAImageSet(m_imageSet.span().data(), m_imageSet.size(), nullptr,
         m_preViewMatrices.span().data(), m_samplingOptions, &paint, SkCanvas::kFast_SrcRectConstraint);
 
-    m_imageSet.clear();
-    m_preViewMatrices.clear();
+    m_imageSet.shrink(0);
+    m_preViewMatrices.shrink(0);
     m_blendMode = std::nullopt;
     m_samplingOptions = { };
 }

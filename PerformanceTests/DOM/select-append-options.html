@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+var sink = 0;
+
+PerfTestRunner.measureRunsPerSecond({
+    description: "This benchmark tests building a select element while reading its length after each option is added",
+    run: function() {
+        var select = document.createElement("select");
+        document.body.appendChild(select);
+        for (var i = 0; i < 1500; i++) {
+            select.appendChild(new Option("option " + i, i));
+            sink += select.length;
+        }
+        select.remove();
+    }});
+</script>
+</body>
+</html>

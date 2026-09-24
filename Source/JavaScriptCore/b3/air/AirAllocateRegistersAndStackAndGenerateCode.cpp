@@ -435,7 +435,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
             auto flushToFreeList = [&] {
                 for (auto* stackSlot : toFree)
                     freeSlots.append(stackSlot);
-                toFree.clear();
+                toFree.shrink(0);
             };
 
             for (Tmp tmp : m_liveness->liveAtHead(block))

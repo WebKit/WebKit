@@ -54,7 +54,7 @@ void Line::initialize(const Vector<InlineItem, 1>& lineSpanningInlineBoxes, bool
     m_hasNonDefaultBidiLevelRun = false;
     m_hasRubyContent = false;
     m_contentLogicalWidth = { };
-    m_inlineBoxLogicalLeftStack.clear();
+    m_inlineBoxLogicalLeftStack.shrink(0);
     m_runs.clear();
     resetTrailingContent();
     auto appendLineSpanningInlineBoxes = [&] {

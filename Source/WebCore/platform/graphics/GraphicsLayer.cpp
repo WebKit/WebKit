@@ -387,7 +387,7 @@ void GraphicsLayer::removeAllChildren()
     for (auto& child : m_children)
         child->setParent(nullptr);
 
-    m_children.clear();
+    m_children.shrink(0);
 }
 
 void GraphicsLayer::removeFromParentInternal()

@@ -911,7 +911,7 @@ void HTMLVideoElement::serviceRequestVideoFrameCallbacks(ReducedResolutionSecond
         if (RefPtr callback = std::exchange(request->callback, { }))
             callback->invoke(now.milliseconds(), *videoFrameMetadata);
     }
-    m_servicedVideoFrameRequests.clear();
+    m_servicedVideoFrameRequests.shrink(0);
 
     if (m_videoFrameRequests.isEmpty()) {
         if (RefPtr player = this->player())

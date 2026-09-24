@@ -634,7 +634,7 @@ void RemoteRenderingBackendProxy::endPreparingImageBufferSetsForDisplay()
         send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData));
     }
 
-    m_bufferSetsToPrepare.clear();
+    m_bufferSetsToPrepare.shrink(0);
 }
 
 void RemoteRenderingBackendProxy::prepareImageBufferSetForDisplay(LayerPrepareBuffersData&& bufferSetToPrepare)

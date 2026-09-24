@@ -884,7 +884,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
 {
     syntaxViolation(iterator);
 
-    m_asciiBuffer.clear();
+    m_asciiBuffer.shrink(0);
     copyASCIIStringUntil(base.m_string, urlLengthUntilPart(base, part));
     switch (part) {
     case URLPart::QueryEnd:
@@ -1272,7 +1272,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 appendToASCIIBuffer(toASCIILower(*c));
                 advance(c);
                 if (c.atEnd()) {
-                    m_asciiBuffer.clear();
+                    m_asciiBuffer.shrink(0);
                     state = State::NoScheme;
                     c = beginAfterControlAndSpace;
                     break;
@@ -1351,14 +1351,14 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 }
                 break;
             } else {
-                m_asciiBuffer.clear();
+                m_asciiBuffer.shrink(0);
                 state = State::NoScheme;
                 c = beginAfterControlAndSpace;
                 break;
             }
             advance(c);
             if (c.atEnd()) {
-                m_asciiBuffer.clear();
+                m_asciiBuffer.shrink(0);
                 state = State::NoScheme;
                 c = beginAfterControlAndSpace;
             }

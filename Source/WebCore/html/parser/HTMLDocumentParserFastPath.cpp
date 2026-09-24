@@ -716,7 +716,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
         if (m_ucharBuffer.size() >= Text::defaultLengthLimit) [[unlikely]]
             return didFail(HTMLFastPathResult::FailedBigText, String());
-        return m_ucharBuffer.isEmpty() ? String() : String(std::exchange(m_ucharBuffer, { }));
+        return m_ucharBuffer.isEmpty() ? String() : String(m_ucharBuffer.span());
     }
 
     // Scan a tagName and convert to lowercase if necessary.
