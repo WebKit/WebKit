@@ -13750,13 +13750,17 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         payload = [{'test': 'layout/test.html', 'configuration': {}, 'results': rows}]
         return TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
 
+    def _submitter_of(self, build: Optional[int]) -> list:
+        return [f'author-of-{build}'] if build is not None else []
+
     def _flaky_row(
         self, flaky_type: Optional[str], build: Optional[int] = None,
         pr_number: Optional[int] = None, authors: Optional[list] = None,
     ) -> dict:
         return {'flaky_type': flaky_type, 'details': {
             'build_url': self._builder_url(build) if build is not None else None,
-            'pr_number': pr_number, 'authors': authors or [],
+            'pr_number': pr_number,
+            'authors': self._submitter_of(build) if authors is None else authors,
         }}
 
     def _failed_row(
@@ -13803,7 +13807,7 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         rows = [self._flaky_row('WithinStepCleanTree', 153004, 72787, [self.SUBMITTER])]
         verdicts, logs = yield self._verdicts_for(rows)
         self.assertFalse(verdicts[self.TEST].is_flaky)
-        self.assertIn('layout/test.html: 1 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+        self.assertIn('layout/test.html: 1 clean-tree row(s) come from 1 build(s) and 1 author(s), fewer than the 2 build(s) and 2 author(s) the clean-tree rule needs', logs)
         self.assertNotIn("recorded by this change's own author(s)", logs)
 
     @defer.inlineCallbacks
@@ -13839,7 +13843,18 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         ]
         verdicts, logs = yield self._verdicts_for(rows, authors=())
         self.assertFalse(verdicts[self.TEST].is_flaky)
-        self.assertIn('layout/test.html: 3 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+        self.assertIn('layout/test.html: 3 clean-tree row(s) come from 1 build(s) and 3 author(s), fewer than the 2 build(s) and 2 author(s) the clean-tree rule needs', logs)
+
+    @defer.inlineCallbacks
+    def test_clean_tree_rows_from_one_author_do_not_convict(self) -> Generator[Any, Any, None]:
+        # These four builds are a real escape, not a hypothetical: one author's own stack.
+        rows = [
+            self._flaky_row('WithinStepCleanTree', build, pr, ['alanbaradlay'])
+            for build, pr in ((156322, 74305), (156323, 74304), (156325, 74303), (156326, 74302))
+        ]
+        verdicts, logs = yield self._verdicts_for(rows, authors=())
+        self.assertFalse(verdicts[self.TEST].is_flaky)
+        self.assertIn('layout/test.html: 4 clean-tree row(s) come from 4 build(s) and 1 author(s), fewer than the 2 build(s) and 2 author(s) the clean-tree rule needs', logs)
 
     @defer.inlineCallbacks
     def test_a_single_build_of_clean_tree_evidence_falls_through_to_the_dirty_tree_rule(self) -> Generator[Any, Any, None]:
@@ -13852,7 +13867,7 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
         result = verdicts[self.TEST]
         self.assertEqual(result.flaky_type, 'DirtyTree')
         self.assertEqual(result.pr_numbers, {72701, 72650})
-        self.assertIn('layout/test.html: 1 clean-tree row(s) come from 1 build(s), fewer than the 2 the clean-tree rule needs', logs)
+        self.assertIn('layout/test.html: 1 clean-tree row(s) come from 1 build(s) and 1 author(s), fewer than the 2 build(s) and 2 author(s) the clean-tree rule needs', logs)
 
     @defer.inlineCallbacks
     def test_clean_tree_evidence_below_its_threshold_does_not_fill_the_dirty_tree_quota(self) -> Generator[Any, Any, None]:
@@ -13953,7 +13968,7 @@ class TestIsTestFlakyClassifier(unittest.TestCase):
     @defer.inlineCallbacks
     def test_dirty_tree_pull_requests_with_no_author_not_flaky(self):
         rows = [
-            self._flaky_row('WithinStepDirtyTree', n, n)
+            self._flaky_row('WithinStepDirtyTree', n, n, authors=[])
             for n in range(1, 4)
         ]
         verdicts, _ = yield self._verdicts_for(rows, authors=())

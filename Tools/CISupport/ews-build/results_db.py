@@ -170,6 +170,7 @@ class ResultsDatabase(object):
     PRS_FOR_DIRTY_TREE_FLAKE = 2
     AUTHORS_FOR_DIRTY_TREE_FLAKE = 2
     BUILDS_FOR_CLEAN_TREE_FLAKE = 2
+    AUTHORS_FOR_CLEAN_TREE_FLAKE = 2
     PRS_FOR_BETWEEN_BUILD_FLAKE = 3
     AUTHORS_FOR_BETWEEN_BUILD_FLAKE = 2
 
@@ -424,11 +425,17 @@ class ResultsDatabase(object):
 
         if clean_tree := rows.get(cls.WITHIN_STEP_CLEAN_TREE, []):
             evidence = cls._evidence_in(clean_tree)
-            if verdict := cls._convict(evidence, cls.CLEAN_TREE_VERDICT, builds_needed=cls.BUILDS_FOR_CLEAN_TREE_FLAKE):
+            if verdict := cls._convict(
+                evidence, cls.CLEAN_TREE_VERDICT,
+                authors_needed=cls.AUTHORS_FOR_CLEAN_TREE_FLAKE,
+                builds_needed=cls.BUILDS_FOR_CLEAN_TREE_FLAKE,
+            ):
                 return verdict
             logger(
-                f'{clean_tree[0].test}: {len(clean_tree)} clean-tree row(s) come from {len(evidence.build_urls)} build(s), '
-                f'fewer than the {cls.BUILDS_FOR_CLEAN_TREE_FLAKE} the clean-tree rule needs\n'
+                f'{clean_tree[0].test}: {len(clean_tree)} clean-tree row(s) come from '
+                f'{len(evidence.build_urls)} build(s) and {len(evidence.authors)} author(s), '
+                f'fewer than the {cls.BUILDS_FOR_CLEAN_TREE_FLAKE} build(s) and '
+                f'{cls.AUTHORS_FOR_CLEAN_TREE_FLAKE} author(s) the clean-tree rule needs\n'
             )
 
         # Folding a below-threshold clean-tree row here would let the change's own rows fill these quotas.

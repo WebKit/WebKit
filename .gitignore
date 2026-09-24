@@ -46,6 +46,10 @@ tags
 compile_commands.json
 __pycache__
 
+# Ignore twisted trial temps created by the CISupport unit tests.
+_trial_temp/
+_trial_temp-*/
+
 # Ignore CMake caches outside of the build directory.
 __cmake_systeminformation/
 
@@ -89,6 +93,9 @@ CLAUDE.md
 .claude/commands
 .claude/settings.local.json
 .claude/skills
+
+# Ignore Kiro IDE files
+.kiro/
 
 # Remove mimalloc binaries
 /Source/bmalloc/mimalloc/mimalloc/bin/
