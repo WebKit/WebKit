@@ -60,7 +60,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderGrid);
 
 RenderGrid::RenderGrid(Element& element, Style::ComputedStyle&& style)
     : RenderBlock(Type::Grid, element, WTF::move(style), { })
-    , m_grid(*this)
     , m_trackSizingAlgorithm(this, currentGrid())
 {
     ASSERT(isRenderGrid());
@@ -873,7 +872,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
     auto [legendMinWidth, legendMaxWidth] = computeIntrinsicLogicalWidthsForFieldsetLegend();
 
     RenderGridLayoutState gridLayoutState;
-    Grid grid(const_cast<RenderGrid&>(*this));
+    Grid grid;
     m_grid.m_currentGrid = std::ref(grid);
     GridTrackSizingAlgorithm algorithm(this, grid);
     // placeItemsOnGrid isn't const since it mutates our grid, but it's safe to do
@@ -1248,10 +1247,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
 
     Vector<RenderBox*> autoMajorAxisAutoGridItems;
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
-    for (auto* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next()) {
-        if (currentGrid().orderIterator().shouldSkipChild(*gridItem))
-            continue;
-
+    for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
         // Grid items should use the grid area sizes instead of the containing block (grid container)
         // sizes, we initialize the overrides here if needed to ensure it.
         if (!gridItem->gridAreaContentLogicalWidth())
@@ -1259,7 +1255,7 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
         if (!gridItem->gridAreaContentLogicalHeight())
             gridItem->setGridAreaContentLogicalHeight(std::nullopt);
 
-        GridArea area = currentGrid().gridItemArea(*gridItem);
+        GridArea area = currentGrid().gridItemArea(gridItem);
         currentGrid().clampAreaToSubgridIfNeeded(area);
         if (!area.rows.isIndefinite())
             area.rows.translate(currentGrid().explicitGridStart(Style::GridTrackSizingDirection::Rows));
@@ -1267,16 +1263,16 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
             area.columns.translate(currentGrid().explicitGridStart(Style::GridTrackSizingDirection::Columns));
 
         if (area.rows.isIndefinite() || area.columns.isIndefinite()) {
-            currentGrid().setGridItemArea(*gridItem, area);
+            currentGrid().setGridItemArea(gridItem, area);
             bool majorAxisDirectionIsForColumns = autoPlacementMajorAxisDirection() == Style::GridTrackSizingDirection::Columns;
             if ((majorAxisDirectionIsForColumns && area.columns.isIndefinite())
                 || (!majorAxisDirectionIsForColumns && area.rows.isIndefinite()))
-                autoMajorAxisAutoGridItems.append(gridItem);
+                autoMajorAxisAutoGridItems.append(gridItem.ptr());
             else
-                specifiedMajorAxisAutoGridItems.append(gridItem);
+                specifiedMajorAxisAutoGridItems.append(gridItem.ptr());
             continue;
         }
-        insertIntoGrid(currentGrid(), *gridItem, { area.rows, area.columns });
+        insertIntoGrid(currentGrid(), gridItem, { area.rows, area.columns });
     }
 
 #if ASSERT_ENABLED
@@ -1299,11 +1295,8 @@ void RenderGrid::placeItemsOnGrid(std::optional<LayoutUnit> availableLogicalWidt
     performAutoPlacement();
 
 #if ASSERT_ENABLED
-    for (auto* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next()) {
-        if (currentGrid().orderIterator().shouldSkipChild(*gridItem))
-            continue;
-
-        GridArea area = currentGrid().gridItemArea(*gridItem);
+    for (CheckedRef gridItem : currentGrid().orderIterator().gridItems()) {
+        GridArea area = currentGrid().gridItemArea(gridItem);
         ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
     }
 #endif
@@ -2604,36 +2597,36 @@ unsigned RenderGrid::numTracks(Style::GridTrackSizingDirection direction) const
 void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& forChild, bool usePrintRect)
 {
     ASSERT(!currentGrid().needsItemsPlacement());
-    for (RenderBox* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next())
-        paintChild(*gridItem, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
+    for (CheckedRef gridItem : currentGrid().orderIterator().gridItems())
+        paintChild(gridItem, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }
 
 bool RenderGrid::hitTestChildren(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& adjustedLocation, HitTestAction hitTestAction)
 {
-    if (hitTestAction != HitTestAction::Foreground)
-        return false;
+    ASSERT(!currentGrid().needsItemsPlacement());
 
-    LayoutPoint scrolledOffset = hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
+    if (hitTestAction == HitTestAction::Foreground) {
+        LayoutPoint scrolledOffset = hasNonVisibleOverflow() ? adjustedLocation - toLayoutSize(scrollPosition()) : adjustedLocation;
 
-    Vector<RenderBox*> reversedOrderIteratorForHitTesting;
-    for (auto* gridItem = currentGrid().orderIterator().first(); gridItem; gridItem = currentGrid().orderIterator().next()) {
-        if (gridItem->isOutOfFlowPositioned())
-            continue;
-        reversedOrderIteratorForHitTesting.append(gridItem);
-    }
-    reversedOrderIteratorForHitTesting.reverse();
-
-    for (auto* gridItem : reversedOrderIteratorForHitTesting) {
-        if (gridItem->hasSelfPaintingLayer())
-            continue;
-        auto location = flipForWritingModeForChild(*gridItem, scrolledOffset);
-        if (gridItem->hitTest(request, result, locationInContainer, location)) {
+        auto hitTestGridItem = [&](RenderBox& gridItem) {
+            if (gridItem.hasSelfPaintingLayer())
+                return false;
+            auto location = flipForWritingModeForChild(gridItem, scrolledOffset);
+            if (!gridItem.hitTest(request, result, locationInContainer, location))
+                return false;
             updateHitTestResult(result, flipForWritingMode(toLayoutPoint(locationInContainer.point() - adjustedLocation)));
             return true;
+        };
+
+        // Hit-testing visits grid items front-to-back, i.e. the reverse of paint order.
+        for (CheckedRef gridItem : currentGrid().orderIterator().gridItems() | std::views::reverse) {
+            if (hitTestGridItem(gridItem))
+                return true;
         }
     }
 
-    return false;
+    // A fieldset's legend is not a grid item and paints beneath them, so it is hit-tested in every phase, after the items.
+    return hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction);
 }
 
 ASCIILiteral RenderGrid::renderName() const
@@ -2699,10 +2692,6 @@ GridSpan RenderGrid::gridSpanForGridItem(const RenderBox& gridItem, Style::GridT
     }
     return span;
 }
-
-RenderGrid::GridWrapper::GridWrapper(RenderGrid& renderGrid)
-    : m_layoutGrid(renderGrid)
-{ }
 
 void RenderGrid::GridWrapper::resetCurrentGrid() const
 {

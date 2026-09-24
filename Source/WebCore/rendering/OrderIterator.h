@@ -31,36 +31,43 @@
 
 #pragma once
 
-#include <wtf/StdSet.h>
+#include <ranges>
+#include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
 class RenderBox;
 class RenderObject;
-    
+
 class OrderIterator {
 public:
     friend class OrderIteratorPopulator;
 
-    explicit OrderIterator(RenderBox&);
+    // The container's grid items in order-modified document order.
+    auto gridItems() const LIFETIME_BOUND
+    {
+        return m_gridItems | std::views::transform([](auto& item) -> RenderBox& { return item.gridItem.get(); });
+    }
 
-    RenderBox* currentChild() const { return m_currentChild; }
-    RenderBox* first();
-    RenderBox* next();
-    OrderIterator reverse();
     bool NODELETE shouldSkipChild(const RenderObject&) const;
 
+    // shrink(0) rather than clear(), which would free the buffer and make every relayout reallocate it.
+    void clear()
+    {
+        m_gridItems.shrink(0);
+        m_hasNonZeroOrder = false;
+    }
+
 private:
-    void NODELETE reset();
+    // The order value is cached alongside the item so that sorting never reaches back into style.
+    struct GridItemAndOrder {
+        SingleThreadWeakRef<RenderBox> gridItem;
+        int order { 0 };
+    };
 
-    RenderBox& m_containerBox;
-    RenderBox* m_currentChild;
-
-    using OrderValues = StdSet<int>;
-    OrderValues m_orderValues;
-    OrderValues::const_iterator m_orderValuesIterator;
-    bool m_isReset { false };
-    bool m_reversedOrder { false };
+    Vector<GridItemAndOrder, 4> m_gridItems;
+    bool m_hasNonZeroOrder { false };
 };
 
 class OrderIteratorPopulator {
@@ -68,11 +75,11 @@ public:
     explicit OrderIteratorPopulator(OrderIterator& iterator)
         : m_iterator(iterator)
     {
-        m_iterator.m_orderValues.clear();
+        m_iterator.clear();
     }
     ~OrderIteratorPopulator();
 
-    bool collectChild(const RenderBox&);
+    bool collectChild(RenderBox&);
 
 private:
     OrderIterator& m_iterator;

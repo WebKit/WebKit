@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<style>
+fieldset { display: grid; margin: 0; width: 200px; }
+legend { padding: 10px; background: lime; font: 10px/10px monospace; }
+#scrolled { overflow: scroll; height: 60px; }
+#scrolled div { height: 200px; }
+</style>
+</head>
+<body>
+<fieldset id="plain"><legend>Title</legend><div>Item</div></fieldset>
+<fieldset id="scrolled"><legend>Title</legend><div>Item</div></fieldset>
+<script>
+function checkLegendPadding(legend, rect) {
+    assert_equals(document.elementFromPoint(rect.left + 3, rect.top + 3), legend, "top-left padding");
+    assert_equals(document.elementFromPoint(rect.right - 3, rect.bottom - 3), legend, "bottom-right padding");
+}
+
+test(() => {
+    const legend = document.querySelector("#plain legend");
+    checkLegendPadding(legend, legend.getBoundingClientRect());
+}, "Legend padding of a grid fieldset hits the legend");
+
+test(() => {
+    // The legend paints unscrolled in the border, but its client rect moves with scrollTop, so measure it first.
+    const fieldset = document.getElementById("scrolled");
+    const legend = fieldset.querySelector("legend");
+    const rect = legend.getBoundingClientRect();
+    fieldset.scrollTop = 30;
+    checkLegendPadding(legend, rect);
+}, "Legend padding of a scrolled grid fieldset hits the legend");
+</script>
+</body>
+</html>

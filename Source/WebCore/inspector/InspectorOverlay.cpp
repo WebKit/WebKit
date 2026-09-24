@@ -1904,11 +1904,8 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         };
 
         Vector<ItemInfo> allItems;
-        for (CheckedPtr gridItem = orderIterator.first(); gridItem; gridItem = orderIterator.next()) {
-            if (orderIterator.shouldSkipChild(*gridItem))
-                continue;
-
-            auto gridArea = renderGrid->currentGrid().gridItemArea(*gridItem);
+        for (CheckedRef gridItem : orderIterator.gridItems()) {
+            auto gridArea = renderGrid->currentGrid().gridItemArea(gridItem);
             auto absoluteRect = FloatRect { gridItem->absoluteBoundingBoxRect(true) };
             absoluteRect.expand(gridItem->marginBox());
 
@@ -1920,12 +1917,12 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
                 auto& columnSpan = gridArea.columns;
                 if (!columnSpan.isTranslatedDefinite())
                     continue;
-                allItems.append({ gridItem, rootRect, columnSpan.startLine(), columnSpan.endLine() });
+                allItems.append({ gridItem.ptr(), rootRect, columnSpan.startLine(), columnSpan.endLine() });
             } else {
                 auto& rowSpan = gridArea.rows;
                 if (!rowSpan.isTranslatedDefinite())
                     continue;
-                allItems.append({ gridItem, rootRect, rowSpan.startLine(), rowSpan.endLine() });
+                allItems.append({ gridItem.ptr(), rootRect, rowSpan.startLine(), rowSpan.endLine() });
             }
         }
 
@@ -1998,20 +1995,17 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     }
 
     if (gridOverlay.config.showOrderNumbers) {
-        Vector<RenderBox*> gridItemsInGridOrder;
         Vector<RenderBox*> gridItemsInDOMOrder;
         bool hasCustomOrder = false;
 
         auto& orderIterator = renderGrid->currentGrid().orderIterator();
-        for (CheckedPtr gridItem = orderIterator.first(); gridItem; gridItem = orderIterator.next()) {
-            if (orderIterator.shouldSkipChild(*gridItem))
-                continue;
-            gridItemsInGridOrder.append(gridItem);
-        }
+        HashSet<SingleThreadWeakRef<const RenderBox>> gridItemSet;
+        for (CheckedRef gridItem : orderIterator.gridItems())
+            gridItemSet.add(gridItem.get());
 
         for (RefPtr child = node->firstChild(); child; child = child->nextSibling()) {
             if (CheckedPtr renderer = dynamicDowncast<RenderBox>(child->renderer())) {
-                if (!gridItemsInGridOrder.contains(renderer))
+                if (!gridItemSet.contains(*renderer))
                     continue;
 
                 gridItemsInDOMOrder.append(renderer);
@@ -2021,7 +2015,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             }
         }
 
-        for (CheckedPtr gridItem : gridItemsInGridOrder) {
+        for (CheckedRef gridItem : orderIterator.gridItems()) {
             FloatQuad itemBounds;
 
             if (renderGrid->isGridLanes()) {
@@ -2038,7 +2032,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
                 };
             } else {
                 // For regular grid layouts, compute bounds from the grid area.
-                auto gridArea = renderGrid->currentGrid().gridItemArea(*gridItem);
+                auto gridArea = renderGrid->currentGrid().gridItemArea(gridItem);
                 if (!gridArea.rows.isTranslatedDefinite() || !gridArea.columns.isTranslatedDefinite())
                     continue;
 
@@ -2070,7 +2064,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
 
             StringBuilder orderNumbers;
 
-            if (auto index = gridItemsInDOMOrder.find(gridItem); index != notFound)
+            if (auto index = gridItemsInDOMOrder.find(gridItem.ptr()); index != notFound)
                 orderNumbers.append(WEB_UI_FORMAT_STRING("Item %lu", "Inspector Grid Item DOM order label", static_cast<unsigned long>(index + 1)));
 
             if (auto order = gridItem->style().order(); !order.isZero() || hasCustomOrder)

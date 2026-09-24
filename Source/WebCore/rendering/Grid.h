@@ -46,8 +46,6 @@ class RenderGrid;
 
 class Grid final {
 public:
-    explicit Grid(RenderGrid&);
-
     unsigned NODELETE numTracks(Style::GridTrackSizingDirection) const;
 
     void ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize);

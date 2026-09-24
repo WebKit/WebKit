@@ -32,11 +32,6 @@
 
 namespace WebCore {
 
-Grid::Grid(RenderGrid& grid)
-    : m_orderIterator(grid)
-{
-}
-
 unsigned Grid::numTracks(Style::GridTrackSizingDirection direction) const
 {
     if (direction == Style::GridTrackSizingDirection::Rows)
@@ -204,6 +199,7 @@ void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 
     m_grid.shrink(0);
     m_gridItemArea.clear();
+    m_orderIterator.clear();
     m_explicitRowStart = 0;
     m_explicitColumnStart = 0;
     m_autoRepeatEmptyColumns = nullptr;

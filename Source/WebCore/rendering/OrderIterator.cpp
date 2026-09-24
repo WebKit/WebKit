@@ -34,83 +34,34 @@
 
 #include "RenderBox.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <algorithm>
 
 namespace WebCore {
-
-OrderIterator::OrderIterator(RenderBox& containerBox)
-    : m_containerBox(containerBox)
-{
-    reset();
-}
-
-RenderBox* OrderIterator::first()
-{
-    reset();
-    return next();
-}
-
-RenderBox* OrderIterator::next()
-{
-    do {
-        if (!m_currentChild) {
-            if (m_orderValuesIterator == m_orderValues.end())
-                return nullptr;
-
-            if (!m_isReset) {
-                if (m_reversedOrder) {
-                    if (m_orderValuesIterator == m_orderValues.begin())
-                        return nullptr;
-                    --m_orderValuesIterator;
-                } else {
-                    ++m_orderValuesIterator;
-                    if (m_orderValuesIterator == m_orderValues.end())
-                        return nullptr;
-                }
-            } else
-                m_isReset = false;
-            m_currentChild = m_reversedOrder ? m_containerBox.lastChildBox() : m_containerBox.firstChildBox();
-        } else {
-            m_currentChild = m_reversedOrder ? m_currentChild->previousSiblingBox() : m_currentChild->nextSiblingBox();
-        }
-    } while (!m_currentChild || m_currentChild->style().order() != *m_orderValuesIterator);
-
-    return m_currentChild;
-}
-
-void OrderIterator::reset()
-{
-    m_currentChild = nullptr;
-    if (m_reversedOrder && !m_orderValues.empty()) {
-        m_orderValuesIterator = m_orderValues.end();
-        --m_orderValuesIterator;
-    } else
-        m_orderValuesIterator = m_orderValues.begin();
-    m_isReset = true;
-}
 
 bool OrderIterator::shouldSkipChild(const RenderObject& child) const
 {
     return child.isOutOfFlowPositioned() || child.isExcludedFromNormalLayout();
 }
 
-OrderIterator OrderIterator::reverse()
-{
-    OrderIterator reversedItr(*this);
-    reversedItr.m_reversedOrder = !m_reversedOrder;
-    reversedItr.reset();
-
-    return reversedItr;
-}
-
 OrderIteratorPopulator::~OrderIteratorPopulator()
 {
-    m_iterator.reset();
+    // Document order is already order-modified document order when every item has the initial order.
+    if (!m_iterator.m_hasNonZeroOrder)
+        return;
+
+    std::ranges::stable_sort(m_iterator.m_gridItems, { }, &OrderIterator::GridItemAndOrder::order);
 }
 
-bool OrderIteratorPopulator::collectChild(const RenderBox& child)
+bool OrderIteratorPopulator::collectChild(RenderBox& child)
 {
-    m_iterator.m_orderValues.insert(child.style().order().value);
-    return !m_iterator.shouldSkipChild(child);
+    if (m_iterator.shouldSkipChild(child))
+        return false;
+
+    auto order = child.style().order().value;
+    if (order)
+        m_iterator.m_hasNonZeroOrder = true;
+    m_iterator.m_gridItems.append(OrderIterator::GridItemAndOrder { child, order });
+    return true;
 }
 
 

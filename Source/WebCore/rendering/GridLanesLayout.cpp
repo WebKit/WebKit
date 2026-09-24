@@ -60,18 +60,15 @@ GridLanesResult GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgori
     LayoutUnit gridContentSize;
 
     auto& grid = m_renderGrid->currentGrid();
-    for (CheckedPtr gridItem = grid.orderIterator().first(); gridItem; gridItem = grid.orderIterator().next()) {
-        if (grid.orderIterator().shouldSkipChild(*gridItem))
-            continue;
-
-        bool isAutoPlacedInGridAxis = !hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection());
-        auto gridArea = isAutoPlacedInGridAxis ? gridAreaForIndefiniteGridAxisItem(*gridItem, fitTolerance) : gridAreaForDefiniteGridAxisItem(*gridItem);
-        auto placement = insertIntoGridAndLayoutItem(algorithm, *gridItem, gridArea, layoutPhase);
+    for (CheckedRef gridItem : grid.orderIterator().gridItems()) {
+        bool isAutoPlacedInGridAxis = !hasDefiniteGridAxisPosition(gridItem, gridAxisDirection());
+        auto gridArea = isAutoPlacedInGridAxis ? gridAreaForIndefiniteGridAxisItem(gridItem, fitTolerance) : gridAreaForDefiniteGridAxisItem(gridItem);
+        auto placement = insertIntoGridAndLayoutItem(algorithm, gridItem, gridArea, layoutPhase);
 
         if (isAutoPlacedInGridAxis)
             m_autoFlowNextCursor = gridAxisSpanFromArea(gridArea).endLine() % gridAxisTracksCount();
 
-        stackingAxisOffsets.set(*gridItem, placement.marginBoxStart);
+        stackingAxisOffsets.set(gridItem.get(), placement.marginBoxStart);
         gridContentSize = std::max(gridContentSize, placement.marginBoxEnd);
     }
 

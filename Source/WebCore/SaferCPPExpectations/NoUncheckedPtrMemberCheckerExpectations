@@ -32,7 +32,6 @@ rendering/LayoutRepainter.h
 rendering/LegacyInlineIterator.h
 rendering/LegacyLineLayout.h
 rendering/LogicalSelectionOffsetCaches.h
-rendering/OrderIterator.h
 rendering/PaintInfo.h
 rendering/PositionedLayoutConstraints.h
 rendering/RenderAncestorIterator.h

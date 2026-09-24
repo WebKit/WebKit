@@ -306,7 +306,6 @@ private:
     class GridWrapper {
         Grid m_layoutGrid;
     public:
-        GridWrapper(RenderGrid&);
         void NODELETE resetCurrentGrid() const;
         mutable std::reference_wrapper<Grid> m_currentGrid { std::ref(m_layoutGrid) };
     } m_grid;
