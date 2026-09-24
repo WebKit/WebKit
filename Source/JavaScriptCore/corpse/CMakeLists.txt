@@ -31,3 +31,8 @@ WEBKIT_LIBRARY(JavaScriptCoreTools)
 
 # The corpse sources use JavaScriptCore's generated headers.
 add_dependencies(JavaScriptCoreTools JavaScriptCore)
+
+# This keeps MYA fast even when we need debug info.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(JavaScriptCoreTools PRIVATE -O2)
+endif ()
