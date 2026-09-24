@@ -7,10 +7,11 @@
 #   [PRODUCT_NAME <product name>]           # if different from bundle identifier
 #   [VARIANT <variant>]                     # XPC service variant to base extra entitlements off of
 #   [OUTPUT <output path>]                  # if unspecified, a default will be used and set as <target>'s CODE_SIGN_ENTITLEMENTS path
+#   [DEPENDS <file>...]                     # other files the script reads
 # )
 
 function(WEBKIT_GENERATE_ENTITLEMENTS _target)
-    cmake_parse_arguments(_arg "EXTENSION" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "" ${ARGN})
+    cmake_parse_arguments(_arg "EXTENSION" "PRODUCT_NAME;BUNDLE_IDENTIFIER;USING;OUTPUT;VARIANT" "DEPENDS" ${ARGN})
     if (NOT _arg_OUTPUT)
         set(_arg_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_target}.entitlements)
         set_target_properties(${_target} PROPERTIES CODE_SIGN_ENTITLEMENTS ${_arg_OUTPUT})
@@ -57,12 +58,12 @@ function(WEBKIT_GENERATE_ENTITLEMENTS _target)
             WK_USE_FATAL_EXCEPTIONS=$<IF:$<BOOL:${USE_FATAL_EXCEPTIONS}>,YES,NO>
             WK_USE_RESTRICTED_ENTITLEMENTS=$<IF:$<BOOL:${USE_RESTRICTED_ENTITLEMENTS}>,YES,NO>
             WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT=$<IF:$<BOOL:${WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}>,YES,NO>
-            WK_XPC_SERVICE_VARIANT=${_arg_USING}
+            WK_XPC_SERVICE_VARIANT=${_arg_VARIANT}
             # -eu flag to fail on build settings which need to be added to this
             # `env` invocation.
             sh -eu ${_script}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS ${_script} ${_additional_entitlements_script}
+        DEPENDS ${_script} ${_additional_entitlements_script} ${_arg_DEPENDS}
         VERBATIM
     )
     add_custom_target(${_target}Entitlements DEPENDS ${_arg_OUTPUT})

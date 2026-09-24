@@ -58,14 +58,25 @@ set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
 include(Headers.cmake)
 
+# Read by process-entitlements.sh.
+set(WebKit_ENTITLEMENTS_DEPENDS
+    ${WEBKIT_DIR}/Resources/cocoa/NotificationAllowList/EmbeddedForwardedNotifications.def
+    ${WEBKIT_DIR}/Resources/cocoa/NotificationAllowList/ForwardedNotifications.def
+    ${WEBKIT_DIR}/Resources/cocoa/NotificationAllowList/MacForwardedNotifications.def
+    ${WEBKIT_DIR}/Resources/cocoa/NotificationAllowList/NonForwardedNotifications.def
+)
+
 webkit_generate_entitlements(WebProcess
     USING Scripts/process-entitlements.sh
+    DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
     BUNDLE_IDENTIFIER com.apple.WebKit.WebContent)
 webkit_generate_entitlements(NetworkProcess
     USING Scripts/process-entitlements.sh
+    DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
     BUNDLE_IDENTIFIER com.apple.WebKit.Networking)
 webkit_generate_entitlements(GPUProcess
     USING Scripts/process-entitlements.sh
+    DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
     BUNDLE_IDENTIFIER com.apple.WebKit.GPU)
 
 list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
@@ -2114,7 +2125,9 @@ with open(sys.argv[2], 'wb') as f:
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_exec_name})
         WEBKIT_GENERATE_ENTITLEMENTS(${_target}
             USING Scripts/process-entitlements.sh
-            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant})
+            DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
+            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
+            VARIANT ${_variant})
         WEBKIT_IOS_XPC_SERVICE(${_target}
             "com.apple.WebKit.WebContent.${_variant}"
             ${WEBKIT_DIR}/WebProcess/EntryPoint/Cocoa/XPCService/WebContentService/Info-iOS.plist
@@ -2325,7 +2338,8 @@ with open(sys.argv[2], 'wb') as f:
             set(${_target}_CODE_SIGN_ENTITLEMENTS ${_sim_get_task_allow})
         else ()
             WEBKIT_GENERATE_ENTITLEMENTS(${_target}
-                USING Scripts/process-entitlements.sh)
+                USING Scripts/process-entitlements.sh
+                DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS})
         endif ()
 
         WEBKIT_EXECUTABLE(${_target})
@@ -2871,7 +2885,9 @@ function(WEBKIT_DEFINE_XPC_SERVICES)
             ${_exec_name})
         WEBKIT_GENERATE_ENTITLEMENTS(${_target}
             USING Scripts/process-entitlements.sh
-            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant})
+            DEPENDS ${WebKit_ENTITLEMENTS_DEPENDS}
+            BUNDLE_IDENTIFIER com.apple.WebKit.WebContent.${_variant}
+            VARIANT ${_variant})
         WEBKIT_EXECUTABLE(${_target})
         WEBKIT_REUSE_PREFIX_HEADER(${_target} WebKit WebKitPrefix.h PREFIX_LANGUAGES CXX)
     endfunction()
