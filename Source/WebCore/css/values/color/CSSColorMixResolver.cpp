@@ -121,19 +121,17 @@ static WebCore::Color mixColorComponentsUsingColorInterpolationMethod(Interpolat
 
 static WebCore::Color convertToColorMixResultRepresentation(const ColorInterpolationMethod& method, const WebCore::Color& color)
 {
+    // `UseColorFunctionSerialization` is set unconditionally due to `color-mix()` serialization
+    // always using the modern serialization formats.
+    auto flags = OptionSet { WebCore::Color::Flags::UseColorFunctionSerialization };
+    if (color.isSemantic())
+        flags.add(WebCore::Color::Flags::Semantic);
+
     return WTF::switchOn(method.value.colorSpace,
         [&]<typename MethodColorSpace>(const MethodColorSpace&) -> WebCore::Color {
             using ColorType = typename MethodColorSpace::ColorType;
 
-            auto convertedColor = color.template toColorTypeLossyCarryingForwardMissing<ColorType>();
-
-            // `UseColorFunctionSerialization` is set unconditionally due to `color-mix()` serialization
-            // always using the modern serialization formats.
-            auto flags = OptionSet { WebCore::Color::Flags::UseColorFunctionSerialization };
-            if (color.isSemantic())
-                flags.add(WebCore::Color::Flags::Semantic);
-
-            return { convertedColor, flags };
+            return { color.template toColorTypeLossyCarryingForwardMissing<ColorType>(), flags };
         }
     );
 }
