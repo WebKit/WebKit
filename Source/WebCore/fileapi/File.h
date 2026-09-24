@@ -45,12 +45,7 @@ public:
     WEBCORE_EXPORT static Ref<File> create(ScriptExecutionContext*, const String& path, const String& replacementPath = { }, const String& nameOverride = { }, const std::optional<FileSystem::PlatformFileID>& fileID = { });
 
     // Create a File using the 'new File' constructor.
-    static Ref<File> create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
-    {
-        auto file = adoptRef(*new File(context, WTF::move(blobPartVariants), filename, propertyBag));
-        file->suspendIfNeeded();
-        return file;
-    }
+    static ExceptionOr<Ref<File>> create(ScriptExecutionContext&, Vector<BlobPartVariant>&&, const String& filename, const PropertyBag&);
 
     static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const std::optional<int64_t>& lastModified = std::nullopt)
     {
@@ -94,7 +89,7 @@ public:
 private:
     WEBCORE_EXPORT File(ScriptExecutionContext*, const String& path);
     File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name);
-    File(ScriptExecutionContext&, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
+    File(ScriptExecutionContext&, Vector<BlobPart>&&, size_t memoryCost, const String& filename, const PropertyBag&);
     File(ScriptExecutionContext*, URL&&, String&& type, String&& path, String&& name, const std::optional<FileSystem::PlatformFileID>&);
     File(ScriptExecutionContext*, const Blob&, const String& name);
     File(ScriptExecutionContext*, const File&, const String& name);
