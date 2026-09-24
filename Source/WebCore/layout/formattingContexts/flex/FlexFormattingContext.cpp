@@ -789,7 +789,25 @@ void FlexFormattingContext::setFlexItemCountsForFirstAndLastLine(const FlexLines
 LayoutUnit FlexFormattingContext::flexBaseSizeForFlexItem(const FlexLayoutItem& flexLayoutItem)
 {
     auto flexBasis = flexFormattingUtils().flexBasisForFlexItem(flexLayoutItem);
-    auto scoped = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
+    // flexBasisForFlexItem() answers flex-basis: auto with the main size property itself, so the item is measured as is.
+    // Installing the property as its own override would make a calc-size() main size resolve against its own result.
+    if (flexBasis == flexFormattingUtils().preferredMainSizeLengthForFlexItem(flexLayoutItem).asFlexBasis())
+        return computeFlexBaseSize(flexLayoutItem, flexBasis);
+
+    // Otherwise the item is measured with its used flex basis in place of its main size.
+    auto flexBasisAsMainSize = LayoutIntegration::ScopedFlexBasisAsFlexItemMainSize { flexLayoutItem, flexBasis.tryPreferredSize().value_or(Style::PreferredSize { CSS::Keyword::MaxContent { } }) };
+    auto flexBaseSize = computeFlexBaseSize(flexLayoutItem, flexBasis);
+
+    // A `content` basis is not a value the item can be laid out with, so it is measured as max-content
+    // and the calculation is applied to that here.
+    if (flexBasis.isCalcSize() && flexBasis.isContent())
+        return integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, flexBasis.get<Style::UnevaluatedCalcSize>(), flexBaseSize, m_constraints.mainAxisSizeForLengthResolution);
+
+    return flexBaseSize;
+}
+
+LayoutUnit FlexFormattingContext::computeFlexBaseSize(const FlexLayoutItem& flexLayoutItem, const Style::FlexBasis& flexBasis)
+{
     // FIXME: While we are supposed to ignore min/max here, the cached
     // The cached block-axis size entry may hold a min/max-constrained size.
     auto blockAxisContentSize = ensureBlockAxisContentSizeForFlexItemIfNeeded(flexLayoutItem);
@@ -858,12 +876,17 @@ std::pair<LayoutUnit, LayoutUnit> FlexFormattingContext::minMaxMainSizesForFlexI
     // useContentBasedMinimumSize covers both auto-equivalent cases: min:auto with
     // non-scrollable overflow (§ 4.5) and block-axis intrinsic keywords (CSS Sizing
     // 3 § 5.2 makes those behave like auto, regardless of overflow).
-    if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem))
-        return { computeContentBasedMinMainSize(flexLayoutItem, maxExtent), resolvedMax };
+    auto minSize = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
+    if (flexFormattingUtils().useContentBasedMinimumSize(flexLayoutItem)) {
+        auto contentBasedMinMainSize = computeContentBasedMinMainSize(flexLayoutItem, maxExtent);
+        // The automatic minimum is what an auto basis on the minimum size stands for.
+        if (minSize.isCalcSize())
+            contentBasedMinMainSize = integrationUtils().resolveCalcSizeMainAxisExtentForFlexItem(flexLayoutItem, minSize.get<Style::UnevaluatedCalcSize>(), contentBasedMinMainSize, m_constraints.mainAxisSizeForLengthResolution);
+        return { contentBasedMinMainSize, resolvedMax };
+    }
 
-    auto min = flexFormattingUtils().minMainSizeLengthForFlexItem(flexLayoutItem);
-    if (!min.isAuto())
-        return { computeUsedNonAutoMinMainSize(flexLayoutItem, min), resolvedMax };
+    if (!minSize.isAuto())
+        return { computeUsedNonAutoMinMainSize(flexLayoutItem, minSize), resolvedMax };
 
     // min:auto on a scroll container — spec says the automatic minimum size is zero.
     return { 0_lu, resolvedMax };

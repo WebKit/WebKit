@@ -2337,6 +2337,40 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::computeIntrinsicLogicalWidths() c
     return { minLogicalWidth + scrollbarWidth, maxLogicalWidth + scrollbarWidth };
 }
 
+std::optional<LayoutUnit> RenderBlock::fixedLogicalWidthContribution(const Style::PreferredSize& logicalWidth) const
+{
+    auto fixedLogicalWidth = logicalWidth.tryFixed();
+    if (!fixedLogicalWidth || !fixedLogicalWidth->isPositiveOrZero())
+        return { };
+
+    // A table cell's fixed width is a minimum rather than the size it contributes, and a zero-width
+    // deprecated flex item still flexes, so its 0 is not a usable fixed width either.
+    if (isRenderTableCell() || (isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength()))))
+        return { };
+    return adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
+}
+
+std::pair<LayoutUnit, LayoutUnit> RenderBlock::logicalWidthContributionsForSize(const Style::PreferredSize& logicalWidth, LayoutUnit minContentLogicalWidth, LayoutUnit maxContentLogicalWidth) const
+{
+    // Either intrinsic keyword makes both contributions that one size, so the box neither shrinks below
+    // it nor grows past it. Both sit behind the aspect-ratio branch in the caller: a ratio transfers the
+    // block size across, and that transferred size is what the keyword then stands for, not the content
+    // based one, which for an empty box with `height: 100px; aspect-ratio: 1/1` would be zero.
+    if (auto contribution = fixedLogicalWidthContribution(logicalWidth))
+        return { *contribution, *contribution };
+
+    if (logicalWidth.isMinContent())
+        maxContentLogicalWidth = minContentLogicalWidth;
+    else if (logicalWidth.isMaxContent())
+        minContentLogicalWidth = maxContentLogicalWidth;
+
+    if (!logicalWidth.isCalcSize())
+        return { minContentLogicalWidth, maxContentLogicalWidth };
+
+    auto calcSize = logicalWidth.get<Style::UnevaluatedCalcSize>();
+    return { resolveCalcSizeLogicalWidth(calcSize, minContentLogicalWidth, 0_lu), resolveCalcSizeLogicalWidth(calcSize, maxContentLogicalWidth, 0_lu) };
+}
+
 void RenderBlock::computeIntrinsicLogicalWidthContributions()
 {
     ASSERT(hasInvalidContentLogicalWidths());
@@ -2346,25 +2380,23 @@ void RenderBlock::computeIntrinsicLogicalWidthContributions()
 
     auto& styleToUse = style();
     auto logicalWidth = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    if (auto fixedLogicalWidth = logicalWidth.tryFixed(); !isRenderTableCell() && fixedLogicalWidth && fixedLogicalWidth->isPositiveOrZero() && !(isDeprecatedFlexItem() && !static_cast<int>(fixedLogicalWidth->resolveZoom(style().usedZoomForLength())))) {
-        m_minContentLogicalWidthContribution = adjustContentBoxLogicalWidthForBoxSizing(*fixedLogicalWidth);
-        m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
+    if (auto contribution = fixedLogicalWidthContribution(logicalWidth)) {
+        m_minContentLogicalWidthContribution = *contribution;
+        m_maxContentLogicalWidthContribution = *contribution;
     } else if (shouldComputeLogicalWidthFromAspectRatio()) {
         m_maxContentLogicalWidthContribution = std::max(0_lu, computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
         m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
         applyAutomaticContentBasedMinimumSize(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
-    } else if (logicalWidth.isMinContent() || logicalWidth.isMaxContent()) {
-        // Either keyword makes both contributions that one size, so the box neither shrinks below it
-        // nor grows past it. Both sit behind the aspect-ratio branch: a ratio transfers the block size
-        // across, and that transferred size is what the keyword then stands for, not the content based
-        // one, which for an empty box with `height: 100px; aspect-ratio: 1/1` would be zero.
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
-        if (logicalWidth.isMaxContent())
-            m_minContentLogicalWidthContribution = m_maxContentLogicalWidthContribution;
-        else
-            m_maxContentLogicalWidthContribution = m_minContentLogicalWidthContribution;
-    } else
-        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = computeIntrinsicLogicalWidths();
+    } else {
+        auto [minContentLogicalWidth, maxContentLogicalWidth] = computeIntrinsicLogicalWidths();
+
+        if (overridingLogicalWidthForFlexBasisComputation() && logicalWidth.isCalcSize() && logicalWidth.isAuto()) {
+            // A flex-basis used as the main size, where `auto` means the width property rather than the width this box would otherwise take.
+            std::tie(minContentLogicalWidth, maxContentLogicalWidth) = logicalWidthContributionsForSize(styleToUse.logicalWidth(), minContentLogicalWidth, maxContentLogicalWidth);
+        }
+
+        std::tie(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution) = logicalWidthContributionsForSize(logicalWidth, minContentLogicalWidth, maxContentLogicalWidth);
+    }
 
     constrainIntrinsicLogicalWidthsByMinMax(m_minContentLogicalWidthContribution, m_maxContentLogicalWidthContribution);
 
