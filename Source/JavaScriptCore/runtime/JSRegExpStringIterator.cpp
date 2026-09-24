@@ -86,7 +86,7 @@ JSValue JSRegExpStringIterator::nextImpl(JSGlobalObject* globalObject)
     auto* regExpObject = dynamicDowncast<RegExpObject>(regExp);
     JSValue match;
     bool isEmptyMatch = false;
-    if (regExpObject && regExpExecWatchpointIsValid(vm, regExpObject)) [[likely]] {
+    if (regExpObject && regExpExecWatchpointIsValid(vm, globalObject, regExpObject)) [[likely]] {
         MatchResult result;
         match = regExpObject->execInline(globalObject, string, result);
         RETURN_IF_EXCEPTION(scope, { });

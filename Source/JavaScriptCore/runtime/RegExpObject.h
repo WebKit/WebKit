@@ -112,11 +112,11 @@ public:
     MatchResult match(JSGlobalObject*, JSString*);
     JSValue matchGlobal(JSGlobalObject*, JSString*);
 
-    bool isSymbolMatchFastAndNonObservable();
-    bool isSymbolSearchFastAndNonObservable();
-    bool isSymbolMatchAllFastAndNonObservable();
-    bool isSymbolReplaceFastAndNonObservable();
-    bool isSymbolSplitFastAndNonObservable();
+    bool isSymbolMatchFastAndNonObservable(JSGlobalObject*);
+    bool isSymbolSearchFastAndNonObservable(JSGlobalObject*);
+    bool isSymbolMatchAllFastAndNonObservable(JSGlobalObject*);
+    bool isSymbolReplaceFastAndNonObservable(JSGlobalObject*);
+    bool isSymbolSplitFastAndNonObservable(JSGlobalObject*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);

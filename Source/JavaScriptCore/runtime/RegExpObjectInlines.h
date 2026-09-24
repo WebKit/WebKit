@@ -34,9 +34,8 @@
 
 namespace JSC {
 
-ALWAYS_INLINE bool RegExpObject::isSymbolMatchFastAndNonObservable()
+ALWAYS_INLINE bool RegExpObject::isSymbolMatchFastAndNonObservable(JSGlobalObject* globalObject)
 {
-    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 
@@ -62,9 +61,8 @@ ALWAYS_INLINE bool RegExpObject::isSymbolMatchFastAndNonObservable()
     return true;
 }
 
-ALWAYS_INLINE bool RegExpObject::isSymbolSearchFastAndNonObservable()
+ALWAYS_INLINE bool RegExpObject::isSymbolSearchFastAndNonObservable(JSGlobalObject* globalObject)
 {
-    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 
@@ -96,9 +94,8 @@ ALWAYS_INLINE bool RegExpObject::isSymbolSearchFastAndNonObservable()
     return true;
 }
 
-ALWAYS_INLINE bool RegExpObject::isSymbolMatchAllFastAndNonObservable()
+ALWAYS_INLINE bool RegExpObject::isSymbolMatchAllFastAndNonObservable(JSGlobalObject* globalObject)
 {
-    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 
@@ -127,9 +124,8 @@ ALWAYS_INLINE bool RegExpObject::isSymbolMatchAllFastAndNonObservable()
     return true;
 }
 
-ALWAYS_INLINE bool RegExpObject::isSymbolReplaceFastAndNonObservable()
+ALWAYS_INLINE bool RegExpObject::isSymbolReplaceFastAndNonObservable(JSGlobalObject* globalObject)
 {
-    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 
@@ -155,9 +151,8 @@ ALWAYS_INLINE bool RegExpObject::isSymbolReplaceFastAndNonObservable()
     return true;
 }
 
-ALWAYS_INLINE bool RegExpObject::isSymbolSplitFastAndNonObservable()
+ALWAYS_INLINE bool RegExpObject::isSymbolSplitFastAndNonObservable(JSGlobalObject* globalObject)
 {
-    JSGlobalObject* globalObject = this->realm();
     if (!globalObject->regExpPrimordialPropertiesWatchpointSet().isStillValid())
         return false;
 
