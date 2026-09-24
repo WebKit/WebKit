@@ -4433,6 +4433,7 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.LockdownMode.SVGFonts
 [ ios ] TestWebKitAPI.MonospaceFontsTest.EnsureMonospaceFontInvariants
 [ ios ] TestWebKitAPI.MouseEventTests.AutoscrollOnMouseDragBelowWindow
+[ ios ] TestWebKitAPI.MouseEventTests.AutoscrollOnMouseDragBelowWindowFromFixedContainer
 [ ios ] TestWebKitAPI.MouseEventTests.WindowChangeShouldCauseMouseLeaveEvent
 [ ios ] TestWebKitAPI.NavigationSwipeTests.DoNotAssertWhenSnapshottingZeroSizeView
 [ ios ] TestWebKitAPI.NavigationSwipeTests.DoNotBecomeFirstResponderAfterNavigationSwipeIfWebViewIsUnparented
