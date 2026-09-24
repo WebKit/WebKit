@@ -54,6 +54,7 @@ http/tests/site-isolation/ios/long-press-in-cross-site-grandchild-of-scrolled-mi
 http/tests/site-isolation/touch-events/tap-nested-cross-origin-frame-in-offset-subframe.html [ Pass ]
 http/tests/site-isolation/touch-events/touch-click-coordinates.html [ Pass ]
 http/tests/site-isolation/touch-events/content-observation.html [ Pass ]
+http/tests/site-isolation/touch-events/tap-screen-coordinates-in-cross-origin-iframe.html [ Pass ]
 
 fast/forms/switch [ Pass ]
 fast/snapshot [ Skip ]

@@ -3222,11 +3222,19 @@ void WebPage::selectTextWithGranularityAtPoint(std::optional<WebCore::FrameIdent
 
 #if ENABLE(TWO_PHASE_CLICKS)
 
+static IntPoint globalPositionForSyntheticMouseEvent(LocalFrame& localRootFrame, FloatPoint pointInLocalRootView)
+{
+    ASSERT(localRootFrame.isRootFrame());
+    RefPtr view = localRootFrame.view();
+    if (!view)
+        return roundedIntPoint(pointInLocalRootView);
+    return roundedIntPoint(view->convertToRootViewAcrossIsolatedFrames(pointInLocalRootView));
+}
+
 static void dispatchSyntheticMouseMove(LocalFrame& localFrame, const WebCore::FloatPoint& location, OptionSet<WebEventModifier> modifiers, WebCore::PointerID pointerId, WebCore::MouseEventInputSource inputSource)
 {
-    auto roundedAdjustedPoint = roundedIntPoint(location);
     auto mouseEvent = PlatformMouseEvent(
-        roundedAdjustedPoint, roundedAdjustedPoint,
+        roundedIntPoint(location), globalPositionForSyntheticMouseEvent(localFrame, location),
         MouseButton::None, PlatformEvent::Type::MouseMoved, 0,
         platform(modifiers), MonotonicTime::now(),
         WebCore::ForceAtClick, WebCore::SyntheticClickType::OneFingerTap,
@@ -3673,8 +3681,9 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
 
     // FIXME: Pass caps lock state.
     auto platformModifiers = platform(modifiers);
+    auto globalPoint = globalPositionForSyntheticMouseEvent(*localRootFrame, location);
 
-    auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, platformModifiers, MonotonicTime::now(), WebCore::ForceAtClick, syntheticClickType, m_potentialTapInputSource, pointerId };
+    auto pressEvent = PlatformMouseEvent { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MousePressed, 1, platformModifiers, MonotonicTime::now(), WebCore::ForceAtClick, syntheticClickType, m_potentialTapInputSource, pointerId };
 
     // FIXME: <https://webkit.org/b/314881> For input sources where pointer events may not have already been
     // dispatched upstream by other compat paths, the pointer events that are dispatched in response to this
@@ -3693,7 +3702,7 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
         clearSelectionAfterTapIfNeeded();
 #endif
 
-    auto releaseEvent = PlatformMouseEvent { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, platformModifiers, MonotonicTime::now(), 0.0, syntheticClickType, m_potentialTapInputSource, pointerId };
+    auto releaseEvent = PlatformMouseEvent { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::MouseReleased, 1, platformModifiers, MonotonicTime::now(), 0.0, syntheticClickType, m_potentialTapInputSource, pointerId };
     bool handledRelease = localRootFrame->eventHandler().handleMouseReleaseEvent(releaseEvent).wasHandled();
     if (m_isClosed)
         return;
@@ -3706,7 +3715,7 @@ void WebPage::completeSyntheticClick(std::optional<WebCore::FrameIdentifier> fra
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
         if (document->quirks().needsYouTubeMouseOutQuirk()) {
             if (RefPtr frame = document->frame()) {
-                PlatformMouseEvent event { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, m_potentialTapInputSource, pointerId };
+                PlatformMouseEvent event { roundedAdjustedPoint, globalPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, MonotonicTime::now(), 0, WebCore::SyntheticClickType::NoTap, m_potentialTapInputSource, pointerId };
                 RefPtr<Element> newHoveredNode;
                 if (!nodeRespondingToClick.isConnected())
                     frame->eventHandler().dispatchSyntheticMouseMove(event);
