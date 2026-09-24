@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, viewport-fit=cover">
+<title>Embedded document that opts into safe area insets</title>
+</head>
+<body>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    parent.postMessage({
+        label: "embed with viewport-fit=cover",
+        present: "requestFullscreen" in Element.prototype,
+    }, "*");
+});
+</script>
+</body>
+</html>

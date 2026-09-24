@@ -27,7 +27,8 @@
 [
     Conditional=FULLSCREEN_API,
     EnabledBySettingOrQuirk=FullScreenEnabled|shouldEnterNativeFullscreenWhenCallingElementRequestFullscreen,
-    DisabledByQuirk=shouldDisableElementFullscreen
+    DisabledByQuirk=shouldDisableElementFullscreen,
+    QuirksCanChangeAtRuntime
 ] partial interface Element {
     Promise<undefined> requestFullscreen(optional FullscreenOptions options = {});
     attribute EventHandler onfullscreenchange;

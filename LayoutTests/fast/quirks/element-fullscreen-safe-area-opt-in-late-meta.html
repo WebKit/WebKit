@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- A bare viewport meta first, refined to opt in later in the same head. The platform honors the
+     last one during initial parse, so the quirk has to follow it back off again. -->
+<meta name="viewport" content="width=device-width">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = [];
+function check(label) {
+    log.push(`${label}: requestFullscreen ${"requestFullscreen" in Element.prototype ? "present" : "absent"}`);
+}
+
+// Touch Element.prototype here so it exists before the second meta tag is parsed. Without this the
+// prototype would simply be created later with the right answer and nothing would need reconciling.
+check("after bare viewport meta");
+</script>
+<meta name="viewport" content="width=device-width, viewport-fit=cover">
+<script>
+check("after viewport-fit=cover meta");
+</script>
+<title>A later viewport meta in the same head re-enables element fullscreen</title>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    check("DOMContentLoaded");
+    document.getElementById("output").textContent = log.join("\n");
+});
+</script>
+</body>
+</html>

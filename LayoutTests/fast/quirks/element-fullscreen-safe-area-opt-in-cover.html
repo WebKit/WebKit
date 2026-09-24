@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, viewport-fit=cover">
+<title>Element fullscreen stays enabled for pages that opt into safe area insets</title>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const log = [];
+function check(label) {
+    log.push(`${label}: requestFullscreen ${"requestFullscreen" in Element.prototype ? "present" : "absent"}`);
+}
+
+check("during head parse");
+</script>
+</head>
+<body>
+<pre id="output"></pre>
+<script>
+check("end of body parse");
+
+document.addEventListener("DOMContentLoaded", () => {
+    check("DOMContentLoaded");
+
+    // Removing the opt-in now must not disable the API: the latch already resolved.
+    document.querySelector("meta[name=viewport]").content = "width=device-width";
+    check("after removing viewport-fit=cover");
+
+    document.getElementById("output").textContent = log.join("\n");
+});
+</script>
+</body>
+</html>
