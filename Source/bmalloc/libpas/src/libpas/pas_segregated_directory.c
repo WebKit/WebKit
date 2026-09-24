@@ -30,9 +30,11 @@
 #include "pas_segregated_view_kind.h"
 #include "pas_segregated_directory.h"
 
+#include "pas_epoch.h"
 #include "pas_heap_lock.h"
 #include "pas_log.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_scavenger.h"
 #include "pas_segregated_directory_inlines.h"
 #include "pas_segregated_page.h"
 
@@ -44,6 +46,22 @@ PAS_API void pas_segregated_directory_construct(
 {
     *directory = PAS_SEGREGATED_DIRECTORY_INITIALIZER(
         page_config_kind, page_sharing_mode, directory_kind);
+}
+
+void pas_segregated_directory_note_recommit(pas_segregated_directory* directory)
+{
+    if (!pas_scavenger_recommit_retention_epoch_delta || pas_epoch_is_counter)
+        return;
+
+    if (!pas_segregated_directory_bits_set_by_mask(directory, PAS_SEGREGATED_DIRECTORY_BITS_HAS_RECOMMITTED_MASK, true))
+        return;
+
+    pas_page_sharing_pool_did_create_delta(
+        &pas_physical_page_sharing_pool,
+        pas_page_sharing_participant_create(
+            directory,
+            pas_page_sharing_participant_kind_select_for_segregated_directory(
+                directory->directory_kind)));
 }
 
 pas_segregated_directory_data*

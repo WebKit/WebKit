@@ -124,6 +124,8 @@ struct pas_segregated_directory {
 #define PAS_SEGREGATED_DIRECTORY_BITS_MISC_SHIFT           2u
 #define PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_SHIFT     3u
 
+#define PAS_SEGREGATED_DIRECTORY_BITS_HAS_RECOMMITTED_SHIFT 4u
+
 #define PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_MASK \
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_ELIGIBLE_SHIFT)
 #define PAS_SEGREGATED_DIRECTORY_BITS_EMPTY_MASK \
@@ -137,6 +139,8 @@ struct pas_segregated_directory {
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_MISC_SHIFT)
 #define PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_MASK \
     (1u << PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_SHIFT)
+#define PAS_SEGREGATED_DIRECTORY_BITS_HAS_RECOMMITTED_MASK \
+    (1u << PAS_SEGREGATED_DIRECTORY_BITS_HAS_RECOMMITTED_SHIFT)
 
 /* This makes the GET_BIT/SET_BIT macros work. */
 #define PAS_SEGREGATED_DIRECTORY_BITS_eligible_MASK \
@@ -231,6 +235,12 @@ static inline bool pas_segregated_directory_set_other_misc_bit(pas_segregated_di
 {
     return pas_segregated_directory_bits_set_by_mask(
         directory, PAS_SEGREGATED_DIRECTORY_BITS_OTHER_MISC_MASK, value);
+}
+
+static inline bool pas_segregated_directory_has_recommitted(pas_segregated_directory* directory)
+{
+    return pas_segregated_directory_bits_get_by_mask(
+        directory, PAS_SEGREGATED_DIRECTORY_BITS_HAS_RECOMMITTED_MASK);
 }
 
 static PAS_ALWAYS_INLINE pas_segregated_directory_bitvector_segment
@@ -387,6 +397,8 @@ pas_segregated_directory_start_sharing_if_necessary(pas_segregated_directory* di
 PAS_API void pas_segregated_directory_minimize_first_eligible(
     pas_segregated_directory* directory,
     size_t index);
+
+PAS_API void pas_segregated_directory_note_recommit(pas_segregated_directory* directory);
 
 PAS_API void pas_segregated_directory_update_first_eligible_after_search(
     pas_segregated_directory* directory,

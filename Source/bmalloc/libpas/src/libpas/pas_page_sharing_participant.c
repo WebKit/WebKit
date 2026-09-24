@@ -34,6 +34,7 @@
 #include "pas_heap_lock.h"
 #include "pas_large_sharing_pool.h"
 #include "pas_page_sharing_pool.h"
+#include "pas_scavenger.h"
 #include "pas_segregated_size_directory.h"
 #include "pas_segregated_size_directory.h"
 
@@ -98,8 +99,14 @@ uint64_t pas_page_sharing_participant_get_use_epoch(pas_page_sharing_participant
     case pas_page_sharing_participant_null:
         PAS_ASSERT(!"Null participant has no use epoch.");
         return 0;
-    case pas_page_sharing_participant_segregated_size_directory:
-        return pas_segregated_directory_get_use_epoch(ptr);
+    case pas_page_sharing_participant_segregated_size_directory: {
+        uint64_t use_epoch = pas_segregated_directory_get_use_epoch(ptr);
+        if (!use_epoch)
+            return 0;
+        if (pas_segregated_directory_has_recommitted(ptr))
+            return use_epoch + pas_scavenger_recommit_retention_epoch_delta;
+        return use_epoch;
+    }
     case pas_page_sharing_participant_bitfit_directory:
         return pas_bitfit_directory_get_use_epoch(ptr);
     case pas_page_sharing_participant_large_sharing_pool:
