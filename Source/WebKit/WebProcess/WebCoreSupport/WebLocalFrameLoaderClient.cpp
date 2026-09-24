@@ -540,7 +540,6 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJS(SameDocum
         { }, /* request */
         { }, /* invalidURLString */
         std::nullopt, /* requester */
-        { }, /* pendingNavigateEventID */
     };
 
     // Notify the UIProcess.
@@ -1080,7 +1079,6 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         request,
         request.url().isValid() ? String() : request.url().string(), /* invalidURLString */
         std::nullopt, /* requester */
-        { }, /* pendingNavigateEventID */
     };
 
     webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNewWindowAction(navigationActionData, frameName), [frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {

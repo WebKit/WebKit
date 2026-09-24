@@ -6148,50 +6148,9 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
                 suspendedPage = nullptr;
 
+            receivedPolicyDecision(policyAction, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::Yes, std::nullopt, WTF::move(message), WTF::move(completionHandler));
             Ref bcgForNavigation = suspendedPage ? suspendedPage->browsingContextGroup() : browsingContextGroup.get();
-            auto navigationUpgradeToHTTPSBehavior = navigationAction->data().navigationUpgradeToHTTPSBehavior;
-            auto pendingNavigateEventID = navigationAction->data().pendingNavigateEventID;
-
-            CompletionHandler<void(bool)> startSwap = [
-                weakThis = WeakPtr { *this },
-                policyAction,
-                navigation = navigation.copyRef(),
-                frame = frame.copyRef(),
-                navigationAction = WTF::move(navigationAction),
-                message = WTF::move(message),
-                completionHandler = WTF::move(completionHandler),
-                suspendedPage = WTF::move(suspendedPage),
-                bcgForNavigation = WTF::move(bcgForNavigation),
-                processNavigatingTo = WTF::move(processNavigatingTo),
-                processSwapRequestedByClient,
-                loadedWebArchive,
-                navigationUpgradeToHTTPSBehavior,
-                replacedDataStoreForWebArchiveLoad,
-                preventNavigationProcessShutdown = WTF::move(preventNavigationProcessShutdown)
-            ] (bool cancelled) mutable {
-                RefPtr protectedThis = weakThis.get();
-                if (!protectedThis) {
-                    completionHandler(PolicyDecision { });
-                    return;
-                }
-
-                if (cancelled) {
-                    protectedThis->receivedPolicyDecision(PolicyAction::Ignore, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::No, std::nullopt, WTF::move(message), WTF::move(completionHandler));
-                    return;
-                }
-
-                protectedThis->receivedPolicyDecision(policyAction, navigation.ptr(), std::nullopt, WTF::move(navigationAction), WillContinueLoadInNewProcess::Yes, std::nullopt, WTF::move(message), WTF::move(completionHandler));
-                protectedThis->continueNavigationInNewProcess(navigation, frame.get(), WTF::move(suspendedPage), bcgForNavigation, WTF::move(processNavigatingTo), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::nullopt, loadedWebArchive, navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition::None, replacedDataStoreForWebArchiveLoad.get(), MonotonicTime { });
-            };
-
-            // A lost reply is not a hang: Connection::cancelAsyncReplyHandlers runs pending handlers with a
-            // default-constructed `cancelled`, so a crashed source process lets the swap proceed.
-            if (!pendingNavigateEventID) {
-                startSwap(false);
-                return;
-            }
-
-            sendWithAsyncReplyToProcessContainingFrame(frame->frameID(), Messages::WebPage::DispatchPendingNavigateEventForProcessSwap(frame->frameID(), *pendingNavigateEventID), WTF::move(startSwap));
+            continueNavigationInNewProcess(navigation, frame.get(), WTF::move(suspendedPage), bcgForNavigation, WTF::move(processNavigatingTo), processSwapRequestedByClient, ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision, std::nullopt, loadedWebArchive, navigationAction->data().navigationUpgradeToHTTPSBehavior, WebCore::ProcessSwapDisposition::None, replacedDataStoreForWebArchiveLoad.get(), MonotonicTime { });
             return;
         }
 

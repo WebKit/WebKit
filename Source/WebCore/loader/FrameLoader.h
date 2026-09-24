@@ -41,7 +41,6 @@
 #include <WebCore/NavigationHistoryBehavior.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/PageIdentifier.h>
-#include <WebCore/PendingNavigateEventIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceLoadNotifier.h>
@@ -140,8 +139,6 @@ public:
     WEBCORE_EXPORT void loadFrameRequest(FrameLoadRequest&&, Event*, RefPtr<const FormSubmission>&&, std::optional<PrivateClickMeasurement>&& = std::nullopt); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(FrameLoadRequest&&, std::optional<NavigationRequester>&& crossSiteRequester = std::nullopt);
-
-    WEBCORE_EXPORT bool dispatchPendingNavigateEventAfterNavigationPolicy(PendingNavigateEventIdentifier);
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(Ref<Archive>&&);

@@ -2788,7 +2788,6 @@
 		6565820209D1508D000E61D7 /* XLinkNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 656581EB09D1508D000E61D7 /* XLinkNames.h */; };
 		656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37360ADBA5DE00A4554D /* DocumentLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D371E0ADBA5DE00A4554D /* DocumentLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373A0ADBA5DE00A4554D /* FormState.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37220ADBA5DE00A4554D /* FormState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373E0ADBA5DE00A4554D /* LocalFrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* LocalFrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13987,7 +13986,6 @@
 		656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LoaderNSURLExtras.h; sourceTree = "<group>"; };
 		656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoaderNSURLExtras.mm; sourceTree = "<group>"; };
 		656D371E0ADBA5DE00A4554D /* DocumentLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentLoader.h; sourceTree = "<group>"; };
-		BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PendingNavigateEventIdentifier.h; sourceTree = "<group>"; };
 		656D37220ADBA5DE00A4554D /* FormState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormState.h; sourceTree = "<group>"; };
 		656D37230ADBA5DE00A4554D /* FormState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormState.cpp; sourceTree = "<group>"; };
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
@@ -39250,7 +39248,6 @@
 				0AC17AC10001000100010001 /* OriginAgentClusterPolicy.h */,
 				5CA126C028DBCE2800B65AD3 /* PCMSites.h */,
 				5CA126B828DBA6EC00B65AD3 /* PCMTokens.h */,
-				BA56E3302E7A11C000D10C01 /* PendingNavigateEventIdentifier.h */,
 				D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */,
 				D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */,
 				97059975107D975200A50A7C /* PolicyChecker.cpp */,
@@ -48310,7 +48307,6 @@
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
 				5E2C43511BCEE2F60001E2BC /* PeerConnectionBackend.h in Headers */,
 				5EBB89391C77C39900C65D41 /* PeerMediaDescription.h in Headers */,
-				BA56E3312E7A11C000D10C01 /* PendingNavigateEventIdentifier.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				E3FA38641D71812D00AA5950 /* PendingScriptClient.h in Headers */,
 				41E27170300934A90015A3AF /* PendingStreamIdentifier.h in Headers */,
