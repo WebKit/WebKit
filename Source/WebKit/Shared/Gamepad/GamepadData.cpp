@@ -31,27 +31,51 @@
 #include "ArgumentCoders.h"
 #include <wtf/text/StringBuilder.h>
 
+using WebCore::GamepadButtonType;
 using WebCore::SharedGamepadValue;
 
 namespace WebKit {
 
-GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes)
+static Vector<double> sharedGamepadValuesToDoubles(const Vector<SharedGamepadValue>& values)
+{
+    return WTF::map(values, [](const auto& value) {
+        return value.value();
+    });
+}
+
+static Vector<GamepadButtonType> normalizedButtonTypes(size_t buttonCount, const Vector<GamepadButtonType>& buttonTypes)
+{
+    if (buttonTypes.size() == buttonCount)
+        return buttonTypes;
+    return Vector<GamepadButtonType>(FillWith { }, buttonCount, GamepadButtonType::NonStandard);
+}
+
+static Vector<GamepadButtonType> normalizedButtonTypes(size_t buttonCount, Vector<GamepadButtonType>&& buttonTypes)
+{
+    if (buttonTypes.size() == buttonCount)
+        return WTF::move(buttonTypes);
+    return Vector<GamepadButtonType>(FillWith { }, buttonCount, GamepadButtonType::NonStandard);
+}
+
+GamepadData::GamepadData(unsigned index, const String& id, const String& mapping, const Vector<SharedGamepadValue>& axisValues, const Vector<SharedGamepadValue>& buttonValues, const Vector<GamepadButtonType>& buttonTypes, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes)
     : m_index(index)
     , m_id(id)
     , m_mapping(mapping)
-    , m_axisValues(WTF::map(axisValues, [](const auto& value) { return value.value(); }))
-    , m_buttonValues(WTF::map(buttonValues, [](const auto& value) { return value.value(); }))
+    , m_axisValues(sharedGamepadValuesToDoubles(axisValues))
+    , m_buttonValues(sharedGamepadValuesToDoubles(buttonValues))
+    , m_buttonTypes(normalizedButtonTypes(m_buttonValues.size(), buttonTypes))
     , m_lastUpdateTime(lastUpdateTime)
     , m_supportedEffectTypes(supportedEffectTypes)
 {
 }
 
-GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
+GamepadData::GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, Vector<GamepadButtonType>&& buttonTypes, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes)
     : m_index(index)
     , m_id(WTF::move(id))
     , m_mapping(WTF::move(mapping))
     , m_axisValues(WTF::move(axisValues))
     , m_buttonValues(WTF::move(buttonValues))
+    , m_buttonTypes(normalizedButtonTypes(m_buttonValues.size(), WTF::move(buttonTypes)))
     , m_lastUpdateTime(lastUpdateTime)
     , m_supportedEffectTypes(WTF::move(supportedEffectTypes))
 {
