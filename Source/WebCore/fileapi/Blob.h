@@ -122,7 +122,7 @@ public:
     static String normalizedContentType(const String&);
 #if ASSERT_ENABLED
     static bool isNormalizedContentType(const String&);
-    static bool isNormalizedContentType(const CString&);
+    static bool isNormalizedContentType(const ASCIICString&);
 #endif
 
     // URLRegistrable

@@ -63,7 +63,7 @@ int WebExtensionSQLiteDatabase::close()
 
     int result = sqlite3_close_v2(m_db);
     if (result != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Extensions, "Failed to close database: %s (%d)", m_lastErrorMessage.data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to close database: %s (%d)", m_lastErrorMessage, result);
         return result;
     }
 

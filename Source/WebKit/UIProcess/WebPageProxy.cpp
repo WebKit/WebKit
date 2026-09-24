@@ -18902,13 +18902,13 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
     m_isServiceWorkerPage = true;
     internals().serviceWorkerLaunchCompletionHandler = WTF::move(completionHandler);
 
-    CString html;
+    UTF8CString html;
     if (usingModules)
         html = makeString("<script>navigator.serviceWorker.register('"_s, url.string(), "', { type: 'module' });</script>"_s).utf8();
     else
         html = makeString("<script>navigator.serviceWorker.register('"_s, url.string(), "');</script>"_s).utf8();
 
-    loadData(SharedBuffer::create(html.span()), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
+    loadData(SharedBuffer::create(byteCast<uint8_t>(html.span())), "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
 }
 
 #if !PLATFORM(COCOA)

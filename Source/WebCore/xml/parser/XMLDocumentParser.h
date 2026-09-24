@@ -48,7 +48,7 @@ class Text;
 
 class XMLParserContext : public RefCounted<XMLParserContext> {
 public:
-    static RefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const CString& chunk);
+    static RefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const UTF8CString& chunk);
     static Ref<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
     XMLParserContext() = delete;
     ~XMLParserContext();
@@ -144,7 +144,7 @@ public:
     void entityDecl(const xmlChar* name, int type, const xmlChar* publicId, const xmlChar* systemId, xmlChar* content);
 
 private:
-    void initializeParserContext(const CString& chunk = CString());
+    void initializeParserContext(const UTF8CString& chunk = UTF8CString());
     void flushDeferredEntityDeclarations();
     uint64_t computeTransitiveEntityReferenceCount(const AtomString& name, const HashMap<AtomString, String>& entityContents, HashSet<AtomString>& visiting);
 

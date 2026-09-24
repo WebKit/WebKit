@@ -32,6 +32,7 @@
 #import <pal/spi/cocoa/NetworkSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_LIBRARY(libnetworkextension)
@@ -47,10 +48,10 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_set_attributed_bundle_identifier, v
 
 namespace WebKit {
 
-void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const char* sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, const String& attributedBundleIdentifier)
+void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const UTF8CString& sourceApplicationBundleIdentifier, std::optional<audit_token_t> sourceApplicationAuditToken, const String& attributedBundleIdentifier)
 {
-    if (sourceApplicationBundleIdentifier && *sourceApplicationBundleIdentifier)
-        nw_parameters_set_source_application_by_bundle_id(parameters, sourceApplicationBundleIdentifier);
+    if (!sourceApplicationBundleIdentifier.isEmpty())
+        nw_parameters_set_source_application_by_bundle_id(parameters, sourceApplicationBundleIdentifier.legacyCStringPointer());
     else if (sourceApplicationAuditToken)
         nw_parameters_set_source_application(parameters, *sourceApplicationAuditToken);
 

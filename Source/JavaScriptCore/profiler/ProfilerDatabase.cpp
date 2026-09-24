@@ -118,18 +118,19 @@ Ref<JSON::Value> Database::toJSON() const
     return result;
 }
 
-bool Database::save(const char* filename) const
+bool Database::save(const UTF8CString& filename) const
 {
-    auto out = FilePrintStream::open(filename, "w");
+    auto out = FilePrintStream::open(filename.legacyCStringPointer(), "w");
     if (!out)
         return false;
     out->print(toJSON().get());
     return true;
 }
 
-void Database::registerToSaveAtExit(const char* filename)
+void Database::registerToSaveAtExit(const UTF8CString& filename)
 {
-    m_atExitSaveFilename = filename;
+    // The atexit callback runs on whichever thread exits, so keep a CStringBuffer of our own.
+    m_atExitSaveFilename = filename.isolatedCopy();
     
     if (m_shouldSaveAtExit)
         return;
@@ -177,7 +178,7 @@ void Database::removeDatabaseFromAtExit()
 void Database::performAtExitSave() const
 {
     JSLockHolder lock(m_vm);
-    save(m_atExitSaveFilename.data());
+    save(m_atExitSaveFilename);
 }
 
 Database* Database::removeFirstAtExitDatabase()

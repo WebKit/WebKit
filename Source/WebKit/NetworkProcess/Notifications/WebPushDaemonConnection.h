@@ -74,10 +74,10 @@ struct ConnectionTraits {
 class Connection final : public Daemon::ConnectionToMachService<ConnectionTraits>, public IPC::MessageSender {
     WTF_MAKE_TZONE_ALLOCATED(Connection);
 public:
-    static Ref<Connection> create(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
+    static Ref<Connection> create(UTF8CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
 
 private:
-    Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
+    Connection(UTF8CString&& machServiceName, WebPushDaemonConnectionConfiguration&&);
 #if PLATFORM(COCOA)
     ~Connection();
 #endif

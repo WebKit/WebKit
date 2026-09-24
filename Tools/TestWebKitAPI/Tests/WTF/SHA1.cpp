@@ -35,12 +35,12 @@
 
 namespace TestWebKitAPI {
 
-static void expectSHA1(CString input, int repeat, CString expected)
+static void expectSHA1(const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     SHA1 sha1;
     for (int i = 0; i < repeat; ++i)
         sha1.addBytes(std::as_bytes(input.span()));
-    CString actual = sha1.computeHexDigest();
+    ASCIICString actual = sha1.computeHexDigest();
 
     ASSERT_EQ(expected.length(), actual.length());
     ASSERT_STREQ(expected.data(), actual.data());
@@ -49,10 +49,10 @@ static void expectSHA1(CString input, int repeat, CString expected)
 TEST(WTF_SHA1, Computation)
 {
     // Examples taken from sample code in RFC 3174.
-    expectSHA1("abc", 1, "A9993E364706816ABA3E25717850C26C9CD0D89D");
-    expectSHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 1, "84983E441C3BD26EBAAE4AA1F95129E5E54670F1");
-    expectSHA1("a", 1000000, "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F");
-    expectSHA1("0123456701234567012345670123456701234567012345670123456701234567", 10, "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452");
+    expectSHA1("abc"_s, 1, "A9993E364706816ABA3E25717850C26C9CD0D89D"_s);
+    expectSHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"_s, 1, "84983E441C3BD26EBAAE4AA1F95129E5E54670F1"_s);
+    expectSHA1("a"_s, 1000000, "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F"_s);
+    expectSHA1("0123456701234567012345670123456701234567012345670123456701234567"_s, 10, "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452"_s);
 }
 
 } // namespace TestWebKitAPI

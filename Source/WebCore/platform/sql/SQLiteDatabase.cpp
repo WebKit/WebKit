@@ -135,7 +135,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
             return;
 
         m_openingThreadID = 0;
-        m_openErrorMessage = sqlite3_errmsg(m_db);
+        m_openErrorMessage = UTF8CString { byteCast<char8_t>(sqlite3_errmsg(m_db)) };
         m_openError = sqlite3_errcode(m_db);
         close();
     });
@@ -169,7 +169,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<O
         if (result != SQLITE_OK) {
             if (!m_db) {
                 m_openError = result;
-                m_openErrorMessage = "sqlite_open returned null";
+                m_openErrorMessage = "sqlite_open returned null"_s;
             }
             return false;
         }
@@ -591,7 +591,7 @@ const char* SQLiteDatabase::lastErrorMsg()
 {
     if (m_db)
         return sqlite3_errmsg(m_db);
-    return m_openErrorMessage.isNull() ? notOpenErrorMessage : m_openErrorMessage.data();
+    return m_openErrorMessage.isNull() ? notOpenErrorMessage : m_openErrorMessage.legacyCStringPointer();
 }
 
 #if ASSERT_ENABLED

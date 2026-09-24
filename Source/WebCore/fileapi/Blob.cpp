@@ -536,7 +536,7 @@ bool Blob::isNormalizedContentType(const String& contentType)
     return true;
 }
 
-bool Blob::isNormalizedContentType(const CString& contentType)
+bool Blob::isNormalizedContentType(const ASCIICString& contentType)
 {
     // FIXME: Do we really want to treat the empty string and null string as valid content types?
     for (auto character : contentType.span()) {

@@ -45,13 +45,13 @@ TEST(WTF, CStringNullStringConstructor)
     ASSERT_EQ(string.data(), static_cast<const char*>(0));
     ASSERT_EQ(string.length(), zeroLength);
 
-    CString stringFromCharPointer(static_cast<const char*>(0));
+    ASCIICString stringFromCharPointer { static_cast<const char*>(0) };
     ASSERT_TRUE(stringFromCharPointer.isNull());
     EXPECT_TRUE(stringFromCharPointer.isEmpty());
     ASSERT_EQ(stringFromCharPointer.data(), static_cast<const char*>(0));
     ASSERT_EQ(stringFromCharPointer.length(), zeroLength);
 
-    CString stringFromCharAndLength(std::span { static_cast<const char*>(0), zeroLength });
+    ASCIICString stringFromCharAndLength { std::span { static_cast<const char*>(0), zeroLength } };
     ASSERT_TRUE(stringFromCharAndLength.isNull());
     EXPECT_TRUE(stringFromCharAndLength.isEmpty());
     ASSERT_EQ(stringFromCharAndLength.data(), static_cast<const char*>(0));
@@ -62,18 +62,18 @@ TEST(WTF, CStringEmptyEmptyConstructor)
 {
     const char* emptyString = "";
 
-    CString stringFromEmptySpanWithNonNullPointer(unsafeMakeSpan(emptyString, 0));
+    ASCIICString stringFromEmptySpanWithNonNullPointer { unsafeMakeSpan(emptyString, 0) };
     EXPECT_FALSE(stringFromEmptySpanWithNonNullPointer.isNull());
     EXPECT_TRUE(stringFromEmptySpanWithNonNullPointer.isEmpty());
     EXPECT_EQ(stringFromEmptySpanWithNonNullPointer.length(), 0UZ);
 
-    CString string(emptyString);
+    ASCIICString string { emptyString };
     ASSERT_FALSE(string.isNull());
     EXPECT_TRUE(string.isEmpty());
     ASSERT_EQ(string.length(), static_cast<size_t>(0));
     ASSERT_EQ(string.data()[0], 0);
 
-    CString stringWithLength(""_span);
+    ASCIICString stringWithLength { ""_span };
     ASSERT_FALSE(stringWithLength.isNull());
     EXPECT_TRUE(stringWithLength.isEmpty());
     ASSERT_EQ(stringWithLength.length(), static_cast<size_t>(0));
@@ -84,12 +84,12 @@ TEST(WTF, CStringEmptyRegularConstructor)
 {
     const char* referenceString = "WebKit";
 
-    CString string(referenceString);
+    ASCIICString string { referenceString };
     ASSERT_FALSE(string.isNull());
     ASSERT_EQ(string.length(), strlen(referenceString));
     ASSERT_STREQ(referenceString, string.data());
 
-    CString stringWithLength(std::span { referenceString, 6 });
+    ASCIICString stringWithLength { std::span { referenceString, 6 } };
     ASSERT_FALSE(stringWithLength.isNull());
     ASSERT_EQ(stringWithLength.length(), strlen(referenceString));
     ASSERT_STREQ(referenceString, stringWithLength.data());
@@ -99,13 +99,13 @@ TEST(WTF, CStringOneByte)
 {
     const char* referenceString = "W";
 
-    CString string(referenceString);
+    ASCIICString string { referenceString };
     ASSERT_FALSE(string.isNull());
     ASSERT_FALSE(string.isEmpty());
     ASSERT_EQ(string.length(), strlen(referenceString));
     ASSERT_STREQ(referenceString, string.data());
 
-    CString stringWithLength(std::span { referenceString, 1 });
+    ASCIICString stringWithLength { std::span { referenceString, 1 } };
     ASSERT_FALSE(stringWithLength.isNull());
     ASSERT_FALSE(stringWithLength.isEmpty());
     ASSERT_EQ(stringWithLength.length(), strlen(referenceString));
@@ -130,7 +130,7 @@ TEST(WTF, ASCIICStringUninitializedConstructor)
 TEST(WTF, CStringZeroTerminated)
 {
     const char* referenceString = "WebKit";
-    CString stringWithLength(std::span { referenceString, 3 });
+    ASCIICString stringWithLength { std::span { referenceString, 3 } };
     ASSERT_EQ(stringWithLength.data()[3], 0);
 }
 
@@ -139,7 +139,7 @@ TEST(WTF, CStringLegacyCStringPointer)
     CString nullString;
     EXPECT_EQ(nullString.legacyCStringPointer(), static_cast<const char*>(nullptr));
 
-    CString string("WebKit");
+    CString string = ASCIICString { "WebKit"_s };
     EXPECT_EQ(string.legacyCStringPointer(), string.data());
     EXPECT_STREQ(string.legacyCStringPointer(), "WebKit");
 }
@@ -157,87 +157,90 @@ TEST(WTF, CStringCopyOnWrite)
 
 TEST(WTF, CStringComparison)
 {
-    // Comparison with another CString.
+    // Slicing a typed string is how an encoding-erased CString is spelled now. The comparison it
+    // selects is the byte-wise one on CString, which CStringWithEncodingComparison does not cover.
     CString a;
     CString b;
     ASSERT_TRUE(a == b);
     ASSERT_FALSE(a != b);
-    a = "a";
+    a = ASCIICString { "a"_s };
     b = CString();
     ASSERT_FALSE(a == b);
     ASSERT_TRUE(a != b);
-    a = "a";
-    b = "b";
+    a = ASCIICString { "a"_s };
+    b = ASCIICString { "b"_s };
     ASSERT_FALSE(a == b);
     ASSERT_TRUE(a != b);
-    a = "a";
-    b = "a";
+    a = ASCIICString { "a"_s };
+    b = ASCIICString { "a"_s };
     ASSERT_TRUE(a == b);
     ASSERT_FALSE(a != b);
-    a = "a";
-    b = "aa";
+    a = ASCIICString { "a"_s };
+    b = ASCIICString { "aa"_s };
     ASSERT_FALSE(a == b);
     ASSERT_TRUE(a != b);
-    a = "";
-    b = "";
+    a = ASCIICString { ""_s };
+    b = ASCIICString { ""_s };
     ASSERT_TRUE(a == b);
     ASSERT_FALSE(a != b);
-    a = "";
+    a = ASCIICString { ""_s };
     b = CString();
     ASSERT_FALSE(a == b);
     ASSERT_TRUE(a != b);
-    a = "a";
-    b = "";
+    a = ASCIICString { "a"_s };
+    b = ASCIICString { ""_s };
     ASSERT_FALSE(a == b);
     ASSERT_TRUE(a != b);
 
-    // Comparison with a const char*.
-    CString c;
-    const char* d = 0;
+    // Comparison against an ASCII literal, which is valid in every encoding and so is the one raw
+    // comparison CString still offers. It is a non-template overload, so an ASCIICString on the left
+    // picks it too: the typed operator cannot deduce its parameter from a literal.
+    ASCIICString c;
+    ASCIILiteral d;
     ASSERT_TRUE(c == d);
     ASSERT_FALSE(c != d);
-    c = "c";
-    d = 0;
+    c = "c"_s;
+    d = nullptr;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = CString();
-    d = "d";
+    c = ASCIICString();
+    d = "d"_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "c";
-    d = "d";
+    c = "c"_s;
+    d = "d"_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "c";
-    d = "c";
+    c = "c"_s;
+    d = "c"_s;
     ASSERT_TRUE(c == d);
     ASSERT_FALSE(c != d);
-    c = "c";
-    d = "cc";
+    c = "c"_s;
+    d = "cc"_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "cc";
-    d = "c";
+    c = "cc"_s;
+    d = "c"_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "";
-    d = "";
+    c = ""_s;
+    d = ""_s;
     ASSERT_TRUE(c == d);
     ASSERT_FALSE(c != d);
-    c = "";
-    d = 0;
+    c = ""_s;
+    d = nullptr;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = CString();
-    d = "";
+    c = ASCIICString();
+    d = ""_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "a";
-    d = "";
+    c = "a"_s;
+    d = ""_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
-    c = "";
-    d = "b";
+    c = ""_s;
+    d = "b"_s;
     ASSERT_FALSE(c == d);
     ASSERT_TRUE(c != d);
 }
@@ -345,15 +348,21 @@ static_assert(std::is_convertible_v<UTF8CString, CString>);
 static_assert(!std::is_convertible_v<CString, UTF8CString>);
 static_assert(!std::is_convertible_v<Latin1CString, UTF8CString>);
 // Bytes get into a CString only through CStringWithEncoding: the encoding-erased base cannot be
-// built from a literal, a std::string or a buffer, and cannot hand out one to write into.
+// built from a literal, a span or a std::string, and cannot hand out a buffer to write into.
 // ASCIILiteral converts to const char*, but that is a worse match than CString(ASCIILiteral), so
 // a literal is rejected outright rather than quietly losing its length, and any embedded null, to
-// a strlen. A std::string has no constructor left but still converts to a span, so for it only the
-// implicit conversion goes away.
+// a strlen. A std::string reaches the span constructor only through a user-defined conversion, so
+// with that constructor gone it has no way in at all.
 static_assert(!std::constructible_from<CString, ASCIILiteral>);
 static_assert(std::constructible_from<UTF8CString, ASCIILiteral>);
-static_assert(!std::is_convertible_v<std::string, CString>);
+static_assert(!std::constructible_from<CString, std::span<const char>>);
+static_assert(std::constructible_from<ASCIICString, std::span<const char>>);
+static_assert(!std::constructible_from<CString, std::string>);
 static_assert(std::constructible_from<UTF8CString, std::string>);
+#if PLATFORM(COCOA)
+static_assert(!std::constructible_from<CString, const char*>);
+#endif
+static_assert(std::constructible_from<ASCIICString, const char*>);
 template<typename StringType> concept HasMutableSpan = requires(StringType& string)
 {
     string.mutableSpan();
@@ -362,6 +371,14 @@ template<typename StringType> concept HasMutableSpan = requires(StringType& stri
 };
 static_assert(!HasMutableSpan<CString>);
 static_assert(HasMutableSpan<UTF8CString>);
+// The storage cannot be taken out of a CString either, which is what closes the last way to build
+// one from bytes that never named an encoding.
+template<typename StringType> concept HasBuffer = requires(const StringType& string)
+{
+    string.buffer();
+};
+static_assert(!HasBuffer<CString>);
+static_assert(!HasBuffer<UTF8CString>);
 // Ordering across encodings must not compile. This has to go through a concept: with concrete
 // types, selecting a deleted overload is a hard error rather than an unsatisfied requirement.
 template<typename A, typename B> concept IsEqualityComparable = requires(const A& a, const B& b)
@@ -486,7 +503,7 @@ TEST(WTF, CStringWithEncodingHashing)
     EXPECT_EQ(map.get(UTF8CString { u8"key"_span }), 1);
 
     // Hashing is over the raw bytes, so an equal untyped CString agrees.
-    EXPECT_EQ(UTF8CString { u8"key"_span }.hash(), CString("key").hash());
+    EXPECT_EQ(UTF8CString { u8"key"_span }.hash(), CString { ASCIICString { "key"_s } }.hash());
 }
 
 template<typename StringType> concept AdaptableToString = std::constructible_from<WTF::StringTypeAdapter<StringType>, const StringType&>;

@@ -363,7 +363,7 @@ DatabaseResult WebExtensionStorageSQLiteStore::createFreshDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE extension_storage (key TEXT PRIMARY KEY NOT NULL, value TEXT NOT NULL)"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create the extension_storage table for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create the extension_storage table for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
     return result;
 }
 
@@ -391,7 +391,7 @@ DatabaseResult WebExtensionStorageSQLiteStore::resetDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS extension_storage"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
 
     return result;
 }

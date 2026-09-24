@@ -99,7 +99,7 @@ private:
     sqlite3* m_db { nullptr };
     URL m_url;
 
-    CString m_lastErrorMessage;
+    UTF8CString m_lastErrorMessage;
 
     const Ref<WorkQueue> m_queue;
 };

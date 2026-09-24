@@ -51,7 +51,7 @@ void SocketStreamHandle::sendData(std::span<const uint8_t> data, Function<void(b
     platformSend(data, WTF::move(completionHandler));
 }
 
-void SocketStreamHandle::sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&& headerFieldProxy, Function<void(bool, bool)> completionHandler)
+void SocketStreamHandle::sendHandshake(UTF8CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&& headerFieldProxy, Function<void(bool, bool)> completionHandler)
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false, false);

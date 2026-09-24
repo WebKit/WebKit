@@ -105,7 +105,7 @@ static Vector<uint8_t> authenticateForProtocol(PINUVAuthProtocol protocol, const
     return signature;
 }
 
-std::optional<CString> validateAndConvertToUTF8(const String& pin)
+std::optional<UTF8CString> validateAndConvertToUTF8(const String& pin)
 {
     if (!hasAtLeastFourCodepoints(pin))
         return std::nullopt;
@@ -341,7 +341,7 @@ static Vector<uint8_t> encryptForProtocol(PINUVAuthProtocol protocol, const Cryp
     return result.releaseReturnValue();
 }
 
-std::optional<TokenRequest> TokenRequest::tryCreate(PINUVAuthProtocol protocol, const CString& pin, const CryptoKeyEC& peerKey)
+std::optional<TokenRequest> TokenRequest::tryCreate(PINUVAuthProtocol protocol, const UTF8CString& pin, const CryptoKeyEC& peerKey)
 {
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret
@@ -407,7 +407,7 @@ const Vector<uint8_t>& SetPinRequest::pinAuth() const
 
 std::optional<SetPinRequest> SetPinRequest::tryCreate(PINUVAuthProtocol protocol, const String& inputPin, const WebCore::CryptoKeyEC& peerKey)
 {
-    std::optional<CString> newPin = validateAndConvertToUTF8(inputPin);
+    std::optional<UTF8CString> newPin = validateAndConvertToUTF8(inputPin);
     if (!newPin)
         return std::nullopt;
 

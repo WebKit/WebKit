@@ -198,7 +198,7 @@ void WebSocketHandshake::setClientHandshakeRequestHeaders(const HTTPHeaderMap& h
     m_clientHandshakeRequestHeaders = WTF::move(filtered);
 }
 
-CString WebSocketHandshake::clientHandshakeMessage() const
+UTF8CString WebSocketHandshake::clientHandshakeMessage() const
 {
     // Keep the following consistent with clientHandshakeRequest just below.
 

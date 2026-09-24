@@ -53,7 +53,7 @@ public:
 
     // The web process writes to the clipboard without waiting for the UI
     // process, so the copy is only visible here once the change lands.
-    CString copyWithKeyStroke(unsigned keyVal, OptionSet<Modifiers> modifiers)
+    UTF8CString copyWithKeyStroke(unsigned keyVal, OptionSet<Modifiers> modifiers)
     {
         auto changeCount = wpe_clipboard_get_change_count(clipboard());
         keyStroke(keyVal, modifiers);
@@ -64,7 +64,7 @@ public:
 
         gsize length;
         GUniquePtr<char> text(wpe_clipboard_read_text(clipboard(), "text/plain;charset=utf-8", &length));
-        return text ? CString(std::span<const char>(text.get(), length)) : CString();
+        return text ? UTF8CString { byteCast<char8_t>(std::span { text.get(), length }) } : UTF8CString();
     }
 };
 
@@ -79,7 +79,7 @@ static void testEditorCopyKeyBindingNonEditable(EditorKeyBindingTest* test, gcon
     test->loadContentsAndWait(selectedSpanHTML);
 
     auto copied = test->copyWithKeyStroke(KEY(c), { WebViewTest::Modifiers::Control });
-    g_assert_cmpstr(copied.data(), ==, "make Jack a dull");
+    g_assert_cmpstr(copied.legacyCStringPointer(), ==, "make Jack a dull");
 }
 
 static void testEditorCopyKeyBindingEditable(EditorKeyBindingTest* test, gconstpointer)
@@ -92,7 +92,7 @@ static void testEditorCopyKeyBindingEditable(EditorKeyBindingTest* test, gconstp
         "</body></html>");
 
     auto copied = test->copyWithKeyStroke(KEY(c), { WebViewTest::Modifiers::Control });
-    g_assert_cmpstr(copied.data(), ==, "and no play");
+    g_assert_cmpstr(copied.legacyCStringPointer(), ==, "and no play");
 }
 
 static void testEditorSelectAllKeyBindingNonEditable(EditorKeyBindingTest* test, gconstpointer)

@@ -125,7 +125,8 @@ public:
     const char* get() const LIFETIME_BOUND { return m_string.data(); }
 
 private:
-    CString m_string;
+    // A slice of an Objective-C type encoding, which is ASCII.
+    ASCIICString m_string;
 };
 
 class StructBuffer {

@@ -613,14 +613,14 @@ RefPtr<VideoInfo> createVideoInfoFromFormatDescription(CMFormatDescriptionRef de
     });
 }
 
-std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
+std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
 {
     if (!samples.info())
-        return makeUnexpected("No TrackInfo found");
+        return makeUnexpected("No TrackInfo found"_s);
 
     RetainPtr format = formatDescription ? retainPtr(formatDescription) : createFormatDescriptionFromTrackInfo(*protect(samples.info()));
     if (!format)
-        return makeUnexpected("No CMFormatDescription available");
+        return makeUnexpected("No CMFormatDescription available"_s);
 
     RetainPtr<CMBlockBufferRef> completeBlockBuffers;
     if (samples.size() > 1) {
@@ -628,7 +628,7 @@ std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const Medi
         CMBlockBufferRef rawBlockBuffer = nullptr;
         auto err = PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, samples.size(), 0, &rawBlockBuffer);
         if (err != kCMBlockBufferNoErr || !rawBlockBuffer)
-            return makeUnexpected("CMBlockBufferCreateEmpty failed");
+            return makeUnexpected("CMBlockBufferCreateEmpty failed"_s);
         completeBlockBuffers = adoptCF(rawBlockBuffer);
     }
 
@@ -641,14 +641,14 @@ std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const Medi
         RefPtr sampleData = sample.data;
         auto blockBuffer = sampleData->createCMBlockBuffer();
         if (!blockBuffer)
-            return makeUnexpected("Couldn't create CMBlockBuffer");
+            return makeUnexpected("Couldn't create CMBlockBuffer"_s);
 
         if (!completeBlockBuffers)
             completeBlockBuffers = WTF::move(blockBuffer);
         else {
             auto err = PAL::CMBlockBufferAppendBufferReference(completeBlockBuffers.get(), blockBuffer.get(), 0, 0, 0);
             if (err != kCMBlockBufferNoErr)
-                return makeUnexpected("CMBlockBufferAppendBufferReference failed");
+                return makeUnexpected("CMBlockBufferAppendBufferReference failed"_s);
         }
         packetTimings.append({ PAL::toCMTime(sample.duration), PAL::toCMTime(sample.presentationTime), PAL::toCMTime(sample.decodeTime) });
         packetSizes.append(sampleData->size());
@@ -657,13 +657,13 @@ std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const Medi
 
     CMSampleBufferRef rawSampleBuffer = nullptr;
     if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, completeBlockBuffers.get(), format.get(), packetSizes.size(), packetTimings.size(), packetTimings.span().data(), packetSizes.size(), packetSizes.span().data(), &rawSampleBuffer))
-        return makeUnexpected("CMSampleBufferCreateReady failed: OOM");
+        return makeUnexpected("CMSampleBufferCreateReady failed: OOM"_s);
 
     if (samples.isVideo() && samples.size()) {
         auto attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true);
         ASSERT(attachmentsArray);
         if (!attachmentsArray)
-            return makeUnexpected("No sample attachment found");
+            return makeUnexpected("No sample attachment found"_s);
         ASSERT(size_t(CFArrayGetCount(attachmentsArray)) == samples.size());
         for (CFIndex i = 0, count = CFArrayGetCount(attachmentsArray); i < count; ++i) {
             CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
@@ -692,7 +692,7 @@ std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const Medi
     RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(rawSampleBuffer, true);
     ASSERT(attachmentsArray);
     if (!attachmentsArray)
-        return makeUnexpected("No sample attachment found");
+        return makeUnexpected("No sample attachment found"_s);
     if (static_cast<size_t>(CFArrayGetCount(attachmentsArray.get())) < samples.size()) {
         RELEASE_LOG_DEBUG(Media, "Encrypted sample doesn't contain sufficient attachments: %u (expected:%u)", static_cast<unsigned>(CFArrayGetCount(attachmentsArray.get())), static_cast<unsigned>(samples.size()));
         return adoptCF(rawSampleBuffer);

@@ -785,7 +785,7 @@ Ref<TextureMapperShaderProgram> TextureMapperShaderProgram::create(TextureMapper
 }
 
 #if !LOG_DISABLED
-static CString getShaderLog(GLuint shader)
+static UTF8CString getShaderLog(GLuint shader)
 {
     GLint logLength = 0;
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
@@ -797,10 +797,10 @@ static CString getShaderLog(GLuint shader)
     glGetShaderInfoLog(shader, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return byteCast<char>(info.span().first(stringLength));
+    return UTF8CString { byteCast<char8_t>(info.span().first(stringLength)) };
 }
 
-static CString getProgramLog(GLuint program)
+static UTF8CString getProgramLog(GLuint program)
 {
     GLint logLength = 0;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
@@ -812,7 +812,7 @@ static CString getProgramLog(GLuint program)
     glGetProgramInfoLog(program, logLength, &infoLength, info.mutableSpan().data());
 
     size_t stringLength = std::max(infoLength, 0);
-    return byteCast<char>(info.span().first(stringLength));
+    return UTF8CString { byteCast<char8_t>(info.span().first(stringLength)) };
 }
 #endif
 
@@ -844,9 +844,9 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(const String& vertex, con
     if (!compositingLogEnabled() || glGetError() == GL_NO_ERROR)
         return;
 
-    LOG(Compositing, "Vertex shader log: %s\n", getShaderLog(m_vertexShader).data());
-    LOG(Compositing, "Fragment shader log: %s\n", getShaderLog(m_fragmentShader).data());
-    LOG(Compositing, "Program log: %s\n", getProgramLog(m_id).data());
+    LOG(Compositing, "Vertex shader log: %s\n", getShaderLog(m_vertexShader));
+    LOG(Compositing, "Fragment shader log: %s\n", getShaderLog(m_fragmentShader));
+    LOG(Compositing, "Program log: %s\n", getProgramLog(m_id));
 }
 
 TextureMapperShaderProgram::~TextureMapperShaderProgram()

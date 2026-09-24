@@ -136,11 +136,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
     webViewResult.iterator->value = client;
 
     auto html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI).toString().utf8();
-    RefPtr buffer = html.buffer();
-    auto span = buffer->span();
-    GRefPtr bytes = adoptGRef(g_bytes_new_with_free_func(span.data(), span.size(), [](void* data) {
-        static_cast<WTF::CStringBuffer*>(data)->deref();
-    }, buffer.leakRef()));
+    GRefPtr bytes = adoptGRef(g_bytes_new(html.span().data(), html.length()));
     GRefPtr stream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     webkit_uri_scheme_request_finish(request, stream.get(), html.length(), "text/html");
 }

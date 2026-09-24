@@ -620,12 +620,12 @@ Ref<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerPtr hand
 
 
 // Chunk should be encoded in UTF-8
-RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const CString& chunk)
+RefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const UTF8CString& chunk)
 {
     initializeXMLParser();
 
     // appendFragmentSource() checks that the length doesn't overflow an int.
-    xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk.data(), chunk.length());
+    xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk.legacyCStringPointer(), chunk.length());
 
     if (!parser)
         return nullptr;
@@ -1505,7 +1505,7 @@ static void NODELETE ignorableWhitespaceHandler(void*, const xmlChar*, int)
     // http://bugs.webkit.org/show_bug.cgi?id=5792
 }
 
-void XMLDocumentParser::initializeParserContext(const CString& chunk)
+void XMLDocumentParser::initializeParserContext(const UTF8CString& chunk)
 {
     xmlSAXHandler sax;
     zeroBytes(sax);

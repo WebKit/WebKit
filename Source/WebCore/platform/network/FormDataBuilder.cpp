@@ -182,7 +182,7 @@ void addFilenameToMultiPartHeader(Vector<uint8_t>& buffer, const PAL::TextEncodi
     append(buffer, '"');
 }
 
-void addContentTypeToMultiPartHeader(Vector<uint8_t>& buffer, const CString& mimeType)
+void addContentTypeToMultiPartHeader(Vector<uint8_t>& buffer, const ASCIICString& mimeType)
 {
     ASSERT(Blob::isNormalizedContentType(mimeType));
     append(buffer, "\r\nContent-Type: "_s);
@@ -210,9 +210,9 @@ void addKeyValuePairAsFormData(Vector<uint8_t>& buffer, const Vector<uint8_t>& k
     }
 }
 
-void encodeStringAsFormData(Vector<uint8_t>& buffer, const CString& string)
+void encodeStringAsFormData(Vector<uint8_t>& buffer, const UTF8CString& string)
 {
-    appendFormURLEncoded(buffer, string.span());
+    appendFormURLEncoded(buffer, byteCast<char>(string.span()));
 }
 
 }

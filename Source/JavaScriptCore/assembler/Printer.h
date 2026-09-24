@@ -160,7 +160,7 @@ void printIntptr(PrintStream&, Context&);
 void printUintptr(PrintStream&, Context&);
 void printPointer(PrintStream&, Context&);
 
-void setPrinter(PrintRecord&, CString&&);
+void setPrinter(PrintRecord&, UTF8CString&&);
 
 // Specialized printers.
 

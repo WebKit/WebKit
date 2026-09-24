@@ -54,7 +54,7 @@ TEST(WTF, StringCreationFromLiteral)
 
 TEST(WTF, StringASCII)
 {
-    CString output;
+    ASCIICString output;
 
     // Null String.
     output = String().ascii();

@@ -38,16 +38,16 @@ namespace WebKit::WebPushD {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Connection);
 
-Ref<Connection> Connection::create(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
+Ref<Connection> Connection::create(UTF8CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
 {
     return adoptRef(*new Connection(WTF::move(machServiceName), WTF::move(configuration)));
 }
 
-Connection::Connection(CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
+Connection::Connection(UTF8CString&& machServiceName, WebPushDaemonConnectionConfiguration&& configuration)
     : Daemon::ConnectionToMachService<ConnectionTraits>(WTF::move(machServiceName))
     , m_configuration(WTF::move(configuration))
 {
-    LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName().data());
+    LOG(Push, "Creating WebPushD connection to mach service: %s", this->machServiceName());
 }
 
 } // namespace WebKit::WebPushD

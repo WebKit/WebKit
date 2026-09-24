@@ -1643,7 +1643,7 @@ void SourceBufferParserWebM::returnSamples(MediaSamplesBlock&& block, CMFormatDe
 
     auto expectedBuffer = toCMSampleBuffer(block, description);
     if (!expectedBuffer) {
-        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "toCMSampleBuffer error:", expectedBuffer.error().data());
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "toCMSampleBuffer error:", expectedBuffer.error());
         return;
     }
 

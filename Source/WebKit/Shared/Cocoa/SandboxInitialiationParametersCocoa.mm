@@ -42,7 +42,7 @@ void SandboxInitializationParameters::appendPathInternal(ASCIILiteral name, cons
         normalizedPath[0] = '\0';
 
     m_parameterNames.append(name);
-    m_parameterValues.append(normalizedPath.data());
+    m_parameterValues.append(UTF8CString { byteCast<char8_t>(normalizedPath.data()) });
 }
 
 void SandboxInitializationParameters::addConfDirectoryParameter(ASCIILiteral name, int confID)
@@ -64,7 +64,7 @@ void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, const 
     appendPathInternal(name, path);
 }
 
-void SandboxInitializationParameters::addParameter(ASCIILiteral name, CString&& value)
+void SandboxInitializationParameters::addParameter(ASCIILiteral name, UTF8CString&& value)
 {
     m_parameterNames.append(name);
     m_parameterValues.append(WTF::move(value));
@@ -77,7 +77,7 @@ Vector<const char*> SandboxInitializationParameters::namedParameterVector() cons
     ASSERT(m_parameterNames.size() == m_parameterValues.size());
     for (size_t i = 0; i < m_parameterNames.size(); ++i) {
         result.append(m_parameterNames[i]);
-        result.append(m_parameterValues[i].data());
+        result.append(m_parameterValues[i].legacyCStringPointer());
     }
     result.append(nullptr);
     return result;
@@ -95,7 +95,7 @@ ASCIILiteral SandboxInitializationParameters::name(size_t index) const
 
 const char* SandboxInitializationParameters::value(size_t index) const
 {
-    return m_parameterValues[index].data();
+    return m_parameterValues[index].legacyCStringPointer();
 }
 
 } // namespace WebKit

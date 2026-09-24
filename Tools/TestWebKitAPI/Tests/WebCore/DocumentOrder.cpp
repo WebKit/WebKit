@@ -142,7 +142,7 @@ static String join(const Vector<String>& vector, ASCIILiteral separator)
     return builder.toString();
 }
 
-static CString allPositionTypeFailures(const Position& a, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
+static UTF8CString allPositionTypeFailures(const Position& a, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
     Vector<String> failures;
     for (auto& b : allPositionTypes(nodeB, offsetB)) {
@@ -156,7 +156,7 @@ static CString allPositionTypeFailures(const Position& a, Node* nodeB, unsigned 
     return join(failures, ", "_s).utf8();
 }
 
-static CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
+static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
     Vector<String> failures;
     for (auto& a : allPositionTypes(nodeA, offsetA)) {
@@ -172,25 +172,25 @@ static CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node* node
     return join(failures, " | "_s).utf8();
 }
 
-static CString allPositionTypeFailures(Node& nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
+static UTF8CString allPositionTypeFailures(Node& nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
     return allPositionTypeFailures(&nodeA, offsetA, &nodeB, offsetB, expectedResult);
 }
 
-static CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
+static UTF8CString allPositionTypeFailures(Node* nodeA, unsigned offsetA, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
     return allPositionTypeFailures(nodeA, offsetA, &nodeB, offsetB, expectedResult);
 }
 
-static CString allPositionTypeFailures(const Position& a, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
+static UTF8CString allPositionTypeFailures(const Position& a, Node& nodeB, unsigned offsetB, std::partial_ordering expectedResult)
 {
     return allPositionTypeFailures(a, &nodeB, offsetB, expectedResult);
 }
 
 #define TEST_ALL_POSITION_TYPES(nodeA, offsetA, nodeB, offsetB, expectedResult) \
-    EXPECT_STREQ(allPositionTypeFailures(nodeA, offsetA, nodeB, offsetB, std::partial_ordering::expectedResult).data(), "")
+    EXPECT_STREQ(allPositionTypeFailures(nodeA, offsetA, nodeB, offsetB, std::partial_ordering::expectedResult).legacyCStringPointer(), "")
 #define TEST_ALL_POSITION_TYPES_B(positionA, nodeB, offsetB, expectedResult) \
-    EXPECT_STREQ(allPositionTypeFailures(positionA, nodeB, offsetB, std::partial_ordering::expectedResult).data(), "")
+    EXPECT_STREQ(allPositionTypeFailures(positionA, nodeB, offsetB, std::partial_ordering::expectedResult).legacyCStringPointer(), "")
 
 static Position makePositionBefore(Node& node)
 {

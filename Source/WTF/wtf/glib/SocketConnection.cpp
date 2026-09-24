@@ -155,7 +155,7 @@ bool SocketConnection::readMessage()
     const auto nullIndex = find(messageData, '\0');
     MESSAGE_CHECK(nullIndex != notFound, "message name delimiter missing");
 
-    const CString messageName(consumeSpan(messageData, nullIndex));
+    const UTF8CString messageName { byteCast<char8_t>(consumeSpan(messageData, nullIndex)) };
     ASSERT(messageData.front() == '\0');
     skip(messageData, 1);
 

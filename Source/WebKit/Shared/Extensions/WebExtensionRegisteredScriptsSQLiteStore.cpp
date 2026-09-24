@@ -249,7 +249,7 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::createFreshDatabaseSche
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "CREATE TABLE registered_scripts (key TEXT PRIMARY KEY NOT NULL, script BLOB NOT NULL)"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create registered_scripts database for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
     return result;
 }
 
@@ -282,7 +282,7 @@ DatabaseResult WebExtensionRegisteredScriptsSQLiteStore::resetDatabaseSchema()
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), "DROP TABLE IF EXISTS registered_scripts"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset registered_scripts database schema for extension %s: %s (%d)", uniqueIdentifier().utf8(), lastErrorMessage(), result);
 
     return result;
 }

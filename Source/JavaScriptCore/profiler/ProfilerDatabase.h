@@ -61,9 +61,9 @@ public:
 
     // Saves the JSON representation (from toJSON()) to the given file. Returns false if the
     // save failed.
-    JS_EXPORT_PRIVATE bool save(const char* filename) const;
+    JS_EXPORT_PRIVATE bool save(const UTF8CString& filename) const;
 
-    void registerToSaveAtExit(const char* filename);
+    void registerToSaveAtExit(const UTF8CString& filename);
     
     JS_EXPORT_PRIVATE void logEvent(CodeBlock*, const char* summary, const UTF8CString& detail);
     
@@ -84,7 +84,7 @@ private:
     UncheckedKeyHashMap<CodeBlock*, Ref<Compilation>> m_compilationMap WTF_GUARDED_BY_LOCK(m_lock);
     Vector<Event> m_events;
     bool m_shouldSaveAtExit;
-    CString m_atExitSaveFilename;
+    UTF8CString m_atExitSaveFilename;
     Database* m_nextRegisteredDatabase;
     Lock m_lock;
 };

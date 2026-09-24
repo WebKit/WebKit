@@ -177,7 +177,7 @@ MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::wri
             RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame audio failed with %ld", static_cast<long>([m_writer error].code));
             return Result::Failure;
         }
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame autio toCMSampleBuffer failed with %s", sample.error().data());
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame autio toCMSampleBuffer failed with %s", sample.error());
         return Result::Failure;
     }
 
@@ -194,7 +194,7 @@ MediaRecorderPrivateWriterAVFObjC::Result MediaRecorderPrivateWriterAVFObjC::wri
         RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame video failed with %ld", static_cast<long>([m_writer error].code));
         return Result::Failure;
     }
-    RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame video toCMSampleBuffer failed with %s", sample.error().data());
+    RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPMediaRecorderPrivateWriterAVFObjC::writeFrame video toCMSampleBuffer failed with %s", sample.error());
     return Result::Failure;
 }
 

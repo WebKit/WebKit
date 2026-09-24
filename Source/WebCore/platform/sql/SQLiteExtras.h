@@ -49,9 +49,9 @@ inline int sqliteBindText(sqlite3_stmt* statement, int index, std::span<const ch
     return sqlite3_bind_text(statement, index, text.data(), text.size(), destructor); // NOLINT
 }
 
-inline int sqliteBindText(sqlite3_stmt* statement, int index, const CString& text, void(*destructor)(void*) = SQLITE_TRANSIENT)
+inline int sqliteBindText(sqlite3_stmt* statement, int index, const UTF8CString& text, void(*destructor)(void*) = SQLITE_TRANSIENT)
 {
-    return sqliteBindText(statement, index, text.span(), destructor);
+    return sqliteBindText(statement, index, byteCast<char>(text.span()), destructor);
 }
 
 inline String sqliteColumnName(sqlite3_stmt* statement, int index)

@@ -87,7 +87,7 @@ void WebExtensionSQLiteStore::vacuum()
 
     DatabaseResult result = SQLiteDatabaseExecute(*m_database, "VACUUM"_s);
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to vacuum database for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage.data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to vacuum database for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage, result);
 }
 
 bool WebExtensionSQLiteStore::openDatabaseIfNecessary(String& outErrorMessage, bool createIfNecessary)
@@ -306,7 +306,7 @@ DatabaseResult WebExtensionSQLiteStore::setDatabaseSchemaVersion(SchemaVersion n
 
     DatabaseResult result = SQLiteDatabaseExecute(*m_database, makeString("PRAGMA user_version = "_s, newVersion));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to set database version for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage.data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to set database version for extension %s: %s (%d)", m_uniqueIdentifier.utf8(), m_database->m_lastErrorMessage, result);
 
     return result;
 }
@@ -335,7 +335,7 @@ void WebExtensionSQLiteStore::createSavepoint(CompletionHandler<void(Markable<WT
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to create storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to create storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage, result);
             errorMessage = "Failed to create savepoint."_s;
         }
 
@@ -371,7 +371,7 @@ void WebExtensionSQLiteStore::commitSavepoint(WTF::UUID& savepointIdentifier, Co
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("RELEASE SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to release storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to release storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage, result);
             errorMessage = "Failed to release savepoint."_s;
         }
 
@@ -405,7 +405,7 @@ void WebExtensionSQLiteStore::rollbackToSavepoint(WTF::UUID& savepointIdentifier
 
         DatabaseResult result = SQLiteDatabaseExecute(*(protectedThis->m_database), makeString("ROLLBACK TO SAVEPOINT "_s, protectedThis->savepointNameFromUUID(savepointIdentifier)));
         if (result != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Extensions, "Failed to rollback to storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage.data(), result);
+            RELEASE_LOG_ERROR(Extensions, "Failed to rollback to storage savepoint for extension %s. %s (%d)", protectedThis->m_uniqueIdentifier.utf8(), protectedThis->m_database->m_lastErrorMessage, result);
             errorMessage = "Failed to rollback to savepoint."_s;
         }
 

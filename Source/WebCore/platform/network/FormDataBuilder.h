@@ -37,12 +37,12 @@ Vector<uint8_t> generateUniqueBoundaryString();
 void beginMultiPartHeader(Vector<uint8_t>&, std::span<const uint8_t> boundary, const Vector<uint8_t>& name);
 void addBoundaryToMultiPartHeader(Vector<uint8_t>&, std::span<const uint8_t> boundary, bool isLastBoundary = false);
 void addFilenameToMultiPartHeader(Vector<uint8_t>&, const PAL::TextEncoding&, const String& filename);
-void addContentTypeToMultiPartHeader(Vector<uint8_t>&, const CString& mimeType);
+void addContentTypeToMultiPartHeader(Vector<uint8_t>&, const ASCIICString& mimeType);
 void finishMultiPartHeader(Vector<uint8_t>&);
 
 // Helper functions used by HTMLFormElement for non-multi-part form data.
 void addKeyValuePairAsFormData(Vector<uint8_t>&, const Vector<uint8_t>& key, const Vector<uint8_t>& value, FormData::EncodingType = FormData::EncodingType::FormURLEncoded);
-void encodeStringAsFormData(Vector<uint8_t>&, const CString&);
+void encodeStringAsFormData(Vector<uint8_t>&, const UTF8CString&);
 
 }
 

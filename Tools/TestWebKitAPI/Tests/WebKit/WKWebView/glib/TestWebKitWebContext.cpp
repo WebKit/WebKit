@@ -724,13 +724,13 @@ public:
         g_assert_false(m_proxyServer.baseWebSocketURL().isNull());
     }
 
-    CString loadURIAndGetMainResourceData(const char* uri)
+    UTF8CString loadURIAndGetMainResourceData(const char* uri)
     {
         loadURI(uri);
         waitUntilLoadFinished();
         size_t dataSize = 0;
         const char* data = mainResourceData(dataSize);
-        return std::span { data, dataSize };
+        return UTF8CString { byteCast<char8_t>(std::span { data, dataSize }) };
     }
 
     GUniquePtr<char> proxyServerPortAsString()
@@ -812,7 +812,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
         g_assert_nonnull(data);
         auto* test = static_cast<ProxyTest*>(userData);
         GUniquePtr<char> proxyServerPortAsString = test->proxyServerPortAsString();
-        ASSERT_CMP_CSTRING(CString(std::span { data.get(), dataSize }), ==, proxyServerPortAsString.get());
+        ASSERT_CMP_CSTRING(UTF8CString { byteCast<char8_t>(std::span { data.get(), dataSize }) }, ==, proxyServerPortAsString.get());
         test->quitMainLoop();
         }, test);
     g_main_loop_run(test->m_mainLoop);

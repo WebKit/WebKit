@@ -57,7 +57,7 @@ CalendarID calendarIDFromString(StringView identifier)
 }
 
 // buildICULocale — internal: maps BCP47 calendar ID to ICU locale string
-static CString buildICULocale(StringView calendarId)
+static UTF8CString buildICULocale(StringView calendarId)
 {
     String bcp47(calendarId.toString());
     auto mapped = mapBCP47ToICUCalendarKeyword(bcp47);
@@ -72,7 +72,7 @@ static std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> buildCalendarTemplate(
     auto str = calendarIDToString(calendarId);
     auto locale = buildICULocale(str);
     UErrorCode status = U_ZERO_ERROR;
-    auto cal = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(u"UTC", 3, locale.data(), UCAL_DEFAULT, &status));
+    auto cal = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(u"UTC", 3, locale.legacyCStringPointer(), UCAL_DEFAULT, &status));
     if (U_FAILURE(status)) [[unlikely]]
         return nullptr;
     // Set to ExactTime::minValue in ms — the minimum representable Temporal instant — making ICU

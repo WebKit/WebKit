@@ -580,18 +580,18 @@ void testWebKitSettingsApplyFromConfigFile(Test* test, gconstpointer)
 }
 
 #if PLATFORM(GTK)
-static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
+static UTF8CString convertWebViewMainResourceDataToUTF8CString(WebViewTest* test)
 {
     size_t mainResourceDataSize = 0;
     const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
-    return std::span { mainResourceData, mainResourceDataSize };
+    return UTF8CString { byteCast<char8_t>(std::span { mainResourceData, mainResourceDataSize }) };
 }
 
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)
 {
     test->loadURI(gServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToCString(test), ==, userAgent);
+    ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToUTF8CString(test), ==, userAgent);
 }
 
 static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)

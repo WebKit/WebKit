@@ -66,12 +66,12 @@ TEST(CtapPinTest, TestValidateAndConvertToUTF8)
     result = validateAndConvertToUTF8("1234"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 4u);
-    EXPECT_STREQ(result->data(), "1234");
+    EXPECT_STREQ(result->legacyCStringPointer(), "1234");
 
     result = validateAndConvertToUTF8("123456781234567812345678123456781234567812345678123456781234567"_s);
     EXPECT_TRUE(result);
     EXPECT_EQ(result->length(), 63u);
-    EXPECT_STREQ(result->data(), "123456781234567812345678123456781234567812345678123456781234567");
+    EXPECT_STREQ(result->legacyCStringPointer(), "123456781234567812345678123456781234567812345678123456781234567");
 }
 
 TEST(CtapPinTest, TestSetPinRequest)
@@ -269,7 +269,7 @@ TEST(CtapPinTest, TestTokenRequest)
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
-    CString pin = "1234";
+    UTF8CString pin = "1234"_s;
 
     auto token = TokenRequest::tryCreate(PINUVAuthProtocol::kPinProtocol1, pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(token);
@@ -459,7 +459,7 @@ TEST(CtapPinTest, TestTokenRequestProtocol2)
     ASSERT_FALSE(keyPairResult.hasException());
     auto keyPair = keyPairResult.releaseReturnValue();
 
-    CString pin = "1234";
+    UTF8CString pin = "1234"_s;
 
     auto token = TokenRequest::tryCreate(PINUVAuthProtocol::kPinProtocol2, pin, downcast<CryptoKeyEC>(*keyPair.publicKey));
     EXPECT_TRUE(token);

@@ -105,7 +105,7 @@ private:
     bool m_shouldBypassRelay { false };
     bool m_enableServiceClass { false };
 
-    CString m_sourceApplicationBundleIdentifier;
+    UTF8CString m_sourceApplicationBundleIdentifier;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
     String m_attributedBundleIdentifier;
 
@@ -232,7 +232,9 @@ NetworkRTCUDPSocketCocoaConnections::NetworkRTCUDPSocketCocoaConnections(WebCore
     , m_isKnownTracker(isKnownTracker(domain))
     , m_shouldBypassRelay(flags.isRelayDisabled)
     , m_enableServiceClass(flags.enableServiceClass)
-    , m_sourceApplicationBundleIdentifier(rtcProvider.applicationBundleIdentifier())
+    // This object is destroyed on whichever thread drops the last reference, so it needs a
+    // CStringBuffer of its own: the provider's is not thread-safe to share.
+    , m_sourceApplicationBundleIdentifier(rtcProvider.applicationBundleIdentifier().isolatedCopy())
     , m_sourceApplicationAuditToken(rtcProvider.sourceApplicationAuditToken())
     , m_attributedBundleIdentifier(WTF::move(attributedBundleIdentifier))
 {
@@ -316,7 +318,7 @@ void NetworkRTCUDPSocketCocoaConnections::configureParameters(nw_parameters_t pa
     if (version != nw_ip_version_any)
         nw_ip_options_set_version(options.get(), version);
 
-    setNWParametersApplicationIdentifiers(parameters, m_sourceApplicationBundleIdentifier.data(), m_sourceApplicationAuditToken, m_attributedBundleIdentifier);
+    setNWParametersApplicationIdentifiers(parameters, m_sourceApplicationBundleIdentifier, m_sourceApplicationAuditToken, m_attributedBundleIdentifier);
     setNWParametersTrackerOptions(parameters, m_shouldBypassRelay, m_isFirstParty, m_isKnownTracker);
 
     nw_parameters_set_reuse_local_address(parameters, true);

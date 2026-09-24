@@ -50,11 +50,11 @@ void printPointer(PrintStream& out, Context& context)
     out.print(RawPointer(context.data.as<const void*>()));
 }
 
-void setPrinter(PrintRecord& record, CString&& string)
+void setPrinter(PrintRecord& record, UTF8CString&& string)
 {
     // FIXME: It would be nice if we can release the CStringBuffer from the CString
     // and take ownership of it here instead of copying it again.
-    record.data.pointer = fastStrDup(string.data());
+    record.data.pointer = fastStrDup(string.legacyCStringPointer());
     record.printer = printConstCharString;
 }
 

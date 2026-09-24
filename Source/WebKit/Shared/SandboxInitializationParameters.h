@@ -45,7 +45,7 @@ public:
     void addConfDirectoryParameter(ASCIILiteral name, int confID);
     void addPathParameter(ASCIILiteral name, NSString *path);
     void addPathParameter(ASCIILiteral name, const char* path);
-    void addParameter(ASCIILiteral name, CString&& value);
+    void addParameter(ASCIILiteral name, UTF8CString&& value);
 
     Vector<const char*> namedParameterVector() const;
 
@@ -94,7 +94,7 @@ private:
     void appendPathInternal(ASCIILiteral name, const char* path);
 
     mutable Vector<ASCIILiteral> m_parameterNames;
-    mutable Vector<CString> m_parameterValues;
+    mutable Vector<UTF8CString> m_parameterValues;
     String m_userDirectorySuffix;
 
     ProfileSelectionMode m_profileSelectionMode;

@@ -304,7 +304,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::createFreshDatabase
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("CREATE TABLE "_s, m_tableName, " (id INTEGER PRIMARY KEY NOT NULL, rule BLOB NOT NULL)"_s));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to create %s database for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
     return result;
 }
 
@@ -334,7 +334,7 @@ DatabaseResult WebExtensionDeclarativeNetRequestSQLiteStore::resetDatabaseSchema
 
     DatabaseResult result = SQLiteDatabaseExecute(*database(), makeString("DROP TABLE IF EXISTS "_s, m_tableName));
     if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage().data(), result);
+        RELEASE_LOG_ERROR(Extensions, "Failed to reset %s database schema for extension %s: %s (%d)", m_tableName.utf8(), uniqueIdentifier().utf8(), lastErrorMessage(), result);
 
     return result;
 }

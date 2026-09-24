@@ -121,7 +121,7 @@ public:
 #if PLATFORM(COCOA)
     bool NODELETE webRTCInterfaceMonitoringViaNWEnabled() const;
     const std::optional<audit_token_t>& sourceApplicationAuditToken() const LIFETIME_BOUND { return m_sourceApplicationAuditToken; }
-    const char* applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier.data(); }
+    const UTF8CString& applicationBundleIdentifier() const LIFETIME_BOUND { return m_applicationBundleIdentifier; }
 #endif
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(IPC::Connection&);
@@ -173,7 +173,7 @@ private:
 #if PLATFORM(COCOA)
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifiers;
     std::optional<audit_token_t> m_sourceApplicationAuditToken;
-    CString m_applicationBundleIdentifier;
+    UTF8CString m_applicationBundleIdentifier;
     const Ref<WorkQueue> m_rtcNetworkThreadQueue;
 #endif
 

@@ -199,7 +199,7 @@ private:
     Lock m_databaseClosingMutex;
 
     int m_openError { SQLITE_ERROR };
-    CString m_openErrorMessage;
+    UTF8CString m_openErrorMessage;
 };
 
 inline void SQLiteDatabase::incrementStatementCount()

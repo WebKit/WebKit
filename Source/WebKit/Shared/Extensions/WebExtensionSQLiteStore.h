@@ -76,7 +76,7 @@ protected:
     WorkQueue& queue() { return m_queue; };
     RefPtr<WebExtensionSQLiteDatabase> database() { return m_database; };
     String uniqueIdentifier() { return m_uniqueIdentifier; };
-    CString lastErrorMessage() { return m_database->m_lastErrorMessage; };
+    const UTF8CString& lastErrorMessage() LIFETIME_BOUND { return m_database->m_lastErrorMessage; };
     URL directory() { return m_directory; };
 
 private:

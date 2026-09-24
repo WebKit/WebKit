@@ -89,17 +89,17 @@ public:
     virtual void connectionReceivedEvent(xpc_object_t) = 0;
 #endif
 
-    const CString& machServiceName() const LIFETIME_BOUND { return m_machServiceName; }
+    const UTF8CString& machServiceName() const LIFETIME_BOUND { return m_machServiceName; }
 
 protected:
-    explicit ConnectionToMachService(CString&& machServiceName)
+    explicit ConnectionToMachService(UTF8CString&& machServiceName)
         : m_machServiceName(WTF::move(machServiceName))
     { }
 
 private:
     void initializeConnectionIfNeeded() const final;
 
-    const CString m_machServiceName;
+    const UTF8CString m_machServiceName;
 };
 
 } // namespace Daemon

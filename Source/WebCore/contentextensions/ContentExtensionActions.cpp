@@ -532,7 +532,7 @@ void RedirectAction::URLTransformAction::serialize(Vector<uint8_t>& vector) cons
     uint8_t hasScheme = !!scheme;
     uint8_t hasUsername = !!username;
     auto* queryString = std::get_if<String>(&queryTransform);
-    auto queryStringUTF8 = queryString ? queryString->utf8() : CString();
+    auto queryStringUTF8 = queryString ? queryString->utf8() : UTF8CString();
     uint8_t hasQuery = !queryString || !!*queryString;
 
     auto fragmentUTF8 = fragment.utf8();

@@ -147,7 +147,7 @@ void WebExtensionSQLiteStatement::reset()
 
     int result = sqlite3_reset(m_handle);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not reset statement: %s (%d)", m_db->m_lastErrorMessage.data(), result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not reset statement: %s (%d)", m_db->m_lastErrorMessage, result);
 }
 
 void WebExtensionSQLiteStatement::invalidate()
@@ -159,7 +159,7 @@ void WebExtensionSQLiteStatement::invalidate()
 
     int result = sqlite3_finalize(m_handle);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not finalize statement: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not finalize statement: %s (%d)", m_db->m_lastErrorMessage, (int)result);
     m_handle = nullptr;
 }
 
@@ -173,7 +173,7 @@ void WebExtensionSQLiteStatement::bind(const String& string, int parameterIndex)
 
     int result = WebCore::sqliteBindText(m_handle, parameterIndex, string.utf8());
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind string: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 void WebExtensionSQLiteStatement::bind(const int& n, int parameterIndex)
@@ -186,7 +186,7 @@ void WebExtensionSQLiteStatement::bind(const int& n, int parameterIndex)
 
     int result = sqlite3_bind_int(m_handle, parameterIndex, n);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind int: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind int: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 void WebExtensionSQLiteStatement::bind(const int64_t& n, int parameterIndex)
@@ -199,7 +199,7 @@ void WebExtensionSQLiteStatement::bind(const int64_t& n, int parameterIndex)
 
     int result = sqlite3_bind_int64(m_handle, parameterIndex, n);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind integer: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind integer: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 void WebExtensionSQLiteStatement::bind(const double& n, int parameterIndex)
@@ -212,7 +212,7 @@ void WebExtensionSQLiteStatement::bind(const double& n, int parameterIndex)
 
     int result = sqlite3_bind_double(m_handle, parameterIndex, n);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind int: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind int: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 void WebExtensionSQLiteStatement::bind(const RefPtr<API::Data>& data, int parameterIndex)
@@ -225,7 +225,7 @@ void WebExtensionSQLiteStatement::bind(const RefPtr<API::Data>& data, int parame
 
     int result = WebCore::sqliteBindBlob(m_handle, parameterIndex, data->span());
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind blob: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind blob: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 void WebExtensionSQLiteStatement::bind(int parameterIndex)
@@ -238,7 +238,7 @@ void WebExtensionSQLiteStatement::bind(int parameterIndex)
 
     int result = sqlite3_bind_null(m_handle, parameterIndex);
     if (result != SQLITE_OK)
-        RELEASE_LOG_DEBUG(Extensions, "Could not bind null: %s (%d)", m_db->m_lastErrorMessage.data(), (int)result);
+        RELEASE_LOG_DEBUG(Extensions, "Could not bind null: %s (%d)", m_db->m_lastErrorMessage, (int)result);
 }
 
 HashMap<String, int> WebExtensionSQLiteStatement::columnNamesToIndicies()

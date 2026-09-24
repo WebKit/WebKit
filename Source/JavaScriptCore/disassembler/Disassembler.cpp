@@ -44,7 +44,7 @@ namespace Disassembler {
 
 Lock labelMapLock;
 
-using LabelMap = UncheckedKeyHashMap<void*, Variant<CString, const char*>>;
+using LabelMap = UncheckedKeyHashMap<void*, Variant<ASCIICString, const char*>>;
 LazyNeverDestroyed<LabelMap> labelMap;
 
 static LabelMap& ensureLabelMap() WTF_REQUIRES_LOCK(labelMapLock)
@@ -66,7 +66,7 @@ void disassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* c
     out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.untaggedPtr(), codePtr.untaggedPtr<char*>() + size);
 }
 
-void registerLabel(void* thunkAddress, CString&& label)
+void registerLabel(void* thunkAddress, ASCIICString&& label)
 {
     Locker lock { Disassembler::labelMapLock };
     Disassembler::ensureLabelMap().add(thunkAddress, WTF::move(label));
@@ -85,8 +85,8 @@ const char* labelFor(void* thunkAddress)
     auto it = map.find(thunkAddress);
     if (it == map.end())
         return nullptr;
-    if (std::holds_alternative<CString>(it->value))
-        return std::get<CString>(it->value).data();
+    if (std::holds_alternative<ASCIICString>(it->value))
+        return std::get<ASCIICString>(it->value).data();
     return std::get<const char*>(it->value);
 }
 

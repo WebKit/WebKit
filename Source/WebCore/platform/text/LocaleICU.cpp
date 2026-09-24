@@ -56,11 +56,11 @@ using namespace icu;
 
 std::unique_ptr<Locale> Locale::create(const AtomString& locale)
 {
-    return makeUnique<LocaleICU>(locale.string().utf8().legacyCStringPointer());
+    return makeUnique<LocaleICU>(locale.string().utf8());
 }
 
-LocaleICU::LocaleICU(const char* locale)
-    : m_locale(locale)
+LocaleICU::LocaleICU(UTF8CString&& locale)
+    : m_locale(WTF::move(locale))
 {
 }
 
@@ -77,7 +77,7 @@ LocaleICU::~LocaleICU()
 Locale::WritingDirection LocaleICU::defaultWritingDirection() const
 {
 #if USE(HARFBUZZ)
-    UScriptCode icuScript = localeToScriptCode(String::fromLatin1(m_locale.span()));
+    UScriptCode icuScript = localeToScriptCode(String::fromUTF8(m_locale.span()));
     hb_script_t script = hb_icu_script_to_script(icuScript);
 
     switch (hb_script_get_horizontal_direction(script)) {
@@ -133,7 +133,7 @@ void LocaleICU::initializeLocaleData()
         return;
     m_didCreateDecimalFormat = true;
     UErrorCode status = U_ZERO_ERROR;
-    m_numberFormat = unum_open(UNUM_DECIMAL, 0, 0, m_locale.data(), 0, &status);
+    m_numberFormat = unum_open(UNUM_DECIMAL, 0, 0, m_locale.legacyCStringPointer(), 0, &status);
     if (!U_SUCCESS(status))
         return;
 
@@ -168,7 +168,7 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
 {
     constexpr std::array<char16_t, 3> gmtTimezone { 'G', 'M', 'T' };
     UErrorCode status = U_ZERO_ERROR;
-    return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone.data(), gmtTimezone.size(), 0, -1, &status);
+    return udat_open(timeStyle, dateStyle, m_locale.legacyCStringPointer(), gmtTimezone.data(), gmtTimezone.size(), 0, -1, &status);
 }
 
 static String getDateFormatPattern(const UDateFormat* dateFormat)
@@ -275,11 +275,11 @@ String LocaleICU::dateFormat()
     return m_dateFormat;
 }
 
-static String getFormatForSkeleton(const CString& locale, std::span<const char16_t> skeleton)
+static String getFormatForSkeleton(const UTF8CString& locale, std::span<const char16_t> skeleton)
 {
     String format = "yyyy-MM"_s;
     UErrorCode status = U_ZERO_ERROR;
-    UDateTimePatternGenerator* patternGenerator = udatpg_open(locale.data(), &status);
+    UDateTimePatternGenerator* patternGenerator = udatpg_open(locale.legacyCStringPointer(), &status);
     if (!patternGenerator)
         return format;
     status = U_ZERO_ERROR;

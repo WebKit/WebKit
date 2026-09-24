@@ -65,7 +65,7 @@ WEBCORE_EXPORT Vector<uint8_t> convertParameterSetsCMSampleBufferToAnnexB(CMSamp
 
 // Convert MediaSamplesBlock to the equivalent CMSampleBufferRef. If CMFormatDescriptionRef
 // is set it will be used, otherwise it will be created from the MediaSamplesBlock's TrackInfo.
-WEBCORE_EXPORT std::expected<RetainPtr<CMSampleBufferRef>, CString> toCMSampleBuffer(const MediaSamplesBlock&, CMFormatDescriptionRef = nullptr);
+WEBCORE_EXPORT std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const MediaSamplesBlock&, CMFormatDescriptionRef = nullptr);
 // Convert CMSampleBufferRef to the equivalent MediaSamplesBlock. If TrackInfo
 // is set it will be used, otherwise it will be created from the CMSampleBufferRef's CMFormatDescriptionRef.
 WEBCORE_EXPORT UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef, const TrackInfo* = nullptr);

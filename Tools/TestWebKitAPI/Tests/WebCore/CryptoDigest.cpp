@@ -30,7 +30,7 @@
 
 namespace TestWebKitAPI {
 
-static CString toHex(WTF::Vector<uint8_t>&& hash)
+static ASCIICString toHex(WTF::Vector<uint8_t>&& hash)
 {
     const char hex[] = "0123456789ABCDEF";
 
@@ -42,38 +42,38 @@ static CString toHex(WTF::Vector<uint8_t>&& hash)
         buffer[2 * i + 1] = hex[lo];
     }
 
-    return buffer.span();
+    return ASCIICString { buffer.span() };
 }
 
-static void expect(PAL::Crypto::CryptoDigest::Algorithm algorithm, const CString& input, int repeat, const CString& expected)
+static void expect(PAL::Crypto::CryptoDigest::Algorithm algorithm, const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     auto cryptoDigest = PAL::Crypto::CryptoDigest::create(algorithm);
 
     for (int i = 0; i < repeat; ++i)
         cryptoDigest->addBytes(std::as_bytes(input.span()));
 
-    CString actual = toHex(cryptoDigest->computeHash());
+    ASCIICString actual = toHex(cryptoDigest->computeHash());
 
     ASSERT_EQ(expected.length(), actual.length());
     ASSERT_STREQ(expected.data(), actual.data());
 }
 
-static void expectSHA1(const CString& input, int repeat, const CString& expected)
+static void expectSHA1(const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     expect(PAL::Crypto::CryptoDigest::Algorithm::SHA_1, input, repeat, expected);
 }
 
-static void expectSHA256(const CString& input, int repeat, const CString& expected)
+static void expectSHA256(const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     expect(PAL::Crypto::CryptoDigest::Algorithm::SHA_256, input, repeat, expected);
 }
 
-static void expectSHA384(const CString& input, int repeat, const CString& expected)
+static void expectSHA384(const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     expect(PAL::Crypto::CryptoDigest::Algorithm::SHA_384, input, repeat, expected);
 }
 
-static void expectSHA512(const CString& input, int repeat, const CString& expected)
+static void expectSHA512(const ASCIICString& input, int repeat, const ASCIICString& expected)
 {
     expect(PAL::Crypto::CryptoDigest::Algorithm::SHA_512, input, repeat, expected);
 }
@@ -81,34 +81,34 @@ static void expectSHA512(const CString& input, int repeat, const CString& expect
 TEST(CryptoDigest, SHA1Computation)
 {
     // Examples taken from sample code in RFC 3174.
-    expectSHA1("abc", 1, "A9993E364706816ABA3E25717850C26C9CD0D89D");
-    expectSHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 1, "84983E441C3BD26EBAAE4AA1F95129E5E54670F1");
-    expectSHA1("a", 1000000, "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F");
-    expectSHA1("0123456701234567012345670123456701234567012345670123456701234567", 10, "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452");
+    expectSHA1("abc"_s, 1, "A9993E364706816ABA3E25717850C26C9CD0D89D"_s);
+    expectSHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"_s, 1, "84983E441C3BD26EBAAE4AA1F95129E5E54670F1"_s);
+    expectSHA1("a"_s, 1000000, "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F"_s);
+    expectSHA1("0123456701234567012345670123456701234567012345670123456701234567"_s, 10, "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452"_s);
 }
 
 TEST(CryptoDigest, SHA256Computation)
 {
     // Examples taken from sample code in FIPS-180.
-    expectSHA256("abc", 1, "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD");
-    expectSHA256("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 1, "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1");
-    expectSHA256("a", 1000000, "CDC76E5C9914FB9281A1C7E284D73E67F1809A48A497200E046D39CCC7112CD0");
+    expectSHA256("abc"_s, 1, "BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD"_s);
+    expectSHA256("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"_s, 1, "248D6A61D20638B8E5C026930C3E6039A33CE45964FF2167F6ECEDD419DB06C1"_s);
+    expectSHA256("a"_s, 1000000, "CDC76E5C9914FB9281A1C7E284D73E67F1809A48A497200E046D39CCC7112CD0"_s);
 }
 
 TEST(CryptoDigest, SHA384Computation)
 {
     // Examples taken from sample code in FIPS-180.
-    expectSHA384("abc", 1, "CB00753F45A35E8BB5A03D699AC65007272C32AB0EDED1631A8B605A43FF5BED8086072BA1E7CC2358BAECA134C825A7");
-    expectSHA384("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", 1, "09330C33F71147E83D192FC782CD1B4753111B173B3B05D22FA08086E3B0F712FCC7C71A557E2DB966C3E9FA91746039");
-    expectSHA384("a", 1000000, "9D0E1809716474CB086E834E310A4A1CED149E9C00F248527972CEC5704C2A5B07B8B3DC38ECC4EBAE97DDD87F3D8985");
+    expectSHA384("abc"_s, 1, "CB00753F45A35E8BB5A03D699AC65007272C32AB0EDED1631A8B605A43FF5BED8086072BA1E7CC2358BAECA134C825A7"_s);
+    expectSHA384("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"_s, 1, "09330C33F71147E83D192FC782CD1B4753111B173B3B05D22FA08086E3B0F712FCC7C71A557E2DB966C3E9FA91746039"_s);
+    expectSHA384("a"_s, 1000000, "9D0E1809716474CB086E834E310A4A1CED149E9C00F248527972CEC5704C2A5B07B8B3DC38ECC4EBAE97DDD87F3D8985"_s);
 }
 
 TEST(CryptoDigest, SHA512Computation)
 {
     // Examples taken from sample code in FIPS-180.
-    expectSHA512("abc", 1, "DDAF35A193617ABACC417349AE20413112E6FA4E89A97EA20A9EEEE64B55D39A2192992A274FC1A836BA3C23A3FEEBBD454D4423643CE80E2A9AC94FA54CA49F");
-    expectSHA512("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu", 1, "8E959B75DAE313DA8CF4F72814FC143F8F7779C6EB9F7FA17299AEADB6889018501D289E4900F7E4331B99DEC4B5433AC7D329EEB6DD26545E96E55B874BE909");
-    expectSHA512("a", 1000000, "E718483D0CE769644E2E42C7BC15B4638E1F98B13B2044285632A803AFA973EBDE0FF244877EA60A4CB0432CE577C31BEB009C5C2C49AA2E4EADB217AD8CC09B");
+    expectSHA512("abc"_s, 1, "DDAF35A193617ABACC417349AE20413112E6FA4E89A97EA20A9EEEE64B55D39A2192992A274FC1A836BA3C23A3FEEBBD454D4423643CE80E2A9AC94FA54CA49F"_s);
+    expectSHA512("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"_s, 1, "8E959B75DAE313DA8CF4F72814FC143F8F7779C6EB9F7FA17299AEADB6889018501D289E4900F7E4331B99DEC4B5433AC7D329EEB6DD26545E96E55B874BE909"_s);
+    expectSHA512("a"_s, 1000000, "E718483D0CE769644E2E42C7BC15B4638E1F98B13B2044285632A803AFA973EBDE0FF244877EA60A4CB0432CE577C31BEB009C5C2C49AA2E4EADB217AD8CC09B"_s);
 }
 
 }

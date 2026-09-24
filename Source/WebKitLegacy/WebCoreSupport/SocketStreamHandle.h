@@ -54,7 +54,7 @@ public:
     SocketStreamState state() const { return m_state; }
 
     void sendData(std::span<const uint8_t> data, Function<void(bool)>);
-    void sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&&, Function<void(bool, bool)>);
+    void sendHandshake(UTF8CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&&, Function<void(bool, bool)>);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();
     virtual size_t bufferedAmount() = 0;

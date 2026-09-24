@@ -81,10 +81,6 @@ class CString {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(CString);
 public:
     CString() { }
-    // FIXME: These two should join the constructors below, which would leave CStringWithEncoding
-    // as the only way to get bytes into a CString.
-    WTF_EXPORT_PRIVATE CString(const char*); // Any encoding
-    WTF_EXPORT_PRIVATE CString(std::span<const char>); // Any encoding
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
 
     const char* data() const LIFETIME_BOUND; // Any encoding
@@ -106,11 +102,19 @@ public:
     bool isEmpty() const { return isNull() || !m_buffer->length(); }
     bool NODELETE isSafeToSendToAnotherThread() const;
 
-    CStringBuffer* buffer() const LIFETIME_BOUND { return m_buffer.get(); }
-
     bool isHashTableDeletedValue() const { return m_buffer.isHashTableDeletedValue(); }
 
     WTF_EXPORT_PRIVATE unsigned NODELETE hash() const;
+
+// This has joined the constructors below on the ports that have finished migrating, leaving
+// CStringWithEncoding as the only way to get bytes into a CString there. It loses the length, and
+// any embedded null, to a strlen, and says nothing about what the bytes mean.
+// FIXME: The GLib-based, curl and Windows ports still build CStrings from raw pointers. Once they
+// are migrated this becomes unconditional and the platform check goes away.
+#if PLATFORM(COCOA)
+protected:
+#endif
+    WTF_EXPORT_PRIVATE CString(const char*); // Any encoding
 
 protected:
     // Only reachable through CStringWithEncoding below. Each of these either puts bytes into a
@@ -118,7 +122,7 @@ protected:
     // say what encoding those bytes are in. An ASCII literal is valid in every supported encoding,
     // but a CString built from one still has to name the encoding it is going to be read as.
     WTF_EXPORT_PRIVATE CString(ASCIILiteral);
-    CString(CStringBuffer* buffer) : m_buffer(buffer) { }
+    WTF_EXPORT_PRIVATE CString(std::span<const char>);
 
     WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, std::span<char>& characterBuffer);
 
@@ -237,9 +241,9 @@ public:
     static CStringWithEncoding newUninitialized(size_t length, std::span<CharacterType>& characterBuffer)
     {
         std::span<char> bytes;
-        auto result = CString::newUninitialized(length, bytes);
+        CStringWithEncoding result { CString::newUninitialized(length, bytes) };
         characterBuffer = byteCast<CharacterType>(bytes);
-        return CStringWithEncoding { result.buffer() };
+        return result;
     }
 
     // These hide the CString versions so that the encoding survives into the pointer and span types.
@@ -285,8 +289,9 @@ public:
 #endif
 
 private:
-    explicit CStringWithEncoding(CStringBuffer* buffer)
-        : CString(buffer)
+    // Takes the result of CString::newUninitialized() above, whose encoding the caller has just named.
+    explicit CStringWithEncoding(CString&& string)
+        : CString(WTF::move(string))
     {
     }
 };

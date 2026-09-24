@@ -660,7 +660,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
         bundlePath = webKit2BundleSingleton().bundlePath.stringByDeletingLastPathComponent;
 
     sandboxParameters.addPathParameter("WEBKIT2_FRAMEWORK_DIR"_s, bundlePath.utf8().legacyCStringPointer());
-    sandboxParameters.addParameter("WK_FRAMEWORKS_ARE_RELOCATED"_s, isRelocatedFramework ? "YES"_span : "NO"_span);
+    sandboxParameters.addParameter("WK_FRAMEWORKS_ARE_RELOCATED"_s, isRelocatedFramework ? "YES"_s : "NO"_s);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
@@ -672,9 +672,9 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     sandboxParameters.addPathParameter("HOME_LIBRARY_PREFERENCES_DIR"_s, FileSystem::fileSystemRepresentation(path).legacyCStringPointer());
 
 #if CPU(X86_64)
-    sandboxParameters.addParameter("CPU"_s, "x86_64"_span);
+    sandboxParameters.addParameter("CPU"_s, "x86_64"_s);
 #elif CPU(ARM64)
-    sandboxParameters.addParameter("CPU"_s, "arm64"_span);
+    sandboxParameters.addParameter("CPU"_s, "arm64"_s);
 #else
 #error "Unknown architecture."
 #endif
@@ -701,7 +701,7 @@ void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationPar
 #if HAVE(SANDBOX_MESSAGE_FILTERING)
     enableMessageFilter = WTF::processHasEntitlement("com.apple.private.security.message-filter"_s);
 #endif
-    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER"_s, enableMessageFilter ? "YES"_span : "NO"_span);
+    sandboxParameters.addParameter("ENABLE_SANDBOX_MESSAGE_FILTER"_s, enableMessageFilter ? "YES"_s : "NO"_s);
 
     if (sandboxParameters.userDirectorySuffix().isNull())
         sandboxParameters.setUserDirectorySuffix(getUserDirectorySuffix(parameters));

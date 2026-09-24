@@ -477,7 +477,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             int token;
             notify_register_dispatch(key, &token, mainDispatchQueueSingleton(), ^(int) {
                 dataLogLn("<BYTECODE.STAT><", pid, "> Dumping");
-                if (!m_perBytecodeProfiler->save(pathOutString->legacyCStringPointer()))
+                if (!m_perBytecodeProfiler->save(pathOutString.get()))
                     dataLogLn("<BYTECODE.STAT><", pid, "> Failed to dump to ", pathOutString.get(), ". Do you need to add a sandbox extension? ((allow file-write* (subpath \"/private/tmp/\")) in WebProcess.sb.in");
                 else
                     dataLogLn("<BYTECODE.STAT><", pid, "> Dumped to ", pathOutString.get());
@@ -487,7 +487,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
         if (Options::dumpProfilerDataAtExit()) [[unlikely]]
-            m_perBytecodeProfiler->registerToSaveAtExit(pathOutString->legacyCStringPointer());
+            m_perBytecodeProfiler->registerToSaveAtExit(pathOutString.get());
     }
 
     // Initialize this last, as a free way of asserting that VM initialization itself

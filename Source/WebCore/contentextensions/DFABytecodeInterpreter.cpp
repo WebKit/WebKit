@@ -258,7 +258,7 @@ DFABytecodeInterpreter::DFABytecodeInterpreter(std::span<const uint8_t> bytecode
 
 auto DFABytecodeInterpreter::interpret(const String& urlString, ResourceFlags flags) -> Actions
 {
-    CString urlCString;
+    UTF8CString urlCString;
     std::span<const Latin1Character> url;
     if (urlString.is8Bit()) [[likely]]
         url = urlString.span8();

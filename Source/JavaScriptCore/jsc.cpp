@@ -3113,7 +3113,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDumpBytecodeProfile, (JSGlobalObject* globalObj
     String path = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    bool ok = vm.m_perBytecodeProfiler->save(path.utf8().legacyCStringPointer());
+    bool ok = vm.m_perBytecodeProfiler->save(path.utf8());
     return JSValue::encode(jsBoolean(ok));
 }
 
@@ -3875,9 +3875,9 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
 
     auto exceptionString = exception.toWTFString(globalObject);
     CHECK_EXCEPTION();
-    std::expected<CString, UTF8ConversionError> expectedCString = exceptionString.tryGetUTF8();
+    auto expectedCString = exceptionString.tryGetUTF8();
     if (expectedCString)
-        printf("Exception: %s\n", expectedCString.value().data());
+        SAFE_PRINTF("Exception: %s\n", expectedCString.value());
     else
         printf("Exception: <out of memory while extracting exception string>\n");
 
@@ -4154,21 +4154,21 @@ static void runInteractive(GlobalObject* globalObject)
         if (evaluationException && vm.isTerminationException(evaluationException.get()))
             vm.setExecutionForbidden();
 
-        std::expected<CString, UTF8ConversionError> utf8;
+        std::expected<UTF8CString, UTF8ConversionError> utf8;
         if (evaluationException) {
             fputs("Exception: ", stdout);
             utf8 = evaluationException->value().toWTFString(globalObject).tryGetUTF8();
         } else
             utf8 = returnValue.toWTFStringForConsole(globalObject).tryGetUTF8();
 
-        CString result;
+        UTF8CString result;
         if (utf8)
             result = utf8.value();
         else if (utf8.error() == UTF8ConversionError::OutOfMemory)
-            result = "OutOfMemory while processing string";
+            result = "OutOfMemory while processing string"_s;
         else
-            result = "Error while processing string";
-        fwrite(result.data(), sizeof(char), result.length(), stdout);
+            result = "Error while processing string"_s;
+        fwrite(result.span().data(), sizeof(char8_t), result.length(), stdout);
         putchar('\n');
 
         scope.clearException();
@@ -4641,7 +4641,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 
         if (Options::useProfiler()) {
             JSLockHolder locker(vm);
-            if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().legacyCStringPointer()))
+            if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8()))
                 fprintf(stderr, "could not save profiler output.\n");
         }
 

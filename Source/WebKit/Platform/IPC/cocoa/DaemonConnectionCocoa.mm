@@ -63,9 +63,9 @@ void Connection::sendWithReply(xpc_object_t message, CompletionHandler<void(xpc_
 }
 
 // Workaround a bug in clang static analyer that [[clang::suppress]] doesn't work in some template function.
-static void logMachServiceInterrupted(const CString& machServiceName)
+static void logMachServiceInterrupted(const UTF8CString& machServiceName)
 {
-    RELEASE_LOG(IPC, "Connection to mach service %s is interrupted", machServiceName.data());
+    RELEASE_LOG(IPC, "Connection to mach service %s is interrupted", machServiceName);
 }
 
 template<typename Traits>
@@ -73,7 +73,7 @@ void ConnectionToMachService<Traits>::initializeConnectionIfNeeded() const
 {
     if (m_connection)
         return;
-    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.data(), mainDispatchQueueSingleton(), 0));
+    m_connection = adoptOSObject(xpc_connection_create_mach_service(m_machServiceName.legacyCStringPointer(), mainDispatchQueueSingleton(), 0));
     xpc_connection_set_event_handler(m_connection.get(), [weakThis = WeakPtr { *this }](xpc_object_t event) {
         // Promote `weakThis` to a stack-local strong reference before doing anything else.
         // Clearing m_connection below may release the last strong reference to the

@@ -67,7 +67,7 @@ public:
 
     String clientLocation() const;
 
-    WEBCORE_EXPORT CString clientHandshakeMessage() const;
+    WEBCORE_EXPORT UTF8CString clientHandshakeMessage() const;
     WEBCORE_EXPORT ResourceRequest clientHandshakeRequest(NOESCAPE const Function<String(const URL&)>& cookieRequestHeaderFieldValue) const;
 
     WEBCORE_EXPORT void setClientHandshakeRequestHeaders(const HTTPHeaderMap&);
