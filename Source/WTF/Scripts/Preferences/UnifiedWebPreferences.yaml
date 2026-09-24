@@ -1014,11 +1014,11 @@ CSSLineFitEdgeEnabled:
 
 CSSLinkParametersEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS Linked Parameters"
   humanReadableDescription: "Enable passing CSS link parameters to linked resources"
-  defaultValue: false
+  defaultValue: true
 
 CSSMarkerContentEnabled:
   type: bool
