@@ -1795,12 +1795,6 @@
 
     "imported/w3c/webdriver/tests/classic/execute_async_script/node.py": {
         "subtests": {
-            "test_stale_element[top_context]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323695"}}
-            },
-            "test_stale_element[child_context]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323695"}}
-            },
             "test_detached_shadow_root[child_context]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
@@ -2090,12 +2084,6 @@
     },
     "imported/w3c/webdriver/tests/classic/execute_script/node.py": {
         "subtests": {
-            "test_stale_element[top_context]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323695"}}
-            },
-            "test_stale_element[child_context]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/323695"}}
-            },
             "test_detached_shadow_root[child_context]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/230612"}}
             },
