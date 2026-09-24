@@ -174,7 +174,7 @@ void WPEQtUnderlayRenderNode::render(const RenderState* state)
     int sceneViewport[4] = { 0, 0, 0, 0 };
     gl->glGetIntegerv(GL_VIEWPORT, sceneViewport);
     const auto viewport = wpeQtUnderlayViewportFor(*state->projectionMatrix() * (matrix() ? *matrix() : QMatrix4x4()), m_rect, sceneViewport);
-    if (!m_blitter.draw(viewport.x(), viewport.y(), viewport.width(), viewport.height()))
+    if (!m_blitter.draw(viewport.x(), viewport.y(), viewport.width(), viewport.height(), float(inheritedOpacity())))
         return;
 
     m_releaseFence = wpeQtUnderlayCreateReleaseFence(gl);
