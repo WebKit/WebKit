@@ -28,7 +28,9 @@ import os
 
 import WebKit_Internal
 
-#if canImport(_USDKit_RealityKit)
+// _USDKit_RealityKit is present on the public SDK, but its SPI (including UsdStage) is only
+// declared when building against the internal SDK; canImport() alone can't detect that.
+#if canImport(_USDKit_RealityKit) && USE_APPLE_INTERNAL_SDK
 
 // FIXME: radar://141774327
 @_weakLinked @_spi(Eryx) import _USDKit_RealityKit
@@ -70,6 +72,6 @@ extension WKUSDStageConverter {
     }
 }
 
-#endif // canImport(_USDKit_RealityKit)
+#endif // canImport(_USDKit_RealityKit) && USE_APPLE_INTERNAL_SDK
 
 #endif // ENABLE_MODEL_PROCESS
