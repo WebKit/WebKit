@@ -4466,6 +4466,8 @@
 		A52460C22FF48CE4003567A5 /* GridSizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C02FF48CE4003567A5 /* GridSizeTypes.h */; };
 		A52460C52FF48CE4003567A5 /* GridItemPlacer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C32FF48CE4003567A5 /* GridItemPlacer.h */; };
 		A52460C82FF48CE4003567A5 /* GridSizer.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460C62FF48CE4003567A5 /* GridSizer.h */; };
+		A52460D32FF48CE4003567A5 /* ExplicitGridResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460D12FF48CE4003567A5 /* ExplicitGridResolver.h */; };
+		A52460D52FF48CE4003567A5 /* ExplicitGridTrackSizes.h in Headers */ = {isa = PBXBuildFile; fileRef = A52460D42FF48CE4003567A5 /* ExplicitGridTrackSizes.h */; };
 		A52B348F1FA3BDA6008B6246 /* ServiceWorkerDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A52B34961FA3E290008B6246 /* ServiceWorkerInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A52B349E1FA41703008B6246 /* WorkerDebuggerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = A52B349C1FA416F8008B6246 /* WorkerDebuggerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -17746,6 +17748,9 @@
 		A52460C42FF48CE4003567A5 /* GridItemPlacer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridItemPlacer.cpp; sourceTree = "<group>"; };
 		A52460C62FF48CE4003567A5 /* GridSizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridSizer.h; sourceTree = "<group>"; };
 		A52460C72FF48CE4003567A5 /* GridSizer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GridSizer.cpp; sourceTree = "<group>"; };
+		A52460D12FF48CE4003567A5 /* ExplicitGridResolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExplicitGridResolver.h; sourceTree = "<group>"; };
+		A52460D22FF48CE4003567A5 /* ExplicitGridResolver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExplicitGridResolver.cpp; sourceTree = "<group>"; };
+		A52460D42FF48CE4003567A5 /* ExplicitGridTrackSizes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExplicitGridTrackSizes.h; sourceTree = "<group>"; };
 		A52B348C1FA3BD79008B6246 /* ServiceWorkerDebuggable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerDebuggable.h; sourceTree = "<group>"; };
 		A52B348E1FA3BD79008B6246 /* ServiceWorkerDebuggable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerDebuggable.cpp; sourceTree = "<group>"; };
 		A52B34931FA3E286008B6246 /* ServiceWorkerInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerInspectorProxy.h; sourceTree = "<group>"; };
@@ -34833,6 +34838,9 @@
 			isa = PBXGroup;
 			children = (
 				A5AC7CAB2F4E9AC700981859 /* AxisConstraint.h */,
+				A52460D22FF48CE4003567A5 /* ExplicitGridResolver.cpp */,
+				A52460D12FF48CE4003567A5 /* ExplicitGridResolver.h */,
+				A52460D42FF48CE4003567A5 /* ExplicitGridTrackSizes.h */,
 				A5FA57652E85F40600EF058F /* GridAreaLines.h */,
 				A585CC3E2E566A7800A69390 /* GridFormattingContext.cpp */,
 				A585CC3D2E566A7800A69390 /* GridFormattingContext.h */,
@@ -45875,6 +45883,8 @@
 				51F645621F45398F00B54DED /* ExceptionData.h in Headers */,
 				2D29386B235F6B6900C7F3B2 /* ExceptionDetails.h in Headers */,
 				93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */,
+				A52460D32FF48CE4003567A5 /* ExplicitGridResolver.h in Headers */,
+				A52460D52FF48CE4003567A5 /* ExplicitGridTrackSizes.h in Headers */,
 				8AA642082A672D0300A84D49 /* EXTClipControl.h in Headers */,
 				8A8F211D2A69DDAD00B7D214 /* EXTConservativeDepth.h in Headers */,
 				8A00EECA2A680146006A53A2 /* EXTDepthClamp.h in Headers */,

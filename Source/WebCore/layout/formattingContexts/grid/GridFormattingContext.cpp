@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GridFormattingContext.h"
 
+#include "ExplicitGridResolver.h"
 #include "GridItemPlacer.h"
 #include "GridItemRect.h"
 #include "GridLayout.h"
@@ -70,7 +71,7 @@ static LogicalGridItems constructLogicalGridItems(const ElementBox& gridBox)
     return logicalGridItems;
 }
 
-static LeadingImplicitTracks computeLeadingImplicitTracks(const ElementBox& gridBox, const LogicalGridItems& logicalGridItems)
+static LeadingImplicitTracks computeLeadingImplicitTracks(const LogicalGridItems& logicalGridItems, const ExplicitGridTrackSizes& explicitGridTrackSizes)
 {
     // Negative line placements are resolved against the explicit grid track count, which can still
     // produce a negative line when the placement counts past the start edge of the explicit grid.
@@ -78,8 +79,8 @@ static LeadingImplicitTracks computeLeadingImplicitTracks(const ElementBox& grid
     // resolved line, so e.g. with 3 explicit columns a column-start of -5 resolves to line -1,
     // which shifts all column lines forward by 1 and maps to matrix column 0. That magnitude is
     // also the number of leading implicit tracks the grid needs to generate.
-    auto explicitColumnCount = gridBox.style().gridTemplateColumns().sizes.size();
-    auto explicitRowCount = gridBox.style().gridTemplateRows().sizes.size();
+    auto explicitColumnCount = explicitGridTrackSizes.columnsCount();
+    auto explicitRowCount = explicitGridTrackSizes.rowsCount();
     int minimumColumnLine = 0;
     int minimumRowLine = 0;
     for (auto& gridItem : logicalGridItems) {
@@ -100,75 +101,17 @@ static LeadingImplicitTracks computeLeadingImplicitTracks(const ElementBox& grid
     };
 }
 
-static Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize& trackSize)
-{
-    return WTF::switchOn(trackSize,
-        [&trackSize](const Style::GridTrackBreadth& breadth) {
-            if (breadth.isPercentOrCalculated())
-                return Style::GridTrackSize { CSS::Keyword::Auto { } };
-            return trackSize;
-        },
-        [&trackSize](const Style::GridTrackSize::FitContent& fitContent) {
-            if (fitContent->value.isPercentOrCalculated())
-                return Style::GridTrackSize { CSS::Keyword::Auto { } };
-            return trackSize;
-        },
-        [&trackSize](const Style::GridTrackBreadth::Flex&) {
-            return trackSize;
-        },
-        [](const Style::GridTrackSize::MinMax& minMax) {
-            auto minTrackSizingFunction = !minMax->min.isPercentOrCalculated() ? minMax->min : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
-            auto maxTrackSizingFunction = !minMax->max.isPercentOrCalculated() ? minMax->max : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
-            return Style::GridTrackSize { Style::GridTrackSize::MinMax { minTrackSizingFunction, maxTrackSizingFunction } };
-        });
-}
-
-static Style::RepeatTrackList repeatTrackListWithPercentagesConvertedToAuto(const Style::RepeatTrackList& repeatList)
-{
-    return repeatList.map([](const Style::RepeatEntry& entry) {
-        return WTF::switchOn(entry,
-            [](const Style::GridTrackSize& trackSize) -> Style::RepeatEntry {
-                return trackSizeWithPercentagesConvertedToAuto(trackSize);
-            },
-            [](const Style::GridLineNames& lineNames) -> Style::RepeatEntry {
-                return lineNames;
-            });
-    });
-}
-
 static Style::GridTrackSizes gridAutoTrackSizesWithPercentagesConvertedToAuto(const Style::GridTrackSizes& gridAutoTrackSizes)
 {
-    return Style::GridTrackSizes { Style::GridTrackSizeList::map(gridAutoTrackSizes, trackSizeWithPercentagesConvertedToAuto) };
-}
-
-static Style::GridTemplateList gridTemplateListWithPercentagesConvertedToAuto(const Style::GridTemplateList& computedGridTemplateList)
-{
-    Style::GridTrackList transformedList = computedGridTemplateList.list.map([](const Style::GridTrackEntry& entry) {
-        return WTF::switchOn(entry,
-            [](const Style::GridTrackSize& trackSize) -> Style::GridTrackEntry {
-                return trackSizeWithPercentagesConvertedToAuto(trackSize);
-            },
-            [](const Style::GridLineNames& lineNames) -> Style::GridTrackEntry {
-                return lineNames;
-            },
-            [](const Style::GridTrackEntryRepeat& repeat) -> Style::GridTrackEntry {
-                return Style::GridTrackEntryRepeat { repeat.repeats, repeatTrackListWithPercentagesConvertedToAuto(repeat.list) };
-            },
-            [](const Style::GridTrackEntryAutoRepeat& autoRepeat) -> Style::GridTrackEntry {
-                return Style::GridTrackEntryAutoRepeat { autoRepeat.type, repeatTrackListWithPercentagesConvertedToAuto(autoRepeat.list) };
-            },
-            [](const Style::GridTrackEntrySubgrid& subgrid) -> Style::GridTrackEntry {
-                return subgrid;
-            });
-    });
-    return Style::GridTemplateList { WTF::move(transformedList) };
+    return Style::GridTrackSizes { Style::GridTrackSizeList::map(gridAutoTrackSizes, GridLayoutUtils::trackSizeWithPercentagesConvertedToAuto) };
 }
 
 GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConstraints)
 {
     auto logicalGridItems = constructLogicalGridItems(root());
-    auto leadingImplicitTracks = computeLeadingImplicitTracks(root(), logicalGridItems);
     CheckedRef gridStyle = root().style();
+    auto explicitGridTrackSizes = ExplicitGridResolver::resolve(gridStyle, layoutConstraints);
+    auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, explicitGridTrackSizes);
 
     GridAutoFlowOptions autoFlowOptions {
         .strategy = gridStyle->gridAutoFlow().isDense() ? PackingStrategy::Dense : PackingStrategy::Sparse,
@@ -185,12 +128,10 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
     auto inlineAxisDependsOnTracks = layoutConstraints.inlineAxis.scenario() != AxisConstraint::FreeSpaceScenario::Definite;
     auto blockAxisDependsOnTracks = layoutConstraints.blockAxis.scenario() != AxisConstraint::FreeSpaceScenario::Definite;
 
-    auto gridTemplateColumns = inlineAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()) : gridStyle->gridTemplateColumns();
-    auto gridTemplateRows = blockAxisDependsOnTracks ? gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()) : gridStyle->gridTemplateRows();
     auto gridAutoColumns = inlineAxisDependsOnTracks ? gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoColumns()) : gridStyle->gridAutoColumns();
     auto gridAutoRows = blockAxisDependsOnTracks ? gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoRows()) : gridStyle->gridAutoRows();
 
-    GridDefinition gridDefinition { gridTemplateColumns, gridTemplateRows, gridAutoColumns, gridAutoRows, autoFlowOptions, gridStyle->usedZoomForLength() };
+    GridDefinition gridDefinition { WTF::move(explicitGridTrackSizes), gridAutoColumns, gridAutoRows, autoFlowOptions, gridStyle->usedZoomForLength() };
 
     auto usedJustifyContent = gridStyle->justifyContent().resolve();
     auto usedAlignContent = gridStyle->alignContent().resolve();
@@ -199,7 +140,7 @@ GridLayoutResult GridFormattingContext::layout(GridLayoutConstraints layoutConst
 
     // https://drafts.csswg.org/css-grid-1/#layout-algorithm
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
-    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridTemplateColumns.sizes.size(), gridTemplateRows.sizes.size());
+    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount());
 
     auto [ usedTrackSizes, gridItemRects ] = GridLayout { *this }.layout(gridItemPlacementResult, leadingImplicitTracks, layoutState);
 
@@ -295,10 +236,11 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     };
 
     // https://drafts.csswg.org/css-grid-1/#track-sizes
-    // For intrinsic sizing, percentages in track sizes must be treated as auto
+    // For intrinsic sizing, percentages in track sizes must be treated as auto. The explicit grid is
+    // shared by both intrinsic sizing scenarios and neither is definite, so resolving it against the
+    // min-content constraint treats its percentages as auto for both.
     GridDefinition gridDefinition {
-        gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateColumns()),
-        gridTemplateListWithPercentagesConvertedToAuto(gridStyle->gridTemplateRows()),
+        ExplicitGridResolver::resolve(gridStyle, { AxisConstraint::minContent(), AxisConstraint::minContent() }),
         gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoColumns()),
         gridAutoTrackSizesWithPercentagesConvertedToAuto(gridStyle->gridAutoRows()),
         autoFlowOptions,
@@ -312,12 +254,12 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
     auto usedRowGap = usedGapValue(gridStyle->rowGap(), gridStyle);
 
     auto logicalGridItems = constructLogicalGridItems(root());
-    auto leadingImplicitTracks = computeLeadingImplicitTracks(root(), logicalGridItems);
+    auto leadingImplicitTracks = computeLeadingImplicitTracks(logicalGridItems, gridDefinition.explicitGridTrackSizes);
 
     // https://drafts.csswg.org/css-grid-1/#layout-algorithm
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
     // The placement does not depend on the axis constraints, so it is shared by both intrinsic sizing scenarios.
-    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.gridTemplateColumns.sizes.size(), gridDefinition.gridTemplateRows.sizes.size());
+    auto gridItemPlacementResult = GridItemPlacer { autoFlowOptions }.placeItems(logicalGridItems, leadingImplicitTracks, gridDefinition.explicitGridTrackSizes.columnsCount(), gridDefinition.explicitGridTrackSizes.rowsCount());
 
     auto columnSizesForConstraint = [&](AxisConstraint intrinsicConstraint) -> TrackSizes {
         GridLayoutConstraints layoutConstraints {

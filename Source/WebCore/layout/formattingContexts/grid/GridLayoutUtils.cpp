@@ -49,6 +49,29 @@ LayoutUnit totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize)
     return tracksCount ? gapsSize * (tracksCount - 1) : LayoutUnit { };
 }
 
+Style::GridTrackSize trackSizeWithPercentagesConvertedToAuto(const Style::GridTrackSize& trackSize)
+{
+    return WTF::switchOn(trackSize,
+        [&trackSize](const Style::GridTrackBreadth& breadth) {
+            if (breadth.isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackSize::FitContent& fitContent) {
+            if (fitContent->value.isPercentOrCalculated())
+                return Style::GridTrackSize { CSS::Keyword::Auto { } };
+            return trackSize;
+        },
+        [&trackSize](const Style::GridTrackBreadth::Flex&) {
+            return trackSize;
+        },
+        [](const Style::GridTrackSize::MinMax& minMax) {
+            auto minTrackSizingFunction = !minMax->min.isPercentOrCalculated() ? minMax->min : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            auto maxTrackSizingFunction = !minMax->max.isPercentOrCalculated() ? minMax->max : Style::GridTrackBreadth { CSS::Keyword::Auto { } };
+            return Style::GridTrackSize { Style::GridTrackSize::MinMax { minTrackSizingFunction, maxTrackSizingFunction } };
+        });
+}
+
 // Resolves a grid item's used margins in one axis.
 // FIXME: Resolve percentage and calc() margins against the grid area's inline size.
 UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes)
