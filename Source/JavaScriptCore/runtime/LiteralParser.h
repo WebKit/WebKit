@@ -221,7 +221,9 @@ private:
         
         TokenType next();
         TokenType nextMaybeIdentifier();
-        
+        bool consumeColon();
+        bool tryConsumeStringEqualTo(std::span<const Latin1Character>);
+
 #if !ASSERT_ENABLED
         using LiteralParserTokenPtr = const LiteralParserToken<CharType>*;
 
