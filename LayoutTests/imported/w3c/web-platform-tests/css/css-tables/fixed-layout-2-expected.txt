@@ -106,11 +106,11 @@ PASS calc-size(100%, size)
 PASS calc(10px + 100%)
 PASS calc-size(calc(10px + 100%), size)
 PASS auto
-FAIL calc-size(auto, size) assert_equals: Table is in fixed mode expected 50 but got 100
+PASS calc-size(auto, size)
 PASS min-content
 PASS calc-size(min-content, size)
 PASS max-content
-FAIL calc-size(max-content, size) assert_equals: Table is in fixed mode expected 50 but got 100
+PASS calc-size(max-content, size)
 PASS fit-content
 PASS calc-size(fit-content, size)
 PASS calc-size(any, 10px + 100%)
@@ -119,8 +119,8 @@ PASS stretch
 PASS calc-size(stretch, size)
 PASS -webkit-fill-available
 PASS calc-size(-webkit-fill-available, size)
-FAIL intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
-FAIL calc-size(intrinsic, size) assert_equals: Table is in fixed mode expected 50 but got 100
-FAIL min-intrinsic assert_equals: Table is in fixed mode expected 50 but got 100
-FAIL calc-size(min-intrinsic, size) assert_equals: Table is in fixed mode expected 50 but got 100
+PASS intrinsic
+PASS calc-size(intrinsic, size)
+PASS min-intrinsic
+PASS calc-size(min-intrinsic, size)
 

@@ -1,0 +1,14 @@
+
+PASS used width, width: max-content — keyword on its own, for comparison
+PASS used width, width: calc-size(max-content, size) — identity
+PASS used width, width: calc-size(max-content, size + 20px)
+PASS used width, width: calc-size(min-content, size * 2)
+PASS used width, width: calc-size(fit-content, size + 10px)
+PASS used width, width: calc-size(stretch, size / 4) — stretch is the containing block
+PASS used width, width: calc-size(auto, size / 2); left: 0; right: 0 — an auto basis with both insets set
+PASS used width, width: calc-size(max-content, 30%) — a percentage resolves against the containing block
+PASS used width, minWidth: calc-size(max-content, size + 30px)
+PASS used width, width: 300px; maxWidth: calc-size(max-content, size + 20px)
+PASS used width, width: calc-size(calc-size(min-content, size * 2), size + 5px) — nested: the outer size is the inner result
+PASS the content and the containing block have the widths the expectations are built on
+
