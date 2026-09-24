@@ -3418,10 +3418,6 @@ ipc/restrictedendpoints/deny-access-webGPU.html [ Skip ]
 ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 ipc/validate-message-check-in-networkconnectiontowebproces-crash.html [ Skip ]
 
-### NEEDS PROPER TRIAGGING/GARDENING
-
-webkit.org/b/325146 ipc/invalid-message-to-web-process-crash.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IPC testing
 #////////////////////////////////////////////////////////////////////////////////////////
