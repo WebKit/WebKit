@@ -62,7 +62,11 @@ chdirWebKit();
 # Build
 
 my $result;
-if (isAppleCocoaWebKit()) {
+if (buildWithExistingCMakeTree()) {
+    # The TestWebKitAPI target also builds TestWTF, but run-api-tests runs TestIPC and TestWGSL too.
+    my @targets = $wtfOnly ? ("TestWTF") : ("TestWebKitAPI", grep { cmakeBuildHasTarget($_) } ("TestIPC", "TestWGSL"));
+    $result = buildCMakeTarget(join(" ", @targets), $clean, @ARGV);
+} elsif (isAppleCocoaWebKit()) {
     my $scheme = $wtfOnly ? "TestWTF" : "TestWebKitAPI";
     $result = buildXcodeScheme($scheme, $clean, XcodeOptions(), @ARGV);
 } else {

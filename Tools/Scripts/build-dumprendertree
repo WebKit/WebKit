@@ -64,7 +64,15 @@ chdirWebKit();
 chdir File::Spec->catdir("Tools", "DumpRenderTree") or die;
 
 my $result;
-if (isAppleCocoaWebKit()) {
+if (buildWithExistingCMakeTree()) {
+    # The CMake build only has a DumpRenderTree target when WebKitLegacy is enabled.
+    if (cmakeBuildHasTarget("DumpRenderTree")) {
+        $result = buildCMakeTarget("DumpRenderTree", $clean, @ARGV);
+    } else {
+        print "Not building DumpRenderTree: the CMake build in " . productDir() . " has no DumpRenderTree target.\n";
+        $result = 0;
+    }
+} elsif (isAppleCocoaWebKit()) {
     $result = buildXcodeScheme("DumpRenderTree", $clean, XcodeOptions(), @ARGV);
 } elsif (isGtk() || isWPE() || isAnyWindows()) {
     # GTK, WPE and Windows build everything in one shot. No need to build anything here.

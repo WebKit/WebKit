@@ -79,8 +79,10 @@ BEGIN {
        &availableXcodeSDKs
        &baseProductDir
        &buildCMakeProjectOrExit
+       &buildCMakeTarget
        &buildSystem
        &buildVisualStudioProject
+       &buildWithExistingCMakeTree
        &buildXCodeProject
        &buildXcodeScheme
        &builtDylibPathForName
@@ -93,6 +95,7 @@ BEGIN {
        &checkForArgumentAndRemoveFromArrayRefGettingValue
        &checkRequiredSystemConfig
        &cmakeArgsFromFeatures
+       &cmakeBuildHasTarget
        &configuration
        &configuredXcodeWorkspace
        &coverageIsEnabled
@@ -3213,6 +3216,52 @@ sub cleanCMakeGeneratedProject()
         return systemVerbose("cmake", "--build", $buildPath, "--config", $config, "--target", "clean");
     }
     return 0;
+}
+
+# Builds one target of an already-configured CMake tree, for the build-* helper
+# scripts that otherwise drive Xcode on Cocoa ports.
+sub buildCMakeTarget($$@)
+{
+    my ($target, $clean, @args) = @_;
+    die "--clean is not supported for a single CMake target; use build-webkit --clean.\n" if $clean;
+
+    # Callers such as webkitpy pass Xcode build settings (e.g. ARCHS=arm64e), which Ninja would read as targets.
+    my @makeArgs = grep { !/^\w+=/ } @args;
+    return buildCMakeGeneratedProject(join(" ", $target, @makeArgs));
+}
+
+# The build-* helper scripts keep building with Xcode on Cocoa unless --cmake was passed or a configured CMake tree already exists.
+sub buildWithExistingCMakeTree()
+{
+    return 0 unless isAppleCocoaWebKit() && isCMakeBuild();
+    # productDir() consumes --asan and --tsan from @ARGV, so resolve it before returning; otherwise they reach Ninja.
+    my $buildNinja = File::Spec->catfile(productDir(), "build.ninja");
+    return 1 if (passedBuildSystem() // "") eq "CMake";
+    return -f $buildNinja;
+}
+
+# Finds ninja the same way canUseNinja() does: the Xcode toolchain copy on Cocoa, then PATH.
+sub ninjaExecutable()
+{
+    if (isAppleCocoaWebKit()) {
+        my $devnull = File::Spec->devnull();
+        chomp(my $ninja = `xcrun -find ninja 2>$devnull`);
+        return $ninja if $ninja && exitStatus($?) == 0;
+    }
+    return "ninja" if commandExists("ninja");
+    return "ninja-build" if commandExists("ninja-build");
+    return undef;
+}
+
+sub cmakeBuildHasTarget($)
+{
+    my ($target) = @_;
+    my $buildPath = productDir();
+    return 0 unless -f File::Spec->catfile($buildPath, "build.ninja");
+    my $ninja = ninjaExecutable();
+    die "Could not find ninja to query the CMake build in $buildPath.\n" unless $ninja;
+    my $devnull = File::Spec->devnull();
+    return exitStatus(system("\"$ninja\" -C \"$buildPath\" -t query \"$target\" >$devnull 2>&1")) == 0;
 }
 
 sub buildCMakeProjectOrExit($$$@)

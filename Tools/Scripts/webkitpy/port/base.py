@@ -1430,6 +1430,13 @@ class Port(object):
         port_flag = self._port_flag_for_scripts()
         if port_flag:
             config_args.append(port_flag)
+        # Match the tree Config.build_directory() resolves, so build-* scripts don't build a different one.
+        if self.get_option('use_cmake'):
+            config_args.append('--cmake')
+        if self.get_option('use_xcode'):
+            config_args.append('--xcode')
+        if self.get_option('asan'):
+            config_args.append('--asan')
         return config_args
 
     def _run_script(self, script_name, args=None, include_configuration_arguments=True, decode_output=True, env=None):

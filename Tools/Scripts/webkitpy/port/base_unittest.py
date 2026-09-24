@@ -290,6 +290,16 @@ class PortTest(unittest.TestCase):
         )
         self.assertEqual(port._build_path(), '/my-build-directory/Debug-embedded-port')
 
+    def test_arguments_for_configuration(self):
+        port = self.make_port(options=optparse.Values({'configuration': 'Release'}))
+        self.assertEqual(port._arguments_for_configuration(), ['--release'])
+
+        port = self.make_port(options=optparse.Values({'configuration': 'Debug', 'use_cmake': True, 'asan': True}))
+        self.assertEqual(port._arguments_for_configuration(), ['--debug', '--cmake', '--asan'])
+
+        port = self.make_port(options=optparse.Values({'configuration': 'Release', 'use_xcode': True}))
+        self.assertEqual(port._arguments_for_configuration(), ['--release', '--xcode'])
+
     def test_jhbuild_wrapper(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
