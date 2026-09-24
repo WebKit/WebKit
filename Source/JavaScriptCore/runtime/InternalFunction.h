@@ -55,6 +55,9 @@ public:
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     JS_EXPORT_PRIVATE static Structure* createSubclassStructure(JSGlobalObject*, JSObject* newTarget, Structure*);
+    JS_EXPORT_PRIVATE static Structure* createSubclassStructure(JSGlobalObject*, JSObject* newTarget, Structure*, JSValue prototype);
+    JS_EXPORT_PRIVATE static bool canUseSubclassAllocationProfile(JSObject*);
+    JS_EXPORT_PRIVATE static Structure* cachedSubclassStructure(JSObject* newTarget, Structure* baseClass);
     JS_EXPORT_PRIVATE static InternalFunction* createFunctionThatMasqueradesAsUndefined(VM&, JSGlobalObject*, unsigned length, const String& name, NativeFunction);
 
     TaggedNativeFunction nativeFunctionFor(CodeSpecializationKind kind)
