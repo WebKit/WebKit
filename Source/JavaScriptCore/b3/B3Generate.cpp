@@ -112,7 +112,9 @@ void generateToAir(Procedure& procedure)
     } else if (procedure.optLevel() >= 1) {
         // FIXME: Explore better "quick mode" optimizations.
         reduceStrength(procedure, ReduceStrengthPass::Initial);
-    }
+        fixSSA(procedure);
+    } else
+        fixSSA(procedure);
 
     // This puts the IR in quirks mode.
     lowerMacros(procedure);

@@ -169,7 +169,6 @@ public:
                     dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
                 break;
             }
-            case Get:
             case Patchpoint:
             case B3::CCall:
             case BottomTuple: {
@@ -182,12 +181,7 @@ public:
             }
         }
 
-        for (Variable* variable : m_procedure.variables()) {
-            auto addResult = m_variableToTmps.add(variable, Vector<Tmp>(m_procedure.resultCount(variable->type())));
-            ASSERT(addResult.isNewEntry);
-            for (unsigned i = 0; i < m_procedure.resultCount(variable->type()); ++i)
-                addResult.iterator->value[i] = tmpForType(m_procedure.typeAtOffset(variable->type(), i));
-        }
+        RELEASE_ASSERT(m_procedure.variables().isEmpty());
 
         // Figure out which blocks are not rare.
         m_fastWorklist.push(m_procedure[0]);
@@ -478,9 +472,6 @@ private:
         case BottomTuple: {
             return m_tupleValueToTmps.find(tupleValue)->value;
         }
-        case Get:
-        case Set:
-            return m_variableToTmps.find(tupleValue->as<VariableValue>()->variable())->value;
         default:
             break;
         }
@@ -840,21 +831,6 @@ private:
         ASSERT(value->type() != Void);
         if (!value->type().isTuple()) {
             func(immOrTmp(value), value->type(), 0);
-            return;
-        }
-
-        const Vector<Type>& tuple = m_procedure.tupleForType(value->type());
-        const auto& tmps = tmpsForTuple(value);
-        for (unsigned i = 0; i < tuple.size(); ++i)
-            func(tmps[i], tuple[i], i);
-    }
-
-    template<typename Functor>
-    void forEachImmOrTmpOrZeroReg(Value* value, const Functor& func)
-    {
-        ASSERT(value->type() != Void);
-        if (!value->type().isTuple()) {
-            func(immOrTmpOrZeroReg(value), value->type(), 0);
             return;
         }
 
@@ -6487,27 +6463,10 @@ private:
             return;
         }
 
-        case Set: {
-            Value* value = m_value->child(0);
-            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
-            forEachImmOrTmpOrZeroReg(value, [&] (Arg immOrTmpOrZeroReg, Type type, unsigned index) {
-                moveToTmp(relaxedMoveForType(type), immOrTmpOrZeroReg, variableTmps[index]);
-            });
+        case Set:
+        case Get:
+            RELEASE_ASSERT_NOT_REACHED();
             return;
-        }
-
-        case Get: {
-            // Snapshot the value of the Get. It may change under us because you could do:
-            // a = Get(var)
-            // Set(@x, var)
-            // @a => this should get the value of the Get before the Set, i.e. not @x.
-
-            const Vector<Tmp>& variableTmps = m_variableToTmps.get(m_value->as<VariableValue>()->variable());
-            forEachImmOrTmp(m_value, [&] (Arg tmp, Type type, unsigned index) {
-                append(relaxedMoveForType(type), variableTmps[index], tmp.tmp());
-            });
-            return;
-        }
 
         case Branch: {
             if (canBeInternal(m_value->child(0))) {
@@ -6821,7 +6780,6 @@ private:
     UncheckedKeyHashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
     UncheckedKeyHashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
-    UncheckedKeyHashMap<Variable*, Vector<Tmp>> m_variableToTmps;
 
     UseCounts m_useCounts;
     PhiChildren m_phiChildren;
