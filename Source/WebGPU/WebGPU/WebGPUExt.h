@@ -133,7 +133,7 @@ typedef struct WGPUImageCopyExternalImage {
     WGPUColorSpace colorSpace;
 } WGPUImageCopyExternalImage;
 
-// WGPUImageCopyTexture plus the GPUImageCopyTextureTagged color-space and alpha tags.
+// WGPUTexelCopyTextureInfo plus the GPUImageCopyTextureTagged color-space and alpha tags.
 typedef struct WGPUImageCopyTextureTagged {
     WGPUTexture texture;
     uint32_t mipLevel;

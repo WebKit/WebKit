@@ -160,7 +160,7 @@ void CommandEncoderImpl::copyBufferToTexture(
 {
     Ref convertToBackingContext = m_convertToBackingContext;
 
-    WGPUImageCopyBuffer backingSource {
+    WGPUTexelCopyBufferInfo backingSource {
         .layout = {
             .offset = source.offset,
             .bytesPerRow = source.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
@@ -169,7 +169,7 @@ void CommandEncoderImpl::copyBufferToTexture(
         .buffer = convertToBackingContext->convertToBacking(protect(source.buffer)),
     };
 
-    WGPUImageCopyTexture backingDestination {
+    WGPUTexelCopyTextureInfo backingDestination {
         .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
@@ -188,14 +188,14 @@ void CommandEncoderImpl::copyTextureToBuffer(
 {
     Ref convertToBackingContext = m_convertToBackingContext;
 
-    WGPUImageCopyTexture backingSource {
+    WGPUTexelCopyTextureInfo backingSource {
         .texture = convertToBackingContext->convertToBacking(protect(source.texture)),
         .mipLevel = source.mipLevel,
         .origin = source.origin ? convertToBackingContext->convertToBacking(*source.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(source.aspect),
     };
 
-    WGPUImageCopyBuffer backingDestination {
+    WGPUTexelCopyBufferInfo backingDestination {
         .layout = {
             .offset = destination.offset,
             .bytesPerRow = destination.bytesPerRow.value_or(WGPU_COPY_STRIDE_UNDEFINED),
@@ -216,14 +216,14 @@ void CommandEncoderImpl::copyTextureToTexture(
 {
     Ref convertToBackingContext = m_convertToBackingContext;
 
-    WGPUImageCopyTexture backingSource {
+    WGPUTexelCopyTextureInfo backingSource {
         .texture = convertToBackingContext->convertToBacking(protect(source.texture)),
         .mipLevel = source.mipLevel,
         .origin = source.origin ? convertToBackingContext->convertToBacking(*source.origin) : WGPUOrigin3D { 0, 0, 0 },
         .aspect = convertToBackingContext->convertToBacking(source.aspect),
     };
 
-    WGPUImageCopyTexture backingDestination {
+    WGPUTexelCopyTextureInfo backingDestination {
         .texture = convertToBackingContext->convertToBacking(protect(destination.texture)),
         .mipLevel = destination.mipLevel,
         .origin = destination.origin ? convertToBackingContext->convertToBacking(*destination.origin) : WGPUOrigin3D { 0, 0, 0 },
