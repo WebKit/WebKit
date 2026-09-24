@@ -171,6 +171,7 @@ private:
 
     FlexBaseAndHypotheticalMainSizeList computeFlexBaseAndHypotheticalMainSizes(FlexLayoutItems&);
     LayoutUnit flexBaseSizeForFlexItem(const FlexLayoutItem&);
+    LayoutUnit computeFlexBaseSize(const FlexLayoutItem&, const Style::FlexBasis&);
     std::optional<LayoutUnit> ensureBlockAxisContentSizeForFlexItemIfNeeded(const FlexLayoutItem&);
     std::pair<LayoutUnit, LayoutUnit> minMaxMainSizesForFlexItem(const FlexLayoutItem&);
     std::optional<LayoutUnit> computeUsedMaxMainSize(const FlexLayoutItem&);
