@@ -1531,8 +1531,13 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         m_jit.jump(loop);
         done.link(m_jit);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (Wasm::isRefType(elementType.unpacked()))
             emitMutatorFence();
+#else
+        // Fence all initializing stores, including the cell header, before the array becomes visible to the GC.
+        emitMutatorFence();
+#endif
 
 #if ASSERT_ENABLED
         if (Wasm::isRefType(elementType.unpacked())) {
@@ -1578,9 +1583,14 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
             consume(args[i]);
         }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (Wasm::isRefType(elementType.unpacked()))
             emitMutatorFence();
 
+#else
+        // Fence all initializing stores, including the cell header, before the array becomes visible to the GC.
+        emitMutatorFence();
+#endif
     }
 
     result = topValue(TypeKind::Ref);
@@ -1635,8 +1645,13 @@ void BBQJIT::emitAllocateGCArrayUninitialized(GPRReg resultGPR, TypeSignatureInd
         m_jit.jump(loop);
         done.link(m_jit);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (Wasm::isRefType(elementType.unpacked()))
             emitMutatorFence();
+#else
+        // Fence all initializing stores, including the cell header, before the array becomes visible to the GC.
+        emitMutatorFence();
+#endif
     }
 
     consume(size);
@@ -2031,6 +2046,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         emitAllocateGCStructUninitialized(resultGPR, typeIndex, wasmScratchGPR, scratchGPR);
 
         JIT_COMMENT(m_jit, "Struct allocation done, do initialization");
+#ifdef RC_REMOVE_SEC_ACCEL_3
         bool needsMutatorFence = false;
         for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
             if (Wasm::isRefType(structType.field(i).type))
@@ -2044,6 +2060,23 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
 
         // No write barrier needed here as all fields are set to constants.
         ASSERT_UNUSED(needsMutatorFence, !needsMutatorFence);
+#else
+        bool needsWriteBarrier = false;
+        for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
+            if (Wasm::isRefType(structType.field(i).type))
+                needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::fromRef(TypeKind::RefNull, JSValue::encode(jsNull())));
+            else if (structType.field(i).type.unpacked().isV128()) {
+                materializeVectorConstant(v128_t { }, Location::fromFPR(wasmScratchFPR));
+                needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::pinned(TypeKind::V128, Location::fromFPR(wasmScratchFPR)));
+            } else
+                needsWriteBarrier |= emitStructSet(resultGPR, structType, i, Value::fromI64(0));
+        }
+        // No write barrier is needed since the struct is not yet visible to the GC. The fields are
+        // all constants, so emitStructSet doesn't ask for one anyway.
+        ASSERT_UNUSED(needsWriteBarrier, !needsWriteBarrier);
+        // Fence all initializing stores, including the cell header, before the struct becomes visible to the GC.
+        emitMutatorFence();
+#endif
     }
 
     result = topValue(TypeKind::Ref);
@@ -2077,6 +2110,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         emitAllocateGCStructUninitialized(resultGPR, typeIndex, wasmScratchGPR, scratchGPR);
 
         JIT_COMMENT(m_jit, "Struct allocation done, do initialization");
+#ifdef RC_REMOVE_SEC_ACCEL_3
         bool needsMutatorFence = false;
         for (uint32_t i = 0; i < args.size(); ++i)
             needsMutatorFence |= emitStructSet(resultGPR, structType, i, args[i]);
@@ -2084,6 +2118,16 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         if (needsMutatorFence)
             emitMutatorFence();
 
+#else
+        bool needsWriteBarrier = false;
+        for (uint32_t i = 0; i < args.size(); ++i)
+            needsWriteBarrier |= emitStructSet(resultGPR, structType, i, args[i]);
+
+        // No write barrier is needed since the struct is not yet visible to the GC.
+        UNUSED_VARIABLE(needsWriteBarrier);
+        // Fence all initializing stores, including the cell header, before the struct becomes visible to the GC.
+        emitMutatorFence();
+#endif
     }
 
     result = topValue(TypeKind::Ref);

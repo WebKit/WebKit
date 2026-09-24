@@ -1496,7 +1496,11 @@ public:
 
     [[nodiscard]] PartialResult addArrayInitData(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, uint32_t srcDataIndex, ExpressionType srcOffset, ExpressionType size);
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     // Returns true if a writeBarrier/mutatorFence is needed.
+#else
+    // Returns true if a writeBarrier is needed.
+#endif
     [[nodiscard]] bool emitStructSet(GPRReg structGPR, const RTT& structType, uint32_t fieldIndex, Value value);
 
     void emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIndex typeIndex, GPRReg scratchGPR, GPRReg scratchGPR2);
