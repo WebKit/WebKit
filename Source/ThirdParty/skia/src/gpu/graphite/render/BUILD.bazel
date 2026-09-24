@@ -9,6 +9,8 @@ licenses(["notice"])
 CORE_FILES = [
     "AnalyticBlurRenderStep.cpp",
     "AnalyticBlurRenderStep.h",
+    "AnalyticRRectBlurRenderStep.cpp",
+    "AnalyticRRectBlurRenderStep.h",
     "AnalyticRRectRenderStep.cpp",
     "AnalyticRRectRenderStep.h",
     "BitmapTextRenderStep.cpp",
@@ -44,6 +46,18 @@ CORE_FILES = [
 split_srcs_and_hdrs(
     name = "core",
     files = CORE_FILES,
+)
+
+SPARSE_STRIPS_FILES = [
+    "EndCapRenderStep.cpp",
+    "EndCapRenderStep.h",
+    "WideTileRenderStep.cpp",
+    "WideTileRenderStep.h",
+]
+
+split_srcs_and_hdrs(
+    name = "sparse_strips",
+    files = SPARSE_STRIPS_FILES,
 )
 
 skia_filegroup(

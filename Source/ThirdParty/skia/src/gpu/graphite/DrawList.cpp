@@ -98,6 +98,7 @@ std::pair<DrawParams*, Layer*> DrawList::recordDraw(
 
 std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
                                                  StorageContext* storageContext,
+                                                 DrawContext* drawContext,
                                                  sk_sp<TextureProxy> target,
                                                  const SkImageInfo& targetInfo,
                                                  DstReadStrategy dstReadStrategy) {
@@ -126,7 +127,9 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
     // bugs in the DrawOrder determination code?
     std::sort(fSortKeys.begin(), fSortKeys.end());
 
-    TRACE_EVENT1_ALWAYS("skia.gpu", TRACE_FUNC, "draw count", fDraws.count());
+    TRACE_EVENT0_ALWAYS("skia.gpu", "Snap DrawPass");
+    TRACE_EVENT_INSTANT1("skia.gpu", "DrawList Stats", TRACE_EVENT_SCOPE_THREAD,
+                         "draw count", fDraws.count());
 
     // The DrawList is converted directly into the DrawPass' data structures, but once the DrawPass
     // is returned from Make(), it is considered immutable.
@@ -148,8 +151,7 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
     const bool useStorageBuffers = caps->storageBufferSupport();
     UniformTracker uniformTracker(useStorageBuffers);
 
-    if (useStorageBuffers) {
-        SkASSERT(storageContext);
+    if (storageContext) {
         storageContext->finalizePrecachedStorageData();
     }
 
@@ -200,7 +202,7 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
         if (pipelineChange) {
             drawWriter.newPipelineState(renderStep.primitiveType(),
                                         renderStep.staticDataStride(),
-                                        renderStep.appendDataStride(),
+                                        renderStep.appendDataStride(draw.drawParams()),
                                         renderStep.getRenderStateFlags(),
                                         draw.drawParams().barrierBeforeDraws());
         } else if (stateChange) {
@@ -248,13 +250,22 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
     // Finish recording draw calls for any collected data still pending at end of the loop
     drawWriter.flush();
 
-    if (useStorageBuffers) {
-        SkASSERT(storageContext);
-        drawPass->fStorageBufferInfo = storageContext->finalize(bufferMgr);
-        if (!storageContext->isEmpty() && !drawPass->fStorageBufferInfo) SK_UNLIKELY {
+    if (bufferMgr->hasMappingFailed()) {
+        SKIA_LOG_W("Failed to write necessary vertex/instance data for DrawPass, dropping!");
+        this->reset(LoadOp::kLoad);
+        return nullptr;
+    }
+
+    if (storageContext) {
+        const bool hasStorageData = !storageContext->isEmpty();
+        auto storageResult = storageContext->finalize(recorder, drawContext);
+        if (hasStorageData && !storageResult) SK_UNLIKELY {
             SKIA_LOG_W("Failed to write Storage Data for Draw pass, dropping!");
             this->reset(LoadOp::kLoad);
             return nullptr;
+        }
+        if (storageResult) {
+            drawPass->setStorageResult(std::move(*storageResult));
         }
     }
 
@@ -262,11 +273,11 @@ std::unique_ptr<DrawPass> DrawList::snapDrawPass(Recorder* recorder,
     drawPass->fPipelineDescs   = fPipelineCache.detach();
     drawPass->fSampledTextures = fTextureDataCache.detachTextures();
 
-    TRACE_EVENT_INSTANT2_ALWAYS("skia.gpu",
-                                "DrawPass Stats",
-                                TRACE_EVENT_SCOPE_THREAD,
-                                "# commands", drawPass->fCommandList.count(),
-                                "# textures", drawPass->fSampledTextures.size());
+    TRACE_EVENT_INSTANT2("skia.gpu",
+                         "DrawPass Stats",
+                         TRACE_EVENT_SCOPE_THREAD,
+                         "# commands", drawPass->fCommandList.count(),
+                         "# textures", drawPass->fSampledTextures.size());
 
     this->reset(LoadOp::kLoad);
 

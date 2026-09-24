@@ -132,8 +132,7 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
 
     // Assert that our push constant sizes are below the maximum allowed (which is guaranteed to be
     // at least 128 bytes per spec).
-    static_assert(VulkanResourceProvider::kIntrinsicConstantSize < 128 &&
-                  VulkanResourceProvider::kLoadMSAAPushConstantSize < 128);
+    static_assert(VulkanResourceProvider::kIntrinsicConstantSize < 128);
 
     fRequiredUniformBufferAlignment = deviceLimits.minUniformBufferOffsetAlignment;
     fRequiredStorageBufferAlignment = deviceLimits.minStorageBufferOffsetAlignment;
@@ -248,9 +247,7 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     }
 
     // Note: ARM GPUs have always been coherent, do not add a subpass self-dependency even if the
-    // application hasn't enabled this feature as it comes with a performance cost on this GPU. Use
-    // of VK_EXT_rasterization_order_attachment_access is disabled on ARM due to an unexplained
-    // memory regression (b/437907749).
+    // application hasn't enabled this feature as it comes with a performance cost on this GPU.
     //
     // Imagination GPUs are also coherent but only within the same sample when sample-shading.
     // VK_EXT_rasterization_order_attachment_access indicates coherence when input attachment read
@@ -258,7 +255,7 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
     // this extension. This is not a problem for Graphite however, which does not enable sample
     // shading (nor would it read color from other samples even if it did).
     fSupportsRasterizationOrderColorAttachmentAccess =
-            enabledFeatures.fRasterizationOrderColorAttachmentAccess && vendorID != kARM_VkVendor;
+            enabledFeatures.fRasterizationOrderColorAttachmentAccess;
     fIsInputAttachmentReadCoherent = fSupportsRasterizationOrderColorAttachmentAccess ||
                                      vendorID == kARM_VkVendor || vendorID == kImagination_VkVendor;
 
@@ -283,8 +280,10 @@ void VulkanCaps::init(const ContextOptions& contextOptions,
             enabledFeatures.fGraphicsPipelineLibrary &&
             (deviceProperties.fGpl.graphicsPipelineLibraryFastLinking || vendorID == kARM_VkVendor);
 
-
-    fSupportsFrameBoundary = enabledFeatures.fFrameBoundary;
+    // Vulkan allows attachments to be bigger than the VkFramebuffer, which Graphite sizes to the
+    // main texture, so using approx-sized dimensions for MSAA and D/S attachments reduces the
+    // number of Resources in play (although hopefully they are all transient anyways).
+    fAttachmentSizePolicy = AttachmentSizePolicy::kApprox;
 
     // Multisampled render to single-sampled usage depends on the mandatory feature of
     // VK_EXT_multisampled_render_to_single_sampled.  Per format queries are needed to determine if
@@ -568,6 +567,25 @@ void VulkanCaps::getProperties(const skgpu::VulkanInterface* vkInterface,
     }
 }
 
+namespace {
+
+bool is_adreno_6xx_proprietary(uint32_t deviceID) {
+    // According to Gemini (with poor citations), the format follows this pattern:
+    //     0x0 + [Series Core] + [Major Tier] + [Minor Revision/Patch]
+    // For the Adreno660, it maps series 6, tier 60, revision 01 -> 0x06060001.
+    // For the Adreno640, it maps series 6, tier 40, revision 01 -> 0x06040001.
+    // For the Adreno620, it maps series 6, tier 20, revision 00 -> 0x06020000.
+    // For the Adreno610, it maps series 6, tier 10, revision 01 -> 0x06010000.
+    //
+    // NOTE: This applies to the proprietary QC driver. Turnip supposedly just reports the GPU
+    // number directly, e.g. 640.
+    static constexpr uint32_t kAdreno6xxMask = 0xFFF00000; // Selects what should be 0x060
+    static constexpr uint32_t kAdreno6xxId   = 0x06000000;
+    return (deviceID & kAdreno6xxMask) == kAdreno6xxId;
+}
+
+} // anonymous namespace
+
 void VulkanCaps::applyDriverCorrectnessWorkarounds(const PhysicalDeviceProperties& properties) {
     // By default, we initialize the Android API version to 0 since we consider certain things
     // "fixed" only once above a certain version. This way, we default to enabling the workarounds.
@@ -581,6 +599,7 @@ void VulkanCaps::applyDriverCorrectnessWorkarounds(const PhysicalDevicePropertie
 #endif
 
     const uint32_t vendorID = properties.fBase.properties.vendorID;
+    const uint32_t deviceID = properties.fBase.properties.deviceID;
     const VkDriverId driverID = properties.fDriver.driverID;
     const skgpu::DriverVersion driverVersion =
             skgpu::ParseVulkanDriverVersion(driverID, properties.fBase.properties.driverVersion);
@@ -614,6 +633,16 @@ void VulkanCaps::applyDriverCorrectnessWorkarounds(const PhysicalDevicePropertie
     // until we run into it.
     if (isQualcommProprietary) {
         fMustLoadFullImageForMSAA = true;
+    }
+
+    // Adreno 620s render garbage when attachment sizes aren't identical; likely an issue with
+    // how the subpass load coordinates are calculated, or how the resolve addresses are handled.
+    // Conservatively disable for all 6xx using QC's driver (not tested on Turnip).
+    //
+    // Swiftshader segfaults when using attachments larger than the framebuffer.
+    if ((isQualcommProprietary && is_adreno_6xx_proprietary(deviceID)) ||
+        driverID == VK_DRIVER_ID_GOOGLE_SWIFTSHADER) {
+        fAttachmentSizePolicy = AttachmentSizePolicy::kExact;
     }
 
     // MSAA doesn't work well on Intel GPUs crbug.com/40434119, crbug.com/41470715

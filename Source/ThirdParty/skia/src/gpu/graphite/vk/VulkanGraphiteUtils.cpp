@@ -11,6 +11,7 @@
 #include "include/core/SkStream.h"
 #include "include/gpu/ShaderErrorHandler.h"
 #include "include/gpu/graphite/Context.h"
+#include "include/gpu/graphite/vk/VulkanGraphiteContext.h"
 #include "include/gpu/vk/VulkanBackendContext.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/graphite/ContextPriv.h"
@@ -84,7 +85,8 @@ void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
                                      VkDescriptorSetLayout* outLayout) {
     // If requestedDescriptors is empty, that simply means we should create an empty placeholder
     // layout that doesn't actually contain any descriptors.
-    skia_private::STArray<kDescriptorTypeCount, VkDescriptorSetLayoutBinding> bindingLayouts;
+    constexpr int32_t kInlineCount = 16;
+    skia_private::STArray<kInlineCount, VkDescriptorSetLayoutBinding> bindingLayouts;
     for (size_t i = 0; i < requestedDescriptors.size(); i++) {
         if (requestedDescriptors[i].fCount != 0) {
             const DescriptorData& currDescriptor = requestedDescriptors[i];
@@ -121,6 +123,8 @@ void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
 VkDescriptorType DsTypeEnumToVkDs(DescriptorType type) {
     switch (type) {
         case DescriptorType::kUniformBuffer:
+            return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case DescriptorType::kUniformBufferDynamic:
             return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
         case DescriptorType::kTextureSampler:
             return VK_DESCRIPTOR_TYPE_SAMPLER;
@@ -129,9 +133,13 @@ VkDescriptorType DsTypeEnumToVkDs(DescriptorType type) {
         case DescriptorType::kCombinedTextureSampler:
             return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         case DescriptorType::kStorageBuffer:
+            return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case DescriptorType::kStorageBufferDynamic:
             return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
         case DescriptorType::kInputAttachment:
             return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        case DescriptorType::kStorageTexture:
+            return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
     }
     SkUNREACHABLE;
 }
@@ -241,6 +249,21 @@ VkShaderStageFlags PipelineStageFlagsToVkShaderStageFlags(
     }
     if (stageFlags & PipelineStageFlags::kCompute) {
         vkStageFlags |= VK_SHADER_STAGE_COMPUTE_BIT;
+    }
+    return vkStageFlags;
+}
+
+VkPipelineStageFlags PipelineStageFlagsToVkPipelineStageFlags(
+        SkEnumBitMask<PipelineStageFlags> stageFlags) {
+    VkPipelineStageFlags vkStageFlags = 0;
+    if (stageFlags & PipelineStageFlags::kVertexShader) {
+        vkStageFlags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+    }
+    if (stageFlags & PipelineStageFlags::kFragmentShader) {
+        vkStageFlags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+    }
+    if (stageFlags & PipelineStageFlags::kCompute) {
+        vkStageFlags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
     }
     return vkStageFlags;
 }

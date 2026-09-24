@@ -16,12 +16,15 @@
 #include "include/core/SkRect.h"
 #include "include/core/SkStream.h"
 #include "include/core/SkString.h"
+#include "include/gpu/graphite/Recorder.h"
 #include "include/private/SkTDArray.h"
 #include "src/core/SkVx.h"
+#include "src/gpu/graphite/geom/EndCaps.h"
+#include "src/gpu/graphite/geom/WideTiles.h"
+#include "src/gpu/graphite/sparse_strips/AlphaAtlasManager.h"
 #include "src/gpu/graphite/sparse_strips/Flatten.h"
 #include "src/gpu/graphite/sparse_strips/MakeStrips.h"
 #include "src/gpu/graphite/sparse_strips/Polyline.h"
-#include "src/gpu/graphite/sparse_strips/Strip.h"
 #include "src/gpu/graphite/sparse_strips/Tiler.h"
 #include "tests/Test.h"
 #include "tests/graphite/sparse_strips/OracleValidator.h"
@@ -86,6 +89,7 @@ std::vector<SkpValidator::ExtractedPath> SkpValidator::ExtractPaths(const SkPict
 
 template <uint16_t kTileWidth, uint16_t kTileHeight>
 bool SkpValidator::ValidatePath(skiatest::Reporter* reporter,
+                                Recorder* recorder,
                                 const SkPath& path,
                                 const char* testName,
                                 const SkTDArray<uint8_t>& maskLut,
@@ -131,21 +135,31 @@ bool SkpValidator::ValidatePath(skiatest::Reporter* reporter,
         return true;
     }
 
-    SkTDArray<Strip> stripBuf;
-    SkTDArray<uint8_t> alphaBuf;
     SkTDArray<skvx::int8> exactWindings;
 
     auto observer = [&](uint8_t exactMask, skvx::int8 winding) {
         exactWindings.push_back(winding);
     };
 
-    MakeStrips::MsaaSimd(
-            tiler, &stripBuf, &alphaBuf, localPath.getFillType(), polyline, maskLut, observer);
+    WideTiles wides;
+    EndCaps ends;
+    AlphaAtlasManager atlasManager(recorder);
+    MakeStrips::MsaaSimd<kTileWidth, kTileHeight>(
+            tiler,
+            &wides,
+            &ends,
+            &atlasManager,
+            localPath.getFillType(),
+            polyline,
+            maskLut,
+            vpWidth,
+            vpHeight,
+            observer);
 
     OracleValidator<kTileWidth, kTileHeight> validator(
             localPath,
-            stripBuf,
-            alphaBuf,
+            wides,
+            ends,
             exactWindings,
             &polyline,
             &tiler,
@@ -162,6 +176,7 @@ bool SkpValidator::ValidatePath(skiatest::Reporter* reporter,
 
 template <uint16_t kTileWidth, uint16_t kTileHeight>
 bool SkpValidator::ValidateSkp(skiatest::Reporter* reporter,
+                               Recorder* recorder,
                                const char* filepath,
                                const SkTDArray<uint8_t>& maskLut) {
     auto paths = ExtractPaths(filepath);
@@ -178,7 +193,7 @@ bool SkpValidator::ValidateSkp(skiatest::Reporter* reporter,
         SkString name;
         name.printf("%s_path_%d", filepath, i);
         if (ValidatePath<kTileWidth, kTileHeight>(
-                    reporter, paths[i].devicePath, name.c_str(), maskLut, &minorErrors)) {
+                    reporter, recorder, paths[i].devicePath, name.c_str(), maskLut, &minorErrors)) {
             passed++;
         }
     }
@@ -201,19 +216,23 @@ bool SkpValidator::ValidateSkp(skiatest::Reporter* reporter,
 
 // Explicit template instantiations for SkpValidator
 template bool SkpValidator::ValidatePath<4, 4>(skiatest::Reporter*,
+                                               Recorder*,
                                                const SkPath&,
                                                const char*,
                                                const SkTDArray<uint8_t>&,
                                                std::array<uint32_t, 3>*);
 template bool SkpValidator::ValidatePath<8, 8>(skiatest::Reporter*,
+                                               Recorder*,
                                                const SkPath&,
                                                const char*,
                                                const SkTDArray<uint8_t>&,
                                                std::array<uint32_t, 3>*);
 template bool SkpValidator::ValidateSkp<4, 4>(skiatest::Reporter*,
+                                              Recorder*,
                                               const char*,
                                               const SkTDArray<uint8_t>&);
 template bool SkpValidator::ValidateSkp<8, 8>(skiatest::Reporter*,
+                                              Recorder*,
                                               const char*,
                                               const SkTDArray<uint8_t>&);
 

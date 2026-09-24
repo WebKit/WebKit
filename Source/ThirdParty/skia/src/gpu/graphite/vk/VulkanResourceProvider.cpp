@@ -18,6 +18,7 @@
 #include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/Texture.h"
+#include "src/gpu/graphite/TextureFormat.h"
 #include "src/gpu/graphite/TextureInfoPriv.h"
 #include "src/gpu/graphite/vk/VulkanBuffer.h"
 #include "src/gpu/graphite/vk/VulkanCommandBuffer.h"
@@ -52,7 +53,7 @@ VkPipelineLayout create_mock_layout(const VulkanSharedContext* sharedContext) {
     pushConstantRange.stageFlags = VulkanResourceProvider::kIntrinsicConstantStageFlags;
 
     skia_private::STArray<1, DescriptorData> inputDesc {
-            VulkanGraphicsPipeline::kInputAttachmentDescriptor};
+            VulkanGraphicsPipeline::GetInputAttachmentDescriptor()};
     VkDescriptorSetLayout setLayout;
     DescriptorDataToVkDescSetLayout(sharedContext, inputDesc, &setLayout);
 
@@ -130,6 +131,18 @@ sk_sp<ComputePipeline> VulkanResourceProvider::createComputePipeline(const Compu
     return nullptr;
 }
 
+const VulkanTexture* VulkanResourceProvider::getOrCreateNullTexture() {
+    if (!fNullTexture) {
+        TextureInfo info = this->vulkanSharedContext()->caps()->getDefaultReadableTextureInfo(
+                TextureFormat::kRGBA32F,
+                Protected::kNo);
+        fNullTexture = this->createTexture(
+                SkISize::Make(1, 1), info, "UnusedTextureSlot");
+        SkASSERT(fNullTexture);
+    }
+    return static_cast<const VulkanTexture*>(fNullTexture.get());
+}
+
 sk_sp<Texture> VulkanResourceProvider::createTexture(SkISize size,
                                                      const TextureInfo& info,
                                                      std::string_view label) {
@@ -198,15 +211,30 @@ GraphiteResourceKey build_desc_set_key(const SkSpan<DescriptorData>& requestedDe
     static const ResourceType kType = GraphiteResourceKey::GenerateResourceType();
 
     // The number of int32s needed for a key can depend on whether we use immutable samplers or not.
-    // So, accumulte key data while passing through to check for that quantity and simply copy
-    // into builder afterwards.
-    skia_private::TArray<uint32_t> keyData (requestedDescriptors.size() + 1);
+    // So, accumulate key data while passing through to check for that quantity and simply copy into
+    // builder afterwards.
+    skia_private::TArray<uint32_t> keyData(requestedDescriptors.size() + 1);
 
     keyData.push_back(requestedDescriptors.size());
     for (const DescriptorData& desc : requestedDescriptors) {
-        keyData.push_back(static_cast<uint8_t>(desc.fType) << 24 |
-                          desc.fBindingIndex << 16 |
-                          static_cast<uint16_t>(desc.fCount));
+        // Pack into 32 bits:
+        // - fType: 4 bits (bits 28..31, max 15)
+        // - fPipelineStageFlags: 4 bits (bits 24..27, max 15)
+        // - fBindingIndex: 8 bits (bits 16..23, max 255)
+        // - fCount: 16 bits (bits 0..15, max 65535)
+        // Including stage flags prevents sets from colliding across incompatible shader stages
+        // (e.g. compute vs fragment textures).
+        // https://docs.vulkan.org/spec/latest/chapters/descriptorsets.html#VUID-vkCmdBindDescriptorSets-pDescriptorSets-00358
+        SkASSERT(static_cast<uint32_t>(desc.fType) < 16);
+        SkASSERT(desc.fPipelineStageFlags.value() > 0 && desc.fPipelineStageFlags.value() < 16);
+        SkASSERT(desc.fBindingIndex >= 0 && desc.fBindingIndex <= 255);
+        SkASSERT(desc.fCount > 0 && desc.fCount <= 0xFFFF);
+
+        uint32_t packedDesc = (static_cast<uint32_t>(desc.fType) << 28) |
+                              (static_cast<uint32_t>(desc.fPipelineStageFlags.value()) << 24) |
+                              (static_cast<uint32_t>(desc.fBindingIndex) << 16) |
+                              static_cast<uint16_t>(desc.fCount);
+        keyData.push_back(packedDesc);
         if (desc.fImmutableSampler) {
             const VulkanSampler* sampler =
                     static_cast<const VulkanSampler*>(desc.fImmutableSampler);
@@ -378,21 +406,15 @@ sk_sp<VulkanFramebuffer> VulkanResourceProvider::findOrCreateFramebuffer(
         VulkanTexture* resolveTexture,
         VulkanTexture* depthStencilTexture,
         const RenderPassDesc& renderPassDesc,
-        const VulkanRenderPass& renderPass,
-        const int width,
-        const int height) {
+        const VulkanRenderPass& renderPass) {
 
-    VulkanTexture* mainTexture = nullptr;
-    if (colorTexture) {
-        mainTexture = resolveTexture ? resolveTexture : colorTexture;
-    } else {
-        SkASSERT(depthStencilTexture);
-        mainTexture = depthStencilTexture;
-    }
+    VulkanTexture* mainTexture = resolveTexture ? resolveTexture :
+                                 colorTexture   ? colorTexture
+                                                : depthStencilTexture;
     SkASSERT(mainTexture);
     VulkanTexture* msaaTexture = resolveTexture ? colorTexture : nullptr;
 
-    // First check for a cached frame buffer.
+    // First check for a cached frame buffer, which are kept alive by the main texture
     sk_sp<VulkanFramebuffer> fb = mainTexture->getCachedFramebuffer(renderPassDesc,
                                                                     msaaTexture,
                                                                     depthStencilTexture);
@@ -409,8 +431,8 @@ sk_sp<VulkanFramebuffer> VulkanResourceProvider::findOrCreateFramebuffer(
     framebufferInfo.renderPass = renderPass.renderPass();
     framebufferInfo.attachmentCount = attachmentViews.size();
     framebufferInfo.pAttachments = attachmentViews.begin();
-    framebufferInfo.width = width;
-    framebufferInfo.height = height;
+    framebufferInfo.width = mainTexture->dimensions().width();
+    framebufferInfo.height = mainTexture->dimensions().height();
     framebufferInfo.layers = 1;
     fb = VulkanFramebuffer::Make(context,
                                  framebufferInfo,

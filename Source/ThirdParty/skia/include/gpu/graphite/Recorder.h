@@ -8,15 +8,16 @@
 #ifndef skgpu_graphite_Recorder_DEFINED
 #define skgpu_graphite_Recorder_DEFINED
 
-#include "include/core/SkCPURecorder.h"
 #include "include/core/SkRecorder.h"
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSurface.h"
+#include "include/cpu/Recorder.h"
 #include "include/gpu/graphite/GraphiteTypes.h"
 #include "include/gpu/graphite/Recording.h"
 #include "include/private/SingleOwner.h"
 #include "include/private/SkAPI.h"
 #include "include/private/SkTArray.h"
+#include "include/private/SkTDArray.h"
 
 #include <chrono>
 #include <cstddef>
@@ -283,6 +284,7 @@ private:
 
     SkCanvas* makeCaptureCanvas(SkCanvas*) override;
     void createCaptureBreakpoint(SkSurface*) override;
+    void deregisterCaptureCanvas(SkCanvas*) override;
 
     sk_sp<SharedContext> fSharedContext;
     ResourceProvider* fResourceProvider; // May point to the Context's resource provider

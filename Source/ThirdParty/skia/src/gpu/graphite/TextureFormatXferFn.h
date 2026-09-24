@@ -70,22 +70,29 @@ public:
              const void* src, size_t srcRowBytes,
              void* dst, size_t dstRowBytes) const;
 
+#if defined(GPU_TEST_UTILS)
+    bool usesRasterPipeline() const { return SkToBool(fRP); }
+    bool usesXferOps() const { return fPreOps | fPostOps; }
+    bool isIgnoreSrcForceOpaque() const;
+    bool isDropOrPadAlpha() const;
+#endif
+
 private:
+    using SwizzlerFn = void (*)(uint32_t*, const uint32_t*, int); // SkOpts::Swizzle_8888_u32
     struct RPOps : public SkNVRefCnt<RPOps> {
         SkRasterPipelineContexts::MemoryCtx fSrcCtx{nullptr, 0};
         SkRasterPipelineContexts::MemoryCtx fDstCtx{nullptr, 0};
 
         SkSTArenaAlloc<256> fArena; // holds raster pipeline and other op contexts
         SkRasterPipeline fRP; // backed by fArena
+        SwizzlerFn fSwizzler = nullptr; // exclusive to fRP if this matches a case in SkSwizzler
 
         const int fSrcBpp;
         const int fDstBpp;
 
         template<typename... RPModifiers>
-        static sk_sp<RPOps> Make(SkColorType srcCT, SkColorType dstCT, RPModifiers...);
-
-        // Returns true if RasterPipeline can process the whole 2D block via its strides
-        bool setStrides(size_t srcRowBytes, size_t dstRowBytes, uint8_t otherOps);
+        static sk_sp<RPOps> Make(SkColorType srcCT, SkColorType dstCT,
+                                 uint8_t* xferOps, RPModifiers...);
 
     private:
         RPOps(int srcBpp, int dstBpp) : fRP(&fArena), fSrcBpp(srcBpp), fDstBpp(dstBpp) {}
@@ -99,6 +106,10 @@ private:
         // At least one direction should not add extra conversion operations
         SkASSERT(preOps == 0 || postOps == 0);
     }
+
+    // Returns the number of times to invoke the row transfer functions, possibly modifying the
+    // width and height parameters of the transfer.
+    int getRowInvokeCount(int* width, int* height, size_t srcRowBytes, size_t dstRowBytes) const;
 
     // At most one of fPreOps or fPostOps will be non-identity; whichever that is determines the
     // side of the conversion for which this TextureFormat defines the raw data format. When both

@@ -260,7 +260,18 @@ SkISize DawnCaps::getDepthAttachmentDimensions(const TextureInfo& textureInfo,
             }
 
             // Otherwise this is the Y or A plane, so no adjustment needed
-            [[fallthrough]];
+            break;
+        case wgpu::TextureFormat::R8BG8Biplanar422Unorm:
+        case wgpu::TextureFormat::R10X6BG10X6Biplanar422Unorm:
+            if (dawnInfo.fAspect == wgpu::TextureAspect::Plane1Only) {
+                return SkISize::Make(colorAttachmentDimensions.width() * 2,
+                                     colorAttachmentDimensions.height());
+            }
+            break;
+        case wgpu::TextureFormat::R8BG8Biplanar444Unorm:
+        case wgpu::TextureFormat::R10X6BG10X6Biplanar444Unorm:
+            // Both planes have the same dimensions as the full texture.
+            break;
         default:
             // Not multiplanar, so no adjustment needed
             break;
@@ -388,7 +399,10 @@ void DawnCaps::initCaps(const DawnBackendContext& backendContext, const ContextO
         fSupportedResolveTextureLoadOp = wgpu::LoadOp::ExpandResolveTexture;
         fSupportsPartialLoadResolve =
                 backendContext.fDevice.HasFeature(wgpu::FeatureName::DawnPartialLoadResolveTexture);
-        fDifferentResolveAttachmentSizeSupport = fSupportsPartialLoadResolve;
+        if (fSupportsPartialLoadResolve) {
+            // This extension allows the MSAA attachments to be smaller than the main target.
+            fAttachmentSizePolicy = AttachmentSizePolicy::kMSAARenderArea;
+        }
     }
 
     fSupportsRenderPassRenderArea =
@@ -404,9 +418,10 @@ void DawnCaps::initCaps(const DawnBackendContext& backendContext, const ContextO
         fSupportedTransientAttachmentUsage == wgpu::TextureUsage::None) {
         // If the device doesn't support partial resolve nor transient attachments, we will emulate
         // load/resolve using separate render passes. This helps reuse MSAA textures better to
-        // reduce memory usage.
+        // reduce memory usage. Since they are separate render passes, there is no more requirement
+        // for the auxiliary attachments to match the main target's dimensions.
         fEmulateLoadStoreResolve = true;
-        fDifferentResolveAttachmentSizeSupport = true;
+        fAttachmentSizePolicy = AttachmentSizePolicy::kMSAARenderArea;
 
         // On hardware that doesn't support transient attachments or partial resolve, we
         // force-disable the ExpandResolveTexture loadOp. This is done because, under emulation,

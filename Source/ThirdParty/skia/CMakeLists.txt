@@ -45,6 +45,7 @@ add_library(Skia STATIC
     src/codec/SkSwizzler.cpp
     src/codec/SkTiffUtility.cpp
 
+    src/core/Recorder.cpp
     src/core/SkAAClip.cpp
     src/core/SkATrace.cpp
     src/core/SkAlphaRuns.cpp
@@ -79,8 +80,6 @@ add_library(Skia STATIC
     src/core/SkBlurMask.cpp
     src/core/SkBlurMaskFilterImpl.cpp
     src/core/SkBuffer.cpp
-    src/core/SkCPUContext.cpp
-    src/core/SkCPURecorder.cpp
     src/core/SkCachedData.cpp
     src/core/SkCanvas.cpp
     src/core/SkCanvasPriv.cpp

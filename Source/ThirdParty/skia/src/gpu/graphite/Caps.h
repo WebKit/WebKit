@@ -88,6 +88,9 @@ struct ResourceBindingRequirements {
     int fIntrinsicBufferBinding       = kUnassigned;
     int fCombinedUniformBufferBinding = kUnassigned;
     int fStorageBufferBinding         = kUnassigned;
+    /* Maximum texture atlas dimension for StorageBuffer fallback texture, defaults to 8192 */
+    int fMaxFallbackTextureSize       = kUnassigned;
+    int fMaxFallbackTextureBytes      = kUnassigned;
 };
 
 class Caps {
@@ -130,17 +133,33 @@ public:
     /* Returns whether multisampled render to single sampled is supported. */
     bool msaaRenderToSingleSampledSupport() const { return fMSAARenderToSingleSampledSupport; }
 
+    // Sizing requirements for auxiliary attachments in a renderpass, such as the depth/stencil
+    // or color MSAA attachment.
+    enum class AttachmentSizePolicy : uint8_t {
+        kExact, // Auxiliary attachments must have the exact same size as the main texture
+        kApprox, // Auxiliary attachments can be made larger via GetApproxSize()
+        kMSAARenderArea, // MSAA-only attachments can be made smaller to fit the render bounds
+    };
+
     /**
-     * Returns whether a render pass can have MSAA/depth/stencil attachments and a resolve
-     * attachment with mismatched sizes. Note: the MSAA attachment and the depth/stencil attachment
-     * still need to match their sizes.
-     * This also implies supporting partial load/resolve.
+     * Returns whether a render pass's MSAA/depth/stencil attachments can have a different size
+     * than the resolve attachment (or the single-sampled color attachment when there is no
+     * MSAA involved).
+     *
+     * The MSAA attachment and the depth/stencil attachment must still match each other's size.
+     * If partial load/resolve is not supported, all attachments (including the resolve attachment)
+     * must still be larger than the framebuffer size.
      */
-    bool differentResolveAttachmentSizeSupport() const {
-        return fDifferentResolveAttachmentSizeSupport;
+    AttachmentSizePolicy attachmentSizePolicy() const {
+        return fAttachmentSizePolicy;
     }
 
-    /* Get required depth attachment dimensions for a givin color attachment info and dimensions. */
+    /**
+     * Get required depth attachment dimensions for a given color attachment info and dimensions.
+     * This assumes `colorAttachmentDimensions` has already been adjusted for attachmentSizePolicy()
+     * and this function's primary purpose is to handle complex requirements when rendering into
+     * multiplanar texture views.
+     */
     virtual SkISize getDepthAttachmentDimensions(const TextureInfo&,
                                                  const SkISize colorAttachmentDimensions) const {
         return colorAttachmentDimensions;
@@ -159,7 +178,7 @@ public:
                                              Protected,
                                              Renderable) const;
 
-    TextureInfo getDefaultReadableTextureInfo(SkColorType,
+    TextureInfo getDefaultReadableTextureInfo(TextureFormat,
                                               Protected = Protected::kNo) const;
 
     TextureInfo getTextureInfoForSampledCopy(const TextureInfo&,  Mipmapped) const;
@@ -170,6 +189,7 @@ public:
                                                 Protected) const;
 
     TextureInfo getDefaultStorageTextureInfo(SkColorType) const;
+    TextureInfo getDefaultReadableStorageTextureInfo(TextureFormat, Protected) const;
 
     // Tries to return a sample count > 1 if needing MSAA to render into the target specification.
     // If the target is already multisampled, it will be that count; otherwise it will be the
@@ -458,7 +478,6 @@ protected:
     bool fDrawBufferCanBeMapped = true;
     bool fBufferMapsAreAsync = false;
     bool fMSAARenderToSingleSampledSupport = false;
-    bool fDifferentResolveAttachmentSizeSupport = false;
     bool fAvoidMSAA = false;
     bool fDrawListLayer = false;
     bool fAvoidDepthMode = false;
@@ -486,6 +505,7 @@ protected:
 
     ResourceBindingRequirements fResourceBindingReqs;
     BlendEquationSupport fBlendEqSupport = BlendEquationSupport::kBasic;
+    AttachmentSizePolicy fAttachmentSizePolicy = AttachmentSizePolicy::kExact;
 
     GpuStatsFlags fSupportedGpuStats = GpuStatsFlags::kNone;
 

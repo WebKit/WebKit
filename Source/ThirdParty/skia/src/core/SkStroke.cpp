@@ -37,11 +37,9 @@ enum {
 // quads with extreme widths (e.g. (0,1) (1,6) (0,3) width=5e7) recurse to point of failure
 // largest seen for normal cubics : 5, 26
 // largest seen for normal quads : 11
-// 3x limits seen in practice, except for cubics (3x limit would be ~75).
-// For cubics, we never get close to 75 when running through dm. The limit of 24
-// was chosen because it's close to the peak in a count of cubic recursion depths visited
-// (define DEBUG_CUBIC_RECURSION_DEPTHS) and no diffs were produced on gold when using it.
-static const int kRecursiveLimits[] = { 5*3, 24, 11*3, 11*3 };
+// The kRecursiveLimits are somewhat arbitrarily chosen: we simply try to choose the largest depth
+// that won't timeout the fuzzer. For cubics that's 24; for quads and conics, that's 16.
+static constexpr auto kRecursiveLimits = std::to_array<int>({ 5*3, 24, 16, 16 });
 
 static_assert(0 == kTangent_RecursiveLimit, "cubic_stroke_relies_on_tangent_equalling_zero");
 static_assert(1 == kCubic_RecursiveLimit, "cubic_stroke_relies_on_cubic_equalling_one");
@@ -544,6 +542,7 @@ void SkPathStroker::init(StrokeType strokeType, SkQuadConstruct* quadPts, SkScal
         SkScalar tEnd) {
     fStrokeType = strokeType;
     fFoundTangents = false;
+    fRecursionDepth = 0;
     quadPts->init(tStart, tEnd);
 }
 
@@ -682,8 +681,8 @@ SkPathStroker::ReductionType SkPathStroker::CheckCubicLinear(const SkPoint cubic
         *tangentPtPtr = degenerateAB ? &cubic[2] : &cubic[1];
         return kQuad_ReductionType;
     }
-    SkScalar tValues[3];
-    int count = SkFindCubicMaxCurvature(cubic, tValues);
+    std::array<SkScalar, 3> tValues;
+    int count = SkFindCubicMaxCurvature(cubic, tValues.data());
     int rCount = 0;
     // Now loop over the t-values, and reject any that evaluate to either end-point
     for (int index = 0; index < count; ++index) {
@@ -999,7 +998,7 @@ SkPathStroker::ResultType SkPathStroker::tangentsMeet(const SkPoint cubic[4],
 // Intersect the line with the quad and return the t values on the quad where the line crosses.
 static int intersect_quad_ray(const SkPoint line[2], const SkPoint quad[3], SkScalar roots[2]) {
     SkVector vec = line[1] - line[0];
-    SkScalar r[3];
+    std::array<SkScalar, 3> r;
     for (int n = 0; n < 3; ++n) {
         r[n] = vec.cross(quad[n] - line[0]);
     }
@@ -1218,6 +1217,7 @@ bool SkPathStroker::cubicStroke(const SkPoint cubic[4], SkQuadConstruct* quadPts
         DEBUG_CUBIC_RECURSION_TRACK_DEPTH(fRecursionDepth);
         // If we stop making progress, just emit a line and move on
         addDegenerateLine(quadPts);
+        --fRecursionDepth;
         return true;
     }
     SkQuadConstruct half;
@@ -1255,6 +1255,9 @@ bool SkPathStroker::conicStroke(const SkConic& conic, SkQuadConstruct* quadPts) 
         addDegenerateLine(quadPts);
         return true;
     }
+    if (!quadPts->fQuad[2].isFinite()) {
+        return false;  // just abort if projected quad isn't representable
+    }
 #if QUAD_STROKE_APPROX_EXTENDED_DEBUGGING
     SkDEBUGCODE(gMaxRecursion[kConic_RecursiveLimit] = std::max(gMaxRecursion[kConic_RecursiveLimit],
             fRecursionDepth + 1));
@@ -1262,14 +1265,23 @@ bool SkPathStroker::conicStroke(const SkConic& conic, SkQuadConstruct* quadPts) 
     if (++fRecursionDepth > kRecursiveLimits[kConic_RecursiveLimit]) {
         // If we stop making progress, just emit a line and move on
         addDegenerateLine(quadPts);
+        --fRecursionDepth;
         return true;
     }
     SkQuadConstruct half;
-    (void) half.initWithStart(quadPts);
+    if (!half.initWithStart(quadPts)) {
+        addDegenerateLine(quadPts);
+        --fRecursionDepth;
+        return true;
+    }
     if (!this->conicStroke(conic, &half)) {
         return false;
     }
-    (void) half.initWithEnd(quadPts);
+    if (!half.initWithEnd(quadPts)) {
+        addDegenerateLine(quadPts);
+        --fRecursionDepth;
+        return true;
+    }
     if (!this->conicStroke(conic, &half)) {
         return false;
     }
@@ -1289,6 +1301,9 @@ bool SkPathStroker::quadStroke(const SkPoint quad[3], SkQuadConstruct* quadPts) 
         addDegenerateLine(quadPts);
         return true;
     }
+    if (!quadPts->fQuad[2].isFinite()) {
+        return false;  // just abort if projected quad isn't representable
+    }
 #if QUAD_STROKE_APPROX_EXTENDED_DEBUGGING
     SkDEBUGCODE(gMaxRecursion[kQuad_RecursiveLimit] = std::max(gMaxRecursion[kQuad_RecursiveLimit],
             fRecursionDepth + 1));
@@ -1296,14 +1311,23 @@ bool SkPathStroker::quadStroke(const SkPoint quad[3], SkQuadConstruct* quadPts) 
     if (++fRecursionDepth > kRecursiveLimits[kQuad_RecursiveLimit]) {
         // If we stop making progress, just emit a line and move on
         addDegenerateLine(quadPts);
+        --fRecursionDepth;
         return true;
     }
     SkQuadConstruct half;
-    (void) half.initWithStart(quadPts);
+    if (!half.initWithStart(quadPts)) {
+        addDegenerateLine(quadPts);
+        --fRecursionDepth;
+        return true;
+    }
     if (!this->quadStroke(quad, &half)) {
         return false;
     }
-    (void) half.initWithEnd(quadPts);
+    if (!half.initWithEnd(quadPts)) {
+        addDegenerateLine(quadPts);
+        --fRecursionDepth;
+        return true;
+    }
     if (!this->quadStroke(quad, &half)) {
         return false;
     }
@@ -1550,7 +1574,8 @@ void SkStroke::strokePath(const SkPath& src, SkPathBuilder* dst) const {
 }
 
 static SkPathDirection reverse_direction(SkPathDirection dir) {
-    static const SkPathDirection gOpposite[] = { SkPathDirection::kCCW, SkPathDirection::kCW };
+    static constexpr auto gOpposite =
+        std::to_array<SkPathDirection>({SkPathDirection::kCCW, SkPathDirection::kCW});
     return gOpposite[(int)dir];
 }
 

@@ -44,6 +44,7 @@
 #include "src/utils/SkMatrix22.h"
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <limits>
 #include <new>
@@ -369,14 +370,15 @@ static void pack4xHToMask(const SkPixmap& src, SkMaskBuilder& dst,
     // but is still sharper on small stems and small rounded corners than gray.
     // This also seems to be about as wide as one can get and only have a three pixel kernel.
     // TODO: calculate these at runtime so parameters can be adjusted (esp contrast).
-    static const unsigned int coefficients[LCD_PER_PIXEL][SAMPLES_PER_PIXEL*3] = {
-        //The red subpixel is centered inside the first sample (at 1/6 pixel), and is shifted.
-        { 0x03, 0x0b, 0x1c, 0x33,  0x40, 0x39, 0x24, 0x10,  0x05, 0x01, 0x00, 0x00, },
-        //The green subpixel is centered between two samples (at 1/2 pixel), so is symetric
-        { 0x00, 0x02, 0x08, 0x16,  0x2b, 0x3d, 0x3d, 0x2b,  0x16, 0x08, 0x02, 0x00, },
-        //The blue subpixel is centered inside the last sample (at 5/6 pixel), and is shifted.
-        { 0x00, 0x00, 0x01, 0x05,  0x10, 0x24, 0x39, 0x40,  0x33, 0x1c, 0x0b, 0x03, },
-    };
+    static constexpr std::array<std::array<unsigned int, SAMPLES_PER_PIXEL * 3>, LCD_PER_PIXEL>
+        coefficients = {{
+            // The red subpixel is centered inside the first sample (at 1/6 pixel), and is shifted.
+            { 0x03, 0x0b, 0x1c, 0x33,  0x40, 0x39, 0x24, 0x10,  0x05, 0x01, 0x00, 0x00, },
+            // The green subpixel is centered between two samples (at 1/2 pixel), so is symetric
+            { 0x00, 0x02, 0x08, 0x16,  0x2b, 0x3d, 0x3d, 0x2b,  0x16, 0x08, 0x02, 0x00, },
+            // The blue subpixel is centered inside the last sample (at 5/6 pixel), and is shifted.
+            { 0x00, 0x00, 0x01, 0x05,  0x10, 0x24, 0x39, 0x40,  0x33, 0x1c, 0x0b, 0x03, },
+        }};
 
     size_t dstPB = toA8 ? sizeof(uint8_t) : sizeof(uint16_t);
     for (int y = 0; y < height; ++y) {
@@ -395,7 +397,7 @@ static void pack4xHToMask(const SkPixmap& src, SkMaskBuilder& dst,
         // TODO: this fir filter implementation is straight forward, but slow.
         // It should be possible to make it much faster.
         for (int sample_x = -4; sample_x < sample_width + 4; sample_x += 4) {
-            int fir[LCD_PER_PIXEL] = { 0 };
+            std::array<int, LCD_PER_PIXEL> fir = { 0 };
             for (int sample_index = std::max(0, sample_x - 4), coeff_index = sample_index - (sample_x - 4)
                 ; sample_index < std::min(sample_x + 8, sample_width)
                 ; ++sample_index, ++coeff_index)
@@ -443,6 +445,83 @@ static void pack4xHToMask(const SkPixmap& src, SkMaskBuilder& dst,
         }
     }
 }
+
+#if defined(SK_USE_LCD_TEXT_3X_FILTER)
+static void pack3xHToMask(const SkPixmap& src, SkMaskBuilder& dst,
+                          const bool doBGR, const bool doVert) {
+    static constexpr int kSamplesPerPixel = 3;
+    // FreeType's default 5-tap LCD filter:
+    // https://freetype.org/freetype2/docs/reference/ft2-lcd_rendering.html
+    static constexpr int kFilter[5] = {
+        0x08, 0x4D, 0x56, 0x4D, 0x08,
+    };
+
+    SkASSERT(kAlpha_8_SkColorType == src.colorType());
+    SkASSERT(SkMask::kLCD16_Format == dst.fFormat);
+
+    // doVert in this function means swap x and y when writing to dst.
+    if (doVert) {
+        SkASSERT(src.width() == (dst.fBounds.height() - 2) * kSamplesPerPixel);
+        SkASSERT(src.height() == dst.fBounds.width());
+    } else {
+        SkASSERT(src.width() == (dst.fBounds.width() - 2) * kSamplesPerPixel);
+        SkASSERT(src.height() == dst.fBounds.height());
+    }
+
+    const int sampleWidth = src.width();
+    const int height = src.height();
+
+    uint8_t* dstImage = dst.image();
+    const size_t dstRB = dst.fRowBytes;
+    const size_t dstPB = sizeof(uint16_t);
+    const size_t dstPDelta = doVert ? dstRB : dstPB;
+    const size_t dstYDelta = doVert ? dstPB : dstRB;
+
+    for (int y = 0; y < height; ++y) {
+        uint8_t* dstP = SkTAddOffset<uint8_t>(dstImage, y * dstYDelta);
+
+        const uint8_t* srcP = SkTAddOffset<const uint8_t>(src.addr(), y * src.rowBytes());
+
+        for (int sampleX = -kSamplesPerPixel;
+             sampleX < sampleWidth + kSamplesPerPixel;
+             sampleX += kSamplesPerPixel) {
+            int coverage[3] = {0, 0, 0};
+
+            for (int channel = 0; channel < 3; ++channel) {
+                const int center = sampleX + channel;
+                int sum = 0;
+
+                for (int tap = 0; tap < 5; ++tap) {
+                    const int sampleIndex = center + tap - 2;
+                    if (sampleIndex >= 0 && sampleIndex < sampleWidth) {
+                        sum += kFilter[tap] * srcP[sampleIndex];
+                    }
+                }
+
+                coverage[channel] = sum >> 8;
+            }
+
+            U8CPU r, g, b;
+            if (doBGR) {
+                r = coverage[2];
+                g = coverage[1];
+                b = coverage[0];
+            } else {
+                r = coverage[0];
+                g = coverage[1];
+                b = coverage[2];
+            }
+            if constexpr (kSkShowTextBlitCoverage) {
+                r = std::max(r, 10u);
+                g = std::max(g, 10u);
+                b = std::max(b, 10u);
+            }
+            *(uint16_t*)dstP = SkPack888ToRGB16(r, g, b);
+            dstP = SkTAddOffset<uint8_t>(dstP, dstPDelta);
+        }
+    }
+}
+#endif
 
 static inline int convert_8_to_1(unsigned byte) {
     SkASSERT(byte <= 0xFF);
@@ -532,15 +611,22 @@ void SkScalerContext::GenerateImageFromPath(
                          (dstMask.fFormat == SkMask::kA8_Format && a8FromLCD);
     const bool intermediateDst = fromLCD || dstMask.fFormat == SkMask::kBW_Format;
     if (fromLCD) {
+#if defined(SK_USE_LCD_TEXT_3X_FILTER)
+        const int samplesPerPixel = dstMask.fFormat == SkMask::kLCD16_Format ? 3 : 4;
+#else
+        constexpr int samplesPerPixel = 4;
+#endif
         if (verticalLCD) {
-            dstW = 4*dstH - 8;
+            dstW = samplesPerPixel * dstH - 2 * samplesPerPixel;
             dstH = srcW;
-            matrix.setAll(0, 4, -SkIntToScalar(dstMask.fBounds.fTop + 1) * 4,
+            matrix.setAll(0, samplesPerPixel,
+                          -SkIntToScalar(dstMask.fBounds.fTop + 1) * samplesPerPixel,
                           1, 0, -SkIntToScalar(dstMask.fBounds.fLeft),
                           0, 0, 1);
         } else {
-            dstW = 4*dstW - 8;
-            matrix.setAll(4, 0, -SkIntToScalar(dstMask.fBounds.fLeft + 1) * 4,
+            dstW = samplesPerPixel * dstW - 2 * samplesPerPixel;
+            matrix.setAll(samplesPerPixel, 0,
+                          -SkIntToScalar(dstMask.fBounds.fLeft + 1) * samplesPerPixel,
                           0, 1, -SkIntToScalar(dstMask.fBounds.fTop),
                           0, 0, 1);
         }
@@ -598,7 +684,11 @@ void SkScalerContext::GenerateImageFromPath(
             }
             break;
         case SkMask::kLCD16_Format:
+#if defined(SK_USE_LCD_TEXT_3X_FILTER)
+            pack3xHToMask(dst, dstMask, doBGR, verticalLCD);
+#else
             pack4xHToMask(dst, dstMask, maskPreBlend, doBGR, verticalLCD);
+#endif
             break;
         default:
             SkUNREACHABLE;

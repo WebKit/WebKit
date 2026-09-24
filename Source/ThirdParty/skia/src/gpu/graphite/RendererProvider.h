@@ -146,6 +146,7 @@ public:
     const Renderer* circularArc() const { return &fCircularArc; }
 
     const Renderer* analyticBlur() const { return &fAnalyticBlur; }
+    const Renderer* analyticRRectBlur() const { return &fAnalyticRRectBlur; }
 
     // TODO: May need to add support for inverse filled strokes (need to check SVG spec if this is a
     // real thing).
@@ -164,6 +165,12 @@ public:
     // Compute shader-based path renderer and compositor. Used with the kCompute related strategies
     // to coordinate the ComputeSteps that feed into the coverageMask() renderer.
     const VelloRenderer* velloRenderer() const { return fVelloRenderer.get(); }
+#endif
+
+#if defined(SK_ENABLE_SPARSE_STRIPS)
+    const Renderer* sparseStripsEndCap() const { return &fSparseStrips[0]; }
+    const Renderer* sparseStripsWideTile() const { return &fSparseStrips[1]; }
+    SkSpan<const Renderer> sparseStrips() const { return {fSparseStrips, 2}; }
 #endif
 
 private:
@@ -213,9 +220,14 @@ private:
     Renderer fCircularArc;
 
     Renderer fAnalyticBlur;
+    Renderer fAnalyticRRectBlur;
 
     Renderer fVertices[kVerticesCount];
     Renderer fMesh;
+
+#if defined(SK_ENABLE_SPARSE_STRIPS)
+    Renderer fSparseStrips[2]; // kEndCap, and kWideTile
+#endif
 
     // Aggregate of all enabled Renderers for convenient iteration when pre-compiling
     skia_private::TArray<const Renderer*> fRenderers;

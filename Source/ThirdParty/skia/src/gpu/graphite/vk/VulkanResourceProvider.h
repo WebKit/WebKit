@@ -41,10 +41,6 @@ public:
     static constexpr VkShaderStageFlagBits kIntrinsicConstantStageFlags =
             VkShaderStageFlagBits(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT);
 
-    static constexpr size_t kLoadMSAAPushConstantSize = sizeof(float) * 4;
-    static constexpr VkShaderStageFlagBits kLoadMSAAPushConstantStageFlags =
-            VK_SHADER_STAGE_VERTEX_BIT;
-
     VulkanResourceProvider(SharedContext* sharedContext,
                            SingleOwner*,
                            uint32_t recorderID,
@@ -64,15 +60,14 @@ public:
     sk_sp<VulkanRenderPass> findOrCreateRenderPass(const RenderPassDesc&, bool compatibleOnly);
 
     VkPipelineLayout mockPipelineLayout() const { return fMockPipelineLayout; }
+    const VulkanTexture* getOrCreateNullTexture();
 
     sk_sp<VulkanFramebuffer> findOrCreateFramebuffer(const VulkanSharedContext*,
                                                      VulkanTexture* colorTexture,
                                                      VulkanTexture* resolveTexture,
                                                      VulkanTexture* depthStencilTexture,
                                                      const RenderPassDesc&,
-                                                     const VulkanRenderPass&,
-                                                     const int width,
-                                                     const int height);
+                                                     const VulkanRenderPass&);
 
 private:
     const VulkanSharedContext* vulkanSharedContext() const;
@@ -112,6 +107,7 @@ private:
     std::unique_ptr<VulkanProgramInfo> fLoadMSAAProgram;
 
     skia_private::TArray<std::pair<GraphiteResourceKey, uint32_t>> fCurrentPoolSizes;
+    sk_sp<Texture> fNullTexture;
 };
 
 } // namespace skgpu::graphite

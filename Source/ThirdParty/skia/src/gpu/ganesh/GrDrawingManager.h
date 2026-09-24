@@ -10,6 +10,7 @@
 
 #include "include/core/SkRefCnt.h"
 #include "include/core/SkSpan.h"
+#include "include/gpu/ganesh/GrDirectContext.h"
 #include "include/private/SkDebug.h"
 #include "include/private/SkTArray.h"
 #include "src/gpu/ganesh/GrAtlasTypes.h"
@@ -178,10 +179,10 @@ public:
 
     static bool ProgramUnitTest(GrDirectContext*, int maxStages, int maxLevels);
 
-    GrSemaphoresSubmitted flushSurfaces(SkSpan<GrSurfaceProxy*>,
-                                        SkSurfaces::BackendSurfaceAccess,
-                                        const GrFlushInfo&,
-                                        const skgpu::MutableTextureState* newState);
+    GrDirectContext::FlushResult flushSurfaces(SkSpan<GrSurfaceProxy*>,
+                                               SkSurfaces::BackendSurfaceAccess,
+                                               const GrFlushInfo&,
+                                               const skgpu::MutableTextureState* newState);
 
     void addOnFlushCallbackObject(GrOnFlushCallbackObject*);
 
@@ -202,10 +203,10 @@ public:
 
     // This is public so it can be called by an SkImage factory (in SkImages namespace).
     // It is not meant to be directly called in other situations.
-    bool flush(SkSpan<GrSurfaceProxy*> proxies,
-               SkSurfaces::BackendSurfaceAccess access,
-               const GrFlushInfo&,
-               const skgpu::MutableTextureState* newState);
+    GrDirectContext::FlushResult flush(SkSpan<GrSurfaceProxy*> proxies,
+                                       SkSurfaces::BackendSurfaceAccess access,
+                                       const GrFlushInfo&,
+                                       const skgpu::MutableTextureState* newState);
 
 private:
     GrDrawingManager(GrRecordingContext*,
@@ -216,8 +217,7 @@ private:
 
     void closeActiveOpsTask();
 
-    // return true if any GrRenderTasks were actually executed; false otherwise
-    bool executeRenderTasks(GrOpFlushState*);
+    GrRenderTask::ExecutionResult executeRenderTasks(GrOpFlushState*);
 
     void removeRenderTasks();
 

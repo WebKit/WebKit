@@ -73,6 +73,16 @@ void Caps::finishInitialization(const ContextOptions& options) {
 
     // Enable setting this flag from either the private or public context options.
     fDrawListLayer |= options.fUseDrawListLayer;
+
+    constexpr int kMaxFallbackTextureSize = 8192;
+    fResourceBindingReqs.fMaxFallbackTextureSize =
+            std::max(std::min(kMaxFallbackTextureSize, fMaxTextureSize), 1);
+
+    constexpr int kBytesPerTexel = 16;  // 4 floats (RGBA32F) per fallback texel
+    fResourceBindingReqs.fMaxFallbackTextureBytes =
+            fResourceBindingReqs.fMaxFallbackTextureSize *
+            fResourceBindingReqs.fMaxFallbackTextureSize *
+            kBytesPerTexel;
 }
 
 sk_sp<SkCapabilities> Caps::capabilities() const { return fCapabilities; }
@@ -304,12 +314,11 @@ TextureInfo Caps::getDefaultSampledTextureInfo(SkColorType colorType,
                                        Discardable::kNo);
 }
 
-TextureInfo Caps::getDefaultReadableTextureInfo(SkColorType colorType,
-                                                Protected isProtected) const {
+TextureInfo Caps::getDefaultReadableTextureInfo(TextureFormat format, Protected isProtected) const {
     return this->getDefaultTextureInfo(TextureUsage::kRead |
                                        TextureUsage::kCopySrc |
                                        TextureUsage::kCopyDst,
-                                       PreferredTextureFormats(colorType),
+                                       SkSpan(&format, 1),
                                        SampleCount::k1,
                                        Mipmapped::kNo,
                                        isProtected,
@@ -327,15 +336,8 @@ TextureInfo Caps::getTextureInfoForSampledCopy(const TextureInfo& info, Mipmappe
 }
 
 TextureInfo Caps::getTextureInfoForReadableCopy(const TextureInfo& info) const {
-    const TextureFormat format = TextureInfoPriv::ViewFormat(info);
-    return this->getDefaultTextureInfo(TextureUsage::kRead |
-                                       TextureUsage::kCopySrc |
-                                       TextureUsage::kCopyDst,
-                                       SkSpan(&format, 1),
-                                       SampleCount::k1,
-                                       Mipmapped::kNo,
-                                       info.isProtected(),
-                                       Discardable::kNo);
+    return this->getDefaultReadableTextureInfo(TextureInfoPriv::ViewFormat(info),
+                                               info.isProtected());
 }
 
 TextureInfo Caps::getDefaultCompressedTextureInfo(SkTextureCompressionType compressionType,
@@ -361,6 +363,19 @@ TextureInfo Caps::getDefaultStorageTextureInfo(SkColorType colorType) const {
                                        SampleCount::k1,
                                        Mipmapped::kNo,
                                        Protected::kNo,
+                                       Discardable::kNo);
+}
+
+TextureInfo Caps::getDefaultReadableStorageTextureInfo(TextureFormat format,
+                                                       Protected isProtected) const {
+    return this->getDefaultTextureInfo(TextureUsage::kStorage |
+                                       TextureUsage::kRead |
+                                       TextureUsage::kCopySrc |
+                                       TextureUsage::kCopyDst,
+                                       SkSpan(&format, 1),
+                                       SampleCount::k1,
+                                       Mipmapped::kNo,
+                                       isProtected,
                                        Discardable::kNo);
 }
 
