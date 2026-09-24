@@ -234,6 +234,9 @@ if (ENABLE_2022_GLIB_API)
     list(APPEND WPE_API_HEADER_TEMPLATES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkSession.h.in
     )
+    list(APPEND WebKit_SOURCES
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitIconLoadingClient.cpp
+    )
 endif ()
 
 if (ENABLE_2022_GLIB_API)
@@ -243,6 +246,7 @@ if (ENABLE_2022_GLIB_API)
     )
     list(APPEND WebKit_SOURCES
         ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtension.cpp
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitWebExtensionMatchPattern.cpp
     )
 endif ()
 
