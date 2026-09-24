@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<style>
+#skippedRoot {
+    display: grid;
+    grid-template: 10px / 10px;
+    content-visibility: hidden;
+}
+#gridItem {
+    place-self: start;
+}
+#fixedBox {
+    position: fixed;
+}
+</style>
+<div id="skippedRoot"><div id="gridItem"><div id="fixedBox"></div></div></div>
+PASS if no crash
+<script>
+window.testRunner?.dumpAsText();
+document.body.offsetHeight;
+fixedBox.style.width = "100px";
+</script>

@@ -392,6 +392,11 @@ void RenderDeprecatedFlexibleBox::layoutBlock(RelayoutChildren relayoutChildren,
         else
             layoutVerticalBox(relayoutChildren);
 
+        if (CheckedRef { layoutContext() }->isSkippedContentRootForLayout(*this)) {
+            for (CheckedRef child : childrenOfType<RenderElement>(*this))
+                child->clearNeedsLayoutForSkippedContent();
+        }
+
         repaintChildrenDuringLayoutIfMoved(this, oldChildRects);
         ASSERT(view().frameView().layoutContext().layoutDeltaMatches(oldLayoutDelta));
 

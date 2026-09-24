@@ -414,6 +414,11 @@ void RenderGrid::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
     else
         layoutGridLanes(relayoutChildren);
 
+    if (CheckedRef { layoutContext() }->isSkippedContentRootForLayout(*this)) {
+        for (CheckedRef child : childrenOfType<RenderElement>(*this))
+            child->clearNeedsLayoutForSkippedContent();
+    }
+
     updateLayerTransform();
 
     repainter.repaintAfterLayout();
