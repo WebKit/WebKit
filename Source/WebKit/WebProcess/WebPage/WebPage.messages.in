@@ -66,6 +66,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     KeyEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebKeyboardEvent> event) -> (bool handled)
     MouseEvent(WebCore::FrameIdentifier frameID, Ref<WebKit::WebMouseEvent> event, std::optional<Vector<WebKit::SandboxExtensionHandle>> sandboxExtensions) -> (bool handled, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::DoublePoint eventPoint, WebCore::DoublePoint globalPoint, enum:uint8_t std::optional<WebCore::LastKnownMousePositionSource> source);
+    MousePointerDidDisappear();
 
 #if PLATFORM(COCOA)
     SelectWithGesture(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (struct WebKit::SelectWithGestureResult result, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
